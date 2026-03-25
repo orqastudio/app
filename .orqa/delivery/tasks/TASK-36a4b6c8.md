@@ -1,23 +1,21 @@
 ---
-id: TASK-36a4b6c8
-type: task
-title: Add Skills Field to Task Schema
+id: "TASK-36a4b6c8"
+type: "task"
+title: "Add Skills Field to Task Schema"
 description: "Add the skills field to the task frontmatter schema in both the tasks README and the artifact-framework documentation. This enables full traceability: plan → task → agent → skills → implementation."
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
-assignee: AGENT-bbad3d30
+status: "completed"
+created: 2026-03-08T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
+assignee: "AGENT-bbad3d30"
 acceptance:
-  - Task frontmatter schema includes skills field (string array)
-  - artifact-framework.md task schema updated with skills field
-  - Field documented with purpose (traceability from plan to implementation)
-  - Example task shown with assignee + skills combination
+  - "Task frontmatter schema includes skills field (string array)"
+  - "artifact-framework.md task schema updated with skills field"
+  - "Field documented with purpose (traceability from plan to implementation)"
+  - "Example task shown with assignee + skills combination"
 relationships:
-  - target: EPIC-57dd7d4c
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dc793265
-    type: depended-on-by
+  - target: "EPIC-57dd7d4c"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,21 +1,19 @@
 ---
-id: TASK-1ec4db8a
-type: task
-title: Define information architecture
+id: "TASK-1ec4db8a"
+type: "task"
+title: "Define information architecture"
 description: "Designed the app's navigation structure, content hierarchy, and organizational patterns for all content types."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Navigation structure covers all content types
-  - Hierarchy is consistent and predictable
-  - Information architecture supports the multi-panel layout
+  - "Navigation structure covers all content types"
+  - "Hierarchy is consistent and predictable"
+  - "Information architecture supports the multi-panel layout"
 relationships:
-  - target: EPIC-a951c9b6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6a46215d
-    type: depended-on-by
+  - target: "EPIC-a951c9b6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

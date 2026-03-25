@@ -1,12 +1,12 @@
 ---
-id: TASK-bad9cd52
-type: task
+id: "TASK-bad9cd52"
+type: "task"
 title: "Consolidate frontmatter parsing to SDK single export"
 description: "Reduce 7 copies of frontmatter parsing across the codebase to 2 canonical implementations: one Rust (orqa_validation) and one TypeScript (SDK). App UI and CLI should import from SDK; MCP server should re-export from orqa_validation."
-status: completed
-priority: P3
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+priority: "P3"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "libs/sdk/src/utils/frontmatter.ts is the single TypeScript frontmatter parser"
   - "app/ui/src/lib/utils/frontmatter.ts imports from SDK instead of maintaining its own copy"
@@ -14,14 +14,12 @@ acceptance:
   - "libs/mcp-server/src/graph.rs re-exports extract_frontmatter from orqa_validation (overlaps with TASK-c18c4cae)"
   - "All consumers produce identical parse results for the same input"
 relationships:
-  - target: EPIC-0497a1be
-    type: delivers
+  - target: "EPIC-0497a1be"
+    type: "delivers"
     rationale: "Task delivers work to the deduplication epic"
-  - target: TASK-c18c4cae
-    type: depends-on
+  - target: "TASK-c18c4cae"
+    type: "depends-on"
     rationale: "MCP server frontmatter fix should be done first to establish the re-export pattern"
-  - target: TASK-11090f14
-    type: depended-on-by
 ---
 
 ## What

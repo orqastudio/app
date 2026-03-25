@@ -1,6 +1,6 @@
 ---
 id: "TASK-17eff97f"
-type: task
+type: "task"
 title: "Deduplicate rule/skill content — rules keep constraints, skills keep methodology"
 description: "Remove duplicated methodology, templates, and code examples from three rules and move them into their companion skills, leaving rules with only constraints and FORBIDDEN sections."
 status: "completed"
@@ -17,8 +17,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

@@ -1,6 +1,6 @@
 ---
 id: "TASK-77bfa7e1"
-type: task
+type: "task"
 title: "Add docs and skills fields to task schema"
 description: "Extend the task schema with optional docs (array of documentation paths) and skills (array of skill names) fields that create graph edges from tasks to their implementation context."
 status: "completed"
@@ -15,16 +15,6 @@ relationships:
   - target: "EPIC-f079c196"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-608d1faa"
-    type: "depended-on-by"
-  - target: "TASK-7a8690e2"
-    type: "depended-on-by"
-  - target: "TASK-bb4fa466"
-    type: "depended-on-by"
-  - target: "TASK-80889691"
-    type: "depended-on-by"
-  - target: "TASK-5ae6eb0f"
-    type: "depended-on-by"
 ---
 ## What
 

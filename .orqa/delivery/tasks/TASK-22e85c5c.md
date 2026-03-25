@@ -1,21 +1,19 @@
 ---
-id: TASK-22e85c5c
-type: task
-title: Implement conversation UI with streaming
+id: "TASK-22e85c5c"
+type: "task"
+title: "Implement conversation UI with streaming"
 description: "Built the conversation view with message bubbles, streaming token display, message input, and real-time response rendering."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Messages display correctly with role-based styling
-  - Streaming tokens appear in real-time
-  - Input area supports multi-line text and Enter to send
+  - "Messages display correctly with role-based styling"
+  - "Streaming tokens appear in real-time"
+  - "Input area supports multi-line text and Enter to send"
 relationships:
-  - target: EPIC-713c48c6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3187066a
-    type: depended-on-by
+  - target: "EPIC-713c48c6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

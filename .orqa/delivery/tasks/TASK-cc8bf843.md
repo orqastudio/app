@@ -1,17 +1,15 @@
 ---
-id: TASK-cc8bf843
-type: task
-title: MCP server — Rust backend artifact graph API
-status: active
-created: 2026-03-19
-updated: 2026-03-21
+id: "TASK-cc8bf843"
+type: "task"
+title: "MCP server — Rust backend artifact graph API"
+status: "active"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-21T00:00:00.000Z
 relationships:
-  - target: EPIC-9b58fdcb
-    type: delivers
-  - target: TASK-44bd295d
-    type: depends-on
-  - target: TASK-f45e6ede
-    type: depended-on-by
+  - target: "EPIC-9b58fdcb"
+    type: "delivers"
+  - target: "TASK-44bd295d"
+    type: "depends-on"
 ---
 
 # TASK-cc8bf843: MCP Server

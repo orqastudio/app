@@ -1,28 +1,21 @@
 ---
-id: TASK-92c15db1
-type: task
-title: Add injection map entries to relevant rules
-description: |
-  Add enforcement entries with action:inject to rules that govern specific
-  code areas, mapping file path patterns to the skills that should be
-  auto-loaded.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-92c15db1"
+type: "task"
+title: "Add injection map entries to relevant rules"
+description: "Add enforcement entries with action:inject to rules that govern specific\ncode areas, mapping file path patterns to the skills that should be\nauto-loaded.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
   - "Enforcement entries with action:inject added to relevant rules"
-  - Each path-to-skill mapping references an existing skill
-  - Writing to a mapped path triggers skill injection
+  - "Each path-to-skill mapping references an existing skill"
+  - "Writing to a mapped path triggers skill injection"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-8d9ac231
-    type: depends-on
-  - target: TASK-7382b265
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-8d9ac231"
+    type: "depends-on"
 ---
 
 ## What

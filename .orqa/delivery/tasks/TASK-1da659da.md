@@ -1,17 +1,17 @@
 ---
-id: TASK-1da659da
-type: task
-title: Create grounding documents for all agent roles
+id: "TASK-1da659da"
+type: "task"
+title: "Create grounding documents for all agent roles"
 description: "Create 5 concise grounding documents distilled from restructured documentation. Each answers: why this role exists, what good looks like, what goes wrong under pressure. Designed for agent injection, not human browsing."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 4
   complexity: 3
   dependencies: 4
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
   - "grounding/product-purpose.md created — mission, pillars, identity (30-50 lines)"
@@ -22,15 +22,11 @@ acceptance:
   - "Each doc has frontmatter with ID, relationships to source docs, and pillar alignment"
   - "Content is distilled from restructured docs, not duplicated"
 relationships:
-  - target: EPIC-12fba656
-    type: delivers
-    rationale: Phase 2 — grounding docs are the foundation for agent purpose injection
-  - target: TASK-97d5ed5f
-    type: depends-on
-  - target: TASK-98f928c3
-    type: depended-on-by
-  - target: TASK-60c0568d
-    type: depended-on-by
+  - target: "EPIC-12fba656"
+    type: "delivers"
+    rationale: "Phase 2 — grounding docs are the foundation for agent purpose injection"
+  - target: "TASK-97d5ed5f"
+    type: "depends-on"
 ---
 
 ## Scope

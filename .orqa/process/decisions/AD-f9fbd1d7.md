@@ -1,18 +1,12 @@
 ---
 id: "AD-f9fbd1d7"
-type: decision
+type: "decision"
 title: "Filesystem-Driven Doc Browsing"
 description: "Documentation browsing is project-scoped and filesystem-driven. Doc tree built dynamically from project directory scanning."
 status: "completed"
 created: "2026-03-03"
 updated: "2026-03-13"
-relationships:
-  - target: "RES-80a476c7"
-    type: "informed-by"
-    rationale: "RES-80a476c7 investigated markdown rendering and doc browsing patterns, validating filesystem-driven tree generation over hardcoded navigation"
-  - target: "RULE-63cc16ad"
-    type: "enforced-by"
-    rationale: "RULE-63cc16ad requires config paths to match disk directories and forbids hardcoded artifact paths — directly enforcing filesystem-driven scanning"
+relationships: []
 ---
 ## Decision
 

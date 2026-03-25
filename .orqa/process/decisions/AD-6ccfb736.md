@@ -6,9 +6,7 @@ description: Artifacts connect ONLY through typed relationships. No standalone f
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships:
-  - target: DOC-28344cd7
-    type: documented-by
+relationships: []
 ---
 
 ## Decision

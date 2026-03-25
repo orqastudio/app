@@ -1,27 +1,25 @@
 ---
-id: TASK-d9f83fb9
-type: task
-title: Pipeline stage visualization widget
+id: "TASK-d9f83fb9"
+type: "task"
+title: "Pipeline stage visualization widget"
 description: "Add a PipelineWidget to the dashboard showing Knowledge Maturity Pipeline stages (Observation → Understanding → Principle → Practice → Enforcement → Verification) with artifact counts, flow connections, and bottleneck highlighting."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
-  - PipelineWidget shows 6 pipeline stages as a horizontal flow
-  - Each stage shows artifact count derived from artifact type mapping
-  - Flow connections between stages indicate relationship edges
-  - Bottleneck stages (artifacts without downstream connections) highlighted in amber/red
-  - Clicking a stage could be wired to navigation (stretch)
-  - Widget appears on ProjectDashboard
-  - make typecheck passes (no new errors)
+  - "PipelineWidget shows 6 pipeline stages as a horizontal flow"
+  - "Each stage shows artifact count derived from artifact type mapping"
+  - "Flow connections between stages indicate relationship edges"
+  - "Bottleneck stages (artifacts without downstream connections) highlighted in amber/red"
+  - "Clicking a stage could be wired to navigation (stretch)"
+  - "Widget appears on ProjectDashboard"
+  - "make typecheck passes (no new errors)"
 relationships:
-  - target: EPIC-82dd0bd2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-25a42498
-    type: depends-on
-  - target: TASK-c15165f5
-    type: depended-on-by
+  - target: "EPIC-82dd0bd2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-25a42498"
+    type: "depends-on"
 ---
 
 ## What

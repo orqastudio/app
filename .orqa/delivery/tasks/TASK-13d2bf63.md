@@ -1,6 +1,6 @@
 ---
 id: "TASK-13d2bf63"
-type: task
+type: "task"
 title: "SQLite persistence design"
 description: "Evaluated SQLite via rusqlite for structured local storage of conversation data, sessions, and messages."
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
   - target: "EPIC-5a0624dc"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-c5d43277"
-    type: "depended-on-by"
 ---
 ## What
 

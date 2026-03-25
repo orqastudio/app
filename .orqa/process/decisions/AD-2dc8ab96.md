@@ -1,20 +1,12 @@
 ---
-id: AD-2dc8ab96
-type: decision
-title: Lint suppression exceptions require decision audit trail
+id: "AD-2dc8ab96"
+type: "decision"
+title: "Lint suppression exceptions require decision audit trail"
 description: "Every lint suppression annotation (#[allow(clippy::...)], eslint-disable, @ts-ignore) must reference an accepted decision artifact. Pre-commit scanner validates the mapping. Vendored components are exempt."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
-relationships:
-  - target: RULE-9814ec3c
-    type: enforced-by
-  - target: RULE-42d17086
-    type: enforced-by
-  - target: IDEA-df1d0829
-    type: crystallised-by
-  - target: IDEA-4263cbaa
-    type: crystallised-by
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
+relationships: []
 ---
 ## Decision
 

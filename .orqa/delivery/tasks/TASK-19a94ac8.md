@@ -1,24 +1,22 @@
 ---
-id: TASK-19a94ac8
-type: task
-title: Audit artifact group README files for accuracy
+id: "TASK-19a94ac8"
+type: "task"
+title: "Audit artifact group README files for accuracy"
 description: "Verify that all README.md files in .orqa/ artifact directories have accurate descriptions, icons, labels, and sort metadata reflecting the current state of each group."
-status: ready
-created: 2026-03-11
-updated: 2026-03-11
+status: "ready"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 docs:
-  - DOC-28344cd7
+  - "DOC-28344cd7"
 acceptance:
-  - Every artifact directory README.md has been reviewed
-  - Descriptions match the current purpose and contents of each group
+  - "Every artifact directory README.md has been reviewed"
+  - "Descriptions match the current purpose and contents of each group"
   - "No references to deprecated terminology (canon, plugin as old meaning)"
   - "All frontmatter fields (icon, label, description, sort) are present and accurate"
 relationships:
-  - target: EPIC-9ddef7f9
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-58e87849
-    type: depended-on-by
+  - target: "EPIC-9ddef7f9"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

@@ -1,17 +1,15 @@
 ---
-id: TASK-8edb8cee
-type: task
-title: Register the connector plugin in Claude Code settings
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "TASK-8edb8cee"
+type: "task"
+title: "Register the connector plugin in Claude Code settings"
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: EPIC-b07d074c
-    type: delivers
-  - target: TASK-72163412
-    type: depends-on
-  - target: TASK-4298cf81
-    type: depended-on-by
+  - target: "EPIC-b07d074c"
+    type: "delivers"
+  - target: "TASK-72163412"
+    type: "depends-on"
 ---
 
 # TASK-8edb8cee: Register Connector Plugin in Claude Code Settings

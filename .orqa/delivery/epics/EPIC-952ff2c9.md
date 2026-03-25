@@ -1,37 +1,22 @@
 ---
-id: EPIC-952ff2c9
-type: epic
+id: "EPIC-952ff2c9"
+type: "epic"
 title: "Documentation improvements — content, ordering, rendering"
 description: "Fix docs navigation (no status for docs), populate Guide section, audit doc ordering for reading flow, add mermaid/PlantUML rendering, and review doc-to-artifact relationships."
-status: completed
-priority: P2
+status: "completed"
+priority: "P2"
 scoring:
   impact: 3
   urgency: 2
   complexity: 2
   dependencies: 1
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: next
+horizon: "next"
 relationships:
-  - target: TASK-7f45cdfa
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-7202f1b4
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-85c8d2fb
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-84f08739
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-fcd3d5c6
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

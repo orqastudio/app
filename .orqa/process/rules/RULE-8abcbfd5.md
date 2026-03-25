@@ -14,8 +14,6 @@ enforcement:
 relationships:
   - target: AD-02a2a97b
     type: enforces
-  - target: DOC-d9cc1f84
-    type: documented-by
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

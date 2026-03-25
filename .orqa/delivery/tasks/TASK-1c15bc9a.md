@@ -1,6 +1,6 @@
 ---
 id: "TASK-1c15bc9a"
-type: task
+type: "task"
 title: "Split 8 core rules with project-specific content"
 description: "RULE-ec9462d8,012,018,020,022,025,026,031 embed Tauri/Svelte/Rust in core rules. Extract to project companions."
 status: "completed"
@@ -13,8 +13,6 @@ relationships:
   - target: "EPIC-770f9ce9"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-ae58609f"
-    type: "depended-on-by"
 ---
 ## What
 

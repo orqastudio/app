@@ -6,12 +6,7 @@ description: "When improving governance, tighten existing rules rather than crea
 status: "completed"
 created: "2026-03-13"
 updated: "2026-03-13"
-relationships:
-  - target: "RULE-ef822519"
-    type: "enforced-by"
-    rationale: "RULE-ef822519 enforces context window management constraints that make conciseness a practical necessity"
-  - target: "RULE-5dd9decd"
-    type: "enforced-by"
+relationships: []
 ---
 ## Decision
 

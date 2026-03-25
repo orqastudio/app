@@ -1,21 +1,19 @@
 ---
-id: TASK-8b8c5da2
-type: task
-title: Create architecture decisions index
+id: "TASK-8b8c5da2"
+type: "task"
+title: "Create architecture decisions index"
 description: "Created the consolidated architecture decisions index page listing all AD records with status, category, and cross-references."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Index page lists all architecture decisions
+  - "Index page lists all architecture decisions"
   - "Each entry has ID, title, status, and category"
-  - Index is browsable and navigable
+  - "Index is browsable and navigable"
 relationships:
-  - target: EPIC-05ae2ce7
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-63b0ef72
-    type: depended-on-by
+  - target: "EPIC-05ae2ce7"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,38 +1,30 @@
 ---
-id: TASK-d29cb6b9
-type: task
+id: "TASK-d29cb6b9"
+type: "task"
 title: "Update project.json, READMEs, and symlinks for app layout"
 description: "After directory moves, update project.json artifacts array, all directory README frontmatter (icon, label, description, sort), and .claude/ symlinks so the app scanner renders the new three-level structure correctly."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - project.json artifacts array reflects new process/delivery/documentation structure
+  - "project.json artifacts array reflects new process/delivery/documentation structure"
   - "Every artifact directory has README.md with frontmatter (icon, label, description)"
-  - .claude/ symlinks point to correct new paths
-  - App scanner renders new structure in nav tree
-  - CLAUDE.md symlink still works
+  - ".claude/ symlinks point to correct new paths"
+  - "App scanner renders new structure in nav tree"
+  - "CLAUDE.md symlink still works"
 rule-overrides: []
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-494b2fcc
-    type: depends-on
-  - target: TASK-d815920c
-    type: depends-on
-  - target: TASK-e33db46c
-    type: depends-on
-  - target: TASK-89af4883
-    type: depended-on-by
-  - target: TASK-c23d882a
-    type: depended-on-by
-  - target: TASK-77a2c410
-    type: depended-on-by
-  - target: TASK-d2b54d2f
-    type: depended-on-by
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-494b2fcc"
+    type: "depends-on"
+  - target: "TASK-d815920c"
+    type: "depends-on"
+  - target: "TASK-e33db46c"
+    type: "depends-on"
 ---
 
 ## What

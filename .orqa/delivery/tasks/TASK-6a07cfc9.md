@@ -1,21 +1,17 @@
 ---
-id: TASK-6a07cfc9
-type: task
+id: "TASK-6a07cfc9"
+type: "task"
 title: "ESLint rules: component purity, tooltip usage, reusable components, alias detection, root cleanliness"
 description: "Add ESLint rules to mechanically enforce component purity, tooltip usage, reusable component patterns, alias detection, and root directory cleanliness"
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "ESLint rules exist and catch violations for component purity, tooltip usage, reusable components, alias detection, and root cleanliness"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-1f74e00b
-    type: depended-on-by
-  - target: TASK-9471304a
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

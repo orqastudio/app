@@ -1,6 +1,6 @@
 ---
 id: "TASK-4cfabe07"
-type: task
+type: "task"
 title: "Record persistence and governance decisions (AD-d01b9e0a through AD-b08f456d)"
 description: "Captured architecture decisions for persistence strategy, governance artifact format, data ownership boundaries, and configuration management."
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-63b0ef72"
-    type: "depended-on-by"
 ---
 ## What
 

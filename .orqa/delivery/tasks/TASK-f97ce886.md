@@ -1,21 +1,19 @@
 ---
-id: TASK-f97ce886
-type: task
-title: Define component inventory
+id: "TASK-f97ce886"
+type: "task"
+title: "Define component inventory"
 description: "Catalogued all reusable UI components with their states, variants, and composition patterns."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Component inventory covers all shared components
-  - Each component has defined variants and states
-  - Composition patterns are documented
+  - "Component inventory covers all shared components"
+  - "Each component has defined variants and states"
+  - "Composition patterns are documented"
 relationships:
-  - target: EPIC-5d5d0ae6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5463271a
-    type: depended-on-by
+  - target: "EPIC-5d5d0ae6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,6 +1,6 @@
 ---
 id: "TASK-8cd409ae"
-type: task
+type: "task"
 title: "Governance data quality backfill"
 description: "Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required."
 status: "completed"
@@ -19,8 +19,6 @@ relationships:
   - target: "EPIC-489c0a47"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-04051871"
-    type: "depended-on-by"
 ---
 ## Findings Addressed
 

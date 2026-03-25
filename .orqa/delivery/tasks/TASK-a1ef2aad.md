@@ -1,21 +1,19 @@
 ---
-id: TASK-a1ef2aad
-type: task
+id: "TASK-a1ef2aad"
+type: "task"
 name: "Update orqa install pipeline for monorepo"
-status: completed
+status: "completed"
 description: "Simplify the orqa install command for monorepo — npm install at root handles workspaces, topological build replaces LIB_ORDER, no npm link."
 relationships:
-  - target: EPIC-2f720d43
-    type: delivers
-    rationale: Phase 1 — monorepo consolidation
-  - target: TASK-fe45b4f9
-    type: depends-on
-    rationale: npm workspaces must be set up first
-  - target: TASK-70118592
-    type: depends-on
-    rationale: Cargo workspace must be set up first
-  - target: TASK-5fdbf116
-    type: depended-on-by
+  - target: "EPIC-2f720d43"
+    type: "delivers"
+    rationale: "Phase 1 — monorepo consolidation"
+  - target: "TASK-fe45b4f9"
+    type: "depends-on"
+    rationale: "npm workspaces must be set up first"
+  - target: "TASK-70118592"
+    type: "depends-on"
+    rationale: "Cargo workspace must be set up first"
 acceptance:
   - "orqa install works from clean clone with no npm link"
   - "LIB_ORDER removed or replaced with workspace-aware build"

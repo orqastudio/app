@@ -1,6 +1,6 @@
 ---
 id: "TASK-a4b53eaa"
-type: task
+type: "task"
 title: "Hooks display in governance section"
 description: "Fixes the hooks section of the governance panel showing empty by updating the scanner to surface hook files even when they are not markdown documents."
 status: "completed"
@@ -16,8 +16,6 @@ relationships:
   - target: "EPIC-489c0a47"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-04051871"
-    type: "depended-on-by"
 ---
 ## Findings Addressed
 

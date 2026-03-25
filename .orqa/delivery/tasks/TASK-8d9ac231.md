@@ -1,32 +1,22 @@
 ---
-id: TASK-8d9ac231
-type: task
-title: Implement skill injection in plugin rule-engine.mjs
-description: |
-  Extend the plugin rule engine to handle inject actions by reading SKILL.md
-  files and returning their content as systemMessage.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-8d9ac231"
+type: "task"
+title: "Implement skill injection in plugin rule-engine.mjs"
+description: "Extend the plugin rule engine to handle inject actions by reading SKILL.md\nfiles and returning their content as systemMessage.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - Plugin rule-engine.mjs reads SKILL.md files for inject actions
-  - Skill content returned as systemMessage
-  - Duplicate skill injection suppressed within same session
-  - Missing skill files silently skipped
+  - "Plugin rule-engine.mjs reads SKILL.md files for inject actions"
+  - "Skill content returned as systemMessage"
+  - "Duplicate skill injection suppressed within same session"
+  - "Missing skill files silently skipped"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-a7bc8368
-    type: depends-on
-  - target: TASK-92c15db1
-    type: depended-on-by
-  - target: TASK-3994d339
-    type: depended-on-by
-  - target: TASK-7382b265
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-a7bc8368"
+    type: "depends-on"
 ---
 
 ## What

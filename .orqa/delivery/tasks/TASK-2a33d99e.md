@@ -1,21 +1,17 @@
 ---
-id: TASK-2a33d99e
-type: task
+id: "TASK-2a33d99e"
+type: "task"
 title: "Behavioral enforcement plan: prompt injection rules"
-description: Define enforcement mechanisms for behavioral rules enforced via prompt injection at delegation time
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+description: "Define enforcement mechanisms for behavioral rules enforced via prompt injection at delegation time"
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "Enforcement plan documented for all prompt-injection-enforced behavioral rules (RULE-87ba1b81, RULE-0d29fc91, RULE-d2c2063a, RULE-25baac14, RULE-5965256d, RULE-dd5b69e6, RULE-d5d28fba, RULE-ef822519)"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9471304a
-    type: depended-on-by
-  - target: TASK-80c27efd
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

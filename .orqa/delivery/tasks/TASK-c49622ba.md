@@ -1,21 +1,19 @@
 ---
-id: TASK-c49622ba
-type: task
-title: Define tool system and permission model
+id: "TASK-c49622ba"
+type: "task"
+title: "Define tool system and permission model"
 description: "Defined file tools, search tools, and governance tools with their permission model and execution patterns."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - All tool types are catalogued with input/output schemas
-  - Permission model is specified
-  - Tool execution flows through the sidecar NDJSON protocol
+  - "All tool types are catalogued with input/output schemas"
+  - "Permission model is specified"
+  - "Tool execution flows through the sidecar NDJSON protocol"
 relationships:
-  - target: EPIC-fe3b5ad5
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-021acf52
-    type: depended-on-by
+  - target: "EPIC-fe3b5ad5"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

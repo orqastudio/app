@@ -1,30 +1,26 @@
 ---
-id: TASK-577f3ed9
-type: task
-title: Port enforcement engine to Rust backend
-description: Implement the rule enforcement engine in Rust for app-native enforcement.
-status: surpassed
-created: 2026-03-11
-updated: 2026-03-11
-assignee: AGENT-e5dd38e4
+id: "TASK-577f3ed9"
+type: "task"
+title: "Port enforcement engine to Rust backend"
+description: "Implement the rule enforcement engine in Rust for app-native enforcement."
+status: "surpassed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 docs:
-  - DOC-9814ec3c
+  - "DOC-9814ec3c"
 acceptance:
-  - Rust module loads rules from .orqa/process/rules/
-  - Module parses YAML frontmatter including enforcement array
-  - Module evaluates patterns against tool call context
-  - Module returns block/warn/allow decisions
+  - "Rust module loads rules from .orqa/process/rules/"
+  - "Module parses YAML frontmatter including enforcement array"
+  - "Module evaluates patterns against tool call context"
+  - "Module returns block/warn/allow decisions"
   - "Unit tests cover loading, parsing, and pattern matching"
 relationships:
-  - target: EPIC-9a1eba3f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-d38a48c9
-    type: depends-on
-  - target: TASK-a449b5c8
-    type: depended-on-by
-  - target: TASK-e0b9edf9
-    type: depended-on-by
+  - target: "EPIC-9a1eba3f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-d38a48c9"
+    type: "depends-on"
 ---
 
 

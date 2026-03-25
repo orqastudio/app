@@ -1,22 +1,17 @@
 ---
-id: AD-0dfa4d52
-type: decision
-title: Governance Artifact Format
-description: Governance artifacts use native Claude Code format (markdown + YAML frontmatter). OrqaStudio-specific metadata lives only in SQLite. Superseded by AD-4ea9a290 which moves source of truth from .claude/ to .orqa/.
-status: surpassed
-created: 2026-03-02
-updated: 2026-03-08
+id: "AD-0dfa4d52"
+type: "decision"
+title: "Governance Artifact Format"
+description: "Governance artifacts use native Claude Code format (markdown + YAML frontmatter). OrqaStudio-specific metadata lives only in SQLite. Superseded by AD-4ea9a290 which moves source of truth from .claude/ to .orqa/."
+status: "surpassed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
 relationships:
-  - target: AD-4ea9a290
-    type: evolves-into
+  - target: "AD-4ea9a290"
+    type: "evolves-into"
     rationale: "AD-4ea9a290 moves source of truth from .claude/ to .orqa/, superseding the .claude/-native format"
-  - target: RES-4ae0750b
-    type: informed-by
-    rationale: RES-4ae0750b confirmed CLI compatibility requires native .claude/ format with no OrqaStudio-specific metadata embedded in artifact files
-  - target: EPIC-05ae2ce7
-    type: drives
-  - target: DOC-b11d4f61
-    type: documented-by
+  - target: "EPIC-05ae2ce7"
+    type: "drives"
 ---
 ## Decision
 

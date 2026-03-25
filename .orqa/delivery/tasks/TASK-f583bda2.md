@@ -1,31 +1,29 @@
 ---
-id: TASK-f583bda2
-type: task
-title: Add bidirectional relationship checking to graph-guardian.mjs
-description: Extend the PostToolUse graph-guardian hook to check for missing bidirectional relationship inverses when .orqa/ artifacts are written. Return warnings for one-sided relationships so the agent can fix them immediately.
-status: completed
-priority: P1
+id: "TASK-f583bda2"
+type: "task"
+title: "Add bidirectional relationship checking to graph-guardian.mjs"
+description: "Extend the PostToolUse graph-guardian hook to check for missing bidirectional relationship inverses when .orqa/ artifacts are written. Return warnings for one-sided relationships so the agent can fix them immediately."
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 5
   complexity: 3
   dependencies: 4
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
   - "After Write/Edit on .orqa/**/*.md files, graph-guardian checks for bidirectional inverses"
   - "For each relationship A --type--> B, checks if B has inverse-type --> A"
-  - Missing inverses returned as warnings in additionalContext (not blocking)
-  - Warning includes the exact relationship entry that should be added to the target artifact
-  - Non-.orqa/ files are ignored (no performance impact on code writes)
-  - Relationship type/inverse mapping matches RULE-130f1f63 table
+  - "Missing inverses returned as warnings in additionalContext (not blocking)"
+  - "Warning includes the exact relationship entry that should be added to the target artifact"
+  - "Non-.orqa/ files are ignored (no performance impact on code writes)"
+  - "Relationship type/inverse mapping matches RULE-130f1f63 table"
 relationships:
-  - target: EPIC-12fba656
-    type: delivers
-    rationale: Core task — write-time integrity enforcement for graph consistency
-  - target: TASK-40fb1279
-    type: depended-on-by
+  - target: "EPIC-12fba656"
+    type: "delivers"
+    rationale: "Core task — write-time integrity enforcement for graph consistency"
 ---
 
 ## Scope

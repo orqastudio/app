@@ -1,6 +1,6 @@
 ---
 id: "TASK-eab05905"
-type: task
+type: "task"
 title: "Migrate agent definitions from tools to capabilities"
 description: "Update all 7 agent definitions to declare capabilities instead of concrete tool names."
 status: "completed"
@@ -22,14 +22,6 @@ relationships:
     type: "depends-on"
   - target: "TASK-34dc7474"
     type: "depends-on"
-  - target: "TASK-f8ea54b9"
-    type: "depended-on-by"
-  - target: "TASK-b9b8d409"
-    type: "depended-on-by"
-  - target: "TASK-821ab799"
-    type: "depended-on-by"
-  - target: "TASK-3123558b"
-    type: "depended-on-by"
 ---
 ## What
 

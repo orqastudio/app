@@ -1,24 +1,22 @@
 ---
-id: TASK-8db2e1c3
-type: task
-title: Governance Vision Alignment Audit
-description: Audit governance rules (.claude/rules/) and agent definitions (.claude/agents/) for references that contradict the updated vision. These are the enforcement layer — they must accurately reflect .orqa/ as source of truth.
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
-assignee: AGENT-4c94fe14
+id: "TASK-8db2e1c3"
+type: "task"
+title: "Governance Vision Alignment Audit"
+description: "Audit governance rules (.claude/rules/) and agent definitions (.claude/agents/) for references that contradict the updated vision. These are the enforcement layer — they must accurately reflect .orqa/ as source of truth."
+status: "completed"
+created: 2026-03-08T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
+assignee: "AGENT-4c94fe14"
 acceptance:
-  - Every rule file checked for .claude/ as source-of-truth references
-  - Every agent definition checked for .claude/ path references
-  - Paths updated to .orqa/ equivalents where appropriate
-  - UI docs checked for Claude-specific branding
-  - No rule or agent definition implies Claude is the product identity
+  - "Every rule file checked for .claude/ as source-of-truth references"
+  - "Every agent definition checked for .claude/ path references"
+  - "Paths updated to .orqa/ equivalents where appropriate"
+  - "UI docs checked for Claude-specific branding"
+  - "No rule or agent definition implies Claude is the product identity"
 relationships:
-  - target: EPIC-57dd7d4c
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dc793265
-    type: depended-on-by
+  - target: "EPIC-57dd7d4c"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,26 +1,19 @@
 ---
-id: KNOW-fbc200e6
-type: knowledge
-title: Orqa Repository Pattern
-description: |
-  OrqaStudio's persistence layer using the repository pattern with rusqlite.
-  Covers repository anatomy, connection management, query patterns, migrations,
-  error handling, and testing.
-  Use when: Adding a new database entity, writing a new repository module,
-  modifying persistence logic, writing migration SQL, or testing database code.
-status: active
-created: 2026-03-01
-updated: 2026-03-10
-category: domain
+id: "KNOW-fbc200e6"
+type: "knowledge"
+title: "Orqa Repository Pattern"
+description: "OrqaStudio's persistence layer using the repository pattern with rusqlite.\nCovers repository anatomy, connection management, query patterns, migrations,\nerror handling, and testing.\nUse when: Adding a new database entity, writing a new repository module,\nmodifying persistence logic, writing migration SQL, or testing database code.\n"
+status: "active"
+created: 2026-03-01T00:00:00.000Z
+updated: 2026-03-10T00:00:00.000Z
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/repo/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-9814ec3c
-    type: synchronised-with
-  - target: AGENT-867da593
-    type: employed-by
+  - target: "DOC-9814ec3c"
+    type: "synchronised-with"
 ---
 
 

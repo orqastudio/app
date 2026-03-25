@@ -1,18 +1,12 @@
 ---
 id: "AD-e8ea9fb9"
-type: decision
+type: "decision"
 title: "Config-Driven Navigation Defaults"
 description: "Each artifact type directory can contain a _navigation.json file that configures default sort, group, filter, group ordering, and custom layout for the browser panel."
 status: "completed"
 created: "2026-03-11"
 updated: "2026-03-11"
-relationships:
-  - target: "RES-8d203b37"
-    type: "informed-by"
-    rationale: "RES-8d203b37 investigated artifact browsing UX and validated per-type navigation configuration over one-size-fits-all defaults"
-  - target: "RULE-63cc16ad"
-    type: "enforced-by"
-    rationale: "RULE-63cc16ad enforces artifact config integrity — _navigation.json files must resolve within configured artifact paths"
+relationships: []
 ---
 ## Decision
 

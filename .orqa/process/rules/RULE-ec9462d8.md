@@ -12,9 +12,6 @@ enforcement:
 relationships:
   - target: "AD-af88bb69"
     type: "enforces"
-  - target: AD-26d8d45d
-    type: governed-by
-    rationale: "Auto-generated inverse of governed-by relationship from AD-26d8d45d"
 ---
 ## Principle
 

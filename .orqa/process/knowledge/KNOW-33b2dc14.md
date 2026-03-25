@@ -1,25 +1,19 @@
 ---
-id: KNOW-33b2dc14
-type: knowledge
-title: Orqa Streaming Pipeline
-description: |
-  OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.
-  Covers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.
-  Use when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,
-  or working with the sidecar.
-status: active
-created: 2026-03-01
-updated: 2026-03-10
-category: domain
+id: "KNOW-33b2dc14"
+type: "knowledge"
+title: "Orqa Streaming Pipeline"
+description: "OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.\nCovers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.\nUse when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,\nor working with the sidecar.\n"
+status: "active"
+created: 2026-03-01T00:00:00.000Z
+updated: 2026-03-10T00:00:00.000Z
+category: "domain"
 file-patterns:
   - "sidecar/src/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-9814ec3c
-    type: synchronised-with
-  - target: AGENT-336e4d7d
-    type: employed-by
+  - target: "DOC-9814ec3c"
+    type: "synchronised-with"
 ---
 OrqaStudio streams Claude conversations through a multi-layer pipeline. Understanding this pipeline is critical for anyone touching streaming, tool execution, or the sidecar.
 

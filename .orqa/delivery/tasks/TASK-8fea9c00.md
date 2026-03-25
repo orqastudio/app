@@ -1,23 +1,21 @@
 ---
-id: TASK-8fea9c00
-type: task
-title: Vision evolution and pillar renaming
+id: "TASK-8fea9c00"
+type: "task"
+title: "Vision evolution and pillar renaming"
 description: "Reframes the product vision as a domain-agnostic clarity engine and renames the two product pillars, aligning all vision, governance, and roadmap documentation to the new language."
-status: completed
-created: 2026-03-07
-updated: 2026-03-09
-assignee: AGENT-bbad3d30
+status: "completed"
+created: 2026-03-07T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-bbad3d30"
 acceptance:
-  - Pillars renamed (Process Governance → Clarity Through Structure
-  - Self-Learning Loop → Learning Through Reflection)
-  - Vision reframed as domain-agnostic clarity engine
-  - All documentation uses canonical pillar names
+  - "Pillars renamed (Process Governance → Clarity Through Structure"
+  - "Self-Learning Loop → Learning Through Reflection)"
+  - "Vision reframed as domain-agnostic clarity engine"
+  - "All documentation uses canonical pillar names"
 relationships:
-  - target: EPIC-4fb5e9e1
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-8c68c28d
-    type: depended-on-by
+  - target: "EPIC-4fb5e9e1"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

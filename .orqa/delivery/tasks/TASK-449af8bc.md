@@ -1,6 +1,6 @@
 ---
 id: "TASK-449af8bc"
-type: task
+type: "task"
 title: "Create AD for standards distribution pattern (AD-339e9223)"
 description: "Formalize how operational standards flow through the pipeline: Observation → Understanding → Principle → Practice → Enforcement → Verification."
 status: "completed"
@@ -18,8 +18,6 @@ relationships:
   - target: "EPIC-88f359b0"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-d2b54d2f"
-    type: "depended-on-by"
 ---
 ## What
 

@@ -6,9 +6,7 @@ description: "Product pillars become structured artifacts in .orqa/principles/pi
 status: "completed"
 created: "2026-03-09"
 updated: "2026-03-13"
-relationships:
-  - target: "RULE-05562ed4"
-    type: "enforced-by"
+relationships: []
 ---
 ## Decision
 

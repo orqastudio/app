@@ -1,10 +1,8 @@
 ---
 id: "TASK-f9599a7d"
-type: task
+type: "task"
 title: "Create RULE-09a238ab, RULE-e1f1afc1, RULE-42d17086"
-description: "Create three new rules documenting the enforcement layers: data persistence
-
-  boundaries, automated skill injection, and tooling ecosystem management.\n"
+description: "Create three new rules documenting the enforcement layers: data persistence\nboundaries, automated skill injection, and tooling ecosystem management.\n"
 status: "completed"
 created: "2026-03-11"
 updated: "2026-03-12"
@@ -20,10 +18,6 @@ relationships:
     type: "depends-on"
   - target: "TASK-7eabe1a5"
     type: "depends-on"
-  - target: "TASK-7382b265"
-    type: "depended-on-by"
-  - target: "TASK-761fe808"
-    type: "depended-on-by"
 ---
 ## What
 

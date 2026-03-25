@@ -1,23 +1,21 @@
 ---
-id: TASK-7b7ee517
-type: task
-title: Create rule for skill portability constraints
-description: Extract skill portability constraints from the skills-maintenance skill into a new dedicated rule with rule-level enforcement.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-7b7ee517"
+type: "task"
+title: "Create rule for skill portability constraints"
+description: "Extract skill portability constraints from the skills-maintenance skill into a new dedicated rule with rule-level enforcement."
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - New RULE-NNN created for skill portability enforcement
-  - Constraints removed from skills-maintenance NON-NEGOTIABLE section
-  - Skill references the new rule
-  - Rule covers canon vs project vs plugin layer requirements
-  - Rule has FORBIDDEN section with concrete violations
+  - "New RULE-NNN created for skill portability enforcement"
+  - "Constraints removed from skills-maintenance NON-NEGOTIABLE section"
+  - "Skill references the new rule"
+  - "Rule covers canon vs project vs plugin layer requirements"
+  - "Rule has FORBIDDEN section with concrete violations"
 relationships:
-  - target: EPIC-5aa11e2f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-698afd4c
-    type: depended-on-by
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,6 +1,6 @@
 ---
 id: "TASK-1c7cab8d"
-type: task
+type: "task"
 title: "Enable clippy pedantic in Cargo.toml"
 description: "Explicitly configure clippy pedantic lints in Cargo.toml and fix resulting warnings."
 status: "completed"
@@ -15,12 +15,6 @@ relationships:
   - target: "EPIC-2bf6887a"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-c8090c99"
-    type: "depended-on-by"
-  - target: "TASK-49bf65bc"
-    type: "depended-on-by"
-  - target: "TASK-e850a474"
-    type: "depended-on-by"
 ---
 ## What
 

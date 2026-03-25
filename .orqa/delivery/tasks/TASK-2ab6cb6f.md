@@ -1,12 +1,12 @@
 ---
-id: TASK-2ab6cb6f
-type: task
+id: "TASK-2ab6cb6f"
+type: "task"
 title: "Consolidate Cytoscape analysis to Rust daemon endpoints"
 description: "Move graph health, BFS traversal, PageRank, knowledge gap detection, and impact analysis from the TypeScript Cytoscape SDK (libs/graph-visualiser/src/analysis.ts) to the Rust validation crate. Expose via daemon HTTP endpoints. Strip analysis.ts to a thin fetch layer."
-status: completed
-priority: P2
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+priority: "P2"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "libs/graph-visualiser/src/analysis.ts contains no business logic — only daemon HTTP fetch calls"
   - "Rust validation crate has equivalents for PageRank backbone, knowledge gaps, and N-hop impact analysis"
@@ -15,11 +15,9 @@ acceptance:
   - "Dead functions removed: computeGraphHealth() (already replaced by Rust), computeBackboneArtifacts(), computeKnowledgeGaps(), computeImpact()"
   - "Cytoscape is ONLY used for layout/rendering in elements.ts"
 relationships:
-  - target: EPIC-0497a1be
-    type: delivers
+  - target: "EPIC-0497a1be"
+    type: "delivers"
     rationale: "Task delivers work to the deduplication epic"
-  - target: TASK-11090f14
-    type: depended-on-by
 ---
 
 ## What

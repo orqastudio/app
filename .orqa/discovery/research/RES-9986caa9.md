@@ -10,8 +10,6 @@ relationships:
   - target: "EPIC-2f1efbd5"
     type: "guides"
     rationale: "Research findings informed the design of Artifact System Migration"
-  - target: "RES-35e37496"
-    type: "merged-from"
 ---
 ## Problem Statement
 

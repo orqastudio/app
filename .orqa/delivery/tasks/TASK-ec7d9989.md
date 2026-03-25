@@ -1,6 +1,6 @@
 ---
 id: "TASK-ec7d9989"
-type: task
+type: "task"
 title: "Archive stale ideas and fix IDEA-1d6675c7"
 description: "IDEA-119c5d54,032,045 should be archived. IDEA-1d6675c7 should be promoted."
 status: "completed"
@@ -13,8 +13,6 @@ relationships:
   - target: "EPIC-770f9ce9"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-ae58609f"
-    type: "depended-on-by"
 ---
 ## What
 

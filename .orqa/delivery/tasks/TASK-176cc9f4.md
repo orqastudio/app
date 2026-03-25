@@ -1,21 +1,19 @@
 ---
-id: TASK-176cc9f4
-type: task
-title: Define error taxonomy
-description: Defined typed errors across the Rust/IPC/TypeScript boundary using thiserror on the Rust side and discriminated unions on the TypeScript side.
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+id: "TASK-176cc9f4"
+type: "task"
+title: "Define error taxonomy"
+description: "Defined typed errors across the Rust/IPC/TypeScript boundary using thiserror on the Rust side and discriminated unions on the TypeScript side."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Error taxonomy covers all domain error cases
-  - From implementations enable propagation across module boundaries
-  - Error serialization produces meaningful messages for the frontend
+  - "Error taxonomy covers all domain error cases"
+  - "From implementations enable propagation across module boundaries"
+  - "Error serialization produces meaningful messages for the frontend"
 relationships:
-  - target: EPIC-fe3b5ad5
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-021acf52
-    type: depended-on-by
+  - target: "EPIC-fe3b5ad5"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

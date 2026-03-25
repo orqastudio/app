@@ -1,25 +1,21 @@
 ---
-id: TASK-0ac5f595
-type: task
-title: Extend ArtifactRef with relationship_type and process relationships array
+id: "TASK-0ac5f595"
+type: "task"
+title: "Extend ArtifactRef with relationship_type and process relationships array"
 description: "Add relationship_type field to ArtifactRef in Rust and TypeScript. Update collect_forward_refs to process the relationships array from frontmatter, creating typed edges with relationship_type populated from each relationship's type field."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "ArtifactRef has relationship_type: Option<String> in Rust and relationship_type: string | null in TypeScript"
   - "relationships array items create ArtifactRef entries with target_id from target, field='relationships', and relationship_type from type"
   - "Existing refs from SINGLE_REF_FIELDS and ARRAY_REF_FIELDS have relationship_type: None/null"
-  - make check passes with zero errors
-  - Graph stats show increased edge count reflecting relationships array edges
+  - "make check passes with zero errors"
+  - "Graph stats show increased edge count reflecting relationships array edges"
 relationships:
-  - target: EPIC-82dd0bd2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-25a42498
-    type: depended-on-by
-  - target: TASK-c15165f5
-    type: depended-on-by
+  - target: "EPIC-82dd0bd2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

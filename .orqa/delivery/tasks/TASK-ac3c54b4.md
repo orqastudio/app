@@ -1,6 +1,6 @@
 ---
 id: "TASK-ac3c54b4"
-type: task
+type: "task"
 title: "Update delegation rules for capability resolution"
 description: "Update RULE-87ba1b81 and RULE-dd5b69e6 to reference capability-based delegation and skill loading."
 status: "completed"
@@ -19,8 +19,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-9726f126"
     type: "depends-on"
-  - target: "TASK-3123558b"
-    type: "depended-on-by"
 ---
 ## What
 

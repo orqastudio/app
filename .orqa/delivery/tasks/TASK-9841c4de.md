@@ -1,21 +1,19 @@
 ---
-id: TASK-9841c4de
-type: task
-title: Implement governance coverage dashboard widget
-description: Built the dashboard widget showing governance coverage health with visual indicators for each governance area.
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+id: "TASK-9841c4de"
+type: "task"
+title: "Implement governance coverage dashboard widget"
+description: "Built the dashboard widget showing governance coverage health with visual indicators for each governance area."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Dashboard widget renders governance coverage visually
-  - Coverage percentages reflect actual scan results
-  - Widget links to the detailed governance analysis view
+  - "Dashboard widget renders governance coverage visually"
+  - "Coverage percentages reflect actual scan results"
+  - "Widget links to the detailed governance analysis view"
 relationships:
-  - target: EPIC-8cba3805
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e385b055
-    type: depended-on-by
+  - target: "EPIC-8cba3805"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

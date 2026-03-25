@@ -10,12 +10,8 @@ enforcement:
   - mechanism: behavioral
     message: "Orchestrator must read relevant architecture decisions before delegating any implementation; plans must include an Architectural Compliance section verifying all relevant decisions"
 relationships:
-  - target: AD-a7fd7461
-    type: governed-by
   - target: AD-859ed163
     type: enforces
-  - target: DOC-28344cd7
-    type: documented-by
 ---
 **Source of Truth:** `.orqa/process/decisions/` — individual `AD-NNN.md` artifacts. Decisions are first-class artifacts browsable in the app's artifact navigation.
 

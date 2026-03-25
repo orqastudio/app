@@ -1,6 +1,6 @@
 ---
 id: "TASK-b6bcdc9d"
-type: task
+type: "task"
 title: "Record core architecture decisions (AD-09fc4e65 through AD-e4a3b5da)"
 description: "Captured foundational architecture decisions covering thick backend, IPC boundary, error propagation, and Svelte 5 runes-only policy."
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-63b0ef72"
-    type: "depended-on-by"
 ---
 ## What
 

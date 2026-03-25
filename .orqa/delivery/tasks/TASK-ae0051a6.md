@@ -1,6 +1,6 @@
 ---
 id: "TASK-ae0051a6"
-type: task
+type: "task"
 title: "Delete duplicate and stale documentation"
 description: "Remove documentation files that duplicate other docs or are entirely outdated. DOC-019 (architecture-overview) duplicates DOC-001, DOC-054 (launch-timeline) is outdated, DOC-032 (process/rules) duplicates RULE-dd5b69e6."
 status: "completed"
@@ -23,8 +23,6 @@ relationships:
   - target: "EPIC-12fba656"
     type: "delivers"
     rationale: "Phase 1 — clean up documentation before connecting to graph"
-  - target: "TASK-0ba4dedd"
-    type: "depended-on-by"
 ---
 ## Scope
 

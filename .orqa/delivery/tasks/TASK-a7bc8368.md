@@ -1,33 +1,20 @@
 ---
-id: TASK-a7bc8368
-type: task
-title: Add inject action to enforcement schema
-description: |
-  Add a new 'inject' action type to the enforcement schema, the plugin
-  rule-engine.mjs, and the Rust enforcement engine. The inject action loads
-  skill content and returns it as systemMessage instead of blocking or warning.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-a7bc8368"
+type: "task"
+title: "Add inject action to enforcement schema"
+description: "Add a new 'inject' action type to the enforcement schema, the plugin\nrule-engine.mjs, and the Rust enforcement engine. The inject action loads\nskill content and returns it as systemMessage instead of blocking or warning.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - inject action type added to enforcement schema and validates
-  - skills field added to enforcement entry schema
-  - Plugin rule-engine.mjs handles inject action
-  - Rust enforcement engine handles Inject variant
+  - "inject action type added to enforcement schema and validates"
+  - "skills field added to enforcement entry schema"
+  - "Plugin rule-engine.mjs handles inject action"
+  - "Rust enforcement engine handles Inject variant"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-f53b9368
-    type: depended-on-by
-  - target: TASK-8d9ac231
-    type: depended-on-by
-  - target: TASK-2634ad36
-    type: depended-on-by
-  - target: TASK-f9599a7d
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

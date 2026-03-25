@@ -1,45 +1,37 @@
 ---
-id: TASK-d38a48c9
-type: task
-title: Test plugin against OrqaStudio governance artifacts
-description: Integration testing of the plugin against the real .orqa/ directory in orqa-studio.
-status: surpassed
-created: 2026-03-11
-updated: 2026-03-11
-assignee: AGENT-8e58cd87
+id: "TASK-d38a48c9"
+type: "task"
+title: "Test plugin against OrqaStudio governance artifacts"
+description: "Integration testing of the plugin against the real .orqa/ directory in orqa-studio."
+status: "surpassed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
+assignee: "AGENT-8e58cd87"
 docs: []
 acceptance:
-  - Plugin loads all 39+ rules from .orqa/process/rules/
-  - Plugin loads all 7 agents from .orqa/process/agents/
-  - Plugin loads all 44+ skills from .orqa/process/skills/
-  - PreToolUse enforcement blocks known violation patterns
-  - SessionStart injects orchestrator context
-  - Slash commands return accurate governance data
-  - No errors or crashes during normal Claude Code usage
+  - "Plugin loads all 39+ rules from .orqa/process/rules/"
+  - "Plugin loads all 7 agents from .orqa/process/agents/"
+  - "Plugin loads all 44+ skills from .orqa/process/skills/"
+  - "PreToolUse enforcement blocks known violation patterns"
+  - "SessionStart injects orchestrator context"
+  - "Slash commands return accurate governance data"
+  - "No errors or crashes during normal Claude Code usage"
 relationships:
-  - target: EPIC-9a1eba3f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-7565b47d
-    type: depends-on
-  - target: TASK-821ab799
-    type: depends-on
-  - target: TASK-7c2638f0
-    type: depends-on
-  - target: TASK-563e0955
-    type: depends-on
-  - target: TASK-243f8acc
-    type: depends-on
-  - target: TASK-055c10f7
-    type: depends-on
-  - target: TASK-1d45fac7
-    type: depended-on-by
-  - target: TASK-c541abcd
-    type: depended-on-by
-  - target: TASK-577f3ed9
-    type: depended-on-by
-  - target: TASK-e0b9edf9
-    type: depended-on-by
+  - target: "EPIC-9a1eba3f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-7565b47d"
+    type: "depends-on"
+  - target: "TASK-821ab799"
+    type: "depends-on"
+  - target: "TASK-7c2638f0"
+    type: "depends-on"
+  - target: "TASK-563e0955"
+    type: "depends-on"
+  - target: "TASK-243f8acc"
+    type: "depends-on"
+  - target: "TASK-055c10f7"
+    type: "depends-on"
 ---
 
 ## What

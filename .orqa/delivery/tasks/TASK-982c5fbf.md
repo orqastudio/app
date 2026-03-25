@@ -1,31 +1,29 @@
 ---
-id: TASK-982c5fbf
-type: task
-title: Add stop event handling to rule-engine.mjs
+id: "TASK-982c5fbf"
+type: "task"
+title: "Add stop event handling to rule-engine.mjs"
 description: "Extend the plugin's rule engine to evaluate enforcement entries with event: stop. Currently only file/bash events are processed. Stop events need different context (session-level, no file path) and must fire when the Stop hook runs."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 5
   complexity: 3
   dependencies: 4
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
-  - rule-engine.mjs accepts and evaluates stop event context
-  - Hard filter on line 199 expanded to include stop events
-  - Stop hook (hooks.json) calls rule-engine.mjs in addition to stop-checklist.sh
-  - RULE-87ba1b81 stop enforcement entries (warn + inject) fire during Stop hook
-  - RULE-3c2da849 stop enforcement entries fire during Stop hook
+  - "rule-engine.mjs accepts and evaluates stop event context"
+  - "Hard filter on line 199 expanded to include stop events"
+  - "Stop hook (hooks.json) calls rule-engine.mjs in addition to stop-checklist.sh"
+  - "RULE-87ba1b81 stop enforcement entries (warn + inject) fire during Stop hook"
+  - "RULE-3c2da849 stop enforcement entries fire during Stop hook"
   - "Stop event context shape documented (no file_path, session-level only)"
 relationships:
-  - target: EPIC-12fba656
-    type: delivers
-    rationale: Core task — enables stop event enforcement in CLI context
-  - target: TASK-40fb1279
-    type: depended-on-by
+  - target: "EPIC-12fba656"
+    type: "delivers"
+    rationale: "Core task — enables stop event enforcement in CLI context"
 ---
 
 ## Scope

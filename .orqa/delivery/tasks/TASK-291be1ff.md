@@ -1,21 +1,17 @@
 ---
-id: TASK-291be1ff
-type: task
-title: Cognitive load indicators
+id: "TASK-291be1ff"
+type: "task"
+title: "Cognitive load indicators"
 description: "Build tooling that detects excessive session complexity and surfaces warnings about too many open files, uncommitted changes, or interleaved tasks"
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "Tooling detects and warns when a session has accumulated too much complexity (open files, uncommitted changes, interleaved tasks)"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9471304a
-    type: depended-on-by
-  - target: TASK-79ff025c
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

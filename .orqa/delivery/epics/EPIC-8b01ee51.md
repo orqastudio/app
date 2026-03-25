@@ -1,43 +1,17 @@
 ---
-id: EPIC-8b01ee51
-type: epic
+id: "EPIC-8b01ee51"
+type: "epic"
 name: "Plugin Framework: Universal Capability Model"
-status: active
-description: Implement the universal plugin capability model (AD-9ab3e0a4) — three-way diff tracking, extends strategy for config plugins, universal capabilities replacing connector-specific wiring, integration lifecycle, and template schema tracking.
-priority: P1
+status: "active"
+description: "Implement the universal plugin capability model (AD-9ab3e0a4) — three-way diff tracking, extends strategy for config plugins, universal capabilities replacing connector-specific wiring, integration lifecycle, and template schema tracking."
+priority: "P1"
 relationships:
-  - target: AD-9ab3e0a4
-    type: implements
-    rationale: Implements the universal plugin capability model decision
-  - target: MS-b1ac0a20
-    type: fulfils
-    rationale: Plugin framework is foundational to dogfooding — the dev environment runs on plugins
-  - target: TASK-d39e416a
-    type: delivered-by
-  - target: TASK-a3774911
-    type: delivered-by
-  - target: TASK-a282af1c
-    type: delivered-by
-  - target: TASK-bbda414d
-    type: delivered-by
-  - target: TASK-9f4a331e
-    type: delivered-by
-  - target: TASK-2d03d1a3
-    type: delivered-by
-  - target: RES-999def94
-    type: guided-by
-  - target: TASK-cfcd78e4
-    type: delivered-by
-  - target: TASK-64b12b40
-    type: delivered-by
-  - target: TASK-924dcfac
-    type: delivered-by
-  - target: TASK-009aa585
-    type: delivered-by
-  - target: EPIC-2f720d43
-    type: depended-on-by
-  - target: TASK-ccf6efae
-    type: delivered-by
+  - target: "AD-9ab3e0a4"
+    type: "implements"
+    rationale: "Implements the universal plugin capability model decision"
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
+    rationale: "Plugin framework is foundational to dogfooding — the dev environment runs on plugins"
 ---
 
 ## Problem

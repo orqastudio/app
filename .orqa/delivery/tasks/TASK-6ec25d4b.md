@@ -1,35 +1,25 @@
 ---
-id: TASK-6ec25d4b
-type: task
-title: Native integrity checks in artifact_graph.rs
+id: "TASK-6ec25d4b"
+type: "task"
+title: "Native integrity checks in artifact_graph.rs"
 description: "Add integrity check methods to the artifact graph that detect broken links, missing relationship inverses, and pipeline gaps. Returns Vec<IntegrityCheck> with categorised findings, severity levels, and auto-fix indicators."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "IntegrityCheck struct defined with category, severity, artifact_id, message, auto_fixable fields"
-  - check_integrity() method returns all findings from the graph
+  - "check_integrity() method returns all findings from the graph"
   - "Detects: broken refs, missing bidirectional inverses, null relationship targets"
   - "Severity levels: Error for broken refs, Warning for missing inverses"
-  - auto_fixable flag set for deterministic fixes (missing inverses)
+  - "auto_fixable flag set for deterministic fixes (missing inverses)"
   - "Tauri command run_integrity_scan returns Vec<IntegrityCheck>"
-  - make check passes
+  - "make check passes"
 relationships:
-  - target: EPIC-82dd0bd2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-25a42498
-    type: depends-on
-  - target: TASK-aa31fad6
-    type: depended-on-by
-  - target: TASK-9f888c45
-    type: depended-on-by
-  - target: TASK-ef349a65
-    type: depended-on-by
-  - target: TASK-c15165f5
-    type: depended-on-by
-  - target: TASK-22c9442a
-    type: depended-on-by
+  - target: "EPIC-82dd0bd2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-25a42498"
+    type: "depends-on"
 ---
 
 ## What

@@ -1,23 +1,21 @@
 ---
-id: TASK-6a335dc3
-type: task
-title: Create code-search wrapper skill
-description: Creates a context-detecting wrapper skill that instructs agents to load the appropriate concrete search skill depending on whether they are running in CLI or App context.
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-4c94fe14
+id: "TASK-6a335dc3"
+type: "task"
+title: "Create code-search wrapper skill"
+description: "Creates a context-detecting wrapper skill that instructs agents to load the appropriate concrete search skill depending on whether they are running in CLI or App context."
+status: "completed"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-4c94fe14"
 acceptance:
-  - Wrapper skill exists at .orqa/process/skills/code-search/SKILL.md
+  - "Wrapper skill exists at .orqa/process/skills/code-search/SKILL.md"
   - "Documents context detection logic (check for mcp__chunkhound__* vs search_regex availability)"
-  - Instructs agent to load chunkhound (CLI) or orqa-native-search (App) based on detection
-  - Shared query patterns documented (same as both underlying skills)
+  - "Instructs agent to load chunkhound (CLI) or orqa-native-search (App) based on detection"
+  - "Shared query patterns documented (same as both underlying skills)"
 relationships:
-  - target: EPIC-42a5330b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-072b9c19
-    type: depended-on-by
+  - target: "EPIC-42a5330b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

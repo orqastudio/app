@@ -1,22 +1,20 @@
 ---
-id: EPIC-a63fde02
-type: epic
+id: "EPIC-a63fde02"
+type: "epic"
 title: "Prompt Generation Pipeline and Knowledge Architecture"
 description: "Build the five-stage prompt generation pipeline and knowledge plugin registration/injection system. Replace monolithic CLAUDE.md loading with generated, role-specific prompts assembled from plugin registries."
-status: captured
-priority: P1
-created: 2026-03-25
-updated: 2026-03-25
-horizon: active
+status: "captured"
+priority: "P1"
+created: 2026-03-25T00:00:00.000Z
+updated: 2026-03-25T00:00:00.000Z
+horizon: "active"
 relationships:
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Token-efficient prompts are critical for sustainable dogfooding"
-  - target: EPIC-f6da17ed
-    type: depends-on
+  - target: "EPIC-f6da17ed"
+    type: "depends-on"
     rationale: "Prompt generation needs workflow stage context from the workflow engine"
-  - target: EPIC-281f7857
-    type: depended-on-by
 ---
 
 ## Scope

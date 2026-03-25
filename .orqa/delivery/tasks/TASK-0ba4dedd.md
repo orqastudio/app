@@ -1,33 +1,31 @@
 ---
-id: TASK-0ba4dedd
-type: task
-title: Merge overlapping documentation
+id: "TASK-0ba4dedd"
+type: "task"
+title: "Merge overlapping documentation"
 description: "Consolidate 4 pairs of overlapping docs into single authoritative sources. Merge governance-hub into governance, guide/workflow into process/workflow, component-inventory into svelte-components, artifact-types into artifact-framework."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 4
   complexity: 3
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
   - "DOC-038 (governance-hub) merged into DOC-06224bf6 (governance) — unique content preserved, file deleted"
-  - DOC-e42efeaf (guide/workflow) merged into DOC-db5b37dc (process/workflow) — file deleted
-  - DOC-048 (component-inventory) merged into DOC-2c94f7ba (svelte-components) — file deleted
-  - DOC-3d8ed14e (artifact-types) merged into DOC-28344cd7 (artifact-framework) — file deleted
-  - All cross-references to merged docs updated to point to the surviving doc
-  - No broken links remain
+  - "DOC-e42efeaf (guide/workflow) merged into DOC-db5b37dc (process/workflow) — file deleted"
+  - "DOC-048 (component-inventory) merged into DOC-2c94f7ba (svelte-components) — file deleted"
+  - "DOC-3d8ed14e (artifact-types) merged into DOC-28344cd7 (artifact-framework) — file deleted"
+  - "All cross-references to merged docs updated to point to the surviving doc"
+  - "No broken links remain"
 relationships:
-  - target: EPIC-12fba656
-    type: delivers
-    rationale: Phase 1 — consolidate documentation before connecting to graph
-  - target: TASK-ae0051a6
-    type: depends-on
-  - target: TASK-97d5ed5f
-    type: depended-on-by
+  - target: "EPIC-12fba656"
+    type: "delivers"
+    rationale: "Phase 1 — consolidate documentation before connecting to graph"
+  - target: "TASK-ae0051a6"
+    type: "depends-on"
 ---
 
 ## Scope

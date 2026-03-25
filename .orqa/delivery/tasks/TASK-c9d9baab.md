@@ -1,20 +1,18 @@
 ---
-id: TASK-c9d9baab
-type: task
+id: "TASK-c9d9baab"
+type: "task"
 title: "Real-time schema validation diagnostics"
 description: "Wire plugin schema validation into the LSP diagnostic pipeline so that frontmatter violations produce real-time editor squiggles with precise line/column positions."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 relationships:
-  - target: EPIC-3a3e5aea
-    type: delivers
+  - target: "EPIC-3a3e5aea"
+    type: "delivers"
     rationale: "Real-time schema validation is the core diagnostic capability"
-  - target: TASK-47225043
-    type: depends-on
+  - target: "TASK-47225043"
+    type: "depends-on"
     rationale: "Schema validation requires plugin schemas to be ingested first"
-  - target: TASK-75b100dd
-    type: depended-on-by
 ---
 
 # Real-Time Schema Validation Diagnostics

@@ -1,6 +1,6 @@
 ---
 id: "TASK-1efe5f1a"
-type: task
+type: "task"
 title: "Verify end-to-end AI transparency rendering"
 description: "Verify the full AI transparency pipeline works end-to-end: Rust emission to Channel<T> to store accumulation to component rendering."
 status: "completed"
@@ -17,8 +17,6 @@ relationships:
   - target: "EPIC-797972a7"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-9c82251b"
-    type: "depended-on-by"
 ---
 ## What
 

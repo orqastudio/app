@@ -1,6 +1,6 @@
 ---
 id: "TASK-cd98526a"
-type: task
+type: "task"
 title: "Create rule for artifact link format constraints"
 description: "Extract the artifact link format constraint from the orqa-documentation skill into a new dedicated rule with enforcement path."
 status: "completed"
@@ -16,8 +16,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

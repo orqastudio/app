@@ -1,25 +1,18 @@
 ---
-id: TASK-e910c85b
-type: task
-title: Move rule-enforcement skill to core + rename plugin skill
-description: |
-  Move the rule-enforcement SKILL.md from the plugin to .orqa/process/skills/ as a
-  core skill. Rename the plugin's copy to reflect it's specifically about the
-  Claude Code companion plugin setup.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-e910c85b"
+type: "task"
+title: "Move rule-enforcement skill to core + rename plugin skill"
+description: "Move the rule-enforcement SKILL.md from the plugin to .orqa/process/skills/ as a\ncore skill. Rename the plugin's copy to reflect it's specifically about the\nClaude Code companion plugin setup.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
   - "rule-enforcement SKILL.md exists as real file in .orqa/process/skills/ with layer: core"
-  - Plugin skill still exists and is distinct from core skill
+  - "Plugin skill still exists and is distinct from core skill"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9d1820f3
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

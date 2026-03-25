@@ -1,21 +1,17 @@
 ---
-id: TASK-3ee643f7
-type: task
+id: "TASK-3ee643f7"
+type: "task"
 title: "Behavioral enforcement plan: session hook rules"
-description: Define enforcement mechanisms for behavioral rules enforced via plugin session hooks
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+description: "Define enforcement mechanisms for behavioral rules enforced via plugin session hooks"
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "Enforcement plan documented for all session-hook-enforced behavioral rules (RULE-f609242f, RULE-30a223ca)"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9471304a
-    type: depended-on-by
-  - target: TASK-80c27efd
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-7bf140e2"
-type: epic
+type: "epic"
 title: "Project Type System"
 description: "Add a project type system so OrqaStudio adapts its agents, tools, and scanning to the domain (software, research, product, personal)."
 status: "captured"
@@ -17,10 +17,6 @@ relationships:
   - target: "MS-21d5096a"
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
-  - target: "AD-48b310f9"
-    type: "driven-by"
-  - target: "AD-26b0eb9f"
-    type: "driven-by"
 ---
 ## Why P1
 

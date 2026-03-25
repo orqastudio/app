@@ -1,6 +1,6 @@
 ---
 id: "EPIC-73fcc85a"
-type: epic
+type: "epic"
 title: "Enforcement & Continuity"
 description: "Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity."
 status: "completed"
@@ -14,11 +14,8 @@ scoring:
   complexity: 4
   dependencies: 3
 relationships:
-  - target: "TASK-a66fd3c8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 **Note:** Two deliverables from this epic were deferred:

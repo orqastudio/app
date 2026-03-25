@@ -1,30 +1,14 @@
 ---
-id: AD-af88bb69
-type: decision
-title: Composability Principle
-description: External integrations connect through provider-agnostic interfaces. Provider-specific logic lives in swappable sidecar processes.
-status: completed
-created: 2026-03-02
-updated: 2026-03-13
+id: "AD-af88bb69"
+type: "decision"
+title: "Composability Principle"
+description: "External integrations connect through provider-agnostic interfaces. Provider-specific logic lives in swappable sidecar processes."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 relationships:
-  - target: RES-b666c725
-    type: informed-by
-    rationale: RES-b666c725 revealed the Agent SDK's subprocess architecture, showing provider logic naturally isolates into a sidecar process
-  - target: RES-96c4417a
-    type: informed-by
-    rationale: RES-96c4417a identified two provider categories (agent runtime SDKs vs direct HTTP APIs) requiring a hybrid sidecar + native architecture
-  - target: EPIC-05ae2ce7
-    type: drives
-  - target: DOC-52b00632
-    type: documented-by
-  - target: RULE-ec9462d8
-    type: enforced-by
-  - target: RULE-c382e053
-    type: enforced-by
-  - target: RULE-af5771e3
-    type: enforced-by
-  - target: RULE-43f1bebc
-    type: enforced-by
+  - target: "EPIC-05ae2ce7"
+    type: "drives"
 ---
 ## Decision
 

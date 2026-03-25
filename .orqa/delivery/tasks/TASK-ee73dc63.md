@@ -1,20 +1,18 @@
 ---
-id: TASK-ee73dc63
-type: task
+id: "TASK-ee73dc63"
+type: "task"
 title: "Broken link detection with line-level positioning"
 description: "Enhance broken link detection to report diagnostics at the exact line and column where the broken artifact reference appears in frontmatter or body."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 relationships:
-  - target: EPIC-3a3e5aea
-    type: delivers
+  - target: "EPIC-3a3e5aea"
+    type: "delivers"
     rationale: "Broken link detection with precise positioning improves the existing capability"
-  - target: TASK-47225043
-    type: depends-on
+  - target: "TASK-47225043"
+    type: "depends-on"
     rationale: "Needs plugin schemas to know valid artifact ID prefixes"
-  - target: TASK-75b100dd
-    type: depended-on-by
 ---
 
 # Broken Link Detection with Line-Level Positioning

@@ -1,44 +1,28 @@
 ---
-id: EPIC-e24086ed
-type: epic
+id: "EPIC-e24086ed"
+type: "epic"
 title: "Code quality audit and enforcement alignment"
 description: "Comprehensive audit of codebase against documented coding standards, lint rule coverage, test coverage, dead code, schema validation compliance, and recurring lessons. Findings feed into the learning loop as lessons and enforcement improvements."
-status: captured
-priority: P2
-created: 2026-03-07
-updated: 2026-03-24
-horizon: next
+status: "captured"
+priority: "P2"
+created: 2026-03-07T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
+horizon: "next"
 scoring:
   impact: 3
   urgency: 2
   complexity: 2
   dependencies: 2
 relationships:
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
-  - target: PILLAR-2acd86c1
-    type: grounded
+  - target: "PILLAR-2acd86c1"
+    type: "grounded"
     rationale: "Audit findings feed into the learning loop — lessons, rule promotions, enforcement improvements"
-  - target: PILLAR-c9e0a695
-    type: grounded
+  - target: "PILLAR-c9e0a695"
+    type: "grounded"
     rationale: "Enforcement alignment ensures documented standards are mechanically enforced, making governance structure tangible"
-  - target: TASK-4a9f0681
-    type: delivered-by
-  - target: TASK-dbbb669b
-    type: delivered-by
-  - target: TASK-8702813d
-    type: delivered-by
-  - target: TASK-74bb7696
-    type: delivered-by
-  - target: TASK-535e93f4
-    type: delivered-by
-  - target: TASK-2606346b
-    type: delivered-by
-  - target: TASK-9f3a2a69
-    type: delivered-by
-  - target: TASK-7fbf7d28
-    type: delivered-by
 ---
 
 ## Why P2

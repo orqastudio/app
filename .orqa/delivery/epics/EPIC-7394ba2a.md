@@ -1,6 +1,6 @@
 ---
 id: "EPIC-7394ba2a"
-type: epic
+type: "epic"
 title: "Portable Governance Framework"
 description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-c9e0a695 engine identity and governance hub capability. Implements AD-48b310f9 and AD-26b0eb9f."
 status: "completed"
@@ -14,37 +14,8 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: "RES-8c29af5d"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-8c29af5d"
-  - target: "TASK-0a4a9172"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-8c4ca6b8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-4023ac04"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-bc351dc1"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-8a26a79b"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-39c5ac3f"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-8c0c77b0"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-c52792a8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "IDEA-119c5d54"
-    type: "realised-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

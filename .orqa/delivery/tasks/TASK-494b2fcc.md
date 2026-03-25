@@ -1,35 +1,29 @@
 ---
-id: TASK-494b2fcc
-type: task
-title: Move governance artifacts to process/
+id: "TASK-494b2fcc"
+type: "task"
+title: "Move governance artifacts to process/"
 description: "Move lessons, decisions, and rules from .orqa/process/ to .orqa/process/. Remove governance/hooks/ (plugin implementation, not artifacts). Update project.json, pre-commit hook, all path references, .claude/ symlinks."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - .orqa/process/lessons/ exists with all lesson files
-  - .orqa/process/decisions/ exists with all decision files
-  - .orqa/process/rules/ exists with all rule files
-  - .orqa/process/ directory no longer exists
-  - project.json paths updated to process/
-  - .claude/rules symlink points to .orqa/process/rules/
-  - Pre-commit hook references updated paths
+  - ".orqa/process/lessons/ exists with all lesson files"
+  - ".orqa/process/decisions/ exists with all decision files"
+  - ".orqa/process/rules/ exists with all rule files"
+  - ".orqa/process/ directory no longer exists"
+  - "project.json paths updated to process/"
+  - ".claude/rules symlink points to .orqa/process/rules/"
+  - "Pre-commit hook references updated paths"
 rule-overrides:
   - "rule: RULE-63cc16ad"
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6aa8e1f1
-    type: depends-on
-  - target: TASK-c4b77719
-    type: depended-on-by
-  - target: TASK-d29cb6b9
-    type: depended-on-by
-  - target: TASK-d2b54d2f
-    type: depended-on-by
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-6aa8e1f1"
+    type: "depends-on"
 ---
 
 ## What

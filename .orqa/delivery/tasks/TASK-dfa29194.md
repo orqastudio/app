@@ -1,28 +1,26 @@
 ---
-id: TASK-dfa29194
-type: task
-title: Audit for missing and miscategorised governance artifacts
+id: "TASK-dfa29194"
+type: "task"
+title: "Audit for missing and miscategorised governance artifacts"
 description: "Identify governance concepts that lack artifacts (undocumented conventions, implicit rules) and artifacts that are miscategorised (rules that should be skills, skills that should be rules, lessons that should be promoted, patterns enforced but not captured)."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - Report listing all missing artifacts with suggested type and content outline
-  - Report listing all miscategorised artifacts with recommended reclassification
-  - Each recommendation includes rationale based on the governance concept taxonomy (CLAUDE.md)
+  - "Report listing all missing artifacts with suggested type and content outline"
+  - "Report listing all miscategorised artifacts with recommended reclassification"
+  - "Each recommendation includes rationale based on the governance concept taxonomy (CLAUDE.md)"
   - "Where both rule and skill are needed, describe how framing differs"
 relationships:
-  - target: EPIC-5aa11e2f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-1637bc63
-    type: depends-on
-  - target: TASK-d6030100
-    type: depends-on
-  - target: TASK-88e72cc1
-    type: depends-on
-  - target: TASK-698afd4c
-    type: depended-on-by
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-1637bc63"
+    type: "depends-on"
+  - target: "TASK-d6030100"
+    type: "depends-on"
+  - target: "TASK-88e72cc1"
+    type: "depends-on"
 ---
 ## What
 

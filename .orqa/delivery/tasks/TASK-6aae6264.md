@@ -1,21 +1,19 @@
 ---
-id: TASK-6aae6264
-type: task
-title: Design artifact browser wireframes
+id: "TASK-6aae6264"
+type: "task"
+title: "Design artifact browser wireframes"
 description: "Created wireframes for the artifact browser including navigation tree, content panel, and frontmatter display."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Artifact browser wireframe covers tree and content views
-  - All component states are specified
-  - Navigation supports nested directories
+  - "Artifact browser wireframe covers tree and content views"
+  - "All component states are specified"
+  - "Navigation supports nested directories"
 relationships:
-  - target: EPIC-5d5d0ae6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5463271a
-    type: depended-on-by
+  - target: "EPIC-5d5d0ae6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

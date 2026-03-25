@@ -1,6 +1,6 @@
 ---
 id: "TASK-fb26fef0"
-type: task
+type: "task"
 title: "Document body templates in artifact-framework.md and schema.json"
 description: "Add bodyTemplate definitions to each artifact type's schema.json and update artifact-framework.md with the canonical body structure for each type."
 status: "completed"
@@ -15,10 +15,6 @@ relationships:
   - target: "EPIC-d45b4dfd"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-42ddbdb3"
-    type: "depended-on-by"
-  - target: "TASK-51f5c500"
-    type: "depended-on-by"
 ---
 ## What
 

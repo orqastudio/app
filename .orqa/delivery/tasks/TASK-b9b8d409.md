@@ -1,27 +1,25 @@
 ---
-id: TASK-b9b8d409
-type: task
-title: Implement capability resolution in app agent execution pipeline
-description: The Rust backend resolves agent capabilities to Tauri tool names when building agent execution context.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
-assignee: AGENT-e5dd38e4
+id: "TASK-b9b8d409"
+type: "task"
+title: "Implement capability resolution in app agent execution pipeline"
+description: "The Rust backend resolves agent capabilities to Tauri tool names when building agent execution context."
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 docs:
-  - DOC-9814ec3c
+  - "DOC-9814ec3c"
 acceptance:
-  - Rust backend reads agent capabilities from agent definition
-  - Capabilities are resolved to Tauri command tool names
-  - Resolved tools are passed to the agent execution context
-  - Agents without capabilities field fall back to tools field
+  - "Rust backend reads agent capabilities from agent definition"
+  - "Capabilities are resolved to Tauri command tool names"
+  - "Resolved tools are passed to the agent execution context"
+  - "Agents without capabilities field fall back to tools field"
 relationships:
-  - target: EPIC-709a6f76
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-eab05905
-    type: depends-on
-  - target: TASK-3123558b
-    type: depended-on-by
+  - target: "EPIC-709a6f76"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-eab05905"
+    type: "depends-on"
 ---
 
 ## What

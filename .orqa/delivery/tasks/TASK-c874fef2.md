@@ -1,21 +1,19 @@
 ---
-id: TASK-c874fef2
-type: task
-title: Implement governance filesystem scanner
-description: Built the filesystem walker that collects governance artifacts from the .orqa/ directory structure.
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+id: "TASK-c874fef2"
+type: "task"
+title: "Implement governance filesystem scanner"
+description: "Built the filesystem walker that collects governance artifacts from the .orqa/ directory structure."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Scanner discovers all governance artifacts in the project
-  - Frontmatter is parsed correctly for each artifact type
+  - "Scanner discovers all governance artifacts in the project"
+  - "Frontmatter is parsed correctly for each artifact type"
   - "Scan results include file paths, types, and metadata"
 relationships:
-  - target: EPIC-8cba3805
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e385b055
-    type: depended-on-by
+  - target: "EPIC-8cba3805"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

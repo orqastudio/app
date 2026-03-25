@@ -1,28 +1,22 @@
 ---
-id: TASK-f9188ffe
-type: task
-title: Implement understand-first + docs-before-code gates
-description: |
-  Process gates that fire when the first code write in a session happens without
-  prior research or documentation reading.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-f9188ffe"
+type: "task"
+title: "Implement understand-first + docs-before-code gates"
+description: "Process gates that fire when the first code write in a session happens without\nprior research or documentation reading.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - understand-first gate fires on first code write with no prior reads/searches
-  - docs-before-code gate fires on code write without prior .orqa/documentation/ reads
-  - Gates fire only once per session
+  - "understand-first gate fires on first code write with no prior reads/searches"
+  - "docs-before-code gate fires on code write without prior .orqa/documentation/ reads"
+  - "Gates fire only once per session"
   - "Gates return systemMessage, not block"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-f53b9368
-    type: depends-on
-  - target: TASK-7382b265
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-f53b9368"
+    type: "depends-on"
 ---
 
 

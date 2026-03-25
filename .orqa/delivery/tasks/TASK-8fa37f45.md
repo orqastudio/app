@@ -1,24 +1,22 @@
 ---
-id: TASK-8fa37f45
-type: task
-title: Audit integrity checking system for coverage gaps
+id: "TASK-8fa37f45"
+type: "task"
+title: "Audit integrity checking system for coverage gaps"
 description: "Systematic audit of the integrity engine (artifact_graph.rs check_integrity) to identify what integrity checks are missing. Cross-reference the planning placement rule, idea lifecycle, epic reconciliation, and other RULE-b10fe6d1 integrity requirements against what the engine actually checks."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
-  - Full inventory of RULE-b10fe6d1 integrity checks vs what check_integrity() implements
+  - "Full inventory of RULE-b10fe6d1 integrity checks vs what check_integrity() implements"
   - "Gap list: checks defined in rules but not implemented in the engine"
-  - Priority assessment for each gap
-  - Tasks created for high-priority gaps
+  - "Priority assessment for each gap"
+  - "Tasks created for high-priority gaps"
 relationships:
-  - target: EPIC-82dd0bd2
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-22c9442a
-    type: depends-on
-  - target: TASK-80c05aa7
-    type: depended-on-by
+  - target: "EPIC-82dd0bd2"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-22c9442a"
+    type: "depends-on"
 ---
 
 ## What

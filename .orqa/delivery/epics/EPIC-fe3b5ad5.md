@@ -1,12 +1,12 @@
 ---
-id: EPIC-fe3b5ad5
-type: epic
-title: Technical Design
+id: "EPIC-fe3b5ad5"
+type: "epic"
+title: "Technical Design"
 description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
-status: completed
-priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+status: "completed"
+priority: "P1"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-07T00:00:00.000Z
 horizon: null
 scoring:
   impact: 5
@@ -14,36 +14,9 @@ scoring:
   complexity: 4
   dependencies: 5
 relationships:
-  - target: MS-063c15b9
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-7726fc26
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b85073a5
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-09e50ea0
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-667f694d
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-4f2ea201
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-c49622ba
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e8fd7052
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-176cc9f4
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-021acf52
-    type: delivered-by
-    rationale: Epic contains this task
+  - target: "MS-063c15b9"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

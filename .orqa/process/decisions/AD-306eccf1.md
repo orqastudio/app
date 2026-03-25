@@ -1,18 +1,12 @@
 ---
 id: "AD-306eccf1"
-type: decision
+type: "decision"
 title: "AI-Driven Cross-Artifact Search"
 description: "Cross-artifact search uses AI semantic understanding rather than keyword matching. Queries are routed through the AI provider with artifact graph context, returning structured results with relevance explanations."
 status: "completed"
 created: "2026-03-11"
 updated: "2026-03-11"
-relationships:
-  - target: "RES-8d203b37"
-    type: "informed-by"
-    rationale: "RES-8d203b37 investigated search approaches and validated AI-driven semantic search over keyword matching"
-  - target: "RULE-0d29fc91"
-    type: "enforced-by"
-    rationale: "RULE-0d29fc91 enforces semantic search usage over keyword-based approaches, aligning with this decision's AI-driven search principle"
+relationships: []
 ---
 ## Decision
 

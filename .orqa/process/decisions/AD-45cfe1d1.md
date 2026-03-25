@@ -7,13 +7,8 @@ status: "completed"
 created: "2026-03-08"
 updated: "2026-03-13"
 relationships:
-  - target: "RULE-63cc16ad"
-    type: "enforced-by"
-    rationale: "RULE-63cc16ad mandates config-driven paths, forbids hardcoded artifact paths in Rust or TypeScript, and requires config to match disk structure"
   - target: "EPIC-2f1efbd5"
     type: "drives"
-  - target: "RULE-25baac14"
-    type: "enforced-by"
 ---
 ## Decision
 

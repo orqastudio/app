@@ -1,17 +1,13 @@
 ---
-id: TASK-83ba8cae
-type: task
-title: ID generation utilities — Rust and TypeScript
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "TASK-83ba8cae"
+type: "task"
+title: "ID generation utilities — Rust and TypeScript"
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: EPIC-d1d42012
-    type: delivers
-  - target: TASK-c8bc9837
-    type: depended-on-by
-  - target: TASK-83958730
-    type: depended-on-by
+  - target: "EPIC-d1d42012"
+    type: "delivers"
 ---
 
 # TASK-83ba8cae: ID Generation Utilities

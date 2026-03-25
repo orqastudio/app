@@ -1,6 +1,6 @@
 ---
 id: "TASK-f95678cd"
-type: task
+type: "task"
 title: "Audit shared component inventory and update RULE-eb269afb"
 description: "Audit all Svelte components under ui/src/lib/components/ and update RULE-eb269afb to reflect the accurate shared component inventory."
 status: "completed"
@@ -16,10 +16,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-63276ee5"
-    type: "depended-on-by"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

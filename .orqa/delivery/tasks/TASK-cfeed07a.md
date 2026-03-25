@@ -1,6 +1,6 @@
 ---
 id: "TASK-cfeed07a"
-type: task
+type: "task"
 title: "Document plugin architecture and SDK extraction plan"
 description: "Document the plugin system architecture and plan for component library / SDK extraction."
 status: "completed"
@@ -17,8 +17,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-f50f84f8"
     type: "depends-on"
-  - target: "TASK-e850a474"
-    type: "depended-on-by"
 ---
 ## What
 

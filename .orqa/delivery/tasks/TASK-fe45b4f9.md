@@ -1,18 +1,16 @@
 ---
-id: TASK-fe45b4f9
-type: task
+id: "TASK-fe45b4f9"
+type: "task"
 name: "Set up npm workspaces"
-status: completed
-description: Replace the entire npm link chain with npm workspaces. Root package.json declares all TS packages as workspace members. Internal @orqastudio/* deps resolve via workspace protocol.
+status: "completed"
+description: "Replace the entire npm link chain with npm workspaces. Root package.json declares all TS packages as workspace members. Internal @orqastudio/* deps resolve via workspace protocol."
 relationships:
-  - target: EPIC-2f720d43
-    type: delivers
-    rationale: Phase 1 — monorepo consolidation
-  - target: TASK-7b011351
-    type: depends-on
-    rationale: Repos must be imported first
-  - target: TASK-a1ef2aad
-    type: depended-on-by
+  - target: "EPIC-2f720d43"
+    type: "delivers"
+    rationale: "Phase 1 — monorepo consolidation"
+  - target: "TASK-7b011351"
+    type: "depends-on"
+    rationale: "Repos must be imported first"
 acceptance:
   - "Root package.json has workspaces field listing all TS packages"
   - "npm install at root resolves all @orqastudio/* packages locally"

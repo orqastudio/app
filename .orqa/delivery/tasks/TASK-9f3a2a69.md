@@ -1,11 +1,11 @@
 ---
-id: TASK-9f3a2a69
-type: task
+id: "TASK-9f3a2a69"
+type: "task"
 title: "Dead code removal"
 description: "Find and remove unused functions, imports, components, and modules across Rust and TypeScript codebases."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "Rust dead code scan completed (cargo clippy dead_code, unused_imports warnings)"
   - "TypeScript dead code scan completed (unused exports, unreachable imports)"
@@ -14,10 +14,8 @@ acceptance:
   - "make check passes after removal"
   - "No false positives removed (public API, conditional compilation, plugin interfaces verified)"
 relationships:
-  - target: EPIC-e24086ed
-    type: delivers
-  - target: TASK-8702813d
-    type: depended-on-by
+  - target: "EPIC-e24086ed"
+    type: "delivers"
 ---
 
 ## What

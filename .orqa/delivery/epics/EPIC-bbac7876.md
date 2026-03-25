@@ -1,35 +1,22 @@
 ---
-id: EPIC-bbac7876
-type: epic
-title: Configuration-driven delivery pipeline
+id: "EPIC-bbac7876"
+type: "epic"
+title: "Configuration-driven delivery pipeline"
 description: "Replace hardcoded delivery artifact types (milestones, epics, tasks) with project-configurable type definitions in project.json. The code becomes a generic enforcement engine for whatever delivery pipeline the project defines. Core artifacts (ideas, research, rules, lessons, decisions, skills, agents, pillars) remain hardcoded as firmware."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 4
   complexity: 4
   dependencies: 4
-created: 2026-03-15
-updated: 2026-03-15
+created: 2026-03-15T00:00:00.000Z
+updated: 2026-03-15T00:00:00.000Z
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-  - target: AD-b2f1f829
-    type: driven-by
-    rationale: Implements the config-driven delivery pipeline decision
-  - target: TASK-6035b69e
-    type: delivered-by
-  - target: TASK-766b4204
-    type: delivered-by
-  - target: TASK-1a300821
-    type: delivered-by
-  - target: TASK-6d057028
-    type: delivered-by
-  - target: TASK-59c7c0a8
-    type: delivered-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 

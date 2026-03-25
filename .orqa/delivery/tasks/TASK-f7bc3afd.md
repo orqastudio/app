@@ -1,23 +1,21 @@
 ---
-id: TASK-f7bc3afd
-type: task
+id: "TASK-f7bc3afd"
+type: "task"
 title: "Fix pre-commit hook extension and integer expression bug"
 description: "Fix two bugs in the plugin pre-commit hook: (1) plugins/githooks/hooks/pre-commit.sh has .sh extension preventing Git discovery, (2) line 57 has integer expression expected error when stdin buffer contains multi-line input."
-status: completed
-priority: P1
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+priority: "P1"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "plugins/githooks/hooks/pre-commit has no file extension (Git hooks via core.hooksPath require extensionless names)"
   - "The integer comparison on line 57 (or equivalent) handles multi-line stdin correctly"
   - "Pre-commit hook fires correctly in projects that use the githooks plugin"
   - "Pre-commit hook correctly validates staged artifacts"
 relationships:
-  - target: EPIC-0497a1be
-    type: delivers
+  - target: "EPIC-0497a1be"
+    type: "delivers"
     rationale: "Task delivers work to the deduplication epic — pre-commit hook infrastructure"
-  - target: TASK-11090f14
-    type: depended-on-by
 ---
 
 ## What

@@ -1,11 +1,11 @@
 ---
-id: TASK-7fbf7d28
-type: task
+id: "TASK-7fbf7d28"
+type: "task"
 title: "Pre-commit hook enforcement verification"
 description: "Verify that the pre-commit hook catches all documented coding standard violations. Test each enforcement path and fix any gaps."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "Pre-commit hook tested with intentional violations for each documented standard"
   - "Every documented standard that should be caught by pre-commit is caught"
@@ -13,12 +13,10 @@ acceptance:
   - "Hook runs the correct subset of checks based on staged file types"
   - "Hook does not silently pass when it should fail"
 relationships:
-  - target: EPIC-e24086ed
-    type: delivers
-  - target: TASK-4a9f0681
-    type: depends-on
-  - target: TASK-8702813d
-    type: depended-on-by
+  - target: "EPIC-e24086ed"
+    type: "delivers"
+  - target: "TASK-4a9f0681"
+    type: "depends-on"
 ---
 
 ## What

@@ -12,8 +12,6 @@ enforcement:
 relationships:
   - target: AD-e711446e
     type: enforces
-  - target: DOC-06224bf6
-    type: documented-by
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
 

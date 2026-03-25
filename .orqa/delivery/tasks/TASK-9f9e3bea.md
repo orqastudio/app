@@ -1,24 +1,22 @@
 ---
-id: TASK-9f9e3bea
-type: task
-title: Plugin extends graph on artifact creation
+id: "TASK-9f9e3bea"
+type: "task"
+title: "Plugin extends graph on artifact creation"
 description: "Add PostToolUse logic that detects when new artifacts are created and prompts for proper graph relationships (docs, skills, epic, depends-on fields)."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 docs:
-  - DOC-28344cd7
+  - "DOC-28344cd7"
 acceptance:
-  - New artifacts without relationship fields trigger a warning
-  - Warnings suggest specific relationships to add
-  - Does not block — advisory only
-  - Helps maintain graph integrity passively
+  - "New artifacts without relationship fields trigger a warning"
+  - "Warnings suggest specific relationships to add"
+  - "Does not block — advisory only"
+  - "Helps maintain graph integrity passively"
 relationships:
-  - target: EPIC-f079c196
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5ae6eb0f
-    type: depended-on-by
+  - target: "EPIC-f079c196"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,17 +1,15 @@
 ---
-id: TASK-c8bc9837
-type: task
-title: Bulk ID migration script — sequential to hex
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "TASK-c8bc9837"
+type: "task"
+title: "Bulk ID migration script — sequential to hex"
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: EPIC-d1d42012
-    type: delivers
-  - target: TASK-83ba8cae
-    type: depends-on
-  - target: TASK-4dc4cc3f
-    type: depended-on-by
+  - target: "EPIC-d1d42012"
+    type: "delivers"
+  - target: "TASK-83ba8cae"
+    type: "depends-on"
 ---
 
 # TASK-c8bc9837: Bulk ID Migration Script

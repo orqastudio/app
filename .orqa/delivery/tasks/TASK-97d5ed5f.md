@@ -1,32 +1,30 @@
 ---
-id: TASK-97d5ed5f
-type: task
-title: Restructure unfocused documentation and remove stale phase references
+id: "TASK-97d5ed5f"
+type: "task"
+title: "Restructure unfocused documentation and remove stale phase references"
 description: "Restructure DOC-9814ec3c (coding-standards) as a principles doc, add purpose to DOC-d9cc1f84 (orchestration), and remove all stale Phase 2a/2b references across 23 documentation files."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 4
   complexity: 2
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
   - "DOC-9814ec3c restructured — leads with principles (why these standards exist), reference material follows"
   - "DOC-d9cc1f84 restructured — leads with purpose and delegation philosophy, procedures follow"
   - "Zero \"Phase 2a\", \"Phase 2b\", or numbered phase references remain in any documentation file"
-  - Phase references replaced with epic names (EPIC-NNN) or removed if context is obsolete
+  - "Phase references replaced with epic names (EPIC-NNN) or removed if context is obsolete"
   - "Clarify or delete DOC-051 (engagement-infrastructure), DOC-9010239f (metrics), DOC-045 (system-artifacts)"
 relationships:
-  - target: EPIC-12fba656
-    type: delivers
-    rationale: Phase 1 — restructure docs to be fit for graph connection and agent grounding
-  - target: TASK-0ba4dedd
-    type: depends-on
-  - target: TASK-1da659da
-    type: depended-on-by
+  - target: "EPIC-12fba656"
+    type: "delivers"
+    rationale: "Phase 1 — restructure docs to be fit for graph connection and agent grounding"
+  - target: "TASK-0ba4dedd"
+    type: "depends-on"
 ---
 ## Scope
 

@@ -1,21 +1,17 @@
 ---
-id: TASK-ee6ea3d2
-type: task
+id: "TASK-ee6ea3d2"
+type: "task"
 title: "Behavioral enforcement plan: skill injection rules"
-description: Define enforcement mechanisms for behavioral rules enforced via domain knowledge skill injection
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+description: "Define enforcement mechanisms for behavioral rules enforced via domain knowledge skill injection"
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
   - "Enforcement plan documented for all skill-injection-enforced behavioral rules (RULE-05ae2ce7, RULE-ec9462d8, RULE-4603207a, RULE-43f1bebc, RULE-71352dc8)"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9471304a
-    type: depended-on-by
-  - target: TASK-80c27efd
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

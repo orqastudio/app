@@ -1,6 +1,6 @@
 ---
 id: "TASK-f2314ba0"
-type: task
+type: "task"
 title: "Create artifact audit skill"
 description: "Create a reusable skill that captures the methodology, checklists, and patterns for auditing .orqa/ artifacts — enabling future audits to be systematic and repeatable without rediscovering the process each time."
 status: "completed"
@@ -25,8 +25,6 @@ relationships:
     type: "depends-on"
   - target: "TASK-3109164e"
     type: "depends-on"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

@@ -1,12 +1,12 @@
 ---
-id: EPIC-a951c9b6
-type: epic
-title: Product Definition
+id: "EPIC-a951c9b6"
+type: "epic"
+title: "Product Definition"
 description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
-status: completed
-priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+status: "completed"
+priority: "P1"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-07T00:00:00.000Z
 horizon: null
 scoring:
   impact: 5
@@ -14,27 +14,9 @@ scoring:
   complexity: 3
   dependencies: 5
 relationships:
-  - target: MS-063c15b9
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-27aaa447
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-4e866442
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-fdc52d00
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-1ec4db8a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-72a6dc30
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-6a46215d
-    type: delivered-by
-    rationale: Epic contains this task
+  - target: "MS-063c15b9"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

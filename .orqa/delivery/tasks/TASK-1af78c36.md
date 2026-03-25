@@ -1,6 +1,6 @@
 ---
 id: "TASK-1af78c36"
-type: task
+type: "task"
 title: "Research: cross-cutting concerns of directory restructure"
 description: "Audit every config, import, and path reference affected by the proposed repository reorganisation into backend/, ui/src/, sidecars/, and debugger/ directories."
 status: "completed"
@@ -17,8 +17,6 @@ relationships:
   - target: "EPIC-5adc6d0a"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-43c0557f"
-    type: "depended-on-by"
 ---
 ## What
 

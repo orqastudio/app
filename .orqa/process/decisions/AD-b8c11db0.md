@@ -6,9 +6,7 @@ description: "Statuses have two layers matching types and relationships. Canonic
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships:
-  - target: DOC-28344cd7
-    type: documented-by
+relationships: []
 ---
 
 ## Decision

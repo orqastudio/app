@@ -6,15 +6,7 @@ description: "Research how to reorganise .orqa/documentation/ into a book-like c
 status: completed
 created: 2026-03-14
 updated: 2026-03-14
-relationships:
-  - target: EPIC-c96c9f12
-    type: guides
-    rationale: "Auto-generated inverse of informs relationship from EPIC-c96c9f12"
-  - target: EPIC-4d60940b
-    type: guides
-    rationale: "Auto-generated inverse of informs relationship from EPIC-4d60940b"
-  - target: IDEA-fab848e7
-    type: spawned-by
+relationships: []
 ---
 ## Research Questions
 

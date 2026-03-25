@@ -1,6 +1,6 @@
 ---
 id: "TASK-33fce918"
-type: task
+type: "task"
 title: "Document orphaned skills as forward-looking in their SKILL.md files"
 description: "Add a forward-looking status note to each of five skills that have no current loading mechanism because their parent features are not yet built."
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

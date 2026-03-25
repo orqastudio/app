@@ -6,16 +6,7 @@ description: Tauri invoke() commands are the only frontend-backend communication
 status: completed
 created: 2026-03-02
 updated: 2026-03-13
-relationships:
-  - target: DOC-28344cd7
-    type: documented-by
-  - target: DOC-bcd7fef4
-    type: documented-by
-  - target: DOC-23175cea
-    type: documented-by
-  - target: RULE-b03009da
-    type: enforced-by
-    rationale: End-to-end completeness rule enforces IPC boundary design
+relationships: []
 ---
 ## Decision
 

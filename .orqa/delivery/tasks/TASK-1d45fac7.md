@@ -1,6 +1,6 @@
 ---
 id: "TASK-1d45fac7"
-type: task
+type: "task"
 title: "Remove .claude/ symlinks and update RULE-63cc16ad"
 description: "Remove the .claude/ symlink architecture and update RULE-63cc16ad to describe plugin-based loading."
 status: "surpassed"
@@ -23,8 +23,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-d38a48c9"
     type: "depends-on"
-  - target: "TASK-e0b9edf9"
-    type: "depended-on-by"
 ---
 ## What
 

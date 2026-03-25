@@ -1,6 +1,6 @@
 ---
 id: "EPIC-63ff87da"
-type: epic
+type: "epic"
 title: "Dogfood Readiness"
 description: "Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume."
 status: "completed"
@@ -14,29 +14,8 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: "RES-ef35d2de"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-ef35d2de"
-  - target: "RES-f27cfd70"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-f27cfd70"
-  - target: "TASK-b913bdef"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-3528981f"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-0befeab2"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-72910a57"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-39504e66"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design

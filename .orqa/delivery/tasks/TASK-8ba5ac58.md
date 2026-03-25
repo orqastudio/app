@@ -1,12 +1,12 @@
 ---
-id: TASK-8ba5ac58
-type: task
+id: "TASK-8ba5ac58"
+type: "task"
 title: "Replace status transition hook with daemon delegation"
 description: "Replace the hardcoded VALID_TRANSITIONS map in app/.githooks/validate-status-transitions.mjs with a thin adapter that calls the daemon /parse endpoint for transition validation. Priority 1 — hardcoded maps WILL drift from config-driven Rust definitions."
-status: completed
-priority: P1
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+priority: "P1"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "app/.githooks/validate-status-transitions.mjs no longer contains hardcoded VALID_TRANSITIONS object"
   - "Hook delegates to daemon /parse or orqa validate for status transition checks"
@@ -14,11 +14,9 @@ acceptance:
   - "Pre-commit hook correctly allows valid transitions"
   - "Follows the validate-artifact.ts pattern (thin adapter, zero business logic)"
 relationships:
-  - target: EPIC-0497a1be
-    type: delivers
+  - target: "EPIC-0497a1be"
+    type: "delivers"
     rationale: "Task delivers work to the deduplication epic"
-  - target: TASK-11090f14
-    type: depended-on-by
 ---
 
 ## What

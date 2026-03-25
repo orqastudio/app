@@ -1,49 +1,28 @@
 ---
-id: EPIC-0497a1be
-type: epic
+id: "EPIC-0497a1be"
+type: "epic"
 title: "Business logic deduplication — daemon delegation model"
 description: "Consolidate 7 categories of business logic duplication across the codebase by migrating JavaScript/TypeScript reimplementations to delegate to the canonical Rust validation crate via the daemon HTTP API. Eliminates logic drift risk in graph scanning, schema validation, status transitions, frontmatter parsing, relationship validation, Cytoscape analysis, and type inference."
-status: review
-priority: P1
-created: 2026-03-24
-updated: 2026-03-24
-horizon: active
+status: "review"
+priority: "P1"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
+horizon: "active"
 scoring:
   impact: 5
   urgency: 4
   complexity: 4
   dependencies: 2
 relationships:
-  - target: RES-16fd5aea
-    type: guided-by
-    rationale: "Source of truth duplication audit identified the 7 categories"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Dogfooding requires single source of truth — duplicate logic causes divergent behaviour in the app being dogfooded"
-  - target: PILLAR-c9e0a695
-    type: grounded
+  - target: "PILLAR-c9e0a695"
+    type: "grounded"
     rationale: "Clarity Through Structure — one canonical implementation per concern eliminates ambiguity about which copy is authoritative"
-  - target: PILLAR-2acd86c1
-    type: grounded
+  - target: "PILLAR-2acd86c1"
+    type: "grounded"
     rationale: "Learning Through Reflection — the audit identified a systemic pattern (JS reimplementing Rust) that must be encoded as an enforceable constraint"
-  - target: TASK-14c5b276
-    type: delivered-by
-  - target: TASK-849b82b4
-    type: delivered-by
-  - target: TASK-f7bc3afd
-    type: delivered-by
-  - target: TASK-8ba5ac58
-    type: delivered-by
-  - target: TASK-11090f14
-    type: delivered-by
-  - target: TASK-a32d1929
-    type: delivered-by
-  - target: TASK-2ab6cb6f
-    type: delivered-by
-  - target: TASK-bad9cd52
-    type: delivered-by
-  - target: TASK-c18c4cae
-    type: delivered-by
 ---
 
 ## Context

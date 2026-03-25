@@ -1,26 +1,22 @@
 ---
-id: TASK-efc1538d
-type: task
+id: "TASK-efc1538d"
+type: "task"
 title: "Update TypeScript types: types lib, SDK skill references"
 description: "Update the @orqastudio/types library and SDK to rename all skill-related type definitions, interfaces, and constants to knowledge equivalents."
-status: ready
-created: 2026-03-20
-updated: 2026-03-20
+status: "ready"
+created: 2026-03-20T00:00:00.000Z
+updated: 2026-03-20T00:00:00.000Z
 acceptance:
-  - All TypeScript interfaces/types named Skill* renamed to Knowledge*
-  - All 'skill' string literals in type discriminants replaced with 'knowledge'
-  - SKILL- prefix constants updated to KNOW-
-  - make typecheck passes
-  - No 'any' types introduced
+  - "All TypeScript interfaces/types named Skill* renamed to Knowledge*"
+  - "All 'skill' string literals in type discriminants replaced with 'knowledge'"
+  - "SKILL- prefix constants updated to KNOW-"
+  - "make typecheck passes"
+  - "No 'any' types introduced"
 relationships:
-  - target: EPIC-fdcdb958
-    type: delivers
-  - target: TASK-30f5bdc8
-    type: depends-on
-  - target: TASK-d8d1fa14
-    type: depended-on-by
-  - target: TASK-f9237a26
-    type: depended-on-by
+  - target: "EPIC-fdcdb958"
+    type: "delivers"
+  - target: "TASK-30f5bdc8"
+    type: "depends-on"
 ---
 
 ## What

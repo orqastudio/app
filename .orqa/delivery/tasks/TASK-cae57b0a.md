@@ -1,21 +1,19 @@
 ---
-id: TASK-cae57b0a
-type: task
-title: Add sources field to research schema for web references
-description: Add an optional sources field to the research artifact schema for tracking external URLs and references that informed the research.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-cae57b0a"
+type: "task"
+title: "Add sources field to research schema for web references"
+description: "Add an optional sources field to the research artifact schema for tracking external URLs and references that informed the research."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - Research schema accepts sources array
-  - Existing research docs without sources still validate
-  - Sources field documented in artifact framework
+  - "Research schema accepts sources array"
+  - "Existing research docs without sources still validate"
+  - "Sources field documented in artifact framework"
 relationships:
-  - target: EPIC-f079c196
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5ae6eb0f
-    type: depended-on-by
+  - target: "EPIC-f079c196"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

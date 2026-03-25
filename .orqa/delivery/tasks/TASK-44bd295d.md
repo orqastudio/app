@@ -1,17 +1,13 @@
 ---
-id: TASK-44bd295d
-type: task
-title: Fix connector basics — path bugs, intent mappings, license, dual manifests
-status: completed
-created: 2026-03-19
-updated: 2026-03-21
+id: "TASK-44bd295d"
+type: "task"
+title: "Fix connector basics — path bugs, intent mappings, license, dual manifests"
+status: "completed"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-21T00:00:00.000Z
 relationships:
-  - target: EPIC-9b58fdcb
-    type: delivers
-  - target: TASK-0c32785c
-    type: depended-on-by
-  - target: TASK-cc8bf843
-    type: depended-on-by
+  - target: "EPIC-9b58fdcb"
+    type: "delivers"
 ---
 
 # TASK-44bd295d: Fix Connector Basics

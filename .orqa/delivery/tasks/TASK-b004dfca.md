@@ -1,6 +1,6 @@
 ---
 id: "TASK-b004dfca"
-type: task
+type: "task"
 title: "Create task dependency validator hook"
 description: "Pre-task hook that checks depends-on tasks have status done before allowing a task to start."
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

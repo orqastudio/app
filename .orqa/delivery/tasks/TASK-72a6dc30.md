@@ -1,21 +1,19 @@
 ---
-id: TASK-72a6dc30
-type: task
-title: Define MVP feature set
+id: "TASK-72a6dc30"
+type: "task"
+title: "Define MVP feature set"
 description: "Bounded the set of capabilities that constitute the minimum viable product, distinguishing MVP features from future work."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - MVP scope is clearly bounded
-  - Every MVP feature traces to at least one pillar
-  - Excluded features are documented with rationale
+  - "MVP scope is clearly bounded"
+  - "Every MVP feature traces to at least one pillar"
+  - "Excluded features are documented with rationale"
 relationships:
-  - target: EPIC-a951c9b6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6a46215d
-    type: depended-on-by
+  - target: "EPIC-a951c9b6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

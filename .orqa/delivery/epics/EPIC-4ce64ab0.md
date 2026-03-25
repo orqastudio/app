@@ -1,12 +1,12 @@
 ---
-id: EPIC-4ce64ab0
-type: epic
-title: Three-Layer Governance Classification
+id: "EPIC-4ce64ab0"
+type: "epic"
+title: "Three-Layer Governance Classification"
 description: "Classify all governance artifacts (agents, skills, rules, hooks) into three layers: canon (platform principles), project (project-specific), and plugin (extensible/ecosystem). Add scope categorisation to agents (software-engineering, governance, general). This is foundational architecture enabling multi-project support."
-status: completed
-priority: P1
-created: 2026-03-09
-updated: 2026-03-09
+status: "completed"
+priority: "P1"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
 horizon: null
 scoring:
   impact: 4
@@ -14,23 +14,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: TASK-d8f219b7
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-7e3796b7
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-bba9cf98
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-142f63d5
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b8c0455a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 Note: This epic used 'canon' terminology which has since been renamed to 'core'.

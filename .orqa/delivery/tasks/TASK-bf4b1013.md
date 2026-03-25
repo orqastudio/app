@@ -1,28 +1,26 @@
 ---
-id: TASK-bf4b1013
-type: task
-title: Backfill Historical Artifact Metadata
+id: "TASK-bf4b1013"
+type: "task"
+title: "Backfill Historical Artifact Metadata"
 description: "Backfill historical artifact data so the decision history, lesson pipeline, and surpassed artifact workflows have real data to test against when we build the navigation and visualization tooling. Some reconstruction from session history is expected — the goal is representative data, not perfect accuracy. This ensures we're dogfooding the full artifact lifecycle, not just the happy path of \"create and leave as accepted."
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
-assignee: AGENT-bbad3d30
+status: "completed"
+created: 2026-03-08T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
+assignee: "AGENT-bbad3d30"
 acceptance:
-  - At least 3 decisions have surpassed predecessors (showing evolution chains)
-  - At least 2 research docs marked as surpassed with surpassed-by references
-  - At least 3 additional lessons exist capturing real implementation learnings from session history
-  - At least 2 tasks marked as surpassed showing work that was overtaken
+  - "At least 3 decisions have surpassed predecessors (showing evolution chains)"
+  - "At least 2 research docs marked as surpassed with surpassed-by references"
+  - "At least 3 additional lessons exist capturing real implementation learnings from session history"
+  - "At least 2 tasks marked as surpassed showing work that was overtaken"
   - "All surpassed artifacts have status: surpassed and surpassed-by field set"
-  - Decision chains are traceable (AD-NNN surpassed-by AD-MMM)
+  - "Decision chains are traceable (AD-NNN surpassed-by AD-MMM)"
   - "Enough variety to test filtering, sorting, and chain navigation in future UI"
   - "Reference integrity verified: every task has a valid epic, every epic has a valid milestone"
   - "No orphaned references (plan:, promoted-to, depends-on all point to existing artifacts)"
 relationships:
-  - target: EPIC-57dd7d4c
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dc793265
-    type: depended-on-by
+  - target: "EPIC-57dd7d4c"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

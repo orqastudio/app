@@ -1,22 +1,18 @@
 ---
-id: TASK-d423f4f7
-type: task
+id: "TASK-d423f4f7"
+type: "task"
 title: "Autocomplete for artifact IDs and statuses"
 description: "Implement LSP completion provider that suggests artifact IDs, status values, and relationship types based on plugin schemas and the daemon's artifact index."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 relationships:
-  - target: EPIC-3a3e5aea
-    type: delivers
+  - target: "EPIC-3a3e5aea"
+    type: "delivers"
     rationale: "Autocomplete is a core editor intelligence feature"
-  - target: TASK-47225043
-    type: depends-on
+  - target: "TASK-47225043"
+    type: "depends-on"
     rationale: "Needs plugin schemas for valid statuses and relationship types"
-  - target: TASK-2d104e1f
-    type: depended-on-by
-  - target: TASK-d0e94e95
-    type: depended-on-by
 ---
 
 # Autocomplete for Artifact IDs and Statuses

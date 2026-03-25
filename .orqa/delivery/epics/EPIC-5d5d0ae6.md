@@ -1,12 +1,12 @@
 ---
-id: EPIC-5d5d0ae6
-type: epic
-title: UX Design
+id: "EPIC-5d5d0ae6"
+type: "epic"
+title: "UX Design"
 description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
-status: completed
-priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+status: "completed"
+priority: "P1"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-07T00:00:00.000Z
 horizon: null
 scoring:
   impact: 5
@@ -14,33 +14,9 @@ scoring:
   complexity: 4
   dependencies: 4
 relationships:
-  - target: MS-063c15b9
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-5f8a459a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-a7fc1f4a
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-789686cf
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-6aae6264
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-04958677
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-f97ce886
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-90c42842
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-5463271a
-    type: delivered-by
-    rationale: Epic contains this task
+  - target: "MS-063c15b9"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

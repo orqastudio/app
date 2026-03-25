@@ -1,21 +1,19 @@
 ---
-id: TASK-a7fc1f4a
-type: task
-title: Design core layout wireframes
+id: "TASK-a7fc1f4a"
+type: "task"
+title: "Design core layout wireframes"
 description: "Created wireframes for the four-zone desktop layout with toolbar, sidebar, main content area, and status bar."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Layout wireframe covers all four zones
-  - Panel resize behaviour is specified
-  - Layout works at minimum supported window size
+  - "Layout wireframe covers all four zones"
+  - "Panel resize behaviour is specified"
+  - "Layout works at minimum supported window size"
 relationships:
-  - target: EPIC-5d5d0ae6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5463271a
-    type: depended-on-by
+  - target: "EPIC-5d5d0ae6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

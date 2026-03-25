@@ -1,23 +1,21 @@
 ---
-id: TASK-75b100dd
-type: task
+id: "TASK-75b100dd"
+type: "task"
 title: "Code actions for quick fixes"
 description: "Implement LSP code action provider that offers quick fixes for common diagnostic issues: fix invalid status, add missing required fields, fix broken links."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 relationships:
-  - target: EPIC-3a3e5aea
-    type: delivers
+  - target: "EPIC-3a3e5aea"
+    type: "delivers"
     rationale: "Code actions turn diagnostics into one-click fixes"
-  - target: TASK-c9d9baab
-    type: depends-on
+  - target: "TASK-c9d9baab"
+    type: "depends-on"
     rationale: "Code actions fix issues reported by schema validation diagnostics"
-  - target: TASK-ee73dc63
-    type: depends-on
+  - target: "TASK-ee73dc63"
+    type: "depends-on"
     rationale: "Code actions fix broken links reported by link detection"
-  - target: TASK-84df448e
-    type: depended-on-by
 ---
 
 # Code Actions for Quick Fixes

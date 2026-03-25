@@ -10,8 +10,6 @@ enforcement:
   - mechanism: behavioral
     message: ".state/session-state.md must be updated in real time during conversations; every new decision, plan change, scope change, or step completion must be reflected immediately"
 relationships:
-  - target: IMPL-984941fb
-    type: promoted-from
   - target: RULE-5d2d39b7
     type: related
     rationale: "Completion gate depends on session state being current"

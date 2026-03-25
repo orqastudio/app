@@ -1,11 +1,11 @@
 ---
-id: TASK-ff0a2460
-type: task
+id: "TASK-ff0a2460"
+type: "task"
 title: "Forward-only relationship storage — remove stored inverses, compute at query time"
-status: captured
-priority: P1
-created: 2026-03-25
-updated: 2026-03-25
+status: "captured"
+priority: "P1"
+created: 2026-03-25T00:00:00.000Z
+updated: 2026-03-25T00:00:00.000Z
 acceptance:
   - "MissingInverse validation removed from structural.rs — no longer produces errors"
   - "apply_missing_inverse_fix() in auto_fix.rs removed or disabled"
@@ -16,11 +16,9 @@ acceptance:
   - "Pre-commit hook passes on artifacts with forward-only relationships"
   - "cargo build/test/clippy clean on orqa-validation"
 relationships:
-  - target: EPIC-c828007a
-    type: delivers
+  - target: "EPIC-c828007a"
+    type: "delivers"
     rationale: "Relationship storage model is governance foundation work"
-  - target: TASK-8c5f7004
-    type: depended-on-by
 ---
 
 ## Research Findings

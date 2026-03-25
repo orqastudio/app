@@ -1,12 +1,8 @@
 ---
 id: "EPIC-9a1eba3f"
-type: epic
+type: "epic"
 title: "Rule Enforcement Engine with Claude Code Companion Plugin"
-description: "Build a two-context rule enforcement engine: a Claude Code companion plugin
-
-  (separate repo) that enforces .orqa/ rules in the CLI, then integrate the same
-
-  enforcement logic into the OrqaStudio app for dogfooding parity.\n"
+description: "Build a two-context rule enforcement engine: a Claude Code companion plugin\n(separate repo) that enforces .orqa/ rules in the CLI, then integrate the same\nenforcement logic into the OrqaStudio app for dogfooding parity.\n"
 status: "completed"
 priority: "P1"
 created: "2026-03-11"
@@ -19,60 +15,8 @@ scoring:
   complexity: 5
   dependencies: 5
 relationships:
-  - target: "RES-b0268020"
-    type: "guided-by"
-    rationale: "Research analyzing what this epic built vs. what remains incomplete"
-  - target: "TASK-15cb18ee"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-7565b47d"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-821ab799"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-7c2638f0"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-563e0955"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-243f8acc"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-d48d6713"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-055c10f7"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-d38a48c9"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-1d45fac7"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-c541abcd"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-577f3ed9"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-a449b5c8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-d4dade11"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-e0b9edf9"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "IDEA-05e5003d"
-    type: "realised-by"
-  - target: "IDEA-3e497812"
-    type: "realised-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

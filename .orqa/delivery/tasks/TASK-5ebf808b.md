@@ -1,21 +1,19 @@
 ---
-id: TASK-5ebf808b
-type: task
-title: Loading spinner size increase
-description: Increases the artifact viewer loading spinner to the large size variant so the branded logo-pulse animation is clearly visible rather than being lost at the default small size.
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-e5dd38e4
+id: "TASK-5ebf808b"
+type: "task"
+title: "Loading spinner size increase"
+description: "Increases the artifact viewer loading spinner to the large size variant so the branded logo-pulse animation is clearly visible rather than being lost at the default small size."
+status: "completed"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Loading spinner in main artifact viewer uses \"lg\" size variant"
-  - Animated logo pulse is clearly visible and not lost at display size
+  - "Animated logo pulse is clearly visible and not lost at display size"
 relationships:
-  - target: EPIC-489c0a47
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-04051871
-    type: depended-on-by
+  - target: "EPIC-489c0a47"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## Findings Addressed
 

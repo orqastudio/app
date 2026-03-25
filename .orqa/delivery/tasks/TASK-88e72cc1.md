@@ -1,28 +1,20 @@
 ---
-id: TASK-88e72cc1
-type: task
-title: Audit all rules for enforcement accuracy
+id: "TASK-88e72cc1"
+type: "task"
+title: "Audit all rules for enforcement accuracy"
 description: "Verify every rule in .orqa/process/rules/ has accurate enforcement mechanisms, valid cross-references, current code patterns in FORBIDDEN sections, and no stale content."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - All Related Rules references point to existing rule files
-  - No rules describe enforcement of patterns that no longer exist
-  - All FORBIDDEN code examples reflect actual anti-patterns
-  - Rule statuses accurately reflect enforcement state
+  - "All Related Rules references point to existing rule files"
+  - "No rules describe enforcement of patterns that no longer exist"
+  - "All FORBIDDEN code examples reflect actual anti-patterns"
+  - "Rule statuses accurately reflect enforcement state"
 relationships:
-  - target: EPIC-5aa11e2f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3109164e
-    type: depended-on-by
-  - target: TASK-f2314ba0
-    type: depended-on-by
-  - target: TASK-dfa29194
-    type: depended-on-by
-  - target: TASK-698afd4c
-    type: depended-on-by
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,25 +1,21 @@
 ---
-id: TASK-c18c4cae
-type: task
+id: "TASK-c18c4cae"
+type: "task"
 title: "Fix MCP server frontmatter missing trim"
 description: "The MCP server's extract_frontmatter() in libs/mcp-server/src/graph.rs does not trim the frontmatter text before parsing, unlike the canonical version in libs/validation/src/graph.rs. Fix by re-exporting from orqa_validation or adding the missing .trim() call."
-status: completed
-priority: P1
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+priority: "P1"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "libs/mcp-server/src/graph.rs extract_frontmatter() produces identical output to libs/validation/src/graph.rs for all frontmatter content including edge cases with leading/trailing whitespace"
   - "Ideally re-exports from orqa_validation directly instead of maintaining a separate copy"
   - "cargo check passes with zero warnings on libs/mcp-server"
   - "Existing MCP server tests pass"
 relationships:
-  - target: EPIC-0497a1be
-    type: delivers
+  - target: "EPIC-0497a1be"
+    type: "delivers"
     rationale: "Task delivers work to the deduplication epic"
-  - target: TASK-11090f14
-    type: depended-on-by
-  - target: TASK-bad9cd52
-    type: depended-on-by
 ---
 
 ## What

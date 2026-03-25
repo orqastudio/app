@@ -7,9 +7,6 @@ status: "completed"
 created: "2026-03-09"
 updated: "2026-03-09"
 relationships:
-  - target: "RULE-dd5b69e6"
-    type: "enforced-by"
-    rationale: "RULE-dd5b69e6 enforces the three-tier skill loading model that this decision depends on for project initialisation"
   - target: "EPIC-7bf140e2"
     type: "drives"
 ---

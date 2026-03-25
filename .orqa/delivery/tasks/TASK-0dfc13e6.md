@@ -1,24 +1,22 @@
 ---
-id: TASK-0dfc13e6
-type: task
-title: Enforce frontmatter field ordering at creation time via schema validation
-description: Add propertyOrder enforcement to the schema validation hook and agent artifact creation process so frontmatter fields are written in the correct order from the start.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+id: "TASK-0dfc13e6"
+type: "task"
+title: "Enforce frontmatter field ordering at creation time via schema validation"
+description: "Add propertyOrder enforcement to the schema validation hook and agent artifact creation process so frontmatter fields are written in the correct order from the start."
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - Schema validation hook checks field ordering against propertyOrder
-  - Out-of-order fields produce a warning or error at commit time
-  - Agents and skills that create artifacts document the correct field order
-  - Existing rule files fixed as a one-time batch
+  - "Schema validation hook checks field ordering against propertyOrder"
+  - "Out-of-order fields produce a warning or error at commit time"
+  - "Agents and skills that create artifacts document the correct field order"
+  - "Existing rule files fixed as a one-time batch"
 relationships:
-  - target: EPIC-5aa11e2f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-052f394f
-    type: depends-on
-  - target: TASK-698afd4c
-    type: depended-on-by
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-052f394f"
+    type: "depends-on"
 ---
 ## What
 

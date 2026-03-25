@@ -1,6 +1,6 @@
 ---
 id: "TASK-bc351dc1"
-type: task
+type: "task"
 title: "Create project setup skills"
 description: "Write the four setup skills that replace templates for project initialisation: base scaffolding, folder inference, agentic config migration, and the software project type preset."
 status: "completed"
@@ -34,8 +34,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-8c0c77b0"
     type: "depends-on"
-  - target: "TASK-c52792a8"
-    type: "depended-on-by"
 ---
 ## Reference
 

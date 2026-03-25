@@ -1,17 +1,15 @@
 ---
-id: TASK-12eaa048
-type: task
-title: Refactor skill sync to proactive-only — coding standards and agent preloads
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "TASK-12eaa048"
+type: "task"
+title: "Refactor skill sync to proactive-only — coding standards and agent preloads"
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: EPIC-1358323e
-    type: delivers
-  - target: TASK-49b455ac
-    type: depends-on
-  - target: TASK-a5ec6d48
-    type: depended-on-by
+  - target: "EPIC-1358323e"
+    type: "delivers"
+  - target: "TASK-49b455ac"
+    type: "depends-on"
 ---
 
 # TASK-12eaa048: Skill Sync Refactor

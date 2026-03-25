@@ -15,8 +15,6 @@ enforcement:
     action: check
     pattern: "src/**/*"
 relationships:
-  - target: DOC-9814ec3c
-    type: documented-by
   - target: AD-af88bb69
     type: enforces
 ---

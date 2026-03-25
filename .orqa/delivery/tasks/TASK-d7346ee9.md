@@ -1,6 +1,6 @@
 ---
 id: "TASK-d7346ee9"
-type: task
+type: "task"
 title: "Tighten RULE-87ba1b81 orchestrator content boundary"
 description: "Clarify in RULE-87ba1b81 that the orchestrator creates artifact structure but delegates content writing to Writer."
 status: "completed"
@@ -15,8 +15,6 @@ relationships:
   - target: "EPIC-2bf6887a"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-e850a474"
-    type: "depended-on-by"
 ---
 ## What
 

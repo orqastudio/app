@@ -1,6 +1,6 @@
 ---
 id: "TASK-8a26a79b"
-type: task
+type: "task"
 title: "Update product documentation"
 description: "Update governance.md with the concept taxonomy from AD-48b310f9, create a new governance-hub.md page for the distribution and coexistence model from AD-26b0eb9f, and verify artifact-framework.md alignment."
 status: "completed"
@@ -25,8 +25,6 @@ relationships:
     type: "depends-on"
   - target: "TASK-39c5ac3f"
     type: "depends-on"
-  - target: "TASK-c52792a8"
-    type: "depended-on-by"
 ---
 ## Reference
 

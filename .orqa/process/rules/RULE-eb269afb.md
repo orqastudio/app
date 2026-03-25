@@ -16,8 +16,6 @@ enforcement:
     pattern: "ui/src/lib/components/**"
     description: "Knowledge injection triggered when writing to component directory"
 relationships:
-  - target: "DOC-2c94f7ba"
-    type: "documented-by"
   - target: "AD-9a7d7256"
     type: "enforces"
   - target: AD-80f39962

@@ -1,6 +1,6 @@
 ---
 id: "TASK-9d1e01d7"
-type: task
+type: "task"
 title: "Complete RES-98ab39e0: behavioral directives research"
 description: "RES-98ab39e0 (Agent Memory, User Directives, and the Knowledge Pipeline) is in draft status. Complete the research and discuss findings with user to determine where behavioral directives fit in the pipeline."
 status: "completed"
@@ -14,10 +14,6 @@ relationships:
   - target: "EPIC-88f359b0"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-f4d05cd7"
-    type: "depended-on-by"
-  - target: "TASK-d2b54d2f"
-    type: "depended-on-by"
 ---
 ## What
 

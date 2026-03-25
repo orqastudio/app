@@ -1,21 +1,19 @@
 ---
-id: TASK-e8c74e51
-type: task
-title: Onboarding strategy definition
-description: Defined the approach for first-run project setup and Claude API authentication flow.
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+id: "TASK-e8c74e51"
+type: "task"
+title: "Onboarding strategy definition"
+description: "Defined the approach for first-run project setup and Claude API authentication flow."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Onboarding flow documented
-  - API key configuration approach decided
-  - Project initialization sequence defined
+  - "Onboarding flow documented"
+  - "API key configuration approach decided"
+  - "Project initialization sequence defined"
 relationships:
-  - target: EPIC-5a0624dc
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-c5d43277
-    type: depended-on-by
+  - target: "EPIC-5a0624dc"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

@@ -1,30 +1,26 @@
 ---
-id: TASK-8e9ca15d
-type: task
-title: Skills content audit (48 skills)
+id: "TASK-8e9ca15d"
+type: "task"
+title: "Skills content audit (48 skills)"
 description: "Audit all 48 skills: fix layer classifications, resolve overlaps, establish naming convention (orqa-* = project-specific), remove stale content references, verify category accuracy."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - All skills have correct layer classification
-  - No overlapping skills without documented justification
+  - "All skills have correct layer classification"
+  - "No overlapping skills without documented justification"
   - "Naming convention enforced: orqa-* = project-specific, no prefix = portable"
-  - No stale content references
-  - Category accuracy verified for all skills
+  - "No stale content references"
+  - "Category accuracy verified for all skills"
 rule-overrides: []
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-d16b7868
-    type: depends-on
-  - target: TASK-f717d20c
-    type: depended-on-by
-  - target: TASK-d2b54d2f
-    type: depended-on-by
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-d16b7868"
+    type: "depends-on"
 ---
 
 ## What

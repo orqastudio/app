@@ -1,25 +1,22 @@
 ---
-id: EPIC-c90fdd32
-type: epic
-title: Artifact viewer enhancements
+id: "EPIC-c90fdd32"
+type: "epic"
+title: "Artifact viewer enhancements"
 description: "Enhance the artifact viewer with unified relationships display, actions needed inference, pipeline position stepper, horizon display, and acceptance criteria checkboxes. Originated from UAT Theme D findings."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 4
   complexity: 3
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-  - target: TASK-d6982377
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

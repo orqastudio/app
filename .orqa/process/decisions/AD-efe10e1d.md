@@ -1,21 +1,12 @@
 ---
 id: "AD-efe10e1d"
-type: decision
+type: "decision"
 title: "CLI Rule Loading — Accept Full Injection Until Selective Loading Exists"
 description: "Accept that .claude/rules/ symlink loads all 44 rules into every CLI session. The graph-based injection model requires selective loading that Claude Code does not yet support."
 status: "completed"
 created: "2026-03-12"
 updated: "2026-03-12"
-relationships:
-  - target: "RES-b7062d7b"
-    type: "informed-by"
-    rationale: "RES-b7062d7b audited all 44 rules and found Claude Code loads all .claude/rules/ files with no selective filtering, confirming the full-injection constraint"
-  - target: "RULE-63cc16ad"
-    type: "enforced-by"
-    rationale: "RULE-63cc16ad enforces artifact config integrity including the .claude/ symlink architecture that this decision accepts"
-  - target: "RULE-ef822519"
-    type: "enforced-by"
-    rationale: "RULE-ef822519 enforces context window management, which this decision's full-injection approach impacts"
+relationships: []
 ---
 ## Decision
 

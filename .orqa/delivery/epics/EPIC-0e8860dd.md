@@ -1,6 +1,6 @@
 ---
 id: "EPIC-0e8860dd"
-type: epic
+type: "epic"
 title: "Pillars as First-Class Artifacts"
 description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-74a2cb7a."
 status: "completed"
@@ -14,29 +14,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "TASK-bf8bf526"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-b34c735a"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-3b07cafa"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-218bef2c"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-86596675"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-677a65d4"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-65903e58"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

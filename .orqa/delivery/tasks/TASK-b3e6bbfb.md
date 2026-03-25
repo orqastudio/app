@@ -1,27 +1,23 @@
 ---
-id: TASK-b3e6bbfb
-type: task
-title: Remove knowledge file copies from connector plugin
-description: Delete all copied knowledge files from the connector plugin directory. The connector must not maintain its own copies — it reads from canonical plugin paths at delegation time.
-status: ready
-created: 2026-03-20
-updated: 2026-03-20
+id: "TASK-b3e6bbfb"
+type: "task"
+title: "Remove knowledge file copies from connector plugin"
+description: "Delete all copied knowledge files from the connector plugin directory. The connector must not maintain its own copies — it reads from canonical plugin paths at delegation time."
+status: "ready"
+created: 2026-03-20T00:00:00.000Z
+updated: 2026-03-20T00:00:00.000Z
 acceptance:
-  - No knowledge/ or skills/ directory with copied files exists in connectors/claude-code/
-  - Connector plugin manifest no longer declares knowledge file paths pointing to local copies
-  - orqa enforce passes on the connector plugin
-  - The connector still functions correctly (knowledge is read from canonical sources)
+  - "No knowledge/ or skills/ directory with copied files exists in connectors/claude-code/"
+  - "Connector plugin manifest no longer declares knowledge file paths pointing to local copies"
+  - "orqa enforce passes on the connector plugin"
+  - "The connector still functions correctly (knowledge is read from canonical sources)"
 relationships:
-  - target: EPIC-fdcdb958
-    type: delivers
-  - target: TASK-126e853f
-    type: depends-on
-  - target: TASK-ea03dd06
-    type: depends-on
-  - target: TASK-904a7533
-    type: depended-on-by
-  - target: TASK-0d68a6c9
-    type: depended-on-by
+  - target: "EPIC-fdcdb958"
+    type: "delivers"
+  - target: "TASK-126e853f"
+    type: "depends-on"
+  - target: "TASK-ea03dd06"
+    type: "depends-on"
 ---
 
 ## What

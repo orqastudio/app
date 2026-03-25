@@ -1,31 +1,27 @@
 ---
-id: TASK-fff38767
-type: task
-title: Backfill lessons with maturity and relationships
-description: Use backfill tooling to add maturity (observation/understanding) and grounded relationships to all 16 lessons.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-fff38767"
+type: "task"
+title: "Backfill lessons with maturity and relationships"
+description: "Use backfill tooling to add maturity (observation/understanding) and grounded relationships to all 16 lessons."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - All 16 lessons have a maturity field (observation or understanding)
-  - All 16 lessons have a relationships array
-  - Lessons with maturity=understanding have at least one grounded relationship
-  - Lessons with maturity=observation may have empty relationships (or informs)
-  - Human reviewed and approved all proposals
+  - "All 16 lessons have a maturity field (observation or understanding)"
+  - "All 16 lessons have a relationships array"
+  - "Lessons with maturity=understanding have at least one grounded relationship"
+  - "Lessons with maturity=observation may have empty relationships (or informs)"
+  - "Human reviewed and approved all proposals"
 rule-overrides:
   - "rule: RULE-23699df2"
 relationships:
-  - target: EPIC-3e6cad90
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-30ca6f82
-    type: depends-on
-  - target: TASK-56c67ce1
-    type: depended-on-by
-  - target: TASK-c89d3c79
-    type: depended-on-by
+  - target: "EPIC-3e6cad90"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-30ca6f82"
+    type: "depends-on"
 ---
 
 ## What

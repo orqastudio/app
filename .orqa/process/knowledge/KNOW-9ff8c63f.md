@@ -1,22 +1,14 @@
 ---
-id: KNOW-9ff8c63f
-type: knowledge
-title: Research Methodology
-description: |
-  Research best practices for agents investigating external sources: source
-  verification, credibility assessment, cross-referencing, and structured
-  documentation of findings with confidence levels.
-status: active
-category: methodology
+id: "KNOW-9ff8c63f"
+type: "knowledge"
+title: "Research Methodology"
+description: "Research best practices for agents investigating external sources: source\nverification, credibility assessment, cross-referencing, and structured\ndocumentation of findings with confidence levels.\n"
+status: "active"
+category: "methodology"
 user-invocable: true
 relationships:
-  - target: AGENT-85be6ace
-    type: employed-by
-  - target: AGENT-e333508b
-    type: employed-by
-  - target: DOC-bad8e26f
-    type: synchronised-with
-
+  - target: "DOC-bad8e26f"
+    type: "synchronised-with"
 ---
 
 # Research Methodology

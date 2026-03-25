@@ -1,22 +1,20 @@
 ---
-id: TASK-edeea471
-type: task
-title: Remove Plan type from artifact framework
+id: "TASK-edeea471"
+type: "task"
+title: "Remove Plan type from artifact framework"
 description: "Removes the Plan artifact type from the framework schema and replaces it with a Research schema, updating the traceability chain to Task → Epic → Milestone."
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
-assignee: AGENT-bbad3d30
+status: "completed"
+created: 2026-03-08T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
+assignee: "AGENT-bbad3d30"
 acceptance:
-  - No Plan type definition in artifact-framework.md
-  - Research schema added with draft/complete/surpassed workflow
-  - Traceability chain updated to Task → Epic → Milestone
+  - "No Plan type definition in artifact-framework.md"
+  - "Research schema added with draft/complete/surpassed workflow"
+  - "Traceability chain updated to Task → Epic → Milestone"
 relationships:
-  - target: EPIC-57dd7d4c
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dc793265
-    type: depended-on-by
+  - target: "EPIC-57dd7d4c"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

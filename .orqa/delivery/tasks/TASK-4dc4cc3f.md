@@ -1,17 +1,15 @@
 ---
-id: TASK-4dc4cc3f
-type: task
-title: Update integrity scanner to validate hex ID format
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "TASK-4dc4cc3f"
+type: "task"
+title: "Update integrity scanner to validate hex ID format"
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: EPIC-d1d42012
-    type: delivers
-  - target: TASK-c8bc9837
-    type: depends-on
-  - target: TASK-7c725cf8
-    type: depended-on-by
+  - target: "EPIC-d1d42012"
+    type: "delivers"
+  - target: "TASK-c8bc9837"
+    type: "depends-on"
 ---
 
 # TASK-4dc4cc3f: Integrity Scanner — Hex ID Validation

@@ -1,23 +1,21 @@
 ---
-id: TASK-5bc61a09
-type: task
-title: Plugin hook injection mechanism — plugins declare behavioral rules and mode templates
-description: Implement a mechanism by which plugins declare behavioral rules and mode templates in their manifests, and the connector aggregates these at runtime to build the injected system context.
-status: captured
-created: 2026-03-21
-updated: 2026-03-21
+id: "TASK-5bc61a09"
+type: "task"
+title: "Plugin hook injection mechanism — plugins declare behavioral rules and mode templates"
+description: "Implement a mechanism by which plugins declare behavioral rules and mode templates in their manifests, and the connector aggregates these at runtime to build the injected system context."
+status: "captured"
+created: 2026-03-21T00:00:00.000Z
+updated: 2026-03-21T00:00:00.000Z
 acceptance:
-  - orqa-plugin.json manifest schema supports a hooks or injection section for behavioral rules and mode templates
-  - The connector reads each installed plugin's manifest at startup and aggregates declared behavioral rules
-  - Mode templates from plugins are merged into the connector's runtime context injection
-  - No behavioral rules or mode templates are hardcoded in the connector itself
-  - orqa enforce passes on all plugin manifests after schema update
-  - Integration test: a new plugin with a behavioral rule results in that rule appearing in injected context
+  - "orqa-plugin.json manifest schema supports a hooks or injection section for behavioral rules and mode templates"
+  - "The connector reads each installed plugin's manifest at startup and aggregates declared behavioral rules"
+  - "Mode templates from plugins are merged into the connector's runtime context injection"
+  - "No behavioral rules or mode templates are hardcoded in the connector itself"
+  - "orqa enforce passes on all plugin manifests after schema update"
+  - Integration test: "a new plugin with a behavioral rule results in that rule appearing in injected context"
 relationships:
-  - target: EPIC-9b58fdcb
-    type: delivers
-  - target: TASK-c5db4e16
-    type: depended-on-by
+  - target: "EPIC-9b58fdcb"
+    type: "delivers"
 ---
 
 ## What

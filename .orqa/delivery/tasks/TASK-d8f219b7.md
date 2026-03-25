@@ -1,22 +1,20 @@
 ---
-id: TASK-d8f219b7
-type: task
-title: Classify agents with layer and scope fields
+id: "TASK-d8f219b7"
+type: "task"
+title: "Classify agents with layer and scope fields"
 description: "Adds layer and scope classification fields to all 16 agent definitions, distinguishing canon agents from project agents and categorising each by domain (software-engineering, governance, or general)."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-4c94fe14
+status: "completed"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-4c94fe14"
 acceptance:
   - "All 16 agent definitions have `layer:` field (canon/project/plugin)"
   - "All 16 agent definitions have `scope:` changed from `system` to one of software-engineering, governance, general"
-  - Classification is consistent with agent purpose
+  - "Classification is consistent with agent purpose"
 relationships:
-  - target: EPIC-4ce64ab0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b8c0455a
-    type: depended-on-by
+  - target: "EPIC-4ce64ab0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## Classification Plan
 

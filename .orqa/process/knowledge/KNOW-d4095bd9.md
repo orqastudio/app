@@ -1,16 +1,12 @@
 ---
-id: KNOW-d4095bd9
-type: knowledge
-name: Clippy Config Management
-status: active
+id: "KNOW-d4095bd9"
+type: "knowledge"
+name: "Clippy Config Management"
+status: "active"
 plugin: "@orqastudio/plugin-rust"
 relationships:
-  - target: DOC-2372ed36
-    type: synchronised-with
-  - target: AGENT-26e5029d
-    type: employed-by
-  - target: AGENT-065a25cc
-    type: employed-by
+  - target: "DOC-2372ed36"
+    type: "synchronised-with"
 ---
 
 # Clippy Config Management

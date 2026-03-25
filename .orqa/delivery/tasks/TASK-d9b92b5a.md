@@ -1,27 +1,21 @@
 ---
-id: TASK-d9b92b5a
-type: task
-title: Implement plan-before-build + structure-before-code gates
-description: |
-  Process gates that fire when code is written without epic/task context or
-  without a plan being referenced.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-d9b92b5a"
+type: "task"
+title: "Implement plan-before-build + structure-before-code gates"
+description: "Process gates that fire when code is written without epic/task context or\nwithout a plan being referenced.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - plan-before-build gate fires on code write without prior epic/task reads
-  - structure-before-code gate fires on code write without .orqa/delivery/ reads
-  - Gates fire only once per session
+  - "plan-before-build gate fires on code write without prior epic/task reads"
+  - "structure-before-code gate fires on code write without .orqa/delivery/ reads"
+  - "Gates fire only once per session"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-f53b9368
-    type: depends-on
-  - target: TASK-7382b265
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-f53b9368"
+    type: "depends-on"
 ---
 
 ## What

@@ -1,27 +1,19 @@
 ---
-id: KNOW-4f81ddc5
-type: knowledge
-title: Orqa IPC Patterns
-description: |
-  OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,
-  Channel<T> streaming, command registration, and IPC type contracts.
-  Use when: Adding or modifying Tauri commands, wiring frontend to backend,
-  implementing streaming features, or debugging IPC boundary issues.
-status: active
-created: 2026-03-01
-updated: 2026-03-10
-category: domain
+id: "KNOW-4f81ddc5"
+type: "knowledge"
+title: "Orqa IPC Patterns"
+description: "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,\nChannel<T> streaming, command registration, and IPC type contracts.\nUse when: Adding or modifying Tauri commands, wiring frontend to backend,\nimplementing streaming features, or debugging IPC boundary issues.\n"
+status: "active"
+created: 2026-03-01T00:00:00.000Z
+updated: 2026-03-10T00:00:00.000Z
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/commands/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-9814ec3c
-    type: synchronised-with
-  - target: AGENT-336e4d7d
-    type: employed-by
-  - target: AGENT-867da593
-    type: employed-by
+  - target: "DOC-9814ec3c"
+    type: "synchronised-with"
 ---
 OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte frontend and the Rust backend. There are no HTTP servers, no direct FFI calls, and no side channels.
 

@@ -1,6 +1,6 @@
 ---
 id: "TASK-25ef9bc2"
-type: task
+type: "task"
 title: "Fix KNOW-f5ee4e0d ID collision"
 description: "Three skills share KNOW-f5ee4e0d. Assign unique IDs and update all agent references."
 status: "completed"
@@ -13,8 +13,6 @@ relationships:
   - target: "EPIC-770f9ce9"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-ae58609f"
-    type: "depended-on-by"
 ---
 ## What
 

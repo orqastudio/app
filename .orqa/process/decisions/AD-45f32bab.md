@@ -6,10 +6,7 @@ description: "Core graph artifacts (schemas, traversal instructions, process mod
 status: completed
 created: 2026-03-12
 updated: 2026-03-12
-relationships:
-  - target: "RULE-3c2da849"
-    type: "enforced-by"
-    rationale: "RULE-3c2da849 referenced in decision body"
+relationships: []
 ---
 
 ## Decision

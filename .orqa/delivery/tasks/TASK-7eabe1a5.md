@@ -1,25 +1,18 @@
 ---
-id: TASK-7eabe1a5
-type: task
-title: Add lint event type to enforcement schema
-description: |
-  Add a 'lint' event type to the enforcement schema. This documents that
-  enforcement for a pattern is delegated to an external linter tool, not
-  handled by the OrqaStudio rule engine directly.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-7eabe1a5"
+type: "task"
+title: "Add lint event type to enforcement schema"
+description: "Add a 'lint' event type to the enforcement schema. This documents that\nenforcement for a pattern is delegated to an external linter tool, not\nhandled by the OrqaStudio rule engine directly.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - lint event type added to enforcement schema and validates
+  - "lint event type added to enforcement schema and validates"
   - "Enforcement entries with event: lint pass schema validation"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-f9599a7d
-    type: depended-on-by
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

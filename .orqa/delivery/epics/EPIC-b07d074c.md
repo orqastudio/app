@@ -1,24 +1,14 @@
 ---
-id: EPIC-b07d074c
-type: epic
-title: Claude Code connector switch — clear state, register plugin, verify governance
-description: The actual switch to the Claude Code connector plugin. Clears stale symlinks and session state, registers the plugin in Claude Code settings, resets auto-memory, verifies hooks/agents/skills/MCP all work end-to-end, and runs a first governed session to confirm the system is production-ready.
-status: captured
-created: 2026-03-19
-updated: 2026-03-19
+id: "EPIC-b07d074c"
+type: "epic"
+title: "Claude Code connector switch — clear state, register plugin, verify governance"
+description: "The actual switch to the Claude Code connector plugin. Clears stale symlinks and session state, registers the plugin in Claude Code settings, resets auto-memory, verifies hooks/agents/skills/MCP all work end-to-end, and runs a first governed session to confirm the system is production-ready."
+status: "captured"
+created: 2026-03-19T00:00:00.000Z
+updated: 2026-03-19T00:00:00.000Z
 relationships:
-  - target: TASK-72163412
-    type: delivered-by
-  - target: TASK-8edb8cee
-    type: delivered-by
-  - target: TASK-4298cf81
-    type: delivered-by
-  - target: TASK-c035b984
-    type: delivered-by
-  - target: TASK-7a3000fd
-    type: delivered-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 

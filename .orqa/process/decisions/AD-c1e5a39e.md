@@ -7,15 +7,8 @@ status: completed
 created: 2026-03-09
 updated: 2026-03-13
 relationships:
-  - target: "RULE-dd5b69e6"
-    type: "enforced-by"
-    rationale: "RULE-dd5b69e6 directly implements this decision — it defines Tier 1 (agent YAML), Tier 2 (orchestrator-injected), and Tier 3 (context-resolved wrapper) skill loading with specific loading order and rules"
   - target: EPIC-42a5330b
     type: drives
-  - target: RULE-5965256d
-    type: enforced-by
-  - target: RULE-f23392dc
-    type: enforced-by
 ---
 ## Decision
 

@@ -1,23 +1,21 @@
 ---
-id: TASK-0befeab2
-type: task
-title: Lesson promotion pipeline
+id: "TASK-0befeab2"
+type: "task"
+title: "Lesson promotion pipeline"
 description: "Implements the self-learning loop that creates lesson entries, tracks recurrence counts, and promotes repeated patterns into rules or skills at a configurable threshold."
-status: completed
-created: 2026-03-05
-updated: 2026-03-09
-assignee: AGENT-e5dd38e4
+status: "completed"
+created: 2026-03-05T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - IMPL entries created and tracked
-  - Recurrence count incremented on match
-  - Promotion triggered at configurable threshold
-  - Lessons viewable in UI
+  - "IMPL entries created and tracked"
+  - "Recurrence count incremented on match"
+  - "Promotion triggered at configurable threshold"
+  - "Lessons viewable in UI"
 relationships:
-  - target: EPIC-63ff87da
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-39504e66
-    type: depended-on-by
+  - target: "EPIC-63ff87da"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

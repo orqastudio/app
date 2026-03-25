@@ -1,25 +1,23 @@
 ---
-id: TASK-c8c6ab3e
-type: task
-title: Create schema compliance scanning skill and tools
+id: "TASK-c8c6ab3e"
+type: "task"
+title: "Create schema compliance scanning skill and tools"
 description: "Create a skill for schema compliance scanning methodology and design tools that can validate artifact frontmatter against schemas at any time, not just at commit time."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - Schema compliance skill created in .orqa/process/skills/
-  - On-demand validation tool exists that scans all .orqa/ artifacts
+  - "Schema compliance skill created in .orqa/process/skills/"
+  - "On-demand validation tool exists that scans all .orqa/ artifacts"
   - "Tool output groups violations by type (missing field, invalid value, pattern mismatch, field ordering, missing body section)"
-  - Tool can be run standalone or integrated into the app dashboard
-  - Skill documents common violation patterns and how to fix them
+  - "Tool can be run standalone or integrated into the app dashboard"
+  - "Skill documents common violation patterns and how to fix them"
 relationships:
-  - target: EPIC-5aa11e2f
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-052f394f
-    type: depends-on
-  - target: TASK-698afd4c
-    type: depended-on-by
+  - target: "EPIC-5aa11e2f"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-052f394f"
+    type: "depends-on"
 ---
 ## What
 

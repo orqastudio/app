@@ -1,21 +1,19 @@
 ---
-id: TASK-bd756cec
-type: task
-title: Implement recommendation review UI
+id: "TASK-bd756cec"
+type: "task"
+title: "Implement recommendation review UI"
 description: "Built the UI for reviewing, approving, and acting on governance recommendations."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Users can browse and filter recommendations
-  - Approve/dismiss actions update recommendation status
-  - Recommendation state persists across sessions
+  - "Users can browse and filter recommendations"
+  - "Approve/dismiss actions update recommendation status"
+  - "Recommendation state persists across sessions"
 relationships:
-  - target: EPIC-8cba3805
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e385b055
-    type: depended-on-by
+  - target: "EPIC-8cba3805"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

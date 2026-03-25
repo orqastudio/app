@@ -1,30 +1,20 @@
 ---
-id: KNOW-207d9e2c
-type: knowledge
-title: Orqa Error Composition
-description: |
-  OrqaStudio error composition and flow: OrqaError anatomy, From implementations,
-  error propagation through domain/repo/command layers, IPC serialization, and
-  frontend error handling patterns.
-  Use when: Adding new error variants, implementing error handling in commands or
-  domain services, wiring error states in Svelte stores, or debugging error flow
-  across the Tauri boundary.
-status: active
-created: 2026-03-01
-updated: 2026-03-10
-category: domain
+id: "KNOW-207d9e2c"
+type: "knowledge"
+title: "Orqa Error Composition"
+description: "OrqaStudio error composition and flow: OrqaError anatomy, From implementations,\nerror propagation through domain/repo/command layers, IPC serialization, and\nfrontend error handling patterns.\nUse when: Adding new error variants, implementing error handling in commands or\ndomain services, wiring error states in Svelte stores, or debugging error flow\nacross the Tauri boundary.\n"
+status: "active"
+created: 2026-03-01T00:00:00.000Z
+updated: 2026-03-10T00:00:00.000Z
+category: "domain"
 file-patterns:
   - "backend/src-tauri/src/domain/**"
   - "backend/src-tauri/src/commands/**"
-version: 1.0.0
+version: "1.0.0"
 user-invocable: true
 relationships:
-  - target: DOC-9814ec3c
-    type: synchronised-with
-  - target: AGENT-336e4d7d
-    type: employed-by
-  - target: AGENT-867da593
-    type: employed-by
+  - target: "DOC-9814ec3c"
+    type: "synchronised-with"
 ---
 
 

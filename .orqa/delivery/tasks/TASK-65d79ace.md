@@ -1,21 +1,19 @@
 ---
-id: TASK-65d79ace
-type: task
-title: Wire governance end-to-end integration
-description: Connected the full governance pipeline from scanner through analysis to recommendations and dashboard.
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+id: "TASK-65d79ace"
+type: "task"
+title: "Wire governance end-to-end integration"
+description: "Connected the full governance pipeline from scanner through analysis to recommendations and dashboard."
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Triggering a scan produces analysis and recommendations
-  - Dashboard widget updates with fresh data after each scan
-  - All IPC commands in the governance pipeline return real data
+  - "Triggering a scan produces analysis and recommendations"
+  - "Dashboard widget updates with fresh data after each scan"
+  - "All IPC commands in the governance pipeline return real data"
 relationships:
-  - target: EPIC-8cba3805
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e385b055
-    type: depended-on-by
+  - target: "EPIC-8cba3805"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

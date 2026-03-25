@@ -1,44 +1,14 @@
 ---
-id: EPIC-fdcdb958
-type: epic
+id: "EPIC-fdcdb958"
+type: "epic"
 title: "Skills→Knowledge rename and connector architecture alignment"
-description: Rename OrqaStudio's "skills" concept to "knowledge" to resolve naming collision with Claude Code's "skills" (slash commands). Establish the connector as a bridge that reads from canonical sources — no copies, no forks, no staleness. Document the semantic distinction in core artifacts.
-status: ready
-created: 2026-03-20
-updated: 2026-03-20
+description: "Rename OrqaStudio's \"skills\" concept to \"knowledge\" to resolve naming collision with Claude Code's \"skills\" (slash commands). Establish the connector as a bridge that reads from canonical sources — no copies, no forks, no staleness. Document the semantic distinction in core artifacts."
+status: "ready"
+created: 2026-03-20T00:00:00.000Z
+updated: 2026-03-20T00:00:00.000Z
 relationships:
-  - target: AD-bb125c2c
-    type: driven-by
-  - target: TASK-30f5bdc8
-    type: delivered-by
-  - target: TASK-9021e959
-    type: delivered-by
-  - target: TASK-efc1538d
-    type: delivered-by
-  - target: TASK-126e853f
-    type: delivered-by
-  - target: TASK-ea03dd06
-    type: delivered-by
-  - target: TASK-d8d1fa14
-    type: delivered-by
-  - target: TASK-efb42876
-    type: delivered-by
-  - target: TASK-f9237a26
-    type: delivered-by
-  - target: TASK-b3e6bbfb
-    type: delivered-by
-  - target: TASK-904a7533
-    type: delivered-by
-  - target: TASK-dfb348e8
-    type: delivered-by
-  - target: TASK-7df98f92
-    type: delivered-by
-  - target: TASK-0d68a6c9
-    type: delivered-by
-  - target: TASK-1377577a
-    type: delivered-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 

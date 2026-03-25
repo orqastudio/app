@@ -1,6 +1,6 @@
 ---
 id: "TASK-6aa8e1f1"
-type: task
+type: "task"
 title: "Create AD for directory reorganization (AD-9687b3cf)"
 description: "Architecture decision formalizing the three-level structure (process/delivery/documentation) and the first-class artifact principle."
 status: "completed"
@@ -18,14 +18,6 @@ relationships:
   - target: "EPIC-88f359b0"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-494b2fcc"
-    type: "depended-on-by"
-  - target: "TASK-d815920c"
-    type: "depended-on-by"
-  - target: "TASK-e33db46c"
-    type: "depended-on-by"
-  - target: "TASK-d2b54d2f"
-    type: "depended-on-by"
 ---
 ## What
 

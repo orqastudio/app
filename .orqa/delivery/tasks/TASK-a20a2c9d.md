@@ -1,6 +1,6 @@
 ---
 id: "TASK-a20a2c9d"
-type: task
+type: "task"
 title: "Audit EPIC-9a1eba3f tasks against plugin codebase"
 description: "14 tasks marked todo but plugin has working code. Verify each task against actual implementation."
 status: "completed"
@@ -13,8 +13,6 @@ relationships:
   - target: "EPIC-770f9ce9"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-ae58609f"
-    type: "depended-on-by"
 ---
 ## What
 

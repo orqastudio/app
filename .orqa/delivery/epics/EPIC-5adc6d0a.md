@@ -1,12 +1,8 @@
 ---
 id: "EPIC-5adc6d0a"
-type: epic
+type: "epic"
 title: "Repository Directory Reorganisation"
-description: "Restructure the repository so that frontend, backend, sidecar, and debugger code
-
-  each live in their own top-level directory. Watchers then target only their specific
-
-  directory, eliminating unnecessary rebuilds when unrelated files change.\n"
+description: "Restructure the repository so that frontend, backend, sidecar, and debugger code\neach live in their own top-level directory. Watchers then target only their specific\ndirectory, eliminating unnecessary rebuilds when unrelated files change.\n"
 status: "completed"
 priority: "P1"
 created: "2026-03-12"
@@ -19,35 +15,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "RES-4dbf04d7"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-4dbf04d7"
-  - target: "TASK-1af78c36"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-2a557489"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-a77fcf2e"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-1a134716"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-c0b200c5"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-b7a65fee"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-f47db62a"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-43c0557f"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

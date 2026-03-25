@@ -8,9 +8,7 @@ created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-14T00:00:00.000Z
 maturity: "observation"
 recurrence: 4
-relationships:
-  - target: "TASK-198335f7"
-    type: "addressed-by"
+relationships: []
 ---
 ## Pattern
 

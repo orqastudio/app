@@ -6,13 +6,7 @@ description: "Enforcement is mechanical, not behavioral. Four layers cover all m
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships:
-  - target: RULE-8cb4bd04
-    type: enforced-by
-  - target: RULE-71352dc8
-    type: enforced-by
-  - target: DOC-28344cd7
-    type: documented-by
+relationships: []
 ---
 
 ## Decision

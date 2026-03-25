@@ -1,21 +1,19 @@
 ---
-id: TASK-09e50ea0
-type: task
-title: Design Rust module architecture
+id: "TASK-09e50ea0"
+type: "task"
+title: "Design Rust module architecture"
 description: "Defined domain boundaries, service interfaces, and the repository pattern for the Rust backend."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Module boundaries are clear and enforce separation of concerns
-  - Repository pattern is defined with trait interfaces
-  - Dependency direction flows one way
+  - "Module boundaries are clear and enforce separation of concerns"
+  - "Repository pattern is defined with trait interfaces"
+  - "Dependency direction flows one way"
 relationships:
-  - target: EPIC-fe3b5ad5
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-021acf52
-    type: depended-on-by
+  - target: "EPIC-fe3b5ad5"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

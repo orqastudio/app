@@ -18,8 +18,6 @@ relationships:
     type: enforces
   - target: AD-c6c2d9fb
     type: enforces
-  - target: DOC-f6c4ac69
-    type: documented-by
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 

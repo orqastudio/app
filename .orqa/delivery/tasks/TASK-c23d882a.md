@@ -1,28 +1,26 @@
 ---
-id: TASK-c23d882a
-type: task
-title: Update all path references across codebase
+id: "TASK-c23d882a"
+type: "task"
+title: "Update all path references across codebase"
 description: "After directory moves, every hardcoded path in Rust, TypeScript, skills, rules, agents, documentation must be updated. Use verify-links to confirm zero broken references."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - Zero broken path references in .orqa/ artifacts
-  - Zero broken path references in Rust source code
-  - Zero broken path references in TypeScript source code
-  - verify-links.mjs reports zero issues
-  - Pre-commit hook references correct paths
+  - "Zero broken path references in .orqa/ artifacts"
+  - "Zero broken path references in Rust source code"
+  - "Zero broken path references in TypeScript source code"
+  - "verify-links.mjs reports zero issues"
+  - "Pre-commit hook references correct paths"
 rule-overrides: []
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-d29cb6b9
-    type: depends-on
-  - target: TASK-d2b54d2f
-    type: depended-on-by
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-d29cb6b9"
+    type: "depends-on"
 ---
 
 ## What

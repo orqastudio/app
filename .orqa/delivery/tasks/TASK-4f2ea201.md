@@ -1,21 +1,19 @@
 ---
-id: TASK-4f2ea201
-type: task
-title: Design streaming pipeline
+id: "TASK-4f2ea201"
+type: "task"
+title: "Design streaming pipeline"
 description: "Designed the Agent SDK to Svelte event flow including the sidecar NDJSON protocol, Rust Channel<T>, and frontend event handling."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Pipeline is documented end-to-end with event types at each boundary
-  - NDJSON protocol is specified with all message types
+  - "Pipeline is documented end-to-end with event types at each boundary"
+  - "NDJSON protocol is specified with all message types"
   - "Channel events cover text, tool use, errors, and completion"
 relationships:
-  - target: EPIC-fe3b5ad5
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-021acf52
-    type: depended-on-by
+  - target: "EPIC-fe3b5ad5"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

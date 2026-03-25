@@ -1,21 +1,19 @@
 ---
-id: TASK-ab29557a
-type: task
-title: Initialize Tauri v2 + Svelte 5 project
+id: "TASK-ab29557a"
+type: "task"
+title: "Initialize Tauri v2 + Svelte 5 project"
 description: "Set up the initial Tauri v2 project with Svelte 5 frontend, configured plugins, build tooling, and development scripts."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - make dev launches the app successfully
-  - Hot module replacement works for Svelte changes
-  - Tauri plugins are configured and accessible
+  - "make dev launches the app successfully"
+  - "Hot module replacement works for Svelte changes"
+  - "Tauri plugins are configured and accessible"
 relationships:
-  - target: EPIC-713c48c6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3187066a
-    type: depended-on-by
+  - target: "EPIC-713c48c6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

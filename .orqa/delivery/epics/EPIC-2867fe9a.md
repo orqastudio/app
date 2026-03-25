@@ -16,23 +16,6 @@ horizon: "now"
 relationships:
   - target: "MS-21d5096a"
     type: "fulfils"
-  - target: "AD-ee2910b1"
-    type: "driven-by"
-    rationale: "Organisation-mode architecture decision drives this work"
-  - target: "TASK-9dc457ee"
-    type: "delivered-by"
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-9dc457ee"
-  - target: "TASK-d0837171"
-    type: "delivered-by"
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-d0837171"
-  - target: "TASK-198335f7"
-    type: "delivered-by"
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-198335f7"
-  - target: "TASK-4a03cec1"
-    type: "delivered-by"
-    rationale: "Auto-generated inverse of delivered-by relationship from TASK-4a03cec1"
-  - target: "TASK-1c7cc798"
-    type: "delivered-by"
 ---
 ## Objective
 

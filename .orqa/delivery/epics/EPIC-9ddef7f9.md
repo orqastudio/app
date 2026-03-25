@@ -1,6 +1,6 @@
 ---
 id: "EPIC-9ddef7f9"
-type: epic
+type: "epic"
 title: "Artifact Browser — Sort, Filter, Search"
 description: "Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel."
 status: "active"
@@ -14,46 +14,9 @@ scoring:
   complexity: 3
   dependencies: 4
 relationships:
-  - target: "RES-c42a077f"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-c42a077f"
-  - target: "RES-8d203b37"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-8d203b37"
-  - target: "TASK-19a94ac8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-764410d7"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-dde309b0"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-99af06ab"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-66a87d84"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-4f1db8fa"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-30045ad8"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-58e87849"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "DOC-28344cd7"
-    type: "documented-by"
-  - target: "IDEA-cc97aab3"
-    type: "realised-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
-  - target: AD-80f39962
-    type: driven-by
-    rationale: "Core UI boundary decision defines navigate/search/edit as the three core capabilities this epic implements"
 ---
 ## Why P1
 

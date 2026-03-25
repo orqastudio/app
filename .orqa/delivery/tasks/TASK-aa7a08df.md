@@ -1,6 +1,6 @@
 ---
 id: "TASK-aa7a08df"
-type: task
+type: "task"
 title: "Update RULE-b10fe6d1: related idea surfacing during promotion"
 description: "Add mandatory step to RULE-b10fe6d1 promotion procedure requiring scanning for thematically related ideas before creating an epic"
 status: "completed"
@@ -12,8 +12,6 @@ relationships:
   - target: "EPIC-a60f5b6b"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-9471304a"
-    type: "depended-on-by"
 ---
 ## What
 

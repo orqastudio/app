@@ -1,30 +1,12 @@
 ---
-id: EPIC-dcc0bac6
-type: epic
+id: "EPIC-dcc0bac6"
+type: "epic"
 title: "Plugin infrastructure and delivery plugin extraction"
-status: exploring
-created: 2026-03-16
+status: "exploring"
+created: 2026-03-16T00:00:00.000Z
 relationships:
-  - type: driven-by
-    target: AD-ee2910b1
-  - target: AD-a7fd7461
-    type: driven-by
-  - target: IDEA-2dfeba32
-    type: realised-by
-  - target: IDEA-5113eeae
-    type: realised-by
-  - target: IDEA-4e813c17
-    type: realised-by
-  - target: IDEA-459f417a
-    type: realised-by
-  - target: IDEA-ec9f5b71
-    type: realised-by
-  - target: IDEA-b37248bf
-    type: realised-by
-  - target: IDEA-617e3e69
-    type: realised-by
-  - target: MS-21d5096a
-    type: fulfils
+  - target: "MS-21d5096a"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 

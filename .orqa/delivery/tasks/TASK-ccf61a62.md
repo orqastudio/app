@@ -1,22 +1,20 @@
 ---
-id: TASK-ccf61a62
-type: task
-title: Extract project-specific requirements to graph-readable artifacts
+id: "TASK-ccf61a62"
+type: "task"
+title: "Extract project-specific requirements to graph-readable artifacts"
 description: "Move project-specific sections from the orchestrator prompt to standalone artifacts discoverable via graph traversal — tech stack, naming conventions, verification gates."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 docs: []
 acceptance:
-  - Project-specific content removed from orchestrator prompt
-  - Content exists in appropriate artifacts
+  - "Project-specific content removed from orchestrator prompt"
+  - "Content exists in appropriate artifacts"
   - "Graph edges make content discoverable (e.g., task.docs points to coding-standards.md)"
 relationships:
-  - target: EPIC-f079c196
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-5ae6eb0f
-    type: depended-on-by
+  - target: "EPIC-f079c196"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

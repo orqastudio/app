@@ -57,8 +57,6 @@ relationships:
     rationale: "Auto-generated inverse of practiced-by relationship from AD-e8a0f910"
   - target: "AD-c6c2d9fb"
     type: "enforces"
-  - target: "DOC-e6fb92b0"
-    type: "documented-by"
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain knowledge as system context. This implements Layer 2 (Knowledge Injection)

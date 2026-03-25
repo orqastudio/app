@@ -1,6 +1,6 @@
 ---
 id: "EPIC-f72b1a22"
-type: epic
+type: "epic"
 title: "UX Polish Sprint"
 description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 status: "completed"
@@ -14,17 +14,8 @@ scoring:
   complexity: 2
   dependencies: 2
 relationships:
-  - target: "RES-f72b1a22"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-f72b1a22"
-  - target: "TASK-56787025"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-3f48d472"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design

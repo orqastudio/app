@@ -1,64 +1,22 @@
 ---
-id: EPIC-469add1c
-type: epic
+id: "EPIC-469add1c"
+type: "epic"
 title: "Artifact viewer redesign — layout, relationships, and graph enrichment"
 description: "Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 5
   urgency: 4
   complexity: 4
   dependencies: 5
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-  - target: TASK-3c586ee4
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-ece42049
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-cd960062
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-efb94956
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-98447dc5
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-bbd43489
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-da473493
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b3314c36
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-c560b894
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-088a0d6d
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-d335dc27
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-734104a2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: IMPL-30230427
-    type: cautioned-by
-  - target: IMPL-9e486d51
-    type: cautioned-by
-  - target: IMPL-638deb6d
-    type: cautioned-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

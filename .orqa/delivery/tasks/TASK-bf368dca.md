@@ -1,6 +1,6 @@
 ---
 id: "TASK-bf368dca"
-type: task
+type: "task"
 title: "Audit existing architecture decisions against AD-f079c196/039/040"
 description: "Review AD-7121ec20 through AD-306eccf1 to identify which decisions are superseded, affected, or made defunct by the graph-based knowledge injection (AD-f079c196), core graph firmware (AD-45f32bab), and task-first audit trail (AD-7fa3f280) decisions."
 status: "completed"
@@ -18,8 +18,6 @@ relationships:
   - target: "EPIC-f079c196"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-5ae6eb0f"
-    type: "depended-on-by"
 ---
 ## What
 

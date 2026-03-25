@@ -6,8 +6,6 @@ status: captured
 horizon: someday
 created: 2026-03-16
 relationships:
-  - type: merged-from
-    target: IDEA-5113eeae
   - target: PILLAR-a6a4bbbb
     type: grounded
   - target: PERSONA-2721ae35

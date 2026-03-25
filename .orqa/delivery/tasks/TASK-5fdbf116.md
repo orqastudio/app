@@ -1,21 +1,19 @@
 ---
-id: TASK-5fdbf116
-type: task
+id: "TASK-5fdbf116"
+type: "task"
 name: "Verify full pipeline and archive original repos"
-status: completed
+status: "completed"
 description: "End-to-end verification: clean clone, make install, make check, make build. Then archive original GitHub repos with redirect READMEs."
 relationships:
-  - target: EPIC-2f720d43
-    type: delivers
-    rationale: Phase 1 — monorepo consolidation
-  - target: TASK-a1ef2aad
-    type: depends-on
-    rationale: Install pipeline must be updated first
-  - target: TASK-58a0bdf0
-    type: depends-on
-    rationale: Licensing must be in place
-  - target: TASK-499c51ea
-    type: depended-on-by
+  - target: "EPIC-2f720d43"
+    type: "delivers"
+    rationale: "Phase 1 — monorepo consolidation"
+  - target: "TASK-a1ef2aad"
+    type: "depends-on"
+    rationale: "Install pipeline must be updated first"
+  - target: "TASK-58a0bdf0"
+    type: "depends-on"
+    rationale: "Licensing must be in place"
 acceptance:
   - "git clone <monorepo> && make install succeeds from scratch"
   - "make check passes (lint, typecheck, test)"

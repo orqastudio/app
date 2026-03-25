@@ -1,14 +1,8 @@
 ---
 id: "KNOW-8615fee2"
-type: knowledge
+type: "knowledge"
 title: "OrqaStudio Backend Best Practices"
-description: "Umbrella skill for all backend implementation work. Establishes composability,
-
-  coding standards, and error handling as always-in-mind principles, then
-
-  references deeper skills for Rust, Tauri, and persistence specifics.
-
-  Use when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).\n"
+description: "Umbrella skill for all backend implementation work. Establishes composability,\ncoding standards, and error handling as always-in-mind principles, then\nreferences deeper skills for Rust, Tauri, and persistence specifics.\nUse when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).\n"
 status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -18,10 +12,6 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
-  - target: AGENT-336e4d7d
-    type: employed-by
-  - target: AGENT-867da593
-    type: employed-by
 ---
 This skill ensures every backend agent has the right mental model before writing code. It does not duplicate content from deeper skills — it establishes principles and points to the right references.
 

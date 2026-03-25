@@ -1,22 +1,20 @@
 ---
-id: TASK-c197caf7
-type: task
-title: Model auto-download and startup loading
+id: "TASK-c197caf7"
+type: "task"
+title: "Model auto-download and startup loading"
 description: "Automatically downloads the embedding model from Hugging Face on first use and pre-loads it at startup, with download progress visible in the status bar."
-status: completed
-created: 2026-03-04
-updated: 2026-03-09
-assignee: AGENT-e5dd38e4
+status: "completed"
+created: 2026-03-04T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - Model auto-downloads from Hugging Face on first use
-  - Pre-download at app startup with progress tracking
-  - Status bar shows indexing progress
+  - "Model auto-downloads from Hugging Face on first use"
+  - "Pre-download at app startup with progress tracking"
+  - "Status bar shows indexing progress"
 relationships:
-  - target: EPIC-7f3119b1
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b869a015
-    type: depended-on-by
+  - target: "EPIC-7f3119b1"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

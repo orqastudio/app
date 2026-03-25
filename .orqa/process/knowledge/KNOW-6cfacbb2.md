@@ -1,14 +1,12 @@
 ---
-id: KNOW-6cfacbb2
-type: knowledge
-name: ESLint Config Management
-status: active
+id: "KNOW-6cfacbb2"
+type: "knowledge"
+name: "ESLint Config Management"
+status: "active"
 plugin: "@orqastudio/plugin-svelte"
 relationships:
-  - target: DOC-fd1d12bb
-    type: synchronised-with
-  - target: AGENT-6f55de0d
-    type: employed-by
+  - target: "DOC-fd1d12bb"
+    type: "synchronised-with"
 ---
 
 # ESLint Config Management

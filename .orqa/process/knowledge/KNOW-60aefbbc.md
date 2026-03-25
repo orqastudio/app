@@ -1,16 +1,8 @@
 ---
 id: "KNOW-60aefbbc"
-type: knowledge
+type: "knowledge"
 title: "Orqa Domain Services"
-description: "OrqaStudio domain service patterns: how Rust backend services are structured,
-
-  composed, tested, and wired to Tauri commands. Covers service anatomy, command
-
-  delegation, error propagation, and the boundary between domain logic and framework code.
-
-  Use when: Creating new domain services, refactoring backend logic out of commands,
-
-  adding business logic to the Rust backend, or reviewing service architecture.\n"
+description: "OrqaStudio domain service patterns: how Rust backend services are structured,\ncomposed, tested, and wired to Tauri commands. Covers service anatomy, command\ndelegation, error propagation, and the boundary between domain logic and framework code.\nUse when: Creating new domain services, refactoring backend logic out of commands,\nadding business logic to the Rust backend, or reviewing service architecture.\n"
 status: "active"
 created: "2026-03-01"
 updated: "2026-03-10"
@@ -22,8 +14,6 @@ user-invocable: true
 relationships:
   - target: "DOC-9814ec3c"
     type: "synchronised-with"
-  - target: AGENT-867da593
-    type: employed-by
 ---
 Domain services live in `backend/src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [AD-7121ec20](AD-7121ec20). Commands in `backend/src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 

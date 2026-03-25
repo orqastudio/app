@@ -1,12 +1,8 @@
 ---
 id: "TASK-d7ae3aee"
-type: task
+type: "task"
 title: "Document linter-to-standard mapping"
-description: "Create a clear mapping between documented coding standards and the linter
-
-  rules/configs that enforce them. Each standard traces to a specific linter
-
-  rule. Each skill describes how to configure the relevant tool.\n"
+description: "Create a clear mapping between documented coding standards and the linter\nrules/configs that enforce them. Each standard traces to a specific linter\nrule. Each skill describes how to configure the relevant tool.\n"
 status: "completed"
 created: "2026-03-11"
 updated: "2026-03-12"
@@ -18,10 +14,6 @@ relationships:
   - target: "EPIC-56940fa8"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-60f64836"
-    type: "depended-on-by"
-  - target: "TASK-761fe808"
-    type: "depended-on-by"
 ---
 ## What
 

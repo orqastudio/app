@@ -1,32 +1,26 @@
 ---
-id: TASK-e33db46c
-type: task
-title: Move pillars to process/ and rename planning to delivery
+id: "TASK-e33db46c"
+type: "task"
+title: "Move pillars to process/ and rename planning to delivery"
 description: "Move pillars from planning/ to process/. Rename planning/ to delivery/. Update project.json, all path references."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
-  - .orqa/principles/pillars/ exists with all pillar files
+  - ".orqa/principles/pillars/ exists with all pillar files"
   - ".orqa/delivery/ exists with ideas, research, milestones, epics, tasks"
-  - .orqa/delivery/ directory no longer exists
-  - project.json paths updated
+  - ".orqa/delivery/ directory no longer exists"
+  - "project.json paths updated"
 rule-overrides:
   - "rule: RULE-63cc16ad"
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6aa8e1f1
-    type: depends-on
-  - target: TASK-c4b77719
-    type: depended-on-by
-  - target: TASK-d29cb6b9
-    type: depended-on-by
-  - target: TASK-d2b54d2f
-    type: depended-on-by
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-6aa8e1f1"
+    type: "depends-on"
 ---
 
 ## What

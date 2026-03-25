@@ -15,20 +15,12 @@ enforcement:
   - mechanism: pre-commit
     check: "orqa enforce"
 relationships:
-  - target: "DOC-db5b37dc"
-    type: "documented-by"
-  - target: "DOC-ffad3f6b"
-    type: "documented-by"
   - target: "AD-3b986859"
     type: "enforces"
   - target: "AD-7fa3f280"
     type: "enforces"
   - target: "AD-339e9223"
     type: "enforces"
-  - target: "DOC-28344cd7"
-    type: "documented-by"
-  - target: "DOC-f6c4ac69"
-    type: "documented-by"
   - target: AD-03d9007d
     type: enforces
     rationale: "Auto-generated inverse of enforces relationship from AD-03d9007d"

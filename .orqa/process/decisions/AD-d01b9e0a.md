@@ -1,21 +1,14 @@
 ---
-id: AD-d01b9e0a
-type: decision
-title: Security Model
+id: "AD-d01b9e0a"
+type: "decision"
+title: "Security Model"
 description: "Tauri three-layer security model with filesystem scoping, sensitive path denials, and OS keychain for API key storage."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 relationships:
-  - target: RES-7b24ff49
-    type: informed-by
-    rationale: RES-7b24ff49 documented Tauri v2's capability-based security model with compiled-in permissions, deny-precedence scoping, and persisted-scope plugin
-  - target: EPIC-05ae2ce7
-    type: drives
-  - target: DOC-52b00632
-    type: documented-by
-  - target: DOC-ec909ab0
-    type: documented-by
+  - target: "EPIC-05ae2ce7"
+    type: "drives"
 ---
 ## Decision
 

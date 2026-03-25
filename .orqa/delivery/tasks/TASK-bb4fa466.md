@@ -1,34 +1,28 @@
 ---
-id: TASK-bb4fa466
-type: task
-title: Write graph-based orchestrator prompt
-description: Rewrite the orchestrator prompt from ~2000 lines of inlined rules/tables to ~200 lines of graph navigation instructions. The prompt teaches agents how to read and extend the artifact graph.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-bb4fa466"
+type: "task"
+title: "Write graph-based orchestrator prompt"
+description: "Rewrite the orchestrator prompt from ~2000 lines of inlined rules/tables to ~200 lines of graph navigation instructions. The prompt teaches agents how to read and extend the artifact graph."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 docs:
-  - DOC-28344cd7
+  - "DOC-28344cd7"
 acceptance:
-  - Orchestrator prompt is <=250 lines
+  - "Orchestrator prompt is <=250 lines"
   - "Agents can navigate the graph to find rules, skills, docs"
-  - Core process and safety constraints are preserved
-  - A dogfood session works correctly with the new prompt
+  - "Core process and safety constraints are preserved"
+  - "A dogfood session works correctly with the new prompt"
 relationships:
-  - target: EPIC-f079c196
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-77bfa7e1
-    type: depends-on
-  - target: TASK-608d1faa
-    type: depends-on
-  - target: TASK-7a8690e2
-    type: depends-on
-  - target: TASK-7a8598c6
-    type: depended-on-by
-  - target: TASK-c39b12a7
-    type: depended-on-by
-  - target: TASK-5ae6eb0f
-    type: depended-on-by
+  - target: "EPIC-f079c196"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-77bfa7e1"
+    type: "depends-on"
+  - target: "TASK-608d1faa"
+    type: "depends-on"
+  - target: "TASK-7a8690e2"
+    type: "depends-on"
 ---
 ## What
 

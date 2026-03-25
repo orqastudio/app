@@ -1,35 +1,31 @@
 ---
-id: TASK-601a75ca
-type: task
-title: Update scanner to use config-driven paths
+id: "TASK-601a75ca"
+type: "task"
+title: "Update scanner to use config-driven paths"
 description: "Replace the scanner's folder-guessing logic with config-driven scanning. The scanner reads the artifacts array from project.json and scans exactly those paths. No more inferring groups from README frontmatter."
-status: completed
-created: 2026-03-08
-updated: 2026-03-08
-assignee: AGENT-e5dd38e4
+status: "completed"
+created: 2026-03-08T00:00:00.000Z
+updated: 2026-03-08T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - artifact_scan_tree reads artifacts config from project.json
-  - For each Type entry
-  - scans path for .md files → DocNode list
-  - For each Group entry
-  - scans children paths → NavType list → NavGroup
-  - Direct types (no children) wrapped in synthetic NavGroup
-  - Empty/missing artifacts config returns empty NavTree (no crash)
-  - Old folder-guessing logic removed (scan_group_dir
-  - scan_type_dirs)
+  - "artifact_scan_tree reads artifacts config from project.json"
+  - "For each Type entry"
+  - "scans path for .md files → DocNode list"
+  - "For each Group entry"
+  - "scans children paths → NavType list → NavGroup"
+  - "Direct types (no children) wrapped in synthetic NavGroup"
+  - "Empty/missing artifacts config returns empty NavTree (no crash)"
+  - "Old folder-guessing logic removed (scan_group_dir"
+  - "scan_type_dirs)"
   - "README.md files filtered from node lists (they're landing pages)"
-  - Hidden files (. or _) skipped
-  - cargo build and clippy pass
+  - "Hidden files (. or _) skipped"
+  - "cargo build and clippy pass"
 relationships:
-  - target: EPIC-57dd7d4c
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-25e35dfc
-    type: depends-on
-  - target: TASK-0c48a446
-    type: depended-on-by
-  - target: TASK-dc793265
-    type: depended-on-by
+  - target: "EPIC-57dd7d4c"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-25e35dfc"
+    type: "depends-on"
 ---
 ## What
 

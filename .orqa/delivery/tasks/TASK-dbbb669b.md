@@ -1,11 +1,11 @@
 ---
-id: TASK-dbbb669b
-type: task
+id: "TASK-dbbb669b"
+type: "task"
 title: "Schema validation compliance audit"
 description: "Verify all .orqa/ artifacts have valid YAML frontmatter per their directory schema.json. Fix any validation failures."
-status: ready
-created: 2026-03-24
-updated: 2026-03-24
+status: "ready"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
   - "Every .orqa/**/*.md artifact is validated against its directory schema.json"
   - "All validation errors are listed with artifact ID, field, and error description"
@@ -13,10 +13,8 @@ acceptance:
   - "graph_validate returns clean after fixes"
   - "Pre-commit hook schema validation passes on all staged files"
 relationships:
-  - target: EPIC-e24086ed
-    type: delivers
-  - target: TASK-8702813d
-    type: depended-on-by
+  - target: "EPIC-e24086ed"
+    type: "delivers"
 ---
 
 ## What

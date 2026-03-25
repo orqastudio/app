@@ -1,22 +1,20 @@
 ---
-id: EPIC-59b92c8d
-type: epic
+id: "EPIC-59b92c8d"
+type: "epic"
 title: "Content Migration to Plugin-Composed Architecture"
 description: "Migrate CLAUDE.md, rule files, agent definitions, and knowledge artifacts to the plugin-composed architecture. One epic, sequential tasks with validation between each step."
-status: captured
-priority: P1
-created: 2026-03-25
-updated: 2026-03-25
-horizon: active
+status: "captured"
+priority: "P1"
+created: 2026-03-25T00:00:00.000Z
+updated: 2026-03-25T00:00:00.000Z
+horizon: "active"
 relationships:
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Migration completes the transition to the target architecture for dogfooding"
-  - target: EPIC-281f7857
-    type: depends-on
+  - target: "EPIC-281f7857"
+    type: "depends-on"
     rationale: "Migration needs the agent lifecycle infrastructure to be in place"
-  - target: EPIC-9d781696
-    type: depended-on-by
 ---
 
 ## Scope

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-6e11f0af"
-type: epic
+type: "epic"
 title: "Artifact Graph SDK extraction research"
 description: "Research extracting the artifactGraphSDK into a standalone npm package that plugins can import, enabling the plugin architecture's data layer."
 status: "captured"
@@ -16,13 +16,8 @@ scoring:
   dependencies: 2
 rule-overrides: []
 relationships:
-  - target: "RES-8fee4dad"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-8fee4dad"
-  - target: "IDEA-9b26ba54"
-    type: "realised-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

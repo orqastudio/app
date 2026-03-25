@@ -1,21 +1,19 @@
 ---
-id: TASK-e8fd7052
-type: task
-title: Design MCP host interface
+id: "TASK-e8fd7052"
+type: "task"
+title: "Design MCP host interface"
 description: "Designed the interface for future external MCP server support, defining how OrqaStudio will host and connect to MCP servers."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - MCP host interface is designed for future implementation
-  - Tool routing strategy accommodates both built-in and external tools
-  - Configuration approach is documented
+  - "MCP host interface is designed for future implementation"
+  - "Tool routing strategy accommodates both built-in and external tools"
+  - "Configuration approach is documented"
 relationships:
-  - target: EPIC-fe3b5ad5
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-021acf52
-    type: depended-on-by
+  - target: "EPIC-fe3b5ad5"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

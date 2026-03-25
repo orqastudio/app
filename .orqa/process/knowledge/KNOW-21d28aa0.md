@@ -1,29 +1,17 @@
 ---
-id: KNOW-21d28aa0
-type: knowledge
-title: Planning
-description: |
-  Enforces documentation-first planning for all implementation tasks.
-  Plans must start with documentation, get user approval, then implement with
-  mandatory verification gates. Prevents documentation drift across sessions.
-status: active
-created: 2026-03-01
-updated: 2026-03-10
-category: methodology
+id: "KNOW-21d28aa0"
+type: "knowledge"
+title: "Planning"
+description: "Enforces documentation-first planning for all implementation tasks.\nPlans must start with documentation, get user approval, then implement with\nmandatory verification gates. Prevents documentation drift across sessions.\n"
+status: "active"
+created: 2026-03-01T00:00:00.000Z
+updated: 2026-03-10T00:00:00.000Z
+category: "methodology"
 user-invocable: false
 allowed-tools: "Read, Glob, Grep"
 relationships:
-  - target: AGENT-4c94fe14
-    type: employed-by
-  - target: AGENT-85be6ace
-    type: employed-by
-  - target: AGENT-e333508b
-    type: employed-by
-  - target: AGENT-bbad3d30
-    type: employed-by
-  - target: DOC-bad8e26f
-    type: synchronised-with
-
+  - target: "DOC-bad8e26f"
+    type: "synchronised-with"
 ---
 
 

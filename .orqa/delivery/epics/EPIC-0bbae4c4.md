@@ -1,6 +1,6 @@
 ---
 id: "EPIC-0bbae4c4"
-type: epic
+type: "epic"
 title: "Rebrand: Forge → OrqaStudio"
 description: "Product rebrand from \"Forge\" to \"Orqa Studio\": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates."
 status: "completed"
@@ -14,17 +14,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "RES-0bbae4c4"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-0bbae4c4"
-  - target: "TASK-dd51ff93"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-2195c722"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design

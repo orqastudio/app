@@ -1,35 +1,19 @@
 ---
-id: TASK-30f5bdc8
-type: task
+id: "TASK-30f5bdc8"
+type: "task"
 title: "Update core.json schema: skill → knowledge type, SKILL → KNOW idPrefix"
-description: Change the artifact type definition in core.json from 'skill' to 'knowledge' and update the idPrefix from 'SKILL' to 'KNOW'.
-status: ready
-created: 2026-03-20
-updated: 2026-03-20
+description: "Change the artifact type definition in core.json from 'skill' to 'knowledge' and update the idPrefix from 'SKILL' to 'KNOW'."
+status: "ready"
+created: 2026-03-20T00:00:00.000Z
+updated: 2026-03-20T00:00:00.000Z
 acceptance:
-  - core.json artifact type entry renamed from 'skill' to 'knowledge'
-  - idPrefix updated from 'SKILL' to 'KNOW'
-  - orqa enforce schema passes after the change
-  - No other artifact types or schema fields are affected
+  - "core.json artifact type entry renamed from 'skill' to 'knowledge'"
+  - "idPrefix updated from 'SKILL' to 'KNOW'"
+  - "orqa enforce schema passes after the change"
+  - "No other artifact types or schema fields are affected"
 relationships:
-  - target: EPIC-fdcdb958
-    type: delivers
-  - target: TASK-9021e959
-    type: depended-on-by
-  - target: TASK-efc1538d
-    type: depended-on-by
-  - target: TASK-126e853f
-    type: depended-on-by
-  - target: TASK-ea03dd06
-    type: depended-on-by
-  - target: TASK-d8d1fa14
-    type: depended-on-by
-  - target: TASK-efb42876
-    type: depended-on-by
-  - target: TASK-f9237a26
-    type: depended-on-by
-  - target: TASK-7df98f92
-    type: depended-on-by
+  - target: "EPIC-fdcdb958"
+    type: "delivers"
 ---
 
 ## What

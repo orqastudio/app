@@ -1,31 +1,29 @@
 ---
-id: TASK-bf94a503
-type: task
+id: "TASK-bf94a503"
+type: "task"
 title: "Create @orqastudio/eslint-config package"
 description: "Extract shared ESLint and TypeScript config from orqa-studio into a standalone @orqastudio/eslint-config package. All orqastudio repos and plugins use this for consistent code standards."
-status: completed
-priority: P1
+status: "completed"
+priority: "P1"
 scoring:
   impact: 3
   urgency: 4
   complexity: 2
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 assignee: null
 acceptance:
-  - New repo orqastudio/orqastudio-eslint-config exists with CI + publish workflow
-  - Exports flat ESLint config compatible with eslint.config.js
+  - "New repo orqastudio/orqastudio-eslint-config exists with CI + publish workflow"
+  - "Exports flat ESLint config compatible with eslint.config.js"
   - "Includes TypeScript strict rules, no-any, ban-ts-comment"
-  - tsconfig base exported for extends
-  - Published to GitHub Packages
-  - orqa-studio main repo updated to use the package
+  - "tsconfig base exported for extends"
+  - "Published to GitHub Packages"
+  - "orqa-studio main repo updated to use the package"
 relationships:
-  - target: EPIC-90cb7349
-    type: delivers
-    rationale: Shared code standards for all repos and plugins
-  - target: TASK-aa1cc420
-    type: depended-on-by
+  - target: "EPIC-90cb7349"
+    type: "delivers"
+    rationale: "Shared code standards for all repos and plugins"
 ---
 
 ## Scope

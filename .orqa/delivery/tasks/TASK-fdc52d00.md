@@ -1,21 +1,19 @@
 ---
-id: TASK-fdc52d00
-type: task
-title: Define user journeys
+id: "TASK-fdc52d00"
+type: "task"
+title: "Define user journeys"
 description: "Documented end-to-end user flows for primary use cases including first-run, conversation, artifact browsing, and governance review."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - All primary use cases have documented journeys
-  - Journeys cover happy path and error states
-  - Journeys drive UI design decisions
+  - "All primary use cases have documented journeys"
+  - "Journeys cover happy path and error states"
+  - "Journeys drive UI design decisions"
 relationships:
-  - target: EPIC-a951c9b6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-6a46215d
-    type: depended-on-by
+  - target: "EPIC-a951c9b6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

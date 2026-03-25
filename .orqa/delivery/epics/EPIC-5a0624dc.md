@@ -1,12 +1,12 @@
 ---
-id: EPIC-5a0624dc
-type: epic
-title: Tech Stack Research
-description: Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform.
-status: completed
-priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+id: "EPIC-5a0624dc"
+type: "epic"
+title: "Tech Stack Research"
+description: "Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform."
+status: "completed"
+priority: "P1"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-07T00:00:00.000Z
 horizon: null
 scoring:
   impact: 5
@@ -14,27 +14,9 @@ scoring:
   complexity: 3
   dependencies: 5
 relationships:
-  - target: MS-063c15b9
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-87ff401c
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-16b6ff1e
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-449bdcd2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-13d2bf63
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e8c74e51
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-c5d43277
-    type: delivered-by
-    rationale: Epic contains this task
+  - target: "MS-063c15b9"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

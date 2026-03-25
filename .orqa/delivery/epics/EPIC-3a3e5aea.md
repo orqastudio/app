@@ -1,51 +1,24 @@
 ---
-id: EPIC-3a3e5aea
-type: epic
+id: "EPIC-3a3e5aea"
+type: "epic"
 title: "Schema-driven LSP enforcement for artifact intelligence"
 description: "Implement full schema-driven artifact intelligence in the orqa LSP: real-time validation, autocomplete, hover, go-to-definition, code actions, broken link detection, reverse relationship checks, and plugin schema ingestion. All powered by plugin schemas — nothing hardcoded."
-status: captured
-priority: P1
-created: 2026-03-24
-updated: 2026-03-24
+status: "captured"
+priority: "P1"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 scoring:
   impact: 5
   urgency: 5
   complexity: 4
   dependencies: 2
 relationships:
-  - target: PILLAR-c9e0a695
-    type: grounded
+  - target: "PILLAR-c9e0a695"
+    type: "grounded"
     rationale: "LSP enforcement makes governance artifacts visible and manageable in the editor — mechanical enforcement of structural rules"
-  - target: AD-a44384d1
-    type: implements
+  - target: "AD-a44384d1"
+    type: "implements"
     rationale: "CLI as single interface — LSP runs as a CLI protocol mode, powered by the validation daemon"
-  - target: TASK-47225043
-    type: delivered-by
-    rationale: "Plugin schema ingestion task"
-  - target: TASK-c9d9baab
-    type: delivered-by
-    rationale: "Real-time schema validation task"
-  - target: TASK-ee73dc63
-    type: delivered-by
-    rationale: "Broken link detection task"
-  - target: TASK-84df448e
-    type: delivered-by
-    rationale: "Reverse relationship checks task"
-  - target: TASK-d423f4f7
-    type: delivered-by
-    rationale: "Autocomplete task"
-  - target: TASK-d0e94e95
-    type: delivered-by
-    rationale: "Hover task"
-  - target: TASK-2d104e1f
-    type: delivered-by
-    rationale: "Go to definition task"
-  - target: TASK-75b100dd
-    type: delivered-by
-    rationale: "Code actions task"
-  - target: TASK-c733e628
-    type: delivered-by
-    rationale: "Reconciliation task"
 ---
 
 # Schema-Driven LSP Enforcement for Artifact Intelligence

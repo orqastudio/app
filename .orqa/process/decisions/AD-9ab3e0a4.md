@@ -1,18 +1,12 @@
 ---
-id: AD-9ab3e0a4
-type: decision
-title: Universal plugin capability model
-status: active
-description: All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins.
-created: 2026-03-23
-updated: 2026-03-23
-relationships:
-  - target: RES-999def94
-    type: informed-by
-  - target: EPIC-8b01ee51
-    type: implemented-by
-  - target: EPIC-2f720d43
-    type: implemented-by
+id: "AD-9ab3e0a4"
+type: "decision"
+title: "Universal plugin capability model"
+status: "active"
+description: "All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins."
+created: 2026-03-23T00:00:00.000Z
+updated: 2026-03-23T00:00:00.000Z
+relationships: []
 ---
 
 ## Decision

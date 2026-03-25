@@ -1,12 +1,12 @@
 ---
-id: EPIC-8cba3805
-type: epic
-title: Governance Bootstrap
+id: "EPIC-8cba3805"
+type: "epic"
+title: "Governance Bootstrap"
 description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
-status: completed
-priority: P1
-created: 2026-03-02
-updated: 2026-03-07
+status: "completed"
+priority: "P1"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-07T00:00:00.000Z
 horizon: null
 scoring:
   impact: 4
@@ -14,30 +14,9 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: MS-063c15b9
-    type: fulfils
-    rationale: Epic belongs to this milestone
-  - target: TASK-c874fef2
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-2f87a454
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-0447b20e
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-bd756cec
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-9841c4de
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-65d79ace
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-e385b055
-    type: delivered-by
-    rationale: Epic contains this task
+  - target: "MS-063c15b9"
+    type: "fulfils"
+    rationale: "Epic belongs to this milestone"
 ---
 ## Why P1
 

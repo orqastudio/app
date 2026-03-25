@@ -1,6 +1,6 @@
 ---
 id: "EPIC-2f1efbd5"
-type: epic
+type: "epic"
 title: "Artifact System Migration"
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
 status: "completed"
@@ -14,32 +14,8 @@ scoring:
   complexity: 3
   dependencies: 3
 relationships:
-  - target: "RES-9986caa9"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-9986caa9"
-  - target: "RES-e7cf8d7b"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-e7cf8d7b"
-  - target: "TASK-812aa166"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-97764b10"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-781e94a2"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-69cbed77"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "AD-4ea9a290"
-    type: "driven-by"
-  - target: "AD-45cfe1d1"
-    type: "driven-by"
-  - target: "AD-3b986859"
-    type: "driven-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Workstreams

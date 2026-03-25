@@ -1,34 +1,28 @@
 ---
-id: TASK-8aedd59b
+id: "TASK-8aedd59b"
 title: "Implement CLI process lifecycle commands (daemon, search, MCP)"
-type: task
+type: "task"
 description: "Add orqa daemon|search|mcp start|stop|status commands to the CLI. CLI manages PID files, health checks, and graceful shutdown for all OrqaStudio services."
-status: completed
-created: 2026-03-24
-updated: 2026-03-24
+status: "completed"
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
 acceptance:
-  - orqa daemon start/stop/status commands exist and work
-  - orqa search start/stop/status commands exist and work
-  - orqa mcp start/stop/status commands exist and work
-  - PID files are written and cleaned up on start/stop
-  - Health check endpoint or mechanism exists for each service
-  - Graceful shutdown sends proper signals before force-killing
-  - orqa dev starts all services using these lifecycle commands
-  - orqa help documents all new commands
-  - make check passes
+  - "orqa daemon start/stop/status commands exist and work"
+  - "orqa search start/stop/status commands exist and work"
+  - "orqa mcp start/stop/status commands exist and work"
+  - "PID files are written and cleaned up on start/stop"
+  - "Health check endpoint or mechanism exists for each service"
+  - "Graceful shutdown sends proper signals before force-killing"
+  - "orqa dev starts all services using these lifecycle commands"
+  - "orqa help documents all new commands"
+  - "make check passes"
 relationships:
-  - target: EPIC-9e3d320b
-    type: delivers
+  - target: "EPIC-9e3d320b"
+    type: "delivers"
     rationale: "Phase 3 of port allocation epic"
-  - target: TASK-35444c5b
-    type: depends-on
+  - target: "TASK-35444c5b"
+    type: "depends-on"
     rationale: "Needs canonical ports for service configuration"
-  - target: TASK-aef92af1
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depends-on relationship from TASK-aef92af1"
-  - target: TASK-5139ce65
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depends-on relationship from TASK-5139ce65"
 ---
 
 ## What

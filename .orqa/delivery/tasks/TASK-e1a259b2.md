@@ -1,21 +1,19 @@
 ---
-id: TASK-e1a259b2
-type: task
-title: Implement tool call rendering
+id: "TASK-e1a259b2"
+type: "task"
+title: "Implement tool call rendering"
 description: "Built tool call card components with collapsible display showing tool name, input parameters, and output results."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Tool calls render inline within conversation messages
-  - Cards are collapsible with input/output visible when expanded
-  - Tool approval flow works
+  - "Tool calls render inline within conversation messages"
+  - "Cards are collapsible with input/output visible when expanded"
+  - "Tool approval flow works"
 relationships:
-  - target: EPIC-713c48c6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3187066a
-    type: depended-on-by
+  - target: "EPIC-713c48c6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

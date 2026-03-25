@@ -14,8 +14,6 @@ scoring:
   complexity: 2
   dependencies: 2
 relationships:
-  - target: "DOC-28344cd7"
-    type: "documented-by"
   - target: MS-b1ac0a20
     type: fulfils
     rationale: "Epic fulfils this milestone"

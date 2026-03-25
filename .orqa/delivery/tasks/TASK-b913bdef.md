@@ -1,23 +1,21 @@
 ---
-id: TASK-b913bdef
-type: task
-title: Governance artifact alignment for dogfooding
+id: "TASK-b913bdef"
+type: "task"
+title: "Governance artifact alignment for dogfooding"
 description: "Aligns governance artifacts with the live codebase in preparation for dogfood use, fixing hook paths, removing debug logging, and eliminating unsafe type annotations."
-status: completed
-created: 2026-03-05
-updated: 2026-03-09
-assignee: AGENT-e5dd38e4
+status: "completed"
+created: 2026-03-05T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - Hook paths use $CLAUDE_PROJECT_DIR
-  - Governance artifacts match codebase state
-  - Frontend debug logging removed
-  - any types fixed
+  - "Hook paths use $CLAUDE_PROJECT_DIR"
+  - "Governance artifacts match codebase state"
+  - "Frontend debug logging removed"
+  - "any types fixed"
 relationships:
-  - target: EPIC-63ff87da
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-39504e66
-    type: depended-on-by
+  - target: "EPIC-63ff87da"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

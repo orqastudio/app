@@ -1,18 +1,16 @@
 ---
-id: TASK-58a0bdf0
-type: task
+id: "TASK-58a0bdf0"
+type: "task"
 name: "License per directory and version management"
-status: completed
+status: "completed"
 description: "Set up per-directory LICENSE files for mixed BSL-1.1/Apache-2.0 licensing. Update orqa version sync for monorepo (single VERSION file, workspace-aware propagation)."
 relationships:
-  - target: EPIC-2f720d43
-    type: delivers
-    rationale: Phase 1 — monorepo consolidation
-  - target: TASK-7b011351
-    type: depends-on
-    rationale: Repos must be imported first
-  - target: TASK-5fdbf116
-    type: depended-on-by
+  - target: "EPIC-2f720d43"
+    type: "delivers"
+    rationale: "Phase 1 — monorepo consolidation"
+  - target: "TASK-7b011351"
+    type: "depends-on"
+    rationale: "Repos must be imported first"
 acceptance:
   - "Each component directory has a LICENSE file matching its intended license"
   - "Root LICENSE is BSL-1.1 (project default)"

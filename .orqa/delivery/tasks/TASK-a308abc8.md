@@ -1,26 +1,22 @@
 ---
-id: TASK-a308abc8
-type: task
-title: Add prompt-based injection to Rust system prompt builder
-description: |
-  Implement prompt-based skill injection in the app's Rust system prompt builder
-  using the local embeddings engine for semantic similarity matching.
-status: completed
-created: 2026-03-11
-updated: 2026-03-12
+id: "TASK-a308abc8"
+type: "task"
+title: "Add prompt-based injection to Rust system prompt builder"
+description: "Implement prompt-based skill injection in the app's Rust system prompt builder\nusing the local embeddings engine for semantic similarity matching.\n"
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - Skill embeddings computed and stored at project load
-  - User prompts matched against skill descriptions by cosine similarity
-  - Top-N threshold prevents over-injection
-  - Dedup against skills already in context
+  - "Skill embeddings computed and stored at project load"
+  - "User prompts matched against skill descriptions by cosine similarity"
+  - "Top-N threshold prevents over-injection"
+  - "Dedup against skills already in context"
 relationships:
-  - target: EPIC-56940fa8
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-2634ad36
-    type: depends-on
-  - target: TASK-761fe808
-    type: depended-on-by
+  - target: "EPIC-56940fa8"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-2634ad36"
+    type: "depends-on"
 ---
 
 ## What

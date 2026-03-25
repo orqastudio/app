@@ -1,28 +1,24 @@
 ---
-id: TASK-b7a65fee
-type: task
-title: Move dev controller to debugger/
-description: Relocate scripts/dev.mjs and scripts/dev-dashboard.html to debugger/ and update Makefile and internal paths.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-b7a65fee"
+type: "task"
+title: "Move dev controller to debugger/"
+description: "Relocate scripts/dev.mjs and scripts/dev-dashboard.html to debugger/ and update Makefile and internal paths."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - scripts/dev.mjs moved to debugger/dev.mjs
-  - scripts/dev-dashboard.html moved to debugger/dev-dashboard.html
-  - Makefile dev controller references updated (9 changes)
-  - DASHBOARD_HTML path in dev.mjs updated
-  - make dev starts successfully
-  - scripts/ directory removed if empty
+  - "scripts/dev.mjs moved to debugger/dev.mjs"
+  - "scripts/dev-dashboard.html moved to debugger/dev-dashboard.html"
+  - "Makefile dev controller references updated (9 changes)"
+  - "DASHBOARD_HTML path in dev.mjs updated"
+  - "make dev starts successfully"
+  - "scripts/ directory removed if empty"
 relationships:
-  - target: EPIC-5adc6d0a
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-c0b200c5
-    type: depends-on
-  - target: TASK-f47db62a
-    type: depended-on-by
-  - target: TASK-43c0557f
-    type: depended-on-by
+  - target: "EPIC-5adc6d0a"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-c0b200c5"
+    type: "depends-on"
 ---
 
 ## What

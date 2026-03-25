@@ -1,27 +1,23 @@
 ---
-id: TASK-a77fcf2e
-type: task
-title: Move sidecar to sidecars/claude-agentsdk-sidecar/
-description: Relocate sidecar/ to sidecars/claude-agentsdk-sidecar/ and update all references in Makefile and Rust source.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+id: "TASK-a77fcf2e"
+type: "task"
+title: "Move sidecar to sidecars/claude-agentsdk-sidecar/"
+description: "Relocate sidecar/ to sidecars/claude-agentsdk-sidecar/ and update all references in Makefile and Rust source."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 acceptance:
-  - sidecar/ moved to sidecars/claude-agentsdk-sidecar/
-  - Makefile sidecar targets updated
-  - sidecar_commands.rs path references updated (5 paths)
-  - make lint-backend passes
-  - make test-rust passes
+  - "sidecar/ moved to sidecars/claude-agentsdk-sidecar/"
+  - "Makefile sidecar targets updated"
+  - "sidecar_commands.rs path references updated (5 paths)"
+  - "make lint-backend passes"
+  - "make test-rust passes"
 relationships:
-  - target: EPIC-5adc6d0a
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-2a557489
-    type: depends-on
-  - target: TASK-1a134716
-    type: depended-on-by
-  - target: TASK-43c0557f
-    type: depended-on-by
+  - target: "EPIC-5adc6d0a"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-2a557489"
+    type: "depends-on"
 ---
 
 ## What

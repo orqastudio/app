@@ -1,6 +1,6 @@
 ---
 id: "EPIC-4fb5e9e1"
-type: epic
+type: "epic"
 title: "Vision & Brand Identity"
 description: "Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-c9e0a695 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision."
 status: "completed"
@@ -14,25 +14,8 @@ scoring:
   complexity: 3
   dependencies: 4
 relationships:
-  - target: "RES-0bbae4c4"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-0bbae4c4"
-  - target: "RES-a5d10705"
-    type: "guided-by"
-    rationale: "Auto-generated inverse of informed-by relationship from RES-a5d10705"
-  - target: "TASK-8fea9c00"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-ef117f44"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "TASK-8c68c28d"
-    type: "delivered-by"
-    rationale: "Epic contains this task"
-  - target: "AD-e711446e"
-    type: "driven-by"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Implementation Design

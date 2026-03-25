@@ -1,33 +1,22 @@
 ---
-id: EPIC-5a5e3c6c
-type: epic
+id: "EPIC-5a5e3c6c"
+type: "epic"
 title: "Notification system — toast, in-app panel, desktop"
 description: "Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel."
-status: completed
-priority: P2
+status: "completed"
+priority: "P2"
 scoring:
   impact: 3
   urgency: 2
   complexity: 2
   dependencies: 2
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: next
+horizon: "next"
 relationships:
-  - target: TASK-5610fe29
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-97e1fa39
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-299639cc
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: IMPL-9177c9bd
-    type: cautioned-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

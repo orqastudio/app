@@ -1,51 +1,25 @@
 ---
-id: EPIC-9e3d320b
-type: epic
+id: "EPIC-9e3d320b"
+type: "epic"
 title: "Port allocation standardisation and CLI process ownership"
 description: "Standardise all service ports above 10000, fix the daemon port mismatch between CLI and MCP server, establish the CLI as the single developer interface with MCP/LSP as stdio protocol modes, embed the search engine in the daemon, and demote the dev controller to debug-only tooling."
-status: active
-priority: P1
+status: "active"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 5
   complexity: 3
   dependencies: 2
-created: 2026-03-24
-updated: 2026-03-24
-horizon: active
+created: 2026-03-24T00:00:00.000Z
+updated: 2026-03-24T00:00:00.000Z
+horizon: "active"
 relationships:
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Port standardisation and CLI process ownership are infrastructure prerequisites for reliable dogfooding"
-  - target: PILLAR-c9e0a695
-    type: grounded
+  - target: "PILLAR-c9e0a695"
+    type: "grounded"
     rationale: "Makes infrastructure configuration visible, structured, and consistently managed through the CLI"
-  - target: TASK-d3b7ddd7
-    type: delivered-by
-  - target: TASK-72bb47b5
-    type: delivered-by
-  - target: TASK-ec4a3c53
-    type: delivered-by
-  - target: TASK-c3ce6480
-    type: delivered-by
-  - target: TASK-5139ce65
-    type: delivered-by
-  - target: TASK-57e2f4c4
-    type: delivered-by
-  - target: TASK-35444c5b
-    type: delivered-by
-  - target: TASK-86e8a21b
-    type: delivered-by
-  - target: AD-a44384d1
-    type: driven-by
-  - target: TASK-8aedd59b
-    type: delivered-by
-  - target: TASK-aef92af1
-    type: delivered-by
-  - target: TASK-088e20b7
-    type: delivered-by
-  - target: TASK-4e25811b
-    type: delivered-by
 ---
 
 ## Context

@@ -1,30 +1,22 @@
 ---
-id: EPIC-c08f0b83
-type: epic
-title: Roadmap kanban view
+id: "EPIC-c08f0b83"
+type: "epic"
+title: "Roadmap kanban view"
 description: "Replace the static roadmap documentation page with a dynamic kanban board view under Process. Milestone-level board with drill-down into epics and tasks, all data from the graph."
-status: completed
-priority: P2
+status: "completed"
+priority: "P2"
 scoring:
   impact: 4
   urgency: 2
   complexity: 3
   dependencies: 1
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: next
+horizon: "next"
 relationships:
-  - target: TASK-c08f0b83
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-d5971d0d
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: IMPL-f39f3824
-    type: cautioned-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

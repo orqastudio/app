@@ -1,24 +1,22 @@
 ---
-id: TASK-4f1db8fa
-type: task
+id: "TASK-4f1db8fa"
+type: "task"
 title: "Frontend: References panel in artifact viewer"
-description: Add a ReferencesPanel component below the frontmatter header showing incoming and outgoing artifact cross-references using the graph SDK.
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+description: "Add a ReferencesPanel component below the frontmatter header showing incoming and outgoing artifact cross-references using the graph SDK."
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - Incoming references shown as clickable ArtifactLink chips
-  - Outgoing references shown as clickable ArtifactLink chips
-  - Sections are collapsible
-  - Empty sections are hidden
-  - Clicking a reference navigates to the target artifact
-  - make typecheck passes
+  - "Incoming references shown as clickable ArtifactLink chips"
+  - "Outgoing references shown as clickable ArtifactLink chips"
+  - "Sections are collapsible"
+  - "Empty sections are hidden"
+  - "Clicking a reference navigates to the target artifact"
+  - "make typecheck passes"
 relationships:
-  - target: EPIC-9ddef7f9
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-58e87849
-    type: depended-on-by
+  - target: "EPIC-9ddef7f9"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 

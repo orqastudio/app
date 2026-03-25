@@ -1,32 +1,14 @@
 ---
-id: AD-c6c2d9fb
-type: decision
-title: Rule promotion requires enforcement — rules without enforcement are lessons
+id: "AD-c6c2d9fb"
+type: "decision"
+title: "Rule promotion requires enforcement — rules without enforcement are lessons"
 description: "A lesson MUST NOT be promoted to a rule unless an enforcement mechanism is attempted. Enforcement flows through the artifact graph enforcement system at three layers: artifact graph declaration, Rust application, and Claude plugin. Raw platform hooks bypass the system and are forbidden."
-status: completed
-created: 2026-03-14
-updated: 2026-03-14
+status: "completed"
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 relationships:
-  - target: RULE-c603e90e
-    type: enforced-by
-    rationale: "Strengthens the promotion pipeline — promotion now requires enforcement, not just documentation"
-  - target: RULE-e1f1afc1
-    type: enforced-by
-    rationale: "All enforcement must flow through the skill injection / enforcement engine system"
-  - target: RULE-4603207a
-    type: enforced-by
-    rationale: "Extends enforcement-before-code to enforcement-before-promotion"
-  - target: RULE-87ba1b81
-    type: enforced-by
-    rationale: "Auto-generated inverse of enforces relationship from RULE-87ba1b81"
-  - target: EPIC-12fba656
-    type: drives
-  - target: IMPL-e3399a4d
-    type: taught-by
-  - target: IMPL-1dbed312
-    type: taught-by
-  - target: RULE-af1cd87d
-    type: enforced-by
+  - target: "EPIC-12fba656"
+    type: "drives"
 ---
 ## Decision
 

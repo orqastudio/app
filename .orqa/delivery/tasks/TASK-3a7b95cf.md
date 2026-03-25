@@ -1,6 +1,6 @@
 ---
 id: "TASK-3a7b95cf"
-type: task
+type: "task"
 title: "Classify artifacts as core vs project-specific and standardise layer taxonomy"
 description: "Audit every governance artifact to determine whether it is truly core (ships with every project) or OrqaStudio-specific (dogfood). Rename layer values, standardise scope, plan template distribution, and identify user-facing documentation gaps."
 status: "completed"
@@ -17,8 +17,6 @@ relationships:
   - target: "EPIC-5aa11e2f"
     type: "delivers"
     rationale: "Task belongs to this epic"
-  - target: "TASK-698afd4c"
-    type: "depended-on-by"
 ---
 ## What
 

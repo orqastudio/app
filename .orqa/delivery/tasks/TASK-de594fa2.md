@@ -1,21 +1,19 @@
 ---
-id: TASK-de594fa2
-type: task
-title: Implement SQLite database and migrations
+id: "TASK-de594fa2"
+type: "task"
+title: "Implement SQLite database and migrations"
 description: "Set up SQLite database creation, schema initialization, and migration infrastructure for conversation persistence."
-status: completed
-created: 2026-03-02
-updated: 2026-03-02
+status: "completed"
+created: 2026-03-02T00:00:00.000Z
+updated: 2026-03-02T00:00:00.000Z
 acceptance:
-  - Database is created on first app launch
-  - Schema matches the technical design specification
-  - Repository pattern is implemented for session and message access
+  - "Database is created on first app launch"
+  - "Schema matches the technical design specification"
+  - "Repository pattern is implemented for session and message access"
 relationships:
-  - target: EPIC-713c48c6
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-3187066a
-    type: depended-on-by
+  - target: "EPIC-713c48c6"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

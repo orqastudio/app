@@ -35,10 +35,6 @@ relationships:
     type: enforces
   - target: AD-2dc8ab96
     type: enforces
-  - target: DOC-9814ec3c
-    type: documented-by
-  - target: DOC-b11d4f61
-    type: documented-by
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
 

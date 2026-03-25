@@ -1,29 +1,21 @@
 ---
-id: TASK-8c0c77b0
-type: task
-title: Task Dependency Mechanism
+id: "TASK-8c0c77b0"
+type: "task"
+title: "Task Dependency Mechanism"
 description: "Add a formal depends-on field to the task schema in the artifact framework, add a dependency gate to the task lifecycle rules, and backfill existing tasks that have implicit dependencies."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-4c94fe14
+status: "completed"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-4c94fe14"
 acceptance:
-  - depends-on field defined in the Task schema (artifact-framework.md)
-  - Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done)
-  - Field ordering convention updated to include depends-on
-  - Traceability web updated to show task-level dependencies
+  - "depends-on field defined in the Task schema (artifact-framework.md)"
+  - "Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done)"
+  - "Field ordering convention updated to include depends-on"
+  - "Traceability web updated to show task-level dependencies"
 relationships:
-  - target: EPIC-7394ba2a
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-0a4a9172
-    type: depended-on-by
-  - target: TASK-4023ac04
-    type: depended-on-by
-  - target: TASK-bc351dc1
-    type: depended-on-by
-  - target: TASK-c52792a8
-    type: depended-on-by
+  - target: "EPIC-7394ba2a"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## Context
 

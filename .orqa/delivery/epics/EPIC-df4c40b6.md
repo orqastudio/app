@@ -1,45 +1,22 @@
 ---
-id: EPIC-df4c40b6
-type: epic
+id: "EPIC-df4c40b6"
+type: "epic"
 title: "Dashboard redesign — layout, widgets, and plugin extensibility"
-description: Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets.
-status: completed
-priority: P1
+description: "Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets."
+status: "completed"
+priority: "P1"
 scoring:
   impact: 4
   urgency: 3
   complexity: 3
   dependencies: 3
-created: 2026-03-14
-updated: 2026-03-14
+created: 2026-03-14T00:00:00.000Z
+updated: 2026-03-14T00:00:00.000Z
 deadline: null
-horizon: active
+horizon: "active"
 relationships:
-  - target: TASK-12e23349
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-a5b75216
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-1382054e
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-777c0715
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: TASK-b1bb8fe5
-    type: delivered-by
-    rationale: Epic contains this task
-  - target: IDEA-c8b70949
-    type: realised-by
-  - target: IMPL-66b7b217
-    type: cautioned-by
-  - target: IMPL-092cc947
-    type: cautioned-by
-  - target: IMPL-e95470f3
-    type: cautioned-by
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 ## Context

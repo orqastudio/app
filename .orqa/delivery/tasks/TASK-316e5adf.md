@@ -1,22 +1,20 @@
 ---
-id: TASK-316e5adf
-type: task
-title: Add errors.svelte.ts store test
-description: Write test file for the one untested frontend store.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-e5dd38e4
+id: "TASK-316e5adf"
+type: "task"
+title: "Add errors.svelte.ts store test"
+description: "Write test file for the one untested frontend store."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - errors.test.ts exists in __tests__/
+  - "errors.test.ts exists in __tests__/"
   - "Tests cover error creation, dismissal, and clearing"
-  - make test-frontend passes
+  - "make test-frontend passes"
 relationships:
-  - target: EPIC-2bf6887a
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-e850a474
-    type: depended-on-by
+  - target: "EPIC-2bf6887a"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

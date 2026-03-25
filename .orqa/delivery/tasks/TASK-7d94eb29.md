@@ -1,6 +1,6 @@
 ---
 id: "TASK-7d94eb29"
-type: task
+type: "task"
 title: "Define priority dimensions and auto-classification rules"
 description: "Define project-level priority dimensions based on RES-0e971367 gap patterns and encode auto-classification rules"
 status: "completed"
@@ -14,8 +14,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-445e8155"
     type: "depends-on"
-  - target: "TASK-9471304a"
-    type: "depended-on-by"
 ---
 ## What
 

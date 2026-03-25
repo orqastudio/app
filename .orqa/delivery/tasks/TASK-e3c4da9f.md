@@ -1,24 +1,22 @@
 ---
-id: TASK-e3c4da9f
-type: task
-title: Code indexer and regex search
+id: "TASK-e3c4da9f"
+type: "task"
+title: "Code indexer and regex search"
 description: "Implements the code indexing pipeline using DuckDB to store file chunks, and exposes a regex search command for matching patterns across all indexed content."
-status: completed
-created: 2026-03-04
-updated: 2026-03-09
-assignee: AGENT-e5dd38e4
+status: "completed"
+created: 2026-03-04T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-e5dd38e4"
 acceptance:
-  - DuckDB database stores code chunks with file path
-  - content
-  - and metadata
-  - Regex search finds patterns across indexed files
-  - IPC command registered and callable from frontend
+  - "DuckDB database stores code chunks with file path"
+  - "content"
+  - "and metadata"
+  - "Regex search finds patterns across indexed files"
+  - "IPC command registered and callable from frontend"
 relationships:
-  - target: EPIC-7f3119b1
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-b869a015
-    type: depended-on-by
+  - target: "EPIC-7f3119b1"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## What
 

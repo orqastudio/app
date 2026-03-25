@@ -1,27 +1,25 @@
 ---
-id: TASK-cb213c0d
-type: task
+id: "TASK-cb213c0d"
+type: "task"
 title: "Plugin: maintain memory entries for unimplemented ADs"
 description: "Use Claude Code's memory system to surface unimplemented architecture decisions. Session-start hook creates/updates concise memory entries for accepted ADs lacking enforced-by/practiced-by edges. Hook also cleans up memory entries when ADs mature. Leverages provider-native memory for compaction-resistant context."
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
-  - Session-start hook scans .orqa/process/decisions/ for accepted ADs
-  - ADs with enforced-by or practiced-by relationships are excluded
-  - Memory file created per unimplemented AD with concise reference + summary
-  - MEMORY.md updated with section listing unimplemented AD memory files
-  - Memory files removed when ADs gain enforced-by or practiced-by edges
-  - Existing session-start functionality unchanged
-  - Stdout AD injection block replaced with memory-based approach
+  - "Session-start hook scans .orqa/process/decisions/ for accepted ADs"
+  - "ADs with enforced-by or practiced-by relationships are excluded"
+  - "Memory file created per unimplemented AD with concise reference + summary"
+  - "MEMORY.md updated with section listing unimplemented AD memory files"
+  - "Memory files removed when ADs gain enforced-by or practiced-by edges"
+  - "Existing session-start functionality unchanged"
+  - "Stdout AD injection block replaced with memory-based approach"
 relationships:
-  - target: EPIC-88f359b0
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-d2b54d2f
-    type: depended-on-by
-  - target: IMPL-d3804cd0
-    type: yields
+  - target: "EPIC-88f359b0"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "IMPL-d3804cd0"
+    type: "yields"
 ---
 ## What
 

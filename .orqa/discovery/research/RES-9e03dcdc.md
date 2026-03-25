@@ -10,8 +10,6 @@ relationships:
   - target: "EPIC-57dd7d4c"
     type: "guides"
     rationale: "Research findings informed the design of Vision Alignment & Schema Simplification"
-  - target: "RES-94a3a6ca"
-    type: "merged-from"
   - target: "RES-aefc9e44"
     type: "merged-into"
 ---

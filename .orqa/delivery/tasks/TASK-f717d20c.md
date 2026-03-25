@@ -1,6 +1,6 @@
 ---
 id: "TASK-f717d20c"
-type: task
+type: "task"
 title: "Agents content audit (7 agents)"
 description: "Audit all 7 agent definitions: expand Tier 1 skills where gaps exist, match capabilities to RULE-b723ea53 role matrix, update orchestrator prompt for pipeline philosophy."
 status: "completed"
@@ -20,8 +20,6 @@ relationships:
     rationale: "Task belongs to this epic"
   - target: "TASK-8e9ca15d"
     type: "depends-on"
-  - target: "TASK-d2b54d2f"
-    type: "depended-on-by"
 ---
 ## What
 

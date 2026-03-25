@@ -1,24 +1,20 @@
 ---
-id: EPIC-f6da17ed
-type: epic
+id: "EPIC-f6da17ed"
+type: "epic"
 title: "Core Workflow Engine and State Machines"
 description: "Build the state machine evaluation engine, YAML workflow format, guard/action primitives, category-based composition, and workflow resolver. Plugins own state machines; core provides the engine."
-status: captured
-priority: P1
-created: 2026-03-25
-updated: 2026-03-25
-horizon: active
+status: "captured"
+priority: "P1"
+created: 2026-03-25T00:00:00.000Z
+updated: 2026-03-25T00:00:00.000Z
+horizon: "active"
 relationships:
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Workflow engine is core infrastructure for dogfooding"
-  - target: EPIC-c828007a
-    type: depends-on
+  - target: "EPIC-c828007a"
+    type: "depends-on"
     rationale: "Workflow engine uses graph queries for guards — graph must be correct first"
-  - target: EPIC-a63fde02
-    type: depended-on-by
-  - target: EPIC-ecef93a8
-    type: depended-on-by
 ---
 
 ## Scope

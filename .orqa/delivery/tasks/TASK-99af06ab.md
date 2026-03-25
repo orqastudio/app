@@ -1,28 +1,24 @@
 ---
-id: TASK-99af06ab
-type: task
+id: "TASK-99af06ab"
+type: "task"
 title: "Frontend: ArtifactToolbar with sort dropdown and filter popover"
 description: "Replace SearchInput in ArtifactNav with an icon-based toolbar containing sort (DropdownMenu) and filter (Popover) controls, dynamically generated from schema metadata."
-status: completed
-created: 2026-03-11
-updated: 2026-03-11
+status: "completed"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-11T00:00:00.000Z
 acceptance:
-  - Toolbar renders at h-10 matching NavSubPanel header height
-  - Sort dropdown shows options dynamically from NavType sortable_fields
-  - Filter popover shows sections dynamically from NavType filterable_fields
-  - Active indicators appear when sort/filter differs from defaults
-  - Clear-all resets to _navigation.json defaults
-  - make typecheck and make lint-frontend pass
+  - "Toolbar renders at h-10 matching NavSubPanel header height"
+  - "Sort dropdown shows options dynamically from NavType sortable_fields"
+  - "Filter popover shows sections dynamically from NavType filterable_fields"
+  - "Active indicators appear when sort/filter differs from defaults"
+  - "Clear-all resets to _navigation.json defaults"
+  - "make typecheck and make lint-frontend pass"
 relationships:
-  - target: EPIC-9ddef7f9
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-dde309b0
-    type: depends-on
-  - target: TASK-66a87d84
-    type: depended-on-by
-  - target: TASK-58e87849
-    type: depended-on-by
+  - target: "EPIC-9ddef7f9"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-dde309b0"
+    type: "depends-on"
 ---
 
 

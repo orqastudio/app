@@ -1,19 +1,17 @@
 ---
-id: KNOW-f5ee4e0d
-type: knowledge
-title: Plugin Setup
+id: "KNOW-f5ee4e0d"
+type: "knowledge"
+title: "Plugin Setup"
 description: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
-status: active
-created: 2026-03-11
-updated: 2026-03-23
-category: tool
-version: 0.2.0
+status: "active"
+created: 2026-03-11T00:00:00.000Z
+updated: 2026-03-23T00:00:00.000Z
+category: "tool"
+version: "0.2.0"
 user-invocable: true
 relationships:
-  - target: DOC-bad8e26f
-    type: synchronised-with
-  - target: AGENT-d1be3776
-    type: employed-by
+  - target: "DOC-bad8e26f"
+    type: "synchronised-with"
 ---
 
 # Plugin Setup

@@ -1,29 +1,25 @@
 ---
-id: TASK-f50f84f8
-type: task
-title: Write core architecture documentation
-description: Complete end-to-end documentation of the target core application architecture.
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
-assignee: AGENT-bbad3d30
+id: "TASK-f50f84f8"
+type: "task"
+title: "Write core architecture documentation"
+description: "Complete end-to-end documentation of the target core application architecture."
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
+assignee: "AGENT-bbad3d30"
 acceptance:
   - "Architecture doc covers: artifact system, knowledge graph, prompt injection, rule enforcement, learning loop"
-  - Every module in the codebase appears in the architecture map
-  - Data flow diagrams trace end-to-end paths
-  - Document lives in .orqa/documentation/development/
+  - "Every module in the codebase appears in the architecture map"
+  - "Data flow diagrams trace end-to-end paths"
+  - "Document lives in .orqa/documentation/development/"
 relationships:
-  - target: EPIC-2bf6887a
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-d1b856b5
-    type: depends-on
-  - target: TASK-cc7df87c
-    type: depends-on
-  - target: TASK-cfeed07a
-    type: depended-on-by
-  - target: TASK-e850a474
-    type: depended-on-by
+  - target: "EPIC-2bf6887a"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-d1b856b5"
+    type: "depends-on"
+  - target: "TASK-cc7df87c"
+    type: "depends-on"
 ---
 
 ## What

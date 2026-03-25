@@ -1,19 +1,17 @@
 ---
-id: TASK-c34a185e
-type: task
-title: Mid-cycle orientation tooling
-description: Build tooling that periodically re-grounds the agent in the original epic purpose during extended work sessions
-status: completed
-created: 2026-03-13
-updated: 2026-03-13
+id: "TASK-c34a185e"
+type: "task"
+title: "Mid-cycle orientation tooling"
+description: "Build tooling that periodically re-grounds the agent in the original epic purpose during extended work sessions"
+status: "completed"
+created: 2026-03-13T00:00:00.000Z
+updated: 2026-03-13T00:00:00.000Z
 acceptance:
-  - Tooling detects when execution has drifted from the original epic intention and surfaces re-orientation prompts
+  - "Tooling detects when execution has drifted from the original epic intention and surfaces re-orientation prompts"
 relationships:
-  - target: EPIC-a60f5b6b
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-9471304a
-    type: depended-on-by
+  - target: "EPIC-a60f5b6b"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 
 ## What

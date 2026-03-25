@@ -1,34 +1,16 @@
 ---
-id: EPIC-347a8c3d
-type: epic
+id: "EPIC-347a8c3d"
+type: "epic"
 title: "Rust artifact platform engine"
 description: "Extend libs/validation from validator-only to the canonical artifact engine. Single parser/serialiser for markdown+YAML → validated JSON. Content access, rule evaluation, hook lifecycle, daemon mode. Eliminates all hand-rolled frontmatter parsing."
-status: captured
-priority: P0
+status: "captured"
+priority: "P0"
 relationships:
-  - target: PILLAR-c9e0a695
-    type: grounded
+  - target: "PILLAR-c9e0a695"
+    type: "grounded"
     rationale: "Clarity Through Structure — single engine for all artifact operations"
-  - target: EPIC-4e9696fa
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-4e9696fa"
-  - target: EPIC-3f01a10f
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-3f01a10f"
-  - target: EPIC-97fd0689
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-97fd0689"
-  - target: EPIC-9215a167
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-9215a167"
-  - target: EPIC-5b353057
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-5b353057"
-  - target: EPIC-f23271d3
-    type: depended-on-by
-    rationale: "Auto-generated inverse of depended-on-by relationship from EPIC-f23271d3"
-  - target: MS-b1ac0a20
-    type: fulfils
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
 # Rust Artifact Platform Engine

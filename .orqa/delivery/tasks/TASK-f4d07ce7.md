@@ -1,43 +1,41 @@
 ---
-id: TASK-f4d07ce7
-type: task
-title: Shared list item and status indicator components
+id: "TASK-f4d07ce7"
+type: "task"
+title: "Shared list item and status indicator components"
 description: "Extracts duplicated list item and status display logic into reusable shared components covering all artifact lifecycle statuses, used consistently across the sidebar and landing grid."
-status: completed
-created: 2026-03-09
-updated: 2026-03-09
-assignee: AGENT-0aad40f4
+status: "completed"
+created: 2026-03-09T00:00:00.000Z
+updated: 2026-03-09T00:00:00.000Z
+assignee: "AGENT-0aad40f4"
 acceptance:
-  - A shared StatusIndicator component exists with semantic colours and icons per status value
-  - StatusIndicator works in list items
-  - detail views
-  - and badge contexts
-  - StatusIndicator covers all artifact lifecycle statuses (draft
-  - ready
-  - in-progress
-  - done
-  - captured
-  - exploring
-  - shaped
-  - promoted
-  - archived
-  - surpassed
-  - etc.)
-  - A shared ArtifactListItem component exists with consistent structure (title
-  - optional description
-  - status indicator)
-  - ArtifactListItem used in both ArtifactNav (sidebar) and ArtifactLanding (grid)
-  - Task list displays title consistently (never raw TASK-ID when title exists)
-  - Artifact list bars include status indicator (dot
-  - icon
-  - or colour)
-  - Components are reusable across planning AND governance sections
+  - "A shared StatusIndicator component exists with semantic colours and icons per status value"
+  - "StatusIndicator works in list items"
+  - "detail views"
+  - "and badge contexts"
+  - "StatusIndicator covers all artifact lifecycle statuses (draft"
+  - "ready"
+  - "in-progress"
+  - "done"
+  - "captured"
+  - "exploring"
+  - "shaped"
+  - "promoted"
+  - "archived"
+  - "surpassed"
+  - "etc.)"
+  - "A shared ArtifactListItem component exists with consistent structure (title"
+  - "optional description"
+  - "status indicator)"
+  - "ArtifactListItem used in both ArtifactNav (sidebar) and ArtifactLanding (grid)"
+  - "Task list displays title consistently (never raw TASK-ID when title exists)"
+  - "Artifact list bars include status indicator (dot"
+  - "icon"
+  - "or colour)"
+  - "Components are reusable across planning AND governance sections"
 relationships:
-  - target: EPIC-489c0a47
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-04051871
-    type: depended-on-by
+  - target: "EPIC-489c0a47"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
 ---
 ## Findings Addressed
 

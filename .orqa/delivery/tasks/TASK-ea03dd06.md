@@ -1,25 +1,23 @@
 ---
-id: TASK-ea03dd06
-type: task
+id: "TASK-ea03dd06"
+type: "task"
 title: "Update plugin manifests: all orqa-plugin.json skill → knowledge"
 description: "Update all orqa-plugin.json plugin manifest files to replace 'skills' directory references and type declarations with 'knowledge' equivalents."
-status: ready
-created: 2026-03-20
-updated: 2026-03-20
+status: "ready"
+created: 2026-03-20T00:00:00.000Z
+updated: 2026-03-20T00:00:00.000Z
 acceptance:
-  - All orqa-plugin.json files reference knowledge/ not skills/
-  - Plugin manifests use 'knowledge' type declarations where 'skill' was used
-  - orqa enforce schema passes on all plugin manifests
-  - No plugin manifest references SKILL- prefixed IDs
+  - "All orqa-plugin.json files reference knowledge/ not skills/"
+  - "Plugin manifests use 'knowledge' type declarations where 'skill' was used"
+  - "orqa enforce schema passes on all plugin manifests"
+  - "No plugin manifest references SKILL- prefixed IDs"
 relationships:
-  - target: EPIC-fdcdb958
-    type: delivers
-  - target: TASK-30f5bdc8
-    type: depends-on
-  - target: TASK-126e853f
-    type: depends-on
-  - target: TASK-b3e6bbfb
-    type: depended-on-by
+  - target: "EPIC-fdcdb958"
+    type: "delivers"
+  - target: "TASK-30f5bdc8"
+    type: "depends-on"
+  - target: "TASK-126e853f"
+    type: "depends-on"
 ---
 
 ## What

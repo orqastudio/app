@@ -10,8 +10,6 @@ relationships:
   - target: AD-859ed163
     type: evolves-into
     rationale: "AD-859ed163 scopes SQLite to conversation persistence only, replacing this broader SQLite-for-all decision"
-  - target: DOC-bf647454
-    type: documented-by
 ---
 ## Decision
 

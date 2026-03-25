@@ -1,27 +1,25 @@
 ---
-id: TASK-c39b12a7
-type: task
-title: Pre-commit hook blocks core graph artifact modifications
+id: "TASK-c39b12a7"
+type: "task"
+title: "Pre-commit hook blocks core graph artifact modifications"
 description: "Add a pre-commit check that warns and blocks commits modifying core graph artifacts (schemas, orchestrator, core skills, role definitions) unless force-overridden. Dogfood mode bypasses."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 docs: []
 acceptance:
-  - Committing changes to schema.json in any artifact directory is blocked with warning
-  - Committing changes to orchestrator.md is blocked with warning
-  - Committing changes to core skill SKILL.md files is blocked with warning
-  - Setting ORQA_CORE_OVERRIDE=1 allows the commit
-  - Dogfood projects skip the check entirely
-  - Warning message explains that changing core artifacts risks breaking the system thinking structure
+  - "Committing changes to schema.json in any artifact directory is blocked with warning"
+  - "Committing changes to orchestrator.md is blocked with warning"
+  - "Committing changes to core skill SKILL.md files is blocked with warning"
+  - "Setting ORQA_CORE_OVERRIDE=1 allows the commit"
+  - "Dogfood projects skip the check entirely"
+  - "Warning message explains that changing core artifacts risks breaking the system thinking structure"
 relationships:
-  - target: EPIC-f079c196
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-bb4fa466
-    type: depends-on
-  - target: TASK-5ae6eb0f
-    type: depended-on-by
+  - target: "EPIC-f079c196"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-bb4fa466"
+    type: "depends-on"
 ---
 ## What
 

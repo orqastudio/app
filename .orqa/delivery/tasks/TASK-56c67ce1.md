@@ -1,31 +1,27 @@
 ---
-id: TASK-56c67ce1
-type: task
-title: Make relationship fields required in schemas
+id: "TASK-56c67ce1"
+type: "task"
+title: "Make relationship fields required in schemas"
 description: "Move relationships, maturity, and category from optional to required in all governance schemas. Update orchestrator prompt with relationship guidance."
-status: completed
-created: 2026-03-12
-updated: 2026-03-12
+status: "completed"
+created: 2026-03-12T00:00:00.000Z
+updated: 2026-03-12T00:00:00.000Z
 assignee: null
 docs: []
 acceptance:
   - "relationships is in required array for lessons, decisions, rules, skills schemas"
-  - maturity is in required array for lesson schema
-  - category is in required array for skill schema
-  - Pre-commit hook enforces on all new/modified artifacts
-  - Orchestrator prompt updated with guidance for including relationships when creating artifacts
-  - All existing artifacts pass validation against updated schemas
+  - "maturity is in required array for lesson schema"
+  - "category is in required array for skill schema"
+  - "Pre-commit hook enforces on all new/modified artifacts"
+  - "Orchestrator prompt updated with guidance for including relationships when creating artifacts"
+  - "All existing artifacts pass validation against updated schemas"
 rule-overrides: []
 relationships:
-  - target: EPIC-3e6cad90
-    type: delivers
-    rationale: Task belongs to this epic
-  - target: TASK-fff38767
-    type: depends-on
-  - target: TASK-49db1a18
-    type: depended-on-by
-  - target: TASK-c89d3c79
-    type: depended-on-by
+  - target: "EPIC-3e6cad90"
+    type: "delivers"
+    rationale: "Task belongs to this epic"
+  - target: "TASK-fff38767"
+    type: "depends-on"
 ---
 
 ## What

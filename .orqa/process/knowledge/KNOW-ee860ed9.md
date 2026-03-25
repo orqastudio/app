@@ -1,12 +1,10 @@
 ---
-id: KNOW-ee860ed9
-type: knowledge
-title: Enforcement Patterns
-description: Available enforcement mechanisms from strongest to weakest — validator checks, blocking hooks, warning hooks, stop hooks, thinking modes, agent prompts.
-status: active
-relationships:
-  - target: AGENT-7a06d10e
-    type: employed-by
+id: "KNOW-ee860ed9"
+type: "knowledge"
+title: "Enforcement Patterns"
+description: "Available enforcement mechanisms from strongest to weakest — validator checks, blocking hooks, warning hooks, stop hooks, thinking modes, agent prompts."
+status: "active"
+relationships: []
 ---
 
 # Enforcement Patterns
