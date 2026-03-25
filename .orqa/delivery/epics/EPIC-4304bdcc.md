@@ -31,6 +31,8 @@ relationships:
     type: delivered-by
   - target: TASK-2cc041f3
     type: delivered-by
+  - target: TASK-ff0a2460
+    type: delivered-by
 ---
 
 ## Context
@@ -48,4 +50,7 @@ This epic stabilises those changes and implements the remaining design decisions
 | [TASK-aee98da7](TASK-aee98da7) | Token efficiency — lazy rule loading | todo | TASK-8870f959 |
 | [TASK-74f5fcdf](TASK-74f5fcdf) | Artifact system review — state machine, definitions, audit | todo | — |
 | [TASK-cc86ee65](TASK-cc86ee65) | Milestone dependency mapping | todo | TASK-74f5fcdf |
+| [TASK-d28b2909](TASK-d28b2909) | Relationship vocabulary — confirm and document plugin types | captured | — |
+| [TASK-2cc041f3](TASK-2cc041f3) | Artifact IDs must be title hashes — audit + migrate | captured | — |
+| [TASK-ff0a2460](TASK-ff0a2460) | Forward-only relationship storage — remove stored inverses | captured | TASK-d28b2909 |
 | [TASK-272b3d07](TASK-272b3d07) | Reconcile EPIC-4304bdcc | todo | all above |
