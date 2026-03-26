@@ -22,10 +22,21 @@
     "docs": {
       "source": "docs",
       "target": ".orqa/documentation"
+    },
+    "workflows": {
+      "source": "workflows",
+      "target": ".orqa/process/workflows"
     }
   },
   "provides": {
     "schemas": [],
+    "workflows": [
+      {
+        "artifact_type": "epic",
+        "path": "workflows/learning.contribution.workflow.yaml",
+        "contribution": true
+      }
+    ],
     "enforcement_mechanisms": [
       {
         "key": "behavioral",

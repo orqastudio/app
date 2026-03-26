@@ -1,7 +1,7 @@
 name: pivot
 version: "0.1.0"
 artifact_type: pivot
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Pivot lifecycle state machine. Pivots capture significant strategic
   direction changes. The workflow is intentionally linear — a pivot is

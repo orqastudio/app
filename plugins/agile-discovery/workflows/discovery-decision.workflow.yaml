@@ -1,0 +1,161 @@
+name: discovery-decision
+version: "0.1.0"
+artifact_type: discovery-decision
+plugin: "@orqastudio/plugin-agile-discovery"
+description: >
+  Discovery decision lifecycle state machine. Discovery decisions capture
+  high-level strategic choices made during the discovery stage — product
+  direction, market positioning, technology bets. These are distinct from
+  planning-stage architecture decisions (AD-*). The workflow tracks capture,
+  exploration, active deliberation, review, and completion.
+
+initial_state: captured
+
+states:
+  captured:
+    category: planning
+    description: "Decision question has been captured but not yet explored."
+
+  exploring:
+    category: planning
+    description: "Decision space is being explored — options, trade-offs, constraints."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Decision exploration started"
+
+  active:
+    category: active
+    description: "Decision is actively being deliberated — a preferred option is being developed."
+    on_enter:
+      - type: set_field
+        params:
+          field: started_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Decision deliberation active"
+
+  hold:
+    category: active
+    description: "Decision is paused, waiting for external input."
+
+  review:
+    category: review
+    description: "Decision is being reviewed for acceptance."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Decision entered review"
+
+  completed:
+    category: completed
+    description: "Decision has been accepted and recorded."
+    on_enter:
+      - type: set_field
+        params:
+          field: decided_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Decision recorded"
+
+  surpassed:
+    category: terminal
+    description: "Decision has been superseded by a newer decision."
+
+  archived:
+    category: terminal
+    description: "Decision is archived."
+
+transitions:
+  # Exploration phase
+  - from: captured
+    to: exploring
+    event: explore
+    description: "Begin exploring the decision space."
+
+  - from: captured
+    to: active
+    event: start
+    description: "Fast-track to active deliberation."
+
+  # Active phase
+  - from: exploring
+    to: active
+    event: start
+    description: "Begin active deliberation."
+
+  - from: exploring
+    to: hold
+    event: pause
+    description: "Pause exploration pending input."
+
+  - from: active
+    to: review
+    event: submit_for_review
+    description: "Submit decision for acceptance review."
+
+  - from: active
+    to: hold
+    event: pause
+    description: "Pause deliberation."
+
+  - from: active
+    to: archived
+    event: archive
+    description: "Archive decision (no longer relevant)."
+
+  - from: hold
+    to: active
+    event: resume
+    description: "Resume deliberation."
+
+  - from: hold
+    to: exploring
+    event: rescope
+    description: "Return to exploration for re-scoping."
+
+  # Review phase
+  - from: review
+    to: completed
+    event: approve
+    description: "Decision accepted and recorded."
+
+  - from: review
+    to: active
+    event: request_changes
+    description: "Further deliberation needed."
+    actions:
+      - type: append_log
+        params:
+          message: "Changes requested during decision review"
+
+  # Terminal transitions
+  - from: completed
+    to: surpassed
+    event: surpass
+    description: "Mark as superseded by a newer decision."
+
+  - from: completed
+    to: archived
+    event: archive
+
+  - from: surpassed
+    to: archived
+    event: archive
+
+  - from: [captured, exploring, hold]
+    to: archived
+    event: archive
+    description: "Archive from non-active states."
+
+migration:
+  captured: captured
+  exploring: exploring
+  active: active
+  hold: hold
+  review: review
+  completed: completed
+  surpassed: surpassed
+  archived: archived

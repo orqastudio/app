@@ -1,0 +1,512 @@
+{
+  "name": "@orqastudio/plugin-agile-discovery",
+  "version": "0.1.4-dev",
+  "displayName": "Discovery Stage",
+  "description": "Discovery-stage artifact types — vision, personas, pillars, pivots, ideas, research, and strategic decisions. Fills the discovery-artifacts contribution point of agile-methodology.",
+  "category": "discovery",
+  "role": null,
+  "provides": {
+    "schemas": [
+      {
+        "key": "vision",
+        "label": "Vision",
+        "plural": "Vision",
+        "icon": "eye",
+        "defaultPath": ".orqa/principles",
+        "idPrefix": "VISION",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^VISION-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      },
+      {
+        "key": "pillar",
+        "label": "Pillar",
+        "plural": "Pillars",
+        "icon": "columns-3",
+        "defaultPath": ".orqa/principles/pillars",
+        "idPrefix": "PILLAR",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PILLAR-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gate": {
+              "type": [
+                "string",
+                "array"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      },
+      {
+        "key": "persona",
+        "label": "Persona",
+        "plural": "Personas",
+        "icon": "users",
+        "defaultPath": ".orqa/principles/personas",
+        "idPrefix": "PERSONA",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PERSONA-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "pivot",
+        "label": "Pivot",
+        "plural": "Pivots",
+        "icon": "refresh-cw",
+        "defaultPath": ".orqa/principles",
+        "idPrefix": "PIVOT",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PIVOT-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "discovery-idea",
+        "label": "Discovery Idea",
+        "plural": "Discovery Ideas",
+        "icon": "lightbulb",
+        "defaultPath": ".orqa/discovery/ideas",
+        "idPrefix": "DISC-IDEA",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^DISC-IDEA-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "discovery-research",
+        "label": "Discovery Research",
+        "plural": "Discovery Research",
+        "icon": "flask-conical",
+        "defaultPath": ".orqa/discovery/research",
+        "idPrefix": "DISC-RES",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^DISC-RES-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "methodology": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "discovery-decision",
+        "label": "Discovery Decision",
+        "plural": "Discovery Decisions",
+        "icon": "scale",
+        "defaultPath": ".orqa/discovery/decisions",
+        "idPrefix": "DISC-AD",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^DISC-AD-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      }
+    ],
+    "views": [],
+    "widgets": [],
+    "workflows": [
+      {
+        "artifact_type": "vision",
+        "path": "workflows/vision.workflow.yaml"
+      },
+      {
+        "artifact_type": "pillar",
+        "path": "workflows/pillar.workflow.yaml"
+      },
+      {
+        "artifact_type": "persona",
+        "path": "workflows/persona.workflow.yaml"
+      },
+      {
+        "artifact_type": "pivot",
+        "path": "workflows/pivot.workflow.yaml"
+      },
+      {
+        "artifact_type": "discovery-idea",
+        "path": "workflows/discovery-idea.workflow.yaml"
+      },
+      {
+        "artifact_type": "discovery-research",
+        "path": "workflows/discovery-research.workflow.yaml"
+      },
+      {
+        "artifact_type": "discovery-decision",
+        "path": "workflows/discovery-decision.workflow.yaml"
+      }
+    ],
+    "relationships": [
+      {
+        "key": "evolves-to",
+        "inverse": "evolved-from",
+        "label": "Evolves To",
+        "inverseLabel": "Evolved From",
+        "from": [
+          "discovery-idea"
+        ],
+        "to": [
+          "discovery-research"
+        ],
+        "description": "Discovery idea evolves into a research investigation",
+        "semantic": "lineage"
+      },
+      {
+        "key": "evolves-to",
+        "inverse": "evolved-from",
+        "label": "Evolves To",
+        "inverseLabel": "Evolved From",
+        "from": [
+          "discovery-research"
+        ],
+        "to": [
+          "discovery-decision"
+        ],
+        "description": "Discovery research evolves into a strategic decision",
+        "semantic": "lineage"
+      },
+      {
+        "key": "drives",
+        "inverse": "driven-by",
+        "label": "Drives",
+        "inverseLabel": "Driven By",
+        "from": [
+          "vision"
+        ],
+        "to": [
+          "pillar"
+        ],
+        "description": "Vision drives a foundational pillar",
+        "semantic": "foundation"
+      },
+      {
+        "key": "pivots",
+        "inverse": "pivoted-by",
+        "label": "Pivots",
+        "inverseLabel": "Pivoted By",
+        "from": [
+          "vision"
+        ],
+        "to": [
+          "pivot"
+        ],
+        "description": "Vision triggers a strategic pivot",
+        "semantic": "foundation"
+      },
+      {
+        "key": "hands-off-to",
+        "inverse": "handed-off-from",
+        "label": "Hands Off To",
+        "inverseLabel": "Handed Off From",
+        "from": [
+          "discovery-decision"
+        ],
+        "to": [
+          "planning-idea"
+        ],
+        "description": "Discovery decision hands off to a planning idea for implementation scoping",
+        "semantic": "lineage"
+      },
+      {
+        "key": "informs",
+        "inverse": "informed-by",
+        "label": "Informs",
+        "inverseLabel": "Informed By",
+        "from": [
+          "discovery-decision"
+        ],
+        "to": [
+          "planning-decision"
+        ],
+        "description": "Discovery decision informs a planning-stage decision",
+        "semantic": "knowledge-flow"
+      }
+    ],
+    "knowledge": [],
+    "cliTools": [],
+    "hooks": [],
+    "behavioral_rules": [],
+    "knowledge_declarations": [],
+    "content": {}
+  }
+}

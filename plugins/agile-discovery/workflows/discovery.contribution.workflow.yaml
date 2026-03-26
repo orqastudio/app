@@ -1,0 +1,96 @@
+name: discovery-contribution
+version: "0.1.0"
+artifact_type: epic
+plugin: "@orqastudio/plugin-agile-discovery"
+description: >
+  Discovery workflow contribution to the agile-methodology skeleton.
+  Adds discovery-stage sub-states for idea exploration, research
+  investigation, and strategic decision-making within the discover stage.
+
+contributes_to:
+  workflow: agile-methodology
+  point: discovery-artifacts
+  priority: 10
+
+initial_state: ideation
+
+states:
+  ideation:
+    category: planning
+    description: "Capture and explore high-level product ideas."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Discovery ideation started"
+
+  investigation:
+    category: planning
+    description: "Conduct research investigations to validate ideas."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Discovery investigation started"
+
+  strategic_decision:
+    category: planning
+    description: "Make strategic decisions based on research findings."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Strategic decision-making started"
+
+  discovery_complete:
+    category: planning
+    description: "Discovery stage complete — ready to hand off to planning."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Discovery complete"
+
+transitions:
+  # Entry from the discover stage of agile-methodology
+  - from: discover
+    to: ideation
+    event: begin_ideation
+    description: "Start capturing and exploring ideas."
+
+  - from: ideation
+    to: investigation
+    event: ideas_captured
+    description: "Ideas captured, begin research investigation."
+
+  - from: investigation
+    to: ideation
+    event: new_ideas
+    description: "Research surfaced new ideas — return to ideation."
+
+  - from: investigation
+    to: strategic_decision
+    event: research_complete
+    description: "Research complete, make strategic decisions."
+
+  - from: strategic_decision
+    to: investigation
+    event: needs_research
+    description: "Decision requires more research."
+
+  - from: strategic_decision
+    to: discovery_complete
+    event: decisions_made
+    description: "Strategic decisions made, discovery is complete."
+
+  - from: discovery_complete
+    to: plan
+    event: scope_defined
+    description: "Hand off to planning stage."
+
+  # Fast-track paths
+  - from: ideation
+    to: strategic_decision
+    event: fast_track
+    description: "Skip investigation for well-understood ideas."
+
+  - from: ideation
+    to: discovery_complete
+    event: skip_to_complete
+    description: "Simple discovery — ideas are clear, no investigation needed."

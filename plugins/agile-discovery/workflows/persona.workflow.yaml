@@ -1,7 +1,7 @@
 name: persona
 version: "0.1.0"
 artifact_type: persona
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Persona lifecycle state machine. Personas represent target users or
   stakeholders. They have a simple lifecycle — activated, reviewed

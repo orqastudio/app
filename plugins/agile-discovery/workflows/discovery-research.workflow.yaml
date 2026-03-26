@@ -1,11 +1,12 @@
-name: research
+name: discovery-research
 version: "0.1.0"
-artifact_type: research
-plugin: "@orqastudio/plugin-software-kanban"
+artifact_type: discovery-research
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
-  Research lifecycle state machine. Research artifacts capture investigations,
-  feasibility studies, and technical explorations. The workflow tracks capture,
-  exploration, active research, review, and completion.
+  Discovery research lifecycle state machine. Research artifacts capture
+  investigations, feasibility studies, and technical explorations during the
+  discovery stage. The workflow tracks capture, exploration, active research,
+  review, and completion.
 
 initial_state: captured
 

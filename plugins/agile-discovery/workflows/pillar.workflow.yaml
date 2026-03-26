@@ -1,7 +1,7 @@
 name: pillar
 version: "0.1.0"
 artifact_type: pillar
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Pillar lifecycle state machine. Pillars are foundational principles that
   uphold the vision. Like visions, they have a simple lifecycle — activated,

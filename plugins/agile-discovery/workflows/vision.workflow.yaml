@@ -1,7 +1,7 @@
 name: vision
 version: "0.1.0"
 artifact_type: vision
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Vision lifecycle state machine. Vision artifacts are foundational,
   long-lived direction statements. The workflow is intentionally simple —

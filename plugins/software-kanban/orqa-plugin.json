@@ -188,61 +188,6 @@
         }
       },
       {
-        "key": "research",
-        "label": "Research",
-        "plural": "Research",
-        "icon": "flask-conical",
-        "defaultPath": ".orqa/discovery/research",
-        "idPrefix": "RES",
-        "frontmatter": {
-          "type": "object",
-          "required": [
-            "id",
-            "status"
-          ],
-          "properties": {
-            "id": {
-              "type": "string",
-              "pattern": "^RES-[a-f0-9]{8}$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "description": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "methodology": {
-              "type": "string"
-            },
-            "relationships": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": [
-                  "target",
-                  "type"
-                ],
-                "properties": {
-                  "target": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "rationale": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "additionalProperties": true
-        }
-      },
-      {
         "key": "wireframe",
         "label": "Wireframe",
         "plural": "Wireframes",
@@ -334,10 +279,6 @@
       {
         "artifact_type": "milestone",
         "path": "workflows/milestone.workflow.yaml"
-      },
-      {
-        "artifact_type": "research",
-        "path": "workflows/research.workflow.yaml"
       },
       {
         "artifact_type": "wireframe",

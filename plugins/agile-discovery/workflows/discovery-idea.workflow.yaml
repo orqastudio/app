@@ -1,12 +1,13 @@
-name: idea
+name: discovery-idea
 version: "0.1.0"
-artifact_type: idea
-plugin: "@orqastudio/plugin-agile-workflow"
+artifact_type: discovery-idea
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
-  Idea lifecycle state machine. Ideas are captured insights that may
-  crystallise into decisions, spawn epics, or be realised through delivery
-  work. The workflow tracks the full journey from capture through exploration,
-  prioritisation, active development, review, and completion.
+  Discovery idea lifecycle state machine. Discovery ideas are high-level
+  product concepts captured during the discovery stage. They may evolve
+  into research investigations or crystallise into strategic decisions.
+  The workflow tracks capture, exploration, prioritisation, active
+  development, review, and completion.
 
 initial_state: captured
 
