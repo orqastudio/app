@@ -12,10 +12,10 @@ relationships:
     type: supports
     rationale: Findings feed the code quality audit epic
   - target: IDEA-0066e754
-    type: references
+    type: related
     rationale: Finding 4 identified this idea as duplicated across delivery/ and discovery/
   - target: IDEA-14669b52
-    type: references
+    type: related
     rationale: Finding 5 resulted in this idea for graph query performance
   - target: EPIC-664909f8
     type: guides

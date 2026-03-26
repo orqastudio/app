@@ -414,6 +414,11 @@
       {
         "artifact_type": "discovery-decision",
         "path": "workflows/discovery-decision.workflow.yaml"
+      },
+      {
+        "artifact_type": "epic",
+        "path": "workflows/discovery.contribution.workflow.yaml",
+        "contribution": true
       }
     ],
     "relationships": [

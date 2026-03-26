@@ -1,30 +1,31 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-core-framework (workflows/doc.workflow.yaml)
-# Resolved at: 2026-03-26T00:20:42.509Z
+# Skeleton: @orqastudio/plugin-agile-discovery (workflows/discovery-research.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.497Z
 
-name: doc
+name: discovery-research
 version: 0.1.0
-artifact_type: doc
-plugin: "@orqastudio/plugin-core-framework"
+artifact_type: discovery-research
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
-  Document lifecycle state machine. Documents capture technical documentation, guides, and reference material. The
-  workflow tracks capture, exploration, active authoring, review, and completion.
+  Discovery research lifecycle state machine. Research artifacts capture investigations, feasibility studies, and
+  technical explorations during the discovery stage. The workflow tracks capture, exploration, active research, review,
+  and completion.
 initial_state: captured
 states:
   captured:
     category: planning
-    description: Document has been captured but not yet started.
+    description: Research topic has been captured but not yet started.
   exploring:
     category: planning
-    description: Document scope is being explored — outline, audience, coverage.
+    description: Research is being explored — defining scope, methodology, questions.
     on_enter:
       - type: append_log
         params:
-          message: Document exploration started
+          message: Research exploration started
   active:
     category: active
-    description: Document is actively being authored.
+    description: Research is actively being conducted.
     on_enter:
       - type: set_field
         params:
@@ -32,20 +33,20 @@ states:
           value: ${now}
       - type: append_log
         params:
-          message: Document authoring activated
+          message: Research activated
   hold:
     category: active
-    description: Document authoring is paused.
+    description: Research is paused, waiting for external input or resources.
   review:
     category: review
-    description: Document is being reviewed for accuracy and completeness.
+    description: Research findings are being reviewed.
     on_enter:
       - type: append_log
         params:
-          message: Document entered review
+          message: Research entered review
   completed:
     category: completed
-    description: Document has been reviewed and published.
+    description: Research has been reviewed and findings accepted.
     on_enter:
       - type: set_field
         params:
@@ -53,65 +54,62 @@ states:
           value: ${now}
       - type: append_log
         params:
-          message: Document completed
+          message: Research completed
   surpassed:
     category: terminal
-    description: Document has been superseded by a newer version.
+    description: Research has been superseded by newer findings.
   archived:
     category: terminal
-    description: Document is archived.
+    description: Research is archived.
 transitions:
   - from: captured
     to: exploring
     event: explore
-    description: Begin defining document scope.
+    description: Begin defining research scope and methodology.
   - from: captured
     to: active
     event: start
-    description: Fast-track to active authoring.
+    description: Fast-track directly to active research.
   - from: exploring
     to: active
     event: start
-    description: Begin authoring.
+    description: Begin active research.
   - from: exploring
     to: hold
     event: pause
-    description: Pause exploration pending input.
+    description: Pause exploration pending resources.
   - from: active
     to: review
     event: submit_for_review
-    description: Submit document for review.
+    description: Submit research findings for review.
   - from: active
     to: hold
     event: pause
-    description: Pause authoring.
-  - from: active
-    to: archived
-    event: archive
-    description: Archive document directly.
+    description: Pause research, waiting for input.
   - from: hold
     to: active
     event: resume
-    description: Resume authoring.
+    description: Resume paused research.
   - from: hold
     to: exploring
     event: rescope
     description: Return to exploration for re-scoping.
   - from: review
+    to: completed
+    event: approve
+    description: Research findings accepted.
+  - from: review
     to: active
     event: request_changes
-    description: Further work needed.
+    description: Further research needed.
     actions:
       - type: append_log
         params:
-          message: Changes requested during document review
-  - from: review
-    to: completed
-    event: approve
-    description: Document accepted and published.
+          message: Changes requested during research review
   - from: completed
     to: surpassed
     event: surpass
+    description: Mark as superseded by newer research.
   - from: completed
     to: archived
     event: archive
@@ -124,7 +122,7 @@ transitions:
       - hold
     to: archived
     event: archive
-    description: Archive from non-active states.
+    description: Archive from any non-active state.
 migration:
   captured: captured
   exploring: exploring

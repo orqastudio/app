@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-workflow (workflows/agent.workflow.yaml)
-# Resolved at: 2026-03-25T22:11:49.116Z
+# Skeleton: @orqastudio/plugin-core-framework (workflows/agent.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.506Z
 
 name: agent
 version: 0.1.0
 artifact_type: agent
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Agent lifecycle state machine. Agent artifacts define specialist agent configurations with preambles, capabilities,
   and knowledge references. The workflow tracks capture, exploration, active deployment, review, and completion.

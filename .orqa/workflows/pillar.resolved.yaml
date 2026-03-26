@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-workflow (workflows/pillar.workflow.yaml)
-# Resolved at: 2026-03-25T22:11:49.143Z
+# Skeleton: @orqastudio/plugin-agile-discovery (workflows/pillar.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.499Z
 
 name: pillar
 version: 0.1.0
 artifact_type: pillar
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Pillar lifecycle state machine. Pillars are foundational principles that uphold the vision. Like visions, they have a
   simple lifecycle — activated, reviewed, and eventually superseded or archived.

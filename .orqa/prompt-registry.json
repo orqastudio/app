@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "built_at": "2026-03-25T22:11:49.175Z",
+  "built_at": "2026-03-26T00:20:42.524Z",
   "knowledge": [
     {
       "id": "governance-maintenance",
@@ -2499,7 +2499,7 @@
       "tags": [],
       "priority": "P1",
       "summary": "Code review methodology: automated checks first (lint, test, type-check), then manual review checklist (function size <=50 lines, no unwrap/panic, error composition with thiserror). Produce structured verdict with PASS/FAIL per category.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-f0efaf83.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\knowledge\\KNOW-f0efaf83.md"
     },
     {
       "id": "test-engineering",
@@ -2516,7 +2516,7 @@
       "tags": [],
       "priority": "P2",
       "summary": "Test engineering methodology: unit tests for pure functions, integration tests for API boundaries, snapshot tests for UI components. Coverage target 80%. Test names describe behavior not implementation.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-bcb42347.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\knowledge\\KNOW-bcb42347.md"
     },
     {
       "id": "security-audit",
@@ -2533,7 +2533,7 @@
       ],
       "priority": "P2",
       "summary": "Security audit process: OWASP top 10 check, dependency vulnerability scan, secrets detection, input validation review. Produces structured findings with severity ratings.",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-170c220e.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\knowledge\\KNOW-170c220e.md"
     },
     {
       "id": "delivery-completion",
@@ -2566,7 +2566,7 @@
       ],
       "priority": "P3",
       "summary": null,
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\knowledge\\KNOW-353a228b.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\knowledge\\KNOW-353a228b.md"
     },
     {
       "id": "delivery-unit-completion-discipline",
@@ -3624,7 +3624,7 @@
       "role": "implementer",
       "stage": null,
       "priority": "P1",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\prompts\\implementer-role.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\prompts\\implementer-role.md"
     },
     {
       "id": "review-checklist",
@@ -3634,7 +3634,7 @@
       "role": null,
       "stage": "review",
       "priority": "P2",
-      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software\\prompts\\review-checklist.md"
+      "content_file": "C:\\Users\\Bobbi\\Code\\orqastudio-dev\\plugins\\software-kanban\\prompts\\review-checklist.md"
     }
   ],
   "contributors": [

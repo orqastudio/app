@@ -21,7 +21,12 @@
     ],
     "views": [],
     "widgets": [],
-    "workflows": [],
+    "workflows": [
+      {
+        "artifact_type": "epic",
+        "path": "workflows/agile-methodology.workflow.yaml"
+      }
+    ],
     "relationships": [
       {
         "key": "upholds",

@@ -1,0 +1,6 @@
+{
+  "name": "@orqastudio/plugin-agile-discovery",
+  "version": "0.1.4-dev",
+  "private": true,
+  "description": "Discovery stage artifact types and workflows for the agile methodology — vision, personas, pillars, pivots, ideas, research, and strategic decisions."
+}

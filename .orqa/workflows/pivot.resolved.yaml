@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-workflow (workflows/pivot.workflow.yaml)
-# Resolved at: 2026-03-25T22:11:49.145Z
+# Skeleton: @orqastudio/plugin-agile-discovery (workflows/pivot.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.500Z
 
 name: pivot
 version: 0.1.0
 artifact_type: pivot
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
   Pivot lifecycle state machine. Pivots capture significant strategic direction changes. The workflow is intentionally
   linear — a pivot is explored, activated (decision made), completed (change implemented), and eventually archived.

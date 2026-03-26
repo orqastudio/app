@@ -1,15 +1,16 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-core-framework (workflows/decision.workflow.yaml)
-# Resolved at: 2026-03-26T00:20:42.508Z
+# Skeleton: @orqastudio/plugin-agile-discovery (workflows/discovery-decision.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.494Z
 
-name: decision
+name: discovery-decision
 version: 0.1.0
-artifact_type: decision
-plugin: "@orqastudio/plugin-core-framework"
+artifact_type: discovery-decision
+plugin: "@orqastudio/plugin-agile-discovery"
 description: >
-  Decision lifecycle state machine. Decisions (architecture decisions, ADRs) capture significant choices and their
-  rationale. The workflow tracks capture, exploration, active deliberation, review, and completion.
+  Discovery decision lifecycle state machine. Discovery decisions capture high-level strategic choices made during the
+  discovery stage — product direction, market positioning, technology bets. These are distinct from planning-stage
+  architecture decisions (AD-*). The workflow tracks capture, exploration, active deliberation, review, and completion.
 initial_state: captured
 states:
   captured:

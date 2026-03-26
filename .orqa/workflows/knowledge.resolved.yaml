@@ -1,12 +1,12 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-workflow (workflows/knowledge.workflow.yaml)
-# Resolved at: 2026-03-25T22:11:49.130Z
+# Skeleton: @orqastudio/plugin-core-framework (workflows/knowledge.workflow.yaml)
+# Resolved at: 2026-03-26T00:20:42.510Z
 
 name: knowledge
 version: 0.1.0
 artifact_type: knowledge
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Knowledge lifecycle state machine. Knowledge artifacts capture domain expertise, thinking modes, and contextual
   information injected into agent prompts. The workflow tracks capture, exploration, active use, review, and completion.
