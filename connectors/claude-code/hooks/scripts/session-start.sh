@@ -72,16 +72,6 @@ if command -v orqa &> /dev/null; then
   fi
 fi
 
-# ─── Demoted Rule Stability ──────────────────────────────────────────────────
-# Track stability of inactive (demoted) rules and surface deletion candidates.
-CONNECTOR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-if [ -f "$CONNECTOR_DIR/hooks/scripts/stability-check.mjs" ]; then
-  STABILITY_OUTPUT=$(node "$CONNECTOR_DIR/hooks/scripts/stability-check.mjs" "$PROJECT_DIR" 2>&1 || true)
-  if [ -n "$STABILITY_OUTPUT" ]; then
-    OUTPUT="${OUTPUT}${STABILITY_OUTPUT}\n\n"
-  fi
-fi
-
 # ─── Git State ───────────────────────────────────────────────────────────────
 STASHES=$(cd "$PROJECT_DIR" && git stash list 2>/dev/null || true)
 if [ -n "$STASHES" ]; then

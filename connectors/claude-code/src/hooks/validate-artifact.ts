@@ -5,7 +5,7 @@
 // Zero validation logic — all schema checks are in the Rust daemon.
 
 import { relative } from "path";
-import { readInput, callDaemon, outputAllow } from "./shared.js";
+import { readInput, callDaemon, outputAllow, isOrqaArtifact } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
 
 interface ValidationResult {
@@ -77,13 +77,6 @@ async function main(): Promise<void> {
 
   process.stdout.write(JSON.stringify({ systemMessage: lines.join("\n") }));
   process.exit(0);
-}
-
-/** Quick check: is this file a governance artifact under .orqa/? */
-function isOrqaArtifact(filePath: string, projectDir: string): boolean {
-  if (!filePath.endsWith(".md")) return false;
-  const rel = relative(projectDir, filePath).replace(/\\/g, "/");
-  return rel.startsWith(".orqa/");
 }
 
 main().catch(() => process.exit(0));

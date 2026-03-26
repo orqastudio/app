@@ -2,13 +2,13 @@
 //
 // Thin adapter: classifies the user prompt, calls the prompt pipeline from
 // @orqastudio/cli for knowledge/rule injection, then builds the systemMessage
-// in Claude Code's format. Connector-specific UX (session state checks,
-// context line) is layered on top of the pipeline output.
+// in Claude Code's format. Connector-specific UX (context line) is layered
+// on top of the pipeline output.
 
-import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { createConnection } from "net";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
-import { readInput, outputAllow } from "./shared.js";
+import { readInput, outputAllow, readIpcPort, mcpSearchCall } from "./shared.js";
+
 import { logTelemetry } from "./telemetry.js";
 import { generatePrompt, type PromptResult } from "@orqastudio/cli";
 
@@ -45,117 +45,6 @@ function resolveThinkingMode(mode: string): PromptType | null {
 // ---------------------------------------------------------------------------
 // Semantic search classifier — Tier 1 (primary, high-quality matching)
 // ---------------------------------------------------------------------------
-
-/** IPC port file path for the running OrqaStudio app's MCP server. */
-function getIpcPortFilePath(): string {
-  const dataDir = process.env["LOCALAPPDATA"]
-    ? join(process.env["LOCALAPPDATA"], "com.orqastudio.app")
-    : join(process.env["HOME"] ?? "~", ".local", "share", "com.orqastudio.app");
-  return join(dataDir, "ipc.port");
-}
-
-/** Read the IPC port from disk, or null if unavailable. */
-function readIpcPort(): number | null {
-  const portFile = getIpcPortFilePath();
-  if (!existsSync(portFile)) return null;
-  try {
-    const content = readFileSync(portFile, "utf-8").trim();
-    const port = parseInt(content, 10);
-    return Number.isNaN(port) ? null : port;
-  } catch {
-    return null;
-  }
-}
-
-interface SearchResult {
-  file: string;
-  line: number;
-  content: string;
-  score: number;
-}
-
-/**
- * Send a JSON-RPC request to the MCP server over IPC and return the response.
- * Connects via TCP, sends the MCP header, then the initialize + tools/call sequence.
- * Times out after 4 seconds to keep the hook fast.
- */
-function mcpSearchCall(port: number, projectDir: string, query: string, limit: number): Promise<SearchResult[]> {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      socket.destroy();
-      reject(new Error("MCP search timeout"));
-    }, 4000);
-
-    const socket = createConnection({ host: "127.0.0.1", port }, () => {
-      // Send MCP protocol header
-      socket.write(`MCP ${projectDir}\n`);
-
-      // Send initialize request
-      const initReq = JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "initialize",
-        params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "prompt-injector", version: "1.0.0" } },
-      });
-      socket.write(initReq + "\n");
-    });
-
-    let buffer = "";
-    let initialized = false;
-
-    socket.on("data", (chunk: Buffer) => {
-      buffer += chunk.toString();
-
-      // Process complete JSON-RPC lines
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        try {
-          const msg = JSON.parse(line) as { id?: number; result?: unknown };
-          if (msg.id === 1 && !initialized) {
-            // Initialize response received — send the search request
-            initialized = true;
-            const searchReq = JSON.stringify({
-              jsonrpc: "2.0",
-              id: 2,
-              method: "tools/call",
-              params: {
-                name: "search_semantic",
-                arguments: { query, scope: "artifacts", limit },
-              },
-            });
-            socket.write(searchReq + "\n");
-          } else if (msg.id === 2) {
-            // Search response received
-            clearTimeout(timeout);
-            socket.destroy();
-            try {
-              const result = msg.result as { content?: Array<{ text?: string }> };
-              const text = result?.content?.[0]?.text ?? "[]";
-              resolve(JSON.parse(text) as SearchResult[]);
-            } catch {
-              resolve([]);
-            }
-          }
-        } catch {
-          // Incomplete JSON — wait for more data
-        }
-      }
-    });
-
-    socket.on("error", (err: Error) => {
-      clearTimeout(timeout);
-      reject(err);
-    });
-
-    socket.on("close", () => {
-      clearTimeout(timeout);
-      // If we haven't resolved yet, the connection closed prematurely
-    });
-  });
-}
 
 /**
  * Classify a prompt using ONNX semantic search against thinking-mode knowledge artifacts.
@@ -270,14 +159,10 @@ async function main(): Promise<void> {
     };
   }
 
-  // Session state freshness check (connector-specific UX concern — stays here).
-  const sessionReminder = checkSessionState(projectDir);
-
   // Context line (connector-specific — stays here).
   const contextLine = getContextLine(projectDir);
 
   // Build the full preamble document (written to file for reference).
-  const sessionSection = sessionReminder ?? "Session state is current.";
   const preambleDoc = [
     "# Orchestrator Preamble",
     "",
@@ -288,10 +173,6 @@ async function main(): Promise<void> {
     "## Project Context",
     "",
     contextLine,
-    "",
-    "## Session State",
-    "",
-    sessionSection,
     "",
     "## Pipeline Output",
     "",
@@ -319,16 +200,10 @@ async function main(): Promise<void> {
     pipeline_errors: pipelineResult.errors.length,
     query: userMessage.slice(0, 100),
     action: "allow",
-    session_state_reminder: !!sessionReminder,
   }, projectDir);
 
   // Build systemMessage — pipeline prompt + connector-specific UX.
   const parts: string[] = [];
-
-  // Session reminder goes first if present.
-  if (sessionReminder) {
-    parts.push(sessionReminder);
-  }
 
   // Pipeline-generated prompt (role definition, safety rules, knowledge, etc.)
   if (pipelineResult.prompt) {
@@ -421,35 +296,6 @@ function getContextLine(projectDir: string): string {
     return `Project: ${name}. Dogfood: ${dogfood}. Run \`orqa plugin list\` to check installed plugins if needed.`;
   } catch {
     return "Project: unknown. Run `orqa plugin list` to check installed plugins if needed.";
-  }
-}
-
-/** Return a session-state reminder string if action is needed, else null. */
-function checkSessionState(projectDir: string): string | null {
-  try {
-    const sessionPath = join(projectDir, ".state", "session-state.md");
-    if (!existsSync(sessionPath)) {
-      return "Session state reminder: .state/session-state.md does not exist. Create a working session state with: scope, step checklist with completion status, and architecture decisions. Update it in real time as decisions happen (RULE-8aadfd6c).";
-    }
-    const content = readFileSync(sessionPath, "utf-8");
-    const isAutoGenerated = content.includes("Session state auto-generated by stop hook");
-    const hasSteps = content.includes("### Steps");
-    if (isAutoGenerated && !hasSteps) {
-      return "Session state reminder: .state/session-state.md is auto-generated. Replace with a working session state containing: scope, step checklist with completion status, and architecture decisions. Update it in real time as decisions happen (RULE-8aadfd6c).";
-    }
-    if (!hasSteps) {
-      return "Session state reminder: .state/session-state.md exists but has no step checklist. Add a ### Steps section with checkboxes tracking current work, and include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion (RULE-8aadfd6c).";
-    }
-    if (!/EPIC-[a-f0-9]{8}/i.test(content)) {
-      return "Session state reminder: .state/session-state.md has no scoped epic. Add the epic ID (EPIC-XXXXXXXX) so the stop hook can check completion status (RULE-8aadfd6c).";
-    }
-    const ageMinutes = (Date.now() - statSync(sessionPath).mtimeMs) / 60000;
-    if (ageMinutes > 10) {
-      return `Session state reminder: .state/session-state.md hasn't been updated in ${Math.round(ageMinutes)} minutes. If scope has changed or decisions were made, update it now (RULE-8aadfd6c).`;
-    }
-    return null;
-  } catch {
-    return null;
   }
 }
 

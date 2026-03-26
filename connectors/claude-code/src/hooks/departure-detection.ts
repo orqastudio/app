@@ -1,46 +1,12 @@
 // UserPromptSubmit hook — departure detection
 //
-// Detects when the user signals they are leaving (going to bed, stepping away,
-// brb, etc.) and injects a systemMessage reminding the orchestrator to:
-//   1. Write session state to .state/session-state.md with progress and next priorities
-//   2. Continue working on outstanding tasks — do NOT stop
-//   3. Compile any requested findings/summaries before the user returns
+// Thin adapter: delegates departure-pattern matching to the daemon.
+// The daemon detects departure signals and returns the appropriate
+// session-state reminder message.
 
-import { readInput, outputAllow } from "./shared.js";
+import { readInput, callDaemon, mapEvent, outputAllow } from "./shared.js";
+import type { HookContext, HookResult } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
-
-/**
- * Departure keyword patterns. Each regex is tested against the lowercased
- * user message. Patterns use word boundaries where possible to avoid false
- * positives (e.g. "leaving" in "leaving the function as-is" is a risk, but
- * the full phrase set makes accidental matches unlikely in practice).
- */
-const DEPARTURE_PATTERNS: RegExp[] = [
-  /\bgoing to bed\b/,
-  /\bgoing afk\b/,
-  /\bgoing offline\b/,
-  /\bstepping away\b/,
-  /\btaking a break\b/,
-  /\bheading out\b/,
-  /\bsigning off\b/,
-  /\blogging off\b/,
-  /\bbe right back\b/,
-  /\bbrb\b/,
-  /\bgotta go\b/,
-  /\bgotta run\b/,
-  /\bgoing to sleep\b/,
-  /\bcall it a night\b/,
-  /\bcall it a day\b/,
-  /\bdone for (the|today|tonight|now)\b/,
-  /\bback later\b/,
-  /\bback in a (bit|while|few)\b/,
-  /\bgoing to (lunch|dinner|eat)\b/,
-];
-
-function isDepartureMessage(message: string): boolean {
-  const lower = message.toLowerCase();
-  return DEPARTURE_PATTERNS.some((pattern) => pattern.test(lower));
-}
 
 async function main(): Promise<void> {
   const startTime = Date.now();
@@ -55,43 +21,35 @@ async function main(): Promise<void> {
   const userMessage = hookInput.user_message ?? hookInput.prompt ?? "";
   const projectDir = hookInput.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
 
-  if (!userMessage || !isDepartureMessage(userMessage)) {
-    logTelemetry(
-      "departure-detection", "UserPromptSubmit", startTime, "no-match",
-      { query: userMessage.slice(0, 100) },
-      projectDir,
-    );
+  if (!userMessage) {
     outputAllow();
   }
 
-  // Departure detected — inject session state writing reminder.
+  const context: HookContext = {
+    event: mapEvent("UserPromptSubmit"),
+    user_message: userMessage,
+  };
+
+  let result: HookResult;
+  try {
+    result = await callDaemon<HookResult>("/hook", context);
+  } catch {
+    // Daemon unavailable — fail-open
+    logTelemetry("departure-detection", "UserPromptSubmit", startTime, "unavailable", {}, projectDir);
+    outputAllow();
+  }
+
   logTelemetry(
-    "departure-detection", "UserPromptSubmit", startTime, "departure-detected",
+    "departure-detection", "UserPromptSubmit", startTime,
+    result.action === "warn" ? "departure-detected" : "no-match",
     { query: userMessage.slice(0, 100) },
     projectDir,
   );
 
-  const systemMessage = [
-    "DEPARTURE DETECTED — The user is leaving.",
-    "",
-    "You MUST do the following IMMEDIATELY:",
-    "",
-    "1. Write session state to .state/session-state.md NOW with:",
-    "   - Current scope (active epic/task IDs)",
-    "   - Step checklist with completion status",
-    "   - Decisions made this session",
-    "   - Next Session Priorities (ordered list of what to do next)",
-    "",
-    "2. Continue working on ALL outstanding tasks. Do NOT stop.",
-    "   The user is stepping away, not asking you to pause.",
-    "",
-    "3. Compile any requested findings or summaries so they are",
-    "   ready when the user returns.",
-    "",
-    "4. Commit and push all work before finishing.",
-  ].join("\n");
+  if (result.messages.length > 0) {
+    process.stdout.write(JSON.stringify({ systemMessage: result.messages.join("\n") }));
+  }
 
-  process.stdout.write(JSON.stringify({ systemMessage }));
   process.exit(0);
 }
 

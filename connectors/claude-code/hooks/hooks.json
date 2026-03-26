@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-completion-gate.mjs",
-            "timeout": 5000
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/rule-engine.js",
+            "timeout": 10000
           }
         ]
       },
@@ -16,8 +16,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/scripts/enforce-background-agents.mjs",
-            "timeout": 5000
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/hooks/rule-engine.js",
+            "timeout": 10000
           }
         ]
       },

@@ -1,9 +1,10 @@
 // PreToolUse hook — Write | Edit
 //
-// Warns when writing feedback/project memory files — process learnings belong
-// in .orqa/process/lessons/, not auto-memory. No daemon call needed.
+// Thin adapter: delegates memory-path enforcement to the daemon.
+// The daemon decides which memory paths should be redirected to lessons.
 
-import { readInput, outputAllow } from "./shared.js";
+import { readInput, callDaemon, mapEvent, outputBlock, outputWarn, outputAllow } from "./shared.js";
+import type { HookContext, HookResult } from "./shared.js";
 
 async function main(): Promise<void> {
   let hookInput;
@@ -13,21 +14,26 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const filePath = (hookInput.tool_input?.file_path ?? "").replace(/\\/g, "/");
-  if (!filePath) {
+  const context: HookContext = {
+    event: mapEvent("PreToolUse"),
+    tool_name: hookInput.tool_name,
+    tool_input: hookInput.tool_input,
+  };
+
+  let result: HookResult;
+  try {
+    result = await callDaemon<HookResult>("/hook", context);
+  } catch {
+    // Daemon unavailable — fail-open (daemon-gate.sh blocks sessions without daemon)
     outputAllow();
   }
 
-  const isMemoryFeedback = filePath.includes("memory/feedback_");
-  const isMemoryProject = filePath.includes("memory/project_");
-  if (!isMemoryFeedback && !isMemoryProject) {
-    outputAllow();
+  if (result.action === "block") {
+    outputBlock(result.messages);
+  } else if (result.action === "warn" && result.messages.length > 0) {
+    outputWarn(result.messages);
   }
 
-  const systemMessage =
-    "STOP: This is a process learning. You MUST create a lesson artifact in .orqa/process/lessons/ instead of writing to auto-memory. Lessons go through the learning loop (promotion to rules at recurrence >= 2). Do NOT store process learnings in auto-memory — auto-memory is ONLY for user preferences (user type) and references (reference type).";
-
-  process.stdout.write(JSON.stringify({ systemMessage }));
   process.exit(0);
 }
 
