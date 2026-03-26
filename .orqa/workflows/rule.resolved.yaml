@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-core-framework (workflows/rule.workflow.yaml)
-# Resolved at: 2026-03-26T00:20:42.512Z
+# Resolved at: 2026-03-26T00:44:15.742Z
 
 name: rule
 version: 0.1.0

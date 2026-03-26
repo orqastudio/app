@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-agile-discovery (workflows/vision.workflow.yaml)
-# Resolved at: 2026-03-26T00:20:42.500Z
+# Resolved at: 2026-03-26T00:44:15.711Z
 
 name: vision
 version: 0.1.0

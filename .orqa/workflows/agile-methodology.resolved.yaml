@@ -8,7 +8,7 @@
 #   - @orqastudio/plugin-agile-review → review-process (+4 states, +11 transitions)
 #   - @orqastudio/plugin-core-framework → learning-pipeline (+5 states, +10 transitions)
 # Unfilled contribution points: documentation-standards
-# Resolved at: 2026-03-26T00:20:42.484Z
+# Resolved at: 2026-03-26T00:44:15.676Z
 
 name: agile-methodology
 version: 0.1.0

@@ -431,7 +431,8 @@ function generateAgentFileContent(
 			for (const section of knowledgeSections) {
 				// Only include the ID and first line as a reference — not full content.
 				// Full content is retrieved on-demand at runtime via the knowledge-injector hook.
-				const firstLine = section.content.split("\n").find((l) => l.trim() && !l.startsWith("---") && !l.startsWith("id:"))?.trim() ?? "";
+				const titleMatch = section.content.match(/^title:\s*"?(.+?)"?\s*$/m);
+				const firstLine = titleMatch ? titleMatch[1] : (section.content.split("\n").find((l) => l.trim() && !l.startsWith("---") && !l.startsWith("id:") && !l.startsWith("type:") && !l.startsWith("title:"))?.trim() ?? "");
 				parts.push(`- **${section.id}** (${section.source}, ${section.priority}): ${firstLine.slice(0, 120)}`);
 			}
 			parts.push("");
