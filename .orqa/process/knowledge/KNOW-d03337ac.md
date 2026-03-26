@@ -2,6 +2,7 @@
 id: KNOW-d03337ac
 type: knowledge
 title: "Project Type: Software"
+summary: "Adds software development governance to a base OrqaStudio setup. This is a project type preset — it layers development-specific rules, skills, and documentation templates on top of the core governance foundation."
 description: |
   Software development governance preset: adds worktree workflow rules,
   code quality standards, testing requirements, CI/CD patterns, and

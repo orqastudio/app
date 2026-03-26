@@ -2,6 +2,7 @@
 id: KNOW-a4e351bc
 type: knowledge
 title: Governance Migration Methodology
+summary: "Methodology for migrating an existing project's governance into a structured governance framework. The goal is coexistence, not replacement — existing tools continue to work, and the governance framework becomes the single source of truth that feeds them."
 description: |
   Methodology for migrating an existing project to a structured governance
   framework. Detects existing rules, instructions, and conventions from other

@@ -2,6 +2,7 @@
 id: KNOW-e6fee7a0
 type: knowledge
 title: First-Party Plugin Development
+summary: "This skill is loaded when the base plugin development skill detects the dev environment: the current working directory is inside a repository that has a project governance directory AND a `plugins/` directory at root."
 description: |
   First-party plugin workflow for the platform dev environment. Use when creating
   or modifying plugins within the platform monorepo. Plugins are submodules,

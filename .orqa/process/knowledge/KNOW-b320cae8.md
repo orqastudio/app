@@ -2,6 +2,7 @@
 id: KNOW-b320cae8
 type: knowledge
 title: Implementer Reasoning Methodology
+summary: "Methodology for how an Implementer agent approaches a task. The Implementer builds — it does not investigate root causes, decide architecture, or self-certify quality."
 description: |
   Reasoning protocol for Implementer agents: understand the domain and task,
   discover existing patterns, implement across all required layers, and verify

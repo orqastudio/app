@@ -3,6 +3,7 @@ id: KNOW-e89753ad
 type: knowledge
 title: OrqaStudio CLI Commands
 description: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
+summary: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
 status: active
 created: 2026-03-24
 updated: 2026-03-24

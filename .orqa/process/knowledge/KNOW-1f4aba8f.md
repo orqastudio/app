@@ -2,6 +2,7 @@
 id: KNOW-1f4aba8f
 type: knowledge
 title: Three-Layer Enforcement Model
+summary: "OrqaStudio enforces governance through **three layers**, each handling different kinds of violations. Understanding which layer owns a check prevents duplication, ensures the right response time, and enables safe demotion of behavioral rules as mechanical enforcement improves."
 description: |
   How OrqaStudio enforces governance through three layers: LSP real-time diagnostics,
   behavioral rules for judgement calls, and pre-commit hard gates. What each layer

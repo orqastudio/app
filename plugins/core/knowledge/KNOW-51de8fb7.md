@@ -2,8 +2,8 @@
 id: KNOW-51de8fb7
 type: knowledge
 title: Artifact Status Management
+summary: "Status is not metadata. It is the artifact's current **state of thought** — how far along an idea, task, or decision has been developed, and whether it needs human attention."
 description: |
-summary: "|. Status is not metadata. It is the artifact's current **state of thought** — how far along an idea, task, or decision has been developed, and whether it needs human attention."
   Teaches agents when and how to correctly update artifact status fields.
   The unified status vocabulary has 11 values. Agents must update status to reflect
   the true state of thought — especially the review gate, which only humans may clear.

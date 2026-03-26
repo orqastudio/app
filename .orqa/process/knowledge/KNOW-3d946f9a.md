@@ -2,6 +2,7 @@
 id: KNOW-3d946f9a
 type: knowledge
 title: Agent Decision Methodology
+summary: "Methodology for how an orchestrating agent classifies incoming requests and decides which role to delegate to. The orchestrator coordinates — it does not implement, research, review, or document."
 description: |
   Reasoning protocol for orchestrating agents: classify the incoming request,
   understand what kind of work is needed, form the right question, and delegate

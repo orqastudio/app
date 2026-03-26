@@ -2,8 +2,8 @@
 id: KNOW-9ff8c63f
 type: knowledge
 title: Research Methodology
+summary: "When agents use WebSearch and WebFetch to investigate external sources, they must verify what they find to an acceptable level of certainty before incorporating it into artifacts. This skill defines what 'acceptable certainty' means and how to achieve it."
 description: |
-summary: "|. When agents use `WebSearch` and `WebFetch` to investigate external sources, they must verify what they find to an acceptable level of certainty before incorporating it into artifacts. This skill defines what \"acceptable certainty\" means and how to achieve it."
   Research best practices for agents investigating external sources: source
   verification, credibility assessment, cross-referencing, and structured
   documentation of findings with confidence levels.

@@ -3,6 +3,7 @@ id: KNOW-1c2d005d
 type: knowledge
 title: Config Generation from Rules
 description: "How to generate tool config files (ESLint, clippy, rustfmt, etc.) from OrqaStudio enforcement rules. Rules define what to enforce; this plugin generates the tooling config."
+summary: "How to generate tool config files (ESLint, clippy, rustfmt, etc.) from OrqaStudio enforcement rules. Rules define what to enforce; this plugin generates the tooling config."
 status: active
 created: 2026-03-19
 updated: 2026-03-19

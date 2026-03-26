@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Documentation"
 thinking-mode: documentation
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
+summary: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 status: active
 created: 2026-03-21
 updated: 2026-03-21

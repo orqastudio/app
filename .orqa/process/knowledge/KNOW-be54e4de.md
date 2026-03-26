@@ -2,6 +2,7 @@
 id: KNOW-be54e4de
 type: knowledge
 name: Svelte Plugin Installation
+summary: "Svelte Plugin Installation. This skill is consumed by the core installer agent when setting up the Svelte plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:

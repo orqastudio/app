@@ -2,6 +2,7 @@
 id: KNOW-91a7a6c1
 type: knowledge
 title: Code Quality Review
+summary: "Code quality review methodology. This skill teaches the *review process and checklist structure* — the specific linting tools and coding standards come from the project's technology and coding-standards documentation."
 description: |
   Code review methodology: automated checks, manual review checklists, forbidden
   pattern detection, function size limits, and structured review output format.

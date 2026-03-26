@@ -3,6 +3,7 @@ id: KNOW-b95ec6e3
 type: knowledge
 title: "Thinking Mode: Debugging"
 description: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
+summary: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
 status: active
 thinking-mode: debugging
 created: 2026-03-21

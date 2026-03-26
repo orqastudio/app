@@ -2,6 +2,7 @@
 id: KNOW-abb08445
 type: knowledge
 title: "Svelte 5 Runes Reference"
+summary: "Svelte 5 Runes Reference"
 status: active
 created: 2026-03-20
 updated: 2026-03-20

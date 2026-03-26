@@ -2,19 +2,19 @@
   "plugins": {
     "@orqastudio/plugin-agile-workflow": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:30.901Z",
+      "installed_at": "2026-03-26T08:48:02.073Z",
       "files": {
         ".orqa/process/knowledge/KNOW-83039175.md": {
-          "sourceHash": "fabb271d76ec7dc57b1558e63997d3ca5276468caf427217176cdab936a42fb7",
-          "installedHash": "fabb271d76ec7dc57b1558e63997d3ca5276468caf427217176cdab936a42fb7"
+          "sourceHash": "de8201ea57cde00851ce5dfe59d26ab093c32be341b2b25c83c4df23ccc71228",
+          "installedHash": "de8201ea57cde00851ce5dfe59d26ab093c32be341b2b25c83c4df23ccc71228"
         },
         ".orqa/process/knowledge/KNOW-8c359ea4.md": {
-          "sourceHash": "a79380942a42870129d4cde39b1128e1cddc50073c0f9334bcc62d21b2d3a5e3",
-          "installedHash": "a79380942a42870129d4cde39b1128e1cddc50073c0f9334bcc62d21b2d3a5e3"
+          "sourceHash": "22ac5accbaced7d0f0f420bd87e6e6ce967267179bde71a984f449fb47a8ddbf",
+          "installedHash": "22ac5accbaced7d0f0f420bd87e6e6ce967267179bde71a984f449fb47a8ddbf"
         },
         ".orqa/process/knowledge/KNOW-ee860ed9.md": {
-          "sourceHash": "22b7d2047b8c6fcfcd9d6b1b41aac2b9fec599ef9e1c82eb0a22911195ca08a3",
-          "installedHash": "22b7d2047b8c6fcfcd9d6b1b41aac2b9fec599ef9e1c82eb0a22911195ca08a3"
+          "sourceHash": "150d162c9251d1ac8ea9cabbbc3c7bdf6abada7f233a08648f3da90274c74b81",
+          "installedHash": "150d162c9251d1ac8ea9cabbbc3c7bdf6abada7f233a08648f3da90274c74b81"
         },
         ".orqa/process/rules/RULE-00700241.md": {
           "sourceHash": "e9fff7c92122138d88d1752eb39b30d83f471ee645657a623d4ab3ff582dcaee",
@@ -116,7 +116,7 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:30.909Z",
+      "installed_at": "2026-03-26T08:48:02.082Z",
       "files": {
         ".orqa/documentation/DOC-8cf6ef38.md": {
           "sourceHash": "3e8f6263b59f778730efaed74d112e57b27c3d555b09cc3f61aee49867fbed35",
@@ -139,28 +139,28 @@
           "installedHash": "e4cdc622005741dd35582db0307f1215b2be259ebd280ea1c0753a9e8b0e4c93"
         },
         ".orqa/process/knowledge/KNOW-40be8113.md": {
-          "sourceHash": "9ec4d0913223bdb9950ac6c44e9fb26ed8429fe28d8336839ebdd96e9239dfc1",
-          "installedHash": "9ec4d0913223bdb9950ac6c44e9fb26ed8429fe28d8336839ebdd96e9239dfc1"
+          "sourceHash": "05690958e59ae0d7274a40dec9879f4861217966136919f7c4669758bac6ce49",
+          "installedHash": "05690958e59ae0d7274a40dec9879f4861217966136919f7c4669758bac6ce49"
         },
         ".orqa/process/knowledge/KNOW-481059d2.md": {
-          "sourceHash": "fdb252dfc3e3872789b7574e634e4f809fd6bd2795eeeace1b0fb3be8492e8c9",
-          "installedHash": "fdb252dfc3e3872789b7574e634e4f809fd6bd2795eeeace1b0fb3be8492e8c9"
+          "sourceHash": "90404a405cb4d2f61365d39e979f1d2d8442f8d58c771f9d7d6b068987ea78a1",
+          "installedHash": "90404a405cb4d2f61365d39e979f1d2d8442f8d58c771f9d7d6b068987ea78a1"
         },
         ".orqa/process/knowledge/KNOW-990e4f85.md": {
-          "sourceHash": "482a7a4bc4aaf0b9f65b320416a50d299db38d6402f3e7595b1736eb7e0c0891",
-          "installedHash": "482a7a4bc4aaf0b9f65b320416a50d299db38d6402f3e7595b1736eb7e0c0891"
+          "sourceHash": "5f47b077e1e634531db5c7d5dbf0c29061818f36909c768b6dfdd6c2a1a1cb6b",
+          "installedHash": "5f47b077e1e634531db5c7d5dbf0c29061818f36909c768b6dfdd6c2a1a1cb6b"
         },
         ".orqa/process/knowledge/KNOW-a0947420.md": {
-          "sourceHash": "6e3a5fe97f6fb2070f09781d7de78e9efe17d79804925244659e78e3ab4b9dcd",
-          "installedHash": "6e3a5fe97f6fb2070f09781d7de78e9efe17d79804925244659e78e3ab4b9dcd"
+          "sourceHash": "0a2b714d1b5f6bf054a7c0c1a624fb3d0687e5998d4e7d41e38a6a1c395ec27d",
+          "installedHash": "0a2b714d1b5f6bf054a7c0c1a624fb3d0687e5998d4e7d41e38a6a1c395ec27d"
         },
         ".orqa/process/knowledge/KNOW-afaa4e88.md": {
-          "sourceHash": "cfae4df7fa525608fa10c27fbcc85ef0aab45df253bbf0c5907f323a66e559e4",
-          "installedHash": "cfae4df7fa525608fa10c27fbcc85ef0aab45df253bbf0c5907f323a66e559e4"
+          "sourceHash": "18403f2e8508ac9f5af5d523dcfb2430a029fe092d6b4873d497205d784e16ff",
+          "installedHash": "18403f2e8508ac9f5af5d523dcfb2430a029fe092d6b4873d497205d784e16ff"
         },
         ".orqa/process/knowledge/KNOW-ea78c8e4.md": {
-          "sourceHash": "9e615cb5672b8ef56524a12de687f954eaf1a2199867532c1448f27b49e3fe0d",
-          "installedHash": "9e615cb5672b8ef56524a12de687f954eaf1a2199867532c1448f27b49e3fe0d"
+          "sourceHash": "cc37484d0abed096a3fc8b06d40d54ce5b94ba6944fa14722ad3800016be4b29",
+          "installedHash": "cc37484d0abed096a3fc8b06d40d54ce5b94ba6944fa14722ad3800016be4b29"
         },
         ".orqa/process/rules/RULE-f3dca71e.md": {
           "sourceHash": "d421c0317e769a5408d573cdd70783f32b475230bb3b7e447b0cb99ab8d02126",
@@ -174,15 +174,15 @@
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:31.883Z",
+      "installed_at": "2026-03-26T08:48:03.070Z",
       "files": {
         ".orqa/process/knowledge/KNOW-126aa140.md": {
-          "sourceHash": "6ffbcae86fa0273a97fa845f22b035e65c5ef8c8043594e1cadab03d7a61ce1c",
-          "installedHash": "6ffbcae86fa0273a97fa845f22b035e65c5ef8c8043594e1cadab03d7a61ce1c"
+          "sourceHash": "52fc0a9f3b6226c46f84e490b24af64c8edc3450908cd6785de5f106264b4c85",
+          "installedHash": "52fc0a9f3b6226c46f84e490b24af64c8edc3450908cd6785de5f106264b4c85"
         },
         ".orqa/process/knowledge/KNOW-1c2d005d.md": {
-          "sourceHash": "a1af2ff9382f0b0bae879674a1dcba792642e8a7c9a28c97f669217fc08ffafe",
-          "installedHash": "a1af2ff9382f0b0bae879674a1dcba792642e8a7c9a28c97f669217fc08ffafe"
+          "sourceHash": "ba1b912608eddddc201d1360eec78f047145e41e11acd3ea08600a8a2d394802",
+          "installedHash": "ba1b912608eddddc201d1360eec78f047145e41e11acd3ea08600a8a2d394802"
         },
         ".orqa/process/rules/RULE-216e112e.md": {
           "sourceHash": "c214f16d2611fbbc8c3b8e2f22dd52b7777a6b1bcf700b5d86bf0ab894a9cd8d",
@@ -220,7 +220,7 @@
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:31.916Z",
+      "installed_at": "2026-03-26T08:48:03.105Z",
       "files": {
         ".orqa/process/agents/AGENT-0aad40f4.md": {
           "sourceHash": "79c5fd58a9e61f81664728d3ecfff4179d7df18479167b259a9a0ea2cb22d709",
@@ -259,88 +259,88 @@
           "installedHash": "3735aee703059d63bcd515504cd17505ec156e9c6ecd4e8123a62044652fa808"
         },
         ".orqa/process/knowledge/KNOW-13348442.md": {
-          "sourceHash": "dd059776d9b53e5e65c8b17ad1705996cd754e2f7634c475b04d686768a03a80",
-          "installedHash": "dd059776d9b53e5e65c8b17ad1705996cd754e2f7634c475b04d686768a03a80"
+          "sourceHash": "0bc896825b1b578dfabbae4591eb5c6b22cbc4b5b9f13796c373b72695b24796",
+          "installedHash": "0bc896825b1b578dfabbae4591eb5c6b22cbc4b5b9f13796c373b72695b24796"
         },
         ".orqa/process/knowledge/KNOW-1f4aba8f.md": {
-          "sourceHash": "39e3bef7ccab02f1c55f94aad84bb39ef070112140d68d3401993a451e2419c5",
-          "installedHash": "39e3bef7ccab02f1c55f94aad84bb39ef070112140d68d3401993a451e2419c5"
+          "sourceHash": "3c922772992ad739dbdeb1fc375a9fd5d29b550b23d214338d70e72fe3a5bacb",
+          "installedHash": "3c922772992ad739dbdeb1fc375a9fd5d29b550b23d214338d70e72fe3a5bacb"
         },
         ".orqa/process/knowledge/KNOW-21d28aa0.md": {
-          "sourceHash": "43cef39dc664bafcea551d8979836abb8c896150d52de2002acf8e512ce062e1",
-          "installedHash": "43cef39dc664bafcea551d8979836abb8c896150d52de2002acf8e512ce062e1"
+          "sourceHash": "5e6f696daf5af47bd7d2a6a77de19d6c958ec9adc97a6c5d86b1000d80c2a561",
+          "installedHash": "5e6f696daf5af47bd7d2a6a77de19d6c958ec9adc97a6c5d86b1000d80c2a561"
         },
         ".orqa/process/knowledge/KNOW-2876afc7.md": {
-          "sourceHash": "ae275e19ad0972dd7dcc86b2683bbe60ff4e3aa9aa7ac471073b6c7d39beb3dc",
-          "installedHash": "ae275e19ad0972dd7dcc86b2683bbe60ff4e3aa9aa7ac471073b6c7d39beb3dc"
+          "sourceHash": "26645680bc845cc675d8de26cbacd622abf9395b01e8f28dc25552eb8b17033f",
+          "installedHash": "26645680bc845cc675d8de26cbacd622abf9395b01e8f28dc25552eb8b17033f"
         },
         ".orqa/process/knowledge/KNOW-3d946f9a.md": {
-          "sourceHash": "c73b1579fa474c760cd40d9d3ec0d06d1a9cbd670eae85f05c68fb3c7b57aa84",
-          "installedHash": "c73b1579fa474c760cd40d9d3ec0d06d1a9cbd670eae85f05c68fb3c7b57aa84"
+          "sourceHash": "4ecd2a3a25714e919013f35de19511713ba23851e13e385c9a886cf3d3ce3653",
+          "installedHash": "4ecd2a3a25714e919013f35de19511713ba23851e13e385c9a886cf3d3ce3653"
         },
         ".orqa/process/knowledge/KNOW-477f2c9c.md": {
-          "sourceHash": "490240603da9228c4db3f0301d9fe2cc1186b76001e6aa468a024f1803399187",
-          "installedHash": "490240603da9228c4db3f0301d9fe2cc1186b76001e6aa468a024f1803399187"
+          "sourceHash": "cf34f85aef5678c1fb28c315944b16eac986b8e1aa30b59baad590e78d3a636e",
+          "installedHash": "cf34f85aef5678c1fb28c315944b16eac986b8e1aa30b59baad590e78d3a636e"
         },
         ".orqa/process/knowledge/KNOW-51de8fb7.md": {
-          "sourceHash": "d2e5d1f7f9f7e5f1f9481b1799d1277f01c6396341eb30a3eccc0c799531f113",
-          "installedHash": "d2e5d1f7f9f7e5f1f9481b1799d1277f01c6396341eb30a3eccc0c799531f113"
+          "sourceHash": "4cd346f3be7b4c4c6ff1607546a190bafde164cabe58b886bd089d7ab680aa78",
+          "installedHash": "4cd346f3be7b4c4c6ff1607546a190bafde164cabe58b886bd089d7ab680aa78"
         },
         ".orqa/process/knowledge/KNOW-586bfa9a.md": {
-          "sourceHash": "e55540c2c873eb3e81e958391cfcd23a1ed7b3ef1a44c1676d349df957f4dace",
-          "installedHash": "e55540c2c873eb3e81e958391cfcd23a1ed7b3ef1a44c1676d349df957f4dace"
+          "sourceHash": "ea9d710e607a498933d72674e0ae70d0321051edd8285e892be1367e940bee00",
+          "installedHash": "ea9d710e607a498933d72674e0ae70d0321051edd8285e892be1367e940bee00"
         },
         ".orqa/process/knowledge/KNOW-6d80cf39.md": {
-          "sourceHash": "6601e27761ad2880156293b046f1180a1ff7f00c1a118cded952e8a59b053a0f",
-          "installedHash": "6601e27761ad2880156293b046f1180a1ff7f00c1a118cded952e8a59b053a0f"
+          "sourceHash": "0740449055353c05bb6fb48af3c23b986f29e23763b415034654da878e52ddb3",
+          "installedHash": "0740449055353c05bb6fb48af3c23b986f29e23763b415034654da878e52ddb3"
         },
         ".orqa/process/knowledge/KNOW-7c871921.md": {
-          "sourceHash": "aa6f9dccf2922c2fdaafe87e43c8ea4ec7f647797cc64ad51fcf7a5ad4d1283f",
-          "installedHash": "aa6f9dccf2922c2fdaafe87e43c8ea4ec7f647797cc64ad51fcf7a5ad4d1283f"
+          "sourceHash": "b78752cf90ad926650a74a29039d64df20e3b5557bb5f50fb072130bffc85d3f",
+          "installedHash": "b78752cf90ad926650a74a29039d64df20e3b5557bb5f50fb072130bffc85d3f"
         },
         ".orqa/process/knowledge/KNOW-9ff8c63f.md": {
-          "sourceHash": "d4b135b6bdfe9ab837704fffcb778bf907d73628eabf162bc8543a0d6fccb318",
-          "installedHash": "d4b135b6bdfe9ab837704fffcb778bf907d73628eabf162bc8543a0d6fccb318"
+          "sourceHash": "a233458f8fb69522f2df85046f87a8d6198e410aa2f0757c733a95baaf506477",
+          "installedHash": "a233458f8fb69522f2df85046f87a8d6198e410aa2f0757c733a95baaf506477"
         },
         ".orqa/process/knowledge/KNOW-a16b7bc7.md": {
-          "sourceHash": "5b234a54442210f14d2e58eb65e25ec296726e701165254e4868b309ea7989e3",
-          "installedHash": "5b234a54442210f14d2e58eb65e25ec296726e701165254e4868b309ea7989e3"
+          "sourceHash": "68535dddbfb8ec512717959d1ae45d4a979e54f9c845deda080d76ba5441e95b",
+          "installedHash": "68535dddbfb8ec512717959d1ae45d4a979e54f9c845deda080d76ba5441e95b"
         },
         ".orqa/process/knowledge/KNOW-a4e351bc.md": {
-          "sourceHash": "5fc5a83e6eb4b7cc3a3931a6ace2e1dfc36ea91d2247bc11ec0cce41d2f0bfe9",
-          "installedHash": "5fc5a83e6eb4b7cc3a3931a6ace2e1dfc36ea91d2247bc11ec0cce41d2f0bfe9"
+          "sourceHash": "dd9c4ea49a185818af4bc443f985141436145233619e572bb0cc4b2101b4737d",
+          "installedHash": "dd9c4ea49a185818af4bc443f985141436145233619e572bb0cc4b2101b4737d"
         },
         ".orqa/process/knowledge/KNOW-b320cae8.md": {
-          "sourceHash": "4841e5dfdb2dcb026da0d346207d38f2a8573655116e16f7bf002e4ae1d4af08",
-          "installedHash": "4841e5dfdb2dcb026da0d346207d38f2a8573655116e16f7bf002e4ae1d4af08"
+          "sourceHash": "48043f501e2a60ebc50d669ed7c680b3a3820e704e095cb7b9913bde2f8e65b1",
+          "installedHash": "48043f501e2a60ebc50d669ed7c680b3a3820e704e095cb7b9913bde2f8e65b1"
         },
         ".orqa/process/knowledge/KNOW-b95ec6e3.md": {
-          "sourceHash": "ff2528ada0bd770201cfb9caa68d11ef139f17abe1e515bc9a672f5447426634",
-          "installedHash": "ff2528ada0bd770201cfb9caa68d11ef139f17abe1e515bc9a672f5447426634"
+          "sourceHash": "ebe6837bcec4a69b8ab2ba1c468989a659143b7de65bc4e64f46888cc3396d39",
+          "installedHash": "ebe6837bcec4a69b8ab2ba1c468989a659143b7de65bc4e64f46888cc3396d39"
         },
         ".orqa/process/knowledge/KNOW-dd5062c9.md": {
-          "sourceHash": "68ff22cfe8d71b28a07e6a412754983a60545a98e4d030d33c3b97ce0c07675c",
-          "installedHash": "68ff22cfe8d71b28a07e6a412754983a60545a98e4d030d33c3b97ce0c07675c"
+          "sourceHash": "0bc940a48915880773c2379fa4d534d6790c5dd132f5ee848c499c387e300c19",
+          "installedHash": "0bc940a48915880773c2379fa4d534d6790c5dd132f5ee848c499c387e300c19"
         },
         ".orqa/process/knowledge/KNOW-e484802a.md": {
-          "sourceHash": "2259b4e9a8cee3553d37ad29f7139e496cce77f239e58231395cd71dba056bbe",
-          "installedHash": "2259b4e9a8cee3553d37ad29f7139e496cce77f239e58231395cd71dba056bbe"
+          "sourceHash": "0b78ccdd95cadaec47c4137019af02eacb0267558ac9bedbb9a7cc3e16552319",
+          "installedHash": "0b78ccdd95cadaec47c4137019af02eacb0267558ac9bedbb9a7cc3e16552319"
         },
         ".orqa/process/knowledge/KNOW-e89753ad.md": {
-          "sourceHash": "9680d2cad0b73b23d5d191b78cc794a5e5bc7b6d6711dbc88303eb9bf2506c63",
-          "installedHash": "9680d2cad0b73b23d5d191b78cc794a5e5bc7b6d6711dbc88303eb9bf2506c63"
+          "sourceHash": "972dbe97af322103fb33d083e30e1737ba60a58b815765061d932047cc7472ae",
+          "installedHash": "972dbe97af322103fb33d083e30e1737ba60a58b815765061d932047cc7472ae"
         },
         ".orqa/process/knowledge/KNOW-f5ee4e0d.md": {
-          "sourceHash": "b2512376b6104456ce646c9c00309defc452a38890e9cd41f178667753d284ee",
-          "installedHash": "b2512376b6104456ce646c9c00309defc452a38890e9cd41f178667753d284ee"
+          "sourceHash": "e7279a0155abdf9a45218b842ee8a357214a6fdbb58865193a368dd0fb9cc434",
+          "installedHash": "e7279a0155abdf9a45218b842ee8a357214a6fdbb58865193a368dd0fb9cc434"
         },
         ".orqa/process/knowledge/KNOW-f7fb7aa7.md": {
-          "sourceHash": "2e43b3798bd202d61c2517a279b2dd22f40cbe3cfa903a437ad9fe9f49b62e8c",
-          "installedHash": "2e43b3798bd202d61c2517a279b2dd22f40cbe3cfa903a437ad9fe9f49b62e8c"
+          "sourceHash": "0b6a0ca509f89ad30fd967bebb2e93a0b00bef736f4157781eefd8e04e97f5de",
+          "installedHash": "0b6a0ca509f89ad30fd967bebb2e93a0b00bef736f4157781eefd8e04e97f5de"
         },
         ".orqa/process/knowledge/KNOW-fd636a56.md": {
-          "sourceHash": "3fe14c0ae3db0115485997f2adfb2cfa0f43cd24bf736653104fa9912c0a929a",
-          "installedHash": "3fe14c0ae3db0115485997f2adfb2cfa0f43cd24bf736653104fa9912c0a929a"
+          "sourceHash": "30b90c440283b98b2bb086c3d36a1285d245653ad23fad0967ab6c26a4dba6ff",
+          "installedHash": "30b90c440283b98b2bb086c3d36a1285d245653ad23fad0967ab6c26a4dba6ff"
         },
         ".orqa/process/rules/RULE-0d29fc91.md": {
           "sourceHash": "277c4777c34c57b2aa4850b3a94171f2acfa2fa6a7c59d9e09f4b23b40246a3a",
@@ -482,7 +482,7 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:31.957Z",
+      "installed_at": "2026-03-26T08:48:03.152Z",
       "files": {
         ".orqa/process/agents/AGENT-065a25cc.md": {
           "sourceHash": "c6956688e038e797a452742257ca17f3d3fcb9baf45c2278bd55c5eb889bb379",
@@ -497,66 +497,66 @@
           "installedHash": "aeb44211c82b0e7d72b531c9669a7b358892036e29a133ca75026c34bf65bd7e"
         },
         ".orqa/process/knowledge/KNOW-694ff7cb.md": {
-          "sourceHash": "84029675c733be467cd5fb519d2d9c7e7f9a22aaa3285464f3ca9d0279a63390",
-          "installedHash": "84029675c733be467cd5fb519d2d9c7e7f9a22aaa3285464f3ca9d0279a63390"
+          "sourceHash": "9bdf3c621480d1980197177d30afd2f3c3b4c8049ccfcc41cab79a1166a18aab",
+          "installedHash": "9bdf3c621480d1980197177d30afd2f3c3b4c8049ccfcc41cab79a1166a18aab"
         },
         ".orqa/process/knowledge/KNOW-d4095bd9.md": {
-          "sourceHash": "8fcbbcaa6246d048fe92c850fdcf4e59e493494e8e365cfcd97c5956dc1925fc",
-          "installedHash": "8fcbbcaa6246d048fe92c850fdcf4e59e493494e8e365cfcd97c5956dc1925fc"
+          "sourceHash": "bf2f83feafde04db13ab9a2604563a65aea779fa55625b5660e563757e13b26b",
+          "installedHash": "bf2f83feafde04db13ab9a2604563a65aea779fa55625b5660e563757e13b26b"
         },
         ".orqa/process/knowledge/KNOW-ea7898e4.md": {
-          "sourceHash": "fcd23f2aee0e8cd6b5787a6e9a76d4eeccde5af67fb6e944e0b41bd699fe78a0",
-          "installedHash": "fcd23f2aee0e8cd6b5787a6e9a76d4eeccde5af67fb6e944e0b41bd699fe78a0"
+          "sourceHash": "6ab4085234b8b00645ff240ced399755087d1792c7f2241486385d5300e0bfcf",
+          "installedHash": "6ab4085234b8b00645ff240ced399755087d1792c7f2241486385d5300e0bfcf"
         },
         ".orqa/process/knowledge/KNOW-f7d03a2c.md": {
-          "sourceHash": "651df7bc6703f62603fc652da690b4aaad5c595304a2796c1be2379914e93291",
-          "installedHash": "651df7bc6703f62603fc652da690b4aaad5c595304a2796c1be2379914e93291"
+          "sourceHash": "b352205f81c6b5b5c3fa8b7695a064fc431f66935989959fdfcfe862d6c67854",
+          "installedHash": "b352205f81c6b5b5c3fa8b7695a064fc431f66935989959fdfcfe862d6c67854"
         }
       }
     },
     "@orqastudio/plugin-software-kanban": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:35.938Z",
+      "installed_at": "2026-03-26T08:48:06.960Z",
       "files": {
         ".orqa/process/knowledge/KNOW-0188373b.md": {
-          "sourceHash": "9c7981482001b4d9bb3824fe50f3c2f33284152c61f92bae1e633fdd6173f52e",
-          "installedHash": "9c7981482001b4d9bb3824fe50f3c2f33284152c61f92bae1e633fdd6173f52e"
+          "sourceHash": "74e6880b9bc174d10bbb889083674151e2cd6a518760ddfd015b659bb4ba5228",
+          "installedHash": "74e6880b9bc174d10bbb889083674151e2cd6a518760ddfd015b659bb4ba5228"
         },
         ".orqa/process/knowledge/KNOW-1314ac47.md": {
-          "sourceHash": "f2abdafa8cc28f90821bc6e3b395cdcd2dd028d715faea33d747b21f3f97c972",
-          "installedHash": "f2abdafa8cc28f90821bc6e3b395cdcd2dd028d715faea33d747b21f3f97c972"
+          "sourceHash": "e3e8e8f8c7a57e0db7abbcf5f6636d136a11ae05e8b6258fe71ab3d5ba5da17b",
+          "installedHash": "e3e8e8f8c7a57e0db7abbcf5f6636d136a11ae05e8b6258fe71ab3d5ba5da17b"
         },
         ".orqa/process/knowledge/KNOW-45b5f8a8.md": {
-          "sourceHash": "3b256e857126607c2949b2f66dc2fe5e6bdbc4cebd5c29e5fb83958f721e81ff",
-          "installedHash": "3b256e857126607c2949b2f66dc2fe5e6bdbc4cebd5c29e5fb83958f721e81ff"
+          "sourceHash": "5e3b8012422911cfdc82084068a847b47a408367e663a437328c4e521db08806",
+          "installedHash": "5e3b8012422911cfdc82084068a847b47a408367e663a437328c4e521db08806"
         },
         ".orqa/process/knowledge/KNOW-5f4db8f7.md": {
-          "sourceHash": "c8d524734390ecc2af32dec19f85b91e15719994759e72fb3d9fc6726bec4f50",
-          "installedHash": "c8d524734390ecc2af32dec19f85b91e15719994759e72fb3d9fc6726bec4f50"
+          "sourceHash": "31b81039f8fd2091ede83d73e4d47cd1038914ba9e11b5a5c9d1e603a4018fbd",
+          "installedHash": "31b81039f8fd2091ede83d73e4d47cd1038914ba9e11b5a5c9d1e603a4018fbd"
         },
         ".orqa/process/knowledge/KNOW-71352dc8.md": {
-          "sourceHash": "77ee8dcb10f30c493b8695b1f6a1991f65a798765b986bad67c196ebb795a6fd",
-          "installedHash": "77ee8dcb10f30c493b8695b1f6a1991f65a798765b986bad67c196ebb795a6fd"
+          "sourceHash": "ab764920955076512368dd6544af420002e903ee2c99358087e7fd9179886611",
+          "installedHash": "ab764920955076512368dd6544af420002e903ee2c99358087e7fd9179886611"
         },
         ".orqa/process/knowledge/KNOW-72ca209f.md": {
-          "sourceHash": "90629dd4ea17adc52e24a4d63ff7b8b76331c5a357a3c1045189ffb698ffd2ed",
-          "installedHash": "90629dd4ea17adc52e24a4d63ff7b8b76331c5a357a3c1045189ffb698ffd2ed"
+          "sourceHash": "29e6265565ac7853c9692ce34827b6ca3e204aa847d6cb5073c452c939e86fde",
+          "installedHash": "29e6265565ac7853c9692ce34827b6ca3e204aa847d6cb5073c452c939e86fde"
         },
         ".orqa/process/knowledge/KNOW-91a7a6c1.md": {
-          "sourceHash": "c864332f345344e60c017d41b528994442c3c6f7143badd2d3e4dfd3bc13b8b2",
-          "installedHash": "c864332f345344e60c017d41b528994442c3c6f7143badd2d3e4dfd3bc13b8b2"
+          "sourceHash": "a805f81cc9b30f813496d628c2849a6b504d14fe38a7d5169aa06b734f9e06d5",
+          "installedHash": "a805f81cc9b30f813496d628c2849a6b504d14fe38a7d5169aa06b734f9e06d5"
         },
         ".orqa/process/knowledge/KNOW-bec7e87d.md": {
-          "sourceHash": "f9adad69c36da26d9d5fa979ba7e6e72cd986ca6ff5f831fdf7ff567157d5208",
-          "installedHash": "f9adad69c36da26d9d5fa979ba7e6e72cd986ca6ff5f831fdf7ff567157d5208"
+          "sourceHash": "9eaf5eaae4899accd5074cc8f29f954bb400e14e609d8a5907e50e47d57d6cc4",
+          "installedHash": "9eaf5eaae4899accd5074cc8f29f954bb400e14e609d8a5907e50e47d57d6cc4"
         },
         ".orqa/process/knowledge/KNOW-d00093e7.md": {
-          "sourceHash": "9c2aaf895ed3fc5c6f620cb452e6e9b9956f1765e55d7931e4e81e328e6aaeef",
-          "installedHash": "9c2aaf895ed3fc5c6f620cb452e6e9b9956f1765e55d7931e4e81e328e6aaeef"
+          "sourceHash": "a39218c735bfa3e4fb471e88393206e923175361c2dc58c9fda898e7cc33a4c0",
+          "installedHash": "a39218c735bfa3e4fb471e88393206e923175361c2dc58c9fda898e7cc33a4c0"
         },
         ".orqa/process/knowledge/KNOW-d03337ac.md": {
-          "sourceHash": "25f504441b6a6e8eaa06577efea26d4b2d9e41ce489ab6122dcd39cf41d8246b",
-          "installedHash": "25f504441b6a6e8eaa06577efea26d4b2d9e41ce489ab6122dcd39cf41d8246b"
+          "sourceHash": "1d14f0d3552dfae1d0184e4e0d595f88a251ec112712a9f4e83a565310ad7d14",
+          "installedHash": "1d14f0d3552dfae1d0184e4e0d595f88a251ec112712a9f4e83a565310ad7d14"
         },
         ".orqa/process/knowledge/relationship-vocabulary.md": {
           "sourceHash": "37473da8e2634c631afeabb8faa4b90deeb04b29dc17bc08ec03e077ae3bc588",
@@ -586,7 +586,7 @@
     },
     "@orqastudio/plugin-svelte": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:37.359Z",
+      "installed_at": "2026-03-26T08:48:08.247Z",
       "files": {
         ".orqa/process/agents/AGENT-5de8c14f.md": {
           "sourceHash": "e68838ea1e029a833bd99e41f318ea5b29199d86e9964b9253d619cabeffb6f8",
@@ -605,62 +605,62 @@
           "installedHash": "8590b113bba91d344c8fe2e0e590d26b5ab565424436e9bbda307621080b6ee6"
         },
         ".orqa/process/knowledge/KNOW-3642842e.md": {
-          "sourceHash": "f97c689f16b35ae656591387c0d0eb5f8569249c03f4faa5d60027284f6d98ef",
-          "installedHash": "f97c689f16b35ae656591387c0d0eb5f8569249c03f4faa5d60027284f6d98ef"
+          "sourceHash": "18081fbd5faa26e4e5ba42e8f0e858de6d00d50a3386dd53085dadb16dcf184a",
+          "installedHash": "18081fbd5faa26e4e5ba42e8f0e858de6d00d50a3386dd53085dadb16dcf184a"
         },
         ".orqa/process/knowledge/KNOW-37496474.md": {
-          "sourceHash": "ec55625c29aac7986afc7af3d48ac4dcd2bf845e1719c9c0b3f8779dd3e38dce",
-          "installedHash": "ec55625c29aac7986afc7af3d48ac4dcd2bf845e1719c9c0b3f8779dd3e38dce"
+          "sourceHash": "509904baab8380df900347beead8c66c1b4de1eaf29b4f88ceafbb7635088187",
+          "installedHash": "509904baab8380df900347beead8c66c1b4de1eaf29b4f88ceafbb7635088187"
         },
         ".orqa/process/knowledge/KNOW-4260613a.md": {
-          "sourceHash": "56878c147bb2175bd49c407c2d919c9798d0d2a5d49ca6f5862096626b4fb4fb",
-          "installedHash": "56878c147bb2175bd49c407c2d919c9798d0d2a5d49ca6f5862096626b4fb4fb"
+          "sourceHash": "d8da8d91f7a4b445a50dead810507c1657fc535b7fc31742ed8bf03251115ce1",
+          "installedHash": "d8da8d91f7a4b445a50dead810507c1657fc535b7fc31742ed8bf03251115ce1"
         },
         ".orqa/process/knowledge/KNOW-50382247.md": {
-          "sourceHash": "5bcebb42fe10b0cf988991d7c558c55d4c0767d1d7e193f9e6fcbcfe34584168",
-          "installedHash": "5bcebb42fe10b0cf988991d7c558c55d4c0767d1d7e193f9e6fcbcfe34584168"
+          "sourceHash": "d5a1ba6629cf653f5582c30bd1222b3798d3ffe9c48974f4668d526d215e6f96",
+          "installedHash": "d5a1ba6629cf653f5582c30bd1222b3798d3ffe9c48974f4668d526d215e6f96"
         },
         ".orqa/process/knowledge/KNOW-5704b089.md": {
-          "sourceHash": "0733a4206adeeb978c526e6645607647e0b49396ce9bc87be326680b6da0937f",
-          "installedHash": "0733a4206adeeb978c526e6645607647e0b49396ce9bc87be326680b6da0937f"
+          "sourceHash": "55044191deefe5a25c3bf74cf03eb87860c6619e3ed49f459817d3d3633f5f90",
+          "installedHash": "55044191deefe5a25c3bf74cf03eb87860c6619e3ed49f459817d3d3633f5f90"
         },
         ".orqa/process/knowledge/KNOW-6cfacbb2.md": {
-          "sourceHash": "707b6008bc39de2ba51ec3794f6a4b2c8b2107a292cff62a629290952394dd10",
-          "installedHash": "707b6008bc39de2ba51ec3794f6a4b2c8b2107a292cff62a629290952394dd10"
+          "sourceHash": "c1c365e06c9c939289b492e1b769924994a1bc68cfc37e809880ee81015f0896",
+          "installedHash": "c1c365e06c9c939289b492e1b769924994a1bc68cfc37e809880ee81015f0896"
         },
         ".orqa/process/knowledge/KNOW-8cc0f5e4.md": {
-          "sourceHash": "e3cf1cb7641cff220fa362422ca7c8cec0c06faf37b5d5268a627112fa2b67d3",
-          "installedHash": "e3cf1cb7641cff220fa362422ca7c8cec0c06faf37b5d5268a627112fa2b67d3"
+          "sourceHash": "e8bddc0daac65e0dde141e37f98ebace439a2a5a7e26c79dc46020424a97e2f2",
+          "installedHash": "e8bddc0daac65e0dde141e37f98ebace439a2a5a7e26c79dc46020424a97e2f2"
         },
         ".orqa/process/knowledge/KNOW-96aaa407.md": {
-          "sourceHash": "40b66355bdfd8e67b8447f56d863ab4575dbf60650d43d7a29c8efb305763570",
-          "installedHash": "40b66355bdfd8e67b8447f56d863ab4575dbf60650d43d7a29c8efb305763570"
+          "sourceHash": "bf36b89a7af1ed4f634ab995266b85a93a549f84ebb9abe31e8a224eb533c3e6",
+          "installedHash": "bf36b89a7af1ed4f634ab995266b85a93a549f84ebb9abe31e8a224eb533c3e6"
         },
         ".orqa/process/knowledge/KNOW-a1a195c1.md": {
-          "sourceHash": "912defdb188c5c4dbdd1438c3418a10f181abbc57a72629899f5b30ac3d8d040",
-          "installedHash": "912defdb188c5c4dbdd1438c3418a10f181abbc57a72629899f5b30ac3d8d040"
+          "sourceHash": "5ad90481af49beefa40ff47b5ac8bbfa21df714577069bf53593e6947cdd621b",
+          "installedHash": "5ad90481af49beefa40ff47b5ac8bbfa21df714577069bf53593e6947cdd621b"
         },
         ".orqa/process/knowledge/KNOW-abb08445.md": {
-          "sourceHash": "fce584126fb8fe704ad701ee89cfcbfe39f17eaad46f4ace05c52b36066e1547",
-          "installedHash": "fce584126fb8fe704ad701ee89cfcbfe39f17eaad46f4ace05c52b36066e1547"
+          "sourceHash": "b76373b0c220338e1cc5623337ce4f07681e9693f35dccb2ab4a11e095058d21",
+          "installedHash": "b76373b0c220338e1cc5623337ce4f07681e9693f35dccb2ab4a11e095058d21"
         },
         ".orqa/process/knowledge/KNOW-be54e4de.md": {
-          "sourceHash": "2cfc4297fd1a0b739bfc9ed6696354dc8b65004b6141bc71135799e89e6b7ead",
-          "installedHash": "2cfc4297fd1a0b739bfc9ed6696354dc8b65004b6141bc71135799e89e6b7ead"
+          "sourceHash": "caede1148d0ebaed4df4443385b4df71d9a932c89105e1e3a1d954604b3213f8",
+          "installedHash": "caede1148d0ebaed4df4443385b4df71d9a932c89105e1e3a1d954604b3213f8"
         },
         ".orqa/process/knowledge/KNOW-c4d3e52b.md": {
-          "sourceHash": "dc503797f0b7b8f1bd06c1cd58e3e423c42031bd1c2ae2d51da9ec5bad2eb4d6",
-          "installedHash": "dc503797f0b7b8f1bd06c1cd58e3e423c42031bd1c2ae2d51da9ec5bad2eb4d6"
+          "sourceHash": "3d6e5e3c551b8942a68e0277842c929ab7d5e472c8ccf250830254a5363d95a5",
+          "installedHash": "3d6e5e3c551b8942a68e0277842c929ab7d5e472c8ccf250830254a5363d95a5"
         },
         ".orqa/process/knowledge/KNOW-df3c489e.md": {
-          "sourceHash": "287ed6c512594032f2ebdd300576587cc668239a5e4839196e7c47920752f7e2",
-          "installedHash": "287ed6c512594032f2ebdd300576587cc668239a5e4839196e7c47920752f7e2"
+          "sourceHash": "ccd8561992e1c2f6eb590f26f1d66bef9cc2bcb4b4f0240bac4961ed37f3d46a",
+          "installedHash": "ccd8561992e1c2f6eb590f26f1d66bef9cc2bcb4b4f0240bac4961ed37f3d46a"
         }
       }
     },
     "@orqastudio/plugin-tauri": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:37.375Z",
+      "installed_at": "2026-03-26T08:48:08.262Z",
       "files": {
         ".orqa/process/agents/AGENT-65b56a0b.md": {
           "sourceHash": "f8e1234321abd44468a12f64530ce4116ede5981672c1ea5c5287b75885523a5",
@@ -675,84 +675,84 @@
           "installedHash": "550a4ef5db7d552a37d087d683579aa1e3cd199c9ba6e0dea95bee26511dfc9f"
         },
         ".orqa/process/knowledge/KNOW-1da7ecd8.md": {
-          "sourceHash": "13f839b251ef3eb6fd4a6c747c6f851aa5ea9dd14642387e5f65d746aa120f54",
-          "installedHash": "13f839b251ef3eb6fd4a6c747c6f851aa5ea9dd14642387e5f65d746aa120f54"
+          "sourceHash": "66f14c0faa9301b3108cc150164f6d537bd22ba91f362932b1a859feb054b738",
+          "installedHash": "66f14c0faa9301b3108cc150164f6d537bd22ba91f362932b1a859feb054b738"
         },
         ".orqa/process/knowledge/KNOW-59077955.md": {
-          "sourceHash": "bdb8cbc1e20eb71e52a32ca8d942c3a64cd931ae2063899f2dba831f5a6b1d71",
-          "installedHash": "bdb8cbc1e20eb71e52a32ca8d942c3a64cd931ae2063899f2dba831f5a6b1d71"
+          "sourceHash": "b7b194555d20911b0b6e995341d39baa38802a0868fa10a5fe3dc5a50995504a",
+          "installedHash": "b7b194555d20911b0b6e995341d39baa38802a0868fa10a5fe3dc5a50995504a"
         },
         ".orqa/process/knowledge/KNOW-5efbe925.md": {
-          "sourceHash": "c4f227de08907e0086f4cc8230970229f552dca98258e1ce1b52c38249786ce6",
-          "installedHash": "c4f227de08907e0086f4cc8230970229f552dca98258e1ce1b52c38249786ce6"
+          "sourceHash": "d1c87d3f0b2687461ec6211b4cf45282748495e2c2dc03035ed83b6a12b17334",
+          "installedHash": "d1c87d3f0b2687461ec6211b4cf45282748495e2c2dc03035ed83b6a12b17334"
         },
         ".orqa/process/knowledge/KNOW-73490bde.md": {
-          "sourceHash": "f025106b54a43683dd4fc30a57fa9be86c921064a54f5e3b800106639e16a882",
-          "installedHash": "f025106b54a43683dd4fc30a57fa9be86c921064a54f5e3b800106639e16a882"
+          "sourceHash": "ab21ce100514c956bf955fdaa8ba4f802d85e413db7abf8bd50e32bb475a278e",
+          "installedHash": "ab21ce100514c956bf955fdaa8ba4f802d85e413db7abf8bd50e32bb475a278e"
         },
         ".orqa/process/knowledge/KNOW-a274d90d.md": {
-          "sourceHash": "554d1d52c499844a4d3766690f5108187f87c8633c3d554e20bd08ca532987fe",
-          "installedHash": "554d1d52c499844a4d3766690f5108187f87c8633c3d554e20bd08ca532987fe"
+          "sourceHash": "1fd8b4f01725f830a0c1160437cb934752afb0cc09c58742a1da98aac73df2b1",
+          "installedHash": "1fd8b4f01725f830a0c1160437cb934752afb0cc09c58742a1da98aac73df2b1"
         }
       }
     },
     "@orqastudio/plugin-typescript": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:38.509Z",
+      "installed_at": "2026-03-26T08:48:09.386Z",
       "files": {
         ".orqa/documentation/DOC-7062bce9.md": {
           "sourceHash": "a6e561452fbc2d1bb2ba08dc3cd144bdd9df3d89a3abcd6a16ee9e827fd9334f",
           "installedHash": "a6e561452fbc2d1bb2ba08dc3cd144bdd9df3d89a3abcd6a16ee9e827fd9334f"
         },
         ".orqa/process/knowledge/KNOW-40e2eb99.md": {
-          "sourceHash": "ef850ffb2a32cc39e97236d09a1cd862397f2b38a8a9700899e66cecbeb4dc33",
-          "installedHash": "ef850ffb2a32cc39e97236d09a1cd862397f2b38a8a9700899e66cecbeb4dc33"
+          "sourceHash": "81807ad196ad14858bdccbc8bd9e32634c510a0a9b762e610ef4b89fc6d8750d",
+          "installedHash": "81807ad196ad14858bdccbc8bd9e32634c510a0a9b762e610ef4b89fc6d8750d"
         }
       }
     },
     "@orqastudio/plugin-systems-thinking": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:37.369Z",
+      "installed_at": "2026-03-26T08:48:08.256Z",
       "files": {
         ".orqa/process/knowledge/KNOW-0619a413.md": {
-          "sourceHash": "6acf73744464476d5093ffeb414a381783548a5082386d118d2ee133aa860031",
-          "installedHash": "6acf73744464476d5093ffeb414a381783548a5082386d118d2ee133aa860031"
+          "sourceHash": "86d6309a561f10c964dd773e07d3b78b2da3473306cd0fa9a1771627c48be72e",
+          "installedHash": "86d6309a561f10c964dd773e07d3b78b2da3473306cd0fa9a1771627c48be72e"
         },
         ".orqa/process/knowledge/KNOW-1ea9291c.md": {
-          "sourceHash": "6036102fba9955273864a3be9840d8999a4275e7ea791f6eb5481dbd1681ca88",
-          "installedHash": "6036102fba9955273864a3be9840d8999a4275e7ea791f6eb5481dbd1681ca88"
+          "sourceHash": "e808e85b7865a809f95aa76579af4d7617a49955abe17d9fbe13c1d79b16193f",
+          "installedHash": "e808e85b7865a809f95aa76579af4d7617a49955abe17d9fbe13c1d79b16193f"
         },
         ".orqa/process/knowledge/KNOW-36befd20.md": {
-          "sourceHash": "410ecbe03f3ad92c8f3d6289c49cc95f5c3924925bb21a8dd11c22747da82ee6",
-          "installedHash": "410ecbe03f3ad92c8f3d6289c49cc95f5c3924925bb21a8dd11c22747da82ee6"
+          "sourceHash": "887ecb373080b49dd59fabe84698c402c8c666d53a977a24a2d20d34ca674a88",
+          "installedHash": "887ecb373080b49dd59fabe84698c402c8c666d53a977a24a2d20d34ca674a88"
         },
         ".orqa/process/knowledge/KNOW-41849545.md": {
-          "sourceHash": "85351df1e3a687932123b388ed25001d6e7b3fdd35a9c69ad851afd6464d3b75",
-          "installedHash": "85351df1e3a687932123b388ed25001d6e7b3fdd35a9c69ad851afd6464d3b75"
+          "sourceHash": "488e9c8cbb6f9314de28c232cc4cafb6abe90572114e70ae1fa99b01ae3733e2",
+          "installedHash": "488e9c8cbb6f9314de28c232cc4cafb6abe90572114e70ae1fa99b01ae3733e2"
         },
         ".orqa/process/knowledge/KNOW-4a4241a5.md": {
-          "sourceHash": "eaaf944216c91f0d291368378c65e80ec044afb31af49aff17bca309e802638c",
-          "installedHash": "eaaf944216c91f0d291368378c65e80ec044afb31af49aff17bca309e802638c"
+          "sourceHash": "377a87ae676c4f5c0f92914a5328160d267608e80631187fda926ef6865cf20f",
+          "installedHash": "377a87ae676c4f5c0f92914a5328160d267608e80631187fda926ef6865cf20f"
         },
         ".orqa/process/knowledge/KNOW-7fadba3f.md": {
-          "sourceHash": "6e7f795bebb209a7cceb2496126aaa44f98fa44786cdd785ae946d29b998e3d7",
-          "installedHash": "6e7f795bebb209a7cceb2496126aaa44f98fa44786cdd785ae946d29b998e3d7"
+          "sourceHash": "7adabb2f395a7061ffdd50840279a9234894068b8d7cee09a516f66b80f31b50",
+          "installedHash": "7adabb2f395a7061ffdd50840279a9234894068b8d7cee09a516f66b80f31b50"
         },
         ".orqa/process/knowledge/KNOW-8564d52c.md": {
-          "sourceHash": "8e71440cfa2e16a6f3d257fcdf795d58efb14f2ceada5bcdf63bfe27e90d6860",
-          "installedHash": "8e71440cfa2e16a6f3d257fcdf795d58efb14f2ceada5bcdf63bfe27e90d6860"
+          "sourceHash": "b59dc4544750e93888f8a105daebe7d214402a3e9e102a9dd2bbe31d6126da65",
+          "installedHash": "b59dc4544750e93888f8a105daebe7d214402a3e9e102a9dd2bbe31d6126da65"
         },
         ".orqa/process/knowledge/KNOW-a3dcdd05.md": {
-          "sourceHash": "404a1d42a504f9a413c294ea996d1245cee5ad5a3c1ed2155f4355044c4a004b",
-          "installedHash": "404a1d42a504f9a413c294ea996d1245cee5ad5a3c1ed2155f4355044c4a004b"
+          "sourceHash": "8c7c997545cee9e3df1276f9cbf91e19dd8eb63d460427071fd20ad1be773dbc",
+          "installedHash": "8c7c997545cee9e3df1276f9cbf91e19dd8eb63d460427071fd20ad1be773dbc"
         },
         ".orqa/process/knowledge/KNOW-bf70068c.md": {
-          "sourceHash": "f2d32765c12062376da5d6a27c1fea5c96b929676bd08caf94251a02911309eb",
-          "installedHash": "f2d32765c12062376da5d6a27c1fea5c96b929676bd08caf94251a02911309eb"
+          "sourceHash": "c4c4a4045fde931085dfc49acc57f0b24fc293aed1ae3e343eeb8be2dfb84c49",
+          "installedHash": "c4c4a4045fde931085dfc49acc57f0b24fc293aed1ae3e343eeb8be2dfb84c49"
         },
         ".orqa/process/knowledge/KNOW-eeceaabf.md": {
-          "sourceHash": "7e620f912a3fd846c33608f37667436cf9be10447f1a340ea41aee4438336976",
-          "installedHash": "7e620f912a3fd846c33608f37667436cf9be10447f1a340ea41aee4438336976"
+          "sourceHash": "af7a21a0d78a8d27f26e39789ce7ff19d125f3803080d2981f029a8e6c7ef30f",
+          "installedHash": "af7a21a0d78a8d27f26e39789ce7ff19d125f3803080d2981f029a8e6c7ef30f"
         },
         ".orqa/process/rules/RULE-05562ed4.md": {
           "sourceHash": "6c09587c70367b996d2cb0a45213f26c6d9eb3ab08ff66ffab70647b316cd5dc",
@@ -774,12 +774,12 @@
     },
     "@orqastudio/plugin-githooks": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:31.917Z",
+      "installed_at": "2026-03-26T08:48:03.107Z",
       "files": {}
     },
     "@orqastudio/claude-code-connector": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-26T08:27:39.827Z",
+      "installed_at": "2026-03-26T08:48:10.663Z",
       "files": {
         ".orqa/process/knowledge/KNOW-03421ec0.md": {
           "sourceHash": "64891930f48f24e0bc06d0a9689bdf6f99a947cd80847d7e3c334233070dcd11",
@@ -793,39 +793,39 @@
     },
     "@orqastudio/plugin-claude": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-03-26T08:27:39.959Z",
+      "installed_at": "2026-03-26T08:48:10.801Z",
       "files": {}
     },
     "@orqastudio/plugin-plugin-dev": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:31.921Z",
+      "installed_at": "2026-03-26T08:48:03.110Z",
       "files": {
         ".orqa/process/agents/AGENT-ce86fb50.md": {
           "sourceHash": "1d833fed56da30c6377eb40a25242023cd3ca956f10863515287c7b7519fe9f9",
           "installedHash": "1d833fed56da30c6377eb40a25242023cd3ca956f10863515287c7b7519fe9f9"
         },
         ".orqa/process/knowledge/KNOW-1b7fa054.md": {
-          "sourceHash": "a6c55b31d69191c3559cb50db80b813f02d942e666322cf5ee67a8aef0937e43",
-          "installedHash": "a6c55b31d69191c3559cb50db80b813f02d942e666322cf5ee67a8aef0937e43"
+          "sourceHash": "950e75a76fd514a6eb35cf3d492c11c7ad46e83bd90f8a1aa2be9da511757053",
+          "installedHash": "950e75a76fd514a6eb35cf3d492c11c7ad46e83bd90f8a1aa2be9da511757053"
         },
         ".orqa/process/knowledge/KNOW-2f38309a.md": {
-          "sourceHash": "f436de64401873f020d3ee7b6ceae1703c48053174e488c889eeabcba2e75fab",
-          "installedHash": "f436de64401873f020d3ee7b6ceae1703c48053174e488c889eeabcba2e75fab"
+          "sourceHash": "679c71923af8d8506ca776557ecf1dae52b7087462af3bb39e46b209ab8fbacf",
+          "installedHash": "679c71923af8d8506ca776557ecf1dae52b7087462af3bb39e46b209ab8fbacf"
         },
         ".orqa/process/knowledge/KNOW-e6fee7a0.md": {
-          "sourceHash": "1ca77b006ef555838ee45a514b469adff15a26871664f28739f7837bcb62c65d",
-          "installedHash": "1ca77b006ef555838ee45a514b469adff15a26871664f28739f7837bcb62c65d"
+          "sourceHash": "287d9a8d0c55251b77327269e8a7dfd085f0403228cc750c171dbcd7fde49d87",
+          "installedHash": "287d9a8d0c55251b77327269e8a7dfd085f0403228cc750c171dbcd7fde49d87"
         }
       }
     },
     "@orqastudio/plugin-agile-discovery": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:30.879Z",
+      "installed_at": "2026-03-26T08:48:02.048Z",
       "files": {}
     },
     "@orqastudio/plugin-agile-planning": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:30.885Z",
+      "installed_at": "2026-03-26T08:48:02.054Z",
       "files": {
         ".orqa/process/workflows/planning-decision.workflow.yaml": {
           "sourceHash": "3fbf384e4375ceffafe79ea35a5cd4e099a34fae24619d9597b68f3264180cbc",
@@ -851,7 +851,7 @@
     },
     "@orqastudio/plugin-agile-review": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T08:27:30.887Z",
+      "installed_at": "2026-03-26T08:48:02.058Z",
       "files": {
         ".orqa/process/workflows/review.contribution.workflow.yaml": {
           "sourceHash": "a6f63567defcaac74b36b582fbdc4637d2e7397917921fd33746f5bcefe3eaa5",

@@ -3,6 +3,7 @@ id: KNOW-ea7898e4
 type: knowledge
 title: Rust Async Patterns
 description: "Master Rust async programming with Tokio, async traits, error handling, and concurrent patterns. Use when building async Rust applications, implementing concurrent systems, or debugging async code."
+summary: "Master Rust async programming with Tokio, async traits, error handling, and concurrent patterns. Use when building async Rust applications, implementing concurrent systems, or debugging async code."
 status: active
 created: 2026-03-01
 updated: 2026-03-10

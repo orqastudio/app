@@ -2,6 +2,7 @@
 id: KNOW-c4d3e52b
 type: knowledge
 title: "SvelteKit Patterns Reference"
+summary: "SvelteKit Patterns Reference"
 status: active
 created: 2026-03-20
 updated: 2026-03-20

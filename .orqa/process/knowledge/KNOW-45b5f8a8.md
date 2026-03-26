@@ -2,6 +2,7 @@
 id: KNOW-45b5f8a8
 type: knowledge
 title: Security Audit
+summary: "Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e."
 description: |
   Security auditing methodology: secret management, capability/permission systems,
   file system scoping, input validation, dependency auditing, and vulnerability

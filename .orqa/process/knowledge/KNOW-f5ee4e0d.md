@@ -3,6 +3,7 @@ id: KNOW-f5ee4e0d
 type: knowledge
 title: Plugin Setup
 description: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
+summary: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
 status: active
 created: 2026-03-11
 updated: 2026-03-23

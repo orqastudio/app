@@ -3,6 +3,7 @@ id: KNOW-6d80cf39
 type: knowledge
 title: "Documentation Placement — Where to Write Docs and Knowledge"
 description: "Decision guide for placing documentation and knowledge artifacts. Plugin directories for production content, .orqa/ for development content. Includes the pairing rule, placement flowchart, and common mistakes."
+summary: "Decision guide for placing documentation and knowledge artifacts. Plugin directories for production content, .orqa/ for development content. Includes the pairing rule, placement flowchart, and common mistakes."
 status: active
 created: 2026-03-24
 updated: 2026-03-24

@@ -2,6 +2,7 @@
 id: KNOW-2876afc7
 type: knowledge
 title: Project Setup
+summary: "Creates the base governance structure for any project. This skill is domain-agnostic — it sets up the infrastructure that all project types share."
 description: |
   Universal project scaffolding: creates the governance directory structure,
   installs core plugins, initialises project configuration, and sets up

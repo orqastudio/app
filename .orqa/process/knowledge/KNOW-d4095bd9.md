@@ -2,6 +2,7 @@
 id: KNOW-d4095bd9
 type: knowledge
 name: Clippy Config Management
+summary: "Clippy Config Management"
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:

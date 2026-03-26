@@ -2,6 +2,7 @@
 id: KNOW-a16b7bc7
 type: knowledge
 title: Demoted Rule Stability Tracking
+summary: "When a rule becomes redundant — because its enforcement is now handled by a linter, LSP, schema validator, or another rule — it should not be deleted immediately. A **demotion** period lets the team verify that the replacement actually catches violations before the original rule disappears."
 description: |
   Explains the stability tracking model for demoted (inactive) rules. Agents learn
   how demotion works, what the stability counter means, and when a demoted rule is

@@ -2,6 +2,7 @@
 id: KNOW-dd5062c9
 type: knowledge
 title: Shared Validation Engine
+summary: "OrqaStudio has **one validation engine** with **three consumers**. All artifact validation — frontmatter schemas, relationship types, status values, broken links, required fields — runs through a shared library."
 description: |
   How the shared validation engine works: a single library in libs/validation/ consumed
   by three adapters (LSP real-time, CLI on-demand, pre-commit gate). Schema-driven from

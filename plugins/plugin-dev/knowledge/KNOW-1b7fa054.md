@@ -2,8 +2,8 @@
 id: KNOW-1b7fa054
 type: knowledge
 title: Third-Party Plugin Development
+summary: "This skill is loaded when the base plugin development skill detects that the working directory is NOT the platform dev environment. Any standalone project creating a plugin uses this workflow."
 description: |
-summary: "|. This skill is loaded when the base plugin development skill detects that the working directory is NOT the platform dev environment. Any standalone project creating a plugin uses this workflow."
   Third-party plugin workflow for community and external developers. Plugins are
   standalone projects with their own project configuration and the software plugin
   pre-installed for independent lifecycle management.

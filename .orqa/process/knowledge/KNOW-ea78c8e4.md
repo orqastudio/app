@@ -2,6 +2,7 @@
 id: KNOW-ea78c8e4
 type: knowledge
 name: Dev Environment Management
+summary: "Dev Environment Management. The OrqaStudio dev environment (`orqastudio-dev`) aggregates all repos as git submodules. This skill covers how to manage it."
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:

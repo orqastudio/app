@@ -2,6 +2,7 @@
 id: KNOW-586bfa9a
 type: knowledge
 title: Knowledge Auto-Injection
+summary: "Agents need domain knowledge to do their jobs correctly. OrqaStudio ensures agents receive the right knowledge automatically through two mechanisms — **declared injection** from agent definitions and **semantic injection** based on task content."
 description: |
   How OrqaStudio automatically injects relevant knowledge into agents at spawn time.
   Two mechanisms: declared knowledge from agent employs relationships, and semantic

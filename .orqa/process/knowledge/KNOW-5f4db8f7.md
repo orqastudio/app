@@ -2,6 +2,7 @@
 id: KNOW-5f4db8f7
 type: knowledge
 title: Test Engineering
+summary: "Test engineering methodology. This skill teaches *how to think about testing* — the specific test frameworks, commands, and file locations come from the project's testing skill."
 description: |
   Test engineering methodology: test organisation, coverage requirements, mock
   boundaries, test writing standards, and the discipline of testing behavior

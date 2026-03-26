@@ -2,6 +2,7 @@
 id: KNOW-a3dcdd05
 type: knowledge
 title: Restructuring Methodology
+summary: "Methodology for safe, incremental restructuring of codebases. This skill teaches the *process* of refactoring — the domain-specific patterns (e."
 description: |
   Safe, incremental refactoring methodology: one change at a time, verify after
   each step, preserve behavior, no temporary files. Covers module extraction,
