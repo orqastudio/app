@@ -20,6 +20,15 @@ export type StateCategory =
 	| "completed"
 	| "terminal";
 
+/** The canonical set of state categories as a runtime constant. */
+export const STATE_CATEGORIES: readonly StateCategory[] = [
+	"planning",
+	"active",
+	"review",
+	"completed",
+	"terminal",
+] as const;
+
 // ---------------------------------------------------------------------------
 // Guards
 // ---------------------------------------------------------------------------

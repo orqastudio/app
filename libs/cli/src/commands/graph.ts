@@ -7,8 +7,13 @@
  * Falls back to the orqa-validation binary when the daemon is unreachable.
  */
 
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { parse as parseYaml } from "yaml";
 import { scanArtifactGraph, queryGraph, getGraphStats } from "../lib/graph.js";
 import type { GraphNode, GraphQueryOptions, GraphStats } from "../lib/graph.js";
+import { getRoot } from "../lib/root.js";
+import type { StateCategory } from "@orqastudio/types";
 
 const USAGE = `
 Usage: orqa graph [options]
@@ -179,71 +184,191 @@ function printArtifactDetail(node: GraphNode, allNodes: GraphNode[]): void {
 	console.log();
 }
 
-function printTree(results: GraphNode[]): void {
-	// Build delivery hierarchy: milestone → epic → task
-	const milestones = results.filter((n) => n.type === "milestone");
-	const epics = results.filter((n) => n.type === "epic");
-	const tasks = results.filter((n) => n.type === "task");
+// ---------------------------------------------------------------------------
+// Delivery hierarchy (loaded from plugin manifests, not hardcoded)
+// ---------------------------------------------------------------------------
 
-	if (milestones.length === 0 && epics.length === 0) {
-		console.log("No delivery hierarchy found. Use --type to filter.");
+interface DeliveryLevel {
+	type: string;
+	parentType: string | null;
+	parentRelationship: string | null;
+}
+
+/** Load delivery type hierarchy from installed plugin manifests. */
+function loadDeliveryHierarchy(): DeliveryLevel[] {
+	const root = getRoot();
+	const levels: DeliveryLevel[] = [];
+
+	for (const container of ["plugins", "connectors", "integrations"]) {
+		const containerDir = path.join(root, container);
+		let entries: string[];
+		try {
+			entries = fs.readdirSync(containerDir, { encoding: "utf-8" }) as string[];
+		} catch {
+			continue;
+		}
+
+		for (const entry of entries) {
+			const manifestPath = path.join(containerDir, entry, "orqa-plugin.json");
+			try {
+				const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+				if (manifest?.delivery?.types && Array.isArray(manifest.delivery.types)) {
+					for (const dt of manifest.delivery.types) {
+						levels.push({
+							type: dt.key,
+							parentType: dt.parent?.type ?? null,
+							parentRelationship: dt.parent?.relationship ?? null,
+						});
+					}
+					return levels; // First plugin with delivery config wins
+				}
+			} catch {
+				// Skip missing/invalid manifests
+			}
+		}
+	}
+
+	return levels;
+}
+
+function printTree(results: GraphNode[]): void {
+	const hierarchy = loadDeliveryHierarchy();
+
+	if (hierarchy.length === 0) {
+		console.log("No delivery hierarchy configured. Use --type to filter.");
 		printResults(results);
 		return;
 	}
 
+	// Group results by delivery type
+	const nodesByType = new Map<string, GraphNode[]>();
+	for (const level of hierarchy) {
+		nodesByType.set(level.type, results.filter((n) => n.type === level.type));
+	}
+
+	// Find the root level (no parent)
+	const rootLevel = hierarchy.find((l) => l.parentType === null);
+	if (!rootLevel) {
+		console.log("No root delivery type found. Use --type to filter.");
+		printResults(results);
+		return;
+	}
+
+	const rootNodes = nodesByType.get(rootLevel.type) ?? [];
+	if (rootNodes.length === 0) {
+		// Try showing from the first level that has nodes
+		const firstWithNodes = hierarchy.find((l) => (nodesByType.get(l.type) ?? []).length > 0);
+		if (!firstWithNodes) {
+			console.log("No delivery hierarchy found. Use --type to filter.");
+			printResults(results);
+			return;
+		}
+	}
+
 	console.log("Delivery Tree:\n");
 
-	for (const milestone of milestones) {
-		console.log(`${formatStatus(milestone.status)} ${milestone.id}: ${milestone.title}`);
+	/** Recursively print children at increasing indent depth. */
+	function printLevel(parentNode: GraphNode, depth: number): void {
+		// Find child levels whose parentType matches the current node's type
+		const childLevels = hierarchy.filter((l) => l.parentType === parentNode.type);
 
-		const childEpics = epics.filter((e) =>
-			e.relationships.some(
-				(r) => r.target === milestone.id && r.type === "delivers",
-			),
-		);
-
-		for (const epic of childEpics) {
-			console.log(`  ${formatStatus(epic.status)} ${epic.id}: ${epic.title}`);
-
-			const childTasks = tasks.filter((t) =>
-				t.relationships.some(
-					(r) => r.target === epic.id && r.type === "delivers",
+		for (const childLevel of childLevels) {
+			const childNodes = (nodesByType.get(childLevel.type) ?? []).filter((n) =>
+				n.relationships.some(
+					(r) => r.target === parentNode.id && r.type === childLevel.parentRelationship,
 				),
 			);
 
-			for (const task of childTasks) {
-				console.log(`    ${formatStatus(task.status)} ${task.id}: ${task.title}`);
+			for (const child of childNodes) {
+				const indent = "  ".repeat(depth);
+				console.log(`${indent}${formatStatus(child.status)} ${child.id}: ${child.title}`);
+				printLevel(child, depth + 1);
 			}
 		}
+	}
+
+	for (const rootNode of rootNodes) {
+		console.log(`${formatStatus(rootNode.status)} ${rootNode.id}: ${rootNode.title}`);
+		printLevel(rootNode, 1);
 		console.log();
 	}
 
-	// Show orphan epics (not delivering to any milestone)
-	const orphanEpics = epics.filter(
-		(e) => !e.relationships.some((r) => r.type === "delivers" && milestones.some((m) => m.id === r.target)),
-	);
-	if (orphanEpics.length > 0) {
-		console.log("Unlinked epics:");
-		for (const epic of orphanEpics) {
-			console.log(`  ${formatStatus(epic.status)} ${epic.id}: ${epic.title}`);
+	// Show orphans: nodes at non-root levels that don't link to any parent
+	for (const level of hierarchy) {
+		if (level.parentType === null) continue;
+		const parentNodes = nodesByType.get(level.parentType) ?? [];
+		const nodes = nodesByType.get(level.type) ?? [];
+		const orphans = nodes.filter(
+			(n) => !n.relationships.some(
+				(r) => r.type === level.parentRelationship && parentNodes.some((p) => p.id === r.target),
+			),
+		);
+		if (orphans.length > 0) {
+			console.log(`Unlinked ${level.type}s:`);
+			for (const node of orphans) {
+				console.log(`  ${formatStatus(node.status)} ${node.id}: ${node.title}`);
+			}
 		}
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Category-based status icons (derived from resolved workflows, not hardcoded)
+// ---------------------------------------------------------------------------
+
+const CATEGORY_ICONS: Record<StateCategory, string> = {
+	planning: "[.]",
+	active: "[*]",
+	review: "[?]",
+	completed: "[+]",
+	terminal: "[x]",
+};
+
+let statusCategoryCache: Map<string, StateCategory> | null = null;
+
+/** Build a status-name → category map from resolved workflow YAML files. */
+function loadStatusCategories(): Map<string, StateCategory> {
+	if (statusCategoryCache) return statusCategoryCache;
+
+	const map = new Map<string, StateCategory>();
+	const root = getRoot();
+	const workflowsDir = path.join(root, ".orqa", "workflows");
+
+	let entries: string[];
+	try {
+		entries = fs.readdirSync(workflowsDir, { encoding: "utf-8" }) as string[];
+	} catch {
+		statusCategoryCache = map;
+		return map;
+	}
+
+	for (const entry of entries) {
+		if (!entry.endsWith(".resolved.yaml")) continue;
+		try {
+			const content = fs.readFileSync(path.join(workflowsDir, entry), "utf-8");
+			const parsed = parseYaml(content);
+			if (parsed?.states && typeof parsed.states === "object") {
+				for (const [stateName, stateDef] of Object.entries(parsed.states)) {
+					const sd = stateDef as Record<string, unknown>;
+					if (typeof sd.category === "string") {
+						map.set(stateName, sd.category as StateCategory);
+					}
+				}
+			}
+		} catch {
+			// Skip unparseable files
+		}
+	}
+
+	statusCategoryCache = map;
+	return map;
+}
+
 function formatStatus(status: string): string {
-	const icons: Record<string, string> = {
-		captured: "[.]",
-		exploring: "[~]",
-		ready: "[R]",
-		prioritised: "[P]",
-		active: "[*]",
-		hold: "[-]",
-		blocked: "[!]",
-		review: "[?]",
-		completed: "[+]",
-		surpassed: "[^]",
-		archived: "[x]",
-		recurring: "[r]",
-	};
-	return icons[status] ?? `[${status}]`;
+	const categories = loadStatusCategories();
+	const category = categories.get(status);
+	if (category && CATEGORY_ICONS[category]) {
+		return CATEGORY_ICONS[category];
+	}
+	return `[${status}]`;
 }

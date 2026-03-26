@@ -83,6 +83,7 @@ export type {
 export type { StreamEvent } from "./streaming.js";
 
 // Workflow types
+export { STATE_CATEGORIES } from "./workflow.js";
 export type {
 	StateCategory,
 	GuardType,

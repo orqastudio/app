@@ -22,9 +22,93 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
-import { stringify as stringifyYaml } from "yaml";
+import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
 import { parseFrontmatterFromFile } from "../lib/frontmatter.js";
+
+// ─── Workflow/schema helpers (read from resolved YAML, not hardcoded) ─────────
+
+/** Read the initial_state for an artifact type from its resolved workflow. */
+function getInitialStatus(projectDir: string, artifactType: string): string | null {
+	const workflowsDir = join(projectDir, ".orqa", "workflows");
+	// Try exact match first, then scan all for matching artifact_type
+	for (const name of [`${artifactType}.resolved.yaml`]) {
+		const filePath = join(workflowsDir, name);
+		if (existsSync(filePath)) {
+			try {
+				const parsed = parseYaml(readFileSync(filePath, "utf-8"));
+				if (parsed?.initial_state) return parsed.initial_state;
+			} catch { /* skip */ }
+		}
+	}
+	// Scan all resolved workflows for matching artifact_type
+	try {
+		const entries = readdirSync(workflowsDir, { encoding: "utf-8" }) as string[];
+		for (const entry of entries) {
+			if (!entry.endsWith(".resolved.yaml")) continue;
+			try {
+				const parsed = parseYaml(readFileSync(join(workflowsDir, entry), "utf-8"));
+				if (parsed?.artifact_type === artifactType && parsed?.initial_state) {
+					return parsed.initial_state;
+				}
+			} catch { /* skip */ }
+		}
+	} catch { /* skip */ }
+	return null;
+}
+
+/** Get all status names that have the "active" category for a given artifact type. */
+function getActiveStatuses(projectDir: string, artifactType: string): Set<string> {
+	const result = new Set<string>();
+	const workflowsDir = join(projectDir, ".orqa", "workflows");
+	try {
+		const entries = readdirSync(workflowsDir, { encoding: "utf-8" }) as string[];
+		for (const entry of entries) {
+			if (!entry.endsWith(".resolved.yaml")) continue;
+			try {
+				const parsed = parseYaml(readFileSync(join(workflowsDir, entry), "utf-8"));
+				if (parsed?.artifact_type !== artifactType) continue;
+				if (parsed?.states && typeof parsed.states === "object") {
+					for (const [stateName, stateDef] of Object.entries(parsed.states)) {
+						const sd = stateDef as Record<string, unknown>;
+						if (sd.category === "active") {
+							result.add(stateName);
+						}
+					}
+				}
+			} catch { /* skip */ }
+		}
+	} catch { /* skip */ }
+	return result;
+}
+
+/** Read the relationship type that connects tasks to epics from the delivery config. */
+function getTaskToEpicRelationship(projectDir: string): string | null {
+	for (const container of ["plugins", "connectors", "integrations"]) {
+		const containerDir = join(projectDir, container);
+		let entries: string[];
+		try {
+			entries = readdirSync(containerDir, { encoding: "utf-8" }) as string[];
+		} catch {
+			continue;
+		}
+		for (const entry of entries) {
+			const manifestPath = join(containerDir, entry, "orqa-plugin.json");
+			try {
+				const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+				if (manifest?.delivery?.types && Array.isArray(manifest.delivery.types)) {
+					const taskType = manifest.delivery.types.find(
+						(dt: Record<string, unknown>) => dt.key === "task",
+					);
+					if (taskType?.parent?.relationship) {
+						return taskType.parent.relationship;
+					}
+				}
+			} catch { /* skip */ }
+		}
+	}
+	return null;
+}
 
 // ─── Full audit ───────────────────────────────────────────────────────────────
 
@@ -107,13 +191,19 @@ function extractRelationships(fm: Record<string, unknown>): ArtifactRelationship
 	}));
 }
 
+/** Cached initial status for lessons, read from the resolved workflow. */
+let lessonInitialStatus: string | undefined;
+
 function parseLessonFrontmatter(filePath: string): LessonFrontmatter | null {
 	const fm = parseFrontmatterFromFile(filePath);
 	if (!fm) return null;
+	if (lessonInitialStatus === undefined) {
+		lessonInitialStatus = getInitialStatus(getRoot(), "lesson") ?? "";
+	}
 	return {
 		id: typeof fm.id === "string" ? fm.id : "",
 		title: typeof fm.title === "string" ? fm.title : "",
-		status: typeof fm.status === "string" ? fm.status : "active",
+		status: typeof fm.status === "string" ? fm.status : lessonInitialStatus,
 		recurrence: typeof fm.recurrence === "number" ? fm.recurrence : 0,
 		relationships: extractRelationships(fm),
 	};
@@ -234,9 +324,11 @@ function findActiveEpic(projectDir: string): string | null {
 		if (match) return match[0];
 	}
 
-	// Scan epics directory for first active epic
+	// Scan epics directory for first epic in an "active" category state
 	const epicsDir = join(projectDir, ".orqa", "delivery", "epics");
 	if (!existsSync(epicsDir)) return null;
+
+	const activeStatuses = getActiveStatuses(projectDir, "epic");
 
 	let entries: string[];
 	try {
@@ -248,7 +340,7 @@ function findActiveEpic(projectDir: string): string | null {
 	for (const entry of entries) {
 		if (!entry.endsWith(".md")) continue;
 		const fm = parseFrontmatterFromFile(join(epicsDir, entry));
-		if (fm?.status === "active" && typeof fm.id === "string") {
+		if (typeof fm?.status === "string" && activeStatuses.has(fm.status) && typeof fm.id === "string") {
 			return fm.id;
 		}
 	}
@@ -303,11 +395,14 @@ function createTaskArtifact(projectDir: string, finding: EscalationFinding, epic
 	}
 
 	if (epicId) {
-		relationships.push({
-			target: epicId,
-			type: "delivers",
-			rationale: "Escalation task linked to active epic",
-		});
+		const taskToEpicRel = getTaskToEpicRelationship(projectDir);
+		if (taskToEpicRel) {
+			relationships.push({
+				target: epicId,
+				type: taskToEpicRel,
+				rationale: "Escalation task linked to active epic",
+			});
+		}
 	}
 
 	const whyText =

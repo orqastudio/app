@@ -14,10 +14,11 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-import type {
-	WorkflowDefinition,
-	WorkflowState,
-	Transition,
+import {
+	STATE_CATEGORIES,
+	type WorkflowDefinition,
+	type WorkflowState,
+	type Transition,
 } from "@orqastudio/types";
 
 // ---------------------------------------------------------------------------
@@ -616,14 +617,8 @@ export function validateResolvedWorkflow(
 		);
 	}
 
-	// Valid state categories
-	const validCategories = new Set([
-		"planning",
-		"active",
-		"review",
-		"completed",
-		"terminal",
-	]);
+	// Valid state categories (engine vocabulary, defined in @orqastudio/types)
+	const validCategories = new Set<string>(STATE_CATEGORIES);
 	for (const [name, state] of Object.entries(definition.states)) {
 		if (!validCategories.has(state.category)) {
 			errors.push(
