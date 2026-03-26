@@ -1,6 +1,6 @@
 ---
 id: IDEA-f6819af5
-type: idea
+type: discovery-idea
 title: Multi-Tab Artifact Viewer
 description: "Allow users to open artifacts in separate tabs within the app window, so multiple artifacts can be viewed and compared without losing context. The chat session remains pinned and global — tabs only affect the navigation and viewer panes."
 status: captured

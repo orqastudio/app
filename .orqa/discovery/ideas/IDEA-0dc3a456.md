@@ -1,6 +1,6 @@
 ---
 id: IDEA-0dc3a456
-type: idea
+type: discovery-idea
 title: skills.sh compatibility plugin — import and reformat external skills
 description: A plugin that installs skills from skills.sh and reformats/renames them to fit OrqaStudio conventions. Imported skills are related back to the skills.sh plugin's human-facing documentation as a reference of provenance.
 status: captured

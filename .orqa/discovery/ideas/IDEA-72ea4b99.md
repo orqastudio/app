@@ -1,6 +1,6 @@
 ---
 id: IDEA-72ea4b99
-type: idea
+type: discovery-idea
 title: VSCode workspace plugin — IDE integration for OrqaStudio projects
 description: "A VSCode plugin that opens code for editing, manages workspace settings, and drives plugin/extension recommendations based on project requirements. AI-powered project configuration."
 status: captured

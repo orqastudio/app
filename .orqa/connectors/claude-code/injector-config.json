@@ -1,5 +1,5 @@
 {
-  "generated": "2026-03-26T08:48:10.959Z",
+  "generated": "2026-03-26T09:47:03.431Z",
   "behavioral_rules": "For process learnings and feedback: create lesson artifacts in .orqa/process/lessons/ instead of auto-memory files. Use auto-memory only for user-specific preferences (user type) and external references (reference type). Relationship type fields in artifact frontmatter MUST use types defined in plugin manifests (provides.relationships[].key or .inverse). Invalid types are rejected by pre-commit hook and PreAction hook. When an epic is scoped: sync session state steps and task list with the epic's tasks — work against the epic's defined tasks, not ad-hoc.",
   "mode_templates": {},
   "session_reminders": "Relationship types are schema-driven — valid types come from core.json and plugin manifests. Validation is handled by the orqa-validation daemon. Session state MUST include the scoped epic (EPIC-XXXXXXXX) so the stop hook can check completion."

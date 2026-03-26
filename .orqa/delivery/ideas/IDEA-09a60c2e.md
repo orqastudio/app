@@ -1,7 +1,7 @@
 ---
 id: IDEA-09a60c2e
 title: "Fix app UI breakage from nested artifact discovery removal"
-type: idea
+type: discovery-idea
 status: captured
 description: "The OrqaStudio app UI is broken — the status bar still finds and displays artifacts correctly, but the main UI panels are broken. This was caused by removal of nested artifact discovery in a previous session. Critical errors visible in the app."
 pillars:

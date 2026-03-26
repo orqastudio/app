@@ -1,7 +1,7 @@
 ---
 id: RES-da6ca6a6
 title: "UX View Architecture Research: Core vs Plugin Views, Navigation, and Visualization"
-type: research
+type: discovery-research
 status: active
 category: ux-architecture
 description: >

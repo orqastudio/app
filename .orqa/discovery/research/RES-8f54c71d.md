@@ -2,7 +2,7 @@
 id: RES-8f54c71d
 title: Frontend App Audit — Post Plugin-Composed Architecture
 created: 2026-03-25
-type: research
+type: discovery-research
 status: completed
 ---
 

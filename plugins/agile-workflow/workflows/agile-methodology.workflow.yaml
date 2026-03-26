@@ -14,7 +14,7 @@ contribution_points:
   - name: discovery-artifacts
     stage: discover
     description: "Contribute discovery artifact types and research workflows."
-    required: false
+    required: true
 
   - name: planning-methodology
     stage: plan
@@ -24,7 +24,7 @@ contribution_points:
   - name: documentation-standards
     stage: document
     description: "Contribute documentation standards and templates."
-    required: false
+    required: true
 
   - name: implementation-workflow
     stage: implement
@@ -39,7 +39,7 @@ contribution_points:
   - name: learning-pipeline
     stage: learn
     description: "Contribute learning pipeline (lesson creation, retrospective, pattern tracking)."
-    required: false
+    required: true
 
 states:
   discover:

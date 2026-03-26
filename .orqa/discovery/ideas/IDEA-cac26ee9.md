@@ -1,6 +1,6 @@
 ---
 id: IDEA-cac26ee9
-type: idea
+type: discovery-idea
 title: "Code-governance traceability"
 status: captured
 horizon: someday

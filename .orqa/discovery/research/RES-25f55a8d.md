@@ -1,7 +1,7 @@
 ---
 id: RES-25f55a8d
 title: "State Machine Design with Human Gates"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: "Deterministic state machines — plugin-owned, YAML-defined, human gate sub-workflows, ad-hoc variants"

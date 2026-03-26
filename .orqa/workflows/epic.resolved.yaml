@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-software-kanban (workflows/epic.workflow.yaml)
-# Resolved at: 2026-03-26T08:48:10.919Z
+# Resolved at: 2026-03-26T09:47:03.556Z
 
 name: epic
 version: 0.1.0

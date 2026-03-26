@@ -1,6 +1,6 @@
 ---
 id: IDEA-9876f3fc
-type: idea
+type: discovery-idea
 title: "Artifact migration: location audit, content cleanup, plugin categories"
 status: surpassed
 description: Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate.

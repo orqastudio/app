@@ -1,6 +1,6 @@
 ---
 id: "AD-af88bb69"
-type: "decision"
+type: discovery-decision
 title: "Composability Principle"
 description: "External integrations connect through provider-agnostic interfaces. Provider-specific logic lives in swappable sidecar processes."
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: IDEA-e2458c2c
-type: idea
+type: discovery-idea
 title: Design discussion mode with structured checkpoints
 description: "A structured protocol for design discussions that enforces: sequential decision presentation, periodic zoom-outs, automatic observation logging, outcome tracking, and a wrap-up protocol before transitioning to implementation. Could be a skill, plan mode variant, or orchestrator behaviour."
 status: captured

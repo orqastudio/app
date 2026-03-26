@@ -311,7 +311,7 @@ async function showReport(projectRoot: string, jsonOutput: boolean): Promise<voi
 async function handleTest(args: string[]): Promise<void> {
 	const projectRoot = getRoot();
 	const ruleFilter = getFlag(args, "--rule");
-	const mechanismFilter = getFlag(args, "--mechanism");
+	getFlag(args, "--mechanism"); // reserved for future mechanism filtering
 	const jsonOutput = args.includes("--json");
 
 	// Find all rule files and extract test entries
@@ -356,7 +356,7 @@ async function handleTest(args: string[]): Promise<void> {
 				// Run schema validation against the test input
 				// For now, check if required fields are present based on the expect
 				const hasId = "id" in t.input;
-				const hasStatus = "status" in t.input;
+				void ("status" in t.input); // reserved for status-based test logic
 				const hasErrors = !hasId; // Simplified: missing id = fail
 
 				const actual = hasErrors ? "fail" : "pass";
@@ -416,7 +416,7 @@ async function handleOverride(args: string[]): Promise<void> {
 	}
 
 	const projectRoot = getRoot();
-	const approvalsPath = join(projectRoot, "tmp", APPROVALS_FILE);
+	const approvalsPath = join(projectRoot, ".state", APPROVALS_FILE);
 
 	// If request-id provided, check if it's approved
 	if (requestId) {
@@ -474,7 +474,7 @@ async function handleOverride(args: string[]): Promise<void> {
 
 	// Store as pending (not yet approved — human must run approve)
 	// We store the request but it's NOT approved until `orqa enforce approve` is called
-	const pendingPath = join(projectRoot, "tmp", "enforcement-pending.json");
+	const pendingPath = join(projectRoot, ".state", "enforcement-pending.json");
 	const pending = loadApprovals(pendingPath);
 	pending[approvalCode] = {
 		rule: ruleId,
@@ -507,8 +507,8 @@ async function handleApprove(code: string | undefined): Promise<void> {
 	}
 
 	const projectRoot = getRoot();
-	const pendingPath = join(projectRoot, "tmp", "enforcement-pending.json");
-	const approvalsPath = join(projectRoot, "tmp", APPROVALS_FILE);
+	const pendingPath = join(projectRoot, ".state", "enforcement-pending.json");
+	const approvalsPath = join(projectRoot, ".state", APPROVALS_FILE);
 
 	const pending = loadApprovals(pendingPath);
 	const request = pending[code];

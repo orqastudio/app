@@ -1,6 +1,6 @@
 ---
 id: RES-ef35d2de
-type: research
+type: discovery-research
 title: Dogfood Alignment Sprint
 description: "Preparing OrqaStudio for dogfooding: governance artifact alignment, frontend audit fixes, documentation alignment, function decomposition, and root cleanliness."
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: "AD-d01b9e0a"
-type: "decision"
+type: discovery-decision
 title: "Security Model"
 description: "Tauri three-layer security model with filesystem scoping, sensitive path denials, and OS keychain for API key storage."
 status: completed

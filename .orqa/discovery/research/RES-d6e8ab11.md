@@ -1,7 +1,7 @@
 ---
 id: RES-d6e8ab11
 title: "Agent Team Design v2: Plugin-Composed Workflows, Token-Efficient Prompts, and Deterministic State Machines"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: >

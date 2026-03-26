@@ -1,6 +1,6 @@
 ---
 id: "RES-e7cf8d7b"
-type: research
+type: discovery-research
 title: "Self-Sustaining Artifact System"
 description: "Make the artifact system self-sustaining so new artifacts are created correctly by default and all types are defined in the framework."
 status: completed

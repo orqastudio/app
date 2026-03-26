@@ -1,6 +1,6 @@
 ---
 id: IDEA-2aa5581e
-type: idea
+type: discovery-idea
 title: Sidecar-specific subagent mapping on agents
 description: "Agent subagent mappings are implementation-specific to the sidecar, not part of the universal agent model. The agent definition should declare capabilities and roles; how those map to subagent tool calls is a sidecar concern."
 status: surpassed

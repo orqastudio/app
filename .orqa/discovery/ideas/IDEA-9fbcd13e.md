@@ -1,6 +1,6 @@
 ---
 id: IDEA-9fbcd13e
-type: idea
+type: discovery-idea
 title: Live file browser widget for directory structure in documents
 description: Replace static directory structure sections in documents with a live file browser markdown widget. Configure an entry point folder and it renders the current structure. Could pull descriptions from comment-based metadata.
 status: captured

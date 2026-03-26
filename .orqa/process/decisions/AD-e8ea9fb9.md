@@ -1,6 +1,6 @@
 ---
 id: "AD-e8ea9fb9"
-type: "decision"
+type: discovery-decision
 title: "Config-Driven Navigation Defaults"
 description: "Each artifact type directory can contain a _navigation.json file that configures default sort, group, filter, group ordering, and custom layout for the browser panel."
 status: completed

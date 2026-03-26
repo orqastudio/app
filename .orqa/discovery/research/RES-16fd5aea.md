@@ -1,6 +1,6 @@
 ---
 id: RES-16fd5aea
-type: research
+type: discovery-research
 title: Source of truth duplication audit — session 2026-03-24
 description: Audit of duplicate source-of-truth patterns across Cytoscape SDK, Rust backend, and governance artifacts. Identifies 6 findings requiring user decisions.
 status: completed

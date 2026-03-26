@@ -1,6 +1,6 @@
 ---
 id: IDEA-13e1e4c9
-type: idea
+type: discovery-idea
 title: Structured Thinking Tools
 description: "Tools that operationalise the agile PILLAR-2acd86c1 loop beyond conversation, including decision matrices, experiments, and assumption mapping."
 status: captured

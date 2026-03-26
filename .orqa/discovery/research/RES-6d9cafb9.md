@@ -1,6 +1,6 @@
 ---
 id: "RES-6d9cafb9"
-type: "research"
+type: discovery-research
 title: "Composability Gate"
 description: "Audit codebase for composability alignment, produce the composability skill, scanner, and enforcement rule."
 status: completed

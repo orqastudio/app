@@ -1,6 +1,6 @@
 ---
 id: IDEA-826e4bc0
-type: idea
+type: discovery-idea
 title: "Multi-project security and integrity"
 status: captured
 horizon: someday

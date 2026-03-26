@@ -1,6 +1,6 @@
 ---
 id: AD-ecc96aef
-type: decision
+type: discovery-decision
 title: Svelte 5 Runes Only
 description: "Svelte 5 runes only ($state, $derived, $effect, $props). No Svelte 4 patterns."
 status: completed

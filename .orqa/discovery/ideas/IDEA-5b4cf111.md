@@ -1,6 +1,6 @@
 ---
 id: IDEA-5b4cf111
-type: idea
+type: discovery-idea
 title: "Git hosting as cloud sync — multi-user without servers"
 description: "Use GitHub/GitLab/Bitbucket as the sync layer for multi-user OrqaStudio projects. Git already tracks changes and history — a hosting provider adds authentication, access control, and cloud storage without running custom infrastructure."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: IDEA-df1d0829
-type: idea
+type: discovery-idea
 title: Linter integration plugins for lint suppression governance
 description: "Replace the pre-commit lint suppression scanner with native linter plugins (clippy plugin, ESLint plugin) that validate AD-NNN decision references at lint time, providing IDE-level feedback. Software-project-specific plugin."
 status: captured

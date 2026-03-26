@@ -1,6 +1,6 @@
 ---
 id: IDEA-ffd74695
-type: idea
+type: discovery-idea
 title: Wireframing plugin — native wireframe creation within OrqaStudio
 description: A plugin that enables creating and editing wireframes natively in the app instead of maintaining static markdown wireframe documents.
 status: captured

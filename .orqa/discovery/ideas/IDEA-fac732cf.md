@@ -1,6 +1,6 @@
 ---
 id: IDEA-fac732cf
-type: idea
+type: discovery-idea
 title: Security Audit — Prompt Injection and Encoded Asset Protection
 description: "Comprehensive security audit covering prompt injection attack vectors, encoded asset vulnerabilities, and defense mechanisms. Protect against malicious content in governance artifacts, tool outputs, and user inputs that could manipulate AI agent behavior."
 status: captured

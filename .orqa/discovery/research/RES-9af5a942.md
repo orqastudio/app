@@ -1,6 +1,6 @@
 ---
 id: "RES-9af5a942"
-type: research
+type: discovery-research
 title: "PlantUML Bundling Spike"
 description: "Investigation spike for bundling PlantUML diagram rendering within the desktop application. Evaluates four options: GraalVM native-image, bundled minimal JRE, system JRE detection, and WebAssembly."
 status: completed

@@ -1,7 +1,7 @@
 ---
 id: RES-9a4dc908
 title: "Token Efficiency as Architectural Constraint"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: "Token-efficient architecture by design — context engineering, model tiering, observability"

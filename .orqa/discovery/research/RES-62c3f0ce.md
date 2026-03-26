@@ -1,6 +1,6 @@
 ---
 id: RES-62c3f0ce
-type: research
+type: discovery-research
 title: Integrity check alignment audit — single source of truth
 description: "Comprehensive audit of all integrity checks across Rust scanner, CLI tools, and pre-commit hooks. Maps duplications, gaps, and the path to a single portable library."
 status: completed

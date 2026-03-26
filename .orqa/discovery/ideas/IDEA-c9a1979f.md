@@ -1,6 +1,6 @@
 ---
 id: IDEA-c9a1979f
-type: idea
+type: discovery-idea
 title: "Native agent observability and artifact-correlated analytics"
 description: "Build native observability into OrqaStudio rather than integrating AgentOps (architecture mismatch — see .state/agentops-research.md). Track session metrics, delegation outcomes, cost awareness, and correlate analytics to artifacts."
 status: captured

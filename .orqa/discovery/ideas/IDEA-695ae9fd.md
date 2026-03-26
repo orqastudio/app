@@ -1,6 +1,6 @@
 ---
 id: "IDEA-695ae9fd"
-type: idea
+type: discovery-idea
 title: "Configurable Priority Scoring"
 description: "Make the epic scoring/prioritisation system configurable per project — custom dimensions, formulas, and priority bands — with the ability to disable scoring entirely for projects that don't need it."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: AD-4e7faf0e
-type: decision
+type: discovery-decision
 title: IPC Boundary Design
 description: Tauri invoke() commands are the only frontend-backend communication channel. Streaming clarified by AD-39e2fb81.
 status: completed

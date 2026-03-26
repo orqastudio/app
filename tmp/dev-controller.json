@@ -1,7 +1,7 @@
 {
   "pid": 40552,
-  "state": "running",
-  "app": 29852,
+  "state": "app-crashed",
+  "app": null,
   "search": 19408,
   "mcp": 47284,
   "lsp": 38952

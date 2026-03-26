@@ -1,6 +1,6 @@
 ---
 id: IDEA-18da61df
-type: idea
+type: discovery-idea
 title: Multi-Provider Model Routing
 description: "Route different agent roles to different AI providers/models based on task type. Planning done by one model (potentially local/fine-tuned), implementation by another (cloud provider like Claude). Enables cost optimization, latency reduction, and specialized model selection per role."
 status: captured

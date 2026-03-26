@@ -1,6 +1,6 @@
 ---
 id: "RES-4ae0750b"
-type: research
+type: discovery-research
 title: "Onboarding Research"
 description: "How OrqaStudio onboards new projects — scanning existing codebases, choosing governance formats, and progressively introducing process features."
 status: completed

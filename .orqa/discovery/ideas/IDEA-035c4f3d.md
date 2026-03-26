@@ -1,6 +1,6 @@
 ---
 id: IDEA-035c4f3d
-type: idea
+type: discovery-idea
 title: Production ONNX model download — first-run installer for embedding models
 description: The ONNX embedding model (BGE-small-en) is too large to bundle with the app. Production environments need a first-run download flow that fetches the model on install, with progress indication, retry logic, and offline fallback.
 status: captured

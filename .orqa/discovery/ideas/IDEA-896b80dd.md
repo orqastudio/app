@@ -1,6 +1,6 @@
 ---
 id: IDEA-896b80dd
-type: idea
+type: discovery-idea
 title: "Reporting & Stakeholder Access"
 description: "Make understanding accessible to non-users through executive dashboards, shareable links, and formatted report exports."
 status: captured

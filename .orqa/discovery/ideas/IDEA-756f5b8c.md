@@ -1,6 +1,6 @@
 ---
 id: IDEA-756f5b8c
-type: idea
+type: discovery-idea
 title: "GitHub integration plugin — bidirectional sync with Issues, Projects, Wiki, PRs"
 description: "A plugin that syncs OrqaStudio artifacts with GitHub features. Tasks↔Issues, docs↔Wiki, epics↔Projects, decisions↔PRs. Manage community engagement through OrqaStudio's structured thinking layer."
 status: captured

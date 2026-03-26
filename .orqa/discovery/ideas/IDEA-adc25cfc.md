@@ -1,6 +1,6 @@
 ---
 id: IDEA-adc25cfc
-type: idea
+type: discovery-idea
 title: Identifiable app processes in task manager
 description: "Make OrqaStudio's spawned processes (Tauri app, Vite dev server, sidecar, cargo builds) easily identifiable in the OS task manager so developers can quickly find and kill them when needed."
 status: captured

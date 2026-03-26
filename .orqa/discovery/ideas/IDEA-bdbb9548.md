@@ -1,6 +1,6 @@
 ---
 id: IDEA-bdbb9548
-type: idea
+type: discovery-idea
 title: Platform Access
 description: "Expand beyond desktop with web companion, mobile companion, API access, and CLI companion."
 status: captured

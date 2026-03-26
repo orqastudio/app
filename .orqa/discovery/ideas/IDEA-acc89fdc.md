@@ -1,6 +1,6 @@
 ---
 id: IDEA-acc89fdc
-type: idea
+type: discovery-idea
 title: "Plugin catalogue and marketplace"
 status: captured
 horizon: someday

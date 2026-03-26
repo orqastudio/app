@@ -1,6 +1,6 @@
 ---
 id: RES-29cf5ac5
-type: research
+type: discovery-research
 title: "Documentation reorganisation — book-chapter structure, how-to guides, relationship migration"
 description: "Research how to reorganise .orqa/documentation/ into a book-like chapter structure, create missing how-to documentation (plugin SDK, testing, linting), and plan the relationship migration as docs move between directories."
 status: completed

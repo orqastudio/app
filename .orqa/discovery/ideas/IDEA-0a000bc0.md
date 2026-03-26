@@ -1,6 +1,6 @@
 ---
 id: IDEA-0a000bc0
-type: idea
+type: discovery-idea
 title: "User plugin development workflow"
 status: captured
 horizon: someday

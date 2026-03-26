@@ -1,6 +1,6 @@
 ---
 id: IDEA-0b0ea45d
-type: idea
+type: discovery-idea
 title: "Hash-based routing for the explorer panel"
 description: "Replace the if/else view chain in AppLayout with hash-based URL routing. Enables back/forward navigation, hot reload preserves the current view, deep linking to artifacts, and data-driven view resolution instead of hardcoded conditionals."
 status: completed

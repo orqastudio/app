@@ -1,6 +1,6 @@
 ---
 id: "RES-94a3a6ca"
-type: research
+type: discovery-research
 title: "Documentation Drift Audit"
 description: "Comprehensive audit of contradictions and drift between documentation, rules, skills, lessons, schemas, and implementation code."
 status: completed

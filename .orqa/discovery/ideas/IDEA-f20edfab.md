@@ -1,6 +1,6 @@
 ---
 id: IDEA-f20edfab
-type: idea
+type: discovery-idea
 title: Session Intelligence
 description: "Make AI conversations smarter over time with summarisation, context-aware suggestions, session branching, and proactive PILLAR-2acd86c1."
 status: captured

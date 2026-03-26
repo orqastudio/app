@@ -1,6 +1,6 @@
 ---
 id: IDEA-641a5a2e
-type: idea
+type: discovery-idea
 title: "Artifact discussions — threaded conversations on artifacts with AI participation"
 description: "Multi-user discussion threads attached to artifacts. Team members discuss decisions, review plans, debate approaches — with AI as a participant that can summarise, challenge, and surface relevant context."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: IDEA-7a57ba89
-type: idea
+type: discovery-idea
 title: Integration Ecosystem
 description: "Connect OrqaStudio with external tools and workflows including git, issue trackers, documentation platforms, and CI/CD."
 status: captured

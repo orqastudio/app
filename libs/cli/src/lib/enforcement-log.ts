@@ -22,7 +22,7 @@ const LOG_FILENAME = "enforcement-log.jsonl";
 
 /** Get the path to the enforcement log file for a project. */
 export function getLogPath(projectRoot: string): string {
-	return join(projectRoot, "tmp", LOG_FILENAME);
+	return join(projectRoot, ".state", LOG_FILENAME);
 }
 
 /** Create an enforcement event with auto-generated ID and timestamp. */

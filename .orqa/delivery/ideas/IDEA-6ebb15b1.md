@@ -1,7 +1,7 @@
 ---
 id: IDEA-6ebb15b1
 title: "Research ort crate upgrade to 2.0.0-rc.12+"
-type: idea
+type: discovery-idea
 status: captured
 description: "Investigate upgrading ort from 2.0.0-rc.11 to rc.12 (ONNX Runtime 1.24) for better DirectML support and Blackwell GPU compatibility"
 pillars: []

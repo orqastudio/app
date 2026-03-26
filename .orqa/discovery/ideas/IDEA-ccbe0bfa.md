@@ -1,6 +1,6 @@
 ---
 id: IDEA-ccbe0bfa
-type: idea
+type: discovery-idea
 title: "Idea canvas — freeform capture inspired by dump.page"
 description: "A freeform idea capture canvas in the app, inspired by dump.page (https://github.com/Vochsel/dump.page). Quick unstructured capture that can later be promoted to structured artifacts."
 status: captured

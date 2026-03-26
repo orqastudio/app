@@ -1,6 +1,6 @@
 ---
 id: IDEA-7ff4a905
-type: idea
+type: discovery-idea
 title: Auto-Refresh on File Changes
 description: Watch the .orqa/ directory for file changes and automatically invalidate the artifact navigation tree and viewer cache so the UI stays current without requiring a hard refresh.
 status: captured

@@ -1,7 +1,7 @@
 ---
 
 id: RES-cc3e38db
-type: research
+type: discovery-research
 title: Personas as top-level artifact type
 description: Research whether user/stakeholder personas should be a first-class artifact type in the OrqaStudio knowledge graph
 status: completed

@@ -2,7 +2,7 @@
 id: KNOW-f7d03a2c
 type: knowledge
 name: Rust Plugin Installation
-summary: "Rust Plugin Installation"
+summary: "Rust plugin installation and setup for OrqaStudio. Requires stable Rust toolchain via rustup with cargo on PATH. Provides clippy, rustfmt, and cargo-test tools, plus Clippy Config Management and Rust Testing Patterns knowledge. Post-install, the rust standards agent runs in assess mode to evaluate the project, then configure mode to generate clippy.toml and .rustfmt.toml. Extended by the Tauri plugin for Tauri-specific configuration."
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:

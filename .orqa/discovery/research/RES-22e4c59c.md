@@ -1,6 +1,6 @@
 ---
 id: "RES-22e4c59c"
-type: research
+type: discovery-research
 title: "README and Schema Audit — Canonical Definitions and Auto-Generation"
 description: "Audit of all README.md and schema.json files for accuracy, duplication, canonical definition ownership, and auto-generation feasibility"
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: IDEA-2dfeba32
-type: idea
+type: discovery-idea
 title: Documentation as Navigation Group
 description: "Convert the documentation artifact type from a single tree type to a group with child types (Architecture, Product, Development, Process, UI, Wireframes). This gives dual-level navigation like other sections instead of a single collapsible tree."
 status: surpassed

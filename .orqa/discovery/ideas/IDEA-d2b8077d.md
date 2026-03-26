@@ -1,6 +1,6 @@
 ---
 id: IDEA-d2b8077d
-type: idea
+type: discovery-idea
 title: Tool-Linked Skills — Documentation Per Tool with UI Integration
 description: "Every tool in OrqaStudio should have a companion skill that documents how to use it effectively. The UI tool list should link directly to the tool's skill, making tool documentation discoverable and actionable."
 status: captured

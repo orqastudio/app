@@ -88,7 +88,7 @@ async function daemonStart(args: string[]): Promise<void> {
 		);
 	}
 
-	ensureTmpDir(projectRoot);
+	ensureStateDir(projectRoot);
 
 	// Spawn detached so the daemon survives the CLI process exit.
 	const child = spawn(binary, ["daemon", projectRoot, "--port", String(port)], {
@@ -218,13 +218,13 @@ async function daemonStatus(): Promise<void> {
 // findBinary — imported from ../lib/validation-engine.js
 
 function getPidPath(projectRoot: string): string {
-	return join(projectRoot, "tmp", "daemon.pid");
+	return join(projectRoot, ".state", "daemon.pid");
 }
 
-function ensureTmpDir(projectRoot: string): void {
-	const tmpDir = join(projectRoot, "tmp");
-	if (!existsSync(tmpDir)) {
-		mkdirSync(tmpDir, { recursive: true });
+function ensureStateDir(projectRoot: string): void {
+	const stateDir = join(projectRoot, ".state");
+	if (!existsSync(stateDir)) {
+		mkdirSync(stateDir, { recursive: true });
 	}
 }
 

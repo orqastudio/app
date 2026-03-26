@@ -1,6 +1,6 @@
 ---
 id: IDEA-c626feb8
-type: idea
+type: discovery-idea
 title: Automated community registry maintenance
 description: "How can we automate the ongoing maintenance of the community plugin registry — compatibility CI, staleness detection, and platform version testing? Version pinning and SHA verification are already in place as policy."
 status: captured

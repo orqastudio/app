@@ -1,6 +1,6 @@
 ---
 id: IDEA-50eaec1d
-type: idea
+type: discovery-idea
 title: "Collaboration & Teams"
 description: "Multi-user support for the PILLAR-c9e0a695 engine with shared projects, role-based access, and structured handoff protocols."
 status: captured

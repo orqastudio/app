@@ -1,6 +1,6 @@
 ---
 id: "AD-0dfa4d52"
-type: "decision"
+type: discovery-decision
 title: "Governance Artifact Format"
 description: "Governance artifacts use native Claude Code format (markdown + YAML frontmatter). OrqaStudio-specific metadata lives only in SQLite. Superseded by AD-4ea9a290 which moves source of truth from .claude/ to .orqa/."
 status: archived

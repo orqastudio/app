@@ -1,6 +1,6 @@
 ---
 id: IDEA-dc45db92
-type: idea
+type: discovery-idea
 title: Artifact Funnel Visualisation Plugin
 description: "Visual funnel showing the flow of work through the idea → research → epic → task pipeline, with counts, conversion rates, and stage duration metrics at each step. Implemented as a plugin using the Artifact Graph SDK."
 status: captured

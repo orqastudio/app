@@ -1,6 +1,6 @@
 ---
 id: "RES-b7062d7b"
-type: research
+type: discovery-research
 title: "Governance Layer Audit — Core vs Project vs Plugin Alignment"
 description: "Full audit of all governance artifacts (rules, decisions, lessons, skills, agents, docs) for layer classification accuracy, portability violations, and alignment with graph-based injection principles"
 status: completed

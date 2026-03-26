@@ -2,7 +2,7 @@
 id: KNOW-abb08445
 type: knowledge
 title: "Svelte 5 Runes Reference"
-summary: "Svelte 5 Runes Reference"
+summary: "Complete Svelte 5 runes API reference covering all six runes: $state (basic, object/array deep reactivity, class state, $state.raw for opt-out), $derived (simple expressions, $derived.by for complex logic, deriving from props, $derived vs $effect), $effect (cleanup patterns, DOM listeners, external subscriptions, $effect.pre, untrack), $props (destructuring, rest props, reserved word renaming, TypeScript typing, children), $bindable (two-way binding setup, defaults), $inspect (debugging, custom logging, breakpoints)."
 status: active
 created: 2026-03-20
 updated: 2026-03-20

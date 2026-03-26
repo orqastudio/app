@@ -1,6 +1,6 @@
 ---
 id: IDEA-06f6d3d8
-type: idea
+type: discovery-idea
 title: "Coding standards as rules — plugin-provided tooling, project-level enforcement, org-level sync"
 description: "Coding standards become OrqaStudio rules with enforcement entries keyed by plugin. Plugins provide linting/testing infrastructure. Rules define the config. Organisation mode syncs standards to sub-projects with override tracking."
 status: surpassed

@@ -1,6 +1,6 @@
 ---
 id: IDEA-638bd0f0
-type: idea
+type: discovery-idea
 title: "App chat panel uses MCP+LSP (same as CLI connector)"
 description: "The app's built-in chat panel should use the same MCP and LSP servers as the Claude Code connector. When this happens, orqa-mcp-server and orqa-lsp-server become app Cargo dependencies again, cargo tauri dev watches them, and they should be removed from the custom dev watchers."
 status: captured

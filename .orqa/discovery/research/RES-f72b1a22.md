@@ -1,6 +1,6 @@
 ---
 id: RES-f72b1a22
-type: research
+type: discovery-research
 title: UX Polish Sprint
 description: "UX improvements for dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar, error display improvements."
 status: completed

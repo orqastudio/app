@@ -1,7 +1,7 @@
 ---
 
 id: RES-d067c8c2
-type: research
+type: discovery-research
 title: Wireframing Tool Research
 description: Text-based wireframing tools suitable for AI-agent-driven UX design. Evaluates 8 tools against 10 requirements.
 status: completed

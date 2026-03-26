@@ -1,6 +1,6 @@
 ---
 id: AD-6ccfb736
-type: decision
+type: discovery-decision
 title: "Canonical relationship vocabulary — relationships are the only connections, two layers"
 description: Artifacts connect ONLY through typed relationships. No standalone frontmatter fields for connections. Canonical relationships are app-level and universal. Project relationships are domain-specific and defined in project.json. Both are enforced by the same engine with the same rigour.
 status: active

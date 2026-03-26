@@ -1,6 +1,6 @@
 ---
 id: RES-a2a77d0c
-type: research
+type: discovery-research
 title: Native Tool Display Names and Icons
 description: "Design for presenting AI tool calls in a user-friendly way: human-readable names, Lucide icons, de-duplication of repeated calls, and summary grouping."
 status: completed

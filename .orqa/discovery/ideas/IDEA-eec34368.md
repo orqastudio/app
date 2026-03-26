@@ -1,6 +1,6 @@
 ---
 id: IDEA-eec34368
-type: idea
+type: discovery-idea
 title: "VibeCheck integration for code quality assessment"
 description: "Integrate VibeCheck (https://github.com/yuvrajangadsingh/vibecheck) for AI-driven code quality assessment. Could feed into the coding standards plugin as another quality signal alongside lint/test/format checks."
 status: captured

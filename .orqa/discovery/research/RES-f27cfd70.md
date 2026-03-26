@@ -1,6 +1,6 @@
 ---
 id: RES-f27cfd70
-type: research
+type: discovery-research
 title: "Enforcement Engine & Process Compliance"
 description: "Design and implementation of the process enforcement engine: governance scanning, tool approval UI, model selection, lesson promotion pipeline, and process violation detection."
 status: completed

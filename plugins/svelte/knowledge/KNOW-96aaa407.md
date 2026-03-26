@@ -2,7 +2,7 @@
 id: KNOW-96aaa407
 type: knowledge
 title: "Svelte 5 Events Reference"
-summary: "Svelte 5 Events Reference"
+summary: "Svelte 5 events reference covering three areas: event handler syntax migration (on:click to onclick, modifier removal, capture/passive variants, inline handlers, spreading handlers, TypeScript event typing), callback props pattern replacing createEventDispatcher (basic callbacks, multiple callbacks, typed callbacks, forwarding native events), and the Context API (setContext/getContext during initialization, reactive context with $state objects, type-safe context with Symbol keys, hasContext checks)."
 status: active
 created: 2026-03-20
 updated: 2026-03-20

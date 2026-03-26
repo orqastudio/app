@@ -1,6 +1,6 @@
 ---
 id: IDEA-4c1288fb
-type: idea
+type: discovery-idea
 title: Local ONNX-based intent interpreter for artifact graph traversal pre-processing
 description: Small local-run ONNX fine-tuned LLM that pre-processes user prompts before the orchestrator receives them. Interprets intent to help the orchestrator decide how to crawl the artifact graph. Does not crawl itself — acts as a lightweight intent classifier fine-tuned on the core artifacts. Optionally extends to include a local fine-tuning pipeline that ingests process artifacts from all locally installed projects.
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: RES-999def94
-type: research
+type: discovery-research
 title: Repository architecture trade-offs — monorepo vs multi-repo with Forgejo hosting
 description: Investigate monorepo vs multi-repo trade-offs for OrqaStudio's dev environment, with Forgejo as the target hosting platform and production packaging as a key constraint.
 status: completed

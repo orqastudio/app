@@ -1,7 +1,7 @@
 ---
 
 id: RES-d6d344c9
-type: research
+type: discovery-research
 title: Notification strategy
 description: "Research on notification channels, event-to-channel mapping, and phased implementation for OrqaStudio"
 status: completed

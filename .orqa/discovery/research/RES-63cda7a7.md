@@ -1,6 +1,6 @@
 ---
 id: "RES-63cda7a7"
-type: research
+type: discovery-research
 title: "Consistent Entity Structure"
 description: "Design body templates for each artifact type to ensure consistency across planning, team, and governance artifacts."
 status: completed

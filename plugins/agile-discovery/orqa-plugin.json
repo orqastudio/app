@@ -236,7 +236,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^DISC-IDEA-[a-f0-9]{8}$"
+              "pattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$"
             },
             "title": {
               "type": "string"
@@ -291,7 +291,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^DISC-RES-[a-f0-9]{8}$"
+              "pattern": "^(RES|DISC-RES)-[a-f0-9]{8}$"
             },
             "name": {
               "type": "string"
@@ -346,7 +346,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^DISC-AD-[a-f0-9]{8}$"
+              "pattern": "^(AD|DISC-AD)-[a-f0-9]{8}$"
             },
             "title": {
               "type": "string"

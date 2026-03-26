@@ -1,6 +1,6 @@
 ---
 id: IDEA-768aef04
-type: idea
+type: discovery-idea
 title: Claude Code connector comprehensive review
 status: captured
 created: 2026-03-19

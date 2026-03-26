@@ -1,6 +1,6 @@
 ---
 id: IDEA-f8f8dc69
-type: idea
+type: discovery-idea
 title: "Git hosting platform evolution — theming, public engagement, contribution flow, auth"
 status: captured
 description: Future enhancements for the self-hosted git platform covering branding, community engagement for non-technical users, contribution workflow design, and authentication strategy.

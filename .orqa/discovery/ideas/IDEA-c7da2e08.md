@@ -1,6 +1,6 @@
 ---
 id: "IDEA-c7da2e08"
-type: idea
+type: discovery-idea
 title: "Pipeline health dashboard — integrity surfacing, visualization, and process automation"
 description: "Surface pipeline integrity checks on the app dashboard with scan/fix actions, add pipeline thread visualization, temporal trend analysis, and automate two process improvements: related idea surfacing during promotion and intent-based observation capture from user prompts."
 status: completed

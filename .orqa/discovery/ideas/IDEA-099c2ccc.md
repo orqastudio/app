@@ -1,6 +1,6 @@
 ---
 id: IDEA-099c2ccc
-type: idea
+type: discovery-idea
 title: Auto-rendered task tables from relationship edges
 description: "Epic body task tables and milestone epic breakdowns should be automatically rendered from relationship edges rather than manually maintained. When a task has epic: EPIC-NNN, the epic's task table is generated from the graph. When an epic has milestone: MS-NNN, the milestone's breakdown table is generated similarly. Makes these views self-maintaining as edges are created."
 status: captured

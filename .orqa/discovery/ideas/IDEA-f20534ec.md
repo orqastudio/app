@@ -1,6 +1,6 @@
 ---
 id: IDEA-f20534ec
-type: idea
+type: discovery-idea
 title: "Status bar connectivity should reflect daemon health"
 status: captured
 description: The app's status bar 'connected' indicator should represent live connectivity to the daemon (orqa-validation HTTP server), not just a static label. Show connected/disconnected/degraded based on periodic health checks.

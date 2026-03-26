@@ -1,6 +1,6 @@
 ---
 id: RES-6a16de02
-type: research
+type: discovery-research
 title: "Codebase Architecture Audit — Composability, Quality, and Standards Alignment"
 description: "Full audit of backend/src-tauri/, ui/, and sidecars/claude-agentsdk-sidecar/ against composability principles, error handling, IPC boundary, component purity, test coverage, and security"
 status: completed

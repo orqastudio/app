@@ -53,6 +53,7 @@
         "inverseLabel": "Grounded By",
         "from": [
           "idea",
+          "discovery-idea",
           "epic"
         ],
         "to": [
@@ -67,7 +68,8 @@
         "label": "Benefits",
         "inverseLabel": "Benefited By",
         "from": [
-          "idea"
+          "idea",
+          "discovery-idea"
         ],
         "to": [
           "persona"
@@ -85,10 +87,12 @@
         "label": "Crystallises",
         "inverseLabel": "Crystallised By",
         "from": [
-          "idea"
+          "idea",
+          "discovery-idea"
         ],
         "to": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "description": "Idea crystallises into an architecture decision",
         "semantic": "lineage"
@@ -99,10 +103,12 @@
         "label": "Spawns",
         "inverseLabel": "Spawned By",
         "from": [
-          "idea"
+          "idea",
+          "discovery-idea"
         ],
         "to": [
-          "research"
+          "research",
+          "discovery-research"
         ],
         "description": "Idea spawns an investigation",
         "semantic": "lineage"
@@ -113,7 +119,8 @@
         "label": "Drives",
         "inverseLabel": "Driven By",
         "from": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "to": [
           "epic"
@@ -127,7 +134,8 @@
         "label": "Governs",
         "inverseLabel": "Governed By",
         "from": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "to": [
           "rule"
@@ -144,7 +152,8 @@
           "rule"
         ],
         "to": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "description": "Rule enforces a decision",
         "semantic": "governance",
@@ -173,11 +182,14 @@
         "label": "Informs",
         "inverseLabel": "Informed By",
         "from": [
-          "research"
+          "research",
+          "discovery-research"
         ],
         "to": [
           "decision",
-          "research"
+          "discovery-decision",
+          "research",
+          "discovery-research"
         ],
         "description": "Research findings inform a decision or another research thread",
         "semantic": "knowledge-flow"
@@ -191,7 +203,8 @@
           "lesson"
         ],
         "to": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "description": "Lesson teaches a future decision",
         "semantic": "knowledge-flow"
@@ -202,7 +215,8 @@
         "label": "Guides",
         "inverseLabel": "Guided By",
         "from": [
-          "research"
+          "research",
+          "discovery-research"
         ],
         "to": [
           "epic"
@@ -272,6 +286,7 @@
         "to": [
           "epic",
           "decision",
+          "discovery-decision",
           "rule",
           "milestone"
         ],
@@ -301,11 +316,15 @@
         "inverseLabel": "Merged From",
         "from": [
           "idea",
-          "research"
+          "discovery-idea",
+          "research",
+          "discovery-research"
         ],
         "to": [
           "idea",
-          "research"
+          "discovery-idea",
+          "research",
+          "discovery-research"
         ],
         "description": "Artifacts consolidated — multiple ideas or research threads become one",
         "semantic": "lineage"

@@ -1,6 +1,6 @@
 ---
 id: RES-12f2bf80
-type: research
+type: discovery-research
 title: "Persistent Dev Team Model — Composable Agent Collaboration"
 status: active
 category: process

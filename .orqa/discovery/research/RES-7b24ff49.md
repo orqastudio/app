@@ -1,6 +1,6 @@
 ---
 id: "RES-7b24ff49"
-type: research
+type: discovery-research
 title: "Tauri v2 Research"
 description: "Tauri v2's capabilities, security model, and plugin ecosystem for OrqaStudio's requirements."
 status: completed

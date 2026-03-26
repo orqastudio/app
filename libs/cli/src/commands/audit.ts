@@ -317,7 +317,7 @@ function scanForEscalations(projectDir: string): EscalationFinding[] {
 
 function findActiveEpic(projectDir: string): string | null {
 	// Try session state first
-	const sessionFile = join(projectDir, "tmp", "session-state.md");
+	const sessionFile = join(projectDir, ".state", "session-state.md");
 	if (existsSync(sessionFile)) {
 		const content = readFileSync(sessionFile, "utf-8");
 		const match = /EPIC-[a-f0-9]{8}/.exec(content);

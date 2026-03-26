@@ -1,0 +1,20 @@
+{
+  "name": "@orqastudio/plugin-agile-documentation",
+  "version": "0.1.4-dev",
+  "displayName": "Agile Documentation",
+  "description": "Documentation standards stage-definition plugin. Fills the documentation-standards contribution point of the agile-methodology workflow with structured documentation creation, review, and publishing stages.",
+  "category": "documentation",
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "workflows": [
+      "workflows/documentation.contribution.workflow.yaml"
+    ]
+  },
+  "content": {
+    "workflows": {
+      "source": "workflows",
+      "target": ".orqa/process/workflows"
+    }
+  }
+}

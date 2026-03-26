@@ -1,7 +1,7 @@
 ---
 id: RES-7ee1a770
 title: "Workflow Composition from Plugins"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: "How workflows are composed from plugin contributions — contribution-point model, stage plugins, YAML+code format"

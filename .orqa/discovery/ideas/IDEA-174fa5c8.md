@@ -1,6 +1,6 @@
 ---
 id: IDEA-174fa5c8
-type: idea
+type: discovery-idea
 title: OrqaStudio Cloud — Forgejo-based git hosting as a plugin
 description: A minimal OrqaStudio-branded git hosting platform based on Forgejo, shipped as a Docker container and deployable as a plugin for local or cloud use. Provides project/organisation/user oversight with the same governance model that runs locally.
 status: captured

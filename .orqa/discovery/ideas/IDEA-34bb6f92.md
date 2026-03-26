@@ -1,6 +1,6 @@
 ---
 id: IDEA-34bb6f92
-type: idea
+type: discovery-idea
 title: "Use market research agent to analyse OrqaStudio's competitive landscape"
 description: "Apply the competitor research and market analysis capability (IDEA-40b0842d) to OrqaStudio itself. Identify competing AI-assisted development tools, governance platforms, and structured thinking frameworks to inform product direction and differentiation strategy."
 status: captured

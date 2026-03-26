@@ -1,6 +1,6 @@
 ---
 id: IDEA-87cd7dcb
-type: idea
+type: discovery-idea
 title: "Resolve npm audit vulnerabilities before MVP"
 description: "npm audit reports 8 vulnerabilities (6 low, 2 moderate) across the workspace. All must be resolved or documented as accepted risk before MVP release."
 status: captured

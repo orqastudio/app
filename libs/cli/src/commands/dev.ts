@@ -210,22 +210,22 @@ interface ControlFileState {
 }
 
 function getControlFilePath(root: string): string {
-	return path.join(root, "tmp", "dev-controller.json");
+	return path.join(root, ".state", "dev-controller.json");
 }
 
 function getSignalFilePath(root: string): string {
-	return path.join(root, "tmp", "dev-signal");
+	return path.join(root, ".state", "dev-signal");
 }
 
-function ensureTmpDir(root: string): void {
-	const tmpDir = path.join(root, "tmp");
-	if (!fs.existsSync(tmpDir)) {
-		fs.mkdirSync(tmpDir, { recursive: true });
+function ensureStateDir(root: string): void {
+	const stateDir = path.join(root, ".state");
+	if (!fs.existsSync(stateDir)) {
+		fs.mkdirSync(stateDir, { recursive: true });
 	}
 }
 
 function writeControlFile(root: string, state: Omit<ControlFileState, "pid">): void {
-	ensureTmpDir(root);
+	ensureStateDir(root);
 	fs.writeFileSync(
 		getControlFilePath(root),
 		JSON.stringify({ pid: process.pid, ...state }, null, 2),
@@ -1034,7 +1034,7 @@ async function cmdDev(root: string): Promise<void> {
 	const nodeCmd = process.execPath;
 	const cliEntry = path.join(root, "libs/cli/dist/cli.js");
 	// Write controller output to a log file so we can debug startup failures
-	const logFile = path.join(root, "tmp", "dev-controller.log");
+	const logFile = path.join(root, ".state", "dev-controller.log");
 	const logFd = fs.openSync(logFile, "w");
 	const child = spawn(nodeCmd, [cliEntry, "dev", "__start-controller"], {
 		cwd: root,
@@ -1090,7 +1090,7 @@ async function cmdStop(root: string): Promise<void> {
 
 	if (ctrl && processIsAlive(ctrl.pid)) {
 		logCtrl("Signalling controller to stop...");
-		ensureTmpDir(root);
+		ensureStateDir(root);
 		fs.writeFileSync(getSignalFilePath(root), "stop");
 
 		// Wait for controller to exit
@@ -1124,7 +1124,7 @@ async function cmdSignal(root: string, signal: string, label: string): Promise<v
 	const ctrl = readControlFile(root);
 	if (ctrl && processIsAlive(ctrl.pid)) {
 		logCtrl(`Signalling controller to ${label}...`);
-		ensureTmpDir(root);
+		ensureStateDir(root);
 		fs.writeFileSync(getSignalFilePath(root), signal);
 		logSuccess(`${label} signal sent. Watch the controller output for progress.`);
 		return;

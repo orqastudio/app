@@ -1,6 +1,6 @@
 ---
 id: AD-45f32bab
-type: decision
+type: discovery-decision
 title: Core Graph Firmware Principle
 description: "Core graph artifacts (schemas, traversal instructions, process model, core skills) are non-editable firmware that ships with OrqaStudio. Project context layers on top. Protected by rule enforcement, git hooks, and app UI."
 status: completed

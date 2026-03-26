@@ -1,7 +1,7 @@
 ---
 
 id: RES-5435cae9
-type: research
+type: discovery-research
 title: Agent Governance Overhaul
 description: "Make the agentic framework operational: fix agent paths, add skills, remove broken tools, add dual-context awareness, and enforce usage."
 status: surpassed

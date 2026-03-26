@@ -1,6 +1,6 @@
 ---
 id: RES-aefc9e44
-type: research
+type: discovery-research
 title: "Product Documentation Audit: Framing Alignment"
 description: "Audit of product documentation when the app was framed as a CLI wrapper. Found framing misalignment, missing governance docs, and stale references that were later addressed by vision realignment work."
 status: surpassed

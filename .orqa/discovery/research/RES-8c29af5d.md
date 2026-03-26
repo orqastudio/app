@@ -1,6 +1,6 @@
 ---
 id: "RES-8c29af5d"
-type: research
+type: discovery-research
 title: "Universal Roles and Task Ownership"
 description: "Combined analysis of the seven universal agent roles, their task ownership boundaries, and how they map to Claude Code's fixed subagent types. Informs the agent restructuring from AD-48b310f9."
 status: completed

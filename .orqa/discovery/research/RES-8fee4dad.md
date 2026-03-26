@@ -1,6 +1,6 @@
 ---
 id: "RES-8fee4dad"
-type: research
+type: discovery-research
 title: "Multi-provider AI integration and plugin architecture"
 description: "Research into supporting multiple AI providers, local models, GitHub integration, and the built-in vs plugin boundary."
 status: completed

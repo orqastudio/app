@@ -1,6 +1,6 @@
 ---
 id: IDEA-028dace7
-type: idea
+type: discovery-idea
 title: "File-opening protocol for .orqa artifacts"
 description: "Register a custom file association or URI scheme so .orqa artifact files (.md files in .orqa/ directories) open directly in OrqaStudio from the OS file explorer. Cross-platform (Windows, macOS, Linux). Works in production installs and during development when the app is running."
 status: captured

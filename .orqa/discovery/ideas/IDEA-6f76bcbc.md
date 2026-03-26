@@ -1,6 +1,6 @@
 ---
 id: IDEA-6f76bcbc
-type: idea
+type: discovery-idea
 title: Output Composability
 description: "New artifact generation modules for different domains including service design, policy development, and research planning."
 status: captured

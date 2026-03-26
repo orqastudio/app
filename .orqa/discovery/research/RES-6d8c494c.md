@@ -1,6 +1,6 @@
 ---
 id: RES-6d8c494c
-type: research
+type: discovery-research
 title: Cross-domain testing framework research
 description: "How to build a shared test framework (@orqastudio/test-config) that works across pure TypeScript, Svelte 5 rune stores, Tauri IPC, and component testing domains."
 status: completed

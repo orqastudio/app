@@ -1,6 +1,6 @@
 ---
 id: IDEA-4263cbaa
-type: idea
+type: discovery-idea
 title: Acknowledged constraints as a decision sub-category with impact tracking
 description: "Decisions that acknowledge known limitations, trade-offs, or temporary compromises should be tracked as a distinct sub-category with impact assessment and resolution priority. Ensures acknowledged constraints don't get forgotten by surfacing them and their impact during planning."
 status: captured

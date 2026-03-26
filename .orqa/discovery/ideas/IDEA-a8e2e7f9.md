@@ -1,6 +1,6 @@
 ---
 id: IDEA-a8e2e7f9
-type: idea
+type: discovery-idea
 title: Automated document content audit with task-level enforcement
 description: Automated system that audits documentation for staleness and accuracy. Tasks that affect documentation have required documentation update acceptance criteria. Ensures docs stay current as code evolves.
 status: captured

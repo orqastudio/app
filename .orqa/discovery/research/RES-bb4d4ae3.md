@@ -1,6 +1,6 @@
 ---
 id: RES-bb4d4ae3
-type: research
+type: discovery-research
 title: First-Run Setup Wizard
 description: "Design for the first-run onboarding experience: project creation, AI provider setup (Claude CLI detection, auth status), and workspace configuration."
 status: completed

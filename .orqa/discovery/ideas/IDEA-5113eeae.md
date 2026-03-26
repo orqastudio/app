@@ -1,6 +1,6 @@
 ---
 id: "IDEA-5113eeae"
-type: idea
+type: discovery-idea
 title: "Plugin Distribution via Git Submodules"
 description: "An official plugins repository under the GitHub org that embeds each plugin as a git submodule. The app reads the repository catalogue, pulls plugins based on user selection, and manages versioning/updates. Each plugin is its own repo with independent releases."
 status: surpassed

@@ -1,6 +1,6 @@
 ---
 id: "RES-93c7bb99"
-type: research
+type: discovery-research
 title: "Knowledge Maturity Pipeline — Self-Enforcing Learning Loop Architecture"
 description: "Investigation into how OrqaStudio's governance artifacts should be restructured around a knowledge maturity pipeline to create a genuinely self-enforcing learning loop."
 status: completed

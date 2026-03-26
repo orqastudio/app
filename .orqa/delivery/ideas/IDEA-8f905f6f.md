@@ -1,6 +1,6 @@
 ---
 id: IDEA-8f905f6f
-type: idea
+type: discovery-idea
 title: "Rich CLI experience — make orqa commands beautiful"
 description: "The orqa CLI outputs plain text. Invest in a polished terminal experience with colors, spinners, progress bars, tables, and branded output that makes the tool feel premium and informative."
 status: captured

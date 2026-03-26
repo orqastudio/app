@@ -1,6 +1,6 @@
 ---
 id: IDEA-408cf74c
-type: idea
+type: discovery-idea
 title: "Evaluate reasoning-loop for structured reasoning in the app"
 description: "Evaluate the reasoning-loop approach (https://github.com/oscarsterling/reasoning-loop) for potential integration into OrqaStudio. Could enhance agent decision-making with explicit reasoning chains that are visible and auditable in the artifact graph."
 status: captured

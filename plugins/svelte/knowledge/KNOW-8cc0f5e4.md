@@ -2,7 +2,7 @@
 id: KNOW-8cc0f5e4
 type: knowledge
 title: "Svelte 5 Snippets Reference"
-summary: "Svelte 5 Snippets Reference"
+summary: "Svelte 5 snippets reference covering the migration from slots to snippets: default content via children prop, named slots to named snippet props, slot props to snippet parameters, fallback content with conditional rendering. Also covers @render directive usage: basic rendering, optional snippets with ?. chaining, conditional rendering, passing arguments, rendering multiple times, dynamic snippet selection, TypeScript typing with Snippet<T>, and passing snippets to child components."
 status: active
 created: 2026-03-20
 updated: 2026-03-20

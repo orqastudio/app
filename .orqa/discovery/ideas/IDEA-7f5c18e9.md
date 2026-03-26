@@ -1,6 +1,6 @@
 ---
 id: "IDEA-7f5c18e9"
-type: idea
+type: discovery-idea
 title: "Full-Codebase Artifact Graph"
 description: "Expand the artifact graph beyond .orqa/ to include source code files, creating a unified knowledge graph that maps relationships between governance artifacts and the code they govern."
 status: captured

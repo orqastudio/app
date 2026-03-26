@@ -1,6 +1,6 @@
 ---
 id: "AD-c8f41d2e"
-type: "decision"
+type: discovery-decision
 title: "Service dependency checks and orqa dev orchestration"
 description: "Design for how the connector verifies service availability (daemon, MCP, LSP), how orqa dev orchestrates all services, and port allocation."
 status: active

@@ -1,6 +1,6 @@
 ---
 id: AD-b8c11db0
-type: decision
+type: discovery-decision
 title: "Canonical status model — universal vocabulary, type subsets, display aliases"
 description: "Statuses have two layers matching types and relationships. Canonical statuses are universal thinking stages — always available, aliasable for display. Project statuses extend for domain-specific needs. Each type declares its allowed subset. Surpassed and archived are distinct: surpassed = superseded by better thinking, archived = explored but didn't lead anywhere."
 status: active

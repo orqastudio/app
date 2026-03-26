@@ -1,6 +1,6 @@
 ---
 id: RES-d2baf8c4
-type: research
+type: discovery-research
 title: Graph analysis — using Cytoscape.js algorithms to power governance insights
 description: "Research how Cytoscape.js built-in graph analysis algorithms can feed dashboard widgets, health metrics, dependency tracing, impact analysis, and knowledge gap detection in OrqaStudio."
 status: completed

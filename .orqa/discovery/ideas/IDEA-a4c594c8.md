@@ -1,6 +1,6 @@
 ---
 id: IDEA-a4c594c8
-type: idea
+type: discovery-idea
 title: Reflective AI Facilitation
 description: "Active structured reflection support with AI-facilitated retrospectives, assumption challenges, and PILLAR-2acd86c1 cycle detection."
 status: captured

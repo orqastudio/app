@@ -1,7 +1,7 @@
 ---
 id: RES-bd4d7ea3
 title: "Knowledge Plugin Architecture"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: "Knowledge registration, injection tiers, conflict resolution — framework comparison and recommended architecture"

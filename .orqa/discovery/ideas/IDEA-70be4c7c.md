@@ -1,6 +1,6 @@
 ---
 id: IDEA-70be4c7c
-type: idea
+type: discovery-idea
 title: Transportable Governance Format
 description: Move governance from .claude/-specific format to generic .orqa/process/ with environment-specific adapters.
 status: captured

@@ -16,7 +16,7 @@ initial_state: capture
 
 states:
   capture:
-    category: learning
+    category: completed
     description: "Lesson capture — create lessons from implementation experience, review outcomes, and process observations."
     on_enter:
       - type: append_log
@@ -24,7 +24,7 @@ states:
           message: "Lesson capture started"
 
   retrospective:
-    category: learning
+    category: completed
     description: "Retrospective analysis — analyse captured lessons, identify what went well and what needs improvement."
     on_enter:
       - type: append_log
@@ -32,7 +32,7 @@ states:
           message: "Retrospective started"
 
   pattern-tracking:
-    category: learning
+    category: completed
     description: "Pattern tracking — aggregate lessons across epics, detect trends and recurring themes."
     on_enter:
       - type: append_log
@@ -40,7 +40,7 @@ states:
           message: "Pattern tracking started"
 
   recurrence-detection:
-    category: learning
+    category: completed
     description: "Recurrence detection — surface systemic issues that recur across multiple cycles, flag for process change."
     on_enter:
       - type: append_log
@@ -48,7 +48,7 @@ states:
           message: "Recurrence detection started"
 
   learning_complete:
-    category: learning
+    category: completed
     description: "Learning complete — lessons captured, patterns analysed, improvements identified."
     on_enter:
       - type: set_field

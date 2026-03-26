@@ -1,6 +1,6 @@
 ---
 id: "AD-9ab3e0a4"
-type: "decision"
+type: discovery-decision
 title: "Universal plugin capability model"
 status: active
 description: "All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins."

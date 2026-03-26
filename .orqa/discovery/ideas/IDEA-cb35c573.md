@@ -1,6 +1,6 @@
 ---
 id: IDEA-cb35c573
-type: idea
+type: discovery-idea
 title: Exploration whiteboard — visual canvas for organising ideas and research before they enter the pipeline
 description: "The Exploring section of Delivery has ideas and research but no spatial/visual way to organise and relate them. A whiteboard-style view (like the roadmap kanban is for the pipeline) could give users a canvas to collect, group, and connect ideas and research before they're shaped into epics. Exact interaction model TBD."
 status: captured

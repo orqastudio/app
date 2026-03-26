@@ -1,6 +1,6 @@
 ---
 id: IDEA-3bd6c89e
-type: idea
+type: discovery-idea
 title: Multi-Provider Ecosystem
 description: Support additional AI providers through the provider-agnostic sidecar interface without changing the Rust core or Svelte UI.
 status: completed

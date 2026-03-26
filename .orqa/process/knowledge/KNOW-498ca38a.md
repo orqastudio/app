@@ -1,3 +1,14 @@
+---
+id: KNOW-498ca38a
+type: knowledge
+title: "Software — Relationship Vocabulary"
+summary: "Defines 11 relationship types for delivery and engineering artifacts across 6 categories: Hierarchy (delivers, fulfils), Lineage (realises, produces), Dependency (depends-on), Corrective (reports, fixes, affects), Knowledge Flow (yields), and Delivery (implements, addresses). Each has forward/inverse directions, from/to constraints, and status rules for automated state transitions."
+status: active
+created: 2026-03-01
+updated: 2026-03-20
+relationships: []
+---
+
 # Software — Relationship Vocabulary
 
 The software plugin defines 11 relationship types that model how delivery and engineering artifacts connect. Each relationship has a forward direction (stored on the source artifact) and a computed inverse (resolved by the graph engine at query time). Under forward-only storage, you write only the forward key on the artifact that initiates the relationship.

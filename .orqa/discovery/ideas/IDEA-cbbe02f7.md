@@ -1,6 +1,6 @@
 ---
 id: IDEA-cbbe02f7
-type: idea
+type: discovery-idea
 title: Session tasklist — track pending artifact creation in working memory
 description: "A session-level scratchpad that tracks things the agent knows it needs to create (tasks, ideas, observations) but hasn't done yet. Prevents knowledge from getting lost during extended conversations when context compacts."
 status: surpassed

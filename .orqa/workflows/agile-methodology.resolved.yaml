@@ -4,11 +4,11 @@
 # Contributions:
 #   - @orqastudio/plugin-agile-discovery → discovery-artifacts (+4 states, +9 transitions)
 #   - @orqastudio/plugin-agile-planning → planning-methodology (+4 states, +9 transitions)
+#   - @orqastudio/plugin-agile-documentation → documentation-standards (+3 states, +6 transitions)
 #   - @orqastudio/plugin-software-kanban → implementation-workflow (+5 states, +10 transitions)
 #   - @orqastudio/plugin-agile-review → review-process (+4 states, +11 transitions)
 #   - @orqastudio/plugin-core-framework → learning-pipeline (+5 states, +10 transitions)
-# Unfilled contribution points: documentation-standards
-# Resolved at: 2026-03-26T08:48:10.888Z
+# Resolved at: 2026-03-26T09:47:03.527Z
 
 name: agile-methodology
 version: 0.1.0
@@ -23,7 +23,7 @@ contribution_points:
   - name: discovery-artifacts
     stage: discover
     description: Contribute discovery artifact types and research workflows.
-    required: false
+    required: true
     filled_by: "@orqastudio/plugin-agile-discovery"
   - name: planning-methodology
     stage: plan
@@ -33,7 +33,8 @@ contribution_points:
   - name: documentation-standards
     stage: document
     description: Contribute documentation standards and templates.
-    required: false
+    required: true
+    filled_by: "@orqastudio/plugin-agile-documentation"
   - name: implementation-workflow
     stage: implement
     description: Contribute implementation sub-workflows (task lifecycle, branching strategy).
@@ -47,7 +48,7 @@ contribution_points:
   - name: learning-pipeline
     stage: learn
     description: Contribute learning pipeline (lesson creation, retrospective, pattern tracking).
-    required: false
+    required: true
     filled_by: "@orqastudio/plugin-core-framework"
 states:
   discover:
@@ -157,6 +158,27 @@ states:
       - type: append_log
         params:
           message: Plan finalised
+  draft_docs:
+    category: planning
+    description: Draft documentation — capture decisions, architecture, requirements as structured artifacts.
+    on_enter:
+      - type: append_log
+        params:
+          message: Documentation drafting started
+  review_docs:
+    category: review
+    description: Review documentation — verify accuracy, completeness, and alignment with decisions.
+    on_enter:
+      - type: append_log
+        params:
+          message: Documentation review started
+  publish_docs:
+    category: active
+    description: Publish documentation — finalize and make available to the team.
+    on_enter:
+      - type: append_log
+        params:
+          message: Documentation published
   task_assignment:
     category: active
     description: Assign tasks to agents or team members based on the plan.
@@ -233,35 +255,35 @@ states:
         params:
           message: Review complete
   capture:
-    category: learning
+    category: completed
     description: Lesson capture — create lessons from implementation experience, review outcomes, and process observations.
     on_enter:
       - type: append_log
         params:
           message: Lesson capture started
   retrospective:
-    category: learning
+    category: completed
     description: Retrospective analysis — analyse captured lessons, identify what went well and what needs improvement.
     on_enter:
       - type: append_log
         params:
           message: Retrospective started
   pattern-tracking:
-    category: learning
+    category: completed
     description: Pattern tracking — aggregate lessons across epics, detect trends and recurring themes.
     on_enter:
       - type: append_log
         params:
           message: Pattern tracking started
   recurrence-detection:
-    category: learning
+    category: completed
     description: Recurrence detection — surface systemic issues that recur across multiple cycles, flag for process change.
     on_enter:
       - type: append_log
         params:
           message: Recurrence detection started
   learning_complete:
-    category: learning
+    category: completed
     description: Learning complete — lessons captured, patterns analysed, improvements identified.
     on_enter:
       - type: set_field
@@ -405,6 +427,30 @@ transitions:
     to: scope_analysis
     event: replan
     description: Fundamental issues found — restart planning from scoping.
+  - from: document
+    to: draft_docs
+    event: begin_documentation
+    description: Start documenting decisions and architecture.
+  - from: draft_docs
+    to: review_docs
+    event: drafts_complete
+    description: Drafts complete, begin documentation review.
+  - from: review_docs
+    to: draft_docs
+    event: revisions_needed
+    description: Review found issues — revise documentation.
+  - from: review_docs
+    to: publish_docs
+    event: docs_approved
+    description: Documentation approved, publish.
+  - from: publish_docs
+    to: implement
+    event: documentation_complete
+    description: Documentation published, proceed to implementation.
+  - from: draft_docs
+    to: implement
+    event: skip_review
+    description: Skip documentation review for simple changes.
   - from: implement
     to: task_assignment
     event: begin_assignment

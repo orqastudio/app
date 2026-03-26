@@ -1,3 +1,14 @@
+---
+id: KNOW-498ca38a
+type: knowledge
+title: "Agile Governance — Relationship Vocabulary"
+summary: "Defines 20 relationship types for governance artifacts across 6 categories: Foundation (upholds, grounded, benefits, serves, revises), Lineage (crystallises, spawns, merged-into), Governance (drives, governs, enforces, codifies, promoted-to), Knowledge Flow (informs, teaches, guides, cautions, documents), Agency (employs), and Synchronisation (synchronised-with). Each has forward/inverse directions, from/to constraints, and usage guidance."
+status: active
+created: 2026-03-01
+updated: 2026-03-20
+relationships: []
+---
+
 # Agile Governance — Relationship Vocabulary
 
 The agile-workflow plugin defines 20 relationship types that model how governance artifacts connect. Each relationship has a forward direction (the one you store on the source artifact) and a computed inverse (resolved by the graph engine at query time). Under forward-only storage, you write only the forward key on the artifact that initiates the relationship.

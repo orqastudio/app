@@ -1,6 +1,6 @@
 ---
 id: "AD-efe10e1d"
-type: "decision"
+type: discovery-decision
 title: "CLI Rule Loading — Accept Full Injection Until Selective Loading Exists"
 description: "Accept that .claude/rules/ symlink loads all 44 rules into every CLI session. The graph-based injection model requires selective loading that Claude Code does not yet support."
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: IDEA-fca8089b
-type: idea
+type: discovery-idea
 title: "Sections are graph filters — Principles, Discovery, Learning, Delivery"
 description: "Nav sections don't categorise artifacts — they filter the graph by relationship patterns. An artifact appears in every section its relationships qualify it for. Decisions appear in multiple sections with contextual labels explaining why."
 status: captured

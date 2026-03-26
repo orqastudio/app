@@ -1,6 +1,6 @@
 ---
 id: IDEA-f5fe34f7
-type: idea
+type: discovery-idea
 title: Unified Search Tool with Flexible Parameters
 description: "Combine the app's three search tools (search_regex, search_semantic, code_research) into a single flexible Search tool that accepts different parameters to control search mode, scope, and output format."
 status: captured

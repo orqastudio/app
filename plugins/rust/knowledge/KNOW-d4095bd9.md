@@ -2,7 +2,7 @@
 id: KNOW-d4095bd9
 type: knowledge
 name: Clippy Config Management
-summary: "Clippy Config Management"
+summary: "How Rust clippy and rustfmt configuration is managed through coding standards rules. Enforcement entries in rule artifacts define lint levels (deny, warn) for specific clippy lints like unwrap_used, expect_used, pedantic, print_stdout. The configurator reads these entries and generates clippy.toml and .rustfmt.toml files. All lint policy is governed by rules, not manually configured."
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:

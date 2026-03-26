@@ -1,6 +1,6 @@
 ---
 id: IDEA-e68b6a47
-type: idea
+type: discovery-idea
 title: "Daemon filesystem watching — live graph refresh on artifact changes"
 description: "The daemon loads the artifact graph once at startup and never refreshes. This is a regression from the in-process graph which watched for filesystem changes. The daemon should watch .orqa/ and rebuild the graph when artifacts change."
 status: captured

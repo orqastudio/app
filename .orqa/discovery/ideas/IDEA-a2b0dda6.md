@@ -1,6 +1,6 @@
 ---
 id: IDEA-a2b0dda6
-type: idea
+type: discovery-idea
 title: "UI polish: favicons, titlebar icon, and visual rough edges"
 description: "The app's favicons and titlebar icon need updating from defaults, and there are visual rough edges like spacing around the close button hover state that make the app feel unfinished."
 status: captured

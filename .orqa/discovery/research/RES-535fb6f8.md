@@ -1,7 +1,7 @@
 ---
 id: RES-535fb6f8
 title: "Programmatic System Prompt Generation"
-type: research
+type: discovery-research
 status: active
 category: architecture
 description: "Dynamic prompt composition — five-stage pipeline, token budgeting, KV-cache optimization"

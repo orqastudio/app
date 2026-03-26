@@ -1,6 +1,6 @@
 ---
 id: "RES-c46ece96"
-type: research
+type: discovery-research
 title: "Graph SDK as primary data source for artifact UI"
 description: "Investigate extending artifactGraphSDK to replace per-type invoke() calls with graph-backed rendering. The SDK already holds the full graph in reactive state — this research identifies what's missing for typed edge traversal, relationship-aware rendering, and component migration."
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: IDEA-30d6a2f9
-type: idea
+type: discovery-idea
 title: App-wide centralized logging
 status: captured
 created: 2026-03-19

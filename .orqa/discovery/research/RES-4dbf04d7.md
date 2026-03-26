@@ -1,6 +1,6 @@
 ---
 id: RES-4dbf04d7
-type: research
+type: discovery-research
 title: Cross-cutting concerns of repository directory restructure
 description: "Audit every file, config, and path reference that would need updating when reorganising the repository into backend/, ui/src/, sidecars/, and debugger/ directories."
 status: completed

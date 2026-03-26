@@ -1,0 +1,71 @@
+name: agile-documentation-contribution
+version: "0.1.0"
+artifact_type: epic
+plugin: "@orqastudio/plugin-agile-documentation"
+description: >
+  Documentation standards contribution to the agile-methodology workflow skeleton.
+  Adds states and transitions for structured documentation creation, review,
+  and publishing within the document stage.
+
+contributes_to:
+  workflow: agile-methodology
+  point: documentation-standards
+  priority: 10
+
+initial_state: draft_docs
+
+states:
+  draft_docs:
+    category: planning
+    description: "Draft documentation — capture decisions, architecture, requirements as structured artifacts."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Documentation drafting started"
+
+  review_docs:
+    category: review
+    description: "Review documentation — verify accuracy, completeness, and alignment with decisions."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Documentation review started"
+
+  publish_docs:
+    category: active
+    description: "Publish documentation — finalize and make available to the team."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Documentation published"
+
+transitions:
+  - from: document
+    to: draft_docs
+    event: begin_documentation
+    description: "Start documenting decisions and architecture."
+
+  - from: draft_docs
+    to: review_docs
+    event: drafts_complete
+    description: "Drafts complete, begin documentation review."
+
+  - from: review_docs
+    to: draft_docs
+    event: revisions_needed
+    description: "Review found issues — revise documentation."
+
+  - from: review_docs
+    to: publish_docs
+    event: docs_approved
+    description: "Documentation approved, publish."
+
+  - from: publish_docs
+    to: implement
+    event: documentation_complete
+    description: "Documentation published, proceed to implementation."
+
+  - from: draft_docs
+    to: implement
+    event: skip_review
+    description: "Skip documentation review for simple changes."

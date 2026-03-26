@@ -1,6 +1,6 @@
 ---
 id: "AD-45cfe1d1"
-type: decision
+type: discovery-decision
 title: "Config-Driven Artifact Scanning"
 description: "The artifact scanner reads paths from project.json config, not hardcoded constants. Directories are walked recursively like a file explorer. Frontmatter title is used for display labels.\n"
 status: completed

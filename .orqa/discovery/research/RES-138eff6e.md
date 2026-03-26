@@ -1,6 +1,6 @@
 ---
 id: RES-138eff6e
-type: research
+type: discovery-research
 title: Token Efficiency Analysis and Optimization Strategy
 status: active
 category: process

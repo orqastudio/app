@@ -1,6 +1,6 @@
 ---
 id: "RES-2d91e2c2"
-type: research
+type: discovery-research
 title: "Design Token Research"
 description: "How OrqaStudio stores, maps, and applies design tokens at runtime — both OrqaStudio's own baseline theme and per-project themes extracted from opened projects."
 status: completed

@@ -1,6 +1,6 @@
 ---
 id: AD-bb125c2c
-type: decision
+type: discovery-decision
 title: "Skills→Knowledge rename and connector architecture"
 status: active
 created: 2026-03-20

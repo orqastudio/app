@@ -244,7 +244,8 @@
         "label": "Realises",
         "inverseLabel": "Realised By",
         "from": [
-          "idea"
+          "idea",
+          "discovery-idea"
         ],
         "to": [
           "epic",
@@ -441,7 +442,8 @@
           "epic"
         ],
         "to": [
-          "decision"
+          "decision",
+          "discovery-decision"
         ],
         "description": "Work directly implements a decision — traces delivery back to governance",
         "semantic": "delivery"

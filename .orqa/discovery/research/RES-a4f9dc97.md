@@ -1,6 +1,6 @@
 ---
 id: "RES-a4f9dc97"
-type: research
+type: discovery-research
 title: "Relationship & Metadata Display UX"
 description: "UX review of how artifacts present their relationships, pipeline stage, and metadata to users. Given the revised process/delivery/documentation structure and knowledge maturity pipeline philosophy, how should this information be surfaced in the app?"
 status: completed

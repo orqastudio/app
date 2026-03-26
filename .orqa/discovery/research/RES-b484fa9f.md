@@ -1,6 +1,6 @@
 ---
 id: "RES-b484fa9f"
-type: research
+type: discovery-research
 title: "Agent, Skill, Rule, and Hook Audit Findings"
 description: "Comprehensive audit of all governance artifacts (agents, skills, rules, hooks) for accuracy against the current codebase, cross-layer consistency, and missing/miscategorised artifact analysis."
 status: completed

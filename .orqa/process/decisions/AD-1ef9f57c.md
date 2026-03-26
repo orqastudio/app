@@ -1,6 +1,6 @@
 ---
 id: "AD-1ef9f57c"
-type: "decision"
+type: discovery-decision
 title: "Team design v2 — open question resolutions"
 status: active
 created: 2026-03-25T00:00:00.000Z

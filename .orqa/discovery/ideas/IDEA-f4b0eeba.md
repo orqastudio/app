@@ -1,6 +1,6 @@
 ---
 id: IDEA-f4b0eeba
-type: idea
+type: discovery-idea
 title: orqa git — unified git operations across submodules
 status: captured
 description: CLI commands that orchestrate git operations across the dev environment's 25+ submodules, ensuring consistent state, correct execution order, and linked commits.
