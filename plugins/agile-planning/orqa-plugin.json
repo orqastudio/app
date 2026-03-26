@@ -1,0 +1,25 @@
+{
+  "name": "@orqastudio/plugin-agile-planning",
+  "version": "0.1.4-dev",
+  "displayName": "Agile Planning",
+  "description": "Planning stage methodology — scope analysis, estimation, prioritisation, and plan finalisation. A stage-definition plugin contributing the planning-methodology point to the agile-methodology workflow.",
+  "category": "methodology",
+  "role": null,
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "workflows": [
+      {
+        "artifact_type": "epic",
+        "path": "workflows/planning.contribution.workflow.yaml",
+        "contribution": true
+      }
+    ]
+  },
+  "content": {
+    "workflows": {
+      "source": "workflows",
+      "target": ".orqa/process/workflows"
+    }
+  }
+}

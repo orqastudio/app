@@ -1,0 +1,33 @@
+{
+  "name": "@orqastudio/plugin-agile-review",
+  "version": "0.1.4-dev",
+  "displayName": "Agile Review",
+  "description": "Review stage definition — code review, gate checks, and acceptance verification. Contributes the review-process stage to the agile-methodology workflow skeleton.",
+  "category": "stage-definition",
+  "role": null,
+  "provides": {
+    "schemas": [],
+    "relationships": [],
+    "workflows": [
+      {
+        "artifact_type": "epic",
+        "path": "workflows/review.contribution.workflow.yaml",
+        "contribution": true
+      }
+    ],
+    "knowledge": [],
+    "cliTools": [],
+    "hooks": []
+  },
+  "content": {
+    "workflows": {
+      "source": "workflows",
+      "target": ".orqa/process/workflows"
+    }
+  },
+  "dependencies": {
+    "npm": [
+      "@orqastudio/types"
+    ]
+  }
+}

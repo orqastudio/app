@@ -1,4 +1,4 @@
-name: delivery
+name: agile-methodology
 version: "0.1.0"
 artifact_type: epic
 plugin: "@orqastudio/plugin-agile-workflow"
@@ -6,7 +6,7 @@ description: >
   Core delivery workflow skeleton with contribution points. This is the
   workflow-definition plugin's skeleton — stage-definition plugins fill
   the named slots at install time. The resolved workflow is written to
-  .orqa/workflows/delivery.resolved.yaml.
+  .orqa/workflows/agile-methodology.resolved.yaml.
 
 initial_state: discover
 

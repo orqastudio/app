@@ -1,14 +1,14 @@
-name: software-planning-contribution
+name: agile-planning-contribution
 version: "0.1.0"
 artifact_type: epic
-plugin: "@orqastudio/plugin-software-kanban"
+plugin: "@orqastudio/plugin-agile-planning"
 description: >
-  Software planning methodology contribution to the delivery workflow skeleton.
+  Agile planning methodology contribution to the agile-methodology workflow skeleton.
   Adds states and transitions for scoping, task decomposition, estimation, and
   prioritisation within a software development project.
 
 contributes_to:
-  workflow: delivery
+  workflow: agile-methodology
   point: planning-methodology
   priority: 10
 

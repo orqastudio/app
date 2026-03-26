@@ -8,7 +8,7 @@ description: >
   integration within a software development project.
 
 contributes_to:
-  workflow: delivery
+  workflow: agile-methodology
   point: implementation-workflow
   priority: 10
 

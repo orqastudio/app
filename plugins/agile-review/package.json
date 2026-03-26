@@ -1,0 +1,7 @@
+{
+  "name": "@orqastudio/plugin-agile-review",
+  "version": "0.1.4-dev",
+  "private": true,
+  "type": "module",
+  "description": "Review stage definition — code review, gate checks, and acceptance verification for the agile methodology workflow."
+}

@@ -1,15 +1,15 @@
-name: software-review-contribution
+name: agile-review-contribution
 version: "0.1.0"
 artifact_type: epic
-plugin: "@orqastudio/plugin-software-kanban"
+plugin: "@orqastudio/plugin-agile-review"
 description: >
-  Software review process contribution to the delivery workflow skeleton.
+  Review process contribution to the agile-methodology workflow skeleton.
   Adds states and transitions for code review, gate checks, and acceptance
   verification within a software development project. Integrates with
   the gate engine's structured_review pattern.
 
 contributes_to:
-  workflow: delivery
+  workflow: agile-methodology
   point: review-process
   priority: 10
 

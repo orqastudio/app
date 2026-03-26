@@ -1,0 +1,6 @@
+{
+  "name": "@orqastudio/plugin-agile-planning",
+  "version": "0.1.4-dev",
+  "private": true,
+  "description": "Planning stage methodology for OrqaStudio — scope analysis, estimation, prioritisation, and plan finalisation."
+}
