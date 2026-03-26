@@ -29,12 +29,416 @@
     }
   },
   "provides": {
-    "schemas": [],
+    "schemas": [
+      {
+        "key": "decision",
+        "label": "Decision",
+        "plural": "Decisions",
+        "icon": "scale",
+        "defaultPath": ".orqa/process/decisions",
+        "idPrefix": "AD",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^AD-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      },
+      {
+        "key": "rule",
+        "label": "Rule",
+        "plural": "Rules",
+        "icon": "shield",
+        "defaultPath": ".orqa/process/rules",
+        "idPrefix": "RULE",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status",
+            "enforcement"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^RULE-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "enforcement": {
+              "type": "array"
+            },
+            "demoted_date": {
+              "type": "string",
+              "format": "date",
+              "description": "ISO date when the rule was demoted to inactive"
+            },
+            "demoted_reason": {
+              "type": "string",
+              "description": "Why the rule was demoted (e.g. enforced by orqa lsp schema validation)"
+            },
+            "replaced_by": {
+              "type": "string",
+              "description": "What now covers this rule (e.g. orqa lsp, pre-commit hook)"
+            },
+            "stability_threshold": {
+              "type": "number",
+              "minimum": 1,
+              "default": 10,
+              "description": "Sessions with zero violations before the rule is safe to delete"
+            },
+            "stability_count": {
+              "type": "number",
+              "minimum": 0,
+              "default": 0,
+              "description": "Current count of consecutive clean sessions since demotion"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      },
+      {
+        "key": "lesson",
+        "label": "Lesson",
+        "plural": "Lessons",
+        "icon": "book-open",
+        "defaultPath": ".orqa/process/lessons",
+        "idPrefix": "IMPL",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status",
+            "recurrence"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^IMPL-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "recurrence": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maturity": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "knowledge",
+        "label": "Knowledge",
+        "plural": "Knowledge",
+        "icon": "zap",
+        "defaultPath": ".orqa/process/knowledge",
+        "idPrefix": "KNOW",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^KNOW-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "thinking-mode": {
+              "type": "string",
+              "description": "Prompt classification mode this knowledge artifact represents. Used by the thinking-mode classifier to match prompts to behavioral context."
+            },
+            "priority-rules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Rule categories prioritised when this thinking mode is active. Used by the prompt injector to select relevant behavioral rules."
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "agent",
+        "label": "Agent",
+        "plural": "Agents",
+        "icon": "bot",
+        "defaultPath": ".orqa/process/agents",
+        "idPrefix": "AGENT",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status",
+            "preamble"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^AGENT-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "preamble": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            },
+            "capabilities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "knowledge": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "doc",
+        "label": "Document",
+        "plural": "Documents",
+        "icon": "file-text",
+        "defaultPath": ".orqa/documentation",
+        "idPrefix": "DOC",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^DOC-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    ],
     "workflows": [
       {
         "artifact_type": "epic",
         "path": "workflows/learning.contribution.workflow.yaml",
         "contribution": true
+      },
+      {
+        "artifact_type": "decision",
+        "path": "workflows/decision.workflow.yaml"
+      },
+      {
+        "artifact_type": "rule",
+        "path": "workflows/rule.workflow.yaml"
+      },
+      {
+        "artifact_type": "lesson",
+        "path": "workflows/lesson.workflow.yaml"
+      },
+      {
+        "artifact_type": "knowledge",
+        "path": "workflows/knowledge.workflow.yaml"
+      },
+      {
+        "artifact_type": "agent",
+        "path": "workflows/agent.workflow.yaml"
+      },
+      {
+        "artifact_type": "doc",
+        "path": "workflows/doc.workflow.yaml"
       }
     ],
     "enforcement_mechanisms": [

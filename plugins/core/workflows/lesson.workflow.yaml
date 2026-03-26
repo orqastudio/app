@@ -1,7 +1,7 @@
 name: lesson
 version: "0.1.0"
 artifact_type: lesson
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Lesson lifecycle state machine. Lessons capture implementation findings
   and patterns learned during delivery. They have a unique "recurring"

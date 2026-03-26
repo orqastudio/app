@@ -2,17 +2,320 @@
   "name": "@orqastudio/plugin-agile-planning",
   "version": "0.1.4-dev",
   "displayName": "Agile Planning",
-  "description": "Planning stage methodology — scope analysis, estimation, prioritisation, and plan finalisation. A stage-definition plugin contributing the planning-methodology point to the agile-methodology workflow.",
+  "description": "Planning stage methodology — scope analysis, estimation, prioritisation, plan finalisation, and planning-stage artifact types (planning-idea, planning-research, planning-decision, wireframe). A stage-definition plugin contributing the planning-methodology point to the agile-methodology workflow.",
   "category": "methodology",
   "role": null,
   "provides": {
-    "schemas": [],
-    "relationships": [],
+    "schemas": [
+      {
+        "key": "planning-idea",
+        "label": "Planning Idea",
+        "plural": "Planning Ideas",
+        "icon": "lightbulb",
+        "defaultPath": ".orqa/planning/ideas",
+        "idPrefix": "PLAN-IDEA",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PLAN-IDEA-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priority": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "planning-research",
+        "label": "Planning Research",
+        "plural": "Planning Research",
+        "icon": "flask-conical",
+        "defaultPath": ".orqa/planning/research",
+        "idPrefix": "PLAN-RES",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PLAN-RES-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "methodology": {
+              "type": "string"
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      {
+        "key": "planning-decision",
+        "label": "Planning Decision",
+        "plural": "Planning Decisions",
+        "icon": "scale",
+        "defaultPath": ".orqa/planning/decisions",
+        "idPrefix": "PLAN-AD",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PLAN-AD-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "influence": "high"
+      },
+      {
+        "key": "wireframe",
+        "label": "Wireframe",
+        "plural": "Wireframes",
+        "icon": "layout",
+        "defaultPath": ".orqa/planning/wireframes",
+        "idPrefix": "WF",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^WF-[a-f0-9]{8}$"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    ],
+    "relationships": [
+      {
+        "key": "evolves-to",
+        "inverse": "evolved-from",
+        "label": "Evolves To",
+        "inverseLabel": "Evolved From",
+        "from": [
+          "planning-idea"
+        ],
+        "to": [
+          "planning-research"
+        ],
+        "description": "Planning idea evolves into a technical spike or implementation research",
+        "semantic": "lineage"
+      },
+      {
+        "key": "evolves-to",
+        "inverse": "evolved-from",
+        "label": "Evolves To",
+        "inverseLabel": "Evolved From",
+        "from": [
+          "planning-research"
+        ],
+        "to": [
+          "planning-decision"
+        ],
+        "description": "Planning research evolves into a concrete implementation decision",
+        "semantic": "lineage"
+      },
+      {
+        "key": "references",
+        "inverse": "referenced-by",
+        "label": "References",
+        "inverseLabel": "Referenced By",
+        "from": [
+          "planning-decision"
+        ],
+        "to": [
+          "discovery-research"
+        ],
+        "description": "Planning decision references discovery research for context (cross-stage join)",
+        "semantic": "knowledge-flow"
+      },
+      {
+        "key": "implements",
+        "inverse": "implemented-by",
+        "label": "Implements",
+        "inverseLabel": "Implemented By",
+        "from": [
+          "planning-decision"
+        ],
+        "to": [
+          "epic"
+        ],
+        "description": "Planning decision implements through an epic (cross-stage to implementation)",
+        "semantic": "delivery"
+      },
+      {
+        "key": "visualises",
+        "inverse": "visualised-by",
+        "label": "Visualises",
+        "inverseLabel": "Visualised By",
+        "from": [
+          "wireframe"
+        ],
+        "to": [
+          "planning-decision"
+        ],
+        "description": "Wireframe visualises a planning decision",
+        "semantic": "knowledge-flow"
+      }
+    ],
     "workflows": [
       {
         "artifact_type": "epic",
         "path": "workflows/planning.contribution.workflow.yaml",
         "contribution": true
+      },
+      {
+        "artifact_type": "planning-idea",
+        "path": "workflows/planning-idea.workflow.yaml"
+      },
+      {
+        "artifact_type": "planning-research",
+        "path": "workflows/planning-research.workflow.yaml"
+      },
+      {
+        "artifact_type": "planning-decision",
+        "path": "workflows/planning-decision.workflow.yaml"
+      },
+      {
+        "artifact_type": "wireframe",
+        "path": "workflows/wireframe.workflow.yaml"
       }
     ]
   },

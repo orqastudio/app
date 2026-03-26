@@ -1,7 +1,7 @@
 name: agent
 version: "0.1.0"
 artifact_type: agent
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Agent lifecycle state machine. Agent artifacts define specialist agent
   configurations with preambles, capabilities, and knowledge references.

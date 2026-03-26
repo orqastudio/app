@@ -1,7 +1,7 @@
 name: rule
 version: "0.1.0"
 artifact_type: rule
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Rule lifecycle state machine. Rules are governance constraints enforced
   within the project. The workflow tracks capture, exploration, active

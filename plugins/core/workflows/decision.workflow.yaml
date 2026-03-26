@@ -1,7 +1,7 @@
 name: decision
 version: "0.1.0"
 artifact_type: decision
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Decision lifecycle state machine. Decisions (architecture decisions, ADRs)
   capture significant choices and their rationale. The workflow tracks

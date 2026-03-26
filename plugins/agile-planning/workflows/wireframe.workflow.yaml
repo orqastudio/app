@@ -1,10 +1,10 @@
 name: wireframe
 version: "0.1.0"
 artifact_type: wireframe
-plugin: "@orqastudio/plugin-software-kanban"
+plugin: "@orqastudio/plugin-agile-planning"
 description: >
   Wireframe lifecycle state machine. Wireframes are visual specifications
-  produced during discovery. The workflow tracks capture, exploration,
+  produced during planning. The workflow tracks capture, exploration,
   active design, review, and completion.
 
 initial_state: captured

@@ -1,7 +1,7 @@
 name: knowledge
 version: "0.1.0"
 artifact_type: knowledge
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Knowledge lifecycle state machine. Knowledge artifacts capture domain
   expertise, thinking modes, and contextual information injected into

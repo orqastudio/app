@@ -1,7 +1,7 @@
 name: doc
 version: "0.1.0"
 artifact_type: doc
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-core-framework"
 description: >
   Document lifecycle state machine. Documents capture technical documentation,
   guides, and reference material. The workflow tracks capture, exploration,

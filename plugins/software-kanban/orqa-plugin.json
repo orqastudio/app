@@ -186,58 +186,6 @@
           },
           "additionalProperties": true
         }
-      },
-      {
-        "key": "wireframe",
-        "label": "Wireframe",
-        "plural": "Wireframes",
-        "icon": "layout",
-        "defaultPath": ".orqa/discovery/wireframes",
-        "idPrefix": "WF",
-        "frontmatter": {
-          "type": "object",
-          "required": [
-            "id",
-            "status"
-          ],
-          "properties": {
-            "id": {
-              "type": "string",
-              "pattern": "^WF-[a-f0-9]{8}$"
-            },
-            "name": {
-              "type": "string"
-            },
-            "description": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "relationships": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": [
-                  "target",
-                  "type"
-                ],
-                "properties": {
-                  "target": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "rationale": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "additionalProperties": true
-        }
       }
     ],
     "views": [
@@ -281,8 +229,12 @@
         "path": "workflows/milestone.workflow.yaml"
       },
       {
-        "artifact_type": "wireframe",
-        "path": "workflows/wireframe.workflow.yaml"
+        "artifact_type": "epic",
+        "path": "workflows/epic.workflow.yaml"
+      },
+      {
+        "artifact_type": "task",
+        "path": "workflows/task.workflow.yaml"
       }
     ],
     "relationships": [
@@ -299,20 +251,6 @@
           "task"
         ],
         "description": "Idea realised through delivery work",
-        "semantic": "lineage"
-      },
-      {
-        "key": "produces",
-        "inverse": "produced-by",
-        "label": "Produces",
-        "inverseLabel": "Produced By",
-        "from": [
-          "research"
-        ],
-        "to": [
-          "wireframe"
-        ],
-        "description": "Research produces a visual specification",
         "semantic": "lineage"
       },
       {
@@ -876,12 +814,6 @@
           "type": "plugin",
           "icon": "flask-conical",
           "pluginSource": "@orqastudio/plugin-software-kanban"
-        },
-        {
-          "key": "wireframes",
-          "type": "plugin",
-          "icon": "layout",
-          "pluginSource": "@orqastudio/plugin-software-kanban"
         }
       ]
     },
@@ -973,7 +905,6 @@
       "EPIC": "title",
       "TASK": "title",
       "RES": "title",
-      "WF": "title",
       "BUG": "title"
     },
     "colors": {
@@ -981,7 +912,6 @@
       "EPIC": "#3b82f6",
       "TASK": "#06b6d4",
       "RES": "#6366f1",
-      "WF": "#a78bfa",
       "BUG": "#ef4444"
     }
   },
