@@ -73,8 +73,36 @@ export interface ResolutionMetadata {
 	unfilledPoints: string[];
 	/** Contribution points that were required but not filled. */
 	unfilledRequired: string[];
+	/** Project-level overrides that were applied. */
+	overrides: Array<{
+		file: string;
+		statesAdded: string[];
+		statesReplaced: string[];
+		transitionsAdded: number;
+		fieldsOverridden: string[];
+	}>;
 	/** Timestamp of resolution. */
 	resolvedAt: string;
+}
+
+/** A project-level override targeting a specific resolved workflow. */
+export interface WorkflowOverride {
+	/** Which resolved workflow to override (matches workflow name). */
+	target_workflow: string;
+	/** States to add or replace (keyed by state name). */
+	states?: Record<string, WorkflowState>;
+	/** Transitions to add. */
+	transitions?: Transition[];
+	/** Top-level field overrides (description, initial_state, etc.). */
+	fields?: Record<string, unknown>;
+}
+
+/** A discovered override file. */
+interface DiscoveredOverride {
+	/** Absolute path to the override YAML file. */
+	filePath: string;
+	/** Parsed override definition. */
+	override: WorkflowOverride;
 }
 
 /** Result of resolving a single workflow. */
@@ -193,6 +221,158 @@ export function discoverWorkflows(projectRoot: string): {
 	}
 
 	return { workflows, errors };
+}
+
+// ---------------------------------------------------------------------------
+// Override Discovery
+// ---------------------------------------------------------------------------
+
+/**
+ * Discover project-level workflow override files.
+ *
+ * Scans `.orqa/workflows/overrides/` for `*.override.yaml` / `*.override.yml` files.
+ * Each file must contain a `target_workflow` field identifying which resolved
+ * workflow to override.
+ */
+export function discoverOverrides(projectRoot: string): {
+	overrides: DiscoveredOverride[];
+	errors: string[];
+} {
+	const overrides: DiscoveredOverride[] = [];
+	const errors: string[] = [];
+
+	const overridesDir = path.join(projectRoot, ".orqa", "workflows", "overrides");
+	if (!fs.existsSync(overridesDir)) {
+		return { overrides, errors };
+	}
+
+	const files = fs.readdirSync(overridesDir).filter(
+		(f) => f.endsWith(".override.yaml") || f.endsWith(".override.yml"),
+	);
+
+	for (const file of files) {
+		const filePath = path.join(overridesDir, file);
+		try {
+			const content = fs.readFileSync(filePath, "utf-8");
+			const parsed = parseYaml(content) as WorkflowOverride;
+
+			if (!parsed || typeof parsed !== "object") {
+				errors.push(`${filePath}: Failed to parse — not a valid YAML object`);
+				continue;
+			}
+
+			if (!parsed.target_workflow) {
+				errors.push(`${filePath}: Missing required field: target_workflow`);
+				continue;
+			}
+
+			overrides.push({ filePath, override: parsed });
+		} catch (err) {
+			errors.push(
+				`${filePath}: ${err instanceof Error ? err.message : String(err)}`,
+			);
+		}
+	}
+
+	return { overrides, errors };
+}
+
+// ---------------------------------------------------------------------------
+// Override Application
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply project-level overrides to a resolved workflow definition.
+ *
+ * Override semantics:
+ * - `states`: new state names are added; existing state names are replaced
+ * - `transitions`: appended (deduplicated by from/to/event)
+ * - `fields`: top-level scalar fields are overwritten (description, initial_state, etc.)
+ *
+ * This runs AFTER contribution merging, BEFORE validation and writing.
+ */
+export function applyOverrides(
+	definition: WorkflowDefinition,
+	overrides: DiscoveredOverride[],
+	metadata: ResolutionMetadata,
+): { definition: WorkflowDefinition; errors: string[] } {
+	const errors: string[] = [];
+	// Deep clone to avoid mutating the input
+	const result: WorkflowDefinition = JSON.parse(JSON.stringify(definition));
+
+	// Filter overrides targeting this workflow
+	const applicable = overrides.filter(
+		(o) => o.override.target_workflow === result.name,
+	);
+
+	for (const { filePath, override } of applicable) {
+		const statesAdded: string[] = [];
+		const statesReplaced: string[] = [];
+		const fieldsOverridden: string[] = [];
+		let transitionsAdded = 0;
+
+		// Apply state overrides
+		if (override.states) {
+			for (const [stateName, stateDef] of Object.entries(override.states)) {
+				if (result.states[stateName]) {
+					statesReplaced.push(stateName);
+				} else {
+					statesAdded.push(stateName);
+				}
+				result.states[stateName] = stateDef;
+			}
+		}
+
+		// Apply transition overrides (append, deduplicate)
+		if (override.transitions) {
+			for (const transition of override.transitions) {
+				const isDuplicate = result.transitions.some(
+					(t) =>
+						JSON.stringify(t.from) === JSON.stringify(transition.from) &&
+						t.to === transition.to &&
+						t.event === transition.event,
+				);
+				if (!isDuplicate) {
+					result.transitions.push(transition);
+					transitionsAdded++;
+				}
+			}
+		}
+
+		// Apply top-level field overrides
+		if (override.fields) {
+			const allowedFields = new Set([
+				"description",
+				"initial_state",
+				"version",
+			]);
+			for (const [field, value] of Object.entries(override.fields)) {
+				if (!allowedFields.has(field)) {
+					errors.push(
+						`${filePath}: Cannot override field "${field}" — only ${[...allowedFields].join(", ")} are allowed`,
+					);
+					continue;
+				}
+				(result as unknown as Record<string, unknown>)[field] = value;
+				fieldsOverridden.push(field);
+			}
+		}
+
+		const relPath = path.relative(
+			path.join(path.dirname(filePath), "..", ".."),
+			filePath,
+		).replace(/\\/g, "/");
+
+		metadata.overrides.push({
+			file: relPath,
+			statesAdded,
+			statesReplaced,
+			transitionsAdded,
+			fieldsOverridden,
+		});
+	}
+
+	return { definition: result, errors };
 }
 
 // ---------------------------------------------------------------------------
@@ -322,6 +502,7 @@ export function mergeContributions(
 		contributions: [],
 		unfilledPoints: [],
 		unfilledRequired: [],
+		overrides: [],
 		resolvedAt: new Date().toISOString(),
 	};
 
@@ -507,7 +688,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		errors: [],
 	};
 
-	// 1. Discover
+	// 1. Discover workflows from plugins
 	const discovery = discoverWorkflows(projectRoot);
 	result.errors.push(...discovery.errors);
 
@@ -515,40 +696,50 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		return result;
 	}
 
-	// 2. Match contributions to skeletons
+	// 2. Discover project-level overrides
+	const overrideDiscovery = discoverOverrides(projectRoot);
+	result.errors.push(...overrideDiscovery.errors);
+
+	// 3. Match contributions to skeletons
 	const { skeletons, contributions, standalone } = matchContributions(
 		discovery.workflows,
 	);
 
-	// 3. Ensure output directory exists
+	// 4. Ensure output directory exists
 	const outputDir = path.join(projectRoot, ".orqa", "workflows");
 	if (!fs.existsSync(outputDir)) {
 		fs.mkdirSync(outputDir, { recursive: true });
 	}
 
-	// 4. Resolve each skeleton
+	// 5. Resolve each skeleton
 	for (const skeleton of skeletons) {
 		const { merged, metadata } = mergeContributions(skeleton, contributions);
-		const errors = validateResolvedWorkflow(merged, metadata);
+
+		// Apply project-level overrides after contribution merging
+		const overrideResult = applyOverrides(merged, overrideDiscovery.overrides, metadata);
+		result.errors.push(...overrideResult.errors);
+
+		// Validate after overrides are applied
+		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
 		const outputPath = path.join(
 			outputDir,
-			`${merged.name}.resolved.yaml`,
+			`${overrideResult.definition.name}.resolved.yaml`,
 		);
 
 		// Write the resolved workflow with metadata header
-		const outputContent = buildResolvedYaml(merged, metadata);
+		const outputContent = buildResolvedYaml(overrideResult.definition, metadata);
 		fs.writeFileSync(outputPath, outputContent, "utf-8");
 
 		result.resolved.push({
-			name: merged.name,
-			definition: merged,
+			name: overrideResult.definition.name,
+			definition: overrideResult.definition,
 			metadata,
 			errors,
 			outputPath,
 		});
 	}
 
-	// 5. Write standalone workflows as-is (no merging needed)
+	// 6. Write standalone workflows (also apply overrides)
 	for (const workflow of standalone) {
 		const defn = workflow.definition;
 		const metadata: ResolutionMetadata = {
@@ -557,20 +748,26 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 			contributions: [],
 			unfilledPoints: [],
 			unfilledRequired: [],
+			overrides: [],
 			resolvedAt: new Date().toISOString(),
 		};
-		const errors = validateResolvedWorkflow(defn, metadata);
+
+		// Apply project-level overrides to standalone workflows too
+		const overrideResult = applyOverrides(defn, overrideDiscovery.overrides, metadata);
+		result.errors.push(...overrideResult.errors);
+
+		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
 		const outputPath = path.join(
 			outputDir,
-			`${defn.name}.resolved.yaml`,
+			`${overrideResult.definition.name}.resolved.yaml`,
 		);
 
-		const outputContent = buildResolvedYaml(defn, metadata);
+		const outputContent = buildResolvedYaml(overrideResult.definition, metadata);
 		fs.writeFileSync(outputPath, outputContent, "utf-8");
 
 		result.standalone.push({
-			name: defn.name,
-			definition: defn,
+			name: overrideResult.definition.name,
+			definition: overrideResult.definition,
 			metadata,
 			errors,
 			outputPath,
@@ -608,6 +805,17 @@ function buildResolvedYaml(
 	}
 	if (metadata.unfilledPoints.length > 0) {
 		lines.push(`# Unfilled contribution points: ${metadata.unfilledPoints.join(", ")}`);
+	}
+	if (metadata.overrides.length > 0) {
+		lines.push("# Project overrides:");
+		for (const o of metadata.overrides) {
+			const parts: string[] = [];
+			if (o.statesAdded.length > 0) parts.push(`+${o.statesAdded.length} states`);
+			if (o.statesReplaced.length > 0) parts.push(`~${o.statesReplaced.length} replaced`);
+			if (o.transitionsAdded > 0) parts.push(`+${o.transitionsAdded} transitions`);
+			if (o.fieldsOverridden.length > 0) parts.push(`fields: ${o.fieldsOverridden.join(", ")}`);
+			lines.push(`#   - ${o.file} (${parts.join(", ")})`);
+		}
 	}
 	lines.push(`# Resolved at: ${metadata.resolvedAt}`);
 	lines.push("");
@@ -661,22 +869,16 @@ export function runWorkflowResolution(projectRoot: string): void {
 		}
 	}
 
-	for (const r of result.resolved) {
+	for (const r of [...result.resolved, ...result.standalone]) {
 		const relPath = path.relative(projectRoot, r.outputPath).replace(/\\/g, "/");
 		const contribCount = r.metadata.contributions.length;
-		console.log(
-			`  Resolved workflow: ${r.name} (${contribCount} contribution(s)) → ${relPath}`,
-		);
-		if (r.errors.length > 0) {
-			for (const err of r.errors) {
-				console.log(`    WARNING: ${err}`);
-			}
-		}
-	}
-
-	for (const r of result.standalone) {
-		const relPath = path.relative(projectRoot, r.outputPath).replace(/\\/g, "/");
-		console.log(`  Standalone workflow: ${r.name} → ${relPath}`);
+		const overrideCount = r.metadata.overrides.length;
+		const parts: string[] = [];
+		if (contribCount > 0) parts.push(`${contribCount} contribution(s)`);
+		if (overrideCount > 0) parts.push(`${overrideCount} override(s)`);
+		const suffix = parts.length > 0 ? ` (${parts.join(", ")})` : "";
+		const label = contribCount > 0 ? "Resolved" : "Standalone";
+		console.log(`  ${label} workflow: ${r.name}${suffix} → ${relPath}`);
 		if (r.errors.length > 0) {
 			for (const err of r.errors) {
 				console.log(`    WARNING: ${err}`);
