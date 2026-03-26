@@ -3,7 +3,7 @@ id: "IDEA-9d5b27b6"
 type: idea
 title: "Dev controller as standalone repository — attachable to dev and production processes"
 description: "Extract the dev controller into its own Tauri app in a standalone repository. Auto-detects dev or production OrqaStudio instances via process discovery. In dev mode it manages process lifecycle + log aggregation. In production mode it attaches to running instances for debugging. Lightweight standalone download — not a webview, a proper Tauri desktop app. Works with the unified logger from IDEA-1cbb9dc4."
-status: "captured"
+status: captured
 created: "2026-03-13"
 updated: "2026-03-13"
 horizon: "someday"

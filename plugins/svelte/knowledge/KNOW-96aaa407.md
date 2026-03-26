@@ -2,6 +2,7 @@
 id: KNOW-96aaa407
 type: knowledge
 title: "Svelte 5 Events Reference"
+summary: "Svelte 5 Events Reference"
 status: active
 created: 2026-03-20
 updated: 2026-03-20

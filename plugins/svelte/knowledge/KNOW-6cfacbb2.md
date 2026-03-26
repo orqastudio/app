@@ -2,6 +2,7 @@
 id: KNOW-6cfacbb2
 type: knowledge
 name: ESLint Config Management
+summary: "ESLint Config Management. Coding standards rules in `.orqa/process/rules/` define enforcement entries for this plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:

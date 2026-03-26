@@ -2,7 +2,7 @@
 id: AD-b741a7df
 type: decision
 title: "Connector architecture v2: dev process separation, graph-first enforcement, plugin specialist agents"
-status: surpassed
+status: archived
 created: 2026-03-20
 updated: 2026-03-24
 relationships:

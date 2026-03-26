@@ -3,6 +3,7 @@ id: KNOW-bec7e87d
 type: knowledge
 title: UX Compliance Review
 description: |
+summary: "|. UX compliance review methodology. This skill teaches the *review process and checklist structure* — the specific design system tokens, component libraries, and UI specs come from the project's design and frontend skills."
   UX compliance review methodology: label auditing, state coverage verification,
   shared component usage checks, layout and accessibility auditing, and structured
   UX review output format.

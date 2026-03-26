@@ -3,6 +3,7 @@ id: KNOW-7fadba3f
 type: knowledge
 title: Architectural Evaluation
 description: |
+summary: "|. Architectural compliance evaluation methodology. This skill teaches the *evaluation process and checklist structure* — the specific architectural decisions, layer names, and technology constraints come from the project's architecture skills and documentation."
   Architectural compliance evaluation methodology: boundary verification,
   domain model integrity checks, data flow mapping, schema evolution review,
   and structured compliance report format.

@@ -2,6 +2,7 @@
 id: KNOW-afaa4e88
 type: knowledge
 name: Plugin Management
+summary: "Plugin Management. OrqaStudio plugins extend the app with new artifact types, views, relationships, sidecars, hooks, and CLI tools. Manage them via the `orqa plugin` commands."
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:

@@ -3,7 +3,7 @@ id: "AD-f9fbd1d7"
 type: "decision"
 title: "Filesystem-Driven Doc Browsing"
 description: "Documentation browsing is project-scoped and filesystem-driven. Doc tree built dynamically from project directory scanning."
-status: "completed"
+status: completed
 created: "2026-03-03"
 updated: "2026-03-13"
 relationships: []

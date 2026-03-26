@@ -2,6 +2,7 @@
 id: KNOW-8cc0f5e4
 type: knowledge
 title: "Svelte 5 Snippets Reference"
+summary: "Svelte 5 Snippets Reference"
 status: active
 created: 2026-03-20
 updated: 2026-03-20

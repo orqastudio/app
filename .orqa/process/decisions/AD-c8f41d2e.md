@@ -3,7 +3,7 @@ id: "AD-c8f41d2e"
 type: "decision"
 title: "Service dependency checks and orqa dev orchestration"
 description: "Design for how the connector verifies service availability (daemon, MCP, LSP), how orqa dev orchestrates all services, and port allocation."
-status: "active"
+status: active
 created: 2026-03-26T00:00:00.000Z
 updated: 2026-03-26T00:00:00.000Z
 relationships:

@@ -3,6 +3,7 @@ id: KNOW-72ca209f
 type: knowledge
 title: Skills Maintenance
 description: |
+summary: "|. Agent skills are portable domain knowledge that agents load on demand. This skill covers the full lifecycle of managing skills: discovering them, installing them, evaluating their portability, updating them, and removing them when no longer needed."
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, KNOW.md format,
   portability rules, provenance tracking, and skill audit protocol.
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install

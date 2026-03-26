@@ -3,7 +3,7 @@ id: "IDEA-723b4bfe"
 type: idea
 title: "Verification definition and scheduling system"
 description: "Verification definitions on artifacts (mode, cadence, trigger, source, parameters, prompt) with a scheduling system that creates VER-NNN records from automated checks and TASK-NNN from failures or reflection prompts."
-status: "captured"
+status: captured
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: "later"

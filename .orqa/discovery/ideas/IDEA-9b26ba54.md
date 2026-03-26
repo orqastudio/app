@@ -3,7 +3,7 @@ id: "IDEA-9b26ba54"
 type: idea
 title: "Component Library SDK for Plugin Views"
 description: "Extract shared components into an importable SDK so plugins can create dynamic views that match the design system."
-status: "completed"
+status: completed
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: "active"

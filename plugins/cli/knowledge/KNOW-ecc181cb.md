@@ -2,6 +2,7 @@
 id: KNOW-ecc181cb
 type: knowledge
 name: README Standards
+summary: "README Standards. Every OrqaStudio repository must have a README.md with a canonical header and structure."
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:

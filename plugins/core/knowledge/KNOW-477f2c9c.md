@@ -3,6 +3,7 @@ id: KNOW-477f2c9c
 type: knowledge
 title: Agentic Workflow and Enforcement Pipeline
 description: |
+summary: "|. This is the master reference for how OrqaStudio works as a system. It describes the complete pipeline from user request to committed code, covering agent delegation, knowledge injection, artifact graph traversal, schema-driven validation, and the three-layer enforcement stack."
   The complete OrqaStudio execution model: how user requests become agent-delegated work,
   how knowledge flows into agent context via declared and semantic injection, how the
   artifact graph connects everything, and how the three-layer enforcement stack (LSP,

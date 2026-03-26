@@ -3,7 +3,7 @@ id: "RES-fbe69e04"
 type: research
 title: "Project Configuration, Plugin Pairing, and Open-Item Tracking"
 description: "Investigates four observations from EPIC-88f359b0 implementation: hardcoded paths needing project config (IMPL-a73db2e6), plugin-sidecar pairing requirements (IMPL-b8ec72e2), plugin context scoping (IMPL-acea0394), and untracked open items during implementation (IMPL-0809b549)."
-status: "completed"
+status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
 sources: []

@@ -3,7 +3,7 @@ id: "RES-8fee4dad"
 type: research
 title: "Multi-provider AI integration and plugin architecture"
 description: "Research into supporting multiple AI providers, local models, GitHub integration, and the built-in vs plugin boundary."
-status: "completed"
+status: completed
 created: "2026-03-12"
 updated: "2026-03-12"
 sources:

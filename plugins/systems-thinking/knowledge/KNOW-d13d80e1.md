@@ -2,6 +2,7 @@
 id: KNOW-d13d80e1
 type: knowledge
 name: Tech Debt Management
+summary: "Tech Debt Management. Tech debt is the gap between what the code says and what the schemas define. In OrqaStudio, the schemas (core."
 status: active
 relationships:
   - target: DOC-743f9c71

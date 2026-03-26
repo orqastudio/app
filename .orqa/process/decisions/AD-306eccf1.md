@@ -3,7 +3,7 @@ id: "AD-306eccf1"
 type: "decision"
 title: "AI-Driven Cross-Artifact Search"
 description: "Cross-artifact search uses AI semantic understanding rather than keyword matching. Queries are routed through the AI provider with artifact graph context, returning structured results with relevance explanations."
-status: "completed"
+status: completed
 created: "2026-03-11"
 updated: "2026-03-11"
 relationships: []

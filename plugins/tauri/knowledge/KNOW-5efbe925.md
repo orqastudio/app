@@ -2,6 +2,7 @@
 id: KNOW-5efbe925
 type: knowledge
 title: "Tauri v2 Capabilities & Permissions Reference"
+summary: "Tauri v2 Capabilities & Permissions Reference. Tauri v2 uses a capabilities-based security model. By default, **nothing is allowed** - you must explicitly grant permissions through capability files."
 status: active
 created: 2026-03-20
 updated: 2026-03-20

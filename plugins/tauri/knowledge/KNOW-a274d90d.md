@@ -2,6 +2,7 @@
 id: KNOW-a274d90d
 type: knowledge
 name: Tauri Plugin Installation
+summary: "Tauri Plugin Installation. This skill is consumed by the core installer agent when setting up the Tauri plugin."
 status: active
 plugin: "@orqastudio/plugin-tauri"
 relationships:

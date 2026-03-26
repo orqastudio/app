@@ -3,7 +3,7 @@ id: "RES-98ab39e0"
 type: research
 title: "Agent Memory, User Directives, and the Knowledge Pipeline"
 description: "Where does agent behavioral guidance fit in the knowledge maturity pipeline? CLI tools like Claude Code maintain per-project memory files outside the artifact graph. This creates a shadow knowledge system that duplicates artifacts, drifts from truth, and breaks the self-reinforcing loop. Investigates what knowledge types currently live in external memory, which are already covered by artifacts, and where the genuine gaps are."
-status: "completed"
+status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
 sources: []

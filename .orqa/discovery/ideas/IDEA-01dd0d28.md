@@ -3,7 +3,7 @@ id: "IDEA-01dd0d28"
 type: idea
 title: "Project initialization — tooling detection and plugin suggestion"
 description: "During project setup, detect existing tooling (automated scan + user interview), suggest verification plugins, recommend options if none exist. Mature plugin system could offer to generate plugins automatically."
-status: "captured"
+status: captured
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: "later"

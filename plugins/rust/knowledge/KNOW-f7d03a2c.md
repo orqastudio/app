@@ -2,6 +2,7 @@
 id: KNOW-f7d03a2c
 type: knowledge
 name: Rust Plugin Installation
+summary: "Rust Plugin Installation"
 status: active
 plugin: "@orqastudio/plugin-rust"
 relationships:

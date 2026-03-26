@@ -3,7 +3,7 @@ id: "AD-74a2cb7a"
 type: decision
 title: "Pillars as First-Class Planning Artifacts"
 description: "Product pillars become structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings scattered across rules and documentation."
-status: "completed"
+status: completed
 created: "2026-03-09"
 updated: "2026-03-13"
 relationships: []

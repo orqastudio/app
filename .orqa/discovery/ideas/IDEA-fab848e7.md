@@ -3,7 +3,7 @@ id: "IDEA-fab848e7"
 type: idea
 title: "Documentation as graph-connected knowledge — restructure docs for agent grounding and graph traversal"
 description: "Documentation is currently isolated from the artifact graph. Docs exist as browsable pages but lack relationships to the skills, rules, decisions, and agents that reference them. This means agents can't traverse from a skill to its deeper documentation, grounding documents can't be systematically injected, and documentation quality is uneven because there's no structural standard for what a doc should contain or how it connects to the system."
-status: "completed"
+status: completed
 created: "2026-03-14"
 updated: "2026-03-14"
 horizon: "active"

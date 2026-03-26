@@ -3,7 +3,7 @@ id: "IDEA-d8a65eee"
 type: idea
 title: "Pipeline dashboard — thread visualization and flow analysis"
 description: "Dashboard rendering emergent threads by traversing relationships, showing bottleneck detection (stuck observations, disconnected enforcement), flow direction analysis (forwards vs backwards pipeline), and verification audit trails."
-status: "completed"
+status: completed
 created: "2026-03-12"
 updated: "2026-03-12"
 horizon: "active"

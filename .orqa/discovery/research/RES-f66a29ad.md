@@ -3,7 +3,7 @@ id: "RES-f66a29ad"
 type: research
 title: "Codebase audit — test coverage, documentation alignment, and quality gaps"
 description: "Comprehensive audit of OrqaStudio codebase: test coverage gaps, documentation vs implementation drift, linting configuration, and pre-commit enforcement."
-status: "completed"
+status: completed
 created: "2026-03-12"
 updated: "2026-03-12"
 sources: []

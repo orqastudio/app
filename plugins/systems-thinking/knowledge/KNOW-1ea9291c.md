@@ -2,6 +2,7 @@
 id: KNOW-1ea9291c
 type: knowledge
 name: Artifact Relationships
+summary: "Artifact Relationships. Every connection between artifacts uses a typed relationship with a specific verb. The verb describes the nature of the connection and constrains which artifact types can participate."
 status: active
 relationships:
   - target: DOC-ae447f88

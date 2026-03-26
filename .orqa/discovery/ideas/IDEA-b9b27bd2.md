@@ -3,7 +3,7 @@ id: "IDEA-b9b27bd2"
 type: idea
 title: "Live Roadmap View"
 description: "Replace the static roadmap markdown document with a database-driven roadmap view that auto-updates as epic/milestone statuses change. First artifact type to be driven by SQLite rather than file scanning."
-status: "captured"
+status: captured
 created: "2026-03-07"
 updated: "2026-03-13"
 horizon: "later"

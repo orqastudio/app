@@ -3,6 +3,7 @@ id: KNOW-21d28aa0
 type: knowledge
 title: Planning
 description: |
+summary: "|. Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved."
   Enforces documentation-first planning for all implementation tasks.
   Plans must start with documentation, get user approval, then implement with
   mandatory verification gates. Prevents documentation drift across sessions.

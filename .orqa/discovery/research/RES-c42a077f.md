@@ -3,7 +3,7 @@ id: "RES-c42a077f"
 type: research
 title: "Artifact Browser"
 description: "Restructure navigation into groups, move governance to .orqa/ with platform adapters, and enable cross-artifact navigation."
-status: "surpassed"
+status: surpassed
 created: "2026-03-08"
 updated: "2026-03-10"
 relationships:

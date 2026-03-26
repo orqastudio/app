@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Research"
 thinking-mode: research
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
+summary: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 status: active
 created: 2026-03-21
 updated: 2026-03-21

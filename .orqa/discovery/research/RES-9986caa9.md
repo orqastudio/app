@@ -3,7 +3,7 @@ id: "RES-9986caa9"
 type: research
 title: "Artifact Migration & Backfill"
 description: "Backfill historical content with artifact linkage, build viewers for missing artifact types, and enable cross-artifact navigation."
-status: "surpassed"
+status: surpassed
 created: "2026-03-07"
 updated: "2026-03-10"
 relationships:

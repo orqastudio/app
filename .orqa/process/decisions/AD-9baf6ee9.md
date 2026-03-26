@@ -3,7 +3,7 @@ id: "AD-9baf6ee9"
 type: decision
 title: "Conciseness over granularity in governance artifacts"
 description: "When improving governance, tighten existing rules rather than creating new ones. Conciseness matters more than granularity for prompt-injected content. The knowledge graph content that gets injected into agent context should be lean — agents work better with fewer, denser instructions than many scattered ones."
-status: "completed"
+status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
 relationships: []

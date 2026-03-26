@@ -2,6 +2,7 @@
 id: KNOW-a700e25a
 type: knowledge
 name: Software Delivery Management
+summary: "Software Delivery Management. You are managing software delivery artifacts in a structured project. This knowledge covers how to create, connect, and progress milestones, epics, tasks, research, wireframes, and bugs through the delivery lifecycle."
 status: active
 plugin: "@orqastudio/plugin-software-kanban"
 relationships:

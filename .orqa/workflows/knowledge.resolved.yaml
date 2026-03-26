@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-core-framework (workflows/knowledge.workflow.yaml)
-# Resolved at: 2026-03-26T00:44:15.737Z
+# Resolved at: 2026-03-26T08:27:40.336Z
 
 name: knowledge
 version: 0.1.0

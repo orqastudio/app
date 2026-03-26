@@ -2,7 +2,7 @@
 id: "AD-9ab3e0a4"
 type: "decision"
 title: "Universal plugin capability model"
-status: "active"
+status: active
 description: "All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins."
 created: 2026-03-23T00:00:00.000Z
 updated: 2026-03-23T00:00:00.000Z

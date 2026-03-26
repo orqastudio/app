@@ -2,6 +2,7 @@
 id: KNOW-1da7ecd8
 type: knowledge
 title: Tauri v2 IPC Patterns Reference
+summary: "Tauri v2 IPC Patterns Reference. Tauri v2 provides three IPC primitives: 1. **Commands**: Request-response (most common) 2."
 status: active
 created: 2026-03-20
 updated: 2026-03-20
