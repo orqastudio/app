@@ -4,6 +4,11 @@
 // lesson markdown files. Lesson files use YAML frontmatter followed by a
 // markdown body. The types themselves (`Lesson`, `NewLesson`) are defined in
 // `crate::types::lesson` and re-exported here for convenience.
+//
+// The `store` submodule provides a file-backed `FileLessonStore` that implements
+// `crate::traits::storage::LessonStore`.
+
+pub mod store;
 
 pub use crate::types::lesson::*;
 

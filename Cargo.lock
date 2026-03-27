@@ -3744,6 +3744,7 @@ dependencies = [
 name = "orqa-engine"
 version = "0.1.4-dev"
 dependencies = [
+ "async-trait",
  "flate2",
  "glob",
  "orqa-search",

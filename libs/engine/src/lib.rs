@@ -1,11 +1,14 @@
 // orqa-engine: Core engine library for the OrqaStudio platform.
 //
 // This crate provides the following for all access layers (Tauri app, daemon, CLI, connectors):
+//   - `agent` — base role taxonomy, agent specification, and task-agent assembly types
 //   - `artifact` — artifact logic: ID generation/validation, type parsing, path derivation,
 //                  frontmatter extraction and parsing
 //   - `enforcement` — rule parsing, compiled-regex evaluation, and project scanning
 //   - `plugin` — plugin lifecycle: manifest reading, discovery, collision detection,
-//                installation (local and GitHub), lockfile management, registry browsing
+//                installation (local and GitHub), lockfile management, registry browsing,
+//                hook dispatcher generation, CLI tool runner
+//   - `prompt` — system prompt builder, session title generator, knowledge injector
 //   - `types` — shared struct and enum definitions (no business logic, no I/O)
 //   - `traits` — abstract storage interfaces that each access layer implements
 //   - `error` — engine-level error type for I/O, serialization, and validation failures
@@ -20,6 +23,7 @@
 // Consumers import from orqa_engine rather than directly from orqa_validation or orqa_search,
 // keeping the dependency surface narrow and centralised.
 
+pub mod agent;
 pub mod artifact;
 pub mod config;
 pub mod enforcement;
@@ -31,6 +35,7 @@ pub mod paths;
 pub mod platform;
 pub mod plugin;
 pub mod project;
+pub mod prompt;
 pub mod search;
 pub mod traits;
 pub mod types;

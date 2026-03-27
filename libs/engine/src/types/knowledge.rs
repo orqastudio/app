@@ -1,8 +1,8 @@
 // Knowledge domain types for the OrqaStudio engine.
 //
-// Defines the KnowledgeMatch struct returned by semantic knowledge injection.
-// The KnowledgeInjector service itself remains in the app until the search/prompt
-// crates are extracted in later migration phases.
+// Defines the KnowledgeMatch struct returned by the KnowledgeInjector in
+// `orqa_engine::prompt::knowledge`. The injector embeds knowledge artifact
+// descriptions and matches them against prompt embeddings via cosine similarity.
 
 /// A matched knowledge artifact with its similarity score.
 ///

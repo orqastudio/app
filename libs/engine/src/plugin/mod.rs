@@ -9,8 +9,10 @@
 //! governance definitions come from plugins; the engine provides the capability
 //! infrastructure to manage them.
 
+pub mod cli_runner;
 pub mod collision;
 pub mod discovery;
+pub mod hooks;
 pub mod installer;
 pub mod lockfile;
 pub mod manifest;

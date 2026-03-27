@@ -1,136 +1,16 @@
+// System prompt utilities for the OrqaStudio app layer.
+//
+// Re-exports the filesystem-based prompt building functions from `orqa_engine::prompt`
+// and provides app-layer utilities that require AppState (DB access, session messages).
+// Pure prompt-building logic lives in the engine; app-specific context loading lives here.
+
+pub use orqa_engine::prompt::{
+    build_system_prompt, list_knowledge_catalog, read_governance_file, read_rules,
+    resolve_system_prompt,
+};
+
 use crate::error::OrqaError;
 use crate::state::AppState;
-
-use std::path::Path;
-
-/// Read a governance file from the project directory, returning its contents.
-/// Returns `None` if the file does not exist, `Err` on read errors.
-pub fn read_governance_file(
-    project_path: &Path,
-    relative: &str,
-) -> Result<Option<String>, OrqaError> {
-    let full_path = project_path.join(relative);
-    if !full_path.exists() {
-        return Ok(None);
-    }
-    let contents = std::fs::read_to_string(&full_path)?;
-    Ok(Some(contents))
-}
-
-/// List knowledge artifact names with one-line descriptions from `.orqa/process/knowledge/*.md`.
-///
-/// Reads only the first non-empty line of each knowledge file as the description.
-/// Full knowledge content is intentionally NOT loaded here — knowledge is loaded
-/// on demand via the `load_knowledge` tool.
-pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
-    let knowledge_dir = project_path.join(".orqa").join("process").join("knowledge");
-    let mut catalog = Vec::new();
-
-    let Ok(read_dir) = std::fs::read_dir(&knowledge_dir) else {
-        return catalog;
-    };
-
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if !path.is_file() || path.extension().is_none_or(|e| e != "md") {
-            continue;
-        }
-
-        let knowledge_name = path
-            .file_stem()
-            .map(|s| s.to_string_lossy().to_string())
-            .unwrap_or_default();
-        let description = std::fs::read_to_string(&path)
-            .ok()
-            .and_then(|content| {
-                content
-                    .lines()
-                    .find(|l| !l.trim().is_empty())
-                    .map(|l| l.trim_start_matches('#').trim().to_string())
-            })
-            .unwrap_or_else(|| "No description".to_string());
-
-        catalog.push((knowledge_name, description));
-    }
-
-    catalog.sort_by(|a, b| a.0.cmp(&b.0));
-    catalog
-}
-
-/// Read all rule files from `.orqa/rules/*.md`.
-pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
-    let rules_dir = project_path.join(".orqa").join("rules");
-    let mut rules = Vec::new();
-
-    let Ok(read_dir) = std::fs::read_dir(&rules_dir) else {
-        return rules;
-    };
-
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|e| e.to_str()) != Some("md") {
-            continue;
-        }
-
-        let rule_name = path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("unknown")
-            .to_string();
-
-        if let Ok(contents) = std::fs::read_to_string(&path) {
-            rules.push((rule_name, contents));
-        }
-    }
-
-    rules.sort_by(|a, b| a.0.cmp(&b.0));
-    rules
-}
-
-/// Build a structured system prompt from the project's governance artifacts.
-///
-/// Reads:
-/// - `.orqa/rules/*.md` — rule files (full content)
-/// - `.claude/CLAUDE.md` — project instructions (full content, platform config)
-/// - `AGENTS.md` — agent definitions (full content)
-/// - `.orqa/process/knowledge/*.md` — knowledge catalog (name + one-line description only)
-///
-/// Returns `Ok(None)` when the project path cannot be resolved (no active project).
-pub fn build_system_prompt(project_path: &Path) -> Result<String, OrqaError> {
-    let mut parts: Vec<String> = Vec::new();
-    parts.push("# Project Governance".to_string());
-
-    let rules = read_rules(project_path);
-    if !rules.is_empty() {
-        parts.push("\n## Rules".to_string());
-        for (name, content) in &rules {
-            parts.push(format!("\n### {name}\n\n{content}"));
-        }
-    }
-
-    let catalog = list_knowledge_catalog(project_path);
-    if !catalog.is_empty() {
-        parts.push("\n## Available Knowledge".to_string());
-        parts.push(
-            "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_string(),
-        );
-        for (name, description) in &catalog {
-            parts.push(format!("- **{name}**: {description}"));
-        }
-    }
-
-    if let Some(claude_md) = read_governance_file(project_path, ".claude/CLAUDE.md")? {
-        parts.push("\n## Project Instructions".to_string());
-        parts.push(claude_md);
-    }
-
-    if let Some(agents_md) = read_governance_file(project_path, "AGENTS.md")? {
-        parts.push("\n## Agent Definitions".to_string());
-        parts.push(agents_md);
-    }
-
-    Ok(parts.join("\n"))
-}
 
 /// A condensed message record used for context injection into the system prompt.
 #[derive(serde::Serialize)]
@@ -148,7 +28,6 @@ pub fn load_context_messages(state: &AppState, session_id: i64) -> Option<Vec<Co
     use crate::repo::message_repo;
 
     let db = state.db.conn.lock().ok()?;
-    // Load a generous window; we'll slice from the end below.
     let messages = message_repo::list(&db, session_id, 200, 0).ok()?;
 
     let context: Vec<ContextMessage> = messages
@@ -249,21 +128,4 @@ pub fn lookup_provider_session_id(
     Ok(session_repo::get(&db, session_id)
         .ok()
         .and_then(|s| s.provider_session_id))
-}
-
-/// Resolve the system prompt from a known project root path.
-///
-/// Returns `Some(prompt)` when the governance prompt can be assembled from
-/// the given root, otherwise `None` (logging a warning on failure).
-pub fn resolve_system_prompt(project_root: &Path) -> Option<String> {
-    match build_system_prompt(project_root) {
-        Ok(prompt) => {
-            tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
-            Some(prompt)
-        }
-        Err(e) => {
-            tracing::warn!("[stream] failed to build system prompt: {e}");
-            None
-        }
-    }
 }
