@@ -1,0 +1,280 @@
+# Target State Specifications
+
+> This is part of the OrqaStudio Architecture Reference. See ARCHITECTURE.md for the complete document.
+
+---
+
+## Appendix A: Target State Specifications (Phase 1 Detail)
+
+Each target is a hand-written artifact that represents what the finished generation pipeline would produce. These are built FIRST and everything else validates against them.
+
+### A.1 Target Claude Code Plugin (`targets/claude-code-plugin/`)
+
+The ideal `.claude/` directory that the connector should generate. This is what Claude Code consumes.
+
+```
+targets/claude-code-plugin/
+  .claude/                        # Project-level config
+    settings.json                 # Project-level Claude Code settings
+    CLAUDE.md                     # Generated orchestrator prompt (from engine prompt pipeline)
+    agents/                       # Generated from 8 base roles + workflow context
+      implementer.md              # Role: source code + shell access
+      reviewer.md                 # Role: read-only, can run checks, produces verdicts
+      researcher.md               # Role: read-only, creates research artifacts only
+      writer.md                   # Role: documentation only, no source code
+      planner.md                  # Role: plans and delivery artifacts
+      designer.md                 # Role: design artifacts, component code
+      governance-steward.md       # Role: .orqa/ artifacts only
+      orchestrator.md             # Role: read-only, delegation, reads summaries
+  .claude-plugin/                 # Plugin manifest
+    plugin.json                   # Name, version, author — ONLY file here
+    skills/                         # Plugin skills
+      orqa/SKILL.md                 # Main OrqaStudio skill (routes to subcommands)
+      orqa-save/SKILL.md            # Save context to governance artifacts
+      orqa-create/SKILL.md          # Create new governance artifact
+      orqa-validate/SKILL.md        # Run validation against composed schema
+    hooks/                          # Plugin hooks
+      hooks.json                    # Generated from plugin hook declarations
+    scripts/                        # Hook handler scripts
+      pre-tool-use.mjs            # Validate artifact operations before execution
+      post-tool-use.mjs           # Track completions, update telemetry
+      user-prompt-submit.mjs      # Classify prompt, inject workflow context via daemon
+      session-start.mjs           # Initialize session, load project context via daemon
+      stop.mjs                    # Save session state via daemon
+      pre-compact.mjs             # Preserve critical context before compaction
+      subagent-stop.mjs           # Review subagent output via daemon
+      teammate-idle.mjs           # Team coordination — check task list, assign work
+      task-completed.mjs          # Team coordination — verify AC, assign next task
+```
+
+**Key characteristics:**
+
+- **Agent teams, not bare subagents** — the orchestrator uses TeamCreate/TaskCreate/Agent(team_name)/SendMessage/TaskUpdate/TeamDelete for hub-spoke coordination. Agent definitions enable this by defining the roles that get spawned into teams.
+- Agent files use YAML frontmatter (`name`, `description`, `tools`/`disallowedTools`, `model`, `maxTurns`, `skills`). The markdown body becomes the system prompt.
+- **No file-level path permissions in agent definitions** — Claude Code does not support glob-pattern path restrictions in agent frontmatter. File access enforcement uses `PreToolUse` hooks that validate paths before tool execution via the daemon.
+- **Plugin agents cannot set `permissionMode`, `hooks`, or `mcpServers`** — silently ignored for security. Permission enforcement flows through hooks instead.
+- All hooks are thin: receive event -> call daemon/CLI -> apply response. No business logic. Timeout values in seconds (not milliseconds).
+- CLAUDE.md is generated from the prompt pipeline, not hand-written
+- hooks.json is generated from plugin declarations, not static
+- `.claude-plugin/` contains ONLY `plugin.json` — nothing else
+- hooks/ and scripts/ are at plugin root, NOT inside .claude-plugin/
+- Uses skills/ (current CC standard), not commands/ (legacy)
+- No git hooks or linting configs — those come from other plugins
+
+**Each agent file should contain (as frontmatter + markdown body):**
+
+```yaml
+---
+name: implementer
+description: "Implements code changes. Reads task, reads knowledge, writes code, runs checks."
+model: sonnet                   # or opus for complex tasks — engine decides at generation time
+tools: "Read,Write,Edit,Bash,Grep,Glob,Agent,TaskCreate,TaskUpdate,TaskGet,TaskList,SendMessage"
+disallowedTools: ""
+maxTurns: 50
+skills:
+  - orqa-validate
+---
+
+[Generated system prompt from engine prompt pipeline]
+
+Role: Implementer
+Behavioral boundaries: ...
+Artifact scope: source code, tests, configs
+Knowledge summary: [compressed, within token budget]
+On-demand retrieval: Use MCP search tools for detailed knowledge...
+```
+
+**PreToolUse hook for file access enforcement:**
+
+The daemon evaluates whether the current agent role is allowed to access the target path. The hook calls the daemon with the tool name, file path, and agent role. The daemon returns approve/deny based on the role's artifact scope rules.
+
+### A.2 Target JSON Schema (`targets/schema.composed.json`)
+
+The full composed schema that the plugin composition pipeline would produce. All artifact types from all installed plugins, unified into one schema.
+
+**Must define for each artifact type:**
+
+- `id_prefix` — the prefix for artifact IDs (e.g., `TASK`, `EPIC`, `KNOW`)
+- `type` — the artifact type name (e.g., `task`, `epic`, `knowledge`)
+- Required frontmatter fields (id, type, title, description, status, created, updated, relationships)
+- Optional frontmatter fields per type
+- Valid status values (from the type's state machine)
+- Valid relationship types (with from/to constraints)
+- Which methodology stage the type belongs to
+
+**Artifact types to include (from all current plugins):**
+
+| Stage | Artifact Types |
+|-------|---------------|
+| Methodology (agile) | — (no artifacts, defines the skeleton) |
+| Discovery | `discovery-idea`, `discovery-research`, `persona`, `pillar`, `vision`, `pivot` |
+| Planning | `planning-idea`, `planning-research`, `planning-decision`, `wireframe` |
+| Documentation | `doc` |
+| Implementation | `epic`, `task`, `milestone` |
+| Review | — (uses contribution workflow, no unique types) |
+| Learning | `lesson`, `knowledge`, `rule`, `principle-decision` |
+| Cross-cutting | `planning-decision` (from both planning and learning) |
+
+**Relationship types must include:**
+
+- All 41 types currently defined across plugins (reconciled, deduplicated)
+- Each with `from` and `to` constraints (which artifact types can participate)
+- Direction semantics (forward-only, graph computes inverses)
+
+### A.3 Target `.orqa/` Structure
+
+Applied directly to the live `.orqa/` directory. This IS the governance data — not a copy in `targets/`.
+
+See Section 5.1 for the directory structure. The work here is:
+
+1. **Restructure directories** — stage-first organization (`discovery/`, `planning/`, `documentation/`, `implementation/`, `learning/`)
+2. **Fix every artifact** — correct type, correct frontmatter (`title` not `name`, required `status`), consistent YAML quoting
+3. **Remove legacy** — delete all AGENT-*.md, SKILL.md, grounding docs
+4. **Split decisions** — `planning/decisions/` (tactical) and `learning/decisions/` (architectural/principle)
+5. **Categorize knowledge** — organize into domain subdirectories within `documentation/`
+6. **Categorize documentation** — organize into topic subdirectories within `documentation/`
+7. **Fix wireframes** — change type from `doc` to `wireframe`, place in `discovery/wireframes/` or `planning/wireframes/`
+8. **Fix personas** — move DOC-1ff7a9ba to `documentation/`
+9. **Clean implementation/discovery** — archive stale items, combine duplicate ideas
+10. **Validate relationships** — ensure all targets exist, types are valid
+
+The result must pass validation against the target JSON schema (A.2).
+
+### A.4 Target Enforcement Configs (`targets/enforcement/`)
+
+What the enforcement plugins should generate.
+
+```
+targets/enforcement/
+  githooks/
+    pre-commit                  # Shell script orchestrator
+    post-commit                 # Post-commit actions
+
+  eslint/
+    base.config.js              # TypeScript base (from typescript plugin)
+    svelte.config.js            # Svelte extension (from svelte plugin)
+    app.config.js               # App config that imports from plugin bases
+
+  clippy/
+    clippy.toml                 # Generated from enforcement rules
+
+  prettier/
+    .prettierrc                 # Generated formatting config
+
+  markdownlint/
+    .markdownlint.json          # Generated markdown linting rules for governance artifacts
+
+  tsconfig/
+    base.json                   # Base TypeScript config (from typescript plugin)
+    app.json                    # App-specific config extending base (bundler, DOM, noEmit)
+    library.json                # Library config extending base (NodeNext, declarations)
+```
+
+**Pre-commit target checks:**
+
+1. Artifact frontmatter validation (required fields, ID format, type matches location)
+2. Relationship validation (targets exist, types valid, from/to constraints)
+3. Schema compliance (against composed schema)
+4. Lint checks (delegated to eslint/clippy)
+5. Tests affected by staged changes (scoped, not full suite)
+6. Knowledge size constraints (500-2000 tokens)
+7. Status value validity (must be from workflow-defined values)
+
+**Post-commit target actions:**
+
+1. Auto-push to Forgejo
+
+**ESLint target rules (key non-default rules):**
+
+- `@typescript-eslint/no-unused-vars`: error (allow `_` prefix)
+- `@typescript-eslint/no-explicit-any`: warn
+- Import organization rules
+- Svelte-specific: a11y rules, component naming
+
+**Clippy target rules:**
+
+- Generated from coding-standards plugin enforcement rules
+- Reflects actual project coding standards, not just defaults
+
+**Markdownlint target rules:**
+
+- Frontmatter validation (YAML structure, required fields per artifact type)
+- Consistent heading hierarchy
+- Line length limits appropriate for governance artifacts
+- Link validation (internal artifact references resolve)
+- Code block language tags required
+- Configured to work with OrqaStudio's YAML frontmatter + markdown body artifact format
+
+### A.5 Target Resolved Workflows (`targets/workflows/`)
+
+One YAML file per methodology stage, fully composed from plugin contributions.
+
+```
+targets/workflows/
+  methodology.resolved.yaml     # The agile methodology skeleton with stage definitions
+  discovery.resolved.yaml       # All discovery artifact types + state machines
+  planning.resolved.yaml        # All planning artifact types + state machines
+  documentation.resolved.yaml   # Documentation artifact types + state machines
+  implementation.resolved.yaml  # Epic, task, milestone types + state machines
+  review.resolved.yaml          # Review contribution workflow
+  learning.resolved.yaml        # Lesson, decision, knowledge, rule types + state machines
+```
+
+**Each stage file must contain:**
+
+- All artifact types for that stage (with full schema definitions)
+- Complete state machine per artifact type (states, transitions, guards, actions)
+- State categories mapped (planning, active, review, completed, terminal)
+- Human gate definitions where applicable
+- Relationship types relevant to the stage
+- Contribution point metadata (which plugin contributed this content)
+
+### A.6 Target Plugin Manifests (`targets/plugin-manifests/`)
+
+Corrected `orqa-plugin.json` for each plugin showing the required taxonomy fields.
+
+**Every manifest must include:**
+
+```json
+{
+  "name": "@orqastudio/plugin-<name>",
+  "description": "...",
+  "version": "...",
+  "purpose": ["methodology" | "workflow" | "knowledge" | "connector" | "infrastructure" | "sidecar"],
+  "stage_slot": "<stage-name>",        // workflow plugins only
+  "affects_schema": true | false,
+  "affects_enforcement": true | false,
+  "category": "<taxonomy-category>",   // matches ARCHITECTURE.md taxonomy
+  "uninstallable": true | false,
+  "provides": {
+    "schemas": [...],
+    "workflows": [...],                // structured objects, never flat strings
+    "knowledge": [...],
+    "rules": [...],
+    "roles": [...],
+    "views": [...],
+    "enforcement_mechanisms": [...]
+  }
+}
+```
+
+**Manifests to produce (one per plugin):**
+
+| Plugin | Purpose | Stage Slot | Affects Schema | Affects Enforcement |
+|--------|---------|-----------|---------------|-------------------|
+| `agile-methodology` (renamed) | `methodology` | — | yes | no |
+| `core` | `workflow` | `learning` | yes | yes |
+| `agile-discovery` | `workflow` | `discovery` | yes | no |
+| `agile-planning` | `workflow` | `planning` | yes | no |
+| `agile-documentation` | `workflow` | `documentation` | yes | no |
+| `agile-review` | `workflow` | `review` | yes | no |
+| `software-kanban` | `workflow` | `implementation` | yes | no |
+| `cli` | `knowledge` | — | no | no |
+| `rust` | `knowledge`, `infrastructure` | — | no | yes |
+| `svelte` | `knowledge` | — | no | no |
+| `tauri` | `knowledge` | — | no | no |
+| `typescript` | `knowledge`, `infrastructure` | — | no | yes |
+| `coding-standards` | `infrastructure` | — | no | yes |
+| `systems-thinking` | `knowledge` | — | no | no |
+| `plugin-dev` | `knowledge` | — | no | no |
+| `claude-code` | `connector` | — | no | no |

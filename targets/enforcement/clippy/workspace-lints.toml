@@ -1,0 +1,81 @@
+# Target [workspace.lints] section for Cargo.toml
+#
+# This file documents the target state. Apply these lints to the
+# workspace Cargo.toml [workspace.lints] section.
+#
+# This file is a target state artifact. Do not overwrite with generated
+# output until the generation pipeline is validated against this target.
+
+[rust]
+# Enforce Rust 2018+ idioms (elided lifetimes, dyn Trait, etc.)
+rust_2018_idioms = { level = "warn", priority = -1 }
+# No unsafe code in this project -- we don't need it
+unsafe_code = "deny"
+# Clean up unnecessarily qualified paths
+unused_qualifications = "warn"
+# Require doc comments on all public items
+missing_docs = "warn"
+
+[clippy]
+# --- Group: Pedantic ---
+# Enable pedantic as baseline, then allow the noisy ones.
+# Priority -1 means individual overrides below take precedence.
+pedantic = { level = "warn", priority = -1 }
+
+# Pedantic allows -- too noisy or inapplicable for this codebase:
+# Tauri commands require owned State<> and String params
+needless_pass_by_value = "allow"
+# graph::GraphEngine is fine, not "repetitive"
+module_name_repetitions = "allow"
+# Too many functions would need #[must_use] for no benefit
+must_use_candidate = "allow"
+# Pre-release: doc lints are premature
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+# Flags "OrqaStudio" etc in doc comments
+doc_markdown = "allow"
+# Codebase does index arithmetic; these casts are intentional
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_precision_loss = "allow"
+cast_lossless = "allow"
+cast_possible_wrap = "allow"
+# Config structs legitimately have many bool fields
+struct_excessive_bools = "allow"
+# Variables like idx/id are clear enough in context
+similar_names = "allow"
+# Numeric literals are fine without underscores at this scale
+unreadable_literal = "allow"
+# Sometimes match is clearer than if-let
+single_match_else = "allow"
+# Definitions after statements are sometimes clearer
+items_after_statements = "allow"
+# return makes control flow explicit in longer functions
+unnecessary_wraps = "allow"
+
+# --- Group: Restriction (cherry-picked) ---
+# Prefer .expect("reason") over bare .unwrap()
+# Configured in clippy.toml: allow-unwrap-in-tests = true
+unwrap_used = "warn"
+# Prevent debug artifacts from shipping
+dbg_macro = "deny"
+# Flag unfinished code -- warn not deny, useful during dev
+todo = "warn"
+# Use tracing, not println/eprintln
+print_stdout = "deny"
+print_stderr = "deny"
+# Prefer .clone() on String, .to_owned() on &str
+str_to_string = "warn"
+string_to_string = "warn"
+# Make Arc::clone() explicit
+clone_on_ref_ptr = "warn"
+# Catch missed fields in struct destructuring
+rest_pat_in_fully_bound_structs = "warn"
+
+# --- Group: Nursery (cherry-picked, stable enough) ---
+# Catches .unwrap_or(Vec::new()) -> .unwrap_or_default()
+or_fun_call = "warn"
+# Catches unnecessary pub(crate) in private modules
+redundant_pub_crate = "warn"
+# Encourages Self in impl blocks
+use_self = "warn"

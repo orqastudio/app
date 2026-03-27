@@ -5,6 +5,7 @@ target/
 models/
 .svelte-kit/
 .claude/
+!targets/**/.claude/
 .state/
 *.swp
 *.swo
