@@ -1,0 +1,31 @@
+# Cargo manifest for the orqa-daemon binary crate.
+# The daemon is a persistent Rust process that provides:
+#   - System tray icon with context menu (process status, app launch)
+#   - HTTP health endpoint for process monitoring
+#   - File watchers for plugin/rule/workflow changes
+#   - PID file management to prevent duplicate instances
+[package]
+name = "orqa-daemon"
+version = "0.1.4-dev"
+edition = "2021"
+description = "OrqaStudio daemon — persistent background process for file watching, health, and system tray"
+
+[[bin]]
+name = "orqa-daemon"
+path = "src/main.rs"
+
+[dependencies]
+orqa-engine = { path = "../libs/engine" }
+tokio = { version = "1", features = ["full"] }
+axum = "0.8"
+notify = "8"
+notify-debouncer-full = "0.7"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+tracing-appender = "0.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ctrlc = "3"
+
+[lints]
+workspace = true

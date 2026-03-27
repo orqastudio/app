@@ -6,6 +6,7 @@ members = [
     "libs/mcp-server",
     "libs/lsp-server",
     "app/src-tauri",
+    "daemon",
 ]
 resolver = "2"
 
