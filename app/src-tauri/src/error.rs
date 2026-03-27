@@ -63,13 +63,16 @@ impl From<serde_json::Error> for OrqaError {
 
 /// Convert an engine-level error into an app-level error.
 ///
-/// EngineError wraps the same underlying I/O and serialization errors that
+/// EngineError wraps the same underlying I/O, serialization, and validation errors that
 /// OrqaError already handles, so we forward to the matching variant.
 impl From<orqa_engine::error::EngineError> for OrqaError {
     fn from(err: orqa_engine::error::EngineError) -> Self {
         match err {
             orqa_engine::error::EngineError::FileSystem(e) => Self::FileSystem(e.to_string()),
             orqa_engine::error::EngineError::Serialization(e) => Self::Serialization(e.to_string()),
+            orqa_engine::error::EngineError::Validation(msg) => Self::Validation(msg),
+            orqa_engine::error::EngineError::Yaml(msg) => Self::Serialization(msg),
+            orqa_engine::error::EngineError::Scan(msg) => Self::Scan(msg),
         }
     }
 }

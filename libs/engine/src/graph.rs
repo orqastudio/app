@@ -4,9 +4,9 @@
 // import everything through orqa_engine::graph instead of depending on
 // orqa_validation directly.
 
+pub use orqa_validation::compute_traceability;
 pub use orqa_validation::graph::{
     build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
 };
 pub use orqa_validation::validate;
-pub use orqa_validation::{compute_health, auto_fix};
-pub use orqa_validation::compute_traceability;
+pub use orqa_validation::{auto_fix, compute_health};

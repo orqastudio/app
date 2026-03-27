@@ -3744,11 +3744,17 @@ dependencies = [
 name = "orqa-engine"
 version = "0.1.4-dev"
 dependencies = [
+ "glob",
+ "orqa-search",
  "orqa-validation",
+ "rand 0.8.5",
+ "regex",
  "serde",
  "serde_json",
+ "serde_yaml",
  "tempfile",
  "thiserror 2.0.18",
+ "tracing",
 ]
 
 [[package]]

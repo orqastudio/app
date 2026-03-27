@@ -1,9 +1,10 @@
-// Project configuration submodule for the orqa-engine crate.
+// Project submodule for the orqa-engine crate.
 //
-// Contains the `ProjectSettings` type — the Rust representation of `.orqa/project.json` —
-// along with supporting types for artifact navigation, status transitions,
-// delivery hierarchy, and plugin configuration.
+// Contains project settings types (`ProjectSettings`, `GovernanceCounts`, etc.) —
+// the Rust representation of `.orqa/project.json` — and the project scanner that
+// walks a project's filesystem to detect its technology stack and governance artifacts.
 
+pub mod scanner;
 pub mod settings;
 
 pub use settings::*;

@@ -24,7 +24,10 @@ pub fn artifact_scan_tree(state: State<'_, AppState>) -> Result<NavTree, OrqaErr
         .map(|s| s.artifacts)
         .unwrap_or_default();
 
-    crate::domain::artifact_reader::artifact_scan_tree(Path::new(&project_path), &artifacts)
+    Ok(crate::domain::artifact_reader::artifact_scan_tree(
+        Path::new(&project_path),
+        &artifacts,
+    )?)
 }
 
 /// Start (or replace) the `.orqa/` file-system watcher for a project.

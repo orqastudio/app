@@ -1,63 +1,22 @@
+// Enforcement rules repository — delegates to the orqa-engine crate.
+//
+// Re-exposes `load_rules` from `orqa_engine::enforcement::repo`, converting the
+// engine-level error to the app-level `OrqaError`. This keeps the app's callers
+// (enforcement_commands, tool_executor) unchanged while the implementation lives
+// in the engine crate.
+
 use std::path::Path;
 
 use crate::domain::enforcement::EnforcementRule;
-use crate::domain::enforcement_parser::parse_rule_content;
 use crate::error::OrqaError;
 
 /// Load all rule files from `rules_dir/*.md` and parse them.
 ///
-/// Files that fail to parse are logged as warnings and skipped — one bad
-/// rule file must not prevent other rules from loading.
+/// Delegates to `orqa_engine::enforcement::repo::load_rules`. Files that fail
+/// to parse are logged as warnings and skipped — one bad rule file must not
+/// prevent other rules from loading. Returns rules sorted by name.
 pub fn load_rules(rules_dir: &Path) -> Result<Vec<EnforcementRule>, OrqaError> {
-    let read_dir = std::fs::read_dir(rules_dir).map_err(|e| {
-        OrqaError::FileSystem(format!(
-            "cannot read rules directory '{}': {e}",
-            rules_dir.display()
-        ))
-    })?;
-
-    let mut rules = Vec::new();
-
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|e| e.to_str()) != Some("md") {
-            continue;
-        }
-
-        let name = path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("unknown")
-            .to_string();
-
-        let content = match std::fs::read_to_string(&path) {
-            Ok(c) => c,
-            Err(e) => {
-                tracing::warn!(
-                    "[enforcement] cannot read rule file '{}': {e}",
-                    path.display()
-                );
-                continue;
-            }
-        };
-
-        match parse_rule_content(&name, &content) {
-            Ok(rule) => {
-                tracing::debug!(
-                    "[enforcement] loaded rule '{}' ({} entries)",
-                    rule.name,
-                    rule.entries.len()
-                );
-                rules.push(rule);
-            }
-            Err(e) => {
-                tracing::warn!("[enforcement] failed to parse '{}': {e}", path.display());
-            }
-        }
-    }
-
-    rules.sort_by(|a, b| a.name.cmp(&b.name));
-    Ok(rules)
+    orqa_engine::enforcement::repo::load_rules(rules_dir).map_err(OrqaError::from)
 }
 
 #[cfg(test)]

@@ -126,7 +126,7 @@ pub fn project_scan(
         "build".to_string(),
     ];
     let paths = excluded_paths.unwrap_or(defaults);
-    project_scanner::scan_project(&path, &paths)
+    Ok(project_scanner::scan_project(&path, &paths)?)
 }
 
 #[cfg(test)]

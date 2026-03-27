@@ -6,6 +6,7 @@
 
 pub use orqa_validation::context::{build_validation_context, build_validation_context_with_types};
 pub use orqa_validation::error::ValidationError;
+pub use orqa_validation::evaluate_hook;
 pub use orqa_validation::types::{
     AppliedFix, EnforcementEvent, EnforcementResult, HookContext, HookResult, HookViolation,
     IntegrityCategory, IntegrityCheck, IntegritySeverity, ParsedArtifact, RelationshipConstraints,
@@ -15,4 +16,3 @@ pub use orqa_validation::{
     artifact_from_graph_node, is_hex_artifact_id, is_valid_artifact_id, parse_artifact,
     query_artifacts, validate_file, FileFinding, FileSeverity,
 };
-pub use orqa_validation::evaluate_hook;
