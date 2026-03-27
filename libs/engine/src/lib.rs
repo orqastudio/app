@@ -4,6 +4,8 @@
 //   - `artifact` — artifact logic: ID generation/validation, type parsing, path derivation,
 //                  frontmatter extraction and parsing
 //   - `enforcement` — rule parsing, compiled-regex evaluation, and project scanning
+//   - `plugin` — plugin lifecycle: manifest reading, discovery, collision detection,
+//                installation (local and GitHub), lockfile management, registry browsing
 //   - `types` — shared struct and enum definitions (no business logic, no I/O)
 //   - `traits` — abstract storage interfaces that each access layer implements
 //   - `error` — engine-level error type for I/O, serialization, and validation failures
@@ -27,6 +29,7 @@ pub mod lesson;
 pub mod metrics;
 pub mod paths;
 pub mod platform;
+pub mod plugin;
 pub mod project;
 pub mod search;
 pub mod traits;

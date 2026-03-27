@@ -1,7 +1,7 @@
 // Engine-level error type for I/O, serialization, and validation failures.
 //
 // This error type is used by the engine crate's config, paths, artifact, enforcement,
-// and other modules. It is intentionally minimal — access layers (app, CLI, daemon)
+// plugin, and other modules. It is intentionally minimal — access layers (app, CLI, daemon)
 // convert this to their own error types as needed.
 
 /// Errors that can occur in engine-level operations.
@@ -26,4 +26,8 @@ pub enum EngineError {
     /// A governance scan operation failed (e.g. invalid glob pattern).
     #[error("scan error: {0}")]
     Scan(String),
+
+    /// A plugin operation failed (e.g. missing manifest, download error, collision).
+    #[error("plugin error: {0}")]
+    Plugin(String),
 }

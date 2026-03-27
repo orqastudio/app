@@ -73,6 +73,7 @@ impl From<orqa_engine::error::EngineError> for OrqaError {
             orqa_engine::error::EngineError::Validation(msg) => Self::Validation(msg),
             orqa_engine::error::EngineError::Yaml(msg) => Self::Serialization(msg),
             orqa_engine::error::EngineError::Scan(msg) => Self::Scan(msg),
+            orqa_engine::error::EngineError::Plugin(msg) => Self::Plugin(msg),
         }
     }
 }
