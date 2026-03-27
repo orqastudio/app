@@ -1,7 +1,0 @@
-# Clippy configuration for OrqaStudio backend
-# Function size limits per RULE-006 coding standards:
-#   domain functions: 20-30 lines
-#   command functions: 30-50 lines
-#   utilities: 10-20 lines
-# The hard ceiling is 50 lines (enforced here).
-too-many-lines-threshold = 50

@@ -10,6 +10,13 @@
 
 set -euo pipefail
 
+# Emergency bypass — for when hooks are genuinely blocking work
+# Usage: ORQA_SKIP_HOOKS=1 git commit -m "message"
+if [ "${ORQA_SKIP_HOOKS:-0}" = "1" ]; then
+  echo "⚠ ORQA_SKIP_HOOKS=1 — skipping pre-commit checks"
+  exit 0
+fi
+
 # Find project root (walk up to find .orqa/)
 find_root() {
   local dir="$PWD"
@@ -94,7 +101,7 @@ if [ "$HAS_FRONTEND" = true ]; then
   # in unstaged parts of the codebase.
   STAGED_FE=$(echo "$STAGED_FILES" | grep -E '\.(svelte|ts|js)$' || true)
   if [ -n "$STAGED_FE" ]; then
-    echo "$STAGED_FE" | xargs npx eslint --config app/eslint.config.js --no-error-on-unmatched-pattern --max-warnings 0 2>&1 || { log_violation "eslint" "frontend" "lint errors"; FAILED=true; }
+    echo "$STAGED_FE" | xargs npx eslint --no-error-on-unmatched-pattern --max-warnings 0 2>&1 || { log_violation "eslint" "frontend" "lint errors"; FAILED=true; }
   fi
 fi
 

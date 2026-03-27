@@ -1,0 +1,243 @@
+# Resolved agile methodology workflow skeleton.
+# Hand-written TARGET STATE artifact representing the output of the plugin
+# composition pipeline for the methodology layer.
+# Source plugin: @orqastudio/plugin-agile-workflow v0.1.0
+
+version: "1.0.0-target"
+generated: false
+description: >
+  Resolved agile methodology skeleton. Top-level workflow defining the delivery
+  lifecycle stages and named contribution points filled by workflow plugins at
+  install time. The runtime reads this resolved file; it does not re-merge at
+  runtime (P7: The Resolved Workflow Is a File).
+
+methodology:
+  name: agile-methodology
+  plugin: "@orqastudio/plugin-agile-workflow"
+  version: "0.1.0"
+  description: >
+    Core delivery workflow skeleton with contribution points. Stage-definition
+    plugins fill the named slots at install time. The resolved workflow is
+    written to .orqa/workflows/agile-methodology.resolved.yaml.
+  initial_state: discover
+
+stages:
+  - name: discover
+    contribution_point: discovery-artifacts
+    category: planning
+    description: "Discovery stage — exploring the problem space, research, feasibility."
+    filled_by: "@orqastudio/plugin-agile-discovery"
+    required: true
+    on_enter:
+      - type: append_log
+        params:
+          message: "Entered discovery stage"
+
+  - name: plan
+    contribution_point: planning-methodology
+    category: planning
+    description: "Planning stage — scoping, estimation, task decomposition."
+    filled_by: "@orqastudio/plugin-agile-planning"
+    required: true
+    on_enter:
+      - type: append_log
+        params:
+          message: "Entered planning stage"
+
+  - name: document
+    contribution_point: documentation-standards
+    category: planning
+    description: "Documentation stage — capturing decisions, architecture, requirements."
+    filled_by: "@orqastudio/plugin-agile-documentation"
+    required: true
+
+  - name: implement
+    contribution_point: implementation-workflow
+    category: active
+    description: "Implementation stage — active delivery of tasks."
+    filled_by: "@orqastudio/plugin-software-kanban"
+    required: true
+    on_enter:
+      - type: set_field
+        params:
+          field: implementation_started_at
+          value: "${now}"
+
+  - name: review
+    contribution_point: review-process
+    category: review
+    description: "Review stage — validating deliverables against acceptance criteria."
+    filled_by: "@orqastudio/plugin-agile-review"
+    required: true
+    on_enter:
+      - type: append_log
+        params:
+          message: "Entered review stage"
+
+  - name: learn
+    contribution_point: learning-pipeline
+    category: completed
+    description: "Learning stage — retrospective, lesson capture, process improvement."
+    filled_by: "@orqastudio/plugin-core-framework"
+    required: true
+    on_enter:
+      - type: append_log
+        params:
+          message: "Entered learning stage"
+
+  - name: done
+    category: terminal
+    description: "Delivery complete — all stages finished."
+    on_enter:
+      - type: set_field
+        params:
+          field: completed_at
+          value: "${now}"
+
+state_categories:
+  planning: [discover, plan, document]
+  active: [implement]
+  review: [review]
+  completed: [learn]
+  terminal: [done]
+
+stage_transitions:
+  - from: discover
+    to: plan
+    event: scope_defined
+    description: "Discovery complete, move to planning."
+    guards:
+      - type: field_check
+        description: "Must have a description"
+        params:
+          field: description
+          operator: not_empty
+
+  - from: plan
+    to: document
+    event: plan_approved
+    description: "Plan approved, document decisions."
+
+  - from: plan
+    to: implement
+    event: start_implementation
+    description: "Skip documentation, go straight to implementation."
+
+  - from: document
+    to: implement
+    event: documentation_complete
+    description: "Documentation done, begin implementation."
+
+  - from: implement
+    to: review
+    event: submit_for_review
+    description: "Implementation complete, submit for review."
+    gate: delivery-review
+
+  - from: review
+    to: learn
+    event: review_passed
+    description: "Review passed, enter learning phase."
+
+  - from: review
+    to: implement
+    event: review_failed
+    description: "Review failed, return to implementation."
+    actions:
+      - type: append_log
+        params:
+          message: "Review failed — returning to implementation"
+
+  - from: learn
+    to: done
+    event: retrospective_complete
+    description: "Retrospective done, delivery complete."
+
+  # Stage regressions
+  - from: document
+    to: plan
+    event: replan
+    description: "Documentation revealed planning gaps."
+
+  - from: implement
+    to: plan
+    event: replan
+    description: "Implementation revealed planning gaps."
+
+  - from: review
+    to: plan
+    event: major_rework
+    description: "Review found fundamental issues requiring re-planning."
+
+gates:
+  delivery-review:
+    pattern: structured_review
+    description: "Delivery review gate — AI pre-check followed by human review."
+    phases:
+      gather:
+        fields: [description, priority, relationships]
+        pre_checks:
+          - type: relationship_check
+            description: "Must have delivered tasks"
+            params:
+              relationship_type: delivers
+              condition: exists
+      present:
+        sections:
+          - title: "Delivery Summary"
+            content_field: description
+          - title: "Tasks Delivered"
+            content_template: "Tasks: ${relationships:delivers}"
+      collect:
+        verdicts:
+          - key: approve
+            label: "Approve"
+            transitions_to: learn
+          - key: request_changes
+            label: "Request Changes"
+            transitions_to: implement
+          - key: major_rework
+            label: "Major Rework Required"
+            transitions_to: plan
+        require_rationale: true
+      learn:
+        on_fail:
+          create_lesson: true
+          track_recurrence: true
+        on_pass:
+          track_cycle_time: true
+
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-agile-workflow"
+    version: "0.1.0"
+    contributes: [methodology_skeleton, stage_definitions, stage_transitions, delivery_review_gate]
+
+  - plugin: "@orqastudio/plugin-agile-discovery"
+    version: "0.1.0"
+    fills_slot: discovery-artifacts
+    stage: discover
+
+  - plugin: "@orqastudio/plugin-agile-planning"
+    version: "0.1.0"
+    fills_slot: planning-methodology
+    stage: plan
+
+  - plugin: "@orqastudio/plugin-agile-documentation"
+    version: "0.1.0"
+    fills_slot: documentation-standards
+    stage: document
+
+  - plugin: "@orqastudio/plugin-software-kanban"
+    version: "0.1.0"
+    fills_slot: implementation-workflow
+    stage: implement
+
+  - plugin: "@orqastudio/plugin-agile-review"
+    version: "0.1.0"
+    fills_slot: review-process
+    stage: review
+
+  - plugin: "@orqastudio/plugin-core-framework"
+    version: "0.1.0"
+    fills_slot: learning-pipeline
+    stage: learn

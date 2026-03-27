@@ -20,7 +20,7 @@
  */
 
 import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, relative, extname, basename } from "path";
+import { join, relative, extname, basename, dirname } from "path";
 import { execSync } from "child_process";
 
 // ── Config ──────────────────────────────────────────────────────────────────
@@ -96,21 +96,77 @@ if (filesToValidate.length === 0) {
 
 // ── Parse frontmatter ───────────────────────────────────────────────────────
 
+/**
+ * Parses YAML frontmatter from markdown content.
+ * Handles flat key-value pairs, booleans, nulls, and the relationships array
+ * (list of objects with target/type/rationale keys). Returns null if no
+ * frontmatter block is present.
+ */
 function parseFrontmatter(content) {
 	const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
 	if (!match) return null;
 
 	const yaml = match[1];
 	const fields = {};
+	const lines = yaml.split("\n");
 
-	// Simple YAML parser for flat frontmatter (handles strings, numbers, booleans, arrays)
-	for (const line of yaml.split("\n")) {
+	let i = 0;
+	while (i < lines.length) {
+		const line = lines[i];
 		const kvMatch = line.match(/^(\w[\w-]*)\s*:\s*(.*)$/);
 		if (kvMatch) {
 			const key = kvMatch[1];
 			let value = kvMatch[2].trim();
 
-			// Remove quotes
+			// Detect a block sequence (value is empty, next lines are list items)
+			if (value === "") {
+				const items = [];
+				i++;
+				while (i < lines.length && lines[i].match(/^\s+-\s/)) {
+					// Parse the first property of the list item
+					const firstPropMatch = lines[i].match(/^\s+-\s+(\w[\w-]*)\s*:\s*(.*)$/);
+					if (firstPropMatch) {
+						const obj = {};
+						const propKey = firstPropMatch[1];
+						let propValue = firstPropMatch[2].trim();
+						if (
+							(propValue.startsWith('"') && propValue.endsWith('"')) ||
+							(propValue.startsWith("'") && propValue.endsWith("'"))
+						) {
+							propValue = propValue.slice(1, -1);
+						}
+						obj[propKey] = propValue;
+
+						// Collect subsequent indented properties belonging to this object
+						i++;
+						while (i < lines.length && lines[i].match(/^\s{4,}(\w[\w-]*)\s*:/)) {
+							const nestedMatch = lines[i].match(/^\s+(\w[\w-]*)\s*:\s*(.*)$/);
+							if (nestedMatch) {
+								const nk = nestedMatch[1];
+								let nv = nestedMatch[2].trim();
+								if (
+									(nv.startsWith('"') && nv.endsWith('"')) ||
+									(nv.startsWith("'") && nv.endsWith("'"))
+								) {
+									nv = nv.slice(1, -1);
+								}
+								obj[nk] = nv;
+							}
+							i++;
+						}
+						items.push(obj);
+					} else {
+						// Plain list item (scalar)
+						const scalarMatch = lines[i].match(/^\s+-\s+(.*)/);
+						if (scalarMatch) items.push(scalarMatch[1].trim());
+						i++;
+					}
+				}
+				fields[key] = items;
+				continue; // i already advanced inside the loop above
+			}
+
+			// Remove quotes from scalar values
 			if (
 				(value.startsWith('"') && value.endsWith('"')) ||
 				(value.startsWith("'") && value.endsWith("'"))
@@ -125,6 +181,7 @@ function parseFrontmatter(content) {
 
 			fields[key] = value;
 		}
+		i++;
 	}
 
 	return fields;
@@ -136,9 +193,17 @@ const errors = [];
 const warnings = [];
 const counts = { total: 0, valid: 0, invalid: 0, skipped: 0 };
 
+// Two-pass relationship validation: collect all known IDs and all relationship
+// targets, then cross-reference after the main loop.
+const knownIds = new Set();
+const allRelationshipTargets = [];
+
+// Track which files already have errors so the broken-link pass doesn't double-count.
+const invalidFiles = new Set();
+
 for (const filePath of filesToValidate) {
 	counts.total++;
-	const relPath = relative(PROJECT_ROOT, filePath);
+	const relPath = relative(PROJECT_ROOT, filePath).replace(/\\/g, "/");
 
 	let content;
 	try {
@@ -146,6 +211,7 @@ for (const filePath of filesToValidate) {
 	} catch {
 		errors.push({ file: relPath, error: "Could not read file" });
 		counts.invalid++;
+		invalidFiles.add(relPath);
 		continue;
 	}
 
@@ -156,12 +222,47 @@ for (const filePath of filesToValidate) {
 		continue;
 	}
 
+	// Collect this artifact's ID for the cross-reference pass.
+	if (fm.id) knownIds.add(fm.id);
+
+	// Collect relationship targets for the cross-reference pass.
+	if (Array.isArray(fm.relationships)) {
+		for (const rel of fm.relationships) {
+			if (rel && typeof rel === "object" && rel.target) {
+				allRelationshipTargets.push({ file: relPath, target: rel.target });
+			}
+		}
+	}
+
 	const fileErrors = validateArtifact(fm, relPath, content);
 	if (fileErrors.length > 0) {
 		errors.push(...fileErrors.map((e) => ({ file: relPath, ...e })));
 		counts.invalid++;
+		invalidFiles.add(relPath);
 	} else {
 		counts.valid++;
+	}
+}
+
+// ── Relationship target existence check (cross-reference pass) ───────────────
+//
+// Now that all artifact IDs are known, verify that every relationship target
+// refers to an ID that actually exists. Broken links indicate either a typo or
+// a deleted artifact whose referencing file was not updated.
+
+for (const { file, target } of allRelationshipTargets) {
+	if (!knownIds.has(target)) {
+		errors.push({
+			file,
+			error: `Broken relationship: target "${target}" does not exist as a known artifact`,
+		});
+		// Only count the file as invalid once — skip if already counted above.
+		if (!invalidFiles.has(file)) {
+			counts.invalid++;
+			// counts.valid was already incremented for this file; undo that.
+			counts.valid--;
+			invalidFiles.add(file);
+		}
 	}
 }
 
@@ -201,13 +302,28 @@ function validateArtifact(fm, relPath, content) {
 		const typeDef = artifactTypes[fm.type];
 
 		// 5a. ID prefix must match type's expected prefix
-		if (idMatch && typeDef.idPrefix && idMatch[1] !== typeDef.idPrefix) {
+		if (idMatch && typeDef.id_prefix && idMatch[1] !== typeDef.id_prefix) {
 			errs.push({
-				error: `ID prefix mismatch: type "${fm.type}" expects prefix "${typeDef.idPrefix}" but got "${idMatch[1]}"`,
+				error: `ID prefix mismatch: type "${fm.type}" expects prefix "${typeDef.id_prefix}" but got "${idMatch[1]}"`,
 			});
 		}
 
-		// 5b. Required fields
+		// 5b. Type-location consistency: the artifact must live under its type's
+		// expected directory. relPath is normalised to forward slashes above.
+		const defaultPath = typeDef.default_path;
+		if (defaultPath) {
+			const artifactDir = dirname(relPath) + "/";
+			const expectedDir = defaultPath.endsWith("/") ? defaultPath : defaultPath + "/";
+			// Strip a leading "./" from expectedDir so both sides are comparable.
+			const normalizedExpected = expectedDir.replace(/^\.\//, "");
+			if (!artifactDir.startsWith(normalizedExpected)) {
+				errs.push({
+					error: `Type-location mismatch: "${fm.type}" expects path "${expectedDir}" but artifact is at "${relPath}"`,
+				});
+			}
+		}
+
+		// 5c. Required fields
 		if (typeDef.fields && typeDef.fields.required) {
 			for (const [field, fieldDef] of Object.entries(typeDef.fields.required)) {
 				if (field === "id") continue; // Already checked
@@ -217,7 +333,7 @@ function validateArtifact(fm, relPath, content) {
 			}
 		}
 
-		// 5c. Status must be valid
+		// 5d. Status must be valid
 		if (fm.status && typeDef.statuses && typeDef.statuses.length > 0) {
 			if (!typeDef.statuses.includes(fm.status)) {
 				errs.push({

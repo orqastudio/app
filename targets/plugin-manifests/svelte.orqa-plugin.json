@@ -1,0 +1,36 @@
+{
+  "name": "@orqastudio/plugin-svelte",
+  "version": "0.1.4-dev",
+  "description": "Svelte development knowledge — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
+  "purpose": ["knowledge"],
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": false,
+  "category": "tooling",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "eslint",
+        "description": "ESLint rule enforcement for Svelte files — rules bundled with plugin, not generated from governance",
+        "strength": 6
+      },
+      {
+        "key": "svelte-check",
+        "description": "Svelte type and template checking",
+        "strength": 6
+      },
+      {
+        "key": "vitest",
+        "description": "Vitest frontend test runner",
+        "strength": 6
+      }
+    ]
+  }
+}

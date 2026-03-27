@@ -1,0 +1,68 @@
+{
+  "name": "@orqastudio/plugin-agile-planning",
+  "version": "0.1.4-dev",
+  "description": "Planning stage — scope analysis, estimation, prioritisation, and planning-stage artifact types (planning-idea, planning-research, planning-decision, wireframe). Fills the planning stage slot of agile-methodology.",
+  "purpose": ["workflow"],
+  "stage_slot": "planning",
+  "affects_schema": true,
+  "affects_enforcement": false,
+  "category": "planning",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [
+      {
+        "key": "planning-idea",
+        "title": "Planning Idea",
+        "idPrefix": "PLAN-IDEA",
+        "installPath": ".orqa/planning/ideas"
+      },
+      {
+        "key": "planning-research",
+        "title": "Planning Research",
+        "idPrefix": "PLAN-RES",
+        "installPath": ".orqa/planning/research"
+      },
+      {
+        "key": "planning-decision",
+        "title": "Planning Decision",
+        "idPrefix": "PLAN-AD",
+        "installPath": ".orqa/planning/decisions"
+      },
+      {
+        "key": "wireframe",
+        "title": "Wireframe",
+        "idPrefix": "WF",
+        "installPath": ".orqa/planning/wireframes"
+      }
+    ],
+    "workflows": [
+      {
+        "artifact_type": "planning-idea",
+        "path": "workflows/planning-idea.workflow.yaml"
+      },
+      {
+        "artifact_type": "planning-research",
+        "path": "workflows/planning-research.workflow.yaml"
+      },
+      {
+        "artifact_type": "planning-decision",
+        "path": "workflows/planning-decision.workflow.yaml"
+      },
+      {
+        "artifact_type": "wireframe",
+        "path": "workflows/wireframe.workflow.yaml"
+      },
+      {
+        "artifact_type": "epic",
+        "path": "workflows/planning.contribution.workflow.yaml",
+        "contribution": true,
+        "description": "Planning stage contribution point — planning outputs feed implementation inputs"
+      }
+    ],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": []
+  }
+}

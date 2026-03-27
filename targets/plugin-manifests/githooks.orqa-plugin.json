@@ -1,0 +1,31 @@
+{
+  "name": "@orqastudio/plugin-githooks",
+  "version": "0.1.4-dev",
+  "description": "Pre-commit enforcement via git hooks — schema validation, filename-to-ID match, relationship integrity. Schema-driven: reads validation rules from installed plugin manifests.",
+  "purpose": ["infrastructure"],
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": true,
+  "category": "enforcement",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "pre-commit",
+        "description": "Git pre-commit hook — final gate before commit. Validates governance artifacts against plugin schemas, filename-to-ID match, relationship integrity.",
+        "strength": 7
+      },
+      {
+        "key": "post-commit",
+        "description": "Git post-commit hook — auto-pushes to remote after every commit.",
+        "strength": 3
+      }
+    ]
+  }
+}

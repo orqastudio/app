@@ -1,0 +1,99 @@
+{
+  "name": "@orqastudio/plugin-core-framework",
+  "version": "0.1.4-dev",
+  "description": "The learning loop — lessons, decisions, knowledge, rules. Framework artifact schemas and enforcement mechanisms. The app's USP. Required for all projects.",
+  "purpose": ["workflow"],
+  "stage_slot": "learning",
+  "affects_schema": true,
+  "affects_enforcement": true,
+  "category": "framework",
+  "uninstallable": true,
+  "provides": {
+    "schemas": [
+      {
+        "key": "decision",
+        "title": "Decision",
+        "idPrefix": "AD",
+        "installPath": ".orqa/learning/decisions"
+      },
+      {
+        "key": "rule",
+        "title": "Rule",
+        "idPrefix": "RULE",
+        "installPath": ".orqa/learning/rules"
+      },
+      {
+        "key": "lesson",
+        "title": "Lesson",
+        "idPrefix": "IMPL",
+        "installPath": ".orqa/learning/lessons"
+      },
+      {
+        "key": "knowledge",
+        "title": "Knowledge",
+        "idPrefix": "KNOW",
+        "installPath": ".orqa/learning/knowledge"
+      },
+      {
+        "key": "doc",
+        "title": "Document",
+        "idPrefix": "DOC",
+        "installPath": ".orqa/documentation"
+      }
+    ],
+    "workflows": [
+      {
+        "artifact_type": "decision",
+        "path": "workflows/decision.workflow.yaml"
+      },
+      {
+        "artifact_type": "rule",
+        "path": "workflows/rule.workflow.yaml"
+      },
+      {
+        "artifact_type": "lesson",
+        "path": "workflows/lesson.workflow.yaml"
+      },
+      {
+        "artifact_type": "knowledge",
+        "path": "workflows/knowledge.workflow.yaml"
+      },
+      {
+        "artifact_type": "doc",
+        "path": "workflows/doc.workflow.yaml"
+      },
+      {
+        "artifact_type": "epic",
+        "path": "workflows/learning.contribution.workflow.yaml",
+        "contribution": true,
+        "description": "Learning stage contribution point — captures lessons and decisions from completed epics"
+      }
+    ],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "json-schema",
+        "description": "Frontmatter JSON Schema validation — validates artifact structure against plugin-provided schemas",
+        "strength": 8
+      },
+      {
+        "key": "hook",
+        "description": "Lifecycle hook enforcement (PreAction, PostAction) — validates artifact operations at runtime",
+        "strength": 5
+      },
+      {
+        "key": "onnx",
+        "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)",
+        "strength": 4
+      },
+      {
+        "key": "behavioral",
+        "description": "Prompt injection reminder — minimum enforcement floor for behavioral compliance",
+        "strength": 1
+      }
+    ]
+  }
+}

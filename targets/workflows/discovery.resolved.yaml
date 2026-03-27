@@ -1,0 +1,1001 @@
+# Resolved discovery stage workflow.
+# Hand-written TARGET STATE artifact representing the output of the plugin
+# composition pipeline for the discovery stage.
+# Source plugin: @orqastudio/plugin-agile-discovery v0.1.0
+
+version: "1.0.0-target"
+generated: false
+description: >
+  Resolved discovery stage workflow. Contains all artifact types, state machines,
+  and relationship types contributed by @orqastudio/plugin-agile-discovery into
+  the discovery stage slot of the agile-methodology skeleton.
+
+stage: discover
+source_plugin: "@orqastudio/plugin-agile-discovery"
+fills_slot: discovery-artifacts
+methodology: agile-methodology
+
+# Sub-workflow states contributed into the discover stage of agile-methodology
+contribution_workflow:
+  name: discovery-contribution
+  initial_state: ideation
+  states:
+    ideation:
+      category: planning
+      description: "Capture and explore high-level product ideas."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Discovery ideation started"
+
+    investigation:
+      category: planning
+      description: "Conduct research investigations to validate ideas."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Discovery investigation started"
+
+    strategic_decision:
+      category: planning
+      description: "Make strategic decisions based on research findings."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Strategic decision-making started"
+
+    discovery_complete:
+      category: planning
+      description: "Discovery stage complete — ready to hand off to planning."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Discovery complete"
+
+  transitions:
+    - from: discover
+      to: ideation
+      event: begin_ideation
+      description: "Start capturing and exploring ideas."
+
+    - from: ideation
+      to: investigation
+      event: ideas_captured
+      description: "Ideas captured, begin research investigation."
+
+    - from: investigation
+      to: ideation
+      event: new_ideas
+      description: "Research surfaced new ideas — return to ideation."
+
+    - from: investigation
+      to: strategic_decision
+      event: research_complete
+      description: "Research complete, make strategic decisions."
+
+    - from: strategic_decision
+      to: investigation
+      event: needs_research
+      description: "Decision requires more research."
+
+    - from: strategic_decision
+      to: discovery_complete
+      event: decisions_made
+      description: "Strategic decisions made, discovery is complete."
+
+    - from: discovery_complete
+      to: plan
+      event: scope_defined
+      description: "Hand off to planning stage."
+
+    # Fast-track paths
+    - from: ideation
+      to: strategic_decision
+      event: fast_track
+      description: "Skip investigation for well-understood ideas."
+
+    - from: ideation
+      to: discovery_complete
+      event: skip_to_complete
+      description: "Simple discovery — ideas are clear, no investigation needed."
+
+artifact_types:
+
+  vision:
+    id_prefix: "VISION"
+    id_pattern: "^VISION-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/vision/"
+    icon: eye
+    influence: high
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^VISION-[a-f0-9]{8}$"
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Vision has been captured but not yet activated."
+        active:
+          category: active
+          description: "Vision is the active guiding direction."
+          on_enter:
+            - type: set_field
+              params:
+                field: activated_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Vision activated"
+        review:
+          category: review
+          description: "Vision is being reviewed for continued relevance."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Vision entered review"
+        surpassed:
+          category: terminal
+          description: "Vision has been superseded by a newer direction."
+        archived:
+          category: terminal
+          description: "Vision is archived."
+      transitions:
+        - from: captured
+          to: active
+          event: activate
+          description: "Activate this vision as the guiding direction."
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Trigger periodic relevance review."
+        - from: active
+          to: archived
+          event: archive
+          description: "Archive an active vision directly."
+        - from: review
+          to: active
+          event: reaffirm
+          description: "Vision is still relevant — return to active."
+        - from: review
+          to: surpassed
+          event: surpass
+          description: "Vision is no longer relevant — mark as superseded."
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: captured
+          to: archived
+          event: archive
+          description: "Archive a captured vision that was never activated."
+    state_categories:
+      planning: [captured]
+      active: [active]
+      review: [review]
+      completed: []
+      terminal: [surpassed, archived]
+
+  pillar:
+    id_prefix: "PILLAR"
+    id_pattern: "^PILLAR-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/pillars/"
+    icon: columns-3
+    influence: high
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^PILLAR-[a-f0-9]{8}$"
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        gate: { type: [string, array] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: active
+      states:
+        active:
+          category: active
+          description: "Pillar is an active guiding principle."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Pillar activated"
+        review:
+          category: review
+          description: "Pillar is being reviewed for continued relevance."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Pillar entered review"
+        surpassed:
+          category: terminal
+          description: "Pillar has been superseded by a revised principle."
+        archived:
+          category: terminal
+          description: "Pillar is archived."
+      transitions:
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Trigger periodic relevance review."
+        - from: active
+          to: archived
+          event: archive
+          description: "Archive a pillar directly."
+        - from: review
+          to: active
+          event: reaffirm
+          description: "Pillar is still relevant — return to active."
+        - from: review
+          to: surpassed
+          event: surpass
+          description: "Pillar is no longer relevant — mark as superseded."
+        - from: surpassed
+          to: archived
+          event: archive
+    state_categories:
+      planning: []
+      active: [active]
+      review: [review]
+      completed: []
+      terminal: [surpassed, archived]
+
+  persona:
+    id_prefix: "PERSONA"
+    id_pattern: "^PERSONA-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/personas/"
+    icon: users
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^PERSONA-[a-f0-9]{8}$"
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: active
+      states:
+        active:
+          category: active
+          description: "Persona is an active target user profile."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Persona activated"
+        review:
+          category: review
+          description: "Persona is being reviewed for continued relevance."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Persona entered review"
+        surpassed:
+          category: terminal
+          description: "Persona has been superseded by a revised profile."
+        archived:
+          category: terminal
+          description: "Persona is archived."
+      transitions:
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Trigger periodic relevance review."
+        - from: active
+          to: archived
+          event: archive
+          description: "Archive a persona directly."
+        - from: review
+          to: active
+          event: reaffirm
+          description: "Persona is still relevant — return to active."
+        - from: review
+          to: surpassed
+          event: surpass
+          description: "Persona is no longer relevant — mark as superseded."
+        - from: surpassed
+          to: archived
+          event: archive
+    state_categories:
+      planning: []
+      active: [active]
+      review: [review]
+      completed: []
+      terminal: [surpassed, archived]
+
+  pivot:
+    id_prefix: "PIVOT"
+    id_pattern: "^PIVOT-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/pivots/"
+    icon: refresh-cw
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^PIVOT-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Pivot has been captured but not yet explored."
+        exploring:
+          category: planning
+          description: "Pivot is being explored — impact assessment, alternatives, rationale."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Pivot exploration started"
+        active:
+          category: active
+          description: "Pivot decision has been made — change is being implemented."
+          on_enter:
+            - type: set_field
+              params:
+                field: decided_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Pivot activated"
+        completed:
+          category: completed
+          description: "Pivot change has been fully implemented."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Pivot completed"
+        surpassed:
+          category: terminal
+          description: "Pivot has been superseded by a subsequent pivot."
+        archived:
+          category: terminal
+          description: "Pivot is archived."
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin exploring pivot impact and alternatives."
+        - from: captured
+          to: active
+          event: activate
+          description: "Fast-track to active implementation."
+        - from: exploring
+          to: active
+          event: activate
+          description: "Decide and begin implementing the pivot."
+        - from: exploring
+          to: archived
+          event: archive
+          description: "Archive during exploration (pivot not viable)."
+        - from: active
+          to: completed
+          event: complete
+          description: "Pivot change fully implemented."
+        - from: completed
+          to: archived
+          event: archive
+        - from: completed
+          to: surpassed
+          event: surpass
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: captured
+          to: archived
+          event: archive
+          description: "Archive a captured pivot that was never explored."
+    state_categories:
+      planning: [captured, exploring]
+      active: [active]
+      review: []
+      completed: [completed]
+      terminal: [surpassed, archived]
+
+  discovery-idea:
+    id_prefix: "DISC-IDEA"
+    id_pattern: "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/ideas/"
+    icon: lightbulb
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        priority: { type: string }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Idea has been captured but not yet explored."
+        exploring:
+          category: planning
+          description: "Idea is being explored — feasibility, scope, impact being assessed."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Idea exploration started"
+        ready:
+          category: planning
+          description: "Idea has been explored and is ready for prioritisation."
+        prioritised:
+          category: planning
+          description: "Idea has been prioritised and is ready for active work."
+        active:
+          category: active
+          description: "Idea is actively being developed or crystallised."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Idea activated"
+        hold:
+          category: active
+          description: "Idea is paused, waiting for external input or decision."
+        review:
+          category: review
+          description: "Idea outcomes are being reviewed."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Idea entered review"
+        completed:
+          category: completed
+          description: "Idea has been reviewed and accepted — outcomes delivered."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Idea completed"
+        surpassed:
+          category: terminal
+          description: "Idea was completed but has been superseded."
+        archived:
+          category: terminal
+          description: "Idea is archived."
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin exploring feasibility and impact."
+        - from: exploring
+          to: ready
+          event: scope_complete
+          description: "Exploration complete, ready for prioritisation."
+        - from: exploring
+          to: hold
+          event: pause
+          description: "Pause exploration pending input."
+        - from: exploring
+          to: archived
+          event: archive
+          description: "Archive during exploration (not viable)."
+        - from: ready
+          to: prioritised
+          event: prioritise
+        - from: ready
+          to: hold
+          event: pause
+          description: "Pause before prioritisation."
+        - from: prioritised
+          to: active
+          event: start
+          description: "Begin active work on this idea."
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Submit idea outcomes for review."
+        - from: active
+          to: hold
+          event: pause
+          description: "Pause active work."
+        - from: hold
+          to: exploring
+          event: rescope
+          description: "Return to exploration for re-scoping."
+        - from: hold
+          to: ready
+          event: resume
+          description: "Return to ready pool."
+        - from: review
+          to: completed
+          event: approve
+          description: "Idea outcomes accepted."
+        - from: review
+          to: active
+          event: request_changes
+          description: "Further work needed."
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during idea review"
+        - from: completed
+          to: surpassed
+          event: surpass
+        - from: completed
+          to: archived
+          event: archive
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, hold]
+          to: archived
+          event: archive
+          description: "Archive from non-active states."
+    state_categories:
+      planning: [captured, exploring, ready, prioritised]
+      active: [active, hold]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+
+  discovery-research:
+    id_prefix: "DISC-RES"
+    id_pattern: "^(RES|DISC-RES)-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/research/"
+    icon: flask-conical
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^(RES|DISC-RES)-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        methodology: { type: string }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Research topic has been captured but not yet started."
+        exploring:
+          category: planning
+          description: "Research is being explored — defining scope, methodology, questions."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Research exploration started"
+        active:
+          category: active
+          description: "Research is actively being conducted."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Research activated"
+        hold:
+          category: active
+          description: "Research is paused, waiting for external input or resources."
+        review:
+          category: review
+          description: "Research findings are being reviewed."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Research entered review"
+        completed:
+          category: completed
+          description: "Research has been reviewed and findings accepted."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Research completed"
+        surpassed:
+          category: terminal
+          description: "Research has been superseded by newer findings."
+        archived:
+          category: terminal
+          description: "Research is archived."
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin defining research scope and methodology."
+        - from: captured
+          to: active
+          event: start
+          description: "Fast-track directly to active research."
+        - from: exploring
+          to: active
+          event: start
+          description: "Begin active research."
+        - from: exploring
+          to: hold
+          event: pause
+          description: "Pause exploration pending resources."
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Submit research findings for review."
+        - from: active
+          to: hold
+          event: pause
+          description: "Pause research, waiting for input."
+        - from: hold
+          to: active
+          event: resume
+          description: "Resume paused research."
+        - from: hold
+          to: exploring
+          event: rescope
+          description: "Return to exploration for re-scoping."
+        - from: review
+          to: completed
+          event: approve
+          description: "Research findings accepted."
+        - from: review
+          to: active
+          event: request_changes
+          description: "Further research needed."
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during research review"
+        - from: completed
+          to: surpassed
+          event: surpass
+          description: "Mark as superseded by newer research."
+        - from: completed
+          to: archived
+          event: archive
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, exploring, hold]
+          to: archived
+          event: archive
+          description: "Archive from any non-active state."
+    state_categories:
+      planning: [captured, exploring]
+      active: [active, hold]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+
+  discovery-decision:
+    id_prefix: "DISC-AD"
+    id_pattern: "^(AD|DISC-AD)-[a-f0-9]{8}$"
+    default_path: ".orqa/discovery/decisions/"
+    icon: scale
+    influence: high
+    stage: discovery
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^(AD|DISC-AD)-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Decision question has been captured but not yet explored."
+        exploring:
+          category: planning
+          description: "Decision space is being explored — options, trade-offs, constraints."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Decision exploration started"
+        active:
+          category: active
+          description: "Decision is actively being deliberated — a preferred option is being developed."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Decision deliberation active"
+        hold:
+          category: active
+          description: "Decision is paused, waiting for external input."
+        review:
+          category: review
+          description: "Decision is being reviewed for acceptance."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Decision entered review"
+        completed:
+          category: completed
+          description: "Decision has been accepted and recorded."
+          on_enter:
+            - type: set_field
+              params:
+                field: decided_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Decision recorded"
+        surpassed:
+          category: terminal
+          description: "Decision has been superseded by a newer decision."
+        archived:
+          category: terminal
+          description: "Decision is archived."
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin exploring the decision space."
+        - from: captured
+          to: active
+          event: start
+          description: "Fast-track to active deliberation."
+        - from: exploring
+          to: active
+          event: start
+          description: "Begin active deliberation."
+        - from: exploring
+          to: hold
+          event: pause
+          description: "Pause exploration pending input."
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Submit decision for acceptance review."
+        - from: active
+          to: hold
+          event: pause
+          description: "Pause deliberation."
+        - from: active
+          to: archived
+          event: archive
+          description: "Archive decision (no longer relevant)."
+        - from: hold
+          to: active
+          event: resume
+          description: "Resume deliberation."
+        - from: hold
+          to: exploring
+          event: rescope
+          description: "Return to exploration for re-scoping."
+        - from: review
+          to: completed
+          event: approve
+          description: "Decision accepted and recorded."
+        - from: review
+          to: active
+          event: request_changes
+          description: "Further deliberation needed."
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during decision review"
+        - from: completed
+          to: surpassed
+          event: surpass
+          description: "Mark as superseded by a newer decision."
+        - from: completed
+          to: archived
+          event: archive
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, exploring, hold]
+          to: archived
+          event: archive
+          description: "Archive from non-active states."
+    state_categories:
+      planning: [captured, exploring]
+      active: [active, hold]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+
+# Relationship types relevant to this stage (from schema.composed.json)
+relationship_types:
+  upholds:
+    forward: upholds
+    inverse: upheld-by
+    from: [pillar]
+    to: [vision]
+    semantic: foundation
+
+  grounded:
+    forward: grounded
+    inverse: grounded-by
+    from: [discovery-idea]
+    to: [pillar]
+    semantic: foundation
+
+  benefits:
+    forward: benefits
+    inverse: benefited-by
+    from: [discovery-idea]
+    to: [persona]
+    semantic: foundation
+    constraints: { required: true, minCount: 1 }
+
+  crystallises:
+    forward: crystallises
+    inverse: crystallised-by
+    from: [discovery-idea]
+    to: [discovery-decision]
+    semantic: lineage
+
+  spawns:
+    forward: spawns
+    inverse: spawned-by
+    from: [discovery-idea]
+    to: [discovery-research]
+    semantic: lineage
+
+  drives:
+    forward: drives
+    inverse: driven-by
+    from: [discovery-decision, vision]
+    to: [pillar]
+    semantic: governance
+
+  informs:
+    forward: informs
+    inverse: informed-by
+    from: [discovery-research, discovery-decision]
+    to: [discovery-decision, discovery-research]
+    semantic: knowledge-flow
+
+  evolves-to:
+    forward: evolves-to
+    inverse: evolved-from
+    from: [discovery-idea, discovery-research]
+    to: [discovery-research, discovery-decision]
+    semantic: lineage
+
+  pivots:
+    forward: pivots
+    inverse: pivoted-by
+    from: [vision]
+    to: [pivot]
+    semantic: foundation
+
+  revises:
+    forward: revises
+    inverse: revised-by
+    from: [pivot]
+    to: [vision, persona, pillar]
+    semantic: foundation
+    constraints: { required: true, minCount: 1 }
+
+  merged-into:
+    forward: merged-into
+    inverse: merged-from
+    from: [discovery-idea, discovery-research]
+    to: [discovery-idea, discovery-research]
+    semantic: lineage
+
+  hands-off-to:
+    forward: hands-off-to
+    inverse: handed-off-from
+    from: [discovery-decision]
+    to: [planning-idea]
+    semantic: lineage
+
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-agile-discovery"
+    version: "0.1.0"
+    contributes:
+      - artifact_types: [vision, pillar, persona, pivot, discovery-idea, discovery-research, discovery-decision]
+      - contribution_workflow: discovery-contribution
+      - relationship_types: [upholds, grounded, benefits, crystallises, spawns, drives, informs, evolves-to, pivots, revises, merged-into, hands-off-to]

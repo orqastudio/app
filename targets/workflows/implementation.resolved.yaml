@@ -1,0 +1,1028 @@
+# Resolved implementation stage workflow.
+# Hand-written TARGET STATE artifact representing the output of the plugin
+# composition pipeline for the implementation stage.
+# Source plugin: @orqastudio/plugin-software-kanban v0.1.0
+
+version: "1.0.0-target"
+generated: false
+description: >
+  Resolved implementation stage workflow. Contains all artifact types (epic, task,
+  milestone), state machines, gates, task variants, and relationship types contributed
+  by @orqastudio/plugin-software-kanban into the implementation stage slot of the
+  agile-methodology skeleton.
+
+stage: implement
+source_plugin: "@orqastudio/plugin-software-kanban"
+fills_slot: implementation-workflow
+methodology: agile-methodology
+
+# Sub-workflow states contributed into the implement stage of agile-methodology
+contribution_workflow:
+  name: software-implementation-contribution
+  initial_state: task_assignment
+  states:
+    task_assignment:
+      category: active
+      description: "Assign tasks to agents or team members based on the plan."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Task assignment started"
+
+    development:
+      category: active
+      description: "Active development — implementing the assigned tasks."
+      on_enter:
+        - type: set_field
+          params:
+            field: development_started_at
+            value: "${now}"
+        - type: append_log
+          params:
+            message: "Development started"
+
+    testing:
+      category: active
+      description: "Testing — verifying implementation against acceptance criteria."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Testing started"
+
+    integration:
+      category: active
+      description: "Integration — merging work, resolving conflicts, verifying combined result."
+      on_enter:
+        - type: append_log
+          params:
+            message: "Integration started"
+
+    implementation_complete:
+      category: active
+      description: "All tasks implemented, tested, and integrated — ready for review."
+      on_enter:
+        - type: set_field
+          params:
+            field: implementation_completed_at
+            value: "${now}"
+        - type: append_log
+          params:
+            message: "Implementation complete"
+
+  transitions:
+    - from: implement
+      to: task_assignment
+      event: begin_assignment
+      description: "Start assigning tasks from the plan."
+
+    - from: task_assignment
+      to: development
+      event: tasks_assigned
+      description: "Tasks assigned, begin development."
+
+    - from: development
+      to: testing
+      event: development_done
+      description: "Development complete, begin testing."
+
+    - from: testing
+      to: development
+      event: tests_failed
+      description: "Tests failed — return to development for fixes."
+      actions:
+        - type: append_log
+          params:
+            message: "Tests failed — returning to development"
+
+    - from: testing
+      to: integration
+      event: tests_passed
+      description: "Tests passed, begin integration."
+
+    - from: integration
+      to: testing
+      event: integration_issues
+      description: "Integration issues found — return to testing."
+      actions:
+        - type: append_log
+          params:
+            message: "Integration issues — returning to testing"
+
+    - from: integration
+      to: implementation_complete
+      event: integration_done
+      description: "Integration successful, implementation is complete."
+
+    - from: implementation_complete
+      to: review
+      event: submit_for_review
+      description: "Submit completed implementation for review."
+
+    # Rework paths
+    - from: implementation_complete
+      to: development
+      event: rework_needed
+      description: "Issues found post-integration — return to development."
+
+    - from: task_assignment
+      to: plan
+      event: replan
+      description: "Task assignment revealed planning gaps — return to planning."
+
+artifact_types:
+
+  milestone:
+    id_prefix: "MS"
+    id_pattern: "^MS-[a-f0-9]{8}$"
+    default_path: ".orqa/implementation/milestones/"
+    icon: flag
+    stage: implementation
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^MS-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        gate: { type: [string, array] }
+        priority: { type: string }
+        target_date: { type: string }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Milestone has been captured but not yet explored."
+        exploring:
+          category: planning
+          description: "Milestone scope is being explored — target date, epics, acceptance criteria."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Milestone exploration started"
+        ready:
+          category: planning
+          description: "Milestone scope is defined and ready for prioritisation."
+        prioritised:
+          category: planning
+          description: "Milestone has been prioritised and is ready for active delivery."
+        active:
+          category: active
+          description: "Milestone delivery is in progress — epics are being worked."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Milestone activated"
+        hold:
+          category: active
+          description: "Milestone is paused, waiting for external input or decision."
+        blocked:
+          category: active
+          description: "Milestone cannot proceed due to unresolved dependencies."
+        review:
+          category: review
+          description: "All epics complete — milestone is awaiting final review."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Milestone entered review"
+        completed:
+          category: completed
+          description: "Milestone has been reviewed and accepted as complete."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Milestone completed"
+        surpassed:
+          category: terminal
+          description: "Milestone was completed but has been superseded."
+        archived:
+          category: terminal
+          description: "Milestone is archived."
+      gates: [milestone-review]
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin exploring scope and target date."
+        - from: captured
+          to: ready
+          event: fast_track
+          description: "Skip exploration for well-understood milestones."
+          guards:
+            - type: field_check
+              description: "Must have a description"
+              params:
+                field: description
+                operator: not_empty
+        - from: captured
+          to: prioritised
+          event: prioritise
+          description: "Fast-track to prioritised (urgent work)."
+        - from: exploring
+          to: ready
+          event: scope_complete
+          description: "Exploration complete, scope is defined."
+          guards:
+            - type: field_check
+              description: "Must have a description"
+              params:
+                field: description
+                operator: not_empty
+        - from: exploring
+          to: prioritised
+          event: prioritise
+          description: "Fast-track from exploration to prioritised."
+        - from: exploring
+          to: hold
+          event: pause
+          description: "Pause exploration pending external input."
+        - from: ready
+          to: prioritised
+          event: prioritise
+        - from: ready
+          to: active
+          event: start
+          description: "Begin delivery directly from ready."
+        - from: ready
+          to: review
+          event: submit_for_review
+          description: "Submit directly for review (all epics pre-completed)."
+        - from: prioritised
+          to: active
+          event: start
+          description: "Begin milestone delivery."
+        - from: prioritised
+          to: ready
+          event: deprioritise
+        - from: active
+          to: hold
+          event: pause
+        - from: active
+          to: blocked
+          event: block
+          guards:
+            - type: relationship_check
+              description: "Must have at least one depends-on relationship"
+              params:
+                relationship_type: depends-on
+                condition: exists
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "All epics complete — submit for review."
+          gate: milestone-review
+          guards:
+            - type: relationship_check
+              description: "All fulfilling epics must be completed or archived"
+              params:
+                relationship_type: fulfils
+                condition: all_targets_in_status
+                statuses: [completed, surpassed, archived]
+        - from: hold
+          to: active
+          event: resume
+        - from: hold
+          to: ready
+          event: replan
+        - from: blocked
+          to: active
+          event: unblock
+          guards:
+            - type: relationship_check
+              description: "All blocking dependencies must be resolved"
+              params:
+                relationship_type: depends-on
+                condition: all_targets_in_status
+                statuses: [completed, surpassed, archived]
+        - from: blocked
+          to: ready
+          event: replan
+        - from: review
+          to: completed
+          event: approve
+        - from: review
+          to: active
+          event: request_changes
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during milestone review"
+        - from: completed
+          to: surpassed
+          event: surpass
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, exploring, ready, prioritised, hold]
+          to: archived
+          event: archive
+    state_categories:
+      planning: [captured, exploring, ready, prioritised]
+      active: [active, hold, blocked]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+    gates:
+      milestone-review:
+        pattern: structured_review
+        description: "Milestone completion review — AI pre-check then human review."
+        phases:
+          gather:
+            fields: [description, target_date, priority, relationships]
+            pre_checks:
+              - type: relationship_check
+                description: "All fulfilling epics must be completed"
+                params:
+                  relationship_type: fulfils
+                  condition: all_targets_in_status
+                  statuses: [completed, surpassed, archived]
+              - type: field_check
+                description: "Description must exist"
+                params:
+                  field: description
+                  operator: not_empty
+            summary_template: >
+              Milestone: ${title}
+              Target date: ${target_date}
+              Epics fulfilled: ${relationship_count:fulfils}
+              Status: All epics in terminal state
+          present:
+            sections:
+              - title: "Milestone Overview"
+                content_field: description
+              - title: "Fulfilled Epics"
+                content_template: "Epic relationships: ${relationships:fulfils}"
+          collect:
+            verdicts:
+              - key: approve
+                label: "Approve — Milestone Complete"
+                transitions_to: completed
+              - key: request_changes
+                label: "Request Changes"
+                transitions_to: active
+            require_rationale: true
+          learn:
+            on_fail:
+              create_lesson: true
+              track_recurrence: true
+            on_pass:
+              track_cycle_time: true
+
+  epic:
+    id_prefix: "EPIC"
+    id_pattern: "^EPIC-[a-f0-9]{8}$"
+    default_path: ".orqa/implementation/epics/"
+    icon: layers
+    stage: implementation
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^EPIC-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        priority: { type: string }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Epic has been captured but not yet explored."
+        exploring:
+          category: planning
+          description: "Epic is being explored — scope, feasibility, and tasks being defined."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Epic exploration started"
+        ready:
+          category: planning
+          description: "Epic scope is defined and ready for prioritisation."
+        prioritised:
+          category: planning
+          description: "Epic has been prioritised and is ready for active delivery."
+        active:
+          category: active
+          description: "Epic delivery is in progress — tasks are being worked."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Epic activated"
+        hold:
+          category: active
+          description: "Epic is paused, waiting for external input or decision."
+        blocked:
+          category: active
+          description: "Epic cannot proceed due to unresolved dependencies."
+        review:
+          category: review
+          description: "All tasks complete — epic is awaiting final review."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Epic entered review"
+        completed:
+          category: completed
+          description: "Epic has been reviewed and accepted as complete."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Epic completed"
+        surpassed:
+          category: terminal
+          description: "Epic was completed but has been superseded."
+        archived:
+          category: terminal
+          description: "Epic is archived."
+      gates: [epic-review]
+      transitions:
+        - from: captured
+          to: exploring
+          event: explore
+          description: "Begin exploring scope and feasibility."
+        - from: captured
+          to: ready
+          event: fast_track
+          description: "Skip exploration for well-understood work."
+          guards:
+            - type: field_check
+              description: "Must have a description"
+              params:
+                field: description
+                operator: not_empty
+        - from: captured
+          to: prioritised
+          event: prioritise
+          description: "Fast-track to prioritised (urgent work)."
+        - from: exploring
+          to: ready
+          event: scope_complete
+          description: "Exploration complete, scope is defined."
+          guards:
+            - type: field_check
+              description: "Must have a description"
+              params:
+                field: description
+                operator: not_empty
+        - from: exploring
+          to: hold
+          event: pause
+          description: "Pause exploration pending external input."
+        - from: ready
+          to: prioritised
+          event: prioritise
+        - from: ready
+          to: active
+          event: start
+          description: "Begin delivery directly from ready."
+        - from: prioritised
+          to: active
+          event: start
+          description: "Begin epic delivery."
+        - from: prioritised
+          to: ready
+          event: deprioritise
+        - from: active
+          to: hold
+          event: pause
+        - from: active
+          to: blocked
+          event: block
+          guards:
+            - type: relationship_check
+              description: "Must have at least one depends-on relationship"
+              params:
+                relationship_type: depends-on
+                condition: exists
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "All tasks complete — submit for review."
+          gate: epic-review
+          guards:
+            - type: relationship_check
+              description: "All child tasks must be completed or archived"
+              params:
+                relationship_type: delivers
+                condition: all_targets_in_status
+                statuses: [completed, surpassed, archived]
+        - from: hold
+          to: active
+          event: resume
+        - from: hold
+          to: ready
+          event: replan
+        - from: blocked
+          to: active
+          event: unblock
+          guards:
+            - type: relationship_check
+              description: "All blocking dependencies must be resolved"
+              params:
+                relationship_type: depends-on
+                condition: all_targets_in_status
+                statuses: [completed, surpassed, archived]
+        - from: review
+          to: completed
+          event: approve
+        - from: review
+          to: active
+          event: request_changes
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during epic review"
+        - from: completed
+          to: surpassed
+          event: surpass
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, exploring, ready, prioritised, hold]
+          to: archived
+          event: archive
+    state_categories:
+      planning: [captured, exploring, ready, prioritised]
+      active: [active, hold, blocked]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+    gates:
+      epic-review:
+        pattern: structured_review
+        description: "Epic completion review — AI pre-check then human review."
+        phases:
+          gather:
+            fields: [description, priority, relationships]
+            pre_checks:
+              - type: relationship_check
+                description: "All child tasks must be completed"
+                params:
+                  relationship_type: delivers
+                  condition: all_targets_in_status
+                  statuses: [completed, surpassed, archived]
+              - type: field_check
+                description: "Description must exist"
+                params:
+                  field: description
+                  operator: not_empty
+            summary_template: >
+              Epic: ${title}
+              Tasks delivered: ${relationship_count:delivers}
+              Status: All tasks in terminal state
+          present:
+            sections:
+              - title: "Epic Overview"
+                content_field: description
+              - title: "Delivered Tasks"
+                content_template: "Task relationships: ${relationships:delivers}"
+            context_queries:
+              - epic_task_summary
+          collect:
+            verdicts:
+              - key: approve
+                label: "Approve — Epic Complete"
+                transitions_to: completed
+              - key: request_changes
+                label: "Request Changes"
+                transitions_to: active
+              - key: descope
+                label: "Descope — Reduce scope and complete"
+                transitions_to: completed
+            require_rationale: true
+          execute:
+            actions:
+              - type: append_log
+                params:
+                  message: "Epic review verdict: ${verdict} by ${actor}"
+          learn:
+            on_fail:
+              create_lesson: true
+              track_recurrence: true
+            on_pass:
+              track_cycle_time: true
+
+  task:
+    id_prefix: "TASK"
+    id_pattern: "^TASK-[a-f0-9]{8}$"
+    default_path: ".orqa/implementation/tasks/"
+    icon: check-square
+    stage: implementation
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: "^TASK-[a-f0-9]{8}$"
+        status: { type: string }
+      optional:
+        title: { type: string }
+        description: { type: [string, "null"] }
+        priority: { type: string }
+        assignee: { type: [string, "null"] }
+        relationships:
+          type: array
+          items:
+            type: object
+            properties:
+              target: { type: string }
+              type: { type: string }
+              rationale: { type: string }
+            required: [target, type]
+    additional_properties: true
+    variants: [quickfix, security, docs-only, hotfix]
+    state_machine:
+      initial_state: captured
+      states:
+        captured:
+          category: planning
+          description: "Newly created task, not yet triaged or prioritised."
+        ready:
+          category: planning
+          description: "Task has been triaged and is ready for prioritisation."
+        prioritised:
+          category: planning
+          description: "Task has been prioritised and is ready to be picked up."
+        active:
+          category: active
+          description: "Work is in progress on this task."
+          on_enter:
+            - type: set_field
+              params:
+                field: started_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Task activated by ${actor}"
+        hold:
+          category: active
+          description: "Work is paused, waiting for external input or decision."
+        blocked:
+          category: active
+          description: "Work cannot proceed due to unresolved dependencies."
+        review:
+          category: review
+          description: "Work is complete and awaiting review."
+          on_enter:
+            - type: append_log
+              params:
+                message: "Task entered review"
+        completed:
+          category: completed
+          description: "Task has been reviewed and accepted."
+          on_enter:
+            - type: set_field
+              params:
+                field: completed_at
+                value: "${now}"
+            - type: append_log
+              params:
+                message: "Task completed"
+        surpassed:
+          category: terminal
+          description: "Task was completed but has been superseded by newer work."
+        archived:
+          category: terminal
+          description: "Task is archived and no longer active."
+      gates: [task-review]
+      transitions:
+        - from: captured
+          to: ready
+          event: triage
+          description: "Task has been triaged and is ready for planning."
+          guards:
+            - type: field_check
+              description: "Task must have a description"
+              params:
+                field: description
+                operator: not_empty
+        - from: captured
+          to: prioritised
+          event: prioritise
+          description: "Fast-track directly to prioritised (skip ready)."
+        - from: ready
+          to: prioritised
+          event: prioritise
+        - from: [ready, prioritised]
+          to: active
+          event: start
+          description: "Begin work on this task."
+          actions:
+            - type: notify
+              params:
+                channel: ui
+                message: "Task ${id} has been started"
+        - from: prioritised
+          to: ready
+          event: deprioritise
+          description: "Return to ready pool."
+        - from: active
+          to: hold
+          event: pause
+          description: "Pause work, waiting for external input."
+        - from: active
+          to: blocked
+          event: block
+          description: "Mark as blocked by dependencies."
+          guards:
+            - type: relationship_check
+              description: "Must have at least one depends-on relationship"
+              params:
+                relationship_type: depends-on
+                condition: exists
+        - from: active
+          to: review
+          event: submit_for_review
+          description: "Submit completed work for review."
+          gate: task-review
+        - from: hold
+          to: active
+          event: resume
+          description: "Resume paused work."
+        - from: hold
+          to: ready
+          event: replan
+          description: "Return to planning for re-scoping."
+        - from: blocked
+          to: active
+          event: unblock
+          description: "Dependencies resolved, resume work."
+          guards:
+            - type: relationship_check
+              description: "All blocking dependencies must be resolved"
+              params:
+                relationship_type: depends-on
+                condition: all_targets_in_status
+                statuses: [completed, surpassed, archived]
+        - from: blocked
+          to: ready
+          event: replan
+          description: "Return to planning for re-scoping."
+        - from: review
+          to: completed
+          event: approve
+          description: "Review passed — task is complete."
+        - from: review
+          to: active
+          event: request_changes
+          description: "Review found issues — return to active work."
+          actions:
+            - type: append_log
+              params:
+                message: "Changes requested during review"
+        - from: completed
+          to: surpassed
+          event: surpass
+          description: "Mark as superseded by newer work."
+        - from: surpassed
+          to: archived
+          event: archive
+        - from: [captured, ready, prioritised, hold]
+          to: archived
+          event: archive
+          description: "Archive from any non-active state."
+    state_categories:
+      planning: [captured, ready, prioritised]
+      active: [active, hold, blocked]
+      review: [review]
+      completed: [completed]
+      terminal: [surpassed, archived]
+    gates:
+      task-review:
+        pattern: simple_approval
+        description: "Standard task completion review."
+        phases:
+          gather:
+            fields: [description, priority, relationships]
+            pre_checks:
+              - type: field_check
+                description: "Task must have a description"
+                params:
+                  field: description
+                  operator: not_empty
+              - type: relationship_check
+                description: "Task should deliver to an epic"
+                params:
+                  relationship_type: delivers
+                  condition: exists
+          present:
+            sections:
+              - title: "Task Summary"
+                content_field: description
+              - title: "Deliverables"
+                content_template: "Relationships: ${relationships}"
+          collect:
+            verdicts:
+              - key: approve
+                label: "Approve"
+                transitions_to: completed
+              - key: request_changes
+                label: "Request Changes"
+                transitions_to: active
+            require_rationale: false
+          learn:
+            on_fail:
+              create_lesson: true
+              track_recurrence: true
+            on_pass:
+              track_cycle_time: true
+    task_variants:
+      quickfix:
+        description: "For small bug fixes and UX tweaks — skip planning, automated review only."
+        skip_states: [ready, prioritised]
+        skip_gates: [task-review]
+        override_transitions:
+          - from: captured
+            to: active
+            event: start
+            description: "Jump directly to active work."
+          - from: active
+            to: completed
+            event: complete
+            description: "Complete without human review."
+            guards:
+              - type: field_check
+                description: "Must be marked as quickfix"
+                params:
+                  field: labels
+                  operator: in
+                  value: [quickfix, bugfix, typo]
+      security:
+        description: "For security fixes — skip planning, mandatory human review."
+        skip_states: [ready, prioritised]
+        override_transitions:
+          - from: captured
+            to: active
+            event: start
+            description: "Jump directly to active work."
+      docs-only:
+        description: "For documentation-only changes — skip planning and review entirely."
+        skip_states: [ready, prioritised]
+        skip_gates: [task-review]
+        override_transitions:
+          - from: captured
+            to: active
+            event: start
+            description: "Jump directly to active work."
+          - from: active
+            to: completed
+            event: complete
+            description: "Complete without human review — docs only."
+      hotfix:
+        description: "For hotfixes — skip planning, expedited but reviewed."
+        skip_states: [ready, prioritised]
+        override_transitions:
+          - from: captured
+            to: active
+            event: start
+            description: "Jump directly to active work."
+    variant_selection_rules:
+      - variant: quickfix
+        priority: 10
+        conditions:
+          - type: field_check
+            params:
+              field: labels
+              operator: in
+              value: [quickfix, bugfix, typo]
+      - variant: security
+        priority: 20
+        conditions:
+          - type: field_check
+            params:
+              field: labels
+              operator: in
+              value: [security]
+      - variant: docs-only
+        priority: 30
+        conditions:
+          - type: field_check
+            params:
+              field: labels
+              operator: in
+              value: [docs-only, documentation]
+      - variant: hotfix
+        priority: 40
+        conditions:
+          - type: field_check
+            params:
+              field: labels
+              operator: in
+              value: [hotfix, emergency]
+
+# Relationship types relevant to this stage
+relationship_types:
+  delivers:
+    forward: delivers
+    inverse: delivered-by
+    from: [task]
+    to: [epic]
+    semantic: hierarchy
+    constraints: { required: true, minCount: 1 }
+    status_rules:
+      description: "When all tasks delivering to an epic have status 'completed', the epic's proposed status becomes 'review'"
+
+  fulfils:
+    forward: fulfils
+    inverse: fulfilled-by
+    from: [epic]
+    to: [milestone]
+    semantic: hierarchy
+    status_rules:
+      description: "When all epics fulfilling a milestone have status 'completed', the milestone's proposed status becomes 'review'"
+
+  depends-on:
+    forward: depends-on
+    inverse: depended-on-by
+    from: [task, epic]
+    to: [task, epic]
+    semantic: dependency
+    status_rules:
+      blocked_when: "any dependency target is in: captured, exploring, ready, prioritised, active, hold"
+      ready_when: "all dependency targets are in: completed, surpassed, archived"
+
+  realises:
+    forward: realises
+    inverse: realised-by
+    from: [discovery-idea]
+    to: [epic, task]
+    semantic: lineage
+
+  implements:
+    forward: implements
+    inverse: implemented-by
+    from: [task, epic]
+    to: [decision, discovery-decision]
+    semantic: delivery
+
+  yields:
+    forward: yields
+    inverse: yielded-by
+    from: [task]
+    to: [lesson]
+    semantic: knowledge-flow
+
+  addresses:
+    forward: addresses
+    inverse: addressed-by
+    from: [task, epic]
+    to: [lesson]
+    semantic: corrective
+
+  grounded:
+    forward: grounded
+    inverse: grounded-by
+    from: [epic]
+    to: [pillar]
+    semantic: foundation
+
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-software-kanban"
+    version: "0.1.0"
+    contributes:
+      - artifact_types: [milestone, epic, task]
+      - contribution_workflow: software-implementation-contribution
+      - relationship_types: [delivers, fulfils, depends-on, realises, implements, yields, addresses]

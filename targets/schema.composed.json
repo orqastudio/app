@@ -7,9 +7,10 @@
   "artifactTypes": {
 
     "decision": {
-      "idPrefix": "AD",
-      "idPattern": "^AD-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/learning/decisions/",
+      "id_prefix": "AD",
+      "label": "Decision",
+      "id_pattern": "^AD-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/decisions/",
       "icon": "scale",
       "influence": "high",
       "stage": "learning",
@@ -51,9 +52,10 @@
     },
 
     "principle-decision": {
-      "idPrefix": "PD",
-      "idPattern": "^PD-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/learning/decisions/",
+      "id_prefix": "PD",
+      "label": "Principle Decision",
+      "id_pattern": "^PD-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/decisions/",
       "icon": "scale",
       "influence": "high",
       "stage": "learning",
@@ -94,9 +96,10 @@
     },
 
     "rule": {
-      "idPrefix": "RULE",
-      "idPattern": "^RULE-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/learning/rules/",
+      "id_prefix": "RULE",
+      "label": "Rule",
+      "id_pattern": "^RULE-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/rules/",
       "icon": "shield",
       "influence": "high",
       "stage": "learning",
@@ -143,9 +146,10 @@
     },
 
     "lesson": {
-      "idPrefix": "IMPL",
-      "idPattern": "^IMPL-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/learning/lessons/",
+      "id_prefix": "IMPL",
+      "label": "Lesson",
+      "id_pattern": "^IMPL-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/lessons/",
       "icon": "book-open",
       "stage": "learning",
       "deprecated": false,
@@ -187,9 +191,10 @@
     },
 
     "knowledge": {
-      "idPrefix": "KNOW",
-      "idPattern": "^KNOW-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/documentation/knowledge/",
+      "id_prefix": "KNOW",
+      "label": "Knowledge",
+      "id_pattern": "^KNOW-[a-f0-9]{8}$",
+      "default_path": ".orqa/documentation/knowledge/",
       "icon": "zap",
       "stage": "documentation",
       "deprecated": false,
@@ -227,13 +232,18 @@
         "review": ["review"],
         "completed": ["completed"],
         "terminal": ["surpassed", "archived"]
+      },
+      "tokenConstraints": {
+        "min": 500,
+        "max": 2000
       }
     },
 
     "doc": {
-      "idPrefix": "DOC",
-      "idPattern": "^DOC-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/documentation/",
+      "id_prefix": "DOC",
+      "label": "Doc",
+      "id_pattern": "^DOC-[a-f0-9]{8}$",
+      "default_path": ".orqa/documentation/",
       "icon": "file-text",
       "stage": "documentation",
       "deprecated": false,
@@ -272,9 +282,10 @@
     },
 
     "vision": {
-      "idPrefix": "VISION",
-      "idPattern": "^VISION-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/vision/",
+      "id_prefix": "VISION",
+      "label": "Vision",
+      "id_pattern": "^VISION-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/vision/",
       "icon": "eye",
       "influence": "high",
       "stage": "discovery",
@@ -314,9 +325,10 @@
     },
 
     "pillar": {
-      "idPrefix": "PILLAR",
-      "idPattern": "^PILLAR-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/pillars/",
+      "id_prefix": "PILLAR",
+      "label": "Pillar",
+      "id_pattern": "^PILLAR-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/pillars/",
       "icon": "columns-3",
       "influence": "high",
       "stage": "discovery",
@@ -357,9 +369,10 @@
     },
 
     "persona": {
-      "idPrefix": "PERSONA",
-      "idPattern": "^PERSONA-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/personas/",
+      "id_prefix": "PERSONA",
+      "label": "Persona",
+      "id_pattern": "^PERSONA-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/personas/",
       "icon": "users",
       "stage": "discovery",
       "deprecated": false,
@@ -398,9 +411,10 @@
     },
 
     "pivot": {
-      "idPrefix": "PIVOT",
-      "idPattern": "^PIVOT-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/pivots/",
+      "id_prefix": "PIVOT",
+      "label": "Pivot",
+      "id_pattern": "^PIVOT-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/pivots/",
       "icon": "refresh-cw",
       "stage": "discovery",
       "deprecated": false,
@@ -440,9 +454,10 @@
     },
 
     "discovery-idea": {
-      "idPrefix": "DISC-IDEA",
-      "idPattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/ideas/",
+      "id_prefix": "DISC-IDEA",
+      "label": "Discovery Idea",
+      "id_pattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/ideas/",
       "icon": "lightbulb",
       "stage": "discovery",
       "deprecated": false,
@@ -483,9 +498,10 @@
     },
 
     "discovery-research": {
-      "idPrefix": "DISC-RES",
-      "idPattern": "^(RES|DISC-RES)-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/research/",
+      "id_prefix": "DISC-RES",
+      "label": "Discovery Research",
+      "id_pattern": "^(RES|DISC-RES)-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/research/",
       "icon": "flask-conical",
       "stage": "discovery",
       "deprecated": false,
@@ -526,9 +542,10 @@
     },
 
     "discovery-decision": {
-      "idPrefix": "DISC-AD",
-      "idPattern": "^(AD|DISC-AD)-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/decisions/",
+      "id_prefix": "DISC-AD",
+      "label": "Discovery Decision",
+      "id_pattern": "^(AD|DISC-AD)-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/decisions/",
       "icon": "scale",
       "influence": "high",
       "stage": "discovery",
@@ -569,9 +586,10 @@
     },
 
     "planning-idea": {
-      "idPrefix": "PLAN-IDEA",
-      "idPattern": "^PLAN-IDEA-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/planning/ideas/",
+      "id_prefix": "PLAN-IDEA",
+      "label": "Planning Idea",
+      "id_pattern": "^PLAN-IDEA-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/ideas/",
       "icon": "lightbulb",
       "stage": "planning",
       "deprecated": false,
@@ -612,9 +630,10 @@
     },
 
     "planning-research": {
-      "idPrefix": "PLAN-RES",
-      "idPattern": "^PLAN-RES-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/planning/research/",
+      "id_prefix": "PLAN-RES",
+      "label": "Planning Research",
+      "id_pattern": "^PLAN-RES-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/research/",
       "icon": "flask-conical",
       "stage": "planning",
       "deprecated": false,
@@ -655,9 +674,10 @@
     },
 
     "planning-decision": {
-      "idPrefix": "PAD",
-      "idPattern": "^PAD-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/planning/decisions/",
+      "id_prefix": "PAD",
+      "label": "Planning Decision",
+      "id_pattern": "^PAD-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/decisions/",
       "icon": "scale",
       "influence": "high",
       "stage": "planning",
@@ -699,9 +719,10 @@
     },
 
     "wireframe": {
-      "idPrefix": "WIRE",
-      "idPattern": "^WIRE-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/discovery/wireframes/",
+      "id_prefix": "WIRE",
+      "label": "Wireframe",
+      "id_pattern": "^WIRE-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/wireframes/",
       "icon": "layout",
       "stage": "discovery",
       "deprecated": false,
@@ -741,9 +762,10 @@
     },
 
     "milestone": {
-      "idPrefix": "MS",
-      "idPattern": "^MS-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/implementation/milestones/",
+      "id_prefix": "MS",
+      "label": "Milestone",
+      "id_pattern": "^MS-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/milestones/",
       "icon": "flag",
       "stage": "implementation",
       "deprecated": false,
@@ -787,9 +809,10 @@
     },
 
     "epic": {
-      "idPrefix": "EPIC",
-      "idPattern": "^EPIC-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/implementation/epics/",
+      "id_prefix": "EPIC",
+      "label": "Epic",
+      "id_pattern": "^EPIC-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/epics/",
       "icon": "layers",
       "stage": "implementation",
       "deprecated": false,
@@ -831,9 +854,10 @@
     },
 
     "task": {
-      "idPrefix": "TASK",
-      "idPattern": "^TASK-[a-f0-9]{8}$",
-      "defaultPath": ".orqa/implementation/tasks/",
+      "id_prefix": "TASK",
+      "label": "Task",
+      "id_pattern": "^TASK-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/tasks/",
       "icon": "check-square",
       "stage": "implementation",
       "deprecated": false,

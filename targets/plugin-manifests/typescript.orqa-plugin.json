@@ -1,0 +1,26 @@
+{
+  "name": "@orqastudio/plugin-typescript",
+  "version": "0.1.4-dev",
+  "description": "TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions. Generates linting infrastructure from engine rules.",
+  "purpose": ["knowledge", "infrastructure"],
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": true,
+  "category": "coding-standards",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "tsc",
+        "description": "TypeScript type checking — config generated from engine enforcement rules",
+        "strength": 6
+      }
+    ]
+  }
+}

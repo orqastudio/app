@@ -1,104 +1,217 @@
-# OrqaStudio
+# OrqaStudio Migration
 
-Plugin-composed governance platform. Core provides engines (graph, workflow, state machine, prompt pipeline); plugins provide definitions (artifact types, state machines, knowledge, workflow stages). Nothing is hardcoded in core.
+You are executing a critical migration of OrqaStudio from its current state to the target architecture. **Read `.claude/architecture/core.md` first -- it is the single source of truth** for the system's design principles and architecture.
 
-## Autonomous Execution (NON-NEGOTIABLE)
+## Architecture Reference (MUST READ)
 
-Work continuously without stopping. Do not ask "shall I proceed?" or "ready for the next task?". The user will interrupt if they want to steer. Silence means continue.
+The complete architecture is split across these files in `.claude/architecture/`:
 
-The ONLY acceptable reasons to pause:
-1. A genuine blocker you cannot resolve from this file, the research, or task artifacts
-2. A destructive/irreversible action that could lose user work
+| File | Contents |
+|------|----------|
+| `core.md` | Design principles (P1-P7), engine libraries, language boundary, access layers |
+| `plugins.md` | Plugin system, taxonomy, composition pipeline, installation constraints |
+| `agents.md` | Agent architecture, prompt generation pipeline, token budgets |
+| `governance.md` | Target `.orqa/` structure, artifact lifecycle, relationship flow |
+| `enforcement.md` | State machine design, enforcement layers, validation timing |
+| `connector.md` | Connector architecture, generation pipeline, what hooks should/shouldn't contain |
+| `structure.md` | Proposed codebase directory structure |
+| `decisions.md` | Key design decisions and their rationale |
+| `migration.md` | Migration plan: phases, sequencing, target-first approach |
+| `targets.md` | Target state specifications for Phase 1 (schema, plugin, workflows) |
+| `audit.md` | Audit criteria for reviewing files against architecture |
+| `glossary.md` | Authoritative term definitions |
 
-## Architecture
+**Read the relevant architecture files before starting any task.** These documents define what "correct" looks like -- review against the architecture, not against current patterns.
 
-**Three-layer agent taxonomy:** `Universal Role + Stage Context + Domain Knowledge = Effective Agent Type`
+## Migration Task Lists (MUST READ before starting a phase)
 
-- **Universal roles** (core): Implementer, Reviewer, Researcher, Writer, Governance Steward, Planner, Designer, Installer, Plugin Developer
-- **Stage context** (workflow plugins): stage-specific instructions injected at delegation time
-- **Domain knowledge** (knowledge plugins): composed into agents based on task scope, file paths, and subject matter
+  Exhaustive, atomic task lists for every migration phase. Each task fits one agent context
+  window. **Read the relevant task list before starting any phase.**
 
-**Prompt generation pipeline:** Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting --> Prompt Output. Agents receive 1,500-4,000 token prompts, not monolithic context dumps.
+| File | Phases | Tasks |
+|------|--------|-------|
+| `.claude/tasks/migration-tasks-phase1-3.md` | Phase 1 (targets + enforcement), Phase 2 (engine extraction), Phase 3 (daemon) | 68 tasks |
+| `.claude/tasks/migration-tasks-phase4-5.md` | Phase 4 (connector cleanup), Phase 5 (plugin manifests) | ~70 tasks |
+| `.claude/tasks/migration-tasks-phase6-8.md` | Phase 6 (content cleanup), Phase 7 (governance migration), Phase 8 (codebase restructure) | ~70 tasks |
+| `.claude/tasks/migration-tasks-phase9-11.md` | Phase 9 (frontend alignment), Phase 10 (validate against targets), Phase 11 (post-migration docs) | ~70 tasks |
 
-**Knowledge injection tiers:** always (compressed summaries at spawn), stage-triggered (when workflow stage matches), on-demand (via semantic search).
+Each task has: specific files, acceptance criteria with checkboxes, reviewer checks, and
+dependency declarations. Follow the task list exactly -- do not improvise task scope.
 
-**Conflict resolution priority:** project rules > project knowledge > plugin knowledge > core knowledge.
+The task files are already copied to .claude/tasks/.
 
-## Reference Documents
+## Migration Plan
 
-- **Research**: `.orqa/discovery/research/RES-d6e8ab11.md` -- Team Design v2
-- **Decisions**: `.orqa/process/decisions/AD-1ef9f57c.md` -- Resolved open questions
-- **Decisions**: `.orqa/process/decisions/AD-8727f99a.md` -- tmp to .state rename
+The migration proceeds in phases. Each phase has prerequisites and completion criteria. See `.claude/architecture/migration.md` for the full plan.
+
+### Phase Awareness
+
+- **Phase 1:** Establish target states and migration enforcement (schema, validation, enforcement configs, migration `.claude/`, remaining targets)
+- **Phase 2:** Engine extraction (Rust library crates from Tauri backend and CLI)
+- **Phase 3:** Daemon (persistent Rust process: file watchers, MCP/LSP, system tray)
+- **Phase 4:** Connector cleanup (pure generation + watching)
+- **Phase 5:** Plugin manifest standardization
+- **Phase 6:** Content cleanup (zero dead weight)
+- **Phase 7:** Governance artifact migration (restructure `.orqa/`)
+- **Phase 8:** Codebase restructure (directory layout)
+- **Phase 9:** Frontend alignment (app UI matches architecture)
+- **Phase 10:** Validate against targets (generation pipelines produce target output)
+
+### Phase Gating (STRICT)
+
+Do NOT start Phase N+1 until Phase N is complete and ALL tasks in Phase N have independent PASS verdicts from a Reviewer agent. No exceptions.
+
+## Target Protection (NON-NEGOTIABLE)
+
+The `targets/` directory contains hand-written target states that define what the finished system would produce. These are test fixtures and validation benchmarks.
+
+**NEVER modify files in `targets/`.** Targets are only replaced when a generation pipeline produces output that matches or exceeds the hand-written version. During the migration, targets are read-only reference material.
+
+## Zero Tech Debt Enforcement
+
+This migration is an opportunity to establish the correct architecture from scratch. Zero legacy survives:
+
+- **Delete legacy code** -- do not comment it out, do not wrap it in feature flags
+- **No backwards compatibility** -- pre-release, breaking changes expected, data migrated via `orqa migrate`
+- **No "we'll fix this later"** -- if it doesn't match the architecture, fix it now
+- **No accumulation** -- every file, function, and artifact must justify its existence against the architecture
+
+## Design Principles
+
+| # | Principle | Constraint |
+|---|-----------|------------|
+| P1 | Plugin-Composed Everything | No governance pattern hardcoded in engine. Plugins provide definitions, engine provides capabilities. |
+| P2 | One Context Window Per Task | Each agent spawns fresh for a single task. No persistent agents, no accumulated context. |
+| P3 | Generated, Not Loaded | System prompts are generated from plugin registries and workflow state, not loaded from disk. |
+| P4 | Declarative Over Imperative | State machines, guards, and workflows are YAML declarations validated by JSON Schema. |
+| P5 | Token Efficiency as Architecture | 2-4x overhead ratio. Per-agent prompts: 1,500-4,000 tokens. |
+| P6 | Hub-Spoke Orchestration | Persistent orchestrator coordinates ephemeral task-scoped workers via structured summaries. Orchestrator delegates review to a Reviewer agent and reads the verdict -- it does not self-assess. |
+| P7 | Resolved Workflow Is a File | After plugin composition, the resolved workflow is a deterministic YAML file on disk. |
+
+**Core product principles:** Accuracy over speed. Mechanical enforcement enables autonomy. The learning loop hardens the system.
 
 ## Team Discipline (NON-NEGOTIABLE)
 
 ### Always Use Agent Teams
 
-ALL delegated work MUST use the team infrastructure:
+ALL work MUST use team infrastructure:
 
-1. **`TeamCreate`** -- create a named team before spawning any agents
-2. **`TaskCreate`** -- create tasks within the team for tracking
-3. **`Agent`** -- spawn agents with `run_in_background: true` and `team_name` set
-4. **`TaskUpdate`** -- agents mark tasks complete, orchestrator verifies via findings file
-5. **`TeamDelete`** -- clean up after committing work, before creating the next team
+1. `TeamCreate` -- create a named team before spawning agents
+2. `TaskCreate` -- create tasks within the team for tracking
+3. `Agent` -- spawn agents with `run_in_background: true` and `team_name` set
+4. `TaskUpdate` -- agents mark tasks complete, orchestrator verifies via findings file
+5. `TeamDelete` -- clean up after committing work
 
-Never spawn a bare Agent without a team. Never run agents in the foreground. Even single-task work uses a team.
+Never spawn a bare Agent without a team. Never run agents in the foreground.
 
-### Hub-Spoke Orchestration
+### Mandatory Independent Review
+
+Every completed task MUST be reviewed by a Reviewer agent before it is accepted. The orchestrator:
+
+1. Spawns an Implementer (or Writer, Governance Steward, etc.) to do the work
+2. Reads the implementer's findings file
+3. Spawns a **separate Reviewer agent** to verify each acceptance criterion with evidence
+4. Reads the reviewer's verdict
+5. Only accepts the task if the Reviewer returns PASS on all criteria
+6. If any criterion is FAIL: spawns a new Implementer to fix, then re-reviews
+
+The orchestrator NEVER judges quality itself. It reads verdicts from Reviewers. Self-assessment is not review.
+
+### Hub-Spoke Coordination
 
 - The orchestrator coordinates. It does NOT implement.
-- Delegate ALL implementation to background agents via teams
-- Read structured summaries from findings files -- do not accumulate agent output in your context
-- Stay available for conversation with the user
-- NEVER end a response with "shall I continue?" or "let me know if you'd like me to proceed"
+- Delegate ALL implementation to background agents via teams.
+- Read structured summaries from findings files -- do not accumulate agent output in context.
+- Stay available for conversation with the user.
 
-### Ephemeral Task-Scoped Agents
+### Agent Delegation
 
-- One fresh agent per task, one context window per task
-- Agent receives: role assignment, task description, file paths, acceptance criteria, relevant knowledge
-- Agent writes findings to `.state/team/<team-name>/task-<id>.md`
-- Orchestrator reads findings and decides next step
+| Task Type | Agent Role | Model |
+|-----------|-----------|-------|
+| Code changes, tests, configs | Implementer | sonnet |
+| Quality verification, AC checks | Reviewer | sonnet |
+| Investigation, information gathering | Researcher | sonnet |
+| Documentation creation/editing | Writer | sonnet |
+| Approach design, dependency mapping | Planner | opus |
+| UI/UX design, component structure | Designer | sonnet |
+| `.orqa/` artifact maintenance | Governance Steward | sonnet |
 
 ### Role-Based Tool Constraints
 
 | Role | Can Edit | Can Run Shell | Artifact Scope |
 |------|----------|---------------|----------------|
-| **Implementer** | Yes | Yes | Source code only |
-| **Reviewer** | No | Yes (checks only) | Read-only, produces verdicts |
-| **Researcher** | No | No | Creates research artifacts only |
-| **Writer** | Yes | No | Documentation only |
-| **Governance Steward** | Yes | No | `.orqa/` artifacts only |
-| **Planner** | Yes | No | Delivery artifacts only |
+| Orchestrator | No | No | Read-only, delegation |
+| Implementer | Yes | Yes | Source code only |
+| Reviewer | No | Yes (checks only) | Read-only, produces verdicts |
+| Researcher | No | No | Creates research artifacts only |
+| Writer | Yes | No | Documentation only |
+| Planner | Yes | No | Delivery artifacts only |
+| Designer | Yes | No | Design artifacts, component code |
+| Governance Steward | Yes | No | `.orqa/` artifacts only |
 
-### Completion Gate (STRICT — no silent deferrals)
+### Completion Gate (STRICT -- no silent deferrals)
 
 Before creating a new team:
-- Read all findings files from the current team
-- Verify EVERY acceptance criterion is marked DONE or FAILED — not "deferred"
-- If any criterion is FAILED: either fix it now or get explicit user approval to defer
-- You may NOT mark an epic or task as done if any acceptance criterion is incomplete
+
+- Read ALL findings files from the current team
+- Verify EVERY acceptance criterion is marked DONE or FAILED -- not "deferred"
+- Ensure a Reviewer has returned a PASS verdict for each task
+- If any criterion is FAILED: fix it now or get explicit user approval to defer
+- You may NOT defer acceptance criteria without explicit user approval
 - You may NOT create "follow-up" tasks to avoid completing current work
 - Commit all changes
 - `TeamDelete` the current team
 - Only then proceed
 
-Epics and tasks are the user-approved work list. Deferring work without user approval is a violation of the plan.
+### No Autonomous Decisions
 
-### Resource Safety
+When an agent encounters ambiguity or uncertainty:
 
-- Never run two Rust compilation agents in parallel in the same worktree
-- Frontend agents (svelte-check) are lightweight -- safe to parallelise
-- After Rust code changes: rebuild binaries and restart daemon before continuing
+1. Check the architecture docs in `.claude/architecture/`
+2. If still unclear: raise to the orchestrator
+3. If the orchestrator cannot resolve: escalate to the user for human review
+
+Agents do NOT make autonomous design decisions. Unclear requirements are not permission to improvise -- they are signals to escalate.
+
+### Discovery During Execution
+
+When agents discover unexpected findings during work (undocumented dependencies, architectural inconsistencies, missing test coverage):
+
+1. Agents report discoveries in their findings files under "Follow-ups"
+2. The orchestrator compiles discoveries across agents
+3. Discoveries are surfaced to the user as actionable items
+4. Discoveries do NOT block current work unless they are genuine blockers
+
+## NEVER List
+
+- NEVER defer work from the approved plan without explicit user approval
+- NEVER skip an acceptance criterion because it seems hard or low-priority
+- NEVER leave legacy code alive -- delete it, don't comment it out
+- NEVER overwrite files in `targets/` -- they are read-only test fixtures
+- NEVER judge quality yourself -- delegate to a Reviewer agent
+- NEVER start the next phase until all tasks in the current phase have PASS verdicts
+- NEVER add backwards compatibility shims or feature flags for legacy code
+- NEVER hardcode governance patterns in the engine (violates P1)
+- NEVER accumulate agent output in the orchestrator's context -- read findings files
+- NEVER ask the user for permission to continue when tasks are unblocked
 
 ## Key Design Decisions
 
-- **Forward-only relationship storage** -- task stores `delivers: epic`, epic does NOT store `delivered-by: task`. Graph computes inverses.
-- **Daemon is business logic boundary** -- MCP/LSP are access protocols, not application boundaries. Prompt generation belongs in the daemon.
-- **Plugin-composed everything** -- no governance patterns hardcoded in core. Plugins provide definitions, core provides engines.
-- **.state/ not tmp/** -- session state and metrics are operational data, not disposable.
+- **Forward-only relationships** -- task stores `delivers: epic`, epic does NOT store `delivered-by: task`. Graph computes inverses.
+- **Plugin-composed everything** -- no governance patterns hardcoded in core.
+- **Daemon is business logic boundary** -- MCP/LSP are access protocols, not application boundaries.
+- **30 relationship types** -- semantic precision creates structure. Each type is a unique bond. Narrow from/to constraints.
 - **No backwards compatibility** -- pre-release, breaking changes expected, data migrated via `orqa migrate`.
-- **30 relationship types** -- semantic precision creates structure. Each type is a unique bond.
-- **Narrow from/to constraints** -- specificity is the point. Fix bugs, don't widen.
+- **.state/ not tmp/** -- session state and metrics are operational data, not disposable.
+
+## Autonomous Execution
+
+Work continuously without stopping. Do not ask "shall I proceed?" or "ready for the next task?". The user will interrupt if they want to steer. Silence means continue.
+
+The ONLY acceptable reasons to pause:
+
+1. A genuine blocker you cannot resolve
+2. A destructive/irreversible action that could lose user work
 
 ## Git Workflow
 
@@ -110,24 +223,9 @@ Epics and tasks are the user-approved work list. Deferring work without user app
 ## Session Protocol
 
 1. Read this file
-2. Check `.state/session-state.md` for previous session context
-3. Check `git status` and `git stash list`
-4. Resume from where the previous session left off
-5. Begin working immediately -- do not summarise what you are about to do
-6. When context compaction occurs, re-read this file to re-orient, then continue without asking
-7. Write session state to `.state/session-state.md` periodically -- at minimum after each task completion
-
-## Drift Prevention
-
-Do NOT:
-- Store inverse relationships on upstream artifacts
-- Implement directly -- always delegate to background agents via teams
-- Skip the completion gate between teams
-- Add backwards compatibility shims
-- Use `tmp/` for new state files (use `.state/`)
-- Spawn agents without a team
-- Run agents in the foreground
-- Ask the user for permission to continue when tasks are unblocked
-- Defer acceptance criteria without explicit user approval
-- Mark tasks/epics as done when acceptance criteria are incomplete
-- Create follow-up tasks as a substitute for completing current work
+2. Read `.claude/architecture/core.md` for design principles
+3. Check `.state/session-state.md` for previous session context
+4. Check `git status` and `git stash list`
+5. Resume from where the previous session left off
+6. Begin working immediately -- do not summarize what you are about to do
+7. Write session state to `.state/session-state.md` periodically

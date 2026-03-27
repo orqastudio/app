@@ -1,0 +1,36 @@
+{
+  "name": "@orqastudio/plugin-rust",
+  "version": "0.1.4-dev",
+  "description": "Rust development knowledge and infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement. Generates linting infrastructure from engine rules.",
+  "purpose": ["knowledge", "infrastructure"],
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": true,
+  "category": "coding-standards",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": [
+      {
+        "key": "clippy",
+        "description": "Rust linter (clippy) — config generated from engine enforcement rules",
+        "strength": 6
+      },
+      {
+        "key": "rustfmt",
+        "description": "Rust formatter — config generated from engine enforcement rules",
+        "strength": 6
+      },
+      {
+        "key": "cargo-test",
+        "description": "Rust test runner",
+        "strength": 6
+      }
+    ]
+  }
+}

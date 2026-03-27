@@ -23,6 +23,23 @@ The complete architecture is split across these files in `.claude/architecture/`
 
 **Read the relevant architecture files before starting any task.** These documents define what "correct" looks like -- review against the architecture, not against current patterns.
 
+## Migration Task Lists (MUST READ before starting a phase)
+
+  Exhaustive, atomic task lists for every migration phase. Each task fits one agent context
+  window. **Read the relevant task list before starting any phase.**
+
+| File | Phases | Tasks |
+|------|--------|-------|
+| `.claude/tasks/migration-tasks-phase1-3.md` | Phase 1 (targets + enforcement), Phase 2 (engine extraction), Phase 3 (daemon) | 68 tasks |
+| `.claude/tasks/migration-tasks-phase4-5.md` | Phase 4 (connector cleanup), Phase 5 (plugin manifests) | ~70 tasks |
+| `.claude/tasks/migration-tasks-phase6-8.md` | Phase 6 (content cleanup), Phase 7 (governance migration), Phase 8 (codebase restructure) | ~70 tasks |
+| `.claude/tasks/migration-tasks-phase9-11.md` | Phase 9 (frontend alignment), Phase 10 (validate against targets), Phase 11 (post-migration docs) | ~70 tasks |
+
+Each task has: specific files, acceptance criteria with checkboxes, reviewer checks, and
+dependency declarations. Follow the task list exactly -- do not improvise task scope.
+
+The task files are already copied to .claude/tasks/.
+
 ## Migration Plan
 
 The migration proceeds in phases. Each phase has prerequisites and completion criteria. See `.claude/architecture/migration.md` for the full plan.
@@ -135,6 +152,7 @@ The orchestrator NEVER judges quality itself. It reads verdicts from Reviewers. 
 ### Completion Gate (STRICT -- no silent deferrals)
 
 Before creating a new team:
+
 - Read ALL findings files from the current team
 - Verify EVERY acceptance criterion is marked DONE or FAILED -- not "deferred"
 - Ensure a Reviewer has returned a PASS verdict for each task
@@ -191,6 +209,7 @@ When agents discover unexpected findings during work (undocumented dependencies,
 Work continuously without stopping. Do not ask "shall I proceed?" or "ready for the next task?". The user will interrupt if they want to steer. Silence means continue.
 
 The ONLY acceptable reasons to pause:
+
 1. A genuine blocker you cannot resolve
 2. A destructive/irreversible action that could lose user work
 

@@ -1,0 +1,20 @@
+{
+  "name": "@orqastudio/plugin-systems-thinking",
+  "version": "0.1.4-dev",
+  "description": "Systems thinking methodology — second-order effects analysis, diagnostic methodology, restructuring methodology. Teaches agents to trace consequences, find root causes, and refactor with awareness of the whole system.",
+  "purpose": ["knowledge"],
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": false,
+  "category": "thinking",
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": []
+  }
+}
