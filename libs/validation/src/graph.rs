@@ -195,6 +195,7 @@ pub(crate) fn build_valid_relationship_types(
 ///
 /// Invalid relationship types (not in core.json or plugins) are excluded from
 /// the graph and logged as warnings. They don't represent valid knowledge flow.
+#[allow(clippy::too_many_lines)]
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, ValidationError> {
     let orqa_dir = project_path.join(".orqa");
 
@@ -468,7 +469,7 @@ struct NodeBuildCtx<'a> {
     project_name: Option<&'a str>,
     valid_rel_types: &'a std::collections::HashSet<String>,
 }
-
+#[allow(clippy::too_many_lines)]
 fn build_node(
     id: String,
     rel_path: String,

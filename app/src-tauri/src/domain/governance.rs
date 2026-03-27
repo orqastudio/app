@@ -1,28 +1,10 @@
-use serde::{Deserialize, Serialize};
+// Governance scan domain types — re-exported from the orqa-engine crate.
+//
+// These types represent the result of scanning the filesystem for governance
+// files (rules, hooks, agents, etc.). Surfaced in the governance UI to show
+// coverage and health of the governance setup.
 
-/// Result of scanning the filesystem for governance files.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GovernanceScanResult {
-    pub areas: Vec<GovernanceArea>,
-    pub coverage_ratio: f64,
-}
-
-/// A governance area (rules, hooks, agents, etc.) found during scanning.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GovernanceArea {
-    pub name: String,
-    pub source: String,
-    pub files: Vec<GovernanceFile>,
-    pub covered: bool,
-}
-
-/// A single governance file found on disk.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct GovernanceFile {
-    pub path: String,
-    pub size_bytes: u64,
-    pub content_preview: String,
-}
+pub use orqa_engine::types::governance::*;
 
 #[cfg(test)]
 mod tests {

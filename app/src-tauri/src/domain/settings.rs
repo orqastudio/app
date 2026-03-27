@@ -1,53 +1,15 @@
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+// Settings domain types — re-exported from the orqa-engine crate.
+//
+// ResolvedTheme, ThemeToken, ThemeTokenSource, SidecarStatus, and SidecarState
+// support the design token extraction pipeline and track the lifecycle of the
+// LLM inference sidecar process.
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ResolvedTheme {
-    pub project_id: i64,
-    pub tokens: HashMap<String, ThemeToken>,
-    pub source_files: Vec<String>,
-    pub has_overrides: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ThemeToken {
-    pub name: String,
-    pub value_light: String,
-    pub value_dark: Option<String>,
-    pub source: ThemeTokenSource,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum ThemeTokenSource {
-    Extracted,
-    Override,
-    Default,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SidecarStatus {
-    pub state: SidecarState,
-    pub pid: Option<u32>,
-    pub uptime_seconds: Option<u64>,
-    pub cli_detected: bool,
-    pub cli_version: Option<String>,
-    pub error_message: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum SidecarState {
-    NotStarted,
-    Starting,
-    Connected,
-    Error,
-    Stopped,
-}
+pub use orqa_engine::types::settings::*;
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashMap;
 
     #[test]
     fn theme_token_source_serializes_snake_case() {

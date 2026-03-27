@@ -96,6 +96,7 @@ use crate::types::{HookContext, HookResult, HookViolation};
 ///
 /// Never panics. I/O errors (missing `.orqa/` directory, etc.) are treated as
 /// "no violations found" with action `"allow"`.
+#[allow(clippy::too_many_lines)]
 pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
     let Ok(graph) = build_artifact_graph(project_root) else {
         return allow();
@@ -276,6 +277,7 @@ fn check_file_entry(
 /// - `exists`     — field must be present (not null)
 /// - `not_exists` — field must be absent or null
 /// - `contains`   — field (as string) must contain `value` as substring
+#[allow(clippy::too_many_lines)]
 /// - `matches`    — field (as string) must match `value` as regex
 fn check_field_entry(
     ctx: &HookContext,
@@ -368,6 +370,7 @@ fn check_field_entry(
 /// Role filtering:
 /// - `allowed_roles`: only these roles are permitted — others get a violation.
 /// - `denied_roles`: these roles are blocked — others are permitted.
+#[allow(clippy::too_many_lines)]
 /// - Neither present: the entry applies to all roles.
 /// - `ctx.agent_type` of `None` is treated as `"unknown"`.
 fn check_tool_matcher_entry(

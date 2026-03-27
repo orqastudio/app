@@ -1,35 +1,13 @@
-use serde::{Deserialize, Serialize};
+// Status transition evaluation — ProposedTransition re-exported from orqa-engine.
+//
+// This module evaluates the artifact graph against status definitions loaded from
+// project settings and returns proposed status transitions. The ProposedTransition
+// type is defined in the engine; business logic lives here in the app.
 
 use crate::domain::artifact_graph::ArtifactGraph;
 use crate::domain::project_settings::StatusDefinition;
 
-// ---------------------------------------------------------------------------
-// Domain types
-// ---------------------------------------------------------------------------
-
-/// A status transition proposed by the evaluation engine.
-///
-/// Transitions are never applied directly — they are returned to the caller
-/// so that the frontend can present them to the user before any mutation
-/// occurs. `auto_apply` signals that the transition is unambiguous and may be
-/// applied programmatically without human confirmation.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProposedTransition {
-    /// Artifact identifier, e.g. `"EPIC-048"`.
-    pub artifact_id: String,
-    /// Relative path from the project root, e.g. `".orqa/delivery/epics/EPIC-048.md"`.
-    pub artifact_path: String,
-    /// Current `status` frontmatter value.
-    pub current_status: String,
-    /// Status value to transition to.
-    pub proposed_status: String,
-    /// Human-readable explanation of why this transition is proposed.
-    pub reason: String,
-    /// When `true` the transition is unambiguous and can be applied without
-    /// explicit human approval (e.g. a task becoming blocked because a
-    /// dependency is not yet complete).
-    pub auto_apply: bool,
-}
+pub use orqa_engine::types::workflow::ProposedTransition;
 
 // ---------------------------------------------------------------------------
 // Public API

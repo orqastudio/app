@@ -27,6 +27,7 @@ use crate::types::{ParsedArtifact, ValidationResult};
 ///
 /// Returns an error only on I/O or fatal parse failures. Schema validation
 /// errors are embedded in the returned [`ParsedArtifact::validation`] field.
+#[allow(clippy::too_many_lines)]
 pub fn parse_artifact(
     file_path: &Path,
     project_path: &Path,

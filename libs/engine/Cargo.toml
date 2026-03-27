@@ -1,0 +1,24 @@
+# Cargo manifest for the orqa-engine library crate.
+# This crate contains core domain type definitions shared across all engine access layers:
+# the app (Tauri), the daemon, the CLI, and connectors.
+[package]
+name = "orqa-engine"
+version = "0.1.4-dev"
+edition = "2021"
+description = "OrqaStudio engine — shared domain type definitions for all access layers"
+
+[lib]
+name = "orqa_engine"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+thiserror = "2"
+orqa-validation = { path = "../validation" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

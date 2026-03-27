@@ -1,6 +1,14 @@
+// Knowledge injector service — KnowledgeMatch re-exported from orqa-engine.
+//
+// Manages knowledge artifact embeddings and prompt-based matching. The
+// KnowledgeMatch type is defined in the engine; the KnowledgeInjector service
+// remains here until the search/prompt crates are extracted in later phases.
+
 use std::path::Path;
 
 use crate::search::embedder::{EmbedError, Embedder};
+
+pub use orqa_engine::types::knowledge::KnowledgeMatch;
 
 /// Pre-computed embedding of a knowledge artifact's description.
 struct KnowledgeEmbedding {
@@ -100,14 +108,6 @@ impl KnowledgeInjector {
     pub fn item_count(&self) -> usize {
         self.items.len()
     }
-}
-
-/// A matched knowledge artifact with its similarity score.
-#[derive(Debug, Clone)]
-pub struct KnowledgeMatch {
-    pub name: String,
-    pub description: String,
-    pub score: f32,
 }
 
 /// Compute cosine similarity between two vectors.

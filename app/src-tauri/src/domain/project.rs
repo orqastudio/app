@@ -1,49 +1,14 @@
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+// Project domain types — re-exported from the orqa-engine crate.
+//
+// Project, ProjectSummary, DetectedStack, and ScanResult represent projects
+// managed by OrqaStudio, including detected technology stacks and scan results.
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Project {
-    pub id: i64,
-    pub name: String,
-    pub path: String,
-    pub description: Option<String>,
-    pub detected_stack: Option<DetectedStack>,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProjectSummary {
-    pub id: i64,
-    pub name: String,
-    pub path: String,
-    pub detected_stack: Option<DetectedStack>,
-    pub session_count: i64,
-    pub artifact_count: i64,
-    pub updated_at: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DetectedStack {
-    pub languages: Vec<String>,
-    pub frameworks: Vec<String>,
-    pub package_manager: Option<String>,
-    pub has_claude_config: bool,
-    pub has_design_tokens: bool,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ScanResult {
-    pub project_id: i64,
-    pub detected_stack: DetectedStack,
-    pub artifact_counts: HashMap<String, i64>,
-    pub design_tokens_found: bool,
-    pub scan_duration_ms: u64,
-}
+pub use orqa_engine::types::project::*;
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashMap;
 
     #[test]
     fn project_roundtrip() {

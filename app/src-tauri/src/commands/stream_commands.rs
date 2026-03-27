@@ -1,3 +1,4 @@
+use crate::domain::process_state::ProcessStateExt;
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::stream_loop::run_stream_loop;
 use crate::domain::system_prompt::{

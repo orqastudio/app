@@ -129,6 +129,7 @@ pub fn run_daemon(project_root: &Path, port: u16) -> Result<(), Box<dyn std::err
 // Server loop
 // ---------------------------------------------------------------------------
 
+#[allow(clippy::too_many_lines)]
 fn serve(
     project_root: &Path,
     port: u16,

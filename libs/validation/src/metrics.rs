@@ -72,6 +72,7 @@ pub struct TraceabilityResult {
 /// query artifact (index 0) to the pillar/vision root (last index).
 ///
 /// Uses iterative DFS with a cycle guard to avoid infinite loops.
+#[allow(clippy::too_many_lines)]
 pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<AncestryChain> {
     let target_types: HashSet<&str> = ["pillar", "vision"].iter().copied().collect();
 
@@ -259,6 +260,7 @@ pub fn compute_traceability(graph: &ArtifactGraph, artifact_id: &str) -> Traceab
     }
 }
 
+#[allow(clippy::too_many_lines)]
 /// Compute graph health metrics for the artifact graph.
 pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     // Work only with primary nodes (exclude bare-ID aliases in org mode).
@@ -431,6 +433,7 @@ fn compute_components(
 }
 
 /// Compute what percentage of non-doc artifacts can trace a path to a pillar artifact.
+#[allow(clippy::too_many_lines)]
 ///
 /// Uses reverse BFS from all pillar nodes to find every node that can reach a pillar.
 fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {

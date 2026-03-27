@@ -1,61 +1,10 @@
-use serde::{Deserialize, Serialize};
+// Message domain types — re-exported from the orqa-engine crate.
+//
+// Message, MessageRole, ContentType, StreamStatus, MessageId, and SearchResult
+// represent chat messages within a session. These types flow from the database
+// through the Tauri IPC boundary to the frontend.
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Message {
-    pub id: i64,
-    pub session_id: i64,
-    pub role: MessageRole,
-    pub content_type: ContentType,
-    pub content: Option<String>,
-    pub tool_call_id: Option<String>,
-    pub tool_name: Option<String>,
-    pub tool_input: Option<String>,
-    pub tool_is_error: bool,
-    pub turn_index: i32,
-    pub block_index: i32,
-    pub stream_status: StreamStatus,
-    pub input_tokens: Option<i64>,
-    pub output_tokens: Option<i64>,
-    pub created_at: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum MessageRole {
-    User,
-    Assistant,
-    System,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum ContentType {
-    Text,
-    ToolUse,
-    ToolResult,
-    Thinking,
-    Image,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum StreamStatus {
-    Pending,
-    Complete,
-    Error,
-}
-
-pub type MessageId = i64;
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SearchResult {
-    pub message_id: i64,
-    pub session_id: i64,
-    pub session_title: Option<String>,
-    pub content: String,
-    pub highlighted: String,
-    pub rank: f64,
-}
+pub use orqa_engine::types::message::*;
 
 #[cfg(test)]
 mod tests {

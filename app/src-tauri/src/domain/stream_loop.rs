@@ -1,5 +1,6 @@
 use crate::domain::enforcement::Verdict;
 use crate::domain::process_gates::{evaluate_stop_verdicts, evaluate_write_verdicts};
+use crate::domain::process_state::ProcessStateExt;
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::tool_executor::{execute_tool, truncate_tool_output, READ_ONLY_TOOLS};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};

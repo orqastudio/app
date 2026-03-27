@@ -1,20 +1,14 @@
+// Process gate evaluation — GateResult re-exported from orqa-engine.
+//
+// Evaluates process gates against current session workflow state and returns
+// gate results. The GateResult type is defined in the engine; evaluation logic
+// lives here in the app.
+
 use crate::domain::enforcement::RuleAction;
 use crate::domain::enforcement::Verdict;
 use crate::domain::workflow_tracker::WorkflowTracker;
 
-/// The result of a single process gate evaluation.
-///
-/// When `fired` is `true`, `message` contains a thinking prompt to inject into
-/// the agent's context to guide it back toward correct process.
-#[derive(Debug, Clone)]
-pub struct GateResult {
-    /// Machine-readable gate identifier (e.g. `"understand-first"`).
-    pub gate_name: String,
-    /// Thinking prompt to inject into the agent context when the gate fires.
-    pub message: String,
-    /// Whether this gate fired (condition was met and action should be taken).
-    pub fired: bool,
-}
+pub use orqa_engine::types::workflow::GateResult;
 
 /// Returns true if the given file path should be treated as a code file.
 ///

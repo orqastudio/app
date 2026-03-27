@@ -1,5 +1,6 @@
 [workspace]
 members = [
+    "libs/engine",
     "libs/validation",
     "libs/search",
     "libs/mcp-server",

@@ -347,6 +347,7 @@ fn apply_missing_status_fix(
 /// Fix duplicate relationships by deduplicating entries with the same target + type.
 ///
 /// Keeps the first occurrence of each (target, type) pair and removes subsequent duplicates.
+#[allow(clippy::too_many_lines)]
 fn apply_duplicate_relationship_fix(
     graph: &ArtifactGraph,
     check: &IntegrityCheck,

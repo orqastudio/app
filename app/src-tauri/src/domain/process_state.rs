@@ -1,42 +1,27 @@
-use serde::{Deserialize, Serialize};
+// Process state domain types — re-exported from orqa-engine; logic lives here.
+//
+// ProcessViolation and SessionProcessState are defined in the engine crate.
+// Business logic methods (reset, track_tool_call, check_violations) are exposed
+// via the ProcessStateExt trait defined here. All callers use this trait.
 
-/// A process compliance violation detected during a session.
-///
-/// Violations are emitted as `StreamEvent::ProcessViolation` after each turn completes,
-/// so the frontend can surface them to the user without blocking execution.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProcessViolation {
-    /// Machine-readable check identifier (e.g. `"docs_before_code"`).
-    pub check: String,
-    /// Human-readable description of the violation.
-    pub message: String,
-    /// Severity level: `"warn"` or `"block"`.
-    pub severity: String,
-}
+pub use orqa_engine::types::workflow::{ProcessViolation, SessionProcessState};
 
-/// Tracks process compliance state across a single session.
+/// Extension trait providing business logic for SessionProcessState.
 ///
-/// Resets when a new session begins (i.e. `stream_send_message` is called with
-/// a different `session_id` than the previous call).
-///
-/// Currently enforces two documentation-first checks:
-/// - `docs_before_code`: documentation must be read before code is written
-/// - `knowledge_before_code`: knowledge must be loaded before code is written
-#[derive(Debug, Default)]
-pub struct SessionProcessState {
-    /// The session this state belongs to. `None` before any message is sent.
-    pub session_id: Option<i64>,
-    /// Set when any `read_file` call targets a path inside `docs/` or `.orqa/rules/`.
-    pub docs_read: bool,
-    /// Set when any `load_knowledge` tool call is made.
-    pub knowledge_loaded: bool,
-    /// Set when any `write_file` or `edit_file` call targets a `.rs`, `.ts`, or `.svelte` file.
-    pub code_written: bool,
-}
-
-impl SessionProcessState {
+/// Because SessionProcessState is defined in the engine crate, methods cannot
+/// be added via inherent impl. This trait provides the same interface.
+pub trait ProcessStateExt {
     /// Reset state for a new session.
-    pub fn reset(&mut self, session_id: i64) {
+    fn reset(&mut self, session_id: i64);
+    /// Update state based on a completed tool call.
+    fn track_tool_call(&mut self, tool_name: &str, input: &serde_json::Value);
+    /// Check for process compliance violations given current state.
+    fn check_violations(&self) -> Vec<ProcessViolation>;
+}
+
+impl ProcessStateExt for SessionProcessState {
+    /// Reset state for a new session, clearing all flags.
+    fn reset(&mut self, session_id: i64) {
         self.session_id = Some(session_id);
         self.docs_read = false;
         self.knowledge_loaded = false;
@@ -47,7 +32,7 @@ impl SessionProcessState {
     ///
     /// `tool_name` is the name of the tool that was called.
     /// `input` is the parsed JSON input passed to the tool.
-    pub fn track_tool_call(&mut self, tool_name: &str, input: &serde_json::Value) {
+    fn track_tool_call(&mut self, tool_name: &str, input: &serde_json::Value) {
         match tool_name {
             "read_file" => {
                 if let Some(path) = input["path"].as_str() {
@@ -80,7 +65,7 @@ impl SessionProcessState {
     ///
     /// Returns a list of violations that apply given the current state.
     /// An empty list means no violations were detected.
-    pub fn check_violations(&self) -> Vec<ProcessViolation> {
+    fn check_violations(&self) -> Vec<ProcessViolation> {
         let mut violations = Vec::new();
 
         if self.code_written && !self.docs_read {

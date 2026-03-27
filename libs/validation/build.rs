@@ -13,6 +13,11 @@
 //!
 //! The generated files will be updated in-place under `src/generated/`.
 
+// Build scripts are compiled outside the workspace lint configuration.
+// The code-generation functions below are intentionally long — suppressing
+// this lint at file scope rather than on each function.
+#![allow(clippy::too_many_lines)]
+
 use std::fmt::Write as FmtWrite;
 use std::fs;
 use std::path::Path;
@@ -199,6 +204,7 @@ fn classify_and_generate(
     None
 }
 
+#[allow(clippy::too_many_lines)]
 fn generate_struct(
     name: &str,
     def: &serde_json::Value,
@@ -372,6 +378,7 @@ fn generate_untagged_enum(
     out
 }
 
+#[allow(clippy::too_many_lines)]
 fn json_type_to_rust(
     field_def: &serde_json::Value,
     defined_types: &std::collections::HashSet<String>,

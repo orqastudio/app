@@ -321,6 +321,7 @@ fn run_query(args: &[String]) {
 // Hook subcommand
 // ---------------------------------------------------------------------------
 
+#[allow(clippy::too_many_lines)]
 fn run_hook(args: &[String]) {
     // orqa-validation hook <project-path> --event <event> --context '<json>'
     if args.len() < 3 {

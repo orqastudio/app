@@ -250,6 +250,7 @@ pub fn extract_behavioral_messages(
 /// - `planning`: Plans, documentation, architecture decisions, structure
 /// - `quality`: Review, testing, search, components, linting
 /// - `general`: Anything that doesn't match a specific category
+#[allow(clippy::too_many_lines)]
 fn categorize_rule(title: &str) -> &'static str {
     let lower = title.to_lowercase();
 

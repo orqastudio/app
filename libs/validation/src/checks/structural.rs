@@ -165,6 +165,7 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 /// `discovery-decision` when a stage-scoped type accepts legacy IDs via its
 /// JSON Schema pattern). The check also tries multi-segment prefixes
 /// (e.g., `DISC-AD`) with longest-match-wins semantics.
+#[allow(clippy::too_many_lines)]
 pub fn check_type_prefix_mismatch(
     graph: &ArtifactGraph,
     artifact_types: &[ArtifactTypeDef],

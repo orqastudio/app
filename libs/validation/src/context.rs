@@ -94,6 +94,7 @@ pub fn build_validation_context_complete(
     }
 }
 
+#[allow(clippy::too_many_lines)]
 fn collect_platform_and_plugin_relationships(
     plugin_relationships: &[RelationshipSchema],
 ) -> (Vec<RelationshipSchema>, HashMap<String, String>) {

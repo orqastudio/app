@@ -61,6 +61,19 @@ impl From<serde_json::Error> for OrqaError {
     }
 }
 
+/// Convert an engine-level error into an app-level error.
+///
+/// EngineError wraps the same underlying I/O and serialization errors that
+/// OrqaError already handles, so we forward to the matching variant.
+impl From<orqa_engine::error::EngineError> for OrqaError {
+    fn from(err: orqa_engine::error::EngineError) -> Self {
+        match err {
+            orqa_engine::error::EngineError::FileSystem(e) => Self::FileSystem(e.to_string()),
+            orqa_engine::error::EngineError::Serialization(e) => Self::Serialization(e.to_string()),
+        }
+    }
+}
+
 impl From<rusqlite::Error> for OrqaError {
     fn from(err: rusqlite::Error) -> Self {
         Self::Database(err.to_string())

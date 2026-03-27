@@ -228,6 +228,7 @@ pub struct PluginContributions {
 ///
 /// Malformed or unreadable manifests are silently skipped (a `tracing::warn` is
 /// emitted so the caller can diagnose issues without crashing).
+#[allow(clippy::too_many_lines)]
 pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
     let mut contributions = PluginContributions::default();
 
