@@ -1,174 +1,24 @@
+// Stream loop for the orqa-studio Tauri app.
+//
+// Drives the sidecar read loop and dispatches responses to the frontend via
+// Tauri's Channel<T>. Pure streaming logic (response translation, terminal
+// detection, accumulation) lives in orqa_engine::streaming::stream_loop and
+// is re-used here. All Tauri-specific code (AppState access, Channel<T>,
+// session persistence, workflow tracking) is in this file.
+
 use crate::domain::enforcement::Verdict;
 use crate::domain::process_gates::{evaluate_stop_verdicts, evaluate_write_verdicts};
 use crate::domain::process_state::ProcessStateExt;
 use crate::domain::provider_event::StreamEvent;
-use crate::domain::tool_executor::{execute_tool, truncate_tool_output, READ_ONLY_TOOLS};
+use crate::domain::tool_executor::{execute_tool, READ_ONLY_TOOLS};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
 use crate::state::AppState;
 
+pub use orqa_engine::streaming::stream_loop::StreamAccumulator;
+use orqa_engine::streaming::stream_loop::{accumulate_response, is_terminal, translate_response};
+use orqa_engine::streaming::tools::truncate_tool_output;
+
 use std::sync::mpsc;
-
-/// Translate a context-overflow error code into a user-friendly message.
-///
-/// Returns `Some(friendly_message)` when the code indicates a context/token
-/// limit error that should be surfaced with a clear explanation.
-pub fn friendly_context_overflow_message(code: &str, message: &str) -> Option<String> {
-    let lower_code = code.to_lowercase();
-    let lower_msg = message.to_lowercase();
-    let is_overflow = lower_code.contains("context")
-        || lower_code.contains("token")
-        || lower_msg.contains("context window")
-        || lower_msg.contains("token limit")
-        || lower_msg.contains("too long")
-        || lower_msg.contains("max_tokens");
-    if is_overflow {
-        Some(
-            "The conversation has exceeded the model's context window. \
-             Start a new session to continue, or summarize earlier context before proceeding."
-                .to_string(),
-        )
-    } else {
-        None
-    }
-}
-
-/// Translate a `SidecarResponse` into a `StreamEvent`, if applicable.
-///
-/// Returns `None` for sidecar-specific responses (HealthOk, SummaryResult)
-/// that are not part of the streaming conversation flow.
-pub fn translate_response(response: &SidecarResponse) -> Option<StreamEvent> {
-    match response {
-        SidecarResponse::StreamStart { .. }
-        | SidecarResponse::TextDelta { .. }
-        | SidecarResponse::ThinkingDelta { .. }
-        | SidecarResponse::ToolUseStart { .. }
-        | SidecarResponse::ToolInputDelta { .. }
-        | SidecarResponse::ToolResult { .. }
-        | SidecarResponse::BlockComplete { .. }
-        | SidecarResponse::TurnComplete { .. } => translate_streaming_data(response),
-        SidecarResponse::StreamError {
-            code,
-            message,
-            recoverable,
-        } => Some(translate_stream_error(code, message, *recoverable)),
-        SidecarResponse::StreamCancelled => Some(StreamEvent::StreamCancelled),
-        SidecarResponse::ToolApprovalRequest {
-            tool_call_id,
-            tool_name,
-            input,
-        } => Some(StreamEvent::ToolApprovalRequest {
-            tool_call_id: tool_call_id.clone(),
-            tool_name: tool_name.clone(),
-            input: input.clone(),
-        }),
-        // Non-streaming responses and synchronous tool execution — not forwarded to frontend
-        SidecarResponse::HealthOk { .. }
-        | SidecarResponse::SummaryResult { .. }
-        | SidecarResponse::SessionInitialized { .. }
-        | SidecarResponse::ToolExecute { .. } => None,
-    }
-}
-
-/// Translate content and lifecycle streaming variants to `StreamEvent`.
-fn translate_content_events(response: &SidecarResponse) -> Option<StreamEvent> {
-    match response {
-        SidecarResponse::StreamStart {
-            message_id,
-            resolved_model,
-        } => Some(StreamEvent::StreamStart {
-            message_id: *message_id,
-            resolved_model: resolved_model.clone(),
-        }),
-        SidecarResponse::TextDelta { content } => Some(StreamEvent::TextDelta {
-            content: content.clone(),
-        }),
-        SidecarResponse::ThinkingDelta { content } => Some(StreamEvent::ThinkingDelta {
-            content: content.clone(),
-        }),
-        SidecarResponse::BlockComplete {
-            block_index,
-            content_type,
-        } => Some(StreamEvent::BlockComplete {
-            block_index: *block_index,
-            content_type: content_type.clone(),
-        }),
-        SidecarResponse::TurnComplete {
-            input_tokens,
-            output_tokens,
-        } => Some(StreamEvent::TurnComplete {
-            input_tokens: *input_tokens,
-            output_tokens: *output_tokens,
-        }),
-        _ => None,
-    }
-}
-
-/// Translate tool-related streaming variants to `StreamEvent`.
-fn translate_tool_events(response: &SidecarResponse) -> Option<StreamEvent> {
-    match response {
-        SidecarResponse::ToolUseStart {
-            tool_call_id,
-            tool_name,
-        } => Some(StreamEvent::ToolUseStart {
-            tool_call_id: tool_call_id.clone(),
-            tool_name: tool_name.clone(),
-        }),
-        SidecarResponse::ToolInputDelta {
-            tool_call_id,
-            content,
-        } => Some(StreamEvent::ToolInputDelta {
-            tool_call_id: tool_call_id.clone(),
-            content: content.clone(),
-        }),
-        SidecarResponse::ToolResult {
-            tool_call_id,
-            tool_name,
-            result,
-            is_error,
-        } => Some(StreamEvent::ToolResult {
-            tool_call_id: tool_call_id.clone(),
-            tool_name: tool_name.clone(),
-            result: result.clone(),
-            is_error: *is_error,
-        }),
-        _ => None,
-    }
-}
-
-/// Translate streaming data variants that map 1:1 from `SidecarResponse` to `StreamEvent`.
-fn translate_streaming_data(response: &SidecarResponse) -> Option<StreamEvent> {
-    translate_content_events(response).or_else(|| translate_tool_events(response))
-}
-
-/// Translate a stream error, replacing context-overflow messages with user-friendly text.
-fn translate_stream_error(code: &str, message: &str, recoverable: bool) -> StreamEvent {
-    let user_message =
-        friendly_context_overflow_message(code, message).unwrap_or_else(|| message.to_string());
-    StreamEvent::StreamError {
-        code: code.to_string(),
-        message: user_message,
-        recoverable,
-    }
-}
-
-/// Returns true if this response is a terminal event (stream complete, error, or cancelled).
-pub fn is_terminal(response: &SidecarResponse) -> bool {
-    matches!(
-        response,
-        SidecarResponse::TurnComplete { .. }
-            | SidecarResponse::StreamError { .. }
-            | SidecarResponse::StreamCancelled
-    )
-}
-
-/// Accumulated state from the sidecar read loop.
-pub struct StreamAccumulator {
-    pub text: String,
-    pub input_tokens: i64,
-    pub output_tokens: i64,
-    pub stream_complete: bool,
-    pub had_error: bool,
-}
 
 /// Handle a `ToolExecute` response: execute the tool and send the result back to the sidecar.
 ///
@@ -432,37 +282,12 @@ pub fn run_stream_loop(
     acc
 }
 
-/// Update the accumulator with data from a streaming response.
-pub fn accumulate_response(response: &SidecarResponse, acc: &mut StreamAccumulator) {
-    if let SidecarResponse::TextDelta { ref content } = response {
-        acc.text.push_str(content);
-    }
-    if let SidecarResponse::TurnComplete {
-        input_tokens,
-        output_tokens,
-    } = response
-    {
-        acc.input_tokens = *input_tokens;
-        acc.output_tokens = *output_tokens;
-        acc.stream_complete = true;
-    }
-    if matches!(
-        response,
-        SidecarResponse::StreamError { .. } | SidecarResponse::StreamCancelled
-    ) {
-        acc.had_error = true;
-    }
-}
-
 /// Evaluate both the enforcement engine and process gates for a file write event,
 /// returning merged verdicts from both systems.
 ///
-/// This is the unified evaluation pipeline for write/edit tool calls. It calls:
-/// 1. Process gates (workflow state conditions) → fired gates as `Verdict`s
-/// 2. Enforcement engine (rule pattern matching) → `Verdict`s from matched rules
-///
-/// Results are merged into a single `Vec<Verdict>`. Gate verdicts come first so
-/// they appear at the top of any injected context.
+/// This is the unified evaluation pipeline for write/edit tool calls. Gate verdicts
+/// come first so they appear at the top of any injected context. Process gates check
+/// workflow state conditions; the enforcement engine checks rule pattern matching.
 fn evaluate_unified_write(
     tracker: &mut crate::domain::workflow_tracker::WorkflowTracker,
     file_path: &str,
@@ -489,8 +314,7 @@ fn evaluate_unified_write(
 /// returning merged verdicts from both systems.
 ///
 /// Process gates check workflow state at turn end (evidence-before-done,
-/// learn-after-doing). The enforcement engine has no stop-event entries currently,
-/// but this unified path ensures both systems share the same output channel.
+/// learn-after-doing). This unified path ensures both systems share the same output channel.
 fn evaluate_unified_stop(
     tracker: &crate::domain::workflow_tracker::WorkflowTracker,
 ) -> Vec<Verdict> {
@@ -860,8 +684,6 @@ mod tests {
 
     #[test]
     fn translate_tool_approval_request_returns_event() {
-        // ToolApprovalRequest is forwarded to the frontend as a StreamEvent so
-        // the UI can display the approval dialog for write/execute tools.
         let resp = SidecarResponse::ToolApprovalRequest {
             tool_call_id: "call_011".to_string(),
             tool_name: "write_file".to_string(),

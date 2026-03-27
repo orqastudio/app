@@ -37,6 +37,7 @@ pub mod plugin;
 pub mod project;
 pub mod prompt;
 pub mod search;
+pub mod streaming;
 pub mod traits;
 pub mod types;
 pub mod utils;
