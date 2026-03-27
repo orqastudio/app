@@ -1,7 +1,7 @@
 //! Artifact graph — scanning, building, and querying `.orqa/` artifacts.
 //!
 //! This module re-exports the canonical graph types and construction logic from
-//! `orqa-validation`, ensuring that the MCP server and the app use the same
+//! `orqa-engine`, ensuring that the MCP server and the app use the same
 //! implementation for graph health, statistics, and integrity checks.
 
 use std::path::Path;
@@ -9,16 +9,17 @@ use std::path::Path;
 use crate::error::McpError;
 
 // ---------------------------------------------------------------------------
-// Re-export graph types from orqa-validation
+// Re-export graph types from orqa-engine
 // ---------------------------------------------------------------------------
 
-pub use orqa_validation::{ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth, GraphStats};
+pub use orqa_engine::graph::{ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats};
+pub use orqa_engine::metrics::GraphHealth;
 
 // ---------------------------------------------------------------------------
-// Re-export integrity types from orqa-validation
+// Re-export integrity types from orqa-engine
 // ---------------------------------------------------------------------------
 
-pub use orqa_validation::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+pub use orqa_engine::validation::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
 
 // ---------------------------------------------------------------------------
 // Graph construction
@@ -26,13 +27,13 @@ pub use orqa_validation::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
 
 /// Build an `ArtifactGraph` by scanning all `.md` files under the project's `.orqa/` directory.
 ///
-/// Delegates to `orqa_validation::build_artifact_graph`, which:
+/// Delegates to `orqa_engine::graph::build_artifact_graph`, which:
 /// - Applies the same two-pass algorithm (forward refs → backlinks)
 /// - Filters invalid relationship types against core.json + plugin manifests
 /// - Handles organisation mode (multi-project scanning with qualified IDs)
 /// - Uses the correct body-ref regex that matches both numeric and hex-suffix IDs
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpError> {
-    orqa_validation::build_artifact_graph(project_path)
+    orqa_engine::graph::build_artifact_graph(project_path)
         .map_err(|e| McpError::FileSystem(e.to_string()))
 }
 
@@ -42,23 +43,23 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, McpErr
 
 /// Compute summary statistics for the graph.
 ///
-/// Delegates to `orqa_validation::graph_stats`.
+/// Delegates to `orqa_engine::graph::graph_stats`.
 pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
-    orqa_validation::graph_stats(graph)
+    orqa_engine::graph::graph_stats(graph)
 }
 
 // ---------------------------------------------------------------------------
 // Health metrics
 // ---------------------------------------------------------------------------
 
-/// Compute graph health metrics using the `orqa-validation` library.
+/// Compute graph health metrics using the engine library.
 ///
 /// Returns connected-component count, orphan rate, average degree, graph
 /// density, largest-component ratio, pillar traceability, and
 /// bidirectionality ratio — all computed from the same canonical algorithm
 /// used by the Tauri app backend.
-pub fn compute_health(graph: &ArtifactGraph) -> orqa_validation::GraphHealth {
-    orqa_validation::compute_health(graph)
+pub fn compute_health(graph: &ArtifactGraph) -> orqa_engine::metrics::GraphHealth {
+    orqa_engine::graph::compute_health(graph)
 }
 
 // ---------------------------------------------------------------------------

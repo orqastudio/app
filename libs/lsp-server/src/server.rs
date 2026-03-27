@@ -33,7 +33,7 @@ use tower_lsp::{Client, LanguageServer, LspService, Server};
 
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
 
-use orqa_validation::platform::{scan_plugin_manifests, ArtifactTypeDef};
+use orqa_engine::validation::platform::{scan_plugin_manifests, ArtifactTypeDef};
 
 use crate::validation::validate_file;
 

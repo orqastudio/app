@@ -15,8 +15,15 @@ import {
 	parseFrontmatterFromContent,
 	writeFrontmatter,
 } from "../lib/frontmatter.js";
-import { estimateTokens } from "../lib/prompt-pipeline.js";
 import { getRoot } from "../lib/root.js";
+
+/**
+ * Estimate token count for a string using a simple character-based heuristic.
+ * Approximation: ~4 characters per token, consistent with GPT/Claude tokenizers.
+ */
+function estimateTokens(text: string): number {
+	return Math.ceil(text.length / 4);
+}
 
 const USAGE = `
 Usage: orqa summarize <path|--all|--check> [options]

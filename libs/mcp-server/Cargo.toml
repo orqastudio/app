@@ -13,8 +13,7 @@ name = "orqa-mcp-server"
 path = "src/bin/server.rs"
 
 [dependencies]
-orqa-search = { path = "../search" }
-orqa-validation = { path = "../validation" }
+orqa-engine = { path = "../engine" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 serde_yaml = "0.9"

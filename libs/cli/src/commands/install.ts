@@ -16,10 +16,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
 import { getRoot } from "../lib/root.js";
-import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
-import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
-import { runAgentFileGeneration } from "../lib/agent-file-generator.js";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -348,19 +345,6 @@ function cmdBuildAll(root: string): void {
 		run("npm run build", appDir);
 	}
 
-	// Generate injector config from plugin manifests.
-	try {
-		const config = generateInjectorConfig(root);
-		const pluginCount = Object.keys(config.mode_templates).length
-			+ (config.behavioral_rules ? 1 : 0)
-			+ (config.session_reminders ? 1 : 0);
-		if (pluginCount > 0) {
-			console.log("  ✓ injector config generated");
-		}
-	} catch {
-		// Non-fatal — prompt-injector will fall back to live scanning.
-	}
-
 	console.log("  ✓ all libraries built");
 }
 
@@ -450,21 +434,6 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
 		console.error(`  Workflow resolution failed: ${e instanceof Error ? e.message : String(e)}`);
 	}
 
-	// Build prompt registry from plugin knowledge declarations
-	console.log("Building prompt registry...");
-	try {
-		runPromptRegistryBuild(root);
-	} catch (e) {
-		console.error(`  Prompt registry build failed: ${e instanceof Error ? e.message : String(e)}`);
-	}
-
-	// Generate .claude/agents/*.md files from the prompt pipeline
-	console.log("Generating agent files...");
-	try {
-		runAgentFileGeneration(root);
-	} catch (e) {
-		console.error(`  Agent file generation failed: ${e instanceof Error ? e.message : String(e)}`);
-	}
 }
 
 // ── Smoke Test ──────────────────────────────────────────────────────────────

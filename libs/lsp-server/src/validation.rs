@@ -1,7 +1,7 @@
 //! LSP adapter for OrqaStudio file validation.
 //!
 //! This module is a **thin protocol adapter**. All validation logic lives in
-//! `orqa_validation::checks::file_level` (the shared engine). This module:
+//! the shared engine (`orqa_engine::validation::checks::file_level`). This module:
 //!
 //! 1. Calls the shared engine's `validate_file` to get `FileFinding` values.
 //! 2. Converts each `FileFinding` to an LSP `Diagnostic`.
@@ -12,10 +12,9 @@
 
 use std::path::Path;
 
-use orqa_validation::checks::file_level::{self, FileFinding, FileSeverity};
-use orqa_validation::graph::ArtifactGraph;
-use orqa_validation::platform::ArtifactTypeDef;
-use orqa_validation::types::{IntegrityCategory, IntegritySeverity};
+use orqa_engine::validation::checks::file_level::{self, FileFinding, FileSeverity};
+use orqa_engine::graph::ArtifactGraph;
+use orqa_engine::validation::{ArtifactTypeDef, IntegrityCategory, IntegritySeverity};
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
 
 // ---------------------------------------------------------------------------
@@ -83,19 +82,19 @@ pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> 
         return Vec::new();
     };
 
-    let Ok(graph) = orqa_validation::build_artifact_graph(project_root) else {
+    let Ok(graph) = orqa_engine::graph::build_artifact_graph(project_root) else {
         return Vec::new();
     };
 
-    let plugin_contributions = orqa_validation::platform::scan_plugin_manifests(project_root);
-    let ctx = orqa_validation::build_validation_context(
+    let plugin_contributions = orqa_engine::validation::scan_plugin_manifests(project_root);
+    let ctx = orqa_engine::validation::build_validation_context(
         &[],
-        &orqa_validation::settings::DeliveryConfig::default(),
+        &orqa_engine::validation::DeliveryConfig::default(),
         &[],
         &plugin_contributions.relationships,
     );
 
-    let checks = orqa_validation::validate(&graph, &ctx);
+    let checks = orqa_engine::graph::validate(&graph, &ctx);
 
     checks
         .into_iter()
@@ -109,7 +108,7 @@ pub fn validate_graph_checks(project_root: &Path, artifact_id: Option<&str>) -> 
 /// Graph-level findings are not tied to a specific line — they are anchored to
 /// the opening frontmatter delimiter (line 0, column 0–3) so the editor shows
 /// them at the top of the file.
-fn integrity_check_to_diagnostic(check: orqa_validation::types::IntegrityCheck) -> Diagnostic {
+fn integrity_check_to_diagnostic(check: orqa_engine::validation::types::IntegrityCheck) -> Diagnostic {
     let severity = match check.severity {
         IntegritySeverity::Error => DiagnosticSeverity::ERROR,
         IntegritySeverity::Warning => DiagnosticSeverity::WARNING,

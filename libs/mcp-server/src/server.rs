@@ -3,7 +3,7 @@
 use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 
-use orqa_search::SearchEngine;
+use orqa_engine::search::SearchEngine;
 use serde_json::{json, Value};
 use tracing::{debug, warn};
 

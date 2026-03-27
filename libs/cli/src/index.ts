@@ -41,26 +41,6 @@ export {
 export { auditLicenses, DEFAULT_LICENSE_POLICY, type LicenseAuditResult, type LicensePolicy } from "./lib/license.js";
 export { auditReadmes, generateReadmeTemplate, type ReadmeAuditResult } from "./lib/readme.js";
 
-// Prompt pipeline
-export {
-	generatePrompt,
-	estimateTokens,
-	DEFAULT_TOKEN_BUDGETS,
-	type PromptPipelineOptions,
-	type PromptResult,
-	type ResolvedSection,
-} from "./lib/prompt-pipeline.js";
-
-// Knowledge retrieval
-export {
-	retrieveKnowledge,
-	queryOnDemandEntries,
-	countOnDemandEntries,
-	generateOnDemandPreamble,
-	type KnowledgeQueryOptions,
-	type RetrievedKnowledge,
-} from "./lib/knowledge-retrieval.js";
-
 // Token tracking
 export {
 	TokenTracker,
@@ -92,38 +72,6 @@ export {
 	type BudgetSeverity,
 } from "./lib/budget-enforcer.js";
 
-// Prompt registry
-export {
-	buildPromptRegistry,
-	readPromptRegistry,
-	runPromptRegistryBuild,
-	queryKnowledge,
-	querySections,
-	type PromptRegistry,
-	type RegistryKnowledgeEntry,
-	type RegistryPromptSection,
-} from "./lib/prompt-registry.js";
-
-// Gate engine
-export {
-	startGate,
-	submitVerdict,
-	getOpenGates,
-	getGateSession,
-	clearGateSessions,
-	setAiRecommendation,
-	computeCycleTime,
-	type GatePhase,
-	type GateSession,
-	type GateVerdictInput,
-	type GateResult,
-	type GateEngineOptions,
-	type LessonAction,
-	type CycleTimeData,
-	type PreCheckResult,
-	type ReviewerVerdict,
-} from "./lib/gate-engine.js";
-
 // Agent spawner
 export {
 	createAgentConfig,
@@ -134,6 +82,7 @@ export {
 	parseFindingsHeader,
 	UNIVERSAL_ROLES,
 	DEFAULT_MODEL_TIERS,
+	DEFAULT_TOKEN_BUDGETS,
 	ROLE_TOOL_CONSTRAINTS,
 	type UniversalRole,
 	type ModelTier,

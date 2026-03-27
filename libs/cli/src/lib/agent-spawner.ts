@@ -1,5 +1,5 @@
 /**
- * Agent spawner — creates agent configurations from the prompt pipeline.
+ * Agent spawner — creates agent configurations for ephemeral task-scoped workers.
  *
  * Implements the three-layer taxonomy from RES-d6e8ab11 section 4:
  *   Universal Role + Stage Context + Domain Knowledge = Effective Agent
@@ -7,15 +7,13 @@
  * Each agent spawns fresh for a single task (ephemeral, task-scoped).
  * The spawner:
  *   1. Selects a model tier based on role and task complexity
- *   2. Generates a prompt via the five-stage pipeline
- *   3. Attaches tool constraints for the role
- *   4. Sets a token budget for the agent
+ *   2. Attaches tool constraints for the role
+ *   3. Sets a token budget for the agent
+ *
+ * Prompt generation belongs in the Rust engine (prompt crate). Callers
+ * that need a generated prompt should call the daemon's /prompt/generate
+ * endpoint and pass the result to the agent directly.
  */
-
-import {
-	generatePrompt,
-	type PromptResult,
-} from "./prompt-pipeline.js";
 
 // ---------------------------------------------------------------------------
 // Universal Roles (Layer 1 — core framework)
@@ -64,6 +62,16 @@ export const DEFAULT_MODEL_TIERS: Record<UniversalRole, ModelTier> = {
 	writer: "sonnet",
 	designer: "sonnet",
 	governance_steward: "sonnet",
+};
+
+/**
+ * Default token budgets per model tier.
+ * Used when no explicit budget is provided to createAgentConfig.
+ */
+export const DEFAULT_TOKEN_BUDGETS: Record<ModelTier, number> = {
+	opus: 4000,
+	sonnet: 2500,
+	haiku: 1500,
 };
 
 /** Task complexity classification. */
@@ -317,8 +325,6 @@ export interface AgentSpawnConfig {
 	role: UniversalRole;
 	/** Selected model tier. */
 	modelTier: ModelTier;
-	/** Generated prompt from the pipeline. */
-	prompt: string;
 	/** Tool constraints for this role. */
 	toolConstraints: ToolConstraint[];
 	/** Token budget for this agent's prompt. */
@@ -327,8 +333,6 @@ export interface AgentSpawnConfig {
 	taskContext: TaskContext;
 	/** Path where findings should be written. */
 	findingsPath: string | null;
-	/** Prompt generation result (for diagnostics). */
-	promptResult: PromptResult;
 }
 
 /** Parameters for creating an agent configuration. */
@@ -360,20 +364,18 @@ export interface CreateAgentParams {
 /**
  * Create an agent spawn configuration.
  *
- * This is the main entry point for the agent lifecycle system.
- * It combines the prompt pipeline, model tier selection, and tool constraints
- * into a complete configuration that a connector/integration can use to
- * spawn an agent.
+ * Combines model tier selection, tool constraints, and task context into a
+ * complete configuration that a connector or integration can use to spawn an
+ * agent. Prompt generation is NOT done here — callers should call the daemon's
+ * /prompt/generate endpoint to obtain the prompt and pass it to the agent.
  */
 export function createAgentConfig(params: CreateAgentParams): AgentSpawnConfig {
 	const {
 		role,
-		workflowStage,
 		taskDescription,
 		files,
 		acceptanceCriteria,
 		complexity = "simple",
-		projectPath,
 		tokenBudget,
 		modelTierOverrides,
 		teamName,
@@ -392,19 +394,6 @@ export function createAgentConfig(params: CreateAgentParams): AgentSpawnConfig {
 		taskId,
 	};
 
-	// Generate prompt via the five-stage pipeline
-	const promptResult = generatePrompt({
-		role: roleToPromptRole(role),
-		workflowStage,
-		taskContext: {
-			description: taskDescription,
-			files,
-			acceptanceCriteria,
-		},
-		tokenBudget,
-		projectPath,
-	});
-
 	// Get tool constraints for this role
 	const toolConstraints = ROLE_TOOL_CONSTRAINTS[role];
 
@@ -414,34 +403,22 @@ export function createAgentConfig(params: CreateAgentParams): AgentSpawnConfig {
 			? `.state/team/${teamName}/task-${taskId}.md`
 			: null;
 
-	// Use the prompt pipeline's budget (which may be the role default)
-	const effectiveBudget = promptResult.budget;
+	// Default token budget per role tier if not specified
+	const effectiveBudget = tokenBudget ?? DEFAULT_TOKEN_BUDGETS[modelTier];
 
 	return {
 		role,
 		modelTier,
-		prompt: promptResult.prompt,
 		toolConstraints,
 		tokenBudget: effectiveBudget,
 		taskContext,
 		findingsPath,
-		promptResult,
 	};
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/**
- * Map universal role enum to the prompt pipeline's role string.
- * The pipeline uses simple lowercase strings; governance_steward maps
- * to "governance-steward" for consistency with plugin naming conventions.
- */
-function roleToPromptRole(role: UniversalRole): string {
-	if (role === "governance_steward") return "governance-steward";
-	return role;
-}
 
 /**
  * Validate that a string is a valid universal role.

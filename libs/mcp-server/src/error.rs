@@ -43,8 +43,8 @@ impl From<serde_yaml::Error> for McpError {
     }
 }
 
-impl From<orqa_search::SearchError> for McpError {
-    fn from(e: orqa_search::SearchError) -> Self {
+impl From<orqa_engine::search::SearchError> for McpError {
+    fn from(e: orqa_engine::search::SearchError) -> Self {
         Self::Search(e.to_string())
     }
 }

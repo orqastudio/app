@@ -24,10 +24,7 @@ import {
 	computeFileHash,
 } from "../lib/content-lifecycle.js";
 import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/content-lifecycle.js";
-import { generateInjectorConfig } from "../lib/injector-config.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
-import { runPromptRegistryBuild } from "../lib/prompt-registry.js";
-import { runAgentFileGeneration } from "../lib/agent-file-generator.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -389,13 +386,6 @@ async function cmdInstall(args: string[]): Promise<void> {
 		// Non-fatal — workflow resolution is best-effort during install
 	}
 
-	// Rebuild prompt registry (new plugin may provide knowledge declarations)
-	try {
-		runPromptRegistryBuild(projectRoot);
-	} catch {
-		// Non-fatal — prompt registry is best-effort during install
-	}
-
 	console.log(`\nPlugin ${result.name} installed successfully.`);
 }
 
@@ -456,13 +446,6 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 		runWorkflowResolution(projectRoot);
 	} catch {
 		// Non-fatal — workflow resolution is best-effort during install
-	}
-
-	// Rebuild prompt registry (new plugin may provide knowledge declarations)
-	try {
-		runPromptRegistryBuild(projectRoot);
-	} catch {
-		// Non-fatal — prompt registry is best-effort during install
 	}
 
 	console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);
@@ -738,27 +721,6 @@ async function cmdRefresh(args: string[]): Promise<void> {
 	// Resolve workflows from plugin contributions
 	try {
 		runWorkflowResolution(projectRoot);
-	} catch {
-		// Non-fatal
-	}
-
-	// Build prompt registry from plugin knowledge declarations
-	try {
-		runPromptRegistryBuild(projectRoot);
-	} catch {
-		// Non-fatal
-	}
-
-	// Generate .claude/agents/*.md files from the prompt pipeline
-	try {
-		runAgentFileGeneration(projectRoot);
-	} catch {
-		// Non-fatal
-	}
-
-	// Regenerate injector config
-	try {
-		generateInjectorConfig(projectRoot);
 	} catch {
 		// Non-fatal
 	}

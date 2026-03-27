@@ -6,11 +6,15 @@
  * aggregated result to .orqa/connectors/claude-code/injector-config.json
  * so the prompt-injector can merge plugin contributions without rescanning
  * on every hook invocation.
+ *
+ * This is connector-specific generation logic. It belongs in the Claude Code
+ * connector package because it generates output consumed exclusively by the
+ * Claude Code prompt-injector hook.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { readManifest } from "./manifest.js";
+import { readManifest } from "@orqastudio/cli";
 
 export interface InjectorConfig {
 	/** ISO 8601 timestamp of when this config was generated. */

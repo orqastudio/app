@@ -1,6 +1,6 @@
 //! Search tool implementations: regex, semantic, research, status.
 
-use orqa_search::{SearchEngine, SearchResult};
+use orqa_engine::search::{SearchEngine, SearchResult};
 use serde_json::{json, Value};
 
 use crate::types::McpToolDefinition;

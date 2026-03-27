@@ -3768,7 +3768,7 @@ name = "orqa-lsp-server"
 version = "0.1.0-dev"
 dependencies = [
  "lsp-types 0.95.1",
- "orqa-validation",
+ "orqa-engine",
  "reqwest 0.12.28",
  "serde",
  "serde_json",
@@ -3786,8 +3786,7 @@ name = "orqa-mcp-server"
 version = "0.1.0-dev"
 dependencies = [
  "dirs-next",
- "orqa-search",
- "orqa-validation",
+ "orqa-engine",
  "regex",
  "reqwest 0.12.28",
  "serde",

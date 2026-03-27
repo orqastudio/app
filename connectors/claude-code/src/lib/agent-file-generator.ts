@@ -1,6 +1,5 @@
 /**
- * Agent file generator — produces .claude/agents/*.md files from the prompt
- * pipeline at install time.
+ * Agent file generator — produces .claude/agents/*.md files at install time.
  *
  * Each generated agent file contains:
  *   - YAML frontmatter: name, description (Claude Code agent fields)
@@ -10,21 +9,23 @@
  * The completion enforcement block is baked directly into the agent file
  * body so it is always present — hooks only inject dynamic context at runtime.
  *
- * Called from the install pipeline alongside workflow resolution and
- * prompt registry building.
+ * This is connector-specific generation for Claude Code. It belongs in this
+ * package because it generates tool-native plugin output (.claude/agents/).
+ *
+ * Prompt content is sourced from the daemon's /prompt/generate endpoint once
+ * available. Until then, agent files are generated from static role metadata
+ * and tool constraints only (no dynamic knowledge sections).
+ *
+ * Called from the install pipeline alongside workflow resolution.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
-	generatePrompt,
-	type PromptResult,
-} from "./prompt-pipeline.js";
-import {
 	ROLE_TOOL_CONSTRAINTS,
 	type UniversalRole,
 	type ToolConstraint,
-} from "./agent-spawner.js";
+} from "@orqastudio/cli";
 
 // ---------------------------------------------------------------------------
 // Role Metadata
@@ -46,8 +47,7 @@ interface RoleMetadata {
  * Roles to generate agent files for.
  *
  * We generate for the six "universal" roles that appear in .claude/agents/.
- * Orchestrator and designer are excluded — orchestrator is the CLAUDE.md itself,
- * designer is not a standard agent file.
+ * Orchestrator is excluded — it is the CLAUDE.md itself.
  */
 const AGENT_ROLES: Record<string, RoleMetadata> = {
 	implementer: {
@@ -259,17 +259,29 @@ Write plan to the path specified in your delegation prompt:
 const ROLE_BOUNDARIES: Record<string, string> = {
 	implementer: `## Boundaries
 
-- You ONLY modify source code files (\`libs/\`, \`plugins/\`, \`ui/\`, \`backend/\`, \`sidecar/\`, \`tools/\`)
-- You do NOT modify governance artifacts (\`.orqa/\`) — delegate to governance-steward
-- You do NOT modify documentation — delegate to writer
-- You do NOT review your own work — a reviewer verifies separately
+- You ONLY modify source code files (\`libs/\`, \`plugins/\`, \`ui/\`, \`backend/\`, \`sidecar/\`, \`tools/\`, \`scripts/\`)
+- You do NOT modify governance artifacts (\`.orqa/\`)
+- You do NOT modify documentation files unless they are inline code comments
+- You do NOT modify files in \`targets/\` -- those are read-only test fixtures
+- You do NOT review your own work -- a reviewer verifies separately
 
 ## Before Starting
 
-1. Read the task artifact (path provided in your delegation prompt)
-2. Read the epic for broader context
-3. Read any knowledge files specified in your delegation prompt
-4. Understand acceptance criteria before writing any code
+1. Read \`.claude/architecture/core.md\` for design principles
+2. Read \`.claude/architecture/migration.md\` for migration context
+3. Read the task artifact (path provided in your delegation prompt)
+4. Read the epic or parent task for broader context
+5. Read any knowledge files specified in your delegation prompt
+6. Understand acceptance criteria before writing any code
+
+## Zero Tech Debt
+
+This is a migration. Zero legacy survives:
+
+- **Delete legacy code** -- do not comment it out, do not wrap it in feature flags
+- **No backwards compatibility shims** -- pre-release, breaking changes are expected
+- **No "we'll fix this later"** -- if it doesn't match the architecture, fix it now
+- **No dead code** -- if it's not needed by the target architecture, delete it
 
 ## Quality Checks
 
@@ -370,13 +382,11 @@ For each acceptance criterion:
  * 3. Role-specific boundaries and before-starting checklist
  * 4. Tool constraints from the agent spawner
  * 5. Completion enforcement (baked in, not hook-injected)
- * 6. Prompt pipeline content (knowledge references, critical rules)
- * 7. Output template
+ * 6. Output template
  */
 function generateAgentFileContent(
 	role: UniversalRole,
 	metadata: RoleMetadata,
-	promptResult: PromptResult,
 ): string {
 	const parts: string[] = [];
 
@@ -388,13 +398,19 @@ function generateAgentFileContent(
 	parts.push("");
 
 	// Role heading
-	parts.push(`# ${metadata.displayName.charAt(0).toUpperCase() + metadata.displayName.slice(1).replace(/-./g, (m) => " " + m[1].toUpperCase())}`);
+	const displayTitle = metadata.displayName
+		.charAt(0)
+		.toUpperCase() + metadata.displayName
+		.slice(1)
+		.replace(/-./g, (m) => " " + m[1].toUpperCase());
+	parts.push(`# ${displayTitle}`);
 	parts.push("");
 	parts.push(metadata.roleSummary);
 	parts.push("");
 
 	// Role-specific boundaries
-	const boundaries = ROLE_BOUNDARIES[role === "governance_steward" ? "governance_steward" : role];
+	const boundaryKey = role === "governance_steward" ? "governance_steward" : role;
+	const boundaries = ROLE_BOUNDARIES[boundaryKey];
 	if (boundaries) {
 		parts.push(boundaries);
 		parts.push("");
@@ -411,38 +427,49 @@ function generateAgentFileContent(
 	parts.push(COMPLETION_ENFORCEMENT);
 	parts.push("");
 
-	// Include prompt pipeline content (knowledge references, critical rules)
-	// if the registry produced any sections
-	if (promptResult.prompt && promptResult.includedSections.length > 0) {
-		// Filter to knowledge and constraint sections — role-definition is already
-		// in the boundaries section above, and task-context is dynamic
-		const knowledgeSections = promptResult.includedSections.filter(
-			(s) =>
-				s.type === "knowledge" ||
-				s.type === "constraint" ||
-				s.type === "safety-rule",
-		);
+	// Architecture reference for applicable roles
+	if (role === "implementer" || role === "reviewer") {
+		parts.push("## Architecture Reference");
+		parts.push("");
+		parts.push("Detailed architecture documentation is available in `.claude/architecture/`:");
+		parts.push("- `core.md` -- design principles, engine libraries, language boundary");
+		parts.push("- `plugins.md` -- plugin system, composition, schema generation");
+		parts.push("- `agents.md` -- agent architecture, prompt generation pipeline");
+		parts.push("- `governance.md` -- `.orqa/` structure, artifact lifecycle");
+		parts.push("- `enforcement.md` -- enforcement layers, validation timing");
+		parts.push("- `connector.md` -- connector architecture, generation pipeline");
+		parts.push("- `structure.md` -- directory structure, file organization");
+		parts.push("- `decisions.md` -- key design decisions and their rationale");
+		parts.push("- `migration.md` -- migration phases and sequencing");
+		parts.push("- `targets.md` -- target state specifications");
+		parts.push("- `audit.md` -- audit criteria");
+		parts.push("- `glossary.md` -- term definitions");
+		parts.push("");
+	}
 
-		if (knowledgeSections.length > 0) {
-			parts.push("## Knowledge References");
-			parts.push("");
-			parts.push("The following knowledge is available. Read the full files when working in these areas:");
-			parts.push("");
-			for (const section of knowledgeSections) {
-				// Only include the ID and first line as a reference — not full content.
-				// Full content is retrieved on-demand at runtime via the knowledge-injector hook.
-				const titleMatch = section.content.match(/^title:\s*"?(.+?)"?\s*$/m);
-				const firstLine = titleMatch ? titleMatch[1] : (section.content.split("\n").find((l) => l.trim() && !l.startsWith("---") && !l.startsWith("id:") && !l.startsWith("type:") && !l.startsWith("title:"))?.trim() ?? "");
-				parts.push(`- **${section.id}** (${section.source}, ${section.priority}): ${firstLine.slice(0, 120)}`);
-			}
-			parts.push("");
-		}
+	// Code documentation standard for implementer
+	if (role === "implementer") {
+		parts.push("## Code Documentation Standard");
+		parts.push("");
+		parts.push("Every file you create or modify must have a comment at the top describing its purpose. Every function must have a comment describing what it does and why. When removing code, leave no comments documenting what was removed. Comments describe active code only.");
+		parts.push("");
 	}
 
 	// Output template
-	const outputTemplate = OUTPUT_TEMPLATES[role === "governance_steward" ? "governance_steward" : role];
+	const outputTemplateKey = role === "governance_steward" ? "governance_steward" : role;
+	const outputTemplate = OUTPUT_TEMPLATES[outputTemplateKey];
 	if (outputTemplate) {
 		parts.push(outputTemplate);
+		parts.push("");
+	}
+
+	// Notes section for implementer
+	if (role === "implementer") {
+		parts.push("Notes:");
+		parts.push("- Agent threads always have their cwd reset between bash calls, as a result please only use absolute file paths.");
+		parts.push("- In your final response, share file paths (always absolute, never relative) that are relevant to the task. Include code snippets only when the exact text is load-bearing (e.g., a bug you found, a function signature the caller asked for) — do not recap code you merely read.");
+		parts.push("- For clear communication with the user the assistant MUST avoid using emojis.");
+		parts.push("- Do not use a colon before tool calls. Text like \"Let me read the file:\" followed by a read tool call should just be \"Let me read the file.\" with a period.");
 		parts.push("");
 	}
 
@@ -456,11 +483,9 @@ function generateAgentFileContent(
 /**
  * Generate .claude/agents/*.md files for all universal agent roles.
  *
- * For each role:
- *   1. Calls generatePrompt() to get the composed prompt from the pipeline
- *   2. Combines role metadata, tool constraints, completion enforcement,
- *      and pipeline content into a single agent markdown file
- *   3. Writes to .claude/agents/<role>.md
+ * For each role, combines role metadata, tool constraints, and completion
+ * enforcement into a single agent markdown file and writes it to
+ * .claude/agents/<role>.md.
  *
  * @param projectPath - The project root directory
  * @returns Summary of generated files and any errors
@@ -481,42 +506,8 @@ export function generateAgentFiles(projectPath: string): {
 	for (const [roleKey, metadata] of Object.entries(AGENT_ROLES)) {
 		const role = roleKey as UniversalRole;
 
-		// Map the role to the prompt pipeline's role string
-		const promptRole =
-			role === "governance_steward" ? "governance-steward" : role;
-
-		// Generate prompt via the five-stage pipeline (no task context — these
-		// are static agent definitions, not runtime prompts)
-		let promptResult: PromptResult;
-		try {
-			promptResult = generatePrompt({
-				role: promptRole,
-				projectPath,
-			});
-		} catch (err) {
-			errors.push(
-				`Failed to generate prompt for ${role}: ${err instanceof Error ? err.message : String(err)}`,
-			);
-			// Generate the file anyway with empty pipeline content
-			promptResult = {
-				prompt: "",
-				totalTokens: 0,
-				budget: 0,
-				includedSections: [],
-				trimmedSections: [],
-				errors: [],
-			};
-		}
-
-		// Collect pipeline errors
-		if (promptResult.errors.length > 0) {
-			for (const e of promptResult.errors) {
-				errors.push(`${role}: ${e}`);
-			}
-		}
-
-		// Generate the file content
-		const content = generateAgentFileContent(role, metadata, promptResult);
+		// Generate the file content from static role metadata and tool constraints
+		const content = generateAgentFileContent(role, metadata);
 
 		// Write to disk
 		const filePath = path.join(agentsDir, `${metadata.fileName}.md`);
@@ -536,7 +527,7 @@ export function generateAgentFiles(projectPath: string): {
 /**
  * Run agent file generation and print results.
  *
- * Called from cmdPluginSync in install.ts and cmdRefresh in plugin.ts.
+ * Called from the Claude Code connector's install and refresh pipeline.
  */
 export function runAgentFileGeneration(projectRoot: string): void {
 	const result = generateAgentFiles(projectRoot);
