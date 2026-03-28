@@ -112,9 +112,14 @@ fi
 # ── 2. Artifact validation (single engine invocation) ─────────────────────
 if [ "$HAS_ARTIFACTS" = true ]; then
   echo "--- Artifacts: validation engine ---"
-  $ORQA validate --staged 2>&1 || {
-    log_violation "validate" "artifacts" "validation engine found errors"
-    FAILED=true
+  output=$($ORQA validate --staged 2>&1) || {
+    if echo "$output" | grep -q "Unknown command"; then
+      echo "WARNING: orqa validate not yet implemented (non-blocking)"
+    else
+      echo "$output"
+      log_violation "validate" "artifacts" "validation engine found errors"
+      FAILED=true
+    fi
   }
 fi
 
@@ -166,9 +171,14 @@ if [ "$HAS_RUST" = true ] || [ "$HAS_FRONTEND" = true ]; then
   STAGED_CODE=$(echo "$STAGED_FILES" | grep -E '\.(rs|ts|svelte|js)$' || true)
   if [ -n "$STAGED_CODE" ]; then
     echo "--- Code: stub scanner ---"
-    $ORQA check stubs --staged 2>&1 || {
-      log_violation "stubs" "code" "stub patterns found"
-      FAILED=true
+    output=$($ORQA check stubs --staged 2>&1) || {
+      if echo "$output" | grep -q "Unknown tool"; then
+        echo "WARNING: stubs check not yet implemented (non-blocking)"
+      else
+        echo "$output"
+        log_violation "stubs" "code" "stub patterns found"
+        FAILED=true
+      fi
     }
   fi
 fi
@@ -178,9 +188,14 @@ if [ "$HAS_RUST" = true ] || [ "$HAS_FRONTEND" = true ]; then
   STAGED_SOURCE=$(echo "$STAGED_FILES" | grep -E '\.(rs|ts|js|svelte|tsx|jsx)$' || true)
   if [ -n "$STAGED_SOURCE" ]; then
     echo "--- Code: lint suppression audit ---"
-    $ORQA check lint-suppressions --staged 2>&1 || {
-      log_violation "lint-suppressions" "code" "undocumented suppressions"
-      FAILED=true
+    output=$($ORQA check lint-suppressions --staged 2>&1) || {
+      if echo "$output" | grep -q "Unknown tool"; then
+        echo "WARNING: lint-suppressions check not yet implemented (non-blocking)"
+      else
+        echo "$output"
+        log_violation "lint-suppressions" "code" "undocumented suppressions"
+        FAILED=true
+      fi
     }
   fi
 fi
@@ -188,17 +203,27 @@ fi
 # ── 8. Scoped tests ───────────────────────────────────────────────────────
 if [ "$HAS_RUST" = true ]; then
   echo "--- Rust: scoped tests ---"
-  $ORQA check test-rust --staged 2>&1 || {
-    log_violation "test-rust" "rust" "test failures"
-    FAILED=true
+  output=$($ORQA check test-rust --staged 2>&1) || {
+    if echo "$output" | grep -q "Unknown tool"; then
+      echo "WARNING: test-rust check not yet implemented (non-blocking)"
+    else
+      echo "$output"
+      log_violation "test-rust" "rust" "test failures"
+      FAILED=true
+    fi
   }
 fi
 
 if [ "$HAS_FRONTEND" = true ]; then
   echo "--- Frontend: scoped tests ---"
-  $ORQA check test-frontend --staged 2>&1 || {
-    log_violation "test-frontend" "frontend" "test failures"
-    FAILED=true
+  output=$($ORQA check test-frontend --staged 2>&1) || {
+    if echo "$output" | grep -q "Unknown tool"; then
+      echo "WARNING: test-frontend check not yet implemented (non-blocking)"
+    else
+      echo "$output"
+      log_violation "test-frontend" "frontend" "test failures"
+      FAILED=true
+    fi
   }
 fi
 

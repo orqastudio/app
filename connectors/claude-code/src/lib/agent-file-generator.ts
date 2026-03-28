@@ -402,7 +402,7 @@ function generateAgentFileContent(
 		.charAt(0)
 		.toUpperCase() + metadata.displayName
 		.slice(1)
-		.replace(/-./g, (m) => " " + m[1].toUpperCase());
+		.replace(/-./g, (m) => " " + (m[1] ?? "").toUpperCase());
 	parts.push(`# ${displayTitle}`);
 	parts.push("");
 	parts.push(metadata.roleSummary);

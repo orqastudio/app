@@ -23,12 +23,14 @@ The orchestrator coordinates. It does NOT implement. Any action beyond reading f
 ## Subagents vs Agent Teams
 
 Use **subagents** when:
+
 - The task is focused and self-contained
 - Only the result matters (not the journey)
 - You need quick delegation with a summary back
 - Tasks are sequential
 
 Use **agent teams** when:
+
 - Multiple agents need to work in parallel
 - Teammates need to communicate with each other
 - The work benefits from competing perspectives
@@ -46,7 +48,7 @@ Use **agent teams** when:
 Each role has clear ownership. Violations indicate a delegation failure:
 
 | Signal | Correct Delegation |
-|--------|-------------------|
+| ------ | ------------------ |
 | Orchestrator writing code | → Implementer |
 | Implementer deciding architecture | → Planner |
 | Reviewer fixing bugs | → Implementer |
@@ -57,6 +59,7 @@ Each role has clear ownership. Violations indicate a delegation failure:
 ## Team Coordination
 
 When using agent teams:
+
 - Task status lives in `.orqa/delivery/tasks/` — the single source of truth
 - Each teammate should own separate files to avoid conflicts
 - The lead (orchestrator) synthesizes findings, not individual teammates

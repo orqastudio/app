@@ -5,8 +5,8 @@
  * 1. A Claude Code plugin (has .claude-plugin/plugin.json + hooks + skills + commands)
  * 2. A reusable library that other plugins can depend on
  *
- * It bridges the `.claude/` directory with OrqaStudio's artifact system,
- * so the same governance process applies via CLI as through the app.
+ * Governance process is applied via connector-generated artifacts (hooks, skills,
+ * commands) that map directly to the OrqaStudio daemon and CLI.
  */
 
 // Re-export graph browsing from @orqastudio/cli (now daemon-backed)
@@ -21,5 +21,8 @@ export type { DaemonArtifactNode, DaemonArtifactRef, DaemonHealthResponse } from
 export { installPlugin, uninstallPlugin, listInstalledPlugins } from "@orqastudio/cli";
 
 // Local modules
-export { ArtifactBridge, type BridgeMapping } from "./artifact-bridge.js";
 export { runConnectorSetup, type ConnectorSetupResult } from "./connector-setup.js";
+
+// Connector generation pipeline
+export { generatePlugin, type GenerateResult } from "./generator.js";
+export { watchAndRegenerate } from "./watcher.js";

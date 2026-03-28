@@ -29,7 +29,7 @@ relationships:
 ### Required Fields
 
 | Field | Format | Notes |
-|-------|--------|-------|
+| ----- | ------ | ----- |
 | `id` | `PREFIX-NNN` | Unique, matches idPrefix from schema |
 | `type` | string | Must match a type from core.json or plugin schemas |
 | `status` | string | One of the canonical statuses (see table below) |
@@ -57,7 +57,7 @@ Agents frequently use statuses that feel natural but are not in any plugin schem
 ### Common Optional Fields
 
 | Field | Format | Notes |
-|-------|--------|-------|
+| ----- | ------ | ----- |
 | `title` | string | Human-readable name |
 | `description` | string | Brief description |
 | `created` | `YYYY-MM-DD` | Creation date |
@@ -157,6 +157,7 @@ relationships:
 ## Validation
 
 After creating artifacts:
+
 1. Check frontmatter against `schema.json` in the target directory
 2. Verify all relationship targets exist
 3. Verify all inverses are present on target artifacts

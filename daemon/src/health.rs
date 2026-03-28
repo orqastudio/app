@@ -1,8 +1,9 @@
 // HTTP health endpoint for the OrqaStudio daemon.
 //
-// Exposes a single GET /health route that returns daemon status, uptime, and
-// PID as JSON. The endpoint runs on the tokio runtime and binds to
-// 127.0.0.1:<ORQA_PORT_BASE> (default port 9120). This allows other tools
+// Exposes GET /health (daemon liveness), POST /parse (artifact impact),
+// POST /prompt, POST /knowledge (knowledge injection), and POST /session-start
+// (structured startup checks). The endpoint runs on the tokio runtime and binds
+// to 127.0.0.1:<ORQA_PORT_BASE> (default port 9120). This allows other tools
 // (app, CLI, connector) to check whether the daemon is alive without reading
 // the PID file directly.
 
@@ -11,7 +12,7 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use axum::extract::State;
-use axum::routing::get;
+use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::Serialize;
 use tracing::{error, info};
@@ -85,6 +86,14 @@ pub async fn start(port: u16) -> Result<(), Box<dyn std::error::Error + Send + S
 
     let app = Router::new()
         .route("/health", get(health_handler))
+        .route("/compact-context", post(crate::compact_context::compact_context_handler))
+        .route("/knowledge", post(crate::knowledge::knowledge_handler))
+        .route("/parse", post(crate::parse::parse_handler))
+        .route("/prompt", post(crate::prompt::prompt_handler))
+        .route(
+            "/session-start",
+            post(crate::session_start::session_start_handler),
+        )
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));

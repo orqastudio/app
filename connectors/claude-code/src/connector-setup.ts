@@ -18,7 +18,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ensureSymlink } from "@orqastudio/cli";
+import { ensureSymlink, listInstalledPlugins, readManifest } from "@orqastudio/cli";
 
 export interface ConnectorSetupResult {
 	symlinkAgents: "created" | "skipped" | "exists" | "replaced";
@@ -28,10 +28,13 @@ export interface ConnectorSetupResult {
 /**
  * Run post-install setup for the Claude Code connector:
  * 1. Build .claude/agents/ as a merged directory containing symlinks to:
- *    - All core agents from app/.orqa/process/agents/ (or .orqa/process/agents/)
+ *    - All core agents from .orqa/process/agents/
  *    - All plugin agents declared via provides.agents in installed plugin manifests
  *    Plugin agents are keyed by their manifest `key` field (e.g. "rust-specialist").
  *    Core agents take precedence: a plugin cannot shadow a core agent filename.
+ *
+ * Agent sources are resolved via the CLI plugin registry (listInstalledPlugins),
+ * not via raw filesystem assumptions about monorepo structure.
  *
  * Symlinks and aggregated files (rules, .mcp.json, .lsp.json) are now handled
  * by the plugin framework's universal mechanisms declared in orqa-plugin.json.
@@ -44,10 +47,7 @@ export interface ConnectorSetupResult {
  */
 export function runConnectorSetup(
 	projectRoot: string,
-	_connectorPluginDir: string,
 ): ConnectorSetupResult {
-	const orqaDir = path.join(projectRoot, ".orqa");
-	const appOrqaDir = path.join(projectRoot, "app", ".orqa");
 	const claudeDir = path.join(projectRoot, ".claude");
 
 	// Ensure .claude/ exists
@@ -55,16 +55,14 @@ export function runConnectorSetup(
 		fs.mkdirSync(claudeDir, { recursive: true });
 	}
 
-	// Agents live in app/.orqa/process/agents/ (OrqaStudio monorepo structure).
-	// Fall back to .orqa/process/agents/ for non-monorepo projects.
-	const agentsSource = fs.existsSync(path.join(appOrqaDir, "process", "agents"))
-		? path.join(appOrqaDir, "process", "agents")
-		: path.join(orqaDir, "process", "agents");
+	// Core agents live in .orqa/process/agents/ relative to the project root.
+	// No monorepo-specific fallback — connector has no knowledge of app/ layout.
+	const coreAgentsSource = path.join(projectRoot, ".orqa", "process", "agents");
 
 	// Build the merged .claude/agents/ directory with core + plugin agent symlinks.
 	const symlinkAgents = setupMergedAgentsDir(
 		path.join(claudeDir, "agents"),
-		agentsSource,
+		coreAgentsSource,
 		projectRoot,
 	);
 
@@ -87,14 +85,16 @@ export function runConnectorSetup(
  * - If the path is an old-style symlink pointing to a directory, remove it and
  *   recreate as a real directory. This migrates existing installs transparently.
  * - Create the directory if it doesn't exist.
- * - Symlink every core agent .md file from agentsSource into the directory.
+ * - Symlink every core agent .md file from coreAgentsSource into the directory.
  * - Symlink every plugin agent declared in provides.agents from installed plugins.
  *   Plugin agents are skipped if a core agent with the same filename already exists.
+ *
+ * Plugin manifests are read via the CLI library (readManifest), not raw fs calls.
  *
  * Returns:
  * - "created": directory was newly created (or migrated from a symlink)
  * - "exists": directory already existed and was updated in-place
- * - "skipped": agentsSource does not exist — nothing to link
+ * - "skipped": coreAgentsSource does not exist — nothing to link
  */
 function setupMergedAgentsDir(
 	agentsDirPath: string,
@@ -134,39 +134,29 @@ function setupMergedAgentsDir(
 		ensureSymlink(targetPath, linkPath);
 	}
 
-	// Link plugin agents
-	const pluginsDirPath = path.join(projectRoot, "plugins");
-	if (fs.existsSync(pluginsDirPath)) {
-		for (const entry of fs.readdirSync(pluginsDirPath, { withFileTypes: true })) {
-			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+	// Link plugin agents using the CLI registry — no raw manifest parsing.
+	// listInstalledPlugins scans plugins/, connectors/, and integrations/.
+	for (const plugin of listInstalledPlugins(projectRoot)) {
+		let manifest;
+		try {
+			manifest = readManifest(plugin.path);
+		} catch {
+			// Skip plugins with unreadable manifests
+			continue;
+		}
 
-			const pluginDir = path.join(pluginsDirPath, entry.name);
-			const manifestPath = path.join(pluginDir, "orqa-plugin.json");
-			if (!fs.existsSync(manifestPath)) continue;
+		const agentEntries = manifest.provides?.agents ?? [];
+		for (const agentEntry of agentEntries) {
+			if (!agentEntry.path) continue;
+			const agentFile = path.basename(agentEntry.path);
+			// Core agents take precedence — never shadow them
+			if (coreAgentFiles.has(agentFile)) continue;
 
-			try {
-				const raw = fs.readFileSync(manifestPath, "utf-8");
-				const manifest = JSON.parse(raw) as {
-					provides?: {
-						agents?: Array<{ key: string; path: string }>;
-					};
-				};
-				const agentEntries = manifest.provides?.agents ?? [];
+			const targetPath = path.join(plugin.path, agentEntry.path);
+			if (!fs.existsSync(targetPath)) continue;
 
-				for (const agentEntry of agentEntries) {
-					const agentFile = path.basename(agentEntry.path);
-					// Core agents take precedence — never shadow them
-					if (coreAgentFiles.has(agentFile)) continue;
-
-					const targetPath = path.join(pluginDir, agentEntry.path);
-					if (!fs.existsSync(targetPath)) continue;
-
-					const linkPath = path.join(agentsDirPath, agentFile);
-					ensureSymlink(targetPath, linkPath);
-				}
-			} catch {
-				// Skip plugins with invalid manifests
-			}
+			const linkPath = path.join(agentsDirPath, agentFile);
+			ensureSymlink(targetPath, linkPath);
 		}
 	}
 
@@ -175,26 +165,17 @@ function setupMergedAgentsDir(
 
 /**
  * Count the total number of plugin agent entries across all installed plugins.
+ * Uses the CLI registry to enumerate plugins rather than raw filesystem scanning.
  */
 function countPluginAgents(projectRoot: string): number {
 	let count = 0;
-	const pluginsDirPath = path.join(projectRoot, "plugins");
-	if (!fs.existsSync(pluginsDirPath)) return count;
-
-	for (const entry of fs.readdirSync(pluginsDirPath, { withFileTypes: true })) {
-		if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-		const manifestPath = path.join(pluginsDirPath, entry.name, "orqa-plugin.json");
-		if (!fs.existsSync(manifestPath)) continue;
+	for (const plugin of listInstalledPlugins(projectRoot)) {
 		try {
-			const raw = fs.readFileSync(manifestPath, "utf-8");
-			const manifest = JSON.parse(raw) as {
-				provides?: { agents?: unknown[] };
-			};
+			const manifest = readManifest(plugin.path);
 			count += manifest.provides?.agents?.length ?? 0;
 		} catch {
 			// Skip invalid
 		}
 	}
-
 	return count;
 }

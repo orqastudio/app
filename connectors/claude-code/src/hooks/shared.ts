@@ -7,9 +7,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { createConnection } from "node:net";
-import { join, relative } from "node:path";
+import { relative } from "node:path";
 import type { HookInput } from "../types.js";
 
 /**
@@ -135,117 +133,6 @@ export function isOrqaArtifact(filePath: string, projectDir: string): boolean {
   if (!filePath.endsWith(".md")) return false;
   const rel = relative(projectDir, filePath).replace(/\\/g, "/");
   return rel.startsWith(".orqa/");
-}
-
-// ---------------------------------------------------------------------------
-// MCP IPC — shared semantic search client
-// ---------------------------------------------------------------------------
-
-export interface SearchResult {
-  file: string;
-  line: number;
-  content: string;
-  score: number;
-}
-
-/** IPC port file path for the running OrqaStudio app's MCP server. */
-export function getIpcPortFilePath(): string {
-  const dataDir = process.env["LOCALAPPDATA"]
-    ? join(process.env["LOCALAPPDATA"], "com.orqastudio.app")
-    : join(process.env["HOME"] ?? "~", ".local", "share", "com.orqastudio.app");
-  return join(dataDir, "ipc.port");
-}
-
-/** Read the IPC port from disk, or null if unavailable. */
-export function readIpcPort(): number | null {
-  const portFile = getIpcPortFilePath();
-  if (!existsSync(portFile)) return null;
-  try {
-    const content = readFileSync(portFile, "utf-8").trim();
-    const port = parseInt(content, 10);
-    return Number.isNaN(port) ? null : port;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Send a JSON-RPC request to the MCP server over IPC and return the response.
- * Connects via TCP, sends the MCP header, then the initialize + tools/call sequence.
- * Times out after 4 seconds to keep the hook fast.
- */
-export function mcpSearchCall(port: number, projectDir: string, query: string, limit: number): Promise<SearchResult[]> {
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      socket.destroy();
-      reject(new Error("MCP search timeout"));
-    }, 4000);
-
-    const socket = createConnection({ host: "127.0.0.1", port }, () => {
-      socket.write(`MCP ${projectDir}\n`);
-      const initReq = JSON.stringify({
-        jsonrpc: "2.0",
-        id: 1,
-        method: "initialize",
-        params: {
-          protocolVersion: "2024-11-05",
-          capabilities: {},
-          clientInfo: { name: "orqastudio-hook", version: "1.0.0" },
-        },
-      });
-      socket.write(initReq + "\n");
-    });
-
-    let buffer = "";
-    let initialized = false;
-
-    socket.on("data", (chunk: Buffer) => {
-      buffer += chunk.toString();
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-
-      for (const line of lines) {
-        if (!line.trim()) continue;
-        try {
-          const msg = JSON.parse(line) as { id?: number; result?: unknown };
-          if (msg.id === 1 && !initialized) {
-            initialized = true;
-            const searchReq = JSON.stringify({
-              jsonrpc: "2.0",
-              id: 2,
-              method: "tools/call",
-              params: {
-                name: "search_semantic",
-                arguments: { query, scope: "artifacts", limit },
-              },
-            });
-            socket.write(searchReq + "\n");
-          } else if (msg.id === 2) {
-            clearTimeout(timeout);
-            socket.destroy();
-            try {
-              const result = msg.result as { content?: Array<{ text?: string }> };
-              const text = result?.content?.[0]?.text ?? "[]";
-              resolve(JSON.parse(text) as SearchResult[]);
-            } catch {
-              resolve([]);
-            }
-          }
-        } catch {
-          // Incomplete JSON — wait for more data
-        }
-      }
-    });
-
-    socket.on("error", (err: Error) => {
-      clearTimeout(timeout);
-      reject(err);
-    });
-
-    socket.on("close", () => {
-      clearTimeout(timeout);
-    });
-  });
 }
 
 // ---------------------------------------------------------------------------

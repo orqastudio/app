@@ -20,7 +20,7 @@ Before reviewing anything, work through these questions in order:
 What kind of artifact or change is this?
 
 | Signal | Domain |
-|--------|--------|
+| ------ | ------ |
 | Rust code, commands, domain logic | **Backend standards** |
 | Svelte components, TypeScript, stores | **Frontend standards** |
 | .orqa/ artifacts, frontmatter | **Governance standards** |

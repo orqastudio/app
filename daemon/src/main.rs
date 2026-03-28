@@ -23,11 +23,16 @@
 //  11. Stop the LSP subprocess.
 //  12. Clean up the PID file and exit.
 
+mod compact_context;
 mod health;
+mod knowledge;
 mod logging;
 mod lsp;
 mod mcp;
+mod parse;
 mod process;
+mod prompt;
+mod session_start;
 mod subprocess;
 mod tray;
 mod watcher;

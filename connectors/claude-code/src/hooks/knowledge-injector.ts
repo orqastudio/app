@@ -1,130 +1,17 @@
-// PreToolUse hook — Agent matcher  (knowledge-injector)
+// PreToolUse hook — Agent matcher (knowledge-injector)
 //
-// Single enforcement mechanism for knowledge injection when agents are spawned.
-// The orchestrator does NOT duplicate this — it relies on the hook exclusively.
-// See AGENT-4c94fe14 Delegation Steps for the behavioral contract.
-//
-// Two knowledge layers:
-//   Layer 1 (Declared): Reads the prompt registry for knowledge entries that
-//     match the detected agent role. No file parsing — uses the cached registry
-//     built at plugin-install time by @orqastudio/cli.
-//   Layer 2 (Semantic): Calls search_semantic via MCP TCP IPC to find
-//     task-specific knowledge beyond declared relationships.
-//
-// Availability:
-//   Layer 1 always works (reads .orqa/prompt-registry.json).
-//   Layer 2 requires the OrqaStudio app or MCP server running (IPC socket
-//   at LOCALAPPDATA/com.orqastudio.app/ipc.port). When unavailable, Layer 2
-//   gracefully returns empty — the hook still injects Layer 1 results.
-//
-// Future: When the search engine is extracted as an HTTP service
-//   (TASK-aef92af1 in EPIC-9e3d320b), Layer 2 can switch from MCP TCP
-//   to a direct HTTP call, removing the app dependency. Alternatively,
-//   an `orqa search` CLI command could serve as a fallback.
+// Thin adapter: calls POST /knowledge on the daemon, which handles role
+// detection, declared knowledge lookup (prompt registry), and ONNX semantic
+// search. All business logic lives in the daemon.
 //
 // Non-blocking: injects context via outputWarn(), never denies.
 
-import { readInput, outputAllow, outputWarn, readIpcPort, mcpSearchCall } from "./shared.js";
-
+import { readInput, outputAllow, outputWarn, callDaemon } from "./shared.js";
 import { logTelemetry } from "./telemetry.js";
-import { readPromptRegistry, queryKnowledge, type RegistryKnowledgeEntry } from "@orqastudio/cli";
 
-/** Minimum semantic search score to include a result. */
-const MIN_SCORE = 0.25;
-
-/** Maximum number of semantic search results to inject. */
-const MAX_SEMANTIC = 5;
-
-// ---------------------------------------------------------------------------
-// Layer 1 — Declared knowledge from prompt registry
-// ---------------------------------------------------------------------------
-
-const ROLE_PATTERNS: Array<[RegExp, string]> = [
-  [/you are (?:an? )?implementer/i, "implementer"],
-  [/you are (?:an? )?researcher/i, "researcher"],
-  [/you are (?:an? )?reviewer/i, "reviewer"],
-  [/you are (?:an? )?planner/i, "planner"],
-  [/you are (?:an? )?writer/i, "writer"],
-  [/you are (?:an? )?designer/i, "designer"],
-  [/you are (?:an? )?governance steward/i, "governance-steward"],
-];
-
-function detectRole(prompt: string): string | null {
-  for (const [pattern, role] of ROLE_PATTERNS) {
-    if (pattern.test(prompt)) return role;
-  }
-  return null;
+interface KnowledgeResult {
+  entries: Array<{ id: string; title: string; path: string; source: string; score?: number }>;
 }
-
-/**
- * Query the prompt registry for knowledge entries declared for the given role.
- * Returns entries with their IDs, titles, and file paths.
- *
- * Replaces the old approach of hand-parsing AGENT-*.md frontmatter for
- * employs relationships to KNOW-* IDs.
- */
-function getDeclaredKnowledge(
-  role: string,
-  projectDir: string,
-): Array<{ id: string; title: string; path: string }> {
-  const registry = readPromptRegistry(projectDir);
-  if (!registry) return [];
-
-  const entries: RegistryKnowledgeEntry[] = queryKnowledge(registry, { role });
-
-  return entries
-    .filter((entry) => entry.content_file !== null)
-    .map((entry) => ({
-      id: entry.id,
-      title: entry.summary
-        ? entry.summary.split("\n")[0].slice(0, 80)
-        : entry.id,
-      path: entry.content_file!,
-    }));
-}
-
-// ---------------------------------------------------------------------------
-// Layer 2 — Semantic search for task-relevant knowledge
-// ---------------------------------------------------------------------------
-
-async function searchSemanticKnowledge(
-  prompt: string,
-  projectDir: string,
-  excludeIds: Set<string>,
-): Promise<Array<{ id: string; title: string; path: string; score: number }>> {
-  const port = readIpcPort();
-  if (!port) return [];
-
-  // Extract a query from the prompt — use the first ~500 chars after role assignment
-  const roleEnd = prompt.search(/\n\n/);
-  const query = roleEnd > 0 ? prompt.slice(roleEnd + 2, roleEnd + 502) : prompt.slice(0, 500);
-
-  try {
-    const results = await mcpSearchCall(port, projectDir, query, MAX_SEMANTIC + excludeIds.size);
-
-    return results
-      .filter(r => {
-        const idMatch = r.file.match(/(KNOW-[a-f0-9]+)/);
-        return idMatch && r.score >= MIN_SCORE && !excludeIds.has(idMatch[1]);
-      })
-      .slice(0, MAX_SEMANTIC)
-      .map(r => {
-        const idMatch = r.file.match(/(KNOW-[a-f0-9]+)/)!;
-        return {
-          id: idMatch[1],
-          title: r.content.split("\n")[0].replace(/^#+\s*/, "").trim() || idMatch[1],
-          path: r.file,
-          score: r.score,
-        };
-      });
-  } catch {
-    return [];
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
 
 async function main(): Promise<void> {
   const startTime = Date.now();
@@ -141,37 +28,39 @@ async function main(): Promise<void> {
 
   const projectDir = input.cwd ?? process.cwd();
 
-  // Layer 1: Declared knowledge from prompt registry (role-matched)
-  const role = detectRole(prompt);
-  const declared = role ? getDeclaredKnowledge(role, projectDir) : [];
-  const declaredIds = new Set(declared.map(d => d.id));
+  const result = await callDaemon<KnowledgeResult>("/knowledge", {
+    agent_prompt: prompt,
+    project_path: projectDir,
+  });
+  const entries = result?.entries ?? [];
 
-  // Layer 2: Semantic search for task-relevant knowledge
-  const semantic = await searchSemanticKnowledge(prompt, projectDir, declaredIds);
-
-  if (declared.length === 0 && semantic.length === 0) {
+  if (entries.length === 0) {
     logTelemetry("knowledge-injector", "PreToolUse:Agent", startTime, "no-results", {
       declared_count: 0,
       semantic_count: 0,
-      role: role ?? "unknown",
     });
     outputAllow();
   }
 
-  // Build injection message
+  const declared = entries.filter((e) => e.source === "declared");
+  const semantic = entries.filter((e) => e.source === "semantic");
   const parts: string[] = [];
 
   if (declared.length > 0) {
-    parts.push(`KNOWLEDGE INJECTION — ${role ?? "agent"} has ${declared.length} declared knowledge artifact(s):\n`);
+    parts.push(
+      `KNOWLEDGE INJECTION — agent has ${declared.length} declared knowledge artifact(s):\n`,
+    );
     for (const k of declared) {
       parts.push(`- **${k.id}** (${k.title}): ${k.path}`);
     }
   }
 
   if (semantic.length > 0) {
-    parts.push(`\nSEMANTIC KNOWLEDGE — ${semantic.length} additional artifact(s) found relevant to this task:\n`);
+    parts.push(
+      `\nSEMANTIC KNOWLEDGE — ${semantic.length} additional artifact(s) found relevant to this task:\n`,
+    );
     for (const k of semantic) {
-      const pct = Math.round(k.score * 100);
+      const pct = Math.round((k.score ?? 0) * 100);
       parts.push(`- **${k.id}** (${k.title}) — relevance: ${pct}%`);
     }
   }
@@ -180,10 +69,9 @@ async function main(): Promise<void> {
 
   logTelemetry("knowledge-injector", "PreToolUse:Agent", startTime, "injected", {
     declared_count: declared.length,
-    declared_ids: declared.map(d => d.id),
+    declared_ids: declared.map((e) => e.id),
     semantic_count: semantic.length,
-    semantic_ids: semantic.map(s => s.id),
-    role: role ?? "unknown",
+    semantic_ids: semantic.map((e) => e.id),
   });
 
   outputWarn(parts);

@@ -11,6 +11,7 @@ user-invocable: false
 ## Format
 
 All artifact IDs use `TYPE-XXXXXXXX` where:
+
 - `TYPE` is the artifact type prefix in uppercase (SKILL, TASK, EPIC, RULE, AD, DOC, etc.)
 - `XXXXXXXX` is 8 lowercase hexadecimal characters, randomly generated
 
@@ -27,6 +28,7 @@ echo "TASK-$(openssl rand -hex 4)"
 ```
 
 In code:
+
 ```typescript
 const id = `${prefix}-${crypto.randomBytes(4).toString('hex')}`;
 ```

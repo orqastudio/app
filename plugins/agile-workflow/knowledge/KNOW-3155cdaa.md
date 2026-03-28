@@ -35,7 +35,7 @@ Before acting on any user request, work through these questions in order:
 What is the user actually communicating?
 
 | Signal | Classification |
-|--------|----------------|
+| ------ | -------------- |
 | "build", "add", "create", "implement", "fix" a thing | **Implementation** |
 | "investigate", "explore", "compare", "understand", "audit" | **Research** |
 | "plan", "scope", "prioritize", "break down", "design" | **Planning** |
@@ -55,6 +55,7 @@ What is the user actually communicating?
 **Feedback / Bug** → This is an observation about something wrong. Investigate root cause first, then determine if it is a fixable bug or a governance/enforcement gap. Enforcement gaps are CRITICAL and never deferred.
 
 **Learning Loop** → The user is TEACHING the system, not requesting work. This observation must enter the governance learning loop:
+
 1. Capture as a lesson artifact in `.orqa/process/lessons/`
 2. `search_semantic(scope: artifacts)` — query: "lessons similar to [observation]" — detect repeating patterns
 3. If pattern repeats → propose promotion to a rule with enforcement mechanism

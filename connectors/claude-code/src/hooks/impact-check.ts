@@ -15,6 +15,7 @@ interface ParsedArtifact {
   high_influence?: boolean;
   downstream_count?: number;
   downstream_summary?: string;
+  should_warn?: boolean;
 }
 
 async function main(): Promise<void> {
@@ -54,7 +55,7 @@ async function main(): Promise<void> {
   const artifactType = parsed.artifact_type ?? "unknown";
   const highInfluence = parsed.high_influence ?? false;
   const downstreamCount = parsed.downstream_count ?? 0;
-  const shouldInject = highInfluence || downstreamCount > 20;
+  const shouldInject = parsed.should_warn ?? false;
 
   logTelemetry("impact-check", "PostToolUse", startTime, shouldInject ? "injected" : "skipped", {
     file: relPath,

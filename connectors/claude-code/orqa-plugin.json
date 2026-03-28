@@ -47,31 +47,6 @@
     },
     "knowledge": [
       {
-        "key": "artifact-creation",
-        "id": "KNOW-816ebef3",
-        "label": "Human-readable title"
-      },
-      {
-        "key": "artifact-ids",
-        "id": "KNOW-9573eeea",
-        "label": "artifact-ids"
-      },
-      {
-        "key": "decision-tree",
-        "id": "KNOW-3155cdaa",
-        "label": "Orchestrator decision tree — self-navigating knowledge discovery"
-      },
-      {
-        "key": "delegation-patterns",
-        "id": "KNOW-ac314f61",
-        "label": "delegation-patterns"
-      },
-      {
-        "key": "implementer-tree",
-        "id": "KNOW-b1593311",
-        "label": "Implementer decision tree — domain-aware implementation protocol"
-      },
-      {
         "key": "0fd23e0b",
         "id": "KNOW-4a58e7dd",
         "label": "Project Migration"
@@ -80,16 +55,6 @@
         "key": "82ceb1bd",
         "id": "KNOW-03421ec0",
         "label": "Project Inference"
-      },
-      {
-        "key": "reviewer-tree",
-        "id": "KNOW-08fcd847",
-        "label": "Reviewer decision tree — standards-driven review protocol"
-      },
-      {
-        "key": "rule-enforcement",
-        "id": "KNOW-bcfeb64e",
-        "label": "Rule Enforcement (CLI Plugin)"
       },
       {
         "key": "tool-mapping",

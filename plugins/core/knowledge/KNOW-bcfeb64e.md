@@ -33,14 +33,14 @@ enforcement:
 ## Event Types
 
 | Event | Triggered By | Pattern Matched Against |
-|-------|-------------|------------------------|
+| ----- | ------------ | ----------------------- |
 | `file` | Write, Edit tool calls | File content (new_string for Edit, content for Write) |
 | `bash` | Bash tool calls | The command string |
 
 ## Actions
 
 | Action | Behavior |
-|--------|----------|
+| ------ | -------- |
 | `block` | Tool call is denied with the rule's message |
 | `warn` | Tool call proceeds but the rule's message is shown as a warning |
 | `inject` | Skills loaded into context as systemMessage (non-blocking) |

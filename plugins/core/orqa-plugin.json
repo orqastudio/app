@@ -722,6 +722,21 @@
         "key": "5611351f",
         "id": "KNOW-5611351f",
         "label": "OrqaStudio Architecture"
+      },
+      {
+        "key": "816ebef3",
+        "id": "KNOW-816ebef3",
+        "label": "Artifact Creation Protocol"
+      },
+      {
+        "key": "9573eeea",
+        "id": "KNOW-9573eeea",
+        "label": "Artifact ID Format"
+      },
+      {
+        "key": "bcfeb64e",
+        "id": "KNOW-bcfeb64e",
+        "label": "Rule Enforcement"
       }
     ],
     "hooks": [],
@@ -1233,6 +1248,58 @@
         "priority": "P2",
         "summary": "OrqaStudio architecture: ADR patterns, data flow mapping, layer responsibilities, violation detection, IPC boundary design for Tauri+Svelte+Rust stack.",
         "content_file": "../../.orqa/process/knowledge/KNOW-5611351f.md"
+      },
+      {
+        "id": "artifact-creation",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "governance-steward"
+        ],
+        "tags": [
+          "artifact",
+          "creation",
+          "frontmatter",
+          "schema",
+          "relationships"
+        ],
+        "priority": "P2",
+        "summary": "How to create valid OrqaStudio artifacts: frontmatter requirements, relationship rules, schema compliance, status discovery via plugin schemas, and common patterns.",
+        "content_file": "knowledge/KNOW-816ebef3.md"
+      },
+      {
+        "id": "artifact-ids",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "governance-steward"
+        ],
+        "tags": [
+          "artifact",
+          "ids",
+          "format",
+          "hex"
+        ],
+        "priority": "P2",
+        "summary": "Artifact ID format: TYPE-XXXXXXXX hex format, generation commands, rules for uniqueness and type-prefix matching.",
+        "content_file": "knowledge/KNOW-9573eeea.md"
+      },
+      {
+        "id": "rule-enforcement",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "governance-steward"
+        ],
+        "tags": [
+          "rule",
+          "enforcement",
+          "hooks",
+          "cli-plugin"
+        ],
+        "priority": "P2",
+        "summary": "How OrqaStudio governance rules are enforced via PreToolUse hooks: enforcement entry format, event types (file/bash), actions (block/warn/inject).",
+        "content_file": "knowledge/KNOW-bcfeb64e.md"
       }
     ]
   }

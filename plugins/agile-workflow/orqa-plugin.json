@@ -429,6 +429,26 @@
         "key": "2a846fb7",
         "id": "KNOW-2a846fb7",
         "label": "OrqaStudio Enforcement Engine"
+      },
+      {
+        "key": "3155cdaa",
+        "id": "KNOW-3155cdaa",
+        "label": "Orchestrator decision tree — self-navigating knowledge discovery"
+      },
+      {
+        "key": "ac314f61",
+        "id": "KNOW-ac314f61",
+        "label": "Delegation Patterns"
+      },
+      {
+        "key": "b1593311",
+        "id": "KNOW-b1593311",
+        "label": "Implementer decision tree — domain-aware implementation protocol"
+      },
+      {
+        "key": "08fcd847",
+        "id": "KNOW-08fcd847",
+        "label": "Reviewer decision tree — standards-driven review protocol"
       }
     ],
     "cliTools": [],
@@ -1692,6 +1712,70 @@
         "priority": "P0",
         "summary": "Worktree-based git workflow: create worktree per task, work in isolation, merge after review, mandatory cleanup. Hooks block --no-verify, force-push to main, reset --hard, clean -f. Commit at natural boundaries (max 20 uncommitted files). Stash only for temporary rebase procedures. Data loss prevention checks before directory operations.",
         "content_file": "../../.orqa/process/rules/RULE-f609242f.md"
+      },
+      {
+        "id": "orchestrator-decision-tree",
+        "tier": "always",
+        "roles": [
+          "orchestrator"
+        ],
+        "tags": [
+          "orchestrator",
+          "decision-tree",
+          "delegation",
+          "reasoning"
+        ],
+        "priority": "P1",
+        "summary": "Orchestrator reasoning protocol: classify context (implementation/research/planning/bug/learning/review/docs), understand what the work requires, form the right question, then delegate with context.",
+        "content_file": "knowledge/KNOW-3155cdaa.md"
+      },
+      {
+        "id": "delegation-patterns",
+        "tier": "always",
+        "roles": [
+          "orchestrator"
+        ],
+        "tags": [
+          "delegation",
+          "roles",
+          "subagents",
+          "teams"
+        ],
+        "priority": "P1",
+        "summary": "How the orchestrator delegates work to specialized agents. Covers role boundaries, when to use subagents vs agent teams, and the delegation protocol.",
+        "content_file": "knowledge/KNOW-ac314f61.md"
+      },
+      {
+        "id": "implementer-decision-tree",
+        "tier": "always",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "implementer",
+          "decision-tree",
+          "reasoning",
+          "domain"
+        ],
+        "priority": "P1",
+        "summary": "Implementer reasoning protocol: understand domain layer, form the right question, search for existing patterns, build and verify. Prevents duplicate implementations.",
+        "content_file": "knowledge/KNOW-b1593311.md"
+      },
+      {
+        "id": "reviewer-decision-tree",
+        "tier": "always",
+        "roles": [
+          "reviewer"
+        ],
+        "tags": [
+          "reviewer",
+          "decision-tree",
+          "reasoning",
+          "verdict"
+        ],
+        "priority": "P1",
+        "summary": "Reviewer reasoning protocol: understand what is being reviewed, find applicable standards, produce an evidence-based PASS/FAIL verdict. Reviewer produces verdicts only — never fixes code.",
+        "content_file": "knowledge/KNOW-08fcd847.md"
       }
     ]
   },
@@ -1807,6 +1891,41 @@
       "AGENT": "#0ea5e9",
       "DOC": "#64748b",
       "PIVOT": "#ef4444"
+    }
+  },
+  "prompt_classification": {
+    "thinking_mode_exceptions": {
+      "learning-loop": "governance",
+      "dogfood-implementation": "implementation"
+    },
+    "prompt_types": [
+      "implementation",
+      "planning",
+      "review",
+      "debugging",
+      "research",
+      "documentation",
+      "governance",
+      "general"
+    ],
+    "stage_mappings": {
+      "implementation": "implement",
+      "planning": "plan",
+      "review": "review",
+      "debugging": "debug",
+      "research": "research",
+      "documentation": "document",
+      "governance": "govern",
+      "general": "general"
+    },
+    "keyword_patterns": {
+      "implementation": ["implement", "build", "create", "add", "write code", "fix bug", "refactor", "migrate", "wire up", "hook up"],
+      "debugging": ["debug", "investigate", "why does", "broken", "error", "crash", "failing", "not working", "trace"],
+      "review": ["review", "audit", "check", "verify", "validate", "assess", "compliance"],
+      "research": ["research", "explore", "investigate options", "compare", "evaluate", "what are the"],
+      "planning": ["plan", "design", "scope", "epic", "roadmap", "milestone", "break down", "approach"],
+      "documentation": ["document", "docs", "write up", "describe", "explain", "specification"],
+      "governance": ["rule", "governance", "enforce", "lesson", "artifact", "pillar", "promote", "knowledge"]
     }
   }
 }

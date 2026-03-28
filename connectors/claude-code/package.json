@@ -18,8 +18,7 @@
   },
   "dependencies": {
     "@orqastudio/cli": "0.1.4-dev",
-    "@orqastudio/types": "0.1.4-dev",
-    "yaml": "^2.8.3"
+    "@orqastudio/types": "0.1.4-dev"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
