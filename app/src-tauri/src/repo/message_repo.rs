@@ -5,15 +5,25 @@ use crate::error::OrqaError;
 
 /// Parameters for creating a tool-related message.
 pub struct NewToolMessage<'a> {
+    /// The session this message belongs to.
     pub session_id: i64,
+    /// Message role: "user", "assistant", or "tool".
     pub role: &'a str,
+    /// Content type discriminator (e.g., "tool_use", "tool_result").
     pub content_type: &'a str,
+    /// Optional text content of the message.
     pub content: Option<&'a str>,
+    /// Tool call identifier linking the request to its result.
     pub tool_call_id: &'a str,
+    /// Name of the tool being called or responded to.
     pub tool_name: &'a str,
+    /// JSON-encoded tool input arguments.
     pub tool_input: Option<&'a str>,
+    /// Whether the tool result represents an error.
     pub tool_is_error: bool,
+    /// Turn index within the session (increments per user message).
     pub turn_index: i32,
+    /// Block index within the turn (increments per content block).
     pub block_index: i32,
 }
 

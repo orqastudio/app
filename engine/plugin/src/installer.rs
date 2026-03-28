@@ -20,10 +20,14 @@ use super::manifest::read_manifest;
 /// Result of a plugin installation.
 #[derive(Debug, Clone, Serialize)]
 pub struct InstallResult {
+    /// The plugin's package name (e.g. `@orqastudio/plugin-software`).
     pub name: String,
+    /// Semantic version string from the manifest (e.g. `1.2.0`).
     pub version: String,
+    /// Absolute filesystem path to the installed plugin directory.
     pub path: String,
-    pub source: String, // "github" or "local"
+    /// Install source: `"github"` or `"local"`.
+    pub source: String,
     /// Key collisions detected during installation. Empty when none.
     /// When non-empty, the UI/CLI should prompt the user to merge or rename
     /// each collision before completing installation.
@@ -90,8 +94,8 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
     Ok(InstallResult {
         name: manifest.name,
         version: manifest.version,
-        path: target.to_string_lossy().to_string(),
-        source: "local".to_string(),
+        path: target.to_string_lossy().into_owned(),
+        source: "local".to_owned(),
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
@@ -110,7 +114,7 @@ pub async fn install_from_github(
     project_root: &Path,
 ) -> Result<InstallResult, EngineError> {
     let tag = match version {
-        Some(v) => v.to_string(),
+        Some(v) => v.to_owned(),
         None => fetch_latest_tag(repo).await?,
     };
     let (bytes, sha256) = download_plugin_archive(repo, &tag).await?;
@@ -178,8 +182,8 @@ fn finalize_github_install(
     Ok(InstallResult {
         name: manifest.name,
         version: manifest.version,
-        path: target.to_string_lossy().to_string(),
-        source: "github".to_string(),
+        path: target.to_string_lossy().into_owned(),
+        source: "github".to_owned(),
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
@@ -225,7 +229,7 @@ fn update_lockfile(
     lockfile.plugins.push(LockEntry {
         name: manifest.name.clone(),
         version: manifest.version.clone(),
-        repo: repo.to_string(),
+        repo: repo.to_owned(),
         sha256,
         installed_at: iso_now(),
     });
@@ -237,7 +241,7 @@ async fn download_plugin_archive(repo: &str, tag: &str) -> Result<(Vec<u8>, Stri
     let repo_name = repo
         .split('/')
         .next_back()
-        .ok_or_else(|| EngineError::Plugin("invalid repo format".to_string()))?;
+        .ok_or_else(|| EngineError::Plugin("invalid repo format".to_owned()))?;
 
     let archive_url =
         format!("https://github.com/{repo}/releases/download/{tag}/{repo_name}-{tag}.tar.gz");
@@ -287,7 +291,7 @@ fn extract_and_read_manifest(
 /// single subdirectory is the plugin root.
 fn find_extracted_dir(tmp_dir: &Path) -> Result<std::path::PathBuf, EngineError> {
     let entries: Vec<_> = std::fs::read_dir(tmp_dir)?
-        .filter_map(std::result::Result::ok)
+        .filter_map(Result::ok)
         .filter(|e| e.path().is_dir())
         .collect();
     Ok(if entries.len() == 1 {
@@ -325,7 +329,7 @@ async fn fetch_latest_tag(repo: &str) -> Result<String, EngineError> {
     data["tag_name"]
         .as_str()
         .map(String::from)
-        .ok_or_else(|| EngineError::Plugin("no tag_name in release response".to_string()))
+        .ok_or_else(|| EngineError::Plugin("no tag_name in release response".to_owned()))
 }
 
 /// Extract a gzipped tar archive into a directory.

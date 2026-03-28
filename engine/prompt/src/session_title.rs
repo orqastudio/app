@@ -1,9 +1,9 @@
-// Session title generation for the orqa-engine crate.
-//
-// Provides the engine-level logic for generating a session title from
-// a set of message summaries. The actual LLM call is delegated to a
-// `SidecarClient` implementation provided by the access layer, keeping
-// the engine free of Tauri and process-management concerns.
+//! Session title generation for the orqa-engine crate.
+//!
+//! Provides the engine-level logic for generating a session title from
+//! a set of message summaries. The actual LLM call is delegated to a
+//! `SidecarClient` implementation provided by the access layer, keeping
+//! the engine free of Tauri and process-management concerns.
 
 use orqa_engine_types::traits::sidecar::SidecarClient;
 
@@ -21,7 +21,7 @@ pub async fn generate_session_title(
     messages: &[String],
 ) -> Result<Option<String>, Box<dyn std::error::Error>> {
     let raw = client.generate_summary(messages).await?;
-    let title = raw.trim().to_string();
+    let title = raw.trim().to_owned();
     if title.is_empty() {
         Ok(None)
     } else {

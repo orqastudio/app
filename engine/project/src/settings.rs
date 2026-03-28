@@ -1,8 +1,8 @@
-// Project settings types for the OrqaStudio engine.
-//
-// `ProjectSettings` is the Rust representation of `{project}/.orqa/project.json`.
-// It is the authoritative config for a project: artifact navigation, status transitions,
-// delivery hierarchy, plugin enablement, and display preferences.
+//! Project settings types for the OrqaStudio engine.
+//!
+//! `ProjectSettings` is the Rust representation of `{project}/.orqa/project.json`.
+//! It is the authoritative config for a project: artifact navigation, status transitions,
+//! delivery hierarchy, plugin enablement, and display preferences.
 
 use serde::{Deserialize, Serialize};
 
@@ -43,14 +43,19 @@ pub struct ArtifactLinksConfig {
 /// Governance artifact counts for a project.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GovernanceCounts {
+    /// Number of lesson files in `.orqa/learning/lessons/`.
     #[serde(default)]
     pub lessons: u32,
+    /// Number of decision records in `.orqa/learning/decisions/`.
     #[serde(default)]
     pub decisions: u32,
+    /// Number of enforcement rules in `.orqa/learning/rules/`.
     #[serde(default)]
     pub rules: u32,
+    /// Number of documentation files in `.orqa/documentation/`.
     #[serde(default)]
     pub documentation: u32,
+    /// Whether a `.claude/` configuration directory was detected.
     #[serde(default)]
     pub has_claude_config: bool,
 }
@@ -83,24 +88,33 @@ pub struct PluginProjectConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ProjectSettings {
+    /// Display name for this project.
     pub name: String,
     /// When `true`, this project is dogfooding — the app being built is the app being used.
     #[serde(default)]
     pub dogfood: bool,
+    /// Optional short description displayed in project selection UI.
     #[serde(default)]
     pub description: Option<String>,
+    /// Default AI model identifier (e.g. "auto", "claude-sonnet-4-6").
     #[serde(default = "default_model")]
     pub default_model: String,
+    /// Directories excluded from artifact scanning (e.g. `node_modules`, `.git`).
     #[serde(default = "default_excluded_paths")]
     pub excluded_paths: Vec<String>,
+    /// Last detected technology stack, cached in project.json by the scanner.
     #[serde(default)]
     pub stack: Option<DetectedStack>,
+    /// Last detected governance artifact counts, cached in project.json by the scanner.
     #[serde(default)]
     pub governance: Option<GovernanceCounts>,
+    /// Optional display icon for this project in the project switcher.
     #[serde(default)]
     pub icon: Option<String>,
+    /// When `true`, the UI exposes the agent's thinking chain for debugging.
     #[serde(default)]
     pub show_thinking: bool,
+    /// Optional custom system prompt prepended to every agent session.
     #[serde(default)]
     pub custom_system_prompt: Option<String>,
     /// Config-driven artifact navigation tree.
@@ -137,17 +151,17 @@ pub struct ProjectSettings {
 
 /// Returns the default model identifier used when none is specified in project.json.
 fn default_model() -> String {
-    "auto".to_string()
+    "auto".to_owned()
 }
 
 /// Returns the default list of paths excluded from artifact scanning.
 fn default_excluded_paths() -> Vec<String> {
     vec![
-        "node_modules".to_string(),
-        ".git".to_string(),
-        "target".to_string(),
-        "dist".to_string(),
-        "build".to_string(),
+        "node_modules".to_owned(),
+        ".git".to_owned(),
+        "target".to_owned(),
+        "dist".to_owned(),
+        "build".to_owned(),
     ]
 }
 

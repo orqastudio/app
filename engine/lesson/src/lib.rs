@@ -1,13 +1,14 @@
-// orqa-lesson: Lesson parse/render logic and file-backed store.
-//
-// Provides `parse_lesson` and `render_lesson` functions that read and write
-// lesson markdown files. Lesson files use YAML frontmatter followed by a
-// markdown body. The types themselves (`Lesson`, `NewLesson`) are defined in
-// `orqa_engine_types::types::lesson` and re-exported here for convenience.
-//
-// The `store` submodule provides a file-backed `FileLessonStore` that implements
-// `orqa_engine_types::traits::storage::LessonStore`.
+//! orqa-lesson: Lesson parse/render logic and file-backed store.
+//!
+//! Provides `parse_lesson` and `render_lesson` functions that read and write
+//! lesson markdown files. Lesson files use YAML frontmatter followed by a
+//! markdown body. The types themselves (`Lesson`, `NewLesson`) are defined in
+//! `orqa_engine_types::types::lesson` and re-exported here for convenience.
+//!
+//! The `store` submodule provides a file-backed `FileLessonStore` that implements
+//! `orqa_engine_types::traits::storage::LessonStore`.
 
+/// File-backed lesson store implementing `LessonStore`.
 pub mod store;
 
 pub use orqa_engine_types::types::lesson::*;
@@ -18,7 +19,7 @@ pub use orqa_engine_types::types::lesson::*;
 /// Everything after the closing `---` is the lesson body.
 pub fn parse_lesson(content: &str, file_path: &str) -> Result<Lesson, String> {
     let (frontmatter, body) = split_frontmatter(content)?;
-    let lesson = parse_frontmatter_fields(&frontmatter, body.trim().to_string(), file_path)?;
+    let lesson = parse_frontmatter_fields(&frontmatter, body.trim().to_owned(), file_path)?;
     Ok(lesson)
 }
 
@@ -26,13 +27,13 @@ pub fn parse_lesson(content: &str, file_path: &str) -> Result<Lesson, String> {
 fn split_frontmatter(content: &str) -> Result<(String, &str), String> {
     let trimmed = content.trim_start();
     if !trimmed.starts_with("---") {
-        return Err("lesson file must begin with '---' YAML frontmatter".to_string());
+        return Err("lesson file must begin with '---' YAML frontmatter".to_owned());
     }
     let after_open = &trimmed[3..];
     let close_pos = after_open
         .find("\n---")
-        .ok_or_else(|| "lesson file missing closing '---' for frontmatter".to_string())?;
-    let frontmatter = after_open[..close_pos].to_string();
+        .ok_or_else(|| "lesson file missing closing '---' for frontmatter".to_owned())?;
+    let frontmatter = after_open[..close_pos].to_owned();
     let body = &after_open[close_pos + 4..]; // skip "\n---"
     Ok((frontmatter, body))
 }
@@ -44,23 +45,23 @@ fn parse_frontmatter_fields(
     file_path: &str,
 ) -> Result<Lesson, String> {
     let id = extract_field(frontmatter, "id")
-        .ok_or_else(|| "frontmatter missing required field: id".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: id".to_owned())?;
     let title = extract_field(frontmatter, "title")
-        .ok_or_else(|| "frontmatter missing required field: title".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: title".to_owned())?;
     let category = extract_field(frontmatter, "category")
-        .ok_or_else(|| "frontmatter missing required field: category".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: category".to_owned())?;
     let recurrence_str = extract_field(frontmatter, "recurrence")
-        .ok_or_else(|| "frontmatter missing required field: recurrence".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: recurrence".to_owned())?;
     let recurrence = recurrence_str.parse::<i32>().map_err(|_| {
         format!("frontmatter 'recurrence' is not a valid integer: {recurrence_str}")
     })?;
     let status = extract_field(frontmatter, "status")
-        .ok_or_else(|| "frontmatter missing required field: status".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: status".to_owned())?;
     let promoted_to = extract_nullable_field(frontmatter, "promoted-to");
     let created = extract_field(frontmatter, "created")
-        .ok_or_else(|| "frontmatter missing required field: created".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: created".to_owned())?;
     let updated = extract_field(frontmatter, "updated")
-        .ok_or_else(|| "frontmatter missing required field: updated".to_string())?;
+        .ok_or_else(|| "frontmatter missing required field: updated".to_owned())?;
 
     Ok(Lesson {
         id,
@@ -72,7 +73,7 @@ fn parse_frontmatter_fields(
         created,
         updated,
         body,
-        file_path: file_path.to_string(),
+        file_path: file_path.to_owned(),
     })
 }
 
@@ -84,7 +85,7 @@ fn extract_field(frontmatter: &str, key: &str) -> Option<String> {
         if let Some(rest) = line.strip_prefix(&format!("{key}:")) {
             let value = rest.trim().trim_matches('"').trim_matches('\'');
             if !value.is_empty() && value != "null" {
-                return Some(value.to_string());
+                return Some(value.to_owned());
             }
         }
     }
@@ -99,7 +100,7 @@ fn extract_nullable_field(frontmatter: &str, key: &str) -> Option<String> {
             if value.is_empty() || value == "null" {
                 return None;
             }
-            return Some(value.to_string());
+            return Some(value.to_owned());
         }
     }
     None
@@ -110,7 +111,7 @@ pub fn render_lesson(lesson: &Lesson) -> String {
     let promoted_to = lesson
         .promoted_to
         .as_deref()
-        .map_or_else(|| "null".to_string(), |v| format!("\"{v}\""));
+        .map_or_else(|| "null".to_owned(), |v| format!("\"{v}\""));
 
     format!(
         "---\nid: {}\ntitle: \"{}\"\ncategory: {}\nrecurrence: {}\nstatus: {}\npromoted-to: {}\ncreated: {}\nupdated: {}\n---\n{}",
@@ -184,7 +185,7 @@ Test body.
         let content = "---\nid: IMPL-002\ntitle: \"Test\"\ncategory: coding\nrecurrence: 3\nstatus: promoted\npromoted-to: \"RULE-001\"\ncreated: 2026-01-01\nupdated: 2026-01-02\n---\nbody\n";
         let lesson =
             parse_lesson(content, ".orqa/learning/lessons/IMPL-002.md").expect("should parse");
-        assert_eq!(lesson.promoted_to, Some("RULE-001".to_string()));
+        assert_eq!(lesson.promoted_to, Some("RULE-001".to_owned()));
     }
 
     #[test]
@@ -204,7 +205,7 @@ Test body.
     fn extract_field_unquoted() {
         assert_eq!(
             extract_field("category: process\n", "category"),
-            Some("process".to_string())
+            Some("process".to_owned())
         );
     }
 
@@ -212,7 +213,7 @@ Test body.
     fn extract_field_quoted() {
         assert_eq!(
             extract_field("title: \"My title\"\n", "title"),
-            Some("My title".to_string())
+            Some("My title".to_owned())
         );
     }
 

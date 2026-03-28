@@ -13,10 +13,12 @@
 //!
 //! The generated files will be updated in-place under `src/generated/`.
 
-// Build scripts are compiled outside the workspace lint configuration.
-// The code-generation functions below are intentionally long — suppressing
-// this lint at file scope rather than on each function.
-#![allow(clippy::too_many_lines)]
+// Build scripts are not library code. The restrictions below are suppressed:
+// - missing_docs: build scripts are not published APIs
+// - unwrap_used: .unwrap() in build scripts panics with a clear build error message
+// - print_stderr: eprintln! is Cargo's API for build warnings (cargo:warning=...)
+// - too_many_lines: code-generation functions are intentionally long
+#![allow(clippy::too_many_lines, clippy::unwrap_used, clippy::print_stderr, missing_docs)]
 
 use std::fmt::Write as FmtWrite;
 use std::fs;
@@ -148,7 +150,7 @@ fn schema_to_rust(schema: &serde_json::Value) -> Result<String, Box<dyn std::err
     output.push_str("// Source: libs/types/src/platform/*.schema.json\n");
     output.push_str("// Regenerate: cargo build -p orqa-validation\n");
     output.push('\n');
-    output.push_str("#![allow(dead_code, unused_imports)]\n");
+    output.push_str("#![allow(dead_code, unused_imports, missing_docs)]\n");
     output.push('\n');
     output.push_str("use serde::{Deserialize, Serialize};\n");
     output.push('\n');
@@ -482,7 +484,7 @@ fn generate_mod_rs(module_names: &[String]) -> String {
     out.push_str("// Source: libs/types/src/platform/*.schema.json\n");
     out.push_str("// Regenerate: cargo build -p orqa-validation\n");
     out.push('\n');
-    out.push_str("#![allow(dead_code)]\n");
+    out.push_str("#![allow(dead_code, missing_docs)]\n");
     out.push('\n');
     for name in module_names {
         writeln!(out, "pub mod {name};").unwrap();

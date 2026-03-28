@@ -19,15 +19,23 @@ const CACHE_TTL: Duration = Duration::from_secs(3600); // 1 hour
 /// A plugin entry in a registry catalog.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RegistryEntry {
+    /// The plugin's package name (e.g. `@orqastudio/plugin-software`).
     pub name: String,
+    /// Human-readable display name shown in the plugin browser.
     #[serde(rename = "displayName")]
     pub display_name: String,
+    /// One-line description of the plugin.
     pub description: String,
+    /// GitHub repository slug (e.g. `orqastudio/plugin-software`).
     pub repo: String,
+    /// Category label for UI grouping (e.g. `"methodology"`, `"tool"`).
     pub category: String,
+    /// Lucide icon name for display in the plugin browser.
     pub icon: String,
+    /// Tool capability identifiers this plugin grants.
     #[serde(default)]
     pub capabilities: Vec<String>,
+    /// Optional requirements (other plugins or capabilities).
     #[serde(default)]
     pub requires: serde_json::Value,
 }
@@ -35,8 +43,11 @@ pub struct RegistryEntry {
 /// A registry catalog fetched from GitHub.
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct RegistryCatalog {
+    /// Catalog format version (currently `1`).
     pub version: u32,
+    /// Registry source identifier (e.g. `"official"`, `"community"`).
     pub source: String,
+    /// Plugin entries in this catalog.
     pub plugins: Vec<RegistryEntry>,
 }
 

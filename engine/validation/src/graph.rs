@@ -690,20 +690,20 @@ pub fn graph_stats(graph: &ArtifactGraph) -> GraphStats {
 pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
     let trimmed = content.trim_start();
     if !trimmed.starts_with("---") {
-        return (None, content.to_string());
+        return (None, content.to_owned());
     }
 
     let after_open = &trimmed[3..];
     let Some(close_pos) = after_open.find("\n---") else {
-        return (None, content.to_string());
+        return (None, content.to_owned());
     };
 
     // Trim leading/trailing whitespace from the YAML block so callers
     // can reliably reconstruct with `format!("---\n{fm}\n---\n{body}")`.
-    let fm_text = after_open[..close_pos].trim().to_string();
+    let fm_text = after_open[..close_pos].trim().to_owned();
     let body = after_open[close_pos + 4..]
         .trim_start_matches('\n')
-        .to_string();
+        .to_owned();
     (Some(fm_text), body)
 }
 
@@ -737,7 +737,7 @@ pub(crate) fn infer_artifact_type(
             format!("{path_prefix}/")
         };
         if (normalized.starts_with(&prefix_slash) || normalized == *path_prefix)
-            && (best_match.is_none() || path_prefix.len() > best_match.unwrap().0.len())
+            && best_match.is_none_or(|(prev, _)| path_prefix.len() > prev.len())
         {
             best_match = Some((path_prefix, type_key));
         }

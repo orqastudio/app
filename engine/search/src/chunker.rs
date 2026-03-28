@@ -23,9 +23,11 @@ const BINARY_EXTENSIONS: &[&str] = &[
 /// Error type for chunking operations.
 #[derive(Debug, thiserror::Error)]
 pub enum ChunkError {
+    /// Underlying I/O error reading a file.
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
 
+    /// Directory walk failed (e.g. permission denied).
     #[error("walk error: {0}")]
     Walk(String),
 }
@@ -120,20 +122,20 @@ fn is_binary_extension(path: &Path) -> bool {
 fn detect_language(path: &Path) -> Option<String> {
     let ext = path.extension()?.to_str()?;
     match ext {
-        "rs" => Some("rust".to_string()),
-        "ts" | "tsx" => Some("typescript".to_string()),
-        "js" | "jsx" => Some("javascript".to_string()),
-        "svelte" => Some("svelte".to_string()),
-        "py" => Some("python".to_string()),
-        "go" => Some("go".to_string()),
-        "toml" => Some("toml".to_string()),
-        "json" => Some("json".to_string()),
-        "yaml" | "yml" => Some("yaml".to_string()),
-        "md" => Some("markdown".to_string()),
-        "html" => Some("html".to_string()),
-        "css" => Some("css".to_string()),
-        "sql" => Some("sql".to_string()),
-        "sh" | "bash" => Some("shell".to_string()),
+        "rs" => Some("rust".to_owned()),
+        "ts" | "tsx" => Some("typescript".to_owned()),
+        "js" | "jsx" => Some("javascript".to_owned()),
+        "svelte" => Some("svelte".to_owned()),
+        "py" => Some("python".to_owned()),
+        "go" => Some("go".to_owned()),
+        "toml" => Some("toml".to_owned()),
+        "json" => Some("json".to_owned()),
+        "yaml" | "yml" => Some("yaml".to_owned()),
+        "md" => Some("markdown".to_owned()),
+        "html" => Some("html".to_owned()),
+        "css" => Some("css".to_owned()),
+        "sql" => Some("sql".to_owned()),
+        "sh" | "bash" => Some("shell".to_owned()),
         _ => None,
     }
 }
@@ -163,7 +165,7 @@ fn split_into_chunks(content: &str, file_path: &str, language: Option<&str>) -> 
         let chunk_content = lines[start..end].join("\n");
 
         chunks.push(ChunkInfo {
-            file_path: file_path.to_string(),
+            file_path: file_path.to_owned(),
             start_line: (start + 1) as u32, // 1-indexed
             end_line: end as u32,           // inclusive of last line
             content: chunk_content,

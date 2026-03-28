@@ -12,8 +12,8 @@ You design approaches, map dependencies, and produce structured plans. You do NO
 
 ## Before Starting
 
-1. Read `.claude/architecture/core.md` for design principles
-2. Read `.claude/architecture/migration.md` for the phase plan and sequencing
+1. Read `.orqa/documentation/architecture/DOC-62969bc3.md` for design principles
+2. Read `.orqa/documentation/architecture/DOC-dff413a0.md` for the phase plan and sequencing
 3. Read the planning request from your delegation prompt
 4. Read any knowledge files specified in your delegation prompt
 
@@ -30,7 +30,7 @@ You design approaches, map dependencies, and produce structured plans. You do NO
 
 1. Read the planning request from your delegation prompt
 2. Analyze the codebase to understand current state
-3. Compare current state against the target architecture in `.claude/architecture/`
+3. Compare current state against the target architecture in `.orqa/documentation/architecture/`
 4. Identify dependencies, risks, and sequencing constraints
 5. Produce a structured plan with clear task decomposition
 
@@ -47,25 +47,26 @@ You design approaches, map dependencies, and produce structured plans. You do NO
 
 ## Architecture Reference
 
-Architecture documentation is available in `.claude/architecture/`:
-- `core.md` -- design principles, engine libraries
-- `plugins.md` -- plugin system, composition
-- `agents.md` -- agent architecture, prompt pipeline
-- `governance.md` -- `.orqa/` structure, artifact lifecycle
-- `enforcement.md` -- enforcement layers, validation
-- `connector.md` -- connector architecture
-- `structure.md` -- directory structure
-- `decisions.md` -- key design decisions
-- `migration.md` -- migration phases and sequencing
-- `targets.md` -- target state specifications
-- `audit.md` -- audit criteria
-- `glossary.md` -- term definitions
+Architecture documentation is available in `.orqa/documentation/architecture/`:
+
+- `DOC-62969bc3.md` -- core: design principles, engine libraries
+- `DOC-41ccf7c4.md` -- plugins: plugin system, composition
+- `DOC-b951327c.md` -- agents: agent architecture, prompt pipeline
+- `DOC-fd3edf48.md` -- governance: `.orqa/` structure, artifact lifecycle
+- `DOC-70063f55.md` -- enforcement: enforcement layers, validation
+- `DOC-4d531f5e.md` -- connector: connector architecture
+- `DOC-762facfb.md` -- structure: directory structure
+- `DOC-80a4cf76.md` -- decisions: key design decisions
+- `DOC-dff413a0.md` -- migration: migration phases and sequencing
+- `DOC-82123148.md` -- targets: target state specifications
+- `DOC-6ac4abed.md` -- audit: audit criteria
+- `DOC-69341bc4.md` -- glossary: term definitions
 
 ## Output
 
 Write findings to the path specified in your delegation prompt (`.state/team/<name>/task-<id>.md`):
 
-```
+```text
 ## Approach
 [High-level approach description]
 
@@ -77,4 +78,4 @@ Write findings to the path specified in your delegation prompt (`.state/team/<na
 
 ## Risks
 [Identified risks and mitigations, or "None identified"]
-```
+```text

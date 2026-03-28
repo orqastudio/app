@@ -4,10 +4,15 @@ use crate::error::OrqaError;
 
 /// Parsed credential details from the Claude credentials file.
 pub struct CredentialDetails {
+    /// Whether the user is authenticated.
     pub authenticated: bool,
+    /// The subscription plan type (e.g., "pro", "free").
     pub subscription_type: Option<String>,
+    /// The rate limit tier assigned to this account.
     pub rate_limit_tier: Option<String>,
+    /// OAuth scopes granted to this session.
     pub scopes: Vec<String>,
+    /// Token expiry timestamp (milliseconds since epoch).
     pub expires_at: Option<u64>,
 }
 
@@ -22,7 +27,7 @@ pub fn check_claude_cli() -> Result<ClaudeCliInfo, OrqaError> {
 
     match version_output {
         Ok(output) if output.status.success() => {
-            let version = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            let version = String::from_utf8_lossy(&output.stdout).trim().to_owned();
             let path = resolve_cli_path();
             Ok(ClaudeCliInfo {
                 installed: true,
@@ -69,7 +74,7 @@ pub fn resolve_cli_path() -> Option<String> {
                 .next()
                 .unwrap_or("")
                 .trim()
-                .to_string();
+                .to_owned();
             if path.is_empty() {
                 None
             } else {
@@ -93,7 +98,7 @@ pub fn check_claude_auth() -> Result<ClaudeCliInfo, OrqaError> {
 
     match version_output {
         Ok(output) if output.status.success() => {
-            let version = String::from_utf8_lossy(&output.stdout).trim().to_string();
+            let version = String::from_utf8_lossy(&output.stdout).trim().to_owned();
 
             let home = std::env::var("HOME")
                 .or_else(|_| std::env::var("USERPROFILE"))
@@ -209,11 +214,11 @@ pub fn reauthenticate_claude() -> Result<ClaudeCliInfo, OrqaError> {
     match login_result {
         Ok(output) if output.status.success() => check_claude_auth(),
         Ok(output) => {
-            let stderr = String::from_utf8_lossy(&output.stderr).trim().to_string();
+            let stderr = String::from_utf8_lossy(&output.stderr).trim().to_owned();
             Err(OrqaError::Sidecar(format!(
                 "claude login failed: {}",
                 if stderr.is_empty() {
-                    "unknown error".to_string()
+                    "unknown error".to_owned()
                 } else {
                     stderr
                 }
@@ -225,41 +230,66 @@ pub fn reauthenticate_claude() -> Result<ClaudeCliInfo, OrqaError> {
     }
 }
 
+/// Serializable setup wizard state emitted to the frontend.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SetupStatus {
+    /// Whether all required setup steps have been completed.
     pub setup_complete: bool,
+    /// The setup schema version expected by the current binary.
     pub current_version: u32,
+    /// The setup schema version recorded in the user's settings store.
     pub stored_version: u32,
+    /// Individual step statuses for each setup requirement.
     pub steps: Vec<SetupStepStatus>,
 }
 
+/// Status of a single setup wizard step.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SetupStepStatus {
+    /// Unique identifier for the setup step (e.g., "claude_cli").
     pub id: String,
+    /// Human-readable label shown in the setup UI.
     pub label: String,
+    /// Current state of this step.
     pub status: StepStatus,
+    /// Optional detail message shown below the step label.
     pub detail: Option<String>,
 }
 
+/// Possible states for a setup wizard step.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum StepStatus {
+    /// Step has not yet been evaluated.
     Pending,
+    /// Step is currently being checked.
     Checking,
+    /// Step completed successfully.
     Complete,
+    /// Step failed with an error.
     Error,
+    /// Step requires manual user action before it can proceed.
     ActionRequired,
 }
 
+/// Claude CLI installation and authentication state.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ClaudeCliInfo {
+    /// Whether the `claude` binary was found on the PATH.
     pub installed: bool,
+    /// Version string returned by `claude --version`.
     pub version: Option<String>,
+    /// Absolute path to the `claude` binary.
     pub path: Option<String>,
+    /// Whether the CLI has valid authentication credentials.
     pub authenticated: bool,
+    /// The subscription plan type (e.g., "pro", "free").
     pub subscription_type: Option<String>,
+    /// The rate limit tier assigned to this account.
     pub rate_limit_tier: Option<String>,
+    /// OAuth scopes granted to this session.
     pub scopes: Vec<String>,
+    /// Token expiry timestamp (milliseconds since epoch).
     pub expires_at: Option<u64>,
 }
 

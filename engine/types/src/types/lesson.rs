@@ -1,8 +1,8 @@
-// Lesson domain types for the OrqaStudio engine.
-//
-// Defines structs for lessons — first-class governance artifacts in the learning loop.
-// Lessons are stored in `.orqa/lessons/` and feed the self-improvement pipeline:
-// recurring patterns are promoted to enforcement rules.
+//! Lesson domain types for the OrqaStudio engine.
+//!
+//! Defines structs for lessons — first-class governance artifacts in the learning loop.
+//! Lessons are stored in `.orqa/lessons/` and feed the self-improvement pipeline:
+//! recurring patterns are promoted to enforcement rules.
 
 use serde::{Deserialize, Serialize};
 
@@ -38,7 +38,10 @@ pub struct Lesson {
 /// Input for creating a new lesson.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NewLesson {
+    /// Short title describing the lesson.
     pub title: String,
+    /// Category: "process", "coding", or "architecture".
     pub category: String,
+    /// Full markdown body of the lesson.
     pub body: String,
 }

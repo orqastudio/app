@@ -83,12 +83,12 @@ pub fn apply_status_transition(
 ) -> Result<(), OrqaError> {
     if artifact_id.trim().is_empty() {
         return Err(OrqaError::Validation(
-            "artifact_id cannot be empty".to_string(),
+            "artifact_id cannot be empty".to_owned(),
         ));
     }
     if proposed_status.trim().is_empty() {
         return Err(OrqaError::Validation(
-            "proposed_status cannot be empty".to_string(),
+            "proposed_status cannot be empty".to_owned(),
         ));
     }
 
@@ -101,7 +101,7 @@ pub fn apply_status_transition(
 
     if node.path.contains("..") {
         return Err(OrqaError::Validation(
-            "artifact path contains path traversal".to_string(),
+            "artifact path contains path traversal".to_owned(),
         ));
     }
 

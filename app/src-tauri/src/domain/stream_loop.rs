@@ -1,10 +1,10 @@
-// Stream loop for the orqa-studio Tauri app.
-//
-// Drives the sidecar read loop and dispatches responses to the frontend via
-// Tauri's Channel<T>. Pure streaming logic (response translation, terminal
-// detection, accumulation) lives in orqa_engine::streaming::stream_loop and
-// is re-used here. All Tauri-specific code (AppState access, Channel<T>,
-// session persistence, workflow tracking) is in this file.
+//! Stream loop for the orqa-studio Tauri app.
+//!
+//! Drives the sidecar read loop and dispatches responses to the frontend via
+//! Tauri's Channel<T>. Pure streaming logic (response translation, terminal
+//! detection, accumulation) lives in orqa_engine::streaming::stream_loop and
+//! is re-used here. All Tauri-specific code (AppState access, Channel<T>,
+//! session persistence, workflow tracking) is in this file.
 
 use crate::domain::enforcement::Verdict;
 use crate::domain::process_gates::{evaluate_stop_verdicts, evaluate_write_verdicts};
@@ -40,13 +40,13 @@ pub fn handle_tool_execute(
 
     let output = truncate_tool_output(raw_output);
     let tool_result = SidecarRequest::ToolResult {
-        tool_call_id: tool_call_id.to_string(),
+        tool_call_id: tool_call_id.to_owned(),
         output,
         is_error,
     };
     if let Err(e) = state.sidecar.manager.send(&tool_result) {
         let _ = on_event.send(StreamEvent::StreamError {
-            code: "tool_result_send_error".to_string(),
+            code: "tool_result_send_error".to_owned(),
             message: format!("failed to send tool result to sidecar: {e}"),
             recoverable: false,
         });
@@ -66,13 +66,13 @@ pub fn send_approval(
     on_event: &tauri::ipc::Channel<StreamEvent>,
 ) -> bool {
     let approval = SidecarRequest::ToolApproval {
-        tool_call_id: tool_call_id.to_string(),
+        tool_call_id: tool_call_id.to_owned(),
         approved,
         reason,
     };
     if let Err(e) = state.sidecar.manager.send(&approval) {
         let _ = on_event.send(StreamEvent::StreamError {
-            code: "tool_approval_send_error".to_string(),
+            code: "tool_approval_send_error".to_owned(),
             message: format!("failed to send tool approval to sidecar: {e}"),
             recoverable: false,
         });
@@ -115,19 +115,19 @@ pub fn handle_tool_approval(
             return send_approval(
                 tool_call_id,
                 false,
-                Some("internal error".to_string()),
+                Some("internal error".to_owned()),
                 state,
                 on_event,
             );
         };
-        map.insert(tool_call_id.to_string(), tx);
+        map.insert(tool_call_id.to_owned(), tx);
     }
 
     // Emit the approval request event to the frontend
     let emit_result = on_event.send(StreamEvent::ToolApprovalRequest {
-        tool_call_id: tool_call_id.to_string(),
-        tool_name: tool_name.to_string(),
-        input: input.to_string(),
+        tool_call_id: tool_call_id.to_owned(),
+        tool_name: tool_name.to_owned(),
+        input: input.to_owned(),
     });
     if emit_result.is_err() {
         tracing::warn!("[stream] failed to emit ToolApprovalRequest to frontend");
@@ -138,7 +138,7 @@ pub fn handle_tool_approval(
         return send_approval(
             tool_call_id,
             false,
-            Some("frontend not reachable".to_string()),
+            Some("frontend not reachable".to_owned()),
             state,
             on_event,
         );
@@ -151,7 +151,7 @@ pub fn handle_tool_approval(
     let reason = if approved {
         None
     } else {
-        Some("denied by user".to_string())
+        Some("denied by user".to_owned())
     };
     send_approval(tool_call_id, approved, reason, state, on_event)
 }
@@ -167,15 +167,15 @@ fn read_next_response(
         Ok(Some(resp)) => Some(resp),
         Ok(None) => {
             let _ = on_event.send(StreamEvent::StreamError {
-                code: "sidecar_eof".to_string(),
-                message: "sidecar process closed unexpectedly".to_string(),
+                code: "sidecar_eof".to_owned(),
+                message: "sidecar process closed unexpectedly".to_owned(),
                 recoverable: false,
             });
             None
         }
         Err(e) => {
             let _ = on_event.send(StreamEvent::StreamError {
-                code: "sidecar_read_error".to_string(),
+                code: "sidecar_read_error".to_owned(),
                 message: e.to_string(),
                 recoverable: false,
             });

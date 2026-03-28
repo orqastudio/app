@@ -14,11 +14,16 @@ use orqa_engine_types::error::EngineError;
 /// by the TypeScript SDK on the frontend.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginManifest {
+    /// The plugin's package name (e.g. `@orqastudio/plugin-software`).
     pub name: String,
+    /// Semantic version string (e.g. `1.2.0`).
     pub version: String,
+    /// Human-readable display name shown in the UI.
     #[serde(rename = "displayName")]
     pub display_name: Option<String>,
+    /// One-line description of the plugin.
     pub description: Option<String>,
+    /// What this plugin contributes to the engine at runtime.
     pub provides: PluginProvides,
     /// Recorded decisions from previous installations when relationship or
     /// artifact type keys collided with core or other plugins.
@@ -71,17 +76,24 @@ pub struct AgentDefinition {
 /// What a plugin declares it provides.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginProvides {
+    /// JSON Schema definitions for artifact types this plugin declares.
     #[serde(default)]
     pub schemas: Vec<serde_json::Value>,
+    /// View component definitions contributed by this plugin.
     #[serde(default)]
     pub views: Vec<serde_json::Value>,
+    /// Dashboard widget definitions contributed by this plugin.
     #[serde(default)]
     pub widgets: Vec<serde_json::Value>,
+    /// Relationship type definitions contributed by this plugin.
     #[serde(default)]
     pub relationships: Vec<serde_json::Value>,
+    /// Optional sidecar process configuration.
     pub sidecar: Option<serde_json::Value>,
+    /// CLI tool registrations contributed by this plugin.
     #[serde(default, rename = "cliTools")]
     pub cli_tools: Vec<serde_json::Value>,
+    /// Lifecycle hook registrations contributed by this plugin.
     #[serde(default)]
     pub hooks: Vec<serde_json::Value>,
     /// Agent role definitions contributed by this plugin.
@@ -152,11 +164,11 @@ pub fn validate_manifest(manifest: &PluginManifest) -> Vec<String> {
     let mut errors = Vec::new();
 
     if manifest.name.is_empty() {
-        errors.push("missing required field: name".to_string());
+        errors.push("missing required field: name".to_owned());
     }
 
     if manifest.version.is_empty() {
-        errors.push("missing required field: version".to_string());
+        errors.push("missing required field: version".to_owned());
     }
 
     errors

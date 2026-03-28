@@ -1,25 +1,25 @@
 # OrqaStudio Migration
 
-You are executing a critical migration of OrqaStudio from its current state to the target architecture. **Read `.claude/architecture/core.md` first -- it is the single source of truth** for the system's design principles and architecture.
+You are executing a critical migration of OrqaStudio from its current state to the target architecture. **Read `.orqa/documentation/architecture/DOC-62969bc3.md` first -- it is the single source of truth** for the system's design principles and architecture.
 
 ## Architecture Reference (MUST READ)
 
-The complete architecture is split across these files in `.claude/architecture/`:
+The complete architecture is split across these files in `.orqa/documentation/architecture/`:
 
-| File | Contents |
-|------|----------|
-| `core.md` | Design principles (P1-P7), engine libraries, language boundary, access layers |
-| `plugins.md` | Plugin system, taxonomy, composition pipeline, installation constraints |
-| `agents.md` | Agent architecture, prompt generation pipeline, token budgets |
-| `governance.md` | Target `.orqa/` structure, artifact lifecycle, relationship flow |
-| `enforcement.md` | State machine design, enforcement layers, validation timing |
-| `connector.md` | Connector architecture, generation pipeline, what hooks should/shouldn't contain |
-| `structure.md` | Proposed codebase directory structure |
-| `decisions.md` | Key design decisions and their rationale |
-| `migration.md` | Migration plan: phases, sequencing, target-first approach |
-| `targets.md` | Target state specifications for Phase 1 (schema, plugin, workflows) |
-| `audit.md` | Audit criteria for reviewing files against architecture |
-| `glossary.md` | Authoritative term definitions |
+| File           | Contents                                                                         |
+|----------------|----------------------------------------------------------------------------------|
+| `DOC-62969bc3` | Design principles (P1-P7), engine libraries, language boundary, access layers    |
+| `DOC-41ccf7c4` | Plugin system, taxonomy, composition pipeline, installation constraints          |
+| `DOC-b951327c` | Agent architecture, prompt generation pipeline, token budgets                    |
+| `DOC-fd3edf48` | Target `.orqa/` structure, artifact lifecycle, relationship flow                 |
+| `DOC-70063f55` | State machine design, enforcement layers, validation timing                      |
+| `DOC-4d531f5e` | Connector architecture, generation pipeline, what hooks should/shouldn't contain |
+| `DOC-762facfb` | Proposed codebase directory structure                                            |
+| `DOC-80a4cf76` | Key design decisions and their rationale                                         |
+| `DOC-dff413a0` | Migration plan: phases, sequencing, target-first approach                        |
+| `DOC-82123148` | Target state specifications for Phase 1 (schema, plugin, workflows)              |
+| `DOC-6ac4abed` | Audit criteria for reviewing files against architecture                          |
+| `DOC-69341bc4` | Authoritative term definitions                                                   |
 
 **Read the relevant architecture files before starting any task.** These documents define what "correct" looks like -- review against the architecture, not against current patterns.
 
@@ -28,11 +28,11 @@ The complete architecture is split across these files in `.claude/architecture/`
   Exhaustive, atomic task lists for every migration phase. Each task fits one agent context
   window. **Read the relevant task list before starting any phase.**
 
-| File | Phases | Tasks |
-|------|--------|-------|
-| `.claude/tasks/migration-tasks-phase1-3.md` | Phase 1 (targets + enforcement), Phase 2 (engine extraction), Phase 3 (daemon) | 68 tasks |
-| `.claude/tasks/migration-tasks-phase4-5.md` | Phase 4 (connector cleanup), Phase 5 (plugin manifests) | ~70 tasks |
-| `.claude/tasks/migration-tasks-phase6-8.md` | Phase 6 (content cleanup), Phase 7 (governance migration), Phase 8 (codebase restructure) | ~70 tasks |
+| File                                         | Phases                                                                                            | Tasks     |
+|----------------------------------------------|---------------------------------------------------------------------------------------------------|-----------|
+| `.claude/tasks/migration-tasks-phase1-3.md`  | Phase 1 (targets + enforcement), Phase 2 (engine extraction), Phase 3 (daemon)                    | 68 tasks  |
+| `.claude/tasks/migration-tasks-phase4-5.md`  | Phase 4 (connector cleanup), Phase 5 (plugin manifests)                                           | ~70 tasks |
+| `.claude/tasks/migration-tasks-phase6-8.md`  | Phase 6 (content cleanup), Phase 7 (governance migration), Phase 8 (codebase restructure)         | ~70 tasks |
 | `.claude/tasks/migration-tasks-phase9-11.md` | Phase 9 (frontend alignment), Phase 10 (validate against targets), Phase 11 (post-migration docs) | ~70 tasks |
 
 Each task has: specific files, acceptance criteria with checkboxes, reviewer checks, and
@@ -42,7 +42,7 @@ The task files are already copied to .claude/tasks/.
 
 ## Migration Plan
 
-The migration proceeds in phases. Each phase has prerequisites and completion criteria. See `.claude/architecture/migration.md` for the full plan.
+The migration proceeds in phases. Each phase has prerequisites and completion criteria. See `.orqa/documentation/architecture/DOC-dff413a0.md` for the full plan.
 
 ### Phase Awareness
 
@@ -78,15 +78,17 @@ This migration is an opportunity to establish the correct architecture from scra
 
 ## Design Principles
 
-| # | Principle | Constraint |
-|---|-----------|------------|
-| P1 | Plugin-Composed Everything | No governance pattern hardcoded in engine. Plugins provide definitions, engine provides capabilities. |
-| P2 | One Context Window Per Task | Each agent spawns fresh for a single task. No persistent agents, no accumulated context. |
-| P3 | Generated, Not Loaded | System prompts are generated from plugin registries and workflow state, not loaded from disk. |
-| P4 | Declarative Over Imperative | State machines, guards, and workflows are YAML declarations validated by JSON Schema. |
-| P5 | Token Efficiency as Architecture | 2-4x overhead ratio. Per-agent prompts: 1,500-4,000 tokens. |
-| P6 | Hub-Spoke Orchestration | Persistent orchestrator coordinates ephemeral task-scoped workers via structured summaries. Orchestrator delegates review to a Reviewer agent and reads the verdict -- it does not self-assess. |
-| P7 | Resolved Workflow Is a File | After plugin composition, the resolved workflow is a deterministic YAML file on disk. |
+| #  | Principle                        | Constraint                                                                                            |
+|----|----------------------------------|-------------------------------------------------------------------------------------------------------|
+| P1 | Plugin-Composed Everything       | No governance pattern hardcoded in engine. Plugins provide definitions, engine provides capabilities. |
+| P2 | One Context Window Per Task      | Each agent spawns fresh for a single task. No persistent agents, no accumulated context.              |
+| P3 | Generated, Not Loaded            | System prompts are generated from plugin registries and workflow state, not loaded from disk.         |
+| P4 | Declarative Over Imperative      | State machines, guards, and workflows are YAML declarations validated by JSON Schema.                 |
+| P5 | Token Efficiency as Architecture | 2-4x overhead ratio. Per-agent prompts: 1,500-4,000 tokens.                                           |
+| P6 | Hub-Spoke Orchestration          | Persistent orchestrator coordinates ephemeral task-scoped workers via structured summaries.*          |
+| P7 | Resolved Workflow Is a File      | After plugin composition, the resolved workflow is a deterministic YAML file on disk.                 |
+
+*Orchestrator delegates review to a Reviewer agent and reads the verdict -- it does not self-assess.
 
 **Core product principles:** Accuracy over speed. Mechanical enforcement enables autonomy. The learning loop hardens the system.
 
@@ -126,28 +128,28 @@ The orchestrator NEVER judges quality itself. It reads verdicts from Reviewers. 
 
 ### Agent Delegation
 
-| Task Type | Agent Role | Model |
-|-----------|-----------|-------|
-| Code changes, tests, configs | Implementer | sonnet |
-| Quality verification, AC checks | Reviewer | sonnet |
-| Investigation, information gathering | Researcher | sonnet |
-| Documentation creation/editing | Writer | sonnet |
-| Approach design, dependency mapping | Planner | opus |
-| UI/UX design, component structure | Designer | sonnet |
-| `.orqa/` artifact maintenance | Governance Steward | sonnet |
+| Task Type                               | Agent Role         | Model  |
+|-----------------------------------------|--------------------|--------|
+| Code changes, tests, configs            | Implementer        | sonnet |
+| Quality verification, AC checks         | Reviewer           | sonnet |
+| Investigation, information gathering    | Researcher         | sonnet |
+| Documentation creation/editing          | Writer             | sonnet |
+| Approach design, dependency mapping     | Planner            | opus   |
+| UI/UX design, component structure       | Designer           | sonnet |
+| `.orqa/` artifact maintenance           | Governance Steward | sonnet |
 
 ### Role-Based Tool Constraints
 
-| Role | Can Edit | Can Run Shell | Artifact Scope |
-|------|----------|---------------|----------------|
-| Orchestrator | No | No | Read-only, delegation |
-| Implementer | Yes | Yes | Source code only |
-| Reviewer | No | Yes (checks only) | Read-only, produces verdicts |
-| Researcher | No | No | Creates research artifacts only |
-| Writer | Yes | No | Documentation only |
-| Planner | Yes | No | Delivery artifacts only |
-| Designer | Yes | No | Design artifacts, component code |
-| Governance Steward | Yes | No | `.orqa/` artifacts only |
+| Role               | Can Edit | Can Run Shell     | Artifact Scope                   |
+|--------------------|----------|-------------------|----------------------------------|
+| Orchestrator       | No       | No                | Read-only, delegation            |
+| Implementer        | Yes      | Yes               | Source code only                 |
+| Reviewer           | No       | Yes (checks only) | Read-only, produces verdicts     |
+| Researcher         | No       | No                | Creates research artifacts only  |
+| Writer             | Yes      | No                | Documentation only               |
+| Planner            | Yes      | No                | Delivery artifacts only          |
+| Designer           | Yes      | No                | Design artifacts, component code |
+| Governance Steward | Yes      | No                | `.orqa/` artifacts only          |
 
 ### Completion Gate (STRICT -- no silent deferrals)
 
@@ -167,7 +169,7 @@ Before creating a new team:
 
 When an agent encounters ambiguity or uncertainty:
 
-1. Check the architecture docs in `.claude/architecture/`
+1. Check the architecture docs in `.orqa/documentation/architecture/`
 2. If still unclear: raise to the orchestrator
 3. If the orchestrator cannot resolve: escalate to the user for human review
 
@@ -223,7 +225,7 @@ The ONLY acceptable reasons to pause:
 ## Session Protocol
 
 1. Read this file
-2. Read `.claude/architecture/core.md` for design principles
+2. Read `.orqa/documentation/architecture/DOC-62969bc3.md` for design principles
 3. Check `.state/session-state.md` for previous session context
 4. Check `git status` and `git stash list`
 5. Resume from where the previous session left off

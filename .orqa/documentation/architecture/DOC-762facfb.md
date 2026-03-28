@@ -1,12 +1,22 @@
-# Proposed Codebase Structure
+---
+id: DOC-762facfb
+type: doc
+status: active
+title: Codebase Structure
+domain: architecture
+description: Directory layout for the orqastudio-dev codebase, organized to make architectural purposes self-evident
+created: 2026-03-28T00:00:00.000Z
+---
 
-> This is part of the OrqaStudio Architecture Reference. See ARCHITECTURE.md for the complete document.
+# Codebase Structure
+
+> This is part of the OrqaStudio Architecture Reference.
 
 ---
 
-## 12. Proposed Codebase Structure
+## 12. Codebase Structure
 
-The directory layout should make architectural purposes self-evident:
+The directory layout makes architectural purposes self-evident:
 
 ```text
 orqastudio-dev/
@@ -24,13 +34,12 @@ orqastudio-dev/
     lesson/                     # Lesson store, promotion pipeline
     project/                    # Project scanning, settings, governance counts
     validation/                 # Integrity checks, graph construction
-    core/                       # Thin facade — re-exports all engine crates
+    core/                       # Thin facade -- re-exports all engine crates
 
-  libs/
-    sdk/                        # Core json schema
+  libs/                         # TypeScript libraries (non-engine)
+    sdk/                        # TypeScript SDK and core JSON schema (@orqastudio/sdk)
     cli/                        # TypeScript CLI library (@orqastudio/cli)
-    types/                      # TypeScript shared types (@orqastudio/types) — future: generated from libs/schema/
-    sdk/                        # TypeScript SDK (@orqastudio/sdk)
+    types/                      # TypeScript shared types (@orqastudio/types)
     logger/                     # Shared logging
     graph-visualiser/           # Graph visualization component
     svelte-components/          # Shared Svelte UI components
@@ -48,23 +57,27 @@ orqastudio-dev/
   connectors/                   # Connector plugins (generation pipelines)
     claude-code/                # Generates Claude Code Plugin to .claude/
 
-  plugins/                      # OrqaStudio plugins organized by type
-    agile-methodology/          # Methodology plugin (one at a time)
-    agile-discovery/            # Workflow: discovery stage
-    agile-planning/             # Workflow: planning stage
-    agile-documentation/        # Workflow: documentation stage
-    agile-review/               # Workflow: review stage
-    software-kanban/            # Workflow: implementation stage
-    core/                       # Workflow: learning stage + framework schemas
-    cli/                        # Domain knowledge: CLI
-    rust/                       # Domain knowledge: Rust
-    svelte/                     # Domain knowledge: Svelte
-    tauri/                      # Domain knowledge: Tauri
-    typescript/                 # Domain knowledge: TypeScript
-    coding-standards/           # Infrastructure: linting config generation
-    systems-thinking/           # Domain knowledge: systems thinking
-    plugin-dev/                 # Domain knowledge: plugin development
-    githooks/                   # Infrastructure: git hook generation
+  plugins/                      # OrqaStudio plugins organized by taxonomy
+    methodology/                # Methodology plugins (one active at a time)
+      agile-methodology/        # Agile methodology definition
+    workflows/                  # Workflow plugins (one per methodology stage)
+      agile-discovery/          # Workflow: discovery stage
+      agile-planning/           # Workflow: planning stage
+      agile-documentation/      # Workflow: documentation stage
+      agile-review/             # Workflow: review stage
+      software-kanban/          # Workflow: implementation stage
+      core/                     # Workflow: learning stage + framework schemas
+    knowledge/                  # Domain knowledge plugins
+      cli/                      # Domain knowledge: CLI
+      rust/                     # Domain knowledge: Rust
+      svelte/                   # Domain knowledge: Svelte
+      tauri/                    # Domain knowledge: Tauri
+      typescript/               # Domain knowledge: TypeScript
+      systems-thinking/         # Domain knowledge: systems thinking
+      plugin-dev/               # Domain knowledge: plugin development
+    infrastructure/             # Infrastructure plugins
+      coding-standards/         # Infrastructure: linting config generation
+      githooks/                 # Infrastructure: git hook generation
 
   integrations/                 # LLM provider integrations
     claude-agent-sdk/
@@ -72,10 +85,10 @@ orqastudio-dev/
   models/                       # ONNX models for local semantic search
   scripts/                      # Maintenance scripts
   infrastructure/               # Deployment tooling (Forgejo setup)
-  .orqa/                        # Governance artifacts (per ARCHITECTURE.md 5.1)
+  .orqa/                        # Governance artifacts (stage-first organization)
   .state/                       # Session state, runtime metrics (not committed)
   .githooks/                    # Git hook scripts (committed)
-  .claude/                      # Architecture docs, task lists, agent definitions
+  .claude/                      # Claude Code configuration, task lists, agent definitions
   targets/                      # Hand-written target states (removed after Phase 10)
   tools/                        # Dev tools (debug dashboard)
-```
+```text

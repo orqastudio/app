@@ -13,10 +13,15 @@ const LOCKFILE_NAME: &str = "plugins.lock.json";
 /// A locked plugin version entry.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LockEntry {
+    /// The plugin's package name (e.g. `@orqastudio/plugin-software`).
     pub name: String,
+    /// Semantic version string at install time (e.g. `1.2.0`).
     pub version: String,
+    /// GitHub repository slug (e.g. `orqastudio/plugin-software`).
     pub repo: String,
+    /// SHA-256 hex digest of the downloaded archive at install time.
     pub sha256: String,
+    /// ISO-8601 timestamp when this plugin was installed.
     #[serde(rename = "installedAt")]
     pub installed_at: String,
 }
@@ -24,7 +29,9 @@ pub struct LockEntry {
 /// The lockfile structure — version-stamped list of locked plugin entries.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lockfile {
+    /// Lockfile format version (currently `1`).
     pub version: u32,
+    /// Locked entries for all installed plugins.
     pub plugins: Vec<LockEntry>,
 }
 

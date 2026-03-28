@@ -1,3 +1,6 @@
+//! OrqaStudio application binary entry point.
+//!
+//! Handles CLI mode flags (`--mcp`, `--lsp`) before launching the Tauri GUI.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 /// Resolve the daemon port from the environment.
@@ -23,7 +26,12 @@ fn main() {
             );
 
         if let Err(e) = orqa_studio_lib::servers::mcp::run(&project_path, daemon_port()) {
-            eprintln!("MCP server error: {e}");
+            // eprintln! is necessary here — tracing is not yet initialized, and
+            // this is a fatal startup error that must reach the terminal.
+            #[allow(clippy::print_stderr)]
+            {
+                eprintln!("MCP server error: {e}");
+            }
             std::process::exit(1);
         }
         return;
@@ -41,7 +49,12 @@ fn main() {
             );
 
         if let Err(e) = orqa_studio_lib::servers::lsp::run(&project_path, daemon_port()) {
-            eprintln!("LSP server error: {e}");
+            // eprintln! is necessary here — tracing is not yet initialized, and
+            // this is a fatal startup error that must reach the terminal.
+            #[allow(clippy::print_stderr)]
+            {
+                eprintln!("LSP server error: {e}");
+            }
             std::process::exit(1);
         }
         return;

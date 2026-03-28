@@ -13,7 +13,7 @@ pub fn active_project_path(state: &tauri::State<'_, AppState>) -> Result<String,
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?.ok_or_else(|| {
-        OrqaError::NotFound("no active project — open a project first".to_string())
+        OrqaError::NotFound("no active project — open a project first".to_owned())
     })?;
 
     Ok(project.path)

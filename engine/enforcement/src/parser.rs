@@ -1,9 +1,9 @@
-// Enforcement rule parser for the orqa-engine crate.
-//
-// Parses YAML frontmatter from enforcement rule `.md` files into typed
-// `EnforcementRule` values. This is a pure module — no filesystem I/O.
-// Callers provide the file content as a string; see `store::load_rules` for
-// the filesystem-level loader that drives this parser.
+//! Enforcement rule parser for the orqa-engine crate.
+//!
+//! Parses YAML frontmatter from enforcement rule `.md` files into typed
+//! `EnforcementRule` values. This is a pure module — no filesystem I/O.
+//! Callers provide the file content as a string; see `store::load_rules` for
+//! the filesystem-level loader that drives this parser.
 
 use serde::Deserialize;
 
@@ -44,7 +44,7 @@ struct RawFrontmatter {
 
 /// Returns the default scope value ("project") when the frontmatter omits it.
 fn default_scope() -> String {
-    "project".to_string()
+    "project".to_owned()
 }
 
 /// Split a markdown file into (frontmatter_yaml, prose_body).
@@ -131,7 +131,7 @@ pub fn parse_rule_content(name: &str, content: &str) -> Result<EnforcementRule, 
     let (frontmatter_str, prose) = split_frontmatter(content);
 
     let (scope, entries) = match frontmatter_str {
-        None => ("project".to_string(), Vec::new()),
+        None => ("project".to_owned(), Vec::new()),
         Some(yaml) => {
             let raw: RawFrontmatter = serde_yaml::from_str(yaml).map_err(|e| {
                 EngineError::Yaml(format!("invalid YAML frontmatter in '{name}': {e}"))
@@ -152,10 +152,10 @@ pub fn parse_rule_content(name: &str, content: &str) -> Result<EnforcementRule, 
     };
 
     Ok(EnforcementRule {
-        name: name.to_string(),
+        name: name.to_owned(),
         scope,
         entries,
-        prose: prose.to_string(),
+        prose: prose.to_owned(),
     })
 }
 

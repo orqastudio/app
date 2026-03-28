@@ -1,10 +1,10 @@
-// Status transition evaluation for the OrqaStudio workflow engine.
-//
-// Evaluates the artifact graph against status definitions loaded from project
-// settings and returns proposed status transitions. The `ProposedTransition` type
-// is defined in `crate::types::workflow`; all graph and settings types come from
-// the engine's own modules. This module contains no I/O — it only reads the
-// graph and status config passed in.
+//! Status transition evaluation for the OrqaStudio workflow engine.
+//!
+//! Evaluates the artifact graph against status definitions loaded from project
+//! settings and returns proposed status transitions. The `ProposedTransition` type
+//! is defined in `crate::types::workflow`; all graph and settings types come from
+//! the engine's own modules. This module contains no I/O — it only reads the
+//! graph and status config passed in.
 
 use std::collections::HashMap;
 

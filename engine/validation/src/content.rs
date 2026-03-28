@@ -16,10 +16,13 @@ use crate::parse::parse_artifact;
 /// Agent preamble and metadata returned by [`find_agent`].
 #[derive(Debug, Serialize)]
 pub struct AgentContent {
+    /// Artifact ID of the agent.
     pub id: String,
+    /// Agent display title from frontmatter.
     pub title: String,
     /// The `preamble` frontmatter field; falls back to `description` if absent.
     pub preamble: String,
+    /// Raw frontmatter fields as a JSON object.
     pub frontmatter: serde_json::Value,
     /// Full markdown body (everything after the frontmatter block).
     pub content: String,
@@ -28,9 +31,13 @@ pub struct AgentContent {
 /// Knowledge artifact content returned by [`find_knowledge`].
 #[derive(Debug, Serialize)]
 pub struct KnowledgeContent {
+    /// Artifact ID of the knowledge entry.
     pub id: String,
+    /// Knowledge artifact display title.
     pub title: String,
+    /// Full markdown body (everything after the frontmatter block).
     pub content: String,
+    /// Raw frontmatter fields as a JSON object.
     pub frontmatter: serde_json::Value,
 }
 

@@ -50,7 +50,7 @@ fn resolve_sidecar() -> (String, Vec<String>) {
     if let Some(config) = read_sidecar_config() {
         let runtime = config
             .runtime
-            .unwrap_or_else(|| SIDECAR_COMMAND.to_string());
+            .unwrap_or_else(|| SIDECAR_COMMAND.to_owned());
         let mut args = vec![config.entrypoint];
         if let Some(extra) = config.args {
             args.extend(extra);
@@ -62,8 +62,8 @@ fn resolve_sidecar() -> (String, Vec<String>) {
     let echo_path = std::path::Path::new("src-tauri/test-sidecar/echo.cjs");
     if echo_path.exists() {
         return (
-            SIDECAR_COMMAND.to_string(),
-            vec![echo_path.to_string_lossy().to_string()],
+            SIDECAR_COMMAND.to_owned(),
+            vec![echo_path.to_string_lossy().into_owned()],
         );
     }
 
@@ -71,15 +71,15 @@ fn resolve_sidecar() -> (String, Vec<String>) {
     let echo_alt = std::path::Path::new("test-sidecar/echo.cjs");
     if echo_alt.exists() {
         return (
-            SIDECAR_COMMAND.to_string(),
-            vec![echo_alt.to_string_lossy().to_string()],
+            SIDECAR_COMMAND.to_owned(),
+            vec![echo_alt.to_string_lossy().into_owned()],
         );
     }
 
     // Last resort — will fail at spawn time with a clear error
     (
-        SIDECAR_COMMAND.to_string(),
-        vec!["sidecar-not-configured".to_string()],
+        SIDECAR_COMMAND.to_owned(),
+        vec!["sidecar-not-configured".to_owned()],
     )
 }
 
@@ -157,7 +157,7 @@ mod tests {
     fn sidecar_config_deserialization() {
         let json = r#"{"runtime": "node", "entrypoint": "plugins/claude-integration/sidecar/dist/sidecar.js"}"#;
         let config: SidecarConfig = serde_json::from_str(json).unwrap();
-        assert_eq!(config.runtime, Some("node".to_string()));
+        assert_eq!(config.runtime, Some("node".to_owned()));
         assert_eq!(
             config.entrypoint,
             "plugins/claude-integration/sidecar/dist/sidecar.js"
@@ -171,6 +171,6 @@ mod tests {
         let config: SidecarConfig = serde_json::from_str(json).unwrap();
         assert_eq!(config.runtime, None);
         assert_eq!(config.entrypoint, "dist/sidecar.js");
-        assert_eq!(config.args, Some(vec!["--verbose".to_string()]));
+        assert_eq!(config.args, Some(vec!["--verbose".to_owned()]));
     }
 }

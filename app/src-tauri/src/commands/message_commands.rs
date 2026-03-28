@@ -18,12 +18,12 @@ pub fn message_list(
 
     if limit_val < 0 {
         return Err(OrqaError::Validation(
-            "limit cannot be negative".to_string(),
+            "limit cannot be negative".to_owned(),
         ));
     }
     if offset_val < 0 {
         return Err(OrqaError::Validation(
-            "offset cannot be negative".to_string(),
+            "offset cannot be negative".to_owned(),
         ));
     }
 

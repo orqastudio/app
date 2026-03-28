@@ -68,7 +68,7 @@ fn detect_cycles_from(
     let mut visited = HashSet::new();
     let mut stack: Vec<(String, Vec<String>)> = initial_dep_ids
         .iter()
-        .map(|id| (id.clone(), vec![start_id.to_string()]))
+        .map(|id| (id.clone(), vec![start_id.to_owned()]))
         .collect();
 
     while let Some((current_id, path)) = stack.pop() {
@@ -113,7 +113,7 @@ fn report_cycle(
         checks.push(IntegrityCheck {
             category: IntegrityCategory::CircularDependency,
             severity: IntegritySeverity::Error,
-            artifact_id: start_id.to_string(),
+            artifact_id: start_id.to_owned(),
             message: format!(
                 "Circular dependency: {} \u{2192} {} \u{2192} {}",
                 start_id,
@@ -121,7 +121,7 @@ fn report_cycle(
                 start_id
             ),
             auto_fixable: false,
-            fix_description: Some("Break the dependency cycle by removing one edge".to_string()),
+            fix_description: Some("Break the dependency cycle by removing one edge".to_owned()),
         });
     }
 }

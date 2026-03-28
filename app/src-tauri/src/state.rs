@@ -23,6 +23,7 @@ use crate::watcher::SharedWatcher;
 ///
 /// The `Mutex<Connection>` is safe for single-writer SQLite with WAL mode.
 pub struct DbState {
+    /// The SQLite connection, guarded by a mutex for single-writer access.
     pub conn: Mutex<Connection>,
 }
 
@@ -34,6 +35,7 @@ pub struct DbState {
 /// sync channel receiver; the `stream_tool_approval_respond` command sends the
 /// boolean decision onto the channel to unblock the stream loop.
 pub struct SidecarState {
+    /// Manages the Claude sidecar child process lifecycle.
     pub manager: SidecarManager,
     /// Pending tool approval channels: `tool_call_id` -> sender for the approval decision.
     ///
@@ -47,6 +49,7 @@ pub struct SidecarState {
 ///
 /// The `SearchEngine` is lazily initialized when a project is first indexed.
 pub struct SearchState {
+    /// ONNX-based semantic search engine; `None` until a project is indexed.
     pub engine: Mutex<Option<SearchEngine>>,
 }
 
@@ -54,6 +57,7 @@ pub struct SearchState {
 ///
 /// The `StartupTracker` tracks long-running initialization tasks for the frontend.
 pub struct StartupState {
+    /// Shared reference to the startup tracker, shared with background init tasks.
     pub tracker: Arc<StartupTracker>,
 }
 
@@ -61,6 +65,7 @@ pub struct StartupState {
 ///
 /// `None` until the first project is opened. Reloaded via `enforcement_rules_reload`.
 pub struct EnforcementState {
+    /// Compiled enforcement engine; `None` until a project is opened.
     pub engine: Mutex<Option<EnforcementEngine>>,
 }
 
@@ -80,6 +85,7 @@ pub struct SessionState {
 ///
 /// Manages one-shot CLI tool execution and caches last-run results.
 pub struct CliToolState {
+    /// Executes plugin-contributed CLI tools and tracks their output.
     pub runner: CliToolRunner,
 }
 
@@ -115,12 +121,20 @@ pub struct ArtifactState {
 /// Decomposed into logical sub-structs for clarity and reduced lock contention.
 /// Tauri manages this as shared state across all commands.
 pub struct AppState {
+    /// SQLite database connection.
     pub db: DbState,
+    /// Claude sidecar process and tool approval state.
     pub sidecar: SidecarState,
+    /// Semantic search engine for code and artifact indexing.
     pub search: SearchState,
+    /// Startup task progress tracker.
     pub startup: StartupState,
+    /// Enforcement rule engine for governance validation.
     pub enforcement: EnforcementState,
+    /// Session-level process compliance and workflow state.
     pub session: SessionState,
+    /// Artifact graph, file watcher, and knowledge injector.
     pub artifacts: ArtifactState,
+    /// Plugin CLI tool runner.
     pub cli_tools: CliToolState,
 }

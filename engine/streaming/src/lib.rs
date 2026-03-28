@@ -1,15 +1,18 @@
-// orqa-streaming: Sidecar streaming module for the OrqaStudio engine.
-//
-// Contains the sidecar protocol types (SidecarRequest, SidecarResponse) and
-// the pure streaming logic that can be tested without a Tauri context:
-// response translation, terminal detection, accumulation, and tool handlers
-// that only use std operations.
-//
-// The Tauri-specific stream loop driver (holding AppState and Channel<T>)
-// remains in the app layer and calls into this module for all business logic.
+//! orqa-streaming: Sidecar streaming module for the OrqaStudio engine.
+//!
+//! Contains the sidecar protocol types (SidecarRequest, SidecarResponse) and
+//! the pure streaming logic that can be tested without a Tauri context:
+//! response translation, terminal detection, accumulation, and tool handlers
+//! that only use std operations.
+//!
+//! The Tauri-specific stream loop driver (holding AppState and Channel<T>)
+//! remains in the app layer and calls into this module for all business logic.
 
+/// Sidecar NDJSON request/response protocol types.
 pub mod protocol;
+/// Pure stream loop logic: translation, accumulation, and terminal detection.
 pub mod stream_loop;
+/// Pure tool handler implementations with no Tauri dependency.
 pub mod tools;
 
 pub use protocol::{MessageSummary, SidecarRequest, SidecarResponse};

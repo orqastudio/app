@@ -73,6 +73,8 @@ interface HooksJson {
  * In dry-run mode (ORQA_DRY_RUN=true), all writes go to
  * .state/dry-run/ so they can be compared against targets/
  * without modifying the live project.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Absolute path to the directory where output files should be written.
  */
 function resolveOutputRoot(projectRoot: string): string {
   if (process.env["ORQA_DRY_RUN"] === "true") {
@@ -91,6 +93,10 @@ function resolveOutputRoot(projectRoot: string): string {
  * Delegates to agent-file-generator, which combines role metadata, tool
  * constraints, and completion enforcement for each role. Returns the list
  * of generated file paths.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Array of absolute paths to the generated agent markdown files.
  */
 function generateAgents(
   projectRoot: string,
@@ -113,6 +119,8 @@ function generateAgents(
  *
  * Used to surface active enforcement context in the generated CLAUDE.md.
  * Returns an empty array if the rules directory does not exist.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Array of rule title strings extracted from frontmatter.
  */
 function readActiveRuleTitles(projectRoot: string): string[] {
   const rulesDir = path.join(projectRoot, ".orqa", "learning", "rules");
@@ -139,6 +147,8 @@ function readActiveRuleTitles(projectRoot: string): string[] {
  *
  * Used to surface the workflow context in the generated CLAUDE.md.
  * Returns an empty array if the workflows directory does not exist.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Array of workflow name strings (filenames without the .resolved.yaml suffix).
  */
 function readActiveWorkflowNames(projectRoot: string): string[] {
   const workflowsDir = path.join(projectRoot, ".orqa", "workflows");
@@ -155,9 +165,12 @@ function readActiveWorkflowNames(projectRoot: string): string[] {
 /**
  * Build the canonical CLAUDE.md content for the orchestrator.
  *
- * Reads design principles from .claude/architecture/core.md if present and
- * appends any active workflows and rules as project-specific context.
+ * Reads design principles from .orqa/documentation/architecture/ DOCs if present
+ * and appends any active workflows and rules as project-specific context.
  * Falls back to baked-in P1-P7 content if architecture docs are unavailable.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns The complete CLAUDE.md content as a string.
  */
 function buildClaudemd(projectRoot: string, errors: string[]): string {
   const workflowNames = readActiveWorkflowNames(projectRoot);
@@ -370,6 +383,10 @@ Architecture documentation and knowledge are available as project governance art
 
 /**
  * Write the generated CLAUDE.md to .claude/CLAUDE.md (or dry-run equivalent).
+ * @param projectRoot - Absolute path to the project root directory (used to read rules and workflows).
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written CLAUDE.md file.
  */
 function generateClaudemd(
   projectRoot: string,
@@ -423,6 +440,9 @@ const HOOK_SCRIPT_MAP: Record<
  * the output. Declared events with no mapping produce a warning. The
  * connector's own hooks are always included in full, regardless of whether
  * they appear in any manifest, since it is the primary source.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns The fully assembled hooks.json object ready for serialization.
  */
 function buildHooksJson(projectRoot: string, errors: string[]): HooksJson {
   // Collect hook events declared across all installed plugin manifests.
@@ -477,6 +497,10 @@ function buildHooksJson(projectRoot: string, errors: string[]): HooksJson {
  * Write the generated hooks.json to plugin/hooks/hooks.json.
  *
  * The target path matches targets/claude-code-plugin/plugin/hooks/hooks.json.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written hooks.json file.
  */
 function generateHooksJson(
   projectRoot: string,
@@ -512,6 +536,10 @@ function generateHooksJson(
  *
  * First-declaration-wins on key collision (alphabetical plugin order from
  * listInstalledPlugins).
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param key - Which server config key to aggregate: "mcpServers" or "lspServers".
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Merged map of server name to server config object.
  */
 function aggregateServerConfigs(
   projectRoot: string,
@@ -553,6 +581,10 @@ function aggregateServerConfigs(
  * Write .mcp.json from aggregated mcpServers declarations.
  *
  * Wraps server configs under "mcpServers" as required by Claude Code format.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written .mcp.json file.
  */
 function generateMcpJson(
   projectRoot: string,
@@ -579,6 +611,10 @@ function generateMcpJson(
  * Write .lsp.json from aggregated lspServers declarations.
  *
  * Top-level flat object (no wrapper key) matching the live .lsp.json format.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written .lsp.json file.
  */
 function generateLspJson(
   projectRoot: string,
@@ -606,7 +642,7 @@ function generateLspJson(
  *
  * Reads from:
  *   - Role metadata and tool constraints → .claude/agents/*.md
- *   - .claude/architecture/core.md + active workflows/rules → .claude/CLAUDE.md
+ *   - .orqa/documentation/architecture/ DOCs + active workflows/rules → .claude/CLAUDE.md
  *   - Plugin manifests (provides.hooks) → plugin/hooks/hooks.json
  *   - Plugin manifests (provides.mcpServers) → .mcp.json
  *   - Plugin manifests (provides.lspServers) → .lsp.json
@@ -614,6 +650,8 @@ function generateLspJson(
  * When ORQA_DRY_RUN=true, all output goes to .state/dry-run/ instead of
  * live project paths, enabling comparison against targets/ without
  * modifying the working tree.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Generation result containing paths to all generated files and any non-fatal errors.
  */
 export function generatePlugin(projectRoot: string): GenerateResult {
   const outputRoot = resolveOutputRoot(projectRoot);

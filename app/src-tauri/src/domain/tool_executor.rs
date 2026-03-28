@@ -356,7 +356,7 @@ pub fn project_root(state: &tauri::State<'_, AppState>) -> Result<PathBuf, Strin
     let conn = state.db.conn.lock().map_err(|e| format!("db lock: {e}"))?;
     let project = project_repo::get_active(&conn)
         .map_err(|e| format!("db query: {e}"))?
-        .ok_or_else(|| "no active project".to_string())?;
+        .ok_or_else(|| "no active project".to_owned())?;
     Ok(PathBuf::from(project.path))
 }
 
@@ -372,7 +372,7 @@ pub fn project_root_from_state(state: &AppState) -> Result<PathBuf, OrqaError> {
         .map_err(|e| OrqaError::Database(format!("db lock: {e}")))?;
     let project = project_repo::get_active(&conn)
         .map_err(|e| OrqaError::Database(format!("db query: {e}")))?
-        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
     Ok(PathBuf::from(project.path))
 }
 
@@ -385,7 +385,7 @@ pub fn tool_search_regex(
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
     let Some(pattern) = input["pattern"].as_str() else {
-        return ("missing 'pattern' parameter".to_string(), true);
+        return ("missing 'pattern' parameter".to_owned(), true);
     };
     let path_filter = input["path"].as_str();
     let max_results = input["max_results"].as_u64().map_or(20, |n| n as u32);
@@ -396,7 +396,7 @@ pub fn tool_search_regex(
     };
     let Some(engine) = search_guard.as_ref() else {
         return (
-            "search index not initialized — index the codebase first".to_string(),
+            "search index not initialized — index the codebase first".to_owned(),
             true,
         );
     };
@@ -416,7 +416,7 @@ pub fn tool_search_semantic(
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
     let Some(query) = input["query"].as_str() else {
-        return ("missing 'query' parameter".to_string(), true);
+        return ("missing 'query' parameter".to_owned(), true);
     };
     let max_results = input["max_results"].as_u64().map_or(10, |n| n as u32);
 
@@ -426,7 +426,7 @@ pub fn tool_search_semantic(
     };
     let Some(engine) = search_guard.as_mut() else {
         return (
-            "search index not initialized — index the codebase first".to_string(),
+            "search index not initialized — index the codebase first".to_owned(),
             true,
         );
     };
@@ -509,7 +509,7 @@ pub fn tool_code_research(
     state: &tauri::State<'_, AppState>,
 ) -> (String, bool) {
     let Some(query) = input["query"].as_str() else {
-        return ("missing 'query' parameter".to_string(), true);
+        return ("missing 'query' parameter".to_owned(), true);
     };
     let max_results = input["max_results"].as_u64().map_or(10, |n| n as u32);
     let half = max_results / 2 + 1;
@@ -524,11 +524,11 @@ pub fn tool_code_research(
 
     if out.is_empty() {
         (
-            "search index not initialized — index the codebase first".to_string(),
+            "search index not initialized — index the codebase first".to_owned(),
             true,
         )
     } else if out.trim().is_empty() || (out.contains("unavailable") && !out.contains("Matches")) {
-        ("no results found".to_string(), false)
+        ("no results found".to_owned(), false)
     } else {
         (out, false)
     }
@@ -540,7 +540,7 @@ mod tests {
 
     #[test]
     fn truncate_tool_output_short_output_unchanged() {
-        let short = "hello world".to_string();
+        let short = "hello world".to_owned();
         let result = truncate_tool_output(short.clone());
         assert_eq!(result, short);
     }
@@ -558,7 +558,7 @@ mod tests {
         let total_len = over_limit.len();
         let result = truncate_tool_output(over_limit);
         assert!(result.contains("[Output truncated:"));
-        assert!(result.contains(&total_len.to_string()));
+        assert!(result.contains(&total_len.to_string().as_str()));
         assert!(result.len() > MAX_TOOL_OUTPUT_CHARS);
         // The first MAX_TOOL_OUTPUT_CHARS chars should be the 'x' characters
         assert!(result.starts_with(&"x".repeat(MAX_TOOL_OUTPUT_CHARS)));
@@ -609,7 +609,7 @@ mod tests {
             .file_name()
             .expect("name")
             .to_string_lossy()
-            .to_string();
+            .to_owned();
 
         let input = serde_json::json!({ "path": file_name });
         let (output, is_error) = tool_read_file(&input, &root);
@@ -635,7 +635,7 @@ mod tests {
             .file_name()
             .expect("name")
             .to_string_lossy()
-            .to_string();
+            .to_owned();
 
         let input = serde_json::json!({ "path": file_name, "offset": 10, "limit": 5 });
         let (output, is_error) = tool_read_file(&input, &root);
@@ -667,7 +667,7 @@ mod tests {
             .file_name()
             .expect("name")
             .to_string_lossy()
-            .to_string();
+            .to_owned();
 
         let input = serde_json::json!({ "path": file_name });
         let (output, is_error) = tool_read_file(&input, &root);

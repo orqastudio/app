@@ -1,9 +1,9 @@
-// Agent type definitions for the orqa-agent crate.
-//
-// Defines the base role taxonomy, per-agent specifications, and the assembled
-// TaskAgent record that combines a spec with its generated system prompt.
-// These types are the foundation for the prompt generation pipeline described
-// in the architecture's `agent` crate domain (core.md section 3.2).
+//! Agent type definitions for the orqa-agent crate.
+//!
+//! Defines the base role taxonomy, per-agent specifications, and the assembled
+//! TaskAgent record that combines a spec with its generated system prompt.
+//! These types are the foundation for the prompt generation pipeline described
+//! in the architecture's `agent` crate domain (core.md section 3.2).
 
 use serde::{Deserialize, Serialize};
 

@@ -75,7 +75,7 @@ impl SearchEngine {
     /// Processes chunks in batches of 32. Returns the count of newly embedded chunks.
     pub fn embed_chunks(&mut self) -> Result<u32, SearchError> {
         if self.embedder.is_none() {
-            return Err(SearchError::Search("embedder not initialized".to_string()));
+            return Err(SearchError::Search("embedder not initialized".to_owned()));
         }
 
         let unembedded = self.store.get_unembedded_chunks()?;
@@ -94,7 +94,7 @@ impl SearchEngine {
             let embeddings = self
                 .embedder
                 .as_mut()
-                .ok_or_else(|| SearchError::Search("embedder not initialized".to_string()))?
+                .ok_or_else(|| SearchError::Search("embedder not initialized".to_owned()))?
                 .embed(&texts)?;
 
             let updates: Vec<(i32, Vec<f32>)> = batch
@@ -131,14 +131,14 @@ impl SearchEngine {
         max_results: u32,
     ) -> Result<Vec<SearchResult>, SearchError> {
         let emb = self.embedder.as_mut().ok_or_else(|| {
-            SearchError::Search("embedder not initialized — model not loaded".to_string())
+            SearchError::Search("embedder not initialized — model not loaded".to_owned())
         })?;
 
         let query_embeddings = emb.embed(&[query])?;
         let query_embedding = query_embeddings
             .into_iter()
             .next()
-            .ok_or_else(|| SearchError::Search("failed to embed query".to_string()))?;
+            .ok_or_else(|| SearchError::Search("failed to embed query".to_owned()))?;
 
         let results = self.store.search_semantic(&query_embedding, max_results)?;
         Ok(results)
@@ -212,13 +212,13 @@ mod tests {
             .index(
                 &src_dir,
                 &[
-                    "lib.rs".to_string(),
-                    "engine.rs".to_string(),
-                    "store.rs".to_string(),
-                    "chunker.rs".to_string(),
-                    "embedder.rs".to_string(),
-                    "types.rs".to_string(),
-                    "error.rs".to_string(),
+                    "lib.rs".to_owned(),
+                    "engine.rs".to_owned(),
+                    "store.rs".to_owned(),
+                    "chunker.rs".to_owned(),
+                    "embedder.rs".to_owned(),
+                    "types.rs".to_owned(),
+                    "error.rs".to_owned(),
                 ],
             )
             .unwrap();

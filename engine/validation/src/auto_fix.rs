@@ -136,7 +136,7 @@ pub fn update_artifact_field(
                 let indent: String = line.chars().take_while(|c| c.is_whitespace()).collect();
                 return format!("{indent}{field}: {value}");
             }
-            line.to_string()
+            line.to_owned()
         })
         .collect::<Vec<_>>()
         .join("\n");

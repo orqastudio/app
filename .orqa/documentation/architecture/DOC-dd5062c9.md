@@ -38,7 +38,7 @@ OrqaStudio has **one validation engine** used by three consumers. All artifact v
                   │      │       │
                   ▼      ▼       ▼
                LSP     CLI    Pre-commit
-```
+```text
 
 ### The Engine
 
@@ -105,7 +105,7 @@ The `orqa check` command runs the validation engine against all artifacts and ou
 ```text
 ERROR  .orqa/process/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
 WARN   .orqa/implementation/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
-```
+```text
 
 Exit code 0 = clean, exit code 1 = errors found.
 

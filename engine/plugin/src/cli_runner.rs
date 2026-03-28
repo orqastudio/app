@@ -129,7 +129,7 @@ impl CliToolRunner {
         project_root: &Path,
     ) -> Result<CliToolResult, String> {
         let (program, mut args) = match tool.runtime.as_str() {
-            "node" => ("node".to_string(), vec![tool.entrypoint.clone()]),
+            "node" => ("node".to_owned(), vec![tool.entrypoint.clone()]),
             "system" => (tool.entrypoint.clone(), vec![]),
             other => return Err(format!("unsupported runtime: {other}")),
         };
@@ -138,7 +138,7 @@ impl CliToolRunner {
 
         // For the integrity tool, append the project root as the target
         if tool.category == "integrity" {
-            args.push(project_root.to_string_lossy().to_string());
+            args.push(project_root.to_string_lossy().into_owned());
         }
 
         let start = Instant::now();
@@ -160,8 +160,8 @@ impl CliToolRunner {
             plugin: tool.plugin.clone(),
             tool_key: tool.key.clone(),
             exit_code: output.status.code().unwrap_or(-1),
-            stdout: String::from_utf8_lossy(&output.stdout).to_string(),
-            stderr: String::from_utf8_lossy(&output.stderr).to_string(),
+            stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+            stderr: String::from_utf8_lossy(&output.stderr).into_owned(),
             duration_ms: duration.as_millis() as u64,
             completed_at,
         };
@@ -198,7 +198,7 @@ impl CliToolRunner {
                     last_duration_ms: last.map(|r| r.duration_ms),
                     summary: last.map(|r| {
                         if r.exit_code == 0 {
-                            "Passed".to_string()
+                            "Passed".to_owned()
                         } else {
                             format!("Failed (exit {})", r.exit_code)
                         }

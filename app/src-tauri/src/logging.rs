@@ -22,8 +22,11 @@ static APP_HANDLE: OnceLock<AppHandle<Wry>> = OnceLock::new();
 /// Payload emitted as an `app-error` Tauri event.
 #[derive(Debug, Clone, Serialize)]
 pub struct AppErrorEvent {
+    /// Origin of the error (e.g., "rust", "sidecar").
     pub source: String,
+    /// Human-readable error description.
     pub message: String,
+    /// Log level string (always "error" for this event type).
     pub level: String,
 }
 
@@ -35,16 +38,16 @@ struct EventWriter;
 
 impl std::io::Write for EventWriter {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        let msg = String::from_utf8_lossy(buf).trim().to_string();
+        let msg = String::from_utf8_lossy(buf).trim().to_owned();
         if msg.is_empty() {
             return Ok(buf.len());
         }
 
         if let Some(handle) = APP_HANDLE.get() {
             let event = AppErrorEvent {
-                source: "rust".to_string(),
+                source: "rust".to_owned(),
                 message: msg,
-                level: "error".to_string(),
+                level: "error".to_owned(),
             };
             let _ = handle.emit(APP_ERROR_EVENT, &event);
         }
@@ -115,9 +118,9 @@ pub fn init_logging(app: &AppHandle<Wry>) {
 pub fn emit_app_error(source: &str, message: &str) {
     if let Some(handle) = APP_HANDLE.get() {
         let event = AppErrorEvent {
-            source: source.to_string(),
-            message: message.to_string(),
-            level: "error".to_string(),
+            source: source.to_owned(),
+            message: message.to_owned(),
+            level: "error".to_owned(),
         };
         let _ = handle.emit(APP_ERROR_EVENT, &event);
     }

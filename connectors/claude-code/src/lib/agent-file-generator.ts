@@ -117,6 +117,8 @@ If you cannot complete a criterion, you MUST report it as a FAILURE — not a de
 
 /**
  * Format tool constraints into a human-readable markdown section.
+ * @param constraints - Array of tool constraint entries for the role.
+ * @returns Markdown string containing the Tool Access section.
  */
 function formatToolConstraints(constraints: ToolConstraint[]): string {
 	const allowed = constraints.filter((c) => c.allowed);
@@ -267,8 +269,8 @@ const ROLE_BOUNDARIES: Record<string, string> = {
 
 ## Before Starting
 
-1. Read \`.claude/architecture/core.md\` for design principles
-2. Read \`.claude/architecture/migration.md\` for migration context
+1. Read \`.orqa/documentation/architecture/DOC-62969bc3.md\` for design principles
+2. Read \`.orqa/documentation/architecture/DOC-dff413a0.md\` for migration context
 3. Read the task artifact (path provided in your delegation prompt)
 4. Read the epic or parent task for broader context
 5. Read any knowledge files specified in your delegation prompt
@@ -383,6 +385,9 @@ For each acceptance criterion:
  * 4. Tool constraints from the agent spawner
  * 5. Completion enforcement (baked in, not hook-injected)
  * 6. Output template
+ * @param role - The universal role key identifying which agent to generate.
+ * @param metadata - Display metadata (fileName, displayName, description, roleSummary) for this role.
+ * @returns Complete markdown content for the agent file including frontmatter and body.
  */
 function generateAgentFileContent(
 	role: UniversalRole,
@@ -431,19 +436,19 @@ function generateAgentFileContent(
 	if (role === "implementer" || role === "reviewer") {
 		parts.push("## Architecture Reference");
 		parts.push("");
-		parts.push("Detailed architecture documentation is available in `.claude/architecture/`:");
-		parts.push("- `core.md` -- design principles, engine libraries, language boundary");
-		parts.push("- `plugins.md` -- plugin system, composition, schema generation");
-		parts.push("- `agents.md` -- agent architecture, prompt generation pipeline");
-		parts.push("- `governance.md` -- `.orqa/` structure, artifact lifecycle");
-		parts.push("- `enforcement.md` -- enforcement layers, validation timing");
-		parts.push("- `connector.md` -- connector architecture, generation pipeline");
-		parts.push("- `structure.md` -- directory structure, file organization");
-		parts.push("- `decisions.md` -- key design decisions and their rationale");
-		parts.push("- `migration.md` -- migration phases and sequencing");
-		parts.push("- `targets.md` -- target state specifications");
-		parts.push("- `audit.md` -- audit criteria");
-		parts.push("- `glossary.md` -- term definitions");
+		parts.push("Detailed architecture documentation is available in `.orqa/documentation/architecture/`:");
+		parts.push("- `DOC-62969bc3.md` -- core: design principles, engine libraries, language boundary");
+		parts.push("- `DOC-41ccf7c4.md` -- plugins: plugin system, composition, schema generation");
+		parts.push("- `DOC-b951327c.md` -- agents: agent architecture, prompt generation pipeline");
+		parts.push("- `DOC-fd3edf48.md` -- governance: `.orqa/` structure, artifact lifecycle");
+		parts.push("- `DOC-70063f55.md` -- enforcement: enforcement layers, validation timing");
+		parts.push("- `DOC-4d531f5e.md` -- connector: connector architecture, generation pipeline");
+		parts.push("- `DOC-762facfb.md` -- structure: directory structure, file organization");
+		parts.push("- `DOC-80a4cf76.md` -- decisions: key design decisions and their rationale");
+		parts.push("- `DOC-dff413a0.md` -- migration: migration phases and sequencing");
+		parts.push("- `DOC-82123148.md` -- targets: target state specifications");
+		parts.push("- `DOC-6ac4abed.md` -- audit: audit criteria");
+		parts.push("- `DOC-69341bc4.md` -- glossary: term definitions");
 		parts.push("");
 	}
 
@@ -486,9 +491,8 @@ function generateAgentFileContent(
  * For each role, combines role metadata, tool constraints, and completion
  * enforcement into a single agent markdown file and writes it to
  * .claude/agents/<role>.md.
- *
- * @param projectPath - The project root directory
- * @returns Summary of generated files and any errors
+ * @param projectPath - Absolute path to the project root directory where .claude/agents/ will be written.
+ * @returns Summary of generated files and any errors encountered during file writes.
  */
 export function generateAgentFiles(projectPath: string): {
 	generated: string[];
@@ -528,6 +532,7 @@ export function generateAgentFiles(projectPath: string): {
  * Run agent file generation and print results.
  *
  * Called from the Claude Code connector's install and refresh pipeline.
+ * @param projectRoot - Absolute path to the project root directory.
  */
 export function runAgentFileGeneration(projectRoot: string): void {
 	const result = generateAgentFiles(projectRoot);

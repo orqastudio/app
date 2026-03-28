@@ -69,7 +69,7 @@ struct JsonRpcError {
 impl JsonRpcResponse {
     fn ok(id: Option<Value>, result: Value) -> Self {
         Self {
-            jsonrpc: "2.0".to_string(),
+            jsonrpc: "2.0".to_owned(),
             id,
             result: Some(result),
             error: None,
@@ -78,7 +78,7 @@ impl JsonRpcResponse {
 
     fn err(id: Option<Value>, code: i32, message: String) -> Self {
         Self {
-            jsonrpc: "2.0".to_string(),
+            jsonrpc: "2.0".to_owned(),
             id,
             result: None,
             error: Some(JsonRpcError { code, message }),
@@ -379,13 +379,13 @@ fn main() {
                         let msg = result["error"]
                             .as_str()
                             .unwrap_or("unknown error")
-                            .to_string();
+                            .to_owned();
                         JsonRpcResponse::err(request.id, -32603, msg)
                     } else {
                         JsonRpcResponse::ok(request.id, result)
                     }
                 } else {
-                    JsonRpcResponse::err(request.id, -32600, "invalid JSON-RPC version".to_string())
+                    JsonRpcResponse::err(request.id, -32600, "invalid JSON-RPC version".to_owned())
                 }
             }
             Err(e) => JsonRpcResponse::err(None, -32700, format!("parse error: {e}")),
@@ -430,10 +430,10 @@ mod tests {
     #[test]
     fn parse_cli_options_explicit() {
         let args = vec![
-            "--db".to_string(),
-            "/tmp/custom.duckdb".to_string(),
-            "--model-dir".to_string(),
-            "/tmp/models".to_string(),
+            "--db".to_owned(),
+            "/tmp/custom.duckdb".to_owned(),
+            "--model-dir".to_owned(),
+            "/tmp/models".to_owned(),
         ];
         let options = parse_cli_options(&args);
         assert_eq!(options.db_path, PathBuf::from("/tmp/custom.duckdb"));
@@ -464,7 +464,7 @@ mod tests {
 
     #[test]
     fn jsonrpc_response_err_has_no_result() {
-        let resp = JsonRpcResponse::err(Some(serde_json::json!(1)), -32603, "oops".to_string());
+        let resp = JsonRpcResponse::err(Some(serde_json::json!(1)), -32603, "oops".to_owned());
         let json = serde_json::to_value(&resp).unwrap();
         assert_eq!(json["error"]["code"], -32603);
         assert_eq!(json["error"]["message"], "oops");
@@ -473,7 +473,7 @@ mod tests {
 
     #[test]
     fn error_value_produces_object_with_error_key() {
-        let v = error_value("something failed".to_string());
+        let v = error_value("something failed".to_owned());
         assert_eq!(v["error"], "something failed");
     }
 }

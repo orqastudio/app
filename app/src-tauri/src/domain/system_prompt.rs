@@ -15,7 +15,9 @@ use crate::state::AppState;
 /// A condensed message record used for context injection into the system prompt.
 #[derive(serde::Serialize)]
 pub struct ContextMessage {
+    /// Message role: "user" or "assistant".
     pub role: String,
+    /// Text content of the message.
     pub content: String,
 }
 
@@ -44,9 +46,9 @@ pub fn load_context_messages(state: &AppState, session_id: i64) -> Option<Vec<Co
         .rev()
         .map(|m| ContextMessage {
             role: match m.role {
-                MessageRole::User => "user".to_string(),
-                MessageRole::Assistant => "assistant".to_string(),
-                MessageRole::System => "system".to_string(),
+                MessageRole::User => "user".to_owned(),
+                MessageRole::Assistant => "assistant".to_owned(),
+                MessageRole::System => "system".to_owned(),
             },
             content: m.content.clone().unwrap_or_default(),
         })

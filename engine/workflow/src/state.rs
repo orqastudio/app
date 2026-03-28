@@ -1,9 +1,9 @@
-// Process state tracking for the OrqaStudio workflow engine.
-//
-// `ProcessViolation` and `SessionProcessState` are defined in `crate::types::workflow`.
-// This module provides the `ProcessStateExt` extension trait that adds business
-// logic methods (reset, track_tool_call, check_violations) to `SessionProcessState`.
-// All callers use this trait to interact with process state.
+//! Process state tracking for the OrqaStudio workflow engine.
+//!
+//! `ProcessViolation` and `SessionProcessState` are defined in `crate::types::workflow`.
+//! This module provides the `ProcessStateExt` extension trait that adds business
+//! logic methods (reset, track_tool_call, check_violations) to `SessionProcessState`.
+//! All callers use this trait to interact with process state.
 
 pub use orqa_engine_types::types::workflow::{ProcessViolation, SessionProcessState};
 
@@ -73,21 +73,21 @@ impl ProcessStateExt for SessionProcessState {
 
         if self.code_written && !self.docs_read {
             violations.push(ProcessViolation {
-                check: "docs_before_code".to_string(),
+                check: "docs_before_code".to_owned(),
                 message: "Code was written before reading documentation. \
                     Read docs/ or .orqa/rules/ before making code changes."
-                    .to_string(),
-                severity: "warn".to_string(),
+                    .to_owned(),
+                severity: "warn".to_owned(),
             });
         }
 
         if self.code_written && !self.knowledge_loaded {
             violations.push(ProcessViolation {
-                check: "knowledge_before_code".to_string(),
+                check: "knowledge_before_code".to_owned(),
                 message: "Code was written without loading any knowledge. \
                     Use load_knowledge to load relevant knowledge before making code changes."
-                    .to_string(),
-                severity: "warn".to_string(),
+                    .to_owned(),
+                severity: "warn".to_owned(),
             });
         }
 

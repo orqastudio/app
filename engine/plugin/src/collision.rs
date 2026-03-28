@@ -93,7 +93,7 @@ fn build_existing_relationships(
 
     for rel in &PLATFORM.relationships {
         existing.push((
-            "core".to_string(),
+            "core".to_owned(),
             RelationshipSchema {
                 key: rel.key.clone(),
                 inverse: rel.inverse.clone(),

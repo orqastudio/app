@@ -67,7 +67,7 @@ pub fn get_artifacts_by_type(
 ) -> Result<Vec<ArtifactNode>, OrqaError> {
     if artifact_type.trim().is_empty() {
         return Err(OrqaError::Validation(
-            "artifact_type cannot be empty".to_string(),
+            "artifact_type cannot be empty".to_owned(),
         ));
     }
     let graph = get_or_build_graph(&state)?;
@@ -90,11 +90,11 @@ pub fn read_artifact_content(
     state: State<'_, AppState>,
 ) -> Result<String, OrqaError> {
     if path.trim().is_empty() {
-        return Err(OrqaError::Validation("path cannot be empty".to_string()));
+        return Err(OrqaError::Validation("path cannot be empty".to_owned()));
     }
     if path.contains("..") {
         return Err(OrqaError::Validation(
-            "path traversal not allowed".to_string(),
+            "path traversal not allowed".to_owned(),
         ));
     }
 
@@ -141,7 +141,7 @@ pub fn get_artifact_traceability(
     state: State<'_, AppState>,
 ) -> Result<TraceabilityResult, OrqaError> {
     if id.trim().is_empty() {
-        return Err(OrqaError::Validation("id cannot be empty".to_string()));
+        return Err(OrqaError::Validation("id cannot be empty".to_owned()));
     }
     let graph = get_or_build_graph(&state)?;
     compute_traceability_for(&graph, &id)
@@ -287,12 +287,12 @@ fn load_project_relationships(
 fn load_plugin_relationships(
     project_path: &str,
 ) -> Vec<crate::domain::integrity_engine::RelationshipSchema> {
-    let project_root = std::path::Path::new(project_path);
+    let project_root = Path::new(project_path);
     let plugins = crate::plugins::discovery::scan_plugins(project_root);
     let mut rels = Vec::new();
 
     for plugin in &plugins {
-        let plugin_dir = std::path::Path::new(&plugin.path);
+        let plugin_dir = Path::new(&plugin.path);
         if let Ok(manifest) = crate::plugins::manifest::read_manifest(plugin_dir) {
             for rel_value in &manifest.provides.relationships {
                 if let Ok(schema) = serde_json::from_value::<
@@ -381,7 +381,7 @@ pub fn store_health_snapshot(
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?
-        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     health_snapshot_repo::create(
         &conn,
@@ -421,15 +421,15 @@ pub fn update_artifact_field(
     state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
     if path.trim().is_empty() {
-        return Err(OrqaError::Validation("path cannot be empty".to_string()));
+        return Err(OrqaError::Validation("path cannot be empty".to_owned()));
     }
     if path.contains("..") {
         return Err(OrqaError::Validation(
-            "path traversal not allowed".to_string(),
+            "path traversal not allowed".to_owned(),
         ));
     }
     if field.trim().is_empty() {
-        return Err(OrqaError::Validation("field cannot be empty".to_string()));
+        return Err(OrqaError::Validation("field cannot be empty".to_owned()));
     }
 
     let project_path = active_project_path(&state)?;
@@ -469,7 +469,7 @@ pub fn get_health_snapshots(
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?
-        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     health_snapshot_repo::get_recent(&conn, project.id, limit.unwrap_or(30))
 }
@@ -496,15 +496,15 @@ mod tests {
     fn graph_stats_counts_nodes_and_orphans() {
         let mut nodes = HashMap::new();
         nodes.insert(
-            "EPIC-001".to_string(),
+            "EPIC-001".to_owned(),
             ArtifactNode {
-                id: "EPIC-001".to_string(),
+                id: "EPIC-001".to_owned(),
                 project: None,
-                path: ".orqa/implementation/epics/EPIC-001.md".to_string(),
-                artifact_type: "epic".to_string(),
-                title: "Test Epic".to_string(),
+                path: ".orqa/implementation/epics/EPIC-001.md".to_owned(),
+                artifact_type: "epic".to_owned(),
+                title: "Test Epic".to_owned(),
                 description: None,
-                status: Some("draft".to_string()),
+                status: Some("draft".to_owned()),
                 priority: None,
                 frontmatter: serde_json::json!({}),
                 body: None,

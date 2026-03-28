@@ -1,9 +1,9 @@
-// File-backed lesson store for the orqa-lesson crate.
-//
-// Provides `FileLessonStore`, a concrete implementation of `LessonStore` that
-// reads and writes lesson files in the configured lessons directory. This
-// replaces the app-layer `lesson_repo` with an engine-level implementation that
-// any access layer (app, daemon, CLI) can use without duplicating file I/O logic.
+//! File-backed lesson store for the orqa-lesson crate.
+//!
+//! Provides `FileLessonStore`, a concrete implementation of `LessonStore` that
+//! reads and writes lesson files in the configured lessons directory. This
+//! replaces the app-layer `lesson_repo` with an engine-level implementation that
+//! any access layer (app, daemon, CLI) can use without duplicating file I/O logic.
 
 use std::path::{Path, PathBuf};
 
@@ -66,7 +66,7 @@ impl FileLessonStore {
     fn lessons_dir(&self) -> Result<PathBuf, LessonStoreError> {
         self.paths.artifact_dir("lessons").ok_or_else(|| {
             LessonStoreError::NotConfigured(
-                "no 'lessons' artifact path configured in project.json".to_string(),
+                "no 'lessons' artifact path configured in project.json".to_owned(),
             )
         })
     }
@@ -78,7 +78,7 @@ impl FileLessonStore {
             .map(String::from)
             .ok_or_else(|| {
                 LessonStoreError::NotConfigured(
-                    "no 'lessons' artifact path configured in project.json".to_string(),
+                    "no 'lessons' artifact path configured in project.json".to_owned(),
                 )
             })
     }
@@ -125,7 +125,7 @@ impl FileLessonStore {
         let lessons_dir = self.lessons_dir()?;
         let file_path = lessons_dir.join(format!("{id}.md"));
         if !file_path.exists() {
-            return Err(LessonStoreError::NotFound(id.to_string()));
+            return Err(LessonStoreError::NotFound(id.to_owned()));
         }
         read_lesson_file(&file_path, self.paths.project_root())
     }
@@ -147,7 +147,7 @@ impl FileLessonStore {
             title: new_lesson.title.clone(),
             category: new_lesson.category.clone(),
             recurrence: 1,
-            status: "active".to_string(),
+            status: "active".to_owned(),
             promoted_to: None,
             created: today.clone(),
             updated: today,
@@ -170,7 +170,7 @@ impl FileLessonStore {
         let lessons_dir = self.lessons_dir()?;
         let file_path = lessons_dir.join(format!("{id}.md"));
         if !file_path.exists() {
-            return Err(LessonStoreError::NotFound(id.to_string()));
+            return Err(LessonStoreError::NotFound(id.to_owned()));
         }
 
         let mut lesson = read_lesson_file(&file_path, self.paths.project_root())?;

@@ -119,11 +119,11 @@ pub fn project_scan(
     excluded_paths: Option<Vec<String>>,
 ) -> Result<ProjectScanResult, OrqaError> {
     let defaults = vec![
-        "node_modules".to_string(),
-        ".git".to_string(),
-        "target".to_string(),
-        "dist".to_string(),
-        "build".to_string(),
+        "node_modules".to_owned(),
+        ".git".to_owned(),
+        "target".to_owned(),
+        "dist".to_owned(),
+        "build".to_owned(),
     ];
     let paths = excluded_paths.unwrap_or(defaults);
     Ok(project_scanner::scan_project(&path, &paths)?)
@@ -146,11 +146,11 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let path = dir.path().to_str().expect("path");
         let settings = ProjectSettings {
-            name: "test-project".to_string(),
+            name: "test-project".to_owned(),
             dogfood: false,
-            description: Some("A test".to_string()),
-            default_model: "auto".to_string(),
-            excluded_paths: vec!["node_modules".to_string()],
+            description: Some("A test".to_owned()),
+            default_model: "auto".to_owned(),
+            excluded_paths: vec!["node_modules".to_owned()],
             stack: None,
             governance: None,
             icon: None,
@@ -169,7 +169,7 @@ mod tests {
             .expect("read")
             .expect("should exist");
         assert_eq!(loaded.name, "test-project");
-        assert_eq!(loaded.description, Some("A test".to_string()));
+        assert_eq!(loaded.description, Some("A test".to_owned()));
     }
 
     #[test]
@@ -200,7 +200,7 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let path = dir.path().to_str().expect("path");
         let result =
-            crate::domain::project_scanner::scan_project(path, &["node_modules".to_string()]);
+            crate::domain::project_scanner::scan_project(path, &["node_modules".to_owned()]);
         assert!(result.is_ok());
         let scan = result.expect("scan");
         assert!(scan.stack.languages.is_empty());
@@ -216,17 +216,17 @@ mod tests {
         std::fs::write(src_dir.join("main.rs"), "fn main() {}\n").expect("write rs");
         let path = dir.path().to_str().expect("path");
         let result =
-            crate::domain::project_scanner::scan_project(path, &["node_modules".to_string()]);
+            crate::domain::project_scanner::scan_project(path, &["node_modules".to_owned()]);
         assert!(result.is_ok());
         let scan = result.expect("scan");
-        assert!(scan.stack.languages.contains(&"rust".to_string()));
+        assert!(scan.stack.languages.contains(&"rust".to_owned()));
     }
 
     #[test]
     fn project_scan_nonexistent_dir_returns_error() {
         let result = crate::domain::project_scanner::scan_project(
             "/nonexistent/dir",
-            &["node_modules".to_string()],
+            &["node_modules".to_owned()],
         );
         assert!(result.is_err());
     }

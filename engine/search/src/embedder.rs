@@ -11,15 +11,19 @@ type TokenizedBatch = (Vec<i64>, Vec<i64>, Vec<i64>, usize, usize);
 /// Error type for embedding operations.
 #[derive(Debug, thiserror::Error)]
 pub enum EmbedError {
+    /// ONNX runtime failed to load or run the model.
     #[error("ONNX runtime error: {0}")]
     Ort(String),
 
+    /// HuggingFace tokenizer error.
     #[error("tokenizer error: {0}")]
     Tokenizer(String),
 
+    /// Model files are missing from the expected directory.
     #[error("model not found: {0}")]
     ModelNotFound(String),
 
+    /// Network download of model files failed.
     #[error("download error: {0}")]
     Download(String),
 }

@@ -1,8 +1,8 @@
-// Project settings types shared across engine domain crates.
-//
-// Contains the status definition and auto-rule types used by the workflow
-// transition engine. These are pure data shapes extracted from the engine's
-// project/settings module to avoid circular dependencies.
+//! Project settings types shared across engine domain crates.
+//!
+//! Contains the status definition and auto-rule types used by the workflow
+//! transition engine. These are pure data shapes extracted from the engine's
+//! project/settings module to avoid circular dependencies.
 
 use serde::{Deserialize, Serialize};
 
@@ -15,8 +15,11 @@ use serde::{Deserialize, Serialize};
 /// does not hardcode artifact type names).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusAutoRule {
+    /// Named condition to evaluate (e.g. `"all-children-completed"`).
     pub condition: String,
+    /// Status key to transition to when the condition is met.
     pub target: String,
+    /// Condition-specific parameters (e.g. `child_type`).
     #[serde(default)]
     pub params: std::collections::HashMap<String, String>,
 }
@@ -27,9 +30,13 @@ pub struct StatusAutoRule {
 /// transition engine (app-specific feature).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusDefinition {
+    /// Unique status key (e.g. `"active"`, `"closed"`).
     pub key: String,
+    /// Human-readable label shown in the UI.
     pub label: String,
+    /// Icon identifier for the UI.
     pub icon: String,
+    /// Whether the status icon should spin (indicates in-progress state).
     #[serde(default)]
     pub spin: bool,
     /// Ordered list of status keys that can be manually transitioned to from this status.

@@ -30,8 +30,11 @@ use crate::platform::ArtifactTypeDef;
 /// Severity of a file-level finding.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum FileSeverity {
+    /// Blocking violation — must be resolved before the artifact is valid.
     Error,
+    /// Non-blocking concern — should be addressed but does not block.
     Warning,
+    /// Informational note — no action required.
     Info,
 }
 
@@ -292,7 +295,7 @@ fn check_duplicate_keys(content: &str, findings: &mut Vec<FileFinding>) {
             break; // closing ---
         }
         if let Some(key) = line.split(':').next() {
-            let key = key.trim().to_string();
+            let key = key.trim().to_owned();
             if !key.is_empty() && !key.starts_with('-') && !key.starts_with(' ') {
                 if let Some(&first_line) = seen_keys.get(&key) {
                     findings.push(FileFinding {

@@ -13,11 +13,17 @@ use orqa_engine_types::config::load_project_settings;
 /// A discovered plugin from scanning the project.
 #[derive(Debug, Clone, Serialize)]
 pub struct DiscoveredPlugin {
+    /// The plugin's package name (e.g. `@orqastudio/plugin-software`).
     pub name: String,
+    /// Semantic version string from the manifest (e.g. `1.2.0`).
     pub version: String,
+    /// Human-readable display name from the manifest, if present.
     pub display_name: Option<String>,
+    /// One-line description from the manifest, if present.
     pub description: Option<String>,
+    /// Absolute filesystem path to the plugin directory.
     pub path: String,
+    /// Where this plugin came from (always `"installed"` for discovered plugins).
     pub source: String,
 }
 
@@ -45,8 +51,8 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
                 version: manifest.version.clone(),
                 display_name: manifest.display_name.clone(),
                 description: manifest.description.clone(),
-                path: plugin_path.to_string_lossy().to_string(),
-                source: "installed".to_string(),
+                path: plugin_path.to_string_lossy().into_owned(),
+                source: "installed".to_owned(),
             });
         }
     }

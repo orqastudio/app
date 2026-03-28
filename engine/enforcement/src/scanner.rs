@@ -1,9 +1,9 @@
-// Governance scanner for the OrqaStudio enforcement engine.
-//
-// Scans a project directory for governance files across the 6 canonical OrqaStudio
-// governance areas: rules, agents, knowledge, lessons, decisions, and documentation.
-// Used by the enforcement pipeline to determine governance coverage and surface files
-// to the governance health UI.
+//! Governance scanner for the OrqaStudio enforcement engine.
+//!
+//! Scans a project directory for governance files across the 6 canonical OrqaStudio
+//! governance areas: rules, agents, knowledge, lessons, decisions, and documentation.
+//! Used by the enforcement pipeline to determine governance coverage and surface files
+//! to the governance health UI.
 
 use std::path::Path;
 
@@ -115,8 +115,8 @@ fn scan_directory_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) 
 
     let covered = !files.is_empty();
     GovernanceArea {
-        name: name.to_string(),
-        source: source.to_string(),
+        name: name.to_owned(),
+        source: source.to_owned(),
         files,
         covered,
     }
@@ -136,8 +136,8 @@ fn scan_recursive_area(name: &str, source: &str, dir: &Path, ext: Option<&str>) 
 
     let covered = !files.is_empty();
     GovernanceArea {
-        name: name.to_string(),
-        source: source.to_string(),
+        name: name.to_owned(),
+        source: source.to_owned(),
         files,
         covered,
     }
@@ -191,8 +191,8 @@ fn scan_knowledge_area(project_root: &Path, knowledge_dir: &Path) -> GovernanceA
 
     let covered = !files.is_empty();
     GovernanceArea {
-        name: "knowledge".to_string(),
-        source: "orqa".to_string(),
+        name: "knowledge".to_owned(),
+        source: "orqa".to_owned(),
         files,
         covered,
     }
@@ -208,7 +208,7 @@ fn read_governance_file(path: &Path) -> Option<GovernanceFile> {
     let size_bytes = metadata.len();
     let content_preview = read_preview(path);
     Some(GovernanceFile {
-        path: path.to_string_lossy().to_string(),
+        path: path.to_string_lossy().into_owned(),
         size_bytes,
         content_preview,
     })
@@ -224,8 +224,8 @@ fn read_governance_file_relative(path: &Path, root: &Path) -> Option<GovernanceF
     let size_bytes = metadata.len();
     let content_preview = read_preview(path);
     let display_path = path.strip_prefix(root).map_or_else(
-        |_| path.to_string_lossy().to_string(),
-        |p| p.to_string_lossy().to_string(),
+        |_| path.to_string_lossy().into_owned(),
+        |p| p.to_string_lossy().into_owned(),
     );
     Some(GovernanceFile {
         path: display_path,

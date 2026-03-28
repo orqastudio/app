@@ -84,7 +84,7 @@ pub fn enforcement_violations_list(
         .map_err(|e| OrqaError::Database(format!("db lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?
-        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     violations_repo::list_for_project(&conn, project.id, None)
 }
@@ -98,7 +98,7 @@ fn resolve_active_project_path(state: &State<'_, AppState>) -> Result<String, Or
         .map_err(|e| OrqaError::Database(format!("db lock poisoned: {e}")))?;
 
     let project = project_repo::get_active(&conn)?
-        .ok_or_else(|| OrqaError::NotFound("no active project".to_string()))?;
+        .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     Ok(project.path)
 }
@@ -118,9 +118,9 @@ mod tests {
     #[test]
     fn engine_with_rules_returns_all_rules() {
         let rule = EnforcementRule {
-            name: "test-rule".to_string(),
-            scope: "project".to_string(),
-            prose: "# Test rule".to_string(),
+            name: "test-rule".to_owned(),
+            scope: "project".to_owned(),
+            prose: "# Test rule".to_owned(),
             entries: vec![],
         };
         let engine = EnforcementEngine::new(vec![rule]);

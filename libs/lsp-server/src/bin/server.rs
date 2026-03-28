@@ -91,14 +91,11 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
                 if i < args.len() {
                     tcp_port = args[i].parse::<u16>().ok();
                     if tcp_port.is_none() {
-                        eprintln!(
-                            "orqa-lsp-server: invalid port '{}', expected a number 1–65535",
-                            args[i]
-                        );
+                        tracing::error!(port = args[i].as_str(), "invalid port, expected a number 1-65535");
                         std::process::exit(2);
                     }
                 } else {
-                    eprintln!("orqa-lsp-server: --tcp requires a port number");
+                    tracing::error!("--tcp requires a port number");
                     std::process::exit(2);
                 }
             }
@@ -108,14 +105,11 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
                     if let Ok(p) = args[i].parse::<u16>() {
                         daemon_port = p;
                     } else {
-                        eprintln!(
-                            "orqa-lsp-server: invalid daemon port '{}', expected a number 1–65535",
-                            args[i]
-                        );
+                        tracing::error!(port = args[i].as_str(), "invalid daemon port, expected a number 1-65535");
                         std::process::exit(2);
                     }
                 } else {
-                    eprintln!("orqa-lsp-server: --daemon-port requires a port number");
+                    tracing::error!("--daemon-port requires a port number");
                     std::process::exit(2);
                 }
             }
@@ -127,8 +121,7 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
                 project_root = Some(PathBuf::from(arg));
             }
             other => {
-                eprintln!("orqa-lsp-server: unknown argument '{other}'");
-                eprintln!("Run with --help for usage.");
+                tracing::error!(arg = other, "unknown argument, run with --help for usage");
                 std::process::exit(2);
             }
         }
@@ -141,20 +134,11 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
     (root, tcp_port, daemon_port)
 }
 
+/// Print usage information via tracing.
 fn print_usage() {
-    eprintln!("OrqaStudio LSP Server");
-    eprintln!();
-    eprintln!("USAGE:");
-    eprintln!("    orqa-lsp-server [PROJECT_PATH] [--tcp PORT] [--daemon-port PORT]");
-    eprintln!();
-    eprintln!("ARGS:");
-    eprintln!("    PROJECT_PATH    Path to the project root (default: current directory)");
-    eprintln!();
-    eprintln!("OPTIONS:");
-    eprintln!("    --tcp PORT          Listen on TCP instead of stdio");
-    eprintln!("    --daemon-port PORT  Validation daemon port (default: 9120)");
-    eprintln!("    --help              Show this help message");
-    eprintln!();
-    eprintln!("ENVIRONMENT:");
-    eprintln!("    RUST_LOG        Tracing filter (default: info)");
+    tracing::info!("OrqaStudio LSP Server");
+    tracing::info!("USAGE: orqa-lsp-server [PROJECT_PATH] [--tcp PORT] [--daemon-port PORT]");
+    tracing::info!("ARGS:  PROJECT_PATH  Path to the project root (default: current directory)");
+    tracing::info!("OPTIONS: --tcp PORT, --daemon-port PORT (default: 9120), --help");
+    tracing::info!("ENVIRONMENT: RUST_LOG  Tracing filter (default: info)");
 }

@@ -34,9 +34,11 @@ pub struct KnowledgeInjector {
 /// Error type for knowledge injection operations.
 #[derive(Debug, thiserror::Error)]
 pub enum KnowledgeInjectorError {
+    /// An error occurred in the ONNX embedder.
     #[error("embedding error: {0}")]
     Embed(#[from] EmbedError),
 
+    /// A filesystem I/O error occurred while reading knowledge artifacts.
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
 }
@@ -157,7 +159,7 @@ fn discover_knowledge_descriptions(
 
         let artifact_name = path
             .file_stem()
-            .map(|s| s.to_string_lossy().to_string())
+            .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
 
         if let Some(description) = extract_description(&path) {
@@ -229,7 +231,7 @@ fn parse_description_field(frontmatter: &str) -> Option<String> {
                 .trim_end_matches('\'')
                 .trim();
             if !val.is_empty() {
-                description_value = Some(val.to_string());
+                description_value = Some(val.to_owned());
             }
         }
         break;

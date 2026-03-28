@@ -18,11 +18,11 @@ pub fn settings_set(
 ) -> Result<(), OrqaError> {
     if key.trim().is_empty() {
         return Err(OrqaError::Validation(
-            "settings key cannot be empty".to_string(),
+            "settings key cannot be empty".to_owned(),
         ));
     }
 
-    let scope_str = scope.unwrap_or_else(|| "app".to_string());
+    let scope_str = scope.unwrap_or_else(|| "app".to_owned());
 
     let conn = state
         .db
@@ -41,7 +41,7 @@ pub fn settings_get_all(
     scope: Option<String>,
     state: State<'_, AppState>,
 ) -> Result<HashMap<String, serde_json::Value>, OrqaError> {
-    let scope_str = scope.unwrap_or_else(|| "app".to_string());
+    let scope_str = scope.unwrap_or_else(|| "app".to_owned());
 
     let conn = state
         .db

@@ -5,24 +5,38 @@ use crate::error::OrqaError;
 /// A raw theme row from the `project_themes` table.
 #[derive(Debug, Clone)]
 pub struct ThemeRow {
+    /// Primary key.
     pub id: i64,
+    /// Foreign key to the `projects` table.
     pub project_id: i64,
+    /// Path to the source file this theme was extracted from.
     pub source_file: String,
+    /// Hash of the source file at extraction time, used for change detection.
     pub source_hash: String,
+    /// ISO-8601 timestamp when this theme was extracted.
     pub extracted_at: String,
+    /// JSON-encoded light-mode design token map.
     pub tokens_light: String,
+    /// JSON-encoded dark-mode design token map, if present.
     pub tokens_dark: Option<String>,
+    /// JSON-encoded list of unmapped token names that could not be resolved.
     pub unmapped: Option<String>,
+    /// Whether this is the currently active theme for the project.
     pub is_active: bool,
 }
 
 /// A raw theme override row from the `project_theme_overrides` table.
 #[derive(Debug, Clone)]
 pub struct ThemeOverrideRow {
+    /// Primary key.
     pub id: i64,
+    /// Foreign key to the `projects` table.
     pub project_id: i64,
+    /// Design token name being overridden (e.g., "primary").
     pub token_name: String,
+    /// Override value for light mode.
     pub value_light: String,
+    /// Override value for dark mode, if set.
     pub value_dark: Option<String>,
 }
 

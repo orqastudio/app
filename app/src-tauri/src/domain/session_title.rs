@@ -69,9 +69,9 @@ fn build_message_summaries(
                 .as_ref()
                 .map(|c| crate::sidecar::types::MessageSummary {
                     role: match m.role {
-                        MessageRole::User => "user".to_string(),
-                        MessageRole::Assistant => "assistant".to_string(),
-                        MessageRole::System => "system".to_string(),
+                        MessageRole::User => "user".to_owned(),
+                        MessageRole::Assistant => "assistant".to_owned(),
+                        MessageRole::System => "system".to_owned(),
                     },
                     content: c.clone(),
                 })
@@ -89,7 +89,7 @@ fn handle_summary_response(
 
     match state.sidecar.manager.read_line() {
         Ok(Some(SidecarResponse::SummaryResult { summary, .. })) => {
-            let title = summary.trim().to_string();
+            let title = summary.trim().to_owned();
             if title.is_empty() {
                 return;
             }

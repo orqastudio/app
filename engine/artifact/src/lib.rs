@@ -1,18 +1,20 @@
-// orqa-artifact: Artifact business logic for the OrqaStudio engine.
-//
-// This crate provides the business logic for working with governance artifacts:
-// ID generation and validation, type parsing, path derivation, frontmatter
-// extraction/parsing, filesystem I/O, and navigation tree scanning.
-// All functions operate on types defined in `orqa_engine_types::types::artifact`.
-//
-// Type definitions (structs/enums) live in `orqa-engine-types`. This crate
-// contains only the behaviour -- the functions that act on those types.
-//
-// Submodules:
-//   `fs`     -- filesystem helpers: write, read, scan directories
-//   `reader` -- navigation tree scanner driven by project.json artifact config
+//! Artifact business logic for the OrqaStudio engine.
+//!
+//! This crate provides the business logic for working with governance artifacts:
+//! ID generation and validation, type parsing, path derivation, frontmatter
+//! extraction/parsing, filesystem I/O, and navigation tree scanning.
+//! All functions operate on types defined in `orqa_engine_types::types::artifact`.
+//!
+//! Type definitions (structs/enums) live in `orqa-engine-types`. This crate
+//! contains only the behaviour -- the functions that act on those types.
+//!
+//! Submodules:
+//!   `fs`     -- filesystem helpers: write, read, scan directories
+//!   `reader` -- navigation tree scanner driven by project.json artifact config
 
+/// Filesystem helpers: write, read, and scan artifact directories.
 pub mod fs;
+/// Navigation tree scanner driven by project.json artifact config.
 pub mod reader;
 
 use rand::Rng;
@@ -125,18 +127,18 @@ pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
 pub fn extract_frontmatter(content: &str) -> (Option<String>, String) {
     let trimmed = content.trim_start();
     if !trimmed.starts_with("---") {
-        return (None, content.to_string());
+        return (None, content.to_owned());
     }
 
     let after_open = &trimmed[3..];
     let Some(close_pos) = after_open.find("\n---") else {
-        return (None, content.to_string());
+        return (None, content.to_owned());
     };
 
-    let fm_text = after_open[..close_pos].to_string();
+    let fm_text = after_open[..close_pos].to_owned();
     let body = after_open[close_pos + 4..]
         .trim_start_matches('\n')
-        .to_string();
+        .to_owned();
     (Some(fm_text), body)
 }
 

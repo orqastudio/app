@@ -17,7 +17,7 @@ pub(crate) fn find_server_binary(name: &str) -> Result<PathBuf, io::Error> {
     let bin_name = if cfg!(windows) {
         format!("{name}.exe")
     } else {
-        name.to_string()
+        name.to_owned()
     };
 
     // 1. Check next to the current executable (workspace target/debug or target/release)

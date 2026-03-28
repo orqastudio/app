@@ -114,6 +114,10 @@ fn result_to_json(r: &SearchResult, source: Option<&str>) -> Value {
 // Tool implementations
 // ---------------------------------------------------------------------------
 
+/// Execute a regex search over the indexed codebase and return JSON-formatted results.
+///
+/// Reads `pattern`, `path_filter`, `scope`, and `limit` from `args`. Returns a pretty-printed
+/// JSON array of matching chunks. Defaults: limit=20, scope="all".
 pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
     let pattern = args
         .get("pattern")
@@ -123,7 +127,7 @@ pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<Stri
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args
         .get("limit")
-        .and_then(serde_json::Value::as_u64)
+        .and_then(Value::as_u64)
         .unwrap_or(20) as u32;
 
     let results = engine
@@ -135,6 +139,10 @@ pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<Stri
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
+/// Execute a semantic (embedding-based) search and return JSON-formatted results.
+///
+/// Reads `query`, `scope`, and `limit` from `args`. Returns a pretty-printed JSON array of
+/// matching chunks sorted by semantic similarity. Defaults: limit=10, scope="all".
 pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
     let query = args
         .get("query")
@@ -143,7 +151,7 @@ pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<S
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args
         .get("limit")
-        .and_then(serde_json::Value::as_u64)
+        .and_then(Value::as_u64)
         .unwrap_or(10) as u32;
 
     let results = engine
@@ -155,6 +163,11 @@ pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<S
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
+/// Execute a multi-step research query: semantic search followed by symbol-level follow-up.
+///
+/// Reads `question`, `scope`, and `limit` from `args`. Performs semantic search first; if
+/// no results are found, falls back to a regex keyword search. Returns a structured JSON object
+/// with primary and related results. Defaults: limit=5, scope="all".
 #[allow(clippy::too_many_lines)]
 pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
     let question = args
@@ -164,7 +177,7 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args
         .get("limit")
-        .and_then(serde_json::Value::as_u64)
+        .and_then(Value::as_u64)
         .unwrap_or(5) as u32;
 
     // Step 1: Semantic search for conceptually relevant chunks
@@ -261,6 +274,10 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     .map_err(|e| e.to_string())
 }
 
+/// Return the current search index status as a JSON object.
+///
+/// Returns `is_indexed`, `chunk_count`, and `has_embeddings` fields reflecting
+/// the current state of the ONNX search engine.
 pub fn tool_search_status(engine: &mut SearchEngine) -> Result<String, String> {
     let status = engine
         .get_status()

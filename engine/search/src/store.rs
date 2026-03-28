@@ -14,12 +14,15 @@ type EmbeddedChunkRow = (i32, String, i32, i32, String, Option<String>, Vec<f32>
 /// Error type for search store operations.
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
+    /// DuckDB database operation failed.
     #[error("DuckDB error: {0}")]
     DuckDb(#[from] duckdb::Error),
 
+    /// The provided regex pattern is invalid.
     #[error("invalid regex pattern: {0}")]
     InvalidRegex(String),
 
+    /// Underlying I/O error.
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
 }

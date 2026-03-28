@@ -176,7 +176,7 @@ pub fn humanize_name(filename: &str) -> String {
         .all(|c| c.is_ascii_uppercase() || c == '-' || c == '_')
         && stem.chars().any(|c| c.is_ascii_uppercase())
     {
-        return stem.to_string();
+        return stem.to_owned();
     }
     stem.split('-')
         .map(title_case_word)

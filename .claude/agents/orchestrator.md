@@ -12,7 +12,7 @@ You coordinate the migration across agent teams. You delegate all implementation
 
 ## Before Starting
 
-Read `.claude/architecture/core.md` for design principles. Read `.claude/architecture/migration.md` for the phase plan. These define what "correct" looks like.
+Read `.orqa/documentation/architecture/DOC-62969bc3.md` for design principles. Read `.orqa/documentation/architecture/DOC-dff413a0.md` for the phase plan. These define what "correct" looks like.
 
 ## Boundaries
 
@@ -40,7 +40,7 @@ You MUST spawn a Reviewer for every completed task. No task is done without a PA
 ## Agent Selection
 
 | Task Type | Agent |
-|-----------|-------|
+| ----------- | ------- |
 | Code changes, tests, build configs | implementer |
 | Quality verification, AC checks | reviewer |
 | Investigation, information gathering | researcher |
@@ -55,15 +55,16 @@ You MUST spawn a Reviewer for every completed task. No task is done without a PA
 - Include: role assignment, task description, file paths, acceptance criteria, relevant knowledge
 - Coding tasks include quality check commands (cargo build, npx svelte-check, etc.)
 - Never run two Rust compilation agents in parallel in the same worktree
-- Reference architecture docs in delegation prompts: "Read .claude/architecture/<file>.md"
+- Reference architecture docs in delegation prompts: "Read .orqa/documentation/architecture/DOC-{id}.md"
 
 ## Phase Gating
 
-Do NOT start Phase N+1 until Phase N is complete and ALL tasks have PASS verdicts from Reviewers. Check `.claude/architecture/migration.md` for phase definitions and sequencing.
+Do NOT start Phase N+1 until Phase N is complete and ALL tasks have PASS verdicts from Reviewers. Check `.orqa/documentation/architecture/DOC-dff413a0.md` for phase definitions and sequencing.
 
 ## Completion Gate
 
 Before creating a new team:
+
 - Read ALL findings files from the current team
 - Verify EVERY acceptance criterion is marked DONE or FAILED
 - Verify a Reviewer has returned PASS for each task
@@ -74,20 +75,20 @@ Before creating a new team:
 
 ## Architecture Reference
 
-When delegating, point agents to the relevant architecture files:
+When delegating, point agents to the relevant architecture DOCs in `.orqa/documentation/architecture/`:
 
-- `.claude/architecture/core.md` -- design principles, engine libraries
-- `.claude/architecture/plugins.md` -- plugin system, composition
-- `.claude/architecture/agents.md` -- agent architecture, prompt pipeline
-- `.claude/architecture/governance.md` -- `.orqa/` structure, artifact lifecycle
-- `.claude/architecture/enforcement.md` -- enforcement layers, validation
-- `.claude/architecture/connector.md` -- connector architecture
-- `.claude/architecture/structure.md` -- directory structure
-- `.claude/architecture/decisions.md` -- key design decisions
-- `.claude/architecture/migration.md` -- migration phases and sequencing
-- `.claude/architecture/targets.md` -- target state specifications
-- `.claude/architecture/audit.md` -- audit criteria
-- `.claude/architecture/glossary.md` -- term definitions
+- `DOC-62969bc3.md` -- core: design principles, engine libraries
+- `DOC-41ccf7c4.md` -- plugins: plugin system, composition
+- `DOC-b951327c.md` -- agents: agent architecture, prompt pipeline
+- `DOC-fd3edf48.md` -- governance: `.orqa/` structure, artifact lifecycle
+- `DOC-70063f55.md` -- enforcement: enforcement layers, validation
+- `DOC-4d531f5e.md` -- connector: connector architecture
+- `DOC-762facfb.md` -- structure: directory structure
+- `DOC-80a4cf76.md` -- decisions: key design decisions
+- `DOC-dff413a0.md` -- migration: migration phases and sequencing
+- `DOC-82123148.md` -- targets: target state specifications
+- `DOC-6ac4abed.md` -- audit: audit criteria
+- `DOC-69341bc4.md` -- glossary: term definitions
 
 ## Output
 

@@ -4,26 +4,39 @@ use serde::Serialize;
 
 use crate::error::OrqaError;
 
+/// A single initialization task tracked during application startup.
 #[derive(Debug, Clone, Serialize)]
 pub struct StartupTask {
+    /// Unique identifier for the task (e.g., "sidecar", "embedding_model").
     pub id: String,
+    /// Human-readable label shown in the startup progress UI.
     pub label: String,
+    /// Current state of this task.
     pub status: TaskStatus,
+    /// Optional detail message (e.g., download percentage, error reason).
     pub detail: Option<String>,
 }
 
+/// Possible states for a startup task.
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskStatus {
+    /// Task has not yet started.
     Pending,
+    /// Task is currently running.
     InProgress,
+    /// Task completed successfully.
     Done,
+    /// Task failed with an error.
     Error,
 }
 
+/// A snapshot of all startup task states at a point in time.
 #[derive(Debug, Clone, Serialize)]
 pub struct StartupSnapshot {
+    /// All registered startup tasks and their current states.
     pub tasks: Vec<StartupTask>,
+    /// True when every task has reached Done or Error — startup is no longer in progress.
     pub all_done: bool,
 }
 
@@ -40,11 +53,12 @@ fn lock_tasks(
     mutex: &Mutex<Vec<StartupTask>>,
 ) -> Result<MutexGuard<'_, Vec<StartupTask>>, OrqaError> {
     mutex.lock().map_err(|_: PoisonError<_>| {
-        OrqaError::Database("startup tracker mutex poisoned".to_string())
+        OrqaError::Database("startup tracker mutex poisoned".to_owned())
     })
 }
 
 impl StartupTracker {
+    /// Create a new `StartupTracker` wrapped in an `Arc`.
     pub fn new() -> Arc<Self> {
         Arc::new(Self {
             tasks: Mutex::new(Vec::new()),
@@ -55,12 +69,12 @@ impl StartupTracker {
     pub fn register(&self, id: &str, label: &str) -> Result<String, OrqaError> {
         let mut tasks = lock_tasks(&self.tasks)?;
         tasks.push(StartupTask {
-            id: id.to_string(),
-            label: label.to_string(),
+            id: id.to_owned(),
+            label: label.to_owned(),
             status: TaskStatus::Pending,
             detail: None,
         });
-        Ok(id.to_string())
+        Ok(id.to_owned())
     }
 
     /// Update the status of a registered task.

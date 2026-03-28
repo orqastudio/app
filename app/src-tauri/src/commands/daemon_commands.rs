@@ -9,9 +9,12 @@ use crate::error::OrqaError;
 /// Response shape returned by the daemon's `/health` endpoint.
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
 pub struct DaemonHealthResponse {
+    /// Health status string (e.g., "ok").
     pub status: String,
+    /// Number of governance artifacts currently indexed.
     #[serde(default)]
     pub artifacts: u64,
+    /// Number of enforcement rules currently loaded.
     #[serde(default)]
     pub rules: u64,
 }

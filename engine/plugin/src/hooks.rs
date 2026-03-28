@@ -95,7 +95,7 @@ fn hook_command_line(hook: &RegisteredHook) -> String {
 
     match hook.runtime.as_str() {
         "node" => {
-            parts.push("node".to_string());
+            parts.push("node".to_owned());
             parts.push(format!("\"{}\"", hook.entrypoint));
         }
         _ => {

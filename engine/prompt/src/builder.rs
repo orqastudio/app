@@ -1,12 +1,12 @@
-// System prompt builder for the orqa-engine crate.
-//
-// Assembles a structured system prompt from governance artifacts on disk:
-// rules, knowledge catalog, project instructions, and agent definitions.
-// Agent definitions are sourced from installed plugins (P1: Plugin-Composed Everything)
-// rather than any static file — the engine reads what plugins declare, not what is
-// hardcoded. This is the filesystem-based, AppState-free portion of prompt generation.
-// The consuming access layer (app, daemon, CLI) may augment the result with context
-// messages, session state, or other runtime data.
+//! System prompt builder for the orqa-engine crate.
+//!
+//! Assembles a structured system prompt from governance artifacts on disk:
+//! rules, knowledge catalog, project instructions, and agent definitions.
+//! Agent definitions are sourced from installed plugins (P1: Plugin-Composed Everything)
+//! rather than any static file — the engine reads what plugins declare, not what is
+//! hardcoded. This is the filesystem-based, AppState-free portion of prompt generation.
+//! The consuming access layer (app, daemon, CLI) may augment the result with context
+//! messages, session state, or other runtime data.
 
 use std::path::Path;
 
@@ -49,7 +49,7 @@ pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
 
         let knowledge_name = path
             .file_stem()
-            .map(|s| s.to_string_lossy().to_string())
+            .map(|s| s.to_string_lossy().into_owned())
             .unwrap_or_default();
         let description = std::fs::read_to_string(&path)
             .ok()
@@ -57,9 +57,9 @@ pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
                 content
                     .lines()
                     .find(|l| !l.trim().is_empty())
-                    .map(|l| l.trim_start_matches('#').trim().to_string())
+                    .map(|l| l.trim_start_matches('#').trim().to_owned())
             })
-            .unwrap_or_else(|| "No description".to_string());
+            .unwrap_or_else(|| "No description".to_owned());
 
         catalog.push((knowledge_name, description));
     }
@@ -90,7 +90,7 @@ pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
             .file_stem()
             .and_then(|s| s.to_str())
             .unwrap_or("unknown")
-            .to_string();
+            .to_owned();
 
         if let Ok(contents) = std::fs::read_to_string(&path) {
             rules.push((rule_name, contents));
@@ -118,7 +118,7 @@ pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinit
     // Primary source: provides.agents in installed plugin manifests.
     let discovered = scan_plugins(project_path);
     for plugin in &discovered {
-        let plugin_path = std::path::Path::new(&plugin.path);
+        let plugin_path = Path::new(&plugin.path);
         if let Ok(manifest) = read_manifest(plugin_path) {
             for agent_def in manifest.provides.agents {
                 agents.push(agent_def);
@@ -155,7 +155,7 @@ fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
             .file_stem()
             .and_then(|s| s.to_str())
             .unwrap_or("unknown")
-            .to_string();
+            .to_owned();
 
         if let Ok(contents) = std::fs::read_to_string(&path) {
             agent_files.push((stem, contents));
@@ -182,11 +182,11 @@ fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
 /// missing optional files are silently skipped.
 pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error> {
     let mut parts: Vec<String> = Vec::new();
-    parts.push("# Project Governance".to_string());
+    parts.push("# Project Governance".to_owned());
 
     let rules = read_rules(project_path);
     if !rules.is_empty() {
-        parts.push("\n## Rules".to_string());
+        parts.push("\n## Rules".to_owned());
         for (name, content) in &rules {
             parts.push(format!("\n### {name}\n\n{content}"));
         }
@@ -194,9 +194,9 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
 
     let catalog = list_knowledge_catalog(project_path);
     if !catalog.is_empty() {
-        parts.push("\n## Available Knowledge".to_string());
+        parts.push("\n## Available Knowledge".to_owned());
         parts.push(
-            "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_string(),
+            "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_owned(),
         );
         for (name, description) in &catalog {
             parts.push(format!("- **{name}**: {description}"));
@@ -204,7 +204,7 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
     }
 
     if let Some(claude_md) = read_governance_file(project_path, ".claude/CLAUDE.md")? {
-        parts.push("\n## Project Instructions".to_string());
+        parts.push("\n## Project Instructions".to_owned());
         parts.push(claude_md);
     }
 
@@ -213,7 +213,7 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
     // each plugin's `content.agents` source directory.
     let agent_files = read_installed_agent_files(project_path);
     if !agent_files.is_empty() {
-        parts.push("\n## Agent Definitions".to_string());
+        parts.push("\n## Agent Definitions".to_owned());
         for (_name, content) in &agent_files {
             parts.push(content.clone());
         }

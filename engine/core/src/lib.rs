@@ -1,9 +1,9 @@
-// orqa-engine: Facade crate for the OrqaStudio engine.
-//
-// This crate re-exports the public API from all engine domain crates so that
-// consumers can import everything through `orqa_engine::*` without depending on
-// individual domain crates directly. No business logic lives here — every module
-// is a thin re-export from its canonical domain crate.
+//! orqa-engine: Facade crate for the OrqaStudio engine.
+//!
+//! This crate re-exports the public API from all engine domain crates so that
+//! consumers can import everything through `orqa_engine::*` without depending on
+//! individual domain crates directly. No business logic lives here — every module
+//! is a thin re-export from its canonical domain crate.
 
 /// Agent role taxonomy, agent specification, and task-agent assembly types.
 pub mod agent {
@@ -16,10 +16,12 @@ pub mod agent {
 pub mod artifact {
     pub use orqa_artifact::*;
 
+    /// Filesystem utilities for artifact file operations.
     pub mod fs {
         pub use orqa_artifact::fs::*;
     }
 
+    /// Artifact file reader — parse artifact files from disk.
     pub mod reader {
         pub use orqa_artifact::reader::*;
     }
@@ -32,18 +34,22 @@ pub mod config {
 
 /// Rule parsing, compiled-regex evaluation, and project scanning.
 pub mod enforcement {
+    /// Enforcement engine — evaluate rules against project content.
     pub mod engine {
         pub use orqa_enforcement::engine::*;
     }
 
+    /// Rule parser — parse enforcement rule files from disk.
     pub mod parser {
         pub use orqa_enforcement::parser::*;
     }
 
+    /// File-backed enforcement rule store.
     pub mod store {
         pub use orqa_enforcement::store::*;
     }
 
+    /// Project scanner — walk project files for enforcement evaluation.
     pub mod scanner {
         pub use orqa_enforcement::scanner::*;
     }
@@ -66,6 +72,7 @@ pub mod graph {
 pub mod lesson {
     pub use orqa_lesson::*;
 
+    /// File-backed lesson store implementing `LessonStore`.
     pub mod store {
         pub use orqa_lesson::store::*;
     }
@@ -101,10 +108,12 @@ pub mod plugin {
 pub mod project {
     pub use orqa_project::*;
 
+    /// Project filesystem scanner: stack detection and governance artifact counting.
     pub mod scanner {
         pub use orqa_project::scanner::*;
     }
 
+    /// File-backed project settings store: reads and writes `project.json`.
     pub mod store {
         pub use orqa_project::store::*;
     }
@@ -112,14 +121,17 @@ pub mod project {
 
 /// System prompt builder, session title generator, knowledge injector.
 pub mod prompt {
+    /// Core system prompt assembly from rules, knowledge, and project config.
     pub mod builder {
         pub use orqa_prompt::builder::*;
     }
 
+    /// ONNX-based semantic knowledge artifact matching and embedding.
     pub mod knowledge {
         pub use orqa_prompt::knowledge::*;
     }
 
+    /// LLM-driven session title generation via SidecarClient trait.
     pub mod session_title {
         pub use orqa_prompt::session_title::*;
     }
@@ -145,14 +157,17 @@ pub mod search {
 pub mod streaming {
     pub use orqa_streaming::*;
 
+    /// Sidecar NDJSON request/response protocol types.
     pub mod protocol {
         pub use orqa_streaming::protocol::*;
     }
 
+    /// Pure stream loop logic: translation, accumulation, and terminal detection.
     pub mod stream_loop {
         pub use orqa_streaming::stream_loop::*;
     }
 
+    /// Pure tool handler implementations with no Tauri dependency.
     pub mod tools {
         pub use orqa_streaming::tools::*;
     }
@@ -160,18 +175,22 @@ pub mod streaming {
 
 /// Abstract storage interfaces that each access layer implements.
 pub mod traits {
+    /// Tool executor trait for dispatching tool calls to implementations.
     pub mod executor {
         pub use orqa_engine_types::traits::executor::*;
     }
 
+    /// Sidecar client trait for LLM inference delegation.
     pub mod sidecar {
         pub use orqa_engine_types::traits::sidecar::*;
     }
 
+    /// Storage traits for all domain entity stores.
     pub mod storage {
         pub use orqa_engine_types::traits::storage::*;
     }
 
+    /// Transport traits for message passing between engine and access layers.
     pub mod transport {
         pub use orqa_engine_types::traits::transport::*;
     }
@@ -179,50 +198,62 @@ pub mod traits {
 
 /// Shared struct and enum definitions (no business logic, no I/O).
 pub mod types {
+    /// Artifact domain types.
     pub mod artifact {
         pub use orqa_engine_types::types::artifact::*;
     }
 
+    /// Enforcement domain types.
     pub mod enforcement {
         pub use orqa_engine_types::types::enforcement::*;
     }
 
+    /// Governance artifact types.
     pub mod governance {
         pub use orqa_engine_types::types::governance::*;
     }
 
+    /// Project health metric types.
     pub mod health {
         pub use orqa_engine_types::types::health::*;
     }
 
+    /// Knowledge artifact types.
     pub mod knowledge {
         pub use orqa_engine_types::types::knowledge::*;
     }
 
+    /// Lesson domain types.
     pub mod lesson {
         pub use orqa_engine_types::types::lesson::*;
     }
 
+    /// Message and conversation turn types.
     pub mod message {
         pub use orqa_engine_types::types::message::*;
     }
 
+    /// Project metadata types.
     pub mod project {
         pub use orqa_engine_types::types::project::*;
     }
 
+    /// Session state types.
     pub mod session {
         pub use orqa_engine_types::types::session::*;
     }
 
+    /// Project settings types.
     pub mod settings {
         pub use orqa_engine_types::types::settings::*;
     }
 
+    /// Streaming event types.
     pub mod streaming {
         pub use orqa_engine_types::types::streaming::*;
     }
 
+    /// Workflow state and transition types.
     pub mod workflow {
         pub use orqa_engine_types::types::workflow::*;
     }
@@ -230,6 +261,7 @@ pub mod types {
 
 /// Utility functions (time, etc.).
 pub mod utils {
+    /// Time utilities: ISO-8601 formatting and current timestamp helpers.
     pub mod time {
         pub use orqa_engine_types::utils::time::*;
     }
@@ -263,18 +295,22 @@ pub mod validation {
 
 /// Status transition evaluation, process state tracking, session activity tracking.
 pub mod workflow {
+    /// Workflow gate evaluation — check preconditions before state transitions.
     pub mod gates {
         pub use orqa_workflow::gates::*;
     }
 
+    /// Workflow process state — track agent process context and violations.
     pub mod state {
         pub use orqa_workflow::state::*;
     }
 
+    /// Workflow activity tracker — record reads, writes, and tool invocations.
     pub mod tracker {
         pub use orqa_workflow::tracker::*;
     }
 
+    /// Workflow transition evaluation — validate and apply status changes.
     pub mod transitions {
         pub use orqa_workflow::transitions::*;
     }

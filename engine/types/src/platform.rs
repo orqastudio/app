@@ -1,10 +1,10 @@
-// Platform configuration loaded from the embedded `core.json`.
-//
-// This module provides the single source of truth for core artifact types
-// and relationships. The JSON is embedded at compile time and parsed once
-// on first access. Project relationships (from `project.json`) and plugin
-// relationships are merged at runtime by callers — this module only provides
-// the platform defaults.
+//! Platform configuration loaded from the embedded `core.json`.
+//!
+//! This module provides the single source of truth for core artifact types
+//! and relationships. The JSON is embedded at compile time and parsed once
+//! on first access. Project relationships (from `project.json`) and plugin
+//! relationships are merged at runtime by callers — this module only provides
+//! the platform defaults.
 
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -18,18 +18,26 @@ const PLATFORM_JSON: &str = include_str!("../../../libs/types/src/platform/core.
 /// A relationship definition from core.json.
 #[derive(Debug, Clone, Deserialize)]
 pub struct RelationshipDef {
+    /// Unique relationship key (e.g. `"delivers"`).
     pub key: String,
+    /// Inverse relationship key (e.g. `"delivered-by"`).
     pub inverse: String,
+    /// Human-readable forward-direction label.
     #[serde(default)]
     pub label: String,
+    /// Allowed source artifact types.
     #[serde(default)]
     pub from: Vec<String>,
+    /// Allowed target artifact types.
     #[serde(default)]
     pub to: Vec<String>,
+    /// Human-readable description of the relationship's meaning.
     #[serde(default)]
     pub description: String,
+    /// Semantic category key (e.g. `"dependency"`, `"delivery"`).
     #[serde(default)]
     pub semantic: Option<String>,
+    /// Validation constraint block for this relationship.
     #[serde(default)]
     pub constraints: Option<ConstraintsDef>,
 }
@@ -37,14 +45,19 @@ pub struct RelationshipDef {
 /// Validation constraints for a relationship, loaded from the schema.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ConstraintsDef {
+    /// Whether at least one instance of this relationship is required.
     #[serde(default)]
     pub required: Option<bool>,
+    /// Minimum number of instances required when `required` is true.
     #[serde(default, rename = "minCount")]
     pub min_count: Option<usize>,
+    /// Maximum number of instances allowed.
     #[serde(default, rename = "maxCount")]
     pub max_count: Option<usize>,
+    /// Whether the inverse relationship edge must also exist.
     #[serde(default, rename = "requireInverse")]
     pub require_inverse: Option<bool>,
+    /// Status-based auto-transition rules.
     #[serde(default, rename = "statusRules")]
     pub status_rules: Vec<StatusRuleDef>,
 }
@@ -52,11 +65,16 @@ pub struct ConstraintsDef {
 /// A status-dependent auto-transition rule from the schema.
 #[derive(Debug, Clone, Deserialize)]
 pub struct StatusRuleDef {
+    /// Which side to evaluate: `"source"` or `"target"`.
     pub evaluate: String,
+    /// Condition to test: `"all-targets-in"`, `"any-target-in"`, `"no-targets-in"`.
     pub condition: String,
+    /// Status values to check against.
     pub statuses: Vec<String>,
+    /// Status to propose when the condition is met.
     #[serde(rename = "proposedStatus")]
     pub proposed_status: String,
+    /// Human-readable description of this rule.
     #[serde(default)]
     pub description: String,
 }
@@ -64,16 +82,22 @@ pub struct StatusRuleDef {
 /// A semantic category grouping relationship keys by intent.
 #[derive(Debug, Clone, Deserialize)]
 pub struct SemanticDef {
+    /// Human-readable description of what this semantic category means.
     pub description: String,
+    /// Relationship keys that belong to this semantic category.
     pub keys: Vec<String>,
 }
 
 /// An artifact type from core.json.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ArtifactTypeDef {
+    /// Unique artifact type key (e.g. `"task"`, `"epic"`).
     pub key: String,
+    /// Human-readable display label.
     pub label: String,
+    /// Icon identifier for the UI.
     pub icon: String,
+    /// ID prefix used to identify artifacts of this type (e.g. `"TASK-"`).
     #[serde(rename = "idPrefix")]
     pub id_prefix: String,
 }
@@ -81,9 +105,12 @@ pub struct ArtifactTypeDef {
 /// The full platform config parsed from core.json.
 #[derive(Debug, Clone, Deserialize)]
 pub struct PlatformConfig {
+    /// Artifact type definitions loaded from core.json.
     #[serde(rename = "artifactTypes")]
     pub artifact_types: Vec<ArtifactTypeDef>,
+    /// Relationship definitions from core.json.
     pub relationships: Vec<RelationshipDef>,
+    /// Semantic category definitions keyed by category name.
     pub semantics: HashMap<String, SemanticDef>,
 }
 

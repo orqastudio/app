@@ -27,7 +27,7 @@ pub struct SidecarManager {
 fn lock_mutex<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>, OrqaError> {
     mutex
         .lock()
-        .map_err(|_: PoisonError<_>| OrqaError::Sidecar("sidecar mutex poisoned".to_string()))
+        .map_err(|_: PoisonError<_>| OrqaError::Sidecar("sidecar mutex poisoned".to_owned()))
 }
 
 impl SidecarManager {
@@ -61,7 +61,7 @@ impl SidecarManager {
             cli_detected: false,
             cli_version: None,
             error_message: if state == SidecarState::Error {
-                Some("sidecar process failed".to_string())
+                Some("sidecar process failed".to_owned())
             } else {
                 None
             },
@@ -103,11 +103,11 @@ impl SidecarManager {
         let child_stdin = child
             .stdin
             .take()
-            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdin".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdin".to_owned()))?;
         let child_stdout = child
             .stdout
             .take()
-            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdout".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("failed to capture sidecar stdout".to_owned()))?;
 
         // Capture sidecar stderr on a background thread.
         // Each line is forwarded to our stderr (for the dev controller) and
@@ -155,7 +155,7 @@ impl SidecarManager {
         let mut stdin_lock = lock_mutex(&self.stdin)?;
         let stdin = stdin_lock
             .as_mut()
-            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_owned()))?;
 
         stdin
             .write_all(line.as_bytes())
@@ -175,7 +175,7 @@ impl SidecarManager {
         let mut stdout_lock = lock_mutex(&self.stdout)?;
         let stdout = stdout_lock
             .as_mut()
-            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_string()))?;
+            .ok_or_else(|| OrqaError::Sidecar("sidecar not running".to_owned()))?;
 
         let mut line = String::new();
         let bytes_read = stdout

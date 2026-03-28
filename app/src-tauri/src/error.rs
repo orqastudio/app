@@ -8,42 +8,52 @@ use serde::Serialize;
 #[derive(Debug, thiserror::Error, Serialize)]
 #[serde(tag = "code", content = "message")]
 pub enum OrqaError {
+    /// An artifact, session, or resource was not found.
     #[error("not found: {0}")]
     #[serde(rename = "not_found")]
     NotFound(String),
 
+    /// A SQLite database operation failed.
     #[error("database error: {0}")]
     #[serde(rename = "database")]
     Database(String),
 
+    /// A filesystem read or write operation failed.
     #[error("file system error: {0}")]
     #[serde(rename = "file_system")]
     FileSystem(String),
 
+    /// The Claude sidecar process returned an error or is unavailable.
     #[error("sidecar error: {0}")]
     #[serde(rename = "sidecar")]
     Sidecar(String),
 
+    /// A validation rule check failed or invalid input was provided.
     #[error("validation error: {0}")]
     #[serde(rename = "validation")]
     Validation(String),
 
+    /// An artifact or directory scan failed.
     #[error("scan error: {0}")]
     #[serde(rename = "scan")]
     Scan(String),
 
+    /// JSON serialization or deserialization failed.
     #[error("serialization error: {0}")]
     #[serde(rename = "serialization")]
     Serialization(String),
 
+    /// An operation was denied because the target path is outside the allowed scope.
     #[error("permission denied: {0}")]
     #[serde(rename = "permission_denied")]
     PermissionDenied(String),
 
+    /// A semantic search or indexing operation failed.
     #[error("search error: {0}")]
     #[serde(rename = "search")]
     Search(String),
 
+    /// A plugin operation (install, verify, or hook) failed.
     #[error("plugin error: {0}")]
     #[serde(rename = "plugin")]
     Plugin(String),

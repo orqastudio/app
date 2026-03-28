@@ -15,7 +15,7 @@ fn lessons_dir_from_config(paths: &ProjectPaths) -> Option<PathBuf> {
 /// Resolve the lessons directory, returning an error if not configured.
 fn require_lessons_dir(paths: &ProjectPaths) -> Result<PathBuf, OrqaError> {
     lessons_dir_from_config(paths).ok_or_else(|| {
-        OrqaError::Validation("no 'lessons' artifact path configured in project.json".to_string())
+        OrqaError::Validation("no 'lessons' artifact path configured in project.json".to_owned())
     })
 }
 
@@ -26,7 +26,7 @@ fn lessons_relative_path(paths: &ProjectPaths) -> Result<String, OrqaError> {
         .map(String::from)
         .ok_or_else(|| {
             OrqaError::Validation(
-                "no 'lessons' artifact path configured in project.json".to_string(),
+                "no 'lessons' artifact path configured in project.json".to_owned(),
             )
         })
 }
@@ -95,7 +95,7 @@ pub fn create(paths: &ProjectPaths, new_lesson: &NewLesson) -> Result<Lesson, Or
         title: new_lesson.title.clone(),
         category: new_lesson.category.clone(),
         recurrence: 1,
-        status: "active".to_string(),
+        status: "active".to_owned(),
         promoted_to: None,
         created: today.clone(),
         updated: today,
@@ -179,18 +179,18 @@ mod tests {
 
     fn make_project_paths(tmp: &TempDir) -> ProjectPaths {
         let settings = ProjectSettings {
-            name: "test".to_string(),
+            name: "test".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![ArtifactEntry::Group {
-                key: "process".to_string(),
+                key: "process".to_owned(),
                 label: None,
                 icon: None,
                 children: vec![ArtifactTypeConfig {
-                    key: "lessons".to_string(),
+                    key: "lessons".to_owned(),
                     label: None,
                     icon: None,
-                    path: ".orqa/learning/lessons".to_string(),
+                    path: ".orqa/learning/lessons".to_owned(),
                 }],
             }],
             statuses: vec![],
@@ -218,9 +218,9 @@ mod tests {
         let dir = make_project();
         let paths = make_project_paths(&dir);
         let new = NewLesson {
-            title: "Test lesson".to_string(),
-            category: "process".to_string(),
-            body: "## Description\nSome content.\n".to_string(),
+            title: "Test lesson".to_owned(),
+            category: "process".to_owned(),
+            body: "## Description\nSome content.\n".to_owned(),
         };
         let lesson = create(&paths, &new).expect("create should succeed");
         assert_eq!(lesson.id, "IMPL-001");
@@ -242,9 +242,9 @@ mod tests {
         let dir = make_project();
         let paths = make_project_paths(&dir);
         let new = |title: &str| NewLesson {
-            title: title.to_string(),
-            category: "coding".to_string(),
-            body: "body".to_string(),
+            title: title.to_owned(),
+            category: "coding".to_owned(),
+            body: "body".to_owned(),
         };
         let l1 = create(&paths, &new("First")).expect("create first");
         let l2 = create(&paths, &new("Second")).expect("create second");
@@ -259,9 +259,9 @@ mod tests {
         let dir = make_project();
         let paths = make_project_paths(&dir);
         let new = NewLesson {
-            title: "My lesson".to_string(),
-            category: "architecture".to_string(),
-            body: "body".to_string(),
+            title: "My lesson".to_owned(),
+            category: "architecture".to_owned(),
+            body: "body".to_owned(),
         };
         create(&paths, &new).expect("create");
         let lesson = get(&paths, "IMPL-001").expect("get should succeed");
@@ -281,9 +281,9 @@ mod tests {
         let dir = make_project();
         let paths = make_project_paths(&dir);
         let new = |title: &str| NewLesson {
-            title: title.to_string(),
-            category: "process".to_string(),
-            body: "body".to_string(),
+            title: title.to_owned(),
+            category: "process".to_owned(),
+            body: "body".to_owned(),
         };
         create(&paths, &new("C")).expect("c");
         create(&paths, &new("A")).expect("a");
@@ -300,9 +300,9 @@ mod tests {
         let dir = make_project();
         let paths = make_project_paths(&dir);
         let new = NewLesson {
-            title: "Recurring".to_string(),
-            category: "process".to_string(),
-            body: "body".to_string(),
+            title: "Recurring".to_owned(),
+            category: "process".to_owned(),
+            body: "body".to_owned(),
         };
         create(&paths, &new).expect("create");
         let updated = increment_recurrence(&paths, "IMPL-001").expect("increment");
@@ -338,7 +338,7 @@ mod tests {
         let dir = make_project();
         // Create ProjectPaths with NO artifacts configured
         let settings = ProjectSettings {
-            name: "empty".to_string(),
+            name: "empty".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![],

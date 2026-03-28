@@ -2,7 +2,7 @@
 // Source: libs/types/src/platform/*.schema.json
 // Regenerate: cargo build -p orqa-validation
 
-#![allow(dead_code)]
+#![allow(dead_code, missing_docs)]
 
 pub mod config;
 pub mod graph;

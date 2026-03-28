@@ -12,32 +12,32 @@ const CURRENT_SETUP_VERSION: u32 = 1;
 fn default_steps() -> Vec<SetupStepStatus> {
     vec![
         SetupStepStatus {
-            id: "claude_cli".to_string(),
-            label: "Claude CLI".to_string(),
+            id: "claude_cli".to_owned(),
+            label: "Claude CLI".to_owned(),
             status: StepStatus::Pending,
             detail: None,
         },
         SetupStepStatus {
-            id: "authentication".to_string(),
-            label: "Authentication".to_string(),
+            id: "authentication".to_owned(),
+            label: "Authentication".to_owned(),
             status: StepStatus::Pending,
             detail: None,
         },
         SetupStepStatus {
-            id: "sidecar".to_string(),
-            label: "Sidecar".to_string(),
+            id: "sidecar".to_owned(),
+            label: "Sidecar".to_owned(),
             status: StepStatus::Pending,
             detail: None,
         },
         SetupStepStatus {
-            id: "embedding_model".to_string(),
-            label: "Embedding Model".to_string(),
+            id: "embedding_model".to_owned(),
+            label: "Embedding Model".to_owned(),
             status: StepStatus::Pending,
             detail: None,
         },
         SetupStepStatus {
-            id: "complete".to_string(),
-            label: "Complete".to_string(),
+            id: "complete".to_owned(),
+            label: "Complete".to_owned(),
             status: StepStatus::Pending,
             detail: None,
         },
@@ -111,17 +111,17 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
 
     if model_file.exists() && tokenizer_file.exists() {
         Ok(SetupStepStatus {
-            id: "embedding_model".to_string(),
-            label: "Embedding Model".to_string(),
+            id: "embedding_model".to_owned(),
+            label: "Embedding Model".to_owned(),
             status: StepStatus::Complete,
-            detail: Some("all-MiniLM-L6-v2 ready".to_string()),
+            detail: Some("all-MiniLM-L6-v2 ready".to_owned()),
         })
     } else {
         Ok(SetupStepStatus {
-            id: "embedding_model".to_string(),
-            label: "Embedding Model".to_string(),
+            id: "embedding_model".to_owned(),
+            label: "Embedding Model".to_owned(),
             status: StepStatus::ActionRequired,
-            detail: Some("Model not downloaded".to_string()),
+            detail: Some("Model not downloaded".to_owned()),
         })
     }
 }

@@ -1,17 +1,36 @@
+//! OrqaStudio Tauri application entry point.
+//!
+//! Bootstraps the Tauri builder with all plugins, commands, and application state.
+
+/// CLI tool runner and registration.
 pub mod cli_tools;
+/// Tauri IPC command handlers (all `#[tauri::command]` functions).
 pub mod commands;
+/// SQLite database initialization and migrations.
 pub mod db;
+/// Domain logic: session management, prompt building, tool dispatch, workflow tracking.
 pub mod domain;
+/// Application-level error type.
 pub mod error;
+/// Plugin hook lifecycle management.
 pub mod hooks;
+/// Structured logging initialization for the Tauri process.
 pub mod logging;
+/// Plugin discovery, installation, and lifecycle management.
 pub mod plugins;
+/// Persistence layer: SQLite-backed repositories for sessions, messages, and lessons.
 pub mod repo;
+/// ONNX-based semantic search: indexing, chunking, and querying.
 pub mod search;
+/// Background server processes: IPC socket for CLI integration.
 pub mod servers;
+/// Claude sidecar process manager: spawn, restart, and health monitoring.
 pub mod sidecar;
+/// Application startup sequencing and task progress tracking.
 pub mod startup;
+/// Tauri `manage`-d application state structs.
 pub mod state;
+/// File system watcher for `.orqa/` artifact change detection.
 pub mod watcher;
 
 use std::sync::Arc;
@@ -61,7 +80,7 @@ fn build_app_state(
             ),
         },
         artifacts: state::ArtifactState {
-            watcher: std::sync::Arc::new(std::sync::Mutex::new(None)),
+            watcher: Arc::new(std::sync::Mutex::new(None)),
             graph: std::sync::Mutex::new(None),
             knowledge_injector: std::sync::Mutex::new(None),
         },
@@ -149,7 +168,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let db_path = app_dir.join("orqa.db");
     let db_path_str = db_path
         .to_str()
-        .ok_or_else(|| "app data path is not valid UTF-8".to_string())?;
+        .ok_or_else(|| "app data path is not valid UTF-8".to_owned())?;
 
     let conn = setup_database(db_path_str).map_err(|e| e.to_string())?;
 
@@ -258,6 +277,7 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
     ])
 }
 
+/// Build and run the Tauri application event loop.
 pub fn run() {
     let builder = tauri::Builder::default().setup(setup_app);
     let builder = register_plugins(builder);

@@ -12,12 +12,12 @@ You verify quality and produce structured verdicts. You do NOT fix issues -- you
 
 ## Before Starting
 
-1. Read `.claude/architecture/core.md` for design principles
+1. Read `.orqa/documentation/architecture/DOC-62969bc3.md` for design principles
 2. Read the task artifact and its acceptance criteria
 3. Read the implementer's findings file
 4. Read the implementation (files listed in the findings)
 
-**Review against ARCHITECTURE.md and the architecture files, not against current patterns.** The migration is moving FROM current patterns TO the target architecture. If the implementation matches current patterns but not the architecture, that is a FAIL.
+**Review against the architecture DOCs, not against current patterns.** The migration is moving FROM current patterns TO the target architecture. If the implementation matches current patterns but not the architecture, that is a FAIL.
 
 ## Boundaries
 
@@ -48,34 +48,36 @@ You verify quality and produce structured verdicts. You do NOT fix issues -- you
 ## Verdict Format
 
 For each acceptance criterion:
-```
+
+```text
 ### AC: [criterion text]
 **Verdict:** PASS | FAIL
 **Evidence:** [what you checked, command output, or code reference]
 **Issue:** [if FAIL -- what is wrong and what needs to change]
-```
+```text
 
 ## Architecture Reference
 
-Review against these architecture files in `.claude/architecture/`:
-- `core.md` -- design principles, engine libraries
-- `plugins.md` -- plugin system, composition
-- `agents.md` -- agent architecture, prompt pipeline
-- `governance.md` -- `.orqa/` structure, artifact lifecycle
-- `enforcement.md` -- enforcement layers, validation
-- `connector.md` -- connector architecture
-- `structure.md` -- directory structure
-- `decisions.md` -- key design decisions
-- `migration.md` -- migration phases
-- `targets.md` -- target state specifications
-- `audit.md` -- audit criteria
-- `glossary.md` -- term definitions
+Review against the architecture DOCs in `.orqa/documentation/architecture/`:
+
+- `DOC-62969bc3.md` -- core: design principles, engine libraries
+- `DOC-41ccf7c4.md` -- plugins: plugin system, composition
+- `DOC-b951327c.md` -- agents: agent architecture, prompt pipeline
+- `DOC-fd3edf48.md` -- governance: `.orqa/` structure, artifact lifecycle
+- `DOC-70063f55.md` -- enforcement: enforcement layers, validation
+- `DOC-4d531f5e.md` -- connector: connector architecture
+- `DOC-762facfb.md` -- structure: directory structure
+- `DOC-80a4cf76.md` -- decisions: key design decisions
+- `DOC-dff413a0.md` -- migration: migration phases
+- `DOC-82123148.md` -- targets: target state specifications
+- `DOC-6ac4abed.md` -- audit: audit criteria
+- `DOC-69341bc4.md` -- glossary: term definitions
 
 ## Output
 
 Write findings to the path specified in your delegation prompt (`.state/team/<name>/task-<id>.md`):
 
-```
+```text
 ## Review Summary
 [Overall PASS/FAIL count]
 
@@ -84,4 +86,4 @@ Write findings to the path specified in your delegation prompt (`.state/team/<na
 
 ## Blocking Issues
 [Issues that must be fixed before acceptance, or "None"]
-```
+```text

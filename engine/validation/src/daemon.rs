@@ -34,6 +34,7 @@ use std::time::Instant;
 use serde::Serialize;
 use serde_json::Value;
 use tiny_http::{Method, Request, Response, Server, StatusCode};
+use tracing::{error, info, warn};
 
 use crate::content::{extract_behavioral_messages, find_agent, find_knowledge};
 use crate::context::build_validation_context_complete;
@@ -147,11 +148,11 @@ fn start_server(
 
     let server = Server::http(addr).map_err(|e| format!("failed to bind {addr}: {e}"))?;
 
-    eprintln!(
+    info!(
         "orqa-validation daemon: listening on http://{addr} ({artifact_count} artifacts, {rule_count} rules)"
     );
-    eprintln!("  PID file: {}", pid_path.display());
-    eprintln!("  Send SIGTERM or SIGINT to shut down.");
+    info!("  PID file: {}", pid_path.display());
+    info!("  Send SIGTERM or SIGINT to shut down.");
 
     Ok(server)
 }
@@ -173,9 +174,9 @@ fn maybe_reload(
     needs_reload.store(false, Ordering::Relaxed);
     *last_reload = Instant::now();
 
-    eprintln!("orqa-validation daemon: .orqa/ changed, reloading graph...");
+    info!("orqa-validation daemon: .orqa/ changed, reloading graph...");
     let project_root = {
-        let state = shared.lock().unwrap();
+        let state = shared.lock().expect("daemon state mutex poisoned");
         state.project_root.clone()
     };
     match DaemonState::build(&project_root) {
@@ -187,11 +188,11 @@ fn maybe_reload(
                 .values()
                 .filter(|n| n.artifact_type == "rule")
                 .count();
-            *shared.lock().unwrap() = new_state;
-            eprintln!("orqa-validation daemon: reloaded ({count} artifacts, {rules} rules)");
+            *shared.lock().expect("daemon state mutex poisoned") = new_state;
+            info!("orqa-validation daemon: reloaded ({count} artifacts, {rules} rules)");
         }
         Err(e) => {
-            eprintln!("orqa-validation daemon: reload failed: {e}");
+            error!("orqa-validation daemon: reload failed: {e}");
         }
     }
 }
@@ -206,7 +207,7 @@ fn serve(
     shutdown: &Arc<AtomicBool>,
     pid_path: &Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    eprintln!(
+    info!(
         "orqa-validation daemon: loading state from {}",
         project_root.display()
     );
@@ -226,7 +227,7 @@ fn serve(
 
     loop {
         if shutdown.load(Ordering::Relaxed) {
-            eprintln!("orqa-validation daemon: shutdown signal received, stopping.");
+            info!("orqa-validation daemon: shutdown signal received, stopping.");
             break;
         }
 
@@ -235,7 +236,7 @@ fn serve(
         match server.recv_timeout(std::time::Duration::from_millis(200)) {
             Ok(Some(request)) => handle_request(request, &shared),
             Ok(None) => {}
-            Err(e) => eprintln!("orqa-validation daemon: recv error: {e}"),
+            Err(e) => error!("orqa-validation daemon: recv error: {e}"),
         }
     }
 
@@ -285,14 +286,15 @@ fn handle_request(mut request: Request, shared: &Arc<Mutex<DaemonState>>) {
     let content_length = body_vec.len();
     let response = Response::new(
         StatusCode(status),
-        vec![tiny_http::Header::from_bytes(b"Content-Type", b"application/json").unwrap()],
+        vec![tiny_http::Header::from_bytes(b"Content-Type", b"application/json")
+            .expect("static header bytes are valid UTF-8")],
         Cursor::new(body_vec),
         Some(content_length),
         None,
     );
 
     if let Err(e) = request.respond(response) {
-        eprintln!("orqa-validation daemon: failed to send response: {e}");
+        error!("orqa-validation daemon: failed to send response: {e}");
     }
 }
 
@@ -592,7 +594,7 @@ fn start_fs_watcher(
 
     let orqa_dir = project_root.join(".orqa");
     if !orqa_dir.exists() {
-        eprintln!("orqa-validation daemon: .orqa/ not found, file watching disabled");
+        warn!("orqa-validation daemon: .orqa/ not found, file watching disabled");
         return None;
     }
 
@@ -617,13 +619,13 @@ fn start_fs_watcher(
     ) {
         Ok(w) => w,
         Err(e) => {
-            eprintln!("orqa-validation daemon: failed to create file watcher: {e}");
+            error!("orqa-validation daemon: failed to create file watcher: {e}");
             return None;
         }
     };
 
     if let Err(e) = watcher.watch(&orqa_dir, RecursiveMode::Recursive) {
-        eprintln!("orqa-validation daemon: failed to watch .orqa/: {e}");
+        error!("orqa-validation daemon: failed to watch .orqa/: {e}");
         return None;
     }
 
@@ -635,7 +637,7 @@ fn start_fs_watcher(
         }
     }
 
-    eprintln!("orqa-validation daemon: watching .orqa/ for changes (auto-reload enabled)");
+    info!("orqa-validation daemon: watching .orqa/ for changes (auto-reload enabled)");
     Some(watcher)
 }
 
@@ -673,7 +675,7 @@ fn check_existing_pid(pid_path: &Path) -> Result<(), Box<dyn std::error::Error>>
     }
 
     // Stale PID file — process no longer alive. Remove and continue.
-    eprintln!("orqa-validation daemon: removing stale PID file (PID {pid} is not running)");
+    warn!("orqa-validation daemon: removing stale PID file (PID {pid} is not running)");
     std::fs::remove_file(pid_path).map_err(|e| format!("failed to remove stale PID file: {e}"))?;
     Ok(())
 }
@@ -695,6 +697,7 @@ fn process_is_alive(pid: u32) -> bool {
 }
 
 #[cfg(windows)]
+#[allow(unsafe_code)] // Windows FFI — no safe alternative for process existence check
 fn process_is_alive(pid: u32) -> bool {
     // SAFETY: OpenProcess with SYNCHRONIZE access only. We immediately close the
     // handle. This is the standard Windows pattern for checking process existence.
@@ -741,6 +744,7 @@ fn register_shutdown_handler(shutdown: Arc<AtomicBool>) {
 }
 
 #[cfg(unix)]
+#[allow(unsafe_code)] // Unix signal FFI — no safe alternative
 fn wait_for_signal() {
     use std::mem::MaybeUninit;
     // SAFETY: sigwait is safe when called on a properly initialised sigset.

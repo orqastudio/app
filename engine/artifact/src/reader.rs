@@ -132,7 +132,7 @@ fn scan_group_from_config(
     let icon = config_icon
         .map(str::to_owned)
         .or_else(|| readme_fm.as_ref().and_then(|fm| fm.icon.clone()))
-        .unwrap_or_else(|| "folder".to_string());
+        .unwrap_or_else(|| "folder".to_owned());
 
     Ok(NavGroup {
         label,
@@ -173,7 +173,7 @@ fn scan_type_from_config(
         .icon
         .clone()
         .or_else(|| readme_fm.as_ref().and_then(|fm| fm.icon.clone()))
-        .unwrap_or_else(|| "file".to_string());
+        .unwrap_or_else(|| "file".to_owned());
 
     // README description is the fallback when config provides none.
     let description = readme_fm
@@ -587,7 +587,7 @@ pub(crate) fn humanize_name(filename: &str) -> String {
         .chars()
         .all(|c| c.is_ascii_uppercase() || c == '-' || c == '_' || c.is_ascii_digit());
     if has_uppercase && all_caps {
-        return stem.to_string();
+        return stem.to_owned();
     }
     stem.split('-')
         .map(title_case_word)

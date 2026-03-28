@@ -1,8 +1,8 @@
-// Enforcement rule repository for the orqa-engine crate.
-//
-// Loads all enforcement rule `.md` files from a directory and parses them into
-// `EnforcementRule` values. This is the only module in the enforcement pipeline
-// that performs filesystem I/O. The parsing logic lives in `parser`.
+//! Enforcement rule repository for the orqa-engine crate.
+//!
+//! Loads all enforcement rule `.md` files from a directory and parses them into
+//! `EnforcementRule` values. This is the only module in the enforcement pipeline
+//! that performs filesystem I/O. The parsing logic lives in `parser`.
 
 use std::path::Path;
 
@@ -35,7 +35,7 @@ pub fn load_rules(rules_dir: &Path) -> Result<Vec<EnforcementRule>, EngineError>
             .file_stem()
             .and_then(|s| s.to_str())
             .unwrap_or("unknown")
-            .to_string();
+            .to_owned();
 
         let content = match std::fs::read_to_string(&path) {
             Ok(c) => c,

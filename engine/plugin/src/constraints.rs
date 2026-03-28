@@ -24,7 +24,7 @@ pub struct ConstraintViolation {
 
 impl From<ConstraintViolation> for EngineError {
     fn from(v: ConstraintViolation) -> Self {
-        EngineError::Plugin(v.message)
+        Self::Plugin(v.message)
     }
 }
 

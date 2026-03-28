@@ -23,7 +23,7 @@ pub fn list_for_project(
                  FROM enforcement_violations \
                  WHERE project_id = ?1 \
                  ORDER BY created_at DESC"
-            .to_string(),
+            .to_owned(),
     };
 
     let mut stmt = conn.prepare(&sql)?;

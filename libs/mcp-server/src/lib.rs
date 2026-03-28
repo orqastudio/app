@@ -15,12 +15,19 @@
 //! orqa_mcp_server::server::run(Path::new("/my/project")).unwrap();
 //! ```
 
+/// Daemon proxy: delegate tool calls to the daemon when it is running.
 pub mod daemon;
+/// Unified error type for MCP server operations.
 pub mod error;
+/// Artifact graph construction and querying over `.orqa/` files.
 pub mod graph;
+/// JSON-RPC stdio server: reads requests and dispatches to tool implementations.
 pub mod server;
+/// Project settings types loaded from `project.json`.
 pub mod settings;
+/// MCP tool implementations for search, graph, and integrity operations.
 pub mod tools;
+/// JSON-RPC and MCP protocol envelope types.
 pub mod types;
 
 // Re-export the primary entry points and error type at the crate root.

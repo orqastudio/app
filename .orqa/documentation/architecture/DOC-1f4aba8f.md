@@ -104,7 +104,7 @@ You edit an artifact file
   Layer 3: Pre-Commit
   Final check on git commit
   Blocks if anything slipped through
-```
+```text
 
 In practice:
 
@@ -133,7 +133,7 @@ Behavioral rule (Layer 2, active)
         │
         ▼
   After N clean sessions → Safe to delete
-```
+```text
 
 ### What CAN Be Demoted
 

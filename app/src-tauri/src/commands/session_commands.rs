@@ -15,9 +15,9 @@ pub fn session_create(
     system_prompt: Option<String>,
     state: State<'_, AppState>,
 ) -> Result<Session, OrqaError> {
-    let model_str = model.unwrap_or_else(|| "auto".to_string());
+    let model_str = model.unwrap_or_else(|| "auto".to_owned());
     if model_str.trim().is_empty() {
-        return Err(OrqaError::Validation("model cannot be empty".to_string()));
+        return Err(OrqaError::Validation("model cannot be empty".to_owned()));
     }
 
     let conn = state
@@ -48,12 +48,12 @@ pub fn session_list(
 
     if limit_val < 0 {
         return Err(OrqaError::Validation(
-            "limit cannot be negative".to_string(),
+            "limit cannot be negative".to_owned(),
         ));
     }
     if offset_val < 0 {
         return Err(OrqaError::Validation(
-            "offset cannot be negative".to_string(),
+            "offset cannot be negative".to_owned(),
         ));
     }
 
@@ -85,7 +85,7 @@ pub fn session_update_title(
     state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
     if title.trim().is_empty() {
-        return Err(OrqaError::Validation("title cannot be empty".to_string()));
+        return Err(OrqaError::Validation("title cannot be empty".to_owned()));
     }
 
     let conn = state

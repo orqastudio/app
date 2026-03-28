@@ -1,4 +1,6 @@
 //! Standalone validation binary for `orqa-validation`.
+// CLI binary — stdout/stderr are the intentional output channel.
+#![allow(clippy::print_stderr, clippy::print_stdout)]
 //!
 //! # Subcommands
 //!

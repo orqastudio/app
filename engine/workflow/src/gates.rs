@@ -1,18 +1,18 @@
-// Process gate evaluation for the OrqaStudio workflow engine.
-//
-// Evaluates 5 process gates against the current session workflow state and returns
-// gate results. Gates inject thinking prompts into the agent context to guide agents
-// back toward correct process when they skip steps like research, documentation review,
-// or verification. Gates are enforced as warnings — they guide but do not block.
-//
-// Write-event gates (fired when a file is written):
-//   - understand-first: fires once per session on first code write with no prior research
-//   - docs-before-code: fires on any code write with no docs read this session
-//   - plan-before-build: fires on any code write with no planning artifacts read
-//
-// Stop-event gates (fired at turn end):
-//   - evidence-before-done: fires when code was written but no verification command was run
-//   - learn-after-doing: fires when >3 code writes occurred but lessons were not checked
+//! Process gate evaluation for the OrqaStudio workflow engine.
+//!
+//! Evaluates 5 process gates against the current session workflow state and returns
+//! gate results. Gates inject thinking prompts into the agent context to guide agents
+//! back toward correct process when they skip steps like research, documentation review,
+//! or verification. Gates are enforced as warnings — they guide but do not block.
+//!
+//! Write-event gates (fired when a file is written):
+//!   - understand-first: fires once per session on first code write with no prior research
+//!   - docs-before-code: fires on any code write with no docs read this session
+//!   - plan-before-build: fires on any code write with no planning artifacts read
+//!
+//! Stop-event gates (fired at turn end):
+//!   - evidence-before-done: fires when code was written but no verification command was run
+//!   - learn-after-doing: fires when >3 code writes occurred but lessons were not checked
 
 use orqa_engine_types::types::enforcement::{RuleAction, Verdict};
 use orqa_engine_types::types::workflow::GateResult;
@@ -29,9 +29,9 @@ fn is_code_file(path: &str) -> bool {
 /// Create a `GateResult` that fired with the given message, or an unfired result.
 fn gate(name: &str, fired: bool, message: &str) -> GateResult {
     GateResult {
-        gate_name: name.to_string(),
+        gate_name: name.to_owned(),
         message: if fired {
-            message.to_string()
+            message.to_owned()
         } else {
             String::new()
         },

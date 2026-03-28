@@ -1,9 +1,9 @@
-// Workflow tracker for the OrqaStudio workflow engine.
-//
-// `WorkflowTracker` accumulates session-level events for process gate evaluation.
-// Each session gets a fresh tracker. Events accumulate over the session lifetime
-// and are used by the process gate evaluator to decide which thinking prompts
-// to inject into the agent's context.
+//! Workflow tracker for the OrqaStudio workflow engine.
+//!
+//! `WorkflowTracker` accumulates session-level events for process gate evaluation.
+//! Each session gets a fresh tracker. Events accumulate over the session lifetime
+//! and are used by the process gate evaluator to decide which thinking prompts
+//! to inject into the agent's context.
 
 use std::collections::HashSet;
 
@@ -49,13 +49,13 @@ impl WorkflowTracker {
     /// - Paths containing `.orqa/implementation/` are added to `planning_consulted`.
     /// - Paths containing `.orqa/learning/lessons/` set `lessons_checked`.
     pub fn record_read(&mut self, path: &str) {
-        self.files_read.push(path.to_string());
+        self.files_read.push(path.to_owned());
 
         if path.contains(".orqa/documentation/") {
-            self.docs_consulted.push(path.to_string());
+            self.docs_consulted.push(path.to_owned());
         }
         if path.contains(".orqa/implementation/") {
-            self.planning_consulted.push(path.to_string());
+            self.planning_consulted.push(path.to_owned());
         }
         if path.contains(".orqa/learning/lessons/") {
             self.lessons_checked = true;
@@ -64,7 +64,7 @@ impl WorkflowTracker {
 
     /// Record a file write.
     pub fn record_write(&mut self, path: &str) {
-        self.files_written.push(path.to_string());
+        self.files_written.push(path.to_owned());
     }
 
     /// Record a search tool call (regex, semantic, or code research).
@@ -74,14 +74,14 @@ impl WorkflowTracker {
 
     /// Record a knowledge artifact being loaded via `load_knowledge`.
     pub fn record_knowledge_loaded(&mut self, name: &str) {
-        self.knowledge_loaded.insert(name.to_string());
+        self.knowledge_loaded.insert(name.to_owned());
     }
 
     /// Record a bash command.
     ///
     /// Detects `make check` and `make test` variants to set `verification_run`.
     pub fn record_command(&mut self, cmd: &str) {
-        self.commands_run.push(cmd.to_string());
+        self.commands_run.push(cmd.to_owned());
 
         // Detect verification commands (make check, make test, make test-rust, etc.)
         let lower = cmd.to_lowercase();
@@ -101,7 +101,7 @@ impl WorkflowTracker {
     /// Returns `true` if this is the first time this knowledge has been injected
     /// in this session (i.e. actually newly injected), `false` if already done.
     pub fn mark_knowledge_injected(&mut self, name: &str) -> bool {
-        self.injected_knowledge.insert(name.to_string())
+        self.injected_knowledge.insert(name.to_owned())
     }
 
     /// True if any file in `.orqa/documentation/` has been read this session.

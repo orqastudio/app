@@ -1,10 +1,10 @@
-// Pure tool implementations for the orqa-engine crate.
-//
-// Contains all tool handler functions that have no Tauri dependency.
-// The app's tool executor calls these for file I/O, glob, grep, and bash
-// operations. Search tools (search_regex, search_semantic, code_research)
-// and enforcement-aware dispatch remain in the app layer because they depend
-// on the search engine and enforcement engine stored in Tauri AppState.
+//! Pure tool implementations for the orqa-engine crate.
+//!
+//! Contains all tool handler functions that have no Tauri dependency.
+//! The app's tool executor calls these for file I/O, glob, grep, and bash
+//! operations. Search tools (search_regex, search_semantic, code_research)
+//! and enforcement-aware dispatch remain in the app layer because they depend
+//! on the search engine and enforcement engine stored in Tauri AppState.
 
 use std::fmt::Write as FmtWrite;
 use std::path::{Path, PathBuf};
@@ -107,7 +107,7 @@ pub fn resolve_write_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
 /// is appended so the caller knows additional lines exist.
 pub fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(raw_path) = input["path"].as_str() else {
-        return ("missing 'path' parameter".to_string(), true);
+        return ("missing 'path' parameter".to_owned(), true);
     };
 
     let path = match resolve_path(raw_path, root) {
@@ -160,10 +160,10 @@ pub fn tool_read_file(input: &serde_json::Value, root: &Path) -> (String, bool) 
 /// with the byte count written, or an error message.
 pub fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(raw_path) = input["path"].as_str() else {
-        return ("missing 'path' parameter".to_string(), true);
+        return ("missing 'path' parameter".to_owned(), true);
     };
     let Some(content) = input["content"].as_str() else {
-        return ("missing 'content' parameter".to_string(), true);
+        return ("missing 'content' parameter".to_owned(), true);
     };
 
     let path = match resolve_write_path(raw_path, root) {
@@ -192,13 +192,13 @@ pub fn tool_write_file(input: &serde_json::Value, root: &Path) -> (String, bool)
 /// ambiguous replacements. Returns a success message or an error message.
 pub fn tool_edit_file(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(raw_path) = input["path"].as_str() else {
-        return ("missing 'path' parameter".to_string(), true);
+        return ("missing 'path' parameter".to_owned(), true);
     };
     let Some(old_string) = input["old_string"].as_str() else {
-        return ("missing 'old_string' parameter".to_string(), true);
+        return ("missing 'old_string' parameter".to_owned(), true);
     };
     let Some(new_string) = input["new_string"].as_str() else {
-        return ("missing 'new_string' parameter".to_string(), true);
+        return ("missing 'new_string' parameter".to_owned(), true);
     };
 
     let path = match resolve_path(raw_path, root) {
@@ -324,7 +324,7 @@ pub fn tool_bash(input: &serde_json::Value, root: &Path) -> (String, bool) {
     use std::process::Stdio;
 
     let Some(command) = input["command"].as_str() else {
-        return ("missing 'command' parameter".to_string(), true);
+        return ("missing 'command' parameter".to_owned(), true);
     };
 
     let mut child = match std::process::Command::new("bash")
@@ -379,7 +379,7 @@ pub fn tool_bash(input: &serde_json::Value, root: &Path) -> (String, bool) {
 /// Returns newline-separated matched paths (relative to project root) or an error.
 pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(pattern) = input["pattern"].as_str() else {
-        return ("missing 'pattern' parameter".to_string(), true);
+        return ("missing 'pattern' parameter".to_owned(), true);
     };
 
     let search_root = match input["path"].as_str() {
@@ -400,7 +400,7 @@ pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
                             .strip_prefix(root)
                             .unwrap_or(&path)
                             .to_string_lossy()
-                            .to_string();
+                            .into_owned();
                         paths.push(display);
                     }
                     Err(e) => {
@@ -409,7 +409,7 @@ pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
                 }
             }
             if paths.is_empty() {
-                ("no matches found".to_string(), false)
+                ("no matches found".to_owned(), false)
             } else {
                 (paths.join("\n"), false)
             }
@@ -428,7 +428,7 @@ pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
 /// 200 matches to prevent unbounded output.
 pub fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(pattern) = input["pattern"].as_str() else {
-        return ("missing 'pattern' parameter".to_string(), true);
+        return ("missing 'pattern' parameter".to_owned(), true);
     };
 
     let search_path = match input["path"].as_str() {
@@ -458,7 +458,7 @@ pub fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     let stdout = String::from_utf8_lossy(&output.stdout);
     if stdout.trim().is_empty() {
-        return ("no matches found".to_string(), false);
+        return ("no matches found".to_owned(), false);
     }
 
     let lines: Vec<&str> = stdout.lines().collect();
@@ -472,7 +472,7 @@ pub fn tool_grep(input: &serde_json::Value, root: &Path) -> (String, bool) {
             false,
         )
     } else {
-        (stdout.to_string(), false)
+        (stdout.into_owned(), false)
     }
 }
 
@@ -490,7 +490,7 @@ fn shell_escape(s: &str) -> String {
 /// Returns the raw file content (including frontmatter) or an informative error.
 pub fn tool_load_knowledge(input: &serde_json::Value, root: &Path) -> (String, bool) {
     let Some(name) = input["name"].as_str() else {
-        return ("missing 'name' parameter".to_string(), true);
+        return ("missing 'name' parameter".to_owned(), true);
     };
 
     // Validate knowledge name: must be a simple filename with no path separators
@@ -527,12 +527,12 @@ pub fn tool_load_knowledge(input: &serde_json::Value, root: &Path) -> (String, b
 /// leading whitespace.
 pub fn strip_frontmatter(content: &str) -> String {
     if !content.starts_with("---") {
-        return content.to_string();
+        return content.to_owned();
     }
     if let Some(end) = content[3..].find("\n---") {
-        content[3 + end + 4..].trim_start().to_string()
+        content[3 + end + 4..].trim_start().to_owned()
     } else {
-        content.to_string()
+        content.to_owned()
     }
 }
 
@@ -542,7 +542,7 @@ pub fn strip_frontmatter(content: &str) -> String {
 /// Returns "no matches found" for an empty result set.
 pub fn format_search_results(results: &[orqa_search::SearchResult]) -> String {
     if results.is_empty() {
-        return "no matches found".to_string();
+        return "no matches found".to_owned();
     }
     let mut out = String::new();
     for result in results {

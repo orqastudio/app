@@ -1,9 +1,9 @@
-// Enforcement engine for the orqa-engine crate.
-//
-// Provides `EnforcementEngine`: loads compiled-regex enforcement rules and
-// evaluates them against file writes, bash commands, and on-demand project scans.
-// Load once when a project is opened; call evaluate_file, evaluate_bash, or scan
-// for each relevant tool execution.
+//! Enforcement engine for the orqa-engine crate.
+//!
+//! Provides `EnforcementEngine`: loads compiled-regex enforcement rules and
+//! evaluates them against file writes, bash commands, and on-demand project scans.
+//! Load once when a project is opened; call evaluate_file, evaluate_bash, or scan
+//! for each relevant tool execution.
 
 use std::path::Path;
 
@@ -95,7 +95,7 @@ fn compile_entry(
 fn prose_excerpt(prose: &str) -> String {
     let trimmed = prose.trim();
     if trimmed.len() <= 200 {
-        trimmed.to_string()
+        trimmed.to_owned()
     } else {
         format!("{}…", &trimmed[..200])
     }
@@ -114,7 +114,7 @@ fn collect_glob_paths(pattern: &str) -> Result<Vec<String>, EngineError> {
         match entry {
             Ok(path) => {
                 if let Some(s) = path.to_str() {
-                    paths.push(s.to_string());
+                    paths.push(s.to_owned());
                 }
             }
             Err(e) => {
@@ -157,9 +157,9 @@ fn scan_content(
             findings.push(ScanFinding {
                 rule_name: rule.name.clone(),
                 action: ce.action.clone(),
-                file_path: file_path.to_string(),
+                file_path: file_path.to_owned(),
                 line: idx + 1,
-                content: line.trim().to_string(),
+                content: line.trim().to_owned(),
                 message: prose_excerpt(&rule.prose),
             });
         }

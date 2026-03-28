@@ -1,8 +1,8 @@
-// Project scanner for the OrqaStudio engine.
-//
-// Walks a project's filesystem to detect the technology stack (language, framework,
-// package manager) and counts governance artifacts. This is a pure filesystem domain
-// service — it performs no database or network I/O.
+//! Project scanner for the OrqaStudio engine.
+//!
+//! Walks a project's filesystem to detect the technology stack (language, framework,
+//! package manager) and counts governance artifacts. This is a pure filesystem domain
+//! service — it performs no database or network I/O.
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -20,8 +20,11 @@ const MAX_SCAN_DEPTH: usize = 10;
 /// Result of scanning a project's filesystem for stack and governance info.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectScanResult {
+    /// The detected technology stack (languages, frameworks, package manager).
     pub stack: DetectedStack,
+    /// Counts of governance artifacts found in the project's `.orqa/` directory.
     pub governance: GovernanceCounts,
+    /// Time taken to complete the scan, in milliseconds.
     pub scan_duration_ms: u64,
 }
 
@@ -148,7 +151,7 @@ fn detect_language_from_name(name: &str, languages: &mut HashSet<String>) {
         Some("c" | "h") => "c",
         _ => return,
     };
-    languages.insert(lang.to_string());
+    languages.insert(lang.to_owned());
 }
 
 /// Detect frameworks by looking for well-known config files in the project root.
@@ -174,7 +177,7 @@ fn detect_root_frameworks(root: &Path, frameworks: &mut HashSet<String>) {
     for (files, framework) in framework_indicators {
         for file in *files {
             if root.join(file).exists() {
-                frameworks.insert((*framework).to_string());
+                frameworks.insert((*framework).to_owned());
                 break;
             }
         }
@@ -196,7 +199,7 @@ fn detect_package_manager(root: &Path) -> Option<String> {
 
     for (file, manager) in lock_files {
         if root.join(file).exists() {
-            return Some((*manager).to_string());
+            return Some((*manager).to_owned());
         }
     }
     None

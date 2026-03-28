@@ -19,11 +19,17 @@
 //! let results = engine.search_regex("fn main", None, 10).unwrap();
 //! ```
 
+/// Language-aware code chunker for splitting source files into indexed segments.
 pub mod chunker;
+/// ONNX runtime wrapper that produces embedding vectors from text chunks.
 pub mod embedder;
+/// Top-level `SearchEngine` that coordinates indexing and querying.
 pub mod engine;
+/// Unified error type for search operations.
 pub mod error;
+/// DuckDB persistence layer for chunks and embeddings.
 pub mod store;
+/// Shared data structures returned by the search API.
 pub mod types;
 
 // Re-export the primary public API at the crate root.

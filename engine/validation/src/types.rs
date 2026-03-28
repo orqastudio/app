@@ -50,16 +50,23 @@ pub struct RelationshipConstraints {
 /// A relationship schema entry — combines platform, project, and plugin definitions.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct RelationshipSchema {
+    /// Unique relationship key (e.g. `"delivers"`).
     pub key: String,
+    /// Inverse relationship key (e.g. `"delivered-by"`).
     pub inverse: String,
+    /// Human-readable description of the relationship's meaning.
     #[serde(default)]
     pub description: String,
+    /// Allowed source artifact types (empty = unconstrained).
     #[serde(default)]
     pub from: Vec<String>,
+    /// Allowed target artifact types (empty = unconstrained).
     #[serde(default)]
     pub to: Vec<String>,
+    /// Semantic category key (e.g. `"dependency"`, `"delivery"`).
     #[serde(default)]
     pub semantic: Option<String>,
+    /// Validation constraints block for this relationship.
     #[serde(default)]
     pub constraints: Option<RelationshipConstraints>,
 }
@@ -132,29 +139,40 @@ pub enum IntegrityCategory {
 /// Severity of an integrity finding.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum IntegritySeverity {
+    /// Blocking violation — must be resolved for the graph to be valid.
     Error,
     /// Reserved — no checks currently emit Warning. All graph integrity
     /// violations are errors because without relationships there is no graph.
     Warning,
+    /// Informational note — no action required.
     Info,
 }
 
 /// A single integrity finding from the graph.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct IntegrityCheck {
+    /// Category of the integrity violation.
     pub category: IntegrityCategory,
+    /// Severity level of this finding.
     pub severity: IntegritySeverity,
+    /// ID of the artifact that triggered this finding.
     pub artifact_id: String,
+    /// Human-readable description of the violation.
     pub message: String,
+    /// Whether the engine can automatically repair this violation.
     pub auto_fixable: bool,
+    /// Description of what the auto-fix would do, if applicable.
     pub fix_description: Option<String>,
 }
 
 /// A fix that was applied to resolve an integrity issue.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppliedFix {
+    /// ID of the artifact that was modified.
     pub artifact_id: String,
+    /// Human-readable description of what was changed.
     pub description: String,
+    /// Path to the file that was modified.
     pub file_path: String,
 }
 
@@ -222,20 +240,29 @@ pub struct EnforcementEvent {
 /// The result of validating a parsed artifact's frontmatter against its type schema.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ValidationResult {
+    /// Whether the frontmatter passed all schema checks.
     pub valid: bool,
+    /// List of validation error messages (empty when `valid` is true).
     pub errors: Vec<String>,
 }
 
 /// A fully parsed artifact: frontmatter, body, type inference, and schema validation.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ParsedArtifact {
+    /// Artifact ID from frontmatter (e.g. `"TASK-abc12345"`).
     pub id: String,
+    /// Artifact type key inferred from ID prefix (e.g. `"task"`).
     #[serde(rename = "type")]
     pub artifact_type: String,
+    /// Current status value from frontmatter, if present.
     pub status: Option<String>,
+    /// Title from the first `# Heading` line or frontmatter `title` field.
     pub title: String,
+    /// All frontmatter fields as a JSON object.
     pub frontmatter: serde_json::Value,
+    /// Full markdown body (everything after the frontmatter block).
     pub content: String,
+    /// Schema validation result for this artifact's frontmatter.
     pub validation: ValidationResult,
 }
 

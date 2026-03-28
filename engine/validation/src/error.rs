@@ -3,21 +3,27 @@
 /// Unified error type for validation operations.
 #[derive(Debug, thiserror::Error)]
 pub enum ValidationError {
+    /// File system operation failed.
     #[error("file system error: {0}")]
     FileSystem(String),
 
+    /// YAML deserialization error.
     #[error("YAML parse error: {0}")]
     Yaml(String),
 
+    /// JSON serialization or deserialization error.
     #[error("JSON error: {0}")]
     Json(String),
 
+    /// Artifact graph construction failed.
     #[error("graph build error: {0}")]
     GraphBuild(String),
 
+    /// A validation rule raised an error.
     #[error("validation error: {0}")]
     Validation(String),
 
+    /// Underlying I/O error from the OS.
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),
 }

@@ -65,7 +65,7 @@ Independent Reviewer
     ├── Verifies against acceptance criteria
     ├── PASS → work committed
     └── FAIL → feedback to implementing agent → fix cycle
-```
+```text
 
 ### Agent Roles
 
@@ -118,7 +118,7 @@ Agent spawn
     ├── Task description → ONNX semantic search → Task-relevant knowledge (context-dependent)
     │
     └── Dedup + inject into agent context
-```
+```text
 
 The hook system enforces this at every agent spawn. Agents cannot be created without going through the knowledge injection pipeline.
 
@@ -200,7 +200,7 @@ Developer edits artifact
     ├── Layer 2: Agent follows behavioral rules while working (documentation-first, delegation)
     │
     └── Layer 3: Pre-commit blocks the commit if anything slipped through
-```
+```text
 
 Each layer catches different things. LSP catches schema errors in real time. Behavioral rules guide agent decisions. Pre-commit catches everything that made it past both.
 
@@ -224,7 +224,7 @@ relationships:
   - target: AD-a44384d1
     type: implements
     rationale: "Documents the CLI architecture decision"
-```
+```text
 
 Every relationship type is defined by a plugin schema — valid types, which artifact types can be source/target, inverses, semantic groupings. The validation engine enforces that only valid relationship types are used.
 
@@ -249,7 +249,7 @@ The daemon serves the graph in memory. All tools query it through the daemon's A
 orqa graph --type rule --status active      # Find active rules
 orqa graph --related-to KNOW-586bfa9a       # Find related artifacts
 orqa graph --id DOC-e16aea3b                # Read one artifact
-```
+```text
 
 MCP tools expose the same queries to AI agents (`graph_query`, `graph_resolve`, `graph_relationships`).
 
@@ -271,7 +271,7 @@ Installed copy (.orqa/)
     │
     ▼
 Three-way diff on next orqa plugin refresh
-```
+```text
 
 ### Three-Way Diff Model
 
@@ -351,7 +351,7 @@ The complete lifecycle from writing to committed code:
        │  ← Hard block on any violation
        │
 7. Committed and pushed
-```
+```text
 
 At every stage, the enforcement is **schema-driven**. Plugin schemas define what is valid. The validation engine reads those schemas. The enforcement layers read the validation engine. Nothing is hardcoded. Extend the schema, and enforcement follows automatically.
 

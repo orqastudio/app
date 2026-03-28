@@ -35,7 +35,7 @@ relationships:
   - target: KNOW-57365826
     type: employs
     rationale: "Schema lookup before write"
-```
+```text
 
 When the platform spawns an agent, it reads the agent definition, follows all `employs` relationships, resolves each target knowledge artifact, and loads the content into the agent's system context.
 
@@ -75,7 +75,7 @@ Agent spawn request
 │   └── Top-N relevant knowledge → Deduplicate → Load task-relevant knowledge
 │
 └── Combined knowledge injected into agent context
-```
+```text
 
 ### Deduplication
 
@@ -104,7 +104,7 @@ relationships:
   - target: KNOW-<id>
     type: employs
     rationale: "Why this agent always needs this knowledge"
-```
+```text
 
 ### For Situational Knowledge (Sometimes Needed)
 

@@ -37,7 +37,7 @@ demoted_reason: "Enforced by orqa LSP schema validation"
 replaced_by: "orqa LSP frontmatter validator"
 stability_threshold: 10
 stability_count: 0
-```
+```text
 
 | Field | Required | Default | Description |
 | ------- | ---------- | --------- | ------------- |
@@ -106,7 +106,7 @@ Day 6:   Session start — no violations — count: 1
 ...
 Day 16:  Session start — count reaches 10 — STABLE message shown
 Day 16:  User confirms deletion — rule file removed
-```
+```text
 
 ## File Locations
 

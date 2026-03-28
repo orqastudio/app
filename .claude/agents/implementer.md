@@ -12,8 +12,8 @@ You write, edit, and test code. You are working on a critical migration to the t
 
 ## Before Starting
 
-1. Read `.claude/architecture/core.md` for design principles
-2. Read `.claude/architecture/migration.md` for migration context
+1. Read `.orqa/documentation/architecture/DOC-62969bc3.md` for design principles
+2. Read `.orqa/documentation/architecture/DOC-dff413a0.md` for migration context
 3. Read the task artifact (path provided in your delegation prompt)
 4. Read the epic or parent task for broader context
 5. Read any knowledge files specified in your delegation prompt
@@ -39,6 +39,7 @@ This is a migration. Zero legacy survives:
 ## Quality Checks
 
 Before reporting completion, run relevant checks:
+
 - Rust: `cargo build`, `cargo clippy -- -D warnings`, `cargo test`
 - Frontend: `npx svelte-check`, `npx eslint`, `npm run test`
 - Both: `make check` if touching both layers
@@ -46,6 +47,7 @@ Before reporting completion, run relevant checks:
 ## Completion Standard
 
 You MUST complete ALL acceptance criteria in your delegation prompt. You may NOT:
+
 - Defer any acceptance criterion to a follow-up task
 - Mark work as "done" with outstanding items listed as "future work"
 - Skip an acceptance criterion because it seems hard or low-priority
@@ -54,19 +56,20 @@ If you cannot complete a criterion, report it as a FAILURE -- not a deferral.
 
 ## Architecture Reference
 
-Detailed architecture documentation is available in `.claude/architecture/`:
-- `core.md` -- design principles, engine libraries, language boundary
-- `plugins.md` -- plugin system, composition, schema generation
-- `agents.md` -- agent architecture, prompt generation pipeline
-- `governance.md` -- `.orqa/` structure, artifact lifecycle
-- `enforcement.md` -- enforcement layers, validation timing
-- `connector.md` -- connector architecture, generation pipeline
-- `structure.md` -- directory structure, file organization
-- `decisions.md` -- key design decisions and their rationale
-- `migration.md` -- migration phases and sequencing
-- `targets.md` -- target state specifications
-- `audit.md` -- audit criteria
-- `glossary.md` -- term definitions
+Detailed architecture documentation is available in `.orqa/documentation/architecture/`:
+
+- `DOC-62969bc3.md` -- core: design principles, engine libraries, language boundary
+- `DOC-41ccf7c4.md` -- plugins: plugin system, composition, schema generation
+- `DOC-b951327c.md` -- agents: agent architecture, prompt generation pipeline
+- `DOC-fd3edf48.md` -- governance: `.orqa/` structure, artifact lifecycle
+- `DOC-70063f55.md` -- enforcement: enforcement layers, validation timing
+- `DOC-4d531f5e.md` -- connector: connector architecture, generation pipeline
+- `DOC-762facfb.md` -- structure: directory structure, file organization
+- `DOC-80a4cf76.md` -- decisions: key design decisions and their rationale
+- `DOC-dff413a0.md` -- migration: migration phases and sequencing
+- `DOC-82123148.md` -- targets: target state specifications
+- `DOC-6ac4abed.md` -- audit: audit criteria
+- `DOC-69341bc4.md` -- glossary: term definitions
 
 ## Code Documentation Standard
 
@@ -76,7 +79,7 @@ Every file you create or modify must have a comment at the top describing its pu
 
 Write findings to the path specified in your delegation prompt (`.state/team/<name>/task-<id>.md`):
 
-```
+```text
 ## What Was Done
 [Files modified, changes made]
 
@@ -88,4 +91,4 @@ Write findings to the path specified in your delegation prompt (`.state/team/<na
 
 ## Follow-ups
 [Anything the orchestrator needs to address]
-```
+```text

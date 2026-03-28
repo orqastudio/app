@@ -26,9 +26,9 @@ fn main() {
     let (project_root, daemon_port) = parse_args(&args);
 
     if !project_root.exists() {
-        eprintln!(
-            "error: project path does not exist: {}",
-            project_root.display()
+        tracing::error!(
+            path = %project_root.display(),
+            "project path does not exist"
         );
         process::exit(1);
     }
@@ -40,7 +40,7 @@ fn main() {
     );
 
     if let Err(e) = orqa_mcp_server::run_with_daemon_port(&project_root, daemon_port) {
-        eprintln!("error: {e}");
+        tracing::error!(error = %e, "MCP server failed");
         process::exit(1);
     }
 }
@@ -58,27 +58,23 @@ fn parse_args(args: &[String]) -> (PathBuf, u16) {
                     if let Ok(p) = args[i].parse::<u16>() {
                         daemon_port = p;
                     } else {
-                        eprintln!(
-                            "orqa-mcp-server: invalid daemon port '{}', expected 1–65535",
-                            args[i]
-                        );
+                        tracing::error!(port = args[i].as_str(), "invalid daemon port, expected 1-65535");
                         process::exit(2);
                     }
                 } else {
-                    eprintln!("orqa-mcp-server: --daemon-port requires a port number");
+                    tracing::error!("--daemon-port requires a port number");
                     process::exit(2);
                 }
             }
             "--help" | "-h" => {
-                eprintln!("OrqaStudio MCP Server");
-                eprintln!("USAGE: orqa-mcp-server <project-path> [--daemon-port <port>]");
+                tracing::info!("USAGE: orqa-mcp-server <project-path> [--daemon-port <port>]");
                 process::exit(0);
             }
             arg if !arg.starts_with('-') => {
                 project_root = Some(PathBuf::from(arg));
             }
             other => {
-                eprintln!("orqa-mcp-server: unknown argument '{other}'");
+                tracing::error!(arg = other, "unknown argument");
                 process::exit(2);
             }
         }
@@ -86,7 +82,7 @@ fn parse_args(args: &[String]) -> (PathBuf, u16) {
     }
 
     let root = project_root.unwrap_or_else(|| {
-        eprintln!("usage: orqa-mcp-server <project-path> [--daemon-port <port>]");
+        tracing::error!("usage: orqa-mcp-server <project-path> [--daemon-port <port>]");
         process::exit(1);
     });
 

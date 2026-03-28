@@ -1,13 +1,13 @@
-// Stream loop pure logic for the orqa-engine crate.
-//
-// Contains the Tauri-independent parts of the sidecar stream loop:
-// protocol translation (SidecarResponse -> StreamEvent), context overflow
-// detection, terminal event classification, and response accumulation.
-//
-// The Tauri-specific loop driver (which holds AppState, Channel<T>, and
-// calls execute_tool) remains in the app layer. That loop calls these
-// pure functions for translation and accumulation, keeping all business
-// logic testable without a Tauri context.
+//! Stream loop pure logic for the orqa-engine crate.
+//!
+//! Contains the Tauri-independent parts of the sidecar stream loop:
+//! protocol translation (SidecarResponse -> StreamEvent), context overflow
+//! detection, terminal event classification, and response accumulation.
+//!
+//! The Tauri-specific loop driver (which holds AppState, Channel<T>, and
+//! calls execute_tool) remains in the app layer. That loop calls these
+//! pure functions for translation and accumulation, keeping all business
+//! logic testable without a Tauri context.
 
 use crate::protocol::SidecarResponse;
 use orqa_engine_types::types::streaming::StreamEvent;
@@ -29,7 +29,7 @@ pub fn friendly_context_overflow_message(code: &str, message: &str) -> Option<St
         Some(
             "The conversation has exceeded the model's context window. \
              Start a new session to continue, or summarize earlier context before proceeding."
-                .to_string(),
+                .to_owned(),
         )
     } else {
         None
@@ -159,9 +159,9 @@ fn translate_streaming_data(response: &SidecarResponse) -> Option<StreamEvent> {
 /// message is replaced with a clear explanation of what the user should do.
 fn translate_stream_error(code: &str, message: &str, recoverable: bool) -> StreamEvent {
     let user_message =
-        friendly_context_overflow_message(code, message).unwrap_or_else(|| message.to_string());
+        friendly_context_overflow_message(code, message).unwrap_or_else(|| message.to_owned());
     StreamEvent::StreamError {
-        code: code.to_string(),
+        code: code.to_owned(),
         message: user_message,
         recoverable,
     }

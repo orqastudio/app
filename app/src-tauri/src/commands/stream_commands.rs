@@ -53,7 +53,7 @@ fn persist_assistant_message(
         .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
 
     let assistant_turn = i32::try_from(turn_index + 1)
-        .map_err(|_| OrqaError::Database("turn index overflow".to_string()))?;
+        .map_err(|_| OrqaError::Database("turn index overflow".to_owned()))?;
     let content_value = if acc.text.is_empty() {
         None
     } else {
@@ -150,10 +150,10 @@ pub fn stream_send_message(
     on_event: tauri::ipc::Channel<StreamEvent>,
     state: tauri::State<'_, AppState>,
 ) -> Result<i64, OrqaError> {
-    let content = content.trim().to_string();
+    let content = content.trim().to_owned();
     if content.is_empty() {
         return Err(OrqaError::Validation(
-            "message content cannot be empty".to_string(),
+            "message content cannot be empty".to_owned(),
         ));
     }
 
@@ -225,7 +225,7 @@ pub fn stream_tool_approval_respond(
         .sidecar
         .pending_approvals
         .lock()
-        .map_err(|_| OrqaError::Sidecar("pending_approvals mutex poisoned".to_string()))?
+        .map_err(|_| OrqaError::Sidecar("pending_approvals mutex poisoned".to_owned()))?
         .remove(&tool_call_id);
 
     match sender {
@@ -271,7 +271,7 @@ mod tests {
         let msg = message_repo::create(&conn, 1, "user", "text", Some("Hello"), turn_index, 0)
             .expect("create message");
         assert_eq!(msg.role, MessageRole::User);
-        assert_eq!(msg.content, Some("Hello".to_string()));
+        assert_eq!(msg.content, Some("Hello".to_owned()));
     }
 
     #[test]

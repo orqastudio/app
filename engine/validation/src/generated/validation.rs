@@ -2,7 +2,7 @@
 // Source: libs/types/src/platform/*.schema.json
 // Regenerate: cargo build -p orqa-validation
 
-#![allow(dead_code, unused_imports)]
+#![allow(dead_code, unused_imports, missing_docs)]
 
 use serde::{Deserialize, Serialize};
 

@@ -224,7 +224,7 @@ fn add_schema_pattern_prefixes(pat: &str, type_key: &str, map: &mut HashMap<Stri
 ///
 /// Uses longest-match-wins: tries prefix candidates from longest to shortest segment count.
 fn check_node_prefix_mismatch(
-    node: &crate::graph::ArtifactNode,
+    node: &ArtifactNode,
     explicit_type: &str,
     prefix_to_types: &HashMap<String, Vec<String>>,
     checks: &mut Vec<IntegrityCheck>,
@@ -273,7 +273,7 @@ pub fn check_missing_status_field(
     // Build set of types that require status from their schema
     let types_requiring_status: std::collections::HashSet<&str> = artifact_types
         .iter()
-        .filter(|t| t.frontmatter_required().contains(&"status".to_string()))
+        .filter(|t| t.frontmatter_required().contains(&"status".to_owned()))
         .map(|t| t.key.as_str())
         .collect();
 
@@ -308,8 +308,7 @@ pub fn check_missing_status_field(
 /// Check for duplicate relationship entries (same target + type appearing more than once).
 pub fn check_duplicate_relationships(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
     for node in graph.nodes.values() {
-        let mut seen: std::collections::HashMap<(&str, &str), usize> =
-            std::collections::HashMap::new();
+        let mut seen: HashMap<(&str, &str), usize> = HashMap::new();
 
         for ref_entry in &node.references_out {
             if ref_entry.field != "relationships" {
