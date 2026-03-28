@@ -1,11 +1,13 @@
-//! Search module — thin re-export of the `orqa-search` standalone library.
+//! Search module — thin re-export of the search API through `orqa_engine::search`.
 //!
 //! All implementation lives in `libs/search`. This module exists only to
 //! preserve the `crate::search` path used by `state.rs`, `lib.rs`, and
-//! the MCP/IPC servers.
+//! the MCP/IPC servers. It routes through `orqa_engine::search` rather than
+//! importing `orqa_search` directly, keeping all direct library dependencies
+//! consolidated in the engine crate.
 
-pub use orqa_search::chunker;
-pub use orqa_search::embedder;
-pub use orqa_search::store;
-pub use orqa_search::types;
-pub use orqa_search::SearchEngine;
+pub use orqa_engine::search::chunker;
+pub use orqa_engine::search::embedder;
+pub use orqa_engine::search::store;
+pub use orqa_engine::search::types;
+pub use orqa_engine::search::SearchEngine;

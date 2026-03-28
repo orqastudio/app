@@ -19,13 +19,14 @@ use serde_json::Value;
 use crate::error::McpError;
 
 /// Default port for the validation daemon.
-/// Reads `ORQA_PORT_BASE` from the environment (default 10200) and adds offset 58.
+///
+/// Reads `ORQA_PORT_BASE` directly as the daemon port (default 9120). This
+/// matches `daemon/src/health.rs resolve_port()` — no offset is applied.
 pub fn default_daemon_port() -> u16 {
-    let base: u16 = std::env::var("ORQA_PORT_BASE")
+    std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse().ok())
-        .unwrap_or(10200);
-    base + 58
+        .unwrap_or(9120)
 }
 
 /// Blocking HTTP client bound to a specific daemon instance.

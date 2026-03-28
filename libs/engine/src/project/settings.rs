@@ -18,10 +18,15 @@ pub use orqa_validation::settings::{
 ///
 /// `condition` is a named condition evaluated by the transition engine.
 /// `target` is the status key to transition to when the condition is met.
+/// `params` carries condition-specific configuration (e.g. `child_type` for
+/// `all-children-completed` and `all-p1-children-completed` so the engine
+/// does not hardcode artifact type names).
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StatusAutoRule {
     pub condition: String,
     pub target: String,
+    #[serde(default)]
+    pub params: std::collections::HashMap<String, String>,
 }
 
 /// A status definition loaded from `project.json`.

@@ -181,7 +181,7 @@ impl EnforcementEngine {
     /// Build an `EnforcementEngine` from a pre-loaded set of rules.
     ///
     /// The caller is responsible for loading the rules from disk (via
-    /// `enforcement::repo::load_rules`). This constructor is pure — it only
+    /// `enforcement::store::load_rules`). This constructor is pure — it only
     /// compiles regexes and builds internal indices. Invalid regex patterns are
     /// skipped with a warning.
     pub fn new(rules: Vec<EnforcementRule>) -> Self {
@@ -332,7 +332,7 @@ impl EnforcementEngine {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::enforcement::repo;
+    use crate::enforcement::store;
     use std::path::Path;
 
     fn write_rule_file(dir: &Path, name: &str, content: &str) {
@@ -340,7 +340,7 @@ mod tests {
     }
 
     fn load_engine(rules_dir: &Path) -> EnforcementEngine {
-        let rules = repo::load_rules(rules_dir).expect("should load rules");
+        let rules = store::load_rules(rules_dir).expect("should load rules");
         EnforcementEngine::new(rules)
     }
 

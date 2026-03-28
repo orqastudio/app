@@ -9,4 +9,4 @@ pub use orqa_validation::graph::{
     build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
 };
 pub use orqa_validation::validate;
-pub use orqa_validation::{auto_fix, compute_health};
+pub use orqa_validation::{auto_fix, compute_health, update_artifact_field};

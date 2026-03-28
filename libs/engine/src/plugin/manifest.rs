@@ -42,6 +42,27 @@ pub struct MergeDecision {
     pub existing_source: String,
 }
 
+/// An agent role definition declared by a plugin.
+///
+/// Provides the structured metadata the engine needs to compose agent prompts
+/// from plugin-contributed definitions (P1: Plugin-Composed Everything).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AgentDefinition {
+    /// Unique identifier for this agent role within the plugin (e.g. "orchestrator").
+    pub id: String,
+    /// Human-readable name shown in the UI and logs.
+    pub title: String,
+    /// One-sentence description of the agent's purpose.
+    #[serde(default)]
+    pub description: String,
+    /// The opening instruction injected into the agent's system prompt.
+    #[serde(default)]
+    pub preamble: String,
+    /// Tool capability identifiers this agent is granted access to.
+    #[serde(default)]
+    pub capabilities: Vec<String>,
+}
+
 /// What a plugin declares it provides.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginProvides {
@@ -58,6 +79,9 @@ pub struct PluginProvides {
     pub cli_tools: Vec<serde_json::Value>,
     #[serde(default)]
     pub hooks: Vec<serde_json::Value>,
+    /// Agent role definitions contributed by this plugin.
+    #[serde(default)]
+    pub agents: Vec<AgentDefinition>,
 }
 
 const MANIFEST_FILENAME: &str = "orqa-plugin.json";
@@ -137,6 +161,7 @@ mod tests {
                 sidecar: None,
                 cli_tools: vec![],
                 hooks: vec![],
+                agents: vec![],
             },
             merge_decisions: vec![],
         };
@@ -160,11 +185,36 @@ mod tests {
                 sidecar: None,
                 cli_tools: vec![],
                 hooks: vec![],
+                agents: vec![],
             },
             merge_decisions: vec![],
         };
 
         let errors = validate_manifest(&manifest);
         assert!(errors.iter().any(|e| e.contains("version")));
+    }
+
+    #[test]
+    fn deserialize_manifest_with_agents() {
+        let json = r#"{
+            "name": "@orqastudio/core-framework",
+            "version": "0.1.0",
+            "provides": {
+                "agents": [
+                    {
+                        "id": "orchestrator",
+                        "title": "Orchestrator",
+                        "description": "Coordinates ephemeral task-scoped workers.",
+                        "preamble": "Coordinate and delegate, never implement.",
+                        "capabilities": ["file_read"]
+                    }
+                ]
+            }
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.provides.agents.len(), 1);
+        assert_eq!(manifest.provides.agents[0].id, "orchestrator");
+        assert_eq!(manifest.provides.agents[0].capabilities, vec!["file_read"]);
     }
 }

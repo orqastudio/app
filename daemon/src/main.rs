@@ -1,8 +1,13 @@
 // OrqaStudio daemon — persistent background process.
 //
 // The daemon provides the always-on infrastructure layer for an OrqaStudio
-// project: health monitoring, file watching, MCP/LSP server lifecycle
-// management, and the system tray icon.
+// project: health monitoring, file watching, LSP server lifecycle management,
+// and the system tray icon.
+//
+// MCP is NOT managed by the daemon. MCP uses stdio transport — each LLM client
+// (e.g., Claude Code) spawns its own `orqa-mcp-server` process. See mcp.rs for
+// the full rationale. LSP is managed here because it uses TCP and legitimately
+// runs as a single shared persistent process.
 //
 // Startup sequence:
 //   1. Locate the project root (walk up from CWD until .orqa/ is found).
@@ -13,11 +18,10 @@
 //   6. Start the system tray (currently headless — see tray.rs).
 //   7. Start the health HTTP endpoint.
 //   8. Start file watchers on .orqa/ and plugins/.
-//   9. Start MCP server subprocess (graceful degradation if binary absent).
-//  10. Start LSP server subprocess in TCP mode (graceful degradation if binary absent).
-//  11. Block until the shutdown signal fires.
-//  12. Stop MCP and LSP subprocesses.
-//  13. Clean up the PID file and exit.
+//   9. Start LSP server subprocess in TCP mode (graceful degradation if binary absent).
+//  10. Block until the shutdown signal fires.
+//  11. Stop the LSP subprocess.
+//  12. Clean up the PID file and exit.
 
 mod health;
 mod logging;
@@ -114,9 +118,13 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
 ///
 /// Spawns the health server as a background tokio task. Starts the file
 /// watcher on `.orqa/` and `plugins/` (with a warning fallback if the watcher
-/// cannot start). Spawns the MCP and LSP server subprocesses; each degrades
-/// gracefully if its binary is not yet built. Runs the polling event loop
-/// until the shutdown flag is set, then stops the subprocesses.
+/// cannot start). Starts the LSP server subprocess in TCP mode; it degrades
+/// gracefully if the binary is not yet built. Runs the polling event loop until
+/// the shutdown flag is set, then stops the LSP subprocess.
+///
+/// MCP is not started here — see mcp.rs for why MCP is client-managed.
+///
+/// Called from `main()` on a background thread that owns the tokio runtime.
 async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
     let daemon_port = health::resolve_port();
 
@@ -143,41 +151,50 @@ async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
         }
     };
 
-    // Start MCP and LSP subprocesses. Both degrade gracefully when their
-    // binaries are not yet available (e.g. first run before a full build).
-    let mut mcp_manager = mcp::start_mcp(&project_root, daemon_port);
+    // Start the LSP server subprocess in TCP mode. LSP is legitimately
+    // persistent — a single process serves all connected editors over TCP.
+    // MCP is not started here; clients spawn their own orqa-mcp-server process.
     let mut lsp_manager = lsp::start_lsp(&project_root, daemon_port);
 
-    run_event_loop(&shutdown_flag, &mut mcp_manager, &mut lsp_manager).await;
+    run_event_loop(&shutdown_flag, &mut lsp_manager).await;
 
-    // Graceful shutdown: stop subprocesses before exiting.
-    mcp_manager.stop();
+    // Graceful shutdown: stop the LSP subprocess before exiting.
     lsp_manager.stop();
 }
 
 /// Poll the shutdown flag and yield to the tokio runtime between checks.
 ///
-/// Also polls subprocess status on each iteration so crashes are logged
+/// Also polls LSP subprocess status on each iteration so crashes are logged
 /// promptly. Polling every 250 ms adds negligible overhead for a long-running
 /// background process.
 async fn run_event_loop(
     shutdown_flag: &Arc<AtomicBool>,
-    mcp: &mut crate::subprocess::SubprocessManager,
     lsp: &mut crate::subprocess::SubprocessManager,
 ) {
     loop {
         if shutdown_flag.load(Ordering::SeqCst) {
             break;
         }
-        // Poll subprocess status to detect crashes and log them.
-        mcp.check_status();
+        // Poll LSP subprocess status to detect crashes and log them.
         lsp.check_status();
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
     }
 }
 
-#[tokio::main]
-async fn main() {
+/// Entry point for the daemon.
+///
+/// The system tray on Windows requires the GUI message pump on the main OS
+/// thread. Tokio's `#[tokio::main]` would own the main thread for the async
+/// runtime, blocking the message pump. To satisfy both requirements:
+///
+///   1. Perform all pre-flight setup synchronously on the main thread.
+///   2. Spawn the tokio runtime on a background thread (`runtime_thread`).
+///   3. Run the tray event loop on the main thread via `tray::run_tray_loop`.
+///   4. On tray exit (Quit or shutdown signal), join the background thread.
+///
+/// This arrangement means the tokio `run()` function and the tray loop share
+/// the `shutdown_flag` `AtomicBool` as the synchronisation primitive.
+fn main() {
     // Project root must be found before logging is initialised so we know
     // where to write the log file.
     let project_root = resolve_project_root();
@@ -204,14 +221,32 @@ async fn main() {
     let shutdown_flag = Arc::new(AtomicBool::new(false));
     register_shutdown_handler(Arc::clone(&shutdown_flag), project_root.clone());
 
-    let tray_status = tray::start();
+    // Spawn the tokio runtime on a background thread so the main thread
+    // remains free for the OS GUI message pump (required by tray-icon).
+    let runtime_root = project_root.clone();
+    let runtime_flag = Arc::clone(&shutdown_flag);
+    let runtime_thread = std::thread::spawn(move || {
+        let rt = tokio::runtime::Runtime::new().expect("failed to build tokio runtime");
+        rt.block_on(run(runtime_root, runtime_flag));
+    });
+
+    // Run the tray loop on the main thread. Returns when Quit is selected or
+    // the shutdown flag is set externally.
+    let tray_status = tray::run_tray_loop(Arc::clone(&shutdown_flag));
     info!(
         subsystem = "health",
         status = ?tray_status,
-        "[health] system tray initialised"
+        "[health] system tray exited"
     );
 
-    run(project_root.clone(), Arc::clone(&shutdown_flag)).await;
+    // Ensure the shutdown flag is set so the background tokio runtime exits
+    // its event loop even if the tray returned Headless.
+    shutdown_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+
+    // Wait for all async subsystems to finish cleanly.
+    if let Err(e) = runtime_thread.join() {
+        eprintln!("runtime thread panicked: {e:?}");
+    }
 
     // Final cleanup in case the signal handler did not run (e.g., clean exit
     // via another code path).

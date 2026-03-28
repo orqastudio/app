@@ -4,5 +4,20 @@
   "version": "0.1.0-dev",
   "author": {
     "name": "OrqaStudio"
+  },
+  "purpose": ["connector"],
+  "category": "connector",
+  "stage_slot": null,
+  "affects_schema": false,
+  "affects_enforcement": false,
+  "uninstallable": false,
+  "provides": {
+    "schemas": [],
+    "workflows": [],
+    "knowledge": [],
+    "rules": [],
+    "roles": [],
+    "views": [],
+    "enforcement_mechanisms": []
   }
 }

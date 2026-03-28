@@ -2,7 +2,7 @@
 //
 // Parses YAML frontmatter from enforcement rule `.md` files into typed
 // `EnforcementRule` values. This is a pure module — no filesystem I/O.
-// Callers provide the file content as a string; see `repo::load_rules` for
+// Callers provide the file content as a string; see `store::load_rules` for
 // the filesystem-level loader that drives this parser.
 
 use serde::Deserialize;

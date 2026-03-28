@@ -37,7 +37,6 @@ glob = "0.3"
 regex = "1"
 reqwest = { version = "0.12", features = ["stream", "json"] }
 orqa-engine = { path = "../../libs/engine" }
-orqa-search = { path = "../../libs/search" }
 sha2 = "0.10"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
@@ -46,7 +45,6 @@ notify-debouncer-full = "0.6"
 rand = "0.8"
 tar = "0.4"
 flate2 = "1"
-orqa-validation = { path = "../../libs/validation" }
 
 [dev-dependencies]
 tempfile = "3"

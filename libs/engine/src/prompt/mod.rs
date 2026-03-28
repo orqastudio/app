@@ -10,6 +10,6 @@ pub mod knowledge;
 pub mod session_title;
 
 pub use builder::{
-    build_system_prompt, list_knowledge_catalog, read_governance_file, read_rules,
-    resolve_system_prompt,
+    build_system_prompt, collect_plugin_agent_definitions, list_knowledge_catalog,
+    read_governance_file, read_rules, resolve_system_prompt,
 };

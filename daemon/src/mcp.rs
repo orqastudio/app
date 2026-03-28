@@ -1,57 +1,27 @@
-// MCP server lifecycle management for the OrqaStudio daemon.
+// MCP protocol note for the OrqaStudio daemon.
 //
-// The `orqa-mcp-server` binary uses stdio (JSON-RPC over stdin/stdout) as its
-// transport. This means each LLM client that wants MCP access spawns its own
-// `orqa-mcp-server` instance rather than connecting to a shared server. As a
-// result the daemon does not pre-spawn a persistent MCP instance — instead it
-// exposes this module so that:
+// MCP (Model Context Protocol) uses stdio as its transport: the LLM client
+// (e.g., Claude Code) spawns `orqa-mcp-server` as a subprocess and
+// communicates with it over stdin/stdout. Each client manages its own server
+// process lifetime.
 //
-//   1. The daemon can optionally launch a single MCP instance for clients
-//      that request it (e.g., via the health endpoint or tray menu).
-//   2. The lifecycle pattern is in place for future work (e.g., TCP-mode MCP,
-//      or a daemon-mediated MCP proxy).
+// The daemon does NOT pre-spawn or manage an MCP server instance because:
 //
-// For now `start_mcp` attempts to spawn the binary, logs the outcome, and
-// returns the manager. If the binary is not found, the daemon degrades
-// gracefully and continues without MCP.
-
-use std::path::Path;
-
-use tracing::{info, warn};
-
-use crate::subprocess::SubprocessManager;
-
-/// Binary name for the MCP server.
-const MCP_BINARY: &str = "orqa-mcp-server";
-
-/// Build a `SubprocessManager` for the MCP server and attempt to start it.
-///
-/// The MCP server is spawned with `project_root` as its first positional
-/// argument. The `--daemon-port` flag is passed so the MCP server can call
-/// back into the daemon for graph-level operations.
-///
-/// If the binary is not found on disk or on PATH, the function logs a warning
-/// and returns the manager in `BinaryNotFound` state — the daemon continues
-/// operating without MCP.
-pub fn start_mcp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
-    let args = vec!["--daemon-port".to_string(), daemon_port.to_string()];
-
-    let mut manager = SubprocessManager::new("mcp-server", MCP_BINARY, args);
-
-    match manager.start(project_root) {
-        Ok(()) => {
-            info!(
-                status = ?manager.status(),
-                "MCP server startup complete"
-            );
-        }
-        Err(e) => {
-            warn!(
-                error = %e,
-                "failed to spawn MCP server — daemon continues without MCP"
-            );
-        }
-    }
-
-    manager
-}
+//   1. The MCP binary reads JSON-RPC from stdin and responds on stdout. If the
+//      daemon were to spawn it with stdin set to null (which it must — the
+//      daemon has no MCP client to wire up), the server would see EOF
+//      immediately and exit. The process would be useless.
+//
+//   2. Multiple LLM clients may be active simultaneously (Claude Code in the
+//      IDE, the app sidecar, a CI agent). Each requires its own stdio pipe; a
+//      single shared daemon-managed process cannot serve multiple clients.
+//
+//   3. core.md §3.2 states: "MCP and LSP are access protocols that expose
+//      engine capabilities to consumers. They are NOT application boundaries."
+//      Business logic belongs in the engine crates. The daemon is the
+//      infrastructure layer, not an MCP broker.
+//
+// LLM clients configure `orqa-mcp-server <project-path>` as their MCP command
+// directly (e.g., in `.mcp.json` or the tool's settings). The daemon manages
+// LSP (TCP-based, legitimately persistent and shared across editors) but NOT
+// MCP (stdio-based, client-managed lifecycle).

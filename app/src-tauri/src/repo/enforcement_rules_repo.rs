@@ -1,6 +1,6 @@
 // Enforcement rules repository — delegates to the orqa-engine crate.
 //
-// Re-exposes `load_rules` from `orqa_engine::enforcement::repo`, converting the
+// Re-exposes `load_rules` from `orqa_engine::enforcement::store`, converting the
 // engine-level error to the app-level `OrqaError`. This keeps the app's callers
 // (enforcement_commands, tool_executor) unchanged while the implementation lives
 // in the engine crate.
@@ -12,11 +12,11 @@ use crate::error::OrqaError;
 
 /// Load all rule files from `rules_dir/*.md` and parse them.
 ///
-/// Delegates to `orqa_engine::enforcement::repo::load_rules`. Files that fail
+/// Delegates to `orqa_engine::enforcement::store::load_rules`. Files that fail
 /// to parse are logged as warnings and skipped — one bad rule file must not
 /// prevent other rules from loading. Returns rules sorted by name.
 pub fn load_rules(rules_dir: &Path) -> Result<Vec<EnforcementRule>, OrqaError> {
-    orqa_engine::enforcement::repo::load_rules(rules_dir).map_err(OrqaError::from)
+    orqa_engine::enforcement::store::load_rules(rules_dir).map_err(OrqaError::from)
 }
 
 #[cfg(test)]

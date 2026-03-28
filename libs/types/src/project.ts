@@ -106,6 +106,8 @@ export const DEFAULT_ARTIFACT_LINK_COLORS: Record<string, string> = {
 export interface StatusAutoRule {
 	condition: string;
 	target: string;
+	/** Condition-specific configuration (e.g. `child_type` for `all-children-completed`). */
+	params?: Record<string, string>;
 }
 
 /** A single status definition from project config — source of truth for status vocabulary. */

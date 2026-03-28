@@ -359,6 +359,68 @@
         }
       },
       {
+        "key": "principle-decision",
+        "label": "Principle Decision",
+        "plural": "Principle Decisions",
+        "icon": "scale",
+        "defaultPath": ".orqa/learning/decisions",
+        "idPrefix": "PD",
+        "frontmatter": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^PD-[a-f0-9]{8}$"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "target",
+                  "type"
+                ],
+                "properties": {
+                  "target": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "rationale": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "statuses": ["captured", "exploring", "active", "hold", "review", "completed", "surpassed", "archived"],
+        "initialStatus": "captured",
+        "stateCategories": {
+          "planning": ["captured", "exploring"],
+          "active": ["active", "hold"],
+          "review": ["review"],
+          "completed": ["completed"],
+          "terminal": ["surpassed", "archived"]
+        },
+        "influence": "high"
+      },
+      {
         "key": "doc",
         "label": "Document",
         "plural": "Documents",
@@ -439,6 +501,10 @@
       {
         "artifact_type": "doc",
         "path": "workflows/doc.workflow.yaml"
+      },
+      {
+        "artifact_type": "principle-decision",
+        "path": "workflows/principle-decision.workflow.yaml"
       }
     ],
     "enforcement_mechanisms": [

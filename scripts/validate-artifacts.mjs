@@ -359,6 +359,12 @@ function validateArtifact(fm, relPath, content) {
 	if (fm.type === "knowledge") {
 		// Rough token estimate: ~4 chars per token
 		const approxTokens = Math.ceil(content.length / 4);
+		if (approxTokens < 500) {
+			errs.push({
+				file: relPath,
+				error: `Knowledge artifact is ~${approxTokens} tokens — too short (minimum: 500 tokens)`,
+			});
+		}
 		if (approxTokens > 2000) {
 			warnings.push({
 				file: relPath,

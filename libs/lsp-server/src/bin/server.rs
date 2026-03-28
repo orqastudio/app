@@ -12,9 +12,9 @@
 //! orqa-lsp-server /path/to/project --tcp 9257
 //! ```
 //!
-//! **Daemon port** (defaults to 10258):
+//! **Daemon port** (defaults to 9120):
 //! ```
-//! orqa-lsp-server /path/to/project --daemon-port 10258
+//! orqa-lsp-server /path/to/project --daemon-port 9120
 //! ```
 //!
 //! The project path is the root of the repository containing the `.orqa/`
@@ -25,13 +25,14 @@ use std::path::PathBuf;
 use tracing_subscriber::EnvFilter;
 
 /// Default port for the validation daemon HTTP API.
-/// Reads `ORQA_PORT_BASE` from the environment (default 10200) and adds offset 58.
+///
+/// Reads `ORQA_PORT_BASE` directly as the daemon port (default 9120). This
+/// matches `daemon/src/health.rs resolve_port()` — no offset is applied.
 fn default_daemon_port() -> u16 {
-    let base: u16 = std::env::var("ORQA_PORT_BASE")
+    std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse().ok())
-        .unwrap_or(10200);
-    base + 58
+        .unwrap_or(9120)
 }
 
 #[tokio::main]
@@ -75,7 +76,7 @@ async fn main() {
 /// - `orqa-lsp-server /path/to/project`                  → given path, stdio, default daemon port
 /// - `orqa-lsp-server --tcp 9257`                        → cwd, TCP 9257, default daemon port
 /// - `orqa-lsp-server /path/to/project --tcp 9257`
-/// - `orqa-lsp-server /path/to/project --daemon-port 10258`
+/// - `orqa-lsp-server /path/to/project --daemon-port 9120`
 fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
     let mut project_root: Option<PathBuf> = None;
     let mut tcp_port: Option<u16> = None;
@@ -150,7 +151,7 @@ fn print_usage() {
     eprintln!();
     eprintln!("OPTIONS:");
     eprintln!("    --tcp PORT          Listen on TCP instead of stdio");
-    eprintln!("    --daemon-port PORT  Validation daemon port (default: 10258)");
+    eprintln!("    --daemon-port PORT  Validation daemon port (default: 9120)");
     eprintln!("    --help              Show this help message");
     eprintln!();
     eprintln!("ENVIRONMENT:");

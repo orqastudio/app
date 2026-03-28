@@ -1,15 +1,10 @@
-//! Schema-driven integrity engine — bridge to `orqa-validation`.
+//! Schema-driven integrity engine — bridge to `orqa_engine::validation` and `orqa_engine::graph`.
 //!
-//! This module forwards to the `orqa-validation` standalone crate. All check
-//! logic now lives in that crate; this module provides the compatibility shim
-//! so that call sites within the app continue to compile without modification.
+//! This module forwards to the engine crate, which centralises all direct
+//! dependencies on `orqa_validation`. The Tauri app binary never imports
+//! `orqa_validation` directly; all paths go through `orqa_engine`.
 //!
-//! Previously this module used JSON round-trip conversion between the app's
-//! duplicate `ArtifactGraph` type and the lib's type. Now that `artifact_graph.rs`
-//! re-exports the canonical types directly from `orqa_validation`, no conversion
-//! is needed — both sides use the same type.
-//!
-//! Public API re-exported from `orqa_validation`:
+//! Public API re-exported from `orqa_engine`:
 //! - [`RelationshipSchema`]
 //! - [`RelationshipConstraints`]
 //! - [`StatusRule`]
@@ -17,25 +12,25 @@
 //! - [`build_validation_context`]
 //! - [`run_schema_checks`]
 
-use orqa_validation::ArtifactGraph;
+use orqa_engine::graph::ArtifactGraph;
 
 use crate::domain::artifact_graph::IntegrityCheck;
-// DeliveryConfig and ProjectRelationshipConfig are re-exported from orqa_validation::settings
+// DeliveryConfig and ProjectRelationshipConfig are re-exported from orqa_engine::validation
 // in project_settings.rs, so they are the SAME type as the validation lib's — no conversion needed.
 use crate::domain::project_settings::{DeliveryConfig, ProjectRelationshipConfig};
 
 // ---------------------------------------------------------------------------
-// Re-exports from orqa-validation
+// Re-exports from orqa_engine::validation
 // ---------------------------------------------------------------------------
 
-/// Re-exported from `orqa_validation::types`.
-pub use orqa_validation::RelationshipConstraints;
-/// Re-exported from `orqa_validation::types`.
-pub use orqa_validation::RelationshipSchema;
-/// Re-exported from `orqa_validation::types`.
-pub use orqa_validation::StatusRule;
-/// Re-exported from `orqa_validation::types`.
-pub use orqa_validation::ValidationContext;
+/// Re-exported from `orqa_engine::validation`.
+pub use orqa_engine::validation::RelationshipConstraints;
+/// Re-exported from `orqa_engine::validation`.
+pub use orqa_engine::validation::RelationshipSchema;
+/// Re-exported from `orqa_engine::validation`.
+pub use orqa_engine::validation::StatusRule;
+/// Re-exported from `orqa_engine::validation`.
+pub use orqa_engine::validation::ValidationContext;
 
 // ---------------------------------------------------------------------------
 // Context building
@@ -44,20 +39,17 @@ pub use orqa_validation::ValidationContext;
 /// Build a `ValidationContext` by merging platform config, project relationships,
 /// and plugin manifests.
 ///
-/// Delegates to [`orqa_validation::build_validation_context`].
+/// Delegates to [`orqa_engine::validation::build_validation_context`].
 ///
-/// Build a `ValidationContext` by merging platform config, project relationships,
-/// and plugin manifests.
-///
-/// Since `DeliveryConfig` and `ProjectRelationshipConfig` are now re-exported from
-/// `orqa_validation::settings`, they are the same type — no conversion needed.
+/// Since `DeliveryConfig` and `ProjectRelationshipConfig` are the same types
+/// re-exported from `orqa_engine::validation`, no conversion is needed.
 pub fn build_validation_context(
     valid_statuses: &[String],
     delivery: &DeliveryConfig,
     project_relationships: &[ProjectRelationshipConfig],
     plugin_relationships: &[RelationshipSchema],
 ) -> ValidationContext {
-    orqa_validation::build_validation_context(
+    orqa_engine::validation::build_validation_context(
         valid_statuses,
         delivery,
         project_relationships,
@@ -71,30 +63,30 @@ pub fn build_validation_context(
 
 /// Run all schema-driven integrity checks on the artifact graph.
 ///
-/// Delegates to [`orqa_validation::validate`].
+/// Delegates to [`orqa_engine::graph::validate`].
 ///
-/// Since `ArtifactGraph` and `IntegrityCheck` are now the canonical types
-/// from `orqa_validation`, no conversion is needed.
+/// Since `ArtifactGraph` and `IntegrityCheck` are the canonical types
+/// from `orqa_engine::graph`, no conversion is needed.
 pub fn run_schema_checks(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityCheck> {
-    orqa_validation::validate(graph, ctx)
+    orqa_engine::graph::validate(graph, ctx)
 }
 
 // ---------------------------------------------------------------------------
 // Traceability
 // ---------------------------------------------------------------------------
 
-/// Re-exported traceability types from `orqa_validation`.
-pub use orqa_validation::{AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact};
+/// Re-exported traceability types from `orqa_engine::metrics`.
+pub use orqa_engine::metrics::{AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact};
 
 /// Compute full traceability for a single artifact by ID.
 ///
-/// Delegates to [`orqa_validation::compute_traceability`].
+/// Delegates to [`orqa_engine::graph::compute_traceability`].
 ///
-/// Since `ArtifactGraph` is now the canonical type from `orqa_validation`,
+/// Since `ArtifactGraph` is now the canonical type from `orqa_engine::graph`,
 /// no round-trip conversion is needed.
 pub fn compute_traceability_for(
     graph: &ArtifactGraph,
     artifact_id: &str,
 ) -> Result<TraceabilityResult, serde_json::Error> {
-    Ok(orqa_validation::compute_traceability(graph, artifact_id))
+    Ok(orqa_engine::graph::compute_traceability(graph, artifact_id))
 }

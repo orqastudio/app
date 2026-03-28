@@ -2,11 +2,16 @@
 //
 // Assembles a structured system prompt from governance artifacts on disk:
 // rules, knowledge catalog, project instructions, and agent definitions.
-// This is the filesystem-based, AppState-free portion of prompt generation.
-// The consuming access layer (app, daemon, CLI) may augment the result with
-// context messages, session state, or other runtime data.
+// Agent definitions are sourced from installed plugins (P1: Plugin-Composed Everything)
+// rather than any static file — the engine reads what plugins declare, not what is
+// hardcoded. This is the filesystem-based, AppState-free portion of prompt generation.
+// The consuming access layer (app, daemon, CLI) may augment the result with context
+// messages, session state, or other runtime data.
 
 use std::path::Path;
+
+use crate::plugin::discovery::scan_plugins;
+use crate::plugin::manifest::{read_manifest, AgentDefinition};
 
 /// Read a governance file from the project directory.
 ///
@@ -96,13 +101,83 @@ pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
     rules
 }
 
+/// Collect agent role definitions from installed plugins.
+///
+/// Sources agent definitions in priority order:
+/// 1. `provides.agents` entries in each installed plugin's manifest — structured definitions
+///    contributed directly by the plugin (P1: Plugin-Composed Everything).
+/// 2. `.orqa/process/agents/*.md` — files synced from plugin `content.agents` directories
+///    at install time, containing the full agent markdown with capabilities and preamble.
+///
+/// Returns a combined list of `AgentDefinition` values. Callers that need the full
+/// markdown content of individual agents should read `.orqa/process/agents/` directly.
+/// Returns an empty vec if no installed plugins define agents.
+pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinition> {
+    let mut agents: Vec<AgentDefinition> = Vec::new();
+
+    // Primary source: provides.agents in installed plugin manifests.
+    let discovered = scan_plugins(project_path);
+    for plugin in &discovered {
+        let plugin_path = std::path::Path::new(&plugin.path);
+        if let Ok(manifest) = read_manifest(plugin_path) {
+            for agent_def in manifest.provides.agents {
+                agents.push(agent_def);
+            }
+        }
+    }
+
+    agents
+}
+
+/// Read agent markdown files installed to `.orqa/process/agents/`.
+///
+/// These files are synced from plugin `content.agents` directories at install time.
+/// Each file is a full agent definition with YAML frontmatter and markdown body.
+/// Returns a sorted list of `(filename_stem, content)` pairs.
+/// Returns an empty vec if the agents directory does not exist.
+fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
+    let agents_dir = project_path
+        .join(".orqa")
+        .join("process")
+        .join("agents");
+    let mut agent_files = Vec::new();
+
+    let Ok(read_dir) = std::fs::read_dir(&agents_dir) else {
+        return agent_files;
+    };
+
+    for entry in read_dir.flatten() {
+        let path = entry.path();
+        if !path.is_file() || path.extension().and_then(|e| e.to_str()) != Some("md") {
+            continue;
+        }
+
+        let stem = path
+            .file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("unknown")
+            .to_string();
+
+        if let Ok(contents) = std::fs::read_to_string(&path) {
+            agent_files.push((stem, contents));
+        }
+    }
+
+    agent_files.sort_by(|a, b| a.0.cmp(&b.0));
+    agent_files
+}
+
 /// Build a structured system prompt from the project's governance artifacts.
 ///
 /// Reads:
 /// - `.orqa/rules/*.md` — rule files (full content)
 /// - `.claude/CLAUDE.md` — project instructions (full content, platform config)
-/// - `AGENTS.md` — agent definitions (full content)
+/// - `.orqa/process/agents/*.md` — agent definitions synced from installed plugins
 /// - `.orqa/process/knowledge/*.md` — knowledge catalog (name + one-line description only)
+///
+/// Agent definitions come from installed plugins, not from any static hardcoded file,
+/// satisfying P1 (Plugin-Composed Everything). If no plugins have installed agent
+/// definitions, the "Agent Definitions" section is omitted gracefully.
 ///
 /// Returns the assembled prompt string. Returns `Err` only on I/O failures;
 /// missing optional files are silently skipped.
@@ -134,9 +209,15 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
         parts.push(claude_md);
     }
 
-    if let Some(agents_md) = read_governance_file(project_path, "AGENTS.md")? {
+    // Agent definitions come from installed plugin content (P1: Plugin-Composed Everything).
+    // The `.orqa/process/agents/` directory is populated at plugin install time from
+    // each plugin's `content.agents` source directory.
+    let agent_files = read_installed_agent_files(project_path);
+    if !agent_files.is_empty() {
         parts.push("\n## Agent Definitions".to_string());
-        parts.push(agents_md);
+        for (_name, content) in &agent_files {
+            parts.push(content.clone());
+        }
     }
 
     Ok(parts.join("\n"))
@@ -228,6 +309,47 @@ mod tests {
         assert!(prompt.contains("## Available Knowledge"));
         assert!(prompt.contains("arch-overview"));
         assert!(prompt.contains("Architecture Overview"));
+    }
+
+    #[test]
+    fn build_system_prompt_includes_plugin_agent_definitions() {
+        // Agents installed to .orqa/process/agents/ (synced from plugin content.agents)
+        // should appear in the generated prompt under "Agent Definitions".
+        let dir = make_project();
+        let agents_dir = dir
+            .path()
+            .join(".orqa")
+            .join("process")
+            .join("agents");
+        fs::create_dir_all(&agents_dir).expect("create agents dir");
+        fs::write(
+            agents_dir.join("AGENT-abc123.md"),
+            "---\nid: AGENT-abc123\ntitle: Orchestrator\n---\n# Orchestrator\n\nCoordinates workers.\n",
+        )
+        .expect("write agent file");
+
+        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        assert!(prompt.contains("## Agent Definitions"));
+        assert!(prompt.contains("Orchestrator"));
+        assert!(prompt.contains("Coordinates workers."));
+    }
+
+    #[test]
+    fn build_system_prompt_no_agents_section_when_no_plugins_installed() {
+        // When no agent files are installed, the "Agent Definitions" section must be absent.
+        // This replaces the old AGENTS.md fallback — if no plugin provides agents,
+        // the section is simply omitted (graceful degradation).
+        let dir = make_project();
+        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        assert!(!prompt.contains("## Agent Definitions"));
+    }
+
+    #[test]
+    fn collect_plugin_agent_definitions_empty_when_no_plugins() {
+        // With no project.json and no installed plugins, the result must be empty.
+        let dir = make_project();
+        let agents = collect_plugin_agent_definitions(dir.path());
+        assert!(agents.is_empty());
     }
 
     #[test]

@@ -6,6 +6,8 @@
 // the engine's own modules. This module contains no I/O — it only reads the
 // graph and status config passed in.
 
+use std::collections::HashMap;
+
 use crate::graph::{ArtifactGraph, ArtifactNode};
 use crate::project::StatusDefinition;
 use crate::types::workflow::ProposedTransition;
@@ -44,9 +46,14 @@ pub fn evaluate_transitions(
         };
 
         for rule in &status_def.auto_rules {
-            if let Some(proposal) =
-                evaluate_condition(graph, node, current_status, &rule.condition, &rule.target)
-            {
+            if let Some(proposal) = evaluate_condition(
+                graph,
+                node,
+                current_status,
+                &rule.condition,
+                &rule.target,
+                &rule.params,
+            ) {
                 proposals.push(proposal);
             }
         }
@@ -62,29 +69,31 @@ pub fn evaluate_transitions(
 /// Evaluate a single named condition for a given artifact node.
 ///
 /// Returns `Some(ProposedTransition)` when the condition is met, `None` otherwise.
+/// `params` carries condition-specific configuration from the rule declaration.
 ///
 /// ### Supported conditions
 ///
-/// | Condition | Meaning | auto_apply |
-/// |-----------|---------|-----------|
-/// | `all-children-completed` | All child artifacts (tasks linked by `delivers` edge) are completed | `false` |
-/// | `all-p1-children-completed` | All P1 child epics (linked by `delivers` relationship to this milestone) are completed | `false` |
-/// | `dependency-blocked` | At least one `depends-on` item is not completed | `true` |
-/// | `dependencies-met` | All `depends-on` items are completed; node must currently be `blocked` | `true` |
-/// | `recurrence-threshold` | `recurrence` frontmatter field is ≥ 2 | `false` |
+/// | Condition | Meaning | Required params | auto_apply |
+/// |-----------|---------|-----------------|-----------|
+/// | `all-children-completed` | All children of the given type (linked by `delivers`) are completed | `child_type` | `false` |
+/// | `all-p1-children-completed` | All P1 children of the given type (linked by `delivers`) are completed | `child_type` | `false` |
+/// | `dependency-blocked` | At least one `depends-on` item is not completed | — | `true` |
+/// | `dependencies-met` | All `depends-on` items are completed; node must currently be `blocked` | — | `true` |
+/// | `recurrence-threshold` | `recurrence` frontmatter field is ≥ 2 | — | `false` |
 fn evaluate_condition(
     graph: &ArtifactGraph,
     node: &ArtifactNode,
     current_status: &str,
     condition: &str,
     target: &str,
+    params: &HashMap<String, String>,
 ) -> Option<ProposedTransition> {
     match condition {
         "all-children-completed" => {
-            check_all_children_completed(graph, node, current_status, target)
+            check_all_children_completed(graph, node, current_status, target, params)
         }
         "all-p1-children-completed" => {
-            check_all_p1_children_completed(graph, node, current_status, target)
+            check_all_p1_children_completed(graph, node, current_status, target, params)
         }
         "dependency-blocked" => check_dependency_blocked(graph, node, current_status, target),
         "dependencies-met" => check_dependencies_met(graph, node, current_status, target),
@@ -104,20 +113,26 @@ fn evaluate_condition(
 // Condition: all-children-completed
 // ---------------------------------------------------------------------------
 
-/// Proposes `target` when all child artifacts (tasks referencing this node via
-/// `delivers` relationship edge) are completed.
+/// Proposes `target` when all child artifacts of the configured type (referencing
+/// this node via `delivers` relationship edge) are completed.
+///
+/// Requires `params["child_type"]` to identify the artifact type to inspect.
+/// Returns `None` without a `child_type` param so misconfigured rules fail safe.
 fn check_all_children_completed(
     graph: &ArtifactGraph,
     node: &ArtifactNode,
     current_status: &str,
     target: &str,
+    params: &HashMap<String, String>,
 ) -> Option<ProposedTransition> {
-    // Collect all tasks that reference this node via a `delivers` relationship.
+    let child_type = params.get("child_type")?;
+
+    // Collect all nodes of `child_type` that reference this node via `delivers`.
     let children: Vec<&ArtifactNode> = graph
         .nodes
         .values()
         .filter(|n| {
-            if n.artifact_type != "task" {
+            if &n.artifact_type != child_type {
                 return false;
             }
             n.references_out.iter().any(|r| {
@@ -140,7 +155,11 @@ fn check_all_children_completed(
             artifact_path: node.path.clone(),
             current_status: current_status.to_owned(),
             proposed_status: target.to_owned(),
-            reason: format!("All {} related task(s) are completed", children.len()),
+            reason: format!(
+                "All {} related {}(s) are completed",
+                children.len(),
+                child_type
+            ),
             auto_apply: false,
         })
     } else {
@@ -152,22 +171,28 @@ fn check_all_children_completed(
 // Condition: all-p1-children-completed
 // ---------------------------------------------------------------------------
 
-/// Proposes `target` when all P1 child epics (referencing this node via
-/// `delivers` relationship) are completed.
+/// Proposes `target` when all P1 children of the configured type (referencing
+/// this node via `delivers` relationship) are completed.
+///
+/// Requires `params["child_type"]` to identify the artifact type to inspect.
+/// Returns `None` without a `child_type` param so misconfigured rules fail safe.
 fn check_all_p1_children_completed(
     graph: &ArtifactGraph,
     node: &ArtifactNode,
     current_status: &str,
     target: &str,
+    params: &HashMap<String, String>,
 ) -> Option<ProposedTransition> {
-    let p1_epics: Vec<&ArtifactNode> = graph
+    let child_type = params.get("child_type")?;
+
+    let p1_children: Vec<&ArtifactNode> = graph
         .nodes
         .values()
         .filter(|n| {
-            if n.artifact_type != "epic" {
+            if &n.artifact_type != child_type {
                 return false;
             }
-            // Epic must have a `delivers` relationship to this milestone.
+            // Child must have a `delivers` relationship to this node.
             let targets_this = n.references_out.iter().any(|r| {
                 r.relationship_type.as_deref() == Some("delivers") && r.target_id == node.id
             });
@@ -182,11 +207,11 @@ fn check_all_p1_children_completed(
         })
         .collect();
 
-    if p1_epics.is_empty() {
+    if p1_children.is_empty() {
         return None;
     }
 
-    let all_completed = p1_epics
+    let all_completed = p1_children
         .iter()
         .all(|e| e.status.as_deref() == Some("completed") || e.status.as_deref() == Some("done"));
 
@@ -197,8 +222,9 @@ fn check_all_p1_children_completed(
             current_status: current_status.to_owned(),
             proposed_status: target.to_owned(),
             reason: format!(
-                "All {} P1 epic(s) for this milestone are completed",
-                p1_epics.len()
+                "All {} P1 {}(s) for this node are completed",
+                p1_children.len(),
+                child_type
             ),
             auto_apply: false,
         })
@@ -442,6 +468,8 @@ mod tests {
         }
     }
 
+    /// Build a `StatusDefinition` with auto rules that carry no params.
+    /// Use `status_with_params` when rules need condition-specific config.
     fn status(key: &str, auto_rules: Vec<(&str, &str)>) -> StatusDefinition {
         StatusDefinition {
             key: key.to_owned(),
@@ -454,9 +482,39 @@ mod tests {
                 .map(|(condition, target)| StatusAutoRule {
                     condition: condition.to_owned(),
                     target: target.to_owned(),
+                    params: HashMap::new(),
                 })
                 .collect(),
         }
+    }
+
+    /// Build a `StatusDefinition` where each auto rule carries the given params map.
+    fn status_with_params(
+        key: &str,
+        auto_rules: Vec<(&str, &str, HashMap<String, String>)>,
+    ) -> StatusDefinition {
+        StatusDefinition {
+            key: key.to_owned(),
+            label: key.to_owned(),
+            icon: "circle".to_owned(),
+            spin: false,
+            transitions: Vec::new(),
+            auto_rules: auto_rules
+                .into_iter()
+                .map(|(condition, target, params)| StatusAutoRule {
+                    condition: condition.to_owned(),
+                    target: target.to_owned(),
+                    params,
+                })
+                .collect(),
+        }
+    }
+
+    /// Convenience: build the params map expected by child-type conditions.
+    fn child_type_params(child_type: &str) -> HashMap<String, String> {
+        let mut m = HashMap::new();
+        m.insert("child_type".to_owned(), child_type.to_owned());
+        m
     }
 
     // -----------------------------------------------------------------------
@@ -470,7 +528,14 @@ mod tests {
         let task2 = make_child("TASK-002", "task", "done", "EPIC-001");
         let graph = make_graph(vec![epic, task1, task2]);
         let statuses = vec![
-            status("in-progress", vec![("all-children-completed", "review")]),
+            status_with_params(
+                "in-progress",
+                vec![(
+                    "all-children-completed",
+                    "review",
+                    child_type_params("task"),
+                )],
+            ),
             status("completed", vec![]),
             status("done", vec![]),
         ];
@@ -493,7 +558,14 @@ mod tests {
         let task2 = make_child("TASK-004", "task", "in-progress", "EPIC-002");
         let graph = make_graph(vec![epic, task1, task2]);
         let statuses = vec![
-            status("in-progress", vec![("all-children-completed", "review")]),
+            status_with_params(
+                "in-progress",
+                vec![(
+                    "all-children-completed",
+                    "review",
+                    child_type_params("task"),
+                )],
+            ),
             status("completed", vec![]),
         ];
 
@@ -507,7 +579,14 @@ mod tests {
     fn rule1_no_proposal_when_no_related_tasks() {
         let epic = make_node("EPIC-003", "epic", "active", serde_json::json!({}));
         let graph = make_graph(vec![epic]);
-        let statuses = vec![status("active", vec![("all-children-completed", "review")])];
+        let statuses = vec![status_with_params(
+            "active",
+            vec![(
+                "all-children-completed",
+                "review",
+                child_type_params("task"),
+            )],
+        )];
 
         let proposals = evaluate_transitions(&graph, &statuses);
         assert!(proposals.iter().all(|p| p.artifact_id != "EPIC-003"));
@@ -525,7 +604,14 @@ mod tests {
         });
         let graph = make_graph(vec![epic, task]);
         let statuses = vec![
-            status("active", vec![("all-children-completed", "review")]),
+            status_with_params(
+                "active",
+                vec![(
+                    "all-children-completed",
+                    "review",
+                    child_type_params("task"),
+                )],
+            ),
             status("completed", vec![]),
         ];
 
@@ -539,6 +625,22 @@ mod tests {
         assert_eq!(epic_proposals[0].proposed_status, "review");
     }
 
+    #[test]
+    fn rule1_no_proposal_when_child_type_param_missing() {
+        // A rule without child_type param must fail safe and produce no proposal.
+        let epic = make_node("EPIC-011", "epic", "active", serde_json::json!({}));
+        let task = make_child("TASK-011", "task", "completed", "EPIC-011");
+        let graph = make_graph(vec![epic, task]);
+        let statuses = vec![
+            // No child_type param — rule is misconfigured.
+            status("active", vec![("all-children-completed", "review")]),
+            status("completed", vec![]),
+        ];
+
+        let proposals = evaluate_transitions(&graph, &statuses);
+        assert!(proposals.iter().all(|p| p.artifact_id != "EPIC-011"));
+    }
+
     // -----------------------------------------------------------------------
     // Rule 2 — milestone to review
     // -----------------------------------------------------------------------
@@ -550,7 +652,14 @@ mod tests {
         let epic2 = make_child_with_priority("EPIC-012", "epic", "completed", "MS-001", "P1");
         let graph = make_graph(vec![ms, epic1, epic2]);
         let statuses = vec![
-            status("active", vec![("all-p1-children-completed", "review")]),
+            status_with_params(
+                "active",
+                vec![(
+                    "all-p1-children-completed",
+                    "review",
+                    child_type_params("epic"),
+                )],
+            ),
             status("completed", vec![]),
         ];
 
@@ -572,7 +681,14 @@ mod tests {
         let epic2 = make_child_with_priority("EPIC-014", "epic", "in-progress", "MS-002", "P1");
         let graph = make_graph(vec![ms, epic1, epic2]);
         let statuses = vec![
-            status("active", vec![("all-p1-children-completed", "review")]),
+            status_with_params(
+                "active",
+                vec![(
+                    "all-p1-children-completed",
+                    "review",
+                    child_type_params("epic"),
+                )],
+            ),
             status("completed", vec![]),
             status("in-progress", vec![]),
         ];
@@ -589,7 +705,14 @@ mod tests {
         let epic_p2 = make_child_with_priority("EPIC-016", "epic", "in-progress", "MS-003", "P2");
         let graph = make_graph(vec![ms, epic_p1, epic_p2]);
         let statuses = vec![
-            status("active", vec![("all-p1-children-completed", "review")]),
+            status_with_params(
+                "active",
+                vec![(
+                    "all-p1-children-completed",
+                    "review",
+                    child_type_params("epic"),
+                )],
+            ),
             status("completed", vec![]),
             status("in-progress", vec![]),
         ];
@@ -610,12 +733,35 @@ mod tests {
         let epic_p2 = make_child_with_priority("EPIC-017", "epic", "completed", "MS-004", "P2");
         let graph = make_graph(vec![ms, epic_p2]);
         let statuses = vec![
-            status("active", vec![("all-p1-children-completed", "review")]),
+            status_with_params(
+                "active",
+                vec![(
+                    "all-p1-children-completed",
+                    "review",
+                    child_type_params("epic"),
+                )],
+            ),
             status("completed", vec![]),
         ];
 
         let proposals = evaluate_transitions(&graph, &statuses);
         assert!(proposals.iter().all(|p| p.artifact_id != "MS-004"));
+    }
+
+    #[test]
+    fn rule2_no_proposal_when_child_type_param_missing() {
+        // A rule without child_type param must fail safe and produce no proposal.
+        let ms = make_node("MS-005", "milestone", "active", serde_json::json!({}));
+        let epic = make_child_with_priority("EPIC-018", "epic", "completed", "MS-005", "P1");
+        let graph = make_graph(vec![ms, epic]);
+        let statuses = vec![
+            // No child_type param — rule is misconfigured.
+            status("active", vec![("all-p1-children-completed", "review")]),
+            status("completed", vec![]),
+        ];
+
+        let proposals = evaluate_transitions(&graph, &statuses);
+        assert!(proposals.iter().all(|p| p.artifact_id != "MS-005"));
     }
 
     // -----------------------------------------------------------------------
@@ -824,7 +970,14 @@ mod tests {
     #[test]
     fn empty_graph_returns_no_proposals() {
         let graph = make_graph(vec![]);
-        let statuses = vec![status("active", vec![("all-children-completed", "review")])];
+        let statuses = vec![status_with_params(
+            "active",
+            vec![(
+                "all-children-completed",
+                "review",
+                child_type_params("task"),
+            )],
+        )];
         let proposals = evaluate_transitions(&graph, &statuses);
         assert!(proposals.is_empty());
     }

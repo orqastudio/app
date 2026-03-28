@@ -1,0 +1,212 @@
+#!/usr/bin/env bash
+# OrqaStudio pre-commit hook — GENERATED from enforcement rules.
+#
+# Thin orchestrator. All business logic lives in `orqa` CLI commands or
+# external lint tools. This script:
+#   1. Detects which file types are staged
+#   2. Calls the appropriate CLI commands / lint tools
+#   3. Logs violations for stability tracking
+#   4. Exits non-zero if any check fails
+#
+# Install: git config core.hooksPath .githooks
+# Override: ORQA_SKIP_HOOKS=1 git commit (emergencies only)
+#
+# Checks performed (per ARCHITECTURE.md A.4):
+#   1. Artifact auto-linking (mutation — fixes bare IDs before validation)
+#   2. Artifact validation (frontmatter, schema, relationships, transitions,
+#      links, pipeline, plugin sources, historical preservation, config
+#      consistency, task deps, epic readiness, core protection, knowledge size)
+#   3. Lint checks (eslint for TS/Svelte, clippy for Rust, markdownlint for .md)
+#   4. Format checks (rustfmt for Rust)
+#   5. Stub scanner (TODO/FIXME, console.log, dbg!, unwrap!)
+#   6. Lint suppression audit (every suppression needs an accepted AD-NNN)
+#   7. Scoped tests (only tests affected by staged changes)
+
+set -euo pipefail
+
+# ── Emergency skip ─────────────────────────────────────────────────────────
+if [ "${ORQA_SKIP_HOOKS:-}" = "1" ]; then
+  echo "WARNING: ORQA_SKIP_HOOKS=1 — skipping all pre-commit checks"
+  exit 0
+fi
+
+# ── Find project root ─────────────────────────────────────────────────────
+find_root() {
+  local dir="$PWD"
+  while [ "$dir" != "/" ]; do
+    if [ -d "$dir/.orqa" ]; then
+      echo "$dir"
+      return
+    fi
+    dir="$(dirname "$dir")"
+  done
+  echo "$PWD"
+}
+
+PROJECT_ROOT=$(find_root)
+
+# ── Violation logging ──────────────────────────────────────────────────────
+log_violation() {
+  local vtype="$1"
+  local domain="$2"
+  local detail="$3"
+  mkdir -p "$PROJECT_ROOT/.state"
+  local ts
+  ts=$(date -u +"%Y-%m-%dT%H:%M:%SZ" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%SZ")
+  local staged_files
+  staged_files=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null | head -20 | tr '\n' ',' | sed 's/,$//')
+  printf '{"timestamp":"%s","violation_type":"%s","domain":"%s","detail":"%s","files":"%s"}\n' \
+    "$ts" "$vtype" "$domain" "$detail" "$staged_files" \
+    >> "$PROJECT_ROOT/.state/precommit-violations.jsonl"
+}
+
+# ── Resolve orqa CLI ───────────────────────────────────────────────────────
+if ! command -v orqa &> /dev/null; then
+  if [ -f "$PROJECT_ROOT/libs/cli/dist/cli.js" ]; then
+    ORQA="node $PROJECT_ROOT/libs/cli/dist/cli.js"
+  else
+    echo "WARNING: orqa CLI not available — skipping pre-commit checks"
+    exit 0
+  fi
+else
+  ORQA="orqa"
+fi
+
+# ── Detect staged file types ──────────────────────────────────────────────
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR 2>/dev/null || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "=== Pre-commit: No staged files ==="
+  exit 0
+fi
+
+HAS_RUST=false
+HAS_FRONTEND=false
+HAS_ARTIFACTS=false
+HAS_MARKDOWN=false
+
+while IFS= read -r file; do
+  case "$file" in
+    *.rs|Cargo.toml|Cargo.lock)    HAS_RUST=true ;;
+    *.svelte|*.ts|*.js|*.css|*.html) HAS_FRONTEND=true ;;
+    .orqa/*.md|plugins/*.md)       HAS_ARTIFACTS=true ;;
+  esac
+  case "$file" in
+    *.md) HAS_MARKDOWN=true ;;
+  esac
+done <<< "$STAGED_FILES"
+
+FAILED=false
+
+echo "=== Pre-commit: Running quality checks ==="
+
+# ── 1. Artifact auto-linking (mutation step) ──────────────────────────────
+if [ "$HAS_ARTIFACTS" = true ]; then
+  echo "--- Artifacts: auto-link bare IDs ---"
+  $ORQA fix autolink --staged 2>&1 || {
+    log_violation "autolink" "artifacts" "auto-link failed"
+    echo "WARNING: auto-link failed (non-blocking)"
+  }
+fi
+
+# ── 2. Artifact validation (single engine invocation) ─────────────────────
+if [ "$HAS_ARTIFACTS" = true ]; then
+  echo "--- Artifacts: validation engine ---"
+  $ORQA validate --staged 2>&1 || {
+    log_violation "validate" "artifacts" "validation engine found errors"
+    FAILED=true
+  }
+fi
+
+# ── 3. Rust checks ────────────────────────────────────────────────────────
+if [ "$HAS_RUST" = true ]; then
+  echo "--- Rust: rustfmt ---"
+  $ORQA check rustfmt 2>&1 || {
+    log_violation "rustfmt" "rust" "format check failed"
+    FAILED=true
+  }
+
+  echo "--- Rust: clippy ---"
+  $ORQA check clippy 2>&1 || {
+    log_violation "clippy" "rust" "clippy warnings"
+    FAILED=true
+  }
+fi
+
+# ── 4. Frontend checks ────────────────────────────────────────────────────
+if [ "$HAS_FRONTEND" = true ]; then
+  STAGED_FE=$(echo "$STAGED_FILES" | grep -E '\.(svelte|ts|js)$' || true)
+  if [ -n "$STAGED_FE" ]; then
+    echo "--- Frontend: eslint (staged files only) ---"
+    echo "$STAGED_FE" | xargs npx eslint \
+      --no-error-on-unmatched-pattern \
+      --max-warnings 0 \
+      2>&1 || {
+        log_violation "eslint" "frontend" "lint errors"
+        FAILED=true
+      }
+  fi
+fi
+
+# ── 5. Markdownlint ───────────────────────────────────────────────────────
+if [ "$HAS_MARKDOWN" = true ]; then
+  STAGED_MD=$(echo "$STAGED_FILES" | grep -E '\.md$' || true)
+  if [ -n "$STAGED_MD" ]; then
+    echo "--- Markdown: markdownlint (staged files only) ---"
+    echo "$STAGED_MD" | xargs npx markdownlint-cli2 \
+      2>&1 || {
+        log_violation "markdownlint" "markdown" "markdown lint errors"
+        FAILED=true
+      }
+  fi
+fi
+
+# ── 6. Stub scanner ───────────────────────────────────────────────────────
+if [ "$HAS_RUST" = true ] || [ "$HAS_FRONTEND" = true ]; then
+  STAGED_CODE=$(echo "$STAGED_FILES" | grep -E '\.(rs|ts|svelte|js)$' || true)
+  if [ -n "$STAGED_CODE" ]; then
+    echo "--- Code: stub scanner ---"
+    $ORQA check stubs --staged 2>&1 || {
+      log_violation "stubs" "code" "stub patterns found"
+      FAILED=true
+    }
+  fi
+fi
+
+# ── 7. Lint suppression audit ─────────────────────────────────────────────
+if [ "$HAS_RUST" = true ] || [ "$HAS_FRONTEND" = true ]; then
+  STAGED_SOURCE=$(echo "$STAGED_FILES" | grep -E '\.(rs|ts|js|svelte|tsx|jsx)$' || true)
+  if [ -n "$STAGED_SOURCE" ]; then
+    echo "--- Code: lint suppression audit ---"
+    $ORQA check lint-suppressions --staged 2>&1 || {
+      log_violation "lint-suppressions" "code" "undocumented suppressions"
+      FAILED=true
+    }
+  fi
+fi
+
+# ── 8. Scoped tests ───────────────────────────────────────────────────────
+if [ "$HAS_RUST" = true ]; then
+  echo "--- Rust: scoped tests ---"
+  $ORQA check test-rust --staged 2>&1 || {
+    log_violation "test-rust" "rust" "test failures"
+    FAILED=true
+  }
+fi
+
+if [ "$HAS_FRONTEND" = true ]; then
+  echo "--- Frontend: scoped tests ---"
+  $ORQA check test-frontend --staged 2>&1 || {
+    log_violation "test-frontend" "frontend" "test failures"
+    FAILED=true
+  }
+fi
+
+# ── Result ─────────────────────────────────────────────────────────────────
+if [ "$FAILED" = true ]; then
+  echo ""
+  echo "BLOCKED: Pre-commit checks found errors. Fix them before committing."
+  exit 1
+fi
+
+echo "=== Pre-commit: All checks passed ==="
