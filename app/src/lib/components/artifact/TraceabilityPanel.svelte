@@ -10,6 +10,7 @@
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import type { TraceabilityResult, AncestryChain } from "@orqastudio/types";
+	import { iconForArtifactType } from "$lib/config/relationship-icons";
 
 	interface Props {
 		result: TraceabilityResult | null;
@@ -22,27 +23,6 @@
 	let open = $state(false);
 	let descendantsOpen = $state(false);
 	let siblingsOpen = $state(false);
-
-	/**
-	 * Icon name for a given artifact type.
-	 */
-	function iconForType(artifactType: string): string {
-		switch (artifactType) {
-			case "pillar": return "columns-3";
-			case "vision": return "telescope";
-			case "epic": return "layers";
-			case "task": return "check-square";
-			case "milestone": return "flag";
-			case "idea": return "lightbulb";
-			case "decision": return "scale";
-			case "research": return "microscope";
-			case "rule": return "shield";
-			case "knowledge": return "book-open";
-			case "agent": return "bot";
-			case "hook": return "webhook";
-			default: return "file-text";
-		}
-	}
 
 	/**
 	 * Whether the panel has any content to show (after a successful load).
@@ -151,7 +131,7 @@
 												style={nodeIdx === 0 ? "" : `margin-left: ${nodeIdx * 8}px`}
 											>
 												<span class="shrink-0 text-muted-foreground">
-													<Icon name={iconForType(node.artifact_type)} size="xs" />
+													<Icon name={iconForArtifactType(node.artifact_type)} size="xs" />
 												</span>
 												<ArtifactLink id={node.id} />
 												{#if node.artifact_type === "pillar" || node.artifact_type === "vision"}

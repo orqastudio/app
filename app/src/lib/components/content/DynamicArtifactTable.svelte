@@ -4,6 +4,7 @@
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import { statusIconName, resolveIcon } from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
+	import { PRIORITY_ORDER, STATUS_ORDER } from "$lib/config/sort-orders";
 
 	let {
 		parentId,
@@ -17,23 +18,6 @@
 		/** The frontmatter field that links children to parent (e.g. "epic"). */
 		refField: string;
 	} = $props();
-
-	/** Priority sort order (P1 first, then P2, P3, unset last). */
-	const PRIORITY_ORDER: Record<string, number> = { P1: 0, P2: 1, P3: 2 };
-
-	/** Status sort order for secondary sorting. */
-	const STATUS_ORDER: Record<string, number> = {
-		active: 0,
-		review: 1,
-		ready: 2,
-		prioritised: 3,
-		exploring: 4,
-		captured: 5,
-		blocked: 6,
-		hold: 7,
-		completed: 8,
-		surpassed: 9,
-	};
 
 	/** Find all artifacts of childType where frontmatter[refField] matches parentId. */
 	const children = $derived.by((): ArtifactNode[] => {

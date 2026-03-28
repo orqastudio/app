@@ -7,6 +7,7 @@
 	import { Textarea } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ProjectScanResult } from "@orqastudio/types";
+	import { CLAUDE_MODEL_OPTIONS } from "$lib/components/conversation/model-options";
 
 	interface Props {
 		settings: ProjectSettings;
@@ -40,12 +41,7 @@
 		};
 	}
 
-	const modelOptions: { value: string; label: string; description: string }[] = [
-		{ value: "auto", label: "Auto (recommended)", description: "Automatically selects the best model" },
-		{ value: "claude-opus-4-6", label: "Opus", description: "Most capable, slower" },
-		{ value: "claude-sonnet-4-6", label: "Sonnet", description: "Balanced performance" },
-		{ value: "claude-haiku-4-5", label: "Haiku", description: "Fastest responses" },
-	];
+	const modelOptions = CLAUDE_MODEL_OPTIONS;
 
 	function handleModelChange(value: string) {
 		localModel = value;

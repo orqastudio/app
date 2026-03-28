@@ -205,7 +205,7 @@ export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupCon
 // Platform Configuration — loaded from platform/core.json
 // ---------------------------------------------------------------------------
 
-import type { RelationshipType, NavigationItem, PlatformConfig, PlatformArtifactType as PlatformArtifactTypeInterface } from "./plugin.js";
+import type { RelationshipType, NavigationItem, PlatformConfig } from "./plugin.js";
 
 // Import the platform config data file. This is the single source of truth
 // for core artifact types and relationships. Plugins and project config
@@ -278,5 +278,6 @@ export const PLATFORM_NAVIGATION: readonly NavigationItem[] = [
 		],
 	},
 	{ key: "artifact-graph", type: "builtin", icon: "network" },
+	{ key: "plugins", type: "builtin", icon: "puzzle" },
 	{ key: "settings", type: "builtin", icon: "settings" },
 ] as const;

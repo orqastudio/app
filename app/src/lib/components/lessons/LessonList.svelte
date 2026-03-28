@@ -5,7 +5,7 @@
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { EmptyState } from "@orqastudio/svelte-components/pure";
 	import type { Lesson } from "@orqastudio/types";
-	import { categoryColor } from "$lib/utils/category-colors";
+	import { categoryColor } from "$lib/config/category-colors";
 
 	let {
 		lessons,

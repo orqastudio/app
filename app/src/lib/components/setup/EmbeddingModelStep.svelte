@@ -3,6 +3,7 @@
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
+	import { EMBEDDING_MODEL_NAME } from "$lib/config/search-config";
 
 	const { setupStore, settingsStore } = getStores();
 
@@ -43,7 +44,7 @@
 					id: "embedding_model",
 					label: "Embedding Model",
 					status: "complete",
-					detail: "all-MiniLM-L6-v2 ready",
+					detail: `${EMBEDDING_MODEL_NAME} ready`,
 				};
 				checking = false;
 				setTimeout(onComplete, 1000);
@@ -83,7 +84,7 @@
 		<div class="space-y-2">
 			<Icon name="circle-check" size="xl" />
 			<p class="text-sm font-medium text-success">Model ready</p>
-			<p class="text-xs text-muted-foreground">all-MiniLM-L6-v2</p>
+			<p class="text-xs text-muted-foreground">{EMBEDDING_MODEL_NAME}</p>
 		</div>
 	{:else}
 		<div class="space-y-3">

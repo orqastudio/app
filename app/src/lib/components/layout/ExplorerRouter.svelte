@@ -1,4 +1,6 @@
 <script lang="ts">
+	// Explorer router — resolves which component to render in the main explorer panel
+	// based on the current navigation state (activity, plugin views, artifact selection).
 	import { getStores } from "@orqastudio/sdk";
 	import { type Component } from "svelte";
 
@@ -8,6 +10,7 @@
 	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
 	import PluginViewContainer from "$lib/components/plugin/PluginViewContainer.svelte";
+	import PluginBrowser from "$lib/components/settings/PluginBrowser.svelte";
 
 	const { navigationStore } = getStores();
 
@@ -24,6 +27,7 @@
 		"project": ProjectDashboard,
 		"artifact-graph": FullGraphView,
 		"welcome": WelcomeScreen,
+		"plugins": PluginBrowser,
 	};
 
 	// Resolve what to render in the explorer panel

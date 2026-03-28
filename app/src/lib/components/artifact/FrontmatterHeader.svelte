@@ -6,6 +6,16 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getCapabilityLabel } from "$lib/utils/tool-display";
 	import { logger } from "@orqastudio/sdk";
+	import {
+		SKIP_FIELDS,
+		DATE_FIELDS,
+		LINK_FIELDS,
+		CHIP_FIELDS,
+		BOOLEAN_FIELDS,
+		FIELD_ORDER,
+		priorityClass,
+		priorityLabel,
+	} from "$lib/config/frontmatter-config";
 
 	const log = logger("frontmatter");
 
@@ -16,22 +26,6 @@
 		metadata: Record<string, unknown>;
 		artifactType: string;
 	} = $props();
-
-	/** Returns Tailwind classes for priority badges. */
-	function priorityClass(priority: string): string {
-		if (priority === "P1") return "bg-destructive/15 text-destructive border-destructive/30";
-		if (priority === "P2") return "bg-warning/15 text-warning border-warning/30";
-		if (priority === "P3") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30";
-		return "";
-	}
-
-	/** Returns human-readable label for priority. */
-	function priorityLabel(priority: string): string {
-		if (priority === "P1") return "P1 — Critical";
-		if (priority === "P2") return "P2 — Important";
-		if (priority === "P3") return "P3 — Nice to Have";
-		return priority;
-	}
 
 	/** Format an ISO date string to a readable date; returns null for invalid/null values. */
 	function formatDate(value: unknown): string | null {
@@ -64,60 +58,12 @@
 		return [String(value)];
 	}
 
-	/**
-	 * Relationship-specific fields that duplicate data shown in RelationshipsList.
-	 * After the graph-first migration, all connections use the `relationships` array.
-	 * These legacy field names are still excluded to handle any residual frontmatter.
-	 */
-	const RELATIONSHIP_FIELDS = new Set<string>([]);
-
-	/**
-	 * Fields always rendered in the fixed header row (ID, status, priority)
-	 * or handled outside the metadata card (title, description),
-	 * or excluded because they are relationship fields shown in RelationshipsList.
-	 * These are skipped in the dynamic body loop.
-	 */
-	const SKIP_FIELDS = new Set([
-		"id", "title", "description", "status", "priority", "scoring",
-		"bodyTemplate", "tools", "capabilities", "created", "updated",
-		"relationships", "enforcement", "rule-overrides",
-		"acceptance",
-		// Relationship fields — shown in RelationshipsList, not here
-		...RELATIONSHIP_FIELDS,
-	]);
-
-	const DATE_FIELDS = new Set(["created", "updated", "deadline"]);
-
-	/** FILE_LIST_FIELDS: path-like values rendered as monospace chips. */
-	const FILE_LIST_FIELDS = new Set<string>([]);
-
-	/**
-	 * LINK_FIELDS: values that are artifact IDs and should render as clickable ArtifactLink chips.
-	 * After graph-first migration, most connection fields have moved to relationships.
-	 */
-	const LINK_FIELDS = new Set([
-		"assignee", "scope",
-	]);
-
-	/**
-	 * CHIP_FIELDS: rendered as styled chips but NOT clickable links.
-	 */
-	const CHIP_FIELDS = new Set<string>(["layer", "model", "maturity", "recurrence", "category", "version", "horizon"]);
-
-	/** CODE_FIELDS: rendered as monospace inline code badges (e.g. file paths). */
-	const CODE_FIELDS = new Set<string>([]);
-
-	/** BOOLEAN_FIELDS: rendered as check/x icons instead of "true"/"false" text. */
-	const BOOLEAN_FIELDS = new Set<string>(["user-invocable"]);
-
 	/** Classify a field key into its render type. */
-	type FieldType = "date" | "file-list" | "link" | "code" | "chip" | "boolean" | "generic";
+	type FieldType = "date" | "link" | "chip" | "boolean" | "generic";
 
-	function fieldType(key: string, value: unknown): FieldType {
+	function fieldType(key: string): FieldType {
 		if (DATE_FIELDS.has(key)) return "date";
-		if (FILE_LIST_FIELDS.has(key)) return "file-list";
 		if (LINK_FIELDS.has(key)) return "link";
-		if (CODE_FIELDS.has(key) && Array.isArray(value)) return "code";
 		if (BOOLEAN_FIELDS.has(key)) return "boolean";
 		if (CHIP_FIELDS.has(key)) return "chip";
 		return "generic";
@@ -188,16 +134,6 @@
 		}
 		return [];
 	});
-
-	/**
-	 * Explicit field display order. Fields listed here are sorted to the
-	 * front in the given order; unlisted fields appear after them in their
-	 * original YAML source order.
-	 */
-	const FIELD_ORDER: string[] = [
-		"layer", "maturity", "recurrence", "category", "version", "horizon",
-		"assignee",
-	];
 
 	/**
 	 * The ordered body entries from the metadata object, skipping:
@@ -298,7 +234,7 @@
 
 	<!-- Dynamic body — YAML source order, type-dispatched -->
 	{#each bodyEntries as [key, value] (key)}
-		{@const type = fieldType(key, value)}
+		{@const type = fieldType(key)}
 		{#if type === "date"}
 			{@const formatted = formatDate(value)}
 			{#if formatted}
@@ -307,21 +243,6 @@
 						{humanizeKey(key)}
 					</span>
 					<span class="text-xs text-foreground">{formatted}</span>
-				</div>
-			{/if}
-
-		{:else if type === "file-list"}
-			{@const items = asArray(value).filter(Boolean)}
-			{#if items.length > 0}
-				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each items as item, i (i)}
-							<ArtifactLink path={item.trim()} />
-						{/each}
-					</div>
 				</div>
 			{/if}
 
@@ -335,21 +256,6 @@
 					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
 						{#each vals as val, i (i)}
 							<ArtifactLink id={val.trim()} />
-						{/each}
-					</div>
-				</div>
-			{/if}
-
-		{:else if type === "code"}
-			{@const items = asArray(value).filter(Boolean)}
-			{#if items.length > 0}
-				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each items as item, i (i)}
-							<code class="rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground">{item}</code>
 						{/each}
 					</div>
 				</div>

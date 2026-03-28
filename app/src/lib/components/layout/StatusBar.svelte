@@ -3,7 +3,7 @@
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK } = getStores();
+	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
 	import finMark from "$lib/assets/fin-mark.svg";
 
 	const sidecarColor = $derived.by(() => {
@@ -33,21 +33,24 @@
 		}
 	});
 
-	// TODO: Plugin name should come from plugin manifest / sidecar config.
-	// Hardcoded for single-provider; multi-provider will list each provider with status.
-	const sidecarPluginName = "@orqastudio/plugin-claude";
+	/**
+	 * Display name for the active sidecar provider.
+	 * Read from the plugin registry so it reflects the installed plugin,
+	 * not a hardcoded package name.
+	 */
+	const sidecarProviderName = $derived(pluginRegistry.activeSidecar?.label ?? "Claude Code");
 
 	const sidecarTooltip = $derived.by(() => {
 		const status = settingsStore.sidecarStatus;
 		switch (status.state) {
 			case "connected":
-				return `Connected via ${sidecarPluginName}`;
+				return `Connected via ${sidecarProviderName}`;
 			case "starting":
-				return `Starting ${sidecarPluginName}...`;
+				return `Starting ${sidecarProviderName}...`;
 			case "error":
 				return `Error: ${status.error_message ?? "Unknown error"}`;
 			case "stopped":
-				return `Stopped — ${sidecarPluginName}`;
+				return `Stopped — ${sidecarProviderName}`;
 			case "not_started":
 				return "No providers configured";
 			default:

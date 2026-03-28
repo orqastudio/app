@@ -17,8 +17,17 @@
 	// Types
 	// -----------------------------------------------------------------------
 
-	type Tab = "installed" | "official" | "community";
+	type Tab = "installed" | "official" | "community" | "groups";
 	type DetailView = { type: "installed" | "registry"; plugin: PluginEntry } | null;
+
+	/** A plugin bundle — a named group of plugins that install together. */
+	interface PluginBundle {
+		key: string;
+		label: string;
+		description: string;
+		icon: string;
+		plugins: PluginEntry[];
+	}
 
 	interface PluginEntry {
 		name: string;
@@ -61,6 +70,7 @@
 	let error = $state<string | null>(null);
 	let manualSource = $state("");
 	let installing = $state<string | null>(null);
+	let installingBundle = $state<string | null>(null);
 	let detailView = $state<DetailView>(null);
 	let detailManifest = $state<PluginManifestData | null>(null);
 	let detailLoading = $state(false);
@@ -83,11 +93,21 @@
 
 	async function loadInstalled() {
 		try {
-			installed = await invoke<PluginEntry[]>("plugin_list_installed");
+			const all = await invoke<PluginEntry[]>("plugin_list_installed");
+			// Hide core infrastructure plugins — they are not user-configurable.
+			installed = all.filter((p) => !isCorePlugin(p));
 		} catch (err) {
 			log.error("Failed to load installed plugins", { err });
 			installed = [];
 		}
+	}
+
+	/** Core plugin names to filter from all views. These are infrastructure, not user-facing. */
+	const CORE_PLUGIN_NAMES = new Set(["@orqastudio/plugin-core-framework", "core", "@orqastudio/core"]);
+
+	/** Whether a plugin entry is the core framework plugin (hidden from browser). */
+	function isCorePlugin(plugin: PluginEntry): boolean {
+		return CORE_PLUGIN_NAMES.has(plugin.name);
 	}
 
 	async function loadRegistry(source: "official" | "community") {
@@ -95,8 +115,10 @@
 		error = null;
 		try {
 			const result = await invoke<{ plugins: PluginEntry[] }>("plugin_registry_list", { source });
-			if (source === "official") official = result.plugins;
-			else community = result.plugins;
+			// Filter out core infrastructure plugins from registry listings.
+			const filtered = result.plugins.filter((p) => !isCorePlugin(p));
+			if (source === "official") official = filtered;
+			else community = filtered;
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : String(err);
 		} finally {
@@ -104,11 +126,83 @@
 		}
 	}
 
+	/**
+	 * Derive plugin bundles from the official registry.
+	 * Bundles group related plugins by taxonomy (methodology + related workflows).
+	 * A bundle whose key matches a category has all plugins in that category.
+	 */
+	const bundles = $derived.by((): PluginBundle[] => {
+		const allRegistryPlugins = [...official, ...community];
+		if (allRegistryPlugins.length === 0) return [];
+
+		// Group by category, creating one bundle per category.
+		const byCategory: Record<string, PluginEntry[]> = {};
+		for (const plugin of allRegistryPlugins) {
+			const cat = plugin.category ?? "other";
+			if (!byCategory[cat]) byCategory[cat] = [];
+			byCategory[cat].push(plugin);
+		}
+
+		// Only surface bundles with more than one plugin (single-plugin categories
+		// are better browsed in the individual tabs).
+		const result: PluginBundle[] = [];
+		for (const [cat, plugins] of Object.entries(byCategory)) {
+			if (plugins.length < 2) continue;
+			result.push({
+				key: cat,
+				label: cat.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+				description: `Install all ${plugins.length} plugins in this category together.`,
+				icon: categoryIcon(cat),
+				plugins,
+			});
+		}
+		return result;
+	});
+
+	/** Map a plugin category to a Lucide icon name. */
+	function categoryIcon(category: string): string {
+		const icons: Record<string, string> = {
+			methodology: "compass",
+			workflow: "git-branch",
+			knowledge: "brain",
+			infrastructure: "server",
+			connector: "plug",
+			sidecar: "bot",
+			tooling: "wrench",
+			"coding-standards": "code-2",
+			enforcement: "shield",
+		};
+		return icons[category] ?? "package";
+	}
+
+	/** Install all plugins in a bundle sequentially. */
+	async function installBundle(bundle: PluginBundle) {
+		installingBundle = bundle.key;
+		error = null;
+		try {
+			for (const plugin of bundle.plugins) {
+				if (!plugin.repo || isInstalled(plugin.name)) continue;
+				await invoke("plugin_install_github", { repo: plugin.repo });
+			}
+			await loadInstalled();
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : String(err);
+		} finally {
+			installingBundle = null;
+		}
+	}
+
+	/** Whether all plugins in a bundle are already installed. */
+	function isBundleInstalled(bundle: PluginBundle): boolean {
+		return bundle.plugins.every((p) => isInstalled(p.name));
+	}
+
 	async function handleTabChange(tab: Tab) {
 		activeTab = tab;
 		detailView = null;
 		if (tab === "official" && official.length === 0) await loadRegistry("official");
 		if (tab === "community" && community.length === 0) await loadRegistry("community");
+		if (tab === "groups" && official.length === 0) await loadRegistry("official");
 	}
 
 	// -----------------------------------------------------------------------
@@ -462,13 +556,13 @@
 	{:else}
 		<!-- Tab bar -->
 		<div class="flex gap-1 rounded-md border border-border p-1">
-			{#each ["installed", "official", "community"] as tab (tab)}
+			{#each (["installed", "official", "community", "groups"] as Tab[]) as tab (tab)}
 				<button
-					class="flex-1 rounded px-3 py-1.5 text-xs font-medium transition-colors"
+					class="flex-1 rounded px-2 py-1.5 text-xs font-medium transition-colors"
 					class:bg-primary={activeTab === tab}
 					class:text-primary-foreground={activeTab === tab}
 					class:text-muted-foreground={activeTab !== tab}
-					onclick={() => handleTabChange(tab as Tab)}
+					onclick={() => handleTabChange(tab)}
 				>
 					{tab.charAt(0).toUpperCase() + tab.slice(1)}
 				</button>
@@ -625,6 +719,68 @@
 						<p class="py-4 text-center text-xs text-muted-foreground">
 							No community plugins available yet.
 						</p>
+					{/each}
+				</div>
+			{/if}
+		<!-- Groups tab — plugin bundles derived from registry categories -->
+		{:else if activeTab === "groups"}
+			{#if loading}
+				<div class="flex items-center justify-center py-8">
+					<LoadingSpinner size="md" />
+				</div>
+			{:else if bundles.length === 0}
+				<p class="py-4 text-center text-xs text-muted-foreground">
+					No plugin bundles available. Check the Official tab for individual plugins.
+				</p>
+			{:else}
+				<div class="space-y-2">
+					{#each bundles as bundle (bundle.key)}
+						<CardRoot class="gap-2">
+							<CardHeader>
+								<CardTitle class="text-sm font-semibold">
+									<div class="flex items-center gap-2">
+										<Icon name={bundle.icon} size="md" />
+										{bundle.label}
+									</div>
+								</CardTitle>
+								<CardAction>
+									{#if isBundleInstalled(bundle)}
+										<Badge variant="outline" class="text-[10px]">All installed</Badge>
+									{:else}
+										<Button
+											variant="default"
+											size="sm"
+											class="h-7 px-3 text-xs"
+											disabled={installingBundle !== null}
+											onclick={() => installBundle(bundle)}
+										>
+											{#if installingBundle === bundle.key}
+												<LoadingSpinner size="sm" />
+												Installing...
+											{:else}
+												Install all
+											{/if}
+										</Button>
+									{/if}
+								</CardAction>
+							</CardHeader>
+							<CardContent>
+								<p class="text-[10px] text-muted-foreground">{bundle.description}</p>
+								<div class="mt-2 space-y-1">
+									{#each bundle.plugins as plugin (plugin.name)}
+										<div class="flex items-center justify-between text-xs">
+											<div class="flex items-center gap-1.5">
+												<Icon name={plugin.icon ?? "puzzle"} size="sm" />
+												<span>{plugin.displayName ?? plugin.display_name ?? plugin.name}</span>
+											</div>
+											{#if isInstalled(plugin.name)}
+												<Badge variant="outline" class="text-[9px] px-1 py-0">Installed</Badge>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							</CardContent>
+						</CardRoot>
 					{/each}
 				</div>
 			{/if}

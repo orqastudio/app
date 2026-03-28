@@ -1,6 +1,12 @@
+// Utility functions for resolving tool display metadata (icon, label) from tool names.
+// Static configuration (icon/label maps) lives in config/tool-display-config.ts.
+
 import { resolveIcon } from "@orqastudio/svelte-components/pure";
 import { logger } from "@orqastudio/sdk";
 import type { Component } from "svelte";
+import { TOOL_ICONS, TOOL_LABELS, CAPABILITY_LABELS as capabilityLabels } from "$lib/config/tool-display-config";
+
+export { CAPABILITY_LABELS } from "$lib/config/tool-display-config";
 
 const log = logger("tool-display");
 
@@ -15,30 +21,6 @@ export function stripToolName(name: string): string {
 	return name;
 }
 
-const TOOL_ICONS: Record<string, string> = {
-	read_file: "file-text",
-	write_file: "file-text",
-	edit_file: "pencil",
-	bash: "terminal",
-	glob: "folder",
-	grep: "search",
-	search_regex: "search",
-	search_semantic: "brain",
-	code_research: "book-open",
-};
-
-const TOOL_LABELS: Record<string, string> = {
-	read_file: "Read File",
-	write_file: "Write File",
-	edit_file: "Edit File",
-	bash: "Run Command",
-	glob: "Find Files",
-	grep: "Search Content",
-	search_regex: "Regex Search",
-	search_semantic: "Semantic Search",
-	code_research: "Code Research",
-};
-
 /**
  * Returns the display label and icon for a tool name.
  */
@@ -52,27 +34,9 @@ export function getToolDisplay(name: string): { label: string; icon: Component; 
 	};
 }
 
-/**
- * Human-friendly labels for agent capability identifiers.
- */
-export const CAPABILITY_LABELS: Record<string, string> = {
-	file_read: "Read Files",
-	file_write: "Create Files",
-	file_edit: "Edit Files",
-	file_search: "Find Files",
-	content_search: "Search Content",
-	code_search_regex: "Regex Code Search",
-	code_search_semantic: "Semantic Code Search",
-	code_research: "Code Research",
-	shell_execute: "Run Commands",
-	skill_load: "Load Knowledge",
-	web_fetch: "Fetch URLs",
-	web_search: "Web Search",
-	notebook_edit: "Edit Notebooks",
-};
-
+/** Returns a human-readable label for an agent capability identifier. */
 export function getCapabilityLabel(capability: string): string {
-	return CAPABILITY_LABELS[capability] ?? capability.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+	return capabilityLabels[capability] ?? capability.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 export function groupLabel(toolName: string, count: number): string {

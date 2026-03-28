@@ -3,15 +3,11 @@
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { DefaultModel } from "@orqastudio/sdk";
+	import { CLAUDE_MODEL_OPTIONS } from "$lib/components/conversation/model-options";
 
 	const { settingsStore } = getStores();
 
-	const modelOptions: { value: DefaultModel; label: string; description: string }[] = [
-		{ value: "auto", label: "Auto (recommended)", description: "Automatically selects the best model" },
-		{ value: "claude-opus-4-6", label: "Opus", description: "Most capable, slower" },
-		{ value: "claude-sonnet-4-6", label: "Sonnet", description: "Balanced performance" },
-		{ value: "claude-haiku-4-5", label: "Haiku", description: "Fastest responses" },
-	];
+	const modelOptions = CLAUDE_MODEL_OPTIONS as { value: DefaultModel; label: string; description: string }[];
 
 	function handleModelChange(value: string): void {
 		settingsStore.setDefaultModel(value as DefaultModel);

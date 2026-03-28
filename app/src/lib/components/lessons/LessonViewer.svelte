@@ -5,7 +5,7 @@
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import type { Lesson } from "@orqastudio/types";
-	import { categoryColor } from "$lib/utils/category-colors";
+	import { categoryColor } from "$lib/config/category-colors";
 
 	let {
 		lesson,

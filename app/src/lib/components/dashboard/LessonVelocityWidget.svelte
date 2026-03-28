@@ -4,17 +4,11 @@
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import { PipelineStages, type PipelineStage } from "@orqastudio/svelte-components/pure";
+	import { LESSON_STAGES } from "$lib/config/lesson-stages";
 
-	// -------------------------------------------------------------------------
-	// Lesson pipeline stage definitions
-	// Uses the same dot-with-center visual as PipelineWidget (dotColorClass).
-	// -------------------------------------------------------------------------
-
-	const stageDefinitions = [
-		{ key: "active",    label: "Active",    dotColorClass: "bg-blue-500"   },
-		{ key: "recurring", label: "Recurring", dotColorClass: "bg-amber-500"  },
-		{ key: "promoted",  label: "Promoted",  dotColorClass: "bg-purple-500" },
-	] as const;
+	// Stage definitions are sourced from config — the widget drives the pipeline visual
+	// from LESSON_STAGES so the stage list is defined in one place.
+	const stageDefinitions = LESSON_STAGES;
 
 	const stageCounts = $derived.by((): Record<string, number> => {
 		const counts: Record<string, number> = {};

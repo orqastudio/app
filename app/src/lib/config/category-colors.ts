@@ -1,7 +1,9 @@
+// Tailwind class strings for lesson category badges.
+// Category colours use distinct palette values to differentiate category identity,
+// not semantic state tokens. All components that display category chips import from here.
+
 /**
- * Returns Tailwind class string for a lesson category badge.
- * Category colors use distinct palette values to differentiate category identity,
- * not semantic state tokens. Duplication across components is eliminated here.
+ * Returns the Tailwind class string for a lesson category badge.
  */
 export function categoryColor(category: string): string {
 	switch (category) {

@@ -6,56 +6,13 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ActivityView } from "@orqastudio/sdk";
+	import { CATEGORY_CONFIG } from "$lib/config/category-config";
 
 	const { artifactStore, enforcementStore, navigationStore } = getStores();
 
 	let { category }: { category: ActivityView } = $props();
 
-	const categoryConfig: Record<
-		string,
-		{
-			icon: string;
-			label: string;
-			singular: string;
-			description: string;
-			location: string;
-		}
-	> = {
-		agents: {
-			icon: "bot",
-			label: "Agents",
-			singular: "agent",
-			description:
-				"Agent definitions give AI personas specialized knowledge and behavior for your project.",
-			location: ".claude/agents/",
-		},
-		rules: {
-			icon: "shield",
-			label: "Rules",
-			singular: "rule",
-			description:
-				"Rules enforce coding standards and project conventions. They are loaded automatically by Claude Code.",
-			location: ".claude/rules/",
-		},
-		knowledge: {
-			icon: "brain",
-			label: "Knowledge",
-			singular: "knowledge",
-			description:
-				"Knowledge files define reusable domain context that agents draw on during sessions.",
-			location: ".claude/knowledge/",
-		},
-		hooks: {
-			icon: "git-branch",
-			label: "Hooks",
-			singular: "hook",
-			description:
-				"Hooks run automated actions at lifecycle events — before/after prompts, on stop, etc.",
-			location: ".claude/hooks/",
-		},
-	};
-
-	const config = $derived(categoryConfig[category]);
+	const config = $derived(CATEGORY_CONFIG[category]);
 
 	/** Derive items from the navTree nodes for this category. */
 	const items = $derived.by(() => {

@@ -5,6 +5,7 @@
 	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
 	import { SvelteMap } from "svelte/reactivity";
 	import { getStores } from "@orqastudio/sdk";
+	import { ACTION_LABELS, DEFAULT_ACTION_LABEL } from "$lib/config/action-labels";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
@@ -31,16 +32,7 @@
 
 	/** Human-readable action required based on artifact type. */
 	function actionLabel(type: string): string {
-		switch (type) {
-			case "task": return "Verify task completion";
-			case "epic": return "Review epic deliverables";
-			case "idea": return "Decide on promotion";
-			case "decision": return "Accept or reject decision";
-			case "lesson": return "Promote to rule or knowledge";
-			case "research": return "Review research findings";
-			case "milestone": return "Verify milestone gate";
-			default: return "Review required";
-		}
+		return ACTION_LABELS[type] ?? DEFAULT_ACTION_LABEL;
 	}
 
 	const pendingActions = $derived.by((): PendingAction[] => {

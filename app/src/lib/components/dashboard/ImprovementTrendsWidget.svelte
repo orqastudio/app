@@ -5,17 +5,16 @@
 	const log = logger("dashboard");
 	const { artifactGraphSDK } = getStores();
 	import type { HealthSnapshot } from "@orqastudio/types";
+	import { GOVERNANCE_TYPES } from "$lib/config/governance-types";
 
 	let snapshots = $state<HealthSnapshot[]>([]);
 	let loading = $state(false);
 	let loaded = $state(false);
 
 	/** All governance artifacts with their created dates. */
-	const governanceArtifacts = $derived([
-		...artifactGraphSDK.byType("rule"),
-		...artifactGraphSDK.byType("lesson"),
-		...artifactGraphSDK.byType("decision"),
-	]);
+	const governanceArtifacts = $derived(
+		GOVERNANCE_TYPES.flatMap((type) => artifactGraphSDK.byType(type))
+	);
 
 	/** Build cumulative governance count over time, aligned to snapshot dates. */
 	function governanceAtDate(dateStr: string): number {

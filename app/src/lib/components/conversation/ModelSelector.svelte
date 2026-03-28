@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
-	import { CLAUDE_MODELS } from "./model-options";
+	import { CLAUDE_MODEL_OPTIONS } from "./model-options";
 
 	function getModelLabel(modelId: string): string {
-		const found = CLAUDE_MODELS.find((m) => m.value === modelId);
+		const found = CLAUDE_MODEL_OPTIONS.find((m) => m.value === modelId);
 		return found ? found.label : modelId;
 	}
 
@@ -19,7 +19,7 @@
 </script>
 
 <SelectMenu
-	items={CLAUDE_MODELS}
+	items={CLAUDE_MODEL_OPTIONS}
 	selected={value}
 	onSelect={onchange}
 	{triggerLabel}

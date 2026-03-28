@@ -183,26 +183,13 @@
 		parsedContent ? String(parsedContent.metadata["status"] ?? "") : "",
 	);
 
-	/** Lifecycle stages — unified across all artifact types, read from project config. */
+	/** Lifecycle stages from project config. Empty when no statuses are configured. */
 	const pipelineStages = $derived.by((): Array<{ key: string; label: string }> => {
 		const statuses = projectStore.projectSettings?.statuses;
 		if (statuses && statuses.length > 0) {
 			return statuses.map((s) => ({ key: s.key, label: s.label }));
 		}
-		// Fallback if config not loaded
-		return [
-			{ key: "captured", label: "Captured" },
-			{ key: "exploring", label: "Exploring" },
-			{ key: "ready", label: "Ready" },
-			{ key: "prioritised", label: "Prioritised" },
-			{ key: "active", label: "Active" },
-			{ key: "hold", label: "On Hold" },
-			{ key: "blocked", label: "Blocked" },
-			{ key: "review", label: "Review" },
-			{ key: "completed", label: "Completed" },
-			{ key: "surpassed", label: "Surpassed" },
-			{ key: "recurring", label: "Recurring" },
-		];
+		return [];
 	});
 
 
