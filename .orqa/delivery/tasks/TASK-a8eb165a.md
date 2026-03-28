@@ -1,7 +1,7 @@
 ---
 id: TASK-a8eb165a
 type: task
-name: "Create agile-discovery plugin"
+title: "Create agile-discovery plugin"
 status: active
 description: "Create plugins/agile-discovery/ as a stage-definition plugin for discovery-stage artifacts filling the discovery-artifacts contribution point"
 relationships:

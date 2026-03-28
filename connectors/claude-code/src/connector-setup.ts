@@ -28,10 +28,9 @@ export interface ConnectorSetupResult {
 /**
  * Run post-install setup for the Claude Code connector:
  * 1. Build .claude/agents/ as a merged directory containing symlinks to:
- *    - All core agents from .orqa/process/agents/
  *    - All plugin agents declared via provides.agents in installed plugin manifests
  *    Plugin agents are keyed by their manifest `key` field (e.g. "rust-specialist").
- *    Core agents take precedence: a plugin cannot shadow a core agent filename.
+ *    Core agents (orchestrator, implementer, etc.) live directly in .claude/agents/.
  *
  * Agent sources are resolved via the CLI plugin registry (listInstalledPlugins),
  * not via raw filesystem assumptions about monorepo structure.
@@ -55,11 +54,11 @@ export function runConnectorSetup(
 		fs.mkdirSync(claudeDir, { recursive: true });
 	}
 
-	// Core agents live in .orqa/process/agents/ relative to the project root.
-	// No monorepo-specific fallback — connector has no knowledge of app/ layout.
-	const coreAgentsSource = path.join(projectRoot, ".orqa", "process", "agents");
+	// Agent files live in .claude/agents/ directly. Plugin agents are symlinked
+	// alongside them via provides.agents in installed plugin manifests.
+	const coreAgentsSource = path.join(claudeDir, "agents");
 
-	// Build the merged .claude/agents/ directory with core + plugin agent symlinks.
+	// Build the merged .claude/agents/ directory with plugin agent symlinks.
 	const symlinkAgents = setupMergedAgentsDir(
 		path.join(claudeDir, "agents"),
 		coreAgentsSource,

@@ -6,7 +6,6 @@ description: "Automatically downloads the embedding model from Hugging Face on f
 status: archived
 created: 2026-03-04T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Model auto-downloads from Hugging Face on first use"
   - "Pre-download at app startup with progress tracking"

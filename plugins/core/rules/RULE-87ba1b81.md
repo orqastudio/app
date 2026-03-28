@@ -28,7 +28,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 ## Universal Roles
 
 | Role | Purpose | When to Use |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | **Researcher** | Investigate questions, gather information | Before planning, when understanding is needed |
 | **Planner** | Design approaches, map dependencies | Before implementation, when a plan is needed |
 | **Implementer** | Build things — code, deliverables | When work needs to be done |
@@ -74,11 +74,13 @@ When delegating to a role:
 When the orchestrator has approved tasks and no blocker exists, it MUST continue to the next task without asking the user for permission. The user's interrupt capability is the coordination mechanism — not permission-seeking questions.
 
 **The orchestrator MUST only pause when:**
+
 1. A dependency gate is not met (task depends on incomplete work)
 2. A genuine user decision is needed (scope change, ambiguity, trade-off)
 3. All work is complete (epic done)
 
 **FORBIDDEN:**
+
 - "Want me to continue?" when tasks are approved and unblocked
 - "Shall I proceed with the next phase?" when no decision is needed
 - "Ready for X?" when X is already planned and unblocked
@@ -90,7 +92,7 @@ This was promoted from [IMPL-2dc87f24](IMPL-2dc87f24) after 3 recurrences.
 
 The orchestrator may bypass delegation for:
 
-- Governance artifacts (`.orqa/process/rules/`, `.orqa/process/agents/`, `.orqa/process/knowledge/`) — these ARE the orchestrator's domain
+- Governance artifacts (`.orqa/learning/rules/`, `.claude/agents/`, `.orqa/documentation/knowledge/`) — these ARE the orchestrator's domain
 - Process documentation (`.orqa/documentation/guide/`) — orchestration is a process concern
 - Session state (`.state/session-state.md`) — coordination artifact
 - Planning artifact **structure** (`.orqa/delivery/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
@@ -114,7 +116,7 @@ Parallel agents sharing a worktree can exhaust system resources. Rust compilatio
 ### Compilation Risk by Knowledge Combination
 
 | Role + Knowledge | Compilation Risk | Safe to Parallelize With |
-|--------------|-----------------|-------------------------|
+| -------------- | ----------------- | ------------------------- |
 | Implementer + backend knowledge | High (cargo) | Frontend-only agents |
 | Implementer + database knowledge | High (cargo) | Frontend-only agents |
 | Implementer + frontend knowledge | Low (svelte-check) | Any agent |

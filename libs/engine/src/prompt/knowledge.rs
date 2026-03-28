@@ -1,7 +1,7 @@
 //! Knowledge injector — ONNX-based semantic knowledge artifact matching.
 //!
 //! Manages knowledge artifact embeddings and prompt-based cosine similarity
-//! matching. Loads all knowledge artifacts from `.orqa/process/knowledge/*.md`,
+//! matching. Loads all knowledge artifacts from `.orqa/documentation/knowledge/*.md`,
 //! extracts their `description:` frontmatter field, embeds them with the ONNX
 //! embedder, and caches the results for fast lookups at prompt time.
 //!
@@ -24,7 +24,7 @@ struct KnowledgeEmbedding {
 
 /// Manages knowledge artifact embeddings and prompt-based matching.
 ///
-/// Loads all knowledge artifacts from `.orqa/process/knowledge/*.md`, extracts their
+/// Loads all knowledge artifacts from `.orqa/documentation/knowledge/*.md`, extracts their
 /// `description:` frontmatter field, embeds them with the ONNX embedder,
 /// and caches the results for fast cosine-similarity lookups at prompt time.
 pub struct KnowledgeInjector {
@@ -42,7 +42,7 @@ pub enum KnowledgeInjectorError {
 }
 
 impl KnowledgeInjector {
-    /// Load all knowledge artifacts from the project's `.orqa/process/knowledge/` directory
+    /// Load all knowledge artifacts from the project's `.orqa/documentation/knowledge/` directory
     /// and pre-compute their description embeddings.
     ///
     /// Artifacts without a `description:` frontmatter field are silently skipped.
@@ -50,7 +50,7 @@ impl KnowledgeInjector {
         project_dir: &Path,
         embedder: &mut Embedder,
     ) -> Result<Self, KnowledgeInjectorError> {
-        let knowledge_dir = project_dir.join(".orqa").join("process").join("knowledge");
+        let knowledge_dir = project_dir.join(".orqa").join("documentation").join("knowledge");
         let item_metas = discover_knowledge_descriptions(&knowledge_dir)?;
 
         if item_metas.is_empty() {

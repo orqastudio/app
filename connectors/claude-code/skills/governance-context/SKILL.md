@@ -2,6 +2,7 @@
 name: governance-context
 description: "How to read and use OrqaStudio governance data — artifact graph, relationship vocabulary, status model, and enforcement rules."
 user-invocable: false
+
 ---
 
 # Governance Context
@@ -13,34 +14,34 @@ OrqaStudio manages work through an **artifact graph** — markdown files with YA
 ### Where Things Live
 
 | What | Where |
-|------|-------|
+| ------ | ------- |
 | Tasks | `.orqa/delivery/tasks/` |
 | Epics | `.orqa/delivery/epics/` |
 | Ideas | `.orqa/discovery/ideas/` |
 | Research | `.orqa/discovery/research/` |
 | Decisions | `.orqa/process/decisions/` |
-| Rules | `.orqa/process/rules/` |
-| Lessons | `.orqa/process/lessons/` |
-| Knowledge | `.orqa/process/knowledge/*/KNOW.md` |
-| Agents | `.orqa/process/agents/` |
+| Rules | `.orqa/learning/rules/` |
+| Lessons | `.orqa/learning/lessons/` |
+| Knowledge | `.orqa/documentation/knowledge/*/KNOW.md` |
+| Agents | `.claude/agents/` |
 | Documentation | `.orqa/documentation/` |
 | Project config | `.orqa/project.json` |
 
 ### Reading the Graph
 
-```
+```text
 Task → reads epic (relationships: delivers → EPIC-NNN)
 Epic → reads milestone (relationships: fulfils → MS-NNN)
 Decision → reads rule (relationships: enforced-by → RULE-NNN)
 Artifact → reads pillar (relationships: grounded-by → PILLAR-NNN)
-```
+```text
 
 ## Relationship Vocabulary
 
 All connections use the `relationships` frontmatter array with `target` and `type` fields.
 
 | Forward | Inverse | When to Use |
-|---------|---------|-------------|
+| --------- | --------- | ------------- |
 | `delivers` | `delivered-by` | Task delivers to epic |
 | `fulfils` | `fulfilled-by` | Epic fulfils milestone |
 | `drives` | `driven-by` | Decision drives work |
@@ -60,7 +61,8 @@ All connections use the `relationships` frontmatter array with `target` and `typ
 
 ## Rules
 
-Rules in `.orqa/process/rules/RULE-NNN.md` define enforcement:
+Rules in `.orqa/learning/rules/RULE-NNN.md` define enforcement:
+
 - `status: active` — enforced, agents must comply
 - `status: inactive` — not enforced, historical reference
 - Rules with `enforcement` arrays in frontmatter trigger hook-based enforcement
@@ -72,6 +74,7 @@ Each artifact directory has a `schema.json` that defines required/optional field
 ## Type Constraints
 
 From `core.json`:
+
 - `enforces` only FROM rule TO decision
 - `grounded`/`grounded-by` only TO pillar
 - `drives`/`driven-by` only FROM decision
@@ -81,7 +84,7 @@ From `core.json`:
 
 When you need domain knowledge beyond what's preloaded, query the MCP server:
 
-```
+```text
 # Find knowledge artifacts by keyword
 graph_query({ type: "knowledge", search: "composability" })
 
@@ -89,10 +92,10 @@ graph_query({ type: "knowledge", search: "composability" })
 graph_query({ type: "knowledge", search: "testing", scope: "artifacts" })
 
 # Read a knowledge artifact's full content
-graph_read({ path: ".orqa/process/knowledge/search/KNOW.md" })
+graph_read({ path: ".orqa/documentation/knowledge/search/KNOW.md" })
 
 # Get a knowledge artifact's relationships (which agents use it)
 graph_relationships({ id: "KNOW-0619a413" })
-```
+```text
 
 Use `scope: "artifacts"` to search only `.orqa/` content. Use `scope: "codebase"` for source code.

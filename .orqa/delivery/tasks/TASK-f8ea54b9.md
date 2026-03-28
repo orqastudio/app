@@ -6,7 +6,6 @@ description: "The companion plugin resolves agent capabilities to Claude Code to
 status: archived
 created: "2026-03-11"
 updated: "2026-03-12"
-assignee: "AGENT-e5dd38e4"
 docs: []
 acceptance:
   - "SubagentStart hook reads agent definition capabilities"

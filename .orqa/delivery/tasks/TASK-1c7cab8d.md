@@ -6,7 +6,6 @@ description: "Explicitly configure clippy pedantic lints in Cargo.toml and fix r
 status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "[lints.clippy] section exists in Cargo.toml with pedantic enabled"
   - "make lint-backend passes with zero warnings"

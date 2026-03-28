@@ -1,7 +1,7 @@
 ---
 id: TASK-a06e8fc1
 type: task
-name: "Architecture compliance audit"
+title: "Architecture compliance audit"
 status: active
 description: "Independent end-to-end review of every section of RES-d6e8ab11 against actual implementation — PASS/FAIL per section"
 relationships:

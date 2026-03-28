@@ -1,7 +1,7 @@
 ---
 id: "TASK-5fdbf116"
 type: "task"
-name: "Verify full pipeline and archive original repos"
+title: "Verify full pipeline and archive original repos"
 status: archived
 description: "End-to-end verification: clean clone, make install, make check, make build. Then archive original GitHub repos with redirect READMEs."
 relationships:

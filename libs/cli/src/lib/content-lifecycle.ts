@@ -2,7 +2,7 @@
  * Plugin content lifecycle — install, remove, diff, and refresh plugin content.
  *
  * Plugins declare content mappings in `orqa-plugin.json`:
- *   { "content": { "rules": { "source": "rules", "target": ".orqa/process/rules" } } }
+ *   { "content": { "rules": { "source": "rules", "target": ".orqa/learning/rules" } } }
  *
  * When installed, plugin content is copied from plugin source dirs to `.orqa/` target
  * dirs under the project root. Ownership is tracked in `.orqa/manifest.json`.
@@ -785,7 +785,7 @@ function isBinaryAvailable(binary: string): boolean {
 }
 
 /**
- * Given a relative path from the project root (e.g. `.orqa/process/rules/RULE-abc.md`),
+ * Given a relative path from the project root (e.g. `.orqa/learning/rules/RULE-abc.md`),
  * find the corresponding source file in the plugin directory by matching target mappings.
  *
  * Returns the absolute path to the source file, or null if no mapping covers this path.

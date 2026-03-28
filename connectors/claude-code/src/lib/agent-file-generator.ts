@@ -326,7 +326,7 @@ For each acceptance criterion:
 
 	writer: `## Boundaries
 
-- You ONLY modify documentation files (\`.orqa/documentation/\`, \`.orqa/process/knowledge/\`, plugin knowledge directories)
+- You ONLY modify documentation files (\`.orqa/documentation/\`, plugin knowledge directories)
 - You do NOT modify source code
 - You do NOT run shell commands
 

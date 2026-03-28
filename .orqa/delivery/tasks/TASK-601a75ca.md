@@ -6,7 +6,6 @@ description: "Replace the scanner's folder-guessing logic with config-driven sca
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "artifact_scan_tree reads artifacts config from project.json"
   - "For each Type entry"

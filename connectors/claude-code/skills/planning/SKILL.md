@@ -2,6 +2,7 @@
 name: planning
 description: "Enforces documentation-first planning for all implementation tasks. Plans must start with documentation, get user approval, then implement with mandatory verification gates. Prevents documentation drift across sessions."
 user-invocable: false
+
 ---
 
 Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved. Documentation is the source of truth — code that diverges from docs is wrong and must be fixed.
@@ -72,7 +73,7 @@ Every implementation plan must include these sections in order:
 **Mandatory checks (verify every one that applies):**
 
 | Principle | Verify |
-|-----------|--------|
+| ----------- | -------- |
 | [AD-7121ec20](AD-7121ec20) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
 | [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
 | [AD-2d58941b](AD-2d58941b) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
@@ -110,7 +111,7 @@ Complies with AD-7121ec20, AD-4e7faf0e, AD-2d58941b, AD-ecc96aef, AD-75bb14ae, A
 Every plan MUST explicitly address each dimension below. For each, state either the specific approach OR "N/A — [reason]". Leaving a dimension blank is a plan rejection.
 
 | Dimension | What to Address |
-|-----------|----------------|
+| ----------- | ---------------- |
 | **Data Persistence** | What new data is created? Where is it stored? Schema design. Migration strategy. |
 | **IPC Contract** | New/modified Tauri commands. Request/response types. Serialization. |
 | **State Management** | Frontend state: where stored (runes store, component, URL)? How loaded/saved? What happens on window refresh? |
@@ -131,13 +132,13 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 3. **Component State Table** — Every component, every state it can be in:
 
 | Component | State | User Sees |
-|-----------|-------|-----------|
+| ----------- | ------- | ----------- |
 | SessionList | Loading | Spinner with "Loading sessions..." |
 | SessionList | Empty | "No sessions yet" with create button |
 | SessionList | Loaded | List of session cards with timestamps |
 | SessionList | Error | Error message with retry button |
 
-4. **Backend Requirements** — Derived from the above. What commands, types, and domain logic are needed to enable the UX?
+1. **Backend Requirements** — Derived from the above. What commands, types, and domain logic are needed to enable the UX?
 
 ### 3. Governing Documentation
 
@@ -153,12 +154,14 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 ## Verification Gate: Phase 1 Complete
 
 **Quality Checks:**
+
 - `cargo fmt --check` passes
 - `cargo clippy --all-targets -- -D warnings` passes
 - `cargo test` passes with 80%+ coverage
 - `npm run check` passes
 
 **Documentation Compliance:**
+
 - IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/process/decisions/`
 - Component states match the plan's component state table
 - Error types match documented error propagation strategy
@@ -245,9 +248,9 @@ State "N/A — [reason]" for inapplicable ones.]
 
 ## See Also
 
-- `.orqa/process/rules/[RULE-dccf4226](RULE-dccf4226).md` — Plan mode requirements
-- `.orqa/process/rules/[RULE-05ae2ce7](RULE-05ae2ce7).md` — AD-XXX quick reference
-- `.orqa/process/rules/[RULE-1b238fc8](RULE-1b238fc8).md` — Two-Pillar framework and governance
+- `.orqa/learning/rules/[RULE-dccf4226](RULE-dccf4226).md` — Plan mode requirements
+- `.orqa/learning/rules/[RULE-05ae2ce7](RULE-05ae2ce7).md` — AD-XXX quick reference
+- `.orqa/learning/rules/[RULE-1b238fc8](RULE-1b238fc8).md` — Two-Pillar framework and governance
 - `.orqa/documentation/development/coding-standards.md` — Code quality standards
 
 ## Related Skills

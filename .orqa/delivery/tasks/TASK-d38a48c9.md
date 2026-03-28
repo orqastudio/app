@@ -6,7 +6,6 @@ description: "Integration testing of the plugin against the real .orqa/ director
 status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
-assignee: "AGENT-8e58cd87"
 docs: []
 acceptance:
   - "Plugin loads all 39+ rules from .orqa/process/rules/"

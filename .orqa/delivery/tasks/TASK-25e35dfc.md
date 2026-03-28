@@ -6,7 +6,6 @@ description: "Define the artifacts config schema in project.json and add corresp
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "project.json has artifacts array with all current groups and types"
   - "ArtifactEntry enum (Group | Type) added to project_settings.rs"

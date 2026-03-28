@@ -6,7 +6,6 @@ description: "Adds layer and scope classification fields to all 16 agent definit
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "All 16 agent definitions have `layer:` field (canon/project/plugin)"
   - "All 16 agent definitions have `scope:` changed from `system` to one of software-engineering, governance, general"

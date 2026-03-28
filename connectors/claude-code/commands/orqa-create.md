@@ -9,6 +9,7 @@ When the user asks to create an artifact, follow this process:
 ### 1. Determine the artifact type
 
 Ask what type of artifact to create if not specified:
+
 - **task** — Delivery work item (TASK-NNN)
 - **epic** — Delivery feature grouping (EPIC-NNN)
 - **idea** — Discovery concept (IDEA-NNN)
@@ -30,6 +31,7 @@ ls .orqa/process/decisions/ | sort -t- -k2 -n | tail -1  # For decisions
 ### 3. Determine relationships
 
 Every artifact should have at least one relationship:
+
 - **Tasks** → `delivers` to an epic
 - **Epics** → `fulfils` a milestone
 - **Decisions** → `grounded` to a pillar
@@ -39,6 +41,7 @@ Every artifact should have at least one relationship:
 ### 4. Write the artifact
 
 Use the governance-steward agent to create the artifact with:
+
 - Full YAML frontmatter (id, type, title, status, created, updated, relationships)
 - Markdown body with appropriate sections
 - Bidirectional relationships (add inverses on target artifacts)
@@ -72,6 +75,7 @@ relationships:
 ```
 
 Then add the inverse on EPIC-9b58fdcb:
+
 ```yaml
   - target: TASK-424c6e2c
     type: delivered-by

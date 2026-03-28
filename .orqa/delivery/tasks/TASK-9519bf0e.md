@@ -1,7 +1,7 @@
 ---
 id: TASK-9519bf0e
 type: task
-name: "Create agile-review plugin"
+title: "Create agile-review plugin"
 status: active
 description: "Create plugins/agile-review/ as a stage-definition plugin filling the review-process contribution point"
 relationships:

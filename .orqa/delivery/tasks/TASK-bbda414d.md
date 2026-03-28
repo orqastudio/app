@@ -1,7 +1,7 @@
 ---
 id: TASK-bbda414d
 type: task
-name: "orqa plugin status command"
+title: "orqa plugin status command"
 status: archived
 description: Add orqa plugin status command that reports three-way diff state across all installed plugins. Shows clean, updated, modified, and conflict counts per plugin with file-level detail.
 relationships:

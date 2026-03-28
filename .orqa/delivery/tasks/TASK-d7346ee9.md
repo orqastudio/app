@@ -6,7 +6,6 @@ description: "Clarify in RULE-87ba1b81 that the orchestrator creates artifact st
 status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "RULE-87ba1b81 exception list distinguishes structure (orchestrator) from content (Writer)"
   - "Research artifacts listed as Writer-delegated content"

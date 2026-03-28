@@ -47,7 +47,7 @@ The validation engine is a pure TypeScript library with no runtime dependencies 
 
 ### Schema Source
 
-Schemas are **plugin-provided**. Each artifact type directory (e.g., `.orqa/process/rules/`, `.orqa/delivery/epics/`) contains a `schema.json` file in JSON Schema format. The validation engine discovers schemas via the plugin system's artifact configuration.
+Schemas are **plugin-provided**. Each artifact type directory (e.g., `.orqa/learning/rules/`, `.orqa/delivery/epics/`) contains a `schema.json` file in JSON Schema format. The validation engine discovers schemas via the plugin system's artifact configuration.
 
 Plugins declare schemas in their `orqa-plugin.json` manifest under `provides.schemas`. The engine loads all registered schemas at startup and matches them to files by directory path.
 
@@ -101,7 +101,7 @@ The LSP adapter also provides **completions** by reading schema enum values.
 The `orqa check` command runs the validation engine against all artifacts and outputs a human-readable report:
 
 ```text
-ERROR  .orqa/process/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
+ERROR  .orqa/learning/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
 WARN   .orqa/delivery/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
 ```
 

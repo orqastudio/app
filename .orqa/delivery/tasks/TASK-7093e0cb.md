@@ -1,7 +1,7 @@
 ---
 id: TASK-7093e0cb
 type: task
-name: "Full environment integration gate"
+title: "Full environment integration gate"
 status: active
 description: "Start orqa dev, connect Claude connector, and validate end-to-end: daemon enforcement, MCP search, prompt pipeline, workflow transitions"
 relationships:

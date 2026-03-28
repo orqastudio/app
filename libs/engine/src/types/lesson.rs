@@ -31,7 +31,7 @@ pub struct Lesson {
     pub updated: String,
     /// Full markdown body (everything after the YAML frontmatter).
     pub body: String,
-    /// Relative file path within the project, e.g. ".orqa/process/lessons/IMPL-001.md".
+    /// Relative file path within the project, e.g. ".orqa/learning/lessons/IMPL-001.md".
     pub file_path: String,
 }
 

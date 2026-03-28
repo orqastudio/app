@@ -868,11 +868,11 @@
     },
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/knowledge"
     },
     "rules": {
       "source": "rules",
-      "target": ".orqa/process/rules"
+      "target": ".orqa/learning/rules"
     }
   },
   "dependencies": {

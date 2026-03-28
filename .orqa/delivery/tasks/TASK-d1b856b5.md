@@ -6,7 +6,6 @@ description: "Update all documentation files that reference pre-restructure path
 status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "No doc file references `src-tauri/` without `backend/` prefix"
   - "No doc file references `persistence/` directory (should be `repo/`)"

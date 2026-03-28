@@ -1,7 +1,7 @@
 ---
 id: "TASK-a1ef2aad"
 type: "task"
-name: "Update orqa install pipeline for monorepo"
+title: "Update orqa install pipeline for monorepo"
 status: archived
 description: "Simplify the orqa install command for monorepo — npm install at root handles workspaces, topological build replaces LIB_ORDER, no npm link."
 relationships:

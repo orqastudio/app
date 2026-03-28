@@ -14,7 +14,7 @@
   "content": {
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/connector"
     }
   },
   "dependencies": {
@@ -98,7 +98,7 @@
     "cliTools": [],
     "symlinks": [
       {
-        "source": ".orqa/process/rules",
+        "source": ".orqa/learning/rules",
         "target": ".claude/rules"
       }
     ],

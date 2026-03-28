@@ -1,5 +1,5 @@
 /**
- * Config Generator — reads enforcement rules from .orqa/process/rules/
+ * Config Generator — reads enforcement rules from .orqa/learning/rules/
  * and generates tool config files (ESLint, Prettier, clippy, etc.).
  *
  * The generator reads:
@@ -76,7 +76,7 @@ export class ConfigGenerator {
 			if (!toolDef || !toolDef.configFile) continue;
 
 			const configPath = path.join(this.projectRoot, toolDef.configFile);
-			const config = this.buildToolConfig(toolName, entries, toolDef);
+			const config = this.buildToolConfig(entries);
 
 			if (config) {
 				const written = this.writeConfig(configPath, config, toolDef.configFormat);
@@ -190,9 +190,7 @@ export class ConfigGenerator {
 	}
 
 	private buildToolConfig(
-		_toolName: string,
 		entries: EnforcementEntry[],
-		_toolDef: PluginTool,
 	): Record<string, unknown> | null {
 		// Build a config object from enforcement entries
 		const config: Record<string, unknown> = {};

@@ -35,10 +35,11 @@ This skill is loaded when the base plugin development skill detects that the wor
 ### 1. Scaffold from Template
 
 ```bash
-orqa plugin create --template <cli-tool|frontend|full|sidecar> --name <plugin-name>
-```
+orqa plugin create --template <cli-tool | frontend | full | sidecar> --name <plugin-name>
+```text
 
 This:
+
 - Creates a new directory `<plugin-name>/`
 - Copies the chosen template
 - Initialises a git repo
@@ -50,7 +51,7 @@ This:
 
 Third-party plugins are standalone projects:
 
-```
+```text
 my-plugin/
 ├── <governance-dir>/             # Project governance artifacts
 │   ├── project configuration     # Software plugin pre-installed
@@ -66,7 +67,7 @@ my-plugin/
 ├── LICENSE
 ├── CONTRIBUTING.md
 └── README.md
-```
+```text
 
 ### 3. Plugin Manifest
 
@@ -76,21 +77,21 @@ my-plugin/
   "version": "0.1.0-dev",
   "displayName": "My Plugin",
   "description": "One-line description.",
-  "category": "coding-standards|delivery|integration|custom",
+  "category": "coding-standards | delivery | integration | custom",
   "provides": {
     "schemas": [],
     "knowledge": [],
     "enforcement_mechanisms": []
   },
   "content": {
-    "knowledge": { "source": "knowledge", "target": ".orqa/process/knowledge" },
-    "rules": { "source": "rules", "target": ".orqa/process/rules" }
+    "knowledge": { "source": "knowledge", "target": ".orqa/documentation/knowledge" },
+    "rules": { "source": "rules", "target": ".orqa/learning/rules" }
   },
   "dependencies": {
     "npm": []
   }
 }
-```
+```text
 
 - `name` — `@yourorg/plugin-<name>` (your package scope, not the platform's)
 - `provides` — at least one capability (schemas, views, hooks, agents, knowledge, enforcement_mechanisms, etc.) or a `content` mapping
@@ -108,6 +109,7 @@ This applies to your own plugin too when testing locally.
 ### 5. Development
 
 Third-party plugins develop independently:
+
 - Create governance seed data for testing
 - Run `orqa dev` within the plugin project
 - Use `orqa check` for coding standards enforcement
@@ -119,23 +121,24 @@ Install in a test project via file path:
 
 ```bash
 orqa plugin install --path /path/to/my-plugin
-```
+```text
 
 After making content changes during development:
 
 ```bash
 orqa plugin refresh my-plugin-name
-```
+```text
 
 To inspect what has drifted between source and `.orqa/`:
 
 ```bash
 orqa plugin diff my-plugin-name
-```
+```text
 
 ### 7. Community Registry Submission
 
 To submit to the community plugin registry:
+
 1. Ensure all enforcement passes (`orqa enforce`)
 2. Submit a PR to the community registry repository
 3. Maintainers review for quality, security, and compatibility
@@ -150,11 +153,12 @@ orqa plugin enable <name>             # Re-copy content for a disabled plugin
 orqa plugin disable <name>            # Remove content without uninstalling
 orqa plugin refresh [name]            # Rebuild and re-sync content (one or all)
 orqa plugin diff [name]               # Show content drift between source and .orqa/
-```
+```text
 
 ### 9. Licensing
 
 Third-party plugins choose their own license. The plugin creation workflow asks:
+
 - Apache-2.0 (permissive, attribution required)
 - MIT (permissive, minimal requirements)
 - Other (manual LICENSE file)

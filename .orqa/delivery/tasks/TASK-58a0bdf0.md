@@ -1,7 +1,7 @@
 ---
 id: "TASK-58a0bdf0"
 type: "task"
-name: "License per directory and version management"
+title: "License per directory and version management"
 status: archived
 description: "Set up per-directory LICENSE files for mixed BSL-1.1/Apache-2.0 licensing. Update orqa version sync for monorepo (single VERSION file, workspace-aware propagation)."
 relationships:

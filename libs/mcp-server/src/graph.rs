@@ -261,7 +261,7 @@ mod tests {
         write_org_project_json(tmp.path(), "app", "app");
 
         // Write a rule in the child project's .orqa/
-        let rules_dir = child_dir.join(".orqa/process/rules");
+        let rules_dir = child_dir.join(".orqa/learning/rules");
         write_artifact(
             &rules_dir,
             "RULE-001.md",
@@ -299,7 +299,7 @@ mod tests {
         );
 
         // RULE-001 is in the child project only.
-        let child_rules = child_dir.join(".orqa/process/rules");
+        let child_rules = child_dir.join(".orqa/learning/rules");
         write_artifact(
             &child_rules,
             "RULE-001.md",
@@ -322,13 +322,13 @@ mod tests {
         write_org_project_json(tmp.path(), "app", "app");
 
         // Same ID in both root and child — root wins.
-        let root_rules = tmp.path().join(".orqa/process/rules");
+        let root_rules = tmp.path().join(".orqa/learning/rules");
         write_artifact(
             &root_rules,
             "RULE-001.md",
             "---\nid: RULE-001\ntitle: Root Rule\n---\n",
         );
-        let child_rules = child_dir.join(".orqa/process/rules");
+        let child_rules = child_dir.join(".orqa/learning/rules");
         write_artifact(
             &child_rules,
             "RULE-001.md",

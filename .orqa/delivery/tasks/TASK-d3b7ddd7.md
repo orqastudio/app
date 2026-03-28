@@ -1,7 +1,7 @@
 ---
 id: TASK-d3b7ddd7
 type: task
-name: "Status bar daemon connectivity indicator"
+title: "Status bar daemon connectivity indicator"
 status: captured
 description: Add periodic health check against the daemon endpoint. Show connected/disconnected/degraded in the status bar based on actual daemon reachability.
 relationships:

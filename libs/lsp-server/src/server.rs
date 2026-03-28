@@ -268,6 +268,7 @@ fn category_label_from_str(category: &str) -> &'static str {
 // LanguageServer implementation
 // ---------------------------------------------------------------------------
 
+#[allow(clippy::too_many_lines)]
 #[tower_lsp::async_trait]
 impl LanguageServer for OrqaLspBackend {
     async fn initialize(&self, _params: InitializeParams) -> RpcResult<InitializeResult> {

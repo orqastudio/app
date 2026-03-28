@@ -3,7 +3,7 @@ id: "MS-b1ac0a20"
 type: "milestone"
 title: "Dogfooding"
 description: "OrqaStudio is usable as a daily workspace for building OrqaStudio itself. The app runs in dogfood mode, editing its own source code. This milestone covers the gap between \"pieces exist\" and \"it actually works end-to-end."
-status: "active"
+status: active
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
 gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?\nAre recent lessons observations rather than corrections? If most lessons captured in the current phase are pure observations — not requiring promotion to rules with enforcement — the infrastructure layer is mature enough to begin app dogfooding. (See IMPL-4eed88ef)\n"

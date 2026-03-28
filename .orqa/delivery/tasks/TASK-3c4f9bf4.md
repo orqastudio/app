@@ -1,7 +1,7 @@
 ---
 id: TASK-3c4f9bf4
 type: task
-name: "Full clean install from scratch"
+title: "Full clean install from scratch"
 status: active
 description: "Delete .orqa/ and run orqa install from plugins only — verify complete system rebuild with zero errors"
 relationships:

@@ -215,13 +215,13 @@ async function cmdConfigure(root: string): Promise<void> {
 	const pluginTools = loadPluginTools(root);
 
 	const entries = [
-		...extractEnforcementEntries(path.join(root, ".orqa/process/rules")),
-		...extractEnforcementEntries(path.join(root, "app/.orqa/process/rules")),
+		...extractEnforcementEntries(path.join(root, ".orqa/learning/rules")),
+		...extractEnforcementEntries(path.join(root, "app/.orqa/learning/rules")),
 	];
 
 	if (entries.length === 0) {
 		console.log("No enforcement entries found in coding standards rules.");
-		console.log("Add enforcement entries to rules in .orqa/process/rules/ with plugin/tool/config.");
+		console.log("Add enforcement entries to rules in .orqa/learning/rules/ with plugin/tool/config.");
 		return;
 	}
 

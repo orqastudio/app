@@ -6,7 +6,6 @@ description: "Extends the artifact scanner to extract and expose the status fiel
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "DocNode struct includes optional status field populated from YAML frontmatter"
   - "DocNode label always uses frontmatter title when available (never raw filename like TASK-1efe5f1a)"

@@ -1,7 +1,7 @@
 ---
 id: "EPIC-8b01ee51"
 type: "epic"
-name: "Plugin Framework: Universal Capability Model"
+title: "Plugin Framework: Universal Capability Model"
 status: active
 description: "Implement the universal plugin capability model (AD-9ab3e0a4) — three-way diff tracking, extends strategy for config plugins, universal capabilities replacing connector-specific wiring, integration lifecycle, and template schema tracking."
 priority: "P1"

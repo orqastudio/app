@@ -53,7 +53,7 @@
         ],
         "priority": "P3",
         "summary": "Third-party plugin development: standalone plugin creation outside the platform monorepo. Template-based, registry publishing, community conventions.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-1b7fa054.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-1b7fa054.md"
       },
       {
         "id": "plugin-development",
@@ -68,7 +68,7 @@
         ],
         "priority": "P2",
         "summary": "Plugin development: detects first-party vs third-party context, loads appropriate sub-knowledge. Use when creating new plugins or extending the platform.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-2f38309a.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-2f38309a.md"
       },
       {
         "id": "first-party-plugin-development",
@@ -83,18 +83,18 @@
         ],
         "priority": "P2",
         "summary": "First-party plugin development: workflow for the platform monorepo. Plugins are submodules, managed by dev environment CLI, published via CI.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-e6fee7a0.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-e6fee7a0.md"
       }
     ]
   },
   "content": {
     "agents": {
       "source": "agents",
-      "target": ".orqa/process/agents"
+      "target": ".claude/agents"
     },
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/knowledge"
     }
   }
 }

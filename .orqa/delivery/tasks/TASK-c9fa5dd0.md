@@ -1,7 +1,7 @@
 ---
 id: TASK-c9fa5dd0
 type: task
-name: "Verify knowledge artifact structure standards"
+title: "Verify knowledge artifact structure standards"
 status: active
 description: "Verify all knowledge artifacts meet 500-2000 token range with 100-150 token summaries per RES-d6e8ab11 section 5"
 relationships:

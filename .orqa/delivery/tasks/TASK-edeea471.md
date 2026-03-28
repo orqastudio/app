@@ -6,7 +6,6 @@ description: "Removes the Plan artifact type from the framework schema and repla
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "No Plan type definition in artifact-framework.md"
   - "Research schema added with draft/complete/surpassed workflow"

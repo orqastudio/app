@@ -1,7 +1,7 @@
 ---
 id: "TASK-ab7001d9"
 type: "task"
-name: "Phase 3 — Migrate CI to Forgejo Actions"
+title: "Phase 3 — Migrate CI to Forgejo Actions"
 status: archived
 description: "Set up Forgejo runner, migrate publish and check workflows, post CI status to GitHub mirror."
 relationships:

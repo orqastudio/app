@@ -484,7 +484,7 @@ fn shell_escape(s: &str) -> String {
     format!("'{}'", s.replace('\'', "'\\''"))
 }
 
-/// Load the full content of a knowledge artifact from `.orqa/process/knowledge/{name}.md`.
+/// Load the full content of a knowledge artifact from `.orqa/documentation/knowledge/{name}.md`.
 ///
 /// Validates that `name` contains no path separators to prevent directory traversal.
 /// Returns the raw file content (including frontmatter) or an informative error.

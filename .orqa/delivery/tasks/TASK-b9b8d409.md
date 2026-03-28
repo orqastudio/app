@@ -6,7 +6,6 @@ description: "The Rust backend resolves agent capabilities to Tauri tool names w
 status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 docs:
   - "DOC-9814ec3c"
 acceptance:

@@ -6,7 +6,6 @@ description: "Add a formal depends-on field to the task schema in the artifact f
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "depends-on field defined in the Task schema (artifact-framework.md)"
   - "Task lifecycle rule updated with dependency gate (todo → in-progress blocked if deps not done)"

@@ -6,7 +6,6 @@ description: "Establish legal foundation for the open source project including A
 status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "Apache License 2.0 applied"
   - "NOTICE file with project attribution"

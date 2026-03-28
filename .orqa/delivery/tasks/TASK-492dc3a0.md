@@ -6,7 +6,6 @@ description: "Extracts business logic from the monolithic stream_commands.rs (2,
 status: archived
 created: 2026-03-06T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "stream_commands.rs reduced from 2"
   - "425 to ~280 lines"

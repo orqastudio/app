@@ -17,7 +17,7 @@ relationships: []
 
 ## How It Works
 
-1. Rules in `.orqa/process/rules/` define coding standards via `enforcement` arrays
+1. Rules in `.orqa/learning/rules/` define coding standards via `enforcement` arrays
 2. Language plugins (svelte, rust, typescript) declare tools with config formats
 3. This plugin reads rules + plugin tools and generates config files
 
@@ -45,6 +45,7 @@ enforcement:
 ## Generated Configs
 
 The generator produces tool-specific config files:
+
 - ESLint → `.eslintrc.json`
 - clippy → `clippy.toml`
 - rustfmt → `.rustfmt.toml`

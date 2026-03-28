@@ -1,7 +1,7 @@
 ---
 id: "TASK-687cae0e"
 type: "task"
-name: "Phase 4 — Bidirectional contribution bridge"
+title: "Phase 4 — Bidirectional contribution bridge"
 status: archived
 description: "Custom webhook service syncing PRs and issues between Forgejo (primary) and GitHub (mirror). Contributors use either platform."
 relationships:

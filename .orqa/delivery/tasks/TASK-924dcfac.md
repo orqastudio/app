@@ -1,7 +1,7 @@
 ---
 id: TASK-924dcfac
 type: task
-name: "Refactor plugins/typescript to use extends strategy"
+title: "Refactor plugins/typescript to use extends strategy"
 status: archived
 description: Convert plugins/typescript from being consumed as a direct npm dependency to using the extends content strategy. Remove @orqastudio/plugin-typescript from libs/cli and libs/sdk direct dependencies.
 relationships:

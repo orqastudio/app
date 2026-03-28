@@ -6,7 +6,6 @@ description: "Add bodyTemplate definitions to each artifact type's schema.json a
 status: archived
 created: "2026-03-10"
 updated: "2026-03-10"
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Each schema.json (except research) has a bodyTemplate key listing required section headings"
   - "artifact-framework.md updated with body template documentation for all 9 types"

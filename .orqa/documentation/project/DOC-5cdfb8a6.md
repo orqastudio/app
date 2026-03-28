@@ -1,7 +1,7 @@
 ---
 id: "DOC-5cdfb8a6"
 type: doc
-status: "archived"
+status: archived
 archived_reason: "UI spec should be a WIREFRAME artifact type, not DOC. References stale paths (.orqa/process/lessons/, .orqa/process/rules/) that don't match target .orqa/ structure. Content describes pre-migration lesson pipeline UI."
 title: "Lesson Dashboard UI Spec"
 domain: reclassify

@@ -6,7 +6,6 @@ description: "Add the skills field to the task frontmatter schema in both the ta
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "Task frontmatter schema includes skills field (string array)"
   - "artifact-framework.md task schema updated with skills field"

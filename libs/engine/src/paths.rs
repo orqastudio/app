@@ -28,7 +28,7 @@ pub const SETTINGS_FILE: &str = ".orqa/project.json";
 pub struct ProjectPaths {
     /// Absolute path to the project root.
     project_root: PathBuf,
-    /// Artifact key → relative path (e.g. "lessons" → ".orqa/process/lessons").
+    /// Artifact key → relative path (e.g. "lessons" → ".orqa/learning/lessons").
     artifact_paths: HashMap<String, String>,
 }
 
@@ -107,7 +107,7 @@ mod tests {
             projects: vec![],
             artifacts: vec![
                 ArtifactEntry::Group {
-                    key: "process".to_string(),
+                    key: "learning".to_string(),
                     label: None,
                     icon: None,
                     children: vec![
@@ -115,13 +115,13 @@ mod tests {
                             key: "lessons".to_string(),
                             label: None,
                             icon: None,
-                            path: ".orqa/process/lessons".to_string(),
+                            path: ".orqa/learning/lessons".to_string(),
                         },
                         ArtifactTypeConfig {
                             key: "decisions".to_string(),
                             label: None,
                             icon: None,
-                            path: ".orqa/process/decisions".to_string(),
+                            path: ".orqa/learning/decisions".to_string(),
                         },
                     ],
                 },
@@ -147,11 +147,11 @@ mod tests {
 
         assert_eq!(
             paths.artifact_relative_path("lessons"),
-            Some(".orqa/process/lessons")
+            Some(".orqa/learning/lessons")
         );
         assert_eq!(
             paths.artifact_relative_path("decisions"),
-            Some(".orqa/process/decisions")
+            Some(".orqa/learning/decisions")
         );
         assert_eq!(
             paths.artifact_relative_path("docs"),
@@ -167,7 +167,7 @@ mod tests {
 
         assert_eq!(
             paths.artifact_dir("lessons"),
-            Some(PathBuf::from("/projects/my-app/.orqa/process/lessons"))
+            Some(PathBuf::from("/projects/my-app/.orqa/learning/lessons"))
         );
     }
 
@@ -219,7 +219,7 @@ mod tests {
         let paths = ProjectPaths::load(tmp.path()).expect("load should succeed");
         assert_eq!(
             paths.artifact_relative_path("lessons"),
-            Some(".orqa/process/lessons")
+            Some(".orqa/learning/lessons")
         );
     }
 

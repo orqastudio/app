@@ -109,7 +109,7 @@ For each agent definition file, the registry extracts:
 ```yaml
 ---
 
-name: backend-engineer
+title: backend-engineer
 description: "Rust / Tauri v2, IPC commands, domain logic, SQLite persistence"
 skills:
   - search

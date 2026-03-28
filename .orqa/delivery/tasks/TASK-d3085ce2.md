@@ -6,7 +6,6 @@ description: "User feedback: hover and active states on navigation items need to
 status: ready
 created: 2026-03-09
 updated: 2026-03-09
-assignee: AGENT-e5dd38e4
 docs:
   - DOC-9814ec3c
 acceptance:

@@ -295,6 +295,7 @@ fn error_value(msg: String) -> Value {
 // Main loop
 // ---------------------------------------------------------------------------
 
+#[allow(clippy::too_many_lines)]
 fn main() {
     // Initialize structured tracing to stderr.
     tracing_subscriber::fmt()

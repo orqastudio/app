@@ -56,7 +56,7 @@ What is the user actually communicating?
 
 **Learning Loop** → The user is TEACHING the system, not requesting work. This observation must enter the governance learning loop:
 
-1. Capture as a lesson artifact in `.orqa/process/lessons/`
+1. Capture as a lesson artifact in `.orqa/learning/lessons/`
 2. `search_semantic(scope: artifacts)` — query: "lessons similar to [observation]" — detect repeating patterns
 3. If pattern repeats → propose promotion to a rule with enforcement mechanism
 4. If first occurrence → log lesson, connect to relevant pillar or decision

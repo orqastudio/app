@@ -6,7 +6,6 @@ description: "Audits and restricts Tauri capabilities to the minimum required pe
 status: archived
 created: 2026-03-06T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-8e58cd87"
 acceptance:
   - "fs:default, shell:default, dialog:default, notification:default removed"
   - "Only dialog:allow-open retained"

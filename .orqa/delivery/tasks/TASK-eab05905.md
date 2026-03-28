@@ -6,7 +6,6 @@ description: "Update all 7 agent definitions to declare capabilities instead of 
 status: archived
 created: "2026-03-11"
 updated: "2026-03-12"
-assignee: "AGENT-4c94fe14"
 docs:
   - "DOC-28344cd7"
 acceptance:

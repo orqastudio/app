@@ -44,7 +44,7 @@ pub trait ArtifactStore {
 /// Load enforcement rules from a project's rules directory.
 ///
 /// Covers the operation performed by `enforcement_rules_repo::load_rules` in the
-/// app layer. Rules are sourced from `.orqa/process/rules/*.md` (or equivalent);
+/// app layer. Rules are sourced from `.orqa/learning/rules/*.md` (or equivalent);
 /// the trait does not prescribe the directory layout.
 pub trait EnforcementRuleStore {
     /// The error type returned by all operations on this store.
@@ -59,7 +59,7 @@ pub trait EnforcementRuleStore {
 
 /// Read, write, and scan lesson files.
 ///
-/// Covers the operations performed against `.orqa/process/lessons/` in the app
+/// Covers the operations performed against `.orqa/learning/lessons/` in the app
 /// layer. Lessons are first-class governance artifacts that feed the learning loop.
 pub trait LessonStore {
     /// The error type returned by all operations on this store.

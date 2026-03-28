@@ -6,7 +6,6 @@ description: "Update RULE-87ba1b81 and RULE-dd5b69e6 to reference capability-bas
 status: archived
 created: "2026-03-11"
 updated: "2026-03-12"
-assignee: "AGENT-4c94fe14"
 docs:
   - "DOC-28344cd7"
 acceptance:

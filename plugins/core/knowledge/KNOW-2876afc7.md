@@ -27,7 +27,7 @@ Creates the base governance structure for any project. This skill is domain-agno
 
 The base structure created by project setup:
 
-```
+```text
 <governance-dir>/
   project.json                  # Project metadata and artifact paths
   manifest.json                 # Plugin content ownership tracking
@@ -50,13 +50,14 @@ The base structure created by project setup:
     hooks/                      #   Event hooks
     agents/                     #   Agent definitions (populated by plugins)
     knowledge/                  #   Knowledge artifacts (populated by plugins)
-```
+```text
 
 ## How Core Content Is Installed
 
 Core rules, agents, and knowledge are NOT copied manually. They come from the `@orqastudio/plugin-core-framework` plugin, installed automatically during project setup.
 
 The plugin lifecycle:
+
 1. `orqa plugin install @orqastudio/plugin-core-framework` — copies agents, rules, and knowledge to `.orqa/`
 2. The installed files are recorded in `manifest.json` and owned by the plugin
 3. Plugin-owned files cannot be edited directly — edit in the plugin source and run `orqa plugin refresh`
@@ -96,7 +97,7 @@ Additional plugins (software, coding-standards, etc.) are installed the same way
     }
   ]
 }
-```
+```text
 
 ## Manifest File (`manifest.json`)
 
@@ -109,14 +110,14 @@ Created alongside `project.json`. Tracks which files in `.orqa/` are owned by wh
       "version": "0.1.0-dev",
       "installed_at": "2026-03-23T00:35:00.000Z",
       "files": [
-        ".orqa/process/agents/AGENT-4c94fe14.md",
-        ".orqa/process/knowledge/KNOW-2f38309a.md",
-        ".orqa/process/rules/RULE-2f64cc63.md"
+        ".claude/agents/AGENT-4c94fe14.md",
+        ".orqa/documentation/knowledge/KNOW-2f38309a.md",
+        ".orqa/learning/rules/RULE-2f64cc63.md"
       ]
     }
   }
 }
-```
+```text
 
 The engine uses `manifest.json` to enforce edit protection on plugin-owned files and to know which files to remove on uninstall or disable.
 
@@ -125,6 +126,7 @@ The engine uses `manifest.json` to enforce edit protection on plugin-owned files
 The core plugin provides:
 
 ### Core Rules
+
 - `artifact-lifecycle.md` — Artifact status transitions and gates
 - `documentation-first.md` — Documentation before code
 - `honest-reporting.md` — No false completion claims
@@ -132,10 +134,12 @@ The core plugin provides:
 - `systems-thinking.md` — Think in systems, not patches
 
 ### Core Agents (7 Universal Roles)
+
 - `orchestrator.md`, `researcher.md`, `planner.md`, `implementer.md`
 - `reviewer.md`, `writer.md`, `designer.md`
 
 ### Core Knowledge
+
 - `search` — Search methodology
 - `composability` — Composability philosophy
 - `planning` — Planning methodology
@@ -149,13 +153,13 @@ The core plugin provides:
 
 For Claude Code compatibility, create symlinks in the agent infrastructure directory:
 
-```
+```text
 <agent-dir>/rules/     → <governance-dir>/process/rules/
 <agent-dir>/agents/    → <governance-dir>/process/agents/
 <agent-dir>/knowledge/ → <governance-dir>/process/knowledge/
 <agent-dir>/hooks/     → <governance-dir>/process/hooks/
 <agent-dir>/CLAUDE.md  → <governance-dir>/process/agents/orchestrator.md
-```
+```text
 
 ## Setup Procedure
 

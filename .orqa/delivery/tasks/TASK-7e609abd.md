@@ -6,7 +6,6 @@ description: "Audit all existing planning and governance artifacts and add missi
 status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "All artifacts pass body template linting via pre-commit hook"
   - "No empty placeholder sections — each section has meaningful content or a brief note"

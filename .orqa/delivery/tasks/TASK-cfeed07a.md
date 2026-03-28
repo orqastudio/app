@@ -6,7 +6,6 @@ description: "Document the plugin system architecture and plan for component lib
 status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "Document covers: current plugin capabilities, component library extraction plan, view registration API, theme tokens"
   - "Built-in vs plugin boundary documented with decision framework"

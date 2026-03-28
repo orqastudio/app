@@ -7,7 +7,7 @@ description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, KNOW.md format,
   portability rules, provenance tracking, and skill audit protocol.
   Use when: Adding, updating, removing, or auditing agent skills; evaluating whether to install
-  a community skill or create a project-specific one; managing the .orqa/process/knowledge/ directory.
+  a community skill or create a project-specific one; managing the .orqa/documentation/knowledge/ directory.
 status: archived
 created: 2026-03-01
 updated: 2026-03-10
@@ -47,11 +47,11 @@ npx skills remove [skill-name]
 
 # Initialize a new empty skill
 npx skills init [skill-name]
-```
+```text
 
 **Installation flags:**
 
-- `--copy`: Copy files to `.orqa/process/knowledge/` instead of symlinking (preferred for this project)
+- `--copy`: Copy files to `.orqa/documentation/knowledge/` instead of symlinking (preferred for this project)
 - `-y` or `--yes`: Skip confirmation prompts
 - `-g` or `--global`: Global scope — installs to `~/.claude/skills/`, available across all projects
 
@@ -60,18 +60,18 @@ Always use project scope (default) with `--copy` for skills relevant to the proj
 ## Key Concepts
 
 | Concept | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Skill | A `KNOW.md` file with YAML frontmatter — portable domain knowledge for agents |
-| Project skill | In `.orqa/process/knowledge/` — committed with the codebase, shared by all agents |
+| Project skill | In `.orqa/documentation/knowledge/` — committed with the codebase, shared by all agents |
 | Global skill | In `~/.claude/skills/` — personal, not committed, available everywhere |
 | Registry skill | Installed from skills.sh ecosystem via `npx skills add` |
-| Custom skill | Created manually in `.orqa/process/knowledge/<name>/KNOW.md` |
+| Custom skill | Created manually in `.orqa/documentation/knowledge/<name>/KNOW.md` |
 | Provenance | Where a skill came from: skills.sh, custom-created, or downloaded+modified |
 | Portability | A skill is portable if it contains no project-specific paths, IDs, or rules |
 
 ## KNOW.md Format
 
-Every skill is a `KNOW.md` file in a directory under `.orqa/process/knowledge/`:
+Every skill is a `KNOW.md` file in a directory under `.orqa/documentation/knowledge/`:
 
 ```markdown
 ---
@@ -102,12 +102,12 @@ user-invocable: true
 
 ## Related Skills
 [Cross-references to other skills]
-```
+```text
 
 ### YAML Frontmatter Fields
 
 | Field | Required | Description |
-|-------|----------|-------------|
+| ------- | ---------- | ------------- |
 | `name` | Yes | Skill identifier (kebab-case, matches directory name) |
 | `description` | Yes | What it covers + "Use when:" trigger conditions |
 | `version` | Recommended | SemVer version of this skill |
@@ -137,7 +137,7 @@ When deciding whether to install a community skill or create a new one:
 
 - The domain is adequately covered by an existing skill
 - The knowledge belongs in project documentation (not portable enough)
-- The skill would duplicate content already in `.orqa/process/rules/` or docs
+- The skill would duplicate content already in `.orqa/learning/rules/` or docs
 
 ## Portability Rules (NON-NEGOTIABLE)
 
@@ -148,7 +148,7 @@ A skill is portable if a different project could use it unchanged. Skills MUST N
 - Project-specific file paths (e.g., `backend/src-tauri/src/domain/sessions.rs`)
 - Architecture decision numbers from this project (e.g., `[AD-7121ec20](AD-7121ec20)`, `[AD-75bb14ae](AD-75bb14ae)`)
 - Project-specific config values (hardcoded URLs, service names, environment variables)
-- Enforcement rules (those belong in `.orqa/process/rules/`)
+- Enforcement rules (those belong in `.orqa/learning/rules/`)
 - Product decisions (those belong in `.orqa/documentation/about/`)
 - Implementation patterns specific to this codebase's conventions
 
@@ -159,7 +159,7 @@ A skill is portable if a different project could use it unchanged. Skills MUST N
 Every installed skill is tracked through its KNOW.md frontmatter (YAML metadata including layer, category, relationships). Key tracking fields:
 
 | Field | Description |
-|-------|-------------|
+| ------- | ------------- |
 | Name | Skill identifier |
 | Source | `skills.sh/<owner>/<repo>@<name>` / `custom` / `downloaded+modified` |
 | Purpose | Why it was installed |
@@ -170,10 +170,10 @@ Every installed skill is tracked through its KNOW.md frontmatter (YAML metadata 
 
 ```text
 Discovery → Evaluation → Installation → Loading → Use → Update → Deprecation → Removal
-```
+```text
 
 | Phase | Action |
-|-------|--------|
+| ------- | -------- |
 | Discovery | `npx skills find [query]` |
 | Evaluation | Check portability, source reputation, relevance |
 | Installation | `npx skills add <source> --copy -y` |
@@ -190,10 +190,10 @@ Run a full skills audit periodically (or when the agent-maintainer role is trigg
 
 ```bash
 npx skills list
-ls .orqa/process/knowledge/
-```
+ls .orqa/documentation/knowledge/
+```text
 
-Verify: every directory in `.orqa/process/knowledge/` has a KNOW.md, and every entry in the knowledge log matches an installed knowledge artifact.
+Verify: every directory in `.orqa/documentation/knowledge/` has a KNOW.md, and every entry in the knowledge log matches an installed knowledge artifact.
 
 ### Step 2: Portability Check
 
@@ -203,7 +203,7 @@ For each skill, verify it contains no project-specific content (see Portability 
 
 ```bash
 npx skills check
-```
+```text
 
 Review the output. For each skill with an available update, review the changelog and update if safe.
 

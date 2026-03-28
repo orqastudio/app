@@ -1,7 +1,7 @@
 ---
 id: TASK-bc924b75
 type: task
-name: "Run orqa install and validate generated agents"
+title: "Run orqa install and validate generated agents"
 status: active
 description: "End-to-end orqa install test — verify all .claude/agents/*.md files are pipeline-generated with no hand-maintained content"
 relationships:

@@ -6,7 +6,6 @@ description: "Set up the separate orqa-plugin repo with plugin.json manifest, di
 status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 docs: []
 acceptance:
   - "Repository exists with .claude-plugin/plugin.json manifest"

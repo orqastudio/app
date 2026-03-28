@@ -6,7 +6,6 @@ description: "Defines a provider abstraction interface in the sidecar and refact
 status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Provider interface defined with query/resume/cancel/health methods"
   - "ClaudeAgentProvider implements the interface"

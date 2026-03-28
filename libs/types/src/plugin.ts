@@ -318,6 +318,42 @@ export interface PluginLifecycle {
 // Plugin Manifest
 // ---------------------------------------------------------------------------
 
+/**
+ * Installation constraint metadata declared in a plugin manifest.
+ *
+ * Governs what the installer must enforce and what post-install actions
+ * it must trigger. Separate from `provides` because these fields describe
+ * installation behaviour rather than runtime contributions.
+ */
+export interface PluginInstallConstraints {
+	/**
+	 * The plugin's role(s) in the methodology composition pipeline.
+	 * Valid values: "methodology", "workflow", "knowledge", "connector",
+	 * "infrastructure", "app_extension", "sidecar".
+	 * A single plugin may serve multiple purposes.
+	 */
+	purpose?: string[];
+	/**
+	 * For workflow plugins: the methodology stage slot this plugin fills.
+	 * Must be unique — only one plugin may occupy each slot per project.
+	 * Non-workflow plugins leave this field absent.
+	 */
+	stageSlot?: string;
+	/**
+	 * True when installing this plugin must trigger full schema recomposition.
+	 * Definition plugins (methodology, workflow) set this to true.
+	 * Knowledge, views, and infrastructure plugins set it to false.
+	 * Missing field defaults to false (safe default per P5-28).
+	 */
+	affectsSchema?: boolean;
+	/**
+	 * True when installing this plugin must trigger enforcement config regeneration.
+	 * Plugins that provide rules or enforcement mechanisms set this to true.
+	 * Missing field defaults to false (safe default per P5-28).
+	 */
+	affectsEnforcement?: boolean;
+}
+
 /** The full plugin manifest (read from `orqa-plugin.json`). */
 export interface PluginManifest {
 	/** Package name (e.g. "@orqastudio/plugin-software-kanban"). */
@@ -344,7 +380,7 @@ export interface PluginManifest {
 	 * - `core:framework` — the agent execution model (always `@orqastudio/plugin-core-framework`)
 	 * - `core:discovery` — discovery methodology (e.g. systems-thinking, design-thinking)
 	 * - `core:delivery` — delivery methodology (e.g. software-project, hardware-project)
-	 * - `core:governance` — governance methodology (e.g. agile-workflow, kanban)
+	 * - `core:governance` — governance methodology (e.g. agile-methodology, kanban)
 	 */
 	role?: string;
 	/** Plugin category. The app requires at least one plugin from each of: thinking, delivery, governance. */
@@ -383,6 +419,11 @@ export interface PluginManifest {
 	build?: string;
 	/** Lifecycle hooks for install/uninstall. */
 	lifecycle?: PluginLifecycle;
+	/**
+	 * Installation constraint metadata: purpose classification, stage slot, and
+	 * post-install action flags. All fields default to safe values when absent.
+	 */
+	installConstraints?: PluginInstallConstraints;
 }
 
 /**

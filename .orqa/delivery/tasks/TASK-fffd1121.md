@@ -6,7 +6,6 @@ description: "Dry-runs backend, frontend, and governance delegation scenarios to
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-8e58cd87"
 acceptance:
   - "Dry-run a backend task delegation — confirm Tier 1, 2, 3 all load"
   - "Dry-run a frontend task delegation — confirm correct Tier 2 skills injected"

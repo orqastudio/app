@@ -6,7 +6,6 @@ description: "Replace ArtifactLink prefix routing, ArtifactNav pendingArtifactId
 status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "ArtifactLink uses artifactGraph.resolve(id) for navigation"
   - "ArtifactNav removes isTree guard — auto-select works for flat AND tree types"

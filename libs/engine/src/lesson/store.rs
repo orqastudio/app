@@ -70,7 +70,7 @@ impl FileLessonStore {
         })
     }
 
-    /// Get the relative path prefix for lessons (e.g. `.orqa/process/lessons`).
+    /// Get the relative path prefix for lessons (e.g. `.orqa/learning/lessons`).
     fn lessons_relative_path(&self) -> Result<String, LessonStoreError> {
         self.paths
             .artifact_relative_path("lessons")
@@ -291,7 +291,7 @@ mod tests {
                     key: "lessons".to_string(),
                     label: None,
                     icon: None,
-                    path: ".orqa/process/lessons".to_string(),
+                    path: ".orqa/learning/lessons".to_string(),
                 }],
             }],
             statuses: vec![],
@@ -324,11 +324,11 @@ mod tests {
         assert_eq!(lesson.category, "process");
         assert_eq!(lesson.recurrence, 1);
         assert_eq!(lesson.status, "active");
-        assert_eq!(lesson.file_path, ".orqa/process/lessons/IMPL-001.md");
+        assert_eq!(lesson.file_path, ".orqa/learning/lessons/IMPL-001.md");
 
         let file = dir
             .path()
-            .join(".orqa/process/lessons/IMPL-001.md");
+            .join(".orqa/learning/lessons/IMPL-001.md");
         assert!(file.exists(), "lesson file should be created on disk");
     }
 
@@ -441,7 +441,7 @@ mod tests {
         let lesson = store.create(&new).expect("create");
         let file_path = dir
             .path()
-            .join(".orqa/process/lessons/IMPL-001.md");
+            .join(".orqa/learning/lessons/IMPL-001.md");
 
         let read_back = LessonStore::read(&store, &file_path).expect("trait read");
         assert_eq!(read_back.id, lesson.id);
@@ -460,7 +460,7 @@ mod tests {
         store.create(&new("One")).expect("one");
         store.create(&new("Two")).expect("two");
 
-        let lessons_dir = dir.path().join(".orqa/process/lessons");
+        let lessons_dir = dir.path().join(".orqa/learning/lessons");
         let scanned = LessonStore::scan(&store, &lessons_dir).expect("scan");
         assert_eq!(scanned.len(), 2);
     }

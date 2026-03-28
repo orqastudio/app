@@ -17,6 +17,7 @@ use crate::types::McpToolDefinition;
 // ---------------------------------------------------------------------------
 
 /// Return the MCP tool definition list for all graph tools.
+#[allow(clippy::too_many_lines)]
 pub fn tool_definitions() -> Vec<McpToolDefinition> {
     vec![
         McpToolDefinition {
@@ -185,6 +186,7 @@ pub fn tool_resolve(daemon: &DaemonClient, args: &Value) -> Result<String, Strin
 
 /// `graph_relationships` — uses `POST /query` to find the artifact, then
 /// extracts its relationship fields.
+#[allow(clippy::too_many_lines)]
 pub fn tool_relationships(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let id = args
         .get("id")

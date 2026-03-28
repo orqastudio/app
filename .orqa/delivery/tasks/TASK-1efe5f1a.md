@@ -6,7 +6,6 @@ description: "Verify the full AI transparency pipeline works end-to-end: Rust em
 status: archived
 created: "2026-03-07"
 updated: "2026-03-07"
-assignee: "AGENT-8e58cd87"
 acceptance:
   - "System prompt sent (N chars) appears inline above assistant response when project is loaded"
   - "Clicking the entry opens ContextDetailDialog with governance prompt text visible"

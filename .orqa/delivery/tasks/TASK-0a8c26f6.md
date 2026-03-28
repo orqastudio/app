@@ -1,7 +1,7 @@
 ---
 id: TASK-0a8c26f6
 type: task
-name: "Verify P6 Hub-Spoke Orchestration"
+title: "Verify P6 Hub-Spoke Orchestration"
 status: active
 description: "Verify that the orchestrator coordinates without implementing — workers write findings, orchestrator reads summaries"
 relationships:

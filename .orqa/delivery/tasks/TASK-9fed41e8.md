@@ -6,7 +6,6 @@ description: "Renames the provider-specific session ID field to a neutral name a
 status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "All sdk_session_id references renamed to provider_session_id"
   - "SQLite migration 005 renames column"

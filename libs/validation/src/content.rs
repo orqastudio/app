@@ -351,7 +351,7 @@ fn is_md_file(path: &Path) -> bool {
 
 /// Directories that may contain agent artifacts, in priority order.
 fn agent_directories(root: &Path) -> Vec<PathBuf> {
-    let mut dirs = vec![root.join(".orqa/process/agents")];
+    let mut dirs = vec![root.join(".claude/agents")];
 
     // plugins/<name>/agents/
     dirs.extend(subdirectory_named(root, "plugins", "agents"));
@@ -364,7 +364,7 @@ fn agent_directories(root: &Path) -> Vec<PathBuf> {
 
 /// Directories that may contain knowledge artifacts, in priority order.
 fn knowledge_directories(root: &Path) -> Vec<PathBuf> {
-    let mut dirs = vec![root.join(".orqa/process/knowledge")];
+    let mut dirs = vec![root.join(".orqa/documentation/knowledge")];
 
     // plugins/<name>/knowledge/
     dirs.extend(subdirectory_named(root, "plugins", "knowledge"));
@@ -459,7 +459,7 @@ mod tests {
     #[test]
     fn find_agent_returns_none_for_unknown_agent() {
         let tmp = make_project();
-        let agents_dir = tmp.path().join(".orqa/process/agents");
+        let agents_dir = tmp.path().join(".claude/agents");
         write_file(
             &agents_dir.join("planner.md"),
             "---\nid: AGENT-a1b2c3d4\ntitle: Planner\nstatus: active\n---\nPlan things.\n",
@@ -471,7 +471,7 @@ mod tests {
     #[test]
     fn find_agent_matches_case_insensitively() {
         let tmp = make_project();
-        let agents_dir = tmp.path().join(".orqa/process/agents");
+        let agents_dir = tmp.path().join(".claude/agents");
         write_file(
             &agents_dir.join("planner.md"),
             "---\nid: AGENT-a1b2c3d4\ntitle: Planner\nstatus: active\npreamble: You plan things.\n---\nBody.\n",
@@ -488,7 +488,7 @@ mod tests {
     #[test]
     fn find_agent_falls_back_to_description_preamble() {
         let tmp = make_project();
-        let agents_dir = tmp.path().join(".orqa/process/agents");
+        let agents_dir = tmp.path().join(".claude/agents");
         write_file(
             &agents_dir.join("reviewer.md"),
             "---\nid: AGENT-b2c3d4e5\ntitle: Reviewer\nstatus: active\ndescription: Reviews code.\n---\nBody.\n",
@@ -501,7 +501,7 @@ mod tests {
     #[test]
     fn find_agent_preamble_empty_when_neither_field_present() {
         let tmp = make_project();
-        let agents_dir = tmp.path().join(".orqa/process/agents");
+        let agents_dir = tmp.path().join(".claude/agents");
         write_file(
             &agents_dir.join("writer.md"),
             "---\nid: AGENT-c3d4e5f6\ntitle: Writer\nstatus: active\n---\nBody.\n",
@@ -539,7 +539,7 @@ mod tests {
     #[test]
     fn find_knowledge_flat_file_form() {
         let tmp = make_project();
-        let know_dir = tmp.path().join(".orqa/process/knowledge");
+        let know_dir = tmp.path().join(".orqa/documentation/knowledge");
         write_file(
             &know_dir.join("coding.md"),
             "---\nid: KNOW-a1b2c3d4\ntitle: Coding Standards\nstatus: active\n---\nContent.\n",
@@ -556,7 +556,7 @@ mod tests {
     #[test]
     fn find_knowledge_directory_form_preferred() {
         let tmp = make_project();
-        let know_dir = tmp.path().join(".orqa/process/knowledge");
+        let know_dir = tmp.path().join(".orqa/documentation/knowledge");
 
         // Both forms exist -- directory form wins.
         write_file(
@@ -576,7 +576,7 @@ mod tests {
     #[test]
     fn find_knowledge_returns_none_for_unknown_key() {
         let tmp = make_project();
-        let know_dir = tmp.path().join(".orqa/process/knowledge");
+        let know_dir = tmp.path().join(".orqa/documentation/knowledge");
         write_file(
             &know_dir.join("coding.md"),
             "---\nid: KNOW-a1b2c3d4\ntitle: Coding\nstatus: active\n---\nContent.\n",
@@ -615,7 +615,7 @@ mod tests {
             id: "RULE-a1b2c3d4".to_owned(),
             project: None,
             artifact_type: "rule".to_owned(),
-            path: ".orqa/process/rules/RULE-a1b2c3d4.md".to_owned(),
+            path: ".orqa/learning/rules/RULE-a1b2c3d4.md".to_owned(),
             title: "Test Rule".to_owned(),
             description: None,
             status: Some("active".to_owned()),
@@ -659,7 +659,7 @@ mod tests {
             id: "RULE-b2c3d4e5".to_owned(),
             project: None,
             artifact_type: "rule".to_owned(),
-            path: ".orqa/process/rules/RULE-b2c3d4e5.md".to_owned(),
+            path: ".orqa/learning/rules/RULE-b2c3d4e5.md".to_owned(),
             title: "Inactive Rule".to_owned(),
             description: None,
             status: Some("inactive".to_owned()),
@@ -734,7 +734,7 @@ mod tests {
             id: "RULE-c3d4e5f6".to_owned(),
             project: None,
             artifact_type: "rule".to_owned(),
-            path: ".orqa/process/rules/RULE-c3d4e5f6.md".to_owned(),
+            path: ".orqa/learning/rules/RULE-c3d4e5f6.md".to_owned(),
             title: "Multi Rule".to_owned(),
             description: None,
             status: Some("active".to_owned()),

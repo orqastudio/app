@@ -1,7 +1,7 @@
 ---
 id: TASK-51aa03f0
 type: task
-name: "Content audit AND migration"
+title: "Content audit AND migration"
 status: active
 description: "Audit and migrate all plugin and project artifacts to correct types, statuses, and relationships for the new architecture"
 relationships:

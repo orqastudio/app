@@ -6,7 +6,6 @@ description: "Updates the orchestrator's delegation protocol to automatically in
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Orchestrator's delegation protocol includes skill injection step"
   - "Delegation prompts to agents include project skill injection instructions"

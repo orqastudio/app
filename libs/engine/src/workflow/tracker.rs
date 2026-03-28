@@ -29,7 +29,7 @@ pub struct WorkflowTracker {
     commands_run: Vec<String>,
     /// True after any `make check` or `make test` command is detected.
     verification_run: bool,
-    /// True after any read of `.orqa/process/lessons/`.
+    /// True after any read of `.orqa/learning/lessons/`.
     lessons_checked: bool,
     /// Deduplication set for knowledge injection — prevents injecting the same knowledge twice.
     injected_knowledge: HashSet<String>,
@@ -47,7 +47,7 @@ impl WorkflowTracker {
     ///
     /// - Paths containing `.orqa/documentation/` are added to `docs_consulted`.
     /// - Paths containing `.orqa/delivery/` are added to `planning_consulted`.
-    /// - Paths containing `.orqa/process/lessons/` set `lessons_checked`.
+    /// - Paths containing `.orqa/learning/lessons/` set `lessons_checked`.
     pub fn record_read(&mut self, path: &str) {
         self.files_read.push(path.to_string());
 
@@ -57,7 +57,7 @@ impl WorkflowTracker {
         if path.contains(".orqa/delivery/") {
             self.planning_consulted.push(path.to_string());
         }
-        if path.contains(".orqa/process/lessons/") {
+        if path.contains(".orqa/learning/lessons/") {
             self.lessons_checked = true;
         }
     }
@@ -131,7 +131,7 @@ impl WorkflowTracker {
         self.verification_run
     }
 
-    /// True if `.orqa/process/lessons/` was read this session.
+    /// True if `.orqa/learning/lessons/` was read this session.
     pub fn has_checked_lessons(&self) -> bool {
         self.lessons_checked
     }
@@ -188,7 +188,7 @@ mod tests {
     #[test]
     fn record_read_lessons_path_sets_lessons_checked() {
         let mut t = WorkflowTracker::new();
-        t.record_read(".orqa/process/lessons/IMPL-001.md");
+        t.record_read(".orqa/learning/lessons/IMPL-001.md");
         assert!(t.has_checked_lessons());
     }
 
@@ -205,7 +205,7 @@ mod tests {
     #[test]
     fn record_write_orqa_file_is_not_code_write() {
         let mut t = WorkflowTracker::new();
-        t.record_write(".orqa/process/rules/RULE-042.md");
+        t.record_write(".orqa/learning/rules/RULE-042.md");
         assert!(!t.has_written_code());
         assert_eq!(t.code_write_count(), 0);
     }
@@ -406,7 +406,7 @@ mod tests {
     #[test]
     fn orqa_write_via_absolute_path_is_not_code() {
         let mut t = WorkflowTracker::new();
-        t.record_write("/home/user/project/.orqa/process/rules/RULE-042.md");
+        t.record_write("/home/user/project/.orqa/learning/rules/RULE-042.md");
         assert!(!t.has_written_code());
     }
 }

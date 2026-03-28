@@ -36,7 +36,7 @@ export function injectNavigation(
 
 // ── Navigation API for plugins and SDK consumers ────────────────────────────
 
-/** Navigate to an artifact by path (e.g., ".orqa/process/rules/RULE-abc.md"). */
+/** Navigate to an artifact by path (e.g., ".orqa/learning/rules/RULE-abc.md"). */
 export function navigateToArtifact(artifactPath: string, activity?: string): void {
 	pushRoute({ type: "artifact", activity: activity ?? "explorer", artifactPath });
 }

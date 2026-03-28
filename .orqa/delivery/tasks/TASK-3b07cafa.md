@@ -6,7 +6,6 @@ description: "Update rules to reference pillar artifacts generically"
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "vision-alignment.md references pillar artifacts by path"
   - "not hardcoded names"

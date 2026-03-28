@@ -22,12 +22,12 @@ orqa enforce --errors-only
 
 # JSON output for programmatic use
 orqa enforce --json
-```
+```text
 
 ## Interpreting Results
 
 | Severity | Meaning | Action |
-|----------|---------|--------|
+| ---------- | --------- | -------- |
 | **ERROR** | Graph integrity broken | Must fix before committing |
 | **WARNING** | Best practice violation | Should fix, not blocking |
 | **INFO** | Suggestion | Optional improvement |
@@ -35,21 +35,27 @@ orqa enforce --json
 ## Common Issues
 
 ### Missing inverse relationship
-```
+
+```text
 ERROR: TASK-44bd295d --delivers--> EPIC-9b58fdcb but EPIC-9b58fdcb has no delivered-by --> TASK-44bd295d
-```
+```text
+
 **Fix:** Add the inverse relationship to the target artifact.
 
 ### Invalid status
-```
+
+```text
 ERROR: TASK-44bd295d has status "in-progress" — must be one of: captured, exploring, ready, ...
-```
+```text
+
 **Fix:** Use one of the 12 canonical statuses (e.g., `active` instead of `in-progress`).
 
 ### Missing required field
-```
+
+```text
 ERROR: .orqa/delivery/tasks/TASK-44bd295d.md — missing required field: id
-```
+```text
+
 **Fix:** Add the required field to the YAML frontmatter.
 
 ## Baseline

@@ -6,7 +6,6 @@ description: "Replace parseFrontmatter() calls in ArtifactViewer, AgentViewer, a
 status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "ArtifactViewer reads metadata from artifactGraph.resolve() or resolveByPath()"
   - "AgentViewer and SkillViewer read metadata from graph instead of parsing frontmatter"

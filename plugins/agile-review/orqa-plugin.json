@@ -26,7 +26,7 @@
   "content": {
     "workflows": {
       "source": "workflows",
-      "target": ".orqa/process/workflows"
+      "target": ".orqa/workflows"
     }
   },
   "dependencies": {

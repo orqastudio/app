@@ -6,7 +6,6 @@ description: "Configure Vitest coverage reporter with threshold enforcement."
 status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "vitest.config.ts exists with coverage configuration"
   - "make coverage-frontend target exists and produces a coverage report"

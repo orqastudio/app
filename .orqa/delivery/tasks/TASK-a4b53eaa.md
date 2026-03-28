@@ -6,7 +6,6 @@ description: "Fixes the hooks section of the governance panel showing empty by u
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Hooks section in governance displays existing hook files from .orqa/process/hooks/"
   - "If hooks directory contains shell scripts (not .md files)"

@@ -1,7 +1,7 @@
 ---
 id: TASK-d32da42f
 type: task
-name: "Verify P3 Generated Not Loaded"
+title: "Verify P3 Generated Not Loaded"
 status: active
 description: "Verify that system prompts are generated programmatically from the pipeline — not hand-maintained files"
 relationships:

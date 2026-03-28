@@ -6,7 +6,6 @@ description: "Increases the artifact viewer loading spinner to the large size va
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Loading spinner in main artifact viewer uses \"lg\" size variant"
   - "Animated logo pulse is clearly visible and not lost at display size"

@@ -6,7 +6,6 @@ description: "Fixes the artifact detail renderer to suppress null, empty, and in
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Null, empty string, and undefined YAML values are not displayed in read views"
   - "Invalid Date never shown for null/missing date fields"

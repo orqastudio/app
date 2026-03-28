@@ -11,7 +11,7 @@ Three MCP tools for structured search. Works for code and non-code projects.
 ## Tool Selection
 
 | Situation | Tool |
-|-----------|------|
+| ----------- | ------ |
 | Know the exact function or class name | `search_regex` |
 | Know the exact route or command name | `search_regex` |
 | Need all callers before refactoring | `search_regex` |
@@ -25,19 +25,19 @@ Three MCP tools for structured search. Works for code and non-code projects.
 
 Pattern-based search across indexed content.
 
-```
+```text
 search_regex({ pattern: "build_artifact_graph", limit: 20 })
 search_regex({ pattern: "pub fn.*Result", path_filter: "src/domain" })
-```
+```text
 
 ## search_semantic
 
 Natural language search using ONNX embeddings (requires model loaded).
 
-```
+```text
 search_semantic({ query: "how does the artifact validation pipeline work?", limit: 10 })
 search_semantic({ query: "error handling in IPC commands" })
-```
+```text
 
 ## search_research
 
@@ -47,18 +47,18 @@ Compound query for deep understanding:
 3. Regex follow-up for definitions and callers
 4. Assembled context with primary + related results
 
-```
+```text
 search_research({ question: "how does the plugin system discover and load plugins?" })
-```
+```text
 
 ## search_status
 
 Check index health:
 
-```
+```text
 search_status()
 → { is_indexed: true, chunk_count: 4521, has_embeddings: true }
-```
+```text
 
 ## When to Use
 

@@ -364,14 +364,14 @@ fn check_relationship_targets(
     }
 }
 
-/// Check that delivery/process artifacts have a relationships section.
+/// Check that delivery and learning artifacts have a relationships section.
 fn check_missing_relationships(
     rel_path: &str,
     frontmatter: &str,
     content: &str,
     findings: &mut Vec<FileFinding>,
 ) {
-    if (rel_path.starts_with(".orqa/delivery/") || rel_path.starts_with(".orqa/process/"))
+    if (rel_path.starts_with(".orqa/delivery/") || rel_path.starts_with(".orqa/learning/"))
         && !frontmatter.contains("relationships:")
     {
         let line_num = find_frontmatter_end_line(content);
@@ -380,7 +380,7 @@ fn check_missing_relationships(
             col_start: 0,
             col_end: 3,
             severity: FileSeverity::Info,
-            message: "No relationships declared — most delivery/process artifacts should have at least one".into(),
+            message: "No relationships declared — most delivery/learning artifacts should have at least one".into(),
         });
     }
 }
@@ -519,7 +519,7 @@ mod tests {
     #[test]
     fn knowledge_artifact_missing_synchronised_with() {
         let content = "---\nid: KNOW-001\ntype: knowledge\n---\n# Body\n";
-        let findings = validate_file(".orqa/process/knowledge/KNOW-001.md", content, None, &[]);
+        let findings = validate_file(".orqa/documentation/knowledge/KNOW-001.md", content, None, &[]);
         assert!(findings
             .iter()
             .any(|f| f.message.contains("synchronised-with")));

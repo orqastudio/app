@@ -1,7 +1,7 @@
 ---
 id: TASK-a38ef832
 type: task
-name: "Verify workflow template override mechanism"
+title: "Verify workflow template override mechanism"
 status: active
 description: "Verify project-level workflow overrides resolve correctly over plugin-provided workflows per RES-d6e8ab11 section 3"
 relationships:

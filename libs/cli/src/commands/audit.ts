@@ -243,8 +243,8 @@ function buildRuleIndex(rulesDir: string): Map<string, RuleFrontmatter> {
 function scanForEscalations(projectDir: string): EscalationFinding[] {
 	const findings: EscalationFinding[] = [];
 
-	const lessonsDir = join(projectDir, ".orqa", "process", "lessons");
-	const rulesDir = join(projectDir, ".orqa", "process", "rules");
+	const lessonsDir = join(projectDir, ".orqa", "learning", "lessons");
+	const rulesDir = join(projectDir, ".orqa", "learning", "rules");
 
 	const ruleIndex = buildRuleIndex(rulesDir);
 

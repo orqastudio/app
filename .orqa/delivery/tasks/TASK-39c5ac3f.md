@@ -6,7 +6,6 @@ description: "Update agent-delegation.md and all other rules that reference old 
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "agent-delegation.md rewritten for 7 universal roles instead of 16 agents"
   - "Delegation table uses role + skill pattern (e.g. \"Implementer + backend skills\")"

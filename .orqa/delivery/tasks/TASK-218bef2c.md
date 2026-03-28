@@ -6,7 +6,6 @@ description: "Add pillar reference field to epic/idea schemas"
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Epic schema includes optional pillars field (list of PILLAR-NNN IDs)"
   - "Idea schema includes optional pillars field"

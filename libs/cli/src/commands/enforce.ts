@@ -316,7 +316,7 @@ async function handleTest(args: string[]): Promise<void> {
 
 	// Find all rule files and extract test entries
 	const ruleDirs = [
-		join(projectRoot, ".orqa", "process", "rules"),
+		join(projectRoot, ".orqa", "learning", "rules"),
 		...findPluginRuleDirs(projectRoot),
 	];
 

@@ -1,7 +1,7 @@
 ---
 id: "TASK-fe45b4f9"
 type: "task"
-name: "Set up npm workspaces"
+title: "Set up npm workspaces"
 status: archived
 description: "Replace the entire npm link chain with npm workspaces. Root package.json declares all TS packages as workspace members. Internal @orqastudio/* deps resolve via workspace protocol."
 relationships:

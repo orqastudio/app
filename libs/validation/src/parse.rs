@@ -418,7 +418,7 @@ mod tests {
     #[test]
     fn parse_minimal_artifact() {
         let tmp = make_project();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
         let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\n---\n\n## Body\n\nSome content here.\n";
         write_file(&rules_dir, "RULE-a1b2c3d4.md", content);
 
@@ -476,7 +476,7 @@ mod tests {
         use crate::graph::build_artifact_graph;
 
         let tmp = make_project();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
         let epics_dir = tmp.path().join(".orqa/delivery/epics");
 
         write_file(
@@ -502,7 +502,7 @@ mod tests {
         use crate::graph::build_artifact_graph;
 
         let tmp = make_project();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
 
         write_file(
             &rules_dir,
@@ -527,7 +527,7 @@ mod tests {
         use crate::graph::build_artifact_graph;
 
         let tmp = make_project();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
 
         write_file(
             &rules_dir,
@@ -653,7 +653,7 @@ relationships:
         use crate::graph::build_artifact_graph;
 
         let tmp = make_project();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
         let epics_dir = tmp.path().join(".orqa/delivery/epics");
 
         write_file(

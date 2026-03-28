@@ -1,7 +1,7 @@
 ---
 id: TASK-90eecd23
 type: task
-name: "Verify P7 Resolved Workflow Is a File on Disk"
+title: "Verify P7 Resolved Workflow Is a File on Disk"
 status: active
 description: "Verify that runtime reads .orqa/workflows/*.resolved.yaml — no install-time re-resolution at runtime"
 relationships:

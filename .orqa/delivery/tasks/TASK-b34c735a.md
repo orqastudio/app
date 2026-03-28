@@ -6,7 +6,6 @@ description: "Register pillars in artifact config"
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Pillars path added to project.json artifacts array under Planning group"
   - "App artifact scanner discovers pillar files"

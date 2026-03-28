@@ -3,7 +3,7 @@ id: "PILLAR-a6a4bbbb"
 type: "pillar"
 title: "Purpose Through Continuity"
 description: "The system actively maintains coherence between intention and action. It prevents drift between what the user set out to do and what is actually being done, ensuring purpose is never lost during implementation."
-status: "active"
+status: active
 created: "2026-03-13"
 updated: "2026-03-13"
 gate:
@@ -15,23 +15,6 @@ gate:
 relationships:
   - target: "VISION-4893db55"
     type: "upholds"
-  - target: "AGENT-4c94fe14"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-85be6ace"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-ae63c406"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-d1be3776"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-336e4d7d"
-    type: "served-by"
-  - target: "AGENT-ce86fb50"
-    type: "served-by"
-    rationale: "Auto-generated inverse of served-by relationship from AGENT-ce86fb50"
 
 ---
 

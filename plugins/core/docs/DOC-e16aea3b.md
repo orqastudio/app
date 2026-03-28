@@ -285,9 +285,9 @@ This detects both plugin updates and user local edits, and merges them intellige
 
 | Content Type | Source | Installed To |
 | ----------- | ------ | ----------- |
-| Agents | `plugins/<name>/agents/` | `.orqa/process/agents/` |
-| Knowledge | `plugins/<name>/knowledge/` | `.orqa/process/knowledge/` |
-| Rules | `plugins/<name>/rules/` | `.orqa/process/rules/` |
+| Agents | `plugins/<name>/agents/` | `.claude/agents/` |
+| Knowledge | `plugins/<name>/knowledge/` | `.orqa/documentation/knowledge/` |
+| Rules | `plugins/<name>/rules/` | `.orqa/learning/rules/` |
 | Docs | `plugins/<name>/docs/` | `.orqa/documentation/` |
 | Schemas | `orqa-plugin.json` provides.schemas | Used by validation engine |
 | Relationships | `orqa-plugin.json` provides.relationships | Used by validation engine |

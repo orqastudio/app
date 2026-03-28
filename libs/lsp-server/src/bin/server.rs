@@ -77,6 +77,7 @@ async fn main() {
 /// - `orqa-lsp-server --tcp 9257`                        → cwd, TCP 9257, default daemon port
 /// - `orqa-lsp-server /path/to/project --tcp 9257`
 /// - `orqa-lsp-server /path/to/project --daemon-port 9120`
+#[allow(clippy::too_many_lines)]
 fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
     let mut project_root: Option<PathBuf> = None;
     let mut tcp_port: Option<u16> = None;

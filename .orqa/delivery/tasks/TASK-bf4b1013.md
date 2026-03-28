@@ -6,7 +6,6 @@ description: "Backfill historical artifact data so the decision history, lesson 
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "At least 3 decisions have surpassed predecessors (showing evolution chains)"
   - "At least 2 research docs marked as surpassed with surpassed-by references"

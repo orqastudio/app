@@ -6,7 +6,6 @@ description: "Full product rebrand from Forge to Orqa Studio across all code, co
 status: archived
 created: 2026-03-04T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Product renamed to Orqa Studio throughout"
   - "src/ renamed to ui/"

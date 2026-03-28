@@ -90,7 +90,7 @@ use crate::types::{HookContext, HookResult, HookViolation};
 
 /// Evaluate all active rules against `ctx` and return a [`HookResult`].
 ///
-/// Scans `.orqa/process/rules/` and any plugin-contributed rules via the
+/// Scans `.orqa/learning/rules/` and any plugin-contributed rules via the
 /// artifact graph, then tests each active rule's enforcement entries against
 /// the context.
 ///
@@ -645,7 +645,7 @@ mod tests {
     // -----------------------------------------------------------------------
 
     fn write_rule(dir: &Path, id: &str, enforcement: serde_json::Value) {
-        let rules_dir = dir.join(".orqa/process/rules");
+        let rules_dir = dir.join(".orqa/learning/rules");
         fs::create_dir_all(&rules_dir).unwrap();
         let content = format!(
             "---\nid: {id}\ntitle: Test Rule\nstatus: active\nenforcement: {}\n---\n\nBody.\n",
@@ -898,7 +898,7 @@ mod tests {
     #[test]
     fn inactive_rules_are_skipped() {
         let tmp = TempDir::new().unwrap();
-        let rules_dir = tmp.path().join(".orqa/process/rules");
+        let rules_dir = tmp.path().join(".orqa/learning/rules");
         fs::create_dir_all(&rules_dir).unwrap();
         let content = concat!(
             "---\nid: RULE-a1b2c3d4\ntitle: Inactive Rule\nstatus: inactive\n",
@@ -945,13 +945,13 @@ mod tests {
         fs::create_dir_all(&orqa_dir).unwrap();
         fs::write(
             orqa_dir.join("manifest.json"),
-            r#"{"plugins":{"@orqastudio/plugin-agile-workflow":{"version":"0.1.0-dev","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-f609242f.md"]}}}"#,
+            r#"{"plugins":{"@orqastudio/plugin-agile-methodology":{"version":"0.1.0-dev","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/learning/rules/RULE-f609242f.md"]}}}"#,
         ).unwrap();
 
-        let ctx = file_ctx(".orqa/process/rules/RULE-f609242f.md");
+        let ctx = file_ctx(".orqa/learning/rules/RULE-f609242f.md");
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "block");
-        assert!(result.messages[0].contains("@orqastudio/plugin-agile-workflow"));
+        assert!(result.messages[0].contains("@orqastudio/plugin-agile-methodology"));
         assert!(result.messages[0].contains("orqa plugin refresh"));
     }
 
@@ -963,10 +963,10 @@ mod tests {
         fs::create_dir_all(&orqa_dir).unwrap();
         fs::write(
             orqa_dir.join("manifest.json"),
-            r#"{"plugins":{"@orqastudio/plugin-core":{"version":"0.1.0","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/process/rules/RULE-abc.md"]}}}"#,
+            r#"{"plugins":{"@orqastudio/plugin-core":{"version":"0.1.0","installed_at":"2026-03-22T00:00:00Z","files":[".orqa/learning/rules/RULE-abc.md"]}}}"#,
         ).unwrap();
 
-        let ctx = file_ctx(".orqa/process/rules/RULE-other.md");
+        let ctx = file_ctx(".orqa/learning/rules/RULE-other.md");
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
     }
@@ -974,7 +974,7 @@ mod tests {
     #[test]
     fn no_manifest_allows_all_files() {
         let tmp = TempDir::new().unwrap();
-        let ctx = file_ctx(".orqa/process/rules/RULE-f609242f.md");
+        let ctx = file_ctx(".orqa/learning/rules/RULE-f609242f.md");
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
     }
@@ -1417,18 +1417,18 @@ mod tests {
                 "mechanism": "hook",
                 "event": "tool-matcher",
                 "tool": "Write|Edit",
-                "paths": [".orqa/process/**"],
+                "paths": [".orqa/learning/**"],
                 "action": "block",
-                "message": "Cannot write to .orqa/process."
+                "message": "Cannot write to .orqa/learning."
             }]),
         );
 
-        // File inside .orqa/process/ matches
-        let ctx_match = tool_matcher_ctx("Write", Some(".orqa/process/rules/RULE-abc.md"), None);
+        // File inside .orqa/learning/ matches
+        let ctx_match = tool_matcher_ctx("Write", Some(".orqa/learning/rules/RULE-abc.md"), None);
         let result = evaluate_hook(&ctx_match, tmp.path());
         assert_eq!(result.action, "block");
 
-        // File outside .orqa/process/ does not match
+        // File outside .orqa/learning/ does not match
         let ctx_no_match = tool_matcher_ctx("Write", Some("src/main.rs"), None);
         let result2 = evaluate_hook(&ctx_no_match, tmp.path());
         assert_eq!(result2.action, "allow");
@@ -1449,17 +1449,17 @@ mod tests {
                 "mechanism": "hook",
                 "event": "tool-matcher",
                 "tool": "Write|Edit",
-                "paths": [".orqa/process/**"],
+                "paths": [".orqa/learning/**"],
                 "allowed_roles": ["governance_steward", "writer"],
                 "action": "block",
-                "message": "Only governance-steward and writer can modify .orqa/process/."
+                "message": "Only governance-steward and writer can modify .orqa/learning/."
             }]),
         );
 
         // governance_steward is allowed — no violation
         let ctx_allowed = tool_matcher_ctx(
             "Edit",
-            Some(".orqa/process/rules/RULE-abc.md"),
+            Some(".orqa/learning/rules/RULE-abc.md"),
             Some("governance_steward"),
         );
         let result = evaluate_hook(&ctx_allowed, tmp.path());
@@ -1468,15 +1468,15 @@ mod tests {
         // implementer is NOT in allowed_roles — violation
         let ctx_denied = tool_matcher_ctx(
             "Edit",
-            Some(".orqa/process/rules/RULE-abc.md"),
+            Some(".orqa/learning/rules/RULE-abc.md"),
             Some("implementer"),
         );
         let result2 = evaluate_hook(&ctx_denied, tmp.path());
         assert_eq!(result2.action, "block");
         assert_eq!(result2.violations.len(), 1);
 
-        // No agent_type (unknown) is NOT in allowed_roles — violation
-        let ctx_unknown = tool_matcher_ctx("Write", Some(".orqa/process/agents/agent-x.md"), None);
+        // No agent_type (unknown) writing to .orqa/learning/ is NOT in allowed_roles — violation
+        let ctx_unknown = tool_matcher_ctx("Write", Some(".orqa/learning/rules/RULE-xyz.md"), None);
         let result3 = evaluate_hook(&ctx_unknown, tmp.path());
         assert_eq!(result3.action, "block");
     }

@@ -10,6 +10,7 @@ use crate::types::McpToolDefinition;
 // ---------------------------------------------------------------------------
 
 /// Return the MCP tool definition list for all search tools.
+#[allow(clippy::too_many_lines)]
 pub fn tool_definitions() -> Vec<McpToolDefinition> {
     vec![
         McpToolDefinition {
@@ -154,6 +155,7 @@ pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<S
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
+#[allow(clippy::too_many_lines)]
 pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
     let question = args
         .get("question")

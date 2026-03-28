@@ -299,14 +299,14 @@ mod tests {
                 pattern: r"unwrap\(\)".to_string(),
             }],
             pattern: None,
-            scope: Some(".orqa/process/agents/*.md".to_string()),
+            scope: Some(".claude/agents/*.md".to_string()),
             skills: vec![],
         };
         let entry = parse_entry(raw).expect("should parse");
         assert_eq!(entry.event, EventType::Scan);
         assert_eq!(entry.action, RuleAction::Warn);
         assert_eq!(entry.conditions.len(), 1);
-        assert_eq!(entry.scope.as_deref(), Some(".orqa/process/agents/*.md"));
+        assert_eq!(entry.scope.as_deref(), Some(".claude/agents/*.md"));
         assert!(entry.pattern.is_none());
     }
 

@@ -6,7 +6,6 @@ description: "Audit all product documentation pages against the updated vision. 
 status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "Every product doc checked against 5 audit criteria from plan"
   - "No .claude/ referenced as source of truth (only as optional symlink layer)"

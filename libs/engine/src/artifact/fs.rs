@@ -58,13 +58,14 @@ pub fn artifact_from_file(
 
 /// Map an `ArtifactType` to its `.orqa/` subdirectory path.
 ///
-/// Returns `None` for `Doc` — docs live in `docs/`, not in `.orqa/`.
+/// Returns `None` for `Doc` — docs live in `.orqa/documentation/`.
+/// Returns `None` for `Agent` — agents live in `.claude/agents/` and are
+/// ephemeral; they are not tracked in the `.orqa/` artifact tree.
 pub fn governance_dir(root: &Path, artifact_type: &ArtifactType) -> Option<PathBuf> {
     match artifact_type {
-        ArtifactType::Agent => Some(root.join(".orqa").join("process").join("agents")),
-        ArtifactType::Rule => Some(root.join(".orqa").join("process").join("rules")),
-        ArtifactType::Knowledge => Some(root.join(".orqa").join("process").join("knowledge")),
-        ArtifactType::Doc => None,
+        ArtifactType::Rule => Some(root.join(".orqa").join("learning").join("rules")),
+        ArtifactType::Knowledge => Some(root.join(".orqa").join("documentation")),
+        ArtifactType::Agent | ArtifactType::Doc => None,
     }
 }
 
@@ -295,10 +296,9 @@ mod tests {
     }
 
     #[test]
-    fn governance_dir_returns_path_for_agent() {
+    fn governance_dir_returns_none_for_agent() {
         let root = Path::new("/tmp/project");
         let dir = governance_dir(root, &ArtifactType::Agent);
-        assert!(dir.is_some());
-        assert!(dir.unwrap().ends_with("process/agents"));
+        assert!(dir.is_none());
     }
 }

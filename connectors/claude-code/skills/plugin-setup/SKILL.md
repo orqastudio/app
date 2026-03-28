@@ -8,6 +8,7 @@ updated: "2026-03-11"
 scope: []
 user-invocable: true
 version: 0.1.0
+
 ---
 
 # OrqaStudio Plugin Setup
@@ -37,13 +38,13 @@ file .claude/CLAUDE.md .claude/rules .claude/agents .claude/skills 2>/dev/null
 ```
 
 | Finding | Meaning | Action |
-|---------|---------|--------|
+| --------- | --------- | -------- |
 | No `.claude/` directory | Fresh install | Bootstrap from scratch |
 | `.claude/CLAUDE.md` is a real file | Existing Claude Code project | Migrate to `.orqa/` |
 | `.claude/CLAUDE.md` is a symlink to `.orqa/` | Already set up for OrqaStudio | Just install plugin |
-| `.claude/rules/` contains real `.md` files | Existing rules | Migrate to `.orqa/process/rules/` |
-| `.claude/agents/` contains real `.md` files | Existing agents | Migrate to `.orqa/process/agents/` |
-| `.claude/skills/` contains real dirs | Existing knowledge | Migrate to `.orqa/process/knowledge/` |
+| `.claude/rules/` contains real `.md` files | Existing rules | Migrate to `.orqa/learning/rules/` |
+| `.claude/agents/` contains real `.md` files | Existing agents | Migrate to `.claude/agents/` |
+| `.claude/skills/` contains real dirs | Existing knowledge | Migrate to `.orqa/documentation/knowledge/` |
 
 ### Check 3: Is the plugin already installed?
 
@@ -59,13 +60,14 @@ When real files exist in `.claude/`, migrate them to `.orqa/` before installing:
 
 ```bash
 # If .claude/CLAUDE.md is a real file (not symlink)
-mkdir -p .orqa/process/agents/
-cp .claude/CLAUDE.md .orqa/process/agents/orchestrator.md
+mkdir -p .claude/agents/
+cp .claude/CLAUDE.md .claude/agents/orchestrator.md
 ```
 
 Add orchestrator frontmatter if missing:
 
 ```yaml
+
 ---
 id: AGENT-4c94fe14
 role: orchestrator
@@ -95,19 +97,21 @@ skills:
 
 ```bash
 # If .claude/rules/ contains real .md files
-mkdir -p .orqa/process/rules/
-cp .claude/rules/*.md .orqa/process/rules/
+mkdir -p .orqa/learning/rules/
+cp .claude/rules/*.md .orqa/learning/rules/
 ```
 
 Add rule frontmatter if missing. Each rule needs at minimum:
 
 ```yaml
+
 ---
 id: RULE-NNN
 title: Rule Title
 description: What this rule enforces.
 status: active
 scope: []
+
 ---
 ```
 
@@ -115,16 +119,16 @@ scope: []
 
 ```bash
 # If .claude/agents/ contains real .md files
-mkdir -p .orqa/process/agents/
-cp .claude/agents/*.md .orqa/process/agents/
+mkdir -p .claude/agents/
+cp .claude/agents/*.md .claude/agents/
 ```
 
 ### Step 4: Migrate knowledge
 
 ```bash
 # If .claude/skills/ contains real knowledge directories
-mkdir -p .orqa/process/knowledge/
-cp -r .claude/skills/*/ .orqa/process/knowledge/
+mkdir -p .orqa/documentation/knowledge/
+cp -r .claude/skills/*/ .orqa/documentation/knowledge/
 ```
 
 ### Step 5: Back up and remove originals
@@ -216,10 +220,10 @@ The `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` triggers compaction at 70% context usage i
 
 Restart Claude Code. The plugin's SessionStart hook will:
 
-1. Create `.claude/CLAUDE.md` → `.orqa/process/agents/orchestrator.md` symlink
-2. Create `.claude/rules/` → `.orqa/process/rules/` symlink
-3. Create `.claude/agents/` → `.orqa/process/agents/` symlink
-4. Create `.claude/knowledge/` → `.orqa/process/knowledge/` symlink
+1. Create `.claude/CLAUDE.md` → `.claude/agents/orchestrator.md` symlink
+2. Create `.claude/rules/` → `.orqa/learning/rules/` symlink
+3. Create `.claude/agents/` → `.claude/agents/` symlink
+4. Create `.claude/knowledge/` → `.orqa/documentation/knowledge/` symlink
 5. Run session health checks (stashes, worktrees, uncommitted files)
 
 ## Fresh Install Path (no existing `.claude/`)
@@ -232,7 +236,7 @@ Restart Claude Code. The plugin's SessionStart hook will:
 ## What the Plugin Provides
 
 | Component | Source | Purpose |
-|-----------|--------|---------|
+| ----------- | -------- | --------- |
 | PreToolUse hook | `hooks/hooks.json` | Rule enforcement via pattern matching |
 | SessionStart hook | `hooks/hooks.json` | Symlink setup + session health checks |
 | Stop hook | `hooks/hooks.json` | Pre-commit checklist reminders |
@@ -244,12 +248,12 @@ Restart Claude Code. The plugin's SessionStart hook will:
 After installation, `.claude/` contains only:
 
 | Item | Type | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `settings.json` | Real file | Plugin enablement, Claude Code config |
 | `worktrees/` | Real dir | Claude Code worktree state |
-| `CLAUDE.md` | Symlink | → `.orqa/process/agents/orchestrator.md` |
-| `rules/` | Symlink | → `.orqa/process/rules/` |
-| `agents/` | Symlink | → `.orqa/process/agents/` |
+| `CLAUDE.md` | Symlink | → `.claude/agents/orchestrator.md` |
+| `rules/` | Symlink | → `.orqa/learning/rules/` |
+| `agents/` | Symlink | → `.claude/agents/` |
 
 Domain knowledge is accessed via the `knowledge/` directory in the connector plugin. Claude Code-native skills (for the `Skill()` tool) come through the plugin's `skills/` directory. Everything in `.orqa/` is the source of truth. The symlinks are managed by the plugin.
 

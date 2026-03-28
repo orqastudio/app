@@ -1,7 +1,7 @@
 ---
 id: TASK-9495bc0f
 type: task
-name: "Rename delivery workflow skeleton to agile-methodology"
+title: "Rename delivery workflow skeleton to agile-methodology"
 status: active
 description: "Rename the delivery workflow skeleton to agile-methodology in the agile-methodology plugin"
 relationships:

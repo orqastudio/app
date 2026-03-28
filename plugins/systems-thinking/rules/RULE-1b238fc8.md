@@ -88,7 +88,7 @@ If the user gives an instruction that appears to conflict with a foundational pr
    - Update the relevant documentation
    - Update `.orqa/documentation/about/vision.md` and/or `.orqa/documentation/about/governance.md` if the pillars or governance rules change
    - Update this rule file ([RULE-1b238fc8](RULE-1b238fc8) (vision-alignment)) to reflect the new principle
-   - Update all affected agent definitions in `.orqa/process/agents/`
+   - Update all affected agent definitions in `.claude/agents/`
 4. **Never silently comply** — If an instruction contradicts a principle, do NOT just implement it without flagging the conflict first
 
 ## Related Rules

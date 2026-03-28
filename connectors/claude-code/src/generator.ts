@@ -109,13 +109,13 @@ function generateAgents(
 // ---------------------------------------------------------------------------
 
 /**
- * Read active rule titles from .orqa/process/rules/*.md frontmatter.
+ * Read active rule titles from .orqa/learning/rules/*.md frontmatter.
  *
  * Used to surface active enforcement context in the generated CLAUDE.md.
  * Returns an empty array if the rules directory does not exist.
  */
 function readActiveRuleTitles(projectRoot: string): string[] {
-  const rulesDir = path.join(projectRoot, ".orqa", "process", "rules");
+  const rulesDir = path.join(projectRoot, ".orqa", "learning", "rules");
   if (!fs.existsSync(rulesDir)) return [];
 
   const titles: string[] = [];
@@ -135,13 +135,13 @@ function readActiveRuleTitles(projectRoot: string): string[] {
 }
 
 /**
- * Read active workflow names from .orqa/process/workflows/*.resolved.yaml.
+ * Read active workflow names from .orqa/workflows/*.resolved.yaml.
  *
  * Used to surface the workflow context in the generated CLAUDE.md.
  * Returns an empty array if the workflows directory does not exist.
  */
 function readActiveWorkflowNames(projectRoot: string): string[] {
-  const workflowsDir = path.join(projectRoot, ".orqa", "process", "workflows");
+  const workflowsDir = path.join(projectRoot, ".orqa", "workflows");
   if (!fs.existsSync(workflowsDir)) return [];
 
   const names: string[] = [];

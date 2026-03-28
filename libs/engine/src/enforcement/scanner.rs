@@ -22,11 +22,11 @@ const TOTAL_AREAS: usize = 6;
 /// Scan a project directory for governance files across the 6 canonical OrqaStudio governance areas.
 ///
 /// The areas correspond to the artifact directories in `.orqa/`:
-/// - `.orqa/process/rules` — enforcement rules (`.md` files)
-/// - `.orqa/process/agents` — agent definitions (`.md` files)
-/// - `.orqa/process/knowledge` — knowledge artifacts (`.md` files)
-/// - `.orqa/process/lessons` — implementation lessons (`.md` files)
-/// - `.orqa/process/decisions` — architecture decisions (`.md` files)
+/// - `.orqa/learning/rules` — enforcement rules (`.md` files)
+/// - `.claude/agents` — agent definitions (`.md` files)
+/// - `.orqa/documentation/knowledge` — knowledge artifacts (`.md` files)
+/// - `.orqa/learning/lessons` — implementation lessons (`.md` files)
+/// - `.orqa/learning/decisions` — architecture decisions (`.md` files)
 /// - `.orqa/documentation` — project documentation (`.md` files, recursive)
 ///
 /// The `coverage_ratio` is computed as covered areas / `TOTAL_AREAS`.
@@ -56,20 +56,21 @@ pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, Engi
     })
 }
 
-/// Scan all 6 canonical governance areas from the `.orqa/` directory tree.
+/// Scan all 6 canonical governance areas from the target directory tree.
 fn scan_orqa_areas(project_path: &Path) -> Vec<GovernanceArea> {
     let orqa_dir = project_path.join(".orqa");
-    let process_dir = orqa_dir.join("process");
+    let learning_dir = orqa_dir.join("learning");
+    let claude_dir = project_path.join(".claude");
 
     vec![
-        scan_directory_area("rules", "orqa", &process_dir.join("rules"), Some(".md")),
-        scan_directory_area("agents", "orqa", &process_dir.join("agents"), Some(".md")),
-        scan_knowledge_area(project_path, &process_dir.join("knowledge")),
-        scan_directory_area("lessons", "orqa", &process_dir.join("lessons"), Some(".md")),
+        scan_directory_area("rules", "orqa", &learning_dir.join("rules"), Some(".md")),
+        scan_directory_area("agents", "claude", &claude_dir.join("agents"), Some(".md")),
+        scan_knowledge_area(project_path, &orqa_dir.join("documentation").join("knowledge")),
+        scan_directory_area("lessons", "orqa", &learning_dir.join("lessons"), Some(".md")),
         scan_directory_area(
             "decisions",
             "orqa",
-            &process_dir.join("decisions"),
+            &learning_dir.join("decisions"),
             Some(".md"),
         ),
         scan_recursive_area(
@@ -284,33 +285,34 @@ mod tests {
     #[test]
     fn full_orqa_governance_has_full_coverage() {
         let dir = create_test_dir("full");
-        let process_dir = dir.join(".orqa").join("process");
+        let learning_dir = dir.join(".orqa").join("learning");
         let doc_dir = dir.join(".orqa").join("documentation");
+        let agents_dir = dir.join(".claude").join("agents");
 
         // rules
-        fs::create_dir_all(process_dir.join("rules")).expect("mkdir");
-        fs::write(process_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
+        fs::create_dir_all(learning_dir.join("rules")).expect("mkdir");
+        fs::write(learning_dir.join("rules").join("no-stubs.md"), "# Rule").expect("write");
 
         // agents
-        fs::create_dir_all(process_dir.join("agents")).expect("mkdir");
-        fs::write(process_dir.join("agents").join("backend.md"), "# Agent").expect("write");
+        fs::create_dir_all(&agents_dir).expect("mkdir");
+        fs::write(agents_dir.join("backend.md"), "# Agent").expect("write");
 
         // knowledge artifacts
-        fs::create_dir_all(process_dir.join("knowledge")).expect("mkdir");
+        fs::create_dir_all(doc_dir.join("knowledge")).expect("mkdir");
         fs::write(
-            process_dir.join("knowledge").join("chunkhound.md"),
+            doc_dir.join("knowledge").join("arch.md"),
             "# Knowledge",
         )
         .expect("write");
 
         // lessons
-        fs::create_dir_all(process_dir.join("lessons")).expect("mkdir");
-        fs::write(process_dir.join("lessons").join("IMPL-001.md"), "# Lesson").expect("write");
+        fs::create_dir_all(learning_dir.join("lessons")).expect("mkdir");
+        fs::write(learning_dir.join("lessons").join("IMPL-001.md"), "# Lesson").expect("write");
 
         // decisions
-        fs::create_dir_all(process_dir.join("decisions")).expect("mkdir");
+        fs::create_dir_all(learning_dir.join("decisions")).expect("mkdir");
         fs::write(
-            process_dir.join("decisions").join("AD-001.md"),
+            learning_dir.join("decisions").join("AD-001.md"),
             "# Decision",
         )
         .expect("write");
@@ -329,14 +331,15 @@ mod tests {
     #[test]
     fn partial_coverage_computed_correctly() {
         let dir = create_test_dir("partial");
-        let process_dir = dir.join(".orqa").join("process");
+        let learning_dir = dir.join(".orqa").join("learning");
+        let agents_dir = dir.join(".claude").join("agents");
 
         // Only rules and agents covered (2 of 6)
-        fs::create_dir_all(process_dir.join("rules")).expect("mkdir");
-        fs::write(process_dir.join("rules").join("rule.md"), "# Rule").expect("write");
+        fs::create_dir_all(learning_dir.join("rules")).expect("mkdir");
+        fs::write(learning_dir.join("rules").join("rule.md"), "# Rule").expect("write");
 
-        fs::create_dir_all(process_dir.join("agents")).expect("mkdir");
-        fs::write(process_dir.join("agents").join("agent.md"), "# Agent").expect("write");
+        fs::create_dir_all(&agents_dir).expect("mkdir");
+        fs::write(agents_dir.join("agent.md"), "# Agent").expect("write");
 
         let result = scan_governance(&dir).expect("scan");
         let expected = 2.0 / 6.0;
@@ -352,7 +355,7 @@ mod tests {
     #[test]
     fn content_preview_truncated_at_500_chars() {
         let dir = create_test_dir("preview");
-        let rules_dir = dir.join(".orqa").join("process").join("rules");
+        let rules_dir = dir.join(".orqa").join("learning").join("rules");
         fs::create_dir_all(&rules_dir).expect("mkdir");
 
         let long_content = "x".repeat(1000);

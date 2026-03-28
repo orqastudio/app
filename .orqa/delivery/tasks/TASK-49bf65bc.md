@@ -6,7 +6,6 @@ description: "Write unit tests for the 8 Tauri command modules that have zero te
 status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Test modules exist in all 8 command files"
   - "Each command module has at least 3 tests covering happy path, error path, and edge case"

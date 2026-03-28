@@ -47,7 +47,7 @@ Follow this sequence. Do not skip steps.
 After diagnosis, classify the root cause:
 
 | Classification | Description | Fix Pattern |
-|---------------|-------------|-------------|
+| --------------- | ------------- | ------------- |
 | **Logic Error** | Code does the wrong thing | Algorithm/logic correction |
 | **Type Error** | Wrong type at a boundary | Type correction at the source |
 | **State Error** | Stale, missing, or conflicting state | State management fix |
@@ -59,7 +59,7 @@ After diagnosis, classify the root cause:
 ## Anti-Patterns
 
 | Anti-Pattern | Why It's Wrong | What To Do Instead |
-|-------------|----------------|-------------------|
+| ------------- | ---------------- | ------------------- |
 | Guess and patch | Wastes time, may introduce new bugs | Follow the 5-step process |
 | Suppress the error | Hides the real problem | Find and fix the cause |
 | "It works on my machine" | Not a diagnosis | Identify the environmental difference |

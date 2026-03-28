@@ -6,7 +6,6 @@ description: "Create pillar artifact schema and initial pillars"
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Pillar schema defined in artifact-framework.md (id"
   - "title"

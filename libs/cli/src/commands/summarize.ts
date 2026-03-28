@@ -293,8 +293,8 @@ function summarizeFile(
 function findKnowledgeArtifacts(projectRoot: string): string[] {
 	const results: string[] = [];
 	const dirs = [
-		path.join(projectRoot, ".orqa", "process", "knowledge"),
-		path.join(projectRoot, "app", ".orqa", "process", "knowledge"),
+		path.join(projectRoot, ".orqa", "documentation", "knowledge"),
+		path.join(projectRoot, "app", ".orqa", "documentation", "knowledge"),
 	];
 
 	for (const dir of dirs) {

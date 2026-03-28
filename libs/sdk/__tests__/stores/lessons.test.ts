@@ -14,7 +14,7 @@ const makeFakeLesson = (overrides: Partial<Lesson> = {}): Lesson => ({
 	body: "Lesson body",
 	created: "2024-01-01",
 	updated: "2024-01-01",
-	file_path: ".orqa/process/lessons/IMPL-001.md",
+	file_path: ".orqa/learning/lessons/IMPL-001.md",
 	...overrides,
 });
 

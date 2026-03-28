@@ -152,7 +152,7 @@ Commands are markdown files in `commands/`. The filename becomes the slash comma
 
 ```markdown
 ---
-name: orqa
+title: orqa
 description: Show OrqaStudio governance summary — active rules, epics, and tasks
 ---
 

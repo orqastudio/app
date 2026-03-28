@@ -30,7 +30,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Additional Rules
 
 | Rule | Purpose |
-|------|---------|
+| ------ | --------- |
 | `coding-standards.md` | Language-specific coding standards (populated from inference) |
 | `testing-standards.md` | Test organisation, coverage requirements, mock boundaries |
 | `git-workflow.md` | Worktree workflow, branch naming, merge protocol |
@@ -43,7 +43,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Additional Skills (loaded based on detected stack)
 
 | Detected Stack | Skills Added |
-|---------------|-------------|
+| --------------- | ------------- |
 | Rust | `rust-async-patterns` |
 | TypeScript | `typescript-advanced-types` |
 | Svelte | `svelte5-best-practices` |
@@ -53,7 +53,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Documentation Templates
 
 | Template | Path | Purpose |
-|----------|------|---------|
+| ---------- | ------ | --------- |
 | Coding Standards | `.orqa/documentation/development/coding-standards.md` | Populated from inference + user input |
 | Architecture Decisions | `.orqa/documentation/development/decisions.md` | Index of architecture decisions |
 | Development Commands | `.orqa/documentation/development/commands.md` | Build/test/lint command reference |
@@ -63,7 +63,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 For software projects, the orchestrator's Tier 2 injection table is populated:
 
 | Task Touches | Inject Skills |
-|-------------|---------------|
+| ------------- | --------------- |
 | Backend code | `orqa-domain-services`, `orqa-error-composition`, `orqa-ipc-patterns` (if Tauri) |
 | Frontend code | `orqa-store-patterns`, `orqa-store-orchestration` |
 | Database code | `orqa-repository-pattern` |
@@ -76,7 +76,7 @@ For software projects, the orchestrator's Tier 2 injection table is populated:
 ## Setup Procedure
 
 1. Read the project profile from `project-inference`
-2. Copy software-specific rules to `.orqa/process/rules/`
+2. Copy software-specific rules to `.orqa/learning/rules/`
 3. Generate coding standards from detected languages/frameworks
 4. Create documentation templates
 5. Configure the orchestrator's skill injection table based on detected stack
@@ -113,7 +113,7 @@ Software projects require regular commits to prevent work loss and maintain clea
 ### Commit Boundaries
 
 | Work Type | When to Commit |
-|-----------|---------------|
+| ----------- | --------------- |
 | Feature implementation (worktree) | At each sub-task completion |
 | Bug fixes | After each fix, before starting the next |
 | Governance-only work (rules, docs, artifacts) | At each logical milestone or every ~20 files |

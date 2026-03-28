@@ -1,7 +1,7 @@
 ---
 id: TASK-c716f4a7
 type: task
-name: "Verify three-layer agent composition"
+title: "Verify three-layer agent composition"
 status: active
 description: "Verify agent-file-generator.ts produces three-layer composition: role + stage context + domain knowledge"
 relationships:

@@ -6,7 +6,6 @@ description: "Adds layer classification to all rule and hook files, separating p
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "All rule files have `layer:` field in YAML frontmatter"
   - "All hook files have classification documented"

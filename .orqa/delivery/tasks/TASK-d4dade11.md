@@ -6,7 +6,6 @@ description: "Display enforcement violations in the app's governance view with h
 status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-14T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 docs:
   - "DOC-9814ec3c"
 acceptance:

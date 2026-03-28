@@ -110,7 +110,7 @@
         ],
         "priority": "P3",
         "summary": "Rust language reference for common patterns used in the OrqaStudio backend.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-694ff7cb.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-694ff7cb.md"
       },
       {
         "id": "clippy-config-management",
@@ -127,7 +127,7 @@
         ],
         "priority": "P3",
         "summary": "Supplementary Rust reference for advanced patterns.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-d4095bd9.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-d4095bd9.md"
       },
       {
         "id": "rust-async-patterns",
@@ -146,7 +146,7 @@
         ],
         "priority": "P2",
         "summary": "Rust async patterns with Tokio: tasks, channels, streams, error handling, graceful shutdown, async traits. Production patterns for concurrent Rust.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-ea7898e4.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-ea7898e4.md"
       },
       {
         "id": "rust-plugin-installation",
@@ -163,14 +163,14 @@
         ],
         "priority": "P3",
         "summary": "Additional Rust patterns and idioms reference for backend development.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-f7d03a2c.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-f7d03a2c.md"
       }
     ]
   },
   "content": {
     "agents": {
       "source": "agents",
-      "target": ".orqa/process/agents"
+      "target": ".claude/agents"
     },
     "documentation": {
       "source": "documentation",
@@ -178,7 +178,7 @@
     },
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/knowledge"
     }
   },
   "dependencies": {

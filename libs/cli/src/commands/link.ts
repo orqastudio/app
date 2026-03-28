@@ -38,8 +38,8 @@ Options:
   --relative     Store target as relative path (same as omitting --absolute)
 
 Examples:
-  orqa link app/.orqa/process/agents/orchestrator.md .claude/CLAUDE.md --force
-  orqa link .orqa/process/rules .claude/rules --force
+  orqa link .claude/agents/orchestrator.md .claude/CLAUDE.md --force
+  orqa link .orqa/learning/rules .claude/rules --force
   orqa link verify .claude/CLAUDE.md
   orqa link remove .claude/rules
   orqa link status

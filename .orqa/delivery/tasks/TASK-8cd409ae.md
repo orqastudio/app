@@ -6,7 +6,6 @@ description: "Audits and repairs frontmatter quality across all governance artif
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "All lessons have human-readable titles (no code references) and descriptions"
   - "All rules have descriptions in their frontmatter"

@@ -13,12 +13,12 @@ enforcement:
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/delivery/*/schema.json|.orqa/process/*/schema.json|.orqa/process/agents/schema.json|.orqa/process/knowledge/schema.json"
+    pattern: ".orqa/delivery/*/schema.json|.orqa/process/*/schema.json|.claude/agents/schema.json|.orqa/documentation/knowledge/schema.json"
   - mechanism: hook
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/process/knowledge/composability/KNOW.md|.orqa/process/knowledge/research-methodology/KNOW.md|.orqa/process/knowledge/planning/KNOW.md|.orqa/process/knowledge/orqa-code-search/KNOW.md"
+    pattern: ".orqa/documentation/knowledge/composability/KNOW.md|.orqa/documentation/knowledge/research-methodology/KNOW.md|.orqa/documentation/knowledge/planning/KNOW.md|.orqa/documentation/knowledge/orqa-code-search/KNOW.md"
 relationships:
   - target: AD-f079c196
     type: enforces
@@ -37,8 +37,8 @@ Core graph artifacts define how the artifact graph works, how agents traverse it
 | -------- | ---- | ------------------ |
 | **Artifact schemas** | `schema.json` in every artifact directory | Define what fields exist, what edges connect artifact types |
 | **Core knowledge** | `composability`, `planning`, `research-methodology`, `orqa-code-search` | Define universal methodology all agents use |
-| **Orchestrator prompt** | `.orqa/process/agents/orchestrator.md` | Defines graph traversal and process model |
-| **Role definitions** | `.orqa/process/agents/*.md` + `schema.json` | Define the 7 universal roles and boundaries |
+| **Orchestrator prompt** | `.claude/agents/orchestrator.md` | Defines graph traversal and process model |
+| **Role definitions** | `.claude/agents/*.md` + `schema.json` | Define the 7 universal roles and boundaries |
 
 ## What Is NOT Core (User-Editable)
 

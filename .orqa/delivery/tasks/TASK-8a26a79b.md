@@ -6,7 +6,6 @@ description: "Update governance.md with the concept taxonomy from AD-48b310f9, c
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "governance.md updated with concept taxonomy (agent/skill/rule/hook/lesson definitions)"
   - "governance.md updated with agent vs skill decision framework"

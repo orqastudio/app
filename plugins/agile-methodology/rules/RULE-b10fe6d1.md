@@ -50,7 +50,7 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 | A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/delivery/tasks/` with `epic:` reference |
 | An epic is created or moves to `ready` | Reconciliation `TASK-NNN` | Auto-create a standing reconciliation task for the epic (see Epic Reconciliation Task below) |
 | A strategic goal is defined | `MS-NNN` | Create in `.orqa/delivery/milestones/` |
-| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-c603e90e](RULE-c603e90e) (lessons-learned)) |
+| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/learning/lessons/` (see [RULE-c603e90e](RULE-c603e90e) (lessons-learned)) |
 | A question needs investigation before a decision | Research file | Create in `.orqa/delivery/research/` |
 | Research produces an architectural choice | `AD-NNN` | Create in `.orqa/process/decisions/` |
 

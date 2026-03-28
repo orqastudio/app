@@ -59,7 +59,7 @@
         ],
         "priority": "P2",
         "summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-126aa140.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-126aa140.md"
       },
       {
         "id": "config-generation-from-rules",
@@ -75,18 +75,18 @@
         ],
         "priority": "P2",
         "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-1c2d005d.md"
+        "content_file": "../../.orqa/documentation/knowledge/KNOW-1c2d005d.md"
       }
     ]
   },
   "content": {
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/knowledge"
     },
     "rules": {
       "source": "rules",
-      "target": ".orqa/process/rules"
+      "target": ".orqa/learning/rules"
     }
   },
   "dependencies": {

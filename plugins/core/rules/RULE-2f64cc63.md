@@ -43,7 +43,7 @@ Everything else proceeds without asking.
 
 This is a behavioral constraint enforced through two mechanisms:
 
-1. **Agent system prompt** — the orchestrator's `Safety` section (`app/.orqa/process/agents/orchestrator.md`) states: "No deferred deliverables — if a deliverable is in scope, it ships NOW." The `CLAUDE.md` user preferences section states: "Never ask to stop — keep working until the user says to stop."
+1. **Agent system prompt** — the orchestrator's `Safety` section (`app/.claude/agents/orchestrator.md`) states: "No deferred deliverables — if a deliverable is in scope, it ships NOW." The `CLAUDE.md` user preferences section states: "Never ask to stop — keep working until the user says to stop."
 2. **Reviewer gate** — Reviewers verify acceptance criteria are fully met before a task is declared complete. Partial completion reported as complete is a separate violation (see RULE-honest-reporting).
 
 The constraint is documented in the orchestrator agent definition so it is loaded into context on every session start.

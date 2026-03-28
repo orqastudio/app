@@ -1,7 +1,7 @@
 ---
 id: TASK-072ff89e
 type: task
-name: "Create agile-planning plugin"
+title: "Create agile-planning plugin"
 status: active
 description: "Create plugins/agile-planning/ as a stage-definition plugin filling the planning-methodology contribution point"
 relationships:

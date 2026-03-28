@@ -6,7 +6,6 @@ description: "Expose the artifact graph through Tauri commands: resolve_artifact
 status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "resolve_artifact command returns ArtifactNode for a given ID"
   - "resolve_path command returns ArtifactNode for a given file path"

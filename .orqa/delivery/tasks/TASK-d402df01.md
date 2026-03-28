@@ -6,7 +6,6 @@ description: "Identifies and resolves memory growth during extended artifact bro
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "MarkdownRenderer cleans up event listeners on content change and unmount"
   - "Artifact viewer cache has an eviction policy (e.g."

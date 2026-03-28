@@ -21,7 +21,7 @@ context, duplicate work, and broken relationships.
 ## Governance Operation Map
 
 | Operation | Tool | When to Use |
-|-----------|------|-------------|
+| ----------- | ------ | ------------- |
 | Find an artifact by known ID | `graph_resolve` | Before reading or editing a known artifact — confirms it exists and returns its path |
 | Find artifacts by type or status | `graph_query` | When scoping work (find all in-progress tasks, find all active rules) or auditing |
 | Check what an artifact links to or from | `graph_relationships` | Before modifying frontmatter relationships — see what's already connected |
@@ -65,20 +65,20 @@ Resolves a single artifact by its frontmatter ID. Returns the full node includin
 path, title, status, and all frontmatter fields. Use when you have the ID and need
 to confirm the artifact exists and read its content.
 
-```
+```text
 graph_resolve("EPIC-d45b4dfd")
 → { id, path, title, status, artifact_type, frontmatter, references_out, references_in }
-```
+```text
 
 ### `graph_query(filters)`
 
 Returns all artifacts matching the given filters. Filters are combined with AND logic.
 
-```
+```text
 graph_query({ type: "task", status: "in-progress" })
 graph_query({ type: "rule", search: "enforcement" })
 graph_query({ type: "decision" })
-```
+```text
 
 ### `graph_relationships(id)`
 
@@ -86,10 +86,10 @@ Returns all outgoing and incoming relationships for a given artifact. Use before
 modifying relationships to understand what's already connected and avoid breaking
 existing links.
 
-```
+```text
 graph_relationships("EPIC-d45b4dfd")
 → { references_out: [...], references_in: [...] }
-```
+```text
 
 ### `graph_validate()`
 
@@ -106,20 +106,20 @@ Semantic search using the ONNX embedding engine. Two scopes:
 Use for concept-level searches when you know what you're looking for but not
 where it lives. More powerful than grep for discovering related work.
 
-```
+```text
 search_semantic("scope: artifacts, query: authentication flow")
 search_semantic("scope: codebase, query: error handling in Tauri commands")
-```
+```text
 
 ### `search_regex(pattern)`
 
 Exact pattern match across the codebase. Use when you know the exact function
 name, struct name, or string you're looking for.
 
-```
+```text
 search_regex("create_session")
 search_regex("graph_commands")
-```
+```text
 
 ### `search_research(query)`
 
@@ -127,10 +127,10 @@ End-to-end research that searches both documentation and code together.
 Use when you need to understand how an entire feature area works before planning
 or implementing.
 
-```
+```text
 search_research("how does streaming work")
 search_research("artifact graph construction pipeline")
-```
+```text
 
 ## Why This Matters
 

@@ -6,7 +6,6 @@ description: "Creates a context-detecting wrapper skill that instructs agents to
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Wrapper skill exists at .orqa/process/skills/code-search/SKILL.md"
   - "Documents context detection logic (check for mcp__chunkhound__* vs search_regex availability)"

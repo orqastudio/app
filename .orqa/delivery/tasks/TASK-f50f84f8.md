@@ -6,7 +6,6 @@ description: "Complete end-to-end documentation of the target core application a
 status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 acceptance:
   - "Architecture doc covers: artifact system, knowledge graph, prompt injection, rule enforcement, learning loop"
   - "Every module in the codebase appears in the architecture map"

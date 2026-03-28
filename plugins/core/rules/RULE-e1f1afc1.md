@@ -68,13 +68,13 @@ of the structured thinking enforcement system.
 
 Enforcement entries with `action: inject` and a `knowledge` array are evaluated on every
 Write/Edit tool call. When a file path matches, the specified knowledge artifacts are read from
-`.orqa/process/knowledge/<name>/KNOW.md` and returned as `systemMessage` to inject into the
+`.orqa/documentation/knowledge/<name>/KNOW.md` and returned as `systemMessage` to inject into the
 agent's context.
 
 ## Path-to-Knowledge Map
 
 | File Path Pattern | Injected Knowledge | Why |
-|------------------|-----------------|-----|
+| ------------------ | ----------------- | ----- |
 | `backend/src-tauri/src/domain/**` | `orqa-domain-services`, `orqa-error-composition` | Domain logic needs service anatomy and error flow |
 | `backend/src-tauri/src/commands/**` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary needs contract discipline |
 | `backend/src-tauri/src/repo/**` | `orqa-repository-pattern` | Data access has specific patterns |
@@ -99,13 +99,13 @@ To add a new path-to-knowledge mapping:
 4. Set `knowledge` to the knowledge artifact directory names
 5. Set `message` to a brief description
 
-Ensure the referenced knowledge artifacts exist in `.orqa/process/knowledge/`.
+Ensure the referenced knowledge artifacts exist in `.orqa/documentation/knowledge/`.
 
 ## FORBIDDEN
 
 - Injection entries that block tool calls (inject is always non-blocking)
 - Injection entries without a `knowledge` field
-- Referencing knowledge artifacts that don't exist in `.orqa/process/knowledge/`
+- Referencing knowledge artifacts that don't exist in `.orqa/documentation/knowledge/`
 
 ## Related Rules
 

@@ -128,7 +128,7 @@ fn evaluate_stop_gates(tracker: &WorkflowTracker) -> Vec<GateResult> {
             "learn-after-doing",
             tracker.code_write_count() > 3 && !tracker.has_checked_lessons(),
             "LEARNING CHECK: Significant work was done this session. \
-             Check .orqa/process/lessons/ for known patterns and consider \
+             Check .orqa/learning/lessons/ for known patterns and consider \
              if anything unexpected should be recorded.",
         ),
     ]
@@ -214,7 +214,7 @@ mod tests {
 
     #[test]
     fn is_code_file_returns_false_for_orqa_relative_path() {
-        assert!(!is_code_file(".orqa/process/rules/RULE-042.md"));
+        assert!(!is_code_file(".orqa/learning/rules/RULE-042.md"));
     }
 
     #[test]
@@ -366,7 +366,7 @@ mod tests {
     fn evidence_before_done_does_not_fire_when_no_code_written() {
         let mut t = fresh_tracker();
         // Only wrote to .orqa/ (governance artifact, not code)
-        t.record_write(".orqa/process/rules/RULE-042.md");
+        t.record_write(".orqa/learning/rules/RULE-042.md");
         let results = evaluate_process_gates(&mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"evidence-before-done"));
@@ -410,7 +410,7 @@ mod tests {
         for i in 0..5 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
-        t.record_read(".orqa/process/lessons/IMPL-001.md");
+        t.record_read(".orqa/learning/lessons/IMPL-001.md");
         let results = evaluate_process_gates(&mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"learn-after-doing"));

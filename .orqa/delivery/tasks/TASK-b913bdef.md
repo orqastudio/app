@@ -6,7 +6,6 @@ description: "Aligns governance artifacts with the live codebase in preparation 
 status: archived
 created: 2026-03-05T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "Hook paths use $CLAUDE_PROJECT_DIR"
   - "Governance artifacts match codebase state"

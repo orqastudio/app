@@ -1,7 +1,7 @@
 ---
 id: TASK-dea6a012
 type: task
-name: "Verify token budgets"
+title: "Verify token budgets"
 status: active
 description: "Measure actual token counts in generated agent prompts against RES-d6e8ab11 section 6 budget targets"
 relationships:

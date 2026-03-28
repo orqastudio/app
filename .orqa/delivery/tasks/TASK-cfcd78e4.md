@@ -1,7 +1,7 @@
 ---
 id: TASK-cfcd78e4
 type: task
-name: "Bring integrations into plugin lifecycle commands"
+title: "Bring integrations into plugin lifecycle commands"
 status: archived
 description: Make orqa plugin list, refresh, and status cover integrations (sidecars). Add integrations to the install pipeline. Report integration health.
 relationships:

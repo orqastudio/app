@@ -6,7 +6,6 @@ description: "Write the four setup skills that replace templates for project ini
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "KNOW-2876afc7 skill created (universal scaffolding — .orqa/ structure"
   - "canon rules"

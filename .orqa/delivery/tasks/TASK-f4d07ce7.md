@@ -6,7 +6,6 @@ description: "Extracts duplicated list item and status display logic into reusab
 status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-0aad40f4"
 acceptance:
   - "A shared StatusIndicator component exists with semantic colours and icons per status value"
   - "StatusIndicator works in list items"

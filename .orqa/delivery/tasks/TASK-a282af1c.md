@@ -1,7 +1,7 @@
 ---
 id: TASK-a282af1c
 type: task
-name: "Reconcile EPIC-8b01ee51"
+title: "Reconcile EPIC-8b01ee51"
 status: active
 description: Standing reconciliation task — keep the epic body accurate as tasks are added, completed, or scope changes.
 relationships:

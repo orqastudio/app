@@ -6,7 +6,6 @@ description: "Write test file for the one untested frontend store."
 status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "errors.test.ts exists in __tests__/"
   - "Tests cover error creation, dismissal, and clearing"

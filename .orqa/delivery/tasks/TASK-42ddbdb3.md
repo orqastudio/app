@@ -6,7 +6,6 @@ description: "Extend validate-schema.mjs to check that artifact bodies contain r
 status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
-assignee: "AGENT-4c94fe14"
 acceptance:
   - "Pre-commit hook reads bodyTemplate from schema.json for each artifact type"
   - "Hook checks that required headings exist in the markdown body"

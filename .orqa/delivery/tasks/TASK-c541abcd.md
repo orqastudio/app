@@ -6,7 +6,6 @@ description: "Write documentation for installing, configuring, and using the orq
 status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
-assignee: "AGENT-bbad3d30"
 docs: []
 acceptance:
   - "Plugin README covers installation steps"

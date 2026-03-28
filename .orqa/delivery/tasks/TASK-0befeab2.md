@@ -6,7 +6,6 @@ description: "Implements the self-learning loop that creates lesson entries, tra
 status: archived
 created: 2026-03-05T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
-assignee: "AGENT-e5dd38e4"
 acceptance:
   - "IMPL entries created and tracked"
   - "Recurrence count incremented on match"

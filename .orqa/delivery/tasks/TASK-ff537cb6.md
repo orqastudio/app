@@ -1,7 +1,7 @@
 ---
 id: TASK-ff537cb6
 type: task
-name: "Audit connector hooks for business logic"
+title: "Audit connector hooks for business logic"
 status: active
 description: "Audit all connector hooks to classify as thin adapter (correct) or business logic (violation V4)"
 relationships:

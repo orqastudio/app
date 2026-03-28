@@ -1,7 +1,7 @@
 ---
 id: TASK-cd118e75
 type: task
-name: "Rename plugins"
+title: "Rename plugins"
 status: active
 description: "Rename agile-governance to agile-methodology and software to software-kanban, updating all cross-references"
 relationships:

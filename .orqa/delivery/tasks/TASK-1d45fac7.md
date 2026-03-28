@@ -6,7 +6,6 @@ description: "Remove the .claude/ symlink architecture and update RULE-63cc16ad 
 status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
-assignee: "AGENT-4c94fe14"
 docs: []
 acceptance:
   - ".claude/rules/ symlink removed"

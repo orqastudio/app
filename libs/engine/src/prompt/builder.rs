@@ -28,13 +28,13 @@ pub fn read_governance_file(
     Ok(Some(contents))
 }
 
-/// List knowledge artifact names with one-line descriptions from `.orqa/process/knowledge/*.md`.
+/// List knowledge artifact names with one-line descriptions from `.orqa/documentation/knowledge/*.md`.
 ///
 /// Reads only the first non-empty line of each knowledge file as the description.
 /// Full knowledge content is intentionally not loaded here — knowledge is loaded
 /// on demand via the `load_knowledge` tool (P5: token efficiency).
 pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
-    let knowledge_dir = project_path.join(".orqa").join("process").join("knowledge");
+    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
     let mut catalog = Vec::new();
 
     let Ok(read_dir) = std::fs::read_dir(&knowledge_dir) else {
@@ -106,11 +106,11 @@ pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
 /// Sources agent definitions in priority order:
 /// 1. `provides.agents` entries in each installed plugin's manifest — structured definitions
 ///    contributed directly by the plugin (P1: Plugin-Composed Everything).
-/// 2. `.orqa/process/agents/*.md` — files synced from plugin `content.agents` directories
+/// 2. `.claude/agents/*.md` — files synced from plugin `content.agents` directories
 ///    at install time, containing the full agent markdown with capabilities and preamble.
 ///
 /// Returns a combined list of `AgentDefinition` values. Callers that need the full
-/// markdown content of individual agents should read `.orqa/process/agents/` directly.
+/// markdown content of individual agents should read `.claude/agents/` directly.
 /// Returns an empty vec if no installed plugins define agents.
 pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinition> {
     let mut agents: Vec<AgentDefinition> = Vec::new();
@@ -129,7 +129,7 @@ pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinit
     agents
 }
 
-/// Read agent markdown files installed to `.orqa/process/agents/`.
+/// Read agent markdown files installed to `.claude/agents/`.
 ///
 /// These files are synced from plugin `content.agents` directories at install time.
 /// Each file is a full agent definition with YAML frontmatter and markdown body.
@@ -137,8 +137,7 @@ pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinit
 /// Returns an empty vec if the agents directory does not exist.
 fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
     let agents_dir = project_path
-        .join(".orqa")
-        .join("process")
+        .join(".claude")
         .join("agents");
     let mut agent_files = Vec::new();
 
@@ -172,8 +171,8 @@ fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
 /// Reads:
 /// - `.orqa/rules/*.md` — rule files (full content)
 /// - `.claude/CLAUDE.md` — project instructions (full content, platform config)
-/// - `.orqa/process/agents/*.md` — agent definitions synced from installed plugins
-/// - `.orqa/process/knowledge/*.md` — knowledge catalog (name + one-line description only)
+/// - `.claude/agents/*.md` — agent definitions synced from installed plugins
+/// - `.orqa/documentation/knowledge/*.md` — knowledge catalog (name + one-line description only)
 ///
 /// Agent definitions come from installed plugins, not from any static hardcoded file,
 /// satisfying P1 (Plugin-Composed Everything). If no plugins have installed agent
@@ -210,7 +209,7 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
     }
 
     // Agent definitions come from installed plugin content (P1: Plugin-Composed Everything).
-    // The `.orqa/process/agents/` directory is populated at plugin install time from
+    // The `.claude/agents/` directory is populated at plugin install time from
     // each plugin's `content.agents` source directory.
     let agent_files = read_installed_agent_files(project_path);
     if !agent_files.is_empty() {
@@ -296,7 +295,7 @@ mod tests {
         let know_dir = dir
             .path()
             .join(".orqa")
-            .join("process")
+            .join("documentation")
             .join("knowledge");
         fs::create_dir_all(&know_dir).expect("create knowledge dir");
         fs::write(
@@ -313,18 +312,17 @@ mod tests {
 
     #[test]
     fn build_system_prompt_includes_plugin_agent_definitions() {
-        // Agents installed to .orqa/process/agents/ (synced from plugin content.agents)
+        // Agents installed to .claude/agents/ (synced from plugin content.agents)
         // should appear in the generated prompt under "Agent Definitions".
         let dir = make_project();
         let agents_dir = dir
             .path()
-            .join(".orqa")
-            .join("process")
+            .join(".claude")
             .join("agents");
         fs::create_dir_all(&agents_dir).expect("create agents dir");
         fs::write(
-            agents_dir.join("AGENT-abc123.md"),
-            "---\nid: AGENT-abc123\ntitle: Orchestrator\n---\n# Orchestrator\n\nCoordinates workers.\n",
+            agents_dir.join("orchestrator.md"),
+            "---\nname: orchestrator\ndescription: Coordinates workers\n---\n# Orchestrator\n\nCoordinates workers.\n",
         )
         .expect("write agent file");
 

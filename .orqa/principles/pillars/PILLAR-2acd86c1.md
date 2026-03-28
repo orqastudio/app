@@ -3,7 +3,7 @@ id: "PILLAR-2acd86c1"
 type: pillar
 title: "Learning Through Reflection"
 description: "The system and its users improve over time through structured retrospection."
-status: "active"
+status: active
 created: "2026-03-09"
 updated: "2026-03-09"
 gate:
@@ -15,24 +15,6 @@ gate:
 relationships:
   - target: "VISION-4893db55"
     type: "upholds"
-  - target: "AGENT-4c94fe14"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-8e58cd87"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-e333508b"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: "AGENT-ae63c406"
-    type: "served-by"
-    rationale: "This agent serves this pillar/persona"
-  - target: AGENT-336e4d7d
-    type: served-by
-  - target: AGENT-867da593
-    type: served-by
-  - target: AGENT-e5a1b6bf
-    type: served-by
 
 ---
 

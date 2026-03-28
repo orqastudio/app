@@ -1,7 +1,7 @@
 ---
 id: TASK-40cd25d8
 type: task
-name: "Verify P5 Token Efficiency as Architecture"
+title: "Verify P5 Token Efficiency as Architecture"
 status: active
 description: "Verify that per-agent prompts meet token budget targets from the architecture research"
 relationships:

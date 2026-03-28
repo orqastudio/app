@@ -2,7 +2,7 @@
 id: KNOW-6cfacbb2
 type: knowledge
 name: ESLint Config Management
-summary: "ESLint Config Management. Coding standards rules in `.orqa/process/rules/` define enforcement entries for this plugin."
+summary: "ESLint Config Management. Coding standards rules in `.orqa/learning/rules/` define enforcement entries for this plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"
 relationships:
@@ -16,7 +16,7 @@ relationships:
 
 ## How Enforcement Works
 
-Coding standards rules in `.orqa/process/rules/` define enforcement entries for this plugin. Each entry specifies an ESLint rule and its severity:
+Coding standards rules in `.orqa/learning/rules/` define enforcement entries for this plugin. Each entry specifies an ESLint rule and its severity:
 
 ```yaml
 enforcement:
@@ -41,6 +41,7 @@ When rules change, the configurator agent reads all enforcement entries for the 
 ## Adding a New Standard
 
 To add a new coding standard:
+
 1. Add an enforcement entry to the coding standards rule
 2. The config generator picks it up and regenerates `.eslintrc.json`
 3. `orqa check` runs ESLint with the updated config
