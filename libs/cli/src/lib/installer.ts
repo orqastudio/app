@@ -91,7 +91,7 @@ export function detectMethodologyConflict(
 	const role = manifest.role;
 	if (!role || !role.startsWith("core:")) return null;
 
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const dir = path.join(projectRoot, container);
 		if (!fs.existsSync(dir)) continue;
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -205,7 +205,7 @@ function detectCollisions(
 	}
 
 	// Already-installed plugin relationships
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const dir = path.join(projectRoot, container);
 		if (!fs.existsSync(dir)) continue;
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -459,29 +459,58 @@ export function uninstallPlugin(name: string, projectRoot?: string): void {
 }
 
 /**
- * List all installed plugins by scanning the plugins/ directory.
+ * List all installed plugins by scanning plugins/, connectors/, and sidecars/.
+ *
+ * plugins/ is scanned two levels deep because plugins are organised into
+ * taxonomy subdirectories: plugins/<taxonomy>/<plugin>/orqa-plugin.json.
+ * connectors/ and sidecars/ are scanned one level deep.
  */
 export function listInstalledPlugins(projectRoot?: string): InstallResult[] {
 	const root = projectRoot ?? process.cwd();
 	const results: InstallResult[] = [];
 
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	// Scan plugins/ two levels deep: plugins/<taxonomy>/<plugin>/orqa-plugin.json.
+	const pluginsDir = path.join(root, "plugins");
+	if (fs.existsSync(pluginsDir)) {
+		for (const taxonomy of fs.readdirSync(pluginsDir, { withFileTypes: true })) {
+			if (!taxonomy.isDirectory() || taxonomy.name.startsWith(".")) continue;
+			const taxonomyPath = path.join(pluginsDir, taxonomy.name);
+			for (const plugin of fs.readdirSync(taxonomyPath, { withFileTypes: true })) {
+				if (!plugin.isDirectory() || plugin.name.startsWith(".")) continue;
+				const pluginPath = path.join(taxonomyPath, plugin.name);
+				if (!fs.existsSync(path.join(pluginPath, "orqa-plugin.json"))) continue;
+				try {
+					const manifest = readManifest(pluginPath);
+					const lockfile = readLockfile(root);
+					const locked = lockfile.plugins.find((p) => p.name === manifest.name);
+					results.push({
+						name: manifest.name,
+						version: manifest.version,
+						path: pluginPath,
+						source: locked ? "github" : "local",
+						collisions: [],
+						requiresSchemaRecomposition: false,
+						requiresEnforcementRegeneration: false,
+					});
+				} catch {
+					// Skip invalid plugins
+				}
+			}
+		}
+	}
+
+	// Scan connectors/ and sidecars/ one level deep.
+	for (const container of ["connectors", "sidecars"]) {
 		const dir = path.join(root, container);
 		if (!fs.existsSync(dir)) continue;
-
 		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
-
 			const pluginPath = path.join(dir, entry.name);
-			const manifestPath = path.join(pluginPath, "orqa-plugin.json");
-
-			if (!fs.existsSync(manifestPath)) continue;
-
+			if (!fs.existsSync(path.join(pluginPath, "orqa-plugin.json"))) continue;
 			try {
 				const manifest = readManifest(pluginPath);
 				const lockfile = readLockfile(root);
 				const locked = lockfile.plugins.find((p) => p.name === manifest.name);
-
 				results.push({
 					name: manifest.name,
 					version: manifest.version,

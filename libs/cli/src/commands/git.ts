@@ -47,7 +47,7 @@ const COMPONENT_ROOTS = [
 	"libs",
 	"plugins",
 	"connectors",
-	"integrations",
+	"sidecars",
 	"app",
 	"tools",
 	"templates",

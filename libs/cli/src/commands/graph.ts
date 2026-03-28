@@ -199,7 +199,7 @@ function loadDeliveryHierarchy(): DeliveryLevel[] {
 	const root = getRoot();
 	const levels: DeliveryLevel[] = [];
 
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const containerDir = path.join(root, container);
 		let entries: string[];
 		try {

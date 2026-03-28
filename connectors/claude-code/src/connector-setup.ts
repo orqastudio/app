@@ -134,7 +134,7 @@ function setupMergedAgentsDir(
 	}
 
 	// Link plugin agents using the CLI registry — no raw manifest parsing.
-	// listInstalledPlugins scans plugins/, connectors/, and integrations/.
+	// listInstalledPlugins scans plugins/, connectors/, and sidecars/.
 	for (const plugin of listInstalledPlugins(projectRoot)) {
 		let manifest;
 		try {

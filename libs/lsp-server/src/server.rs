@@ -11,9 +11,10 @@
 //! 2. Calls the validation daemon `POST /validate` for graph-level checks
 //!    (broken refs, missing inverses, type constraints, cardinality, cycles).
 //!
-//! Schema definitions are loaded from plugin manifests (`plugins/*/orqa-plugin.json`
-//! and `connectors/*/orqa-plugin.json`) on startup. They are refreshed whenever a
-//! plugin manifest is saved.
+//! Schema definitions are loaded from plugin manifests on startup. Plugins are
+//! organised under taxonomy subdirectories: `plugins/<taxonomy>/<plugin>/orqa-plugin.json`.
+//! Connectors are at `connectors/<connector>/orqa-plugin.json`. They are
+//! refreshed whenever a plugin manifest is saved.
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;

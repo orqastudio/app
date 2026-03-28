@@ -137,7 +137,7 @@ export interface ResolveAllResult {
 /**
  * Discover all workflow files across installed plugins.
  *
- * Scans `workflows/` directories in plugins/, connectors/, and integrations/.
+ * Scans `workflows/` directories in plugins/, connectors/, and sidecars/.
  * Files must end with `.workflow.yaml` or `.workflow.yml`.
  */
 export function discoverWorkflows(projectRoot: string): {
@@ -147,7 +147,7 @@ export function discoverWorkflows(projectRoot: string): {
 	const workflows: DiscoveredWorkflow[] = [];
 	const errors: string[] = [];
 
-	const containers = ["plugins", "connectors", "integrations"];
+	const containers = ["plugins", "connectors", "sidecars"];
 
 	for (const container of containers) {
 		const containerDir = path.join(projectRoot, container);

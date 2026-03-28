@@ -144,11 +144,6 @@ const PLUGIN_CONFIG_KNOWN_FIELDS: Record<string, string> = {
 /** Required fields for project.json. */
 const PROJECT_JSON_REQUIRED = ["name"];
 
-/** Known fields for orqa-plugin.json provides block. */
-const PLUGIN_PROVIDES_KNOWN_FIELDS = [
-	"schemas", "views", "widgets", "relationships",
-	"artifactTypes", "defaultNavigation", "delivery",
-];
 
 function validateProjectJson(filePath: string): SchemaFinding[] {
 	const findings: SchemaFinding[] = [];
@@ -337,7 +332,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 	}
 
 	// Validate all plugin manifests
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const containerDir = join(projectRoot, container);
 		let entries;
 		try {
@@ -356,7 +351,7 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 
 	// Plugin integrity checks: required categories + dependency resolution
 	const loadedPlugins: LoadedPlugin[] = [];
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const containerDir = join(projectRoot, container);
 		let entries;
 		try {

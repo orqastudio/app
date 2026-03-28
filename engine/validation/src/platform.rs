@@ -1,10 +1,11 @@
 //! Platform configuration sourced from plugin manifests at runtime.
 //!
-//! Plugins (`plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json`)
-//! are now the sole source of truth for artifact type schemas and relationships.
-//! There is no longer a compile-time `core.json` dependency — the `PLATFORM`
-//! static provides empty defaults, and all meaningful schema data is loaded via
-//! [`scan_plugin_manifests`].
+//! Plugins are now the sole source of truth for artifact type schemas and
+//! relationships. Plugins live under taxonomy subdirectories:
+//! `plugins/<taxonomy>/<plugin>/orqa-plugin.json`. Connectors live at
+//! `connectors/<connector>/orqa-plugin.json`. There is no longer a compile-time
+//! `core.json` dependency — the `PLATFORM` static provides empty defaults, and
+//! all meaningful schema data is loaded via [`scan_plugin_manifests`].
 
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -223,19 +224,39 @@ pub struct PluginContributions {
     pub enforcement_mechanisms: Vec<EnforcementMechanism>,
 }
 
-/// Scan `plugins/*/orqa-plugin.json` and `connectors/*/orqa-plugin.json` under
-/// `project_root` and return the combined artifact types and relationships they provide.
+/// Scan plugin manifests under `project_root` and return the combined artifact
+/// types and relationships they provide.
+///
+/// Scanning strategy:
+/// - `plugins/` — two levels deep (`plugins/<taxonomy>/<plugin>/orqa-plugin.json`)
+///   because plugins are now organised into taxonomy subdirectories.
+/// - `connectors/` — one level deep (`connectors/<connector>/orqa-plugin.json`)
+///   because connectors are not organised into taxonomy subdirectories.
 ///
 /// Malformed or unreadable manifests are silently skipped (a `tracing::warn` is
 /// emitted so the caller can diagnose issues without crashing).
 pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
     let mut contributions = PluginContributions::default();
 
-    for search_dir in &["plugins", "connectors"] {
-        let dir = project_root.join(search_dir);
-        let Ok(entries) = std::fs::read_dir(&dir) else {
-            continue;
-        };
+    // Scan plugins/ two levels deep: plugins/<taxonomy>/<plugin>/orqa-plugin.json.
+    let plugins_dir = project_root.join("plugins");
+    if let Ok(taxonomy_entries) = std::fs::read_dir(&plugins_dir) {
+        for taxonomy_entry in taxonomy_entries.flatten() {
+            let Ok(inner) = std::fs::read_dir(taxonomy_entry.path()) else {
+                continue;
+            };
+            for plugin_entry in inner.flatten() {
+                let manifest_path = plugin_entry.path().join("orqa-plugin.json");
+                if let Some(manifest) = load_plugin_manifest(&manifest_path) {
+                    apply_manifest(manifest, &mut contributions);
+                }
+            }
+        }
+    }
+
+    // Scan connectors/ one level deep: connectors/<connector>/orqa-plugin.json.
+    let connectors_dir = project_root.join("connectors");
+    if let Ok(entries) = std::fs::read_dir(&connectors_dir) {
         for entry in entries.flatten() {
             let manifest_path = entry.path().join("orqa-plugin.json");
             if let Some(manifest) = load_plugin_manifest(&manifest_path) {

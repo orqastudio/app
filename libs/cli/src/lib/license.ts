@@ -49,7 +49,7 @@ export function auditLicenses(
 	results.push(checkLicense(path.join(projectRoot, "app"), "app", policy));
 
 	// Scan category directories
-	for (const category of ["libs", "plugins", "connectors", "integrations", "tools", "registry"]) {
+	for (const category of ["libs", "plugins", "connectors", "sidecars", "tools", "registry"]) {
 		const dir = path.join(projectRoot, category);
 		if (!fs.existsSync(dir)) continue;
 

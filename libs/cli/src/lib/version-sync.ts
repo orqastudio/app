@@ -96,8 +96,8 @@ export function syncVersions(projectRoot: string, version: string): VersionSyncR
 	const cargoToml = path.join(projectRoot, "app", "backend", "src-tauri", "Cargo.toml");
 	if (updateCargoVersion(cargoToml, version)) updated.push(cargoToml);
 
-	// Plugins + Integrations
-	for (const container of ["plugins", "integrations"]) {
+	// Plugins + Sidecars
+	for (const container of ["plugins", "sidecars"]) {
 		const containerDir = path.join(projectRoot, container);
 		if (!fs.existsSync(containerDir)) continue;
 		for (const entry of fs.readdirSync(containerDir, { withFileTypes: true })) {
@@ -142,7 +142,7 @@ export function checkVersionDrift(projectRoot: string): VersionDrift[] {
 	};
 
 	// Scan all known locations
-	for (const dir of ["libs", "plugins", "connectors", "integrations"]) {
+	for (const dir of ["libs", "plugins", "connectors", "sidecars"]) {
 		const base = path.join(projectRoot, dir);
 		if (!fs.existsSync(base)) continue;
 		for (const entry of fs.readdirSync(base, { withFileTypes: true })) {

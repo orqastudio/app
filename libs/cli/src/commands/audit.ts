@@ -84,7 +84,7 @@ function getActiveStatuses(projectDir: string, artifactType: string): Set<string
 
 /** Read the relationship type that connects tasks to epics from the delivery config. */
 function getTaskToEpicRelationship(projectDir: string): string | null {
-	for (const container of ["plugins", "connectors", "integrations"]) {
+	for (const container of ["plugins", "connectors", "sidecars"]) {
 		const containerDir = join(projectDir, container);
 		let entries: string[];
 		try {

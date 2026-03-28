@@ -58,7 +58,7 @@ struct PluginManifest {
 
 /// Scan installed plugin manifests and return the first `prompt_classification`
 /// block found. Plugins are discovered by globbing for `orqa-plugin.json` files
-/// under `<project_root>/plugins/*/orqa-plugin.json`.
+/// under `<project_root>/plugins/*/*/orqa-plugin.json` (taxonomy subdirectories).
 ///
 /// Returns `PromptClassification::default()` (all empty) and logs a warning when
 /// no plugin provides classification data — callers treat empty as "fall back to
@@ -66,6 +66,7 @@ struct PluginManifest {
 fn load_prompt_classification(project_path: &Path) -> PromptClassification {
     let pattern = project_path
         .join("plugins")
+        .join("*")
         .join("*")
         .join("orqa-plugin.json");
 

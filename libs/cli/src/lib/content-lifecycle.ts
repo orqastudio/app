@@ -624,7 +624,7 @@ export function processAggregatedFiles(
 	const scanDirs = [
 		path.join(projectRoot, "plugins"),
 		path.join(projectRoot, "connectors"),
-		path.join(projectRoot, "integrations"),
+		path.join(projectRoot, "sidecars"),
 	];
 
 	// Collect all aggregatedFile declarations first

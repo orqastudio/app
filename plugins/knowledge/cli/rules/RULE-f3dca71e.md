@@ -1,0 +1,65 @@
+---
+id: "RULE-f3dca71e"
+type: rule
+title: "Pre-Release Version Tagging"
+description: "All pre-release versions must use a -dev suffix (e.g. 0.2.0-dev). Stable version strings (X.Y.Z with no suffix) are reserved for production releases only."
+status: "active"
+created: "2026-03-21"
+updated: "2026-03-21"
+enforcement:
+  - mechanism: behavioral
+    message: "All pre-release versions must use a -dev suffix; bare X.Y.Z version strings are reserved for production releases only"
+relationships: []
+---
+
+Version numbers communicate release intent. A bare `X.Y.Z` version string signals production-ready. Any version that is not production-ready MUST carry a `-dev` suffix.
+
+## The Rule
+
+- Pre-release versions: `X.Y.Z-dev` (e.g. `0.2.0-dev`, `1.0.0-dev`)
+- Production releases: `X.Y.Z` (e.g. `0.2.0`, `1.0.0`)
+- Other pre-release suffixes are allowed for specific release candidates: `X.Y.Z-rc.1`, `X.Y.Z-beta.1`
+- **The default pre-release suffix is `-dev`** — use this unless there is a specific reason for another suffix
+
+## Applies To
+
+This rule applies to every version field in the repository:
+
+- `VERSION` (canonical version file)
+- `package.json` in all packages and apps
+- `Cargo.toml` in all Rust crates
+- `orqa-plugin.json` in all plugins
+
+All of these are kept in sync by `orqa version sync`. The canonical source of truth is the `VERSION` file at the repository root.
+
+## Setting a Version
+
+Use `orqa version bump` to set a new version:
+
+```bash
+orqa version bump 0.2.0-dev   # correct: pre-release gets -dev
+orqa version bump 0.2.0       # FORBIDDEN unless this is a production release
+```text
+
+Never manually edit version fields in individual files. Always go through the `VERSION` file and `orqa version sync`.
+
+## Enforcement
+
+Three enforcement layers:
+
+1. **`orqa version bump` validation** — `libs/cli/src/lib/version-sync.ts` calls `isValidVersion()` which validates semver format. If an untagged version is bumped when the project is in pre-release state, the agent should catch it via pillar alignment — a bare version number signals production readiness, which requires explicit sign-off.
+2. **`orqa version check`** — detects drift between the `VERSION` file and individual `package.json`/`Cargo.toml` files. Running `orqa version check` in CI or pre-commit catches out-of-sync versions before they reach a release.
+3. **Agent behavioral constraint** — the `CLAUDE.md` user preferences section states: "Dev tags for releases — use `-dev` suffix for all pre-release versions." This is loaded into orchestrator context on every session start.
+
+To add stronger mechanical enforcement, a CI check validating that any push to `main` either has a `-dev` suffix OR has passed a production-release gate could be added as a future task.
+
+## FORBIDDEN
+
+- Using a bare `X.Y.Z` version string during active development
+- Manually editing `package.json` or `Cargo.toml` version fields without running `orqa version sync`
+- Tagging a git release without first verifying the version matches the release intent
+
+## Related Rules
+
+- [RULE-d2c2063a](RULE-d2c2063a) (development-commands) — `orqa version` must be used via its `make` equivalent when one exists
+- end-to-end-completeness — version consistency across all layers is a layer-consistency requirement

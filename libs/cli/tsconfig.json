@@ -1,5 +1,5 @@
 {
-  "extends": "../../plugins/typescript/src/tsconfig/library.json",
+  "extends": "../../plugins/knowledge/typescript/src/tsconfig/library.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
