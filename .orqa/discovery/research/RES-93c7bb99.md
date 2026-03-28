@@ -17,6 +17,7 @@ relationships:
   - target: "AD-430829f1"
     type: "informs"
 ---
+
 ## Problem Statement
 
 OrqaStudio's mission is to turn messy situations into structured understanding through agile thinking and continuous retrospection. The governance layer is supposed to embody this — a self-enforcing learning loop where the system gets smarter by being used.
@@ -40,7 +41,7 @@ No rule prevented this because the drift isn't a violation — it's a gradual sh
 
 From the user's perspective, the loop is simple:
 
-```
+```text
 You're working. You make a mistake — or discover something that works.
 You want the system to remember that, so next time the outcome is better.
 ```
@@ -50,7 +51,7 @@ That's the entire loop. Everything else is mechanism.
 ### Six Stages
 
 | Stage | Question | What Happens |
-|-------|----------|-------------|
+| ------- | ---------- | ------------- |
 | **Observation** | "What happened?" | Raw capture — something was noticed |
 | **Understanding** | "Why did it happen?" | Root cause identified, context mapped |
 | **Principle** | "What's the general rule?" | Abstract, transferable insight distilled |
@@ -63,6 +64,7 @@ That's the entire loop. Everything else is mechanism.
 The loop self-enforces not through more hooks or regex, but through **structural visibility into whether knowledge is flowing through the pipeline**.
 
 When you can see:
+
 - "We have 16 observations that never became principles — learning is stuck at stage 2"
 - "We have 30 enforcement entries with no connected principle — enforcement is disconnected from reasoning"
 - "This principle has been violated 5 times since enforcement was added — the practice isn't working"
@@ -73,7 +75,7 @@ That last signal is exactly what would have caught our drift. We were running th
 ## Current State Mapping
 
 | Current Artifact | Pipeline Stage | Problem |
-|-----------------|---------------|---------|
+| ----------------- | --------------- | --------- |
 | Lesson (IMPL-NNN) | Observation + Understanding | Stuck — write-only, never flows to Principle |
 | Decision (AD-NNN) | Principle | Disconnected — no link to Enforcement or Practice |
 | Skill (SKILL.md) | Practice | Disconnected — no link to the learning that created it |
@@ -131,7 +133,7 @@ verification: VER-006    # effectiveness measurement
 
 Group related artifacts into a **Knowledge Thread** — a named pipeline that connects one piece of learning from observation through verification.
 
-```
+```text
 Thread: "Component Purity"
   Observation: IMPL-ffb199b5 ("invoke() found in display component")
   Understanding: IMPL-ffb199b5 body ("convenience leads to coupling")

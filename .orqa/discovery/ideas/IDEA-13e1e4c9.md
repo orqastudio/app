@@ -17,6 +17,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Candidate Items
 
 - Decision matrices — structured comparison with weighted criteria

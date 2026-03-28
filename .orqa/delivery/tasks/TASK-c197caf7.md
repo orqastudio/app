@@ -3,7 +3,7 @@ id: "TASK-c197caf7"
 type: "task"
 title: "Model auto-download and startup loading"
 description: "Automatically downloads the embedding model from Hugging Face on first use and pre-loads it at startup, with download progress visible in the status bar."
-status: "completed"
+status: archived
 created: 2026-03-04T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Implement automatic model download from Hugging Face for development environments,

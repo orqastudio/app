@@ -10,6 +10,7 @@ relationships:
   - target: EPIC-42a5330b
     type: drives
 ---
+
 ## Decision
 
 The skill loading system uses three tiers:
@@ -35,6 +36,7 @@ Skills injected by the orchestrator at task creation time based on the project a
 Wrapper skills that resolve to a concrete implementation based on runtime context. The agent declares the wrapper; the wrapper detects the context and loads the right implementation.
 
 **Examples:**
+
 - `code-search` → resolves to `chunkhound` (CLI) or `orqa-native-search` (App)
 - Future: `code-formatting` → could resolve to different formatters per context
 
@@ -42,7 +44,7 @@ Wrapper skills that resolve to a concrete implementation based on runtime contex
 
 ## Skill Loading Sequence
 
-```
+```text
 1. Agent starts task
 2. Load Tier 1 skills (from agent YAML frontmatter) — portable skills + wrapper skills
 3. Wrapper skills (Tier 3) detect context and load the correct implementation
@@ -56,7 +58,7 @@ Wrapper skills that resolve to a concrete implementation based on runtime contex
 Wrapper skills detect their context using tool availability:
 
 | Signal | Context | Resolution |
-|--------|---------|------------|
+| -------- | --------- | ------------ |
 | `mcp__chunkhound__*` tools available | CLI (Claude Code) | Load `chunkhound` |
 | `search_regex` is a Tauri command | App (OrqaStudio) | Load `orqa-native-search` |
 | Neither available | Unknown | Fall back to Grep/Glob, note in summary |
@@ -73,6 +75,7 @@ The previous approach put all skills on agent definitions, including project-spe
 4. **Orchestrator bypass** — project skills loaded without orchestrator awareness of task scope
 
 The three-tier model separates concerns cleanly:
+
 - Agent definitions are portable (Tier 1)
 - Project knowledge is injected by the coordinator who has context (Tier 2)
 - Runtime ambiguity is resolved by detection, not declaration (Tier 3)
@@ -100,7 +103,7 @@ The three-tier model separates concerns cleanly:
 The three skill tiers map to the three-layer governance architecture:
 
 | Skill Tier | Governance Layer | Scope |
-|-----------|-----------------|-------|
+| ----------- | ----------------- | ------- |
 | Tier 1 (Agent) | Canon | Ships with the agent, universal |
 | Tier 2 (Orchestrator) | Project | Specific to this project's patterns |
 | Tier 3 (Wrapper) | Plugin | Resolves based on runtime context |

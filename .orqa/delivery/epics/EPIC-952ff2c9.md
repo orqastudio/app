@@ -3,7 +3,7 @@ id: "EPIC-952ff2c9"
 type: "epic"
 title: "Documentation improvements — content, ordering, rendering"
 description: "Fix docs navigation (no status for docs), populate Guide section, audit doc ordering for reading flow, add mermaid/PlantUML rendering, and review doc-to-artifact relationships."
-status: "completed"
+status: archived
 priority: "P2"
 scoring:
   impact: 3
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 UAT round 2 found documentation navigation shows status (irrelevant for docs), Guide section is empty, doc ordering is arbitrary, and the markdown renderer lacks diagram support. Documentation pages also need proper graph relationships.

@@ -20,7 +20,7 @@ The app enforces BOTH canonical and project-configured constraints with the same
 ### What Gets Enforced
 
 | Constraint | Scope | Layer |
-|---|---|---|
+| --- | --- | --- |
 | Relationships must be bidirectional | Canonical + project | App |
 | Relationships must use valid types | Canonical + project | App |
 | Statuses must be from allowed vocabulary | Canonical + project | App |
@@ -35,7 +35,7 @@ The app enforces BOTH canonical and project-configured constraints with the same
 ### Four Layers
 
 | Layer | When | Human Needed? | What It Does |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **App enforcement** | At action time | No | Prevents invalid states mechanically |
 | **Automated scanners** | On file change (watcher) | No | Applies objective transitions automatically |
 | **Integrity checks** | On scan/refresh | Yes | Flags judgment-required issues |
@@ -50,6 +50,7 @@ Covers both canonical constraints (relationship bidirectionality, status vocabul
 ### Layer 2: Automated Scanners
 
 Run on file watcher events. When an artifact changes on disk:
+
 1. Read the changed file's relationships
 2. Evaluate connected nodes for objective state changes
 3. Auto-apply transitions that are unambiguous (no human judgment needed)
@@ -57,6 +58,7 @@ Run on file watcher events. When an artifact changes on disk:
 These are the configurable auto_rules from the state machine, triggered by file watcher events. Auto-rules can reference both canonical and project relationships.
 
 Examples:
+
 - All tasks on an epic are `completed` → auto-move epic to `review`
 - A dependency completes → auto-unblock the waiting task
 - A lesson hits recurrence threshold → auto-move to `review`
@@ -66,6 +68,7 @@ Examples:
 Detect states that are technically valid but semantically wrong — situations where code can identify the problem but only a human can decide the fix.
 
 Examples:
+
 - Body text references an artifact with no corresponding relationship
 - Lesson has recurred 3 times (promote to rule?)
 - All tasks completed on an epic (move to review?)
@@ -80,6 +83,7 @@ Additionally enforce Layer 1 immutability — blocking commits that modify app-f
 ## Rationale
 
 Each layer covers a different modification path:
+
 - **App**: the primary path — all in-app actions
 - **Scanners**: reactive automation — when graph state changes objectively
 - **Integrity**: human-judgment issues that can't be auto-resolved

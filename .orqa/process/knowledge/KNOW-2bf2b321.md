@@ -1,7 +1,9 @@
 ---
 id: KNOW-2bf2b321
 type: knowledge
-name: Schema Validation
+title: Schema Validation
+domain: methodology/governance
+description: "How schema-driven validation works in OrqaStudio, where schemas live, and what structural and relationship checks the validator enforces."
 status: active
 relationships:
   - target: DOC-7b9b45f0
@@ -31,11 +33,13 @@ OrqaStudio uses schema-driven validation. There is no custom business logic in t
 ## Where schemas live
 
 **Platform schemas** — `libs/types/src/platform/core.json`
+
 - Artifact types (12): vision, pillar, persona, idea, decision, rule, lesson, skill, agent, doc, pivot, bug
 - Relationships (19): each with from/to type constraints, semantic category, and optional validation constraints
 - Semantic categories (6): foundation, lineage, governance, knowledge-flow, observation, synchronisation
 
 **Plugin schemas** — `plugins/{name}/orqa-plugin.json`
+
 - Additional artifact types (schemas array)
 - Additional relationships (relationships array with same constraint format)
 - Status transitions per artifact type
@@ -48,12 +52,14 @@ OrqaStudio uses schema-driven validation. There is no custom business logic in t
 All checks are derived from the schema — no hardcoded rules:
 
 ### Structural checks (from type definitions)
+
 - **Required frontmatter fields**: id, type, status (from schema `frontmatter.required`)
 - **Valid artifact type**: type field matches a registered type key
 - **Valid status**: status field matches canonical statuses
 - **Status transitions**: transition is allowed per `statusTransitions` config
 
 ### Relationship checks (from relationship definitions)
+
 - **Valid relationship key**: relationship type matches a registered key
 - **Target exists**: relationship target ID exists in the graph
 - **Inverse exists**: bidirectional inverse edge present on target
@@ -62,6 +68,7 @@ All checks are derived from the schema — no hardcoded rules:
 - **Max count**: if `constraints.maxCount` set, no more than that many instances
 
 ### Status rules (from relationship `constraints.statusRules`)
+
 - **Computed transitions**: when relationship targets meet a condition (all-completed, any-not-completed), propose a status change on the source or target
 - **Example**: task with `depends-on` targets not completed → propose `blocked`
 - **Example**: epic with all `delivered-by` tasks completed → propose `review`
@@ -97,15 +104,18 @@ You never write validation code. You write schema.
 ```
 
 ### `evaluate`
+
 - `"source"` — evaluate the artifact that HAS this relationship
 - `"target"` — evaluate the artifact that is TARGETED by this relationship (inverse direction)
 
 ### `condition`
+
 - `"all-targets-in"` — all related targets have a status in the `statuses` list
 - `"any-target-in"` — at least one target has a status in the list
 - `"no-targets-in"` — no targets have a status in the list
 
 ### `proposedStatus`
+
 The status to propose for the evaluated artifact if the condition is met.
 
 ## Running validation

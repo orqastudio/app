@@ -2,6 +2,7 @@
 id: KNOW-e89753ad
 type: knowledge
 title: OrqaStudio CLI Commands
+domain: integration/cli
 description: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
 summary: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
 status: active
@@ -23,7 +24,7 @@ The `orqa` CLI is the single developer interface. All commands go through it.
 ## Core Commands
 
 | Command | Purpose | When to Use |
-|---------|---------|-------------|
+| --------- | --------- | ------------- |
 | `orqa install` | Full setup (prereqs + deps + build + sync) | First-time, after cloning |
 | `orqa dev` | Start dev environment (Vite + Tauri) | Daily development |
 | `orqa dev restart-tauri` | Restart Tauri only | After Rust changes |
@@ -36,7 +37,7 @@ The `orqa` CLI is the single developer interface. All commands go through it.
 ## Graph + Discovery
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa graph --type <type>` | Filter artifacts by type |
 | `orqa graph --related-to <id>` | Show related artifacts |
 | `orqa graph --tree` | Delivery hierarchy view |
@@ -45,7 +46,7 @@ The `orqa` CLI is the single developer interface. All commands go through it.
 ## Plugin Management
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa plugin list` | List installed plugins |
 | `orqa plugin install <source>` | Install a plugin |
 | `orqa plugin refresh [name]` | Re-sync content after edits |
@@ -54,7 +55,7 @@ The `orqa` CLI is the single developer interface. All commands go through it.
 ## Maintenance
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa version show/sync/bump` | Version management |
 | `orqa id generate/check/migrate` | Artifact ID management |
 | `orqa index` | ONNX embedding + search index |
@@ -63,7 +64,7 @@ The `orqa` CLI is the single developer interface. All commands go through it.
 ## Infrastructure (auto-spawned)
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa mcp` | MCP server (stdio, auto-spawned by Claude Code) |
 | `orqa lsp` | LSP server (auto-spawned by editor) |
 | `orqa daemon start` | Validation daemon (port 10258) |

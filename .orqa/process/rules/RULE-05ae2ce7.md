@@ -3,11 +3,14 @@ id: "RULE-05ae2ce7"
 type: rule
 title: "Architecture Decisions"
 description: "Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives."
-status: "active"
+status: active
+enforcement_type: advisory
 created: "2026-03-22"
 updated: "2026-03-22"
 enforcement:
+
   - mechanism: behavioral
+
     message: "Orchestrator reads architecture decisions before delegating; every significant technical choice must be recorded as a decision artifact; plans must include an Architectural Compliance section"
 ---
 Architecture decisions are first-class governance artifacts. Every significant technical choice must be recorded as a decision artifact with status, rationale, alternatives considered, and relationships to the rules and delivery work it drives. Decisions are the bridge between discovery (research, ideas) and governance (rules, enforcement).

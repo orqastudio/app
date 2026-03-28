@@ -18,6 +18,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Problem
 
 The roadmap document (`.orqa/documentation/about/roadmap.md`) is a manually maintained markdown file that lists milestones, epics, and their statuses. It drifts constantly — every time an epic status changes, the roadmap must be manually updated. This violates the single-source-of-truth principle: the real status lives in epic/milestone frontmatter, but the roadmap is a stale copy.
@@ -40,12 +41,14 @@ This is the first step toward database-driven artifact views. The pattern establ
 This could be built as either a core feature or a plugin. Both have trade-offs.
 
 **Core feature (built into the app):**
+
 - Pro: Roadmap is fundamental to project management — every project benefits
 - Pro: Tighter integration with artifact scanning and status change events
 - Pro: Can establish the file→SQLite→UI pattern that other features will follow
 - Con: Adds complexity to the core app for something not every user may need
 
 **Plugin (ecosystem contribution):**
+
 - Pro: Keeps the core lean — only structured thinking primitives in the app
 - Pro: Different users could have different roadmap visualisations
 - Pro: Tests the plugin API early with a real use case

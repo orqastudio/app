@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: Epic belongs to this milestone
 ---
+
 ## Tasks
 
 - [ ] Semantic search index management UI — trigger re-index, show status, configure patterns

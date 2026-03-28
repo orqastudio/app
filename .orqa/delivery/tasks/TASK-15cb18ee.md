@@ -3,7 +3,7 @@ id: "TASK-15cb18ee"
 type: "task"
 title: "Create orqa-plugin repository with Claude Code plugin scaffold"
 description: "Set up the separate orqa-plugin repo with plugin.json manifest, directory structure, and README."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

@@ -2,6 +2,8 @@
 id: KNOW-df3c489e
 type: knowledge
 title: "Svelte 5 Performance Reference"
+domain: platform/svelte
+description: "Patterns for optimizing Svelte 5 reactivity, preventing waterfalls in SvelteKit load functions, and avoiding common $effect anti-patterns."
 summary: "Svelte 5 Performance Reference"
 status: active
 created: 2026-03-20
@@ -26,7 +28,7 @@ Use getters for derived values in module scope (no `$derived` at module level). 
 ## Reactivity Anti-Patterns
 
 | Anti-Pattern | Fix |
-|---|---|
+| --- | --- |
 | `$effect` to set derived values | Use `$derived(count * 2)` |
 | Circular `$effect` dependencies | Separate effects or event handlers |
 | Reading reactive state inside `$effect` that also writes it | Use `untrack()` |
@@ -62,7 +64,7 @@ export const load = async ({ fetch }) => {
 Use `{#await data.analytics}` in components to handle streamed data.
 
 | Data Type | Stream? | Reason |
-|-----------|---------|--------|
+| ----------- | --------- | -------- |
 | User info / main content | No | Critical for layout |
 | Analytics / recommendations | Yes | Supplementary |
 

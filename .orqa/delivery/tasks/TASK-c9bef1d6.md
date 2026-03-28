@@ -3,7 +3,7 @@ id: TASK-c9bef1d6
 type: task
 title: Investigate and suppress tao event loop warnings
 description: Investigate tao framework event loop warnings flooding the dev controller output. Determine if they indicate a real issue or can be safely filtered.
-status: completed
+status: archived
 priority: P3
 scoring:
   impact: 1
@@ -25,6 +25,7 @@ relationships:
 ## Scope
 
 ### tao Event Loop Warnings (Finding #34)
+
 - **Symptoms**: Dev controller floods with:
   - `WARN tao::platform_impl::platform::event_loop::runner: NewEvents emitted without explicit RedrawEventsCleared`
   - `WARN tao::platform_impl::platform::event_loop::runner: RedrawEventsCleared emitted without explicit MainEventsCleared`

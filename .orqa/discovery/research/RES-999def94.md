@@ -29,6 +29,7 @@ relationships:
 Consider 30 submodules across 7 categories (app, libs, plugins, connectors, integrations, registries, templates). Each has independent versioning needs and different release cadences.
 
 Dimensions to evaluate:
+
 - Development experience (DX) for humans and AI agents
 - Version management and dependency resolution
 - CI/CD pipeline complexity
@@ -39,6 +40,7 @@ Dimensions to evaluate:
 ### Q2: How Does Each Structure Affect Production Packaging?
 
 OrqaStudio ships as:
+
 - A Tauri desktop app (Rust + Svelte bundle)
 - Plugins distributed independently
 - Libraries published to npm (and potentially crates.io)
@@ -49,6 +51,7 @@ For each repo structure, how does the build/release/distribute pipeline work?
 ### Q3: How Does Forgejo Change the Equation?
 
 With self-hosted Forgejo:
+
 - Can branch protection be centralised?
 - Does josh proxy make monorepo viable without losing per-component repos?
 - What does the GitHub mirror story look like?
@@ -57,6 +60,7 @@ With self-hosted Forgejo:
 ### Q4: Is There a Hybrid Path?
 
 Could OrqaStudio use:
+
 - Monorepo for core (app + libs) where tight coupling exists
 - Separate repos for plugins (independent lifecycle)
 - Forgejo as the primary host with GitHub as a mirror
@@ -64,6 +68,7 @@ Could OrqaStudio use:
 ### Q5: What Does `orqa git` Need to Do Regardless of Structure?
 
 Common tooling needs that apply regardless of repo architecture:
+
 - Unified status/diff across the working set
 - Coordinated version bumps
 - Cross-component commit linking
@@ -90,6 +95,7 @@ Both problems are solved by workspaces (Cargo workspace for Rust, npm/pnpm works
 ### F2: Clear Coupling Boundary Exists
 
 **Tightly coupled (15 components, change together):**
+
 - App (frontend + backend)
 - All 11 libraries
 - `plugins/typescript` (misclassified — actually infrastructure consumed by `cli` and `sdk`)
@@ -97,6 +103,7 @@ Both problems are solved by workspaces (Cargo workspace for Rust, npm/pnpm works
 - `tools/debug`
 
 **Loosely coupled (15 components, independent lifecycle):**
+
 - 10 content-only plugins (markdown/JSON governance artifacts)
 - `integrations/claude-agent-sdk`
 - 2 registries (JSON manifests)
@@ -108,6 +115,7 @@ This boundary maps cleanly to a hybrid structure.
 ### F3: Production Packaging Strongly Favours Core Monorepo
 
 The Tauri desktop app build requires ALL tightly-coupled components:
+
 - Frontend: `app/ui/build` depends on `types`, `sdk`, `svelte-components`, `graph-visualiser`
 - Backend: `app/backend` depends on `search`, `validation`, `mcp-server`, `lsp-server`
 - CLI: `@orqastudio/cli` depends on `types`, `plugin-typescript`
@@ -121,6 +129,7 @@ Plugin distribution is unaffected — plugins ship as tarballs from their own re
 **josh proxy** eliminates the monorepo-vs-multirepo trade-off: one actual repo internally, per-component virtual repos externally. Atomic commits, shared build cache, no submodule orchestration — while preserving independent repos for public consumption on GitHub.
 
 **Risks:**
+
 - josh maturity (active but not widely adopted in production)
 - Windows compatibility (dev environment is Windows)
 - Requires self-hosted infrastructure (Forgejo + josh)
@@ -137,7 +146,7 @@ All 30 components currently share a single version (`0.1.4-dev`). This is correc
 ### Trade-Off Matrix
 
 | Dimension | Multi-Repo (status quo) | Hybrid (core mono + plugin multi) | Forgejo + Josh |
-|-----------|------------------------|-----------------------------------|----------------|
+| ----------- | ------------------------ | ----------------------------------- | ---------------- |
 | Atomic commits (core) | No | Yes | Yes |
 | Dependency resolution | npm link (fragile) | Workspaces (solid) | Workspaces |
 | Rust build cache | None | Shared workspace | Shared workspace |

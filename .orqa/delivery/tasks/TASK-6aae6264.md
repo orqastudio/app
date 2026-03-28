@@ -3,7 +3,7 @@ id: "TASK-6aae6264"
 type: "task"
 title: "Design artifact browser wireframes"
 description: "Created wireframes for the artifact browser including navigation tree, content panel, and frontmatter display."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Created wireframes for the artifact browser including the navigation tree sidebar, markdown content panel, frontmatter metadata display, and empty/loading states.

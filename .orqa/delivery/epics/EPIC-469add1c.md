@@ -3,7 +3,7 @@ id: "EPIC-469add1c"
 type: "epic"
 title: "Artifact viewer redesign — layout, relationships, and graph enrichment"
 description: "Redesign the artifact viewer information hierarchy, relationships panel, and pipeline stepper. Enrich graph nodes with metadata for display. The largest systemic theme from UAT round 2."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 UAT round 2 produced 30 findings. Themes C, D, and E converge on the artifact viewer — wrong information hierarchy, relationships panel needing redesign, and graph nodes lacking metadata for display. These are interdependent and must be addressed together.
@@ -32,6 +33,7 @@ Enrich ArtifactNode in the Rust graph builder to carry status, title, descriptio
 ### Phase 2: Artifact viewer layout (Theme C)
 
 Reorder the artifact viewer:
+
 1. Actions needed (top — most actionable)
 2. Pipeline stepper (configurable stages, reusable component)
 3. Title + metadata box

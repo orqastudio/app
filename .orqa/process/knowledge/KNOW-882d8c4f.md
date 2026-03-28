@@ -2,6 +2,7 @@
 id: "KNOW-882d8c4f"
 type: "knowledge"
 title: "Orqa Store Orchestration"
+domain: platform/svelte
 description: "How multiple Svelte 5 rune stores coordinate in OrqaStudio without tight coupling.\nCovers store independence, component-level orchestration via $derived and $effect,\ncircular dependency prevention, cross-store derived state, and initialization order.\nUse when: Wiring multiple stores together, adding cross-store coordination,\ndebugging state synchronization issues, or planning new multi-store features.\n"
 status: "active"
 created: 2026-03-01T00:00:00.000Z
@@ -31,13 +32,12 @@ summary: |
   prevention, initialization order.
 ---
 
-
 OrqaStudio has 10 singleton stores, each owning a single domain. Stores never import each other (with one documented exception). All cross-store coordination happens in components — primarily layout components that have visibility into multiple domains.
 
 ## Store Inventory
 
 | Store | Domain | Imports Other Stores? |
-|-------|--------|----------------------|
+| ------- | -------- | ---------------------- |
 | `projectStore` | Active project, settings, scanning | No |
 | `settingsStore` | App preferences, theme, sidecar status | No |
 | `sessionStore` | Session CRUD, active session | No |
@@ -119,7 +119,7 @@ These combine state from multiple stores without any store importing another.
 
 AppLayout controls startup via `onMount`:
 
-```
+```text
 settingsStore.initialize()
   -> setupStore.checkSetupStatus()
     -> projectStore.loadActiveProject()
@@ -136,11 +136,13 @@ Each step is gated by the previous one completing. `$effect` blocks naturally fi
 No single component coordinates all 10 stores. Each component coordinates the subset it needs.
 
 **AppLayout coordinates:**
+
 - `projectStore` + `navigationStore` (switch to project dashboard)
 - `navigationStore` + `artifactStore` (load trees on activity change)
 - `projectStore` + `governanceStore` (auto-scan on project load)
 
 **ConversationView coordinates:**
+
 - `sessionStore` + `conversationStore` (load messages on session change)
 - `projectStore` + `sessionStore` (restore last session)
 

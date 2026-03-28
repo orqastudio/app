@@ -32,6 +32,7 @@ Decisions sometimes acknowledge trade-offs: "we're doing X now because Y isn't r
 The result: constraints accumulate silently. No one notices the workaround has been in place for 6 months and the blocker it was working around has been resolved. The constraint becomes permanent not because it's still necessary, but because it's forgotten.
 
 A constraint sub-category on decisions would:
+
 - Track impact (how often is this constraint encountered, how painful is the workaround)
 - Surface during planning (when reviewing milestones, show unresolved high-impact constraints)
 - Trigger integrity checks (constraints older than N months without reassessment get flagged)
@@ -42,6 +43,7 @@ This is framed domain-agnostically — "constraint" works for any field, not jus
 ## Sketch
 
 Decision frontmatter extension:
+
 ```yaml
 constraint:
   type: temporary  # temporary | accepted | resolved

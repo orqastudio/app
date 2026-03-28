@@ -3,7 +3,7 @@ id: "TASK-e86dc6a2"
 type: "task"
 title: "Add artifact graph Tauri commands"
 description: "Expose the artifact graph through Tauri commands: resolve_artifact, resolve_path, get_references_from, get_references_to, get_artifacts_by_type, read_artifact_content, get_graph_stats."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

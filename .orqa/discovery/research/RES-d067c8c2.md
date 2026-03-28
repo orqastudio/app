@@ -28,7 +28,7 @@ ImagineUI (https://imagineui.github.io/en/) was the initial candidate. This rese
 ## Requirements
 
 | # | Requirement | Weight |
-|---|---|---|
+| --- | --- | --- |
 | R1 | Text-based input format (DSL, JSON, markup) — generatable by AI agents | Must |
 | R2 | Image output (PNG and/or SVG) embeddable in markdown | Must |
 | R3 | CLI or programmatic API (no GUI required) | Must |
@@ -55,7 +55,8 @@ ImagineUI (https://imagineui.github.io/en/) was the initial candidate. This rese
 **Status:** Self-described as "Early alpha. Things may break."
 
 **Input format:** Custom DSL using `.scene` files with natural-language-like syntax:
-```
+
+```text
 Page: Authorization
 
 Main block: Login
@@ -75,6 +76,7 @@ Elements include: Page, Block, Header, Field, Button, Image, List, Text. Layout 
 **Output format:** PNG (via Puppeteer-based headless browser rendering)
 
 **CLI usage:**
+
 ```bash
 npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 ```
@@ -86,6 +88,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 **Bundling:** Requires Node.js + Puppeteer (headless Chromium). Heavy dependency (~400MB for Chromium). Can run offline once installed.
 
 **Assessment:**
+
 - (+) Purpose-built for wireframes with UI-specific vocabulary
 - (+) Natural language DSL is easy to read
 - (+) MIT license
@@ -111,6 +114,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 **Maintenance:** Actively maintained. PlantUML has continuous releases.
 
 **Input format:** Text-based DSL wrapped in `@startsalt` / `@endsalt` blocks:
+
 ```plantuml
 @startsalt
 {+
@@ -126,6 +130,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 ```
 
 **Available UI elements:**
+
 - Buttons: `[Button Text]`
 - Text input fields: `"placeholder text"`
 - Radio buttons: `()` unchecked, `(X)` checked
@@ -141,6 +146,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 - OpenIconic icons: `<&icon_name>`
 
 **Layout system:**
+
 - Grid/table: `{` opens container, `|` separates columns
 - Line modes: `#` (all lines), `!` (vertical only), `-` (horizontal only), `+` (external only)
 - Cell spanning with `*` and empty cells with `.`
@@ -150,6 +156,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 **Output formats:** PNG (default), SVG (`-tsvg` flag), PDF, EPS
 
 **CLI usage:**
+
 ```bash
 java -jar plantuml.jar -tpng diagram.puml
 java -jar plantuml.jar -tsvg diagram.puml
@@ -157,6 +164,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 ```
 
 **Theming/styling:**
+
 - Color support: `<color:Blue>Text` or `<color:#9a9a9a>Text`
 - Text formatting: `**bold**`, `//italic//`, `""monospaced""`, `--strikethrough--`, `__underlined__`
 - `skinparam` commands for background colors, fonts (being deprecated)
@@ -170,6 +178,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 **Bundling:** Requires Java runtime (JRE). The `plantuml.jar` file is ~10MB. Runs fully offline. Since wireframing is a first-class product feature (not just a dev tool), the JRE must be bundled with OrqaStudio or compiled to a native binary via GraalVM. See Open Questions for bundling options.
 
 **Assessment:**
+
 - (+) **Purpose-built for wireframes** with rich UI element vocabulary
 - (+) **Excellent documentation** — extensive examples, cheat sheets, community resources
 - (+) **Mature and actively maintained** — decades of development, large community
@@ -198,6 +207,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 **Company:** Terrastruct (commercial entity behind it)
 
 **Input format:** Declarative text DSL (`.d2` files):
+
 ```d2
 server: {
   label: Web Server
@@ -211,6 +221,7 @@ server: {
 ```
 
 **Grid layout capability:**
+
 ```d2
 layout: {
   grid-rows: 2
@@ -226,6 +237,7 @@ Supports nested grids (children of grid cells can themselves be grids), gap cont
 **Output formats:** SVG (default), PNG, PDF, GIF (animated)
 
 **CLI usage:**
+
 ```bash
 d2 input.d2 output.svg
 d2 --watch input.d2 output.svg  # live reload
@@ -233,6 +245,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 ```
 
 **Theming/styling:**
+
 - Multiple built-in themes (light and dark variants)
 - `--dark-theme` flag for automatic dark mode adaptation
 - `theme-overrides` and `dark-theme-overrides` for custom color codes
@@ -241,6 +254,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 - `d2 --list-themes` to see all available themes
 
 **Layout engines:**
+
 - Dagre (default, bundled) — hierarchical graph layout
 - ELK (bundled) — node-link directional flow
 - TALA (separate binary) — proprietary, designed for architecture diagrams
@@ -250,6 +264,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 **Bundling:** Single Go binary. ~20MB. No runtime dependencies. Cross-platform (Windows, macOS, Linux). Install via curl script, Homebrew, or precompiled binaries. Can also be used as a Go library.
 
 **Assessment:**
+
 - (+) **Excellent theming** — built-in themes, dark mode, granular style overrides
 - (+) **Grid layout system** — row/column/gap control for structured layouts
 - (+) **Multiple output formats** — SVG, PNG, PDF
@@ -277,6 +292,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 **Maintenance:** Very actively maintained, large contributor base
 
 **Input format:** Markdown-like text DSL with multiple diagram types:
+
 ```mermaid
 block-beta
   columns 3
@@ -286,11 +302,13 @@ block-beta
 ```
 
 **Relevant diagram types for wireframes:**
+
 - **Block diagrams** (`block-beta`) — CSS-grid-style layout with column spanning
 - **Flowcharts** — boxes and connections
 - No dedicated wireframe diagram type (GitHub issue #1184 is approved but unimplemented)
 
 **Block diagram features:**
+
 - Column count specification
 - Column spanning (`:2`, `:3`)
 - Multiple shape types: rectangle, rounded, stadium, cylinder, circle, diamond, hexagon
@@ -302,12 +320,14 @@ block-beta
 **Output formats:** SVG (primary, rendered in browser), PNG (via `@mermaid-js/mermaid-cli` / `mmdc`)
 
 **CLI usage:**
+
 ```bash
 npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.svg
 npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 ```
 
 **Theming/styling:**
+
 - Built-in themes: `default`, `dark`, `forest`, `neutral`, `base`
 - Theme variables for fine-grained control (primary/secondary colors, fonts, etc.)
 - Per-element CSS styling
@@ -318,6 +338,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 **Bundling:** Requires Node.js + Puppeteer (for CLI/PNG export). Can also render client-side in browser. The mermaid-cli uses headless Chromium (~400MB).
 
 **Assessment:**
+
 - (+) **Ubiquitous** — supported in GitHub markdown, many renderers
 - (+) **AI agents generate Mermaid very reliably** — most common diagram format in LLM training data
 - (+) **MIT license**
@@ -345,6 +366,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 **Maintenance:** Very actively maintained
 
 **Input format:** JSON (`.excalidraw` files):
+
 ```json
 {
   "type": "excalidraw",
@@ -376,6 +398,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 **Output formats:** PNG, SVG (via export utilities)
 
 **CLI/programmatic rendering:**
+
 - `@excalidraw/utils` — Node.js export utilities (SVG)
 - `excalidraw-brute-export-cli` — Playwright+Firefox headless export to PNG/SVG
 - `excalidraw-to-svg` — Node.js library using jsdom
@@ -389,6 +412,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 **Bundling:** The file format is portable JSON. Rendering requires a browser environment (headless Chromium/Firefox for CLI export). Heavy dependency.
 
 **Assessment:**
+
 - (+) **Complete styling control** — pixel-level positioning, colors, fonts, roughness
 - (+) **Beautiful hand-drawn aesthetic** when roughness > 0
 - (+) **MIT license**
@@ -438,15 +462,17 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 **What it is:** Tools that convert ASCII art diagrams into SVG images.
 
 **Example tools:**
+
 - **GoAT** (`github.com/blampe/goat`) — Go binary, renders ASCII art to multi-colored SVG, supports CSS styling
 - **asciitosvg** (`github.com/asciitosvg/asciitosvg`) — Go binary, ASCII to SVG
 - **aasvg** — npm package, ASCII art to SVG
 
 **Input format:** Plain ASCII art:
-```
+
+```text
 +------------------+---------------------------+
-|     Sidebar      |       Main Content        |
-|                  |                           |
+|     Sidebar |       Main Content | | | | |
+|                  | --- | --- |
 |  [Agents]        |   +-------------------+   |
 |  [Rules]         |   | Conversation      |   |
 |  [Skills]        |   |                   |   |
@@ -455,6 +481,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 ```
 
 **Assessment:**
+
 - (+) ASCII art is trivially easy for AI agents to generate
 - (+) Single Go binary (GoAT), no dependencies
 - (+) Works offline
@@ -471,7 +498,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 ## Comparison Matrix
 
 | Criterion | ImagineUI | PlantUML Salt | D2 | Mermaid | Excalidraw | ASCII-to-SVG |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | **UI element vocabulary** | Good | **Excellent** | None | None | None | None |
 | **Layout system** | Limited | Grid/table | Grid | Block grid | Manual xy | ASCII grid |
 | **Output: PNG** | Yes | Yes | Yes | Yes (CLI) | Yes (CLI) | No |
@@ -513,6 +540,7 @@ PlantUML Salt is the clear winner for OrqaStudio's wireframing needs:
 **Secondary tool: D2**
 
 D2 should be adopted for non-wireframe diagrams in OrqaStudio's documentation:
+
 - Architecture diagrams
 - System flow diagrams
 - Data flow / pipeline diagrams

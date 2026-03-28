@@ -3,7 +3,7 @@ id: "TASK-0ba4dedd"
 type: "task"
 title: "Merge overlapping documentation"
 description: "Consolidate 4 pairs of overlapping docs into single authoritative sources. Merge governance-hub into governance, guide/workflow into process/workflow, component-inventory into svelte-components, artifact-types into artifact-framework."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4

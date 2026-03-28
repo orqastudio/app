@@ -3,7 +3,7 @@ id: "TASK-5bc61a09"
 type: "task"
 title: "Plugin hook injection mechanism — plugins declare behavioral rules and mode templates"
 description: "Implement a mechanism by which plugins declare behavioral rules and mode templates in their manifests, and the connector aggregates these at runtime to build the injected system context."
-status: "captured"
+status: captured
 created: 2026-03-21T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 acceptance:

@@ -16,6 +16,7 @@ The user identified that the auto-memory system and the lessons pipeline serve o
 ## Pattern
 
 When the orchestrator learns something about process or governance:
+
 1. It writes to auto-memory (e.g., `feedback_*.md`) because Claude's system prompt instructs it to
 2. The lesson is never created in `.orqa/process/lessons/`
 3. The learning has no recurrence tracking, no promotion pipeline, no graph edges
@@ -25,7 +26,7 @@ When the orchestrator learns something about process or governance:
 
 The lesson pipeline is the system of record for governance learnings. Auto-memory provides immediate cross-session context. Both are written simultaneously — this is a **write-through** pattern, not a sequential pipeline.
 
-### During a session (write-through):
+### During a session (write-through)
 
 When a governance learning is captured (user correction, process insight, feedback):
 
@@ -33,24 +34,25 @@ When a governance learning is captured (user correction, process insight, feedba
 2. **Write to auto-memory** at the same time (e.g., `feedback_*.md` or `project_*.md`)
 3. Both artifacts exist immediately — the lesson for governance tracking, the memory for next-session context
 
-### At session start (reconciliation):
+### At session start (reconciliation)
 
 The orchestrator scans `.orqa/process/lessons/` and checks whether each active/recurring lesson has a corresponding auto-memory entry. Any lesson not yet reflected in memory is synced.
 
 This catches:
+
 - Lessons created by other agents that didn't write memory
 - Lessons promoted from other sources (review failures, audit findings)
 - Memory entries that were lost or cleaned up
 
-### What goes where:
+### What goes where
 
 | Knowledge Type | Lesson (.orqa/) | Auto-memory | Both |
-|---------------|:---:|:---:|:---:|
+| --- | :---: | :---: | :---: |
 | Process corrections (feedback) | Y | Y | **Write-through** |
 | Project governance state | Y | Y | **Write-through** |
-| User preferences (role, style) | -- | Y | Memory only |
-| Reference pointers (URLs, locations) | -- | Y | Memory only |
-| Non-governance context | -- | Y | Memory only |
+| User preferences (role, style) | --- | Y | Memory only |
+| Reference pointers (URLs, locations) | --- | Y | Memory only |
+| Non-governance context | --- | Y | Memory only |
 
 The lesson pipeline is the system of record. Auto-memory is the delivery mechanism for immediate context. Neither replaces the other.
 

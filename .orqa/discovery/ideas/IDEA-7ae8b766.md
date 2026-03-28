@@ -29,9 +29,15 @@ agent coordination level.
 ## Questions to Answer
 
 - How does the constitutional framework compare to OrqaStudio's current
+
   role-based agent constraints (P2, P6)?
+
 - Could constitutional rules be expressed as plugin-provided declarations
+
   (aligning with P1: Plugin-Composed Everything)?
+
 - What would the integration surface look like in the app's sidecar/agent
+
   spawning infrastructure?
+
 - Does this overlap with or complement the existing lesson-to-rule pipeline?

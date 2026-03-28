@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Composability Refactoring"
 ---
+
 # Composability Gate: Audit, Alignment & Platform Architecture
 
 ## Problem Statement
@@ -18,6 +19,7 @@ relationships:
 OrqaStudio promotes composability as a core principle ([AD-af88bb69](AD-af88bb69), `composability` skill) but the app itself has composability debt: monolithic commands, god components, tightly coupled features. The app cannot credibly enforce composability on projects it manages if it doesn't adhere to those principles itself.
 
 Beyond the app's own code, composability must be a **platform-level architectural principle** that shapes:
+
 - How the app is built (every layer, from AI provider integration to UI components)
 - How the app interacts with projects (the learning loop, enforcement, scanning — all composable)
 - How new projects are scaffolded (composability by default)
@@ -44,7 +46,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `sidecars/claude-agentsdk-sidecar/src/`, `backend/src-tauri/src/sidecar/`, streaming pipeline
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Provider abstraction | Is the sidecar truly provider-agnostic? Can Claude Agent SDK be swapped for API, Codex, OpenAI without touching Rust or Svelte? |
 | Protocol contract | Is the NDJSON protocol a clean interface or does it leak Claude-specific concepts? |
 | Authentication | Is auth handling provider-specific or pluggable? |
@@ -58,7 +60,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `backend/src-tauri/src/` — every module
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Command thickness | Every `#[tauri::command]` handler should be ≤30 lines. Business logic lives in `domain/`. |
 | Domain service purity | Every domain function is pure (takes inputs, returns outputs, no hidden state). |
 | Repository consistency | Every repo follows the standard interface (create/get/list/update/delete). |
@@ -68,6 +70,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 | Feature isolation | Each feature is a self-contained unit (domain + command + type). Can be removed without cascading changes. |
 
 **Known debt:**
+
 - `stream_commands.rs` (~1000+ lines) — thick command with business logic that should be domain services
 - `artifact_commands.rs` — some inline helpers that could be domain functions
 - `governance_commands.rs` — `governance_analyze` does sidecar orchestration inline
@@ -77,7 +80,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `ui/src/lib/stores/` — all 10 stores
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Store independence | No store imports another store (except documented exception). |
 | Store size | No store exceeds 300 lines. |
 | State encapsulation | All state mutations happen inside the store, not from components. |
@@ -85,6 +88,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 | Circular deps | No bidirectional store imports. |
 
 **Known debt:**
+
 - `conversationStore` imports `sessionStore` directly (the one coupling violation)
 
 ### A4: Frontend Component Layer
@@ -92,7 +96,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `ui/src/lib/components/` — every component
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Component purity | Display components receive props only. No `invoke()` in `$lib/components/`. |
 | Component size | No component exceeds 150 lines of script + template. |
 | Shared component usage | EmptyState, LoadingSpinner, ErrorDisplay, etc. used everywhere — no inline equivalents. |
@@ -101,6 +105,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 | State handling | Every component handles all states: loading, error, empty, loaded. |
 
 **Known debt:**
+
 - `ConversationView.svelte` — orchestrates 8+ children, 4 stores, has side effects
 - Potential inline empty/loading states in newer components
 
@@ -109,7 +114,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `ui/src/app.css`, `tailwind.config.ts`, `ui/src/lib/components/ui/`
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Design tokens | Colors, spacing, typography defined as tokens, not hardcoded values. |
 | Component variants | shadcn-svelte components use variant props, not ad-hoc Tailwind overrides. |
 | Consistency | Same visual pattern uses the same component everywhere. |
@@ -120,7 +125,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 **Audit scope:** `.orqa/project.json`, `backend/src-tauri/capabilities/`, Makefile
 
 | Check | What to verify |
-|-------|---------------|
+| ------- | --------------- |
 | Config-driven behavior | Project-specific behavior driven by config, not hardcoded conditionals. |
 | Capability scoping | Tauri capabilities are minimal and composable. |
 | Build composability | Make targets are composable (can run individually or combined). |
@@ -128,6 +133,7 @@ Comprehensive audit of the entire OrqaStudio codebase against composability prin
 ### Audit Output
 
 The audit produces:
+
 1. **Composability scorecard** — per-layer scores with specific violations
 2. **Refactoring plan** — prioritized by severity and blast radius
 3. **Architectural debt register** — tracked items with owners and target dates
@@ -143,7 +149,7 @@ Execute the refactoring plan from Phase A. Each refactoring is a worktree task d
 **Target:** `stream_commands.rs` → extract to domain modules
 
 | Extract | Target module | What moves |
-|---------|--------------|------------|
+| --------- | -------------- | ------------ |
 | System prompt assembly | `domain::system_prompt` | `build_system_prompt()`, `read_rules()`, `list_skill_catalog()` |
 | Context management | `domain::context` | `load_context_messages()`, context injection logic |
 | Stream translation | `domain::stream_translator` | `translate_response()`, event mapping |
@@ -157,7 +163,7 @@ After extraction, `stream_commands.rs` should be ≤200 lines — just the Tauri
 **Target:** `ConversationView.svelte` → split into composable units
 
 | New component | Responsibility |
-|--------------|----------------|
+| -------------- | ---------------- |
 | `ConversationPanel.svelte` | Message list + streaming display (pure display) |
 | `ConversationOrchestrator.svelte` | Store coordination, side effects, keyboard handling |
 | `SessionContextLoader.svelte` | Loads doc/research/plan context for the active session |
@@ -167,6 +173,7 @@ After extraction, `stream_commands.rs` should be ≤200 lines — just the Tauri
 **Target:** `conversationStore` → `sessionStore` dependency
 
 Options (evaluate during implementation):
+
 - Event bus pattern (decouple via custom events)
 - Component-mediated pattern (move title update to ConversationView's $effect)
 - Callback injection (store accepts an `onTitleUpdate` callback at init)
@@ -194,6 +201,7 @@ The learning loop (skills, agents, rules, scanning, enforcement, lessons) must i
 ### C1: Base + Project Layering
 
 **Base layer (ships with app):**
+
 - Generic `composability` skill (language-agnostic philosophy)
 - Generic `chunkhound` skill (code search patterns)
 - Base agents: orchestrator, code-reviewer, test-engineer, documentation-writer (roles that exist in any project)
@@ -201,12 +209,14 @@ The learning loop (skills, agents, rules, scanning, enforcement, lessons) must i
 - Base scanner: composability anti-pattern detection, function size, coupling analysis
 
 **Project layer (generated during init or customized by user):**
+
 - Project-specific skills with real code examples from that codebase
 - Project-specific agents with domain knowledge (e.g., `backend-engineer` configured for Rails vs. Django vs. Rust)
 - Project-specific rules derived from the project's existing coding standards
 - Project-specific scanner rules for domain-specific patterns
 
 **Assembly:** `.orqa/project.json` declares:
+
 ```json
 {
   "composability": {
@@ -222,6 +232,7 @@ The learning loop (skills, agents, rules, scanning, enforcement, lessons) must i
 ### C2: Skill Composability
 
 Skills must be:
+
 - **Stackable** — base skill provides principles, project skill provides examples
 - **Overridable** — project skill can override base skill guidance for specific patterns
 - **Discoverable** — the app can suggest skills based on detected tech stack
@@ -230,6 +241,7 @@ Skills must be:
 ### C3: Agent Composability
 
 Agents must be:
+
 - **Role-based** — defined by what they do, not what tech they use
 - **Configurable** — the same `backend-engineer` role adapts to Rust, Python, Go, etc.
 - **Extensible** — project-specific agents extend base agents without duplicating
@@ -238,6 +250,7 @@ Agents must be:
 ### C4: Rule Composability
 
 Rules must be:
+
 - **Layered** — base rules always apply, project rules add on top
 - **Scoped** — rules can target specific file paths, languages, or phases
 - **Enforceable** — every rule has a corresponding scanner entry
@@ -246,6 +259,7 @@ Rules must be:
 ### C5: Scanner Composability
 
 Scanners must be:
+
 - **Pluggable** — projects can define custom scan rules beyond built-in ones
 - **Composable** — multiple scan profiles can be combined
 - **Incremental** — scans run on changed files, not the entire codebase every time
@@ -270,7 +284,8 @@ During the governance scan (which already runs on project open), add composabili
 ### D2: User-Facing Assessment Report
 
 Present the user with:
-```
+
+```text
 Composability Assessment: [Project Name]
 
 Score: 62/100
@@ -294,6 +309,7 @@ Options:
 ### D3: Greenfield Default
 
 For new projects (no existing code):
+
 - Composability is ON by default
 - Project-specific composability skill is generated from the scaffolded template
 - Base agents are configured with composability-aware instructions
@@ -302,6 +318,7 @@ For new projects (no existing code):
 ### D4: No-Code PM Scenario
 
 When a non-technical user creates a product from scratch:
+
 - The orchestrator agent applies composability principles to all generated code
 - The composability skill is loaded as a universal skill
 - Code review agent enforces composability before accepting deliverables
@@ -312,7 +329,7 @@ When a non-technical user creates a product from scratch:
 ## Implementation Order
 
 | Step | Phase | Scope | Delegated To |
-|------|-------|-------|-------------|
+| ------ | ------- | ------- | ------------- |
 | 1 | A | Deep audit — all 6 layers | systems-architect + code-reviewer |
 | 2 | A | Scorecard + refactoring plan | systems-architect → documentation-writer |
 | 3 | B1 | Extract domain services from stream_commands.rs | backend-engineer |
@@ -341,6 +358,6 @@ When a non-technical user creates a product from scratch:
 ## Pillar Alignment
 
 | Pillar | Alignment |
-|--------|-----------|
+| -------- | ----------- |
 | Learning Through Reflection | The composability scanner feeds findings into the lesson system. Recurring violations are promoted to rules. The system learns which composability patterns work for which project types. |
 | Clarity Through Structure | Composability becomes an enforceable governance dimension — scannable, scoreable, visible in dashboards. Rules, agents, and skills are themselves governed by composability principles. |

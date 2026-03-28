@@ -3,7 +3,7 @@ id: "IDEA-5113eeae"
 type: discovery-idea
 title: "Plugin Distribution via Git Submodules"
 description: "An official plugins repository under the GitHub org that embeds each plugin as a git submodule. The app reads the repository catalogue, pulls plugins based on user selection, and manages versioning/updates. Each plugin is its own repo with independent releases."
-status: surpassed
+status: archived
 created: "2026-03-10"
 updated: "2026-03-13"
 horizon: "later"
@@ -43,7 +43,7 @@ Plugins need a distribution channel that supports independent versioning, safe i
 
 ### Architecture
 
-```
+```text
 github.com/orqa-studio/orqa-plugins          (catalogue repo)
   ├── plugins/
   │   ├── governance-dashboard/               (submodule → orqa-studio/plugin-governance-dashboard)
@@ -56,7 +56,7 @@ github.com/orqa-studio/orqa-plugins          (catalogue repo)
 
 Each plugin repo:
 
-```
+```text
 github.com/orqa-studio/plugin-governance-dashboard
   ├── plugin.json                             (manifest: name, version, entry point, SDK version required)
   ├── src/                                    (plugin source — Svelte components, store, etc.)
@@ -77,7 +77,7 @@ github.com/orqa-studio/plugin-governance-dashboard
 The app ships with **default views only**. Everything else is a plugin, distributed through one of four layers:
 
 | Layer | What | Distribution | Versioning |
-|-------|------|-------------|------------|
+| ------- | ------ | ------------- | ------------ |
 | **Built-in** | Artifact browser, viewers, navigation, conversation | Shipped with app binary | App version |
 | **Official plugins** | Curated plugins maintained by the OrqaStudio team | Official plugins repo (git submodules) | Semver per plugin repo |
 | **Community plugins** | Third-party plugins shared publicly | Their own GitHub repos, installable via URL | Author-managed |
@@ -99,7 +99,7 @@ User plugins are the most important layer. They represent the core promise: **an
 **Sharing is optional and progressive:**
 
 | Want to... | Do this |
-|------------|---------|
+| ------------ | --------- |
 | Keep it private | Just use it locally — nothing else needed |
 | Share with others | Push to a public GitHub repo, share the URL |
 | Get it into the official catalogue | Create a PR to the official plugins repo to add it as a submodule |

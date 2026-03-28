@@ -2,6 +2,7 @@
 id: KNOW-f5ee4e0d
 type: knowledge
 title: Plugin Setup
+domain: integration/connector
 description: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
 summary: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
 status: active
@@ -34,7 +35,7 @@ Before installing, determine the current state:
 ### Check 2: Does existing Claude Code infrastructure exist with real files (not symlinks)?
 
 | Finding | Meaning | Action |
-|---------|---------|--------|
+| --------- | --------- | -------- |
 | No agent infrastructure directory | Fresh install | Bootstrap from scratch |
 | `CLAUDE.md` is a real file | Existing Claude Code project | Migrate to governance directory |
 | `CLAUDE.md` is a symlink to governance dir | Already set up | Just install plugin |
@@ -122,6 +123,7 @@ Add the local plugin source to the Claude Code plugins configuration as a known 
 ### Step 3: Install the plugin
 
 Run `orqa plugin install <plugin-name>`. This:
+
 - Copies plugin content to `.orqa/` based on the `content` field in `orqa-plugin.json`
 - Records installed files in `.orqa/manifest.json`
 - Installs npm dependencies declared in `dependencies.npm`
@@ -152,7 +154,7 @@ Restart Claude Code. The plugin's SessionStart hook will:
 ## What the Plugin Provides
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | PreToolUse hook | Rule enforcement via pattern matching |
 | SessionStart hook | Symlink setup + session health checks |
 | Stop hook | Pre-commit checklist reminders |
@@ -164,7 +166,7 @@ Restart Claude Code. The plugin's SessionStart hook will:
 After installation, the agent infrastructure directory contains only:
 
 | Item | Type | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `settings.json` | Real file | Plugin enablement, Claude Code config |
 | `worktrees/` | Real dir | Claude Code worktree state |
 | `CLAUDE.md` | Symlink | → orchestrator agent definition |

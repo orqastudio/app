@@ -3,7 +3,7 @@ id: "TASK-492dc3a0"
 type: "task"
 title: "Decompose stream commands into domain modules"
 description: "Extracts business logic from the monolithic stream_commands.rs (2,425 lines) into four focused domain modules, leaving the command file as thin orchestration only."
-status: "completed"
+status: archived
 created: 2026-03-06T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Extract business logic from the monolithic stream_commands.rs (2,425 lines) into

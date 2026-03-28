@@ -18,7 +18,7 @@ relationships:
 
 `orqa build` queries the git server for what changed since the last build marker, maps changed files to workspace packages, and rebuilds only what's needed.
 
-```
+```text
 orqa build              # Diff-aware incremental rebuild
 orqa build --all        # Full rebuild (ignore diff)
 orqa build --status     # Show what needs rebuilding
@@ -27,7 +27,7 @@ orqa build --status     # Show what needs rebuilding
 ## How It Works
 
 1. Read last build commit SHA from `.orqa/build-marker` (or similar)
-2. Query git diff: `git diff <last-build>..<HEAD> --name-only`
+2. Query git diff: `git diff <last-build>..\<HEAD\> --name-only`
 3. Map changed files to workspace packages (libs/cli/ → @orqastudio/cli)
 4. Include downstream dependents (if types changed, rebuild cli, sdk, etc.)
 5. Rebuild in topological order

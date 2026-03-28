@@ -2,7 +2,7 @@
 id: "TASK-37bafa1c"
 type: "task"
 title: "Add synchronised-with constraint to core.json for skills"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

@@ -15,6 +15,7 @@ relationships:
     type: delivers
     rationale: Escalation task linked to active epic
 ---
+
 ## What
 
 Lesson IMPL-0c9a5882 has recurrence 3 but status is "review" — needs promoting to a rule

@@ -25,7 +25,7 @@ Architecture is fundamentally sound. Clean module separation (commands/domain/re
 ### Module Structure
 
 | Module | Files | Lines | Purpose |
-|--------|-------|-------|---------|
+| -------- | ------- | ------- | --------- |
 | `commands/` | 15 | ~5,800 | Tauri command handlers (thin IPC wrappers) |
 | `domain/` | 29 | ~11,800 | Business logic, types, engines |
 | `repo/` | 10 | ~3,800 | SQLite persistence (pure functions) |
@@ -36,6 +36,7 @@ Architecture is fundamentally sound. Clean module separation (commands/domain/re
 ### Critical Finding: stream_commands.rs God-File
 
 `commands/stream_commands.rs` (2,497 lines) contains 57 functions — only 3 are `#[tauri::command]`. The remaining ~1,200 lines duplicate logic already extracted into:
+
 - `domain/stream_loop.rs` (937 lines) — stream processing
 - `domain/tool_executor.rs` (1,131 lines) — tool execution
 - `domain/system_prompt.rs` (~150 lines) — system prompt building
@@ -59,7 +60,7 @@ The domain modules appear to be a refactoring that was started but never complet
 ### Compliance: Excellent
 
 | Standard | Status | Details |
-|----------|--------|---------|
+| ---------- | -------- | --------- |
 | Svelte 5 only | PERFECT | Zero Svelte 4 patterns found |
 | No `any` types | PERFECT | Zero `any` in application code |
 | No `@ts-ignore` | PERFECT | Zero instances |
@@ -106,7 +107,7 @@ No `.test.ts` files exist. No store tests, no component tests, no utility tests.
 ## Composability Assessment
 
 | Area | Score | Notes |
-|------|-------|-------|
+| ------ | ------- | ------- |
 | `error.rs` | Excellent | Single responsibility, clean API |
 | `commands/` (excluding stream) | Good | Thin wrappers delegating to domain |
 | `stream_commands.rs` | **Poor** | God-file with duplicated domain logic |
@@ -120,19 +121,23 @@ No `.test.ts` files exist. No store tests, no component tests, no utility tests.
 ## Recommendations (Priority Order)
 
 ### P1 — Critical
+
 1. **Eliminate `stream_commands.rs` duplication** — delegate to existing domain modules
 
 ### P2 — High
-2. **Add frontend tests** — all 10 stores, utility functions, StreamEvent handling
-3. **Add search module tests** — `embedder.rs` and `store.rs` have zero coverage
-4. **Add `From<duckdb::Error>` to `OrqaError`** — eliminate `.map_err(|e| e.to_string())`
+
+1. **Add frontend tests** — all 10 stores, utility functions, StreamEvent handling
+2. **Add search module tests** — `embedder.rs` and `store.rs` have zero coverage
+3. **Add `From<duckdb::Error>` to `OrqaError`** — eliminate `.map_err(|e| e.to_string())`
 
 ### P3 — Moderate
-5. **Fix `db.rs` migration error handling** — `.unwrap_or(false)` silently swallows errors
-6. **Audit 29 backend-only commands** — identify truly orphaned code
-7. **Consider `AppState` decomposition** — group 11 Mutex fields into sub-structs
+
+1. **Fix `db.rs` migration error handling** — `.unwrap_or(false)` silently swallows errors
+2. **Audit 29 backend-only commands** — identify truly orphaned code
+3. **Consider `AppState` decomposition** — group 11 Mutex fields into sub-structs
 
 ### P4 — Low
-8. Add E2E tests (empty `tests/` directory exists)
-9. Move `AppLayout.svelte` invoke to a store
-10. Standardize `lib.rs` tracker error handling
+
+1. Add E2E tests (empty `tests/` directory exists)
+2. Move `AppLayout.svelte` invoke to a store
+3. Standardize `lib.rs` tracker error handling

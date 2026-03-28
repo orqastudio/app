@@ -2,7 +2,8 @@
 id: "KNOW-8615fee2"
 type: "knowledge"
 title: "OrqaStudio Backend Best Practices"
-description: "Umbrella skill for all backend implementation work. Establishes composability,\ncoding standards, and error handling as always-in-mind principles, then\nreferences deeper skills for Rust, Tauri, and persistence specifics.\nUse when: Any agent is about to write or modify backend code (backend/src-tauri/, sidecar/).\n"
+domain: platform/rust
+description: "Umbrella skill for all backend implementation work. Establishes composability,\ncoding standards, and error handling as always-in-mind principles, then\nreferences deeper skills for Rust, Tauri, and persistence specifics.\nUse when: Any agent is about to write or modify backend code (app/src-tauri/, libs/engine/).\n"
 status: "active"
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -39,7 +40,7 @@ This skill ensures every backend agent has the right mental model before writing
 Every domain service, command handler, and utility follows OrqaStudio's composability philosophy:
 
 - **Small enough to understand in isolation** — domain functions 20-30 lines, commands 30-50 lines
-- **Pure enough to test without the world** — domain logic takes inputs and returns `Result<T, E>`, no side effects
+- **Pure enough to test without the world** — domain logic takes inputs and returns `Result\<T, E\>`, no side effects
 - **Typed enough to compose safely** — `thiserror` for typed errors, `From` impls for `?` propagation
 - **Swappable enough to replace without cascading changes** — trait boundaries at integration points
 
@@ -51,7 +52,7 @@ Read `.orqa/documentation/development/coding-standards.md` before writing any co
 
 - **Formatting** — `rustfmt` on all code, no exceptions
 - **Linting** — `clippy` with pedantic and nursery lint groups, zero warnings
-- **Error handling** — `thiserror` for all error types, every function returns `Result<T, E>`, **no `unwrap()` / `expect()` / `panic!()` in production**
+- **Error handling** — `thiserror` for all error types, every function returns `Result\<T, E\>`, **no `unwrap()` / `expect()` / `panic!()` in production**
 - **Types** — IPC types derive `Serialize`, `Deserialize`, `Debug`, `Clone`. Domain types immutable by default.
 - **Module organisation** — one module per domain concept, public API via `mod.rs`
 - **No TODO comments** — use task artifacts instead
@@ -79,10 +80,10 @@ let value = map.get("key").unwrap(); // NEVER
 Tauri `invoke()` is the ONLY frontend-backend interface. Every backend capability the frontend needs MUST have a `#[tauri::command]` function registered in the app builder.
 
 | Layer | Responsibility |
-|-------|---------------|
-| `backend/src-tauri/src/commands/` | Thin command handlers — validate, delegate to domain, serialize response |
-| `backend/src-tauri/src/domain/` | Business logic — pure functions, no framework dependencies |
-| `backend/src-tauri/src/repo/` | Data access — repository pattern, SQLite via rusqlite |
+| ------- | --------------- |
+| `app/src-tauri/src/commands/` | Thin command handlers — validate, delegate to domain, serialize response |
+| `app/src-tauri/src/domain/` | Business logic — pure functions, no framework dependencies |
+| `app/src-tauri/src/repo/` | Data access — repository pattern, SQLite via rusqlite |
 
 Command handlers should be thin — delegate to domain services, don't contain business logic.
 
@@ -100,9 +101,9 @@ A backend change without the corresponding frontend wiring is incomplete.
 ## Deeper Skills (Load When Needed)
 
 | Skill | When to load |
-|-------|-------------|
+| ------- | ------------- |
 | `rust-async-patterns` | Async/await, Tokio, concurrent patterns |
-| `tauri-v2` | Tauri commands, plugins, capabilities, Channel<T> streaming |
+| `tauri-v2` | Tauri commands, plugins, capabilities, Channel\<T\> streaming |
 | `orqa-ipc-patterns` | IPC contracts, command registration, type serialisation |
 | `orqa-domain-services` | Service anatomy, composition, domain boundaries |
 | `orqa-error-composition` | OrqaError flow, From impls, error propagation patterns |

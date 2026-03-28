@@ -4,17 +4,24 @@ type: rule
 title: Completion Gate Before New Work
 description: "The orchestrator MUST NOT start new epics, phases, or work batches when the current batch has unresolved follow-up items. A completion gate triggers before every new team or phase."
 status: active
+enforcement_type: mechanical
 created: 2026-03-24
 updated: 2026-03-24
 enforcement:
+
   - mechanism: hook
+
     type: PostToolUse
     event: team_create
     action: check
     message: "Before creating a new team, verify all follow-up items from the current batch are resolved"
+
   - mechanism: behavioral
+
     message: "The orchestrator must run the completion gate checklist before starting any new epic, phase, or work batch"
+
   - mechanism: hook
+
     type: Stop
     event: session_end
     action: check
@@ -25,13 +32,21 @@ roles: [orchestrator]
 priority: P0
 tags: [completion-gate, follow-ups, batch-transitions]
 relationships:
+
   - target: RULE-8ee65d73
+
     type: extends
+
   - target: RULE-8aadfd6c
+
     type: related
+
   - target: RULE-d543d759
+
     type: extends
+
   - target: RULE-99abcea1
+
     type: constrains
 ---
 
@@ -55,7 +70,7 @@ Before ANY of the following actions, the orchestrator MUST run the completion ga
 ### Checklist
 
 | Check | What to Verify | How |
-|-------|---------------|-----|
+| --- | --- | --- |
 | **Task statuses** | All tasks from the current batch have accurate statuses in `.orqa/delivery/tasks/` | Read each task file, verify status matches reality |
 | **Follow-up items** | All follow-ups reported in agent findings files (`.state/team/*/task-*.md`) are resolved | Read findings files, check each follow-up item |
 | **Dead file cleanup** | Files marked for deletion during the batch are actually deleted | `git status` to verify no stale files remain |
@@ -80,7 +95,7 @@ Before ANY of the following actions, the orchestrator MUST run the completion ga
 When an agent reports follow-ups in their findings, those are not afterthoughts. They are work items that must be completed before the batch is done.
 
 | Agent Reports | Orchestrator Action |
-|---------------|-------------------|
+| --- | --- |
 | "Dead file X still on disk" | Delete the file before moving on |
 | "Dependency Y should be removed" | Remove it from the manifest and rebuild |
 | "Task status not updated" | Update the task status in `.orqa/delivery/tasks/` |
@@ -107,7 +122,7 @@ Three enforcement layers:
 - [x] ChainTrace.svelte deleted
 - [x] gray-matter removed from package.json
 - [ ] Daemon rebuilt with latest code    <-- BLOCKS new work
-```
+```text
 
 ## FORBIDDEN
 
@@ -124,7 +139,7 @@ Three enforcement layers:
 
 ### Correct Flow
 
-```
+```text
 1. Team "feature-batch" completes
 2. Orchestrator reads all findings files in .state/team/feature-batch/
 3. Findings report: "gray-matter still in deps, ChainTrace.svelte not deleted"
@@ -132,17 +147,17 @@ Three enforcement layers:
 5. Orchestrator updates session state: all completion gate items checked
 6. Orchestrator runs TeamDelete on "feature-batch"
 7. Orchestrator runs TeamCreate for "next-batch"
-```
+```text
 
 ### Incorrect Flow (FORBIDDEN)
 
-```
+```text
 1. Team "feature-batch" completes
 2. Orchestrator skips reading findings files
 3. Orchestrator runs TeamDelete on "feature-batch"
 4. Orchestrator runs TeamCreate for "next-batch"  <-- VIOLATION
 5. gray-matter and ChainTrace.svelte silently remain
-```
+```text
 
 ## Related Rules
 

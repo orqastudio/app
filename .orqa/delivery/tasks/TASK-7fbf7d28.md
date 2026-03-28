@@ -3,7 +3,7 @@ id: "TASK-7fbf7d28"
 type: "task"
 title: "Pre-commit hook enforcement verification"
 description: "Verify that the pre-commit hook catches all documented coding standard violations. Test each enforcement path and fix any gaps."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 acceptance:

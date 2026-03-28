@@ -11,11 +11,13 @@ relationships:
     type: "guides"
     rationale: "Research findings informed epic design"
 ---
+
 ## Problem Statement
 
 OrqaStudio manages its own governance through `.orqa/` — the same system it provides to other projects. This creates a classification problem: which artifacts are **core** (universal, ship with every new project) and which are **project-specific** (exist only because OrqaStudio is dogfooding itself)?
 
 Currently, the `layer` field uses `canon | project | plugin`, but:
+
 1. "Canon" is unclear — it conflates "ships with the app" with "portable across projects"
 2. No mechanism exists to template/inject core artifacts into new projects
 3. Many `canon` artifacts are actually OrqaStudio-specific (e.g., [RULE-eb269afb](RULE-eb269afb) references OrqaStudio's specific shared components)
@@ -26,7 +28,7 @@ Currently, the `layer` field uses `canon | project | plugin`, but:
 ### Layer Field (`layer`)
 
 | Value | Intended Meaning | Actual Usage |
-|-------|-----------------|--------------|
+| ------- | ----------------- | -------------- |
 | `canon` | Ships with the app, portable | 37 rules, 30 skills, 7 agents — but many contain OrqaStudio-specific content |
 | `project` | Project-specific | 3 rules, 16 skills — OrqaStudio dogfood artifacts |
 | `plugin` | External ecosystem | 0 artifacts — placeholder for future |
@@ -34,7 +36,7 @@ Currently, the `layer` field uses `canon | project | plugin`, but:
 ### Scope Field (`scope`) — Rules Only
 
 | Value | Count | Meaning |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | `system` | 22 | Universal process rules (delegation, honest reporting, etc.) |
 | `project` | 10 | Project-specific standards (coding standards, component rules) |
 | `general` | 6 | Recently created rules, general-purpose |
@@ -51,6 +53,7 @@ Skills have both `layer` (canon/project/plugin) and `scope` (general/software-en
 ### What Actually Needs to Ship with Every Project?
 
 **Tier 1 — Universal Process (any project type):**
+
 - Agent delegation (RULE-87ba1b81)
 - Documentation-first (RULE-ec9462d8)
 - Honest reporting (RULE-5dd9decd)
@@ -79,6 +82,7 @@ Skills have both `layer` (canon/project/plugin) and `scope` (general/software-en
 - Required reading (RULE-5965256d)
 
 **Tier 2 — Software Development (software projects only):**
+
 - Coding standards (RULE-9814ec3c) — needs to be a template, not hardcoded to Rust/Svelte
 - Git workflow (RULE-f609242f) — worktree pattern is universal for software
 - End-to-end completeness (RULE-b03009da) — Tauri-specific, needs generalisation
@@ -91,12 +95,14 @@ Skills have both `layer` (canon/project/plugin) and `scope` (general/software-en
 - Tooltip usage (RULE-83411442) — shadcn-specific
 
 **Tier 3 — OrqaStudio-Only:**
+
 - Dogfood mode (RULE-998da8ea) — only relevant when editing the app you're inside
 - Artifact config integrity (RULE-63cc16ad) — references OrqaStudio's `project.json`
 
 ### The Classification Problem
 
 Many "Tier 1" rules reference OrqaStudio-specific examples, paths, and patterns. They would need to be **parameterised** or **templated** before they can truly ship as core. For example:
+
 - [RULE-b10fe6d1](RULE-b10fe6d1) references `.orqa/delivery/epics/` paths — but those paths ARE the core structure
 - [RULE-dd5b69e6](RULE-dd5b69e6) lists OrqaStudio's specific skill injection table — but each project would have its own
 - [RULE-eb269afb](RULE-eb269afb) lists OrqaStudio's shared components — but is the *pattern* of "use shared components" universal
@@ -110,7 +116,7 @@ Many "Tier 1" rules reference OrqaStudio-specific examples, paths, and patterns.
 Replace the `layer` enum:
 
 | Old | New | Meaning |
-|-----|-----|---------|
+| ----- | ----- | --------- |
 | `canon` | `core` | Ships with OrqaStudio, injected into every new project |
 | `project` | `project` | Created by/for this specific project |
 | `plugin` | `plugin` | 1st party official extensions |
@@ -124,7 +130,7 @@ Replace the `layer` enum:
 Redefine `scope` as "what kind of project does this apply to":
 
 | Value | Meaning | Example |
-|-------|---------|---------|
+| ------- | --------- | --------- |
 | `universal` | Any project type | [RULE-87ba1b81](RULE-87ba1b81) (delegation), [RULE-ec9462d8](RULE-ec9462d8) (docs-first) |
 | `software` | Software development projects | [RULE-9814ec3c](RULE-9814ec3c) (coding standards), [RULE-f609242f](RULE-f609242f) (git workflow) |
 | `governance` | Governance management work | (internal classification) |
@@ -132,6 +138,7 @@ Redefine `scope` as "what kind of project does this apply to":
 Remove `system`, `project`, `general`, `artifact` from scope — these are confusing.
 
 The two dimensions then cleanly separate:
+
 - **`layer`** = distribution mechanism (core / project / community / user)
 - **`scope`** = applicability domain (universal / software / governance)
 
@@ -151,7 +158,7 @@ This is partially implemented via `project-setup` and `project-type-software` sk
 Every current `layer: canon` artifact needs evaluation:
 
 | Question | Classification |
-|----------|---------------|
+| ---------- | --------------- |
 | Is the constraint universal? Is the content universal? | `layer: core` — ships as-is |
 | Is the constraint universal but content is project-specific? | Split: core rule (constraint) + project skill (content) |
 | Is the entire artifact project-specific? | `layer: project` — stays in OrqaStudio only |
@@ -162,7 +169,7 @@ Every current `layer: canon` artifact needs evaluation:
 Currently all documentation in `.orqa/documentation/` is internal development documentation for OrqaStudio. There is no "how to use OrqaStudio" documentation for end users. Needed:
 
 | Document | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | Getting Started Guide | How to install and set up OrqaStudio on your project |
 | Core Concepts | Pillars, artifacts, layers, governance model explained for users |
 | Layer System Guide | What core/project/community/user mean, how to manage them |
@@ -177,7 +184,7 @@ These should live in a user-facing documentation section, separate from the inte
 Currently only rules, skills, and agents have `layer`. Decisions and lessons don't. If layer indicates distribution scope, it should be on everything:
 
 | Artifact Type | Has `layer`? | Should Have? |
-|--------------|-------------|-------------|
+| -------------- | ------------- | ------------- |
 | Rules | Yes | Yes |
 | Skills | Yes | Yes |
 | Agents | Yes | Yes |
@@ -193,17 +200,20 @@ Currently only rules, skills, and agents have `layer`. Decisions and lessons don
 ## Recommendations
 
 **Phase 1 — Classification (this task):**
+
 1. Audit every `layer: canon` artifact and classify as truly-core vs OrqaStudio-specific
 2. Rename `canon` → `core` across schemas, artifacts, and code
 3. Standardise `scope` values to `universal | software | governance`
 4. Add `layer` to decision schema
 
 **Phase 2 — Template System:**
+
 1. Create generalised versions of core artifacts (strip OrqaStudio-specific content)
 2. Build template injection into `project-setup` skill
 3. Support project-type presets that layer on domain-specific artifacts
 
 **Phase 3 — User Documentation:**
+
 1. Create user-facing documentation section
 2. Write getting started, core concepts, customisation guides
 3. Document the layer system for end users

@@ -2,6 +2,7 @@
 id: DOC-bf70068c
 type: doc
 title: "Thinking Mode: Documentation"
+domain: reference
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 category: platform
 status: active
@@ -25,6 +26,7 @@ Documentation Mode enforces the documentation-first principle (RULE-008): docs d
 The orchestrator routes here when the user's request is about knowledge capture for humans rather than system execution.
 
 Typical signals:
+
 - "document how X works"
 - "update the README for this module"
 - "write a guide for Y"

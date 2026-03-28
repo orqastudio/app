@@ -3,7 +3,7 @@ id: "TASK-5ebf808b"
 type: "task"
 title: "Loading spinner size increase"
 description: "Increases the artifact viewer loading spinner to the large size variant so the branded logo-pulse animation is clearly visible rather than being lost at the default small size."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Findings Addressed
 
 - **F16**: Loading spinner in main viewer too small — animation lost at current size

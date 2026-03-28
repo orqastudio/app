@@ -2,7 +2,7 @@
 id: "TASK-bb5f9ff3"
 type: "task"
 title: "Artifact system review — state machine, definitions, audit"
-status: "surpassed"
+status: archived
 priority: "P1"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z
@@ -15,6 +15,7 @@ relationships:
   - target: "EPIC-c828007a"
     type: "delivers"
 ---
+
 ## Status Note
 
 Surpassed on 2026-03-25. Scope was addressed by EPIC-f6da17ed (state machines), EPIC-59b92c8d (content migration), and EPIC-a63fde02 (prompt pipeline). No standalone review needed.

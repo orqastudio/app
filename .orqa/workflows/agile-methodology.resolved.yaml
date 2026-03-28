@@ -1,6 +1,6 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
-# Skeleton: @orqastudio/plugin-agile-workflow (workflows/agile-methodology.workflow.yaml)
+# Skeleton: @orqastudio/plugin-agile-methodology (workflows/agile-methodology.workflow.yaml)
 # Contributions:
 #   - @orqastudio/plugin-agile-discovery → discovery-artifacts (+4 states, +9 transitions)
 #   - @orqastudio/plugin-agile-planning → planning-methodology (+4 states, +9 transitions)
@@ -13,7 +13,7 @@
 name: agile-methodology
 version: 0.1.0
 artifact_type: epic
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-methodology"
 description: >
   Core delivery workflow skeleton with contribution points. This is the workflow-definition plugin's skeleton —
   stage-definition plugins fill the named slots at install time. The resolved workflow is written to

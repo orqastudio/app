@@ -3,7 +3,7 @@ id: "TASK-ec7b1f28"
 type: "task"
 title: "Fix all broken links and frontmatter refs"
 description: "Run verify-links.mjs across all .orqa/ artifacts, fix every broken reference. Commit in batches by artifact type."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

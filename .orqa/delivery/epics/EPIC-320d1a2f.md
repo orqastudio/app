@@ -3,7 +3,7 @@ id: "EPIC-320d1a2f"
 type: epic
 title: "AI-Mediated Artifact Editing"
 description: "Build an AI-mediated editing experience where creates, edits, and deletes are proposals sent to the AI conversation panel. The AI analyses cross-reference implications and suggests cascading updates to keep artifacts in sync."
-status: "captured"
+status: captured
 priority: "P1"
 created: "2026-03-07"
 updated: "2026-03-11"
@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P1
 
 Can't manage governance in-app without editing. Currently requires switching to a text editor. But raw CRUD is insufficient — artifact mutations have cross-referencing implications that users can't track manually. AI-mediated editing turns every change into an informed decision.
@@ -33,7 +34,7 @@ This approach surpasses traditional editing tools because the AI acts as a gover
 ## Design Principles
 
 > Artifact mutations are proposals, not commands. The AI evaluates implications before changes are applied. — User direction, 2026-03-11
-
+>
 > The conversation panel is the editing interface. Structured prompts trigger AI analysis and proposal generation. — User direction, 2026-03-11
 
 ## Implementation Design

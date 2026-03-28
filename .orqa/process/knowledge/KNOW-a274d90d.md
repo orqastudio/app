@@ -1,7 +1,9 @@
 ---
 id: KNOW-a274d90d
 type: knowledge
-name: Tauri Plugin Installation
+title: Tauri Plugin Installation
+domain: platform/tauri
+description: "How the installer agent detects Tauri projects and sets up the Tauri plugin with clippy.toml and coding standards config."
 summary: "Tauri Plugin Installation. This skill is consumed by the core installer agent when setting up the Tauri plugin."
 status: active
 plugin: "@orqastudio/plugin-tauri"
@@ -20,6 +22,7 @@ This skill is consumed by the core installer agent when setting up the Tauri plu
 ## Detection
 
 Identify sub-projects that should receive this plugin by checking for:
+
 - `Cargo.toml` → Rust project
 - `src-tauri/` directory → Tauri app
 - `.rs` files → Rust source code
@@ -35,6 +38,7 @@ Generate `clippy.toml` and `.rustfmt.toml` from the project's coding standards r
 ## Organisation Mode
 
 When installing to an org project:
+
 1. Scan all sub-projects for Cargo.toml / .rs files
 2. Recommend sub-projects based on detection
 3. Present selection UI

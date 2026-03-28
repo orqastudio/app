@@ -3,7 +3,7 @@ id: "IMPL-d3804cd0"
 type: "lesson"
 title: "Decisions scrolled out of view by automated work must be resurfaced"
 description: "When the orchestrator presents a decision to the user and then launches background agents whose output scrolls the decision out of view, the user loses context. The orchestrator must re-present pending decisions after automated work completes, not assume the user remembers what was asked."
-status: "completed"
+status: completed
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 maturity: "understanding"
@@ -18,6 +18,7 @@ The orchestrator asked the user a pillar design decision (extend existing pillar
 ## Fix
 
 Not yet determined. Possible approaches:
+
 1. Track pending decisions in session state and re-present after background agent completions
 2. Design discussion skill (IDEA-e2458c2c) maintains a "pending decisions" queue
 3. Pin important questions in the UI so they don't scroll away

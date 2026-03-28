@@ -1,7 +1,9 @@
 ---
 id: DOC-8cba3805
 type: doc
+status: active
 title: Governance Bootstrap
+domain: architecture
 category: architecture
 description: How governance artifacts are loaded and initialized when a project is first opened.
 created: 2026-03-04
@@ -9,7 +11,6 @@ updated: 2026-03-09
 sort: 13
 relationships: []
 ---
-
 
 **Date:** 2026-03-04
 **Phase:** 2b
@@ -36,7 +37,7 @@ A static scanner can count files and check formats. AI analysis can:
 The governance scanner walks the filesystem to collect governance files from multiple tool ecosystems.
 
 | Source | Path Pattern | Description |
-|--------|-------------|-------------|
+| -------- | ------------- | ------------- |
 | OrqaStudio rules | `.orqa/process/rules/*.md` | Enforcement rules (canonical location) |
 | OrqaStudio agents | `.orqa/process/agents/*.md` | Agent role definitions (canonical location) |
 | OrqaStudio skills | `.orqa/process/knowledge/*/KNOW.md` | Skill definitions (canonical location) |
@@ -58,7 +59,7 @@ The governance bootstrap writes governance artifacts to `.orqa/` — the source 
 - Work with CLI tools via the optional `.claude/` symlink compatibility layer
 
 | Artifact Type | Output Path | Description |
-|---------------|-------------|-------------|
+| --------------- | ------------- | ------------- |
 | Rules | `.orqa/process/rules/*.md` | Enforcement rules |
 | Hooks | `.orqa/process/hooks/*.sh` | Session and pre-commit hooks |
 | Agents | `.orqa/process/agents/*.md` | Agent role definitions |
@@ -72,6 +73,7 @@ The governance bootstrap writes governance artifacts to `.orqa/` — the source 
 The governance bootstrap uses the existing `send_message` flow with a dedicated "governance" session. No new sidecar request types are needed — it is a specialized system prompt that instructs the AI provider to analyze governance files and produce structured output.
 
 **Flow:**
+
 1. Rust backend collects governance files via filesystem walk
 2. File contents are formatted into a structured prompt
 3. A governance session is created with a system prompt instructing the AI to analyze and recommend
@@ -105,16 +107,16 @@ The governance bootstrap wizard appears when a project is opened and meets one o
 ## Backend Changes
 
 | File | Change |
-|------|--------|
-| `backend/src-tauri/src/domain/governance.rs` | New — governance domain types (scan results, recommendations, analysis) |
-| `backend/src-tauri/src/domain/governance_scanner.rs` | New — filesystem walk to collect governance files |
-| `backend/src-tauri/src/domain/mod.rs` | Add `pub mod governance;` and `pub mod governance_scanner;` |
-| `backend/src-tauri/src/repo/governance_repo.rs` | New — CRUD for analyses and recommendations (SQLite) |
-| `backend/src-tauri/src/repo/mod.rs` | Add `pub mod governance_repo;` |
-| `backend/src-tauri/src/commands/governance_commands.rs` | New — Tauri commands for scan, analyze, list, update, apply |
-| `backend/src-tauri/src/commands/mod.rs` | Add `pub mod governance_commands;` |
-| `backend/src-tauri/src/lib.rs` | Register governance commands in Tauri app builder |
-| `backend/src-tauri/migrations/002_governance_bootstrap.sql` | New — governance tables |
+| ------ | -------- |
+| `app/src-tauri/src/domain/governance.rs` | New — governance domain types (scan results, recommendations, analysis) |
+| `app/src-tauri/src/domain/governance_scanner.rs` | New — filesystem walk to collect governance files |
+| `app/src-tauri/src/domain/mod.rs` | Add `pub mod governance;` and `pub mod governance_scanner;` |
+| `app/src-tauri/src/repo/governance_repo.rs` | New — CRUD for analyses and recommendations (SQLite) |
+| `app/src-tauri/src/repo/mod.rs` | Add `pub mod governance_repo;` |
+| `app/src-tauri/src/commands/governance_commands.rs` | New — Tauri commands for scan, analyze, list, update, apply |
+| `app/src-tauri/src/commands/mod.rs` | Add `pub mod governance_commands;` |
+| `app/src-tauri/src/lib.rs` | Register governance commands in Tauri app builder |
+| `app/src-tauri/migrations/002_governance_bootstrap.sql` | New — governance tables |
 
 ## SQLite Schema (Migration 002)
 
@@ -257,19 +259,19 @@ pub struct AnalysisOutput {
 ## IPC Commands
 
 | Command | Input | Output | Description |
-|---------|-------|--------|-------------|
+| --------- | ------- | -------- | ------------- |
 | `governance_scan` | `project_id: i64` | `GovernanceScanResult` | Scan filesystem for governance files |
 | `governance_analyze` | `project_id: i64, scan_result: GovernanceScanResult` | `GovernanceAnalysis` | Send to the AI provider for analysis (creates governance session) |
-| `governance_analysis_get` | `project_id: i64` | `Option<GovernanceAnalysis>` | Get latest analysis for a project |
-| `recommendations_list` | `project_id: i64` | `Vec<Recommendation>` | List all recommendations for a project |
+| `governance_analysis_get` | `project_id: i64` | `Option\<GovernanceAnalysis\>` | Get latest analysis for a project |
+| `recommendations_list` | `project_id: i64` | `Vec\<Recommendation\>` | List all recommendations for a project |
 | `recommendation_update` | `id: i64, status: String` | `Recommendation` | Approve or reject a recommendation |
 | `recommendation_apply` | `id: i64` | `Recommendation` | Write approved recommendation to disk |
-| `recommendations_apply_all` | `project_id: i64` | `Vec<Recommendation>` | Apply all approved recommendations |
+| `recommendations_apply_all` | `project_id: i64` | `Vec\<Recommendation\>` | Apply all approved recommendations |
 
 ## Frontend Changes
 
 | File | Change |
-|------|--------|
+| ------ | -------- |
 | `ui/src/lib/types/governance.ts` | New — TypeScript interfaces matching Rust types |
 | `ui/src/lib/stores/governance.svelte.ts` | New — governance store: scan state, analysis state, recommendations list, actions |
 | `ui/src/lib/components/governance/GovernanceBootstrapWizard.svelte` | New — wizard overlay container with step navigation |
@@ -282,7 +284,7 @@ pub struct AnalysisOutput {
 ## Component State Table
 
 | Component | States | What the user sees |
-|-----------|--------|-------------------|
+| ----------- | -------- | ------------------- |
 | GovernanceBootstrapWizard | `scanning`, `scan_complete`, `analyzing`, `review`, `applying`, `done` | Scanning: spinner. Scan complete: results + "Analyze" button. Analyzing: spinner with streamed AI analysis. Review: recommendation cards. Applying: progress. Done: summary. |
 | GovernanceScanPanel | `loading`, `loaded`, `empty` | Loading: spinner. Loaded: file list + coverage chart. Empty: "No governance files found" message. |
 | RecommendationCard | `pending`, `approved`, `rejected`, `applying`, `applied`, `error` | Pending: neutral card with approve/reject buttons. Approved: green accent. Rejected: dimmed. Applying: spinner. Applied: check mark + file path. Error: error message + retry. |
@@ -291,6 +293,7 @@ pub struct AnalysisOutput {
 ## User Journeys
 
 **New project with no governance:**
+
 1. User opens a project directory with no `.orqa/` governance files
 2. Scan finds 0 governance files — wizard appears automatically
 3. Scan panel shows "No governance files found. 0 of 7 areas covered."
@@ -302,6 +305,7 @@ pub struct AnalysisOutput {
 9. Dashboard shows governance health: "5 of 7 areas covered"
 
 **Existing project with Cursor rules:**
+
 1. User opens a project with `.cursorrules` and some `.cursor/rules/*.md`
 2. Scan finds Cursor-format rules — wizard appears (OrqaStudio governance not yet configured)
 3. Scan panel shows: "Found 4 Cursor rules. OrqaStudio governance: 0 of 7 areas covered."
@@ -311,6 +315,7 @@ pub struct AnalysisOutput {
 7. User reviews, approves, applies
 
 **Existing project with comprehensive governance:**
+
 1. User opens the OrqaStudio project itself (which has extensive `.orqa/` governance)
 2. Scan finds 20+ files across all 7 areas
 3. Coverage is 7/7 — wizard does NOT auto-trigger

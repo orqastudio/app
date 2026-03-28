@@ -2,6 +2,7 @@
 id: KNOW-3f307edb
 type: knowledge
 title: Orqa Testing Patterns
+domain: methodology/delivery
 description: |
   OrqaStudio testing patterns: make test commands, Rust unit/integration tests,
   Vitest frontend tests, mock boundaries, and test file organization.
@@ -29,7 +30,6 @@ summary: |
   patterns, mock strategies for the Tauri+Svelte+Rust stack.
 ---
 
-
 OrqaStudio uses `make` targets for all test commands. Tests are organized by layer: Rust unit tests inline with source, Rust integration tests in `backend/src-tauri/tests/`, frontend unit tests alongside components, and E2E tests in `tests/`.
 
 ## Test Commands (MANDATORY)
@@ -47,7 +47,7 @@ make check           # ALL checks: format-check + lint + test-rust + typecheck +
 
 ## Test File Organization
 
-```
+```text
 backend/src-tauri/
   src/
     domain/
@@ -78,7 +78,7 @@ tests/                         # E2E tests (Playwright)
 ### Unit Test (Inline)
 
 ```rust
-// backend/src-tauri/src/domain/artifact.rs
+// app/src-tauri/src/domain/artifact.rs
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,6 +103,7 @@ mod tests {
 ```
 
 **Key rules:**
+
 - Use `#[cfg(test)]` module at the bottom of the source file
 - Import from `super::*` to access the module's private internals
 - Test both happy path and error/edge cases
@@ -132,6 +133,7 @@ fn create_session_with_valid_project() {
 ```
 
 **Key rules:**
+
 - Use in-memory SQLite for database tests
 - Set up fresh state per test (no shared mutable state)
 - Test cross-module interactions (repo + domain)
@@ -173,6 +175,7 @@ describe('SessionStore', () => {
 ```
 
 **Key rules:**
+
 - Mock `invoke()` from `$lib/ipc/invoke` — never call the real backend
 - Test loading, success, and error states
 - Use `vi.clearAllMocks()` in `beforeEach`
@@ -201,7 +204,7 @@ describe('StatusBar', () => {
 **Mock ONLY at the adapter/boundary layer:**
 
 | OK to Mock | NOT OK to Mock |
-|-----------|----------------|
+| ----------- | ---------------- |
 | `invoke()` — the IPC boundary | Domain logic functions |
 | File system traits (in Rust) | Internal Rust functions |
 | External API responses | Store methods (test stores directly) |
@@ -228,6 +231,7 @@ impl SessionRepository for InMemorySessionRepo { /* ... */ }
 ## Anti-Patterns
 
 ### Testing implementation details
+
 ```typescript
 // WRONG: testing internal state shape
 expect(store._internal_map.size).toBe(3);
@@ -237,6 +241,7 @@ expect(store.items.length).toBe(3);
 ```
 
 ### Shared mutable state between tests
+
 ```rust
 // WRONG: static mut or lazy_static shared across tests
 static mut DB: Option<Connection> = None;
@@ -246,6 +251,7 @@ fn setup() -> Connection { Connection::open_in_memory().unwrap() }
 ```
 
 ### Skipping error path tests
+
 ```typescript
 // WRONG: only testing the happy path
 it('loads data', async () => { /* ... */ });
@@ -260,9 +266,9 @@ it('handles load failure', async () => {
 ## Key Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `Makefile` | All test targets (test, test-rust, test-frontend, etc.) |
-| `backend/src-tauri/src/` | Rust unit tests (inline `#[cfg(test)]` modules) |
+| `app/src-tauri/src/` | Rust unit tests (inline `#[cfg(test)]` modules) |
 | `backend/src-tauri/tests/` | Rust integration tests |
 | `ui/**/*.test.ts` | Frontend unit tests (Vitest) |
 | `tests/` | E2E tests (Playwright) |

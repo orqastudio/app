@@ -3,7 +3,7 @@ id: "EPIC-82dd0bd2"
 type: "epic"
 title: "Pipeline health dashboard"
 description: "Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -20,6 +20,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 Pipeline integrity checks (`make verify`) only run from the CLI or pre-commit hook. The artifact graph already computes orphans and broken refs during its two-pass build, and the dashboard already shows GraphStats (nodes, edges, orphans, broken refs) — but there's no way to run targeted integrity checks on-demand, see categorised issues, or fix them from the UI.
@@ -42,9 +43,10 @@ Pipeline integrity checks (`make verify`) only run from the CLI or pre-commit ho
 
 **Foundation for all subsequent phases.** [RES-c46ece96](RES-c46ece96) found the `artifactGraphSDK` already holds the full graph in reactive state. The gap is typed relationship edges.
 
-**Backend change:** Extend `ArtifactRef` (Rust + TypeScript) with `relationship_type: Option<String>`. During graph construction, when processing `relationships` arrays, populate `relationship_type` from the relationship's `type` field (e.g., `enforced-by`, `grounded`).
+**Backend change:** Extend `ArtifactRef` (Rust + TypeScript) with `relationship_type: Option\<String\>`. During graph construction, when processing `relationships` arrays, populate `relationship_type` from the relationship's `type` field (e.g., `enforced-by`, `grounded`).
 
 **SDK extensions:**
+
 - `traverse(id, relationshipType)` → `ArtifactNode[]` — follow edges of a specific type
 - `pipelineChain(id)` → full upstream/downstream pipeline chain
 - `missingInverses()` → `ArtifactRef[]` — A→B exists but B→A doesn't
@@ -56,7 +58,7 @@ Pipeline integrity checks (`make verify`) only run from the CLI or pre-commit ho
 
 Extend `artifact_graph.rs` with integrity check methods:
 
-```
+```text
 IntegrityCheck {
   category: BrokenLink | MissingRelationship | SchemaViolation | ReconciliationGap | NullTarget
   severity: Error | Warning
@@ -68,6 +70,7 @@ IntegrityCheck {
 ```
 
 **Checks to implement natively:**
+
 - Broken cross-references (target doesn't exist)
 - Missing bidirectional inverses (A→B exists, B→A doesn't)
 - Null relationship targets without `intended: true`
@@ -75,23 +78,27 @@ IntegrityCheck {
 - Schema field validation (required fields present, enum values valid)
 
 **Auto-fix logic ([IDEA-974623c0](IDEA-974623c0)):**
+
 - Null targets: scan all artifacts for keyword matches on rationale text, shared relationships, same epic scope. Single strong candidate → auto-fix. Multiple → suggest.
 - Missing inverses: deterministic — add the inverse relationship to the target artifact.
 - Reconciliation tasks: create missing ones with correct dependencies.
 
 **IPC commands:**
-- `run_integrity_scan` → returns `Vec<IntegrityCheck>`
+
+- `run_integrity_scan` → returns `Vec\<IntegrityCheck\>`
 - `apply_auto_fixes` → applies deterministic fixes, returns what was changed
 - `package_agent_tasks` → creates task artifacts for non-deterministic issues
 
 ### Phase 2: Dashboard Integrity Widget
 
 **Health score card:**
+
 - Traffic light indicator (green/amber/red based on error count)
 - Summary: "3 errors, 7 warnings" or "All clear"
 - Two action buttons: Scan (refresh checks) and Fix (apply auto-fixes + delegate rest)
 
 **Issue list (expandable by category):**
+
 - Broken Links (count)
 - Missing Relationships (count)
 - Schema Violations (count)
@@ -101,6 +108,7 @@ IntegrityCheck {
 Each issue row: artifact ID (clickable → navigates to artifact), message, severity badge, auto-fixable indicator.
 
 **Fix flow:**
+
 1. User clicks Fix
 2. Auto-fixable issues applied immediately, results shown (what changed)
 3. Non-auto-fixable issues packaged as agent tasks
@@ -109,11 +117,13 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 ### Phase 3: Pipeline Visualization ([IDEA-d8a65eee](IDEA-d8a65eee))
 
 **Thread rendering:**
+
 - Traverse relationship edges from the artifact graph to render emergent threads
 - Show the knowledge maturity pipeline: Observation → Understanding → Principle → Practice → Enforcement → Verification
 - Highlight bottlenecks: observations that never became principles, enforcement without observations
 
 **Visualization:**
+
 - Sankey-style flow diagram showing artifact movement through pipeline stages
 - Node coloring by bottleneck status (stuck = red, flowing = green)
 - Click any node to navigate to the artifact
@@ -121,10 +131,12 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 ### Phase 4: Temporal Analytics ([IDEA-451b29b6](IDEA-451b29b6))
 
 **Trend data:**
+
 - Periodic graph snapshots (on each scan, or from git history)
 - Store snapshots as lightweight JSON in ephemeral storage or SQLite metrics table
 
 **Dashboard widgets:**
+
 - Health sparklines: broken refs, orphans, density over last N snapshots
 - Velocity chart: artifact status transitions per week
 - Staleness heatmap: artifacts not updated relative to their dependents
@@ -133,7 +145,7 @@ Each issue row: artifact ID (clickable → navigates to artifact), message, seve
 ## Tasks
 
 | ID | Title | Phase | Depends On |
-|----|-------|-------|------------|
+| ---- | ------- | ------- | ------------ |
 | [TASK-0ac5f595](TASK-0ac5f595) | Extend ArtifactRef with relationship_type in Rust backend | 0 | — |
 | [TASK-25a42498](TASK-25a42498) | Add traverse/pipelineChain/missingInverses to graph SDK | 0 | [TASK-0ac5f595](TASK-0ac5f595) |
 | [TASK-9129f1a8](TASK-9129f1a8) | Audit components for invoke()-to-SDK migration | 0 | [TASK-25a42498](TASK-25a42498) |

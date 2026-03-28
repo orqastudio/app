@@ -1,7 +1,9 @@
 ---
 id: KNOW-ecc181cb
 type: knowledge
-name: README Standards
+title: README Standards
+domain: standards/readme
+description: "Reference for the required README header structure, badge conventions, and compliance audit process for every OrqaStudio repository."
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:
@@ -33,7 +35,7 @@ Every README starts with badges, the brand banner, then the title:
 ### Required Badges
 
 | Badge | Required | Source |
-|-------|----------|--------|
+| ------- | ---------- | -------- |
 | **License** | Always | License policy for the component category |
 | **Status** | Always | `pre-release`, `stable`, or `experimental` |
 | **OrqaStudio banner** | Always | `orqastudio-brand` repo asset |
@@ -43,7 +45,7 @@ Every README starts with badges, the brand banner, then the title:
 Add a badge for each language used in the repository. Detect from file extensions present:
 
 | Language | Detection | Badge |
-|----------|-----------|-------|
+| ---------- | ----------- | ------- |
 | TypeScript | `.ts` or `.tsx` files | `![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)` |
 | Rust | `.rs` files or `Cargo.toml` | `![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)` |
 | Svelte | `.svelte` files | `![Svelte](https://img.shields.io/badge/Svelte-FF3E00?logo=svelte&logoColor=white)` |
@@ -66,7 +68,7 @@ Language badges go on the same line as the license and status badges, before the
 ## Required Sections
 
 | Section | Required | Pattern |
-|---------|----------|---------|
+| --------- | ---------- | --------- |
 | Title | Yes | `# DisplayName` matching the manifest |
 | Description | Yes | Opening paragraph (at least 20 characters) |
 | Installation | For published packages | `## Installation` |
@@ -86,6 +88,7 @@ orqa repo readme --json
 ## Results
 
 Each repo gets a status:
+
 - **ok** — README exists with all required elements (badges, banner, sections)
 - **missing** — no README.md found
 - **incomplete** — README exists but missing required badges, banner, or sections
@@ -125,5 +128,6 @@ BSL-1.1 — see [LICENSE](LICENSE) for details.
 ## Naming Convention
 
 The README title should match `displayName` from `package.json` or `orqa-plugin.json`, not the npm package name:
+
 - `@orqastudio/types` → `# OrqaStudio Types`
 - `@orqastudio/plugin-software-kanban` → `# Software Kanban`

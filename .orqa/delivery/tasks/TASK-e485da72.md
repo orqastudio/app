@@ -3,7 +3,7 @@ id: TASK-e485da72
 type: task
 title: "Remove dead Cytoscape graph health analysis code"
 description: "The Rust backend (compute_graph_health) is the live graph health data source — the epic is surpassed. Remove the dead Cytoscape SDK computeGraphHealth code path and any unused Cytoscape analysis utilities that are no longer called."
-status: ready
+status: archived
 priority: P2
 scoring:
   impact: 3
@@ -22,6 +22,7 @@ relationships:
   - target: EPIC-ff7db83e
     type: delivers
 ---
+
 ## What
 
 The Rust backend `compute_graph_health` command is the live graph health data source. The Cytoscape SDK `computeGraphHealth` function is dead code — the epic has been marked surpassed because the Rust backend replaced the Cytoscape analysis approach. This task removes the dead Cytoscape analysis code path and any associated unused utilities.

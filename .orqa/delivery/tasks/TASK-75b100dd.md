@@ -3,7 +3,7 @@ id: "TASK-75b100dd"
 type: "task"
 title: "Code actions for quick fixes"
 description: "Implement LSP code action provider that offers quick fixes for common diagnostic issues: fix invalid status, add missing required fields, fix broken links."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 relationships:

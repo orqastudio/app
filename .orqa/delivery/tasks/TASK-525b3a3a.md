@@ -3,7 +3,7 @@ id: "TASK-525b3a3a"
 type: "task"
 title: "Initial publish of tier-0 packages to GitHub Packages"
 description: "Create GitHub releases for types, eslint-config, and test-config to trigger the publish workflows. These have no orqa dependencies so they can be published first."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -29,6 +29,7 @@ relationships:
 ## Scope
 
 For each tier-0 package:
+
 1. Verify CI passes on GitHub Actions
 2. Create a GitHub release tagged `v0.1.0`
 3. Verify the publish workflow runs and succeeds

@@ -8,6 +8,7 @@ status: completed
 created: 2026-03-14
 updated: 2026-03-14
 ---
+
 ## What Personas Represent
 
 Personas are archetypal descriptions of user types or stakeholder profiles that a product serves. In OrqaStudio's context, they would capture:
@@ -45,7 +46,7 @@ relationships:
 ### Key Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `id` | string (PERSONA-NNN) | Yes | Unique identifier |
 | `title` | string | Yes | Persona name |
 | `description` | string | Yes | One-sentence summary |
@@ -58,7 +59,7 @@ relationships:
 
 ## Proposed Lifecycle
 
-```
+```text
 draft --> validated --> archived
 ```
 
@@ -71,7 +72,7 @@ draft --> validated --> archived
 Two options considered:
 
 | Option | Path | Rationale |
-|--------|------|-----------|
+| -------- | ------ | ----------- |
 | A | `.orqa/delivery/personas/` | Personas are delivery-adjacent -- they inform what gets built |
 | B | `.orqa/product/personas/` | Personas are product strategy artifacts |
 
@@ -82,7 +83,7 @@ Two options considered:
 New bidirectional relationship pair:
 
 | Type | Inverse | Meaning |
-|------|---------|---------|
+| ------ | --------- | --------- |
 | `serves` | `served-by` | "This feature/epic serves this persona" |
 | `served-by` | `serves` | "This persona is served by this feature/epic" |
 
@@ -115,7 +116,7 @@ These would be added to the relationship type enums in all schema.json files and
 Personas could remain as markdown pages in `.orqa/documentation/about/personas/` without schema-validated frontmatter. They would be human-readable but not graph-connected.
 
 | Dimension | Artifact Type | Documentation Page |
-|-----------|--------------|-------------------|
+| ----------- | -------------- | ------------------- |
 | Graph queries | Yes | No |
 | Schema validation | Yes | No |
 | Bidirectional links | Yes | No (manual cross-refs only) |

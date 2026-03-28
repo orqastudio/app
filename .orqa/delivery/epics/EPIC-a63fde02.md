@@ -3,7 +3,7 @@ id: "EPIC-a63fde02"
 type: "epic"
 title: "Prompt Generation Pipeline and Knowledge Architecture"
 description: "Build the five-stage prompt generation pipeline and knowledge plugin registration/injection system. Replace monolithic CLAUDE.md loading with generated, role-specific prompts assembled from plugin registries."
-status: "captured"
+status: captured
 priority: "P1"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z

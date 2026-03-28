@@ -2,7 +2,7 @@
 id: TASK-424c6e2c
 type: task
 title: "Move domain skills to their respective plugins"
-status: surpassed
+status: archived
 created: 2026-03-19
 updated: 2026-03-21
 relationships:

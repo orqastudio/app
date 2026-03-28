@@ -3,7 +3,7 @@ id: "TASK-f4d07ce7"
 type: "task"
 title: "Shared list item and status indicator components"
 description: "Extracts duplicated list item and status display logic into reusable shared components covering all artifact lifecycle statuses, used consistently across the sidebar and landing grid."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-0aad40f4"
@@ -37,6 +37,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Findings Addressed
 
 - **F12**: Task list inconsistent — sometimes title+description, sometimes just title, sometimes raw TASK-ID

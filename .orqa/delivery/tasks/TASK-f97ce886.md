@@ -3,7 +3,7 @@ id: "TASK-f97ce886"
 type: "task"
 title: "Define component inventory"
 description: "Catalogued all reusable UI components with their states, variants, and composition patterns."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Catalogued all reusable shared UI components with their props, variants, states, and composition patterns.

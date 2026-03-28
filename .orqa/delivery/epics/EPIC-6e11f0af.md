@@ -3,7 +3,7 @@ id: "EPIC-6e11f0af"
 type: "epic"
 title: "Artifact Graph SDK extraction research"
 description: "Research extracting the artifactGraphSDK into a standalone npm package that plugins can import, enabling the plugin architecture's data layer."
-status: "captured"
+status: captured
 priority: "P2"
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -20,6 +20,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 The `artifactGraphSDK` in `ui/src/lib/sdk/artifact-graph.svelte.ts` is the single abstraction layer between the Tauri backend and the frontend. It manages:
@@ -56,7 +57,7 @@ Based on research findings, extract the SDK. Scope TBD by research.
 ## Tasks
 
 | ID | Title | Phase | Depends On |
-|----|-------|-------|------------|
+| ---- | ------- | ------- | ------------ |
 | TASK-TBD-1 | Research SDK extraction feasibility and package boundary | 1 | — |
 | TASK-TBD-2 | Reconcile EPIC-6e11f0af | — | all above |
 

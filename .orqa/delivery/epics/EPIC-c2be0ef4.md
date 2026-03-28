@@ -3,7 +3,7 @@ id: "EPIC-c2be0ef4"
 type: "epic"
 title: "Inference-time decision tree: self-navigating knowledge discovery"
 description: "Implement the self-navigating knowledge discovery model. Replace pre-injection with a reasoning protocol that agents work through to find their own knowledge. Create the decision tree as a governance artifact, update the hook to inject it, and make it plugin-extensible."
-status: "review"
+status: review
 created: 2026-03-21T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 relationships:
@@ -48,7 +48,7 @@ Rewrite `prompt-injector.ts` (`plugins/claude/hooks/`):
 Each agent role gets questions tailored to its boundary:
 
 | Agent | Focus questions |
-|-------|----------------|
+| ------- | ---------------- |
 | Orchestrator | Who does this work? What rules apply? What pillar does it serve? |
 | Implementer | What layer does this touch? What patterns apply? What tests are needed? |
 | Reviewer | What is the acceptance criteria? What standards apply? What to verify? |

@@ -3,7 +3,7 @@ id: "TASK-efc1538d"
 type: "task"
 title: "Update TypeScript types: types lib, SDK skill references"
 description: "Update the @orqastudio/types library and SDK to rename all skill-related type definitions, interfaces, and constants to knowledge equivalents."
-status: "ready"
+status: ready
 created: 2026-03-20T00:00:00.000Z
 updated: 2026-03-20T00:00:00.000Z
 acceptance:
@@ -26,12 +26,14 @@ Update the TypeScript types library (`libs/types`) and any SDK packages to renam
 ## How
 
 Search `libs/types/` and `libs/` for:
+
 - Interface/type names: `SkillArtifact`, `SkillEntry`, etc. → `KnowledgeArtifact`, `KnowledgeEntry`
 - String discriminants: `type: "skill"` → `type: "knowledge"`
 - Prefix constants: `"SKILL-"` → `"KNOW-"`
 - Export names and barrel files
 
 After changes:
+
 - Rebuild the types lib: `npx tsc` in `libs/types/`
 - Re-link if needed: `npm link @orqastudio/types` in `app/ui`
 - Run `make typecheck` to verify no TypeScript errors

@@ -3,7 +3,7 @@ id: "TASK-c541abcd"
 type: "task"
 title: "Document plugin installation and configuration"
 description: "Write documentation for installing, configuring, and using the orqa companion plugin."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-bbad3d30"

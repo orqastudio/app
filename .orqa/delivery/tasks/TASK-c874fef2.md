@@ -3,7 +3,7 @@ id: "TASK-c874fef2"
 type: "task"
 title: "Implement governance filesystem scanner"
 description: "Built the filesystem walker that collects governance artifacts from the .orqa/ directory structure."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Built the governance filesystem scanner that recursively walks `.orqa/` directories, parses YAML frontmatter, and classifies artifacts by type.

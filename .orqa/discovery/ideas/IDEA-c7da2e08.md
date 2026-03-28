@@ -3,7 +3,7 @@ id: "IDEA-c7da2e08"
 type: discovery-idea
 title: "Pipeline health dashboard — integrity surfacing, visualization, and process automation"
 description: "Surface pipeline integrity checks on the app dashboard with scan/fix actions, add pipeline thread visualization, temporal trend analysis, and automate two process improvements: related idea surfacing during promotion and intent-based observation capture from user prompts."
-status: completed
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 horizon: "active"
@@ -20,6 +20,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 Pipeline integrity checks (`make verify`) currently only run from the CLI or pre-commit hook. Issues like missing reconciliation tasks, broken cross-references, or empty relationship arrays are invisible until someone runs the tool manually. Surfacing these on the app dashboard makes the artifact graph's health a first-class concern — visible at a glance, not hidden behind a terminal command.
@@ -40,16 +41,19 @@ Beyond integrity, the pipeline dashboard should show the flow of knowledge throu
 ## Scope
 
 ### Phase 0: Process Automation (Precursors)
+
 - Promote [IMPL-f3629976](IMPL-f3629976): update [RULE-b10fe6d1](RULE-b10fe6d1) with a mandatory "scan related ideas" step in the promotion procedure
 - Promote [IMPL-6a8f9612](IMPL-6a8f9612): create a `user-prompt-submit` hook in the plugin that infers observation intent and auto-creates IMPL entries
 
 ### Phase 1: Integrity Engine (Backend)
+
 - Native Rust integrity checks in the backend (link verification, relationship validation, reconciliation checks, schema compliance)
 - IPC command to run checks on-demand and return categorised results
 - Auto-fix logic for deterministic issues (null targets with obvious candidates, missing bidirectional inverses)
 - Agent delegation packaging for non-deterministic issues
 
 ### Phase 2: Dashboard Integrity Widget (Frontend)
+
 - Health score summary (pass/fail/warnings count)
 - Categorised expandable issue list (broken links, missing relationships, schema violations, reconciliation gaps)
 - Click-through to affected artifact
@@ -57,12 +61,14 @@ Beyond integrity, the pipeline dashboard should show the flow of knowledge throu
 - Fix result display (what was changed, what was delegated, delegation status)
 
 ### Phase 3: Pipeline Visualization
+
 - Thread visualization by traversing relationship edges
 - Bottleneck detection (stuck observations, disconnected enforcement)
 - Flow direction analysis (forward pipeline movement vs backwards)
 - Unresolved tension display (null targets with intended=false)
 
 ### Phase 4: Temporal Analytics
+
 - Health trend sparklines (broken refs, orphans over time)
 - Artifact velocity (status transitions per period)
 - Staleness detection (artifacts not updated relative to dependents)

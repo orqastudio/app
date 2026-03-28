@@ -4,12 +4,17 @@ type: rule
 title: End-to-End Completeness
 description: "Every feature must include all required layers in the same commit. No partial implementations across boundaries."
 status: active
+enforcement_type: advisory
 created: 2026-03-07
 updated: 2026-03-24
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every feature must include all required layers in the same commit — no partial implementations across boundaries"
+
   - mechanism: behavioral
+
     message: "Code reviewer verifies all layers exist for each new feature endpoint"
 summary: "Every feature crossing the IPC boundary must include all four layers in the same commit: backend command, IPC type (Rust + TypeScript), frontend store, UI component. Types must match across boundaries. Error handling end-to-end. General principle: no partial implementations across any service boundary."
 tier: stage-triggered
@@ -17,16 +22,24 @@ roles: [implementer, reviewer]
 priority: P1
 tags: [end-to-end, four-layer, ipc, completeness]
 relationships:
+
   - target: AD-4e7faf0e
+
     type: enforces
     rationale: "IPC boundary design requires matching types on both sides"
+
   - target: RULE-05ae2ce7
+
     type: complements
     rationale: "Architecture decisions define the layer requirements this rule enforces"
+
   - target: RULE-af5771e3
+
     type: complements
     rationale: "No-stubs ensures each layer has a real implementation, not scaffolding"
+
   - target: RULE-c382e053
+
     type: complements
     rationale: "No-aliases ensures layers agree on types without shims"
 ---
@@ -38,7 +51,7 @@ Every feature that crosses a service boundary MUST include all required layers i
 For any feature that touches the IPC boundary between frontend and backend, ALL four layers must be present in the same commit:
 
 | Layer | What | Where |
-|-------|------|-------|
+| --- | --- | --- |
 | **Backend command** | Tauri command or service function | `backend/src-tauri/src/commands/` |
 | **IPC type** | Shared type definitions (Rust + TypeScript) | Rust: domain types with `Serialize`/`Deserialize`. TS: matching interface in `$lib/types/` |
 | **Frontend store** | Reactive state management | `ui/src/lib/stores/` |

@@ -12,7 +12,6 @@ recurrence: 1
 relationships: []
 ---
 
-
 ## Pattern
 
 Manual editing or agent output introduced blank lines between `---` and the first YAML key. Parsers that expect `---` followed immediately by key-value pairs fail silently.

@@ -45,7 +45,7 @@ No more "which directory am I in?" failures.
 
 ### Commands
 
-```
+```text
 orqa git status          Show git status of dev repo + all submodules with changes
 orqa git diff            Show diffs across all dirty submodules
 orqa git commit -m "X"  Commit in all dirty submodules, then commit parent with pointer updates
@@ -59,16 +59,19 @@ orqa git stash pop       Pop stashes in reverse order
 ### Execution Order (Critical)
 
 **Commit order** (inside-out):
+
 1. Identify all submodules with staged/unstaged changes
 2. Commit each submodule (alphabetical within dependency tier)
 3. Stage all updated submodule pointers in parent
 4. Commit parent repo with a summary message linking submodule commits
 
 **Push order** (inside-out):
+
 1. Push all submodules that are ahead of their remote
 2. Push parent repo (which references the just-pushed submodule SHAs)
 
 **Pull order** (outside-in):
+
 1. Pull parent repo (gets new submodule pointer SHAs)
 2. `git submodule update --init --recursive` (checks out the new SHAs)
 
@@ -77,7 +80,7 @@ orqa git stash pop       Pop stashes in reverse order
 When `orqa git commit` commits the parent repo, the commit message includes a
 trailer block listing all submodule commits made in that batch:
 
-```
+```text
 Artifact migration: core → owning plugins
 
 Submodule-Commits:
@@ -94,7 +97,7 @@ find the parent commit that recorded its pointer.
 
 ### Flags
 
-```
+```text
 --dry-run         Show what would happen without executing
 --submodule=X     Target specific submodule(s) only
 --exclude=X       Exclude specific submodule(s)
@@ -115,25 +118,31 @@ find the parent commit that recorded its pointer.
 ## Potential Downsides / Risks
 
 1. **Hides git complexity** — developers who don't understand submodules may be surprised when things
+
    break in ways that `orqa git` doesn't handle (e.g., detached HEAD in a submodule, merge conflicts
    in submodule pointers). Mitigation: always show raw git output, never swallow errors.
 
 2. **Commit granularity loss** — if `orqa git commit` auto-commits all dirty submodules with one
+
    message, you lose the ability to write per-submodule commit messages. Mitigation: `--submodule=X`
    flag for targeted commits, and allow passing per-submodule messages via a manifest file.
 
 3. **Divergent branches** — the commands assume all submodules track `main`. Feature branches
+
    in individual submodules would need special handling. Mitigation: detect non-main branches and
    warn, but don't block.
 
 4. **Push failures mid-batch** — if one submodule push fails (auth, hook rejection), the parent
+
    commit already references the unpushed SHA. Mitigation: push all submodules first, only then
    commit+push parent. If any submodule push fails, abort before touching the parent.
 
 5. **Performance** — 25+ submodules means 25+ git operations per command. Some may be slow.
+
    Mitigation: parallel execution where safe, skip clean submodules, cache status.
 
 6. **Interference with existing workflow** — `make` targets and raw git commands still work.
+
    If someone uses `orqa git commit` and someone else uses raw `git commit` in a submodule,
    the parent pointer won't update. Mitigation: this is a coordination tool, not a gate. Document
    that `orqa git` is the recommended path but raw git still works.
@@ -145,7 +154,7 @@ No existing tool solves atomic cross-submodule commit with rollback. Key finding
 ### Existing Tools Assessed
 
 | Tool | Language | Cross-Repo Atomic | Failure Recovery | Status |
-|------|----------|-------------------|-----------------|--------|
+| ------ | ---------- | ------------------- | ----------------- | -------- |
 | **git2** (Rust crate) | Rust | Build your own | Build your own | Very active, MIT |
 | **gix/gitoxide** | Rust | Build your own | Build your own | Very active, MIT |
 | **josh** (git proxy) | Rust | Yes (single repo) | N/A | Active, MIT |
@@ -159,6 +168,7 @@ None provide coordinated rollback across repos. All multi-repo tools are fire-an
 ### Recovery Patterns (from distributed systems)
 
 **Pattern D — Stage in Branches (recommended)**:
+
 1. Create a working branch in each submodule
 2. Commit to working branches
 3. Only merge to main when ALL submodules pass
@@ -209,6 +219,7 @@ on GitHub.
 ## Dependency Order (for commits)
 
 Libraries before consumers:
+
 1. `libs/types` (no deps)
 2. `libs/validation`, `libs/brand` (depend on types)
 3. `libs/sdk`, `libs/cli`, `libs/search`, `libs/mcp-server`, `libs/lsp-server` (depend on types/validation)
@@ -223,7 +234,7 @@ Libraries before consumers:
 many of the deeper problems that `orqa git` works around:
 
 | Problem | `orqa git` approach | Forgejo approach |
-|---------|-------------------|-----------------|
+| --------- | ------------------- | ----------------- |
 | Branch protection | Relies on GitHub API (`gh`) to set rules per-repo | Forgejo instance enforces rules centrally |
 | PR coordination | `orqa pr create` creates linked PRs across repos | Forgejo manages all repos in one instance — one PR per change |
 | Direct push blocking | Must configure 28 separate GitHub repos | One Forgejo config applies to all repos |
@@ -232,6 +243,7 @@ many of the deeper problems that `orqa git` works around:
 
 **If Forgejo is adopted**, the 28-separate-repo problem disappears. Submodules still
 exist for code organisation, but all repos live in one Forgejo instance where:
+
 - Branch protection is configured once, not 28 times
 - PRs are visible in one dashboard, not scattered across GitHub repos
 - Push permissions are managed centrally
@@ -244,6 +256,7 @@ The CLI commands remain the same — only the remote changes.
 ### Repo Protection Audit (2026-03-22)
 
 All 28 repos in the orqastudio GitHub org are currently:
+
 - **Public**, **unprotected** — no branch protection on `main`
 - Anyone with write access can push directly to `main`
 - Zero PR requirements, zero review requirements

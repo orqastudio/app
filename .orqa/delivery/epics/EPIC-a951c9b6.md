@@ -3,7 +3,7 @@ id: "EPIC-a951c9b6"
 type: "epic"
 title: "Product Definition"
 description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 UX design (Phase 0d) and technical design (Phase 0e) cannot proceed without knowing what the product is and who it serves.

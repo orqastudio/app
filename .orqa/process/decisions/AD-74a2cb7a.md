@@ -8,6 +8,7 @@ created: "2026-03-09"
 updated: "2026-03-13"
 relationships: []
 ---
+
 ## Decision
 
 Product pillars — the guiding principles that every feature must serve — become
@@ -16,6 +17,7 @@ first-class structured artifacts stored in `.orqa/principles/pillars/`.
 ### Current State
 
 Pillars are prose embedded in multiple files:
+
 - `vision.md` defines them narratively
 - `governance.md` repeats the definitions
 - `vision-alignment.md` rule hardcodes "Clarity Through Structure" and "Learning Through Reflection"
@@ -24,6 +26,7 @@ Pillars are prose embedded in multiple files:
 - The system prompt has no awareness of what pillars exist
 
 This means:
+
 - Changing a pillar requires updating 5+ files manually
 - Non-software projects cannot define their own pillars
 - The AI has no structured knowledge of the project's guiding principles
@@ -64,7 +67,7 @@ home for "what matters to this project."
 The system prompt builder reads active pillars from `.orqa/principles/pillars/`
 and injects them into every AI conversation:
 
-```
+```text
 Project Pillars:
 
 1. Clarity Through Structure (PILLAR-c9e0a695)
@@ -126,8 +129,11 @@ is identical.
 ## Open Questions
 
 1. Should core include default pillars that new projects start with?
+
    Probably yes — "Clarity Through Structure" and "Learning Through
    Reflection" as defaults that users can modify or replace.
+
 2. How many pillars should a project have? Recommend 2-4. More than 4
+
    dilutes focus. Fewer than 2 doesn't create enough tension for
    meaningful prioritisation decisions.

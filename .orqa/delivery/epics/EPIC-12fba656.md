@@ -3,7 +3,7 @@ id: "EPIC-12fba656"
 type: "epic"
 title: "Close enforcement bootstrapping gap"
 description: "The enforcement system can't enforce the project's principles because: (1) documentation is isolated from the artifact graph — agents can't traverse to the knowledge they need, (2) no grounding mechanism exists — agents lose purpose under implementation pressure, (3) the orchestrator has no delegation reference — work types aren't mapped to roles and skills, and (4) mechanical enforcement gaps remain — stop events, skill injection, and write-time integrity aren't wired. This epic closes all four gaps so the system can enforce itself during its own development."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-14"
 updated: "2026-03-14"
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 During a heavy implementation session (31 tasks across 6 epics), the orchestrator lost awareness of the project's core principles — pillars, vision, architectural constraints. Investigation revealed four structural gaps:
@@ -37,17 +38,20 @@ The consequence: **the system's principles are lost during implementation becaus
 Fix the documentation so it's worth connecting to the graph. Delete duplicates, merge overlaps, remove stale content, clarify unfocused docs.
 
 #### Deletions
+
 - DOC-019 (architecture-overview) — stub, duplicates DOC-001
 - DOC-054 (launch-timeline) — entirely outdated
 - DOC-032 (process/rules) — duplicates RULE-dd5b69e6
 
 #### Merges
+
 - DOC-038 (governance-hub) → DOC-06224bf6 (governance)
 - DOC-e42efeaf (guide/workflow) → DOC-db5b37dc (process/workflow)
 - DOC-048 (component-inventory) → DOC-2c94f7ba (svelte-components)
 - DOC-3d8ed14e (artifact-types) → DOC-28344cd7 (artifact-framework)
 
 #### Restructures
+
 - DOC-9814ec3c (coding-standards) — restructure as principles doc, not rule restatement
 - DOC-d9cc1f84 (orchestration) — add purpose, reduce to delegation reference
 - Remove all "Phase 2a/2b" references across 23 files
@@ -58,6 +62,7 @@ Fix the documentation so it's worth connecting to the graph. Delete duplicates, 
 Create grounding documents distilled from restructured docs. Create the orchestrator's delegation reference. Connect everything to the graph.
 
 #### Grounding Documents (one per role area)
+
 - `grounding/product-purpose.md` — mission, pillars, identity (grounds: Orchestrator, Planner, Writer)
 - `grounding/code-principles.md` — what "good code" means (grounds: Implementer, Reviewer)
 - `grounding/artifact-principles.md` — what "good artifacts" look like (grounds: Orchestrator, Writer, Researcher)
@@ -67,14 +72,18 @@ Create grounding documents distilled from restructured docs. Create the orchestr
 Each is 30-50 lines. Answers three questions: why this role exists, what "good" looks like, what goes wrong under pressure.
 
 #### Delegation Reference
+
 A new doc in `documentation/reference/delegation.md` — the orchestrator's lookup table:
+
 - Maps every work type to: agent role, required skills, grounding document
 - Connected to orchestrator via `grounded-by`
 - Makes "if the orchestrator is writing anything other than coordination output, the system has failed" explicit and actionable
 - Includes the Governance Steward as the owner of ALL `.orqa/` artifact creation and maintenance
 
 #### Governance Steward Agent
+
 A new specialist agent (`governance-steward.md`) that owns all `.orqa/` artifact work:
+
 - **Purpose**: Create and maintain governance artifacts with correct frontmatter, relationships, pillar alignment, and schema compliance
 - **Grounding**: artifact-principles, product-purpose
 - **Skills**: orqa-governance, orqa-documentation, orqa-schema-compliance, migration-tooling
@@ -83,6 +92,7 @@ A new specialist agent (`governance-steward.md`) that owns all `.orqa/` artifact
 - The orchestrator provides content intent; the steward handles the writing with full graph discipline
 
 #### Graph Connectivity
+
 - Add `grounded-by` relationships on all agent definitions → their grounding docs
 - Add `informs`/`informed-by` relationships between skills and their documentation
 - Add `informed-by` relationships from rules/decisions to their documentation pages
@@ -94,15 +104,19 @@ A new specialist agent (`governance-steward.md`) that owns all `.orqa/` artifact
 Close gaps in the Claude Code plugin so enforcement entries are fully consumed.
 
 #### Stop Event Support
+
 Stop hook → rule-engine.mjs (evaluates `event: stop` entries) + stop-checklist.sh
 
 #### Full Skill Content Injection
+
 rule-engine.mjs reads SKILL.md files and returns body content as systemMessage, not just names.
 
 #### Graph Integrity on PostToolUse
+
 graph-guardian.mjs checks bidirectional relationship inverses after `.orqa/**/*.md` writes.
 
 #### Grounding Injection
+
 Plugin resolves `grounded-by` relationships on agent definitions and injects target content at session initialization. This is the mechanical implementation of the grounding pattern.
 
 ### Phase 4: App Enforcement Pipeline

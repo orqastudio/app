@@ -1,7 +1,9 @@
 ---
 id: DOC-b4099ea3
 type: doc
+status: active
 title: Information Architecture
+domain: architecture
 category: architecture
 description: Information architecture defining how content is organized and navigated within the application.
 created: 2026-03-02
@@ -37,7 +39,7 @@ This ensures OrqaStudio is always useful for governance management (browsing and
 
 OrqaStudio uses a **three-zone + nav sub-panel layout**. The Activity Bar is a fixed CSS flex element; the three resizable zones (Nav Sub-Panel, Explorer Panel, Chat Panel) are managed by PaneForge (shadcn-svelte Resizable).
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────┐
 │  Toolbar                                                      │
 ├────┬────────┬────────────────────┬───────────────────────────┤
@@ -60,7 +62,7 @@ OrqaStudio uses a **three-zone + nav sub-panel layout**. The Activity Bar is a f
 ### Zone Dimensions
 
 | Zone | Default | Min | Max | Collapsible |
-|------|---------|-----|-----|-------------|
+| ------ | --------- | ----- | ----- | ------------- |
 | Activity Bar | 48px (fixed) | 48px | 48px | No |
 | Nav Sub-Panel | 200px | 160px | 280px | Yes → 0px |
 | Explorer Panel | Flex (fills remaining) | 280px | — | No |
@@ -77,7 +79,7 @@ Nav Sub-Panel, Explorer, and Chat share remaining space after Activity Bar (48px
 The toolbar spans the full window width and provides global context and actions.
 
 | Element | Position | Description |
-|---------|----------|-------------|
+| --------- | ---------- | ------------- |
 | Project name | Left | Currently open project. Click to switch projects. |
 | Global search | Center | FTS5-powered search across sessions and artifacts. `Ctrl+K` / `Cmd+K`. |
 
@@ -94,13 +96,13 @@ A 48px fixed-width vertical icon rail on the far left. Provides direct navigatio
 **Top — Project Dashboard:**
 
 | Icon | Label | Lucide Icon |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | Project Dashboard | Project Dashboard | LayoutDashboard |
 
 **Group 1 — Artifact Categories:**
 
 | Icon | Label | Lucide Icon |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | Docs | Docs (default active) | FileText |
 | Agents | Agents | Bot |
 | Rules | Rules | Shield |
@@ -112,7 +114,7 @@ A 48px fixed-width vertical icon rail on the far left. Provides direct navigatio
 **Group 2 — Dashboards (post-MVP):**
 
 | Icon | Label | Lucide Icon |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | Scanners | Scanners | ScanLine |
 | Metrics | Metrics | BarChart3 |
 | Learning | Learning | Lightbulb |
@@ -120,7 +122,7 @@ A 48px fixed-width vertical icon rail on the far left. Provides direct navigatio
 **Separator (bottom-aligned):**
 
 | Icon | Label | Lucide Icon |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | Settings | Settings | Settings |
 
 ### Active State
@@ -130,7 +132,7 @@ Active icon: 2px left border indicator (`--primary` color) + highlighted backgro
 ### View Mapping
 
 | Activity Bar Icon | Nav Sub-Panel Shows | Explorer Panel Shows |
-|-------------------|---------------------|---------------------|
+| ------------------- | --------------------- | --------------------- |
 | Project Dashboard | Hidden | Project dashboard |
 | Docs (default) | Doc tree (sections > pages) | Selected doc viewer/editor |
 | Agents | Agent list | Selected agent viewer/editor |
@@ -152,7 +154,7 @@ A collapsible 200px panel between the Activity Bar and Explorer Panel. Provides 
 
 The Docs category uses a hierarchical tree that mirrors the `.orqa/documentation/` directory structure:
 
-```
+```text
 Product
   ├── Vision
   ├── Governance
@@ -231,7 +233,7 @@ When an artifact category is active, the Explorer Panel shows the selected artif
 When the user clicks an artifact in the Nav Sub-Panel (or in the fallback list), the Explorer Panel shows the artifact viewer.
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Breadcrumb | Navigation context: Category > Section > Artifact name. Click any level to navigate up. |
 | Rendered view | Markdown rendering of the artifact content. YAML frontmatter displayed as structured metadata above the body. |
 | Edit mode | Toggle to CodeMirror 6 source editing. Full markdown + YAML editing with syntax highlighting. Save: `Ctrl+S` / `Cmd+S`. |
@@ -241,7 +243,7 @@ When the user clicks an artifact in the Nav Sub-Panel (or in the fallback list),
 Shown when the Project Dashboard Activity Bar icon is active. Nav Sub-Panel is hidden.
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Project info | Detected stack (languages, frameworks), project root path. |
 | Governance summary | Counts of artifacts: N agents, N rules, N skills, N hooks. Click any category to activate it in the Activity Bar. |
 | Quick links | Scanner status, metrics, learning — post-MVP features. |
@@ -252,7 +254,7 @@ Shown when the Project Dashboard Activity Bar icon is active. Nav Sub-Panel is h
 Application and project settings, shown when the Settings icon is active in the Activity Bar. Settings category list in the Nav Sub-Panel.
 
 | Section | Contents |
-|---------|----------|
+| --------- | ---------- |
 | Provider | Sidecar status, active AI provider name and path, connection health indicator. |
 | Project | Project root, scan settings, file watcher status. |
 | Appearance | Theme (light/dark/system), font size, panel defaults. Per-project theming toggle. |
@@ -261,7 +263,7 @@ Application and project settings, shown when the Settings icon is active in the 
 ### Scanner Dashboard (post-MVP)
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Scanner list | Each scanner with last result: pass/fail, timestamp (in Nav Sub-Panel when active). |
 | Trend chart | Pass/fail rate over time (LayerChart). |
 | Violation details | Expandable list of current violations with file location and description. |
@@ -269,7 +271,7 @@ Application and project settings, shown when the Settings icon is active in the 
 ### Metrics Dashboard (post-MVP)
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | KPI cards | Each metric as a card: current value, trend indicator, sparkline. |
 | Charts | Detailed time-series charts for selected metrics (LayerChart). |
 | Lesson log | Recent IMPL and RETRO entries with promotion status. |
@@ -285,7 +287,7 @@ The Chat Panel is always visible and always shows the active conversation. It is
 The session header sits at the top of the Chat Panel and provides session context and switching.
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Session dropdown | Active session title (clickable). Opens a dropdown with: recent sessions list, search filter, "New Session" button. |
 | Model selector | Auto / Opus / Sonnet / Haiku dropdown. "Auto (recommended)" is the default — separated from specific models by a visual divider. |
 | Provider status | AI provider connection status (e.g., "Provider: Connected" or "Provider: Not found"). In the current implementation using Claude Code CLI, this shows the CLI version (e.g., "CLI: v1.2.3"). |
@@ -294,6 +296,7 @@ The session header sits at the top of the Chat Panel and provides session contex
 ### Auto-Session on Plan Mode
 
 When a conversation triggers plan mode (user says "plan this", "how should we build X", or Claude determines planning is needed), OrqaStudio automatically:
+
 1. Creates a new session titled `[Plan] <topic>`
 2. Switches to the new session in the Chat Panel
 3. Preserves the previous session in history
@@ -307,7 +310,7 @@ This keeps sessions focused on a single concern and makes session history a mean
 ### Conversation View
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Message stream | Scrollable list of messages. User messages are right-aligned, assistant messages left-aligned. |
 | Content blocks | Each message contains typed content blocks: text (rendered markdown), code (syntax-highlighted), tool call cards, tool result cards, error blocks. |
 | Tool call cards | Collapsible. Summary shows: tool name, input summary, result summary, duration. Expanded shows: full input, full output, diff view (for edits). Badge indicates status: pending, approved, denied, completed. |
@@ -321,7 +324,7 @@ This keeps sessions focused on a single concern and makes session history a mean
 Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching — not a traditional menu or route-based navigation. All zones are always visible (unless Nav Sub-Panel is collapsed); the user's "location" is determined by the Activity Bar selection and the Nav Sub-Panel selection.
 
 | Action | Activity Bar | Nav Sub-Panel | Explorer Panel | Chat Panel |
-|--------|-------------|---------------|----------------|------------|
+| -------- | ------------- | --------------- | ---------------- | ------------ |
 | Start app | Docs active | Doc tree | Docs overview | Conversation (active or welcome) |
 | Click Agents icon | Agents active | Agent list | Agent list (if none selected) | Unchanged |
 | Click an artifact in Nav | Unchanged | Highlights item | Opens artifact viewer | Unchanged |
@@ -335,7 +338,7 @@ Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching 
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
-|----------|--------|
+| ---------- | -------- |
 | `Ctrl+0` | Project Dashboard |
 | `Ctrl+1` through `Ctrl+5` | Switch artifact category (Docs / Agents / Rules / Skills / Hooks) |
 | `Ctrl+B` | Toggle Nav Sub-Panel |
@@ -414,7 +417,7 @@ Toolbar → Activity Bar → Nav Sub-Panel → Explorer Panel → Chat Panel →
 ## Responsive Behavior
 
 | Window Width | Layout |
-|-------------|--------|
+| ------------- | -------- |
 | > 1200px | All zones open |
 | 900-1200px | Nav Sub-Panel auto-collapsed |
 | 720-900px | Nav Sub-Panel as overlay Sheet |
@@ -429,7 +432,7 @@ Collapse priority: Nav Sub-Panel → Chat Panel (overlay) → Activity Bar (floa
 Every view has a meaningful empty state that guides the user toward the next action.
 
 | View | Empty State | Call to Action |
-|------|------------|----------------|
+| ------ | ------------ | ---------------- |
 | Session dropdown | "No sessions yet" | "Start a conversation" prompt in input area |
 | Conversation | Welcome message explaining OrqaStudio | "Type a message to begin" in input placeholder |
 | Artifact list (no .orqa/) | "No governance framework detected" | "Set up governance for this project" button (initialises `.orqa/` scaffold) |
@@ -446,6 +449,7 @@ Every view has a meaningful empty state that guides the user toward the next act
 The MVP includes only the views and elements needed for the core journeys:
 
 **Included:**
+
 - Three-zone layout with PaneForge + Activity Bar + Nav Sub-Panel
 - Toolbar (project name)
 - Activity Bar (Project Dashboard + 5 artifact categories + settings)
@@ -458,6 +462,7 @@ The MVP includes only the views and elements needed for the core journeys:
 - Keyboard shortcuts for core actions
 
 **Deferred:**
+
 - Scanners / Metrics / Learning Activity Bar icons (post-MVP)
 - Global search (post-MVP — FTS5 infrastructure exists but UI deferred)
 - Tool inspector (post-MVP)

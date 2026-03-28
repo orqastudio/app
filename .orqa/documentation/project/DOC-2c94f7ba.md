@@ -1,7 +1,9 @@
 ---
 id: "DOC-2c94f7ba"
 type: doc
+status: active
 title: "Svelte Component Tree"
+domain: architecture
 description: "Component tree structure and hierarchy of the Svelte 5 frontend application."
 created: "2026-03-02"
 updated: "2026-03-10"
@@ -38,7 +40,7 @@ Describes the Svelte component directory structure, store architecture, IPC wrap
 
 ## Directory Structure
 
-```
+```text
 ui/
 ├── app.html                          # Tauri entry HTML
 ├── app.css                           # Global styles (Tailwind directives, CSS variables)
@@ -79,7 +81,7 @@ ui/
 ### `layout/` — Application Shell
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `AppLayout.svelte` | Root shell — composes all zones |
 | `ActivityBar.svelte` | Icon rail — controls which view is active |
 | `ActivityBarItem.svelte` | Single activity bar icon with active indicator |
@@ -97,7 +99,7 @@ ui/
 ### `conversation/` — Conversation Domain
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ConversationView.svelte` | Scrollable message list + input area |
 | `SessionHeader.svelte` | Session title, model selector, token badge |
 | `SessionDropdown.svelte` | Session switcher dropdown |
@@ -114,7 +116,7 @@ ui/
 ### `artifact/` — Artifact Viewer Domain
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ArtifactLanding.svelte` | Category landing — shows artifact list for a type |
 | `ArtifactMasterDetail.svelte` | Two-pane list + detail layout |
 | `ArtifactViewer.svelte` | Generic artifact viewer (renders frontmatter + body) |
@@ -130,7 +132,7 @@ ui/
 ### `navigation/` — Navigation Sub-Panels
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ArtifactNav.svelte` | List navigation for artifact categories (agents, rules, etc.) |
 | `GroupSubPanel.svelte` | Navigation for grouped artifact entries |
 | `SettingsCategoryNav.svelte` | Settings category navigation |
@@ -138,13 +140,13 @@ ui/
 ### `dashboard/` — Project Dashboard
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ProjectDashboard.svelte` | Project overview — metadata, governance counts, stack |
 
 ### `settings/` — Settings Screens
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `SettingsView.svelte` | Settings root — routes to sub-sections |
 | `ProjectGeneralSettings.svelte` | Project name, description, icon |
 | `ProjectGovernanceSettings.svelte` | Governance artifact management |
@@ -161,7 +163,7 @@ ui/
 ### `governance/` — Governance Scan and Analysis
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `GovernanceScanPanel.svelte` | Scan controls and results overview |
 | `GovernanceBootstrapWizard.svelte` | Wizard for first-time governance setup |
 | `RecommendationList.svelte` | List of AI-generated governance recommendations |
@@ -171,13 +173,13 @@ ui/
 ### `enforcement/` — Enforcement Display
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ViolationBadge.svelte` | Badge showing block/warn violation count |
 
 ### `lessons/` — Lessons Management
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `LessonsPanel.svelte` | Lessons panel container |
 | `LessonList.svelte` | Filterable list of lesson entries |
 | `LessonViewer.svelte` | Detail view for a single lesson |
@@ -185,7 +187,7 @@ ui/
 ### `setup/` — First-Run Setup Wizard
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `SetupWizard.svelte` | Setup wizard shell — routes through steps |
 | `ClaudeCliStep.svelte` | Check and install Claude CLI step |
 | `ClaudeAuthStep.svelte` | Claude authentication step |
@@ -196,7 +198,7 @@ ui/
 ### `tool/` — Tool Call Display
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ToolCallCard.svelte` | Individual tool call with input/output |
 | `ToolCallGroup.svelte` | Grouped tool calls within a message |
 | `ToolCallSummary.svelte` | Collapsed summary of tool call results |
@@ -205,7 +207,7 @@ ui/
 ### `content/` — Content Rendering
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `MarkdownRenderer.svelte` | Renders markdown with custom element support |
 | `MarkdownLink.svelte` | Artifact-aware link renderer within markdown |
 | `CodeBlock.svelte` | Syntax-highlighted code with copy button |
@@ -213,7 +215,7 @@ ui/
 ### `shared/` — Shared Reusable Components
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `EmptyState.svelte` | Empty list/grid placeholder with icon, title, optional action |
 | `ErrorDisplay.svelte` | Error message with optional retry |
 | `LoadingSpinner.svelte` | Loading indicator for async operations |
@@ -233,7 +235,7 @@ ui/
 All stores use Svelte 5 runes exclusively [AD-ecc96aef](AD-ecc96aef). Store files use the `.svelte.ts` extension to enable runes outside of components. Each store is a class instance exported as a singleton.
 
 | Store | File | Purpose |
-|-------|------|---------|
+| ------- | ------ | --------- |
 | **Session** | `session.svelte.ts` | Active session, session list, session metadata |
 | **Navigation** | `navigation.svelte.ts` | Active activity, explorer view, selected artifact path, config-driven nav tree |
 | **Conversation** | `conversation.svelte.ts` | Message list, streaming state, streaming content accumulation, context entries |
@@ -268,7 +270,7 @@ There is no `commands/` directory — invoke calls are made directly from stores
 Per [AD-9a7d7256](AD-9a7d7256), only containers and the route entry points call `invoke()`. Display components receive data via `$props()`.
 
 | Boundary | Files |
-|----------|-------|
+| ---------- | ------- |
 | **Data-fetching containers** | `routes/+page.svelte`, `routes/+layout.svelte` |
 | **Stores (call invoke)** | All files in `lib/stores/` |
 | **Display components (props only)** | All files in `lib/components/` |
@@ -279,10 +281,10 @@ Display components communicate user intent upward via callback props (e.g., `onS
 
 Per [RULE-eb269afb](RULE-eb269afb), standard states must use shared components:
 
-- Empty states: always `<EmptyState>` from `shared/`
-- Loading states: always `<LoadingSpinner>` from `shared/`
-- Error states: always `<ErrorDisplay>` from `shared/`
-- Destructive actions: always `<ConfirmDeleteDialog>` from `shared/`
+- Empty states: always `\<EmptyState\>` from `shared/`
+- Loading states: always `\<LoadingSpinner\>` from `shared/`
+- Error states: always `\<ErrorDisplay\>` from `shared/`
+- Destructive actions: always `\<ConfirmDeleteDialog\>` from `shared/`
 
 ### shadcn-svelte Primitives
 
@@ -294,17 +296,17 @@ The `ui/` directory contains auto-generated shadcn-svelte components. These are 
 
 ### Request/Response (invoke)
 
-```
+```text
 User Action → Display Component → callback prop → Store → invoke() → Rust command
                                                                          ↓
 Component re-renders ← $state mutation ← Store update ← Result<T, E>
 ```
 
-### Streaming (Channel<T>)
+### Streaming (Channel\<T\>)
 
-High-frequency token streaming uses Tauri `Channel<T>` rather than `emit/listen`:
+High-frequency token streaming uses Tauri `Channel\<T\>` rather than `emit/listen`:
 
-```
+```text
 Claude API → Sidecar (Bun) → NDJSON stdout → Rust Channel<T> → +page.svelte callback
                                                                        ↓
                                                             conversationStore.$state mutation
@@ -321,14 +323,14 @@ File-system changes, sidecar lifecycle, and scan-complete notifications use Taur
 ## Conventions Summary
 
 | Convention | Rule | Reference |
-|-----------|------|-----------|
+| ----------- | ------ | ----------- |
 | Runes only | `$state`, `$derived`, `$effect`, `$props` everywhere. No `export let`, no `$:`, no `<slot>`. | [AD-ecc96aef](AD-ecc96aef) |
 | Component purity | `$lib/components/` files receive props only. No `invoke()` inside components. | [AD-9a7d7256](AD-9a7d7256) |
 | Stores call invoke | Stores are the only layer (besides routes) that call the `ipc/invoke` wrapper. | [AD-9a7d7256](AD-9a7d7256) |
 | Callback props | User intent flows up via callback props to stores or containers. | [AD-9a7d7256](AD-9a7d7256) |
 | shadcn-svelte | Use `$lib/components/ui/<name>` for primitives. Do not rewrite them. | [AD-33e315cc](AD-33e315cc) |
 | Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton. | [AD-ecc96aef](AD-ecc96aef) |
-| Streaming | `Channel<T>` for token streams; `emit/listen` for app-level events. | [AD-39e2fb81](AD-39e2fb81) |
+| Streaming | `Channel\<T\>` for token streams; `emit/listen` for app-level events. | [AD-39e2fb81](AD-39e2fb81) |
 | Snippets over slots | Use `{#snippet}` and `{@render}` for composition; never `<slot>`. | [AD-ecc96aef](AD-ecc96aef) |
 
 ---
@@ -340,7 +342,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ### Core UI
 
 | Component | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | **Button** | Send message, new session, save, cancel, create artifact |
 | **Input** | Search filters, session search, artifact search, settings fields |
 | **Textarea** | Message input (multi-line) |
@@ -352,7 +354,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ### Layout
 
 | Component | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | **Resizable** (PaneForge) | Three-zone resizable layout within PaneForge |
 | **ScrollArea** | Message stream, artifact list, session list |
 | **Collapsible** | Tool call cards (collapsed/expanded), settings sections |
@@ -360,7 +362,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ### Data Display
 
 | Component | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | **Badge** | Tool call status, artifact type, connection status |
 | **Card** | Message bubbles, tool call cards, KPI cards, artifact summary cards |
 | **Table** | Keyboard shortcuts reference, settings display |
@@ -369,7 +371,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ### Overlay
 
 | Component | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | **Dialog** | Confirmation dialogs (delete artifact, discard changes), project creation |
 | **Popover** | Project switcher, model info |
 | **Sheet** | Mobile/narrow responsive alternative to collapsed panels |
@@ -379,7 +381,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 ### Feedback
 
 | Component | Usage |
-|-----------|-------|
+| ----------- | ------- |
 | **Alert** | Error messages, warnings, first-run guidance |
 | **Sonner** (Toast) | Save confirmation, copy-to-clipboard, connection status changes |
 
@@ -390,7 +392,7 @@ Components used directly from the shadcn-svelte library. No custom code needed b
 Extensions to the markdown renderer for OrqaStudio-specific content types.
 
 | Block | Syntax | Rendering |
-|-------|--------|-----------|
+| ------- | -------- | ----------- |
 | **Wireframe image** | `![wireframe](orqa://wireframe/core-layout?theme=dark)` | Serves cached wireframe image from local store. Selects light/dark/brand variant based on active theme. |
 | **UX flow navigation** | `<!-- orqa:ux-flow screens="screen1,screen2,screen3" -->` | Renders clickable wireframe sequence with forward/back navigation. |
 | **Artifact link** | `[agent:backend-engineer]` | Renders as a styled badge/chip linking to the artifact in the viewer. |
@@ -401,7 +403,7 @@ Extensions to the markdown renderer for OrqaStudio-specific content types.
 ## Third-Party Libraries
 
 | Library | Purpose | Component Usage |
-|---------|---------|----------------|
+| --------- | --------- | ---------------- |
 | `@humanspeak/svelte-markdown` | Markdown rendering | MarkdownRenderer |
 | `svelte-codemirror-editor` | Code/markdown editing (Svelte 5 runes) | MarkdownEditor, ArtifactEditor |
 | `svelte-highlight` | Syntax highlighting in rendered markdown | CodeBlock |

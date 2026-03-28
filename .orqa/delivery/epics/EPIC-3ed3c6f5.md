@@ -31,6 +31,7 @@ RES-d6e8ab11 section 3 defines three plugin types:
 EPIC-f6da17ed's acceptance criteria included "workflow-definition plugin defines the skeleton, stage-definition plugins fill slots (composability)" — this was never done. The monolithic `agile-governance` plugin provides everything: artifact types, state machines, workflows, knowledge, rules, agent definitions, and relationship types.
 
 The research gives concrete examples:
+
 - `software-discovery plugin` fills planning
 - `software-kanban plugin` fills implementation + review
 - `governance plugin` fills learning pipeline
@@ -38,7 +39,7 @@ The research gives concrete examples:
 ## Target Plugin Layout
 
 | Plugin | Type | Provides |
-|--------|------|----------|
+| -------- | ------ | ---------- |
 | `software-project` | Workflow-definition | Delivery workflow skeleton with contribution points |
 | `agile-methodology` | Stage-definition | `planning-methodology` contribution (scoping, estimation, prioritisation) |
 | `software-kanban` | Stage-definition | `implementation-workflow` contribution (task lifecycle, branching) |
@@ -57,17 +58,20 @@ The research gives concrete examples:
 ### Phase 1: Create New Plugins
 
 **TASK-1: Create `software-project` workflow-definition plugin**
+
 - New plugin with manifest, delivery workflow skeleton
 - Move the delivery skeleton from agile-governance to here
 - This plugin defines the project domain, not the methodology
 - Acceptance criteria: plugin exists, delivery skeleton resolves, contribution points available
 
 **TASK-2: Create `agile-methodology` stage-definition plugin**
+
 - New plugin providing the `planning-methodology` contribution
 - Move planning-related rules, knowledge from agile-governance
 - Acceptance criteria: plugin exists, fills planning-methodology point, no warnings
 
 **TASK-3: Rename `software` to `software-kanban` stage-definition plugin**
+
 - Rename plugin, update manifest name
 - Keep the `implementation-workflow` contribution (currently there, correctly placed)
 - Remove the planning and review contributions (incorrectly placed there this session)
@@ -75,12 +79,14 @@ The research gives concrete examples:
 - Acceptance criteria: plugin renamed, fills only implementation-workflow
 
 **TASK-4: Create or identify `review-process` stage-definition plugin**
+
 - Determine which plugin provides the review methodology
 - Could be a standalone `code-review` plugin or part of an existing plugin
 - Must fill the `review-process` contribution point
 - Acceptance criteria: review-process point filled
 
 **TASK-5: Add `learning-pipeline` contribution to `core` plugin**
+
 - Core plugin provides lesson creation, recurrence tracking, promotion pipeline
 - This is a core governance capability, not domain-specific
 - Acceptance criteria: core fills learning-pipeline point
@@ -88,6 +94,7 @@ The research gives concrete examples:
 ### Phase 2: Decompose agile-governance
 
 **TASK-6: Split agile-governance manifest**
+
 - Move artifact type schemas to appropriate plugins (core for base types, software-project for delivery types)
 - Move relationship definitions to the plugin that owns the source type
 - Move rules to the plugin that owns the methodology they enforce
@@ -96,6 +103,7 @@ The research gives concrete examples:
 - Acceptance criteria: agile-governance is eliminated or reduced to minimal scope
 
 **TASK-7: Update all cross-references**
+
 - Plugin names in workflow files, knowledge declarations, prompt registry
 - Relationship targets that reference moved artifacts
 - Update manifest `provides` arrays
@@ -104,6 +112,7 @@ The research gives concrete examples:
 ### Phase 3: Verify
 
 **TASK-8: Full reinstall verification**
+
 - Run `orqa plugin install` from scratch
 - Verify all workflows resolve with correct contributions
 - Verify prompt registry includes all knowledge from new plugin layout
@@ -114,6 +123,7 @@ The research gives concrete examples:
 ### Phase 4: Revert incorrect contributions
 
 **TASK-9: Remove incorrect contributions from software plugin**
+
 - Delete `planning.contribution.workflow.yaml` (belongs in agile-methodology)
 - Delete `review.contribution.workflow.yaml` (belongs in review plugin)
 - Keep `implementation.contribution.workflow.yaml` (correct location)

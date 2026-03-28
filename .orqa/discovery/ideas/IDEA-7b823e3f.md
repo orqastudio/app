@@ -21,6 +21,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 OrqaStudio currently requires a Claude Max Pro subscription for development — an expensive dependency that limits who can use the tool. The structured thinking foundation (artifact graph, enforced schemas, skill-driven context injection, file-based governance) creates an interesting opportunity:
@@ -43,7 +44,7 @@ This is fundamentally different from asking a local model to reason about an uns
 
 ### Potential Architecture
 
-```
+```text
 Tier 1: Local model (Ollama/llama.cpp) — routine tasks, artifact CRUD, simple code generation
 Tier 2: Cloud model (Claude/GPT) — complex planning, architecture decisions, multi-step reasoning
 Tier 3: Embedded model (ONNX) — search, classification, embeddings (already implemented via AD-7d3d7521)
@@ -56,7 +57,7 @@ The app could auto-route based on task complexity, or the user could choose.
 What's the minimum viable model for each capability?
 
 | Capability | Complexity | Minimum Model Class |
-|-----------|-----------|-------------------|
+| ----------- | ----------- | ------------------- |
 | Create artifact from template | Low | 7B quantised? |
 | Follow a skill's instructions | Medium | 13B? |
 | Plan a multi-task epic | High | Frontier? |

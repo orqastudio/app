@@ -13,6 +13,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 # System Tray for Daemon Lifecycle
 
 ## Problem
@@ -33,17 +34,20 @@ A lightweight system tray application that:
 ## Implementation Options
 
 ### Option A: Tauri tray app (Rust + minimal UI)
+
 - Small standalone Tauri binary with system tray only (no window)
 - Uses Tauri's built-in tray API
 - Calls `orqa daemon start/stop/status` via CLI
 - Consistent with the app's tech stack
 
 ### Option B: Native tray (Rust only)
+
 - Use `tray-item` or `tao` crate directly
 - No web runtime overhead
 - Lighter than Tauri but less polished
 
 ### Option C: Node tray
+
 - Use `systray2` or `electron-tray` (without full Electron)
 - Consistent with CLI toolchain
 - But adds Node runtime requirement

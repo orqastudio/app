@@ -1,7 +1,9 @@
 ---
 id: DOC-dff91641
 type: doc
+status: active
 title: Plugin-Canonical Architecture Guide
+domain: architecture
 description: "How content is organised in OrqaStudio: plugins are the canonical source of truth, .orqa/ holds installed copies and dev-only artifacts. Covers the content flow, placement decisions, and the docs-knowledge pairing rule."
 category: architecture
 created: 2026-03-24
@@ -27,12 +29,12 @@ Understanding this distinction is essential for knowing where to create, edit, a
 
 When you run `orqa install`, the CLI reads each plugin's `orqa-plugin.json` manifest and syncs content from the plugin's source directories into `.orqa/`:
 
-```
+```text
 plugins/core/knowledge/    -->  .orqa/process/knowledge/
 plugins/core/rules/        -->  .orqa/process/rules/
 plugins/core/agents/       -->  .orqa/process/agents/
 plugins/software-kanban/knowledge/ --> .orqa/process/knowledge/
-plugins/agile-workflow/            --> .orqa/process/ (various)
+plugins/agile-methodology/            --> .orqa/process/ (various)
 ```
 
 Each plugin manifest declares content entries like:
@@ -55,7 +57,7 @@ The plugin directory is the **canonical source**. The `.orqa/` copy is the **ins
 Write content in a plugin when it describes something that is part of the product itself:
 
 | Content Type | Example | Plugin |
-|-------------|---------|--------|
+| ------------- | --------- | -------- |
 | Core framework knowledge | Port allocation, service architecture | `plugins/core/` |
 | Orchestrator and agent definitions | Agent roles, delegation rules | `plugins/core/` |
 | Domain-specific patterns | Svelte component patterns | `plugins/svelte/` |
@@ -70,7 +72,7 @@ Write content in a plugin when it describes something that is part of the produc
 Write content in `.orqa/` when it is specific to this project's development:
 
 | Content Type | Example | Location |
-|-------------|---------|----------|
+| ------------- | --------- | ---------- |
 | Architecture decisions | AD-26d8d45d, AD-859ed163 | `.orqa/process/decisions/` |
 | Lessons learned | IMPL-08d70280 | `.orqa/process/lessons/` |
 | Project-specific rules | Rules unique to this project | `.orqa/process/rules/` |
@@ -87,6 +89,7 @@ Every piece of documented content must exist as **two paired artifacts**:
 2. **Knowledge artifact** — agent-facing. Written to be injected into agent context when working in a related code area. Structured, concise, action-oriented.
 
 This pairing applies at both levels:
+
 - **Plugin level:** `plugins/core/docs/` paired with `plugins/core/knowledge/`
 - **Project level:** `.orqa/documentation/` paired with `.orqa/process/knowledge/`
 
@@ -115,6 +118,7 @@ Edit directly in `.orqa/`. These files are not managed by `orqa install` and won
 ### Drift detection
 
 OrqaStudio uses a three-way diff model to detect when:
+
 - A **local edit** was made to an installed copy (project copy differs from installed baseline)
 - A **plugin update** changed the canonical source (plugin source differs from installed baseline)
 
@@ -123,7 +127,7 @@ Both cases surface during `orqa install` for reconciliation.
 ## Quick Reference
 
 | Question | Answer |
-|----------|--------|
+| ---------- | -------- |
 | Where is the canonical source for core rules? | `plugins/core/rules/` |
 | Where do I find installed rules at runtime? | `.orqa/process/rules/` |
 | Where do I write a new architecture decision? | `.orqa/process/decisions/` |

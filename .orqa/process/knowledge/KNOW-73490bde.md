@@ -1,7 +1,9 @@
 ---
 id: KNOW-73490bde
 type: knowledge
-name: Tauri v2 Patterns
+title: Tauri v2 Patterns
+domain: platform/tauri
+description: "Patterns for structuring Tauri v2 commands, error handling, state management, and domain-driven architecture in the OrqaStudio backend."
 summary: "Tauri v2 Patterns. All frontend-backend communication uses `#[tauri::command]` functions. No HTTP servers, no WebSockets, no shared memory."
 status: active
 plugin: "@orqastudio/plugin-tauri"
@@ -27,7 +29,7 @@ pub fn my_command(state: State<'_, AppState>) -> Result<MyResponse, OrqaError> {
 
 ## Error Handling
 
-Use `thiserror` for error types. All commands return `Result<T, OrqaError>`. No `unwrap()` or `expect()` in production code.
+Use `thiserror` for error types. All commands return `Result\<T, OrqaError\>`. No `unwrap()` or `expect()` in production code.
 
 ```rust
 #[derive(Debug, thiserror::Error)]

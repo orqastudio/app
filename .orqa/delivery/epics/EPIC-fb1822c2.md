@@ -3,7 +3,7 @@ id: "EPIC-fb1822c2"
 type: "epic"
 title: "Connector architecture v2: service extraction, semantic knowledge injection, graph-first enforcement"
 description: "Extract MCP/LSP/ONNX into standalone libraries that run independently in dev mode. Replace keyword-based INTENT_MAP with semantic search for knowledge injection. Enforce artifact graph usage. Enable plugin specialist agents. Add hook telemetry and bash safety."
-status: "review"
+status: review
 created: 2026-03-20T00:00:00.000Z
 updated: 2026-03-20T00:00:00.000Z
 relationships:
@@ -29,7 +29,7 @@ See AD-061 for the architecture decision.
 Extract three services from the Tauri app into standalone Rust crate libraries:
 
 | Library | Current Location | Standalone Binary | App Integration |
-|---------|-----------------|-------------------|-----------------|
+| --------- | ----------------- | ------------------- | ----------------- |
 | `libs/search` | `backend/src-tauri/src/search/` | `cargo run -p orqa-search-server` | Compiled into app as dependency |
 | `libs/mcp-server` | `backend/src-tauri/src/servers/mcp.rs` | `cargo run -p orqa-mcp-server` | Compiled into app as dependency |
 | `libs/lsp-server` | `backend/src-tauri/src/servers/lsp.rs` | `cargo run -p orqa-lsp-server` | Compiled into app as dependency |

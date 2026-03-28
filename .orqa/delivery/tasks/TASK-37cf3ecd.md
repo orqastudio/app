@@ -2,7 +2,7 @@
 id: TASK-37cf3ecd
 type: task
 title: "Create canonical READMEs for all 17 repos"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

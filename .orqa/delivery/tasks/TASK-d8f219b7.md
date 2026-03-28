@@ -3,7 +3,7 @@ id: "TASK-d8f219b7"
 type: "task"
 title: "Classify agents with layer and scope fields"
 description: "Adds layer and scope classification fields to all 16 agent definitions, distinguishing canon agents from project agents and categorising each by domain (software-engineering, governance, or general)."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -16,10 +16,11 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Classification Plan
 
 | Agent | Layer | Scope |
-|-------|-------|-------|
+| ------- | ------- | ------- |
 | orchestrator | canon | general |
 | agent-maintainer | canon | governance |
 | backend-engineer | canon | software-engineering |

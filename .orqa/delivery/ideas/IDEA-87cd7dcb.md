@@ -20,7 +20,8 @@ relationships:
 ## What
 
 `npm install` reports:
-```
+
+```text
 8 vulnerabilities (6 low, 2 moderate)
 ```
 

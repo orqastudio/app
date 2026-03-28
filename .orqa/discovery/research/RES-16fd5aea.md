@@ -36,7 +36,7 @@ The audit investigated overlapping implementations between the Cytoscape SDK (`l
 **Status:** Confirmed duplicate. Rust is authoritative.
 
 | Source | Location | Status |
-|--------|----------|--------|
+| -------- | ---------- | -------- |
 | Rust backend | `backend/src-tauri/src/commands/graph_commands.rs` -> `compute_graph_health` | LIVE — consumed by dashboard |
 | Cytoscape SDK | `libs/graph-visualiser/src/analysis.ts` -> `computeGraphHealth` | DEAD CODE — no app consumers |
 
@@ -49,7 +49,7 @@ The Rust backend provides a superset of metrics (graph_density, pillar_traceabil
 **Status:** Duplicate display — both render in ArtifactViewer side-by-side.
 
 | Source | Component | Data Source |
-|--------|-----------|-------------|
+| -------- | ----------- | ------------- |
 | ChainTrace.svelte | BFS chain trace via Cytoscape `traceChain()` | `GraphVisualiser` (Cytoscape) |
 | TraceabilityPanel | Traceability via Rust `graph_traceability` MCP tool | Rust backend |
 
@@ -92,7 +92,7 @@ The existing `plugins/githooks/hooks/pre-commit.sh` has a `.sh` extension. Git h
 ## Summary
 
 | # | Finding | Severity | Decision Required |
-|---|---------|----------|-------------------|
+| --- | --------- | ---------- | ------------------- |
 | 1 | Graph health duplicate (Cytoscape vs Rust) | Low — dead code | Remove or keep? |
 | 2 | Traceability duplicate display | Medium — confusing UX | Consolidate to one source |
 | 3 | Dead Cytoscape analysis functions | Low — dead code | Remove or build consumers? |

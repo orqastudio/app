@@ -2,6 +2,8 @@
 id: KNOW-5efbe925
 type: knowledge
 title: "Tauri v2 Capabilities & Permissions Reference"
+domain: platform/tauri
+description: "Reference for configuring Tauri v2 capability files to grant permissions to windows, plugins, and filesystem access."
 summary: "Tauri v2 Capabilities & Permissions Reference. Tauri v2 uses a capabilities-based security model. By default, **nothing is allowed** - you must explicitly grant permissions through capability files."
 status: active
 created: 2026-03-20
@@ -19,7 +21,7 @@ Tauri v2 uses a capabilities-based security model. By default, **nothing is allo
 
 ## Capability File Structure
 
-Location: `backend/src-tauri/capabilities/`
+Location: `app/src-tauri/capabilities/`
 
 ```json
 {
@@ -52,7 +54,7 @@ Location: `backend/src-tauri/capabilities/`
 ### Window Permissions
 
 | Permission | Description |
-|------------|-------------|
+| ------------ | ------------- |
 | `core:window:default` | Basic window operations |
 | `core:window:allow-close` | Allow closing windows |
 | `core:window:allow-set-title` | Allow changing window title |
@@ -65,7 +67,7 @@ Location: `backend/src-tauri/capabilities/`
 ### Event Permissions
 
 | Permission | Description |
-|------------|-------------|
+| ------------ | ------------- |
 | `core:event:default` | Basic event listening |
 | `core:event:allow-emit` | Allow emitting events |
 | `core:event:allow-listen` | Allow listening to events |
@@ -89,6 +91,7 @@ Location: `backend/src-tauri/capabilities/`
 ```
 
 **With Scopes:**
+
 ```json
 {
     "permissions": [
@@ -131,6 +134,7 @@ Location: `backend/src-tauri/capabilities/`
 ```
 
 **Scoped Execute:**
+
 ```json
 {
     "permissions": [
@@ -156,6 +160,7 @@ Location: `backend/src-tauri/capabilities/`
 ```
 
 **With URL Scopes:**
+
 ```json
 {
     "permissions": [
@@ -255,9 +260,10 @@ Allow Tauri commands from remote URLs:
 
 ## Custom Permission Files
 
-Create custom permissions in `backend/src-tauri/permissions/`:
+Create custom permissions in `app/src-tauri/permissions/`:
 
 **`custom.toml`:**
+
 ```toml
 [[permission]]
 identifier = "allow-home-documents"
@@ -269,6 +275,7 @@ path = "$HOME/Documents/**"
 ```
 
 Reference in capability:
+
 ```json
 {
     "permissions": ["custom:allow-home-documents"]

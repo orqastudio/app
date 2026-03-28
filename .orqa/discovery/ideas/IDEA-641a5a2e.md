@@ -33,6 +33,7 @@ Every artifact in the graph is a potential discussion point. A decision might ne
 ## The Model
 
 A discussion is a thread of messages attached to an artifact. Each message has:
+
 - **Author** — a human user or the AI
 - **Timestamp**
 - **Content** — markdown
@@ -63,6 +64,7 @@ The hybrid might be: discussions live in SQLite for speed, but are periodically 
 ## Interaction with Status Model
 
 An unresolved objection on an artifact could block its status transition. For example:
+
 - A task can't move from `review` to `completed` if there's an unresolved objection
 - A decision can't move from `exploring` to `active` if there are open questions
 

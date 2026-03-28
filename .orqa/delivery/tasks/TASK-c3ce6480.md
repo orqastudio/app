@@ -32,7 +32,7 @@ Create a guide that explains the documentation placement architecture for OrqaSt
 1. **Three Documentation Locations**
 
    | Location | What Belongs | Examples |
-   |----------|-------------|---------|
+| ---------- | ------------- | --------- |
    | Core-framework plugin (`plugins/core/`) | Production app docs — features, ports, runtime config | Port allocation, service architecture, app configuration |
    | Project (`.orqa/`) | Development docs — architecture decisions, process, governance, coding standards | Coding standards, workflow guide, artifact framework |
    | Plugin-specific (`plugins/<name>/`) | Plugin domain docs | Svelte patterns (in svelte plugin), Tauri patterns (in tauri plugin) |

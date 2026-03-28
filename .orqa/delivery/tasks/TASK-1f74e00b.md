@@ -3,7 +3,7 @@ id: "TASK-1f74e00b"
 type: "task"
 title: "Wire all new checks into pre-commit hook"
 description: "Integrate all new linter, hook, and tooling checks from Phase 2 into the pre-commit hook staged-file paths"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

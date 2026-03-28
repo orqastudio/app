@@ -3,7 +3,7 @@ id: "TASK-7f13e4a6"
 type: "task"
 title: "Migrate stores to SDK: replace artifact/navigation store ad-hoc patterns"
 description: "Replace invoke('read_artifact') + viewerCache and ARTIFACT_PREFIX_MAP + pendingArtifactId in the artifact and navigation stores with Artifact Graph SDK calls."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

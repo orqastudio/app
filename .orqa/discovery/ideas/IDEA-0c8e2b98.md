@@ -19,6 +19,7 @@ relationships:
   - target: "PERSONA-477971bf"
     type: "benefits"
 ---
+
 ## Motivation
 
 Development workflow hits friction from three independent problems that share one root cause: **no single process owns the dev lifecycle**.
@@ -33,7 +34,7 @@ All three are symptoms of not owning the process tree. A dev controller that IS 
 
 A single persistent Node process (`debugger/dev.mjs`) that replaces `cargo tauri dev` entirely during development:
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │              Dev Controller (Node)                   │
 │   Persistent — survives app crashes and restarts     │
@@ -61,7 +62,7 @@ This sidesteps the entire Tauri CLI orphan problem — we don't use `cargo tauri
 ### Capabilities
 
 | Capability | What It Does |
-|-----------|-------------|
+| ----------- | ------------- |
 | **Unified output** | Streams stdout/stderr from all children with colour-coded prefixes: `[vite]`, `[rust]`, `[sidecar]` |
 | **Process ownership** | Controller is the parent — killing it kills everything. No orphans. |
 | **Independent restart** | Restart only Rust (after backend changes) without touching Vite. Restart only sidecar without touching either. |
@@ -92,7 +93,7 @@ This means `make restart` becomes seamless — the app comes back exactly where 
 ### Commands
 
 | Command | Behaviour |
-|---------|-----------|
+| --------- | ----------- |
 | `make dev` | Starts the controller. Controller spawns Vite, compiles Rust, launches app. Output streams to terminal. |
 | `make stop` | Signals the controller to kill all children and exit. |
 | `make restart` | Signals the controller to kill the app + recompile + relaunch. Controller stays alive. Vite stays alive. |

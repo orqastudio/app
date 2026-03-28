@@ -10,6 +10,7 @@ relationships:
   - target: "EPIC-12fba656"
     type: "drives"
 ---
+
 ## Decision
 
 A lesson (IMPL-NNN) MUST NOT be promoted to a rule (RULE-NNN) unless enforcement is attempted at the appropriate layers. A rule without enforcement is just a lesson with a label — it provides no mechanical guarantee.
@@ -19,7 +20,7 @@ A lesson (IMPL-NNN) MUST NOT be promoted to a rule (RULE-NNN) unless enforcement
 Every rule's enforcement should be attempted across three layers, in order of priority:
 
 | Layer | Mechanism | When |
-|-------|-----------|------|
+| ------- | ----------- | ------ |
 | **Artifact graph** | Enforcement entries on the rule, consumed by the enforcement engine | Always — this is the declaration layer |
 | **Rust application** | Process gates, validators, integrity checks in `backend/src-tauri/` | When the app can mechanically verify compliance |
 | **Claude plugin** | Plugin hooks that consume enforcement entries from the artifact graph | When CLI agents need real-time enforcement |
@@ -38,7 +39,7 @@ Before promoting IMPL-NNN to RULE-NNN:
 ### What Counts as Enforcement
 
 | Enforcement Type | Example | Mechanical? |
-|-----------------|---------|-------------|
+| ----------------- | --------- | ------------- |
 | Pre-commit hook | Schema validation blocks commit | Yes |
 | Integrity check | Broken link detection in artifact_graph.rs | Yes |
 | Skill injection | Domain skill injected when writing to a path | Soft — agent awareness |
@@ -50,7 +51,7 @@ Before promoting IMPL-NNN to RULE-NNN:
 
 All enforcement flows through OrqaStudio's enforcement system:
 
-```
+```text
 Rule declares enforcement entries (artifact graph)
   → Plugin reads entries, registers hooks (CLI context)
   → App reads entries, applies process gates (App context)

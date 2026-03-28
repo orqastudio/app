@@ -3,7 +3,7 @@ id: "TASK-e8c74e51"
 type: "task"
 title: "Onboarding strategy definition"
 description: "Defined the approach for first-run project setup and Claude API authentication flow."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Defined the first-run onboarding strategy covering API key configuration, project initialization, and the .orqa directory setup sequence.

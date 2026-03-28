@@ -1,7 +1,9 @@
 ---
 id: DOC-d2c2063a
 type: doc
+status: active
 title: Development Commands
+domain: reference
 category: reference
 description: Reference for all development commands available via make targets.
 created: 2026-03-05
@@ -27,7 +29,7 @@ Install all project dependencies: frontend Node.js packages, sidecar Bun package
 ```bash
 npm install
 cd sidecar && bun install
-cargo fetch --manifest-path backend/src-tauri/Cargo.toml
+cargo fetch --manifest-path app/src-tauri/Cargo.toml
 ```
 
 **When to use:** After cloning the repository for the first time, or after pulling changes that modify `package.json`, `sidecar/package.json`, or `Cargo.toml`.
@@ -41,7 +43,7 @@ Build the Agent SDK sidecar binary.
 **Underlying command:**
 
 ```bash
-bun build sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
+bun build sidecar/index.ts --compile --outfile app/src-tauri/binaries/sidecar
 ```
 
 **When to use:** After cloning the repository for the first time, after pulling changes to the sidecar source, or when the sidecar binary is missing or stale. Requires Bun 1.0+.
@@ -61,6 +63,7 @@ node tools/debug/dev.mjs dev
 ```
 
 **What it does:**
+
 1. Spawns the controller as a detached process
 2. Polls the control file until state is `running` (Vite + Tauri both up)
 3. Exits cleanly — no hanging process
@@ -80,6 +83,7 @@ node tools/debug/dev.mjs start
 ```
 
 **What it does:**
+
 1. Kills any orphaned processes from previous runs
 2. Starts the dashboard server at `http://localhost:10401` and opens it in the browser
 3. Spawns Vite dev server, waits for port 10420
@@ -199,8 +203,8 @@ Run all quality checks in sequence. This is the standard pre-commit gate. All ch
 
 ```bash
 cargo fmt --check
-cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
-cargo test --manifest-path backend/src-tauri/Cargo.toml
+cargo clippy --manifest-path app/src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo test --manifest-path app/src-tauri/Cargo.toml
 npm run check
 npm run lint
 npm run test
@@ -217,7 +221,7 @@ Auto-format all Rust source files with `rustfmt`.
 **Underlying command:**
 
 ```bash
-cargo fmt --manifest-path backend/src-tauri/Cargo.toml
+cargo fmt --manifest-path app/src-tauri/Cargo.toml
 ```
 
 **When to use:** Before committing Rust changes. Run once to apply formatting, then `make format-check` to verify.
@@ -245,7 +249,7 @@ Run all linters: backend (clippy) and frontend (ESLint).
 **Underlying commands:**
 
 ```bash
-cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo clippy --manifest-path app/src-tauri/Cargo.toml --all-targets -- -D warnings
 npm run lint
 ```
 
@@ -260,7 +264,7 @@ Run the Rust linter (clippy) with all warnings promoted to errors.
 **Underlying command:**
 
 ```bash
-cargo clippy --manifest-path backend/src-tauri/Cargo.toml --all-targets -- -D warnings
+cargo clippy --manifest-path app/src-tauri/Cargo.toml --all-targets -- -D warnings
 ```
 
 **When to use:** After any Rust change. Zero-warning policy is enforced — this command must exit cleanly.
@@ -304,7 +308,7 @@ Run all tests: Rust backend tests and frontend Vitest tests.
 **Underlying commands:**
 
 ```bash
-cargo test --manifest-path backend/src-tauri/Cargo.toml
+cargo test --manifest-path app/src-tauri/Cargo.toml
 npm run test
 ```
 
@@ -319,7 +323,7 @@ Run only the Rust backend tests.
 **Underlying command:**
 
 ```bash
-cargo test --manifest-path backend/src-tauri/Cargo.toml
+cargo test --manifest-path app/src-tauri/Cargo.toml
 ```
 
 **When to use:** When iterating on backend changes and you want fast feedback without running frontend tests.
@@ -347,7 +351,7 @@ Run Rust library tests with LLVM source-based code coverage via `cargo-llvm-cov`
 **Underlying command:**
 
 ```bash
-cargo llvm-cov --manifest-path backend/src-tauri/Cargo.toml --lib
+cargo llvm-cov --manifest-path app/src-tauri/Cargo.toml --lib
 ```
 
 **When to use:** To check current Rust backend test coverage. Target is 80% per module. Requires `cargo-llvm-cov` (`cargo install cargo-llvm-cov`) and the `llvm-tools-preview` rustup component (`rustup component add llvm-tools-preview`). A minimal `ui/build/index.html` must exist for Tauri's `generate_context!()` macro to compile.
@@ -408,7 +412,7 @@ Build a production-ready distributable application for the current platform.
 cargo tauri build
 ```
 
-**When to use:** When preparing a release artifact. Produces a platform-appropriate installer or executable in `backend/src-tauri/target/release/`.
+**When to use:** When preparing a release artifact. Produces a platform-appropriate installer or executable in `app/src-tauri/target/release/`.
 
 ---
 
@@ -433,7 +437,7 @@ Compile the Agent SDK sidecar TypeScript into a standalone binary.
 **Underlying command:**
 
 ```bash
-bun build sidecar/index.ts --compile --outfile backend/src-tauri/binaries/sidecar
+bun build sidecar/index.ts --compile --outfile app/src-tauri/binaries/sidecar
 ```
 
 **When to use:** Before `make build` if sidecar source has changed, or to update the sidecar binary independently of a full release build.
@@ -538,12 +542,12 @@ Print a summary of all available `make` targets with one-line descriptions.
 **Why:** Makefile targets encode the correct flags, manifest paths, and command sequences for this project. Raw commands omit project-specific flags (e.g., `--manifest-path`, `-D warnings`) and silently produce incomplete results.
 
 | Do this | Not this |
-|---------|----------|
+| --------- | ---------- |
 | `make check` | `cargo clippy` or `npm run lint` separately |
 | `make test` | `cargo test` alone |
 | `make format` | `rustfmt src/main.rs` |
 | `make build` | `cargo build --release` |
-| `make test-rust` | `cargo test --manifest-path backend/src-tauri/Cargo.toml` |
+| `make test-rust` | `cargo test --manifest-path app/src-tauri/Cargo.toml` |
 
 The only exception is when a target does not yet exist for a specific operation. In that case, use the raw command and note in the task summary that a Makefile target should be added.
 

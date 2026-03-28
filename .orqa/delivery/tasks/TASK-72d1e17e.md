@@ -3,7 +3,7 @@ id: TASK-72d1e17e
 type: task
 title: "Create @orqastudio/test-config package — shared vitest + testing utilities"
 description: "Extract shared test configuration (vitest config, test utilities, fixture helpers) into a standalone package. All orqastudio repos and plugins use this for consistent testing with full CI/CD integration."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 3
@@ -29,17 +29,20 @@ relationships:
 ## Scope
 
 ### Shared vitest config
+
 - Base `vitest.config.ts` with coverage thresholds, reporter settings
 - Consistent test file patterns (`**/*.test.ts`)
 - Coverage targets (80%+ per module)
 
 ### Test utilities
+
 - `createTestGraph(nodes)` — build an ArtifactGraph from minimal node descriptions
 - `createTestNode(overrides)` — build an ArtifactNode with sensible defaults
 - `mockInvoke(commands)` — mock Tauri invoke for store testing
 - Fixture builders for common artifact types (task, epic, idea, rule, etc.)
 
 ### CI/CD
+
 - GitHub Actions workflow template that repos can reference
 - Test + lint + build on every PR
 - Coverage report upload

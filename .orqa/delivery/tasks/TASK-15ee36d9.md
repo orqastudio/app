@@ -3,7 +3,7 @@ id: TASK-15ee36d9
 type: task
 title: "Switch orqa-studio from file: to published package versions"
 description: "Update the main app to consume published @orqastudio packages from GitHub Packages instead of file: references to sibling directories."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 5
@@ -32,12 +32,14 @@ relationships:
 ## Scope
 
 Replace in ui/package.json:
+
 - `"@orqastudio/types": "file:../../orqa-types"` → `"@orqastudio/types": "^0.1.0"`
 - `"@orqastudio/sdk": "file:../../orqa-sdk"` → `"@orqastudio/sdk": "^0.1.0"`
 - Same for eslint-config, test-config, integrity-validator
 
 Add ui/.npmrc:
-```
+
+```text
 @orqastudio:registry=https://npm.pkg.github.com
 ```
 

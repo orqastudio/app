@@ -3,7 +3,7 @@ id: "TASK-f869ce62"
 type: "task"
 title: "Extract remaining command domain logic"
 description: "Applies the thin-handler pattern established in TASK-492dc3a0 to the setup, governance, and artifact command files, moving all business logic into dedicated domain and repository modules."
-status: "completed"
+status: archived
 created: "2026-03-07"
 updated: "2026-03-09"
 assignee: "AGENT-e5dd38e4"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Apply the domain service extraction pattern (established in [TASK-492dc3a0](TASK-492dc3a0)) to the

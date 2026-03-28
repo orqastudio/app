@@ -2,6 +2,7 @@
 id: KNOW-7fadba3f
 type: knowledge
 title: Architectural Evaluation
+domain: methodology/planning
 summary: "Architectural compliance evaluation methodology. This skill teaches the *evaluation process and checklist structure* — the specific architectural decisions, layer names, and technology constraints come from the project's architecture skills and documentation."
 description: |
   Architectural compliance evaluation methodology: boundary verification,
@@ -19,7 +20,6 @@ relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
 ---
-
 
 Architectural compliance evaluation methodology. This skill teaches the *evaluation process and checklist structure* — the specific architectural decisions, layer names, and technology constraints come from the project's architecture skills and documentation.
 
@@ -44,7 +44,7 @@ Architectural compliance evaluation methodology. This skill teaches the *evaluat
 
 For any feature, map the complete data flow:
 
-```
+```text
 User Action
   → UI Component (event handler)
     → State Container (API call)
@@ -56,6 +56,7 @@ User Action
 ```
 
 Verify:
+
 - Data transforms only happen at appropriate layers
 - No layer skips
 - Error handling exists at every boundary

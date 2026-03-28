@@ -3,7 +3,7 @@ id: "TASK-d9b92b5a"
 type: "task"
 title: "Implement plan-before-build + structure-before-code gates"
 description: "Process gates that fire when code is written without epic/task context or\nwithout a plan being referenced.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:
@@ -21,9 +21,13 @@ relationships:
 ## What
 
 Two process gates:
+
 - **plan-before-build**: Fires on code write without any epic/task artifacts
+
   being read in the session. Injects planning prompt.
+
 - **structure-before-code**: Fires on code write without `.orqa/delivery/` files
+
   being read. Injects structure prompt.
 
 ## How

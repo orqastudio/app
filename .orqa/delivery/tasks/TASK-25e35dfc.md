@@ -3,7 +3,7 @@ id: "TASK-25e35dfc"
 type: "task"
 title: "Add artifacts config to project.json and Rust types"
 description: "Define the artifacts config schema in project.json and add corresponding Rust types. This is the foundation — the scanner and frontend will read from this config."
-status: "completed"
+status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -23,13 +23,14 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 1. Add `artifacts` array to `.orqa/project.json` with all current groups/types
 2. Add Rust types to `project_settings.rs`:
    - `ArtifactTypeConfig { key, label, icon: Option, path }`
    - `ArtifactEntry` untagged enum: `Group { key, label, icon, children }` | `Type(ArtifactTypeConfig)`
-3. Add `artifacts: Vec<ArtifactEntry>` to the project config struct
+3. Add `artifacts: Vec\<ArtifactEntry\>` to the project config struct
 
 ## Config Values
 

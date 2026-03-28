@@ -17,6 +17,7 @@ relationships:
 ### Current state
 
 OrqaStudio already has working test infrastructure:
+
 - **vitest** configured with jsdom, v8 coverage (no thresholds enforced yet)
 - **@testing-library/svelte** 5.3.1 for component tests
 - **Tauri mock** (`mockInvoke`, `MockChannel`) in `ui/src/lib/stores/__tests__/setup.ts`
@@ -26,7 +27,7 @@ OrqaStudio already has working test infrastructure:
 ### Four testing domains
 
 | Domain | Dependencies | Example |
-|--------|-------------|---------|
+| -------- | ------------- | --------- |
 | Pure TypeScript | None — vitest only | integrity-validator checks, type guards |
 | Svelte 5 rune stores | SvelteMap import | SDK stores ($state, $derived) |
 | Tauri IPC stores | Mock invoke + MockChannel | Any store calling invoke() |
@@ -35,6 +36,7 @@ OrqaStudio already has working test infrastructure:
 ### Critical insight: $state is testable without Svelte compilation
 
 Store classes use `$state` and `$derived` but tests access fields directly:
+
 ```typescript
 conversationStore.clear();
 expect(conversationStore.messages).toEqual([]);
@@ -45,7 +47,7 @@ No special rune test harness needed — vitest with the Svelte plugin handles co
 
 ## Proposed package structure
 
-```
+```text
 @orqastudio/test-config/
 ├── src/
 │   ├── config/
@@ -143,7 +145,7 @@ it("renders title and description", () => {
 The test framework itself must be tested because it's foundation code:
 
 | What to test | Why |
-|-------------|-----|
+| ------------- | ----- |
 | `mockInvoke` factory | Verify it correctly captures calls, supports mockResolvedValueOnce, resets cleanly |
 | `MockChannel.emit()` | Verify callback is called, verify typing, verify error on no listener |
 | `createTestNode()` defaults | Verify all required fields have sensible defaults, verify overrides work |

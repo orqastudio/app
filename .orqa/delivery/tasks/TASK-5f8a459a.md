@@ -3,7 +3,7 @@ id: "TASK-5f8a459a"
 type: "task"
 title: "Define design system"
 description: "Established the visual design system including typography, colour palette, spacing scale, and iconography conventions."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Established the visual design system covering typography, colour palette, spacing scale, and iconography conventions for OrqaStudio.

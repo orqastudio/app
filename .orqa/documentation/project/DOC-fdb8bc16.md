@@ -1,7 +1,9 @@
 ---
 id: DOC-fdb8bc16
 type: doc
+status: active
 title: "How To: Write Frontend Tests in OrqaStudio"
+domain: guides
 category: how-to
 description: Practical guide for writing Vitest tests for Svelte 5 stores and components in OrqaStudio.
 created: 2026-03-14
@@ -22,7 +24,7 @@ aliases and `@orqastudio/types` imports all work inside tests.
 
 Test files sit alongside the code they test, named `*.test.ts`:
 
-```
+```text
 ui/src/lib/
 ├── stores/
 │   ├── session.svelte.ts

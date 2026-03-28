@@ -27,6 +27,7 @@ Research into how OrqaStudio onboards new projects — scanning existing codebas
 **Question:** When a user opens a new project in OrqaStudio, how does it understand the codebase structure?
 
 **What needs to be detected:**
+
 - Languages and frameworks in use
 - Project structure (monorepo, single service, library)
 - Test setup (test runner, coverage tool, test directory structure)
@@ -44,7 +45,7 @@ The presence of specific files at the project root is an extraordinarily reliabl
 **Key manifest detections:**
 
 | File | Language | Package Manager | Framework Hints |
-|------|----------|----------------|-----------------|
+| ------ | ---------- | ---------------- | ----------------- |
 | `Cargo.toml` | Rust | cargo | Check `[dependencies]` for `actix-web`, `axum`, `tauri`, `rocket` |
 | `Cargo.toml` + `[workspace]` | Rust | cargo workspace | Monorepo structure |
 | `package.json` | JavaScript/TypeScript | npm/yarn/pnpm | Check `dependencies` for `react`, `svelte`, `vue`, `next` |
@@ -61,7 +62,7 @@ The presence of specific files at the project root is an extraordinarily reliabl
 **Project structure detection:**
 
 | Signal | Meaning |
-|--------|---------|
+| -------- | --------- |
 | `Cargo.toml` with `[workspace]` | Rust workspace (monorepo) |
 | `package.json` with `"workspaces"` | JS/TS monorepo |
 | `pnpm-workspace.yaml` | pnpm monorepo |
@@ -71,7 +72,7 @@ The presence of specific files at the project root is an extraordinarily reliabl
 **Test setup detection:**
 
 | File/Dir | Test Runner |
-|----------|------------|
+| ---------- | ------------ |
 | `vitest.config.*` | Vitest |
 | `jest.config.*` | Jest |
 | `playwright.config.*` | Playwright |
@@ -80,7 +81,7 @@ The presence of specific files at the project root is an extraordinarily reliabl
 **CI/CD detection:**
 
 | File/Dir | CI System |
-|----------|-----------|
+| ---------- | ----------- |
 | `.github/workflows/*.yml` | GitHub Actions |
 | `.gitlab-ci.yml` | GitLab CI |
 | `Jenkinsfile` | Jenkins |
@@ -89,7 +90,7 @@ The presence of specific files at the project root is an extraordinarily reliabl
 **Design system / branding detection:**
 
 | File | What to Extract |
-|------|----------------|
+| ------ | ---------------- |
 | `tailwind.config.*` | `theme.extend.colors`, `theme.extend.fontFamily`, custom spacing, dark mode strategy |
 | `src/styles/tokens.*` or `src/theme.*` | CSS custom properties (`--color-*`, `--font-*`), design token definitions |
 | `:root` in any `.css` file | CSS custom properties used as design tokens |
@@ -103,7 +104,7 @@ OrqaStudio uses extracted design tokens to theme its own UI when a project is op
 **Governance artifact detection:**
 
 | File/Dir | Meaning |
-|----------|---------|
+| ---------- | --------- |
 | `.claude/` | Claude Code governance (OrqaStudio-compatible) |
 | `.claude/CLAUDE.md` | Main orchestrator instructions |
 | `.orqa/agents/` | Agent definitions |
@@ -128,6 +129,7 @@ Triggered automatically after Tier 1. Results update the UI asynchronously (~1-2
 Send file tree + manifests + README to Claude for deep analysis. Triggered by user action ("Analyze this project") or as part of the onboarding wizard.
 
 **What Claude adds over heuristics:**
+
 - Understands what the project does (not just what language it uses)
 - Detects architectural patterns (hexagonal, event sourcing, CQRS)
 - Identifies coding conventions and style
@@ -139,7 +141,7 @@ Send file tree + manifests + README to Claude for deep analysis. Triggered by us
 **What other tools do:**
 
 | Tool | Approach |
-|------|----------|
+| ------ | ---------- |
 | VS Code | Extension-based per-language detection |
 | IntelliJ | Scans for build files, deep framework support |
 | Cursor | Full codebase embedding index via Merkle trees |
@@ -162,7 +164,8 @@ Send file tree + manifests + README to Claude for deep analysis. Triggered by us
 Parse `.claude/` files as-is. YAML frontmatter + markdown body for agents/skills. Pure markdown for rules. JSON for settings.
 
 **Parsing in Rust:**
-- [`yaml-front-matter`](https://crates.io/crates/yaml-front-matter) — Splits `---` delimited frontmatter, deserializes into a serde struct. Returns `Document<T>` with `.metadata` and `.content`.
+
+- [`yaml-front-matter`](https://crates.io/crates/yaml-front-matter) — Splits `---` delimited frontmatter, deserializes into a serde struct. Returns `Document\<T\>` with `.metadata` and `.content`.
 - [`gray_matter`](https://crates.io/crates/gray_matter) — Rust port of JavaScript `gray-matter`. Supports YAML, TOML, JSON frontmatter.
 - [`comrak`](https://github.com/kivikakk/comrak) — Full CommonMark + GFM parser (used by crates.io, docs.rs, GitLab). Has `front_matter_delimiter` option. Full AST for extracting structured sections.
 
@@ -179,7 +182,7 @@ JSON or YAML schema for each artifact type.
 
 Preserves full compatibility while giving OrqaStudio structured data.
 
-```
+```text
 .claude/                    ← Source of truth (git-committed, CLI-compatible)
   agents/backend-engineer.md
   rules/coding-standards.md
@@ -198,7 +201,7 @@ orqa.db (SQLite)           ← Derived/enriched data (gitignored)
 **OrqaStudio-only metadata in SQLite (not in files):**
 
 | Column | Purpose |
-|--------|---------|
+| -------- | --------- |
 | `parsed_at` | When OrqaStudio last parsed the file |
 | `file_hash` | SHA-256 for change detection |
 | `extracted_tools` | Tools list from frontmatter |
@@ -213,7 +216,7 @@ Add comment markers for structured sections. **Verdict:** Not recommended. Fragi
 **What other tools use:**
 
 | Tool | Format | Why |
-|------|--------|-----|
+| ------ | -------- | ----- |
 | Claude Code CLI | Markdown + YAML frontmatter + JSON | Content IS instructions for an LLM — markdown is natural |
 | Cursor | `.cursor/rules/` (markdown) | Same pattern as Claude Code |
 | Kubernetes | YAML + JSON Schema | Declarative infrastructure config (different domain) |
@@ -241,6 +244,7 @@ OrqaStudio's target user is a PM/Tech Lead, not a developer in a code editor. Th
 **Step 0: API Key Setup (Gate)**
 
 Single, focused screen. No sidebar, no panels, no navigation. Just:
+
 - "Connect to Claude" headline
 - API key input field
 - "Verify & Continue" button
@@ -259,7 +263,7 @@ No empty dashboard. No 15 empty panels. Just an action.
 
 When the user opens a directory, Tier 1 + Tier 2 heuristic scan runs automatically:
 
-```
+```text
 Scanning project...
   Found: Rust (Cargo.toml), TypeScript (package.json)
   Structure: Tauri desktop app
@@ -278,7 +282,7 @@ User lands on the conversation view. Pre-populated system message summarizes the
 Features reveal themselves through conversation:
 
 | User Action | Feature Revealed |
-|-------------|-----------------|
+| ------------- | ----------------- |
 | "Show me my agents" | Agent browser panel slides in |
 | "Create a new rule" | Rule editor opens inline |
 | "How compliant is the codebase?" | Scanner dashboard appears |
@@ -342,7 +346,7 @@ Use the technical terms (agent, rule, skill, hook) for `.claude/` compatibility,
 **What other tools do well:**
 
 | Tool | Pattern | Lesson for OrqaStudio |
-|------|---------|-----------------|
+| ------ | --------- | ----------------- |
 | Linear | Minimal setup, then immediately into the issue board | Speed to value |
 | Notion | Empty workspace with a single page. Templates available but not pushed. | Blank canvas approach |
 | Obsidian | "Start here" note. Plugins discoverable but not required. | Explain-by-doing |
@@ -355,7 +359,7 @@ Use the technical terms (agent, rule, skill, hook) for `.claude/` compatibility,
 ## Summary
 
 | Question | Recommendation | Key Rationale |
-|----------|---------------|---------------|
+| ---------- | --------------- | --------------- |
 | Q1: Codebase Scanning | Three-tier hybrid: manifest heuristics (instant) + hyperpolyglot (fast) + Claude (on-demand) | Heuristics cover 90%+ in <100ms. Claude adds depth when needed. |
 | Q2: Governance Format | Option C: `.claude/` files on disk + SQLite metadata | Full CLI compatibility. Files authoritative. DB is derived cache. |
 | Q3: Progressive Disclosure | Conversation-first with organic feature introduction | PM persona needs value in <1 minute. No wizard. Features appear as relevant. |
@@ -363,7 +367,7 @@ Use the technical terms (agent, rule, skill, hook) for `.claude/` compatibility,
 ### Key Crates
 
 | Crate | Purpose |
-|-------|---------|
+| ------- | --------- |
 | `hyperpolyglot` | Language detection (GitHub Linguist port, pure Rust) |
 | `yaml-front-matter` | YAML frontmatter parsing |
 | `comrak` | Markdown parsing + rendering (CommonMark + GFM) |

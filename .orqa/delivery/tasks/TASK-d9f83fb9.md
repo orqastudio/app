@@ -3,7 +3,7 @@ id: "TASK-d9f83fb9"
 type: "task"
 title: "Pipeline stage visualization widget"
 description: "Add a PipelineWidget to the dashboard showing Knowledge Maturity Pipeline stages (Observation → Understanding → Principle → Practice → Enforcement → Verification) with artifact counts, flow connections, and bottleneck highlighting."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

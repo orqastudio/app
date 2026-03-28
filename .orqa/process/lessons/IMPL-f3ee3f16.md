@@ -11,6 +11,7 @@ maturity: observation
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 Three layers of capability configuration:
@@ -22,6 +23,7 @@ Three layers of capability configuration:
 Resolution order: project config > plugin defaults > app baseline.
 
 This means:
+
 - A new provider plugin can work immediately by providing its own defaults
 - The app doesn't need to know about every provider's capabilities upfront
 - Users retain control over routing decisions per-project
@@ -30,6 +32,7 @@ This means:
 ## Fix
 
 The capability system needs:
+
 1. App baseline capabilities defined somewhere (app-native MCP server manifest)
 2. Plugin default capabilities in plugin config (`default-capabilities` section)
 3. Project-level overrides in `project.json` (`capability-routing` section or similar)

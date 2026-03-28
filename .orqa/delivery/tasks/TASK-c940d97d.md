@@ -2,7 +2,7 @@
 id: TASK-c940d97d
 type: task
 title: "Update github-org profile README"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

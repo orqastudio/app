@@ -2,6 +2,7 @@
 id: KNOW-bf70068c
 type: knowledge
 title: "Thinking Mode: Documentation"
+domain: methodology/planning
 thinking-mode: documentation
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 summary: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."

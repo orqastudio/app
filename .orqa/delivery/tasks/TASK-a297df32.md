@@ -3,7 +3,7 @@ id: "TASK-a297df32"
 type: "task"
 title: "Assign scope to RULE-09a238ab, RULE-e1f1afc1, RULE-42d17086"
 description: "These rules have empty scope arrays. Assign agent IDs for enforcement."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

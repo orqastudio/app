@@ -3,7 +3,7 @@ id: "TASK-c79077be"
 type: "task"
 title: "Audit product docs for vision alignment"
 description: "Audit all product documentation pages against the updated vision. Fix references to .claude/ as source of truth, Claude-specific identity language, and missing three-layer architecture concepts."
-status: "completed"
+status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 assignee: "AGENT-bbad3d30"
@@ -20,6 +20,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Read each product doc listed in scope. For each one, check the 5 audit criteria

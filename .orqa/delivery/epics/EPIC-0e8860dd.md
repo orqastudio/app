@@ -3,7 +3,7 @@ id: "EPIC-0e8860dd"
 type: "epic"
 title: "Pillars as First-Class Artifacts"
 description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-74a2cb7a."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-09"
 updated: "2026-03-09"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 Product pillars ("Clarity Through Structure" and "Learning Through Reflection")
@@ -53,6 +54,7 @@ them as structured context into every AI conversation.
 ### 4. Rule Genericisation
 
 Update rules that hardcode pillar names to reference pillar artifacts instead:
+
 - `vision-alignment.md` — "serve at least one active pillar" (generic)
 - `pillar-alignment-docs.md` — read pillar titles from artifacts, not hardcoded
 - `governance.md` — reference pillar artifacts instead of inline definitions
@@ -65,18 +67,23 @@ in `artifact-framework.md`. Update scoring to reference pillar IDs.
 ## Constraints
 
 - **Orchestrator-only work** — This affects rules and governance artifacts directly.
+
   No delegation needed; all changes are governance/docs.
+
 - **No code changes required for MVP** — The pillar artifacts, rule updates, and
+
   prompt injection text can all be done without Rust/Svelte changes. The system
   prompt is already assembled from governance files. Future: Rust-side pillar
   reading for config-driven injection.
+
 - **Backward compatible** — Existing pillar alignment sections in docs remain
+
   valid; they just reference artifact IDs instead of hardcoded strings.
 
 ## Tasks
 
 | Task | Title | Depends On |
-|------|-------|------------|
+| ------ | ------- | ------------ |
 | [TASK-bf8bf526](TASK-bf8bf526) | Create pillar artifact schema and initial pillars | — |
 | [TASK-b34c735a](TASK-b34c735a) | Register pillars in artifact config | [TASK-bf8bf526](TASK-bf8bf526) |
 | [TASK-3b07cafa](TASK-3b07cafa) | Update rules to reference pillar artifacts generically | [TASK-bf8bf526](TASK-bf8bf526) |
@@ -86,7 +93,7 @@ in `artifact-framework.md`. Update scoring to reference pillar IDs.
 
 ## Dependency Chain
 
-```
+```text
 TASK-bf8bf526 (create pillar artifacts)
   ├── TASK-b34c735a (register in config)
   │     └── TASK-86596675 (system prompt injection)

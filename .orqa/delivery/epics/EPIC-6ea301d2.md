@@ -3,7 +3,7 @@ id: "EPIC-6ea301d2"
 type: "epic"
 title: "Automated status transitions — the system enforces its own lifecycle"
 description: "Implement app-level automation that detects conditions requiring status changes and applies them. Validates all artifacts have valid statuses. The status process documented in DOC-61ecc85e and KNOW-51de8fb7 is enforced mechanically, not just by convention."
-status: "active"
+status: active
 priority: "P1"
 scoring:
   impact: 5
@@ -31,6 +31,7 @@ The unified status system (AD-487e045a) defines 11 statuses and DOC-61ecc85e doc
 ### Status Validation Rule
 
 A Rust-side validation that runs on every artifact scan:
+
 - Check every artifact's `status` field against the valid enum from project.json
 - Invalid statuses flagged as integrity errors
 - Surfaced in the IntegrityWidget alongside other graph health checks
@@ -40,7 +41,7 @@ A Rust-side validation that runs on every artifact scan:
 A Rust service that detects conditions and updates artifact statuses:
 
 | Condition | Transition | Rationale |
-|---|---|---|
+| --- | --- | --- |
 | All tasks in an epic are `completed` | Epic → `review` | All work done, needs verification |
 | All P1 epics in a milestone are `completed` | Milestone → `review` | Gate question needs answering |
 | A task's `depends-on` items are all `completed` | Task stays `ready` (no change) | Dependencies met but don't auto-start |

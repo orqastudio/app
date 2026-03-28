@@ -3,7 +3,7 @@ id: "TASK-c9d9baab"
 type: "task"
 title: "Real-time schema validation diagnostics"
 description: "Wire plugin schema validation into the LSP diagnostic pipeline so that frontmatter violations produce real-time editor squiggles with precise line/column positions."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 relationships:

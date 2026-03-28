@@ -3,7 +3,7 @@ id: "EPIC-5a0624dc"
 type: "epic"
 title: "Tech Stack Research"
 description: "Pre-build investigation that determined the technology choices underpinning the entire OrqaStudio platform."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 All subsequent phases depend on these decisions. No architecture decisions, product definition, or scaffold can begin without knowing the tech stack.

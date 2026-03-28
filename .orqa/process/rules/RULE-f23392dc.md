@@ -4,18 +4,27 @@ type: rule
 title: User-Invocable Knowledge Semantics
 description: The user-invocable field in knowledge frontmatter controls whether a knowledge artifact can be triggered directly by users as a slash command or from the UI.
 status: active
+enforcement_type: mechanical
 created: 2026-03-11
 updated: 2026-03-11
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every knowledge artifact must have a user-invocable field in its YAML frontmatter; missing field is a schema validation failure"
+
   - mechanism: json-schema
+
     description: "Schema validation checks for user-invocable field presence in knowledge artifact frontmatter"
+
   - mechanism: tool
+
     command: "orqa enforce"
     description: "Validates user-invocable field presence; missing field blocks commits"
 relationships:
+
   - target: AD-c1e5a39e
+
     type: enforces
 ---
 Every knowledge artifact MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the knowledge artifact surfaces to users.
@@ -23,7 +32,7 @@ Every knowledge artifact MUST have a `user-invocable` field in its YAML frontmat
 ## Field Values
 
 | Value | Meaning | System Behavior |
-|-------|---------|-----------------|
+| --- | --- | --- |
 | `true` | Users can trigger this knowledge directly | Appears in CLI slash command list, app knowledge picker, and knowledge browser |
 | `false` | Only loaded into agent context by the orchestrator | Hidden from user-facing lists; only agents use it |
 

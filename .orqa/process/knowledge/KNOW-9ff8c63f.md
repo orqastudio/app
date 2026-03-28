@@ -2,6 +2,7 @@
 id: KNOW-9ff8c63f
 type: knowledge
 title: Research Methodology
+domain: methodology/planning
 summary: "When agents use WebSearch and WebFetch to investigate external sources, they must verify what they find to an acceptable level of certainty before incorporating it into artifacts. This skill defines what 'acceptable certainty' means and how to achieve it."
 description: |
   Research best practices for agents investigating external sources: source
@@ -42,7 +43,7 @@ achieve it.
 ### Source Credibility Tiers
 
 | Tier | Source Type | Verification Required | Confidence |
-|------|-----------|----------------------|------------|
+| ------ | ----------- | ---------------------- | ------------ |
 | **T1 — Authoritative** | Official documentation, RFCs, language/framework specs, vendor docs | Verify version matches project stack | High |
 | **T2 — Reliable** | Well-maintained GitHub repos (>100 stars), established blogs (official team blogs), conference talks by core contributors | Cross-reference with T1 source | Medium-High |
 | **T3 — Community** | Stack Overflow (accepted + upvoted), GitHub issues/discussions, dev.to/Medium articles, tutorials | Cross-reference with T1 or T2, check date | Medium |
@@ -51,12 +52,19 @@ achieve it.
 ### Cross-Referencing Rules
 
 - **Single-source claims**: If only one source says something, note it explicitly:
+
   "Single source — not independently verified"
+
 - **Contradicting sources**: Document both positions and the contradiction. Do not
+
   silently pick one.
+
 - **Version-specific information**: Always check which version the source applies to.
+
   An answer for version N may be wrong for version N+1.
+
 - **Date-sensitive information**: Library APIs change. Check the publication date.
+
   Anything older than 12 months needs verification against current docs.
 
 ## Structured Research Documentation
@@ -82,7 +90,7 @@ sources:
 Every finding or recommendation should state its confidence:
 
 | Level | Meaning | Basis |
-|-------|---------|-------|
+| ------- | --------- | ------- |
 | **Confirmed** | Verified against T1 source + tested or independently corroborated | Multiple sources agree, version-matched |
 | **Likely** | Verified against T1/T2 source but not independently tested | Single authoritative source, no contradictions |
 | **Uncertain** | Based on T3/T4 sources or extrapolated from related information | Community consensus but no official confirmation |
@@ -94,7 +102,9 @@ Every finding or recommendation should state its confidence:
 - **Never omit the source** when making a factual claim about an external system
 - **Never assume version compatibility** — check explicitly
 - **Never cite a single Stack Overflow answer as authoritative** — it's a starting
+
   point, not a conclusion
+
 - **Never ignore contradicting evidence** — document it, even if inconvenient
 - **Never claim "best practice" without attribution** — whose best practice? Says who?
 
@@ -103,7 +113,7 @@ Every finding or recommendation should state its confidence:
 ### Effective Queries
 
 | Intent | Query Pattern | Example |
-|--------|-------------|---------|
+| -------- | ------------- | --------- |
 | Official docs | `site:[docs-domain] [library] [function]` | `site:docs.python.org asyncio gather` |
 | GitHub issues | `site:github.com [repo] [keyword]` | `site:github.com org/project connection-pool` |
 | Version-specific | `[library] v[version] [topic]` | `react 19 server components` |

@@ -3,7 +3,7 @@ id: "TASK-8db2e1c3"
 type: "task"
 title: "Governance Vision Alignment Audit"
 description: "Audit governance rules (.claude/rules/) and agent definitions (.claude/agents/) for references that contradict the updated vision. These are the enforcement layer — they must accurately reflect .orqa/ as source of truth."
-status: "completed"
+status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The rules and agent definitions currently reference `.claude/` paths as if

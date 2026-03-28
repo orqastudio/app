@@ -42,7 +42,7 @@ The additional value: piping log output to the dev controller SSE stream means l
 **Level model:**
 
 | Level | When to use | Default visibility |
-|-------|------------|-------------------|
+| ------- | ------------ | ------------------- |
 | `error` | Something failed, user-impacting | Always shown |
 | `warn` | Unexpected but recoverable | Shown in dev |
 | `info` | Key lifecycle events, state changes | Shown in dev |

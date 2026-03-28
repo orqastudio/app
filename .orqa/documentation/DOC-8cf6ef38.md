@@ -1,7 +1,9 @@
 ---
 id: DOC-8cf6ef38
 type: doc
+status: active
 title: Dev Environment Setup Guide
+domain: guides
 description: "How to set up the OrqaStudio dev environment — submodules, npm linking, and the multi-repo workflow."
 category: onboarding
 created: 2026-03-18
@@ -34,7 +36,7 @@ After `link-all.sh` completes, the `orqa` command is globally available via `npm
 
 ## Repository Structure
 
-```
+```text
 orqastudio-dev/
 ├── app/                  # Tauri v2 desktop app (Rust + Svelte 5 + SQLite)
 ├── libs/
@@ -57,12 +59,14 @@ orqastudio-dev/
 Libraries are wired into the app via `npm link`. This creates symlinks so the app uses local source instead of published packages.
 
 The dependency order matters:
+
 1. `libs/types` — no dependencies, build first
 2. `libs/sdk` — depends on types
 3. `libs/cli` — depends on types
 4. `app/ui` — depends on types, sdk, and other libs
 
 After changing a library:
+
 ```bash
 cd libs/types && npx tsc          # Rebuild the lib
 cd ../../app/ui && npm link @orqastudio/types  # Re-link into app

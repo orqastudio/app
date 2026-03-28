@@ -1,7 +1,9 @@
 ---
 id: DOC-e6fb92b0
 type: doc
+status: active
 title: Plugin Architecture
+domain: architecture
 category: architecture
 description: "How plugins extend OrqaStudio — current CLI companion plugin, four-layer model, component SDK extraction plan, and built-in vs plugin decision framework."
 sort: 12
@@ -74,7 +76,7 @@ Plugins declare knowledge artifacts with injection tier metadata:
 **Injection tiers:**
 
 | Tier | When Loaded | Use Case |
-|------|-------------|----------|
+| ------ | ------------- | ---------- |
 | `always` | At agent spawn for matching roles/paths | Safety rules, error handling patterns |
 | `stage-triggered` | When workflow enters a matching stage | Coding standards during implement, review criteria during review |
 | `on-demand` | Agent queries semantic search at runtime | Specific domain patterns, historical decisions |
@@ -146,7 +148,7 @@ The CLI companion plugin bridges OrqaStudio's governance framework with Claude C
 
 ### Plugin Structure
 
-```
+```text
 .claude-plugin/
   plugin.json            # Manifest: name, version, description
   marketplace.json       # Local marketplace registration for discovery
@@ -168,7 +170,7 @@ knowledge/
 ### Hook Pipeline
 
 | Hook Event | Script | Trigger | Behavior |
-|-----------|--------|---------|----------|
+| ----------- | -------- | --------- | ---------- |
 | `PreToolUse` | `rule-engine.mjs` | `Write`, `Edit`, `Bash` | Loads active rules with `enforcement` frontmatter entries. Evaluates conditions against tool input. Block verdicts deny the tool call; warn verdicts emit a system message; inject verdicts emit knowledge IDs for the agent to read. |
 | `UserPromptSubmit` | `prompt-injector.ts` | Every user message | Detects artifact references (TASK-NNN, EPIC-NNN) in the prompt. Crawls artifact graph edges (task.epic, task.knowledge, task.docs, epic.research-refs, epic.docs-required) and emits referenced IDs as a system message. |
 | `PostToolUse` | `graph-guardian.mjs` | `Write`, `Edit` to `.orqa/` | Checks newly written artifacts for missing relationship fields (e.g., task without `docs`, epic without `research-refs`). Advisory only — warns but never blocks. |
@@ -189,7 +191,7 @@ Both files are ephemeral (cleared when `.state/` is cleaned between sessions).
 The session-start hook manages the `.claude/` compatibility layer. Claude Code discovers project instructions via `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/agents/`, and `.claude/knowledge/`. The plugin creates symlinks from these paths to their `.orqa/` source of truth:
 
 | Symlink | Target |
-|---------|--------|
+| --------- | -------- |
 | `.claude/CLAUDE.md` | `.orqa/process/agents/orchestrator.md` |
 | `.claude/rules/` | `.orqa/process/rules/` |
 | `.claude/agents/` | `.orqa/process/agents/` |
@@ -202,7 +204,7 @@ Plugin-bundled skills (e.g., `plugin-setup`, `rule-enforcement`) are symlinked i
 The CLI plugin and the app's built-in enforcement engine are **independent implementations** of the same governance model:
 
 | Aspect | CLI Plugin | App (Built-in) |
-|--------|-----------|----------------|
+| -------- | ----------- | ---------------- |
 | Language | JavaScript (Node.js) | Rust |
 | Rule source | Same `.orqa/process/rules/*.md` files | Same `.orqa/process/rules/*.md` files |
 | YAML parsing | Custom lightweight parser | `serde_yaml` |
@@ -223,7 +225,7 @@ They share no code. The rule YAML frontmatter format is the contract that both i
 The orqastudio MCP server exposes native search and governance tools to CLI sessions via the Model Context Protocol. It runs as a local server launched by `orqa mcp` and exposes three search tools:
 
 | Tool | Purpose |
-|------|---------|
+| ------ | --------- |
 | `search_regex` | Exact pattern search across the codebase |
 | `search_semantic` | Meaning-based search using ONNX embeddings |
 | `search_research` | Multi-step architectural analysis |
@@ -239,7 +241,7 @@ OrqaStudio's extension architecture follows four trust layers. Each layer has di
 ### Layer Definitions
 
 | Layer | Label | Trust Level | Discovery | Examples |
-|-------|-------|------------|-----------|---------|
+| ------- | ------- | ------------ | ----------- | --------- |
 | **Built-in** | `core` | Full | Ships with app binary | Artifact scanner, enforcement engine, streaming pipeline, search engine |
 | **Official** | `plugin` | High | OrqaStudio marketplace or bundled git submodule | CLI companion plugin, future GitHub integration |
 | **Community** | `community` | Medium | Community marketplace or manual install | Third-party workflow plugins, custom dashboard panels |
@@ -248,22 +250,26 @@ OrqaStudio's extension architecture follows four trust layers. Each layer has di
 ### Discovery and Loading
 
 **Built-in (core):**
+
 - Compiled into the Tauri binary
 - No discovery needed — always available
 - Knowledge artifacts with `layer: core` are loaded by the orchestrator based on agent YAML frontmatter
 
 **Official (plugin):**
+
 - Discovered via the `.claude-plugin/marketplace.json` local marketplace or `settings.json` plugin configuration
 - Installed as git submodules in `.orqa/plugins/`
 - Plugin knowledge artifacts symlinked into `.orqa/process/knowledge/` at session start
 - Hooks registered via `hooks.json` in the plugin directory
 
 **Community:**
+
 - Same installation mechanism as official plugins
 - Reviewed but not maintained by the OrqaStudio team
 - Knowledge artifacts carry `layer: community` for trust distinction
 
 **User:**
+
 - Files directly in `.orqa/process/knowledge/` with `layer: user`
 - Rules in `.orqa/process/rules/`
 - No installation step — the artifact scanner picks them up automatically
@@ -273,7 +279,7 @@ OrqaStudio's extension architecture follows four trust layers. Each layer has di
 All layers share the same enforcement pipeline. The difference is in trust defaults:
 
 | Layer | Auto-approve hooks? | Knowledge injection? | Can modify core? |
-|-------|-------------------|------------------|-----------------|
+| ------- | ------------------- | ------------------ | ----------------- |
 | Built-in | Yes | Yes | Yes (firmware) |
 | Official | User approves on install | Yes | No |
 | Community | User approves per-hook | Yes, with notice | No |
@@ -293,7 +299,7 @@ The Artifact Graph SDK is a Svelte 5 rune-based client that maintains an in-memo
 ### API Surface
 
 | Category | Method | Description |
-|----------|--------|-------------|
+| ---------- | -------- | ------------- |
 | **Lifecycle** | `initialize()` | Fetch full graph from backend, register for auto-refresh |
 | **Lifecycle** | `refresh()` | Rebuild graph from disk, re-fetch into cache |
 | **Resolution** | `resolve(id)` | Look up a node by artifact ID (e.g., "[EPIC-d45b4dfd](EPIC-d45b4dfd)") |
@@ -310,8 +316,8 @@ The Artifact Graph SDK is a Svelte 5 rune-based client that maintains an in-memo
 
 ### Reactive State
 
-| Property | Type | Description |
-|----------|------|-------------|
+| Property | Type | Description | | |
+| ---------- | ------ | ------------- --- |
 | `graph` | `SvelteMap<string, ArtifactNode>` | All nodes keyed by ID |
 | `pathIndex` | `SvelteMap<string, string>` | Path-to-ID reverse lookup |
 | `stats` | `GraphStats` | Node count, edge count, orphans, broken refs |
@@ -337,7 +343,7 @@ The subscription API (`subscribe`, `subscribeType`) is designed for plugin use. 
 Shared components live in `ui/src/lib/components/shared/` and are only importable within the core app. There are 12 shared components today:
 
 | Component | Purpose |
-|-----------|---------|
+| ----------- | --------- |
 | `ArtifactListItem` | Clickable list item with status dot and description |
 | `ConfirmDeleteDialog` | Destructive action confirmation dialog |
 | `EmptyState` | Empty list/grid placeholder with icon, title, action |
@@ -366,7 +372,7 @@ Additionally, the app uses shadcn-svelte components (`Button`, `Card`, `Dialog`,
 ### Distribution Options (Requires Research)
 
 | Option | Pros | Cons |
-|--------|------|------|
+| -------- | ------ | ------ |
 | **npm package** | Standard distribution, versioned | Requires publishing infrastructure |
 | **Bundled with app** | Always available, no version mismatch | Increases app size |
 | **Git submodule** | Simple, version-pinned | Manual updates |
@@ -437,7 +443,7 @@ Based on findings from [RES-8fee4dad](RES-8fee4dad), this framework guides where
 ### Decision Criteria
 
 | Criterion | Built-in | Plugin |
-|-----------|---------|--------|
+| ----------- | --------- | -------- |
 | Required by ALL users regardless of domain | Yes | No |
 | Serves a core pillar directly | Yes | Maybe |
 | Needs deep streaming pipeline integration | Yes | No |
@@ -449,7 +455,7 @@ Based on findings from [RES-8fee4dad](RES-8fee4dad), this framework guides where
 ### Applying the Framework
 
 | Feature | Verdict | Reason |
-|---------|---------|--------|
+| --------- | --------- | -------- |
 | Provider abstraction (NDJSON, Provider interface) | **Built-in** | Core infrastructure all providers depend on |
 | Claude Agent SDK provider | **Built-in** | Reference implementation, ships with app |
 | OpenAI-compatible provider | **Built-in** | Universal — one adapter covers cloud + local models |

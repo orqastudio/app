@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact Graph SDK and Structural Integrity"
 ---
+
 ## Problem
 
 Artifact cross-references (e.g., an epic linking to its milestone, a task linking to its epic, a decision referencing another decision) are inconsistent and partially broken. The current system uses a fragile frontend-only resolution mechanism that fails for tree-structured directories and depends on label string matching rather than real ID-to-path resolution.
@@ -22,7 +23,7 @@ Artifact cross-references (e.g., an epic linking to its milestone, a task linkin
 Flat artifact types with standard ID prefixes navigate correctly:
 
 | Prefix | Target | Status |
-|--------|--------|--------|
+| -------- | -------- | -------- |
 | MS | `.orqa/delivery/milestones/` | Working |
 | EPIC | `.orqa/delivery/epics/` | Working |
 | TASK | `.orqa/delivery/tasks/` | Working |
@@ -53,7 +54,7 @@ Flat artifact types with standard ID prefixes navigate correctly:
 
 ### Current Flow (Frontend-Only)
 
-```
+```text
 ArtifactLink click
   → navigationStore.navigateToArtifact(id)
     → Extract prefix from ID (e.g., "EPIC" from "EPIC-797972a7")
@@ -69,7 +70,7 @@ ArtifactLink click
 ### Problems with Frontend-Only Resolution
 
 | Problem | Impact |
-|---------|--------|
+| --------- | -------- |
 | No ID field in NavTree nodes | Must match on label, not on the actual artifact ID |
 | Tree types excluded | Documentation, rules (if nested), hooks are unreachable |
 | Prefix map is hardcoded | Adding new artifact types requires code changes |
@@ -138,7 +139,7 @@ docs-produced:
 **Convention:**
 
 | Field Pattern | Value Format | Resolution |
-|--------------|-------------|------------|
+| -------------- | ------------- | ------------ |
 | Fields listing artifact IDs | `[EPIC-797972a7](EPIC-797972a7)`, `[AD-0dfa4d52](AD-0dfa4d52)`, etc. | Resolve via `resolve_artifact_id` |
 | Fields listing file paths | `.orqa/documentation/...` | Navigate directly to path |
 | Mixed fields | Should not exist — pick one format per field | |
@@ -202,6 +203,7 @@ For `docs-required` and `docs-produced` (which are file paths, not IDs), the com
 Artifact IDs in document bodies are auto-linked during markdown rendering. The `MarkdownRenderer` component preprocesses text to wrap patterns like `EPIC-\d+`, `AD-\d+`, etc. in clickable links.
 
 Implementation:
+
 - Regex pass over rendered markdown matching all known artifact ID patterns (EPIC-NNN, TASK-NNN, AD-NNN, MS-NNN, IDEA-NNN, IMPL-NNN, RES-NNN, PILLAR-NNN, RULE-NNN)
 - Wrap matches in clickable elements that call `navigateToArtifact`
 - Always-on — no configuration needed. All matching patterns are linked.

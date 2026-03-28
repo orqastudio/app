@@ -3,7 +3,7 @@ id: "EPIC-9e3d320b"
 type: "epic"
 title: "Port allocation standardisation and CLI process ownership"
 description: "Standardise all service ports above 10000, fix the daemon port mismatch between CLI and MCP server, establish the CLI as the single developer interface with MCP/LSP as stdio protocol modes, embed the search engine in the daemon, and demote the dev controller to debug-only tooling."
-status: "active"
+status: active
 priority: "P1"
 scoring:
   impact: 4
@@ -27,6 +27,7 @@ relationships:
 OrqaStudio runs multiple services with inconsistent port allocation. The daemon port is mismatched between CLI (`libs/cli/src/commands/daemon.ts`: DEFAULT_PORT = 3002) and MCP server (`libs/mcp-server/src/daemon.rs`: DEFAULT_DAEMON_PORT = 9258). Current workaround: `orqa daemon start --port 9258`.
 
 User decisions from 2026-03-24 session:
+
 - All ports move above 10000 to avoid conflicts with common development tools
 - CLI is the single developer interface with multiple protocol modes ([AD-a44384d1](AD-a44384d1))
 - `orqa mcp` = MCP protocol mode (stdio) for Claude Code — NOT a separate server process
@@ -41,7 +42,7 @@ User decisions from 2026-03-24 session:
 ### Port Allocation Table (Complete Inventory)
 
 | Service | Current Port | New Port | Config Locations | Notes |
-|---------|-------------|----------|-----------------|-------|
+| --------- | ------------- | ---------- | ----------------- | ------- |
 | Daemon (graph, search, validation) | 3002 (CLI) / 9258 (MCP/LSP) | 10258 | `libs/cli/src/commands/daemon.ts`, `libs/mcp-server/src/daemon.rs`, `libs/validation/src/bin/server.rs`, `libs/lsp-server/src/bin/server.rs`, `app/backend/src-tauri/src/servers/lsp.rs` | Only long-running service |
 | Vite Dev Server | 1420 | 10420 | `tools/debug/dev.mjs`, `app/backend/src-tauri/tauri.conf.json` | Dev only |
 | OrqaDev Dashboard | 3001 | 10401 | `tools/debug/dev.mjs`, `libs/logger/src/index.ts`, `app/ui/src/lib/utils/dev-console.ts`, `connectors/claude-code/src/hooks/telemetry.ts` | Debug only |
@@ -51,6 +52,7 @@ User decisions from 2026-03-24 session:
 | App IPC Socket | random (port 0) | Keep as-is | `app/backend/src-tauri/src/servers/ipc_socket.rs` | |
 
 **Eliminated ports (per [AD-a44384d1](AD-a44384d1)):**
+
 - ~~MCP Server (was 10259)~~ — now `orqa mcp` over stdio, no port needed
 - ~~Search Engine (was 10260)~~ — now embedded in the daemon
 - ~~LSP Server TCP (was 10261)~~ — now `orqa lsp` over stdio, no port needed
@@ -60,6 +62,7 @@ All ports in the 10200-10499 range reserved for OrqaStudio services.
 ### Consumers of Daemon Port (all must be updated)
 
 **Port 3002 consumers:**
+
 - `connectors/claude-code/src/hooks/shared.ts:11` — `DAEMON_BASE = "http://localhost:3002"`
 - `libs/cli/src/commands/enforce.ts:115` — `const port = 3002`
 - `libs/cli/src/commands/daemon.ts:14` — `DEFAULT_PORT = 3002`
@@ -67,6 +70,7 @@ All ports in the 10200-10499 range reserved for OrqaStudio services.
 - `app/backend/src-tauri/src/commands/daemon_commands.rs:32` — hardcoded `127.0.0.1:3002`
 
 **Port 9258 consumers:**
+
 - `libs/mcp-server/src/daemon.rs:22` — `DEFAULT_DAEMON_PORT: u16 = 9258`
 - `libs/mcp-server/src/bin/server.rs:50` — defaults to 9258
 - `libs/lsp-server/src/bin/server.rs:28` — `DEFAULT_DAEMON_PORT: u16 = 9258`
@@ -92,7 +96,7 @@ All ports in the 10200-10499 range reserved for OrqaStudio services.
 
 ### Architecture (per [AD-a44384d1](AD-a44384d1))
 
-```
+```text
 Daemon (long-running service)
   ├── Graph queries, validation
   ├── Search engine (ONNX + DuckDB, embedded)
@@ -149,6 +153,7 @@ Dev Controller (dev.mjs)
 ## Out of Scope
 
 To be confirmed with user:
+
 - Changing the Tauri IPC mechanism (stays as `invoke()`)
 - Docker/container port mapping (no Docker in current dev flow)
 - CI/CD port configuration (no CI yet)

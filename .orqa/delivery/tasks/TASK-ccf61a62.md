@@ -3,7 +3,7 @@ id: "TASK-ccf61a62"
 type: "task"
 title: "Extract project-specific requirements to graph-readable artifacts"
 description: "Move project-specific sections from the orchestrator prompt to standalone artifacts discoverable via graph traversal — tech stack, naming conventions, verification gates."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs: []
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The orchestrator prompt's "Section 2: Project-Specific Requirements" is ~500 lines of content that should live in the artifact graph, not be inlined into every session.

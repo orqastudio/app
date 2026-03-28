@@ -4,15 +4,21 @@ type: rule
 title: Structure Before Work
 description: No implementation work may begin without the full artifact structure in place first.
 status: active
+enforcement_type: advisory
 created: 2026-03-07
 updated: 2026-03-07
 enforcement:
+
   - mechanism: behavioral
+
     message: "No implementation work may begin until the artifact structure (epic and tasks) exists; agents must refuse to start unstructured requests"
 relationships:
+
   - target: AD-7fa3f280
+
     type: enforces
 ---
+
 ## The Rule (NON-NEGOTIABLE)
 
 **No implementation work may begin until the artifact structure for that work exists.**
@@ -29,6 +35,7 @@ The orchestrator MUST verify these artifacts exist and are complete before deleg
 ## Why
 
 Without structure first:
+
 - Work happens without traceability — there's no record of what was decided, why, or what was delivered
 - Scope creeps silently — without defined acceptance criteria, "done" is ambiguous
 - The artifact system becomes a retroactive paperwork exercise instead of a planning tool
@@ -36,7 +43,7 @@ Without structure first:
 
 ## The Sequence (MANDATORY)
 
-```
+```text
 1. Identify the work (user request, bug, idea)
 2. Create or update the epic with implementation design
 3. Create tasks with scope and acceptance criteria
@@ -44,14 +51,14 @@ Without structure first:
 5. Create decision artifacts if architectural choices are made
 6. Get user approval of the structure
 7. THEN delegate implementation to agents
-```
+```text
 
 Steps 2-5 may happen in parallel. Step 6 is a gate — no implementation without approval.
 
 ## What Counts as "Structure in Place"
 
 | Artifact | Minimum Required Fields |
-|----------|----------------------|
+| --- | --- |
 | Epic | `id`, `title`, `status`, `milestone`, `description`, implementation design in body |
 | Task | `id`, `title`, `status`, `epic`, `acceptance` |
 | Research | `title`, `type`, `status`, `category`, `description` |

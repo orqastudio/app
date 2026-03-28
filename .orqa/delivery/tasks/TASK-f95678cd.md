@@ -3,7 +3,7 @@ id: "TASK-f95678cd"
 type: "task"
 title: "Audit shared component inventory and update RULE-eb269afb"
 description: "Audit all Svelte components under ui/src/lib/components/ and update RULE-eb269afb to reflect the accurate shared component inventory."
-status: "completed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 acceptance:
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Audit all `.svelte` components under `ui/src/lib/components/` to produce a complete inventory of reusable/shared components. Map each against [RULE-eb269afb](RULE-eb269afb)'s current 12-item list. Identify:

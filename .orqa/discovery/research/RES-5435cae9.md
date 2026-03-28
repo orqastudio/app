@@ -8,6 +8,7 @@ status: surpassed
 created: 2026-03-06
 updated: 2026-03-12
 ---
+
 ## Problem Statement
 
 All 15 agent definitions in `.orqa/agents/` are effectively dormant. Dogfooding readiness requires that the agentic framework actually works — agents must know what tools they have, where to find documentation, what patterns to follow, and how to operate in both CLI and app contexts.
@@ -25,6 +26,7 @@ All 15 agent definitions in `.orqa/agents/` are effectively dormant. Dogfooding 
 ## Goal
 
 **Dogfooding-ready agent framework.** After this plan is complete, every agent:
+
 - Knows the OrqaStudio tech stack (Tauri v2, Svelte 5, Rust, SQLite, Agent SDK sidecar)
 - Knows which tools are available and what they're called in each context
 - Has correct documentation paths that resolve to real files
@@ -42,17 +44,20 @@ All 15 agent definitions in `.orqa/agents/` are effectively dormant. Dogfooding 
 OrqaStudio permanently supports two operating contexts. Both are first-class — neither is temporary or deprecated.
 
 **CLI context** (Claude Code CLI with `.mcp.json`):
+
 - File tools: `Read`, `Edit`, `Write`, `Bash`, `Glob`, `Grep` (built-in Claude Code tools)
 - Search tools: `mcp__chunkhound__search_regex`, `mcp__chunkhound__search_semantic`, `mcp__chunkhound__code_research` (via ChunkHound MCP server in `.mcp.json`)
 - ChunkHound is a permanent dev-tool environment enhancement for CLI usage
 - No sidecar, no streaming, no Tauri commands
 
 **App context** (OrqaStudio sidecar):
+
 - File tools: `read`, `write`, `edit`, `bash`, `glob`, `grep` (native Rust tools exposed via built-in MCP server)
 - Search tools: `search_regex`, `search_semantic`, `code_research` (native, embedded ONNX + DuckDB)
 - Streaming, tool approval UI, governance scanning, sub-agent spawning
 
 **What each agent needs to know:**
+
 - Both contexts are permanent and first-class
 - The context is determined by how the agent is invoked — CLI subagent or app sidecar
 - In CLI: search tools have `mcp__chunkhound__` prefix (MCP server)
@@ -61,6 +66,7 @@ OrqaStudio permanently supports two operating contexts. Both are first-class —
 - **When dogfooding** (using OrqaStudio to develop OrqaStudio): agents must be explicitly told they are dogfooding. This changes behavior — e.g., `make dev` uses `--no-watch` so editing `.rs` files doesn't kill the running app mid-session
 
 **Agent `tools:` frontmatter**: List both sets so agents work in either context:
+
 ```yaml
 tools:
   - Read
@@ -84,12 +90,14 @@ tools:
 When the project being managed IS OrqaStudio itself, agents need enhanced caution that doesn't apply to normal projects. This must be detectable and enforceable now — not deferred to the future project type system.
 
 **Detection mechanism:**
+
 - Add `"dogfood": true` flag to `.orqa/project.json`
 - In CLI context: agents check `.orqa/project.json` at task start
 - In app context: the project settings store exposes `isDogfood` and the system prompt includes dogfood context when true
 - `CLAUDE.md` already contains some dogfood rules (no-watch, restart protocol) — these should reference the flag
 
 **Enhanced caution rules (dogfood only):**
+
 - **`make dev` uses `--no-watch`** — editing `.rs` files must NOT auto-restart and kill the session
 - **After Rust backend changes**: write session state to `.state/session-state.md`, then tell the user the backend needs a manual restart
 - **Sidecar self-edit warnings** — the sidecar they communicate through IS the sidecar they might be editing. Changes to `sidecars/claude-agentsdk-sidecar/src/` require extra care: verify the change won't break the active connection, and warn the user before modifying protocol types
@@ -97,6 +105,7 @@ When the project being managed IS OrqaStudio itself, agents need enhanced cautio
 - **They are editing the app they are running inside** — Vite HMR handles frontend changes live, but Rust changes require restart
 
 **Deliverables:**
+
 1. Add `"dogfood": true` to `.orqa/project.json`
 2. Add `ProjectSettings.dogfood: bool` (Rust + TypeScript)
 3. Create `.orqa/rules/dogfood-mode.md` — consolidates all dogfood-specific rules, references the detection flag
@@ -106,7 +115,7 @@ When the project being managed IS OrqaStudio itself, agents need enhanced cautio
 ### 1b: Required Reading Path Corrections
 
 | Wrong Path | Correct Path |
-|------------|-------------|
+| ------------ | ------------- |
 | `docs/standards/coding-standards.md` | `docs/development/coding-standards.md` |
 | `docs/standards/` | `docs/development/` |
 | `docs/decisions/` | `docs/architecture/` |
@@ -122,7 +131,7 @@ When the project being managed IS OrqaStudio itself, agents need enhanced cautio
 ### 1d: Domain-Appropriate Skills Per Agent
 
 | Agent | Current Skills | Add Skills |
-|-------|---------------|------------|
+| ------- | --------------- | ------------ |
 | `backend-engineer` | `chunkhound` | `rust-async-patterns`, `tauri-v2` |
 | `frontend-engineer` | `chunkhound` | `svelte5-best-practices`, `tailwind-design-system`, `typescript-advanced-types` |
 | `designer` | `chunkhound` | `svelte5-best-practices`, `tailwind-design-system` |
@@ -144,7 +153,7 @@ When the project being managed IS OrqaStudio itself, agents need enhanced cautio
 Every agent body must be rewritten to reference the actual project, not generic placeholders. Each agent body must include:
 
 1. **Tech stack context** — "This project uses Tauri v2 + Svelte 5 (runes) + Rust + SQLite" and specifics relevant to that agent's domain
-2. **Key patterns** — The actual patterns used in this codebase (e.g., `thiserror` for errors, `Channel<T>` for streaming, rune stores in `.svelte.ts`, `invoke()` for IPC)
+2. **Key patterns** — The actual patterns used in this codebase (e.g., `thiserror` for errors, `Channel\<T\>` for streaming, rune stores in `.svelte.ts`, `invoke()` for IPC)
 3. **Development commands** — Reference `make` targets, not raw `cargo`/`npm` commands
 4. **Context awareness section** — Explain CLI vs. app tool availability so the agent knows what context it's operating in
 5. **Critical files** — List the specific files/directories the agent works with most
@@ -171,6 +180,7 @@ Use `make` targets for all build/test/lint commands (see `docs/development/comma
 ### 1f: Update `chunkhound-usage.md` Rule
 
 Update `.orqa/rules/chunkhound-usage.md` to:
+
 - Document both tool name sets (CLI MCP vs. app native)
 - Explain the native tools are embedded (ONNX + DuckDB in `backend/src-tauri/src/search/`)
 - Note that `.mcp.json` ChunkHound is a permanent CLI/dev-tool enhancement; native search is for the app context
@@ -179,8 +189,8 @@ Update `.orqa/rules/chunkhound-usage.md` to:
 ### Changes Per Agent Summary
 
 | Agent | Fix Paths | Add Skills | Remove Tools | Add Native Search | Make Project-Specific |
-|-------|-----------|------------|--------------|-------------------|----------------------|
-| `backend-engineer` | Y | `rust-async-patterns`, `tauri-v2` | — | Y | Rust/Tauri v2, `thiserror`, `Channel<T>`, SQLite, sidecar protocol |
+| ------- | ----------- | ------------ | -------------- | ------------------- | ---------------------- |
+| `backend-engineer` | Y | `rust-async-patterns`, `tauri-v2` | — | Y | Rust/Tauri v2, `thiserror`, `Channel\<T\>`, SQLite, sidecar protocol |
 | `frontend-engineer` | Y | `svelte5-best-practices`, `tailwind-design-system`, `typescript-advanced-types` | `mcp__MCP_DOCKER__*` (5) | Y | Svelte 5 runes, shadcn-svelte, `invoke()`, rune stores |
 | `designer` | Y | `svelte5-best-practices`, `tailwind-design-system` | `mcp__MCP_DOCKER__*` (3) | Y | shadcn-svelte variants, Lucide icons, Orqa color system |
 | `debugger` | Y | `rust-async-patterns`, `tauri-v2`, `svelte5-best-practices` | `mcp__MCP_DOCKER__*` (3) | Y | IPC boundary, sidecar NDJSON, streaming pipeline |
@@ -222,16 +232,17 @@ Update `.orqa/rules/chunkhound-usage.md` to:
 ### Skills to Create
 
 | Skill | Content | Used By |
-|-------|---------|---------|
-| `orqa-ipc-patterns` | Tauri `invoke()` patterns, `Channel<T>` streaming, command registration, IPC type contracts, the full request chain (component → store → invoke → Rust command) | `backend-engineer`, `frontend-engineer`, `debugger`, `systems-architect` |
+| ------- | --------- | --------- |
+| `orqa-ipc-patterns` | Tauri `invoke()` patterns, `Channel\<T\>` streaming, command registration, IPC type contracts, the full request chain (component → store → invoke → Rust command) | `backend-engineer`, `frontend-engineer`, `debugger`, `systems-architect` |
 | `orqa-store-patterns` | Svelte 5 rune stores (`.svelte.ts`), `$state`/`$derived`/`$effect`, store-to-component data flow, the store pattern used throughout the app | `frontend-engineer`, `designer`, `debugger` |
-| `orqa-streaming` | Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte pipeline, `ProviderEvent` types, `StreamEvent` types, error handling, backpressure | `backend-engineer`, `frontend-engineer`, `debugger` |
+| `orqa-streaming` | Agent SDK → sidecar (Bun) → NDJSON → Rust Channel\<T\> → Svelte pipeline, `ProviderEvent` types, `StreamEvent` types, error handling, backpressure | `backend-engineer`, `frontend-engineer`, `debugger` |
 | `orqa-governance` | Artifact types, scanning pipeline, lesson promotion, rule enforcement, frontmatter schemas (`DocFrontmatter`, `ResearchFrontmatter`), `.orqa/` directory structure | `agent-maintainer`, `code-reviewer`, `documentation-writer` |
 | `orqa-testing` | `make test` commands, Vitest patterns for Svelte stores/components, cargo test patterns for domain logic, mock boundaries (trait-based), test file locations | `test-engineer`, `qa-tester`, `code-reviewer` |
 
 ### Skill Format
 
 Each skill is a `.md` file in `.orqa/skills/` following the standard format:
+
 - YAML frontmatter with `name`, `description`, `tags`
 - Patterns section with **real code examples from this codebase** (not generic)
 - Anti-patterns section with actual mistakes we've made
@@ -253,6 +264,7 @@ Each skill is a `.md` file in `.orqa/skills/` following the standard format:
 ### 3a: Orchestration Enforcement Rule
 
 Create `.orqa/rules/agent-delegation.md`:
+
 - The orchestrator MUST delegate implementation to agents, never implement directly
 - Every implementation task must name the agent being delegated to
 - The orchestrator may only: read files for planning, write plans/docs, coordinate, report status
@@ -261,6 +273,7 @@ Create `.orqa/rules/agent-delegation.md`:
 ### 3b: Agent Usage Audit Hook
 
 Update `.orqa/hooks/session-start-hook.sh` to:
+
 - List available agents and their domains
 - Remind the orchestrator to delegate, not implement
 - Check that agent definitions have valid Required Reading paths
@@ -268,6 +281,7 @@ Update `.orqa/hooks/session-start-hook.sh` to:
 ### 3c: Skill Loading Enforcement
 
 Update `.orqa/rules/skill-enforcement.md`:
+
 - Before any agent starts implementation, it MUST load all skills declared in its frontmatter
 - Skill loading must happen BEFORE Required Reading
 - If a skill fails to load, the agent must report it (not silently continue)
@@ -276,6 +290,7 @@ Update `.orqa/rules/skill-enforcement.md`:
 ### 3d: App-Side Enforcement (Design Only)
 
 Capture the design for app-side enforcement in the roadmap:
+
 - Track which agents are invoked per session
 - Warn if the orchestrator is writing code directly
 - Show agent utilization metrics in the dashboard
@@ -316,7 +331,7 @@ tags: [agents, governance, dogfooding]
 
 1. Create `.orqa/plans/` directory
 2. Move `docs/process/agent-governance-plan.md` → `.orqa/plans/agent-governance.md` (this plan becomes the first entry)
-3. Add `PlanFrontmatter` struct to `backend/src-tauri/src/domain/artifact.rs` (follows the generic `parse_frontmatter<T>` pattern)
+3. Add `PlanFrontmatter` struct to `backend/src-tauri/src/domain/artifact.rs` (follows the generic `parse_frontmatter\<T\>` pattern)
 4. Add `plan_tree_scan` and `plan_read` Tauri commands (same pattern as `research_tree_scan` / `research_read`)
 5. Add "Plans" activity to the navbar (between Research and Agents) with a clipboard/kanban icon
 6. Reuse `DocTreeNav` component with `mode="plans"` (same pattern as research)
@@ -361,7 +376,7 @@ tags: [agents, governance, dogfooding]
 
 ## Implementation Order
 
-```
+```text
 Phase 1 (Agent Definitions + Dogfood Detection) ─── start immediately, largest phase
 Phase 4 (Plans as Entities)  ─── independent, can run in parallel with Phase 1
 Phase 5 (Research Org)       ─── independent, can run in parallel with Phase 1
@@ -388,7 +403,7 @@ Phase 1 is the largest (15 agent files + dogfood detection + rule updates) but e
 ## Verification
 
 | Phase | How to Verify |
-|-------|--------------|
+| ------- | -------------- |
 | 1 | For each agent: `ls` every Required Reading path. Verify skills list matches domain. Verify no `mcp__MCP_DOCKER__` references. Verify both search tool name sets listed. Verify "Operating Context" section exists. Verify dogfood detection works. |
 | 2 | For each skill: `Skill(name)` loads. Content includes Orqa-specific code examples from the actual codebase. |
 | 3 | Session start hook output includes delegation reminder. `agent-delegation.md` rule is loaded in orchestrator context. |
@@ -398,6 +413,6 @@ Phase 1 is the largest (15 agent files + dogfood detection + rule updates) but e
 ## Pillar Alignment
 
 | Pillar | Alignment |
-|--------|-----------|
+| -------- | ----------- |
 | Learning Through Reflection | Properly configured agents with correct skills and reading lists produce higher-quality output, reducing rework and feeding better data into the lesson pipeline. |
 | Clarity Through Structure | This plan IS governance — it ensures the agent framework is actually functional, enforceable, and used as designed. Dogfooding readiness means governance is real, not theoretical. |

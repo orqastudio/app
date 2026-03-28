@@ -1,7 +1,9 @@
 ---
 id: DOC-e89753ad
 type: doc
+status: active
 title: OrqaStudio CLI Commands
+domain: reference
 description: "Complete reference for the orqa CLI: all commands, subcommands, options, and usage patterns. The single developer interface for setup, quality checks, testing, governance, plugin management, and protocol servers."
 category: development
 created: 2026-03-24
@@ -28,7 +30,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Setup & Dev Environment
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa install` | Full dev environment setup (prereqs, deps, build, plugin sync, verify) |
 | `orqa install prereqs` | Check prerequisites (node 22+, rust, git) |
 | `orqa install deps` | Install npm workspace + cargo dependencies |
@@ -46,7 +48,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Code Quality & Testing
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa check` | Run all quality checks from installed plugins |
 | `orqa check <tool>` | Run a specific tool (eslint, clippy, svelte-check) |
 | `orqa check configure` | Generate linter config files from coding standards |
@@ -57,7 +59,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Governance & Enforcement
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa enforce [path]` | Run all enforcement checks on artifacts |
 | `orqa enforce --mechanism <key>` | Run specific mechanism (e.g. json-schema) |
 | `orqa enforce --rule <id>` | Run all mechanisms for a specific rule |
@@ -73,7 +75,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Artifact Graph
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa graph` | List all artifacts |
 | `orqa graph --type <type>` | Filter by artifact type |
 | `orqa graph --status <status>` | Filter by status |
@@ -86,7 +88,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Plugin Management
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa plugin list` | List installed plugins |
 | `orqa plugin install <source>` | Install a plugin (owner/repo or local path) |
 | `orqa plugin uninstall <name>` | Remove a plugin |
@@ -101,12 +103,12 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Version & ID Management
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa version show` | Show current canonical version |
 | `orqa version sync` | Sync VERSION file to all manifests |
 | `orqa version bump <ver>` | Set new version and sync |
 | `orqa version check` | Check for version drift |
-| `orqa id generate <TYPE>` | Generate a new hex ID |
+| `orqa id generate \<TYPE\>` | Generate a new hex ID |
 | `orqa id check` | Scan for duplicate IDs |
 | `orqa id check --fix` | Auto-regenerate duplicates |
 | `orqa id migrate <old> <new>` | Rename an ID across the graph |
@@ -114,7 +116,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Git Operations
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa git status` | Component-aware change status |
 | `orqa git pr` | Create a pull request on local git server |
 | `orqa git sync` | Push to all remotes |
@@ -123,7 +125,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Protocol Servers
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa mcp [project-path]` | Start MCP server (stdio) for Claude Code |
 | `orqa lsp [project-path]` | Start LSP server (stdio) for editor diagnostics |
 | `orqa daemon start` | Start validation daemon (port 10258) |
@@ -133,7 +135,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Search & Indexing
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa index [project-path]` | Download model, index codebase, generate embeddings |
 | `orqa index --download-only` | Download ONNX model only |
 | `orqa index --skip-download` | Index using existing model |
@@ -141,7 +143,7 @@ This command structure was established by [AD-a44384d1](AD-a44384d1).
 ### Maintenance
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `orqa repo license` | License audit across all packages |
 | `orqa repo readme` | README completeness audit |
 | `orqa debug [command]` | Run the debug tool |
@@ -177,7 +179,7 @@ The pre-commit hook (`.githooks/pre-commit`) automatically calls `orqa check` an
 The `orqa` CLI replaces all `make` targets except `make install` (bootstrap only):
 
 | Old (make) | New (orqa) |
-|------------|------------|
+| ------------ | ------------ |
 | `make dev` | `orqa dev` |
 | `make check` | `orqa check` |
 | `make test` | `orqa test` |

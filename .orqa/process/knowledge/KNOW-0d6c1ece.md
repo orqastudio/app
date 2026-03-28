@@ -2,6 +2,7 @@
 id: "KNOW-0d6c1ece"
 type: "knowledge"
 title: "OrqaStudio Frontend Best Practices"
+domain: platform/svelte
 description: "Umbrella skill for all frontend implementation work. Establishes composability,\ncoding standards, and component conventions as always-in-mind principles, then\nreferences deeper skills for Svelte 5, TypeScript, and Tailwind specifics.\nUse when: Any agent is about to write or modify frontend code (ui/, components, stores).\n"
 status: "active"
 created: "2026-03-11"
@@ -61,7 +62,7 @@ Read `.orqa/documentation/development/coding-standards.md` before writing any co
 The boundary between containers and display components is strict:
 
 | Layer | Responsibility | May call `invoke()`? |
-|-------|---------------|---------------------|
+| ------- | --------------- | --------------------- |
 | Pages / containers | Data fetching, routing | Yes |
 | Stores (`.svelte.ts`) | State management, IPC calls | Yes |
 | Display components (`$lib/components/`) | Rendering props | **Never** |
@@ -101,7 +102,7 @@ Native `overflow-*` classes on content divs produce unstyled browser scrollbars 
 Every component that displays data MUST handle all states:
 
 | State | What to show |
-|-------|-------------|
+| ------- | ------------- |
 | Loading | `<LoadingSpinner />` |
 | Error | `<ErrorDisplay />` |
 | Empty | `<EmptyState />` |
@@ -110,7 +111,7 @@ Every component that displays data MUST handle all states:
 ## Deeper Skills (Load When Needed)
 
 | Skill | When to load |
-|-------|-------------|
+| ------- | ------------- |
 | `svelte5-best-practices` | Svelte component patterns, runes, snippets, event handling |
 | `typescript-advanced-types` | Generic types, discriminated unions, utility types |
 | `tailwind-design-system` | Design tokens, responsive patterns, component variants |

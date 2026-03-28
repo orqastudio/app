@@ -3,7 +3,7 @@ id: "EPIC-b8dc200d"
 type: epic
 title: "Context Injection on Failed Resume"
 description: "Add fallback context injection when SDK session resume fails due to app restart or cleared storage."
-status: "captured"
+status: captured
 priority: "P1"
 created: "2026-03-07"
 updated: "2026-03-07"
@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P1
 
 Can't restart the app during development without losing conversation context. Every Rust change requires a restart, so this directly blocks dogfooding workflow.

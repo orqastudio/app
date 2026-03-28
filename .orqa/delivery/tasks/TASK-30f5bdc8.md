@@ -3,7 +3,7 @@ id: "TASK-30f5bdc8"
 type: "task"
 title: "Update core.json schema: skill → knowledge type, SKILL → KNOW idPrefix"
 description: "Change the artifact type definition in core.json from 'skill' to 'knowledge' and update the idPrefix from 'SKILL' to 'KNOW'."
-status: "ready"
+status: ready
 created: 2026-03-20T00:00:00.000Z
 updated: 2026-03-20T00:00:00.000Z
 acceptance:
@@ -23,6 +23,7 @@ Update the `core.json` schema to rename the `skill` artifact type to `knowledge`
 ## How
 
 Locate the artifact type definition for `skill` in `core.json` and update:
+
 - `type: "skill"` → `type: "knowledge"`
 - `idPrefix: "SKILL"` → `idPrefix: "KNOW"`
 - Update any `label`, `plural`, or display name fields accordingly

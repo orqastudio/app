@@ -3,7 +3,7 @@ id: "TASK-9f9e3bea"
 type: "task"
 title: "Plugin extends graph on artifact creation"
 description: "Add PostToolUse logic that detects when new artifacts are created and prompts for proper graph relationships (docs, skills, epic, depends-on fields)."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs:
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The self-building loop requires that new artifacts are created with proper relationships. This PostToolUse hook gently enforces graph integrity by warning when an artifact is created without the relationships that make it discoverable.

@@ -2,6 +2,7 @@
 id: DOC-36befd20
 type: doc
 title: "Thinking Mode: Research"
+domain: reference
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 category: platform
 status: active
@@ -25,6 +26,7 @@ The distinction matters for quality: a research agent that starts making changes
 The orchestrator routes here when the user's request is about understanding the current state of something, not changing it.
 
 Typical signals:
+
 - "investigate why X happens"
 - "explore options for Y"
 - "compare these two approaches"

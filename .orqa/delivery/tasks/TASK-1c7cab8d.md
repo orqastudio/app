@@ -3,7 +3,7 @@ id: "TASK-1c7cab8d"
 type: "task"
 title: "Enable clippy pedantic in Cargo.toml"
 description: "Explicitly configure clippy pedantic lints in Cargo.toml and fix resulting warnings."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 assignee: "AGENT-e5dd38e4"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 [RULE-9814ec3c](RULE-9814ec3c) claims clippy pedantic is enabled but it's not explicitly configured. Add it properly.

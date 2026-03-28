@@ -1,7 +1,9 @@
 ---
 id: DOC-bcd7fef4
 type: doc
+status: active
 title: Error Taxonomy
+domain: reference
 category: reference
 description: "The flat OrqaError enum — its variants, From conversions, serde serialization format, and propagation through domain → command → IPC → frontend."
 created: 2026-03-02
@@ -14,23 +16,21 @@ relationships:
     type: documents
 ---
 
-
 # Error Taxonomy
 
-All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat enum defined in `backend/src-tauri/src/error.rs`. There are no nested error enums.
+All Tauri commands return `Result\<T, OrqaError\>`. `OrqaError` is a single flat enum defined in `app/src-tauri/src/error.rs`. There are no nested error enums.
 
 **Architecture References:** [AD-2d58941b](AD-2d58941b) (error propagation via Result types), [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary design)
 
 ---
 
-
 ## 1. Design Principles
 
-1. **Every command returns `Result<T, OrqaError>`.** The application must never crash. Every error is caught and propagated up to the Tauri command boundary where it is serialized and returned to the frontend as a structured JSON error.
+1. **Every command returns `Result\<T, OrqaError\>`.** The application must never crash. Every error is caught and propagated up to the Tauri command boundary where it is serialized and returned to the frontend as a structured JSON error.
 
 2. **Errors are stringly-typed within each variant.** Each variant carries a single `String` with the error detail. The variant tag conveys the error category; the string conveys the specific message. This differs from the typed-field design in the previous specification — the actual implementation uses strings.
 
-3. **Errors cross the IPC boundary as tagged JSON.** `OrqaError` derives `serde::Serialize` with `#[serde(tag = "code", content = "message")]`. Tauri's blanket `impl<T: Serialize> From<T> for InvokeError` handles conversion to a Tauri invoke error automatically. No custom serialization logic exists.
+3. **Errors cross the IPC boundary as tagged JSON.** `OrqaError` derives `serde::Serialize` with `#[serde(tag = "code", content = "message")]`. Tauri's blanket `impl<T: Serialize> From\<T\> for InvokeError` handles conversion to a Tauri invoke error automatically. No custom serialization logic exists.
 
 4. **Error context is a string.** Lower-level errors (`std::io::Error`, `rusqlite::Error`, `serde_json::Error`) are converted to `OrqaError` via `From` impls that call `.to_string()` on the source error. The string message is the only context that crosses the boundary.
 
@@ -38,11 +38,10 @@ All Tauri commands return `Result<T, OrqaError>`. `OrqaError` is a single flat e
 
 ---
 
-
 ## 2. The OrqaError Enum
 
 ```rust
-// backend/src-tauri/src/error.rs
+// app/src-tauri/src/error.rs
 
 use serde::Serialize;
 
@@ -95,7 +94,7 @@ pub enum OrqaError {
 ### Variant Reference
 
 | Variant | Serde `code` | Used For |
-|---------|-------------|----------|
+| --------- | ------------- | ---------- |
 | `NotFound(String)` | `not_found` | Missing resources (sessions, projects, artifacts) |
 | `Database(String)` | `database` | SQLite errors from rusqlite, including lock failures |
 | `FileSystem(String)` | `file_system` | `std::io::Error` — file reads, writes, directory operations |
@@ -107,7 +106,6 @@ pub enum OrqaError {
 | `Search(String)` | `search` | Search engine errors |
 
 ---
-
 
 ## 3. From Conversions
 
@@ -137,19 +135,18 @@ These `From` impls enable `?` propagation throughout the codebase. A function th
 
 ---
 
-
 ## 4. Propagation Pattern
 
 Errors flow in one direction through the layers:
 
-```
+```text
 domain function  →  command handler  →  IPC boundary  →  TypeScript invoke()
      ?                   ?               (serialize)         catch(err)
 ```
 
 ### Domain layer
 
-Domain functions in `backend/src-tauri/src/domain/` return `Result<T, OrqaError>`. They construct variants directly or use `?` with the `From` impls:
+Domain functions in `app/src-tauri/src/domain/` return `Result\<T, OrqaError\>`. They construct variants directly or use `?` with the `From` impls:
 
 ```rust
 // Direct construction — manual context
@@ -161,7 +158,7 @@ let content = std::fs::read_to_string(&path)?;  // io::Error → OrqaError::File
 
 ### Command layer
 
-Tauri command handlers in `backend/src-tauri/src/commands/` return `Result<T, OrqaError>` and delegate to domain functions using `?`:
+Tauri command handlers in `app/src-tauri/src/commands/` return `Result\<T, OrqaError\>` and delegate to domain functions using `?`:
 
 ```rust
 #[tauri::command]
@@ -183,7 +180,6 @@ pub fn session_create(
 Tauri serializes `Err(OrqaError)` using the `Serialize` derive. The `#[serde(tag = "code", content = "message")]` attribute produces a two-field JSON object. No manual `Serialize` implementation exists.
 
 ---
-
 
 ## 5. IPC Serialization Format
 
@@ -219,7 +215,6 @@ Every `OrqaError` variant serializes to the same two-field JSON shape:
 The `message` value is always the raw string passed to the variant constructor — it is the `Display` output of the original error (via `.to_string()`) for converted errors, or a hand-written message for directly constructed ones.
 
 ---
-
 
 ## 6. TypeScript Interface
 
@@ -262,10 +257,9 @@ try {
 
 ---
 
-
 ## 7. Testing
 
-`backend/src-tauri/src/error.rs` contains unit tests covering:
+`app/src-tauri/src/error.rs` contains unit tests covering:
 
 - Each variant serializes with the correct `code` value
 - Each variant serializes with a `string` in `message`
@@ -274,12 +268,11 @@ try {
 - `From<serde_json::Error>` produces `OrqaError::Serialization`
 - All variants serialize correctly in a round-trip check (`all_variants_serialize_as_tagged_json`)
 
-There is no test for `rusqlite::Error` conversion because constructing a `rusqlite::Error` in unit tests requires a database connection. The `From` impl is tested implicitly through integration tests in `backend/src-tauri/tests/`.
+There is no test for `rusqlite::Error` conversion because constructing a `rusqlite::Error` in unit tests requires a database connection. The `From` impl is tested implicitly through integration tests in `app/src-tauri/tests/`.
 
 ---
-
 
 ## Related Documents
 
 - [AD-2d58941b](AD-2d58941b) (Result types, no unwrap in production), [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary)
-- `backend/src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls
+- `app/src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls

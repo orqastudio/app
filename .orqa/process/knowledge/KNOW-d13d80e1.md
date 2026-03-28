@@ -1,7 +1,9 @@
 ---
 id: KNOW-d13d80e1
 type: knowledge
-name: Tech Debt Management
+title: Tech Debt Management
+domain: methodology/governance
+description: "How to identify, prevent, and eliminate tech debt in OrqaStudio by keeping code aligned with schemas and avoiding hardcoded values."
 status: active
 relationships:
   - target: DOC-743f9c71
@@ -30,19 +32,22 @@ The goal is not "low debt" — it's **zero debt**. Every architectural change mu
 
 ## How to Prevent Debt
 
-### Before making a schema change:
+### Before making a schema change
+
 1. **Grep the entire codebase** for the values you're about to change
 2. **List every file** that references the old values
 3. **Change everything in the same commit** — schema + all references
 4. **Run `cargo test` AND `orqa enforce`** before committing
 
-### After making a schema change:
+### After making a schema change
+
 1. Run the tech debt audit: `grep -rn "old-value" app/ libs/ connectors/ plugins/`
 2. Check in-app manifests match plugin manifests
 3. Verify no hardcoded values bypass the schema
 4. Run the full verification suite: `make verify`
 
-### When adding new code:
+### When adding new code
+
 1. **Never hardcode relationship keys** — read them from the registry or schema
 2. **Never hardcode artifact types** — read them from the type registry
 3. **Never hardcode paths** — derive from config or conventions
@@ -51,7 +56,8 @@ The goal is not "low debt" — it's **zero debt**. Every architectural change mu
 
 ## How to Detect Debt
 
-### Automated checks (run regularly):
+### Automated checks (run regularly)
+
 ```bash
 # Find hardcoded relationship keys in frontend
 grep -rn '"delivers"\|"drives"\|"informs"' app/ui/src/ --include="*.ts" --include="*.svelte"
@@ -60,7 +66,7 @@ grep -rn '"delivers"\|"drives"\|"informs"' app/ui/src/ --include="*.ts" --includ
 grep -rn 'ToolRegistration\|ToolRunResult\|allTools' app/ui/src/ libs/sdk/src/
 
 # Find duplicated functions
-grep -rn 'fn active_project_path' app/backend/src-tauri/src/
+grep -rn 'fn active_project_path' app/app/src-tauri/src/
 
 # Find unused dependencies
 # (compare package.json deps against actual imports)
@@ -70,7 +76,8 @@ diff <(jq '.provides.schemas[].key' plugins/software-kanban/orqa-plugin.json) \
      <(grep -o '"key": "[^"]*"' app/ui/src/lib/plugins/software-project/manifest.ts)
 ```
 
-### Manual review triggers:
+### Manual review triggers
+
 - After renaming repos, folders, or types
 - After changing the relationship vocabulary
 - After adding/removing a plugin
@@ -87,7 +94,7 @@ diff <(jq '.provides.schemas[].key' plugins/software-kanban/orqa-plugin.json) \
 ## Debt Categories
 
 | Category | Detection | Example |
-|---|---|---|
+| --- | --- | --- |
 | Hardcoded values | grep for string literals | `"delivers"` in component code |
 | Stale copies | find duplicate files | Embedded JSON that should be include_str! |
 | Dead code | unused imports, unreachable functions | Imported type that was renamed |

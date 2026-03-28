@@ -3,7 +3,7 @@ id: "TASK-f50f84f8"
 type: "task"
 title: "Write core architecture documentation"
 description: "Complete end-to-end documentation of the target core application architecture."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-bbad3d30"

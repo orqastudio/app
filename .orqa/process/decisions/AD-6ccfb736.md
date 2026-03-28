@@ -20,7 +20,7 @@ No standalone frontmatter fields for connections. No `epic: EPIC-7394ba2a`. No `
 These exist in every project. They represent universal ways that thinking connects. Projects can alias display labels but the underlying semantics are fixed.
 
 | Relationship | Inverse | Meaning |
-|---|---|---|
+| --- | --- | --- |
 | `informs` | `informed-by` | Supplementary context |
 | `evolves-into` | `evolves-from` | Thinking becomes action |
 | `drives` | `driven-by` | Decision directs work |
@@ -37,6 +37,7 @@ These exist in every project. They represent universal ways that thinking connec
 Defined per-project in `project.json` for domain-specific connections between project types. Only exist when the project defines them.
 
 Examples:
+
 - Software: `depends-on` / `depended-on-by` (delivery dependency)
 - Research: `replicates` / `replicated-by` (experiment reproduction)
 - Consulting: `escalates-to` / `escalated-from` (issue escalation)
@@ -52,7 +53,7 @@ If artifact A `depends-on` artifact B and B isn't completed, A is blocked. The g
 All previously existing app-level relationship types are replaced by the canonical vocabulary:
 
 | Old Type | Migration Path | Reasoning |
-|---|---|---|
+| --- | --- | --- |
 | `enforces` / `enforced-by` | → canonical `enforces` | Rule scope = what it enforces |
 | `delivered-by` / `delivers` | → canonical `delivers` | Containment is contribution |
 | `informs` / `informed-by` | → canonical `informs` | Documentation informs its subject |
@@ -64,7 +65,7 @@ Each existing usage is audited during migration: mapped to canonical relationshi
 ### Standalone Fields to Migrate
 
 | Field | On Type | Becomes |
-|---|---|---|
+| --- | --- | --- |
 | `epic` | Tasks | `delivers → EPIC-NNN` |
 | `milestone` | Epics | `delivers → MS-NNN` |
 | `depends-on` | Tasks | `depends-on → TASK-NNN` (project relationship) |

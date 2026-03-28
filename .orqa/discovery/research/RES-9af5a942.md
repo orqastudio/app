@@ -15,7 +15,6 @@ A time-boxed investigation into eliminating or bundling PlantUML's Java dependen
 
 ---
 
-
 ## The Problem
 
 PlantUML Salt is OrqaStudio's primary wireframing tool (decided in [wireframing research](RES-d067c8c2)). Wireframing is a first-class product feature, not a developer-only build tool. Every OrqaStudio user must be able to render wireframes without manual setup.
@@ -31,7 +30,6 @@ This spike evaluates four options for resolving the dependency, determines which
 
 ---
 
-
 ## Option A: GraalVM Native Image
 
 Compile `plantuml.jar` into a standalone native binary using GraalVM's `native-image` ahead-of-time (AOT) compiler. The output is a platform-specific executable with no JRE dependency.
@@ -43,11 +41,13 @@ GraalVM's `native-image` performs static analysis of the JAR's bytecode, resolve
 ### Steps to Validate
 
 1. **Download PlantUML JAR:**
+
    ```bash
    curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/download/v1.2025.2/plantuml-1.2025.2.jar
    ```
 
 2. **Install GraalVM (latest, with native-image):**
+
    ```bash
    # macOS (Homebrew)
    brew install --cask graalvm-jdk
@@ -60,6 +60,7 @@ GraalVM's `native-image` performs static analysis of the JAR's bytecode, resolve
    ```
 
 3. **Run native-image with tracing agent (to detect reflection):**
+
    ```bash
    # Step 1: Run PlantUML under the tracing agent to record reflection/resource usage
    java -agentlib:native-image-agent=config-output-dir=ni-config \
@@ -75,6 +76,7 @@ GraalVM's `native-image` performs static analysis of the JAR's bytecode, resolve
    ```
 
 4. **Test the native binary with Salt specifically:**
+
    ```bash
    ./plantuml-native -tpng test-salt.puml
    ./plantuml-native -tsvg test-salt.puml
@@ -82,6 +84,7 @@ GraalVM's `native-image` performs static analysis of the JAR's bytecode, resolve
    ```
 
 5. **Test with styled Salt (theme integration):**
+
    ```bash
    # Verify that <style> blocks, skinparam, colors, and fonts work
    ./plantuml-native -tpng styled-salt.puml
@@ -135,7 +138,7 @@ Salt uses the same AWT rendering pipeline as other PlantUML diagrams. Salt-speci
 ### Risk Assessment
 
 | Factor | Risk | Mitigation |
-|--------|------|------------|
+| -------- | ------ | ------------ |
 | AWT compilation | Medium-High | SVG-only output as fallback; test on all three platforms |
 | Reflection config completeness | Medium | Tracing agent + manual review of PlantUML source |
 | Cross-platform builds | Medium | CI matrix: build native binary on each target OS |
@@ -147,7 +150,6 @@ Salt uses the same AWT rendering pipeline as other PlantUML diagrams. Salt-speci
 **Best-case outcome if it works.** Smallest footprint, fastest execution, no runtime dependency. Worth trying first, but AWT on native-image is the primary risk factor. SVG output has a higher chance of working than PNG.
 
 ---
-
 
 ## Option B: Bundled Minimal JRE
 
@@ -170,6 +172,7 @@ jlink \
 ```
 
 Module breakdown:
+
 - `java.base` — core JDK (always required)
 - `java.desktop` — AWT, Graphics2D, ImageIO, font handling (required for PNG rendering)
 - `java.logging` — PlantUML uses `java.util.logging`
@@ -179,7 +182,7 @@ Module breakdown:
 ### Expected Size
 
 | Configuration | Uncompressed | Compressed |
-|--------------|-------------|-----------|
+| -------------- | ------------- | ----------- |
 | Full JRE (Eclipse Temurin) | ~180MB | ~60MB |
 | jlink minimal (modules above) | ~90MB | ~45MB |
 | jlink minimal + `--compress=zip-9` | ~90MB | ~38MB |
@@ -191,7 +194,7 @@ The minimal JRE adds approximately 38-50MB to OrqaStudio's installer size.
 A jlink'd JRE is platform-specific. OrqaStudio must bundle a different JRE for each target:
 
 | Platform | JRE Variant | Notes |
-|----------|------------|-------|
+| ---------- | ------------ | ------- |
 | Windows x64 | Temurin JRE 21 LTS, Windows x64 | Most common OrqaStudio target |
 | Windows ARM64 | Temurin JRE 21 LTS, Windows aarch64 | Surface Pro X, etc. |
 | macOS x64 | Temurin JRE 21 LTS, macOS x64 | Intel Macs |
@@ -205,7 +208,7 @@ Each platform's jlink output is built in CI and included in that platform's Taur
 
 The JRE is bundled as a sidecar resource:
 
-```
+```text
 backend/src-tauri/
   resources/
     jre/          <-- jlink output (platform-specific, populated by CI)
@@ -239,7 +242,7 @@ Use Java 21 LTS (Eclipse Temurin). LTS ensures long-term availability of securit
 ### Risk Assessment
 
 | Factor | Risk | Mitigation |
-|--------|------|------------|
+| -------- | ------ | ------------ |
 | Installer size increase | Medium | 38-50MB; acceptable for a desktop app |
 | Cross-platform CI builds | Low-Medium | Automated jlink in CI matrix; one-time setup |
 | JVM startup time | Medium | Use `-pipe` mode to keep JVM warm; startup ~1-2s |
@@ -251,7 +254,6 @@ Use Java 21 LTS (Eclipse Temurin). LTS ensures long-term availability of securit
 **Most reliable option.** Full AWT support is guaranteed because we are shipping a real JRE. The cost is installer size (~40MB) and JVM startup latency. This is the safe fallback if native-image (Option A) fails.
 
 ---
-
 
 ## Option C: Detect System JRE
 
@@ -297,7 +299,7 @@ This is not a primary distribution strategy. It serves as:
 ### Risk Assessment
 
 | Factor | Risk | Mitigation |
-|--------|------|------------|
+| -------- | ------ | ------------ |
 | Java not installed | High | This is why we cannot rely on this option alone |
 | Wrong Java version | Medium | Version check + clear error message |
 | PATH misconfiguration | Medium | Check JAVA_HOME first, then PATH |
@@ -308,7 +310,6 @@ This is not a primary distribution strategy. It serves as:
 **Not acceptable as the primary strategy.** Useful as the last link in a fallback chain. Zero additional distribution cost.
 
 ---
-
 
 ## Option D: WebAssembly (WASM)
 
@@ -334,7 +335,7 @@ PlantUML Salt support in WASM environments is **unverified and likely incomplete
 ### Risk Assessment
 
 | Factor | Risk | Mitigation |
-|--------|------|------------|
+| -------- | ------ | ------------ |
 | Salt rendering correctness | High | No one has validated Salt in WASM |
 | AWT emulation fidelity | High | Font metrics, layout may differ |
 | CheerpJ licensing | Medium | Commercial license for production use |
@@ -348,14 +349,13 @@ PlantUML Salt support in WASM environments is **unverified and likely incomplete
 
 ---
 
-
 ## Recommendation
 
 ### Primary Strategy: Try Option A First, Fall Back to Option B
 
-```
+```text
 Option A (GraalVM native-image)
-  |
+ | | | | |
   |-- Success? Ship native binary per platform
   |
   |-- Failure (AWT issues)?
@@ -391,7 +391,6 @@ Runtime fallback chain (regardless of primary):
 
 ---
 
-
 ## Spike Acceptance Criteria
 
 The spike is considered successful when the following conditions are met. Each criterion has a clear pass/fail determination.
@@ -412,13 +411,13 @@ The spike is considered successful when the following conditions are met. Each c
 
 ### Should-Pass Criteria
 
-7. **Rendering performance** — A typical wireframe (20-30 Salt elements) renders in under 2 seconds on commodity hardware, including any cold-start cost.
+1. **Rendering performance** — A typical wireframe (20-30 Salt elements) renders in under 2 seconds on commodity hardware, including any cold-start cost.
 
-8. **Binary/bundle size** — The distributable artifact (native binary or jlink'd JRE + JAR) is under 50MB compressed.
+2. **Binary/bundle size** — The distributable artifact (native binary or jlink'd JRE + JAR) is under 50MB compressed.
 
-9. **Font rendering** — Text in the rendered wireframe uses a readable sans-serif font on all tested platforms (does not fall back to a bitmap or monospace font).
+3. **Font rendering** — Text in the rendered wireframe uses a readable sans-serif font on all tested platforms (does not fall back to a bitmap or monospace font).
 
-10. **Three-platform build** — The chosen option builds on all three primary platforms: macOS, Windows, and Linux.
+4. **Three-platform build** — The chosen option builds on all three primary platforms: macOS, Windows, and Linux.
 
 ### Spike Output Artifacts
 

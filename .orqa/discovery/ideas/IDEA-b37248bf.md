@@ -3,7 +3,7 @@ id: IDEA-b37248bf
 type: discovery-idea
 title: Software project integration plugin — code-level references into the artifact graph
 description: A comment structure in code files that allows direct references into the governance system. Entire codebase gets injected into the graph. Could update search to have full search across project structure and remove separate code search.
-status: surpassed
+status: archived
 created: 2026-03-15
 updated: 2026-03-15
 horizon: later

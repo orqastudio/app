@@ -3,7 +3,7 @@ id: "TASK-b1039dca"
 type: "task"
 title: "Extract stores into SDK — session, project, artifact, conversation"
 description: "Move the four primary data stores into @orqastudio/sdk. Fix conversationStore's DEFAULT_MODEL dependency by making it a config parameter."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -32,10 +32,12 @@ relationships:
 ## Scope
 
 ### From ui/src/lib/stores/
+
 - `session.svelte.ts` → fully portable, no changes
 - `project.svelte.ts` → fully portable, no changes
 - `artifact.svelte.ts` → fully portable, depends on SDK graph
 - `conversation.svelte.ts` → extract DEFAULT_MODEL to constructor/config parameter
 
 ### Modification needed
+
 `conversationStore` imports `DEFAULT_MODEL` from `$lib/components/conversation/model-options`. This must become a config parameter so the store doesn't depend on a UI component.

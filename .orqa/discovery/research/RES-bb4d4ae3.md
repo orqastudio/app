@@ -11,9 +11,11 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of Native Tool UX & First-Run Setup"
 ---
+
 ## Problem
 
 New users need to configure a project before they can start working. This includes:
+
 - Creating/opening a project directory
 - Setting up the AI provider (detecting Claude CLI, checking auth status)
 - Configuring the workspace (project name, icon, model selection)
@@ -21,6 +23,7 @@ New users need to configure a project before they can start working. This includ
 ## Design
 
 Phase 2a implemented a setup wizard with:
+
 1. **Claude CLI detection** — Checks if `claude` binary exists on PATH
 2. **Auth status** — Verifies Claude CLI authentication state
 3. **Project configuration** — Name, icon, model selection

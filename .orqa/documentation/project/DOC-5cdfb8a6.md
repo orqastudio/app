@@ -1,8 +1,12 @@
 ---
 id: "DOC-5cdfb8a6"
 type: doc
-status: "captured"
+status: "archived"
+archived_reason: "UI spec should be a WIREFRAME artifact type, not DOC. References stale paths (.orqa/process/lessons/, .orqa/process/rules/) that don't match target .orqa/ structure. Content describes pre-migration lesson pipeline UI."
 title: "Lesson Dashboard UI Spec"
+domain: reclassify
+reclassify_as: wireframe
+reclassify_reason: UI specification for a screen — not a platform guide
 description: "UI specification for the lesson dashboard that visualizes implementation lessons and promotion status."
 created: "2026-03-05"
 updated: "2026-03-05"
@@ -15,13 +19,11 @@ The lesson dashboard provides navigation and display for implementation lessons 
 
 ---
 
-
 ## Purpose
 
 The lesson dashboard makes the learning loop visible and actionable. Review agents add new lessons through the API; the dashboard surfaces them to users so they can track recurring mistakes, understand why they happen, and promote patterns into enforceable rules when they've recurred enough times.
 
 ---
-
 
 ## Components
 
@@ -31,7 +33,7 @@ The navigation section within the Lessons section of the Nav Sub-Panel. Shows a 
 
 **Layout:**
 
-```
+```text
 ┌──────────────────────────────────┐
 │ Lessons                          │
 │ [All] [Active] [Promoted]        │
@@ -48,6 +50,7 @@ The navigation section within the Lessons section of the Nav Sub-Panel. Shows a 
 ```
 
 **Filter tabs:**
+
 - **All** — shows all lessons regardless of status
 - **Active** — shows only `status: active` lessons
 - **Promoted** — shows only `status: promoted` lessons
@@ -55,6 +58,7 @@ The navigation section within the Lessons section of the Nav Sub-Panel. Shows a 
 **Item display:**
 
 Each lesson item shows:
+
 - IMPL number (left, muted)
 - Title (truncated to one line)
 - Recurrence badge (right): count in amber when recurrence >= 2, green when promoted
@@ -62,7 +66,7 @@ Each lesson item shows:
 **States:**
 
 | State | Display |
-|-------|---------|
+| ------- | --------- |
 | Loading | `LoadingSpinner` |
 | Error | `ErrorDisplay` with retry |
 | Empty | "No lessons recorded yet. Lessons are created when review agents identify recurring mistakes." |
@@ -70,14 +74,13 @@ Each lesson item shows:
 
 ---
 
-
 ### LessonViewer
 
 Displays the full content of a single lesson, selected from the LessonList.
 
 **Layout:**
 
-```
+```text
 ┌────────────────────────────────────────────────────┐
 │ IMPL-286bdc1f                                   [Promote]│
 │ unwrap() called in Tauri command handler            │
@@ -125,7 +128,7 @@ Displays the full content of a single lesson, selected from the LessonList.
 **States:**
 
 | State | Display |
-|-------|---------|
+| ------- | --------- |
 | Loading | `LoadingSpinner` centered |
 | Error | `ErrorDisplay` |
 | Empty (no lesson selected) | "Select a lesson from the list to view details." |
@@ -134,13 +137,12 @@ Displays the full content of a single lesson, selected from the LessonList.
 
 ---
 
-
 ### Recurrence Badges
 
 Recurrence badges appear in both the LessonList and within the LessonViewer metadata row. They communicate urgency at a glance.
 
 | Recurrence | Badge Style | Meaning |
-|------------|-------------|---------|
+| ------------ | ------------- | --------- |
 | 1 | Gray, no highlight | First occurrence — monitoring |
 | 2 | Amber, highlighted | Meets promotion threshold — review recommended |
 | 3+ | Amber, bold | Elevated recurrence — promotion strongly recommended |
@@ -148,14 +150,13 @@ Recurrence badges appear in both the LessonList and within the LessonViewer meta
 
 ---
 
-
 ### Promotion Candidates Section
 
 A dedicated section at the top of the lesson list (or as a dashboard card) highlighting lessons that meet the promotion threshold.
 
 **Layout (when promotion candidates exist):**
 
-```
+```text
 ┌──────────────────────────────────┐
 │ Promotion Candidates             │
 │ 2 lessons meet the threshold     │
@@ -170,7 +171,6 @@ A dedicated section at the top of the lesson list (or as a dashboard card) highl
 This section is hidden when no lessons have recurrence >= 2.
 
 ---
-
 
 ### Promotion Dialog
 
@@ -190,7 +190,7 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 **States:**
 
 | State | Display |
-|-------|---------|
+| ------- | --------- |
 | Step 1-4 | Form wizard with step indicator |
 | Submitting | `LoadingSpinner` with "Saving..." |
 | Error | Inline error message, form remains open |
@@ -198,11 +198,10 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 ---
 
-
 ## Component States Summary
 
 | Component | States |
-|-----------|--------|
+| ----------- | -------- |
 | `LessonList` | loading, error, empty, loaded |
 | `LessonViewer` | loading, error, empty (no selection), active, promoted |
 | `RecurrenceBadge` | first-occurrence, threshold-met, elevated, promoted |
@@ -211,11 +210,10 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 
 ---
 
-
 ## User-Facing Language
 
 | Internal concept | Display label |
-|-----------------|---------------|
+| ----------------- | --------------- |
 | `status: active` | "Active" |
 | `status: promoted` | "Promoted" |
 | `status: archived` | "Archived" |
@@ -224,7 +222,6 @@ A modal dialog that walks the user through promoting a lesson to a rule enforcem
 | Promotion threshold | Not exposed directly; surfaced as "meets the threshold" |
 
 ---
-
 
 ## Related Documents
 

@@ -10,6 +10,7 @@ relationships:
   - target: "EPIC-2f1efbd5"
     type: "drives"
 ---
+
 ## Decision
 
 The artifact scanner in `artifact_reader.rs` is config-driven. The `artifacts` array in `project.json` defines exactly what gets scanned — the scanner does not guess or hardcode paths. Directories are walked recursively like a file explorer, building a tree of `DocNode` entries. Every `.md` file has its YAML frontmatter extracted for display labels (title field, falling back to humanized filename).

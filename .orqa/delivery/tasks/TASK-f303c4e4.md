@@ -3,7 +3,7 @@ id: "TASK-f303c4e4"
 type: "task"
 title: "Resolve DOC-NNN phantom references"
 description: "20+ epics reference DOC-NNN IDs but no DOC artifacts exist. Fix unresolvable graph edges."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

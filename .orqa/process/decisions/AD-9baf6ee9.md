@@ -8,6 +8,7 @@ created: "2026-03-13"
 updated: "2026-03-13"
 relationships: []
 ---
+
 ## Decision
 
 Governance artifacts (rules, skills, agent definitions) that are injected into agent context must prioritize conciseness over granularity. When a new concern arises, the default action is to expand an existing rule rather than create a new one.

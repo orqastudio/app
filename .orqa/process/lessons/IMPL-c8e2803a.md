@@ -12,7 +12,6 @@ recurrence: 1
 relationships: []
 ---
 
-
 ## Pattern
 
 When the user requests an investigation or audit, the orchestrator delegates directly to a research agent without first creating a RES-NNN artifact. This skips the structure-before-work requirement and means the research has no traceability — no artifact to reference from the epic, no place for findings to live.
@@ -20,6 +19,7 @@ When the user requests an investigation or audit, the orchestrator delegates dir
 ## Fix
 
 The orchestrator should recognise investigation-class requests ("scan for gaps", "audit X", "identify Y") and:
+
 1. Create a RES-NNN research artifact with the investigation scope
 2. Reference it from the epic's `research-refs` field
 3. Then delegate the investigation to a research agent

@@ -3,7 +3,7 @@ id: "TASK-ee73dc63"
 type: "task"
 title: "Broken link detection with line-level positioning"
 description: "Enhance broken link detection to report diagnostics at the exact line and column where the broken artifact reference appears in frontmatter or body."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 relationships:
@@ -27,7 +27,7 @@ Broken link detection already works at two levels: `check_relationship_targets()
 
 2. **Map daemon BrokenLink diagnostics to source lines** — the daemon returns artifact IDs; the LSP must find where that ID appears in the document to position the diagnostic.
 
-3. **Detect broken links in body content** — scan markdown body for `[<TYPE>-<hex8>](<TYPE>-<hex8>)` patterns and validate each referenced ID exists in the graph.
+3. **Detect broken links in body content** — scan markdown body for `[\<TYPE\>-<hex8>](\<TYPE\>-<hex8>)` patterns and validate each referenced ID exists in the graph.
 
 4. **Use daemon `/validate` for authoritative checks** — text-level checks provide fast feedback; daemon checks provide authoritative results when the full graph is available.
 

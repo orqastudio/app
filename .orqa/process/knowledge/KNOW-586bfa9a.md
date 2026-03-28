@@ -2,6 +2,7 @@
 id: KNOW-586bfa9a
 type: knowledge
 title: Knowledge Auto-Injection
+domain: methodology/governance
 summary: "Agents need domain knowledge to do their jobs correctly. OrqaStudio ensures agents receive the right knowledge automatically through two mechanisms — **declared injection** from agent definitions and **semantic injection** based on task content."
 description: |
   How OrqaStudio automatically injects relevant knowledge into agents at spawn time.
@@ -64,7 +65,7 @@ When an agent is spawned with a task description, the platform runs a semantic s
 
 ## How It Works Together
 
-```
+```text
 Agent spawn
     │
     ├── Read agent definition
@@ -79,6 +80,7 @@ Agent spawn
 ### Example
 
 An Implementer working on "add a new Tauri command for artifact validation":
+
 - **Declared knowledge** (from Implementer agent employs): composability, search, reasoning methodology
 - **Semantic search** (from task description): Tauri IPC patterns, error composition, validation engine architecture
 
@@ -89,7 +91,7 @@ An Implementer working on "add a new Tauri command for artifact validation":
 Knowledge injection is enforced by hooks in the connector plugin:
 
 | Hook | Event | What It Does |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | **Agent spawn hook** | When a subagent is created | Reads agent definition, follows employs, loads knowledge |
 | **Task assignment hook** | When a task is delegated | Runs semantic search on task description, injects relevant knowledge |
 | **Dedup cache** | Per session | Tracks which knowledge has been injected to avoid re-injection |
@@ -101,7 +103,7 @@ The dedup cache is ephemeral (lives in memory for the session). If a knowledge a
 ## Agent Actions
 
 | Situation | Action |
-|-----------|--------|
+| ----------- | -------- |
 | Agent needs specific knowledge every time | Add an `employs` relationship in the agent's YAML frontmatter |
 | Agent needs knowledge only for certain tasks | Rely on semantic search — ensure the knowledge artifact has a good title and description for matching |
 | Knowledge not being injected | Check: (1) Does the employs relationship exist? (2) Does the knowledge artifact exist at the target ID? (3) Is the semantic search index up to date? |

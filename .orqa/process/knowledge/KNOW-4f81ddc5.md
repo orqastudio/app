@@ -2,13 +2,14 @@
 id: "KNOW-4f81ddc5"
 type: "knowledge"
 title: "Orqa IPC Patterns"
+domain: platform/tauri
 description: "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,\nChannel<T> streaming, command registration, and IPC type contracts.\nUse when: Adding or modifying Tauri commands, wiring frontend to backend,\nimplementing streaming features, or debugging IPC boundary issues.\n"
 status: "active"
 created: 2026-03-01T00:00:00.000Z
-updated: 2026-03-10T00:00:00.000Z
+updated: 2026-03-28T00:00:00.000Z
 category: "domain"
 file-patterns:
-  - "backend/src-tauri/src/commands/**"
+  - "app/src-tauri/src/commands/**"
 version: "1.0.0"
 user-invocable: true
 relationships:
@@ -36,7 +37,7 @@ OrqaStudio uses Tauri v2's `invoke()` as the ONLY interface between the Svelte f
 
 Every feature follows this path. All layers must exist in the same commit.
 
-```
+```text
 Svelte Component (event handler)
     → Svelte Store (invoke() call)
     → Tauri IPC Boundary (serialization)
@@ -50,10 +51,10 @@ Svelte Component (event handler)
 
 ### 1. Tauri Command Handler
 
-Commands live in `backend/src-tauri/src/commands/` and are thin wrappers delegating to domain services.
+Commands live in `app/src-tauri/src/commands/` and are thin wrappers delegating to domain services.
 
 ```rust
-// backend/src-tauri/src/commands/project_commands.rs
+// app/src-tauri/src/commands/project_commands.rs
 #[tauri::command]
 pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
     let canonical = validate_directory_path(&path)?;
@@ -74,17 +75,18 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
 ```
 
 **Key rules:**
-- Always return `Result<T, OrqaError>` — never `unwrap()` or `panic!()`
+
+- Always return `Result\<T, OrqaError\>` — never `unwrap()` or `panic!()`
 - Access database via `State<'_, AppState>` and lock the mutex
-- Delegate to domain modules in `backend/src-tauri/src/domain/` and repos in `backend/src-tauri/src/repo/`
+- Delegate to domain modules in `app/src-tauri/src/domain/` and repos in `app/src-tauri/src/repo/`
 - Keep commands thin — business logic belongs in domain services
 
 ### 2. Command Registration
 
-Every command must be registered in `backend/src-tauri/src/lib.rs`:
+Every command must be registered in `app/src-tauri/src/lib.rs`:
 
 ```rust
-// backend/src-tauri/src/lib.rs
+// app/src-tauri/src/lib.rs
 .invoke_handler(tauri::generate_handler![
     // Project
     commands::project_commands::project_open,
@@ -124,13 +126,14 @@ async loadMessages(sessionId: number): Promise<void> {
 ```
 
 **Key rules:**
-- Always specify the return type generic: `invoke<ReturnType>()`
+
+- Always specify the return type generic: `invoke\<ReturnType\>()`
 - Always handle errors — show them to the user
 - Only call `invoke()` in stores or page-level code, NEVER in display components
 
-### 4. Channel<T> Streaming
+### 4. Channel\<T\> Streaming
 
-For long-running operations (Claude conversations), use `Channel<T>`:
+For long-running operations (Claude conversations), use `Channel\<T\>`:
 
 ```typescript
 // Frontend: create channel, pass to invoke
@@ -169,7 +172,7 @@ pub async fn stream_send_message(
 Types must match exactly across the Rust/TypeScript boundary.
 
 ```rust
-// Rust: backend/src-tauri/src/domain/provider_event.rs
+// Rust: app/src-tauri/src/domain/provider_event.rs
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type", content = "data")]
 #[serde(rename_all = "snake_case")]
@@ -200,7 +203,7 @@ export type StreamEvent =
 
 When adding a new feature, all four layers must be created together. Below is a complete example (hardware info display) showing the canonical shape for each layer.
 
-**1. Rust types (`backend/src-tauri/src/domain/`):**
+**1. Rust types (`app/src-tauri/src/domain/`):**
 
 ```rust
 #[derive(Debug, Serialize, Deserialize)]
@@ -211,7 +214,7 @@ pub struct HardwareInfo {
 }
 ```
 
-**2. Rust command (`backend/src-tauri/src/commands/`):**
+**2. Rust command (`app/src-tauri/src/commands/`):**
 
 ```rust
 #[tauri::command]
@@ -268,14 +271,16 @@ export function useHardware() {
 ## Anti-Patterns
 
 ### Missing command registration
+
 ```rust
 // Command exists but NOT in invoke_handler → runtime "command not found" error
 #[tauri::command]
 pub fn my_new_command() -> Result<(), OrqaError> { /* ... */ }
-// FORGOT to add to backend/src-tauri/src/lib.rs!
+// FORGOT to add to app/src-tauri/src/lib.rs!
 ```
 
 ### invoke() in display components
+
 ```svelte
 <!-- FORBIDDEN: display components must not call invoke() -->
 <script lang="ts">
@@ -284,19 +289,23 @@ pub fn my_new_command() -> Result<(), OrqaError> { /* ... */ }
   $effect(() => { invoke('get_data').then(d => data = d); }); // WRONG
 </script>
 ```
+
 Move the `invoke()` call to a store or page-level container.
 
 ### Type mismatch across boundary
+
 ```rust
 // Rust returns i64
 pub struct Info { pub count: i64 }
 ```
+
 ```typescript
 // TypeScript expects string — SILENT RUNTIME ERROR
 interface Info { count: string }
 ```
 
 ### Forgetting error handling
+
 ```typescript
 // WRONG: no error handling
 const data = await invoke('get_data');
@@ -313,7 +322,7 @@ try {
 
 Before committing any IPC change, use `search_regex` to verify:
 
-1. The command name appears in `backend/src-tauri/src/lib.rs` (registered)
+1. The command name appears in `app/src-tauri/src/lib.rs` (registered)
 2. The command name appears in a `#[tauri::command]` function (implemented)
 3. The command name appears in an `invoke()` call (wired to frontend)
 4. The return type has matching TypeScript interface
@@ -321,11 +330,11 @@ Before committing any IPC change, use `search_regex` to verify:
 ## Key Files
 
 | File | Purpose |
-|------|---------|
-| `backend/src-tauri/src/lib.rs` | Command registration (invoke_handler) |
-| `backend/src-tauri/src/commands/` | All `#[tauri::command]` handlers |
-| `backend/src-tauri/src/domain/` | Business logic (commands delegate here) |
-| `backend/src-tauri/src/domain/provider_event.rs` | StreamEvent enum |
+| ------ | --------- |
+| `app/src-tauri/src/lib.rs` | Command registration (invoke_handler) |
+| `app/src-tauri/src/commands/` | All `#[tauri::command]` handlers |
+| `app/src-tauri/src/domain/` | Business logic (commands delegate here) |
+| `app/src-tauri/src/domain/provider_event.rs` | StreamEvent enum |
 | `ui/src/lib/ipc/invoke.ts` | Typed invoke wrapper |
 | `ui/src/lib/stores/*.svelte.ts` | Stores that call invoke() |
 | `ui/src/lib/types/` | TypeScript interfaces matching Rust types |

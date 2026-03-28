@@ -34,7 +34,7 @@ The MCP server currently embeds the ONNX runtime and DuckDB for semantic search.
 
 ## Architecture After Extraction
 
-```
+```text
 Search Engine (standalone, port 10260)
   ├── ONNX Runtime — embedding generation
   ├── DuckDB — vector storage and similarity search

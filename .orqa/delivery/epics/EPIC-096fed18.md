@@ -3,7 +3,7 @@ id: "EPIC-096fed18"
 type: epic
 title: "Settings UI for Thinking & Custom Prompt"
 description: "Add UI controls for show_thinking toggle and custom system prompt fields that already exist in the backend."
-status: "captured"
+status: captured
 priority: "P1"
 created: "2026-03-07"
 updated: "2026-03-07"
@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P1
 
 Can't control reasoning behaviour without these toggles. The custom system prompt is how dogfooding context reaches the AI.

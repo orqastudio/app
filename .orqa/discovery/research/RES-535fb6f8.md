@@ -25,6 +25,7 @@ CrewAI uses a **three-attribute template model** for agent prompt composition:
 - **`backstory`**: Context and personality ("15 years of systems programming experience...")
 
 The framework provides three customizable template parameters:
+
 - `system_template` — core behavior
 - `prompt_template` — input structure
 - `response_template` — output format
@@ -46,6 +47,7 @@ AutoGen takes a fundamentally different approach: **prompts emerge from message 
 - `MultiModalMessage` objects compose text, images, and tool outputs dynamically
 
 AutoGen v0.4+ (2025-2026) shifted to event-driven architecture with:
+
 - Drag-and-drop workflow design (AutoGen Studio)
 - Privacy safeguards (Maris) for inter-agent message flow control
 - Declarative agent definition via JSON/YAML
@@ -105,7 +107,7 @@ DSPy takes the most radical approach: **prompts are compiled, not authored**.
 ### Summary Matrix
 
 | Framework | Composition Model | Dynamic? | Knowledge Injection | Workflow Awareness | Token Efficiency |
-|-----------|------------------|----------|--------------------|--------------------|-----------------|
+| ----------- | ------------------ | ---------- | -------------------- | -------------------- | ----------------- |
 | CrewAI | Template interpolation | Static per agent | Flat backstory string | Via task, not prompt | Low (full backstory always included) |
 | AutoGen | Message accumulation | Dynamic via conversation | Via message passing | Implicit in conversation | Medium (grows with history) |
 | LangGraph | Node-based rebuild | Dynamic per invocation | Skill registry + on-demand | Explicit graph state | High (only relevant skills loaded) |
@@ -120,7 +122,7 @@ DSPy takes the most radical approach: **prompts are compiled, not authored**.
 
 **Mechanism**: Markdown or text files with placeholder variables (`{{ agent_role }}`, `{{ knowledge_sections }}`) resolved at generation time.
 
-```
+```text
 # System Prompt
 
 You are a {{ agent.role }}.
@@ -146,6 +148,7 @@ You are a {{ agent.role }}.
 ```
 
 **Pros**:
+
 - Human-readable templates, easy to author and review
 - Familiar syntax (Jinja2 is industry standard)
 - Templates are auditable — you can see exactly what will be generated
@@ -153,6 +156,7 @@ You are a {{ agent.role }}.
 - Conditional sections via `{% if %}` blocks
 
 **Cons**:
+
 - No type safety — a missing variable produces silent empty output
 - Complex logic (sorting, filtering, priority ordering) is awkward in template syntax
 - Templates can grow unwieldy as conditional branches multiply
@@ -191,6 +195,7 @@ class PromptBuilder {
 ```
 
 **Pros**:
+
 - Type-safe — missing inputs are compile-time errors
 - Complex filtering/sorting/prioritization logic is natural in code
 - Token budget management is built-in (can trim low-priority sections)
@@ -198,6 +203,7 @@ class PromptBuilder {
 - Testable — unit test each section builder independently
 
 **Cons**:
+
 - Prompts are not human-readable without running the code
 - Harder for non-developers to modify prompt structure
 - Code changes require recompilation (in Rust/TypeScript)
@@ -241,6 +247,7 @@ sections:
 ```
 
 **Pros**:
+
 - Prompt structure is data, not code — can be modified without recompilation
 - Plugin-friendly — plugins add entries to the schema, assembler handles the rest
 - Auditable — the schema shows exactly what will be composed
@@ -248,6 +255,7 @@ sections:
 - Natural fit for OrqaStudio's artifact graph (sections reference graph nodes)
 
 **Cons**:
+
 - The generic assembler must handle all edge cases (missing sources, token overflow, circular references)
 - Schema language needs to be expressive enough for conditional logic
 - Two levels of indirection: schema → assembler → prompt (harder to debug)
@@ -272,7 +280,7 @@ Use **declarative schemas** (Option C) for the *structure* — which sections to
 Assign each prompt section a priority level. When the total prompt exceeds the token budget, trim from lowest priority up:
 
 | Priority | Section Type | Trim Strategy |
-|----------|-------------|---------------|
+| ---------- | ------------- | --------------- |
 | P0 (never trim) | Identity, workflow stage, task description | Always included |
 | P1 (trim last) | Active rules, acceptance criteria | Summarize if over budget |
 | P2 (trim if needed) | Knowledge artifacts | Include most relevant only |
@@ -285,7 +293,7 @@ Assign each prompt section a priority level. When the total prompt exceeds the t
 Use **Mermaid statechart notation** instead of prose to represent workflows. Token efficiency comparison:
 
 | Format | Tokens (simple diagram) | Tokens (complex workflow) | LLM Comprehension |
-|--------|------------------------|--------------------------|-------------------|
+| -------- | ------------------------ | -------------------------- | ------------------- |
 | Prose description | ~200 | ~800 | Good but verbose |
 | Mermaid | ~50 | ~200 | Excellent |
 | YAML | ~80 | ~350 | Good |
@@ -298,7 +306,7 @@ Use **Mermaid statechart notation** instead of prose to represent workflows. Tok
 
 Instead of embedding full knowledge in every prompt, use a **compact skill registry**:
 
-```
+```text
 ## Available Knowledge
 - rust-error-patterns: Error composition with thiserror (invoke if touching error types)
 - svelte5-runes: Reactive state with $state/$derived/$effect (invoke if touching stores/components)
@@ -314,14 +322,16 @@ Each entry is ~20 tokens. Full knowledge artifacts are 500-2000 tokens each. A r
 Transform verbose rule prose into compact constraint tables:
 
 **Before (verbose, ~150 tokens)**:
-```
+
+```text
 When writing Rust code, you must never use unwrap() or expect() in production code.
 All functions must return Result types. Use thiserror for error definition.
 No panic!() calls are allowed outside of test modules.
 ```
 
 **After (compressed, ~60 tokens)**:
-```
+
+```text
 ## Rust Constraints
 | FORBIDDEN | REQUIRED |
 |-----------|----------|
@@ -335,7 +345,7 @@ Tables are 40-60% more token-efficient than prose for constraint lists while mai
 
 Only include sections relevant to the current task:
 
-```
+```text
 if task.area == "backend":
   include: rust-patterns, error-composition, ipc-patterns
   exclude: svelte-patterns, component-extraction
@@ -353,7 +363,7 @@ Research shows role prompting alone cuts token use by 25-30% because the model r
 ### Combined Impact Estimate
 
 | Technique | Token Savings | Implementation Complexity |
-|-----------|--------------|--------------------------|
+| ----------- | -------------- | -------------------------- |
 | Priority trimming | 20-40% | Medium (requires priority assignment) |
 | Mermaid for workflows | 75% of workflow section | Low (format change only) |
 | Skill registry | 80% of knowledge section | Medium (requires tool call support) |
@@ -399,7 +409,7 @@ stateDiagram-v2
 
 Represent the workflow as a state transition table:
 
-```
+```text
 ## Workflow
 
 | State | Entry Gate | Agent Role | Exit Gate | Next State |
@@ -443,7 +453,7 @@ workflow:
 
 Use **Mermaid** for the overall flow (visual structure) and **a compact table** for gate details (precise conditions). This gives the LLM both the spatial understanding of the workflow and the precise transition rules:
 
-```
+```text
 ## Workflow
 stateDiagram-v2
   [*] --> understand --> plan --> document --> implement --> review
@@ -468,7 +478,7 @@ stateDiagram-v2
 
 ### Architecture Overview
 
-```
+```text
 Plugin Registry → Schema Assembly → Section Resolution → Token Budgeting → Prompt Output
 ```
 
@@ -521,7 +531,7 @@ interface PromptSection {
 
 With all sections resolved, apply the token budget:
 
-```
+```text
 total_budget = model_context_limit - expected_output_tokens - conversation_tokens
 available_for_prompt = total_budget
 
@@ -579,7 +589,7 @@ The XML tag structure follows Anthropic's best practices — Claude parses XML t
 
 ### Dependency Graph for Regeneration
 
-```
+```text
 Plugin installed/removed
   → Regenerate prompt schemas for affected agent types
   → Regenerate knowledge sections for affected artifacts
@@ -625,8 +635,8 @@ Next: review (Reviewer must PASS before task is done)
 
 <knowledge>
 ## Rust Error Patterns
-| REQUIRED | FORBIDDEN |
-|----------|-----------|
+| REQUIRED | FORBIDDEN | | | | |
+|----------|----------- --- | --- |
 | Result<T,E> returns | unwrap(), expect(), panic!() |
 | thiserror for error types | silent error swallowing |
 | Error context via .context() | bare .map_err(|e| e) |
@@ -765,12 +775,13 @@ const schema: PromptSchema = {
 **Treat prompts as code with semantic versioning:**
 
 | Version Component | When to Increment | Example |
-|-------------------|-------------------|---------|
+| ------------------- | ------------------- | --------- |
 | MAJOR | Format/structure changes, role redefinition | Identity section restructured |
 | MINOR | New knowledge section, rule additions | Added svelte5 knowledge |
 | PATCH | Wording clarifications, compression | Rephrased error constraint table |
 
 **Version tracking per component:**
+
 - Each prompt schema gets its own version (e.g., `implementer-prompt@2.3.1`)
 - Each knowledge section gets its own version (tied to knowledge artifact `updated` date)
 - The assembled prompt gets a composite version hash (schema version + all section hashes)
@@ -782,12 +793,14 @@ const schema: PromptSchema = {
 **Three-tier testing approach:**
 
 #### Tier 1: Static Validation (Every Build)
+
 - Schema validation — does the prompt schema reference existing artifacts?
 - Token budget check — does the assembled prompt fit within limits?
 - Required section check — are all P0 sections present?
 - Syntax check — do XML tags close properly? Is Mermaid valid?
 
 #### Tier 2: Behavioral Regression (Every Schema Change)
+
 - **Gold test set**: 10-20 representative tasks per agent type
 - **Hard gates** (must never regress):
   - Agent stays in role (doesn't implement when assigned Reviewer)
@@ -799,6 +812,7 @@ const schema: PromptSchema = {
   - Unnecessary tool calls
 
 #### Tier 3: A/B Comparison (Major Changes)
+
 - Run the same task set against old and new prompt versions
 - Compare: task success rate, token cost, tool call count, output quality
 - Report per-segment (by task type, complexity, domain)
@@ -826,7 +840,7 @@ gate: hard
 
 ### Prompt Change Workflow
 
-```
+```text
 1. Modify prompt schema or section template
 2. Run Tier 1 validation (static checks)
 3. Run Tier 2 regression (gold test set)

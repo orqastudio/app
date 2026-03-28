@@ -3,7 +3,7 @@ id: "TASK-aa1cc420"
 type: "task"
 title: "Wire types + eslint-config into integrity validator + add tests"
 description: "Update @orqastudio/integrity-validator to import types from @orqastudio/types, use @orqastudio/eslint-config, and add comprehensive unit tests for all 10 checks."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4

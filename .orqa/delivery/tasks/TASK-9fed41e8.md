@@ -3,7 +3,7 @@ id: "TASK-9fed41e8"
 type: "task"
 title: "Provider-neutral session ID naming"
 description: "Renames the provider-specific session ID field to a neutral name across all layers — sidecar, Rust types, commands, domain, repository, and SQLite — with no behavioral changes."
-status: "completed"
+status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Rename the provider-specific `sdk_session_id` field to the neutral

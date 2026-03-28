@@ -3,7 +3,7 @@ id: "TASK-d423f4f7"
 type: "task"
 title: "Autocomplete for artifact IDs and statuses"
 description: "Implement LSP completion provider that suggests artifact IDs, status values, and relationship types based on plugin schemas and the daemon's artifact index."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 relationships:

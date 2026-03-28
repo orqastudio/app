@@ -3,7 +3,7 @@ id: TASK-9a1165dd
 type: task
 title: LSP server review — verify frontmatter validation
 description: Review the existing LSP server implementation to verify that real-time frontmatter validation works correctly for all artifact types. Produce a verdict with any gaps.
-status: completed
+status: archived
 created: 2026-03-21
 updated: 2026-03-21
 acceptance:

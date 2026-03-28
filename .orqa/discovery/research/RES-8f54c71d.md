@@ -17,7 +17,7 @@ Conducted 2026-03-25 against commit 9171faea on the `main` branch.
 The app uses a single-page architecture. There is only one SvelteKit route:
 
 | Route | File | Purpose |
-|-------|------|---------|
+| ------- | ------ | --------- |
 | `/` | `app/src/routes/+page.svelte` | Renders `AppLayout` (the entire app) |
 | (layout) | `app/src/routes/+layout.svelte` | Initialises SDK stores, plugin registry, hash-based router, key bindings |
 | (layout config) | `app/src/routes/+layout.ts` | Disables SSR and prerendering |
@@ -49,7 +49,7 @@ Everything else is either an `ArtifactViewer` (for selected artifacts) or a `Plu
 #### Dashboard (`app/src/lib/components/dashboard/`) — 10 components
 
 | Component | Status | Notes |
-|-----------|--------|-------|
+| ----------- | -------- | ------- |
 | `ProjectDashboard.svelte` | OK | Orchestrates widgets, delegates to `artifactGraphSDK` |
 | `GraphHealthWidget.svelte` | **STALE** | Shows "Bidirectionality Ratio" metric (lines 85-89, 268-279). With forward-only storage, bidirectionality_ratio will always be < 100% by design. The tooltip text at line 275 says "Missing inverses create navigation asymmetry" which is misleading — inverses are now computed, not stored. The threshold alert at line 129 flags bidirectionality < 80% which will fire permanently. |
 | `IntegrityWidget.svelte` | **STALE** | `categoryLabels` map (lines 36-49) is missing `SchemaViolation` and `TypePrefixMismatch` categories that the Rust validation crate now emits. Findings with these categories will render with `undefined` labels. |
@@ -65,7 +65,7 @@ Everything else is either an `ArtifactViewer` (for selected artifacts) or a `Plu
 #### Artifact (`app/src/lib/components/artifact/`) — 17 components
 
 | Component | Status | Notes |
-|-----------|--------|-------|
+| ----------- | -------- | ------- |
 | `HookViewer.svelte` | **POTENTIALLY STALE** | Renders `.sh` files as bash code blocks. Still valid for `.claude/hooks/` but the git-hooks system was part of the `githooks` plugin and may not be the primary hook mechanism going forward. |
 | `ArtifactViewer.svelte` | **IMPORTS HOOK** | Lines 5, 288: imports and renders `HookViewer` for `.sh` file extensions. This is harmless but couples artifact viewing to hook rendering. |
 | `ArtifactLanding.svelte` | **STALE REFERENCES** | Lines 48-55: Has a `hooks` category configuration pointing to `.claude/hooks/` with description "Hooks run automated actions at lifecycle events". The gate engine now handles lifecycle events via YAML workflows, not shell hooks. |
@@ -77,14 +77,14 @@ Everything else is either an `ArtifactViewer` (for selected artifacts) or a `Plu
 #### Graph (`app/src/lib/components/graph/`) — 2 components
 
 | Component | Status | Notes |
-|-----------|--------|-------|
+| ----------- | -------- | ------- |
 | `FullGraphView.svelte` | OK | Cytoscape-based graph visualization. Clean. |
 | `GraphHealthPanel.svelte` | **STALE** | Same bidirectionality issue as `GraphHealthWidget.svelte`. Lines 71-75, 154-158, 363-366 reference bidirectionality_ratio with thresholds that assume stored inverses. |
 
 #### Settings (`app/src/lib/components/settings/`) — 16 components
 
 | Component | Status | Notes |
-|-----------|--------|-------|
+| ----------- | -------- | ------- |
 | `ProjectStatusSettings.svelte` | **CONCEPTUALLY STALE** | Manages `statusTransitions` and `auto_rules` in `project.json`. The new architecture uses YAML workflow state machines in `.orqa/workflows/`. This UI edits the old `project.json` status definitions which still drive the Tauri `status_transitions` engine, but those are being superseded by the workflow engine. Not broken — but represents the OLD way of doing status management. |
 | `PluginBrowser.svelte` | **MINOR** | Lines 48, 436-453: Displays plugin hooks from manifests. Still valid for `githooks` plugin. |
 | `ProjectSetupWizard.svelte` | **MINOR** | Lines 153-154: Shows hook count in scan results. Still valid. |
@@ -93,7 +93,7 @@ Everything else is either an `ArtifactViewer` (for selected artifacts) or a `Plu
 #### Other Areas
 
 | Area | Status |
-|------|--------|
+| ------ | -------- |
 | `layout/` (13 components) | OK — clean, no deprecated references |
 | `content/` (6 components) | OK — markdown rendering, diagrams |
 | `conversation/` (12 components) | OK — chat/streaming interface |
@@ -112,7 +112,7 @@ Everything else is either an `ArtifactViewer` (for selected artifacts) or a `Plu
 There is NO `app/src/lib/stores/` directory. All state management lives in `libs/sdk/src/stores/`:
 
 | Store | File | Purpose | Status |
-|-------|------|---------|--------|
+| ------- | ------ | --------- | -------- |
 | `artifact` | `artifact.svelte.ts` | Nav tree, content loading | OK |
 | `conversation` | `conversation.svelte.ts` | Chat sessions | OK |
 | `enforcement` | `enforcement.svelte.ts` | Rules, violations | OK |
@@ -128,6 +128,7 @@ There is NO `app/src/lib/stores/` directory. All state management lives in `libs
 Additionally, the `ArtifactGraphSDK` in `libs/sdk/src/graph/artifact-graph.svelte.ts` acts as the primary graph state manager. It is the central data hub.
 
 **What's Missing from Stores**:
+
 - No `WorkflowStore` — the 17 resolved YAML workflow files have no UI representation
 - No `GateStore` — gate reviews have no UI state
 - No `AgentTeamStore` — agent team metrics/status have no UI representation
@@ -145,7 +146,7 @@ Frontend communicates with the Rust backend via Tauri IPC (`invoke()` calls). Th
 ### 4.2 Registered Tauri Commands (from `app/src-tauri/src/lib.rs` lines 193-258)
 
 | Command Group | Commands | Status |
-|--------------|----------|--------|
+| -------------- | ---------- | -------- |
 | **Daemon** | `daemon_health` | OK |
 | **Sidecar** | `sidecar_status`, `sidecar_restart` | OK |
 | **Streaming** | `stream_send_message`, `stream_stop`, `stream_tool_approval_respond` | OK |
@@ -180,6 +181,7 @@ Frontend communicates with the Rust backend via Tauri IPC (`invoke()` calls). Th
 ### 4.4 Tauri Domain Modules (`app/src-tauri/src/domain/`)
 
 Notable modules:
+
 - `status_transitions.rs` — Old `project.json`-based transition engine. Still functional but superseded by YAML workflows.
 - `process_gates.rs` — Exists but NOT exposed as Tauri commands to the frontend.
 - `process_state.rs` — Session process state. Present in `AppState` but no commands expose it.
@@ -195,7 +197,7 @@ Notable modules:
 ### 5.1 View Declarations in Plugin Manifests
 
 | Plugin | Views Declared |
-|--------|---------------|
+| -------- | --------------- |
 | `software` | 1: `roadmap` (key: "roadmap", label: "Roadmap", icon: "kanban") |
 | `core` | 0 |
 | `agile-governance` | 0 |
@@ -209,6 +211,7 @@ Notable modules:
 ### 5.2 View Loading Mechanism
 
 `PluginViewContainer.svelte` (lines 16-56) loads plugin views by:
+
 1. Getting the plugin's install path via `invoke("plugin_get_path", { name })`
 2. Loading `{pluginPath}/dist/views/{viewKey}.js` as a dynamic ES module
 3. Looking for `module.mount()` or `module.default` (Svelte component)
@@ -320,6 +323,7 @@ The cluster count comes from `component_count` in `GraphHealth`. This suggests t
 **File**: `libs/types/src/artifact-graph.ts` (lines 109-122) and `libs/types/src/generated/validation.generated.ts` (lines 13-26)
 
 The TypeScript types are missing two categories that the Rust validation crate emits:
+
 - `SchemaViolation` — used by enforcement checks, schema checks, and structural checks
 - `TypePrefixMismatch` — used by structural checks
 
@@ -330,6 +334,7 @@ The frontend `IntegrityWidget.svelte` `categoryLabels` map (lines 36-49) does no
 ### 8.2 Bidirectionality Metric is Misleading
 
 **Files**:
+
 - `app/src/lib/components/dashboard/GraphHealthWidget.svelte` (lines 85-89, 128-133, 268-279)
 - `app/src/lib/components/graph/GraphHealthPanel.svelte` (lines 71-75, 154-158, 363-366)
 
@@ -340,6 +345,7 @@ With forward-only relationship storage, the `bidirectionality_ratio` measures wh
 ### 8.3 Duplicate Status Transition Engine
 
 **Files**:
+
 - `app/src-tauri/src/commands/status_transition_commands.rs` — standalone transition commands
 - `app/src-tauri/src/commands/graph_commands.rs` (lines 151-238) — transition logic duplicated in `refresh_artifact_graph`
 
@@ -354,6 +360,7 @@ This component manages status definitions with `transitions` (allowed next statu
 ### 8.5 Hook References (Low Priority)
 
 **Files**:
+
 - `app/src/lib/components/artifact/ArtifactLanding.svelte` (lines 48-55) — hooks category config
 - `app/src/lib/components/artifact/ArtifactViewer.svelte` (lines 5, 288) — HookViewer import
 - `app/src-tauri/src/commands/hook_commands.rs` — hook Tauri commands
@@ -386,34 +393,34 @@ A search for `statusTransitions` across `app/src` returned zero results. However
 
 ### High Priority (architectural gaps)
 
-4. **Expose workflow state machines to frontend**: Add Tauri commands to read `.orqa/workflows/*.resolved.yaml`, return current state per artifact, and provide a UI to visualize/interact with workflows.
+1. **Expose workflow state machines to frontend**: Add Tauri commands to read `.orqa/workflows/*.resolved.yaml`, return current state per artifact, and provide a UI to visualize/interact with workflows.
 
-5. **Expose gate engine to frontend**: Add Tauri commands for gate lifecycle (list pending, propose, approve/reject). Add a dashboard widget for pending gates.
+2. **Expose gate engine to frontend**: Add Tauri commands for gate lifecycle (list pending, propose, approve/reject). Add a dashboard widget for pending gates.
 
-6. **Retire or reconcile status transition systems**: Either remove the old `project.json`-based transition engine and `ProjectStatusSettings.svelte`, or document their relationship to YAML workflows.
+3. **Retire or reconcile status transition systems**: Either remove the old `project.json`-based transition engine and `ProjectStatusSettings.svelte`, or document their relationship to YAML workflows.
 
 ### Medium Priority (feature gaps)
 
-7. **Build plugin widget system**: Allow plugins to contribute dashboard widgets (the `software` plugin already declares them in its manifest).
+1. **Build plugin widget system**: Allow plugins to contribute dashboard widgets (the `software` plugin already declares them in its manifest).
 
-8. **Build knowledge browser**: A dedicated UI for browsing knowledge artifacts with metadata, tags, and semantic search.
+2. **Build knowledge browser**: A dedicated UI for browsing knowledge artifacts with metadata, tags, and semantic search.
 
-9. **Add agent team visibility**: Dashboard widget showing active teams, token usage, session cost.
+3. **Add agent team visibility**: Dashboard widget showing active teams, token usage, session cost.
 
-10. **Ship plugin view bundles**: The `software` plugin's `roadmap` view is declared but has no compiled bundle.
+4. **Ship plugin view bundles**: The `software` plugin's `roadmap` view is declared but has no compiled bundle.
 
 ### Low Priority (cleanup)
 
-11. **Deduplicate status transition code**: `status_transition_commands.rs` and the transition logic in `graph_commands.rs` should be consolidated.
+1. **Deduplicate status transition code**: `status_transition_commands.rs` and the transition logic in `graph_commands.rs` should be consolidated.
 
-12. **Review hooks UI**: Decide whether hook display in `ArtifactLanding` and `ArtifactViewer` should be kept, renamed, or merged with the gate concept.
+2. **Review hooks UI**: Decide whether hook display in `ArtifactLanding` and `ArtifactViewer` should be kept, renamed, or merged with the gate concept.
 
 ---
 
 ## 10. Summary Statistics
 
 | Metric | Count |
-|--------|-------|
+| -------- | ------- |
 | Total Svelte components | ~98 |
 | Components with stale/deprecated references | 5 |
 | Components with dead imports | 0 |

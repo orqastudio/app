@@ -32,7 +32,7 @@ The connector depends on exactly **one service**: the daemon. MCP and LSP are st
 Per AD-a44384d1, the architecture has converged to:
 
 | Component | Transport | Lifecycle | Port |
-|-----------|-----------|-----------|------|
+| ----------- | ----------- | ----------- | ------ |
 | **Daemon** | HTTP | Long-running process (PID file in `tmp/daemon.pid`) | `ORQA_PORT_BASE + 58` (default: 10258) |
 | **MCP** | stdio | Subprocess of Claude Code (spawned on demand) | None |
 | **LSP** | stdio | Subprocess of editor (spawned on demand) | None |
@@ -127,7 +127,7 @@ During development (`orqa dev`), the dev controller spawns the MCP binary as a m
 
 Same as MCP. LSP is an stdio subprocess spawned by the editor:
 
-```
+```text
 Editor → orqa lsp → daemon (HTTP)
 ```
 
@@ -140,7 +140,7 @@ The connector has no relationship with LSP. The editor manages the LSP subproces
 Current port map (from `libs/cli/src/lib/ports.ts`):
 
 | Service | Offset | Default Port | Notes |
-|---------|--------|-------------|-------|
+| --------- | -------- | ------------- | ------- |
 | daemon | +58 | 10258 | Only port the connector checks |
 | vite | +220 | 10420 | Dev server only |
 | dashboard | +201 | 10401 | Dev metrics only |
@@ -191,7 +191,7 @@ Debounce: 500ms between file change detection and rebuild trigger.
 The dev controller uses a signal file (`tmp/dev-signal`) for remote control:
 
 | Signal | Action |
-|--------|--------|
+| -------- | -------- |
 | `restart` | Full restart of all services |
 | `restart-daemon` | Daemon only |
 | `restart-search` | Search + MCP (MCP depends on search) |
@@ -205,12 +205,14 @@ CLI subcommands (`orqa dev restart mcp`, etc.) write to this signal file; the ru
 #### Graceful Shutdown
 
 On Ctrl+C, SIGINT, or SIGTERM:
+
 1. Close all file watchers
 2. Kill managed processes (search, MCP, LSP, app) via process tree kill
 3. Remove control file (`tmp/dev-controller.json`)
 4. Remove signal file (`tmp/dev-signal`)
 
 On app window close (exit code 0):
+
 1. Kill search, MCP, LSP
 2. Remove control/signal files
 3. Exit
@@ -247,7 +249,7 @@ The `orqa dev` command simplifies to: start daemon, start TypeScript watches, st
 ## 7. Connector Blocking Behavior Summary
 
 | Event | Service Check | Failure Mode |
-|-------|--------------|-------------|
+| ------- | -------------- | ------------- |
 | SessionStart | Daemon `/health` (2s timeout) | **BLOCK** — deny decision, exit 2 |
 | UserPromptSubmit | Daemon `/health` (2s timeout) | **BLOCK** — deny decision, exit 2 |
 | Hook calls (PreToolUse, etc.) | Daemon POST (8s timeout) | **DEGRADE** — binary fallback |
@@ -266,6 +268,7 @@ This design follows directly from two prior decisions:
 The connector should not check services it does not consume. It consumes the daemon (via HTTP). MCP and LSP are consumed by Claude Code and the editor respectively — those consumers handle their own subprocess lifecycle.
 
 Adding MCP/LSP health checks to the connector would:
+
 - Create a dependency on services that might not be running (LSP only runs when an editor is open)
 - Conflate development-time process management with production service architecture
 - Add complexity for zero benefit (the connector never calls MCP or LSP)

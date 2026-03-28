@@ -28,6 +28,7 @@ This is a correction — RULE-046 already exists. The recurrence signals that th
 ## Suggested Promotion
 
 If recurrence reaches 2, consider:
+
 - Adding an explicit self-check to the orchestrator's thinking mode template: "Does this response offer the user an exit? If yes, remove it."
 - Adding a hook that scans orchestrator responses for stop-offer patterns and flags them before delivery.
 - Updating the RULE-046 enforcement entry to include a stronger signal in the agent preamble.

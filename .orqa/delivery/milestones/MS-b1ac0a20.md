@@ -9,6 +9,7 @@ updated: 2026-03-07T00:00:00.000Z
 gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?\nAre recent lessons observations rather than corrections? If most lessons captured in the current phase are pure observations — not requiring promotion to rules with enforcement — the infrastructure layer is mature enough to begin app dogfooding. (See IMPL-4eed88ef)\n"
 relationships: []
 ---
+
 ## Context
 
 OrqaStudio is developed using itself (`.orqa/project.json` has `dogfood: true`). The app runs with `--no-watch` so editing Rust files doesn't kill the active session. Frontend changes hot-reload via Vite HMR. Rust changes require manual restart.
@@ -20,7 +21,7 @@ Most core infrastructure is in place (40+ IPC commands, streaming pipeline, sess
 ### P1 — Critical Path
 
 | Epic | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [EPIC-797972a7](EPIC-797972a7) | AI Transparency Wiring | done |
 | [EPIC-096fed18](EPIC-096fed18) | Settings UI for Thinking & Custom Prompt | draft |
 | [EPIC-b8dc200d](EPIC-b8dc200d) | Context Injection on Failed Resume | draft |
@@ -40,7 +41,7 @@ Most core infrastructure is in place (40+ IPC commands, streaming pipeline, sess
 ### P1 — Critical Path (Retroactive — Completed)
 
 | Epic | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [EPIC-7f3119b1](EPIC-7f3119b1) | Native Search Engine | done |
 | [EPIC-4cec22ea](EPIC-4cec22ea) | Native Tool UX & First-Run Setup | done |
 | [EPIC-0bbae4c4](EPIC-0bbae4c4) | Rebrand: Forge → OrqaStudio | done |
@@ -53,7 +54,7 @@ Most core infrastructure is in place (40+ IPC commands, streaming pipeline, sess
 ### P2 — Enablers
 
 | Epic | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [EPIC-80e3bf71](EPIC-80e3bf71) | File Watcher for External Changes | draft |
 | [EPIC-c1833545](EPIC-c1833545) | Composability Refactoring | draft |
 | [EPIC-e24086ed](EPIC-e24086ed) | Code Quality Audit | draft |
@@ -62,7 +63,7 @@ Most core infrastructure is in place (40+ IPC commands, streaming pipeline, sess
 ### P3 — Polish
 
 | Epic | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [EPIC-560cf78c](EPIC-560cf78c) | Developer Experience Polish | draft |
 
 ## Completion Criteria

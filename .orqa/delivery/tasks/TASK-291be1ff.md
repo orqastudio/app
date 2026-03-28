@@ -3,7 +3,7 @@ id: "TASK-291be1ff"
 type: "task"
 title: "Cognitive load indicators"
 description: "Build tooling that detects excessive session complexity and surfaces warnings about too many open files, uncommitted changes, or interleaved tasks"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

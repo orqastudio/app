@@ -8,6 +8,7 @@ status: completed
 created: 2026-03-14
 updated: 2026-03-14
 ---
+
 ## Overview
 
 OrqaStudio needs a notification strategy that routes events to the right channel based on urgency, user attention state, and context. Three channels are available: toast notifications (in-viewport), notification panel (in-app persistent), and desktop notifications (OS-level).
@@ -32,7 +33,7 @@ Toast notifications are already implemented (TASK-97e1fa39) using the sonner lib
 ### Variants
 
 | Variant | Use Case | Auto-dismiss |
-|---------|----------|-------------|
+| --------- | ---------- | ------------- |
 | `success` | Confirmations | Yes (3s) |
 | `info` | Informational updates | Yes (5s) |
 | `warning` | Non-blocking issues | Yes (8s) |
@@ -44,7 +45,7 @@ Toast notifications are already implemented (TASK-97e1fa39) using the sonner lib
 
 A slide-out panel (right side, 360px width) accessible from a bell icon in the header. The icon shows an unread count badge when notifications are pending.
 
-```
+```text
 +------------------------------------------+
 | Notifications                    Mark all |
 +------------------------------------------+
@@ -62,7 +63,7 @@ A slide-out panel (right side, 360px width) accessible from a bell icon in the h
 ### What Events Populate It
 
 | Event Category | Examples | Retention |
-|----------------|----------|-----------|
+| ---------------- | ---------- | ----------- |
 | **Integrity findings** | Broken links, missing inverses, schema violations | Until resolved |
 | **Task lifecycle** | Task started, completed, blocked | 24 hours |
 | **Session events** | Auto-save, session resume, context loss warning | Current session |
@@ -105,7 +106,7 @@ Tauri provides `@tauri-apps/plugin-notification` which wraps native OS notificat
 Desktop notifications are for events that need attention when the user is NOT looking at the app:
 
 | Event | Desktop? | Rationale |
-|-------|----------|-----------|
+| ------- | ---------- | ----------- |
 | Long-running build complete | Yes | User may have switched to another app |
 | Agent task completed (>30s) | Yes | Agent work happens in background |
 | Integrity check found errors | Yes | Critical quality issue |
@@ -135,7 +136,7 @@ interface NotificationPreferences {
 ## Event-to-Channel Mapping
 
 | Event | Toast | Panel | Desktop |
-|-------|:-----:|:-----:|:-------:|
+| ------- | :-----: | :-----: | :-------: |
 | Action confirmation (save, create, delete) | Y | - | - |
 | Transient warning (retry, stale data) | Y | - | - |
 | Error (save failed, command error) | Y | Y | - |

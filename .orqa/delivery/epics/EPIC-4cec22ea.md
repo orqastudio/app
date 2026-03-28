@@ -3,7 +3,7 @@ id: "EPIC-4cec22ea"
 type: "epic"
 title: "Native Tool UX & First-Run Setup"
 description: "Two related UX improvements: (1) friendly tool call display with names, icons, and grouping; (2) first-run setup wizard for project creation and AI provider configuration."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-04"
 updated: "2026-03-09"
@@ -18,9 +18,11 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Implementation Design
 
 ### Native Tool UX
+
 - Friendly names for tool types: Read → "Reading file", Bash → "Running command"
 - Lucide icons per tool type
 - Parameter extraction for summary display
@@ -28,6 +30,7 @@ relationships:
 - Collapsible detail view
 
 ### First-Run Setup Wizard
+
 - Claude CLI detection (binary on PATH)
 - Auth status verification
 - Project configuration (name, icon, model)

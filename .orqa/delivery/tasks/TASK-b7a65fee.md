@@ -3,7 +3,7 @@ id: "TASK-b7a65fee"
 type: "task"
 title: "Move dev controller to debugger/"
 description: "Relocate scripts/dev.mjs and scripts/dev-dashboard.html to debugger/ and update Makefile and internal paths."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

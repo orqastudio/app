@@ -3,7 +3,7 @@ id: "TASK-dde309b0"
 type: "task"
 title: "Frontend: TypeScript types for schema metadata and navigation config"
 description: "Add TypeScript interfaces matching the new Rust types for FilterableField, SortableField, NavigationConfig, and extend DocNode/NavType interfaces."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -16,7 +16,6 @@ relationships:
   - target: "TASK-764410d7"
     type: "depends-on"
 ---
-
 
 ## What
 

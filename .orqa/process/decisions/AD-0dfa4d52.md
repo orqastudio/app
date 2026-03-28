@@ -13,6 +13,7 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"
 ---
+
 ## Decision
 
 OrqaStudio reads and writes governance artifacts as native Claude Code artifacts in the exact `.claude/` format (markdown with YAML frontmatter for agents/skills, pure markdown for rules, JSON for settings). All `.claude/` files created by OrqaStudio work identically in Claude Code CLI — there is no OrqaStudio-specific format or metadata embedded in the files. OrqaStudio-specific metadata (compliance status, usage counts, parsed timestamps) lives only in SQLite — files are never modified to add OrqaStudio metadata.

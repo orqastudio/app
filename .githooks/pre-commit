@@ -158,11 +158,14 @@ if [ "$HAS_MARKDOWN" = true ]; then
   STAGED_MD=$(echo "$STAGED_FILES" | grep -E '\.md$' || true)
   if [ -n "$STAGED_MD" ]; then
     echo "--- Markdown: markdownlint (staged files only) ---"
-    echo "$STAGED_MD" | xargs npx markdownlint-cli2 \
-      2>&1 || {
-        log_violation "markdownlint" "markdown" "markdown lint errors"
-        FAILED=true
-      }
+    # Batch to avoid Windows command line length limits on large commits
+    md_failed=false
+    echo "$STAGED_MD" | xargs -n 50 npx markdownlint-cli2 \
+      2>&1 || md_failed=true
+    if [ "$md_failed" = true ]; then
+      log_violation "markdownlint" "markdown" "markdown lint errors"
+      FAILED=true
+    fi
   fi
 fi
 

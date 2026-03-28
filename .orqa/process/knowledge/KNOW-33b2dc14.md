@@ -2,8 +2,10 @@
 id: "KNOW-33b2dc14"
 type: "knowledge"
 title: "Orqa Streaming Pipeline"
+domain: platform/rust
 description: "OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.\nCovers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.\nUse when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,\nor working with the sidecar.\n"
-status: "active"
+status: "archived"
+archived_reason: "References non-existent sidecar/ directory and backend/src-tauri/ paths (now app/src-tauri/). The Bun sidecar source no longer exists as a separate directory. Streaming pipeline concepts (Channel<T>, StreamEvent) remain valid but all paths and code references are stale. Needs full rewrite against current app/src-tauri/src/ structure."
 created: 2026-03-01T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 category: "domain"
@@ -35,7 +37,7 @@ OrqaStudio streams Claude conversations through a multi-layer pipeline. Understa
 
 ## Pipeline Overview
 
-```
+```text
 Claude API (Anthropic)
     ↑↓
 Agent SDK (in sidecar process)
@@ -167,9 +169,9 @@ pub enum SidecarResponse {
 }
 ```
 
-## Layer 3: Channel<T> to Frontend
+## Layer 3: Channel\<T\> to Frontend
 
-The Rust stream command receives `Channel<StreamEvent>` from Tauri and forwards events.
+The Rust stream command receives `Channel\<StreamEvent\>` from Tauri and forwards events.
 
 ### StreamEvent Enum (Rust)
 
@@ -253,7 +255,7 @@ private handleStreamEvent(event: StreamEvent) {
 
 Tools have a special round-trip through the pipeline:
 
-```
+```text
 1. Claude requests tool use → sidecar emits tool_execute
 2. Rust receives tool_execute → checks if read-only
 3a. Read-only tool → Rust executes immediately → sends tool_result to sidecar
@@ -269,24 +271,27 @@ Read-only tools (auto-approved): `read_file`, `glob`, `grep`, `search_regex`, `s
 ## Anti-Patterns
 
 ### Adding a StreamEvent variant without updating both sides
+
 If you add a new variant to the Rust `StreamEvent` enum, you MUST also add the matching entry to the TypeScript `StreamEvent` union AND handle it in `handleStreamEvent()`.
 
 ### Parsing streaming data in the frontend
+
 All response parsing happens in Rust (`backend/src-tauri/src/sidecar/`). The frontend receives pre-parsed `StreamEvent` objects. Never parse raw API responses in Svelte.
 
 ### Blocking the stream loop
+
 The Rust stream command runs a synchronous loop reading from sidecar stdout. Tool execution blocks this loop until the tool completes. Long-running tools should be async.
 
 ## Key Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `sidecar/src/provider.ts` | Agent SDK integration, event streaming |
 | `sidecar/src/protocol.ts` | NDJSON protocol types |
 | `sidecar/src/index.ts` | stdin/stdout communication loop |
 | `backend/src-tauri/src/sidecar/types.rs` | Rust-side sidecar protocol types |
 | `backend/src-tauri/src/sidecar/protocol.rs` | NDJSON parsing and sidecar process management |
-| `backend/src-tauri/src/commands/stream_commands.rs` | Stream command handler, tool execution, Channel<T> |
+| `backend/src-tauri/src/commands/stream_commands.rs` | Stream command handler, tool execution, Channel\<T\> |
 | `backend/src-tauri/src/domain/provider_event.rs` | StreamEvent enum definition |
 | `ui/src/lib/types/streaming.ts` | TypeScript StreamEvent union |
 | `ui/src/lib/stores/conversation.svelte.ts` | Frontend event handling and state management |

@@ -41,7 +41,7 @@ You are the Planner. You design implementation approaches, evaluate architectura
 ## Ownership Boundaries
 
 | You Do | You Do NOT |
-|--------|-----------|
+| -------- | ----------- |
 | Design implementation approaches | Write code or make changes |
 | Evaluate architectural compliance | Implement the plan |
 | Map dependencies and risks | Skip to implementation |
@@ -87,7 +87,7 @@ Every plan MUST follow the structure defined in [RULE-dccf4226](RULE-dccf4226):
 For every plan, verify against foundational principles:
 
 | Principle | Verify |
-|-----------|--------|
+| ----------- | -------- |
 | Error propagation | All Rust functions return `Result`. No `unwrap()` in production. |
 | IPC boundary | Tauri commands are the only frontend-backend interface. |
 | Component purity | Display components receive props only. No `invoke()` in components. |

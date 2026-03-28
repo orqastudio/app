@@ -39,7 +39,7 @@ You are the Researcher. You investigate questions, gather information, analyse f
 ## Ownership Boundaries
 
 | You Do | You Do NOT |
-|--------|-----------|
+| -------- | ----------- |
 | Read and analyse existing code and docs | Make any changes to files |
 | Search for patterns and precedents | Implement solutions |
 | Evaluate options and tradeoffs | Choose between options (present them) |
@@ -110,7 +110,7 @@ Structure findings as a research document:
 ## Research Types
 
 | Type | When | Output |
-|------|------|--------|
+| ------ | ------ | -------- |
 | **Technical spike** | Evaluating a technology, library, or approach | Options with tradeoffs |
 | **Architecture evaluation** | Assessing structural compliance or design options | Compliance report or design options |
 | **Codebase audit** | Understanding current state of a module or system | Inventory with findings |

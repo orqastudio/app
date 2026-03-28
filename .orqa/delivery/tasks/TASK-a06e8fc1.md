@@ -47,13 +47,17 @@ Researcher — read-only audit producing a compliance report. Any FAIL findings 
 1. Read `RES-d6e8ab11.md` in full — all 11 sections
 2. Read `AD-1ef9f57c` for resolved decisions
 3. For EACH section (1-11):
+
    a. Extract the key recommendations and constraints
    b. Identify the corresponding implementation files/code/artifacts
    c. Verify the implementation matches the recommendation
    d. Mark PASS or FAIL with evidence
+
 4. For any FAIL:
+
    a. Check if there is a corresponding AD artifact approving the variance
    b. If no AD artifact exists, flag it as an unresolved violation
+
 5. Produce the audit report with:
    - Section number and title
    - Key recommendations from that section

@@ -22,6 +22,7 @@ relationships:
 ## Executive Summary
 
 The current approach of spawning disposable agents per task is failing on four fronts:
+
 1. **Zero context continuity** — Each agent starts from scratch, re-learning patterns already captured in knowledge artifacts
 2. **Resource contention** — Parallel Rust compilation exhausts memory; agents don't know about each other's resource needs
 3. **Poor shutdown discipline** — Agents don't terminate cleanly, consuming resources for hours
@@ -49,7 +50,7 @@ Team roles (Backend Lead, Frontend Lead, Integration Lead, Governance Lead) are 
 Team agents live in `plugins/software/agents/`, not `.orqa/process/agents/` (framework). This separation enables portability:
 
 | Context | Team Location | Knowledge Sources | Benefit |
-|---------|---------------|-------------------|---------|
+| --------- | --------------- | ------------------- | --------- |
 | **OrqaStudio** (Rust + Svelte + TypeScript + Tauri) | `plugins/software/agents/` | `plugins/rust/knowledge/`, `plugins/svelte/knowledge/`, `plugins/typescript/knowledge/`, `plugins/tauri/knowledge/` | Backend Lead implements Rust, Frontend Lead implements Svelte |
 | **Python + Django + React** | `plugins/software/agents/` (same agents) | `plugins/python/knowledge/`, `plugins/django/knowledge/`, `plugins/react/knowledge/` | Same Backend/Frontend/Integration Leads; different expertise sources |
 | **Go + API + Vue** | `plugins/software/agents/` (same agents) | `plugins/go/knowledge/`, `plugins/api/knowledge/`, `plugins/vue/knowledge/` | Team roles unchanged; knowledge swapped |
@@ -59,6 +60,7 @@ The team is a **role-based abstraction**. What it specializes in changes with th
 ### 0.2 Knowledge Plugin Architecture
 
 **Language plugins** provide domain expertise. On OrqaStudio:
+
 - `plugins/rust/` — Rust async, error handling, testing, clippy standards
 - `plugins/svelte/` — Svelte 5 runes, reactive state, component patterns
 - `plugins/typescript/` — TypeScript strict mode, type safety, eslint
@@ -105,19 +107,23 @@ Team agents depend on language plugins. Without the right language plugins, team
 ### 1.1 Existing Agent Structure
 
 **Role-based agents (universal roles):**
+
 - `Orchestrator` — coordination only, no implementation
 - `Implementer`, `Reviewer`, `Researcher`, `Planner`, `Writer`, `Designer`
 - `Governance Steward` — governance artifacts
 
 **Project-specific specialists (layer on universal roles):**
+
 - `OrqaStudio Rust Backend Specialist` — backend domain knowledge
 - `OrqaStudio Svelte Frontend Specialist` — frontend domain knowledge
 - `OrqaStudio Integration Specialist` — cross-boundary (IPC, streaming, type safety)
 
 **Governance enforcement:**
+
 - `Governance Enforcer` — mechanical enforcement for rules
 
 **Plugin-provided specialists** (from @orqastudio/plugin-rust, plugin-svelte, etc.):
+
 - `Rust Specialist`
 - `Svelte Specialist`
 
@@ -126,6 +132,7 @@ Team agents depend on language plugins. Without the right language plugins, team
 Knowledge is organized in `.orqa/process/knowledge/` by domain:
 
 **Backend domains:**
+
 - `orqa-domain-services` — 3 service shapes, constructor injection
 - `orqa-ipc-patterns` — Tauri command → IPC type → TS interface → store chain
 - `orqa-repository-pattern` — Trait-based repos, SQLite, migrations
@@ -133,22 +140,26 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 - `orqa-backend-best-practices` — Umbrella conventions
 
 **Frontend domains:**
+
 - `orqa-store-patterns` — Runes-based stores, reactive state
 - `orqa-store-orchestration` — Multi-store coordination, side effects
 - `svelte5-best-practices` — Runes only, no Svelte 4 patterns
 - `component-extraction` — Component purity, prop interfaces
 
 **Integration domains:**
+
 - `orqa-streaming` — Agent SDK → sidecar → backend → UI pipeline
 - `orqa-ipc-patterns` (shared with backend)
 
 **Governance domains:**
+
 - `orqa-governance` — Artifact graph, relationships, lifecycle
 - `orqa-documentation` — Documentation-first workflow
 
 ### 1.3 Codebase Technical Domains
 
 **Backend subsystems** (app/backend/src-tauri/src/):
+
 - `commands/` — Tauri command handlers, IPC entry points
 - `domain/` — Domain logic, business rules, core types
 - `repo/` — Data access layer, SQLite repositories
@@ -160,6 +171,7 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 - `cli_tools/` — CLI integration
 
 **Frontend subsystems** (app/ui/src/):
+
 - `lib/components/` — Reusable component library
 - `lib/stores/` — Reactive state management
 - `lib/services/` — Services that call backend commands
@@ -168,6 +180,7 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 - `lib/workers/` — Web workers for heavy computation
 
 **Shared libraries** (libs/):
+
 - `cli/` — CLI implementation (TypeScript, Node.js)
 - `mcp-server/` — MCP server (Rust + ONNX search)
 - `lsp-server/` — LSP server (Rust)
@@ -179,6 +192,7 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 - `types/` — Shared TypeScript types
 
 **Cross-cutting concerns:**
+
 - `connectors/claude-code/` — Claude Code plugin (TypeScript)
 - `plugins/` — First-party plugins (software, cli, claude, svelte, tauri)
 - `.orqa/` — Governance (rules, knowledge, agents, epics, tasks, ideas)
@@ -186,36 +200,44 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 ### 1.4 Current Failure Modes
 
 **Problem 1: Disposable agents lose context**
-```
+
+```text
 Session N: Backend agent builds feature A (learns 5 patterns)
 Session N+1: Different backend agent builds feature B (relearns same 5 patterns)
 ```
+
 → Knowledge exists in artifacts but not in agent continuity
 
 **Problem 2: Parallel compilation kills quality**
-```
+
+```text
 Backend agent A: Starts rustc for feature X (uses 400MB RAM)
 Backend agent B: Starts rustc for feature Y (same 400MB)
 System: OOM — builds fail, timeouts, no clear error
 ```
+
 → Resource safety rule exists but no enforcement at team level
 
 **Problem 3: Agents don't shut down**
-```
+
+```text
 Orchestrator: "Delegate feature X to Backend agent"
 Backend agent: Works, marks task done, doesn't terminate
 Orchestrator: Spawns new agent for feature Y
 Background: Both agents alive, competing for resources
 ```
+
 → TeamDelete supposed to happen but doesn't reliably
 
 **Problem 4: No handoff discipline**
-```
+
+```text
 Backend finishes IPC layer (command + type)
 Frontend agent doesn't know it exists yet
 Frontend agent writes its own version of the type
 Integration specialist catches mismatch post-hoc
 ```
+
 → Parallel work creates rework, not progress
 
 ---
@@ -229,7 +251,7 @@ An OrqaStudio dev session should maintain a **persistent team of 4-6 specialists
 **Core team (always active):**
 
 | Role | Agent | Reads Knowledge From | Owns |
-|------|-------|----------------------|------|
+| ------ | ------- | ---------------------- | ------ |
 | **Orchestrator** | `.orqa/process/agents/` | Framework layer | Process coordination, governance, vision |
 | **Backend Lead** | `plugins/software/agents/` | Rust + Tauri plugins + OrqaStudio software plugin | Rust backend subsystems, IPC layer, error handling |
 | **Frontend Lead** | `plugins/software/agents/` | Svelte + TypeScript plugins + OrqaStudio software plugin | Svelte frontend, stores, reactive state |
@@ -237,6 +259,7 @@ An OrqaStudio dev session should maintain a **persistent team of 4-6 specialists
 | **Governance Lead** | `.orqa/process/agents/` | Framework + OrqaStudio software plugin | .orqa/ artifacts, graph integrity, artifact lifecycle |
 
 **Key difference from previous structure:**
+
 - Backend/Frontend/Integration/Governance agents live in **software plugin**, not framework
 - They CONSUME knowledge from language plugins (Rust, Svelte, TypeScript, Tauri)
 - On a Python + React project, same team roles consume Python + React plugin knowledge
@@ -245,7 +268,7 @@ An OrqaStudio dev session should maintain a **persistent team of 4-6 specialists
 **Specialist pool (spawned as needed):**
 
 | Role | When Used | From | Owns |
-|------|-----------|------|------|
+| ------ | ----------- | ------ | ------ |
 | **Reviewer** | After implementation phase | Framework | Quality gates, verification |
 | **Planner** | Before implementation | Framework | Design, dependencies, architecture |
 | **Researcher** | During planning | Framework | Investigation, options evaluation |
@@ -255,17 +278,20 @@ An OrqaStudio dev session should maintain a **persistent team of 4-6 specialists
 ### 2.2 Team Lifecycle
 
 **Session start:**
+
 1. Orchestrator spawns core team (4-5 agents)
 2. Each team member reads its knowledge artifacts
 3. Orchestrator briefs team on current scope
 4. Team stays active for entire session
 
 **During work:**
+
 - Core team handles most tasks
 - Specialist pool agents spawn for specific needs (planning, review)
 - Specialists terminate after their work; core team persists
 
 **Session end:**
+
 - Orchestrator coordinates final verification
 - TeamDelete removes all agents cleanly
 - Session state documents what's running for next session
@@ -273,13 +299,15 @@ An OrqaStudio dev session should maintain a **persistent team of 4-6 specialists
 ### 2.3 Communication Model
 
 **Sync points (via SendMessage):**
+
 - Backend finishes IPC layer → notifies Integration Lead + Frontend Lead
 - Frontend finishes store → notifies Integration Lead
 - Integration Lead verifies full chain before both sign off
 - Each domain validates its own code before handoff
 
 **Sequential handoffs:**
-```
+
+```text
 Planner: "Here's the design"
          ↓
 Backend Lead: "Building IPC layer + command"
@@ -294,6 +322,7 @@ Reviewer: "Quality gate"
 ```
 
 **Parallel safety zones:**
+
 - Frontend can work on unrelated components while backend works on commands
 - Governance work runs in parallel with feature work (different code areas)
 - CLI can advance independently of app development
@@ -307,6 +336,7 @@ Reviewer: "Quality gate"
 **Owns:** `app/backend/src-tauri/src/{domain,commands,repo,sidecar,cli_tools}`
 
 **Knowledge loaded:**
+
 - `orqa-backend-best-practices` — Umbrella conventions
 - `orqa-error-composition` — OrqaError enum, From impls, error flow
 - `orqa-domain-services` — 3 service shapes, injection, composition
@@ -314,12 +344,14 @@ Reviewer: "Quality gate"
 - `orqa-repository-pattern` — Traits, repos, migrations
 
 **Skills:**
+
 - Rust async patterns, error handling, type safety
 - Tauri v2 integration
 - SQLite/DuckDB schema design
 - IPC contract design
 
 **Responsibilities:**
+
 1. Implement domain logic and services
 2. Define Tauri commands with proper error handling
 3. Build repository implementations
@@ -327,6 +359,7 @@ Reviewer: "Quality gate"
 5. Verify `make check` passes (clippy, rustfmt, tests)
 
 **Boundaries:**
+
 - Does NOT touch frontend code
 - Does NOT design UI or stores
 - Does NOT coordinate across teams (Orchestrator does that)
@@ -336,6 +369,7 @@ Reviewer: "Quality gate"
 **Owns:** `app/ui/src/{lib/components,lib/stores,lib/services,routes}`
 
 **Knowledge loaded:**
+
 - `orqa-frontend-best-practices` — Component purity, stores, runes
 - `svelte5-best-practices` — Runes only, no Svelte 4 patterns
 - `component-extraction` — Shared components, prop interfaces
@@ -343,6 +377,7 @@ Reviewer: "Quality gate"
 - `orqa-store-orchestration` — Multi-store coordination
 
 **Skills:**
+
 - Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`)
 - Strict TypeScript (no `any`)
 - shadcn-svelte components
@@ -350,6 +385,7 @@ Reviewer: "Quality gate"
 - Store architecture
 
 **Responsibilities:**
+
 1. Build reusable components
 2. Implement reactive stores
 3. Wire backend calls via `invoke()`
@@ -358,6 +394,7 @@ Reviewer: "Quality gate"
 6. Verify `npm run check` passes (type check, lint, tests)
 
 **Boundaries:**
+
 - Does NOT touch backend Rust code
 - Does NOT write complex business logic in stores
 - Does NOT call backend directly from display components
@@ -367,6 +404,7 @@ Reviewer: "Quality gate"
 **Owns:** IPC contracts, streaming pipeline, cross-boundary type safety
 
 **Knowledge loaded:**
+
 - `orqa-ipc-patterns` — Full 4-layer request chain
 - `orqa-streaming` — Agent SDK → sidecar → backend → UI
 - `orqa-error-composition` — Error flow across boundary
@@ -374,6 +412,7 @@ Reviewer: "Quality gate"
 - Cross-domain knowledge (backend + frontend)
 
 **Skills:**
+
 - Tauri invoke/listen patterns
 - Type contract verification
 - NDJSON protocol (streaming)
@@ -381,6 +420,7 @@ Reviewer: "Quality gate"
 - End-to-end wiring
 
 **Responsibilities:**
+
 1. Design IPC types and contracts
 2. Verify Rust types match TypeScript interfaces
 3. Wire streaming pipeline for long-running operations
@@ -389,6 +429,7 @@ Reviewer: "Quality gate"
 6. Produce evidence of complete chains (not stubs)
 
 **Boundaries:**
+
 - Does NOT implement backend logic
 - Does NOT implement frontend components
 - Focuses purely on contracts and wiring
@@ -398,12 +439,14 @@ Reviewer: "Quality gate"
 **Owns:** `.orqa/` artifact graph, schema compliance, relationships
 
 **Knowledge loaded:**
+
 - `orqa-governance` — Artifact graph, lifecycle, relationships
 - `orqa-documentation` — Documentation gates, specs
 - Graph schema validation
 - Artifact integrity
 
 **Skills:**
+
 - Artifact graph schema
 - Relationship types and direction
 - YAML frontmatter validation
@@ -411,6 +454,7 @@ Reviewer: "Quality gate"
 - Documentation-first workflow
 
 **Responsibilities:**
+
 1. Create and maintain all `.orqa/` artifacts
 2. Enforce graph integrity (bidirectional edges)
 3. Manage artifact lifecycle (status transitions)
@@ -419,6 +463,7 @@ Reviewer: "Quality gate"
 6. Verify artifact config in `project.json`
 
 **Boundaries:**
+
 - Does NOT modify implementation code
 - Does NOT make architecture decisions (records them)
 - Does NOT review feature work (Reviewer does that)
@@ -428,11 +473,13 @@ Reviewer: "Quality gate"
 **Owns:** Process coordination, task delegation, governance gates
 
 **Knowledge loaded:**
+
 - `decision-tree` — Pillar alignment, vision
 - All active rules (injected at session start)
 - Artifact graph topology
 
 **Skills:**
+
 - Process coordination
 - Task decomposition
 - Governance enforcement
@@ -440,6 +487,7 @@ Reviewer: "Quality gate"
 - Conflict resolution
 
 **Responsibilities:**
+
 1. Discover pillars and rules at session start
 2. Evaluate work against pillar gates
 3. Create and delegate tasks
@@ -449,6 +497,7 @@ Reviewer: "Quality gate"
 7. Trace artifacts to affected systems (RULE-b2584e59)
 
 **Boundaries:**
+
 - Does NOT write implementation code
 - Does NOT implement features
 - Does NOT touch `.orqa/` directly (Governance Lead does)
@@ -460,7 +509,7 @@ Reviewer: "Quality gate"
 
 ### 4.1 Sequential Feature Implementation
 
-```
+```text
 Planner:
 ├─ Read epic, understand requirements
 ├─ Interview domain experts (Backend/Frontend leads)
@@ -509,6 +558,7 @@ Governance Lead:
 ### 4.2 Parallel Safety Zones
 
 **These CAN happen in parallel:**
+
 - Backend working on feature A while Frontend works on unrelated component in feature B
 - Governance work on rules while development happens (different code areas)
 - CLI development while app development (separate subsystems)
@@ -516,6 +566,7 @@ Governance Lead:
 - Researcher investigating options while current feature is in code review
 
 **These MUST be sequential:**
+
 - Backend Rust compilation → Frontend build (resource contention)
 - Backend IPC layer → Frontend store implementation (dependency)
 - Any feature layer → code review (dependency)
@@ -524,17 +575,20 @@ Governance Lead:
 ### 4.3 Resource Safety Enforcement
 
 **Compilation resource contention:**
+
 - Only ONE agent compiles Rust at a time
 - Frontend-only work (Svelte) happens while Rust is building
 - Agent starting a compilation notifies team via SendMessage
 - Other agents wait for notification before starting compilation
 
 **Context continuity:**
+
 - Core team persists across session (5+ hour typical)
 - No re-spawning unless explicitly needed
 - Specialists spawn briefly, terminate cleanly
 
 **Clean shutdown:**
+
 - Orchestrator coordinates final TaskUpdates
 - Orchestrator calls TeamDelete (not individual shutdowns)
 - Agents do NOT stay alive between tasks
@@ -548,6 +602,7 @@ Governance Lead:
 Each agent loads its knowledge before ANY work begins:
 
 **Backend Lead loads:**
+
 ```yaml
 knowledge:
   - orqa-code-search        # Universal search wrapper
@@ -560,6 +615,7 @@ knowledge:
 ```
 
 **Frontend Lead loads:**
+
 ```yaml
 knowledge:
   - orqa-code-search
@@ -572,6 +628,7 @@ knowledge:
 ```
 
 **Integration Lead loads:**
+
 ```yaml
 knowledge:
   - orqa-code-search
@@ -585,6 +642,7 @@ knowledge:
 ```
 
 **Governance Lead loads:**
+
 ```yaml
 knowledge:
   - orqa-code-search
@@ -598,6 +656,7 @@ knowledge:
 The orchestrator injects knowledge once per session. Core team members don't re-load the same knowledge when switching tasks.
 
 **Example:**
+
 - Session starts, Backend Lead loads 7 knowledge artifacts
 - Backend Lead implements feature A
 - Backend Lead handles new task in feature B
@@ -611,6 +670,7 @@ The orchestrator injects knowledge once per session. Core team members don't re-
 ### 6.1 Minimum Viable Team
 
 **For most development sessions:**
+
 - **1 Orchestrator** — coordination
 - **1 Backend Lead** — Rust implementation
 - **1 Frontend Lead** — Svelte implementation
@@ -624,7 +684,7 @@ The orchestrator injects knowledge once per session. Core team members don't re-
 Spawn specialist agents for bounded tasks:
 
 | Trigger | Specialist | Lifetime | Example |
-|---------|-----------|----------|---------|
+| --------- | ----------- | ---------- | --------- |
 | Implementation complete | Reviewer | 1 task | Verify feature passes `make check` |
 | Feature planning phase | Planner | 1 task | Design 4-layer architecture |
 | Complex investigation | Researcher | 1 task | Evaluate migration approach |
@@ -632,6 +692,7 @@ Spawn specialist agents for bounded tasks:
 | UI/UX design | Designer | 1 task | Design component interaction |
 
 **Specialist lifecycle:**
+
 1. Orchestrator spawns for specific task
 2. Specialist works and produces output
 3. Specialist terminates cleanly (TaskUpdate → done)
@@ -641,11 +702,13 @@ Spawn specialist agents for bounded tasks:
 ### 6.3 Scaling Considerations
 
 **For large epics (3+ weeks):**
+
 - Consider adding a dedicated **CLI specialist** if CLI work is active
 - Consider splitting **Frontend Lead** into component specialist + stores specialist
 - Keep core team at 5-6; add specialists as needed
 
 **Resource constraints:**
+
 - Never run >1 Rust compilation agent in parallel
 - Frontend agents are cheap; safe to parallel with backend planning
 - Governance work runs independent of feature work
@@ -656,7 +719,7 @@ Spawn specialist agents for bounded tasks:
 
 ### 7.1 Session Start
 
-```
+```text
 User: "Here's a new feature"
      ↓
 Orchestrator:
@@ -677,7 +740,7 @@ Each Agent:
 
 ### 7.2 During Work
 
-```
+```text
 Orchestrator:
 ├─ Assign task to Backend Lead
 ├─ Backend Lead works → notifies Orchestrator
@@ -695,7 +758,7 @@ Specialist (if spawned):
 
 ### 7.3 Session End
 
-```
+```text
 Orchestrator:
 ├─ Verify all open tasks
 ├─ Request final status from each agent
@@ -718,62 +781,76 @@ TeamDelete:
 ### 8.1 From Current Failures
 
 **Anti-pattern 1: Spawn agents per task without team concept**
-```
+
+```text
 Task 1 → Backend Agent X → Knowledge loaded, work done, dies
 Task 2 → Backend Agent Y → Knowledge reloaded, re-learns patterns, dies
 Task 3 → Backend Agent Z → Knowledge reloaded AGAIN
 ```
+
 **Fix:** Persistent Backend Lead carries knowledge across 3 tasks
 
 **Anti-pattern 2: Parallel Rust compilation**
-```
+
+```text
 Agent A: cargo build (400MB)
 Agent B: cargo clippy (400MB)
 System: OOM
 ```
+
 **Fix:** Compilation resource synchronization via SendMessage
 
 **Anti-pattern 3: Stale agents consuming resources**
-```
+
+```text
 Agent A finishes, doesn't terminate
 Agent B finishes, doesn't terminate
 After 10 tasks: 10 agents alive, competing for memory
 ```
+
 **Fix:** Explicit TeamDelete after task batch completion
 
 **Anti-pattern 4: No handoff discipline**
-```
+
+```text
 Backend: "IPC layer done"
 Frontend: "Building store..."
 Frontend: writes own version of IPC type (didn't know it existed)
 Integration: Finds type mismatch post-hoc
 ```
+
 **Fix:** Integration Lead validates all contracts before Frontend starts
 
 **Anti-pattern 5: Parallel same-layer work**
-```
+
+```text
 Backend Agent A: Building Tauri command for feature X
 Backend Agent B: Building Tauri command for feature Y
 Both try to update app builder → merge conflict, no clear resolution
 ```
+
 **Fix:** One Backend Lead owns all backend changes sequentially
 
 **Anti-pattern 6: Agent doesn't know the project's quality workflow**
-```
+
+```text
 Agent: restructures 306 files, runs cargo check, reports "done"
 Pre-commit: 20+ rustfmt diffs, 92 eslint errors, clippy warnings
 Result: commit blocked, orchestrator spends 30 minutes fixing lint
 ```
+
 **Fix:** Every agent must know: format → lint → test → commit. This is
 project knowledge that agents must load BEFORE starting work. The team
 design should ensure agents consume the project's quality workflow from
 the coding-standards plugin, not discover it at commit time.
 
 **Anti-pattern 7: Agent uses cargo check instead of orqa check**
-```
+
+```text
 Agent: "cargo check passes — done"
 Reality: rustfmt, clippy, eslint, svelte-check, artifact validation all unchecked
 ```
+
 **Fix:** Agents must use the project's check command (`orqa check`), not
 raw tool commands. The check command runs ALL quality gates. This is
 enforced through the coding-standards knowledge artifact.
@@ -781,11 +858,13 @@ enforced through the coding-standards knowledge artifact.
 ### 8.2 Resource Contention
 
 **FORBIDDEN:**
+
 - Two Rust compilation agents in same worktree
 - Unbounded parallel agent spawning
 - Agents staying alive after task completion
 
 **SAFE:**
+
 - Frontend + Planning in parallel (no compilation)
 - Governance + Implementation in parallel (different trees)
 - Sequential feature layers with handoff notifications
@@ -793,11 +872,13 @@ enforced through the coding-standards knowledge artifact.
 ### 8.3 Communication Breakdown
 
 **FORBIDDEN:**
+
 - Agents silently assuming contract details
 - No notification when IPC layer ready
 - Frontend building before Integration Lead verifies contract
 
 **REQUIRED:**
+
 - SendMessage when layer complete
 - Integration Lead validates before next layer
 - Clear handoff protocol per workflow
@@ -902,6 +983,7 @@ These changes affect how the Orchestrator agent behaves at runtime:
 ### 9.4 Knowledge Integration
 
 **OrqaStudio software plugin knowledge** (`plugins/software/knowledge/`):
+
 - `orqa-backend-best-practices` — OrqaStudio backend conventions, Rust patterns
 - `orqa-error-composition` — OrqaError enum patterns, error flow
 - `orqa-domain-services` — 3-shape service architecture, injection
@@ -914,6 +996,7 @@ These changes affect how the Orchestrator agent behaves at runtime:
 - `orqa-team-protocol` — Handoff expectations, resource safety, SendMessage protocol (NEW)
 
 **Language/framework plugins provide:**
+
 - `plugins/rust/knowledge/` — Rust async, thiserror, clippy, ownership
 - `plugins/svelte/knowledge/` — Svelte 5 runes, `$state`/`$derived`/`$effect`
 - `plugins/typescript/knowledge/` — Strict TypeScript, type safety, no `any`
@@ -948,13 +1031,15 @@ These changes affect how the Orchestrator agent behaves at runtime:
 The persistent team model is **stack-agnostic**. To deploy the same team to a different technology stack:
 
 **Step 1: Identify the new tech stack**
-```
+
+```text
 Current (OrqaStudio): Rust backend + Svelte frontend + TypeScript + Tauri
 Target (Example): Python backend + React frontend + TypeScript
 ```
 
 **Step 2: Identify equivalent language plugins**
-```
+
+```text
 Rust → Python       (plugins/python/)
 Svelte → React      (plugins/react/)
 TypeScript → (unchanged, or plugins/typescript-react/)
@@ -965,6 +1050,7 @@ Tauri → Flask/FastAPI (plugins/fastapi/ or plugins/flask/)
 The team agents (`AGENT-backend-lead-sw.md`, `AGENT-frontend-lead-sw.md`, etc.) do NOT change. Only their knowledge sources change.
 
 **Step 4: Update agent knowledge references**
+
 ```yaml
 # BEFORE (OrqaStudio)
 Backend Lead knows:
@@ -980,7 +1066,7 @@ Backend Lead knows:
 **Example adaptation table:**
 
 | Role | OrqaStudio Knowledge | Python + React Equivalent |
-|------|---------------------|---------------------------|
+| ------ | --------------------- | --------------------------- |
 | Backend Lead | Rust async + Tauri | Python async + FastAPI |
 | Frontend Lead | Svelte 5 runes | React hooks + TypeScript |
 | Integration Lead | Tauri IPC + NDJSON | REST API / WebSocket |
@@ -995,24 +1081,28 @@ This is the composability principle in action.
 ## Part 10: Transition Timeline
 
 ### Phase 1: Documentation (This session)
+
 - Document recommended team structure ✓ (this proposal)
 - Update Orchestrator agent definition
 - Create team orchestration rule
 - Update team member agent definitions with team context
 
 ### Phase 2: Enforcement (Next session)
+
 - Orchestrator spawns core team at session start
 - Core team reads team protocol rule
 - Orchestrator documents handoff expectations
 - Test with single feature through 4-layer implementation
 
 ### Phase 3: Validation (Following sessions)
+
 - Run multiple features through persistent team model
 - Capture handoff issues as lessons
 - Refine based on real usage
 - Promote stable patterns to rules
 
 ### Phase 4: Specialization (Later)
+
 - Define specialist pool criteria
 - Document when/how to spawn for bounded tasks
 - Refine resource synchronization rules
@@ -1040,6 +1130,7 @@ OrqaStudio's current agent model treats implementation as a commodity — spawn 
 The recommended structure is composable and stack-agnostic:
 
 **Core principles:**
+
 - 5 core agents (orchestrator + 4 specialists) persistent for entire session
 - Specialist pool for planning, review, research (spawned as needed)
 - Clear ownership boundaries per domain
@@ -1047,6 +1138,7 @@ The recommended structure is composable and stack-agnostic:
 - Clean lifecycle: spawn → work → notify → next → terminate
 
 **Portability:**
+
 - Team agents live in software plugin, consume knowledge from language/framework plugins
 - Same Backend/Frontend/Integration/Governance Leads on any tech stack
 - Swap language plugins; team roles stay identical
@@ -1055,6 +1147,7 @@ The recommended structure is composable and stack-agnostic:
 This mirrors how experienced IRL teams work and removes the failure modes that plague disposable-agent approaches. The composability principle makes the investment in team design multiply across different projects.
 
 **Next steps:**
+
 1. Get user feedback on team structure and composability principle
 2. Create agents in `plugins/software/agents/` and rule in `.orqa/process/rules/`
 3. Update Orchestrator agent definition with team management section

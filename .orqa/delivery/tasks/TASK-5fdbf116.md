@@ -2,7 +2,7 @@
 id: "TASK-5fdbf116"
 type: "task"
 name: "Verify full pipeline and archive original repos"
-status: "completed"
+status: archived
 description: "End-to-end verification: clean clone, make install, make check, make build. Then archive original GitHub repos with redirect READMEs."
 relationships:
   - target: "EPIC-2f720d43"
@@ -35,7 +35,8 @@ acceptance:
 ### Archive original repos
 
 For each of the 30 GitHub repos:
-1. Update README to say "This repo has moved to <monorepo-url>"
+
+1. Update README to say "This repo has moved to \<monorepo-url\>"
 2. Archive the repo via `gh repo archive`
 3. Do NOT delete — archived repos remain accessible for historical links
 

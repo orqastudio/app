@@ -21,6 +21,7 @@ relationships:
   - target: "AD-efe10e1d"
     type: "informs"
 ---
+
 ## Findings
 
 ### Layer Classification of Rules
@@ -28,7 +29,7 @@ relationships:
 44 rules audited. 8 rules marked `layer: core` contain project-specific content that violates portability:
 
 | Rule | Universal Principle | Project-Specific Content |
-|------|--------------------|-----------------------|
+| ------ | -------------------- | ----------------------- |
 | [RULE-ec9462d8](RULE-ec9462d8) | Documentation-first | References Tauri/Svelte/Rust paths in body |
 | [RULE-0be7765e](RULE-0be7765e) | Error ownership | Mentions cargo/clippy/npm |
 | [RULE-c382e053](RULE-c382e053) | No aliases/hacks | Rust serde examples, TypeScript union examples |
@@ -53,6 +54,7 @@ relationships:
 ### Skills Assessment — Critical Issues
 
 **[KNOW-f5ee4e0d](KNOW-f5ee4e0d) ID collision (CRITICAL):** Three skills share ID [KNOW-f5ee4e0d](KNOW-f5ee4e0d):
+
 1. `plugin-setup` (plugin directory)
 2. `plugin-setup` (symlinked to team/skills)
 3. `research-methodology`
@@ -60,6 +62,7 @@ relationships:
 **KNOW-bcfeb64e duplication without symlink:** `rule-enforcement` exists as separate copies in both `team/skills/` (layer: core) and `plugin/skills/` (layer: plugin). Content has diverged.
 
 **Core-layer portability violations:**
+
 - `composability` (KNOW-0619a413): 37 project-specific references (Svelte components, sidecar paths, Tauri patterns)
 - `orqa-native-search` (KNOW-40addb7a): Contains OrqaStudio-specific implementation details, should be `layer: project`
 - `rule-enforcement` (team/skills copy): References OrqaStudio Rust enforcement engine paths, should be `layer: project`

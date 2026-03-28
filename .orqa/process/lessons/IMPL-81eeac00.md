@@ -12,16 +12,17 @@ recurrence: 1
 relationships: []
 ---
 
-
 ## Pattern
 
 Currently, when the Claude plugin is installed:
+
 - Hook scripts are registered (rule-engine, prompt-injector, etc.)
 - Skills are symlinked into `.orqa/process/skills/`
 - But agent definitions are NOT updated with provider-specific capabilities
 - And there's no skill that teaches "how to use Claude Code's Read tool effectively"
 
 A provider integration plugin should be a complete package:
+
 1. **Capabilities** — what tools are available and how to resolve them
 2. **Skills** — how to use those tools effectively (patterns, anti-patterns, provider quirks)
 3. **Agent updates** — which agents gain which capabilities when this plugin is active
@@ -31,6 +32,7 @@ The installation process should handle all three, not just register hooks and ho
 ## Fix
 
 Plugin installation process needs to:
+
 1. Register capability mappings (default-capabilities)
 2. Install provider-specific skills (e.g., "claude-code-patterns" skill)
 3. Update or extend agent definitions with provider-specific capabilities

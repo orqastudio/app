@@ -2,6 +2,7 @@
 id: "KNOW-1afbc656"
 type: "knowledge"
 title: "Orqa Documentation Authoring"
+domain: standards/readme
 description: "OrqaStudio documentation authoring conventions: internal link format, cross-referencing\nbetween artifacts, markdown rendering pipeline, and content structure patterns.\nUse when: Writing or editing any markdown content in .orqa/ — documentation pages,\nartifact body text, research documents, epic designs, rule descriptions, README files.\n"
 status: "active"
 created: "2026-03-10"
@@ -51,7 +52,7 @@ The [Frontend Research](RES-80a476c7) covers component library selection.
 Every artifact type has a typed ID prefix:
 
 | Prefix | Type | Location |
-|--------|------|----------|
+| -------- | ------ | ---------- |
 | `DOC-NNN` | Documentation page | `.orqa/documentation/**/*.md` |
 | `EPIC-NNN` | Epic | `.orqa/delivery/epics/` |
 | `TASK-NNN` | Task | `.orqa/delivery/tasks/` |

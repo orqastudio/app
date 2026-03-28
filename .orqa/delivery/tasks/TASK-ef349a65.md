@@ -3,7 +3,7 @@ id: "TASK-ef349a65"
 type: "task"
 title: "Graph health snapshot storage and trend sparklines"
 description: "Store graph health snapshots on each integrity scan and display trend sparklines on the dashboard showing how graph health metrics change over time."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

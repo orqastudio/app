@@ -3,7 +3,7 @@ id: "EPIC-f6d06edb"
 type: "epic"
 title: "MCP Host — External Servers"
 description: "Implement MCP host with JSON-RPC protocol handler, stdio and SSE transports, tool aggregation, and settings UI for external servers."
-status: "captured"
+status: captured
 priority: "P2"
 created: "2026-03-07"
 updated: "2026-03-07"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Tasks
 
 - [ ] MCP host module — JSON-RPC protocol handler, connection state machine

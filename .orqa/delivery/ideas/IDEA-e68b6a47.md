@@ -20,6 +20,7 @@ relationships:
 ## What
 
 The daemon (libs/validation/) serves the artifact graph from memory. It builds the graph once at startup and never updates it. When files change on disk:
+
 - MCP serves stale graph queries
 - Validation reports errors for already-fixed issues
 - LSP diagnostics are wrong
@@ -32,6 +33,7 @@ The in-process graph (before daemon extraction) watched the filesystem and rebui
 ## Fix
 
 Add filesystem watching to the daemon:
+
 1. Watch `.orqa/` recursively for `.md` file changes
 2. Debounce (500ms-1s)
 3. Rebuild the affected portion of the graph (or full rebuild if simpler)

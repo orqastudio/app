@@ -3,7 +3,7 @@ id: "TASK-bd8caa3c"
 type: "task"
 title: "Mark surpassed research and connect orphans"
 description: "RES-5435cae9 surpassed. 9 orphaned Phase 0 research files need connection or documentation."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 acceptance:
@@ -14,6 +14,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 [RES-5435cae9](RES-5435cae9) surpassed. 9 orphaned Phase 0 research files need connection or documentation.

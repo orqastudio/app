@@ -24,11 +24,13 @@ relationships:
 ## What
 
 Update the following documentation files:
+
 1. `app/.orqa/documentation/about/vision.md` — add section explaining knowledge vs skills distinction
 2. `app/.orqa/documentation/about/artifact-framework.md` — update/add knowledge artifact type documentation
 3. `app/.claude/CLAUDE.md` — update all skill references to knowledge references
 
 The semantic distinction to document:
+
 - **Knowledge** = domain context files injected into agents at delegation time (OrqaStudio concept)
 - **Skills** = user-invocable slash commands in Claude Code (Claude Code concept)
 

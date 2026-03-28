@@ -2,7 +2,7 @@
 id: TASK-ecb0e558
 type: task
 title: "Create @orqastudio/plugin-svelte with skills, docs, and agent"
-status: completed
+status: archived
 created: 2026-03-19
 updated: 2026-03-19
 relationships:

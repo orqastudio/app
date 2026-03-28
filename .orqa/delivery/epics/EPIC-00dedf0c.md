@@ -13,6 +13,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 # Plugin Lifecycle
 
 ## Problem
@@ -33,9 +34,10 @@ Plugin content (rules, knowledge, agents, docs) lives in plugin directories (`pl
    - `plugins/<name>/documentation/*.md` → `.orqa/documentation/`
    - Other artifact directories as declared in plugin manifest
 5. **Record ownership** in `.orqa/manifest.json`:
+
    ```json
    {
-     "@orqastudio/plugin-agile-workflow": {
+     "@orqastudio/plugin-agile-methodology": {
        "files": [
          ".orqa/process/rules/RULE-f609242f.md",
          ".orqa/process/rules/RULE-0be7765e.md"
@@ -45,6 +47,7 @@ Plugin content (rules, knowledge, agents, docs) lives in plugin directories (`pl
      }
    }
    ```
+
 6. **Run install hook** — each plugin can declare an `install` entry in its manifest:
    - Connector: syncs to `.claude/plugins/` cache, sets up symlinks
    - Tooling plugins: install their tools (clippy, eslint config, etc.)
@@ -75,6 +78,7 @@ Plugin content (rules, knowledge, agents, docs) lives in plugin directories (`pl
 ### Refresh (`orqa plugin refresh [<name>]`)
 
 For each installed plugin (or a specific one):
+
 1. **Check dependencies** — verify all deps are installed, install any missing
 2. **Rebuild** — run the plugin's build step (npm run build, cargo build)
 3. **Re-sync content** — diff plugin source against manifest, copy changed files to `.orqa/`, update manifest
@@ -98,9 +102,9 @@ For each installed plugin (or a specific one):
 5. The app UI will consume this to show warnings when someone has edited plugin-owned files directly
 6. Agents can run this to self-check before committing
 
-```
+```text
 orqa plugin diff
-  @orqastudio/plugin-agile-workflow:
+  @orqastudio/plugin-agile-methodology:
     RULE-f609242f.md: identical
     RULE-0be7765e.md: MODIFIED (3 lines changed)
     KNOW-ee860ed9.md: identical
@@ -126,7 +130,7 @@ Each plugin declares its lifecycle requirements. Validated by JSON Schema.
 
 ```json
 {
-  "name": "@orqastudio/plugin-agile-workflow",
+  "name": "@orqastudio/plugin-agile-methodology",
   "version": "0.1.0-dev",
   "provides": { "schemas": [...], "relationships": [...], ... },
 
@@ -165,10 +169,11 @@ The manifest schema itself is validated by JSON Schema (added to libs/types or t
 ## Manifest format
 
 `.orqa/manifest.json`:
+
 ```json
 {
   "plugins": {
-    "@orqastudio/plugin-agile-workflow": {
+    "@orqastudio/plugin-agile-methodology": {
       "version": "0.1.0-dev",
       "installed_at": "2026-03-22T00:00:00Z",
       "files": [

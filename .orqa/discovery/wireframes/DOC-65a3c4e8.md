@@ -11,7 +11,6 @@ relationships: []
 ---
 <!-- FRESHNESS NOTE (2026-03-15): The Component Mapping table (Section 5) lists `DiffView.svelte` as a separate component — this does not exist; diff display is handled inline within `ToolCallCard.svelte`. `TypingIndicator.svelte` is implemented as `StreamingIndicator.svelte`. The tool call card status badges for "Approved/Denied/Pending" (post-MVP approval flow) are not yet implemented — only Completed and Error exist. The welcome state heading is "OrqaStudio" not a star icon in current implementation. All other component names and behavior descriptions remain accurate. -->
 
-
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-80a476c7), MVP Spec F-003, F-004
 
 The conversation view is the Chat Panel content. It is where the user interacts with the AI: sending messages, reading streaming responses, and reviewing tool call results. This document covers the active conversation state, streaming mid-response state, and the empty/welcome state.
@@ -110,7 +109,7 @@ A conversation in progress with user messages, assistant responses, and tool cal
 #### Session Header
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **Session dropdown** | Clickable session title that opens a dropdown. Dropdown shows: recent sessions list (ordered by most recent), search filter input, "New Session" button. Selecting a session loads it. `Ctrl+N` creates a new session. |
 | **Session title** | Editable inline via the dropdown. Click title to open dropdown, double-click to rename. Auto-generated from first user message (first 50 chars) if not manually set. `Escape` cancels editing. `Enter` confirms. |
 | **Model selector** | Dropdown showing available models for the configured provider. `Auto (recommended)` is the default when the provider supports it — it delegates model choice to the provider based on current rate limits and availability. If the provider does not support auto, the option is hidden and a specific model is required. Model options are populated from the active provider's capabilities. Changing model takes effect on the next message sent. Does not affect previous messages. |
@@ -119,7 +118,7 @@ A conversation in progress with user messages, assistant responses, and tool cal
 #### Message Stream
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **User message** | Prefixed with `person` icon and **You** role label. Timestamp on the right. Plain text or markdown content. |
 | **Assistant message** | Prefixed with `chat` icon and **Claude** role label. Timestamp on the right. Content rendered as markdown via `@humanspeak/svelte-markdown`. |
 | **Timestamp** | Relative format for today ("14:30"), date format for older ("Mar 1, 14:30"). Hover shows full ISO timestamp in a tooltip. |
@@ -129,7 +128,7 @@ A conversation in progress with user messages, assistant responses, and tool cal
 #### Code Blocks
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **Language label** | Shown in the top-left corner of the code block (e.g., `rust`, `typescript`). Detected from the fenced code block language tag. |
 | **Copy button** | Top-right corner of the code block. Click copies the code content to clipboard. Icon changes from clipboard to checkmark for 2 seconds after copy. Uses `navigator.clipboard.writeText()`. |
 | **Syntax highlighting** | Powered by `svelte-highlight` (highlight.js) for streaming/dynamic content. Monospace font (`JetBrains Mono` or system monospace). Dark background regardless of theme. |
@@ -234,7 +233,7 @@ Detail view showing the two states of tool call cards.
 ### Tool Call Card Descriptions
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **Tool icon** | Varies by tool type. `magnifying-glass` for Read/Grep, `pencil` for Write/Edit, `terminal` for Bash, `list` for Glob. |
 | **Tool name** | Bold label: Read, Write, Edit, Bash, Glob, Grep. |
 | **Input summary** | Truncated to one line. For file tools: the file path. For Bash: the command. For Grep: the pattern + path. For Glob: the pattern. |
@@ -292,9 +291,9 @@ What the conversation looks like while Claude is actively generating a response.
 
 ### Streaming State Descriptions
 
-| Element | Behavior |
-|---------|----------|
-| **Partial text** | Text appears character by character (or in small chunks) as tokens arrive from the sidecar via `Channel<T>`. The pipe character `\|` represents the blinking cursor at the insertion point. |
+| Element | Behavior | | |
+| --------- | ---------- --- |
+| **Partial text** | Text appears character by character (or in small chunks) as tokens arrive from the sidecar via `Channel\<T\>`. The pipe character `\|` represents the blinking cursor at the insertion point. |
 | **Typing indicator** | Below the partial text: a spinner icon + "Claude is typing..." in italic. Animates while tokens are arriving. Disappears when the message is complete. |
 | **Token counter** | The token usage indicator in the header updates in real-time as tokens stream in. Shows running total. |
 | **Send / Stop button** | The Send button changes to a **Stop** button (red-tinted) during streaming. Clicking Stop sends an abort signal to the sidecar, which cancels the current generation. The partial response is preserved as-is. |
@@ -351,7 +350,7 @@ The conversation view when no session is active or when a new empty session has 
 ### Empty State Descriptions
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **Session title** | Defaults to "New Session". Becomes auto-titled after the first user message is sent (first 50 characters of the message). |
 | **Token counter** | Shows "0 tokens" until the first exchange. |
 | **Welcome icon** | A centered star or OrqaStudio™ logo icon. Visually anchors the empty state. |
@@ -424,7 +423,7 @@ How errors appear within the conversation stream.
 ### Error State Descriptions
 
 | Element | Behavior |
-|---------|----------|
+| --------- | ---------- |
 | **Tool error** | Tool call card with red "Error" badge. Expanded view shows the error output with a warning icon and red-tinted background. The assistant message continues after the error (Claude can react to the error). |
 | **Provider error** | Rendered as a distinct error block in the message stream. Warning icon + "Error" role label. Shows error type (rate limit, auth failure, network error, etc.) and a human-readable message. |
 | **Retry button** | Appears on provider errors. Clicking retries the last user message. Only shown for transient errors (rate limits, timeouts). Not shown for permanent errors (auth failures). |
@@ -437,7 +436,7 @@ How errors appear within the conversation stream.
 How wireframe elements map to implementation components and libraries.
 
 | Wireframe Element | Svelte Component | Library / Primitive |
-|-------------------|-----------------|-------------------|
+| ------------------- | ----------------- | ------------------- |
 | Session header | `ConversationHeader.svelte` | shadcn-svelte `Select` (model dropdown), custom editable title |
 | Message stream | `MessageStream.svelte` | shadcn-svelte `ScrollArea`, virtual list for long sessions |
 | User message | `UserMessage.svelte` | `@humanspeak/svelte-markdown` for content |
@@ -457,7 +456,7 @@ How wireframe elements map to implementation components and libraries.
 ## Keyboard Shortcuts (Conversation-Specific)
 
 | Shortcut | Action |
-|----------|--------|
+| ---------- | -------- |
 | `Enter` | Send message (when input is focused) |
 | `Shift+Enter` | Insert newline in input |
 | `Escape` | Cancel streaming (same as clicking Stop) |
@@ -471,7 +470,7 @@ How wireframe elements map to implementation components and libraries.
 ## Responsive Behavior
 
 | Condition | Behavior |
-|-----------|----------|
+| ----------- | ---------- |
 | **Nav Sub-Panel collapsed** | Chat Panel expands. Message lines wrap at wider widths. Code blocks gain more horizontal room. |
 | **Wide window (all zones open)** | Chat Panel shares space with Explorer. Comfortable conversation width. |
 | **Narrow window (< 720px)** | Chat becomes overlay Sheet. Explorer fills window as focal point. |
@@ -482,7 +481,7 @@ How wireframe elements map to implementation components and libraries.
 ## Scroll Behavior Details
 
 | Scenario | Behavior |
-|----------|----------|
+| ---------- | ---------- |
 | **New message arrives, user at bottom** | Auto-scroll to show new content. |
 | **New message arrives, user scrolled up** | No auto-scroll. "Scroll to bottom" pill appears as a floating button above the input area. Badge shows count of new messages below. |
 | **User clicks "Scroll to bottom"** | Smooth scroll to bottom. Re-enables auto-scroll. Pill disappears. |

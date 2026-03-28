@@ -8,6 +8,7 @@ created: "2026-03-11"
 updated: "2026-03-11"
 relationships: []
 ---
+
 ## Decision
 
 Cross-artifact search in OrqaStudio is AI-driven, not keyword-based. When a user searches:
@@ -20,6 +21,7 @@ Cross-artifact search in OrqaStudio is AI-driven, not keyword-based. When a user
 The search UI is a **Spotlight-style floating overlay** (Ctrl+Space) that preserves the user's current browsing context.
 
 **Examples of queries the AI can handle:**
+
 - "what's blocking the next milestone"
 - "show me all rules about error handling"
 - "which tasks depend on [EPIC-9ddef7f9](EPIC-9ddef7f9)"

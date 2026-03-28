@@ -34,12 +34,14 @@ Research in TASK-09 (research: lessons as memory source) informed this design.
 ## How
 
 ### Preamble injection
+
 1. At connector startup, scan `.orqa/process/lessons/` for active lessons
 2. Filter to lessons relevant to the current session scope (task domain, plugin context)
 3. Format as behavioral override statements in the preamble section
 4. Deduplicate via the existing session-level injected knowledge cache
 
 ### PreToolUse hook
+
 1. Add a `PreToolUse` hook entry to the connector's `hooks.json`
 2. The hook receives the tool call details and current session context
 3. If the tool call matches a known lesson-trigger pattern (e.g., certain file paths, command patterns), write a memory entry

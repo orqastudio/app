@@ -3,7 +3,7 @@ id: "TASK-f717d20c"
 type: "task"
 title: "Agents content audit (7 agents)"
 description: "Audit all 7 agent definitions: expand Tier 1 skills where gaps exist, match capabilities to RULE-b723ea53 role matrix, update orchestrator prompt for pipeline philosophy."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 assignee: null
@@ -21,6 +21,7 @@ relationships:
   - target: "TASK-8e9ca15d"
     type: "depends-on"
 ---
+
 ## What
 
 Content audit of all 7 agent definitions for skill coverage and pipeline alignment.

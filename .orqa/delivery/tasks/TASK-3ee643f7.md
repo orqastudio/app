@@ -3,7 +3,7 @@ id: "TASK-3ee643f7"
 type: "task"
 title: "Behavioral enforcement plan: session hook rules"
 description: "Define enforcement mechanisms for behavioral rules enforced via plugin session hooks"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

@@ -2,7 +2,7 @@
 id: "TASK-ff0a2460"
 type: "task"
 title: "Forward-only relationship storage — remove stored inverses, compute at query time"
-status: "captured"
+status: captured
 priority: "P1"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z
@@ -28,7 +28,7 @@ Graph engine already computes inverse edges in Pass 2 of graph building (`graph.
 ### Code Locations
 
 | File | What | Lines |
-|------|------|-------|
+| ------ | ------ | ------- |
 | `libs/validation/src/structural.rs` | MissingInverse check — requires stored inverse on target | 32-81 |
 | `libs/validation/src/auto_fix.rs` | `apply_missing_inverse_fix()` — adds inverse entries to files | 240-297 |
 | `libs/validation/src/metrics.rs` | Bidirectionality metrics — counts stored bidirectional edges | 507-548 |
@@ -39,6 +39,7 @@ Graph engine already computes inverse edges in Pass 2 of graph building (`graph.
 ### Current Problem
 
 Every forward relationship requires a stored inverse on the target artifact:
+
 - Persona files accumulate 100+ `benefited-by` entries
 - Every commit touching relationships gets MissingInverse errors
 - Auto-fix adds inverse entries, growing target files indefinitely

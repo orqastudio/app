@@ -3,7 +3,7 @@ id: "TASK-d38a48c9"
 type: "task"
 title: "Test plugin against OrqaStudio governance artifacts"
 description: "Integration testing of the plugin against the real .orqa/ directory in orqa-studio."
-status: "surpassed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 assignee: "AGENT-8e58cd87"

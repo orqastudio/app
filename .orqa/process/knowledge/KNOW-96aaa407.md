@@ -2,6 +2,8 @@
 id: KNOW-96aaa407
 type: knowledge
 title: "Svelte 5 Events Reference"
+domain: platform/svelte
+description: "How to migrate Svelte 4 event directives to Svelte 5 attribute-style event handlers and callback props pattern."
 summary: "Svelte 5 Events Reference"
 status: active
 created: 2026-03-20
@@ -14,6 +16,7 @@ relationships:
 # Svelte 5 Events Reference
 
 ## Table of Contents
+
 - [Event Handler Syntax](#event-handler-syntax)
 - [Callback Props Pattern](#callback-props-pattern)
 - [Context API](#context-api)
@@ -27,6 +30,7 @@ Svelte 5 replaces `on:click` directive syntax with standard HTML attribute synta
 ### Basic Event Handlers
 
 **Svelte 4:**
+
 ```svelte
 <button on:click={handleClick}>Click</button>
 <input on:input={handleInput} />
@@ -34,6 +38,7 @@ Svelte 5 replaces `on:click` directive syntax with standard HTML attribute synta
 ```
 
 **Svelte 5:**
+
 ```svelte
 <button onclick={handleClick}>Click</button>
 <input oninput={handleInput} />
@@ -45,12 +50,14 @@ Svelte 5 replaces `on:click` directive syntax with standard HTML attribute synta
 Event modifiers no longer exist. Use wrapper functions:
 
 **Svelte 4:**
+
 ```svelte
 <form on:submit|preventDefault={handleSubmit}>...</form>
 <button on:click|stopPropagation={handleClick}>...</button>
 ```
 
 **Svelte 5:**
+
 ```svelte
 <script>
   function handleSubmit(event) {
@@ -160,6 +167,7 @@ Svelte 5 deprecates `createEventDispatcher` in favor of callback props for compo
 ### Basic Event Pattern
 
 **Svelte 4:**
+
 ```svelte
 <!-- Button.svelte -->
 <script>
@@ -174,6 +182,7 @@ Svelte 5 deprecates `createEventDispatcher` in favor of callback props for compo
 ```
 
 **Svelte 5:**
+
 ```svelte
 <!-- Button.svelte -->
 <script>

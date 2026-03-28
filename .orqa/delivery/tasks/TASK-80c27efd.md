@@ -3,7 +3,7 @@ id: "TASK-80c27efd"
 type: "task"
 title: "Implement behavioral enforcement mechanisms"
 description: "Implement all behavioral enforcement mechanisms defined in the Phase 5 plans (prompt injection, output validation, skill injection, session hooks)"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

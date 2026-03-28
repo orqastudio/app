@@ -3,7 +3,7 @@ id: "TASK-8cd409ae"
 type: "task"
 title: "Governance data quality backfill"
 description: "Audits and repairs frontmatter quality across all governance artifacts — adding missing titles, descriptions, and consistent YAML field ordering — with no code changes required."
-status: "completed"
+status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
 assignee: "AGENT-4c94fe14"
@@ -20,6 +20,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Findings Addressed
 
 - **F4**: Research audits missing description fields
@@ -35,6 +36,7 @@ This is a data-only task — no code changes. All fixes are governance file edit
 The YAML field order audit is critical because [TASK-77dcf08f](TASK-77dcf08f) will make the renderer respect YAML source order. If the field order in existing files doesn't make sense from a content hierarchy perspective, the renderer fix will surface that as a display problem.
 
 Recommended field order per type:
+
 - **Milestones**: id, title, status, description, created, updated, deadline, gate, epic-count, completed-epics, tags
 - **Epics**: id, title, status, priority, milestone, description, created, updated, research-refs, docs-required, docs-produced, scoring, tags
 - **Tasks**: id, title, status, epic, description, created, updated, assignee, skills, scope, acceptance, tags

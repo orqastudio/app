@@ -34,6 +34,7 @@ relationships:
     rationale: "Auto-generated inverse of served-by relationship from AGENT-ce86fb50"
 
 ---
+
 ## What This Pillar Means
 
 Purpose Through Continuity is the principle that the system actively maintains coherence between what the user intended and what is actually happening — across time, across interruptions, and across the complexity that accumulates during extended work.

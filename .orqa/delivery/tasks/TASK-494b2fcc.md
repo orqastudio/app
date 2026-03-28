@@ -3,7 +3,7 @@ id: "TASK-494b2fcc"
 type: "task"
 title: "Move governance artifacts to process/"
 description: "Move lessons, decisions, and rules from .orqa/process/ to .orqa/process/. Remove governance/hooks/ (plugin implementation, not artifacts). Update project.json, pre-commit hook, all path references, .claude/ symlinks."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

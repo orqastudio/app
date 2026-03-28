@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P2
 
 Without this, CLI edits to governance files and `.orqa/` artifacts aren't reflected in the app until manual refresh. Important for dogfooding where both the CLI and app are used simultaneously.

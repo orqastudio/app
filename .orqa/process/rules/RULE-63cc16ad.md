@@ -4,29 +4,47 @@ type: rule
 title: Artifact Config Integrity
 description: Every path in project.json artifacts must resolve to an actual directory on disk. Config-driven scanning with no hardcoded paths.
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every path in project.json artifacts must resolve to an actual directory on disk; config-driven scanning with no hardcoded paths"
+
   - mechanism: tool
+
     command: "orqa enforce"
     description: "Artifact scanner validates all paths in project.json resolve to existing directories"
+
   - mechanism: pre-commit
+
     check: "orqa enforce"
     description: "Pre-commit hook runs orqa enforce on staged .orqa files"
 relationships:
+
   - target: AD-f9fbd1d7
+
     type: enforces
+
   - target: AD-4ea9a290
+
     type: enforces
+
   - target: AD-45cfe1d1
+
     type: enforces
+
   - target: AD-e8ea9fb9
+
     type: enforces
+
   - target: AD-efe10e1d
+
     type: enforces
 ---
+
 # Artifact Config Integrity (NON-NEGOTIABLE)
 
 The `artifacts` array in `.orqa/project.json` is the single source of truth for what the app scans, displays, and navigates. Every path in the config MUST resolve to an actual directory on disk. Every directory the app needs to scan MUST be listed in the config.
@@ -56,7 +74,7 @@ Every artifact directory's README.md provides the default icon, label, descripti
 **Config is the override layer, not the primary source.** The `artifacts` array in `project.json` should only include `icon`, `label`, or `description` fields when they intentionally differ from the README. This keeps config minimal and enables plugins to override specific entries without duplicating README content.
 
 | Field | Primary source | Override source |
-|-------|---------------|-----------------|
+| --- | --- | --- |
 | `icon` | README frontmatter | Config entry (only if different from README) |
 | `label` | README frontmatter | Config entry (only if different from README) |
 | `description` | README frontmatter | Config entry |
@@ -101,14 +119,14 @@ Before committing any change that affects artifact paths or structure:
     { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" }
   ]
 }
-```
+```text
 
 ## .claude/ Symlink Architecture
 
 `.orqa/` is the single source of truth for ALL governance artifacts. The `.claude/` directory exists only for CLI tool compatibility and contains symlinks — NOT copies.
 
 | Symlink | Target (source of truth) |
-|---------|-------------------------|
+| --- | --- |
 | `.claude/rules/` | → `.orqa/process/rules/` |
 | `.claude/agents/` | → `.orqa/process/agents/` |
 | `.claude/knowledge/` | → `.orqa/process/knowledge/` |
@@ -116,6 +134,7 @@ Before committing any change that affects artifact paths or structure:
 | `.claude/CLAUDE.md` | → `.orqa/process/agents/orchestrator.md` |
 
 **Real files in `.claude/`** (not symlinks):
+
 - `settings.json` — CLI-specific configuration
 - `worktrees/` — CLI worktree state
 

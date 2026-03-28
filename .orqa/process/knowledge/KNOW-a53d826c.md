@@ -2,6 +2,7 @@
 id: KNOW-a53d826c
 type: knowledge
 title: Centralized Logging
+domain: platform/rust
 description: |
   How to use the OrqaStudio centralized logging system. ALL code must use the
   SDK logger instead of bare console calls. Covers log levels, module scoping,
@@ -45,6 +46,7 @@ summary: |
 **NEVER use `console.log`, `console.warn`, `console.error`, `console.time`, or `console.debug` directly.** All output must go through the centralized logger from `@orqastudio/sdk`.
 
 This is enforced by:
+
 - **TypeScript**: ESLint `no-console: error` (via `@orqastudio/plugin-typescript`)
 - **Rust**: `clippy::print_stdout` and `clippy::print_stderr` deny (via `@orqastudio/plugin-rust`)
 
@@ -58,6 +60,7 @@ const log = logger("my-module");
 ```
 
 Within the SDK itself (not an external consumer):
+
 ```typescript
 import { logger } from "../logger.js";
 const log = logger("my-module");
@@ -121,7 +124,7 @@ const unsubscribe = subscribeToLogs((entry) => {
 Use short, descriptive names that match the module's responsibility:
 
 | Module | Logger Source |
-|--------|-------------|
+| -------- | ------------- |
 | Navigation store | `logger("navigation")` |
 | Artifact store | `logger("artifact")` |
 | Graph SDK | `logger("graph")` |
@@ -133,19 +136,24 @@ Use short, descriptive names that match the module's responsibility:
 ## What Gets Logged Where
 
 ### Dev Mode
+
 All levels (debug through error) are:
+
 1. Output to browser console with `[source]` prefix
 2. Forwarded to the dev controller dashboard via HTTP POST
 3. Available to log subscribers
 
 ### Production Mode
+
 Only `warn` and `error` are:
+
 1. Output to browser console
 2. Available to log subscribers (for in-app error display)
 
 ## Dev Controller Dashboard
 
 The dashboard at `http://localhost:10401` provides:
+
 - **Source filters**: toggle visibility per module (navigation, artifact, graph, etc.)
 - **Level filters**: debug, info, perf, warn, error
 - **Text search**: filter log lines by content
@@ -154,6 +162,7 @@ The dashboard at `http://localhost:10401` provides:
 ## Where Logging Is Required
 
 Every code path that:
+
 1. **Catches an error** → `log.error(message, err)`
 2. **Makes an IPC/API call** → `log.perfAsync(label, fn)` for timing
 3. **Handles user actions** → `log.info(action)` for navigation, artifact opens

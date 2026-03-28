@@ -12,7 +12,6 @@ recurrence: 1
 relationships: []
 ---
 
-
 ## Pattern
 
 Artifacts reference other artifacts by ID in their body text but don't declare relationships in frontmatter. The graph can't traverse these connections — they're invisible to analysis, health checks, and the artifact graph visualization.

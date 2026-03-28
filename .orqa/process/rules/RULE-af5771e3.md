@@ -4,22 +4,32 @@ type: rule
 title: No Stubs or Placeholders
 description: No hardcoded fake data, TODO functions, or scaffolded implementations in production code.
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-12
 enforcement:
+
   - mechanism: behavioral
+
     message: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code; all implementations must be real"
+
   - mechanism: hook
+
     type: PostToolUse
     event: file
     action: check
     pattern: "src/**/*"
 relationships:
+
   - target: DOC-9814ec3c
+
     type: documented-by
+
   - target: AD-af88bb69
+
     type: enforces
 ---
+
 ## What Counts as a Stub
 
 - Hardcoded return values pretending to be real data (e.g., `status: "connected"`, `latency: 42`)
@@ -85,7 +95,7 @@ Every agent completing implementation work MUST include these sections in its fi
 ## Smoke Test
 [What happens if the user tries to USE this feature right now?]
 [Did you actually try it? What was the result?]
-```
+```text
 
 **The "What Is NOT Done" section is NON-NEGOTIABLE.** Omitting it is treated as a review FAIL. An empty section with justification ("Nothing — all deliverables are fully implemented") is acceptable. A missing section is not.
 

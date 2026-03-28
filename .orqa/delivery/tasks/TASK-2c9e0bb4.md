@@ -2,7 +2,7 @@
 id: TASK-2c9e0bb4
 type: task
 title: "Reconcile EPIC-7fd25812"
-status: captured
+status: archived
 priority: P1
 created: 2026-03-25
 updated: 2026-03-25

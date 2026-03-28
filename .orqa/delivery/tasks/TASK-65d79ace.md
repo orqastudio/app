@@ -3,7 +3,7 @@ id: "TASK-65d79ace"
 type: "task"
 title: "Wire governance end-to-end integration"
 description: "Connected the full governance pipeline from scanner through analysis to recommendations and dashboard."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Connected the full governance pipeline end-to-end: scan trigger → analysis → recommendations → dashboard widget update.

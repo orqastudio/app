@@ -3,7 +3,7 @@ id: "TASK-d6e26c99"
 type: "task"
 title: "Pipeline stage transition health checks"
 description: "Build pipeline health checks that detect stuck observations, accepted ADs without skills, skills without rules, and rules without verification"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

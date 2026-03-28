@@ -3,7 +3,7 @@ id: "TASK-ddb2414f"
 type: "task"
 title: "Extract stores into SDK — enforcement, lessons, setup, settings, errors"
 description: "Move the five secondary stores into @orqastudio/sdk. Fix settingsStore theme application and errorStore browser handlers to be injectable/opt-in."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -31,6 +31,7 @@ relationships:
 ## Scope
 
 ### From ui/src/lib/stores/
+
 - `enforcement.svelte.ts` → fully portable
 - `lessons.svelte.ts` → fully portable
 - `setup.svelte.ts` → fully portable
@@ -38,5 +39,6 @@ relationships:
 - `errors.svelte.ts` → wrap `window.onerror`/`onunhandledrejection` in opt-in `initBrowserHandlers()`
 
 ### Modifications needed
+
 1. `settingsStore.initialize()` accepts an optional `onThemeChange?: (mode: ThemeMode) => void` callback
 2. `errorStore` exports `initBrowserHandlers()` separately from core error accumulation

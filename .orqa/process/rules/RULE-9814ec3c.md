@@ -4,41 +4,66 @@ type: rule
 title: Coding Standards
 description: Defines Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards with coverage requirements, plus lint rule alignment discipline.
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Follow Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards; 80%+ test coverage required"
+
   - mechanism: pre-commit
+
     check: "make check"
+
   - mechanism: lint
+
     linter: rustfmt
+
   - mechanism: lint
+
     linter: clippy
+
   - mechanism: lint
+
     linter: eslint
+
   - mechanism: svelte-check
   - mechanism: cargo-test
   - mechanism: vitest
   - mechanism: tsc
+
 summary: "Rust: rustfmt, clippy pedantic, thiserror, no unwrap/panic. TypeScript/Svelte 5: strict TS, runes only ($state/$derived/$effect/$props), shadcn-svelte components, no emoji in UI. Both: 80%+ test coverage, no TODOs, no commented-out code. Enforced via make check pre-commit hook. Lint rules must align with documented standards."
 tier: stage-triggered
 roles: [implementer, reviewer, designer]
 priority: P1
 tags: [coding-standards, rust, typescript, svelte, linting]
 relationships:
+
   - target: AD-33e315cc
+
     type: enforces
     rationale: Auto-generated inverse of enforces relationship from AD-33e315cc
+
   - target: AD-2d58941b
+
     type: enforces
+
   - target: AD-ecc96aef
+
     type: enforces
+
   - target: AD-9a7d7256
+
     type: enforces
+
   - target: AD-306d7320
+
     type: enforces
+
   - target: AD-2dc8ab96
+
     type: enforces
 ---
 **Source of Truth:** `.orqa/documentation/development/coding-standards.md`
@@ -49,7 +74,7 @@ relationships:
 
 - **Formatting**: `rustfmt` on all code, no exceptions
 - **Linting**: `clippy` with pedantic and nursery lint groups enabled. Zero warnings in CI.
-- **Error handling**: `thiserror` for all error types. Every function returns `Result<T, E>`. NO `unwrap()`, `expect()`, or `panic!()` in production code — only in tests.
+- **Error handling**: `thiserror` for all error types. Every function returns `Result\<T, E\>`. NO `unwrap()`, `expect()`, or `panic!()` in production code — only in tests.
 - **Types**: All IPC types derive `Serialize`, `Deserialize`, `Debug`, `Clone`. Domain types should be immutable by default.
 - **Module organization**: One module per domain concept. Public API via `mod.rs` or `lib.rs`. Keep `main.rs` minimal — it wires things together.
 - **Functions**: <=50 lines (domain: 20-30, commands: 30-50, utilities: 10-20). Extract helpers when exceeding limits.
@@ -78,7 +103,7 @@ Run before every commit:
 
 ```bash
 make check
-```
+```text
 
 This single command runs: `format-check` + `lint` + `test-rust` + `typecheck` + `test-frontend`.
 
@@ -91,6 +116,7 @@ For individual checks, see `.orqa/documentation/development/commands.md` or run 
 Coding standards MUST be reflected in automated linting rules. If a standard exists in this document or in `.orqa/documentation/development/coding-standards.md`, there MUST be a corresponding lint rule that enforces it. Conversely, if a lint rule enforces something, that standard MUST be documented. Standards and tooling stay in sync.
 
 Every documented coding standard must have exactly one of:
+
 - A linter rule configured to catch violations automatically
 - A pre-commit hook check that catches violations before commit
 - A documented exception explaining why mechanical enforcement is impractical

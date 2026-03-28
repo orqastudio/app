@@ -3,7 +3,7 @@ id: "TASK-520f6e7d"
 type: "task"
 title: "Backfill AD → Rule enforcement relationships (37 ADs)"
 description: "Add enforcement relationship edges between accepted architecture decisions and the rules that enforce them"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

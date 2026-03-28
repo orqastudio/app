@@ -16,7 +16,7 @@ The following resolutions were agreed for the open questions in RES-d6e8ab11:
 ### Architecture Questions
 
 | # | Question | Resolution |
-|---|----------|-----------|
+| --- | ---------- | ----------- |
 | 1 | Workflow inheritance vs composition | **No inheritance.** Plugin owns its complete state machine. Add extension points only if clear need emerges. |
 | 2 | Guard expression language | **Declarative only.** Field checks, relationship checks, graph queries. Code hooks for anything beyond that. |
 | 3 | Cross-plugin workflow coordination | **Implicit coupling within a domain is acceptable** as long as the expected vocabulary (artifact type names, status values) is documented. Alternative plugins that provide the same stage must use the same terminology. |
@@ -25,7 +25,7 @@ The following resolutions were agreed for the open questions in RES-d6e8ab11:
 ### Token Efficiency Questions
 
 | # | Question | Resolution |
-|---|----------|-----------|
+| --- | ---------- | ----------- |
 | 5 | Compressed summary generation | **Author writes summaries** (including agent authors). `summary` field in frontmatter. `orqa summarize` CLI generates drafts. |
 | 6 | On-demand retrieval latency | **Acceptable.** 1-2s per query paid once at task start beats 10x token cost compounding throughout agent lifetime. |
 | 7 | Token budget granularity | **Per-agent for prompt size, per-session for total cost.** Team-level adds complexity without benefit. |
@@ -33,7 +33,7 @@ The following resolutions were agreed for the open questions in RES-d6e8ab11:
 ### Process Questions
 
 | # | Question | Resolution |
-|---|----------|-----------|
+| --- | ---------- | ----------- |
 | 8 | MCP server as application boundary | **No — daemon is the business logic boundary.** MCP and LSP are access protocols. Prompt generation belongs in the daemon. |
 | 9 | Migration timeline | **Incremental, one epic, sequential tasks with validation between each.** Start with one plugin as proving ground. |
 | 10 | Backwards compatibility during transition | **Short fallback period only.** CLAUDE.md loading as safety net while the LLM performs migration. Remove fallback code after migration complete. |

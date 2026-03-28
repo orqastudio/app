@@ -8,6 +8,7 @@ created: "2026-03-03"
 updated: "2026-03-13"
 relationships: []
 ---
+
 ## Decision
 
 Documentation browsing in OrqaStudio is project-scoped — docs are only visible when a project is loaded, and the doc tree is built dynamically from the project's filesystem rather than hardcoded in the frontend. Docsify (`_sidebar.md`, `index.html`, `docs/assets/custom.css`) is superseded by OrqaStudio's built-in doc viewer and should be removed from managed projects. OrqaStudio manages projects — it is not itself the project.

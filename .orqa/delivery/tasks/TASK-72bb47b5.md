@@ -3,7 +3,7 @@ id: TASK-72bb47b5
 title: "Fix daemon port mismatch between CLI and MCP server"
 type: task
 description: "Align the daemon port constant in CLI (libs/cli/src/commands/daemon.ts) and MCP server (libs/mcp-server/src/daemon.rs) so both use the same default port. Remove the --port 9258 workaround."
-status: completed
+status: archived
 created: 2026-03-24
 updated: 2026-03-24
 acceptance:
@@ -28,6 +28,7 @@ The daemon port is mismatched: CLI starts on 3002, MCP server expects 9258. This
 ## Files to Modify
 
 **CLI ecosystem (currently 3002):**
+
 - `libs/cli/src/commands/daemon.ts:14` — `DEFAULT_PORT`
 - `libs/cli/src/commands/enforce.ts:115` — hardcoded port
 - `connectors/claude-code/src/hooks/shared.ts:11` — `DAEMON_BASE`
@@ -35,11 +36,13 @@ The daemon port is mismatched: CLI starts on 3002, MCP server expects 9258. This
 - `app/backend/src-tauri/src/commands/daemon_commands.rs:32` — hardcoded address
 
 **Rust library ecosystem (currently 9258):**
+
 - `libs/mcp-server/src/daemon.rs:22` — `DEFAULT_DAEMON_PORT`
 - `libs/mcp-server/src/bin/server.rs:50` — defaults to 9258
 - `libs/lsp-server/src/bin/server.rs:28` — `DEFAULT_DAEMON_PORT`
 
 **App LSP (currently 3002, separate task):**
+
 - `app/backend/src-tauri/src/servers/lsp.rs:15` — see [TASK-ec4a3c53](TASK-ec4a3c53)
 
 ## Verification

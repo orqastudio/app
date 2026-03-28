@@ -23,6 +23,7 @@ relationships:
   - target: TASK-46c06db8
     type: depends-on
 ---
+
 ## What
 
 Extend the graph-guardian plugin's PostToolUse hook to catch status validation errors at write time — before a commit reaches the pre-commit hook. When an agent writes a `.orqa/` artifact with an invalid status, the hook immediately surfaces a warning in `additionalContext` so the agent can self-correct in the same turn. The valid values are read from the project config (or schema.json) to stay in sync with the Rust-side validation added in TASK-46c06db8.
@@ -30,15 +31,18 @@ Extend the graph-guardian plugin's PostToolUse hook to catch status validation e
 ## How
 
 1. In the `PostToolUse` hook handler in `graph-guardian.mjs`, after any `Write` or `Edit` tool call that targets a `.orqa/**/*.md` file:
+
    a. Parse the YAML frontmatter from the written content.
    b. Extract the `status` field.
    c. Determine the artifact type from the file path (e.g. `tasks/` → task, `epics/` → epic).
    d. Load the valid status enum for that type from the directory's `schema.json`.
    e. If `status` is not in the valid enum, add a warning to `additionalContext`:
-      ```
+
+      ```text
       ⚠ Invalid status "{actual}" for artifact type {type}.
       Valid values: {comma-separated list}.
       ```
+
 2. Load `schema.json` files lazily (cache after first read per artifact type) to avoid repeated disk reads.
 3. If the `status` field is absent or the file cannot be parsed, skip validation silently (the schema pre-commit hook will catch missing required fields separately).
 4. No changes to `PreToolUse` — this is a PostToolUse concern.

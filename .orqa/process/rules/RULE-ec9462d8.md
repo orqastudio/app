@@ -3,16 +3,22 @@ id: "RULE-ec9462d8"
 type: rule
 title: "Documentation-First Implementation"
 description: "Documentation is the source of truth. Verify docs exist before writing code; update docs before changing code."
-status: "active"
+status: active
+enforcement_type: advisory
 created: "2026-03-07"
 updated: "2026-03-12"
 enforcement:
+
   - mechanism: behavioral
+
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
 relationships:
+
   - target: "AD-af88bb69"
+
     type: "enforces"
 ---
+
 ## Principle
 
 Documentation is the source of truth. Before writing ANY implementation code, verify that documentation exists for the feature area and read it. If documentation is missing or outdated, update the docs FIRST, get user approval, then implement.

@@ -18,6 +18,7 @@ relationships:
 The app's Rust plugin loader already reads `orqa-plugin.json` manifests for schemas, views, widgets, and relationships. Extend it to also aggregate `lspServers` and `mcpServers` declarations from all installed plugins, making them available to the in-app agent framework.
 
 This enables:
+
 - In-app agents get language intelligence from plugin LSP servers
 - In-app agents get tool access from plugin MCP servers
 - Central registration — one manifest format, multiple consumers (app, CLI, Claude Code)

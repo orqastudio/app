@@ -3,7 +3,7 @@ id: "EPIC-f72b1a22"
 type: "epic"
 title: "UX Polish Sprint"
 description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
-status: "completed"
+status: archived
 priority: "P2"
 created: "2026-03-06"
 updated: "2026-03-09"
@@ -18,9 +18,11 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Implementation Design
 
 ### Fixes
+
 1. **Streaming** — Proper NDJSON line buffering with partial message handling
 2. **Output truncation** — Tool outputs beyond 500 chars collapsed with "Show more"
 3. **Tool grouping** — Consecutive same-tool calls grouped into summary card

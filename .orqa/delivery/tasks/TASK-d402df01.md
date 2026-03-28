@@ -3,7 +3,7 @@ id: "TASK-d402df01"
 type: "task"
 title: "Memory leak investigation and fix"
 description: "Identifies and resolves memory growth during extended artifact browsing sessions by cleaning up orphaned DOM event listeners and adding an eviction policy to the viewer cache."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Findings Addressed
 
 - **F3**: Crash/freeze after navigating many artifacts (possible memory leak)

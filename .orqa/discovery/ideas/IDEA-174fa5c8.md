@@ -33,7 +33,7 @@ A minimal OrqaStudio-branded git hosting platform based on Forgejo (GPLv3+, comm
 
 ### Architecture
 
-```
+```text
 OrqaStudio App (local)
   └── orqa-cloud plugin
        └── Forgejo container (git server)
@@ -63,7 +63,7 @@ The .orqa/ directory is just files in a repo — works against Forgejo the same 
 ### Deployment Options
 
 | Mode | Who | How |
-|------|-----|-----|
+| ------ | ----- | ----- |
 | **Local plugin** | Solo developer, small team | `orqa plugin install @orqastudio/cloud` → Docker container starts locally |
 | **Self-hosted cloud** | Organisation | Deploy Docker image to own infrastructure |
 | **Managed cloud** | Organisation (SaaS) | OrqaStudio-hosted instance |
@@ -118,7 +118,7 @@ Cloud is the aggregation and rollout mechanism. It is not the data capture mecha
 **User control at every tier:**
 
 | Tier | Who controls propagation |
-|------|--------------------------|
+| ------ | -------------------------- |
 | Local (Tier 1) | Project team — lessons become rules within the project |
 | Org (Tier 2) | Org admin — reviews aggregated patterns, approves cross-project rule rollout |
 | Global (Tier 3) | Org admin opts org in; project team can still opt their project out |
@@ -148,7 +148,7 @@ Git resolves conflicts between origins using its standard merge/rebase mechanism
 This enables several critical workflows:
 
 | Scenario | How multi-origin helps |
-|----------|----------------------|
+| ---------- | ---------------------- |
 | **Team collaboration** | Different team members work against different remotes — some prefer GitHub, some use the local instance, some use both |
 | **Domain separation** | Frontend team pushes to GitHub (open source), backend team pushes to internal Forgejo (proprietary governance), ops team pushes to a third remote |
 | **Dogfooding** | OrqaStudio itself runs on a local Docker instance for governance AND syncs to GitHub for public collaboration |

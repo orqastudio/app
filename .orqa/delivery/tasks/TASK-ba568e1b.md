@@ -3,7 +3,7 @@ id: TASK-ba568e1b
 type: task
 title: Move roadmap into Delivery nav section (F41)
 description: "Relocate the Roadmap nav item from the top-level sidebar into the Delivery section, as the first item within that section."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 3

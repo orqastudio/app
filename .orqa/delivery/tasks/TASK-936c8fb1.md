@@ -23,6 +23,7 @@ relationships:
   - target: TASK-6810ef0c
     type: depends-on
 ---
+
 ## What
 
 PipelineStepper currently renders the artifact's current stage in the lifecycle. This task adds interactive transition buttons to the stepper: for each valid next status reachable from the current one, a button appears that — when clicked — calls the artifact-update SDK command to apply the transition. The valid transitions are derived from the same transition map used by the Rust transition engine (TASK-6810ef0c), ensuring the UI and backend agree on what is allowed.
@@ -30,13 +31,17 @@ PipelineStepper currently renders the artifact's current stage in the lifecycle.
 ## How
 
 1. Define (or import) a `validTransitions` map in the frontend, keyed by artifact type and current status, returning an array of valid next statuses. This mirrors the transition logic from TASK-6810ef0c.
+
    Example: `{ epic: { active: ["review"], review: ["completed"] }, task: { ready: ["active"], active: ["completed", "blocked"] } }`.
+
 2. In `PipelineStepper`, derive the available transitions reactively:
+
    ```svelte
    const availableTransitions = $derived(
      validTransitions[props.artifactType]?.[props.currentStatus] ?? []
    );
    ```
+
 3. Render a row of transition buttons beneath (or alongside) the current stage indicator — one button per available transition labelled with the target status.
 4. On click, call the artifact-update Tauri command (via the store, not directly from the component) with the new status value.
 5. Disable transition buttons while an update is in flight (loading state).

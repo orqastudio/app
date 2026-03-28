@@ -12,6 +12,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed epic design"
 ---
+
 ## Research Questions
 
 ### Q1: How should source code discover .orqa/ paths? (IMPL-a73db2e6)
@@ -67,7 +68,7 @@ For the immediate term, Option D acknowledges the duality and adds enforcement (
 }
 ```
 
-4. **How is sidecar identity detected?** The system needs to know which sidecar is active:
+1. **How is sidecar identity detected?** The system needs to know which sidecar is active:
    - CLI: the sidecar IS the CLI tool (Claude Code, Cursor, etc.) — detectable from environment variables or process context
    - App: the app IS the sidecar (Agent SDK built-in) — always `orqa-app`
    - Context detection already exists in [RULE-8abcbfd5](RULE-8abcbfd5) capability resolution — extend it
@@ -138,6 +139,7 @@ Q1 and Q3 share a root cause: the system has two path discovery mechanisms that 
 ### The Pairing Pattern
 
 Q2 and Q3 are two sides of the same coin: declaration (Q2) and enforcement (Q3). This is exactly the Knowledge Maturity Pipeline pattern: an observation becomes understanding, understanding becomes a principle, the principle becomes enforcement. The plugin-sidecar pairing is currently at the observation stage. It needs:
+
 - A principle (AD) establishing that plugins and sidecars are paired
 - Enforcement (plugin schema + loader filtering)
 - Verification (verify-links or similar checks that all active plugins match the sidecar)
@@ -205,7 +207,7 @@ The orchestrator verifies this section exists and is non-empty before accepting 
 All previously-untracked open items that need tasks under [EPIC-88f359b0](EPIC-88f359b0):
 
 | Item | Type | Description |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | [RES-98ab39e0](RES-98ab39e0) completion | Research | Behavioral directives in the pipeline — draft research awaiting discussion |
 | Claude memory cleanup | Cleanup | 6 memory files duplicate artifact knowledge, should be pruned |
 | ArtifactType::Hook removal | Dead code | Hook enum variant and all handling code — hooks are plugin implementation |
@@ -222,7 +224,7 @@ All previously-untracked open items that need tasks under [EPIC-88f359b0](EPIC-8
 ## Decisions Made
 
 | Question | Decision | Rationale |
-|----------|----------|-----------|
+| ---------- | ---------- | ----------- |
 | Q1: Path discovery | Option C — runtime config cache | User chose "do it properly". ProjectPaths struct loaded from project.json at startup. |
 | Q2a: Plugin type taxonomy | Array of types: `ai-provider-integration`, `visualisation`, `governance-extension`, `data-connector` | Single plugin can span multiple types. Enum is extendable. |
 | Q2a: Plugin requires shape | Determined by declared types — union of type-specific requires fields | `ai-provider-integration` adds `requires.ai-providers`, other types add their own fields |

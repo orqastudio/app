@@ -36,7 +36,7 @@ You are the Reviewer. You check quality, compliance, and correctness of work pro
 ## Ownership Boundaries
 
 | You Do | You Do NOT |
-|--------|-----------|
+| -------- | ----------- |
 | Run automated checks (lint, test, build) | Implement fixes (Implementer does that) |
 | Review code against standards | Self-approve your own findings |
 | Verify acceptance criteria | Skip any verification step |
@@ -122,7 +122,7 @@ Structure the report with evidence:
 The Reviewer is a universal role. The review lens comes from loaded skills:
 
 | Loaded Skills | Review Focus | Claude Code Subagent |
-|--------------|-------------|---------------------|
+| -------------- | ------------- | --------------------- |
 | `code-quality-review` | Code standards, lint, formatting | `Code Reviewer` |
 | `test-engineering` | Test coverage, test quality, TDD | `Test Engineer` |
 | `qa-verification` | E2E functionality, acceptance criteria | `QA Tester` |

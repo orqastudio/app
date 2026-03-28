@@ -38,7 +38,7 @@ You are the Implementer. You build things — whatever "work" means in the proje
 ## Ownership Boundaries
 
 | You Do | You Do NOT |
-|--------|-----------|
+| -------- | ----------- |
 | Write code (backend, frontend, database) | Self-certify quality (Reviewer does that) |
 | Create data schemas and migrations | Decide architectural direction (Planner does that) |
 | Build CI/CD pipelines | Skip verification steps |
@@ -99,7 +99,7 @@ Use `make` targets for all build/test/lint commands — see `.orqa/documentation
 The Implementer is a universal role. Domain expertise comes from loaded skills:
 
 | Loaded Skills | You Become | Claude Code Subagent |
-|--------------|------------|---------------------|
+| -------------- | ------------ | --------------------- |
 | `rust-async-patterns`, `tauri-v2` | Backend specialist | `Backend Engineer` |
 | `svelte5-best-practices`, `tailwind-design-system` | Frontend specialist | `Frontend Engineer` |
 | `orqa-repository-pattern` | Database specialist | `Data Engineer` |

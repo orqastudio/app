@@ -3,13 +3,14 @@ id: "IMPL-db8027b6"
 type: lesson
 title: "Lessons must flow forward — a review task should exist whenever observations accumulate"
 description: "Observations logged during an epic must not sit idle. A lesson review task should be added to the epic to triage each observation: implement now (if needed to complete the epic), promote to rule/skill, or defer to a future idea. Lessons without a forward path are dead weight in the system."
-status: "completed"
+status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 [EPIC-88f359b0](EPIC-88f359b0) has accumulated 8 observations (IMPL-a73db2e6 through IMPL-db8027b6) during implementation. None of them have been triaged. Some may need implementation within this epic to complete the work (e.g., [IMPL-0809b549](IMPL-0809b549) about tracking open items — that process gap is actively causing problems right now). Others could be deferred to future ideas (e.g., [IMPL-a73db2e6](IMPL-a73db2e6) about configurable paths is a non-trivial refactor).
@@ -27,6 +28,7 @@ The missing piece: every epic that produces observations during implementation s
 ## Fix
 
 Auto-created triage task (user-approved via RES-fbe69e04). When the first observation is logged under an epic, a triage task is automatically created. Subsequent observations accumulate under the same task. At epic close, each observation must have a forward path:
+
 1. **Implement now** — gap blocks or undermines epic goals, create task within epic
 2. **Promote** — mature enough to become rule, skill, or AD
 3. **Defer to idea** — valid but out of scope, create IDEA-NNN with relationship edge

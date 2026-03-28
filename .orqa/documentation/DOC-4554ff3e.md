@@ -1,7 +1,8 @@
 ---
 id: DOC-4554ff3e
 type: doc
-name: Software Delivery Guide
+title: Software Delivery Guide
+domain: guides
 category: how-to
 status: active
 plugin: "@orqastudio/plugin-software-kanban"
@@ -34,7 +35,7 @@ This guide explains how OrqaStudio's software delivery system works — how to p
 The software delivery plugin adds artifact types for the full development lifecycle:
 
 | Type | Prefix | Section | Purpose |
-|------|--------|---------|---------|
+| ------ | -------- | --------- | --------- |
 | **Milestone** | MS | Delivery | Major checkpoints and releases |
 | **Epic** | EPIC | Delivery | Coherent bodies of work |
 | **Task** | TASK | Delivery | Atomic work units |
@@ -46,7 +47,7 @@ The software delivery plugin adds artifact types for the full development lifecy
 
 Work is structured in three levels:
 
-```
+```text
 Milestone  →  defines the destination
   ↑ fulfils
 Epic       →  defines the capability
@@ -64,7 +65,7 @@ Every artifact uses a specific relationship verb that describes the nature of th
 
 Ideas are the seeds. They enter the graph, get grounded by a pillar and linked to a persona, then flow into work:
 
-```
+```text
 Pillar ←(grounded-by)← Idea →(benefits)→ Persona
                           │
                 ┌─────────┼──────────┐
@@ -122,6 +123,7 @@ All delivery artifacts progress through canonical statuses:
 7. **Completed** — done and verified
 
 Side states:
+
 - **Hold** — paused intentionally
 - **Blocked** — waiting on a dependency (inferred from `depends-on` relationships)
 - **Surpassed** — replaced by newer work
@@ -142,11 +144,12 @@ These transitions are computed from the graph state — you don't set them manua
 
 Any artifact traces back to the project's vision through the graph:
 
-```
+```text
 task →(delivers)→ epic →(realised-by)→ idea →(grounded-by)→ pillar →(upholds)→ vision
 ```
 
 If you can't trace a task back to a pillar, it means either:
+
 - The epic is missing a `realised-by` link to an idea
 - The idea is missing a `grounded-by` link to a pillar
 - The idea doesn't fit the vision — consider a **pivot**
@@ -162,7 +165,7 @@ Navigate to **Delivery → Roadmap** in the sidebar:
 ## Quick Reference: All Plugin Relationships
 
 | From | Verb | To | Meaning |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | idea | `realises` | epic, task | Idea becomes delivery work |
 | idea | `spawns` | research | Idea triggers investigation |
 | research | `produces` | wireframe | Investigation yields visual spec |

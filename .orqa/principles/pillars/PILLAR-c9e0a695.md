@@ -61,6 +61,7 @@ relationships:
     rationale: "Auto-generated inverse of served-by relationship from AGENT-ce86fb50"
 
 ---
+
 ## What This Pillar Means
 
 Clarity Through Structure is the principle that thinking, standards, and decisions must be visible and structured — not hidden in people's heads, buried in terminal output, or scattered across incompatible files.

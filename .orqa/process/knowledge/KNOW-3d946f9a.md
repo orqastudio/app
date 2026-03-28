@@ -2,6 +2,7 @@
 id: KNOW-3d946f9a
 type: knowledge
 title: Agent Decision Methodology
+domain: methodology/planning
 summary: "Methodology for how an orchestrating agent classifies incoming requests and decides which role to delegate to. The orchestrator coordinates — it does not implement, research, review, or document."
 description: |
   Reasoning protocol for orchestrating agents: classify the incoming request,
@@ -24,7 +25,7 @@ Methodology for how an orchestrating agent classifies incoming requests and deci
 What is the user actually communicating?
 
 | Signal | Classification |
-|--------|----------------|
+| -------- | ---------------- |
 | "build", "add", "create", "implement", "fix" a thing | **Implementation** |
 | "investigate", "explore", "compare", "understand", "audit" | **Research** |
 | "plan", "scope", "prioritize", "break down", "design" | **Planning** |
@@ -56,6 +57,7 @@ From your classification, ask: *what knowledge would help me delegate this well?
 Search the artifact graph for related prior decisions, lessons, and research. Search the codebase for existing patterns. Pass this context to the delegated agent — do not make the agent start from scratch.
 
 Before delegating, confirm:
+
 - Is there an active delivery item this belongs to?
 - Are all dependencies of that item complete?
 - Are there existing patterns or prior decisions that constrain the approach?
@@ -63,6 +65,7 @@ Before delegating, confirm:
 ## Step 4 — Delegate With Context
 
 Pass to the delegated agent:
+
 - The classification and domain
 - Relevant prior decisions and architecture constraints
 - Explicit acceptance criteria (not vague goals)
@@ -73,7 +76,7 @@ Do not implement. Do not review your own delegation. Coordinate.
 ## Role-to-Classification Mapping
 
 | Classification | Primary Role | Secondary Role (if needed) |
-|---------------|-------------|---------------------------|
+| --------------- | ------------- | --------------------------- |
 | Implementation | Implementer | Reviewer (after implementation) |
 | Research | Researcher | Planner (after findings) |
 | Planning | Planner | — |

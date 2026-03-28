@@ -3,7 +3,7 @@ id: "TASK-aa7a08df"
 type: "task"
 title: "Update RULE-b10fe6d1: related idea surfacing during promotion"
 description: "Add mandatory step to RULE-b10fe6d1 promotion procedure requiring scanning for thematically related ideas before creating an epic"
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -13,6 +13,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Update [RULE-b10fe6d1](RULE-b10fe6d1) to require related idea surfacing during the promotion procedure.

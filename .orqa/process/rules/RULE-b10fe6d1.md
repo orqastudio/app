@@ -3,31 +3,52 @@ id: "RULE-b10fe6d1"
 type: rule
 title: "Artifact Lifecycle"
 description: "Enforces creation standards, status transitions, promotion gates, and documentation gates for all .orqa/ artifacts."
-status: "active"
+status: active
+enforcement_type: mechanical
 created: "2026-03-07"
 updated: "2026-03-13"
 enforcement:
+
   - mechanism: behavioral
+
     message: "Orchestrator enforces human gate before marking epics done; status transitions must follow defined lifecycle gates"
+
   - mechanism: tool
+
     command: "orqa enforce"
     description: "Validates artifact status transitions, required fields, and relationship integrity"
+
   - mechanism: pre-commit
+
     check: "orqa enforce"
 relationships:
+
   - target: "DOC-db5b37dc"
+
     type: "documented-by"
+
   - target: "DOC-ffad3f6b"
+
     type: "documented-by"
+
   - target: "AD-3b986859"
+
     type: "enforces"
+
   - target: "AD-7fa3f280"
+
     type: "enforces"
+
   - target: "AD-339e9223"
+
     type: "enforces"
+
   - target: "DOC-28344cd7"
+
     type: "documented-by"
+
   - target: "DOC-f6c4ac69"
+
     type: "documented-by"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
@@ -41,7 +62,7 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 ### When to Create Artifacts
 
 | Trigger | Artifact Type | Action |
-|---------|--------------|--------|
+| --- | --- | --- |
 | User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/delivery/ideas/` with `status: captured` |
 | User approves an idea for investigation | Update existing `IDEA-NNN` | Set `status: exploring`, begin research |
 | Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/delivery/epics/` with `status: draft`, update idea `evolves-into` |
@@ -70,18 +91,18 @@ Status transitions MUST follow the defined workflows. Skipping states is forbidd
 
 ### Milestone
 
-```
+```text
 planning ──> active ──> complete
-```
+```text
 
 - `planning → active`: At least one epic exists with `status: ready` or later
 - `active → complete`: The milestone's `gate` question can be answered "yes" — all P1 epics are `done`
 
 ### Epic
 
-```
+```text
 draft ──> ready ──> in-progress ──> review ──> done
-```
+```text
 
 - `draft → ready`: All `docs-required` items exist and are approved (Documentation Gate — see below)
 - `ready → in-progress`: Epic meets Definition of Ready, worktree created, agent assigned
@@ -96,25 +117,28 @@ Every epic MUST have a standing reconciliation task created when the epic is cre
 
 **Creation:** When an epic is created, the orchestrator auto-creates a task:
 
-```
+```text
 TASK-NNN: "Reconcile EPIC-NNN"
 epic: EPIC-NNN
 status: in-progress (active for the duration of the epic)
+enforcement_type: mechanical
 acceptance:
   - "Epic task table lists ALL tasks created during the epic"
   - "Epic pillars array reflects all pillars served"
   - "Epic docs-produced list matches actual documentation created/updated"
   - "Epic scope section accurately reflects what was in/out of scope"
   - "No tasks exist for this epic that are missing from the epic body"
-```
+```text
 
 **Lifecycle:**
+
 - Starts as `in-progress` when the epic begins
 - The orchestrator updates the epic body whenever tasks are added, pillars change, or scope evolves
 - Cannot be marked `done` until all other epic tasks are done and the epic body is verified accurate
 - Is always the **last task** completed before the epic moves to `review → done`
 
 **What it checks:**
+
 1. Task table completeness — every TASK-NNN with `epic: EPIC-NNN` appears in the epic body
 2. Pillar accuracy — pillars array reflects all pillars the work actually serves
 3. Docs-produced accuracy — listed docs were actually created/updated
@@ -124,9 +148,9 @@ acceptance:
 
 ### Task
 
-```
+```text
 todo ──> in-progress ──> done
-```
+```text
 
 - `todo → in-progress`: Parent epic is `in-progress`, agent is assigned, **and all tasks listed in `depends-on` have `status: done`**
 - `in-progress → done`: Acceptance criteria met, verified by reviewer
@@ -148,22 +172,22 @@ If a task has a `depends-on` field listing other task IDs, those tasks MUST be `
 
 ### Research
 
-```
+```text
 draft ──> complete ──> surpassed
-```
+```text
 
 - Research documents capture investigation findings and feed into epics or architecture decisions.
 - A research document may be marked `surpassed` when newer investigation supersedes it. Set `surpassed-by` field. Do NOT delete — research documents are historical records of reasoning and findings.
 
 ### Idea
 
-```
+```text
 captured ──> exploring ──> shaped ──> promoted ──> delivered
                                   │            └──> partially-delivered
                                   └──> archived
 Any state ──> discarded
 Any state ──> archived
-```
+```text
 
 - `captured → exploring`: User approves investigation. Research begins on `research-needed` items.
 - `exploring → shaped`: All `research-needed` items have been investigated. Research artifacts exist. The idea has a clear scope and proposed approach.
@@ -193,10 +217,10 @@ Any state ──> archived
 
 ### Decision
 
-```
+```text
 proposed ──> accepted ──> superseded
                       └──> deprecated
-```
+```text
 
 - `proposed → accepted`: Decision reviewed and approved by the user
 - `accepted → superseded`: A new decision replaces this one — both the new and old artifacts MUST be updated in the same commit
@@ -342,6 +366,7 @@ The following changes MUST be reflected in `.orqa/documentation/about/roadmap.md
 When all tasks in an epic have `status: done` but the epic itself is not yet `status: done`, the orchestrator MUST proactively surface this to the user. This prevents epics from silently stalling between task completion and formal closure.
 
 The surfacing must include:
+
 1. List of completed tasks
 2. Any observations logged during implementation (IMPL entries)
 3. A prompt asking the user to review and approve epic completion
@@ -355,6 +380,7 @@ In the app, this should be surfaced via a dashboard notification or tool output.
 When observations (IMPL entries) are created during an epic's implementation, a triage task MUST be auto-created on the first observation. Subsequent observations accumulate under the same triage task. The triage task is completed as part of epic closure.
 
 For each observation, the triage outcome MUST be one of:
+
 1. **Implement now** — the observation reveals a gap that blocks or undermines the epic's goals. Create a task within this epic.
 2. **Promote** — the observation is mature enough to become a rule, knowledge update, or architectural decision. Do it in this epic or create a task.
 3. **Defer to idea** — the observation is valid but out of scope. Create an `IDEA-NNN` with a relationship edge so it enters the planning pipeline.
@@ -372,7 +398,7 @@ Every planning artifact (idea, epic, task) must be **placed** — either reachab
 An artifact is **placed** if any of these conditions hold:
 
 | Artifact | Direct placement | Indirect placement |
-|----------|-----------------|-------------------|
+| --- | --- | --- |
 | **Epic** | Has `milestone` set | — |
 | **Task** | Has `milestone` set | Has `epic` → that epic has `milestone` |
 | **Idea** | Has `milestone` set | Has `evolves-into` → that epic has `milestone` |
@@ -380,7 +406,7 @@ An artifact is **placed** if any of these conditions hold:
 If none of the above → the artifact MUST have a `horizon` field:
 
 | Horizon | Meaning | Integrity behaviour |
-|---------|---------|-------------------|
+| --- | --- | --- |
 | `active` | Actively planned for current work | Surfaced in dashboard planning view |
 | `next` | Think about for the next milestone | Reviewed during milestone transitions |
 | `later` | Worth doing, no timeline yet | Visible in backlog views |

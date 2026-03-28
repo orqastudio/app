@@ -3,7 +3,7 @@ id: "TASK-cfeed07a"
 type: "task"
 title: "Document plugin architecture and SDK extraction plan"
 description: "Document the plugin system architecture and plan for component library / SDK extraction."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 assignee: "AGENT-bbad3d30"
@@ -18,6 +18,7 @@ relationships:
   - target: "TASK-f50f84f8"
     type: "depends-on"
 ---
+
 ## What
 
 Document the plugin architecture including the path to SDK extraction for dynamic plugin views.

@@ -3,7 +3,7 @@ id: "IDEA-9b26ba54"
 type: discovery-idea
 title: "Component Library SDK for Plugin Views"
 description: "Extract shared components into an importable SDK so plugins can create dynamic views that match the design system."
-status: completed
+status: archived
 created: "2026-03-12"
 updated: "2026-03-13"
 horizon: "active"
@@ -20,6 +20,7 @@ relationships:
   - target: "PERSONA-477971bf"
     type: "benefits"
 ---
+
 ## Description
 
 OrqaStudio's plugin architecture needs a way for plugins to create custom views. Currently, shared components live in `$lib/components/shared/` but are only available to the core app. Plugins need:

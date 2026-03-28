@@ -16,7 +16,7 @@ The orchestrator has used invalid relationship types (`supersedes`, `supports`, 
 
 ## Root Cause
 
-The orchestrator invents relationship types that sound correct but aren't in the plugin-defined vocabulary. The valid types are defined in `plugins/agile-workflow/orqa-plugin.json` and `plugins/software-kanban/orqa-plugin.json` but the orchestrator doesn't check these before writing relationships.
+The orchestrator invents relationship types that sound correct but aren't in the plugin-defined vocabulary. The valid types are defined in `plugins/agile-methodology/orqa-plugin.json` and `plugins/software-kanban/orqa-plugin.json` but the orchestrator doesn't check these before writing relationships.
 
 ## Recurrence
 
@@ -26,6 +26,7 @@ The orchestrator invents relationship types that sound correct but aren't in the
 ## Recommendation — Promote to Enforcement
 
 At recurrence >= 2, this should be promoted to mechanical enforcement:
+
 1. The pre-commit hook should validate relationship types against the plugin schemas
 2. The connector's PreToolUse:Write hook should check relationship types when writing to .orqa/
 3. The relationship type vocabulary should be injected into the orchestrator's context at session start

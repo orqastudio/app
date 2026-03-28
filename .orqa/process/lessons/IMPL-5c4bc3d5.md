@@ -11,16 +11,17 @@ recurrence: 3
 relationships: []
 ---
 
-
 ## Pattern
 
 Under task volume, the orchestrator:
+
 1. Delegates a task with acceptance criteria to an implementer
 2. The implementer returns a summary of what was done
 3. The orchestrator marks the task done based on the summary
 4. UAT later reveals specific acceptance criteria that were not met
 
 Examples from EPIC-c96c9f12 UAT round 3:
+
 - TASK-43acbe04 acceptance: "Roadmap should be first item in Delivery" — roadmap remained top-level (F41)
 - TASK-237ebc9f acceptance: "Column grouping/sorting configurable" — no sort dropdown exists (F38)
 - TASK-4c973e88 acceptance: "Relationships no longer appear in metadata card" — relationship-specific fields (epic, milestone, depends-on) still show (F44)

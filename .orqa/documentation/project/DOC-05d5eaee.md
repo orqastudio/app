@@ -2,6 +2,7 @@
 id: DOC-05d5eaee
 type: doc
 title: "How To: Build an OrqaStudio Plugin"
+domain: guides
 category: how-to
 description: "Step-by-step guide for building a Claude Code companion plugin that adds hooks, commands, and knowledge to an OrqaStudio project."
 created: 2026-03-14
@@ -26,7 +27,7 @@ is the reference implementation for everything in this guide.
 
 ## Plugin Directory Structure
 
-```
+```text
 .claude-plugin/
 ├── package.json          # Plugin metadata and npm dependencies
 ├── hooks/
@@ -129,7 +130,7 @@ path of your plugin directory.
 **Hook types:**
 
 | Type | Fires When |
-|------|-----------|
+| ------ | ----------- |
 | `PreToolUse` | Before a tool call executes — can block the call by exiting non-zero |
 | `PostToolUse` | After a tool call completes — use for graph integrity checks, auto-linking |
 | `SessionStart` | When a new Claude Code session begins |
@@ -210,7 +211,9 @@ The live plugin at `.orqa/plugins/orqastudio-claude-plugin/` demonstrates all of
 patterns working together:
 
 - `hooks/scripts/rule-engine.mjs` — reads enforcement entries from rule frontmatter
+
   and blocks tool calls that violate them (PreToolUse)
+
 - `hooks/scripts/prompt-injector.ts` — injects project context on every prompt (UserPromptSubmit)
 - `hooks/scripts/graph-guardian.mjs` — validates artifact cross-references after writes (PostToolUse)
 - `hooks/scripts/session-start.sh` — runs `git status` and `git stash list` checks (SessionStart)

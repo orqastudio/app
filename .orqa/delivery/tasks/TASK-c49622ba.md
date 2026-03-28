@@ -3,7 +3,7 @@ id: "TASK-c49622ba"
 type: "task"
 title: "Define tool system and permission model"
 description: "Defined file tools, search tools, and governance tools with their permission model and execution patterns."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Defined the complete tool system including file tools, search tools, and governance tools with input/output schemas, a permission model, and execution flow through the sidecar NDJSON protocol.

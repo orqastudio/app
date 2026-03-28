@@ -16,6 +16,7 @@ relationships:
 # IDEA-142: Plugin Lifecycle Events
 
 Events triggered on plugin install/uninstall/update that the app and other plugins can listen to:
+
 - `plugin:installed` — run dependency installation, config generation
 - `plugin:uninstalled` — cleanup configs, remove generated files
 - `plugin:updated` — re-run setup, migrate configs

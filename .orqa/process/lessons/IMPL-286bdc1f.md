@@ -3,13 +3,15 @@ id: "IMPL-286bdc1f"
 type: lesson
 title: "Symlinks Prevent Governance Divergence"
 description: "When .claude/ contains copies instead of symlinks to .orqa/, agents writing to .claude/ bypass the source of truth and the two directories silently diverge."
-status: "completed"
+status: archived
+archived_reason: "Superseded by connector architecture — .claude/ is generated output, not symlinks to .orqa/"
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-03-28"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## What Happened
 
 Agents were writing governance artifacts (rules, agents, skills) directly to `.claude/` directories, which were separate copies of the `.orqa/` source of truth. Over multiple sessions, the two directories diverged — `.claude/` had newer rule content while `.orqa/` had the original versions. The CLI loaded from `.claude/` and the app scanned `.orqa/`, resulting in inconsistent governance enforcement.
@@ -23,7 +25,7 @@ The initial setup created `.claude/` as copies of `.orqa/` files. When agent del
 `.claude/` should contain ONLY symlinks to `.orqa/` directories, plus `settings.json` and `worktrees/` as real files:
 
 | Symlink | Target |
-|---------|--------|
+| --- | --- |
 | `.claude/rules/` | → `.orqa/process/rules/` |
 | `.claude/agents/` | → `.orqa/process/agents/` |
 | `.claude/skills/` | → `.orqa/process/skills/` |

@@ -2,6 +2,7 @@
 id: KNOW-f7fb7aa7
 type: knowledge
 title: "Thinking Mode: Implementation"
+domain: methodology/planning
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 summary: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 status: active

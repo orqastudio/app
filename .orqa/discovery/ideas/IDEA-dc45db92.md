@@ -20,11 +20,12 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 OrqaStudio's artifact lifecycle defines a natural funnel:
 
-```
+```text
 Ideas (captured) → Ideas (exploring) → Ideas (shaped) → Epics (draft) → Epics (ready) → Tasks (in-progress) → Tasks (done)
 ```
 

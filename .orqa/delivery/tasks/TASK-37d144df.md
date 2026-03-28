@@ -2,7 +2,7 @@
 id: TASK-37d144df
 type: task
 title: "Integrate router into NavigationStore"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

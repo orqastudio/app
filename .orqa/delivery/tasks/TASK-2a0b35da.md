@@ -3,7 +3,7 @@ id: "TASK-2a0b35da"
 type: task
 title: "Reconcile EPIC-a1555708"
 description: "Standing reconciliation task — verify epic body accuracy: task table, pillars, docs-produced, scope."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -32,6 +32,7 @@ relationships:
   - target: "TASK-36924b1c"
     type: "depends-on"
 ---
+
 ## What
 
 Standing reconciliation task for [EPIC-a1555708](EPIC-a1555708). Ensures the epic body stays accurate as work evolves.

@@ -3,7 +3,7 @@ id: "TASK-bf368dca"
 type: "task"
 title: "Audit existing architecture decisions against AD-f079c196/039/040"
 description: "Review AD-7121ec20 through AD-306eccf1 to identify which decisions are superseded, affected, or made defunct by the graph-based knowledge injection (AD-f079c196), core graph firmware (AD-45f32bab), and task-first audit trail (AD-7fa3f280) decisions."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 docs:
@@ -19,6 +19,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 [AD-f079c196](AD-f079c196) (graph-based knowledge injection), [AD-45f32bab](AD-45f32bab) (core graph firmware), and [AD-7fa3f280](AD-7fa3f280)
@@ -34,7 +35,7 @@ architectural shift. Several earlier decisions may now be:
 These decisions are likely affected based on what [AD-f079c196](AD-f079c196)/039/040 change:
 
 | Decision | Title | Likely Impact |
-|----------|-------|---------------|
+| ---------- | ------- | --------------- |
 | [AD-c1e5a39e](AD-c1e5a39e) | Three-tier skill model | May be affected by graph-based skill discovery |
 | [AD-48b310f9](AD-48b310f9) | Universal agent roles | Likely unaffected — roles are orthogonal to injection |
 | [AD-859ed163](AD-859ed163) | SQLite for conversations only | Likely unaffected — governance stays file-based |
@@ -64,7 +65,7 @@ All other ADs should still be reviewed for completeness.
 No full supersessions found. [AD-f079c196](AD-f079c196)/039/040 are additive/evolutionary, not replacements. Six ADs are partially affected:
 
 | AD | Title | Verdict | Notes |
-|----|-------|---------|-------|
+| ---- | ------- | --------- | ------- |
 | [AD-7121ec20](AD-7121ec20) | Thick Backend Architecture | Unaffected | |
 | [AD-4e7faf0e](AD-4e7faf0e) | IPC Boundary Design | Unaffected | |
 | [AD-2d58941b](AD-2d58941b) | Error Propagation via Result Types | Unaffected | |

@@ -2,6 +2,7 @@
 id: DOC-bad8e26f
 type: doc
 title: Core Platform Knowledge Catalog
+domain: reference
 description: Reference catalog of all core platform knowledge artifacts — agent-facing instructions shipped with OrqaStudio.
 status: active
 created: 2026-03-19
@@ -69,7 +70,7 @@ These knowledge artifacts ship with the OrqaStudio platform and are available to
 ## Governance & Process
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | `planning` | Documentation-first workflow, Systems Architecture Checklist, UX-first design |
 | `orqa-governance` | Governance patterns, rule enforcement, artifact lifecycle |
 | `governance-maintenance` | How to maintain and evolve governance artifacts |
@@ -82,7 +83,7 @@ These knowledge artifacts ship with the OrqaStudio platform and are available to
 ## Research & Evaluation
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | `architectural-evaluation` | How to evaluate architectural compliance and design options |
 | `research-methodology` | Structured research process: scope, gather, analyse, present |
 | `systems-thinking` | Holistic analysis, dependency mapping, second-order effects |
@@ -94,7 +95,7 @@ These knowledge artifacts ship with the OrqaStudio platform and are available to
 ## Plugin Development
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | `orqa-plugin-development` | Platform-level plugin development guide |
 | `plugin-development-first-party` | First-party OrqaStudio plugin workflow |
 | `plugin-development-third-party` | Community/third-party plugin development |
@@ -104,7 +105,7 @@ These knowledge artifacts ship with the OrqaStudio platform and are available to
 ## Project Setup
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | `project-setup` | Creating new OrqaStudio projects |
 | `project-inference` | Detecting project characteristics from codebase |
 | `project-migration` | Migrating existing projects to OrqaStudio |
@@ -114,6 +115,5 @@ These knowledge artifacts ship with the OrqaStudio platform and are available to
 ## Search & Tools
 
 | Skill | Description |
-|---|---|
+| --- | --- |
 | `search` | Unified search — regex, semantic, and compound research queries |
-

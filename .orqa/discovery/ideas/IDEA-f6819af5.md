@@ -19,6 +19,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 Currently the artifact viewer shows one artifact at a time. Navigating to a different artifact replaces the current view, losing the user's scroll position and reading context. Users working across related artifacts (e.g., reading an epic while referencing its research docs, or comparing two decisions) are forced to navigate back and forth repeatedly.

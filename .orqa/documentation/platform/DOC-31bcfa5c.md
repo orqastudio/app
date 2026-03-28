@@ -1,7 +1,9 @@
 ---
 id: DOC-31bcfa5c
 type: doc
+status: active
 title: Design System
+domain: reference
 category: reference
 description: "Design system tokens, spacing scale, color themes, and component styling conventions."
 created: 2026-03-02
@@ -176,7 +178,7 @@ These extend the shadcn-svelte base set for OrqaStudio-specific needs (contextua
 ### Color Usage Rules
 
 | Do | Don't |
-|----|-------|
+| ---- | ------- |
 | `bg-primary text-primary-foreground` | `bg-blue-600 text-white` |
 | `border-border` | `border-gray-200` |
 | `text-muted-foreground` | `text-[#71717a]` |
@@ -206,7 +208,7 @@ Dark mode is handled entirely by CSS variable redefinition under `.dark`. Compon
 ### Type Scale
 
 | Role | Class | Weight |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | Page heading | `text-2xl` | `font-semibold` |
 | Section heading | `text-xl` | `font-semibold` |
 | Subsection heading | `text-lg` | `font-medium` |
@@ -232,7 +234,7 @@ Body text defaults to `text-sm` (14px). This is the standard for information-den
 Tailwind's default 4px increment scale. Commonly used values:
 
 | Token | Value | Typical Usage |
-|-------|-------|---------------|
+| ------- | ------- | --------------- |
 | `gap-1` / `p-1` | 4px | Icon-to-text gap, tight inline spacing |
 | `gap-2` / `p-2` | 8px | Related items within a group |
 | `gap-3` / `p-3` | 12px | Compact card padding |
@@ -245,7 +247,7 @@ Tailwind's default 4px increment scale. Commonly used values:
 `--radius: 0.625rem` (10px) — the shadcn-svelte default. All components derive from this:
 
 | Component | Radius |
-|-----------|--------|
+| ----------- | -------- |
 | Button, Input | `rounded-md` (calc from `--radius`) |
 | Card, Dialog | `rounded-lg` |
 | Badge, Tag | `rounded-full` for pills, `rounded-md` for labels |
@@ -254,7 +256,7 @@ Tailwind's default 4px increment scale. Commonly used values:
 ### Layout Conventions
 
 | Pattern | Implementation |
-|---------|---------------|
+| --------- | --------------- |
 | Card padding | `p-6` |
 | Section gaps | `space-y-4` or `gap-4` |
 | Page margins | `px-4 md:px-6` |
@@ -323,7 +325,7 @@ On Linux, Tauri's WebView does not reliably propagate `prefers-color-scheme`. Th
 ### Core Components (MVP)
 
 | Category | Components |
-|----------|-----------|
+| ---------- | ----------- |
 | **Actions** | Button, Toggle, DropdownMenu |
 | **Data display** | Badge, Card, Table, Separator |
 | **Feedback** | Alert, Tooltip, Sonner (toast) |
@@ -337,7 +339,7 @@ On Linux, Tauri's WebView does not reliably propagate `prefers-color-scheme`. Th
 These are not provided by shadcn-svelte and must be built:
 
 | Component | Purpose | Builds On |
-|-----------|---------|-----------|
+| ----------- | --------- | ----------- |
 | `ConversationView` | Message stream with streaming token display | ScrollArea, Card |
 | `MessageBubble` | Single message (user, assistant, system) | Card |
 | `ToolCallCard` | Collapsible tool call with input/output | Collapsible, Card, Badge |
@@ -363,7 +365,7 @@ OrqaStudio adapts its UI to match the active project's design tokens. This makes
 
 ### Theme Resolution Chain
 
-```
+```text
 User Override  >  Extracted Project Token  >  OrqaStudio Default Theme
 ```
 
@@ -425,6 +427,7 @@ When the AI generates frontend code, OrqaStudio injects a compact `<design-syste
 ### Injection Conditions
 
 The design system context is injected when:
+
 1. Files with frontend extensions are in the conversation (`.svelte`, `.tsx`, `.jsx`, `.css`, etc.)
 2. User intent suggests frontend work ("build a component", "create a page", etc.)
 3. `.orqa/process/rules/design-system.md` exists and has matching path patterns
@@ -491,7 +494,7 @@ Auto-generated as `.orqa/process/rules/design-system.md` during codebase scan if
 **Library:** `lucide-svelte`
 
 | Usage | Icon Style |
-|-------|-----------|
+| ------- | ----------- |
 | Navigation | Outline, 20px |
 | Inline with text | Outline, 16px, `text-muted-foreground` |
 | Status indicators | Filled or outline depending on state |
@@ -504,7 +507,7 @@ Icons inherit text color. Use semantic color classes: `text-foreground`, `text-m
 ## Reference Links
 
 | Document | What It Covers |
-|----------|---------------|
+| ---------- | --------------- |
 | Brand Identity Guidelines | Dual-mode identity, logo family, contextual spark colors, deliverables checklist |
 | [Design Tokens Research](RES-2d91e2c2) | Token format, runtime application, extraction pipeline, per-project persistence |
 | [Branding Research](RES-a5d10705) | Three-layer branding strategy, governance artifact, code generation, hierarchy |

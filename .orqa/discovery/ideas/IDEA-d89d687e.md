@@ -44,6 +44,7 @@ Across consenting projects, classification corrections aggregate into improved s
 When a new version ships with improved classification prompts, it cannot overwrite local project refinements.
 
 An AI merge process must:
+
 - Take the new global prompt (improved from cross-project learning)
 - Take the local project's refinements (lessons that corrected classifications locally)
 - Merge so local learnings are preserved but global improvements are incorporated
@@ -91,7 +92,7 @@ Anonymised pattern learning across all consenting organisations:
 **What Cloud provides vs. what analytics tools provide:**
 
 | Concern | Provided by |
-|---------|-------------|
+| --------- | ------------- |
 | Capturing observations locally (hook events, telemetry) | Analytics/observability tooling on each project |
 | Transmitting aggregated lessons upward | Orqa Cloud management API |
 | Cross-project pattern detection | Orqa Cloud |

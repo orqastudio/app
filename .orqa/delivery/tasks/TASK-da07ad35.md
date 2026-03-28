@@ -3,7 +3,7 @@ id: "TASK-da07ad35"
 type: "task"
 title: "Clippy/custom check: function size limits"
 description: "Add clippy or custom check to enforce function size limits in Rust code"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

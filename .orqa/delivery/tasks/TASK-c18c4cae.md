@@ -3,7 +3,7 @@ id: "TASK-c18c4cae"
 type: "task"
 title: "Fix MCP server frontmatter missing trim"
 description: "The MCP server's extract_frontmatter() in libs/mcp-server/src/graph.rs does not trim the frontmatter text before parsing, unlike the canonical version in libs/validation/src/graph.rs. Fix by re-exporting from orqa_validation or adding the missing .trim() call."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z

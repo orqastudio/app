@@ -2,6 +2,7 @@
 id: KNOW-477f2c9c
 type: knowledge
 title: Agentic Workflow and Enforcement Pipeline
+domain: methodology/governance
 summary: "This is the master reference for how OrqaStudio works as a system. It describes the complete pipeline from user request to committed code, covering agent delegation, knowledge injection, artifact graph traversal, schema-driven validation, and the three-layer enforcement stack."
 description: |
   The complete OrqaStudio execution model: how user requests become agent-delegated work,
@@ -42,7 +43,7 @@ This is the master reference for how OrqaStudio works as a system. It describes 
 
 ## System Model
 
-```
+```text
 User request
     │
     ▼
@@ -73,7 +74,7 @@ Independent Reviewer verifies
 ## Agent Roles and Boundaries
 
 | Role | May Do | May NOT Do |
-|------|--------|-----------|
+| ------ | -------- | ----------- |
 | **Orchestrator** | Coordinate, delegate, query graph, write session state | Write implementation code, run tests |
 | **Implementer** | Write/edit code, run builds | Self-certify quality |
 | **Researcher** | Read files, search code, investigate | Modify any files |
@@ -120,12 +121,12 @@ Hooks enforce injection at every agent spawn. Agents cannot be created without g
 
 - **Nodes** = Markdown files with YAML frontmatter in `.orqa/` directories
 - **Edges** = Relationships declared in frontmatter (`relationships` array)
-- **Types** = Defined by plugin schemas (rule, knowledge, doc, agent, idea, decision, etc.)
+- **Types** = Defined by plugin schemas (rule, knowledge, doc, idea, decision, etc.)
 
 ### Relationship Semantics
 
 | Semantic Group | Key Relationships | Purpose |
-|---------------|-------------------|---------|
+| --------------- | ------------------- | --------- |
 | Foundation | upholds, grounded, benefits, serves, revises | Anchor work to vision/pillars/personas |
 | Lineage | crystallises, spawns, merged-into | Track artifact evolution |
 | Governance | drives, governs, enforces, codifies, promoted-to | Connect decisions → rules → lessons |
@@ -155,15 +156,15 @@ Plugins declare schemas in `orqa-plugin.json` under `provides.schemas`. Each sch
 
 ### Single Validation Engine
 
-`libs/validation/` is one TypeScript library consumed by three adapters:
+The engine enforcement crate (`libs/engine/src/enforcement/`) is the single validation library consumed by three adapters:
 
 | Adapter | When | Response |
-|---------|------|----------|
+| --------- | ------ | ---------- |
 | LSP (`orqa lsp`) | Real-time | Red squiggles, warnings |
 | CLI (`orqa check`) | On demand | Error report, exit code |
 | Pre-commit | On commit | Hard block |
 
-No adapter implements its own validation logic. All read schemas through the shared engine.
+No adapter implements its own validation logic. All read schemas through the shared engine crate.
 
 ---
 
@@ -172,6 +173,7 @@ No adapter implements its own validation logic. All read schemas through the sha
 ### Layer 1: LSP (Real-Time, Mechanical)
 
 Validates against plugin schemas as you type:
+
 - Invalid status values, wrong relationship types, missing required fields, broken references, type mismatches
 - **Response**: Instant editor diagnostics (squiggles, completions)
 - **Character**: Deterministic. No judgement. If the schema defines it, LSP validates it.
@@ -179,6 +181,7 @@ Validates against plugin schemas as you type:
 ### Layer 2: Behavioral Rules (Prompt Injection, Judgement)
 
 Injected into agent context at delegation time:
+
 - Documentation-before-code, delegation boundaries, pillar alignment, process sequencing, honest reporting
 - **Response**: Agent follows the rule as part of its instructions
 - **Character**: Requires judgement. Cannot be reduced to a schema check.
@@ -186,6 +189,7 @@ Injected into agent context at delegation time:
 ### Layer 3: Pre-Commit (Hard Gate, Final)
 
 Runs `orqa check` on every commit:
+
 - All schema validation (safety net for Layer 1), linting, type checking, tests
 - **Response**: Commit blocked on any failure
 - **Character**: Nothing passes. Cannot be bypassed with `--no-verify`.
@@ -204,13 +208,14 @@ Plugins (`plugins/<name>/`) are the source of truth for schemas, agents, knowled
 
 ### Content Flow
 
-```
+```text
 Plugin source → orqa install → .orqa/ (installed copy) → local edits → three-way diff on refresh
 ```
 
 ### Three-Way Diff
 
 On `orqa plugin refresh`, compare:
+
 1. **Plugin source** (new version)
 2. **Installed baseline** (what was last synced, from `manifest.json`)
 3. **Project copy** (current `.orqa/` state, may have local edits)
@@ -220,13 +225,14 @@ Detects both plugin updates AND user local edits.
 ### What Plugins Provide
 
 | Content | Plugin Location | Installed To |
-|---------|----------------|-------------|
-| Agents | `agents/` | `.orqa/process/agents/` |
-| Knowledge | `knowledge/` | `.orqa/process/knowledge/` |
-| Rules | `rules/` | `.orqa/process/rules/` |
-| Docs | `docs/` | `.orqa/documentation/` |
+| --------- | ---------------- | ------------- |
+| Knowledge | `knowledge/` | `.orqa/documentation/<topic>/knowledge/` |
+| Rules | `rules/` | `.orqa/learning/rules/` |
+| Docs | `docs/` | `.orqa/documentation/<topic>/` |
 | Schemas | `orqa-plugin.json` | Read by validation engine (not installed as files) |
 | Relationships | `orqa-plugin.json` | Read by validation engine (not installed as files) |
+
+Note: Agents are ephemeral (generated and discarded by the prompt pipeline), not installed as artifacts.
 
 ---
 
@@ -235,7 +241,7 @@ Detects both plugin updates AND user local edits.
 Every documentation page has a paired knowledge artifact:
 
 | Type | Audience | Content Style |
-|------|----------|--------------|
+| ------ | ---------- | -------------- |
 | Doc (DOC-xxx) | Human developers | Explanatory, contextual, with examples |
 | Knowledge (KNOW-xxx) | AI agents | Structured tables, decision rules, forbidden patterns |
 
@@ -263,7 +269,7 @@ Rules requiring judgement: documentation-first, delegation boundaries, pillar al
 
 ## The Full Loop
 
-```
+```text
 1. Write artifact         → LSP validates real-time (Layer 1)
 2. Agent spawned          → Knowledge injected (declared + semantic)
 3. Agent works            → Behavioral rules guide decisions (Layer 2)
@@ -279,7 +285,7 @@ Rules requiring judgement: documentation-first, delegation boundaries, pillar al
 ## Agent Actions
 
 | Situation | Action |
-|-----------|--------|
+| ----------- | -------- |
 | Adding a new artifact type | Define schema in plugin `orqa-plugin.json`. Validation engine picks it up. |
 | Adding a new relationship type | Add to plugin `provides.relationships`. Graph and validation honor it. |
 | Configuring agent knowledge | Add `employs` relationship in agent YAML frontmatter. |

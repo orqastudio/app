@@ -1,7 +1,9 @@
 ---
 id: DOC-6097aad6
 type: doc
+status: active
 title: Hook Execution Semantics
+domain: reference
 description: How OrqaStudio's governance hooks fire, execute, and produce results. Reference for adding new hooks and understanding enforcement behaviour.
 created: 2026-03-20
 updated: 2026-03-20
@@ -66,9 +68,13 @@ The tool will NOT execute if a hook returns a deny decision.
 **What it does in OrqaStudio (Write, Edit, Bash):**
 
 - Loads all active rules from `.orqa/process/rules/RULE-*.md` that have an
+
   `enforcement` array in their frontmatter
+
 - Evaluates each enforcement entry against the tool call (file path, content,
+
   or command string)
+
 - If any entry matches with `action: block` — denies the tool call
 - If any entry matches with `action: warn` — allows the tool call, appends warning
 - If any entry matches with `action: inject` — injects knowledge into context (once per session)
@@ -110,7 +116,9 @@ Fires before Claude Code compacts the conversation context to stay within token 
 **What it does in OrqaStudio:**
 
 - Saves the current governance context (active epic, tasks, scope) to
+
   `.state/governance-context.md`
+
 - This file is loaded by the next `SessionStart` hook to restore context after compaction
 
 **Script:** `save-context.mjs`
@@ -142,7 +150,7 @@ output is ignored if the tool is already denied.
 Hook failures do not block the tool call unless the hook explicitly returns a deny decision.
 
 | Failure Mode | Behaviour |
-|-------------|-----------|
+| ------------- | ----------- |
 | Hook timeout (default 10s) | Tool proceeds as if hook returned allow (no output) |
 | Hook exits with non-zero code | Tool proceeds as if hook returned allow; stderr output is discarded |
 | Hook returns invalid JSON | Treated as allow; malformed output is ignored |
@@ -158,9 +166,12 @@ When multiple hooks fire for the same event and return output:
 
 - **`systemMessage` values are concatenated** with newline separators in registration order
 - **Block/deny overrides allow**: if any hook for a `PreToolUse` event returns
+
   `permissionDecision: "deny"`, the tool is blocked regardless of what other hooks return
+
 - **Precedence**: `deny` > `warn` (systemMessage with no deny) > `allow` (no output)
 - **Knowledge injection deduplication**: the rule engine tracks which knowledge artifacts
+
   have been injected this session in `.state/.injected-skills.json`. A second Write to a
   different file in the same domain does not re-inject the same knowledge.
 
@@ -225,8 +236,8 @@ enforcement:
 
 The `event` field values map to hook events as follows:
 
-| `event` value | Hook event | Tool matcher |
-|--------------|-----------|--------------|
+| `event` value | Hook event | Tool matcher | | |
+| -------------- | ----------- | -------------- --- |
 | `file` | `PreToolUse` | `Write\|Edit` |
 | `bash` | `PreToolUse` | `Bash` |
 | `inject` | `PreToolUse` | `Write\|Edit` |
@@ -318,7 +329,7 @@ documents the hook:
 If the hook enforces a governance rule, add an `enforcement` entry to the rule's
 frontmatter with the appropriate `event` value. This creates the traceability chain:
 
-```
+```text
 Rule document → enforcement entry → hook script → tool call decision
 ```
 

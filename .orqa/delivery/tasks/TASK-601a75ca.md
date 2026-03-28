@@ -3,7 +3,7 @@ id: "TASK-601a75ca"
 type: "task"
 title: "Update scanner to use config-driven paths"
 description: "Replace the scanner's folder-guessing logic with config-driven scanning. The scanner reads the artifacts array from project.json and scans exactly those paths. No more inferring groups from README frontmatter."
-status: "completed"
+status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -27,6 +27,7 @@ relationships:
   - target: "TASK-25e35dfc"
     type: "depends-on"
 ---
+
 ## What
 
 The current scanner walks `.orqa/` and guesses what's a group vs type based

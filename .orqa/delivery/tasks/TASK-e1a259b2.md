@@ -3,7 +3,7 @@ id: "TASK-e1a259b2"
 type: "task"
 title: "Implement tool call rendering"
 description: "Built tool call card components with collapsible display showing tool name, input parameters, and output results."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Built the `ToolCallCard` component for rendering tool calls inline within conversation messages, with collapsible input/output display and approval UI.

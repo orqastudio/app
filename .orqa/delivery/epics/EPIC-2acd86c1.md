@@ -18,6 +18,7 @@ relationships:
     type: fulfils
     rationale: Epic belongs to this milestone
 ---
+
 ## Why P1
 
 Pillar 2 (Learning Through Reflection) — the system must get smarter with each cycle.

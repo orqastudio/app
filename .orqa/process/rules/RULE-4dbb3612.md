@@ -4,10 +4,13 @@ type: rule
 title: Enforcement Gap Priority
 description: Any discovered enforcement gap is immediately CRITICAL priority. It is never deferred, scoped out, or addressed in a future epic. This rule applies universally — not only in dogfood mode.
 status: active
+enforcement_type: advisory
 created: 2026-03-21
 updated: 2026-03-21
 enforcement:
+
   - mechanism: behavioral
+
     message: "Any discovered enforcement gap is immediately CRITICAL priority; it is never deferred, scoped out, or addressed in a future epic"
 relationships: []
 ---

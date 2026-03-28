@@ -19,12 +19,13 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 During UAT, the app's integrity scan found 54 errors that the CLI `verify-links.mjs` reported as 0 errors. The gap is significant:
 
 | Check | App (Rust) | CLI (Node) |
-|-------|-----------|------------|
+| ------- | ----------- | ------------ |
 | Broken links (markdown) | Yes | Yes |
 | Broken refs (frontmatter fields) | Yes | No |
 | Missing inverses | Yes | Yes |

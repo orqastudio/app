@@ -3,7 +3,7 @@ id: "TASK-42ddbdb3"
 type: "task"
 title: "Add body template linting to pre-commit hook"
 description: "Extend validate-schema.mjs to check that artifact bodies contain required section headings defined in the bodyTemplate schema key."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -20,6 +20,7 @@ relationships:
   - target: "TASK-fb26fef0"
     type: "depends-on"
 ---
+
 ## What
 
 The pre-commit hook already validates frontmatter against schema.json. Extend it to also validate body structure against the bodyTemplate definitions.

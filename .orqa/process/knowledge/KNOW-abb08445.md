@@ -2,6 +2,8 @@
 id: KNOW-abb08445
 type: knowledge
 title: "Svelte 5 Runes Reference"
+domain: platform/svelte
+description: "Complete reference for all Svelte 5 runes: $state, $derived, $effect, $props, $bindable, and $inspect with usage examples."
 summary: "Svelte 5 Runes Reference"
 status: active
 created: 2026-03-20
@@ -14,6 +16,7 @@ relationships:
 # Svelte 5 Runes Reference
 
 ## Table of Contents
+
 - [$state - Reactive State](#state---reactive-state)
 - [$derived - Computed Values](#derived---computed-values)
 - [$effect - Side Effects](#effect---side-effects)

@@ -3,7 +3,7 @@ id: "TASK-ee6ea3d2"
 type: "task"
 title: "Behavioral enforcement plan: skill injection rules"
 description: "Define enforcement mechanisms for behavioral rules enforced via domain knowledge skill injection"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

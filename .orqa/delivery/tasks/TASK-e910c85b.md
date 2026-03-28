@@ -3,7 +3,7 @@ id: "TASK-e910c85b"
 type: "task"
 title: "Move rule-enforcement skill to core + rename plugin skill"
 description: "Move the rule-enforcement SKILL.md from the plugin to .orqa/process/skills/ as a\ncore skill. Rename the plugin's copy to reflect it's specifically about the\nClaude Code companion plugin setup.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

@@ -3,7 +3,7 @@ id: IDEA-d4c0f409
 type: discovery-idea
 title: App-shipped platform knowledge — immutable Layer 1 documentation and skills
 description: "Platform knowledge (type definitions, relationship semantics, enforcement rules, how the system works) ships as immutable Layer 1 artifacts. Platform docs teach humans. Platform skills teach agents. Both are versioned with the app and cannot be edited by the project. Project-level docs and skills are separate, editable, and synchronised via relationships."
-status: surpassed
+status: archived
 created: 2026-03-15
 updated: 2026-03-15
 horizon: next
@@ -25,13 +25,14 @@ Platform knowledge is Layer 1 — immutable, app-shipped, protected by pre-commi
 ### Platform (Layer 1 — Immutable)
 
 | For Humans | For Agents |
-|---|---|
+| --- | --- |
 | Platform documentation | Platform skills |
 | How to use OrqaStudio | How agents interact with OrqaStudio |
 | Versioned with the app | Versioned with the app |
 | Read-only in the app | Loaded automatically into context |
 
 What becomes platform knowledge:
+
 - How artifact types work (what a rule is, what a lesson is, what statuses mean)
 - The state machine and how to work within it
 - How the artifact graph works (relationships, integrity, traversal)
@@ -41,7 +42,7 @@ What becomes platform knowledge:
 ### Project (Layer 3 — Editable, Synchronised)
 
 | For Humans | For Agents |
-|---|---|
+| --- | --- |
 | Project documentation | Project skills |
 | Architecture docs, how-to guides | How agents work in THIS project |
 | Editable by the project | Editable by the project |

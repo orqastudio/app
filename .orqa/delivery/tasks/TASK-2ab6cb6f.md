@@ -3,7 +3,7 @@ id: "TASK-2ab6cb6f"
 type: "task"
 title: "Consolidate Cytoscape analysis to Rust daemon endpoints"
 description: "Move graph health, BFS traversal, PageRank, knowledge gap detection, and impact analysis from the TypeScript Cytoscape SDK (libs/graph-visualiser/src/analysis.ts) to the Rust validation crate. Expose via daemon HTTP endpoints. Strip analysis.ts to a thin fetch layer."
-status: "completed"
+status: archived
 priority: "P2"
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
@@ -23,6 +23,7 @@ relationships:
 ## What
 
 `libs/graph-visualiser/src/analysis.ts` reimplements graph analysis algorithms using Cytoscape's API:
+
 - `computeGraphHealth(cy)` — duplicates Rust `compute_health()` (already dead code, replaced by Rust)
 - `computeBackboneArtifacts(cy, graph, topN)` — PageRank via Cytoscape (no Rust equivalent yet)
 - `computeKnowledgeGaps(graph)` — knowledge gap detection

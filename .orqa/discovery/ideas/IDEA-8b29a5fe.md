@@ -20,6 +20,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 Every artifact in `.orqa/` exists in a web of relationships — epics reference milestones, tasks depend on other tasks, ideas promote to epics, decisions supersede each other. The Artifact Graph already tracks all of these connections, but the only way to explore them today is through raw frontmatter fields.

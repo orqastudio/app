@@ -2,7 +2,7 @@
 id: TASK-924dcfac
 type: task
 name: "Refactor plugins/typescript to use extends strategy"
-status: completed
+status: archived
 description: Convert plugins/typescript from being consumed as a direct npm dependency to using the extends content strategy. Remove @orqastudio/plugin-typescript from libs/cli and libs/sdk direct dependencies.
 relationships:
   - target: EPIC-8b01ee51
@@ -23,16 +23,19 @@ acceptance:
 ## Scope
 
 ### Current state
+
 - `libs/cli/package.json` has `"@orqastudio/plugin-typescript": "..."` as a dependency
 - `libs/sdk/package.json` has `"@orqastudio/plugin-typescript": "..."` as a dependency
 - These resolve via npm link in dev, GitHub Packages in CI
 
 ### Target state
+
 - `plugins/typescript/orqa-plugin.json` declares extends config entries
 - `orqa install` sets up `"extends": "<plugin-path>/tsconfig.base.json"` in consuming tsconfigs
 - No direct npm dependency needed — the plugin install handles it
 
 ### Key files
+
 - `plugins/typescript/orqa-plugin.json` — add config entries
 - `libs/cli/package.json` — remove direct dep
 - `libs/sdk/package.json` — remove direct dep

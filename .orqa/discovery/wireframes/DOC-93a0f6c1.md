@@ -11,14 +11,11 @@ relationships: []
 ---
 <!-- FRESHNESS NOTE (2026-03-15): Section 6 "File Watching" refers to Tauri's `fs.watch` API — the implementation uses Tauri event listeners via the artifact graph SDK, not a direct `fs.watch` call. The viewer (Section 3) now includes additional panels not shown here: RelationshipsList, ReferencesPanel, PipelineStepper, ActionsNeeded, and AcceptanceCriteria (added in EPIC-c90fdd32). The list item anatomy and empty state sections remain accurate. -->
 
-
-
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-80a476c7), MVP Spec F-007, F-008
 
 The artifact browser surfaces governance artifacts as a navigation list in the Nav Sub-Panel and as a rendered/editable view in the Explorer Panel. Artifact categories are defined by the `artifacts` array in `.orqa/project.json` — the default set includes Docs, Agents, Rules, Skills, and Hooks, but this is configurable per project. The artifact list and viewer are split across two zones so the conversation remains visible in the Chat Panel — the core workflow is collaborating with the AI *on* artifacts. Artifacts are Markdown files with YAML frontmatter stored under `.orqa/`.
 
 ---
-
 
 ## 1. Nav Sub-Panel + Explorer: Artifact Browser (Docs — Default)
 
@@ -71,7 +68,7 @@ The default view when the Docs icon is active. The Nav Sub-Panel shows the struc
 ### List Item Anatomy
 
 | Element | Description |
-|---------|-------------|
+| --------- | ------------- |
 | **Icon** | Category-specific: `<&person>` agents, `<&shield>` rules, `<&bolt>` skills, `<&loop-circular>` hooks (lifecycle) / `<&warning>` hooks (hookify), `<&document>` docs |
 | **Name** | Artifact filename without extension (e.g., `backend-engineer`) |
 | **Description** | First line of the `description` frontmatter field, truncated to 2 lines |
@@ -81,13 +78,12 @@ The default view when the Docs icon is active. The Nav Sub-Panel shows the struc
 ### Interactions
 
 | Action | Result |
-|--------|--------|
+| -------- | -------- |
 | Click artifact row | Opens artifact viewer in the Explorer Panel (replaces the browser list). Conversation stays visible in Chat Panel. |
 | Click "Filter agents..." | Focuses input; filters list by name and description substring match |
 | Click "+ New Agent" | Creates new artifact from category template, opens in editor mode |
 
 ---
-
 
 ## 2. Nav Sub-Panel + Explorer: Rules (via Activity Bar)
 
@@ -150,7 +146,6 @@ The Rules tab shows rule artifacts with their applicable path scopes, helping us
 Rules include a `globs` field in frontmatter that controls where the rule applies. The path scope is shown in italics below the description as a folder icon followed by the glob pattern. Rules with `**/*` (global scope) may optionally hide the path indicator to reduce noise.
 
 ---
-
 
 ## 3. Explorer Panel: Artifact Viewer (Rendered)
 
@@ -218,7 +213,7 @@ When clicking an artifact in the browser, the Explorer Panel switches from the l
 ### Metadata Card Layout
 
 | Element | Source | Display |
-|---------|--------|---------|
+| --------- | -------- | --------- |
 | **Title** | Frontmatter `name` or filename | Large heading at top |
 | **Status badge** | Frontmatter `status` | Colored dot + label |
 | **Model** | Frontmatter `model` | Dropdown display (read-only in view mode) |
@@ -230,14 +225,13 @@ Metadata fields vary by category. The viewer dynamically renders whatever frontm
 ### Interactions
 
 | Action | Result |
-|--------|--------|
+| -------- | -------- |
 | Click "Edit" button | Switches to source editing mode (State 4) |
 | Click breadcrumb "Agents" | Returns to Explorer Panel Agents list |
 | Click breadcrumb "Project" | Returns to project overview |
 | Links in rendered Markdown | Open in default browser (external) or navigate (internal) |
 
 ---
-
 
 ## 4. Explorer Panel: Artifact Editor (Source)
 
@@ -295,7 +289,7 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
 ### Editor Features
 
 | Feature | Implementation |
-|---------|---------------|
+| --------- | --------------- |
 | **Syntax highlighting** | CodeMirror 6 with `@codemirror/lang-markdown` and `@codemirror/lang-yaml` (frontmatter region) |
 | **Unsaved indicator** | Yellow dot + "Unsaved changes" text appears when buffer differs from last saved state |
 | **Save** | `Ctrl+S` writes to disk via Tauri filesystem API. Indicator clears on success. |
@@ -307,14 +301,13 @@ The source editing mode replaces the rendered view in the Explorer Panel with a 
 ### Editor Behavior
 
 | Action | Result |
-|--------|--------|
+| -------- | -------- |
 | `Ctrl+S` | Save file, show brief "Saved" toast, remain in editor |
 | `Escape` or Cancel click | If unsaved changes: confirm dialog. If clean: return to rendered view. |
 | Navigate away with unsaved changes | Confirm dialog: "Discard unsaved changes?" with Save / Discard / Cancel |
 | `Ctrl+Z` / `Ctrl+Y` | Undo / Redo within editor session |
 
 ---
-
 
 ## 5. Nav Sub-Panel + Explorer: Empty State
 
@@ -354,7 +347,7 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 ### Empty State Content by Category
 
 | Category | Heading | Description |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | **Agents** | No agents yet | Agents define AI personas with specialized knowledge and behavior. Create your first agent to customize how the AI works on your project. |
 | **Rules** | No rules yet | Rules enforce coding standards and project conventions. They are automatically applied based on file path globs. |
 | **Skills** | No skills yet | Skills define reusable capabilities that agents can invoke during sessions. Create your first skill to get started. |
@@ -363,11 +356,10 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 
 ---
 
-
 ## Keyboard Navigation
 
 | Shortcut | Context | Action |
-|----------|---------|--------|
+| ---------- | --------- | -------- |
 | `Up` / `Down` | Explorer Panel list | Navigate between artifacts |
 | `Enter` | Explorer Panel list | Open selected artifact in Explorer Panel viewer |
 | `Ctrl+N` | Explorer Panel | Create new artifact in current category |
@@ -378,18 +370,16 @@ Shown when a category has no artifacts yet. Provides guidance and a clear call t
 
 ---
 
-
 ## Responsive Behavior
 
 | Condition | Behavior |
-|-----------|----------|
+| ----------- | ---------- |
 | Explorer Panel at minimum width (280px) | Description text truncated to 1 line; path scopes hidden. Artifact viewer/editor uses full available width. |
 | Explorer Panel wider than 400px | Full 2-line descriptions; path scopes shown. Artifact viewer has room for metadata card 2-column layout. |
 | Explorer Panel at maximum width (480px) | Rendered Markdown limited to panel width for readability. Editor has comfortable editing width. |
 | Nav Sub-Panel collapsed | When Nav Sub-Panel is collapsed, the Explorer Panel shows the full artifact list as fallback. |
 
 ---
-
 
 ## File Watching
 

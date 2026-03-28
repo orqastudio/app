@@ -3,7 +3,7 @@ id: "TASK-0526eed8"
 type: "task"
 title: "Establish learning loop and completion discipline (IMPL-0809b549, 022, 023, 024)"
 description: "Create enforcement for: tracking open items during implementation, human-gated epic completion, automated observation logging by agents, and recording lessons on task completion artifacts."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -20,6 +20,7 @@ relationships:
   - target: "IMPL-b27c458f"
     type: "yields"
 ---
+
 ## What
 
 Address four related process gaps:

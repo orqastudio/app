@@ -2,7 +2,7 @@
 id: IDEA-9876f3fc
 type: discovery-idea
 title: "Artifact migration: location audit, content cleanup, plugin categories"
-status: surpassed
+status: archived
 description: Audit artifact locations, move to correct plugins, rewrite content to be domain-portable, add plugin category schema (core/enhancement/extension), deduplicate.
 created: 2026-03-22
 updated: 2026-03-22
@@ -22,7 +22,7 @@ relationships:
 Each plugin declares a `role` in addition to its existing `category`:
 
 | Role | Meaning | Examples |
-|------|---------|---------|
+| ------ | --------- | --------- |
 | `core:framework` | The agent execution model — universal roles, delegation, sessions, knowledge loading. Every project gets this. | **orqa-core** (NEW) |
 | `core:governance` | The governance lifecycle — rules, decisions, lessons, enforcement, integrity | agile-governance |
 | `core:discovery` | The reasoning methodology — systems thinking, pillar/vision alignment, thinking modes | systems-thinking |
@@ -51,7 +51,7 @@ of which plugin the artifact lives in, and injects the corresponding mode
 template. Thinking modes live with their owning plugin:
 
 | Thinking Mode | Plugin | Rationale |
-|--------------|--------|-----------|
+| -------------- | -------- | ----------- |
 | implementation | orqa-core | Generic how-to-implement |
 | debugging | orqa-core | Generic how-to-debug |
 | review | orqa-core | Generic how-to-review |
@@ -89,7 +89,7 @@ milestone/epic/task structure creation.
 ### Agents
 
 | Current ID | Title | Current Location | Action |
-|-----------|-------|-----------------|--------|
+| ----------- | ------- | ----------------- | -------- |
 | AGENT-4c94fe14 | Orchestrator | agile-governance | **MOVE → orqa-core** (framework execution model) |
 | AGENT-e5dd38e4 | Implementer | agile-governance | **MOVE → orqa-core** |
 | AGENT-8e58cd87 | Reviewer | agile-governance | **MOVE → orqa-core** |
@@ -108,7 +108,7 @@ milestone/epic/task structure creation.
 ### Rules — agile-governance (currently 20)
 
 | Current ID | Title | Action |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | RULE-87ba1b81 | Agent Delegation | **MOVE → orqa-core** (framework execution model) |
 | RULE-b10fe6d1 | Artifact Lifecycle | **REVIEW** — generic status transitions STAY, governance-specific parts SPLIT |
 | RULE-ec9462d8 | Documentation-First | **MOVE → orqa-core** (framework methodology) |
@@ -133,7 +133,7 @@ milestone/epic/task structure creation.
 ### Rules — systems-thinking (currently 7)
 
 | Current ID | Title | Action |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | RULE-c382e053 | No Aliases or Hacks | **MOVE → coding-standards** (code-level rule) |
 | RULE-05562ed4 | Pillar Alignment in Documentation | STAY (discovery methodology) |
 | RULE-97e96528 | Root Directory Cleanliness | **MOVE → coding-standards** (file structure rule) |
@@ -145,7 +145,7 @@ milestone/epic/task structure creation.
 ### Rules — software (currently 7)
 
 | Current ID | Title | Action |
-|-----------|-------|--------|
+| ----------- | ------- | -------- |
 | RULE-63cc16ad | Artifact Config Integrity | **REVIEW** — may be redundant with well-enforced schemas. Remove if so |
 | RULE-dccf4226 | Plan Mode Compliance | STAY (delivery planning) |
 | RULE-dd5b69e6 | Skill Enforcement | **MOVE → orqa-core** (framework knowledge model) |
@@ -167,6 +167,7 @@ Rules enforced via a language tool (clippy, ESLint) should live in OR require
 the tool's plugin — those tools are the enforcement mechanism, not the connector.
 
 **Enforcement method key:**
+
 - `behavioral` — prompt injection (app: system prompt builder, connector: UserPromptSubmit hook)
 - `hook` — action validation (app: enforcement engine, connector: PreToolUse/PostToolUse)
 - `lint` — linter rule (provided by language plugin: rust, svelte, typescript)
@@ -174,8 +175,8 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 - `tool` — CLI tool (orqa enforce, orqa check — lives with CLI plugin)
 - `none` — not yet mechanically enforced (enforcement gap)
 
-| Current ID | Title | Action |
-|-----------|-------|--------|
+| Current ID | Title | Action | | |
+| ----------- | ------- | -------- --- |
 | RULE-4dbb3612 | Enforcement Gap Priority | **MOVE → agile-governance** | `none` — enforcement gap itself! |
 | RULE-d543d759 | Honest Status Reporting | **MOVE → agile-governance** | `behavioral` — prompt injection |
 | RULE-145332dc | Governance Priority Over Delivery | **MOVE → agile-governance** | `behavioral` + `hook` (stop hook escalation). App enforces natively; connector adapts to native hooks |
@@ -199,7 +200,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 ### Knowledge — agile-governance (currently 11)
 
 | Current ID | Title | Action | Content Status |
-|-----------|-------|--------|---------------|
+| ----------- | ------- | -------- | --------------- |
 | KNOW-ee860ed9 | Enforcement Patterns | STAY | GENERIC — teaches methodology |
 | KNOW-21d28aa0 | Planning | **MOVE → orqa-core** (framework methodology) | NEEDS REWRITE — has .orqa/ paths, AD IDs |
 | KNOW-9ff8c63f | Research Methodology | **MOVE → orqa-core** (framework methodology) | GENERIC |
@@ -215,7 +216,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 ### Knowledge — systems-thinking (currently 14)
 
 | Current ID | Title | Action | Content Status |
-|-----------|-------|--------|---------------|
+| ----------- | ------- | -------- | --------------- |
 | KNOW-41849545 | Systems Thinking | STAY | GENERIC |
 | KNOW-7fadba3f | Architectural Evaluation | STAY | GENERIC |
 | KNOW-1ea9291c | Artifact Relationships | STAY | GENERIC |
@@ -234,7 +235,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 ### Knowledge — software (currently 14)
 
 | Current ID | Title | Action | Content Status |
-|-----------|-------|--------|---------------|
+| ----------- | ------- | -------- | --------------- |
 | KNOW-a700e25a | Software Delivery | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/delivery/, artifact IDs. Extract generic delivery pattern |
 | KNOW-0188373b | Epic Completion | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/, orqa enforce. Extract generic "delivery unit completion" |
 | KNOW-2f38309a | Plugin Development | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove OrqaStudio-specific paths, make generic |
@@ -253,7 +254,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 ### Knowledge — connector (currently 6)
 
 | Current ID | Title | Action | Content Status |
-|-----------|-------|--------|---------------|
+| ----------- | ------- | -------- | --------------- |
 | KNOW-3155cdaa | Decision Tree | **SPLIT** → generic "Agent Decision Methodology" in orqa-core + Claude Code-specific tree in dev .orqa/ | Extract reasoning pattern; keep CC tool names/mappings project-level |
 | KNOW-b1593311 | Implementer Tree | **SPLIT** → generic "Implementer Reasoning" in orqa-core + CC-specific tree in dev .orqa/ | Same split pattern |
 | KNOW-08fcd847 | Reviewer Tree | **SPLIT** → generic "Reviewer Reasoning" in orqa-core + CC-specific tree in dev .orqa/ | Same split pattern |
@@ -276,7 +277,7 @@ describe OrqaStudio's implementation, not portable governance methodology.
 ## Deduplication Candidates
 
 | Artifact A | Artifact B | Overlap | Action |
-|-----------|-----------|---------|--------|
+| ----------- | ----------- | --------- | -------- |
 | governance-maintenance | orqa-artifact-audit | Both teach auditing | Extract generic custodianship → governance-maintenance. Move OrqaStudio audit → dev .orqa/ |
 | artifact-status-management | Artifact Lifecycle rule | Both define status vocabulary | No duplication — knowledge teaches, rule enforces. Good separation |
 | planning.md | thinking-mode-planning | Planning methodology vs mode detection | No duplication — complementary |

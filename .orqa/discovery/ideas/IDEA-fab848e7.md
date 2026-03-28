@@ -3,7 +3,7 @@ id: "IDEA-fab848e7"
 type: discovery-idea
 title: "Documentation as graph-connected knowledge — restructure docs for agent grounding and graph traversal"
 description: "Documentation is currently isolated from the artifact graph. Docs exist as browsable pages but lack relationships to the skills, rules, decisions, and agents that reference them. This means agents can't traverse from a skill to its deeper documentation, grounding documents can't be systematically injected, and documentation quality is uneven because there's no structural standard for what a doc should contain or how it connects to the system."
-status: completed
+status: archived
 created: "2026-03-14"
 updated: "2026-03-14"
 horizon: "active"
@@ -29,6 +29,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 During a heavy implementation session (31 tasks across 6 epics), the orchestrator lost awareness of the project's core principles. Investigation revealed the root cause is structural: the orchestrator prompt is 100% procedural with no grounding in purpose, and the enforcement system can't inject grounding because documentation is isolated from the artifact graph.
@@ -36,6 +37,7 @@ During a heavy implementation session (31 tasks across 6 epics), the orchestrato
 The broader problem: documentation pages have few or no relationships to the skills, rules, and decisions that reference them. Skills mention docs in body text but don't have traversable graph edges. Agents can't follow a path from "I need to understand this concept" through the graph to the documentation that explains it.
 
 This creates three failures:
+
 1. **Agents lose purpose under load** — no grounding mechanism because documentation isn't connected
 2. **Knowledge is duplicated** — skills repeat what docs say because there's no "one hop to the source"
 3. **Documentation quality is uneven** — no standard for what a doc should contain or how focused it should be

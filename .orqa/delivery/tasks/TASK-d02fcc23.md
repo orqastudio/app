@@ -3,7 +3,7 @@ id: "TASK-d02fcc23"
 type: "task"
 title: "Implement remaining IPC commands across all domains"
 description: "Built the full IPC command surface covering settings, governance, tools, sidecar management, and system information."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Completed the full IPC command surface across settings, governance, file tools, and system info domains.

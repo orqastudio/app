@@ -3,7 +3,7 @@ id: "TASK-27aaa447"
 type: "task"
 title: "Define product glossary"
 description: "Established canonical terminology used throughout OrqaStudio's product documentation, governance, and UI."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Established the canonical product glossary defining all domain-specific terms used in OrqaStudio documentation, governance artifacts, and the UI.

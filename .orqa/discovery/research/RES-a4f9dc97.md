@@ -12,6 +12,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed epic design"
 ---
+
 ## Research Questions
 
 1. **What relationship information matters to users?** Not all edges are equally interesting. Which relationships should be prominent, which should be discoverable, and which are internal bookkeeping?
@@ -51,7 +52,7 @@ Looking at [RULE-87ba1b81](RULE-87ba1b81) in `.orqa/process/rules/[RULE-87ba1b81
 The relationship types break down into three user intent categories:
 
 | Category | Relationship Types | User Value | Prominence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | **Pipeline positioning** | `grounded`, `grounded-by`, `observed-by` | "Why does this artifact exist? What authorized it?" | High — essential context |
 | **Downstream consequences** | `enforces`, `enforced-by`, `enforces`, `enforced-by`, `grounded-by`, `grounded` | "What does this artifact drive? What checks it?" | Medium — important for compliance |
 | **Lateral context** | `informs`, `informed-by`, `observes` | "Related reading, not decision chain" | Low — discoverable on demand |
@@ -73,7 +74,7 @@ The `informs`/`informed-by` relationships are particularly noisy. [RULE-87ba1b81
 The knowledge maturity pipeline has six stages, mapped to artifact types as follows:
 
 | Stage | Artifact Types | Schema Fields |
-|---|---|---|
+| --- | --- | --- |
 | **Observation** | Lesson (`maturity: observation`) | `recurrence`, relationships to Pillar |
 | **Understanding** | Lesson (`maturity: understanding`) | `grounded` relationship to Decision required |
 | **Principle** | Decision (AD) | `grounded-by` + `enforces` relationships expected |
@@ -92,6 +93,7 @@ The `FrontmatterHeader` skips `relationships` from the `bodyEntries` loop (it's 
 #### The Story Being Missed
 
 When a user reads [IMPL-91d951b6](IMPL-91d951b6) (a promoted lesson), the relationships show:
+
 - `grounded` → [PILLAR-c9e0a695](PILLAR-c9e0a695)
 - `grounded-by` → [RULE-63cc16ad](RULE-63cc16ad)
 - `observed-by` → [RULE-63cc16ad](RULE-63cc16ad)
@@ -113,6 +115,7 @@ What the user should be able to understand: "This was an observation that became
 #### Audit of FrontmatterHeader
 
 **What works well:**
+
 - The fixed header row (ID, status, priority, dates) is clean and consistently rendered.
 - `StatusIndicator` correctly maps all status values to color-coded badges with icons.
 - The LINK_FIELDS set correctly identifies artifact ID fields and renders them as clickable ArtifactLink chips.
@@ -144,12 +147,14 @@ What the user should be able to understand: "This was an observation that became
 The knowledge maturity pipeline uses bidirectional relationship types by design. When [RULE-87ba1b81](RULE-87ba1b81) has `{ type: "informs", target: "[RULE-dd5b69e6](RULE-dd5b69e6)" }`, [RULE-dd5b69e6](RULE-dd5b69e6) should have `{ type: "informed-by", target: "[RULE-87ba1b81](RULE-87ba1b81)" }`. Both sides declare the relationship explicitly in their frontmatter.
 
 Looking at [RULE-87ba1b81](RULE-87ba1b81)'s frontmatter, it has both:
+
 - `{ type: "informs", target: [RULE-dd5b69e6](RULE-dd5b69e6) }` (explicit forward declaration)
 - `{ type: "informed-by", target: [RULE-dd5b69e6](RULE-dd5b69e6) }` (explicit inverse declaration)
 - AND `{ type: "informed-by", target: [RULE-8abcbfd5](RULE-8abcbfd5) }` (another explicit inverse)
 
 This means the user reading [RULE-87ba1b81](RULE-87ba1b81) sees both sides of every relationship it participates in. The current `RelationshipsList` groups by type, so a user sees:
-```
+
+```text
 [Informs]     RULE-dd5b69e6  RULE-5965256d  RULE-5dd9decd  RULE-b723ea53  RULE-8abcbfd5
 [Informed By] RULE-dd5b69e6  RULE-ef822519  RULE-b723ea53  RULE-8abcbfd5
 ```
@@ -171,7 +176,8 @@ Meanwhile, `ReferencesPanel` also computes references from the graph's `referenc
 **Adopt Option C with a phased approach.** The current split between `ReferencesPanel` (field references) and `RelationshipsList` (semantic relationships) is a source of confusion. They should be unified into a single "Connections" section.
 
 Proposed unified view structure:
-```
+
+```text
 Connections
   This artifact →
     [Grounds] →  PILLAR-c9e0a695 (with rationale tooltip)
@@ -182,6 +188,7 @@ Connections
 ```
 
 The key distinction:
+
 - **Semantic outgoing** (declared `relationships[]` with non-`-by` types): what this artifact intentionally points to
 - **Field references in** (from `ReferencesPanel` data): what other artifacts have put this artifact's ID in their fields
 - **Semantic incoming** (`-by` types): explicitly declared inverses — these should be visually de-emphasized since the information is redundant with "Referenced by"
@@ -215,14 +222,17 @@ The current click-through model supports drill-down but not survey. For survey b
 #### Recommendations
 
 **Near-term (no new infrastructure required):**
+
 - Add relationship-link navigation history in the breadcrumb. When a user clicks through from [RULE-87ba1b81](RULE-87ba1b81)'s `grounded` relationship to [PILLAR-c9e0a695](PILLAR-c9e0a695), the breadcrumb should show `Rules > [RULE-87ba1b81](RULE-87ba1b81) > [PILLAR-c9e0a695](PILLAR-c9e0a695)`. A "back" button or clickable history segment returns them.
 - Show a count badge on relationship types when count > 1. `[Informs] (5) ▸` with expand-on-click is cleaner than always showing all 5 chips inline.
 
 **Medium-term:**
+
 - Add a "Where is this used?" section to process-layer artifacts (Pillars, Decisions, Rules). This answers the survey question: "What artifacts reference this?" Using `referencesTo()` from the graph SDK, this is already technically available.
 - Consider a `RelatedArtifacts` panel that shows the 3-5 most relevant connected artifacts with their type labels and titles (not just IDs). The current chips show only the ID — resolving the title from `artifactGraphSDK.resolve(id)` would make the connection more readable without requiring a click.
 
 **Long-term:**
+
 - A graph view for process-layer artifacts is compelling but significant. The data is available. The interaction model (pan, zoom, click-to-focus) requires substantial frontend work. Defer to a dedicated epic. The immediate wins from breadcrumb history and survey queries are higher ROI.
 
 ---
@@ -232,6 +242,7 @@ The current click-through model supports drill-down but not survey. For survey b
 #### The Structure
 
 `project.json` organizes artifacts into three top-level groups:
+
 - **Process** (learning machine): pillars, lessons, decisions, rules, skills, agents
 - **Delivery** (work pipeline): ideas, research, milestones, epics, tasks, verification
 - **Documentation** (human layer): guide, product, architecture, development, process, ui, wireframes
@@ -278,18 +289,18 @@ The `ArtifactLink` chip shows the ID (e.g. `VER-NNN`) but not the layer. Clickin
 
 ### Medium Priority (usability improvements)
 
-4. **Group relationships by semantic intent, not type name.** Show "Pipeline Anchor" (`grounded`, `grounded-by`) first, "Downstream" (`enforces`, `enforces`, `grounded-by`, `enforced-by`, `enforced-by`, `grounded`) second, and "Related" (`informs`, `informed-by`, `observes`, `observed-by`) as a collapsible third group.
+1. **Group relationships by semantic intent, not type name.** Show "Pipeline Anchor" (`grounded`, `grounded-by`) first, "Downstream" (`enforces`, `enforces`, `grounded-by`, `enforced-by`, `enforced-by`, `grounded`) second, and "Related" (`informs`, `informed-by`, `observes`, `observed-by`) as a collapsible third group.
 
-5. **Add layer context to ArtifactLink chips for cross-layer links.** A small label or color when a link crosses layer boundaries (Process ↔ Delivery) prevents navigation disorientation.
+2. **Add layer context to ArtifactLink chips for cross-layer links.** A small label or color when a link crosses layer boundaries (Process ↔ Delivery) prevents navigation disorientation.
 
-6. **Add relationship navigation history to breadcrumbs.** When a user clicks through a relationship link, the breadcrumb trail should record the path so they can navigate back.
+3. **Add relationship navigation history to breadcrumbs.** When a user clicks through a relationship link, the breadcrumb trail should record the path so they can navigate back.
 
-7. **Prioritize metadata fields by semantic importance.** For each artifact type, define a `displayOrder` that puts the most user-relevant fields first (e.g., `acceptance` before `depends-on` for tasks, `maturity` before `recurrence` for lessons).
+4. **Prioritize metadata fields by semantic importance.** For each artifact type, define a `displayOrder` that puts the most user-relevant fields first (e.g., `acceptance` before `depends-on` for tasks, `maturity` before `recurrence` for lessons).
 
 ### Lower Priority (polish)
 
-8. **Show artifact titles alongside IDs in relationship chips.** `[RULE-63cc16ad](RULE-63cc16ad) "Artifact Config Integrity"` is more readable than `[RULE-63cc16ad](RULE-63cc16ad)`. Titles are available via `artifactGraphSDK.resolve(id)?.title`. A tooltip is the minimum; inline title display is better.
+1. **Show artifact titles alongside IDs in relationship chips.** `[RULE-63cc16ad](RULE-63cc16ad) "Artifact Config Integrity"` is more readable than `[RULE-63cc16ad](RULE-63cc16ad)`. Titles are available via `artifactGraphSDK.resolve(id)?.title`. A tooltip is the minimum; inline title display is better.
 
-9. **Add a "Where is this used?" section to pillars and decisions.** These are foundation artifacts — showing what rules, skills, and lessons are grounded in them completes the picture without requiring a full graph view.
+2. **Add a "Where is this used?" section to pillars and decisions.** These are foundation artifacts — showing what rules, skills, and lessons are grounded in them completes the picture without requiring a full graph view.
 
-10. **Clarify recurrence display for lessons.** `recurrence: 3` should render as "Seen 3 times" or "Recurrence: 3×" rather than a generic chip. The number has narrative weight.
+3. **Clarify recurrence display for lessons.** `recurrence: 3` should render as "Seen 3 times" or "Recurrence: 3×" rather than a generic chip. The number has narrative weight.

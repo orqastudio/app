@@ -2,6 +2,7 @@
 id: DOC-b95ec6e3
 type: doc
 title: "Thinking Mode: Debugging"
+domain: reference
 description: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
 category: platform
 status: active
@@ -25,6 +26,7 @@ This separation is important. An agent that jumps from "something is broken" to 
 The orchestrator routes here when the user reports a concrete failure — not a question about the system, but a specific thing that is not working.
 
 Typical signals:
+
 - "this is broken"
 - "why is X showing wrong numbers"
 - "it's not working"

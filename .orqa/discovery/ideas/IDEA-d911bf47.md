@@ -3,7 +3,7 @@ id: IDEA-d911bf47
 type: discovery-idea
 title: Cross-Project Intelligence
 description: "Enable PILLAR-2acd86c1 that transfers between projects through shared templates, cross-project patterns, and accumulated insights."
-status: surpassed
+status: archived
 created: 2026-03-07
 updated: 2026-03-13
 horizon: someday

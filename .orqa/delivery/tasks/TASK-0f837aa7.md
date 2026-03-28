@@ -3,7 +3,7 @@ id: "TASK-0f837aa7"
 type: "task"
 title: "Update orchestration.md and workflow.md"
 description: "Both describe pre-graph patterns. Update for graph-based injection architecture."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

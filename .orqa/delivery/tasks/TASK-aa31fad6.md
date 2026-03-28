@@ -3,7 +3,7 @@ id: "TASK-aa31fad6"
 type: "task"
 title: "Dashboard integrity widget — health score, issue list, scan action"
 description: "Add an integrity health widget to the ProjectDashboard that calls run_integrity_scan, displays categorised findings with severity badges, and provides a Scan button to refresh. This is the first user-visible output of the pipeline health system."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

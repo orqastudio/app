@@ -3,7 +3,7 @@ id: TASK-4effd358
 type: task
 title: Build ImprovementTrendsWidget with sparklines and trend arrows
 description: "Build a 2x2 sparkline grid widget showing error count trend, warning count trend, rule count trend, and pass rate trend. Each cell displays the current value, a trend arrow, and percentage change. Include a timeframe selector. Place in the 'How You're Improving' column."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 3

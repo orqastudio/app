@@ -3,7 +3,7 @@ id: "TASK-ae0051a6"
 type: "task"
 title: "Delete duplicate and stale documentation"
 description: "Remove documentation files that duplicate other docs or are entirely outdated. DOC-019 (architecture-overview) duplicates DOC-001, DOC-054 (launch-timeline) is outdated, DOC-032 (process/rules) duplicates RULE-dd5b69e6."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 3
@@ -24,6 +24,7 @@ relationships:
     type: "delivers"
     rationale: "Phase 1 — clean up documentation before connecting to graph"
 ---
+
 ## Scope
 
 Delete 3 documentation files identified as duplicates or stale by the documentation audit ([RES-f664f528](RES-f664f528)):

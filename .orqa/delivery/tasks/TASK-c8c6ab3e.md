@@ -3,7 +3,7 @@ id: "TASK-c8c6ab3e"
 type: "task"
 title: "Create schema compliance scanning skill and tools"
 description: "Create a skill for schema compliance scanning methodology and design tools that can validate artifact frontmatter against schemas at any time, not just at commit time."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -19,6 +19,7 @@ relationships:
   - target: "TASK-052f394f"
     type: "depends-on"
 ---
+
 ## What
 
 Schema validation currently only runs at commit time (pre-commit hook). Agents and users need the ability to scan all artifacts for compliance at any time — during audits, after bulk edits, or before starting work. This requires both a skill (teaching agents how to think about schema compliance) and a tool (running the actual validation).

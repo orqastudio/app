@@ -3,7 +3,7 @@ id: "TASK-c23d882a"
 type: "task"
 title: "Update all path references across codebase"
 description: "After directory moves, every hardcoded path in Rust, TypeScript, skills, rules, agents, documentation must be updated. Use verify-links to confirm zero broken references."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

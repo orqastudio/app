@@ -3,7 +3,7 @@ id: "TASK-1d45fac7"
 type: "task"
 title: "Remove .claude/ symlinks and update RULE-63cc16ad"
 description: "Remove the .claude/ symlink architecture and update RULE-63cc16ad to describe plugin-based loading."
-status: "surpassed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 assignee: "AGENT-4c94fe14"
@@ -24,6 +24,7 @@ relationships:
   - target: "TASK-d38a48c9"
     type: "depends-on"
 ---
+
 ## What
 
 Once the plugin is tested and working (TASK-d38a48c9), the symlink architecture is no

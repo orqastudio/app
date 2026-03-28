@@ -2,7 +2,7 @@
 id: TASK-001ad8c0
 type: task
 name: "Phase 5 — Developer tooling (orqa git)"
-status: completed
+status: archived
 description: "CLI commands for the monorepo + Forgejo workflow: orqa git status/pr, orqa repo audit/protect, update plugin distribution and registry."
 relationships:
   - target: EPIC-2f720d43

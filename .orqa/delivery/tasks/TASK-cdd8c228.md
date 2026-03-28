@@ -24,6 +24,7 @@ relationships:
   - target: TASK-6810ef0c
     type: depends-on
 ---
+
 ## What
 
 After every artifact graph refresh, call `evaluate_transitions` from TASK-6810ef0c and route the resulting proposals. Proposals are split into two buckets by transition type: auto-apply (unambiguous, deterministic) and manual-approve (requires human judgement). Auto-apply proposals are applied immediately and written back to disk; manual-approve proposals are emitted to the frontend as a Tauri event so the user can review and accept them.
@@ -38,7 +39,7 @@ After every artifact graph refresh, call `evaluate_transitions` from TASK-6810ef
    - Apply the status update by writing the new frontmatter value to the artifact file.
    - Re-trigger a graph refresh so the UI reflects the change.
 4. For manual-approve proposals:
-   - Accumulate them in a `Vec<TransitionProposal>` and emit a Tauri event `"transition-proposals-ready"` with the list as the payload.
+   - Accumulate them in a `Vec\<TransitionProposal\>` and emit a Tauri event `"transition-proposals-ready"` with the list as the payload.
 5. Define a `#[tauri::command]` `apply_transition(artifact_id: String, proposed_status: String)` that the frontend can call when the user approves a proposal.
 6. Register the new command in the Tauri app builder.
 7. Add matching TypeScript interfaces for `TransitionProposal` and the event payload.

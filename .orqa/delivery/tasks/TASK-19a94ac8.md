@@ -3,7 +3,7 @@ id: "TASK-19a94ac8"
 type: "task"
 title: "Audit artifact group README files for accuracy"
 description: "Verify that all README.md files in .orqa/ artifact directories have accurate descriptions, icons, labels, and sort metadata reflecting the current state of each group."
-status: "ready"
+status: ready
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 docs:

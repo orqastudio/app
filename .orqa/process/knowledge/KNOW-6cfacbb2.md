@@ -1,7 +1,9 @@
 ---
 id: KNOW-6cfacbb2
 type: knowledge
-name: ESLint Config Management
+title: ESLint Config Management
+domain: platform/typescript
+description: "How ESLint configuration is generated from OrqaStudio coding standards rules and how to add or override individual lint rules."
 summary: "ESLint Config Management. Coding standards rules in `.orqa/process/rules/` define enforcement entries for this plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"
@@ -41,6 +43,7 @@ When rules change, the configurator agent reads all enforcement entries for the 
 ## Adding a New Standard
 
 To add a new coding standard:
+
 1. Add an enforcement entry to the coding standards rule
 2. The config generator picks it up and regenerates `.eslintrc.json`
 3. `orqa check` runs ESLint with the updated config

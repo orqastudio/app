@@ -3,7 +3,7 @@ id: "TASK-7d94eb29"
 type: "task"
 title: "Define priority dimensions and auto-classification rules"
 description: "Define project-level priority dimensions based on RES-0e971367 gap patterns and encode auto-classification rules"
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -15,6 +15,7 @@ relationships:
   - target: "TASK-445e8155"
     type: "depends-on"
 ---
+
 ## What
 
 Define priority dimensions and auto-classification rules for the project.

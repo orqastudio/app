@@ -25,7 +25,8 @@ acceptance:
 
 Audit and migrate ALL existing content across plugins and at project level to align with the new plugin-decomposed architecture. This is not a read-only audit — artifacts must actually be updated to use correct types, statuses, and relationships.
 
-### Audit scope:
+### Audit scope
+
 - Every artifact in every plugin must have the correct artifact type for its new owner plugin
 - Every artifact's `status` must be valid per that type's state machine
 - Plugin content (docs, knowledge, rules) must be accurate and up-to-date
@@ -34,7 +35,8 @@ Audit and migrate ALL existing content across plugins and at project level to al
 - No orphaned content referencing types/plugins that no longer exist
 - Relationships trace the full evolution chain through workflow stages
 
-### Migration scope:
+### Migration scope
+
 - Existing `idea` artifacts -> `discovery-idea` type (update frontmatter `type` field)
 - Existing `research` artifacts -> `discovery-research` or `planning-research` based on content
 - Existing `decision` artifacts -> `discovery-decision` or `planning-decision` based on scope

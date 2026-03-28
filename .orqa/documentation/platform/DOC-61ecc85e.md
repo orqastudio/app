@@ -1,7 +1,9 @@
 ---
 id: DOC-61ecc85e
 type: doc
+status: active
 title: "Status & Workflow"
+domain: reference
 category: reference
 description: "How the unified status system works — what each status means, when it changes, and who changes it."
 created: 2026-03-15
@@ -23,7 +25,7 @@ The same 12 statuses apply across all artifact types. A task, an epic, an idea, 
 ## The Status Vocabulary
 
 | Status | Icon | Meaning |
-|--------|------|---------|
+| -------- | ------ | --------- |
 | `captured` | Circle | Exists but not yet examined. The idea or item has been recorded, nothing more. |
 | `exploring` | Compass | Under active investigation. Someone is gathering information or doing research. |
 | `ready` | Circle Dot | Shaped and waiting. The artifact is well-defined and ready to be picked up. |
@@ -43,7 +45,7 @@ The same 12 statuses apply across all artifact types. A task, an epic, an idea, 
 
 Not every artifact passes through every status. The path depends on what the artifact is. But the general shape is:
 
-```
+```text
 captured → exploring → ready → prioritised → active → review → completed
 ```
 
@@ -82,7 +84,7 @@ This pattern applies uniformly. An agent never self-certifies completion.
 ### Transitions the system can make automatically
 
 | Trigger | Transition |
-|---------|------------|
+| --------- | ------------ |
 | All tasks in an epic reach `review` | Epic moves to `review` |
 | An agent starts working on an artifact | Artifact moves to `active` |
 | A dependency is resolved (blocked item unblocked) | Artifact may move back to `ready` or `active` |
@@ -91,7 +93,7 @@ This pattern applies uniformly. An agent never self-certifies completion.
 ### Transitions that require human action
 
 | Transition | Why it requires a human |
-|-----------|------------------------|
+| ----------- | ------------------------ |
 | `captured → exploring` | The human must decide whether investigation is worth pursuing |
 | `exploring → ready` | The human confirms the investigation is complete and the scope is sound |
 | `ready → prioritised` | The human decides this is the next thing to work on |
@@ -115,7 +117,7 @@ The progression is not a conveyor belt. It is a map of how ideas and tasks matur
 ## Pillar Alignment
 
 | Pillar | Alignment |
-|--------|-----------|
+| -------- | ----------- |
 | Clarity Through Structure | The unified status vocabulary makes every artifact's state of thought visible at a glance, across all types, without ambiguity. |
 | Learning Through Reflection | The `recurring` status creates a visible signal when patterns repeat, feeding directly into the lesson promotion pipeline. |
 | Purpose Through Continuity | Status tracking prevents intent drift — an artifact's journey from `captured` to `completed` is visible, so original purpose isn't lost during implementation. |

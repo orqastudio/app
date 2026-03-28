@@ -3,7 +3,7 @@ id: "TASK-8ba5ac58"
 type: "task"
 title: "Replace status transition hook with daemon delegation"
 description: "Replace the hardcoded VALID_TRANSITIONS map in app/.githooks/validate-status-transitions.mjs with a thin adapter that calls the daemon /parse endpoint for transition validation. Priority 1 — hardcoded maps WILL drift from config-driven Rust definitions."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z

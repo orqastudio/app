@@ -2,7 +2,7 @@
 id: TASK-1176fffe
 type: task
 title: "Add PreCommit and SessionStart hooks to CLI plugin manifest"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

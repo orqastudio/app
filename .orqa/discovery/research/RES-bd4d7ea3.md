@@ -15,7 +15,9 @@ tags:
 # Research: Knowledge Plugin Architecture for AI Agent Systems
 
 ## Status: Complete
+
 ## Researcher: knowledge-architecture-researcher
+
 ## Date: 2026-03-25
 
 ---
@@ -42,7 +44,7 @@ tags:
 
 **Knowledge loading**: Hybrid. Semantic Memory provides long-term vector-based knowledge retrieval. Plugins can also be "semantic functions" — templated prompts that encode domain knowledge.
 
-**Registration**: Plugins register with the Kernel via `AddFromType<T>()` or `add_plugin()`. Each plugin declares functions with descriptions. The kernel's function calling system auto-discovers available capabilities.
+**Registration**: Plugins register with the Kernel via `AddFromType\<T\>()` or `add_plugin()`. Each plugin declares functions with descriptions. The kernel's function calling system auto-discovers available capabilities.
 
 ```csharp
 builder.Plugins.AddFromType<LightsPlugin>("Lights");
@@ -61,6 +63,7 @@ builder.Plugins.AddFromType<LightsPlugin>("Lights");
 **Knowledge loading**: Static at kickoff. Knowledge sources are embedded every time `crew.kickoff()` runs. This is a known inefficiency for large datasets.
 
 **Registration**: Two-level attachment:
+
 ```python
 # Agent-level (private knowledge)
 agent = Agent(role="Specialist", knowledge_sources=[specialist_knowledge])
@@ -114,6 +117,7 @@ crew = Crew(agents=[agent], tasks=[task], knowledge_sources=[crew_knowledge])
 **Knowledge loading**: Dynamic injection at runtime. Dependencies are declared as types and provided as instances during execution.
 
 **Registration**:
+
 ```python
 @dataclass
 class MyDeps:
@@ -135,12 +139,14 @@ result = await agent.run('prompt', deps=MyDeps('key', client))
 **How it works**: When an agent is spawned, all declared knowledge is loaded into its system prompt or context before any task begins.
 
 **Pros**:
+
 - Predictable context — agent always has full knowledge
 - No runtime overhead for retrieval
 - Simpler implementation — load once, use throughout
 - Knowledge is guaranteed available (no retrieval failures)
 
 **Cons**:
+
 - Context window waste — loads knowledge that may not be needed for the current task
 - Scales poorly — as knowledge grows, context window fills with irrelevant material
 - LLMs struggle to distinguish valuable information when "flooded with unfiltered information" (RAGFlow 2025 review)
@@ -154,12 +160,14 @@ result = await agent.run('prompt', deps=MyDeps('key', client))
 **How it works**: Agent has no pre-loaded knowledge. It queries knowledge bases as needed during task execution via RAG tools or semantic search.
 
 **Pros**:
+
 - Minimal context usage — only loads what's needed for the current query
 - Scales to large knowledge bases
 - Always retrieves latest version of knowledge
 - Agent can refine queries based on initial results (agentic RAG pattern)
 
 **Cons**:
+
 - Retrieval latency adds to every knowledge access
 - Agent may not know to search for knowledge it doesn't know exists
 - Retrieval failures cause task failures
@@ -173,6 +181,7 @@ result = await agent.run('prompt', deps=MyDeps('key', client))
 **How it works**: A baseline of critical knowledge is loaded statically at agent spawn. Task-specific knowledge is loaded dynamically based on context signals (file paths, task type, domain tags).
 
 **Pros**:
+
 - Critical knowledge is always present (safety, architectural constraints)
 - Task-relevant knowledge is loaded just-in-time without wasting context
 - Scales — baseline stays small, dynamic loading handles the long tail
@@ -180,6 +189,7 @@ result = await agent.run('prompt', deps=MyDeps('key', client))
 - Matches the "context engineering" trend: "providing the right information at the right time"
 
 **Cons**:
+
 - More complex implementation — need baseline selection + dynamic injection
 - Must define what counts as "baseline" vs "on-demand"
 - Risk of loading duplicate knowledge (baseline + dynamic both hit same artifact)
@@ -191,7 +201,7 @@ result = await agent.run('prompt', deps=MyDeps('key', client))
 The existing three-tier model in RULE-dd5b69e6 already implements hybrid loading:
 
 | Tier | Loading Strategy | What |
-|------|-----------------|------|
+| ------ | ----------------- | ------ |
 | Tier 1 | Static (always loaded) | Universal skills + role knowledge |
 | Tier 2 | Semi-dynamic (orchestrator-injected) | Task-specific knowledge |
 | Tier 3 | Dynamic (context-resolved) | File-path-triggered injection |
@@ -327,7 +337,7 @@ When two plugins provide knowledge for the same domain (e.g., Plugin A says "use
 ### 4.2 Strategy Comparison
 
 | Strategy | How It Works | Best For | Risk |
-|----------|-------------|----------|------|
+| ---------- | ------------- | ---------- | ------ |
 | **Priority layers** | Knowledge has a priority: core > project > plugin > community | Clear hierarchy, deterministic | Rigid — can't override core knowledge |
 | **Specificity wins** | More specific knowledge overrides general knowledge | Natural resolution — "rust error handling" beats "general error handling" | Hard to measure "specificity" |
 | **Last-write wins** | Most recently installed/updated knowledge takes precedence | Simple to implement | Silently overrides good knowledge |
@@ -338,12 +348,14 @@ When two plugins provide knowledge for the same domain (e.g., Plugin A says "use
 ### 4.3 Recommended Strategy for OrqaStudio: Layered Priority with Explicit Override
 
 **Layer priority** (higher wins):
+
 1. **Project rules** (`.orqa/process/rules/`) — always wins. These are the user's explicit constraints.
 2. **Project knowledge** (`.orqa/process/knowledge/` with `layer: project`) — project-specific patterns
 3. **Plugin knowledge** (from installed plugins) — domain expertise
 4. **Core knowledge** (shipped with OrqaStudio, `layer: core`) — universal methodology
 
 **Explicit override mechanism**:
+
 ```yaml
 # Plugin knowledge that intentionally overrides core
 ---
@@ -355,11 +367,13 @@ priority: plugin
 ```
 
 **Conflict detection**: When knowledge is installed, the graph engine checks for:
+
 - Same `domain_tags` + same `target_agents` = potential conflict
 - Same `triggers.file_patterns` = potential conflict
 - Explicit `overrides` field = intentional replacement (no conflict)
 
 **Conflict resolution at injection time**:
+
 1. Check if any knowledge has `overrides` pointing to the other → use the overriding one
 2. Check priority layers → higher layer wins
 3. If same layer, check specificity (more specific file pattern wins)
@@ -372,7 +386,7 @@ priority: plugin
 ### 5.1 Approaches Compared
 
 | Approach | Description | Pros | Cons |
-|----------|-------------|------|------|
+| ---------- | ------------- | ------ | ------ |
 | **Monolithic documents** | One large knowledge document per domain | Easy to write, complete context | Wastes context window, hard to compose |
 | **Atomic fragments** | Small, single-concept knowledge pieces | Precise injection, composable | Loses cross-concept context, many files |
 | **Hierarchical trees** | Tree of knowledge with parent-child relationships | Natural organization, can load at right depth | Complex graph relationships |
@@ -383,7 +397,8 @@ priority: plugin
 OrqaStudio already uses flat knowledge files (KNOW-xxx.md). The plugin architecture should add:
 
 **Knowledge tree structure per plugin**:
-```
+
+```text
 rust-plugin/
   knowledge/
     KNOW-rust-overview.md          # Summary — loaded as Tier 1 baseline
@@ -455,16 +470,19 @@ When a plugin updates its knowledge, running agents may have stale knowledge in 
 **Version field on knowledge artifacts** (already exists: `version: 0.2.0`).
 
 **Compatibility rules**:
+
 - PATCH updates (0.2.0 → 0.2.1): Content corrections. No structural change. Safe to hot-reload.
 - MINOR updates (0.2.0 → 0.3.0): New sections added, no sections removed. Safe to hot-reload.
 - MAJOR updates (0.2.0 → 1.0.0): Structural changes, sections removed or renamed. Requires re-evaluation of dependent agents.
 
 **Hot-reload strategy**: Knowledge artifacts are markdown files on disk. The graph engine already watches for file changes. When a knowledge file changes:
+
 1. If PATCH/MINOR: Update the graph node, invalidate any cached embeddings
 2. If MAJOR: Flag to the user that dependent agents may need review
 3. Currently-running agents keep their loaded knowledge until session end (no mid-session disruption)
 
 **Version pinning**: Plugins can pin knowledge versions in their manifest:
+
 ```json
 {
   "knowledge_version_policy": "minor",  // accept patch and minor updates automatically
@@ -489,7 +507,7 @@ When a plugin updates its knowledge, running agents may have stale knowledge in 
 
 ### 7.2 The Flow
 
-```
+```text
 Plugin Installed
   ↓
 orqa install reads plugin manifest
@@ -582,7 +600,8 @@ The graph engine resolves `knowledge_needs` against installed plugin manifests a
 ### 7.5 Conflict Detection and Resolution
 
 At install time:
-```
+
+```text
 For each new KNOW artifact:
   1. Check existing knowledge with same domain_tags + target_roles
   2. If found:
@@ -593,7 +612,8 @@ For each new KNOW artifact:
 ```
 
 At injection time:
-```
+
+```text
 For each knowledge artifact matching current context:
   1. Group by domain_tags
   2. Within each group, sort by layer priority

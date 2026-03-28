@@ -2,6 +2,7 @@
 id: "KNOW-b5f520d5"
 type: "knowledge"
 title: "Orqa Store Patterns"
+domain: platform/svelte
 description: "OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived,\nstore-to-component data flow, and reactive state management.\nUse when: Creating or modifying Svelte stores, wiring stores to components,\nmanaging loading/error/empty states, or debugging reactivity issues.\n"
 status: "active"
 created: 2026-03-01T00:00:00.000Z
@@ -32,7 +33,6 @@ summary: |
   $state/$derived, store-to-component data flow, reactive state management. The
   canonical store pattern.
 ---
-
 
 OrqaStudio uses Svelte 5 rune-based stores exclusively. All stores live in `ui/src/lib/stores/*.svelte.ts` files and use class-based patterns with `$state` and `$derived`.
 
@@ -71,6 +71,7 @@ export const navigationStore = new NavigationStore();
 ```
 
 **Key rules:**
+
 - One class per store file
 - `$state()` for reactive properties
 - Getter properties for computed values (replaces `$derived` at class level)
@@ -221,6 +222,7 @@ Use `$effect()` in components for data loading triggered by store state changes:
 ## Anti-Patterns
 
 ### Direct state mutation from components
+
 ```svelte
 <!-- WRONG: components should not write store state directly -->
 <button onclick={() => conversationStore.messages = []}>Clear</button>
@@ -230,6 +232,7 @@ Use `$effect()` in components for data loading triggered by store state changes:
 ```
 
 ### Missing error handling in stores
+
 ```typescript
 // WRONG: no error state, no loading state
 async load() {
@@ -251,6 +254,7 @@ async load() {
 ```
 
 ### Svelte 4 patterns (FORBIDDEN)
+
 ```typescript
 // WRONG: Svelte 4 store
 import { writable } from 'svelte/store';
@@ -264,6 +268,7 @@ $: filteredItems = items.filter(i => i.active);
 ```
 
 ### invoke() in display components
+
 ```svelte
 <!-- FORBIDDEN: only stores and page-level code call invoke() -->
 <script lang="ts">
@@ -275,7 +280,7 @@ $: filteredItems = items.filter(i => i.active);
 ## Key Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `ui/src/lib/stores/conversation.svelte.ts` | Conversation/streaming state (most complex store) |
 | `ui/src/lib/stores/navigation.svelte.ts` | Activity view, nav panel, artifact selection |
 | `ui/src/lib/stores/session.svelte.ts` | Session lifecycle (create, list, select, delete) |

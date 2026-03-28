@@ -3,7 +3,7 @@ id: "TASK-8fa37f45"
 type: "task"
 title: "Audit integrity checking system for coverage gaps"
 description: "Systematic audit of the integrity engine (artifact_graph.rs check_integrity) to identify what integrity checks are missing. Cross-reference the planning placement rule, idea lifecycle, epic reconciliation, and other RULE-b10fe6d1 integrity requirements against what the engine actually checks."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

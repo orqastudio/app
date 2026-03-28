@@ -3,7 +3,7 @@ id: TASK-c8ea3e2a
 type: task
 title: "Quick fixes: broken link RES-94a3a6ca and IDEA-fab848e7 categorisation"
 description: "Fix broken body link in RES-94a3a6ca referencing TASK-d3085ce2, and fix IDEA-fab848e7 appearing under Other in the artifact browser."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 2

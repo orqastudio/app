@@ -4,21 +4,32 @@ type: rule
 title: Lessons Learned
 description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-14
 enforcement:
+
   - mechanism: behavioral
+
     message: "Review agents must include a Lessons Logged section in output; orchestrator audits compliance during governance reviews"
+
   - mechanism: hook
+
     type: SessionStart
     action: surface
     description: "Session start hook surfaces recurring lessons that are due for promotion"
 relationships:
+
   - target: AD-339e9223
+
     type: enforces
+
   - target: AD-c6c2d9fb
+
     type: enforces
+
   - target: DOC-f6c4ac69
+
     type: documented-by
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
@@ -47,7 +58,7 @@ Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/process/l
 
 ```text
 Lesson documented -> recurrence tracked -> promoted at threshold -> enforcement attempted -> promotion completed -> recurrence re-tracked
-```
+```text
 
 ### Enforcement Gate (NON-NEGOTIABLE — [AD-c6c2d9fb](AD-c6c2d9fb))
 
@@ -75,7 +86,7 @@ All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "
 Lessons carry a `status` field that reflects their promotion state:
 
 | Status | Meaning | Indicator |
-|--------|---------|-----------|
+| --- | --- | --- |
 | `active` | Unpromoted lesson, normal state | Blue dot |
 | `recurring` | Recurrence >= 2, pending promotion review | Amber dot |
 | `promoted` | Promoted to a rule, coding standard, or knowledge | Purple dot |

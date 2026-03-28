@@ -3,7 +3,7 @@ id: "TASK-f4d05cd7"
 type: "task"
 title: "Clean up Claude memory files that duplicate artifact knowledge"
 description: "6 of 10 Claude memory files are fully covered by artifacts in .orqa/. Per user directive, project memory should be empty when artifacts contain the knowledge. Delete duplicated memory files and verify remaining files are genuinely additive."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

@@ -15,6 +15,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact Graph Alignment Audit"
 ---
+
 ## Findings
 
 ### Triple Source of Truth Problem
@@ -22,12 +23,13 @@ relationships:
 Artifact type definitions live in three places that already disagree:
 
 | Source | Role | Status |
-|--------|------|--------|
+| -------- | ------ | -------- |
 | `schema.json` | Machine-readable truth, pre-commit validation | Authoritative for field shapes |
 | `README.md` | Human-readable guide, navigation metadata | Drifts from schema |
 | `artifact-framework.md` | Canonical prose definitions per [RULE-b10fe6d1](RULE-b10fe6d1) | Most comprehensive but not machine-readable |
 
 **Example disagreement (Tasks):**
+
 - README says `epic` is required; schema says optional
 - README omits `docs` field entirely; schema defines it
 - CLAUDE.md references `scope` field; schema doesn't have it (removed tonight)
@@ -35,7 +37,7 @@ Artifact type definitions live in three places that already disagree:
 ### README Accuracy Issues
 
 | README | Issue |
-|--------|-------|
+| -------- | ------- |
 | Planning group | Mentions "plans" as artifact type (deprecated) |
 | Documentation group | Uses web-style link paths (`/product/`, `/architecture/`) violating RULE-2f7b6a31; lists "Research" as doc section (lives under Planning) |
 | Skills | Says `chunkhound` is universal; should be `orqa-code-search` per [RULE-dd5b69e6](RULE-dd5b69e6) |
@@ -48,7 +50,7 @@ Artifact type definitions live in three places that already disagree:
 All 11 schemas have `propertyOrder`. 9 of 11 have `bodyTemplate` sections. Field descriptions exist on some schemas but not all.
 
 | Schema | bodyTemplate? | Field descriptions? |
-|--------|--------------|-------------------|
+| -------- | -------------- | ------------------- |
 | epics | Yes (4 sections) | No |
 | pillars | Yes (4 sections) | gate has description |
 | milestones | Yes (3 sections) | No |
@@ -64,6 +66,7 @@ All 11 schemas have `propertyOrder`. 9 of 11 have `bodyTemplate` sections. Field
 ### Auto-Generation Feasibility
 
 **Can be generated from schema:**
+
 - Field reference table (properties + required + propertyOrder)
 - Valid status/priority values (enum arrays)
 - YAML frontmatter template (required fields + defaults)
@@ -71,6 +74,7 @@ All 11 schemas have `propertyOrder`. 9 of 11 have `bodyTemplate` sections. Field
 - Relationship map (fields with `^PREFIX-\d+$` patterns)
 
 **Must be human-authored:**
+
 - Opening paragraph (what the artifact IS and why)
 - Lifecycle explanation (what status transitions mean)
 - Process guidance ("What Makes a Good X")
@@ -81,6 +85,7 @@ All 11 schemas have `propertyOrder`. 9 of 11 have `bodyTemplate` sections. Field
 ### README Role Recommendation
 
 READMEs should serve exactly two roles:
+
 1. **Navigation metadata** (frontmatter: role, label, icon, sort) — consumed by artifact scanner
 2. **Human authoring guide** (body: what, why, lifecycle, process) — consumed by agents/humans
 

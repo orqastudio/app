@@ -3,7 +3,7 @@ id: "TASK-3a7b95cf"
 type: "task"
 title: "Classify artifacts as core vs project-specific and standardise layer taxonomy"
 description: "Audit every governance artifact to determine whether it is truly core (ships with every project) or OrqaStudio-specific (dogfood). Rename layer values, standardise scope, plan template distribution, and identify user-facing documentation gaps."
-status: "completed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 acceptance:
@@ -18,9 +18,11 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The `.orqa/` governance system serves two roles simultaneously:
+
 1. **Platform governance** — rules, skills, and agents that ship with OrqaStudio and apply to every project
 2. **Project governance** — artifacts specific to OrqaStudio's own development (dogfooding)
 
@@ -31,13 +33,16 @@ See [RES-72f6f6b6](RES-72f6f6b6) for the full investigation and proposals.
 ## Deliverables
 
 ### 1. Classification Audit
+
 For every `layer: canon` artifact, answer:
+
 - Is the constraint universal? Is the content universal?
 - Does it reference OrqaStudio-specific paths, components, or patterns?
 - Would it make sense in a non-software project?
 - Classification: `core` (ships as-is), `core-needs-generalisation` (constraint is universal but content is OrqaStudio-specific), or `project` (OrqaStudio-only)
 
 ### 2. Schema Changes
+
 - Rename `canon` → `core` in all `schema.json` files
 - Add `community` as a value (replacing `plugin`)
 - Add `user` as a future-reserved value
@@ -45,11 +50,13 @@ For every `layer: canon` artifact, answer:
 - Add `layer` field to decision schema
 
 ### 3. Artifact Updates
+
 - Update every artifact's `layer` field from `canon` to `core` (or reclassify to `project`)
 - Update every artifact's `scope` field to use new standardised values
 - Update [RULE-dd5b69e6](RULE-dd5b69e6), orchestrator, and other governance docs that reference layer values
 
 ### 4. Documentation Plan
+
 - Identify where user-facing docs should live
 - List the documentation pages needed (getting started, core concepts, layer system, customisation)
 - Create placeholder structure

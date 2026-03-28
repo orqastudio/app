@@ -3,7 +3,7 @@ id: "TASK-bf8bf526"
 type: "task"
 title: "Create pillar artifact schema and initial pillars"
 description: "Create pillar artifact schema and initial pillars"
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"

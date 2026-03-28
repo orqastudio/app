@@ -9,18 +9,24 @@ updated: 2026-03-14
 recurrence: 1
 maturity: observation
 relationships:
+
   - target: AD-c6c2d9fb
+
     type: teaches
     rationale: "This lesson directly triggered the decision that rule promotion requires enforcement through the artifact graph"
+
   - target: EPIC-12fba656
+
     type: cautions
     rationale: "Auto-generated inverse of informs relationship from EPIC-12fba656"
 ---
+
 ## Pattern
 
 When promoting IMPL-2dc87f24 (permission-seeking) to RULE-87ba1b81, the orchestrator needed to add enforcement. Instead of working through the artifact graph's enforcement system (enforcement entries on rules, consumed by the plugin and app), it created a raw `.claude/hooks/block-permission-seeking.sh` — a platform-specific hook that bypasses the entire governance system.
 
 This is the equivalent of hardcoding a database query instead of using the repository pattern. The enforcement system exists specifically so that enforcement is:
+
 1. Declared in the artifact graph (traceable, auditable)
 2. Consumed by the Rust application layer (app context)
 3. Consumed by the Claude plugin (CLI context)

@@ -3,7 +3,7 @@ id: "TASK-72a6dc30"
 type: "task"
 title: "Define MVP feature set"
 description: "Bounded the set of capabilities that constitute the minimum viable product, distinguishing MVP features from future work."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Defined the MVP feature set by listing required capabilities, explicitly excluding non-MVP work, and verifying pillar alignment for every included feature.

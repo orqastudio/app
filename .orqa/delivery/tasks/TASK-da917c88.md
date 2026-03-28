@@ -3,7 +3,7 @@ id: "TASK-da917c88"
 type: "task"
 title: "Implement settings view and semantic code search"
 description: "Built the settings view for provider configuration and model selection, and set up the ONNX embeddings engine with DuckDB vector search."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:

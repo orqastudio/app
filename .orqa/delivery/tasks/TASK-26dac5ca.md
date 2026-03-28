@@ -3,7 +3,7 @@ id: "TASK-26dac5ca"
 type: "task"
 title: "Behavioral enforcement plan: output validation rules"
 description: "Define enforcement mechanisms for behavioral rules enforced via post-hoc output validation"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

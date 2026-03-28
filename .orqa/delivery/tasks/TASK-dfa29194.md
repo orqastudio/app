@@ -3,7 +3,7 @@ id: "TASK-dfa29194"
 type: "task"
 title: "Audit for missing and miscategorised governance artifacts"
 description: "Identify governance concepts that lack artifacts (undocumented conventions, implicit rules) and artifacts that are miscategorised (rules that should be skills, skills that should be rules, lessons that should be promoted, patterns enforced but not captured)."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -22,6 +22,7 @@ relationships:
   - target: "TASK-88e72cc1"
     type: "depends-on"
 ---
+
 ## What
 
 Audit the boundary between governance artifact types to find gaps and miscategorisations. A rule is a binary constraint (compliant or not). A skill is domain knowledge that shapes how work is done. A lesson is a learned pattern. Sometimes a concept needs both a rule (the constraint) and a skill (the knowledge to implement it correctly) — these should be identified.

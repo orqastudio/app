@@ -1,7 +1,9 @@
 ---
 id: KNOW-ea78c8e4
 type: knowledge
-name: Dev Environment Management
+title: Dev Environment Management
+domain: integration/cli
+description: "How to set up, navigate, and operate the OrqaStudio dev environment mono-repo with its git submodules and Makefile commands."
 summary: "Dev Environment Management. The OrqaStudio dev environment (`orqastudio-dev`) aggregates all repos as git submodules. This skill covers how to manage it."
 status: active
 plugin: "@orqastudio/plugin-cli"
@@ -19,7 +21,7 @@ The OrqaStudio dev environment (`orqastudio-dev`) aggregates all repos as git su
 
 ## Structure
 
-```
+```text
 orqastudio-dev/
 ├── .github-org/          # Org-level metadata (profile README, etc.)
 ├── .orqa/                # Project-level governance artifacts
@@ -74,6 +76,7 @@ cd libs/types && npx tsc && cd ../../app/ui && npm link @orqastudio/types
 ## Dependency Order
 
 Libraries must be built in order:
+
 1. `types` (no deps)
 2. `cli` (depends on types)
 3. `claude-code-cli` (depends on types + cli)

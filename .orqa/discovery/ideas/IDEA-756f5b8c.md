@@ -38,7 +38,7 @@ A plugin (not core) that creates bidirectional sync between OrqaStudio artifacts
 ## Mapping
 
 | OrqaStudio | GitHub | Sync Direction | Notes |
-|-----------|--------|----------------|-------|
+| ----------- | -------- | ---------------- | ------- |
 | Task | Issue | Bidirectional | Status, assignee, labels, description |
 | Epic | Project (board) | OrqaStudio → GitHub | Delivery hierarchy as a project board |
 | Milestone | Milestone | Bidirectional | Gate criteria, target date |
@@ -50,6 +50,7 @@ A plugin (not core) that creates bidirectional sync between OrqaStudio artifacts
 ## Community Engagement Flow
 
 For open-source projects:
+
 1. External contributor files a GitHub Issue
 2. The sync creates an OrqaStudio task (or idea, depending on labels)
 3. Maintainer triages in OrqaStudio — assigns pillar, priority, links to epic

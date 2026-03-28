@@ -2,6 +2,7 @@
 id: KNOW-45b5f8a8
 type: knowledge
 title: Security Audit
+domain: methodology/delivery
 summary: "Security auditing methodology for applications. This skill teaches *what to check and how* — the specific security mechanisms (e."
 description: |
   Security auditing methodology: secret management, capability/permission systems,
@@ -96,7 +97,7 @@ Security auditing methodology for applications. This skill teaches *what to chec
 ## Vulnerability Classification
 
 | Severity | Examples |
-|----------|---------|
+| ---------- | --------- |
 | **Critical** | Remote code execution, credential exposure, arbitrary file access |
 | **High** | Path traversal, SQL injection, privilege escalation, unscoped shell access |
 | **Medium** | Information disclosure, missing input validation, overly broad permissions |

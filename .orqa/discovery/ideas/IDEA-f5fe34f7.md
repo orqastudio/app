@@ -32,7 +32,7 @@ A unified `search` tool with a `mode` parameter (or auto-detection) simplifies t
 
 ## Sketch
 
-```
+```text
 search({
   query: "error handling in commands",
   mode: "semantic" | "regex" | "research" | "auto",

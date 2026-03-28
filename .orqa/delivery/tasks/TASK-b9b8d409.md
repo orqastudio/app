@@ -3,7 +3,7 @@ id: "TASK-b9b8d409"
 type: "task"
 title: "Implement capability resolution in app agent execution pipeline"
 description: "The Rust backend resolves agent capabilities to Tauri tool names when building agent execution context."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

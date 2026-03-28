@@ -3,13 +3,15 @@ id: "IMPL-acea0394"
 type: lesson
 title: "Plugins from other sidecars should be disabled when not in their sidecar context"
 description: "When multiple sidecar-specific plugins are installed, only the plugin matching the active sidecar should be loaded. Plugins from other sidecars should be disabled or scoped to prevent cross-context interference (wrong hooks firing, incompatible tool references)."
-status: "completed"
+status: archived
+archived_reason: "Superseded by connector architecture — connector plugin scoping by AI provider replaces sidecar-specific plugin activation model"
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-28"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 Consider a project with two sidecar-specific plugins installed:

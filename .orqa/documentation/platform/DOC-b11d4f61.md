@@ -1,7 +1,9 @@
 ---
 id: DOC-b11d4f61
 type: doc
+status: active
 title: Enforcement Architecture
+domain: architecture
 category: architecture
 description: "Architecture of OrqaStudio's five-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, prompt-based skill injection, and the schema-driven integrity engine."
 created: 2026-03-05
@@ -51,7 +53,7 @@ enforcement:
         pattern: "regex pattern"
     pattern: "regex pattern"              # bash/prompt events: single pattern
     paths:                                # file events: glob patterns restricting scope
-      - "backend/src-tauri/**/*.rs"
+      - "app/src-tauri/**/*.rs"
     scope: "glob pattern"                 # scan events: files to scan
     skills:                               # inject action: skill names to load
       - skill-name
@@ -62,7 +64,7 @@ enforcement:
 ### Event Types
 
 | Event | Trigger | Evaluation Target |
-|-------|---------|-------------------|
+| ------- | --------- | ------------------- |
 | `file` | File write or edit tool call | File path + new content, via `conditions` array |
 | `bash` | Bash tool call | Command string, via `pattern` field |
 | `scan` | On-demand governance scan | Project files matching `scope` glob, via `conditions` |
@@ -72,7 +74,7 @@ enforcement:
 ### Action Types
 
 | Action | Behavior | Use Case |
-|--------|----------|----------|
+| -------- | ---------- | ---------- |
 | `block` | Rejects the tool call, returns error to the model | Hard constraints (no `unwrap()`, no `--no-verify`) |
 | `warn` | Allows the tool call, records a warning | Soft constraints (force push, large file writes) |
 | `inject` | Non-blocking, injects skill content into agent context | Knowledge injection (load domain skills when touching specific code) |
@@ -80,7 +82,7 @@ enforcement:
 ### Condition Fields
 
 | Field | Used In | Matches Against |
-|-------|---------|-----------------|
+| ------- | --------- | ----------------- |
 | `file_path` | `file` events | The path of the file being written |
 | `new_text` | `file` events | The content being written to the file |
 | `content` | `scan` events | Each line of scanned file content |
@@ -95,10 +97,10 @@ Process gates enforce the structured thinking sequence at workflow transitions. 
 
 ### WorkflowTracker
 
-The `WorkflowTracker` (`backend/src-tauri/src/domain/workflow_tracker.rs`) tracks session-level events:
+The `WorkflowTracker` (`app/src-tauri/src/domain/workflow_tracker.rs`) tracks session-level events:
 
 | Event Category | Tracked Data | Purpose |
-|----------------|-------------|---------|
+| ---------------- | ------------- | --------- |
 | Files read | Paths of all files read | Detect whether research was done |
 | Files written | Paths of all files written | Detect code writes vs governance writes |
 | Searches | Count of search tool calls | Detect codebase exploration |
@@ -110,14 +112,14 @@ The `WorkflowTracker` (`backend/src-tauri/src/domain/workflow_tracker.rs`) track
 | Lessons checked | Boolean flag | Set when `.orqa/process/lessons/` read |
 | Injected skills | Deduplication set | Prevent injecting the same skill twice per session |
 
-The tracker is stored in `AppState` behind a `Mutex<WorkflowTracker>` and shared across all tool execution handlers.
+The tracker is stored in `AppState` behind a `Mutex\<WorkflowTracker\>` and shared across all tool execution handlers.
 
 ### Gate Definitions
 
-Gates are evaluated by `evaluate_process_gates()` (`backend/src-tauri/src/domain/process_gates.rs`). Each gate returns a `GateResult` with a thinking prompt message when fired.
+Gates are evaluated by `evaluate_process_gates()` (`app/src-tauri/src/domain/process_gates.rs`). Each gate returns a `GateResult` with a thinking prompt message when fired.
 
 | Gate | Fires When | Checks | Injected Prompt |
-|------|-----------|--------|-----------------|
+| ------ | ----------- | -------- | ----------------- |
 | **understand-first** | First code write in session | No files read, no searches, no docs consulted | "What is the system? What are the boundaries? What depends on this?" |
 | **docs-before-code** | Code write without reading documentation | No `.orqa/documentation/` files read | "What documentation defines this area? Read the governing docs first." |
 | **plan-before-build** | Code write without planning context | No `.orqa/delivery/` files read | "What's the plan? Read the epic and task context before building." |
@@ -165,11 +167,11 @@ When agents touch specific code areas, the enforcement system automatically inje
 ### Injection Table (Current Entries)
 
 | Path Pattern | Injected Skills | Purpose |
-|-------------|----------------|---------|
-| `backend/src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
-| `backend/src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
-| `backend/src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
-| `sidecar/src/**` | `orqa-streaming` | Streaming pipeline protocol |
+| ------------- | ---------------- | --------- |
+| `app/src-tauri/src/domain/**/*.rs` | `orqa-domain-services`, `orqa-error-composition` | Domain logic patterns |
+| `app/src-tauri/src/commands/**/*.rs` | `orqa-ipc-patterns`, `orqa-error-composition` | IPC boundary discipline |
+| `app/src-tauri/src/repo/**/*.rs` | `orqa-repository-pattern` | Data access patterns |
+| `app/src-tauri/src/sidecar/**` | `orqa-streaming` | Streaming pipeline protocol |
 | `ui/src/lib/components/**/*.svelte` | `component-extraction`, `svelte5-best-practices` | Component purity |
 | `ui/src/lib/stores/**/*.svelte.ts` | `orqa-store-patterns`, `orqa-store-orchestration` | Reactive state patterns |
 | `.orqa/**` | `orqa-governance`, `orqa-documentation` | Artifact consistency |
@@ -178,7 +180,7 @@ When agents touch specific code areas, the enforcement system automatically inje
 
 Both the Rust engine and CLI plugin track which skills have been injected in the current session:
 
-- **Rust**: `WorkflowTracker.injected_skills: HashSet<String>` — `mark_skill_injected()` returns `true` only for newly-added skills
+- **Rust**: `WorkflowTracker.injected_skills: HashSet\<String\>` — `mark_skill_injected()` returns `true` only for newly-added skills
 - **CLI plugin**: `.state/.injected-skills.json` — JSON array persisted to disk per session, checked before each injection
 
 A skill is only injected once per session, regardless of how many matching file writes occur.
@@ -220,7 +222,7 @@ enforcement:
 ### Documented Linter Delegation
 
 | Standard | Linter | Config Location | Hook Trigger |
-|----------|--------|-----------------|--------------|
+| ---------- | -------- | ----------------- | -------------- |
 | No `unwrap()`/`expect()` in production | `cargo clippy` (pedantic) | `Cargo.toml` lint config | Pre-commit + `make check` |
 | Rust formatting | `rustfmt` | `rustfmt.toml` | Pre-commit |
 | No `any` types | ESLint `@typescript-eslint/no-explicit-any` | `eslint.config.js` | Pre-commit + `make check` |
@@ -265,7 +267,7 @@ The CLI plugin uses keyword-based intent classification via `prompt-injector.ts`
 **Intent Map (Current Categories):**
 
 | Intent | Keywords | Injected Skills |
-|--------|----------|----------------|
+| -------- | ---------- | ---------------- |
 | IPC boundary work | tauri command, ipc, invoke, #[tauri::command] | `orqa-ipc-patterns`, `orqa-error-composition` |
 | Store architecture | store, reactive, $state, $derived, $effect, rune | `orqa-store-patterns`, `orqa-store-orchestration` |
 | Component work | component, svelte component, ui component | `component-extraction`, `svelte5-best-practices` |
@@ -282,7 +284,7 @@ The CLI plugin uses keyword-based intent classification via `prompt-injector.ts`
 
 ### App Implementation (Native)
 
-The app uses semantic similarity via the `SkillInjector` (`backend/src-tauri/src/domain/skill_injector.rs`):
+The app uses semantic similarity via the `SkillInjector` (`app/src-tauri/src/domain/skill_injector.rs`):
 
 1. On startup, all skills are discovered from `.orqa/process/knowledge/*/KNOW.md`
 2. Each skill's `description:` frontmatter field is extracted
@@ -294,7 +296,7 @@ The app uses semantic similarity via the `SkillInjector` (`backend/src-tauri/src
 **Key Functions:**
 
 | Function | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | `SkillInjector::new(project_dir, embedder)` | Discover skills, embed descriptions, cache results |
 | `SkillInjector::match_prompt(embedding, top_n, threshold)` | Find top-N skills by cosine similarity |
 | `cosine_similarity(a, b)` | Dot product / (norm_a * norm_b), returns 0.0 for zero/mismatched vectors |
@@ -317,7 +319,7 @@ The `ValidationContext` merges all three into a single constraint set. When a pl
 Every check derives from schema metadata — zero hardcoded artifact types or relationship keys:
 
 | Check | What it validates | Source |
-|-------|-------------------|--------|
+| ------- | ------------------- | -------- |
 | Broken references | Every relationship target resolves to a real artifact | Graph structure |
 | Missing inverses | Bidirectional edges exist for every relationship | Inverse map from schema |
 | Type constraints | Source and target types match the relationship's `from`/`to` arrays | Relationship definitions |
@@ -359,7 +361,7 @@ The CLI (`orqa enforce`) runs the same schema-driven checks as the Rust engine. 
 ## Rust Module Structure
 
 ```text
-backend/src-tauri/src/domain/
+app/src-tauri/src/domain/
   enforcement.rs            -- Type definitions: EventType, RuleAction, EnforcementEntry,
                                EnforcementRule, Verdict, ScanFinding, Condition
   enforcement_parser.rs     -- YAML frontmatter parsing: split_frontmatter(),
@@ -380,7 +382,7 @@ backend/src-tauri/src/domain/
 ### Supporting Modules
 
 ```text
-backend/src-tauri/src/
+app/src-tauri/src/
   repo/
     enforcement_rules_repo.rs -- load_rules(): reads .orqa/process/rules/*.md from disk
   state.rs                    -- AppState: holds EnforcementEngine, WorkflowTracker,
@@ -407,7 +409,7 @@ connectors/claude-code/
 ### Plugin Hook Registration
 
 | Hook Event | Script | Purpose |
-|-----------|--------|---------|
+| ----------- | -------- | --------- |
 | `PreToolUse` | `rule-engine.mjs` | Evaluate enforcement entries on file/bash tool calls |
 | `Stop` | `rule-engine.mjs` | Evaluate process gates at turn end |
 | `UserPromptSubmit` | `prompt-injector.ts` | Classify prompt intent and inject skills |
@@ -459,7 +461,7 @@ pub struct EnforcementResult {
 The enforcement system has comprehensive test coverage:
 
 | Module | Test Count | What's Tested |
-|--------|-----------|---------------|
+| -------- | ----------- | --------------- |
 | `enforcement_engine.rs` | 15 | File/bash/scan evaluation, inject/block/warn verdicts, lint skipping, multi-rule matching |
 | `enforcement_parser.rs` | 10 | Frontmatter splitting, entry parsing, event/action validation, condition parsing |
 | `workflow_tracker.rs` | 34 | Event recording, auto-categorization, research detection, skill dedup, verification detection |

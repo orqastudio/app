@@ -3,7 +3,7 @@ id: "TASK-e8fd7052"
 type: "task"
 title: "Design MCP host interface"
 description: "Designed the interface for future external MCP server support, defining how OrqaStudio will host and connect to MCP servers."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Designed the MCP host interface for future external MCP server support, covering connection lifecycle, tool routing, and configuration format.

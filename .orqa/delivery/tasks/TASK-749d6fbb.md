@@ -3,7 +3,7 @@ id: "TASK-749d6fbb"
 type: "task"
 title: "Implement rule-overrides in CLI plugin prompt injection"
 description: "When loading rules into agent context for a task, read the task's rule-overrides (falling back to epic's if task has none). Suspended rules are loaded but annotated with the suspension reason."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 assignee: null
@@ -19,6 +19,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Extend the CLI plugin's rule loading to check the active task/epic for `rule-overrides`. Suspended rules are still injected into agent context but wrapped with an annotation explaining the suspension and its reason.

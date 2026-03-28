@@ -20,6 +20,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 OrqaStudio reads governance artifacts, user-authored markdown, and tool outputs directly into AI agent context. This creates multiple prompt injection surfaces:

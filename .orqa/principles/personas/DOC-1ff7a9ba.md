@@ -183,7 +183,7 @@ Jordan ships quality work at a pace that would normally require a small team. Th
 ## Persona Comparison
 
 | Dimension | Alex (The Lead) | Sam (The Practitioner) | Jordan (The Independent) |
-|-----------|----------------|----------------------|--------------------------|
+| ----------- | ---------------- | ---------------------- | -------------------------- |
 | Primary goal | Structure complex work, delegate with governance | Structured AI-assisted execution | Ship solo with quality |
 | Core need | Clarity and oversight | Consistency and depth | Speed and safety net |
 | Domain depth | Broad, strategic | Deep, specialist | Moderate, generalist |

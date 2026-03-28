@@ -8,6 +8,7 @@ created: "2026-03-12"
 updated: "2026-03-12"
 relationships: []
 ---
+
 ## Decision
 
 Keep the `.claude/rules/` → `.orqa/process/rules/` symlink as-is. All rules load into every CLI session. This is a known tension with the graph-based injection model but is the pragmatic choice given current tool constraints.

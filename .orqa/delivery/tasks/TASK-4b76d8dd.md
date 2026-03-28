@@ -3,7 +3,7 @@ id: "TASK-4b76d8dd"
 type: "task"
 title: "Create skill for epic-requirement inference during project setup"
 description: "Create a skill that informs the project-setup process about whether epics should be required, based on the project type, structure, and intended use. The skill provides heuristics and questions to determine the right workflow.epics-required setting."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs: []
@@ -19,6 +19,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 When a new project is set up via OrqaStudio, the setup process needs to determine
@@ -53,7 +54,7 @@ characteristics. Should tasks require epic linkage?"
 
 The `project-setup` skill calls this inference during the setup flow:
 
-```
+```text
 1. Run project-inference (existing) → project profile
 2. Run epic-requirement inference (this skill) → recommended setting
 3. Present recommendation to user with rationale

@@ -32,6 +32,7 @@ The `// AD-NNN` comment pattern is designed as the stable interface — both the
 ## Sketch
 
 Software-project-specific plugin providing:
+
 - Clippy lint: `orqa::suppression_requires_decision` — validates `#[allow]` has `// AD-NNN`
 - ESLint rule: `orqa/suppression-requires-decision` — validates `eslint-disable` has `// AD-NNN`
 - Both read `.orqa/process/decisions/` to verify referenced decisions exist and are accepted

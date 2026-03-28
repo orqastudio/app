@@ -16,7 +16,7 @@ relationships:
 Cytoscape.js provides these algorithms out of the box (no additional packages):
 
 | Algorithm | Method | Returns |
-|-----------|--------|---------|
+| ----------- | -------- | --------- |
 | Connected components | `cy.elements().components()` | Array of element collections — each is a disconnected subgraph |
 | Betweenness centrality | `eles.betweennessCentrality()` | Per-node score — how often a node sits on shortest paths between others |
 | PageRank | `eles.pageRank()` | Per-node importance score based on incoming edge count and quality |
@@ -34,6 +34,7 @@ Cytoscape.js provides these algorithms out of the box (no additional packages):
 **Current**: Health score computed from error/warning counts from file-based integrity scan.
 
 **With graph analysis**:
+
 - `components()` → count disconnected clusters. A healthy graph has 1 large component. Multiple components = orphaned clusters.
 - `degreeCentrality()` → find nodes with 0 in-degree (true orphans — nothing points to them)
 - Health score formula: `(largest_component_size / total_nodes) * 100` — percentage of graph that's connected
@@ -41,11 +42,13 @@ Cytoscape.js provides these algorithms out of the box (no additional packages):
 ### 2. Most Important Artifacts (New dashboard widget or graph overlay)
 
 **`pageRank()`** ranks every artifact by structural importance:
+
 - High PageRank = many other artifacts reference this one (backbone artifacts)
 - Low PageRank = peripheral artifacts (may be orphans or very specific)
 - Surface top 10 as "backbone artifacts" — if these break, the graph degrades
 
 **`betweennessCentrality()`** finds bridge artifacts:
+
 - High betweenness = artifact connects otherwise-separate parts of the graph
 - If removed, the graph splits into components
 - Surface as "critical path artifacts" — extra attention during changes
@@ -53,6 +56,7 @@ Cytoscape.js provides these algorithms out of the box (no additional packages):
 ### 3. Dependency Chain Tracing (Artifact viewer enhancement)
 
 **`bfs()` from any artifact** shows the full chain:
+
 - Task → Epic → Milestone → Pillar (upward chain: "why does this exist?")
 - Rule → Lessons that informed it → Decisions that produced it (provenance chain)
 - Pillar → Rules grounded by it → Skills that practice them (downward chain: "how is this enforced?")
@@ -62,6 +66,7 @@ Display as a linear path in the artifact viewer: "This task traces to Pillar 1 t
 ### 4. Impact Analysis (Before making changes)
 
 **`node.neighborhood()` recursively** (or BFS with depth limit):
+
 - "If I change RULE-9814ec3c, what is affected?" → all artifacts with `enforced-by`, `grounded-by`, `informed-by` relationships to RULE-9814ec3c
 - Surface as a warning before editing: "This change affects 12 artifacts"
 - Could power a pre-edit impact preview panel
@@ -69,12 +74,14 @@ Display as a linear path in the artifact viewer: "This task traces to Pillar 1 t
 ### 5. Knowledge Gap Detection (Governance audit)
 
 **`components()`** on the full graph:
+
 - Each disconnected component is a knowledge silo
 - The governance system should be one connected graph
 - Disconnected components indicate missing relationships
 - Surface as: "3 disconnected clusters detected — 8 artifacts are not connected to the main graph"
 
 **Degree analysis per artifact type**:
+
 - Rules with 0 `grounded-by` → not traced to a pillar
 - Skills with 0 `grounded` → no agent uses this skill
 - Decisions with 0 `enforces` → decision exists but nothing implements it
@@ -83,6 +90,7 @@ Display as a linear path in the artifact viewer: "This task traces to Pillar 1 t
 ### 6. Trend Analysis (Dashboard — ImprovementTrendsWidget)
 
 Store graph metrics in health snapshots:
+
 - Connected component count (fewer = better)
 - Orphan percentage (lower = better)
 - Average degree centrality (higher = better connected)

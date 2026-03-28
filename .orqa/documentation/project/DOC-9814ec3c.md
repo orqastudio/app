@@ -1,7 +1,9 @@
 ---
 id: DOC-9814ec3c
 type: doc
+status: active
 title: Coding Standards
+domain: reference
 category: reference
 description: Coding standards for Rust and TypeScript/Svelte covering formatting, linting, error handling, and component patterns.
 created: 2026-03-02
@@ -48,6 +50,7 @@ relationships:
   - target: KNOW-46f68631
     type: synchronised-with
 ---
+
 ## Purpose
 
 Good code in this project is code that a future agent or contributor can read, trust, and extend without fear. That requires three things: explicit structure, honest error paths, and testable units.
@@ -70,9 +73,9 @@ The standards are enforced by `make check`. The principles behind them are gover
 ### Error Handling
 
 - Use `thiserror` for all custom error types
-- Every function returns `Result<T, E>` — no `unwrap()`, `expect()`, or `panic!()` in production code
+- Every function returns `Result\<T, E\>` — no `unwrap()`, `expect()`, or `panic!()` in production code
 - Error types are enums with descriptive variants
-- IPC commands return `Result<T, String>` for Tauri serialization
+- IPC commands return `Result\<T, String\>` for Tauri serialization
 
 ### Type Design
 
@@ -146,41 +149,77 @@ The standards are enforced by `make check`. The principles behind them are gover
 ```bash
 make check
 ```
-  - target: KNOW-a53d826c
-    type: synchronised-with
-  - target: KNOW-1b7fa054
-    type: synchronised-with
-  - target: KNOW-e6fee7a0
-    type: synchronised-with
-  - target: KNOW-5611351f
-    type: synchronised-with
-  - target: KNOW-8615fee2
-    type: synchronised-with
-  - target: KNOW-1afbc656
-    type: synchronised-with
-  - target: KNOW-60aefbbc
-    type: synchronised-with
-  - target: KNOW-2a846fb7
-    type: synchronised-with
-  - target: KNOW-207d9e2c
-    type: synchronised-with
-  - target: KNOW-0d6c1ece
-    type: synchronised-with
-  - target: KNOW-4f81ddc5
-    type: synchronised-with
-  - target: KNOW-40addb7a
-    type: synchronised-with
-  - target: KNOW-fbc200e6
-    type: synchronised-with
-  - target: KNOW-a4b6310b
-    type: synchronised-with
-  - target: KNOW-882d8c4f
-    type: synchronised-with
-  - target: KNOW-b5f520d5
-    type: synchronised-with
-  - target: KNOW-33b2dc14
-    type: synchronised-with
-  - target: KNOW-3f307edb
-    type: synchronised-with
+
+- target: KNOW-a53d826c
+
+  type: synchronised-with
+
+- target: KNOW-1b7fa054
+
+  type: synchronised-with
+
+- target: KNOW-e6fee7a0
+
+  type: synchronised-with
+
+- target: KNOW-5611351f
+
+  type: synchronised-with
+
+- target: KNOW-8615fee2
+
+  type: synchronised-with
+
+- target: KNOW-1afbc656
+
+  type: synchronised-with
+
+- target: KNOW-60aefbbc
+
+  type: synchronised-with
+
+- target: KNOW-2a846fb7
+
+  type: synchronised-with
+
+- target: KNOW-207d9e2c
+
+  type: synchronised-with
+
+- target: KNOW-0d6c1ece
+
+  type: synchronised-with
+
+- target: KNOW-4f81ddc5
+
+  type: synchronised-with
+
+- target: KNOW-40addb7a
+
+  type: synchronised-with
+
+- target: KNOW-fbc200e6
+
+  type: synchronised-with
+
+- target: KNOW-a4b6310b
+
+  type: synchronised-with
+
+- target: KNOW-882d8c4f
+
+  type: synchronised-with
+
+- target: KNOW-b5f520d5
+
+  type: synchronised-with
+
+- target: KNOW-33b2dc14
+
+  type: synchronised-with
+
+- target: KNOW-3f307edb
+
+  type: synchronised-with
 
 ---

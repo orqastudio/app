@@ -16,6 +16,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact Graph SDK extraction research"
 ---
+
 ## Research Questions
 
 1. How should OrqaStudio support multiple AI providers?
@@ -83,7 +84,7 @@ Local models (Ollama, LM Studio, llama.cpp) expose **OpenAI-compatible HTTP endp
 ### Built-in vs Plugin Decision Framework
 
 | Criterion | Built-in | Plugin |
-|-----------|---------|--------|
+| ----------- | --------- | -------- |
 | Required by ALL users regardless of domain | Yes | No |
 | Serves a core pillar directly | Yes | Maybe |
 | Needs deep streaming pipeline integration | Yes | No |
@@ -95,7 +96,7 @@ Local models (Ollama, LM Studio, llama.cpp) expose **OpenAI-compatible HTTP endp
 ### Applying the Framework
 
 | Feature | Verdict | Reason |
-|---------|---------|--------|
+| --------- | --------- | -------- |
 | Provider abstraction (NDJSON, Provider interface) | **Built-in** | Core infrastructure |
 | Claude Agent SDK provider | **Built-in** | Ships with app, reference implementation |
 | OpenAI-compatible provider | **Built-in** | Universal — covers cloud + local |
@@ -112,7 +113,7 @@ Local models (Ollama, LM Studio, llama.cpp) expose **OpenAI-compatible HTTP endp
 If built as a plugin:
 
 | Capability | Complexity | Value |
-|-----------|-----------|-------|
+| ----------- | ----------- | ------- |
 | Branch management from tasks | Low | High |
 | PR creation with governance context | Low | High |
 | Issue sync (bidirectional) | Medium | Medium |

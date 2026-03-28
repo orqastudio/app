@@ -3,7 +3,7 @@ id: TASK-bbd43489
 type: task
 title: Migrate scope fields to relationships array (rules + skills)
 description: Replace scope fields on rules and skills with relationships array entries using scoped-to/scoped-by types.
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

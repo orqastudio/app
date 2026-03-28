@@ -25,7 +25,7 @@ This naming collision revealed a deeper architectural question: what IS the conn
 OrqaStudio's agent domain files are renamed from "skills" to "knowledge" everywhere:
 
 | Before | After |
-|--------|-------|
+| -------- | ------- |
 | `.orqa/process/skills/` | `.orqa/process/knowledge/` |
 | `SKILL-XXXXXXXX` IDs | `KNOW-XXXXXXXX` IDs |
 | Artifact type `skill` | Artifact type `knowledge` |
@@ -38,7 +38,7 @@ The term "skill" is reserved exclusively for Claude Code slash commands — user
 ### 2. Semantic distinction (documented in core artifacts)
 
 | Term | Context | What It Is | Who Uses It |
-|------|---------|-----------|-------------|
+| ------ | --------- | ----------- | ------------- |
 | **Knowledge** | OrqaStudio platform | Domain expertise files injected into agents for implementation context | Agents (via orchestrator delegation) |
 | **Skill** | Claude Code plugin | User-invocable slash command (`/orqastudio:search`) | Humans using Claude Code |
 
@@ -49,7 +49,7 @@ Knowledge files teach agents HOW to do something. Skills let humans ASK for some
 The Claude Code connector maps OrqaStudio concepts to Claude Code concepts:
 
 | OrqaStudio | Claude Code | Connector Maps Via |
-|-----------|-------------|-------------------|
+| ----------- | ------------- | ------------------- |
 | Agents (`.orqa/process/agents/`) | `.claude/agents/` | Symlinks |
 | Rules (`.orqa/process/rules/`) | `.claude/rules/` | Symlinks |
 | Orchestrator agent | `.claude/CLAUDE.md` | Symlink |
@@ -58,6 +58,7 @@ The Claude Code connector maps OrqaStudio concepts to Claude Code concepts:
 | Governance hooks | `hooks/hooks.json` | Plugin hooks |
 
 **The connector NEVER maintains its own copies of agents, rules, or knowledge.** It reads from canonical sources:
+
 - Agents: from the app's `.orqa/process/agents/` (symlinked)
 - Knowledge: from installed plugins' directories (resolved via `project.json` plugin paths)
 - Rules: from `.orqa/process/rules/` (symlinked)
@@ -66,7 +67,7 @@ The Claude Code connector maps OrqaStudio concepts to Claude Code concepts:
 
 When the orchestrator delegates a task, it resolves knowledge from installed plugin directories:
 
-```
+```text
 project.json plugins.<name>.path → <path>/knowledge/<file>.md → injected into agent prompt
 ```
 

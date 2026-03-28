@@ -18,9 +18,9 @@ Agent team message delivery is unreliable when the team lead is mid-turn. A team
 
 Every teammate MUST write their findings to `.state/team/<team-name>/<task-id>.md` BEFORE marking the task complete via TaskUpdate. The team lead reads the file to verify completion. Message delivery becomes a notification, not the evidence.
 
-```
+```text
 .state/team/post-migration-fixes/task-5.md   ← findings written by teammate
-```
+```text
 
 The file IS the evidence. TaskUpdate(completed) is just the signal that the file is ready. If the signal is lost, the lead can poll the directory.
 

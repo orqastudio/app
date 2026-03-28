@@ -19,11 +19,13 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 [EPIC-d45b4dfd](EPIC-d45b4dfd) establishes an artifact graph covering `.orqa/` — governance artifacts and their relationships. But the real power comes from connecting governance to code: which tasks modified which files, which rules govern which modules, which decisions affected which components.
 
 A full-codebase graph would enable:
+
 - Impact analysis: "If I change this module, which epics and decisions are affected?"
 - Traceability: "Show me every artifact related to the streaming pipeline"
 - Plugin queries: "Find all files that haven't been touched by any task"

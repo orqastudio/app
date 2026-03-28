@@ -9,7 +9,9 @@ updated: 2026-03-14
 recurrence: 1
 maturity: observation
 relationships:
+
   - target: EPIC-5a5e3c6c
+
     type: cautions
     rationale: "Notification system epic addresses the missing toast infrastructure"
 ---

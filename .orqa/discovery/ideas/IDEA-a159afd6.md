@@ -25,6 +25,7 @@ The current architecture uses a unified logger library for both operational logg
 ## Proposed Approach
 
 Split into two Rust library crates:
+
 - `libs/logger` — operational logging (info, warn, error, debug, trace)
 - `libs/metrics` — structured telemetry (counters, gauges, histograms, token tracking)
 

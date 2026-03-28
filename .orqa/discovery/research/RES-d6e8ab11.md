@@ -110,7 +110,7 @@ After plugin contributions are merged, the resolved workflow must be a YAML file
 
 The core framework defines a workflow skeleton with named contribution points (slots). Stage plugins fill those slots via declarative manifests. The composition happens at install time, not runtime.
 
-```
+```text
 Core Workflow Skeleton (YAML)
   |
   +-- contribution-point: "planning"
@@ -162,7 +162,7 @@ Recommended stages for a software development workflow: `discover`, `plan`, `doc
 
 ### The Three-Layer Taxonomy
 
-```
+```text
 Universal Role + Stage Context + Domain Knowledge = Effective Agent Type
 ```
 
@@ -189,7 +189,7 @@ This eliminates: maintaining separate agent definitions per domain, knowledge dr
 Not all agents need the most capable model. Research consistently shows 60-80% cost reduction through intelligent model routing.
 
 | Role | Recommended Model | Rationale |
-|------|------------------|-----------|
+| ------ | ------------------ | ----------- |
 | Orchestrator | Opus | Strongest reasoning for delegation decisions |
 | Planner | Opus | Architecture planning requires deep reasoning |
 | Implementer (complex) | Opus | Multi-file refactoring needs full capability |
@@ -230,7 +230,7 @@ knowledge:
 ### Three Injection Tiers
 
 | Tier | When Loaded | Token Budget | Example |
-|------|-------------|-------------|---------|
+| ------ | ------------- | ------------- | --------- |
 | **Always** | At agent spawn for matching roles/paths | 200-500 tokens (compressed summary) | Safety rules, error handling |
 | **Stage-triggered** | When workflow enters a matching stage | 500-1,000 tokens | Coding standards during implement, review criteria during review |
 | **On-demand** | When agent queries semantic search | 1,000-2,000 tokens (full artifact) | Specific domain patterns, historical decisions |
@@ -262,7 +262,7 @@ Individual knowledge artifacts are atomic and self-contained:
 
 ### The Five-Stage Pipeline
 
-```
+```text
 Plugin Registry → Schema Assembly → Section Resolution → Token Budgeting → Prompt Output
 ```
 
@@ -279,7 +279,7 @@ Plugin Registry → Schema Assembly → Section Resolution → Token Budgeting �
 ### Expected Token Budgets
 
 | Agent Type | Static Core | Workflow Stage | On-Demand | Total Budget |
-|-----------|-------------|---------------|-----------|-------------|
+| ----------- | ------------- | --------------- | ----------- | ------------- |
 | Orchestrator | 1,500 | 500 | 500 | 2,500 |
 | Implementer | 800 | 500 | 1,500 | 2,800 |
 | Reviewer | 600 | 300 | 1,000 | 1,900 |
@@ -294,7 +294,7 @@ Compare to current: 9,500-16,500 tokens per orchestrator turn, 6,400 tokens per 
 Research identified several high-impact techniques, each with measured results:
 
 | Technique | Token Impact | Source |
-|-----------|-------------|--------|
+| ----------- | ------------- | -------- |
 | Modular prompting (sections over monolith) | 42% reduction | Factory.ai research |
 | Mermaid statecharts over prose | 4x more efficient | Measured in RES-138eff6e |
 | Structured rule summaries | ~100-150 tokens vs ~800 per rule | Calculated from current rules |
@@ -348,7 +348,7 @@ Plugins provide the actual state definitions, transitions, guards, and gates for
 The core framework defines state categories; plugins map their states to categories. Categories drive cross-cutting concerns:
 
 | Category | Purpose | UI Treatment |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | `planning` | Work being designed/scoped | Blue indicators |
 | `active` | Work in progress | Green indicators |
 | `review` | Work being reviewed | Amber indicators |
@@ -370,7 +370,7 @@ Human gates are not boolean approve/reject flags. They are structured sub-workfl
 Five gate patterns cover the full range of review needs:
 
 | Pattern | Use Case | Mechanism |
-|---------|----------|-----------|
+| --------- | ---------- | ----------- |
 | Simple Approval | Task completion, small changes | Single reviewer, approve/reject |
 | Structured Review (Maker-Checker) | Epic completion, milestone gates | AI review first, then human review |
 | Multi-Reviewer (Four-Eyes) | Major releases, compliance-sensitive | Multiple independent reviewers, all must pass |
@@ -382,7 +382,7 @@ Five gate patterns cover the full range of review needs:
 Not all work follows the full pipeline. The architecture supports workflow variants:
 
 | Scenario | Variant | Key Difference |
-|----------|---------|----------------|
+| ---------- | --------- | ---------------- |
 | Bug fix (small) | `task-quickfix` | Skip planning, automated review only |
 | UX tweak | `task-quickfix` | Skip planning, automated review only |
 | Security fix | `task-security` | Skip planning, mandatory human review |
@@ -409,7 +409,7 @@ Migration follows a forward-compatible-first approach:
 
 ### Architecture Overview
 
-```
+```text
 [User Request]
      |
      v
@@ -445,7 +445,7 @@ Migration follows a forward-compatible-first approach:
 ### Expected Impact
 
 | Metric | Current | After Architecture | Improvement |
-|--------|---------|-------------------|-------------|
+| -------- | --------- | ------------------- | ------------- |
 | Per-prompt overhead (orchestrator) | 9,500-16,500 tokens | 2,000-3,500 tokens | 65-80% |
 | Per-agent spawn cost | 6,400 tokens | 1,500-4,000 tokens | 40-75% |
 | 8-agent team spawn | 63K tokens | 16-36K tokens | 43-75% |
@@ -472,7 +472,7 @@ Dashboard design: Session Overview (total/budget/cost), Agent Breakdown (per-age
 From **RES-12f2bf80** (Composability Research):
 
 | Element | Status | How It Carries Forward |
-|---------|--------|----------------------|
+| --------- | -------- | ---------------------- |
 | Composability model (skills, knowledge, rules as units) | Carry forward | Foundation of the knowledge plugin architecture |
 | Knowledge patterns (atomic, self-contained, injectable) | Carry forward | Knowledge artifact structure at 500-2000 tokens |
 | Sequential workflow (understand-plan-document-implement-review-learn) | Carry forward | Becomes the workflow skeleton that plugins compose into |
@@ -483,7 +483,7 @@ From **RES-12f2bf80** (Composability Research):
 From **RES-138eff6e** (Token Efficiency Baselines):
 
 | Element | Status | How It Carries Forward |
-|---------|--------|----------------------|
+| --------- | -------- | ---------------------- |
 | Token baselines (9.5K-16.5K per prompt, 63K per team) | Carry forward | Benchmarks for measuring improvement |
 | Orchestrator discipline recommendations | Carry forward | Hub-spoke with findings-to-disk |
 | Model tiering recommendations | Carry forward | Integrated into agent spawn pipeline |
@@ -492,7 +492,7 @@ From **RES-138eff6e** (Token Efficiency Baselines):
 ### What Is Discarded
 
 | Element | Why Discarded | Replaced By |
-|---------|--------------|-------------|
+| --------- | -------------- | ------------- |
 | Persistent agents (session-long lifecycle) | Context rot, stale agents, shutdown discipline | Ephemeral task-scoped agents |
 | Fixed team of 5 agents | Rigid, cannot adapt to task needs | Dynamic team composition from workflow stage |
 | SendMessage-based handoffs | Unreliable during concurrent turns | Findings-to-disk + task completion events |
@@ -504,7 +504,7 @@ From **RES-138eff6e** (Token Efficiency Baselines):
 ### Gaps Filled by This Research
 
 | Gap | Prior State | Now Addressed |
-|-----|------------|---------------|
+| ----- | ------------ | --------------- |
 | Workflow composition from plugins | Not investigated | Contribution-point model with YAML manifests |
 | Programmatic prompt generation | Not investigated | Five-stage pipeline with token budgeting |
 | Deterministic state machines | Informal status tracking | YAML state machines with declarative guards |
@@ -581,7 +581,7 @@ Each epic should be broken into tasks following the established pattern:
 The transition from current architecture to plugin-composed architecture requires migrating existing content:
 
 | Current Location | Migration Target | Notes |
-|-----------------|-----------------|-------|
+| ----------------- | ----------------- | ------- |
 | CLAUDE.md (monolithic orchestrator prompt) | Plugin-composed generated prompt | Decompose into role definition + stage instructions + safety rules |
 | 58 rule files in .orqa/process/rules/ | Knowledge plugin artifacts + compressed summaries | Each rule produces a 100-150 token summary for injection |
 | Agent definitions in .orqa/process/agents/ | Universal role templates + knowledge composition | Agent definitions become role + capability + knowledge declarations |
@@ -592,7 +592,7 @@ The transition from current architecture to plugin-composed architecture require
 
 The four epics have a dependency chain:
 
-```
+```text
 Epic 1 (Workflow Engine)
   |
   +-- Epic 2 (Prompt Generation + Knowledge)
@@ -624,19 +624,19 @@ All questions have been resolved as AD-1ef9f57c. Summary of decisions:
 
 ### Token Efficiency Questions
 
-5. **Compressed summary generation:** **RESOLVED — Author writes summaries** (including agent authors). `summary` field in knowledge artifact frontmatter. `orqa summarize` CLI generates drafts for review.
+1. **Compressed summary generation:** **RESOLVED — Author writes summaries** (including agent authors). `summary` field in knowledge artifact frontmatter. `orqa summarize` CLI generates drafts for review.
 
-6. **On-demand retrieval latency:** **RESOLVED — Acceptable.** 1-2s per query paid once at task start beats 10x token cost compounding throughout agent lifetime.
+2. **On-demand retrieval latency:** **RESOLVED — Acceptable.** 1-2s per query paid once at task start beats 10x token cost compounding throughout agent lifetime.
 
-7. **Token budget enforcement granularity:** **RESOLVED — Per-agent for prompt size, per-session for total cost.** Team-level adds complexity without benefit.
+3. **Token budget enforcement granularity:** **RESOLVED — Per-agent for prompt size, per-session for total cost.** Team-level adds complexity without benefit.
 
 ### Process Questions
 
-8. **Business logic boundary:** **RESOLVED — Daemon, not MCP.** The daemon runs business logic (validation, graph queries, search, state machine evaluation, prompt generation). MCP and LSP are access protocols — thin layers exposing daemon capabilities to consumers.
+1. **Business logic boundary:** **RESOLVED — Daemon, not MCP.** The daemon runs business logic (validation, graph queries, search, state machine evaluation, prompt generation). MCP and LSP are access protocols — thin layers exposing daemon capabilities to consumers.
 
-9. **Migration timeline:** **RESOLVED — Incremental, one epic (EPIC-59b92c8d), sequential tasks with validation between each.** Not big-bang, not multi-epic.
+2. **Migration timeline:** **RESOLVED — Incremental, one epic (EPIC-59b92c8d), sequential tasks with validation between each.** Not big-bang, not multi-epic.
 
-10. **Backwards compatibility during transition:** **RESOLVED — Short fallback period only.** CLAUDE.md loading as safety net while the LLM performs migration. Remove fallback code after migration complete.
+3. **Backwards compatibility during transition:** **RESOLVED — Short fallback period only.** CLAUDE.md loading as safety net while the LLM performs migration. Remove fallback code after migration complete.
 
 ---
 
@@ -645,7 +645,7 @@ All questions have been resolved as AD-1ef9f57c. Summary of decisions:
 ### Primary Research Documents (This Investigation)
 
 | Task | Topic | Key Findings |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | task-1 | Workflow Composition from Plugins | Contribution-point model, YAML + code hooks, install-time merging, resolved file on disk |
 | task-2 | Agent Type Specialization | Three-layer taxonomy, generalist + injection model, Google/Microsoft validation of hub-spoke |
 | task-3 | Knowledge Plugin Architecture | Hybrid manifest + capability matching, three injection tiers, atomic 500-2000 token artifacts |
@@ -657,7 +657,7 @@ All questions have been resolved as AD-1ef9f57c. Summary of decisions:
 ### Prior Research (Evolved From)
 
 | Document | Relationship |
-|----------|-------------|
+| ---------- | ------------- |
 | RES-12f2bf80 (Composability) | Composability model carries forward; persistent agent model discarded |
 | RES-138eff6e (Token Efficiency) | Baselines and measurement carry forward; patch-level solutions superseded |
 
@@ -687,7 +687,7 @@ This section was added after implementation (March 2026) to document what was bu
 The architecture was implemented across seven epics (not the four originally proposed):
 
 | Epic | Title | Status | Notes |
-|------|-------|--------|-------|
+| ------ | ------- | -------- | ------- |
 | EPIC-c828007a | Graph Foundation | Done | Forward-only relationship storage, constraint fixes, vocabulary docs, ID hash migration, .state rename |
 | EPIC-f6da17ed | Core Workflow Engine + State Machines | Done | YAML workflow format, state machine types, workflow resolver, guard/action primitives, contribution points |
 | EPIC-a63fde02 | Prompt Generation + Knowledge Architecture | Done | Five-stage pipeline, prompt registry, knowledge retrieval, section resolution, token budgeting |
@@ -714,7 +714,7 @@ The original plan proposed 4 epics; implementation required 7 due to the additio
 **Changed during implementation:**
 
 | Prediction | Actual | Reason |
-|-----------|--------|--------|
+| ----------- | -------- | -------- |
 | 4 implementation epics | 7 epics total | Graph foundation work, content migration, and cleanup each needed dedicated focus |
 | Workflow engine in Rust daemon | TypeScript in `libs/cli/` | Decision to build in TypeScript for faster iteration during pre-release; Rust integration deferred |
 | Prompt generation in daemon | TypeScript in `libs/cli/` | Same rationale; daemon integration planned post-migration |

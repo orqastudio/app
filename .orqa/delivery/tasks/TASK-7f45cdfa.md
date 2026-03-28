@@ -3,7 +3,7 @@ id: TASK-7f45cdfa
 type: task
 title: Fix docs nav — show categories instead of status
 description: "Update documentation navigation to show top-level categories (Architecture, Product, Development, etc.) instead of status values."
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 3

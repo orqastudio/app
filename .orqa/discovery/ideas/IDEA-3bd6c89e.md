@@ -3,7 +3,7 @@ id: IDEA-3bd6c89e
 type: discovery-idea
 title: Multi-Provider Ecosystem
 description: Support additional AI providers through the provider-agnostic sidecar interface without changing the Rust core or Svelte UI.
-status: completed
+status: archived
 created: 2026-03-07
 updated: 2026-03-13
 research-needed:
@@ -19,6 +19,7 @@ relationships:
   - target: PERSONA-477971bf
     type: benefits
 ---
+
 ## Candidate Items
 
 - Third-party AI cloud provider research — OpenRouter, Together AI, Fireworks, Replicate

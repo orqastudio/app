@@ -1,7 +1,9 @@
 ---
 id: DOC-db5b37dc
 type: doc
+status: active
 title: Development Workflow
+domain: guides
 category: how-to
 description: "Development workflow covering worktree lifecycle, branch strategy, and merge procedures."
 created: 2026-03-02
@@ -210,7 +212,7 @@ NO backwards compatibility shims. Fix ALL callers in the same commit. See `.orqa
 ## Key Documents
 
 | Document | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | Coding Standards | Full code quality rules |
 | Architecture Decisions | All architecture decisions |
 | Team Overview | Agent directory, skill directory |
@@ -278,6 +280,7 @@ A shaped idea is promoted to an `EPIC-NNN`. The epic contains the implementation
 ### 4. Plan Tasks
 
 Within an epic, individual `TASK-NNN` artifacts define the work items. Each task has:
+
 - **Acceptance criteria** defining what "done" means
 - **Dependencies** on other tasks
 - **Skills** that agents need to load
@@ -332,6 +335,7 @@ graph LR
 ```
 
 Each stage maps to artifact types:
+
 - **Observation**: Lessons, research findings
 - **Understanding**: Research documents, shaped ideas
 - **Principle**: Decisions, pillars
@@ -346,7 +350,7 @@ A healthy pipeline shows knowledge flowing through all stages. Bottlenecks indic
 OrqaStudio defines universal roles that can be filled by humans or AI agents:
 
 | Role | Purpose |
-|------|---------|
+| ------ | --------- |
 | **Orchestrator** | Coordinates work, manages artifacts, delegates tasks |
 | **Implementer** | Builds things (code, configurations, content) |
 | **Reviewer** | Checks quality and correctness independently |

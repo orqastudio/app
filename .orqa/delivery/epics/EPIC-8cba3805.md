@@ -3,7 +3,7 @@ id: "EPIC-8cba3805"
 type: "epic"
 title: "Governance Bootstrap"
 description: "The initial governance layer: filesystem scanner, coverage analysis, recommendations, and governance coverage indicator on the dashboard."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 Orqa Studio's Pillar 2 (Process Governance) requires the app to be able to inspect and reason about its own governance. Without this, governance is invisible — documents that exist but can't be surfaced in the app.

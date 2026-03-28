@@ -3,7 +3,7 @@ id: "TASK-ea03dd06"
 type: "task"
 title: "Update plugin manifests: all orqa-plugin.json skill → knowledge"
 description: "Update all orqa-plugin.json plugin manifest files to replace 'skills' directory references and type declarations with 'knowledge' equivalents."
-status: "ready"
+status: ready
 created: 2026-03-20T00:00:00.000Z
 updated: 2026-03-20T00:00:00.000Z
 acceptance:
@@ -27,6 +27,7 @@ Update every `orqa-plugin.json` file across all first-party plugins (software, c
 ## How
 
 For each `orqa-plugin.json` in `plugins/*/`:
+
 - Find any field named `skills`, `skillsDir`, or similar → rename to `knowledge`, `knowledgeDir`
 - Update any type references: `"type": "skill"` → `"type": "knowledge"`
 - Update directory path values: `"skills/"` → `"knowledge/"`

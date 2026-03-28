@@ -16,6 +16,7 @@ All plugin functionality — content sync, config extension, service registratio
 ## Context
 
 The Claude Code connector (`connectors/claude-code`) currently contains custom setup logic (`runConnectorSetup()`) that:
+
 - Creates symlinks for `.claude/agents/`
 - Aggregates MCP/LSP server declarations from all plugins
 - Syncs to Claude Code's plugin cache
@@ -24,6 +25,7 @@ The Claude Code connector (`connectors/claude-code`) currently contains custom s
 This logic is connector-specific but the capabilities it implements are universal — any plugin could need symlinks, service aggregation, root file management, or external cache sync. As new connectors emerge (VS Code, Cursor, Windsurf), duplicating this bespoke wiring is unsustainable.
 
 Additionally, the plugin content model has gaps:
+
 - No three-way diff tracking (plugin source vs installed baseline vs user-modified copy)
 - No "extends" strategy for config files that support extension chains (tsconfig, eslint)
 - Sidecar integrations are outside the plugin lifecycle (`plugin list`, `plugin refresh` don't cover them)
@@ -32,7 +34,7 @@ Additionally, the plugin content model has gaps:
 ## Capability Vocabulary
 
 | Capability | Manifest Key | What It Does |
-|-----------|-------------|-------------|
+| ----------- | ------------- | ------------- |
 | **Artifact content** | `content` | Copy files to `.orqa/`, three-way diff tracking |
 | **Extendable config** | `config` | Set up extends references, base stays in plugin |
 | **Service providers** | `provides.mcpServers`, `provides.lspServers`, `provides.sidecar` | Register services; framework aggregates across plugins |
@@ -54,6 +56,7 @@ Additionally, the plugin content model has gaps:
 ### Pattern 1: Copy + Three-Way Diff (artifacts, non-extendable files)
 
 Plugin is the upstream source. `orqa install` copies to managed location and records the baseline hash. On subsequent install/refresh:
+
 - **Plugin source hash** compared to baseline → plugin updated?
 - **Baseline hash** compared to current file on disk → user modified?
 - Both changed → conflict surfaced to user (merge, keep theirs, take plugin's)
@@ -63,6 +66,7 @@ Plugin is the upstream source. `orqa install` copies to managed location and rec
 Plugin install sets up an extends reference in the project's config. Base config stays in the plugin source. Project config extends it with local overrides. Plugin updates propagate automatically through the extends chain.
 
 Declared per content entry:
+
 ```json
 "config": {
   "tsconfig": { "source": "tsconfig.base.json", "target": "tsconfig.json", "strategy": "extends" },
@@ -75,6 +79,7 @@ Declared per content entry:
 ### Keep connector-specific wiring (REJECTED)
 
 Each connector maintains its own setup logic. Rejected because:
+
 - Duplicates mechanics across connectors
 - Each new connector reinvents symlink management, service aggregation, cache sync
 - No consistency in how capabilities are declared or discovered
@@ -82,12 +87,14 @@ Each connector maintains its own setup logic. Rejected because:
 ### Framework handles everything, no lifecycle hooks (REJECTED)
 
 All setup is purely declarative with zero escape hatches. Rejected because:
+
 - Some plugins will need custom setup logic that cannot be anticipated
 - Lifecycle callbacks (`onInstall`, `onRefresh`) provide the escape hatch while keeping the default path declarative
 
 ## Consequences
 
 ### Positive
+
 - New connectors (VS Code, Cursor) are thin manifests, not codebases
 - Any plugin can aggregate services, manage symlinks, sync caches
 - Three-way diff gives users visibility into both plugin updates and their own local edits
@@ -95,11 +102,13 @@ All setup is purely declarative with zero escape hatches. Rejected because:
 - Plugin templates can declare schema tracking dependencies
 
 ### Negative
+
 - Migration effort: connector's `runConnectorSetup()` must be decomposed into capabilities
 - The `orqa-plugin.json` manifest grows in complexity
 - Framework code must handle all capability mechanics (more framework code)
 
 ### Constraints
+
 - All plugin interaction goes through the manifest — no side-channel wiring
 - The `orqa install` / `orqa plugin refresh` pipeline must handle all capability types
 - Baseline hash tracking requires a lockfile or manifest extension

@@ -3,7 +3,7 @@ id: "TASK-46c06db8"
 type: "task"
 title: "Add status validation to artifact graph integrity checks"
 description: "Extend the artifact graph integrity scan to validate every artifact's status field against the valid enum values defined in project.json. Invalid statuses are reported as integrity errors with the artifact ID and the offending value. An auto-fix suggestion derives the closest valid status from a migration map."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4

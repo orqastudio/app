@@ -2,6 +2,7 @@
 id: KNOW-40e2eb99
 type: knowledge
 title: TypeScript Advanced Types
+domain: platform/typescript
 description: "Master TypeScript's advanced type system including generics, conditional types, mapped types, template literals, and utility types for building type-safe applications. Use when implementing complex type logic, creating reusable type utilities, or ensuring compile-time type safety in TypeScript projects."
 summary: "Master TypeScript's advanced type system including generics, conditional types, mapped types, template literals, and utility types for building type-safe applications. Use when implementing complex type logic, creating reusable type utilities, or ensuring compile-time type safety in TypeScript projects."
 status: active
@@ -112,16 +113,16 @@ type DeepPartial<T> = {
 ## Built-in Utility Types
 
 | Type | Purpose |
-|------|---------|
-| `Partial<T>` | All properties optional |
-| `Required<T>` | All properties required |
-| `Readonly<T>` | All properties readonly |
-| `Pick<T, K>` | Select specific properties |
-| `Omit<T, K>` | Remove specific properties |
-| `Record<K, T>` | Object with keys K, values T |
-| `Exclude<T, U>` | Remove types from union |
-| `Extract<T, U>` | Keep types from union |
-| `NonNullable<T>` | Remove null/undefined |
+| ------ | --------- |
+| `Partial\<T\>` | All properties optional |
+| `Required\<T\>` | All properties required |
+| `Readonly\<T\>` | All properties readonly |
+| `Pick\<T, K\>` | Select specific properties |
+| `Omit\<T, K\>` | Remove specific properties |
+| `Record\<K, T\>` | Object with keys K, values T |
+| `Exclude\<T, U\>` | Remove types from union |
+| `Extract\<T, U\>` | Keep types from union |
+| `NonNullable\<T\>` | Remove null/undefined |
 
 ## Rules
 

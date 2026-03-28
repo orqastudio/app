@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact Graph SDK and Structural Integrity"
 ---
+
 ## Problem
 
 Artifact frontmatter is now schema-enforced, but body structure (everything below the `---`) is completely freeform. Some types have naturally converged on consistent patterns (pillars, milestones, lessons, decisions), while others are inconsistent (epics, tasks) or nearly empty (ideas). Without body templates, new artifacts are created with whatever structure the author invents, making it harder to find information and harder for the app to eventually parse or render structured sections.
@@ -22,7 +23,7 @@ This covers planning, team, and governance artifacts. Documentation files (`.orq
 ## Current State
 
 | Type | Body Consistency | Pattern |
-|------|-----------------|---------|
+| ------ | ----------------- | --------- |
 | Pillar | High | 4 standard sections |
 | Milestone | High | Gate Question, Context, Epics, Completion Criteria |
 | Decision | High | Decision, Rationale, Consequences |

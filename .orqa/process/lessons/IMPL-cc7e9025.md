@@ -11,6 +11,7 @@ maturity: observation
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 Three categories of observation during implementation:
@@ -20,6 +21,7 @@ Three categories of observation during implementation:
 3. **Borderline** — might affect other tasks, might not. Rework may or may not be needed.
 
 For borderline cases, the right answer depends on context the agent doesn't have:
+
 - User going to bed → prefer continue, accept potential rework, record the caveat
 - User actively supervising → prefer block and reassess
 - Deadline pressure → prefer continue
@@ -30,6 +32,7 @@ The orchestrator should ask the user for their preference in borderline cases. T
 ## Fix
 
 Add to the observation logging discipline:
+
 - Clearly blocking: immediate, no question
 - Clearly non-blocking: task completion
 - Borderline: orchestrator asks user, records the preference and rationale on the task

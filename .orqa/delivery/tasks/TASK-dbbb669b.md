@@ -3,7 +3,7 @@ id: "TASK-dbbb669b"
 type: "task"
 title: "Schema validation compliance audit"
 description: "Verify all .orqa/ artifacts have valid YAML frontmatter per their directory schema.json. Fix any validation failures."
-status: "ready"
+status: ready
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 acceptance:

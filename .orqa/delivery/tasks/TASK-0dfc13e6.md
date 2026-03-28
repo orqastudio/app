@@ -3,7 +3,7 @@ id: "TASK-0dfc13e6"
 type: "task"
 title: "Enforce frontmatter field ordering at creation time via schema validation"
 description: "Add propertyOrder enforcement to the schema validation hook and agent artifact creation process so frontmatter fields are written in the correct order from the start."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -18,6 +18,7 @@ relationships:
   - target: "TASK-052f394f"
     type: "depends-on"
 ---
+
 ## What
 
 Most rule files don't follow the `propertyOrder` from their `schema.json`. Rather than reformatting on the frontend, enforce correct ordering at the point of creation — in the schema validation hook and in agent/skill instructions for creating artifacts.

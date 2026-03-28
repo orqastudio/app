@@ -1,8 +1,12 @@
 ---
 id: DOC-7ac153d1
 type: doc
-status: captured
+status: archived
+archived_reason: "UI spec should be a WIREFRAME artifact type, not DOC. References stale paths (.orqa/process/rules/) that don't match target .orqa/ structure. Enforcement model described here is partially superseded by the three-layer enforcement stack in the engine crates."
 title: Enforcement Panel UI Spec
+domain: reclassify
+reclassify_as: wireframe
+reclassify_reason: UI specification for a panel — not a platform guide
 description: UI specification for the enforcement panel that displays rule violations and compliance status.
 created: 2026-03-05
 updated: 2026-03-05
@@ -29,23 +33,25 @@ A compact inline indicator displayed on a `ToolCallCard` when the tool call prod
 
 **Layout:**
 
-```
+```text
 [icon] [label]
 ```
 
 **States:**
 
 | State | Icon | Color | Label |
-|-------|------|-------|-------|
+| ------- | ------ | ------- | ------- |
 | Blocked | X | Red (`destructive`) | "Blocked" |
 | Warned | Triangle | Amber (`warning`) | "Warning" |
 
 **Behavior:**
+
 - Clicking the badge opens a popover showing the rule description and matched text snippet.
 - The badge appears in the top-right corner of the tool call card.
 - If multiple violations exist on one tool call, only the most severe badge is shown (block takes priority over warn). The popover lists all violations.
 
 **Props:**
+
 ```typescript
 interface ViolationBadgeProps {
   violations: Violation[];
@@ -62,7 +68,7 @@ A sidebar panel (accessible from the Activity Bar) showing all enforcement entri
 
 **Layout:**
 
-```
+```text
 ┌─────────────────────────────────┐
 │ Enforcement                  [x]│
 ├─────────────────────────────────┤
@@ -94,13 +100,14 @@ A sidebar panel (accessible from the Activity Bar) showing all enforcement entri
 **States:**
 
 | State | Display |
-|-------|---------|
+| ------- | --------- |
 | Loading | `LoadingSpinner` centered in the panel |
 | Error | `ErrorDisplay` with retry action |
 | Empty (no violations) | "No violations in this session." with a checkmark icon |
 | Violations present | Rule list with expandable violation groups |
 
 **Behavior:**
+
 - Clicking a violation in the list scrolls the conversation view to the relevant tool call card.
 - Violations persist for the session — refreshing the panel re-queries from SQLite.
 - Dismissed violations are shown with strikethrough text and reduced opacity.
@@ -113,7 +120,7 @@ When a tool call produces a violation, the `ToolCallCard` component shows an inl
 
 **Layout (blocked tool call):**
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │ Write  src/main.ts                     [Blocked]    │
 ├─────────────────────────────────────────────────────┤
@@ -124,7 +131,7 @@ When a tool call produces a violation, the `ToolCallCard` component shows an inl
 
 **Layout (warned tool call):**
 
-```
+```text
 ┌─────────────────────────────────────────────────────┐
 │ Bash  git reset --hard HEAD~1          [Warning]    │
 ├─────────────────────────────────────────────────────┤
@@ -135,6 +142,7 @@ When a tool call produces a violation, the `ToolCallCard` component shows an inl
 ```
 
 **Behavior:**
+
 - Blocked tool calls cannot be re-executed without modifying the offending content.
 - Warned tool calls show a "Proceed anyway" button that records a user acknowledgment in the violation record.
 - The inline violation section is collapsed by default if the tool call is older than 5 minutes; the badge remains visible.
@@ -147,7 +155,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 
 **Layout:**
 
-```
+```text
 ┌──────────────────────────────────────────────────────┐
 │ Governance Scan Results                              │
 ├──────────────────────────────────────────────────────┤
@@ -170,7 +178,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 **States:**
 
 | State | Display |
-|-------|---------|
+| ------- | --------- |
 | Loading | `LoadingSpinner` |
 | Error | `ErrorDisplay` with retry |
 | Empty (no rules found) | "No rule files found in .orqa/process/rules/" |
@@ -181,7 +189,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 ## Component States Summary
 
 | Component | States |
-|-----------|--------|
+| ----------- | -------- |
 | `ViolationBadge` | blocked, warned |
 | `EnforcementPanel` | loading, error, empty, violations-present |
 | `ToolCallCard` (with violation) | blocked, warned, warned-acknowledged |
@@ -192,7 +200,7 @@ Displays the output of a governance scan, including enforcement coverage — how
 ## User-Facing Language
 
 | Internal concept | Display label |
-|-----------------|---------------|
+| ----------------- | --------------- |
 | `verdict: "block"` | "Blocked" |
 | `verdict: "warn"` | "Warning" |
 | enforcement entry | "Rule" |

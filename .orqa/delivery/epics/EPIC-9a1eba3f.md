@@ -3,7 +3,7 @@ id: "EPIC-9a1eba3f"
 type: "epic"
 title: "Rule Enforcement Engine with Claude Code Companion Plugin"
 description: "Build a two-context rule enforcement engine: a Claude Code companion plugin\n(separate repo) that enforces .orqa/ rules in the CLI, then integrate the same\nenforcement logic into the OrqaStudio app for dogfooding parity.\n"
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-11"
 updated: "2026-03-12"
@@ -19,18 +19,21 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 OrqaStudio has 39 rules in `.orqa/process/rules/` with structured frontmatter
 (id, layer, scope as agent ID arrays, status). But enforcement is fragile:
 
 - **CLI context**: Rules are loaded into agent context via `.claude/rules/` symlinks.
+
   Enforcement is self-policed — agents read rules but nothing stops violations.
   Shell-script hooks in `.claude/settings.json` handle session-start checks and
   pre-commit reminders, but these are invisible to the app and broke when
   `.claude/hooks/` was gitignored (RES-b484fa9f finding F-01).
 
 - **App context**: The app scans `.orqa/process/rules/` for display but doesn't
+
   enforce rules during agent execution. The enforcement architecture doc
   (`.orqa/documentation/development/enforcement.md`) describes a pattern-matching
   engine that evaluates rules against file writes and bash commands, but it's not
@@ -50,12 +53,14 @@ rule format rather than inventing a new one.
 ### Two-Phase Strategy
 
 **Phase 1: Claude Code Companion Plugin** (separate repo: `orqa-studio/orqa-plugin`)
+
 - A Claude Code plugin that reads `.orqa/process/rules/` and enforces them
 - Replaces the need for `.claude/hooks/` shell scripts and `.claude/rules/` symlinks
 - Provides commands (`/orqa`, `/orqa:rules`, `/orqa:status`) for governance interaction
 - Ships as an installable Claude Code plugin
 
 **Phase 2: App-Native Enforcement** (this repo: `orqa-studio`)
+
 - Port the enforcement logic into the Rust backend
 - Integrate with the agent execution pipeline (tool approval, pre-delegation checks)
 - Surface violations in the governance UI
@@ -63,7 +68,7 @@ rule format rather than inventing a new one.
 
 ### Phase 1: Companion Plugin Architecture
 
-```
+```text
 orqa-plugin/
   .claude-plugin/
     plugin.json
@@ -90,6 +95,7 @@ orqa-plugin/
 #### Rule Loading
 
 The engine reads `.orqa/process/rules/RULE-NNN.md` files and extracts:
+
 - `status` — only `active` rules are enforced
 - `layer` — determines if the rule applies (core = always, project = this project)
 - `scope` — agent ID array filtering (match against current agent context)
@@ -120,7 +126,7 @@ get mechanical enforcement.
 
 #### Hook Flow
 
-```
+```text
 Claude Code tool call (e.g., Bash, Edit, Write)
   → PreToolUse hook fires
   → Plugin loads active rules from .orqa/process/rules/
@@ -135,7 +141,7 @@ Claude Code tool call (e.g., Bash, Edit, Write)
 #### Context Fields by Event
 
 | Event | Context Fields |
-|-------|---------------|
+| ------- | --------------- |
 | `bash` | `command` |
 | `file` | `file_path`, `new_text`, `old_text` |
 | `prompt` | `user_prompt` |
@@ -144,7 +150,7 @@ Claude Code tool call (e.g., Bash, Edit, Write)
 #### Commands
 
 | Command | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `/orqa` | Show governance summary: active rules, recent violations, health |
 | `/orqa:rules` | List all active rules with enforcement status |
 | `/orqa:status` | Governance health: rule coverage, broken refs, schema compliance |
@@ -152,6 +158,7 @@ Claude Code tool call (e.g., Bash, Edit, Write)
 ### Phase 2: App-Native Enforcement
 
 Port the same engine into Rust:
+
 - Rule loading from `.orqa/process/rules/` (already scanned by artifact reader)
 - Pattern matching via `regex` crate
 - Integration with tool approval pipeline (before tool execution in agent loop)
@@ -186,7 +193,7 @@ The plugin doesn't just enforce rules — it becomes the single bridge between
 `.orqa/` and Claude Code, replacing the entire `.claude/` symlink architecture:
 
 | Plugin Component | Reads From | Replaces |
-|-----------------|-----------|----------|
+| ----------------- | ----------- | ---------- |
 | **Orchestrator agent** | `.orqa/process/agents/orchestrator.md` | `.claude/CLAUDE.md` symlink |
 | **Agent definitions** | `.orqa/process/agents/*.md` | `.claude/agents/` symlink |
 | **Skills** | `.orqa/process/skills/*/SKILL.md` | `.claude/skills/` symlink |
@@ -197,15 +204,23 @@ The plugin doesn't just enforce rules — it becomes the single bridge between
 **How it works:**
 
 - **SessionStart hook** — reads `.orqa/process/agents/orchestrator.md` and injects
+
   it as system context. This is what `.claude/CLAUDE.md` currently does via symlink.
+
 - **Plugin agents directory** — exposes `.orqa/process/agents/` as the plugin's agents
+
   folder. Claude Code discovers them automatically.
+
 - **Plugin skills directory** — exposes `.orqa/process/skills/` as the plugin's skills
+
   folder. Skills become available via `/skill-name` in Claude Code.
+
 - **Plugin hooks** — replace shell scripts with structured hook definitions that
+
   read and enforce rules from `.orqa/process/rules/`.
 
 **After migration, `.claude/` contains only:**
+
 - `settings.json` — enables the plugin, configures Claude Code preferences
 - `settings.local.json` — user-specific overrides (gitignored)
 
@@ -214,7 +229,7 @@ Everything else comes from `.orqa/` via the plugin. The symlinks are deleted.
 ### What Replaces What
 
 | Current | Replaced By |
-|---------|-------------|
+| --------- | ------------- |
 | `.claude/CLAUDE.md` → orchestrator.md | Plugin loads orchestrator directly |
 | `.claude/rules/` → `.orqa/process/rules/` | Plugin hooks enforce + load rules |
 | `.claude/agents/` → `.orqa/process/agents/` | Plugin exposes agents natively |
@@ -225,7 +240,7 @@ Everything else comes from `.orqa/` via the plugin. The symlinks are deleted.
 ### What Stays
 
 | Kept | Reason |
-|------|--------|
+| ------ | -------- |
 | `.githooks/pre-commit` | Git-level enforcement (schema validation, stub scanning) — independent of Claude |
 | `.orqa/process/rules/` | Source of truth — unchanged, just consumed by more systems |
 | Rule frontmatter (id, layer, scope) | Extended with `enforcement`, not replaced |

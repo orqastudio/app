@@ -1,7 +1,9 @@
 ---
 id: DOC-f0a1c9b5
 type: doc
+status: active
 title: Versioning System Guide
+domain: guides
 description: "How OrqaStudio's single-version ecosystem works — the VERSION file, sync process, and dev tag convention."
 category: how-to
 created: 2026-03-18
@@ -19,7 +21,7 @@ OrqaStudio uses a **single canonical version** for the entire ecosystem. Every r
 
 The `VERSION` file at the dev repo root is the single source of truth:
 
-```
+```text
 0.1.0-dev
 ```
 

@@ -3,7 +3,7 @@ id: "TASK-a449b5c8"
 type: "task"
 title: "Integrate enforcement with agent tool approval pipeline"
 description: "Wire the Rust enforcement engine into the agent execution pipeline for pre-tool-use checks."
-status: "surpassed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

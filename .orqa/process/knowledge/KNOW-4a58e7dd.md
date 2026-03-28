@@ -2,6 +2,7 @@
 id: KNOW-4a58e7dd
 type: knowledge
 title: Project Migration
+domain: integration/connector
 description: |
   Reads existing agentic tool configurations (Claude Code, Cursor, Copilot, Aider)
   and maps their rules, instructions, and settings into OrqaStudio's governance
@@ -28,7 +29,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 ### Claude Code
 
 | Source | Content | Maps To |
-|--------|---------|---------|
+| -------- | --------- | --------- |
 | `CLAUDE.md` | Project instructions | `.orqa/process/agents/orchestrator.md` + project rules |
 | `.claude/rules/*.md` | Rule files | `.orqa/process/rules/` (if not already core) |
 | `.claude/settings.json` | Hooks, permissions | `.orqa/process/hooks/` |
@@ -39,7 +40,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 ### Cursor
 
 | Source | Content | Maps To |
-|--------|---------|---------|
+| -------- | --------- | --------- |
 | `.cursorrules` | Project-wide instructions | `.orqa/process/rules/` (extracted as individual rules) |
 | `.cursor/rules/*.md` | Rule files | `.orqa/process/rules/` |
 
@@ -48,7 +49,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 ### GitHub Copilot
 
 | Source | Content | Maps To |
-|--------|---------|---------|
+| -------- | --------- | --------- |
 | `.github/copilot-instructions.md` | Instructions | `.orqa/process/rules/` (extracted as individual rules) |
 
 **Coexistence strategy:** OrqaStudio can generate `copilot-instructions.md` from its governance rules.
@@ -56,7 +57,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 ### Aider
 
 | Source | Content | Maps To |
-|--------|---------|---------|
+| -------- | --------- | --------- |
 | `.aider.conf.yml` | Configuration | Project settings in `project.json` |
 | `.aider.model.settings.yml` | Model config | Model settings in `project.json` |
 | `CONVENTIONS.md` | Conventions | `.orqa/process/rules/` (extracted as individual rules) |
@@ -83,7 +84,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 
 Many tools use a single large instruction file. Break it into individual rules:
 
-```
+```text
 CLAUDE.md contains:
   "Always use TypeScript strict mode"     → rule: typescript-strict.md
   "Never use console.log in production"   → rule: no-console-log.md

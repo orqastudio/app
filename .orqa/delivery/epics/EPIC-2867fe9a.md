@@ -3,7 +3,7 @@ id: "EPIC-2867fe9a"
 type: "epic"
 title: "Dev environment migration and schema-driven enforcement"
 description: "Consolidate all OrqaStudio repos into a submodule-based dev environment, migrate project-level artifacts there, and make all integrity enforcement schema-driven rather than hardcoded.\n"
-status: "active"
+status: active
 priority: "P1"
 scoring:
   impact: 5
@@ -17,6 +17,7 @@ relationships:
   - target: "MS-21d5096a"
     type: "fulfils"
 ---
+
 ## Objective
 
 Consolidate the OrqaStudio development workflow into a single `orqastudio-dev` repo that uses git submodules for all sub-repositories, with npm link wiring local code instances. Move all project-level governance artifacts into the dev environment. Make ALL integrity enforcement schema-driven — no hardcoded artifact types or relationships anywhere in the codebase.
@@ -24,6 +25,7 @@ Consolidate the OrqaStudio development workflow into a single `orqastudio-dev` r
 ## Background
 
 OrqaStudio currently has 6 repos developed independently:
+
 - `orqastudio-app` — Tauri desktop app (Rust + Svelte)
 - `orqastudio-types` — TypeScript type definitions
 - `orqastudio-sdk` — Svelte 5 SDK (stores, graph SDK)
@@ -38,7 +40,8 @@ Artifact types and relationships are currently hardcoded as string constants acr
 **Repo:** `git@github.com:orqastudio/orqastudio-dev.git`
 
 ### Structure
-```
+
+```text
 orqastudio-dev/
 ├── .orqa/                    # Org-level governance artifacts
 │   ├── project.json          # organisation: true, lists child projects
@@ -61,6 +64,7 @@ orqastudio-dev/
 ```
 
 ### Tasks
+
 - [x] Clone dev repo, add all submodules
 - [ ] Install deps and npm link all libs → app
 - [ ] Create `scripts/link-all.sh` for reproducible setup
@@ -71,19 +75,22 @@ orqastudio-dev/
 
 Move project-level `.orqa/` artifacts from `orqastudio-app` to `orqastudio-dev`.
 
-### What moves:
+### What moves
+
 - `principles/` — pillars, vision, personas, grounding
 - `discovery/` — ideas, research, wireframes
 - `delivery/` — milestones, epics, tasks
 - `process/` — decisions, rules, lessons, skills, agents
 - `documentation/` — project-level docs
 
-### What stays in app:
+### What stays in app
+
 - `project.json` — app-specific config (artifact types, statuses, delivery hierarchy)
 - `documentation/platform/` — platform documentation that ships with the app
 - App-specific `.claude/` config
 
 ### Tasks
+
 - [ ] Copy `.orqa/` tree to dev environment
 - [ ] Update `project.json` in dev environment with org config
 - [ ] Strip project artifacts from app repo (keep platform config only)
@@ -99,6 +106,7 @@ Move project-level `.orqa/` artifacts from `orqastudio-app` to `orqastudio-dev`.
 Replace `PLATFORM_RELATIONSHIPS` and `PLATFORM_ARTIFACT_TYPES` TypeScript constants with a shipped JSON config file loaded at runtime.
 
 **File:** `orqa-types/platform/core.json` (or similar)
+
 ```json
 {
   "artifactTypes": [...],
@@ -117,11 +125,13 @@ Replace `PLATFORM_RELATIONSHIPS` and `PLATFORM_ARTIFACT_TYPES` TypeScript consta
 ### 3b: Merged Runtime Registry
 
 At runtime, three layers merge:
+
 1. **Platform defaults** — core.json shipped with the app
 2. **Project config** — `project.json` relationships and delivery types
 3. **Plugin provides** — each plugin's `provides.relationships` and `provides.schemas`
 
 Both Rust and TS build:
+
 - `TypeRegistry` — all known artifact types with their paths, labels, icons
 - `RelationshipRegistry` — all known relationship pairs with inverses and type constraints
 - `InverseMap` — derived from RelationshipRegistry
@@ -129,11 +139,13 @@ Both Rust and TS build:
 ### 3c: Check Logic Driven by Schema
 
 Integrity checks query the registry instead of hardcoding strings:
+
 - "Does this surpassed idea have a relationship whose type has lineage semantics?" (not `if rel === "evolves-into"`)
 - "Does this delivery node have the parent relationship declared in the delivery config?" (already works this way in Rust)
 - Inverse validation uses the merged InverseMap, not a constant
 
 ### Tasks
+
 - [ ] Create `platform/core.json` in orqa-types with canonical types and relationships
 - [ ] Replace `INVERSE_MAP` constant with `buildInverseMap()` function
 - [ ] Remove `PLATFORM_RELATIONSHIPS` constant, load from JSON

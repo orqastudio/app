@@ -1,7 +1,9 @@
 ---
 id: KNOW-1a4f41f7
 type: knowledge
-name: Dependency License Compatibility
+title: Dependency License Compatibility
+domain: standards/licensing
+description: "Reference for checking license compatibility before adding npm packages or Rust crates to OrqaStudio repositories under BSL-1.1."
 status: active
 category: domain
 user-invocable: true
@@ -31,7 +33,7 @@ Before adding any dependency (npm package, Rust crate, or vendored code), verify
 ## Quick Decision
 
 | Dependency license | Action |
-|-------------------|--------|
+| ------------------- | -------- |
 | MIT, Apache-2.0, BSD, ISC, 0BSD, Unlicense | Safe. Proceed. |
 | MPL-2.0 | OK if importing, not if modifying source files. |
 | LGPL-2.1/3.0 | OK as a linked dependency, not if copying source. |

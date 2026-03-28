@@ -3,7 +3,7 @@ id: "TASK-1da659da"
 type: "task"
 title: "Create grounding documents for all agent roles"
 description: "Create 5 concise grounding documents distilled from restructured documentation. Each answers: why this role exists, what good looks like, what goes wrong under pressure. Designed for agent injection, not human browsing."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -34,6 +34,7 @@ relationships:
 Create `.orqa/documentation/grounding/` directory with 5 role-area documents.
 
 Each document answers three questions:
+
 1. **Why does this role exist?** — Connection to mission and pillars
 2. **What does "good" look like?** — The principles that define quality for this role
 3. **What goes wrong under pressure?** — Specific failure modes and how to recognize them
@@ -41,7 +42,7 @@ Each document answers three questions:
 ### Documents
 
 | File | Grounds | Distilled From |
-|------|---------|---------------|
+| ------ | --------- | --------------- |
 | product-purpose.md | Orchestrator, Planner, Writer | VISION-4893db55 (vision), DOC-06224bf6 (governance), pillars |
 | code-principles.md | Implementer, Reviewer | DOC-9814ec3c (coding-standards), architecture decisions |
 | artifact-principles.md | Orchestrator, Writer, Researcher, Governance Steward | DOC-28344cd7 (artifact-framework), DOC-06224bf6 (governance) |

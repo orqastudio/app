@@ -3,7 +3,7 @@ id: "TASK-fffd1121"
 type: "task"
 title: "Verify three-tier skill loading"
 description: "Dry-runs backend, frontend, and governance delegation scenarios to confirm that all three skill tiers load correctly and that no agent definition still carries project-specific skills directly."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-8e58cd87"
@@ -26,15 +26,18 @@ scenarios and confirming the right skills are loaded in each case.
 ## Test Scenarios
 
 1. **Backend task** (scope: `backend/src-tauri/src/commands/`) — Expect: agent loads `code-search` +
+
    `rust-async-patterns` (Tier 1), orchestrator injects `orqa-ipc-patterns` +
    `orqa-error-composition` + `composability` (Tier 2), `code-search` resolves to
    `chunkhound` in CLI (Tier 3)
 
 2. **Frontend task** (scope: `ui/src/lib/stores/`) — Expect: `code-search` +
+
    `svelte5-best-practices` (Tier 1), `orqa-store-patterns` + `orqa-store-orchestration` +
    `composability` (Tier 2)
 
 3. **Governance task** (scope: `.orqa/`) — Expect: `code-search` + `planning` (Tier 1),
+
    `orqa-governance` + `composability` (Tier 2)
 
 ## How

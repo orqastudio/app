@@ -2,7 +2,7 @@
 id: "EPIC-8b01ee51"
 type: "epic"
 name: "Plugin Framework: Universal Capability Model"
-status: "active"
+status: active
 description: "Implement the universal plugin capability model (AD-9ab3e0a4) — three-way diff tracking, extends strategy for config plugins, universal capabilities replacing connector-specific wiring, integration lifecycle, and template schema tracking."
 priority: "P1"
 relationships:
@@ -81,7 +81,7 @@ Ensure plugin templates stay in sync with schema changes.
 ## Tasks
 
 | Task | Phase | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | Design manifest schema extensions for capabilities | 1-3 | todo |
 | Implement three-way diff hash tracking in manifest.json | 1 | todo |
 | Update `orqa plugin diff` to use three-way comparison | 1 | todo |

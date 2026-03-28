@@ -2,6 +2,7 @@
 id: DOC-3d8ed14e
 type: doc
 title: Core Application Architecture
+domain: architecture
 category: architecture
 description: End-to-end architecture map of OrqaStudio — every system traced from entry point to persistence/display.
 sort: 2
@@ -13,9 +14,9 @@ This document maps the entire OrqaStudio core application end-to-end. It covers 
 
 ## Technology Stack
 
-- **Backend**: Rust (Tauri v2) — `backend/src-tauri/src/`
+- **Backend**: Rust (Tauri v2) — `app/src-tauri/src/`
 - **Frontend**: Svelte 5 + TypeScript — `ui/src/lib/`
-- **Sidecar**: Bun/Node TypeScript — `plugins/claude-integration/sidecar/src/`
+- **Sidecar**: Bun/Node TypeScript — `plugins/claude-integration/app/src-tauri/src/sidecar/`
 - **Database**: SQLite (rusqlite) — conversation persistence
 - **File System**: `.orqa/` directory tree — governance artifacts
 - **IPC**: Tauri `invoke()` — the ONLY frontend-backend interface
@@ -61,17 +62,17 @@ graph TD
 
 ## AppState Decomposition
 
-The `AppState` struct (`backend/src-tauri/src/state.rs`) is decomposed into 7 sub-structs, each owning a domain:
+The `AppState` struct (`app/src-tauri/src/state.rs`) is decomposed into 7 sub-structs, each owning a domain:
 
 | Sub-struct | Contents | Purpose |
-|-----------|----------|---------|
-| `DbState` | `Mutex<Connection>` | SQLite connection (sessions, messages, settings) |
+| ----------- | ---------- | --------- |
+| `DbState` | `Mutex\<Connection\>` | SQLite connection (sessions, messages, settings) |
 | `SidecarState` | `SidecarManager` + `pending_approvals: DashMap` | Sidecar process lifecycle + tool approval channels |
-| `SearchState` | `Mutex<Option<SearchEngine>>` | ONNX+DuckDB code search (lazy init) |
-| `StartupState` | `Arc<StartupTracker>` | Async startup task tracking |
-| `EnforcementState` | `Mutex<Option<EnforcementEngine>>` | Compiled enforcement rules |
-| `SessionState` | `process_state: Mutex<SessionProcessState>` + `workflow_tracker: Mutex<WorkflowTracker>` | Per-session process compliance tracking |
-| `ArtifactState` | `watcher` + `graph: Mutex<Option<ArtifactGraph>>` + `skill_injector: Mutex<Option<SkillInjector>>` | File watcher + artifact graph + semantic skill matching |
+| `SearchState` | `Mutex<Option\<SearchEngine\>>` | ONNX+DuckDB code search (lazy init) |
+| `StartupState` | `Arc\<StartupTracker\>` | Async startup task tracking |
+| `EnforcementState` | `Mutex<Option\<EnforcementEngine\>>` | Compiled enforcement rules |
+| `SessionState` | `process_state: Mutex\<SessionProcessState\>` + `workflow_tracker: Mutex\<WorkflowTracker\>` | Per-session process compliance tracking |
+| `ArtifactState` | `watcher` + `graph: Mutex<Option\<ArtifactGraph\>>` + `skill_injector: Mutex<Option\<SkillInjector\>>` | File watcher + artifact graph + semantic skill matching |
 
 ---
 
@@ -84,9 +85,9 @@ The artifact system scans `.orqa/` directories, builds a bidirectional graph of 
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Frontend | `artifactStore.loadNavTree()` | `ui/src/lib/stores/artifact.svelte.ts` |
-| Backend | `#[tauri::command] artifact_scan_tree` | `backend/src-tauri/src/commands/artifact_commands.rs` |
+| Backend | `#[tauri::command] artifact_scan_tree` | `app/src-tauri/src/commands/artifact_commands.rs` |
 
 ### Processing Pipeline
 
@@ -111,7 +112,7 @@ The artifact system scans `.orqa/` directories, builds a bidirectional graph of 
 
 - **No persistence** — the nav tree and graph are computed on demand from the file system
 - File system (`.orqa/`) IS the persistence layer for all governance artifacts
-- Graph is cached in `AppState.artifacts.graph: Mutex<Option<ArtifactGraph>>`
+- Graph is cached in `AppState.artifacts.graph: Mutex<Option\<ArtifactGraph\>>`
 
 ### Display
 
@@ -123,7 +124,7 @@ The artifact system scans `.orqa/` directories, builds a bidirectional graph of 
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `NavTree` / `NavGroup` / `NavType` / `DocNode` | `domain/artifact.rs` | Navigation hierarchy |
 | `ArtifactGraph` / `ArtifactNode` / `ArtifactRef` | `domain/artifact_graph.rs` | Bidirectional reference graph |
 | `ArtifactEntry` (config) | `domain/artifact.rs` | Config-driven directory entries |
@@ -140,10 +141,10 @@ The streaming pipeline carries messages from the LLM provider through the sideca
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Frontend | `conversationStore.sendMessage()` | `ui/src/lib/stores/conversation.svelte.ts` |
-| Backend | `#[tauri::command] stream_send_message` | `backend/src-tauri/src/commands/stream_commands.rs` |
-| Sidecar | `handleRequest()` on stdin readline | `plugins/claude-integration/sidecar/src/index.ts` |
+| Backend | `#[tauri::command] stream_send_message` | `app/src-tauri/src/commands/stream_commands.rs` |
+| Sidecar | `handleRequest()` on stdin readline | `plugins/claude-integration/app/src-tauri/src/sidecar/index.ts` |
 
 ### Processing Pipeline
 
@@ -151,16 +152,19 @@ The streaming pipeline carries messages from the LLM provider through the sideca
 
 1. **Frontend**: `conversationStore.sendMessage(content)` calls `invoke("stream_send_message", { sessionId, content, onEvent: channel })`
 2. **Rust command** (`stream_commands.rs`):
+
    a. Persist user message to SQLite via `message_repo::create`
    b. Reset session process state (`SessionProcessState` + `WorkflowTracker`)
    c. Ensure sidecar is running (`ensure_sidecar`)
    d. Build system prompt from governance artifacts (`build_system_prompt`)
    e. Load context messages (up to 20 recent text messages)
-   f. Emit `SystemPromptSent` event via `Channel<T>`
+   f. Emit `SystemPromptSent` event via `Channel\<T\>`
    g. Emit `ContextInjected` event with message count + total chars
    h. Send `SendMessage` request to sidecar via NDJSON stdin
    i. Enter `run_stream_loop()` — blocking read from sidecar stdout
+
 3. **Sidecar** (`index.ts` → `claude-agent.ts`):
+
    a. Parse NDJSON request
    b. Call `query()` from `@anthropic-ai/claude-agent-sdk` which spawns the Claude Code CLI
    c. Pass system prompt, model, abort controller, resume session ID
@@ -170,13 +174,15 @@ The streaming pipeline carries messages from the LLM provider through the sideca
 
 1. **Sidecar** writes NDJSON responses to stdout
 2. **Rust stream loop** (`stream_loop.rs`):
+
    a. `read_line()` from sidecar stdout
    b. `translate_response()`: `SidecarResponse` → `StreamEvent` (skips HealthOk, SummaryResult, SessionInitialized, ToolExecute)
-   c. Emit `StreamEvent` via `Channel<T>` to frontend
+   c. Emit `StreamEvent` via `Channel\<T\>` to frontend
    d. Special handling for `ToolExecute` → `handle_tool_execute()` → dispatch to `tool_executor.rs`
    e. Special handling for `ToolApprovalRequest` → `handle_tool_approval()` → auto-approve read-only tools, block on `sync_channel` for write tools
    f. At `TurnComplete`: run `evaluate_stop_gates()` → emit `ProcessViolation` events
    g. Persist assistant message, update token usage
+
 3. **Frontend** (`conversation.svelte.ts`):
    - `handleStreamEvent()` switch on `StreamEvent.type`:
      - `text_delta` → append to `streamingContent`
@@ -236,9 +242,9 @@ graph TD
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `SidecarRequest` / `SidecarResponse` | `sidecar/types.rs` + `protocol.ts` | Wire protocol (mirrored Rust↔TS) |
-| `StreamEvent` | `domain/provider_event.rs` | Rust→Frontend events via Channel<T> |
+| `StreamEvent` | `domain/provider_event.rs` | Rust→Frontend events via Channel\<T\> |
 | `SidecarManager` | `sidecar/manager.rs` | Child process lifecycle (spawn/send/read/kill) |
 
 ---
@@ -254,7 +260,7 @@ The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Loading | `enforcement_parser::parse_rule_content()` | `domain/enforcement_parser.rs` |
 | Runtime (file) | `enforcement_engine.evaluate_file()` | `domain/enforcement_engine.rs` |
 | Runtime (bash) | `enforcement_engine.evaluate_bash()` | `domain/enforcement_engine.rs` |
@@ -272,13 +278,13 @@ The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their
 
 2. **Engine compilation** (`enforcement_engine.rs`):
    - `EnforcementEngine::new(rules)` compiles all condition patterns into `Regex` objects
-   - Stores compiled entries as `Vec<CompiledEntry>` with pre-compiled regex for fast matching
+   - Stores compiled entries as `Vec\<CompiledEntry\>` with pre-compiled regex for fast matching
    - Lint entries are stored but skipped during evaluation (declarative documentation only)
 
 3. **Runtime evaluation**:
    - **`evaluate_file(file_path, new_text)`**: For each File-event entry, check all conditions (AND logic — all must match). Conditions match against `file_path` or `new_text` fields.
    - **`evaluate_bash(command)`**: For each Bash-event entry, check the `pattern` against the command string.
-   - Returns `Vec<Verdict>` with `rule_name`, `action` (Block/Warn/Inject), `message`, and optional `skills[]`
+   - Returns `Vec\<Verdict\>` with `rule_name`, `action` (Block/Warn/Inject), `message`, and optional `skills[]`
 
 4. **Tool executor integration** (`tool_executor.rs`):
    - `enforce_file()` runs before `write_file` and `edit_file` tools
@@ -290,14 +296,14 @@ The enforcement pipeline loads rules from `.orqa/process/rules/`, compiles their
 5. **Governance scanning** (`enforcement_engine.scan(project_path)`):
    - Evaluates Scan-event entries across project files
    - Uses `scope` field as glob pattern to select files
-   - Returns `Vec<ScanFinding>` with file path, line number, matched pattern
+   - Returns `Vec\<ScanFinding\>` with file path, line number, matched pattern
 
 ### Process Gates (Separate from Enforcement Engine)
 
 Process gates (`process_gates.rs`) fire at tool execution time and turn completion. They use `WorkflowTracker` state, not enforcement rules:
 
 | Gate | Event | Condition | Message |
-|------|-------|-----------|---------|
+| ------ | ------- | ----------- | --------- |
 | `understand-first` | write (code file) | No research done, fires once per session | "THINK FIRST: What is the system..." |
 | `docs-before-code` | write (code file) | No docs read this session | "DOCUMENTATION CHECK..." |
 | `plan-before-build` | write (code file) | No planning artifacts read | "PLANNING CHECK..." |
@@ -307,7 +313,7 @@ Process gates (`process_gates.rs`) fire at tool execution time and turn completi
 ### Persistence
 
 - Enforcement rules are loaded from disk (`.orqa/process/rules/*.md`)
-- Compiled engine cached in `AppState.enforcement: Mutex<Option<EnforcementEngine>>`
+- Compiled engine cached in `AppState.enforcement: Mutex<Option\<EnforcementEngine\>>`
 - WorkflowTracker is ephemeral (per-session, lost on restart)
 
 ### Display
@@ -319,7 +325,7 @@ Process gates (`process_gates.rs`) fire at tool execution time and turn completi
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `EnforcementRule` / `EnforcementEntry` / `Condition` | `domain/enforcement.rs` | Rule domain model |
 | `EventType` (File/Bash/Scan/Lint) | `domain/enforcement.rs` | Event classification |
 | `RuleAction` (Block/Warn/Inject) | `domain/enforcement.rs` | Action classification |
@@ -338,17 +344,19 @@ The prompt generation system has two layers: the **legacy Rust path** (system_pr
 
 ### Architecture: Five-Stage Pipeline
 
-```
+```text
 Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting --> Prompt Output
 ```
 
 **Stage 1 -- Plugin Registry** (`prompt-registry.ts`):
+
 - Scans installed plugins for `knowledge_declarations` and `prompt_sections` in `orqa-plugin.json` manifests
 - Builds a cached registry at `orqa plugin install` time, written to `.orqa/prompt-registry.json`
 - Runtime reads only the cached registry, never raw plugin manifests
 - Classifies each entry by source: `project-rules` > `project-knowledge` > `plugin` > `core`
 
 **Stage 2 -- Schema Assembly** (`prompt-pipeline.ts::assembleSchema`):
+
 - For a (role, workflow-stage, task) tuple, queries the registry for applicable sections
 - Knowledge entries filtered by injection tier:
   - **always** tier: matched by role and/or file path globs
@@ -358,18 +366,21 @@ Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting -
 - Task context added as a dynamic section with P1 priority
 
 **Stage 3 -- Section Resolution** (`prompt-pipeline.ts::resolveSections`):
+
 - Loads content from disk for file-backed sections
 - Falls back to inline summaries (100-150 tokens) when files are unavailable
 - Follows cross-references at depth 1 via `{{ref:ARTIFACT-ID}}` pattern
 - Detects and breaks circular references
 
 **Stage 4 -- Token Budgeting** (`prompt-pipeline.ts::applyTokenBudget`):
+
 - Default budgets per role: Orchestrator 2,500 / Implementer 2,800 / Reviewer 1,900 / Writer 1,800
 - Trim order: P3 sections first, then P2, then P1. **P0 sections are never trimmed.**
 - Within same priority, largest sections trimmed first
 - Returns both included and trimmed section lists for diagnostics
 
 **Stage 5 -- Prompt Output** (`prompt-pipeline.ts::assemblePrompt`):
+
 - KV-cache-aware zone ordering: static core at top, dynamic content at bottom
 - Zone order: role-definition > safety-rule > constraint > stage-instruction > knowledge > task-template > task-context
 - Uses Claude XML tags for structure (`<role>`, `<knowledge id="...">`, `<task-context>`)
@@ -378,7 +389,7 @@ Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting -
 ### Knowledge Injection Tiers
 
 | Tier | When Loaded | Token Budget | Source |
-|------|-------------|-------------|--------|
+| ------ | ------------- | ------------- | -------- |
 | **always** | At agent spawn for matching roles/paths | 200-500 tokens (compressed summary) | Plugin `knowledge_declarations` with `tier: "always"` |
 | **stage-triggered** | When workflow enters a matching stage | 500-1,000 tokens | Plugin `knowledge_declarations` with `tier: "stage-triggered"` |
 | **on-demand** | Agent queries semantic search at runtime | 1,000-2,000 tokens (full artifact) | `knowledge-retrieval.ts` or MCP search tools |
@@ -404,7 +415,7 @@ This path will be replaced by the plugin-composed pipeline once the daemon integ
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Plugin-composed pipeline | `generatePrompt(options)` | `libs/cli/src/lib/prompt-pipeline.ts` |
 | Plugin-composed registry | `buildPromptRegistry(projectRoot)` | `libs/cli/src/lib/prompt-registry.ts` |
 | Plugin-composed knowledge | `retrieveKnowledge(projectPath, options)` | `libs/cli/src/lib/knowledge-retrieval.ts` |
@@ -414,7 +425,7 @@ This path will be replaced by the plugin-composed pipeline once the daemon integ
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `PromptRegistry` / `RegistryKnowledgeEntry` | `libs/cli/src/lib/prompt-registry.ts` | Cached plugin prompt contributions |
 | `PromptResult` / `ResolvedSection` | `libs/cli/src/lib/prompt-pipeline.ts` | Pipeline output with diagnostics |
 | `KnowledgeDeclaration` / `PromptSection` | `libs/types/src/plugin.ts` | Plugin manifest schema types |
@@ -433,10 +444,10 @@ The learning loop captures implementation lessons as markdown files, tracks recu
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Frontend | `lessonStore.loadLessons()` | `ui/src/lib/stores/lessons.svelte.ts` |
-| Backend | `#[tauri::command] lessons_list` | `backend/src-tauri/src/commands/lesson_commands.rs` |
-| Repo | `lesson_repo::list()` | `backend/src-tauri/src/repo/lesson_repo.rs` |
+| Backend | `#[tauri::command] lessons_list` | `app/src-tauri/src/commands/lesson_commands.rs` |
+| Repo | `lesson_repo::list()` | `app/src-tauri/src/repo/lesson_repo.rs` |
 
 ### Processing Pipeline
 
@@ -477,7 +488,7 @@ The learning loop captures implementation lessons as markdown files, tracks recu
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `Lesson` | `domain/lessons.rs` | Lesson domain model |
 | `NewLesson` | `domain/lessons.rs` | Input for creation |
 
@@ -490,8 +501,8 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `conversationStore` (conversation.svelte.ts)
 
 | Store Method | Tauri Command | Direction |
-|-------------|---------------|-----------|
-| `sendMessage()` | `stream_send_message` | invoke + Channel<T> streaming |
+| ------------- | --------------- | ----------- |
+| `sendMessage()` | `stream_send_message` | invoke + Channel\<T\> streaming |
 | `stopStreaming()` | `stream_stop` | invoke |
 | `respondToApproval()` | `stream_tool_approval_respond` | invoke |
 | `loadMessages()` | `message_list` | invoke |
@@ -499,7 +510,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `sessionStore` (session.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadSessions()` | `session_list` |
 | `createSession()` | `session_create` |
 | `selectSession()` | `session_get` |
@@ -513,7 +524,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `projectStore` (project.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadActiveProject()` | `project_get_active` |
 | `openProject()` | `project_open` |
 | `loadProjects()` | `project_list` |
@@ -527,21 +538,21 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `artifactStore` (artifact.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadNavTree()` | `artifact_scan_tree` |
 | Content loading | Delegated to `artifactGraphSDK` |
 
 ### `enforcementStore` (enforcement.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadRules()` | `enforcement_rules_list` |
 | `reloadRules()` | `enforcement_rules_reload` + `enforcement_rules_list` |
 
 ### `lessonStore` (lessons.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadLessons()` | `lessons_list` |
 | `createLesson()` | `lessons_create` |
 | `incrementRecurrence()` | `lesson_increment_recurrence` |
@@ -549,7 +560,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `settingsStore` (settings.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `loadAllSettings()` | `settings_get_all` |
 | `setThemeMode()` | `settings_set` |
 | `setDefaultModel()` | `settings_set` |
@@ -560,7 +571,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `setupStore` (setup.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `checkSetupStatus()` | `get_setup_status` |
 | `checkCli()` | `check_claude_cli` |
 | `checkAuth()` | `check_claude_auth` |
@@ -571,7 +582,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### `governanceStore` (governance.svelte.ts)
 
 | Store Method | Tauri Command |
-|-------------|---------------|
+| ------------- | --------------- |
 | `scan()` | `governance_scan` |
 | `checkExistingAnalysis()` | `governance_analysis_get` |
 | `analyze()` | `governance_analyze` |
@@ -650,7 +661,7 @@ Every frontend store communicates with the Rust backend exclusively through `inv
 ### SQLite Schema (Session-Related)
 
 | Table | Key Columns |
-|-------|------------|
+| ------- | ------------ |
 | `projects` | id, name, path, stack_json, created_at |
 | `sessions` | id, project_id (FK), title, model, system_prompt, status, total_input_tokens, total_output_tokens, provider_session_id, title_manually_set |
 | `messages` | id, session_id (FK), role, content, content_type, turn_index, block_index, tool_call_id |
@@ -669,7 +680,7 @@ On app launch (`lib.rs`):
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `Session` / `SessionSummary` / `SessionStatus` | `domain/session.rs` | Session domain model |
 | `Project` / `ProjectSummary` / `DetectedStack` | `domain/project.rs` | Project domain model |
 | `ProjectSettings` | `domain/project_settings.rs` | File-based project config |
@@ -695,7 +706,7 @@ The workflow engine evaluates plugin-owned YAML state machines for artifact type
 The core framework defines five state categories; plugins map their states to categories:
 
 | Category | Purpose | UI Treatment |
-|----------|---------|-------------|
+| ---------- | --------- | ------------- |
 | `planning` | Work being designed/scoped | Blue indicators |
 | `active` | Work in progress | Green indicators |
 | `review` | Work being reviewed | Amber indicators |
@@ -705,7 +716,7 @@ The core framework defines five state categories; plugins map their states to ca
 ### Guard Primitives
 
 | Guard Type | Purpose | Parameters |
-|-----------|---------|-----------|
+| ----------- | --------- | ----------- |
 | `field_check` | Check artifact field values | `field`, `operator` (exists/equals/matches/in/etc.), `value` |
 | `relationship_check` | Check relationship existence or target status | `relationship_type`, `condition` (exists/min_count/all_targets_in_status) |
 | `query` | Run a graph query | `query_name`, `expected_result` (empty/non_empty/count_equals/etc.) |
@@ -715,7 +726,7 @@ The core framework defines five state categories; plugins map their states to ca
 ### Action Primitives
 
 | Action Type | Purpose | Parameters |
-|------------|---------|-----------|
+| ------------ | --------- | ----------- |
 | `set_field` | Update artifact fields | `field`, `value` |
 | `append_log` | Add to audit trail | `message`, optional `log_field` |
 | `create_artifact` | Create a related artifact | `artifact_type`, optional `template`/`relationship` |
@@ -739,7 +750,7 @@ Five gate patterns: simple_approval, structured_review, multi_reviewer, escalati
 Ad-hoc workflow patterns for scenarios that skip full pipeline stages:
 
 | Variant | Scenario | Difference |
-|---------|----------|-----------|
+| --------- | ---------- | ----------- |
 | `task-quickfix` | Bug fix, UX tweak | Skip planning, automated review only |
 | `task-security` | Security fix | Skip planning, mandatory human review |
 | `task-docs-only` | Documentation fix | Skip review entirely |
@@ -750,7 +761,7 @@ Workflow selection rules in plugin manifests automatically assign variants based
 ### Entry Points
 
 | Layer | Entry Point | File |
-|-------|------------|------|
+| ------- | ------------ | ------ |
 | Workflow Resolver | `resolveAll(projectRoot)` | `libs/cli/src/lib/workflow-resolver.ts` |
 | Type Definitions | `WorkflowDefinition` | `libs/types/src/workflow.ts` |
 | Plugin Schema | `provides.workflow_definitions` | `orqa-plugin.json` manifests |
@@ -758,7 +769,7 @@ Workflow selection rules in plugin manifests automatically assign variants based
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `WorkflowDefinition` | `libs/types/src/workflow.ts` | Complete state machine for an artifact type |
 | `WorkflowState` / `Transition` | `libs/types/src/workflow.ts` | State and transition definitions |
 | `Guard` / `GuardType` | `libs/types/src/workflow.ts` | Declarative guard system |
@@ -786,7 +797,7 @@ The agent lifecycle system implements ephemeral, task-scoped agents spawned from
 ### Model Tiering
 
 | Role | Default Tier | Upgrade Condition |
-|------|-------------|-------------------|
+| ------ | ------------- | ------------------- |
 | Orchestrator | Opus | N/A |
 | Planner | Opus | N/A |
 | Implementer | Sonnet | Complex tasks --> Opus |
@@ -801,7 +812,7 @@ The agent lifecycle system implements ephemeral, task-scoped agents spawned from
 Four-level metrics capture, all written to `.state/token-metrics.jsonl`:
 
 | Level | Scope | Metrics |
-|-------|-------|---------|
+| ------- | ------- | --------- |
 | 1 | Per-Request | input/output tokens, cache hit rate, reasoning tokens, latency, model |
 | 2 | Per-Agent | total tokens, context utilization, request count, lifetime |
 | 3 | Per-Session | total tokens, cost, agent spawns, overhead ratio, team spawn cost |
@@ -810,7 +821,7 @@ Four-level metrics capture, all written to `.state/token-metrics.jsonl`:
 ### Budget Enforcement (`budget-enforcer.ts`)
 
 | Budget | Default | Enforcement |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | Per-agent prompt tokens | 4,000 | Hard block if exceeded |
 | Per-agent total tokens | 100,000 | Hard block, with warnings at 75%/90% |
 | Per-session total tokens | 500,000 | Hard block, with model downgrade suggestions |
@@ -832,7 +843,7 @@ follow_ups: ["Item needing attention"]
 ### Key Types
 
 | Type | File | Purpose |
-|------|------|---------|
+| ------ | ------ | --------- |
 | `UniversalRole` / `ModelTier` | `libs/cli/src/lib/agent-spawner.ts` | Role and model tier enums |
 | `AgentSpawnConfig` / `CreateAgentParams` | `libs/cli/src/lib/agent-spawner.ts` | Agent configuration |
 | `ToolConstraint` / `ROLE_TOOL_CONSTRAINTS` | `libs/cli/src/lib/agent-spawner.ts` | Role-based tool permissions |
@@ -845,10 +856,10 @@ follow_ups: ["Item needing attention"]
 
 ## Module Map
 
-### Backend Rust Modules (`backend/src-tauri/src/`)
+### Backend Rust Modules (`app/src-tauri/src/`)
 
 | Module | Purpose |
-|--------|---------|
+| -------- | --------- |
 | `lib.rs` | App initialization, command registration (39 commands) |
 | `state.rs` | AppState with 7 sub-structs |
 | `error.rs` | `OrqaError` enum with `thiserror` |
@@ -904,7 +915,7 @@ follow_ups: ["Item needing attention"]
 ### Frontend Stores (`ui/src/lib/stores/`)
 
 | Store | Commands Used | State Managed |
-|-------|-------------|---------------|
+| ------- | ------------- | --------------- |
 | `conversation.svelte.ts` | 4 commands | messages, streaming state, tool calls, approvals |
 | `session.svelte.ts` | 7 commands | sessions list, active session |
 | `project.svelte.ts` | 9 commands | active project, settings, scanning |
@@ -917,10 +928,10 @@ follow_ups: ["Item needing attention"]
 | `navigation.svelte.ts` | 0 commands | UI navigation state (frontend-only) |
 | `errors.svelte.ts` | 0 commands | Error collection (event-driven) |
 
-### Sidecar (`plugins/claude-integration/sidecar/src/`)
+### Sidecar (`plugins/claude-integration/app/src-tauri/src/sidecar/`)
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `index.ts` | NDJSON readline loop, request dispatch |
 | `protocol.ts` | Type definitions + parse/serialize helpers |
 | `provider.ts` | Facade re-exporting default provider methods |

@@ -3,7 +3,7 @@ id: "TASK-ade0c669"
 type: "task"
 title: "Documentation inventory"
 description: "Audit documentation/: what docs NEED to exist vs what IS there. Identify stale content. Every remaining doc must be human-consumption content. Flag placeholder directories."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

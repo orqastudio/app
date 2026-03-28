@@ -2,7 +2,7 @@
 id: "TASK-d5d62fa5"
 type: "task"
 title: "Test orqa dev end-to-end"
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z
@@ -15,6 +15,7 @@ relationships:
   - target: "EPIC-7fd25812"
     type: "delivers"
 ---
+
 ## Done
 
 Tested 2026-03-24. All 6 processes running, all watchers active. Fixed: cargo tauri dev (not npx), log file for controller output, lock contention between watchers resolved.

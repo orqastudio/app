@@ -37,7 +37,7 @@ Additionally:
 The delivery hierarchy must be schema-defined so `libs/validation` can enforce it:
 
 | Relationship | From | To | Semantic | Required |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `delivers` | task | epic | delivery | yes (task must have ≥1) |
 | `delivered-by` | epic | task | delivery | — |
 | `fulfils` | epic | milestone | delivery | yes (epic must have ≥1) |
@@ -52,7 +52,7 @@ A new `delivery` semantic group is created to contain these relationships. This 
 A task or epic that implements a decision should be able to declare that fact directly, rather than requiring a chain traversal through the epic's `driven-by` edge:
 
 | Relationship | From | To | Semantic |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `implements` | task, epic | decision | governance |
 | `implemented-by` | decision | task, epic | governance |
 
@@ -65,11 +65,12 @@ Remove `observes` from `core.json` entirely. Agents do not statically observe de
 In its place, add `serves` to connect agents upward to the principles that define their purpose:
 
 | Relationship | From | To | Semantic | Required |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `serves` | agent | pillar, persona | foundation | yes (agent must have ≥1) |
 | `served-by` | pillar, persona | agent | foundation | — |
 
 With this change, the agent relationship set becomes:
+
 - `employs` → knowledge: what domain context an agent consumes (already in schema, required)
 - `serves` → pillar, persona: which foundational principles an agent is accountable to (new, required)
 
@@ -80,7 +81,7 @@ Agents connect UP to principles and OUT to knowledge. They do not connect down i
 Formalise minimum cardinality requirements in `core.json` constraints. These are enforced by `libs/validation` and by the PreToolUse hook (AD-062):
 
 | Artifact type | Required relationship | Minimum |
-|---|---|---|
+| --- | --- | --- |
 | task | `delivers` → epic | 1 |
 | epic | `fulfils` → milestone | 1 |
 | idea | `grounded` → pillar | 1 |
@@ -111,6 +112,7 @@ injection:
 ```
 
 Three trigger mechanisms, checked in order:
+
 1. **File context** — `file_patterns` and `paths` match against the file being edited (PreToolUse/PostToolUse). Deterministic, no latency.
 2. **Prompt keywords** — `keywords` match against the user's prompt (UserPromptSubmit). Fast keyword scan, fallback when semantic search unavailable.
 3. **Semantic search** — embed the prompt and search the knowledge corpus (UserPromptSubmit). Most accurate, requires the search engine.
@@ -123,13 +125,14 @@ This replaces the INTENT_MAP entirely — injection configuration is graph-nativ
 
 Every relationship type in `core.json` must serve this flow. Relationships that do not trace knowledge and cannot be read as a meaningful governance statement should not exist.
 
-```
+```text
 Vision ← Pillar ← Idea → Research → Decision → Epic → Task
               ↑                            ↓
           Agent → Knowledge            Rule → Lesson
 ```
 
 Reading the graph:
+
 - **Foundation layer**: Vision ← pillars (upholds). Pillars ← ideas (grounded). Ideas ← personas (benefits).
 - **Ideation layer**: Ideas → research (spawns). Ideas → decisions (crystallises). Research → decisions (informs).
 - **Governance layer**: Decisions → epics (drives). Decisions → rules (governs). Rules → decisions (enforces). Rules → lessons (codifies). Lessons → decisions (teaches). Lessons → epics (cautions).
@@ -143,21 +146,25 @@ Agents connect UP to principles and OUT to knowledge. They discover the delivery
 When an artifact with high graph connectivity is modified, the system should automatically assess downstream impact and alert the orchestrator.
 
 **PostToolUse hook on `.orqa/` writes:**
+
 1. Identify the modified artifact
 2. Query its impact radius via `graph_relationships` (2-3 hops downstream)
 3. If impact exceeds a threshold → inject a system message listing affected artifacts and prompting the orchestrator to investigate
 
 **Always-trigger types** (changes to these always have wide blast radius):
+
 - Vision, Pillar, Persona → foundational; everything grounds to them
 - Decision → affects all enforcing rules + all driven epics
 - Rule → affects all governed agents + all codified lessons
 
 **Threshold-trigger** (trigger when downstream count > N):
+
 - Any artifact where impact radius (depth 2) exceeds 20 affected artifacts
 - Milestone changes → all fulfilling epics + their tasks
 - Knowledge changes → all employing agents
 
 The system message provides:
+
 - Count of affected artifacts by type
 - List of directly connected artifacts (depth 1)
 - Summary of the change's scope relative to the pillar it traces to

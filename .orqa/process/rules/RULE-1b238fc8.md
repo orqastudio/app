@@ -4,15 +4,22 @@ type: rule
 title: Vision Alignment
 description: Every feature must serve at least one active pillar defined in .orqa/process/pillars/.
 status: active
+enforcement_type: advisory
 created: 2026-03-07
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every feature must serve at least one active pillar; orchestrator reads active pillars and evaluates gate questions before delegating any task; features failing pillar alignment are rejected"
 relationships:
+
   - target: AD-e711446e
+
     type: enforces
+
   - target: DOC-06224bf6
+
     type: documented-by
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.

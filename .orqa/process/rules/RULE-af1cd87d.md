@@ -4,16 +4,23 @@ type: rule
 title: Behavioral Rule Enforcement Plan
 description: "Defines enforcement strategies for rules that cannot be mechanically checked by linters, hooks, or tooling. Every behavioral rule has a defined enforcement mechanism: prompt injection, output validation, knowledge injection, or session hooks."
 status: active
+enforcement_type: mechanical
 created: 2026-03-13
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every behavioral rule maps to a defined enforcement strategy (prompt injection, output validation, knowledge injection, or session hooks); the orchestrator injects this rule as the authoritative reference"
+
   - mechanism: tool
+
     command: "orqa enforce"
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
 relationships:
+
   - target: AD-c6c2d9fb
+
     type: enforces
 ---
 Rules that cannot be enforced by linters, hooks, or automated tooling still need a defined enforcement mechanism. Every behavioral rule maps to one of four strategies, and each strategy has a concrete implementation path.
@@ -25,7 +32,7 @@ Rules that cannot be enforced by linters, hooks, or automated tooling still need
 Rule content is injected into the agent's context at delegation time. The orchestrator includes the rule's constraints in the delegation prompt, making them part of the agent's active instructions.
 
 | Rule | What is injected |
-|------|-----------------|
+| --- | --- |
 | [RULE-87ba1b81](RULE-87ba1b81) | Delegation boundaries — orchestrator coordinates, doesn't implement |
 | [RULE-0d29fc91](RULE-0d29fc91) | Search usage — prefer semantic search over Grep/Glob |
 | [RULE-d2c2063a](RULE-d2c2063a) | Make targets — use make commands, not raw cargo/npm |
@@ -42,7 +49,7 @@ Rule content is injected into the agent's context at delegation time. The orches
 Post-hoc checks on agent output for compliance signals. After an agent completes work, its output is checked for required sections and forbidden language.
 
 | Rule | What is validated |
-|------|------------------|
+| --- | --- |
 | [RULE-5dd9decd](RULE-5dd9decd) | Honest reporting — check for "What Is NOT Done" section in completion reports |
 | [RULE-c603e90e](RULE-c603e90e) | Lessons learned — check for IMPL entries mentioned in review output |
 | [RULE-8ee65d73](RULE-8ee65d73) | No deferred deliverables — check completion reports for deferral language ("handled by EPIC-NNN", "wired up later") |
@@ -55,7 +62,7 @@ Post-hoc checks on agent output for compliance signals. After an agent completes
 Domain knowledge is loaded into agent context before work begins on relevant files. The enforcement engine auto-injects knowledge based on file paths being modified.
 
 | Rule | When injected |
-|------|--------------|
+| --- | --- |
 | [RULE-05ae2ce7](RULE-05ae2ce7) | AD compliance — architecture knowledge injected when modifying cross-boundary code |
 | [RULE-ec9462d8](RULE-ec9462d8) | Documentation first — documentation knowledge injected when creating new features |
 | [RULE-4603207a](RULE-4603207a) | Enforcement before code — governance knowledge injected when modifying rules/lessons |
@@ -69,7 +76,7 @@ Domain knowledge is loaded into agent context before work begins on relevant fil
 Plugin hooks that trigger at session boundaries (start, end, stop) to enforce workflow rules.
 
 | Rule | When checked |
-|------|-------------|
+| --- | --- |
 | [RULE-f609242f](RULE-f609242f) | Git workflow — session-start checks for stashes and untracked files; session-end verifies all changes committed |
 | [RULE-30a223ca](RULE-30a223ca) | Session management — session-end checks for uncommitted changes and writes session state |
 
@@ -78,7 +85,7 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 ## Coverage Summary
 
 | Category | Rule Count | Strategy |
-|----------|-----------|----------|
+| --- | --- | --- |
 | Prompt injection | 8 rules | Delegation template + plugin injector |
 | Output validation | 4 rules | Stop hook + orchestrator self-check |
 | Knowledge injection | 5 rules | [RULE-e1f1afc1](RULE-e1f1afc1) enforcement entries + plugin PostToolUse |
@@ -88,6 +95,7 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 ## Verification
 
 To verify behavioral enforcement coverage:
+
 1. Run `orqa check validate` — the engine's validation crate reports rules without enforcement chains and agent capability compliance
 2. Cross-reference: every rule in this plan should produce no errors from `orqa check validate`
 

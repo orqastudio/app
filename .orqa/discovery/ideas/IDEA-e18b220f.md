@@ -3,7 +3,7 @@ id: "IDEA-e18b220f"
 type: discovery-idea
 title: "OrqaStudio package ecosystem for plugin portability"
 description: "Extract shared code into scoped npm packages hosted on GitHub Packages so that plugins can import types, validation, SDK, and UI components without depending on the full app."
-status: completed
+status: archived
 created: "2026-03-14"
 updated: "2026-03-14"
 horizon: "active"
@@ -21,6 +21,7 @@ relationships:
   - target: "PERSONA-477971bf"
     type: "benefits"
 ---
+
 ## Motivation
 
 OrqaStudio plugins need to import shared code — types, validation, the artifact graph SDK, and eventually UI components. Currently everything lives inside the monolith. Extracting into scoped packages enables:
@@ -34,7 +35,7 @@ OrqaStudio plugins need to import shared code — types, validation, the artifac
 ## Package Architecture
 
 | Package | Source | Status | Priority |
-|---------|--------|--------|----------|
+| --------- | -------- | -------- | ---------- |
 | `@orqastudio/types` | Extract from integrity-validator + sdk types | Not started | P1 — foundation for everything |
 | `@orqastudio/integrity-validator` | `orqastudio-integrity-validator` repo | Scaffolded, needs tests + lint | P1 — already created |
 | `@orqastudio/eslint-config` | Extract from orqa-studio eslint.config.js + tsconfig | Not started | P1 — needed before tests |
@@ -46,7 +47,7 @@ OrqaStudio plugins need to import shared code — types, validation, the artifac
 
 ### Dependency graph
 
-```
+```text
 @orqastudio/types
   ↑
 @orqastudio/integrity-validator
@@ -61,10 +62,12 @@ OrqaStudio plugins need to import shared code — types, validation, the artifac
 ### SDK extraction considerations
 
 The current SDK (`artifact-graph.svelte.ts`) is tightly coupled to:
+
 - Svelte 5 runes (`$state`, `$derived`)
 - Tauri `invoke()` calls
 
 For portability, the SDK needs two layers:
+
 1. **Core** (framework-agnostic): graph building, querying, traversal — pure TypeScript
 2. **Svelte adapter**: reactive wrapper using runes, calls invoke()
 
@@ -73,6 +76,7 @@ Plugins in the app context use the Svelte adapter. Plugins in CLI/Node context u
 ### Component library considerations
 
 Shared components (`EmptyState`, `LoadingSpinner`, `StatusIndicator`, etc.) are Svelte 5 + shadcn-svelte. The package would be:
+
 - Svelte 5 only (no framework-agnostic option needed — plugins render inside the app)
 - Depends on the app's tailwind theme tokens
 - Published as source (not compiled) so Svelte can process them

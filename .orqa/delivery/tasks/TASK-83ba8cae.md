@@ -2,7 +2,7 @@
 id: "TASK-83ba8cae"
 type: "task"
 title: "ID generation utilities — Rust and TypeScript"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

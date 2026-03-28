@@ -3,7 +3,7 @@ id: "TASK-f9188ffe"
 type: "task"
 title: "Implement understand-first + docs-before-code gates"
 description: "Process gates that fire when the first code write in a session happens without\nprior research or documentation reading.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:
@@ -19,13 +19,16 @@ relationships:
     type: "depends-on"
 ---
 
-
 ## What
 
 Two process gates:
+
 - **understand-first**: Fires on first code write with no prior file reads, searches,
+
   or code research calls. Injects systems thinking prompt.
+
 - **docs-before-code**: Fires on code write without reading any `.orqa/documentation/`
+
   files. Injects documentation prompt.
 
 ## How

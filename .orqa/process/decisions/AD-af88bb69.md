@@ -10,6 +10,7 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"
 ---
+
 ## Decision
 
 External integrations (AI providers, MCP servers) connect through provider-agnostic interfaces. The Rust core speaks a neutral `ProviderEvent` protocol; provider-specific logic lives in swappable sidecar processes. Phase 1 implements one provider (Agent SDK for Max subscription). Future providers implement the same interface without changing the core.

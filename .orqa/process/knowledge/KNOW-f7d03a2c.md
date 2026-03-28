@@ -1,7 +1,9 @@
 ---
 id: KNOW-f7d03a2c
 type: knowledge
-name: Rust Plugin Installation
+title: Rust Plugin Installation
+domain: platform/rust
+description: "How to install the OrqaStudio Rust plugin and what it provides: clippy, rustfmt, cargo-test tools and standards agent."
 summary: "Rust Plugin Installation"
 status: active
 plugin: "@orqastudio/plugin-rust"

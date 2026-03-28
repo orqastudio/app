@@ -4,13 +4,18 @@ type: rule
 title: Real-time Session State Management
 description: .state/session-state.md must be updated in real time during conversations — not just at session end. Every new decision, plan change, scope change, or step completion must be reflected immediately.
 status: active
+enforcement_type: advisory
 created: 2026-03-21
 updated: 2026-03-21
 enforcement:
+
   - mechanism: behavioral
+
     message: ".state/session-state.md must be updated in real time during conversations; every new decision, plan change, scope change, or step completion must be reflected immediately"
 relationships:
+
   - target: IMPL-984941fb
+
     type: promoted-from
 ---
 

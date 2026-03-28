@@ -16,7 +16,7 @@ relationships: []
 These represent universal stages of thinking. They exist in every project. The underlying concept is fixed; the display label is aliasable per project.
 
 | Status | Meaning |
-|---|---|
+| --- | --- |
 | `captured` | Recorded, not yet explored |
 | `exploring` | Under investigation |
 | `ready` | Explored, awaiting prioritisation |
@@ -33,6 +33,7 @@ These represent universal stages of thinking. They exist in every project. The u
 ### `surpassed` vs `archived`
 
 Different meanings, different semantics:
+
 - **`surpassed`**: Thinking evolved. A merged idea is surpassed — the `merged-into` relationship tells you what replaced it. Outdated research is surpassed — something newer exists.
 - **`archived`**: Thinking was explored but didn't go anywhere. No successor exists. The idea was valid but the team decided not to pursue it.
 

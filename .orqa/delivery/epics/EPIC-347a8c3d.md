@@ -3,7 +3,7 @@ id: "EPIC-347a8c3d"
 type: "epic"
 title: "Rust artifact platform engine"
 description: "Extend libs/validation from validator-only to the canonical artifact engine. Single parser/serialiser for markdown+YAML → validated JSON. Content access, rule evaluation, hook lifecycle, daemon mode. Eliminates all hand-rolled frontmatter parsing."
-status: "captured"
+status: captured
 priority: "P0"
 relationships:
   - target: "PILLAR-c9e0a695"
@@ -13,6 +13,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 # Rust Artifact Platform Engine
 
 ## Problem

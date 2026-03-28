@@ -1,7 +1,9 @@
 ---
 id: DOC-c43c7d5d
 type: doc
+status: active
 title: "Content Ownership: Docs, Agents, Knowledge, and Rules"
+domain: reference
 category: concept
 description: "Ownership model for documentation, agent definitions, knowledge, and rules across the project."
 created: 2026-03-02
@@ -18,7 +20,7 @@ OrqaStudio™ uses five distinct layers for governance knowledge: documentation,
 ## The Five Layers
 
 | Layer | Owns | Examples | Source of Truth For |
-|-------|------|----------|---------------------|
+| ------- | ------ | ---------- | --------------------- |
 | **Documentation (`.orqa/documentation/`)** | Functional and product knowledge: architecture decisions, coding standards, IPC contracts, UI specs | Architecture decisions, function size limits, IPC response format, component state tables | Yes — code that doesn't match docs is wrong |
 | **Agent Instructions (`.orqa/process/agents/`)** | Process: how the agent works, which tools it uses, which docs to read first, when to delegate, verification steps | "Run clippy before committing", "Read relevant `AD-NNN.md` decisions first", "Delegate to test-engineer after implementation" | Process only — agents reference docs, not restate them |
 | **Knowledge (`.orqa/process/knowledge/`)** | Domain knowledge: how a technology works, general patterns, reusable techniques not specific to OrqaStudio | How Svelte 5 runes work, how to structure a Rust module, how to write a cargo test | Technology patterns only — knowledge artifacts must not contain OrqaStudio-specific architectural rules |
@@ -104,7 +106,7 @@ Think of it this way: a rule says "you must do X", a hook makes sure X actually 
 **Relationship between rules and hooks:**
 
 | Rule | Implemented By Hook | Trigger |
-|------|-------------------|---------|
+| ------ | ------------------- | --------- |
 | `knowledge-enforcement.md` — Load relevant knowledge before coding | `knowledge-instructions-hook.sh` — Lists knowledge artifacts, requires LOAD/SKIP decision | `UserPromptSubmit` |
 | `required-reading.md` — Read governing docs before implementing | `session-start-hook.sh` — Checks for session state, stale worktrees, stashes | `UserPromptSubmit` (first) |
 | `testing-standards.md` — Run tests before committing | `pre-commit-reminder.sh` — Checklist: make check, no stubs | `Stop` |
@@ -112,7 +114,7 @@ Think of it this way: a rule says "you must do X", a hook makes sure X actually 
 **When to use a rule vs a hook:**
 
 | Use a Rule When | Use a Hook When |
-|----------------|-----------------|
+| ---------------- | ----------------- |
 | The constraint is judgement-based ("ensure error handling is comprehensive") | The constraint is checkable at a lifecycle boundary ("run make lint-backend before committing") |
 | Compliance requires context the agent must evaluate | Compliance can be verified or prompted by a script |
 | The constraint applies situationally | The constraint should fire on every lifecycle event |
@@ -121,7 +123,7 @@ Think of it this way: a rule says "you must do X", a hook makes sure X actually 
 **Hook lifecycle events:**
 
 | Event | When It Fires | Use For |
-|-------|--------------|---------|
+| ------- | -------------- | --------- |
 | `UserPromptSubmit` | Every time the user sends a message | Session setup, knowledge loading, context checks |
 | `Stop` | When the agent finishes a response | Pre-commit checklists, session state reminders |
 
@@ -207,7 +209,7 @@ When a standard needs updating:
 After implementation, independent review agents evaluate each phase before it is considered complete:
 
 | Review Agent | Evaluates |
-|---|---|
+| --- | --- |
 | `code-reviewer` | Code quality: clippy, rustfmt, ESLint, svelte-check, no stubs, coverage, doc layer compliance |
 | `qa-tester` | Functional correctness: does it behave as documented, not just compile |
 | `ux-reviewer` | UX/accessibility: labels match docs, states are complete, no jargon in the UI |

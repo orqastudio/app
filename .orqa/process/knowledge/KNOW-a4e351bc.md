@@ -2,6 +2,7 @@
 id: KNOW-a4e351bc
 type: knowledge
 title: Governance Migration Methodology
+domain: methodology/governance
 summary: "Methodology for migrating an existing project's governance into a structured governance framework. The goal is coexistence, not replacement — existing tools continue to work, and the governance framework becomes the single source of truth that feeds them."
 description: |
   Methodology for migrating an existing project to a structured governance
@@ -23,6 +24,7 @@ Methodology for migrating an existing project's governance into a structured gov
 ## When to Use This
 
 Migration applies when project type detection (see `project-type-detection`) finds:
+
 - Existing AI tool configuration files with rules or instructions
 - Convention documents (`CONVENTIONS.md`, `CONTRIBUTING.md`)
 - Pre-commit hooks with embedded rules
@@ -37,7 +39,8 @@ Do not skip migration. Layering new governance on top of undiscovered existing g
 Many tools use a single large file for all instructions. These must be decomposed into individual rules during migration.
 
 **Decomposition pattern:**
-```
+
+```text
 Monolithic file contains:
   "Always use strict TypeScript"      → rule: typescript-strict.md
   "Never use console.log in prod"     → rule: no-console-log.md
@@ -49,6 +52,7 @@ Each extracted rule gets proper structured frontmatter: unique ID, title, descri
 ### Rule Files
 
 If the source tool already uses individual rule files, they map directly to individual governance rules. Check for:
+
 - Duplicates against existing core rules (do not create duplicates)
 - Conflicts with core rules (surface to the user, do not silently override)
 
@@ -63,6 +67,7 @@ Model settings, tool preferences, and project metadata map to the project config
 ### Convention Documents
 
 `CONVENTIONS.md`, `CONTRIBUTING.md`, and similar documents are usually a mix of rules, guidelines, and onboarding documentation. Classify each section:
+
 - Clear constraint with PASS/FAIL criteria → rule
 - Best practice guidance → knowledge artifact
 - Setup instructions → documentation artifact
@@ -83,7 +88,7 @@ Parse each source file and inventory its content. Produce a migration manifest l
 For each content item, determine what governance artifact type it maps to:
 
 | Content Type | Maps To |
-|-------------|---------|
+| ------------- | --------- |
 | Constraint with PASS/FAIL criteria | Rule artifact |
 | Agent or role instructions | Agent definition or skill |
 | Hook or automation | Hook artifact |
@@ -96,6 +101,7 @@ For each content item, determine what governance artifact type it maps to:
 Before creating any new artifact, check whether the content already exists in the governance framework's core artifacts. Common rules (no `console.log`, strict types, test coverage) often exist in core already. Do not create duplicates.
 
 When content overlaps with an existing rule:
+
 - If they agree: link the migration source to the existing rule (no new artifact needed)
 - If they conflict: surface the conflict to the user; do not resolve silently
 
@@ -107,7 +113,7 @@ Write the extracted governance artifacts with proper structured frontmatter. Do 
 
 Existing tool configurations should become generated outputs, not sources of truth, once migration is complete. The governance framework generates them:
 
-```
+```text
 Governance framework (source of truth)
   → generates tool-specific config files
   → existing tools read their native format unchanged

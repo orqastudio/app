@@ -3,7 +3,7 @@ id: "TASK-f465a57a"
 type: "task"
 title: "Provider interface and Claude adapter"
 description: "Defines a provider abstraction interface in the sidecar and refactors the Claude Agent SDK integration into a concrete adapter, enabling future providers to be added via a factory."
-status: "completed"
+status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Create the Provider interface abstraction and refactor the Claude Agent SDK

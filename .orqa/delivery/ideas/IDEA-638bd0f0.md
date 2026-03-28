@@ -24,5 +24,6 @@ Currently the app's chat panel has its own implementation. The CLI connector use
 ## Dev environment impact
 
 When MCP/LSP become app Cargo dependencies:
+
 - cargo tauri dev will watch them automatically
 - Remove libs/mcp-server and libs/lsp-server from the custom dev watchers in dev.ts (they'd cause lock contention)

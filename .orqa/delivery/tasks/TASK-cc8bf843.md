@@ -2,7 +2,7 @@
 id: "TASK-cc8bf843"
 type: "task"
 title: "MCP server — Rust backend artifact graph API"
-status: "active"
+status: active
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 relationships:

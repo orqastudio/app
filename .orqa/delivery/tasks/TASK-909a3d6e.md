@@ -3,7 +3,7 @@ id: "TASK-909a3d6e"
 type: "task"
 title: "Create @orqastudio/sdk package — graph + IPC + frontmatter"
 description: "Create the SDK package with ArtifactGraphSDK, IPC invoke wrapper, and frontmatter parser. This is the core layer — stores are added in subsequent tasks."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -34,14 +34,18 @@ relationships:
 ## Scope
 
 ### From ui/src/lib/sdk/
+
 - `artifact-graph.svelte.ts` → `src/graph/artifact-graph.svelte.ts`
 
 ### From ui/src/lib/ipc/
+
 - `invoke.ts` → `src/ipc/invoke.ts` (invoke wrapper, extractErrorMessage, createStreamChannel)
 
 ### From ui/src/lib/utils/
+
 - `frontmatter.ts` → `src/utils/frontmatter.ts`
 
 ### Peer dependencies
+
 - `svelte` ≥ 5.0 (SvelteMap, runes)
 - `@tauri-apps/api` (invoke, Channel, event listen)

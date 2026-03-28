@@ -2,6 +2,7 @@
 id: KNOW-5f4db8f7
 type: knowledge
 title: Test Engineering
+domain: methodology/delivery
 summary: "Test engineering methodology. This skill teaches *how to think about testing* — the specific test frameworks, commands, and file locations come from the project's testing skill."
 description: |
   Test engineering methodology: test organisation, coverage requirements, mock
@@ -20,13 +21,12 @@ relationships:
     type: synchronised-with
 ---
 
-
 Test engineering methodology. This skill teaches *how to think about testing* — the specific test frameworks, commands, and file locations come from the project's testing skill.
 
 ## Test Organisation Principles
 
 | Test Type | Scope | What It Verifies |
-|-----------|-------|-----------------|
+| ----------- | ------- | ----------------- |
 | **Unit tests** | Single module/function | Logic, edge cases, error handling |
 | **Integration tests** | Cross-module flows | Boundaries work together correctly |
 | **Component tests** | UI components in isolation | Rendering, interactions, state |
@@ -39,7 +39,7 @@ Tests should be colocated with the code they test (not in a separate tree), unle
 **Mock ONLY at the adapter/boundary layer.** Never mock domain logic, orchestrators, or internal functions.
 
 | Correct | Forbidden |
-|---------|-----------|
+| --------- | ----------- |
 | Mock a repository trait for testing without a database | Mock domain logic or internal functions |
 | Mock a file system trait for testing without disk | Mock private methods |
 | Mock an API client for testing without network | Mock the thing you're testing |
@@ -71,7 +71,7 @@ Tests should be colocated with the code they test (not in a separate tree), unle
 ## Test Writing Standards
 
 | Standard | Why |
-|----------|-----|
+| ---------- | ----- |
 | Test names describe behavior | `rejects_empty_name`, not `test_new` |
 | Each test verifies one behavior | Split tests with multiple unrelated assertions |
 | Tests must be independent | No shared mutable state between tests |

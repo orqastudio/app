@@ -2,7 +2,7 @@
 id: TASK-d39e416a
 type: task
 name: "Migrate connector runConnectorSetup() to declarative capabilities"
-status: completed
+status: archived
 description: Replace the connector's bespoke runConnectorSetup() with declarative capability entries in its orqa-plugin.json manifest. The framework handles symlinks, MCP/LSP aggregation, and root file management.
 relationships:
   - target: EPIC-8b01ee51

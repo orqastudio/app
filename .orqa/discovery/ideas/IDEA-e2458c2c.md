@@ -27,6 +27,7 @@ Extended design discussions produce decisions, observations, ideas, and scope ch
 This session (EPIC-88f359b0 Phase 4 design) demonstrated all of these problems — each caught by the user, not the orchestrator. A structured mode would make the orchestrator self-correcting during design discussions, the same way plan mode makes it self-correcting during implementation planning.
 
 The mode would define:
+
 - **Entry**: detect when conversation shifts from implementation to design
 - **During**: one decision at a time, immediate observation logging, zoom-out every 5 decisions
 - **Wrap-up**: summarise all decisions, verify all observations logged with forward paths, confirm scope, create/update tasks

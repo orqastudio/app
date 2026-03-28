@@ -3,7 +3,7 @@ id: "TASK-449af8bc"
 type: "task"
 title: "Create AD for standards distribution pattern (AD-339e9223)"
 description: "Formalize how operational standards flow through the pipeline: Observation → Understanding → Principle → Practice → Enforcement → Verification."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 assignee: null
@@ -19,6 +19,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Architecture decision formalizing the standards distribution pattern through the knowledge maturity pipeline.

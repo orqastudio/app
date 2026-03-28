@@ -46,6 +46,7 @@ relationships:
     type: serves
     rationale: Agent serves this pillar/persona in its operational role
 ---
+
 # Orchestrator
 
 ## Purpose
@@ -55,7 +56,7 @@ artifact you create, every status you report — must serve at least one pillar.
 
 At session start, discover the project's pillars:
 
-```
+```text
 orqa graph query --type pillar
 ```
 
@@ -113,7 +114,7 @@ graph queries causes duplicate work, missed constraints, and broken relationship
 
 Use graph tools for all artifact discovery. Do not hardcode paths.
 
-```
+```text
 graph_query({ type: "<type>" })              — find artifacts by type
 graph_query({ type: "<type>", status: "active" }) — filter by status
 graph_query({ type: "<type>", search: "<term>" }) — full-text search
@@ -124,7 +125,7 @@ graph_validate()                             — verify graph integrity after ba
 
 ### How to Read the Graph
 
-```
+```text
 Task → reads epic (task.epic field)
 Task → reads docs (task.docs field)  → documentation files
 Task → reads knowledge (task.knowledge field) → knowledge directories
@@ -164,7 +165,7 @@ Before delegating to an Implementer:
 ### Tool Reference
 
 | Operation | Tool | When |
-|-----------|------|------|
+| ----------- | ------ | ------ |
 | Find artifact by ID | `graph_resolve` | Before reading/editing a known artifact |
 | Find artifacts by type/status | `graph_query` | Scoping work, auditing |
 | Check relationships | `graph_relationships` | Before modifying relationships |
@@ -198,6 +199,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 When any request requires investigation — gathering information, comparing options, auditing existing state, or exploring unknowns — the orchestrator MUST create a research artifact BEFORE delegating the investigation to a Researcher agent. The research artifact defines the scope, questions, and expected outputs. Investigation results are written into the research artifact, not held only in conversation context.
 
 Signals that indicate a research trigger:
+
 - "Let's investigate...", "What are the options for...", "Audit the current state of..."
 - Any task whose first step is gathering information rather than building something
 - Epic planning that requires understanding the current state before defining scope
@@ -208,7 +210,7 @@ Signals that indicate a research trigger:
 ### Universal Roles
 
 | Role | Purpose | Boundary |
-|------|---------|----------|
+| ------ | --------- | ---------- |
 | **Researcher** | Investigate, gather information | Produces findings, not changes |
 | **Planner** | Design approaches, map dependencies | Produces plans, not code |
 | **Implementer** | Build things | Does NOT self-certify quality |
@@ -255,15 +257,19 @@ is connected.
 These constraints are always in effect. No exceptions.
 
 - **ALL work MUST use TeamCreate + background Agent spawning (RULE-99abcea1).** The orchestrator
+
   MUST NEVER implement, review, research, or write documentation inline. For EVERY piece of
   delegated work: (1) `TeamCreate` to create a team, (2) `TaskCreate` for each task,
   (3) spawn agents with `run_in_background: true`. No exceptions. Even single tasks use teams.
   The orchestrator's job is to stay available for conversation — not to block on agent work.
+
 - **TeamDelete before TeamCreate (NON-NEGOTIABLE).** Always `TeamDelete` the current team
+
   immediately after committing its work — before creating a new team. Do NOT send shutdown
   requests and wait for agents to respond. TeamDelete is the reliable termination mechanism.
   Agents that don't process shutdown requests consume resources for hours. The pattern is:
   work completes → commit → **TeamDelete** → TeamCreate for next batch.
+
 - **No `unwrap()` / `expect()` / `panic!()`** in Rust production code
 - **No `--no-verify`** on git commits
 - **No force push** to main
@@ -338,7 +344,7 @@ Rules are first-class artifacts. Discover them dynamically rather than relying o
 
 At session start, load active rules:
 
-```
+```text
 orqa graph query --type rule --status active
 ```
 
@@ -346,7 +352,7 @@ Or via MCP: `graph_query({ type: "rule", status: "active" })`.
 
 Before starting work in any domain, query for relevant rules:
 
-```
+```text
 graph_query({ type: "rule", search: "<domain>" })
 ```
 
@@ -357,6 +363,7 @@ Read the full rule artifact when its area is relevant to current work. Rules hav
 ## Learning Loop
 
 When a Reviewer reports a FAIL:
+
 1. Query lessons for matching patterns: `graph_query({ type: "lesson", search: "<failure topic>" })`
 2. If new: create a lesson artifact before the fix cycle
 3. If existing: increment recurrence count

@@ -27,16 +27,19 @@ This research investigates how mature systems compose end-to-end workflows from 
 Plugins declare what they contribute to a shared schema. The host system merges contributions.
 
 **How it works:**
+
 - VS Code uses `contributes` in `package.json` -- plugins declare commands, views, menus, languages, etc. The host merges all contributions into a unified UI/command palette.
 - Backstage uses `extension points` -- plugins register interfaces (e.g., `addAction()` on the scaffolder), and modules extend those interfaces. Critically, "all modules that extend a plugin are completely initialized before the plugin gets initialized."
 
 **Pros:**
+
 - Declarative -- easy to validate, merge, and reason about
 - Lazy loading -- plugins activate only when needed (VS Code's activation events)
 - Additive by design -- extensions add to the system, they don't remove
 - Clear ownership -- each plugin owns its contribution points
 
 **Cons:**
+
 - Limited expressiveness -- can't express complex conditional logic
 - Merge conflicts -- two plugins contributing to the same slot may conflict
 - Discovery overhead -- consumers must know which extension points exist
@@ -48,15 +51,18 @@ Plugins declare what they contribute to a shared schema. The host system merges 
 Plugins scan the workspace and automatically infer what they contribute based on what exists.
 
 **How it works:**
+
 - Nx 18+ plugins scan for configuration files (e.g., `webpack.config.js`) and automatically infer build targets. No explicit registration -- the plugin's presence + the config file's existence = the target exists.
 - "Project Crystal automatically infers targets within a project, significantly reducing the size of project configuration files."
 
 **Pros:**
+
 - Zero-config for common cases
 - Convention-over-configuration -- reduces boilerplate
 - Single source of truth -- the config file IS the declaration
 
 **Cons:**
+
 - Magic -- harder to debug when inference is wrong
 - Limited control -- hard to override inferred behavior
 - Coupling -- the inference logic must understand every possible config format
@@ -68,16 +74,19 @@ Plugins scan the workspace and automatically infer what they contribute based on
 Workflows are defined as pipelines of steps. Each step references a reusable action/plugin.
 
 **How it works:**
+
 - GitHub Actions: Reusable workflows are entire pipelines; composite actions are step-level building blocks. "Treat reusable workflows as pipeline templates and composite actions as shared task templates."
 - Kestra: YAML-defined workflows reference plugin tasks. 500+ integrations available as plugins. "The YAML definition gets automatically adjusted any time you make changes from the UI or via an API call."
 
 **Pros:**
+
 - Explicit sequencing -- the pipeline order is visible in the definition
 - Versioned references -- pin plugin versions for reproducibility
 - Composable at two levels -- whole pipelines AND individual steps
 - Wide ecosystem adoption -- developers understand this model
 
 **Cons:**
+
 - Static structure -- hard to express dynamic, conditional workflows
 - YAML sprawl -- complex workflows become hard to read
 - Limited inter-step communication -- steps pass data through artifacts/outputs
@@ -104,6 +113,7 @@ This avoids the magic of Option B while getting the declarative clarity of A and
 Used by: GitHub Actions, Kestra, CircleCI, CloudSlang, Azure Logic Apps
 
 **Format example for OrqaStudio:**
+
 ```yaml
 workflow:
   id: software-project
@@ -149,6 +159,7 @@ workflow:
 ```
 
 **Pros:**
+
 - Human-readable and auditable
 - Schema-validatable (JSON Schema)
 - Non-developers can understand and modify
@@ -156,6 +167,7 @@ workflow:
 - "DSL-based engines are more accessible to non-developers" (Kestra)
 
 **Cons:**
+
 - Limited expressiveness for conditional logic
 - No IDE support for autocomplete/debugging
 - "The moment you need anything dynamic or non-trivial, the complexity of DSL-based state machines grows quickly" (Temporal comparison)
@@ -165,6 +177,7 @@ workflow:
 Used by: Temporal, Prefect, Durable Functions, LangGraph
 
 **Format example for OrqaStudio:**
+
 ```typescript
 const workflow = defineWorkflow("software-project", (ctx) => {
   // Discovery
@@ -188,6 +201,7 @@ const workflow = defineWorkflow("software-project", (ctx) => {
 ```
 
 **Pros:**
+
 - Full expressiveness -- conditionals, loops, error handling
 - IDE support -- autocomplete, type checking, debugging
 - "You write Workflows as straightforward code in your language of choice" (Temporal)
@@ -195,6 +209,7 @@ const workflow = defineWorkflow("software-project", (ctx) => {
 - "Prefect moved away from requiring workflows to be DAGs, fully embracing native Python control flow"
 
 **Cons:**
+
 - Requires developer expertise to modify
 - Harder to visualize
 - Harder to serialize/store as artifacts
@@ -205,6 +220,7 @@ const workflow = defineWorkflow("software-project", (ctx) => {
 Used by: Azure Logic Apps (JSON + code actions), Backstage (YAML templates + custom actions), CrewAI (Flows + Processes)
 
 **Format example for OrqaStudio:**
+
 ```yaml
 # Declarative skeleton (YAML)
 workflow:
@@ -244,12 +260,14 @@ export const gates: GateDefinitions = {
 ```
 
 **Pros:**
+
 - Best of both worlds -- simple cases are config, complex cases are code
 - The YAML is the "what" (auditable), the code is the "how" (expressive)
 - Fits OrqaStudio's existing artifact model (YAML frontmatter + body)
 - Plugin authors can provide both config and code
 
 **Cons:**
+
 - Two formats to learn and maintain
 - Potential for config/code drift
 - Validation must span both formats
@@ -267,6 +285,7 @@ export const gates: GateDefinitions = {
 The core defines named slots. Plugins fill slots.
 
 **How it works:**
+
 - The core workflow has named phases: `discovery`, `delivery`, `learning`
 - Each phase is a slot that accepts step contributions from plugins
 - A discovery plugin contributes steps to the `discovery` slot
@@ -274,7 +293,8 @@ The core defines named slots. Plugins fill slots.
 - The core's `learning` phase has built-in steps (lesson capture, promotion)
 
 **Example:**
-```
+
+```text
 Core Framework defines:
   [discovery] -> [delivery] -> [learning]
 
@@ -289,12 +309,14 @@ Resolved workflow:
 ```
 
 **Pros:**
+
 - Clear boundaries -- plugins can only contribute to their designated slots
 - No override conflicts -- slots accept additions, not replacements
 - Composable -- swap one discovery plugin for another without touching delivery
 - Follows Backstage's principle: "extension points should support additions only"
 
 **Cons:**
+
 - Inflexible -- what if a plugin needs to add a step between existing steps from another plugin?
 - The core must pre-define all possible slots
 
@@ -303,11 +325,13 @@ Resolved workflow:
 Plugins register hooks at defined points. The core calls hooks in order.
 
 **How it works:**
+
 - The core defines lifecycle events: `before-stage`, `after-stage`, `on-gate`, `on-transition`
 - Plugins register handlers for these events
 - Handlers execute in priority order and can modify context, add steps, or block transitions
 
 **Example:**
+
 ```typescript
 // Discovery plugin registers hooks
 registerHook("before-stage:delivery", async (ctx) => {
@@ -324,11 +348,13 @@ registerHook("after-stage:delivery", async (ctx) => {
 ```
 
 **Pros:**
+
 - Maximum flexibility -- hooks can intercept any point
 - Cross-cutting concerns -- logging, validation, metrics can be added without modifying stages
 - Familiar pattern (Express middleware, Git hooks, WordPress hooks)
 
 **Cons:**
+
 - Order-dependent -- hook execution order matters and is hard to reason about
 - Debugging complexity -- "what hooks run before stage X?" requires tracing
 - Tight coupling through shared context
@@ -338,12 +364,14 @@ registerHook("after-stage:delivery", async (ctx) => {
 Plugins declare their contributions in a manifest. The installer merges them.
 
 **How it works:**
+
 - Each plugin has a `workflow.yaml` that declares what stages/steps it provides
 - At install time, all plugin manifests are merged into a single resolved workflow
 - Merge rules handle conflicts (same stage contributed by two plugins -> error)
 - The resolved workflow is written to disk as a project artifact
 
 **Example:**
+
 ```yaml
 # core-framework/workflow.yaml
 phases:
@@ -381,12 +409,14 @@ steps:
 ```
 
 **Pros:**
+
 - Static analysis -- the resolved workflow is known at install time, not runtime
 - Conflict detection -- merge failures surface immediately
 - Auditable -- the resolved workflow is a file on disk
 - Versioned -- the resolved workflow is committed to git
 
 **Cons:**
+
 - No runtime flexibility -- can't adapt the workflow based on runtime context
 - Requires an install step -- changes to plugins require re-installing
 
@@ -411,17 +441,20 @@ This matches OrqaStudio's existing `orqa install` pattern and keeps the resolved
 Each project type has its own complete workflow definition.
 
 **How it works:**
+
 - Jira allows per-project workflows with different states and transitions
 - A "Bug Tracking" workflow has: Reported -> Under Investigation -> Fixed -> Verified
 - A "Feature Development" workflow has: Backlog -> In Progress -> In Review -> Done
 - Teams pick which workflow applies to their project
 
 **Pros:**
+
 - Maximum flexibility per project type
 - Clear -- each workflow is self-contained
 - No conditional complexity within a single workflow
 
 **Cons:**
+
 - Duplication -- shared stages are repeated across workflows
 - Maintenance burden -- updating a common pattern requires touching all workflows
 - Jira's complexity: "a simple change to a workflow might require navigating five different administration screens"
@@ -431,17 +464,20 @@ Each project type has its own complete workflow definition.
 One workflow, but steps can be conditionally skipped.
 
 **How it works:**
+
 - Shortcut has "a single workflow per team with linear state progressions"
 - SAP's Process Variants: "business rules may define variants where steps are skipped based on criteria"
 - Steps have `canSkip` conditions evaluated at runtime
 - Fast-track transitions allow jumping past intermediate states
 
 **Pros:**
+
 - Single source of truth -- one workflow to maintain
 - Simpler -- variants are just conditions on the base workflow
 - The full workflow is always visible, even if some steps are skipped
 
 **Cons:**
+
 - Complex conditions -- many variants make the single workflow hard to read
 - "Linear starts to strain past about 15 teams" (Linear comparison)
 - Fast-track logic can be hard to debug
@@ -451,11 +487,13 @@ One workflow, but steps can be conditionally skipped.
 A base template that variants customize through overrides.
 
 **How it works:**
+
 - Define a base workflow with all stages
 - Define named variants that override specific properties
 - At project creation, select a variant that resolves to a concrete workflow
 
 **Example for OrqaStudio:**
+
 ```yaml
 base:
   stages: [research, plan, document, implement, review, release, retrospect]
@@ -483,12 +521,14 @@ variants:
 ```
 
 **Pros:**
+
 - DRY -- base workflow defined once
 - Clear variant definitions
 - Easy to add new variants
 - Resolved workflow is deterministic per variant
 
 **Cons:**
+
 - Limited expressiveness (only skip/add, not reorder)
 - Must pre-define all variants
 
@@ -497,17 +537,20 @@ variants:
 The workflow adapts its granularity based on task complexity.
 
 **How it works:**
+
 - Recent research (2025): "Task-level workflows over-process simple queries, wasting resources"
 - A difficulty classifier determines the workflow path at runtime
 - Simple tasks get abbreviated workflows; complex tasks get the full pipeline
 - LangGraph uses conditional edges to route based on state
 
 **Pros:**
+
 - Optimal resource usage -- simple tasks don't pay the cost of complex workflows
 - Adaptive -- handles novel task types without pre-defined variants
 - Aligns with token efficiency goals
 
 **Cons:**
+
 - Harder to audit -- the workflow path isn't known until runtime
 - Requires a reliable difficulty classifier
 - Non-deterministic -- same input might get different paths
@@ -532,11 +575,13 @@ This keeps the project-level workflow deterministic and auditable while allowing
 Stages like: `write-test`, `write-code`, `run-lint`, `run-test`, `format`, `commit`
 
 **Pros:**
+
 - Maximum control and observability
 - Each step can have its own gate
 - Easy to parallelize independent steps
 
 **Cons:**
+
 - Overhead -- too many transitions for simple tasks
 - "Query-level workflows introduce input-specific adaptation, but their granularity is often insufficient" (Difficulty-Aware Agent Orchestration)
 - Token-expensive -- each transition requires orchestrator context
@@ -546,11 +591,13 @@ Stages like: `write-test`, `write-code`, `run-lint`, `run-test`, `format`, `comm
 Stages like: `discover`, `deliver`, `learn`
 
 **Pros:**
+
 - Simple mental model
 - Low orchestration overhead
 - Each phase is a complete unit of work
 
 **Cons:**
+
 - No visibility into progress within a phase
 - Hard to define gates between sub-steps
 - "Uniform multi-agent systems for entire task categories over-process simple queries"
@@ -560,6 +607,7 @@ Stages like: `discover`, `deliver`, `learn`
 Stages like: `research`, `plan`, `document`, `implement`, `review`, `release`, `retrospect`
 
 **Pros:**
+
 - Maps to natural agent specialization boundaries (researcher, planner, implementer, reviewer)
 - Each stage corresponds to a single agent role -- clear delegation
 - Gates between stages provide quality checkpoints
@@ -567,6 +615,7 @@ Stages like: `research`, `plan`, `document`, `implement`, `review`, `release`, `
 - Microsoft's patterns: Sequential for "draft, review, polish" workflows -- this IS medium granularity
 
 **Cons:**
+
 - May still be too coarse for complex stages (implementation might need sub-stages)
 - May be too fine for simple tasks
 
@@ -574,7 +623,7 @@ Stages like: `research`, `plan`, `document`, `implement`, `review`, `release`, `
 
 **Medium-grained stages as the primary workflow level, with sub-steps defined within stages:**
 
-```
+```text
 Project Workflow (medium-grained):
   research -> plan -> document -> implement -> review -> retrospect
 
@@ -585,8 +634,9 @@ Within "implement" stage (fine-grained, managed by the stage):
 The orchestrator manages transitions between medium-grained stages. Within each stage, the assigned agent manages its own fine-grained steps. This matches the existing OrqaStudio delegation model where the orchestrator coordinates and agents implement.
 
 The medium granularity also maps perfectly to the universal roles:
+
 | Stage | Primary Agent Role |
-|-------|-------------------|
+| ------- | ------------------- |
 | research | Researcher |
 | plan | Planner |
 | document | Writer |
@@ -603,12 +653,14 @@ The medium granularity also maps perfectly to the universal roles:
 The workflow is a state machine. The orchestrator queries current state and available transitions.
 
 **How it works (from REST API workflow modeling):**
+
 - Current state is a property on the workflow object
 - Available transitions are dynamically computed based on current state + gate conditions
 - The orchestrator calls a "transition" endpoint/function to move to the next state
 - HATEOAS pattern: "the _links section automatically updates to show what workflow transitions are possible"
 
 **Implementation for OrqaStudio:**
+
 ```typescript
 interface WorkflowState {
   currentStage: string;           // "implement"
@@ -626,11 +678,13 @@ interface Transition {
 ```
 
 **Pros:**
+
 - Self-describing -- the orchestrator doesn't need to know the full workflow graph
 - Dynamic -- transitions reflect current context (gates satisfied, dependencies met)
 - Familiar pattern (Symfony Workflow, .NET State Machine, AWS Step Functions)
 
 **Cons:**
+
 - Requires a running service to compute transitions
 - State must be persisted somewhere
 
@@ -639,11 +693,13 @@ interface Transition {
 The full workflow graph is loaded into the orchestrator's context at session start.
 
 **How it works:**
+
 - The resolved workflow YAML is read into the orchestrator's context
 - The orchestrator traverses the graph using its own logic
 - Progress is tracked in session state
 
 **Implementation for OrqaStudio:**
+
 ```yaml
 # Loaded into orchestrator context at session start
 workflow:
@@ -669,12 +725,14 @@ workflow:
 ```
 
 **Pros:**
+
 - No external service needed
 - Full context in the LLM's window -- the orchestrator can reason about the entire workflow
 - Simple -- just read a file
 - Matches OrqaStudio's file-based artifact model
 
 **Cons:**
+
 - Context window cost -- the full graph takes tokens
 - Stale -- if another agent changes something, the orchestrator's copy is outdated
 - Orchestrator must implement transition logic itself
@@ -684,11 +742,13 @@ workflow:
 State transitions emit events. A tracker maintains current state.
 
 **How it works (from CrewAI Flows and LangGraph):**
+
 - "CrewAI's 2025 addition of Flows provides a state-machine orchestration layer enabling conditional branching, parallel execution, and event-driven transitions between crews"
 - LangGraph: "State is a shared data structure representing the current snapshot. Edges determine which Node to execute next based on current state."
 - Events trigger transitions; a tracker (in-memory or persisted) maintains the current position
 
 **Implementation for OrqaStudio:**
+
 ```typescript
 class WorkflowTracker {
   private state: WorkflowState;
@@ -706,11 +766,13 @@ class WorkflowTracker {
 ```
 
 **Pros:**
+
 - Real-time state -- always accurate
 - Event-driven -- other systems can react to transitions
 - Integrates with OrqaStudio's existing WorkflowTracker (ephemeral state)
 
 **Cons:**
+
 - Requires a running service
 - More complex than file-based approaches
 - Events can be lost if the service restarts
@@ -734,6 +796,7 @@ This gives the orchestrator full workflow awareness (from the static graph) with
 ### From Current Monolithic Workflow to Plugin-Composed Workflow
 
 The current OrqaStudio workflow is defined implicitly through:
+
 - The orchestrator's CLAUDE.md (process section)
 - Rules that reference stages (RULE-dccf4226 plan-mode-compliance, RULE-b10fe6d1 artifact-lifecycle)
 - The artifact lifecycle (idea -> epic -> task -> done)
@@ -756,7 +819,7 @@ The current OrqaStudio workflow is defined implicitly through:
 ## Summary of Recommendations
 
 | Question | Recommendation |
-|----------|---------------|
+| ---------- | --------------- |
 | Composition model | Contribution-point slots + pipeline composition |
 | Definition format | Hybrid YAML (skeleton) + code hooks (gates) |
 | Extension mechanism | Contribution merging at install + hooks at runtime |

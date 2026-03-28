@@ -1,7 +1,9 @@
 ---
 id: DOC-fc36aeec
 type: doc
+status: active
 title: "Software Project Setup Guide"
+domain: onboarding
 description: "How to set up OrqaStudio for a software development project — what the software preset adds, how stack detection works, and what to customise."
 category: onboarding
 created: 2026-03-18
@@ -31,7 +33,7 @@ The software plugin (`@orqastudio/plugin-software-kanban`) is installed automati
 The preset copies development-specific rules to your project:
 
 | Rule | Purpose |
-|------|---------|
+| ------ | --------- |
 | Coding Standards | Language-specific standards populated from stack detection |
 | Testing Standards | Test organisation, coverage requirements, mock boundaries |
 | Git Workflow | Worktree workflow, branch naming, merge protocol |
@@ -44,7 +46,7 @@ The preset copies development-specific rules to your project:
 Based on detected languages and frameworks, relevant skills are loaded:
 
 | Detected Stack | Skills Added |
-|---------------|-------------|
+| --------------- | ------------- |
 | Rust | `rust-async-patterns` |
 | TypeScript | `typescript-advanced-types` |
 | Svelte | `svelte5-best-practices` |

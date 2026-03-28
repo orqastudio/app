@@ -3,7 +3,7 @@ id: "TASK-52e8c9a5"
 type: "task"
 title: "Implement evidence-before-done + learn-after-doing gates"
 description: "Process gates that fire at task completion without verification evidence or\nlesson documentation.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:
@@ -21,9 +21,13 @@ relationships:
 ## What
 
 Two process gates:
+
 - **evidence-before-done**: Fires at Stop event when the session included code
+
   writes but no `make check`/`make test` was run. Injects review prompt.
+
 - **learn-after-doing**: Fires at Stop event when the session included significant
+
   work but no lessons were checked or created. Injects learning prompt.
 
 ## How

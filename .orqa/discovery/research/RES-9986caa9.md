@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact System Migration"
 ---
+
 ## Problem Statement
 
 OrqaStudio is mid-migration: the artifact framework (milestones, epics, tasks, ideas, plans, lessons, research) was designed recently, but significant historical work predates it. That work lives in `docs/` without artifact linkage. Meanwhile, the app can only browse 7 of 12 artifact types — the core agile types (milestones, epics, tasks, ideas) have no UI at all.
@@ -22,7 +23,7 @@ If we backfill content without building viewers, the artifacts exist but are inv
 ### What users CAN browse today (7 types)
 
 | Type | Backend | Viewer | Sidebar | Data |
-|------|---------|--------|---------|------|
+| ------ | --------- | -------- | --------- | ------ |
 | Agents | `governance_list/read` | AgentViewer | ArtifactListNav | 15 agents |
 | Rules | `governance_list/read` | RuleViewer | ArtifactListNav | 19+ rules |
 | Skills | `governance_list/read` | SkillViewer | ArtifactListNav | 19 skills |
@@ -34,7 +35,7 @@ If we backfill content without building viewers, the artifacts exist but are inv
 ### What users CANNOT browse (5 types)
 
 | Type | Backend | Viewer | Sidebar | Data |
-|------|---------|--------|---------|------|
+| ------ | --------- | -------- | --------- | ------ |
 | Milestones | None | None | None | 2 files in `.orqa/milestones/` |
 | Epics | None | None | None | 24 files in `.orqa/epics/` |
 | Tasks | None | None | None | 3 files in `.orqa/tasks/` |
@@ -44,7 +45,7 @@ If we backfill content without building viewers, the artifacts exist but are inv
 ### What historical content has no artifact trail
 
 | Content | Location | What's Missing |
-|---------|----------|---------------|
+| --------- | ---------- | --------------- |
 | Phase 0 research (8 files) | `.orqa/research/mvp/` | No frontmatter links to decisions/ideas/epics |
 | Provider architecture research | `.orqa/research/provider-architecture.md` | No frontmatter links |
 | Architecture decisions [AD-7121ec20](AD-7121ec20)–[AD-af88bb69](AD-af88bb69) | `docs/architecture/decisions.md` (monolithic) | Not individual artifacts; no links to research |
@@ -70,7 +71,7 @@ This means we can **backfill content now** and build viewers incrementally. The 
 Populate existing artifact types with historical data. These artifacts are browsable in the CLI and become visible the moment viewers are built.
 
 | Action | Details | Risk |
-|--------|---------|------|
+| -------- | --------- | ------ |
 | **1a. Research frontmatter** | Add YAML frontmatter to all 9 research docs linking them to the architecture decisions they produced | None — additive |
 | **1b. Link orphaned plans** | Connect `agent-governance.md` and `provider-abstraction.md` to their epics, or archive them | None — metadata only |
 | **1c. Retroactive epics for completed work** | Create `EPIC-NNN` (or similar) for Phase 1 Scaffold and Phase 2b Governance Bootstrap with `status: done` | Low — historical record |
@@ -81,8 +82,8 @@ Populate existing artifact types with historical data. These artifacts are brows
 Add the missing backend + frontend for milestones, epics, tasks, ideas. This is the [EPIC-9ddef7f9](EPIC-9ddef7f9) (Artifact Browser) work from the roadmap.
 
 | Action | Details | Depends On |
-|--------|---------|------------|
-| **2a. Backend readers** | Add `scan_*_tree` and `read_*` functions for milestones, epics, tasks, ideas in `artifact_reader.rs` | Wave 1 (content to display) |
+| -------- | --------- | ------------ |
+| **2a. Backend readers** | Add `scan_**tree` and `read**` functions for milestones, epics, tasks, ideas in `artifact_reader.rs` | Wave 1 (content to display) |
 | **2b. Tauri commands** | Add `milestone_tree_scan`, `epic_tree_scan`, `task_list`, `idea_tree_scan` + read commands | 2a |
 | **2c. Store bindings** | Add load methods to artifact store | 2b |
 | **2d. Viewers** | Create MilestoneViewer, EpicViewer, TaskViewer, IdeaViewer with structured frontmatter rendering | 2c |
@@ -94,7 +95,7 @@ Add the missing backend + frontend for milestones, epics, tasks, ideas. This is 
 Make artifacts navigable — clicking an epic shows its tasks, clicking a task shows its epic, clicking research shows what decisions it produced.
 
 | Action | Details | Depends On |
-|--------|---------|------------|
+| -------- | --------- | ------------ |
 | **3a. Internal artifact links** | MarkdownRenderer resolves `[EPIC-797972a7](EPIC-797972a7)`, `[TASK-154e988e](TASK-154e988e)`, `[AD-09fc4e65](AD-09fc4e65)` as clickable links to their artifacts | Wave 2 |
 | **3b. Relationship sidebar** | When viewing an epic, show related tasks, plans, research, decisions in a sidebar panel | Wave 2 |
 | **3c. Roadmap view** | Interactive roadmap showing milestones → epics → tasks hierarchy (replaces monolithic doc) | Wave 2 |
@@ -108,7 +109,7 @@ Make artifacts navigable — clicking an epic shows its tasks, clicking a task s
 Every research doc gets YAML frontmatter linking it to what it informed.
 
 | File | Current Frontmatter | Add |
-|------|-------------------|-----|
+| ------ | ------------------- | ----- |
 | `mvp/claude-integration.md` | type, status, date | `produces_decisions: [[AD-09fc4e65](AD-09fc4e65), [AD-fc4e9013](AD-fc4e9013)]`, `informs_epics: []` |
 | `mvp/tauri-v2.md` | type, status, date | `produces_decisions: [[AD-39e2fb81](AD-39e2fb81), [AD-e4a3b5da](AD-e4a3b5da)]`, `informs_epics: []` |
 | `mvp/frontend-library.md` | type, status, date | `produces_decisions: [[AD-d01b9e0a](AD-d01b9e0a), [AD-5d0f8814](AD-5d0f8814)]`, `informs_epics: []` |
@@ -124,7 +125,7 @@ Every research doc gets YAML frontmatter linking it to what it informed.
 ### 1b. Orphaned Plan Resolution
 
 | Plan | Proposed Action | Rationale |
-|------|----------------|-----------|
+| ------ | ---------------- | ----------- |
 | `agent-governance.md` | Link to [EPIC-e24086ed](EPIC-e24086ed) (Agent Management UI) or a retroactive completed epic | This plan guided the agent governance overhaul that's already done |
 | `provider-abstraction.md` | Link to [EPIC-73fcc85a](EPIC-73fcc85a) (Provider Abstraction) | This is the design doc for the provider work |
 | `composability-gate.md` | Already linked to [EPIC-c1833545](EPIC-c1833545) | No action needed |
@@ -135,7 +136,7 @@ Every research doc gets YAML frontmatter linking it to what it informed.
 The roadmap lists completed phases with no artifact trail. Proposed retroactive epics:
 
 | Proposed Epic | Phase | Milestone | Status | What It Covers |
-|---------------|-------|-----------|--------|---------------|
+| --------------- | ------- | ----------- | -------- | --------------- |
 | [EPIC-5a0624dc](EPIC-5a0624dc) | Phase 1: Scaffold | [MS-b1ac0a20](MS-b1ac0a20) | done | Tauri v2 setup, sidecar, SQLite, streaming, conversation UI, session management, settings |
 | [EPIC-05ae2ce7](EPIC-05ae2ce7) | Phase 2b: Governance Bootstrap | [MS-b1ac0a20](MS-b1ac0a20) | done | Governance scanner, analysis, recommendation UI, coverage indicator |
 | [EPIC-a951c9b6](EPIC-a951c9b6) | Phase 0: Foundation | [MS-b1ac0a20](MS-b1ac0a20) | done | All research, architecture decisions, product definition, UX design, technical design |
@@ -158,7 +159,7 @@ The architecture decisions doc (`docs/architecture/decisions.md`) contains [AD-7
 
 ### The Interleaving Plan
 
-```
+```text
 Wave 1 (backfill)          Wave 2 (viewers)              Wave 3 (linking)
 ─────────────────          ─────────────────              ─────────────────
 1a. Research frontmatter ──┐
@@ -191,7 +192,7 @@ Wave 1 (backfill)          Wave 2 (viewers)              Wave 3 (linking)
 ## Relationship to Existing Epics
 
 | Epic | Relevance |
-|------|-----------|
+| ------ | ----------- |
 | **[EPIC-9ddef7f9](EPIC-9ddef7f9)** (Artifact Browser) | Wave 2 IS this epic — building viewers for milestones, epics, tasks, ideas |
 | **[EPIC-e24086ed](EPIC-e24086ed)** (Agent Management UI) | May absorb the agent-governance plan linkage |
 | **[EPIC-73fcc85a](EPIC-73fcc85a)** (Provider Abstraction) | Provider-abstraction plan links here |
@@ -200,6 +201,7 @@ Wave 1 (backfill)          Wave 2 (viewers)              Wave 3 (linking)
 ### Should [EPIC-9ddef7f9](EPIC-9ddef7f9) be restructured?
 
 Currently [EPIC-9ddef7f9](EPIC-9ddef7f9) is a draft P2 epic for "Artifact Browser." Given that Wave 2 of this migration IS [EPIC-9ddef7f9](EPIC-9ddef7f9), we should:
+
 1. Promote [EPIC-9ddef7f9](EPIC-9ddef7f9) to P1 (it's needed for dogfooding — we can't manage our own project without seeing epics/tasks)
 2. Update its scope to include all 5 missing artifact types
 3. Create a detailed plan with tasks for each viewer
@@ -211,7 +213,7 @@ Currently [EPIC-9ddef7f9](EPIC-9ddef7f9) is a draft P2 epic for "Artifact Browse
 After each wave:
 
 | Wave | Verify |
-|------|--------|
+| ------ | -------- |
 | 1 | All research docs have frontmatter. All plans are linked. Retroactive epics exist. `git log` shows clean additive commits. |
 | 2 | Every artifact type is browsable in the app. Sidebar shows all types. Viewers render frontmatter correctly. |
 | 3 | Clicking artifact references navigates to the target. Relationship panel shows connections. Roadmap is interactive. |

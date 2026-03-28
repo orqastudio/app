@@ -19,6 +19,7 @@ relationships:
   - target: PERSONA-477971bf
     type: benefits
 ---
+
 ## Motivation
 
 OrqaStudio's universal agent model already separates work into distinct roles (Planner, Implementer, Reviewer, etc.). Each role has different requirements — planning needs broad reasoning but not code generation speed, while implementation needs strong code capabilities. Routing each role to the optimal model enables:

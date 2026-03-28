@@ -2,7 +2,7 @@
 id: "TASK-58a0bdf0"
 type: "task"
 name: "License per directory and version management"
-status: "completed"
+status: archived
 description: "Set up per-directory LICENSE files for mixed BSL-1.1/Apache-2.0 licensing. Update orqa version sync for monorepo (single VERSION file, workspace-aware propagation)."
 relationships:
   - target: "EPIC-2f720d43"
@@ -24,7 +24,7 @@ acceptance:
 ### License mapping
 
 | Component | License | Reason |
-|-----------|---------|--------|
+| ----------- | --------- | -------- |
 | Root, app, libs/cli | BSL-1.1 | Core product |
 | libs/types, libs/sdk, libs/logger, libs/svelte-components, libs/graph-visualiser, libs/brand | Apache-2.0 | Open libraries |
 | libs/search, libs/validation, libs/mcp-server, libs/lsp-server | Apache-2.0 | Open Rust crates |

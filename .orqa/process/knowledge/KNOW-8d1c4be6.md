@@ -1,7 +1,9 @@
 ---
 id: KNOW-8d1c4be6
 type: knowledge
+status: active
 title: Plugin Artifact Usage
+domain: methodology/governance
 description: How plugins provide and consume governance artifacts within the OrqaStudio ecosystem
 summary: "Plugin artifact usage: how plugins declare, provide, and consume governance artifacts. Content flow from plugin source through install-time sync to project-level copies."
 ---
@@ -13,6 +15,7 @@ Plugins interact with governance artifacts through a defined content flow:
 ### Content Declaration
 
 Plugins declare content sections in `orqa-plugin.json`:
+
 - `content.knowledge` — knowledge artifacts provided by the plugin
 - `content.rules` — rule artifacts provided by the plugin
 - `content.documentation` — documentation provided by the plugin

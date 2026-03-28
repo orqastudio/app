@@ -3,7 +3,7 @@ id: "TASK-16b6ff1e"
 type: "task"
 title: "Tauri v2 capability audit"
 description: "Confirmed Tauri v2 meets all desktop app requirements including security model, IPC patterns, plugin ecosystem, and cross-platform support."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Audited Tauri v2 against all desktop app requirements, confirming the security model, IPC command system, plugin ecosystem, and cross-platform build support meet project needs.

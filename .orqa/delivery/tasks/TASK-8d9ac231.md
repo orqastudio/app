@@ -3,7 +3,7 @@ id: "TASK-8d9ac231"
 type: "task"
 title: "Implement skill injection in plugin rule-engine.mjs"
 description: "Extend the plugin rule engine to handle inject actions by reading SKILL.md\nfiles and returning their content as systemMessage.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

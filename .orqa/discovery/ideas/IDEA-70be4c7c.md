@@ -17,6 +17,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Candidate Items
 
 - Generic governance format — agents, rules, skills, hooks in `.orqa/process/` as canonical source

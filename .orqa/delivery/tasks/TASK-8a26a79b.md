@@ -3,7 +3,7 @@ id: "TASK-8a26a79b"
 type: "task"
 title: "Update product documentation"
 description: "Update governance.md with the concept taxonomy from AD-48b310f9, create a new governance-hub.md page for the distribution and coexistence model from AD-26b0eb9f, and verify artifact-framework.md alignment."
-status: "completed"
+status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
 assignee: "AGENT-4c94fe14"
@@ -26,6 +26,7 @@ relationships:
   - target: "TASK-39c5ac3f"
     type: "depends-on"
 ---
+
 ## Reference
 
 - [AD-48b310f9](AD-48b310f9) has the concept taxonomy and decision framework

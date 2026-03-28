@@ -3,7 +3,7 @@ id: "TASK-b6bcdc9d"
 type: "task"
 title: "Record core architecture decisions (AD-09fc4e65 through AD-e4a3b5da)"
 description: "Captured foundational architecture decisions covering thick backend, IPC boundary, error propagation, and Svelte 5 runes-only policy."
-status: "completed"
+status: archived
 created: "2026-03-02"
 updated: "2026-03-02"
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Recorded four foundational architecture decisions covering the sidecar integration pattern, streaming pipeline design, security model, and MCP host approach.

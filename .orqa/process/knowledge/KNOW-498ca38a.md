@@ -2,6 +2,8 @@
 id: KNOW-498ca38a
 type: knowledge
 title: "Software — Relationship Vocabulary"
+domain: methodology/governance
+description: "Reference for the 11 software plugin relationship types with forward/inverse directions, from/to constraints, and automated status transition rules."
 summary: "Defines 11 relationship types for delivery and engineering artifacts across 6 categories: Hierarchy (delivers, fulfils), Lineage (realises, produces), Dependency (depends-on), Corrective (reports, fixes, affects), Knowledge Flow (yields), and Delivery (implements, addresses). Each has forward/inverse directions, from/to constraints, and status rules for automated state transitions."
 status: active
 created: 2026-03-01
@@ -20,11 +22,12 @@ The software plugin defines 11 relationship types that model how delivery and en
 Relationships that structure work into nested delivery units.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `delivers` | `delivered-by` | task | epic | Task delivers work to an epic. Required, min 1. Has status rules: epic moves to review when all delivering tasks are completed. |
 | `fulfils` | `fulfilled-by` | epic | milestone | Epic fulfils a milestone checkpoint. Has status rules: milestone moves to review when all fulfilling epics are completed. |
 
 **When to use:**
+
 - `delivers` — every task must belong to exactly one epic
 - `fulfils` — epics that contribute to a milestone checkpoint
 
@@ -35,11 +38,12 @@ Relationships that structure work into nested delivery units.
 Relationships that trace how artifacts evolve through the pipeline.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `realises` | `realised-by` | idea | epic, task | Idea realised through delivery work. |
 | `produces` | `produced-by` | research | wireframe | Research produces a visual specification. |
 
 **When to use:**
+
 - `realises` — an idea has moved from discovery into delivery as an epic or task
 - `produces` — research has generated a wireframe or visual spec
 
@@ -50,10 +54,11 @@ Relationships that trace how artifacts evolve through the pipeline.
 Relationships that express blocking dependencies between work items.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `depends-on` | `depended-on-by` | task, epic | task, epic | Task or epic cannot proceed until dependency is completed. Has status rules: blocked when any dependency is incomplete, unblocked (ready) when all are completed. |
 
 **When to use:**
+
 - `depends-on` — a task or epic cannot start until another piece of work is finished. Always store on the dependent item (the one that is blocked), pointing to the item it waits for.
 
 ---
@@ -63,12 +68,13 @@ Relationships that express blocking dependencies between work items.
 Relationships that connect bugs to the work they affect and the work that fixes them.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `reports` | `reported-by` | bug | epic, task, milestone | Bug reports an issue against delivery work. Required, min 1. |
 | `fixes` | `fixed-by` | task | bug | Task fixes a reported bug. |
 | `affects` | `affected-by` | bug | persona | Bug affects a target persona. |
 
 **When to use:**
+
 - `reports` — every bug must identify which delivery work it was found in
 - `fixes` — a task has been created specifically to resolve a bug
 - `affects` — a bug impacts a specific user persona
@@ -80,10 +86,11 @@ Relationships that connect bugs to the work they affect and the work that fixes 
 Relationships that capture operational learning from delivery work.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `yields` | `yielded-by` | task | lesson | Task yields a lesson learned. |
 
 **When to use:**
+
 - `yields` — a completed task produced an insight worth capturing as a lesson
 
 ---
@@ -93,10 +100,11 @@ Relationships that capture operational learning from delivery work.
 Relationships that trace delivery work back to governance decisions and lessons.
 
 | Forward | Inverse | From | To | Description |
-|---------|---------|------|----|-------------|
+| --------- | --------- | ------ | ---- | ------------- |
 | `implements` | `implemented-by` | task, epic | decision | Work directly implements a decision — traces delivery back to governance. |
 | `addresses` | `addressed-by` | task, epic | lesson | Task or epic addresses a lesson or implementation finding. |
 
 **When to use:**
+
 - `implements` — work that directly carries out an architecture decision
 - `addresses` — work that responds to a lesson learned or implementation finding

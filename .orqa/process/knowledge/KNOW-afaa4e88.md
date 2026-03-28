@@ -1,7 +1,9 @@
 ---
 id: KNOW-afaa4e88
 type: knowledge
-name: Plugin Management
+title: Plugin Management
+domain: integration/cli
+description: "How to create, install, update, and remove OrqaStudio plugins using orqa plugin commands and the plugin manifest format."
 summary: "Plugin Management. OrqaStudio plugins extend the app with new artifact types, views, relationships, sidecars, hooks, and CLI tools. Manage them via the `orqa plugin` commands."
 status: active
 plugin: "@orqastudio/plugin-cli"
@@ -18,7 +20,7 @@ OrqaStudio plugins extend the app with new artifact types, views, relationships,
 ## Plugin Types
 
 | Type | What it provides | Build tool |
-|---|---|---|
+| --- | --- | --- |
 | frontend | Views + widgets (Svelte components) | svelte-package |
 | sidecar | Long-running process (NDJSON protocol) | bun build |
 | cli-tool | One-shot CLI command | tsc |
@@ -34,6 +36,7 @@ orqa plugin create full        # Combined
 ```
 
 Each template includes:
+
 - `orqa-plugin.json` — manifest with schemas, views, relationships
 - `package.json` — dependencies and build scripts
 - `.github/workflows/release.yml` — build → tar.gz → GitHub Release

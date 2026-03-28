@@ -3,13 +3,14 @@ id: "IMPL-5b380b2e"
 type: lesson
 title: "Investigate systemically before fixing individual issues"
 description: "Collect all findings first, group by systemic theme, investigate the architecture, then design solutions at the system level. One fix addressing six findings is better than six independent fixes."
-status: "completed"
+status: completed
 created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## What Happened
 
 During UAT Round 1 [EPIC-489c0a47](EPIC-489c0a47), multiple issues were identified across artifact display, status UX, null value handling, breadcrumbs, and memory leaks. The instinct was to fix each finding immediately as reported.

@@ -3,7 +3,7 @@ id: "TASK-ab29557a"
 type: "task"
 title: "Initialize Tauri v2 + Svelte 5 project"
 description: "Set up the initial Tauri v2 project with Svelte 5 frontend, configured plugins, build tooling, and development scripts."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Initialized the Tauri v2 project with a Svelte 5 frontend template and configured all required plugins, build tooling, and development scripts.

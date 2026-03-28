@@ -2,6 +2,7 @@
 id: KNOW-2a846fb7
 type: knowledge
 title: OrqaStudio Enforcement Engine
+domain: methodology/governance
 description: Understands how OrqaStudio governance rules are mechanically enforced via the
 status: active
 created: 2026-03-11
@@ -37,7 +38,7 @@ fire when agents skip steps in the process: understand → plan → document →
 review → learn.
 
 | Gate | Fires When | Effect |
-|------|-----------|--------|
+| ------ | ----------- | -------- |
 | understand-first | First code write with no prior research | Systems thinking prompt injected |
 | docs-before-code | Code write without reading governing docs | Documentation prompt injected |
 | plan-before-build | Code write without epic/task context | Planning prompt injected |
@@ -55,7 +56,7 @@ entries with `action: inject`. Path patterns map to skill names.
 ```yaml
 enforcement:
   - event: file
-    paths: ["backend/src-tauri/src/domain/**"]
+    paths: ["app/src-tauri/src/domain/**"]
     action: inject
     skills: [orqa-domain-services, orqa-error-composition]
     message: "Domain service and error composition patterns loaded."
@@ -102,7 +103,7 @@ enforcement:
 ### Event Types
 
 | Event | Triggered By | Pattern Matched Against |
-|-------|-------------|------------------------|
+| ------- | ------------- | ------------------------ |
 | `file` | Write, Edit tool calls | File content |
 | `bash` | Bash tool calls | Command string |
 | `prompt` | UserPromptSubmit hook | User message |
@@ -112,7 +113,7 @@ enforcement:
 ### Actions
 
 | Action | Behavior |
-|--------|----------|
+| -------- | ---------- |
 | `block` | Tool call denied with message |
 | `warn` | Tool call proceeds, message shown as warning |
 | `inject` | Skills loaded into context as systemMessage |
@@ -120,7 +121,7 @@ enforcement:
 ### Fields
 
 | Field | Required | Description |
-|-------|----------|-------------|
+| ------- | ---------- | ------------- |
 | `event` | Yes | Which event type triggers this entry |
 | `pattern` | No | Regex (file/bash) or linter rule name (lint) |
 | `paths` | No | Glob patterns restricting which files match |
@@ -130,7 +131,7 @@ enforcement:
 
 ## Implementation
 
-The app's Rust enforcement engine (`backend/src-tauri/src/domain/enforcement_engine.rs`) is the
+The app's Rust enforcement engine (`app/src-tauri/src/domain/enforcement_engine.rs`) is the
 primary implementation. It sits above the agent layer and applies uniformly regardless
 of which agent is running. The CLI companion plugin (`rule-engine.mjs`) is a compatibility
 port that brings the same enforcement to Claude Code CLI users.

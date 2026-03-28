@@ -3,7 +3,7 @@ id: "EPIC-bbac7876"
 type: "epic"
 title: "Configuration-driven delivery pipeline"
 description: "Replace hardcoded delivery artifact types (milestones, epics, tasks) with project-configurable type definitions in project.json. The code becomes a generic enforcement engine for whatever delivery pipeline the project defines. Core artifacts (ideas, research, rules, lessons, decisions, skills, agents, pillars) remain hardcoded as firmware."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -23,6 +23,7 @@ relationships:
 ## Context
 
 Currently the codebase hardcodes knowledge of delivery artifact types:
+
 - Rust integrity checks reference "epic", "milestone", "task" field names directly
 - Roadmap components have hardcoded EPIC_COLUMNS, TASK_COLUMNS
 - Parent-child relationships (task→epic→milestone) are hardcoded
@@ -35,6 +36,7 @@ Per AD-b2f1f829, the delivery pipeline should be configurable. A software projec
 ### Phase 1: Define delivery type configuration schema
 
 Add a `delivery` section to `project.json`:
+
 ```json
 {
   "delivery": {
@@ -69,6 +71,7 @@ Replace hardcoded field references in `artifact_graph.rs` with lookups against t
 ### Phase 3: Make roadmap components config-driven
 
 Roadmap reads delivery types from config to determine:
+
 - Which type is the top level (milestones)
 - Which type is the second level (epics)
 - Which type is the third level (tasks)

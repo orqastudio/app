@@ -3,7 +3,7 @@ id: "TASK-6429d9eb"
 type: "task"
 title: "End-to-end test — task with docs/skills triggers correct context injection"
 description: "Verify that a task with docs and skills fields causes the plugin to inject the correct documentation and skills into agent context."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs: []
@@ -21,6 +21,7 @@ relationships:
   - target: "TASK-1ee2031e"
     type: "depends-on"
 ---
+
 ## What
 
 Verify the full graph-based injection pipeline works end-to-end: a task with `docs` and `skills` fields causes the plugin to automatically inject the correct context.

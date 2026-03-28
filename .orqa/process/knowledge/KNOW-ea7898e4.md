@@ -2,6 +2,7 @@
 id: KNOW-ea7898e4
 type: knowledge
 title: Rust Async Patterns
+domain: platform/rust
 description: "Master Rust async programming with Tokio, async traits, error handling, and concurrent patterns. Use when building async Rust applications, implementing concurrent systems, or debugging async code."
 summary: "Master Rust async programming with Tokio, async traits, error handling, and concurrent patterns. Use when building async Rust applications, implementing concurrent systems, or debugging async code."
 status: active
@@ -18,14 +19,14 @@ Async Rust patterns with Tokio: concurrent tasks, channels, error handling, grac
 
 ## Execution Model
 
-```
+```text
 Future (lazy) → poll() → Ready(value) | Pending
                 ↑           ↓
               Waker ← Runtime schedules
 ```
 
 | Concept | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `Future` | Lazy computation that may complete later |
 | `async fn` | Function returning impl Future |
 | `Task` | Spawned future running concurrently |
@@ -59,7 +60,7 @@ stream::iter(urls)
 ## Channel Selection Guide
 
 | Channel | Pattern | Use Case |
-|---------|---------|----------|
+| --------- | --------- | ---------- |
 | `mpsc` | Multi-producer, single-consumer | Work queues |
 | `broadcast` | Multi-producer, multi-consumer | Event bus |
 | `oneshot` | Single value, single use | Request-response |

@@ -2,7 +2,7 @@
 id: TASK-c0c9613d
 type: task
 title: "Interactive prereq installation via fnm and rustup"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

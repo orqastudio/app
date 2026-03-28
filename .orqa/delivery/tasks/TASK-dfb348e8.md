@@ -22,6 +22,7 @@ relationships:
 ## What
 
 Write integration tests that exercise the full knowledge injection path:
+
 1. Connector reads `project.json` and discovers plugin paths
 2. Knowledge file is found at canonical location
 3. Content is included in the delegation prompt sent to the subagent
@@ -30,10 +31,12 @@ Write integration tests that exercise the full knowledge injection path:
 ## How
 
 Create test fixtures:
+
 - A minimal `project.json` pointing to a test plugin directory
 - A test plugin directory with `knowledge/test-domain/SKILL.md`
 
 Write integration tests (in `connectors/claude-code/` test directory or equivalent):
+
 - Happy path: knowledge injection produces prompt containing knowledge content
 - Missing file: delegation proceeds without knowledge, no error thrown
 - Invalid plugin path: delegation proceeds without knowledge, warning logged

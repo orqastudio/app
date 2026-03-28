@@ -3,7 +3,7 @@ id: "TASK-ef117f44"
 type: "task"
 title: "Licensing and Legal Documentation"
 description: "Establish legal foundation for the open source project including Apache 2.0 license, attribution notices, third-party dependency documentation, and contributing guidelines."
-status: "completed"
+status: archived
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-bbad3d30"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Establish legal foundation: open source license, attribution notices,

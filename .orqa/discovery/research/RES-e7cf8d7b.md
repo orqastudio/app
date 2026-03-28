@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Artifact System Migration"
 ---
+
 ## Problem Statement
 
 We backfilled 33 historical artifacts (Wave 1), but the system that governs them hasn't caught up. Decisions exist as files in `.orqa/decisions/` but the framework doesn't define them. New decisions will still be added to the monolithic doc by habit. The roadmap doesn't reflect the new milestone. Agents don't know about `.orqa/decisions/`. Cross-references are unvalidated.
@@ -29,7 +30,7 @@ The artifact system must become self-sustaining: when someone creates a new deci
 ## Gap Analysis
 
 | Gap | Current State | Target State | Effort |
-|-----|--------------|-------------|--------|
+| ----- | -------------- | ------------- | -------- |
 | Decision not in framework | Not defined in `artifact-framework.md` | Full schema, workflow, storage defined | Doc update |
 | Decision not in lifecycle rules | `artifact-lifecycle.md` doesn't mention decisions | Creation, status transitions, research linkage enforced | Rule update |
 | Decision not in workflow | `artifact-workflow.md` says "record in decisions.md" | Says "create AD-NNN.md in `.orqa/decisions/`" | Doc update |
@@ -61,12 +62,14 @@ Status workflow: proposed → accepted → superseded | deprecated
 **1b. Update `docs/process/artifact-workflow.md`**
 
 Replace "record decisions in `docs/architecture/decisions.md`" with:
+
 - Create `AD-NNN.md` in `.orqa/decisions/`
 - Use the frontmatter schema from the framework
 - Link back to the research that informed the decision via `research-refs`
 - If a decision supersedes another, set `evolves-into` and update the old one's `evolves-from`
 
 Add a "Decision Creation" section covering:
+
 - When to create a decision (research produces an architectural choice)
 - How to number it (next available AD-NNN)
 - Required fields and links
@@ -75,6 +78,7 @@ Add a "Decision Creation" section covering:
 **1c. Update `.orqa/rules/artifact-lifecycle.md`**
 
 Add Decision to the enforced artifact types:
+
 - Status transitions: proposed → accepted → superseded | deprecated
 - Creation rule: research that produces an architectural choice MUST create an AD-NNN.md
 - Supersession rule: when a new decision replaces an old one, both must be updated
@@ -83,7 +87,8 @@ Add Decision to the enforced artifact types:
 **1d. Update `.claude/CLAUDE.md` resources table**
 
 Add:
-```
+
+```text
 | Decisions | `.orqa/decisions/` | Architecture decision artifacts |
 ```
 
@@ -116,6 +121,7 @@ Replace the Phase 0/1/2b descriptions with references to [MS-063c15b9](MS-063c15
 **3b. Validate all cross-references**
 
 An agent reads every `.orqa/decisions/AD-NNN.md` file and verifies:
+
 - Every `research-refs` entry points to a file that actually exists
 - Every `evolves-into`/`evolves-from` reference points to a decision that exists
 - Every research doc's `produces_decisions` field matches what the decisions claim
@@ -131,6 +137,7 @@ Fix any mismatches found.
 **4a. Create [EPIC-2f1efbd5](EPIC-2f1efbd5): Artifact System Migration**
 
 This epic tracks the migration itself (distinct from [EPIC-9ddef7f9](EPIC-9ddef7f9) which is about building viewers):
+
 - Milestone: [MS-b1ac0a20](MS-b1ac0a20) (dogfooding)
 - Priority: P1
 - Tasks: one per workstream above
@@ -145,13 +152,14 @@ Link `.orqa/plans/artifact-migration.md` to [EPIC-2f1efbd5](EPIC-2f1efbd5) and u
 This is the implementation work for building backend + frontend viewers. It's already tracked as [EPIC-9ddef7f9](EPIC-9ddef7f9) and should be planned separately with its own tasks. Not part of this plan's scope — but this plan's output (consistent, well-structured artifacts) is its prerequisite.
 
 [EPIC-9ddef7f9](EPIC-9ddef7f9) depends on:
+
 - Decision type being defined in the framework (WS-1)
 - All artifact content being backfilled and cross-referenced (WS-1, WS-2, WS-3)
 - The monolithic decisions doc being converted to an index (WS-2)
 
 ## Sequencing
 
-```
+```text
 WS-1 (framework + rules)    ← Do first. Makes all future work correct by default.
   ↓
 WS-2 (monolithic transition) ← Depends on WS-1 defining the Decision type.
@@ -168,7 +176,7 @@ WS-1 through WS-4 are all documentation/rule changes — no code. They can be co
 ## Verification
 
 | Check | How |
-|-------|-----|
+| ------- | ----- |
 | Framework defines all 8 types | Read `artifact-framework.md`, count types |
 | Lifecycle rules cover all 8 types | Read `artifact-lifecycle.md`, verify each type has creation + transition rules |
 | Workflow describes all creation paths | Read `artifact-workflow.md`, verify each type has a "when to create" section |

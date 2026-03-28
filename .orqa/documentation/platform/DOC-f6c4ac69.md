@@ -1,7 +1,9 @@
 ---
 id: DOC-f6c4ac69
 type: doc
+status: active
 title: Artifact Workflow
+domain: guides
 category: how-to
 description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
 created: 2026-03-07
@@ -262,6 +264,7 @@ When research produces an architectural choice that affects the system — a tec
    - **Context** — what situation or question prompted this decision
    - **Decision** — what was chosen and the key reasons
    - **Consequences** — what becomes easier, harder, or newly constrained
+
 ### Supersession
 
 When a new decision replaces an existing accepted decision:
@@ -283,7 +286,7 @@ When a new decision replaces an existing accepted decision:
 The roadmap (`.orqa/documentation/about/roadmap.md`) must stay in sync with artifacts:
 
 | Event | Roadmap Update |
-|-------|----------------|
+| ------- | ---------------- |
 | New idea captured | Add to ideas/future section (if significant) |
 | Idea promoted to epic | Move from ideas to the appropriate milestone section |
 | New epic added | Add under milestone section with ID reference |

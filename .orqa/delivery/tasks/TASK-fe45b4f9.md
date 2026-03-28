@@ -2,7 +2,7 @@
 id: "TASK-fe45b4f9"
 type: "task"
 name: "Set up npm workspaces"
-status: "completed"
+status: archived
 description: "Replace the entire npm link chain with npm workspaces. Root package.json declares all TS packages as workspace members. Internal @orqastudio/* deps resolve via workspace protocol."
 relationships:
   - target: "EPIC-2f720d43"
@@ -48,6 +48,7 @@ acceptance:
 ### Update internal deps
 
 Each package.json that references `@orqastudio/*` packages should use workspace protocol:
+
 ```json
 "@orqastudio/types": "workspace:*"
 ```
@@ -57,6 +58,7 @@ Or just `"*"` — npm workspaces resolve local packages automatically by name.
 ### Update orqa install
 
 Remove the LIB_ORDER npm link chain from `libs/cli/src/commands/install.ts`. Replace with:
+
 1. `npm install` at repo root (resolves all workspaces)
 2. Build each package in dependency order (or use a topological build)
 3. Plugin content sync (already framework-managed)

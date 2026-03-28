@@ -3,7 +3,7 @@ id: "EPIC-2bf6887a"
 type: "epic"
 title: "Codebase Audit and Architecture Documentation"
 description: "Thorough code review ensuring artifact accuracy, documenting undiscovered implementation patterns, removing dead/outdated code, assessing test coverage, aligning linting with coding standards, and producing complete architecture documentation for the target core application."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-12"
 updated: "2026-03-12"
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 [RES-f66a29ad](RES-f66a29ad) identified significant gaps: 8 untested command modules, zero integration tests, zero component tests, documentation path drift post-restructure, clippy pedantic not explicitly configured, no coverage measurement tooling, and several active epic tasks marked done incorrectly.
@@ -46,7 +47,7 @@ Fix incorrect task statuses on active epics, remove dead `scope` field reference
 ## Tasks
 
 | ID | Title | Phase | Description |
-|----|-------|-------|-------------|
+| ---- | ------- | ------- | ------------- |
 | [TASK-d1b856b5](TASK-d1b856b5) | Fix post-restructure path references in docs | 1 | Update `src-tauri/` → `backend/src-tauri/`, `persistence/` → `repo/` across all `.orqa/` docs |
 | [TASK-cc7df87c](TASK-cc7df87c) | Update rust-modules.md module tree | 1 | Add `skill_injector.rs`, fix tree structure to match current codebase |
 | [TASK-1c7cab8d](TASK-1c7cab8d) | Enable clippy pedantic in Cargo.toml | 1 | Add `[lints.clippy]` section with pedantic enabled, fix resulting warnings |

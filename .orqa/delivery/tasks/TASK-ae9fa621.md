@@ -3,7 +3,7 @@ id: "TASK-ae9fa621"
 type: "task"
 title: "Update git-workflow rule for governance-only work"
 description: "Update git-workflow rule for governance-only work"
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"

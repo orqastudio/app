@@ -1,6 +1,6 @@
 {
   "plugins": {
-    "@orqastudio/plugin-agile-workflow": {
+    "@orqastudio/plugin-agile-methodology": {
       "version": "0.1.4-dev",
       "installed_at": "2026-03-26T09:46:54.447Z",
       "files": {

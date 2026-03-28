@@ -3,7 +3,7 @@ id: "TASK-3c586ee4"
 type: "task"
 title: "Enrich graph nodes with status, title, priority as first-class fields"
 description: "Update ArtifactNode to expose status, title, description, priority as direct fields instead of requiring frontmatter JSON parsing."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5

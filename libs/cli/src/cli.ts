@@ -3,10 +3,10 @@
 /**
  * OrqaStudio CLI — general-purpose command-line interface.
  *
- * 12 primary commands. Legacy top-level names are preserved as
- * backwards-compatible aliases that route to the new locations.
+ * 16 primary commands. No legacy aliases — pre-release, breaking changes expected.
  */
 
+import { createRequire } from "node:module";
 import { runPluginCommand } from "./commands/plugin.js";
 import { runIdCommand } from "./commands/id.js";
 import { runMcpCommand } from "./commands/mcp.js";
@@ -24,8 +24,13 @@ import { runSummarizeCommand } from "./commands/summarize.js";
 import { runMetricsCommand } from "./commands/metrics.js";
 import { runMigrateCommand } from "./commands/migrate.js";
 
+/** Read version dynamically from package.json so it never drifts from the published value. */
+const require = createRequire(import.meta.url);
+const pkg = require("../package.json") as { version: string };
+const VERSION = pkg.version;
+
 const USAGE = `
-OrqaStudio CLI v0.1.0-dev
+OrqaStudio CLI v${VERSION}
 
 Usage: orqa <command> [options]
 
@@ -45,7 +50,7 @@ Commands:
   id          Artifact ID management (generate, check, migrate)
   migrate     Apply status migrations from workflow definitions
   git         Git operations + repo maintenance (status, pr, license, readme, hosting)
-  debug       Dev environment + debug tooling (stop, kill, restart, icons, tool)
+  dev         Dev environment + debug tooling (stop, kill, restart, icons, tool)
 
 Options:
   --help, -h     Show this help message
@@ -63,7 +68,7 @@ async function main(): Promise<void> {
 	}
 
 	if (args[0] === "--version" || args[0] === "-v") {
-		console.log("0.1.0-dev");
+		console.log(VERSION);
 		return;
 	}
 
@@ -71,7 +76,6 @@ async function main(): Promise<void> {
 	const commandArgs = args.slice(1);
 
 	switch (command) {
-		// ── 12 primary commands ───────────────────────────────────
 		case "install":
 			await runInstallCommand(commandArgs);
 			break;
@@ -119,48 +123,6 @@ async function main(): Promise<void> {
 			break;
 		case "dev":
 			await runDevCommand(commandArgs);
-			break;
-		// setup → install link
-		case "setup":
-			await runInstallCommand(["link", ...commandArgs]);
-			break;
-		// link → plugin link
-		case "link":
-			await runPluginCommand(["link", ...commandArgs]);
-			break;
-		// verify → check verify
-		case "verify":
-			await runCheckCommand(["verify", ...commandArgs]);
-			break;
-		// audit → check audit
-		case "audit":
-			await runCheckCommand(["audit", ...commandArgs]);
-			break;
-		// enforce → check enforce
-		case "enforce":
-			await runCheckCommand(["enforce", ...commandArgs]);
-			break;
-		// repo → git (license/readme subcommands live under git now)
-		case "repo":
-			await runGitCommand(commandArgs);
-			break;
-		// hosting → git hosting
-		case "hosting":
-			await runGitCommand(["hosting", ...commandArgs]);
-			break;
-		// index → mcp index
-		case "index":
-			await runMcpCommand(["index", ...commandArgs]);
-			break;
-		// log enforcement-response → check enforce response
-		case "log":
-			if (commandArgs[0] === "enforcement-response") {
-				await runCheckCommand(["enforce", "response", ...commandArgs.slice(1)]);
-			} else {
-				console.error(`Unknown log subcommand: ${commandArgs[0] ?? "(none)"}`);
-				console.error("Available: enforcement-response");
-				process.exit(1);
-			}
 			break;
 
 		default:

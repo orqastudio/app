@@ -11,13 +11,13 @@ relationships:
     type: "guides"
     rationale: "Research findings informed epic design"
 ---
+
 # Agent, Skill, Rule, and Hook Audit Findings
 
 **Epic:** [EPIC-5aa11e2f](EPIC-5aa11e2f)
 **Tasks completed:** [TASK-1637bc63](TASK-1637bc63) (agents), [TASK-d6030100](TASK-d6030100) (skills), [TASK-88e72cc1](TASK-88e72cc1) (rules), [TASK-81b11647](TASK-81b11647) (hooks), [TASK-3109164e](TASK-3109164e) (cross-layer), [TASK-dfa29194](TASK-dfa29194) (missing/miscategorised)
 
 ---
-
 
 ## Executive Summary
 
@@ -34,11 +34,10 @@ Six audits were conducted across all governance layers. The governance framework
 
 ---
 
-
 ## Finding Categories and Counts
 
 | Category | Agents | Skills | Rules | Hooks | Cross-Layer | Misc. | Total |
-|----------|--------|--------|-------|-------|-------------|-------|-------|
+| ---------- | -------- | -------- | ------- | ------- | ------------- | ------- | ------- |
 | Stale file paths | 8 | 2 | 10 | 7 | 1 | — | 28 |
 | Stale code patterns | — | 2 | — | — | — | — | 2 |
 | Content accuracy | 1 | 2 | 5 | 2 | — | — | 10 |
@@ -49,7 +48,6 @@ Six audits were conducted across all governance layers. The governance framework
 
 ---
 
-
 ## Priority 1: Fix Immediately
 
 ### F-01: Claude Code lifecycle hooks are broken (TASK-81b11647, Finding 2)
@@ -59,10 +57,12 @@ Six audits were conducted across all governance layers. The governance framework
 `.claude/settings.json` references `.claude/hooks/session-start-hook.sh` and `.claude/hooks/pre-commit-reminder.sh`. However `.claude/hooks/` is listed in `.gitignore` (line 54) and no files exist there. The symlink from `.claude/hooks/` to `.orqa/process/hooks/` either doesn't exist or is blocked by gitignore.
 
 **Fix:** Update `.claude/settings.json` to reference `.orqa/process/hooks/` directly:
-```
+
+```text
 bash "$CLAUDE_PROJECT_DIR/.orqa/process/hooks/session-start-hook.sh"
 bash "$CLAUDE_PROJECT_DIR/.orqa/process/hooks/pre-commit-reminder.sh"
 ```
+
 Also remove `.claude/hooks/` from `.gitignore` or document that the symlink must be created post-clone.
 
 ### F-02: Stale `dogfood-mode.md` references in 6 agent definitions (TASK-1637bc63, Finding 3)
@@ -76,7 +76,7 @@ Every non-orchestrator agent references `.orqa/process/rules/dogfood-mode.md` wh
 ### F-03: Stale rule filename references in 3 agents (TASK-1637bc63, Finding 3)
 
 | Agent | Stale Reference | Correct Reference |
-|-------|----------------|-------------------|
+| ------- | ---------------- | ------------------- |
 | `implementer.md` | `no-stubs.md` | `[RULE-af5771e3](RULE-af5771e3).md` |
 | `writer.md` | `pillar-alignment-docs.md` | `[RULE-05562ed4](RULE-05562ed4).md` |
 | `planner.md` | `plan-mode-compliance.md` (Required Reading + 2 body refs) | `[RULE-dccf4226](RULE-dccf4226).md` |
@@ -88,7 +88,7 @@ The orchestrator's Hooks Configuration table says `.orqa/hooks/` — should be `
 ### F-05: Stale `.orqa/hooks/` references across 7+ documentation files (TASK-81b11647, Finding 7)
 
 | File | Stale Path |
-|------|-----------|
+| ------ | ----------- |
 | `.orqa/documentation/about/glossary.md` | `.orqa/hooks/` |
 | `.orqa/documentation/about/mvp-specification.md` (2 occurrences) | `.orqa/hooks/` |
 | `.orqa/documentation/about/journeys.md` | `.orqa/hooks/` |
@@ -100,7 +100,6 @@ The orchestrator's Hooks Configuration table says `.orqa/hooks/` — should be `
 **Fix:** Update all non-research references to `.orqa/process/hooks/`.
 
 ---
-
 
 ## Priority 2: Fix Soon
 
@@ -148,13 +147,14 @@ References `epic-count` and `completed-epics` as milestone fields. Neither exist
 Orchestrator says Tier 1 skills are "declared in agent YAML, loaded automatically" but `rust-async-patterns`, `svelte5-best-practices`, `tailwind-design-system`, `typescript-advanced-types`, `tauri-v2` do NOT appear in any agent's `skills:` YAML list. They are loaded by the orchestrator at delegation time — making them effectively Tier 2.
 
 **Fix options:**
+
 - A) Add these skill IDs to the relevant agent YAML `skills:` lists (makes them truly Tier 1)
 - B) Reclassify in the orchestrator as "orchestrator-injected based on task domain" (acknowledges current reality)
 
 ### F-14: Five orphaned skills with no loading mechanism (TASK-3109164e, Finding 4.2)
 
 | Skill | Purpose | Status |
-|-------|---------|--------|
+| ------- | --------- | -------- |
 | `project-inference` | Detect project characteristics | Future use (app setup flow) |
 | `project-migration` | Import from other AI tools | Future use (app setup flow) |
 | `project-setup` | Scaffold .orqa/ directory | Future use (app setup flow) |
@@ -166,7 +166,7 @@ These are forward-looking skills for features not yet implemented. They should b
 ### F-15: Skills with stale code patterns (TASK-d6030100)
 
 | Skill | Issue |
-|-------|-------|
+| ------- | ------- |
 | `orqa-domain-services` | References `load_context_messages()` — actual function is `load_context_summary()` |
 | `orqa-repository-pattern` | Lists 8 of 10 repos — missing `enforcement_rules_repo` and `project_settings_repo` |
 | `orqa-governance` | References rule by old filename `artifact-config-integrity.md` — should be `[RULE-63cc16ad](RULE-63cc16ad)` |
@@ -177,13 +177,12 @@ Component variant examples use `React.ButtonHTMLAttributes`, `forwardRef`, Radix
 
 ---
 
-
 ## Priority 3: Improvements
 
 ### F-17: Content duplication between rules and companion skills (TASK-dfa29194, Check 1)
 
 | Rule | Skill | Duplication |
-|------|-------|-------------|
+| ------ | ------- | ------------- |
 | [RULE-dccf4226](RULE-dccf4226) (Plan Mode Compliance) | `planning` | Full plan template exists in both |
 | [RULE-71352dc8](RULE-71352dc8) (UAT Process) | `uat-process` | Full 4-phase methodology in both |
 | RULE-b03009da (End-to-End Completeness) | `orqa-ipc-patterns` (partial) | 100+ lines of code examples in rule |
@@ -194,7 +193,7 @@ Component variant examples use `React.ButtonHTMLAttributes`, `forwardRef`, Radix
 ### F-18: Concepts needing companion artifacts (TASK-dfa29194, Check 3)
 
 | Concept | Has Rule? | Has Skill? | Gap |
-|---------|-----------|------------|-----|
+| --------- | ----------- | ------------ | ----- |
 | Artifact link format | No | `orqa-documentation` (FORBIDDEN section) | Need rule — binary constraint hidden in a skill |
 | Skill portability constraints | No | `skills-maintenance` (NON-NEGOTIABLE section) | Need rule — hard constraints without enforcement path |
 | Systems thinking methodology | [RULE-43f1bebc](RULE-43f1bebc) | No | Need companion skill — rule says "ask questions" but no HOW |
@@ -205,6 +204,7 @@ Component variant examples use `React.ButtonHTMLAttributes`, `forwardRef`, Radix
 Marked `layer: canon` but contains OrqaStudio-specific file paths and code examples. The composability *principles* are portable; the *examples* are project-specific.
 
 **Options:**
+
 - A) Keep `layer: canon`, replace OrqaStudio examples with generic ones
 - B) Change to `layer: project` (requires CLAUDE.md update since it's listed as Tier 1 universal)
 
@@ -223,7 +223,7 @@ Not a documented valid value. Rule schema has no enum constraint on `scope`, but
 ### F-23: Suggested new hooks (TASK-dfa29194, Check 6)
 
 | Hook | Priority | What It Checks |
-|------|----------|---------------|
+| ------ | ---------- | --------------- |
 | Stub scanner | High | [RULE-af5771e3](RULE-af5771e3) explicitly calls for this — grep staged files for TODO/FIXME/HACK |
 | Task dependency validator | Medium | Check `depends-on` tasks are `done` before starting |
 | Epic readiness validator | Medium | Check `docs-required` paths exist on disk |
@@ -231,7 +231,7 @@ Not a documented valid value. Rule schema has no enum constraint on `scope`, but
 ### F-24: Implicit conventions not captured (TASK-dfa29194, Check 5)
 
 | Convention | Where Found |
-|-----------|-------------|
+| ----------- | ------------- |
 | Context window management guidelines | orchestrator.md Section 1 |
 | Tool access restrictions per role | Agent YAML `tools:` lists |
 | `user-invocable` skill field semantics | Skill YAML — undocumented |
@@ -243,19 +243,22 @@ All 15 lessons checked. 6 already promoted. Remaining 9 are at recurrence 1 — 
 
 ---
 
-
 ## Recommended Implementation Approach
 
 ### Batch 1: Path fixes (mechanical, low risk)
+
 Fix all stale paths in one commit — agent `dogfood-mode.md` refs, orchestrator hooks path, documentation `.orqa/hooks/` refs, rule `TODO.md` refs, [RULE-f609242f](RULE-f609242f) source of truth, orchestrator `persistence/` → `repo/`. ~30 file edits.
 
 ### Batch 2: Hook fix (critical)
+
 Fix `.claude/settings.json` to point to `.orqa/process/hooks/` directly. Update `.gitignore` if needed.
 
 ### Batch 3: Content accuracy
+
 Update [RULE-eb269afb](RULE-eb269afb) component inventory, [RULE-b10fe6d1](RULE-b10fe6d1) milestone fields, [RULE-0be7765e](RULE-0be7765e)/032 pre-commit descriptions, skill code patterns (function names, repo inventory).
 
 ### Batch 4: Structural improvements (needs user direction)
+
 - Tier 1 skill resolution (option A vs B)
 - `composability` layer classification
 - Rule/skill deduplication strategy
@@ -264,7 +267,6 @@ Update [RULE-eb269afb](RULE-eb269afb) component inventory, [RULE-b10fe6d1](RULE-
 - New hooks (stub scanner)
 
 ---
-
 
 ## Files Examined
 

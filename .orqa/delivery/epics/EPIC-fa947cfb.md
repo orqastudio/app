@@ -19,6 +19,7 @@ relationships:
 ## Problem
 
 Two validators exist independently:
+
 - **Rust** (`libs/validation/`) — used by app backend, MCP server, LSP server
 - **TypeScript** (`libs/cli/src/validator/`) — used by CLI `orqa enforce`
 
@@ -29,9 +30,11 @@ checking, no patterns, no enums, no conditional requirements.
 ## Target State
 
 1. **ONE validator** — the Rust crate. CLI calls it via MCP or a dedicated binary.
+
    TypeScript validator removed entirely.
 
 2. **JSON Schema for frontmatter** — each artifact type in plugin manifests defines
+
    its frontmatter as JSON Schema (draft 2020-12). The validator runs YAML
    frontmatter through the schema.
 
@@ -77,12 +80,14 @@ can add required fields, tighten constraints, or add new optional fields
 to any artifact type defined by another plugin.
 
 **Resolution order:**
+
 1. Core plugin defines the artifact type schema (base)
 2. Enhancement plugins extend with `allOf` composition
 3. Project-level `project.json` can add project-specific constraints
 4. Final merged schema is what the validator runs against
 
 This means:
+
 - agile-governance defines what a `rule` needs (id, status, enforcement)
 - coding-standards adds that rules in its domain also need `linter`
 - A project could add that all rules need `owner` field
@@ -91,7 +96,7 @@ This means:
 ## What JSON Schema Gives Us
 
 | Current | With JSON Schema |
-|---------|-----------------|
+| --------- | ----------------- |
 | "id is required" | `"id": { "type": "string", "pattern": "^[A-Z]+-[a-f0-9]{8}$" }` |
 | "status is required" | `"status": { "enum": ["captured", "active", ...] }` |
 | No type checking | `"recurrence": { "type": "integer", "minimum": 0 }` |
@@ -99,7 +104,7 @@ This means:
 
 ## Enforcement Architecture
 
-```
+```text
 Rules (YAML frontmatter enforcement entries)
   ↓ declares structured enforcement config
 Engine (Rust crate / JS rule-engine)
@@ -169,6 +174,7 @@ enforcement:
 ```
 
 **Schema validation ensures:**
+
 1. Every rule has `enforcement` array with ≥1 entry
 2. Every entry references a `mechanism` key registered by an installed plugin
 3. If a mechanism is not installed, the validator warns (enforcement degraded)
@@ -221,7 +227,7 @@ plugins). This is declared via plugin dependencies:
 
 **Enforcement chain resolution — every consumer runs what it can:**
 
-```
+```text
 pre-commit (githooks)
   → consumes lint, json-schema, tool, type-check, test
   → runs: clippy, eslint, svelte-check, orqa enforce, cargo test, vitest
@@ -258,7 +264,7 @@ which consumer fires it — is logged to a single structured log. This
 provides a complete audit trail of what was enforced, when, and whether
 it passed or failed.
 
-```
+```text
 { timestamp, mechanism, type, rule_id, artifact_id, result, message }
 ```
 
@@ -270,6 +276,7 @@ Lessons map to memory/learning, not enforcement. Lesson recurrence is
 detected by the ONNX runtime via semantic similarity (not manual counting).
 
 Sources that log:
+
 - Hook lifecycle: already logs to .state/hook-metrics.json (telemetry.mjs)
 - LSP: logs diagnostics published per file
 - Pre-commit: logs each check run and pass/fail
@@ -289,12 +296,14 @@ orqa log enforcement-response \
 ```
 
 This creates a closed audit loop:
-```
+
+```text
 Enforcement fires → Event logged (violation detected)
 Agent sees feedback → Agent fixes → Response logged (action taken)
 ```
 
 Every enforcement event has a resolution status:
+
 - `unresolved` — feedback was given, no response logged yet
 - `fixed` — agent fixed the issue
 - `deferred` — agent acknowledged but deferred (with reason)
@@ -302,20 +311,28 @@ Every enforcement event has a resolution status:
 - `false-positive` — agent determined the violation was incorrect
 
 The app consumes this log for:
+
 - Dashboard: enforcement health metrics (violation rate, resolution rate)
 - Analytics: which rules fire most, which are never triggered (dead rules?),
+
   which have low resolution rates (agents ignoring feedback?)
+
 - Audit: complete traceability — violation → action → resolution per event
 - Learning loop: high false-positive rates trigger rule review
 
 **`consumes` vs `requires`:**
+
 - `consumes`: optional dependency — the plugin works without it but can't
+
   run those mechanism types. Pre-commit works without clippy, just skips Rust checks.
+
 - `requires`: hard dependency — plugin fails to install without it.
+
   Listed in the existing `requires` field for plugins that can't function at all
   without the dependency.
 
 **Plugin mechanism providers:**
+
 - core-framework: registers ALL built-in enforcement mechanisms:
 
   **`behavioral`** — always present, minimum floor. Prompt injection.
@@ -329,25 +346,30 @@ The app consumes this log for:
   Canonical hook types (registered by core-framework, extensible):
 
   Action hooks:
+
   - `PreAction` / `PostAction` — before/after any agent tool use
   - `PreWrite` / `PostWrite` — before/after file creation/modification
   - `PreDelete` — before artifact deletion
 
   Artifact hooks:
+
   - `PreStatusTransition` / `PostStatusTransition` — before/after status changes
   - `PreRelationshipChange` — before adding/removing relationships
   - `PostArtifactCreate` — after a new artifact is created
 
   Session hooks:
+
   - `SessionStart` / `SessionEnd`
   - `PreDelegation` / `PostDelegation` — before/after delegation
   - `PreCompact` — before context window compaction
 
   Prompt hooks:
+
   - `PromptSubmit` — before agent responds
   - `PostResponse` — after agent responds (output validation)
 
   Graph hooks:
+
   - `PostGraphMutation` — after any graph change
   - `PreCommit` — before git commit (final gate)
 
@@ -361,6 +383,7 @@ The app consumes this log for:
   `PostAction` ↔ `PostToolUse`,
   `PromptSubmit` ↔ `UserPromptSubmit`, etc.
   What connectors can't map, the app executes directly.
+
 - claude-code connector: registers `hook` mechanism with supported hook types:
   - `PreToolUse` (block/warn before tool execution)
   - `PostToolUse` (validate/inject after tool execution)
@@ -369,11 +392,13 @@ The app consumes this log for:
   - `Stop` (session end checklist)
   - `PreCompact` (context preservation before compaction)
   - `SubagentStop` (subagent output review)
+
   Claude Code maps to app canonical types:
   `PreToolUse` → `PreAction`, `PostToolUse` → `PostAction`,
   `UserPromptSubmit` → `PromptSubmit`, etc.
   Other connectors do the same mapping — rules target app canonical types,
   connectors translate to their native equivalents.
+
 - coding-standards: `lint` (consumes language linters)
 - githooks: `pre-commit` (consumes lint, json-schema, tool, type-check, test)
 - cli: `tool` — `orqa-validate`, `orqa-version-check`
@@ -382,6 +407,7 @@ The app consumes this log for:
 - svelte: `eslint`, `svelte-check`, `vitest`
 - typescript: `tsc` (type checking)
 - claude-code connector: `hook` with types mapped to app canonical hooks
+
   (consumes lint, json-schema, tool, behavioral — runs during agent work)
 
 ### Enforcement Entry Schema (structured YAML)
@@ -417,47 +443,52 @@ enforcement:
 ## Tasks
 
 ### Phase 1: Single Validator
+
 1. [ ] Build `orqa enforce` as a standalone Rust binary
 2. [ ] CLI `orqa enforce` shells out to Rust binary
 3. [ ] Remove `libs/cli/src/validator/` TypeScript implementation
 4. [ ] Verify connector hooks work with Rust binary
 
 ### Phase 2: JSON Schema
-5. [ ] Add `jsonschema` Rust crate to `libs/validation/`
-6. [ ] Migrate plugin manifest `frontmatter` from `{required, optional}` to JSON Schema
-7. [ ] Update Rust `check_frontmatter_requirements` to validate against JSON Schema
-8. [ ] Generate `status` enum from `statusTransitions` keys
-9. [ ] Git hooks plugin pre-commit calls `validate-frontmatter.mjs` (already done)
-10. [ ] LSP server: validate frontmatter against JSON Schema on every file save
-11. [ ] LSP server: publish diagnostics (errors/warnings) for schema violations
-12. [ ] LSP server: read schemas from plugin manifests (same source as validator)
-13. [ ] LSP server: support schema composition (base + plugin extensions via allOf)
-14. [ ] Connector prompt hooks: inject LSP diagnostic summary as actionable instruction
-15. [ ] App: surface LSP diagnostics in artifact editor UI (inline error markers)
+
+1. [ ] Add `jsonschema` Rust crate to `libs/validation/`
+2. [ ] Migrate plugin manifest `frontmatter` from `{required, optional}` to JSON Schema
+3. [ ] Update Rust `check_frontmatter_requirements` to validate against JSON Schema
+4. [ ] Generate `status` enum from `statusTransitions` keys
+5. [ ] Git hooks plugin pre-commit calls `validate-frontmatter.mjs` (already done)
+6. [ ] LSP server: validate frontmatter against JSON Schema on every file save
+7. [ ] LSP server: publish diagnostics (errors/warnings) for schema violations
+8. [ ] LSP server: read schemas from plugin manifests (same source as validator)
+9. [ ] LSP server: support schema composition (base + plugin extensions via allOf)
+10. [ ] Connector prompt hooks: inject LSP diagnostic summary as actionable instruction
+11. [ ] App: surface LSP diagnostics in artifact editor UI (inline error markers)
 
 ### Phase 3: Enforcement Mechanisms as Plugin Capabilities
-11. [ ] Add `enforcement_mechanisms` to plugin manifest schema (libs/types)
-12. [ ] Register mechanisms in each plugin: core (behavioral), connector (hooks), coding-standards (linters), githooks (pre-commit), cli (tools), LSP (diagnostics)
-13. [ ] Add `mechanism` field to enforcement entry schema
-14. [ ] Schema validation: every rule must have ≥1 enforcement entry
-15. [ ] Schema validation: every enforcement entry must reference a registered mechanism
-16. [ ] Warn when a referenced mechanism's plugin is not installed (degraded enforcement)
+
+1. [ ] Add `enforcement_mechanisms` to plugin manifest schema (libs/types)
+2. [ ] Register mechanisms in each plugin: core (behavioral), connector (hooks), coding-standards (linters), githooks (pre-commit), cli (tools), LSP (diagnostics)
+3. [ ] Add `mechanism` field to enforcement entry schema
+4. [ ] Schema validation: every rule must have ≥1 enforcement entry
+5. [ ] Schema validation: every enforcement entry must reference a registered mechanism
+6. [ ] Warn when a referenced mechanism's plugin is not installed (degraded enforcement)
 
 ### Phase 4: Centralised Enforcement Logging
-18. [ ] Define enforcement log schema (timestamp, mechanism, type, rule_id, artifact_id, result, message)
-19. [ ] Core-framework provides the log writer utility (consumed by all mechanisms)
-20. [ ] Migrate connector telemetry.mjs to use the shared log format
-21. [ ] LSP logs diagnostics to enforcement log
-22. [ ] Pre-commit logs check results to enforcement log
-23. [ ] JSON Schema validator logs to enforcement log
-24. [ ] App dashboard consumes enforcement log for health metrics
+
+1. [ ] Define enforcement log schema (timestamp, mechanism, type, rule_id, artifact_id, result, message)
+2. [ ] Core-framework provides the log writer utility (consumed by all mechanisms)
+3. [ ] Migrate connector telemetry.mjs to use the shared log format
+4. [ ] LSP logs diagnostics to enforcement log
+5. [ ] Pre-commit logs check results to enforcement log
+6. [ ] JSON Schema validator logs to enforcement log
+7. [ ] App dashboard consumes enforcement log for health metrics
 
 ### Phase 5: Agent Enforcement Response Logging
-25. [ ] Add `orqa log enforcement-response` CLI command
-26. [ ] Define response schema (event-id, action, detail, timestamp)
-27. [ ] Agent preambles instruct: log responses via CLI after acting on feedback
-28. [ ] Dashboard: resolution rate per rule, unresolved violation tracking
-29. [ ] Learning loop: high false-positive rate → automatic rule review trigger
+
+1. [ ] Add `orqa log enforcement-response` CLI command
+2. [ ] Define response schema (event-id, action, detail, timestamp)
+3. [ ] Agent preambles instruct: log responses via CLI after acting on feedback
+4. [ ] Dashboard: resolution rate per rule, unresolved violation tracking
+5. [ ] Learning loop: high false-positive rate → automatic rule review trigger
 
 ### Phase 6: CLI Spot-Check for All Mechanisms
 
@@ -479,7 +510,7 @@ Everything that can be invoked mechanically goes through `orqa enforce`.
 Consumers (hooks, LSP, pre-commit) call the CLI rather than implementing
 their own execution:
 
-```
+```text
 Pre-commit hook      → orqa enforce --mechanism lint,json-schema,tool
 LSP on file save     → orqa enforce --mechanism json-schema --file X
 Connector PostAction → orqa enforce --mechanism json-schema --file X
@@ -489,8 +520,10 @@ Dashboard refresh    → orqa enforce --report
 ```
 
 Exceptions (cannot go through CLI):
+
 - `behavioral` — prompt injection, operates at a layer CLI can't reach
 - Real-time connector hook responses — must be synchronous within the
+
   hook lifecycle, CLI roundtrip may be too slow for PreAction blocks
 
 **Async by default, sync only when blocking.**
@@ -498,7 +531,7 @@ Exceptions (cannot go through CLI):
 Enforcement calls are categorised by timing requirement:
 
 | Category | When | Async? | Example |
-|----------|------|--------|---------|
+| ---------- | ------ | -------- | --------- |
 | **Blocking** | Must resolve before action proceeds | Sync | PreAction deny on `--no-verify` |
 | **Feedback** | Result goes to agent but doesn't block | Async | PostAction schema validation |
 | **Background** | Result goes to log/dashboard only | Async fire-and-forget | Lint sweep, integrity check |
@@ -533,23 +566,25 @@ validators, and maintains the rule→mechanism index. First call pays the
 startup cost, subsequent calls are sub-millisecond for schema checks.
 
 **Session lifecycle:**
+
 - `SessionStart` → starts daemon (`orqa enforce --daemon`)
 - Hook calls → hit daemon via HTTP (fast)
 - `SessionEnd` → daemon shuts down
 - Pre-commit → can use daemon if running, falls back to process spawn
 
 This means:
+
 - PreAction blocks: ~5ms (daemon HTTP) instead of ~200ms (process spawn)
 - PostAction feedback: async, agent gets result in next prompt
 - Background checks: fire-and-forget, results in log
 
-36. [ ] Add `orqa enforce` CLI command
-37. [ ] Engine resolves rule × mechanism matrix
-38. [ ] Each mechanism plugin exposes a `check` function callable from CLI
-39. [ ] `--report` generates enforcement coverage matrix
-40. [ ] `--mechanism` flag filters to specific mechanism
-41. [ ] `--rule` flag runs all mechanisms for one rule
-42. [ ] `--file` flag runs all applicable mechanisms for one file
+1. [ ] Add `orqa enforce` CLI command
+2. [ ] Engine resolves rule × mechanism matrix
+3. [ ] Each mechanism plugin exposes a `check` function callable from CLI
+4. [ ] `--report` generates enforcement coverage matrix
+5. [ ] `--mechanism` flag filters to specific mechanism
+6. [ ] `--rule` flag runs all mechanisms for one rule
+7. [ ] `--file` flag runs all applicable mechanisms for one file
 
 ### Phase 7: ONNX Runtime for Pre and Post Processing
 
@@ -557,20 +592,29 @@ The ONNX runtime currently runs at prompt-submit time (pre-processing:
 classify thinking mode via semantic search). Extend to post-processing:
 
 **Pre-processing (existing):**
+
 - Thinking mode classification (semantic match against thinking-mode-* artifacts)
 - Knowledge injection (semantic match for relevant context)
 
 **Post-processing (new):**
+
 - **Lesson recurrence detection:** After agent creates a lesson, ONNX checks
+
   semantic similarity against existing lessons. If similarity > threshold,
   auto-flag as recurring — no manual `recurrence` counter needed.
+
 - **Duplicate artifact detection:** After agent creates any artifact, ONNX
+
   checks if a semantically similar artifact already exists. Surface as
   warning: "This looks similar to KNOW-xxx — merge or differentiate."
+
 - **Compliance check:** After agent response, ONNX checks if output patterns
+
   match known anti-patterns from lessons. "This response looks like it
   repeats the pattern from IMPL-xxx — review before proceeding."
+
 - **Quality signals:** Classify response for completeness, specificity,
+
   actionability against knowledge artifacts that define quality criteria.
 
 **Making ONNX results actionable:**
@@ -587,6 +631,7 @@ registered by the core-framework plugin (it ships with the search engine):
 ```
 
 Rules declare ONNX checks:
+
 ```yaml
 enforcement:
   - mechanism: onnx
@@ -609,13 +654,13 @@ by the stop hook just like unresolved rule violations.
 The enforce daemon keeps the ONNX model loaded alongside JSON Schema
 validators — one process handles both inference and validation.
 
-43. [ ] Register `onnx` as enforcement mechanism in core-framework
-44. [ ] Add PostResponse hook type to core-framework canonical hooks
-44. [ ] ONNX lesson recurrence detection (replaces manual recurrence counter)
-45. [ ] ONNX duplicate artifact detection on PostArtifactCreate
-46. [ ] ONNX compliance check on PostResponse (anti-pattern matching)
-47. [ ] Daemon mode: keep ONNX model loaded in enforce daemon for fast inference
-48. [ ] Learning loop: ONNX-detected recurrence auto-triggers lesson → rule promotion review
+1. [ ] Register `onnx` as enforcement mechanism in core-framework
+2. [ ] Add PostResponse hook type to core-framework canonical hooks
+3. [ ] ONNX lesson recurrence detection (replaces manual recurrence counter)
+4. [ ] ONNX duplicate artifact detection on PostArtifactCreate
+5. [ ] ONNX compliance check on PostResponse (anti-pattern matching)
+6. [ ] Daemon mode: keep ONNX model loaded in enforce daemon for fast inference
+7. [ ] Learning loop: ONNX-detected recurrence auto-triggers lesson → rule promotion review
 
 ### Phase 8: Plugin Conflict Resolution
 
@@ -624,10 +669,13 @@ When plugins define contradictory enforcement for the same artifact type
 is resolved by the USER at install time, not automatically.
 
 **Install-time flow:**
+
 1. `orqa plugin install X` detects schema overlaps with installed plugins
 2. UI presents the conflicts with options: keep existing, adopt new, merge
 3. User's decision is logged as a project-level conflict resolution in
+
    `project.json` → `enforcement.resolutions[]`
+
 4. The enforcement engine reads resolutions and applies them during validation
 5. Unresolved conflicts block installation — no silent overwrite
 
@@ -656,11 +704,11 @@ which is not installed. Enforcement degraded."
 This is not a log message — it's a permanent app-wide indicator until
 the plugin is installed or the rule is updated.
 
-49. [ ] Plugin install: detect schema conflicts with installed plugins
-50. [ ] UI: present conflict resolution options during install
-51. [ ] Project.json: store conflict resolutions
-52. [ ] Enforcement engine: read and apply resolutions
-53. [ ] App: persistent banner for missing mechanism plugins
+1. [ ] Plugin install: detect schema conflicts with installed plugins
+2. [ ] UI: present conflict resolution options during install
+3. [ ] Project.json: store conflict resolutions
+4. [ ] Enforcement engine: read and apply resolutions
+5. [ ] App: persistent banner for missing mechanism plugins
 
 ### Phase 9: Re-validation on Rule Changes
 
@@ -668,21 +716,23 @@ When a rule changes or a new rule is created, ALL artifacts that the rule
 applies to must be re-validated. Not just new artifacts — existing ones too.
 
 **Triggers:**
+
 - Rule frontmatter edited (enforcement entries changed, thresholds updated)
 - New rule created
 - Rule status changes (active ↔ archived)
 - Plugin installed/uninstalled (rules added/removed)
 
 **Implementation:**
+
 - PostWrite hook detects rule file modification
 - Triggers `orqa enforce --full-revalidation` (async, background)
 - Results logged to enforcement log
 - New violations surface in dashboard + agent feedback
 
-54. [ ] Detect rule file modifications in PostWrite/PostArtifactCreate
-55. [ ] `orqa enforce --full-revalidation` re-runs all rules against all artifacts
-56. [ ] New violations from re-validation surface in dashboard
-57. [ ] Plugin install/uninstall triggers full re-validation
+1. [ ] Detect rule file modifications in PostWrite/PostArtifactCreate
+2. [ ] `orqa enforce --full-revalidation` re-runs all rules against all artifacts
+3. [ ] New violations from re-validation surface in dashboard
+4. [ ] Plugin install/uninstall triggers full re-validation
 
 ### Phase 10: Enforcement Testing Framework
 
@@ -696,9 +746,11 @@ orqa enforce test --mechanism json-schema   # test all rules using this mechanis
 ```
 
 **How it works:**
+
 - Each rule can declare `test` entries alongside `enforcement` entries
 - Test entries describe a scenario that SHOULD trigger the enforcement
 - The testing framework creates a temporary artifact matching the scenario,
+
   runs enforcement, and verifies the expected result (pass/fail/warn)
 
 ```yaml
@@ -716,10 +768,10 @@ test:
     expect: pass
 ```
 
-58. [ ] Add `test` field to rule enforcement schema
-59. [ ] `orqa enforce test` command — runs all enforcement tests
-60. [ ] Test runner: creates temp artifacts, runs enforcement, verifies results
-61. [ ] CI integration: `orqa enforce test` in pre-commit or CI pipeline
+1. [ ] Add `test` field to rule enforcement schema
+2. [ ] `orqa enforce test` command — runs all enforcement tests
+3. [ ] Test runner: creates temp artifacts, runs enforcement, verifies results
+4. [ ] CI integration: `orqa enforce test` in pre-commit or CI pipeline
 
 ### Phase 11: Escape Hatches (Human Approval Only)
 
@@ -732,7 +784,7 @@ without the user confirming.
 The CLI never auto-approves. It always returns a challenge that requires
 a separate human action. The agent cannot complete the override alone.
 
-```
+```text
 Step 1: Agent requests override
 $ orqa enforce override --rule RULE-xxx --reason "Emergency hotfix"
 
@@ -765,7 +817,7 @@ Step 1 creates a request ID and logs it. The approval command uses
 that ID. When the agent retries the override with an approved request
 ID, it goes through.
 
-```
+```text
 Agent: orqa enforce override --rule RULE-xxx --reason "..."
   → { status: "requires-human-approval", request_id: "73829",
       approve_command: "orqa enforce approve 73829" }
@@ -785,7 +837,8 @@ The agent learns the `--request-id` flag from the challenge response.
 It can't fabricate an approved ID — the log must show human approval.
 
 **Request ID lifecycle:**
-```
+
+```text
 Created (pending) → Approved (by human) → Consumed (by agent retry) → Deleted
 ```
 
@@ -811,17 +864,20 @@ retry within that window, the approval lapses and the human must
 re-approve. Prevents stale approvals sitting around indefinitely.
 
 **The full cycle:**
+
 1. `orqa enforce override --rule X` → creates pending ID, returns challenge
 2. `orqa enforce approve 73829` → writes to approvals file
 3. `orqa enforce override --rule X --request-id 73829` → reads approvals,
+
    verifies match, executes override, deletes the ID from approvals
+
 4. ID gone — cannot be reused
 
 **App UI flow:**
 When the app receives `requires-human-approval`, it renders an inline
 approval widget in the chat:
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │ ⚠ Override Requested: RULE-xxx (No Stubs)       │
 │ Reason: Emergency hotfix                        │
@@ -839,6 +895,7 @@ in another terminal: `orqa enforce approve 73829`"
 User runs it. Agent retries. Goes through.
 
 **Override log entry:**
+
 ```json
 {
   "timestamp": "...",
@@ -858,17 +915,18 @@ or any bypass. When enforcement must be overridden, call
 `orqa enforce override` and present the result to the user for approval.
 Any bypass without a logged, human-approved override is a violation.
 
-62. [ ] `orqa enforce override` command with interactive human approval
-63. [ ] Override logging to enforcement log
-64. [ ] Agent preambles: never bypass without orqa enforce override
-65. [ ] Dashboard: override history and frequency tracking
-66. [ ] Recurring overrides on same rule → trigger rule review
+1. [ ] `orqa enforce override` command with interactive human approval
+2. [ ] Override logging to enforcement log
+3. [ ] Agent preambles: never bypass without orqa enforce override
+4. [ ] Dashboard: override history and frequency tracking
+5. [ ] Recurring overrides on same rule → trigger rule review
 
 ### Phase 12: Enforcement Metrics in Learning Loop
 
 Enforcement metrics feed back into governance improvement:
 
 **Metrics tracked per rule:**
+
 - Fire rate: how often the rule triggers enforcement events
 - Resolution rate: what % of violations get resolved (fixed/overridden)
 - Time-to-resolution: how long between violation and fix
@@ -877,29 +935,38 @@ Enforcement metrics feed back into governance improvement:
 - Dead rule detection: rules that never fire (misconfigured or obsolete?)
 
 **Automatic triggers:**
+
 - False-positive rate > 30% → auto-create lesson: "RULE-xxx has high
+
   false-positive rate — review rule scope or threshold"
+
 - Override rate > 20% → auto-create lesson: "RULE-xxx is frequently
+
   overridden — rule may be too restrictive or misaligned"
+
 - Dead rule (0 fires in 30 days) → auto-create lesson: "RULE-xxx has
+
   never fired — check enforcement entry configuration"
+
 - Resolution rate < 50% → auto-create lesson: "RULE-xxx violations are
+
   frequently ignored — enforcement may need escalation to stronger mechanism"
 
 ONNX detects semantic patterns across these lessons and flags systemic
 issues: "Three rules in the coding-standards plugin have high override
 rates — the plugin may need a configuration review."
 
-67. [ ] Per-rule enforcement metrics aggregation
-68. [ ] Dashboard: rule health metrics (fire rate, resolution, false-positive)
-69. [ ] Auto-create lessons for metric thresholds (high FP, high override, dead rules)
-70. [ ] ONNX cross-rule pattern detection from enforcement lessons
+1. [ ] Per-rule enforcement metrics aggregation
+2. [ ] Dashboard: rule health metrics (fire rate, resolution, false-positive)
+3. [ ] Auto-create lessons for metric thresholds (high FP, high override, dead rules)
+4. [ ] ONNX cross-rule pattern detection from enforcement lessons
 
 ### Phase 13: Migrate Hardcoded Enforcement to Rules
-17. [ ] Fix all 5 malformed enforcement entries (string → structured object with mechanism)
-18. [ ] Fill 7 empty enforcement fields with real structured entries (minimum: behavioral)
-19. [ ] Migrate bash-safety.mjs hardcoded patterns → rules with mechanism: pre-tool-use entries
-20. [ ] Migrate artifact-enforcement.mjs relationship checks → schema constraints
-21. [ ] Rule-engine reads enforcement entries by mechanism key
-22. [ ] Remove all hardcoded enforcement from hooks — hooks only call the engine
-23. [ ] Under-declared rules updated (RULE-83411442, RULE-05562ed4, RULE-c603e90e, RULE-145332dc)
+
+1. [ ] Fix all 5 malformed enforcement entries (string → structured object with mechanism)
+2. [ ] Fill 7 empty enforcement fields with real structured entries (minimum: behavioral)
+3. [ ] Migrate bash-safety.mjs hardcoded patterns → rules with mechanism: pre-tool-use entries
+4. [ ] Migrate artifact-enforcement.mjs relationship checks → schema constraints
+5. [ ] Rule-engine reads enforcement entries by mechanism key
+6. [ ] Remove all hardcoded enforcement from hooks — hooks only call the engine
+7. [ ] Under-declared rules updated (RULE-83411442, RULE-05562ed4, RULE-c603e90e, RULE-145332dc)

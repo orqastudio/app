@@ -8,6 +8,7 @@ created: 2026-03-14
 updated: 2026-03-14
 relationships: []
 ---
+
 ## Research Questions
 
 1. **Chapter structure**: How should `.orqa/documentation/` be reorganised into book-like chapters? What directories map to what chapters?
@@ -19,7 +20,7 @@ relationships: []
 ## Proposed Chapter Structure
 
 | Chapter | Directory | Content |
-|---------|-----------|---------|
+| --------- | ----------- | --------- |
 | About | `about/` | Vision, core concepts, personas, journeys, governance |
 | User Guide | `guide/` | Getting started, working with artifacts, exploring, delivery, process |
 | Development | `development/` | Setup, architecture, coding standards, commands, dev controller, modules |
@@ -34,7 +35,7 @@ The following table maps every current documentation file to its proposed new lo
 ### Current → Proposed Path Mapping
 
 | Current Path | ID | Current Section | Proposed Chapter | New Path | Notes |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | `architecture/core-architecture.md` | (no ID) | architecture | development | `development/core-architecture.md` | No DOC id assigned |
 | `architecture/enforcement.md` | DOC-b11d4f61 | architecture | development | `development/enforcement.md` | |
 | `architecture/error-taxonomy.md` | DOC-bcd7fef4 | architecture | reference | `reference/error-taxonomy.md` | Reference material |
@@ -98,7 +99,7 @@ The following table maps every current documentation file to its proposed new lo
 ### Summary by Movement Type
 
 | Action | Count | Sections affected |
-|--------|-------|------------------|
+| -------- | ------- | ------------------ |
 | No move (stays in same directory) | 12 | development (6), guide (1), grounding (5) |
 | Move from `architecture/` | 18 | → development (13), → reference (5) |
 | Move from `product/` | 11 | → about (11) |
@@ -123,7 +124,7 @@ The `architecture/` and `process/` directories are dissolved — all content mov
 The `how-to/` chapter is entirely new and needs these guides written:
 
 | Guide | Path | Audience | Priority |
-|-------|------|----------|----------|
+| ------- | ------ | ---------- | ---------- |
 | Plugin development — SDK overview | `how-to/plugin-sdk.md` | Plugin authors | P1 |
 | Plugin development — plugin.json schema | `how-to/plugin-json.md` | Plugin authors | P1 |
 | Plugin development — hooks and commands | `how-to/plugin-hooks.md` | Plugin authors | P1 |
@@ -186,7 +187,7 @@ These body text references will not break the app (they are not machine-parsed) 
 **Most-referenced paths that will change:**
 
 | Old Path | New Path | References affected |
-|----------|----------|---------------------|
+| ---------- | ---------- | --------------------- |
 | `.orqa/documentation/product/roadmap.md` | `.orqa/documentation/about/roadmap.md` | ~8 |
 | `.orqa/documentation/product/artifact-framework.md` | `.orqa/documentation/reference/artifact-framework.md` | ~12 |
 | `.orqa/documentation/product/vision.md` | `.orqa/documentation/about/vision.md` | ~6 |

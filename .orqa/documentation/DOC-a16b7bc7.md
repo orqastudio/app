@@ -2,6 +2,7 @@
 id: DOC-a16b7bc7
 type: doc
 title: Demoted Rule Stability Tracking
+domain: architecture
 description: "How OrqaStudio tracks whether demoted rules are safe to delete: the demotion lifecycle, stability counter, violation logging, and auto-delete trigger."
 category: governance
 created: 2026-03-24
@@ -19,6 +20,7 @@ relationships:
 When a governance rule becomes redundant — because its enforcement is now handled by a linter, an LSP, a schema validator, or another rule — it enters a **demotion period**. During this period, OrqaStudio automatically tracks whether the rule's domain remains violation-free. Once enough clean sessions pass, the rule is surfaced as safe to delete.
 
 This prevents two failure modes:
+
 - **Premature deletion**: Removing a rule before verifying its replacement actually works
 - **Stale rules**: Keeping inactive rules indefinitely because nobody remembers to check
 
@@ -38,7 +40,7 @@ stability_count: 0
 ```
 
 | Field | Required | Default | Description |
-|-------|----------|---------|-------------|
+| ------- | ---------- | --------- | ------------- |
 | `demoted_date` | Yes | — | The date the rule was demoted |
 | `demoted_reason` | No | — | Why the rule was demoted |
 | `replaced_by` | No | — | What now covers this rule's enforcement |
@@ -69,7 +71,7 @@ At every session start, the stability tracker (`connectors/claude-code/hooks/scr
 The tracker outputs one of three messages:
 
 | Message | Meaning |
-|---------|---------|
+| --------- | --------- |
 | `STABLE: RULE-xxx` | Threshold reached — safe to delete (with user confirmation) |
 | `RESET: RULE-xxx` | Violations found — counter reset, replacement not fully effective |
 | `TRACKING: RULE-xxx` | No violations, counter incremented — steady progress |
@@ -95,7 +97,7 @@ A violation matches if any of its fields (`violation_type`, `domain`, or `detail
 
 ## Example Lifecycle
 
-```
+```text
 Day 1:   Rule demoted (status: inactive, stability_count: 0)
 Day 2:   Session start — no violations — count: 1
 Day 3:   Session start — no violations — count: 2
@@ -109,11 +111,11 @@ Day 16:  User confirms deletion — rule file removed
 ## File Locations
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `connectors/claude-code/hooks/scripts/stability-check.mjs` | Session-start stability tracker |
 | `plugins/githooks/hooks/pre-commit` | Violation logging (appends to JSONL) |
 | `.state/precommit-violations.jsonl` | Append-only violation log |
-| `plugins/agile-workflow/orqa-plugin.json` | Rule schema with demotion fields |
+| `plugins/agile-methodology/orqa-plugin.json` | Rule schema with demotion fields |
 
 ## Related Documents
 

@@ -3,29 +3,40 @@ id: "RULE-aff3c5db"
 type: rule
 title: "Rebuild After Changes"
 description: "After any commit touching compiled Rust source, binaries must be rebuilt and the daemon restarted immediately. Never leave stale binaries running."
-status: "active"
+status: active
+enforcement_type: mechanical
 created: "2026-03-24"
-updated: "2026-03-24"
+updated: "2026-03-28"
 enforcement:
+
   - mechanism: behavioral
+
     message: "After committing Rust source changes, stop the daemon, rebuild affected binaries, and restart. Stale binaries waste tokens by serving outdated validation, graph data, and diagnostics."
+
   - mechanism: hook
+
     type: PostToolUse
     event: bash
     action: warn
     pattern: "git commit"
-    message: "If this commit includes Rust source files (libs/validation/, libs/mcp-server/, libs/lsp-server/, app/backend/), rebuild binaries and restart the daemon before continuing."
-summary: "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/backend), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files."
+    message: "If this commit includes Rust source files (libs/validation/, libs/mcp-server/, libs/lsp-server/, app/src-tauri/), rebuild binaries and restart the daemon before continuing."
+summary: "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/src-tauri), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files."
 tier: stage-triggered
 roles: [orchestrator, implementer]
 priority: P1
 tags: [rebuild, rust, daemon, binary, stale-prevention]
 relationships:
+
   - target: "RULE-d2c2063a"
+
     type: "extends"
+
   - target: "RULE-998da8ea"
+
     type: "extends"
+
   - target: "RULE-f609242f"
+
     type: "extends"
 ---
 
@@ -34,11 +45,11 @@ After any commit that touches compiled Rust source code, the affected binaries M
 ## What Requires a Rebuild
 
 | Source Path | Binary Affected | Rebuild Command |
-|-------------|----------------|-----------------|
+| --- | --- | --- |
 | `libs/validation/` | Validation engine (daemon) | `cargo build -p orqa-validation` |
 | `libs/mcp-server/` | MCP server (daemon) | `cargo build -p orqa-mcp-server` |
 | `libs/lsp-server/` | LSP server | `cargo build -p orqa-lsp-server` |
-| `app/backend/` | Tauri app backend | `make restart-tauri` |
+| `app/src-tauri/` | Tauri app backend | `make restart-tauri` |
 
 If multiple paths are affected in a single commit, rebuild all affected binaries in one pass.
 
@@ -46,12 +57,12 @@ If multiple paths are affected in a single commit, rebuild all affected binaries
 
 After committing Rust source changes:
 
-```
+```text
 1. Stop the daemon         → orqa daemon stop (or make stop)
 2. Rebuild affected binary → cargo build -p <crate>
 3. Restart the daemon      → orqa daemon start (or make dev)
 4. Verify                  → orqa daemon status
-```
+```text
 
 **The rebuild is part of the commit workflow, not a follow-up task.** A commit that changes Rust source without rebuilding leaves the running environment in an inconsistent state.
 
@@ -65,13 +76,13 @@ If the dev environment is running in watch mode (e.g., `cargo watch` or an equiv
 
 ## When This Applies
 
-- Any `git commit` that includes files matching `libs/validation/**/*.rs`, `libs/mcp-server/**/*.rs`, `libs/lsp-server/**/*.rs`, or `app/backend/**/*.rs`
+- Any `git commit` that includes files matching `libs/validation/**/*.rs`, `libs/mcp-server/**/*.rs`, `libs/lsp-server/**/*.rs`, or `app/src-tauri/**/*.rs`
 - Any `git commit` that includes `Cargo.toml` changes affecting these crates
 - After `git merge` or `git rebase` that brings in Rust source changes
 
 ## When This Does NOT Apply
 
-- Commits that only touch frontend files (`ui/`, `.svelte`, `.ts`, `.css`)
+- Commits that only touch frontend files (`app/src/`, `.svelte`, `.ts`, `.css`)
 - Commits that only touch governance artifacts (`.orqa/`)
 - Commits that only touch documentation or configuration
 - Commits that only touch TypeScript/JavaScript tooling (`libs/cli/`, `connectors/`)
@@ -81,7 +92,7 @@ If the dev environment is running in watch mode (e.g., `cargo watch` or an equiv
 In a dogfooding environment, agents rely on daemon services for real-time feedback:
 
 | Service | What Goes Stale | Impact |
-|---------|----------------|--------|
+| --- | --- | --- |
 | **Validation engine** | Schema validation, frontmatter checks | Agents see errors for already-fixed issues, or miss new violations |
 | **MCP server** | Graph queries, artifact resolution | Agents get outdated graph state, make decisions on wrong data |
 | **LSP server** | Diagnostics, completions | Editor shows phantom errors or misses real ones |

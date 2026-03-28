@@ -3,7 +3,7 @@ id: TASK-85c8d2fb
 type: task
 title: Audit and reorder documentation for reading flow
 description: "Reorder documentation within each category for structured reading — fundamentals first, specifics later."
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 2

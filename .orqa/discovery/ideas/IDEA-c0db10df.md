@@ -16,6 +16,7 @@ relationships:
 # IDEA-139: Python Language Support Plugin
 
 A `@orqastudio/plugin-python` providing:
+
 - Python coding standards skills (PEP 8, type hints, async patterns)
 - Pyright LSP integration via `.lsp.json`
 - pytest/coverage configuration

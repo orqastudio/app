@@ -3,7 +3,7 @@ id: TASK-b1bb8fe5
 type: task
 title: Knowledge pipeline flow model rethink
 description: Revise the pipeline widget algorithm to accurately represent knowledge flow through the artifact graph.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 3

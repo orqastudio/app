@@ -10,6 +10,7 @@ relationships:
   - target: "EPIC-7bf140e2"
     type: "drives"
 ---
+
 ## Decision
 
 Project initialisation is handled entirely through skills — no separate
@@ -36,6 +37,7 @@ directory entirely.
 Universal scaffolding knowledge. Loaded on every project initialisation.
 
 **Knows how to:**
+
 - Create the `.orqa/` directory structure
 - Install the lean orchestrator core (Section 1 only)
 - Install core rules (documentation-first, honest-reporting, etc.)
@@ -52,19 +54,30 @@ Reads an existing folder and produces a project profile. Does not
 modify anything — only produces findings.
 
 **Scans for:**
+
 - **Software signals**: `package.json`, `Cargo.toml`, `requirements.txt`,
+
   `go.mod`, `pom.xml`, `.sln` → language, framework, package manager
+
 - **Existing governance**: `.github/`, `CONTRIBUTING.md`, linting configs,
+
   `Makefile`, CI configs → existing standards to respect
+
 - **Existing AI tooling**: `.claude/`, `.cursor/`, `.aider/`, `.copilot/`
+
   → existing AI config to integrate with
+
 - **Documentation signals**: `README.md`, `docs/`, wiki structures
+
   → existing documentation patterns
+
 - **Domain signals**: file types, directory names, content patterns
+
   → research papers, design files, data files, etc.
 
 **Produces:** A structured project profile that the setup skill and
 type skills consume:
+
 ```yaml
 inferred_type: software
 languages: [typescript, rust]
@@ -92,12 +105,13 @@ artifact types on top of the base setup.
 **Initial types:**
 
 | Skill | Domain | Adds |
-|-------|--------|------|
+| ------- | -------- | ------ |
 | `project-type-software` | Software development | Worktree rules, code quality rules, tech-specific skills, CI patterns, testing standards |
 | `project-type-consulting` | Consulting engagements | Engagement structure, deliverable templates, stakeholder rules, review cycles |
 | `project-type-research` | Research projects | Methodology framework, findings structure, literature review patterns, hypothesis tracking |
 
 **Future types** can be added as skills — no app code changes needed:
+
 - `project-type-operations` — process improvement, SOP management
 - `project-type-product` — product management, roadmapping, user research
 - `project-type-creative` — content creation, editorial workflows
@@ -120,7 +134,7 @@ validates and adjusts before the skill scaffolds.
 
 ### New Project (Empty Folder)
 
-```
+```text
 1. Load project-setup
 2. Ask: "What kind of project?"
    → Known type → Load project-type-X → Scaffold with sensible defaults
@@ -131,7 +145,7 @@ validates and adjusts before the skill scaffolds.
 
 ### Existing Project (Folder Has Content)
 
-```
+```text
 1. Load project-setup + project-inference
 2. project-inference scans folder → produces project profile
 3. Present findings: "I see a TypeScript/React project with ESLint..."
@@ -143,7 +157,7 @@ validates and adjusts before the skill scaffolds.
 
 ### Existing Agentic Project (Has AI Governance)
 
-```
+```text
 1. Load project-setup + project-inference + project-migration
 2. project-inference scans folder → produces project profile
 3. project-migration scans for existing agentic config:
@@ -170,22 +184,34 @@ The `project-migration` skill teaches the agent to:
 
 1. **Detect** which agentic frameworks are present (file patterns, config formats)
 2. **Parse** their governance — read rules, instructions, agent definitions in
+
    whatever format the source framework uses
+
 3. **Understand intent** — what is each rule/instruction trying to achieve?
+
    Not just syntactic mapping but semantic understanding
+
 4. **Map to OrqaStudio concepts** — source rule → OrqaStudio rule, source
+
    instruction → OrqaStudio skill, source agent config → OrqaStudio role
+
 5. **Identify gaps** — what does the existing setup NOT cover that OrqaStudio
+
    would add? Present these as recommendations, not forced additions
+
 6. **Propose coexistence** — some teams need both systems during transition.
+
    Where possible, maintain the source config as symlinks or generated output
    from OrqaStudio's governance (e.g., generate `.cursorrules` from `.orqa/rules/`)
+
 7. **Evolve** — new AI tooling frameworks will emerge. The skill needs to be
+
    updatable without app code changes
 
 ## How OrqaStudio Itself Uses This
 
 OrqaStudio's `.orqa/` directory is the result of:
+
 - `project-setup` (base scaffolding)
 - `project-inference` (detected Tauri + Svelte + Rust)
 - `project-type-software` (code quality, worktrees, testing)
@@ -202,7 +228,7 @@ project, plus the project-specific additions that make it OrqaStudio.
 ## The Full Skill Set
 
 | Skill | Role | When Loaded |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `project-setup` | Base scaffolding mechanics | Every initialisation |
 | `project-inference` | Reads folder, produces project profile | Every initialisation |
 | `project-migration` | Reads existing agentic config, maps to OrqaStudio | When existing AI governance detected |
@@ -223,7 +249,7 @@ long-term operating model.
 `.orqa/` is the single source of truth for governance. Other tools
 consume it via symlinks (same format) or generated output (different format):
 
-```
+```text
 .orqa/                              ← Source of truth (OrqaStudio manages)
   governance/rules/
   team/agents/
@@ -247,7 +273,7 @@ specific path).
 ### Team Roles and Enforcement Layers
 
 | Person | Tool | Gets Rules From | Enforcement Level |
-|--------|------|----------------|-------------------|
+| -------- | ------ | ---------------- | ------------------- |
 | PM / Tech Lead | OrqaStudio app | `.orqa/` directly | Full: scanner, gates, learning loop |
 | Developer A | Claude Code CLI | `.claude/` symlinks | Self-policed: rules in context, no scanner |
 | Developer B | Cursor | `.cursorrules` generated | Self-policed: rules in context |
@@ -282,7 +308,7 @@ mechanisms work together: prevention, detection, and reconciliation.
 
 A git pre-commit hook detects direct edits to distribution targets:
 
-```
+```text
 On commit:
   1. Check for modified distribution targets (.claude/, .cursorrules, etc.)
   2. If modified:
@@ -303,7 +329,7 @@ The file watcher (already built for `.orqa/` → UI refresh) extends to
 watch distribution targets too:
 
 | Watch Direction | Trigger | Action |
-|----------------|---------|--------|
+| ---------------- | --------- | -------- |
 | `.orqa/` changes | Rule/skill/agent edited in OrqaStudio | Regenerate all distribution targets |
 | Distribution target changes | Someone edits `.cursorrules` directly | Flag drift in UI |
 
@@ -320,6 +346,7 @@ When drift is detected, the app surfaces it — no CLI needed:
 > [Review Changes]
 
 **Reconciliation dialog** (click through):
+
 - Shows diff: expected (generated from `.orqa/`) vs actual (on disk)
 - Each change block gets three options:
   - **Adopt** — pull into `.orqa/rules/` as a new rule, regenerate all targets
@@ -366,16 +393,25 @@ use cases — they activate when the context calls for them.
 2. **Skills are the single source of truth** for what a project needs
 3. **New project types** are added as new skills, not app code changes
 4. **The orchestrator stays lean** — Section 1 is universal core identity,
+
    Section 2 is generated from the project profile
+
 5. **Existing projects are respected** — inference reads before writing
 6. **Existing AI governance is migrated, not discarded** — the migration
+
    skill maps existing rules/instructions to OrqaStudio equivalents
+
 7. **Permanent coexistence** — OrqaStudio distributes governance to other
+
    tools via symlinks and generated config. Not a transitional state.
+
 8. **Team-heterogeneous** — different team members can use different AI
+
    tools while sharing the same governance source of truth
+
 9. **The setup conversation is structured** — not freeform, guided by skills
 10. **OrqaStudio's own governance is a reference implementation** — the
+
     most complex example of what the setup skills produce
 
 ## Documentation Requirements
@@ -386,15 +422,22 @@ as the central narrative — not as a technical implementation detail
 but as the core value proposition:
 
 - **`vision.md`** — Update to position OrqaStudio as a governance hub
+
   that distributes to other tools, not a replacement for them. The
   "additive layer" philosophy and "manage the governance your tools
   consume" positioning must be prominent.
+
 - **`governance.md`** — Update with the governance concept taxonomy
+
   (agent, skill, rule, hook, lesson) and the agent vs skill decision
   framework from [AD-48b310f9](AD-48b310f9).
+
 - **`artifact-framework.md`** — Already updated with concept taxonomy
+
   and universal roles. Verify alignment with this decision.
+
 - **New: `governance-hub.md`** — Dedicated page explaining the
+
   distribution model, coexistence architecture, drift reconciliation,
   and team workflow in detail. This is the key product differentiator
   and deserves its own page.
@@ -412,11 +455,16 @@ universal roles and install the appropriate orchestrator configuration.
 ## Open Questions
 
 1. How do type skills compose? Can a project be "software + research"?
+
    Probably yes — skills layer additively. But conflict resolution
    between type skills needs design.
+
 2. Should inference run periodically (detect new languages added) or
+
    only at init? Probably only at init, with manual re-scan available.
+
 3. How much of the collaborative custom setup can be automated vs
+
    requires human judgment? Start conservative (ask more), learn
    which questions can be inferred over time.
 

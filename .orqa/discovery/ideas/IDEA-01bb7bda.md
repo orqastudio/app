@@ -18,6 +18,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 [EPIC-3e6cad90](EPIC-3e6cad90) Phase 2 requires backfilling relationships on ~150 artifacts. Doing this manually is error-prone and slow. Doing it with ad-hoc AI prompting loses consistency. Purpose-built tooling that can read an artifact, propose connections based on content analysis, and present them for human review makes the migration reliable AND creates a reusable capability for any future schema evolution.
@@ -25,6 +26,7 @@ relationships:
 ## Sketch
 
 The tool would:
+
 1. Read an artifact and its schema
 2. Identify required relationship types for that artifact type
 3. Search other artifacts (via semantic search or content analysis) for likely connections

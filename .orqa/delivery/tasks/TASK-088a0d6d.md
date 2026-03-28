@@ -3,7 +3,7 @@ id: TASK-088a0d6d
 type: task
 title: Actions needed icon in artifact list + epics without tasks
 description: Show action-needed indicators in artifact list items and flag epics that have no tasks referencing them.
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

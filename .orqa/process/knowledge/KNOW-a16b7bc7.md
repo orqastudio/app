@@ -2,6 +2,7 @@
 id: KNOW-a16b7bc7
 type: knowledge
 title: Demoted Rule Stability Tracking
+domain: methodology/governance
 summary: "When a rule becomes redundant — because its enforcement is now handled by a linter, LSP, schema validator, or another rule — it should not be deleted immediately. A **demotion** period lets the team verify that the replacement actually catches violations before the original rule disappears."
 description: |
   Explains the stability tracking model for demoted (inactive) rules. Agents learn
@@ -27,7 +28,7 @@ When a rule becomes redundant — because its enforcement is now handled by a li
 
 ## Demotion Lifecycle
 
-```
+```text
 active  ──demote──>  inactive (with demoted_date)
                          │
         stability_count increments each clean session
@@ -41,7 +42,7 @@ active  ──demote──>  inactive (with demoted_date)
 ### Frontmatter Fields
 
 | Field | Type | Default | Purpose |
-|-------|------|---------|---------|
+| ------- | ------ | --------- | --------- |
 | `demoted_date` | date | — | ISO date when the rule was set to `inactive` |
 | `demoted_reason` | string | — | Why the rule was demoted (e.g. "enforced by LSP schema validation") |
 | `replaced_by` | string | — | What now covers this rule's intent |
@@ -69,6 +70,7 @@ The **stability-check** script runs at every session start. For each inactive ru
 ### Domain Matching
 
 The tracker matches violations to rules using multiple signals:
+
 - Enforcement entry `domain` fields
 - Enforcement entry `mechanism` fields
 - The `replaced_by` field (normalized to lowercase kebab-case)
@@ -87,7 +89,7 @@ The pre-commit hook appends to `.state/precommit-violations.jsonl` whenever a va
 ## Agent Actions
 
 | Situation | Action |
-|-----------|--------|
+| ----------- | -------- |
 | Session start shows "STABLE: RULE-xxx" | Confirm with user before deleting. Verify the replacement is genuinely covering the rule's intent. |
 | Session start shows "RESET: RULE-xxx" | The domain still has violations. The replacement is not fully effective yet. Investigate. |
 | Session start shows "TRACKING: RULE-xxx" | No action needed. Progress is being recorded. |

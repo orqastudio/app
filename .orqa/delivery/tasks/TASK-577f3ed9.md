@@ -3,7 +3,7 @@ id: "TASK-577f3ed9"
 type: "task"
 title: "Port enforcement engine to Rust backend"
 description: "Implement the rule enforcement engine in Rust for app-native enforcement."
-status: "surpassed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -22,7 +22,6 @@ relationships:
   - target: "TASK-d38a48c9"
     type: "depends-on"
 ---
-
 
 ## What
 

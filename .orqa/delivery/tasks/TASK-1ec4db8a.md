@@ -3,7 +3,7 @@ id: "TASK-1ec4db8a"
 type: "task"
 title: "Define information architecture"
 description: "Designed the app's navigation structure, content hierarchy, and organizational patterns for all content types."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Designed the app's full information architecture including the sidebar navigation zones, multi-panel layout, content type hierarchy, and artifact browsing patterns.

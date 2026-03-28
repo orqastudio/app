@@ -12,6 +12,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Pipeline health dashboard"
 ---
+
 ## Question
 
 Can the existing `artifactGraphSDK` serve as the primary data source for artifact display, replacing per-component `invoke()` calls? What extensions are needed?
@@ -23,7 +24,7 @@ Can the existing `artifactGraphSDK` serve as the primary data source for artifac
 ### What Already Exists
 
 | Capability | Implementation | Status |
-|-----------|---------------|--------|
+| ----------- | --------------- | -------- |
 | Full graph in reactive state | `SvelteMap<string, ArtifactNode>` with `$state` | Working |
 | Auto-refresh on file changes | Tauri `artifact-graph-updated` event listener | Working |
 | Resolve by ID | `resolve(id)` → `ArtifactNode` | Working |
@@ -53,6 +54,7 @@ sdk.pipelineChain(id)               // → full upstream/downstream chain
 ```
 
 This requires either:
+
 - **(a)** Extending `ArtifactRef` with a `relationship_type` field populated by the Rust backend during graph construction
 - **(b)** A frontend-only helper that reads `node.frontmatter.relationships` and resolves targets
 
@@ -73,7 +75,7 @@ These could be added to `GraphStats` or returned by a separate `get_integrity_st
 17 files already reference the SDK, but many artifact views still use `invoke()` directly. The migration is:
 
 | Current Pattern | Graph-backed Pattern |
-|----------------|---------------------|
+| ---------------- | --------------------- |
 | `invoke("get_artifacts_by_type", { artifactType: "task" })` | `artifactGraphSDK.byType("task")` |
 | `invoke("read_artifact_content", { path })` | `artifactGraphSDK.readContent(path)` (already in SDK) |
 | Per-component loading states | SDK-level `loading`/`error` states (already in SDK) |

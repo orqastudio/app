@@ -3,7 +3,7 @@ id: "TASK-608d1faa"
 type: "task"
 title: "Backfill docs field on existing tasks from git history"
 description: "Analyse git history and task scope to populate the docs field on existing todo tasks, creating graph edges from tasks to the documentation that should be loaded during implementation."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

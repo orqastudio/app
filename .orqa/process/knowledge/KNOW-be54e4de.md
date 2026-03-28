@@ -1,7 +1,9 @@
 ---
 id: KNOW-be54e4de
 type: knowledge
-name: Svelte Plugin Installation
+title: Svelte Plugin Installation
+domain: platform/svelte
+description: "How the installer agent detects Svelte projects and sets up the Svelte plugin with ESLint, svelte-check, and Vitest dependencies."
 summary: "Svelte Plugin Installation. This skill is consumed by the core installer agent when setting up the Svelte plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"
@@ -20,6 +22,7 @@ This skill is consumed by the core installer agent when setting up the Svelte pl
 ## Detection
 
 Identify sub-projects that should receive this plugin by checking for:
+
 - `tsconfig.json` or `.ts`/`.tsx` files → TypeScript project
 - `.svelte` files → Svelte project
 - `package.json` with svelte in dependencies → Svelte project
@@ -51,6 +54,7 @@ After dependencies are installed, generate config files from the project's codin
 ## Organisation Mode
 
 When installing to an org project:
+
 1. Scan all sub-projects for TypeScript/Svelte files
 2. Recommend sub-projects based on detected languages
 3. Present selection UI (checkboxes with AI recommendations)

@@ -2,6 +2,7 @@
 id: KNOW-1f4aba8f
 type: knowledge
 title: Three-Layer Enforcement Model
+domain: methodology/governance
 summary: "OrqaStudio enforces governance through **three layers**, each handling different kinds of violations. Understanding which layer owns a check prevents duplication, ensures the right response time, and enables safe demotion of behavioral rules as mechanical enforcement improves."
 description: |
   How OrqaStudio enforces governance through three layers: LSP real-time diagnostics,
@@ -32,7 +33,7 @@ OrqaStudio enforces governance through **three layers**, each handling different
 
 ## The Three Layers
 
-```
+```text
 Layer 1: LSP (real-time)          ← Fastest. Red squiggles as you type.
 Layer 2: Behavioral rules         ← Judgement. Agent prompt injection.
 Layer 3: Pre-commit (hard gate)   ← Final. Blocks bad commits.
@@ -41,7 +42,7 @@ Layer 3: Pre-commit (hard gate)   ← Final. Blocks bad commits.
 ### Layer 1: LSP Real-Time Diagnostics
 
 | What It Catches | How | Response |
-|----------------|-----|----------|
+| ---------------- | ----- | ---------- |
 | Invalid status values | Schema enum validation | Red squiggle + suggested fix |
 | Wrong relationship types | Plugin schema lookup | Red squiggle + valid options |
 | Missing required fields | JSON Schema required check | Warning squiggle |
@@ -53,7 +54,7 @@ Layer 3: Pre-commit (hard gate)   ← Final. Blocks bad commits.
 ### Layer 2: Behavioral Rules (Prompt Injection)
 
 | What It Catches | How | Response |
-|----------------|-----|----------|
+| ---------------- | ----- | ---------- |
 | Documentation-before-code violations | Orchestrator delegation discipline | Agent refuses to proceed |
 | Delegation boundary violations | Role constraint injection | Agent stays in lane |
 | Scope creep (pillar misalignment) | Pillar gate questions in context | Agent flags to user |
@@ -65,7 +66,7 @@ Layer 3: Pre-commit (hard gate)   ← Final. Blocks bad commits.
 ### Layer 3: Pre-Commit Hard Gate
 
 | What It Catches | How | Response |
-|----------------|-----|----------|
+| ---------------- | ----- | ---------- |
 | All Layer 1 checks (redundant safety net) | Shared validation engine | Commit blocked |
 | Lint failures (Rust clippy, ESLint) | Linter execution | Commit blocked |
 | Type check failures (svelte-check, tsc) | Compiler execution | Commit blocked |
@@ -80,7 +81,7 @@ Layer 3: Pre-commit (hard gate)   ← Final. Blocks bad commits.
 
 When a behavioral rule (Layer 2) becomes mechanically enforceable (Layer 1 or 3), it can be **demoted**:
 
-```
+```text
 Behavioral rule active
         │
   LSP/validator now catches it?
@@ -111,7 +112,7 @@ Behavioral rule active
 ## Agent Actions
 
 | Situation | Action |
-|-----------|--------|
+| ----------- | -------- |
 | Designing enforcement for a new rule | Determine which layer: mechanical check → LSP/pre-commit; judgement → behavioral |
 | LSP now covers a behavioral rule | Demote the rule per KNOW-a16b7bc7 lifecycle |
 | Pre-commit fails on commit | Fix the violation. Read the error. Never `--no-verify`. |

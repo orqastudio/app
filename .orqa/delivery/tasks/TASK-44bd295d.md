@@ -2,7 +2,7 @@
 id: "TASK-44bd295d"
 type: "task"
 title: "Fix connector basics — path bugs, intent mappings, license, dual manifests"
-status: "completed"
+status: archived
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 relationships:

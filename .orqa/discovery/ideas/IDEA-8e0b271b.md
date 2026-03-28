@@ -17,6 +17,7 @@ relationships:
   - target: PERSONA-477971bf
     type: benefits
 ---
+
 # Domain Expansion
 
 Extending beyond software development.

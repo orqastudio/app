@@ -2,7 +2,7 @@
 id: TASK-f06eab44
 type: task
 title: "Skill sync — auto-generate Claude Code skills from OrqaStudio skills"
-status: surpassed
+status: archived
 created: 2026-03-19
 updated: 2026-03-21
 relationships:

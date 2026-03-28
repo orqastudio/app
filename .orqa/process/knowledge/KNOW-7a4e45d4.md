@@ -2,6 +2,7 @@
 id: KNOW-7a4e45d4
 type: knowledge
 title: "Thinking Mode: General"
+domain: methodology/planning
 thinking-mode: general
 priority-rules: [process, safety]
 description: "The user's prompt does not match a specific thinking mode — apply default process and safety rules with no special emphasis."

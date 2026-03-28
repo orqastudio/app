@@ -1,7 +1,9 @@
 ---
 id: DOC-af962d42
 type: doc
+status: active
 title: License Policy
+domain: reference
 description: "Which licenses apply to which OrqaStudio components and how to audit compliance."
 category: reference
 created: 2026-03-18
@@ -18,7 +20,7 @@ OrqaStudio uses a tiered licensing model. Each component category has a specific
 ## Policy Table
 
 | Category | Path Pattern | License | Rationale |
-|----------|-------------|---------|-----------|
+| ---------- | ------------- | --------- | ----------- |
 | Core app | `app/` | BSL-1.1 with Ethical Use Addendum | Source-available product, converts to Apache 2.0 (+ Addendum) after 4 years |
 | Libraries | `libs/*/` | BSL-1.1 with Ethical Use Addendum | Shared code is part of the core product |
 | Plugins (first-party) | `plugins/*/` | BSL-1.1 with Ethical Use Addendum | Official extensions are product features |
@@ -32,6 +34,7 @@ The Ethical Use Addendum is uniform across all BSL repos — there is no BSL var
 ## BSL-1.1 with Ethical Use Addendum
 
 The primary license for OrqaStudio components:
+
 - Source code is publicly readable and modifiable
 - Non-production use is unrestricted
 - Production use requires a commercial license for 4 years from release
@@ -52,6 +55,7 @@ Each directory with a `package.json`, `Cargo.toml`, or `orqa-plugin.json` is che
 ## Adding New Components
 
 When creating a new repository or submodule:
+
 1. Determine its category from the table above
 2. Copy the LICENSE file from an existing component in the same category
 3. Run `orqa repo license` to verify compliance

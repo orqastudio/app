@@ -2,7 +2,7 @@
 id: "TASK-a1ef2aad"
 type: "task"
 name: "Update orqa install pipeline for monorepo"
-status: "completed"
+status: archived
 description: "Simplify the orqa install command for monorepo — npm install at root handles workspaces, topological build replaces LIB_ORDER, no npm link."
 relationships:
   - target: "EPIC-2f720d43"
@@ -26,7 +26,7 @@ acceptance:
 
 ### New install flow
 
-```
+```text
 1. npm install (at root — workspaces resolve everything)
 2. Build TS packages in topological order (tsc per package)
 3. cargo fetch (Cargo workspace)

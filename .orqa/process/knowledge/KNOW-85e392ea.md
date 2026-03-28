@@ -1,7 +1,9 @@
 ---
 id: KNOW-85e392ea
 type: knowledge
+status: active
 title: Thinking Mode - Learning Loop
+domain: methodology/planning
 description: Learning loop thinking mode for capturing surprising outcomes and process failures as lessons
 summary: "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation."
 ---

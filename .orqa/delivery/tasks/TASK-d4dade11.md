@@ -3,7 +3,7 @@ id: "TASK-d4dade11"
 type: "task"
 title: "Surface violations in governance UI"
 description: "Display enforcement violations in the app's governance view with history and filtering."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-14T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -24,6 +24,7 @@ relationships:
   - target: "TASK-8b51938b"
     type: "depends-on"
 ---
+
 ## What
 
 The governance UI surfaces enforcement violations so users can see what was

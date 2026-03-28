@@ -11,6 +11,7 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of UX Polish Sprint"
 ---
+
 ## Problems Identified During Dogfooding
 
 1. **Streaming broke on long responses** — Buffer overflow in NDJSON parser

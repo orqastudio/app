@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Native Search Engine"
 ---
+
 ## Investigation
 
 OrqaStudio needed in-app code search that works offline, is fast (<100ms), and supports
@@ -20,24 +21,29 @@ rejected for latency, privacy, and offline-first requirements.
 ## Key Design Decisions
 
 1. **DuckDB over SQLite for vectors** — DuckDB has native `array_cosine_similarity()` and
+
    columnar storage optimized for analytical/vector queries. SQLite would require extensions.
 
 2. **ONNX Runtime over PyTorch/TensorFlow** — Lighter weight, supports DirectML for Windows
+
    NPU/GPU acceleration without CUDA dependency. The `ort` Rust crate provides native bindings.
 
 3. **bge-small-en-v1.5 model** — 33M parameters, 384-dimensional vectors. Balances quality and
+
    size (~67MB). Small enough to bundle with the installer.
 
 4. **Semantic boundary chunking** — Code is chunked at function/class/import boundaries, not
+
    fixed-size windows. Preserves meaningful units for search.
 
 5. **Model distribution** — Bundled in installer for production, auto-downloaded from Hugging Face
+
    for development (first-use download with progress tracking).
 
 ## Three Search Modes
 
 | Mode | Implementation | Use Case |
-|------|---------------|----------|
+| ------ | --------------- | ---------- |
 | `search_regex` | DuckDB full-text scan with regex | Finding specific symbols, imports, patterns |
 | `search_semantic` | ONNX embedding → DuckDB cosine similarity | Understanding what code does a thing |
 | `code_research` | Combines semantic search with LLM analysis | Answering "how does X work?" |
@@ -45,6 +51,7 @@ rejected for latency, privacy, and offline-first requirements.
 ## Dual-Context Architecture
 
 The app and CLI provide the same three tool names but through independent implementations:
+
 - **App**: Native Rust engine (`backend/src-tauri/src/search/`) with ONNX + DuckDB
 - **CLI**: ChunkHound MCP server (external Python tool, separate codebase)
 

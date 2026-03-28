@@ -29,6 +29,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Context management approach:** Graph-based state machines with explicit state persistence. LangGraph manages state using reducer logic to merge concurrent updates, giving precise control over execution order, branching, and error recovery.
 
 **Token efficiency strategy:**
+
 - State is persisted externally (checkpoints), not carried in-context
 - Each node in the graph receives only the state slice it needs
 - Reducer functions control what gets added to state vs. discarded
@@ -43,6 +44,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Context management approach:** Role-based agents with hierarchical delegation. Each agent has a defined role, goal, and backstory.
 
 **Token efficiency strategy:**
+
 - Agents communicate through structured task outputs, not full conversation history
 - Supports Mem0 integration for persistent memory, reducing token costs by up to 90% (from 26K tokens to ~1.8K per conversation)
 - Memory architecture supports short-term (conversation), long-term (cross-session), and entity memory
@@ -56,6 +58,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Context management approach:** Conversational collaboration between agents with explicit message protocols.
 
 **Token efficiency strategy:**
+
 - GroupChat manager controls which agent speaks next, preventing unnecessary context accumulation
 - Supports "teachable agents" that learn and compress knowledge to external storage
 - Message filtering controls which messages each agent sees
@@ -69,6 +72,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Context management approach:** Context as a "compiled view over a richer stateful system." ADK treats context engineering as a first-class architectural concern.
 
 **Token efficiency strategy:**
+
 - Context is not raw history — it's a compiled, filtered view assembled at each step
 - Explicit semantics for handing off "the right slice of context" between agents
 - Built-in context compaction via Google's own compression APIs
@@ -83,6 +87,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Context management approach:** Five-dimensional context engineering: offloading, reduction, retrieval, isolation, and caching.
 
 **Token efficiency strategy:**
+
 - KV-cache hit rate treated as the single most important production metric
 - Context offloading to file systems and sandbox environments
 - Context reduction through compaction and summarization
@@ -98,7 +103,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 ### Summary Comparison
 
 | Framework | Primary Strategy | Token Savings | Context Isolation | Production Maturity |
-|-----------|-----------------|---------------|-------------------|-------------------|
+| ----------- | ----------------- | --------------- | ------------------- | ------------------- |
 | LangGraph | State graph with reducers | Moderate | Per-node state slices | High |
 | CrewAI | Role-based + Mem0 | High (90% with Mem0) | Per-agent role scope | High |
 | AutoGen | Message filtering + teachable agents | Moderate | Per-agent message filter | High |
@@ -114,7 +119,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Pattern:** Load all potentially relevant rules, knowledge, and context at session start or agent spawn.
 
 | Pros | Cons |
-|------|------|
+| ------ | ------ |
 | Simple implementation | 48K+ tokens of rules loaded per prompt |
 | No retrieval latency at decision time | Most loaded context is irrelevant to current task |
 | Guaranteed availability | Context window fills quickly |
@@ -127,13 +132,14 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Pattern:** Load only the specific rules, knowledge, and context relevant to the current task, using semantic search or classification.
 
 | Pros | Cons |
-|------|------|
+| ------ | ------ |
 | Dramatic token reduction (60-80%) | Retrieval latency (1-2 seconds per query) |
 | Context stays focused and relevant | Risk of missing critical rules |
 | Scales to any number of rules/knowledge | Requires quality semantic search |
 | Each agent gets only what it needs | Cold-start problem for new topics |
 
 **Implementation patterns:**
+
 - **Tool RAG:** Retrieve only relevant tools from a large registry. Studies show 3x accuracy improvement while halving prompt length.
 - **Semantic rule retrieval:** Instead of loading 5 critical rules always, query "what rules apply to [this specific task]?" and load top-3.
 - **Progressive disclosure:** Start with minimal context, load more only when the agent signals it needs specific information.
@@ -143,7 +149,7 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Pattern:** Small static core + on-demand retrieval for everything else.
 
 | Component | Loading Strategy | Size Target |
-|-----------|-----------------|-------------|
+| ----------- | ----------------- | ------------- |
 | Agent role definition | Static (always loaded) | 200-500 tokens |
 | Current workflow stage instructions | Static (workflow-specific) | 500-1,000 tokens |
 | Critical safety rules | Static (always loaded) | 500 tokens (compressed) |
@@ -164,18 +170,21 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Approach:** Coarse-to-fine compression using a small language model's perplexity to identify which tokens can be removed.
 
 **Components:**
+
 - Budget Controller: Dynamically allocates compression ratios by section type
 - Iterative Token-level Compression: Removes low-information tokens
 - Alignment: Ensures compressed output preserves semantic meaning
 
 **Results:**
+
 - Up to 20x compression with only 1.5-point performance drop
 - 1.7-5.7x inference acceleration
 - LLMLingua-2 adds 3-6x speed improvement via BERT-level encoder
 
 **Compression ratio recommendations:**
+
 | Content Type | Recommended Compression | Token Cost Impact |
-|-------------|------------------------|-------------------|
+| ------------- | ------------------------ | ------------------- |
 | Instructions/system prompts | 10-20% (light) | Preserves clarity |
 | Examples/few-shot | 60-80% (heavy) | High redundancy in examples |
 | Questions/tasks | 0-10% (minimal) | Must preserve intent |
@@ -188,7 +197,8 @@ Research best practices for designing token-efficient multi-agent AI systems, co
 **Approach:** Replace raw rule text with structured summaries that force preservation of key information categories.
 
 **Pattern (from Factory.ai research):**
-```
+
+```text
 For each rule, generate:
 - Core constraint (1-2 sentences)
 - Trigger condition (when does this apply?)
@@ -237,7 +247,7 @@ Using the most capable model for every agent is the most common cause of cost bl
 ### 4.2 Recommended Tiering for OrqaStudio
 
 | Role | Task Complexity | Recommended Tier | Rationale |
-|------|----------------|-----------------|-----------|
+| ------ | ---------------- | ----------------- | ----------- |
 | **Orchestrator** | High (coordination, planning) | Opus | Needs strongest reasoning for delegation decisions |
 | **Planner** | High (architecture, dependencies) | Opus | Architecture planning requires deep reasoning |
 | **Implementer** (complex) | High (multi-file refactoring) | Opus | Complex code changes need full capability |
@@ -251,12 +261,13 @@ Using the most capable model for every agent is the most common cause of cost bl
 ### 4.3 Cost-Quality Analysis
 
 | Scenario | All Opus | Tiered | Savings |
-|----------|----------|--------|---------|
+| ---------- | ---------- | -------- | --------- |
 | 8-agent team, mixed tasks | $X | ~0.35X | 65% |
 | Orchestrator + 3 implementers | $X | ~0.55X | 45% |
 | Research + review pipeline | $X | ~0.30X | 70% |
 
 **Implementation approach:**
+
 1. Add `model` field to task artifacts (optional, defaults based on role)
 2. Orchestrator determines complexity at delegation time
 3. Start conservative (Opus for anything uncertain) and tier down as confidence grows
@@ -277,8 +288,9 @@ For OrqaStudio, this could mean the orchestrator assesses task complexity before
 Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 
 **Level 1: Per-Request Metrics**
+
 | Metric | What It Measures | Why It Matters |
-|--------|-----------------|---------------|
+| -------- | ----------------- | --------------- |
 | Input tokens | Tokens sent to the model | Cost driver (cached vs. uncached) |
 | Output tokens | Tokens generated by the model | Quality signal + cost |
 | Cache hit rate | % of input from KV-cache | 10x cost difference (Manus insight) |
@@ -286,8 +298,9 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 | Tool call tokens | Tokens in tool inputs/outputs | Often the largest component |
 
 **Level 2: Per-Agent Metrics**
+
 | Metric | What It Measures | Why It Matters |
-|--------|-----------------|---------------|
+| -------- | ----------------- | --------------- |
 | Total tokens per agent | Lifetime token consumption | Cost attribution |
 | Context utilization ratio | Used tokens / available window | Efficiency signal |
 | Knowledge injection tokens | Tokens from injected rules/knowledge | Measures injection efficiency |
@@ -295,8 +308,9 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 | Agent lifetime | Time from spawn to completion | Stale agent detection |
 
 **Level 3: Per-Task/Session Metrics**
+
 | Metric | What It Measures | Why It Matters |
-|--------|-----------------|---------------|
+| -------- | ----------------- | --------------- |
 | Tokens per deliverable | Total tokens to produce a task output | Efficiency benchmark |
 | Overhead ratio | Actual tokens / theoretical minimum | The 13x gap metric |
 | Rule loading tokens | Tokens spent on governance rules | Injection optimization target |
@@ -304,8 +318,9 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 | Session total cost | Total tokens for the session | Budget management |
 
 **Level 4: Trend Metrics**
+
 | Metric | What It Measures | Why It Matters |
-|--------|-----------------|---------------|
+| -------- | ----------------- | --------------- |
 | Cost per task (7-day trend) | Average token cost to complete a task | Efficiency trajectory |
 | Cache hit rate trend | Improving or degrading cache performance | Infra health |
 | Model tier distribution | % of tokens on each model tier | Cost optimization progress |
@@ -316,23 +331,27 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 **Dashboard Design (inspired by Langfuse, Braintrust, and production patterns):**
 
 **View 1: Session Overview**
+
 - Total tokens (input/output/cached breakdown)
 - Total estimated cost
 - Agent count and model distribution
 - Session timeline with token usage per turn
 
 **View 2: Agent Breakdown**
+
 - Table: Agent name | Role | Model | Input tokens | Output tokens | Cache hits | Cost
 - Sortable by any column
 - Drill-down to individual agent traces
 
 **View 3: Efficiency Analysis**
+
 - Overhead ratio gauge (current vs. target)
 - Rule injection analysis (which rules were loaded, which were used)
 - Knowledge injection analysis (loaded vs. referenced)
 - Waste identification (largest unnecessary context items)
 
 **View 4: Trends**
+
 - 7-day/30-day cost trend
 - Token efficiency trend (overhead ratio over time)
 - Model tier distribution changes
@@ -341,16 +360,19 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 ### 5.3 Implementation Approach
 
 **Phase 1: Basic tracking (hook-based)**
+
 - PostToolUse hook on Agent tool captures token usage from Claude API responses
 - Write to `.state/token-metrics.jsonl` (append-only log)
 - Session summary in `.state/session-state.md`
 
 **Phase 2: Structured attribution**
+
 - Tag each API call with: session_id, team_name, agent_role, task_id, model
 - Store in SQLite (conversation persistence channel per AD-859ed163)
 - Generate per-session and per-task cost reports
 
 **Phase 3: Dashboard**
+
 - Token usage view in OrqaStudio UI
 - Real-time session cost counter
 - Historical trends and benchmarks
@@ -397,6 +419,7 @@ When transitioning between work phases (e.g., planning to implementation to revi
 ### 6.3 Recommended Approach for OrqaStudio
 
 Combine patterns 1 + 2 + 4:
+
 1. **Blackboard for findings:** Orchestrator never reads full findings files. Agents write structured summaries to a standard format. Orchestrator reads only the summary section.
 2. **Session state as external memory:** All intermediate state goes to `.state/session-state.md`, not held in context.
 3. **Phase boundaries as compaction points:** When switching teams or work phases, summarize and clear.
@@ -465,7 +488,7 @@ Raise the MIN_SCORE threshold from 0.25 to 0.40 for semantic search results. Ded
 
 ### 8.2 Architecture Overview
 
-```
+```text
 [User Request]
      |
      v
@@ -490,7 +513,7 @@ Raise the MIN_SCORE threshold from 0.25 to 0.40 for semantic search results. Ded
 Replace the current "CLAUDE.md + 58 rule files" with generated, role-specific system prompts.
 
 | Agent Type | Static Core | Workflow Stage | On-Demand | Total Budget |
-|-----------|-------------|---------------|-----------|-------------|
+| ----------- | ------------- | --------------- | ----------- | ------------- |
 | Orchestrator | 1,500 | 500 | 500 | 2,500 |
 | Implementer | 800 | 500 | 1,500 | 2,800 |
 | Reviewer | 600 | 300 | 1,000 | 1,900 |
@@ -499,6 +522,7 @@ Replace the current "CLAUDE.md + 58 rule files" with generated, role-specific sy
 | Designer | 500 | 300 | 1,000 | 1,800 |
 
 **How to generate:**
+
 1. Each workflow stage (plan, implement, review, learn) has a compiled prompt template
 2. Template includes only the rules and knowledge relevant to that stage
 3. Rules are pre-compressed to structured summaries (~100-150 tokens each)
@@ -509,12 +533,14 @@ Default model selection by role (see Section 4). Orchestrator selects model at d
 
 **Component 3: Token Budget Enforcement**
 Each agent spawn has a token budget. The orchestrator monitors cumulative session cost and adjusts strategy:
+
 - Under budget: Continue normally
 - Approaching budget: Switch remaining agents to Sonnet
 - Over budget: Warn user, suggest session scope reduction
 
 **Component 4: KV-Cache Optimization**
 Structure system prompts for maximum KV-cache reuse:
+
 - Static core at the TOP of every prompt (cached across turns)
 - Dynamic content (task description, tool results) at the BOTTOM
 - Avoid re-ordering sections between turns (breaks cache)
@@ -523,12 +549,14 @@ Following Manus's insight: with cached tokens at $0.30/MTok vs. uncached at $3/M
 
 **Component 5: Findings-to-Disk Enforcement**
 Orchestrator never reads full findings files into its own context. Pattern:
+
 1. Agent writes findings to `.state/team/<team>/task-<id>.md` with a standardized summary header
 2. Orchestrator reads ONLY the summary header (~200 tokens)
 3. For detailed review, orchestrator delegates to a Reviewer agent
 
 **Component 6: Token Tracking**
 Hook-based tracking integrated into the existing PostToolUse pipeline:
+
 - Capture tokens per API call, attributed to session/team/agent/task
 - Write metrics to `.state/token-metrics.jsonl`
 - Summary in session state
@@ -537,7 +565,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 ### 8.4 Expected Impact
 
 | Metric | Current | After Optimization | Improvement |
-|--------|---------|-------------------|-------------|
+| -------- | --------- | ------------------- | ------------- |
 | Per-prompt overhead (orchestrator) | 9,500-16,500 tokens | 2,000-3,500 tokens | 65-80% reduction |
 | Per-agent spawn cost | 6,400 tokens | 1,500-4,000 tokens | 40-75% reduction |
 | 8-agent team spawn | 63K tokens | 16-36K tokens | 43-75% reduction |
@@ -547,7 +575,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 ### 8.5 Implementation Priority
 
 | Priority | Component | Effort | Token Savings | Risk |
-|----------|-----------|--------|---------------|------|
+| ---------- | ----------- | -------- | --------------- | ------ |
 | P1 | Compiled system prompts (workflow-embedded) | Medium | 35-40% | Low |
 | P1 | Findings-to-disk enforcement | Low | 5-10% | Very Low |
 | P1 | Role-specific context bundles | Medium | 15-25% | Low |
@@ -567,7 +595,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 **Efficiency Metrics (core - always tracked):**
 
 | Metric ID | Name | Calculation | Target |
-|-----------|------|-------------|--------|
+| ----------- | ------ | ------------- | -------- |
 | TE-01 | Overhead Ratio | actual_tokens / theoretical_min_tokens | < 4x |
 | TE-02 | Context Utilization | relevant_tokens / total_input_tokens | > 60% |
 | TE-03 | Cache Hit Rate | cached_tokens / total_input_tokens | > 70% |
@@ -577,7 +605,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 **Cost Metrics (business - tracked per session):**
 
 | Metric ID | Name | Calculation | Target |
-|-----------|------|-------------|--------|
+| ----------- | ------ | ------------- | -------- |
 | TC-01 | Session Cost | sum(tokens * price_per_token) | Budget-dependent |
 | TC-02 | Cost Per Task | session_cost / completed_tasks | Decreasing trend |
 | TC-03 | Model Mix Ratio | opus_tokens / total_tokens | < 40% |
@@ -586,7 +614,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 **Health Metrics (operational - alerts):**
 
 | Metric ID | Name | Calculation | Alert Threshold |
-|-----------|------|-------------|----------------|
+| ----------- | ------ | ------------- | ---------------- |
 | TH-01 | Stale Agent Count | agents_alive_past_timeout | > 0 |
 | TH-02 | Context Window Pressure | current_tokens / max_tokens | > 80% |
 | TH-03 | Search Availability | search_server_responding | false |
@@ -596,9 +624,9 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 
 **Dashboard 1: Session Token Overview**
 
-```
+```text
 +--------------------------------------------------+
-| Session: 2026-03-25 14:30                        |
+| Session: 2026-03-25 14:30 | | | | |
 | Duration: 45 min | Tasks: 6 | Agents: 12        |
 +--------------------------------------------------+
 | [============================] 78K / 200K budget  |
@@ -615,7 +643,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 
 **Dashboard 2: Agent Cost Breakdown**
 
-```
+```text
 +--------------------------------------------------+
 | Agent           | Role    | Model  | Tokens | $  |
 |-----------------|---------|--------|--------|----|
@@ -630,7 +658,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 
 **Dashboard 3: Efficiency Analysis**
 
-```
+```text
 +--------------------------------------------------+
 | Overhead Ratio: 3.2x (target: < 4x)   [green]  |
 +--------------------------------------------------+
@@ -648,7 +676,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 
 **Dashboard 4: Trends (7-day)**
 
-```
+```text
 +--------------------------------------------------+
 | Cost Per Task Trend                              |
 | [line chart: decreasing from $0.12 to $0.05]     |
@@ -664,6 +692,7 @@ Hook-based tracking integrated into the existing PostToolUse pipeline:
 ### 9.3 Reporting Outputs
 
 **Per-Session Report** (written to `.state/session-metrics.md`):
+
 ```markdown
 ## Token Usage Report
 - Total: 78,432 tokens (62,100 input, 14,332 output, 2,000 reasoning)

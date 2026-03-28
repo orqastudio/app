@@ -1,7 +1,9 @@
 ---
 id: "DOC-2f2abff9"
 type: doc
+status: active
 title: "Wireframe Serving Infrastructure"
+domain: architecture
 category: "architecture"
 description: "Infrastructure for serving and rendering wireframe assets within the application."
 created: "2026-03-02"
@@ -16,12 +18,11 @@ How OrqaStudio™ stores, renders, caches, and serves PlantUML Salt wireframes a
 
 ---
 
-
 ## Overview
 
 Wireframing is a first-class product feature. OrqaStudio's AI agent generates PlantUML Salt source files during UX design sessions, and OrqaStudio renders them to PNG/SVG images on demand. The rendering pipeline supports three style variants (light, dark, brand) backed by a SQLite image cache. A custom markdown syntax (`orqa://wireframe/...`) embeds wireframes into documentation rendered in the WebView.
 
-```
+```text
 Salt source file (.puml)
         |
         v
@@ -40,14 +41,13 @@ Salt source file (.puml)
 
 ---
 
-
 ## Salt Source File Storage
 
 Wireframe source files live on disk alongside the documentation they illustrate, under the project's `docs/` tree.
 
 ### Directory Convention
 
-```
+```text
 docs/
   ui/
     wireframes/
@@ -104,7 +104,6 @@ The Rust backend discovers wireframe sources by scanning for `*.puml` files that
 
 ---
 
-
 ## SQLite Image Cache
 
 Rendered wireframe images are cached in SQLite to avoid re-rendering unchanged sources. This table is added to `orqa.db` alongside the existing schema.
@@ -140,7 +139,7 @@ CREATE INDEX idx_wireframe_cache_name
 
 Rendered images are stored under the project's OrqaStudio data directory:
 
-```
+```text
 .orqa/
   cache/
     wireframes/
@@ -159,14 +158,13 @@ The `image_path` column stores the path relative to the project root (e.g., `.or
 This table is added as a new migration file:
 
 ```sql
--- backend/src-tauri/migrations/003_wireframe_cache.sql
+-- app/src-tauri/migrations/003_wireframe_cache.sql
 CREATE TABLE IF NOT EXISTS wireframe_cache (
     -- (full definition as above)
 );
 ```
 
 ---
-
 
 ## Style Variants
 
@@ -189,6 +187,7 @@ salt {
 ```
 
 Token mapping from the design system:
+
 - Background: `--background` = `oklch(1 0 0)` -> `#FFFFFF`
 - Foreground: `--foreground` = `oklch(0.145 0 0)` -> approximately `#252525`
 - Border: `--border` = `oklch(0.922 0 0)` -> approximately `#E8E8E8`
@@ -210,6 +209,7 @@ salt {
 ```
 
 Token mapping:
+
 - Background: `--background` (dark) = `oklch(0.145 0 0)` -> approximately `#252525`
 - Foreground: `--foreground` (dark) = `oklch(0.985 0 0)` -> approximately `#FAFAFA`
 - Border: `--border` (dark) = `oklch(0.269 0 0)` -> approximately `#404040`
@@ -259,14 +259,13 @@ fn generate_style_block(variant: StyleVariant, theme: Option<&ProjectTheme>) -> 
 
 ---
 
-
 ## On-Demand Generation
 
 Wireframes are rendered lazily. No background batch processing. The rendering pipeline is triggered when a wireframe image is requested (via the custom markdown syntax or the UI) and a valid cache entry does not exist.
 
 ### Request Flow
 
-```
+```text
 1. WebView requests:  orqa://wireframe/core-layout?theme=dark&format=png
 2. Rust handler extracts: name="core-layout", variant="dark", format="png"
 3. Resolve source file: scan docs/ for core-layout.puml containing @startsalt
@@ -290,7 +289,6 @@ If multiple requests arrive for the same uncached wireframe simultaneously, the 
 
 ---
 
-
 ## Custom Markdown Rendering Block
 
 Wireframes are embedded in markdown documentation using a custom URI scheme that the OrqaStudio markdown renderer intercepts.
@@ -302,6 +300,7 @@ Wireframes are embedded in markdown documentation using a custom URI scheme that
 ```
 
 Parameters:
+
 - `{name}` — The wireframe's logical name, matching the `.puml` filename without extension (e.g., `core-layout`)
 - `{variant}` — Style variant: `light`, `dark`, or `brand`. Defaults to the user's current mode (light/dark) if omitted.
 - `format` — Optional. `png` (default) or `svg`. Example: `orqa://wireframe/core-layout?theme=dark&format=svg`
@@ -337,7 +336,6 @@ The `MarkdownRenderer` Svelte component (from the design system's custom compone
 If the source `.puml` file does not exist, the renderer displays a placeholder with the text "Wireframe not found: {name}" styled as `text-muted-foreground`.
 
 ---
-
 
 ## PlantUML Execution
 
@@ -397,6 +395,7 @@ If no working PlantUML binary is found, OrqaStudio displays an error in the UI w
 ### Rendering Performance
 
 PlantUML Salt rendering for typical wireframes:
+
 - Cold start (JVM launch): ~1-2 seconds
 - Warm rendering (JVM already running): ~200-500ms
 - Native binary (GraalVM): ~100-300ms with no cold start
@@ -409,7 +408,6 @@ echo "@startsalt ... @endsalt" | java -jar plantuml.jar -pipe -tpng > output.png
 ```
 
 ---
-
 
 ## Cache Invalidation
 
@@ -462,7 +460,6 @@ fn clear_wireframe_cache(project_id: i64, name: Option<String>) -> Result<(), Er
 
 ---
 
-
 ## Image Serving to WebView
 
 The rendered wireframe images must be accessible to Tauri's WebView for display in `<img>` tags.
@@ -472,7 +469,7 @@ The rendered wireframe images must be accessible to Tauri's WebView for display 
 Register a custom protocol handler in Tauri that serves files from the cache directory:
 
 ```rust
-// backend/src-tauri/src/lib.rs
+// app/src-tauri/src/lib.rs
 tauri::Builder::default()
     .register_asynchronous_uri_scheme_protocol("orqa", |_ctx, request, responder| {
         // Parse: orqa://wireframe/core-layout?theme=dark&format=png
@@ -493,7 +490,7 @@ This approach avoids running a separate HTTP server and integrates naturally wit
 
 If custom protocols prove unreliable across platforms, a minimal local HTTP server (bound to `127.0.0.1` on a random port) serves static files from the cache directory:
 
-```
+```text
 http://127.0.0.1:{port}/wireframes/core-layout.dark.png
 ```
 
@@ -509,11 +506,10 @@ Use Tauri's custom protocol handler (Option A). It is the idiomatic approach for
 
 ---
 
-
 ## Summary
 
 | Concern | Approach |
-|---------|----------|
+| --------- | ---------- |
 | Source storage | `.puml` files on disk in `docs/` alongside documentation |
 | Cache storage | SQLite `wireframe_cache` table + image files in `.orqa/cache/wireframes/` |
 | Variants | light, dark, brand (project theme colors) |

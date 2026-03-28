@@ -2,7 +2,7 @@
 id: "TASK-25b352ce"
 type: "task"
 title: "Milestone dependency mapping"
-status: "captured"
+status: captured
 priority: "P2"
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "depends-on"
     rationale: "Artifact system must be stable before mapping milestones against it"
 ---
+
 ## What
 
 After stabilising the connector, governance process, agent teams, and state machine — map out what's needed to reach each milestone. Use artifacts with explicit depends-on relationships between epics.

@@ -3,7 +3,7 @@ id: "EPIC-0bbae4c4"
 type: "epic"
 title: "Rebrand: Forge → OrqaStudio"
 description: "Product rebrand from \"Forge\" to \"Orqa Studio\": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-04"
 updated: "2026-03-09"
@@ -18,9 +18,11 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Implementation Design
 
 ### Scope
+
 - Product name: Forge → Orqa Studio (OrqaStudio in code)
 - Source directory: `src/` → `ui/`
 - Config directory: `.forge/` → project-level config

@@ -11,9 +11,11 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of Dogfood Readiness"
 ---
+
 ## Context
 
 Before OrqaStudio could be used to develop itself, several gaps needed closing:
+
 - Governance artifacts didn't match the running codebase
 - Frontend had debug logging and `any` types
 - Documentation was misaligned with implementation

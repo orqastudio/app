@@ -45,5 +45,5 @@ This breakage was caused by the removal of nested artifact discovery logic in a 
 ## Pillar Alignment
 
 | Pillar | Alignment |
-|--------|-----------|
+| -------- | ----------- |
 | Clarity Through Structure | The app UI is the primary interface for navigating structured governance artifacts. Broken panels prevent users from seeing and managing the artifact graph, directly violating this pillar's purpose. |

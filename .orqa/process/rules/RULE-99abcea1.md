@@ -4,8 +4,11 @@ type: rule
 title: Use agent teams for implementation
 description: The orchestrator must delegate implementation, review, and research tasks to subagents via the Agent tool rather than performing them directly.
 status: active
+enforcement_type: advisory
 enforcement:
+
   - mechanism: behavioral
+
     message: "Delegate implementation to subagents via the Agent tool. Do not write code directly."
 summary: "Orchestrator must delegate all implementation, review, research, and documentation to subagents via Agent tool with teams. Every delegation names the role, provides acceptance criteria, file paths, and context. Teams are mandatory even for single tasks. Agents run in background to keep orchestrator available for conversation."
 tier: always
@@ -22,7 +25,7 @@ The orchestrator MUST use Claude Code's Agent tool to spawn subagents for all im
 The orchestrator MUST delegate via the Agent tool for:
 
 | Work Type | Role to Assign | What the Subagent Does |
-|-----------|---------------|----------------------|
+| --- | --- | --- |
 | **Implementation** | Implementer | Write, edit, and test code. Run build and lint commands. |
 | **Code review** | Reviewer | Read code, run quality checks (`make check`, `make test`), produce PASS/FAIL verdicts. |
 | **Research** | Researcher | Investigate codebases, read documentation, analyse patterns, report findings. |
@@ -73,7 +76,7 @@ Every Agent tool invocation MUST include:
 
 ### Example Delegation
 
-```
+```text
 You are an Implementer.
 
 Task: Add a `last_modified` field to the session metadata struct and update
@@ -92,7 +95,7 @@ Acceptance criteria:
 
 Context: See EPIC-XXXXXXXX for the full design. Follow error handling
 patterns in RULE-05ae2ce7.
-```
+```text
 
 ## Subagent Independence
 

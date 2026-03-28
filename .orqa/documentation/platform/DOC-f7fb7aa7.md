@@ -2,6 +2,7 @@
 id: DOC-f7fb7aa7
 type: doc
 title: "Thinking Mode: Implementation"
+domain: reference
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 category: platform
 status: active
@@ -25,6 +26,7 @@ This is the most common active-work mode. When a user says "build X" or "fix Y",
 The orchestrator routes here when the user's request has an execution target — something that will be different after the conversation ends.
 
 Typical signals:
+
 - "build a new component"
 - "add a Tauri command for X"
 - "fix the broken store"
@@ -41,7 +43,7 @@ Typical signals:
 The orchestrator injects knowledge appropriate to the implementation domain:
 
 | Domain | Injected Knowledge |
-|--------|-------------------|
+| -------- | ------------------- |
 | Svelte/frontend | `svelte5-best-practices`, `orqa-frontend-best-practices` |
 | Rust/backend | `rust-async-patterns`, `orqa-backend-best-practices` |
 | IPC boundary | `orqa-ipc-patterns`, `orqa-error-composition` |

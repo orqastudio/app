@@ -3,7 +3,7 @@ id: "TASK-c34a185e"
 type: "task"
 title: "Mid-cycle orientation tooling"
 description: "Build tooling that periodically re-grounds the agent in the original epic purpose during extended work sessions"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

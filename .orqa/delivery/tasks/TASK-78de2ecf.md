@@ -3,7 +3,7 @@ id: "TASK-78de2ecf"
 type: "task"
 title: "Fix broken forward-references to non-existent artifacts"
 description: "verify-links reports 9 broken-link errors for references to artifacts that don't exist: KNOW-bcfeb64e (4 refs), AGENT-4c94fe14/004/005, VER-NNN (2 refs). Either create the referenced artifacts or remove the forward references."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

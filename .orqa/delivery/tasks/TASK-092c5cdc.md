@@ -17,6 +17,7 @@ relationships:
     type: delivers
     rationale: Task belongs to this epic
 ---
+
 ## What
 
 The scrollbar styling varies across panels — the viewer panel has the correct appearance but other panels (conversation, artifact list, settings, etc.) use different or default scrollbar styles. This is a visual inconsistency bugfix.

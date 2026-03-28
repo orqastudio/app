@@ -11,6 +11,7 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of Native Tool UX & First-Run Setup"
 ---
+
 ## Problem
 
 Raw tool calls from the Agent SDK show technical names like `Read`, `Edit`, `Bash` with

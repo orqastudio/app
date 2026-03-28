@@ -3,7 +3,7 @@ id: "TASK-cd98526a"
 type: "task"
 title: "Create rule for artifact link format constraints"
 description: "Extract the artifact link format constraint from the orqa-documentation skill into a new dedicated rule with enforcement path."
-status: "completed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 acceptance:
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The artifact link format constraint (`[EPIC-797972a7](EPIC-797972a7)` style) is currently hidden in the `orqa-documentation` skill's FORBIDDEN section. This is a binary constraint that should be a rule with enforcement path.

@@ -3,7 +3,7 @@ id: TASK-c4a09d02
 type: task
 title: Body template validation in integrity validator
 description: Add integrity checks that validate artifact body sections against bodyTemplate in schema.json.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 3

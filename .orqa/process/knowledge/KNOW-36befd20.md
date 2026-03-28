@@ -2,6 +2,7 @@
 id: KNOW-36befd20
 type: knowledge
 title: "Thinking Mode: Research"
+domain: methodology/planning
 thinking-mode: research
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 summary: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."

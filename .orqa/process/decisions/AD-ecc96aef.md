@@ -8,6 +8,7 @@ created: 2026-03-02
 updated: 2026-03-13
 relationships: []
 ---
+
 ## Decision
 
 Use Svelte 5 runes exclusively (`$state`, `$derived`, `$effect`, `$props`). No Svelte 4 patterns.

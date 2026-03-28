@@ -3,7 +3,7 @@ id: "TASK-2a19d2d1"
 type: "task"
 title: "Migrate nav and linking to SDK: ArtifactLink, ArtifactNav, FrontmatterHeader, AppLayout"
 description: "Replace ArtifactLink prefix routing, ArtifactNav pendingArtifactId workaround, and AppLayout watch init with SDK-based patterns."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

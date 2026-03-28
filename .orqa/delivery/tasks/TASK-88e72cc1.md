@@ -3,7 +3,7 @@ id: "TASK-88e72cc1"
 type: "task"
 title: "Audit all rules for enforcement accuracy"
 description: "Verify every rule in .orqa/process/rules/ has accurate enforcement mechanisms, valid cross-references, current code patterns in FORBIDDEN sections, and no stale content."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Systematic audit of all governance rules to ensure enforcement accuracy and internal consistency.

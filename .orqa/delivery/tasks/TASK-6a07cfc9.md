@@ -3,7 +3,7 @@ id: "TASK-6a07cfc9"
 type: "task"
 title: "ESLint rules: component purity, tooltip usage, reusable components, alias detection, root cleanliness"
 description: "Add ESLint rules to mechanically enforce component purity, tooltip usage, reusable component patterns, alias detection, and root directory cleanliness"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

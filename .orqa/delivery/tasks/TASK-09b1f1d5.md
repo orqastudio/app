@@ -3,7 +3,7 @@ id: TASK-09b1f1d5
 type: task
 title: "Fix roadmap drag-drop, add sort dropdown, column headers (F37, F38, F39)"
 description: "Fix drag-and-drop between roadmap kanban columns so it updates the underlying artifact field. Add a sort/group dropdown to the kanban. Fix column headers to remove the item count, show done progress as 'X/X done', capitalise words, and use badge styling."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

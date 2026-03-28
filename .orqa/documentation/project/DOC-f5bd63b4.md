@@ -1,7 +1,9 @@
 ---
 id: "DOC-f5bd63b4"
 type: doc
+status: active
 title: "Dev Controller and OrqaDev Dashboard"
+domain: architecture
 category: "architecture"
 description: "Architecture of the dev controller (tools/debug/dev.mjs) and the OrqaDev web dashboard for unified process management and log streaming during development."
 created: "2026-03-12"
@@ -9,6 +11,7 @@ updated: "2026-03-24"
 sort: 5
 relationships: []
 ---
+
 ## Overview
 
 The dev controller (`tools/debug/dev.mjs`) is a persistent Node.js process that owns the
@@ -22,7 +25,7 @@ crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │  Dev Controller (tools/debug/dev.mjs)           │
 │  Port 10401 — HTTP + SSE                    │
@@ -64,14 +67,14 @@ crash, `taskkill` hangs on MSYS2/Git Bash, and no unified build visibility. See
 ## HTTP Endpoints
 
 | Method | Path | Purpose |
-|--------|------|---------|
-| `GET /` | Serves `dev-dashboard.html` |
-| `GET /events` | SSE stream — real-time logs and status updates |
-| `POST /command/start` | Start Vite + Tauri |
-| `POST /command/restart-tauri` | Kill Tauri, recompile, relaunch (Vite stays) |
-| `POST /command/restart-vite` | Restart Vite only |
-| `POST /command/restart` | Restart both Vite + Tauri |
-| `POST /command/stop` | Graceful shutdown of all processes |
+| -------- | ------ | --------- |
+| `GET` | `/` | Serves `dev-dashboard.html` |
+| `GET` | `/events` | SSE stream — real-time logs and status updates |
+| `POST` | `/command/start` | Start Vite + Tauri |
+| `POST` | `/command/restart-tauri` | Kill Tauri, recompile, relaunch (Vite stays) |
+| `POST` | `/command/restart-vite` | Restart Vite only |
+| `POST` | `/command/restart` | Restart both Vite + Tauri |
+| `POST` | `/command/stop` | Graceful shutdown of all processes |
 
 ## SSE Event Protocol
 
@@ -96,7 +99,7 @@ Values: `true` (alive), `false` (dead), `"building"` (compiling)
 The controller handles platform-specific process cleanup:
 
 | Platform | Port detection | Process kill |
-|----------|---------------|-------------|
+| ---------- | --------------- | ------------- |
 | Windows (MSYS2) | `netstat -ano` | PowerShell `Get-Process` + tree traversal |
 | macOS | `lsof -ti:port` | `kill` |
 | Linux | `ss -tlnp` | `pgrep` + `kill` |
@@ -106,7 +109,7 @@ State is tracked in `.state/dev-controller.json` with PID and child process info
 ## Make Integration
 
 | Command | What It Does |
-|---------|-------------|
+| --------- | ------------- |
 | `make dev` | Spawn controller detached, wait for ready, exit |
 | `make start` | Run controller in foreground (long-running) |
 | `make stop` | Graceful stop via controller |
@@ -121,7 +124,7 @@ See [commands reference](commands.md) for full details.
 ## Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `tools/debug/dev.mjs` | Controller + HTTP/SSE server |
 | `tools/debug/dev-dashboard.html` | Self-contained dashboard UI (HTML/CSS/JS) |
 | `.state/dev-controller.json` | Runtime state (PIDs, status) — gitignored |

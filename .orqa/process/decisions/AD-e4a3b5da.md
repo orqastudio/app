@@ -12,6 +12,7 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"
 ---
+
 ## Decision
 
 OrqaStudio's core tools (Read, Write, Edit, Bash, Glob, Grep) are implemented natively in Rust and exposed to the Agent SDK as a custom MCP server via `createSdkMcpServer()`. The Agent SDK's built-in tools are disabled (`tools: []`). OrqaStudio also acts as an MCP host for user-provided MCP servers (extensibility).

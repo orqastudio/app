@@ -3,7 +3,7 @@ id: "TASK-8c0c77b0"
 type: "task"
 title: "Task Dependency Mechanism"
 description: "Add a formal depends-on field to the task schema in the artifact framework, add a dependency gate to the task lifecycle rules, and backfill existing tasks that have implicit dependencies."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Context
 
 Tasks within an epic often have execution order dependencies (e.g., can't remove

@@ -2,6 +2,7 @@
 id: KNOW-72ca209f
 type: knowledge
 title: Skills Maintenance
+domain: methodology/governance
 summary: "Agent skills are portable domain knowledge that agents load on demand. This skill covers the full lifecycle of managing skills: discovering them, installing them, evaluating their portability, updating them, and removing them when no longer needed."
 description: |
   Full skills.sh lifecycle management: CLI reference, skill evaluation criteria, KNOW.md format,
@@ -18,7 +19,6 @@ relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
 ---
-
 
 Agent skills are portable domain knowledge that agents load on demand. This skill covers the full lifecycle of managing skills: discovering them, installing them, evaluating their portability, updating them, and removing them when no longer needed.
 
@@ -60,7 +60,7 @@ Always use project scope (default) with `--copy` for skills relevant to the proj
 ## Key Concepts
 
 | Concept | Description |
-|---------|-------------|
+| --------- | ------------- |
 | Skill | A `KNOW.md` file with YAML frontmatter — portable domain knowledge for agents |
 | Project skill | In `.orqa/process/knowledge/` — committed with the codebase, shared by all agents |
 | Global skill | In `~/.claude/skills/` — personal, not committed, available everywhere |
@@ -107,7 +107,7 @@ user-invocable: true
 ### YAML Frontmatter Fields
 
 | Field | Required | Description |
-|-------|----------|-------------|
+| ------- | ---------- | ------------- |
 | `name` | Yes | Skill identifier (kebab-case, matches directory name) |
 | `description` | Yes | What it covers + "Use when:" trigger conditions |
 | `version` | Recommended | SemVer version of this skill |
@@ -145,7 +145,7 @@ See [RULE-205d9c91](RULE-205d9c91) for the full skill portability constraint and
 
 A skill is portable if a different project could use it unchanged. Skills MUST NOT contain:
 
-- Project-specific file paths (e.g., `backend/src-tauri/src/domain/sessions.rs`)
+- Project-specific file paths (e.g., `app/src-tauri/src/domain/sessions.rs`)
 - Architecture decision numbers from this project (e.g., `[AD-7121ec20](AD-7121ec20)`, `[AD-75bb14ae](AD-75bb14ae)`)
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules (those belong in `.orqa/process/rules/`)
@@ -159,7 +159,7 @@ A skill is portable if a different project could use it unchanged. Skills MUST N
 Every installed skill is tracked through its KNOW.md frontmatter (YAML metadata including layer, category, relationships). Key tracking fields:
 
 | Field | Description |
-|-------|-------------|
+| ------- | ------------- |
 | Name | Skill identifier |
 | Source | `skills.sh/<owner>/<repo>@<name>` / `custom` / `downloaded+modified` |
 | Purpose | Why it was installed |
@@ -173,7 +173,7 @@ Discovery → Evaluation → Installation → Loading → Use → Update → Dep
 ```
 
 | Phase | Action |
-|-------|--------|
+| ------- | -------- |
 | Discovery | `npx skills find [query]` |
 | Evaluation | Check portability, source reputation, relevance |
 | Installation | `npx skills add <source> --copy -y` |

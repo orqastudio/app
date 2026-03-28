@@ -1,7 +1,11 @@
 ---
 id: DOC-bb4d4ae3
 type: doc
+status: active
 title: First-Run Setup Wizard
+domain: reclassify
+reclassify_as: wireframe
+reclassify_reason: Not a platform guide — this is a design/spec artifact
 category: architecture
 description: Design of the first-run setup wizard that guides users through initial project configuration.
 created: 2026-03-04
@@ -9,7 +13,6 @@ updated: 2026-03-04
 sort: 14
 relationships: []
 ---
-
 
 **Date:** 2026-03-04
 **Phase:** 2a
@@ -87,12 +90,12 @@ Confirmation screen.
 ## Backend Changes
 
 | File | Change |
-|------|--------|
-| `backend/src-tauri/src/domain/setup.rs` | New — setup domain types |
-| `backend/src-tauri/src/commands/setup_commands.rs` | New — setup Tauri commands |
-| `backend/src-tauri/src/domain/mod.rs` | Add `pub mod setup;` |
-| `backend/src-tauri/src/commands/mod.rs` | Add `pub mod setup_commands;` |
-| `backend/src-tauri/src/lib.rs` | Register setup commands in the Tauri app builder; add `CURRENT_SETUP_VERSION` constant; check setup_version on launch |
+| ------ | -------- |
+| `app/src-tauri/src/domain/setup.rs` | New — setup domain types |
+| `app/src-tauri/src/commands/setup_commands.rs` | New — setup Tauri commands |
+| `app/src-tauri/src/domain/mod.rs` | Add `pub mod setup;` |
+| `app/src-tauri/src/commands/mod.rs` | Add `pub mod setup_commands;` |
+| `app/src-tauri/src/lib.rs` | Register setup commands in the Tauri app builder; add `CURRENT_SETUP_VERSION` constant; check setup_version on launch |
 
 ## Key Types
 
@@ -139,7 +142,7 @@ pub struct AgentCliInfo {
 ## IPC Commands
 
 | Command | Input | Output | Description |
-|---------|-------|--------|-------------|
+| --------- | ------- | -------- | ------------- |
 | `get_setup_status` | — | `SetupStatus` | Check overall setup state |
 | `check_agent_cli` | — | `AgentCliInfo` | Detect CLI installation |
 | `check_provider_auth` | — | `AgentCliInfo` | Verify authentication |
@@ -149,7 +152,7 @@ pub struct AgentCliInfo {
 ## Frontend Changes
 
 | File | Change |
-|------|--------|
+| ------ | -------- |
 | `ui/src/lib/types/setup.ts` | New — TypeScript interfaces matching Rust types |
 | `ui/src/lib/stores/setup.svelte.ts` | New — setup store with step state, detection results, actions |
 | `ui/src/lib/components/setup/SetupWizard.svelte` | New — full-screen overlay container, step navigation |
@@ -163,7 +166,7 @@ pub struct AgentCliInfo {
 ## Component State Table
 
 | Component | States | What the user sees |
-|-----------|--------|-------------------|
+| ----------- | -------- | ------------------- |
 | SetupWizard | `loading`, `active`, `complete` | Loading: spinner. Active: current step. Complete: dismissed (main app visible). |
 | AgentCliStep | `checking`, `found`, `not_found`, `error` | Checking: spinner. Found: version + auto-advance. Not found: install instructions + "Check Again". Error: error message + retry. |
 | ProviderAuthStep | `checking`, `authenticated`, `not_authenticated`, `error` | Checking: spinner. Authenticated: subscription info + auto-advance. Not authenticated: "Log in" button. Error: error message + retry. |
@@ -185,6 +188,7 @@ This reuses the data collected during setup. The Settings view calls the same `c
 ## User Journeys
 
 **First-time install (everything missing):**
+
 1. User launches OrqaStudio™ for the first time
 2. Wizard appears: Step 1 shows "Agent SDK CLI not found" with install link
 3. User installs CLI, clicks "Check Again" — detected, auto-advances
@@ -194,11 +198,13 @@ This reuses the data collected during setup. The Settings view calls the same `c
 7. Step 5: "You're all set!" — user clicks "Get Started"
 
 **Returning user (everything configured):**
+
 1. User launches OrqaStudio
 2. Backend checks `setup_version` — matches `CURRENT_SETUP_VERSION`
 3. Wizard does not appear, main app loads immediately
 
 **Upgrade scenario (new version adds steps):**
+
 1. User updates OrqaStudio to a version with `CURRENT_SETUP_VERSION = 2`
 2. On launch, stored version (1) < current version (2)
 3. Wizard appears showing only the new steps (previously completed steps show as "Complete" and are skipped or shown briefly)

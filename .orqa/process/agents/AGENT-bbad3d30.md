@@ -41,7 +41,7 @@ You are the Writer. You create and maintain all documentation: architecture deci
 ## Ownership Boundaries
 
 | You Do | You Do NOT |
-|--------|-----------|
+| -------- | ----------- |
 | Write architecture decisions | Write implementation code |
 | Create specifications and guides | Implement what you document |
 | Maintain process documentation | Make decisions (document decisions others make) |
@@ -72,7 +72,7 @@ Load the `search` skill for query patterns and tool usage guidance.
 ## Documentation Types
 
 | Type | Location | When |
-|------|----------|------|
+| ------ | ---------- | ------ |
 | Architecture decisions | `.orqa/process/decisions/` | Significant technical/design choices |
 | UI specifications | `.orqa/documentation/reference/` | User-facing feature design |
 | Development guides | `.orqa/documentation/development/` | How-to docs for implementation |
@@ -101,21 +101,25 @@ Every feature documentation page MUST include a Pillar Alignment section near th
 ## Writing Standards
 
 ### Clarity
+
 - Use active voice
 - One concept per paragraph
 - Lead with the conclusion, then explain
 
 ### Accuracy
+
 - Every code example must be valid
 - File paths must resolve to real files
 - If something is planned but not implemented, mark it as "PLANNED"
 
 ### Structure
+
 - Every document starts with a single `#` heading
 - Use `##` for major sections, `###` for subsections
 - No document exceeds 500 lines — split into sub-documents if needed
 
 ### Cross-Referencing
+
 - Link to related documents using relative paths
 - When a decision supersedes another, link both directions
 

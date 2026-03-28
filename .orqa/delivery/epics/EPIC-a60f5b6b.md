@@ -3,7 +3,7 @@ id: "EPIC-a60f5b6b"
 type: "epic"
 title: "Principle enforcement foundations"
 description: "Close all gaps between declared principles and mechanical enforcement. Backfill the relationship graph, mechanically enforce all enforceable rules, automate the learning loop, build Pillar 3 tooling, establish a behavioral rule enforcement plan, define priority dimensions, and build the gap audit into repeatable tooling. The system enforces itself going forward."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-13"
 updated: "2026-03-13"
@@ -20,6 +20,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 [RES-0e971367](RES-0e971367) audited the entire governance framework and found six gap patterns:
@@ -42,6 +43,7 @@ This epic closes ALL of these gaps. The goal is self-enforcement: after this epi
 The graph is lying — enforcement chains exist in prose but not in structured relationships. This must be fixed before any tooling can reason about the graph.
 
 **1a. AD → Rule enforcement edges**: For each of the 37 accepted ADs without enforcement relationships, determine:
+
 - Does a rule enforce this AD? If yes, add `enforced-by: RULE-NNN` relationship to the AD and `enforces: AD-NNN` to the rule
 - Does a knowledge artifact practice this AD? If yes, add `practiced-by: KNOW-NNN` relationship
 - Is this AD a strategy/selection decision with no enforceable constraint? Mark as `intended: true` (no enforcement needed)
@@ -49,6 +51,7 @@ The graph is lying — enforcement chains exist in prose but not in structured r
 **1b. Lesson promoted-to targets**: All 22 promoted lessons have empty `evolves-into` fields. For each, trace what rule/skill/standard it was promoted to and populate the field.
 
 **1c. Extend `verify-pipeline-integrity.mjs`**: Add checks for:
+
 - Accepted ADs without any enforcement/practice relationship (error unless `intended: true`)
 - Promoted lessons without `evolves-into` targets (error)
 - Rules that reference ADs in body text but don't have `enforces` relationships (warning)
@@ -58,6 +61,7 @@ The graph is lying — enforcement chains exist in prose but not in structured r
 Convert every self-compliance-only rule to mechanical enforcement where possible. For each of the 27 rules identified in [RES-0e971367](RES-0e971367):
 
 **Linter-enforceable (add ESLint/clippy rules):**
+
 - [RULE-9814ec3c](RULE-9814ec3c): Component purity — no `invoke()` in `$lib/components/` ([AD-9a7d7256](AD-9a7d7256))
 - [RULE-9814ec3c](RULE-9814ec3c): Function size limits — flag functions >50 lines
 - [RULE-83411442](RULE-83411442): Tooltip usage — no `title=` on interactive elements
@@ -66,6 +70,7 @@ Convert every self-compliance-only rule to mechanical enforcement where possible
 - [RULE-97e96528](RULE-97e96528): Root cleanliness — lint check on root directory contents
 
 **Hook-enforceable (extend pre-commit hook):**
+
 - [RULE-b10fe6d1](RULE-b10fe6d1): Status transition validation — block invalid state transitions (e.g., `draft→in-progress` skipping `ready`)
 - [RULE-63cc16ad](RULE-63cc16ad): Config-disk consistency — verify `project.json` artifact paths match actual directories
 - [RULE-05562ed4](RULE-05562ed4): Pillar alignment sections — check doc pages for required section
@@ -73,6 +78,7 @@ Convert every self-compliance-only rule to mechanical enforcement where possible
 - RULE-b03009da: End-to-end completeness — when a Tauri command is added, check for matching TS interface
 
 **Tooling-enforceable (extend verify tools or new scripts):**
+
 - [RULE-205d9c91](RULE-205d9c91): Skill portability — scan core skills for project-specific paths
 - [RULE-8abcbfd5](RULE-8abcbfd5): Provider-agnostic capabilities — check agent definitions use `capabilities` not `tools`
 - [RULE-09a238ab](RULE-09a238ab): Data persistence boundaries — scan for governance data in SQLite or conversation data in files
@@ -87,16 +93,19 @@ Add all new checks to pre-commit hook staged-file paths.
 The knowledge maturity pipeline has zero automated stage transitions. This phase adds the mechanical drivers.
 
 **3a. Recurrence auto-tracking**: Extend `verify-pipeline-integrity.mjs` (or a new tool) to:
+
 - Scan review agent output for failure patterns that match existing lessons
 - Auto-increment recurrence when a match is found
 - Surface lessons with `recurrence >= 2` that haven't been promoted
 
 **3b. Promotion readiness detection**: Add tooling to detect:
+
 - Observations that should be elevated to understanding (maturity assessment signals)
 - Understandings that recur and should become rules/skills
 - The `evolves-into` field is empty on promoted lessons (enforcement from Phase 1c)
 
 **3c. Stage transition suggestions**: Build a `pipeline-health` check (can be part of `verify-pipeline-integrity.mjs` or a new tool) that reports:
+
 - Stuck observations (active for >N days with no advancement)
 - Accepted ADs without corresponding skills
 - Skills without corresponding rules
@@ -115,13 +124,14 @@ The knowledge maturity pipeline has zero automated stage transitions. This phase
 Rules that are inherently non-mechanical still need an enforcement strategy. For each behavioral rule, define how it will be enforced:
 
 | Enforcement Strategy | Applicable To |
-|---------------------|---------------|
+| --------------------- | --------------- |
 | **Prompt injection** — rule content injected into agent context at delegation time | [RULE-87ba1b81](RULE-87ba1b81) (delegation), [RULE-0d29fc91](RULE-0d29fc91) (search usage), [RULE-d2c2063a](RULE-d2c2063a) (make targets), [RULE-25baac14](RULE-25baac14) (IDs not priority), [RULE-5965256d](RULE-5965256d) (required reading), [RULE-dd5b69e6](RULE-dd5b69e6) (skill loading), [RULE-d5d28fba](RULE-d5d28fba) (structure before work), [RULE-ef822519](RULE-ef822519) (context management) |
 | **Output validation** — post-hoc check on agent output for compliance signals | [RULE-5dd9decd](RULE-5dd9decd) (honest reporting — check for "What Is NOT Done" section), [RULE-c603e90e](RULE-c603e90e) (lessons learned — check for IMPL entries in review output), [RULE-8ee65d73](RULE-8ee65d73) (no deferred deliverables — check completion reports for deferral language), [RULE-dccf4226](RULE-dccf4226) (plan compliance — check plan structure) |
 | **Skill injection** — domain knowledge loaded before relevant work | [RULE-05ae2ce7](RULE-05ae2ce7) (AD compliance), [RULE-ec9462d8](RULE-ec9462d8) (documentation first), [RULE-4603207a](RULE-4603207a) (enforcement before code), [RULE-43f1bebc](RULE-43f1bebc) (systems thinking), [RULE-71352dc8](RULE-71352dc8) (UAT process) |
 | **Session hooks** — plugin hooks that trigger at session boundaries | [RULE-f609242f](RULE-f609242f) (git workflow — session-start/end checks), [RULE-30a223ca](RULE-30a223ca) (session management — session-end commit check) |
 
 For each strategy:
+
 - Define the implementation mechanism (plugin hook, skill content, output parser)
 - Create the enforcement artifact (hook script, skill update, validation script)
 - Wire into the appropriate trigger point
@@ -145,6 +155,7 @@ For each strategy:
 **7b. Auto-classification rules**: Define rules that automatically classify work priority based on what it touches (e.g., integrity tooling → CRITICAL).
 
 **7c. Automated gap audit tool**: Build a repeatable version of the [RES-0e971367](RES-0e971367) audit as tooling (extend `verify-pipeline-integrity.mjs` or new script) that:
+
 - Scans all rules and reports enforcement mechanism (mechanical vs self-compliance vs behavioral plan)
 - Scans all ADs and reports enforcement chain completeness
 - Scans all lessons and reports promotion status / recurrence
@@ -159,6 +170,7 @@ The tooling built in phases 1-7 produces output. Phase 8 runs it all, reviews th
 **8a. Run all enforcement tooling**: Execute `make verify` (extended), all new linter rules, the gap audit tool, pipeline health checks, and behavioral enforcement mechanisms against the full codebase. Capture the complete output.
 
 **8b. Triage findings**: Review every finding from the tooling output. For each:
+
 - Is it a data fix (wrong relationship, missing field)? → Fix immediately
 - Is it a new enforcement gap that needs tooling? → Create a task in a follow-up epic
 - Is it a behavioral gap with no enforcement plan? → Add to behavioral enforcement plan
@@ -166,13 +178,14 @@ The tooling built in phases 1-7 produces output. Phase 8 runs it all, reviews th
 **8c. Create follow-up epics**: Group the findings into coherent epics, prioritized using the framework from Phase 7. These epics inherit the priority dimensions and auto-classification rules — the system now prioritizes its own backlog.
 
 **8d. Update planning methodology**: Promote [IMPL-b19a7e02](IMPL-b19a7e02) and [IMPL-c726abc2](IMPL-c726abc2) by updating [RULE-dccf4226](RULE-dccf4226) to require:
+
 - Any epic producing enforcement or audit tooling includes a loop-closure phase (IMPL-b19a7e02)
 - Out of Scope sections are presented to the user for explicit approval before being committed (IMPL-c726abc2, recurrence=2)
 
 ## Tasks
 
 | ID | Title | Phase | Depends On |
-|----|-------|-------|------------|
+| ---- | ------- | ------- | ------------ |
 | [TASK-520f6e7d](TASK-520f6e7d) | Backfill AD → Rule enforcement relationships (37 ADs) | 1 | — |
 | [TASK-bf0ee06e](TASK-bf0ee06e) | Backfill lesson promoted-to targets (22 lessons) | 1 | — |
 | [TASK-445e8155](TASK-445e8155) | Extend pipeline integrity tool with enforcement chain checks | 1 | [TASK-520f6e7d](TASK-520f6e7d), [TASK-bf0ee06e](TASK-bf0ee06e) |

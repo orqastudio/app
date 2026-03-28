@@ -19,6 +19,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 Tools are currently documented in scattered locations — some in skills, some in rules, some in architecture docs. When an agent encounters a tool, there's no direct path from "here's the tool" to "here's how to use it well." Users browsing the tool list in the app see tool names and parameter schemas but no usage guidance.

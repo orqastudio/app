@@ -3,7 +3,7 @@ id: "TASK-f51abfea"
 type: "task"
 title: "Design plugin-sidecar pairing mechanism (IMPL-b8ec72e2, IMPL-acea0394)"
 description: "Design the plugin type taxonomy, AI provider schema, and capability fulfilment model schemas. Design only — implementation is deferred to IDEA-459f417a. Covers plugin.json schema extension, provider definition schema, and capability routing configuration shape."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Design how plugins declare which sidecar they require and how the system enforces that pairing. This covers [IMPL-b8ec72e2](IMPL-b8ec72e2) (declaration) and [IMPL-acea0394](IMPL-acea0394) (enforcement) as two sides of the same design.

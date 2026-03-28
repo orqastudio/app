@@ -29,14 +29,14 @@ Research into Tauri v2's capabilities, security model, and plugin ecosystem for 
 **Verdict: ALL eight requirements are supported.**
 
 | Requirement | Supported | Mechanism |
-|-------------|-----------|-----------|
+| ------------- | ----------- | ----------- |
 | File system read/write (arbitrary paths) | **Yes** | `tauri-plugin-fs` with scope config; `$HOME/**` or runtime `FsScope::allow_directory()` |
 | Process spawning (git, shell, Python) | **Yes** | `tauri-plugin-shell` with scoped command allowlist |
 | File watching | **Yes** | Built into `tauri-plugin-fs` via `watch()` / `watchImmediate()` (uses `notify` crate) |
 | System tray | **Yes** | Core feature via `tray-icon` Cargo feature flag |
 | Auto-update | **Yes** | `tauri-plugin-updater` (v2.9.0) |
 | Cross-platform builds | **Yes** | Windows, macOS, Linux; `tauri-action` GitHub Action for CI/CD |
-| SSE/HTTP streaming from Rust | **Yes** | `tauri::ipc::Channel<T>` for ordered streaming; `reqwest` for HTTP |
+| SSE/HTTP streaming from Rust | **Yes** | `tauri::ipc::Channel\<T\>` for ordered streaming; `reqwest` for HTTP |
 | Multi-window support | **Yes** | Core feature; `WebviewWindow::new()` or JS `WebviewWindow` API |
 
 **Detailed notes:**
@@ -47,7 +47,7 @@ Research into Tauri v2's capabilities, security model, and plugin ecosystem for 
 - **System tray:** Enabled via `features = ["tray-icon"]`. Supports custom icons, menus, and events (Click, DoubleClick, Enter, Move, Leave). Linux has limited event support.
 - **Auto-update:** `tauri-plugin-updater` supports GitHub releases, custom endpoints, and CrabNebula Cloud. Known issue: slow Windows uninstalls during updates (5-30 min in some cases).
 - **Cross-platform:** `tauri-action` builds for Windows (.msi, .exe), macOS (.dmg, .app), Linux (.deb, .AppImage). x86_64 and aarch64 supported.
-- **Streaming:** `Channel<T>` is the documented recommended mechanism — faster than events, ordered delivery, type-safe on Rust side. Perfect for Claude API SSE responses.
+- **Streaming:** `Channel\<T\>` is the documented recommended mechanism — faster than events, ordered delivery, type-safe on Rust side. Perfect for Claude API SSE responses.
 - **Multi-window:** Stable with single-webview-per-window. Multi-webview per window is unstable/behind feature flag.
 
 **Decision:** Tauri v2 is fully capable. No blockers. Proceed with [AD-7121ec20](AD-7121ec20) (thick backend) and [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary) as designed.
@@ -79,9 +79,9 @@ async fn create_session(project_path: String) -> Result<Session, String> { ... }
 
 **Type safety:** `invoke()` is NOT type-safe at the JS/TS boundary — returns `Promise<unknown>` by default. Must cast or use generics. Community tool [TauRPC](https://lib.rs/crates/taurpc) generates TypeScript types from Rust command signatures.
 
-**Error handling:** Commands return `Result<T, E>` where E must implement `serde::Serialize`. Rejected promise contains serialized error.
+**Error handling:** Commands return `Result\<T, E\>` where E must implement `serde::Serialize`. Rejected promise contains serialized error.
 
-#### `Channel<T>` — Streaming (Backend → Frontend) — RECOMMENDED FOR STREAMING
+#### `Channel\<T\>` — Streaming (Backend → Frontend) — RECOMMENDED FOR STREAMING
 
 The **preferred mechanism for streaming data**. Faster than events, ordered delivery (index-based), type-safe on Rust side.
 
@@ -127,14 +127,14 @@ No documented hard limits. ~200ms for 3MB JSON via standard IPC. For large binar
 **Proposed IPC patterns for OrqaStudio:**
 
 | Pattern | Use Case | Mechanism |
-|---------|----------|-----------|
-| CRUD operations (sessions, projects, settings) | One-shot queries | `invoke()` → `Result<T>` |
-| Claude API streaming (tokens, tool calls) | High-throughput ordered stream | `Channel<StreamEvent>` |
-| Scanner progress, git operations | Long-running progress | `Channel<ProgressEvent>` |
+| --------- | ---------- | ----------- |
+| CRUD operations (sessions, projects, settings) | One-shot queries | `invoke()` → `Result\<T\>` |
+| Claude API streaming (tokens, tool calls) | High-throughput ordered stream | `Channel\<StreamEvent\>` |
+| Scanner progress, git operations | Long-running progress | `Channel\<ProgressEvent\>` |
 | File change notifications | Background events | `emit()` / `listen()` |
 | App lifecycle (window close, tray click) | Simple notifications | `emit()` / `listen()` |
 
-**Decision:** Use `invoke()` for CRUD, `Channel<T>` for streaming (Claude responses, progress), events for background notifications. Evaluate TauRPC for end-to-end type safety during Phase 1. → Extends [AD-4e7faf0e](AD-4e7faf0e).
+**Decision:** Use `invoke()` for CRUD, `Channel\<T\>` for streaming (Claude responses, progress), events for background notifications. Evaluate TauRPC for end-to-end type safety during Phase 1. → Extends [AD-4e7faf0e](AD-4e7faf0e).
 
 ---
 
@@ -205,7 +205,7 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 **All plugins are official, stable, and maintained in [tauri-apps/plugins-workspace](https://github.com/tauri-apps/plugins-workspace).** Tauri core is at v2.10.2 (Feb 2026). Minimum Rust version: 1.77.2.
 
 | Plugin | Version | Use in OrqaStudio | Notes |
-|--------|---------|-------------|-------|
+| -------- | --------- | ------------- | ------- |
 | `tauri-plugin-sql` | 2.3.1 | SQLite for sessions, metrics, tasks | Enable `--features sqlite`. Runs migrations. For complex queries, use `sqlx` in Rust directly. |
 | `tauri-plugin-fs` | 2.4.5 | Read/write project files, watch for changes | Enable `watch` feature. Runtime scope expansion. Path traversal blocked. |
 | `tauri-plugin-shell` | 2.3.4 | Git, shell commands, scanner execution | Pre-declare commands with arg validators. `spawn()` for streaming stdout. |
@@ -219,6 +219,7 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 | `tauri-plugin-persisted-scope` | official | Remember file system permissions across restarts | Pairs with fs plugin. |
 
 **Gotchas:**
+
 - Shell plugin arg validators: `".*"` allows any arg but weakens security — tighten for production
 - FS scope on first launch: no paths allowed until user selects a directory (use dialog plugin)
 - SQL plugin migrations: for complex schemas, manage via `sqlx` in Rust rather than JS API
@@ -232,12 +233,12 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 
 Tauri v2 is fully capable for OrqaStudio. No blockers, no workarounds needed. The key architectural patterns:
 
-- **Claude streaming:** `reqwest` SSE → `Channel<T>` → Svelte store
+- **Claude streaming:** `reqwest` SSE → `Channel\<T\>` → Svelte store
 - **File operations:** `tauri-plugin-fs` with runtime scope expansion + persisted scope
 - **Git/Shell:** `tauri-plugin-shell` with `spawn()` for streaming stdout
 - **API key storage:** `tauri-plugin-keyring` (OS keychain)
 - **Database:** `tauri-plugin-sql` with SQLite
-- **IPC pattern:** `invoke()` for CRUD, `Channel<T>` for streaming, events for notifications
+- **IPC pattern:** `invoke()` for CRUD, `Channel\<T\>` for streaming, events for notifications
 
 ## Related
 

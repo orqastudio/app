@@ -4,19 +4,27 @@ type: rule
 title: Honest Reporting
 description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-07
 enforcement:
+
   - mechanism: behavioral
+
     message: "Report status accurately; partial work reported as complete is worse than reporting it as incomplete; every completion report must include a What Is NOT Done section"
+
   - mechanism: hook
+
     type: Stop
     action: check
     description: "Stop hook scans completion reports for missing What Is NOT Done section"
 relationships:
+
   - target: AD-9baf6ee9
+
     type: enforces
 ---
+
 ## The Core Rule
 
 **Reporting partial work as complete is WORSE than reporting it as incomplete.**
@@ -44,7 +52,7 @@ Before marking ANY deliverable as complete, ask:
 Use these precise terms — not vague language like "mostly done" or "almost complete":
 
 | Term | Meaning | Example |
-|------|---------|---------|
+| --- | --- | --- |
 | **Done** | Works end-to-end as documented | "Session persistence: messages save to SQLite, reload on app restart" |
 | **Partially done** | Some paths work, others don't | "File tools: Read and Glob work, Write doesn't handle binary files" |
 | **Scaffolded** | Code exists but doesn't do real work | "Scanner runner exists but delegates to a TODO function" |

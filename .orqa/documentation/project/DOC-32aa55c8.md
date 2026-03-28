@@ -2,6 +2,7 @@
 id: "DOC-32aa55c8"
 type: doc
 title: "Lesson Promotion Pipeline Architecture"
+domain: architecture
 category: "architecture"
 description: "Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules."
 created: "2026-03-05"
@@ -14,7 +15,6 @@ relationships: []
 The lesson promotion pipeline captures implementation mistakes, tracks their recurrence across sessions, and promotes recurring patterns into enforceable governance artifacts. Lessons are individual markdown files with YAML frontmatter. SQLite caches metadata for fast queries and dashboard display. Promoted lessons become enforcement entries in rule files.
 
 ---
-
 
 ## Storage: `.orqa/process/lessons/`
 
@@ -54,7 +54,7 @@ session_ids:
 **Fields:**
 
 | Field | Type | Description |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `id` | string | Unique identifier. Format: `IMPL-NNN` (zero-padded, three digits). |
 | `title` | string | Concise description of the lesson. Shown in navigation lists. |
 | `category` | string | Technology or domain category for filtering. |
@@ -90,7 +90,6 @@ The markdown body follows this structure:
 
 ---
 
-
 ## SQLite Metadata Cache
 
 The `.orqa/process/lessons/*.md` files are the authoritative source. SQLite caches metadata for fast queries, filtering, and dashboard aggregation.
@@ -113,7 +112,6 @@ CREATE TABLE lessons (
 **Cache synchronization:** The cache is rebuilt from disk on app startup and whenever a lesson file changes (file watcher). The cache is never the source of truth — the `.md` files are.
 
 ---
-
 
 ## Lesson Lifecycle
 
@@ -142,7 +140,6 @@ graph TD
 
 ---
 
-
 ## Promotion Flow
 
 When a lesson is promoted to a rule:
@@ -160,25 +157,23 @@ The promotion creates a traceable link between a documented lesson and a live en
 
 ---
 
-
 ## IPC Commands
 
 | Command | Input | Output | Description |
-|---------|-------|--------|-------------|
-| `list_lessons` | `status?`, `category?`, `tag?` | `Vec<LessonSummary>` | List lessons with optional filters |
+| --------- | ------- | -------- | ------------- |
+| `list_lessons` | `status?`, `category?`, `tag?` | `Vec\<LessonSummary\>` | List lessons with optional filters |
 | `get_lesson` | `id: String` | `Lesson` | Get a single lesson with full markdown body |
 | `create_lesson` | `CreateLessonInput` | `Lesson` | Create a new lesson from a review agent report |
 | `update_lesson` | `UpdateLessonInput` | `Lesson` | Update metadata (recurrence, status, session_id) |
-| `list_promotion_candidates` | — | `Vec<LessonSummary>` | Lessons with recurrence >= threshold and status=active |
+| `list_promotion_candidates` | — | `Vec\<LessonSummary\>` | Lessons with recurrence >= threshold and status=active |
 | `promote_lesson` | `PromoteLessonInput` | `Lesson` | Promote a lesson to a rule enforcement entry |
 
 ---
 
-
 ## Rust Module Structure
 
 ```text
-backend/src-tauri/src/
+app/src-tauri/src/
   lessons/
     mod.rs             -- Lesson domain model, public API
     parser.rs          -- YAML frontmatter extraction from lesson files
@@ -191,7 +186,6 @@ backend/src-tauri/src/
 ```
 
 ---
-
 
 ## Related Documents
 

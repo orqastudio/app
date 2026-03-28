@@ -8,6 +8,7 @@ created: 2026-03-14
 updated: 2026-03-14
 relationships: []
 ---
+
 ## What Good Code Means Here
 
 Good code is code that a future agent can read, trust, and extend without fear. That requires three things: explicit structure, honest error paths, and testable units. When code is small, typed, and returns explicit results, it is safe to compose. When it silently swallows errors or grows past 50 lines, it becomes opaque — no one can reason about it, and neither can you.
@@ -20,7 +21,7 @@ Standards exist not to impose bureaucracy but to enforce the properties that mak
 
 **`invoke()` is the only bridge.** There is no HTTP server. There is no shared memory. There is no side channel. Every frontend-backend communication goes through a `#[tauri::command]` function. Every feature that crosses the boundary needs both a Rust command and a matching TypeScript type. If they don't both exist, the feature doesn't exist.
 
-**`Result<T, E>` everywhere.** A desktop app must never crash. There is no `unwrap()`, no `expect()`, no `panic!()` in production Rust. Every function returns a `Result`. Every error is handled explicitly and communicated to the user. This is non-negotiable — not a preference.
+**`Result\<T, E\>` everywhere.** A desktop app must never crash. There is no `unwrap()`, no `expect()`, no `panic!()` in production Rust. Every function returns a `Result`. Every error is handled explicitly and communicated to the user. This is non-negotiable — not a preference.
 
 **Components display; pages fetch.** No `invoke()` calls inside `$lib/components/`. Pages and containers handle data loading. Components receive props. This separation makes components testable and reusable. A component that fetches its own data cannot be tested without a running backend.
 

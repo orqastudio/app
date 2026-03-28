@@ -2,33 +2,43 @@
 id: RULE-998da8ea
 type: rule
 title: Dogfood Mode
-description: "OrqaStudio-specific extension of RULE-49f66888 (self-hosted-development). Adds Tauri restart commands, Vite HMR specifics, sidecar protocol warnings, and the dogfood: true detection flag."
+description: "OrqaStudio-specific extension of RULE-49f66888 (self-hosted-development). Adds Tauri restart commands, Vite HMR specifics, and the dogfood: true detection flag."
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
-updated: 2026-03-07
+updated: 2026-03-28
 enforcement:
+
   - mechanism: behavioral
+
     message: "Dogfood context is injected into agent system prompt when dogfood: true; apply extra caution on restarts, protocol changes, and structural modifications"
+
   - mechanism: hook
+
     type: SessionStart
     action: inject
     description: "Dogfood behavioral context injected into system prompt when project.json contains dogfood: true"
+
   - mechanism: hook
+
     type: PreToolUse
     event: file
     action: block
     pattern: "plugins/"
     condition: "dogfood: true"
     message: "Dogfood safety: Production agents cannot edit first-party plugins while dogfood mode is active"
-summary: "Conditional rule when dogfood: true in project.json. You are editing the app you run inside. App context: restart ends session (save state first), sidecar self-edit warnings, HMR crash risk. CLI context: restart is safe, no session risk. Agents must only use restart commands. Never make dev-watch. Enforcement gaps are immediately CRITICAL. Controller uses --no-watch. Plugin edits blocked in dogfood mode."
+summary: "Conditional rule when dogfood: true in project.json. You are editing the app you run inside. App context: restart ends session (save state first), HMR crash risk. CLI context: restart is safe, no session risk. Agents must only use restart commands. Never make dev-watch. Enforcement gaps are immediately CRITICAL. Controller uses --no-watch. Plugin edits blocked in dogfood mode."
 tier: stage-triggered
 roles: [orchestrator, implementer]
 priority: P1
 tags: [dogfood, self-hosted, restart-protocol, enforcement-gaps]
 relationships:
+
   - target: AD-4ea9a290
+
     type: enforces
 ---
+
 # Dogfood Mode (CONDITIONAL — only when `dogfood: true`)
 
 This rule applies ONLY when `.orqa/project.json` contains `"dogfood": true`. For non-dogfood projects, ignore this rule entirely. This is a **project-level** rule, not a universal rule.
@@ -42,7 +52,7 @@ You are editing the app you are running inside. The codebase IS the running inst
 When the dogfood flag is set, the project's system prompt injection tells orchestrating agents their operational context. Agents must always know:
 
 | Question | Answer in Dogfood Mode |
-|----------|----------------------|
+| --- | --- |
 | **What am I?** | An orchestrating agent coordinating implementation work |
 | **Where am I?** | CLI (Claude Code) or App (OrqaStudio) — determines which tools and governance are available |
 | **Am I dogfooding?** | Yes — my changes affect my own runtime environment |
@@ -63,10 +73,9 @@ This injection is what transitions an agent from "building an app" to "building 
 The Enhanced Caution Rules below apply differently depending on whether you are running inside the app or from the CLI:
 
 | Rule | App Context | CLI Context |
-|------|-------------|-------------|
+| --- | --- | --- |
 | Restart ends session | **YES** — `make restart-tauri` kills the app you're inside | **NO** — `make restart-tauri` just restarts the app externally |
 | Session state before restart | **MANDATORY** — session dies on restart | **NOT REQUIRED** — CLI session survives |
-| Sidecar self-edit warnings | **YES** — you communicate through it | **NO** — CLI doesn't use the sidecar |
 | Frontend mid-stream crash risk | **YES** — HMR in your own window | **NO** — CLI has no window |
 | Dev server management | **YES** — orchestrator manages lifecycle | **YES** — still useful to manage via CLI |
 
@@ -97,16 +106,6 @@ The Enhanced Caution Rules below apply differently depending on whether you are 
 2. Run `make restart-tauri` — the Tauri app restarts but the CLI session continues
 3. No session state file needed
 
-### Sidecar Self-Edit Warnings (App Context Only)
-
-The sidecar (`sidecar/src/`) is the communication bridge between the Agent SDK and the Rust backend. **In app context**, you are communicating THROUGH it while potentially editing it.
-
-- Before modifying `sidecar/src/protocol.ts`, `sidecar/src/provider.ts`, or `sidecar/src/index.ts`: warn the user that this may affect the active connection
-- After sidecar changes: the sidecar must be rebuilt (`cd sidecar && bun run build`) and the app restarted
-- Never change the NDJSON protocol format mid-session without a restart
-
-In CLI context, sidecar changes are just normal file edits with no live-session risk.
-
 ### Frontend Hot Reload (App Context Only)
 
 - Vite HMR handles frontend changes live — Svelte/TypeScript/CSS changes appear immediately
@@ -127,6 +126,7 @@ When `dogfood: true`, the product enforces structured thinking through governanc
 **Any discovered enforcement gap is immediately CRITICAL.** It is never deferred, never scoped out, never "addressed in a future epic." When a gap is spotted — a rule with no mechanical enforcement, an AD with no enforcement chain, a pillar gate question with no tooling — it becomes an immediate task.
 
 This applies to:
+
 - Rules that exist but nothing mechanically checks them
 - Architecture decisions that are accepted but no rule enforces them
 - Pillar gate questions that can't be answered by current tooling

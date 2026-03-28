@@ -2,6 +2,7 @@
 id: KNOW-a1a195c1
 type: knowledge
 title: Tailwind Design System
+domain: platform/svelte
 description: "Build scalable design systems with Tailwind CSS v4, design tokens, component libraries, and responsive patterns. Use when creating component libraries, implementing design systems, or standardizing UI patterns."
 summary: "Build scalable design systems with Tailwind CSS v4, design tokens, component libraries, and responsive patterns. Use when creating component libraries, implementing design systems, or standardizing UI patterns."
 status: active
@@ -19,7 +20,7 @@ Tailwind CSS v4 design system patterns for Svelte 5 with CSS-first configuration
 ## Key v4 Changes
 
 | v3 Pattern | v4 Pattern |
-|---|---|
+| --- | --- |
 | `tailwind.config.ts` | `@theme` in CSS |
 | `@tailwind base/components/utilities` | `@import "tailwindcss"` |
 | `darkMode: "class"` | `@custom-variant dark (&:where(.dark, .dark *))` |
@@ -51,7 +52,7 @@ Tailwind CSS v4 design system patterns for Svelte 5 with CSS-first configuration
 
 ## Design Token Hierarchy
 
-```
+```text
 Brand Tokens (abstract) → Semantic Tokens (purpose) → Component Tokens (specific)
 Example: oklch(45% 0.2 260) → --color-primary → bg-primary
 ```

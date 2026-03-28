@@ -3,7 +3,7 @@ id: "TASK-97e9ba49"
 type: "task"
 title: "Address .claude/rules/ loading vs graph injection"
 description: "All 44 rules loaded via symlinks contradicts graph model. Investigate and propose solution."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

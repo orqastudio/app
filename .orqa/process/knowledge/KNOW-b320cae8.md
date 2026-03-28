@@ -2,6 +2,7 @@
 id: KNOW-b320cae8
 type: knowledge
 title: Implementer Reasoning Methodology
+domain: methodology/planning
 summary: "Methodology for how an Implementer agent approaches a task. The Implementer builds — it does not investigate root causes, decide architecture, or self-certify quality."
 description: |
   Reasoning protocol for Implementer agents: understand the domain and task,
@@ -26,7 +27,7 @@ Before writing any code, answer these questions:
 **What layer am I working in?**
 
 | Signal | Domain |
-|--------|--------|
+| -------- | -------- |
 | Backend source files, server logic, data access | **Backend / service layer** |
 | UI component files | **Frontend / presentation layer** |
 | Reactive state files, stores | **State management layer** |
@@ -50,6 +51,7 @@ Search the codebase before writing anything new.
 Ask: *what patterns govern this kind of work in this project?*
 
 Then look for:
+
 - Existing implementations of the same concept
 - Similar patterns in adjacent modules
 - Shared components, utilities, or abstractions that should be reused
@@ -74,6 +76,7 @@ Partial implementations — changes that are correct in isolation but fail at ru
 Work layer by layer, but commit all layers together at the end.
 
 Within each layer:
+
 - Follow the patterns discovered in Step 2
 - Apply the constraints identified in Step 1
 - Use typed errors, not raw panics or unhandled exceptions

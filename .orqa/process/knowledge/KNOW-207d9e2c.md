@@ -2,14 +2,15 @@
 id: "KNOW-207d9e2c"
 type: "knowledge"
 title: "Orqa Error Composition"
+domain: platform/rust
 description: "OrqaStudio error composition and flow: OrqaError anatomy, From implementations,\nerror propagation through domain/repo/command layers, IPC serialization, and\nfrontend error handling patterns.\nUse when: Adding new error variants, implementing error handling in commands or\ndomain services, wiring error states in Svelte stores, or debugging error flow\nacross the Tauri boundary.\n"
 status: "active"
 created: 2026-03-01T00:00:00.000Z
-updated: 2026-03-10T00:00:00.000Z
+updated: 2026-03-28T00:00:00.000Z
 category: "domain"
 file-patterns:
-  - "backend/src-tauri/src/domain/**"
-  - "backend/src-tauri/src/commands/**"
+  - "app/src-tauri/src/domain/**"
+  - "app/src-tauri/src/commands/**"
 version: "1.0.0"
 user-invocable: true
 relationships:
@@ -32,13 +33,12 @@ summary: |
   patterns.
 ---
 
-
-OrqaStudio uses a single canonical error type (`OrqaError`) that flows from deep in the Rust backend, through the Tauri IPC boundary, and into Svelte stores where it is surfaced to the user. Every Rust function returns `Result<T, OrqaError>`. No `unwrap()`, `expect()`, or `panic!()` in production code.
+OrqaStudio uses a single canonical error type (`OrqaError`) that flows from deep in the Rust backend, through the Tauri IPC boundary, and into Svelte stores where it is surfaced to the user. Every Rust function returns `Result\<T, OrqaError\>`. No `unwrap()`, `expect()`, or `panic!()` in production code.
 
 ## OrqaError Anatomy
 
 ```rust
-// backend/src-tauri/src/error.rs
+// app/src-tauri/src/error.rs
 #[derive(Debug, thiserror::Error, Serialize)]
 #[serde(tag = "code", content = "message")]
 pub enum OrqaError {
@@ -85,7 +85,7 @@ Serializes as `{"code": "not_found", "message": "session 42"}` — the frontend 
 ### Variant Selection Guide
 
 | Variant | When to use |
-|---------|-------------|
+| --------- | ------------- |
 | `NotFound` | Entity lookup returned no rows |
 | `Database` | SQLite errors, lock poisoning |
 | `FileSystem` | File I/O failures, missing directories |
@@ -123,7 +123,7 @@ conn.execute("INSERT ...", params![...])?;               // rusqlite -> Database
 ### Layer 1: Repository
 
 ```rust
-// backend/src-tauri/src/repo/session_repo.rs
+// app/src-tauri/src/repo/session_repo.rs
 pub fn get(conn: &Connection, id: i64) -> Result<Session, OrqaError> {
     conn.query_row("SELECT ... WHERE id = ?1", params![id], |row| { Ok(Session { /* ... */ }) })
     .map_err(|e| match e {
@@ -219,7 +219,7 @@ OrqaError::FileSystem(e.to_string())  // What file? What operation?
 
 ## Adding New Error Variants
 
-1. Add the variant to `OrqaError` in `backend/src-tauri/src/error.rs`
+1. Add the variant to `OrqaError` in `app/src-tauri/src/error.rs`
 2. Add `From` implementation if there is a common external error type
 3. Add a serialization test
 4. Update this skill's variant selection guide
@@ -266,7 +266,7 @@ try {
 ### Recovery Patterns
 
 | Pattern | When | Example |
-|---------|------|---------|
+| --------- | ------ | --------- |
 | Retry | Transient failures | `ErrorDisplay` with `onRetry` callback |
 | Fallback | Non-critical data missing | `restoreSession` returns `false`, app continues |
 | User notification | Actionable errors | Store sets `this.error`, component shows `ErrorDisplay` |
@@ -309,11 +309,11 @@ std::fs::read_to_string(path)?;
 ## Key Files
 
 | File | Purpose |
-|------|---------|
-| `backend/src-tauri/src/error.rs` | `OrqaError` enum, `From` implementations |
-| `backend/src-tauri/src/repo/*.rs` | Repository layer error conversion |
-| `backend/src-tauri/src/domain/*.rs` | Domain services error propagation |
-| `backend/src-tauri/src/commands/*.rs` | Command handlers returning `Result<T, OrqaError>` |
+| ------ | --------- |
+| `app/src-tauri/src/error.rs` | `OrqaError` enum, `From` implementations |
+| `app/src-tauri/src/repo/*.rs` | Repository layer error conversion |
+| `app/src-tauri/src/domain/*.rs` | Domain services error propagation |
+| `app/src-tauri/src/commands/*.rs` | Command handlers returning `Result\<T, OrqaError\>` |
 | `ui/src/lib/stores/*.svelte.ts` | Frontend error state |
 | `ui/src/lib/components/shared/ErrorDisplay.svelte` | Shared error display |
 

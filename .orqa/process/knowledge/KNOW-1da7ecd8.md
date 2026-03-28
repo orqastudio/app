@@ -2,6 +2,8 @@
 id: KNOW-1da7ecd8
 type: knowledge
 title: Tauri v2 IPC Patterns Reference
+domain: platform/tauri
+description: "Patterns for implementing frontend-backend communication in Tauri v2 using commands, events, and channels."
 summary: "Tauri v2 IPC Patterns Reference. Tauri v2 provides three IPC primitives: 1. **Commands**: Request-response (most common) 2."
 status: active
 created: 2026-03-20
@@ -89,7 +91,7 @@ await invoke('download', { url: '...', onEvent: ch });
 ## Selection Guide
 
 | Pattern | Use Case | Direction | Frequency |
-|---------|----------|-----------|-----------|
+| --------- | ---------- | ----------- | ----------- |
 | Commands | Request-response, CRUD | Frontend → Rust | One-time |
 | Events | Notifications, broadcasts | Bidirectional | Low-medium |
 | Channels | Progress, streaming | Rust → Frontend | High |

@@ -3,7 +3,7 @@ id: "TASK-a7fc1f4a"
 type: "task"
 title: "Design core layout wireframes"
 description: "Created wireframes for the four-zone desktop layout with toolbar, sidebar, main content area, and status bar."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Created wireframes for the four-zone desktop layout consisting of toolbar, sidebar, main content area, and status bar.

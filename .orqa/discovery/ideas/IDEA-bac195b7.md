@@ -3,7 +3,7 @@ id: IDEA-bac195b7
 type: discovery-idea
 title: Reasoning Transparency
 description: "Maintain clear reasoning trails with AI-generated summaries, confidence indicators, and chronological decision logs."
-status: completed
+status: archived
 created: 2026-03-07
 updated: 2026-03-13
 research-needed:
@@ -18,6 +18,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Candidate Items
 
 - Reasoning summaries — AI-generated summaries of how conclusions were reached

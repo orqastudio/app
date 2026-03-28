@@ -2,6 +2,7 @@
 id: KNOW-21d28aa0
 type: knowledge
 title: Planning
+domain: methodology/planning
 summary: "Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved."
 description: |
   Enforces documentation-first planning for all implementation tasks.
@@ -26,7 +27,6 @@ relationships:
     type: synchronised-with
 
 ---
-
 
 Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved. Documentation is the source of truth — code that diverges from docs is wrong and must be fixed.
 
@@ -96,7 +96,7 @@ Every implementation plan must include these sections in order:
 **Mandatory checks (verify every one that applies):**
 
 | Principle | Verify |
-|-----------|--------|
+| ----------- | -------- |
 | Architecture decisions | Each relevant architecture decision is satisfied — show HOW with specific patterns |
 | Error propagation | All functions return typed results, no unchecked panics or exceptions |
 | Layer separation | Domain logic in backend, frontend is view layer only |
@@ -132,7 +132,7 @@ Complies with all architecture decisions.
 Every plan MUST explicitly address each dimension below. For each, state either the specific approach OR "N/A — [reason]". Leaving a dimension blank is a plan rejection.
 
 | Dimension | What to Address |
-|-----------|----------------|
+| ----------- | ---------------- |
 | **Data Persistence** | What new data is created? Where is it stored? Schema design. Migration strategy. |
 | **IPC Contract** | New/modified commands. Request/response types. Serialization. |
 | **State Management** | Frontend state: where stored? How loaded/saved? What happens on window refresh? |
@@ -153,13 +153,13 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 3. **Component State Table** — Every component, every state it can be in:
 
 | Component | State | User Sees |
-|-----------|-------|-----------|
+| ----------- | ------- | ----------- |
 | SessionList | Loading | Spinner with "Loading sessions..." |
 | SessionList | Empty | "No sessions yet" with create button |
 | SessionList | Loaded | List of session cards with timestamps |
 | SessionList | Error | Error message with retry button |
 
-4. **Backend Requirements** — Derived from the above. What commands, types, and domain logic are needed to enable the UX?
+1. **Backend Requirements** — Derived from the above. What commands, types, and domain logic are needed to enable the UX?
 
 ### 3. Governing Documentation
 

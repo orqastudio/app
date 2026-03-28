@@ -1,7 +1,9 @@
 ---
 id: DOC-a06f2a63
 type: doc
+status: active
 title: "Svelte Plugin Setup"
+domain: guides
 description: "How to install and configure the Svelte development plugin — dependencies, config generation, and organisation mode."
 category: onboarding
 created: 2026-03-19
@@ -22,6 +24,7 @@ orqa plugin install @orqastudio/plugin-svelte
 ```
 
 The installer:
+
 1. Detects which sub-projects use TypeScript/Svelte
 2. Recommends which sub-projects should receive the plugin
 3. Adds dev dependencies to each selected project's `package.json`
@@ -31,6 +34,7 @@ The installer:
 ## What Gets Installed
 
 Dev dependencies added to `package.json`:
+
 - `eslint`, `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`
 - `eslint-plugin-svelte`
 - `svelte-check`

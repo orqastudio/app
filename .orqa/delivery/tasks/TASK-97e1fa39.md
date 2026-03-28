@@ -3,7 +3,7 @@ id: "TASK-97e1fa39"
 type: "task"
 title: "Implement toast notification system"
 description: "Install and configure a toast notification library with configurable position, duration, and severity levels."
-status: "completed"
+status: archived
 priority: "P2"
 scoring:
   impact: 3

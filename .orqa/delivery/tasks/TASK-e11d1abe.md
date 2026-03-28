@@ -3,7 +3,7 @@ id: "TASK-e11d1abe"
 type: "task"
 title: "Plugin prompt-submit hook for observation capture"
 description: "Create a user-prompt-submit hook in the plugin that infers observation intent and prompts auto-creation of IMPL entries"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

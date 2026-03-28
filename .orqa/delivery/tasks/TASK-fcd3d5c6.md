@@ -3,7 +3,7 @@ id: TASK-fcd3d5c6
 type: task
 title: Documentation relationship audit — documents/documented-by edges
 description: Audit all documentation pages and populate documents/documented-by relationship edges across all docs.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 3

@@ -2,7 +2,7 @@
 id: TASK-22eda690
 type: task
 title: "Token efficiency — lazy rule loading"
-status: surpassed
+status: archived
 priority: P1
 created: 2026-03-25
 updated: 2026-03-25
@@ -13,6 +13,7 @@ acceptance:
   - "RES-138eff6e recommendations implemented (at minimum: lazy rule loading)"
 relationships: []
 ---
+
 ## What
 
 Implement the top recommendation from RES-138eff6e: lazy rule loading. Currently 58 rule files (~8,800 tokens) are loaded into every prompt. Load only rules relevant to the current task.

@@ -3,13 +3,18 @@ id: "RULE-d2c2063a"
 type: rule
 title: "Development Commands"
 description: "Dev environment startup must use orqa CLI. Raw cargo test/clippy/fmt/build are allowed."
-status: "active"
+status: active
+enforcement_type: mechanical
 created: "2026-03-07"
 updated: "2026-03-25"
 enforcement:
+
   - mechanism: behavioral
+
     message: "Use 'orqa debug' to start the dev environment, not raw 'cargo tauri dev' or 'npm run dev'. Raw cargo test/clippy/fmt/build and npx commands are allowed for quality checks."
+
   - mechanism: hook
+
     type: PreToolUse
     event: bash
     action: block
@@ -20,7 +25,9 @@ roles: [orchestrator, implementer]
 priority: P1
 tags: [development-commands, make-targets, dev-server, restart-protocol]
 relationships:
+
   - target: "AD-e8a0f910"
+
     type: "enforces"
 ---
 The dev environment MUST be started via `orqa debug`, not raw `cargo tauri dev` or `npm run dev`. These are the only commands blocked by the enforcement hook.
@@ -30,7 +37,7 @@ Raw `cargo test`, `cargo clippy`, `cargo fmt`, `cargo build`, `npx tsc`, `npx vi
 ## Command Mapping
 
 | Action | Use This | Also Allowed |
-|--------|----------|--------------|
+| --- | --- | --- |
 | Start dev environment | `orqa debug` | NOT `cargo tauri dev` or `npm run dev` |
 | Stop gracefully | `orqa debug stop` | |
 | Force kill everything | `orqa debug kill` | |
@@ -88,6 +95,7 @@ These raw commands are allowed:
 ## Forward Compatibility
 
 When adding a new recurring command to the project:
+
 1. Add an `orqa` CLI subcommand if it involves orchestration
 2. Update this rule's command mapping table
 3. Only then start using the command

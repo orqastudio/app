@@ -3,7 +3,7 @@ id: IDEA-7d76d86e
 type: discovery-idea
 title: "Spaces & Organisational Structure"
 description: "Containers for organising projects as adoption scales, with space-level governance and aggregated insights."
-status: surpassed
+status: archived
 created: 2026-03-07
 updated: 2026-03-13
 horizon: someday

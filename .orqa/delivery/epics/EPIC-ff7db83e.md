@@ -3,7 +3,7 @@ id: "EPIC-ff7db83e"
 type: "epic"
 title: "Graph analysis — Cytoscape algorithms powering governance insights"
 description: "Use Cytoscape.js graph analysis algorithms to power dashboard health scoring, dependency chain tracing, impact analysis, knowledge gap detection, and artifact importance ranking. Replaces file-based integrity checks with graph-theoretic analysis."
-status: "surpassed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Context
 
 Cytoscape.js is now installed for graph visualization. It includes built-in graph analysis algorithms (components, centrality, PageRank, BFS/DFS, shortest path) that can power governance insights far beyond the current file-based integrity scanning.
@@ -29,7 +30,7 @@ Cytoscape.js is now installed for graph visualization. It includes built-in grap
 
 A headless Cytoscape instance in the artifact graph SDK runs analysis without requiring DOM rendering. Results are exposed as reactive state that dashboard widgets consume.
 
-```
+```text
 Artifact Graph SDK
   → buildAnalysisCy() — headless cytoscape instance from graph data
   → graphHealth — { componentCount, orphanPercentage, avgDegree, largestComponentRatio }

@@ -17,6 +17,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Candidate Items
 
 - Git integration — branch awareness, commit correlation with decisions

@@ -26,7 +26,7 @@ Artifact IDs (e.g., TASK-2f67f14e, RES-d6e8ab11) use 8-character hex strings. Th
 
 ## The Rule
 
-```
+```text
 ID = PREFIX-{first 8 hex chars of MD5(title)}
 ```
 
@@ -41,7 +41,7 @@ Where PREFIX is the artifact type prefix (TASK, RES, EPIC, AD, RULE, KNOW, IMPL,
 
 ## What Needs to Happen
 
-1. **Audit**: Script to read all artifacts, compute MD5(title)[:8], compare to actual ID
+1. **Audit**: Script to read all artifacts, compute MD5[title](:8), compare to actual ID
 2. **Report**: List artifacts where ID doesn't match title hash
 3. **Migrate**: Rename files, update all relationship targets and body references
 4. **Enforce**: Pre-commit hook validates ID = hash(title) for new/modified artifacts

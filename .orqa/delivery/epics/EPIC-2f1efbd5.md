@@ -3,7 +3,7 @@ id: "EPIC-2f1efbd5"
 type: "epic"
 title: "Artifact System Migration"
 description: "Make the artifact system self-sustaining: correct default creation, historical content linkage, and framework coverage for all 8 types."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-08"
 updated: "2026-03-08"
@@ -18,9 +18,11 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Workstreams
 
 ### WS-1: Framework & Rules (DONE)
+
 - [x] Add Decision (AD-NNN) type to `artifact-framework.md`
 - [x] Add Decision creation section to `artifact-workflow.md`
 - [x] Add Decision enforcement to `artifact-lifecycle.md`
@@ -28,19 +30,23 @@ relationships:
 - [x] Update `architecture-decisions.md` to reference individual artifacts
 
 ### WS-2: Monolithic Doc Transition (DONE)
+
 - [x] Convert `docs/architecture/decisions.md` from full content to index table
 - [x] 20 individual `AD-NNN.md` artifacts created in `.orqa/decisions/`
 - [x] Index links to all individual artifacts
 
 ### WS-3: Roadmap & Cross-Reference Integrity (DONE)
+
 - [x] Roadmap completed work section references [MS-063c15b9](MS-063c15b9) and [EPIC-5a0624dc](EPIC-5a0624dc)-031
 - [x] All research ↔ decision cross-references validated and fixed
 - [x] [MS-b1ac0a20](MS-b1ac0a20) completed-epics count updated (0 → 1)
 
 ### WS-4: Migration Tracking (DONE)
+
 - [x] This epic [EPIC-2f1efbd5](EPIC-2f1efbd5) created to track the migration
 
 ### WS-5: Viewer Infrastructure (DEFERRED → [EPIC-9ddef7f9](EPIC-9ddef7f9))
+
 - [ ] Backend readers for milestones, epics, tasks, ideas, decisions
 - [ ] Tauri commands for artifact scanning and reading
 - [ ] Store bindings for new artifact types

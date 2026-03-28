@@ -3,11 +3,14 @@ id: "RULE-f3dca71e"
 type: rule
 title: "Pre-Release Version Tagging"
 description: "All pre-release versions must use a -dev suffix (e.g. 0.2.0-dev). Stable version strings (X.Y.Z with no suffix) are reserved for production releases only."
-status: "active"
+status: active
+enforcement_type: advisory
 created: "2026-03-21"
 updated: "2026-03-21"
 enforcement:
+
   - mechanism: behavioral
+
     message: "All pre-release versions must use a -dev suffix; bare X.Y.Z version strings are reserved for production releases only"
 relationships: []
 ---
@@ -39,7 +42,7 @@ Use `orqa version bump` to set a new version:
 ```bash
 orqa version bump 0.2.0-dev   # correct: pre-release gets -dev
 orqa version bump 0.2.0       # FORBIDDEN unless this is a production release
-```
+```text
 
 Never manually edit version fields in individual files. Always go through the `VERSION` file and `orqa version sync`.
 

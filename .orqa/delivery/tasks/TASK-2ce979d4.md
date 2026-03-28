@@ -2,7 +2,7 @@
 id: TASK-2ce979d4
 type: task
 title: "Create KNOW-40be8113 and KNOW-ecc181cb"
-status: completed
+status: archived
 created: 2026-03-18
 updated: 2026-03-19
 relationships:

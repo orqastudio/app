@@ -2,7 +2,7 @@
 id: IDEA-60a975ef
 type: discovery-idea
 title: "Governance libraries and pattern detection"
-status: surpassed
+status: archived
 horizon: someday
 created: 2026-03-16
 relationships:

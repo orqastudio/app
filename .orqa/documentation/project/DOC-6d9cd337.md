@@ -1,7 +1,9 @@
 ---
 id: "DOC-6d9cd337"
 type: doc
+status: active
 title: "Responsive Behavior"
+domain: reference
 category: "reference"
 description: "Responsive layout behavior across different window sizes and breakpoints."
 created: "2026-03-02"
@@ -22,7 +24,7 @@ OrqaStudio does not use CSS media query breakpoints in the traditional web sense
 ### Minimum Panel Widths
 
 | Zone | Min Width | Below Min |
-|------|-----------|-----------|
+| ------ | ----------- | ----------- |
 | Activity Bar | 48px | Never collapses (fixed) |
 | Explorer Panel | 280px | Never collapses (focal point) |
 | Nav Sub-Panel | 160px | Collapses to 0px |
@@ -31,7 +33,7 @@ OrqaStudio does not use CSS media query breakpoints in the traditional web sense
 ### Window Width Ranges
 
 | Window Width | Layout |
-|-------------|--------|
+| ------------- | -------- |
 | **> 1200px** | All zones open. Comfortable working space. |
 | **900-1200px** | Nav Sub-Panel auto-collapsed. Activity Bar + Explorer + Chat visible. |
 | **720-900px** | Nav Sub-Panel as overlay Sheet. Activity Bar + Explorer + Chat visible. |
@@ -40,6 +42,7 @@ OrqaStudio does not use CSS media query breakpoints in the traditional web sense
 ### Collapse Priority
 
 When the window shrinks, panels collapse in this order:
+
 1. **Nav Sub-Panel** collapses first (navigation is secondary to active content)
 2. **Chat Panel** becomes overlay second (conversation accessible via Sheet)
 3. **Activity Bar** becomes floating toggle third
@@ -54,7 +57,7 @@ When the window grows, panels restore in reverse order.
 ### Nav Sub-Panel Adaptations
 
 | Width | Behavior |
-|-------|----------|
+| ------- | ---------- |
 | 200px+ (normal) | Full tree/list navigation with section headers. |
 | 160-200px (narrow) | Compact list items, abbreviated labels. |
 | < 160px | Collapsed to 0px. Content accessible via `Ctrl+B` toggle or overlay Sheet. |
@@ -62,7 +65,7 @@ When the window grows, panels restore in reverse order.
 ### Explorer Panel Adaptations
 
 | Available Width | Behavior |
-|----------------|----------|
+| ---------------- | ---------- |
 | 400px+ | Full artifact lists with descriptions. Viewer/editor has comfortable width. |
 | 280-400px | Compact artifact list items, abbreviated descriptions. Viewer wraps tighter. |
 | 280px | Minimum. Single-column artifact list, basic viewer. |
@@ -70,7 +73,7 @@ When the window grows, panels restore in reverse order.
 ### Chat Panel Adaptations
 
 | Width | Behavior |
-|-------|----------|
+| ------- | ---------- |
 | 500px+ | Full message width. Code blocks show without horizontal scroll. |
 | 360-500px | Narrower messages. Code blocks may scroll horizontally. |
 | 360px | Minimum. Message input, send button, basic conversation. |
@@ -93,7 +96,7 @@ This preserves all functionality in narrow windows without requiring a completel
 ## Toolbar Adaptations
 
 | Width | Behavior |
-|-------|----------|
+| ------- | ---------- |
 | **> 900px** | Full toolbar: project name, search bar, new session button, settings icon |
 | **600-900px** | Search bar collapses to icon. `Ctrl+K` still works. |
 | **< 600px** | Project name truncated. Search and new session as icons only. |
@@ -103,7 +106,7 @@ This preserves all functionality in narrow windows without requiring a completel
 ## Conversation Input Adaptations
 
 | Width | Behavior |
-|-------|----------|
+| ------- | ---------- |
 | **> 500px** | Multi-line input with visible Send button on right |
 | **< 500px** | Input spans full width. Send button overlays bottom-right of input |
 
@@ -112,7 +115,7 @@ This preserves all functionality in narrow windows without requiring a completel
 ## Status Bar Adaptations
 
 | Width | Behavior |
-|-------|----------|
+| ------- | ---------- |
 | **> 800px** | Full: connection indicator + CLI version + sidecar status |
 | **500-800px** | Connection indicator + sidecar status. Version hidden. |
 | **< 500px** | Connection indicator only (colored dot). |
@@ -161,7 +164,7 @@ PaneForge sizes are percentages, not pixels. The actual pixel widths depend on t
 All layout state is persisted via `tauri-plugin-window-state`:
 
 | State | Persisted |
-|-------|-----------|
+| ------- | ----------- |
 | Window size (width, height) | Yes |
 | Window position (x, y) | Yes |
 | Panel widths (percentage) | Yes |
@@ -177,7 +180,7 @@ On app restart, the window restores to its previous size, position, and panel co
 Minimum set of window sizes to validate responsive behavior:
 
 | Size | Name | Expected Layout |
-|------|------|----------------|
+| ------ | ------ | ---------------- |
 | 1920x1080 | Full HD | All zones, comfortable |
 | 1440x900 | Laptop | All zones, slightly tighter |
 | 1280x720 | Small laptop | Nav Sub-Panel auto-collapsed; Activity Bar + Explorer + Chat |

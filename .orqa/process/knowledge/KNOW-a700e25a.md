@@ -1,7 +1,9 @@
 ---
 id: KNOW-a700e25a
 type: knowledge
-name: Software Delivery Management
+title: Software Delivery Management
+domain: methodology/delivery
+description: "How to create, connect, and progress milestones, epics, tasks, research, wireframes, and bugs through the software delivery lifecycle."
 status: active
 plugin: "@orqastudio/plugin-software-kanban"
 relationships:
@@ -16,13 +18,17 @@ You are managing software delivery artifacts in a structured project. This knowl
 ## Artifact Types
 
 ### Milestone
+
 Top of the delivery hierarchy. Represents a significant project checkpoint or release.
+
 - Stored in the project's delivery artifacts directory
 - Key fields: `gate` (optional completion conditions), `target_date`
 - Children: epics connect via `fulfils`
 
 ### Epic
+
 A body of work delivering a coherent capability. Groups related tasks.
+
 - Stored in the project's delivery artifacts directory
 - Connects up: `fulfils` → milestone
 - Connects down: tasks connect via `delivers`
@@ -31,7 +37,9 @@ A body of work delivering a coherent capability. Groups related tasks.
 - Knowledge: `guided-by` → research, `cautioned-by` → lesson
 
 ### Task
+
 An atomic unit of work completable in a single session.
+
 - Stored in the project's delivery artifacts directory
 - Connects up: `delivers` → epic
 - Sequencing: `depends-on` → other tasks
@@ -39,18 +47,24 @@ An atomic unit of work completable in a single session.
 - Fixes: `fixes` → bug (when fixing a reported issue)
 
 ### Research
+
 Investigation or analysis that produces findings.
+
 - Stored in the project's discovery artifacts directory
 - Origin: `spawned-by` → idea
 - Output: `produces` → wireframe, `informs` → decision, `guides` → epic
 
 ### Wireframe
+
 Visual specification of a UI or interaction pattern.
+
 - Stored in the project's discovery artifacts directory
 - Origin: `produced-by` → research
 
 ### Bug
+
 A functional or display issue reported against existing work.
+
 - Stored in the project's discovery artifacts directory
 - Reports against: `reports` → epic, task, or milestone
 - Impact: `affects` → persona
@@ -64,7 +78,7 @@ Always include full frontmatter:
 ---
 id: <generated-id>
 type: epic
-name: Plugin Distribution System
+title: Plugin Distribution System
 status: active
 relationships:
   - target: <milestone-id>
@@ -77,6 +91,7 @@ relationships:
 ```
 
 Rules:
+
 1. **Every artifact MUST have `id`, `type`, `status`**
 2. **Relationships are bidirectional** — when you add `delivers` on a task, add `delivered-by` on the epic
 3. **Use the correct verb** — each relationship has specific from/to types. The verb constrains usage.
@@ -85,7 +100,7 @@ Rules:
 ## Relationship Quick Reference
 
 | From | Verb | To | When to use |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | idea | `realises` | epic, task | Idea becomes delivery work |
 | idea | `spawns` | research | Idea triggers investigation |
 | research | `produces` | wireframe | Investigation yields visual spec |
@@ -104,7 +119,7 @@ Rules:
 
 ## Status Progression
 
-```
+```text
 captured → exploring → ready → prioritised → active → review → completed
                                                 ↕
                                            hold / blocked
@@ -116,7 +131,7 @@ captured → exploring → ready → prioritised → active → review → compl
 
 ## Delivery Hierarchy
 
-```
+```text
 Milestone
   ↑ fulfils
 Epic
@@ -127,7 +142,8 @@ Task
 ## Traceability
 
 Any delivery artifact traces back to the idea and pillar through the graph:
-```
+
+```text
 task →(delivers)→ epic →(realised-by)→ idea →(grounded-by)→ pillar →(upholds)→ vision
 ```
 

@@ -23,7 +23,7 @@ More fundamentally, sections shouldn't categorise artifacts at all. They should 
 ## The Four Sections
 
 | Section | Shows | Label for Decisions |
-|---|---|---|
+| --- | --- | --- |
 | **Principles** | Pillars, Vision, Personas, Grounding | — |
 | **Discovery** | Ideas, Decisions, project discovery types | "Decisions" (all) |
 | **Learning** | Rules, Lessons, Skills, Agents, + decisions with `governs` edges | "Governing Decisions" |

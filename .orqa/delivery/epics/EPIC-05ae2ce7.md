@@ -3,7 +3,7 @@ id: "EPIC-05ae2ce7"
 type: "epic"
 title: "Architecture Decisions"
 description: "Formal architecture decision records (AD-09fc4e65 through AD-af88bb69) capturing every significant technical choice made before implementation."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-02"
 updated: "2026-03-07"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 Architecture decisions are the governing law of the codebase. Every implementation agent must comply with them. Without these decisions, implementation is ungoverned.

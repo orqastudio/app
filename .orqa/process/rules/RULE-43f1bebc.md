@@ -4,20 +4,28 @@ type: rule
 title: Systems Thinking First
 description: "Every change must be evaluated as part of the whole system, not as an isolated fix. This is the foundational discipline that OrqaStudio exists to enable — it applies to every project the app manages."
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-07
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every change must be evaluated as part of the whole system; plans addressing symptoms without identifying the system are rejected"
+
   - mechanism: hook
+
     type: PostToolUse
     event: file
     action: inject
     description: "systems-thinking knowledge injected on all implementation work"
 relationships:
+
   - target: AD-af88bb69
+
     type: enforces
 ---
+
 # Systems Thinking First (NON-NEGOTIABLE)
 
 This is a universal rule. It applies to every project OrqaStudio manages, not just OrqaStudio itself. The app exists to provide a framework for systems thinking applied to complex problems — this rule defines what that means in practice.
@@ -35,7 +43,7 @@ Before touching code, answer these questions:
 ## Anti-Patterns
 
 | Anti-Pattern | Systems Alternative |
-|-------------|-------------------|
+| --- | --- |
 | Fix one instance, move on | Design for ALL instances of the pattern, implement uniformly |
 | Add a special case for this one scenario | Find the general rule, implement it once, apply everywhere |
 | Patch the symptom (wrong label, missing field) | Trace to the root cause (data model, pipeline, contract) |

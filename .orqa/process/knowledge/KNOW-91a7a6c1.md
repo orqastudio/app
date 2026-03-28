@@ -2,6 +2,7 @@
 id: KNOW-91a7a6c1
 type: knowledge
 title: Code Quality Review
+domain: methodology/delivery
 summary: "Code quality review methodology. This skill teaches the *review process and checklist structure* — the specific linting tools and coding standards come from the project's technology and coding-standards documentation."
 description: |
   Code review methodology: automated checks, manual review checklists, forbidden
@@ -20,7 +21,6 @@ relationships:
     type: synchronised-with
 ---
 
-
 Code quality review methodology. This skill teaches the *review process and checklist structure* — the specific linting tools and coding standards come from the project's technology and coding-standards documentation.
 
 ## Review Protocol
@@ -30,6 +30,7 @@ Code quality review methodology. This skill teaches the *review process and chec
 Run all available automated checks. Record PASS/FAIL for each.
 
 Common check categories:
+
 - Formatting (auto-formatter check mode)
 - Linting (static analysis with warnings as errors)
 - Type checking (compiler or type checker in strict mode)

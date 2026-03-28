@@ -22,6 +22,7 @@ relationships:
 Double-clicking an artifact file (e.g., `RULE-9814ec3c.md`) in Windows Explorer, Finder, or Nautilus should open it in OrqaStudio's artifact viewer — not a text editor.
 
 ## Approach options
+
 - Custom URI scheme (`orqa://artifact/.orqa/process/rules/RULE-9814ec3c.md`)
 - File association for `.md` files inside `.orqa/` directories
 - Tauri deep linking support

@@ -3,7 +3,7 @@ id: "EPIC-5d5d0ae6"
 type: "epic"
 title: "UX Design"
 description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 Implementation agents build to UX specifications. Without the UX design, the scaffold (Phase 1) has no spec to follow.

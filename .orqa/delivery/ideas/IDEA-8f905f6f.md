@@ -22,27 +22,32 @@ relationships:
 The orqa CLI currently uses basic console.log/console.error output. A polished CLI experience would include:
 
 ### Output formatting
+
 - Colored status indicators (green checkmarks, red errors, yellow warnings)
 - Consistent prefixed output (already started in `orqa dev` with `[ctrl]`, `[vite]` etc.)
 - Table output for `orqa graph stats`, `orqa daemon status`, `orqa dev status`
 - Tree output for `orqa graph --tree`
 
 ### Progress indicators
+
 - Spinners for long operations (daemon start, cargo builds, plugin refresh)
 - Progress bars for multi-file operations (validation, content sync)
 - Elapsed time display for builds
 
 ### Branding
+
 - OrqaStudio logo/banner on `orqa dev` startup (already has a basic box)
 - Consistent color palette across all commands
 - Version display in headers
 
 ### Interactive features
+
 - `orqa dev` dashboard mode (process status, log tailing, restart shortcuts)
 - `orqa graph` interactive exploration
 - Fuzzy search for artifact navigation
 
 ### Libraries to consider
+
 - `chalk` or `picocolors` for colors (picocolors is smaller)
 - `ora` for spinners
 - `cli-table3` or `tty-table` for tables

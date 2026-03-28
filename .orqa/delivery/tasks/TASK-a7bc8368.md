@@ -3,7 +3,7 @@ id: "TASK-a7bc8368"
 type: "task"
 title: "Add inject action to enforcement schema"
 description: "Add a new 'inject' action type to the enforcement schema, the plugin\nrule-engine.mjs, and the Rust enforcement engine. The inject action loads\nskill content and returns it as systemMessage instead of blocking or warning.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

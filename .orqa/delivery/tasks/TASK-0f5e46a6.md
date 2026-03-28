@@ -3,7 +3,7 @@ id: TASK-0f5e46a6
 type: task
 title: Research document relationship schema update and data backfill
 description: Add relationships array to research schema. Backfill existing research documents with relationship data. Backfill epic horizon fields.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 3
@@ -28,10 +28,12 @@ relationships:
 ## Scope
 
 ### Research Schema Update (Finding #21)
+
 - **Current**: `.orqa/discovery/research/schema.json` has NO `relationships` field
 - **Fix**: Add `relationships` array matching the pattern used in rules, skills, ideas, etc.
 - **Backfill**: For each RES-NNN, add at minimum the `informs` relationship to any epic that lists it in `research-refs`
 
 ### Epic Horizon Backfill (Finding #25)
+
 - **Current**: `horizon` field exists in epic schema but zero epics have it populated
 - **Fix**: Populate all epics with appropriate horizon value based on milestone status

@@ -33,7 +33,7 @@ The LSP currently does not register a definition provider. This task adds one th
 3. **Handle definition in different contexts**:
    - Frontmatter `target:` values — navigate to the referenced artifact
    - Frontmatter `depends-on:` values — navigate to the dependency
-   - Body `[<TYPE>-<hex8>](<TYPE>-<hex8>)` links — navigate to the referenced artifact
+   - Body `[\<TYPE\>-<hex8>](\<TYPE\>-<hex8>)` links — navigate to the referenced artifact
 
 4. **Cache artifact-to-path mapping** — avoid hitting the daemon on every go-to-definition request. Refresh the cache on `didSave` events or when the daemon signals a graph change.
 

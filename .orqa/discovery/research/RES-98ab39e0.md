@@ -9,6 +9,7 @@ updated: "2026-03-13"
 sources: []
 relationships: []
 ---
+
 ## The Problem
 
 AI CLI tools (Claude Code, Cursor, etc.) maintain their own per-project memory systems — files stored outside the project's governance structure. For OrqaStudio projects, this creates a fundamental tension:
@@ -26,7 +27,7 @@ An audit of the current Claude Code memory for this project reveals 10 files:
 ### Already Fully Covered by Artifacts (can be deleted)
 
 | Memory File | Artifact(s) That Cover It |
-|---|---|
+| --- | --- |
 | `dogfood-plan.md` | Stale tracking — actual epics/tasks are source of truth |
 | `audit-findings.md` | Stale snapshot — actual RES/EPIC artifacts exist |
 | `project_core_graph_firmware.md` | [RULE-3c2da849](RULE-3c2da849) (core graph firmware) |
@@ -37,7 +38,7 @@ An audit of the current Claude Code memory for this project reveals 10 files:
 ### Partially Covered — Knowledge Split Across Memory and Artifacts
 
 | Memory File | What's in Artifacts | What's NOT |
-|---|---|---|
+| --- | --- | --- |
 | `project_graph_based_enforcement.md` | [EPIC-f079c196](EPIC-f079c196) tracks the work; [AD-430829f1](AD-430829f1) covers pipeline | The detailed vision of "inject graph not content" and orchestrator simplification target |
 | `user_product_philosophy.md` | Vision doc covers mission, pillars | The "structured therapy" metaphor and the insight about preventing drift into implementation |
 | `feedback_plugin_vs_app_enforcement.md` | [RULE-3c2da849](RULE-3c2da849), [KNOW-2a846fb7](KNOW-2a846fb7) cover mechanics | The architectural principle "design for app first, port to CLI" |
@@ -45,12 +46,13 @@ An audit of the current Claude Code memory for this project reveals 10 files:
 ### No Clear Artifact Home
 
 | Memory File | Knowledge Type | Why It Doesn't Fit |
-|---|---|---|
+| --- | --- | --- |
 | `feedback_conciseness_over_granularity.md` | Agent behavioral preference | Not a coding standard, not an architecture decision, not a methodology skill. It's guidance on how agents should approach prompt-injected knowledge. |
 
 ### Also in MEMORY.md (inline, not in separate files)
 
 The `MEMORY.md` index file itself contains substantial inline knowledge:
+
 - Dev server lifecycle behavior (CLI-specific)
 - Svelte `$derived` syntax gotcha
 - "Don't use agents when agentic structure itself is being refactored"
@@ -69,6 +71,7 @@ After filtering out duplicates and partial overlaps, the knowledge that has **no
 How agents should work *with this user/team* — not what they should build, but how they should think and communicate.
 
 Examples:
+
 - "Conciseness over granularity in prompt injection"
 - "No hard deadlines — structured approach over speed"
 - "Don't use agents when the agentic structure itself is being refactored"
@@ -81,6 +84,7 @@ These are not observations (they didn't come from mistakes). They're not princip
 The "why behind the why" — not what the product does or how it's built, but the mental model that guides decisions.
 
 Examples:
+
 - "OrqaStudio is structured therapy for problem-solving"
 - "Self-enforcement through visibility, not more constraints"
 - "The system should prevent losing sight of purpose during implementation"
@@ -92,6 +96,7 @@ The vision document captures *what* the product is. Pillars capture *what matter
 Things that are true about the development environment but not about the product.
 
 Examples:
+
 - "`make restart` completing means the app has EXITED" (CLI-specific dev behavior)
 - Svelte `$derived` syntax gotcha
 - "Dogfood rules load via symlinks into CLI sessions where they shouldn't"
@@ -103,7 +108,8 @@ These are somewhere between lessons (they were learned from experience) and docu
 ### Q1: Where do behavioral directives enter the pipeline?
 
 The knowledge maturity pipeline is:
-```
+
+```text
 Observation → Understanding → Principle → Practice → Enforcement → Verification
 ```
 
@@ -122,6 +128,7 @@ Does "consumed by everything always" mean it belongs in the orchestrator prompt?
 Normal pipeline: observation → understanding → principle → practice → enforcement.
 
 Behavioral directives seem to follow a different path:
+
 - User states preference → agent records it → it guides behavior → it may eventually become a rule
 
 But some directives never need to become rules. "No hard deadlines" is a collaboration preference, not an enforceable standard. It doesn't have a verification step. It's just... context.
@@ -163,7 +170,7 @@ But pillars are product-focused ("does this feature serve clarity?") while behav
 All three categories of knowledge currently in external memory map to existing artifact types:
 
 | Knowledge Category | Artifact Type | Examples |
-|---|---|---|
+| --- | --- | --- |
 | **Product philosophy framing** | Pillars (PILLAR-NNN) | "Structured therapy for problem-solving", "self-enforcement through visibility" |
 | **Agent behavioral directives** | Architecture Decisions (AD-NNN) | "Conciseness over granularity", "no hard deadlines", "don't use agents when refactoring agent structure" |
 | **Context-specific operational knowledge** | Skills | `make restart` behavior, Svelte $derived gotcha, dogfood symlink issue |
@@ -171,7 +178,7 @@ All three categories of knowledge currently in external memory map to existing a
 ### Resolution of Research Questions
 
 | Question | Answer |
-|---|---|
+| --- | --- |
 | Q1: Where do directives enter the pipeline? | As ADs — declared principles that skip observation/understanding because the user IS the understanding |
 | Q2: What consumes this knowledge? | Pillars: universal context. ADs: loaded when relevant. Skills: loaded per-task |
 | Q3: How does it mature? | Pillars are foundational (don't flow through the pipeline). ADs follow proposed→accepted. Skills follow normal lifecycle |

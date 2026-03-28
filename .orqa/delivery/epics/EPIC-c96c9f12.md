@@ -3,7 +3,7 @@ id: "EPIC-c96c9f12"
 type: "epic"
 title: "UAT round 3 — navigation architecture, artifact links, roadmap drill-down, doc reorg"
 description: "30 UAT findings grouped into 10 systemic themes. Largest themes: navigation architecture overhaul (Exploring/Delivery/Documentation/Process), artifact link component rework with settings, roadmap hierarchical drill-down, documentation reorganisation into book chapters, and schema migrations for scope → relationship."
-status: "active"
+status: active
 priority: "P1"
 scoring:
   impact: 5
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 UAT round 3 collected 30 findings across the app after implementing 31 tasks in 6 epics. F2 (agent artifact discipline — 57 integrity warnings) was addressed by EPIC-12fba656 (enforcement bootstrapping). The remaining 29 findings group into 10 systemic themes.
@@ -26,7 +27,7 @@ UAT round 3 collected 30 findings across the app after implementing 31 tasks in 
 ## UAT Findings
 
 | # | Finding | Type | Area | Theme |
-|---|---------|------|------|-------|
+| --- | --------- | ------ | ------ | ------- |
 | F1 | Dashboard needs holistic redesign of what data is shown | ux | dashboard | Dashboard |
 | F2 | ~~57 integrity warnings~~ | ~~bug~~ | ~~process~~ | **Addressed by EPIC-12fba656** |
 | F3 | Broken link: RES-94a3a6ca → TASK-d3085ce2 | bug | data | Quick fix |
@@ -78,51 +79,61 @@ UAT round 3 collected 30 findings across the app after implementing 31 tasks in 
 ## Systemic Analysis
 
 ### Theme 1: Navigation Architecture (F17-F24)
+
 **Root cause**: The nav structure was built incrementally and doesn't match the conceptual model of Exploring (divergent thinking) vs Delivery (convergent execution).
 
 **Fix**: Restructure main nav into 4 sections: Exploring → Delivery → Documentation → Process. Exploring gets ideas + research. Delivery gets roadmap (top), milestones, epics, tasks. Remove or repurpose Verification. Fix missing icons.
 
 ### Theme 2: Artifact Link System (F6-F10, F27, F28)
+
 **Root cause**: The ArtifactLink component was built for basic rendering. Now it needs to be a rich, configurable, interactive element with status dots inside, per-type colours, hover popovers, display mode settings, and proper text overflow.
 
 **Fix**: Systematic rework of ArtifactLink component + project settings for colour/display configuration. Also fix relationships leaking into metadata card.
 
 ### Theme 3: Roadmap View (F4, F5)
+
 **Root cause**: Roadmap kanban is a flat view. The conceptual model is hierarchical: Now/Next/Later → milestones → epics → tasks.
 
 **Fix**: Build drill-down navigation with breadcrumbs, collapsible done columns, drag-drop between columns, and configurable grouping/sorting. This is a substantial UX feature.
 
 ### Theme 4: Schema/Data Fixes (F12, F14, F15)
+
 **Root cause**: Legacy frontmatter fields (scope on rules/skills) that should be relationship types. Status vocabulary mismatch on lessons.
 
 **Fix**: Migrate scope fields to scoped-to/scoped-by relationships. Fix lesson status vocabulary. Update schemas.
 
 ### Theme 5: Dashboard Polish (F1, F30, F32, F33)
+
 **Root cause**: Dashboard components built quickly without using shared component library.
 
 **Fix**: Replace native elements with shared components (ScrollArea, SelectMenu, proper filter toggles). F1 (holistic redesign) is a larger piece — defer to separate research/epic.
 
 ### Theme 6: Artifact Viewer Layout (F11, F13)
+
 **Root cause**: Minor layout issues in artifact viewer.
 
 **Fix**: Move actions below status pipeline. Fix connector line vertical centering.
 
 ### Theme 7: Documentation Reorganisation (F25, F26)
+
 **Root cause**: Docs grew organically without structure. Needs research ([RES-29cf5ac5](RES-29cf5ac5)) then its own epic.
 
 **Fix**: Research doc-chapter structure, plan migration, create epic. Remove redundant category badge.
 
 ### Theme 8: UI Polish (F31)
+
 **Root cause**: Toast notification defaults not customised.
 
 **Fix**: Configure toast position, animation, min-width.
 
 ### Theme 9: Settings (F29)
+
 **Root cause**: Keyboard shortcut exists but isn't registered in config UI.
 
 **Fix**: Add Ctrl+Space to keyboard shortcuts section.
 
 ### Theme 10: Quick Fixes (F3, F16)
+
 **Root cause**: Individual bugs.
 
 **Fix**: Fix broken link. Fix IDEA-fab848e7 categorisation.
@@ -130,30 +141,38 @@ UAT round 3 collected 30 findings across the app after implementing 31 tasks in 
 ## Tasks
 
 ### Quick Fixes
+
 - [ ] [TASK-c8ea3e2a](TASK-c8ea3e2a): Fix broken link RES-94a3a6ca → TASK-d3085ce2 and IDEA-fab848e7 categorisation (F3, F16)
 
 ### Navigation Architecture (F17-F24)
+
 - [ ] [TASK-43acbe04](TASK-43acbe04): Restructure main nav: Exploring → Delivery → Documentation → Process
 
 ### Artifact Link System (F6-F10, F27, F28)
+
 - [ ] [TASK-4c973e88](TASK-4c973e88): Rework ArtifactLink component — status dot inside, ellipsis, hover popover
 - [ ] [TASK-16fc8f8f](TASK-16fc8f8f): Artifact link settings — display mode (ID/title) and per-type colour coding
 
 ### Roadmap (F4, F5)
+
 - [ ] [TASK-29cf1029](TASK-29cf1029): Roadmap columns fill available space
 - [ ] [TASK-237ebc9f](TASK-237ebc9f): Roadmap hierarchical drill-down with breadcrumbs
 
 ### Schema/Data Fixes (F12, F14, F15)
+
 - [ ] [TASK-cf872a80](TASK-cf872a80): Migrate rule/skill scope fields to relationship types
 - [ ] [TASK-27360347](TASK-27360347): Fix lesson status vocabulary, viewer layout (actions + pipeline)
 
 ### Dashboard Polish (F30, F32, F33)
+
 - [ ] [TASK-84b816cd](TASK-84b816cd): Dashboard components use shared library
 
 ### Documentation (F25, F26)
+
 - [ ] [TASK-26ae8fff](TASK-26ae8fff): Documentation reorg research + redundant badge removal
 
 ### UI Polish + Settings (F29, F31)
+
 - [ ] [TASK-bf7ba85a](TASK-bf7ba85a): Toast notifications + keyboard shortcuts config
 
 ## Verification

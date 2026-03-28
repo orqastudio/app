@@ -1,7 +1,9 @@
 ---
 id: DOC-ec909ab0
 type: doc
+status: active
 title: Tool Definitions
+domain: reference
 category: reference
 description: "Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions."
 created: 2026-03-02
@@ -16,7 +18,7 @@ relationships:
 
 **Date:** 2026-03-02 | **References:** [AD-e4a3b5da](AD-e4a3b5da), [AD-d01b9e0a](AD-d01b9e0a)
 
-This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `backend/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`sidecar/src/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
+This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `app/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`app/src-tauri/src/sidecar/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
 
 ---
 
@@ -50,7 +52,7 @@ The sidecar creates an in-process MCP server via `createSdkMcpServer()` from the
 
 ### Execution flow
 
-```
+```text
 Agent SDK invokes tool
         |
         v
@@ -80,7 +82,7 @@ Before executing `write_file`, `edit_file`, and `bash`, the tool executor runs e
 ### Key constants (tool_executor.rs)
 
 | Constant | Value | Purpose |
-|----------|-------|---------|
+| ---------- | ------- | --------- |
 | `MAX_TOOL_OUTPUT_CHARS` | 100,000 | Truncation threshold for all tool outputs |
 | `DEFAULT_READ_FILE_MAX_LINES` | 2,000 | Default line limit for `read_file` |
 
@@ -95,7 +97,7 @@ Read a file's contents with optional line range selection.
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
+| ----------- | ------ | ---------- | --------- | ------------- |
 | `path` | string | Yes | — | Path to the file. Absolute or relative to project root. |
 | `offset` | integer | No | 0 | Zero-based line number to start reading from. |
 | `limit` | integer | No | 2000 | Maximum number of lines to return. |
@@ -113,7 +115,7 @@ Write content to a file, creating parent directories as needed. If the file alre
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `path` | string | Yes | Path to the file. Absolute or relative to project root. |
 | `content` | string | Yes | Full content to write. |
 
@@ -130,7 +132,7 @@ Replace an exact string in a file. The old string must appear exactly once unles
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `path` | string | Yes | Path to the file. Must exist. |
 | `old_string` | string | Yes | The exact text to find. Must appear exactly once. |
 | `new_string` | string | Yes | The replacement text. |
@@ -148,7 +150,7 @@ Execute a shell command in the project root directory.
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `command` | string | Yes | Shell command to run via `bash -c`. |
 
 **Behaviour:** Spawns a `bash -c <command>` subprocess with the project root as working directory. Stdout and stderr are captured concurrently in background threads (capped at 512,000 bytes each). The process is killed after a 120-second timeout. On timeout, returns an error message. On success, returns stdout followed by stderr (with a `STDERR:` prefix if stderr is non-empty).
@@ -164,7 +166,7 @@ Find files matching a glob pattern.
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `pattern` | string | Yes | Glob pattern (e.g. `**/*.rs`, `src/**/*.ts`). |
 | `path` | string | No | Directory to search in. Defaults to project root. |
 
@@ -181,7 +183,7 @@ Search file contents for lines matching a regular expression.
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `pattern` | string | Yes | Regular expression to search for. |
 | `path` | string | No | File or directory to search. Defaults to project root. |
 
@@ -198,7 +200,7 @@ Search the indexed codebase with an exact regex pattern. Requires the codebase t
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
+| ----------- | ------ | ---------- | --------- | ------------- |
 | `pattern` | string | Yes | — | Regular expression pattern. |
 | `path` | string | No | — | Optional path filter. |
 | `max_results` | integer | No | 20 | Maximum results to return. |
@@ -216,7 +218,7 @@ Search the indexed codebase using natural language. Requires the codebase to be 
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
+| ----------- | ------ | ---------- | --------- | ------------- |
 | `query` | string | Yes | — | Natural language query describing the code to find. |
 | `max_results` | integer | No | 10 | Maximum results to return. |
 
@@ -233,7 +235,7 @@ Combined regex and semantic search. Best for understanding how a feature works e
 **Parameters:**
 
 | Parameter | Type | Required | Default | Description |
-|-----------|------|----------|---------|-------------|
+| ----------- | ------ | ---------- | --------- | ------------- |
 | `query` | string | Yes | — | A natural language query or identifier to research. |
 | `max_results` | integer | No | 10 | Total maximum results (split between regex and semantic). |
 
@@ -250,7 +252,7 @@ Load the full content of a project skill document by name.
 **Parameters:**
 
 | Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
+| ----------- | ------ | ---------- | ------------- |
 | `name` | string | Yes | Knowledge name (e.g. `rust-async-patterns`). Must not contain path separators. |
 
 **Behaviour:** Reads `.orqa/knowledge/{name}/KNOW.md` from the project root. Returns the file contents on success. Returns an error if the knowledge name contains `/`, `\`, or `..`, or if the file does not exist.
@@ -274,7 +276,7 @@ Before `write_file`, `edit_file`, and `bash` execute, the `EnforcementEngine` ev
 ### Read-only vs write tools
 
 | Tool | Auto-approved | Notes |
-|------|--------------|-------|
+| ------ | -------------- | ------- |
 | `read_file` | Yes | |
 | `glob` | Yes | |
 | `grep` | Yes | |
@@ -292,7 +294,7 @@ Before `write_file`, `edit_file`, and `bash` execute, the `EnforcementEngine` ev
 
 All tool outputs are passed through `truncate_tool_output()` before being sent to the sidecar. Any output exceeding 100,000 characters is truncated with a notice appended:
 
-```
+```text
 [Output truncated: N chars total, showing first 100000]
 ```
 

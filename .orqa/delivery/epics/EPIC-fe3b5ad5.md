@@ -3,7 +3,7 @@ id: "EPIC-fe3b5ad5"
 type: "epic"
 title: "Technical Design"
 description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
-status: "completed"
+status: archived
 priority: "P1"
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic belongs to this milestone"
 ---
+
 ## Why P1
 
 Implementation cannot begin without knowing the data model, the IPC surface, and the module boundaries. This phase converts the architecture decisions and UX design into implementable specifications.
@@ -28,7 +29,7 @@ Implementation cannot begin without knowing the data model, the IPC surface, and
 - IPC command catalogue — every Tauri command with its input/output types
 - Rust module architecture — domain boundaries, service interfaces, repository pattern
 - Svelte component tree — component hierarchy mapped to the UX wireframes
-- Streaming pipeline — Agent SDK to Svelte event flow, Channel<T> protocol
+- Streaming pipeline — Agent SDK to Svelte event flow, Channel\<T\> protocol
 - Tool definitions — file tools, search tools, governance tools with permission model
 - MCP host interface — design for future external MCP server support
 - Error taxonomy — typed errors across the Rust/IPC/TypeScript boundary

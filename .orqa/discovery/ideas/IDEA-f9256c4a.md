@@ -18,6 +18,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 The current chat footer feels crowded — the textarea shares horizontal and vertical space with action buttons, description text, and other controls. This makes the input area feel smaller than it needs to be and adds visual noise when the user is focused on composing a message.

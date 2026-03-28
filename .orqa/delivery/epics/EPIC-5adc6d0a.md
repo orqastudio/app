@@ -3,7 +3,7 @@ id: "EPIC-5adc6d0a"
 type: "epic"
 title: "Repository Directory Reorganisation"
 description: "Restructure the repository so that frontend, backend, sidecar, and debugger code\neach live in their own top-level directory. Watchers then target only their specific\ndirectory, eliminating unnecessary rebuilds when unrelated files change.\n"
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-12"
 updated: "2026-03-12"
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 Both Vite and Rust file watchers currently watch the entire repository root. This causes
@@ -29,7 +30,7 @@ directory boundaries that watchers can target.
 
 **Current structure:**
 
-```
+```text
 orqa-studio/
   src-tauri/          # Rust backend
   ui/                 # Svelte frontend
@@ -41,7 +42,7 @@ orqa-studio/
 
 **Proposed structure:**
 
-```
+```text
 orqa-studio/
   backend/
     src-tauri/        # Rust backend (moved)
@@ -57,6 +58,7 @@ orqa-studio/
 ```
 
 Watchers can then be scoped:
+
 - Vite watches `ui/` only
 - Cargo watches `backend/` only
 - Neither triggers on `.orqa/`, `debugger/`, or `sidecars/` changes
@@ -83,13 +85,13 @@ after each step.
 ### Phase 1: Research
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-1af78c36](TASK-1af78c36) | Research: cross-cutting concerns of directory restructure |
 
 ### Phase 2: Implementation
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-2a557489](TASK-2a557489) | Update documentation paths for directory reorganisation |
 | [TASK-a77fcf2e](TASK-a77fcf2e) | Move sidecar to sidecars/claude-agentsdk-sidecar/ |
 | [TASK-1a134716](TASK-1a134716) | Move backend to backend/src-tauri/ |
@@ -99,7 +101,7 @@ after each step.
 ### Phase 3: Verification
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-f47db62a](TASK-f47db62a) | Full integration test of reorganised repository |
 
 ## Out of Scope

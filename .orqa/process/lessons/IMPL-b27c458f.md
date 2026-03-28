@@ -3,13 +3,14 @@ id: "IMPL-b27c458f"
 type: "lesson"
 title: "Lessons learned should be recorded on task completion artifacts"
 description: "When a task is completed, any observations logged or recurrence incremented during that task should be recorded in the task artifact itself. This makes the learning visible to the user as part of the completion statement, not buried in conversation history."
-status: "completed"
+status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 Currently, task artifacts have three body sections: What, How, Verification. When a task is completed, the agent updates `status: done` but doesn't record what was learned during implementation.
@@ -28,7 +29,7 @@ Required "Lessons" body section on task artifacts (user-approved via RES-fbe69e0
 - Created [IMPL-a73db2e6](IMPL-a73db2e6): Hardcoded paths should be configurable
 - Updated [IMPL-ffb199b5](IMPL-ffb199b5): recurrence 2 → 3
 - None — straightforward implementation
-```
+```text
 
 "None — straightforward" is valid. Decreasing lesson frequency over time is a signal the pipeline is working.
 

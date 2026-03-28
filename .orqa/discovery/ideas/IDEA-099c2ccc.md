@@ -33,6 +33,7 @@ Auto-rendering these tables from the graph makes them self-maintaining. The tabl
 **Milestone epic table**: Query all epics where `milestone: MS-NNN`, render as table showing status/priority/title.
 
 Both could be rendered:
+
 - **In the app**: dynamically at display time (always current)
 - **In markdown**: via a tool that regenerates the table section (for CLI/static viewing)
 - **Both**: app renders live, tool regenerates for git-committed markdown

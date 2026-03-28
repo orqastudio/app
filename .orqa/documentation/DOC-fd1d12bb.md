@@ -1,7 +1,9 @@
 ---
 id: DOC-fd1d12bb
 type: doc
+status: active
 title: Svelte Development Guide
+domain: guides
 description: How to develop with Svelte 5 in OrqaStudio projects — runes, component patterns, testing, and coding standards.
 category: how-to
 created: 2026-03-19
@@ -57,7 +59,7 @@ To change a standard: edit the rule. The config regenerates automatically.
 Svelte 5 uses runes exclusively:
 
 | Rune | Purpose |
-|------|---------|
+| ------ | --------- |
 | `$state()` | Reactive state |
 | `$derived()` | Computed values |
 | `$derived.by(() => ...)` | Computed values with logic |

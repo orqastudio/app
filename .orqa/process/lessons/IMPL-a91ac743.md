@@ -19,6 +19,7 @@ The user has corrected the orchestrator at least 3 times for performing work inl
 The orchestrator defaults to doing work inline because it is faster for small tasks. But this violates the core delegation principle: the orchestrator's primary job is conversation with the user, not waiting for file reads or artifact writes to complete. Even "quick" tasks add up and block the user from steering.
 
 Specific recurrences:
+
 1. Orchestrator wrote governance artifacts inline instead of spawning a Writer agent
 2. Orchestrator performed research by reading files directly instead of spawning a Researcher agent in background
 3. Orchestrator ran implementation-adjacent work (updating configs, creating artifacts) without using TeamCreate
@@ -35,6 +36,7 @@ The Agent tool can run in foreground or background. Running in foreground is the
 4. The orchestrator reads findings files when agents complete, then reports to the user
 
 The only exceptions where the orchestrator may act directly:
+
 - Quick file reads for planning decisions
 - Writing `.state/session-state.md`
 - Artifact status transitions (frontmatter updates)

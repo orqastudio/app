@@ -3,7 +3,7 @@ id: "TASK-5acbab1e"
 type: "task"
 title: "Record composability and integration decisions (AD-0dfa4d52 through AD-af88bb69)"
 description: "Captured architecture decisions for composability principle, tool execution model, and provider-agnostic design."
-status: "completed"
+status: archived
 created: "2026-03-02"
 updated: "2026-03-02"
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Recorded three architecture decisions establishing the tool execution model, provider-agnostic design approach, and composability as a first-class platform principle.

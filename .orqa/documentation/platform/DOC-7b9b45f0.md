@@ -1,7 +1,8 @@
 ---
 id: DOC-7b9b45f0
 type: doc
-name: Schema Validation Reference
+title: Schema Validation Reference
+domain: reference
 category: reference
 status: active
 relationships:
@@ -24,7 +25,7 @@ This file ships with every OrqaStudio installation and defines:
 **Artifact Types** — 12 core types:
 
 | Type | Prefix | Purpose |
-|------|--------|---------|
+| ------ | -------- | --------- |
 | vision | VISION | The project's north star |
 | pillar | PILLAR | Foundational principles that uphold the vision |
 | persona | PERSONA | Target users the project serves |
@@ -39,6 +40,7 @@ This file ships with every OrqaStudio installation and defines:
 | bug | BUG | Functional and display issues |
 
 **Relationships** — 19 typed connections, each with:
+
 - `key` / `inverse` — the verb pair (e.g. `grounded` / `grounded-by`)
 - `from` / `to` — which artifact types can participate
 - `semantic` — which category it belongs to
@@ -75,7 +77,7 @@ There is no custom validation code. Both validators (TypeScript CLI and Rust app
 Some relationships trigger automatic status proposals based on the graph state:
 
 | Relationship | Condition | Proposal |
-|---|---|---|
+| --- | --- | --- |
 | `depends-on` | Any target not completed | Source task → `blocked` |
 | `depends-on` | All targets completed | Source task → `ready` |
 | `delivers` | All source tasks completed | Target epic → `review` |
@@ -96,9 +98,9 @@ Then both validators pick it up automatically. No code changes needed.
 ## Schema Location Summary
 
 | What | Where |
-|---|---|
+| --- | --- |
 | Platform types + relationships | `libs/types/src/platform/core.json` |
 | Plugin types + relationships | `plugins/{name}/orqa-plugin.json` |
 | TypeScript type definitions | `libs/types/src/plugin.ts` (RelationshipType, RelationshipConstraints, etc.) |
 | Validator (CLI) | `libs/cli/src/validator/` |
-| Validator (Rust) | `app/backend/src-tauri/src/domain/artifact_graph.rs` |
+| Validator (Rust) | `app/app/src-tauri/src/domain/artifact_graph.rs` |

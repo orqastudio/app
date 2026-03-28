@@ -3,7 +3,7 @@ id: "TASK-e33db46c"
 type: "task"
 title: "Move pillars to process/ and rename planning to delivery"
 description: "Move pillars from planning/ to process/. Rename planning/ to delivery/. Update project.json, all path references."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

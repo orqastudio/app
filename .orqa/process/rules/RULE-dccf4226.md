@@ -4,13 +4,18 @@ type: rule
 title: Plan Mode Compliance
 description: Every implementation plan must have architectural compliance verification and UX-first design.
 status: active
+enforcement_type: advisory
 created: 2026-03-07
 updated: 2026-03-12
 enforcement:
+
   - mechanism: behavioral
+
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
 relationships:
+
   - target: AD-b2f1f829
+
     type: enforces
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.
@@ -22,7 +27,7 @@ Every plan MUST include an explicit "Architectural Compliance" section that veri
 **Required checks (verify every one that applies):**
 
 | Principle | Verify |
-|-----------|--------|
+| --- | --- |
 | Error propagation | All functions return result/error types. No silent failures in production. |
 | Service boundary | Backend services are the only interface between frontend and backend. No side channels. |
 | Component purity | Display components receive data via props. Pages/containers fetch data. No direct service calls in reusable components. |
@@ -39,7 +44,7 @@ Every plan MUST include an explicit "Architectural Compliance" section that veri
 Every plan MUST include a "Systems Architecture Checklist" section that explicitly addresses each dimension below. Leaving a dimension unaddressed is a plan rejection. State "N/A — [reason]" for dimensions that don't apply.
 
 | Dimension | What to Address |
-|-----------|----------------|
+| --- | --- |
 | **Data Persistence** | What new data is created? Database tables? File system artifacts? Schema design. Migration strategy. |
 | **Service Contract** | New/modified backend endpoints or commands. Input/output types. Which modules expose them. |
 | **State Management** | Frontend state: where stored? How loaded/saved? What happens on app restart? |

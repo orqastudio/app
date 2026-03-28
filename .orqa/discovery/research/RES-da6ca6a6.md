@@ -41,7 +41,7 @@ The app currently has a VS Code-inspired layout with four structural zones:
 The `ExplorerRouter` routes between three core views and a plugin view container:
 
 | Key | Component | Description |
-|-----|-----------|-------------|
+| ----- | ----------- | ------------- |
 | `project` | `ProjectDashboard` | Dashboard with 7 widgets |
 | `artifact-graph` | `FullGraphView` | Force-directed graph visualization |
 | `welcome` | `WelcomeScreen` | No-project landing page |
@@ -67,7 +67,7 @@ The `ProjectDashboard` has a fixed layout with these widgets, all hardcoded:
 Across all 12 plugins, only the **software plugin** declares views and widgets:
 
 | Plugin | Views | Widgets |
-|--------|-------|---------|
+| -------- | ------- | --------- |
 | `@orqastudio/plugin-software-kanban` | `roadmap` (Kanban icon) | `pipeline` (Delivery Pipeline), `milestone-context` |
 | All other 11 plugins | `[]` | `[]` |
 
@@ -108,7 +108,7 @@ The architecture already has a clean separation principle: **core provides engin
 These views operate on core graph engine data and are meaningful regardless of which plugins are installed:
 
 | View | Purpose | Data Source |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | **Project Dashboard** | Health overview, action queue, trends | Graph engine (health, integrity, traceability) |
 | **Artifact Graph** | Full relationship visualization | Graph engine (nodes, edges, components) |
 | **Artifact Browser** | Master-detail for any artifact type | Graph engine + filesystem (artifact content) |
@@ -124,7 +124,7 @@ These 7 core views handle the fundamental activities: orient (dashboard), explor
 These views present domain-specific interpretations of artifact data:
 
 | View Category | Example | Plugin Owner |
-|---------------|---------|--------------|
+| --------------- | --------- | -------------- |
 | **Roadmap/Kanban** | Board view of epics/tasks by status | Delivery plugin (e.g., software) |
 | **Timeline/Gantt** | Time-based milestone visualization | Delivery plugin |
 | **Workflow Designer** | Visual state machine editor | Governance plugin |
@@ -173,7 +173,7 @@ The app supports both legacy `artifacts` config and the new `navigation` tree. T
 
 ### Recommendation: Navigation Architecture
 
-```
+```text
 ActivityBar (left sidebar, icon-only, 48px)
   |
   +-- Dashboard (builtin, always first)
@@ -216,12 +216,15 @@ This is already implemented correctly in `NavigationStore.setGroup()` and `NavSu
 ### What the User Should See on First Launch
 
 **Before a project is loaded:**
+
 - WelcomeScreen with "Open Project" action (current implementation is correct).
 
 **After a project is loaded (first time):**
+
 - ProjectSetupWizard (current implementation is correct -- detects missing project.json settings).
 
 **After setup is complete:**
+
 - **Project Dashboard** -- the orientation view. This is the correct default (already implemented in the `$effect` in AppLayout that switches from "chat" to "project" when a project becomes active).
 
 ### Information Hierarchy on the Dashboard
@@ -229,7 +232,7 @@ This is already implemented correctly in `NavigationStore.setGroup()` and `NavSu
 The current dashboard layout follows a good narrative structure. Based on the governance practitioner's needs, the hierarchy should be:
 
 | Priority | Information Need | Current Widget | Assessment |
-|----------|-----------------|----------------|------------|
+| ---------- | ----------------- | ---------------- | ------------ |
 | **1. What needs my attention?** | Items requiring human decisions | DecisionQueueWidget | Good -- shows "review" status items and active epics |
 | **2. Where am I relative to the goal?** | Milestone progress | MilestoneContextCard | Good -- shows active milestone, P1 progress, deadline |
 | **3. Is the project healthy?** | Graph integrity, connected components | GraphHealthWidget | Good -- largest component ratio as health score |
@@ -269,7 +272,7 @@ The current dashboard hardcodes all 8 widgets. The widget system types (`WidgetR
 
 Rather than a flat grid, organize the dashboard into semantic sections that make sense even if some widgets are absent:
 
-```
+```text
 Section 1: "Attention Required" (always visible)
   - Decision Queue (core)
   - Gate Reviews pending (plugin, if governance plugin installed)
@@ -313,7 +316,7 @@ The generic rendering approach is correct for a plugin-composed system. Plugin-s
 There are 17 workflow YAML files across two plugins:
 
 | Plugin | Workflows |
-|--------|-----------|
+| -------- | ----------- |
 | agile-governance | vision, pillar, persona, idea, decision, rule, lesson, knowledge, agent, doc, pivot, epic, task, delivery (14) |
 | software | milestone, research, wireframe (3) |
 
@@ -326,6 +329,7 @@ The `PipelineStepper` component already renders workflow states as a horizontal 
 The `PipelineStepper` is good for the linear happy path, but it loses information for non-linear workflows. A task workflow, for example, has branching paths (hold, blocked) that the stepper cannot represent.
 
 **Tier 1 (immediate, within ArtifactViewer):**
+
 - Keep `PipelineStepper` as the primary visualization. It works for the common case.
 - Add a "Workflow" info section below the stepper that shows:
   - Current state name and description (from the workflow YAML)
@@ -334,12 +338,14 @@ The `PipelineStepper` is good for the linear happy path, but it loses informatio
   - Gate information (if the transition has a gate, show the gate pattern)
 
 **Tier 2 (plugin view):**
+
 - A dedicated "Workflow Browser" view contributed by the governance plugin.
 - Shows all registered workflows with their state diagrams (rendered as Mermaid statecharts).
 - Allows inspecting states, transitions, guards, gates for any workflow.
 - This is a reference view, not day-to-day.
 
 **Tier 3 (future):**
+
 - A "Workflow Designer" plugin view that allows visual editing of workflow YAML files.
 - Out of scope for near-term.
 
@@ -367,7 +373,7 @@ The existing `GateQuestions.svelte` renders gate questions as blockquoted text. 
 The research document (RES-d6e8ab11, Section 7) defines state categories with UI treatments:
 
 | Category | Color | Use |
-|----------|-------|-----|
+| ---------- | ------- | ----- |
 | planning | Blue | Status badges, pipeline stepper past/current indicators |
 | active | Green | Active work indicators |
 | review | Amber | Review/gate indicators |
@@ -383,6 +389,7 @@ These should be applied consistently across the `PipelineStepper`, status badges
 ### Current State
 
 The app has NO agent team visibility currently. There are no components for showing:
+
 - Active agent teams
 - Task progress within teams
 - Token metrics
@@ -439,7 +446,7 @@ A "Developer Console" panel (already partially implemented as `initDevConsole()`
 
 The StatusBar should show a single token efficiency indicator:
 
-```
+```text
 [Session: 45K tokens | $0.23 | Cache: 87%]
 ```
 
@@ -448,6 +455,7 @@ Clicking opens the Session Metrics view. This gives the power user constant visi
 ### Recommendation: Do NOT Show Agent Internals by Default
 
 The governance practitioner mental model is:
+
 - "I asked for a code review" (not "I spawned a reviewer agent with 2,800 token budget")
 - "The review found 3 issues" (not "Agent-7f2b completed in 4.2s with 1,847 output tokens")
 
@@ -482,8 +490,8 @@ The plugin browser is functional. What is missing:
 
 In the "Installed" tab detail view, add a contribution summary card:
 
-```
-@orqastudio/plugin-agile-workflow v0.1.4-dev
+```text
+@orqastudio/plugin-agile-methodology v0.1.4-dev
 Role: core:governance
 
 Contributes:
@@ -503,6 +511,7 @@ This gives the user immediate understanding of what each plugin provides.
 ### Recommendation: Plugin Toggle
 
 Add an enable/disable toggle to each installed plugin card. When disabled:
+
 - The plugin's schemas, relationships, views, and widgets are unregistered from the `PluginRegistry`
 - Existing artifacts using the plugin's types remain on disk but show validation warnings
 - The toggle state is persisted in `project.json` under `plugins.<name>.enabled`
@@ -527,27 +536,27 @@ This allows non-destructive experimentation with plugin combinations.
 
 ### Medium-Term (next 3-4 epics)
 
-6. **Build a Gate Review Panel** component that implements the gather-present-collect flow for human gates.
+1. **Build a Gate Review Panel** component that implements the gather-present-collect flow for human gates.
 
-7. **Add "Active Work" widget** to the dashboard showing running agent teams and task progress.
+2. **Add "Active Work" widget** to the dashboard showing running agent teams and task progress.
 
-8. **Add session token summary** to the StatusBar.
+3. **Add session token summary** to the StatusBar.
 
-9. **Build a Session Metrics core view** accessible from StatusBar click or a nav item.
+4. **Build a Session Metrics core view** accessible from StatusBar click or a nav item.
 
-10. **Enhance the Plugin Browser** with contribution summary cards and enable/disable toggles.
+5. **Enhance the Plugin Browser** with contribution summary cards and enable/disable toggles.
 
 ### Long-Term (future roadmap)
 
-11. **Workflow Browser plugin view** from the governance plugin showing all state machines as Mermaid diagrams.
+1. **Workflow Browser plugin view** from the governance plugin showing all state machines as Mermaid diagrams.
 
-12. **Command palette** (Ctrl+Shift+P) for executing actions across views.
+2. **Command palette** (Ctrl+Shift+P) for executing actions across views.
 
-13. **Custom artifact viewers** -- plugins can register custom viewer components for their artifact types.
+3. **Custom artifact viewers** -- plugins can register custom viewer components for their artifact types.
 
-14. **Workflow Designer** -- visual editor for workflow YAML files.
+4. **Workflow Designer** -- visual editor for workflow YAML files.
 
-15. **Token efficiency dashboard** with trend analysis, cost attribution, and cache optimization recommendations.
+5. **Token efficiency dashboard** with trend analysis, cost attribution, and cache optimization recommendations.
 
 ---
 

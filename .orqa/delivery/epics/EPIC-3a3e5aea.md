@@ -3,7 +3,7 @@ id: "EPIC-3a3e5aea"
 type: "epic"
 title: "Schema-driven LSP enforcement for artifact intelligence"
 description: "Implement full schema-driven artifact intelligence in the orqa LSP: real-time validation, autocomplete, hover, go-to-definition, code actions, broken link detection, reverse relationship checks, and plugin schema ingestion. All powered by plugin schemas — nothing hardcoded."
-status: "captured"
+status: captured
 priority: "P1"
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
@@ -41,7 +41,7 @@ Serves [PILLAR-c9e0a695](PILLAR-c9e0a695) gate question: "Does the system mechan
 ## Current State
 
 | Capability | Status |
-|-----------|--------|
+| ----------- | -------- |
 | Frontmatter structure checks | Done — `validation.rs` |
 | JSON Schema validation | Done — delegates to `orqa_validation::checks::schema` |
 | Broken link detection (local) | Done — `check_relationship_targets` |
@@ -67,7 +67,7 @@ The daemon already holds `ArtifactGraph` + `PluginContributions` in memory. New 
 
 ### Plugin Schema Flow
 
-```
+```text
 Plugin orqa-plugin.json
   → daemon scan_plugin_manifests() [startup + POST /reload]
   → daemon DaemonState.plugin_contributions
@@ -79,7 +79,7 @@ Plugin orqa-plugin.json
 ### New Daemon Endpoints
 
 | Endpoint | Purpose |
-|----------|---------|
+| ---------- | --------- |
 | `GET /schema` | Return all artifact type definitions (for LSP to use in validation + autocomplete) |
 | `GET /artifacts` | Return all artifact IDs with title, type, status, file path (for autocomplete + hover) |
 | `GET /artifact/:id` | Return full metadata for a single artifact (for hover) |
@@ -101,7 +101,7 @@ ServerCapabilities {
 ## Tasks
 
 | Task | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [TASK-47225043](TASK-47225043) | Plugin schema ingestion in LSP | ready |
 | [TASK-c9d9baab](TASK-c9d9baab) | Real-time schema validation diagnostics | ready |
 | [TASK-ee73dc63](TASK-ee73dc63) | Broken link detection with line-level positioning | ready |

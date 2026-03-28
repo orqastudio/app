@@ -3,7 +3,7 @@ id: "TASK-92c15db1"
 type: "task"
 title: "Add injection map entries to relevant rules"
 description: "Add enforcement entries with action:inject to rules that govern specific\ncode areas, mapping file path patterns to the skills that should be\nauto-loaded.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

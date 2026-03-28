@@ -3,7 +3,7 @@ id: "TASK-6ec25d4b"
 type: "task"
 title: "Native integrity checks in artifact_graph.rs"
 description: "Add integrity check methods to the artifact graph that detect broken links, missing relationship inverses, and pipeline gaps. Returns Vec<IntegrityCheck> with categorised findings, severity levels, and auto-fix indicators."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:
@@ -29,7 +29,7 @@ Port the logic from `verify-links.mjs` and `verify-pipeline-integrity.mjs` into 
 ## How
 
 1. Define `IntegrityCheck` and `IntegrityCategory` types in `artifact_graph.rs`
-2. Add `check_integrity(&self) -> Vec<IntegrityCheck>` method to `ArtifactGraph`
+2. Add `check_integrity(&self) -> Vec\<IntegrityCheck\>` method to `ArtifactGraph`
 3. Add `run_integrity_scan` Tauri command in `graph_commands.rs`
 4. Implement checks: broken refs, missing inverses, null targets
 

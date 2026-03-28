@@ -1,7 +1,9 @@
 ---
 id: KNOW-1ea9291c
 type: knowledge
-name: Artifact Relationships
+title: Artifact Relationships
+domain: methodology/governance
+description: "Reference for all typed relationship verbs, their from/to constraints, and semantic categories used to connect OrqaStudio artifacts."
 summary: "Artifact Relationships. Every connection between artifacts uses a typed relationship with a specific verb. The verb describes the nature of the connection and constrains which artifact types can participate."
 status: active
 relationships:
@@ -23,7 +25,7 @@ These ship with every OrqaStudio installation and define the foundational graph 
 ### Foundation — anchoring to principles
 
 | From | Verb | To | Sentence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | pillar | `upholds` | vision | "Pillar upholds Vision" |
 | idea | `grounded-by` | pillar | "Idea grounded by Pillar" |
 | idea | `benefits` | persona | "Idea benefits Persona" |
@@ -34,7 +36,7 @@ The vision is the north star. Pillars uphold it. Ideas must ground to a pillar a
 ### Lineage — ideas becoming other things
 
 | From | Verb | To | Sentence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | idea | `crystallises` | decision | "Idea crystallises into Decision" |
 | idea | `spawns` | research | "Idea spawns Research" |
 | idea | `merged-into` | idea | "Idea merged into Idea" |
@@ -44,7 +46,7 @@ Ideas are seeds. They crystallise into decisions (choices), spawn research (inve
 ### Governance — decisions directing behaviour
 
 | From | Verb | To | Sentence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | decision | `drives` | epic | "Decision drives Epic" |
 | decision | `governs` | rule | "Decision governs Rule" |
 | rule | `enforces` | decision | "Rule enforces Decision" |
@@ -55,7 +57,7 @@ Decisions fork into two paths: `drives` leads into delivery (epics → tasks), `
 ### Knowledge flow — findings and learning
 
 | From | Verb | To | Sentence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | research | `informs` | decision | "Research informs Decision" |
 | research | `guides` | epic | "Research guides Epic" |
 | lesson | `teaches` | decision | "Lesson teaches Decision" |
@@ -67,7 +69,7 @@ Each verb is specific: research `informs` choices and `guides` work. Lessons `te
 ### Agents and skills
 
 | From | Verb | To | Sentence |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | agent | `observes` | epic, task, decision, rule, milestone | "Agent observes Epic" |
 | agent | `employs` | skill | "Agent employs Skill" |
 | skill | `synchronised-with` | doc | "Skill synchronised with Doc" |
@@ -90,6 +92,7 @@ Plugins register additional relationships for their artifact types. The software
 ## Automatic Transitions
 
 Status transitions are computed from relationship state:
+
 - Tasks with unmet `depends-on` targets → `blocked`
 - Tasks with all `depends-on` targets completed → `ready`
 - Epics with all child tasks (`delivered-by`) completed → `review`

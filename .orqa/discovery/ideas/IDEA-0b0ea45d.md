@@ -3,7 +3,7 @@ id: IDEA-0b0ea45d
 type: discovery-idea
 title: "Hash-based routing for the explorer panel"
 description: "Replace the if/else view chain in AppLayout with hash-based URL routing. Enables back/forward navigation, hot reload preserves the current view, deep linking to artifacts, and data-driven view resolution instead of hardcoded conditionals."
-status: completed
+status: archived
 created: 2026-03-19
 updated: 2026-03-19
 research-needed:
@@ -44,6 +44,7 @@ AppLayout currently uses an if/else chain to decide what to render in the explor
 ```
 
 Problems:
+
 - Hot reload resets to dashboard (view state is in memory, not URL)
 - No back/forward navigation
 - No deep linking to specific artifacts
@@ -54,7 +55,7 @@ Problems:
 
 ### Layout stays the same
 
-```
+```text
 [Activity Bar] [Nav Panel] [Explorer ← routes here] [Chat Panel ← always visible]
 ```
 
@@ -62,7 +63,7 @@ The chat panel sits outside the routed area. It's always present regardless of w
 
 ### Route structure
 
-```
+```text
 #/project                              → ProjectDashboard
 #/artifacts/:id                        → ArtifactViewer for that artifact
 #/artifacts                            → ArtifactViewer (list/browse mode)

@@ -1,7 +1,11 @@
 ---
 id: DOC-9e1f1ebf
 type: doc
+status: active
 title: Go-To-Market Strategy
+domain: reclassify
+reclassify_as: idea
+reclassify_reason: Strategic planning document — not a platform guide describing how the system works
 category: concept
 description: "Go-to-market strategy covering positioning, channels, and launch sequencing."
 created: 2026-03-07

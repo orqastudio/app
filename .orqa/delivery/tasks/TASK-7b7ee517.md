@@ -3,7 +3,7 @@ id: "TASK-7b7ee517"
 type: "task"
 title: "Create rule for skill portability constraints"
 description: "Extract skill portability constraints from the skills-maintenance skill into a new dedicated rule with rule-level enforcement."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Skill portability constraints (canon skills must not contain project-specific paths, project skills must declare their scope, etc.) are currently in the `skills-maintenance` skill's NON-NEGOTIABLE section. These are hard constraints that need rule-level enforcement.

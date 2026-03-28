@@ -3,7 +3,7 @@ id: "IDEA-cc97aab3"
 type: discovery-idea
 title: "Document Browser Sorting, Filtering & Navigation Config"
 description: "Enhance the artifact navigation pane with sorting and filtering controls. Include manual sort order that persists to a _navigation.json config file alongside the README in each artifact group directory. Filter and sort state also persists to this file so it is properly retained across sessions."
-status: surpassed
+status: archived
 created: "2026-03-10"
 updated: "2026-03-12"
 research-needed:
@@ -21,6 +21,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Archived
 
 Document browser sorting, filtering, and navigation config was absorbed by [EPIC-9ddef7f9](EPIC-9ddef7f9) (Artifact Browser -- Sort, Filter, Search), which is the active epic implementing this functionality. The research in [RES-8d203b37](RES-8d203b37) provides the detailed design.

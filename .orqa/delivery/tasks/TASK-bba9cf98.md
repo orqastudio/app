@@ -3,7 +3,7 @@ id: "TASK-bba9cf98"
 type: "task"
 title: "Classify rules and hooks with layer field"
 description: "Adds layer classification to all rule and hook files, separating platform-level canon rules from OrqaStudio-specific project rules."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Classification Plan
 
 ### Rules — Canon (platform principles)

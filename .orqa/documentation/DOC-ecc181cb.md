@@ -1,7 +1,9 @@
 ---
 id: DOC-ecc181cb
 type: doc
+status: active
 title: README Standards
+domain: reference
 description: "Canonical README structure for all OrqaStudio repositories — required badges, banner, sections, and audit process."
 category: reference
 created: 2026-03-18
@@ -19,7 +21,7 @@ Every OrqaStudio repository must have a `README.md` with a canonical header (bad
 
 The header appears before any content. Order matters:
 
-```
+```text
 1. Badge line: License | Status | Language badges (alphabetical)
 2. (blank line)
 3. OrqaStudio banner image
@@ -46,7 +48,7 @@ The header appears before any content. Order matters:
 ### Always Required
 
 | Badge | Format |
-|-------|--------|
+| ------- | -------- |
 | **License** | `![License](https://img.shields.io/badge/license-{LICENSE}-blue)` where `{LICENSE}` matches the license policy for the component category |
 | **Status** | `![Status](https://img.shields.io/badge/status-{STATUS}-orange)` — use `pre-release`, `stable`, or `experimental` |
 | **Banner** | `![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)` |
@@ -56,7 +58,7 @@ The header appears before any content. Order matters:
 Add one badge per language detected in the repository. The `orqa repo readme` auditor detects languages automatically from file extensions.
 
 | Language | Detection | Badge URL |
-|----------|-----------|-----------|
+| ---------- | ----------- | ----------- |
 | TypeScript | `.ts`, `.tsx` | `https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white` |
 | Rust | `.rs`, `Cargo.toml` | `https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white` |
 | Svelte | `.svelte` | `https://img.shields.io/badge/Svelte-FF3E00?logo=svelte&logoColor=white` |
@@ -69,7 +71,7 @@ Language badges appear alphabetically after the status badge, on the same line.
 ## Required Sections
 
 | Section | Always Required | Notes |
-|---------|----------------|-------|
+| --------- | ---------------- | ------- |
 | **Title** | Yes | `# Display Name` matching the manifest's `displayName` |
 | **Description** | Yes | Opening paragraph, minimum 20 characters |
 | **Installation** | For published packages | `## Installation` with install command |

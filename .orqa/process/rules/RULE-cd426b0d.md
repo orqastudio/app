@@ -3,9 +3,12 @@ id: RULE-cd426b0d
 type: rule
 title: Session state with next priorities must be written proactively at session end
 status: active
+enforcement_type: advisory
 description: The orchestrator MUST write .state/session-state.md with a Next Session Priorities section before ending any session. The Stop hook enforces this with a warning.
 enforcement:
+
   - mechanism: behavioral
+
     message: "Write session state with Next Session Priorities before ending any session"
 created: 2026-03-23
 promoted-from: IMPL-30c3da78
@@ -31,6 +34,7 @@ The "Next Session Priorities" section is mandatory. Without it, the next session
 ## Enforcement
 
 **Stop hook** (`connectors/claude-code/hooks/scripts/stop-checklist.sh`):
+
 - On session stop, reads `.state/session-state.md`
 - Checks for a heading containing "Next Session" or "Next Priorities"
 - If missing: injects `STOP: You have not written next session priorities` warning into the systemMessage

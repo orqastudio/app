@@ -1,7 +1,8 @@
 ---
 id: DOC-e42efeaf
 type: doc
-name: Repository and Package Naming Conventions
+title: Repository and Package Naming Conventions
+domain: reference
 category: reference
 status: active
 relationships:
@@ -20,7 +21,7 @@ OrqaStudio uses consistent naming conventions across all repositories, local fol
 The core desktop application.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-app` | `orqastudio-app` |
 | Dev folder | `app/` | `app/` |
 
@@ -29,7 +30,7 @@ The core desktop application.
 Shared code packages published to GitHub Packages. Libraries are our own code — they don't bridge to external systems.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-lib-{name}` | `orqastudio-lib-types` |
 | Dev folder | `libs/{name}/` | `libs/types/` |
 | npm package | `@orqastudio/{name}` | `@orqastudio/types` |
@@ -39,7 +40,7 @@ Shared code packages published to GitHub Packages. Libraries are our own code �
 Extend OrqaStudio by registering artifact schemas, views, widgets, relationships, CLI tools, or hooks. Plugins run INSIDE OrqaStudio.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-plugin-{name}` | `orqastudio-plugin-software` |
 | Dev folder | `plugins/{name}/` | `plugins/software-kanban/` |
 | npm package | `@orqastudio/plugin-{name}` | `@orqastudio/plugin-software` |
@@ -52,12 +53,13 @@ A plugin can install a connector as part of its setup. For example, the Claude p
 Bridge OrqaStudio's governance into a third-party system. Connectors run INSIDE the third-party, not inside OrqaStudio.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-connector-{name}` | `orqastudio-connector-claude-code` |
 | Dev folder | `connectors/{name}/` | `connectors/claude-code/` |
 | npm package | `@orqastudio/connector-{name}` | `@orqastudio/connector-claude-code` |
 
 The distinction between plugins and connectors is **direction**:
+
 - **Plugin**: brings external capability INTO OrqaStudio (runs in the app)
 - **Connector**: brings OrqaStudio governance INTO an external tool (runs in the external tool)
 
@@ -67,7 +69,7 @@ A connector may have its own plugin manifest for the external system. For exampl
 
 Some integrations need both directions. The Claude integration is a good example:
 
-```
+```text
 orqastudio-plugin-claude          (Plugin — runs in OrqaStudio)
 ├── Agent SDK sidecar              Brings Claude AI into the app
 ├── On install: sets up connector  Installs the Claude Code connector
@@ -88,7 +90,7 @@ The plugin is installed through OrqaStudio's plugin browser. The connector is in
 Catalogs of available plugins and connectors.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-registry-{name}` | `orqastudio-registry-official` |
 | Dev folder | `registry/{name}/` | `registry/official/` |
 
@@ -97,7 +99,7 @@ Catalogs of available plugins and connectors.
 Scaffolds for creating new plugins and connectors.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-templates` | `orqastudio-templates` |
 | Dev folder | `templates/` | `templates/` |
 
@@ -106,7 +108,7 @@ Scaffolds for creating new plugins and connectors.
 Development utilities that aren't published packages.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `orqastudio-tool-{name}` | `orqastudio-tool-debug` |
 | Dev folder | `tools/{name}/` | `tools/debug/` |
 
@@ -115,7 +117,7 @@ Development utilities that aren't published packages.
 GitHub organisation profile, shared workflows, etc.
 
 | | Pattern | Example |
-|---|---|---|
+| --- | --- | --- |
 | GitHub repo | `.github` | `.github` |
 | Dev folder | `.github-org/` | `.github-org/` |
 
@@ -123,7 +125,7 @@ GitHub organisation profile, shared workflows, etc.
 
 The dev environment folder is always the repo name with the category prefix stripped:
 
-```
+```text
 orqastudio-lib-types          → libs/types/
 orqastudio-plugin-software-kanban → plugins/software-kanban/
 orqastudio-connector-claude-code → connectors/claude-code/
@@ -134,7 +136,7 @@ orqastudio-templates          → templates/
 
 ## npm Package Derivation Rule
 
-```
+```text
 orqastudio-lib-types          → @orqastudio/types
 orqastudio-plugin-software    → @orqastudio/plugin-software
 orqastudio-connector-claude-code → @orqastudio/connector-claude-code

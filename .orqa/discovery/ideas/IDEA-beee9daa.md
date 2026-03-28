@@ -17,6 +17,7 @@ relationships:
   - target: PERSONA-477971bf
     type: benefits
 ---
+
 ## Candidate Items
 
 - Figma integration — import design tokens, Figma MCP server

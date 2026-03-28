@@ -4,17 +4,26 @@ type: rule
 title: Provider-Agnostic Tool Capabilities
 description: Agent definitions declare abstract capabilities. A provider mapping table resolves capabilities to concrete tool names per context.
 status: active
+enforcement_type: mechanical
 created: 2026-03-11
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Agent definitions must declare capabilities not tool names; orchestrator resolves capabilities to concrete tool names per provider mapping at delegation time"
+
   - mechanism: json-schema
+
     description: "Governance steward verifies agent YAML uses capabilities field not tool names"
 relationships:
+
   - target: AD-02a2a97b
+
     type: enforces
+
   - target: DOC-d9cc1f84
+
     type: documented-by
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
@@ -24,7 +33,7 @@ rule and resolved at delegation time by the orchestrator, companion plugin, or a
 ## Capability Vocabulary
 
 | Capability | Description |
-|-----------|-------------|
+| --- | --- |
 | `file_read` | Read file contents |
 | `file_write` | Create new files |
 | `file_edit` | Edit existing files |
@@ -45,7 +54,7 @@ tool type is introduced to any provider.
 ## Provider Mapping: Claude Code CLI
 
 | Capability | Tool Name | Source |
-|-----------|-----------|--------|
+| --- | --- | --- |
 | `file_read` | `Read` | Built-in |
 | `file_write` | `Write` | Built-in |
 | `file_edit` | `Edit` | Built-in |
@@ -63,7 +72,7 @@ tool type is introduced to any provider.
 ## Provider Mapping: OrqaStudio App
 
 | Capability | Tool Name | Source |
-|-----------|-----------|--------|
+| --- | --- | --- |
 | `file_read` | `read` | Tauri command |
 | `file_write` | `write` | Tauri command |
 | `file_edit` | `edit` | Tauri command |
@@ -81,7 +90,7 @@ tool type is introduced to any provider.
 ## Context Detection
 
 | Signal | Context |
-|--------|---------|
+| --- | --- |
 | `Read`, `Edit`, `Bash` tools available (PascalCase) | Claude Code CLI |
 | `read`, `edit`, `bash` tools available (lowercase Tauri commands) | OrqaStudio App |
 
@@ -94,6 +103,7 @@ When the orchestrator delegates to an agent:
 3. Resolve each capability to the concrete tool name from the matching provider table
 4. Include the resolved tool names in the delegation prompt
 5. If a capability has no mapping in the current context (e.g., semantic search
+
    unavailable), note the gap explicitly in the delegation prompt
 
 Until the companion plugin (EPIC-9a1eba3f) automates this resolution, the orchestrator
@@ -113,7 +123,7 @@ capabilities:
   - code_search_semantic
   - code_research
   - shell_execute
-```
+```text
 
 The `tools` field is removed from agent definitions. All tool resolution goes
 through this rule's mapping tables.
@@ -133,9 +143,13 @@ No agent definitions change. The capability vocabulary stays the same.
 
 - Concrete tool names in agent `tools` fields (use `capabilities` instead)
 - Hardcoding provider-specific tool names in delegation prompts without resolving
+
   from this mapping
+
 - Adding a new tool to a provider without adding the corresponding capability to
+
   the vocabulary
+
 - Assuming tool availability without checking the current context
 
 ## Related Rules

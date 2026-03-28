@@ -86,6 +86,7 @@ createMachine({
 ```
 
 **Key strengths:**
+
 - Parallel states (type: 'parallel') for concurrent workflows
 - Guards on transitions for conditional logic
 - Actions (entry, exit, transition) for side effects
@@ -96,6 +97,7 @@ createMachine({
 - W3C SCXML-compatible semantics
 
 **Key limitations:**
+
 - Code-first — requires JavaScript runtime for evaluation
 - Guards are functions, not declarative expressions (though they can be named)
 - No built-in human-in-the-loop primitives
@@ -136,6 +138,7 @@ async function epicWorkflow(input: EpicInput): Promise<EpicResult> {
 ```
 
 **Key strengths:**
+
 - Code-as-workflow — full programming language power
 - Automatic state persistence via event sourcing
 - Human-in-the-loop via signals and conditions (can wait indefinitely)
@@ -144,6 +147,7 @@ async function epicWorkflow(input: EpicInput): Promise<EpicResult> {
 - Deterministic replay for fault tolerance
 
 **Key limitations:**
+
 - Requires a Temporal server (heavy infrastructure)
 - Determinism constraints — no random, no current time, no external I/O in workflow code
 - State machine is implicit (harder to visualize)
@@ -200,6 +204,7 @@ Step Functions uses a JSON-based domain-specific language (ASL) to define state 
 ```
 
 **Key strengths:**
+
 - Purely declarative — no code in the state machine definition
 - Built-in human approval via `.waitForTaskToken` pattern
 - Choice states for conditional branching
@@ -209,6 +214,7 @@ Step Functions uses a JSON-based domain-specific language (ASL) to define state 
 - Visual editor in AWS console
 
 **Key limitations:**
+
 - AWS-locked — not portable
 - Verbose JSON format
 - Limited expression language
@@ -222,6 +228,7 @@ BPMN (Business Process Model and Notation) is the industry standard for process 
 **Definition format:** BPMN 2.0 XML.
 
 **Key concepts:**
+
 - **User Tasks** — human activities with assignment (individual, group, role)
 - **Service Tasks** — automated activities
 - **Gateways** — exclusive (XOR), parallel (AND), inclusive (OR)
@@ -230,12 +237,14 @@ BPMN (Business Process Model and Notation) is the industry standard for process 
 - **Lanes/Pools** — organizational responsibility
 
 **Human gate patterns:**
+
 - Maker-checker: two separate User Tasks assigned to different roles
 - Multi-instance: same task assigned to N reviewers in parallel
 - Escalation: non-interrupting timer triggers an escalation task alongside the approval
 - Four-eyes principle: parallel gateway splits to two reviewers, both must approve
 
 **Key strengths:**
+
 - Industry standard (BPMN 2.0)
 - Rich human task management (assignment, delegation, escalation, SLA)
 - Sub-processes for composition and reuse
@@ -244,6 +253,7 @@ BPMN (Business Process Model and Notation) is the industry standard for process 
 - Graphical notation with formal semantics
 
 **Key limitations:**
+
 - XML-based — verbose and hard to author by hand
 - Heavy runtime (Java-based engines)
 - Steep learning curve
@@ -292,6 +302,7 @@ framework:
 ```
 
 **Key strengths:**
+
 - Clean YAML configuration
 - Guard expressions on transitions
 - Event system (guard, leave, transition, enter, completed, announce)
@@ -299,6 +310,7 @@ framework:
 - Distinction between "workflow" (multi-place) and "state_machine" (single-place)
 
 **Key limitations:**
+
 - PHP-specific runtime
 - No parallel states
 - No hierarchical states
@@ -361,6 +373,7 @@ states:
 ```
 
 **Key strengths:**
+
 - YAML-native configuration — human-readable, diffable
 - Module composition — sub-workflows that push/pop on a stack
 - Built-in permissions model (role-based)
@@ -370,6 +383,7 @@ states:
 - Domain-agnostic — works for any artifact type
 
 **Key limitations:**
+
 - No parallel states
 - No hierarchical states
 - Newer/less mature ecosystem
@@ -378,7 +392,7 @@ states:
 ### Summary Comparison Table
 
 | Feature | XState | Temporal | Step Functions | BPMN | Symfony | CFlow |
-|---------|--------|----------|---------------|------|---------|-------|
+| --------- | -------- | ---------- | --------------- | ------ | --------- | ------- |
 | **Format** | JS/JSON | Code | JSON (ASL) | XML | YAML | YAML |
 | **Parallel states** | Yes | Via Promise.all | Yes | Yes (AND gateway) | No | No |
 | **Hierarchical states** | Yes | Via child workflows | No | Yes (sub-process) | No | Yes (modules) |
@@ -447,6 +461,7 @@ states:
 ```
 
 **Pros:**
+
 - Human-readable, easy to review in PRs
 - Diffable — state changes show as clean diffs
 - Validated by JSON Schema (same pattern as existing artifact schemas)
@@ -455,6 +470,7 @@ states:
 - Plugin authors write configuration, not code
 
 **Cons:**
+
 - Expression language for guards needs careful design
 - No IDE autocompletion without language server support
 - Complex conditional logic becomes awkward
@@ -493,6 +509,7 @@ states:
 ```
 
 **Pros:**
+
 - Battle-tested format (XState ecosystem)
 - Supports parallel and hierarchical states natively
 - Large ecosystem of tools (visualizers, editors, testing)
@@ -500,6 +517,7 @@ states:
 - Can be rendered visually by existing tools
 
 **Cons:**
+
 - JSON is harder to read/write than YAML (no comments)
 - XState-specific conventions may not map cleanly to OrqaStudio's needs
 - Guard functions need a resolution layer (named guards → implementations)
@@ -601,6 +619,7 @@ actions:
 ```
 
 **Pros:**
+
 - YAML readability with statechart-level expressiveness
 - Guards are declarative (field checks, queries) — no code required
 - Actions are declarative (set field, append log) — no code required
@@ -611,6 +630,7 @@ actions:
 - Engine handles guard/action resolution
 
 **Cons:**
+
 - Custom format — no existing tooling ecosystem
 - No parallel state support (would need to be added)
 - Guard expression language needs careful design to avoid becoming a programming language
@@ -786,7 +806,7 @@ gate:
 
 Every human gate follows this structure:
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │ Gate: <name>                                │
 │                                             │
@@ -866,6 +886,7 @@ states:
 ```
 
 **How it works:**
+
 - When creating a task, the user or orchestrator selects the workflow variant
 - Standard tasks get full planning + review
 - Quickfix tasks skip planning, use automated verification instead of human review
@@ -916,7 +937,7 @@ Use **workflow variants** (Pattern 1) with **selection rules** (Pattern 2):
 **Ad-hoc workflow examples for OrqaStudio:**
 
 | Scenario | Workflow | Key Difference from Standard |
-|----------|----------|------------------------------|
+| ---------- | ---------- | ------------------------------ |
 | Bug fix (small) | `task-quickfix` | Skip planning, automated review only |
 | UX tweak | `task-quickfix` | Skip planning, automated review only |
 | Security fix | `task-security` | Skip planning, mandatory human review |
@@ -935,7 +956,7 @@ If the core framework defines an artifact's base lifecycle and a plugin extends 
 
 **The plugin that defines an artifact type owns its state machine completely.** The core framework provides the state machine engine but does not define any artifact-specific states.
 
-```
+```text
 Core Framework:
   - State machine engine (evaluates transitions, guards, gates)
   - State category vocabulary (planning, active, review, completed, terminal)
@@ -953,11 +974,13 @@ Plugin (e.g., software-discovery):
 ```
 
 **Pros:**
+
 - No inheritance conflicts — each plugin is self-contained
 - Clear ownership — the plugin author controls the entire lifecycle
 - No "base + override" complexity
 
 **Cons:**
+
 - No shared states across plugins (duplication if multiple plugins have similar lifecycles)
 - Core framework can't enforce any lifecycle patterns
 
@@ -989,6 +1012,7 @@ states:
 **This is exactly the pattern Azure DevOps uses** — they define four state categories (Proposed, In Progress, Resolved, Completed) and plugins/custom processes map their states into those categories. The categories drive board columns, reporting, and aggregation.
 
 **Pros:**
+
 - Plugins have full control over states and transitions
 - Core framework can render any artifact type generically using categories
 - Dashboard aggregation works across artifact types ("show me everything in review")
@@ -996,6 +1020,7 @@ states:
 - New plugins work immediately with existing UI
 
 **Cons:**
+
 - Category vocabulary is fixed (adding new categories is a breaking change)
 - Some cross-cutting behaviors (like "all review states need gates") must be enforced by convention, not by the engine
 
@@ -1029,11 +1054,13 @@ extensions:
 ```
 
 **Pros:**
+
 - Base workflow is stable; extensions add without modifying
 - Multiple plugins can extend the same workflow
 - Clean separation of concerns
 
 **Cons:**
+
 - Extension point discovery is hard (what can I extend?)
 - Ordering conflicts when multiple plugins extend the same point
 - Debugging becomes harder (where did this guard come from?)
@@ -1060,6 +1087,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** A record of a significant technical or architectural choice.
 
 **Distinguishing criteria:**
+
 - Records a specific choice that was made (not a rule to follow)
 - Has alternatives that were considered and rejected
 - Has consequences (what this enables, what this constrains)
@@ -1067,6 +1095,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Has a lifecycle: proposed → accepted → superseded/deprecated
 
 **Is NOT:**
+
 - A rule (rules prescribe behavior; decisions record choices)
 - A guideline (guidelines suggest; decisions commit)
 - Knowledge (knowledge explains; decisions justify a specific choice)
@@ -1078,6 +1107,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** An enforceable constraint on how work is done.
 
 **Distinguishing criteria:**
+
 - Prescribes behavior ("do this", "don't do that")
 - Has enforcement mechanisms (automated or behavioral)
 - Is active or inactive (not superseded — that's for decisions)
@@ -1085,6 +1115,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Often promoted from lessons that recurred
 
 **Is NOT:**
+
 - A decision (decisions record choices; rules enforce them)
 - Knowledge (knowledge explains how; rules mandate what)
 - A lesson (lessons observe patterns; rules mandate behavior)
@@ -1096,6 +1127,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** Reusable domain expertise that agents need to do work correctly.
 
 **Distinguishing criteria:**
+
 - Explains how something works or how to do something
 - Is injected into agent context before relevant work
 - Is factual/procedural, not prescriptive (though it may reference rules)
@@ -1103,6 +1135,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Is consumed by agents, not directly by users
 
 **Is NOT:**
+
 - A rule (rules mandate; knowledge informs)
 - A decision (decisions choose; knowledge explains)
 - Documentation (docs are for humans; knowledge is for agents)
@@ -1114,6 +1147,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** An observation from a specific incident that may become a pattern.
 
 **Distinguishing criteria:**
+
 - Records something that went wrong (or right) in a specific context
 - Has a recurrence count — tracks how many times this has been observed
 - Has a promotion path (lesson → rule, lesson → knowledge, lesson → decision)
@@ -1121,6 +1155,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Is created by review agents during verification
 
 **Is NOT:**
+
 - A rule (yet — it becomes one if it recurs enough)
 - Knowledge (yet — it becomes knowledge if it's a reusable pattern)
 - A bug report (bugs are tasks; lessons are patterns)
@@ -1132,6 +1167,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** A body of work with defined scope, acceptance criteria, and deliverables.
 
 **Distinguishing criteria:**
+
 - Has a scope (what's in, what's out)
 - Has tasks (breakdown of the work)
 - Has documentation gates (docs-required, docs-produced)
@@ -1140,6 +1176,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Contains the implementation design in its body
 
 **Is NOT:**
+
 - A task (epics contain tasks; tasks are atomic work items)
 - An idea (ideas become epics when promoted)
 - A milestone (milestones contain epics; milestones measure progress)
@@ -1149,6 +1186,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** An atomic unit of work within an epic.
 
 **Distinguishing criteria:**
+
 - Has specific acceptance criteria (verifiable conditions)
 - Is assigned to a role (implementer, reviewer, writer, etc.)
 - Has dependencies (depends-on other tasks)
@@ -1156,6 +1194,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Is verified by an independent reviewer
 
 **Is NOT:**
+
 - An epic (tasks are atomic; epics are collections)
 - A bug (bugs are tasks with a quickfix workflow variant)
 - An idea (ideas propose; tasks execute)
@@ -1165,6 +1204,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** A captured possibility that may or may not become work.
 
 **Distinguishing criteria:**
+
 - Starts as a raw capture ("what if we...")
 - Goes through a shaping process (exploring → shaped)
 - May be promoted to an epic or discarded
@@ -1172,6 +1212,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Is the entry point for all new work
 
 **Is NOT:**
+
 - A task (ideas propose; tasks execute)
 - A decision (ideas explore; decisions commit)
 - A bug (bugs are immediate; ideas are future possibilities)
@@ -1181,6 +1222,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** An investigation that produces findings to inform decisions.
 
 **Distinguishing criteria:**
+
 - Has specific research questions
 - Produces findings (factual results of investigation)
 - Feeds into epics (via research-refs) and decisions
@@ -1188,6 +1230,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Does not prescribe action (findings inform; decisions prescribe)
 
 **Is NOT:**
+
 - A decision (research informs decisions; it doesn't make them)
 - Knowledge (research is one-time investigation; knowledge is reusable)
 - Documentation (research is historical; docs describe current state)
@@ -1197,6 +1240,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** A description of the current target state of a feature, system, or process.
 
 **Distinguishing criteria:**
+
 - Describes what IS (or should be) — not what was
 - Is deleted and replaced when outdated (not preserved like research)
 - Is the source of truth for implementation
@@ -1204,6 +1248,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - Is human-readable (unlike knowledge, which is agent-readable)
 
 **Is NOT:**
+
 - Research (docs describe current state; research describes findings)
 - Knowledge (docs are for humans; knowledge is for agents)
 - A rule (docs describe; rules prescribe)
@@ -1213,6 +1258,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 **What it is:** A strategic goal marker that aggregates epics.
 
 **Distinguishing criteria:**
+
 - Has a gate question ("Can we answer yes to: ...?")
 - Contains epics (via epic.milestone references)
 - Has a lifecycle: planning → active → complete
@@ -1314,12 +1360,14 @@ migration:
 Use **Strategy 1 (forward-compatible addition) as the default**, with **Strategy 2 (status mapping) for breaking changes**.
 
 Rationale:
+
 - Most state machine changes are additive (adding states, adding transitions)
 - OrqaStudio artifacts are file-based with YAML frontmatter — easy to batch-update
 - The `orqa migrate` CLI command can run status mappings
 - Version pinning (Strategy 4) is over-engineered for file-based artifacts that aren't "running"
 
 **Migration protocol:**
+
 1. Plugin updates its `workflow.yaml` with a `migration` section
 2. `orqa migrate` reads all artifacts of the affected type
 3. For each artifact with an old status, applies the mapping
@@ -1334,7 +1382,7 @@ Rationale:
 
 Every review gate follows a pipeline structure:
 
-```
+```text
 TRIGGER (artifact reaches review state)
   │
   ▼
@@ -1378,7 +1426,7 @@ AI REVIEW (automated first pass)
 ### Review Roles and Their Responsibilities
 
 | Role | What They Review | Verdict Produces |
-|------|-----------------|------------------|
+| ------ | ----------------- | ------------------ |
 | **Code Reviewer** (AI) | Code quality, standards compliance, test coverage | PASS/FAIL with findings list |
 | **QA Tester** (AI) | Functional correctness, end-to-end wiring, smoke tests | PASS/FAIL with test results |
 | **UX Reviewer** (AI) | UI compliance with specs, component usage, accessibility | PASS/FAIL with UX findings |
@@ -1388,7 +1436,7 @@ AI REVIEW (automated first pass)
 
 The AI reviews run first (they're fast and catch mechanical issues). Only if AI reviews pass does the human review gate activate. This prevents humans from reviewing work that has known defects.
 
-```
+```text
 AI Reviews (parallel):
   ├── Code Review Agent → PASS/FAIL
   ├── QA Test Agent → PASS/FAIL
@@ -1473,7 +1521,7 @@ on_fail:
 
 ### File Structure
 
-```
+```text
 plugins/
   software-kanban/
     artifacts/

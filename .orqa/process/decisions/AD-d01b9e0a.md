@@ -10,6 +10,7 @@ relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"
 ---
+
 ## Decision
 
 Tauri's three-layer security model (permissions → scopes → capabilities) configured with `$HOME/**` base file system scope, sensitive path denials (`.ssh`, `.gnupg`), pre-declared shell commands with argument validators, and `tauri-plugin-keyring` for API key storage in the OS keychain.

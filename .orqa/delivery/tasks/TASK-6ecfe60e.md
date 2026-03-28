@@ -3,7 +3,7 @@ id: TASK-6ecfe60e
 type: task
 title: Sweep body-text path references across all .orqa/ files
 description: "After all file moves are complete, scan every .orqa/ file for body-text references to old documentation paths and update them to the new locations. Covers all 152 known references identified during the reorganisation planning."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

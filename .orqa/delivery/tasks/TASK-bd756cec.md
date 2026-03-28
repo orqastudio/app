@@ -3,7 +3,7 @@ id: "TASK-bd756cec"
 type: "task"
 title: "Implement recommendation review UI"
 description: "Built the UI for reviewing, approving, and acting on governance recommendations."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Built the recommendation review UI with a filterable list view, detail display, and approve/dismiss actions wired to backend commands.

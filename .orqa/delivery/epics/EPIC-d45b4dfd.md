@@ -3,7 +3,7 @@ id: "EPIC-d45b4dfd"
 type: "epic"
 title: "Artifact Graph SDK and Structural Integrity"
 description: "Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-10"
 updated: "2026-03-10"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 Three systemic gaps identified during dogfooding prevent the artifact system from being self-consistent and extensible:
@@ -37,7 +38,7 @@ This epic addresses all three by building a bidirectional artifact node graph in
 Document and enforce minimum body structure for each artifact type:
 
 | Type | Required Sections | Status |
-|------|-------------------|--------|
+| ------ | ------------------- | -------- |
 | Pillar | What This Pillar Means, Examples, Anti-Patterns, Conflict Resolution | Already consistent |
 | Milestone | Context, Epics, Completion Criteria | Already consistent |
 | Decision | Decision, Rationale, Consequences | Already consistent |
@@ -76,11 +77,13 @@ ArtifactRef { target_id, field, source_id }
 ```
 
 **Graph construction** during `artifact_scan_tree`:
+
 1. First pass: scan all `.md` files, extract frontmatter, create nodes with `references_out`
 2. Second pass: invert all `references_out` to populate `references_in`
 3. Store in `AppState`
 
 **Tauri commands:**
+
 - `resolve_artifact(id)` / `resolve_path(path)` — core resolution
 - `get_references_from(id)` / `get_references_to(id)` — relationship queries
 - `get_artifacts_by_type(type)` / `get_artifact_children(id)` — bulk queries
@@ -122,6 +125,7 @@ class ArtifactGraphSDK {
 ```
 
 **Design principles:**
+
 - Eagerly loaded — full graph on app start, in-memory thereafter
 - Synchronous reads for metadata/relationships (no IPC round-trip)
 - Async only for `readContent()` (disk I/O)
@@ -136,7 +140,7 @@ The built-in artifact views are the first consumer of the SDK. Every ad-hoc arti
 Phase 4a — Stores (data layer):
 
 | File | Current Pattern | Replaced By |
-|------|----------------|-------------|
+| ------ | ---------------- | ------------- |
 | `artifact.svelte.ts` | `invoke("artifact_scan_tree")` for NavTree | Keep for sidebar shape; SDK handles metadata/relationships |
 | `artifact.svelte.ts` | `invoke("read_artifact")` + `viewerCache` | `artifactGraph.readContent(path)` (always from disk, no frontend cache) |
 | `navigation.svelte.ts` | `ARTIFACT_PREFIX_MAP` hardcoded prefix→group map | `artifactGraph.resolve(id)` for ID→path, then `navigateToPath()` |
@@ -145,7 +149,7 @@ Phase 4a — Stores (data layer):
 Phase 4b — Viewer components:
 
 | File | Current Pattern | Replaced By |
-|------|----------------|-------------|
+| ------ | ---------------- | ------------- |
 | `ArtifactViewer.svelte` | `parseFrontmatter(content)` to extract metadata | `artifactGraph.resolve(id).frontmatter` (already parsed in graph) |
 | `ArtifactViewer.svelte` | Internal link click handler parsing hrefs | SDK-based navigation via `navigateToPath()` |
 | `AgentViewer.svelte` | `parseFrontmatter()` for agent metadata | `artifactGraph.resolveByPath(path).frontmatter` |
@@ -154,7 +158,7 @@ Phase 4b — Viewer components:
 Phase 4c — Navigation and linking components:
 
 | File | Current Pattern | Replaced By |
-|------|----------------|-------------|
+| ------ | ---------------- | ------------- |
 | `ArtifactLink.svelte` | `navigateToArtifact(id)` via prefix map | `artifactGraph.resolve(id)` — broken if undefined |
 | `ArtifactNav.svelte` | `pendingArtifactId` auto-select with `if (isTree) return` guard | SDK resolution — works for flat AND tree types |
 | `FrontmatterHeader.svelte` | `ARTIFACT_ID_RE` regex for link detection | SDK `resolve()` — if resolvable, render as link |
@@ -191,7 +195,7 @@ Phase 4c — Navigation and linking components:
 The app ships with **default views only** — these are the artifact browser, viewers, and core navigation. They use the SDK exactly as plugins will. Everything beyond the defaults is a plugin.
 
 | Layer | Examples | Distribution |
-|-------|----------|-------------|
+| ------- | ---------- | ------------- |
 | **Built-in (default)** | Artifact browser, viewers (artifact, agent, skill, rule, hook), navigation, conversation | Shipped with app binary |
 | **Official plugins** | Governance dashboard, dependency graph, sprint planning | Official plugins repo [IDEA-5113eeae](IDEA-5113eeae) |
 | **Community plugins** | Third-party extensions shared publicly | Their own repos, installable via URL |
@@ -219,7 +223,7 @@ This protects production governance data during development. The skill reference
 ## Tasks
 
 | Task | Title | Scope |
-|------|-------|-------|
+| ------ | ------- | ------- |
 | [TASK-fb26fef0](TASK-fb26fef0) | Document body templates in artifact-framework.md and schema.json | .orqa/documentation/, .orqa/**/schema.json |
 | [TASK-42ddbdb3](TASK-42ddbdb3) | Add body template linting to pre-commit hook | .githooks/validate-schema.mjs |
 | [TASK-7e609abd](TASK-7e609abd) | Backfill existing artifacts to match body templates | .orqa/delivery/, .orqa/process/ |
@@ -237,7 +241,7 @@ This protects production governance data during development. The skill reference
 
 ## Dependency Chain
 
-```
+```text
 Track A — Body Templates (governance-only, no code changes):
 TASK-fb26fef0 (templates + schema) ──> TASK-42ddbdb3 (linting) ──> TASK-7e609abd (backfill)
 

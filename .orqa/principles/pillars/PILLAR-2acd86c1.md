@@ -35,6 +35,7 @@ relationships:
     type: served-by
 
 ---
+
 ## What This Pillar Means
 
 Learning Through Reflection is the principle that the system and its users get smarter with every cycle. Mistakes are documented, patterns are extracted, and governance artifacts are updated so the same problem doesn't recur.

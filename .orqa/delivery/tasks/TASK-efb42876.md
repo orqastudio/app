@@ -21,6 +21,7 @@ relationships:
 ## What
 
 Update the `project.json` file (and any plugin-level `project.json` overrides) to:
+
 1. Replace `skills` artifact tree node with `knowledge`
 2. Update directory paths from `process/skills/` to `process/knowledge/`
 3. Update type references from `skill` to `knowledge`
@@ -29,6 +30,7 @@ Update the `project.json` file (and any plugin-level `project.json` overrides) t
 ## How
 
 Read `project.json` and locate the artifact tree configuration section. Find entries with:
+
 - `"type": "skill"` or `"skills"` path segments
 - Replace with `"type": "knowledge"` and `knowledge/` path accordingly
 

@@ -2,7 +2,7 @@
 id: "TASK-ba25d426"
 type: "task"
 title: "Implement code_research compound search tool"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

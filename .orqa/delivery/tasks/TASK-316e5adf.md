@@ -3,7 +3,7 @@ id: "TASK-316e5adf"
 type: "task"
 title: "Add errors.svelte.ts store test"
 description: "Write test file for the one untested frontend store."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

@@ -3,7 +3,7 @@ id: "TASK-c39b12a7"
 type: "task"
 title: "Pre-commit hook blocks core graph artifact modifications"
 description: "Add a pre-commit check that warns and blocks commits modifying core graph artifacts (schemas, orchestrator, core skills, role definitions) unless force-overridden. Dogfood mode bypasses."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs: []
@@ -21,6 +21,7 @@ relationships:
   - target: "TASK-bb4fa466"
     type: "depends-on"
 ---
+
 ## What
 
 Core graph artifacts are firmware — they define how the artifact graph works, how
@@ -33,7 +34,7 @@ read-only on these files, but the git hook catches changes made outside the app
 
 ## Warning Message
 
-```
+```text
 ⚠ CORE GRAPH ARTIFACTS MODIFIED
 
 The following files define OrqaStudio's thinking structure:
@@ -47,7 +48,7 @@ To proceed anyway: ORQA_CORE_OVERRIDE=1 git commit ...
 
 ## Core Artifact Paths
 
-```
+```text
 .orqa/delivery/*/schema.json
 .orqa/process/*/schema.json
 .orqa/process/agents/schema.json

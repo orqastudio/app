@@ -3,7 +3,7 @@ id: "TASK-c639bf2f"
 type: "task"
 title: "Orchestrator delegation with skill injection"
 description: "Updates the orchestrator's delegation protocol to automatically include the relevant Tier 2 project skills in every delegation prompt, matched from the task's scope against the injection table."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Update the orchestrator's delegation protocol so that when delegating a task to an
@@ -27,7 +28,7 @@ scope.
 In the orchestrator's "Delegation Protocol" section, add a step between "Scope the task"
 and "Provide context":
 
-```
+```text
 3. **Inject project skills** — Match the task's scope against the injection table.
    Include in the delegation prompt: "Load these project skills before starting: [list]"
 ```

@@ -3,7 +3,7 @@ id: "TASK-fff38767"
 type: "task"
 title: "Backfill lessons with maturity and relationships"
 description: "Use backfill tooling to add maturity (observation/understanding) and grounded relationships to all 16 lessons."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: null

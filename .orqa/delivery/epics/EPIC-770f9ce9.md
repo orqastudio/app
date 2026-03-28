@@ -3,7 +3,7 @@ id: "EPIC-770f9ce9"
 type: "epic"
 title: "Artifact Graph Alignment Audit"
 description: "Comprehensive audit and cleanup of all .orqa/ artifacts to align with graph-based\nknowledge injection principles, correct layer classifications, fix data integrity\nissues, and eliminate sources of context confusion.\n"
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-12"
 updated: "2026-03-12"
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Governing Principles
 
 These are the architectural principles established in recent sessions that this epic
@@ -39,7 +40,7 @@ stale patterns.
 ### 2. Three-Layer Architecture
 
 | Layer | What | Portability Test |
-|-------|------|-----------------|
+| ------- | ------ | ----------------- |
 | **Core** | Clarity engine firmware — universal principles, process model, schemas | Would this work unchanged on a Python/Django project? |
 | **Project** | This project's patterns — Tauri/Svelte/Rust conventions, orqa-* skills | Does this reference OrqaStudio-specific paths, technologies, or patterns? |
 | **Plugin** | CLI compatibility — hooks, commands, session management | Does this exist to make the graph work in Claude Code specifically? |
@@ -80,6 +81,7 @@ Three research investigations ([RES-b7062d7b](RES-b7062d7b), [RES-1a888755](RES-
 audited 476+ artifacts across all layers. Critical findings:
 
 **Data Integrity:**
+
 - [KNOW-f5ee4e0d](KNOW-f5ee4e0d) ID assigned to 3 different skills (graph traversal breaks)
 - KNOW-bcfeb64e exists as divergent copies (not symlinked)
 - 20+ epics reference DOC-NNN phantom IDs (unresolvable graph edges)
@@ -88,12 +90,14 @@ audited 476+ artifacts across all layers. Critical findings:
 - [EPIC-c1833545](EPIC-c1833545) marked done but superseded by [EPIC-c1833545](EPIC-c1833545)
 
 **Layer Violations:**
+
 - 8 core rules embed project-specific Tauri/Svelte/Rust content
 - composability skill (core) has 37 project-specific references
 - orqa-native-search marked core but is project-specific
 - orqa-code-search marked project but treated as universal
 
 **Content Staleness:**
+
 - orchestration.md and workflow.md describe pre-graph patterns
 - Planning README mentions deprecated "plans" artifact type
 - Documentation README uses web-style links violating RULE-2f7b6a31
@@ -101,6 +105,7 @@ audited 476+ artifacts across all layers. Critical findings:
 - [RES-5435cae9](RES-5435cae9) references non-existent `.orqa/agents/` path
 
 **Structural:**
+
 - Tasks README duplicates and diverges from schema.json
 - No architecture doc for graph-based injection model
 - 3 rules have empty scope arrays
@@ -137,7 +142,7 @@ scoring dimensions.
 ### Phase 1: Data Integrity
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-25ef9bc2](TASK-25ef9bc2) | Fix [KNOW-f5ee4e0d](KNOW-f5ee4e0d) ID collision — assign unique IDs |
 | [TASK-4a65565c](TASK-4a65565c) | Fix KNOW-bcfeb64e rule-enforcement duplication — symlink or split |
 | [TASK-2106d3c4](TASK-2106d3c4) | Fix epic/task status mismatches (EPIC-709a6f76, [EPIC-f079c196](EPIC-f079c196), EPIC-c1833545) |
@@ -149,7 +154,7 @@ scoring dimensions.
 ### Phase 2: Layer Reclassification
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-1c15bc9a](TASK-1c15bc9a) | Split 8 core rules — extract project-specific content |
 | [TASK-729a39f7](TASK-729a39f7) | Split composability skill — core principle vs project examples |
 | [TASK-0fcd8ea1](TASK-0fcd8ea1) | Fix skill layer misclassifications (orqa-native-search, rule-enforcement, orqa-code-search) |
@@ -158,7 +163,7 @@ scoring dimensions.
 ### Phase 3: Content Accuracy
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-ce9f22cc](TASK-ce9f22cc) | Fix all README inaccuracies (Planning, Documentation, Skills, Tasks, Lessons, Decisions) |
 | [TASK-0f837aa7](TASK-0f837aa7) | Update orchestration.md and workflow.md for graph-based model |
 | [TASK-057c1430](TASK-057c1430) | Remove scope reference from CLAUDE.md / orchestrator prompt |
@@ -168,7 +173,7 @@ scoring dimensions.
 ### Phase 4: Structural Cleanup
 
 | ID | Title |
-|----|-------|
+| ---- | ------- |
 | [TASK-ec7d9989](TASK-ec7d9989) | Archive stale ideas (IDEA-119c5d54, [IDEA-8087e548](IDEA-8087e548), [IDEA-cc97aab3](IDEA-cc97aab3), [IDEA-1d6675c7](IDEA-1d6675c7) status fix) |
 | [TASK-bd8caa3c](TASK-bd8caa3c) | Mark surpassed research (RES-5435cae9) and connect Phase 0 orphans |
 | [TASK-97e9ba49](TASK-97e9ba49) | Address .claude/rules/ full-body loading vs graph-based injection |

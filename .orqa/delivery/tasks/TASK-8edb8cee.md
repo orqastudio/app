@@ -2,7 +2,7 @@
 id: "TASK-8edb8cee"
 type: "task"
 title: "Register the connector plugin in Claude Code settings"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

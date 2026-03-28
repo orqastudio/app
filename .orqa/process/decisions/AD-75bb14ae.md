@@ -11,6 +11,7 @@ relationships:
     type: evolves-into
     rationale: "AD-859ed163 scopes SQLite to conversation persistence only, replacing this broader SQLite-for-all decision"
 ---
+
 ## Decision
 
 SQLite is the sole persistence layer for structured data (sessions, messages, metrics, project config). File-based artifacts (docs, rules, agents) are read from disk.

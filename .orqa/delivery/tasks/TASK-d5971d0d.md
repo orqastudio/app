@@ -3,7 +3,7 @@ id: TASK-d5971d0d
 type: task
 title: Register roadmap view under Process navigation
 description: Make the roadmap kanban view accessible under Process in navigation and handle the static roadmap.md.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 2

@@ -3,7 +3,7 @@ id: "TASK-e3c4da9f"
 type: "task"
 title: "Code indexer and regex search"
 description: "Implements the code indexing pipeline using DuckDB to store file chunks, and exposes a regex search command for matching patterns across all indexed content."
-status: "completed"
+status: archived
 created: 2026-03-04T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Implement the code indexing pipeline (file walking, semantic chunking, DuckDB storage)

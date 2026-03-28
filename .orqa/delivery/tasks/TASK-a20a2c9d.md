@@ -3,7 +3,7 @@ id: "TASK-a20a2c9d"
 type: "task"
 title: "Audit EPIC-9a1eba3f tasks against plugin codebase"
 description: "14 tasks marked todo but plugin has working code. Verify each task against actual implementation."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 acceptance:
@@ -14,6 +14,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 14 tasks marked todo but plugin has working code. Verify each task against actual implementation.

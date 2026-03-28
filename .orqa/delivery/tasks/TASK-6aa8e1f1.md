@@ -3,7 +3,7 @@ id: "TASK-6aa8e1f1"
 type: "task"
 title: "Create AD for directory reorganization (AD-9687b3cf)"
 description: "Architecture decision formalizing the three-level structure (process/delivery/documentation) and the first-class artifact principle."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 assignee: null
@@ -19,6 +19,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Create an architecture decision documenting the directory reorganization from governance/team/planning to process/delivery/documentation.

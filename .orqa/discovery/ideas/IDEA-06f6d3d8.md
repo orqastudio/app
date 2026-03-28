@@ -3,7 +3,7 @@ id: IDEA-06f6d3d8
 type: discovery-idea
 title: "Coding standards as rules — plugin-provided tooling, project-level enforcement, org-level sync"
 description: "Coding standards become OrqaStudio rules with enforcement entries keyed by plugin. Plugins provide linting/testing infrastructure. Rules define the config. Organisation mode syncs standards to sub-projects with override tracking."
-status: surpassed
+status: archived
 created: 2026-03-19
 updated: 2026-03-19
 research-needed:
@@ -30,7 +30,7 @@ relationships:
 
 Coding standards are OrqaStudio rules. Each rule has enforcement entries keyed by plugin. Plugins provide the tooling infrastructure. Rules define what the tools enforce. Decisions govern why.
 
-```
+```text
 AD-xxx (Decision: "Strict TypeScript, no shortcuts")
   ↓ governs
 RULE-xxx (Rule: "Coding Standards")
@@ -122,6 +122,7 @@ The generated config files are the **output** of the governance system, not the 
 ### @orqastudio/plugin-svelte
 
 Provides:
+
 - ESLint infrastructure (installs deps, generates config)
 - svelte-check infrastructure
 - Vitest infrastructure
@@ -133,6 +134,7 @@ Registers as a tool provider for enforcement entries with `tool: eslint`, `tool:
 ### @orqastudio/plugin-tauri
 
 Provides:
+
 - Clippy infrastructure (generates clippy.toml)
 - rustfmt infrastructure (generates .rustfmt.toml)
 - cargo test infrastructure
@@ -144,6 +146,7 @@ Registers as a tool provider for enforcement entries with `tool: clippy`, `tool:
 ### Agent Skills for Config Management
 
 Each plugin ships a skill that teaches agents how to:
+
 - Add/modify enforcement entries on coding standards rules
 - Create override rules for sub-projects with proper rationale and decision links
 - Understand the config merge hierarchy (org → project → override)
@@ -159,10 +162,12 @@ Each skill has a paired documentation artifact (`synchronised-with`) so humans c
 Each plugin ships dedicated agents that are NOT conversational — they're scoped task agents that run, produce structured output, and return:
 
 **Assessment agents** (read-only, return structured findings):
+
 - `svelte-standards-assessor` — scans a project, returns a structured report of violations against configured rules. No conversation, no suggestions — just facts.
 - `tauri-standards-assessor` — same for Rust/Tauri.
 
 **Configuration agents** (write, scoped to specific tasks):
+
 - `svelte-standards-configurator` — reads the project's coding standards rules, generates/updates ESLint + svelte-check + Vitest config files. Does the job and exits.
 - `tauri-standards-configurator` — same for clippy + rustfmt + cargo test config.
 
@@ -207,7 +212,7 @@ When a plugin is installed, it ensures the target project has the required tool 
 
 When installing to an org-mode project, the plugin asks which sub-projects it applies to:
 
-```
+```text
 Installing @orqastudio/plugin-svelte...
 
 This org has 7 sub-projects. Based on detected languages:
@@ -227,6 +232,7 @@ Install to selected projects? [Y/n]
 ```
 
 Each selected sub-project gets:
+
 - Tool dependencies added to its `package.json`
 - Config files generated from the org-level coding standards rules
 - Any sub-project-specific overrides preserved

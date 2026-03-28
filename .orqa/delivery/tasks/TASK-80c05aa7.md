@@ -3,7 +3,7 @@ id: "TASK-80c05aa7"
 type: task
 title: "Implement 7 high-priority integrity checks + codebase-wide clippy compliance"
 description: "Implement all 7 graph-implementable integrity checks identified in TASK-8fa37f45 audit. Also fix all clippy too_many_lines violations across the entire backend codebase to achieve zero-warning clippy compliance."
-status: "completed"
+status: archived
 created: "2026-03-13"
 updated: "2026-03-13"
 acceptance:
@@ -25,6 +25,7 @@ relationships:
   - target: "TASK-8fa37f45"
     type: "depends-on"
 ---
+
 ## What
 
 Implement 7 integrity checks identified by the TASK-8fa37f45 audit as high-impact and graph-implementable. Additionally fix all pre-existing clippy too_many_lines violations to achieve zero-warning compliance.

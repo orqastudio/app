@@ -3,7 +3,7 @@ id: "EPIC-2d63dff3"
 type: "epic"
 title: "Validation consolidation: libs/validation crate as single source of truth"
 description: "Extract all validation logic into a shared libs/validation Rust crate. Consolidate 6 separate implementations into one. Add graph-theoretic metrics. All consumers (app, MCP, LSP, CLI, hooks, visualiser) use the same library for consistent results."
-status: "review"
+status: review
 created: 2026-03-21T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 relationships:
@@ -29,7 +29,7 @@ See AD-062 for the architecture decision.
 Create `libs/validation` as a Rust workspace crate. Extract `app/integrity_engine.rs` as the starting implementation. Organise into `checks/` modules:
 
 | Module | Checks |
-|--------|--------|
+| -------- | -------- |
 | `structural.rs` | Broken references, missing inverses, type constraints |
 | `cardinality.rs` | Min/max relationship counts per relationship type |
 | `cycles.rs` | Cycle detection in the relationship graph |
@@ -76,6 +76,7 @@ The graph visualiser view is currently broken or extremely slow with no loading 
 Graph visualiser calls server-computed metrics from `libs/validation` (via MCP) instead of running its own Cytoscape analysis. Dashboard clarity view and graph visualiser show identical numbers because they query the same source.
 
 **Dashboard widgets** (Clarity column) — high-level health for glancing:
+
 - Overall health score (traffic light)
 - Trend over time (store health snapshots, show trend lines for key metrics)
 - Threshold alerts (orphan % > 5%, clusters > 3, traceability < 90%)
@@ -85,6 +86,7 @@ Graph visualiser calls server-computed metrics from `libs/validation` (via MCP) 
 - Trend queries: metric values over time, deltas between snapshots
 
 **Graph visualiser health panel** — detailed metrics for investigating:
+
 - Full metric breakdown with values and traffic-light status per metric
 - Per-artifact drilldowns (which nodes are orphans, bottlenecks, disconnected)
 - Cluster visualisation (colour-code nodes by connected component)
@@ -96,7 +98,7 @@ Both surfaces consume the same `libs/validation` data — dashboard summarises, 
 Expand graph-theoretic metrics beyond current set:
 
 | Metric | Purpose |
-|--------|---------|
+| -------- | --------- |
 | Connected components | Fragmentation — should be 1 |
 | Orphan count/% | Unreachable artifacts |
 | Average degree | Interconnectedness |
@@ -116,7 +118,7 @@ Rebuild the artifact relationships and traceability components from scratch usin
 
 **Traceability view** — the core feature: show how any artifact traces back to the vision through the pillar hierarchy. For any selected artifact, render the full provenance chain:
 
-```
+```text
 Vision → Pillar → Idea → Research → Decision → Epic → Task (you are here)
                               ↓
                           Rule → Knowledge → Agent
@@ -125,6 +127,7 @@ Vision → Pillar → Idea → Research → Decision → Epic → Task (you are 
 This is not just "show relationships" — it's "show how this work evolved from a pillar, through ideation, into implementation." Each node in the chain is clickable, showing the decision points and context that led to the current artifact.
 
 **Relationships panel rebuild:**
+
 1. **Ancestry chain** — trace UP from any artifact to its pillar(s) via BFS. Show the full path with relationship types. If no path exists, flag it as disconnected from governance.
 2. **Descendant tree** — trace DOWN from any artifact to see everything it spawned (epic → tasks, decision → rules, etc.)
 3. **Sibling context** — other artifacts at the same level that share the same parent (other tasks in the same epic, other rules enforcing the same decision)
@@ -132,6 +135,7 @@ This is not just "show relationships" — it's "show how this work evolved from 
 5. **Impact radius** — what would be affected if this artifact changed (using the `computeImpact` function with configurable depth)
 
 **Full graph layout:**
+
 - Replace `cose-bilkent` (force-directed, produces a ball) with `dagre` (hierarchical DAG layout)
 - Vision/Pillars as root nodes at the top, flow downward through the governance hierarchy
 - Hierarchy levels by artifact type: vision(0) → pillar(1) → idea(2) → decision/research(3) → epic/rule(4) → task/knowledge(5)
@@ -139,6 +143,7 @@ This is not just "show relationships" — it's "show how this work evolved from 
 - Cross-cutting edges (documents, synchronised-with) rendered as lighter/dotted to not dominate the hierarchy
 
 **Visual design:**
+
 - Use the graph visualiser's existing Cytoscape infrastructure for rendering
 - Ancestry chain rendered as a vertical timeline (pillar at top, current artifact highlighted)
 - Descendants as an expandable tree
@@ -151,6 +156,7 @@ This is not just "show relationships" — it's "show how this work evolved from 
 The validation library provides auto-fix methods for objective issues:
 
 **Auto-fixable (no human judgment needed):**
+
 - Missing inverse relationship → add the inverse to target artifact
 - Broken ref from known rename (SKILL→KNOW) → update the ID
 - Missing `type:` field → infer from path registry + core.json
@@ -159,6 +165,7 @@ The validation library provides auto-fix methods for objective issues:
 - Bidirectionality gaps → add the missing direction
 
 **Not auto-fixable (flag for human review):**
+
 - Which pillar an idea should ground to
 - Which epic an unassigned task belongs to
 - Whether an orphan should be archived or connected
@@ -166,6 +173,7 @@ The validation library provides auto-fix methods for objective issues:
 API: `validate()` returns checks, `auto_fix()` applies objective fixes, remainder is reported for review.
 
 **Enforcement integration:**
+
 - PreToolUse hook: block artifact creation without minimum relationships
 - Pre-commit hook: `orqa enforce --fix` auto-heals, fails on remaining errors
 - Dashboard: threshold alerts when metrics cross boundaries (orphan % > 5%, clusters > 3, traceability < 90%)

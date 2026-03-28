@@ -3,7 +3,7 @@ id: "TASK-c12c22b1"
 type: "task"
 title: "Integrate integrity checks into pre-commit hook"
 description: "Add staged-file mode to verify-links.mjs and verify-pipeline-integrity.mjs. Add both to .githooks/pre-commit in the ORQA_CHANGED block. Broken links and missing inverses on staged files block the commit."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

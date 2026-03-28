@@ -3,7 +3,7 @@ id: "EPIC-5aa11e2f"
 type: "epic"
 title: "Agent, Skill, and Enforcement Artifact Audit"
 description: "Comprehensive audit of all agent definitions, skill definitions, and enforcement artifacts (rules, hooks) to verify accuracy against the current codebase, fix stale references, remove deprecated content, and ensure internal consistency."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-11"
 updated: "2026-03-11"
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 The comprehensive planning artifact audit (EPIC-d45b4dfd review cycle) revealed that while planning artifacts, milestones, decisions, and documentation pages have been audited and fixed, the **team layer** (agents and skills) and **enforcement layer** (rules and hooks) have not been systematically verified against the current codebase state.
@@ -32,6 +33,7 @@ This epic applies the same audit methodology used for planning artifacts to the 
 ### Phase 1: Agent Definition Audit
 
 For each agent in `.orqa/process/agents/`:
+
 1. Read the agent definition
 2. Verify `skills:` list — do all referenced skills exist in `.orqa/process/skills/`?
 3. Verify Required Reading paths — do all referenced documents exist?
@@ -42,6 +44,7 @@ For each agent in `.orqa/process/agents/`:
 ### Phase 2: Skill Definition Audit
 
 For each skill in `.orqa/process/skills/`:
+
 1. Read the SKILL.md and any supporting files
 2. Verify code patterns described match the actual codebase
 3. Verify file paths referenced in examples exist
@@ -52,6 +55,7 @@ For each skill in `.orqa/process/skills/`:
 ### Phase 3: Rule Enforcement Audit
 
 For each rule in `.orqa/process/rules/`:
+
 1. Verify the rule's enforcement mechanisms still apply
 2. Check for stale path references (already partially done in prior audit)
 3. Verify Related Rules cross-references point to existing rules
@@ -61,6 +65,7 @@ For each rule in `.orqa/process/rules/`:
 ### Phase 4: Hook Audit
 
 For each hook in `.orqa/process/hooks/`:
+
 1. Verify the hook script exists and is executable
 2. Check that paths referenced in the script are correct
 3. Verify the hook's trigger event is still valid
@@ -77,6 +82,7 @@ For each hook in `.orqa/process/hooks/`:
 ### Phase 6: Missing and Miscategorised Artifacts
 
 Audit the boundaries between governance artifact types:
+
 1. Rules vs skills — is a rule actually domain knowledge (skill)? Does a skill encode a binary constraint (rule)?
 2. Where both are needed, ensure both exist with appropriate framing
 3. Identify implicit conventions enforced in practice but not captured in any artifact
@@ -86,6 +92,7 @@ Audit the boundaries between governance artifact types:
 ### Phase 7: Create Artifact Audit Skill
 
 Encode the audit methodology from [EPIC-d45b4dfd](EPIC-d45b4dfd) and [EPIC-5aa11e2f](EPIC-5aa11e2f) into a reusable skill:
+
 1. Per-artifact-type checklists (status, cross-references, paths, codebase alignment)
 2. Systemic pattern grouping approach
 3. Cross-layer consistency checks

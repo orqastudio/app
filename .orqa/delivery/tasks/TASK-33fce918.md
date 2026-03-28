@@ -3,7 +3,7 @@ id: "TASK-33fce918"
 type: "task"
 title: "Document orphaned skills as forward-looking in their SKILL.md files"
 description: "Add a forward-looking status note to each of five skills that have no current loading mechanism because their parent features are not yet built."
-status: "completed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 acceptance:
@@ -15,12 +15,13 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Five skills have no current loading mechanism because the features they support are not built yet. They are already referenced from the correct epics/tasks/ideas:
 
 | Skill | Linked From |
-|-------|------------|
+| ------- | ------------ |
 | `project-inference` | [EPIC-7394ba2a](EPIC-7394ba2a), [TASK-bc351dc1](TASK-bc351dc1) |
 | `project-migration` | [EPIC-7394ba2a](EPIC-7394ba2a), [TASK-bc351dc1](TASK-bc351dc1) |
 | `project-setup` | [EPIC-7394ba2a](EPIC-7394ba2a), [TASK-bc351dc1](TASK-bc351dc1) |

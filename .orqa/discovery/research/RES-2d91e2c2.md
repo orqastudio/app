@@ -14,7 +14,6 @@ Research into how OrqaStudio stores, maps, and applies design tokens at runtime 
 
 ---
 
-
 ## Context
 
 OrqaStudio needs two design token capabilities:
@@ -34,7 +33,6 @@ The scanning/detection side is covered in `docs/research/onboarding.md` (Tier 1 
 - **OKLCH color space** -- shadcn-svelte's current version uses OKLCH for all CSS variables.
 
 ---
-
 
 ## Q1: Design Token Format & Storage
 
@@ -209,7 +207,7 @@ The internal storage format maps directly to the shadcn-svelte variable names. A
 
 When OrqaStudio resolves a CSS variable value for a given project, it follows this chain:
 
-```
+```text
 User Override  >  Extracted Project Token  >  OrqaStudio Default Theme
 ```
 
@@ -229,7 +227,6 @@ function resolveToken(name: string, projectTheme: ProjectTheme | null): string {
 In practice, the fallback is handled by CSS itself: OrqaStudio's default theme is defined in the global stylesheet as `:root` variables. Project-specific overrides are applied via `document.documentElement.style.setProperty()`, which takes precedence over stylesheet rules. Removing a property (`.removeProperty()`) restores the default.
 
 ---
-
 
 ## Q2: Runtime Theme Application in Svelte 5
 
@@ -392,7 +389,6 @@ Benchmarks from real-world applications show that updating 20-30 CSS custom prop
 
 ---
 
-
 ## Q3: Token Extraction Pipeline
 
 **Question:** How does OrqaStudio extract design tokens from project files and map them to its internal schema?
@@ -402,7 +398,7 @@ Benchmarks from real-world applications show that updating 20-30 CSS custom prop
 OrqaStudio needs to map extracted project colors to these semantic roles (the shadcn-svelte variables):
 
 | Token | Role | Extraction Priority |
-|-------|------|-------------------|
+| ------- | ------ | ------------------- |
 | `primary` | Main brand/action color | Required |
 | `primary-foreground` | Text on primary | Derived |
 | `secondary` | Secondary UI surfaces | Optional |
@@ -469,6 +465,7 @@ pub fn extract_css_tokens(css_content: &str) -> ExtractedTokens {
 ```
 
 **File discovery:** Scan for CSS files in common locations:
+
 - `src/app.css`, `src/global.css`, `src/index.css`
 - `src/styles/*.css`
 - `app/globals.css` (Next.js convention)
@@ -573,7 +570,7 @@ When OrqaStudio extracts raw colors from a project, it must map them to the sema
 
 **Case 1: shadcn-style variables detected (trivial mapping)**
 
-```
+```text
 --primary         -> primary
 --primary-foreground -> primary-foreground
 --secondary       -> secondary
@@ -582,7 +579,7 @@ When OrqaStudio extracts raw colors from a project, it must map them to the sema
 
 **Case 2: Tailwind color palette detected (heuristic mapping)**
 
-```
+```text
 Most saturated color at shade 600   -> primary
 Least saturated color at shade 100  -> secondary
 Color with highest chroma           -> accent
@@ -694,7 +691,6 @@ fn derive_surface_tokens(tokens: &mut HashMap<String, String>) {
 ```
 
 ---
-
 
 ## Q4: Per-Project Theme Persistence
 
@@ -889,7 +885,7 @@ The settings panel includes a "Theme" section where users can:
 
 ### Theme Lifecycle Summary
 
-```
+```text
 Project Opened
   |
   v
@@ -926,11 +922,10 @@ File Watcher Active
 
 ---
 
-
 ## Summary
 
 | Question | Recommendation | Key Rationale |
-|----------|---------------|---------------|
+| ---------- | --------------- | --------------- |
 | Q1: Token Format & Storage | JSON object in SQLite keyed by shadcn-svelte variable names, all values in OKLCH | Direct 1:1 mapping to CSS variables. No translation layer. OKLCH is shadcn-svelte's native format. |
 | Q2: Runtime Theme Application | `document.documentElement.style.setProperty()` for light mode, injected `<style>` for dark mode overrides. `mode-watcher` for dark/light/system toggle. | Sub-1ms application time. No stylesheet rebuild. Class-based dark mode avoids Tauri's `prefers-color-scheme` issues on Linux. |
 | Q3: Token Extraction Pipeline | Three-source extraction (CSS `:root` > Tailwind config > generic vars). `csscolorparser` for color parsing. Heuristic mapping to semantic roles. Foreground colors derived via OKLCH lightness check. | Handles 90%+ of real-world projects. OKLCH lightness is perceptually accurate for contrast decisions. Node subprocess for Tailwind configs is reliable. |
@@ -939,7 +934,7 @@ File Watcher Active
 ### Key Crates & Packages
 
 | Package | Language | Purpose |
-|---------|----------|---------|
+| --------- | ---------- | --------- |
 | `csscolorparser` | Rust | Parse CSS color values (hex, rgb, hsl, oklch, named) into RGBA/OKLCH |
 | `regex` | Rust | Extract CSS custom properties from `:root` blocks |
 | `sha2` | Rust | Hash source files for change detection (already planned) |
@@ -953,7 +948,6 @@ File Watcher Active
 The baseline OrqaStudio theme (used when no project theme is active) is the default shadcn-svelte "zinc" palette. It is defined in the global CSS file (`ui/src/app.css`) and requires no runtime processing. When a project theme is cleared, removing inline styles on `:root` instantly restores these defaults via the CSS cascade.
 
 ---
-
 
 ## Related
 

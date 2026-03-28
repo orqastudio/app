@@ -2,6 +2,7 @@
 id: KNOW-6d80cf39
 type: knowledge
 title: "Documentation Placement — Where to Write Docs and Knowledge"
+domain: methodology/governance
 description: "Decision guide for placing documentation and knowledge artifacts. Plugin directories for production content, .orqa/ for development content. Includes the pairing rule, placement flowchart, and common mistakes."
 summary: "Decision guide for placing documentation and knowledge artifacts. Plugin directories for production content, .orqa/ for development content. Includes the pairing rule, placement flowchart, and common mistakes."
 status: active
@@ -25,7 +26,7 @@ relationships:
 
 ## Placement Decision
 
-### Write in PLUGIN directory when:
+### Write in PLUGIN directory when
 
 - The content describes a feature that ships with the product
 - The content would exist in a fresh project after `orqa install`
@@ -34,7 +35,7 @@ relationships:
 
 **Locations:** `plugins/core/knowledge/`, `plugins/core/docs/`, `plugins/<name>/knowledge/`, `plugins/<name>/docs/`
 
-### Write in .orqa/ when:
+### Write in .orqa/ when
 
 - The content is specific to THIS project's development process
 - The content is a development artifact: decisions (AD-*), lessons (IMPL-*), planning (EPIC-*, TASK-*)
@@ -48,7 +49,7 @@ relationships:
 Documentation and knowledge ALWAYS come in pairs:
 
 | Artifact | Audience | Purpose | Location Pattern |
-|----------|----------|---------|-----------------|
+| ---------- | ---------- | --------- | ----------------- |
 | Documentation | Humans | Readable narrative — what and why | `docs/` or `documentation/` |
 | Knowledge | Agents | Structured context injection — what and how | `knowledge/` |
 
@@ -56,7 +57,7 @@ Link pairs with `synchronised-with` relationship in frontmatter. Creating one wi
 
 ## Content Flow
 
-```
+```text
 Plugin (canonical)           orqa install           .orqa/ (installed copy)
 ─────────────────           ────────────           ─────────────────────
 plugins/core/knowledge/  ──────────────>  .orqa/process/knowledge/
@@ -70,7 +71,7 @@ Each plugin's `orqa-plugin.json` declares `content` entries with `source` and `t
 ## Editing Rules
 
 | Content Type | How to Edit |
-|-------------|-------------|
+| ------------- | ------------- |
 | Plugin-canonical content | Edit in `plugins/<name>/`, then `orqa install` |
 | Dev-only content in `.orqa/` | Edit directly — not managed by `orqa install` |
 | Installed copies in `.orqa/` | DO NOT edit — changes overwritten on next install |
@@ -78,7 +79,7 @@ Each plugin's `orqa-plugin.json` declares `content` entries with `source` and `t
 ## Common Mistakes
 
 | Mistake | Correction |
-|---------|-----------|
+| --------- | ----------- |
 | Writing product knowledge in `.orqa/process/knowledge/` | Write in the plugin's `knowledge/` directory |
 | Editing installed copy in `.orqa/` directly | Edit canonical source in plugin, then `orqa install` |
 | Creating doc without knowledge pair | Always create both |
@@ -88,6 +89,7 @@ Each plugin's `orqa-plugin.json` declares `content` entries with `source` and `t
 ## Drift Detection
 
 Three-way diff model detects drift between:
+
 1. **Plugin source** (canonical)
 2. **Installed baseline** (what `orqa install` last synced)
 3. **Project copy** (what's currently in `.orqa/`)

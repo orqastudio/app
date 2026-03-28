@@ -3,7 +3,7 @@ id: "TASK-abba7331"
 type: "task"
 title: "Security hardening: CSP and permissions"
 description: "Audits and restricts Tauri capabilities to the minimum required permissions, removing broad defaults and enabling a Content Security Policy."
-status: "completed"
+status: archived
 created: 2026-03-06T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-8e58cd87"
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Audit and restrict Tauri capabilities to minimum required permissions. Enable CSP.

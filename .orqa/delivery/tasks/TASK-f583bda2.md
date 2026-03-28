@@ -3,7 +3,7 @@ id: "TASK-f583bda2"
 type: "task"
 title: "Add bidirectional relationship checking to graph-guardian.mjs"
 description: "Extend the PostToolUse graph-guardian hook to check for missing bidirectional relationship inverses when .orqa/ artifacts are written. Return warnings for one-sided relationships so the agent can fix them immediately."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 5
@@ -35,10 +35,12 @@ Add bidirectional check function:
 1. Parse frontmatter of the just-written file
 2. Extract `relationships` array
 3. For each relationship `{ target, type }`:
+
    a. Resolve target to file path (e.g., `RULE-87ba1b81` → `.orqa/process/rules/RULE-87ba1b81.md`)
    b. Read target file's frontmatter
    c. Check for inverse relationship pointing back
    d. If missing: add to warnings list
+
 4. Return warnings as additionalContext
 
 ### Inverse Mapping

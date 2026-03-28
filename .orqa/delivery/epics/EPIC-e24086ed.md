@@ -3,7 +3,7 @@ id: "EPIC-e24086ed"
 type: "epic"
 title: "Code quality audit and enforcement alignment"
 description: "Comprehensive audit of codebase against documented coding standards, lint rule coverage, test coverage, dead code, schema validation compliance, and recurring lessons. Findings feed into the learning loop as lessons and enforcement improvements."
-status: "captured"
+status: captured
 priority: "P2"
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
@@ -34,7 +34,7 @@ Can't credibly enforce quality on managed projects if our own code has violation
 ### In Scope
 
 | Area | Description |
-|------|-------------|
+| ------ | ------------- |
 | Lint rule coverage audit | Verify all documented coding standards in `.orqa/documentation/development/coding-standards.md` have corresponding linter rules |
 | Test coverage gaps | Identify modules below 80% coverage threshold |
 | Dead code removal | Find unused functions, imports, and components across Rust and TypeScript |
@@ -52,7 +52,7 @@ Can't credibly enforce quality on managed projects if our own code has violation
 ## Tasks
 
 | Task | Title | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [TASK-4a9f0681](TASK-4a9f0681) | Lint rule coverage audit | ready |
 | [TASK-74bb7696](TASK-74bb7696) | Test coverage gap analysis | ready |
 | [TASK-9f3a2a69](TASK-9f3a2a69) | Dead code removal | ready |
@@ -70,6 +70,7 @@ Can't credibly enforce quality on managed projects if our own code has violation
 ## Implementation Design
 
 Each task is an independent audit activity that produces a findings report. Findings are triaged into:
+
 1. **Immediate fixes** — violations that can be fixed in the same task
 2. **Lessons** — patterns that should be logged as IMPL entries
 3. **Promotions** — lessons with recurrence >= 2 that should become rules or knowledge updates

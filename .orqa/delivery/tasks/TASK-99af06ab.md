@@ -3,7 +3,7 @@ id: "TASK-99af06ab"
 type: "task"
 title: "Frontend: ArtifactToolbar with sort dropdown and filter popover"
 description: "Replace SearchInput in ArtifactNav with an icon-based toolbar containing sort (DropdownMenu) and filter (Popover) controls, dynamically generated from schema metadata."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-11T00:00:00.000Z
 acceptance:
@@ -20,7 +20,6 @@ relationships:
   - target: "TASK-dde309b0"
     type: "depends-on"
 ---
-
 
 ## What
 

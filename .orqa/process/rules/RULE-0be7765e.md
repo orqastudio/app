@@ -4,22 +4,32 @@ type: rule
 title: Error Ownership
 description: All errors are your responsibility. Pre-existing errors must be fixed. Never skip or ignore failures.
 status: active
+enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-12
 enforcement:
+
   - mechanism: behavioral
+
     message: "All errors are your responsibility; never claim a pre-existing error, skip failures, or commit with failing checks"
+
   - mechanism: pre-commit
+
     check: "make check"
+
   - mechanism: hook
+
     type: PreToolUse
     event: bash
     action: block
     pattern: "--no-verify"
 relationships:
+
   - target: AD-2d58941b
+
     type: enforces
 ---
+
 ## Rule (NON-NEGOTIABLE)
 
 **ALL errors are YOUR responsibility. No exceptions.**

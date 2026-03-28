@@ -3,7 +3,7 @@ id: "TASK-0befeab2"
 type: "task"
 title: "Lesson promotion pipeline"
 description: "Implements the self-learning loop that creates lesson entries, tracks recurrence counts, and promotes repeated patterns into rules or skills at a configurable threshold."
-status: "completed"
+status: archived
 created: 2026-03-05T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -17,6 +17,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Implement the lesson promotion pipeline: create IMPL entries, track recurrence,

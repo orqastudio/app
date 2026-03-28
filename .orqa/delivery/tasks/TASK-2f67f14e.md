@@ -34,6 +34,7 @@ Session 2026-03-25 research established:
 ## What Changed from Previous Version
 
 The previous version of this task (written by an earlier session) assumed:
+
 - Only 10 types should exist (WRONG — all 30 are semantically valid)
 - A "kill list" of types to remove (WRONG — never user-approved)
 - Plugins don't declare relationships (WRONG — both plugins already declare them)
@@ -45,12 +46,12 @@ The corrected scope is documentation and cleanup, not vocabulary reduction.
 - Schema shape: `libs/types/schemas/orqa-plugin.json`
 - TypeScript types: `libs/types/src/plugin.ts` (RelationshipType, RelationshipConstraints)
 - Validation engine: `libs/validation/src/graph.rs`, `libs/validation/src/structural.rs`
-- Plugin declarations: `plugins/agile-workflow/orqa-plugin.json`, `plugins/software-kanban/orqa-plugin.json`
+- Plugin declarations: `plugins/agile-methodology/orqa-plugin.json`, `plugins/software-kanban/orqa-plugin.json`
 - Runtime discovery: `libs/validation/src/platform.rs` (scan_plugin_manifests)
 
 ## Dependency Chain
 
-```
+```text
 TASK-ff0a2460 (forward-only storage — remove MissingInverse validation)
   → TASK-8c5f7004 (fix from/to constraints, resolve merged-into duplication)
     → TASK-2f67f14e (document vocabulary, bulk-remove stored inverses)

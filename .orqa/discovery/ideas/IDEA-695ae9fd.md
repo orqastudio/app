@@ -19,6 +19,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Problem
 
 The current scoring system is hardcoded: four dimensions (`pillar`, `impact`, `dependency`, `effort`), one formula, fixed P1/P2/P3 bands. This works for OrqaStudio but won't suit every project. Some projects don't need scoring at all — they have three epics and manual prioritisation is fine. Others may want different dimensions (e.g. `revenue_impact`, `tech_debt`, `user_requests`).

@@ -40,6 +40,7 @@ Update the plugin development documentation and connector README:
 Read the existing plugin development docs to identify all skill/knowledge references. Update each occurrence. Ensure the examples in the docs match the actual directory structure after the rename tasks complete.
 
 For the connector README: if it doesn't exist, create it. Document:
+
 - What the connector is (Claude Code bridge for OrqaStudio)
 - File structure (what's connector-specific vs resolved at runtime)
 - How knowledge injection works in the delegation model

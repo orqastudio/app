@@ -1,7 +1,9 @@
 ---
 id: DOC-1a4f41f7
 type: doc
+status: active
 title: Dependency License Compatibility
+domain: guides
 description: How to ensure that every dependency we use is compatible with our licensing model — what's allowed, what's not, and how to check.
 category: how-to
 created: 2026-03-18
@@ -26,7 +28,7 @@ Our code is BSL-1.1 (core/libs/plugins), Apache-2.0 (connectors), or MIT (tools/
 ### Safe — always compatible
 
 | Dependency License | Why it's safe |
-|-------------------|---------------|
+| ------------------- | --------------- |
 | **MIT** | No restrictions. Use however you want. |
 | **Apache-2.0** | Permissive. Requires attribution in NOTICE files. |
 | **BSD-2-Clause** | Minimal restrictions, just keep the copyright notice. |
@@ -37,14 +39,14 @@ Our code is BSL-1.1 (core/libs/plugins), Apache-2.0 (connectors), or MIT (tools/
 ### Requires caution
 
 | Dependency License | Issue |
-|-------------------|-------|
+| ------------------- | ------- |
 | **MPL-2.0** (Mozilla Public License) | File-level copyleft — modified files must stay MPL, but you can combine with proprietary code. Usually fine, but check if you're modifying the dependency's source files directly. |
 | **LGPL-2.1 / LGPL-3.0** | Library copyleft — fine if dynamically linked (npm/cargo dependency). Problematic if you copy source files into your codebase. |
 
 ### Incompatible — never use
 
 | Dependency License | Why |
-|-------------------|-----|
+| ------------------- | ----- |
 | **GPL-2.0 / GPL-3.0** | Strong copyleft. Requires your entire project to be GPL. Incompatible with BSL-1.1. |
 | **AGPL-3.0** | Network copyleft. Even running it as part of a service triggers the copyleft. Absolutely incompatible. |
 | **SSPL** | MongoDB's license. Incompatible with almost everything. |
@@ -98,7 +100,7 @@ This is the most common pattern in the Rust ecosystem. You can choose either lic
 All current dependencies are compatible:
 
 | Layer | Key Dependencies | Licenses |
-|-------|-----------------|----------|
+| ------- | ----------------- | ---------- |
 | Rust backend | Tauri, rusqlite, serde, tokio, DuckDB, ONNX Runtime | MIT, Apache-2.0, MIT OR Apache-2.0 |
 | Svelte frontend | SvelteKit, Cytoscape, Mermaid, Tailwind | MIT |
 | TypeScript libs | yaml, ajv | MIT, ISC |

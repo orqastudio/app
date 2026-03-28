@@ -3,7 +3,7 @@ id: "EPIC-5a5e3c6c"
 type: "epic"
 title: "Notification system — toast, in-app panel, desktop"
 description: "Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel."
-status: "completed"
+status: archived
 priority: "P2"
 scoring:
   impact: 3
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 No notification strategy exists. Auto-fix confirmations are verbose and inline. Need to decide on toast messages, in-app notification panel, desktop notifications, and which events use which channel.
@@ -26,6 +27,7 @@ No notification strategy exists. Auto-fix confirmations are verbose and inline. 
 ## Implementation Design
 
 TBD — needs research on:
+
 - Toast library (sonner? shadcn toast?)
 - Desktop notification API (Tauri notification plugin)
 - In-app notification panel design

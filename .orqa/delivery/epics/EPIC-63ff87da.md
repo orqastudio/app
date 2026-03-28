@@ -3,7 +3,7 @@ id: "EPIC-63ff87da"
 type: "epic"
 title: "Dogfood Readiness"
 description: "Multi-phase sprint to make OrqaStudio ready for self-hosted development (dogfooding). Covers governance alignment, frontend audit fixes, documentation alignment, enforcement engine, tool approval, lesson promotion, and SDK session resume."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-05"
 updated: "2026-03-09"
@@ -18,34 +18,41 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Implementation Design
 
 ### Phase 1: Governance Alignment
+
 - Hook paths updated to use `$CLAUDE_PROJECT_DIR`
 - TODO rewritten for dogfood milestone
 - Governance artifacts aligned with codebase
 
 ### Phase 2: Frontend Audit
+
 - Debug logging removed
 - `any` types fixed
 - Documentation aligned with implementation
 
 ### Phase 3: Function Decomposition
+
 - Oversized functions broken down
 - Root directory cleaned
 
 ### Phase 4: Enforcement Engine
+
 - Governance scanning logic
-- Tool approval workflow via Channel<T>
+- Tool approval workflow via Channel\<T\>
 - Model selection UI
 - Enforcement UI and scanner dashboard
 - Process violation detection and display
 
 ### Phase 5: Self-Learning Loop
+
 - Lesson promotion pipeline: IMPL entries → recurrence tracking → rule promotion
 - Config-driven recurrence threshold
 
 ### Phase 6: SDK Integration
+
 - Session resume across app restarts
 - `code_research` native tool implementation
 - Process violation hook fixes

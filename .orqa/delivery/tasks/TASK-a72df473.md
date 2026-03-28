@@ -3,7 +3,7 @@ id: "TASK-a72df473"
 type: "task"
 title: "Create follow-up epics/tasks to address findings"
 description: "Group findings from the enforcement tooling run into coherent follow-up epics prioritized using the Phase 7 framework"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

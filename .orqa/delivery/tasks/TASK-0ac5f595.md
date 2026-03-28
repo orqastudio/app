@@ -3,7 +3,7 @@ id: "TASK-0ac5f595"
 type: "task"
 title: "Extend ArtifactRef with relationship_type and process relationships array"
 description: "Add relationship_type field to ArtifactRef in Rust and TypeScript. Update collect_forward_refs to process the relationships array from frontmatter, creating typed edges with relationship_type populated from each relationship's type field."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:
@@ -24,7 +24,7 @@ Extend the artifact graph to treat `relationships` array entries as first-class 
 
 ## How
 
-1. Add `relationship_type: Option<String>` to `ArtifactRef` struct in `backend/src-tauri/src/domain/artifact_graph.rs`
+1. Add `relationship_type: Option\<String\>` to `ArtifactRef` struct in `backend/src-tauri/src/domain/artifact_graph.rs`
 2. Add `relationship_type: string | null` to `ArtifactRef` interface in `ui/src/lib/types/artifact-graph.ts`
 3. In `collect_forward_refs`, add processing for the `relationships` array:
    - Each item has `target` (string) and `type` (string)

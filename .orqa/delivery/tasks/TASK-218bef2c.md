@@ -3,7 +3,7 @@ id: "TASK-218bef2c"
 type: "task"
 title: "Add pillar reference field to epic/idea schemas"
 description: "Add pillar reference field to epic/idea schemas"
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"

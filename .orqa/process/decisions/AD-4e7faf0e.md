@@ -8,6 +8,7 @@ created: 2026-03-02
 updated: 2026-03-13
 relationships: []
 ---
+
 ## Decision
 
 Tauri `invoke()` commands are the only mechanism for frontend-backend communication. All commands are defined as `#[tauri::command]` functions in Rust.

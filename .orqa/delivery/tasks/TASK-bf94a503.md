@@ -3,7 +3,7 @@ id: "TASK-bf94a503"
 type: "task"
 title: "Create @orqastudio/eslint-config package"
 description: "Extract shared ESLint and TypeScript config from orqa-studio into a standalone @orqastudio/eslint-config package. All orqastudio repos and plugins use this for consistent code standards."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 3
@@ -29,6 +29,7 @@ relationships:
 ## Scope
 
 Extract from orqa-studio:
+
 - `eslint.config.js` rules → shareable flat config
 - `tsconfig.json` strict settings → base tsconfig for extends
 - Any shared prettier config if applicable

@@ -3,7 +3,7 @@ id: "EPIC-560cf78c"
 type: "epic"
 title: "Developer Experience Polish"
 description: "Quality-of-life improvements for dogfooding, including project-local database, build splash window, and system prompt templates."
-status: "captured"
+status: captured
 priority: "P3"
 created: 2026-03-07T00:00:00.000Z
 updated: 2026-03-07T00:00:00.000Z
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P3
 
 Quality of life improvements for dogfooding. Not blocking but make daily use more pleasant.

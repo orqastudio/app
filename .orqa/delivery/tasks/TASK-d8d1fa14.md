@@ -24,6 +24,7 @@ relationships:
 ## What
 
 Update the `libs/cli` package and the `orqa` CLI binary to:
+
 1. Scan `knowledge/` directories instead of (or in addition to, during transition) `skills/`
 2. Generate `KNOW-` prefixed IDs when creating new knowledge artifacts
 3. Validate that `KNOW-` prefixed IDs match the `knowledge` type
@@ -33,6 +34,7 @@ Update the `libs/cli` package and the `orqa` CLI binary to:
 ## How
 
 Search `libs/cli/` for:
+
 - Directory scanner constants: `"skills"` glob patterns → `"knowledge"`
 - ID prefix registry: `"SKILL-"` → `"KNOW-"`
 - Type-to-prefix mapping: `skill → knowledge`

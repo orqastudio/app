@@ -8,6 +8,7 @@ created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 relationships: []
 ---
+
 ## Decision
 
 Every lint suppression annotation in the codebase must include a decision reference comment on the same line (or adjacent comment block):
@@ -36,7 +37,7 @@ Every lint suppression annotation in the codebase must include a decision refere
 These paths are exempt because they contain vendored/generated code whose lint suppressions we don't control:
 
 | Path Pattern | Reason |
-|-------------|--------|
+| ------------- | -------- |
 | `ui/src/lib/components/ui/**` | shadcn-svelte vendored components |
 | `.svelte-kit/**` | SvelteKit generated types |
 | `node_modules/**` | Third-party dependencies |
@@ -51,22 +52,24 @@ These paths are exempt because they contain vendored/generated code whose lint s
 ### Acknowledged Tech Debt
 
 The pre-commit scanner is a stopgap enforcement mechanism. The long-term design is linter plugins that:
+
 - Parse `// AD-NNN` references natively
 - Validate against decision artifacts at lint time (not just commit time)
 - Provide IDE-level feedback (red squiggly on suppressions without decision refs)
 
 This is acceptable because:
+
 - The `// AD-NNN` comment pattern is the stable interface — both the scanner and future plugins consume it
 - The scanner is a single file (~80 lines) with no dependencies beyond Node.js
 - Migration to plugins means deleting the scanner and adding plugin config, not refactoring data
 
 ### Approved Exceptions
 
-_No exceptions currently in use. The codebase has zero lint suppression annotations in non-vendored code._
+*No exceptions currently in use. The codebase has zero lint suppression annotations in non-vendored code.*
 
 | Function/Location | File | Rule Suppressed | Justification |
-|-------------------|------|-----------------|---------------|
-| _(none)_ | | | |
+| ------------------- | ------ | ----------------- | --------------- |
+| *(none)* | | | |
 
 ## Rationale
 

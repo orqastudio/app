@@ -2,6 +2,7 @@
 id: KNOW-a3dcdd05
 type: knowledge
 title: Restructuring Methodology
+domain: methodology/planning
 summary: "Methodology for safe, incremental restructuring of codebases. This skill teaches the *process* of refactoring — the domain-specific patterns (e."
 description: |
   Safe, incremental refactoring methodology: one change at a time, verify after
@@ -19,7 +20,6 @@ relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
 ---
-
 
 Methodology for safe, incremental restructuring of codebases. This skill teaches the *process* of refactoring — the domain-specific patterns (e.g., which modules exist, what the architecture looks like) come from the project's architecture skills.
 
@@ -92,7 +92,7 @@ When a UI component exceeds size limits:
 Before starting, assess the scope:
 
 | Scope | Estimate | Action |
-|-------|----------|--------|
+| ------- | ---------- | -------- |
 | **Small** | < 30 minutes | Rename, extract function, fix inconsistency — proceed immediately |
 | **Medium** | 30 min - 2 hours | Extract module, consolidate types — plan steps first |
 | **Large** | > 2 hours | Restructure hierarchy, change data flow — write a plan document, get approval |

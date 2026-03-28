@@ -1,7 +1,9 @@
 ---
 id: DOC-39ea442c
 type: doc
+status: active
 title: Prompt Pipeline Architecture
+domain: architecture
 category: architecture
 description: "Five-stage prompt generation pipeline: Plugin Registry, Schema Assembly, Section Resolution, Token Budgeting, and Prompt Output. Replaces monolithic CLAUDE.md loading with generated, role-specific, token-budgeted, KV-cache-aware prompts."
 sort: 13
@@ -30,7 +32,7 @@ The prompt pipeline replaces OrqaStudio's monolithic "load everything" approach 
 
 ## Pipeline Overview
 
-```
+```text
 Plugin Registry --> Schema Assembly --> Section Resolution --> Token Budgeting --> Prompt Output
      (1)                (2)                  (3)                   (4)               (5)
 ```
@@ -50,17 +52,20 @@ Each stage has a single responsibility and a clear input/output contract. The pi
 **Input:** Plugin directories (`plugins/`, `connectors/`, `integrations/`) containing `orqa-plugin.json` manifests.
 
 **Output:** Cached registry at `.orqa/prompt-registry.json` containing:
+
 - All `RegistryKnowledgeEntry` records (knowledge declarations with source metadata)
 - All `RegistryPromptSection` records (prompt sections with source metadata)
 - List of contributing plugins
 - Any scanning errors
 
 **Key operations:**
+
 - `scanPluginPromptContributions(projectRoot)` -- walks plugin directories, parses manifests
 - `buildPromptRegistry(projectRoot)` -- builds and writes the cached registry
 - `readPromptRegistry(projectRoot)` -- reads the cached registry (used by Stage 2)
 
 **Source classification:** Each entry is classified by its conflict resolution priority:
+
 1. `project-rules` -- reserved for `.orqa/process/rules/` (highest priority)
 2. `project-knowledge` -- reserved for `.orqa/process/knowledge/`
 3. `plugin` -- most installed plugins
@@ -99,7 +104,7 @@ interface RegistryKnowledgeEntry {
 **Knowledge entry filtering by tier:**
 
 | Tier | Filter Logic |
-|------|-------------|
+| ------ | ------------- |
 | `always` | Match by role (entry's roles includes query role) OR by path (entry's path globs match task files) |
 | `stage-triggered` | Must match stage (entry's stages includes query stage), optionally also match role |
 | `on-demand` | Never returned by query -- counted for the preamble in Stage 5 |
@@ -114,7 +119,7 @@ Fix the validation bug in artifact_graph.rs
 </task-description>
 
 <relevant-files>
-backend/src-tauri/src/domain/artifact_graph.rs
+app/src-tauri/src/domain/artifact_graph.rs
 </relevant-files>
 
 <acceptance-criteria>
@@ -136,6 +141,7 @@ backend/src-tauri/src/domain/artifact_graph.rs
 **Output:** Array of `ResolvedSection` records with content text and estimated token counts.
 
 **Resolution priority:**
+
 1. Content file on disk (full text) -- preferred when available
 2. Inline content (compressed summary) -- fallback for always-tier entries
 3. Skip with error -- when neither is available
@@ -159,7 +165,7 @@ backend/src-tauri/src/domain/artifact_graph.rs
 **Default budgets per role:**
 
 | Role | Budget (tokens) |
-|------|----------------|
+| ------ | ---------------- |
 | Orchestrator | 2,500 |
 | Implementer | 2,800 |
 | Reviewer | 1,900 |
@@ -168,6 +174,7 @@ backend/src-tauri/src/domain/artifact_graph.rs
 | Designer | 1,800 |
 
 **Trim algorithm:**
+
 1. Separate P0 sections (never trimmed) from trimmable sections
 2. Sort trimmable sections: P3 first, then P2, then P1; within same priority, largest first
 3. Work from the highest-priority end, keeping sections that fit the remaining budget
@@ -176,7 +183,7 @@ backend/src-tauri/src/domain/artifact_graph.rs
 **Priority semantics:**
 
 | Priority | Meaning | Trim Behavior |
-|----------|---------|---------------|
+| ---------- | --------- | --------------- |
 | P0 | Safety-critical, never cut | Immune to trimming |
 | P1 | Role-critical | Trimmed only under extreme pressure |
 | P2 | Task-relevant | Trimmed after P3 |
@@ -197,7 +204,7 @@ backend/src-tauri/src/domain/artifact_graph.rs
 **KV-cache-aware zone ordering:** Sections are sorted into zones so that static content (stable across turns) appears at the top and dynamic content (changes per task) appears at the bottom. This maximizes KV-cache prefix hits, which Manus reports as a 10x cost difference.
 
 | Zone | Section Type | Stability |
-|------|-------------|-----------|
+| ------ | ------------- | ----------- |
 | 0 | `role-definition` | Static (same across all tasks for a role) |
 | 1 | `safety-rule` | Static |
 | 2 | `constraint` | Static |
@@ -249,6 +256,7 @@ To retrieve full content for a specific topic, use the semantic search tool:
 Handles on-demand knowledge access for agents at runtime.
 
 **Key functions:**
+
 - `generateOnDemandPreamble(count)` -- generates the instruction text appended to prompts
 - `queryOnDemandEntries(registry, options)` -- filters registry for on-demand entries by tags/role
 - `retrieveKnowledge(projectPath, options)` -- disk-based fallback that reads knowledge artifacts from `.orqa/process/knowledge/`, filtered by tags/role/text within a token budget
@@ -259,6 +267,7 @@ Handles on-demand knowledge access for agents at runtime.
 Creates complete agent configurations by combining the prompt pipeline with model tier selection and tool constraints.
 
 **Key operations:**
+
 - `createAgentConfig(params)` -- main entry point, produces an `AgentSpawnConfig` with prompt, model tier, tool constraints, and findings path
 - `selectModelTier(role, complexity, overrides)` -- selects model tier (Opus for orchestrator/planner, Sonnet for others, with complexity-based upgrade for implementer)
 - `serializeFindings(doc)` / `parseFindingsHeader(content)` -- structured findings format for orchestrator consumption (~200 tokens)
@@ -274,6 +283,7 @@ Four-level metrics capture for token usage observability.
 **Metrics storage:** `.state/token-metrics.jsonl` (newline-delimited JSON events)
 
 **Levels:**
+
 - Level 1 (Per-Request): input/output tokens, cache hit rate, reasoning tokens, model, latency
 - Level 2 (Per-Agent): total tokens, context utilization, request count, lifetime
 - Level 3 (Per-Session): total tokens, cost, agent spawns, overhead ratio
@@ -288,7 +298,7 @@ Stateful budget enforcement for agent spawning and session cost control.
 **Budget limits (defaults):**
 
 | Budget | Default | Enforcement |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | Per-agent prompt tokens | 4,000 | Hard block |
 | Per-agent total tokens | 100,000 | Hard block at 100%, warnings at 75%/90% |
 | Per-session total tokens | 500,000 | Hard block at 100%, warnings at 75%/90% |
@@ -297,7 +307,7 @@ Stateful budget enforcement for agent spawning and session cost control.
 **Model tier pricing (per million tokens):**
 
 | Tier | Input | Output | Cached |
-|------|-------|--------|--------|
+| ------ | ------- | -------- | -------- |
 | Opus | $15.00 | $75.00 | $1.50 |
 | Sonnet | $3.00 | $15.00 | $0.30 |
 | Haiku | $0.25 | $1.25 | $0.025 |
@@ -308,7 +318,7 @@ Stateful budget enforcement for agent spawning and session cost control.
 
 ## Data Flow Summary
 
-```
+```text
 orqa plugin install
   |
   v
@@ -316,8 +326,6 @@ prompt-registry.ts: scanPluginPromptContributions()
   |
   v
 .orqa/prompt-registry.json (cached registry)
-
-
 
 Agent spawn request (role, stage, task)
   |
@@ -350,7 +358,7 @@ budget-enforcer.ts: recordUsage() / checkAgentContinue()
 These decisions are recorded in [AD-1ef9f57c](AD-1ef9f57c):
 
 | Decision | Resolution |
-|----------|-----------|
+| ---------- | ----------- |
 | Summary generation | Author writes summaries. `summary` field in frontmatter. `orqa summarize` CLI generates drafts. |
 | On-demand retrieval latency | Acceptable. 1-2s per query paid once at task start beats 10x token cost compounding. |
 | Budget enforcement granularity | Per-agent for prompt size, per-session for total cost. No team-level budgets. |
@@ -361,7 +369,7 @@ These decisions are recorded in [AD-1ef9f57c](AD-1ef9f57c):
 ## Relationship to Prior Architecture
 
 | Aspect | Before (Monolithic) | After (Plugin-Composed Pipeline) |
-|--------|--------------------|---------------------------------|
+| -------- | -------------------- | --------------------------------- |
 | Prompt source | `CLAUDE.md` + 58 rule files + `AGENTS.md` | Plugin registry with sections and knowledge |
 | Loading strategy | Load everything at message-send time | Generate role-specific prompt at agent spawn |
 | Token overhead | 9,500-16,500 per orchestrator turn | 2,000-3,500 per orchestrator turn |

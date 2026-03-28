@@ -3,7 +3,7 @@ id: "TASK-f336fa1d"
 type: "task"
 title: "Switch tier-1 packages from file: to published deps + publish"
 description: "Update integrity-validator and SDK to depend on published @orqastudio/types instead of file: references. Fix CI, verify, then publish both."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -32,17 +32,22 @@ relationships:
 ## Scope
 
 ### integrity-validator
+
 Replace in package.json:
+
 - `"@orqastudio/types": "file:../orqa-types"` → `"@orqastudio/types": "^0.1.0"`
 - `"@orqastudio/eslint-config": "file:../orqa-eslint-config"` → `"@orqastudio/eslint-config": "^0.1.0"`
 - `"@orqastudio/test-config": "file:../orqa-test-config"` → `"@orqastudio/test-config": "^0.1.0"`
 
 ### SDK
+
 Replace in package.json:
+
 - `"@orqastudio/types": "file:../orqa-types"` → `"@orqastudio/types": "^0.1.0"`
 - Same for eslint-config and test-config if present
 
 ### For both
+
 - Add `.npmrc` to repo: `@orqastudio:registry=https://npm.pkg.github.com`
 - Verify `npm install` works from registry
 - Verify CI passes

@@ -1,7 +1,9 @@
 ---
 id: DOC-e3a0462c
 type: doc
+status: active
 title: SQLite Schema
+domain: reference
 category: reference
 description: "SQLite database schema covering sessions, messages, governance artifacts, and configuration tables."
 created: 2026-03-02
@@ -12,7 +14,6 @@ relationships:
     type: documents
 ---
 
-
 **Date:** 2026-03-02 | **Updated:** 2026-03-10 | **Status:** Current
 **References:** [Persistence Research](RES-ac474863) [AD-b08f456d](AD-b08f456d), [Design Tokens Research](RES-2d91e2c2)
 
@@ -20,13 +21,12 @@ Full table definitions, indexes, FTS5 configuration, and migration strategy for 
 
 ---
 
-
 ## Database Configuration
 
-PRAGMAs are set by `db::init_db()` in `backend/src-tauri/src/db.rs` using `rusqlite` (NOT `tauri-plugin-sql`). The database is opened directly via `rusqlite::Connection::open()` and wrapped in `Mutex<Connection>` inside `AppState`.
+PRAGMAs are set by `db::init_db()` in `app/src-tauri/src/db.rs` using `rusqlite` (NOT `tauri-plugin-sql`). The database is opened directly via `rusqlite::Connection::open()` and wrapped in `Mutex\<Connection\>` inside `AppState`.
 
 ```rust
-// backend/src-tauri/src/db.rs — init_db()
+// app/src-tauri/src/db.rs — init_db()
 conn.execute_batch("
     PRAGMA journal_mode = WAL;
     PRAGMA foreign_keys = ON;
@@ -40,7 +40,6 @@ conn.execute_batch("
 **WAL mode** is essential for streaming — it allows the UI to read session data while new tokens are being written.
 
 ---
-
 
 ## Core Tables (8 implemented + 3 planned)
 
@@ -322,7 +321,6 @@ CREATE TABLE IF NOT EXISTS enforcement_violations (
 
 ---
 
-
 ## FTS5 Virtual Tables (1)
 
 ### messages_fts
@@ -359,15 +357,14 @@ END;
 
 ---
 
-
 ## Migration Strategy
 
 ### Approach
 
-Numbered SQL migration files in `backend/src-tauri/migrations/`, executed by `db::init_db()` using `rusqlite` directly (NOT `tauri-plugin-sql`). Migrations 001–003 are loaded via `include_str!()` and are fully idempotent. Migrations 004–006 are implemented as Rust functions in `backend/src-tauri/src/db.rs` using `pragma_table_info` guards because SQLite does not support `ALTER TABLE ADD/RENAME COLUMN IF NOT EXISTS`.
+Numbered SQL migration files in `app/src-tauri/migrations/`, executed by `db::init_db()` using `rusqlite` directly (NOT `tauri-plugin-sql`). Migrations 001–003 are loaded via `include_str!()` and are fully idempotent. Migrations 004–006 are implemented as Rust functions in `app/src-tauri/src/db.rs` using `pragma_table_info` guards because SQLite does not support `ALTER TABLE ADD/RENAME COLUMN IF NOT EXISTS`.
 
-```
-backend/src-tauri/migrations/
+```text
+app/src-tauri/migrations/
   001_initial_schema.sql         # Core tables, indexes, FTS5 virtual tables, stream recovery
   002_governance_bootstrap.sql   # governance_analyses, governance_recommendations
   003_enforcement.sql            # enforcement_violations
@@ -382,7 +379,7 @@ Migration 006 (rename `sdk_session_id` → `provider_session_id`) has no corresp
 `db::init_db()` opens the database with `rusqlite::Connection::open()`, applies PRAGMAs, then runs all migrations in order:
 
 ```rust
-// backend/src-tauri/src/db.rs
+// app/src-tauri/src/db.rs
 pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     let conn = Connection::open(path)?;
     conn.execute_batch("PRAGMA journal_mode = WAL; ...");
@@ -458,12 +455,11 @@ Drops `artifacts_fts` and `artifacts`. Artifacts are file-based (`.orqa/`) — S
 
 ---
 
-
 ## Streaming Write Pattern
 
 During active streaming, tokens are buffered in Rust and flushed to SQLite periodically:
 
-```
+```text
 Token arrival → In-memory buffer → Flush every ~500ms → UPDATE messages SET content = ?
                                                       → SET stream_status = 'complete' on finish
 ```
@@ -476,7 +472,6 @@ WHERE stream_status = 'pending';
 ```
 
 ---
-
 
 ## Query Patterns
 
@@ -529,7 +524,6 @@ WHERE pt.project_id = ? AND pt.is_active = 1;
 
 ---
 
-
 ## Global Store (post-MVP)
 
 Cross-project learning requires app-level storage outside any per-project `orqa.db` database. A global SQLite database (e.g., `~/.orqa/global.db`) would store:
@@ -545,11 +539,10 @@ Schema design for `global.db` will be specified when cross-project learning feat
 
 ---
 
-
 ## Table Summary
 
 | Table | Rows (est. 1yr heavy use) | Migration | Status |
-|-------|---------------------------|-----------|--------|
+| ------- | --------------------------- | ----------- | -------- |
 | projects | 10-50 | 001 | Implemented |
 | sessions | 1,000-5,000 | 001 | Implemented |
 | messages | 100,000-500,000 | 001 | Implemented |

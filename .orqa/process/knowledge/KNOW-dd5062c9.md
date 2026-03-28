@@ -2,6 +2,7 @@
 id: KNOW-dd5062c9
 type: knowledge
 title: Shared Validation Engine
+domain: methodology/governance
 summary: "OrqaStudio has **one validation engine** with **three consumers**. All artifact validation — frontmatter schemas, relationship types, status values, broken links, required fields — runs through a shared library."
 description: |
   How the shared validation engine works: a single library in libs/validation/ consumed
@@ -28,13 +29,13 @@ OrqaStudio has **one validation engine** with **three consumers**. All artifact 
 
 ## Architecture
 
-```
+```text
 Plugin schema.json files
         │
         ▼
 ┌─────────────────────┐
 │  libs/validation/    │  ← Single validation engine
-│  (TypeScript)        │
+│  (Rust crate)        │
 └────┬───────┬────────┘
      │       │        │
      ▼       ▼        ▼
@@ -45,7 +46,7 @@ Plugin schema.json files
 
 ### The Engine (libs/validation/)
 
-The validation engine is a TypeScript library that:
+The validation engine is a Rust crate that:
 
 1. **Reads plugin schemas** — each artifact type directory has a `schema.json` (JSON Schema format)
 2. **Validates frontmatter** — checks YAML frontmatter against the schema for required fields, valid enum values, correct types
@@ -56,7 +57,7 @@ The validation engine is a TypeScript library that:
 ### Three Consumers
 
 | Consumer | When It Runs | Response to Violations |
-|----------|-------------|----------------------|
+| ---------- | ------------- | ---------------------- |
 | **LSP adapter** (`orqa lsp`) | Real-time in the editor, on every file save | Red squiggles, warnings, completions |
 | **CLI adapter** (`orqa check`) | On demand from terminal or `make check` | Human-readable error report, exit code |
 | **Pre-commit adapter** (`.githooks/pre-commit`) | On every `git commit` | Blocks commit if errors found |
@@ -66,7 +67,7 @@ The validation engine is a TypeScript library that:
 ## What It Validates
 
 | Check | Example |
-|-------|---------|
+| ------- | --------- |
 | **Required fields** | `id`, `type`, `title`, `status` present in frontmatter |
 | **Valid statuses** | `status: active` not `status: enabled` (per schema enum) |
 | **Valid relationship types** | `synchronised-with` not `synced-with` (per plugin schema) |
@@ -83,7 +84,7 @@ Schemas are **plugin-provided**. Each plugin's `orqa-plugin.json` declares `prov
 ## Agent Actions
 
 | Situation | Action |
-|-----------|--------|
+| ----------- | -------- |
 | Adding a new artifact type | Create a `schema.json` in the type directory. The validation engine picks it up automatically. |
 | Adding a new relationship type | Add it to the plugin's `provides.relationships` array in `orqa-plugin.json`. |
 | Adding a new status value | Add it to the status enum in the relevant `schema.json`. |

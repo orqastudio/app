@@ -2,7 +2,7 @@
 id: "TASK-f45e6ede"
 type: "task"
 title: "LSP server — real-time frontmatter validation"
-status: "active"
+status: active
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 relationships:

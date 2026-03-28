@@ -38,11 +38,13 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
 ### Current State
 
 **Orchestrator prompt size:**
+
 - `CLAUDE.md` (symlink to `plugins/core/agents/AGENT-4c94fe14.md`): **370 lines**
 - Content: Orchestrator methodology, session start protocol, artifact framework, delegation steps
 - Token cost: ~3,000-3,500 tokens (methodology + extensive examples)
 
 **Rule files injected via connector hooks:**
+
 - Total rules in `.claude/rules/` (symlinks): **58 rules**
 - Total lines: **5,358 lines**
 - Total disk size: **384 KB**
@@ -50,6 +52,7 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
 - Token cost: ~48,000 tokens for all rules in one context
 
 **Rule injection mechanism:**
+
 - The `prompt-injector.ts` hook classifies incoming prompts by type (implementation, planning, review, etc.)
 - Selects "most relevant" rules from 8 critical rules + up to 8 category-relevant rules per prompt
 - **Problem**: The "critical rules" set (RULE-99abcea1, RULE-87ba1b81, etc.) is injected on EVERY prompt regardless of context
@@ -58,7 +61,7 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
 ### Token Breakdown
 
 | Component | Lines | Est. Tokens | Loaded When |
-|-----------|-------|-----------|------------|
+| ----------- | ------- | ----------- | ------------ |
 | CLAUDE.md orchestrator prompt | 370 | 3,000 | Every prompt |
 | Critical rules (5 rules × 92 lines avg) | 460 | 3,500 | Every prompt |
 | Category-relevant rules (8 rules × 92) | 736 | 5,300 | Most prompts |
@@ -88,6 +91,7 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
    - **Total per agent**: ~3,000-5,000 tokens
 
 **Total for 8-agent team spawn:**
+
 - Orchestrator context: ~12K tokens
 - 8 × (task delegation 2.4K + knowledge 4K) = **51.2K tokens**
 - **Total team spawn cost: ~63K tokens** (plus the 20K+ the orchestrator already burned in its context)
@@ -95,11 +99,13 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
 ### The Agent Reuse Problem
 
 **Current behavior:**
+
 - Agents run to completion, then the orchestrator creates a new team for the next task
 - No persistent agent context
 - When an agent needs to continue work (e.g., fix a failed code review), it gets a brand new context with all rules reloaded
 
 **Observed issue:**
+
 - Agents spawned via `run_in_background: true` sometimes don't shut down cleanly
 - Idle agents continue to consume tokens via orchestrator polling ("status check" prompts)
 - Each status check includes full context (rules, prompt templates, etc.)
@@ -114,7 +120,7 @@ OrqaStudio's agent orchestration system is currently **burning tokens at an unsu
 
 The `.claude/rules/` directory is a symlink to `.orqa/process/rules/`. Every rule file is symlinked:
 
-```
+```text
 .claude/rules/RULE-99abcea1.md → .orqa/process/rules/RULE-99abcea1.md
 .claude/rules/RULE-87ba1b81.md → .orqa/process/rules/RULE-87ba1b81.md
 ... (56 more)
@@ -152,7 +158,7 @@ This is intentional for **discoverability** — rules are meant to be readable v
 ### Token Cost Breakdown
 
 | Step | Tokens | Frequency |
-|------|--------|-----------|
+| ------ | -------- | ----------- |
 | Prompt classification | 200 | Every prompt |
 | Critical rule fetch + format | 3,500 | Every prompt |
 | Category rule fetch + format | 5,300 | Most prompts |
@@ -210,11 +216,13 @@ The orchestrator reads task findings into its own context:
 ```
 
 **Problem**: After reading 3-4 agent findings, the orchestrator's context is full of implementation details it will never need. This prevents it from:
+
 - Reading governing documentation (runs out of context)
 - Planning the next task tier
 - Coordinating across multiple teams
 
 **Example from this session**:
+
 - Orchestrator reads Researcher findings (~2K tokens)
 - Orchestrator reads Implementer findings (~3K tokens)
 - Orchestrator reads Reviewer findings (~2K tokens)
@@ -229,7 +237,7 @@ The orchestrator reads task findings into its own context:
 
 For a status check prompt ("What's the current state?"):
 
-```
+```text
 User message: 100 tokens
 Orchestrator role definition: 500 tokens (minimal)
 Single relevant rule: 500 tokens
@@ -241,7 +249,7 @@ Total: ~1,600 tokens
 
 For the same status check:
 
-```
+```text
 User message: 100 tokens
 CLAUDE.md orchestrator prompt: 3,000 tokens
 All critical rules: 3,500 tokens
@@ -259,7 +267,7 @@ Total: ~21,400 tokens
 ## 8. Findings Summary Table
 
 | Issue | Current State | Theoretical Min | Token Gap | Priority |
-|-------|---------------|-----------------|-----------|-|
+| ------- | --------------- | ----------------- | ----------- | - |
 | Rule loading on every prompt | 8,800 tokens | 500 tokens | 8,300 | 🔴 Critical |
 | Knowledge injection overhead | 4,000 tokens/agent | 1,500 tokens/agent | 2,500 | 🔴 Critical |
 | Agent context duplication (8 agents) | 64K tokens | 24K tokens | 40K | 🟠 High |
@@ -278,17 +286,20 @@ Total: ~21,400 tokens
 **What**: Instead of injecting all critical rules on every prompt, use semantic search to find the 3-4 rules actually relevant to the current turn.
 
 **How**:
+
 1. Replace `CRITICAL_RULE_IDS` fixed set with semantic search
 2. Query: "What rules apply to [prompt classification]?"
 3. Return top-3 matches instead of fixed 5 rules
 4. Cache results per-session to avoid duplicate searches
 
 **Implementation**:
+
 - Modify `prompt-injector.ts` to call `search_semantic` for rule discovery
 - Fall back to critical rules if search is unavailable (offline mode)
 - Log rule selection for observability
 
 **Cost**:
+
 - First-time setup: ~1-2 seconds per session
 - Savings: 3,500-5,300 tokens per prompt × 10-20 prompts = **35K-105K tokens saved**
 
@@ -301,16 +312,19 @@ Total: ~21,400 tokens
 **What**: Enforce findings-to-disk pattern — orchestrator NEVER reads agent findings into its own context. All findings stay in `.state/team/*/` files.
 
 **How**:
+
 1. Create a PostToolUse hook that blocks `Read` on task findings files
 2. Orchestrator verifies completion by checking file existence + basic parsing (task ID, status)
 3. For detailed review, orchestrator spawns a lightweight Reviewer agent, not itself
 
 **Implementation**:
+
 - Add enforcement entry to prevent Read of `.state/team/*/task-*.md` files by orchestrator
 - Update delegation template to clarify orchestrator doesn't read findings
 - Create auto-Reviewer delegation for "verify this completed task" requests
 
 **Cost**:
+
 - No code overhead
 - Savings: 7K tokens in orchestrator context per session
 
@@ -323,6 +337,7 @@ Total: ~21,400 tokens
 **What**: Use cheaper models (sonnet) for lightweight agents, reserve opus for complex tasks.
 
 **How**:
+
 ```yaml
 Model Selection by Task:
 - Simple tasks (linting, formatting, validation): sonnet
@@ -333,11 +348,13 @@ Model Selection by Task:
 ```
 
 **Implementation**:
+
 - Add `model` field to task artifacts (optional, defaults to opus)
 - Modify agent spawning to check task.model and use that instead of agent.model
 - Default policy: orchestrator=opus, everyone else=sonnet unless task specifies
 
 **Cost**:
+
 - Sonnet is ~30% cheaper than opus on input tokens
 - For an 8-agent team: (80% of agents on sonnet) × 30% savings = **6-8K tokens per team**
 - 3-4 teams per session = **18-32K tokens saved**
@@ -351,17 +368,20 @@ Model Selection by Task:
 **What**: Deduplicate and rank knowledge by relevance before injection.
 
 **How**:
+
 1. Layer 1 (Declared): Load declared knowledge as baseline
 2. Layer 2 (Semantic): Run search, filter results by MIN_SCORE = 0.40 (up from 0.25)
 3. Deduplication: Remove Layer 2 results that duplicate Layer 1
 4. Ranking: Order by score, keep only top-3 new results
 
 **Implementation**:
+
 - Modify `knowledge-injector.ts` to deduplicate and filter
 - Increase MIN_SCORE threshold
 - Add telemetry to track knowledge injection counts
 
 **Cost**:
+
 - Savings: 1-3K tokens per agent × 8 agents = **8-24K tokens per team**
 - 1 team per session average = **8K tokens**
 
@@ -374,16 +394,19 @@ Model Selection by Task:
 **What**: Add explicit agent shutdown verification to prevent stale agents from consuming idle tokens.
 
 **How**:
+
 1. Add a post-TeamDelete hook that verifies all agents are killed
 2. If agents don't respond to shutdown, log their IDs and terminate forcibly
 3. Track agent shutdown in telemetry
 
 **Implementation**:
+
 - Add subprocess tracking to agent spawning
 - Verify all subprocesses are dead after TeamDelete
 - If not, kill them and log a warning
 
 **Cost**:
+
 - Savings: 100-300 tokens per stale agent per session × 2-3 agents = **1-2K tokens**
 
 **Risk**: Low. Just better process cleanup.
@@ -393,18 +416,23 @@ Model Selection by Task:
 ## 10. Implementation Roadmap
 
 ### Phase 1: Quick Wins (1-2 hours, 15K tokens saved)
+
 1. **Orchestrator context discipline** (Recommendation 2) — Easy, no risk
 2. **Agent shutdown enforcement** (Recommendation 5) — Easy, improves stability
 
 ### Phase 2: Medium Effort (4-6 hours, 35K tokens saved)
-3. **Lazy rule loading** (Recommendation 1) — Moderate, high impact
-4. **Selective knowledge injection** (Recommendation 4) — Easy, incremental improvement
+
+1. **Lazy rule loading** (Recommendation 1) — Moderate, high impact
+2. **Selective knowledge injection** (Recommendation 4) — Easy, incremental improvement
 
 ### Phase 3: Higher Risk (8-12 hours, 25K tokens saved)
-5. **Agent model tiering** (Recommendation 3) — Requires validation, high savings
+
+1. **Agent model tiering** (Recommendation 3) — Requires validation, high savings
 
 ### Total Effort: ~20 hours
+
 ### Total Tokens Saved: ~60K tokens/session (40-60% reduction)
+
 ### ROI: Significant reduction in context window pressure, enables longer sessions
 
 ---
@@ -412,6 +440,7 @@ Model Selection by Task:
 ## 11. Supporting Data
 
 ### Rule File Statistics
+
 - Total rule files: 58
 - Total lines: 5,358
 - Average size: 92 lines
@@ -419,11 +448,13 @@ Model Selection by Task:
 - Most rules: 50-150 lines (median: 92)
 
 ### Agent Context Sizes
+
 - Orchestrator (CLAUDE.md): 370 lines / 3,000 tokens
 - Average agent definition: 40-60 lines / 300-400 tokens
 - Average knowledge artifact: 150-300 lines / 1,200-2,400 tokens per artifact
 
 ### Session Patterns
+
 - Average session: 10-20 orchestrator prompts
 - Average team size: 6-8 agents
 - Average team spawns per session: 2-4 teams

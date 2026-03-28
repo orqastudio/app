@@ -3,7 +3,7 @@ id: "TASK-de594fa2"
 type: "task"
 title: "Implement SQLite database and migrations"
 description: "Set up SQLite database creation, schema initialization, and migration infrastructure for conversation persistence."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Set up the SQLite database layer with connection management, initial schema for sessions, messages, and tool calls, and a migration runner for schema evolution.

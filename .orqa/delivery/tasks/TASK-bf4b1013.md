@@ -3,7 +3,7 @@ id: "TASK-bf4b1013"
 type: "task"
 title: "Backfill Historical Artifact Metadata"
 description: "Backfill historical artifact data so the decision history, lesson pipeline, and surpassed artifact workflows have real data to test against when we build the navigation and visualization tooling. Some reconstruction from session history is expected — the goal is representative data, not perfect accuracy. This ensures we're dogfooding the full artifact lifecycle, not just the happy path of \"create and leave as accepted."
-status: "completed"
+status: archived
 created: 2026-03-08T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 assignee: "AGENT-bbad3d30"
@@ -22,6 +22,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 The artifact system currently has 20 decisions, 3 lessons, and 0 surpassed artifacts. When we build tooling to navigate decision history and the lesson pipeline, we need real data that exercises:
@@ -53,6 +54,7 @@ Examples of real evolution that happened:
 ### Lessons to Add
 
 Real lessons from recent sessions:
+
 - `$derived(() => ...)` vs `$derived.by(() => ...)` — caused app hang
 - Config paths must match disk paths — caused empty artifact views
 - Symlinks vs copies for `.claude/` — caused governance divergence

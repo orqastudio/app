@@ -2,6 +2,8 @@
 id: KNOW-c4d3e52b
 type: knowledge
 title: "SvelteKit Patterns Reference"
+domain: platform/svelte
+description: "Patterns for SvelteKit load functions, page props typing, form actions, and server vs universal load function selection."
 summary: "SvelteKit Patterns Reference"
 status: active
 created: 2026-03-20
@@ -18,7 +20,7 @@ relationships:
 Two types: universal (`+page.js`) and server-only (`+page.server.ts`).
 
 | Use +page.server.ts | Use +page.js |
-|---------------------|--------------|
+| --------------------- | -------------- |
 | Secrets/credentials, DB, server APIs | Public APIs, non-serializable data (functions, classes) |
 
 Server load: use `$env/static/private` for secrets. Universal load: only `$env/static/public`. Server load cannot return non-serializable values (functions, class instances).
@@ -63,7 +65,7 @@ export const actions = {
 ```
 
 | Situation | Function | Result |
-|-----------|----------|--------|
+| ----------- | ---------- | -------- |
 | Validation error | `fail(400, {...})` | Form state preserved |
 | Not found / server crash | `throw error(status, ...)` | Error page |
 | Auth required | `throw redirect(303, ...)` | Redirect |
@@ -75,6 +77,7 @@ Module-level state on the server persists across requests, leaking data between 
 **Dangerous:** module-level `let` variables, global `$state` — shared across all requests on the server.
 
 **Safe patterns:**
+
 - `event.locals` — per-request, set in `hooks.server.ts`, accessed in load functions
 - Return all user data from load functions, never from module scope
 - `setContext` in layouts for component-tree-scoped state

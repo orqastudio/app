@@ -59,6 +59,7 @@ A breaking change is any change that could cause existing plugins, artifacts, or
 ### Detection
 
 The app should be able to diff the current core.json against the incoming version's core.json and identify:
+
 - New required relationships → which artifacts need updating
 - Removed relationship keys → which artifacts use them
 - Changed constraints → which plugins are affected
@@ -67,6 +68,7 @@ The app should be able to diff the current core.json against the incoming versio
 ### Communication
 
 Before an update applies:
+
 - Show a breaking change report
 - List affected plugins with their compatibility status
 - Offer migration guidance or auto-migration where possible
@@ -89,7 +91,7 @@ When the platform makes a breaking change:
 Different projects map delivery artifacts to release artifacts differently:
 
 | Pattern | Milestone → Release | Use Case |
-|---------|---------------------|----------|
+| --------- | --------------------- | ---------- |
 | 1:1 | Each milestone is a release | Small projects, rapid iteration |
 | N:1 | Multiple milestones batch into a release | Large projects, quarterly releases |
 | Tagged | Releases triggered by git tags, milestones are planning only | Open-source projects |
@@ -100,6 +102,7 @@ This mapping should live in `project.json` or the software plugin config — not
 ## Changelog Generation
 
 The artifact graph already knows:
+
 - Which epics were completed since the last release
 - Which tasks delivered those epics
 - Which decisions drove the work

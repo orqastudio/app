@@ -2,6 +2,7 @@
 id: KNOW-e6fee7a0
 type: knowledge
 title: First-Party Plugin Development
+domain: methodology/governance
 summary: "This skill is loaded when the base plugin development skill detects the dev environment: the current working directory is inside a repository that has a project governance directory AND a `plugins/` directory at root."
 description: |
   First-party plugin workflow for the platform dev environment. Use when creating
@@ -39,6 +40,7 @@ orqa plugin create --template <cli-tool|frontend|full|sidecar> --name <plugin-na
 ```
 
 This:
+
 - Copies the template into `plugins/<plugin-name>/`
 - Creates a repository under the platform org
 - Initialises git, sets remote, pushes initial commit
@@ -49,6 +51,7 @@ This:
 ### 2. Plugin Manifest
 
 Every plugin must have `orqa-plugin.json` at root. The template provides a skeleton — fill in:
+
 - `name` — `@platform/plugin-<name>` for first-party
 - `displayName` — human-readable name
 - `description` — one-line summary
@@ -66,6 +69,7 @@ Plugin content is copied from plugin source directories to `.orqa/` at install t
 **Do NOT edit plugin-owned files directly in `.orqa/`.** The engine enforces edit protection on manifest-tracked files.
 
 When editing plugin content:
+
 1. Edit source in `plugins/<name>/knowledge/`, `plugins/<name>/rules/`, etc.
 2. Run `orqa plugin refresh <name>` to rebuild and re-sync to `.orqa/`
 
@@ -82,6 +86,7 @@ First-party plugins live as submodules in the dev environment. The `orqa dev` co
 ### 5. Knowledge, Documentation, Agents
 
 Every plugin that defines artifact types or relationships MUST ship:
+
 - A **knowledge artifact** teaching agents how to use the plugin's artifacts
 - A **documentation** artifact teaching humans the same
 - Connected via `synchronised-with`
@@ -93,6 +98,7 @@ Push to `main` triggers the publish workflow which publishes a dev-tagged versio
 ### 7. Enforcement
 
 Run `orqa enforce` in the plugin directory. The validator checks:
+
 - Manifest schema compliance (`content`, `provides`, `dependencies`, `build` fields)
 - Knowledge/doc frontmatter validity
 - Relationship target resolution

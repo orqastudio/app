@@ -3,7 +3,7 @@ id: "TASK-7eabe1a5"
 type: "task"
 title: "Add lint event type to enforcement schema"
 description: "Add a 'lint' event type to the enforcement schema. This documents that\nenforcement for a pattern is delegated to an external linter tool, not\nhandled by the OrqaStudio rule engine directly.\n"
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:
@@ -27,7 +27,9 @@ doesn't execute anything, but it closes the gap between "documented standard" an
 
 1. Update `.orqa/process/rules/schema.json`: add `lint` to event enum
 2. Document the convention: `lint` entries carry `pattern` (the linter rule name),
+
    `message` (what it enforces), and optionally `paths` (which files it applies to)
+
 3. No changes needed to rule-engine.mjs — it ignores events it doesn't handle
 
 ## Verification

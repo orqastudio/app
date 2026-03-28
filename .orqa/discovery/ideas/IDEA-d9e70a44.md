@@ -18,6 +18,7 @@ relationships:
   - target: "PERSONA-c4afd86b"
     type: "benefits"
 ---
+
 ## Motivation
 
 The current OrqaDev dashboard (`debugger/dev-dashboard.html`) bundles the UI and the SSE server together. Separating these concerns — a pure SSE endpoint as the data layer, with multiple consumers — enables richer tooling without coupling to a single HTML page.
@@ -26,7 +27,7 @@ The current OrqaDev dashboard (`debugger/dev-dashboard.html`) bundles the UI and
 
 ### Architecture
 
-```
+```text
 Dev Controller (debugger/dev.mjs)
   └─ SSE endpoint: GET /events
        ├─ OrqaDev Companion App (dedicated window, richer UI)
@@ -37,14 +38,17 @@ Dev Controller (debugger/dev.mjs)
 ### Three pieces
 
 1. **SSE endpoint** — the dev controller already serves SSE at `GET /events`. Strip the
+
    HTML dashboard to just the endpoint (or keep the HTML as a lightweight fallback). Define
    a structured event schema with log levels, source tags, timestamps, and metadata.
 
 2. **OrqaDev Companion App** — a separate app (likely a small Tauri app or persistent web
+
    app) that connects to the SSE endpoint and provides a rich debugging experience: log
    filtering, search, process controls, performance graphs, error aggregation.
 
 3. **In-app debug overlay** — a toggleable UI inside OrqaStudio itself that subscribes to
+
    the same SSE feed. Activated via a dev menu or keyboard shortcut. Useful when you want
    to see logs without switching windows. Only available when the dev controller is running.
 

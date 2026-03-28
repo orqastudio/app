@@ -3,7 +3,7 @@ id: "TASK-9841c4de"
 type: "task"
 title: "Implement governance coverage dashboard widget"
 description: "Built the dashboard widget showing governance coverage health with visual indicators for each governance area."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Built the governance coverage dashboard widget displaying per-area coverage percentages, an overall health score, and a link to the detailed analysis view.

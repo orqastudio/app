@@ -1,7 +1,9 @@
 ---
 id: DOC-ffad3f6b
 type: doc
+status: active
 title: Sub-Agent Support Architecture
+domain: architecture
 category: architecture
 description: Architecture for sub-agent support enabling nested agent delegation within conversations.
 created: 2026-03-05
@@ -16,13 +18,11 @@ relationships:
     rationale: Documentation page references AD-e4a3b5da
 ---
 
-
 **Date:** 2026-03-05
 
 Sub-agent support allows the orchestrator agent to delegate tasks to specialized sub-agents within a single OrqaStudio™ session. The `spawn_agent` tool spawns a sub-agent with a declared role and instructions. The agent registry reads `.orqa/process/agents/*.md` to discover available roles. Child tool calls are aggregated and not surfaced individually in the conversation view. Turn limits prevent runaway sub-agent loops.
 
 ---
-
 
 ## `spawn_agent` Tool
 
@@ -90,7 +90,6 @@ The `spawn_agent` tool is an OrqaStudio MCP tool, implemented in Rust, exposed t
 
 ---
 
-
 ## Agent Registry
 
 The agent registry reads `.orqa/process/agents/*.md` at startup and indexes available roles.
@@ -128,7 +127,6 @@ capabilities:
 
 ---
 
-
 ## Explore Mode
 
 Explore mode is a lightweight variant of `spawn_agent` optimized for codebase research. The explore-mode sub-agent:
@@ -141,7 +139,6 @@ Explore mode is a lightweight variant of `spawn_agent` optimized for codebase re
 Use explore mode when the orchestrator needs to gather information before deciding on an implementation approach. The result is a structured summary, not a set of file changes.
 
 ---
-
 
 ## Output Aggregation
 
@@ -171,7 +168,6 @@ CREATE TABLE sub_agent_turns (
 
 ---
 
-
 ## Turn Limits
 
 Turn limits prevent runaway sub-agent loops. When a sub-agent reaches its `max_turns` limit:
@@ -185,12 +181,11 @@ Turn limits are enforced by the Rust runtime, not by the sidecar. The sidecar re
 **Default limits by mode:**
 
 | Mode | Default | Maximum |
-|------|---------|---------|
+| ------ | --------- | --------- |
 | Normal | 20 turns | 50 turns |
 | Explore | 10 turns | 20 turns |
 
 ---
-
 
 ## Enforcement in Sub-Agents
 
@@ -198,22 +193,20 @@ Sub-agent tool calls pass through the same enforcement engine as parent tool cal
 
 ---
 
-
 ## IPC Commands
 
 | Command | Input | Output | Description |
-|---------|-------|--------|-------------|
-| `list_agent_roles` | — | `Vec<AgentRole>` | List available roles from the registry |
+| --------- | ------- | -------- | ------------- |
+| `list_agent_roles` | — | `Vec\<AgentRole\>` | List available roles from the registry |
 | `get_agent_role` | `role: String` | `AgentRole` | Get role details including skills and required reading |
-| `get_sub_agent_turns` | `spawn_call_id: String` | `Vec<SubAgentTurn>` | Get the full turn log for a spawn_agent call |
+| `get_sub_agent_turns` | `spawn_call_id: String` | `Vec\<SubAgentTurn\>` | Get the full turn log for a spawn_agent call |
 
 ---
-
 
 ## Rust Module Structure
 
 ```text
-backend/src-tauri/src/
+app/src-tauri/src/
   agents/
     mod.rs             -- AgentRegistry struct, spawn_agent tool handler
     registry.rs        -- Reads .orqa/process/agents/*.md, builds role index
@@ -227,7 +220,6 @@ backend/src-tauri/src/
 ```
 
 ---
-
 
 ## Related Documents
 

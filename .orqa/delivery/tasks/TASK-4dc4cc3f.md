@@ -2,7 +2,7 @@
 id: "TASK-4dc4cc3f"
 type: "task"
 title: "Update integrity scanner to validate hex ID format"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

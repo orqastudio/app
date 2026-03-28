@@ -3,7 +3,7 @@ id: "TASK-8c4ca6b8"
 type: "task"
 title: "Remove old software-specific agents"
 description: "Delete the 14 old agent files that have been merged into universal roles. Update all cross-references in rules, skills, epics, and documentation that mention old agent names."
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"

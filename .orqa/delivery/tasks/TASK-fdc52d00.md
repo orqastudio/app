@@ -3,7 +3,7 @@ id: "TASK-fdc52d00"
 type: "task"
 title: "Define user journeys"
 description: "Documented end-to-end user flows for primary use cases including first-run, conversation, artifact browsing, and governance review."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Documented end-to-end user journeys for first-run onboarding, conversation workflow, artifact browsing, and governance review, covering both happy paths and error states.

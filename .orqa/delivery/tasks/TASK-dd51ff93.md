@@ -3,7 +3,7 @@ id: "TASK-dd51ff93"
 type: "task"
 title: "Product rebrand to Orqa Studio"
 description: "Full product rebrand from Forge to Orqa Studio across all code, configuration, documentation, agent definitions, and brand assets."
-status: "completed"
+status: archived
 created: 2026-03-04T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"
@@ -18,6 +18,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Full product rebrand from Forge to Orqa Studio across all code, configuration,

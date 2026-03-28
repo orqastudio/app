@@ -3,7 +3,7 @@ id: "TASK-bb4fa466"
 type: "task"
 title: "Write graph-based orchestrator prompt"
 description: "Rewrite the orchestrator prompt from ~2000 lines of inlined rules/tables to ~200 lines of graph navigation instructions. The prompt teaches agents how to read and extend the artifact graph."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 docs:
@@ -24,6 +24,7 @@ relationships:
   - target: "TASK-7a8690e2"
     type: "depends-on"
 ---
+
 ## What
 
 The orchestrator prompt is the most critical artifact in the system. Currently it's ~2000 lines encoding everything inline. The target is ~200 lines that teach graph navigation.
@@ -58,6 +59,7 @@ The orchestrator prompt is the most critical artifact in the system. Currently i
 ## Critical Preservation
 
 These MUST remain in the prompt (not delegated to graph):
+
 - Role definitions and ownership boundaries
 - NON-NEGOTIABLE safety rules (no unwrap, no --no-verify, no force push)
 - The documentation-first process sequence

@@ -1,7 +1,9 @@
 ---
 id: DOC-d9cc1f84
 type: doc
+status: active
 title: Orchestration
+domain: architecture
 category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: 2026-03-02
@@ -104,7 +106,7 @@ Additional skills are injected by the orchestrator based on task scope per [RULE
 All agents are universal roles (see [AD-48b310f9](AD-48b310f9)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-8abcbfd5](RULE-8abcbfd5). Domain expertise is loaded via skills — the role + skills combination determines capability.
 
 | Task Type | Role | Skills to Load |
-|-----------|------|----------------|
+| ----------- | ------ | ---------------- |
 | Rust backend, Tauri commands, domain logic, SQLite persistence | Implementer | `rust-async-patterns`, `tauri-v2`, `orqa-ipc-patterns`, `orqa-error-composition` |
 | Svelte component, store, TypeScript IPC wrapper | Implementer | `svelte5-best-practices`, `typescript-advanced-types`, `orqa-store-patterns` |
 | UI component styling, design system, Tailwind classes | Designer | `svelte5-best-practices`, `tailwind-design-system` |
@@ -149,7 +151,7 @@ Every task follows this lifecycle without exception:
 The orchestrator MUST NOT mark a task complete without all three reviewers passing.
 
 | Gate | Agent | Checks |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | 1 | `code-reviewer` | clippy/rustfmt/ESLint/svelte-check zero errors, no stubs, 80%+ coverage, doc compliance, all layers complete |
 | 2 | `qa-tester` | End-to-end functional correctness, smoke test -- "would it work right now?" |
 | 3 | `ux-reviewer` | Labels match UI specs, all states handled, shared components, no jargon (if UI-facing) |

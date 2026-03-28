@@ -3,7 +3,7 @@ id: "TASK-4b7c5d82"
 type: "task"
 title: "Migrate viewer components to SDK: frontmatter from graph, link handling"
 description: "Replace parseFrontmatter() calls in ArtifactViewer, AgentViewer, and SkillViewer with artifactGraph metadata lookups. Update internal link handling."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

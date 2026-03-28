@@ -2,6 +2,7 @@
 id: KNOW-d03337ac
 type: knowledge
 title: "Project Type: Software"
+domain: integration/connector
 summary: "Adds software development governance to a base OrqaStudio setup. This is a project type preset — it layers development-specific rules, skills, and documentation templates on top of the core governance foundation."
 description: |
   Software development governance preset: adds worktree workflow rules,
@@ -30,7 +31,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Additional Rules
 
 | Rule | Purpose |
-|------|---------|
+| ------ | --------- |
 | `coding-standards.md` | Language-specific coding standards (populated from inference) |
 | `testing-standards.md` | Test organisation, coverage requirements, mock boundaries |
 | `git-workflow.md` | Worktree workflow, branch naming, merge protocol |
@@ -43,7 +44,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Additional Skills (loaded based on detected stack)
 
 | Detected Stack | Skills Added |
-|---------------|-------------|
+| --------------- | ------------- |
 | Rust | `rust-async-patterns` |
 | TypeScript | `typescript-advanced-types` |
 | Svelte | `svelte5-best-practices` |
@@ -53,7 +54,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 ### Documentation Templates
 
 | Template | Path | Purpose |
-|----------|------|---------|
+| ---------- | ------ | --------- |
 | Coding Standards | `.orqa/documentation/development/coding-standards.md` | Populated from inference + user input |
 | Architecture Decisions | `.orqa/documentation/development/decisions.md` | Index of architecture decisions |
 | Development Commands | `.orqa/documentation/development/commands.md` | Build/test/lint command reference |
@@ -63,7 +64,7 @@ Adds software development governance to a base OrqaStudio setup. This is a proje
 For software projects, the orchestrator's Tier 2 injection table is populated:
 
 | Task Touches | Inject Skills |
-|-------------|---------------|
+| ------------- | --------------- |
 | Backend code | `orqa-domain-services`, `orqa-error-composition`, `orqa-ipc-patterns` (if Tauri) |
 | Frontend code | `orqa-store-patterns`, `orqa-store-orchestration` |
 | Database code | `orqa-repository-pattern` |
@@ -113,7 +114,7 @@ Software projects require regular commits to prevent work loss and maintain clea
 ### Commit Boundaries
 
 | Work Type | When to Commit |
-|-----------|---------------|
+| ----------- | --------------- |
 | Feature implementation (worktree) | At each sub-task completion |
 | Bug fixes | After each fix, before starting the next |
 | Governance-only work (rules, docs, artifacts) | At each logical milestone or every ~20 files |

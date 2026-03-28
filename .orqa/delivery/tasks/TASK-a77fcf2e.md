@@ -3,7 +3,7 @@ id: "TASK-a77fcf2e"
 type: "task"
 title: "Move sidecar to sidecars/claude-agentsdk-sidecar/"
 description: "Relocate sidecar/ to sidecars/claude-agentsdk-sidecar/ and update all references in Makefile and Rust source."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

@@ -2,7 +2,7 @@
 id: "TASK-49b455ac"
 type: "task"
 title: "Consolidate search skills — merge chunkhound, orqa-code-search, orqa-native-search into search"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

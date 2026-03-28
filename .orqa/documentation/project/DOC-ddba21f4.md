@@ -2,6 +2,7 @@
 id: DOC-ddba21f4
 type: doc
 title: Centralized Logging Guide
+domain: guides
 status: active
 created: 2026-03-19
 updated: 2026-03-24
@@ -27,7 +28,7 @@ OrqaStudio uses a centralized logging system that routes all output — from the
 
 ## Architecture
 
-```
+```text
 Frontend Code → logger("module") → Log Entry
                                       ↓
                               ┌───────┴───────┐
@@ -59,7 +60,7 @@ await log.perfAsync("label", () => async());// async timing
 ## Log Levels
 
 | Level | Console | Dashboard | When to Use |
-|-------|---------|-----------|-------------|
+| ------- | --------- | ----------- | ------------- |
 | `debug` | Dev only | Yes | Detailed trace info during development |
 | `info` | Dev only | Yes | Normal operational events (navigation, loads) |
 | `perf` | Dev only | Yes | Performance timing measurements |
@@ -71,12 +72,15 @@ await log.perfAsync("label", () => async());// async timing
 Access at `http://localhost:10401` when the dev environment is running.
 
 ### Filters
+
 - **Source buttons** — toggle individual modules on/off (navigation, artifact, graph, plugins, etc.)
 - **Level buttons** — toggle debug/info/perf/warn/error visibility
 - **Text search** — filter by content substring
 
 ### Source Colours
+
 Each log source has a consistent colour in the dashboard for visual scanning:
+
 - Process sources: controller (amber), vite (green), rust (purple)
 - Library watchers: types, sdk, cli, components, software
 - SDK modules: navigation (blue), artifact (green), graph (lime), plugins (tan)

@@ -3,7 +3,7 @@ id: "TASK-d29cb6b9"
 type: "task"
 title: "Update project.json, READMEs, and symlinks for app layout"
 description: "After directory moves, update project.json artifacts array, all directory README frontmatter (icon, label, description, sort), and .claude/ symlinks so the app scanner renders the new three-level structure correctly."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null

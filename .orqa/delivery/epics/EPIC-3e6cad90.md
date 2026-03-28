@@ -3,7 +3,7 @@ id: "EPIC-3e6cad90"
 type: "epic"
 title: "Knowledge Maturity Pipeline — Full Migration"
 description: "Migrate all governance artifacts to the AD-430829f1 knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-12"
 updated: "2026-03-12"
@@ -22,6 +22,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 [AD-430829f1](AD-430829f1) defines the Knowledge Maturity Pipeline — restructuring governance artifacts around a six-stage learning lifecycle with mandatory bidirectional relationships. The design is complete. This epic is the full migration.
@@ -29,12 +30,14 @@ relationships:
 This must be done in one pass. A half-migrated state — some artifacts with relationships, some without; some schemas requiring fields, others not — creates exactly the kind of drift the pipeline is designed to prevent. Mid-migration hell is worse than the current state.
 
 **What exists today:**
+
 - ~150 governance artifacts (16 lessons, 42 decisions, 44 rules, 48 skills) with no pipeline relationships
 - Schemas updated with optional `relationships`, `maturity`, `category` fields (Phase 1 already done)
 - `rule-overrides` field added to task and epic schemas
 - No mechanism to read `rule-overrides` at enforcement time
 
 **What this epic delivers:**
+
 - Rule-overrides mechanism working in both prompt injection and pre-commit hooks
 - Every governance artifact has a `relationships` array populated with pipeline connections
 - Lessons have `maturity` field (observation/understanding)
@@ -58,6 +61,7 @@ Build the scoped rule suspension system before touching any artifacts.
 ### Phase 1: Schema Changes (ALREADY DONE)
 
 Schemas already updated this session with optional fields:
+
 - `governance/lessons/schema.json` — `maturity`, `relationships`
 - `governance/decisions/schema.json` — `relationships`
 - `governance/rules/schema.json` — `relationships`
@@ -68,6 +72,7 @@ Schemas already updated this session with optional fields:
 AI proposes relationships for all ~150 artifacts. Human reviews in batches.
 
 **Batch order** (most connected first):
+
 1. **Rules** (44) — add `grounded` to decisions/pillars
 2. **Skills** (48) — add `category` and `grounded` to decisions/pillars
 3. **Decisions** (42) — add `grounded-by` and `enforces` to skills/rules already backfilled
@@ -78,6 +83,7 @@ Each batch: AI proposes → human reviews → commit. Later batches use earlier 
 ### Phase 3: Make Fields Required
 
 Single commit after Phase 2:
+
 - Move `relationships` into `required` in all four governance schemas
 - Move `maturity` into `required` for lessons
 - Move `category` into `required` for skills
@@ -86,6 +92,7 @@ Single commit after Phase 2:
 ### Phase 4: Deprecate Old Fields
 
 Single commit after Phase 3 is stable:
+
 - Remove `evolves-into` from lesson frontmatter and schema
 - Remove `promoted-from` from rule frontmatter and schema
 - Remove `research-refs` from decision frontmatter and schema (data migrated to `informed-by` relationships)
@@ -93,7 +100,7 @@ Single commit after Phase 3 is stable:
 ## Tasks
 
 | ID | Title | Depends On | Phase |
-|----|-------|-----------|-------|
+| ---- | ------- | ----------- | ------- |
 | [TASK-749d6fbb](TASK-749d6fbb) | Implement rule-overrides in CLI plugin prompt injection | — | 0 |
 | [TASK-5c883790](TASK-5c883790) | Implement rule-overrides in pre-commit hook | — | 0 |
 | [TASK-281e393a](TASK-281e393a) | Build AI-assisted backfill and link verification tooling | [TASK-749d6fbb](TASK-749d6fbb), [TASK-5c883790](TASK-5c883790) | 1.5 |

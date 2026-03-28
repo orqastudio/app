@@ -3,7 +3,7 @@ id: "TASK-7e609abd"
 type: "task"
 title: "Backfill existing artifacts to match body templates"
 description: "Audit all existing planning and governance artifacts and add missing required body sections so they pass the new body template linting."
-status: "completed"
+status: archived
 created: 2026-03-10T00:00:00.000Z
 updated: 2026-03-10T00:00:00.000Z
 assignee: "AGENT-4c94fe14"
@@ -18,6 +18,7 @@ relationships:
   - target: "TASK-42ddbdb3"
     type: "depends-on"
 ---
+
 ## What
 
 Existing artifacts were created before body templates existed. Many are missing required sections or have content that doesn't follow the template structure.

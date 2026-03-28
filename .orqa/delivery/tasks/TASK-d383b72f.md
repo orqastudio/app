@@ -3,7 +3,7 @@ id: TASK-d383b72f
 type: task
 title: Fix milestone card progress circle centering (F40)
 description: Fix the vertical alignment of progress bar circles on milestone cards so they are vertically centred on their label text.
-status: completed
+status: archived
 priority: P2
 scoring:
   impact: 1

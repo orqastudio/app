@@ -3,7 +3,7 @@ id: TASK-16fc8f8f
 type: task
 title: Artifact link settings — display mode and per-type colour coding
 description: Add project settings for artifact link display mode (ID vs title) and per-type colour configuration. Settings stored in project.json.
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 3

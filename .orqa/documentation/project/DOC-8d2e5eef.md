@@ -1,7 +1,9 @@
 ---
 id: DOC-8d2e5eef
 type: doc
+status: active
 title: Agent Team Structure
+domain: architecture
 description: "How the OrqaStudio development agent team is organised: specialist dev team agents (Rust, Svelte, Integration), the multi-role Governance Steward, Plugin Developer, and how the orchestrator delegates work across them."
 category: architecture
 created: 2026-03-24
@@ -25,7 +27,7 @@ This document describes the team composition for the OrqaStudio development proj
 The core framework plugin (`@orqastudio/plugin-core-framework`) defines the universal agent roles that every project gets:
 
 | Role | Agent ID | Purpose |
-|------|----------|---------|
+| ------ | ---------- | --------- |
 | Orchestrator | AGENT-4c94fe14 | Coordinates work, delegates to specialists, manages artifact lifecycle |
 | Implementer | AGENT-e5dd38e4 | Generic implementation — base role for specialist implementers |
 | Reviewer | AGENT-bbad3d30 | Independent quality verification — PASS/FAIL verdicts |
@@ -41,7 +43,7 @@ The core framework plugin (`@orqastudio/plugin-core-framework`) defines the univ
 These agents inherit from the generic Implementer and carry domain-specific knowledge via `employs` relationships:
 
 | Specialist | Plugin | Domain | Key Knowledge |
-|-----------|--------|--------|--------------|
+| ----------- | -------- | -------- | -------------- |
 | **Rust Specialist** | `@orqastudio/plugin-software` | Rust backend, Tauri commands, domain services | Error composition, repository patterns, async Rust |
 | **Svelte Specialist** | `@orqastudio/plugin-svelte` | Svelte 5 frontend, shadcn-svelte, stores | Runes patterns, component purity, store orchestration |
 | **Integration Specialist** | `@orqastudio/plugin-tauri` | Cross-boundary wiring, IPC contracts | Tauri IPC patterns, type consistency, end-to-end flows |
@@ -51,7 +53,7 @@ These agents inherit from the generic Implementer and carry domain-specific know
 The Governance Steward (AGENT-ae63c406) is a multi-role agent that handles all artifact-touching work:
 
 | Role | When Used | What It Does |
-|------|-----------|-------------|
+| ------ | ----------- | ------------- |
 | **Governance Steward** | Creating/updating rules, knowledge, decisions, lessons | Ensures schema compliance, relationship integrity, correct placement |
 | **Documentation Maintainer** | Documentation needs updating or pairing | Keeps docs accurate, enforces the doc+knowledge pairing rule |
 | **Artifact Auditor** | Schema violations or structural problems found | Finds and fixes invalid statuses, missing relationships, wrong placements |
@@ -71,8 +73,8 @@ The Plugin Developer (AGENT-ce86fb50) handles all plugin lifecycle work:
 ### Enforcement Specialists (Plugin-Specific)
 
 | Agent | Plugin | Purpose |
-|-------|--------|---------|
-| **Governance Enforcer** | `@orqastudio/plugin-agile-workflow` | Designs mechanical enforcement for governance rules |
+| ------- | -------- | --------- |
+| **Governance Enforcer** | `@orqastudio/plugin-agile-methodology` | Designs mechanical enforcement for governance rules |
 | **Tauri Standards Agent** | `@orqastudio/plugin-tauri` | Scoped task agent for Tauri v2 standards checks |
 
 ## How the Orchestrator Delegates
@@ -82,8 +84,8 @@ The Plugin Developer (AGENT-ce86fb50) handles all plugin lifecycle work:
 The orchestrator selects the specialist based on which code areas or artifact types the task touches:
 
 | Task Touches | Delegate To |
-|-------------|------------|
-| `backend/src-tauri/` (Rust code) | Rust Specialist |
+| ------------- | ------------ |
+| `app/src-tauri/` (Rust code) | Rust Specialist |
 | `ui/src/` (Svelte/TypeScript) | Svelte Specialist |
 | Both backend and frontend | Integration Specialist |
 | `.orqa/` artifacts (rules, knowledge, docs) | Governance Steward |
@@ -96,7 +98,7 @@ The orchestrator selects the specialist based on which code areas or artifact ty
 Not all agents can run in parallel safely. The key constraint is **compilation resources**:
 
 | Agent Type | Resource Weight | Parallel Safety |
-|-----------|----------------|-----------------|
+| ----------- | ---------------- | ----------------- |
 | Rust Specialist | Heavy (cargo compilation) | Only with lightweight agents |
 | Svelte Specialist | Light (svelte-check) | Safe with any agent |
 | Governance Steward | None (file operations) | Safe with any agent |

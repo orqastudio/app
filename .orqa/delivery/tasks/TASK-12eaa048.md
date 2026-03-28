@@ -2,7 +2,7 @@
 id: "TASK-12eaa048"
 type: "task"
 title: "Refactor skill sync to proactive-only — coding standards and agent preloads"
-status: "captured"
+status: captured
 created: 2026-03-19T00:00:00.000Z
 updated: 2026-03-19T00:00:00.000Z
 relationships:

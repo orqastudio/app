@@ -1,7 +1,8 @@
 ---
 id: DOC-ae447f88
 type: doc
-name: Artifact Relationships Reference
+title: Artifact Relationships Reference
+domain: reference
 category: reference
 status: active
 relationships:
@@ -23,7 +24,7 @@ Example: "Decision drives Epic" means a Decision artifact can have a `drives` re
 
 Everything traces back to the vision through a natural chain:
 
-```
+```text
 Vision
   ↑ upholds
 Pillar
@@ -49,7 +50,7 @@ Idea ──→ benefits ──→ Persona
 These anchor everything to the project's principles.
 
 | Relationship | Meaning | Example |
-|---|---|---|
+| --- | --- | --- |
 | Pillar **upholds** Vision | A pillar supports the project vision | "Clarity Through Structure upholds the OrqaStudio vision" |
 | Idea **grounded-by** Pillar | An idea is anchored to a principle | "Plugin system idea grounded by Clarity Through Structure" |
 | Idea **benefits** Persona | An idea serves a user type | "Plugin browser idea benefits the Plugin Developer persona" |
@@ -62,7 +63,7 @@ These anchor everything to the project's principles.
 These track how ideas become other things.
 
 | Relationship | Meaning |
-|---|---|
+| --- | --- |
 | Idea **crystallises** into Decision | An idea becomes a concrete choice |
 | Idea **spawns** Research | An idea triggers investigation |
 | Idea **merged-into** Idea | Multiple ideas consolidated into one |
@@ -72,7 +73,7 @@ These track how ideas become other things.
 These connect decisions to the work they motivate and the rules they establish.
 
 | Relationship | Meaning |
-|---|---|
+| --- | --- |
 | Decision **drives** Epic | A choice motivates a body of work |
 | Decision **governs** Rule | A choice establishes a governance rule |
 | Rule **enforces** Decision | A rule guards a decision |
@@ -85,7 +86,7 @@ These connect decisions to the work they motivate and the rules they establish.
 These move knowledge between artifacts.
 
 | Relationship | Meaning |
-|---|---|
+| --- | --- |
 | Research **informs** Decision | Findings shape a choice |
 | Research **guides** Epic | Findings shape delivery work |
 | Lesson **teaches** Decision | Past experience shapes a future choice |
@@ -97,7 +98,7 @@ These move knowledge between artifacts.
 ## Agent Relationships
 
 | Relationship | Meaning |
-|---|---|
+| --- | --- |
 | Agent **observes** Epic/Task/Decision/Rule/Milestone | Agent monitors an artifact |
 | Agent **employs** Skill | Agent uses a skill capability |
 | Skill **synchronised-with** Doc | Agent-facing and human-facing versions |
@@ -107,7 +108,7 @@ These move knowledge between artifacts.
 The software-project plugin adds delivery-specific relationships. See the Software Delivery Guide (DOC-4554ff3e) for the complete reference. Key additions:
 
 | Relationship | Meaning |
-|---|---|
+| --- | --- |
 | Task **delivers** to Epic | Work rolls up to parent |
 | Epic **fulfils** Milestone | Work completes a checkpoint |
 | Task **depends-on** Task | Sequencing constraint |

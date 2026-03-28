@@ -32,19 +32,25 @@ An agent can commit changes but forget to push. The pre-commit hook validates co
 ## Proposed Solutions
 
 ### Option A: Post-commit hook
+
 Add a `.githooks/post-commit` hook that:
+
 1. Checks if the current branch has a remote tracking branch
 2. If yes, checks if HEAD is ahead of the remote (`git rev-list @{u}..HEAD`)
 3. If ahead by more than 1 commit (the one just made), warns that previous commits were not pushed
 4. Optionally auto-pushes or prompts
 
 ### Option B: Pre-commit hook extension
+
 Extend `.githooks/pre-commit` to check before allowing a new commit:
+
 1. If the branch has a remote, check if there are unpushed commits older than the staged changes
 2. If unpushed commits exist, warn or block
 
 ### Option C: Stop hook enhancement
+
 Extend `connectors/claude-code/hooks/scripts/stop-checklist.sh` to:
+
 1. Check `git rev-list @{u}..HEAD` for unpushed commits
 2. If any exist, warn with CRITICAL priority in the systemMessage
 

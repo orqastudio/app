@@ -13,6 +13,7 @@ relationships:
   - target: "RES-aefc9e44"
     type: "merged-into"
 ---
+
 ## Problem Statement
 
 The product vision has evolved to explicitly articulate a three-layer enforcement
@@ -26,9 +27,13 @@ traceability chain (Task → ??? → Milestone) is broken.
 
 1. **`.orqa/` is the source of truth** — `.claude/` is an optional symlink layer
 2. **AI provider is an implementation option** — the app is a framework for
+
    systems thinking, not a Claude companion
+
 3. **Config drives structure** — `project.json` `artifacts` array defines what
+
    the app shows and scans
+
 4. **Canon vs Project vs Plugin** — three layers, clearly separated
 5. **Tasks are traceable** — Task → Epic → Milestone, always navigable
 6. **Research is thinking, epics are commitment** — no separate "plan" type
@@ -40,6 +45,7 @@ traceability chain (Task → ??? → Milestone) is broken.
 Audited all 57 documentation files + 20 rules + 15 agents for vision alignment.
 
 ### Completed Tasks
+
 - [TASK-c79077be](TASK-c79077be): Product docs audit (8 files)
 - [TASK-43c190d2](TASK-43c190d2): Architecture/process docs audit (15 files)
 - [TASK-8db2e1c3](TASK-8db2e1c3): Rules and agents audit (35 files)
@@ -52,12 +58,14 @@ Audited all 57 documentation files + 20 rules + 15 agents for vision alignment.
 Replaced hardcoded navigation and scanner with config-driven logic.
 
 ### Completed Tasks
+
 - [TASK-25e35dfc](TASK-25e35dfc): Rust types for ArtifactEntry/ArtifactTypeConfig
 - [TASK-601a75ca](TASK-601a75ca): Config-driven scanner in artifact_reader.rs (recursive file explorer pattern)
 - [TASK-0c48a446](TASK-0c48a446): Frontend config-driven navigation (deleted hardcoded constants)
 - [TASK-36a4b6c8](TASK-36a4b6c8): Task schema enhancement (assignee + skills fields)
 
 ### Also Completed (unplanned but necessary)
+
 - Fixed `$derived(() => ...)` reactivity bugs across 3 components
 - Fixed `humanize_name` to preserve artifact IDs with digits
 - Fixed config paths in project.json to match actual disk structure
@@ -75,14 +83,16 @@ relevant via `research-refs`.
 ### The Change
 
 **Before:**
-```
+
+```text
 Research ←→ Ideas
 Plan ← Tasks (no link to epics or milestones)
 Epic → Milestone (separate from plans)
 ```
 
 **After:**
-```
+
+```text
 Research ←→ Ideas (exploration phase)
 Epic → Milestone (committed work, design in body)
 Task → Epic (always, no exceptions)

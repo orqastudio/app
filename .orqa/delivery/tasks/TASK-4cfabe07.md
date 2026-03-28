@@ -3,7 +3,7 @@ id: "TASK-4cfabe07"
 type: "task"
 title: "Record persistence and governance decisions (AD-d01b9e0a through AD-b08f456d)"
 description: "Captured architecture decisions for persistence strategy, governance artifact format, data ownership boundaries, and configuration management."
-status: "completed"
+status: archived
 created: "2026-03-02"
 updated: "2026-03-02"
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Recorded four architecture decisions establishing the persistence strategy, file-based governance format, data ownership boundaries, and configuration management approach.

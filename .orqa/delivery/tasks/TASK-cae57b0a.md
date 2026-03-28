@@ -3,7 +3,7 @@ id: "TASK-cae57b0a"
 type: "task"
 title: "Add sources field to research schema for web references"
 description: "Add an optional sources field to the research artifact schema for tracking external URLs and references that informed the research."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Research documents often reference external sources (library docs, GitHub issues, blog posts, specifications). Currently these are just inline markdown links in the body. Adding a structured `sources` field to frontmatter makes them graph-queryable — the system can trace which external knowledge informed which decisions.

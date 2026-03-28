@@ -2,6 +2,7 @@
 id: DOC-fd636a56
 type: doc
 title: "Thinking Mode: Review"
+domain: reference
 description: "The user wants something checked, validated, or audited against standards — produces a PASS/FAIL verdict with evidence, not fixes."
 category: platform
 status: active
@@ -17,6 +18,7 @@ relationships:
 Review Mode is active when the user wants something checked, validated, or audited against standards. The reviewer produces a **verdict** — PASS or FAIL with specific evidence — not fixes. This separation is structural: a reviewer who fixes what they find has removed the independent perspective that makes review meaningful.
 
 Reviews check three kinds of conformance:
+
 1. **Code quality** — does the implementation follow coding standards (RULE-006)?
 2. **Completeness** — does the feature satisfy the four-layer completeness rule (RULE-010)?
 3. **Artifact integrity** — do the governance artifacts have correct structure and relationships?
@@ -28,6 +30,7 @@ Reviews check three kinds of conformance:
 The orchestrator routes here when the user's request is about checking conformance, not producing work.
 
 Typical signals:
+
 - "review this code"
 - "check if this implementation meets standards"
 - "validate the artifact graph"

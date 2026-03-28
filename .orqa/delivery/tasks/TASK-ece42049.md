@@ -3,7 +3,7 @@ id: TASK-ece42049
 type: task
 title: "Reorder artifact viewer layout — actions needed, pipeline, metadata, acceptance, body"
 description: Change the ArtifactViewer component ordering so the most actionable information appears first.
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

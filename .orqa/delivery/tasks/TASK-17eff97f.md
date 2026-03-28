@@ -3,7 +3,7 @@ id: "TASK-17eff97f"
 type: "task"
 title: "Deduplicate rule/skill content — rules keep constraints, skills keep methodology"
 description: "Remove duplicated methodology, templates, and code examples from three rules and move them into their companion skills, leaving rules with only constraints and FORBIDDEN sections."
-status: "completed"
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 acceptance:
@@ -18,12 +18,13 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Three rule/skill pairs have significant content duplication. Apply the principle: rules keep constraints and FORBIDDEN sections, skills keep methodology, templates, and code examples. Rules reference skills for the "how."
 
 | Rule | Skill | Action |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | [RULE-dccf4226](RULE-dccf4226) (Plan Mode Compliance) | `planning` | Move plan template from rule to skill. Rule keeps mandatory requirements and verification gates. Add "See `planning` skill for template and methodology." |
 | [RULE-71352dc8](RULE-71352dc8) (UAT Process) | `uat-process` | Move 4-phase methodology detail from rule to skill. Rule keeps phase names, FORBIDDEN section, and process improvement encoding requirement. Add skill reference. |
 | RULE-b03009da (End-to-End Completeness) | `orqa-ipc-patterns` | Move 100+ lines of code examples from rule to skill. Rule keeps the 4-layer requirement, verification checklist, and FORBIDDEN patterns (keep these concise). Add skill reference. |

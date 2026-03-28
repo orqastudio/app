@@ -3,7 +3,7 @@ id: "TASK-cef272ad"
 type: "task"
 title: "Audit backend-only commands — identify and remove orphaned code"
 description: "29 of 75 registered commands have no frontend callers. Some are used by sidecar tool loop, others may be orphaned. Audit and clean up."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 acceptance:

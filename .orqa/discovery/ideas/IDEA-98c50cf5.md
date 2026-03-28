@@ -20,6 +20,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 RULE-8cb4bd04 requires 80%+ test coverage but enforcement is manual — agents check coverage during review but there's no automated gate. A plugin could make coverage a first-class integrity check, blocking status transitions when coverage drops below threshold. This turns coverage from a guideline into an enforceable constraint, consistent with the Knowledge Maturity Pipeline philosophy of enforcement through visibility.

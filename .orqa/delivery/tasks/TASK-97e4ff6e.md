@@ -3,7 +3,7 @@ id: TASK-97e4ff6e
 type: task
 title: Build LessonVelocityWidget and DecisionQueueWidget
 description: "Build two widgets for the 'What's Next' column. LessonVelocityWidget shows the lesson pipeline stages (Draft, Review, Promoted, Active) with item counts per stage. DecisionQueueWidget shows pending decisions and blockers with context and days pending."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 3

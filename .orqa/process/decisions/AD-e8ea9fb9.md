@@ -8,6 +8,7 @@ created: "2026-03-11"
 updated: "2026-03-11"
 relationships: []
 ---
+
 ## Decision
 
 Each artifact type directory (e.g. `.orqa/delivery/epics/`, `.orqa/documentation/`) can contain a `_navigation.json` file with two mutually exclusive modes:

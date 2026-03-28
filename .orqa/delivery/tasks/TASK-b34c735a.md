@@ -3,7 +3,7 @@ id: "TASK-b34c735a"
 type: "task"
 title: "Register pillars in artifact config"
 description: "Register pillars in artifact config"
-status: "completed"
+status: archived
 created: 2026-03-09T00:00:00.000Z
 updated: 2026-03-09T00:00:00.000Z
 assignee: "AGENT-4c94fe14"

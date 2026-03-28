@@ -16,6 +16,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Candidate Items
 
 - Strategy maps — visual connections to strategic objectives

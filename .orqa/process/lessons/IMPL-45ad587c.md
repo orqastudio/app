@@ -9,10 +9,13 @@ updated: 2026-03-14
 recurrence: 1
 maturity: understanding
 relationships:
+
   - target: EPIC-f7055984
+
     type: cautions
     rationale: "Multiple UAT findings (#2, #8, #13) converge on this pattern"
 ---
+
 ## Observation
 
 The pipeline health dashboard surfaced counts (66 orphans, 197 warnings) and labels (stuck, bottleneck) without explaining why or what to do about them. Users see numbers that feel wrong but have no path to action. This pattern appeared across three independent findings:

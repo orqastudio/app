@@ -1,7 +1,9 @@
 ---
 id: DOC-1f4aba8f
 type: doc
+status: active
 title: Three-Layer Enforcement Model
+domain: architecture
 description: "How OrqaStudio enforces governance through three layers: LSP real-time diagnostics for mechanical checks, behavioral rules for judgement calls, and pre-commit hard gates as the final safety net. Includes the demotion model for transitioning rules between layers."
 category: governance
 created: 2026-03-24
@@ -27,7 +29,7 @@ The fastest enforcement layer. The LSP mode (`orqa lsp`) validates artifact file
 **What it catches:**
 
 | Violation | LSP Response |
-|-----------|-------------|
+| ----------- | ------------- |
 | Invalid status value (e.g., `enabled` instead of `active`) | Red squiggle + suggested valid values |
 | Wrong relationship type (e.g., `synced-with` instead of `synchronised-with`) | Red squiggle + valid type list |
 | Missing required field (e.g., no `id` in frontmatter) | Warning squiggle |
@@ -35,6 +37,7 @@ The fastest enforcement layer. The LSP mode (`orqa lsp`) validates artifact file
 | Type mismatch (e.g., `created: true` instead of a date) | Error squiggle |
 
 **Characteristics:**
+
 - Mechanical and deterministic — the same input always produces the same diagnostic
 - Driven by plugin `schema.json` files — no hardcoded rules
 - Zero latency feedback — errors appear as you type
@@ -47,7 +50,7 @@ The judgement layer. Some governance constraints cannot be reduced to a schema c
 **What it catches:**
 
 | Violation | Enforcement |
-|-----------|------------|
+| ----------- | ------------ |
 | Documentation-before-code | Orchestrator includes the rule in delegation prompt |
 | Delegation boundary crossing | Role constraints in agent system prompt |
 | Pillar misalignment (feature doesn't serve a pillar) | Pillar gate questions in context |
@@ -55,6 +58,7 @@ The judgement layer. Some governance constraints cannot be reduced to a schema c
 | Incomplete reporting (missing "What Is NOT Done") | Output structure requirements in context |
 
 **Characteristics:**
+
 - Requires judgement — the agent must interpret and apply the rule
 - Context-dependent — the same rule may apply differently in different situations
 - Enforced via prompt injection by the orchestrator and connector hooks
@@ -67,7 +71,7 @@ The final safety net. Nothing enters the repository without passing all checks.
 **What it catches:**
 
 | Check | Tool |
-|-------|------|
+| ------- | ------ |
 | Artifact schema validation | Shared validation engine (same as LSP) |
 | Rust lint violations | `cargo clippy` with pedantic warnings |
 | TypeScript/Svelte type errors | `svelte-check`, ESLint |
@@ -75,6 +79,7 @@ The final safety net. Nothing enters the repository without passing all checks.
 | Formatting violations | `cargo fmt --check` |
 
 **Characteristics:**
+
 - Hard gate — commit is blocked if any check fails
 - Runs `orqa check` which calls the shared validation engine plus language-specific tools
 - Redundant with LSP for schema checks (defense in depth)
@@ -82,7 +87,7 @@ The final safety net. Nothing enters the repository without passing all checks.
 
 ## How the Layers Work Together
 
-```
+```text
 You edit an artifact file
         │
         ▼
@@ -102,6 +107,7 @@ You edit an artifact file
 ```
 
 In practice:
+
 - **Layer 1 catches most mechanical errors** before they are ever committed
 - **Layer 2 catches process violations** that require judgement
 - **Layer 3 catches anything that escaped** Layers 1 and 2
@@ -112,7 +118,7 @@ When a behavioral rule (Layer 2) becomes mechanically enforceable by the LSP or 
 
 ### Demotion Flow
 
-```
+```text
 Behavioral rule (Layer 2, active)
         │
   Mechanical enforcement added (Layer 1 or 3)?
@@ -132,6 +138,7 @@ Behavioral rule (Layer 2, active)
 ### What CAN Be Demoted
 
 Rules that enforce constraints the schema and validation engine can check:
+
 - Valid status values
 - Valid relationship types
 - Required frontmatter fields
@@ -141,6 +148,7 @@ Rules that enforce constraints the schema and validation engine can check:
 ### What CANNOT Be Demoted
 
 Rules that require human or agent judgement:
+
 - Pillar alignment (is this feature serving the product vision?)
 - Documentation-before-code (is the docs update genuine, not a stub?)
 - Honest reporting (is the completion report accurate?)
@@ -152,7 +160,7 @@ Rules that require human or agent judgement:
 The system's enforcement health can be assessed by looking at coverage across all three layers:
 
 | Health Indicator | Meaning |
-|-----------------|---------|
+| ----------------- | --------- |
 | All mechanical rules have LSP diagnostics | Layer 1 is complete |
 | All judgement rules are in the prompt injection set | Layer 2 is complete |
 | Pre-commit runs the validation engine | Layer 3 is complete |

@@ -3,7 +3,7 @@ id: "TASK-97d5ed5f"
 type: "task"
 title: "Restructure unfocused documentation and remove stale phase references"
 description: "Restructure DOC-9814ec3c (coding-standards) as a principles doc, add purpose to DOC-d9cc1f84 (orchestration), and remove all stale Phase 2a/2b references across 23 documentation files."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -26,6 +26,7 @@ relationships:
   - target: "TASK-0ba4dedd"
     type: "depends-on"
 ---
+
 ## Scope
 
 ### Restructure DOC-9814ec3c (coding-standards.md)

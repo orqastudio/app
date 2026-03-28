@@ -19,6 +19,7 @@ relationships:
   - target: PERSONA-c4afd86b
     type: benefits
 ---
+
 ## Motivation
 
 The Exploring section (ideas, research) currently shows flat lists. There's no spatial way to organise pre-pipeline thinking — grouping related ideas, connecting research to the ideas it validates, seeing the landscape of what's being explored. A whiteboard/canvas view would be the exploration equivalent of what the roadmap kanban is for the delivery pipeline.

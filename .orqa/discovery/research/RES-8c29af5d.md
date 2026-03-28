@@ -11,6 +11,7 @@ relationships:
     type: "guides"
     rationale: "Research findings informed the design of Portable Governance Framework"
 ---
+
 ## The Problem
 
 Three overlapping concerns need resolving together:
@@ -26,7 +27,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Process coordination, governance lifecycle, delegation decisions, status reporting
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Break requests into tasks | Implementation work |
 | Manage artifact lifecycle (.orqa/) | Code changes (backend/src-tauri/, ui/, sidecars/claude-agentsdk-sidecar/) |
 | Write plans and session state | Running tests and checks |
@@ -41,7 +42,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Investigation, information gathering, analysis, findings
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Read and analyse existing code/docs | Nothing — produces findings, not changes |
 | Search for patterns and precedents | |
 | Evaluate options and tradeoffs | |
@@ -55,7 +56,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Approach design, architectural evaluation, structural mapping
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Design implementation approaches | Nothing — produces plans, not changes |
 | Evaluate architectural compliance | |
 | Map dependencies and risks | |
@@ -69,7 +70,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Building things — code, deliverables, artifacts
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Write code (backend, frontend, database) | Nothing — produces working code |
 | Create data schemas and migrations | |
 | Build CI/CD pipelines | |
@@ -84,7 +85,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Quality verification, compliance checking, correctness validation
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Run automated checks (lint, test, build) | Nothing — produces verdicts |
 | Review code against standards | |
 | Verify acceptance criteria | |
@@ -99,7 +100,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Documentation, communications, records
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Write architecture decisions | Nothing — produces documents |
 | Create UI specs and guides | |
 | Maintain process documentation | |
@@ -113,7 +114,7 @@ Three overlapping concerns need resolving together:
 **Owns:** Experience design, interface design, structural design
 
 | Does Directly | Delegates To |
-|--------------|-------------|
+| -------------- | ------------- |
 | Design UI layouts and components | Nothing — produces designs and implementations |
 | Implement visual styling | |
 | Create interaction patterns | |
@@ -129,7 +130,7 @@ Claude Code has fixed subagent types. Our universal roles map to them based on l
 ### Direct Mappings
 
 | Universal Role | Claude Code Subagent | Notes |
-|---------------|---------------------|-------|
+| --------------- | --------------------- | ------- |
 | Orchestrator | (main conversation) | Not a subagent — IS the conversation |
 | Researcher | `Explore` | Built for codebase exploration |
 | Planner | `Plan` | Built for implementation planning |
@@ -139,7 +140,7 @@ Claude Code has fixed subagent types. Our universal roles map to them based on l
 ### Skill-Dependent Mappings
 
 | Universal Role + Skills | Claude Code Subagent |
-|------------------------|---------------------|
+| ------------------------ | --------------------- |
 | Implementer + backend skills | `Backend Engineer` |
 | Implementer + frontend skills | `Frontend Engineer` |
 | Implementer + database skills | `Data Engineer` |
@@ -156,7 +157,7 @@ Claude Code has fixed subagent types. Our universal roles map to them based on l
 
 When the orchestrator delegates:
 
-```
+```text
 1. Determine the ROLE needed (Implementer, Reviewer, etc.)
 2. Determine the SKILLS needed (backend, frontend, security, etc.)
 3. Map role + skills → closest Claude Code subagent_type
@@ -167,7 +168,8 @@ When the orchestrator delegates:
 ## Role Interaction Patterns
 
 ### Implementation Flow
-```
+
+```text
 User request
   → Orchestrator (breaks down, plans)
     → Planner (designs approach) — if complex
@@ -178,7 +180,8 @@ User request
 ```
 
 ### Investigation Flow
-```
+
+```text
 User question / bug report
   → Orchestrator (scopes investigation)
     → Researcher (investigates, produces findings)
@@ -187,7 +190,8 @@ User question / bug report
 ```
 
 ### Review Flow
-```
+
+```text
 Implementation complete
   → Orchestrator (triggers review)
     → Reviewer + code quality (checks standards)
@@ -199,6 +203,7 @@ Implementation complete
 ## What Changes in Agent Definitions
 
 ### Files to Create (7 universal roles)
+
 - `.orqa/process/agents/orchestrator.md` — UPDATE existing
 - `.orqa/process/agents/researcher.md` — NEW
 - `.orqa/process/agents/planner.md` — NEW
@@ -208,6 +213,7 @@ Implementation complete
 - `.orqa/process/agents/designer.md` — UPDATE existing
 
 ### Files to Remove (old software-specific agents)
+
 - backend-engineer.md, frontend-engineer.md, data-engineer.md
 - devops-engineer.md, test-engineer.md, code-reviewer.md
 - qa-tester.md, ux-reviewer.md, security-engineer.md
@@ -215,10 +221,11 @@ Implementation complete
 - systems-architect.md
 
 ### Skills to Extract
+
 Domain knowledge currently embedded in agent definitions needs to move to skills:
 
 | From Agent | Extract To Skill | Content |
-|-----------|-----------------|---------|
+| ----------- | ----------------- | --------- |
 | debugger | `diagnostic-methodology` | Root cause analysis workflow, stack tracing approach |
 | refactor-agent | `restructuring-methodology` | Safe refactoring steps, verification after each change |
 | security-engineer | `security-audit` | Audit checklist, threat model, permission review |
@@ -232,7 +239,11 @@ Domain knowledge currently embedded in agent definitions needs to move to skills
 ## Open Questions for User
 
 1. Should the orchestrator's agent definition remain OrqaStudio-specific (as it is now),
+
    or should it also become portable with project context loaded via skills?
+
 2. The orchestrator.md file IS the CLAUDE.md — restructuring it changes the entire
+
    conversation context. How much of the current content is role-definition vs project-context?
+
 3. Should we do this restructuring incrementally (one role at a time) or all at once?

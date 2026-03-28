@@ -3,7 +3,7 @@ id: "TASK-8b8c5da2"
 type: "task"
 title: "Create architecture decisions index"
 description: "Created the consolidated architecture decisions index page listing all AD records with status, category, and cross-references."
-status: "completed"
+status: archived
 created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-02T00:00:00.000Z
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Created the architecture decisions index at `.orqa/documentation/development/decisions.md`, listing all AD records with their status, category, and brief summaries.

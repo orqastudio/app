@@ -3,7 +3,7 @@ id: EPIC-db6bd805
 type: epic
 title: GitHub Packages CI/CD pipeline — all 7 packages publishing
 description: Established CI/CD pipeline for all 7 OrqaStudio npm packages via GitHub Packages. SHA-based versioning, npm ci for reproducible installs, caret dependencies for flexibility. All packages publish on push to main.
-status: completed
+status: archived
 created: 2026-03-19
 milestone: MS-b1ac0a20
 relationships:

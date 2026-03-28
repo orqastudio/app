@@ -2,6 +2,7 @@
 id: KNOW-51de8fb7
 type: knowledge
 title: Artifact Status Management
+domain: methodology/governance
 summary: "Status is not metadata. It is the artifact's current **state of thought** — how far along an idea, task, or decision has been developed, and whether it needs human attention."
 description: |
   Teaches agents when and how to correctly update artifact status fields.
@@ -28,7 +29,7 @@ Status is not metadata. It is the artifact's current **state of thought** — ho
 ## The 11 Statuses
 
 | Status | When to Use |
-|--------|-------------|
+| -------- | ------------- |
 | `captured` | The artifact was just created. Nothing has been done with it yet. |
 | `exploring` | Active investigation is underway. Research is being gathered. |
 | `ready` | The artifact is shaped and well-defined. Nothing is blocking it — it just hasn't been picked up. |
@@ -101,7 +102,7 @@ These are two different acts. Agents do the first. Only humans do the second.
 ## Transition Reference
 
 | Transition | Who | Condition |
-|-----------|-----|-----------|
+| ----------- | ----- | ----------- |
 | `captured → exploring` | Human | Human approves investigation |
 | `captured → active` | Agent | Immediate work begins on a newly created artifact |
 | `exploring → ready` | Human | Investigation is complete, scope is confirmed |

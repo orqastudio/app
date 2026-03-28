@@ -3,7 +3,7 @@ id: TASK-a29adcd7
 type: task
 title: "Add grounding injection to plugin — resolve grounded-by on agents, inject content"
 description: Extend the Claude Code plugin to resolve grounded-by relationships on agent definitions and inject the target document content as system-level context at session initialization.
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 5
@@ -40,16 +40,19 @@ In the SessionStart hook or prompt-injector.ts:
 2. Parse frontmatter relationships
 3. Filter for `type: grounded-by` relationships
 4. For each grounded-by target:
+
    a. Resolve artifact ID to file path (e.g., PILLAR-c9e0a695 → .orqa/principles/pillars/PILLAR-c9e0a695.md)
    b. Read file content
    c. Strip YAML frontmatter
    d. Collect body content
+
 5. Inject collected content as systemMessage with header: "## Agent Grounding (always in context)"
 6. Track injected grounding in session dedup file to prevent re-injection
 
 ### Ordering
 
 Grounding is injected FIRST, before:
+
 - Skill injection (TASK-c4b04937)
 - Artifact graph traversal (prompt-injector.ts)
 - Rule enforcement (rule-engine.mjs)

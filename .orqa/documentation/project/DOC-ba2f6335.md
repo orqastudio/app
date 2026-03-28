@@ -1,7 +1,9 @@
 ---
 id: DOC-ba2f6335
 type: doc
+status: active
 title: "How To: Write Rust Tests in OrqaStudio"
+domain: guides
 category: how-to
 description: Practical guide for writing unit and integration tests for the OrqaStudio Rust backend.
 created: 2026-03-14
@@ -12,8 +14,8 @@ relationships: []
 
 ## Test Organisation
 
-```
-backend/src-tauri/src/
+```text
+app/src-tauri/src/
 ├── commands/
 │   ├── artifact_commands.rs     # #[cfg(test)] mod tests { ... } at bottom
 │   └── enforcement_commands.rs  # same pattern
@@ -23,14 +25,14 @@ backend/src-tauri/src/
 └── domain/
     └── artifact_reader.rs
 
-backend/src-tauri/tests/          # integration tests (cross-module flows)
+app/src-tauri/tests/          # integration tests (cross-module flows)
     └── artifact_lifecycle.rs
 ```
 
 **Unit tests** go in a `#[cfg(test)] mod tests { ... }` block at the bottom of the
 same file as the code under test. They test one module in isolation.
 
-**Integration tests** go in `backend/src-tauri/tests/`. They test cross-module flows
+**Integration tests** go in `app/src-tauri/tests/`. They test cross-module flows
 and database interactions using the same in-memory SQLite pattern.
 
 ---
@@ -45,7 +47,7 @@ make test-rust
 make test-watch-rust
 
 # Single test by name
-cargo test --manifest-path backend/src-tauri/Cargo.toml artifact_list_empty
+cargo test --manifest-path app/src-tauri/Cargo.toml artifact_list_empty
 ```
 
 ---
@@ -100,6 +102,7 @@ mod tests {
 ```
 
 Key patterns:
+
 - `setup()` helper creates a fresh in-memory DB for each test — never share state
 - `.expect("create artifact")` is acceptable **in tests only** — banned in production code
 - Assert on the specific error variant with `matches!`, not just `result.is_err()`
@@ -161,11 +164,13 @@ impl ArtifactScanner for MockScanner {
 ```
 
 **What to mock:**
+
 - File system access (use a trait, inject in tests)
 - External HTTP calls
 - `SystemTime::now()` if tests need deterministic timestamps
 
 **What NOT to mock:**
+
 - SQLite (`init_memory_db` is cheaper and more faithful)
 - Your own domain logic or repo functions
 - The Tauri invoke bridge directly (test commands via their inputs/outputs instead)
@@ -213,7 +218,7 @@ Test input validation paths explicitly — pass invalid inputs and assert the co
 Every module must maintain **80%+ line coverage**. Run coverage locally with:
 
 ```bash
-cargo tarpaulin --manifest-path backend/src-tauri/Cargo.toml --fail-under 80
+cargo tarpaulin --manifest-path app/src-tauri/Cargo.toml --fail-under 80
 ```
 
 Coverage failures block CI. If a function is genuinely untestable (e.g., Tauri

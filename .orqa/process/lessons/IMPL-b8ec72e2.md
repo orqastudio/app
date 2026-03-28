@@ -3,13 +3,15 @@ id: "IMPL-b8ec72e2"
 type: lesson
 title: "Plugins and sidecars are paired — no requirement mechanism exists"
 description: "The orqastudio-claude-plugin is designed for Claude Code CLI. If a different sidecar is used (Cursor, Copilot), this plugin should not be active. Currently there is no mechanism for a plugin to declare which sidecar it requires, or for the system to enforce that pairing."
-status: "completed"
+status: archived
+archived_reason: "Superseded by connector architecture — 'sidecar' renamed to 'connector plugin', pairing mechanism redesigned in plugin taxonomy"
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-28"
 maturity: "understanding"
 recurrence: 1
 relationships: []
 ---
+
 ## Pattern
 
 The companion plugin (`orqastudio-claude-plugin`) contains hooks, rules, skills, and agents designed specifically for the Claude Code CLI sidecar. These artifacts assume:
@@ -25,6 +27,7 @@ The pairing is implicit — nothing in `plugin.json` declares "I require the Cla
 ## Fix
 
 Design is in progress via [RES-fbe69e04](RES-fbe69e04). Key decisions made:
+
 - Plugins declare `requires.ai-providers` with `any-of`/`all` semantics
 - Provider definitions live in `.orqa/providers/<name>.json` (app-native, identity + detection + required plugins)
 - Plugin type determines requires shape — only `ai-provider-integration` type has `requires.ai-providers`

@@ -3,7 +3,7 @@ id: "TASK-97f896ce"
 type: "task"
 title: "Scanner frontmatter extraction"
 description: "Extends the artifact scanner to extract and expose the status field from YAML frontmatter so sidebar list items display correct titles and status indicators for all artifact types."
-status: "completed"
+status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
 assignee: "AGENT-e5dd38e4"
@@ -21,6 +21,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## Findings Addressed
 
 - **F19**: Tasks showing [TASK-1efe5f1a](TASK-1efe5f1a) instead of title
@@ -32,7 +33,7 @@ The Rust `DocNode` struct has `label`, `path`, `children`, `description` but no 
 
 ## Fix
 
-1. Add `pub status: Option<String>` to `DocNode` in `artifact_reader.rs`
+1. Add `pub status: Option\<String\>` to `DocNode` in `artifact_reader.rs`
 2. Extract `status` from YAML frontmatter during scanning (same as title/description extraction)
 3. Ensure `label` always prefers frontmatter `title` over filename — verify the existing logic handles all-caps IDs correctly
 4. Update `DocNode` TypeScript interface in `nav-tree.ts`

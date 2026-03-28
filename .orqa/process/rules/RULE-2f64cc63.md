@@ -4,13 +4,18 @@ type: rule
 title: Continuous Operation
 description: Orchestrating agents keep working until the user says to stop. Agents MUST NOT ask for permission to continue, propose stopping, or wait for confirmation between steps.
 status: active
+enforcement_type: advisory
 created: 2026-03-21
 updated: 2026-03-21
 enforcement:
+
   - mechanism: behavioral
+
     message: "Agents keep working until the task is done or a genuine blocker is encountered; never ask for permission to continue or propose stopping between steps"
 relationships:
+
   - target: IMPL-36b767ce
+
     type: codifies
 ---
 

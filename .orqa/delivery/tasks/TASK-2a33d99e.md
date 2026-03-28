@@ -3,7 +3,7 @@ id: "TASK-2a33d99e"
 type: "task"
 title: "Behavioral enforcement plan: prompt injection rules"
 description: "Define enforcement mechanisms for behavioral rules enforced via prompt injection at delegation time"
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 acceptance:

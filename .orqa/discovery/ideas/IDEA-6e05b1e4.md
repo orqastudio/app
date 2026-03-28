@@ -3,7 +3,7 @@ id: IDEA-6e05b1e4
 type: discovery-idea
 title: Session management framework — prevent context drift across long and multi-session work
 description: Structured session management to prevent agents losing track of intent during long sessions or across session boundaries. Sessions have explicit scope (epic/task), state persistence (what was done, what's in progress, what's next), and context recovery after compaction. Implemented first in the Claude Code connector for dogfooding, then brought into the in-app agent framework.
-status: surpassed
+status: archived
 created: 2026-03-19
 updated: 2026-03-19
 relationships:
@@ -24,13 +24,16 @@ This directly violates Pillar 3 (Purpose Through Continuity): the user's origina
 ## Concept
 
 ### Session Lifecycle
+
 1. **Start** — load previous session state, identify scope (which epic/task), load governing docs
 2. **Work** — maintain focus on scoped work, delegate to agents within scope
 3. **Compact** — save governance context before compaction, recover cleanly after
 4. **Stop** — write session state (done, in progress, next steps, blockers), clean handoff
 
 ### Session State Artifact
+
 `.state/session-state.md` — written at session end, read at session start:
+
 ```markdown
 ## Session: 2026-03-19T14:30:00Z
 
@@ -54,12 +57,14 @@ This directly violates Pillar 3 (Purpose Through Continuity): the user's origina
 ```
 
 ### Connector Implementation (dogfood first)
+
 - SessionStart hook reads `.state/session-state.md` and injects as context
 - Stop hook prompts the orchestrator to write session state
 - PreCompact hook saves governance context to survive compaction
 - Orchestrator prompt includes session management protocol
 
 ### In-App Framework (future)
+
 - Session model in the Rust backend (SQLite-backed)
 - Session scoping in the UI (pick epic/task to focus on)
 - Session timeline view (what happened across sessions)

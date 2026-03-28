@@ -13,7 +13,6 @@ relationships: []
 
 ---
 
-
 **Date:** 2026-03-07
 
 ## Mission
@@ -49,7 +48,7 @@ The distinction matters for every product decision: features are evaluated again
 OrqaStudio sits at the intersection of several categories but is not limited to any of them:
 
 | Category | Relationship |
-|----------|-------------|
+| ---------- | ------------- |
 | Productivity tools | Provides structured artifacts |
 | AI assistants | Offers conversational reasoning |
 | Project tools | Generates execution frameworks |
@@ -62,7 +61,7 @@ In essence, OrqaStudio becomes **cognitive infrastructure for structured reasoni
 
 The core cycle that OrqaStudio operationalises:
 
-```
+```text
 Chaos / Input
   --> Structured Understanding
   --> Experiments / Backlog
@@ -92,6 +91,7 @@ The platform blends three interaction layers:
 Human-readable markdown artifacts represent the current state of understanding. Examples: context analysis, backlog, strategy outputs, retrospectives. Artifacts are the **canonical state of knowledge**.
 
 Key properties:
+
 - Human-readable
 - Reusable in prompts (artifacts feed directly into AI reasoning)
 - Composable across workflows
@@ -102,6 +102,7 @@ Artifacts serve as both outputs and inputs to subsequent reasoning cycles.
 ### Insight Layer
 
 Dashboards and views aggregate insights across artifacts:
+
 - Progress indicators
 - Change summaries
 - Iteration insights
@@ -126,6 +127,7 @@ The core layer is the opinionated agentic framework shipped with OrqaStudio. It 
 Core artifacts are **not user-editable**. They include a warning comment at the top of each file discouraging manual modification. When the app updates, core artifacts are overwritten with the latest version.
 
 What core encodes:
+
 - How to decompose problems into manageable, structured thinking
 - How to plan iteratively with explicit approval gates
 - How to track lessons and promote patterns into governance
@@ -139,6 +141,7 @@ The core layer is identical across every project and every industry. A software 
 The project layer is where users customise the framework for their specific context. Project artifacts are layered on top of core and are fully editable by the user and AI.
 
 Project artifacts encode:
+
 - Domain-specific rules and conventions (what "done" means for this project)
 - Custom coding standards, naming conventions, or workflow patterns
 - Industry-specific terminology and artifact types
@@ -151,6 +154,7 @@ The project layer is **additive only**. Project artifacts can extend the core fr
 The plugin layer extends both the artifact system and the display system with officially maintained extensions. Plugins allow the framework to serve radically different use cases — from software development to personal life management — without changing the underlying structure.
 
 Plugins can:
+
 - **Register new artifact types** — Define new types of structured knowledge beyond the built-in set (milestones, epics, tasks, ideas, lessons)
 - **Register artifact groups** — Organise multiple artifact types into a named section in the UI
 - **Provide custom display views** — Gantt charts, kanban boards, graph visualisations, timelines, custom dashboards
@@ -194,7 +198,7 @@ OrqaStudio can build anything — including extensions of itself. A plugin is ju
 This creates a flywheel: the app teaches structured thinking → the user applies structured thinking to extend the app → the extension makes the app more capable → the more capable app enables more ambitious extensions. The five layers reflect this progression:
 
 | Layer | What | Who |
-|-------|------|-----|
+| ------- | ------ | ----- |
 | **Core** | Platform principles and framework shipped with the app | OrqaStudio team |
 | **Plugin** | Curated extensions in the official repository | OrqaStudio team |
 | **Community** | Publicly shared extensions | Anyone |
@@ -209,7 +213,7 @@ The user layer is the most important. The barrier from "I had an idea" to "I hav
 Users arrive at OrqaStudio from different starting points. Not everyone enters with a clear task — many enter with ambiguity. The platform meets them where they are:
 
 | Mode | Starting point | What the user needs |
-|------|---------------|-------------------|
+| ------ | --------------- | ------------------- |
 | **Problem** | Something is not working and needs diagnosis | Understand root causes, map the situation, produce a fix plan |
 | **Idea** | A concept needs validation and shaping | Explore feasibility, challenge assumptions, shape into something actionable |
 | **Goal** | A desired outcome requires planning | Gap analysis, breakdown into steps, produce a backlog or experiment plan |
@@ -223,7 +227,7 @@ The entry modes are how agile thinking is operationalised at the point of entry.
 
 While software development is OrqaStudio's first domain — where implementation can be directly integrated into the structured thinking process — the entry modes are domain-agnostic by design. The same onboarding patterns apply to personal life management, healthcare project management, research planning, consulting engagements, or any situation where complex work benefits from structured thinking.
 
-```
+```text
 Problem ──┐
 Idea ─────┤
 Goal ─────┼──→ Structured Understanding ──→ Agile Learning Loop

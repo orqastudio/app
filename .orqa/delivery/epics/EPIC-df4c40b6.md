@@ -3,7 +3,7 @@ id: "EPIC-df4c40b6"
 type: "epic"
 title: "Dashboard redesign — layout, widgets, and plugin extensibility"
 description: "Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets."
-status: "completed"
+status: archived
 priority: "P1"
 scoring:
   impact: 4
@@ -19,6 +19,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 UAT round 2 found the dashboard is a column of cards, not a dashboard. Health trends are underutilised, "all clear" wastes space, and refresh/re-index are duplicated. The knowledge pipeline flow model needs rethinking (IDEA-c8b70949).
@@ -26,11 +27,13 @@ UAT round 2 found the dashboard is a column of cards, not a dashboard. Health tr
 ## Implementation Design
 
 ### Design constraints
+
 - Architecture must support drag-and-drop layout customization (not implemented this pass)
 - Architecture must support plugin-provided custom widgets (not implemented this pass)
 - Widget grid/layout system chosen now must accommodate both constraints later
 
 ### Phase 1: Pipeline health widget rework (Theme B)
+
 - Fix stale data after rescan (refresh graph before scanning)
 - Auto-fix confirmations → toast notifications
 - "All clear" collapses to subtle indicator, expands when errors exist
@@ -38,6 +41,7 @@ UAT round 2 found the dashboard is a column of cards, not a dashboard. Health tr
 - Rescan auto-triggers after graph refresh
 
 ### Phase 2: Dashboard layout (Theme A)
+
 - Replace vertical card stack with information-dense grid layout
 - Health trend sparklines more prominent
 - Widget sizing and positioning via grid system

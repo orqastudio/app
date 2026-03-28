@@ -3,7 +3,7 @@ id: TASK-de122ae3
 type: task
 title: Wire orqa-studio to import from packages + update pre-commit and make verify
 description: "Update the main orqa-studio app to import types, SDK, and stores from the extracted packages instead of local files. Replace verify-links.mjs and verify-pipeline-integrity.mjs with @orqastudio/integrity-validator. Update pre-commit hook and make targets."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 5
@@ -38,6 +38,7 @@ relationships:
 ## Scope
 
 ### Import rewiring
+
 - All `$lib/types/*` imports → `@orqastudio/types`
 - All `$lib/sdk/*` imports → `@orqastudio/sdk`
 - All `$lib/stores/*` imports (except navigation) → `@orqastudio/sdk`
@@ -45,12 +46,15 @@ relationships:
 - `$lib/utils/frontmatter` → `@orqastudio/sdk`
 
 ### Pre-commit update
+
 - Replace `node tools/verify-links.mjs --staged --check-bidirectional` with `npx @orqastudio/integrity-validator .`
 - Replace `node tools/verify-pipeline-integrity.mjs --staged` with same (single tool)
 
 ### Make targets
+
 - `make verify` → `npx @orqastudio/integrity-validator .`
 - Individual targets (`verify-links`, `verify-integrity`) → delegate to package
 
 ### navigationStore
+
 Stays in `ui/src/lib/stores/navigation.svelte.ts` — not extracted.

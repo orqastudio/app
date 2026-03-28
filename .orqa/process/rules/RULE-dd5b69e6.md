@@ -4,21 +4,34 @@ type: rule
 title: Skill Enforcement
 description: "Three-tier skill loading: agent portable skills, orchestrator-injected project skills, and context-resolving wrappers."
 status: active
+enforcement_type: advisory
 created: 2026-03-07
 updated: 2026-03-13
 enforcement:
+
   - mechanism: behavioral
+
     message: "Skills must be loaded before task execution; orchestrator's delegation template requires skill loading; three-tier skill loading must be followed"
 relationships:
+
   - target: AD-c1e5a39e
+
     type: enforces
+
   - target: AD-26b0eb9f
+
     type: enforces
+
   - target: DOC-b11d4f61
+
     type: documented-by
+
   - target: DOC-d9cc1f84
+
     type: documented-by
+
   - target: DOC-e6fb92b0
+
     type: documented-by
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-8abcbfd5](RULE-8abcbfd5). Skills load in three tiers [AD-c1e5a39e](AD-c1e5a39e).
@@ -26,7 +39,7 @@ Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool acces
 ## Three-Tier Model
 
 | Tier | What | Where Declared | Loaded By |
-|------|------|---------------|-----------|
+| --- | --- | --- | --- |
 | **Tier 1** | Portable skills + wrappers | Agent YAML `skills:` frontmatter | Loaded on task start (by agent, plugin, or app) |
 | **Tier 2** | Project-specific skills | Orchestrator injection table | Orchestrator adds to delegation prompt |
 | **Tier 3** | Context resolution (CLI vs App) | Wrapper skill logic | Wrapper skill auto-resolves |
@@ -47,7 +60,7 @@ If a skill fails to load, the agent MUST report the failure explicitly. Do NOT s
 Every skill carries a `layer` field in its SKILL.md frontmatter:
 
 | Layer | Meaning | Loading |
-|-------|---------|---------|
+| --- | --- | --- |
 | `core` | Universal skill — applicable to all project types (governance, systems thinking, search usage) | Loaded based on agent YAML `skills:` list (Tier 1) |
 | `setup` | Project setup — used only during new project initialization, inference, and migration | Loaded by orchestrator during project setup workflows |
 | `project` | Project-specific — captures THIS project's patterns, conventions, and domain knowledge | Injected by orchestrator based on task scope (Tier 2) |
@@ -75,7 +88,7 @@ When delegating, the orchestrator includes: "Load these project skills before st
 The `orqa-code-search` wrapper skill detects the runtime context and resolves to the correct search implementation:
 
 | Available Tools | Context | Resolved Skill |
-|----------------|---------|---------------|
+| --- | --- | --- |
 | `Read`, `Edit`, `Bash` tools available (PascalCase built-ins) | CLI (Claude Code) | orqastudio MCP server (`search_regex`, `search_semantic`, `search_research`) |
 | Native search commands available | App (OrqaStudio) | `orqa-native-search` |
 | Neither | Fallback | Use Grep/Glob, note in task summary |
@@ -83,7 +96,7 @@ The `orqa-code-search` wrapper skill detects the runtime context and resolves to
 ## Portable Skills (Tier 1 — Agent-Declared)
 
 | Skill | Purpose | On Which Roles |
-|-------|---------|---------------|
+| --- | --- | --- |
 | `orqa-code-search` | Code search wrapper (mandatory) | ALL roles |
 | `composability` | Composability philosophy (mandatory) | ALL roles |
 | `planning` | Planning methodology | orchestrator, planner, researcher, writer |

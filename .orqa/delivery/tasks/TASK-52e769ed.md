@@ -3,7 +3,7 @@ id: TASK-52e769ed
 type: task
 title: Refactor GraphHealthWidget for clarity-focused display
 description: "Redesign the graph health widget to emphasise at-a-glance status clarity: a large status indicator, summary score, breakdown of errors and warnings, and a scan trigger button. Place in the 'Where You Are' column."
-status: completed
+status: archived
 priority: P1
 scoring:
   impact: 4

@@ -2,6 +2,7 @@
 id: KNOW-eeceaabf
 type: knowledge
 title: "Thinking Mode: Dogfood Implementation"
+domain: methodology/planning
 thinking-mode: dogfood-implementation
 description: Building infrastructure for immediate use in the current workflow — not a future feature idea.
 summary: "Building infrastructure for immediate use in the current workflow — not a future feature idea.. You are building infrastructure that this project will use immediately. This is not a future feature idea — it's work-enabling infrastructure for the current session or workflow."
@@ -29,24 +30,26 @@ You are building infrastructure that this project will use immediately. This is 
 ## What the Agent Needs
 
 **Core requirements (same as Implementation Mode):**
+
 - Coding standards (RULE-006) and four-layer completeness rule (RULE-010)
 - Relevant domain knowledge: `svelte5-best-practices`, `rust-async-patterns`, `orqa-ipc-patterns`
 - Search the codebase for existing implementations before creating new ones
 - Verify full request chain: component → store → invoke → Rust command
 
 **PLUS Dogfood-Specific Guidance:**
+
 - Awareness of the project's dogfood flag in project configuration — you are editing the app from inside or alongside it
 - RULE-009 context (dogfood mode constraints, restart protocol, sidecar self-edit warnings)
 - Search **aggressively** for existing patterns in THIS codebase — reuse over rebuild is critical for dogfood
 - For Rust backend changes: offer to run `make restart-tauri` after commit — changes affect the running environment
-- For sidecar protocol changes (`sidecar/src/`): warn before modifying; protocol changes require rebuild + restart
+- For sidecar protocol changes (`app/src-tauri/src/sidecar/`): warn before modifying; protocol changes require rebuild + restart
 - For frontend changes: Vite HMR handles them live, but avoid editing conversation components mid-stream (can crash)
 - After changes: be ready to restart the app to verify they work end-to-end
 
 ## Key Differences from Regular Implementation
 
 | Aspect | Regular Implementation | Dogfood Implementation |
-|--------|----------------------|----------------------|
+| -------- | ---------------------- | ---------------------- |
 | Motivation | Feature roadmap | Immediate workflow utility |
 | Urgency | Can wait for planning/design cycle | Needed now |
 | Consequence | Code goes into the app | Code affects the running app |
@@ -54,6 +57,7 @@ You are building infrastructure that this project will use immediately. This is 
 | Pattern search | Moderate — rewrite is acceptable | Aggressive — reuse is mandatory |
 
 **Example distinction:**
+
 - Regular: "add a metrics dashboard" (feature for users)
 - Dogfood: "build a script to auto-migrate old artifacts" (tool for us right now)
 

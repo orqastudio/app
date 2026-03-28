@@ -3,7 +3,7 @@ id: "EPIC-7394ba2a"
 type: "epic"
 title: "Portable Governance Framework"
 description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-c9e0a695 engine identity and governance hub capability. Implements AD-48b310f9 and AD-26b0eb9f."
-status: "completed"
+status: archived
 priority: "P1"
 created: "2026-03-09"
 updated: "2026-03-09"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Context
 
 [AD-48b310f9](AD-48b310f9) established that agents should represent universal roles (Orchestrator, Researcher,
@@ -37,19 +38,23 @@ not an AI development tool.
 Replace 16 software-specific agent files with 7 universal role definitions:
 
 **Create:**
+
 - `researcher.md` — Investigation, information gathering, analysis
 - `planner.md` — Approach design, architectural evaluation
 - `implementer.md` — Building things (code, deliverables, artifacts)
 - `reviewer.md` — Quality verification, compliance checking
 
 **Rename:**
+
 - `documentation-writer.md` → `writer.md`
 
 **Update:**
+
 - `orchestrator.md` — Already restructured (Section 1 + 2)
 - `designer.md` — Broaden from UI-only to experience/interface/structure design
 
 **Remove (merge into universal roles):**
+
 - backend-engineer.md, frontend-engineer.md, data-engineer.md → Implementer
 - devops-engineer.md → Implementer
 - systems-architect.md → Planner
@@ -63,7 +68,7 @@ Replace 16 software-specific agent files with 7 universal role definitions:
 Extract domain knowledge from old agents into loadable skills:
 
 | Source Agent | New Skill | Content |
-|-------------|-----------|---------|
+| ------------- | ----------- | --------- |
 | debugger | `diagnostic-methodology` | Root cause analysis, stack tracing |
 | refactor-agent | `restructuring-methodology` | Safe refactoring steps, verification |
 | security-engineer | `security-audit` | Audit checklist, threat model |
@@ -92,20 +97,27 @@ Create the four setup skills that replace templates:
 ## Constraints
 
 - **Orchestrator-only work** — This restructuring affects agent definitions directly.
+
   Launching agents that reference old/restructured definitions risks confusion.
   All tasks are executed by the orchestrator, not delegated.
+
 - **No code changes** — This epic is entirely governance artifacts (.orqa/ files).
+
   No changes to backend/src-tauri/, ui/, or sidecars/claude-agentsdk-sidecar/.
+
 - **Backward compatible** — The orchestrator.md (which IS CLAUDE.md via symlink)
+
   must continue to work after restructuring. Agent references in rules must be
   updated to use new role names.
+
 - **Update all cross-references** — Rules, skills, and other artifacts that reference
+
   old agent names must be updated in the same commit as the agent changes.
 
 ## Tasks
 
 | Task | Title | Depends On |
-|------|-------|------------|
+| ------ | ------- | ------------ |
 | [TASK-8c0c77b0](TASK-8c0c77b0) | Task Dependency Mechanism | — |
 | [TASK-0a4a9172](TASK-0a4a9172) | Create universal agent definitions | [TASK-8c0c77b0](TASK-8c0c77b0) |
 | [TASK-4023ac04](TASK-4023ac04) | Extract domain skills from old agents | [TASK-8c0c77b0](TASK-8c0c77b0), [TASK-0a4a9172](TASK-0a4a9172) |
@@ -116,7 +128,7 @@ Create the four setup skills that replace templates:
 
 ## Dependency Chain
 
-```
+```text
 TASK-8c0c77b0 (dependency mechanism)
   ├── TASK-0a4a9172 (create new agents)
   │     └── TASK-4023ac04 (extract skills from old agents)

@@ -2,6 +2,7 @@
 id: KNOW-1b7fa054
 type: knowledge
 title: Third-Party Plugin Development
+domain: methodology/governance
 summary: "This skill is loaded when the base plugin development skill detects that the working directory is NOT the platform dev environment. Any standalone project creating a plugin uses this workflow."
 description: |
   Third-party plugin workflow for community and external developers. Plugins are
@@ -39,6 +40,7 @@ orqa plugin create --template <cli-tool|frontend|full|sidecar> --name <plugin-na
 ```
 
 This:
+
 - Creates a new directory `<plugin-name>/`
 - Copies the chosen template
 - Initialises a git repo
@@ -50,7 +52,7 @@ This:
 
 Third-party plugins are standalone projects:
 
-```
+```text
 my-plugin/
 ├── <governance-dir>/             # Project governance artifacts
 │   ├── project configuration     # Software plugin pre-installed
@@ -108,6 +110,7 @@ This applies to your own plugin too when testing locally.
 ### 5. Development
 
 Third-party plugins develop independently:
+
 - Create governance seed data for testing
 - Run `orqa dev` within the plugin project
 - Use `orqa check` for coding standards enforcement
@@ -136,6 +139,7 @@ orqa plugin diff my-plugin-name
 ### 7. Community Registry Submission
 
 To submit to the community plugin registry:
+
 1. Ensure all enforcement passes (`orqa enforce`)
 2. Submit a PR to the community registry repository
 3. Maintainers review for quality, security, and compatibility
@@ -155,6 +159,7 @@ orqa plugin diff [name]               # Show content drift between source and .o
 ### 9. Licensing
 
 Third-party plugins choose their own license. The plugin creation workflow asks:
+
 - Apache-2.0 (permissive, attribution required)
 - MIT (permissive, minimal requirements)
 - Other (manual LICENSE file)

@@ -11,6 +11,7 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of Dogfood Readiness"
 ---
+
 ## Scope
 
 Six implementation phases delivered in a single sprint:
@@ -25,7 +26,7 @@ Six implementation phases delivered in a single sprint:
 ## Key Design Decisions
 
 - Governance analysis runs in Rust domain layer, not in commands
-- Tool approval uses Channel<T> for streaming approval requests to the frontend
+- Tool approval uses Channel\<T\> for streaming approval requests to the frontend
 - Lesson promotion is config-driven (recurrence threshold in project.json)
 - Process violations are non-blocking warnings, not hard errors
 

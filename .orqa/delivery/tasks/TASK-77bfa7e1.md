@@ -3,7 +3,7 @@ id: "TASK-77bfa7e1"
 type: "task"
 title: "Add docs and skills fields to task schema"
 description: "Extend the task schema with optional docs (array of documentation paths) and skills (array of skill names) fields that create graph edges from tasks to their implementation context."
-status: "completed"
+status: archived
 created: "2026-03-12"
 updated: "2026-03-12"
 acceptance:
@@ -16,6 +16,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Add two new optional fields to the task YAML frontmatter schema:

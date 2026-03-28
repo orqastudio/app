@@ -36,16 +36,18 @@ A small fine-tuned model sitting between the user and the orchestrator solves th
 
 **Architecture:**
 
-```
+```text
 User prompt → [Intent Model (local ONNX)] → enriched prompt + graph hints → Orchestrator
 ```
 
 The model is optional. When available:
+
 - Runs locally via ONNX Runtime (already in the project for search embeddings)
 - Adds structured metadata to the prompt: relevant artifact types, suggested skills, scope signals
 - Does NOT replace the orchestrator's judgment — provides input to accelerate graph traversal
 
 When not available:
+
 - Falls back to current regex-based prompt injector
 - No degradation in correctness, just slower graph discovery
 

@@ -3,7 +3,7 @@ id: "TASK-d1b856b5"
 type: "task"
 title: "Fix post-restructure path references in docs"
 description: "Update all documentation files that reference pre-restructure paths."
-status: "completed"
+status: archived
 created: 2026-03-12T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

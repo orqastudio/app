@@ -2,6 +2,7 @@
 id: KNOW-8c359ea4
 type: knowledge
 title: Governance Maintenance
+domain: methodology/governance
 summary: "Methodology for maintaining a governance framework's internal consistency. This knowledge artifact teaches the *custodianship process* — the specific artifact types and directory structures come from the project's governance configuration."
 description: |
   Governance framework custodianship: auditing agent definitions, maintaining
@@ -19,7 +20,6 @@ relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
 ---
-
 
 Methodology for maintaining a governance framework's internal consistency. This knowledge artifact teaches the *custodianship process* — the specific artifact types and directory structures come from the project's governance configuration.
 

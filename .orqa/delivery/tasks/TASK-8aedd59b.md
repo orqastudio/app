@@ -3,7 +3,7 @@ id: "TASK-8aedd59b"
 title: "Implement CLI process lifecycle commands (daemon, search, MCP)"
 type: "task"
 description: "Add orqa daemon|search|mcp start|stop|status commands to the CLI. CLI manages PID files, health checks, and graceful shutdown for all OrqaStudio services."
-status: "completed"
+status: archived
 created: 2026-03-24T00:00:00.000Z
 updated: 2026-03-24T00:00:00.000Z
 acceptance:
@@ -31,7 +31,7 @@ The CLI becomes the single entry point for managing all OrqaStudio service proce
 
 ## Design
 
-```
+```text
 orqa daemon start [--port N]   # Start daemon, write PID file
 orqa daemon stop               # Graceful shutdown via PID
 orqa daemon status             # Report running/stopped, port, PID

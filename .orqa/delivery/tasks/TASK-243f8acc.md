@@ -3,7 +3,7 @@ id: "TASK-243f8acc"
 type: "task"
 title: "Implement Stop hook (replaces pre-commit-reminder.sh)"
 description: "Plugin Stop hook replaces the shell-script pre-commit reminder with a structured hook."
-status: "completed"
+status: archived
 created: 2026-03-11T00:00:00.000Z
 updated: 2026-03-12T00:00:00.000Z
 assignee: "AGENT-e5dd38e4"

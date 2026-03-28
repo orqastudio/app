@@ -3,7 +3,7 @@ id: EPIC-609ddfee
 type: epic
 title: Plugin development workflow — three-tier skill architecture and template updates
 description: "Established the three-tier plugin development skill architecture: base KNOW-2f38309a (platform plugin development), first-party KNOW-46f68631 (OrqaStudio-maintained plugins), and third-party KNOW-1a4f41f7 (community plugins). Updated plugin templates with thumbnails, README boilerplate, deactivated workflow templates, and schema compatibility."
-status: completed
+status: archived
 created: 2026-03-19
 milestone: MS-b1ac0a20
 relationships:

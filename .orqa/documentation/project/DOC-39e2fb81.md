@@ -1,7 +1,9 @@
 ---
 id: DOC-39e2fb81
 type: doc
+status: active
 title: Streaming Pipeline
+domain: architecture
 category: architecture
 description: "End-to-end streaming architecture from Agent SDK through sidecar NDJSON to Rust Channel<T> to Svelte."
 created: 2026-03-02
@@ -42,7 +44,7 @@ graph TD
     RAF --> DOM
 ```
 
-The sidecar adds ~0.1–0.5ms per event, negligible relative to AI token generation latency. `Channel<T>` is Tauri's streaming IPC mechanism — faster than `emit`/`listen`, with ordered, indexed delivery.
+The sidecar adds ~0.1–0.5ms per event, negligible relative to AI token generation latency. `Channel\<T\>` is Tauri's streaming IPC mechanism — faster than `emit`/`listen`, with ordered, indexed delivery.
 
 ---
 
@@ -57,9 +59,9 @@ Requests flow in the reverse direction: Rust writes `SidecarRequest` objects to 
 Both sides of the protocol are defined in two mirrored files:
 
 | Layer | File |
-|-------|------|
-| Rust | `backend/src-tauri/src/sidecar/types.rs` — `SidecarRequest` and `SidecarResponse` enums |
-| TypeScript | `sidecar/src/protocol.ts` — matching interfaces and union types |
+| ------- | ------ |
+| Rust | `app/src-tauri/src/sidecar/types.rs` — `SidecarRequest` and `SidecarResponse` enums |
+| TypeScript | `app/src-tauri/src/sidecar/protocol.ts` — matching interfaces and union types |
 
 These files must stay in sync. A change to one requires a matching change to the other.
 
@@ -72,8 +74,8 @@ The `SidecarResponse` enum (Rust) / union type (TypeScript) carries all events e
 ### Streaming content
 
 | Variant | Fields | Description |
-|---------|--------|-------------|
-| `stream_start` | `message_id: i64`, `resolved_model: Option<String>` | Marks the start of a turn. `message_id` links to the persisted message row. |
+| --------- | -------- | ------------- |
+| `stream_start` | `message_id: i64`, `resolved_model: Option\<String\>` | Marks the start of a turn. `message_id` links to the persisted message row. |
 | `text_delta` | `content: String` | A chunk of assistant response text. |
 | `thinking_delta` | `content: String` | A chunk of extended thinking content (only when `enable_thinking` is true). |
 | `tool_use_start` | `tool_call_id: String`, `tool_name: String` | Signals that a tool call has begun. |
@@ -87,14 +89,14 @@ The `SidecarResponse` enum (Rust) / union type (TypeScript) carries all events e
 ### Tool execution
 
 | Variant | Fields | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `tool_execute` | `tool_call_id: String`, `tool_name: String`, `input: String` | Sidecar asks Rust to execute a tool. Handled synchronously in the stream loop — not forwarded to the frontend. |
 | `tool_approval_request` | `tool_call_id: String`, `tool_name: String`, `input: String` | Sidecar asks whether a write/execute tool is approved. Forwarded to the frontend as a `StreamEvent::ToolApprovalRequest`. |
 
 ### Lifecycle
 
 | Variant | Fields | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `session_initialized` | `session_id: i64`, `provider_session_id: String` | The Agent SDK has assigned a provider session UUID. Rust persists this to SQLite. Not forwarded to the frontend. |
 | `health_ok` | `version: String` | Health check response. Not forwarded to the frontend. |
 | `summary_result` | `session_id: i64`, `summary: String` | Response to a `generate_summary` request. Not forwarded to the frontend. |
@@ -106,11 +108,11 @@ The `SidecarResponse` enum (Rust) / union type (TypeScript) carries all events e
 Rust writes `SidecarRequest` objects to the sidecar's stdin.
 
 | Variant | Fields | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `send_message` | `session_id`, `content`, `model`, `system_prompt`, `provider_session_id`, `enable_thinking` | Begin a new turn. `provider_session_id` is set when resuming a session after restart. |
 | `cancel_stream` | `session_id` | Abort the active stream for this session. |
 | `health_check` | — | Request a `health_ok` response. |
-| `generate_summary` | `session_id`, `messages: Vec<MessageSummary>` | Request a short conversation title. |
+| `generate_summary` | `session_id`, `messages: Vec\<MessageSummary\>` | Request a short conversation title. |
 | `tool_result` | `tool_call_id`, `output`, `is_error` | Return the result of a `tool_execute` dispatch to the sidecar. |
 | `tool_approval` | `tool_call_id`, `approved`, `reason` | Return the user's approval decision for a `tool_approval_request`. |
 
@@ -118,12 +120,12 @@ Rust writes `SidecarRequest` objects to the sidecar's stdin.
 
 ## 5. StreamEvent (Frontend-Facing Type)
 
-`StreamEvent` is the Rust enum defined in `backend/src-tauri/src/domain/provider_event.rs`. It is what flows over `Channel<StreamEvent>` to the Svelte frontend. It is a filtered, transformed subset of `SidecarResponse`.
+`StreamEvent` is the Rust enum defined in `app/src-tauri/src/domain/provider_event.rs`. It is what flows over `Channel\<StreamEvent\>` to the Svelte frontend. It is a filtered, transformed subset of `SidecarResponse`.
 
 `StreamEvent` has 15 variants:
 
 | Variant | Notes |
-|---------|-------|
+| --------- | ------- |
 | `StreamStart` | Forwarded from `SidecarResponse::StreamStart` |
 | `TextDelta` | Forwarded from `SidecarResponse::TextDelta` |
 | `ThinkingDelta` | Forwarded from `SidecarResponse::ThinkingDelta` |
@@ -146,7 +148,7 @@ Rust writes `SidecarRequest` objects to the sidecar's stdin.
 
 ## 6. Stream Loop
 
-The stream loop is implemented in `backend/src-tauri/src/domain/stream_loop.rs`. It is the central Rust component that drives a conversation turn.
+The stream loop is implemented in `app/src-tauri/src/domain/stream_loop.rs`. It is the central Rust component that drives a conversation turn.
 
 ### Entry point
 
@@ -154,7 +156,7 @@ The stream loop is implemented in `backend/src-tauri/src/domain/stream_loop.rs`.
 
 ### Loop mechanics
 
-```
+```text
 loop {
     response = state.sidecar.read_line()   // blocking read from sidecar stdout
     if SessionInitialized → persist provider_session_id to SQLite, continue
@@ -198,14 +200,14 @@ The sidecar is a Bun-compiled binary (`sidecar/`) that wraps the Claude Agent SD
 
 ### Provider interface
 
-`sidecar/src/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `sidecar/src/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
+`app/src-tauri/src/sidecar/provider-interface.ts` defines the `Provider` interface. `ClaudeAgentProvider` in `app/src-tauri/src/sidecar/providers/claude-agent.ts` is the current implementation. Adding a new AI provider means implementing this interface without changing Rust or Svelte code.
 
 ### Tool routing via MCP
 
 The sidecar creates an in-process MCP server using `createSdkMcpServer()` from the Agent SDK. It registers 10 tools:
 
 | Tool | Description |
-|------|-------------|
+| ------ | ------------- |
 | `read_file` | Read file contents with optional offset/limit |
 | `write_file` | Write or create a file |
 | `edit_file` | Replace a string in a file (requires unique match) |
@@ -218,6 +220,7 @@ The sidecar creates an in-process MCP server using `createSdkMcpServer()` from t
 | `load_skill` | Load a project skill document by name |
 
 Every tool call invokes `executeToolViaRust()`, which:
+
 1. Emits a `tool_execute` NDJSON line to stdout
 2. Emits a `tool_use_start` NDJSON line (for frontend tracking)
 3. Waits for a `tool_result` on stdin (from Rust)
@@ -239,7 +242,7 @@ The Agent SDK's `canUseTool` callback is the approval gate for all tool calls. T
 `StreamError` events carry a `code`, `message`, and `recoverable` flag.
 
 | Error code | Cause | Recoverable |
-|-----------|-------|-------------|
+| ----------- | ------- | ------------- |
 | `rate_limit` | API rate limit hit | true |
 | `overloaded` | Provider overloaded | true |
 | `auth_error` | Claude Code CLI not authenticated | false |
@@ -256,7 +259,7 @@ Context overflow errors are intercepted in `translate_response()` and given a us
 
 ## Related Documents
 
-- Architecture Decisions — [AD-09fc4e65](AD-09fc4e65) (sidecar architecture), [AD-39e2fb81](AD-39e2fb81) (Channel<T> for streaming)
+- Architecture Decisions — [AD-09fc4e65](AD-09fc4e65) (sidecar architecture), [AD-39e2fb81](AD-39e2fb81) (Channel\<T\> for streaming)
 - Tool Definitions — Tool schemas, security model, and in-process execution
 - Streaming Pipeline — this document
 

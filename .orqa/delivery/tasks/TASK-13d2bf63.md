@@ -3,7 +3,7 @@ id: "TASK-13d2bf63"
 type: "task"
 title: "SQLite persistence design"
 description: "Evaluated SQLite via rusqlite for structured local storage of conversation data, sessions, and messages."
-status: "completed"
+status: archived
 created: "2026-03-02"
 updated: "2026-03-02"
 acceptance:
@@ -15,6 +15,7 @@ relationships:
     type: "delivers"
     rationale: "Task belongs to this epic"
 ---
+
 ## What
 
 Evaluated SQLite access libraries and established the persistence scope boundary: SQLite via rusqlite for conversation data (sessions, messages, metrics) only, with governance data remaining file-based.

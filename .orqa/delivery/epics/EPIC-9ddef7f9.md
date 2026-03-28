@@ -3,7 +3,7 @@ id: "EPIC-9ddef7f9"
 type: "epic"
 title: "Artifact Browser — Sort, Filter, Search"
 description: "Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel."
-status: "active"
+status: active
 priority: "P1"
 created: "2026-03-07"
 updated: "2026-03-11"
@@ -18,6 +18,7 @@ relationships:
     type: "fulfils"
     rationale: "Epic fulfils this milestone"
 ---
+
 ## Why P1
 
 The core app's job is to let users **navigate and search** artifacts ([AD-80f39962](AD-80f39962)). Navigation and cross-linking are built. What's missing is the ability to sort/group/filter the artifact list, search across all artifacts semantically, and surface cross-references. Editing is tracked separately in [EPIC-320d1a2f](EPIC-320d1a2f).
@@ -43,11 +44,11 @@ The core app's job is to let users navigate, search, and edit artifacts. Navigat
 ## Design Principles
 
 > The core app UI provides three capabilities: navigate, search, and edit. All system-level visualizations (roadmaps, dashboards, dependency graphs) are plugins. — [AD-80f39962](AD-80f39962)
-
+>
 > Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — [AD-306eccf1](AD-306eccf1)
-
+>
 > Sorting and filtering are schema-driven — generated dynamically from each artifact type's `schema.json` enum fields. No hardcoded field lists. — [AD-a47f313a](AD-a47f313a)
-
+>
 > Default views are config-driven via `_navigation.json` per artifact type directory. Supports sort/group/filter defaults, group ordering overrides, and custom curated layouts. — [AD-e8ea9fb9](AD-e8ea9fb9)
 
 ## Remaining Scope
@@ -142,33 +143,39 @@ Surface the graph's cross-reference data in the viewer:
 ### Phase 1: Schema-Driven Sort/Group/Filter Toolbar + `_navigation.json`
 
 **Backend:**
+
 - Extend DocNode to carry all scalar frontmatter fields
 - Read each type's `schema.json` — extract enum fields as `filterable_fields` and date/string fields as `sortable_fields` on NavType
 - Read `_navigation.json` from each type directory — include as `navigation_config` on NavType
 - No new Tauri commands — data flows through the existing `artifact_scan_tree` response
 
 **Frontend — Toolbar:**
+
 - Replace `SearchInput` in `ArtifactNav` with `ArtifactToolbar.svelte` — fixed `h-10` bar
 - Two ghost icon buttons: `ArrowUpDownIcon` (sort) and `FilterIcon` (filter)
 - Active state indicators on icons when non-default sort/filter is applied
 
 **Frontend — Filter panel (Popover):**
+
 - Sections generated dynamically from NavType's `filterable_fields` (schema enum properties)
 - Each section: heading + checkbox rows for each enum value
 - Visual decorators by field name: status dots for `status`, priority colours for `priority`
 
 **Frontend — Sort dropdown (DropdownMenu):**
+
 - Sort options from NavType's `sortable_fields` plus universal fields (title)
 - Group-by options from `filterable_fields` (enum fields)
 - Collapsible group headers replace tree rendering
 - Group header ordering: `_navigation.json` `group_order` → schema enum order → alphabetical
 
 **Frontend — State:**
+
 - `ArtifactViewState`: `{ sort: SortConfig; filters: FilterConfig; group: string | null }`
 - Defaults from `_navigation.json` → user overrides in navigation store per type key
 - Client-side sorting/filtering/grouping on the DocNode array
 
 **Frontend — Tree mode removal + custom layout:**
+
 - Remove tree rendering — all types render as flat lists with optional collapsible groups
 - When `_navigation.json` has `layout`, render curated sections instead of sort/filter
 
@@ -195,6 +202,7 @@ Surface the graph's cross-reference data in the viewer:
 ## Tasks
 
 **Phase 1 — Sort/Group/Filter Toolbar:**
+
 - [TASK-19a94ac8](TASK-19a94ac8): Audit artifact group README files for accuracy
 - [TASK-764410d7](TASK-764410d7): Backend — extend DocNode with frontmatter, NavType with schema metadata
 - [TASK-dde309b0](TASK-dde309b0): Frontend — TypeScript types for schema metadata and navigation config
@@ -202,7 +210,9 @@ Surface the graph's cross-reference data in the viewer:
 - [TASK-66a87d84](TASK-66a87d84): Frontend — Client-side sorting, filtering, and grouping logic
 
 **Phase 2 — References Panel:**
+
 - [TASK-4f1db8fa](TASK-4f1db8fa): Frontend — References panel in artifact viewer
 
 **Phase 3 — AI Search:**
+
 - [TASK-30045ad8](TASK-30045ad8): Frontend — Spotlight-style AI search overlay

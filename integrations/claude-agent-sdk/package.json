@@ -1,6 +1,6 @@
 {
   "name": "@orqastudio/plugin-claude-integration",
-  "version": "0.1.0-dev",
+  "version": "0.1.4-dev",
   "private": true,
   "description": "Claude AI provider for OrqaStudio — wraps Agent SDK sidecar + claude-code-cli governance.",
   "dependencies": {

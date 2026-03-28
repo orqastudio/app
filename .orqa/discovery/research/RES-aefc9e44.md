@@ -11,6 +11,7 @@ relationships:
     type: guides
     rationale: "Research findings informed the design of Vision Alignment & Schema Simplification"
 ---
+
 ## Context
 
 This audit was conducted when OrqaStudio (then "Forge") was framed as a "wrapper/companion for Claude Code CLI". The vision has since evolved to a domain-agnostic clarity engine with `.orqa/` as source of truth and provider-agnostic AI integration. Many findings here have been addressed by the vision realignment work, but the audit remains as a historical record of the documentation state at that point.

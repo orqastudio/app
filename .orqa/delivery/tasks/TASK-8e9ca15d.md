@@ -3,7 +3,7 @@ id: "TASK-8e9ca15d"
 type: "task"
 title: "Skills content audit (48 skills)"
 description: "Audit all 48 skills: fix layer classifications, resolve overlaps, establish naming convention (orqa-* = project-specific), remove stale content references, verify category accuracy."
-status: "completed"
+status: archived
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 assignee: null
