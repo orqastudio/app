@@ -75,7 +75,7 @@ All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "
 Lessons carry a `status` field that reflects their promotion state:
 
 | Status | Meaning | Indicator |
-|--------|---------|-----------|
+| ------ | ------- | --------- |
 | `active` | Unpromoted lesson, normal state | Blue dot |
 | `recurring` | Recurrence >= 2, pending promotion review | Amber dot |
 | `promoted` | Promoted to a rule, coding standard, or knowledge | Purple dot |

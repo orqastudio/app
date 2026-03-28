@@ -1,7 +1,7 @@
 name: agile-methodology
 version: "0.1.0"
 artifact_type: epic
-plugin: "@orqastudio/plugin-agile-workflow"
+plugin: "@orqastudio/plugin-agile-methodology"
 description: >
   Core delivery workflow skeleton with contribution points. This is the
   workflow-definition plugin's skeleton — stage-definition plugins fill

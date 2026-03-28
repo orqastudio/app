@@ -3,7 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Svelte Development",
   "description": "Svelte development infrastructure — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
-  "category": "tooling",
+  "category": "domain-knowledge",
+  "purpose": ["domain-knowledge"],
+  "affects_schema": false,
+  "affects_enforcement": false,
   "extends": [
     "@orqastudio/plugin-typescript"
   ],

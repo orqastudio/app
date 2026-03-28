@@ -13,6 +13,7 @@ Plugins interact with governance artifacts through a defined content flow:
 ### Content Declaration
 
 Plugins declare content sections in `orqa-plugin.json`:
+
 - `content.knowledge` — knowledge artifacts provided by the plugin
 - `content.rules` — rule artifacts provided by the plugin
 - `content.documentation` — documentation provided by the plugin

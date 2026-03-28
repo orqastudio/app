@@ -20,7 +20,7 @@ OrqaStudio has **one validation engine** used by three consumers. All artifact v
 
 ## Architecture
 
-```
+```text
                  Plugin schema.json files
                          │
                          ▼
@@ -58,7 +58,7 @@ Plugins declare schemas in their `orqa-plugin.json` manifest under `provides.sch
 Every `.md` file in `.orqa/` has YAML frontmatter. The engine validates each field against the directory's `schema.json`:
 
 | Check | Example Violation |
-|-------|-------------------|
+| ----- | ----------------- |
 | Required fields present | Missing `id` or `status` in frontmatter |
 | Valid enum values | `status: enabled` instead of `status: active` |
 | Correct field types | `created: true` instead of `created: 2026-03-24` |
@@ -69,7 +69,7 @@ Every `.md` file in `.orqa/` has YAML frontmatter. The engine validates each fie
 Relationships in frontmatter (`relationships:` array) are checked against the plugin schema's `provides.relationships` definitions:
 
 | Check | Example Violation |
-|-------|-------------------|
+| ----- | ----------------- |
 | Valid relationship type | `type: synced-with` instead of `type: synchronised-with` |
 | Valid source type | `implements` used on a knowledge artifact (only valid from docs) |
 | Target exists | `target: KNOW-999999` when no such artifact exists |
@@ -79,7 +79,7 @@ Relationships in frontmatter (`relationships:` array) are checked against the pl
 Cross-artifact references are checked for consistency:
 
 | Check | Example Violation |
-|-------|-------------------|
+| ----- | ----------------- |
 | Broken targets | A relationship pointing to a non-existent artifact ID |
 | Missing inverses | A `synchronised-with` B but B doesn't list A |
 | Orphaned artifacts | An epic referencing a task that doesn't reference back |
@@ -100,7 +100,7 @@ The LSP adapter also provides **completions** by reading schema enum values.
 
 The `orqa check` command runs the validation engine against all artifacts and outputs a human-readable report:
 
-```
+```text
 ERROR  .orqa/process/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
 WARN   .orqa/delivery/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
 ```
@@ -124,7 +124,7 @@ All three consumers automatically gain the new rule — there is nothing to upda
 ## File Locations
 
 | File | Purpose |
-|------|---------|
+| ---- | ------- |
 | `libs/validation/` | Shared validation engine library |
 | `plugins/*/schema.json` (per artifact directory) | JSON Schema definitions for artifact types |
 | `plugins/*/orqa-plugin.json` | Plugin manifest declaring schemas and relationship types |

@@ -34,7 +34,7 @@ Core graph artifacts define how the artifact graph works, how agents traverse it
 ## What Is Core (Firmware)
 
 | Artifact | Path | Why It's Protected |
-|----------|------|--------------------|
+| -------- | ---- | ------------------ |
 | **Artifact schemas** | `schema.json` in every artifact directory | Define what fields exist, what edges connect artifact types |
 | **Core knowledge** | `composability`, `planning`, `research-methodology`, `orqa-code-search` | Define universal methodology all agents use |
 | **Orchestrator prompt** | `.orqa/process/agents/orchestrator.md` | Defines graph traversal and process model |
@@ -52,6 +52,7 @@ Everything else in `.orqa/` is project-specific and freely editable:
 ## Why This Matters
 
 The core graph is the foundation the entire system builds on. If a schema is changed incorrectly:
+
 - Existing artifacts may fail validation
 - Graph traversal instructions become wrong
 - The plugin injects incorrect context
@@ -64,6 +65,7 @@ These are the same class of risk as modifying a database schema without a migrat
 When `project.json` contains `"dogfood": true`, core artifacts ARE editable because the developer is building OrqaStudio itself. The enforcement engine and pre-commit hook both check this flag and skip the protection.
 
 In all other projects, core artifacts are read-only at three levels:
+
 1. **This rule** — agents are blocked from writing to core files
 2. **Pre-commit hook** — git commits touching core files are blocked (override: `ORQA_CORE_OVERRIDE=1`)
 3. **App UI** (future) — core files render as read-only in the artifact editor

@@ -3,7 +3,10 @@
   "displayName": "TypeScript",
   "version": "0.1.4-dev",
   "description": "Base TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions.",
-  "category": "coding-standards",
+  "category": "domain-knowledge",
+  "purpose": ["domain-knowledge", "infrastructure"],
+  "affects_schema": false,
+  "affects_enforcement": true,
   "content": {
     "documentation": {
       "source": "documentation",

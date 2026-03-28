@@ -11,6 +11,7 @@
 
 pub mod cli_runner;
 pub mod collision;
+pub mod constraints;
 pub mod discovery;
 pub mod hooks;
 pub mod installer;

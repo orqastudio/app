@@ -10,7 +10,10 @@
     "@orqastudio/plugin-rust",
     "@orqastudio/plugin-svelte"
   ],
-  "category": "tooling",
+  "category": "domain-knowledge",
+  "purpose": ["domain-knowledge"],
+  "affects_schema": false,
+  "affects_enforcement": false,
   "provides": {
     "knowledge": [
       {

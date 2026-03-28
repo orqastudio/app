@@ -3,7 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Coding Standards",
   "description": "Unified coding standards enforcement — config generation from governance rules, quality checks via orqa check, and organisation-wide standards sync.",
-  "category": "coding-standards",
+  "category": "infrastructure",
+  "purpose": ["infrastructure"],
+  "affects_schema": false,
+  "affects_enforcement": true,
   "provides": {
     "schemas": [],
     "enforcement_mechanisms": [

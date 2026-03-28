@@ -38,7 +38,7 @@ Nothing in this pipeline is hardcoded. Plugin schemas define what artifact types
 
 ### Request to Delivery
 
-```
+```text
 User request
     │
     ▼
@@ -68,7 +68,7 @@ Independent Reviewer
 ### Agent Roles
 
 | Role | What They Do | What They Cannot Do |
-|------|-------------|-------------------|
+| ---- | ----------- | ------------------- |
 | **Orchestrator** | Coordinates, delegates, reports status | Write implementation code |
 | **Implementer** | Build code and deliverables | Self-certify quality |
 | **Researcher** | Investigate and gather information | Modify files |
@@ -108,7 +108,7 @@ This is **dynamic** — an Implementer working on "add a Tauri command for artif
 
 ### How They Combine
 
-```
+```text
 Agent spawn
     │
     ├── Agent definition → employs → Declared knowledge (always loaded)
@@ -137,7 +137,7 @@ The validation engine reads these schemas. It never hardcodes valid values. Addi
 The shared validation engine (`libs/validation/`) is consumed by three adapters:
 
 | Consumer | When | Response |
-|----------|------|----------|
+| -------- | ---- | -------- |
 | **LSP** (`orqa lsp`) | Real-time, on every file save | Red squiggles, warnings, completions |
 | **CLI** (`orqa check`) | On demand | Human-readable error report |
 | **Pre-commit** (`.githooks/pre-commit`) | On every `git commit` | Commit blocked if errors |
@@ -153,7 +153,7 @@ Governance enforcement operates in three layers, each handling a different class
 The LSP server (`orqa lsp`) runs in the developer's editor and provides instant feedback:
 
 | Check | Example |
-|-------|---------|
+| ----- | ------- |
 | Invalid statuses | `status: enabled` when the schema says `active/inactive/archived` |
 | Wrong relationship types | `type: synced-with` when the schema defines `synchronised-with` |
 | Missing required fields | A rule without an `enforcement` array |
@@ -167,7 +167,7 @@ Layer 1 checks are **mechanical and deterministic**. If the schema defines it, t
 Some governance cannot be reduced to a schema check. These are enforced as behavioral rules injected into agent context:
 
 | Check | Example |
-|-------|---------|
+| ----- | ------- |
 | Documentation-before-code | Agent must verify docs exist before implementing |
 | Delegation boundaries | Orchestrator must not write code; Reviewer must not fix issues |
 | Pillar alignment | Every feature must serve at least one active pillar |
@@ -190,7 +190,7 @@ Nothing passes without passing all checks. The hook cannot be bypassed with `--n
 
 ### How the Layers Interact
 
-```
+```text
 Developer edits artifact
     │
     ├── Layer 1: LSP flags invalid status immediately (red squiggle)
@@ -231,7 +231,7 @@ Every relationship type is defined by a plugin schema — valid types, which art
 Relationships are grouped by semantic meaning:
 
 | Semantic | Relationships | Purpose |
-|----------|--------------|---------|
+| -------- | ------------ | ------- |
 | **Foundation** | upholds, grounded, benefits, serves, revises | Anchor work to vision, pillars, personas |
 | **Lineage** | crystallises, spawns, merged-into | Track how artifacts evolve |
 | **Governance** | drives, governs, enforces, codifies, promoted-to | Connect decisions to rules to lessons |
@@ -257,7 +257,7 @@ Plugins are the **canonical source of truth** for schemas, agents, knowledge, ru
 
 ### The Flow
 
-```
+```text
 Plugin source (plugins/<name>/)
     │
     orqa install
@@ -284,7 +284,7 @@ This detects both plugin updates and user local edits, and merges them intellige
 ### What Plugins Provide
 
 | Content Type | Source | Installed To |
-|-------------|--------|-------------|
+| ----------- | ------ | ----------- |
 | Agents | `plugins/<name>/agents/` | `.orqa/process/agents/` |
 | Knowledge | `plugins/<name>/knowledge/` | `.orqa/process/knowledge/` |
 | Rules | `plugins/<name>/rules/` | `.orqa/process/rules/` |
@@ -299,7 +299,7 @@ Schemas and relationships are not installed as files — they are declared in `o
 Every documentation page has a paired knowledge artifact. They contain the same information structured for different audiences:
 
 | Artifact | Audience | Purpose |
-|----------|----------|---------|
+| -------- | -------- | ------- |
 | **Doc** (DOC-xxxxxxxx) | Human developers | Explain concepts, provide context, show examples |
 | **Knowledge** (KNOW-xxxxxxxx) | AI agents | Structured rules, decision tables, forbidden patterns |
 
@@ -330,7 +330,7 @@ Rules requiring judgement — documentation-first, delegation boundaries, pillar
 
 The complete lifecycle from writing to committed code:
 
-```
+```text
 1. Write artifact
        │
 2. LSP validates in real-time (Layer 1)

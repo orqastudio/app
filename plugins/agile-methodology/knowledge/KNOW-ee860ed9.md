@@ -32,6 +32,7 @@ relationships:
 ## Escalation Path
 
 When enforcement fails (lesson recurrence >= 3):
+
 - Prompt → hook (add mechanical check)
 - Warning hook → blocking hook (prevent, not just warn)
 - Hook → validator check (blocks the pipeline)
@@ -40,6 +41,7 @@ When enforcement fails (lesson recurrence >= 3):
 ## Connector-Specific Enforcement
 
 Each connector provides its own enforcement primitives. For Claude Code:
+
 - `PreToolUse` hooks: can block Write/Edit/Bash
 - `PostToolUse` hooks: can warn after Write/Edit/Bash
 - `UserPromptSubmit` hooks: classify prompt type + inject behavioral rules
@@ -49,6 +51,7 @@ Each connector provides its own enforcement primitives. For Claude Code:
 ## Linter Delegation
 
 Per [RULE-42d17086](RULE-42d17086), OrqaStudio delegates code quality enforcement to linters. Do NOT add file-based enforcement for patterns that clippy or ESLint already catch. Instead:
+
 - Add a `lint` entry in the rule's frontmatter documenting the delegation
 - Ensure the linter rule is configured to match the documented standard
 - Reference the linter rule name so violations can be traced to the standard
@@ -79,6 +82,7 @@ enforcement:
 ## Gap Detection
 
 An enforcement gap exists when:
+
 - A rule has `enforcement: []` or no enforcement field
 - A rule's enforcement is documentation-only (no mechanical check)
 - A lesson recurs 3+ times without being blocked by tooling

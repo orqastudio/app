@@ -1,10 +1,13 @@
 {
-  "name": "@orqastudio/plugin-agile-workflow",
+  "name": "@orqastudio/plugin-agile-methodology",
   "version": "0.1.4-dev",
   "displayName": "Agile Governance",
   "description": "Agile governance methodology — the skeleton workflow with contribution points, relationship vocabulary, and content (knowledge, rules, docs) about the agile model. No artifact type definitions.",
-  "category": "governance",
-  "role": "core:workflow",
+  "category": "methodology",
+  "purpose": ["methodology"],
+  "role": "core:methodology",
+  "affects_schema": true,
+  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "agents": [
@@ -12,11 +15,6 @@
         "key": "e7f3a2c9",
         "id": "AGENT-7a06d10e",
         "path": "agents/AGENT-7a06d10e.md"
-      },
-      {
-        "key": "ff44f841",
-        "id": "AGENT-ae63c406",
-        "path": "agents/AGENT-ae63c406.md"
       }
     ],
     "views": [],
@@ -495,55 +493,6 @@
         "content_file": "knowledge/KNOW-8d1c4be6.md"
       },
       {
-        "id": "plugin-artifact-usage-0444355f",
-        "tier": "on-demand",
-        "roles": [
-          "implementer",
-          "writer"
-        ],
-        "tags": [
-          "plugin",
-          "artifacts",
-          "usage",
-          "governance"
-        ],
-        "priority": "P3",
-        "summary": "Plugin artifact usage: how plugins provide and consume governance artifacts. The content flow between plugin source and installed copies.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-0444355f.md"
-      },
-      {
-        "id": "thinking-mode-learning-loop",
-        "tier": "always",
-        "tags": [
-          "thinking-mode",
-          "learning-loop",
-          "lessons"
-        ],
-        "priority": "P0",
-        "summary": "Learning loop thinking mode: captures surprising outcomes or process failures as lesson artifacts. Lessons may promote to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-83039175.md"
-      },
-      {
-        "id": "governance-maintenance-8c359ea4",
-        "tier": "stage-triggered",
-        "roles": [
-          "reviewer",
-          "writer"
-        ],
-        "stages": [
-          "review",
-          "maintain"
-        ],
-        "tags": [
-          "governance",
-          "maintenance",
-          "custodianship"
-        ],
-        "priority": "P1",
-        "summary": "Governance maintenance: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency.",
-        "content_file": "../../.orqa/process/knowledge/KNOW-8c359ea4.md"
-      },
-      {
         "id": "thinking-mode-general",
         "tier": "always",
         "tags": [
@@ -568,7 +517,7 @@
         "content_file": "../../.orqa/process/knowledge/KNOW-c89f28b3.md"
       },
       {
-        "id": "thinking-mode-governance",
+        "id": "schema-first-frontmatter",
         "tier": "always",
         "tags": [
           "governance",
@@ -581,7 +530,7 @@
         "content_file": "../../.orqa/process/knowledge/KNOW-57365826.md"
       },
       {
-        "id": "thinking-mode-governance",
+        "id": "plugin-canonical-architecture",
         "tier": "always",
         "tags": [
           "governance",
@@ -594,7 +543,7 @@
         "content_file": "../../.orqa/process/knowledge/KNOW-e3432947.md"
       },
       {
-        "id": "thinking-mode-governance",
+        "id": "documentation-placement",
         "tier": "always",
         "roles": [
           "writer",

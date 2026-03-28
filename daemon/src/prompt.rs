@@ -11,7 +11,7 @@
 //
 // Classification vocabulary (thinking-mode exceptions, prompt types, stage
 // mappings, keyword patterns) is loaded at handler time from the installed
-// plugin manifests. The agile-workflow plugin owns this vocabulary via its
+// plugin manifests. The agile-methodology plugin owns this vocabulary via its
 // `prompt_classification` section. If no plugin provides classification data,
 // a warning is logged and all prompts fall back to "general".
 
@@ -31,7 +31,7 @@ use orqa_engine::search::embedder::Embedder;
 // ---------------------------------------------------------------------------
 
 /// Prompt classification vocabulary loaded from a plugin's `prompt_classification`
-/// manifest section. The agile-workflow plugin is the canonical provider.
+/// manifest section. The agile-methodology plugin is the canonical provider.
 #[derive(Deserialize, Default)]
 struct PromptClassification {
     /// Maps thinking-mode frontmatter values that do not match their prompt type by name.
@@ -440,7 +440,7 @@ fn estimate_tokens(text: &str) -> u64 {
 mod tests {
     use super::*;
 
-    /// Build a fully populated PromptClassification matching the agile-workflow plugin data.
+    /// Build a fully populated PromptClassification matching the agile-methodology plugin data.
     fn test_classification() -> PromptClassification {
         let mut thinking_mode_exceptions = HashMap::new();
         thinking_mode_exceptions.insert("learning-loop".to_string(), "governance".to_string());

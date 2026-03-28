@@ -25,6 +25,11 @@ pub struct PluginManifest {
     /// Key: the relationship/schema key. Value: the decision made.
     #[serde(default, rename = "mergeDecisions")]
     pub merge_decisions: Vec<MergeDecision>,
+    /// Installation constraints: purpose classification, stage slot, and
+    /// post-install action flags. All fields default to safe values when absent.
+    /// These fields are top-level in the manifest JSON (not nested under a sub-object).
+    #[serde(flatten)]
+    pub install_constraints: PluginInstallConstraints,
 }
 
 /// A recorded decision about a key collision during plugin installation.
@@ -82,6 +87,40 @@ pub struct PluginProvides {
     /// Agent role definitions contributed by this plugin.
     #[serde(default)]
     pub agents: Vec<AgentDefinition>,
+}
+
+/// Installation constraint metadata declared in a plugin manifest.
+///
+/// These fields govern what the installer must enforce and what post-install
+/// actions it must trigger. They are separate from `provides` because they
+/// describe the plugin's installation behaviour rather than its runtime contributions.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct PluginInstallConstraints {
+    /// The plugin's role(s) in the methodology composition pipeline.
+    /// Valid values: "methodology", "workflow", "knowledge", "connector",
+    /// "infrastructure", "app_extension", "sidecar".
+    /// A single plugin may serve multiple purposes.
+    #[serde(default)]
+    pub purpose: Vec<String>,
+
+    /// For workflow plugins: the methodology stage slot this plugin fills.
+    /// Must be unique — only one plugin may occupy each slot per project.
+    /// Non-workflow plugins leave this field absent.
+    #[serde(default)]
+    pub stage_slot: Option<String>,
+
+    /// True when installing this plugin must trigger full schema recomposition.
+    /// Definition plugins (methodology, workflow) set this to true.
+    /// Knowledge, views, and infrastructure plugins set it to false.
+    /// Missing field defaults to false (safe default).
+    #[serde(default)]
+    pub affects_schema: bool,
+
+    /// True when installing this plugin must trigger enforcement config regeneration.
+    /// Plugins that provide rules or enforcement mechanisms set this to true.
+    /// Missing field defaults to false (safe default).
+    #[serde(default)]
+    pub affects_enforcement: bool,
 }
 
 const MANIFEST_FILENAME: &str = "orqa-plugin.json";
@@ -164,6 +203,7 @@ mod tests {
                 agents: vec![],
             },
             merge_decisions: vec![],
+            install_constraints: Default::default(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -188,6 +228,7 @@ mod tests {
                 agents: vec![],
             },
             merge_decisions: vec![],
+            install_constraints: Default::default(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -216,5 +257,63 @@ mod tests {
         assert_eq!(manifest.provides.agents.len(), 1);
         assert_eq!(manifest.provides.agents[0].id, "orchestrator");
         assert_eq!(manifest.provides.agents[0].capabilities, vec!["file_read"]);
+    }
+
+    #[test]
+    fn install_constraints_default_to_safe_values_when_absent() {
+        // A manifest without installConstraints should default all flags to false
+        // and purpose/stageSlot to empty/None. This is the safe default per P5-28.
+        let json = r#"{
+            "name": "@orqastudio/knowledge-plugin",
+            "version": "0.1.0",
+            "provides": {}
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert!(manifest.install_constraints.purpose.is_empty());
+        assert!(manifest.install_constraints.stage_slot.is_none());
+        assert!(!manifest.install_constraints.affects_schema);
+        assert!(!manifest.install_constraints.affects_enforcement);
+    }
+
+    #[test]
+    fn install_constraints_deserialized_when_present() {
+        // A methodology plugin with full install constraints should round-trip correctly.
+        // Fields are top-level in the manifest JSON, using snake_case names.
+        let json = r#"{
+            "name": "@orqastudio/plugin-agile-methodology",
+            "version": "0.1.0",
+            "provides": {},
+            "purpose": ["methodology"],
+            "affects_schema": true,
+            "affects_enforcement": false
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.install_constraints.purpose, vec!["methodology"]);
+        assert!(manifest.install_constraints.stage_slot.is_none());
+        assert!(manifest.install_constraints.affects_schema);
+        assert!(!manifest.install_constraints.affects_enforcement);
+    }
+
+    #[test]
+    fn install_constraints_stage_slot_deserialized() {
+        // A workflow plugin with stage_slot should deserialize correctly.
+        // Fields are top-level in the manifest JSON, using snake_case names.
+        let json = r#"{
+            "name": "@orqastudio/plugin-agile-discovery",
+            "version": "0.1.0",
+            "provides": {},
+            "purpose": ["workflow"],
+            "stage_slot": "discovery",
+            "affects_schema": true,
+            "affects_enforcement": false
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(
+            manifest.install_constraints.stage_slot.as_deref(),
+            Some("discovery")
+        );
     }
 }

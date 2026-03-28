@@ -40,6 +40,7 @@ When the platform spawns an agent, it reads the agent definition, follows all `e
 **This gives agents their base knowledge** — the foundational information every instance of that agent type needs, regardless of the specific task.
 
 **Examples of declared knowledge:**
+
 - Orchestrator always gets: search methodology, planning methodology, plugin-canonical architecture
 - Governance Steward always gets: plugin-canonical architecture, schema lookup patterns
 - Svelte Specialist always gets: Svelte 5 patterns, component extraction methodology
@@ -57,12 +58,13 @@ When an agent is spawned with a task description, the platform runs a semantic s
 **This gives agents situational knowledge** — information specific to the task at hand that the agent's base knowledge doesn't cover.
 
 **Example:** A Rust Specialist assigned "add a new Tauri command for artifact validation" would receive:
+
 - **Via Mechanism 1:** Composability, search methodology, error handling patterns (always loaded)
 - **Via Mechanism 2:** Tauri IPC patterns, validation engine architecture, command structure (task-relevant)
 
 ## How They Work Together
 
-```
+```text
 Agent spawn request
 ├── Agent ID → Read agent definition
 │   └── Follow employs relationships → Load declared knowledge
@@ -82,7 +84,7 @@ If a knowledge artifact is found by both mechanisms (declared AND semantically r
 Knowledge injection is enforced through hooks in the connector plugin:
 
 | Hook | Event | Purpose |
-|------|-------|---------|
+| ---- | ----- | ------- |
 | Agent spawn hook | Agent created | Reads agent definition, follows `employs`, loads declared knowledge |
 | Task delegation hook | Task assigned to agent | Runs semantic search on task description, injects relevant knowledge |
 | Dedup cache | Per session | Prevents duplicate injection across mechanisms |
@@ -109,7 +111,7 @@ Ensure the knowledge artifact has a descriptive `title` and `description` in its
 ### Choosing Between Declared and Semantic
 
 | If the agent needs this knowledge... | Use |
-|--------------------------------------|-----|
+| -------------------------------------- | --- |
 | Every time, regardless of task | Declared (`employs` relationship) |
 | Only for certain types of tasks | Semantic (good title + description) |
 | Only for very specific, rare tasks | Manual orchestrator injection in delegation prompt |

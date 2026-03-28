@@ -68,7 +68,7 @@ Before marking an epic as done, the orchestrator MUST:
 Sometimes a deliverable genuinely depends on infrastructure from another epic. This is handled at planning time, not implementation time:
 
 | Situation | Resolution |
-|-----------|------------|
+| --------- | ---------- |
 | Item depends on another epic's infrastructure | Include the minimum infrastructure in THIS epic, or get user approval to remove the item from scope |
 | Item is trivially blocked | Build the prerequisite as part of this epic |
 | Item requires a large body of work from another domain | Flag to user: "This item requires X, which is EPIC-NNN scope. Should I include it here or remove it from this epic's deliverables?" |
@@ -117,12 +117,14 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 ## Out of Scope (handled by other epics)
 - `ContextInjected` emission — depends on EPIC-b8dc200d
 ```
+
 ^ This is the orchestrator unilaterally removing a deliverable without user approval.
 
 ```text
 ## What Is NOT Done
 - custom_prompt is always None — EPIC-096fed18 will populate this
 ```
+
 ^ This is deferring a deliverable. If custom_prompt is in scope, implement it. If it's genuinely out of scope, the user must have approved its removal.
 
 ```text
@@ -131,6 +133,7 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 - 8 stale docs — minor cleanup
 - 5 skill renames — deferred due to complexity
 ```
+
 ^ This is the agent triaging outstanding work without user input. Each item must be surfaced individually for the user to decide.
 
 ## Related Rules

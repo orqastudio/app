@@ -12,7 +12,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
-import { readLockfile, writeLockfile, type LockfileData } from "./lockfile.js";
+import { readLockfile, writeLockfile } from "./lockfile.js";
 import { readManifest, validateManifest } from "./manifest.js";
 import { PLATFORM_CONFIG } from "@orqastudio/types";
 import type { RelationshipType, PluginManifest } from "@orqastudio/types";
@@ -41,6 +41,16 @@ export interface InstallResult {
 	source: "github" | "local";
 	/** Key collisions detected during installation. Empty when none. */
 	collisions: KeyCollisionResult[];
+	/**
+	 * True when the installed plugin declares affectsSchema: true.
+	 * The caller must trigger schema recomposition after installation (P5-28).
+	 */
+	requiresSchemaRecomposition: boolean;
+	/**
+	 * True when the installed plugin declares affectsEnforcement: true.
+	 * The caller must trigger enforcement config regeneration after installation (P5-28).
+	 */
+	requiresEnforcementRegeneration: boolean;
 }
 
 export interface KeyCollisionResult {
@@ -67,7 +77,7 @@ export interface MethodologyConflict {
 }
 
 /**
- * Detect methodology exclusivity conflicts.
+ * Detect methodology exclusivity conflicts (legacy role-based check).
  *
  * Plugins with a `core:*` role are exclusive — only one per domain
  * (framework, discovery, delivery, governance) is allowed per project.
@@ -101,6 +111,79 @@ export function detectMethodologyConflict(
 	}
 
 	return null;
+}
+
+/**
+ * P5-26: Enforce one-methodology-plugin-per-project.
+ *
+ * Reads installed plugins and rejects installation when another methodology
+ * plugin is already present. Reinstalling the same plugin (same name) succeeds.
+ * Non-methodology plugins are unaffected.
+ *
+ * @throws Error with descriptive message naming the conflicting plugin.
+ */
+function enforceOneMethodology(manifest: PluginManifest, projectRoot: string): void {
+	const purpose = manifest.installConstraints?.purpose ?? [];
+	if (!purpose.includes("methodology")) return;
+
+	for (const container of ["plugins", "connectors"]) {
+		const dir = path.join(projectRoot, container);
+		if (!fs.existsSync(dir)) continue;
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+			try {
+				const installed = readManifest(path.join(dir, entry.name));
+				if (installed.name === manifest.name) continue; // Same plugin = update
+				const installedPurpose = installed.installConstraints?.purpose ?? [];
+				if (installedPurpose.includes("methodology")) {
+					throw new Error(
+						`Cannot install methodology plugin '${manifest.name}': project already has ` +
+						`methodology plugin '${installed.name}' installed. Only one methodology plugin ` +
+						`is allowed per project. Uninstall '${installed.name}' first.`,
+					);
+				}
+			} catch (err) {
+				// Re-throw constraint violations; swallow manifest read errors
+				if (err instanceof Error && err.message.startsWith("Cannot install")) throw err;
+			}
+		}
+	}
+}
+
+/**
+ * P5-27: Enforce one-workflow-plugin-per-stage.
+ *
+ * Reads installed plugins and rejects installation when another plugin already
+ * fills the same stage slot. Reinstalling the same plugin (same name) succeeds.
+ * Plugins without stageSlot are unaffected.
+ *
+ * @throws Error with descriptive message naming the conflicting plugin and slot.
+ */
+function enforceOnePerStage(manifest: PluginManifest, projectRoot: string): void {
+	const incomingSlot = manifest.installConstraints?.stageSlot;
+	if (!incomingSlot) return;
+
+	for (const container of ["plugins", "connectors"]) {
+		const dir = path.join(projectRoot, container);
+		if (!fs.existsSync(dir)) continue;
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			if (!entry.isDirectory() || entry.name.startsWith(".")) continue;
+			try {
+				const installed = readManifest(path.join(dir, entry.name));
+				if (installed.name === manifest.name) continue; // Same plugin = update
+				const existingSlot = installed.installConstraints?.stageSlot;
+				if (existingSlot === incomingSlot) {
+					throw new Error(
+						`Cannot install workflow plugin '${manifest.name}': stage slot '${incomingSlot}' ` +
+						`is already filled by '${installed.name}'. Only one workflow plugin may occupy ` +
+						`each stage slot. Uninstall '${installed.name}' first.`,
+					);
+				}
+			} catch (err) {
+				if (err instanceof Error && err.message.startsWith("Cannot install")) throw err;
+			}
+		}
+	}
 }
 
 /**
@@ -203,6 +286,12 @@ async function installFromLocalPath(
 		throw new Error(`Invalid plugin manifest:\n  ${errors.join("\n  ")}`);
 	}
 
+	// P5-26: enforce one-methodology constraint.
+	enforceOneMethodology(manifest, projectRoot);
+
+	// P5-27: enforce one-per-stage constraint.
+	enforceOnePerStage(manifest, projectRoot);
+
 	const collisions = detectCollisions(manifest, projectRoot);
 
 	const targetDir = path.join(pluginsDirectory, manifest.name.replace(/^@[^/]+\//, ""));
@@ -215,12 +304,18 @@ async function installFromLocalPath(
 
 	postInstall?.(targetDir, projectRoot);
 
+	// P5-28: read post-install action flags from the manifest.
+	const requiresSchemaRecomposition = manifest.installConstraints?.affectsSchema ?? false;
+	const requiresEnforcementRegeneration = manifest.installConstraints?.affectsEnforcement ?? false;
+
 	return {
 		name: manifest.name,
 		version: manifest.version,
 		path: targetDir,
 		source: "local",
 		collisions,
+		requiresSchemaRecomposition,
+		requiresEnforcementRegeneration,
 	};
 }
 
@@ -266,6 +361,12 @@ async function installFromGitHub(
 			throw new Error(`Invalid plugin manifest:\n  ${errors.join("\n  ")}`);
 		}
 
+		// P5-26: enforce one-methodology constraint before moving files.
+		enforceOneMethodology(manifest, projectRoot);
+
+		// P5-27: enforce one-per-stage constraint before moving files.
+		enforceOnePerStage(manifest, projectRoot);
+
 		const pluginDir = path.join(pluginsDirectory, manifest.name.replace(/^@[^/]+\//, ""));
 		if (fs.existsSync(pluginDir)) {
 			fs.rmSync(pluginDir, { recursive: true });
@@ -290,12 +391,18 @@ async function installFromGitHub(
 
 		console.log(`Installed ${manifest.name}@${manifest.version}`);
 
+		// P5-28: read post-install action flags from the manifest.
+		const requiresSchemaRecomposition = manifest.installConstraints?.affectsSchema ?? false;
+		const requiresEnforcementRegeneration = manifest.installConstraints?.affectsEnforcement ?? false;
+
 		return {
 			name: manifest.name,
 			version: manifest.version,
 			path: pluginDir,
 			source: "github",
 			collisions,
+			requiresSchemaRecomposition,
+			requiresEnforcementRegeneration,
 		};
 	} finally {
 		if (fs.existsSync(tmpDir)) {
@@ -381,6 +488,8 @@ export function listInstalledPlugins(projectRoot?: string): InstallResult[] {
 					path: pluginPath,
 					source: locked ? "github" : "local",
 					collisions: [],
+					requiresSchemaRecomposition: false,
+					requiresEnforcementRegeneration: false,
 				});
 			} catch {
 				// Skip invalid plugins

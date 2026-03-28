@@ -2,7 +2,9 @@
 //!
 //! Downloads and extracts .tar.gz archives from GitHub releases, or copies
 //! plugins from a local filesystem path. Detects relationship key collisions
-//! before finalising installation and records the result in the lockfile.
+//! and enforces installation constraints (one methodology plugin per project,
+//! one workflow plugin per stage slot) before finalising installation.
+//! Records the result in the lockfile.
 
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -11,6 +13,7 @@ use std::path::Path;
 use crate::error::EngineError;
 
 use super::collision::KeyCollision;
+use super::constraints::{check_one_methodology, check_one_per_stage};
 use super::lockfile::{read_lockfile, write_lockfile, LockEntry};
 use super::manifest::read_manifest;
 
@@ -25,15 +28,31 @@ pub struct InstallResult {
     /// When non-empty, the UI/CLI should prompt the user to merge or rename
     /// each collision before completing installation.
     pub collisions: Vec<KeyCollision>,
+    /// True when the installed plugin declares `affects_schema: true`.
+    /// The caller must trigger schema recomposition after installation.
+    pub requires_schema_recomposition: bool,
+    /// True when the installed plugin declares `affects_enforcement: true`.
+    /// The caller must trigger enforcement config regeneration after installation.
+    pub requires_enforcement_regeneration: bool,
 }
 
 /// Install a plugin from a local filesystem path.
 ///
-/// Checks for relationship key collisions with core and other installed plugins.
+/// Enforces installation constraints (P5-26: one methodology plugin per project,
+/// P5-27: one workflow plugin per stage slot) before proceeding. Checks for
+/// relationship key collisions with core and other installed plugins.
 /// If collisions are detected, they are returned in the result so the caller
 /// can prompt the user to merge or rename before finalising.
+/// The result flags (requires_schema_recomposition, requires_enforcement_regeneration)
+/// indicate what post-install actions the caller must trigger.
 pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallResult, EngineError> {
     let manifest = read_manifest(source)?;
+
+    // P5-26: enforce one-methodology constraint.
+    check_one_methodology(&manifest, project_root).map_err(EngineError::from)?;
+
+    // P5-27: enforce one-per-stage constraint.
+    check_one_per_stage(&manifest, project_root).map_err(EngineError::from)?;
 
     let incoming_rels: Vec<orqa_validation::RelationshipSchema> = manifest
         .provides
@@ -64,19 +83,27 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
 
     copy_dir_all(source, &target)?;
 
+    // P5-28: read post-install action flags from the manifest.
+    let requires_schema_recomposition = manifest.install_constraints.affects_schema;
+    let requires_enforcement_regeneration = manifest.install_constraints.affects_enforcement;
+
     Ok(InstallResult {
         name: manifest.name,
         version: manifest.version,
         path: target.to_string_lossy().to_string(),
         source: "local".to_string(),
         collisions,
+        requires_schema_recomposition,
+        requires_enforcement_regeneration,
     })
 }
 
 /// Install a plugin from a GitHub release .tar.gz archive.
 ///
-/// Downloads the archive, verifies the sha256 hash, extracts it, checks for
-/// collisions, and records the result in the lockfile.
+/// Downloads the archive, verifies the sha256 hash, extracts it, enforces
+/// installation constraints (P5-26/P5-27), checks for collisions, and records
+/// the result in the lockfile. The result flags indicate what post-install
+/// actions the caller must trigger (P5-28).
 pub async fn install_from_github(
     repo: &str,
     version: Option<&str>,
@@ -94,6 +121,32 @@ pub async fn install_from_github(
     std::fs::create_dir_all(&tmp_dir)?;
 
     let manifest = extract_and_read_manifest(&bytes, &tmp_dir)?;
+    finalize_github_install(manifest, plugins_dir, tmp_dir, project_root, repo, sha256)
+}
+
+/// Enforce constraints, move extracted plugin into place, and build the result.
+///
+/// Called by `install_from_github` after extraction. Cleans up the temp directory
+/// on any constraint or I/O error before returning.
+fn finalize_github_install(
+    manifest: super::manifest::PluginManifest,
+    plugins_dir: std::path::PathBuf,
+    tmp_dir: std::path::PathBuf,
+    project_root: &Path,
+    repo: &str,
+    sha256: String,
+) -> Result<InstallResult, EngineError> {
+    // P5-26: enforce one-methodology constraint before moving files.
+    if let Err(e) = check_one_methodology(&manifest, project_root) {
+        let _ = std::fs::remove_dir_all(&tmp_dir);
+        return Err(e.into());
+    }
+
+    // P5-27: enforce one-per-stage constraint before moving files.
+    if let Err(e) = check_one_per_stage(&manifest, project_root) {
+        let _ = std::fs::remove_dir_all(&tmp_dir);
+        return Err(e.into());
+    }
 
     let incoming_rels: Vec<orqa_validation::RelationshipSchema> = manifest
         .provides
@@ -107,11 +160,7 @@ pub async fn install_from_github(
         &manifest.name,
     );
 
-    let short_name = manifest
-        .name
-        .split('/')
-        .next_back()
-        .unwrap_or(&manifest.name);
+    let short_name = manifest.name.split('/').next_back().unwrap_or(&manifest.name);
     let target = plugins_dir.join(short_name);
     if target.exists() {
         std::fs::remove_dir_all(&target)?;
@@ -122,12 +171,18 @@ pub async fn install_from_github(
 
     update_lockfile(project_root, &manifest, repo, sha256)?;
 
+    // P5-28: read post-install action flags from the manifest.
+    let requires_schema_recomposition = manifest.install_constraints.affects_schema;
+    let requires_enforcement_regeneration = manifest.install_constraints.affects_enforcement;
+
     Ok(InstallResult {
         name: manifest.name,
         version: manifest.version,
         path: target.to_string_lossy().to_string(),
         source: "github".to_string(),
         collisions,
+        requires_schema_recomposition,
+        requires_enforcement_regeneration,
     })
 }
 
@@ -343,5 +398,340 @@ mod tests {
         let ts = iso_now();
         assert!(!ts.is_empty());
         assert!(ts.contains('T'));
+    }
+
+    /// Write a minimal plugin manifest JSON to a directory for use in tests.
+    fn write_plugin_manifest(
+        dir: &std::path::Path,
+        name: &str,
+        purpose: &[&str],
+        stage_slot: Option<&str>,
+        affects_schema: bool,
+        affects_enforcement: bool,
+    ) {
+        let stage_slot_json = match stage_slot {
+            Some(s) => format!(r#",
+  "stage_slot": "{}""#, s),
+            None => String::new(),
+        };
+        let purpose_json = purpose
+            .iter()
+            .map(|p| format!(r#""{}""#, p))
+            .collect::<Vec<_>>()
+            .join(", ");
+        // Fields are top-level in the manifest JSON using snake_case, matching actual plugin manifests.
+        let manifest = format!(
+            r#"{{
+  "name": "{}",
+  "version": "0.1.0",
+  "provides": {{}},
+  "purpose": [{}],
+  "affects_schema": {},
+  "affects_enforcement": {}{}
+}}"#,
+            name, purpose_json, affects_schema, affects_enforcement, stage_slot_json
+        );
+        std::fs::write(dir.join("orqa-plugin.json"), manifest).unwrap();
+    }
+
+    #[test]
+    fn install_from_path_sets_schema_recomposition_flag() {
+        // A definition plugin (affects_schema: true) must set requires_schema_recomposition.
+        let plugin_dir = tempfile::tempdir().unwrap();
+        let project_dir = tempfile::tempdir().unwrap();
+
+        write_plugin_manifest(
+            plugin_dir.path(),
+            "@orqastudio/plugin-agile-methodology",
+            &["methodology"],
+            None,
+            true,  // affects_schema
+            false, // affects_enforcement
+        );
+
+        let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
+        assert!(result.requires_schema_recomposition);
+        assert!(!result.requires_enforcement_regeneration);
+    }
+
+    #[test]
+    fn install_from_path_sets_enforcement_regeneration_flag() {
+        // A plugin with affects_enforcement: true must set requires_enforcement_regeneration.
+        let plugin_dir = tempfile::tempdir().unwrap();
+        let project_dir = tempfile::tempdir().unwrap();
+
+        write_plugin_manifest(
+            plugin_dir.path(),
+            "@orqastudio/plugin-coding-standards",
+            &["infrastructure"],
+            None,
+            false, // affects_schema
+            true,  // affects_enforcement
+        );
+
+        let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
+        assert!(!result.requires_schema_recomposition);
+        assert!(result.requires_enforcement_regeneration);
+    }
+
+    #[test]
+    fn install_from_path_no_flags_for_knowledge_plugin() {
+        // A knowledge plugin (affects_schema: false, affects_enforcement: false)
+        // must not set either recomposition flag.
+        let plugin_dir = tempfile::tempdir().unwrap();
+        let project_dir = tempfile::tempdir().unwrap();
+
+        write_plugin_manifest(
+            plugin_dir.path(),
+            "@orqastudio/plugin-rust",
+            &["knowledge"],
+            None,
+            false, // affects_schema
+            false, // affects_enforcement
+        );
+
+        let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
+        assert!(!result.requires_schema_recomposition);
+        assert!(!result.requires_enforcement_regeneration);
+    }
+
+    #[test]
+    fn install_from_path_rejects_second_methodology_plugin() {
+        // Installing a second methodology plugin must fail.
+        // Set up a project with an already-installed methodology plugin.
+        let project_dir = tempfile::tempdir().unwrap();
+        let plugins_dir = project_dir.path().join("plugins");
+        std::fs::create_dir_all(&plugins_dir).unwrap();
+
+        // Write an existing methodology plugin into the plugins/ dir.
+        let existing_dir = plugins_dir.join("agile-methodology");
+        std::fs::create_dir_all(&existing_dir).unwrap();
+        write_plugin_manifest(
+            &existing_dir,
+            "@orqastudio/plugin-agile-methodology",
+            &["methodology"],
+            None,
+            true,
+            false,
+        );
+
+        // Write a project.json so scan_plugins can find it.
+        let orqa_dir = project_dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        let project_json = r#"{
+            "name": "test",
+            "organisation": false,
+            "projects": [],
+            "artifacts": [],
+            "statuses": [],
+            "delivery": {},
+            "relationships": [],
+            "plugins": {
+                "@orqastudio/plugin-agile-methodology": {
+                    "path": "plugins/agile-methodology",
+                    "installed": true,
+                    "enabled": true
+                }
+            }
+        }"#;
+        std::fs::write(orqa_dir.join("project.json"), project_json).unwrap();
+
+        // Try to install a different methodology plugin.
+        let second_methodology_dir = tempfile::tempdir().unwrap();
+        write_plugin_manifest(
+            second_methodology_dir.path(),
+            "@orqastudio/plugin-scrum-methodology",
+            &["methodology"],
+            None,
+            true,
+            false,
+        );
+
+        let result = install_from_path(second_methodology_dir.path(), project_dir.path());
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("agile-methodology"),
+            "error should name existing plugin, got: {err}"
+        );
+        assert!(
+            err.contains("methodology"),
+            "error should mention methodology, got: {err}"
+        );
+    }
+
+    #[test]
+    fn install_from_path_allows_reinstall_of_same_methodology_plugin() {
+        // Reinstalling the same methodology plugin (update) must succeed.
+        let project_dir = tempfile::tempdir().unwrap();
+        let plugins_dir = project_dir.path().join("plugins");
+        std::fs::create_dir_all(&plugins_dir).unwrap();
+
+        let existing_dir = plugins_dir.join("agile-methodology");
+        std::fs::create_dir_all(&existing_dir).unwrap();
+        write_plugin_manifest(
+            &existing_dir,
+            "@orqastudio/plugin-agile-methodology",
+            &["methodology"],
+            None,
+            true,
+            false,
+        );
+
+        let orqa_dir = project_dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        let project_json = r#"{
+            "name": "test",
+            "organisation": false,
+            "projects": [],
+            "artifacts": [],
+            "statuses": [],
+            "delivery": {},
+            "relationships": [],
+            "plugins": {
+                "@orqastudio/plugin-agile-methodology": {
+                    "path": "plugins/agile-methodology",
+                    "installed": true,
+                    "enabled": true
+                }
+            }
+        }"#;
+        std::fs::write(orqa_dir.join("project.json"), project_json).unwrap();
+
+        // Install the same plugin again (same name = update).
+        let reinstall_dir = tempfile::tempdir().unwrap();
+        write_plugin_manifest(
+            reinstall_dir.path(),
+            "@orqastudio/plugin-agile-methodology",
+            &["methodology"],
+            None,
+            true,
+            false,
+        );
+
+        let result = install_from_path(reinstall_dir.path(), project_dir.path());
+        assert!(
+            result.is_ok(),
+            "reinstalling same methodology plugin should succeed"
+        );
+    }
+
+    #[test]
+    fn install_from_path_rejects_stage_slot_conflict() {
+        // Installing a workflow plugin whose stage_slot is already filled must fail.
+        let project_dir = tempfile::tempdir().unwrap();
+        let plugins_dir = project_dir.path().join("plugins");
+        std::fs::create_dir_all(&plugins_dir).unwrap();
+
+        let existing_dir = plugins_dir.join("agile-discovery");
+        std::fs::create_dir_all(&existing_dir).unwrap();
+        write_plugin_manifest(
+            &existing_dir,
+            "@orqastudio/plugin-agile-discovery",
+            &["workflow"],
+            Some("discovery"),
+            true,
+            false,
+        );
+
+        let orqa_dir = project_dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        let project_json = r#"{
+            "name": "test",
+            "organisation": false,
+            "projects": [],
+            "artifacts": [],
+            "statuses": [],
+            "delivery": {},
+            "relationships": [],
+            "plugins": {
+                "@orqastudio/plugin-agile-discovery": {
+                    "path": "plugins/agile-discovery",
+                    "installed": true,
+                    "enabled": true
+                }
+            }
+        }"#;
+        std::fs::write(orqa_dir.join("project.json"), project_json).unwrap();
+
+        // Try to install a different plugin filling the same stage slot.
+        let conflict_dir = tempfile::tempdir().unwrap();
+        write_plugin_manifest(
+            conflict_dir.path(),
+            "@orqastudio/plugin-custom-discovery",
+            &["workflow"],
+            Some("discovery"),
+            true,
+            false,
+        );
+
+        let result = install_from_path(conflict_dir.path(), project_dir.path());
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(
+            err.contains("discovery"),
+            "error should name the stage slot, got: {err}"
+        );
+        assert!(
+            err.contains("agile-discovery"),
+            "error should name existing plugin, got: {err}"
+        );
+    }
+
+    #[test]
+    fn install_from_path_allows_different_stage_slots() {
+        // Two workflow plugins with different stage slots must not conflict.
+        let project_dir = tempfile::tempdir().unwrap();
+        let plugins_dir = project_dir.path().join("plugins");
+        std::fs::create_dir_all(&plugins_dir).unwrap();
+
+        let existing_dir = plugins_dir.join("agile-discovery");
+        std::fs::create_dir_all(&existing_dir).unwrap();
+        write_plugin_manifest(
+            &existing_dir,
+            "@orqastudio/plugin-agile-discovery",
+            &["workflow"],
+            Some("discovery"),
+            true,
+            false,
+        );
+
+        let orqa_dir = project_dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        let project_json = r#"{
+            "name": "test",
+            "organisation": false,
+            "projects": [],
+            "artifacts": [],
+            "statuses": [],
+            "delivery": {},
+            "relationships": [],
+            "plugins": {
+                "@orqastudio/plugin-agile-discovery": {
+                    "path": "plugins/agile-discovery",
+                    "installed": true,
+                    "enabled": true
+                }
+            }
+        }"#;
+        std::fs::write(orqa_dir.join("project.json"), project_json).unwrap();
+
+        // Install a plugin for a different stage slot.
+        let planning_dir = tempfile::tempdir().unwrap();
+        write_plugin_manifest(
+            planning_dir.path(),
+            "@orqastudio/plugin-agile-planning",
+            &["workflow"],
+            Some("planning"),
+            true,
+            false,
+        );
+
+        let result = install_from_path(planning_dir.path(), project_dir.path());
+        assert!(
+            result.is_ok(),
+            "different stage slots should not conflict, got: {:?}",
+            result.err()
+        );
     }
 }
