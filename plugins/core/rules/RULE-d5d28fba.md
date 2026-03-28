@@ -19,9 +19,9 @@ relationships:
 
 Before writing ANY code, the following artifacts MUST exist:
 
-1. **Epic** — An `EPIC-NNN.md` in `.orqa/delivery/epics/` with status, milestone reference, research-refs, and implementation design in the body
-2. **Tasks** — One or more `TASK-NNN.md` in `.orqa/delivery/tasks/` with epic reference, scope, and acceptance criteria
-3. **Research** (if investigation was needed) — Research docs in `.orqa/delivery/research/` referenced by the epic's `research-refs`
+1. **Epic** — An `EPIC-NNN.md` in `.orqa/implementation/epics/` with status, milestone reference, research-refs, and implementation design in the body
+2. **Tasks** — One or more `TASK-NNN.md` in `.orqa/implementation/tasks/` with epic reference, scope, and acceptance criteria
+3. **Research** (if investigation was needed) — Research docs in `.orqa/implementation/research/` referenced by the epic's `research-refs`
 4. **Decision** (if an architectural choice was made) — An `AD-NNN.md` in `.orqa/process/decisions/` with the decision index updated
 
 The orchestrator MUST verify these artifacts exist and are complete before delegating any implementation task to an agent.
@@ -29,6 +29,7 @@ The orchestrator MUST verify these artifacts exist and are complete before deleg
 ## Why
 
 Without structure first:
+
 - Work happens without traceability — there's no record of what was decided, why, or what was delivered
 - Scope creeps silently — without defined acceptance criteria, "done" is ambiguous
 - The artifact system becomes a retroactive paperwork exercise instead of a planning tool
@@ -36,7 +37,7 @@ Without structure first:
 
 ## The Sequence (MANDATORY)
 
-```
+```text
 1. Identify the work (user request, bug, idea)
 2. Create or update the epic with implementation design
 3. Create tasks with scope and acceptance criteria
@@ -44,14 +45,14 @@ Without structure first:
 5. Create decision artifacts if architectural choices are made
 6. Get user approval of the structure
 7. THEN delegate implementation to agents
-```
+```text
 
 Steps 2-5 may happen in parallel. Step 6 is a gate — no implementation without approval.
 
 ## What Counts as "Structure in Place"
 
 | Artifact | Minimum Required Fields |
-|----------|----------------------|
+| ---------- | ---------------------- |
 | Epic | `id`, `title`, `status`, `milestone`, `description`, implementation design in body |
 | Task | `id`, `title`, `status`, `epic`, `acceptance` |
 | Research | `title`, `type`, `status`, `category`, `description` |

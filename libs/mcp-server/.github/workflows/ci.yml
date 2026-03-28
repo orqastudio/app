@@ -61,7 +61,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: libs/mcp-server/target/
-          key: ${{ runner.os }}-mcp-cargo-target-${{ hashFiles('libs/mcp-server/Cargo.lock') }}-${{ hashFiles('libs/mcp-server/src/**/*.rs', 'libs/search/src/**/*.rs') }}
+          key: ${{ runner.os }}-mcp-cargo-target-${{ hashFiles('libs/mcp-server/Cargo.lock') }}-${{ hashFiles('libs/mcp-server/src/**/*.rs', 'engine/search/src/**/*.rs') }}
           restore-keys: |
             ${{ runner.os }}-mcp-cargo-target-${{ hashFiles('libs/mcp-server/Cargo.lock') }}-
             ${{ runner.os }}-mcp-cargo-target-

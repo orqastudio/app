@@ -3885,6 +3885,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-agent"
+version = "0.1.0-dev"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "orqa-daemon"
 version = "0.1.4-dev"
 dependencies = [
@@ -3906,14 +3913,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-enforcement"
+version = "0.1.0-dev"
+dependencies = [
+ "glob",
+ "orqa-engine-types",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
 name = "orqa-engine"
 version = "0.1.4-dev"
 dependencies = [
  "async-trait",
  "flate2",
  "glob",
+ "orqa-agent",
+ "orqa-enforcement",
+ "orqa-engine-types",
+ "orqa-graph",
+ "orqa-plugin",
+ "orqa-prompt",
  "orqa-search",
  "orqa-validation",
+ "orqa-workflow",
  "rand 0.8.5",
  "regex",
  "reqwest 0.12.28",
@@ -3926,6 +3954,26 @@ dependencies = [
  "thiserror 2.0.18",
  "tokio",
  "tracing",
+]
+
+[[package]]
+name = "orqa-engine-types"
+version = "0.1.0-dev"
+dependencies = [
+ "async-trait",
+ "orqa-validation",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+ "thiserror 2.0.18",
+]
+
+[[package]]
+name = "orqa-graph"
+version = "0.1.0-dev"
+dependencies = [
+ "orqa-validation",
 ]
 
 [[package]]
@@ -3965,6 +4013,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-plugin"
+version = "0.1.0-dev"
+dependencies = [
+ "flate2",
+ "orqa-engine-types",
+ "orqa-validation",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha2",
+ "tar",
+ "tempfile",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "orqa-prompt"
+version = "0.1.0-dev"
+dependencies = [
+ "async-trait",
+ "orqa-engine-types",
+ "orqa-plugin",
+ "orqa-search",
+ "tempfile",
+ "thiserror 2.0.18",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "orqa-search"
 version = "0.1.0-dev"
 dependencies = [
@@ -3996,6 +4076,7 @@ dependencies = [
  "notify",
  "notify-debouncer-full 0.6.0",
  "orqa-engine",
+ "orqa-validation",
  "rand 0.8.5",
  "regex",
  "reqwest 0.12.28",
@@ -4033,6 +4114,17 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.18",
  "tiny_http",
+ "tracing",
+]
+
+[[package]]
+name = "orqa-workflow"
+version = "0.1.0-dev"
+dependencies = [
+ "orqa-engine-types",
+ "orqa-validation",
+ "serde",
+ "serde_json",
  "tracing",
 ]
 

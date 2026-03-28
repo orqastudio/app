@@ -63,16 +63,16 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 
 | Trigger | Artifact Type | Action |
 | --- | --- | --- |
-| User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/delivery/ideas/` with `status: captured` |
+| User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/implementation/ideas/` with `status: captured` |
 | User approves an idea for investigation | Update existing `IDEA-NNN` | Set `status: exploring`, begin research |
-| Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/delivery/epics/` with `status: draft`, update idea `evolves-into` |
-| An epic needs investigation work before implementation | Research file | Create in `.orqa/delivery/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
+| Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/implementation/epics/` with `status: draft`, update idea `evolves-into` |
+| An epic needs investigation work before implementation | Research file | Create in `.orqa/implementation/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
 | An epic is approved and scoped for implementation | Update `EPIC-NNN` | Set `status: ready` (requires `docs-required` gate satisfied) |
-| A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/delivery/tasks/` with `epic:` reference |
+| A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/implementation/tasks/` with `epic:` reference |
 | An epic is created or moves to `ready` | Reconciliation `TASK-NNN` | Auto-create a standing reconciliation task for the epic (see Epic Reconciliation Task below) |
-| A strategic goal is defined | `MS-NNN` | Create in `.orqa/delivery/milestones/` |
+| A strategic goal is defined | `MS-NNN` | Create in `.orqa/implementation/milestones/` |
 | An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-c603e90e](RULE-c603e90e) (lessons-learned)) |
-| A question needs investigation before a decision | Research file | Create in `.orqa/delivery/research/` |
+| A question needs investigation before a decision | Research file | Create in `.orqa/implementation/research/` |
 | Research produces an architectural choice | `AD-NNN` | Create in `.orqa/process/decisions/` |
 
 ### ID Assignment
@@ -109,7 +109,7 @@ draft ──> ready ──> in-progress ──> review ──> done
 - `in-progress → review`: Implementation complete, submitted for verification gates
 - `review → done`: **Human gate (NON-NEGOTIABLE)** — the orchestrator presents a completion summary to the user and receives explicit approval. The summary must include: tasks completed, docs-produced verification, lessons logged during implementation, and any scope changes. The orchestrator MUST NOT mark an epic as done without user confirmation. All verification gates must also have passed (code-reviewer, qa-tester, ux-reviewer), and all `docs-produced` items verified as created/updated
 
-The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/delivery/research/` that informed the design.
+The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/implementation/research/` that informed the design.
 
 ### Epic Reconciliation Task (NON-NEGOTIABLE)
 
@@ -276,7 +276,7 @@ Every epic's `docs-produced` field lists documentation that this work creates or
 An idea MUST NOT be promoted to an epic until:
 
 1. **Status is `shaped`** — the idea has been through `exploring` and has clear scope
-2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/delivery/research/` or the research question has been answered and documented in the idea body
+2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/implementation/research/` or the research question has been answered and documented in the idea body
 3. **Pillar alignment confirmed** — at least one pillar is listed and justified
 4. **Related ideas scanned** — before creating the epic, scan all ideas for thematic overlap. Related ideas may be bundled into the same epic or explicitly noted as separate scope
 5. **User approves promotion** — the orchestrator presents the shaped idea, any related ideas found, and asks for explicit approval
@@ -285,7 +285,7 @@ An idea MUST NOT be promoted to an epic until:
 
 Before creating the promotion epic, the orchestrator MUST:
 
-1. Scan all `IDEA-NNN.md` files in `.orqa/delivery/ideas/` with status `captured`, `exploring`, or `shaped`
+1. Scan all `IDEA-NNN.md` files in `.orqa/implementation/ideas/` with status `captured`, `exploring`, or `shaped`
 2. Identify ideas with thematic overlap (similar title, description, or pillar alignment)
 3. Present related ideas to the user with a recommendation: bundle into the same epic, or note as separate scope
 4. If the user chooses to bundle, include the related ideas' scope in the epic and set their `evolves-into` fields
@@ -296,7 +296,7 @@ This prevents the pattern where multiple ideas addressing the same capability ar
 ### Promotion Procedure
 
 1. **Scan for related ideas** (see Related Idea Scan above)
-2. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
+2. Create `EPIC-NNN.md` in `.orqa/implementation/epics/` with:
    - `milestone` set to the appropriate milestone
    - `status: draft`
    - `priority` assessed per project criteria (see DOC-54594c57)

@@ -236,7 +236,7 @@ the tool's plugin — those tools are the enforcement mechanism, not the connect
 
 | Current ID | Title | Action | Content Status |
 | ----------- | ------- | -------- | --------------- |
-| KNOW-a700e25a | Software Delivery | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/delivery/, artifact IDs. Extract generic delivery pattern |
+| KNOW-a700e25a | Software Delivery | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/implementation/, artifact IDs. Extract generic delivery pattern |
 | KNOW-0188373b | Epic Completion | STAY but REWRITE | ORQASTUDIO-ONLY — references .orqa/, orqa enforce. Extract generic "delivery unit completion" |
 | KNOW-2f38309a | Plugin Development | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove OrqaStudio-specific paths, make generic |
 | KNOW-e6fee7a0 | First-Party Plugin Dev | **MOVE → orqa-core** (framework infrastructure) | NEEDS REWRITE — remove orqastudio-dev/ refs |

@@ -48,7 +48,7 @@
         },
         "path": {
           "type": "string",
-          "description": "Relative path from the project root (e.g. '.orqa/delivery/epics/EPIC-048.md')."
+          "description": "Relative path from the project root (e.g. '.orqa/implementation/epics/EPIC-048.md')."
         },
         "artifact_type": {
           "type": "string",

@@ -23,8 +23,8 @@ Ask what type of artifact to create if not specified:
 Find the highest existing ID for this type:
 
 ```bash
-ls .orqa/delivery/tasks/ | sort -t- -k2 -n | tail -1    # For tasks
-ls .orqa/delivery/epics/ | sort -t- -k2 -n | tail -1    # For epics
+ls .orqa/implementation/tasks/ | sort -t- -k2 -n | tail -1    # For tasks
+ls .orqa/implementation/epics/ | sort -t- -k2 -n | tail -1    # For epics
 ls .orqa/process/decisions/ | sort -t- -k2 -n | tail -1  # For decisions
 ```
 

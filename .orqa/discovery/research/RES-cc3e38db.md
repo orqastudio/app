@@ -73,10 +73,10 @@ Two options considered:
 
 | Option | Path | Rationale |
 | -------- | ------ | ----------- |
-| A | `.orqa/delivery/personas/` | Personas are delivery-adjacent -- they inform what gets built |
+| A | `.orqa/implementation/personas/` | Personas are delivery-adjacent -- they inform what gets built |
 | B | `.orqa/product/personas/` | Personas are product strategy artifacts |
 
-**Recommendation: Option A (`.orqa/delivery/personas/`)** -- personas directly inform epic prioritisation and feature scoping, which are delivery concerns. They sit alongside ideas, epics, and research as inputs to the delivery pipeline.
+**Recommendation: Option A (`.orqa/implementation/personas/`)** -- personas directly inform epic prioritisation and feature scoping, which are delivery concerns. They sit alongside ideas, epics, and research as inputs to the delivery pipeline.
 
 ## Relationship Types
 

@@ -47,7 +47,7 @@ orqa graph --type decision --json
 
 ## Understanding the project governance
 
-1. **Pillars** (`.orqa/principles/pillars/`) — The foundational principles. Every decision should trace back to a pillar.
+1. **Pillars** (`.orqa/discovery/pillars/`) — The foundational principles. Every decision should trace back to a pillar.
 2. **Decisions** (`.orqa/process/decisions/`) — Architecture decisions (AD-nnn). These drive implementation.
 3. **Rules** (`.orqa/learning/rules/`) — Enforcement rules. Some have `enforcement` arrays that trigger on your actions.
 4. **Lessons** (`.orqa/learning/lessons/`) — Documented mistakes and patterns. Check before repeating.

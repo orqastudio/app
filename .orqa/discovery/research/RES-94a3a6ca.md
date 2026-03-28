@@ -59,7 +59,7 @@ The pillar schema uses `gate`. Multiple rules, docs, and the orchestrator itself
 
 #### A2. Artifact directory paths: missing `planning/` and `governance/` prefixes
 
-Multiple docs reference flat `.orqa/` paths (e.g., `.orqa/epics/`) but the actual structure uses `.orqa/delivery/epics/` and `.orqa/process/lessons/`.
+Multiple docs reference flat `.orqa/` paths (e.g., `.orqa/epics/`) but the actual structure uses `.orqa/implementation/epics/` and `.orqa/process/lessons/`.
 
 | File | Wrong paths referenced |
 | ------ | ----------------------- |
@@ -68,7 +68,7 @@ Multiple docs reference flat `.orqa/` paths (e.g., `.orqa/epics/`) but the actua
 | [RULE-ec9462d8](RULE-ec9462d8) line 22 | `.orqa/epics/` |
 | [RULE-c603e90e](RULE-c603e90e) lines 15, 19, 21, 47, 69 | `.orqa/lessons/` |
 | [RULE-5dd9decd](RULE-5dd9decd) lines 60, 62 | `.orqa/lessons/` |
-| **Actual paths** | **`.orqa/delivery/{milestones,epics,tasks,ideas,research}/` and `.orqa/process/{lessons,decisions,rules}/`** |
+| **Actual paths** | **`.orqa/implementation/{milestones,epics,tasks,ideas,research}/` and `.orqa/process/{lessons,decisions,rules}/`** |
 
 **Decision needed:** Update all references to use full paths.
 
@@ -78,9 +78,9 @@ Plans were deprecated ([AD-3b986859](AD-3b986859)) and merged into Research/Epic
 
 | File | References plans |
 | ------ | ----------------- |
-| [RULE-87ba1b81](RULE-87ba1b81) line 60 | "Plan files (`.orqa/delivery/plans/`)" |
-| [RULE-484872ef](RULE-484872ef) line 32 | Lists "Plans (`.orqa/delivery/plans/`)" |
-| [RULE-8ee65d73](RULE-8ee65d73) line 23 | "The epic's plan in `.orqa/delivery/plans/`" |
+| [RULE-87ba1b81](RULE-87ba1b81) line 60 | "Plan files (`.orqa/implementation/plans/`)" |
+| [RULE-484872ef](RULE-484872ef) line 32 | Lists "Plans (`.orqa/implementation/plans/`)" |
+| [RULE-8ee65d73](RULE-8ee65d73) line 23 | "The epic's plan in `.orqa/implementation/plans/`" |
 | [RULE-dccf4226](RULE-dccf4226) title/body | "plan-mode-compliance" — governs planning activity, not plan artifacts |
 | DOC-028 line 43 | "If the epic has a `plan` field" |
 | DOC-f6c4ac69 line 142 | "Follow the plan referenced by the epic's `plan` field" |

@@ -11,7 +11,7 @@ relationships: []
 
 ## Decision
 
-Each artifact type directory (e.g. `.orqa/delivery/epics/`, `.orqa/documentation/`) can contain a `_navigation.json` file with two mutually exclusive modes:
+Each artifact type directory (e.g. `.orqa/implementation/epics/`, `.orqa/documentation/`) can contain a `_navigation.json` file with two mutually exclusive modes:
 
 ### Standard defaults mode
 

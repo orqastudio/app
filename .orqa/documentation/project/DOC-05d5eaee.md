@@ -162,8 +162,8 @@ Read the OrqaStudio governance state and present a summary.
 
 1. Read `.orqa/project.json` to get the project name
 2. Count active rules in `.orqa/process/rules/`
-3. Count epics by status in `.orqa/delivery/epics/`
-4. Count tasks by status in `.orqa/delivery/tasks/`
+3. Count epics by status in `.orqa/implementation/epics/`
+4. Count tasks by status in `.orqa/implementation/tasks/`
 
 Present the summary as a compact table.
 ```

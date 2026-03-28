@@ -58,7 +58,7 @@ A stub scanner should be part of the CI/quality checks. It scans all production 
 - Hardcoded data standing in for real backend responses
 - Scaffolded implementations that don't do real work
 
-**If the scanner finds stubs, the build fails.** Legitimate exceptions (e.g., known incomplete features tracked in `.orqa/delivery/tasks/`) can be added to an allowlist with a documented reason.
+**If the scanner finds stubs, the build fails.** Legitimate exceptions (e.g., known incomplete features tracked in `.orqa/implementation/tasks/`) can be added to an allowlist with a documented reason.
 
 ## Code Search Integration
 
@@ -85,7 +85,7 @@ Every agent completing implementation work MUST include these sections in its fi
 ## Smoke Test
 [What happens if the user tries to USE this feature right now?]
 [Did you actually try it? What was the result?]
-```
+```text
 
 **The "What Is NOT Done" section is NON-NEGOTIABLE.** Omitting it is treated as a review FAIL. An empty section with justification ("Nothing — all deliverables are fully implemented") is acceptable. A missing section is not.
 

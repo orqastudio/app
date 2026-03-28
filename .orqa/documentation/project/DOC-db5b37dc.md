@@ -101,7 +101,7 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 
 1. Check the Definition of Ready -- verify all applicable items
 2. Verify the artifact trail -- confirm an `EPIC-NNN` exists with `status: ready` and `docs-required` gate satisfied
-3. Check task dependencies in `.orqa/delivery/tasks/` -- ensure the task is not blocked
+3. Check task dependencies in `.orqa/implementation/tasks/` -- ensure the task is not blocked
 4. Read the full task description including scope, action, and acceptance criteria
 5. Run `code_research` via context-aware search to understand existing code you will modify
 
@@ -116,8 +116,8 @@ Merge conflicts are the primary source of lost work. Every conflict MUST be reso
 1. Run acceptance criteria -- execute the specific checks listed for this task
 2. Verify the Definition of Done -- all applicable items must be satisfied
 3. Request review from `code-reviewer`, then `qa-tester`, then `ux-reviewer` (if UI-facing)
-4. Update the task artifact in `.orqa/delivery/tasks/` -- set `status: done`
-5. Update the epic's task checklist and status in `.orqa/delivery/epics/EPIC-NNN.md`
+4. Update the task artifact in `.orqa/implementation/tasks/` -- set `status: done`
+5. Update the epic's task checklist and status in `.orqa/implementation/epics/EPIC-NNN.md`
 6. Verify all `docs-produced` items from the epic have been created or updated
 7. Update the parent milestone's `completed-epics` count if the epic is now `done`
 8. Log any new patterns discovered in `.orqa/process/lessons/`
@@ -146,7 +146,7 @@ Format: `[task_id] Short description`
 
 When starting a new session, resuming after context compaction, or picking up a task with no prior context:
 
-1. **Read task artifacts in `.orqa/delivery/tasks/`** -- understand current tasks, priorities, and overall progress
+1. **Read task artifacts in `.orqa/implementation/tasks/`** -- understand current tasks, priorities, and overall progress
 2. **Read `.state/session-state.md`** -- recover context from the prior session
 3. **Read this document** -- understand all workflow rules
 4. **Run `code_research`** -- understand relevant existing code before making changes (uses `orqa-code-search` to resolve the right tool for your context)
@@ -220,7 +220,7 @@ NO backwards compatibility shims. Fix ALL callers in the same commit. See `.orqa
 | Definition of Done | Task completion gate checklist |
 | Orchestration | Orchestrator responsibilities |
 | Implementation Lessons | Known patterns and gotchas |
-| `.orqa/delivery/tasks/` | Task artifacts with status, scope, and acceptance criteria |
+| `.orqa/implementation/tasks/` | Task artifacts with status, scope, and acceptance criteria |
 
 ---
 

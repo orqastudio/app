@@ -70,9 +70,8 @@ mod tests {
             governance: Some(GovernanceCounts {
                 lessons: 10,
                 decisions: 5,
-                agents: 3,
                 rules: 5,
-                knowledge: 2,
+                documentation: 2,
                 has_claude_config: true,
             }),
             icon: None,

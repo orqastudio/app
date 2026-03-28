@@ -12,7 +12,7 @@ export interface ArtifactNode {
     id: string;
     /** Source project name in organisation mode, or null for single-project mode. */
     project?: string | null;
-    /** Relative path from the project root (e.g. ".orqa/delivery/epics/EPIC-048.md"). */
+    /** Relative path from the project root (e.g. ".orqa/implementation/epics/EPIC-048.md"). */
     path: string;
     /** Inferred category string (e.g. "epic", "task", "milestone", "idea", "decision"). */
     artifact_type: string;
@@ -145,7 +145,7 @@ export interface AppliedFix {
 export interface ProposedTransition {
     /** Artifact identifier, e.g. `"EPIC-048"`. */
     artifact_id: string;
-    /** Relative path from the project root, e.g. `".orqa/delivery/epics/EPIC-048.md"`. */
+    /** Relative path from the project root, e.g. `".orqa/implementation/epics/EPIC-048.md"`. */
     artifact_path: string;
     /** Current `status` frontmatter value. */
     current_status: string;

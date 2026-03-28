@@ -105,7 +105,7 @@ The `WorkflowTracker` (`app/src-tauri/src/domain/workflow_tracker.rs`) tracks se
 | Files written | Paths of all files written | Detect code writes vs governance writes |
 | Searches | Count of search tool calls | Detect codebase exploration |
 | Docs consulted | Reads from `.orqa/documentation/` | Detect documentation review |
-| Planning consulted | Reads from `.orqa/delivery/` | Detect planning artifact review |
+| Planning consulted | Reads from `.orqa/implementation/` | Detect planning artifact review |
 | Skills loaded | Names of loaded skills | Detect skill loading |
 | Commands run | Bash commands executed | Detect `make check`/`make test` runs |
 | Verification run | Boolean flag | Set when `make check`/`make test` detected |
@@ -122,7 +122,7 @@ Gates are evaluated by `evaluate_process_gates()` (`app/src-tauri/src/domain/pro
 | ------ | ----------- | -------- | ----------------- |
 | **understand-first** | First code write in session | No files read, no searches, no docs consulted | "What is the system? What are the boundaries? What depends on this?" |
 | **docs-before-code** | Code write without reading documentation | No `.orqa/documentation/` files read | "What documentation defines this area? Read the governing docs first." |
-| **plan-before-build** | Code write without planning context | No `.orqa/delivery/` files read | "What's the plan? Read the epic and task context before building." |
+| **plan-before-build** | Code write without planning context | No `.orqa/implementation/` files read | "What's the plan? Read the epic and task context before building." |
 | **evidence-before-done** | Session ending (stop event) | No `make check`/`make test` run + code was written | "Show evidence. Run verification. What would a user see?" |
 | **learn-after-doing** | Session ending (stop event) | No lessons checked + code was written | "What was unexpected? Check lessons. Should we know something for next time?" |
 

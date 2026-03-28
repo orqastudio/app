@@ -16,7 +16,7 @@
         "label": "Vision",
         "plural": "Vision",
         "icon": "eye",
-        "defaultPath": ".orqa/principles",
+        "defaultPath": ".orqa/discovery",
         "idPrefix": "VISION",
         "frontmatter": {
           "type": "object",
@@ -68,7 +68,7 @@
         "label": "Pillar",
         "plural": "Pillars",
         "icon": "columns-3",
-        "defaultPath": ".orqa/principles/pillars",
+        "defaultPath": ".orqa/discovery/pillars",
         "idPrefix": "PILLAR",
         "frontmatter": {
           "type": "object",
@@ -126,7 +126,7 @@
         "label": "Persona",
         "plural": "Personas",
         "icon": "users",
-        "defaultPath": ".orqa/principles/personas",
+        "defaultPath": ".orqa/discovery/personas",
         "idPrefix": "PERSONA",
         "frontmatter": {
           "type": "object",
@@ -177,7 +177,7 @@
         "label": "Pivot",
         "plural": "Pivots",
         "icon": "refresh-cw",
-        "defaultPath": ".orqa/principles",
+        "defaultPath": ".orqa/discovery",
         "idPrefix": "PIVOT",
         "frontmatter": {
           "type": "object",

@@ -1,0 +1,27 @@
+# Cargo manifest for the orqa-prompt library crate.
+# Provides the prompt generation pipeline: system prompt assembly from governance
+# artifacts, knowledge injection via ONNX embeddings, and session title generation.
+[package]
+name = "orqa-prompt"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio prompt crate — five-stage prompt generation from plugin registries"
+
+[lib]
+name = "orqa_prompt"
+path = "src/lib.rs"
+
+[dependencies]
+orqa-engine-types = { path = "../types" }
+orqa-plugin = { path = "../plugin" }
+orqa-search = { path = "../search" }
+thiserror = "2"
+tracing = "0.1"
+async-trait = "0.1"
+tokio = { version = "1", features = ["rt", "macros"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

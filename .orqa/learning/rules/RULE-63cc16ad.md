@@ -53,7 +53,7 @@ The `artifacts` array in `.orqa/project.json` is the single source of truth for 
 
 The artifact scanner (`artifact_reader.rs`) does NOT guess directory structure. It reads the `artifacts` config and scans exactly what's configured. This means:
 
-1. **Config paths must match disk** — If the config says `.orqa/delivery/milestones`, the directory `.orqa/delivery/milestones/` must exist
+1. **Config paths must match disk** — If the config says `.orqa/implementation/milestones`, the directory `.orqa/implementation/milestones/` must exist
 2. **Disk changes require config updates** — Moving `.orqa/lessons/` to `.orqa/process/lessons/` requires updating the config path
 3. **No hardcoded paths in Rust or TypeScript** — All artifact paths come from config, never from constants
 
@@ -115,8 +115,8 @@ Before committing any change that affects artifact paths or structure:
 // icon: "target" overrides the README's "clipboard-list"
 { "key": "planning", "label": "Planning", "icon": "target",
   "children": [
-    { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" },
-    { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" }
+    { "key": "ideas", "label": "Ideas", "path": ".orqa/implementation/ideas" },
+    { "key": "epics", "label": "Epics", "path": ".orqa/implementation/epics" }
   ]
 }
 ```text

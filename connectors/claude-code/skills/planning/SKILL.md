@@ -38,7 +38,7 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 
 - `.orqa/documentation/reference/` — Existing feature designs related to the task
 - `.orqa/process/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
-- `.orqa/delivery/tasks/` — Task artifacts with context, constraints, and priorities
+- `.orqa/implementation/tasks/` — Task artifacts with context, constraints, and priorities
 - `.orqa/documentation/about/roadmap.md` — Verify the work is prioritized and not scope creep
 
 ### Read When Modifying Backend

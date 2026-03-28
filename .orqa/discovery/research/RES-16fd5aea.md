@@ -74,7 +74,7 @@ The `GraphVisualiser` class exposes these as `$derived` reactive properties, but
 
 The same idea existed in two locations:
 
-- `.orqa/delivery/ideas/IDEA-0066e754.md` (status: promoted, richer description)
+- `.orqa/implementation/ideas/IDEA-0066e754.md` (status: promoted, richer description)
 - `.orqa/discovery/ideas/IDEA-0066e754.md` (status: captured, original version)
 
 **Resolution:** `discovery/` is the canonical location for ideas. The `delivery/` copy has been deleted. Note: the `delivery/` copy had evolved to `status: promoted` with a richer description — this content was not present in the `discovery/` copy. The discovery/ copy may need updating to reflect the promoted status.

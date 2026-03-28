@@ -60,7 +60,7 @@ Each role has clear ownership. Violations indicate a delegation failure:
 
 When using agent teams:
 
-- Task status lives in `.orqa/delivery/tasks/` — the single source of truth
+- Task status lives in `.orqa/implementation/tasks/` — the single source of truth
 - Each teammate should own separate files to avoid conflicts
 - The lead (orchestrator) synthesizes findings, not individual teammates
 - Use `TeammateIdle` moments to check for unblocked tasks in the artifact graph

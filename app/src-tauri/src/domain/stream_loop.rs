@@ -14,6 +14,8 @@ use crate::domain::tool_executor::{execute_tool, READ_ONLY_TOOLS};
 use crate::sidecar::types::{SidecarRequest, SidecarResponse};
 use crate::state::AppState;
 
+#[cfg(test)]
+use orqa_engine::streaming::stream_loop::friendly_context_overflow_message;
 pub use orqa_engine::streaming::stream_loop::StreamAccumulator;
 use orqa_engine::streaming::stream_loop::{accumulate_response, is_terminal, translate_response};
 use orqa_engine::streaming::tools::truncate_tool_output;

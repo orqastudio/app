@@ -21,7 +21,7 @@ Documentation is the source of truth. Before writing ANY implementation code, ve
 
 1. Check `.orqa/documentation/` for existing designs related to the task
 2. Check `.orqa/documentation/development/` for relevant architecture decisions
-3. Check the relevant `EPIC-NNN.md` in `.orqa/delivery/epics/` for phase requirements and constraints
+3. Check the relevant `EPIC-NNN.md` in `.orqa/implementation/epics/` for phase requirements and constraints
 4. Verify the epic's `docs-required` gate is satisfied before starting implementation
 5. Check `.orqa/documentation/about/artifact-framework.md` if working with `.orqa/` artifacts
 

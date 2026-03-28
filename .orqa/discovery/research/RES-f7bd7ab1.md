@@ -24,10 +24,10 @@ Flat artifact types with standard ID prefixes navigate correctly:
 
 | Prefix | Target | Status |
 | -------- | -------- | -------- |
-| MS | `.orqa/delivery/milestones/` | Working |
-| EPIC | `.orqa/delivery/epics/` | Working |
-| TASK | `.orqa/delivery/tasks/` | Working |
-| IDEA | `.orqa/delivery/ideas/` | Working |
+| MS | `.orqa/implementation/milestones/` | Working |
+| EPIC | `.orqa/implementation/epics/` | Working |
+| TASK | `.orqa/implementation/tasks/` | Working |
+| IDEA | `.orqa/implementation/ideas/` | Working |
 | AD | `.orqa/process/decisions/` | Working |
 | IMPL | `.orqa/process/lessons/` | Working |
 
@@ -90,7 +90,7 @@ Add an in-memory index built during `artifact_scan_tree` that maps every artifac
 ```rust
 // Domain type
 pub struct ArtifactIndex {
-    id_to_path: HashMap<String, String>,  // "EPIC-797972a7" → ".orqa/delivery/epics/EPIC-797972a7.md"
+    id_to_path: HashMap<String, String>,  // "EPIC-797972a7" → ".orqa/implementation/epics/EPIC-797972a7.md"
 }
 
 // Built during scan by extracting frontmatter `id` from every .md file

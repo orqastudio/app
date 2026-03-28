@@ -12,3 +12,4 @@ models/
 .DS_Store
 *.duckdb
 *.duckdb.wal
+connectors/claude-code/tsconfig.tsbuildinfo

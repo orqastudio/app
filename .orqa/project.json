@@ -37,43 +37,97 @@
   "custom_system_prompt": null,
   "artifacts": [
     {
-      "key": "process",
-      "label": "Process",
+      "key": "learning",
+      "label": "Learning",
       "children": [
-        { "key": "rules", "label": "Rules", "path": ".orqa/process/rules" },
-        { "key": "agents", "label": "Agents", "path": ".orqa/process/agents" },
-        { "key": "knowledge", "label": "Knowledge", "path": ".orqa/process/knowledge" },
-        { "key": "lessons", "label": "Lessons", "path": ".orqa/process/lessons" },
-        { "key": "decisions", "label": "Decisions", "path": ".orqa/process/decisions" }
+        {
+          "key": "rules",
+          "label": "Rules",
+          "path": ".orqa/learning/rules"
+        },
+        {
+          "key": "lessons",
+          "label": "Lessons",
+          "path": ".orqa/learning/lessons"
+        },
+        {
+          "key": "decisions",
+          "label": "Decisions",
+          "path": ".orqa/learning/decisions"
+        }
       ]
     },
     {
       "key": "principles",
       "label": "Principles",
       "children": [
-        { "key": "pillars", "label": "Pillars", "path": ".orqa/principles/pillars" },
-        { "key": "personas", "label": "Personas", "path": ".orqa/principles/personas" },
-        { "key": "vision", "label": "Vision", "path": ".orqa/principles/vision" },
-        { "key": "grounding", "label": "Grounding", "path": ".orqa/principles/grounding" }
+        {
+          "key": "pillars",
+          "label": "Pillars",
+          "path": ".orqa/principles/pillars"
+        },
+        {
+          "key": "personas",
+          "label": "Personas",
+          "path": ".orqa/principles/personas"
+        },
+        {
+          "key": "vision",
+          "label": "Vision",
+          "path": ".orqa/principles/vision"
+        },
+        {
+          "key": "grounding",
+          "label": "Grounding",
+          "path": ".orqa/principles/grounding"
+        }
       ]
     },
     {
-      "key": "delivery",
-      "label": "Delivery",
+      "key": "implementation",
+      "label": "Implementation",
       "children": [
-        { "key": "milestones", "label": "Milestones", "path": ".orqa/delivery/milestones" },
-        { "key": "epics", "label": "Epics", "path": ".orqa/delivery/epics" },
-        { "key": "tasks", "label": "Tasks", "path": ".orqa/delivery/tasks" },
-        { "key": "ideas", "label": "Ideas", "path": ".orqa/delivery/ideas" }
+        {
+          "key": "milestones",
+          "label": "Milestones",
+          "path": ".orqa/implementation/milestones"
+        },
+        {
+          "key": "epics",
+          "label": "Epics",
+          "path": ".orqa/implementation/epics"
+        },
+        {
+          "key": "tasks",
+          "label": "Tasks",
+          "path": ".orqa/implementation/tasks"
+        },
+        {
+          "key": "ideas",
+          "label": "Ideas",
+          "path": ".orqa/implementation/ideas"
+        }
       ]
     },
     {
       "key": "discovery",
       "label": "Discovery",
       "children": [
-        { "key": "discovery-ideas", "label": "Ideas", "path": ".orqa/discovery/ideas" },
-        { "key": "research", "label": "Research", "path": ".orqa/discovery/research" },
-        { "key": "wireframes", "label": "Wireframes", "path": ".orqa/discovery/wireframes" }
+        {
+          "key": "discovery-ideas",
+          "label": "Ideas",
+          "path": ".orqa/discovery/ideas"
+        },
+        {
+          "key": "research",
+          "label": "Research",
+          "path": ".orqa/discovery/research"
+        },
+        {
+          "key": "wireframes",
+          "label": "Wireframes",
+          "path": ".orqa/discovery/wireframes"
+        }
       ]
     },
     {
@@ -87,7 +141,7 @@
     "colors": {}
   },
   "statuses": [],
-  "delivery": {
+  "implementation": {
     "types": []
   },
   "relationships": [],

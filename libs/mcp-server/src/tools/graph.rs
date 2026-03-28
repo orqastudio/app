@@ -90,7 +90,7 @@ pub fn tool_definitions() -> Vec<McpToolDefinition> {
                 "properties": {
                     "path": {
                         "type": "string",
-                        "description": "Relative path to the artifact (e.g. .orqa/delivery/epics/EPIC-094.md)"
+                        "description": "Relative path to the artifact (e.g. .orqa/implementation/epics/EPIC-094.md)"
                     }
                 },
                 "required": ["path"]

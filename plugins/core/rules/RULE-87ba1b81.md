@@ -95,7 +95,7 @@ The orchestrator may bypass delegation for:
 - Governance artifacts (`.orqa/learning/rules/`, `.claude/agents/`, `.orqa/documentation/knowledge/`) — these ARE the orchestrator's domain
 - Process documentation (`.orqa/documentation/guide/`) — orchestration is a process concern
 - Session state (`.state/session-state.md`) — coordination artifact
-- Planning artifact **structure** (`.orqa/delivery/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
+- Planning artifact **structure** (`.orqa/implementation/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.
 
 ## Resource Safety (NON-NEGOTIABLE)
 

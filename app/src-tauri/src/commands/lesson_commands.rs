@@ -57,21 +57,14 @@ pub fn lesson_increment_recurrence(
 mod tests {
     use crate::domain::lessons::NewLesson;
     use crate::domain::paths::ProjectPaths;
-    use crate::domain::project_settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
     use crate::repo::lesson_repo;
+    use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
 
     fn make_project_paths(tmp: &tempfile::TempDir) -> ProjectPaths {
         let settings = ProjectSettings {
             name: "test".to_string(),
-            dogfood: false,
-            description: None,
-            default_model: "auto".to_string(),
-            excluded_paths: vec![],
-            stack: None,
-            governance: None,
-            icon: None,
-            show_thinking: false,
-            custom_system_prompt: None,
+            organisation: false,
+            projects: vec![],
             artifacts: vec![ArtifactEntry::Group {
                 key: "process".to_string(),
                 label: None,
@@ -80,10 +73,9 @@ mod tests {
                     key: "lessons".to_string(),
                     label: None,
                     icon: None,
-                    path: ".orqa/process/lessons".to_string(),
+                    path: ".orqa/learning/lessons".to_string(),
                 }],
             }],
-            artifact_links: Default::default(),
             statuses: vec![],
             delivery: Default::default(),
             relationships: vec![],

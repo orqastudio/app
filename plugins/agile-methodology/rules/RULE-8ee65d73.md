@@ -18,7 +18,7 @@ enforcement:
     type: PostToolUse
     event: file
     action: check
-    pattern: ".orqa/delivery/tasks/**|.orqa/delivery/epics/**"
+    pattern: ".orqa/implementation/tasks/** | .orqa/implementation/epics/**"
 relationships:
   - target: AD-b2f1f829
     type: enforces
@@ -34,7 +34,7 @@ Deferring a scoped deliverable to a future epic is forbidden. It creates invisib
 A deliverable is any item that appears in:
 
 - The epic's roadmap entry (e.g., D1 items in `.orqa/documentation/about/roadmap.md`)
-- The epic's task list in `.orqa/delivery/epics/EPIC-NNN.md`
+- The epic's task list in `.orqa/implementation/epics/EPIC-NNN.md`
 - The epic's implementation design (in the epic body)
 - The epic's `docs-produced` list
 
@@ -116,14 +116,14 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 ```text
 ## Out of Scope (handled by other epics)
 - `ContextInjected` emission — depends on EPIC-b8dc200d
-```
+```text
 
 ^ This is the orchestrator unilaterally removing a deliverable without user approval.
 
 ```text
 ## What Is NOT Done
 - custom_prompt is always None — EPIC-096fed18 will populate this
-```
+```text
 
 ^ This is deferring a deliverable. If custom_prompt is in scope, implement it. If it's genuinely out of scope, the user must have approved its removal.
 
@@ -132,7 +132,7 @@ Framing outstanding work as "none of these are blocking" or "these are minor cle
 - 322 bare-ID warnings — not blocking
 - 8 stale docs — minor cleanup
 - 5 skill renames — deferred due to complexity
-```
+```text
 
 ^ This is the agent triaging outstanding work without user input. Each item must be surfaced individually for the user to decide.
 

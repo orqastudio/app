@@ -15,7 +15,7 @@ import type { ArtifactNode, ArtifactRef } from "@orqastudio/types";
 // Helper to build test ArtifactNode objects matching the real interface
 function makeNode(overrides: Partial<ArtifactNode> & { id: string }): ArtifactNode {
 	return {
-		path: `.orqa/delivery/tasks/${overrides.id}.md`,
+		path: `.orqa/implementation/tasks/${overrides.id}.md`,
 		artifact_type: "task",
 		title: overrides.id,
 		description: null,

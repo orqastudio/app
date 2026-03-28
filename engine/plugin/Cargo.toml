@@ -1,0 +1,32 @@
+# Cargo manifest for the orqa-plugin library crate.
+# Provides the plugin lifecycle: manifest reading, discovery, collision detection,
+# installation (local and GitHub), lockfile management, registry browsing,
+# hook dispatcher generation, and CLI tool runner.
+[package]
+name = "orqa-plugin"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio plugin crate — installation, composition, schema generation, content management"
+
+[lib]
+name = "orqa_plugin"
+path = "src/lib.rs"
+
+[dependencies]
+orqa-engine-types = { path = "../types" }
+orqa-validation = { path = "../validation" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+tracing = "0.1"
+reqwest = { version = "0.12", features = ["json"], default-features = false }
+sha2 = "0.10"
+tar = "0.4"
+flate2 = "1"
+tokio = { version = "1", features = ["rt", "macros"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

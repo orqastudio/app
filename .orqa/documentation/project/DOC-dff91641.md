@@ -76,7 +76,7 @@ Write content in `.orqa/` when it is specific to this project's development:
 | Architecture decisions | AD-26d8d45d, AD-859ed163 | `.orqa/process/decisions/` |
 | Lessons learned | IMPL-08d70280 | `.orqa/process/lessons/` |
 | Project-specific rules | Rules unique to this project | `.orqa/process/rules/` |
-| Planning artifacts | Epics, tasks, ideas, research | `.orqa/delivery/` |
+| Planning artifacts | Epics, tasks, ideas, research | `.orqa/implementation/` |
 | Development documentation | Coding standards, workflow guides | `.orqa/documentation/` |
 
 **Test:** Is this specific to THIS project's development process? If yes, it belongs in `.orqa/`.

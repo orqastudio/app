@@ -37,7 +37,7 @@ const IGNORED_COMPONENTS: &[&str] = &[".git", "node_modules", "target", ".state"
 const DEBOUNCE_MS: u64 = 500;
 
 /// Relative path from the project root to the enforcement rules directory.
-const RULES_DIR: &str = ".orqa/process/rules";
+const RULES_DIR: &str = ".orqa/learning/rules";
 
 /// RAII handle that keeps the debounced watcher alive.
 ///
@@ -199,7 +199,7 @@ fn rebuild_graph(root: &Path) {
 
 /// Reload enforcement rules after `.orqa/` changes.
 ///
-/// Loads rules from `.orqa/process/rules`, compiles the enforcement engine,
+/// Loads rules from `.orqa/learning/rules`, compiles the enforcement engine,
 /// and logs how many rules and compiled entries were loaded at info level.
 /// Errors are logged at warn level — a missing rules directory or unparseable
 /// rule file must not crash the daemon.
@@ -300,7 +300,7 @@ mod tests {
     #[test]
     fn path_is_under_detects_orqa() {
         let root = PathBuf::from("/project");
-        let path = PathBuf::from("/project/.orqa/process/rules/rule-001.md");
+        let path = PathBuf::from("/project/.orqa/learning/rules/rule-001.md");
         assert!(path_is_under(&path, &root, ".orqa"));
         assert!(!path_is_under(&path, &root, "plugins"));
     }

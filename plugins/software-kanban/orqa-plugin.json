@@ -16,7 +16,7 @@
         "label": "Milestone",
         "plural": "Milestones",
         "icon": "flag",
-        "defaultPath": ".orqa/delivery/milestones",
+        "defaultPath": ".orqa/implementation/milestones",
         "idPrefix": "MS",
         "frontmatter": {
           "type": "object",
@@ -80,7 +80,7 @@
         "label": "Epic",
         "plural": "Epics",
         "icon": "layers",
-        "defaultPath": ".orqa/delivery/epics",
+        "defaultPath": ".orqa/implementation/epics",
         "idPrefix": "EPIC",
         "frontmatter": {
           "type": "object",
@@ -135,7 +135,7 @@
         "label": "Task",
         "plural": "Tasks",
         "icon": "check-square",
-        "defaultPath": ".orqa/delivery/tasks",
+        "defaultPath": ".orqa/implementation/tasks",
         "idPrefix": "TASK",
         "frontmatter": {
           "type": "object",
@@ -886,14 +886,14 @@
       {
         "key": "milestone",
         "label": "Milestone",
-        "path": ".orqa/delivery/milestones",
+        "path": ".orqa/implementation/milestones",
         "parent": null,
         "gate_field": "gate"
       },
       {
         "key": "epic",
         "label": "Epic",
-        "path": ".orqa/delivery/epics",
+        "path": ".orqa/implementation/epics",
         "parent": {
           "type": "milestone",
           "relationship": "fulfils"
@@ -902,7 +902,7 @@
       {
         "key": "task",
         "label": "Task",
-        "path": ".orqa/delivery/tasks",
+        "path": ".orqa/implementation/tasks",
         "parent": {
           "type": "epic",
           "relationship": "delivers"

@@ -54,10 +54,10 @@ Every artifact type has a typed ID prefix:
 | Prefix | Type | Location |
 | -------- | ------ | ---------- |
 | `DOC-NNN` | Documentation page | `.orqa/documentation/**/*.md` |
-| `EPIC-NNN` | Epic | `.orqa/delivery/epics/` |
-| `TASK-NNN` | Task | `.orqa/delivery/tasks/` |
-| `MS-NNN` | Milestone | `.orqa/delivery/milestones/` |
-| `IDEA-NNN` | Idea | `.orqa/delivery/ideas/` |
+| `EPIC-NNN` | Epic | `.orqa/implementation/epics/` |
+| `TASK-NNN` | Task | `.orqa/implementation/tasks/` |
+| `MS-NNN` | Milestone | `.orqa/implementation/milestones/` |
+| `IDEA-NNN` | Idea | `.orqa/implementation/ideas/` |
 | `RES-NNN` | Research | `.orqa/discovery/research/` |
 | `PILLAR-NNN` | Pillar | `.orqa/principles/pillars/` |
 | `AD-NNN` | Architecture Decision | `.orqa/process/decisions/` |

@@ -39,7 +39,7 @@
         "label": "Decision",
         "plural": "Decisions",
         "icon": "scale",
-        "defaultPath": ".orqa/process/decisions",
+        "defaultPath": ".orqa/learning/decisions",
         "idPrefix": "AD",
         "frontmatter": {
           "type": "object",

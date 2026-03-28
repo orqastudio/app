@@ -15,7 +15,7 @@ name = "orqa-daemon"
 path = "src/main.rs"
 
 [dependencies]
-orqa-engine = { path = "../libs/engine" }
+orqa-engine = { path = "../engine/core" }
 tokio = { version = "1", features = ["full"] }
 axum = "0.8"
 notify = "8"

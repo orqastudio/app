@@ -36,7 +36,7 @@ OrqaStudio has **one validation engine** used by three consumers. All artifact v
                   │      │       │
                   ▼      ▼       ▼
                LSP     CLI    Pre-commit
-```
+```text
 
 ### The Engine
 
@@ -47,7 +47,7 @@ The validation engine is a pure TypeScript library with no runtime dependencies 
 
 ### Schema Source
 
-Schemas are **plugin-provided**. Each artifact type directory (e.g., `.orqa/learning/rules/`, `.orqa/delivery/epics/`) contains a `schema.json` file in JSON Schema format. The validation engine discovers schemas via the plugin system's artifact configuration.
+Schemas are **plugin-provided**. Each artifact type directory (e.g., `.orqa/learning/rules/`, `.orqa/implementation/epics/`) contains a `schema.json` file in JSON Schema format. The validation engine discovers schemas via the plugin system's artifact configuration.
 
 Plugins declare schemas in their `orqa-plugin.json` manifest under `provides.schemas`. The engine loads all registered schemas at startup and matches them to files by directory path.
 
@@ -102,8 +102,8 @@ The `orqa check` command runs the validation engine against all artifacts and ou
 
 ```text
 ERROR  .orqa/learning/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
-WARN   .orqa/delivery/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
-```
+WARN   .orqa/implementation/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
+```text
 
 Exit code 0 = clean, exit code 1 = errors found.
 

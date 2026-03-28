@@ -115,7 +115,7 @@ export function parseHash(hash: string): ParsedRoute {
 		// Check if the second segment looks like a file path (contains / or .)
 		const rest = segments.slice(1).join("/");
 		if (rest.includes(".") || rest.includes("\\")) {
-			// It's an artifact path: #/artifacts/docs/.orqa/delivery/epics/EPIC-001.md
+			// It's an artifact path: #/artifacts/docs/.orqa/implementation/epics/EPIC-001.md
 			const firstSlash = rest.indexOf("/");
 			if (firstSlash > 0) {
 				return {

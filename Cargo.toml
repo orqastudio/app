@@ -1,8 +1,15 @@
 [workspace]
 members = [
-    "libs/engine",
-    "libs/validation",
-    "libs/search",
+    "engine/agent",
+    "engine/enforcement",
+    "engine/core",
+    "engine/types",
+    "engine/graph",
+    "engine/plugin",
+    "engine/prompt",
+    "engine/validation",
+    "engine/workflow",
+    "engine/search",
     "libs/mcp-server",
     "libs/lsp-server",
     "app/src-tauri",

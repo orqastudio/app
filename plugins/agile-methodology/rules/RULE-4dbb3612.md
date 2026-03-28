@@ -29,7 +29,7 @@ An enforcement gap exists when any of the following are true:
 When an enforcement gap is discovered:
 
 1. **Stop what you are doing** — gaps are not tracked for later; they break the credibility of the entire governance system
-2. **Capture immediately** — create a CRITICAL task in `.orqa/delivery/tasks/` for the gap
+2. **Capture immediately** — create a CRITICAL task in `.orqa/implementation/tasks/` for the gap
 3. **Prioritize above feature work** — enforcement gaps preempt all non-critical work
 4. **Do not wait for the next planning cycle** — there is no acceptable delay
 

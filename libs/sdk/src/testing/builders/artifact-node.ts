@@ -21,7 +21,7 @@ export interface ArtifactNode {
 
 const defaults: ArtifactNode = {
 	id: "TEST-001",
-	path: ".orqa/delivery/tasks/TEST-001.md",
+	path: ".orqa/implementation/tasks/TEST-001.md",
 	artifactType: "task",
 	title: "Test artifact",
 	status: "todo",

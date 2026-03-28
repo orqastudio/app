@@ -174,10 +174,10 @@ beforeEach(() => {
 it("loads content via SDK", async () => {
   vi.mocked(artifactGraphSDK.readContent).mockResolvedValueOnce("# EPIC-797972a7\n...");
 
-  await artifactStore.loadContent(".orqa/delivery/epics/EPIC-797972a7.md");
+  await artifactStore.loadContent(".orqa/implementation/epics/EPIC-797972a7.md");
 
   expect(artifactGraphSDK.readContent).toHaveBeenCalledWith(
-    ".orqa/delivery/epics/EPIC-797972a7.md"
+    ".orqa/implementation/epics/EPIC-797972a7.md"
   );
   expect(artifactStore.activeContent).toBe("# EPIC-797972a7\n...");
 });

@@ -25,9 +25,9 @@ relationships:
 
 Before writing ANY code, the following artifacts MUST exist:
 
-1. **Epic** — An `EPIC-NNN.md` in `.orqa/delivery/epics/` with status, milestone reference, research-refs, and implementation design in the body
-2. **Tasks** — One or more `TASK-NNN.md` in `.orqa/delivery/tasks/` with epic reference, scope, and acceptance criteria
-3. **Research** (if investigation was needed) — Research docs in `.orqa/delivery/research/` referenced by the epic's `research-refs`
+1. **Epic** — An `EPIC-NNN.md` in `.orqa/implementation/epics/` with status, milestone reference, research-refs, and implementation design in the body
+2. **Tasks** — One or more `TASK-NNN.md` in `.orqa/implementation/tasks/` with epic reference, scope, and acceptance criteria
+3. **Research** (if investigation was needed) — Research docs in `.orqa/implementation/research/` referenced by the epic's `research-refs`
 4. **Decision** (if an architectural choice was made) — An `AD-NNN.md` in `.orqa/process/decisions/` with the decision index updated
 
 The orchestrator MUST verify these artifacts exist and are complete before delegating any implementation task to an agent.

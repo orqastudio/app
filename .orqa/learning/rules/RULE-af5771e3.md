@@ -68,7 +68,7 @@ A stub scanner should be part of the CI/quality checks. It scans all production 
 - Hardcoded data standing in for real backend responses
 - Scaffolded implementations that don't do real work
 
-**If the scanner finds stubs, the build fails.** Legitimate exceptions (e.g., known incomplete features tracked in `.orqa/delivery/tasks/`) can be added to an allowlist with a documented reason.
+**If the scanner finds stubs, the build fails.** Legitimate exceptions (e.g., known incomplete features tracked in `.orqa/implementation/tasks/`) can be added to an allowlist with a documented reason.
 
 ## Code Search Integration
 

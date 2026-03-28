@@ -24,7 +24,7 @@ relationships:
   - target: RELATED-ID
     type: relationship-type
 ---
-```
+```text
 
 ### Required Fields
 
@@ -69,8 +69,8 @@ Agents frequently use statuses that feel natural but are not in any plugin schem
 Check existing artifacts to find the next available ID:
 
 ```bash
-ls .orqa/delivery/tasks/ | sort -t- -k2 -n | tail -1
-```
+ls .orqa/implementation/tasks/ | sort -t- -k2 -n | tail -1
+```text
 
 ## Relationship Protocol
 
@@ -86,14 +86,14 @@ Example: Creating a task that delivers to an epic:
 relationships:
   - target: EPIC-9b58fdcb
     type: delivers
-```
+```text
 
 ```yaml
 # In EPIC-9b58fdcb.md — add the inverse
 relationships:
   - target: TASK-44bd295d
     type: delivered-by
-```
+```text
 
 ## Common Patterns
 
@@ -118,7 +118,7 @@ relationships:
 
 1. ...
 2. ...
-```
+```text
 
 ### New Epic
 
@@ -136,7 +136,7 @@ relationships:
   - target: TASK-NNN
     type: delivered-by
 ---
-```
+```text
 
 ### New Decision
 
@@ -152,7 +152,7 @@ relationships:
   - target: PILLAR-NNN
     type: grounded
 ---
-```
+```text
 
 ## Validation
 

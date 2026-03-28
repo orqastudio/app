@@ -22,7 +22,7 @@
 #   6. Lint suppression audit (every suppression needs an accepted AD-NNN)
 #   7. Scoped tests (only tests affected by staged changes)
 
-set -euo pipefail
+set -u
 
 # ── Emergency skip ─────────────────────────────────────────────────────────
 if [ "${ORQA_SKIP_HOOKS:-}" = "1" ]; then
@@ -143,13 +143,13 @@ if [ "$HAS_FRONTEND" = true ]; then
   STAGED_FE=$(echo "$STAGED_FILES" | grep -E '\.(svelte|ts|js)$' || true)
   if [ -n "$STAGED_FE" ]; then
     echo "--- Frontend: eslint (staged files only) ---"
-    echo "$STAGED_FE" | xargs npx eslint \
-      --no-error-on-unmatched-pattern \
-      --max-warnings 0 \
-      2>&1 || {
-        log_violation "eslint" "frontend" "lint errors"
-        FAILED=true
-      }
+    ESLINT_TMPFILE=$(mktemp)
+    echo "$STAGED_FE" > "$ESLINT_TMPFILE"
+    npx eslint --no-error-on-unmatched-pattern --max-warnings 0 $(cat "$ESLINT_TMPFILE") 2>&1 || {
+      log_violation "eslint" "frontend" "lint errors"
+      FAILED=true
+    }
+    rm -f "$ESLINT_TMPFILE"
   fi
 fi
 
@@ -159,10 +159,8 @@ if [ "$HAS_MARKDOWN" = true ]; then
   if [ -n "$STAGED_MD" ]; then
     echo "--- Markdown: markdownlint (staged files only) ---"
     # Batch to avoid Windows command line length limits on large commits
-    md_failed=false
-    echo "$STAGED_MD" | xargs -n 50 npx markdownlint-cli2 \
-      2>&1 || md_failed=true
-    if [ "$md_failed" = true ]; then
+    # Subshell disables pipefail locally so xargs batch failures don't abort
+    if ! (set +o pipefail 2>/dev/null; echo "$STAGED_MD" | xargs -n 50 npx markdownlint-cli2 2>&1); then
       log_violation "markdownlint" "markdown" "markdown lint errors"
       FAILED=true
     fi

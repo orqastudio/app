@@ -1,0 +1,18 @@
+# Cargo manifest for the orqa-agent library crate.
+# Provides the base role taxonomy, agent specifications, and task-agent assembly types.
+# This crate is the foundation for the prompt generation pipeline (core.md section 3.2).
+[package]
+name = "orqa-agent"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio agent crate — base role taxonomy and agent specification types"
+
+[lib]
+name = "orqa_agent"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+
+[lints]
+workspace = true

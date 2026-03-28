@@ -1,4 +1,3 @@
-/* eslint-disable */
 // THIS FILE IS AUTO-GENERATED — DO NOT EDIT BY HAND.
 // Source: libs/types/src/platform/*.schema.json
 // Regenerate: node scripts/generate-types.mjs
@@ -43,7 +42,7 @@ export interface ArtifactNode {
    */
   project?: string | null;
   /**
-   * Relative path from the project root (e.g. '.orqa/delivery/epics/EPIC-048.md').
+   * Relative path from the project root (e.g. '.orqa/implementation/epics/EPIC-048.md').
    */
   path: string;
   /**

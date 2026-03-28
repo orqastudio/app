@@ -71,7 +71,7 @@ Before ANY of the following actions, the orchestrator MUST run the completion ga
 
 | Check | What to Verify | How |
 | --- | --- | --- |
-| **Task statuses** | All tasks from the current batch have accurate statuses in `.orqa/delivery/tasks/` | Read each task file, verify status matches reality |
+| **Task statuses** | All tasks from the current batch have accurate statuses in `.orqa/implementation/tasks/` | Read each task file, verify status matches reality |
 | **Follow-up items** | All follow-ups reported in agent findings files (`.state/team/*/task-*.md`) are resolved | Read findings files, check each follow-up item |
 | **Dead file cleanup** | Files marked for deletion during the batch are actually deleted | `git status` to verify no stale files remain |
 | **Dependency cleanup** | Dependencies marked for removal are actually removed from manifests | Check `package.json` / `Cargo.toml` for stale entries |
@@ -98,7 +98,7 @@ When an agent reports follow-ups in their findings, those are not afterthoughts.
 | --- | --- |
 | "Dead file X still on disk" | Delete the file before moving on |
 | "Dependency Y should be removed" | Remove it from the manifest and rebuild |
-| "Task status not updated" | Update the task status in `.orqa/delivery/tasks/` |
+| "Task status not updated" | Update the task status in `.orqa/implementation/tasks/` |
 | "Binary needs rebuild" | Run the rebuild command |
 | "Documentation needs update" | Delegate to a Writer or do it if trivial |
 

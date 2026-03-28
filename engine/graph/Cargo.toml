@@ -1,0 +1,18 @@
+# Cargo manifest for the orqa-graph library crate.
+# Provides the artifact graph construction, query, and traceability functions.
+# Currently a thin re-export layer over orqa-validation's graph module.
+[package]
+name = "orqa-graph"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio graph crate — artifact relationships and traceability"
+
+[lib]
+name = "orqa_graph"
+path = "src/lib.rs"
+
+[dependencies]
+orqa-validation = { path = "../validation" }
+
+[lints]
+workspace = true

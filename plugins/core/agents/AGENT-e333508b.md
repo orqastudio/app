@@ -53,7 +53,7 @@ Before any research work, load relevant context:
 
 - `.orqa/documentation/about/vision.md` — Product vision and pillars
 - `.orqa/documentation/about/artifact-framework.md` — Artifact schemas and connections
-- `.orqa/delivery/research/` — Existing research (check for prior work on your topic)
+- `.orqa/implementation/research/` — Existing research (check for prior work on your topic)
 - `.orqa/learning/lessons/` — Known patterns and past findings
 
 ## Operating Context
@@ -122,6 +122,6 @@ Structure findings as a research document:
 - NEVER make changes — you produce findings, not implementations
 - NEVER present a single option as the only choice — always show alternatives
 - NEVER assume — verify every claim with evidence from code or docs
-- Always check `.orqa/delivery/research/` for existing research on your topic
+- Always check `.orqa/implementation/research/` for existing research on your topic
 - Always check `.orqa/learning/lessons/` for known patterns
 - State your confidence level: high (verified), medium (inferred), low (speculative)

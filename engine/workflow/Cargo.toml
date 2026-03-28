@@ -1,0 +1,22 @@
+# Cargo manifest for the orqa-workflow library crate.
+# Provides the workflow evaluation engine: status transitions, session process
+# state tracking, session activity tracking, and process gate evaluation.
+[package]
+name = "orqa-workflow"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio workflow crate — state machine evaluation, transition resolution, process gates"
+
+[lib]
+name = "orqa_workflow"
+path = "src/lib.rs"
+
+[dependencies]
+orqa-engine-types = { path = "../types" }
+orqa-validation = { path = "../validation" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+tracing = "0.1"
+
+[lints]
+workspace = true

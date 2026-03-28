@@ -103,7 +103,7 @@ Skills have both `layer` (canon/project/plugin) and `scope` (general/software-en
 
 Many "Tier 1" rules reference OrqaStudio-specific examples, paths, and patterns. They would need to be **parameterised** or **templated** before they can truly ship as core. For example:
 
-- [RULE-b10fe6d1](RULE-b10fe6d1) references `.orqa/delivery/epics/` paths — but those paths ARE the core structure
+- [RULE-b10fe6d1](RULE-b10fe6d1) references `.orqa/implementation/epics/` paths — but those paths ARE the core structure
 - [RULE-dd5b69e6](RULE-dd5b69e6) lists OrqaStudio's specific skill injection table — but each project would have its own
 - [RULE-eb269afb](RULE-eb269afb) lists OrqaStudio's shared components — but is the *pattern* of "use shared components" universal
 

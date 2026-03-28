@@ -15,8 +15,8 @@ OrqaStudio manages work through an **artifact graph** — markdown files with YA
 
 | What | Where |
 | ------ | ------- |
-| Tasks | `.orqa/delivery/tasks/` |
-| Epics | `.orqa/delivery/epics/` |
+| Tasks | `.orqa/implementation/tasks/` |
+| Epics | `.orqa/implementation/epics/` |
 | Ideas | `.orqa/discovery/ideas/` |
 | Research | `.orqa/discovery/research/` |
 | Decisions | `.orqa/process/decisions/` |

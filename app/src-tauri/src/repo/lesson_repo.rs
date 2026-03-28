@@ -174,21 +174,14 @@ fn read_lesson_file(file_path: &Path, project_root: &Path) -> Result<Lesson, Orq
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::project_settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
+    use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
     use tempfile::TempDir;
 
     fn make_project_paths(tmp: &TempDir) -> ProjectPaths {
         let settings = ProjectSettings {
             name: "test".to_string(),
-            dogfood: false,
-            description: None,
-            default_model: "auto".to_string(),
-            excluded_paths: vec![],
-            stack: None,
-            governance: None,
-            icon: None,
-            show_thinking: false,
-            custom_system_prompt: None,
+            organisation: false,
+            projects: vec![],
             artifacts: vec![ArtifactEntry::Group {
                 key: "process".to_string(),
                 label: None,
@@ -197,10 +190,9 @@ mod tests {
                     key: "lessons".to_string(),
                     label: None,
                     icon: None,
-                    path: ".orqa/process/lessons".to_string(),
+                    path: ".orqa/learning/lessons".to_string(),
                 }],
             }],
-            artifact_links: Default::default(),
             statuses: vec![],
             delivery: Default::default(),
             relationships: vec![],
@@ -236,7 +228,7 @@ mod tests {
         assert_eq!(lesson.category, "process");
         assert_eq!(lesson.recurrence, 1);
         assert_eq!(lesson.status, "active");
-        assert_eq!(lesson.file_path, ".orqa/process/lessons/IMPL-001.md");
+        assert_eq!(lesson.file_path, ".orqa/learning/lessons/IMPL-001.md");
 
         let file = paths
             .artifact_dir("lessons")
@@ -347,17 +339,9 @@ mod tests {
         // Create ProjectPaths with NO artifacts configured
         let settings = ProjectSettings {
             name: "empty".to_string(),
-            dogfood: false,
-            description: None,
-            default_model: "auto".to_string(),
-            excluded_paths: vec![],
-            stack: None,
-            governance: None,
-            icon: None,
-            show_thinking: false,
-            custom_system_prompt: None,
+            organisation: false,
+            projects: vec![],
             artifacts: vec![],
-            artifact_links: Default::default(),
             statuses: vec![],
             delivery: Default::default(),
             relationships: vec![],

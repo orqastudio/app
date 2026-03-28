@@ -92,7 +92,7 @@ relationships:
 ## Both Languages
 
 - **Coverage**: 80%+ test coverage. No exceptions without documented justification.
-- **No TODO comments**: If something isn't done, it's tracked in `.orqa/delivery/tasks/`, not scattered across the codebase. TODO comments in committed code are a build failure.
+- **No TODO comments**: If something isn't done, it's tracked in `.orqa/implementation/tasks/`, not scattered across the codebase. TODO comments in committed code are a build failure.
 - **No commented-out code**: Delete it. Git history preserves it.
 - **No hardcoded fake data**: See [RULE-af5771e3](RULE-af5771e3) (no-stubs).
 - **MUST use shared components**: See [RULE-eb269afb](RULE-eb269afb) (reusable-components) for the shared component library.

@@ -146,7 +146,7 @@ mod tests {
     #[test]
     fn file_without_id_is_skipped() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -159,7 +159,7 @@ mod tests {
     #[test]
     fn file_with_id_creates_node() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -177,7 +177,7 @@ mod tests {
     #[test]
     fn relationship_creates_forward_ref() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
+        let tasks_dir = tmp.path().join(".orqa/implementation/tasks");
         // Use `enforces` — a core.json relationship type that is always valid
         // even without a project.json in the test fixture.
         write_artifact(

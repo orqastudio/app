@@ -41,7 +41,7 @@ relationships:
 - The content is project documentation: coding standards, workflow guides
 - The content is a project-specific rule
 
-**Locations:** `.orqa/process/decisions/`, `.orqa/learning/lessons/`, `.orqa/delivery/`, `.orqa/documentation/`
+**Locations:** `.orqa/process/decisions/`, `.orqa/learning/lessons/`, `.orqa/implementation/`, `.orqa/documentation/`
 
 ## The Pairing Rule (NON-NEGOTIABLE)
 

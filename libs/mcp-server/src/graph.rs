@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn file_without_id_is_skipped() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn file_with_id_creates_node() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -152,7 +152,7 @@ mod tests {
     #[test]
     fn relationship_creates_forward_ref() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
+        let tasks_dir = tmp.path().join(".orqa/implementation/tasks");
         write_artifact(
             &tasks_dir,
             "TASK-001.md",
@@ -168,8 +168,8 @@ mod tests {
     #[test]
     fn backlinks_are_computed_in_pass_two() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
-        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
+        let tasks_dir = tmp.path().join(".orqa/implementation/tasks");
         write_artifact(
             &epics_dir,
             "EPIC-001.md",
@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn broken_refs_counted_in_stats() {
         let tmp = make_project();
-        let tasks_dir = tmp.path().join(".orqa/delivery/tasks");
+        let tasks_dir = tmp.path().join(".orqa/implementation/tasks");
         write_artifact(
             &tasks_dir,
             "TASK-001.md",
@@ -205,7 +205,7 @@ mod tests {
     #[test]
     fn readme_files_are_skipped() {
         let tmp = make_project();
-        let epics_dir = tmp.path().join(".orqa/delivery/epics");
+        let epics_dir = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &epics_dir,
             "README.md",
@@ -291,7 +291,7 @@ mod tests {
         write_org_project_json(tmp.path(), "app", "app");
 
         // Root epic references RULE-001 which lives in the child project.
-        let root_epics = tmp.path().join(".orqa/delivery/epics");
+        let root_epics = tmp.path().join(".orqa/implementation/epics");
         write_artifact(
             &root_epics,
             "EPIC-001.md",

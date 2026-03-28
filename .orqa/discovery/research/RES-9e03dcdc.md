@@ -105,7 +105,7 @@ research-refs on any artifact (traceability to thinking)
 - **Epics contain their own design** in the markdown body
 - **`research-refs`** field available on epics, tasks, and decisions for linking back to research
 - **Remove `plans` from the `artifacts` config** in project.json
-- **Remove `.orqa/delivery/plans/` directory** after migration
+- **Remove `.orqa/implementation/plans/` directory** after migration
 
 ### Tasks
 
@@ -118,7 +118,7 @@ research-refs on any artifact (traceability to thinking)
 ### Verification
 
 - No `plan:` field in any task frontmatter (replaced by `epic:`)
-- No files in `.orqa/delivery/plans/` (moved to research, marked surpassed)
+- No files in `.orqa/implementation/plans/` (moved to research, marked surpassed)
 - artifact-framework.md has no Plan type definition
 - artifact-lifecycle.md has no plan status transitions
 - Every task has an `epic:` field that references an existing epic

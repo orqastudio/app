@@ -13,12 +13,12 @@ enforcement:
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/delivery/*/schema.json|.orqa/process/*/schema.json|.claude/agents/schema.json|.orqa/documentation/knowledge/schema.json"
+    pattern: ".orqa/implementation/*/schema.json | .orqa/process/*/schema.json | .claude/agents/schema.json | .orqa/documentation/knowledge/schema.json"
   - mechanism: hook
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/documentation/knowledge/composability/KNOW.md|.orqa/documentation/knowledge/research-methodology/KNOW.md|.orqa/documentation/knowledge/planning/KNOW.md|.orqa/documentation/knowledge/orqa-code-search/KNOW.md"
+    pattern: ".orqa/documentation/knowledge/composability/KNOW.md | .orqa/documentation/knowledge/research-methodology/KNOW.md | .orqa/documentation/knowledge/planning/KNOW.md | .orqa/documentation/knowledge/orqa-code-search/KNOW.md"
 relationships:
   - target: AD-f079c196
     type: enforces

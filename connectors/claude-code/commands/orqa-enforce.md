@@ -15,7 +15,7 @@ Run the OrqaStudio integrity validator against the artifact graph. This checks a
 orqa enforce
 
 # Validate a specific path
-orqa enforce .orqa/delivery/
+orqa enforce .orqa/implementation/
 
 # Show only errors (skip warnings)
 orqa enforce --errors-only
@@ -53,7 +53,7 @@ ERROR: TASK-44bd295d has status "in-progress" — must be one of: captured, expl
 ### Missing required field
 
 ```text
-ERROR: .orqa/delivery/tasks/TASK-44bd295d.md — missing required field: id
+ERROR: .orqa/implementation/tasks/TASK-44bd295d.md — missing required field: id
 ```text
 
 **Fix:** Add the required field to the YAML frontmatter.

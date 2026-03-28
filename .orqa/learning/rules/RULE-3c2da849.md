@@ -18,7 +18,7 @@ enforcement:
     type: PostToolUse
     event: file
     action: warn
-    pattern: ".orqa/delivery/*/schema.json|.orqa/process/*/schema.json|.orqa/process/agents/schema.json|.orqa/process/knowledge/schema.json"
+    pattern: ".orqa/implementation/*/schema.json|.orqa/process/*/schema.json|.orqa/process/agents/schema.json|.orqa/process/knowledge/schema.json"
 
   - mechanism: hook
 

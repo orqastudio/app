@@ -25,7 +25,7 @@ enforcement:
     type: PostToolUse
     event: file
     action: check
-    pattern: ".orqa/delivery/tasks/**|.orqa/delivery/epics/**"
+    pattern: ".orqa/implementation/tasks/**|.orqa/implementation/epics/**"
 relationships:
 
   - target: AD-b2f1f829
@@ -44,7 +44,7 @@ Deferring a scoped deliverable to a future epic is forbidden. It creates invisib
 A deliverable is any item that appears in:
 
 - The epic's roadmap entry (e.g., D1 items in `.orqa/documentation/about/roadmap.md`)
-- The epic's task list in `.orqa/delivery/epics/EPIC-NNN.md`
+- The epic's task list in `.orqa/implementation/epics/EPIC-NNN.md`
 - The epic's implementation design (in the epic body)
 - The epic's `docs-produced` list
 

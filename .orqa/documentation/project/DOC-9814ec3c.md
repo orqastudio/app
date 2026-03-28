@@ -139,7 +139,7 @@ The standards are enforced by `make check`. The principles behind them are gover
 ## Both Languages
 
 - **Coverage:** 80%+ test coverage, no exceptions without documented justification
-- **No TODO comments:** Track as task artifacts in `.orqa/delivery/tasks/`, not scattered across the codebase
+- **No TODO comments:** Track as task artifacts in `.orqa/implementation/tasks/`, not scattered across the codebase
 - **No commented-out code:** Delete it. Git history preserves it.
 - **No hardcoded fake data:** See [RULE-af5771e3](RULE-af5771e3)
 - **Documentation-first:** Read governing docs before implementing

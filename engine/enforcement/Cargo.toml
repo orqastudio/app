@@ -1,0 +1,27 @@
+# Cargo manifest for the orqa-enforcement library crate.
+# Provides the enforcement pipeline: rule parsing, compiled-regex evaluation engine,
+# rule store (filesystem loader), and governance scanner.
+[package]
+name = "orqa-enforcement"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio enforcement crate — rule evaluation, artifact validation, governance scanning"
+
+[lib]
+name = "orqa_enforcement"
+path = "src/lib.rs"
+
+[dependencies]
+orqa-engine-types = { path = "../types" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+regex = "1"
+glob = "0.3"
+tracing = "0.1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

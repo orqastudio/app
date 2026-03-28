@@ -67,7 +67,7 @@ Whenever the user mentions a future feature, enhancement, or "we should eventual
 
 ### How
 
-1. Scan `.orqa/delivery/ideas/` to determine the next ID
+1. Scan `.orqa/implementation/ideas/` to determine the next ID
 2. Create `IDEA-NNN.md` with:
    - `status: captured`
    - `pillar` alignment (at least one pillar must apply)
@@ -120,7 +120,7 @@ The idea MUST be `shaped` before promotion. The user MUST explicitly approve.
 ### Procedure
 
 1. Compute priority score using `.orqa/project.json` dimensions
-2. Create `EPIC-NNN.md` in `.orqa/delivery/epics/` with:
+2. Create `EPIC-NNN.md` in `.orqa/implementation/epics/` with:
    - `status: draft`
    - `milestone` assignment
    - `priority` derived from score
@@ -158,7 +158,7 @@ Before an epic can begin implementation:
 
 1. Follow the implementation design in the epic body
 2. Tasks are tracked as checklist items in the epic body
-3. If a task needs its own tracking, graduate it to `TASK-NNN.md` in `.orqa/delivery/tasks/`
+3. If a task needs its own tracking, graduate it to `TASK-NNN.md` in `.orqa/implementation/tasks/`
 4. Commit regularly to the worktree branch
 5. Capture implementation lessons in `.orqa/process/lessons/`
 
@@ -207,7 +207,7 @@ A task graduates to a separate `TASK-NNN.md` file when it needs:
 
 ### Creating a Graduated Task
 
-1. Scan `.orqa/delivery/tasks/` for the next ID
+1. Scan `.orqa/implementation/tasks/` for the next ID
 2. Create `TASK-NNN.md` with `epic` reference
 3. Replace the checklist item with a reference: `- [ ] [TASK-NNN] Emit SystemPromptSent event`
 

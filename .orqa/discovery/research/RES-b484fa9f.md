@@ -115,7 +115,7 @@ The `architecture` skill also references `backend/src-tauri/src/persistence/` in
 
 `TODO.md` no longer exists. Rules referencing it: [RULE-9814ec3c](RULE-9814ec3c), [RULE-ec9462d8](RULE-ec9462d8) (2 refs), [RULE-0be7765e](RULE-0be7765e), [RULE-af5771e3](RULE-af5771e3), [RULE-dccf4226](RULE-dccf4226).
 
-**Fix:** Replace with references to `.orqa/delivery/tasks/` or `.orqa/delivery/epics/` as appropriate.
+**Fix:** Replace with references to `.orqa/implementation/tasks/` or `.orqa/implementation/epics/` as appropriate.
 
 ### F-08: [RULE-f609242f](RULE-f609242f) source of truth path broken (TASK-88e72cc1)
 

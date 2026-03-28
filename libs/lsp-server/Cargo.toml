@@ -23,7 +23,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
 thiserror = "2"
 reqwest = { version = "0.12", features = ["json"] }
-orqa-engine = { path = "../engine" }
+orqa-engine = { path = "../../engine/core" }
 
 [dev-dependencies]
 tempfile = "3"

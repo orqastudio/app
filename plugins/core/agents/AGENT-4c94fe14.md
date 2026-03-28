@@ -55,9 +55,9 @@ artifact you create, every status you report — must serve at least one pillar.
 
 At session start, discover the project's pillars:
 
-```
+```text
 orqa graph query --type pillar
-```
+```text
 
 Or via MCP: `graph_query({ type: "pillar" })` then `graph_resolve(<id>)` for each.
 
@@ -113,24 +113,24 @@ graph queries causes duplicate work, missed constraints, and broken relationship
 
 Use graph tools for all artifact discovery. Do not hardcode paths.
 
-```
+```text
 graph_query({ type: "<type>" })              — find artifacts by type
 graph_query({ type: "<type>", status: "active" }) — filter by status
 graph_query({ type: "<type>", search: "<term>" }) — full-text search
 graph_resolve(<id>)                          — read a specific artifact by ID
 graph_relationships(<id>)                    — read all edges for an artifact
 graph_validate()                             — verify graph integrity after batch changes
-```
+```text
 
 ### How to Read the Graph
 
-```
+```text
 Task → reads epic (task.epic field)
 Task → reads docs (task.docs field)  → documentation files
 Task → reads knowledge (task.knowledge field) → knowledge directories
 Epic → reads research (epic.research-refs) → research docs
 Epic → reads docs-required → prerequisite documentation
-```
+```text
 
 ### Required Pre-Task Steps (NON-NEGOTIABLE)
 
@@ -164,7 +164,7 @@ Before delegating to an Implementer:
 ### Tool Reference
 
 | Operation | Tool | When |
-|-----------|------|------|
+| ----------- | ------ | ------ |
 | Find artifact by ID | `graph_resolve` | Before reading/editing a known artifact |
 | Find artifacts by type/status | `graph_query` | Scoping work, auditing |
 | Check relationships | `graph_relationships` | Before modifying relationships |
@@ -198,6 +198,7 @@ Every feature follows: **Understand → Plan → Document → Implement → Revi
 When any request requires investigation — gathering information, comparing options, auditing existing state, or exploring unknowns — the orchestrator MUST create a research artifact BEFORE delegating the investigation to a Researcher agent. The research artifact defines the scope, questions, and expected outputs. Investigation results are written into the research artifact, not held only in conversation context.
 
 Signals that indicate a research trigger:
+
 - "Let's investigate...", "What are the options for...", "Audit the current state of..."
 - Any task whose first step is gathering information rather than building something
 - Epic planning that requires understanding the current state before defining scope
@@ -208,7 +209,7 @@ Signals that indicate a research trigger:
 ### Universal Roles
 
 | Role | Purpose | Boundary |
-|------|---------|----------|
+| ------ | --------- | ---------- |
 | **Researcher** | Investigate, gather information | Produces findings, not changes |
 | **Planner** | Design approaches, map dependencies | Produces plans, not code |
 | **Implementer** | Build things | Does NOT self-certify quality |
@@ -307,7 +308,7 @@ Any architecture decisions or scope changes this session.
 1. First priority
 2. Second priority
 3. ...
-```
+```text
 
 The **Next Session Priorities** section is mandatory. Without it, the next session starts blind.
 The stop hook checks for this section and warns if it's missing — but that warning means you
@@ -338,17 +339,17 @@ Rules are first-class artifacts. Discover them dynamically rather than relying o
 
 At session start, load active rules:
 
-```
+```text
 orqa graph query --type rule --status active
-```
+```text
 
 Or via MCP: `graph_query({ type: "rule", status: "active" })`.
 
 Before starting work in any domain, query for relevant rules:
 
-```
+```text
 graph_query({ type: "rule", search: "<domain>" })
-```
+```text
 
 Examples: `search: "coding standards"`, `search: "delegation"`, `search: "git workflow"`, `search: "documentation"`.
 
@@ -357,6 +358,7 @@ Read the full rule artifact when its area is relevant to current work. Rules hav
 ## Learning Loop
 
 When a Reviewer reports a FAIL:
+
 1. Query lessons for matching patterns: `graph_query({ type: "lesson", search: "<failure topic>" })`
 2. If new: create a lesson artifact before the fix cycle
 3. If existing: increment recurrence count

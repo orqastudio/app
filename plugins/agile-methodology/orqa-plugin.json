@@ -691,7 +691,7 @@
           "scope-control"
         ],
         "priority": "P2",
-        "summary": "Every documentation page describing a feature must include a Pillar Alignment section with a row per active pillar. Read pillars from .orqa/process/pillars/. Pages serving no pillar are scope creep. Exempt: research pages, dev guidelines, pillar definitions, vision/governance pages, architecture decisions.",
+        "summary": "Every documentation page describing a feature must include a Pillar Alignment section with a row per active pillar. Read pillars from .orqa/discovery/. Pages serving no pillar are scope creep. Exempt: research pages, dev guidelines, pillar definitions, vision/governance pages, architecture decisions.",
         "content_file": "../../.orqa/learning/rules/RULE-05562ed4.md"
       },
       {
@@ -710,7 +710,7 @@
           "type-safety"
         ],
         "priority": "P1",
-        "summary": "Architecture decisions in .orqa/process/decisions/ are source of truth. Critical decisions: error propagation (Result types, no unwrap), IPC boundary (Tauri invoke only), component purity (display vs container), type safety (strict TS, no any), immutability, UX-first, Svelte 5 only, SQLite for conversations only. Plans must include Architectural Compliance section.",
+        "summary": "Architecture decisions in .orqa/learning/decisions/ are source of truth. Critical decisions: error propagation (Result types, no unwrap), IPC boundary (Tauri invoke only), component purity (display vs container), type safety (strict TS, no any), immutability, UX-first, Svelte 5 only, SQLite for conversations only. Plans must include Architectural Compliance section.",
         "content_file": "../../.orqa/learning/rules/RULE-05ae2ce7.md"
       },
       {
@@ -803,7 +803,7 @@
           "ux-first"
         ],
         "priority": "P0",
-        "summary": "Every feature must serve at least one active pillar from .orqa/process/pillars/. Evaluate gate questions before implementing. Reject features with no pillar alignment. UX-first design: user journeys before backend architecture. Foundational principles (pillar framework, tech stack, UX-first, doc-first) are immutable without user approval.",
+        "summary": "Every feature must serve at least one active pillar from .orqa/discovery/. Evaluate gate questions before implementing. Reject features with no pillar alignment. UX-first design: user journeys before backend architecture. Foundational principles (pillar framework, tech stack, UX-first, doc-first) are immutable without user approval.",
         "content_file": "../../.orqa/learning/rules/RULE-1b238fc8.md"
       },
       {
