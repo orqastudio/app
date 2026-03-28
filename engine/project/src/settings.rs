@@ -6,7 +6,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::types::project::DetectedStack;
+use orqa_engine_types::types::project::DetectedStack;
 
 // Re-export config types from the canonical source in orqa-validation.
 pub use orqa_validation::settings::{
@@ -71,7 +71,7 @@ pub struct PluginProjectConfig {
     pub enabled: bool,
     /// Relative path to the plugin directory (from project root).
     pub path: String,
-    /// Per-relationship overrides (key → enabled).
+    /// Per-relationship overrides (key -> enabled).
     #[serde(default)]
     pub relationships: Option<std::collections::HashMap<String, bool>>,
     /// Plugin-specific settings.
@@ -117,7 +117,7 @@ pub struct ProjectSettings {
     /// When absent, the app falls back to built-in defaults.
     #[serde(default)]
     pub statuses: Vec<StatusDefinition>,
-    /// Delivery type hierarchy (milestone → epic → task) from `project.json`.
+    /// Delivery type hierarchy (milestone -> epic -> task) from `project.json`.
     ///
     /// When absent, defaults to an empty hierarchy.
     #[serde(default)]

@@ -1,0 +1,23 @@
+# Cargo manifest for the orqa-lesson crate.
+# Contains lesson parse/render logic for YAML-frontmatter markdown lesson files,
+# and a file-backed LessonStore implementation.
+[package]
+name = "orqa-lesson"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio lesson parsing, rendering, and file-backed lesson store"
+
+[lib]
+name = "orqa_lesson"
+path = "src/lib.rs"
+
+[dependencies]
+tracing = "0.1"
+orqa-engine-types = { path = "../types" }
+orqa-validation = { path = "../validation" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

@@ -1,4 +1,4 @@
-// Streaming module for the orqa-engine crate.
+// orqa-streaming: Sidecar streaming module for the OrqaStudio engine.
 //
 // Contains the sidecar protocol types (SidecarRequest, SidecarResponse) and
 // the pure streaming logic that can be tested without a Tauri context:

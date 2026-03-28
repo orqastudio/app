@@ -1,0 +1,26 @@
+# Cargo manifest for the orqa-project crate.
+# Contains project scanning (technology stack detection, governance artifact counting),
+# project settings types (ProjectSettings, GovernanceCounts, PluginProjectConfig),
+# and the file-backed project settings store.
+[package]
+name = "orqa-project"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio project scanning, settings types, and file-backed settings store"
+
+[lib]
+name = "orqa_project"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+tracing = "0.1"
+orqa-engine-types = { path = "../types" }
+orqa-validation = { path = "../validation" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

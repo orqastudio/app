@@ -1,8 +1,11 @@
 [workspace]
 members = [
     "engine/agent",
+    "engine/artifact",
     "engine/enforcement",
     "engine/core",
+    "engine/lesson",
+    "engine/project",
     "engine/types",
     "engine/graph",
     "engine/plugin",
@@ -10,6 +13,7 @@ members = [
     "engine/validation",
     "engine/workflow",
     "engine/search",
+    "engine/streaming",
     "libs/mcp-server",
     "libs/lsp-server",
     "app/src-tauri",

@@ -1,0 +1,27 @@
+# Cargo manifest for the orqa-artifact library crate.
+# Provides artifact business logic: ID generation/validation, type parsing,
+# path derivation, frontmatter extraction/parsing, filesystem I/O helpers,
+# and the navigation tree scanner driven by project.json artifact config.
+[package]
+name = "orqa-artifact"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio engine — artifact reading, parsing, frontmatter extraction, navigation tree scanning"
+
+[lib]
+name = "orqa_artifact"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+rand = "0.8"
+orqa-engine-types = { path = "../types" }
+orqa-validation = { path = "../validation" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

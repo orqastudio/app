@@ -1,4 +1,4 @@
-// File-backed project settings store for the orqa-engine crate.
+// File-backed project settings store for the orqa-project crate.
 //
 // Provides `FileProjectSettingsStore`, a concrete implementation of
 // `ProjectSettingsStore` that reads and writes `project.json` as
@@ -8,8 +8,8 @@
 
 use std::path::Path;
 
-use crate::paths::{ORQA_DIR, SETTINGS_FILE};
-use crate::traits::storage::ProjectSettingsStore;
+use orqa_engine_types::paths::{ORQA_DIR, SETTINGS_FILE};
+use orqa_engine_types::traits::storage::ProjectSettingsStore;
 
 /// Concrete error type for `FileProjectSettingsStore` operations.
 #[derive(Debug)]

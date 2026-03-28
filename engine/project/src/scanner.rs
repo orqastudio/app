@@ -9,9 +9,10 @@ use std::collections::HashSet;
 use std::path::Path;
 use std::time::Instant;
 
-use crate::error::EngineError;
-use crate::project::settings::GovernanceCounts;
-use crate::types::project::DetectedStack;
+use orqa_engine_types::error::EngineError;
+use orqa_engine_types::types::project::DetectedStack;
+
+use crate::settings::GovernanceCounts;
 
 /// Maximum directory recursion depth during language detection.
 const MAX_SCAN_DEPTH: usize = 10;

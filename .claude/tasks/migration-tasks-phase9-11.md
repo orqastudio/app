@@ -1988,3 +1988,67 @@ For each identified enforcement opportunity:
 - [ ] No pre-determined scope limitations — the audit discovers what's needed, not what's expected
 - [ ] Findings written to a decision artifact (AD-*.md) for review before implementation
 - [ ] Implementation priority assigned to each (critical/high/medium/low)
+
+---
+
+### Phase 10 Addendum: Schema-Driven Type Generation
+
+> Added 2026-03-28. Single source of truth for TS and Rust types.
+> Research: .state/schema-type-generation-research.md
+
+#### TASK 10.6.1: Create libs/schema/ and move JSON Schema files
+
+**What:** Create `libs/schema/` directory. Move all `.schema.json` files from `libs/types/src/platform/` to `libs/schema/platform/`. Update any scripts that reference the old location.
+
+**Acceptance Criteria:**
+- [ ] `libs/schema/platform/` contains all schema files (core.json, graph.schema.json, artifact-graph.schema.json, config.schema.json, workflow.schema.json)
+- [ ] `libs/types/src/platform/` no longer contains schema files (only generated output)
+- [ ] `scripts/generate-types.mjs` updated to read from `libs/schema/`
+- [ ] Existing TS generation still works
+
+#### TASK 10.6.2: Update TS generation to read from libs/schema/
+
+**What:** Update `generate-types.mjs` to read schemas from `libs/schema/` and output to `libs/types/src/generated/`. Verify generated output is identical to current.
+
+**Acceptance Criteria:**
+- [ ] Generation script reads from `libs/schema/`
+- [ ] Generated TS matches current output (diff comparison)
+- [ ] `npm run build` in libs/types succeeds
+
+#### TASK 10.6.3: Evaluate and implement Rust codegen from JSON Schema
+
+**What:** Evaluate `typify` crate for Rust struct generation from JSON Schema. If suitable, integrate into `engine/types/build.rs`. If not, document why and use custom codegen. Start with `graph.schema.json` (simplest).
+
+**Acceptance Criteria:**
+- [ ] Rust structs generated from at least `graph.schema.json`
+- [ ] Generated structs match hand-written equivalents (field names, types, derives)
+- [ ] `cargo build` passes with generated types
+- [ ] Decision documented if typify rejected
+
+#### TASK 10.6.4: Migrate graph types to schema-generated
+
+**What:** Replace hand-written graph types in both TS and Rust with schema-generated versions. Remove hand-written duplicates.
+
+**Acceptance Criteria:**
+- [ ] TS graph types imported from generated, not hand-written
+- [ ] Rust graph types imported from generated, not hand-written
+- [ ] All tests pass
+- [ ] Zero type drift between TS and Rust for graph domain
+
+#### TASK 10.6.5: Migrate config types to schema-generated
+
+**What:** Same as 10.6.4 but for config types. This is more complex (3 layers of duplication per research findings).
+
+**Acceptance Criteria:**
+- [ ] Config types generated from schema in both languages
+- [ ] Hand-written config type duplicates removed
+- [ ] Tauri IPC serialization verified (config crosses the boundary)
+
+#### TASK 10.6.6: Add schema hash verification to git hook
+
+**What:** Add pre-commit check that computes SHA256 of each schema file, compares with hashes embedded in generated files. Blocks commit if schema changed but types not regenerated.
+
+**Acceptance Criteria:**
+- [ ] Changing a schema without regenerating types blocks commit
+- [ ] Regenerating after schema change allows commit
+- [ ] Hash stored as comment in generated output files

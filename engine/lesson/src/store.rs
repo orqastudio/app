@@ -1,4 +1,4 @@
-// File-backed lesson store for the orqa-engine crate.
+// File-backed lesson store for the orqa-lesson crate.
 //
 // Provides `FileLessonStore`, a concrete implementation of `LessonStore` that
 // reads and writes lesson files in the configured lessons directory. This
@@ -7,10 +7,11 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::lesson::{parse_lesson, render_lesson, Lesson, NewLesson};
-use crate::paths::ProjectPaths;
-use crate::traits::storage::LessonStore;
-use crate::utils::time::today_date_string;
+use orqa_engine_types::paths::ProjectPaths;
+use orqa_engine_types::traits::storage::LessonStore;
+use orqa_engine_types::utils::time::today_date_string;
+
+use crate::{parse_lesson, render_lesson, Lesson, NewLesson};
 
 /// Concrete error type for `FileLessonStore` operations.
 #[derive(Debug)]

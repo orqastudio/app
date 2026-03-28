@@ -9,8 +9,8 @@
 // pure functions for translation and accumulation, keeping all business
 // logic testable without a Tauri context.
 
-use crate::streaming::protocol::SidecarResponse;
-use crate::types::streaming::StreamEvent;
+use crate::protocol::SidecarResponse;
+use orqa_engine_types::types::streaming::StreamEvent;
 
 /// Translate a context-overflow error code into a user-friendly message.
 ///

@@ -1,0 +1,26 @@
+# Cargo manifest for the orqa-streaming library crate.
+# Provides the sidecar protocol types and pure streaming logic that can be
+# tested without a Tauri context: response translation, terminal detection,
+# accumulation, and tool handler functions that only use std operations.
+[package]
+name = "orqa-streaming"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio engine — sidecar streaming protocol, tool execution, response accumulation"
+
+[lib]
+name = "orqa_streaming"
+path = "src/lib.rs"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+glob = "0.3"
+orqa-engine-types = { path = "../types" }
+orqa-search = { path = "../search" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

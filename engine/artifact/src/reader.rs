@@ -10,8 +10,8 @@
 use std::collections::HashMap;
 use std::path::Path;
 
-use crate::error::EngineError;
-use crate::types::artifact::{
+use orqa_engine_types::error::EngineError;
+use orqa_engine_types::types::artifact::{
     DocNode, FilterableField, NavGroup, NavTree, NavType, NavigationConfig, SortableField,
 };
 use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig};
@@ -400,11 +400,11 @@ fn read_readme_content(dir: &Path) -> String {
 /// Parse the `NavReadme` frontmatter from a `README.md` in `dir`.
 ///
 /// Returns `None` when the README does not exist or has no parseable frontmatter.
-fn read_readme_frontmatter(dir: &Path) -> Option<crate::types::artifact::NavReadme> {
+fn read_readme_frontmatter(dir: &Path) -> Option<orqa_engine_types::types::artifact::NavReadme> {
     let readme = dir.join("README.md");
     let content = std::fs::read_to_string(&readme).ok()?;
-    let (fm, _): (crate::types::artifact::NavReadme, _) =
-        crate::artifact::parse_frontmatter(&content);
+    let (fm, _): (orqa_engine_types::types::artifact::NavReadme, _) =
+        crate::parse_frontmatter(&content);
     // Return Some only when at least one meaningful field was extracted.
     if fm.icon.is_some() || fm.description.is_some() || fm.label.is_some() || fm.sort.is_some() {
         Some(fm)
@@ -424,7 +424,7 @@ fn extract_basic_frontmatter(
     Option<String>,
     Option<String>,
 ) {
-    let (fm_text, _) = crate::artifact::extract_frontmatter(content);
+    let (fm_text, _) = crate::extract_frontmatter(content);
     let Some(yaml) = fm_text else {
         return (None, None, None, None);
     };
@@ -449,7 +449,7 @@ fn extract_basic_frontmatter(
 /// Arrays, objects, and null values are excluded. Returns `None` when the file
 /// has no parseable frontmatter. Used to populate `DocNode::frontmatter`.
 fn extract_full_frontmatter(content: &str) -> Option<HashMap<String, serde_json::Value>> {
-    let (fm_text, _) = crate::artifact::extract_frontmatter(content);
+    let (fm_text, _) = crate::extract_frontmatter(content);
     let yaml = fm_text?;
     let value: serde_yaml::Value = serde_yaml::from_str(&yaml).ok()?;
     let mapping = value.as_mapping()?;

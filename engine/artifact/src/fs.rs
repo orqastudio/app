@@ -6,8 +6,8 @@
 
 use std::path::{Path, PathBuf};
 
-use crate::error::EngineError;
-use crate::types::artifact::{Artifact, ArtifactType, ComplianceStatus, DocNode};
+use orqa_engine_types::error::EngineError;
+use orqa_engine_types::types::artifact::{Artifact, ArtifactType, ComplianceStatus, DocNode};
 
 /// Write artifact content to disk, creating parent directories as needed.
 ///

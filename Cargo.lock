@@ -3892,6 +3892,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-artifact"
+version = "0.1.0-dev"
+dependencies = [
+ "orqa-engine-types",
+ "orqa-validation",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "tempfile",
+]
+
+[[package]]
 name = "orqa-daemon"
 version = "0.1.4-dev"
 dependencies = [
@@ -3930,30 +3943,19 @@ dependencies = [
 name = "orqa-engine"
 version = "0.1.4-dev"
 dependencies = [
- "async-trait",
- "flate2",
- "glob",
  "orqa-agent",
+ "orqa-artifact",
  "orqa-enforcement",
  "orqa-engine-types",
  "orqa-graph",
+ "orqa-lesson",
  "orqa-plugin",
+ "orqa-project",
  "orqa-prompt",
  "orqa-search",
+ "orqa-streaming",
  "orqa-validation",
  "orqa-workflow",
- "rand 0.8.5",
- "regex",
- "reqwest 0.12.28",
- "serde",
- "serde_json",
- "serde_yaml",
- "sha2",
- "tar",
- "tempfile",
- "thiserror 2.0.18",
- "tokio",
- "tracing",
 ]
 
 [[package]]
@@ -3974,6 +3976,16 @@ name = "orqa-graph"
 version = "0.1.0-dev"
 dependencies = [
  "orqa-validation",
+]
+
+[[package]]
+name = "orqa-lesson"
+version = "0.1.0-dev"
+dependencies = [
+ "orqa-engine-types",
+ "orqa-validation",
+ "tempfile",
+ "tracing",
 ]
 
 [[package]]
@@ -4031,6 +4043,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-project"
+version = "0.1.0-dev"
+dependencies = [
+ "orqa-engine-types",
+ "orqa-validation",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tracing",
+]
+
+[[package]]
 name = "orqa-prompt"
 version = "0.1.0-dev"
 dependencies = [
@@ -4063,6 +4087,18 @@ dependencies = [
  "tokio",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "orqa-streaming"
+version = "0.1.0-dev"
+dependencies = [
+ "glob",
+ "orqa-engine-types",
+ "orqa-search",
+ "serde",
+ "serde_json",
+ "tempfile",
 ]
 
 [[package]]

@@ -540,7 +540,7 @@ pub fn strip_frontmatter(content: &str) -> String {
 ///
 /// Each result appears as `filepath:start-end\ncontent\n---\n`.
 /// Returns "no matches found" for an empty result set.
-pub fn format_search_results(results: &[crate::search::SearchResult]) -> String {
+pub fn format_search_results(results: &[orqa_search::SearchResult]) -> String {
     if results.is_empty() {
         return "no matches found".to_string();
     }
