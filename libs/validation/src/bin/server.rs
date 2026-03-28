@@ -321,7 +321,7 @@ fn run_query(args: &[String]) {
 // Hook subcommand
 // ---------------------------------------------------------------------------
 
-#[allow(clippy::too_many_lines)]
+/// Run the `hook` subcommand: evaluate rules against a lifecycle event.
 fn run_hook(args: &[String]) {
     // orqa-validation hook <project-path> --event <event> --context '<json>'
     if args.len() < 3 {
@@ -342,6 +342,24 @@ fn run_hook(args: &[String]) {
         process::exit(2);
     }
 
+    let ctx = build_hook_context(args);
+    let result: HookResult = evaluate_hook(&ctx, &project_path);
+
+    match serde_json::to_string_pretty(&result) {
+        Ok(json) => println!("{json}"),
+        Err(e) => {
+            eprintln!("Error serialising result: {e}");
+            process::exit(2);
+        }
+    }
+
+    process::exit(0);
+}
+
+/// Parse `--event` and `--context` flags from args and build a [`HookContext`].
+///
+/// Exits the process with code 2 if required flags are missing or `--context` is not valid JSON.
+fn build_hook_context(args: &[String]) -> HookContext {
     let Some(event_str) = find_flag_value(args, "--event") else {
         eprintln!("Error: --event is required");
         process::exit(2);
@@ -353,8 +371,8 @@ fn run_hook(args: &[String]) {
         process::exit(2);
     };
 
-    // Parse the context JSON. Accept both a full HookContext object and a
-    // partial object (any fields not present default to None).
+    // Accept both a full HookContext object and a partial object —
+    // any fields not present default to None.
     let partial: serde_json::Value = match serde_json::from_str(context_json) {
         Ok(v) => v,
         Err(e) => {
@@ -363,7 +381,14 @@ fn run_hook(args: &[String]) {
         }
     };
 
-    let ctx = HookContext {
+    hook_context_from_json(event, &partial)
+}
+
+/// Construct a [`HookContext`] from a parsed JSON object.
+///
+/// All optional fields default to `None` when absent from the JSON.
+fn hook_context_from_json(event: String, partial: &serde_json::Value) -> HookContext {
+    HookContext {
         event,
         tool_name: partial
             .get("tool_name")
@@ -382,19 +407,7 @@ fn run_hook(args: &[String]) {
             .get("agent_type")
             .and_then(serde_json::Value::as_str)
             .map(str::to_owned),
-    };
-
-    let result: HookResult = evaluate_hook(&ctx, &project_path);
-
-    match serde_json::to_string_pretty(&result) {
-        Ok(json) => println!("{json}"),
-        Err(e) => {
-            eprintln!("Error serialising result: {e}");
-            process::exit(2);
-        }
     }
-
-    process::exit(0);
 }
 
 // ---------------------------------------------------------------------------

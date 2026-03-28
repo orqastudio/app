@@ -129,7 +129,77 @@ pub fn run_daemon(project_root: &Path, port: u16) -> Result<(), Box<dyn std::err
 // Server loop
 // ---------------------------------------------------------------------------
 
-#[allow(clippy::too_many_lines)]
+/// Start the HTTP server, log startup info, and return the bound `Server`.
+///
+/// Logs the artifact and rule counts from the initial daemon state.
+fn start_server(
+    state: &DaemonState,
+    pid_path: &Path,
+    addr: &str,
+) -> Result<Server, Box<dyn std::error::Error>> {
+    let artifact_count = state.graph.nodes.len();
+    let rule_count = state
+        .graph
+        .nodes
+        .values()
+        .filter(|n| n.artifact_type == "rule")
+        .count();
+
+    let server = Server::http(addr).map_err(|e| format!("failed to bind {addr}: {e}"))?;
+
+    eprintln!(
+        "orqa-validation daemon: listening on http://{addr} ({artifact_count} artifacts, {rule_count} rules)"
+    );
+    eprintln!("  PID file: {}", pid_path.display());
+    eprintln!("  Send SIGTERM or SIGINT to shut down.");
+
+    Ok(server)
+}
+
+/// Attempt to reload daemon state from disk when the filesystem watcher fires.
+///
+/// Logs the new artifact and rule counts on success, or the error on failure.
+/// Resets the `needs_reload` flag and updates `last_reload` before rebuilding.
+fn maybe_reload(
+    shared: &Arc<Mutex<DaemonState>>,
+    needs_reload: &Arc<AtomicBool>,
+    last_reload: &mut Instant,
+    reload_debounce: std::time::Duration,
+) {
+    if !needs_reload.load(Ordering::Relaxed) || last_reload.elapsed() < reload_debounce {
+        return;
+    }
+
+    needs_reload.store(false, Ordering::Relaxed);
+    *last_reload = Instant::now();
+
+    eprintln!("orqa-validation daemon: .orqa/ changed, reloading graph...");
+    let project_root = {
+        let state = shared.lock().unwrap();
+        state.project_root.clone()
+    };
+    match DaemonState::build(&project_root) {
+        Ok(new_state) => {
+            let count = new_state.graph.nodes.len();
+            let rules = new_state
+                .graph
+                .nodes
+                .values()
+                .filter(|n| n.artifact_type == "rule")
+                .count();
+            *shared.lock().unwrap() = new_state;
+            eprintln!("orqa-validation daemon: reloaded ({count} artifacts, {rules} rules)");
+        }
+        Err(e) => {
+            eprintln!("orqa-validation daemon: reload failed: {e}");
+        }
+    }
+}
+
+/// Load initial state, bind the server, and run the request/reload loop until shutdown.
+///
+/// Broken out from `run_daemon` so the PID cleanup always runs in the caller
+/// regardless of whether this function returns Ok or Err.
 fn serve(
     project_root: &Path,
     port: u16,
@@ -144,26 +214,10 @@ fn serve(
     let state = DaemonState::build(project_root)
         .map_err(|e| format!("failed to build initial state: {e}"))?;
 
-    let artifact_count = state.graph.nodes.len();
-    let rule_count = state
-        .graph
-        .nodes
-        .values()
-        .filter(|n| n.artifact_type == "rule")
-        .count();
-
+    let addr = format!("0.0.0.0:{port}");
+    let server = start_server(&state, pid_path, &addr)?;
     let shared = Arc::new(Mutex::new(state));
 
-    let addr = format!("0.0.0.0:{port}");
-    let server = Server::http(&addr).map_err(|e| format!("failed to bind {addr}: {e}"))?;
-
-    eprintln!(
-        "orqa-validation daemon: listening on http://{addr} ({artifact_count} artifacts, {rule_count} rules)"
-    );
-    eprintln!("  PID file: {}", pid_path.display());
-    eprintln!("  Send SIGTERM or SIGINT to shut down.");
-
-    // --- Filesystem watcher: auto-reload on .orqa/ changes ---
     let needs_reload = Arc::new(AtomicBool::new(false));
     let _watcher = start_fs_watcher(project_root, Arc::clone(&needs_reload));
 
@@ -176,47 +230,12 @@ fn serve(
             break;
         }
 
-        // Check if filesystem watcher flagged a reload.
-        if needs_reload.load(Ordering::Relaxed) && last_reload.elapsed() >= reload_debounce {
-            needs_reload.store(false, Ordering::Relaxed);
-            last_reload = Instant::now();
+        maybe_reload(&shared, &needs_reload, &mut last_reload, reload_debounce);
 
-            eprintln!("orqa-validation daemon: .orqa/ changed, reloading graph...");
-            let project_root = {
-                let state = shared.lock().unwrap();
-                state.project_root.clone()
-            };
-            match DaemonState::build(&project_root) {
-                Ok(new_state) => {
-                    let count = new_state.graph.nodes.len();
-                    let rules = new_state
-                        .graph
-                        .nodes
-                        .values()
-                        .filter(|n| n.artifact_type == "rule")
-                        .count();
-                    *shared.lock().unwrap() = new_state;
-                    eprintln!(
-                        "orqa-validation daemon: reloaded ({count} artifacts, {rules} rules)"
-                    );
-                }
-                Err(e) => {
-                    eprintln!("orqa-validation daemon: reload failed: {e}");
-                }
-            }
-        }
-
-        // Non-blocking receive with a short timeout so we can check shutdown + reload.
         match server.recv_timeout(std::time::Duration::from_millis(200)) {
-            Ok(Some(request)) => {
-                handle_request(request, &shared);
-            }
-            Ok(None) => {
-                // Timeout — loop back to check flags.
-            }
-            Err(e) => {
-                eprintln!("orqa-validation daemon: recv error: {e}");
-            }
+            Ok(Some(request)) => handle_request(request, &shared),
+            Ok(None) => {}
+            Err(e) => eprintln!("orqa-validation daemon: recv error: {e}"),
         }
     }
 

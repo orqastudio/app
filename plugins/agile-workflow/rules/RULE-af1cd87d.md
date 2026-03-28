@@ -88,9 +88,8 @@ Plugin hooks that trigger at session boundaries (start, end, stop) to enforce wo
 ## Verification
 
 To verify behavioral enforcement coverage:
-1. Run `node tools/verify-pipeline-integrity.mjs` — reports rules without enforcement chains
-2. Run `node tools/verify-enforcement-rules.mjs` — reports agent capability compliance
-3. Cross-reference: every rule in this plan should appear in the pipeline integrity tool's enforcement chain data
+1. Run `orqa check validate` — the engine's validation crate reports rules without enforcement chains and agent capability compliance
+2. Cross-reference: every rule in this plan should produce no errors from `orqa check validate`
 
 ## Related Rules
 

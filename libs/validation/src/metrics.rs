@@ -62,6 +62,29 @@ pub struct TraceabilityResult {
 }
 
 // ---------------------------------------------------------------------------
+// GraphHealth helpers
+// ---------------------------------------------------------------------------
+
+impl GraphHealth {
+    /// Return a zeroed `GraphHealth` for an empty graph.
+    fn empty() -> Self {
+        Self {
+            component_count: 0,
+            orphan_count: 0,
+            orphan_percentage: 0.0,
+            avg_degree: 0.0,
+            graph_density: 0.0,
+            largest_component_ratio: 0.0,
+            total_nodes: 0,
+            total_edges: 0,
+            pillar_traceability: 0.0,
+            bidirectionality_ratio: 0.0,
+            broken_ref_count: 0,
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Traceability queries
 // ---------------------------------------------------------------------------
 
@@ -72,7 +95,6 @@ pub struct TraceabilityResult {
 /// query artifact (index 0) to the pillar/vision root (last index).
 ///
 /// Uses iterative DFS with a cycle guard to avoid infinite loops.
-#[allow(clippy::too_many_lines)]
 pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<AncestryChain> {
     let target_types: HashSet<&str> = ["pillar", "vision"].iter().copied().collect();
 
@@ -99,47 +121,13 @@ pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<Ancestr
             continue;
         };
 
-        // If we reached a pillar/vision, record the chain.
+        // If we reached a pillar/vision with a non-trivial path, record the chain.
         if target_types.contains(current_node.artifact_type.as_str()) && path.len() > 1 {
             results.push(AncestryChain { path: path.clone() });
             continue;
         }
 
-        // Expand: follow outgoing edges (forward references leading upward).
-        let mut has_upward_edge = false;
-        for ref_entry in &current_node.references_out {
-            let target = &ref_entry.target_id;
-            if visited.contains(target.as_str()) {
-                continue;
-            }
-            let Some(target_node) = graph.nodes.get(target) else {
-                continue;
-            };
-            has_upward_edge = true;
-
-            let rel_type = ref_entry
-                .relationship_type
-                .clone()
-                .unwrap_or_else(|| ref_entry.field.clone());
-
-            // Annotate the *last* node in the current path with the edge type.
-            let mut new_path = path.clone();
-            if let Some(last) = new_path.last_mut() {
-                last.relationship = rel_type;
-            }
-
-            let next_node = AncestryNode {
-                id: target_node.id.clone(),
-                title: target_node.title.clone(),
-                artifact_type: target_node.artifact_type.clone(),
-                relationship: String::new(),
-            };
-            new_path.push(next_node);
-
-            let mut new_visited = visited.clone();
-            new_visited.insert(target.clone());
-            stack.push((target.clone(), new_path, new_visited));
-        }
+        let has_upward_edge = expand_dfs_node(graph, current_node, &path, &visited, &mut stack);
 
         // If this node has no upward edges and it IS a pillar/vision (len == 1
         // means we started on a pillar), record as a trivially connected chain.
@@ -149,6 +137,51 @@ pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<Ancestr
     }
 
     results
+}
+
+/// Push unvisited outgoing neighbours of `current_node` onto the DFS stack.
+///
+/// Each new frame extends `path` with an annotated edge and the new target node.
+/// Returns `true` if at least one unvisited neighbour was found.
+fn expand_dfs_node(
+    graph: &ArtifactGraph,
+    current_node: &crate::graph::ArtifactNode,
+    path: &[AncestryNode],
+    visited: &HashSet<String>,
+    stack: &mut Vec<(String, Vec<AncestryNode>, HashSet<String>)>,
+) -> bool {
+    let mut has_upward_edge = false;
+    for ref_entry in &current_node.references_out {
+        let target = &ref_entry.target_id;
+        if visited.contains(target.as_str()) {
+            continue;
+        }
+        let Some(target_node) = graph.nodes.get(target) else {
+            continue;
+        };
+        has_upward_edge = true;
+
+        let rel_type = ref_entry
+            .relationship_type
+            .clone()
+            .unwrap_or_else(|| ref_entry.field.clone());
+
+        let mut new_path = path.to_vec();
+        if let Some(last) = new_path.last_mut() {
+            last.relationship = rel_type;
+        }
+        new_path.push(AncestryNode {
+            id: target_node.id.clone(),
+            title: target_node.title.clone(),
+            artifact_type: target_node.artifact_type.clone(),
+            relationship: String::new(),
+        });
+
+        let mut new_visited = visited.clone();
+        new_visited.insert(target.clone());
+        stack.push((target.clone(), new_path, new_visited));
+    }
+    has_upward_edge
 }
 
 /// Return all artifacts reachable downstream from `artifact_id` (following
@@ -260,7 +293,6 @@ pub fn compute_traceability(graph: &ArtifactGraph, artifact_id: &str) -> Traceab
     }
 }
 
-#[allow(clippy::too_many_lines)]
 /// Compute graph health metrics for the artifact graph.
 pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     // Work only with primary nodes (exclude bare-ID aliases in org mode).
@@ -274,90 +306,20 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     let total_nodes = primary_ids.len();
 
     if total_nodes == 0 {
-        return GraphHealth {
-            component_count: 0,
-            orphan_count: 0,
-            orphan_percentage: 0.0,
-            avg_degree: 0.0,
-            graph_density: 0.0,
-            largest_component_ratio: 0.0,
-            total_nodes: 0,
-            total_edges: 0,
-            pillar_traceability: 0.0,
-            bidirectionality_ratio: 0.0,
-            broken_ref_count: 0,
-        };
+        return GraphHealth::empty();
     }
 
-    // Build undirected adjacency for connected-component analysis.
     let primary_set: HashSet<&str> = primary_ids.iter().copied().collect();
-
-    // Total directed edges among primary nodes.
-    let total_edges: usize = primary_ids
-        .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .map(|n| n.references_out.len())
-        .sum();
-
-    // Orphan count: non-doc nodes with no edges in either direction.
-    let orphan_count = primary_ids
-        .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .filter(|n| {
-            n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
-        })
-        .count();
-
-    let orphan_percentage = if total_nodes > 0 {
-        (orphan_count as f64 / total_nodes as f64) * 100.0
-    } else {
-        0.0
-    };
-
-    // Average degree: sum of (out + in) edges across all primary nodes, divided by node count.
-    // Each undirected edge is counted once for each endpoint.
-    let total_degree: usize = primary_ids
-        .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .map(|n| n.references_out.len() + n.references_in.len())
-        .sum();
-    let avg_degree = if total_nodes > 0 {
-        total_degree as f64 / total_nodes as f64
-    } else {
-        0.0
-    };
-
-    // Graph density: directed density = edges / (n * (n-1))
-    let max_edges = total_nodes.saturating_mul(total_nodes.saturating_sub(1));
-    let graph_density = if max_edges > 0 {
-        total_edges as f64 / max_edges as f64
-    } else {
-        0.0
-    };
-
-    // Connected components via BFS on the undirected graph.
+    let total_edges = count_total_edges(graph, &primary_ids);
+    let (orphan_count, orphan_percentage) = count_orphans(graph, &primary_ids, total_nodes);
+    let avg_degree = compute_avg_degree(graph, &primary_ids, total_nodes);
+    let graph_density = compute_graph_density(total_edges, total_nodes);
     let (component_count, largest_component_size) =
         compute_components(graph, &primary_ids, &primary_set);
-
-    let largest_component_ratio = if total_nodes > 0 {
-        largest_component_size as f64 / total_nodes as f64
-    } else {
-        0.0
-    };
-
-    // Pillar traceability: fraction of non-doc nodes reachable from a pillar artifact.
+    let largest_component_ratio = largest_component_size as f64 / total_nodes as f64;
     let pillar_traceability = compute_pillar_traceability(graph, &primary_ids);
-
-    // Bidirectionality ratio: fraction of typed relationship edges that have their inverse.
     let bidirectionality_ratio = compute_bidirectionality_ratio(graph, &primary_ids);
-
-    // Broken references: edges whose target is not in the graph.
-    let broken_ref_count: usize = primary_ids
-        .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .flat_map(|n| n.references_out.iter())
-        .filter(|r| !graph.nodes.contains_key(&r.target_id))
-        .count();
+    let broken_ref_count = count_broken_refs(graph, &primary_ids);
 
     GraphHealth {
         component_count,
@@ -372,6 +334,58 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
         bidirectionality_ratio,
         broken_ref_count,
     }
+}
+
+/// Return the total number of directed outgoing edges among primary nodes.
+fn count_total_edges(graph: &ArtifactGraph, primary_ids: &[&str]) -> usize {
+    primary_ids
+        .iter()
+        .filter_map(|id| graph.nodes.get(*id))
+        .map(|n| n.references_out.len())
+        .sum()
+}
+
+/// Return `(orphan_count, orphan_percentage)` for non-doc nodes with no edges.
+fn count_orphans(graph: &ArtifactGraph, primary_ids: &[&str], total_nodes: usize) -> (usize, f64) {
+    let orphan_count = primary_ids
+        .iter()
+        .filter_map(|id| graph.nodes.get(*id))
+        .filter(|n| {
+            n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
+        })
+        .count();
+    let orphan_percentage = (orphan_count as f64 / total_nodes as f64) * 100.0;
+    (orphan_count, orphan_percentage)
+}
+
+/// Return the average (in + out) degree across all primary nodes.
+fn compute_avg_degree(graph: &ArtifactGraph, primary_ids: &[&str], total_nodes: usize) -> f64 {
+    let total_degree: usize = primary_ids
+        .iter()
+        .filter_map(|id| graph.nodes.get(*id))
+        .map(|n| n.references_out.len() + n.references_in.len())
+        .sum();
+    total_degree as f64 / total_nodes as f64
+}
+
+/// Return the directed graph density: `edges / (n * (n - 1))`.
+fn compute_graph_density(total_edges: usize, total_nodes: usize) -> f64 {
+    let max_edges = total_nodes.saturating_mul(total_nodes.saturating_sub(1));
+    if max_edges > 0 {
+        total_edges as f64 / max_edges as f64
+    } else {
+        0.0
+    }
+}
+
+/// Return the count of edges whose target is not present in the graph.
+fn count_broken_refs(graph: &ArtifactGraph, primary_ids: &[&str]) -> usize {
+    primary_ids
+        .iter()
+        .filter_map(|id| graph.nodes.get(*id))
+        .flat_map(|n| n.references_out.iter())
+        .filter(|r| !graph.nodes.contains_key(&r.target_id))
+        .count()
 }
 
 /// Compute weakly connected components using BFS on the undirected projection.
@@ -433,20 +447,14 @@ fn compute_components(
 }
 
 /// Compute what percentage of non-doc artifacts can trace a path to a pillar artifact.
-#[allow(clippy::too_many_lines)]
 ///
 /// Uses reverse BFS from all pillar nodes to find every node that can reach a pillar.
 fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    // Collect all pillar IDs.
     let pillar_ids: Vec<&str> = primary_ids
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            if node.artifact_type == "pillar" {
-                Some(*id)
-            } else {
-                None
-            }
+            (node.artifact_type == "pillar").then_some(*id)
         })
         .collect();
 
@@ -454,41 +462,13 @@ fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f
         return 0.0;
     }
 
-    // BFS outward from pillars following INCOMING edges (backwards traversal).
-    // A node is "pillar-traceable" if there is a directed path FROM it TO a pillar.
-    // We achieve this by reversing the direction: starting from pillars and following references_in.
-    let mut reachable: HashSet<&str> = HashSet::new();
-    let mut queue: VecDeque<&str> = VecDeque::new();
+    let reachable = reverse_bfs_from_pillars(graph, &pillar_ids);
 
-    for pid in &pillar_ids {
-        reachable.insert(*pid);
-        queue.push_back(*pid);
-    }
-
-    while let Some(current_id) = queue.pop_front() {
-        let Some(node) = graph.nodes.get(current_id) else {
-            continue;
-        };
-        // Follow references_in backwards: nodes that reference current can reach current.
-        for ref_entry in &node.references_in {
-            let source = ref_entry.source_id.as_str();
-            if !reachable.contains(source) {
-                reachable.insert(source);
-                queue.push_back(source);
-            }
-        }
-    }
-
-    // Count non-doc primary nodes and those that are pillar-traceable.
     let non_doc_ids: Vec<&str> = primary_ids
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            if node.artifact_type == "doc" {
-                None
-            } else {
-                Some(*id)
-            }
+            (node.artifact_type != "doc").then_some(*id)
         })
         .collect();
 
@@ -502,6 +482,37 @@ fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f
         .filter(|id| reachable.contains(*id))
         .count();
     (traceable as f64 / non_doc_count as f64) * 100.0
+}
+
+/// BFS backwards from `pillar_ids` via `references_in` edges.
+///
+/// Returns the set of artifact IDs that have at least one directed path to a pillar.
+fn reverse_bfs_from_pillars<'a>(
+    graph: &'a ArtifactGraph,
+    pillar_ids: &[&'a str],
+) -> HashSet<&'a str> {
+    let mut reachable: HashSet<&str> = HashSet::new();
+    let mut queue: VecDeque<&str> = VecDeque::new();
+
+    for &pid in pillar_ids {
+        reachable.insert(pid);
+        queue.push_back(pid);
+    }
+
+    while let Some(current_id) = queue.pop_front() {
+        let Some(node) = graph.nodes.get(current_id) else {
+            continue;
+        };
+        for ref_entry in &node.references_in {
+            let source = ref_entry.source_id.as_str();
+            if !reachable.contains(source) {
+                reachable.insert(source);
+                queue.push_back(source);
+            }
+        }
+    }
+
+    reachable
 }
 
 /// Compute the fraction of typed relationship edges whose type has a schema-defined inverse.

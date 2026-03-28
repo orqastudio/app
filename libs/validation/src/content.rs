@@ -250,12 +250,28 @@ pub fn extract_behavioral_messages(
 /// - `planning`: Plans, documentation, architecture decisions, structure
 /// - `quality`: Review, testing, search, components, linting
 /// - `general`: Anything that doesn't match a specific category
-#[allow(clippy::too_many_lines)]
 fn categorize_rule(title: &str) -> &'static str {
     let lower = title.to_lowercase();
+    if is_safety_rule(&lower) {
+        return "safety";
+    }
+    if is_process_rule(&lower) {
+        return "process";
+    }
+    if is_planning_rule(&lower) {
+        return "planning";
+    }
+    if is_quality_rule(&lower) {
+        return "quality";
+    }
+    "general"
+}
 
-    // Safety: error handling, stubs, command safety, coding standards
-    if lower.contains("error")
+/// Return true if the lowercase title matches safety-category keywords.
+///
+/// Safety rules cover error handling, stubs, command safety, and coding standards.
+fn is_safety_rule(lower: &str) -> bool {
+    lower.contains("error")
         || lower.contains("stub")
         || lower.contains("placeholder")
         || lower.contains("command safety")
@@ -263,12 +279,13 @@ fn categorize_rule(title: &str) -> &'static str {
         || lower.contains("coding standard")
         || lower.contains("no alias")
         || lower.contains("version")
-    {
-        return "safety";
-    }
+}
 
-    // Process: delegation, reporting, lifecycle, governance, session
-    if lower.contains("delegat")
+/// Return true if the lowercase title matches process-category keywords.
+///
+/// Process rules cover delegation, reporting, lifecycle, governance, and session management.
+fn is_process_rule(lower: &str) -> bool {
+    lower.contains("delegat")
         || lower.contains("report")
         || lower.contains("honest")
         || lower.contains("lifecycle")
@@ -285,12 +302,13 @@ fn categorize_rule(title: &str) -> &'static str {
         || lower.contains("agent team")
         || lower.contains("context window")
         || lower.contains("deferred")
-    {
-        return "process";
-    }
+}
 
-    // Planning: plans, documentation, architecture, structure
-    if lower.contains("plan")
+/// Return true if the lowercase title matches planning-category keywords.
+///
+/// Planning rules cover plans, documentation, architecture decisions, and structure.
+fn is_planning_rule(lower: &str) -> bool {
+    lower.contains("plan")
         || lower.contains("document")
         || lower.contains("architecture")
         || lower.contains("structure")
@@ -300,12 +318,13 @@ fn categorize_rule(title: &str) -> &'static str {
         || lower.contains("roadmap")
         || lower.contains("uat")
         || lower.contains("persist")
-    {
-        return "planning";
-    }
+}
 
-    // Quality: review, testing, search, components, linting, skills
-    if lower.contains("review")
+/// Return true if the lowercase title matches quality-category keywords.
+///
+/// Quality rules cover review, testing, search, components, linting, and skills.
+fn is_quality_rule(lower: &str) -> bool {
+    lower.contains("review")
         || lower.contains("test")
         || lower.contains("search")
         || lower.contains("component")
@@ -320,11 +339,6 @@ fn categorize_rule(title: &str) -> &'static str {
         || lower.contains("schema")
         || lower.contains("firmware")
         || lower.contains("system")
-    {
-        return "quality";
-    }
-
-    "general"
 }
 
 // ---------------------------------------------------------------------------

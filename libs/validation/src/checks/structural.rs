@@ -165,87 +165,97 @@ pub fn check_missing_type_field(graph: &ArtifactGraph, checks: &mut Vec<Integrit
 /// `discovery-decision` when a stage-scoped type accepts legacy IDs via its
 /// JSON Schema pattern). The check also tries multi-segment prefixes
 /// (e.g., `DISC-AD`) with longest-match-wins semantics.
-#[allow(clippy::too_many_lines)]
 pub fn check_type_prefix_mismatch(
     graph: &ArtifactGraph,
     artifact_types: &[ArtifactTypeDef],
     checks: &mut Vec<IntegrityCheck>,
 ) {
-    // Build prefix → set of type keys mapping from plugin schemas.
-    // Multiple types can map to the same prefix (e.g., decision + discovery-decision
-    // both have idPrefix containing "AD").
-    let mut prefix_to_types: HashMap<String, Vec<String>> = HashMap::new();
-    for t in artifact_types {
-        prefix_to_types
-            .entry(t.id_prefix.to_uppercase())
-            .or_default()
-            .push(t.key.clone());
-    }
-
-    // Also index types by the ID pattern in their JSON Schema — if the pattern
-    // accepts a legacy prefix (e.g., `^(IDEA|DISC-IDEA)-...`), extract the
-    // alternation prefixes and add them to the map.
-    for t in artifact_types {
-        if let Some(pat) = t.frontmatter_schema
-            .pointer("/properties/id/pattern")
-            .and_then(|v| v.as_str())
-        {
-            // Match patterns like ^(IDEA|DISC-IDEA)-... or ^IDEA-...
-            let inner = pat.trim_start_matches('^');
-            if let Some(rest) = inner.strip_prefix('(') {
-                if let Some(group_end) = rest.find(')') {
-                    let alternatives = &rest[..group_end];
-                    for alt in alternatives.split('|') {
-                        let prefix = alt.trim().to_uppercase();
-                        let types = prefix_to_types.entry(prefix).or_default();
-                        if !types.contains(&t.key) {
-                            types.push(t.key.clone());
-                        }
-                    }
-                }
-            }
-        }
-    }
+    let prefix_to_types = build_prefix_map(artifact_types);
 
     for node in graph.nodes.values() {
-        // Only check artifacts that HAVE an explicit type field
         let explicit_type = match node.frontmatter.get("type").and_then(|v| v.as_str()) {
             Some(t) if !t.is_empty() => t,
             _ => continue,
         };
+        check_node_prefix_mismatch(node, explicit_type, &prefix_to_types, checks);
+    }
+}
 
-        // Try all possible prefix lengths from longest to shortest.
-        // For "DISC-AD-abc12345", try "DISC-AD-ABC12345", "DISC-AD", "DISC".
-        let id_upper = node.id.to_uppercase();
-        let segments: Vec<&str> = id_upper.split('-').collect();
-        let mut matched = false;
+/// Build a mapping from uppercase ID prefix to the list of type keys that use that prefix.
+///
+/// Also extracts alternation prefixes from JSON Schema id patterns (e.g., `^(IDEA|DISC-IDEA)-`).
+fn build_prefix_map(artifact_types: &[ArtifactTypeDef]) -> HashMap<String, Vec<String>> {
+    let mut map: HashMap<String, Vec<String>> = HashMap::new();
+    for t in artifact_types {
+        map.entry(t.id_prefix.to_uppercase())
+            .or_default()
+            .push(t.key.clone());
+    }
+    // Extract alternation prefixes from id JSON Schema patterns.
+    for t in artifact_types {
+        if let Some(pat) = t
+            .frontmatter_schema
+            .pointer("/properties/id/pattern")
+            .and_then(|v| v.as_str())
+        {
+            add_schema_pattern_prefixes(pat, &t.key, &mut map);
+        }
+    }
+    map
+}
 
-        // Try from longest possible prefix down to single segment
-        for len in (1..segments.len()).rev() {
-            let candidate = segments[..len].join("-");
-            if let Some(valid_types) = prefix_to_types.get(&candidate) {
-                if valid_types.iter().any(|t| t == explicit_type) {
-                    matched = true;
+/// Parse a `^(ALT1|ALT2)-` style id pattern and register each alternative prefix for the type.
+fn add_schema_pattern_prefixes(pat: &str, type_key: &str, map: &mut HashMap<String, Vec<String>>) {
+    let inner = pat.trim_start_matches('^');
+    if let Some(rest) = inner.strip_prefix('(') {
+        if let Some(group_end) = rest.find(')') {
+            for alt in rest[..group_end].split('|') {
+                let prefix = alt.trim().to_uppercase();
+                let types = map.entry(prefix).or_default();
+                if !types.contains(&type_key.to_owned()) {
+                    types.push(type_key.to_owned());
                 }
-                // Longest match found — use it regardless of match
-                if !matched {
-                    checks.push(IntegrityCheck {
-                        category: IntegrityCategory::TypePrefixMismatch,
-                        severity: IntegritySeverity::Error,
-                        artifact_id: node.id.clone(),
-                        message: format!(
-                            "{} has type: '{}' but ID prefix '{}' implies type '{}' per plugin schema",
-                            node.id, explicit_type, candidate, valid_types.join(" or ")
-                        ),
-                        auto_fixable: true,
-                        fix_description: Some(format!(
-                            "Change type: {explicit_type} to type: {}",
-                            valid_types[0]
-                        )),
-                    });
-                }
-                break;
             }
+        }
+    }
+}
+
+/// Check a single node for a type/prefix mismatch and push a violation if one is found.
+///
+/// Uses longest-match-wins: tries prefix candidates from longest to shortest segment count.
+fn check_node_prefix_mismatch(
+    node: &crate::graph::ArtifactNode,
+    explicit_type: &str,
+    prefix_to_types: &HashMap<String, Vec<String>>,
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let id_upper = node.id.to_uppercase();
+    let segments: Vec<&str> = id_upper.split('-').collect();
+
+    for len in (1..segments.len()).rev() {
+        let candidate = segments[..len].join("-");
+        if let Some(valid_types) = prefix_to_types.get(&candidate) {
+            let matched = valid_types.iter().any(|t| t == explicit_type);
+            if !matched {
+                checks.push(IntegrityCheck {
+                    category: IntegrityCategory::TypePrefixMismatch,
+                    severity: IntegritySeverity::Error,
+                    artifact_id: node.id.clone(),
+                    message: format!(
+                        "{} has type: '{}' but ID prefix '{}' implies type '{}' per plugin schema",
+                        node.id,
+                        explicit_type,
+                        candidate,
+                        valid_types.join(" or ")
+                    ),
+                    auto_fixable: true,
+                    fix_description: Some(format!(
+                        "Change type: {explicit_type} to type: {}",
+                        valid_types[0]
+                    )),
+                });
+            }
+            break;
         }
     }
 }

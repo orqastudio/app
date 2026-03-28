@@ -2,7 +2,9 @@
 
 use std::collections::{HashMap, HashSet};
 
-use crate::platform::{ArtifactTypeDef, EnforcementMechanism, SchemaExtension, PLATFORM};
+use crate::platform::{
+    ArtifactTypeDef, EnforcementMechanism, RelationshipDef, SchemaExtension, PLATFORM,
+};
 use crate::settings::{DeliveryConfig, ProjectRelationshipConfig};
 use crate::types::{RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext};
 
@@ -94,7 +96,10 @@ pub fn build_validation_context_complete(
     }
 }
 
-#[allow(clippy::too_many_lines)]
+/// Collect all relationship schemas and their inverse mappings from the platform config and plugins.
+///
+/// Platform relationships are converted from the internal `ConstraintsDef` format to the schema
+/// `RelationshipConstraints` type. Plugin relationships extend or supplement platform definitions.
 fn collect_platform_and_plugin_relationships(
     plugin_relationships: &[RelationshipSchema],
 ) -> (Vec<RelationshipSchema>, HashMap<String, String>) {
@@ -102,41 +107,55 @@ fn collect_platform_and_plugin_relationships(
     let mut inverse_map: HashMap<String, String> = HashMap::new();
 
     for rel in &PLATFORM.relationships {
-        // Convert platform ConstraintsDef to schema RelationshipConstraints if present.
-        let constraints = rel.constraints.as_ref().map(|c| RelationshipConstraints {
-            required: c.required,
-            min_count: c.min_count,
-            max_count: c.max_count,
-            require_inverse: c.require_inverse,
-            status_rules: c
-                .status_rules
-                .iter()
-                .map(|sr| StatusRule {
-                    evaluate: sr.evaluate.clone(),
-                    condition: sr.condition.clone(),
-                    statuses: sr.statuses.clone(),
-                    proposed_status: sr.proposed_status.clone(),
-                    description: sr.description.clone(),
-                })
-                .collect(),
-        });
-
-        relationships.push(RelationshipSchema {
-            key: rel.key.clone(),
-            inverse: rel.inverse.clone(),
-            description: rel.description.clone(),
-            from: rel.from.clone(),
-            to: rel.to.clone(),
-            semantic: rel.semantic.clone(),
-            constraints,
-        });
-        inverse_map.insert(rel.key.clone(), rel.inverse.clone());
-        if rel.inverse != rel.key {
-            inverse_map.insert(rel.inverse.clone(), rel.key.clone());
-        }
+        relationships.push(platform_rel_to_schema(rel));
+        register_inverse(&mut inverse_map, &rel.key, &rel.inverse);
     }
 
-    // Plugin relationships — extend existing definitions or add new ones.
+    merge_plugin_relationships(plugin_relationships, &mut relationships, &mut inverse_map);
+
+    (relationships, inverse_map)
+}
+
+/// Convert a platform relationship definition to a `RelationshipSchema`.
+///
+/// Converts `ConstraintsDef` to `RelationshipConstraints` when constraints are present.
+fn platform_rel_to_schema(rel: &RelationshipDef) -> RelationshipSchema {
+    let constraints = rel.constraints.as_ref().map(|c| RelationshipConstraints {
+        required: c.required,
+        min_count: c.min_count,
+        max_count: c.max_count,
+        require_inverse: c.require_inverse,
+        status_rules: c
+            .status_rules
+            .iter()
+            .map(|sr| StatusRule {
+                evaluate: sr.evaluate.clone(),
+                condition: sr.condition.clone(),
+                statuses: sr.statuses.clone(),
+                proposed_status: sr.proposed_status.clone(),
+                description: sr.description.clone(),
+            })
+            .collect(),
+    });
+    RelationshipSchema {
+        key: rel.key.clone(),
+        inverse: rel.inverse.clone(),
+        description: rel.description.clone(),
+        from: rel.from.clone(),
+        to: rel.to.clone(),
+        semantic: rel.semantic.clone(),
+        constraints,
+    }
+}
+
+/// Merge plugin-provided relationships into the existing relationship list and inverse map.
+///
+/// Extends existing definitions (from/to types) and adds new ones. Registers inverses for all.
+fn merge_plugin_relationships(
+    plugin_relationships: &[RelationshipSchema],
+    relationships: &mut Vec<RelationshipSchema>,
+    inverse_map: &mut HashMap<String, String>,
+) {
     for pr in plugin_relationships {
         if let Some(existing) = relationships.iter_mut().find(|r| r.key == pr.key) {
             for t in &pr.from {
@@ -155,13 +174,18 @@ fn collect_platform_and_plugin_relationships(
         } else {
             relationships.push(pr.clone());
         }
-        inverse_map.insert(pr.key.clone(), pr.inverse.clone());
-        if pr.inverse != pr.key {
-            inverse_map.insert(pr.inverse.clone(), pr.key.clone());
-        }
+        register_inverse(inverse_map, &pr.key, &pr.inverse);
     }
+}
 
-    (relationships, inverse_map)
+/// Register a relationship key and its inverse in the inverse map.
+///
+/// Inserts both directions unless the relationship is its own inverse.
+fn register_inverse(inverse_map: &mut HashMap<String, String>, key: &str, inverse: &str) {
+    inverse_map.insert(key.to_owned(), inverse.to_owned());
+    if inverse != key {
+        inverse_map.insert(inverse.to_owned(), key.to_owned());
+    }
 }
 
 fn collect_project_relationships(

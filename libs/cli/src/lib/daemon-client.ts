@@ -1,8 +1,9 @@
 /**
  * HTTP client for the orqa-validation daemon.
  *
- * Daemon runs at localhost:10258 and provides the canonical graph scanning,
- * query, and validation endpoints. Falls back to spawning the
+ * Daemon runs at localhost:9120 by default (port is ORQA_PORT_BASE, matched
+ * from daemon/src/health.rs resolve_port()). Provides canonical graph
+ * scanning, query, and validation endpoints. Falls back to spawning the
  * `orqa-validation` binary when the daemon is unreachable.
  */
 

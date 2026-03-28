@@ -96,14 +96,12 @@ use crate::types::{HookContext, HookResult, HookViolation};
 ///
 /// Never panics. I/O errors (missing `.orqa/` directory, etc.) are treated as
 /// "no violations found" with action `"allow"`.
-#[allow(clippy::too_many_lines)]
 pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
     let Ok(graph) = build_artifact_graph(project_root) else {
         return allow();
     };
 
     let plugin_contributions = scan_plugin_manifests(project_root);
-
     let rules = query_artifacts(
         &graph,
         project_root,
@@ -115,79 +113,61 @@ pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
     );
 
     let mut violations: Vec<HookViolation> = Vec::new();
-
-    // --- Plugin ownership protection ---
-    // Before evaluating rules, check if the target file is owned by a plugin.
     if let Some(violation) = check_manifest_ownership(ctx, project_root) {
         violations.push(violation);
     }
 
     for rule in &rules {
-        let Some(enforcement) = rule.frontmatter.get("enforcement") else {
-            continue;
-        };
-        let Some(entries) = enforcement.as_array() else {
-            continue;
-        };
-
-        for entry in entries {
-            let Some(obj) = entry.as_object() else {
-                continue;
-            };
-
-            // Only process hook-mechanism entries that have an event field.
-            let mechanism = obj.get("mechanism").and_then(|v| v.as_str());
-            if mechanism != Some("hook") {
-                continue;
-            }
-
-            let event_kind = obj.get("event").and_then(|v| v.as_str());
-            let action = obj
-                .get("action")
-                .and_then(|v| v.as_str())
-                .unwrap_or("warn")
-                .to_owned();
-            let message = obj
-                .get("message")
-                .and_then(|v| v.as_str())
-                .unwrap_or("")
-                .to_owned();
-
-            match event_kind {
-                Some("bash") => {
-                    if let Some(violation) = check_bash_entry(ctx, &rule.id, &action, &message, obj)
-                    {
-                        violations.push(violation);
-                    }
-                }
-                Some("file") => {
-                    if let Some(violation) = check_file_entry(ctx, &rule.id, &action, &message, obj)
-                    {
-                        violations.push(violation);
-                    }
-                }
-                Some("field-check") => {
-                    if let Some(violation) =
-                        check_field_entry(ctx, &rule.id, &action, &message, obj)
-                    {
-                        violations.push(violation);
-                    }
-                }
-                Some("tool-matcher") => {
-                    if let Some(violation) =
-                        check_tool_matcher_entry(ctx, &rule.id, &action, &message, obj)
-                    {
-                        violations.push(violation);
-                    }
-                }
-                _ => {
-                    // Unknown or missing event kind — skip.
-                }
-            }
-        }
+        evaluate_rule_entries(ctx, rule, &mut violations);
     }
 
     build_result(violations)
+}
+
+/// Evaluate all hook enforcement entries on a single rule and collect violations.
+///
+/// Skips entries without `mechanism: hook`. Dispatches each hook event type to its checker.
+fn evaluate_rule_entries(
+    ctx: &HookContext,
+    rule: &crate::types::ParsedArtifact,
+    violations: &mut Vec<HookViolation>,
+) {
+    let Some(entries) = rule
+        .frontmatter
+        .get("enforcement")
+        .and_then(|v| v.as_array())
+    else {
+        return;
+    };
+    for entry in entries {
+        let Some(obj) = entry.as_object() else {
+            continue;
+        };
+        if obj.get("mechanism").and_then(|v| v.as_str()) != Some("hook") {
+            continue;
+        }
+        let action = obj
+            .get("action")
+            .and_then(|v| v.as_str())
+            .unwrap_or("warn")
+            .to_owned();
+        let message = obj
+            .get("message")
+            .and_then(|v| v.as_str())
+            .unwrap_or("")
+            .to_owned();
+        let event_kind = obj.get("event").and_then(|v| v.as_str());
+        let violation = match event_kind {
+            Some("bash") => check_bash_entry(ctx, &rule.id, &action, &message, obj),
+            Some("file") => check_file_entry(ctx, &rule.id, &action, &message, obj),
+            Some("field-check") => check_field_entry(ctx, &rule.id, &action, &message, obj),
+            Some("tool-matcher") => check_tool_matcher_entry(ctx, &rule.id, &action, &message, obj),
+            _ => None,
+        };
+        if let Some(v) = violation {
+            violations.push(v);
+        }
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -271,14 +251,8 @@ fn check_file_entry(
 /// matches the entry's `tool` field, and the dot-path `field` into
 /// `ctx.tool_input` fails the `operator` comparison against `value`.
 ///
-/// Supported operators:
-/// - `equals`     — field value must equal `value`
-/// - `not_equals` — field value must NOT equal `value`
-/// - `exists`     — field must be present (not null)
-/// - `not_exists` — field must be absent or null
-/// - `contains`   — field (as string) must contain `value` as substring
-#[allow(clippy::too_many_lines)]
-/// - `matches`    — field (as string) must match `value` as regex
+/// Supported operators: `equals`, `not_equals`, `exists`, `not_exists`,
+/// `contains`, `matches`.
 fn check_field_entry(
     ctx: &HookContext,
     rule_id: &str,
@@ -302,53 +276,14 @@ fn check_field_entry(
     let entry_value = obj.get("value"); // May be None for exists/not_exists
 
     // Navigate the dot-path into tool_input.
-    // The field path may start with "tool_input." — strip that prefix since
-    // we're already starting from ctx.tool_input.
+    // Strip the "tool_input." prefix when present since we start from ctx.tool_input.
     let path = field_path.strip_prefix("tool_input.").unwrap_or(field_path);
     let segments: Vec<&str> = path.split('.').collect();
-
     let resolved = resolve_dot_path(ctx.tool_input.as_ref(), &segments);
 
-    // Evaluate the operator.
-    let check_passes = match operator {
-        "equals" => {
-            let expected = entry_value?;
-            match resolved {
-                Some(actual) => values_equal(actual, expected),
-                None => false,
-            }
-        }
-        "not_equals" => {
-            let expected = entry_value?;
-            match resolved {
-                Some(actual) => !values_equal(actual, expected),
-                None => true, // absent != any value
-            }
-        }
-        "exists" => resolved.is_some() && !resolved.unwrap().is_null(),
-        "not_exists" => resolved.is_none() || resolved.unwrap().is_null(),
-        "contains" => {
-            let needle = entry_value?.as_str()?;
-            match resolved.and_then(|v| v.as_str()) {
-                Some(haystack) => haystack.contains(needle),
-                None => false,
-            }
-        }
-        "matches" => {
-            let pattern = entry_value?.as_str()?;
-            let re = Regex::new(pattern).ok()?;
-            match resolved.and_then(|v| v.as_str()) {
-                Some(text) => re.is_match(text),
-                None => false,
-            }
-        }
-        _ => return None, // Unknown operator — skip.
-    };
+    // A violation occurs when the operator check FAILS.
+    let check_passes = eval_operator(operator, resolved, entry_value)?;
 
-    // A violation occurs when the check FAILS.
-    // For "equals": violation if the value does NOT equal the expected.
-    // For "exists": violation if the field does NOT exist.
-    // etc.
     if check_passes {
         None
     } else {
@@ -357,6 +292,47 @@ fn check_field_entry(
             action: action.to_owned(),
             message: message.to_owned(),
         })
+    }
+}
+
+/// Evaluate a field-check operator against a resolved field value and an expected value.
+///
+/// Returns `Some(true)` when the condition passes, `Some(false)` when it fails,
+/// and `None` when the operator is unknown or a required `entry_value` is absent.
+fn eval_operator(
+    operator: &str,
+    resolved: Option<&serde_json::Value>,
+    entry_value: Option<&serde_json::Value>,
+) -> Option<bool> {
+    match operator {
+        "equals" => {
+            let expected = entry_value?;
+            Some(resolved.is_some_and(|actual| values_equal(actual, expected)))
+        }
+        "not_equals" => {
+            let expected = entry_value?;
+            Some(resolved.is_none_or(|actual| !values_equal(actual, expected)))
+        }
+        "exists" => Some(resolved.is_some_and(|v| !v.is_null())),
+        "not_exists" => Some(resolved.is_none_or(serde_json::Value::is_null)),
+        "contains" => {
+            let needle = entry_value?.as_str()?;
+            Some(
+                resolved
+                    .and_then(|v| v.as_str())
+                    .is_some_and(|s| s.contains(needle)),
+            )
+        }
+        "matches" => {
+            let pattern = entry_value?.as_str()?;
+            let re = Regex::new(pattern).ok()?;
+            Some(
+                resolved
+                    .and_then(|v| v.as_str())
+                    .is_some_and(|s| re.is_match(s)),
+            )
+        }
+        _ => None, // Unknown operator — skip.
     }
 }
 
@@ -370,7 +346,6 @@ fn check_field_entry(
 /// Role filtering:
 /// - `allowed_roles`: only these roles are permitted — others get a violation.
 /// - `denied_roles`: these roles are blocked — others are permitted.
-#[allow(clippy::too_many_lines)]
 /// - Neither present: the entry applies to all roles.
 /// - `ctx.agent_type` of `None` is treated as `"unknown"`.
 fn check_tool_matcher_entry(
@@ -388,68 +363,64 @@ fn check_tool_matcher_entry(
     // Tool name must match one of the pipe-separated names in `tool`.
     let tool_spec = obj.get("tool").and_then(|v| v.as_str())?;
     let ctx_tool = ctx.tool_name.as_deref()?;
-    let tool_matches = tool_spec.split('|').any(|t| t.trim() == ctx_tool);
-    if !tool_matches {
+    if !tool_spec.split('|').any(|t| t.trim() == ctx_tool) {
         return None;
     }
 
     // If `paths` is present, the file path must match at least one glob.
-    if let Some(paths) = obj.get("paths").and_then(|v| v.as_array()) {
-        let file_path = match ctx.file_path.as_deref() {
-            Some(fp) => fp.replace('\\', "/"),
-            None => return None, // paths filter present but no file_path in context
-        };
-        let any_path_matches = paths.iter().any(|pat_val| {
-            pat_val
-                .as_str()
-                .is_some_and(|pattern| glob_matches(pattern, &file_path))
-        });
-        if !any_path_matches {
-            return None;
-        }
+    if !tool_matcher_paths_match(ctx, obj) {
+        return None;
     }
 
-    // Role-based access control.
+    // Role-based access control check; None means no violation from role logic.
     let agent_role = ctx.agent_type.as_deref().unwrap_or("unknown");
+    let role_violation = check_role_filter(agent_role, obj);
 
-    // Check allowed_roles (allowlist).
-    if let Some(allowed) = obj.get("allowed_roles").and_then(|v| v.as_array()) {
-        let is_allowed = allowed.iter().any(|r| r.as_str() == Some(agent_role));
-        if !is_allowed {
-            return Some(HookViolation {
-                rule_id: rule_id.to_owned(),
-                action: action.to_owned(),
-                message: message.to_owned(),
-            });
-        }
-    }
-
-    // Check denied_roles (denylist).
-    if let Some(denied) = obj.get("denied_roles").and_then(|v| v.as_array()) {
-        let is_denied = denied.iter().any(|r| r.as_str() == Some(agent_role));
-        if is_denied {
-            return Some(HookViolation {
-                rule_id: rule_id.to_owned(),
-                action: action.to_owned(),
-                message: message.to_owned(),
-            });
-        }
-    }
-
-    // No role filter present, or the agent passed role checks but we still
-    // matched tool+paths — that means the entry applies unconditionally.
-    // If neither allowed_roles nor denied_roles is present, it's a blanket
-    // match: the tool+path combination itself is the violation.
-    let has_role_filter = obj.contains_key("allowed_roles") || obj.contains_key("denied_roles");
-    if !has_role_filter {
-        return Some(HookViolation {
+    if role_violation {
+        Some(HookViolation {
             rule_id: rule_id.to_owned(),
             action: action.to_owned(),
             message: message.to_owned(),
-        });
+        })
+    } else {
+        None
     }
+}
 
-    None
+/// Return `false` when a `paths` filter is present but the context file path does not match.
+///
+/// Returns `true` when paths is absent (no path filter) or the file path matches a glob.
+fn tool_matcher_paths_match(
+    ctx: &HookContext,
+    obj: &serde_json::Map<String, serde_json::Value>,
+) -> bool {
+    let Some(paths) = obj.get("paths").and_then(|v| v.as_array()) else {
+        return true; // No path filter — passes.
+    };
+    let Some(fp) = ctx.file_path.as_deref() else {
+        return false; // Path filter present but context has no file_path.
+    };
+    let file_path = fp.replace('\\', "/");
+    paths.iter().any(|pat_val| {
+        pat_val
+            .as_str()
+            .is_some_and(|pattern| glob_matches(pattern, &file_path))
+    })
+}
+
+/// Return `true` when role-based access control produces a violation for `agent_role`.
+///
+/// Checks `allowed_roles` (allowlist) then `denied_roles` (denylist). When neither
+/// is present the tool+path match itself is the violation, so returns `true`.
+fn check_role_filter(agent_role: &str, obj: &serde_json::Map<String, serde_json::Value>) -> bool {
+    if let Some(allowed) = obj.get("allowed_roles").and_then(|v| v.as_array()) {
+        return !allowed.iter().any(|r| r.as_str() == Some(agent_role));
+    }
+    if let Some(denied) = obj.get("denied_roles").and_then(|v| v.as_array()) {
+        return denied.iter().any(|r| r.as_str() == Some(agent_role));
+    }
+    // Neither filter present — blanket match is a violation.
+    true
 }
 
 /// Walk a JSON value along a dot-separated path.
@@ -479,18 +450,10 @@ fn values_equal(actual: &serde_json::Value, expected: &serde_json::Value) -> boo
 
     // Loose comparison: bool vs string representation
     match (actual, expected) {
-        (serde_json::Value::String(a), serde_json::Value::Bool(b)) => {
-            a == &b.to_string()
-        }
-        (serde_json::Value::Bool(a), serde_json::Value::String(b)) => {
-            &a.to_string() == b
-        }
-        (serde_json::Value::String(a), serde_json::Value::Number(n)) => {
-            a == &n.to_string()
-        }
-        (serde_json::Value::Number(n), serde_json::Value::String(a)) => {
-            &n.to_string() == a
-        }
+        (serde_json::Value::String(a), serde_json::Value::Bool(b)) => a == &b.to_string(),
+        (serde_json::Value::Bool(a), serde_json::Value::String(b)) => &a.to_string() == b,
+        (serde_json::Value::String(a), serde_json::Value::Number(n)) => a == &n.to_string(),
+        (serde_json::Value::Number(n), serde_json::Value::String(a)) => &n.to_string() == a,
         _ => false,
     }
 }
@@ -1051,10 +1014,13 @@ mod tests {
         );
 
         // Agent call without run_in_background → violation
-        let ctx = field_check_ctx("Agent", serde_json::json!({
-            "prompt": "do something",
-            "run_in_background": false
-        }));
+        let ctx = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "prompt": "do something",
+                "run_in_background": false
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "block");
         assert_eq!(result.violations.len(), 1);
@@ -1080,10 +1046,13 @@ mod tests {
         );
 
         // Agent call with run_in_background: true → no violation
-        let ctx = field_check_ctx("Agent", serde_json::json!({
-            "prompt": "do something",
-            "run_in_background": true
-        }));
+        let ctx = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "prompt": "do something",
+                "run_in_background": true
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
         assert!(result.violations.is_empty());
@@ -1107,10 +1076,13 @@ mod tests {
         );
 
         // Agent call without team_name → violation (exists check fails)
-        let ctx = field_check_ctx("Agent", serde_json::json!({
-            "prompt": "do something",
-            "run_in_background": true
-        }));
+        let ctx = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "prompt": "do something",
+                "run_in_background": true
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "block");
         assert_eq!(result.violations.len(), 1);
@@ -1136,9 +1108,12 @@ mod tests {
         );
 
         // Bash tool (not Agent) → rule does not apply, no violation
-        let ctx = field_check_ctx("Bash", serde_json::json!({
-            "command": "ls -la"
-        }));
+        let ctx = field_check_ctx(
+            "Bash",
+            serde_json::json!({
+                "command": "ls -la"
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
         assert!(result.violations.is_empty());
@@ -1162,10 +1137,13 @@ mod tests {
         );
 
         // Write call without dangerous_flag → not_exists passes, no violation
-        let ctx = field_check_ctx("Write", serde_json::json!({
-            "file_path": "/tmp/foo.txt",
-            "content": "hello"
-        }));
+        let ctx = field_check_ctx(
+            "Write",
+            serde_json::json!({
+                "file_path": "/tmp/foo.txt",
+                "content": "hello"
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
         assert!(result.violations.is_empty());
@@ -1190,19 +1168,25 @@ mod tests {
         );
 
         // Description contains "safe" → check passes → no violation
-        let ctx = field_check_ctx("Bash", serde_json::json!({
-            "command": "ls",
-            "description": "List files safely"
-        }));
+        let ctx = field_check_ctx(
+            "Bash",
+            serde_json::json!({
+                "command": "ls",
+                "description": "List files safely"
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
         assert!(result.violations.is_empty());
 
         // Description does NOT contain "safe" → check fails → violation
-        let ctx2 = field_check_ctx("Bash", serde_json::json!({
-            "command": "rm -rf /",
-            "description": "This is a dangerous operation"
-        }));
+        let ctx2 = field_check_ctx(
+            "Bash",
+            serde_json::json!({
+                "command": "rm -rf /",
+                "description": "This is a dangerous operation"
+            }),
+        );
         let result2 = evaluate_hook(&ctx2, tmp.path());
         assert_eq!(result2.action, "block");
         assert_eq!(result2.violations.len(), 1);
@@ -1227,18 +1211,24 @@ mod tests {
         );
 
         // Valid kebab-case → passes regex → no violation
-        let ctx = field_check_ctx("Agent", serde_json::json!({
-            "team_name": "my-team-42",
-            "run_in_background": true
-        }));
+        let ctx = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "team_name": "my-team-42",
+                "run_in_background": true
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "allow");
 
         // Invalid name → fails regex → violation
-        let ctx2 = field_check_ctx("Agent", serde_json::json!({
-            "team_name": "My Team!",
-            "run_in_background": true
-        }));
+        let ctx2 = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "team_name": "My Team!",
+                "run_in_background": true
+            }),
+        );
         let result2 = evaluate_hook(&ctx2, tmp.path());
         assert_eq!(result2.action, "block");
     }
@@ -1262,16 +1252,22 @@ mod tests {
         );
 
         // false → not_equals false fails → violation
-        let ctx = field_check_ctx("Agent", serde_json::json!({
-            "run_in_background": false
-        }));
+        let ctx = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "run_in_background": false
+            }),
+        );
         let result = evaluate_hook(&ctx, tmp.path());
         assert_eq!(result.action, "block");
 
         // true → not_equals false passes → no violation
-        let ctx2 = field_check_ctx("Agent", serde_json::json!({
-            "run_in_background": true
-        }));
+        let ctx2 = field_check_ctx(
+            "Agent",
+            serde_json::json!({
+                "run_in_background": true
+            }),
+        );
         let result2 = evaluate_hook(&ctx2, tmp.path());
         assert_eq!(result2.action, "allow");
     }
@@ -1428,11 +1424,7 @@ mod tests {
         );
 
         // File inside .orqa/process/ matches
-        let ctx_match = tool_matcher_ctx(
-            "Write",
-            Some(".orqa/process/rules/RULE-abc.md"),
-            None,
-        );
+        let ctx_match = tool_matcher_ctx("Write", Some(".orqa/process/rules/RULE-abc.md"), None);
         let result = evaluate_hook(&ctx_match, tmp.path());
         assert_eq!(result.action, "block");
 
@@ -1484,11 +1476,7 @@ mod tests {
         assert_eq!(result2.violations.len(), 1);
 
         // No agent_type (unknown) is NOT in allowed_roles — violation
-        let ctx_unknown = tool_matcher_ctx(
-            "Write",
-            Some(".orqa/process/agents/agent-x.md"),
-            None,
-        );
+        let ctx_unknown = tool_matcher_ctx("Write", Some(".orqa/process/agents/agent-x.md"), None);
         let result3 = evaluate_hook(&ctx_unknown, tmp.path());
         assert_eq!(result3.action, "block");
     }

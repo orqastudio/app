@@ -27,7 +27,6 @@ use crate::types::{ParsedArtifact, ValidationResult};
 ///
 /// Returns an error only on I/O or fatal parse failures. Schema validation
 /// errors are embedded in the returned [`ParsedArtifact::validation`] field.
-#[allow(clippy::too_many_lines)]
 pub fn parse_artifact(
     file_path: &Path,
     project_path: &Path,
@@ -35,58 +34,16 @@ pub fn parse_artifact(
     let content = std::fs::read_to_string(file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
 
-    let (fm_text, body) = extract_frontmatter(&content);
-
-    let fm_text = fm_text.ok_or_else(|| {
-        ValidationError::FileSystem(format!(
-            "No YAML frontmatter found in {}",
-            file_path.display()
-        ))
-    })?;
-
-    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text)
-        .map_err(|e| ValidationError::FileSystem(format!("YAML parse error: {e}")))?;
-
-    let id = yaml_value
-        .get("id")
-        .and_then(|v| v.as_str())
-        .filter(|s| !s.trim().is_empty())
-        .ok_or_else(|| {
-            ValidationError::FileSystem(format!(
-                "Artifact at {} has no `id` field in frontmatter",
-                file_path.display()
-            ))
-        })?
-        .to_owned();
-
+    let (yaml_value, body) = parse_frontmatter(file_path, &content)?;
+    let (id, title, status) = extract_scalar_fields(&yaml_value, file_path)?;
     let frontmatter = serde_json::to_value(&yaml_value).unwrap_or(serde_json::Value::Null);
 
-    let title = yaml_value
-        .get("title")
-        .and_then(|v| v.as_str())
-        .map_or_else(|| humanize_stem(file_path), str::to_owned);
-
-    let status = yaml_value
-        .get("status")
-        .and_then(|v| v.as_str())
-        .map(str::to_owned);
-
+    let rel_path = relative_path(file_path, project_path);
+    let plugin_contributions = scan_plugin_manifests(project_path);
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
 
-    // Compute the relative path for type registry lookup.
-    let rel_path = file_path
-        .strip_prefix(project_path)
-        .unwrap_or(file_path)
-        .to_string_lossy()
-        .replace('\\', "/");
-
-    // Load plugin contributions to get type registry and schemas.
-    let plugin_contributions = scan_plugin_manifests(project_path);
-
-    // Build a minimal type registry from plugin artifact types.
-    // We use the id_prefix for type inference when the path registry is empty.
-    let type_registry = Vec::new(); // path-based registry requires project.json; we rely on ID prefix
-
+    // Path-based registry requires project.json; we rely on ID prefix instead.
+    let type_registry = Vec::new();
     let artifact_type = infer_artifact_type(
         &rel_path,
         &type_registry,
@@ -101,7 +58,6 @@ pub fn parse_artifact(
         &plugin_contributions.artifact_types,
     );
 
-    // Validate relationship types against the vocabulary from core + plugins + project.
     let valid_rel_types = build_valid_relationship_types(project_path);
     validate_relationship_types(&yaml_value, &valid_rel_types, &mut validation);
 
@@ -114,6 +70,64 @@ pub fn parse_artifact(
         content: body,
         validation,
     })
+}
+
+/// Read and parse frontmatter YAML from raw file content.
+///
+/// Returns the parsed YAML value and body text, or an error if frontmatter is
+/// missing or malformed.
+fn parse_frontmatter(
+    file_path: &Path,
+    content: &str,
+) -> Result<(serde_yaml::Value, String), ValidationError> {
+    let (fm_text, body) = extract_frontmatter(content);
+    let fm_text = fm_text.ok_or_else(|| {
+        ValidationError::FileSystem(format!(
+            "No YAML frontmatter found in {}",
+            file_path.display()
+        ))
+    })?;
+    let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text)
+        .map_err(|e| ValidationError::FileSystem(format!("YAML parse error: {e}")))?;
+    Ok((yaml_value, body))
+}
+
+/// Extract id, title, and status scalar fields from a parsed YAML frontmatter value.
+///
+/// Returns an error if the `id` field is missing or empty.
+fn extract_scalar_fields(
+    yaml_value: &serde_yaml::Value,
+    file_path: &Path,
+) -> Result<(String, String, Option<String>), ValidationError> {
+    let id = yaml_value
+        .get("id")
+        .and_then(|v| v.as_str())
+        .filter(|s| !s.trim().is_empty())
+        .ok_or_else(|| {
+            ValidationError::FileSystem(format!(
+                "Artifact at {} has no `id` field in frontmatter",
+                file_path.display()
+            ))
+        })?
+        .to_owned();
+    let title = yaml_value
+        .get("title")
+        .and_then(|v| v.as_str())
+        .map_or_else(|| humanize_stem(file_path), str::to_owned);
+    let status = yaml_value
+        .get("status")
+        .and_then(|v| v.as_str())
+        .map(str::to_owned);
+    Ok((id, title, status))
+}
+
+/// Compute the relative path of `file_path` under `project_path`, normalised to forward slashes.
+fn relative_path(file_path: &Path, project_path: &Path) -> String {
+    file_path
+        .strip_prefix(project_path)
+        .unwrap_or(file_path)
+        .to_string_lossy()
+        .replace('\\', "/")
 }
 
 /// Convert a graph node (`ArtifactNode`) into a [`ParsedArtifact`].

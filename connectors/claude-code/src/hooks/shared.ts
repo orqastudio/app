@@ -2,7 +2,8 @@
  * Shared I/O helpers for connector hooks.
  *
  * Each hook is a thin adapter: read stdin → call daemon → write stdout/stderr.
- * All enforcement logic lives in the Rust daemon at localhost:10258.
+ * All enforcement logic lives in the Rust daemon at localhost:9120 by default
+ * (port is ORQA_PORT_BASE, matched from daemon/src/health.rs resolve_port()).
  */
 
 import { spawnSync } from "node:child_process";
@@ -11,11 +12,17 @@ import { createConnection } from "node:net";
 import { join, relative } from "node:path";
 import type { HookInput } from "../types.js";
 
-/** Resolve daemon port from ORQA_PORT_BASE (default 10200) + offset 58. */
+/**
+ * Resolve daemon port from ORQA_PORT_BASE.
+ *
+ * The daemon reads ORQA_PORT_BASE as the direct port number (not as a base for
+ * an offset). This matches daemon/src/health.rs resolve_port(). Default: 9120.
+ */
 function getDaemonPort(): number {
   const raw = process.env["ORQA_PORT_BASE"];
-  const base = (raw !== undefined && raw !== "") ? parseInt(raw, 10) : 10200;
-  return (Number.isNaN(base) ? 10200 : base) + 58;
+  if (raw === undefined || raw === "") return 9120;
+  const n = parseInt(raw, 10);
+  return Number.isNaN(n) ? 9120 : n;
 }
 
 const DAEMON_BASE = `http://localhost:${getDaemonPort()}`;

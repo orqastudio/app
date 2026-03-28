@@ -195,22 +195,20 @@ pub(crate) fn build_valid_relationship_types(
 ///
 /// Invalid relationship types (not in core.json or plugins) are excluded from
 /// the graph and logged as warnings. They don't represent valid knowledge flow.
-#[allow(clippy::too_many_lines)]
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, ValidationError> {
-    let orqa_dir = project_path.join(".orqa");
-
     let settings = load_settings(project_path);
     let type_registry = settings
         .as_ref()
         .map(build_type_registry)
         .unwrap_or_default();
     let valid_rel_types = build_valid_relationship_types(project_path);
+    let org_mode = settings.as_ref().is_some_and(|s| s.organisation);
 
     let mut graph = ArtifactGraph::default();
 
-    // Pass 1a: walk the project's own .orqa/ with project: None.
+    // Pass 1a: walk the project's own .orqa/.
     walk_directory(
-        &orqa_dir,
+        &project_path.join(".orqa"),
         project_path,
         &mut graph,
         &type_registry,
@@ -219,61 +217,82 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, Valida
     )?;
 
     // Pass 1b: if organisation mode, scan each child project.
-    if let Some(ref settings) = settings {
-        if settings.organisation {
-            for child in &settings.projects {
-                let child_path = if Path::new(&child.path).is_absolute() {
-                    std::path::PathBuf::from(&child.path)
-                } else {
-                    project_path.join(&child.path)
-                };
-                let child_path = child_path.canonicalize().unwrap_or(child_path);
-                let child_orqa = child_path.join(".orqa");
-                if child_orqa.exists() {
-                    let child_settings = load_settings(&child_path);
-                    let child_registry = child_settings
-                        .as_ref()
-                        .map(build_type_registry)
-                        .unwrap_or_default();
-                    walk_directory(
-                        &child_orqa,
-                        &child_path,
-                        &mut graph,
-                        &child_registry,
-                        Some(&child.name),
-                        &valid_rel_types,
-                    )?;
-                    qualify_intra_project_refs(&mut graph, &child.name);
-                }
-            }
+    if org_mode {
+        if let Some(ref s) = settings {
+            scan_child_projects(s, project_path, &mut graph, &valid_rel_types)?;
         }
     }
 
-    // Pass 1c: in organisation mode, rewrite cross-project target IDs before Pass 2.
-    let org_mode = settings.as_ref().is_some_and(|s| s.organisation);
+    // Pass 1c: rewrite cross-project target IDs before computing backlinks.
     if org_mode {
         rewrite_cross_project_refs(&mut graph);
     }
 
     // Pass 2: invert references — add backlinks to target nodes.
-    let forward_refs: Vec<ArtifactRef> = graph
-        .nodes
-        .values()
-        .flat_map(|n| n.references_out.iter().cloned())
-        .collect();
+    invert_references(&mut graph);
 
-    for ref_entry in forward_refs {
-        if let Some(target_node) = graph.nodes.get_mut(&ref_entry.target_id) {
-            target_node.references_in.push(ref_entry);
-        }
-    }
-
-    // Pass 3: in organisation mode, insert bare-ID aliases AFTER backlinks are computed.
+    // Pass 3: insert bare-ID aliases after backlinks are computed.
     if org_mode {
         insert_bare_id_aliases(&mut graph);
     }
 
     Ok(graph)
+}
+
+/// Walk all child projects in organisation mode and add their nodes to the graph.
+///
+/// Resolves each child path relative to `project_path` and qualifies intra-project refs.
+fn scan_child_projects(
+    settings: &ProjectSettings,
+    project_path: &Path,
+    graph: &mut ArtifactGraph,
+    valid_rel_types: &std::collections::HashSet<String>,
+) -> Result<(), ValidationError> {
+    for child in &settings.projects {
+        let child_path = resolve_child_path(project_path, &child.path);
+        let child_orqa = child_path.join(".orqa");
+        if !child_orqa.exists() {
+            continue;
+        }
+        let child_registry = load_settings(&child_path)
+            .as_ref()
+            .map(build_type_registry)
+            .unwrap_or_default();
+        walk_directory(
+            &child_orqa,
+            &child_path,
+            graph,
+            &child_registry,
+            Some(&child.name),
+            valid_rel_types,
+        )?;
+        qualify_intra_project_refs(graph, &child.name);
+    }
+    Ok(())
+}
+
+/// Resolve a child project path: absolute paths are used as-is; relative paths are joined to `base`.
+fn resolve_child_path(base: &Path, child_path_str: &str) -> std::path::PathBuf {
+    let raw = if Path::new(child_path_str).is_absolute() {
+        std::path::PathBuf::from(child_path_str)
+    } else {
+        base.join(child_path_str)
+    };
+    raw.canonicalize().unwrap_or(raw)
+}
+
+/// Compute backlinks (Pass 2): for every forward reference, add a backlink on the target node.
+fn invert_references(graph: &mut ArtifactGraph) {
+    let forward_refs: Vec<ArtifactRef> = graph
+        .nodes
+        .values()
+        .flat_map(|n| n.references_out.iter().cloned())
+        .collect();
+    for ref_entry in forward_refs {
+        if let Some(target_node) = graph.nodes.get_mut(&ref_entry.target_id) {
+            target_node.references_in.push(ref_entry);
+        }
+    }
 }
 
 /// Build a bare-ID → qualified-graph-key index for all child-project nodes.
@@ -469,7 +488,9 @@ struct NodeBuildCtx<'a> {
     project_name: Option<&'a str>,
     valid_rel_types: &'a std::collections::HashSet<String>,
 }
-#[allow(clippy::too_many_lines)]
+/// Build an `ArtifactNode` from parsed YAML frontmatter and body.
+///
+/// Extracts scalar fields, infers type, filters invalid relationship types, and assembles the node.
 fn build_node(
     id: String,
     rel_path: String,
@@ -494,30 +515,19 @@ fn build_node(
         .get("priority")
         .and_then(|v| v.as_str())
         .map(str::to_owned);
+
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
     let artifact_type =
         infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id, &[]);
     let frontmatter = yaml_to_json(yaml_value);
-    let all_refs = collect_relationship_refs(yaml_value, &id);
-    // Filter: only include edges with valid relationship types in the graph.
-    // Invalid types are warned and excluded — they don't represent valid knowledge flow.
-    let mut references_out: Vec<ArtifactRef> = Vec::new();
-    for r in all_refs {
-        if let Some(ref rel_type) = r.relationship_type {
-            if !ctx.valid_rel_types.is_empty() && !ctx.valid_rel_types.contains(rel_type) {
-                tracing::warn!(
-                    artifact = %id,
-                    relationship = %rel_type,
-                    target = %r.target_id,
-                    "Skipping invalid relationship type '{}' on {} — not defined in core.json or any plugin schema",
-                    rel_type, id,
-                );
-                continue;
-            }
-        }
-        references_out.push(r);
-    }
+
+    let mut references_out = filter_valid_refs(
+        collect_relationship_refs(yaml_value, &id),
+        &id,
+        ctx.valid_rel_types,
+    );
     references_out.extend(collect_body_refs(body, &id));
+
     ArtifactNode {
         id,
         project: ctx.project_name.map(str::to_owned),
@@ -532,6 +542,33 @@ fn build_node(
         references_out,
         references_in: Vec::new(),
     }
+}
+
+/// Filter a list of artifact refs to only those with valid (or untyped) relationship types.
+///
+/// Invalid typed edges are excluded and logged as warnings since they don't represent valid knowledge flow.
+fn filter_valid_refs(
+    all_refs: Vec<ArtifactRef>,
+    source_id: &str,
+    valid_rel_types: &std::collections::HashSet<String>,
+) -> Vec<ArtifactRef> {
+    let mut out = Vec::new();
+    for r in all_refs {
+        if let Some(ref rel_type) = r.relationship_type {
+            if !valid_rel_types.is_empty() && !valid_rel_types.contains(rel_type) {
+                tracing::warn!(
+                    artifact = %source_id,
+                    relationship = %rel_type,
+                    target = %r.target_id,
+                    "Skipping invalid relationship type '{}' on {} — not defined in core.json or any plugin schema",
+                    rel_type, source_id,
+                );
+                continue;
+            }
+        }
+        out.push(r);
+    }
+    out
 }
 
 fn collect_relationship_refs(yaml_value: &serde_yaml::Value, source_id: &str) -> Vec<ArtifactRef> {

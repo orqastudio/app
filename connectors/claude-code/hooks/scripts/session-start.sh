@@ -48,8 +48,10 @@ fi
 # ─── Daemon Health Gate (BLOCKING) ───────────────────────────────────────────
 # The daemon provides rule enforcement, graph validation, and content services.
 # Without it, rules are not mechanically enforced — work must not proceed.
-PORT_BASE="${ORQA_PORT_BASE:-10200}"
-DAEMON_PORT=$((PORT_BASE + 58))
+#
+# ORQA_PORT_BASE is the direct daemon health port (not a base for an offset).
+# This matches daemon/src/health.rs resolve_port() — default is 9120.
+DAEMON_PORT="${ORQA_PORT_BASE:-9120}"
 DAEMON_HEALTHY=false
 if curl -sf --max-time 2 "http://127.0.0.1:${DAEMON_PORT}/health" > /dev/null 2>&1; then
   DAEMON_HEALTHY=true
@@ -59,7 +61,7 @@ if [ "$DAEMON_HEALTHY" = false ]; then
   BLOCK_MSG="OrqaStudio daemon is not running. Rule enforcement requires the daemon.\\n\\n"
   BLOCK_MSG="${BLOCK_MSG}Start it with: orqa daemon start\\n"
   BLOCK_MSG="${BLOCK_MSG}Or run: orqa-validation daemon --project-root \$(pwd) &\\n\\n"
-  BLOCK_MSG="${BLOCK_MSG}Daemon expected on port ${DAEMON_PORT} (ORQA_PORT_BASE=${PORT_BASE} + 58)."
+  BLOCK_MSG="${BLOCK_MSG}Daemon expected on port ${DAEMON_PORT} (ORQA_PORT_BASE, default 9120)."
   printf '{"hookSpecificOutput":{"permissionDecision":"deny"},"systemMessage":"%s"}' "$BLOCK_MSG" >&2
   exit 2
 fi

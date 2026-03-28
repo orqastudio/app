@@ -11,9 +11,10 @@
 
 set -euo pipefail
 
-# ─── Port Calculation ───────────────────────────────────────────────────────
-PORT_BASE="${ORQA_PORT_BASE:-10200}"
-DAEMON_PORT=$((PORT_BASE + 58))
+# ─── Port Resolution ─────────────────────────────────────────────────────────
+# ORQA_PORT_BASE is the direct daemon health port (not a base for an offset).
+# This matches daemon/src/health.rs resolve_port() — default is 9120.
+DAEMON_PORT="${ORQA_PORT_BASE:-9120}"
 
 # ─── Health Check ───────────────────────────────────────────────────────────
 # Use a short timeout (2s) to avoid blocking the user experience.
@@ -25,7 +26,7 @@ fi
 BLOCK_MSG="OrqaStudio daemon is not running. Rule enforcement requires the daemon.\\n\\n"
 BLOCK_MSG="${BLOCK_MSG}Start it with: orqa daemon start\\n"
 BLOCK_MSG="${BLOCK_MSG}Or run: orqa-validation daemon --project-root \$(pwd) &\\n\\n"
-BLOCK_MSG="${BLOCK_MSG}Daemon expected on port ${DAEMON_PORT} (ORQA_PORT_BASE=${PORT_BASE} + 58).\\n\\n"
+BLOCK_MSG="${BLOCK_MSG}Daemon expected on port ${DAEMON_PORT} (ORQA_PORT_BASE, default 9120).\\n\\n"
 BLOCK_MSG="${BLOCK_MSG}To work without the daemon, disable the OrqaStudio plugin."
 printf '{"hookSpecificOutput":{"permissionDecision":"deny"},"systemMessage":"%s"}' "$BLOCK_MSG" >&2
 exit 2

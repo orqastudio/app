@@ -228,110 +228,124 @@ pub struct PluginContributions {
 ///
 /// Malformed or unreadable manifests are silently skipped (a `tracing::warn` is
 /// emitted so the caller can diagnose issues without crashing).
-#[allow(clippy::too_many_lines)]
 pub fn scan_plugin_manifests(project_root: &Path) -> PluginContributions {
     let mut contributions = PluginContributions::default();
 
-    let search_dirs = ["plugins", "connectors"];
-
-    for search_dir in &search_dirs {
+    for search_dir in &["plugins", "connectors"] {
         let dir = project_root.join(search_dir);
         let Ok(entries) = std::fs::read_dir(&dir) else {
             continue;
         };
-
         for entry in entries.flatten() {
             let manifest_path = entry.path().join("orqa-plugin.json");
-            if !manifest_path.exists() {
-                continue;
-            }
-
-            let content = match std::fs::read_to_string(&manifest_path) {
-                Ok(c) => c,
-                Err(e) => {
-                    tracing::warn!(
-                        path = %manifest_path.display(),
-                        error = %e,
-                        "failed to read plugin manifest — skipping"
-                    );
-                    continue;
-                }
-            };
-
-            let manifest: PluginManifest = match serde_json::from_str(&content) {
-                Ok(m) => m,
-                Err(e) => {
-                    tracing::warn!(
-                        path = %manifest_path.display(),
-                        error = %e,
-                        "failed to parse plugin manifest — skipping"
-                    );
-                    continue;
-                }
-            };
-
-            for schema in manifest.provides.schemas {
-                // If frontmatter is null/missing, use an empty object schema.
-                let frontmatter_schema = if schema.frontmatter.is_null() {
-                    serde_json::json!({ "type": "object", "additionalProperties": true })
-                } else {
-                    schema.frontmatter.clone()
-                };
-
-                if let Some(target_key) = schema.extends {
-                    // This is a schema extension — collect it for later composition.
-                    contributions.schema_extensions.push(SchemaExtension {
-                        target_key,
-                        frontmatter_schema,
-                    });
-                } else {
-                    // This is a base schema definition.
-                    contributions.artifact_types.push(ArtifactTypeDef {
-                        key: schema.key,
-                        label: schema.label,
-                        icon: schema.icon,
-                        id_prefix: schema.id_prefix,
-                        frontmatter_schema,
-                        status_transitions: schema.status_transitions.unwrap_or_default(),
-                    });
-                }
-            }
-
-            // Collect enforcement mechanisms.
-            contributions
-                .enforcement_mechanisms
-                .extend(manifest.provides.enforcement_mechanisms);
-
-            for rel in manifest.provides.relationships {
-                let constraints = rel.constraints.map(|c| RelationshipConstraints {
-                    required: c.required,
-                    min_count: c.min_count,
-                    max_count: c.max_count,
-                    require_inverse: c.require_inverse,
-                    status_rules: c
-                        .status_rules
-                        .into_iter()
-                        .map(|sr| StatusRule {
-                            evaluate: sr.evaluate,
-                            condition: sr.condition,
-                            statuses: sr.statuses,
-                            proposed_status: sr.proposed_status,
-                            description: sr.description,
-                        })
-                        .collect(),
-                });
-                contributions.relationships.push(RelationshipSchema {
-                    key: rel.key,
-                    inverse: rel.inverse,
-                    description: rel.description,
-                    from: rel.from,
-                    to: rel.to,
-                    semantic: rel.semantic,
-                    constraints,
-                });
+            if let Some(manifest) = load_plugin_manifest(&manifest_path) {
+                apply_manifest(manifest, &mut contributions);
             }
         }
     }
 
     contributions
+}
+
+/// Load and parse a single plugin manifest from disk.
+///
+/// Returns `None` and emits a warning if the file is missing, unreadable, or malformed.
+fn load_plugin_manifest(manifest_path: &std::path::Path) -> Option<PluginManifest> {
+    if !manifest_path.exists() {
+        return None;
+    }
+    let content = match std::fs::read_to_string(manifest_path) {
+        Ok(c) => c,
+        Err(e) => {
+            tracing::warn!(
+                path = %manifest_path.display(),
+                error = %e,
+                "failed to read plugin manifest — skipping"
+            );
+            return None;
+        }
+    };
+    match serde_json::from_str(&content) {
+        Ok(m) => Some(m),
+        Err(e) => {
+            tracing::warn!(
+                path = %manifest_path.display(),
+                error = %e,
+                "failed to parse plugin manifest — skipping"
+            );
+            None
+        }
+    }
+}
+
+/// Apply a parsed plugin manifest's contributions to the accumulated `PluginContributions`.
+///
+/// Processes schemas (base definitions and extensions), relationships, and enforcement mechanisms.
+fn apply_manifest(manifest: PluginManifest, contributions: &mut PluginContributions) {
+    for schema in manifest.provides.schemas {
+        apply_schema(schema, contributions);
+    }
+    contributions
+        .enforcement_mechanisms
+        .extend(manifest.provides.enforcement_mechanisms);
+    for rel in manifest.provides.relationships {
+        contributions.relationships.push(plugin_rel_to_schema(rel));
+    }
+}
+
+/// Classify a plugin schema as a base type definition or an extension, and add it to contributions.
+///
+/// Schemas with a null frontmatter block default to an open object schema.
+fn apply_schema(schema: PluginProvidesSchema, contributions: &mut PluginContributions) {
+    let frontmatter_schema = if schema.frontmatter.is_null() {
+        serde_json::json!({ "type": "object", "additionalProperties": true })
+    } else {
+        schema.frontmatter.clone()
+    };
+
+    if let Some(target_key) = schema.extends {
+        contributions.schema_extensions.push(SchemaExtension {
+            target_key,
+            frontmatter_schema,
+        });
+    } else {
+        contributions.artifact_types.push(ArtifactTypeDef {
+            key: schema.key,
+            label: schema.label,
+            icon: schema.icon,
+            id_prefix: schema.id_prefix,
+            frontmatter_schema,
+            status_transitions: schema.status_transitions.unwrap_or_default(),
+        });
+    }
+}
+
+/// Convert a plugin-provided relationship to the canonical `RelationshipSchema` type.
+fn plugin_rel_to_schema(rel: PluginProvidesRelationship) -> RelationshipSchema {
+    let constraints = rel.constraints.map(|c| RelationshipConstraints {
+        required: c.required,
+        min_count: c.min_count,
+        max_count: c.max_count,
+        require_inverse: c.require_inverse,
+        status_rules: c
+            .status_rules
+            .into_iter()
+            .map(|sr| StatusRule {
+                evaluate: sr.evaluate,
+                condition: sr.condition,
+                statuses: sr.statuses,
+                proposed_status: sr.proposed_status,
+                description: sr.description,
+            })
+            .collect(),
+    });
+    RelationshipSchema {
+        key: rel.key,
+        inverse: rel.inverse,
+        description: rel.description,
+        from: rel.from,
+        to: rel.to,
+        semantic: rel.semantic,
+        constraints,
+    }
 }

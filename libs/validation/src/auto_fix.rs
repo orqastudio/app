@@ -347,7 +347,6 @@ fn apply_missing_status_fix(
 /// Fix duplicate relationships by deduplicating entries with the same target + type.
 ///
 /// Keeps the first occurrence of each (target, type) pair and removes subsequent duplicates.
-#[allow(clippy::too_many_lines)]
 fn apply_duplicate_relationship_fix(
     graph: &ArtifactGraph,
     check: &IntegrityCheck,
@@ -373,13 +372,34 @@ fn apply_duplicate_relationship_fix(
         ValidationError::Validation(format!("YAML parse error in {}: {e}", node.path))
     })?;
 
+    let (deduped, removed) = dedup_relationships(&yaml_value);
+    if removed == 0 {
+        return Ok(None);
+    }
+
+    write_deduped_relationships(&yaml_value, deduped, &body, &file_path)?;
+
+    Ok(Some(AppliedFix {
+        artifact_id: check.artifact_id.clone(),
+        description: format!(
+            "Removed {removed} duplicate relationship entries from {}",
+            node.path
+        ),
+        file_path: node.path.clone(),
+    }))
+}
+
+/// Extract and deduplicate the `relationships` sequence from a YAML value.
+///
+/// Returns the deduplicated sequence and the count of entries removed.
+/// Returns an empty vec and zero if `relationships` is absent.
+fn dedup_relationships(yaml_value: &serde_yaml::Value) -> (Vec<serde_yaml::Value>, usize) {
     let Some(rels) = yaml_value
         .get("relationships")
         .and_then(|v| v.as_sequence())
     else {
-        return Ok(None);
+        return (Vec::new(), 0);
     };
-
     let mut seen: std::collections::HashSet<(String, String)> = std::collections::HashSet::new();
     let mut removed = 0usize;
     let deduped: Vec<serde_yaml::Value> = rels
@@ -406,12 +426,16 @@ fn apply_duplicate_relationship_fix(
         })
         .cloned()
         .collect();
+    (deduped, removed)
+}
 
-    if removed == 0 {
-        return Ok(None);
-    }
-
-    // Rebuild the YAML with deduplicated relationships.
+/// Rebuild the file with the deduplicated relationship list and write it to disk.
+fn write_deduped_relationships(
+    yaml_value: &serde_yaml::Value,
+    deduped: Vec<serde_yaml::Value>,
+    body: &str,
+    file_path: &Path,
+) -> Result<(), ValidationError> {
     let mut new_yaml = yaml_value.clone();
     if let Some(map) = new_yaml.as_mapping_mut() {
         map.insert(
@@ -419,27 +443,14 @@ fn apply_duplicate_relationship_fix(
             serde_yaml::Value::Sequence(deduped),
         );
     }
-
     let new_fm = serde_yaml::to_string(&new_yaml)
         .map_err(|e| ValidationError::Validation(format!("YAML serialization error: {e}")))?;
-    // serde_yaml adds a leading `---\n` in some versions; normalise it away.
     let new_fm = new_fm
         .trim_start_matches("---\n")
         .trim_end_matches('\n')
         .to_owned();
-
     let new_content = format!("---\n{new_fm}\n---\n{body}");
-    std::fs::write(&file_path, new_content)
-        .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
-
-    Ok(Some(AppliedFix {
-        artifact_id: check.artifact_id.clone(),
-        description: format!(
-            "Removed {removed} duplicate relationship entries from {}",
-            node.path
-        ),
-        file_path: node.path.clone(),
-    }))
+    std::fs::write(file_path, new_content).map_err(|e| ValidationError::FileSystem(e.to_string()))
 }
 
 /// Insert a new YAML field line into a raw file, immediately after the first
@@ -467,4 +478,3 @@ fn insert_field_in_file(raw_content: &str, anchor_prefix: &str, new_field: &str)
 
     Some(result.join("\n"))
 }
-
