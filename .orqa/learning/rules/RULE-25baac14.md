@@ -9,7 +9,7 @@ created: "2026-03-07"
 updated: "2026-03-07"
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Artifact IDs are identifiers not rankings; orchestrator must use the priority field not ID order when sequencing work"
 relationships:

@@ -2,11 +2,57 @@
   "name": "@orqastudio/plugin-typescript",
   "displayName": "TypeScript",
   "version": "0.1.4-dev",
-  "description": "Base TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions.",
-  "categories": ["domain-knowledge", "enforcement-generator"],
+  "description": "Base TypeScript development infrastructure — tsconfig presets and enforcement config generation for TypeScript/Svelte/JS projects.",
+  "categories": ["domain-knowledge", "enforcement-generator", "enforcement-contributor"],
   "purpose": [
     "domain-knowledge",
     "infrastructure"
+  ],
+  "enforcement": [
+    {
+      "role": "generator",
+      "engine": "eslint",
+      "config_output": ".orqa/configs/eslint.config.js",
+      "generator": "scripts/generate-eslint-config.ts",
+      "actions": {
+        "check": {
+          "command": "eslint",
+          "args": ["--config", ".orqa/configs/eslint.config.js", "--max-warnings", "0"],
+          "files": "*.{ts,svelte,js}"
+        },
+        "fix": {
+          "command": "eslint",
+          "args": ["--config", ".orqa/configs/eslint.config.js", "--fix"],
+          "files": "*.{ts,svelte,js}"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: eslint",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.ts", "*.svelte", "*.js"],
+      "rules_path": "rules/eslint/"
+    },
+    {
+      "role": "generator",
+      "engine": "tsconfig",
+      "config_output": ".orqa/configs/tsconfig.base.json",
+      "generator": "scripts/generate-tsconfig.ts",
+      "actions": {
+        "check": {
+          "command": "tsc",
+          "args": ["--noEmit"],
+          "files": "*.ts"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: tsconfig",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.ts"]
+    }
   ],
   "content": {
     "documentation": {
@@ -32,13 +78,6 @@
   },
   "build": "npm run build",
   "provides": {
-    "enforcement_mechanisms": [
-      {
-        "key": "tsc",
-        "description": "TypeScript type checking",
-        "strength": 6
-      }
-    ],
     "knowledge": [
       {
         "key": "typescript-advanced-types",
@@ -64,37 +103,6 @@
           ".jsx": "javascriptreact"
         }
       }
-    },
-    "configPresets": {
-      "tsconfig": [
-        {
-          "name": "base",
-          "path": "src/tsconfig/base.json",
-          "description": "Strict TypeScript defaults"
-        },
-        {
-          "name": "library",
-          "path": "src/tsconfig/library.json",
-          "description": "Library preset (NodeNext, declarations)"
-        },
-        {
-          "name": "app",
-          "path": "src/tsconfig/app.json",
-          "description": "App preset (bundler resolution, no emit)"
-        }
-      ],
-      "eslint": [
-        {
-          "name": "base",
-          "import": "@orqastudio/plugin-typescript/eslint",
-          "export": "base"
-        },
-        {
-          "name": "recommended",
-          "import": "@orqastudio/plugin-typescript/eslint",
-          "export": "recommended"
-        }
-      ]
     },
     "knowledge_declarations": [
       {

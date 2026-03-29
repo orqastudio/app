@@ -109,6 +109,7 @@ export async function runEnforceCommand(projectRoot, args) {
                     check: decl.actions.check,
                     fix: decl.actions.fix,
                     fileTypes: decl.file_types ?? [],
+                    configOutput: decl.config_output,
                 });
             }
         }
@@ -144,6 +145,11 @@ export async function runEnforceCommand(projectRoot, args) {
         const action = fix ? engine.fix : engine.check;
         if (!action)
             continue;
+        // Skip engines whose generated config doesn't exist yet (generators not run).
+        if (engine.configOutput && !existsSync(join(projectRoot, engine.configOutput))) {
+            console.log(`Skipping ${engine.engine}: config not generated yet (run orqa install)`);
+            continue;
+        }
         // Filter files if --staged.
         let files = stagedFiles;
         if (files !== null && engine.fileTypes.length > 0) {
@@ -226,9 +232,13 @@ function runAction(action, files) {
     if (files !== null && files.length > 0) {
         argv.push(...files);
     }
+    // Resolve commands through node_modules/.bin (same as npm scripts).
+    const npmBin = join(process.cwd(), "node_modules", ".bin");
+    const pathEnv = `${npmBin}${process.platform === "win32" ? ";" : ":"}${process.env.PATH ?? ""}`;
     const result = spawnSync(action.command, argv, {
         stdio: "inherit",
-        shell: false,
+        shell: process.platform === "win32",
+        env: { ...process.env, PATH: pathEnv },
     });
     if (result.error) {
         console.error(`Failed to run ${action.command}: ${result.error.message}`);

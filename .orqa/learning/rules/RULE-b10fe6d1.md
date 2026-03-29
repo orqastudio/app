@@ -9,16 +9,16 @@ created: "2026-03-07"
 updated: "2026-03-13"
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Orchestrator enforces human gate before marking epics done; status transitions must follow defined lifecycle gates"
 
-  - mechanism: tool
+  - engine: tool
 
     command: "orqa enforce"
     description: "Validates artifact status transitions, required fields, and relationship integrity"
 
-  - mechanism: pre-commit
+  - engine: pre-commit
 
     check: "orqa enforce"
 relationships:

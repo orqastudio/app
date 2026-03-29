@@ -9,15 +9,15 @@ created: 2026-03-11
 updated: 2026-03-11
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Every knowledge artifact must have a user-invocable field in its YAML frontmatter; missing field is a schema validation failure"
 
-  - mechanism: json-schema
+  - engine: json-schema
 
     description: "Schema validation checks for user-invocable field presence in knowledge artifact frontmatter"
 
-  - mechanism: tool
+  - engine: tool
 
     command: "orqa enforce"
     description: "Validates user-invocable field presence; missing field blocks commits"

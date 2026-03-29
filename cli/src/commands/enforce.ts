@@ -72,6 +72,8 @@ interface EnforcementEngine {
 	fix?: ActionDeclaration;
 	/** File patterns this engine operates on — used for --staged filtering. */
 	fileTypes: string[];
+	/** Path to generated config — skip dispatch if missing. */
+	configOutput?: string | null;
 }
 
 /**
@@ -145,6 +147,7 @@ export async function runEnforceCommand(projectRoot: string, args: string[]): Pr
 					check: decl.actions.check,
 					fix: decl.actions.fix,
 					fileTypes: decl.file_types ?? [],
+					configOutput: decl.config_output,
 				});
 			}
 		}
@@ -190,6 +193,12 @@ export async function runEnforceCommand(projectRoot: string, args: string[]): Pr
 	for (const engine of toRun) {
 		const action = fix ? engine.fix : engine.check;
 		if (!action) continue;
+
+		// Skip engines whose generated config doesn't exist yet (generators not run).
+		if (engine.configOutput && !existsSync(join(projectRoot, engine.configOutput))) {
+			console.log(`Skipping ${engine.engine}: config not generated yet (run orqa install)`);
+			continue;
+		}
 
 		// Filter files if --staged.
 		let files = stagedFiles;
@@ -280,9 +289,14 @@ function runAction(action: ActionDeclaration, files: string[] | null): number {
 		argv.push(...files);
 	}
 
+	// Resolve commands through node_modules/.bin (same as npm scripts).
+	const npmBin = join(process.cwd(), "node_modules", ".bin");
+	const pathEnv = `${npmBin}${process.platform === "win32" ? ";" : ":"}${process.env.PATH ?? ""}`;
+
 	const result = spawnSync(action.command, argv, {
 		stdio: "inherit",
-		shell: false,
+		shell: process.platform === "win32",
+		env: { ...process.env, PATH: pathEnv },
 	});
 
 	if (result.error) {

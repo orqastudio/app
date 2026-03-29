@@ -1,17 +1,14 @@
 // eslint.config.js
 //
-// TARGET STATE — composes from OrqaStudio plugin configs. Project-specific rules only.
-// Plugin base rules: no-explicit-any, ban-ts-comment, no-unused-vars,
-// no-console, svelte/recommended. See plugin sources for details.
-//
-// This file is a target state artifact. Do not overwrite with generated
-// output until the generation pipeline is validated against this target.
+// GENERATED target state — self-contained, no @orqastudio/plugin-* imports.
+// This file is the live config for the app. It will be replaced by the
+// output of generate-eslint-config.ts once the generation pipeline is
+// validated. Until then it stays as a hand-authored self-contained config.
 
-import { svelte } from "@orqastudio/plugin-svelte/eslint";
+import tseslint from "typescript-eslint";
 import sveltePlugin from "eslint-plugin-svelte";
 import jsdocPlugin from "eslint-plugin-jsdoc";
 import globals from "globals";
-import tseslint from "typescript-eslint";
 
 // --- Project-Specific AST Restrictions ---
 // Defined as objects so they can be composed into overlapping file-glob
@@ -36,15 +33,56 @@ const noHtmlTitleAttribute = {
 };
 
 export default tseslint.config(
-	// ── Layer 1: Plugin base ──────────────────────────────────────────
-	// Imports ALL base rules from the Svelte plugin (which itself extends
-	// the TypeScript plugin). This gives us: js/recommended,
-	// typescript-eslint/recommended, svelte/flat/recommended, no-explicit-any,
-	// ban-ts-comment, no-unused-vars (underscore OK), no-console,
-	// TS parser for .svelte files, and test file overrides.
-	...svelte(sveltePlugin),
+	// ── Layer 1: TypeScript base ──────────────────────────────────────────
+	...tseslint.configs.recommended,
+	{
+		files: ["**/*.ts"],
+		rules: {
+			"@typescript-eslint/no-explicit-any": "error",
+			"@typescript-eslint/ban-ts-comment": [
+				"error",
+				{
+					"ts-ignore": true,
+					"ts-expect-error": "allow-with-description",
+					"ts-nocheck": true,
+					"ts-check": false,
+				},
+			],
+			"@typescript-eslint/no-unused-vars": [
+				"error",
+				{ argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+			],
+			"no-console": "error",
+		},
+	},
+	{
+		files: ["**/*.test.ts", "**/*.test.js", "**/__tests__/**"],
+		rules: {
+			"@typescript-eslint/no-unused-vars": "off",
+		},
+	},
+	{
+		files: ["**/*.worker.ts", "**/logger.ts", "**/dev-console.ts"],
+		rules: {
+			"no-console": "off",
+		},
+	},
 
-	// ── Layer 2: Environment globals ──────────────────────────────────
+	// ── Layer 2: Svelte ───────────────────────────────────────────────────
+	...sveltePlugin.configs["flat/recommended"],
+	{
+		files: ["**/*.svelte", "**/*.svelte.ts"],
+		languageOptions: {
+			parserOptions: {
+				parser: tseslint.parser,
+			},
+		},
+		rules: {
+			"@typescript-eslint/no-explicit-any": "error",
+		},
+	},
+
+	// ── Layer 3: Environment globals ──────────────────────────────────────
 	// Tauri apps run in both browser (webview) and node (build tooling).
 	{
 		languageOptions: {
@@ -55,9 +93,8 @@ export default tseslint.config(
 		},
 	},
 
-	// ── Layer 3: Documentation enforcement ───────────────────────────
+	// ── Layer 4: Documentation enforcement ───────────────────────────────
 	// Every exported function and class must have a JSDoc description.
-	// File-level purpose is enforced by requiring JSDoc on module declarations.
 	jsdocPlugin.configs["flat/recommended-typescript"],
 	{
 		files: ["**/*.ts", "**/*.svelte.ts"],
@@ -74,7 +111,7 @@ export default tseslint.config(
 		},
 	},
 
-	// ── Layer 4: Tauri-specific overrides ─────────────────────────────
+	// ── Layer 5: Tauri-specific overrides ─────────────────────────────────
 	{
 		files: ["**/*.svelte", "**/*.svelte.ts"],
 		rules: {
@@ -84,7 +121,7 @@ export default tseslint.config(
 		},
 	},
 
-	// ── Layer 4: Project architecture rules ───────────────────────────
+	// ── Layer 6: Project architecture rules ───────────────────────────────
 
 	// RULE-006 + RULE-033: Component .svelte files get BOTH restrictions.
 	// Combined in one block because flat config merges no-restricted-syntax
@@ -117,7 +154,7 @@ export default tseslint.config(
 		},
 	},
 
-	// ── Layer 5: Ignores ──────────────────────────────────────────────
+	// ── Layer 7: Ignores ──────────────────────────────────────────────────
 	{
 		ignores: [
 			"build/",

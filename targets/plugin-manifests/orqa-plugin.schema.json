@@ -4,75 +4,735 @@
   "title": "OrqaStudio Plugin Manifest",
   "description": "Canonical schema for orqa-plugin.json files.",
   "type": "object",
-  "required": ["name", "version", "description", "category", "purpose", "affects_schema", "affects_enforcement"],
+  "required": [
+    "name",
+    "version",
+    "description",
+    "categories"
+  ],
   "properties": {
-    "name": { "type": "string", "pattern": "^@orqastudio/" },
-    "version": { "type": "string" },
-    "displayName": { "type": "string" },
-    "description": { "type": "string" },
-    "category": { "type": "string", "enum": ["methodology", "workflow", "domain-knowledge", "connector", "infrastructure"] },
+    "name": {
+      "type": "string",
+      "pattern": "^@orqastudio/"
+    },
+    "version": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
     "purpose": {
       "type": "array",
-      "items": { "type": "string", "enum": ["methodology", "workflow", "domain-knowledge", "connector", "infrastructure", "app-extension", "sidecar"] },
-      "minItems": 1, "uniqueItems": true
+      "items": {
+        "type": "string",
+        "enum": [
+          "methodology",
+          "workflow",
+          "domain-knowledge",
+          "connector",
+          "infrastructure",
+          "app-extension",
+          "sidecar"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
     },
-    "stage_slot": { "type": "string" },
-    "affects_schema": { "type": "boolean" },
-    "affects_enforcement": { "type": "boolean" },
-    "role": { "type": "string" },
-    "requires": { "type": "array", "items": { "type": "string" } },
-    "uninstallable": { "type": "boolean" },
-    "content": { "type": "object", "additionalProperties": { "type": "object", "properties": { "source": { "type": "string" }, "target": { "type": "string" } } } },
-    "dependencies": { "type": "object", "properties": { "npm": { "type": "array", "items": { "type": "string" } } } },
-    "build": { "type": "string" },
-    "lifecycle": { "type": "object", "properties": { "install": { "type": "string" }, "uninstall": { "type": "string" }, "update": { "type": "string" } } },
+    "stage_slot": {
+      "type": "string"
+    },
+    "affects_schema": {
+      "type": "boolean"
+    },
+    "role": {
+      "type": "string"
+    },
+    "requires": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "uninstallable": {
+      "type": "boolean"
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "npm": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "build": {
+      "type": "string"
+    },
+    "lifecycle": {
+      "type": "object",
+      "properties": {
+        "install": {
+          "type": "string"
+        },
+        "uninstall": {
+          "type": "string"
+        },
+        "update": {
+          "type": "string"
+        }
+      }
+    },
     "provides": {
       "type": "object",
       "properties": {
-        "schemas": { "type": "array", "items": { "type": "object" } },
-        "agents": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "id": { "type": "string" }, "path": { "type": "string" } } } },
-        "views": { "type": "array", "items": { "type": "object" } },
-        "widgets": { "type": "array", "items": { "type": "object" } },
+        "schemas": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "views": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
         "workflows": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "artifact_type": { "type": ["string", "null"] },
-              "path": { "type": "string" },
-              "contribution": { "type": "boolean" }
+              "artifact_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "path": {
+                "type": "string"
+              },
+              "contribution": {
+                "type": "boolean"
+              }
             },
-            "required": ["path"]
+            "required": [
+              "path"
+            ]
           }
         },
-        "relationships": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "inverse": { "type": "string" }, "label": { "type": "string" }, "inverseLabel": { "type": "string" }, "from": { "type": "array", "items": { "type": "string" } }, "to": { "type": "array", "items": { "type": "string" } }, "description": { "type": "string" }, "semantic": { "type": "string" }, "constraints": { "type": "object" } }, "required": ["key", "label"] } },
-        "knowledge": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "id": { "type": "string" }, "label": { "type": "string" } } } },
-        "hooks": { "type": "array", "items": { "type": "object", "properties": { "event": { "type": "string" }, "description": { "type": "string" } }, "required": ["event"] } },
-        "cliTools": { "type": "array", "items": { "type": "object" } },
-        "symlinks": { "type": "array", "items": { "type": "object", "properties": { "source": { "type": "string" }, "target": { "type": "string" } }, "required": ["source", "target"] } },
-        "aggregatedFiles": { "type": "array", "items": { "type": "object", "properties": { "target": { "type": "string" }, "collect": { "type": "string" }, "wrapper": { "type": "string" }, "stripFields": { "type": "array", "items": { "type": "string" } }, "relativeToPlugin": { "type": "boolean" } }, "required": ["target", "collect"] } },
-        "mcpServers": { "type": "object", "additionalProperties": { "type": "object", "properties": { "command": { "type": "string" }, "args": { "type": "array", "items": { "type": "string" } } }, "required": ["command"] } },
-        "lspServers": { "type": "object", "additionalProperties": { "type": "object", "properties": { "command": { "type": "string" }, "args": { "type": "array", "items": { "type": "string" } }, "extensionToLanguage": { "type": "object" } }, "required": ["command"] } }
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "inverse": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "inverseLabel": {
+                "type": "string"
+              },
+              "from": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "to": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": {
+                "type": "string"
+              },
+              "semantic": {
+                "type": "string"
+              },
+              "constraints": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "key",
+              "label"
+            ]
+          }
+        },
+        "knowledge": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "hooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "event"
+            ]
+          }
+        },
+        "cliTools": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "symlinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "target": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "source",
+              "target"
+            ]
+          }
+        },
+        "aggregatedFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "target": {
+                "type": "string"
+              },
+              "collect": {
+                "type": "string"
+              },
+              "wrapper": {
+                "type": "string"
+              },
+              "stripFields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "relativeToPlugin": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "target",
+              "collect"
+            ]
+          }
+        },
+        "mcpServers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "command"
+            ]
+          }
+        },
+        "lspServers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "command": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "extensionToLanguage": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "command"
+            ]
+          }
+        },
+        "artifact_viewers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "artifact_type": {
+                "type": "string"
+              },
+              "view_key": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "artifact_type",
+              "view_key"
+            ]
+          }
+        },
+        "role_definitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "prompt_template": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "role",
+              "prompt_template"
+            ]
+          }
+        },
+        "settings_pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "section": {
+                "type": "string"
+              },
+              "view_key": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "label",
+              "section",
+              "view_key"
+            ]
+          }
+        }
       }
     },
     "knowledge_declarations": {
       "type": "array",
-      "items": { "type": "object", "properties": { "id": { "type": "string" }, "content_file": { "type": ["string", "null"] }, "summary": { "type": "string" }, "tier": { "type": "string", "enum": ["always", "stage-triggered", "on-demand"] }, "roles": { "type": "array", "items": { "type": "string" } }, "stages": { "type": "array", "items": { "type": "string" } }, "tags": { "type": "array", "items": { "type": "string" } }, "priority": { "type": "integer" } }, "required": ["id"] }
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "content_file": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": "string"
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "always",
+              "stage-triggered",
+              "on-demand"
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "priority": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
     },
     "prompt_sections": {
       "type": "array",
-      "items": { "type": "object", "properties": { "id": { "type": "string" }, "content_file": { "type": "string" }, "stage": { "type": "string" }, "role": { "type": "string" }, "priority": { "type": "integer" } } }
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "content_file": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "integer"
+          }
+        }
+      }
     },
     "prompt_classification": {
       "type": "object",
       "properties": {
-        "thinking_mode_exceptions": { "type": "object", "additionalProperties": { "type": "string" } },
-        "prompt_types": { "type": "array", "items": { "type": "string" } },
-        "stage_mappings": { "type": "object", "additionalProperties": { "type": "string" } },
-        "keyword_patterns": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+        "thinking_mode_exceptions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "prompt_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stage_mappings": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "keyword_patterns": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "methodology",
+          "workflow",
+          "domain-knowledge",
+          "connector",
+          "infrastructure",
+          "enforcement-generator",
+          "enforcement-contributor"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "enforcement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "generator",
+              "contributor"
+            ]
+          },
+          "engine": {
+            "type": "string"
+          },
+          "config_output": {
+            "type": "string"
+          },
+          "generator": {
+            "type": "string"
+          },
+          "actions": {
+            "type": "object",
+            "properties": {
+              "check": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "files": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "command",
+                  "args",
+                  "files"
+                ]
+              },
+              "fix": {
+                "type": "object",
+                "properties": {
+                  "command": {
+                    "type": "string"
+                  },
+                  "args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "files": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "command",
+                  "args",
+                  "files"
+                ]
+              }
+            },
+            "required": [
+              "check"
+            ]
+          },
+          "watch": {
+            "type": "object",
+            "properties": {
+              "paths": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "filter": {
+                "type": "string"
+              },
+              "on_change": {
+                "type": "string",
+                "enum": [
+                  "regenerate"
+                ]
+              }
+            },
+            "required": [
+              "paths",
+              "on_change"
+            ]
+          },
+          "file_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rules_path": {
+            "type": "string"
+          },
+          "contributes_to": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      }
+    },
+    "pluginDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     }
   },
-  "if": { "properties": { "purpose": { "contains": { "const": "workflow" } } } },
-  "then": { "required": ["stage_slot"] }
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "categories": {
+            "contains": {
+              "const": "enforcement-generator"
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "enforcement"
+        ],
+        "properties": {
+          "enforcement": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "generator"
+                }
+              },
+              "required": [
+                "role",
+                "engine",
+                "generator",
+                "config_output",
+                "actions"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "categories": {
+            "contains": {
+              "const": "enforcement-contributor"
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "enforcement",
+          "pluginDependencies"
+        ],
+        "properties": {
+          "enforcement": {
+            "contains": {
+              "properties": {
+                "role": {
+                  "const": "contributor"
+                }
+              },
+              "required": [
+                "role",
+                "contributes_to"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "categories": {
+            "contains": {
+              "const": "workflow"
+            }
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "stage_slot"
+        ]
+      }
+    }
+  ]
 }

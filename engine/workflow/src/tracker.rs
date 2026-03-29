@@ -48,21 +48,61 @@ impl PathRule {
 
 /// Configuration for the `WorkflowTracker`.
 ///
-/// Holds the path classification rules that determine how file reads are
-/// categorised for gate evaluation. This config is provided by the caller
-/// (loaded from the resolved workflow or plugin config) so the tracker
-/// contains no hardcoded path knowledge.
-#[derive(Debug, Clone, Default)]
+/// Holds the path classification rules and verification command patterns that
+/// determine how file reads and commands are categorised for gate evaluation.
+/// This config is provided by the caller (loaded from the resolved workflow or
+/// plugin config) so the tracker contains no hardcoded path or command knowledge.
+#[derive(Debug, Clone)]
 pub struct TrackerConfig {
     /// Rules applied in order to each file path recorded via `record_read`.
     /// A path may match multiple rules and be classified into multiple categories.
     pub path_rules: Vec<PathRule>,
+    /// Substring patterns for commands that count as verification.
+    /// A command is considered a verification command if it contains any of these
+    /// patterns (case-insensitive). Defaults to the standard set when constructed
+    /// via `TrackerConfig::new`.
+    pub verification_patterns: Vec<String>,
+}
+
+impl Default for TrackerConfig {
+    /// Default config has no path rules and uses the standard verification patterns.
+    fn default() -> Self {
+        Self {
+            path_rules: Vec::new(),
+            verification_patterns: default_verification_patterns(),
+        }
+    }
+}
+
+/// Returns the default set of verification command patterns.
+///
+/// These cover the standard build/test commands used across the codebase.
+fn default_verification_patterns() -> Vec<String> {
+    vec![
+        "make check".to_owned(),
+        "make test".to_owned(),
+        "cargo test".to_owned(),
+        "npm test".to_owned(),
+        "npx vitest".to_owned(),
+        "pytest".to_owned(),
+    ]
 }
 
 impl TrackerConfig {
-    /// Create a config with the given path classification rules.
+    /// Create a config with the given path classification rules and default verification patterns.
     pub fn new(path_rules: Vec<PathRule>) -> Self {
-        Self { path_rules }
+        Self {
+            path_rules,
+            verification_patterns: default_verification_patterns(),
+        }
+    }
+
+    /// Create a config with explicit path rules and verification patterns.
+    pub fn with_patterns(path_rules: Vec<PathRule>, verification_patterns: Vec<String>) -> Self {
+        Self {
+            path_rules,
+            verification_patterns,
+        }
     }
 
     /// Classify a file path against all rules and return the matching categories.
@@ -161,17 +201,17 @@ impl WorkflowTracker {
 
     /// Record a bash command.
     ///
-    /// Detects verification commands to set `verification_run`.
+    /// Detects verification commands by checking against `config.verification_patterns`
+    /// (case-insensitive substring match). Sets `verification_run` if any pattern matches.
     pub fn record_command(&mut self, cmd: &str) {
         self.commands_run.push(cmd.to_owned());
 
         let lower = cmd.to_lowercase();
-        if lower.contains("make check")
-            || lower.contains("make test")
-            || lower.contains("cargo test")
-            || lower.contains("cargo clippy")
-            || lower.contains("npm run test")
-            || lower.contains("npm run check")
+        if self
+            .config
+            .verification_patterns
+            .iter()
+            .any(|p| lower.contains(p.as_str()))
         {
             self.verification_run = true;
         }
@@ -403,17 +443,43 @@ mod tests {
     }
 
     #[test]
-    fn record_command_cargo_clippy_sets_verification_run() {
+    fn record_command_npx_vitest_sets_verification_run() {
         let mut t = tracker_with_standard_config();
-        t.record_command("cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings");
+        t.record_command("npx vitest run --coverage");
         assert!(t.has_run_verification());
     }
 
     #[test]
-    fn record_command_npm_run_check_sets_verification_run() {
+    fn record_command_npm_test_sets_verification_run() {
         let mut t = tracker_with_standard_config();
-        t.record_command("npm run check");
+        t.record_command("npm test");
         assert!(t.has_run_verification());
+    }
+
+    #[test]
+    fn record_command_pytest_sets_verification_run() {
+        let mut t = tracker_with_standard_config();
+        t.record_command("pytest tests/");
+        assert!(t.has_run_verification());
+    }
+
+    #[test]
+    fn record_command_custom_pattern_sets_verification_run() {
+        let config = TrackerConfig::with_patterns(
+            vec![],
+            vec!["cargo clippy".to_owned(), "npm run check".to_owned()],
+        );
+        let mut t = WorkflowTracker::new(config);
+        t.record_command("cargo clippy --workspace -- -D warnings");
+        assert!(t.has_run_verification());
+    }
+
+    #[test]
+    fn record_command_empty_patterns_never_sets_verification_run() {
+        let config = TrackerConfig::with_patterns(vec![], vec![]);
+        let mut t = WorkflowTracker::new(config);
+        t.record_command("make check");
+        assert!(!t.has_run_verification());
     }
 
     #[test]

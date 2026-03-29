@@ -2,30 +2,65 @@
   "name": "@orqastudio/plugin-rust",
   "displayName": "Rust",
   "version": "0.1.4-dev",
-  "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
-  "categories": ["domain-knowledge", "enforcement-generator"],
+  "description": "Base Rust development infrastructure — clippy, rustfmt enforcement config generation.",
+  "categories": ["domain-knowledge", "enforcement-generator", "enforcement-contributor"],
   "purpose": [
     "domain-knowledge",
     "infrastructure"
   ],
+  "enforcement": [
+    {
+      "role": "generator",
+      "engine": "clippy",
+      "config_output": ".orqa/configs/clippy.toml",
+      "generator": "scripts/generate-clippy-config.ts",
+      "actions": {
+        "check": {
+          "command": "cargo",
+          "args": ["clippy", "--workspace", "--all-targets"],
+          "files": "*.rs"
+        },
+        "fix": {
+          "command": "cargo",
+          "args": ["clippy", "--workspace", "--all-targets", "--fix", "--allow-dirty"],
+          "files": "*.rs"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: clippy",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.rs"],
+      "rules_path": "rules/clippy/"
+    },
+    {
+      "role": "generator",
+      "engine": "rustfmt",
+      "config_output": ".orqa/configs/.rustfmt.toml",
+      "generator": "scripts/generate-rustfmt-config.ts",
+      "actions": {
+        "check": {
+          "command": "cargo",
+          "args": ["fmt", "--check"],
+          "files": "*.rs"
+        },
+        "fix": {
+          "command": "cargo",
+          "args": ["fmt"],
+          "files": "*.rs"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: rustfmt",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.rs"],
+      "rules_path": "rules/rustfmt/"
+    }
+  ],
   "provides": {
-    "enforcement_mechanisms": [
-      {
-        "key": "clippy",
-        "description": "Rust linter (clippy)",
-        "strength": 6
-      },
-      {
-        "key": "rustfmt",
-        "description": "Rust formatter",
-        "strength": 6
-      },
-      {
-        "key": "cargo-test",
-        "description": "Rust test runner",
-        "strength": 6
-      }
-    ],
     "agents": [
       {
         "key": "4241392c",
@@ -65,26 +100,6 @@
         "id": "KNOW-d4095bd9"
       }
     ],
-    "tools": {
-      "clippy": {
-        "command": "cargo clippy",
-        "configFile": "clippy.toml",
-        "configFormat": "toml"
-      },
-      "rustfmt": {
-        "command": "cargo fmt --check",
-        "configFile": ".rustfmt.toml",
-        "configFormat": "toml"
-      },
-      "cargo-test": {
-        "command": "cargo test",
-        "configFile": null,
-        "configFormat": "cli-args"
-      }
-    },
-    "dependencies": {
-      "rustToolchain": "stable"
-    },
     "decision_tree": {
       "branches": [
         {

@@ -9,11 +9,11 @@ created: 2026-03-13
 updated: 2026-03-13
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Every behavioral rule maps to a defined enforcement strategy (prompt injection, output validation, knowledge injection, or session hooks); the orchestrator injects this rule as the authoritative reference"
 
-  - mechanism: tool
+  - engine: tool
 
     command: "orqa enforce"
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"

@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-14
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "The orchestrator coordinates but does not implement; all implementation is delegated to universal roles with appropriate knowledge loaded"
 
-  - mechanism: hook
+  - engine: hook
 
     type: Stop
     action: check

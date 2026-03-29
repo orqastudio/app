@@ -7,7 +7,7 @@ enforcement_type: advisory
 description: The orchestrator MUST write .state/session-state.md with a Next Session Priorities section before ending any session. The Stop hook enforces this with a warning.
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Write session state with Next Session Priorities before ending any session"
 created: 2026-03-23

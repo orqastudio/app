@@ -27,7 +27,11 @@ pub enum GateTrigger {
 
 /// The condition that determines whether a process gate fires.
 ///
-/// Each condition variant encodes one observable fact about the current session.
+/// Built-in variants encode well-known session-observable facts. The `Custom`
+/// variant allows plugin-declared gates to name a condition string without
+/// requiring changes to Rust source. Unknown condition strings log a warning
+/// and return `GateResult::Pass` (open) so that new plugin conditions degrade
+/// gracefully rather than blocking agent work.
 #[derive(Debug, Clone)]
 pub enum GateCondition {
     /// Fires on first code write when no research has been done.
@@ -44,6 +48,12 @@ pub enum GateCondition {
         /// Minimum number of code writes that must have occurred before this gate fires.
         threshold: usize,
     },
+    /// Plugin-declared condition identified by a string.
+    ///
+    /// Unknown condition IDs are not evaluated against session state. The engine
+    /// logs a warning and returns a non-fired (pass) result, allowing plugins to
+    /// declare forward-compatible condition types without blocking agent work.
+    Custom(String),
 }
 
 /// Definition of a single process gate loaded from plugin workflow config.
@@ -143,6 +153,16 @@ fn evaluate_gate(
         GateCondition::SignificantWorkWithoutLessons { threshold } => {
             tracker.code_write_count() > *threshold && !tracker.has_checked_lessons()
         }
+        GateCondition::Custom(condition_id) => {
+            // Unknown plugin-declared conditions are not evaluated against session state.
+            // Log a warning and return pass (not fired) so new condition types from plugins
+            // degrade gracefully without blocking agent work.
+            tracing::warn!(
+                "[process_gates] gate '{}': unknown condition '{condition_id}', treating as pass",
+                config.name
+            );
+            false
+        }
     };
 
     Some(gate(&config.name, fired, &config.message))
@@ -238,7 +258,17 @@ pub fn evaluate_stop_verdicts(
                     tracker.code_write_count() > *threshold && !tracker.has_checked_lessons()
                 }
                 // Write-only conditions never fire at stop
-                _ => false,
+                GateCondition::FirstCodeWriteWithoutResearch
+                | GateCondition::CodeWriteWithoutDocs
+                | GateCondition::CodeWriteWithoutPlanning => false,
+                // Unknown plugin-declared conditions: log warning and treat as pass
+                GateCondition::Custom(condition_id) => {
+                    tracing::warn!(
+                        "[process_gates] gate '{}': unknown condition '{condition_id}', treating as pass",
+                        g.name
+                    );
+                    false
+                }
             };
             if fired {
                 Some(gate_as_verdict(gate(&g.name, true, &g.message)))
@@ -583,18 +613,18 @@ mod tests {
     fn fired_gates_filters_to_only_fired() {
         let results = vec![
             GateResult {
-                gate_name: "gate-a".to_string(),
-                message: "msg a".to_string(),
+                gate_name: "gate-a".to_owned(),
+                message: "msg a".to_owned(),
                 fired: true,
             },
             GateResult {
-                gate_name: "gate-b".to_string(),
+                gate_name: "gate-b".to_owned(),
                 message: String::new(),
                 fired: false,
             },
             GateResult {
-                gate_name: "gate-c".to_string(),
-                message: "msg c".to_string(),
+                gate_name: "gate-c".to_owned(),
+                message: "msg c".to_owned(),
                 fired: true,
             },
         ];
@@ -720,5 +750,52 @@ mod tests {
         let stop_results = evaluate_process_gates(&gates, &mut t, "stop", None);
         assert!(write_results.is_empty());
         assert!(stop_results.is_empty());
+    }
+
+    // ── Custom condition ──
+
+    #[test]
+    fn custom_condition_at_write_event_does_not_fire() {
+        // Unknown plugin-declared conditions degrade gracefully — gate does not fire.
+        let gates = vec![ProcessGateConfig::new(
+            "plugin-custom-gate",
+            GateTrigger::Write,
+            GateCondition::Custom("some-plugin-condition".to_owned()),
+            "PLUGIN: custom message",
+        )];
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src/lib.rs"));
+        assert_eq!(results.len(), 1);
+        assert!(!results[0].fired, "custom condition must not fire (pass)");
+    }
+
+    #[test]
+    fn custom_condition_at_stop_event_does_not_fire() {
+        // Unknown plugin-declared conditions at stop event also degrade gracefully.
+        let gates = vec![ProcessGateConfig::new(
+            "plugin-stop-gate",
+            GateTrigger::Stop,
+            GateCondition::Custom("another-plugin-condition".to_owned()),
+            "PLUGIN: stop message",
+        )];
+        let mut t = standard_tracker();
+        t.record_write("src/lib.rs");
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
+        assert_eq!(results.len(), 1);
+        assert!(!results[0].fired, "custom condition must not fire (pass)");
+    }
+
+    #[test]
+    fn custom_condition_in_evaluate_stop_verdicts_returns_no_verdicts() {
+        let gates = vec![ProcessGateConfig::new(
+            "plugin-stop-gate",
+            GateTrigger::Stop,
+            GateCondition::Custom("plugin-defined-condition".to_owned()),
+            "PLUGIN: stop message",
+        )];
+        let mut t = standard_tracker();
+        t.record_write("src/lib.rs");
+        let verdicts = evaluate_stop_verdicts(&gates, &t);
+        assert!(verdicts.is_empty(), "custom condition must produce no verdicts");
     }
 }

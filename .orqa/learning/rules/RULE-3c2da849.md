@@ -9,18 +9,18 @@ created: 2026-03-12
 updated: 2026-03-12
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Core graph artifacts are firmware — non-editable by agents or users except through the update system or in dogfood mode"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file
     action: warn
     pattern: ".orqa/implementation/*/schema.json|.orqa/process/*/schema.json|.orqa/process/agents/schema.json|.orqa/process/knowledge/schema.json"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file

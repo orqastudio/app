@@ -9,18 +9,18 @@ created: 2026-03-24
 updated: 2026-03-24
 enforcement:
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: team_create
     action: check
     message: "Before creating a new team, verify all follow-up items from the current batch are resolved"
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "The orchestrator must run the completion gate checklist before starting any new epic, phase, or work batch"
 
-  - mechanism: hook
+  - engine: hook
 
     type: Stop
     event: session_end

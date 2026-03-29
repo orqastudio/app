@@ -9,7 +9,7 @@ created: "2026-03-07"
 updated: "2026-03-12"
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
 relationships:

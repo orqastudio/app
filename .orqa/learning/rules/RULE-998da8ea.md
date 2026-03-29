@@ -9,17 +9,17 @@ created: 2026-03-07
 updated: 2026-03-28
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Dogfood context is injected into agent system prompt when dogfood: true; apply extra caution on restarts, protocol changes, and structural modifications"
 
-  - mechanism: hook
+  - engine: hook
 
     type: SessionStart
     action: inject
     description: "Dogfood behavioral context injected into system prompt when project.json contains dogfood: true"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PreToolUse
     event: file

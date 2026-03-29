@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-07
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Report status accurately; partial work reported as complete is worse than reporting it as incomplete; every completion report must include a What Is NOT Done section"
 
-  - mechanism: hook
+  - engine: hook
 
     type: Stop
     action: check

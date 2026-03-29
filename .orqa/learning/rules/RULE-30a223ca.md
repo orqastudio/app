@@ -9,17 +9,17 @@ created: 2026-03-11
 updated: 2026-03-11
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Sessions must be managed with state persistence, clean handoffs, and no unsaved work at session boundaries"
 
-  - mechanism: hook
+  - engine: hook
 
     type: Stop
     action: check
     description: "Stop hook verifies session state is written to .state/session-state.md and changes are committed"
 
-  - mechanism: hook
+  - engine: hook
 
     type: SessionStart
     action: surface

@@ -9,7 +9,7 @@ created: 2026-03-07
 updated: 2026-03-13
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Skills must be loaded before task execution; orchestrator's delegation template requires skill loading; three-tier skill loading must be followed"
 relationships:

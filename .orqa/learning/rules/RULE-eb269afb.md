@@ -9,11 +9,11 @@ created: "2026-03-07"
 updated: "2026-03-11"
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Check shared component library before creating new UI elements; code reviewer rejects inline empty states, spinners, and error displays when shared components exist"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file

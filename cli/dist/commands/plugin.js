@@ -11,6 +11,7 @@ import { readManifest } from "../lib/manifest.js";
 import { readContentManifest, writeContentManifest, copyPluginContent, removePluginContent, installPluginDeps, buildPlugin, runLifecycleHook, diffPluginContent, computeThreeWayState, findSourceFile, processAggregatedFiles, computeFileHash, } from "../lib/content-lifecycle.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
+import { generatePromptRegistry } from "../lib/prompt-registry.js";
 const USAGE = `
 Usage: orqa plugin <subcommand> [options]
 
@@ -341,6 +342,13 @@ async function cmdInstall(args) {
             // Non-fatal — workflow resolution is best-effort during install
         }
     }
+    // Regenerate prompt registry after schema composition so knowledge declarations are current.
+    try {
+        generatePromptRegistry(projectRoot);
+    }
+    catch {
+        // Non-fatal — registry generation is best-effort during install
+    }
     console.log(`\nPlugin ${result.name} installed successfully.`);
 }
 /**
@@ -406,6 +414,13 @@ async function cmdInstallFirstParty(pluginDir, projectRoot) {
         catch {
             // Non-fatal — workflow resolution is best-effort during install
         }
+    }
+    // Regenerate prompt registry after schema composition so knowledge declarations are current.
+    try {
+        generatePromptRegistry(projectRoot);
+    }
+    catch {
+        // Non-fatal — registry generation is best-effort during install
     }
     console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);
 }

@@ -26,6 +26,7 @@ import {
 import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/content-lifecycle.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
+import { generatePromptRegistry } from "../lib/prompt-registry.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -413,6 +414,13 @@ async function cmdInstall(args: string[]): Promise<void> {
 		}
 	}
 
+	// Regenerate prompt registry after schema composition so knowledge declarations are current.
+	try {
+		generatePromptRegistry(projectRoot);
+	} catch {
+		// Non-fatal — registry generation is best-effort during install
+	}
+
 	console.log(`\nPlugin ${result.name} installed successfully.`);
 }
 
@@ -489,6 +497,13 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 		} catch {
 			// Non-fatal — workflow resolution is best-effort during install
 		}
+	}
+
+	// Regenerate prompt registry after schema composition so knowledge declarations are current.
+	try {
+		generatePromptRegistry(projectRoot);
+	} catch {
+		// Non-fatal — registry generation is best-effort during install
 	}
 
 	console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);

@@ -11,6 +11,76 @@
   "stage_slot": "learning",
   "role": "core:framework",
   "uninstallable": true,
+  "enforcement": [
+    {
+      "role": "generator",
+      "engine": "prettier",
+      "config_output": ".orqa/configs/.prettierrc",
+      "generator": "scripts/generate-prettier-config.ts",
+      "actions": {
+        "check": {
+          "command": "prettier",
+          "args": ["--config", ".orqa/configs/.prettierrc", "--check"],
+          "files": "*.{ts,svelte,js,json,css}"
+        },
+        "fix": {
+          "command": "prettier",
+          "args": ["--config", ".orqa/configs/.prettierrc", "--write"],
+          "files": "*.{ts,svelte,js,json,css}"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: prettier",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"],
+      "rules_path": "rules/prettier/"
+    },
+    {
+      "role": "generator",
+      "engine": "markdownlint",
+      "config_output": ".orqa/configs/.markdownlint.json",
+      "generator": "scripts/generate-markdownlint-config.ts",
+      "actions": {
+        "check": {
+          "command": "markdownlint-cli2",
+          "args": ["--config", ".orqa/configs/.markdownlint.json"],
+          "files": "*.md"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/learning/rules/**/*.md"],
+        "filter": "engine: markdownlint",
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.md"],
+      "rules_path": "rules/markdownlint/"
+    },
+    {
+      "role": "generator",
+      "engine": "artifact-validation",
+      "config_output": null,
+      "generator": null,
+      "actions": {
+        "check": {
+          "command": "node",
+          "args": ["scripts/validate-artifacts.mjs", "--staged"],
+          "files": "*.md"
+        },
+        "fix": {
+          "command": "node",
+          "args": ["scripts/validate-artifacts.mjs", "--fix"],
+          "files": "*.md"
+        }
+      },
+      "watch": {
+        "paths": [".orqa/**/*.md"],
+        "on_change": "regenerate"
+      },
+      "file_types": ["*.md"]
+    }
+  ],
   "content": {
     "agents": {
       "source": "agents",

@@ -2,28 +2,21 @@
   "name": "@orqastudio/plugin-svelte",
   "version": "0.1.4-dev",
   "displayName": "Svelte Development",
-  "description": "Svelte development infrastructure — extends the TypeScript plugin with Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules.",
+  "description": "Svelte development infrastructure — Svelte parser, svelte-check, Vitest config, and Svelte ESLint rules contributed to the TypeScript plugin's ESLint generator.",
   "categories": ["domain-knowledge", "enforcement-contributor"],
   "purpose": [
     "domain-knowledge"
   ],
-  "extends": [
+  "pluginDependencies": [
     "@orqastudio/plugin-typescript"
   ],
-  "requires": [
-    "@orqastudio/plugin-typescript"
-  ],
-  "configExtensions": {
-    "tsconfig": {
-      "compilerOptions": {
-        "verbatimModuleSyntax": true
-      }
-    },
-    "eslint": {
-      "import": "@orqastudio/plugin-svelte/eslint",
-      "export": "svelte"
+  "enforcement": [
+    {
+      "role": "contributor",
+      "contributes_to": "@orqastudio/plugin-typescript:eslint",
+      "rules_path": "rules/eslint/"
     }
-  },
+  ],
   "provides": {
     "agents": [
       {
@@ -38,23 +31,6 @@
       }
     ],
     "schemas": [],
-    "enforcement_mechanisms": [
-      {
-        "key": "eslint",
-        "description": "ESLint rule enforcement",
-        "strength": 6
-      },
-      {
-        "key": "svelte-check",
-        "description": "Svelte type and template checking",
-        "strength": 6
-      },
-      {
-        "key": "vitest",
-        "description": "Vitest frontend test runner",
-        "strength": 6
-      }
-    ],
     "views": [],
     "widgets": [],
     "lspServers": {
@@ -147,37 +123,6 @@
         "label": "Orqa Store Orchestration"
       }
     ],
-    "tools": {
-      "eslint": {
-        "command": "npx eslint",
-        "configFile": ".eslintrc.json",
-        "configFormat": "json"
-      },
-      "svelte-check": {
-        "command": "npx svelte-check",
-        "configFile": null,
-        "configFormat": "cli-args"
-      },
-      "vitest": {
-        "command": "npx vitest run",
-        "configFile": "vitest.config.ts",
-        "configFormat": "ts"
-      }
-    },
-    "dependencies": {
-      "devDependencies": {
-        "eslint": "^9.0.0",
-        "@typescript-eslint/eslint-plugin": "^8.0.0",
-        "@typescript-eslint/parser": "^8.0.0",
-        "eslint-plugin-svelte": "^3.0.0",
-        "svelte-check": "^4.0.0",
-        "vitest": "^3.0.0",
-        "@testing-library/svelte": "^5.0.0",
-        "typescript": "^5.9.0"
-      }
-    },
-    "cliTools": [],
-    "hooks": [],
     "decision_tree": {
       "branches": [
         {
@@ -448,10 +393,8 @@
   },
   "dependencies": {
     "npm": [
-      "@orqastudio/types",
-      "@orqastudio/plugin-typescript"
+      "@orqastudio/types"
     ]
   },
-  "build": "npm run build",
   "role": "enhancement:delivery"
 }

@@ -9,18 +9,18 @@ created: 2026-03-07
 updated: 2026-03-07
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "If a deliverable is listed in an epic's scope, it ships with that epic; deferring scoped deliverables to a future epic is forbidden"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file
     action: check
     pattern: ".orqa/**"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file

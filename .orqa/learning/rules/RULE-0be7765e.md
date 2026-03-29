@@ -9,15 +9,15 @@ created: 2026-03-07
 updated: 2026-03-12
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "All errors are your responsibility; never claim a pre-existing error, skip failures, or commit with failing checks"
 
-  - mechanism: pre-commit
+  - engine: pre-commit
 
     check: "make check"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PreToolUse
     event: bash

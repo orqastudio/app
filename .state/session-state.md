@@ -38,9 +38,31 @@ Designs at:
 - `.state/design/enforcement-plugin-model.md`
 - `.state/design/frontend-runtime-derivation.md`
 
-### Implementation In Progress
+### Implementation Complete — 3 Waves
 
-~27 tasks across enforcement model + frontend runtime derivation.
+**Wave 1** (`3efe3e82c`): PluginManifest types (categories[], enforcement[], provides extensions), MCP TCP transport, coding-standards plugin deleted
+
+**Wave 2** (`da3460f95`): Daemon watcher registry (manifest-driven), orqa enforce (dynamic dispatch), resolved workflows YAML→JSON with embedded state machines, pre-commit hook simplified to `orqa enforce --staged`
+
+**Wave 3** (`c16d91f8b`): Plugin registry runtime derivation (7 static configs deleted), PLATFORM_NAVIGATION reduced to 4 fixed items, artifact viewer extensibility, dynamic settings pages, connector generation matches all targets (10/10), tray LSP/MCP status, RoadmapView epic drill-down, core-framework role_definitions
+
+### Remaining Work for Next Session
+
+1. **Generator scripts** — manifest blocks and watcher registry are in place, but actual generator scripts (eslint, tsconfig, clippy, rustfmt, prettier, markdownlint) haven't been written yet. These read rule frontmatter and produce self-contained config files.
+
+2. **JSON schema if/then validation** — category-to-config-block enforcement in orqa-plugin.schema.json not yet implemented.
+
+3. **prompt-registry.json generation** — needs to be generated from plugin knowledge_declarations at install time, not hand-maintained.
+
+4. **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages fields in schema declarations need actual values in plugin manifests for runtime derivation to produce meaningful output.
+
+5. **Remove cross-package ESLint exports** — plugins/knowledge/typescript/src/eslint/ and svelte/src/eslint/ still export Node.js modules. Replace with generators once generator scripts exist.
+
+6. **GateCondition enum** — still hardcoded in engine/workflow/src/gates.rs. Needs string-based dispatch.
+
+7. **TrackerConfig verification_patterns** — hardcoded in engine/workflow/src/tracker.rs.
+
+8. **Complete target plugin.json** — targets/claude-code-plugin/plugin/.claude-plugin/plugin.json needs commands/hooks/skills/resources.
 
 ---
 

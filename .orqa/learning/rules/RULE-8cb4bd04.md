@@ -9,20 +9,20 @@ created: "2026-03-07"
 updated: "2026-03-07"
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "80%+ test coverage required; tests must be organised by layer; no skipping tests without documented justification"
 
-  - mechanism: pre-commit
+  - engine: pre-commit
 
     check: "make check"
     description: "make check runs make test-rust and make test-frontend"
 
-  - mechanism: cargo-test
+  - engine: cargo-test
 
     description: "cargo tarpaulin enforces 80% coverage per module"
 
-  - mechanism: vitest
+  - engine: vitest
 
 relationships:
 

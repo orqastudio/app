@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-07
 enforcement:
 
-  - mechanism: behavioral
+  - engine: behavioral
 
     message: "Every change must be evaluated as part of the whole system; plans addressing symptoms without identifying the system are rejected"
 
-  - mechanism: hook
+  - engine: hook
 
     type: PostToolUse
     event: file

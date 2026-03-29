@@ -17,6 +17,7 @@ import * as readline from "node:readline";
 import { getRoot } from "../lib/root.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
+import { generatePromptRegistry } from "../lib/prompt-registry.js";
 const NODE_MIN_MAJOR = 22;
 const USAGE = `
 Usage: orqa install [subcommand]
@@ -415,6 +416,15 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
     }
     catch (e) {
         console.error(`  Schema composition failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    // Generate prompt registry from all installed plugin knowledge_declarations
+    console.log("Generating prompt registry...");
+    try {
+        const registryPath = generatePromptRegistry(root);
+        console.log(`  ✓ prompt-registry.json written to ${registryPath}`);
+    }
+    catch (e) {
+        console.error(`  Prompt registry generation failed: ${e instanceof Error ? e.message : String(e)}`);
     }
 }
 // ── Smoke Test ──────────────────────────────────────────────────────────────
