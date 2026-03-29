@@ -421,7 +421,7 @@ function cmdPublish(root: string, dryRun: boolean): void {
  * then runs the aggregation pipeline (schema, workflows, prompt registry).
  * @param root - Absolute path to the project root.
  */
-function cmdPluginSync(root: string): void {
+export function cmdPluginSync(root: string): void {
 	console.log("Syncing plugin content to .orqa/...");
 
 	// Read project.json — it is the source of truth for plugin configuration.

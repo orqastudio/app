@@ -887,14 +887,22 @@ async function cmdDev(root) {
             }
         }
     }
-    // 4. Refresh plugin content (builds plugins, syncs to .orqa/)
-    logCtrl("Building plugins and syncing content...");
+    // 4. Install plugins from project.json (builds, syncs content, composes schema)
+    logCtrl("Installing plugins from project.json...");
     try {
-        const { runPluginCommand } = await import("./plugin.js");
-        await runPluginCommand(["refresh"]);
+        const { cmdPluginSync } = await import("./install.js");
+        cmdPluginSync(root);
     }
     catch {
         // Non-fatal — content may be stale but dev can still start
+        logCtrl("Plugin sync failed — falling back to refresh...");
+        try {
+            const { runPluginCommand } = await import("./plugin.js");
+            await runPluginCommand(["refresh"]);
+        }
+        catch {
+            // Non-fatal
+        }
     }
     logCtrl("Starting dev environment...");
     // Spawn the controller as a detached process (this same script with __start-controller)
