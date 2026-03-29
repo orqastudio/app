@@ -34,7 +34,7 @@ priority: P1
 tags: [dogfood, self-hosted, restart-protocol, enforcement-gaps]
 relationships:
 
-  - target: AD-4ea9a290
+  - target: PD-4ea9a290
 
     type: enforces
 ---

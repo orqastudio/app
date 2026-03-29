@@ -36,7 +36,7 @@ Extend the artifact graph to treat `relationships` array entries as first-class 
 
 - `make check` passes
 - Run app, check GraphStats — edge count should increase (relationships array edges now counted)
-- `artifactGraphSDK.referencesFrom("AD-48b310f9")` should include `enforced-by` edges with `relationship_type` populated
+- `artifactGraphSDK.referencesFrom("PD-48b310f9")` should include `enforced-by` edges with `relationship_type` populated
 
 ## Lessons
 

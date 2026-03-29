@@ -19,7 +19,7 @@ enforcement:
     event: bash
     action: warn
     pattern: "git commit"
-    message: "If this commit includes Rust source files (libs/validation/, libs/mcp-server/, libs/lsp-server/, app/src-tauri/), rebuild binaries and restart the daemon before continuing."
+    message: "If this commit includes Rust source files (libs/validation/, engine/mcp-server/, engine/lsp-server/, app/src-tauri/), rebuild binaries and restart the daemon before continuing."
 summary: "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/src-tauri), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files."
 tier: stage-triggered
 roles: [orchestrator, implementer]
@@ -47,8 +47,8 @@ After any commit that touches compiled Rust source code, the affected binaries M
 | Source Path | Binary Affected | Rebuild Command |
 | --- | --- | --- |
 | `libs/validation/` | Validation engine (daemon) | `cargo build -p orqa-validation` |
-| `libs/mcp-server/` | MCP server (daemon) | `cargo build -p orqa-mcp-server` |
-| `libs/lsp-server/` | LSP server | `cargo build -p orqa-lsp-server` |
+| `engine/mcp-server/` | MCP server (daemon) | `cargo build -p orqa-mcp-server` |
+| `engine/lsp-server/` | LSP server | `cargo build -p orqa-lsp-server` |
 | `app/src-tauri/` | Tauri app backend | `make restart-tauri` |
 
 If multiple paths are affected in a single commit, rebuild all affected binaries in one pass.
@@ -76,7 +76,7 @@ If the dev environment is running in watch mode (e.g., `cargo watch` or an equiv
 
 ## When This Applies
 
-- Any `git commit` that includes files matching `libs/validation/**/*.rs`, `libs/mcp-server/**/*.rs`, `libs/lsp-server/**/*.rs`, or `app/src-tauri/**/*.rs`
+- Any `git commit` that includes files matching `libs/validation/**/*.rs`, `engine/mcp-server/**/*.rs`, `engine/lsp-server/**/*.rs`, or `app/src-tauri/**/*.rs`
 - Any `git commit` that includes `Cargo.toml` changes affecting these crates
 - After `git merge` or `git rebase` that brings in Rust source changes
 

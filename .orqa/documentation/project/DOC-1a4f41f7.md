@@ -9,7 +9,7 @@ category: how-to
 created: 2026-03-18
 updated: 2026-03-18
 relationships:
-  - target: AD-a7fd7461
+  - target: PD-a7fd7461
     type: documents
   - target: KNOW-1b7fa054
     type: synchronised-with

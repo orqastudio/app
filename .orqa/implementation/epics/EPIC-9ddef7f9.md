@@ -21,7 +21,7 @@ relationships:
 
 ## Why P1
 
-The core app's job is to let users **navigate and search** artifacts ([AD-80f39962](AD-80f39962)). Navigation and cross-linking are built. What's missing is the ability to sort/group/filter the artifact list, search across all artifacts semantically, and surface cross-references. Editing is tracked separately in [EPIC-320d1a2f](EPIC-320d1a2f).
+The core app's job is to let users **navigate and search** artifacts ([PD-80f39962](PD-80f39962)). Navigation and cross-linking are built. What's missing is the ability to sort/group/filter the artifact list, search across all artifacts semantically, and surface cross-references. Editing is tracked separately in [EPIC-320d1a2f](EPIC-320d1a2f).
 
 ## What's Already Done
 
@@ -39,17 +39,17 @@ Previous work ([EPIC-489c0a47](EPIC-489c0a47), [EPIC-4ce64ab0](EPIC-4ce64ab0), a
 
 ## Context
 
-The core app's job is to let users navigate, search, and edit artifacts. Navigation and cross-linking are built. This epic completes the browsing and search capabilities: sorting/filtering the artifact list, AI-driven semantic search, and a references panel. Editing is a separate concern tracked in [EPIC-320d1a2f](EPIC-320d1a2f) — artifact mutations are AI-mediated proposals, not raw CRUD. The architecture decision [AD-80f39962](AD-80f39962) establishes that all system-level visualizations (roadmaps, dashboards, kanban) are plugin territory.
+The core app's job is to let users navigate, search, and edit artifacts. Navigation and cross-linking are built. This epic completes the browsing and search capabilities: sorting/filtering the artifact list, AI-driven semantic search, and a references panel. Editing is a separate concern tracked in [EPIC-320d1a2f](EPIC-320d1a2f) — artifact mutations are AI-mediated proposals, not raw CRUD. The architecture decision [PD-80f39962](PD-80f39962) establishes that all system-level visualizations (roadmaps, dashboards, kanban) are plugin territory.
 
 ## Design Principles
 
-> The core app UI provides three capabilities: navigate, search, and edit. All system-level visualizations (roadmaps, dashboards, dependency graphs) are plugins. — [AD-80f39962](AD-80f39962)
+> The core app UI provides three capabilities: navigate, search, and edit. All system-level visualizations (roadmaps, dashboards, dependency graphs) are plugins. — [PD-80f39962](PD-80f39962)
 >
-> Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — [AD-306eccf1](AD-306eccf1)
+> Cross-artifact search is AI-driven, not keyword-based. The AI infers search intent and presents results in a structured way, giving infinite flexibility. — [PD-306eccf1](PD-306eccf1)
 >
-> Sorting and filtering are schema-driven — generated dynamically from each artifact type's `schema.json` enum fields. No hardcoded field lists. — [AD-a47f313a](AD-a47f313a)
+> Sorting and filtering are schema-driven — generated dynamically from each artifact type's `schema.json` enum fields. No hardcoded field lists. — [PD-a47f313a](PD-a47f313a)
 >
-> Default views are config-driven via `_navigation.json` per artifact type directory. Supports sort/group/filter defaults, group ordering overrides, and custom curated layouts. — [AD-e8ea9fb9](AD-e8ea9fb9)
+> Default views are config-driven via `_navigation.json` per artifact type directory. Supports sort/group/filter defaults, group ordering overrides, and custom curated layouts. — [PD-e8ea9fb9](PD-e8ea9fb9)
 
 ## Remaining Scope
 

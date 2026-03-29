@@ -14,9 +14,9 @@ enforcement:
     action: surface
     description: "Session start hook surfaces recurring lessons that are due for promotion"
 relationships:
-  - target: AD-339e9223
+  - target: PD-339e9223
     type: enforces
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
     type: enforces
   - target: DOC-f6c4ac69
     type: documented-by
@@ -49,7 +49,7 @@ Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/learning/
 Lesson documented -> recurrence tracked -> promoted at threshold -> enforcement attempted -> promotion completed -> recurrence re-tracked
 ```text
 
-### Enforcement Gate (NON-NEGOTIABLE — [AD-c6c2d9fb](AD-c6c2d9fb))
+### Enforcement Gate (NON-NEGOTIABLE — [PD-c6c2d9fb](PD-c6c2d9fb))
 
 A lesson MUST NOT be promoted to a rule without attempting enforcement. Rules without enforcement are just lessons with a label. Before setting `evolves-into` on a lesson:
 

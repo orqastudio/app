@@ -16,15 +16,15 @@ enforcement:
     check: "orqa enforce"
     description: "Pre-commit hook runs orqa enforce on staged .orqa files"
 relationships:
-  - target: AD-f9fbd1d7
+  - target: PD-f9fbd1d7
     type: enforces
-  - target: AD-4ea9a290
+  - target: PD-4ea9a290
     type: enforces
-  - target: AD-45cfe1d1
+  - target: PD-45cfe1d1
     type: enforces
-  - target: AD-e8ea9fb9
+  - target: PD-e8ea9fb9
     type: enforces
-  - target: AD-efe10e1d
+  - target: PD-efe10e1d
     type: enforces
 ---
 # Artifact Config Integrity (NON-NEGOTIABLE)
@@ -70,7 +70,7 @@ Every `.md` file's display label follows this priority:
 1. **YAML frontmatter `title` field** — Use as the label if present
 2. **Humanized filename** — Fallback when no frontmatter title exists (e.g., `coding-standards.md` becomes "Coding Standards")
 
-Artifact IDs in all-caps format (e.g., `[EPIC-797972a7](EPIC-797972a7)`, `[IDEA-70be4c7c](IDEA-70be4c7c)`, `[AD-0dfa4d52](AD-0dfa4d52)`) are preserved as-is — they are NOT humanized.
+Artifact IDs in all-caps format (e.g., `[EPIC-797972a7](EPIC-797972a7)`, `[IDEA-70be4c7c](IDEA-70be4c7c)`, `[PD-0dfa4d52](PD-0dfa4d52)`) are preserved as-is — they are NOT humanized.
 
 The same applies to `description` — use frontmatter `description` when present, otherwise omit.
 

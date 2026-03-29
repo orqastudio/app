@@ -10,12 +10,12 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 4
 relationships:
-  - target: AD-b08f456d
+  - target: PD-b08f456d
     type: documents
 ---
 
 **Date:** 2026-03-02 | **Updated:** 2026-03-10 | **Status:** Current
-**References:** [Persistence Research](RES-ac474863) [AD-b08f456d](AD-b08f456d), [Design Tokens Research](RES-2d91e2c2)
+**References:** [Persistence Research](RES-ac474863) [PD-b08f456d](PD-b08f456d), [Design Tokens Research](RES-2d91e2c2)
 
 Full table definitions, indexes, FTS5 configuration, and migration strategy for `orqa.db`.
 
@@ -435,7 +435,7 @@ Renames `sdk_session_id` → `provider_session_id` on the `sessions` table. Impl
 
 ### Migration 007: Drop Governance Tables
 
-Drops `governance_recommendations` and `governance_analyses`. These were added in migration 002 and removed per [AD-859ed163](AD-859ed163) (SQLite is for conversation persistence only).
+Drops `governance_recommendations` and `governance_analyses`. These were added in migration 002 and removed per [PD-859ed163](PD-859ed163) (SQLite is for conversation persistence only).
 
 ### Migration 008: Health Snapshots
 
@@ -443,7 +443,7 @@ Adds `health_snapshots` table for storing graph integrity metric trends over tim
 
 ### Migration 009: Drop Artifacts Table
 
-Drops `artifacts_fts` and `artifacts`. Artifacts are file-based (`.orqa/`) — SQLite persistence is not needed per [AD-859ed163](AD-859ed163).
+Drops `artifacts_fts` and `artifacts`. Artifacts are file-based (`.orqa/`) — SQLite persistence is not needed per [PD-859ed163](PD-859ed163).
 
 ### Rules
 

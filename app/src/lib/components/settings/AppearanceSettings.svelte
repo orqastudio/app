@@ -12,6 +12,10 @@
 		{ value: "dark", label: "Dark" },
 	];
 
+	/**
+	 * Applies the selected theme mode to the settings store.
+	 * @param value - The theme mode value to apply.
+	 */
 	function handleThemeChange(value: string): void {
 		settingsStore.setThemeMode(value as ThemeMode);
 	}

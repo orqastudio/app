@@ -4,7 +4,10 @@
   "version": "0.1.4-dev",
   "description": "Base TypeScript development infrastructure — tsconfig presets, ESLint configs, and config composition for plugin extensions.",
   "category": "domain-knowledge",
-  "purpose": ["domain-knowledge", "infrastructure"],
+  "purpose": [
+    "domain-knowledge",
+    "infrastructure"
+  ],
   "affects_schema": false,
   "affects_enforcement": true,
   "content": {
@@ -108,7 +111,7 @@
         ],
         "priority": "P3",
         "summary": "TypeScript advanced types: generics, conditional types, mapped types, template literals, utility types. For complex type logic and compile-time type safety.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-40e2eb99.md"
+        "content_file": "knowledge/KNOW-40e2eb99.md"
       }
     ]
   }

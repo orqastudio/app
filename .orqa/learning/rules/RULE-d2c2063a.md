@@ -26,7 +26,7 @@ priority: P1
 tags: [development-commands, make-targets, dev-server, restart-protocol]
 relationships:
 
-  - target: "AD-e8a0f910"
+  - target: "PD-e8a0f910"
 
     type: "enforces"
 ---

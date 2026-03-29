@@ -4,7 +4,7 @@
 //!   - `parser`  — parses YAML frontmatter from rule `.md` files into typed EnforcementRule values
 //!   - `engine`  — compiled-regex evaluation engine for file, bash, and scan events
 //!   - `store`   — loads all rule files from a directory (used by the engine tests and by callers)
-//!   - `scanner` — scans a project for governance files across the 6 canonical areas
+//!   - `scanner` — scans a project for governance files across config-defined artifact areas
 
 /// YAML rule parser: reads `.md` rule files and produces typed `EnforcementRule` values.
 pub mod engine;

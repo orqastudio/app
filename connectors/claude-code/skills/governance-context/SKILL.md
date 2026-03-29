@@ -19,7 +19,7 @@ OrqaStudio manages work through an **artifact graph** — markdown files with YA
 | Epics | `.orqa/implementation/epics/` |
 | Ideas | `.orqa/discovery/ideas/` |
 | Research | `.orqa/discovery/research/` |
-| Decisions | `.orqa/process/decisions/` |
+| Decisions | `.orqa/learning/decisions/` |
 | Rules | `.orqa/learning/rules/` |
 | Lessons | `.orqa/learning/lessons/` |
 | Knowledge | `.orqa/documentation/knowledge/*/KNOW.md` |

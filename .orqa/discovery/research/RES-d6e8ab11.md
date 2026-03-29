@@ -26,10 +26,10 @@ relationships:
   - target: EPIC-7fd25812
     type: related
     rationale: "Part of the stabilisation epic"
-  - target: AD-1ef9f57c
+  - target: PD-1ef9f57c
     type: informs
     rationale: "Open questions in section 11 resolved as architecture decisions"
-  - target: AD-8727f99a
+  - target: PD-8727f99a
     type: informs
     rationale: "tmp→.state rename decision arose from comment on section 8"
 tags:
@@ -440,7 +440,7 @@ Migration follows a forward-compatible-first approach:
 
 **5. Findings-to-Disk Enforcement:** Orchestrator reads only structured summary headers from findings files (~200 tokens), never full findings. Detailed review is delegated to Reviewer agents.
 
-**6. Token Tracking:** Hook-based tracking captures tokens per API call, attributed to session/team/agent/task. Metrics written to `.state/token-metrics.jsonl` (see AD-8727f99a — `.state/` renamed to `.state/` to reflect that session state and metrics are operational data, not disposable). Future dashboard in OrqaStudio UI.
+**6. Token Tracking:** Hook-based tracking captures tokens per API call, attributed to session/team/agent/task. Metrics written to `.state/token-metrics.jsonl` (see PD-8727f99a — `.state/` renamed to `.state/` to reflect that session state and metrics are operational data, not disposable). Future dashboard in OrqaStudio UI.
 
 ### Expected Impact
 
@@ -610,7 +610,7 @@ Epic 1 must complete before Epic 2 (prompt generation needs workflow stage conte
 
 ## 11. Resolved Questions
 
-All questions have been resolved as AD-1ef9f57c. Summary of decisions:
+All questions have been resolved as PD-1ef9f57c. Summary of decisions:
 
 ### Architecture Questions
 
@@ -741,9 +741,9 @@ The original plan proposed 4 epics; implementation required 7 due to the additio
 
 2. **Graph foundation as prerequisite**: The research did not explicitly call out graph fixes as a prerequisite epic. Implementation discovered that forward-only relationship storage, constraint fixes, and vocabulary documentation were prerequisites for workflow guards that use graph queries.
 
-3. **Content migration as separate epic**: The research section 10 described migration as part of the implementation path. Implementation treated it as a distinct epic (EPIC-59b92c8d) with sequential tasks and validation gates between each, following the decision in AD-1ef9f57c.
+3. **Content migration as separate epic**: The research section 10 described migration as part of the implementation path. Implementation treated it as a distinct epic (EPIC-59b92c8d) with sequential tasks and validation gates between each, following the decision in PD-1ef9f57c.
 
-4. **No backwards compatibility**: This was predicted by the research and confirmed by AD-1ef9f57c. The implementation carried this through strictly -- no fallback shims, no dual-write periods. Breaking changes were applied directly with data migrated via `orqa migrate`.
+4. **No backwards compatibility**: This was predicted by the research and confirmed by PD-1ef9f57c. The implementation carried this through strictly -- no fallback shims, no dual-write periods. Breaking changes were applied directly with data migrated via `orqa migrate`.
 
 ### What Worked
 

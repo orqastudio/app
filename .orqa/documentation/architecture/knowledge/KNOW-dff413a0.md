@@ -5,7 +5,7 @@ status: active
 title: Migration Plan
 domain: architecture
 description: Phase-by-phase migration overview — current phase status, sequencing rules, and zero tech debt enforcement during migration
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-dff413a0
 ---

@@ -21,7 +21,7 @@ relationships:
 
 3. **What's wrong with the current metadata display?** Audit the existing artifact detail views — what information is shown, what's missing, what's misleading?
 
-4. **How should bidirectional relationships render?** If [RULE-9814ec3c](RULE-9814ec3c) is `grounded` in [AD-48b310f9](AD-48b310f9), and [AD-48b310f9](AD-48b310f9) has `enforced-by` [RULE-9814ec3c](RULE-9814ec3c) — do both sides show the same thing? Different things? How do we avoid redundant noise while maintaining traceability?
+4. **How should bidirectional relationships render?** If [RULE-9814ec3c](RULE-9814ec3c) is `grounded` in [PD-48b310f9](PD-48b310f9), and [PD-48b310f9](PD-48b310f9) has `enforced-by` [RULE-9814ec3c](RULE-9814ec3c) — do both sides show the same thing? Different things? How do we avoid redundant noise while maintaining traceability?
 
 5. **What does relationship navigation look like?** Can users click through relationships? Is there a graph view? A breadcrumb trail? What's the right interaction model?
 
@@ -41,7 +41,7 @@ This is a UX research document, not a bug fix list. It should produce design rec
 
 The codebase has two separate relationship rendering mechanisms operating at different levels:
 
-**`RelationshipsList` (frontmatter-level semantic relationships):** Renders the `relationships[]` array from artifact frontmatter. Each entry has `type`, `target`, `rationale`, and optional `intended`. Types are: `observes`, `observed-by`, `grounded`, `grounded-by`, `grounded-by`, `grounded`, `enforces`, `enforced-by`, `enforces`, `enforced-by`, `informs`, `informed-by`. Rendered as grouped rows inside the metadata card: `[Grounded] → [AD-7121ec20](AD-7121ec20)  [AD-09fc4e65](AD-09fc4e65)` with rationale on hover.
+**`RelationshipsList` (frontmatter-level semantic relationships):** Renders the `relationships[]` array from artifact frontmatter. Each entry has `type`, `target`, `rationale`, and optional `intended`. Types are: `observes`, `observed-by`, `grounded`, `grounded-by`, `grounded-by`, `grounded`, `enforces`, `enforced-by`, `enforces`, `enforced-by`, `informs`, `informed-by`. Rendered as grouped rows inside the metadata card: `[Grounded] → [PD-7121ec20](PD-7121ec20)  [PD-09fc4e65](PD-09fc4e65)` with rationale on hover.
 
 **`ReferencesPanel` (graph-level field references):** A collapsible panel above the content area showing "Referenced by" and "References" — computed from the artifact graph's `references_in` and `references_out`. These are ALL fields that happen to contain artifact IDs (e.g., `epic: [EPIC-d45b4dfd](EPIC-d45b4dfd)` on a task, `research-refs: [RES-22e4c59c]` on an epic). The panel says "Relationships (N)" but it's actually showing field references, not semantic relationships.
 

@@ -1,7 +1,8 @@
 // HTTP health endpoint for the OrqaStudio daemon.
 //
 // Exposes GET /health (daemon liveness), POST /parse (artifact impact),
-// POST /prompt, POST /knowledge (knowledge injection), and POST /session-start
+// POST /prompt, POST /knowledge (knowledge injection), POST /context (active
+// rules and workflows for CLAUDE.md generation), and POST /session-start
 // (structured startup checks). The endpoint runs on the tokio runtime and binds
 // to 127.0.0.1:<ORQA_PORT_BASE> (default port 9120). This allows other tools
 // (app, CLI, connector) to check whether the daemon is alive without reading
@@ -87,6 +88,7 @@ pub async fn start(port: u16) -> Result<(), Box<dyn std::error::Error + Send + S
     let app = Router::new()
         .route("/health", get(health_handler))
         .route("/compact-context", post(crate::compact_context::compact_context_handler))
+        .route("/context", post(crate::context::context_handler))
         .route("/knowledge", post(crate::knowledge::knowledge_handler))
         .route("/parse", post(crate::parse::parse_handler))
         .route("/prompt", post(crate::prompt::prompt_handler))

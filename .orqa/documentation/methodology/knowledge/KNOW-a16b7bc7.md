@@ -9,6 +9,7 @@ description: |
   how demotion works, what the stability counter means, and when a demoted rule is
   safe to delete. Use when: Demoting a rule, reviewing rule lifecycle, or responding
   to stability-check output at session start.
+tier: always
 status: active
 created: 2026-03-24
 updated: 2026-03-24

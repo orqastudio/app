@@ -1,5 +1,5 @@
 /**
- * @orqastudio/claude-code-cli — Claude Code governance integration library.
+ * `@orqastudio/claude-code-cli` — Claude Code governance integration library.
  *
  * This package is BOTH:
  * 1. A Claude Code plugin (has .claude-plugin/plugin.json + hooks + skills + commands)

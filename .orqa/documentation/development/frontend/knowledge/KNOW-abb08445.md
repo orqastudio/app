@@ -4,6 +4,7 @@ type: knowledge
 title: "Svelte 5 Runes Reference"
 domain: platform/svelte
 description: "Complete reference for all Svelte 5 runes: $state, $derived, $effect, $props, $bindable, and $inspect with usage examples."
+tier: on-demand
 summary: "Svelte 5 Runes Reference"
 status: active
 created: 2026-03-20

@@ -6,6 +6,7 @@
 
 	// Core view components — registered by route key
 	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
+	import RoadmapView from "$lib/components/dashboard/RoadmapView.svelte";
 	import FullGraphView from "$lib/components/graph/FullGraphView.svelte";
 	import ArtifactViewer from "$lib/components/artifact/ArtifactViewer.svelte";
 	import WelcomeScreen from "./WelcomeScreen.svelte";
@@ -25,6 +26,7 @@
 	 */
 	const CORE_VIEWS: Record<string, Component> = {
 		"project": ProjectDashboard,
+		"roadmap": RoadmapView,
 		"artifact-graph": FullGraphView,
 		"welcome": WelcomeScreen,
 		"plugins": PluginBrowser,

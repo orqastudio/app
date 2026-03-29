@@ -1,0 +1,92 @@
+---
+id: PD-6ccfb736
+type: principle-decision
+title: "Canonical relationship vocabulary — relationships are the only connections, two layers"
+description: Artifacts connect ONLY through typed relationships. No standalone frontmatter fields for connections. Canonical relationships are app-level and universal. Project relationships are domain-specific and defined in project.json. Both are enforced by the same engine with the same rigour.
+status: active
+created: 2026-03-15
+updated: 2026-03-15
+relationships: []
+---
+
+## Decision
+
+### Relationships Are the Only Connections
+
+No standalone frontmatter fields for connections. No `epic: EPIC-7394ba2a`. No `milestone: MS-21d5096a`. Only typed relationships with explicit semantics. The graph IS the connections.
+
+### Canonical Relationships (App-Level)
+
+These exist in every project. They represent universal ways that thinking connects. Projects can alias display labels but the underlying semantics are fixed.
+
+| Relationship | Inverse | Meaning |
+| --- | --- | --- |
+| `informs` | `informed-by` | Supplementary context |
+| `evolves-into` | `evolves-from` | Thinking becomes action |
+| `drives` | `driven-by` | Decision directs work |
+| `governs` | `governed-by` | Decision authorises enforcement |
+| `delivers` | `delivered-by` | Work contributes to a goal |
+| `enforces` | `enforced-by` | Mechanical enforcement |
+| `grounded` | `grounded-by` | Foundational anchor |
+| `observes` | `observed-by` | Learning captured |
+| `merged-into` | `merged-from` | Ideas converged |
+| `synchronised-with` | `synchronised-with` | Must stay aligned |
+
+### Project Relationships (Project-Level)
+
+Defined per-project in `project.json` for domain-specific connections between project types. Only exist when the project defines them.
+
+Examples:
+
+- Software: `depends-on` / `depended-on-by` (delivery dependency)
+- Research: `replicates` / `replicated-by` (experiment reproduction)
+- Consulting: `escalates-to` / `escalated-from` (issue escalation)
+
+Project relationships follow the same rules as canonical ones — bidirectional, app-enforced, used in graph queries. The difference is they're defined by the project, not shipped with the app.
+
+### Blocking Is Derived, Not Stored
+
+If artifact A `depends-on` artifact B and B isn't completed, A is blocked. The graph query tells you that. There is no `blocked-by` relationship — blocking is inferred state from dependency + status.
+
+### Migration of Old Relationship Types
+
+All previously existing app-level relationship types are replaced by the canonical vocabulary:
+
+| Old Type | Migration Path | Reasoning |
+| --- | --- | --- |
+| `enforces` / `enforced-by` | → canonical `enforces` | Rule scope = what it enforces |
+| `delivered-by` / `delivers` | → canonical `delivers` | Containment is contribution |
+| `informs` / `informed-by` | → canonical `informs` | Documentation informs its subject |
+| `grounded-by` / `grounded` | → canonical `grounded` | Agent practicing a skill = grounded by it |
+| `enforces` / `enforced-by` | → canonical `enforces` | Verification is enforcement |
+
+Each existing usage is audited during migration: mapped to canonical relationship or routed to project relationship.
+
+### Standalone Fields to Migrate
+
+| Field | On Type | Becomes |
+| --- | --- | --- |
+| `epic` | Tasks | `delivers → EPIC-NNN` |
+| `milestone` | Epics | `delivers → MS-NNN` |
+| `depends-on` | Tasks | `depends-on → TASK-NNN` (project relationship) |
+| `evolves-into` | Ideas/Lessons | `evolves-into → RULE-NNN` |
+| `surpassed-by` | Research | `evolves-into` (the newer work) |
+| `evolves-into` / `evolves-from` | Decisions | `evolves-into` / `evolves-from` |
+| `pillars` | Ideas/Epics | `grounded-by → PILLAR-NNN` (already migrated) |
+| `research-refs` | Epics | `informed-by → RES-NNN` |
+| `docs-required` / `docs-produced` | Epics | `informs` / `informed-by` to doc artifacts |
+
+## Rationale
+
+Relationships define the principles of the app. They are how thinking connects. Having multiple competing connection mechanisms (frontmatter fields, relationships, implicit containment) means the graph is incomplete — some connections are invisible to graph queries. One mechanism, uniformly enforced.
+
+The two-layer model means the app ships with universal thinking relationships while projects extend with domain-specific work relationships. Both are enforced identically.
+
+## Consequences
+
+- All standalone connection fields removed from frontmatter schemas
+- All existing artifacts migrated to use relationships only
+- Old relationship types removed from codebase
+- `project.json` gains a `relationships` section for project-level types
+- The app's relationship engine processes canonical + project types uniformly
+- Graph queries work across both layers transparently

@@ -41,28 +41,28 @@ priority: P1
 tags: [coding-standards, rust, typescript, svelte, linting]
 relationships:
 
-  - target: AD-33e315cc
+  - target: PD-33e315cc
 
     type: enforces
-    rationale: Auto-generated inverse of enforces relationship from AD-33e315cc
+    rationale: Auto-generated inverse of enforces relationship from PD-33e315cc
 
-  - target: AD-2d58941b
-
-    type: enforces
-
-  - target: AD-ecc96aef
+  - target: PD-2d58941b
 
     type: enforces
 
-  - target: AD-9a7d7256
+  - target: PD-ecc96aef
 
     type: enforces
 
-  - target: AD-306d7320
+  - target: PD-9a7d7256
 
     type: enforces
 
-  - target: AD-2dc8ab96
+  - target: PD-306d7320
+
+    type: enforces
+
+  - target: PD-2dc8ab96
 
     type: enforces
 ---

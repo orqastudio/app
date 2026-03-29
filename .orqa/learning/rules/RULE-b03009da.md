@@ -23,7 +23,7 @@ priority: P1
 tags: [end-to-end, four-layer, ipc, completeness]
 relationships:
 
-  - target: AD-4e7faf0e
+  - target: PD-4e7faf0e
 
     type: enforces
     rationale: "IPC boundary design requires matching types on both sides"

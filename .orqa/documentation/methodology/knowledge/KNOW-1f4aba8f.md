@@ -10,6 +10,7 @@ description: |
   handles, when rules can be demoted from behavioral to mechanical enforcement. Use
   when: designing enforcement for a new rule, deciding where a check belongs, or
   demoting behavioral rules after LSP covers them.
+tier: always
 status: active
 created: 2026-03-24
 updated: 2026-03-24

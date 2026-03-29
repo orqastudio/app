@@ -5,7 +5,7 @@ status: active
 title: Governance Artifacts Structure
 domain: architecture
 description: Target .orqa/ directory structure organized by methodology stage — where each artifact type lives and why
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-fd3edf48
 ---

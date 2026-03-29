@@ -20,8 +20,8 @@ The orchestrator invents relationship types that sound correct but aren't in the
 
 ## Recurrence
 
-- First occurrence: EPIC-8b01ee51 used `dependency-of`, IDEA-f8f8dc69 used `follows` and `related`, AD-9ab3e0a4 used `evolves`
-- Second occurrence: AD-9ab3e0a4 used `supersedes` (after the first batch was "fixed"), RULE-04684a16 used `supports`
+- First occurrence: EPIC-8b01ee51 used `dependency-of`, IDEA-f8f8dc69 used `follows` and `related`, PD-9ab3e0a4 used `evolves`
+- Second occurrence: PD-9ab3e0a4 used `supersedes` (after the first batch was "fixed"), RULE-04684a16 used `supports`
 
 ## Recommendation — Promote to Enforcement
 

@@ -1,0 +1,134 @@
+/**
+ * Centralised enforcement log writer and reader.
+ *
+ * All enforcement events — regardless of source (hook, LSP, pre-commit,
+ * JSON Schema, lint) — are logged to a single NDJSON file at
+ * `.state/enforcement-log.jsonl`. This provides a complete audit trail.
+ * @module enforcement-log
+ */
+
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "fs";
+import { join, dirname } from "path";
+import { randomUUID } from "crypto";
+import type {
+	EnforcementEvent,
+	EnforcementResponse,
+	EnforcementResult,
+	EnforcementResolution,
+} from "@orqastudio/types";
+
+const LOG_FILENAME = "enforcement-log.jsonl";
+
+/**
+ * Get the path to the enforcement log file for a project.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Absolute path to the enforcement log file.
+ */
+export function getLogPath(projectRoot: string): string {
+	return join(projectRoot, ".state", LOG_FILENAME);
+}
+
+/**
+ * Create an enforcement event with auto-generated ID and timestamp.
+ * @param fields - Event fields excluding auto-generated id, timestamp, and resolution.
+ * @returns A complete enforcement event with generated id and timestamp.
+ */
+export function createEvent(
+	fields: Omit<EnforcementEvent, "id" | "timestamp" | "resolution"> & {
+		resolution?: EnforcementResolution;
+	},
+): EnforcementEvent {
+	return {
+		id: randomUUID(),
+		timestamp: new Date().toISOString(),
+		resolution:
+			fields.result === "pass" ? "fixed" : "unresolved",
+		...fields,
+	};
+}
+
+/**
+ * Append an enforcement event to the log file.
+ * @param projectRoot - Absolute path to the project root.
+ * @param event - The enforcement event to log.
+ */
+export function logEvent(
+	projectRoot: string,
+	event: EnforcementEvent,
+): void {
+	const logPath = getLogPath(projectRoot);
+	const dir = dirname(logPath);
+	if (!existsSync(dir)) {
+		mkdirSync(dir, { recursive: true });
+	}
+	appendFileSync(logPath, JSON.stringify(event) + "\n", "utf-8");
+}
+
+/**
+ * Append an enforcement response to the log file.
+ * @param projectRoot - Absolute path to the project root.
+ * @param response - The enforcement response to log.
+ */
+export function logResponse(
+	projectRoot: string,
+	response: EnforcementResponse,
+): void {
+	const logPath = getLogPath(projectRoot);
+	const dir = dirname(logPath);
+	if (!existsSync(dir)) {
+		mkdirSync(dir, { recursive: true });
+	}
+	// Responses are stored as a separate line type with a `_type` discriminator.
+	const entry = { _type: "response" as const, ...response };
+	appendFileSync(logPath, JSON.stringify(entry) + "\n", "utf-8");
+}
+
+/**
+ * Read all enforcement events from the log file.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Array of all enforcement events in the log.
+ */
+export function readEvents(projectRoot: string): EnforcementEvent[] {
+	const logPath = getLogPath(projectRoot);
+	if (!existsSync(logPath)) return [];
+
+	const results: EnforcementEvent[] = [];
+	for (const line of readFileSync(logPath, "utf-8").split("\n")) {
+		if (!line) continue;
+		try {
+			const parsed = JSON.parse(line);
+			if (parsed && typeof parsed === "object" && !("_type" in parsed)) {
+				results.push(parsed as EnforcementEvent);
+			}
+		} catch {
+			// skip malformed lines
+		}
+	}
+	return results;
+}
+
+/**
+ * Read all enforcement responses from the log file.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Array of all enforcement responses in the log.
+ */
+export function readResponses(projectRoot: string): EnforcementResponse[] {
+	const logPath = getLogPath(projectRoot);
+	if (!existsSync(logPath)) return [];
+
+	const results: EnforcementResponse[] = [];
+	for (const line of readFileSync(logPath, "utf-8").split("\n")) {
+		if (!line) continue;
+		try {
+			const parsed = JSON.parse(line);
+			if (parsed && typeof parsed === "object" && parsed._type === "response") {
+				results.push(parsed as EnforcementResponse);
+			}
+		} catch {
+			// skip malformed lines
+		}
+	}
+	return results;
+}
+
+export type { EnforcementEvent, EnforcementResponse, EnforcementResult, EnforcementResolution };

@@ -2,7 +2,7 @@
 id: "EPIC-3e6cad90"
 type: "epic"
 title: "Knowledge Maturity Pipeline — Full Migration"
-description: "Migrate all governance artifacts to the AD-430829f1 knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift."
+description: "Migrate all governance artifacts to the PD-430829f1 knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift."
 status: archived
 priority: "P1"
 created: "2026-03-12"
@@ -25,7 +25,7 @@ relationships:
 
 ## Context
 
-[AD-430829f1](AD-430829f1) defines the Knowledge Maturity Pipeline — restructuring governance artifacts around a six-stage learning lifecycle with mandatory bidirectional relationships. The design is complete. This epic is the full migration.
+[PD-430829f1](PD-430829f1) defines the Knowledge Maturity Pipeline — restructuring governance artifacts around a six-stage learning lifecycle with mandatory bidirectional relationships. The design is complete. This epic is the full migration.
 
 This must be done in one pass. A half-migrated state — some artifacts with relationships, some without; some schemas requiring fields, others not — creates exactly the kind of drift the pipeline is designed to prevent. Mid-migration hell is worse than the current state.
 

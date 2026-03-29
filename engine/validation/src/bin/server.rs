@@ -575,7 +575,7 @@ fn run_daemon_cmd(args: &[String]) {
     }
 
     // ORQA_PORT_BASE is the daemon port directly (no offset). Matches
-    // daemon/src/health.rs resolve_port() and libs/cli/src/lib/ports.ts.
+    // daemon/src/health.rs resolve_port() and cli/src/lib/ports.ts.
     let default_port: u16 = std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse().ok())

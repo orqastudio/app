@@ -10,15 +10,15 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 9
 relationships:
-  - target: AD-09fc4e65
+  - target: PD-09fc4e65
     type: documents
-    rationale: Documentation page references AD-09fc4e65
-  - target: AD-39e2fb81
+    rationale: Documentation page references PD-09fc4e65
+  - target: PD-39e2fb81
     type: documents
-    rationale: Documentation page references AD-39e2fb81
+    rationale: Documentation page references PD-39e2fb81
 ---
 
-**Date:** 2026-03-02 | **References:** [AD-09fc4e65](AD-09fc4e65), [AD-39e2fb81](AD-39e2fb81)
+**Date:** 2026-03-02 | **References:** [PD-09fc4e65](PD-09fc4e65), [PD-39e2fb81](PD-39e2fb81)
 
 End-to-end description of how AI responses stream through the provider sidecar, Rust backend, and into the Svelte UI. The sidecar implements a provider interface — currently using the Claude Agent SDK, with the architecture designed for additional providers. Covers the NDJSON protocol, event types, stream loop mechanics, tool execution, approval gating, and cancellation.
 
@@ -31,7 +31,7 @@ graph TD
     SDK["Claude Agent SDK (TypeScript)"]
     Sidecar["Sidecar (Bun binary)<br/>translates SDK messages into SidecarResponse NDJSON"]
     Rust["Rust stream loop<br/>domain/stream_loop.rs, reads line-by-line"]
-    Channel["Channel&lt;StreamEvent&gt;<br/>Tauri IPC, ordered delivery (AD-39e2fb81)"]
+    Channel["Channel&lt;StreamEvent&gt;<br/>Tauri IPC, ordered delivery (PD-39e2fb81)"]
     Store["Svelte store ($state runes)"]
     RAF["requestAnimationFrame (~16ms)"]
     DOM["DOM"]
@@ -259,7 +259,7 @@ Context overflow errors are intercepted in `translate_response()` and given a us
 
 ## Related Documents
 
-- Architecture Decisions — [AD-09fc4e65](AD-09fc4e65) (sidecar architecture), [AD-39e2fb81](AD-39e2fb81) (Channel\<T\> for streaming)
+- Architecture Decisions — [PD-09fc4e65](PD-09fc4e65) (sidecar architecture), [PD-39e2fb81](PD-39e2fb81) (Channel\<T\> for streaming)
 - Tool Definitions — Tool schemas, security model, and in-process execution
 - Streaming Pipeline — this document
 

@@ -14,7 +14,7 @@ enforcement:
     message: "Each universal role has a defined set of permitted tools; using tools outside a role's scope violates ownership boundaries; Reviewer and Researcher cannot use Edit/Write tools"
 relationships:
 
-  - target: AD-48b310f9
+  - target: PD-48b310f9
 
     type: enforces
 ---

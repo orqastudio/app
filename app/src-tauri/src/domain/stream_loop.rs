@@ -295,7 +295,14 @@ fn evaluate_unified_write(
     file_path: &str,
     state: &tauri::State<'_, AppState>,
 ) -> Vec<Verdict> {
-    let mut verdicts = evaluate_write_verdicts(tracker, file_path);
+    let gates = match state.session.process_gates.lock() {
+        Ok(g) => g.clone(),
+        Err(e) => {
+            tracing::warn!("[process_gates] process_gates mutex poisoned in write eval: {e}");
+            Vec::new()
+        }
+    };
+    let mut verdicts = evaluate_write_verdicts(&gates, tracker, file_path);
 
     // Append enforcement engine verdicts for this file write.
     let engine_guard = match state.enforcement.engine.lock() {
@@ -319,8 +326,16 @@ fn evaluate_unified_write(
 /// learn-after-doing). This unified path ensures both systems share the same output channel.
 fn evaluate_unified_stop(
     tracker: &crate::domain::workflow_tracker::WorkflowTracker,
+    state: &tauri::State<'_, AppState>,
 ) -> Vec<Verdict> {
-    evaluate_stop_verdicts(tracker)
+    let gates = match state.session.process_gates.lock() {
+        Ok(g) => g.clone(),
+        Err(e) => {
+            tracing::warn!("[process_gates] process_gates mutex poisoned in stop eval: {e}");
+            Vec::new()
+        }
+    };
+    evaluate_stop_verdicts(&gates, tracker)
 }
 
 /// Record a completed tool call in the session process state.
@@ -403,7 +418,7 @@ pub fn evaluate_stop_gates(state: &tauri::State<'_, AppState>) {
             return;
         }
     };
-    let verdicts = evaluate_unified_stop(&guard);
+    let verdicts = evaluate_unified_stop(&guard, state);
     for v in &verdicts {
         tracing::debug!(
             "[enforcement] rule='{}' action={:?} fired at stop: {}",

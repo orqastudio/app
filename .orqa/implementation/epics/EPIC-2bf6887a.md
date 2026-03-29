@@ -60,7 +60,7 @@ Fix incorrect task statuses on active epics, remove dead `scope` field reference
 | [TASK-cfeed07a](TASK-cfeed07a) | Document plugin architecture and SDK extraction plan | 3 | Component library extraction, view registration API, theme tokens, plugin distribution |
 | [TASK-48464435](TASK-48464435) | Fix [EPIC-9ddef7f9](EPIC-9ddef7f9) task statuses | 4 | Revert [TASK-30045ad8](TASK-30045ad8) to in-progress, update [TASK-19a94ac8](TASK-19a94ac8) |
 | [TASK-d7346ee9](TASK-d7346ee9) | Tighten [RULE-87ba1b81](RULE-87ba1b81) orchestrator content boundary | 4 | Clarify `.orqa/implementation/` exception: structure = orchestrator, content = Writer |
-| [TASK-62b0543c](TASK-62b0543c) | Resolve [AD-859ed163](AD-859ed163) SQLite scoping violation | 4 | Governance tables in SQLite violate [AD-859ed163](AD-859ed163). Decide: ephemeral cache or file-based. |
+| [TASK-62b0543c](TASK-62b0543c) | Resolve [PD-859ed163](PD-859ed163) SQLite scoping violation | 4 | Governance tables in SQLite violate [PD-859ed163](PD-859ed163). Decide: ephemeral cache or file-based. |
 
 ## Out of Scope
 

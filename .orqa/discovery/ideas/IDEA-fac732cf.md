@@ -29,7 +29,7 @@ OrqaStudio reads governance artifacts, user-authored markdown, and tool outputs 
 2. **Tool outputs** — file read results, search results, and external data could contain injection payloads
 3. **Encoded assets** — base64-encoded content, unicode tricks, or invisible characters could bypass input validation
 4. **Cross-session persistence** — injected content in SQLite (session history) could affect future sessions
-5. **Plugin attack surface** — future plugin system (AD-0dfa4d52) opens additional vectors
+5. **Plugin attack surface** — future plugin system (PD-0dfa4d52) opens additional vectors
 
 A structured security audit would identify vulnerabilities, implement defenses, and establish security testing patterns.
 

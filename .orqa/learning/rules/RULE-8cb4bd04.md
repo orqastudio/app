@@ -26,7 +26,7 @@ enforcement:
 
 relationships:
 
-  - target: "AD-a1c2ca06"
+  - target: "PD-a1c2ca06"
 
     type: "enforces"
 ---

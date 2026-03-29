@@ -7,6 +7,11 @@
 
 	const pluginRelationships = $derived(pluginRegistry.allRelationships);
 
+	/**
+	 * Formats a list of artifact type constraints as a readable string.
+	 * @param types - The list of allowed artifact type keys.
+	 * @returns A comma-separated string, or "any" if the list is empty.
+	 */
 	function typeConstraint(types: string[]): string {
 		if (types.length === 0) return "any";
 		return types.join(", ");

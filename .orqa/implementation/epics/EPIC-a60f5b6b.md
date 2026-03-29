@@ -62,7 +62,7 @@ Convert every self-compliance-only rule to mechanical enforcement where possible
 
 **Linter-enforceable (add ESLint/clippy rules):**
 
-- [RULE-9814ec3c](RULE-9814ec3c): Component purity — no `invoke()` in `$lib/components/` ([AD-9a7d7256](AD-9a7d7256))
+- [RULE-9814ec3c](RULE-9814ec3c): Component purity — no `invoke()` in `$lib/components/` ([PD-9a7d7256](PD-9a7d7256))
 - [RULE-9814ec3c](RULE-9814ec3c): Function size limits — flag functions >50 lines
 - [RULE-83411442](RULE-83411442): Tooltip usage — no `title=` on interactive elements
 - [RULE-eb269afb](RULE-eb269afb): Reusable components — warn on inline empty/loading/error patterns

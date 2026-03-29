@@ -15,7 +15,7 @@ enforcement:
     command: "orqa enforce"
     description: "Validates user-invocable field presence; missing field blocks commits"
 relationships:
-  - target: AD-c1e5a39e
+  - target: PD-c1e5a39e
     type: enforces
 ---
 Every knowledge artifact MUST have a `user-invocable` field in its YAML frontmatter. This field determines how the knowledge artifact surfaces to users.

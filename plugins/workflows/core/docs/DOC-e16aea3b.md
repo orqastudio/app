@@ -219,7 +219,7 @@ relationships:
   - target: KNOW-e89753ad
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
-  - target: AD-a44384d1
+  - target: PD-a44384d1
     type: implements
     rationale: "Documents the CLI architecture decision"
 ```text

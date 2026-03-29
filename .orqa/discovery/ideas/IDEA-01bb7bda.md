@@ -2,7 +2,7 @@
 id: "IDEA-01bb7bda"
 type: discovery-idea
 title: "AI-assisted artifact backfill tooling"
-description: "Tooling that reads artifacts, analyses content against other artifacts, proposes relationship connections, presents for human review, and batch-updates frontmatter. Built as a precursor to the AD-430829f1 migration, reusable for any future schema evolution."
+description: "Tooling that reads artifacts, analyses content against other artifacts, proposes relationship connections, presents for human review, and batch-updates frontmatter. Built as a precursor to the PD-430829f1 migration, reusable for any future schema evolution."
 status: captured
 created: "2026-03-12"
 updated: "2026-03-13"

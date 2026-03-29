@@ -34,8 +34,8 @@ Independent end-to-end compliance audit: read every section of the architecture 
   8. Token Efficiency as Architecture
   9. Integration Points
   10. Migration Path
-  11. Open Questions (resolved in AD-1ef9f57c)
-- `AD-1ef9f57c` — resolved architecture decisions (answers to section 11 open questions)
+  11. Open Questions (resolved in PD-1ef9f57c)
+- `PD-1ef9f57c` — resolved architecture decisions (answers to section 11 open questions)
 - The actual codebase: `libs/`, `plugins/`, `connectors/`, `.orqa/`, `.claude/`
 
 ## Agent Role
@@ -45,7 +45,7 @@ Researcher — read-only audit producing a compliance report. Any FAIL findings 
 ## Steps
 
 1. Read `RES-d6e8ab11.md` in full — all 11 sections
-2. Read `AD-1ef9f57c` for resolved decisions
+2. Read `PD-1ef9f57c` for resolved decisions
 3. For EACH section (1-11):
 
    a. Extract the key recommendations and constraints

@@ -8,8 +8,9 @@ use crate::cli_tools::runner::CliToolRunner;
 use crate::domain::artifact_graph::ArtifactGraph;
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::knowledge_injector::KnowledgeInjector;
+use crate::domain::process_gates::ProcessGateConfig;
 use crate::domain::process_state::SessionProcessState;
-use crate::domain::workflow_tracker::WorkflowTracker;
+use crate::domain::workflow_tracker::{TrackerConfig, WorkflowTracker};
 use crate::search::SearchEngine;
 use crate::sidecar::manager::SidecarManager;
 use crate::startup::StartupTracker;
@@ -73,12 +74,20 @@ pub struct EnforcementState {
 ///
 /// Tracks whether docs were read and knowledge was loaded before code was written.
 /// Accumulates reads, writes, searches, and commands over the session lifetime.
-/// Both reset when `stream_send_message` is called for a different session.
+/// All reset when `stream_send_message` is called for a different session.
+/// Gate and tracker configs are loaded from the resolved workflow plugin config.
 pub struct SessionState {
     /// Session-level process compliance state.
     pub process_state: Mutex<SessionProcessState>,
     /// Session-level workflow tracker for process gate evaluation.
     pub workflow_tracker: Mutex<WorkflowTracker>,
+    /// Process gate definitions loaded from the resolved workflow plugin config.
+    pub process_gates: Mutex<Vec<ProcessGateConfig>>,
+    /// Path classification rules for the workflow tracker, from workflow plugin config.
+    ///
+    /// Wrapped in a `Mutex` so it can be replaced when a new project is opened via
+    /// `project_open`. The tracker is rebuilt with the new config at that point.
+    pub tracker_config: Mutex<TrackerConfig>,
 }
 
 /// Plugin CLI tool runner state.

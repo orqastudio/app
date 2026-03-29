@@ -2,7 +2,7 @@
 id: "RES-8c29af5d"
 type: discovery-research
 title: "Universal Roles and Task Ownership"
-description: "Combined analysis of the seven universal agent roles, their task ownership boundaries, and how they map to Claude Code's fixed subagent types. Informs the agent restructuring from AD-48b310f9."
+description: "Combined analysis of the seven universal agent roles, their task ownership boundaries, and how they map to Claude Code's fixed subagent types. Informs the agent restructuring from PD-48b310f9."
 status: completed
 created: "2026-03-07"
 updated: "2026-03-07"
@@ -16,7 +16,7 @@ relationships:
 
 Three overlapping concerns need resolving together:
 
-1. **Role portability** — Current agents are software-specific; need universal roles [AD-48b310f9](AD-48b310f9)
+1. **Role portability** — Current agents are software-specific; need universal roles [PD-48b310f9](PD-48b310f9)
 2. **Task ownership** — Who owns what? Process vs execution, investigation vs implementation
 3. **Platform mapping** — Claude Code has fixed subagent types we must map to
 

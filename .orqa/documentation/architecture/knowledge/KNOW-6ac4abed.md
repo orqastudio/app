@@ -5,7 +5,7 @@ status: active
 title: Audit Criteria
 domain: architecture
 description: Nine questions to ask when reviewing any file or artifact against the target architecture — use for audit work and quality checks
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-6ac4abed
 ---

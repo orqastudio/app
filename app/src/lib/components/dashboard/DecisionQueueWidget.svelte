@@ -6,6 +6,8 @@
 	import { SvelteMap } from "svelte/reactivity";
 	import { getStores } from "@orqastudio/sdk";
 	import { ACTION_LABELS, DEFAULT_ACTION_LABEL } from "$lib/config/action-labels";
+	import { STATUS_ORDER } from "$lib/config/sort-orders";
+	import { ARTIFACT_TYPES, ARTIFACT_STATUSES } from "$lib/config/governance-types";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
@@ -30,13 +32,17 @@
 		priority: string | null;
 	}
 
-	/** Human-readable action required based on artifact type. */
+	/**
+	 * Returns a human-readable action label for an artifact type.
+	 * @param type - The artifact type key.
+	 * @returns The action label string for the type.
+	 */
 	function actionLabel(type: string): string {
 		return ACTION_LABELS[type] ?? DEFAULT_ACTION_LABEL;
 	}
 
 	const pendingActions = $derived.by((): PendingAction[] => {
-		return artifactGraphSDK.byStatus("review").map((node) => ({
+		return artifactGraphSDK.byStatus(ARTIFACT_STATUSES.review).map((node) => ({
 			id: node.id,
 			title: node.title,
 			artifactType: node.artifact_type,
@@ -62,7 +68,11 @@
 		taskTotal: number;
 	}
 
-	/** Priority band → sort rank (lower = higher priority). */
+	/**
+	 * Maps a priority band to a numeric sort rank where lower is higher priority.
+	 * @param p - The priority string (e.g. "P1", "P2") or null for unset.
+	 * @returns A numeric rank; unset priorities rank last.
+	 */
 	function priorityRank(p: string | null): number {
 		if (p === "P1") return 0;
 		if (p === "P2") return 1;
@@ -75,7 +85,7 @@
 
 		// Pre-index tasks by epic reference (frontmatter `epic` field)
 		const tasksByEpic = new SvelteMap<string, ArtifactNode[]>();
-		for (const task of artifactGraphSDK.byType("task")) {
+		for (const task of artifactGraphSDK.byType(ARTIFACT_TYPES.task)) {
 			const fm = task.frontmatter as Record<string, unknown>;
 			const epicId = typeof fm.epic === "string" ? fm.epic : null;
 			if (!epicId) continue;
@@ -84,13 +94,17 @@
 			tasksByEpic.set(epicId, existing);
 		}
 
-		for (const node of artifactGraphSDK.byType("epic")) {
+		for (const node of artifactGraphSDK.byType(ARTIFACT_TYPES.epic)) {
 			const status = node.status ?? "";
-			if (status !== "active" && status !== "ready" && status !== "prioritised") continue;
+			if (
+				status !== ARTIFACT_STATUSES.active &&
+				status !== ARTIFACT_STATUSES.ready &&
+				status !== ARTIFACT_STATUSES.prioritised
+			) continue;
 
 			const tasks = tasksByEpic.get(node.id) ?? [];
 			const taskTotal = tasks.length;
-			const taskDone = tasks.filter((t) => t.status === "completed").length;
+			const taskDone = tasks.filter((t) => t.status === ARTIFACT_STATUSES.completed).length;
 			const taskProgress = taskTotal > 0 ? taskDone / taskTotal : null;
 
 			entries.push({
@@ -108,9 +122,8 @@
 
 		// active first, then ready; within each group sort by priority
 		return entries.sort((a, b) => {
-			const statusOrder: Record<string, number> = { active: 0, prioritised: 1, ready: 2 };
-			const sa = statusOrder[a.status] ?? 2;
-			const sb = statusOrder[b.status] ?? 2;
+			const sa = STATUS_ORDER[a.status] ?? 99;
+			const sb = STATUS_ORDER[b.status] ?? 99;
 			if (sa !== sb) return sa - sb;
 			return priorityRank(a.priority) - priorityRank(b.priority);
 		});
@@ -126,6 +139,7 @@
 	// Navigation
 	// -------------------------------------------------------------------------
 
+	/** Navigate to the roadmap activity view. */
 	function openRoadmap() {
 		navigationStore.setActivity("roadmap");
 	}

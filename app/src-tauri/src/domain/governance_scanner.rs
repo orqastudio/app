@@ -6,14 +6,20 @@
 
 use std::path::Path;
 
+use orqa_validation::settings::ArtifactEntry;
+
 use crate::domain::governance::GovernanceScanResult;
 use crate::error::OrqaError;
 
-/// Scan a project directory for governance files across the 6 canonical governance areas.
+/// Scan a project directory for governance files across the areas defined in `artifacts`.
 ///
 /// Delegates to `orqa_engine::enforcement::scanner::scan_governance`. Returns
 /// `OrqaError::Validation` if the path does not exist, `OrqaError::FileSystem`
 /// for I/O errors.
-pub fn scan_governance(project_path: &Path) -> Result<GovernanceScanResult, OrqaError> {
-    orqa_engine::enforcement::scanner::scan_governance(project_path).map_err(OrqaError::from)
+pub fn scan_governance(
+    project_path: &Path,
+    artifacts: &[ArtifactEntry],
+) -> Result<GovernanceScanResult, OrqaError> {
+    orqa_engine::enforcement::scanner::scan_governance(project_path, artifacts)
+        .map_err(OrqaError::from)
 }

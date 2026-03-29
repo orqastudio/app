@@ -4,6 +4,7 @@ type: knowledge
 title: Artifact Relationships
 domain: methodology/governance
 description: "Reference for all typed relationship verbs, their from/to constraints, and semantic categories used to connect OrqaStudio artifacts."
+tier: always
 summary: "Artifact Relationships. Every connection between artifacts uses a typed relationship with a specific verb. The verb describes the nature of the connection and constrains which artifact types can participate."
 status: active
 relationships:

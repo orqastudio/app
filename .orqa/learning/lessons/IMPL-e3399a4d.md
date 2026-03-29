@@ -10,7 +10,7 @@ maturity: understanding
 recurrence: 1
 relationships:
 
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
 
     type: teaches
     rationale: "This lesson's principle (enforcement gaps are critical) informed the decision that rule promotion requires enforcement"

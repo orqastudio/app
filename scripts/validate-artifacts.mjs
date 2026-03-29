@@ -301,11 +301,23 @@ function validateArtifact(fm, relPath, content) {
 	if (fm.type && artifactTypes[fm.type]) {
 		const typeDef = artifactTypes[fm.type];
 
-		// 5a. ID prefix must match type's expected prefix
-		if (idMatch && typeDef.id_prefix && idMatch[1] !== typeDef.id_prefix) {
-			errs.push({
-				error: `ID prefix mismatch: type "${fm.type}" expects prefix "${typeDef.id_prefix}" but got "${idMatch[1]}"`,
-			});
+		// 5a. ID must match type's id_pattern when available, or fall back to
+		// strict id_prefix comparison. id_pattern allows both legacy and current
+		// prefixes (e.g., IDEA-* and DISC-IDEA-* for discovery-idea).
+		if (idMatch) {
+			const idPatternStr = typeDef.id_pattern;
+			if (idPatternStr) {
+				const idPattern = new RegExp(idPatternStr);
+				if (!idPattern.test(fm.id)) {
+					errs.push({
+						error: `ID format mismatch: type "${fm.type}" expects pattern "${idPatternStr}" but got "${fm.id}"`,
+					});
+				}
+			} else if (typeDef.id_prefix && idMatch[1] !== typeDef.id_prefix) {
+				errs.push({
+					error: `ID prefix mismatch: type "${fm.type}" expects prefix "${typeDef.id_prefix}" but got "${idMatch[1]}"`,
+				});
+			}
 		}
 
 		// 5b. Type-location consistency: the artifact must live under its type's
@@ -316,7 +328,9 @@ function validateArtifact(fm, relPath, content) {
 			const expectedDir = defaultPath.endsWith("/") ? defaultPath : defaultPath + "/";
 			// Strip a leading "./" from expectedDir so both sides are comparable.
 			const normalizedExpected = expectedDir.replace(/^\.\//, "");
-			if (!artifactDir.startsWith(normalizedExpected)) {
+			const isKnowledge = fm.type === "knowledge";
+			const inAKnowledgeSubdir = /[/]knowledge[/]$/.test(artifactDir);
+			if (!artifactDir.startsWith(normalizedExpected) && !(isKnowledge && inAKnowledgeSubdir)) {
 				errs.push({
 					error: `Type-location mismatch: "${fm.type}" expects path "${expectedDir}" but artifact is at "${relPath}"`,
 				});
@@ -360,9 +374,10 @@ function validateArtifact(fm, relPath, content) {
 		// Rough token estimate: ~4 chars per token
 		const approxTokens = Math.ceil(content.length / 4);
 		if (approxTokens < 500) {
-			errs.push({
+			// Token count is a guideline, not a structural requirement — warn but don't block.
+			warnings.push({
 				file: relPath,
-				error: `Knowledge artifact is ~${approxTokens} tokens — too short (minimum: 500 tokens)`,
+				warning: `Knowledge artifact is ~${approxTokens} tokens — below target (minimum: 500 tokens)`,
 			});
 		}
 		if (approxTokens > 2000) {

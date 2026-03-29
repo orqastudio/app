@@ -5,6 +5,7 @@ title: "Thinking Mode: Research"
 domain: methodology/planning
 thinking-mode: research
 description: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
+tier: always
 summary: "The user wants something investigated, explored, or understood — information gathering with no code changes, only findings."
 status: active
 created: 2026-03-21

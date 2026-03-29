@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Review"
 domain: methodology/delivery
 description: "The user wants something checked, validated, or audited against standards — produces a PASS/FAIL verdict with evidence, not fixes."
+tier: always
 summary: "The user wants something checked, validated, or audited against standards — produces a PASS/FAIL verdict with evidence, not fixes."
 status: active
 thinking-mode: review

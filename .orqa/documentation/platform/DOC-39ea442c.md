@@ -10,7 +10,7 @@ sort: 13
 created: 2026-03-25
 updated: 2026-03-25
 relationships:
-  - target: AD-1ef9f57c
+  - target: PD-1ef9f57c
     type: documents
     rationale: "Documents the resolved decisions on prompt generation, summary generation, budget granularity, retrieval latency"
   - target: DOC-3d8ed14e
@@ -355,7 +355,7 @@ budget-enforcer.ts: recordUsage() / checkAgentContinue()
 
 ## Design Decisions
 
-These decisions are recorded in [AD-1ef9f57c](AD-1ef9f57c):
+These decisions are recorded in [PD-1ef9f57c](PD-1ef9f57c):
 
 | Decision | Resolution |
 | ---------- | ----------- |

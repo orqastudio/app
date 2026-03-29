@@ -3,6 +3,7 @@
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
+	import { ARTIFACT_TYPES, ARTIFACT_STATUSES, RELATIONSHIP_TYPES, PRIORITY_VALUES } from "$lib/config/governance-types";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
@@ -20,13 +21,13 @@
 	}
 
 	const activeMilestone = $derived.by((): MilestoneProgress | null => {
-		const milestones = artifactGraphSDK.byType("milestone");
-		const active = milestones.find((m) => m.status === "active");
+		const milestones = artifactGraphSDK.byType(ARTIFACT_TYPES.milestone);
+		const active = milestones.find((m) => m.status === ARTIFACT_STATUSES.active);
 		if (!active) return null;
 
 		// Collect epic IDs referenced by this milestone via "contains" relationships
 		const epicIds = active.references_out
-			.filter((ref) => ref.relationship_type === "contains")
+			.filter((ref) => ref.relationship_type === RELATIONSHIP_TYPES.contains)
 			.map((ref) => ref.target_id);
 
 		// For each epic ID, resolve and count P1 epics
@@ -35,10 +36,10 @@
 
 		for (const epicId of epicIds) {
 			const epic = artifactGraphSDK.resolve(epicId);
-			if (!epic || epic.artifact_type !== "epic") continue;
-			if (epic.priority === "P1") {
+			if (!epic || epic.artifact_type !== ARTIFACT_TYPES.epic) continue;
+			if (epic.priority === PRIORITY_VALUES.p1) {
 				p1Total++;
-				if (epic.status === "completed") p1Done++;
+				if (epic.status === ARTIFACT_STATUSES.completed) p1Done++;
 			}
 		}
 
@@ -64,13 +65,14 @@
 	// Navigation
 	// -------------------------------------------------------------------------
 
+	/** Navigate to the roadmap activity to view the active milestone. */
 	function openMilestone() {
-		// Navigate to the roadmap view, not the artifact entry
-		navigationStore.setGroup("delivery");
+		navigationStore.setActivity("roadmap");
 	}
 
+	/** Navigate to the roadmap activity overview. */
 	function openRoadmap() {
-		navigationStore.setGroup("delivery");
+		navigationStore.setActivity("roadmap");
 	}
 </script>
 

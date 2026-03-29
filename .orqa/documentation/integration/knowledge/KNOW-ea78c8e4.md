@@ -4,6 +4,7 @@ type: knowledge
 title: Dev Environment Management
 domain: integration/cli
 description: "How to set up, navigate, and operate the OrqaStudio dev environment mono-repo with its git submodules and Makefile commands."
+tier: on-demand
 summary: "Dev Environment Management. The OrqaStudio dev environment (`orqastudio-dev`) aggregates all repos as git submodules. This skill covers how to manage it."
 status: active
 plugin: "@orqastudio/plugin-cli"

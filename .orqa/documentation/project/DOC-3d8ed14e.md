@@ -5,6 +5,7 @@ title: Core Application Architecture
 domain: architecture
 category: architecture
 description: End-to-end architecture map of OrqaStudio — every system traced from entry point to persistence/display.
+status: active
 sort: 2
 ---
 

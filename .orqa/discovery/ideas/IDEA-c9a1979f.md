@@ -60,7 +60,7 @@ Extend the existing session/SQLite infrastructure to track quantitative data per
 - Delegation outcomes: success, failure, partial completion rates
 - Tool call counts: which tools used most frequently, which fail most
 - Session duration and active time
-- Stored in SQLite alongside existing session data (per AD-859ed163)
+- Stored in SQLite alongside existing session data (per PD-859ed163)
 
 ### c. Cost Awareness
 

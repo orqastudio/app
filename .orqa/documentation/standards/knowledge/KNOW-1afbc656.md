@@ -42,7 +42,7 @@ Display Text
 
 ```markdown
 See [RULE-b10fe6d1](RULE-b10fe6d1) for artifact lifecycle rules.
-This was decided in [AD-859ed163](AD-859ed163).
+This was decided in [PD-859ed163](PD-859ed163).
 Refer to the Streaming Pipeline for the full architecture.
 The [Frontend Research](RES-80a476c7) covers component library selection.
 ```
@@ -164,7 +164,7 @@ Most documentation pages end with a "Related Documents" section. Use artifact ID
 ## Related Documents
 
 - IPC Command Catalog — Full parameter and return type documentation
-- Architecture Decisions — [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary), [AD-2d58941b](AD-2d58941b) (errors)
+- Architecture Decisions — [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary), [PD-2d58941b](PD-2d58941b) (errors)
 - MVP Specification — Features F-001 through F-013
 ```
 
@@ -174,7 +174,7 @@ When referencing artifacts inline, always use the link format:
 
 ```markdown
 Per [RULE-b10fe6d1](RULE-b10fe6d1), epics must have a milestone reference.
-This was investigated in [RES-80a476c7](RES-80a476c7) and decided in [AD-33e315cc](AD-33e315cc).
+This was investigated in [RES-80a476c7](RES-80a476c7) and decided in [PD-33e315cc](PD-33e315cc).
 The Coding Standards require 80%+ test coverage.
 ```
 

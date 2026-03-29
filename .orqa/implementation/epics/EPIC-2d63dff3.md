@@ -81,7 +81,7 @@ Graph visualiser calls server-computed metrics from `libs/validation` (via MCP) 
 - Trend over time (store health snapshots, show trend lines for key metrics)
 - Threshold alerts (orphan % > 5%, clusters > 3, traceability < 90%)
 - Action buttons (scan, auto-fix)
-- Store health snapshots in SQLite (the app already uses SQLite for conversation persistence — per AD-859ed163, metrics are structured queryable data, appropriate for SQLite)
+- Store health snapshots in SQLite (the app already uses SQLite for conversation persistence — per PD-859ed163, metrics are structured queryable data, appropriate for SQLite)
 - Expand snapshots to capture all metrics, not just error/warning counts
 - Trend queries: metric values over time, deltas between snapshots
 

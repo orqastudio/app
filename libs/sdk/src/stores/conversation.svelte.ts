@@ -1,4 +1,4 @@
-import { SvelteMap } from "svelte/reactivity";
+import { SvelteMap, SvelteDate } from "svelte/reactivity";
 import type { Message, StreamEvent } from "@orqastudio/types";
 import { invoke, createStreamChannel, extractErrorMessage } from "../ipc/invoke.js";
 
@@ -36,14 +36,23 @@ export interface PendingApproval {
 /** Default model used when no explicit model is configured. */
 const DEFAULT_MODEL_FALLBACK = "auto";
 
+/** Reactive state for the active conversation: messages, streaming, tool calls, and approvals. */
 export class ConversationStore {
+	/** All messages in the active session. */
 	messages = $state<Message[]>([]);
+	/** Accumulated text content while the model is streaming. */
 	streamingContent = $state("");
+	/** Accumulated thinking content while the model is streaming. */
 	streamingThinking = $state("");
+	/** True while the model is actively streaming a response. */
 	isStreaming = $state(false);
+	/** True while messages are being loaded from the backend. */
 	isLoading = $state(false);
+	/** Last error message, or null if none. */
 	error = $state<string | null>(null);
+	/** Active tool call states, keyed by tool_call_id. */
 	activeToolCalls = $state<SvelteMap<string, ToolCallState>>(new SvelteMap());
+	/** Currently selected model identifier. */
 	selectedModel = $state<string>(DEFAULT_MODEL_FALLBACK);
 	/** Non-null when a write/execute tool is waiting for user approval. */
 	pendingApproval = $state<PendingApproval | null>(null);
@@ -51,18 +60,28 @@ export class ConversationStore {
 	processViolations = $state<Array<{ check: string; message: string }>>([]);
 	/** Context entries sent to the model at the start of the most recent turn. */
 	contextEntries = $state<ContextEntry[]>([]);
-	/** Last auto-generated title update received from the backend. Components observe this
-	 * to propagate the change to the session store without creating a cross-store dependency. */
+	/**
+	 * Last auto-generated title update received from the backend. Components observe this
+	 * to propagate the change to the session store without creating a cross-store dependency.
+	 */
 	lastTitleUpdate = $state<{ sessionId: number; title: string } | null>(null);
 
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
 	private defaultModel: string = DEFAULT_MODEL_FALLBACK;
 
+	/**
+	 * The resolved model name as reported by the backend, or null before the first stream.
+	 * @returns Model identifier string, or null.
+	 */
 	get currentModel(): string | null {
 		return this.resolvedModel;
 	}
 
+	/**
+	 * True if there is at least one message in the active session.
+	 * @returns True when messages array is non-empty.
+	 */
 	get hasMessages(): boolean {
 		return this.messages.length > 0;
 	}
@@ -71,12 +90,17 @@ export class ConversationStore {
 	 * Set the default model used when the store is cleared.
 	 * Call this during app initialization to configure the default model
 	 * without hardcoding it in the SDK.
+	 * @param model - Model identifier to use as the default.
 	 */
 	setDefaultModel(model: string): void {
 		this.defaultModel = model;
 		this.selectedModel = model;
 	}
 
+	/**
+	 * Load all messages for the given session from the backend.
+	 * @param sessionId - ID of the session whose messages to load.
+	 */
 	async loadMessages(sessionId: number): Promise<void> {
 		this.isLoading = true;
 		this.error = null;
@@ -91,6 +115,11 @@ export class ConversationStore {
 		}
 	}
 
+	/**
+	 * Send a user message and stream the assistant response.
+	 * @param sessionId - ID of the session to send into.
+	 * @param content - Text content of the user message.
+	 */
 	async sendMessage(sessionId: number, content: string): Promise<void> {
 		this.error = null;
 		this.streamingContent = "";
@@ -120,7 +149,7 @@ export class ConversationStore {
 			stream_status: "complete",
 			input_tokens: null,
 			output_tokens: null,
-			created_at: new Date().toISOString(),
+			created_at: new SvelteDate().toISOString(),
 		};
 		this.messages = [...this.messages, optimisticMessage];
 
@@ -141,6 +170,10 @@ export class ConversationStore {
 		}
 	}
 
+	/**
+	 * Cancel an active streaming response for the given session.
+	 * @param sessionId - ID of the session to stop.
+	 */
 	async stopStreaming(sessionId: number): Promise<void> {
 		try {
 			await invoke("stream_stop", { sessionId });
@@ -149,6 +182,7 @@ export class ConversationStore {
 		}
 	}
 
+	/** Reset all conversation state, preparing for a new session. */
 	clear() {
 		this.messages = [];
 		this.streamingContent = "";
@@ -166,7 +200,36 @@ export class ConversationStore {
 		this.lastTitleUpdate = null;
 	}
 
-	/** Approve or deny the currently pending tool call, then invoke the backend. */
+	/**
+	 * Send a one-shot message to the sidecar and collect the full response text.
+	 * Does not persist to a session or update any store state. Use this when you
+	 * need a quick inference result (e.g., AI suggestions in a dialog) without
+	 * creating a visible conversation turn.
+	 * @param content - Text content of the message to send.
+	 * @returns The complete response text, or throws if the sidecar is unavailable.
+	 */
+	async oneShotMessage(content: string): Promise<string> {
+		let collected = "";
+		const channel = createStreamChannel((event: StreamEvent) => {
+			// Only collect text deltas — no store state mutations for one-shot calls.
+			if (event.type === "text_delta") {
+				collected += event.data.content;
+			}
+		});
+
+		await invoke("stream_send_message", {
+			sessionId: -1,
+			content,
+			model: this.selectedModel,
+			onEvent: channel,
+		});
+		return collected;
+	}
+
+	/**
+	 * Approve or deny the currently pending tool call, then invoke the backend.
+	 * @param approved - True to allow the tool call, false to deny it.
+	 */
 	async respondToApproval(approved: boolean): Promise<void> {
 		const approval = this.pendingApproval;
 		if (!approval) return;
@@ -181,6 +244,10 @@ export class ConversationStore {
 		}
 	}
 
+	/**
+	 * Dispatch a single stream event to the appropriate store state update.
+	 * @param event - The stream event received from the sidecar.
+	 */
 	private handleStreamEvent(event: StreamEvent) {
 		switch (event.type) {
 			case "stream_start":

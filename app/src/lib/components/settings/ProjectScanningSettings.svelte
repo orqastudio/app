@@ -31,6 +31,10 @@
 		localCustomPrompt = props.settings.custom_system_prompt ?? "";
 	});
 
+	/**
+	 * Constructs a ProjectSettings object from the current local scanning form state.
+	 * @returns The merged ProjectSettings with updated model, paths, and prompt.
+	 */
 	function buildSettings(): ProjectSettings {
 		return {
 			...props.settings,
@@ -43,11 +47,16 @@
 
 	const modelOptions = CLAUDE_MODEL_OPTIONS;
 
+	/**
+	 * Applies the selected model and saves settings.
+	 * @param value - The model identifier to apply.
+	 */
 	function handleModelChange(value: string) {
 		localModel = value;
 		props.onSave(buildSettings());
 	}
 
+	/** Adds the current newExcludedPath input to the excluded paths list and saves. */
 	function addExcludedPath() {
 		const trimmed = newExcludedPath.trim();
 		if (trimmed && !localExcludedPaths.includes(trimmed)) {
@@ -57,11 +66,16 @@
 		}
 	}
 
+	/**
+	 * Removes an excluded path from the list and saves.
+	 * @param path - The path string to remove.
+	 */
 	function removeExcludedPath(path: string) {
 		localExcludedPaths = localExcludedPaths.filter((p) => p !== path);
 		props.onSave(buildSettings());
 	}
 
+	/** Triggers a project rescan and merges the detected stack/governance into settings. */
 	async function handleRescan() {
 		const result = await props.onRescan();
 		if (result) {

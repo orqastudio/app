@@ -14,8 +14,8 @@ members = [
     "engine/workflow",
     "engine/search",
     "engine/streaming",
-    "libs/mcp-server",
-    "libs/lsp-server",
+    "engine/mcp-server",
+    "engine/lsp-server",
     "app/src-tauri",
     "daemon",
 ]
@@ -81,6 +81,8 @@ print_stdout = "deny"
 print_stderr = "deny"
 # Prefer .to_owned() on &str over .to_string()
 str_to_string = "warn"
+# Prefer .clone() on String over .to_string()
+string_to_string = "warn"
 # Make Arc::clone() explicit
 clone_on_ref_ptr = "warn"
 # Catch missed fields in struct destructuring

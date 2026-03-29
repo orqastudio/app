@@ -10,7 +10,7 @@ enforcement:
   - mechanism: behavioral
     message: "Every feature must serve at least one active pillar; orchestrator reads active pillars and evaluates gate questions before delegating any task; features failing pillar alignment are rejected"
 relationships:
-  - target: AD-e711446e
+  - target: PD-e711446e
     type: enforces
   - target: DOC-06224bf6
     type: documented-by

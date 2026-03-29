@@ -48,7 +48,7 @@ If we backfill content without building viewers, the artifacts exist but are inv
 | --------- | ---------- | --------------- |
 | Phase 0 research (8 files) | `.orqa/research/mvp/` | No frontmatter links to decisions/ideas/epics |
 | Provider architecture research | `.orqa/research/provider-architecture.md` | No frontmatter links |
-| Architecture decisions [AD-7121ec20](AD-7121ec20)–[AD-af88bb69](AD-af88bb69) | `docs/architecture/decisions.md` (monolithic) | Not individual artifacts; no links to research |
+| Architecture decisions [PD-7121ec20](PD-7121ec20)–[PD-af88bb69](PD-af88bb69) | `docs/architecture/decisions.md` (monolithic) | Not individual artifacts; no links to research |
 | Phase 1 scaffold (completed) | Described in roadmap only | No retroactive epic/tasks |
 | Phase 2b governance bootstrap (completed) | Described in roadmap only | No retroactive epic/tasks |
 | Agent governance plan | `.orqa/plans/agent-governance.md` | Orphaned — no epic reference |
@@ -96,7 +96,7 @@ Make artifacts navigable — clicking an epic shows its tasks, clicking a task s
 
 | Action | Details | Depends On |
 | -------- | --------- | ------------ |
-| **3a. Internal artifact links** | MarkdownRenderer resolves `[EPIC-797972a7](EPIC-797972a7)`, `[TASK-154e988e](TASK-154e988e)`, `[AD-09fc4e65](AD-09fc4e65)` as clickable links to their artifacts | Wave 2 |
+| **3a. Internal artifact links** | MarkdownRenderer resolves `[EPIC-797972a7](EPIC-797972a7)`, `[TASK-154e988e](TASK-154e988e)`, `[PD-09fc4e65](PD-09fc4e65)` as clickable links to their artifacts | Wave 2 |
 | **3b. Relationship sidebar** | When viewing an epic, show related tasks, plans, research, decisions in a sidebar panel | Wave 2 |
 | **3c. Roadmap view** | Interactive roadmap showing milestones → epics → tasks hierarchy (replaces monolithic doc) | Wave 2 |
 
@@ -110,15 +110,15 @@ Every research doc gets YAML frontmatter linking it to what it informed.
 
 | File | Current Frontmatter | Add |
 | ------ | ------------------- | ----- |
-| `mvp/claude-integration.md` | type, status, date | `produces_decisions: [[AD-09fc4e65](AD-09fc4e65), [AD-fc4e9013](AD-fc4e9013)]`, `informs_epics: []` |
-| `mvp/tauri-v2.md` | type, status, date | `produces_decisions: [[AD-39e2fb81](AD-39e2fb81), [AD-e4a3b5da](AD-e4a3b5da)]`, `informs_epics: []` |
-| `mvp/frontend-library.md` | type, status, date | `produces_decisions: [[AD-d01b9e0a](AD-d01b9e0a), [AD-5d0f8814](AD-5d0f8814)]`, `informs_epics: []` |
-| `mvp/persistence-design.md` | type, status, date | `produces_decisions: [[AD-33e315cc](AD-33e315cc)]`, `informs_epics: []` |
-| `mvp/onboarding-strategy.md` | type, status, date | `produces_decisions: [[AD-b08f456d](AD-b08f456d)]`, `informs_epics: []` |
-| `mvp/wireframing-approach.md` | type, status, date | `produces_decisions: [[AD-0dfa4d52](AD-0dfa4d52)]`, `informs_epics: []` |
-| `mvp/design-tokens.md` | type, status, date | `produces_decisions: [[AD-23e27cf5](AD-23e27cf5)]`, `informs_epics: []` |
-| `mvp/branding.md` | type, status, date | `produces_decisions: [[AD-af88bb69](AD-af88bb69)]`, `informs_epics: []` |
-| `provider-architecture.md` | (none currently) | `produces_decisions: [[AD-09fc4e65](AD-09fc4e65)]`, `informs_epics: [[EPIC-73fcc85a](EPIC-73fcc85a)]` |
+| `mvp/claude-integration.md` | type, status, date | `produces_decisions: [[PD-09fc4e65](PD-09fc4e65), [PD-fc4e9013](PD-fc4e9013)]`, `informs_epics: []` |
+| `mvp/tauri-v2.md` | type, status, date | `produces_decisions: [[PD-39e2fb81](PD-39e2fb81), [PD-e4a3b5da](PD-e4a3b5da)]`, `informs_epics: []` |
+| `mvp/frontend-library.md` | type, status, date | `produces_decisions: [[PD-d01b9e0a](PD-d01b9e0a), [PD-5d0f8814](PD-5d0f8814)]`, `informs_epics: []` |
+| `mvp/persistence-design.md` | type, status, date | `produces_decisions: [[PD-33e315cc](PD-33e315cc)]`, `informs_epics: []` |
+| `mvp/onboarding-strategy.md` | type, status, date | `produces_decisions: [[PD-b08f456d](PD-b08f456d)]`, `informs_epics: []` |
+| `mvp/wireframing-approach.md` | type, status, date | `produces_decisions: [[PD-0dfa4d52](PD-0dfa4d52)]`, `informs_epics: []` |
+| `mvp/design-tokens.md` | type, status, date | `produces_decisions: [[PD-23e27cf5](PD-23e27cf5)]`, `informs_epics: []` |
+| `mvp/branding.md` | type, status, date | `produces_decisions: [[PD-af88bb69](PD-af88bb69)]`, `informs_epics: []` |
+| `provider-architecture.md` | (none currently) | `produces_decisions: [[PD-09fc4e65](PD-09fc4e65)]`, `informs_epics: [[EPIC-73fcc85a](EPIC-73fcc85a)]` |
 
 **Note:** The exact AD mappings above are approximate. The implementing agent must read `docs/architecture/decisions.md` to verify which research produced which decision.
 
@@ -145,7 +145,7 @@ The roadmap lists completed phases with no artifact trail. Proposed retroactive 
 
 ### 1d. Research → Decision Links
 
-The architecture decisions doc (`docs/architecture/decisions.md`) contains [AD-7121ec20](AD-7121ec20) through [AD-af88bb69](AD-af88bb69). Each decision was informed by research. The frontmatter links in 1a create the forward reference (research → decision). For the reverse (decision → research), we have two options:
+The architecture decisions doc (`docs/architecture/decisions.md`) contains [PD-7121ec20](PD-7121ec20) through [PD-af88bb69](PD-af88bb69). Each decision was informed by research. The frontmatter links in 1a create the forward reference (research → decision). For the reverse (decision → research), we have two options:
 
 **Option A: Keep decisions as a monolithic doc** — Add a "Research Source" column to the decisions table. Lightweight, no new artifact type.
 

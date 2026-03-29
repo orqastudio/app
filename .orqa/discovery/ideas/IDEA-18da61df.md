@@ -27,7 +27,7 @@ OrqaStudio's universal agent model already separates work into distinct roles (P
 1. **Cost optimization** — use cheaper/local models for planning, expensive models for implementation
 2. **Latency reduction** — local fine-tuned models for fast planning iterations
 3. **Specialization** — models tuned for specific tasks (code review, documentation, architecture)
-4. **Provider independence** — the app already aims to be provider-agnostic (AD-23e27cf5), this extends that to per-role granularity
+4. **Provider independence** — the app already aims to be provider-agnostic (PD-23e27cf5), this extends that to per-role granularity
 
 ## Sketch
 

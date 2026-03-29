@@ -4,6 +4,7 @@ type: knowledge
 title: "Svelte 5 Events Reference"
 domain: platform/svelte
 description: "How to migrate Svelte 4 event directives to Svelte 5 attribute-style event handlers and callback props pattern."
+tier: on-demand
 summary: "Svelte 5 Events Reference"
 status: active
 created: 2026-03-20

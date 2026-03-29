@@ -4,6 +4,7 @@ type: knowledge
 title: OrqaStudio CLI Commands
 domain: integration/cli
 description: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
+tier: on-demand
 summary: "Complete reference for the orqa CLI: every command, its subcommands, and when to use each. Agents must use orqa commands instead of raw cargo/npm/make."
 status: active
 created: 2026-03-24

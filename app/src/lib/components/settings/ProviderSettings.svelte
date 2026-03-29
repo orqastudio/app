@@ -9,6 +9,7 @@
 	let cliChecking = $state(false);
 	let reauthenticating = $state(false);
 
+	/** Checks the CLI installation status and auth state, updating the setup store. */
 	async function handleCheckCli(): Promise<void> {
 		cliChecking = true;
 		await setupStore.checkCli();
@@ -16,6 +17,7 @@
 		cliChecking = false;
 	}
 
+	/** Initiates re-authentication with Claude and waits for the result. */
 	async function handleReauthenticate(): Promise<void> {
 		reauthenticating = true;
 		await setupStore.reauthenticate();

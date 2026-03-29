@@ -28,7 +28,7 @@ enforcement:
     pattern: ".orqa/implementation/tasks/**|.orqa/implementation/epics/**"
 relationships:
 
-  - target: AD-b2f1f829
+  - target: PD-b2f1f829
 
     type: enforces
 ---

@@ -4,6 +4,7 @@ type: knowledge
 title: "Svelte 5 Performance Reference"
 domain: platform/svelte
 description: "Patterns for optimizing Svelte 5 reactivity, preventing waterfalls in SvelteKit load functions, and avoiding common $effect anti-patterns."
+tier: on-demand
 summary: "Svelte 5 Performance Reference"
 status: active
 created: 2026-03-20

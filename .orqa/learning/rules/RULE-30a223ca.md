@@ -26,7 +26,7 @@ enforcement:
     description: "SessionStart hook reads .state/session-state.md and surfaces unfinished work"
 relationships:
 
-  - target: AD-4ea9a290
+  - target: PD-4ea9a290
 
     type: enforces
 ---

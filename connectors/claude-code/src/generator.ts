@@ -20,6 +20,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { listInstalledPlugins, readManifest } from "@orqastudio/cli";
 import { generateAgentFiles } from "./lib/agent-file-generator.js";
+import { callDaemon } from "./hooks/shared.js";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -114,52 +115,34 @@ function generateAgents(
 // CLAUDE.md generation
 // ---------------------------------------------------------------------------
 
-/**
- * Read active rule titles from .orqa/learning/rules/*.md frontmatter.
- *
- * Used to surface active enforcement context in the generated CLAUDE.md.
- * Returns an empty array if the rules directory does not exist.
- * @param projectRoot - Absolute path to the project root directory.
- * @returns Array of rule title strings extracted from frontmatter.
- */
-function readActiveRuleTitles(projectRoot: string): string[] {
-  const rulesDir = path.join(projectRoot, ".orqa", "learning", "rules");
-  if (!fs.existsSync(rulesDir)) return [];
-
-  const titles: string[] = [];
-  for (const file of fs.readdirSync(rulesDir)) {
-    if (!file.endsWith(".md")) continue;
-    try {
-      const content = fs.readFileSync(path.join(rulesDir, file), "utf-8");
-      const match = content.match(/^---\n[\s\S]*?title:\s*(.+?)\n[\s\S]*?---/m);
-      if (match?.[1]) {
-        titles.push(match[1].trim());
-      }
-    } catch {
-      // Skip unreadable files silently
-    }
-  }
-  return titles;
+/** Response shape for POST /context. */
+interface ContextResponse {
+  rule_titles: string[];
+  workflow_names: string[];
 }
 
 /**
- * Read active workflow names from .orqa/workflows/*.resolved.yaml.
+ * Fetch active rule titles and workflow names from the daemon POST /context endpoint.
  *
- * Used to surface the workflow context in the generated CLAUDE.md.
- * Returns an empty array if the workflows directory does not exist.
+ * The daemon reads .orqa/learning/rules/*.md frontmatter and
+ * .orqa/workflows/*.resolved.yaml filenames. Business logic for reading .orqa/
+ * lives in the daemon, not the connector.
+ *
+ * Falls back to empty arrays when the daemon is unavailable — CLAUDE.md
+ * generation continues without the active-context section.
  * @param projectRoot - Absolute path to the project root directory.
- * @returns Array of workflow name strings (filenames without the .resolved.yaml suffix).
+ * @returns Tuple of [ruleTitles, workflowNames].
  */
-function readActiveWorkflowNames(projectRoot: string): string[] {
-  const workflowsDir = path.join(projectRoot, ".orqa", "workflows");
-  if (!fs.existsSync(workflowsDir)) return [];
-
-  const names: string[] = [];
-  for (const file of fs.readdirSync(workflowsDir)) {
-    if (!file.endsWith(".resolved.yaml")) continue;
-    names.push(file.replace(".resolved.yaml", ""));
-  }
-  return names;
+async function fetchActiveContext(
+  projectRoot: string,
+): Promise<{ ruleTitles: string[]; workflowNames: string[] }> {
+  const result = await callDaemon<ContextResponse>("/context", {
+    project_path: projectRoot,
+  }).catch(() => null);
+  return {
+    ruleTitles: result?.rule_titles ?? [],
+    workflowNames: result?.workflow_names ?? [],
+  };
 }
 
 /**
@@ -168,13 +151,13 @@ function readActiveWorkflowNames(projectRoot: string): string[] {
  * Reads design principles from .orqa/documentation/architecture/ DOCs if present
  * and appends any active workflows and rules as project-specific context.
  * Falls back to baked-in P1-P7 content if architecture docs are unavailable.
+ * Active rules and workflows are fetched from the daemon POST /context endpoint.
  * @param projectRoot - Absolute path to the project root directory.
  * @param errors - Mutable array to which non-fatal error messages are appended.
  * @returns The complete CLAUDE.md content as a string.
  */
-function buildClaudemd(projectRoot: string, errors: string[]): string {
-  const workflowNames = readActiveWorkflowNames(projectRoot);
-  const ruleTitles = readActiveRuleTitles(projectRoot);
+async function buildClaudemd(projectRoot: string, errors: string[]): Promise<string> {
+  const { ruleTitles, workflowNames } = await fetchActiveContext(projectRoot);
 
   // Attempt to extract the P1-P7 principles block from architecture docs.
   const architectureCoreDoc = path.join(
@@ -383,17 +366,17 @@ Architecture documentation and knowledge are available as project governance art
 
 /**
  * Write the generated CLAUDE.md to .claude/CLAUDE.md (or dry-run equivalent).
- * @param projectRoot - Absolute path to the project root directory (used to read rules and workflows).
+ * @param projectRoot - Absolute path to the project root directory (used to fetch rules and workflows from daemon).
  * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
  * @param errors - Mutable array to which non-fatal error messages are appended.
  * @returns Absolute path to the written CLAUDE.md file.
  */
-function generateClaudemd(
+async function generateClaudemd(
   projectRoot: string,
   outputRoot: string,
   errors: string[],
-): string {
-  const content = buildClaudemd(projectRoot, errors);
+): Promise<string> {
+  const content = await buildClaudemd(projectRoot, errors);
   const outputPath = path.join(outputRoot, ".claude", "CLAUDE.md");
   const outputDir = path.dirname(outputPath);
 
@@ -410,84 +393,68 @@ function generateClaudemd(
 // ---------------------------------------------------------------------------
 
 /**
- * Map from Claude Code hook event name to the script file and timeout.
+ * Resolve the path to the connector's hooks source directory.
  *
- * Scripts live at plugin/scripts/ relative to the plugin root and are
- * referenced via CLAUDE_PLUGIN_ROOT. This matches the target structure at
- * targets/claude-code-plugin/plugin/hooks/hooks.json.
+ * The connector plugin lives at connectors/claude-code/. Its source hooks
+ * declaration is at hooks/hooks.json within that directory. This is the
+ * authoritative hook configuration — generated from the plugin manifest's
+ * provides.hooks declarations, not from a hardcoded static map.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Absolute path to the connector's hooks/hooks.json source file.
  */
-const HOOK_SCRIPT_MAP: Record<
-  string,
-  { matcher: string; script: string; timeout: number }
-> = {
-  PreToolUse: { matcher: "Write|Edit", script: "pre-tool-use.mjs", timeout: 10 },
-  PostToolUse: { matcher: "Write|Edit", script: "post-tool-use.mjs", timeout: 10 },
-  UserPromptSubmit: { matcher: "*", script: "user-prompt-submit.mjs", timeout: 10 },
-  SessionStart: { matcher: "*", script: "session-start.mjs", timeout: 15 },
-  Stop: { matcher: "*", script: "stop.mjs", timeout: 10 },
-  PreCompact: { matcher: "*", script: "pre-compact.mjs", timeout: 10 },
-  SubagentStop: { matcher: "*", script: "subagent-stop.mjs", timeout: 15 },
-  TeammateIdle: { matcher: "*", script: "teammate-idle.mjs", timeout: 10 },
-  TaskCompleted: { matcher: "*", script: "task-completed.mjs", timeout: 10 },
-};
+function resolveConnectorHooksPath(projectRoot: string): string {
+  return path.join(projectRoot, "connectors", "claude-code", "hooks", "hooks.json");
+}
 
 /**
- * Build the hooks.json content from plugin hook declarations and the
- * connector's script-to-event mapping.
+ * Build the hooks.json content by reading the connector plugin's own
+ * hooks/hooks.json source declaration.
  *
- * Scans all installed plugin manifests for `provides.hooks` entries. Any
- * declared event that has a known mapping in HOOK_SCRIPT_MAP is included in
- * the output. Declared events with no mapping produce a warning. The
- * connector's own hooks are always included in full, regardless of whether
- * they appear in any manifest, since it is the primary source.
+ * The connector's hooks/hooks.json is the authoritative plugin-manifest-driven
+ * declaration of what Claude Code hook events this connector provides. It is
+ * maintained alongside the connector source and updated when new hook scripts
+ * are added. This replaces the previous static HOOK_SCRIPT_MAP approach.
+ *
+ * Any plugin that declares hook events in its manifest but has no corresponding
+ * entry in the connector hooks source produces a warning — those events are
+ * acknowledged as needing wiring in a future connector update.
  * @param projectRoot - Absolute path to the project root directory.
  * @param errors - Mutable array to which non-fatal error messages are appended.
  * @returns The fully assembled hooks.json object ready for serialization.
  */
 function buildHooksJson(projectRoot: string, errors: string[]): HooksJson {
-  // Collect hook events declared across all installed plugin manifests.
-  const declaredEvents = new Set<string>();
+  // Read the connector's own hooks.json — the authoritative hook declaration.
+  const hooksSourcePath = resolveConnectorHooksPath(projectRoot);
+  let hooksJson: HooksJson;
+
+  try {
+    const raw = fs.readFileSync(hooksSourcePath, "utf-8");
+    hooksJson = JSON.parse(raw) as HooksJson;
+  } catch (err) {
+    errors.push(
+      `Could not read connector hooks source at ${hooksSourcePath}: ${err instanceof Error ? err.message : String(err)}`,
+    );
+    hooksJson = { hooks: {} };
+  }
+
+  // Collect hook events declared across all installed plugin manifests and
+  // warn about any that have no corresponding entry in the connector hooks source.
+  const wiredEvents = new Set(Object.keys(hooksJson.hooks));
+
   for (const plugin of listInstalledPlugins(projectRoot)) {
     try {
       const manifest = readManifest(plugin.path);
       for (const hookDecl of manifest.provides?.hooks ?? []) {
-        if ((hookDecl as { event?: string }).event) {
-          declaredEvents.add((hookDecl as { event: string }).event);
+        const event = (hookDecl as { event?: string }).event;
+        if (event && !wiredEvents.has(event)) {
+          errors.push(
+            `Hook event "${event}" declared in ${manifest.name} has no Claude Code wiring — update connector hooks/hooks.json`,
+          );
         }
       }
     } catch {
       // Skip plugins with unreadable manifests
     }
-  }
-
-  // Build the hooks.json from HOOK_SCRIPT_MAP — the full connector event set.
-  // Includes all mapped events regardless of manifest declarations so the
-  // generated file is always complete.
-  const hooksJson: HooksJson = { hooks: {} };
-
-  for (const [event, { matcher, script, timeout }] of Object.entries(
-    HOOK_SCRIPT_MAP,
-  )) {
-    hooksJson.hooks[event] = [
-      {
-        matcher,
-        hooks: [
-          {
-            type: "command",
-            command: `node \${CLAUDE_PLUGIN_ROOT}/scripts/${script}`,
-            timeout,
-          },
-        ],
-      },
-    ];
-    declaredEvents.delete(event);
-  }
-
-  // Warn about any declared events that have no wiring.
-  for (const unhandled of declaredEvents) {
-    errors.push(
-      `Hook event "${unhandled}" declared in a plugin manifest has no Claude Code wiring — skipped`,
-    );
   }
 
   return hooksJson;
@@ -642,7 +609,7 @@ function generateLspJson(
  *
  * Reads from:
  *   - Role metadata and tool constraints → .claude/agents/*.md
- *   - .orqa/documentation/architecture/ DOCs + active workflows/rules → .claude/CLAUDE.md
+ *   - Daemon /context + architecture DOCs → .claude/CLAUDE.md
  *   - Plugin manifests (provides.hooks) → plugin/hooks/hooks.json
  *   - Plugin manifests (provides.mcpServers) → .mcp.json
  *   - Plugin manifests (provides.lspServers) → .lsp.json
@@ -653,7 +620,7 @@ function generateLspJson(
  * @param projectRoot - Absolute path to the project root directory.
  * @returns Generation result containing paths to all generated files and any non-fatal errors.
  */
-export function generatePlugin(projectRoot: string): GenerateResult {
+export async function generatePlugin(projectRoot: string): Promise<GenerateResult> {
   const outputRoot = resolveOutputRoot(projectRoot);
   const errors: string[] = [];
 
@@ -663,7 +630,7 @@ export function generatePlugin(projectRoot: string): GenerateResult {
   }
 
   const agents = generateAgents(projectRoot, outputRoot, errors);
-  const claudeMd = generateClaudemd(projectRoot, outputRoot, errors);
+  const claudeMd = await generateClaudemd(projectRoot, outputRoot, errors);
   const hooksJson = generateHooksJson(projectRoot, outputRoot, errors);
   const mcpJson = generateMcpJson(projectRoot, outputRoot, errors);
   const lspJson = generateLspJson(projectRoot, outputRoot, errors);

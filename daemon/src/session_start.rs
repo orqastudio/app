@@ -9,9 +9,9 @@
 // Body: { "project_path": "/abs/path/to/project" }
 
 use std::path::Path;
-use std::process::Command;
 
 use axum::Json;
+use orqa_engine::project::git;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
@@ -168,76 +168,33 @@ fn walk_json_files(dir: &Path) -> Result<Vec<std::path::PathBuf>, std::io::Error
 
 /// Append a warning for each git stash found in the project.
 ///
-/// Runs `git stash list` and pushes a summary into `warnings` if any stashes
-/// exist. Silent on failure — a missing git binary or non-git directory is not
-/// a hard error for the daemon.
+/// Delegates to the engine git module so that subprocess execution is an
+/// engine concern. Silent on failure — a missing git binary or non-git
+/// directory is not a hard error for the daemon.
 fn check_git_stashes(project_path: &Path, warnings: &mut Vec<String>) {
-    let stash_output = Command::new("git")
-        .args(["stash", "list"])
-        .current_dir(project_path)
-        .output();
-
-    match stash_output {
-        Ok(out) if out.status.success() => {
-            let stash_text = String::from_utf8_lossy(&out.stdout);
-            let stash_text = stash_text.trim();
-            if !stash_text.is_empty() {
-                warnings.push(format!("Git stashes found:\n{stash_text}"));
-            }
+    match git::stash_list(project_path) {
+        Some(stashes) if !stashes.is_empty() => {
+            warnings.push(format!("Git stashes found:\n{}", stashes.output));
         }
-        Ok(out) => {
-            let stderr = String::from_utf8_lossy(&out.stderr);
-            warn!(subsystem = "session_start", "git stash list failed: {stderr}");
+        None => {
+            warn!(subsystem = "session_start", "git stash list unavailable");
         }
-        Err(e) => {
-            warn!(subsystem = "session_start", "could not run git stash list: {e}");
-        }
+        _ => {}
     }
 }
 
 /// Append a warning when there are uncommitted changes on the main branch.
 ///
-/// Runs `git branch --show-current` to detect whether the working directory
-/// is on main, then `git status --porcelain` to count modified files. Silent
-/// on failure — a missing git binary or non-git directory is not a hard error.
+/// Delegates to the engine git module so that subprocess execution is an
+/// engine concern. Silent on failure — a missing git binary or non-git
+/// directory is not a hard error.
 fn check_uncommitted_on_main(project_path: &Path, warnings: &mut Vec<String>) {
-    let branch_output = Command::new("git")
-        .args(["branch", "--show-current"])
-        .current_dir(project_path)
-        .output();
-
-    let on_main = branch_output
-        .ok()
-        .filter(|o| o.status.success())
-        .and_then(|o| String::from_utf8(o.stdout).ok())
-        .is_some_and(|s| s.trim() == "main");
-
-    if !on_main {
-        return;
-    }
-
-    let status_output = Command::new("git")
-        .args(["status", "--porcelain"])
-        .current_dir(project_path)
-        .output();
-
-    match status_output {
-        Ok(out) if out.status.success() => {
-            let lines: Vec<&str> = std::str::from_utf8(&out.stdout)
-                .unwrap_or("")
-                .lines()
-                .filter(|l| !l.trim().is_empty())
-                .collect();
-            if !lines.is_empty() {
-                warnings.push(format!("{} uncommitted file(s) on main", lines.len()));
-            }
-        }
-        Ok(out) => {
-            let stderr = String::from_utf8_lossy(&out.stderr);
-            warn!(subsystem = "session_start", "git status failed: {stderr}");
-        }
-        Err(e) => {
-            warn!(subsystem = "session_start", "could not run git status: {e}");
+    if let Some(status) = git::uncommitted_status(project_path) {
+        if status.branch == "main" && status.uncommitted_count > 0 {
+            warnings.push(format!(
+                "{} uncommitted file(s) on main",
+                status.uncommitted_count
+            ));
         }
     }
 }

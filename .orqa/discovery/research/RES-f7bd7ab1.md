@@ -48,7 +48,7 @@ Flat artifact types with standard ID prefixes navigate correctly:
    - Broken links are silent (no error, no feedback)
    - Deep-linking from outside the app is impossible
 
-5. **No markdown cross-linking** — Artifact IDs mentioned in document bodies (e.g., "See [AD-0dfa4d52](AD-0dfa4d52)") are plain text, not interactive links.
+5. **No markdown cross-linking** — Artifact IDs mentioned in document bodies (e.g., "See [PD-0dfa4d52](PD-0dfa4d52)") are plain text, not interactive links.
 
 ## Resolution Mechanism Analysis
 
@@ -126,7 +126,7 @@ pillars:
   - PILLAR-c9e0a695
 research-refs:
   - RES-63cda7a7
-supersedes: AD-0dfa4d52
+supersedes: PD-0dfa4d52
 promoted-to: RULE-8cb4bd04
 
 # Links to files without ID patterns (documentation pages, etc.)
@@ -140,7 +140,7 @@ docs-produced:
 
 | Field Pattern | Value Format | Resolution |
 | -------------- | ------------- | ------------ |
-| Fields listing artifact IDs | `[EPIC-797972a7](EPIC-797972a7)`, `[AD-0dfa4d52](AD-0dfa4d52)`, etc. | Resolve via `resolve_artifact_id` |
+| Fields listing artifact IDs | `[EPIC-797972a7](EPIC-797972a7)`, `[PD-0dfa4d52](PD-0dfa4d52)`, etc. | Resolve via `resolve_artifact_id` |
 | Fields listing file paths | `.orqa/documentation/...` | Navigate directly to path |
 | Mixed fields | Should not exist — pick one format per field | |
 
@@ -250,7 +250,7 @@ Implementation:
 ## Resolved Questions
 
 - **Index refresh**: File watcher — the artifact index rebuilds automatically on `.orqa/` file system changes. No manual rescan needed.
-- **Partial matches**: No — exact ID match only. Partial matching adds ambiguity ([EPIC-797972a7](EPIC-797972a7) vs [TASK-855582b4](TASK-855582b4) vs [AD-7121ec20](AD-7121ec20)).
+- **Partial matches**: No — exact ID match only. Partial matching adds ambiguity ([EPIC-797972a7](EPIC-797972a7) vs [TASK-855582b4](TASK-855582b4) vs [PD-7121ec20](PD-7121ec20)).
 - **Broken links**: Styled as a "broken link" — same chip/box shape as a working link but with a broken-link icon and the app's warning colour token. Visually distinct, not hidden.
 - **Path validation**: Yes — `docs-required`/`docs-produced` paths are validated against disk during scan. Broken paths are flagged in the UI.
 
@@ -259,4 +259,4 @@ Implementation:
 - [RES-63cda7a7](RES-63cda7a7) — Consistent entity body structure (complementary: body templates may include cross-reference sections)
 - [RULE-63cc16ad](RULE-63cc16ad) — Artifact config integrity (config paths must match disk)
 - RULE-b03009da — End-to-end completeness (linking touches all layers)
-- [AD-48b310f9](AD-48b310f9) — Universal agent model (agents are artifacts too, but without standard ID prefixes)
+- [PD-48b310f9](PD-48b310f9) — Universal agent model (agents are artifacts too, but without standard ID prefixes)

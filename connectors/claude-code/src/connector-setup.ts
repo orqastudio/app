@@ -43,6 +43,8 @@ export interface ConnectorSetupResult {
  *
  * NOTE: .claude/CLAUDE.md is NOT managed here — it is a Claude Code project artifact
  * maintained directly, not derived from any source file.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Setup result indicating what was created or updated.
  */
 export function runConnectorSetup(
 	projectRoot: string,
@@ -94,6 +96,10 @@ export function runConnectorSetup(
  * - "created": directory was newly created (or migrated from a symlink)
  * - "exists": directory already existed and was updated in-place
  * - "skipped": coreAgentsSource does not exist — nothing to link
+ * @param agentsDirPath - Absolute path to the .claude/agents/ merged directory.
+ * @param coreAgentsSource - Absolute path to the core agents source directory.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns "created", "exists", or "skipped" based on directory state.
  */
 function setupMergedAgentsDir(
 	agentsDirPath: string,
@@ -165,6 +171,8 @@ function setupMergedAgentsDir(
 /**
  * Count the total number of plugin agent entries across all installed plugins.
  * Uses the CLI registry to enumerate plugins rather than raw filesystem scanning.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Total count of agent entries declared across all installed plugin manifests.
  */
 function countPluginAgents(projectRoot: string): number {
 	let count = 0;

@@ -1,0 +1,366 @@
+# AUTO-GENERATED — do not edit manually.
+# Stage: discover (discovery-artifacts slot in agile-methodology)
+# Source plugin: @orqastudio/plugin-agile-discovery v0.1.4-dev
+# Generated at: 2026-03-29T09:05:07.481Z
+version: 1.0.0
+generated: true
+generatedAt: 2026-03-29T09:05:07.481Z
+description: Resolved discover stage workflow. Contains states, transitions, and artifact types contributed by
+  @orqastudio/plugin-agile-discovery into the discovery-artifacts slot of agile-methodology.
+stage: discover
+source_plugin: "@orqastudio/plugin-agile-discovery"
+fills_slot: discovery-artifacts
+methodology: agile-methodology
+contribution_workflow:
+  name: discover-contribution
+  initial_state: discover
+  states:
+    ideation:
+      category: planning
+      description: Capture and explore high-level product ideas.
+      on_enter:
+        - type: append_log
+          params:
+            message: Discovery ideation started
+    investigation:
+      category: planning
+      description: Conduct research investigations to validate ideas.
+      on_enter:
+        - type: append_log
+          params:
+            message: Discovery investigation started
+    strategic_decision:
+      category: planning
+      description: Make strategic decisions based on research findings.
+      on_enter:
+        - type: append_log
+          params:
+            message: Strategic decision-making started
+    discovery_complete:
+      category: planning
+      description: Discovery stage complete — ready to hand off to planning.
+      on_enter:
+        - type: append_log
+          params:
+            message: Discovery complete
+  transitions:
+    - from: discover
+      to: ideation
+      event: begin_ideation
+      description: Start capturing and exploring ideas.
+    - from: ideation
+      to: investigation
+      event: ideas_captured
+      description: Ideas captured, begin research investigation.
+    - from: investigation
+      to: ideation
+      event: new_ideas
+      description: Research surfaced new ideas — return to ideation.
+    - from: investigation
+      to: strategic_decision
+      event: research_complete
+      description: Research complete, make strategic decisions.
+    - from: strategic_decision
+      to: investigation
+      event: needs_research
+      description: Decision requires more research.
+    - from: strategic_decision
+      to: discovery_complete
+      event: decisions_made
+      description: Strategic decisions made, discovery is complete.
+    - from: discovery_complete
+      to: plan
+      event: scope_defined
+      description: Hand off to planning stage.
+    - from: ideation
+      to: strategic_decision
+      event: fast_track
+      description: Skip investigation for well-understood ideas.
+    - from: ideation
+      to: discovery_complete
+      event: skip_to_complete
+      description: Simple discovery — ideas are clear, no investigation needed.
+artifact_types:
+  vision:
+    id_prefix: VISION
+    id_pattern: ^VISION-[a-f0-9]{8}$
+    default_path: .orqa/discovery/
+    icon: eye
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^VISION-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  pillar:
+    id_prefix: PILLAR
+    id_pattern: ^PILLAR-[a-f0-9]{8}$
+    default_path: .orqa/discovery/pillars/
+    icon: columns-3
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^PILLAR-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        gate:
+          type:
+            - string
+            - array
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  persona:
+    id_prefix: PERSONA
+    id_pattern: ^PERSONA-[a-f0-9]{8}$
+    default_path: .orqa/discovery/personas/
+    icon: users
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^PERSONA-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  pivot:
+    id_prefix: PIVOT
+    id_pattern: ^PIVOT-[a-f0-9]{8}$
+    default_path: .orqa/discovery/
+    icon: refresh-cw
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^PIVOT-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  discovery-idea:
+    id_prefix: DISC-IDEA
+    id_pattern: ^DISC-IDEA-[a-f0-9]{8}$
+    default_path: .orqa/discovery/ideas/
+    icon: lightbulb
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^(IDEA|DISC-IDEA)-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        priority:
+          type: string
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  discovery-research:
+    id_prefix: DISC-RES
+    id_pattern: ^DISC-RES-[a-f0-9]{8}$
+    default_path: .orqa/discovery/research/
+    icon: flask-conical
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^(RES|DISC-RES)-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        methodology:
+          type: string
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  discovery-decision:
+    id_prefix: DISC-AD
+    id_pattern: ^DISC-AD-[a-f0-9]{8}$
+    default_path: .orqa/discovery/decisions/
+    icon: scale
+    source_plugin: "@orqastudio/plugin-agile-discovery"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^(AD|DISC-AD)-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+relationship_types:
+  evolves-to:
+    forward: evolves-to
+    inverse: evolved-from
+    from:
+      - discovery-idea
+    to:
+      - discovery-research
+    semantic: lineage
+  drives:
+    forward: drives
+    inverse: driven-by
+    from:
+      - vision
+    to:
+      - pillar
+    semantic: foundation
+  pivots:
+    forward: pivots
+    inverse: pivoted-by
+    from:
+      - vision
+    to:
+      - pivot
+    semantic: foundation
+  hands-off-to:
+    forward: hands-off-to
+    inverse: handed-off-from
+    from:
+      - discovery-decision
+    to:
+      - planning-idea
+    semantic: lineage
+  informs:
+    forward: informs
+    inverse: informed-by
+    from:
+      - discovery-decision
+    to:
+      - planning-decision
+    semantic: knowledge-flow
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-agile-discovery"
+    version: 0.1.4-dev

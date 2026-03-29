@@ -5,7 +5,7 @@ status: active
 title: Plugin Architecture
 domain: architecture
 description: Plugin taxonomy, purposes, composition pipeline, installation constraints — essential for understanding what plugins provide and how they compose
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-41ccf7c4
 ---

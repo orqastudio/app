@@ -9,6 +9,7 @@ description: |
   code quality standards, testing requirements, CI/CD patterns, and
   development-specific agent skills to the base OrqaStudio setup.
   Use when: The project being set up is a software development project.
+tier: on-demand
 status: active
 onboarding: true
 created: 2026-03-01

@@ -10,9 +10,9 @@ created: 2026-03-02
 updated: 2026-03-08
 sort: 3
 relationships:
-  - target: AD-ecc96aef
+  - target: PD-ecc96aef
     type: documents
-    rationale: Documentation page references AD-ecc96aef
+    rationale: Documentation page references PD-ecc96aef
   - target: RULE-af5771e3
     type: documents
     rationale: Documentation page references RULE-af5771e3
@@ -105,7 +105,7 @@ The standards are enforced by `make check`. The principles behind them are gover
 
 ## TypeScript / Svelte Standards
 
-### Svelte 5 Runes [AD-ecc96aef](AD-ecc96aef)
+### Svelte 5 Runes [PD-ecc96aef](PD-ecc96aef)
 
 - `$state()` for reactive state — never `let x = value` for reactive vars
 - `$derived()` for computed values — never `$:` reactive declarations

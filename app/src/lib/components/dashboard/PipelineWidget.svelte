@@ -4,6 +4,7 @@
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
+	import { ARTIFACT_TYPES, RELATIONSHIP_SEMANTICS } from "$lib/config/governance-types";
 
 	import { PipelineStages, type PipelineStage, type PipelineEdge } from "@orqastudio/svelte-components/pure";
 
@@ -41,23 +42,23 @@
 		const findRels = (semantic: string): RelationshipType[] =>
 			allRels.filter((r) => r.semantic === semantic);
 
-		const govRels = findRels("governance");
-		const knowledgeRels = findRels("knowledge-flow");
+		const govRels = findRels(RELATIONSHIP_SEMANTICS.governance);
+		const knowledgeRels = findRels(RELATIONSHIP_SEMANTICS.knowledgeFlow);
 
 		// Build stages from the types that participate in governance + knowledge flow
 		const stages: StageDef[] = [];
 
 		// Lesson stage — lessons teach decisions, lessons get codified into rules
 		const lessonOutbound = [
-			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.key),
-			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.inverse),
+			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.lesson)).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.lesson)).map((r) => r.inverse),
 		];
 		if (lessonOutbound.length > 0) {
 			stages.push({
-				key: "lesson",
+				key: ARTIFACT_TYPES.lesson,
 				label: "Learning",
 				artifactNoun: "lessons",
-				artifactType: "lesson",
+				artifactType: ARTIFACT_TYPES.lesson,
 				icon: "book-open",
 				outboundRelationships: lessonOutbound,
 			});
@@ -65,15 +66,15 @@
 
 		// Research stage — research informs decisions and guides epics
 		const researchOutbound = [
-			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.key),
-			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.inverse),
+			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.research)).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.research)).map((r) => r.inverse),
 		];
 		if (researchOutbound.length > 0) {
 			stages.push({
-				key: "research",
+				key: ARTIFACT_TYPES.research,
 				label: "Research",
 				artifactNoun: "research docs",
-				artifactType: "research",
+				artifactType: ARTIFACT_TYPES.research,
 				icon: "flask-conical",
 				outboundRelationships: researchOutbound,
 			});
@@ -81,15 +82,15 @@
 
 		// Decision stage — decisions drive epics and govern rules
 		const decisionOutbound = [
-			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.key),
-			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.inverse),
+			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.decision)).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.decision)).map((r) => r.inverse),
 		];
 		if (decisionOutbound.length > 0) {
 			stages.push({
-				key: "decision",
+				key: ARTIFACT_TYPES.decision,
 				label: "Decisions",
 				artifactNoun: "decisions",
-				artifactType: "decision",
+				artifactType: ARTIFACT_TYPES.decision,
 				icon: "scale",
 				outboundRelationships: decisionOutbound,
 			});
@@ -97,15 +98,15 @@
 
 		// Rule stage — rules enforce decisions, codify lessons
 		const ruleOutbound = [
-			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.key),
-			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.inverse),
+			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.rule)).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.rule)).map((r) => r.inverse),
 		];
 		if (ruleOutbound.length > 0) {
 			stages.push({
-				key: "rule",
+				key: ARTIFACT_TYPES.rule,
 				label: "Rules",
 				artifactNoun: "rules",
-				artifactType: "rule",
+				artifactType: ARTIFACT_TYPES.rule,
 				icon: "shield",
 				outboundRelationships: ruleOutbound,
 			});
@@ -135,11 +136,25 @@
 		count: number;
 	}
 
+	/**
+	 * Returns true if the ref's target artifact is of the given type.
+	 * @param ref - The artifact reference to check.
+	 * @param targetType - The artifact type key to match against.
+	 * @returns Whether the referenced artifact is of the target type.
+	 */
 	function refConnectsToType(ref: ArtifactRef, targetType: string): boolean {
 		const targetNode = artifactGraphSDK.resolve(ref.target_id);
 		return targetNode?.artifact_type === targetType;
 	}
 
+	/**
+	 * Counts outbound edges between a set of artifacts and a given target type.
+	 * Only counts edges whose relationship type is in the provided list.
+	 * @param fromArtifacts - The source artifacts to check edges from.
+	 * @param toType - The artifact type of the target to count edges toward.
+	 * @param relationshipTypes - The relationship type keys to include.
+	 * @returns The total number of matching outbound edges.
+	 */
 	function countEdgesBetween(
 		fromArtifacts: ArtifactNode[],
 		toType: string,
@@ -160,6 +175,11 @@
 		return count;
 	}
 
+	/**
+	 * Returns true if the artifact has at least one inbound or outbound reference.
+	 * @param artifact - The artifact node to check.
+	 * @returns Whether the artifact participates in any relationship.
+	 */
 	function hasAnyRelationship(artifact: ArtifactNode): boolean {
 		return artifact.references_out.length > 0 || artifact.references_in.length > 0;
 	}
@@ -222,6 +242,11 @@
 	// Visual helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Returns the Tailwind border class for a stage status.
+	 * @param status - The pipeline stage connectivity status.
+	 * @returns The CSS border class string.
+	 */
 	function statusBorderClass(status: StageData["status"]): string {
 		switch (status) {
 			case "isolated":  return "border-red-400 dark:border-red-600";
@@ -230,6 +255,11 @@
 		}
 	}
 
+	/**
+	 * Returns the Tailwind background class for a stage status.
+	 * @param status - The pipeline stage connectivity status.
+	 * @returns The CSS background class string.
+	 */
 	function statusBgClass(status: StageData["status"]): string {
 		switch (status) {
 			case "isolated":  return "bg-red-50 dark:bg-red-950/30";
@@ -238,6 +268,11 @@
 		}
 	}
 
+	/**
+	 * Computes the connectivity percentage label for a stage, or null if healthy/empty.
+	 * @param data - The stage data including count, connectivity, and status.
+	 * @returns A formatted label string or null if no label should be shown.
+	 */
 	function computeStatusLabel(data: StageData): string | null {
 		if (data.count === 0) return null;
 		const pct = Math.round(data.connectivity * 100);
@@ -247,6 +282,11 @@
 		return null;
 	}
 
+	/**
+	 * Returns the Tailwind text color class for a stage status label.
+	 * @param status - The pipeline stage connectivity status.
+	 * @returns The CSS text color class string.
+	 */
 	function statusLabelClass(status: StageData["status"]): string {
 		switch (status) {
 			case "isolated":  return "text-red-500";
@@ -255,6 +295,11 @@
 		}
 	}
 
+	/**
+	 * Returns the Tailwind background color class for a stage status dot indicator.
+	 * @param status - The pipeline stage connectivity status.
+	 * @returns The CSS background color class string.
+	 */
 	function statusDotColorClass(status: StageData["status"]): string {
 		switch (status) {
 			case "isolated":  return "bg-red-500";

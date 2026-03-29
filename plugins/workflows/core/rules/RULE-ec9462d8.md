@@ -10,7 +10,7 @@ enforcement:
   - mechanism: behavioral
     message: "Documentation is the source of truth; verify docs exist before writing code; update docs before changing code; orchestrator checks docs-required gate before delegating implementation"
 relationships:
-  - target: "AD-af88bb69"
+  - target: "PD-af88bb69"
     type: "enforces"
 ---
 ## Principle

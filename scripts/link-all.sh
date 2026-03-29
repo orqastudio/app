@@ -19,8 +19,8 @@ npm link
 
 # 2. Install and build CLI (depends on types)
 echo ""
-echo "--- libs/cli ---"
-cd "$ROOT/libs/cli"
+echo "--- cli ---"
+cd "$ROOT/cli"
 npm install
 npm link @orqastudio/types
 npx tsc

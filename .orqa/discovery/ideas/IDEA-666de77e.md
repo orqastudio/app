@@ -20,4 +20,4 @@ relationships:
 
 ## Motivation
 
-Emerged during the [AD-430829f1](AD-430829f1) design conversation when the user asked "can you reframe the question for me" and discovered that the reframed perspective changed the design direction. The therapeutic question patterns identified in [AD-430829f1](AD-430829f1) include assumption testing ("can you reframe the question so I get a different perspective?") as a core pipeline mechanism.
+Emerged during the [PD-430829f1](PD-430829f1) design conversation when the user asked "can you reframe the question for me" and discovered that the reframed perspective changed the design direction. The therapeutic question patterns identified in [PD-430829f1](PD-430829f1) include assumption testing ("can you reframe the question so I get a different perspective?") as a core pipeline mechanism.

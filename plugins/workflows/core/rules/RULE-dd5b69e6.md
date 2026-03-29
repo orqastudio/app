@@ -10,9 +10,9 @@ enforcement:
   - mechanism: behavioral
     message: "Skills must be loaded before task execution; orchestrator's delegation template requires skill loading; three-tier skill loading must be followed"
 relationships:
-  - target: AD-c1e5a39e
+  - target: PD-c1e5a39e
     type: enforces
-  - target: AD-26b0eb9f
+  - target: PD-26b0eb9f
     type: enforces
   - target: DOC-b11d4f61
     type: documented-by
@@ -21,7 +21,7 @@ relationships:
   - target: DOC-e6fb92b0
     type: documented-by
 ---
-Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-8abcbfd5](RULE-8abcbfd5). Skills load in three tiers [AD-c1e5a39e](AD-c1e5a39e).
+Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-8abcbfd5](RULE-8abcbfd5). Skills load in three tiers [PD-c1e5a39e](PD-c1e5a39e).
 
 ## Three-Tier Model
 

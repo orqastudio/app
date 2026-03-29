@@ -30,7 +30,7 @@ Sequential migration with validation between each step:
 5. Validation gate between each migration step
 6. Remove CLAUDE.md fallback after migration complete
 
-## Design Constraints (from AD-1ef9f57c)
+## Design Constraints (from PD-1ef9f57c)
 
 - Short fallback period only — CLAUDE.md loading as safety net while LLM performs migration
 - No backwards compatibility — once migrated, old format is dead

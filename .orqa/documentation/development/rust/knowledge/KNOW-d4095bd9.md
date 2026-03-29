@@ -4,6 +4,7 @@ type: knowledge
 title: Clippy Config Management
 domain: platform/rust
 description: "How Clippy lint configuration is generated from OrqaStudio coding standards rules and written to clippy.toml."
+tier: on-demand
 summary: "Clippy Config Management"
 status: active
 plugin: "@orqastudio/plugin-rust"

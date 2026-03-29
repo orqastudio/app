@@ -25,11 +25,10 @@
     "has_design_tokens": false
   },
   "governance": {
-    "lessons": 80,
-    "decisions": 65,
-    "agents": 15,
-    "rules": 56,
-    "knowledge": 99,
+    "lessons": 84,
+    "decisions": 70,
+    "rules": 59,
+    "knowledge": 128,
     "has_claude_config": true
   },
   "icon": null,
@@ -64,22 +63,17 @@
         {
           "key": "pillars",
           "label": "Pillars",
-          "path": ".orqa/principles/pillars"
+          "path": ".orqa/discovery/pillars"
         },
         {
           "key": "personas",
           "label": "Personas",
-          "path": ".orqa/principles/personas"
+          "path": ".orqa/discovery/personas"
         },
         {
           "key": "vision",
           "label": "Vision",
-          "path": ".orqa/principles/vision"
-        },
-        {
-          "key": "grounding",
-          "label": "Grounding",
-          "path": ".orqa/principles/grounding"
+          "path": ".orqa/discovery/vision"
         }
       ]
     },

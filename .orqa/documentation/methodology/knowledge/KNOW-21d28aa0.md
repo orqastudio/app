@@ -8,6 +8,7 @@ description: |
   Enforces documentation-first planning for all implementation tasks.
   Plans must start with documentation, get user approval, then implement with
   mandatory verification gates. Prevents documentation drift across sessions.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

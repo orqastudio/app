@@ -14,7 +14,7 @@ relationships:
   - target: "EPIC-88f359b0"
     type: "guides"
     rationale: "Research findings informed epic design"
-  - target: "AD-430829f1"
+  - target: "PD-430829f1"
     type: "informs"
 ---
 
@@ -88,7 +88,7 @@ That last signal is exactly what would have caught our drift. We were running th
 
 2. **Understanding → Principle**: Lessons have a `evolves-into` field, but promotion is entirely manual. No mechanism detects that a lesson maps to an existing principle, or that a recurring lesson should become a new principle. The `recurrence` counter exists but nothing reads it.
 
-3. **Principle → Practice**: Decisions exist independently of skills. [AD-48b310f9](AD-48b310f9) says "component purity" but there's no structural link to the `component-extraction` skill that teaches how to achieve it. The practice was written separately and happens to cover the same ground.
+3. **Principle → Practice**: Decisions exist independently of skills. [PD-48b310f9](PD-48b310f9) says "component purity" but there's no structural link to the `component-extraction` skill that teaches how to achieve it. The practice was written separately and happens to cover the same ground.
 
 4. **Practice → Enforcement**: Skills are injected by file path patterns (RULE-e1f1afc1). Rules have enforcement entries. But there's no link from "this skill teaches X" to "this rule enforces X." They're parallel systems.
 
@@ -119,7 +119,7 @@ Keep decisions, lessons, rules, and skills as separate types. Add mandatory `ups
 ```yaml
 # On a Rule
 id: RULE-9814ec3c
-principle: AD-48b310f9        # the decision this enforces
+principle: PD-48b310f9        # the decision this enforces
 practice: [component-extraction]  # the skill that teaches compliance
 observations: [IMPL-ffb199b5, IMPL-42dd183e]  # the lessons that motivated this
 verification: VER-006    # effectiveness measurement
@@ -137,7 +137,7 @@ Group related artifacts into a **Knowledge Thread** — a named pipeline that co
 Thread: "Component Purity"
   Observation: IMPL-ffb199b5 ("invoke() found in display component")
   Understanding: IMPL-ffb199b5 body ("convenience leads to coupling")
-  Principle: AD-48b310f9 ("display components receive props only")
+  Principle: PD-48b310f9 ("display components receive props only")
   Practice: component-extraction skill
   Enforcement: RULE-9814ec3c enforcement entry (path match on $lib/components/)
   Verification: VER-xxx (violation trend: 5 → 2 → 0 over 3 months)

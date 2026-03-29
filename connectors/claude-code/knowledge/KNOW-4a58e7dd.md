@@ -31,7 +31,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 | -------- | --------- | --------- |
 | `CLAUDE.md` | Project instructions | `.claude/agents/orchestrator.md` + project rules |
 | `.claude/rules/*.md` | Rule files | `.orqa/learning/rules/` (if not already core) |
-| `.claude/settings.json` | Hooks, permissions | `.orqa/process/hooks/` |
+| `.claude/settings.json` | Hooks, permissions | `project.json` (hooks config lives in project settings) |
 | `AGENTS.md` | Cross-agent instructions | Agent skill content |
 
 **Coexistence strategy:** `.claude/` becomes a symlink layer pointing to `.orqa/`. Claude Code reads `.claude/CLAUDE.md` which symlinks to `.claude/agents/orchestrator.md`. Both tools read the same source of truth.
@@ -70,7 +70,7 @@ Maps existing agentic tool configurations into OrqaStudio's governance structure
 3. **Classify** — For each piece of content, determine:
    - Is this a rule? → `.orqa/learning/rules/`
    - Is this agent instructions? → Agent definition or skill content
-   - Is this a hook/automation? → `.orqa/process/hooks/`
+   - Is this a hook/automation? → `project.json` (hooks are configured in project settings)
    - Is this project settings? → `project.json`
 4. **Deduplicate** — Check if the content already exists in core rules/skills
 5. **Create** — Write the extracted governance artifacts

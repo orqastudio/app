@@ -37,7 +37,7 @@ For any non-trivial feature, follow this preferred workflow before writing the f
 ### Always Read
 
 - `.orqa/documentation/reference/` — Existing feature designs related to the task
-- `.orqa/process/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
+- `.orqa/learning/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
 - `.orqa/implementation/tasks/` — Task artifacts with context, constraints, and priorities
 - `.orqa/documentation/about/roadmap.md` — Verify the work is prioritized and not scope creep
 
@@ -74,12 +74,12 @@ Every implementation plan must include these sections in order:
 
 | Principle | Verify |
 | ----------- | -------- |
-| [AD-7121ec20](AD-7121ec20) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
-| [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
-| [AD-2d58941b](AD-2d58941b) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
-| [AD-ecc96aef](AD-ecc96aef) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
-| [AD-75bb14ae](AD-75bb14ae) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
-| [AD-9a7d7256](AD-9a7d7256) (Component purity) | Pages fetch data, components receive via props only |
+| [PD-7121ec20](PD-7121ec20) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
+| [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
+| [PD-2d58941b](PD-2d58941b) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
+| [PD-ecc96aef](PD-ecc96aef) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
+| [PD-75bb14ae](PD-75bb14ae) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
+| [PD-9a7d7256](PD-9a7d7256) (Component purity) | Pages fetch data, components receive via props only |
 | End-to-end completeness | Every feature includes all 4 layers: Rust command → IPC type → Svelte component → store binding |
 | Coding standards | Function size limits, zero clippy/rustfmt warnings, 80%+ coverage |
 
@@ -88,13 +88,13 @@ Every implementation plan must include these sections in order:
 ```markdown
 ## Architectural Compliance
 
-**AD-7121ec20 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
+**PD-7121ec20 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
 Frontend only displays session list and current conversation.
 
-**AD-4e7faf0e (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
+**PD-4e7faf0e (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
 Frontend calls via `invoke('create_session', { name })`.
 
-**AD-2d58941b (Error propagation):** All session functions return `Result<Session, SessionError>`.
+**PD-2d58941b (Error propagation):** All session functions return `Result<Session, SessionError>`.
 Command handlers map to `Result<T, String>` for Tauri serialization.
 ```
 
@@ -103,7 +103,7 @@ Command handlers map to `Result<T, String>` for Tauri serialization.
 ```markdown
 ## Architectural Compliance
 
-Complies with AD-7121ec20, AD-4e7faf0e, AD-2d58941b, AD-ecc96aef, AD-75bb14ae, AD-9a7d7256.
+Complies with PD-7121ec20, PD-4e7faf0e, PD-2d58941b, PD-ecc96aef, PD-75bb14ae, PD-9a7d7256.
 ```
 
 ### 1b. Systems Architecture Checklist
@@ -162,7 +162,7 @@ Every plan MUST explicitly address each dimension below. For each, state either 
 
 **Documentation Compliance:**
 
-- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/process/decisions/`
+- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/learning/decisions/`
 - Component states match the plan's component state table
 - Error types match documented error propagation strategy
 ```

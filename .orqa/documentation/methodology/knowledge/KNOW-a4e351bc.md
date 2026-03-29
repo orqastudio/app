@@ -11,6 +11,7 @@ description: |
   existing tooling continues to work.
   Use when: Onboarding a project that already uses AI tools or has documented
   conventions, or adding a governance layer to a project mid-lifecycle.
+tier: always
 status: active
 created: 2026-03-22
 updated: 2026-03-22

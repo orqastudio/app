@@ -34,6 +34,7 @@
 		}
 	});
 
+	/** Refreshes the artifact graph and runs a health scan, storing the resulting snapshot. */
 	async function runHealthScan(): Promise<void> {
 		healthLoading = true;
 		try {
@@ -57,6 +58,7 @@
 		}
 	}
 
+	/** Applies all auto-fixable integrity checks, then re-scans to reflect the updated state. */
 	async function runHealthAutoFix(): Promise<void> {
 		healthFixing = true;
 		try {

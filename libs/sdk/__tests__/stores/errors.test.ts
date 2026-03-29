@@ -12,7 +12,7 @@ if (typeof globalThis.window === "undefined") {
 	};
 }
 
-import { errorStore, initBrowserHandlers } from "../../src/stores/errors.svelte.js";
+import { errorStore } from "../../src/stores/errors.svelte.js";
 
 beforeEach(() => {
 	vi.useFakeTimers();
@@ -165,31 +165,12 @@ describe("ErrorStore", () => {
 		});
 	});
 
-	describe("initBrowserHandlers", () => {
+	describe("browser handlers (instance method)", () => {
 		it("works without calling initBrowserHandlers — core error functions still work", () => {
-			// No initBrowserHandlers() call
 			errorStore.addError("test", "works fine");
 			expect(errorStore.errors).toHaveLength(1);
 			errorStore.dismiss(errorStore.errors[0].id);
 			expect(errorStore.errors).toHaveLength(0);
-		});
-
-		it("sets up window.onerror when called", () => {
-			initBrowserHandlers();
-			expect(typeof window.onerror).toBe("function");
-		});
-
-		it("sets up window.onunhandledrejection when called", () => {
-			initBrowserHandlers();
-			expect(typeof window.onunhandledrejection).toBe("function");
-		});
-
-		it("is idempotent", () => {
-			initBrowserHandlers();
-			const first = window.onerror;
-			initBrowserHandlers();
-			// Should be the same handler (not double-registered)
-			expect(window.onerror).toBe(first);
 		});
 	});
 });

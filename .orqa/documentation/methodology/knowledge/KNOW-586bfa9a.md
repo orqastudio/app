@@ -10,6 +10,7 @@ description: |
   search for task-relevant knowledge. Hooks as the enforcement mechanism. Use when:
   configuring agent knowledge, adding employs relationships, understanding why knowledge
   appears in agent context, or debugging missing knowledge injection.
+tier: always
 status: active
 created: 2026-03-24
 updated: 2026-03-24

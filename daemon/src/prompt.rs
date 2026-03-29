@@ -22,7 +22,7 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
-use orqa_engine::prompt::builder::build_system_prompt;
+use orqa_engine::prompt::builder::{build_system_prompt, resolve_project_paths};
 use orqa_engine::prompt::knowledge::KnowledgeInjector;
 use orqa_engine::search::embedder::Embedder;
 
@@ -71,7 +71,7 @@ fn load_prompt_classification(project_path: &Path) -> PromptClassification {
         .join("orqa-plugin.json");
 
     let glob_str = if let Some(s) = pattern.to_str() {
-        s.to_string()
+        s.to_owned()
     } else {
         warn!("[prompt] could not build plugin glob path — using empty classification");
         return PromptClassification::default();
@@ -156,53 +156,13 @@ pub struct PromptResponse {
 pub async fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptResponse> {
     let project_path = Path::new(&req.project_path);
     let classification = load_prompt_classification(project_path);
-
-    // --- Tier 1: ONNX semantic search ---
-    let (prompt_type, method) =
-        if let Some(pt) = classify_with_onnx(&req.message, project_path, &classification) {
-            (pt, "semantic".to_string())
-        } else {
-            // --- Tier 2: keyword regex ---
-            let kw = classify_by_keyword(&req.message, &classification);
-            if kw == "general" {
-                // --- Tier 3: default ---
-                ("general".to_string(), "default".to_string())
-            } else {
-                (kw, "keyword".to_string())
-            }
-        };
-
+    let (prompt_type, method) = classify_message(&req.message, project_path, &classification);
     let stage = resolve_stage(&prompt_type, &classification);
-
-    // Build the system prompt using the engine's prompt builder.
-    // The role and stage will guide which sections are selected.
-    let (prompt_text, sections) = match build_system_prompt(project_path) {
-        Ok(text) => {
-            let token_estimate = estimate_tokens(&text);
-            let sections = vec![SectionInfo {
-                name: format!("system-prompt[role={},stage={}]", req.role, stage),
-                tokens: token_estimate,
-            }];
-            (text, sections)
-        }
-        Err(e) => {
-            warn!(
-                error = %e,
-                role = %req.role,
-                stage = %stage,
-                "[prompt] failed to build system prompt — using minimal fallback"
-            );
-            let fallback = format!("<role>{}</role>", req.role);
-            let sections = vec![SectionInfo {
-                name: "fallback".to_string(),
-                tokens: estimate_tokens(&fallback),
-            }];
-            (fallback, sections)
-        }
-    };
-
+    let prompt_paths = resolve_project_paths(project_path);
+    let stage_opt = if stage == "general" { None } else { Some(stage) };
+    let (prompt_text, sections) = build_prompt_text(&req.role, stage_opt, project_path, &prompt_paths);
     let total_tokens = sections.iter().map(|s| s.tokens).sum();
-    let budget = budget_for_type(&prompt_type);
+    let budget = budget_for_role(&req.role).max(budget_for_type(&prompt_type));
 
     Json(PromptResponse {
         prompt: prompt_text,
@@ -214,26 +174,64 @@ pub async fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptRespon
     })
 }
 
+/// Classify a message using the three-tier pipeline: ONNX → keyword → default.
+///
+/// Returns `(prompt_type, method)` where `method` is one of `"semantic"`, `"keyword"`,
+/// or `"default"` indicating which tier matched.
+fn classify_message(
+    message: &str,
+    project_path: &Path,
+    classification: &PromptClassification,
+) -> (String, String) {
+    if let Some(pt) = classify_with_onnx(message, project_path, classification) {
+        return (pt, "semantic".to_owned());
+    }
+    let kw = classify_by_keyword(message, classification);
+    if kw == "general" {
+        ("general".to_owned(), "default".to_owned())
+    } else {
+        (kw, "keyword".to_owned())
+    }
+}
+
+/// Build the system prompt text and section metadata for a given role and stage.
+///
+/// Falls back to a minimal `<role>` tag when the prompt builder returns an error.
+fn build_prompt_text(
+    role: &str,
+    stage_opt: Option<&str>,
+    project_path: &Path,
+    prompt_paths: &orqa_engine::prompt::builder::ProjectPromptPaths,
+) -> (String, Vec<SectionInfo>) {
+    match build_system_prompt(project_path, role, stage_opt, prompt_paths) {
+        Ok(text) => {
+            let token_estimate = estimate_tokens(&text);
+            let sections = vec![SectionInfo {
+                name: format!("system-prompt[role={role},stage={}]", stage_opt.unwrap_or("general")),
+                tokens: token_estimate,
+            }];
+            (text, sections)
+        }
+        Err(e) => {
+            warn!(
+                error = %e,
+                role = %role,
+                stage = %stage_opt.unwrap_or("general"),
+                "[prompt] failed to build system prompt — using minimal fallback"
+            );
+            let fallback = format!("<role>{role}</role>");
+            let sections = vec![SectionInfo {
+                name: "fallback".to_owned(),
+                tokens: estimate_tokens(&fallback),
+            }];
+            (fallback, sections)
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Tier 1: ONNX semantic classification
 // ---------------------------------------------------------------------------
-
-/// Resolve the ONNX model directory.
-///
-/// Checks in priority order:
-///   1. `ORQA_MODEL_DIR` environment variable
-///   2. `<project_root>/models/all-MiniLM-L6-v2`
-///
-/// Returns the first directory that contains both `model.onnx` and `tokenizer.json`.
-fn resolve_model_dir(project_path: &Path) -> Option<std::path::PathBuf> {
-    [
-        std::env::var("ORQA_MODEL_DIR").ok().map(std::path::PathBuf::from),
-        Some(project_path.join("models").join("all-MiniLM-L6-v2")),
-    ]
-    .into_iter()
-    .flatten()
-    .find(|dir| dir.join("model.onnx").exists() && dir.join("tokenizer.json").exists())
-}
 
 /// Attempt to classify the message using ONNX embeddings against thinking-mode
 /// knowledge artifacts. Returns a PromptType string on success, None if the
@@ -247,7 +245,8 @@ fn classify_with_onnx(
     classification: &PromptClassification,
 ) -> Option<String> {
     // Build an embedder — this will fail gracefully if the ONNX model is absent.
-    let model_dir = resolve_model_dir(project_path)?;
+    // Uses the shared resolve_model_dir from knowledge.rs (LOCALAPPDATA fallback).
+    let model_dir = crate::knowledge::resolve_model_dir()?;
     let mut embedder = Embedder::new(&model_dir).ok()?;
 
     // Truncate the message and form the search query.
@@ -275,7 +274,7 @@ fn classify_with_onnx(
     // We cannot read thinking-mode frontmatter from just the artifact name here,
     // so we use the artifact name as the lookup key against all installed knowledge
     // artifacts, reading the thinking-mode field from the matched artifact file.
-    let knowledge_dir = project_path.join(".orqa").join("process").join("knowledge");
+    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
     for m in &matches {
         let artifact_path = knowledge_dir.join(format!("{}.md", m.name));
         if let Ok(content) = std::fs::read_to_string(&artifact_path) {
@@ -305,7 +304,7 @@ fn extract_thinking_mode(content: &str) -> Option<String> {
         if let Some(rest) = line.strip_prefix("thinking-mode:") {
             let val = rest.trim().trim_matches('"').trim_matches('\'');
             if !val.is_empty() {
-                return Some(val.to_string());
+                return Some(val.to_owned());
             }
         }
     }
@@ -323,8 +322,8 @@ fn resolve_thinking_mode(mode: &str, classification: &PromptClassification) -> O
         return Some(pt.clone());
     }
     // Direct name match against known prompt types.
-    if classification.prompt_types.contains(&mode.to_string()) {
-        return Some(mode.to_string());
+    if classification.prompt_types.contains(&mode.to_owned()) {
+        return Some(mode.to_owned());
     }
     None
 }
@@ -359,11 +358,11 @@ fn classify_by_keyword(message: &str, classification: &PromptClassification) -> 
         if let Some(keywords) = classification.keyword_patterns.get(pt) {
             let kw_refs: Vec<&str> = keywords.iter().map(String::as_str).collect();
             if contains_any(&lower, &kw_refs) {
-                return pt.to_string();
+                return pt.to_owned();
             }
         }
     }
-    "general".to_string()
+    "general".to_owned()
 }
 
 /// Return true if the text contains any of the given keywords as whole words.
@@ -420,6 +419,20 @@ fn budget_for_type(prompt_type: &str) -> u64 {
     match prompt_type {
         "governance" | "planning" | "research" => 4000,
         "review" | "documentation" => 3500,
+        _ => 2500,
+    }
+}
+
+/// Return the token budget for a given agent role per DOC-b951327c section 6.3.
+///
+/// The final budget is the max of `budget_for_role` and `budget_for_type` so that
+/// richer task types can still receive additional headroom above the role minimum.
+fn budget_for_role(role: &str) -> u64 {
+    match role {
+        "implementer" => 2800,
+        "reviewer" => 1900,
+        "researcher" => 2100,
+        "writer" | "designer" | "governance-steward" => 1800,
         _ => 2500,
     }
 }
@@ -699,6 +712,30 @@ mod tests {
     fn budget_for_type_governance_is_larger() {
         assert!(budget_for_type("governance") > budget_for_type("implementation"));
         assert!(budget_for_type("planning") > budget_for_type("debugging"));
+    }
+
+    #[test]
+    fn budget_for_role_matches_doc_b951327c() {
+        // Verify budgets match DOC-b951327c section 6.3 token budget table.
+        assert_eq!(budget_for_role("orchestrator"), 2500);
+        assert_eq!(budget_for_role("implementer"), 2800);
+        assert_eq!(budget_for_role("reviewer"), 1900);
+        assert_eq!(budget_for_role("researcher"), 2100);
+        assert_eq!(budget_for_role("writer"), 1800);
+        assert_eq!(budget_for_role("planner"), 2500);
+        assert_eq!(budget_for_role("designer"), 1800);
+        assert_eq!(budget_for_role("governance-steward"), 1800);
+    }
+
+    #[test]
+    fn budget_is_max_of_role_and_type() {
+        // A governance task for an implementer should get the governance budget (4000)
+        // since it exceeds the implementer role budget (2800).
+        let combined = budget_for_role("implementer").max(budget_for_type("governance"));
+        assert_eq!(combined, 4000);
+        // A general task for an implementer gets the implementer budget (2800).
+        let combined2 = budget_for_role("implementer").max(budget_for_type("general"));
+        assert_eq!(combined2, 2800);
     }
 
     #[test]

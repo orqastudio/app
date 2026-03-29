@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Implementation"
 domain: methodology/planning
 description: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
+tier: always
 summary: "The user wants something built, fixed, added, or refactored — hands-on work producing code, artifacts, or configuration changes."
 status: active
 thinking-mode: implementation

@@ -8,9 +8,7 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use orqa_validation::settings::{ArtifactEntry, ProjectSettings};
-
-use crate::config::load_project_settings;
+use crate::config::{load_project_settings, ArtifactEntry, ProjectSettings};
 use crate::error::EngineError;
 
 /// Central directory name for Orqa project configuration and metadata.
@@ -98,7 +96,7 @@ impl ProjectPaths {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
+    use crate::config::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
 
     fn sample_settings() -> ProjectSettings {
         ProjectSettings {

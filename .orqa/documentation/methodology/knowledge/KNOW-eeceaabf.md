@@ -5,6 +5,7 @@ title: "Thinking Mode: Dogfood Implementation"
 domain: methodology/planning
 thinking-mode: dogfood-implementation
 description: Building infrastructure for immediate use in the current workflow — not a future feature idea.
+tier: always
 summary: "Building infrastructure for immediate use in the current workflow — not a future feature idea.. You are building infrastructure that this project will use immediately. This is not a future feature idea — it's work-enabling infrastructure for the current session or workflow."
 status: active
 created: 2026-03-21

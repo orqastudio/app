@@ -955,7 +955,7 @@ The baseline OrqaStudio theme (used when no project theme is active) is the defa
 - [Frontend Research](RES-80a476c7) -- shadcn-svelte as the component library, PaneForge layout
 - [Persistence Research](RES-ac474863) -- SQLite schema design (new tables extend this schema)
 - Information Architecture -- Settings panel where theme controls live
-- Architecture Decisions -- [AD-33e315cc](AD-33e315cc) (frontend library selections), [AD-b08f456d](AD-b08f456d) (persistence)
+- Architecture Decisions -- [PD-33e315cc](PD-33e315cc) (frontend library selections), [PD-b08f456d](PD-b08f456d) (persistence)
 
 ## Sources
 

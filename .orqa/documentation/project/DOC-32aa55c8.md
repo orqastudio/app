@@ -5,6 +5,7 @@ title: "Lesson Promotion Pipeline Architecture"
 domain: architecture
 category: "architecture"
 description: "Architecture of the lesson promotion pipeline that converts implementation lessons into enforced rules."
+status: active
 created: "2026-03-05"
 updated: "2026-03-05"
 sort: 18

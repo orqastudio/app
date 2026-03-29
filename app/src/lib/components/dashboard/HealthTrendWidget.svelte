@@ -18,6 +18,7 @@
 		}
 	});
 
+	/** Fetches the most recent health snapshots from the graph SDK and stores them. */
 	async function loadSnapshots() {
 		loading = true;
 		try {
@@ -50,6 +51,14 @@
 	const SPARKLINE_WIDTH = 120;
 	const SPARKLINE_HEIGHT = 80;
 
+	/**
+	 * Builds an SVG path string for a sparkline from a sequence of health snapshots.
+	 * @param data - The health snapshots to render, in chronological order.
+	 * @param key - The snapshot field to plot on the y-axis.
+	 * @param width - The total SVG width in pixels.
+	 * @param height - The total SVG height in pixels.
+	 * @returns An SVG path `d` attribute string, or an empty string if fewer than 2 points.
+	 */
 	function sparklinePath(data: HealthSnapshot[], key: keyof HealthSnapshot, width: number, height: number): string {
 		if (data.length < 2) return "";
 		const values = data.map((s) => Number(s[key]));
@@ -61,18 +70,32 @@
 		return `M${points.join(" L")}`;
 	}
 
-	/** Compute the max value for the y-axis scale label. */
+	/**
+	 * Computes the maximum value across all chronological snapshots for a given key.
+	 * @param key - The snapshot field to compute the max for.
+	 * @returns The maximum numeric value, or 0 if no snapshots are available.
+	 */
 	function maxValue(key: keyof HealthSnapshot): number {
 		if (chronological.length === 0) return 0;
 		const values = chronological.map((s) => Number(s[key]));
 		return Math.max(...values, 1);
 	}
 
+	/**
+	 * Returns the most recent value for a snapshot field.
+	 * @param key - The snapshot field to read.
+	 * @returns The latest numeric value, or 0 if no snapshots are available.
+	 */
 	function latestValue(key: keyof HealthSnapshot): number {
 		if (snapshots.length === 0) return 0;
 		return Number(snapshots[0][key]);
 	}
 
+	/**
+	 * Computes the percentage change between the two most recent snapshots for a field.
+	 * @param key - The snapshot field to compare.
+	 * @returns The percentage change as an integer, or null if fewer than 2 snapshots exist.
+	 */
 	function trendPercent(key: keyof HealthSnapshot): number | null {
 		if (snapshots.length < 2) return null;
 		const current = Number(snapshots[0][key]);
@@ -84,6 +107,11 @@
 		return Math.round(((current - previous) / previous) * 100);
 	}
 
+	/**
+	 * Returns a formatted percentage change string for a snapshot field (e.g. "+12%").
+	 * @param key - The snapshot field to format.
+	 * @returns A formatted string, or an empty string if no trend data is available.
+	 */
 	function trendIndicator(key: keyof HealthSnapshot): string {
 		const pct = trendPercent(key);
 		if (pct === null) return "";
@@ -92,12 +120,23 @@
 		return `${sign}${pct}%`;
 	}
 
+	/**
+	 * Returns an up or down arrow character for a snapshot field's trend direction.
+	 * @param key - The snapshot field to evaluate.
+	 * @returns "↑", "↓", or an empty string if no trend or no change.
+	 */
 	function trendArrow(key: keyof HealthSnapshot): string {
 		const pct = trendPercent(key);
 		if (pct === null || pct === 0) return "";
 		return pct > 0 ? "\u2191" : "\u2193";
 	}
 
+	/**
+	 * Returns a Tailwind text color class for the trend direction of a snapshot field.
+	 * For health metrics, lower values are better so increases render as destructive.
+	 * @param key - The snapshot field to evaluate.
+	 * @returns A Tailwind text color class string.
+	 */
 	function trendColor(key: keyof HealthSnapshot): string {
 		const pct = trendPercent(key);
 		if (pct === null || pct === 0) return "text-muted-foreground";

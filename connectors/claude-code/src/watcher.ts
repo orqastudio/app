@@ -44,6 +44,9 @@ const PLUGIN_MANIFEST_NAME = "orqa-plugin.json";
  *
  * Any call within `delayMs` of the previous call resets the timer.
  * Only one execution fires per burst of rapid calls.
+ * @param fn - The function to debounce.
+ * @param delayMs - Milliseconds to wait after the last call before executing.
+ * @returns A debounced function that resets the timer on each invocation.
  */
 function debounce(fn: () => void, delayMs: number): () => void {
   let timer: ReturnType<typeof setTimeout> | null = null;
@@ -65,6 +68,10 @@ function debounce(fn: () => void, delayMs: number): () => void {
  *
  * If the path does not exist, logs a warning and returns null.
  * The caller must handle the null case gracefully.
+ * @param watchPath - Absolute path to the file or directory to watch.
+ * @param onChange - Callback invoked when a relevant file change is detected.
+ * @param label - Human-readable label for log output identifying this watcher.
+ * @returns An FSWatcher instance, or null if the path does not exist.
  */
 function startWatcher(
   watchPath: string,
@@ -109,8 +116,10 @@ function startWatcher(
  * when any change is detected.
  *
  * Debounces rapid change bursts to a single regeneration after DEBOUNCE_MS.
- * Logs each detected change and each regeneration.
- *
+ * Logs each detected change and each regeneration. generatePlugin is async
+ * (it calls the daemon for active context); the debounced callback fires
+ * the async function and handles the returned Promise via .then/.catch so
+ * the synchronous debouncer signature is preserved.
  * @param projectRoot - The project root directory.
  * @returns A cleanup function that stops all watchers. Call on process exit.
  */
@@ -119,8 +128,7 @@ export function watchAndRegenerate(projectRoot: string): () => void {
 
   const onChanged = debounce(() => {
     console.log("[watcher] regenerating Claude Code Plugin artifacts...");
-    try {
-      const result = generatePlugin(projectRoot);
+    generatePlugin(projectRoot).then((result) => {
       const written = [result.claudeMd, result.hooksJson, result.mcpJson, result.lspJson, ...result.agents];
       console.log(
         `[watcher] regeneration complete — ${written.length} file(s) written`,
@@ -130,11 +138,11 @@ export function watchAndRegenerate(projectRoot: string): () => void {
           console.warn(`[watcher] warning: ${w}`);
         }
       }
-    } catch (err) {
+    }).catch((err: unknown) => {
       console.error(
         `[watcher] regeneration failed: ${err instanceof Error ? err.message : String(err)}`,
       );
-    }
+    });
   }, DEBOUNCE_MS);
 
   // Watch .orqa/workflows/, .orqa/learning/rules/, .orqa/schema.composed.json.

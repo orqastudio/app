@@ -31,7 +31,7 @@ An audit of the current Claude Code memory for this project reveals 10 files:
 | `dogfood-plan.md` | Stale tracking — actual epics/tasks are source of truth |
 | `audit-findings.md` | Stale snapshot — actual RES/EPIC artifacts exist |
 | `project_core_graph_firmware.md` | [RULE-3c2da849](RULE-3c2da849) (core graph firmware) |
-| `project_knowledge_pipeline.md` | [AD-430829f1](AD-430829f1) (knowledge maturity pipeline) |
+| `project_knowledge_pipeline.md` | [PD-430829f1](PD-430829f1) (knowledge maturity pipeline) |
 | `feedback_scope_is_human_decision.md` | [RULE-8ee65d73](RULE-8ee65d73) § "Scope Decisions Are Human Decisions" |
 | `feedback_no_assumptions.md` | [RULE-8ee65d73](RULE-8ee65d73) § "No Assumptions — Ask, Don't Guess" |
 
@@ -39,7 +39,7 @@ An audit of the current Claude Code memory for this project reveals 10 files:
 
 | Memory File | What's in Artifacts | What's NOT |
 | --- | --- | --- |
-| `project_graph_based_enforcement.md` | [EPIC-f079c196](EPIC-f079c196) tracks the work; [AD-430829f1](AD-430829f1) covers pipeline | The detailed vision of "inject graph not content" and orchestrator simplification target |
+| `project_graph_based_enforcement.md` | [EPIC-f079c196](EPIC-f079c196) tracks the work; [PD-430829f1](PD-430829f1) covers pipeline | The detailed vision of "inject graph not content" and orchestrator simplification target |
 | `user_product_philosophy.md` | Vision doc covers mission, pillars | The "structured therapy" metaphor and the insight about preventing drift into implementation |
 | `feedback_plugin_vs_app_enforcement.md` | [RULE-3c2da849](RULE-3c2da849), [KNOW-2a846fb7](KNOW-2a846fb7) cover mechanics | The architectural principle "design for app first, port to CLI" |
 

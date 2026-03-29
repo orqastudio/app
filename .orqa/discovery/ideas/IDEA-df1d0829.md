@@ -14,9 +14,9 @@ research-needed:
   - "Should this be a standalone plugin or part of the software project type preset?"
   - "How does this interact with IDE integration — can suppression violations show as warnings in the editor?"
 relationships:
-  - target: AD-2dc8ab96
+  - target: PD-2dc8ab96
     type: crystallises
-    rationale: "AD-2dc8ab96 defines the // AD-NNN pattern these plugins would consume"
+    rationale: "PD-2dc8ab96 defines the // AD-NNN pattern these plugins would consume"
   - target: PILLAR-2acd86c1
     type: grounded
   - target: PERSONA-c4afd86b

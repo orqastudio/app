@@ -10,7 +10,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use orqa_validation::settings::ProjectRelationshipConfig;
+use crate::config::ProjectRelationshipConfig;
 
 /// The platform core config JSON, embedded at compile time from the canonical source.
 const PLATFORM_JSON: &str = include_str!("../../../libs/types/src/platform/core.json");

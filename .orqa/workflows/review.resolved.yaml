@@ -1,0 +1,113 @@
+# AUTO-GENERATED — do not edit manually.
+# Stage: review (review-process slot in agile-methodology)
+# Source plugin: @orqastudio/plugin-agile-review v0.1.4-dev
+# Generated at: 2026-03-29T09:05:07.490Z
+version: 1.0.0
+generated: true
+generatedAt: 2026-03-29T09:05:07.490Z
+description: Resolved review stage workflow. Contains states, transitions, and artifact types contributed by
+  @orqastudio/plugin-agile-review into the review-process slot of agile-methodology.
+stage: review
+source_plugin: "@orqastudio/plugin-agile-review"
+fills_slot: review-process
+methodology: agile-methodology
+contribution_workflow:
+  name: review-contribution
+  initial_state: review
+  states:
+    code_review:
+      category: review
+      description: Code review — verify implementation quality, standards compliance, and correctness.
+      on_enter:
+        - type: append_log
+          params:
+            message: Code review started
+    gate_check:
+      category: review
+      description: Gate check — run automated pre-checks and gather review context.
+      on_enter:
+        - type: append_log
+          params:
+            message: Gate check started
+    acceptance_verification:
+      category: review
+      description: Acceptance verification — validate deliverables against acceptance criteria.
+      on_enter:
+        - type: append_log
+          params:
+            message: Acceptance verification started
+    review_complete:
+      category: review
+      description: Review process complete — verdict rendered, ready to proceed.
+      on_enter:
+        - type: set_field
+          params:
+            field: review_completed_at
+            value: ${now}
+        - type: append_log
+          params:
+            message: Review complete
+  transitions:
+    - from: review
+      to: code_review
+      event: begin_review
+      description: Start the review process with code review.
+    - from: code_review
+      to: gate_check
+      event: code_review_passed
+      description: Code review passed, run gate checks.
+    - from: code_review
+      to: implement
+      event: code_review_failed
+      description: Code review failed — return to implementation for fixes.
+      actions:
+        - type: append_log
+          params:
+            message: Code review failed — returning to implementation
+    - from: gate_check
+      to: acceptance_verification
+      event: gate_passed
+      description: Gate checks passed, proceed to acceptance verification.
+    - from: gate_check
+      to: implement
+      event: gate_failed
+      description: Gate checks failed — return to implementation.
+      actions:
+        - type: append_log
+          params:
+            message: Gate check failed — returning to implementation
+    - from: acceptance_verification
+      to: review_complete
+      event: acceptance_confirmed
+      description: Acceptance criteria met — review is complete.
+    - from: acceptance_verification
+      to: implement
+      event: acceptance_rejected
+      description: Acceptance criteria not met — return to implementation.
+      actions:
+        - type: append_log
+          params:
+            message: Acceptance verification failed — returning to implementation
+    - from: review_complete
+      to: learn
+      event: review_passed
+      description: Review passed, proceed to learning phase.
+    - from: review_complete
+      to: plan
+      event: major_rework
+      description: Review found fundamental issues requiring re-planning.
+      actions:
+        - type: append_log
+          params:
+            message: Major rework required — returning to planning
+    - from: gate_check
+      to: code_review
+      event: recheck_code
+      description: Gate check revealed code issues — return to code review.
+    - from: acceptance_verification
+      to: code_review
+      event: restart_review
+      description: Acceptance verification revealed issues — restart review from code review.
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-agile-review"
+    version: 0.1.4-dev

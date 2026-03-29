@@ -1,9 +1,13 @@
-// Process management for the OrqaStudio daemon.
-//
-// Handles PID file lifecycle and project root discovery. The PID file at
-// `.state/daemon.pid` ensures only one daemon instance runs per project at a
-// time. Project root discovery walks up from CWD until it finds the `.orqa/`
-// marker directory.
+//! Process management for the OrqaStudio daemon.
+//!
+//! Handles PID file lifecycle and project root discovery. The PID file at
+//! `.state/daemon.pid` ensures only one daemon instance runs per project at a
+//! time. Project root discovery walks up from CWD until it finds the `.orqa/`
+//! marker directory.
+//!
+//! Windows process-liveness checks require unsafe FFI to kernel32 (`OpenProcess`,
+//! `CloseHandle`). These are the only `unsafe` operations in this module.
+#![allow(unsafe_code)]
 
 use std::fs;
 use std::io;

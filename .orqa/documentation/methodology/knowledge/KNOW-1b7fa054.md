@@ -8,6 +8,7 @@ description: |
   Third-party plugin workflow for community and external developers. Plugins are
   standalone projects with their own project configuration and the software plugin
   pre-installed for independent lifecycle management.
+tier: always
 status: active
 created: 2026-03-19
 updated: 2026-03-23

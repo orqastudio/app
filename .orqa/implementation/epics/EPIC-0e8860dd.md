@@ -2,7 +2,7 @@
 id: "EPIC-0e8860dd"
 type: "epic"
 title: "Pillars as First-Class Artifacts"
-description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements AD-74a2cb7a."
+description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements PD-74a2cb7a."
 status: archived
 priority: "P1"
 created: "2026-03-09"
@@ -27,7 +27,7 @@ vision-alignment.md, pillar-alignment-docs.md, and scoring dimensions. This
 makes the governance framework non-portable — other projects cannot define
 their own guiding principles without editing canon rules.
 
-[AD-74a2cb7a](AD-74a2cb7a) establishes that pillars should be first-class artifacts with structured
+[PD-74a2cb7a](PD-74a2cb7a) establishes that pillars should be first-class artifacts with structured
 frontmatter, referenced by ID, and injected into AI system prompts.
 
 ## Implementation Scope

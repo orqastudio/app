@@ -5,7 +5,7 @@ status: active
 title: Key Architecture Decisions
 domain: architecture
 description: Resolved architectural decisions — reference this before making any design choice to ensure alignment with established resolutions
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-80a4cf76
 ---

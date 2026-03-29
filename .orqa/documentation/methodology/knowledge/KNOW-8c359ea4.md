@@ -10,6 +10,7 @@ description: |
   list currency, and ensuring internal consistency across the governance layer.
   Use when: Auditing governance artifacts, promoting lessons to rules, maintaining
   agent/knowledge/rule consistency, or reviewing the governance framework.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

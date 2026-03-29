@@ -4,9 +4,10 @@ type: knowledge
 title: Enforcement Patterns
 domain: methodology/governance
 description: Available enforcement mechanisms from strongest to weakest — validator checks, blocking hooks, warning hooks, stop hooks, thinking modes, agent prompts.
+tier: always
 summary: "Available enforcement mechanisms from strongest to weakest — validator checks, blocking hooks, warning hooks, stop hooks, thinking modes, agent prompts."
 status: active
-relationships:
+relationships: []
 ---
 
 # Enforcement Patterns

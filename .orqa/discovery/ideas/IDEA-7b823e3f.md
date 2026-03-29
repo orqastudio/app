@@ -11,7 +11,7 @@ research-needed:
   - "Minimum model capability threshold — what reasoning quality is needed for structured artifact creation, planning, and code generation?"
   - "Context window requirements — the file-based architecture means loading the right files at the right time, not everything at once. What's the minimum context window?"
   - "Memory footprint — local models (llama.cpp, Ollama, LM Studio) vs cloud API. What hardware is required?"
-  - "Provider abstraction — AD-02a2a97b already defines provider-agnostic integration. How much work to add local model backends (Ollama, llama.cpp, vLLM)?"
+  - "Provider abstraction — PD-02a2a97b already defines provider-agnostic integration. How much work to add local model backends (Ollama, llama.cpp, vLLM)?"
   - "Quality degradation mapping — which OrqaStudio capabilities degrade gracefully with smaller models vs which require frontier-class reasoning?"
   - "Hybrid approach — could a local model handle routine tasks (artifact creation, simple edits) while cloud models handle complex planning and architecture?"
   - "Skill-driven context injection — since skills load domain knowledge at the right time, does this compensate for smaller context windows?"
@@ -28,7 +28,7 @@ OrqaStudio currently requires a Claude Max Pro subscription for development — 
 
 **If the structure does enough of the thinking, does the model need to be as smart?**
 
-The file-based architecture [AD-859ed163](AD-859ed163) means governance data is flat files with enforced frontmatter. The artifact graph [EPIC-d45b4dfd](EPIC-d45b4dfd) provides the relational layer. Skills inject the right domain knowledge at the right time. Rules enforce constraints mechanically. The model's job shifts from "figure everything out from scratch" to "follow structured patterns with the right context loaded."
+The file-based architecture [PD-859ed163](PD-859ed163) means governance data is flat files with enforced frontmatter. The artifact graph [EPIC-d45b4dfd](EPIC-d45b4dfd) provides the relational layer. Skills inject the right domain knowledge at the right time. Rules enforce constraints mechanically. The model's job shifts from "figure everything out from scratch" to "follow structured patterns with the right context loaded."
 
 This is fundamentally different from asking a local model to reason about an unstructured codebase. The structure IS the intelligence — the model is the executor.
 
@@ -47,7 +47,7 @@ This is fundamentally different from asking a local model to reason about an uns
 ```text
 Tier 1: Local model (Ollama/llama.cpp) — routine tasks, artifact CRUD, simple code generation
 Tier 2: Cloud model (Claude/GPT) — complex planning, architecture decisions, multi-step reasoning
-Tier 3: Embedded model (ONNX) — search, classification, embeddings (already implemented via AD-7d3d7521)
+Tier 3: Embedded model (ONNX) — search, classification, embeddings (already implemented via PD-7d3d7521)
 ```
 
 The app could auto-route based on task complexity, or the user could choose.

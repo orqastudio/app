@@ -13,7 +13,7 @@ relationships:
     target: IDEA-cac26ee9
   - type: realises
     target: EPIC-dcc0bac6
-  - target: AD-ee2910b1
+  - target: PD-ee2910b1
     type: crystallises
   - target: PILLAR-c9e0a695
     type: grounded
@@ -21,7 +21,7 @@ relationships:
     type: benefits
 ---
 
-> **Surpassed 2026-03-16**: Software project integration concept merged into EPIC-dcc0bac6 via AD-ee2910b1 as part of plugin infrastructure. Code-governance traceability (comment syntax, code file nodes, unified search) split into IDEA-cac26ee9 as a distinct feature requiring its own scanner plugin.
+> **Surpassed 2026-03-16**: Software project integration concept merged into EPIC-dcc0bac6 via PD-ee2910b1 as part of plugin infrastructure. Code-governance traceability (comment syntax, code file nodes, unified search) split into IDEA-cac26ee9 as a distinct feature requiring its own scanner plugin.
 
 ## Motivation
 

@@ -29,7 +29,7 @@ Currently the codebase hardcodes knowledge of delivery artifact types:
 - Parent-child relationships (task→epic→milestone) are hardcoded
 - The StatusKanban groups by hardcoded status values
 
-Per AD-b2f1f829, the delivery pipeline should be configurable. A software project defines milestones/epics/tasks. A different project might define phases/workstreams/actions.
+Per PD-b2f1f829, the delivery pipeline should be configurable. A software project defines milestones/epics/tasks. A different project might define phases/workstreams/actions.
 
 ## Implementation Design
 

@@ -202,7 +202,7 @@ When agents discover unexpected findings during work (undocumented dependencies,
 - **Forward-only relationships** -- task stores `delivers: epic`, epic does NOT store `delivered-by: task`. Graph computes inverses.
 - **Plugin-composed everything** -- no governance patterns hardcoded in core.
 - **Daemon is business logic boundary** -- MCP/LSP are access protocols, not application boundaries.
-- **30 relationship types** -- semantic precision creates structure. Each type is a unique bond. Narrow from/to constraints.
+- **35 relationship types** -- semantic precision creates structure. Each type is a unique bond. Narrow from/to constraints.
 - **No backwards compatibility** -- pre-release, breaking changes expected, data migrated via `orqa migrate`.
 - **.state/ not tmp/** -- session state and metrics are operational data, not disposable.
 

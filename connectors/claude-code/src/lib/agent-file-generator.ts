@@ -528,25 +528,3 @@ export function generateAgentFiles(projectPath: string): {
 	return { generated, errors };
 }
 
-/**
- * Run agent file generation and print results.
- *
- * Called from the Claude Code connector's install and refresh pipeline.
- * @param projectRoot - Absolute path to the project root directory.
- */
-export function runAgentFileGeneration(projectRoot: string): void {
-	const result = generateAgentFiles(projectRoot);
-
-	if (result.errors.length > 0) {
-		console.log("  Agent file generation warnings:");
-		for (const err of result.errors) {
-			console.log(`    - ${err}`);
-		}
-	}
-
-	if (result.generated.length > 0) {
-		console.log(
-			`  Agent files: ${result.generated.length} agent(s) generated in .claude/agents/`,
-		);
-	}
-}

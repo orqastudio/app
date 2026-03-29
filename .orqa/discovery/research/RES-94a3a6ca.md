@@ -74,7 +74,7 @@ Multiple docs reference flat `.orqa/` paths (e.g., `.orqa/epics/`) but the actua
 
 #### A3. Deprecated plan artifact type references
 
-Plans were deprecated ([AD-3b986859](AD-3b986859)) and merged into Research/Epics. Multiple files still reference them.
+Plans were deprecated ([PD-3b986859](PD-3b986859)) and merged into Research/Epics. Multiple files still reference them.
 
 | File | References plans |
 | ------ | ----------------- |
@@ -159,8 +159,8 @@ These are docs that describe systems significantly different from what's built.
 | C7 | DOC-28344cd7 | Rule schema requires `slug` field | Rule schema.json has no `slug`. No rule file uses `slug`. | **Medium** |
 | C8 | DOC-28344cd7 | Milestone schema has `epic-count` and `completed-epics` fields | Milestone schema.json does not include these. No milestone uses them. | **Medium** |
 | C9 | DOC-28344cd7 | Decision schema omits `category` field | Decision schema.json includes `category` in propertyOrder | **Low** |
-| C10 | DOC-d9cc1f84 lines 94-108 | Lists specific agent names: `backend-engineer`, `frontend-engineer` | [AD-48b310f9](AD-48b310f9) universal model uses role+skills (Implementer + backend skills), not named agents | **Medium** |
-| C11 | DOC-68a7420e line 32 | "All 15 agents" | 7 universal roles per [AD-48b310f9](AD-48b310f9): Orchestrator, Researcher, Planner, Implementer, Reviewer, Writer, Designer | **Medium** |
+| C10 | DOC-d9cc1f84 lines 94-108 | Lists specific agent names: `backend-engineer`, `frontend-engineer` | [PD-48b310f9](PD-48b310f9) universal model uses role+skills (Implementer + backend skills), not named agents | **Medium** |
+| C11 | DOC-68a7420e line 32 | "All 15 agents" | 7 universal roles per [PD-48b310f9](PD-48b310f9): Orchestrator, Researcher, Planner, Implementer, Reviewer, Writer, Designer | **Medium** |
 | C12 | DOC-c43c7d5d lines 146-201 | Documents `.orqa/hookify/` directory | Directory does not exist | **Medium** |
 | C13 | DOC-d2c2063a | `make dev-sidecar` described as hot reload | Target removed — use `make build-sidecar` instead | **Resolved** |
 | C14 | DOC-d2c2063a | `make install` described as "Install frontend Node.js dependencies" | Also does `cd sidecar && bun install` and `cargo fetch` | **Low** |
@@ -171,7 +171,7 @@ These are docs that describe systems significantly different from what's built.
 
 | # | Source | Reference | Issue | Severity |
 | --- | -------- | ----------- | ------- | ---------- |
-| D1 | [AD-859ed163](AD-859ed163) | Missing `supersedes: [AD-75bb14ae](AD-75bb14ae)` | [AD-75bb14ae](AD-75bb14ae) has `superseded-by: [AD-859ed163](AD-859ed163)` but [AD-859ed163](AD-859ed163) does NOT have `supersedes: [AD-75bb14ae](AD-75bb14ae)`. One-sided supersession. | **High** |
+| D1 | [PD-859ed163](PD-859ed163) | Missing `supersedes: [PD-75bb14ae](PD-75bb14ae)` | [PD-75bb14ae](PD-75bb14ae) has `superseded-by: [PD-859ed163](PD-859ed163)` but [PD-859ed163](PD-859ed163) does NOT have `supersedes: [PD-75bb14ae](PD-75bb14ae)`. One-sided supersession. | **High** |
 | D2 | [EPIC-489c0a47](EPIC-489c0a47) | `status: in-progress` | All 10 tasks are `done`. Epic should be `review` or `done`. | **High** |
 | D3 | [EPIC-57dd7d4c](EPIC-57dd7d4c) | `status: in-progress` | All 9 tasks are `done`. Epic should be `review` or `done`. | **High** |
 | D4 | [EPIC-2f1efbd5](EPIC-2f1efbd5) | `status: in-progress` | Zero tasks reference this epic. In-progress with no tasks. | **High** |

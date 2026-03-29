@@ -19,7 +19,7 @@ relationships:
   - target: EPIC-f7055984
     type: realises
     rationale: "UAT revealed dashboard widget UX needs fundamental rethinking — configurable widgets is the long-term direction"
-  - target: AD-ee2910b1
+  - target: PD-ee2910b1
     type: crystallises
   - target: PILLAR-c9e0a695
     type: grounded
@@ -38,4 +38,4 @@ The current dashboard has a fixed layout of widgets. UAT on EPIC-82dd0bd2 reveal
 
 This aligns with the five-layer architecture — built-in widgets are core, official plugins provide recommended widgets, community/user plugins can add custom ones.
 
-> **Surpassed 2026-03-16**: Widget registration and configuration persistence folded into EPIC-dcc0bac6 Phase 1 via AD-ee2910b1. Widget layout model (grid vs column) remains an implementation decision.
+> **Surpassed 2026-03-16**: Widget registration and configuration persistence folded into EPIC-dcc0bac6 Phase 1 via PD-ee2910b1. Widget layout model (grid vs column) remains an implementation decision.

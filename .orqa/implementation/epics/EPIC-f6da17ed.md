@@ -31,7 +31,7 @@ From RES-d6e8ab11 sections 3 (Workflow Composition) and 7 (State Machine Design)
 - Migration framework — forward-compatible addition, `orqa migrate` for status mapping, no backwards compatibility (pre-release)
 - Migrate existing hardcoded status values in schema.json to plugin-owned state machines
 
-## Design Constraints (from AD-1ef9f57c)
+## Design Constraints (from PD-1ef9f57c)
 
 - No workflow inheritance — plugin owns complete state machine
 - Declarative guards only — code hooks for anything beyond field/relationship/graph checks

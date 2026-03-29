@@ -10,6 +10,7 @@ description: |
   not implementation. Portable across backend and frontend test frameworks.
   Use when: Writing tests, setting up test infrastructure, defining mock
   boundaries, or enforcing test coverage requirements.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

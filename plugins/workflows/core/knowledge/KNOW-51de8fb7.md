@@ -123,5 +123,5 @@ These are two different acts. Agents do the first. Only humans do the second.
 
 ## Related Artifacts
 
-- [AD-487e045a](AD-487e045a) — Icon-based status representation decision
+- [PD-487e045a](PD-487e045a) — Icon-based status representation decision
 - [DOC-61ecc85e](DOC-61ecc85e) — Status & Workflow user guide

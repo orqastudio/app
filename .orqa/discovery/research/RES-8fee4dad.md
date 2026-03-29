@@ -35,7 +35,7 @@ The existing sidecar architecture is **already provider-agnostic**:
 
 - **Provider interface** (`provider-interface.ts`) defines the contract: `healthCheck()`, `streamMessage()`, `cancelStream()`, `generateSummary()`, `resolveToolResult()`, `resolveToolApproval()`
 - **Provider factory** (`providers/index.ts`) with `createProvider(type?)` — currently returns only `ClaudeAgentProvider`
-- **NDJSON protocol** between Rust and sidecar is provider-neutral per [AD-02a2a97b](AD-02a2a97b)
+- **NDJSON protocol** between Rust and sidecar is provider-neutral per [PD-02a2a97b](PD-02a2a97b)
 - The Rust backend **does not know or care** which AI provider the sidecar uses
 
 Existing idea artifacts: [IDEA-7b823e3f](IDEA-7b823e3f) (local models), [IDEA-18da61df](IDEA-18da61df) (multi-provider routing), [IDEA-1d6675c7](IDEA-1d6675c7) (promoted to EPIC-709a6f76).

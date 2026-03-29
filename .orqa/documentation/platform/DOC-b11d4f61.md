@@ -12,7 +12,7 @@ sort: 11
 relationships:
   - target: RULE-9814ec3c
     type: documents
-  - target: AD-0dfa4d52
+  - target: PD-0dfa4d52
     type: documents
   - target: EPIC-56940fa8
     type: documents
@@ -478,4 +478,4 @@ The enforcement system has comprehensive test coverage:
 - [RULE-f609242f](RULE-f609242f) — Git workflow with `--no-verify` blocking
 - [RULE-dd5b69e6](RULE-dd5b69e6) — Skill enforcement and three-tier loading model
 - [EPIC-56940fa8](EPIC-56940fa8) — Structured Thinking Enforcement epic (design + implementation)
-- [AD-0dfa4d52](AD-0dfa4d52) — Governance artifact format
+- [PD-0dfa4d52](PD-0dfa4d52) — Governance artifact format

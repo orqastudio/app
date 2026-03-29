@@ -1,7 +1,7 @@
 ---
 id: "TASK-4cfabe07"
 type: "task"
-title: "Record persistence and governance decisions (AD-d01b9e0a through AD-b08f456d)"
+title: "Record persistence and governance decisions (PD-d01b9e0a through PD-b08f456d)"
 description: "Captured architecture decisions for persistence strategy, governance artifact format, data ownership boundaries, and configuration management."
 status: archived
 created: "2026-03-02"
@@ -26,4 +26,4 @@ Authored each AD artifact with full context and rationale, ensuring the SQLite/f
 
 ## Verification
 
-[AD-d01b9e0a](AD-d01b9e0a) through [AD-b08f456d](AD-b08f456d) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.
+[PD-d01b9e0a](PD-d01b9e0a) through [PD-b08f456d](PD-b08f456d) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.

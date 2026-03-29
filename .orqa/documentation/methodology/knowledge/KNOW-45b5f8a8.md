@@ -10,6 +10,7 @@ description: |
   classification. Portable across desktop and web applications.
   Use when: Auditing application security, reviewing permissions, checking for
   credential exposure, validating input handling, or assessing dependency risk.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

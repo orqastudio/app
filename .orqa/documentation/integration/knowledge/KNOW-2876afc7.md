@@ -10,6 +10,7 @@ description: |
   CLI symlinks. This is the base setup — project type presets layer on top.
   Use when: initialising a new project with governance, or repairing a broken
   governance directory structure.
+tier: on-demand
 status: active
 onboarding: true
 created: 2026-03-01

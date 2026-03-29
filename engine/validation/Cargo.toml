@@ -13,6 +13,7 @@ name = "orqa-validation"
 path = "src/bin/server.rs"
 
 [dependencies]
+orqa-engine-types = { path = "../types" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 serde_yaml = "0.9"

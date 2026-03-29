@@ -9,6 +9,7 @@ description: |
   structure. Preserves existing governance while adding OrqaStudio's layer.
   Use when: Setting up OrqaStudio on a project that already uses other AI tools,
   or syncing governance between OrqaStudio and external tools.
+tier: on-demand
 status: active
 created: 2026-03-01
 updated: 2026-03-10

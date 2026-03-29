@@ -37,7 +37,7 @@ For each agent in `.orqa/process/agents/`:
 1. Read the agent definition
 2. Verify `skills:` list — do all referenced skills exist in `.orqa/process/skills/`?
 3. Verify Required Reading paths — do all referenced documents exist?
-4. Verify role description matches current universal role model (AD-48b310f9)
+4. Verify role description matches current universal role model (PD-48b310f9)
 5. Check for stale references (old app names, deprecated concepts, wrong paths)
 6. Check that delegation instructions match current subagent types available
 

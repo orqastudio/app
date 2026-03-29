@@ -4,7 +4,9 @@
   "displayName": "Coding Standards",
   "description": "Unified coding standards enforcement — config generation from governance rules, quality checks via orqa check, and organisation-wide standards sync.",
   "category": "infrastructure",
-  "purpose": ["infrastructure"],
+  "purpose": [
+    "infrastructure"
+  ],
   "affects_schema": false,
   "affects_enforcement": true,
   "provides": {
@@ -59,7 +61,7 @@
         ],
         "priority": "P2",
         "summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-126aa140.md"
+        "content_file": "knowledge/KNOW-126aa140.md"
       },
       {
         "id": "config-generation-from-rules",
@@ -75,7 +77,7 @@
         ],
         "priority": "P2",
         "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-1c2d005d.md"
+        "content_file": "knowledge/KNOW-1c2d005d.md"
       }
     ]
   },

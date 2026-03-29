@@ -16,14 +16,14 @@ relationships:
     target: IDEA-f5275987
   - type: realises
     target: EPIC-4a107943
-  - target: AD-ee2910b1
+  - target: PD-ee2910b1
     type: crystallises
   - target: PILLAR-c9e0a695
     type: grounded
   - target: PERSONA-c4afd86b
     type: benefits
 ---
-n> **Surpassed 2026-03-16**: Flat organisation model merged into EPIC-4a107943 via AD-ee2910b1. Nested spaces and governance inheritance split into IDEA-f5275987.
+n> **Surpassed 2026-03-16**: Flat organisation model merged into EPIC-4a107943 via PD-ee2910b1. Nested spaces and governance inheritance split into IDEA-f5275987.
 
 ## Candidate Items
 

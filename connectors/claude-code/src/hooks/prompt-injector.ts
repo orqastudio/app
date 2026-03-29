@@ -55,7 +55,11 @@ async function main(): Promise<void> {
 // Connector-specific helpers — format/UX concerns that stay in the connector
 // ---------------------------------------------------------------------------
 
-/** Read project.json and return a concise context line. */
+/**
+ * Read project.json and return a concise context line.
+ * @param projectDir - Absolute path to the project directory containing .orqa/project.json.
+ * @returns A single-line string summarising project name and dogfood status.
+ */
 function getContextLine(projectDir: string): string {
   const p = join(projectDir, ".orqa", "project.json");
   if (!existsSync(p)) {

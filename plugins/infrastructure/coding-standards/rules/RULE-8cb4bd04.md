@@ -16,7 +16,7 @@ enforcement:
     description: "cargo tarpaulin enforces 80% coverage per module"
   - mechanism: vitest
 relationships:
-  - target: "AD-a1c2ca06"
+  - target: "PD-a1c2ca06"
     type: "enforces"
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.

@@ -53,7 +53,7 @@ The default view when the Docs icon is active. The Nav Sub-Panel shows the struc
         Formal architecture decisions log.
         Each decision is numbered AD-NNN...
         ---
-        <b>AD-7121ec20: Thick Backend</b>
+        <b>PD-7121ec20: Thick Backend</b>
         ---
         Rust owns the domain model...
         ---

@@ -196,7 +196,7 @@ Keep documentation accurate, current, and properly paired with knowledge artifac
 
 4. **Cross-reference integrity** — verify links between documents:
    - All `Related Documents` links resolve to existing artifacts
-   - All artifact ID references (e.g. `[AD-26d8d45d](AD-26d8d45d)`) point to real artifacts
+   - All artifact ID references (e.g. `[PD-26d8d45d](PD-26d8d45d)`) point to real artifacts
    - Pillar alignment sections reference current active pillars
 
 **Protocol:**

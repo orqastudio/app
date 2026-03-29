@@ -15,6 +15,7 @@ path = "src/lib.rs"
 orqa-engine-types = { path = "../types" }
 orqa-plugin = { path = "../plugin" }
 orqa-search = { path = "../search" }
+serde_json = "1"
 thiserror = "2"
 tracing = "0.1"
 async-trait = "0.1"

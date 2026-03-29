@@ -10,7 +10,7 @@ enforcement:
   - mechanism: behavioral
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
 relationships:
-  - target: AD-b2f1f829
+  - target: PD-b2f1f829
     type: enforces
 ---
 Every implementation plan — whether captured in an epic, a task, or proposed in conversation — MUST satisfy two mandatory requirements before implementation begins.

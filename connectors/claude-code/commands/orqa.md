@@ -8,9 +8,9 @@ The `.claude/` directory is NOT a standalone configuration. It is a set of **sym
 
 | `.claude/` path | → `.orqa/` artifact | Purpose |
 | --- | --- | --- |
-| `CLAUDE.md` | `process/agents/orchestrator.md` | Your agent definition (the orchestrator) |
-| `rules/` | `process/rules/` | Enforcement rules with YAML frontmatter |
-| `agents/` | `process/agents/` | All agent definitions (orchestrator, planner, implementer, etc.) |
+| `CLAUDE.md` | orchestrator agent definition | Your agent definition (the orchestrator) |
+| `rules/` | `.orqa/learning/rules/` | Enforcement rules with YAML frontmatter |
+| `agents/` | `.claude/agents/` | All agent definitions (orchestrator, planner, implementer, etc.) |
 
 This means:
 
@@ -48,7 +48,7 @@ orqa graph --type decision --json
 ## Understanding the project governance
 
 1. **Pillars** (`.orqa/discovery/pillars/`) — The foundational principles. Every decision should trace back to a pillar.
-2. **Decisions** (`.orqa/process/decisions/`) — Architecture decisions (AD-nnn). These drive implementation.
+2. **Decisions** (`.orqa/learning/decisions/`) — Architecture decisions (AD-nnn). These drive implementation.
 3. **Rules** (`.orqa/learning/rules/`) — Enforcement rules. Some have `enforcement` arrays that trigger on your actions.
 4. **Lessons** (`.orqa/learning/lessons/`) — Documented mistakes and patterns. Check before repeating.
 5. **Knowledge** (`.orqa/documentation/knowledge/`) — Domain knowledge injected into agent prompts by the prompt-injector hook.

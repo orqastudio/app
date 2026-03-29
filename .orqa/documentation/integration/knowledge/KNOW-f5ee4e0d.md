@@ -4,6 +4,7 @@ type: knowledge
 title: Plugin Setup
 domain: integration/connector
 description: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
+tier: on-demand
 summary: "Installs the companion plugin for Claude Code. Detects existing agent infrastructure, migrates to the project governance directory, registers the plugin, and sets up symlinks."
 status: active
 created: 2026-03-11

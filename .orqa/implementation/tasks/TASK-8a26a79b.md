@@ -2,7 +2,7 @@
 id: "TASK-8a26a79b"
 type: "task"
 title: "Update product documentation"
-description: "Update governance.md with the concept taxonomy from AD-48b310f9, create a new governance-hub.md page for the distribution and coexistence model from AD-26b0eb9f, and verify artifact-framework.md alignment."
+description: "Update governance.md with the concept taxonomy from PD-48b310f9, create a new governance-hub.md page for the distribution and coexistence model from PD-26b0eb9f, and verify artifact-framework.md alignment."
 status: archived
 created: "2026-03-09"
 updated: "2026-03-09"
@@ -14,7 +14,7 @@ acceptance:
   - "drift reconciliation"
   - "governance-hub.md positions hub capability as contextual"
   - "not identity"
-  - "artifact-framework.md verified aligned with AD-48b310f9 universal roles"
+  - "artifact-framework.md verified aligned with PD-48b310f9 universal roles"
   - "All three pages have pillar alignment sections"
 relationships:
   - target: "EPIC-7394ba2a"
@@ -28,8 +28,8 @@ relationships:
 
 ## Reference
 
-- [AD-48b310f9](AD-48b310f9) has the concept taxonomy and decision framework
-- [AD-26b0eb9f](AD-26b0eb9f) has the governance hub model, coexistence architecture, drift reconciliation
+- [PD-48b310f9](PD-48b310f9) has the concept taxonomy and decision framework
+- [PD-26b0eb9f](PD-26b0eb9f) has the governance hub model, coexistence architecture, drift reconciliation
 - vision.md Platform Identity section sets the framing (clarity engine first)
 
 ## What

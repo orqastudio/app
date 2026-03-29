@@ -11,6 +11,10 @@
 	const activeKey = $derived(pluginRegistry.activeSidecarKey);
 	const hasMultiple = $derived(sidecars.length > 1);
 
+	/**
+	 * Switches the active sidecar provider and notifies the user to restart.
+	 * @param key - The provider key to activate.
+	 */
 	function switchProvider(key: string) {
 		pluginRegistry.setActiveSidecar(key);
 		toast.success(`Switched to ${key}. Restart the app to apply.`);
@@ -34,7 +38,7 @@
 	</CardHeader>
 	<CardContent class="pt-0">
 		<div class="space-y-2">
-			{#each sidecars as sidecar (sidecar.name)}
+			{#each sidecars as sidecar (sidecar.key)}
 				{@const isActive = sidecar.key === activeKey}
 				<div
 					class="flex items-center justify-between rounded border px-3 py-2 {isActive

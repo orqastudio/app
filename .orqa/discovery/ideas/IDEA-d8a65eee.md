@@ -23,4 +23,4 @@ relationships:
 
 ## Motivation
 
-[AD-430829f1](AD-430829f1) relies on structural visibility as the self-enforcement mechanism. The pipeline dashboard is how that visibility reaches the user. Without it, the relationships exist in frontmatter but the pipeline health signals ("16 observations never became principles", "enforcement created without observations") remain invisible.
+[PD-430829f1](PD-430829f1) relies on structural visibility as the self-enforcement mechanism. The pipeline dashboard is how that visibility reaches the user. Without it, the relationships exist in frontmatter but the pipeline health signals ("16 observations never became principles", "enforcement created without observations") remain invisible.

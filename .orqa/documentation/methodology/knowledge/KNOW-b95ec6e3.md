@@ -4,6 +4,7 @@ type: knowledge
 title: "Thinking Mode: Debugging"
 domain: methodology/planning
 description: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
+tier: always
 summary: "Something is broken or behaving unexpectedly — reproduce, isolate, identify root cause, then route to implementation or learning loop."
 status: active
 thinking-mode: debugging

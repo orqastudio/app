@@ -4,6 +4,9 @@ use tauri::State;
 
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::project::{Project, ProjectSummary};
+use crate::domain::workflow_config::{default_process_gates, tracker_config_from_artifacts};
+use crate::domain::workflow_loader::load_process_gates_from_workflows;
+use crate::domain::workflow_tracker::WorkflowTracker;
 use crate::error::OrqaError;
 use crate::repo::enforcement_rules_repo;
 use crate::repo::project_repo;
@@ -42,6 +45,8 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
     drop(conn);
 
     load_enforcement_engine(&state, &canonical);
+    load_tracker_config(&state, &canonical);
+    load_process_gates(&state, &canonical);
 
     Ok(project)
 }
@@ -103,6 +108,93 @@ pub fn project_list(state: State<'_, AppState>) -> Result<Vec<ProjectSummary>, O
         .lock()
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
     project_repo::list(&conn)
+}
+
+/// Load `TrackerConfig` from the project's `.orqa/project.json` artifacts array.
+///
+/// Reads the artifact entries from the project settings and builds path classification
+/// rules from the configured artifact paths. This ensures no governance paths are
+/// hardcoded — all classification is driven by the project config populated from
+/// plugin manifests during `orqa install`.
+///
+/// Updates both `state.session.tracker_config` (for future session resets) and the
+/// active `state.session.workflow_tracker` (for the current session). Failures are
+/// logged as warnings — a missing or malformed project.json must not block the
+/// project from opening.
+fn load_tracker_config(state: &State<'_, AppState>, project_path: &str) {
+    use orqa_engine::config::load_project_settings;
+
+    let root = Path::new(project_path);
+    let artifacts = match load_project_settings(root) {
+        Ok(Some(settings)) => settings.artifacts,
+        Ok(None) => {
+            tracing::debug!("[tracker] no project.json at '{project_path}', using default paths");
+            Vec::new()
+        }
+        Err(e) => {
+            tracing::warn!("[tracker] failed to load project.json for tracker config: {e}");
+            Vec::new()
+        }
+    };
+
+    let config = tracker_config_from_artifacts(&artifacts);
+
+    // Update tracker_config so future session resets (reset_workflow_tracker) use the new config.
+    match state.session.tracker_config.lock() {
+        Ok(mut tc) => {
+            *tc = config.clone();
+        }
+        Err(e) => {
+            tracing::warn!("[tracker] tracker_config mutex poisoned, skipping config reload: {e}");
+        }
+    }
+
+    // Also rebuild the active workflow tracker so the current session uses the new paths.
+    match state.session.workflow_tracker.lock() {
+        Ok(mut wt) => {
+            *wt = WorkflowTracker::new(config);
+        }
+        Err(e) => {
+            tracing::warn!("[tracker] workflow_tracker mutex poisoned, skipping config reload: {e}");
+        }
+    }
+
+    tracing::debug!("[tracker] tracker config and workflow tracker rebuilt from project.json artifact paths");
+}
+
+/// Load process gate definitions from the project's resolved workflow YAML files.
+///
+/// Scans `.orqa/workflows/*.resolved.yaml` for `process_gates:` sections and
+/// replaces the session's in-memory gate list with the loaded definitions.
+/// Falls back to `default_process_gates()` when no resolved workflow files
+/// declare any gates. Failures are logged as warnings — a missing or malformed
+/// workflow file must not block the project from opening.
+fn load_process_gates(state: &State<'_, AppState>, project_path: &str) {
+    let root = Path::new(project_path);
+    let gates = match load_process_gates_from_workflows(root) {
+        Some(loaded) => {
+            tracing::debug!(
+                "[process_gates] loaded {} gate(s) from resolved workflows at '{project_path}'",
+                loaded.len()
+            );
+            loaded
+        }
+        None => {
+            tracing::debug!(
+                "[process_gates] no process gates found in resolved workflows at '{project_path}', using defaults"
+            );
+            default_process_gates()
+        }
+    };
+
+    match state.session.process_gates.lock() {
+        Ok(mut guard) => {
+            *guard = gates;
+        }
+        Err(e) => {
+            tracing::warn!("[process_gates] process_gates mutex poisoned, skipping reload: {e}");
+        }
+    }
 }
 
 /// Validate that a path exists and is a directory, returning the canonical path string.

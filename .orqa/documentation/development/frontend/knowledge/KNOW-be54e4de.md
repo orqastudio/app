@@ -4,6 +4,7 @@ type: knowledge
 title: Svelte Plugin Installation
 domain: platform/svelte
 description: "How the installer agent detects Svelte projects and sets up the Svelte plugin with ESLint, svelte-check, and Vitest dependencies."
+tier: on-demand
 summary: "Svelte Plugin Installation. This skill is consumed by the core installer agent when setting up the Svelte plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"

@@ -25,6 +25,7 @@ import { ErrorStoreImpl } from "./stores/errors.svelte.js";
 import { NavigationStore } from "./stores/navigation.svelte.js";
 import { ToastStore, createToastConvenience } from "./stores/toast.svelte.js";
 import { PluginRegistry } from "./plugins/plugin-registry.svelte.js";
+import { PluginStore } from "./stores/plugin.svelte.js";
 
 /** The full set of SDK store instances. */
 export interface OrqaStores {
@@ -41,6 +42,7 @@ export interface OrqaStores {
     navigationStore: NavigationStore;
     toastStore: ToastStore;
     pluginRegistry: PluginRegistry;
+    pluginStore: PluginStore;
     /** Convenience functions: toast.success(), toast.error(), etc. */
     toast: ReturnType<typeof createToastConvenience>;
 }
@@ -52,8 +54,7 @@ export interface OrqaStores {
 const REGISTRY_KEY = "__orqa_stores";
 
 declare global {
-    // eslint-disable-next-line no-var
-    var __orqa_stores: OrqaStores | undefined;
+    var __orqa_stores: OrqaStores | undefined;  
 }
 
 /**
@@ -61,7 +62,6 @@ declare global {
  *
  * Call this exactly once during app startup (e.g. in the root +layout.svelte).
  * Subsequent calls — including from plugin bundles — return the existing instances.
- *
  * @returns The full set of store instances.
  */
 export function initializeStores(): OrqaStores {
@@ -81,6 +81,7 @@ export function initializeStores(): OrqaStores {
     const navigationStore = new NavigationStore();
     const toastStore = new ToastStore();
     const toast = createToastConvenience(toastStore);
+    const pluginStore = new PluginStore();
 
     const stores: OrqaStores = {
         artifactGraphSDK,
@@ -96,6 +97,7 @@ export function initializeStores(): OrqaStores {
         navigationStore,
         toastStore,
         pluginRegistry,
+        pluginStore,
         toast,
     };
 
@@ -111,6 +113,7 @@ export function initializeStores(): OrqaStores {
  * instances the app created.
  *
  * Throws if `initializeStores()` has not been called yet.
+ * @returns The registered store instances.
  */
 export function getStores(): OrqaStores {
     const stores = globalThis[REGISTRY_KEY];

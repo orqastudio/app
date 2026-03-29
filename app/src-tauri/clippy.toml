@@ -1,0 +1,21 @@
+# OrqaStudio clippy configuration
+# Complements [workspace.lints.clippy] in Cargo.toml
+#
+# This file is a target state artifact. Do not overwrite with generated
+# output until the generation pipeline is validated against this target.
+
+# Function size limit per RULE-006 coding standards:
+#   domain functions: 20-30 lines
+#   command functions: 30-50 lines
+#   utilities: 10-20 lines
+# Hard ceiling is 50 lines.
+too-many-lines-threshold = 50
+
+# Allow .unwrap() and .expect() in test code (#[cfg(test)] + #[test])
+# Production code should use proper error handling.
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+
+# Cognitive complexity -- matches too-many-lines as a secondary check.
+# Default is 25, we use a tighter threshold.
+cognitive-complexity-threshold = 20

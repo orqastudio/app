@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# OrqaStudio post-commit hook
+#
+# Auto-pushes to the remote after every commit.
+# Enforces RULE-f609242f: every commit is pushed immediately.
+#
+# Behavior:
+#   - Sets upstream on first push for new branches
+#   - Skips push during rebase, merge, cherry-pick, revert, or bisect
+#   - Warns on failure but does not block (post-commit cannot prevent the commit)
+
+# Do not use set -e -- a push failure must not crash the hook
+set -uo pipefail
+
+# ── Skip during automated git operations ──────────────────────────────────
+
+GIT_DIR=$(git rev-parse --git-dir)
+
+# Rebase in progress
+if [ -d "$GIT_DIR/rebase-merge" ] || [ -d "$GIT_DIR/rebase-apply" ]; then
+  exit 0
+fi
+
+# Merge in progress
+if [ -f "$GIT_DIR/MERGE_HEAD" ]; then
+  exit 0
+fi
+
+# Cherry-pick in progress
+if [ -f "$GIT_DIR/CHERRY_PICK_HEAD" ]; then
+  exit 0
+fi
+
+# Revert in progress
+if [ -f "$GIT_DIR/REVERT_HEAD" ]; then
+  exit 0
+fi
+
+# ── Skip if no remote configured ──────────────────────────────────────────
+
+if ! git remote get-url origin &>/dev/null; then
+  exit 0
+fi
+
+# ── Push ──────────────────────────────────────────────────────────────────
+
+BRANCH=$(git branch --show-current)
+
+# Detached HEAD (e.g., during bisect) -- skip
+if [ -z "$BRANCH" ]; then
+  exit 0
+fi
+
+# Check if upstream is set
+if git rev-parse --abbrev-ref --symbolic-full-name "@{u}" &>/dev/null; then
+  if ! git push 2>&1; then
+    echo ""
+    echo "WARNING: post-commit push failed. Run 'git push' manually."
+    echo ""
+  fi
+else
+  if ! git push -u origin "$BRANCH" 2>&1; then
+    echo ""
+    echo "WARNING: post-commit push failed. Run 'git push -u origin $BRANCH' manually."
+    echo ""
+  fi
+fi

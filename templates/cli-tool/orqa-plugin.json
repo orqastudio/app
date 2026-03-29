@@ -3,7 +3,10 @@
   "version": "0.1.0-dev",
   "displayName": "Your CLI Tool Plugin",
   "description": "A CLI tool plugin providing one-shot commands.",
-  "category": "custom",
+  "category": "infrastructure",
+  "purpose": ["infrastructure"],
+  "affects_schema": false,
+  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "views": [],
@@ -25,11 +28,11 @@
   "content": {
     "rules": {
       "source": "rules",
-      "target": ".orqa/process/rules"
+      "target": ".orqa/learning/rules"
     },
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/reference"
     }
   },
   "dependencies": {

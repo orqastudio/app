@@ -7,11 +7,27 @@
 //! hardcoded. This is the filesystem-based, AppState-free portion of prompt generation.
 //! The consuming access layer (app, daemon, CLI) may augment the result with context
 //! messages, session state, or other runtime data.
+//!
+//! Paths for knowledge and rules are resolved from `ProjectSettings.artifacts` when
+//! a `project.json` is available, falling back to well-known defaults for environments
+//! that have not been fully set up yet. This satisfies P1 (no hardcoded governance paths).
 
 use std::path::Path;
 
 use orqa_plugin::discovery::scan_plugins;
 use orqa_plugin::manifest::{read_manifest, AgentDefinition};
+
+/// Default relative path for knowledge artifacts when not configured via project.json.
+const DEFAULT_KNOWLEDGE_PATH: &str = ".orqa/documentation/knowledge";
+
+/// Default relative path for rule artifacts when not configured via project.json.
+const DEFAULT_RULES_PATH: &str = ".orqa/learning/rules";
+
+/// Default relative path for the platform instructions file.
+const DEFAULT_CLAUDE_MD_PATH: &str = ".claude/CLAUDE.md";
+
+/// Default relative path for installed agent definition files.
+const DEFAULT_AGENTS_PATH: &str = ".claude/agents";
 
 /// Read a governance file from the project directory.
 ///
@@ -28,13 +44,17 @@ pub fn read_governance_file(
     Ok(Some(contents))
 }
 
-/// List knowledge artifact names with one-line descriptions from `.orqa/documentation/knowledge/*.md`.
+/// List knowledge artifact names with one-line descriptions from the knowledge directory.
+///
+/// `knowledge_path` is the relative path to the knowledge directory (e.g.
+/// `.orqa/documentation/knowledge`). The caller resolves this from
+/// `ProjectSettings.artifacts` or falls back to `DEFAULT_KNOWLEDGE_PATH`.
 ///
 /// Reads only the first non-empty line of each knowledge file as the description.
 /// Full knowledge content is intentionally not loaded here — knowledge is loaded
 /// on demand via the `load_knowledge` tool (P5: token efficiency).
-pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
-    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
+pub fn list_knowledge_catalog(project_path: &Path, knowledge_path: &str) -> Vec<(String, String)> {
+    let knowledge_dir = project_path.join(knowledge_path);
     let mut catalog = Vec::new();
 
     let Ok(read_dir) = std::fs::read_dir(&knowledge_dir) else {
@@ -68,12 +88,16 @@ pub fn list_knowledge_catalog(project_path: &Path) -> Vec<(String, String)> {
     catalog
 }
 
-/// Read all rule files from `.orqa/rules/*.md`.
+/// Read all rule files from the rules directory.
+///
+/// `rules_path` is the relative path to the rules directory (e.g. `.orqa/learning/rules`).
+/// The caller resolves this from `ProjectSettings.artifacts` or falls back to
+/// `DEFAULT_RULES_PATH`.
 ///
 /// Returns a sorted list of `(rule_name, content)` pairs.
 /// Rules are included in full because they are always relevant to every agent (P5).
-pub fn read_rules(project_path: &Path) -> Vec<(String, String)> {
-    let rules_dir = project_path.join(".orqa").join("rules");
+pub fn read_rules(project_path: &Path, rules_path: &str) -> Vec<(String, String)> {
+    let rules_dir = project_path.join(rules_path);
     let mut rules = Vec::new();
 
     let Ok(read_dir) = std::fs::read_dir(&rules_dir) else {
@@ -129,16 +153,15 @@ pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinit
     agents
 }
 
-/// Read agent markdown files installed to `.claude/agents/`.
+/// Read agent markdown files from the installed agents directory.
 ///
+/// `agents_path` is the relative path to the agents directory (e.g. `.claude/agents`).
 /// These files are synced from plugin `content.agents` directories at install time.
 /// Each file is a full agent definition with YAML frontmatter and markdown body.
 /// Returns a sorted list of `(filename_stem, content)` pairs.
 /// Returns an empty vec if the agents directory does not exist.
-fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
-    let agents_dir = project_path
-        .join(".claude")
-        .join("agents");
+fn read_installed_agent_files(project_path: &Path, agents_path: &str) -> Vec<(String, String)> {
+    let agents_dir = project_path.join(agents_path);
     let mut agent_files = Vec::new();
 
     let Ok(read_dir) = std::fs::read_dir(&agents_dir) else {
@@ -166,25 +189,127 @@ fn read_installed_agent_files(project_path: &Path) -> Vec<(String, String)> {
     agent_files
 }
 
+/// Paths resolved from `ProjectSettings.artifacts` (or defaults) for prompt assembly.
+///
+/// These are relative paths within the project root. They are resolved by
+/// `resolve_project_paths` from the `artifacts` array in `project.json`, falling back
+/// to known defaults when the project has not been configured.
+pub struct ProjectPromptPaths {
+    /// Relative path to rule files (default: `.orqa/learning/rules`).
+    pub rules: String,
+    /// Relative path to the knowledge catalog (default: `.orqa/documentation/knowledge`).
+    pub knowledge: String,
+    /// Relative path to the platform instructions file (default: `.claude/CLAUDE.md`).
+    pub claude_md: String,
+    /// Relative path to installed agent definition files (default: `.claude/agents`).
+    pub agents: String,
+}
+
+impl Default for ProjectPromptPaths {
+    /// Return well-known default paths used when project.json is absent or unconfigured.
+    fn default() -> Self {
+        Self {
+            rules: DEFAULT_RULES_PATH.to_owned(),
+            knowledge: DEFAULT_KNOWLEDGE_PATH.to_owned(),
+            claude_md: DEFAULT_CLAUDE_MD_PATH.to_owned(),
+            agents: DEFAULT_AGENTS_PATH.to_owned(),
+        }
+    }
+}
+
+/// Resolve prompt-relevant artifact paths from `project.json`.
+///
+/// Reads `{project_path}/.orqa/project.json`, walks the `artifacts` array looking for
+/// entries with key `"rules"` and `"knowledge"`. Falls back to defaults when the file
+/// is absent or an entry is not found.
+pub fn resolve_project_paths(project_path: &Path) -> ProjectPromptPaths {
+    let settings_file = project_path.join(".orqa").join("project.json");
+    let Ok(content) = std::fs::read_to_string(&settings_file) else {
+        return ProjectPromptPaths::default();
+    };
+    let Ok(value) = serde_json::from_str::<serde_json::Value>(&content) else {
+        return ProjectPromptPaths::default();
+    };
+
+    let rules = find_artifact_path(&value, "rules")
+        .unwrap_or_else(|| DEFAULT_RULES_PATH.to_owned());
+    let knowledge = find_artifact_path(&value, "knowledge")
+        .unwrap_or_else(|| DEFAULT_KNOWLEDGE_PATH.to_owned());
+
+    ProjectPromptPaths {
+        rules,
+        knowledge,
+        claude_md: DEFAULT_CLAUDE_MD_PATH.to_owned(),
+        agents: DEFAULT_AGENTS_PATH.to_owned(),
+    }
+}
+
+/// Walk the `artifacts` array in `project.json` and return the `path` for an entry with
+/// the given `key`. Searches both top-level `Type` entries and children of `Group` entries.
+///
+/// Made `pub` so the facade crate (`orqa_engine::prompt::find_artifact_path`) and scanner
+/// crates can share the same traversal logic without duplicating it.
+pub fn find_artifact_path(value: &serde_json::Value, key: &str) -> Option<String> {
+    let artifacts = value.get("artifacts")?.as_array()?;
+    for entry in artifacts {
+        // Direct type entry with matching key.
+        if entry.get("key").and_then(|v: &serde_json::Value| v.as_str()) == Some(key) {
+            if let Some(path) = entry.get("path").and_then(|v: &serde_json::Value| v.as_str()) {
+                return Some(path.to_owned());
+            }
+        }
+        // Group entry — search children.
+        if let Some(children) = entry.get("children").and_then(|v: &serde_json::Value| v.as_array()) {
+            for child in children {
+                if child.get("key").and_then(|v: &serde_json::Value| v.as_str()) == Some(key) {
+                    if let Some(path) = child.get("path").and_then(|v: &serde_json::Value| v.as_str()) {
+                        return Some(path.to_owned());
+                    }
+                }
+            }
+        }
+    }
+    None
+}
+
 /// Build a structured system prompt from the project's governance artifacts.
 ///
-/// Reads:
-/// - `.orqa/rules/*.md` — rule files (full content)
-/// - `.claude/CLAUDE.md` — project instructions (full content, platform config)
-/// - `.claude/agents/*.md` — agent definitions synced from installed plugins
-/// - `.orqa/documentation/knowledge/*.md` — knowledge catalog (name + one-line description only)
+/// `role` identifies the agent role (e.g. "orchestrator", "implementer"). It is
+/// included in the prompt header so the agent knows its specialisation, and is
+/// used to select the appropriate token budget per DOC-b951327c section 6.3.
 ///
-/// Agent definitions come from installed plugins, not from any static hardcoded file,
-/// satisfying P1 (Plugin-Composed Everything). If no plugins have installed agent
-/// definitions, the "Agent Definitions" section is omitted gracefully.
+/// `stage` is the optional workflow stage (e.g. "implement", "review"). When
+/// provided it is included in the header for task context.
+///
+/// Reads:
+/// - `paths.rules/*.md` — rule files (full content; default `.orqa/learning/rules`)
+/// - `paths.claude_md` — platform instructions (default `.claude/CLAUDE.md`)
+/// - `paths.agents/*.md` — agent definitions synced from installed plugins (default `.claude/agents`)
+/// - `paths.knowledge/*.md` — knowledge catalog, name + one-line description only (default `.orqa/documentation/knowledge`)
+///
+/// Paths come from `ProjectSettings.artifacts` via `resolve_project_paths`, so no
+/// governance paths are hardcoded (P1: Plugin-Composed Everything). If no plugins
+/// have installed agent definitions, the "Agent Definitions" section is omitted.
 ///
 /// Returns the assembled prompt string. Returns `Err` only on I/O failures;
 /// missing optional files are silently skipped.
-pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error> {
+pub fn build_system_prompt(
+    project_path: &Path,
+    role: &str,
+    stage: Option<&str>,
+    paths: &ProjectPromptPaths,
+) -> Result<String, std::io::Error> {
     let mut parts: Vec<String> = Vec::new();
-    parts.push("# Project Governance".to_owned());
 
-    let rules = read_rules(project_path);
+    // Role/stage header gives the agent immediate context without consuming
+    // a large token budget (P5: token efficiency).
+    if let Some(s) = stage {
+        parts.push(format!("# Project Governance\n\nRole: {role} | Stage: {s}"));
+    } else {
+        parts.push(format!("# Project Governance\n\nRole: {role}"));
+    }
+
+    let rules = read_rules(project_path, &paths.rules);
     if !rules.is_empty() {
         parts.push("\n## Rules".to_owned());
         for (name, content) in &rules {
@@ -192,7 +317,7 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
         }
     }
 
-    let catalog = list_knowledge_catalog(project_path);
+    let catalog = list_knowledge_catalog(project_path, &paths.knowledge);
     if !catalog.is_empty() {
         parts.push("\n## Available Knowledge".to_owned());
         parts.push(
@@ -203,15 +328,15 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
         }
     }
 
-    if let Some(claude_md) = read_governance_file(project_path, ".claude/CLAUDE.md")? {
+    if let Some(claude_md) = read_governance_file(project_path, &paths.claude_md)? {
         parts.push("\n## Project Instructions".to_owned());
         parts.push(claude_md);
     }
 
     // Agent definitions come from installed plugin content (P1: Plugin-Composed Everything).
-    // The `.claude/agents/` directory is populated at plugin install time from
+    // The agents directory is populated at plugin install time from
     // each plugin's `content.agents` source directory.
-    let agent_files = read_installed_agent_files(project_path);
+    let agent_files = read_installed_agent_files(project_path, &paths.agents);
     if !agent_files.is_empty() {
         parts.push("\n## Agent Definitions".to_owned());
         for (_name, content) in &agent_files {
@@ -224,10 +349,15 @@ pub fn build_system_prompt(project_path: &Path) -> Result<String, std::io::Error
 
 /// Resolve the system prompt from a known project root path, logging on failure.
 ///
+/// Resolves paths from `project.json` automatically. Uses "general" as the role
+/// and no stage when called without context — prefer calling `build_system_prompt`
+/// directly when role and stage are known.
+///
 /// Returns `Some(prompt)` when the prompt can be assembled; returns `None`
 /// and emits a tracing warning when assembly fails.
 pub fn resolve_system_prompt(project_root: &Path) -> Option<String> {
-    match build_system_prompt(project_root) {
+    let paths = resolve_project_paths(project_root);
+    match build_system_prompt(project_root, "general", None, &paths) {
         Ok(prompt) => {
             tracing::debug!("[stream] system prompt built ({} chars)", prompt.len());
             Some(prompt)
@@ -249,17 +379,37 @@ mod tests {
         tempfile::tempdir().expect("tempdir")
     }
 
+    /// Build a default `ProjectPromptPaths` for test use.
+    fn default_paths() -> ProjectPromptPaths {
+        ProjectPromptPaths::default()
+    }
+
     #[test]
     fn build_system_prompt_empty_project() {
         let dir = make_project();
-        let prompt = build_system_prompt(dir.path()).expect("should not error on empty project");
+        let paths = default_paths();
+        let prompt = build_system_prompt(dir.path(), "implementer", None, &paths)
+            .expect("should not error on empty project");
         assert!(prompt.contains("# Project Governance"));
+        assert!(prompt.contains("Role: implementer"));
+    }
+
+    #[test]
+    fn build_system_prompt_includes_role_and_stage() {
+        let dir = make_project();
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "reviewer", Some("review"), &paths)
+                .expect("should succeed");
+        assert!(prompt.contains("Role: reviewer"));
+        assert!(prompt.contains("Stage: review"));
     }
 
     #[test]
     fn build_system_prompt_includes_rules() {
         let dir = make_project();
-        let rules_dir = dir.path().join(".orqa").join("rules");
+        // Use the default rules path (.orqa/learning/rules) matching project.json config.
+        let rules_dir = dir.path().join(".orqa").join("learning").join("rules");
         fs::create_dir_all(&rules_dir).expect("create rules dir");
         fs::write(
             rules_dir.join("no-debug.md"),
@@ -267,10 +417,34 @@ mod tests {
         )
         .expect("write rule");
 
-        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "implementer", None, &paths).expect("should succeed");
         assert!(prompt.contains("## Rules"));
         assert!(prompt.contains("no-debug"));
         assert!(prompt.contains("Never leave debug statements"));
+    }
+
+    #[test]
+    fn build_system_prompt_includes_rules_from_custom_path() {
+        // Verify that custom paths (from project.json) override the defaults.
+        let dir = make_project();
+        let rules_dir = dir.path().join("custom").join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+        fs::write(
+            rules_dir.join("my-rule.md"),
+            "Custom rule content.",
+        )
+        .expect("write rule");
+
+        let paths = ProjectPromptPaths {
+            rules: "custom/rules".to_owned(),
+            ..ProjectPromptPaths::default()
+        };
+        let prompt =
+            build_system_prompt(dir.path(), "implementer", None, &paths).expect("should succeed");
+        assert!(prompt.contains("## Rules"));
+        assert!(prompt.contains("Custom rule content."));
     }
 
     #[test]
@@ -284,7 +458,9 @@ mod tests {
         )
         .expect("write CLAUDE.md");
 
-        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "general", None, &paths).expect("should succeed");
         assert!(prompt.contains("## Project Instructions"));
         assert!(prompt.contains("Follow the architecture."));
     }
@@ -304,7 +480,9 @@ mod tests {
         )
         .expect("write knowledge");
 
-        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "general", None, &paths).expect("should succeed");
         assert!(prompt.contains("## Available Knowledge"));
         assert!(prompt.contains("arch-overview"));
         assert!(prompt.contains("Architecture Overview"));
@@ -315,10 +493,7 @@ mod tests {
         // Agents installed to .claude/agents/ (synced from plugin content.agents)
         // should appear in the generated prompt under "Agent Definitions".
         let dir = make_project();
-        let agents_dir = dir
-            .path()
-            .join(".claude")
-            .join("agents");
+        let agents_dir = dir.path().join(".claude").join("agents");
         fs::create_dir_all(&agents_dir).expect("create agents dir");
         fs::write(
             agents_dir.join("orchestrator.md"),
@@ -326,7 +501,9 @@ mod tests {
         )
         .expect("write agent file");
 
-        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "general", None, &paths).expect("should succeed");
         assert!(prompt.contains("## Agent Definitions"));
         assert!(prompt.contains("Orchestrator"));
         assert!(prompt.contains("Coordinates workers."));
@@ -338,7 +515,9 @@ mod tests {
         // This replaces the old AGENTS.md fallback — if no plugin provides agents,
         // the section is simply omitted (graceful degradation).
         let dir = make_project();
-        let prompt = build_system_prompt(dir.path()).expect("should succeed");
+        let paths = default_paths();
+        let prompt =
+            build_system_prompt(dir.path(), "general", None, &paths).expect("should succeed");
         assert!(!prompt.contains("## Agent Definitions"));
     }
 
@@ -353,14 +532,14 @@ mod tests {
     #[test]
     fn list_knowledge_catalog_empty_when_no_dir() {
         let dir = make_project();
-        let catalog = list_knowledge_catalog(dir.path());
+        let catalog = list_knowledge_catalog(dir.path(), DEFAULT_KNOWLEDGE_PATH);
         assert!(catalog.is_empty());
     }
 
     #[test]
     fn read_rules_empty_when_no_dir() {
         let dir = make_project();
-        let rules = read_rules(dir.path());
+        let rules = read_rules(dir.path(), DEFAULT_RULES_PATH);
         assert!(rules.is_empty());
     }
 
@@ -369,6 +548,43 @@ mod tests {
         let dir = make_project();
         let result = read_governance_file(dir.path(), "nonexistent.md").expect("should not error");
         assert!(result.is_none());
+    }
+
+    #[test]
+    fn resolve_project_paths_falls_back_to_defaults_when_no_project_json() {
+        let dir = make_project();
+        let paths = resolve_project_paths(dir.path());
+        assert_eq!(paths.rules, DEFAULT_RULES_PATH);
+        assert_eq!(paths.knowledge, DEFAULT_KNOWLEDGE_PATH);
+    }
+
+    #[test]
+    fn resolve_project_paths_reads_from_project_json() {
+        let dir = make_project();
+        let orqa_dir = dir.path().join(".orqa");
+        fs::create_dir_all(&orqa_dir).expect("create .orqa");
+        let project_json = serde_json::json!({
+            "name": "test",
+            "artifacts": [
+                {
+                    "key": "learning",
+                    "label": "Learning",
+                    "children": [
+                        { "key": "rules", "label": "Rules", "path": ".orqa/custom/rules" }
+                    ]
+                },
+                { "key": "knowledge", "label": "Knowledge", "path": ".orqa/custom/knowledge" }
+            ]
+        });
+        fs::write(
+            orqa_dir.join("project.json"),
+            serde_json::to_string_pretty(&project_json).unwrap(),
+        )
+        .expect("write project.json");
+
+        let paths = resolve_project_paths(dir.path());
+        assert_eq!(paths.rules, ".orqa/custom/rules");
+        assert_eq!(paths.knowledge, ".orqa/custom/knowledge");
     }
 
     #[test]

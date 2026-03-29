@@ -33,6 +33,7 @@
 		}
 	});
 
+	/** Scans the project path for stack and governance detection, updating the scan result state. */
 	async function handleScan() {
 		const result = await projectStore.scanProject(props.projectPath);
 		if (result) {
@@ -41,6 +42,7 @@
 		}
 	}
 
+	/** Saves the project settings from the wizard form and calls the onSave prop. */
 	async function handleSave() {
 		if (!scanResult) return;
 		const settings: ProjectSettings = {

@@ -10,21 +10,21 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 1
 relationships:
-  - target: AD-39e2fb81
+  - target: PD-39e2fb81
     type: documents
-  - target: AD-2d58941b
+  - target: PD-2d58941b
     type: documents
-  - target: AD-4e7faf0e
+  - target: PD-4e7faf0e
     type: documents
   - target: EPIC-d45b4dfd
     type: documents
 ---
 
-**References:** [Tauri v2 Research](RES-7b24ff49), [AD-4e7faf0e](AD-4e7faf0e), [AD-39e2fb81](AD-39e2fb81), Rust Module Architecture
+**References:** [Tauri v2 Research](RES-7b24ff49), [PD-4e7faf0e](PD-4e7faf0e), [PD-39e2fb81](PD-39e2fb81), Rust Module Architecture
 
-Complete catalog of `#[tauri::command]` functions. Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel\<T\>` [AD-39e2fb81](AD-39e2fb81) rather than `invoke()`.
+Complete catalog of `#[tauri::command]` functions. Every frontend-to-backend call crosses the IPC boundary through one of these commands. Streaming data uses `Channel\<T\>` [PD-39e2fb81](PD-39e2fb81) rather than `invoke()`.
 
-All commands return `Result\<T, OrqaError\>` where `OrqaError` is a `thiserror`-derived enum serialized as `{"code": "<variant>", "message": "<detail>"}` [AD-2d58941b](AD-2d58941b).
+All commands return `Result\<T, OrqaError\>` where `OrqaError` is a `thiserror`-derived enum serialized as `{"code": "<variant>", "message": "<detail>"}` [PD-2d58941b](PD-2d58941b).
 
 There are currently **15 command modules** containing approximately **82 commands** in total.
 
@@ -230,8 +230,8 @@ Tool calls that require approval park on a sync channel. The frontend calls `str
 ## Related Documents
 
 - Rust Module Architecture — module structure, AppState, dependency graph
-- [AD-4e7faf0e](AD-4e7faf0e) — IPC boundary principle
-- [AD-39e2fb81](AD-39e2fb81) — streaming via Channel\<T\>
-- [AD-2d58941b](AD-2d58941b) — error propagation via Result + thiserror
+- [PD-4e7faf0e](PD-4e7faf0e) — IPC boundary principle
+- [PD-39e2fb81](PD-39e2fb81) — streaming via Channel\<T\>
+- [PD-2d58941b](PD-2d58941b) — error propagation via Result + thiserror
 
 ---

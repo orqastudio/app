@@ -14,7 +14,7 @@ enforcement:
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
 relationships:
 
-  - target: AD-b2f1f829
+  - target: PD-b2f1f829
 
     type: enforces
 ---

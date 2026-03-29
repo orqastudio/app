@@ -9,6 +9,10 @@
 
 	const modelOptions = CLAUDE_MODEL_OPTIONS as { value: DefaultModel; label: string; description: string }[];
 
+	/**
+	 * Applies the selected model to the settings store.
+	 * @param value - The model identifier to set as the default.
+	 */
 	function handleModelChange(value: string): void {
 		settingsStore.setDefaultModel(value as DefaultModel);
 	}

@@ -10,13 +10,13 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 16
 relationships:
-  - target: AD-d01b9e0a
+  - target: PD-d01b9e0a
     type: documents
-  - target: AD-e4a3b5da
+  - target: PD-e4a3b5da
     type: documents
 ---
 
-**Date:** 2026-03-02 | **References:** [AD-e4a3b5da](AD-e4a3b5da), [AD-d01b9e0a](AD-d01b9e0a)
+**Date:** 2026-03-02 | **References:** [PD-e4a3b5da](PD-e4a3b5da), [PD-d01b9e0a](PD-d01b9e0a)
 
 This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `app/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`app/src-tauri/src/sidecar/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
 
@@ -318,7 +318,7 @@ For write operations, where the file may not yet exist, `resolve_write_path()` c
 
 ## Related Documents
 
-- Architecture Decisions — [AD-e4a3b5da](AD-e4a3b5da) (tool execution model), [AD-d01b9e0a](AD-d01b9e0a) (security model)
+- Architecture Decisions — [PD-e4a3b5da](PD-e4a3b5da) (tool execution model), [PD-d01b9e0a](PD-d01b9e0a) (security model)
 - Streaming Pipeline — How tool events flow through the NDJSON protocol
 
 ---

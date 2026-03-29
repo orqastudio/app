@@ -28,7 +28,7 @@ The current prompt-injector uses regex pattern matching to detect artifact refer
 
 A small fine-tuned model sitting between the user and the orchestrator solves this:
 
-1. **Intent classification**: "refactor session handling" → {area: persistence, artifacts: [AD-75bb14ae, AD-859ed163], skills: [orqa-repository-pattern, orqa-domain-services]}
+1. **Intent classification**: "refactor session handling" → {area: persistence, artifacts: [PD-75bb14ae, PD-859ed163], skills: [orqa-repository-pattern, orqa-domain-services]}
 2. **Graph traversal hints**: Instead of the orchestrator reading every artifact to find relevance, the intent model provides starting nodes for the graph walk
 3. **Reduced orchestrator context load**: The model pre-selects what matters, keeping the orchestrator focused on coordination
 
@@ -64,7 +64,7 @@ When not available:
 {
   "intent": "refactor",
   "domain": ["persistence", "domain-services"],
-  "suggested_artifacts": ["AD-75bb14ae", "AD-859ed163"],
+  "suggested_artifacts": ["PD-75bb14ae", "PD-859ed163"],
   "suggested_skills": ["orqa-repository-pattern", "orqa-domain-services"],
   "scope_signal": "backend-only",
   "confidence": 0.87

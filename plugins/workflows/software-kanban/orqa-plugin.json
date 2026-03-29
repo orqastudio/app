@@ -4,7 +4,9 @@
   "displayName": "Software Project",
   "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
   "category": "workflow",
-  "purpose": ["workflow"],
+  "purpose": [
+    "workflow"
+  ],
   "stage_slot": "implementation",
   "role": null,
   "affects_schema": true,
@@ -392,54 +394,6 @@
             }
           ]
         }
-      },
-      {
-        "key": "reports",
-        "inverse": "reported-by",
-        "label": "Reports",
-        "inverseLabel": "Reported By",
-        "from": [
-          "bug"
-        ],
-        "to": [
-          "epic",
-          "task",
-          "milestone"
-        ],
-        "description": "Bug reports an issue against delivery work",
-        "semantic": "corrective",
-        "constraints": {
-          "required": true,
-          "minCount": 1
-        }
-      },
-      {
-        "key": "fixes",
-        "inverse": "fixed-by",
-        "label": "Fixes",
-        "inverseLabel": "Fixed By",
-        "from": [
-          "task"
-        ],
-        "to": [
-          "bug"
-        ],
-        "description": "Task fixes a reported bug",
-        "semantic": "corrective"
-      },
-      {
-        "key": "affects",
-        "inverse": "affected-by",
-        "label": "Affects",
-        "inverseLabel": "Affected By",
-        "from": [
-          "bug"
-        ],
-        "to": [
-          "persona"
-        ],
-        "description": "Bug affects a target persona",
-        "semantic": "corrective"
       },
       {
         "key": "implements",
@@ -915,15 +869,13 @@
       "MS": "title",
       "EPIC": "title",
       "TASK": "title",
-      "RES": "title",
-      "BUG": "title"
+      "RES": "title"
     },
     "colors": {
       "MS": "#38bdf8",
       "EPIC": "#3b82f6",
       "TASK": "#06b6d4",
-      "RES": "#6366f1",
-      "BUG": "#ef4444"
+      "RES": "#6366f1"
     }
   },
   "semantics": {
@@ -941,17 +893,6 @@
       "keys": [
         "depends-on",
         "depended-on-by"
-      ]
-    },
-    "corrective": {
-      "description": "Bug tracking — reporting issues and fixing them",
-      "keys": [
-        "reports",
-        "reported-by",
-        "fixes",
-        "fixed-by",
-        "affects",
-        "affected-by"
       ]
     },
     "delivery": {

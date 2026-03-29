@@ -12,7 +12,7 @@ enforcement:
   - mechanism: json-schema
     description: "Governance steward verifies agent YAML uses capabilities field not tool names"
 relationships:
-  - target: AD-02a2a97b
+  - target: PD-02a2a97b
     type: enforces
   - target: DOC-d9cc1f84
     type: documented-by

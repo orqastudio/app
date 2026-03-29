@@ -49,6 +49,7 @@ export {
 	NavigationStore,
 	ToastStore,
 	createToastConvenience,
+	PluginStore,
 } from "./stores/index.js";
 
 // Store-related types
@@ -57,3 +58,4 @@ export type { ThemeMode, DefaultModel, DaemonState, DaemonHealth } from "./store
 export type { AppError } from "./stores/index.js";
 export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig, ActiveNavItem } from "./stores/index.js";
 export type { Toast, ToastType } from "./stores/index.js";
+export type { PluginEntry } from "./stores/index.js";

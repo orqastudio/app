@@ -4,6 +4,7 @@ type: knowledge
 title: Plugin Management
 domain: integration/cli
 description: "How to create, install, update, and remove OrqaStudio plugins using orqa plugin commands and the plugin manifest format."
+tier: on-demand
 summary: "Plugin Management. OrqaStudio plugins extend the app with new artifact types, views, relationships, sidecars, hooks, and CLI tools. Manage them via the `orqa plugin` commands."
 status: active
 plugin: "@orqastudio/plugin-cli"

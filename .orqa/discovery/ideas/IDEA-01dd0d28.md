@@ -21,4 +21,4 @@ relationships:
 
 ## Motivation
 
-[AD-430829f1](AD-430829f1) defines three discovery paths during project initialization: automated detection of codebase tooling, user interview about metrics/monitoring tools, and recommendation of options based on project context. This turns OrqaStudio setup into a guided process that connects the project to the verification pipeline from day one.
+[PD-430829f1](PD-430829f1) defines three discovery paths during project initialization: automated detection of codebase tooling, user interview about metrics/monitoring tools, and recommendation of options based on project context. This turns OrqaStudio setup into a guided process that connects the project to the verification pipeline from day one.

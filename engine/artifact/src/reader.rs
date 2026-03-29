@@ -10,11 +10,11 @@
 use std::collections::HashMap;
 use std::path::Path;
 
+use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
 use orqa_engine_types::error::EngineError;
 use orqa_engine_types::types::artifact::{
     DocNode, FilterableField, NavGroup, NavTree, NavType, NavigationConfig, SortableField,
 };
-use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig};
 
 // ---------------------------------------------------------------------------
 // Navigation tree scanner
@@ -613,7 +613,7 @@ fn title_case_word(word: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use orqa_validation::settings::ArtifactTypeConfig;
+    use orqa_engine_types::config::ArtifactTypeConfig;
     use std::fs;
     use tempfile::TempDir;
 

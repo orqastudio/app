@@ -176,7 +176,7 @@ When a group is clicked, the NavSubPanel shows a two-level layout:
 
 Each artifact in the sub-category list shows:
 
-- **ID** (if applicable): `[EPIC-9ddef7f9](EPIC-9ddef7f9)`, `[AD-af88bb69](AD-af88bb69)`, `[MS-b1ac0a20](MS-b1ac0a20)`
+- **ID** (if applicable): `[EPIC-9ddef7f9](EPIC-9ddef7f9)`, `[PD-af88bb69](PD-af88bb69)`, `[MS-b1ac0a20](MS-b1ac0a20)`
 - **Title**: truncated to fit
 - **Status badge**: colored pill (draft=gray, active=blue, done=green, etc.)
 - **Priority badge** (epics only): P1=red, P2=amber, P3=green
@@ -278,10 +278,10 @@ A special entry in the Team group showing:
 
 ### Power User — Cross-Navigation
 
-1. Viewing [AD-af88bb69](AD-af88bb69) under Governance > Decisions
+1. Viewing [PD-af88bb69](PD-af88bb69) under Governance > Decisions
 2. See `research-refs: provider-architecture.md` as a clickable chip
 3. Click it → navigates to Planning > Research > provider-architecture.md
-4. See `produces_decisions: [[AD-af88bb69](AD-af88bb69)]` in research frontmatter → click to go back
+4. See `produces_decisions: [[PD-af88bb69](PD-af88bb69)]` in research frontmatter → click to go back
 
 ### Platform Setup
 
@@ -638,7 +638,7 @@ References to `.orqa/` paths in frontmatter or body:
 
 - [ ] Clicking `[MS-b1ac0a20](MS-b1ac0a20)` in an epic's frontmatter navigates to Planning > Milestones > [MS-b1ac0a20](MS-b1ac0a20)
 - [ ] Clicking `[EPIC-9ddef7f9](EPIC-9ddef7f9)` in markdown body navigates to Planning > Epics > [EPIC-9ddef7f9](EPIC-9ddef7f9)
-- [ ] Clicking `[AD-af88bb69](AD-af88bb69)` navigates to Governance > Decisions > [AD-af88bb69](AD-af88bb69)
+- [ ] Clicking `[PD-af88bb69](PD-af88bb69)` navigates to Governance > Decisions > [PD-af88bb69](PD-af88bb69)
 - [ ] Back navigation works (browser-style or breadcrumb)
 - [ ] Non-existent artifact IDs show tooltip "artifact not found" instead of broken navigation
 

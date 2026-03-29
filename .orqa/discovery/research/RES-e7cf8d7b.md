@@ -105,8 +105,8 @@ The monolithic doc becomes a summary table that links to individual artifacts:
 ```markdown
 | ID | Title | Status | Category | Artifact |
 |----|-------|--------|----------|----------|
-| AD-7121ec20 | Thick Backend Architecture | accepted | architecture | [→ .orqa/decisions/AD-7121ec20.md] |
-| AD-4e7faf0e | IPC Boundary Design | accepted | architecture | [→ .orqa/decisions/AD-4e7faf0e.md] |
+| PD-7121ec20 | Thick Backend Architecture | accepted | architecture | [→ .orqa/decisions/PD-7121ec20.md] |
+| PD-4e7faf0e | IPC Boundary Design | accepted | architecture | [→ .orqa/decisions/PD-4e7faf0e.md] |
 ...
 ```
 

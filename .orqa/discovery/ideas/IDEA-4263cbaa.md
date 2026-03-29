@@ -16,9 +16,9 @@ research-needed:
   - "How does this relate to lessons? A constraint is different from a lesson — a lesson captures understanding, a constraint acknowledges a gap"
   - "What does the dashboard widget look like? Aging constraints sorted by impact?"
 relationships:
-  - target: AD-2dc8ab96
+  - target: PD-2dc8ab96
     type: crystallises
-    rationale: "AD-2dc8ab96's scanner is acknowledged as a known constraint (stopgap before linter plugins)"
+    rationale: "PD-2dc8ab96's scanner is acknowledged as a known constraint (stopgap before linter plugins)"
   - target: PILLAR-2acd86c1
     type: grounded
   - target: PERSONA-c4afd86b

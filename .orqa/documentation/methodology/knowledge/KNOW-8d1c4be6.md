@@ -5,6 +5,7 @@ status: active
 title: Plugin Artifact Usage
 domain: methodology/governance
 description: How plugins provide and consume governance artifacts within the OrqaStudio ecosystem
+tier: always
 summary: "Plugin artifact usage: how plugins declare, provide, and consume governance artifacts. Content flow from plugin source through install-time sync to project-level copies."
 ---
 

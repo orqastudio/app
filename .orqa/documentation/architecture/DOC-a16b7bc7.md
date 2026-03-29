@@ -5,6 +5,7 @@ title: Demoted Rule Stability Tracking
 domain: architecture
 description: "How OrqaStudio tracks whether demoted rules are safe to delete: the demotion lifecycle, stability counter, violation logging, and auto-delete trigger."
 category: governance
+status: active
 created: 2026-03-24
 updated: 2026-03-24
 relationships:

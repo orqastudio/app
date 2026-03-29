@@ -4,6 +4,7 @@ type: knowledge
 title: README Standards
 domain: standards/readme
 description: "Reference for the required README header structure, badge conventions, and compliance audit process for every OrqaStudio repository."
+tier: stage-triggered
 status: active
 plugin: "@orqastudio/plugin-cli"
 relationships:

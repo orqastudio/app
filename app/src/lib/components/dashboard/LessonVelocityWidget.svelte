@@ -54,6 +54,10 @@
 	// Navigation
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Navigates to the lessons activity view.
+	 * @param status - Optional status filter (reserved for future use; not yet applied by the view).
+	 */
 	function navigateToLessons(status?: string) {
 		navigationStore.setActivity("lessons");
 		// Status filter not yet supported by the artifact list view — navigate to lessons

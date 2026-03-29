@@ -20,7 +20,7 @@ enforcement:
     description: "Stop hook scans completion reports for missing What Is NOT Done section"
 relationships:
 
-  - target: AD-9baf6ee9
+  - target: PD-9baf6ee9
 
     type: enforces
 ---

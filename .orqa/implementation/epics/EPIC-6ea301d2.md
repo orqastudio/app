@@ -24,7 +24,7 @@ relationships:
 
 ## Context
 
-The unified status system (AD-487e045a) defines 11 statuses and DOC-61ecc85e documents which transitions are automatic vs manual. Currently nothing enforces this — agents and users must remember to update statuses. This epic adds mechanical enforcement.
+The unified status system (PD-487e045a) defines 11 statuses and DOC-61ecc85e documents which transitions are automatic vs manual. Currently nothing enforces this — agents and users must remember to update statuses. This epic adds mechanical enforcement.
 
 ## Implementation Design
 

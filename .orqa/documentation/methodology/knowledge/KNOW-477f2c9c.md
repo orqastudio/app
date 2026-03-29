@@ -11,6 +11,7 @@ description: |
   behavioral rules, pre-commit) validates quality. Use when: understanding the system
   architecture, designing new enforcement, configuring agent knowledge, adding artifact
   types, or explaining how OrqaStudio works.
+tier: always
 status: active
 created: 2026-03-24
 updated: 2026-03-24

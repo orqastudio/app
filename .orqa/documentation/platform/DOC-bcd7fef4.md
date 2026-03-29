@@ -10,9 +10,9 @@ created: 2026-03-02
 updated: 2026-03-10
 sort: 2
 relationships:
-  - target: AD-2d58941b
+  - target: PD-2d58941b
     type: documents
-  - target: AD-4e7faf0e
+  - target: PD-4e7faf0e
     type: documents
 ---
 
@@ -20,7 +20,7 @@ relationships:
 
 All Tauri commands return `Result\<T, OrqaError\>`. `OrqaError` is a single flat enum defined in `app/src-tauri/src/error.rs`. There are no nested error enums.
 
-**Architecture References:** [AD-2d58941b](AD-2d58941b) (error propagation via Result types), [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary design)
+**Architecture References:** [PD-2d58941b](PD-2d58941b) (error propagation via Result types), [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary design)
 
 ---
 
@@ -274,5 +274,5 @@ There is no test for `rusqlite::Error` conversion because constructing a `rusqli
 
 ## Related Documents
 
-- [AD-2d58941b](AD-2d58941b) (Result types, no unwrap in production), [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary)
+- [PD-2d58941b](PD-2d58941b) (Result types, no unwrap in production), [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary)
 - `app/src-tauri/src/error.rs` — canonical source of truth for all variant definitions and From impls

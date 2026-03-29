@@ -75,7 +75,7 @@ pub enum DomainError {
 let value = map.get("key").unwrap(); // NEVER
 ```
 
-### IPC Boundary ([AD-ecc96aef](AD-ecc96aef))
+### IPC Boundary ([PD-ecc96aef](PD-ecc96aef))
 
 Tauri `invoke()` is the ONLY frontend-backend interface. Every backend capability the frontend needs MUST have a `#[tauri::command]` function registered in the app builder.
 

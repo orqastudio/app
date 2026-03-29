@@ -102,11 +102,21 @@ fn reset_process_state_if_new_session(state: &tauri::State<'_, AppState>, sessio
 }
 
 /// Reset the workflow tracker to a clean state for a new session.
+///
+/// Creates a new tracker with the current session's tracker config so that
+/// path classification rules are preserved across session resets.
 fn reset_workflow_tracker(state: &tauri::State<'_, AppState>) {
     use crate::domain::workflow_tracker::WorkflowTracker;
+    let config = match state.session.tracker_config.lock() {
+        Ok(c) => c.clone(),
+        Err(e) => {
+            tracing::warn!("[workflow] tracker_config mutex poisoned, skipping reset: {e}");
+            return;
+        }
+    };
     match state.session.workflow_tracker.lock() {
         Ok(mut wt) => {
-            *wt = WorkflowTracker::new();
+            *wt = WorkflowTracker::new(config);
         }
         Err(e) => {
             tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping reset: {e}");

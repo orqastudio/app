@@ -57,7 +57,7 @@ Read `.orqa/documentation/development/coding-standards.md` before writing any co
 - **Function size** — components under 150 lines, utilities under 20 lines
 - **No TODO comments** — use task artifacts instead
 
-### Component Purity ([AD-ecc96aef](AD-ecc96aef))
+### Component Purity ([PD-ecc96aef](PD-ecc96aef))
 
 The boundary between containers and display components is strict:
 

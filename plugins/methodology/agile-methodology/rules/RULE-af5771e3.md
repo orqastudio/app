@@ -17,7 +17,7 @@ enforcement:
 relationships:
   - target: DOC-9814ec3c
     type: documented-by
-  - target: AD-af88bb69
+  - target: PD-af88bb69
     type: enforces
 ---
 ## What Counts as a Stub

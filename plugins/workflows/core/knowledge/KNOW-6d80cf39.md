@@ -99,4 +99,4 @@ Local edits and plugin updates both require reconciliation during `orqa install`
 
 - [DOC-7068f40a](DOC-7068f40a) — user-facing documentation pair for this knowledge
 - [KNOW-e3432947](KNOW-e3432947) — project-level knowledge about plugin-canonical architecture
-- [AD-26d8d45d](AD-26d8d45d) — architecture decision formalising the plugin-canonical model
+- [PD-26d8d45d](PD-26d8d45d) — architecture decision formalising the plugin-canonical model

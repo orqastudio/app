@@ -10,6 +10,7 @@ description: |
   to the correct agent role with explicit acceptance criteria.
   Use when: Coordinating multi-agent work, deciding which role to delegate to,
   or handling ambiguous user requests.
+tier: always
 status: active
 created: 2026-03-22
 updated: 2026-03-22

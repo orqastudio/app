@@ -1,0 +1,66 @@
+# AUTO-GENERATED — do not edit manually.
+# Stage: document (documentation-standards slot in agile-methodology)
+# Source plugin: @orqastudio/plugin-agile-documentation v0.1.4-dev
+# Generated at: 2026-03-29T09:05:07.486Z
+version: 1.0.0
+generated: true
+generatedAt: 2026-03-29T09:05:07.486Z
+description: Resolved document stage workflow. Contains states, transitions, and artifact types contributed by
+  @orqastudio/plugin-agile-documentation into the documentation-standards slot of agile-methodology.
+stage: document
+source_plugin: "@orqastudio/plugin-agile-documentation"
+fills_slot: documentation-standards
+methodology: agile-methodology
+contribution_workflow:
+  name: document-contribution
+  initial_state: document
+  states:
+    draft_docs:
+      category: planning
+      description: Draft documentation — capture decisions, architecture, requirements as structured artifacts.
+      on_enter:
+        - type: append_log
+          params:
+            message: Documentation drafting started
+    review_docs:
+      category: review
+      description: Review documentation — verify accuracy, completeness, and alignment with decisions.
+      on_enter:
+        - type: append_log
+          params:
+            message: Documentation review started
+    publish_docs:
+      category: active
+      description: Publish documentation — finalize and make available to the team.
+      on_enter:
+        - type: append_log
+          params:
+            message: Documentation published
+  transitions:
+    - from: document
+      to: draft_docs
+      event: begin_documentation
+      description: Start documenting decisions and architecture.
+    - from: draft_docs
+      to: review_docs
+      event: drafts_complete
+      description: Drafts complete, begin documentation review.
+    - from: review_docs
+      to: draft_docs
+      event: revisions_needed
+      description: Review found issues — revise documentation.
+    - from: review_docs
+      to: publish_docs
+      event: docs_approved
+      description: Documentation approved, publish.
+    - from: publish_docs
+      to: implement
+      event: documentation_complete
+      description: Documentation published, proceed to implementation.
+    - from: draft_docs
+      to: implement
+      event: skip_review
+      description: Skip documentation review for simple changes.
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-agile-documentation"
+    version: 0.1.4-dev

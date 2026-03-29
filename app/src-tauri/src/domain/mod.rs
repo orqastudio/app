@@ -71,3 +71,7 @@ pub mod time_utils;
 pub mod tool_executor;
 /// Workflow tracker: records reads, writes, and tool invocations per session.
 pub mod workflow_tracker;
+/// Workflow configuration: builds process gate and tracker configs from resolved workflow.
+pub mod workflow_config;
+/// Workflow loader: reads process gate definitions from resolved workflow YAML files.
+pub mod workflow_loader;

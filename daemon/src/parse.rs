@@ -121,9 +121,9 @@ fn extract_frontmatter(content: &str) -> (Option<String>, String) {
             break;
         }
         if let Some(value) = line.strip_prefix("id:") {
-            id = Some(value.trim().to_string());
+            id = Some(value.trim().to_owned());
         } else if let Some(value) = line.strip_prefix("type:") {
-            artifact_type = value.trim().to_string();
+            value.trim().clone_into(&mut artifact_type);
         }
     }
 
@@ -168,7 +168,7 @@ fn count_downstream(
                     if examples.len() < 3 {
                         // Use the file stem as a human-readable label.
                         if let Some(stem) = entry.file_stem().and_then(|s| s.to_str()) {
-                            examples.push(stem.to_string());
+                            examples.push(stem.to_owned());
                         }
                     }
                 }

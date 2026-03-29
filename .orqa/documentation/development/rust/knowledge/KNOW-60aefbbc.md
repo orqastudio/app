@@ -31,7 +31,7 @@ summary: |
   tested, and wired to Tauri commands. Service anatomy and the domain/framework
   boundary.
 ---
-Domain services live in `app/src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [AD-7121ec20](AD-7121ec20). Commands in `app/src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
+Domain services live in `app/src-tauri/src/domain/`. They contain the business logic of OrqaStudio and are the heart of the thick-backend architecture [PD-7121ec20](PD-7121ec20). Commands in `app/src-tauri/src/commands/` are thin wrappers that delegate to domain services and repositories.
 
 ## Service Anatomy
 

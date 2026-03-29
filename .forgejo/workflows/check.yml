@@ -30,7 +30,7 @@ jobs:
 
       - name: Build TypeScript packages
         run: |
-          for dir in libs/types libs/logger plugins/typescript libs/cli connectors/claude-code libs/sdk libs/svelte-components libs/graph-visualiser; do
+          for dir in libs/types libs/logger plugins/typescript cli connectors/claude-code libs/sdk libs/svelte-components libs/graph-visualiser; do
             if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
               echo "Building $dir..."
               cd "$dir"

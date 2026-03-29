@@ -62,8 +62,8 @@ log_violation() {
 
 # ── Resolve orqa CLI ───────────────────────────────────────────────────────
 if ! command -v orqa &> /dev/null; then
-  if [ -f "$PROJECT_ROOT/libs/cli/dist/cli.js" ]; then
-    ORQA="node $PROJECT_ROOT/libs/cli/dist/cli.js"
+  if [ -f "$PROJECT_ROOT/cli/dist/cli.js" ]; then
+    ORQA="node $PROJECT_ROOT/cli/dist/cli.js"
   else
     echo "WARNING: orqa CLI not available — skipping pre-commit checks"
     exit 0

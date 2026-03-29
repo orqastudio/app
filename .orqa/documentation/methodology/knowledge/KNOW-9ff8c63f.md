@@ -8,6 +8,7 @@ description: |
   Research best practices for agents investigating external sources: source
   verification, credibility assessment, cross-referencing, and structured
   documentation of findings with confidence levels.
+tier: always
 status: active
 category: methodology
 user-invocable: true

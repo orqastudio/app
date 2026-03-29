@@ -4,6 +4,7 @@ type: knowledge
 title: Rust Testing Patterns
 domain: platform/rust
 description: "Patterns and conventions for writing Rust tests in the OrqaStudio engine crates, including test organization, fixture management, and assertion patterns."
+tier: on-demand
 summary: "Rust Testing Patterns. Tests live in `#[cfg(test)]` modules at the bottom of each source file. Integration tests in a `tests/` directory."
 status: active
 plugin: "@orqastudio/plugin-rust"

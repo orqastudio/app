@@ -1,29 +1,30 @@
-// OrqaStudio daemon — persistent background process.
+//! OrqaStudio daemon — persistent background process.
 //
-// The daemon provides the always-on infrastructure layer for an OrqaStudio
-// project: health monitoring, file watching, LSP server lifecycle management,
-// and the system tray icon.
-//
-// MCP is NOT managed by the daemon. MCP uses stdio transport — each LLM client
-// (e.g., Claude Code) spawns its own `orqa-mcp-server` process. See mcp.rs for
-// the full rationale. LSP is managed here because it uses TCP and legitimately
-// runs as a single shared persistent process.
-//
-// Startup sequence:
-//   1. Locate the project root (walk up from CWD until .orqa/ is found).
-//   2. Initialise structured logging (file + optional TTY console).
-//   3. Check for an existing live daemon instance via the PID file.
-//   4. Write our own PID file.
-//   5. Register Ctrl-C / SIGTERM handler for graceful shutdown.
-//   6. Start the system tray (currently headless — see tray.rs).
-//   7. Start the health HTTP endpoint.
-//   8. Start file watchers on .orqa/ and plugins/.
-//   9. Start LSP server subprocess in TCP mode (graceful degradation if binary absent).
-//  10. Block until the shutdown signal fires.
-//  11. Stop the LSP subprocess.
-//  12. Clean up the PID file and exit.
+//! The daemon provides the always-on infrastructure layer for an OrqaStudio
+//! project: health monitoring, file watching, LSP server lifecycle management,
+//! and the system tray icon.
+//!
+//! MCP is NOT managed by the daemon. MCP uses stdio transport — each LLM client
+//! (e.g., Claude Code) spawns its own `orqa-mcp-server` process. See mcp.rs for
+//! the full rationale. LSP is managed here because it uses TCP and legitimately
+//! runs as a single shared persistent process.
+//!
+//! Startup sequence:
+//!   1. Locate the project root (walk up from CWD until .orqa/ is found).
+//!   2. Initialise structured logging (file + optional TTY console).
+//!   3. Check for an existing live daemon instance via the PID file.
+//!   4. Write our own PID file.
+//!   5. Register Ctrl-C / SIGTERM handler for graceful shutdown.
+//!   6. Start the system tray (currently headless — see tray.rs).
+//!   7. Start the health HTTP endpoint.
+//!   8. Start file watchers on .orqa/ and plugins/.
+//!   9. Start LSP server subprocess in TCP mode (graceful degradation if binary absent).
+//!  10. Block until the shutdown signal fires.
+//!  11. Stop the LSP subprocess.
+//!  12. Clean up the PID file and exit.
 
 mod compact_context;
+mod context;
 mod health;
 mod knowledge;
 mod logging;
@@ -41,6 +42,8 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
+use crate::subprocess::SubprocessManager;
+
 use tracing::{error, info, warn};
 
 /// Resolve the project root, exiting with a helpful message if none is found.
@@ -52,7 +55,9 @@ fn resolve_project_root() -> PathBuf {
     match process::find_project_root(&cwd) {
         Ok(root) => root,
         Err(e) => {
-            eprintln!("error: no OrqaStudio project found — {e}");
+            // Logging is not yet initialised at this point — print directly to stderr.
+            #[allow(clippy::print_stderr)]
+            { eprintln!("error: no OrqaStudio project found — {e}"); }
             std::process::exit(1);
         }
     }
@@ -113,7 +118,7 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
         info!(subsystem = "health", "[health] shutdown signal received");
         shutdown_flag.store(true, Ordering::SeqCst);
         if let Err(e) = process::cleanup_pid(&project_root) {
-            eprintln!("failed to remove PID file during shutdown: {e}");
+            error!(subsystem = "health", error = %e, "[health] failed to remove PID file during shutdown");
         }
     })
     .expect("failed to register Ctrl-C handler");
@@ -174,7 +179,7 @@ async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
 /// background process.
 async fn run_event_loop(
     shutdown_flag: &Arc<AtomicBool>,
-    lsp: &mut crate::subprocess::SubprocessManager,
+    lsp: &mut SubprocessManager,
 ) {
     loop {
         if shutdown_flag.load(Ordering::SeqCst) {
@@ -246,11 +251,11 @@ fn main() {
 
     // Ensure the shutdown flag is set so the background tokio runtime exits
     // its event loop even if the tray returned Headless.
-    shutdown_flag.store(true, std::sync::atomic::Ordering::SeqCst);
+    shutdown_flag.store(true, Ordering::SeqCst);
 
     // Wait for all async subsystems to finish cleanly.
     if let Err(e) = runtime_thread.join() {
-        eprintln!("runtime thread panicked: {e:?}");
+        error!(subsystem = "health", error = ?e, "[health] runtime thread panicked");
     }
 
     // Final cleanup in case the signal handler did not run (e.g., clean exit

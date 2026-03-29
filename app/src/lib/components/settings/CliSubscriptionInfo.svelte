@@ -11,6 +11,11 @@
 
 	const { subscriptionType, rateLimitTier, expiresAt, scopes }: Props = $props();
 
+	/**
+	 * Returns a human-readable label for a Claude subscription type.
+	 * @param type - The raw subscription type string.
+	 * @returns A capitalised display label.
+	 */
 	function formatSubscriptionType(type: string): string {
 		const labels: Record<string, string> = {
 			max: "Max",
@@ -22,14 +27,29 @@
 		return labels[type] ?? type.charAt(0).toUpperCase() + type.slice(1);
 	}
 
+	/**
+	 * Strips the "default_claude_" prefix and converts underscores to spaces for display.
+	 * @param tier - The raw rate limit tier identifier.
+	 * @returns A human-readable tier label.
+	 */
 	function formatRateLimitTier(tier: string): string {
 		return tier.replace(/^default_claude_/, "").replace(/_/g, " ");
 	}
 
+	/**
+	 * Formats an OAuth scope string for readable display.
+	 * @param scope - The raw scope string (e.g. "org:read").
+	 * @returns A formatted scope string with spaces around colons and underscores replaced.
+	 */
 	function formatScope(scope: string): string {
 		return scope.replace(/:/g, ": ").replace(/_/g, " ");
 	}
 
+	/**
+	 * Returns a human-readable expiry label and whether the token has already expired.
+	 * @param epochMs - The expiry time as a Unix timestamp in milliseconds.
+	 * @returns An object with a display label and an expired flag.
+	 */
 	function formatExpiry(epochMs: number): { label: string; expired: boolean } {
 		const now = Date.now();
 		if (epochMs <= now) return { label: "Expired", expired: true };

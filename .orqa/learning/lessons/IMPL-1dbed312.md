@@ -10,7 +10,7 @@ recurrence: 1
 maturity: observation
 relationships:
 
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
 
     type: teaches
     rationale: "This lesson directly triggered the decision that rule promotion requires enforcement through the artifact graph"

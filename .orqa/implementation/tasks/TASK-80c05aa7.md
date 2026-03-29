@@ -46,4 +46,4 @@ Implement 7 integrity checks identified by the TASK-8fa37f45 audit as high-impac
 
 - Pre-existing clippy violations accumulate silently when not caught at introduction time. The 12 pre-existing violations blocked this commit even though they were unrelated to the integrity check work.
 - The 50-line function limit is genuinely useful — every function that was refactored became more readable after extraction.
-- [AD-2dc8ab96](AD-2dc8ab96) created to document exception policy for functions that can't be meaningfully decomposed.
+- [PD-2dc8ab96](PD-2dc8ab96) created to document exception policy for functions that can't be meaningfully decomposed.

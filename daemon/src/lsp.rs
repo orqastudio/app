@@ -62,9 +62,9 @@ pub fn start_lsp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     let lsp_port = resolve_lsp_port();
 
     let args = vec![
-        "--tcp".to_string(),
+        "--tcp".to_owned(),
         lsp_port.to_string(),
-        "--daemon-port".to_string(),
+        "--daemon-port".to_owned(),
         daemon_port.to_string(),
     ];
 

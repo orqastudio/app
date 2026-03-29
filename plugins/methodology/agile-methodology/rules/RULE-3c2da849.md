@@ -20,11 +20,11 @@ enforcement:
     action: warn
     pattern: ".orqa/documentation/knowledge/composability/KNOW.md | .orqa/documentation/knowledge/research-methodology/KNOW.md | .orqa/documentation/knowledge/planning/KNOW.md | .orqa/documentation/knowledge/orqa-code-search/KNOW.md"
 relationships:
-  - target: AD-f079c196
+  - target: PD-f079c196
     type: enforces
-  - target: AD-45f32bab
+  - target: PD-45f32bab
     type: enforces
-  - target: AD-e8a0f910
+  - target: PD-e8a0f910
     type: enforces
   - target: DOC-e6fb92b0
     type: documented-by

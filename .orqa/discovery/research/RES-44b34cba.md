@@ -68,4 +68,4 @@ ChunkHound is NOT embedded in the app — it's a CLI companion tool.
 
 ## Produced Decision
 
-[AD-7d3d7521](AD-7d3d7521)
+[PD-7d3d7521](PD-7d3d7521)

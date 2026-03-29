@@ -4,6 +4,7 @@ type: knowledge
 title: "Software — Relationship Vocabulary"
 domain: methodology/governance
 description: "Reference for the 11 software plugin relationship types with forward/inverse directions, from/to constraints, and automated status transition rules."
+tier: always
 summary: "Defines 11 relationship types for delivery and engineering artifacts across 6 categories: Hierarchy (delivers, fulfils), Lineage (realises, produces), Dependency (depends-on), Corrective (reports, fixes, affects), Knowledge Flow (yields), and Delivery (implements, addresses). Each has forward/inverse directions, from/to constraints, and status rules for automated state transitions."
 status: active
 created: 2026-03-01

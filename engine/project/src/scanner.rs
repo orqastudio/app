@@ -207,15 +207,33 @@ fn detect_package_manager(root: &Path) -> Option<String> {
 
 /// Count governance artifacts in the project's `.orqa/` directory.
 ///
-/// Only counts `.md` files in each subdirectory (non-recursive) to match the
-/// flat layout convention used by OrqaStudio governance artifacts.
+/// Reads artifact paths from `project.json` when available, so the scan
+/// locations are driven by `ProjectSettings.artifacts` rather than hardcoded
+/// paths (P1: Plugin-Composed Everything). Falls back to well-known defaults
+/// when the config is absent or an artifact type is not configured.
 fn scan_governance(root: &Path) -> GovernanceCounts {
-    let learning_dir = root.join(".orqa").join("learning");
-    let docs_dir = root.join(".orqa").join("documentation");
-    let lessons = count_md_files_in_dir(&learning_dir.join("lessons"));
-    let decisions = count_md_files_in_dir(&learning_dir.join("decisions"));
-    let rules = count_md_files_in_dir(&learning_dir.join("rules"));
+    // Load project.json to resolve configured artifact paths.
+    let config = load_project_config(root);
+    let get_path = |key: &str, default: &str| -> std::path::PathBuf {
+        config
+            .as_ref()
+            .and_then(|v| find_artifact_path_in_config(v, key))
+            .map_or_else(|| root.join(default), |p| root.join(p))
+    };
+
+    let lessons_dir = get_path("lessons", ".orqa/learning/lessons");
+    let decisions_dir = get_path("decisions", ".orqa/learning/decisions");
+    let rules_dir = get_path("rules", ".orqa/learning/rules");
+
+    let lessons = count_md_files_in_dir(&lessons_dir);
+    let decisions = count_md_files_in_dir(&decisions_dir);
+    let rules = count_md_files_in_dir(&rules_dir);
+
+    // Documentation uses the docs subtree from project.json, or defaults to
+    // the standard documentation directory.
+    let docs_dir = get_path("docs", ".orqa/documentation");
     let documentation = count_md_files_in_docs(&docs_dir);
+
     let has_claude_config = root.join(".claude").join("CLAUDE.md").exists();
 
     GovernanceCounts {
@@ -225,6 +243,42 @@ fn scan_governance(root: &Path) -> GovernanceCounts {
         documentation,
         has_claude_config,
     }
+}
+
+/// Load `project.json` as a generic JSON value for path resolution.
+///
+/// Returns `None` when the file is absent or unparseable — callers fall back
+/// to default paths in that case.
+fn load_project_config(root: &Path) -> Option<serde_json::Value> {
+    let path = root.join(".orqa").join("project.json");
+    let content = std::fs::read_to_string(&path).ok()?;
+    serde_json::from_str(&content).ok()
+}
+
+/// Walk the `artifacts` array in a parsed `project.json` value and return the
+/// `path` string for an entry with the given `key`.
+///
+/// Searches both top-level `Type` entries and children of `Group` entries.
+/// Returns `None` if no matching entry is found.
+fn find_artifact_path_in_config(value: &serde_json::Value, key: &str) -> Option<String> {
+    let artifacts = value.get("artifacts")?.as_array()?;
+    for entry in artifacts {
+        if entry.get("key").and_then(|v| v.as_str()) == Some(key) {
+            if let Some(path) = entry.get("path").and_then(|v| v.as_str()) {
+                return Some(path.to_owned());
+            }
+        }
+        if let Some(children) = entry.get("children").and_then(|v| v.as_array()) {
+            for child in children {
+                if child.get("key").and_then(|v| v.as_str()) == Some(key) {
+                    if let Some(path) = child.get("path").and_then(|v| v.as_str()) {
+                        return Some(path.to_owned());
+                    }
+                }
+            }
+        }
+    }
+    None
 }
 
 /// Count `.md` files recursively under the documentation tree.
@@ -437,5 +491,84 @@ mod tests {
         assert!(langs.contains("c"));
         assert!(!langs.contains("markdown"));
         assert_eq!(langs.len(), 12);
+    }
+
+    #[test]
+    fn governance_scan_uses_paths_from_project_json() {
+        // When project.json specifies custom artifact paths, scan_governance should
+        // count files in those locations rather than the default paths.
+        let dir = create_test_dir("governance_config_driven");
+
+        // Write a project.json with custom paths.
+        let orqa_dir = dir.join(".orqa");
+        fs::create_dir_all(&orqa_dir).expect("mkdir .orqa");
+        let project_json = serde_json::json!({
+            "name": "test",
+            "artifacts": [
+                {
+                    "key": "learning",
+                    "children": [
+                        { "key": "rules", "path": ".orqa/custom/my-rules" },
+                        { "key": "lessons", "path": ".orqa/custom/my-lessons" },
+                        { "key": "decisions", "path": ".orqa/custom/my-decisions" }
+                    ]
+                },
+                { "key": "docs", "path": ".orqa/custom/my-docs" }
+            ]
+        });
+        fs::write(
+            orqa_dir.join("project.json"),
+            serde_json::to_string_pretty(&project_json).unwrap(),
+        )
+        .expect("write project.json");
+
+        // Create files in the configured paths.
+        let rules_dir = dir.join(".orqa").join("custom").join("my-rules");
+        let lessons_dir = dir.join(".orqa").join("custom").join("my-lessons");
+        fs::create_dir_all(&rules_dir).expect("mkdir rules");
+        fs::create_dir_all(&lessons_dir).expect("mkdir lessons");
+        fs::write(rules_dir.join("rule1.md"), "# Rule 1").expect("write rule");
+        fs::write(lessons_dir.join("lesson1.md"), "# Lesson 1").expect("write lesson");
+
+        let governance = scan_governance(&dir);
+        assert_eq!(governance.rules, 1);
+        assert_eq!(governance.lessons, 1);
+        assert_eq!(governance.decisions, 0);
+
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn find_artifact_path_in_config_finds_group_child() {
+        let config = serde_json::json!({
+            "artifacts": [
+                {
+                    "key": "learning",
+                    "children": [
+                        { "key": "rules", "path": ".orqa/learning/rules" }
+                    ]
+                }
+            ]
+        });
+        let path = find_artifact_path_in_config(&config, "rules");
+        assert_eq!(path, Some(".orqa/learning/rules".to_owned()));
+    }
+
+    #[test]
+    fn find_artifact_path_in_config_finds_top_level() {
+        let config = serde_json::json!({
+            "artifacts": [
+                { "key": "docs", "path": ".orqa/documentation" }
+            ]
+        });
+        let path = find_artifact_path_in_config(&config, "docs");
+        assert_eq!(path, Some(".orqa/documentation".to_owned()));
+    }
+
+    #[test]
+    fn find_artifact_path_in_config_returns_none_for_missing_key() {
+        let config = serde_json::json!({ "artifacts": [] });
+        let path = find_artifact_path_in_config(&config, "rules");
+        assert!(path.is_none());
     }
 }

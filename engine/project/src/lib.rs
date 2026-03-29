@@ -7,6 +7,8 @@
 //!     GovernanceCounts, PluginProjectConfig, ArtifactLinksConfig, etc.)
 //!   - `store` — file-backed implementation of `ProjectSettingsStore`
 
+/// Git state utilities: stash list and uncommitted file queries.
+pub mod git;
 /// Project filesystem scanner: stack detection and governance artifact counting.
 pub mod scanner;
 /// Project settings types: Rust representation of `.orqa/project.json`.

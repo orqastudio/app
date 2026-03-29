@@ -104,9 +104,14 @@ pub mod plugin {
     pub use orqa_plugin::*;
 }
 
-/// Project scanning, settings types, and file-backed settings store.
+/// Project scanning, settings types, file-backed settings store, and git utilities.
 pub mod project {
     pub use orqa_project::*;
+
+    /// Git state utilities: stash list and uncommitted file queries.
+    pub mod git {
+        pub use orqa_project::git::*;
+    }
 
     /// Project filesystem scanner: stack detection and governance artifact counting.
     pub mod scanner {
@@ -137,8 +142,9 @@ pub mod prompt {
     }
 
     pub use orqa_prompt::{
-        build_system_prompt, collect_plugin_agent_definitions, list_knowledge_catalog,
-        read_governance_file, read_rules, resolve_system_prompt,
+        build_system_prompt, collect_plugin_agent_definitions, find_artifact_path,
+        list_knowledge_catalog, read_governance_file, read_rules, resolve_project_paths,
+        resolve_system_prompt, ProjectPromptPaths,
     };
 }
 

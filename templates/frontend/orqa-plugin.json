@@ -3,7 +3,10 @@
   "version": "0.1.0-dev",
   "displayName": "Your Plugin Name",
   "description": "A frontend plugin providing views and widgets for OrqaStudio.",
-  "category": "custom",
+  "category": "infrastructure",
+  "purpose": ["infrastructure"],
+  "affects_schema": false,
+  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "views": [
@@ -28,7 +31,7 @@
   "content": {
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/process/knowledge"
+      "target": ".orqa/documentation/reference"
     }
   },
   "dependencies": {

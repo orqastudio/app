@@ -4,14 +4,15 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { invoke, getStores, logger } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
+	import type { PluginEntry } from "@orqastudio/sdk";
 
 	const log = logger("plugin-browser");
 	import type { RegistrationConflict } from "@orqastudio/sdk";
 	import type { PluginManifest } from "@orqastudio/types";
 	import ConflictResolutionDialog from "./ConflictResolutionDialog.svelte";
 
-	const { pluginRegistry } = getStores();
+	const { pluginRegistry, pluginStore } = getStores();
 
 	// -----------------------------------------------------------------------
 	// Types
@@ -27,20 +28,6 @@
 		description: string;
 		icon: string;
 		plugins: PluginEntry[];
-	}
-
-	interface PluginEntry {
-		name: string;
-		displayName?: string;
-		display_name?: string;
-		description?: string;
-		version?: string;
-		path?: string;
-		source?: string;
-		repo?: string;
-		category?: string;
-		icon?: string;
-		capabilities?: string[];
 	}
 
 	interface PluginManifestData {
@@ -63,10 +50,8 @@
 	// -----------------------------------------------------------------------
 
 	let activeTab = $state<Tab>("installed");
-	let installed = $state<PluginEntry[]>([]);
 	let official = $state<PluginEntry[]>([]);
 	let community = $state<PluginEntry[]>([]);
-	let loading = $state(false);
 	let error = $state<string | null>(null);
 	let manualSource = $state("");
 	let installing = $state<string | null>(null);
@@ -91,38 +76,41 @@
 		void loadInstalled();
 	});
 
-	async function loadInstalled() {
-		try {
-			const all = await invoke<PluginEntry[]>("plugin_list_installed");
-			// Hide core infrastructure plugins — they are not user-configurable.
-			installed = all.filter((p) => !isCorePlugin(p));
-		} catch (err) {
-			log.error("Failed to load installed plugins", { err });
-			installed = [];
-		}
-	}
-
 	/** Core plugin names to filter from all views. These are infrastructure, not user-facing. */
 	const CORE_PLUGIN_NAMES = new Set(["@orqastudio/plugin-core-framework", "core", "@orqastudio/core"]);
 
-	/** Whether a plugin entry is the core framework plugin (hidden from browser). */
+	/**
+	 * Returns true if the plugin is the core framework plugin, which is hidden from the browser.
+	 * @param plugin - The plugin entry to check.
+	 * @returns Whether the plugin is a core infrastructure plugin.
+	 */
 	function isCorePlugin(plugin: PluginEntry): boolean {
 		return CORE_PLUGIN_NAMES.has(plugin.name);
 	}
 
+	/** Loads the installed plugin list and logs any errors. */
+	async function loadInstalled() {
+		await pluginStore.loadInstalled();
+		if (pluginStore.error) {
+			log.error("Failed to load installed plugins", { err: pluginStore.error });
+		}
+	}
+
+	/** Derive the visible installed list (core infrastructure hidden from browser). */
+	const installed = $derived(pluginStore.installed.filter((p) => !isCorePlugin(p)));
+
+	/**
+	 * Loads plugins from the specified registry source, filtering out core plugins.
+	 * @param source - The registry source to load from: "official" or "community".
+	 */
 	async function loadRegistry(source: "official" | "community") {
-		loading = true;
 		error = null;
-		try {
-			const result = await invoke<{ plugins: PluginEntry[] }>("plugin_registry_list", { source });
-			// Filter out core infrastructure plugins from registry listings.
-			const filtered = result.plugins.filter((p) => !isCorePlugin(p));
-			if (source === "official") official = filtered;
-			else community = filtered;
-		} catch (err: unknown) {
-			error = err instanceof Error ? err.message : String(err);
-		} finally {
-			loading = false;
+		const plugins = await pluginStore.listRegistry(source);
+		const filtered = plugins.filter((p) => !isCorePlugin(p));
+		if (source === "official") official = filtered;
+		else community = filtered;
+		if (pluginStore.error) {
+			error = pluginStore.error;
 		}
 	}
 
@@ -159,7 +147,11 @@
 		return result;
 	});
 
-	/** Map a plugin category to a Lucide icon name. */
+	/**
+	 * Maps a plugin category key to a Lucide icon name for display.
+	 * @param category - The plugin category key.
+	 * @returns A Lucide icon name string.
+	 */
 	function categoryIcon(category: string): string {
 		const icons: Record<string, string> = {
 			methodology: "compass",
@@ -175,14 +167,17 @@
 		return icons[category] ?? "package";
 	}
 
-	/** Install all plugins in a bundle sequentially. */
+	/**
+	 * Installs all plugins in a bundle sequentially, skipping already-installed ones.
+	 * @param bundle - The plugin bundle to install.
+	 */
 	async function installBundle(bundle: PluginBundle) {
 		installingBundle = bundle.key;
 		error = null;
 		try {
 			for (const plugin of bundle.plugins) {
 				if (!plugin.repo || isInstalled(plugin.name)) continue;
-				await invoke("plugin_install_github", { repo: plugin.repo });
+				await pluginStore.installFromGitHub(plugin.repo);
 			}
 			await loadInstalled();
 		} catch (err: unknown) {
@@ -192,11 +187,19 @@
 		}
 	}
 
-	/** Whether all plugins in a bundle are already installed. */
+	/**
+	 * Returns true if every plugin in the bundle is already installed.
+	 * @param bundle - The plugin bundle to check.
+	 * @returns Whether all plugins in the bundle are installed.
+	 */
 	function isBundleInstalled(bundle: PluginBundle): boolean {
 		return bundle.plugins.every((p) => isInstalled(p.name));
 	}
 
+	/**
+	 * Switches the active tab and lazily loads registry data for tabs that require it.
+	 * @param tab - The tab to activate.
+	 */
 	async function handleTabChange(tab: Tab) {
 		activeTab = tab;
 		detailView = null;
@@ -209,15 +212,24 @@
 	// Install / Uninstall
 	// -----------------------------------------------------------------------
 
+	/**
+	 * Downloads and registers a plugin from the registry, triggering conflict resolution if needed.
+	 * @param plugin - The registry plugin entry to install.
+	 */
 	async function installFromRegistry(plugin: PluginEntry) {
 		if (!plugin.repo) return;
 		installing = plugin.name;
 		error = null;
 		try {
-			await invoke("plugin_install_github", { repo: plugin.repo });
+			await pluginStore.installFromGitHub(plugin.repo);
 
 			// Read the installed manifest and check for conflicts before registering
-			const manifest = await invoke<PluginManifest>("plugin_get_manifest", { name: plugin.name });
+			const manifest = await pluginStore.getManifest(plugin.name);
+			if (!manifest) {
+				error = pluginStore.error ?? "Failed to read plugin manifest";
+				installing = null;
+				return;
+			}
 			const conflicts = pluginRegistry.checkConflicts(manifest);
 
 			if (conflicts.length > 0) {
@@ -246,6 +258,10 @@
 		}
 	}
 
+	/**
+	 * Applies the user's conflict resolutions and retries plugin registration.
+	 * @param resolutions - A map of conflict key to the chosen alias configuration.
+	 */
 	async function handleConflictResolution(
 		resolutions: Record<string, { plugin: string; alias: string; label?: string }>,
 	) {
@@ -277,6 +293,7 @@
 		}
 	}
 
+	/** Cancels conflict resolution and uninstalls the downloaded plugin that failed to register. */
 	function handleConflictCancel() {
 		if (conflictDialog) {
 			// Uninstall the plugin that was downloaded but couldn't register
@@ -285,6 +302,7 @@
 		conflictDialog = null;
 	}
 
+	/** Installs a plugin from the manually entered GitHub repo path or local filesystem path. */
 	async function installManual() {
 		if (!manualSource.trim()) return;
 		installing = "manual";
@@ -294,9 +312,9 @@
 			if (source.includes("/") && !source.includes("\\") && !source.includes(":")) {
 				// GitHub repo format: owner/repo or owner/repo@version
 				const [repo, version] = source.split("@");
-				await invoke("plugin_install_github", { repo, version: version ?? null });
+				await pluginStore.installFromGitHub(repo, version ?? null);
 			} else {
-				await invoke("plugin_install_local", { path: source });
+				await pluginStore.installFromLocal(source);
 			}
 			manualSource = "";
 			await loadInstalled();
@@ -307,10 +325,14 @@
 		}
 	}
 
+	/**
+	 * Uninstalls a plugin by name and refreshes the installed list.
+	 * @param name - The plugin name to uninstall.
+	 */
 	async function uninstallPlugin(name: string) {
 		error = null;
 		try {
-			await invoke("plugin_uninstall", { name });
+			await pluginStore.uninstall(name);
 			await loadInstalled();
 			if (detailView?.plugin.name === name) detailView = null;
 		} catch (err: unknown) {
@@ -322,6 +344,11 @@
 	// Detail View
 	// -----------------------------------------------------------------------
 
+	/**
+	 * Opens the detail view for a plugin, loading its manifest if it is installed.
+	 * @param plugin - The plugin entry to show.
+	 * @param type - Whether the plugin is from the "installed" list or a "registry" source.
+	 */
 	async function showDetail(plugin: PluginEntry, type: "installed" | "registry") {
 		detailView = { type, plugin };
 		detailManifest = null;
@@ -329,7 +356,7 @@
 		if (type === "installed") {
 			detailLoading = true;
 			try {
-				detailManifest = await invoke<PluginManifestData>("plugin_get_manifest", { name: plugin.name });
+				detailManifest = await pluginStore.getManifest(plugin.name) as PluginManifestData | null;
 			} catch (err) {
 				log.error("Failed to load plugin manifest for detail view", { pluginName: plugin.name, err });
 				detailManifest = null;
@@ -339,6 +366,7 @@
 		}
 	}
 
+	/** Closes the detail panel and clears the detail state. */
 	function closeDetail() {
 		detailView = null;
 		detailManifest = null;
@@ -348,10 +376,20 @@
 	// Helpers
 	// -----------------------------------------------------------------------
 
+	/**
+	 * Returns the best available display name for a plugin entry.
+	 * @param plugin - The plugin entry to get a display name for.
+	 * @returns The display name, falling back to the plugin's name field.
+	 */
 	function displayName(plugin: PluginEntry): string {
 		return plugin.displayName ?? plugin.display_name ?? plugin.name;
 	}
 
+	/**
+	 * Returns true if a plugin with the given name is in the installed list.
+	 * @param name - The plugin name to check.
+	 * @returns Whether the plugin is currently installed.
+	 */
 	function isInstalled(name: string): boolean {
 		return installed.some((p) => p.name === name);
 	}
@@ -460,7 +498,7 @@
 						</CardHeader>
 						<CardContent class="pt-0">
 							<div class="space-y-1">
-								{#each detailManifest.provides.schemas as schema (schema.idPrefix)}
+								{#each detailManifest.provides.schemas as schema (schema.key)}
 									<div class="flex items-center gap-2 text-xs">
 										<Icon name={schema.icon} size="sm" />
 										<span class="font-medium">{schema.label}</span>
@@ -479,7 +517,7 @@
 						</CardHeader>
 						<CardContent class="pt-0">
 							<div class="space-y-1">
-								{#each detailManifest.provides.relationships as rel (rel.type)}
+								{#each detailManifest.provides.relationships as rel (rel.key)}
 									<div class="text-xs">
 										<span class="font-medium">{rel.label}</span>
 										<span class="text-muted-foreground"> / {rel.inverse}</span>
@@ -534,7 +572,7 @@
 						</CardHeader>
 						<CardContent class="pt-0">
 							<div class="space-y-1 text-xs">
-								{#each detailManifest.provides.cli_tools as tool (tool.name)}
+								{#each detailManifest.provides.cli_tools as tool (tool.key)}
 									<div class="flex items-center gap-2">
 										<Icon name="terminal" size="sm" />
 										<span>{tool.label}</span>
@@ -605,7 +643,7 @@
 
 		<!-- Official tab -->
 		{:else if activeTab === "official"}
-			{#if loading}
+			{#if pluginStore.loadingRegistry}
 				<div class="flex items-center justify-center py-8">
 					<LoadingSpinner size="md" />
 				</div>
@@ -668,7 +706,7 @@
 
 		<!-- Community tab -->
 		{:else if activeTab === "community"}
-			{#if loading}
+			{#if pluginStore.loadingRegistry}
 				<div class="flex items-center justify-center py-8">
 					<LoadingSpinner size="md" />
 				</div>
@@ -724,7 +762,7 @@
 			{/if}
 		<!-- Groups tab — plugin bundles derived from registry categories -->
 		{:else if activeTab === "groups"}
-			{#if loading}
+			{#if pluginStore.loadingRegistry}
 				<div class="flex items-center justify-center py-8">
 					<LoadingSpinner size="md" />
 				</div>

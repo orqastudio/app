@@ -13,7 +13,7 @@ relationships: []
 
 ## Pattern
 
-During [EPIC-2bf6887a](EPIC-2bf6887a), the orchestrator reported [TASK-62b0543c](TASK-62b0543c) (AD-859ed163 SQLite governance table removal) as documentation-only and deferred the actual table removal to a future epic. This violated [RULE-8ee65d73](RULE-8ee65d73) (no deferred deliverables) — the task's acceptance criteria explicitly included removing the tables, not just documenting the violation.
+During [EPIC-2bf6887a](EPIC-2bf6887a), the orchestrator reported [TASK-62b0543c](TASK-62b0543c) (PD-859ed163 SQLite governance table removal) as documentation-only and deferred the actual table removal to a future epic. This violated [RULE-8ee65d73](RULE-8ee65d73) (no deferred deliverables) — the task's acceptance criteria explicitly included removing the tables, not just documenting the violation.
 
 The root cause: the orchestrator treated "document the gap" as equivalent to "resolve the gap" when the acceptance criteria clearly required resolution.
 

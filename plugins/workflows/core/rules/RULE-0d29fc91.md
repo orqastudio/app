@@ -10,12 +10,12 @@ enforcement:
   - mechanism: behavioral
     message: "Prefer semantic search over Grep/Glob for any search spanning more than one file or directory; load the correct search knowledge for your context"
 relationships:
-  - target: "AD-7d3d7521"
+  - target: "PD-7d3d7521"
     type: "enforces"
-    rationale: "Auto-generated inverse of enforces relationship from AD-7d3d7521"
-  - target: "AD-306eccf1"
+    rationale: "Auto-generated inverse of enforces relationship from PD-7d3d7521"
+  - target: "PD-306eccf1"
     type: "enforces"
-    rationale: "Auto-generated inverse of enforces relationship from AD-306eccf1"
+    rationale: "Auto-generated inverse of enforces relationship from PD-306eccf1"
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 

@@ -10,13 +10,13 @@ created: 2026-03-02
 updated: 2026-03-08
 sort: 6
 relationships:
-  - target: AD-7cb83077
+  - target: PD-7cb83077
     type: documents
-  - target: AD-85d45674
+  - target: PD-85d45674
     type: documents
-  - target: AD-b08f456d
+  - target: PD-b08f456d
     type: documents
-  - target: AD-33e315cc
+  - target: PD-33e315cc
     type: documents
 ---
 
@@ -349,7 +349,7 @@ Navigation uses the Activity Bar, Nav Sub-Panel, and contextual panel switching 
 | `Ctrl+S` | Save (in edit mode) |
 | `Escape` | Close overlay / exit edit mode |
 
-**Removed from [AD-85d45674](AD-85d45674):** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
+**Removed from [PD-85d45674](PD-85d45674):** `Ctrl+Shift+S` (Scanner dashboard), `Ctrl+Shift+M` (Metrics dashboard), `Ctrl+Shift+L` (Learning loop) — these are Activity Bar destinations, not keyboard shortcut targets. `Ctrl+B` repurposed from Sessions Panel toggle to Nav Sub-Panel toggle.
 
 ---
 
@@ -488,6 +488,6 @@ This design means the AI provider status shown in the status bar is meaningful c
 - User Journeys — Workflows that this architecture supports
 - User Personas — Who navigates this UI
 - MVP Feature Specification — What the MVP includes
-- [AD-33e315cc](AD-33e315cc): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
-- [AD-7cb83077](AD-7cb83077): Three-zone + Nav Sub-Panel layout — layout architecture decision
-- [AD-b08f456d](AD-b08f456d): Persistence architecture — SQLite for session/artifact storage
+- [PD-33e315cc](PD-33e315cc): Frontend library selections — shadcn-svelte, PaneForge, CodeMirror 6
+- [PD-7cb83077](PD-7cb83077): Three-zone + Nav Sub-Panel layout — layout architecture decision
+- [PD-b08f456d](PD-b08f456d): Persistence architecture — SQLite for session/artifact storage

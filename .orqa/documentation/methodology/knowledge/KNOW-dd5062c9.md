@@ -9,6 +9,7 @@ description: |
   by three adapters (LSP real-time, CLI on-demand, pre-commit gate). Schema-driven from
   plugin schema.json files. Use when: adding validation rules, modifying artifact schemas,
   building enforcement tooling, or debugging validation failures.
+tier: always
 status: active
 created: 2026-03-24
 updated: 2026-03-24

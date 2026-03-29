@@ -18,7 +18,7 @@ enforcement:
 relationships:
   - target: "DOC-2c94f7ba"
     type: "documented-by"
-  - target: "AD-9a7d7256"
+  - target: "PD-9a7d7256"
     type: "enforces"
 ---
 ## Shared Component Library

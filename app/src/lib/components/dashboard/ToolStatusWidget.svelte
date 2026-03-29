@@ -4,41 +4,34 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { invoke, logger } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
-	import type { CliToolRunResult, CliToolRunStatus } from "@orqastudio/types";
+	import type { CliToolRunResult } from "@orqastudio/types";
 
-	let statuses = $state<CliToolRunStatus[]>([]);
+	const { pluginStore } = getStores();
+
 	let running = $state<string | null>(null);
 	let lastResult = $state<CliToolRunResult | null>(null);
 	let error = $state<string | null>(null);
 
-	const hasTools = $derived(statuses.length > 0);
+	const hasTools = $derived(pluginStore.cliToolStatuses.length > 0);
 
 	$effect(() => {
-		void loadStatuses();
+		void pluginStore.loadCliToolStatuses();
 	});
 
-	async function loadStatuses() {
-		try {
-			statuses = await invoke<CliToolRunStatus[]>("cli_tool_status");
-		} catch (err) {
-			log.warn("Failed to load CLI tool statuses", { err });
-			statuses = [];
-		}
-	}
-
+	/**
+	 * Runs a plugin CLI tool and stores the result or error.
+	 * @param plugin - The plugin name that owns the tool.
+	 * @param toolKey - The tool's key within the plugin.
+	 */
 	async function runTool(plugin: string, toolKey: string) {
 		running = `${plugin}:${toolKey}`;
 		error = null;
 		lastResult = null;
 		try {
-			lastResult = await invoke<CliToolRunResult>("run_cli_tool", {
-				pluginName: plugin,
-				toolKey,
-			});
-			await loadStatuses();
+			lastResult = await pluginStore.runCliTool(plugin, toolKey);
 		} catch (err: unknown) {
 			log.warn("CLI tool run failed", { plugin, toolKey, err });
 			error = err instanceof Error ? err.message : String(err);
@@ -47,6 +40,11 @@
 		}
 	}
 
+	/**
+	 * Formats a millisecond duration as a human-readable string.
+	 * @param ms - Duration in milliseconds.
+	 * @returns A formatted string like "250ms" or "1.3s".
+	 */
 	function formatDuration(ms: number): string {
 		if (ms < 1000) return `${ms}ms`;
 		return `${(ms / 1000).toFixed(1)}s`;
@@ -64,13 +62,13 @@
 		</CardTitle>
 		<CardAction>
 			<Badge variant="outline" class="text-[10px] px-1.5 py-0">
-				{statuses.length} tool{statuses.length !== 1 ? "s" : ""}
+				{pluginStore.cliToolStatuses.length} tool{pluginStore.cliToolStatuses.length !== 1 ? "s" : ""}
 			</Badge>
 		</CardAction>
 	</CardHeader>
 	<CardContent class="pt-0">
 		<div class="space-y-2">
-			{#each statuses as tool (tool.name)}
+			{#each pluginStore.cliToolStatuses as tool (`${tool.plugin}:${tool.tool_key}`)}
 				{@const isRunning = running === `${tool.plugin}:${tool.tool_key}`}
 				<div class="flex items-center justify-between rounded border border-border px-3 py-2">
 					<div class="flex items-center gap-2">

@@ -34,18 +34,19 @@ orqastudio-dev/
     lesson/                     # Lesson store, promotion pipeline
     project/                    # Project scanning, settings, governance counts
     validation/                 # Integrity checks, graph construction
+    mcp-server/                 # MCP protocol server (Rust)
+    lsp-server/                 # LSP protocol server (Rust)
     core/                       # Thin facade -- re-exports all engine crates
 
-  libs/                         # TypeScript libraries (non-engine)
+  libs/                         # TypeScript libraries (non-engine, no Rust crates)
     sdk/                        # TypeScript SDK and core JSON schema (@orqastudio/sdk)
-    cli/                        # TypeScript CLI library (@orqastudio/cli)
     types/                      # TypeScript shared types (@orqastudio/types)
     logger/                     # Shared logging
     graph-visualiser/           # Graph visualization component
     svelte-components/          # Shared Svelte UI components
-    mcp-server/                 # MCP protocol server
-    lsp-server/                 # LSP protocol server
     brand/                      # Brand assets, icons, design tokens
+
+  cli/                          # TypeScript CLI (@orqastudio/cli)
 
   daemon/                       # Persistent Rust process
     src/                        # File watchers, health endpoint, system tray
@@ -79,12 +80,19 @@ orqastudio-dev/
       coding-standards/         # Infrastructure: linting config generation
       githooks/                 # Infrastructure: git hook generation
 
-  integrations/                 # LLM provider integrations
-    claude-agent-sdk/
+  sidecars/                     # LLM provider sidecar integrations
+    claude-agent-sdk/           # Claude agent SDK sidecar
+
+  templates/                    # Plugin scaffold templates
+    cli-tool/                   # Template: CLI-only plugin
+    frontend/                   # Template: frontend plugin
+    sidecar/                    # Template: sidecar plugin
+    full/                       # Template: full plugin (all layers)
 
   models/                       # ONNX models for local semantic search
   scripts/                      # Maintenance scripts
   infrastructure/               # Deployment tooling (Forgejo setup)
+    orqastudio-git/             # Forgejo configuration
   .orqa/                        # Governance artifacts (stage-first organization)
   .state/                       # Session state, runtime metrics (not committed)
   .githooks/                    # Git hook scripts (committed)

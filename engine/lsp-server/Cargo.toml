@@ -1,0 +1,32 @@
+[package]
+name = "orqa-lsp-server"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio LSP server for real-time artifact validation"
+
+[lib]
+name = "orqa_lsp_server"
+path = "src/lib.rs"
+
+[[bin]]
+name = "orqa-lsp-server"
+path = "src/bin/server.rs"
+
+[dependencies]
+tower-lsp = "0.20"
+lsp-types = "0.95"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+thiserror = "2"
+reqwest = { version = "0.12", features = ["json"] }
+orqa-engine = { path = "../core" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

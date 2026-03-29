@@ -16,7 +16,7 @@ relationships:
 
 ## Problem Statement
 
-OrqaStudio promotes composability as a core principle ([AD-af88bb69](AD-af88bb69), `composability` skill) but the app itself has composability debt: monolithic commands, god components, tightly coupled features. The app cannot credibly enforce composability on projects it manages if it doesn't adhere to those principles itself.
+OrqaStudio promotes composability as a core principle ([PD-af88bb69](PD-af88bb69), `composability` skill) but the app itself has composability debt: monolithic commands, god components, tightly coupled features. The app cannot credibly enforce composability on projects it manages if it doesn't adhere to those principles itself.
 
 Beyond the app's own code, composability must be a **platform-level architectural principle** that shapes:
 

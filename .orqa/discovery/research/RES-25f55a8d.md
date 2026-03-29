@@ -1100,7 +1100,7 @@ Each artifact type has a distinct purpose in the governance system. Here are cle
 - A guideline (guidelines suggest; decisions commit)
 - Knowledge (knowledge explains; decisions justify a specific choice)
 
-**Example:** "We chose SQLite for conversation persistence because..." (AD-859ed163)
+**Example:** "We chose SQLite for conversation persistence because..." (PD-859ed163)
 
 ### Rule (RULE-NNN)
 

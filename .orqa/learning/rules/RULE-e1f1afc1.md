@@ -54,12 +54,12 @@ enforcement:
     knowledge: "orqa-governance, orqa-documentation"
 relationships:
 
-  - target: "AD-e8a0f910"
+  - target: "PD-e8a0f910"
 
     type: "enforces"
-    rationale: "Auto-generated inverse of practiced-by relationship from AD-e8a0f910"
+    rationale: "Auto-generated inverse of practiced-by relationship from PD-e8a0f910"
 
-  - target: "AD-c6c2d9fb"
+  - target: "PD-c6c2d9fb"
 
     type: "enforces"
 

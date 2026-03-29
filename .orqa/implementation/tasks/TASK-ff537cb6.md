@@ -43,7 +43,7 @@ Audit all connector hooks in `connectors/claude-code/src/hooks/` to identify V4 
 - `connectors/claude-code/src/` — daemon-gate implementation
 - `.orqa/process/rules/` — rule entry types that should be in daemon
 - RES-d6e8ab11 section on connector architecture
-- AD-1ef9f57c question 8 — daemon is business logic boundary
+- PD-1ef9f57c question 8 — daemon is business logic boundary
 
 ## Agent role
 

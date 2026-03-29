@@ -87,12 +87,21 @@
 		return sorted;
 	});
 
+	/**
+	 * Returns a numeric rank for an integrity severity level for sort ordering.
+	 * @param s - The severity level.
+	 * @returns 0 for Error, 1 for Warning, 2 for Info.
+	 */
 	function severityRank(s: IntegritySeverity): number {
 		if (s === "Error") return 0;
 		if (s === "Warning") return 1;
 		return 2; // Info
 	}
 
+	/**
+	 * Toggles sort direction if the same column is clicked again, or sets the new sort column.
+	 * @param col - The column to sort by.
+	 */
 	function toggleSort(col: SortColumn) {
 		if (sortColumn === col) {
 			sortAsc = !sortAsc;
@@ -109,6 +118,7 @@
 		}
 	});
 
+	/** Refreshes the artifact graph and runs a full integrity scan, storing the resulting health snapshot. */
 	async function scan() {
 		loading = true;
 		error = null;

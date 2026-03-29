@@ -5,9 +5,12 @@ use tauri::State;
 use crate::domain::enforcement::EnforcementRule;
 use crate::domain::enforcement_engine::EnforcementEngine;
 use crate::domain::enforcement_violation::EnforcementViolation;
+use crate::domain::governance::GovernanceScanResult;
+use crate::domain::governance_scanner;
 use crate::error::OrqaError;
 use crate::repo::enforcement_rules_repo;
 use crate::repo::project_repo;
+use crate::repo::project_settings_repo;
 use crate::repo::violations_repo;
 use crate::state::AppState;
 
@@ -87,6 +90,32 @@ pub fn enforcement_violations_list(
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     violations_repo::list_for_project(&conn, project.id, None)
+}
+
+/// Scan the active project directory for governance files.
+///
+/// Loads artifact paths from `project.json` so the set of scanned areas is driven
+/// by plugin configuration (P1: Plugin-Composed Everything). Falls back to an empty
+/// artifact list when no `project.json` exists — the scan still runs but reports zero
+/// coverage, prompting the user to configure a project.
+#[tauri::command]
+pub fn governance_scan(state: State<'_, AppState>) -> Result<GovernanceScanResult, OrqaError> {
+    let project_path = resolve_active_project_path(&state)?;
+
+    // Load artifacts config from project.json; fall back to empty if missing or unreadable.
+    let artifacts = match project_settings_repo::read(&project_path) {
+        Ok(Some(settings)) => settings.artifacts,
+        Ok(None) => {
+            tracing::debug!("[governance_scan] no project.json at '{project_path}', scanning with empty artifact list");
+            Vec::new()
+        }
+        Err(e) => {
+            tracing::warn!("[governance_scan] failed to load project.json: {e}");
+            Vec::new()
+        }
+    };
+
+    governance_scanner::scan_governance(Path::new(&project_path), &artifacts)
 }
 
 /// Resolve the active project's path from the database.

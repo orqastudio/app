@@ -4,6 +4,7 @@ type: knowledge
 title: "Svelte 5 Snippets Reference"
 domain: platform/svelte
 description: "How to replace Svelte 4 slots with Svelte 5 snippets using $props(), {@render}, and named snippet patterns."
+tier: on-demand
 summary: "Svelte 5 Snippets Reference"
 status: active
 created: 2026-03-20

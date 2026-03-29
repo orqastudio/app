@@ -4,6 +4,7 @@ type: knowledge
 title: OrqaStudio Plugin Setup
 domain: integration/connector
 description: Installs the OrqaStudio companion plugin for Claude Code. Detects existing .claude/ infrastructure, migrates to .orqa/, registers the plugin, and sets up symlinks.
+tier: on-demand
 summary: "How to install and configure the OrqaStudio companion plugin for Claude Code — detection, migration from existing infrastructure, registration, and verification."
 status: active
 created: "2026-03-11"

@@ -10,6 +10,7 @@ description: |
   and structured compliance report format.
   Use when: Evaluating architectural compliance of plans or implementations,
   reviewing boundary integrity, mapping data flows, or assessing schema changes.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

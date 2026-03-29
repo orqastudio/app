@@ -4,6 +4,7 @@ type: knowledge
 title: Tauri v2 IPC Patterns Reference
 domain: platform/tauri
 description: "Patterns for implementing frontend-backend communication in Tauri v2 using commands, events, and channels."
+tier: on-demand
 summary: "Tauri v2 IPC Patterns Reference. Tauri v2 provides three IPC primitives: 1. **Commands**: Request-response (most common) 2."
 status: active
 created: 2026-03-20

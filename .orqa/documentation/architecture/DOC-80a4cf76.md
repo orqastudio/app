@@ -36,10 +36,10 @@ created: 2026-03-28T00:00:00.000Z
 | Git integration | Engine concern, not external infrastructure. | This document |
 | Telemetry | Unified logger library. Future split into metrics + logger. | This document |
 | Accuracy over speed | Core product principle for all trade-offs | This document |
-| Workflow inheritance | No inheritance. Plugin owns complete state machine. | AD-1ef9f57c |
-| Guard language | Declarative only. Code hooks for complex cases. | AD-1ef9f57c |
-| Business logic boundary | Engine crates, not MCP/LSP. Protocols are access methods. | AD-1ef9f57c |
-| Backwards compatibility | None during pre-release. `orqa migrate` for breaking changes. | AD-1ef9f57c |
-| Summary generation | Author writes summaries. `orqa summarize` generates drafts. | AD-1ef9f57c |
+| Workflow inheritance | No inheritance. Plugin owns complete state machine. | PD-1ef9f57c |
+| Guard language | Declarative only. Code hooks for complex cases. | PD-1ef9f57c |
+| Business logic boundary | Engine crates, not MCP/LSP. Protocols are access methods. | PD-1ef9f57c |
+| Backwards compatibility | None during pre-release. `orqa migrate` for breaking changes. | PD-1ef9f57c |
+| Summary generation | Author writes summaries. `orqa summarize` generates drafts. | PD-1ef9f57c |
 | Relationship storage | Forward-only. Task stores `delivers: epic`; graph computes inverses. | CLAUDE.md |
-| Session state | `.state/` not `tmp/`. Operational data, not disposable. | AD-8727f99a |
+| Session state | `.state/` not `tmp/`. Operational data, not disposable. | PD-8727f99a |

@@ -15,6 +15,12 @@
 //
 // Deduplication: IDs already present in Layer 1 are excluded from Layer 2 results.
 // Source field: "declared" for Layer 1 entries, "semantic" for Layer 2.
+//
+// Role detection: role names come from installed plugin manifests (P1). The
+// `build_role_patterns` function reads plugin `provides.agents` entries to
+// discover valid role names, then generates matching phrases for each. Falls
+// back to a built-in set of base roles when no plugins are installed so the
+// daemon always degrades gracefully.
 
 use std::collections::HashSet;
 use std::path::Path;
@@ -23,6 +29,8 @@ use axum::Json;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
+use orqa_engine::plugin::discovery::scan_plugins;
+use orqa_engine::plugin::manifest::read_manifest;
 use orqa_engine::prompt::knowledge::KnowledgeInjector;
 use orqa_engine::search::embedder::Embedder;
 
@@ -40,36 +48,93 @@ const MIN_SCORE: f32 = 0.25;
 const MAX_SEMANTIC: usize = 5;
 
 // ---------------------------------------------------------------------------
-// Role detection — regex patterns matching ROLE_PATTERNS in knowledge-injector.ts
+// Role detection — driven by installed plugin manifests (P1)
 // ---------------------------------------------------------------------------
 
-/// Agent role patterns: (substring to match in lower-case prompt, role name).
-///
-/// Each pattern corresponds to one entry in the TypeScript ROLE_PATTERNS array.
-/// The matching is case-insensitive via lower-casing the prompt before lookup.
-const ROLE_PATTERNS: &[(&str, &str)] = &[
-    ("you are an implementer", "implementer"),
-    ("you are a implementer", "implementer"),
-    ("you are implementer", "implementer"),
-    ("you are an researcher", "researcher"),
-    ("you are a researcher", "researcher"),
-    ("you are researcher", "researcher"),
-    ("you are an reviewer", "reviewer"),
-    ("you are a reviewer", "reviewer"),
-    ("you are reviewer", "reviewer"),
-    ("you are an planner", "planner"),
-    ("you are a planner", "planner"),
-    ("you are planner", "planner"),
-    ("you are an writer", "writer"),
-    ("you are a writer", "writer"),
-    ("you are writer", "writer"),
-    ("you are an designer", "designer"),
-    ("you are a designer", "designer"),
-    ("you are designer", "designer"),
-    ("you are an governance steward", "governance-steward"),
-    ("you are a governance steward", "governance-steward"),
-    ("you are governance steward", "governance-steward"),
+/// Base agent role names provided by the methodology plugin when no plugins
+/// are installed. Used only as a fallback when `scan_plugins` returns nothing.
+/// These names mirror DOC-b951327c section 6.1.
+const BASE_ROLE_NAMES: &[&str] = &[
+    "orchestrator",
+    "implementer",
+    "reviewer",
+    "researcher",
+    "writer",
+    "planner",
+    "designer",
+    "governance steward",
 ];
+
+/// Collect agent role names from installed plugin manifests.
+///
+/// Reads `provides.agents` entries from every installed plugin and returns
+/// the unique set of role id values. Falls back to `BASE_ROLE_NAMES` when
+/// no plugins declare agents — this preserves operation during bootstrap or
+/// in environments where plugins have not been installed yet.
+fn load_role_names_from_plugins(project_path: &Path) -> Vec<String> {
+    let discovered = scan_plugins(project_path);
+    let mut names: Vec<String> = Vec::new();
+
+    for plugin in &discovered {
+        let plugin_path = Path::new(&plugin.path);
+        if let Ok(manifest) = read_manifest(plugin_path) {
+            for agent in manifest.provides.agents {
+                let id = agent.id.to_lowercase();
+                if !names.contains(&id) {
+                    names.push(id);
+                }
+            }
+        }
+    }
+
+    if names.is_empty() {
+        // Fallback: use the base role names so the daemon is usable before plugins install.
+        BASE_ROLE_NAMES.iter().map(ToString::to_string).collect()
+    } else {
+        names
+    }
+}
+
+/// Build role-detection patterns from a list of role names.
+///
+/// For each role, generates three phrase variants:
+///   - "you are an {role}"
+///   - "you are a {role}"
+///   - "you are {role}"
+///
+/// These variants cover natural-language role declarations in agent prompts
+/// regardless of whether "a" or "an" is used. Patterns are matched
+/// case-insensitively by lower-casing the prompt before comparison.
+///
+/// Returns a `Vec<(pattern, role_id)>` in the same shape as the old static
+/// `ROLE_PATTERNS` constant, so `detect_role_with_patterns` can use it.
+fn build_role_patterns(role_names: &[String]) -> Vec<(String, String)> {
+    let mut patterns = Vec::new();
+    for role in role_names {
+        let role_lower = role.to_lowercase();
+        // Normalise role id: spaces become hyphens (e.g. "governance steward" -> "governance-steward").
+        let role_id = role_lower.replace(' ', "-");
+        patterns.push((format!("you are an {role_lower}"), role_id.clone()));
+        patterns.push((format!("you are a {role_lower}"), role_id.clone()));
+        patterns.push((format!("you are {role_lower}"), role_id.clone()));
+    }
+    patterns
+}
+
+/// Detect the agent role from the prompt text using the given pattern list.
+///
+/// Applies patterns in order, returning the first matching role name.
+/// Matches case-insensitively by lower-casing the prompt before comparison.
+/// Returns None when no pattern matches (e.g. for non-agent tool calls).
+fn detect_role_with_patterns(prompt: &str, patterns: &[(String, String)]) -> Option<String> {
+    let lower = prompt.to_lowercase();
+    for (pattern, role) in patterns {
+        if lower.contains(pattern.as_str()) {
+            return Some(role.clone());
+        }
+    }
+    None
+}
 
 // ---------------------------------------------------------------------------
 // Prompt registry types — minimal Rust representation of the JSON written by
@@ -136,14 +201,21 @@ pub struct KnowledgeResponse {
 
 /// Handle POST /knowledge.
 ///
-/// Detects the agent role from the prompt, runs Layer 1 (declared registry
-/// lookup) and Layer 2 (ONNX semantic search), deduplicates, and returns the
-/// combined results. Layer 2 degrades gracefully when the ONNX model is absent.
+/// Detects the agent role from the prompt using patterns loaded from installed
+/// plugin manifests (P1: Plugin-Composed Everything), then runs Layer 1
+/// (declared registry lookup) and Layer 2 (ONNX semantic search), deduplicates,
+/// and returns the combined results. Layer 2 degrades gracefully when the ONNX
+/// model is absent.
 pub async fn knowledge_handler(Json(req): Json<KnowledgeRequest>) -> Json<KnowledgeResponse> {
     let project_path = Path::new(&req.project_path);
 
+    // Load role names from installed plugin manifests and build detection patterns.
+    // This satisfies P1 — role names are not hardcoded, they come from plugins.
+    let role_names = load_role_names_from_plugins(project_path);
+    let patterns = build_role_patterns(&role_names);
+
     // Layer 1: declared knowledge from prompt registry (role-matched).
-    let role = detect_role(&req.agent_prompt);
+    let role = detect_role_with_patterns(&req.agent_prompt, &patterns);
     let declared = match &role {
         Some(r) => get_declared_knowledge(project_path, r),
         None => Vec::new(),
@@ -158,25 +230,6 @@ pub async fn knowledge_handler(Json(req): Json<KnowledgeRequest>) -> Json<Knowle
     entries.extend(semantic);
 
     Json(KnowledgeResponse { entries })
-}
-
-// ---------------------------------------------------------------------------
-// Role detection
-// ---------------------------------------------------------------------------
-
-/// Detect the agent role from the prompt text.
-///
-/// Applies ROLE_PATTERNS in order, returning the first matching role name.
-/// Matches case-insensitively by lower-casing the prompt before comparison.
-/// Returns None when no pattern matches (e.g., for non-agent tool calls).
-fn detect_role(prompt: &str) -> Option<String> {
-    let lower = prompt.to_lowercase();
-    for (pattern, role) in ROLE_PATTERNS {
-        if lower.contains(pattern) {
-            return Some(role.to_string());
-        }
-    }
-    None
 }
 
 // ---------------------------------------------------------------------------
@@ -226,8 +279,8 @@ fn get_declared_knowledge(project_path: &Path, role: &str) -> Vec<KnowledgeEntry
             KnowledgeEntry {
                 id: entry.id,
                 title,
-                path: entry.content_file.unwrap(),
-                source: "declared".to_string(),
+                path: entry.content_file.expect("filter guarantees content_file is Some"),
+                source: "declared".to_owned(),
                 score: None,
             }
         })
@@ -283,7 +336,7 @@ fn get_semantic_knowledge(
     let top_n = MAX_SEMANTIC + exclude_ids.len();
     let matches = injector.match_prompt(&query_embedding, top_n, MIN_SCORE);
 
-    let knowledge_dir = project_path.join(".orqa").join("process").join("knowledge");
+    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
 
     matches
         .into_iter()
@@ -294,8 +347,8 @@ fn get_semantic_knowledge(
             KnowledgeEntry {
                 id: m.name.clone(),
                 title: m.name,
-                path: path.to_string_lossy().to_string(),
-                source: "semantic".to_string(),
+                path: path.to_string_lossy().into_owned(),
+                source: "semantic".to_owned(),
                 score: Some(m.score as f64),
             }
         })
@@ -327,7 +380,7 @@ fn extract_query(prompt: &str) -> String {
 /// Returns the first directory that contains both `model.onnx` and
 /// `tokenizer.json`. Returns None if no valid directory is found — callers
 /// degrade gracefully when the model is not installed.
-fn resolve_model_dir() -> Option<std::path::PathBuf> {
+pub fn resolve_model_dir() -> Option<std::path::PathBuf> {
     #[cfg(target_os = "windows")]
     let platform_dir = std::env::var("LOCALAPPDATA")
         .ok()
@@ -364,77 +417,125 @@ mod tests {
     use std::fs;
     use tempfile::TempDir;
 
-    // ── detect_role ──
+    // ── role detection (via build_role_patterns / detect_role_with_patterns) ──
+
+    /// Build patterns from the base role names for use in tests.
+    fn base_patterns() -> Vec<(String, String)> {
+        let names: Vec<String> = BASE_ROLE_NAMES.iter().map(|s| s.to_string()).collect();
+        build_role_patterns(&names)
+    }
 
     #[test]
     fn detect_role_implementer() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are an Implementer. Your task is..."),
+            detect_role_with_patterns("You are an Implementer. Your task is...", &patterns),
             Some("implementer".to_string())
         );
     }
 
     #[test]
     fn detect_role_researcher() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Researcher working on..."),
+            detect_role_with_patterns("You are a Researcher working on...", &patterns),
             Some("researcher".to_string())
         );
     }
 
     #[test]
     fn detect_role_reviewer() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Reviewer. Verify that..."),
+            detect_role_with_patterns("You are a Reviewer. Verify that...", &patterns),
             Some("reviewer".to_string())
         );
     }
 
     #[test]
     fn detect_role_planner() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Planner. Design the approach."),
+            detect_role_with_patterns("You are a Planner. Design the approach.", &patterns),
             Some("planner".to_string())
         );
     }
 
     #[test]
     fn detect_role_writer() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Writer. Document this."),
+            detect_role_with_patterns("You are a Writer. Document this.", &patterns),
             Some("writer".to_string())
         );
     }
 
     #[test]
     fn detect_role_designer() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Designer. Create the layout."),
+            detect_role_with_patterns("You are a Designer. Create the layout.", &patterns),
             Some("designer".to_string())
         );
     }
 
     #[test]
     fn detect_role_governance_steward() {
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("You are a Governance Steward. Maintain the artifacts."),
+            detect_role_with_patterns(
+                "You are a Governance Steward. Maintain the artifacts.",
+                &patterns
+            ),
             Some("governance-steward".to_string())
         );
     }
 
     #[test]
     fn detect_role_no_match_returns_none() {
-        assert_eq!(detect_role("Use the bash tool to run the test."), None);
-        assert_eq!(detect_role(""), None);
+        let patterns = base_patterns();
+        assert_eq!(
+            detect_role_with_patterns("Use the bash tool to run the test.", &patterns),
+            None
+        );
+        assert_eq!(detect_role_with_patterns("", &patterns), None);
     }
 
     #[test]
     fn detect_role_case_insensitive() {
         // All-caps "YOU ARE AN IMPLEMENTER" should still match.
+        let patterns = base_patterns();
         assert_eq!(
-            detect_role("YOU ARE AN IMPLEMENTER working on..."),
+            detect_role_with_patterns("YOU ARE AN IMPLEMENTER working on...", &patterns),
             Some("implementer".to_string())
         );
+    }
+
+    #[test]
+    fn build_role_patterns_generates_three_variants_per_role() {
+        let patterns = build_role_patterns(&["analyst".to_string()]);
+        // Each role generates 3 patterns: "you are an", "you are a", "you are".
+        assert_eq!(patterns.len(), 3);
+        assert!(patterns.iter().any(|(p, _)| p == "you are an analyst"));
+        assert!(patterns.iter().any(|(p, _)| p == "you are a analyst"));
+        assert!(patterns.iter().any(|(p, _)| p == "you are analyst"));
+        // All patterns map to the same role id.
+        assert!(patterns.iter().all(|(_, r)| r == "analyst"));
+    }
+
+    #[test]
+    fn build_role_patterns_normalises_space_to_hyphen_in_id() {
+        let patterns = build_role_patterns(&["governance steward".to_string()]);
+        assert!(patterns.iter().all(|(_, r)| r == "governance-steward"));
+    }
+
+    #[test]
+    fn load_role_names_falls_back_to_base_when_no_plugins() {
+        // With no project.json and no installed plugins, must fall back to BASE_ROLE_NAMES.
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let names = load_role_names_from_plugins(tmp.path());
+        let base: Vec<String> = BASE_ROLE_NAMES.iter().map(|s| s.to_string()).collect();
+        assert_eq!(names, base);
     }
 
     // ── get_declared_knowledge ──

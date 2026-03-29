@@ -19,7 +19,7 @@ priority: P1
 tags: [persistence, sqlite, artifacts, ephemeral, data-boundaries]
 relationships:
 
-  - target: "AD-859ed163"
+  - target: "PD-859ed163"
 
     type: "enforces"
 ---
@@ -37,7 +37,7 @@ Data persistence in OrqaStudio follows three channels, each with clear boundarie
 
 ### SQLite (conversation persistence only)
 
-Per [AD-859ed163](AD-859ed163), SQLite is scoped to conversation persistence:
+Per [PD-859ed163](PD-859ed163), SQLite is scoped to conversation persistence:
 
 - Sessions, messages, tool calls, stream events
 - Project metadata (path, stack detection, settings)
@@ -82,7 +82,7 @@ Ephemeral state MUST NOT:
 - Storing governance artifacts in SQLite
 - Storing conversation data in .orqa/ files
 - Relying on ephemeral state for data integrity
-- Using localStorage for any application state ([AD-859ed163](AD-859ed163))
+- Using localStorage for any application state ([PD-859ed163](PD-859ed163))
 
 ## Related Rules
 

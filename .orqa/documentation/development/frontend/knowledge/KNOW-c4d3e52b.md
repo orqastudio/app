@@ -4,6 +4,7 @@ type: knowledge
 title: "SvelteKit Patterns Reference"
 domain: platform/svelte
 description: "Patterns for SvelteKit load functions, page props typing, form actions, and server vs universal load function selection."
+tier: on-demand
 summary: "SvelteKit Patterns Reference"
 status: active
 created: 2026-03-20

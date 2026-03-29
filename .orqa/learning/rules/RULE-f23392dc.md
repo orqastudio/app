@@ -23,7 +23,7 @@ enforcement:
     description: "Validates user-invocable field presence; missing field blocks commits"
 relationships:
 
-  - target: AD-c1e5a39e
+  - target: PD-c1e5a39e
 
     type: enforces
 ---

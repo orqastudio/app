@@ -16,21 +16,21 @@ tags:
   - "architecture"
 sort: 8
 relationships:
-  - target: "AD-ecc96aef"
+  - target: "PD-ecc96aef"
     type: "documents"
-    rationale: "Documentation page references AD-ecc96aef"
-  - target: "AD-9a7d7256"
+    rationale: "Documentation page references PD-ecc96aef"
+  - target: "PD-9a7d7256"
     type: "documents"
-    rationale: "Documentation page references AD-9a7d7256"
+    rationale: "Documentation page references PD-9a7d7256"
   - target: "RULE-eb269afb"
     type: "documents"
     rationale: "Documentation page references RULE-eb269afb"
-  - target: "AD-33e315cc"
+  - target: "PD-33e315cc"
     type: "documents"
-    rationale: "Documentation page references AD-33e315cc"
-  - target: "AD-39e2fb81"
+    rationale: "Documentation page references PD-33e315cc"
+  - target: "PD-39e2fb81"
     type: "documents"
-    rationale: "Documentation page references AD-39e2fb81"
+    rationale: "Documentation page references PD-39e2fb81"
 ---
 **References:** [Frontend Research](RES-80a476c7), Information Architecture
 
@@ -232,7 +232,7 @@ ui/
 
 ## Store Architecture
 
-All stores use Svelte 5 runes exclusively [AD-ecc96aef](AD-ecc96aef). Store files use the `.svelte.ts` extension to enable runes outside of components. Each store is a class instance exported as a singleton.
+All stores use Svelte 5 runes exclusively [PD-ecc96aef](PD-ecc96aef). Store files use the `.svelte.ts` extension to enable runes outside of components. Each store is a class instance exported as a singleton.
 
 | Store | File | Purpose |
 | ------- | ------ | --------- |
@@ -267,7 +267,7 @@ There is no `commands/` directory — invoke calls are made directly from stores
 
 ### Container vs. Display
 
-Per [AD-9a7d7256](AD-9a7d7256), only containers and the route entry points call `invoke()`. Display components receive data via `$props()`.
+Per [PD-9a7d7256](PD-9a7d7256), only containers and the route entry points call `invoke()`. Display components receive data via `$props()`.
 
 | Boundary | Files |
 | ---------- | ------- |
@@ -324,14 +324,14 @@ File-system changes, sidecar lifecycle, and scan-complete notifications use Taur
 
 | Convention | Rule | Reference |
 | ----------- | ------ | ----------- |
-| Runes only | `$state`, `$derived`, `$effect`, `$props` everywhere. No `export let`, no `$:`, no `<slot>`. | [AD-ecc96aef](AD-ecc96aef) |
-| Component purity | `$lib/components/` files receive props only. No `invoke()` inside components. | [AD-9a7d7256](AD-9a7d7256) |
-| Stores call invoke | Stores are the only layer (besides routes) that call the `ipc/invoke` wrapper. | [AD-9a7d7256](AD-9a7d7256) |
-| Callback props | User intent flows up via callback props to stores or containers. | [AD-9a7d7256](AD-9a7d7256) |
-| shadcn-svelte | Use `$lib/components/ui/<name>` for primitives. Do not rewrite them. | [AD-33e315cc](AD-33e315cc) |
-| Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton. | [AD-ecc96aef](AD-ecc96aef) |
-| Streaming | `Channel\<T\>` for token streams; `emit/listen` for app-level events. | [AD-39e2fb81](AD-39e2fb81) |
-| Snippets over slots | Use `{#snippet}` and `{@render}` for composition; never `<slot>`. | [AD-ecc96aef](AD-ecc96aef) |
+| Runes only | `$state`, `$derived`, `$effect`, `$props` everywhere. No `export let`, no `$:`, no `<slot>`. | [PD-ecc96aef](PD-ecc96aef) |
+| Component purity | `$lib/components/` files receive props only. No `invoke()` inside components. | [PD-9a7d7256](PD-9a7d7256) |
+| Stores call invoke | Stores are the only layer (besides routes) that call the `ipc/invoke` wrapper. | [PD-9a7d7256](PD-9a7d7256) |
+| Callback props | User intent flows up via callback props to stores or containers. | [PD-9a7d7256](PD-9a7d7256) |
+| shadcn-svelte | Use `$lib/components/ui/<name>` for primitives. Do not rewrite them. | [PD-33e315cc](PD-33e315cc) |
+| Store files | `.svelte.ts` extension, class-based with `$state` fields, exported singleton. | [PD-ecc96aef](PD-ecc96aef) |
+| Streaming | `Channel\<T\>` for token streams; `emit/listen` for app-level events. | [PD-39e2fb81](PD-39e2fb81) |
+| Snippets over slots | Use `{#snippet}` and `{@render}` for composition; never `<slot>`. | [PD-ecc96aef](PD-ecc96aef) |
 
 ---
 
@@ -416,5 +416,5 @@ Extensions to the markdown renderer for OrqaStudio-specific content types.
 ## Related Documents
 
 - Information Architecture — Layout model and navigation
-- Architecture Decisions — [AD-ecc96aef](AD-ecc96aef) (runes), [AD-9a7d7256](AD-9a7d7256) (purity), [AD-39e2fb81](AD-39e2fb81) (streaming)
+- Architecture Decisions — [PD-ecc96aef](PD-ecc96aef) (runes), [PD-9a7d7256](PD-9a7d7256) (purity), [PD-39e2fb81](PD-39e2fb81) (streaming)
 - SQLite Schema — Database tables backing the stores

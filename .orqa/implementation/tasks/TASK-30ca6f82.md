@@ -12,7 +12,7 @@ acceptance:
   - "All 42 decisions have a relationships array"
   - "Each decision has practices and enforces relationships (nullable with rationale)"
   - "Connections reference skills and rules already backfilled in TASK-eb558448/TASK-4b57032b"
-  - "Bidirectional consistency — if AD-48b310f9 says practices:KNOW-X, KNOW-X says grounded:AD-48b310f9"
+  - "Bidirectional consistency — if PD-48b310f9 says practices:KNOW-X, KNOW-X says grounded:PD-48b310f9"
   - "Human reviewed and approved all proposals"
 rule-overrides:
   - "rule: RULE-23699df2"

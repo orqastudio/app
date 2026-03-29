@@ -1,7 +1,7 @@
 ---
 id: "TASK-b6bcdc9d"
 type: "task"
-title: "Record core architecture decisions (AD-09fc4e65 through AD-e4a3b5da)"
+title: "Record core architecture decisions (PD-09fc4e65 through PD-e4a3b5da)"
 description: "Captured foundational architecture decisions covering thick backend, IPC boundary, error propagation, and Svelte 5 runes-only policy."
 status: archived
 created: "2026-03-02"
@@ -26,4 +26,4 @@ Authored each AD artifact with context, decision rationale, consequences, and st
 
 ## Verification
 
-[AD-09fc4e65](AD-09fc4e65) through [AD-e4a3b5da](AD-e4a3b5da) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.
+[PD-09fc4e65](PD-09fc4e65) through [PD-e4a3b5da](PD-e4a3b5da) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.

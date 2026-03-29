@@ -29,7 +29,7 @@ OrqaStudio runs multiple services with inconsistent port allocation. The daemon 
 User decisions from 2026-03-24 session:
 
 - All ports move above 10000 to avoid conflicts with common development tools
-- CLI is the single developer interface with multiple protocol modes ([AD-a44384d1](AD-a44384d1))
+- CLI is the single developer interface with multiple protocol modes ([PD-a44384d1](PD-a44384d1))
 - `orqa mcp` = MCP protocol mode (stdio) for Claude Code — NOT a separate server process
 - `orqa lsp` = LSP protocol mode (stdio) for IDEs — NOT a separate server process
 - Daemon is for app runtime only (graph, search, validation)
@@ -51,7 +51,7 @@ User decisions from 2026-03-24 session:
 | Forgejo SSH | 222 | 10222 | `infrastructure/orqastudio-git/docker-compose.yml` | |
 | App IPC Socket | random (port 0) | Keep as-is | `app/backend/src-tauri/src/servers/ipc_socket.rs` | |
 
-**Eliminated ports (per [AD-a44384d1](AD-a44384d1)):**
+**Eliminated ports (per [PD-a44384d1](PD-a44384d1)):**
 
 - ~~MCP Server (was 10259)~~ — now `orqa mcp` over stdio, no port needed
 - ~~Search Engine (was 10260)~~ — now embedded in the daemon
@@ -84,7 +84,7 @@ All ports in the 10200-10499 range reserved for OrqaStudio services.
 
 ### Architecture Decisions (NON-NEGOTIABLE)
 
-1. **Daemon is the only long-running service** — The daemon (graph, search, validation) is the single backend service. MCP and LSP are CLI protocol modes over stdio, not separate processes. See [AD-a44384d1](AD-a44384d1).
+1. **Daemon is the only long-running service** — The daemon (graph, search, validation) is the single backend service. MCP and LSP are CLI protocol modes over stdio, not separate processes. See [PD-a44384d1](PD-a44384d1).
 
 2. **Port conflict resolution** — If the daemon port is busy when launching, the existing process on that port MUST be killed first. Do not fail with "port in use". Do not silently pick another port.
 
@@ -94,7 +94,7 @@ All ports in the 10200-10499 range reserved for OrqaStudio services.
 
 5. **Configurable port base** — Port base MUST be configurable via `ORQA_PORT_BASE` environment variable (default: 10200) so multiple OrqaStudio instances can coexist. All port offsets are relative to this base.
 
-### Architecture (per [AD-a44384d1](AD-a44384d1))
+### Architecture (per [PD-a44384d1](PD-a44384d1))
 
 ```text
 Daemon (long-running service)
@@ -140,7 +140,7 @@ Dev Controller (dev.mjs)
 - [ ] [TASK-35444c5b](TASK-35444c5b): Remap all service ports to 10000+ range
 - [ ] [TASK-72bb47b5](TASK-72bb47b5): Fix daemon port mismatch between CLI and MCP server
 - [ ] [TASK-8aedd59b](TASK-8aedd59b): Implement CLI daemon lifecycle commands (start/stop/status, PID file, health check)
-- [ ] ~~[TASK-aef92af1](TASK-aef92af1): Extract search engine from MCP server into standalone process~~ — **REMOVED per [AD-a44384d1](AD-a44384d1)**: search engine stays embedded in daemon
+- [ ] ~~[TASK-aef92af1](TASK-aef92af1): Extract search engine from MCP server into standalone process~~ — **REMOVED per [PD-a44384d1](PD-a44384d1)**: search engine stays embedded in daemon
 - [ ] [TASK-5139ce65](TASK-5139ce65): Demote dev controller to debug-only tooling
 - [ ] [TASK-57e2f4c4](TASK-57e2f4c4): Update documentation and commands reference
 - [ ] [TASK-86e8a21b](TASK-86e8a21b): Create canonical port allocation reference doc

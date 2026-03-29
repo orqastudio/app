@@ -3896,7 +3896,6 @@ name = "orqa-artifact"
 version = "0.1.0-dev"
 dependencies = [
  "orqa-engine-types",
- "orqa-validation",
  "rand 0.8.5",
  "serde",
  "serde_json",
@@ -3931,6 +3930,7 @@ version = "0.1.0-dev"
 dependencies = [
  "glob",
  "orqa-engine-types",
+ "orqa-validation",
  "regex",
  "serde",
  "serde_json",
@@ -3963,7 +3963,6 @@ name = "orqa-engine-types"
 version = "0.1.0-dev"
 dependencies = [
  "async-trait",
- "orqa-validation",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -4062,6 +4061,7 @@ dependencies = [
  "orqa-engine-types",
  "orqa-plugin",
  "orqa-search",
+ "serde_json",
  "tempfile",
  "thiserror 2.0.18",
  "tokio",
@@ -4143,6 +4143,7 @@ version = "0.1.0-dev"
 dependencies = [
  "jsonschema",
  "notify",
+ "orqa-engine-types",
  "regex",
  "serde",
  "serde_json",

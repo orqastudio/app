@@ -4,6 +4,7 @@ type: knowledge
 title: Software Delivery Management
 domain: methodology/delivery
 description: "How to create, connect, and progress milestones, epics, tasks, research, wireframes, and bugs through the software delivery lifecycle."
+tier: always
 status: active
 plugin: "@orqastudio/plugin-software-kanban"
 relationships:

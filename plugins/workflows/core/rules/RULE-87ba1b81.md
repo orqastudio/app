@@ -14,7 +14,7 @@ enforcement:
     action: check
     description: "Stop hook verifies the orchestrator did not self-implement; governance maintenance check runs at session end"
 relationships:
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
     type: enforces
   - target: DOC-28344cd7
     type: documented-by

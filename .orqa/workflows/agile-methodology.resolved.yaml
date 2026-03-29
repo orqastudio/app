@@ -8,7 +8,7 @@
 #   - @orqastudio/plugin-software-kanban → implementation-workflow (+5 states, +10 transitions)
 #   - @orqastudio/plugin-agile-review → review-process (+4 states, +11 transitions)
 #   - @orqastudio/plugin-core-framework → learning-pipeline (+5 states, +10 transitions)
-# Resolved at: 2026-03-26T09:47:03.527Z
+# Resolved at: 2026-03-29T09:05:07.466Z
 
 name: agile-methodology
 version: 0.1.0
@@ -599,6 +599,44 @@ transitions:
     to: capture
     event: reopen_learning
     description: New lessons surfaced — restart learning from capture.
+process_gates:
+  - name: understand-first
+    trigger: write
+    condition: first_code_write_without_research
+    message: >
+      THINK FIRST: What is the system you're modifying?
+      What are its boundaries? What depends on this? What could break?
+      Read the governing docs and understand the context before writing code.
+  - name: docs-before-code
+    trigger: write
+    condition: code_write_without_docs
+    message: >
+      DOCUMENTATION CHECK: Have you read the documentation that defines
+      this area? Check .orqa/documentation/ for specs, patterns, and constraints
+      before implementing.
+  - name: plan-before-build
+    trigger: write
+    condition: code_write_without_planning
+    message: >
+      PLANNING CHECK: Is there an epic or task that defines this work?
+      Check .orqa/implementation/ for the scope, acceptance criteria, and
+      implementation design.
+  - name: evidence-before-done
+    trigger: stop
+    condition: code_written_without_verification
+    message: >
+      VERIFICATION CHECK: You wrote code but didn't run make check
+      or make test. Show evidence that the work is correct before completing.
+  - name: learn-after-doing
+    trigger: stop
+    condition:
+      type: significant_work_without_lessons
+      threshold: 3
+    message: >
+      LEARNING CHECK: Significant work was done this session.
+      Check .orqa/learning/lessons/ for known patterns and consider
+      if anything unexpected should be recorded.
+
 gates:
   delivery-review:
     pattern: structured_review

@@ -10,6 +10,7 @@ description: |
   UX review output format.
   Use when: Reviewing UI implementations against specifications, auditing accessibility,
   checking design system compliance, or verifying state coverage.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

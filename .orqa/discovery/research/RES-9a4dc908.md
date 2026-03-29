@@ -368,7 +368,7 @@ Based on analysis of Langfuse, AgentOps, Braintrust, and production systems:
 **Phase 2: Structured attribution**
 
 - Tag each API call with: session_id, team_name, agent_role, task_id, model
-- Store in SQLite (conversation persistence channel per AD-859ed163)
+- Store in SQLite (conversation persistence channel per PD-859ed163)
 - Generate per-session and per-task cost reports
 
 **Phase 3: Dashboard**

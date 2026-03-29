@@ -89,7 +89,7 @@ interface AppNotification {
 
 ### Storage
 
-Notifications should be stored in SQLite (ephemeral session data per AD-859ed163). They are not governance artifacts. Table: `notifications` with columns matching the data model above. Cleared on app restart or after retention period.
+Notifications should be stored in SQLite (ephemeral session data per PD-859ed163). They are not governance artifacts. Table: `notifications` with columns matching the data model above. Cleared on app restart or after retention period.
 
 ## Desktop Notifications (Tauri Notification Plugin)
 

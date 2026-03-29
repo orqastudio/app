@@ -34,6 +34,10 @@
 		}));
 	});
 
+	/**
+	 * Constructs a ProjectSettings object from the current local statuses.
+	 * @returns The merged ProjectSettings with updated status definitions.
+	 */
 	function buildSettings(): ProjectSettings {
 		return {
 			...props.settings,
@@ -41,15 +45,27 @@
 		};
 	}
 
+	/** Persists the current local statuses to the parent via onSave. */
 	function save() {
 		props.onSave(buildSettings());
 	}
 
+	/**
+	 * Updates a single field on a status definition and saves.
+	 * @param index - The index of the status in the local list.
+	 * @param field - The StatusDefinition field to update.
+	 * @param value - The new value for the field.
+	 */
 	function updateField(index: number, field: keyof StatusDefinition, value: string | boolean) {
 		localStatuses = localStatuses.map((s, i) => (i === index ? { ...s, [field]: value } : s));
 		save();
 	}
 
+	/**
+	 * Adds or removes a transition target for a status, then saves.
+	 * @param statusIndex - The index of the status to modify.
+	 * @param targetKey - The status key to toggle in the transitions list.
+	 */
 	function toggleTransition(statusIndex: number, targetKey: string) {
 		localStatuses = localStatuses.map((s, i) => {
 			if (i !== statusIndex) return s;
@@ -62,6 +78,10 @@
 		save();
 	}
 
+	/**
+	 * Appends an empty auto-rule to a status definition.
+	 * @param index - The index of the status to add the rule to.
+	 */
 	function addAutoRule(index: number) {
 		localStatuses = localStatuses.map((s, i) => {
 			if (i !== index) return s;
@@ -70,6 +90,13 @@
 		});
 	}
 
+	/**
+	 * Updates a single field on an auto-rule and saves.
+	 * @param statusIndex - The index of the status that owns the rule.
+	 * @param ruleIndex - The index of the rule within the status.
+	 * @param field - The StatusAutoRule field to update.
+	 * @param value - The new value for the field.
+	 */
 	function updateAutoRule(
 		statusIndex: number,
 		ruleIndex: number,
@@ -86,6 +113,11 @@
 		save();
 	}
 
+	/**
+	 * Removes an auto-rule from a status definition and saves.
+	 * @param statusIndex - The index of the status that owns the rule.
+	 * @param ruleIndex - The index of the rule to remove.
+	 */
 	function removeAutoRule(statusIndex: number, ruleIndex: number) {
 		localStatuses = localStatuses.map((s, i) => {
 			if (i !== statusIndex) return s;
@@ -95,6 +127,7 @@
 		save();
 	}
 
+	/** Appends a new blank status definition to the list and saves. */
 	function addStatus() {
 		const newStatus: StatusDefinition = {
 			key: `status_${Date.now()}`,
@@ -108,11 +141,16 @@
 		save();
 	}
 
+	/**
+	 * Marks a status for deletion and opens the confirmation dialog.
+	 * @param index - The index of the status to delete.
+	 */
 	function requestDelete(index: number) {
 		deleteIndex = index;
 		confirmDeleteOpen = true;
 	}
 
+	/** Executes the pending deletion, removing the status and cleaning up references from other statuses. */
 	function confirmDelete() {
 		if (deleteIndex !== null) {
 			const removed = localStatuses[deleteIndex]?.key;
@@ -129,15 +167,28 @@
 	}
 
 	// Drag-and-drop reorder
+	/**
+	 * Records the dragged item's index at the start of a drag operation.
+	 * @param index - The index of the status being dragged.
+	 */
 	function handleDragStart(index: number) {
 		dragIndex = index;
 	}
 
+	/**
+	 * Prevents default drag behavior and tracks the current drag-over index.
+	 * @param e - The drag event to prevent default on.
+	 * @param index - The index of the status being dragged over.
+	 */
 	function handleDragOver(e: DragEvent, index: number) {
 		e.preventDefault();
 		dragOverIndex = index;
 	}
 
+	/**
+	 * Reorders the statuses list by moving the dragged item to the drop target index.
+	 * @param index - The index of the drop target status.
+	 */
 	function handleDrop(index: number) {
 		if (dragIndex === null || dragIndex === index) {
 			dragIndex = null;
@@ -153,6 +204,7 @@
 		save();
 	}
 
+	/** Clears drag state when the drag operation ends without a drop. */
 	function handleDragEnd() {
 		dragIndex = null;
 		dragOverIndex = null;

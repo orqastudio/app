@@ -8,6 +8,7 @@ description: |
   First-party plugin workflow for the platform dev environment. Use when creating
   or modifying plugins within the platform monorepo. Plugins are submodules,
   managed by the dev environment's CLI, and published via CI workflows.
+tier: always
 status: active
 created: 2026-03-19
 updated: 2026-03-23

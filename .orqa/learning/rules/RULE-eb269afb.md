@@ -26,7 +26,7 @@ relationships:
 
     type: "documented-by"
 
-  - target: "AD-9a7d7256"
+  - target: "PD-9a7d7256"
 
     type: "enforces"
 ---

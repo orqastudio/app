@@ -10,6 +10,7 @@ description: |
   Portable across any codebase with linting and testing infrastructure.
   Use when: Reviewing code for quality, running compliance checks, or producing
   structured review verdicts.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

@@ -13,7 +13,7 @@ enforcement:
     command: "orqa enforce"
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
 relationships:
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
     type: enforces
 ---
 Rules that cannot be enforced by linters, hooks, or automated tooling still need a defined enforcement mechanism. Every behavioral rule maps to one of four strategies, and each strategy has a concrete implementation path.

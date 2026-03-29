@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-agile-discovery (workflows/discovery-decision.workflow.yaml)
-# Resolved at: 2026-03-26T09:47:03.537Z
+# Resolved at: 2026-03-29T09:05:07.494Z
 
 name: discovery-decision
 version: 0.1.0

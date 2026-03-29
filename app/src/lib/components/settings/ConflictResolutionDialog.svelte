@@ -5,12 +5,14 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import {
-		invoke,
+		getStores,
 		buildConflictResolutionPrompt,
 		parseConflictResolutionResponse,
 	} from "@orqastudio/sdk";
 	import type { RegistrationConflict } from "@orqastudio/sdk";
 	import type { PluginManifest, ConflictResolutionSuggestion } from "@orqastudio/types";
+
+	const { conversationStore } = getStores();
 
 	// -----------------------------------------------------------------------
 	// Props
@@ -53,6 +55,7 @@
 		void fetchSuggestions();
 	});
 
+	/** Fetches AI-generated conflict resolution suggestions from the conversation store. */
 	async function fetchSuggestions() {
 		loadingSuggestions = true;
 		suggestionsError = null;
@@ -64,14 +67,8 @@
 				newManifest,
 			);
 
-			// Use the sidecar to generate suggestions via a one-shot message
-			const response = await invoke<string>("stream_send_message", {
-				sessionId: -1, // One-shot, no session
-				content: prompt,
-				model: "auto",
-				systemPrompt: "You are resolving plugin naming conflicts. Respond only with the JSON array requested. No preamble.",
-				enableThinking: false,
-			});
+			// Use the store's one-shot method — no invoke() in components (RULE-006).
+			const response = await conversationStore.oneShotMessage(prompt);
 
 			suggestions = parseConflictResolutionResponse(response);
 		} catch {
@@ -87,6 +84,10 @@
 	// Resolution Actions
 	// -----------------------------------------------------------------------
 
+	/**
+	 * Applies an AI-suggested resolution to the resolutions map for its conflict key.
+	 * @param suggestion - The resolution suggestion to apply.
+	 */
 	function applySuggestion(suggestion: ConflictResolutionSuggestion) {
 		switch (suggestion.strategy) {
 			case "rename-new":
@@ -117,6 +118,10 @@
 		}
 	}
 
+	/**
+	 * Applies the manually entered custom alias for a conflict key.
+	 * @param conflictKey - The conflict key to resolve with the custom alias.
+	 */
 	function applyCustom(conflictKey: string) {
 		const alias = customInputs[conflictKey]?.trim();
 		if (!alias) return;
@@ -127,6 +132,10 @@
 		customMode[conflictKey] = false;
 	}
 
+	/**
+	 * Clears the current resolution for a conflict key, allowing re-selection.
+	 * @param conflictKey - The conflict key whose resolution should be cleared.
+	 */
 	function clearResolution(conflictKey: string) {
 		delete resolutions[conflictKey];
 		resolutions = { ...resolutions };
@@ -150,7 +159,7 @@
 
 		<!-- Conflicts -->
 		<div class="max-h-80 space-y-3 overflow-y-auto">
-			{#each conflicts as conflict (conflict.id)}
+			{#each conflicts as conflict (conflict.key)}
 				<CardRoot class="gap-1">
 					<CardHeader class="pb-1">
 						<CardTitle class="text-xs font-semibold">
@@ -190,7 +199,7 @@
 								{@const conflictSuggestions = suggestions.filter((s) => s.key === conflict.key)}
 								{#if conflictSuggestions.length > 0}
 									<div class="space-y-1">
-										{#each conflictSuggestions as suggestion (suggestion.id)}
+										{#each conflictSuggestions as suggestion (suggestion.key)}
 											<button
 												class="w-full rounded border border-border px-2 py-1.5 text-left transition-colors hover:bg-accent/30"
 												onclick={() => applySuggestion(suggestion)}

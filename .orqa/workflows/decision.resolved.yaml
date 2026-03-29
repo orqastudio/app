@@ -1,7 +1,7 @@
 # AUTO-GENERATED — do not edit manually.
 # Resolved by: orqa plugin install
 # Skeleton: @orqastudio/plugin-core-framework (workflows/decision.workflow.yaml)
-# Resolved at: 2026-03-26T09:47:03.550Z
+# Resolved at: 2026-03-29T09:05:07.506Z
 
 name: decision
 version: 0.1.0

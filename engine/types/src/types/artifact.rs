@@ -1,7 +1,8 @@
 //! Artifact domain types for the OrqaStudio engine.
 //!
-//! Defines the core structs and enums used to represent governance artifacts (.orqa/ files),
-//! their navigation tree structure, and frontmatter shapes for each artifact kind.
+//! Defines the core structs used to represent governance artifacts (.orqa/ files)
+//! and their navigation tree structure. Artifact types are opaque strings — the
+//! engine does not enumerate them; plugins declare artifact types via their manifests.
 //! These types are serialized over the Tauri IPC boundary and used by the frontend.
 
 use std::collections::HashMap;
@@ -15,8 +16,9 @@ pub struct Artifact {
     pub id: i64,
     /// ID of the project this artifact belongs to.
     pub project_id: i64,
-    /// Type category of the artifact (agent, rule, knowledge, doc).
-    pub artifact_type: ArtifactType,
+    /// Opaque artifact type key declared by a plugin (e.g. `"task"`, `"epic"`).
+    /// The engine treats this as an opaque string; plugins define what values are valid.
+    pub artifact_type: String,
     /// Relative path from the project root (e.g. `.orqa/rules/RULE-abc.md`).
     pub rel_path: String,
     /// Display name of the artifact.
@@ -48,8 +50,8 @@ pub struct Artifact {
 pub struct ArtifactSummary {
     /// Database row ID.
     pub id: i64,
-    /// Type category of the artifact.
-    pub artifact_type: ArtifactType,
+    /// Opaque artifact type key declared by a plugin.
+    pub artifact_type: String,
     /// Relative path from the project root.
     pub rel_path: String,
     /// Display name of the artifact.
@@ -60,20 +62,6 @@ pub struct ArtifactSummary {
     pub compliance_status: ComplianceStatus,
     /// ISO-8601 timestamp of the file's last modification.
     pub file_modified_at: Option<String>,
-}
-
-/// The type of a governance artifact — determines its storage location and schema.
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-#[serde(rename_all = "snake_case")]
-pub enum ArtifactType {
-    /// An agent definition (`.orqa/agents/`).
-    Agent,
-    /// An enforcement rule (`.orqa/rules/`).
-    Rule,
-    /// A knowledge artifact (`.orqa/knowledge/`).
-    Knowledge,
-    /// A documentation file (`docs/` or other markdown).
-    Doc,
 }
 
 /// Whether an artifact is currently compliant with enforcement rules.
@@ -100,21 +88,13 @@ pub struct ArtifactRelationship {
     pub target: String,
 }
 
-/// YAML frontmatter metadata extracted from a documentation file.
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct DocFrontmatter {
-    /// Document title.
-    pub title: Option<String>,
-    /// Categorization label (e.g. `"architecture"`, `"process"`).
-    pub category: Option<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-    /// ISO-8601 date string when the document was created.
-    pub created: Option<String>,
-    /// ISO-8601 date string when the document was last updated.
-    pub updated: Option<String>,
-}
+/// Generic YAML frontmatter parsed from any artifact file.
+///
+/// The engine treats frontmatter as an opaque key-value map. Plugins declare
+/// what fields are valid for their artifact types via JSON Schema. The engine
+/// does not interpret specific field names except for universal fields like
+/// `id`, `title`, and `status` used for navigation and display.
+pub type GenericFrontmatter = HashMap<String, serde_json::Value>;
 
 /// A node in the documentation tree. Directories have children; markdown files have a path.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -302,154 +282,3 @@ pub struct NavTree {
     pub groups: Vec<NavGroup>,
 }
 
-/// YAML frontmatter metadata extracted from a milestone file (`.orqa/milestones/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct MilestoneFrontmatter {
-    /// Unique milestone ID.
-    pub id: Option<String>,
-    /// Milestone title.
-    pub title: Option<String>,
-    /// Current status value.
-    pub status: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// ISO-8601 target deadline date.
-    pub deadline: Option<String>,
-    /// Short description of the milestone.
-    pub description: Option<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}
-
-/// YAML frontmatter metadata extracted from an epic file (`.orqa/epics/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct EpicFrontmatter {
-    /// Unique epic ID.
-    pub id: Option<String>,
-    /// Epic title.
-    pub title: Option<String>,
-    /// Current status value.
-    pub status: Option<String>,
-    /// Priority level (e.g. `"P1"`, `"P2"`).
-    pub priority: Option<String>,
-    /// Parent milestone ID.
-    pub milestone: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// ISO-8601 target deadline date.
-    pub deadline: Option<String>,
-    /// Short description of the epic.
-    pub description: Option<String>,
-    /// Assigned team member.
-    pub assignee: Option<String>,
-    /// Pillar keys this epic contributes to.
-    #[serde(default)]
-    pub pillar: Vec<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}
-
-/// YAML frontmatter metadata extracted from a task file (`.orqa/tasks/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct TaskFrontmatter {
-    /// Unique task ID.
-    pub id: Option<String>,
-    /// Task title.
-    pub title: Option<String>,
-    /// Current status value.
-    pub status: Option<String>,
-    /// Parent epic ID.
-    pub epic: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// Assigned team member.
-    pub assignee: Option<String>,
-    /// Short description of the task.
-    pub description: Option<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}
-
-/// YAML frontmatter metadata extracted from an idea file (`.orqa/ideas/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct IdeaFrontmatter {
-    /// Unique idea ID.
-    pub id: Option<String>,
-    /// Idea title.
-    pub title: Option<String>,
-    /// Current status value.
-    pub status: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// Short description of the idea.
-    pub description: Option<String>,
-    /// Path to the epic or milestone this idea was promoted to.
-    #[serde(rename = "promoted-to")]
-    pub promoted_to: Option<String>,
-    /// Pillar keys this idea contributes to.
-    #[serde(default)]
-    pub pillar: Vec<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}
-
-/// YAML frontmatter metadata extracted from a decision record file (`.orqa/decisions/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct DecisionFrontmatter {
-    /// Unique decision record ID.
-    pub id: Option<String>,
-    /// Decision title.
-    pub title: Option<String>,
-    /// Current status value (e.g. `"proposed"`, `"accepted"`, `"superseded"`).
-    pub status: Option<String>,
-    /// Category (e.g. `"architecture"`, `"process"`, `"tooling"`).
-    pub category: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// Short description of the decision.
-    pub description: Option<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}
-
-/// YAML frontmatter metadata extracted from a lesson file (`.orqa/lessons/`).
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-pub struct LessonFrontmatter {
-    /// Unique lesson ID.
-    pub id: Option<String>,
-    /// Lesson title.
-    pub title: Option<String>,
-    /// Category: `"process"`, `"coding"`, or `"architecture"`.
-    pub category: Option<String>,
-    /// Current status (e.g. `"active"`, `"promoted"`, `"resolved"`).
-    pub status: Option<String>,
-    /// Number of times this pattern has recurred.
-    pub recurrence: Option<i64>,
-    /// Path to the rule or standard this lesson was promoted to.
-    #[serde(rename = "promoted-to")]
-    pub promoted_to: Option<String>,
-    /// ISO-8601 creation date.
-    pub created: Option<String>,
-    /// ISO-8601 last-updated date.
-    pub updated: Option<String>,
-    /// Short description of the lesson.
-    pub description: Option<String>,
-    /// Tags for filtering and discovery.
-    #[serde(default)]
-    pub tags: Vec<String>,
-}

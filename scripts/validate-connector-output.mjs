@@ -197,7 +197,7 @@ async function main() {
 
   let generateResult;
   try {
-    generateResult = generatePlugin(projectRoot);
+    generateResult = await generatePlugin(projectRoot);
   } catch (err) {
     console.error(`ERROR: Generator failed: ${err.message}`);
     process.exit(2);

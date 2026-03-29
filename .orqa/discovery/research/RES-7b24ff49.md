@@ -7,11 +7,11 @@ status: completed
 created: "2026-03-02"
 updated: "2026-03-07"
 relationships:
-  - target: "AD-39e2fb81"
+  - target: "PD-39e2fb81"
     type: "informs"
-  - target: "AD-d01b9e0a"
+  - target: "PD-d01b9e0a"
     type: "informs"
-  - target: "AD-5d0f8814"
+  - target: "PD-5d0f8814"
     type: "informs"
 ---
 **Date:** 2026-03-02 | **Status:** Complete
@@ -50,7 +50,7 @@ Research into Tauri v2's capabilities, security model, and plugin ecosystem for 
 - **Streaming:** `Channel\<T\>` is the documented recommended mechanism — faster than events, ordered delivery, type-safe on Rust side. Perfect for Claude API SSE responses.
 - **Multi-window:** Stable with single-webview-per-window. Multi-webview per window is unstable/behind feature flag.
 
-**Decision:** Tauri v2 is fully capable. No blockers. Proceed with [AD-7121ec20](AD-7121ec20) (thick backend) and [AD-4e7faf0e](AD-4e7faf0e) (IPC boundary) as designed.
+**Decision:** Tauri v2 is fully capable. No blockers. Proceed with [PD-7121ec20](PD-7121ec20) (thick backend) and [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary) as designed.
 
 ---
 
@@ -134,7 +134,7 @@ No documented hard limits. ~200ms for 3MB JSON via standard IPC. For large binar
 | File change notifications | Background events | `emit()` / `listen()` |
 | App lifecycle (window close, tray click) | Simple notifications | `emit()` / `listen()` |
 
-**Decision:** Use `invoke()` for CRUD, `Channel\<T\>` for streaming (Claude responses, progress), events for background notifications. Evaluate TauRPC for end-to-end type safety during Phase 1. → Extends [AD-4e7faf0e](AD-4e7faf0e).
+**Decision:** Use `invoke()` for CRUD, `Channel\<T\>` for streaming (Claude responses, progress), events for background notifications. Evaluate TauRPC for end-to-end type safety during Phase 1. → Extends [PD-4e7faf0e](PD-4e7faf0e).
 
 ---
 
@@ -194,7 +194,7 @@ const key = await getPassword('orqa-studio', 'claude-api-key');
 
 **Project directory selection:** Use dialog plugin for initial project folder selection (auto-expands scope) + `tauri-plugin-persisted-scope` to remember across restarts.
 
-**Decision:** Scoped permissions with `$HOME/**` base, sensitive path denials, pre-declared shell commands, keyring for API keys. → Needs new AD [AD-09fc4e65](AD-09fc4e65).
+**Decision:** Scoped permissions with `$HOME/**` base, sensitive path denials, pre-declared shell commands, keyring for API keys. → Needs new AD [PD-09fc4e65](PD-09fc4e65).
 
 ---
 
@@ -242,6 +242,6 @@ Tauri v2 is fully capable for OrqaStudio. No blockers, no workarounds needed. Th
 
 ## Related
 
-- Architecture Decisions — [AD-7121ec20](AD-7121ec20), [AD-4e7faf0e](AD-4e7faf0e) confirmed viable; [AD-09fc4e65](AD-09fc4e65) (security model) needed
+- Architecture Decisions — [PD-7121ec20](PD-7121ec20), [PD-4e7faf0e](PD-4e7faf0e) confirmed viable; [PD-09fc4e65](PD-09fc4e65) (security model) needed
 - [Claude Integration Research](RES-b666c725) — Streaming pipeline confirmed: reqwest → Channel → Svelte
 - [Persistence Research](RES-ac474863) — tauri-plugin-sql confirmed for SQLite

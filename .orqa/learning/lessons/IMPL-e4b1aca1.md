@@ -19,7 +19,7 @@ The frontend runs inside a WebView with restricted network access. Direct HTTP c
 
 ## Rule
 
-The frontend (app/ui/) MUST NEVER make direct HTTP calls to local services (daemon, search server, MCP, etc.). All communication goes through Tauri commands. This is an architectural constraint from the IPC boundary decision (AD-7121ec20).
+The frontend (app/ui/) MUST NEVER make direct HTTP calls to local services (daemon, search server, MCP, etc.). All communication goes through Tauri commands. This is an architectural constraint from the IPC boundary decision (PD-7121ec20).
 
 ## Applies To
 

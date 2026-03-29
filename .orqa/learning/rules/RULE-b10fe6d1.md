@@ -31,15 +31,15 @@ relationships:
 
     type: "documented-by"
 
-  - target: "AD-3b986859"
+  - target: "PD-3b986859"
 
     type: "enforces"
 
-  - target: "AD-7fa3f280"
+  - target: "PD-7fa3f280"
 
     type: "enforces"
 
-  - target: "AD-339e9223"
+  - target: "PD-339e9223"
 
     type: "enforces"
 

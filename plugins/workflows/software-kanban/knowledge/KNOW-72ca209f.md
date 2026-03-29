@@ -146,7 +146,7 @@ See [RULE-205d9c91](RULE-205d9c91) for the full skill portability constraint and
 A skill is portable if a different project could use it unchanged. Skills MUST NOT contain:
 
 - Project-specific file paths (e.g., `backend/src-tauri/src/domain/sessions.rs`)
-- Architecture decision numbers from this project (e.g., `[AD-7121ec20](AD-7121ec20)`, `[AD-75bb14ae](AD-75bb14ae)`)
+- Architecture decision numbers from this project (e.g., `[PD-7121ec20](PD-7121ec20)`, `[PD-75bb14ae](PD-75bb14ae)`)
 - Project-specific config values (hardcoded URLs, service names, environment variables)
 - Enforcement rules (those belong in `.orqa/learning/rules/`)
 - Product decisions (those belong in `.orqa/documentation/about/`)

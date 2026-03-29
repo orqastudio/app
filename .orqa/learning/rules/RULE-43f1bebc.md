@@ -21,7 +21,7 @@ enforcement:
     description: "systems-thinking knowledge injected on all implementation work"
 relationships:
 
-  - target: AD-af88bb69
+  - target: PD-af88bb69
 
     type: enforces
 ---

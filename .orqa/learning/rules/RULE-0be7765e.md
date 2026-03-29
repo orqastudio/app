@@ -25,7 +25,7 @@ enforcement:
     pattern: "--no-verify"
 relationships:
 
-  - target: AD-2d58941b
+  - target: PD-2d58941b
 
     type: enforces
 ---

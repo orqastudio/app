@@ -4,7 +4,9 @@
   "displayName": "CLI Tools",
   "description": "Bundles the orqa CLI with skills for graph browsing, validation, plugin management, version management, license/readme auditing, and dev environment maintenance.",
   "category": "domain-knowledge",
-  "purpose": ["domain-knowledge"],
+  "purpose": [
+    "domain-knowledge"
+  ],
   "affects_schema": false,
   "affects_enforcement": false,
   "provides": {
@@ -114,7 +116,7 @@
     "hooks": [
       {
         "event": "PreCommit",
-        "command": "cd libs/cli && npx tsc && cd ../.. && orqa verify",
+        "command": "cd cli && npx tsc && cd .. && orqa verify",
         "description": "Rebuild CLI then run all audits before every commit"
       },
       {
@@ -136,7 +138,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI development patterns and tools reference.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-40be8113.md"
+        "content_file": "knowledge/KNOW-40be8113.md"
       },
       {
         "id": "version-management",
@@ -150,7 +152,7 @@
         ],
         "priority": "P3",
         "summary": "CLI tooling supplementary reference material.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-481059d2.md"
+        "content_file": "knowledge/KNOW-481059d2.md"
       },
       {
         "id": "orqastudio-cli-usage",
@@ -164,7 +166,7 @@
         ],
         "priority": "P3",
         "summary": "CLI-specific reference for command-line tool development and patterns.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-990e4f85.md"
+        "content_file": "knowledge/KNOW-990e4f85.md"
       },
       {
         "id": "cli-plugin-self-maintenance",
@@ -178,7 +180,7 @@
         ],
         "priority": "P3",
         "summary": "CLI architecture and development supplementary reference.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-a0947420.md"
+        "content_file": "knowledge/KNOW-a0947420.md"
       },
       {
         "id": "plugin-management",
@@ -192,7 +194,7 @@
         ],
         "priority": "P3",
         "summary": "CLI supplementary reference for specific development scenarios.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-afaa4e88.md"
+        "content_file": "knowledge/KNOW-afaa4e88.md"
       },
       {
         "id": "dev-environment-management",
@@ -206,7 +208,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI patterns and development reference.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-ea78c8e4.md"
+        "content_file": "knowledge/KNOW-ea78c8e4.md"
       },
       {
         "id": "readme-standards",
@@ -220,7 +222,7 @@
         ],
         "priority": "P3",
         "summary": "Additional CLI development reference material.",
-        "content_file": "../../.orqa/documentation/knowledge/KNOW-ecc181cb.md"
+        "content_file": "knowledge/KNOW-ecc181cb.md"
       }
     ]
   },

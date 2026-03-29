@@ -57,7 +57,7 @@ relationships:
 - `sub-agents.md` references `persistence/` — same issue
 - `skill_injector.rs` exists in domain but missing from the module tree in `rust-modules.md`
 
-**Architecture decisions**: All accepted decisions (AD-7121ec20, [AD-2d58941b](AD-2d58941b), [AD-09fc4e65](AD-09fc4e65), [AD-39e2fb81](AD-39e2fb81), etc.) have corresponding implementations. No orphaned decisions found.
+**Architecture decisions**: All accepted decisions (PD-7121ec20, [PD-2d58941b](PD-2d58941b), [PD-09fc4e65](PD-09fc4e65), [PD-39e2fb81](PD-39e2fb81), etc.) have corresponding implementations. No orphaned decisions found.
 
 **UI component inventory**: 10 components documented as "not yet implemented" in `component-inventory.md`. 158 actual components exist vs ~76 documented. The doc is aspirational.
 

@@ -8,10 +8,10 @@ created: 2026-03-23
 updated: 2026-03-23
 category: infrastructure
 relationships:
-  - target: AD-ee2910b1
+  - target: PD-ee2910b1
     type: informs
     rationale: May produce a formal AD on repo structure
-  - target: AD-9ab3e0a4
+  - target: PD-9ab3e0a4
     type: informs
     rationale: Research led to the Universal Plugin Capability Model decision
   - target: EPIC-8b01ee51

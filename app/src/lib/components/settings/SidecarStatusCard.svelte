@@ -6,6 +6,11 @@
 
 	const { settingsStore } = getStores();
 
+	/**
+	 * Returns a Tailwind text color class for the given sidecar connection state.
+	 * @param state - The sidecar connection state string.
+	 * @returns A Tailwind text color class string.
+	 */
 	function sidecarStatusColor(state: string): string {
 		switch (state) {
 			case "connected":
@@ -21,6 +26,7 @@
 		}
 	}
 
+	/** Requests a sidecar restart through the settings store. */
 	function handleRestart(): void {
 		settingsStore.restartSidecar();
 	}

@@ -3,9 +3,6 @@
  */
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
-import { logger } from "../logger.js";
-
-const log = logger("errors");
 
 export interface AppError {
 	id: number;
@@ -18,13 +15,21 @@ export interface AppError {
 const MAX_ERRORS = 50;
 const TOAST_DURATION_MS = 8000;
 
+/** Reactive store for surfacing backend, sidecar, and frontend errors as toasts. */
 export class ErrorStoreImpl {
+	/** Active errors, newest first, capped at MAX_ERRORS. */
 	errors = $state<AppError[]>([]);
 	private nextId = 0;
 	private unlistenAppError: UnlistenFn | null = null;
 	private initialized = false;
 	private browserHandlersInstalled = false;
 
+	/**
+	 * Add an error to the store and auto-dismiss after TOAST_DURATION_MS.
+	 * @param source - Origin of the error (e.g. "frontend", "backend").
+	 * @param message - Human-readable error description.
+	 * @param level - Severity level, defaults to "error".
+	 */
 	addError(source: string, message: string, level: string = "error") {
 		const error: AppError = {
 			id: this.nextId++,
@@ -41,14 +46,23 @@ export class ErrorStoreImpl {
 		}, TOAST_DURATION_MS);
 	}
 
+	/**
+	 * Dismiss a single error by its ID.
+	 * @param id - The numeric ID assigned when the error was added.
+	 */
 	dismiss(id: number) {
 		this.errors = this.errors.filter((e) => e.id !== id);
 	}
 
+	/** Dismiss all active errors. */
 	dismissAll() {
 		this.errors = [];
 	}
 
+	/**
+	 * Subscribe to the Tauri "app-error" event from the backend.
+	 * Safe to call multiple times — subsequent calls are no-ops.
+	 */
 	async initialize() {
 		if (this.initialized) return;
 		this.initialized = true;
@@ -86,6 +100,7 @@ export class ErrorStoreImpl {
 		};
 	}
 
+	/** Tear down event listeners and reset browser global error handlers. */
 	destroy() {
 		this.unlistenAppError?.();
 		this.unlistenAppError = null;
@@ -96,13 +111,4 @@ export class ErrorStoreImpl {
 		this.browserHandlersInstalled = false;
 		this.initialized = false;
 	}
-}
-
-/**
- * @deprecated Use `getStores().errorStore.initBrowserHandlers()` instead.
- * Kept for backward compatibility during migration.
- */
-export function initBrowserHandlers(): void {
-	// no-op — callers should use the instance method
-	log.warn("initBrowserHandlers() is deprecated — use getStores().errorStore.initBrowserHandlers() instead");
 }

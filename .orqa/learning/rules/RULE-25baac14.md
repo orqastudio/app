@@ -14,11 +14,11 @@ enforcement:
     message: "Artifact IDs are identifiers not rankings; orchestrator must use the priority field not ID order when sequencing work"
 relationships:
 
-  - target: "AD-45cfe1d1"
+  - target: "PD-45cfe1d1"
 
     type: "enforces"
 ---
-Artifact IDs ([EPIC-7394ba2a](EPIC-7394ba2a), [TASK-0a4a9172](TASK-0a4a9172), [AD-48b310f9](AD-48b310f9), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
+Artifact IDs ([EPIC-7394ba2a](EPIC-7394ba2a), [TASK-0a4a9172](TASK-0a4a9172), [PD-48b310f9](PD-48b310f9), etc.) are sequential identifiers for uniqueness and reference. They carry NO information about priority, importance, or execution order.
 
 ## Rule
 

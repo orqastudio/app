@@ -4,6 +4,7 @@ type: knowledge
 title: Tech Debt Management
 domain: methodology/governance
 description: "How to identify, prevent, and eliminate tech debt in OrqaStudio by keeping code aligned with schemas and avoiding hardcoded values."
+tier: always
 status: active
 relationships:
   - target: DOC-743f9c71

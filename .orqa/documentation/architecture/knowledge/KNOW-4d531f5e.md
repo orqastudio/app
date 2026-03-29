@@ -5,7 +5,7 @@ status: active
 title: Connector Architecture
 domain: architecture
 description: What a connector does, what the generated plugin contains, and what must NOT be in connector source code — boundary enforcement for connector work
-tier: core
+tier: always
 relationships:
   synchronised-with: DOC-4d531f5e
 ---

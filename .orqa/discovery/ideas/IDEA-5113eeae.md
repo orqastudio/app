@@ -21,14 +21,14 @@ relationships:
     target: "IDEA-0a000bc0"
   - type: "realises"
     target: "EPIC-dcc0bac6"
-  - target: "AD-ee2910b1"
+  - target: "PD-ee2910b1"
     type: "crystallises"
   - target: "PILLAR-2acd86c1"
     type: "grounded"
   - target: "PERSONA-2721ae35"
     type: "benefits"
 ---
-> **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-dcc0bac6 via AD-ee2910b1. Plugin catalogue/marketplace concept split into IDEA-acc89fdc. User plugin development workflow split into IDEA-0a000bc0.
+> **Surpassed 2026-03-16**: Core plugin distribution mechanism merged into EPIC-dcc0bac6 via PD-ee2910b1. Plugin catalogue/marketplace concept split into IDEA-acc89fdc. User plugin development workflow split into IDEA-0a000bc0.
 
 ## Motivation
 

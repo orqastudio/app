@@ -75,8 +75,16 @@ fn build_app_state(
             process_state: std::sync::Mutex::new(
                 domain::process_state::SessionProcessState::default(),
             ),
+            tracker_config: std::sync::Mutex::new(
+                domain::workflow_config::default_tracker_config(),
+            ),
             workflow_tracker: std::sync::Mutex::new(
-                domain::workflow_tracker::WorkflowTracker::new(),
+                domain::workflow_tracker::WorkflowTracker::new(
+                    domain::workflow_config::default_tracker_config(),
+                ),
+            ),
+            process_gates: std::sync::Mutex::new(
+                domain::workflow_config::default_process_gates(),
             ),
         },
         artifacts: state::ArtifactState {
@@ -248,6 +256,7 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::enforcement_commands::enforcement_rules_list,
         commands::enforcement_commands::enforcement_rules_reload,
         commands::enforcement_commands::enforcement_violations_list,
+        commands::enforcement_commands::governance_scan,
         commands::graph_commands::get_artifacts_by_type,
         commands::graph_commands::read_artifact_content,
         commands::graph_commands::get_graph_stats,

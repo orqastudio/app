@@ -18,7 +18,7 @@ relationships:
   - target: "EPIC-770f9ce9"
     type: "guides"
     rationale: "Research findings informed epic design"
-  - target: "AD-efe10e1d"
+  - target: "PD-efe10e1d"
     type: "informs"
 ---
 
@@ -43,9 +43,9 @@ relationships:
 
 ### Decisions Assessment
 
-40 decisions. 4 supersession chains — all consistent (AD-75bb14ae→[AD-859ed163](AD-859ed163), [AD-b08f456d](AD-b08f456d)→[AD-859ed163](AD-859ed163), [AD-0dfa4d52](AD-0dfa4d52)→[AD-4ea9a290](AD-4ea9a290), [AD-85d45674](AD-85d45674)→AD-7cb83077). Recent graph decisions (AD-f079c196, [AD-45f32bab](AD-45f32bab), AD-7fa3f280) are current and aligned.
+40 decisions. 4 supersession chains — all consistent (PD-75bb14ae→[PD-859ed163](PD-859ed163), [PD-b08f456d](PD-b08f456d)→[PD-859ed163](PD-859ed163), [PD-0dfa4d52](PD-0dfa4d52)→[PD-4ea9a290](PD-4ea9a290), [PD-85d45674](PD-85d45674)→PD-7cb83077). Recent graph decisions (PD-f079c196, [PD-45f32bab](PD-45f32bab), PD-7fa3f280) are current and aligned.
 
-**Issue:** Early decisions (AD-7121ec20 through AD-33e315cc) have no `layer` field. Later decisions (AD-80f39962+) all have `layer: core`. Schema may not enforce `layer` on decisions.
+**Issue:** Early decisions (PD-7121ec20 through PD-33e315cc) have no `layer` field. Later decisions (PD-80f39962+) all have `layer: core`. Schema may not enforce `layer` on decisions.
 
 ### Lessons Assessment
 
@@ -76,7 +76,7 @@ relationships:
 ### Documentation Assessment
 
 - `orchestration.md` and `workflow.md` describe pre-graph-based patterns (ChunkHound-specific)
-- No architecture doc exists for graph-based injection model (AD-f079c196 accepted but no implementation doc)
+- No architecture doc exists for graph-based injection model (PD-f079c196 accepted but no implementation doc)
 - 15 wireframe/UI docs frozen at 2026-03-04 through 2026-03-07, likely outdated
 - 3 rules have `scope: []` (empty) — [RULE-09a238ab](RULE-09a238ab), [RULE-e1f1afc1](RULE-e1f1afc1), [RULE-42d17086](RULE-42d17086)
 

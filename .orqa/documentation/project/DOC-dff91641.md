@@ -73,7 +73,7 @@ Write content in `.orqa/` when it is specific to this project's development:
 
 | Content Type | Example | Location |
 | ------------- | --------- | ---------- |
-| Architecture decisions | AD-26d8d45d, AD-859ed163 | `.orqa/process/decisions/` |
+| Architecture decisions | PD-26d8d45d, PD-859ed163 | `.orqa/process/decisions/` |
 | Lessons learned | IMPL-08d70280 | `.orqa/process/lessons/` |
 | Project-specific rules | Rules unique to this project | `.orqa/process/rules/` |
 | Planning artifacts | Epics, tasks, ideas, research | `.orqa/implementation/` |
@@ -137,7 +137,7 @@ Both cases surface during `orqa install` for reconciliation.
 
 ## Related Documents
 
-- [AD-26d8d45d](AD-26d8d45d) — Architecture decision formalising the plugin-canonical model
+- [PD-26d8d45d](PD-26d8d45d) — Architecture decision formalising the plugin-canonical model
 - [IMPL-08d70280](IMPL-08d70280) — Lesson that prompted this architectural clarification
 - [DOC-8cf6ef38](DOC-8cf6ef38) — Dev environment setup (covers `orqa install` in the setup workflow)
 - [KNOW-e3432947](KNOW-e3432947) — Agent-facing knowledge pair for this documentation page

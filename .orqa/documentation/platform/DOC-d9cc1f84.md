@@ -10,7 +10,7 @@ created: 2026-03-02
 updated: 2026-03-12
 sort: 20
 relationships:
-  - target: AD-48b310f9
+  - target: PD-48b310f9
     type: documents
   - target: RULE-dd5b69e6
     type: documents
@@ -103,7 +103,7 @@ Additional skills are injected by the orchestrator based on task scope per [RULE
 
 ## Agent Delegation Guide
 
-All agents are universal roles (see [AD-48b310f9](AD-48b310f9)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-8abcbfd5](RULE-8abcbfd5). Domain expertise is loaded via skills — the role + skills combination determines capability.
+All agents are universal roles (see [PD-48b310f9](PD-48b310f9)). Agent definitions declare **capabilities** (not tools); these are resolved to provider-specific tool names at delegation time per [RULE-8abcbfd5](RULE-8abcbfd5). Domain expertise is loaded via skills — the role + skills combination determines capability.
 
 | Task Type | Role | Skills to Load |
 | ----------- | ------ | ---------------- |

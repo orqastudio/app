@@ -4,6 +4,7 @@ type: knowledge
 title: "Tauri v2 Capabilities & Permissions Reference"
 domain: platform/tauri
 description: "Reference for configuring Tauri v2 capability files to grant permissions to windows, plugins, and filesystem access."
+tier: on-demand
 summary: "Tauri v2 Capabilities & Permissions Reference. Tauri v2 uses a capabilities-based security model. By default, **nothing is allowed** - you must explicitly grant permissions through capability files."
 status: active
 created: 2026-03-20

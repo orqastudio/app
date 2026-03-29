@@ -2,7 +2,7 @@
 id: "EPIC-7394ba2a"
 type: "epic"
 title: "Portable Governance Framework"
-description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-c9e0a695 engine identity and governance hub capability. Implements AD-48b310f9 and AD-26b0eb9f."
+description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-c9e0a695 engine identity and governance hub capability. Implements PD-48b310f9 and PD-26b0eb9f."
 status: archived
 priority: "P1"
 created: "2026-03-09"
@@ -21,11 +21,11 @@ relationships:
 
 ## Context
 
-[AD-48b310f9](AD-48b310f9) established that agents should represent universal roles (Orchestrator, Researcher,
+[PD-48b310f9](PD-48b310f9) established that agents should represent universal roles (Orchestrator, Researcher,
 Planner, Implementer, Reviewer, Writer, Designer) that work across any project type.
 Domain-specific knowledge lives in skills loaded at runtime.
 
-[AD-26b0eb9f](AD-26b0eb9f) established that project setup is skill-driven — no templates directory, no hardcoded
+[PD-26b0eb9f](PD-26b0eb9f) established that project setup is skill-driven — no templates directory, no hardcoded
 scaffolding. Setup skills contain the knowledge of what a project needs.
 
 Both decisions support OrqaStudio's identity as a clarity engine for structured thinking,
@@ -33,7 +33,7 @@ not an AI development tool.
 
 ## Implementation Scope
 
-### 1. Agent Restructuring [AD-48b310f9](AD-48b310f9)
+### 1. Agent Restructuring [PD-48b310f9](PD-48b310f9)
 
 Replace 16 software-specific agent files with 7 universal role definitions:
 
@@ -63,7 +63,7 @@ Replace 16 software-specific agent files with 7 universal role definitions:
 - debugger.md, refactor-agent.md → become skills only
 - agent-maintainer.md → becomes skill for Orchestrator
 
-### 2. Domain Skill Extraction [AD-48b310f9](AD-48b310f9)
+### 2. Domain Skill Extraction [PD-48b310f9](PD-48b310f9)
 
 Extract domain knowledge from old agents into loadable skills:
 
@@ -79,7 +79,7 @@ Extract domain knowledge from old agents into loadable skills:
 | test-engineer | `test-engineering` | TDD workflow, coverage, mock boundaries |
 | systems-architect | `architectural-evaluation` | Compliance checks, boundary verification |
 
-### 3. Project Setup Skills [AD-26b0eb9f](AD-26b0eb9f)
+### 3. Project Setup Skills [PD-26b0eb9f](PD-26b0eb9f)
 
 Create the four setup skills that replace templates:
 
@@ -90,9 +90,9 @@ Create the four setup skills that replace templates:
 
 ### 4. Product Documentation Update
 
-- Update `governance.md` with concept taxonomy from [AD-48b310f9](AD-48b310f9)
-- Create `governance-hub.md` for the distribution/coexistence model from [AD-26b0eb9f](AD-26b0eb9f)
-- Verify `artifact-framework.md` alignment with [AD-48b310f9](AD-48b310f9) concepts
+- Update `governance.md` with concept taxonomy from [PD-48b310f9](PD-48b310f9)
+- Create `governance-hub.md` for the distribution/coexistence model from [PD-26b0eb9f](PD-26b0eb9f)
+- Verify `artifact-framework.md` alignment with [PD-48b310f9](PD-48b310f9) concepts
 
 ## Constraints
 

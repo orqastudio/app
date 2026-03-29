@@ -5,6 +5,7 @@ title: "Thinking Mode: Documentation"
 domain: methodology/planning
 thinking-mode: documentation
 description: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
+tier: always
 summary: "The user wants docs written, updated, or organised — capturing knowledge for humans, not building features."
 status: active
 created: 2026-03-21

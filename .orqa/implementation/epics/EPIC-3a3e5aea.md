@@ -19,7 +19,7 @@ relationships:
   - target: "PILLAR-c9e0a695"
     type: "grounded"
     rationale: "LSP enforcement makes governance artifacts visible and manageable in the editor — mechanical enforcement of structural rules"
-  - target: "AD-a44384d1"
+  - target: "PD-a44384d1"
     type: "implements"
     rationale: "CLI as single interface — LSP runs as a CLI protocol mode, powered by the validation daemon"
 ---

@@ -19,7 +19,7 @@ enforcement:
     description: "Pipeline integrity tool verifies behavioral rule enforcement coverage"
 relationships:
 
-  - target: AD-c6c2d9fb
+  - target: PD-c6c2d9fb
 
     type: enforces
 ---

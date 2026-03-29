@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
+import jsdocPlugin from "eslint-plugin-jsdoc";
 
 // Shared restriction objects for no-restricted-syntax rule.
 // Defined here so they can be composed into multiple config blocks
@@ -34,6 +35,12 @@ export default tseslint.config(
 				...globals.node,
 			},
 		},
+		rules: {
+			"@typescript-eslint/no-unused-vars": [
+				"error",
+				{ argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+			],
+		},
 	},
 	{
 		files: ["**/*.svelte", "**/*.svelte.ts"],
@@ -55,6 +62,25 @@ export default tseslint.config(
 		files: ["**/*.ts", "**/*.svelte", "**/*.svelte.ts"],
 		rules: {
 			"@typescript-eslint/no-explicit-any": "error",
+		},
+	},
+	// Documentation enforcement: every exported function and class must have a
+	// JSDoc description. File-level purpose is enforced by requiring JSDoc on
+	// module declarations. Applies to .ts and .svelte.ts files only (not .svelte
+	// templates where JSDoc is not idiomatic).
+	jsdocPlugin.configs["flat/recommended-typescript"],
+	{
+		files: ["**/*.ts", "**/*.svelte.ts"],
+		rules: {
+			"jsdoc/require-jsdoc": ["warn", {
+				require: {
+					FunctionDeclaration: true,
+					MethodDefinition: true,
+					ClassDeclaration: true,
+				},
+				publicOnly: true,
+			}],
+			"jsdoc/require-description": "warn",
 		},
 	},
 	// RULE-006 / Component purity + RULE-033 / Tooltip usage for component files.

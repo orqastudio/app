@@ -13,7 +13,7 @@ research-needed:
   - "Which existing views would benefit most from graph-backed rendering? (sidebar nav, relationship panels, epic task tables, milestone breakdowns)"
   - "How does this interact with IDEA-099c2ccc (auto-rendered task tables)? The graph store would be the data source for those auto-rendered views."
   - "Should the graph store replace existing per-type stores (artifactStore, etc.) or layer on top of them?"
-  - "How do edge traversals work in practice? e.g., 'show me all rules that enforce AD-48b310f9' = traverse enforced-by edges from AD-48b310f9"
+  - "How do edge traversals work in practice? e.g., 'show me all rules that enforce PD-48b310f9' = traverse enforced-by edges from PD-48b310f9"
 relationships:
   - target: PILLAR-c9e0a695
     type: grounded
@@ -43,7 +43,7 @@ The artifact graph already exists in the backend — the scanner builds it from 
 
 ```typescript
 // Conceptual usage
-const node = graphStore.get("AD-48b310f9");
-const enforcedBy = graphStore.traverse("AD-48b310f9", "enforced-by");
+const node = graphStore.get("PD-48b310f9");
+const enforcedBy = graphStore.traverse("PD-48b310f9", "enforced-by");
 // enforcedBy = [{ id: "RULE-9814ec3c", title: "Coding Standards", ... }, ...]
 ```

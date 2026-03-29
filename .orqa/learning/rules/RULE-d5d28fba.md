@@ -14,7 +14,7 @@ enforcement:
     message: "No implementation work may begin until the artifact structure (epic and tasks) exists; agents must refuse to start unstructured requests"
 relationships:
 
-  - target: AD-7fa3f280
+  - target: PD-7fa3f280
 
     type: enforces
 ---

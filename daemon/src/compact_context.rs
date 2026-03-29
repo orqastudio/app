@@ -40,7 +40,7 @@ struct ArtifactItem {
 
 impl ArtifactItem {
     fn from_node(node: &ArtifactNode) -> Self {
-        ArtifactItem {
+        Self {
             id: node.id.clone(),
             title: node.title.clone(),
             status: node.status.clone(),
@@ -120,13 +120,13 @@ fn compose_document(
 ) -> String {
     let mut lines: Vec<String> = Vec::new();
 
-    lines.push("# Governance Context (saved before compaction)".to_string());
+    lines.push("# Governance Context (saved before compaction)".to_owned());
     lines.push(String::new());
     lines.push(format!("Saved: {}", chrono_timestamp()));
     lines.push(String::new());
 
     if !epics.is_empty() {
-        lines.push("## Active Epics".to_string());
+        lines.push("## Active Epics".to_owned());
         lines.push(String::new());
         for e in epics {
             lines.push(format!("- **{}**: {}", e.id, e.title));
@@ -135,7 +135,7 @@ fn compose_document(
     }
 
     if !tasks.is_empty() {
-        lines.push("## Active Tasks".to_string());
+        lines.push("## Active Tasks".to_owned());
         lines.push(String::new());
         for t in tasks {
             let status_label = t
@@ -148,23 +148,23 @@ fn compose_document(
     }
 
     if !session_state.is_empty() {
-        lines.push("## Previous Session State".to_string());
+        lines.push("## Previous Session State".to_owned());
         lines.push(String::new());
-        lines.push(session_state.to_string());
+        lines.push(session_state.to_owned());
     }
 
     lines.push(String::new());
-    lines.push("## Recovery Instructions".to_string());
+    lines.push("## Recovery Instructions".to_owned());
     lines.push(String::new());
-    lines.push("After compaction, re-read:".to_string());
-    lines.push("1. The active epic files listed above".to_string());
-    lines.push("2. The active task files listed above".to_string());
+    lines.push("After compaction, re-read:".to_owned());
+    lines.push("1. The active epic files listed above".to_owned());
+    lines.push("2. The active task files listed above".to_owned());
     lines.push(
         "3. Your role definition as resolved by the plugin system (use the prompt generation \
          pipeline to regenerate your agent context from installed plugins)"
-            .to_string(),
+            .to_owned(),
     );
-    lines.push("4. Any skills referenced by the current tasks".to_string());
+    lines.push("4. Any skills referenced by the current tasks".to_owned());
 
     lines.join("\n")
 }
@@ -172,7 +172,7 @@ fn compose_document(
 /// Build a short summary string for the response and telemetry.
 fn compose_summary(epics: &[ArtifactItem], tasks: &[ArtifactItem]) -> String {
     let epic_part = if epics.is_empty() {
-        "No active epics".to_string()
+        "No active epics".to_owned()
     } else {
         format!(
             "Active epics: {}",
@@ -185,7 +185,7 @@ fn compose_summary(epics: &[ArtifactItem], tasks: &[ArtifactItem]) -> String {
     };
 
     let task_part = if tasks.is_empty() {
-        "No active tasks".to_string()
+        "No active tasks".to_owned()
     } else {
         format!(
             "Active tasks: {}",

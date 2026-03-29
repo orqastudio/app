@@ -37,8 +37,8 @@ relationships:
 
 ## Reference
 
-- [AD-26b0eb9f](AD-26b0eb9f) defines the four setup skills and their responsibilities
-- [AD-26b0eb9f](AD-26b0eb9f) Section "The Four Setup Skills" has detailed specs for each
+- [PD-26b0eb9f](PD-26b0eb9f) defines the four setup skills and their responsibilities
+- [PD-26b0eb9f](PD-26b0eb9f) Section "The Four Setup Skills" has detailed specs for each
 
 ## What
 

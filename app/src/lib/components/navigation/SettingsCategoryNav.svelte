@@ -1,14 +1,20 @@
+<!-- Settings category navigation with architecture-aligned section groups. -->
 <script lang="ts">
 	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { settingsStore } = getStores();
 
-	interface SettingsCategory {
+	interface SettingsItem {
 		id: string;
 		label: string;
 		icon: string;
 		description: string;
+	}
+
+	interface SettingsGroup {
+		label: string;
+		items: SettingsItem[];
 	}
 
 	interface Props {
@@ -20,6 +26,11 @@
 	const { mode, activeSection, onSectionChange }: Props = $props();
 
 	const currentSection = $derived(activeSection ?? settingsStore.activeSection);
+
+	/**
+	 * Handles section selection, delegating to the onSectionChange prop or the settings store.
+	 * @param id - The section identifier to activate.
+	 */
 	function handleSectionChange(id: string) {
 		if (onSectionChange) {
 			onSectionChange(id);
@@ -28,7 +39,8 @@
 		}
 	}
 
-	const appCategories: SettingsCategory[] = [
+	// App-level settings (not grouped — these are global, not project-scoped)
+	const appCategories: SettingsItem[] = [
 		{
 			id: "provider",
 			label: "Provider",
@@ -55,75 +67,124 @@
 		},
 	];
 
-	const projectCategories: SettingsCategory[] = [
+	// Project settings grouped by architecture section (Methodology / Sidecar / Connector / Plugins)
+	const projectGroups: SettingsGroup[] = [
 		{
-			id: "project-general",
-			label: "General",
-			icon: "settings",
-			description: "Name, icon, description",
+			label: "Methodology",
+			items: [
+				{
+					id: "project-general",
+					label: "General",
+					icon: "settings",
+					description: "Name, icon, description",
+				},
+				{
+					id: "project-status",
+					label: "Status Machine",
+					icon: "workflow",
+					description: "Statuses, transitions, auto rules",
+				},
+				{
+					id: "project-relationships",
+					label: "Relationships",
+					icon: "git-branch",
+					description: "Canonical and plugin relationships",
+				},
+				{
+					id: "project-artifact-links",
+					label: "Artifact Links",
+					icon: "link",
+					description: "Display mode, chip colours",
+				},
+			],
 		},
 		{
-			id: "project-scanning",
-			label: "Model & Scanning",
-			icon: "scan-search",
-			description: "Model, paths, stack detection",
+			label: "Sidecar",
+			items: [
+				{
+					id: "project-scanning",
+					label: "Model & Scanning",
+					icon: "scan-search",
+					description: "Model, paths, stack detection",
+				},
+			],
 		},
 		{
-			id: "project-navigation",
-			label: "Navigation",
-			icon: "panel-left",
-			description: "Nav tree, item order, visibility",
+			label: "Connector",
+			items: [
+				{
+					id: "project-delivery",
+					label: "Delivery Pipeline",
+					icon: "rocket",
+					description: "Delivery types and hierarchy",
+				},
+				{
+					id: "project-navigation",
+					label: "Navigation",
+					icon: "panel-left",
+					description: "Nav tree, item order, visibility",
+				},
+			],
 		},
 		{
-			id: "project-relationships",
-			label: "Relationships",
-			icon: "git-branch",
-			description: "Canonical and plugin relationships",
-		},
-		{
-			id: "project-artifact-links",
-			label: "Artifact Links",
-			icon: "link",
-			description: "Display mode, chip colours",
-		},
-		{
-			id: "project-delivery",
-			label: "Delivery Pipeline",
-			icon: "rocket",
-			description: "Delivery types and hierarchy",
-		},
-		{
-			id: "project-status",
-			label: "Status Machine",
-			icon: "workflow",
-			description: "Statuses, transitions, auto rules",
-		},
-		{
-			id: "project-plugins",
 			label: "Plugins",
-			icon: "puzzle",
-			description: "Browse, install, manage plugins",
+			items: [
+				{
+					id: "project-plugins",
+					label: "Plugins",
+					icon: "puzzle",
+					description: "Browse, install, manage plugins",
+				},
+			],
 		},
 	];
-
-	const categories = $derived(mode === "app" ? appCategories : projectCategories);
 </script>
 
 <ScrollArea class="h-full">
-	<div class="space-y-0.5 p-2">
-		{#each categories as cat (cat.id)}
-			<button
-				class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"
-				class:bg-accent={currentSection === cat.id}
-				class:text-accent-foreground={currentSection === cat.id}
-				onclick={() => handleSectionChange(cat.id)}
-			>
-				<Icon name={cat.icon} size="md" />
-				<div class="min-w-0">
-					<div class="truncate text-sm font-medium">{cat.label}</div>
-					<div class="truncate text-xs text-muted-foreground">{cat.description}</div>
-				</div>
-			</button>
-		{/each}
+	<div class="p-2">
+		{#if mode === "app"}
+			<div class="space-y-0.5">
+				{#each appCategories as item (item.id)}
+					<button
+						class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"
+						class:bg-accent={currentSection === item.id}
+						class:text-accent-foreground={currentSection === item.id}
+						onclick={() => handleSectionChange(item.id)}
+					>
+						<Icon name={item.icon} size="md" />
+						<div class="min-w-0">
+							<div class="truncate text-sm font-medium">{item.label}</div>
+							<div class="truncate text-xs text-muted-foreground">{item.description}</div>
+						</div>
+					</button>
+				{/each}
+			</div>
+		{:else}
+			<div class="space-y-4">
+				{#each projectGroups as group (group.label)}
+					<div>
+						<div class="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+							{group.label}
+						</div>
+						<div class="space-y-0.5">
+							{#each group.items as item (item.id)}
+								<button
+									class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"
+									class:bg-accent={currentSection === item.id}
+									class:text-accent-foreground={currentSection === item.id}
+									onclick={() => handleSectionChange(item.id)}
+								>
+									<Icon name={item.icon} size="md" />
+									<div class="min-w-0">
+										<div class="truncate text-sm font-medium">{item.label}</div>
+										<div class="truncate text-xs text-muted-foreground">{item.description}</div>
+									</div>
+								</button>
+							{/each}
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 	</div>
 </ScrollArea>

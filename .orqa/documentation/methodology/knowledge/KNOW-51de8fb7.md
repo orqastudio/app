@@ -9,6 +9,7 @@ description: |
   The unified status vocabulary has 11 values. Agents must update status to reflect
   the true state of thought — especially the review gate, which only humans may clear.
   Use when: Creating, updating, or completing any artifact during task execution.
+tier: always
 status: active
 created: 2026-03-15
 updated: 2026-03-15
@@ -124,5 +125,5 @@ These are two different acts. Agents do the first. Only humans do the second.
 
 ## Related Artifacts
 
-- [AD-487e045a](AD-487e045a) — Icon-based status representation decision
+- [PD-487e045a](PD-487e045a) — Icon-based status representation decision
 - [DOC-61ecc85e](DOC-61ecc85e) — Status & Workflow user guide

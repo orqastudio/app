@@ -1,12 +1,16 @@
 //! Artifact business logic for the OrqaStudio engine.
 //!
 //! This crate provides the business logic for working with governance artifacts:
-//! ID generation and validation, type parsing, path derivation, frontmatter
-//! extraction/parsing, filesystem I/O, and navigation tree scanning.
-//! All functions operate on types defined in `orqa_engine_types::types::artifact`.
+//! ID generation and validation, frontmatter extraction/parsing, filesystem I/O,
+//! and navigation tree scanning. All functions operate on types defined in
+//! `orqa_engine_types::types::artifact`.
 //!
-//! Type definitions (structs/enums) live in `orqa-engine-types`. This crate
-//! contains only the behaviour -- the functions that act on those types.
+//! Artifact types are opaque strings — the engine does not enumerate specific types
+//! like "agent" or "rule". Plugins declare what artifact types exist and where they
+//! live. The engine reads from plugin-configured paths.
+//!
+//! Type definitions (structs) live in `orqa-engine-types`. This crate contains
+//! only the behaviour — the functions that act on those types.
 //!
 //! Submodules:
 //!   `fs`     -- filesystem helpers: write, read, scan directories
@@ -20,10 +24,6 @@ pub mod reader;
 use rand::Rng;
 
 use orqa_engine_types::error::EngineError;
-use orqa_engine_types::types::artifact::{
-    ArtifactType, DecisionFrontmatter, DocFrontmatter, EpicFrontmatter, IdeaFrontmatter,
-    LessonFrontmatter, MilestoneFrontmatter, TaskFrontmatter,
-};
 
 /// Generate a new artifact ID in `TYPE-XXXXXXXX` format (8 lowercase hex chars).
 ///
@@ -75,52 +75,6 @@ pub fn is_hex_artifact_id(id: &str) -> bool {
     suffix.len() == 8 && suffix.chars().all(|c| c.is_ascii_hexdigit())
 }
 
-/// Parse a string into an `ArtifactType`, returning a validation error for unknown types.
-pub fn parse_artifact_type(s: &str) -> Result<ArtifactType, EngineError> {
-    match s {
-        "agent" => Ok(ArtifactType::Agent),
-        "rule" => Ok(ArtifactType::Rule),
-        "knowledge" => Ok(ArtifactType::Knowledge),
-        "doc" => Ok(ArtifactType::Doc),
-        other => Err(EngineError::Validation(format!(
-            "unknown artifact type: {other} (valid: agent, rule, knowledge, doc)"
-        ))),
-    }
-}
-
-/// Derive the relative path for an artifact based on its type and name.
-///
-/// The name is sanitized (spaces become hyphens, lowercased) before being
-/// embedded in the path. Rules live in `.orqa/learning/rules/`. Knowledge
-/// files live under `.orqa/documentation/<topic>/knowledge/` but because the
-/// topic is not known at derivation time, a flat fallback path is used. Agents
-/// are ephemeral and have no canonical `.orqa/` location.
-pub fn derive_rel_path(artifact_type: &ArtifactType, name: &str) -> String {
-    let sanitized = name.replace(' ', "-").to_lowercase();
-
-    match artifact_type {
-        ArtifactType::Agent => format!(".claude/agents/{sanitized}.md"),
-        ArtifactType::Rule => format!(".orqa/learning/rules/{sanitized}.md"),
-        ArtifactType::Knowledge => format!(".orqa/documentation/knowledge/{sanitized}.md"),
-        ArtifactType::Doc => format!("docs/{sanitized}.md"),
-    }
-}
-
-/// Infer an `ArtifactType` from a `.orqa/` relative path prefix.
-///
-/// Defaults to `ArtifactType::Doc` for paths that do not match any known prefix.
-pub fn infer_artifact_type_from_path(rel_path: &str) -> ArtifactType {
-    if rel_path.starts_with(".claude/agents") {
-        ArtifactType::Agent
-    } else if rel_path.starts_with(".orqa/learning/rules") {
-        ArtifactType::Rule
-    } else if rel_path.contains("/knowledge/") {
-        ArtifactType::Knowledge
-    } else {
-        ArtifactType::Doc
-    }
-}
-
 /// Extract the YAML text between `---` delimiters from a markdown file.
 ///
 /// Returns `(yaml_text, body)`. If no frontmatter is present, returns `(None, full_content)`.
@@ -154,39 +108,22 @@ pub fn parse_frontmatter<T: serde::de::DeserializeOwned + Default>(content: &str
     (frontmatter, body)
 }
 
-/// Parse doc frontmatter from markdown content.
-pub fn parse_doc_frontmatter(content: &str) -> (DocFrontmatter, String) {
-    parse_frontmatter::<DocFrontmatter>(content)
-}
-
-/// Parse milestone frontmatter from markdown content.
-pub fn parse_milestone_frontmatter(content: &str) -> (MilestoneFrontmatter, String) {
-    parse_frontmatter::<MilestoneFrontmatter>(content)
-}
-
-/// Parse epic frontmatter from markdown content.
-pub fn parse_epic_frontmatter(content: &str) -> (EpicFrontmatter, String) {
-    parse_frontmatter::<EpicFrontmatter>(content)
-}
-
-/// Parse task frontmatter from markdown content.
-pub fn parse_task_frontmatter(content: &str) -> (TaskFrontmatter, String) {
-    parse_frontmatter::<TaskFrontmatter>(content)
-}
-
-/// Parse idea frontmatter from markdown content.
-pub fn parse_idea_frontmatter(content: &str) -> (IdeaFrontmatter, String) {
-    parse_frontmatter::<IdeaFrontmatter>(content)
-}
-
-/// Parse decision frontmatter from markdown content.
-pub fn parse_decision_frontmatter(content: &str) -> (DecisionFrontmatter, String) {
-    parse_frontmatter::<DecisionFrontmatter>(content)
-}
-
-/// Parse lesson frontmatter from markdown content.
-pub fn parse_lesson_frontmatter(content: &str) -> (LessonFrontmatter, String) {
-    parse_frontmatter::<LessonFrontmatter>(content)
+/// Validate that a string is a usable artifact type key (non-empty, no path separators).
+///
+/// The engine does not enumerate valid types — plugins declare them. This validates
+/// only the structural requirements: non-empty and containing only safe characters.
+pub fn validate_artifact_type_key(key: &str) -> Result<(), EngineError> {
+    if key.is_empty() {
+        return Err(EngineError::Validation(
+            "artifact type key must not be empty".to_owned(),
+        ));
+    }
+    if key.contains('/') || key.contains('\\') {
+        return Err(EngineError::Validation(format!(
+            "artifact type key must not contain path separators: {key}"
+        )));
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -197,94 +134,26 @@ mod tests {
     };
 
     #[test]
-    fn parse_artifact_type_valid() {
+    fn validate_artifact_type_key_valid() {
+        assert!(validate_artifact_type_key("task").is_ok());
+        assert!(validate_artifact_type_key("epic").is_ok());
+        assert!(validate_artifact_type_key("my-type").is_ok());
+    }
+
+    #[test]
+    fn validate_artifact_type_key_empty() {
         assert!(matches!(
-            parse_artifact_type("agent"),
-            Ok(ArtifactType::Agent)
+            validate_artifact_type_key(""),
+            Err(EngineError::Validation(_))
         ));
+    }
+
+    #[test]
+    fn validate_artifact_type_key_path_separator() {
         assert!(matches!(
-            parse_artifact_type("rule"),
-            Ok(ArtifactType::Rule)
+            validate_artifact_type_key("foo/bar"),
+            Err(EngineError::Validation(_))
         ));
-        assert!(matches!(
-            parse_artifact_type("knowledge"),
-            Ok(ArtifactType::Knowledge)
-        ));
-        assert!(matches!(parse_artifact_type("doc"), Ok(ArtifactType::Doc)));
-    }
-
-    #[test]
-    fn parse_artifact_type_invalid() {
-        let result = parse_artifact_type("unknown");
-        assert!(matches!(result, Err(EngineError::Validation(_))));
-    }
-
-    #[test]
-    fn derive_rel_path_agent() {
-        assert_eq!(
-            derive_rel_path(&ArtifactType::Agent, "backend-engineer"),
-            ".claude/agents/backend-engineer.md"
-        );
-    }
-
-    #[test]
-    fn derive_rel_path_knowledge() {
-        assert_eq!(
-            derive_rel_path(&ArtifactType::Knowledge, "chunkhound"),
-            ".orqa/documentation/knowledge/chunkhound.md"
-        );
-    }
-
-    #[test]
-    fn derive_rel_path_sanitizes_spaces() {
-        assert_eq!(
-            derive_rel_path(&ArtifactType::Rule, "No Stubs Rule"),
-            ".orqa/learning/rules/no-stubs-rule.md"
-        );
-    }
-
-    #[test]
-    fn infer_artifact_type_agents() {
-        assert_eq!(
-            infer_artifact_type_from_path(".claude/agents/foo.md"),
-            ArtifactType::Agent
-        );
-    }
-
-    #[test]
-    fn infer_artifact_type_doc_fallback() {
-        assert_eq!(
-            infer_artifact_type_from_path("docs/something.md"),
-            ArtifactType::Doc
-        );
-    }
-
-    #[test]
-    fn artifact_type_serializes_snake_case() {
-        assert_eq!(
-            serde_json::to_value(ArtifactType::Agent)
-                .expect("serialization should succeed")
-                .as_str(),
-            Some("agent")
-        );
-        assert_eq!(
-            serde_json::to_value(ArtifactType::Rule)
-                .expect("serialization should succeed")
-                .as_str(),
-            Some("rule")
-        );
-        assert_eq!(
-            serde_json::to_value(ArtifactType::Knowledge)
-                .expect("serialization should succeed")
-                .as_str(),
-            Some("knowledge")
-        );
-        assert_eq!(
-            serde_json::to_value(ArtifactType::Doc)
-                .expect("serialization should succeed")
-                .as_str(),
-            Some("doc")
-        );
     }
 
     #[test]
@@ -332,7 +201,7 @@ mod tests {
         let artifact = Artifact {
             id: 1,
             project_id: 1,
-            artifact_type: ArtifactType::Rule,
+            artifact_type: "rule".to_string(),
             rel_path: ".orqa/learning/rules/no-stubs.md".to_string(),
             name: "no-stubs".to_string(),
             description: Some("No stubs or placeholders".to_string()),
@@ -355,7 +224,7 @@ mod tests {
             serde_json::from_str(&json).expect("deserialization should succeed");
 
         assert_eq!(deserialized.id, artifact.id);
-        assert_eq!(deserialized.artifact_type, ArtifactType::Rule);
+        assert_eq!(deserialized.artifact_type, "rule");
         assert_eq!(deserialized.compliance_status, ComplianceStatus::Compliant);
         assert!(deserialized.relationships.is_some());
         assert_eq!(
@@ -372,7 +241,7 @@ mod tests {
     fn artifact_summary_serialization() {
         let summary = ArtifactSummary {
             id: 1,
-            artifact_type: ArtifactType::Agent,
+            artifact_type: "agent".to_string(),
             rel_path: ".claude/agents/backend-engineer.md".to_string(),
             name: "backend-engineer".to_string(),
             description: Some("Rust backend agent".to_string()),

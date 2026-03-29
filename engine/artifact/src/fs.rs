@@ -6,8 +6,9 @@
 
 use std::path::{Path, PathBuf};
 
+use orqa_engine_types::config::ArtifactEntry;
 use orqa_engine_types::error::EngineError;
-use orqa_engine_types::types::artifact::{Artifact, ArtifactType, ComplianceStatus, DocNode};
+use orqa_engine_types::types::artifact::{Artifact, ComplianceStatus, DocNode};
 
 /// Write artifact content to disk, creating parent directories as needed.
 ///
@@ -23,11 +24,12 @@ pub fn write_artifact_file(full_path: &Path, content: &str) -> Result<(), Engine
 /// Build an in-memory `Artifact` struct from a file on disk (no DB record).
 ///
 /// Performs filesystem I/O to read content and metadata. The returned artifact
-/// has zeroed IDs — callers that persist it must assign real IDs.
+/// has zeroed IDs — callers that persist it must assign real IDs. The `type_key`
+/// is an opaque string from the project config — the engine does not validate it.
 pub fn artifact_from_file(
     full_path: &Path,
     rel_path: String,
-    artifact_type: ArtifactType,
+    type_key: String,
 ) -> Result<Artifact, EngineError> {
     let content = std::fs::read_to_string(full_path)?;
     let file_name = full_path
@@ -40,7 +42,7 @@ pub fn artifact_from_file(
     Ok(Artifact {
         id: 0,
         project_id: 0,
-        artifact_type,
+        artifact_type: type_key,
         rel_path,
         name,
         description: None,
@@ -56,17 +58,28 @@ pub fn artifact_from_file(
     })
 }
 
-/// Map an `ArtifactType` to its `.orqa/` subdirectory path.
+/// Resolve the filesystem directory for an artifact type key from project config.
 ///
-/// Returns `None` for `Doc` — docs live in `.orqa/documentation/`.
-/// Returns `None` for `Agent` — agents live in `.claude/agents/` and are
-/// ephemeral; they are not tracked in the `.orqa/` artifact tree.
-pub fn governance_dir(root: &Path, artifact_type: &ArtifactType) -> Option<PathBuf> {
-    match artifact_type {
-        ArtifactType::Rule => Some(root.join(".orqa").join("learning").join("rules")),
-        ArtifactType::Knowledge => Some(root.join(".orqa").join("documentation")),
-        ArtifactType::Agent | ArtifactType::Doc => None,
+/// Returns the absolute path to the configured directory for the type key, or `None`
+/// when the type key is not found in the entries. No paths are hardcoded — all lookups
+/// come from the project's artifact config, satisfying P1 (Plugin-Composed Everything).
+pub fn governance_dir(root: &Path, type_key: &str, entries: &[ArtifactEntry]) -> Option<PathBuf> {
+    for entry in entries {
+        match entry {
+            ArtifactEntry::Type(cfg) if cfg.key == type_key => {
+                return Some(root.join(&cfg.path));
+            }
+            ArtifactEntry::Group { children, .. } => {
+                for child in children {
+                    if child.key == type_key {
+                        return Some(root.join(&child.path));
+                    }
+                }
+            }
+            ArtifactEntry::Type(_) => {}
+        }
     }
+    None
 }
 
 /// Recursively scan a directory and build a sorted list of `DocNode` entries.
@@ -290,15 +303,30 @@ mod tests {
     }
 
     #[test]
-    fn governance_dir_returns_none_for_doc() {
+    fn governance_dir_resolves_configured_type() {
+        use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
         let root = Path::new("/tmp/project");
-        assert!(governance_dir(root, &ArtifactType::Doc).is_none());
+        let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
+            key: "rule".to_string(),
+            label: None,
+            icon: None,
+            path: ".orqa/learning/rules".to_string(),
+        })];
+        let dir = governance_dir(root, "rule", &entries);
+        assert_eq!(dir, Some(root.join(".orqa/learning/rules")));
     }
 
     #[test]
-    fn governance_dir_returns_none_for_agent() {
+    fn governance_dir_returns_none_for_unknown_type() {
+        use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
         let root = Path::new("/tmp/project");
-        let dir = governance_dir(root, &ArtifactType::Agent);
-        assert!(dir.is_none());
+        let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
+            key: "rule".to_string(),
+            label: None,
+            icon: None,
+            path: ".orqa/learning/rules".to_string(),
+        })];
+        // "epic" is not in this config — returns None.
+        assert!(governance_dir(root, "epic", &entries).is_none());
     }
 }

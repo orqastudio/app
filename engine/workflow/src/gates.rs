@@ -1,22 +1,84 @@
 //! Process gate evaluation for the OrqaStudio workflow engine.
 //!
-//! Evaluates 5 process gates against the current session workflow state and returns
+//! Evaluates process gates against the current session workflow state and returns
 //! gate results. Gates inject thinking prompts into the agent context to guide agents
 //! back toward correct process when they skip steps like research, documentation review,
 //! or verification. Gates are enforced as warnings — they guide but do not block.
 //!
-//! Write-event gates (fired when a file is written):
-//!   - understand-first: fires once per session on first code write with no prior research
-//!   - docs-before-code: fires on any code write with no docs read this session
-//!   - plan-before-build: fires on any code write with no planning artifacts read
+//! Gate definitions are loaded from plugin-declared workflow config via `ProcessGateConfig`.
+//! No gate names, conditions, or messages are hardcoded in this module.
 //!
-//! Stop-event gates (fired at turn end):
-//!   - evidence-before-done: fires when code was written but no verification command was run
-//!   - learn-after-doing: fires when >3 code writes occurred but lessons were not checked
+//! Two gate trigger types are supported:
+//!   - `write` — evaluated once per file write event
+//!   - `stop`  — evaluated once per turn-complete event
 
 use orqa_engine_types::types::enforcement::{RuleAction, Verdict};
 use orqa_engine_types::types::workflow::GateResult;
 use crate::tracker::WorkflowTracker;
+
+/// When a process gate fires relative to agent activity.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GateTrigger {
+    /// Fires when a file is written.
+    Write,
+    /// Fires at turn end (stop event).
+    Stop,
+}
+
+/// The condition that determines whether a process gate fires.
+///
+/// Each condition variant encodes one observable fact about the current session.
+#[derive(Debug, Clone)]
+pub enum GateCondition {
+    /// Fires on first code write when no research has been done.
+    /// Only fires once per session.
+    FirstCodeWriteWithoutResearch,
+    /// Fires on any code write when no docs have been consulted.
+    CodeWriteWithoutDocs,
+    /// Fires on any code write when no planning artifacts have been consulted.
+    CodeWriteWithoutPlanning,
+    /// Fires at stop when code was written but no verification command was run.
+    CodeWrittenWithoutVerification,
+    /// Fires at stop when more than `threshold` code writes occurred but lessons were not checked.
+    SignificantWorkWithoutLessons {
+        /// Minimum number of code writes that must have occurred before this gate fires.
+        threshold: usize,
+    },
+}
+
+/// Definition of a single process gate loaded from plugin workflow config.
+///
+/// Each gate has a name, trigger type, condition, and the thinking prompt to inject
+/// when the gate fires. The engine evaluates all registered gates against the current
+/// session state; gates that fire have their `message` injected into the agent context.
+#[derive(Debug, Clone)]
+pub struct ProcessGateConfig {
+    /// Machine-readable gate identifier (e.g. `"understand-first"`).
+    pub name: String,
+    /// When this gate is evaluated — on file write or at turn end.
+    pub trigger: GateTrigger,
+    /// The condition that causes this gate to fire.
+    pub condition: GateCondition,
+    /// Thinking prompt injected into the agent context when the gate fires.
+    pub message: String,
+}
+
+impl ProcessGateConfig {
+    /// Create a new gate config entry.
+    pub fn new(
+        name: impl Into<String>,
+        trigger: GateTrigger,
+        condition: GateCondition,
+        message: impl Into<String>,
+    ) -> Self {
+        Self {
+            name: name.into(),
+            trigger,
+            condition,
+            message: message.into(),
+        }
+    }
+}
 
 /// Returns true if the given file path should be treated as a code file.
 ///
@@ -39,10 +101,58 @@ fn gate(name: &str, fired: bool, message: &str) -> GateResult {
     }
 }
 
-/// Evaluate all process gates against the current session workflow state.
+/// Evaluate a single gate config entry against the current session state.
+///
+/// Returns a `GateResult` indicating whether the gate fired and, if so, the
+/// thinking prompt to inject.
+fn evaluate_gate(
+    config: &ProcessGateConfig,
+    tracker: &mut WorkflowTracker,
+    event_type: &str,
+    file_path: Option<&str>,
+) -> Option<GateResult> {
+    let trigger_matches = match config.trigger {
+        GateTrigger::Write => event_type == "write",
+        GateTrigger::Stop => event_type == "stop",
+    };
+    if !trigger_matches {
+        return None;
+    }
+
+    let writing_code = file_path.is_some_and(is_code_file);
+
+    let fired = match &config.condition {
+        GateCondition::FirstCodeWriteWithoutResearch => {
+            let fires = writing_code
+                && !tracker.has_done_any_research()
+                && !tracker.first_code_write_gated;
+            if fires {
+                tracker.first_code_write_gated = true;
+            }
+            fires
+        }
+        GateCondition::CodeWriteWithoutDocs => {
+            writing_code && !tracker.has_read_any_docs()
+        }
+        GateCondition::CodeWriteWithoutPlanning => {
+            writing_code && !tracker.has_read_any_planning()
+        }
+        GateCondition::CodeWrittenWithoutVerification => {
+            tracker.has_written_code() && !tracker.has_run_verification()
+        }
+        GateCondition::SignificantWorkWithoutLessons { threshold } => {
+            tracker.code_write_count() > *threshold && !tracker.has_checked_lessons()
+        }
+    };
+
+    Some(gate(&config.name, fired, &config.message))
+}
+
+/// Evaluate all registered process gates against the current session workflow state.
 ///
 /// # Parameters
 ///
+/// - `gates`: The gate definitions loaded from plugin workflow config.
 /// - `tracker`: The current session's `WorkflowTracker`.
 /// - `event_type`: Either `"write"` (file write/edit tool call) or `"stop"` (turn complete).
 /// - `file_path`: The path of the file being written, when `event_type == "write"`. `None`
@@ -54,84 +164,20 @@ fn gate(name: &str, fired: bool, message: &str) -> GateResult {
 /// the gate's condition was met and a thinking prompt should be injected. Gates
 /// with `fired: false` are returned for observability but require no action.
 pub fn evaluate_process_gates(
+    gates: &[ProcessGateConfig],
     tracker: &mut WorkflowTracker,
     event_type: &str,
     file_path: Option<&str>,
 ) -> Vec<GateResult> {
-    match event_type {
-        "write" => evaluate_write_gates(tracker, file_path),
-        "stop" => evaluate_stop_gates(tracker),
-        other => {
-            tracing::warn!("[process_gates] unknown event_type: '{other}'");
-            Vec::new()
-        }
+    if event_type != "write" && event_type != "stop" {
+        tracing::warn!("[process_gates] unknown event_type: '{event_type}'");
+        return Vec::new();
     }
-}
 
-/// Evaluate gates triggered by a file write event.
-fn evaluate_write_gates(tracker: &mut WorkflowTracker, file_path: Option<&str>) -> Vec<GateResult> {
-    let writing_code = file_path.is_some_and(is_code_file);
-    let mut results = Vec::new();
-
-    // Gate: understand-first
-    // Fires once per session, on the first code write, when no research has been done.
-    let uf_fired =
-        writing_code && !tracker.has_done_any_research() && !tracker.first_code_write_gated;
-    if uf_fired {
-        tracker.first_code_write_gated = true;
-    }
-    results.push(gate(
-        "understand-first",
-        uf_fired,
-        "THINK FIRST: What is the system you're modifying? \
-         What are its boundaries? What depends on this? What could break? \
-         Read the governing docs and understand the context before writing code.",
-    ));
-
-    // Gate: docs-before-code
-    // Fires on any code write when no docs have been read this session.
-    results.push(gate(
-        "docs-before-code",
-        writing_code && !tracker.has_read_any_docs(),
-        "DOCUMENTATION CHECK: Have you read the documentation that defines \
-         this area? Check .orqa/documentation/ for specs, patterns, and constraints \
-         before implementing.",
-    ));
-
-    // Gate: plan-before-build
-    // Fires on any code write when no planning artifacts have been consulted.
-    results.push(gate(
-        "plan-before-build",
-        writing_code && !tracker.has_read_any_planning(),
-        "PLANNING CHECK: Is there an epic or task that defines this work? \
-         Check .orqa/implementation/ for the scope, acceptance criteria, and \
-         implementation design.",
-    ));
-
-    results
-}
-
-/// Evaluate gates triggered at turn end (stop event).
-fn evaluate_stop_gates(tracker: &WorkflowTracker) -> Vec<GateResult> {
-    vec![
-        // Gate: evidence-before-done
-        // Fires at turn end when code was written but no verification command was run.
-        gate(
-            "evidence-before-done",
-            tracker.has_written_code() && !tracker.has_run_verification(),
-            "VERIFICATION CHECK: You wrote code but didn't run make check \
-             or make test. Show evidence that the work is correct before completing.",
-        ),
-        // Gate: learn-after-doing
-        // Fires at turn end when significant code was written but lessons were not checked.
-        gate(
-            "learn-after-doing",
-            tracker.code_write_count() > 3 && !tracker.has_checked_lessons(),
-            "LEARNING CHECK: Significant work was done this session. \
-             Check .orqa/learning/lessons/ for known patterns and consider \
-             if anything unexpected should be recorded.",
-        ),
-    ]
+    gates
+        .iter()
+        .filter_map(|g| evaluate_gate(g, tracker, event_type, file_path))
+        .collect()
 }
 
 /// Return only the gates that fired from a full evaluation result.
@@ -159,8 +205,12 @@ fn gate_as_verdict(gate: GateResult) -> Verdict {
 /// This is the enforcement-compatible output path. Callers that need to merge
 /// gate results with `EnforcementEngine` verdicts use this instead of
 /// `evaluate_process_gates`.
-pub fn evaluate_write_verdicts(tracker: &mut WorkflowTracker, file_path: &str) -> Vec<Verdict> {
-    evaluate_write_gates(tracker, Some(file_path))
+pub fn evaluate_write_verdicts(
+    gates: &[ProcessGateConfig],
+    tracker: &mut WorkflowTracker,
+    file_path: &str,
+) -> Vec<Verdict> {
+    evaluate_process_gates(gates, tracker, "write", Some(file_path))
         .into_iter()
         .filter(|r| r.fired)
         .map(gate_as_verdict)
@@ -170,20 +220,91 @@ pub fn evaluate_write_verdicts(tracker: &mut WorkflowTracker, file_path: &str) -
 /// Evaluate stop-event process gates and return only fired ones as `Verdict`s.
 ///
 /// This is the enforcement-compatible output path for turn-complete events.
-pub fn evaluate_stop_verdicts(tracker: &WorkflowTracker) -> Vec<Verdict> {
-    evaluate_stop_gates(tracker)
-        .into_iter()
-        .filter(|r| r.fired)
-        .map(gate_as_verdict)
+pub fn evaluate_stop_verdicts(
+    gates: &[ProcessGateConfig],
+    tracker: &WorkflowTracker,
+) -> Vec<Verdict> {
+    // Stop gates don't mutate the tracker so we use a shared ref.
+    // Re-evaluate all stop-triggered gates directly without the mutable tracker path.
+    gates
+        .iter()
+        .filter(|g| g.trigger == GateTrigger::Stop)
+        .filter_map(|g| {
+            let fired = match &g.condition {
+                GateCondition::CodeWrittenWithoutVerification => {
+                    tracker.has_written_code() && !tracker.has_run_verification()
+                }
+                GateCondition::SignificantWorkWithoutLessons { threshold } => {
+                    tracker.code_write_count() > *threshold && !tracker.has_checked_lessons()
+                }
+                // Write-only conditions never fire at stop
+                _ => false,
+            };
+            if fired {
+                Some(gate_as_verdict(gate(&g.name, true, &g.message)))
+            } else {
+                None
+            }
+        })
         .collect()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tracker::{PathCategory, PathRule, TrackerConfig, WorkflowTracker};
 
-    fn fresh_tracker() -> WorkflowTracker {
-        WorkflowTracker::new()
+    /// Build the standard set of process gates matching the original hardcoded gates.
+    fn standard_gates() -> Vec<ProcessGateConfig> {
+        vec![
+            ProcessGateConfig::new(
+                "understand-first",
+                GateTrigger::Write,
+                GateCondition::FirstCodeWriteWithoutResearch,
+                "THINK FIRST: What is the system you're modifying? \
+                 What are its boundaries? What depends on this? What could break? \
+                 Read the governing docs and understand the context before writing code.",
+            ),
+            ProcessGateConfig::new(
+                "docs-before-code",
+                GateTrigger::Write,
+                GateCondition::CodeWriteWithoutDocs,
+                "DOCUMENTATION CHECK: Have you read the documentation that defines \
+                 this area? Check .orqa/documentation/ for specs, patterns, and constraints \
+                 before implementing.",
+            ),
+            ProcessGateConfig::new(
+                "plan-before-build",
+                GateTrigger::Write,
+                GateCondition::CodeWriteWithoutPlanning,
+                "PLANNING CHECK: Is there an epic or task that defines this work? \
+                 Check .orqa/implementation/ for the scope, acceptance criteria, and \
+                 implementation design.",
+            ),
+            ProcessGateConfig::new(
+                "evidence-before-done",
+                GateTrigger::Stop,
+                GateCondition::CodeWrittenWithoutVerification,
+                "VERIFICATION CHECK: You wrote code but didn't run make check \
+                 or make test. Show evidence that the work is correct before completing.",
+            ),
+            ProcessGateConfig::new(
+                "learn-after-doing",
+                GateTrigger::Stop,
+                GateCondition::SignificantWorkWithoutLessons { threshold: 3 },
+                "LEARNING CHECK: Significant work was done this session. \
+                 Check .orqa/learning/lessons/ for known patterns and consider \
+                 if anything unexpected should be recorded.",
+            ),
+        ]
+    }
+
+    fn standard_tracker() -> WorkflowTracker {
+        WorkflowTracker::new(TrackerConfig::new(vec![
+            PathRule::new(".orqa/documentation/", PathCategory::Docs),
+            PathRule::new(".orqa/implementation/", PathCategory::Planning),
+            PathRule::new(".orqa/learning/lessons/", PathCategory::Lessons),
+        ]))
     }
 
     // ── helpers ──
@@ -228,8 +349,9 @@ mod tests {
 
     #[test]
     fn write_event_no_research_no_docs_no_planning_fires_all_three_gates() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(
             fired.contains(&"understand-first"),
@@ -247,8 +369,10 @@ mod tests {
 
     #[test]
     fn write_event_returns_three_results_for_code_file() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
+        // Only write-triggered gates are returned (3 of 5).
         assert_eq!(results.len(), 3);
         let names = all_gate_names(&results);
         assert!(names.contains(&"understand-first"));
@@ -258,23 +382,29 @@ mod tests {
 
     #[test]
     fn write_event_no_gates_fire_for_orqa_file() {
-        let mut t = fresh_tracker();
-        let results =
-            evaluate_process_gates(&mut t, "write", Some(".orqa/implementation/tasks/TASK-001.md"));
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            "write",
+            Some(".orqa/implementation/tasks/TASK-001.md"),
+        );
         let fired = gates_fired(&results);
         assert!(fired.is_empty(), "no gates should fire for .orqa/ writes");
     }
 
     #[test]
     fn understand_first_only_fires_once_per_session() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         // First write — gate fires
-        let results1 = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let results1 = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired1 = gates_fired(&results1);
         assert!(fired1.contains(&"understand-first"));
 
         // Second write — gate must NOT fire again
-        let results2 = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/bar.rs"));
+        let results2 = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/bar.rs"));
         let fired2 = gates_fired(&results2);
         assert!(
             !fired2.contains(&"understand-first"),
@@ -284,47 +414,52 @@ mod tests {
 
     #[test]
     fn understand_first_does_not_fire_when_research_done() {
-        let mut t = fresh_tracker();
-        t.record_search(); // research performed
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        t.record_search();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"understand-first"));
     }
 
     #[test]
     fn understand_first_does_not_fire_when_docs_read() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"understand-first"));
     }
 
     #[test]
     fn docs_before_code_does_not_fire_when_docs_read() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"docs-before-code"));
     }
 
     #[test]
     fn plan_before_build_does_not_fire_when_planning_read() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_read(".orqa/implementation/epics/EPIC-042.md");
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"plan-before-build"));
     }
 
     #[test]
     fn all_write_gates_silent_when_fully_prepared() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
         t.record_read(".orqa/implementation/epics/EPIC-042.md");
         t.record_search();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
         let fired = gates_fired(&results);
         assert!(
             fired.is_empty(),
@@ -335,8 +470,9 @@ mod tests {
 
     #[test]
     fn write_event_with_no_file_path_does_not_fire_write_gates() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", None);
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", None);
         let fired = gates_fired(&results);
         assert!(fired.is_empty());
     }
@@ -345,8 +481,9 @@ mod tests {
 
     #[test]
     fn stop_event_returns_two_results() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         assert_eq!(results.len(), 2);
         let names = all_gate_names(&results);
         assert!(names.contains(&"evidence-before-done"));
@@ -355,72 +492,77 @@ mod tests {
 
     #[test]
     fn evidence_before_done_fires_when_code_written_no_verification() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_write("src-tauri/src/foo.rs");
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(fired.contains(&"evidence-before-done"));
     }
 
     #[test]
     fn evidence_before_done_does_not_fire_when_no_code_written() {
-        let mut t = fresh_tracker();
-        // Only wrote to .orqa/ (governance artifact, not code)
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_write(".orqa/learning/rules/RULE-042.md");
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"evidence-before-done"));
     }
 
     #[test]
     fn evidence_before_done_does_not_fire_when_verification_ran() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_write("src-tauri/src/foo.rs");
         t.record_command("make check");
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"evidence-before-done"));
     }
 
     #[test]
     fn learn_after_doing_fires_when_more_than_three_code_writes_no_lessons() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         for i in 0..4 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(fired.contains(&"learn-after-doing"));
     }
 
     #[test]
     fn learn_after_doing_does_not_fire_when_exactly_three_code_writes() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         for i in 0..3 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"learn-after-doing"));
     }
 
     #[test]
     fn learn_after_doing_does_not_fire_when_lessons_checked() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         for i in 0..5 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
         t.record_read(".orqa/learning/lessons/IMPL-001.md");
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"learn-after-doing"));
     }
 
     #[test]
     fn all_stop_gates_silent_when_compliant() {
-        let mut t = fresh_tracker();
-        // No code written, no lessons needed
-        let results = evaluate_process_gates(&mut t, "stop", None);
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
         let fired = gates_fired(&results);
         assert!(fired.is_empty());
     }
@@ -429,8 +571,9 @@ mod tests {
 
     #[test]
     fn unknown_event_type_returns_empty_results() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "unknown", None);
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "unknown", None);
         assert!(results.is_empty());
     }
 
@@ -465,85 +608,117 @@ mod tests {
 
     #[test]
     fn understand_first_message_contains_key_phrase() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
-        let gate = results
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
+        let g = results
             .iter()
             .find(|r| r.gate_name == "understand-first")
             .unwrap();
-        assert!(gate.fired);
-        assert!(
-            gate.message.contains("THINK FIRST"),
-            "message: {}",
-            gate.message
-        );
+        assert!(g.fired);
+        assert!(g.message.contains("THINK FIRST"), "message: {}", g.message);
     }
 
     #[test]
     fn docs_before_code_message_contains_key_phrase() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
-        let gate = results
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
+        let g = results
             .iter()
             .find(|r| r.gate_name == "docs-before-code")
             .unwrap();
-        assert!(gate.fired);
+        assert!(g.fired);
         assert!(
-            gate.message.contains("DOCUMENTATION CHECK"),
+            g.message.contains("DOCUMENTATION CHECK"),
             "message: {}",
-            gate.message
+            g.message
         );
     }
 
     #[test]
     fn plan_before_build_message_contains_key_phrase() {
-        let mut t = fresh_tracker();
-        let results = evaluate_process_gates(&mut t, "write", Some("src-tauri/src/foo.rs"));
-        let gate = results
+        let gates = standard_gates();
+        let mut t = standard_tracker();
+        let results = evaluate_process_gates(&gates, &mut t, "write", Some("src-tauri/src/foo.rs"));
+        let g = results
             .iter()
             .find(|r| r.gate_name == "plan-before-build")
             .unwrap();
-        assert!(gate.fired);
+        assert!(g.fired);
         assert!(
-            gate.message.contains("PLANNING CHECK"),
+            g.message.contains("PLANNING CHECK"),
             "message: {}",
-            gate.message
+            g.message
         );
     }
 
     #[test]
     fn evidence_before_done_message_contains_key_phrase() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         t.record_write("src-tauri/src/foo.rs");
-        let results = evaluate_process_gates(&mut t, "stop", None);
-        let gate = results
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
+        let g = results
             .iter()
             .find(|r| r.gate_name == "evidence-before-done")
             .unwrap();
-        assert!(gate.fired);
+        assert!(g.fired);
         assert!(
-            gate.message.contains("VERIFICATION CHECK"),
+            g.message.contains("VERIFICATION CHECK"),
             "message: {}",
-            gate.message
+            g.message
         );
     }
 
     #[test]
     fn learn_after_doing_message_contains_key_phrase() {
-        let mut t = fresh_tracker();
+        let gates = standard_gates();
+        let mut t = standard_tracker();
         for i in 0..5 {
             t.record_write(&format!("src-tauri/src/file{i}.rs"));
         }
-        let results = evaluate_process_gates(&mut t, "stop", None);
-        let gate = results
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
+        let g = results
             .iter()
             .find(|r| r.gate_name == "learn-after-doing")
             .unwrap();
-        assert!(gate.fired);
+        assert!(g.fired);
         assert!(
-            gate.message.contains("LEARNING CHECK"),
+            g.message.contains("LEARNING CHECK"),
             "message: {}",
-            gate.message
+            g.message
         );
+    }
+
+    // ── custom gates config ──
+
+    #[test]
+    fn custom_gate_names_and_conditions_work() {
+        let gates = vec![
+            ProcessGateConfig::new(
+                "my-custom-gate",
+                GateTrigger::Stop,
+                GateCondition::CodeWrittenWithoutVerification,
+                "CUSTOM: run your tests!",
+            ),
+        ];
+        let mut t = standard_tracker();
+        t.record_write("src/lib.rs");
+        let results = evaluate_process_gates(&gates, &mut t, "stop", None);
+        assert_eq!(results.len(), 1);
+        assert_eq!(results[0].gate_name, "my-custom-gate");
+        assert!(results[0].fired);
+        assert!(results[0].message.contains("CUSTOM"));
+    }
+
+    #[test]
+    fn empty_gates_config_produces_no_results() {
+        let gates: Vec<ProcessGateConfig> = vec![];
+        let mut t = standard_tracker();
+        let write_results = evaluate_process_gates(&gates, &mut t, "write", Some("src/lib.rs"));
+        let stop_results = evaluate_process_gates(&gates, &mut t, "stop", None);
+        assert!(write_results.is_empty());
+        assert!(stop_results.is_empty());
     }
 }

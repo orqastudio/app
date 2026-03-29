@@ -4,6 +4,7 @@ type: knowledge
 title: Tauri Plugin Installation
 domain: platform/tauri
 description: "How the installer agent detects Tauri projects and sets up the Tauri plugin with clippy.toml and coding standards config."
+tier: on-demand
 summary: "Tauri Plugin Installation. This skill is consumed by the core installer agent when setting up the Tauri plugin."
 status: active
 plugin: "@orqastudio/plugin-tauri"

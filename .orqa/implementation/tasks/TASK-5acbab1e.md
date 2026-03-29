@@ -1,7 +1,7 @@
 ---
 id: "TASK-5acbab1e"
 type: "task"
-title: "Record composability and integration decisions (AD-0dfa4d52 through AD-af88bb69)"
+title: "Record composability and integration decisions (PD-0dfa4d52 through PD-af88bb69)"
 description: "Captured architecture decisions for composability principle, tool execution model, and provider-agnostic design."
 status: archived
 created: "2026-03-02"
@@ -26,4 +26,4 @@ Authored each AD with rationale linking back to the product pillars, explicitly 
 
 ## Verification
 
-[AD-0dfa4d52](AD-0dfa4d52) through [AD-af88bb69](AD-af88bb69) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.
+[PD-0dfa4d52](PD-0dfa4d52) through [PD-af88bb69](PD-af88bb69) exist in `.orqa/process/decisions/` with all required schema fields and are listed in the decisions index.

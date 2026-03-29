@@ -12,7 +12,7 @@ research-needed:
   - "How to handle artifacts that don't follow the standard funnel (e.g., epics created directly without an idea)?"
   - "What metrics matter most at each funnel stage? (count, avg duration, drop-off rate, promotion rate)"
   - "Should the funnel be interactive (click a stage to see the artifacts in it)?"
-  - "How does this integrate with the plugin system (AD-0dfa4d52 future work)?"
+  - "How does this integrate with the plugin system (PD-0dfa4d52 future work)?"
   - "What seed data format works for the plugin to consume from the Artifact Graph SDK?"
 relationships:
   - target: PILLAR-c9e0a695

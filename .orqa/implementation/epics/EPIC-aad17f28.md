@@ -15,7 +15,7 @@ relationships:
   - target: EPIC-a5501c18
     type: depends-on
     rationale: "Connector rebuild must be complete"
-  - target: AD-1ef9f57c
+  - target: PD-1ef9f57c
     type: implements
     rationale: "AD resolved: daemon is business logic boundary"
   - target: MS-b1ac0a20

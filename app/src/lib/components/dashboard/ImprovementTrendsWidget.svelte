@@ -16,7 +16,12 @@
 		GOVERNANCE_TYPES.flatMap((type) => artifactGraphSDK.byType(type))
 	);
 
-	/** Build cumulative governance count over time, aligned to snapshot dates. */
+	/**
+	 * Counts governance artifacts that existed on or before a given date.
+	 * Artifacts without a created date are assumed to have always existed.
+	 * @param dateStr - An ISO date string (YYYY-MM-DD) to use as the upper bound.
+	 * @returns The count of governance artifacts active on that date.
+	 */
 	function governanceAtDate(dateStr: string): number {
 		return governanceArtifacts.filter((a) => {
 			const created = (a.frontmatter as Record<string, unknown>)["created"];
@@ -31,6 +36,7 @@
 		}
 	});
 
+	/** Fetches the most recent health snapshots and marks the component as loaded. */
 	async function loadSnapshots() {
 		loading = true;
 		try {
@@ -52,7 +58,12 @@
 	const previous = $derived(snapshots[1] ?? null);
 	const hasTrend = $derived(snapshots.length >= 2);
 
-	/** Compute integrity score (0–100) from a snapshot. */
+	/**
+	 * Computes a 0–100 integrity score from a health snapshot.
+	 * Score reflects the proportion of nodes that are neither orphaned nor broken.
+	 * @param s - The health snapshot to score.
+	 * @returns An integer percentage from 0 to 100.
+	 */
 	function integrityScore(s: HealthSnapshot): number {
 		if (s.node_count === 0) return 100;
 		const healthy = Math.max(0, s.node_count - s.orphan_count - s.broken_ref_count);
@@ -61,9 +72,15 @@
 
 	const SPARKLINE_HEIGHT = 40;
 
-	/** Build an SVG polyline path from an array of values.
-	 *  Values plot naturally: 0 at bottom, max at top.
-	 *  Color (not line direction) indicates whether the trend is good or bad. */
+	/**
+	 * Builds an SVG polyline path from an array of values.
+	 * Values plot naturally: 0 at bottom, max at top.
+	 * Color (not line direction) indicates whether the trend is good or bad.
+	 * @param values - The numeric data points to plot.
+	 * @param fixedMin - Optional fixed minimum for the y-axis scale.
+	 * @param fixedMax - Optional fixed maximum for the y-axis scale.
+	 * @returns An SVG path `d` attribute string, or empty string if fewer than 2 points.
+	 */
 	function sparklinePath(values: number[], fixedMin?: number, fixedMax?: number): string {
 		if (values.length < 2) return "";
 		const min = fixedMin ?? Math.min(...values);
@@ -115,10 +132,20 @@
 		},
 	];
 
+	/**
+	 * Returns the current value for a metric from the latest snapshot.
+	 * @param m - The metric configuration.
+	 * @returns The metric's current value, or 0 if no snapshot is available.
+	 */
 	function currentValue(m: MetricConfig): number {
 		return latest ? m.getValue(latest) : 0;
 	}
 
+	/**
+	 * Computes the percentage change for a metric between the two most recent snapshots.
+	 * @param m - The metric configuration.
+	 * @returns The percentage change as an integer, or null if trend data is unavailable.
+	 */
 	function percentChange(m: MetricConfig): number | null {
 		if (!hasTrend || !latest || !previous) return null;
 		const curr = m.getValue(latest);
@@ -130,17 +157,32 @@
 		return Math.round(((curr - prev) / prev) * 100);
 	}
 
-	/** Is this change considered an improvement? */
+	/**
+	 * Returns true if the percentage change represents an improvement for the metric.
+	 * @param m - The metric configuration, which declares whether lower is better.
+	 * @param pct - The percentage change value.
+	 * @returns Whether the change is an improvement.
+	 */
 	function isImprovement(m: MetricConfig, pct: number): boolean {
 		return m.lowerIsBetter ? pct < 0 : pct > 0;
 	}
 
+	/**
+	 * Returns an up or down arrow character for a metric's trend direction.
+	 * @param m - The metric configuration.
+	 * @returns "↑", "↓", or an empty string if no change or no trend.
+	 */
 	function trendArrow(m: MetricConfig): string {
 		const pct = percentChange(m);
 		if (pct === null || pct === 0) return "";
 		return pct > 0 ? "↑" : "↓";
 	}
 
+	/**
+	 * Returns a formatted percentage string for a metric's change (e.g. "+12%" or "0%").
+	 * @param m - The metric configuration.
+	 * @returns A formatted label string, or empty string if no trend data.
+	 */
 	function trendLabel(m: MetricConfig): string {
 		const pct = percentChange(m);
 		if (pct === null) return "";
@@ -149,6 +191,11 @@
 		return `${sign}${pct}%`;
 	}
 
+	/**
+	 * Returns a Tailwind text color class for a metric's trend, reflecting improvement vs regression.
+	 * @param m - The metric configuration.
+	 * @returns A Tailwind text color class string.
+	 */
 	function trendColorClass(m: MetricConfig): string {
 		const pct = percentChange(m);
 		if (pct === null || pct === 0) return "text-muted-foreground";
@@ -156,10 +203,10 @@
 	}
 
 	/**
-	 * Sparkline stroke colour based on overall trend (first vs last value):
-	 * - Contextually positive → green
-	 * - Contextually negative → red
-	 * - No trend / flat → cyan (neutral)
+	 * Returns the sparkline stroke color based on the overall first-to-last trend.
+	 * Contextually positive changes render green; negative render red; flat renders cyan.
+	 * @param m - The metric configuration.
+	 * @returns A hex color string.
 	 */
 	function strokeColor(m: MetricConfig): string {
 		const values = sparklineValues(m);
@@ -189,6 +236,12 @@
 		})
 	);
 
+	/**
+	 * Computes the data points to plot for a metric's sparkline.
+	 * Governance metrics use daily time points; other metrics use recent snapshots.
+	 * @param m - The metric configuration.
+	 * @returns An array of numeric values in chronological order.
+	 */
 	function sparklineValues(m: MetricConfig): number[] {
 		if (m.label === "Governance") {
 			// Use daily time points, not snapshots

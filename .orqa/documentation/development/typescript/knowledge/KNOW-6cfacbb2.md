@@ -4,6 +4,7 @@ type: knowledge
 title: ESLint Config Management
 domain: platform/typescript
 description: "How ESLint configuration is generated from OrqaStudio coding standards rules and how to add or override individual lint rules."
+tier: on-demand
 summary: "ESLint Config Management. Coding standards rules in `.orqa/process/rules/` define enforcement entries for this plugin."
 status: active
 plugin: "@orqastudio/plugin-svelte"

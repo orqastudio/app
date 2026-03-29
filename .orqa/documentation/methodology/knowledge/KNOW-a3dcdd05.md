@@ -10,6 +10,7 @@ description: |
   type unification, store consolidation, and scope assessment.
   Use when: Cleaning up architectural debt, reorganizing modules, consolidating
   patterns, or performing any structural code change.
+tier: always
 status: active
 created: 2026-03-01
 updated: 2026-03-10

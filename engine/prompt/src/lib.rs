@@ -14,6 +14,7 @@ pub mod knowledge;
 pub mod session_title;
 
 pub use builder::{
-    build_system_prompt, collect_plugin_agent_definitions, list_knowledge_catalog,
-    read_governance_file, read_rules, resolve_system_prompt,
+    build_system_prompt, collect_plugin_agent_definitions, find_artifact_path,
+    list_knowledge_catalog, read_governance_file, read_rules, resolve_project_paths,
+    resolve_system_prompt, ProjectPromptPaths,
 };

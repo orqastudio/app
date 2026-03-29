@@ -5,6 +5,12 @@
 //! markdown body. The types themselves (`Lesson`, `NewLesson`) are defined in
 //! `orqa_engine_types::types::lesson` and re-exported here for convenience.
 //!
+//! Frontmatter parsing uses a generic key-value map (`HashMap<String, String>`)
+//! so that the parser is not coupled to any specific set of field names. Known
+//! fields are accessed by string key after the map is built. This satisfies P1
+//! (Plugin-Composed Everything) — if the lesson schema gains or loses fields via
+//! a plugin, the parser does not need to change.
+//!
 //! The `store` submodule provides a file-backed `FileLessonStore` that implements
 //! `orqa_engine_types::traits::storage::LessonStore`.
 
@@ -38,30 +44,75 @@ fn split_frontmatter(content: &str) -> Result<(String, &str), String> {
     Ok((frontmatter, body))
 }
 
+/// Parse YAML frontmatter into a generic key-value map.
+///
+/// Each `key: value` line is stored as-is in the map. Values are unquoted
+/// (both `"` and `'` delimiters are stripped). Lines that do not match the
+/// `key: value` pattern are silently skipped.
+///
+/// Using a generic map here means the parser is not coupled to any specific
+/// set of frontmatter field names (P1: Plugin-Composed Everything). Known
+/// fields are extracted from the map after it is built.
+fn parse_frontmatter_map(frontmatter: &str) -> std::collections::HashMap<String, Option<String>> {
+    let mut map = std::collections::HashMap::new();
+    for line in frontmatter.lines() {
+        if let Some(colon_pos) = line.find(':') {
+            let key = line[..colon_pos].trim().to_owned();
+            let raw = line[colon_pos + 1..].trim();
+            let value = if raw.is_empty() || raw == "null" {
+                None
+            } else {
+                Some(raw.trim_matches('"').trim_matches('\'').to_owned())
+            };
+            map.insert(key, value);
+        }
+    }
+    map
+}
+
+/// Extract a required field from the frontmatter map, returning an error if absent or null.
+fn required(
+    map: &std::collections::HashMap<String, Option<String>>,
+    key: &str,
+) -> Result<String, String> {
+    match map.get(key) {
+        Some(Some(v)) => Ok(v.clone()),
+        Some(None) => Err(format!("frontmatter field '{key}' is null (required)")),
+        None => Err(format!("frontmatter missing required field: {key}")),
+    }
+}
+
+/// Extract an optional nullable field from the frontmatter map.
+fn optional(
+    map: &std::collections::HashMap<String, Option<String>>,
+    key: &str,
+) -> Option<String> {
+    map.get(key).and_then(Clone::clone)
+}
+
 /// Parse YAML frontmatter fields into a `Lesson`.
+///
+/// Builds a generic frontmatter map first, then extracts known fields by key.
+/// Unknown fields in the frontmatter are ignored — adding new fields to the
+/// lesson schema via a plugin does not require parser changes.
 fn parse_frontmatter_fields(
     frontmatter: &str,
     body: String,
     file_path: &str,
 ) -> Result<Lesson, String> {
-    let id = extract_field(frontmatter, "id")
-        .ok_or_else(|| "frontmatter missing required field: id".to_owned())?;
-    let title = extract_field(frontmatter, "title")
-        .ok_or_else(|| "frontmatter missing required field: title".to_owned())?;
-    let category = extract_field(frontmatter, "category")
-        .ok_or_else(|| "frontmatter missing required field: category".to_owned())?;
-    let recurrence_str = extract_field(frontmatter, "recurrence")
-        .ok_or_else(|| "frontmatter missing required field: recurrence".to_owned())?;
+    let map = parse_frontmatter_map(frontmatter);
+
+    let id = required(&map, "id")?;
+    let title = required(&map, "title")?;
+    let category = required(&map, "category")?;
+    let recurrence_str = required(&map, "recurrence")?;
     let recurrence = recurrence_str.parse::<i32>().map_err(|_| {
         format!("frontmatter 'recurrence' is not a valid integer: {recurrence_str}")
     })?;
-    let status = extract_field(frontmatter, "status")
-        .ok_or_else(|| "frontmatter missing required field: status".to_owned())?;
-    let promoted_to = extract_nullable_field(frontmatter, "promoted-to");
-    let created = extract_field(frontmatter, "created")
-        .ok_or_else(|| "frontmatter missing required field: created".to_owned())?;
-    let updated = extract_field(frontmatter, "updated")
-        .ok_or_else(|| "frontmatter missing required field: updated".to_owned())?;
+    let status = required(&map, "status")?;
+    let promoted_to = optional(&map, "promoted-to");
+    let created = required(&map, "created")?;
+    let updated = required(&map, "updated")?;
 
     Ok(Lesson {
         id,
@@ -75,35 +126,6 @@ fn parse_frontmatter_fields(
         body,
         file_path: file_path.to_owned(),
     })
-}
-
-/// Extract a scalar YAML field value by key from frontmatter text.
-///
-/// Handles both unquoted and quoted values. Returns `None` if the field is absent.
-fn extract_field(frontmatter: &str, key: &str) -> Option<String> {
-    for line in frontmatter.lines() {
-        if let Some(rest) = line.strip_prefix(&format!("{key}:")) {
-            let value = rest.trim().trim_matches('"').trim_matches('\'');
-            if !value.is_empty() && value != "null" {
-                return Some(value.to_owned());
-            }
-        }
-    }
-    None
-}
-
-/// Extract a nullable YAML field value — returns `None` for "null" or absent fields.
-fn extract_nullable_field(frontmatter: &str, key: &str) -> Option<String> {
-    for line in frontmatter.lines() {
-        if let Some(rest) = line.strip_prefix(&format!("{key}:")) {
-            let value = rest.trim().trim_matches('"').trim_matches('\'');
-            if value.is_empty() || value == "null" {
-                return None;
-            }
-            return Some(value.to_owned());
-        }
-    }
-    None
 }
 
 /// Render a `Lesson` as a markdown file string (frontmatter + body).
@@ -202,26 +224,47 @@ Test body.
     }
 
     #[test]
-    fn extract_field_unquoted() {
-        assert_eq!(
-            extract_field("category: process\n", "category"),
-            Some("process".to_owned())
-        );
+    fn parse_frontmatter_map_unquoted_value() {
+        let map = parse_frontmatter_map("category: process\n");
+        assert_eq!(map.get("category").cloned().flatten(), Some("process".to_owned()));
     }
 
     #[test]
-    fn extract_field_quoted() {
-        assert_eq!(
-            extract_field("title: \"My title\"\n", "title"),
-            Some("My title".to_owned())
-        );
+    fn parse_frontmatter_map_quoted_value() {
+        let map = parse_frontmatter_map("title: \"My title\"\n");
+        assert_eq!(map.get("title").cloned().flatten(), Some("My title".to_owned()));
     }
 
     #[test]
-    fn extract_nullable_field_null() {
-        assert_eq!(
-            extract_nullable_field("promoted-to: null\n", "promoted-to"),
-            None
-        );
+    fn parse_frontmatter_map_null_value() {
+        let map = parse_frontmatter_map("promoted-to: null\n");
+        assert_eq!(map.get("promoted-to").cloned(), Some(None));
+    }
+
+    #[test]
+    fn parse_frontmatter_map_extra_fields_are_preserved() {
+        // Extra fields from future schema extensions are captured in the map,
+        // not silently dropped. They are just not mapped to Lesson struct fields.
+        let map = parse_frontmatter_map("id: X\nfuture-field: some-value\n");
+        assert!(map.contains_key("future-field"));
+    }
+
+    #[test]
+    fn required_returns_error_for_null_field() {
+        let map = parse_frontmatter_map("promoted-to: null\n");
+        assert!(required(&map, "promoted-to").is_err());
+    }
+
+    #[test]
+    fn required_returns_error_for_absent_field() {
+        let map = parse_frontmatter_map("id: X\n");
+        assert!(required(&map, "missing-field").is_err());
+    }
+
+    #[test]
+    fn optional_returns_none_for_null_or_absent() {
+        let map = parse_frontmatter_map("promoted-to: null\n");
+        assert!(optional(&map, "promoted-to").is_none());
+        assert!(optional(&map, "not-present").is_none());
     }
 }

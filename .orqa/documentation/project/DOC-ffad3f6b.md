@@ -13,9 +13,9 @@ relationships:
   - target: RULE-b10fe6d1
     type: documents
     rationale: Documentation page references RULE-b10fe6d1
-  - target: AD-e4a3b5da
+  - target: PD-e4a3b5da
     type: documents
-    rationale: Documentation page references AD-e4a3b5da
+    rationale: Documentation page references PD-e4a3b5da
 ---
 
 **Date:** 2026-03-05
@@ -223,7 +223,7 @@ app/src-tauri/src/
 
 ## Related Documents
 
-- [AD-e4a3b5da](AD-e4a3b5da) — Tool implementation as MCP (orqa_ tool namespace)
+- [PD-e4a3b5da](PD-e4a3b5da) — Tool implementation as MCP (orqa_ tool namespace)
 - `.orqa/documentation/development/enforcement.md` — Enforcement engine that sub-agent calls pass through
 - `.orqa/documentation/development/tool-definitions.md` — Built-in tool definitions and approval matrix
 - `.orqa/documentation/development/orchestration.md` — Orchestration model and task delegation workflow

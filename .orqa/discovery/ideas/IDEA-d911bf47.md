@@ -16,14 +16,14 @@ relationships:
     target: IDEA-60a975ef
   - type: realises
     target: EPIC-4a107943
-  - target: AD-ee2910b1
+  - target: PD-ee2910b1
     type: crystallises
   - target: PILLAR-2acd86c1
     type: grounded
   - target: PERSONA-c4afd86b
     type: benefits
 ---
-> **Surpassed 2026-03-16**: Core multi-project traversal merged into EPIC-4a107943 via AD-ee2910b1. Unique concepts (governance libraries, pattern detection, benchmarking) split into IDEA-60a975ef.
+> **Surpassed 2026-03-16**: Core multi-project traversal merged into EPIC-4a107943 via PD-ee2910b1. Unique concepts (governance libraries, pattern detection, benchmarking) split into IDEA-60a975ef.
 
 ## Candidate Items
 

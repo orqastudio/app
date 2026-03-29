@@ -1,0 +1,331 @@
+# AUTO-GENERATED — do not edit manually.
+# Stage: implement (implementation-workflow slot in agile-methodology)
+# Source plugin: @orqastudio/plugin-software-kanban v0.1.4-dev
+# Generated at: 2026-03-29T09:05:07.488Z
+version: 1.0.0
+generated: true
+generatedAt: 2026-03-29T09:05:07.487Z
+description: Resolved implement stage workflow. Contains states, transitions, and artifact types contributed by
+  @orqastudio/plugin-software-kanban into the implementation-workflow slot of agile-methodology.
+stage: implement
+source_plugin: "@orqastudio/plugin-software-kanban"
+fills_slot: implementation-workflow
+methodology: agile-methodology
+contribution_workflow:
+  name: implement-contribution
+  initial_state: implement
+  states:
+    task_assignment:
+      category: active
+      description: Assign tasks to agents or team members based on the plan.
+      on_enter:
+        - type: append_log
+          params:
+            message: Task assignment started
+    development:
+      category: active
+      description: Active development — implementing the assigned tasks.
+      on_enter:
+        - type: set_field
+          params:
+            field: development_started_at
+            value: ${now}
+        - type: append_log
+          params:
+            message: Development started
+    testing:
+      category: active
+      description: Testing — verifying implementation against acceptance criteria.
+      on_enter:
+        - type: append_log
+          params:
+            message: Testing started
+    integration:
+      category: active
+      description: Integration — merging work, resolving conflicts, verifying combined result.
+      on_enter:
+        - type: append_log
+          params:
+            message: Integration started
+    implementation_complete:
+      category: active
+      description: All tasks implemented, tested, and integrated — ready for review.
+      on_enter:
+        - type: set_field
+          params:
+            field: implementation_completed_at
+            value: ${now}
+        - type: append_log
+          params:
+            message: Implementation complete
+  transitions:
+    - from: implement
+      to: task_assignment
+      event: begin_assignment
+      description: Start assigning tasks from the plan.
+    - from: task_assignment
+      to: development
+      event: tasks_assigned
+      description: Tasks assigned, begin development.
+    - from: development
+      to: testing
+      event: development_done
+      description: Development complete, begin testing.
+    - from: testing
+      to: development
+      event: tests_failed
+      description: Tests failed — return to development for fixes.
+      actions:
+        - type: append_log
+          params:
+            message: Tests failed — returning to development
+    - from: testing
+      to: integration
+      event: tests_passed
+      description: Tests passed, begin integration.
+    - from: integration
+      to: testing
+      event: integration_issues
+      description: Integration issues found — return to testing.
+      actions:
+        - type: append_log
+          params:
+            message: Integration issues — returning to testing
+    - from: integration
+      to: implementation_complete
+      event: integration_done
+      description: Integration successful, implementation is complete.
+    - from: implementation_complete
+      to: review
+      event: submit_for_review
+      description: Submit completed implementation for review.
+    - from: implementation_complete
+      to: development
+      event: rework_needed
+      description: Issues found post-integration — return to development.
+    - from: task_assignment
+      to: plan
+      event: replan
+      description: Task assignment revealed planning gaps — return to planning.
+artifact_types:
+  milestone:
+    id_prefix: MS
+    id_pattern: ^MS-[a-f0-9]{8}$
+    default_path: .orqa/implementation/milestones/
+    icon: flag
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^MS-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        gate:
+          type:
+            - string
+            - array
+        priority:
+          type: string
+        target_date:
+          type: string
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  epic:
+    id_prefix: EPIC
+    id_pattern: ^EPIC-[a-f0-9]{8}$
+    default_path: .orqa/implementation/epics/
+    icon: layers
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^EPIC-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        priority:
+          type: string
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+  task:
+    id_prefix: TASK
+    id_pattern: ^TASK-[a-f0-9]{8}$
+    default_path: .orqa/implementation/tasks/
+    icon: check-square
+    source_plugin: "@orqastudio/plugin-software-kanban"
+    fields:
+      required:
+        id:
+          type: string
+          pattern: ^TASK-[a-f0-9]{8}$
+      optional:
+        title:
+          type: string
+        description:
+          type:
+            - string
+            - "null"
+        priority:
+          type: string
+        assignee:
+          type:
+            - string
+            - "null"
+        relationships:
+          type: array
+          items:
+            type: object
+            required:
+              - target
+              - type
+            properties:
+              target:
+                type: string
+              type:
+                type: string
+              rationale:
+                type: string
+    additional_properties: true
+relationship_types:
+  realises:
+    forward: realises
+    inverse: realised-by
+    from:
+      - idea
+      - discovery-idea
+    to:
+      - epic
+      - task
+    semantic: lineage
+  yields:
+    forward: yields
+    inverse: yielded-by
+    from:
+      - task
+    to:
+      - lesson
+    semantic: knowledge-flow
+  addresses:
+    forward: addresses
+    inverse: addressed-by
+    from:
+      - task
+      - epic
+    to:
+      - lesson
+    semantic: corrective
+  delivers:
+    forward: delivers
+    inverse: delivered-by
+    from:
+      - task
+    to:
+      - epic
+    semantic: hierarchy
+    constraints:
+      required: true
+      minCount: 1
+      statusRules:
+        - evaluate: target
+          condition: all-targets-in
+          statuses:
+            - completed
+          proposedStatus: review
+          description: Epic moves to review when all delivering tasks are completed
+  fulfils:
+    forward: fulfils
+    inverse: fulfilled-by
+    from:
+      - epic
+    to:
+      - milestone
+    semantic: hierarchy
+    constraints:
+      statusRules:
+        - evaluate: target
+          condition: all-targets-in
+          statuses:
+            - completed
+          proposedStatus: review
+          description: Milestone moves to review when all fulfilling epics are completed
+  depends-on:
+    forward: depends-on
+    inverse: depended-on-by
+    from:
+      - task
+      - epic
+    to:
+      - task
+      - epic
+    semantic: dependency
+    constraints:
+      statusRules:
+        - evaluate: source
+          condition: any-target-in
+          statuses:
+            - captured
+            - exploring
+            - ready
+            - prioritised
+            - active
+            - hold
+          proposedStatus: blocked
+          description: Task is blocked when any dependency is not yet completed
+        - evaluate: source
+          condition: all-targets-in
+          statuses:
+            - completed
+            - surpassed
+            - archived
+          proposedStatus: ready
+          description: Task is unblocked when all dependencies are completed
+  implements:
+    forward: implements
+    inverse: implemented-by
+    from:
+      - task
+      - epic
+    to:
+      - decision
+      - discovery-decision
+    semantic: delivery
+contribution_metadata:
+  - plugin: "@orqastudio/plugin-software-kanban"
+    version: 0.1.4-dev

@@ -91,7 +91,7 @@ if ! command -v node &>/dev/null; then
   exit 1
 fi
 
-# ── Init submodules (needed to access libs/cli) ─────────────────────────────
+# ── Init submodules ──────────────────────────────────────────────────────────
 
 echo "  Initialising submodules..."
 git submodule update --init --recursive
@@ -101,7 +101,7 @@ echo "  ✓ submodules"
 
 echo "  Building CLI..."
 cd "$ROOT/libs/types" && npm install --ignore-scripts && npx tsc
-cd "$ROOT/libs/cli" && npm install --ignore-scripts && npm link @orqastudio/types && npx tsc && npm link
+cd "$ROOT/cli" && npm install --ignore-scripts && npm link @orqastudio/types && npx tsc && npm link
 
 # ── Hand off to orqa install ─────────────────────────────────────────────────
 

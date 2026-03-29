@@ -25,6 +25,10 @@
 		localDescription = props.settings.description ?? "";
 	});
 
+	/**
+	 * Constructs a ProjectSettings object from the current local form state.
+	 * @returns The merged ProjectSettings with updated name and description.
+	 */
 	function buildSettings(): ProjectSettings {
 		return {
 			...props.settings,
@@ -33,10 +37,12 @@
 		};
 	}
 
+	/** Saves the current settings when an input loses focus. */
 	function handleBlurSave() {
 		props.onSave(buildSettings());
 	}
 
+	/** Opens a file picker and notifies the parent with the selected icon path. */
 	async function handleIconUpload() {
 		const selected = await open({
 			multiple: false,

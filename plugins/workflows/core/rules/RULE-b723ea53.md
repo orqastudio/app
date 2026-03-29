@@ -10,7 +10,7 @@ enforcement:
   - mechanism: behavioral
     message: "Each universal role has a defined set of permitted tools; using tools outside a role's scope violates ownership boundaries; Reviewer and Researcher cannot use Edit/Write tools"
 relationships:
-  - target: AD-48b310f9
+  - target: PD-48b310f9
     type: enforces
 ---
 Tool access per role enforces ownership boundaries defined in [RULE-87ba1b81](RULE-87ba1b81). A Reviewer that can Edit would be tempted to fix issues instead of reporting them. A Researcher that can Write would be tempted to create artifacts instead of investigating.

@@ -10,6 +10,7 @@ description: |
   against acceptance criteria before reporting complete.
   Use when: Building features, fixing bugs with a known root cause, refactoring
   existing code, or implementing any change across multiple system layers.
+tier: always
 status: active
 created: 2026-03-22
 updated: 2026-03-22
