@@ -1,0 +1,700 @@
+{
+  "version": "1.0.0",
+  "generated": true,
+  "generatedAt": "2026-03-29T09:05:07.492Z",
+  "description": "Resolved learn stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-core-framework into the learning-pipeline slot of agile-methodology.",
+  "stage": "learn",
+  "source_plugin": "@orqastudio/plugin-core-framework",
+  "fills_slot": "learning-pipeline",
+  "methodology": "agile-methodology",
+  "contribution_workflow": {
+    "name": "learn-contribution",
+    "initial_state": "learn",
+    "states": {
+      "capture": {
+        "category": "completed",
+        "description": "Lesson capture — create lessons from implementation experience, review outcomes, and process observations.",
+        "on_enter": [
+          { "type": "append_log", "params": { "message": "Lesson capture started" } }
+        ]
+      },
+      "retrospective": {
+        "category": "completed",
+        "description": "Retrospective analysis — analyse captured lessons, identify what went well and what needs improvement.",
+        "on_enter": [
+          { "type": "append_log", "params": { "message": "Retrospective started" } }
+        ]
+      },
+      "pattern-tracking": {
+        "category": "completed",
+        "description": "Pattern tracking — aggregate lessons across epics, detect trends and recurring themes.",
+        "on_enter": [
+          { "type": "append_log", "params": { "message": "Pattern tracking started" } }
+        ]
+      },
+      "recurrence-detection": {
+        "category": "completed",
+        "description": "Recurrence detection — surface systemic issues that recur across multiple cycles, flag for process change.",
+        "on_enter": [
+          { "type": "append_log", "params": { "message": "Recurrence detection started" } }
+        ]
+      },
+      "learning_complete": {
+        "category": "completed",
+        "description": "Learning complete — lessons captured, patterns analysed, improvements identified.",
+        "on_enter": [
+          { "type": "set_field", "params": { "field": "learning_completed_at", "value": "${now}" } },
+          { "type": "append_log", "params": { "message": "Learning complete" } }
+        ]
+      }
+    },
+    "transitions": [
+      { "from": "learn", "to": "capture", "event": "begin_learning", "description": "Start the learning pipeline with lesson capture." },
+      { "from": "capture", "to": "retrospective", "event": "lessons_captured", "description": "Lessons captured, begin retrospective analysis." },
+      { "from": "retrospective", "to": "pattern-tracking", "event": "retrospective_complete", "description": "Retrospective done, begin pattern tracking across lessons." },
+      { "from": "pattern-tracking", "to": "recurrence-detection", "event": "patterns_identified", "description": "Patterns identified, check for recurring systemic issues." },
+      { "from": "recurrence-detection", "to": "learning_complete", "event": "analysis_complete", "description": "Recurrence analysis done, learning pipeline complete." },
+      { "from": "learning_complete", "to": "done", "event": "close_delivery", "description": "Learning phase complete, close the delivery." },
+      { "from": "retrospective", "to": "capture", "event": "capture_more", "description": "Retrospective revealed gaps — capture additional lessons." },
+      { "from": "pattern-tracking", "to": "retrospective", "event": "re_analyse", "description": "Pattern tracking revealed insights requiring deeper retrospective analysis." },
+      { "from": "recurrence-detection", "to": "pattern-tracking", "event": "recheck_patterns", "description": "Recurrence detection found new patterns — return to pattern tracking." },
+      { "from": "learning_complete", "to": "capture", "event": "reopen_learning", "description": "New lessons surfaced — restart learning from capture." }
+    ]
+  },
+  "artifact_types": {
+    "lesson": {
+      "schema": {
+        "id_prefix": "IMPL",
+        "id_pattern": "^IMPL-[a-f0-9]{8}$",
+        "default_path": ".orqa/learning/lessons/",
+        "icon": "book-open",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^IMPL-[a-f0-9]{8}$" },
+            "recurrence": { "type": "integer", "minimum": 0 }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "maturity": { "type": "string" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "initial_state": "captured",
+        "description": "Lesson lifecycle state machine. Lessons capture implementation findings and patterns learned during delivery. They have a unique recurring state for patterns that recur, and a promoted terminal state for lessons that are promoted to rules.",
+        "states": {
+          "captured": {
+            "category": "planning",
+            "description": "Lesson has been captured but not yet explored."
+          },
+          "exploring": {
+            "category": "planning",
+            "description": "Lesson is being explored — root cause, impact, remediation.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Lesson exploration started" } }
+            ]
+          },
+          "active": {
+            "category": "active",
+            "description": "Lesson is actively being tracked and applied.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "started_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Lesson activated" } }
+            ]
+          },
+          "recurring": {
+            "category": "active",
+            "description": "Lesson pattern has recurred — tracking frequency and impact.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Lesson marked as recurring pattern" } }
+            ]
+          },
+          "review": {
+            "category": "review",
+            "description": "Lesson is being reviewed for promotion or completion.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Lesson entered review" } }
+            ]
+          },
+          "completed": {
+            "category": "completed",
+            "description": "Lesson has been addressed and documented.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "completed_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Lesson completed" } }
+            ]
+          },
+          "promoted": {
+            "category": "terminal",
+            "description": "Lesson has been promoted to a rule.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Lesson promoted to rule" } }
+            ]
+          },
+          "surpassed": {
+            "category": "terminal",
+            "description": "Lesson has been superseded by newer findings."
+          },
+          "archived": {
+            "category": "terminal",
+            "description": "Lesson is archived."
+          }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring root cause and remediation." },
+          { "from": "exploring", "to": "active", "event": "activate", "description": "Begin actively tracking this lesson." },
+          { "from": "exploring", "to": "recurring", "event": "mark_recurring", "description": "Pattern has recurred during exploration." },
+          { "from": "active", "to": "completed", "event": "complete", "description": "Lesson has been addressed." },
+          { "from": "active", "to": "recurring", "event": "mark_recurring", "description": "Pattern has recurred." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit for promotion review." },
+          { "from": "active", "to": "promoted", "event": "promote", "description": "Promote directly to a rule." },
+          { "from": "recurring", "to": "active", "event": "resolve", "description": "Recurrence resolved — return to active tracking." },
+          { "from": "recurring", "to": "completed", "event": "complete", "description": "Recurring pattern resolved." },
+          { "from": "review", "to": "completed", "event": "complete", "description": "Lesson documented and complete." },
+          {
+            "from": "review",
+            "to": "active",
+            "event": "request_changes",
+            "description": "Further investigation needed.",
+            "actions": [
+              { "type": "append_log", "params": { "message": "Changes requested during lesson review" } }
+            ]
+          },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "completed", "to": "surpassed", "event": "surpass" },
+          { "from": "promoted", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": {
+          "captured": "captured",
+          "exploring": "exploring",
+          "active": "active",
+          "recurring": "recurring",
+          "review": "review",
+          "completed": "completed",
+          "promoted": "promoted",
+          "surpassed": "surpassed",
+          "archived": "archived"
+        }
+      }
+    },
+    "rule": {
+      "schema": {
+        "id_prefix": "RULE",
+        "id_pattern": "^RULE-[a-f0-9]{8}$",
+        "default_path": ".orqa/learning/rules/",
+        "icon": "shield",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^RULE-[a-f0-9]{8}$" },
+            "enforcement": { "type": "array" }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "demoted_date": { "type": "string", "format": "date", "description": "ISO date when the rule was demoted to inactive" },
+            "demoted_reason": { "type": "string", "description": "Why the rule was demoted (e.g. enforced by orqa lsp schema validation)" },
+            "replaced_by": { "type": "string", "description": "What now covers this rule (e.g. orqa lsp, pre-commit hook)" },
+            "stability_threshold": { "type": "number", "minimum": 1, "default": 10, "description": "Sessions with zero violations before the rule is safe to delete" },
+            "stability_count": { "type": "number", "minimum": 0, "default": 0, "description": "Current count of consecutive clean sessions since demotion" },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "initial_state": "captured",
+        "description": "Rule lifecycle state machine. Rules are governance constraints enforced within the project. The workflow tracks capture, exploration, active enforcement, potential inactivation, review, and completion. Rules have a unique inactive state for demoted rules being monitored before removal.",
+        "states": {
+          "captured": {
+            "category": "planning",
+            "description": "Rule has been captured but not yet explored."
+          },
+          "exploring": {
+            "category": "planning",
+            "description": "Rule is being explored — scope, enforcement mechanism, rationale.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Rule exploration started" } }
+            ]
+          },
+          "active": {
+            "category": "active",
+            "description": "Rule is actively enforced.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "activated_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Rule activated" } }
+            ]
+          },
+          "inactive": {
+            "category": "active",
+            "description": "Rule has been demoted — monitoring stability before removal.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "demoted_date", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Rule demoted to inactive" } }
+            ]
+          },
+          "hold": {
+            "category": "active",
+            "description": "Rule enforcement is paused pending discussion."
+          },
+          "review": {
+            "category": "review",
+            "description": "Rule is being reviewed for continued relevance.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Rule entered review" } }
+            ]
+          },
+          "completed": {
+            "category": "completed",
+            "description": "Rule lifecycle is complete — enforcement superseded or no longer needed.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Rule completed" } }
+            ]
+          },
+          "surpassed": {
+            "category": "terminal",
+            "description": "Rule has been superseded by a newer rule or enforcement mechanism."
+          },
+          "archived": {
+            "category": "terminal",
+            "description": "Rule is archived."
+          }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring rule scope and enforcement." },
+          { "from": "captured", "to": "active", "event": "activate", "description": "Fast-track to active enforcement." },
+          { "from": "exploring", "to": "active", "event": "activate", "description": "Begin active enforcement." },
+          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending discussion." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Trigger periodic relevance review." },
+          { "from": "active", "to": "hold", "event": "pause", "description": "Pause enforcement." },
+          { "from": "active", "to": "inactive", "event": "demote", "description": "Demote rule — enforcement replaced by tooling or no longer needed." },
+          { "from": "active", "to": "archived", "event": "archive", "description": "Archive an active rule directly." },
+          { "from": "inactive", "to": "active", "event": "reactivate", "description": "Re-activate a demoted rule (violations detected)." },
+          { "from": "inactive", "to": "archived", "event": "archive", "description": "Archive a demoted rule after stability period." },
+          { "from": "hold", "to": "active", "event": "resume", "description": "Resume enforcement." },
+          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
+          { "from": "review", "to": "active", "event": "reaffirm", "description": "Rule is still relevant — return to active." },
+          { "from": "review", "to": "completed", "event": "retire", "description": "Rule is no longer needed — retire." },
+          { "from": "completed", "to": "surpassed", "event": "surpass" },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": {
+          "captured": "captured",
+          "exploring": "exploring",
+          "active": "active",
+          "inactive": "inactive",
+          "hold": "hold",
+          "review": "review",
+          "completed": "completed",
+          "surpassed": "surpassed",
+          "archived": "archived"
+        }
+      }
+    },
+    "decision": {
+      "schema": {
+        "id_prefix": "AD",
+        "id_pattern": "^AD-[a-f0-9]{8}$",
+        "default_path": ".orqa/learning/decisions/",
+        "icon": "scale",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^AD-[a-f0-9]{8}$" }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "initial_state": "captured",
+        "description": "Decision lifecycle state machine. Decisions (architecture decisions, ADRs) capture significant choices and their rationale. The workflow tracks capture, exploration, active deliberation, review, and completion.",
+        "states": {
+          "captured": {
+            "category": "planning",
+            "description": "Decision question has been captured but not yet explored."
+          },
+          "exploring": {
+            "category": "planning",
+            "description": "Decision space is being explored — options, trade-offs, constraints.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Decision exploration started" } }
+            ]
+          },
+          "active": {
+            "category": "active",
+            "description": "Decision is actively being deliberated — a preferred option is being developed.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "started_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Decision deliberation active" } }
+            ]
+          },
+          "hold": {
+            "category": "active",
+            "description": "Decision is paused, waiting for external input."
+          },
+          "review": {
+            "category": "review",
+            "description": "Decision is being reviewed for acceptance.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Decision entered review" } }
+            ]
+          },
+          "completed": {
+            "category": "completed",
+            "description": "Decision has been accepted and recorded.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "decided_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Decision recorded" } }
+            ]
+          },
+          "surpassed": {
+            "category": "terminal",
+            "description": "Decision has been superseded by a newer decision."
+          },
+          "archived": {
+            "category": "terminal",
+            "description": "Decision is archived."
+          }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring the decision space." },
+          { "from": "captured", "to": "active", "event": "start", "description": "Fast-track to active deliberation." },
+          { "from": "exploring", "to": "active", "event": "start", "description": "Begin active deliberation." },
+          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending input." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit decision for acceptance review." },
+          { "from": "active", "to": "hold", "event": "pause", "description": "Pause deliberation." },
+          { "from": "active", "to": "archived", "event": "archive", "description": "Archive decision (no longer relevant)." },
+          { "from": "hold", "to": "active", "event": "resume", "description": "Resume deliberation." },
+          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
+          { "from": "review", "to": "completed", "event": "approve", "description": "Decision accepted and recorded." },
+          {
+            "from": "review",
+            "to": "active",
+            "event": "request_changes",
+            "description": "Further deliberation needed.",
+            "actions": [
+              { "type": "append_log", "params": { "message": "Changes requested during decision review" } }
+            ]
+          },
+          { "from": "completed", "to": "surpassed", "event": "surpass", "description": "Mark as superseded by a newer decision." },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": {
+          "captured": "captured",
+          "exploring": "exploring",
+          "active": "active",
+          "hold": "hold",
+          "review": "review",
+          "completed": "completed",
+          "surpassed": "surpassed",
+          "archived": "archived"
+        }
+      }
+    },
+    "knowledge": {
+      "schema": {
+        "id_prefix": "KNOW",
+        "id_pattern": "^KNOW-[a-f0-9]{8}$",
+        "default_path": ".orqa/documentation/knowledge/",
+        "icon": "zap",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^KNOW-[a-f0-9]{8}$" }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "thinking-mode": { "type": "string", "description": "Prompt classification mode this knowledge artifact represents. Used by the thinking-mode classifier to match prompts to behavioral context." },
+            "priority-rules": { "type": "array", "items": { "type": "string" }, "description": "Rule categories prioritised when this thinking mode is active. Used by the prompt injector to select relevant behavioral rules." },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "initial_state": "captured",
+        "description": "Knowledge lifecycle state machine. Knowledge artifacts capture domain expertise, thinking modes, and contextual information injected into agent prompts. The workflow tracks capture, exploration, active use, review, and completion.",
+        "states": {
+          "captured": {
+            "category": "planning",
+            "description": "Knowledge has been captured but not yet explored."
+          },
+          "exploring": {
+            "category": "planning",
+            "description": "Knowledge is being explored — scope, accuracy, relevance.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Knowledge exploration started" } }
+            ]
+          },
+          "active": {
+            "category": "active",
+            "description": "Knowledge is actively being used in agent prompts.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "activated_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Knowledge activated" } }
+            ]
+          },
+          "hold": {
+            "category": "active",
+            "description": "Knowledge is paused — accuracy or relevance under question."
+          },
+          "review": {
+            "category": "review",
+            "description": "Knowledge is being reviewed for continued accuracy.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Knowledge entered review" } }
+            ]
+          },
+          "completed": {
+            "category": "completed",
+            "description": "Knowledge lifecycle is complete — content has been fully documented.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Knowledge completed" } }
+            ]
+          },
+          "surpassed": {
+            "category": "terminal",
+            "description": "Knowledge has been superseded by newer information."
+          },
+          "archived": {
+            "category": "terminal",
+            "description": "Knowledge is archived."
+          }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring scope and accuracy." },
+          { "from": "captured", "to": "active", "event": "activate", "description": "Fast-track to active use." },
+          { "from": "exploring", "to": "active", "event": "activate", "description": "Begin active use in prompts." },
+          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending verification." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Trigger periodic accuracy review." },
+          { "from": "active", "to": "hold", "event": "pause", "description": "Pause active use." },
+          { "from": "active", "to": "archived", "event": "archive", "description": "Archive knowledge directly." },
+          { "from": "hold", "to": "active", "event": "resume", "description": "Resume active use." },
+          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
+          { "from": "review", "to": "active", "event": "reaffirm", "description": "Knowledge is still accurate — return to active." },
+          { "from": "review", "to": "completed", "event": "retire", "description": "Knowledge is complete — no further updates needed." },
+          { "from": "completed", "to": "surpassed", "event": "surpass" },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": {
+          "captured": "captured",
+          "exploring": "exploring",
+          "active": "active",
+          "hold": "hold",
+          "review": "review",
+          "completed": "completed",
+          "surpassed": "surpassed",
+          "archived": "archived"
+        }
+      }
+    },
+    "principle-decision": {
+      "schema": {
+        "id_prefix": "PD",
+        "id_pattern": "^PD-[a-f0-9]{8}$",
+        "default_path": ".orqa/learning/decisions/",
+        "icon": "scale",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^PD-[a-f0-9]{8}$" }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "initial_state": "captured",
+        "description": "Principle decision lifecycle state machine. Principle decisions capture high-influence governance choices — architectural decisions, design principles, and process guidelines. Tracks capture, exploration, active governance, review, and completion.",
+        "states": {
+          "captured": {
+            "category": "planning",
+            "description": "Principle decision has been captured but not yet explored."
+          },
+          "exploring": {
+            "category": "planning",
+            "description": "Principle decision is being explored — rationale, alternatives, implications.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Principle decision exploration started" } }
+            ]
+          },
+          "active": {
+            "category": "active",
+            "description": "Principle decision is active and applies to the project.",
+            "on_enter": [
+              { "type": "set_field", "params": { "field": "decided_at", "value": "${now}" } },
+              { "type": "append_log", "params": { "message": "Principle decision activated" } }
+            ]
+          },
+          "hold": {
+            "category": "active",
+            "description": "Principle decision on hold pending further information or discussion."
+          },
+          "review": {
+            "category": "review",
+            "description": "Principle decision is being reviewed for continued relevance.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Principle decision entered review" } }
+            ]
+          },
+          "completed": {
+            "category": "completed",
+            "description": "Principle decision lifecycle complete.",
+            "on_enter": [
+              { "type": "append_log", "params": { "message": "Principle decision completed" } }
+            ]
+          },
+          "surpassed": {
+            "category": "terminal",
+            "description": "Principle decision has been superseded by a newer decision."
+          },
+          "archived": {
+            "category": "terminal",
+            "description": "Principle decision is archived."
+          }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring the principle decision." },
+          { "from": "exploring", "to": "active", "event": "decide", "description": "Decision reached — activate." },
+          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending information." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit for periodic review." },
+          { "from": "active", "to": "hold", "event": "pause", "description": "Pause the decision." },
+          { "from": "hold", "to": "active", "event": "resume", "description": "Resume from hold." },
+          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-evaluation." },
+          { "from": "review", "to": "active", "event": "reaffirm", "description": "Decision still applies — return to active." },
+          { "from": "review", "to": "completed", "event": "retire", "description": "Decision is no longer needed." },
+          { "from": "completed", "to": "surpassed", "event": "surpass" },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": {
+          "captured": "captured",
+          "exploring": "exploring",
+          "active": "active",
+          "hold": "hold",
+          "review": "review",
+          "completed": "completed",
+          "surpassed": "surpassed",
+          "archived": "archived"
+        }
+      }
+    },
+    "agent": {
+      "schema": {
+        "id_prefix": "AGENT",
+        "id_pattern": "^AGENT-[a-f0-9]{8}$",
+        "default_path": ".claude/agents/",
+        "icon": "bot",
+        "source_plugin": "@orqastudio/plugin-core-framework",
+        "fields": {
+          "required": {
+            "id": { "type": "string", "pattern": "^AGENT-[a-f0-9]{8}$" },
+            "preamble": { "type": "string" }
+          },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "model": { "type": "string" },
+            "capabilities": { "type": "array", "items": { "type": "string" } },
+            "knowledge": { "type": "array", "items": { "type": "string" } },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["target", "type"],
+                "properties": {
+                  "target": { "type": "string" },
+                  "type": { "type": "string" },
+                  "rationale": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": null
+    }
+  },
+  "contribution_metadata": [
+    { "plugin": "@orqastudio/plugin-core-framework", "version": "0.1.4-dev" }
+  ]
+}

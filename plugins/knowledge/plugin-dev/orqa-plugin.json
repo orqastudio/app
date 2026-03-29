@@ -3,12 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Plugin Development",
   "description": "Plugin development tooling — scaffolding, manifest management, content ownership, three-way diff, first-party and third-party workflows. Opt-in for plugin authors.",
-  "category": "domain-knowledge",
+  "categories": ["domain-knowledge"],
   "purpose": [
     "domain-knowledge"
   ],
-  "affects_schema": false,
-  "affects_enforcement": false,
   "role": "enhancement:development",
   "provides": {
     "agents": [

@@ -1,0 +1,211 @@
+/**
+ * Shared access to the orqa-validation Rust binary / daemon.
+ *
+ * Both `orqa check` and `orqa enforce` use the same underlying validation
+ * engine (engine/validation/).  This module provides the common helpers:
+ *
+ *   findBinary()     — locate the compiled orqa-validation binary
+ *   callDaemon()     — POST to the running daemon's /validate endpoint
+ *   runRustBinary()  — exec the binary directly and capture JSON output
+ *   runValidation()  — daemon-first, binary-fallback orchestration
+ */
+import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+// ---------------------------------------------------------------------------
+// Binary discovery
+// ---------------------------------------------------------------------------
+/**
+ * Find the Rust validation binary. Checks common build locations relative to
+ * the project root, including workspace-level and crate-level target dirs.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Absolute path to the binary, or null if not found.
+ */
+export function findBinary(projectRoot) {
+    const candidates = [
+        join(projectRoot, "engine", "validation", "target", "release", "orqa-validation"),
+        join(projectRoot, "engine", "validation", "target", "release", "orqa-validation.exe"),
+        join(projectRoot, "engine", "validation", "target", "debug", "orqa-validation"),
+        join(projectRoot, "engine", "validation", "target", "debug", "orqa-validation.exe"),
+        join(projectRoot, "target", "release", "orqa-validation"),
+        join(projectRoot, "target", "release", "orqa-validation.exe"),
+        join(projectRoot, "target", "debug", "orqa-validation"),
+        join(projectRoot, "target", "debug", "orqa-validation.exe"),
+        join(projectRoot, "app", "backend", "target", "release", "orqa-validation"),
+        join(projectRoot, "app", "backend", "target", "release", "orqa-validation.exe"),
+        join(projectRoot, "app", "backend", "target", "debug", "orqa-validation"),
+        join(projectRoot, "app", "backend", "target", "debug", "orqa-validation.exe"),
+    ];
+    for (const c of candidates) {
+        if (existsSync(c))
+            return c;
+    }
+    return null;
+}
+// ---------------------------------------------------------------------------
+// Daemon communication
+// ---------------------------------------------------------------------------
+import { getPort } from "./ports.js";
+const DAEMON_PORT = getPort("daemon");
+/**
+ * Call the running daemon's /validate endpoint.
+ * Returns the raw JSON response string, or null if the daemon is unreachable.
+ * @param targetPath - Path to the file or directory to validate.
+ * @param autoFix - Whether to automatically apply fixes.
+ * @returns The raw JSON response string, or null if the daemon is unreachable.
+ */
+export async function callDaemon(targetPath, autoFix) {
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 500);
+        try {
+            const response = await fetch(`http://127.0.0.1:${DAEMON_PORT}/validate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ path: targetPath, fix: autoFix }),
+                signal: controller.signal,
+            });
+            if (!response.ok)
+                return null;
+            return await response.text();
+        }
+        finally {
+            clearTimeout(timeout);
+        }
+    }
+    catch {
+        return null;
+    }
+}
+// ---------------------------------------------------------------------------
+// Direct binary execution
+// ---------------------------------------------------------------------------
+/**
+ * Run the Rust validator binary directly and capture its JSON output.
+ * @param binaryPath - Absolute path to the orqa-validation binary.
+ * @param targetPath - Path to the file or directory to validate.
+ * @param autoFix - Whether to automatically apply fixes.
+ * @returns Exit code and captured output string from the binary.
+ */
+export function runRustBinary(binaryPath, targetPath, autoFix) {
+    const args = [targetPath];
+    if (autoFix)
+        args.push("--fix");
+    try {
+        const output = execFileSync(binaryPath, args, {
+            encoding: "utf-8",
+            timeout: 60000,
+            windowsHide: true,
+        });
+        return { exitCode: 0, output };
+    }
+    catch (e) {
+        const err = e;
+        return {
+            exitCode: err.status ?? 2,
+            output: err.stdout ?? err.stderr ?? String(e),
+        };
+    }
+}
+// ---------------------------------------------------------------------------
+// High-level orchestration
+// ---------------------------------------------------------------------------
+/**
+ * Run validation: daemon-first, binary-fallback.
+ *
+ * Returns a parsed `ValidationReport` and the process exit code.
+ * Throws if neither the daemon nor the binary are available.
+ * @param projectRoot - Absolute path to the project root.
+ * @param targetPath - Path to the file or directory to validate.
+ * @param autoFix - Whether to automatically apply fixes.
+ * @returns Parsed validation report and process exit code.
+ */
+export async function runValidation(projectRoot, targetPath, autoFix = false) {
+    // Try daemon first (low-latency, keeps graph in memory).
+    const daemonOutput = await callDaemon(targetPath, autoFix);
+    const { exitCode, output } = daemonOutput !== null
+        ? { exitCode: 0, output: daemonOutput }
+        : (() => {
+            const binary = findBinary(projectRoot);
+            if (binary === null) {
+                throw new Error("orqa-validation binary not found and daemon is not running.\n" +
+                    "Build with: cargo build --manifest-path engine/validation/Cargo.toml --release\n" +
+                    "Or start the daemon with: orqa daemon start");
+            }
+            return runRustBinary(binary, targetPath, autoFix);
+        })();
+    let parsed;
+    try {
+        parsed = JSON.parse(output);
+    }
+    catch {
+        // Binary produced non-JSON output (e.g. a crash). Return it as a single
+        // error check so the caller can display it.
+        return {
+            report: {
+                checks: [
+                    {
+                        category: "RuntimeError",
+                        severity: "Error",
+                        artifact_id: "",
+                        message: output.trim(),
+                    },
+                ],
+                health: null,
+                fixes_applied: [],
+                enforcement_events: [],
+            },
+            exitCode: exitCode || 2,
+        };
+    }
+    return {
+        report: {
+            checks: parsed.checks ?? [],
+            health: parsed.health ?? null,
+            fixes_applied: parsed.fixes_applied ?? [],
+            enforcement_events: parsed.enforcement_events ?? [],
+        },
+        exitCode,
+    };
+}
+// ---------------------------------------------------------------------------
+// Text formatting
+// ---------------------------------------------------------------------------
+/**
+ * Format a validation report as human-readable text output.
+ * Returns the formatted string and counts of errors/warnings.
+ * @param report - The validation report to format.
+ * @returns Object with formatted text and error/warning counts.
+ */
+export function formatReport(report) {
+    const lines = [];
+    const checks = report.checks;
+    if (checks.length === 0) {
+        return {
+            text: "All validation checks passed. 0 errors.",
+            errors: 0,
+            warnings: 0,
+        };
+    }
+    const byCategory = new Map();
+    for (const c of checks) {
+        const list = byCategory.get(c.category) ?? [];
+        list.push(c);
+        byCategory.set(c.category, list);
+    }
+    for (const [category, findings] of byCategory) {
+        lines.push(`\n${category} (${findings.length}):`);
+        for (const f of findings) {
+            const icon = f.severity === "Error" || f.severity === "error" ? "E" : "W";
+            lines.push(`  [${icon}] ${f.artifact_id}: ${f.message}`);
+        }
+    }
+    const errors = checks.filter((c) => c.severity === "Error" || c.severity === "error").length;
+    const warnings = checks.length - errors;
+    lines.push(`\n${checks.length} error(s).`);
+    if (report.fixes_applied.length > 0) {
+        lines.push(`Auto-fixed ${report.fixes_applied.length} issue(s).`);
+    }
+    return { text: lines.join("\n"), errors, warnings };
+}
+//# sourceMappingURL=validation-engine.js.map

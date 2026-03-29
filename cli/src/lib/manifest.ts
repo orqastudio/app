@@ -96,7 +96,7 @@ export function isPluginManifestNonEmpty(manifest: PluginManifest): boolean {
 		(Array.isArray(p.widgets) && p.widgets.length > 0) ||
 		(Array.isArray(p.hooks) && p.hooks.length > 0) ||
 		(Array.isArray(p.cliTools) && p.cliTools.length > 0) ||
-		(Array.isArray(p.enforcement_mechanisms) && p.enforcement_mechanisms.length > 0) ||
+		(Array.isArray(manifest.enforcement) && manifest.enforcement.length > 0) ||
 		(Array.isArray(p.agents) && p.agents.length > 0) ||
 		(Array.isArray(p.knowledge) && p.knowledge.length > 0) ||
 		(manifest.content !== undefined && Object.keys(manifest.content).length > 0)

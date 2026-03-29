@@ -1,9 +1,9 @@
-// Resolved workflow YAML loader for the OrqaStudio Tauri backend.
+// Resolved workflow JSON loader for the OrqaStudio Tauri backend.
 //
-// Reads `process_gates:` sections from `.orqa/workflows/*.resolved.yaml` and
+// Reads `process_gates:` sections from `.orqa/workflows/*.resolved.json` and
 // converts them into `ProcessGateConfig` values consumed by the session gate
 // evaluator. Gate definitions are owned by workflow plugins and expressed in
-// the resolved YAML — this loader is the bridge between the YAML on disk and
+// the resolved JSON — this loader is the bridge between the JSON on disk and
 // the in-memory `Vec<ProcessGateConfig>` held in `AppState`.
 //
 // The loader searches all resolved workflow files in `.orqa/workflows/` and
@@ -19,11 +19,11 @@ use serde::Deserialize;
 
 use crate::domain::process_gates::{GateCondition, GateTrigger, ProcessGateConfig};
 
-/// YAML representation of a single process gate entry.
+/// JSON representation of a single process gate entry.
 ///
-/// Matches the `process_gates:` list items in a resolved workflow YAML file.
+/// Matches the `process_gates:` list items in a resolved workflow JSON file.
 #[derive(Debug, Deserialize)]
-struct YamlProcessGate {
+struct JsonProcessGate {
     /// Machine-readable gate identifier (e.g. `"understand-first"`).
     name: String,
     /// When this gate fires — `"write"` or `"stop"`.
@@ -31,24 +31,24 @@ struct YamlProcessGate {
     /// The condition that causes this gate to fire.
     ///
     /// Can be either a plain string (e.g. `"code_write_without_docs"`) for
-    /// parameterless conditions or a mapping with a `type` key and optional
-    /// parameters (e.g. `{ type: significant_work_without_lessons, threshold: 3 }`).
-    condition: serde_yaml::Value,
+    /// parameterless conditions or an object with a `type` key and optional
+    /// parameters (e.g. `{ "type": "significant_work_without_lessons", "threshold": 3 }`).
+    condition: serde_json::Value,
     /// Thinking prompt injected into the agent context when the gate fires.
     message: String,
 }
 
-/// Minimal YAML structure for a resolved workflow file.
+/// Minimal JSON structure for a resolved workflow file.
 ///
 /// Only the `process_gates` field is extracted; all other workflow content
 /// is ignored by this loader.
 #[derive(Debug, Deserialize)]
-struct YamlWorkflow {
+struct JsonWorkflow {
     #[serde(default)]
-    process_gates: Vec<YamlProcessGate>,
+    process_gates: Vec<JsonProcessGate>,
 }
 
-/// Parse a `GateTrigger` from a YAML string value.
+/// Parse a `GateTrigger` from a JSON string value.
 ///
 /// Returns `None` for unrecognised trigger strings so the loader can skip
 /// malformed entries without failing the entire load.
@@ -63,21 +63,21 @@ fn parse_trigger(s: &str) -> Option<GateTrigger> {
     }
 }
 
-/// Parse a `GateCondition` from a YAML value.
+/// Parse a `GateCondition` from a JSON value.
 ///
-/// Accepts either a plain string or a mapping with a `type` key:
+/// Accepts either a plain string or an object with a `type` key:
 ///
-/// - `"first_code_write_without_research"` or `{type: first_code_write_without_research}`
-/// - `"code_write_without_docs"` or `{type: code_write_without_docs}`
-/// - `"code_write_without_planning"` or `{type: code_write_without_planning}`
-/// - `"code_written_without_verification"` or `{type: code_written_without_verification}`
-/// - `{type: significant_work_without_lessons, threshold: <usize>}`
+/// - `"first_code_write_without_research"` or `{"type": "first_code_write_without_research"}`
+/// - `"code_write_without_docs"` or `{"type": "code_write_without_docs"}`
+/// - `"code_write_without_planning"` or `{"type": "code_write_without_planning"}`
+/// - `"code_written_without_verification"` or `{"type": "code_written_without_verification"}`
+/// - `{"type": "significant_work_without_lessons", "threshold": <usize>}`
 ///
 /// Returns `None` for unrecognised conditions so the loader skips malformed entries.
-fn parse_condition(value: &serde_yaml::Value) -> Option<GateCondition> {
+fn parse_condition(value: &serde_json::Value) -> Option<GateCondition> {
     let (type_str, params) = match value {
-        serde_yaml::Value::String(s) => (s.as_str(), None),
-        serde_yaml::Value::Mapping(map) => {
+        serde_json::Value::String(s) => (s.as_str(), None),
+        serde_json::Value::Object(map) => {
             let type_val = map.get("type")?;
             let type_str = type_val.as_str()?;
             (type_str, Some(map))
@@ -96,7 +96,7 @@ fn parse_condition(value: &serde_yaml::Value) -> Option<GateCondition> {
         "significant_work_without_lessons" => {
             let threshold = params
                 .and_then(|m| m.get("threshold"))
-                .and_then(serde_yaml::Value::as_u64)
+                .and_then(serde_json::Value::as_u64)
                 .map_or(3, |n| n as usize);
             Some(GateCondition::SignificantWorkWithoutLessons { threshold })
         }
@@ -107,16 +107,16 @@ fn parse_condition(value: &serde_yaml::Value) -> Option<GateCondition> {
     }
 }
 
-/// Convert a `YamlProcessGate` to a `ProcessGateConfig`.
+/// Convert a `JsonProcessGate` to a `ProcessGateConfig`.
 ///
 /// Returns `None` if the trigger or condition cannot be parsed so the loader
 /// can skip individual malformed entries without aborting the full load.
-fn yaml_gate_to_config(yaml: YamlProcessGate) -> Option<ProcessGateConfig> {
-    let trigger = parse_trigger(&yaml.trigger)?;
-    let condition = parse_condition(&yaml.condition)?;
-    // Collapse the multi-line YAML block scalar to a single space-separated line.
-    let message = yaml.message.split_whitespace().collect::<Vec<_>>().join(" ");
-    Some(ProcessGateConfig::new(yaml.name, trigger, condition, message))
+fn json_gate_to_config(json: JsonProcessGate) -> Option<ProcessGateConfig> {
+    let trigger = parse_trigger(&json.trigger)?;
+    let condition = parse_condition(&json.condition)?;
+    // Collapse multi-line message strings to a single space-separated line.
+    let message = json.message.split_whitespace().collect::<Vec<_>>().join(" ");
+    Some(ProcessGateConfig::new(json.name, trigger, condition, message))
 }
 
 /// Collect process gates from a single resolved workflow file into `gates`.
@@ -137,7 +137,7 @@ fn collect_gates_from_file(
         }
     };
 
-    let workflow: YamlWorkflow = match serde_yaml::from_str(&contents) {
+    let workflow: JsonWorkflow = match serde_json::from_str(&contents) {
         Ok(w) => w,
         Err(err) => {
             tracing::warn!("[workflow_loader] failed to parse '{}': {err}", path.display());
@@ -155,8 +155,8 @@ fn collect_gates_from_file(
         path.display()
     );
 
-    for yaml_gate in workflow.process_gates {
-        let name = yaml_gate.name.clone();
+    for json_gate in workflow.process_gates {
+        let name = json_gate.name.clone();
         if seen_names.contains(&name) {
             tracing::debug!(
                 "[workflow_loader] duplicate gate '{name}' in '{}', skipping",
@@ -164,16 +164,16 @@ fn collect_gates_from_file(
             );
             continue;
         }
-        if let Some(config) = yaml_gate_to_config(yaml_gate) {
+        if let Some(config) = json_gate_to_config(json_gate) {
             seen_names.insert(name);
             gates.push(config);
         }
     }
 }
 
-/// Load process gate definitions from resolved workflow YAML files.
+/// Load process gate definitions from resolved workflow JSON files.
 ///
-/// Scans `.orqa/workflows/*.resolved.yaml` in `project_root` and collects
+/// Scans `.orqa/workflows/*.resolved.json` in `project_root` and collects
 /// all `process_gates:` entries. Gate names are deduplicated — the first
 /// occurrence wins. Returns `None` when no resolved workflow files exist or
 /// none of them declare any process gates. The caller falls back to
@@ -211,7 +211,7 @@ pub fn load_process_gates_from_workflows(project_root: &Path) -> Option<Vec<Proc
         let is_resolved = path
             .file_name()
             .and_then(|n| n.to_str())
-            .is_some_and(|n| n.ends_with(".resolved.yaml"));
+            .is_some_and(|n| n.ends_with(".resolved.json"));
         if !is_resolved {
             continue;
         }
@@ -235,7 +235,7 @@ mod tests {
     use std::io::Write as IoWrite;
     use tempfile::TempDir;
 
-    fn write_resolved_yaml(dir: &Path, filename: &str, content: &str) {
+    fn write_resolved_json(dir: &Path, filename: &str, content: &str) {
         let path = dir.join(filename);
         let mut file = std::fs::File::create(&path).expect("create file");
         file.write_all(content.as_bytes()).expect("write file");
@@ -259,7 +259,7 @@ mod tests {
     // ── empty or no process_gates ──
 
     #[test]
-    fn returns_none_when_no_resolved_yaml_files() {
+    fn returns_none_when_no_resolved_json_files() {
         let tmp = TempDir::new().unwrap();
         setup_workflows_dir(&tmp);
         let result = load_process_gates_from_workflows(tmp.path());
@@ -267,13 +267,13 @@ mod tests {
     }
 
     #[test]
-    fn returns_none_when_resolved_yaml_has_no_process_gates() {
+    fn returns_none_when_resolved_json_has_no_process_gates() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "task.resolved.yaml",
-            "name: task\nstates:\n  open:\n    category: active\n",
+            "task.resolved.json",
+            r#"{"name": "task", "states": {"open": {"category": "active"}}}"#,
         );
         let result = load_process_gates_from_workflows(tmp.path());
         assert!(result.is_none());
@@ -285,10 +285,10 @@ mod tests {
     fn loads_write_trigger_string_condition() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: docs-before-code\n    trigger: write\n    condition: code_write_without_docs\n    message: Check docs first.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "docs-before-code", "trigger": "write", "condition": "code_write_without_docs", "message": "Check docs first."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1);
@@ -302,10 +302,10 @@ mod tests {
     fn loads_stop_trigger_string_condition() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: evidence-before-done\n    trigger: stop\n    condition: code_written_without_verification\n    message: Run tests.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "evidence-before-done", "trigger": "stop", "condition": "code_written_without_verification", "message": "Run tests."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1);
@@ -317,10 +317,10 @@ mod tests {
     fn loads_significant_work_condition_with_threshold() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: learn-after-doing\n    trigger: stop\n    condition:\n      type: significant_work_without_lessons\n      threshold: 5\n    message: Record lessons.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "learn-after-doing", "trigger": "stop", "condition": {"type": "significant_work_without_lessons", "threshold": 5}, "message": "Record lessons."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1);
@@ -336,10 +336,10 @@ mod tests {
     fn loads_significant_work_condition_default_threshold_when_absent() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: learn-after-doing\n    trigger: stop\n    condition:\n      type: significant_work_without_lessons\n    message: Record lessons.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "learn-after-doing", "trigger": "stop", "condition": {"type": "significant_work_without_lessons"}, "message": "Record lessons."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         match &gates[0].condition {
@@ -355,15 +355,15 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
         // Write two files with the same gate name — first wins.
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "a.resolved.yaml",
-            "name: a\nprocess_gates:\n  - name: my-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: From file A.\n",
+            "a.resolved.json",
+            r#"{"name": "a", "process_gates": [{"name": "my-gate", "trigger": "write", "condition": "code_write_without_docs", "message": "From file A."}]}"#,
         );
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "b.resolved.yaml",
-            "name: b\nprocess_gates:\n  - name: my-gate\n    trigger: stop\n    condition: code_written_without_verification\n    message: From file B.\n",
+            "b.resolved.json",
+            r#"{"name": "b", "process_gates": [{"name": "my-gate", "trigger": "stop", "condition": "code_written_without_verification", "message": "From file B."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1, "duplicate gate name should be deduplicated");
@@ -373,10 +373,10 @@ mod tests {
     fn skips_unknown_trigger() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: bad-gate\n    trigger: unknown_trigger\n    condition: code_write_without_docs\n    message: Never fires.\n  - name: good-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: Fires.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "bad-gate", "trigger": "unknown_trigger", "condition": "code_write_without_docs", "message": "Never fires."}, {"name": "good-gate", "trigger": "write", "condition": "code_write_without_docs", "message": "Fires."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1);
@@ -387,10 +387,10 @@ mod tests {
     fn skips_unknown_condition() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: bad-gate\n    trigger: write\n    condition: unknown_condition_type\n    message: Never fires.\n  - name: good-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: Fires.\n",
+            "workflow.resolved.json",
+            r#"{"name": "test", "process_gates": [{"name": "bad-gate", "trigger": "write", "condition": "unknown_condition_type", "message": "Never fires."}, {"name": "good-gate", "trigger": "write", "condition": "code_write_without_docs", "message": "Fires."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load gates");
         assert_eq!(gates.len(), 1);
@@ -398,44 +398,44 @@ mod tests {
     }
 
     #[test]
-    fn skips_malformed_yaml_file_and_loads_valid_one() {
+    fn skips_malformed_json_file_and_loads_valid_one() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "bad.resolved.yaml",
-            ": not valid yaml: : :\n  badly:\n",
+            "bad.resolved.json",
+            "{ not valid json",
         );
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "good.resolved.yaml",
-            "name: good\nprocess_gates:\n  - name: my-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: Check docs.\n",
+            "good.resolved.json",
+            r#"{"name": "good", "process_gates": [{"name": "my-gate", "trigger": "write", "condition": "code_write_without_docs", "message": "Check docs."}]}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load from good file");
         assert_eq!(gates.len(), 1);
     }
 
     #[test]
-    fn non_resolved_yaml_files_are_ignored() {
+    fn non_resolved_json_files_are_ignored() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "task.workflow.yaml",
-            "name: task\nprocess_gates:\n  - name: my-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: Should not load.\n",
+            "task.workflow.json",
+            r#"{"name": "task", "process_gates": [{"name": "my-gate", "trigger": "write", "condition": "code_write_without_docs", "message": "Should not load."}]}"#,
         );
         let result = load_process_gates_from_workflows(tmp.path());
-        assert!(result.is_none(), "non-resolved YAML files should be ignored");
+        assert!(result.is_none(), "non-resolved JSON files should be ignored");
     }
 
     #[test]
     fn message_whitespace_is_collapsed() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            "name: test\nprocess_gates:\n  - name: my-gate\n    trigger: write\n    condition: code_write_without_docs\n    message: |\n      Line one.\n      Line two.\n",
+            "workflow.resolved.json",
+            "{\"name\": \"test\", \"process_gates\": [{\"name\": \"my-gate\", \"trigger\": \"write\", \"condition\": \"code_write_without_docs\", \"message\": \"Line one.\\n      Line two.\"}]}",
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load");
         assert_eq!(gates[0].message, "Line one. Line two.");
@@ -447,35 +447,19 @@ mod tests {
     fn loads_all_five_standard_gate_conditions() {
         let tmp = TempDir::new().unwrap();
         let workflows = setup_workflows_dir(&tmp);
-        write_resolved_yaml(
+        write_resolved_json(
             &workflows,
-            "workflow.resolved.yaml",
-            concat!(
-                "name: test\n",
-                "process_gates:\n",
-                "  - name: understand-first\n",
-                "    trigger: write\n",
-                "    condition: first_code_write_without_research\n",
-                "    message: Think first.\n",
-                "  - name: docs-before-code\n",
-                "    trigger: write\n",
-                "    condition: code_write_without_docs\n",
-                "    message: Read docs.\n",
-                "  - name: plan-before-build\n",
-                "    trigger: write\n",
-                "    condition: code_write_without_planning\n",
-                "    message: Check plan.\n",
-                "  - name: evidence-before-done\n",
-                "    trigger: stop\n",
-                "    condition: code_written_without_verification\n",
-                "    message: Run tests.\n",
-                "  - name: learn-after-doing\n",
-                "    trigger: stop\n",
-                "    condition:\n",
-                "      type: significant_work_without_lessons\n",
-                "      threshold: 3\n",
-                "    message: Record lessons.\n",
-            ),
+            "workflow.resolved.json",
+            r#"{
+  "name": "test",
+  "process_gates": [
+    {"name": "understand-first", "trigger": "write", "condition": "first_code_write_without_research", "message": "Think first."},
+    {"name": "docs-before-code", "trigger": "write", "condition": "code_write_without_docs", "message": "Read docs."},
+    {"name": "plan-before-build", "trigger": "write", "condition": "code_write_without_planning", "message": "Check plan."},
+    {"name": "evidence-before-done", "trigger": "stop", "condition": "code_written_without_verification", "message": "Run tests."},
+    {"name": "learn-after-doing", "trigger": "stop", "condition": {"type": "significant_work_without_lessons", "threshold": 3}, "message": "Record lessons."}
+  ]
+}"#,
         );
         let gates = load_process_gates_from_workflows(tmp.path()).expect("should load all 5 gates");
         assert_eq!(gates.len(), 5);

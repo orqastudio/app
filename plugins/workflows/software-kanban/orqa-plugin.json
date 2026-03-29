@@ -3,14 +3,12 @@
   "version": "0.1.4-dev",
   "displayName": "Software Project",
   "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
-  "category": "workflow",
+  "categories": ["workflow"],
   "purpose": [
     "workflow"
   ],
   "stage_slot": "implementation",
   "role": null,
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [
       {

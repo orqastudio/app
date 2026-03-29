@@ -162,9 +162,9 @@ fn load_tracker_config(state: &State<'_, AppState>, project_path: &str) {
     tracing::debug!("[tracker] tracker config and workflow tracker rebuilt from project.json artifact paths");
 }
 
-/// Load process gate definitions from the project's resolved workflow YAML files.
+/// Load process gate definitions from the project's resolved workflow JSON files.
 ///
-/// Scans `.orqa/workflows/*.resolved.yaml` for `process_gates:` sections and
+/// Scans `.orqa/workflows/*.resolved.json` for `process_gates:` sections and
 /// replaces the session's in-memory gate list with the loaded definitions.
 /// Falls back to `default_process_gates()` when no resolved workflow files
 /// declare any gates. Failures are logged as warnings — a missing or malformed

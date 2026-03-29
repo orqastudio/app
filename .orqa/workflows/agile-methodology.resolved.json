@@ -1,0 +1,142 @@
+{
+  "name": "agile-methodology",
+  "version": "0.1.0",
+  "artifact_type": "epic",
+  "plugin": "@orqastudio/plugin-agile-methodology",
+  "description": "Core delivery workflow skeleton with contribution points. This is the workflow-definition plugin's skeleton — stage-definition plugins fill the named slots at install time. The resolved workflow is written to .orqa/workflows/agile-methodology.resolved.json.",
+  "initial_state": "discover",
+  "contribution_points": [
+    {
+      "name": "discovery-artifacts",
+      "stage": "discover",
+      "description": "Contribute discovery artifact types and research workflows.",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-agile-discovery"
+    },
+    {
+      "name": "planning-methodology",
+      "stage": "plan",
+      "description": "Contribute planning methodology (scoping, estimation, prioritisation).",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-agile-planning"
+    },
+    {
+      "name": "documentation-standards",
+      "stage": "document",
+      "description": "Contribute documentation standards and templates.",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-agile-documentation"
+    },
+    {
+      "name": "implementation-workflow",
+      "stage": "implement",
+      "description": "Contribute implementation sub-workflows (task lifecycle, branching strategy).",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-software-kanban"
+    },
+    {
+      "name": "review-process",
+      "stage": "review",
+      "description": "Contribute review process (code review, gate definitions, acceptance criteria).",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-agile-review"
+    },
+    {
+      "name": "learning-pipeline",
+      "stage": "learn",
+      "description": "Contribute learning pipeline (lesson creation, retrospective, pattern tracking).",
+      "required": true,
+      "filled_by": "@orqastudio/plugin-core-framework"
+    }
+  ],
+  "states": {
+    "discover": { "category": "planning", "description": "Discovery stage — exploring the problem space, research, feasibility." },
+    "plan": { "category": "planning", "description": "Planning stage — scoping, estimation, task decomposition." },
+    "document": { "category": "planning", "description": "Documentation stage — capturing decisions, architecture, requirements." },
+    "implement": { "category": "active", "description": "Implementation stage — active delivery of tasks." },
+    "review": { "category": "review", "description": "Review stage — validating deliverables against acceptance criteria." },
+    "learn": { "category": "completed", "description": "Learning stage — retrospective, lesson capture, process improvement." },
+    "done": { "category": "terminal", "description": "Delivery complete — all stages finished." }
+  },
+  "transitions": [
+    { "from": "discover", "to": "plan", "event": "scope_defined", "description": "Discovery complete, move to planning." },
+    { "from": "plan", "to": "document", "event": "plan_approved", "description": "Plan approved, document decisions." },
+    { "from": "plan", "to": "implement", "event": "start_implementation", "description": "Skip documentation, go straight to implementation." },
+    { "from": "document", "to": "implement", "event": "documentation_complete", "description": "Documentation done, begin implementation." },
+    { "from": "implement", "to": "review", "event": "submit_for_review", "description": "Implementation complete, submit for review." },
+    { "from": "review", "to": "learn", "event": "review_passed", "description": "Review passed, enter learning phase." },
+    { "from": "review", "to": "implement", "event": "review_failed", "description": "Review failed, return to implementation." },
+    { "from": "learn", "to": "done", "event": "retrospective_complete", "description": "Retrospective done, delivery complete." },
+    { "from": "document", "to": "plan", "event": "replan", "description": "Documentation revealed planning gaps." },
+    { "from": "implement", "to": "plan", "event": "replan", "description": "Implementation revealed planning gaps." },
+    { "from": "review", "to": "plan", "event": "major_rework", "description": "Review found fundamental issues requiring re-planning." }
+  ],
+  "process_gates": [
+    {
+      "name": "understand-first",
+      "trigger": "write",
+      "condition": "first_code_write_without_research",
+      "message": "THINK FIRST: What is the system you're modifying? What are its boundaries? What depends on this? What could break? Read the governing docs and understand the context before writing code."
+    },
+    {
+      "name": "docs-before-code",
+      "trigger": "write",
+      "condition": "code_write_without_docs",
+      "message": "DOCUMENTATION CHECK: Have you read the documentation that defines this area? Check .orqa/documentation/ for specs, patterns, and constraints before implementing."
+    },
+    {
+      "name": "plan-before-build",
+      "trigger": "write",
+      "condition": "code_write_without_planning",
+      "message": "PLANNING CHECK: Is there an epic or task that defines this work? Check .orqa/implementation/ for the scope, acceptance criteria, and implementation design."
+    },
+    {
+      "name": "evidence-before-done",
+      "trigger": "stop",
+      "condition": "code_written_without_verification",
+      "message": "VERIFICATION CHECK: You wrote code but didn't run make check or make test. Show evidence that the work is correct before completing."
+    },
+    {
+      "name": "learn-after-doing",
+      "trigger": "stop",
+      "condition": { "type": "significant_work_without_lessons", "threshold": 3 },
+      "message": "LEARNING CHECK: Significant work was done this session. Check .orqa/learning/lessons/ for known patterns and consider if anything unexpected should be recorded."
+    }
+  ],
+  "gates": {
+    "delivery-review": {
+      "pattern": "structured_review",
+      "description": "Delivery review gate — AI pre-check followed by human review.",
+      "phases": {
+        "gather": {
+          "fields": ["description", "priority", "relationships"],
+          "pre_checks": [
+            {
+              "type": "relationship_check",
+              "description": "Must have delivered tasks",
+              "params": { "relationship_type": "delivers", "condition": "exists" }
+            }
+          ]
+        },
+        "present": {
+          "sections": [
+            { "title": "Delivery Summary", "content_field": "description" },
+            { "title": "Tasks Delivered", "content_template": "Tasks: ${relationships:delivers}" }
+          ]
+        },
+        "collect": {
+          "verdicts": [
+            { "key": "approve", "label": "Approve", "transitions_to": "learn" },
+            { "key": "request_changes", "label": "Request Changes", "transitions_to": "implement" },
+            { "key": "major_rework", "label": "Major Rework Required", "transitions_to": "plan" }
+          ],
+          "require_rationale": true
+        },
+        "learn": {
+          "on_fail": { "create_lesson": true, "track_recurrence": true },
+          "on_pass": { "track_cycle_time": true }
+        }
+      }
+    }
+  }
+}

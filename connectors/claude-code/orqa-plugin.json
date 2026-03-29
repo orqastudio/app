@@ -7,10 +7,8 @@
     "@orqastudio/plugin-agile-methodology",
     "@orqastudio/plugin-systems-thinking"
   ],
-  "category": "connector",
+  "categories": ["connector"],
   "purpose": ["connector"],
-  "affects_schema": false,
-  "affects_enforcement": false,
   "content": {
     "knowledge": {
       "source": "knowledge",

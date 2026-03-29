@@ -3,7 +3,7 @@
   "version": "0.1.4-dev",
   "displayName": "Core Framework",
   "description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
-  "category": "workflow",
+  "categories": ["workflow", "infrastructure", "enforcement-generator"],
   "purpose": [
     "workflow",
     "infrastructure"
@@ -11,8 +11,6 @@
   "stage_slot": "learning",
   "role": "core:framework",
   "uninstallable": true,
-  "affects_schema": true,
-  "affects_enforcement": true,
   "content": {
     "agents": {
       "source": "agents",

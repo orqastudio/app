@@ -10,12 +10,10 @@
     "@orqastudio/plugin-rust",
     "@orqastudio/plugin-svelte"
   ],
-  "category": "domain-knowledge",
+  "categories": ["domain-knowledge"],
   "purpose": [
     "domain-knowledge"
   ],
-  "affects_schema": false,
-  "affects_enforcement": false,
   "provides": {
     "knowledge": [
       {

@@ -1,22 +1,26 @@
 /**
- * Enforcement command — the single command for all validation and enforcement.
+ * Enforcement command — dynamic plugin-dispatch enforcement entry point.
  *
- * Replaces the old `orqa validate`. Runs the Rust validator for graph integrity
- * and schema checks, produces enforcement events, and supports response logging.
+ * Reads all installed plugin manifests, builds an engine registry from their
+ * enforcement declarations, and dispatches to each registered engine.
  *
- * orqa enforce [path]                   Run ALL checks on all artifacts
- * orqa enforce --mechanism json-schema  Run specific mechanism only
- * orqa enforce --rule RULE-xxx          Run all mechanisms for one rule
- * orqa enforce --file path/to/file.md   Run all mechanisms for one file
- * orqa enforce --report                 Enforcement coverage report
- * orqa enforce --fix                    Auto-fix fixable errors
- * orqa enforce --json                   JSON output
- * orqa enforce schema                   Validate project.json and plugin manifests
- * orqa enforce response --event-id X --action fixed --detail "..."
+ * orqa enforce                         Run ALL registered enforcement engines
+ * orqa enforce --staged                Run all engines on staged files only (git hooks)
+ * orqa enforce --<engine>              Run a specific engine (e.g. --eslint, --clippy)
+ * orqa enforce --<engine> --fix        Run a specific engine in fix mode
+ * orqa enforce --report                Enforcement coverage report
+ * orqa enforce --json                  JSON output for report/metrics subcommands
+ * orqa enforce response ...            Log an agent's response to an enforcement event
+ * orqa enforce schema ...              Validate project.json and plugin manifests
+ * orqa enforce test ...                Run enforcement tests defined in rules
+ * orqa enforce override ...            Request enforcement override (requires human approval)
+ * orqa enforce approve <code>          Approve an override request
+ * orqa enforce metrics                 Show per-rule enforcement metrics
  */
 
 import { existsSync, readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { execSync, spawnSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
 import {
@@ -26,25 +30,21 @@ import {
 	readEvents,
 	readResponses,
 } from "../lib/enforcement-log.js";
-import {
-	findBinary,
-	callDaemon,
-	runRustBinary,
-} from "../lib/validation-engine.js";
+import { listInstalledPlugins } from "../lib/installer.js";
+import { readManifest } from "../lib/manifest.js";
 import type { EnforcementResolution } from "@orqastudio/types";
+import type { ActionDeclaration } from "@orqastudio/types";
 
 const USAGE = `
-Usage: orqa enforce [path] [options]
+Usage: orqa enforce [options]
 
-Run enforcement checks (graph integrity + schema + rule enforcement).
+Run enforcement checks dispatched from installed plugin manifests.
 
 Options:
-  --mechanism <key>      Run only the specified mechanism (e.g. json-schema, lint)
-  --rule <id>            Run all mechanisms for a specific rule
-  --file <path>          Run all applicable mechanisms for a specific file
+  --staged               Run engines on staged files only (used by git hooks)
+  --fix                  Run engines in fix mode (if supported)
+  --<engine>             Run only the named engine (e.g. --eslint, --clippy)
   --report               Show enforcement coverage report
-  --fix                  Auto-fix objectively fixable errors (e.g. missing inverses)
-  --full-revalidation    Re-run all rules against all artifacts (triggered on rule changes)
   --json                 Output as JSON
   --help, -h             Show this help message
 
@@ -60,173 +60,250 @@ Subcommands:
     --detail <text>   Human-readable detail (required)
 `.trim();
 
-// findBinary, callDaemon, runRustBinary — imported from ../lib/validation-engine.js
+/** Internal representation of a registered enforcement engine. */
+interface EnforcementEngine {
+	/** Plugin that registered this engine. */
+	plugin: string;
+	/** Engine name (used as --<engine> CLI flag). */
+	engine: string;
+	/** Check action declaration. */
+	check?: ActionDeclaration;
+	/** Fix action declaration. */
+	fix?: ActionDeclaration;
+	/** File patterns this engine operates on — used for --staged filtering. */
+	fileTypes: string[];
+}
 
 /**
- * Dispatch the enforce command: schema, test, override, approve, metrics, or artifact enforcement.
+ * Dispatch the enforce command. Returns an exit code (0 = all passed, 1 = failure).
+ *
+ * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce".
  */
-export async function runEnforceCommand(args: string[]): Promise<void> {
+export async function runEnforceCommand(projectRoot: string, args: string[]): Promise<number> {
 	if (args[0] === "--help" || args[0] === "-h") {
 		console.log(USAGE);
-		return;
+		return 0;
 	}
 
-	// Subcommands
+	// Subcommands — pass projectRoot to each handler.
 	if (args[0] === "response") {
-		await handleResponse(args.slice(1));
-		return;
+		await handleResponse(projectRoot, args.slice(1));
+		return 0;
 	}
 
 	if (args[0] === "schema") {
 		const { runValidateSchemaCommand } = await import("./validate-schema.js");
 		await runValidateSchemaCommand(args.slice(1));
-		return;
+		return 0;
 	}
 
 	if (args[0] === "test") {
-		await handleTest(args.slice(1));
-		return;
+		return await handleTest(projectRoot, args.slice(1));
 	}
 
 	if (args[0] === "override") {
-		await handleOverride(args.slice(1));
-		return;
+		await handleOverride(projectRoot, args.slice(1));
+		return 0;
 	}
 
 	if (args[0] === "approve") {
-		await handleApprove(args[1]);
-		return;
+		await handleApprove(projectRoot, args[1]);
+		return 0;
 	}
 
 	if (args[0] === "metrics") {
-		await handleMetrics(args.slice(1));
-		return;
+		await handleMetrics(projectRoot, args.slice(1));
+		return 0;
 	}
 
-	const projectRoot = getRoot();
-	const mechanism = getFlag(args, "--mechanism");
-	const ruleId = getFlag(args, "--rule");
-	const filePath = getFlag(args, "--file");
-	const report = args.includes("--report");
-	const jsonOutput = args.includes("--json");
-	const autoFix = args.includes("--fix");
-	// Find target path: first arg that doesn't start with -- AND isn't a value for a flag
-	const flagsWithValues = new Set(["--mechanism", "--rule", "--file"]);
-	let targetPath = projectRoot;
-	for (let i = 0; i < args.length; i++) {
-		if (flagsWithValues.has(args[i])) {
-			i++; // skip the flag's value
+	if (args.includes("--report")) {
+		await showReport(projectRoot, args.includes("--json"));
+		return 0;
+	}
+
+	// --- Main enforcement dispatch ---
+
+	// 1. Read all installed plugin manifests and build the engine registry.
+	const plugins = listInstalledPlugins(projectRoot);
+	const engines: Map<string, EnforcementEngine> = new Map();
+
+	for (const plugin of plugins) {
+		let manifest;
+		try {
+			manifest = readManifest(plugin.path);
+		} catch {
+			// Skip plugins with unreadable manifests.
 			continue;
 		}
-		if (!args[i].startsWith("--")) {
-			targetPath = args[i];
-			break;
-		}
-	}
 
-	if (report) {
-		await showReport(projectRoot, jsonOutput);
-		return;
-	}
-
-	// Try daemon first (low-latency, keeps graph in memory).
-	const daemonOutput = await callDaemon(targetPath, autoFix);
-	const { exitCode, output } = daemonOutput !== null
-		? { exitCode: 0, output: daemonOutput }
-		: (() => {
-			// Daemon not running — spawn binary directly.
-			const binary = findBinary(projectRoot);
-			if (binary === null) {
-				console.error("orqa-validation binary not found and daemon is not running.");
-				console.error("Build with: cargo build --manifest-path engine/validation/Cargo.toml --release");
-				console.error("Or start the daemon with: orqa daemon start");
-				process.exit(1);
-			}
-			return runRustBinary(binary, targetPath, autoFix);
-		})();
-
-	let parsed: {
-		checks?: Array<{
-			category: string;
-			severity: string;
-			artifact_id: string;
-			message: string;
-		}>;
-		health?: Record<string, unknown>;
-		fixes_applied?: Array<{ artifact_id: string; description: string }>;
-		enforcement_events?: Array<{
-			mechanism: string;
-			check_type: string;
-			rule_id: string | null;
-			artifact_id: string | null;
-			result: string;
-			message: string;
-		}>;
-	};
-
-	try {
-		parsed = JSON.parse(output);
-	} catch {
-		process.stdout.write(output);
-		process.exit(exitCode);
-		return;
-	}
-
-	const checks = parsed.checks ?? [];
-
-	// Apply mechanism/rule/file filters
-	let filteredChecks = checks;
-	if (mechanism) {
-		if (mechanism === "json-schema") {
-			filteredChecks = filteredChecks.filter((c) => c.category === "SchemaViolation");
-		}
-	}
-	if (ruleId) {
-		filteredChecks = filteredChecks.filter((c) => c.artifact_id === ruleId);
-	}
-	if (filePath) {
-		filteredChecks = filteredChecks.filter((c) => c.artifact_id?.includes(filePath) ?? false);
-	}
-
-	if (jsonOutput) {
-		console.log(JSON.stringify({
-			checks: filteredChecks,
-			health: parsed.health,
-			fixes_applied: parsed.fixes_applied ?? null,
-			enforcement_events: parsed.enforcement_events ?? [],
-		}, null, 2));
-	} else {
-		if (filteredChecks.length === 0) {
-			console.log("All enforcement checks passed. 0 errors, 0 warnings.");
-		} else {
-			const byCategory = new Map<string, Array<{ severity: string; artifact_id: string; message: string }>>();
-			for (const c of filteredChecks) {
-				const list = byCategory.get(c.category) ?? [];
-				list.push(c);
-				byCategory.set(c.category, list);
-			}
-			for (const [category, findings] of byCategory) {
-				console.log(`\n${category} (${findings.length}):`);
-				for (const f of findings) {
-					const icon = f.severity === "Error" || f.severity === "error" ? "E" : "W";
-					console.log(`  [${icon}] ${f.artifact_id}: ${f.message}`);
-				}
-			}
-			const errors = filteredChecks.filter((c) => c.severity === "Error" || c.severity === "error").length;
-			const warnings = filteredChecks.length - errors;
-			console.log(`\n${errors} error(s), ${warnings} warning(s).`);
-
-			if (parsed.fixes_applied && parsed.fixes_applied.length > 0) {
-				console.log(`Auto-fixed ${parsed.fixes_applied.length} issue(s).`);
+		for (const decl of manifest.enforcement ?? []) {
+			if (decl.role === "generator" && decl.engine && decl.actions) {
+				engines.set(decl.engine, {
+					plugin: manifest.name,
+					engine: decl.engine,
+					check: decl.actions.check,
+					fix: decl.actions.fix,
+					fileTypes: decl.file_types ?? [],
+				});
 			}
 		}
 	}
 
-	if (exitCode !== 0) process.exit(exitCode);
+	// 2. Parse flags.
+	const staged = args.includes("--staged");
+	const fix = args.includes("--fix");
+
+	// Dynamic --<engine> flags: any --flag that is not a known built-in flag.
+	const BUILTIN_FLAGS = new Set(["--staged", "--fix", "--json", "--report", "--help", "-h"]);
+	const specificEngines = args
+		.filter((a) => a.startsWith("--") && !BUILTIN_FLAGS.has(a))
+		.map((a) => a.slice(2));
+
+	// 3. Determine which engines to run.
+	const toRun: EnforcementEngine[] =
+		specificEngines.length > 0
+			? specificEngines
+				.map((e) => engines.get(e))
+				.filter((e): e is EnforcementEngine => e !== undefined)
+			: Array.from(engines.values());
+
+	if (engines.size === 0) {
+		console.log("No enforcement engines registered. Install plugins with enforcement declarations.");
+		return 0;
+	}
+
+	if (specificEngines.length > 0 && toRun.length === 0) {
+		console.error(
+			`Unknown engine(s): ${specificEngines.join(", ")}. ` +
+			`Registered engines: ${Array.from(engines.keys()).join(", ")}`,
+		);
+		return 1;
+	}
+
+	// 4. Get staged files if --staged was requested.
+	const stagedFiles = staged ? getStagedFiles() : null;
+
+	// 5. Dispatch to each engine.
+	let allPassed = true;
+
+	for (const engine of toRun) {
+		const action = fix ? engine.fix : engine.check;
+		if (!action) continue;
+
+		// Filter files if --staged.
+		let files = stagedFiles;
+		if (files !== null && engine.fileTypes.length > 0) {
+			files = filterByPatterns(files, engine.fileTypes);
+			if (files.length === 0) continue; // No relevant staged files for this engine.
+		}
+
+		const exitCode = runAction(action, files);
+		if (exitCode !== 0) allPassed = false;
+	}
+
+	return allPassed ? 0 : 1;
 }
 
-async function handleResponse(args: string[]): Promise<void> {
+/**
+ * Get the list of staged files from git.
+ *
+ * Returns an array of relative file paths that are staged for commit.
+ */
+function getStagedFiles(): string[] {
+	try {
+		const result = execSync("git diff --cached --name-only --diff-filter=ACMR", {
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		});
+		return result.trim().split("\n").filter(Boolean);
+	} catch {
+		return [];
+	}
+}
+
+/**
+ * Filter a file list by an array of glob-style patterns.
+ *
+ * Supports simple extension patterns like "*.ts", "*.{ts,svelte,js}", and "*.rs".
+ * Files that match at least one pattern are included.
+ *
+ * @param files - Array of file paths to filter.
+ * @param patterns - Array of glob patterns to match against (e.g. ["*.ts", "*.svelte"]).
+ */
+function filterByPatterns(files: string[], patterns: string[]): string[] {
+	return files.filter((file) => patterns.some((pattern) => matchesPattern(file, pattern)));
+}
+
+/**
+ * Match a file path against a simple glob pattern.
+ *
+ * Handles "*.ext" and "*.{ext1,ext2}" style patterns. Path components are ignored —
+ * only the file extension/suffix is matched.
+ *
+ * @param file - The file path to test.
+ * @param pattern - The glob pattern (e.g. "*.ts", "*.{ts,svelte}").
+ */
+function matchesPattern(file: string, pattern: string): boolean {
+	// Expand brace patterns like "*.{ts,svelte,js}" into individual patterns.
+	const braceMatch = pattern.match(/^\*\.\{([^}]+)\}$/);
+	if (braceMatch) {
+		const exts = braceMatch[1].split(",").map((e) => e.trim());
+		return exts.some((ext) => file.endsWith(`.${ext}`));
+	}
+
+	// Simple "*.ext" pattern.
+	const simpleMatch = pattern.match(/^\*\.(.+)$/);
+	if (simpleMatch) {
+		return file.endsWith(`.${simpleMatch[1]}`);
+	}
+
+	// Literal match (fallback for unusual patterns).
+	return file === pattern;
+}
+
+/**
+ * Execute an action declaration and return its exit code.
+ *
+ * If files is provided, it is appended to the command arguments so the tool
+ * operates only on those files. If files is null (not --staged), the tool
+ * runs without file arguments (operates on all files per its own config).
+ *
+ * @param action - The action declaration from the plugin manifest.
+ * @param files - Filtered staged file list, or null to run on all files.
+ */
+function runAction(action: ActionDeclaration, files: string[] | null): number {
+	const argv = [...action.args];
+
+	// When staged files are provided, append them after the args.
+	if (files !== null && files.length > 0) {
+		argv.push(...files);
+	}
+
+	const result = spawnSync(action.command, argv, {
+		stdio: "inherit",
+		shell: false,
+	});
+
+	if (result.error) {
+		console.error(`Failed to run ${action.command}: ${result.error.message}`);
+		return 1;
+	}
+
+	return result.status ?? 1;
+}
+
+// ---------------------------------------------------------------------------
+// Subcommand: response
+// ---------------------------------------------------------------------------
+
+/**
+ * Log an agent's response to an enforcement event.
+ *
+ * @param projectRoot - Absolute path to the project root.
+ * @param args - CLI arguments after "enforce response".
+ */
+async function handleResponse(projectRoot: string, args: string[]): Promise<void> {
 	const eventId = getFlag(args, "--event-id");
 	const action = getFlag(args, "--action") as EnforcementResolution | undefined;
 	const detail = getFlag(args, "--detail");
@@ -249,7 +326,6 @@ async function handleResponse(args: string[]): Promise<void> {
 		return;
 	}
 
-	const projectRoot = getRoot();
 	logResponse(projectRoot, {
 		event_id: eventId,
 		timestamp: new Date().toISOString(),
@@ -259,6 +335,16 @@ async function handleResponse(args: string[]): Promise<void> {
 	console.log(`Logged response for event ${eventId}: ${action}`);
 }
 
+// ---------------------------------------------------------------------------
+// Subcommand: report
+// ---------------------------------------------------------------------------
+
+/**
+ * Show an enforcement coverage report summarising events and responses.
+ *
+ * @param projectRoot - Absolute path to the project root.
+ * @param jsonOutput - When true, emit JSON instead of human-readable text.
+ */
 async function showReport(projectRoot: string, jsonOutput: boolean): Promise<void> {
 	const events = readEvents(projectRoot);
 	const responses = readResponses(projectRoot);
@@ -302,7 +388,7 @@ async function showReport(projectRoot: string, jsonOutput: boolean): Promise<voi
 }
 
 // ---------------------------------------------------------------------------
-// Phase 10: Enforcement testing framework
+// Subcommand: test
 // ---------------------------------------------------------------------------
 
 /**
@@ -311,15 +397,15 @@ async function showReport(projectRoot: string, jsonOutput: boolean): Promise<voi
  * Each test entry describes a scenario that SHOULD trigger enforcement.
  * The runner creates a virtual artifact from the `input`, runs schema
  * validation, and checks the result matches `expect` (pass/fail/warn).
+ *
+ * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce test".
  */
-async function handleTest(args: string[]): Promise<void> {
-	const projectRoot = getRoot();
+async function handleTest(projectRoot: string, args: string[]): Promise<number> {
 	const ruleFilter = getFlag(args, "--rule");
 	getFlag(args, "--mechanism"); // reserved for future mechanism filtering
 	const jsonOutput = args.includes("--json");
 
-	// Find all rule files and extract test entries
 	const ruleDirs = [
 		join(projectRoot, ".orqa", "learning", "rules"),
 		...findPluginRuleDirs(projectRoot),
@@ -358,11 +444,9 @@ async function handleTest(args: string[]): Promise<void> {
 
 				totalTests++;
 
-				// Run schema validation against the test input
-				// For now, check if required fields are present based on the expect
 				const hasId = "id" in t.input;
-				void ("status" in t.input); // reserved for status-based test logic
-				const hasErrors = !hasId; // Simplified: missing id = fail
+				void ("status" in t.input);
+				const hasErrors = !hasId;
 
 				const actual = hasErrors ? "fail" : "pass";
 				const testPassed = actual === t.expect;
@@ -392,13 +476,15 @@ async function handleTest(args: string[]): Promise<void> {
 				console.log(`  [${icon}] ${r.rule}: ${r.scenario} (expected ${r.expected}, got ${r.actual})`);
 			}
 			console.log(`\n${passed} passed, ${failed} failed out of ${totalTests} tests.`);
-			if (failed > 0) process.exit(1);
+			if (failed > 0) return 1;
 		}
 	}
+
+	return 0;
 }
 
 // ---------------------------------------------------------------------------
-// Phase 11: Escape hatches — override/approve
+// Subcommand: override
 // ---------------------------------------------------------------------------
 
 const APPROVALS_FILE = "enforcement-approvals.json";
@@ -408,9 +494,11 @@ const APPROVAL_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
  * Request an enforcement override. Returns a challenge requiring human approval.
  *
  * orqa enforce override --rule RULE-xxx --reason "Emergency hotfix"
+ *
+ * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce override".
  */
-async function handleOverride(args: string[]): Promise<void> {
+async function handleOverride(projectRoot: string, args: string[]): Promise<void> {
 	const ruleId = getFlag(args, "--rule");
 	const reason = getFlag(args, "--reason");
 	const requestId = getFlag(args, "--request-id");
@@ -421,10 +509,8 @@ async function handleOverride(args: string[]): Promise<void> {
 		return;
 	}
 
-	const projectRoot = getRoot();
 	const approvalsPath = join(projectRoot, ".state", APPROVALS_FILE);
 
-	// If request-id provided, check if it's approved
 	if (requestId) {
 		const approvals = loadApprovals(approvalsPath);
 		const approval = approvals[requestId];
@@ -441,7 +527,6 @@ async function handleOverride(args: string[]): Promise<void> {
 			return;
 		}
 
-		// Check expiry
 		if (new Date(approval.expires_at).getTime() < Date.now()) {
 			console.error(`Override request ${requestId} has expired. Request a new one.`);
 			delete approvals[requestId];
@@ -450,11 +535,9 @@ async function handleOverride(args: string[]): Promise<void> {
 			return;
 		}
 
-		// Consume the approval (one-time use)
 		delete approvals[requestId];
 		writeApprovals(approvalsPath, approvals);
 
-		// Log the override
 		logEvent(projectRoot, createEvent({
 			mechanism: "override",
 			type: "human-approved",
@@ -475,11 +558,7 @@ async function handleOverride(args: string[]): Promise<void> {
 		return;
 	}
 
-	// Generate a 5-digit approval code
 	const approvalCode = String(Math.floor(10000 + Math.random() * 90000));
-
-	// Store as pending (not yet approved — human must run approve)
-	// We store the request but it's NOT approved until `orqa enforce approve` is called
 	const pendingPath = join(projectRoot, ".state", "enforcement-pending.json");
 	const pending = loadApprovals(pendingPath);
 	pending[approvalCode] = {
@@ -500,20 +579,25 @@ async function handleOverride(args: string[]): Promise<void> {
 	}, null, 2));
 }
 
+// ---------------------------------------------------------------------------
+// Subcommand: approve
+// ---------------------------------------------------------------------------
+
 /**
  * Approve an override request. Must be run by a human.
  *
  * orqa enforce approve 73829
+ *
+ * @param projectRoot - Absolute path to the project root.
  * @param code - The approval code from the override challenge.
  */
-async function handleApprove(code: string | undefined): Promise<void> {
+async function handleApprove(projectRoot: string, code: string | undefined): Promise<void> {
 	if (!code) {
 		console.error("Usage: orqa enforce approve <approval-code>");
 		process.exit(1);
 		return;
 	}
 
-	const projectRoot = getRoot();
 	const pendingPath = join(projectRoot, ".state", "enforcement-pending.json");
 	const approvalsPath = join(projectRoot, ".state", APPROVALS_FILE);
 
@@ -526,7 +610,6 @@ async function handleApprove(code: string | undefined): Promise<void> {
 		return;
 	}
 
-	// Check expiry
 	if (new Date(request.expires_at).getTime() < Date.now()) {
 		console.error(`Override request ${code} has expired.`);
 		delete pending[code];
@@ -535,7 +618,6 @@ async function handleApprove(code: string | undefined): Promise<void> {
 		return;
 	}
 
-	// Move from pending to approved
 	delete pending[code];
 	writeApprovals(pendingPath, pending);
 
@@ -549,45 +631,29 @@ async function handleApprove(code: string | undefined): Promise<void> {
 	console.log(`Override ${code} approved for ${request.rule}. The agent can now retry with --request-id ${code}.`);
 }
 
-function loadApprovals(filePath: string): Record<string, Record<string, string>> {
-	try {
-		if (!existsSync(filePath)) return {};
-		return JSON.parse(readFileSync(filePath, "utf-8"));
-	} catch {
-		return {};
-	}
-}
-
-function writeApprovals(filePath: string, data: Record<string, Record<string, string>>): void {
-	const dir = dirname(filePath);
-	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-	writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf-8");
-}
-
 // ---------------------------------------------------------------------------
-// Phase 12: Enforcement metrics
+// Subcommand: metrics
 // ---------------------------------------------------------------------------
 
 /**
  * Show per-rule enforcement metrics computed from the enforcement log.
  *
  * orqa enforce metrics [--json]
+ *
+ * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce metrics".
  */
-async function handleMetrics(args: string[]): Promise<void> {
-	const projectRoot = getRoot();
+async function handleMetrics(projectRoot: string, args: string[]): Promise<void> {
 	const jsonOutput = args.includes("--json");
 
 	const events = readEvents(projectRoot);
 	const responses = readResponses(projectRoot);
 
-	// Build response lookup
 	const responseMap = new Map<string, { action: string; detail: string }>();
 	for (const r of responses) {
 		responseMap.set(r.event_id, { action: r.action, detail: r.detail });
 	}
 
-	// Aggregate per-rule metrics
 	const ruleMetrics = new Map<string, {
 		fires: number;
 		fails: number;
@@ -622,7 +688,6 @@ async function handleMetrics(args: string[]): Promise<void> {
 		ruleMetrics.set(ruleId, m);
 	}
 
-	// Detect threshold violations for learning loop
 	const alerts: string[] = [];
 	for (const [ruleId, m] of ruleMetrics) {
 		if (m.fires === 0) continue;
@@ -677,6 +742,11 @@ async function handleMetrics(args: string[]): Promise<void> {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Find rule directories contributed by installed plugins.
+ *
+ * @param projectRoot - Absolute path to the project root.
+ */
 function findPluginRuleDirs(projectRoot: string): string[] {
 	const dirs: string[] = [];
 	const pluginsDir = join(projectRoot, "plugins");
@@ -689,6 +759,38 @@ function findPluginRuleDirs(projectRoot: string): string[] {
 	return dirs;
 }
 
+/**
+ * Load a JSON approvals/pending file, returning an empty object on error.
+ *
+ * @param filePath - Absolute path to the JSON file.
+ */
+function loadApprovals(filePath: string): Record<string, Record<string, string>> {
+	try {
+		if (!existsSync(filePath)) return {};
+		return JSON.parse(readFileSync(filePath, "utf-8"));
+	} catch {
+		return {};
+	}
+}
+
+/**
+ * Write a JSON approvals/pending file, creating parent directories as needed.
+ *
+ * @param filePath - Absolute path to the JSON file.
+ * @param data - The data to write.
+ */
+function writeApprovals(filePath: string, data: Record<string, Record<string, string>>): void {
+	const dir = dirname(filePath);
+	if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+	writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf-8");
+}
+
+/**
+ * Extract a named flag value from an args array (e.g. --flag value).
+ *
+ * @param args - The argument array to search.
+ * @param flag - The flag name (e.g. "--event-id").
+ */
 function getFlag(args: string[], flag: string): string | undefined {
 	const idx = args.indexOf(flag);
 	if (idx === -1 || idx + 1 >= args.length) return undefined;

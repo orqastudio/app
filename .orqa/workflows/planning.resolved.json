@@ -1,0 +1,233 @@
+{
+  "name": "planning",
+  "version": "1.0.0",
+  "stage": "plan",
+  "source_plugin": "@orqastudio/plugin-agile-planning",
+  "fills_slot": "planning-methodology",
+  "methodology": "agile-methodology",
+  "description": "Resolved plan stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-planning into the planning-methodology slot of agile-methodology.",
+  "contribution_workflow": {
+    "name": "plan-contribution",
+    "initial_state": "plan",
+    "states": {
+      "scope_analysis": { "category": "planning", "description": "Analyse scope — break down the epic into deliverable tasks, identify dependencies." },
+      "estimation": { "category": "planning", "description": "Estimate effort — size tasks, identify risks, set rough timelines." },
+      "prioritisation": { "category": "planning", "description": "Prioritise tasks — order by value, risk, and dependency constraints." },
+      "plan_finalised": { "category": "planning", "description": "Plan is finalised — tasks are scoped, estimated, and ordered." }
+    },
+    "transitions": [
+      { "from": "plan", "to": "scope_analysis", "event": "begin_scoping", "description": "Start scoping the delivery — decompose into tasks." },
+      { "from": "scope_analysis", "to": "estimation", "event": "scoping_complete", "description": "Scope is defined, begin estimation.", "guards": [{ "type": "field_check", "description": "Must have a description before estimating", "params": { "field": "description", "operator": "not_empty" } }] },
+      { "from": "estimation", "to": "prioritisation", "event": "estimation_complete", "description": "Estimation done, begin prioritisation." },
+      { "from": "prioritisation", "to": "plan_finalised", "event": "priorities_set", "description": "Priorities established, finalise the plan." },
+      { "from": "plan_finalised", "to": "implement", "event": "start_implementation", "description": "Plan approved, begin implementation." },
+      { "from": "plan_finalised", "to": "document", "event": "plan_approved", "description": "Plan approved, document decisions before implementing." },
+      { "from": "estimation", "to": "scope_analysis", "event": "rescope", "description": "Estimation revealed scope issues — return to scoping." },
+      { "from": "prioritisation", "to": "estimation", "event": "re_estimate", "description": "Priority changes require re-estimation." },
+      { "from": "plan_finalised", "to": "scope_analysis", "event": "replan", "description": "Fundamental issues found — restart planning from scoping." }
+    ]
+  },
+  "artifact_types": {
+    "planning-idea": {
+      "schema": {
+        "id_prefix": "PLAN-IDEA",
+        "id_pattern": "^PLAN-IDEA-[a-f0-9]{8}$",
+        "default_path": ".orqa/planning/ideas/",
+        "icon": "lightbulb",
+        "source_plugin": "@orqastudio/plugin-agile-planning",
+        "fields": {
+          "required": { "id": { "type": "string", "pattern": "^PLAN-IDEA-[a-f0-9]{8}$" } },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "priority": { "type": "string" },
+            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "name": "planning-idea",
+        "version": "0.1.0",
+        "artifact_type": "planning-idea",
+        "plugin": "@orqastudio/plugin-agile-planning",
+        "description": "Planning idea lifecycle state machine. Planning ideas are scoped implementation approaches derived from discovery decisions.",
+        "initial_state": "draft",
+        "states": {
+          "draft": { "category": "planning", "description": "Planning idea has been drafted but not yet evaluated." },
+          "evaluating": { "category": "planning", "description": "Planning idea is being evaluated — feasibility, effort, risks assessed.", "on_enter": [{ "type": "append_log", "params": { "message": "Planning idea evaluation started" } }] },
+          "accepted": { "category": "active", "description": "Planning idea has been accepted for implementation.", "on_enter": [{ "type": "set_field", "params": { "field": "accepted_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning idea accepted" } }] },
+          "hold": { "category": "active", "description": "Planning idea is paused, waiting for input or decisions." },
+          "rejected": { "category": "terminal", "description": "Planning idea was evaluated and rejected — not viable or out of scope.", "on_enter": [{ "type": "set_field", "params": { "field": "rejected_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning idea rejected" } }] },
+          "archived": { "category": "terminal", "description": "Planning idea is archived." }
+        },
+        "transitions": [
+          { "from": "draft", "to": "evaluating", "event": "evaluate", "description": "Begin evaluating the planning idea." },
+          { "from": "draft", "to": "accepted", "event": "accept", "description": "Fast-track directly to accepted." },
+          { "from": "evaluating", "to": "accepted", "event": "accept", "description": "Accept the planning idea for implementation." },
+          { "from": "evaluating", "to": "rejected", "event": "reject", "description": "Reject the planning idea." },
+          { "from": "evaluating", "to": "hold", "event": "pause", "description": "Pause evaluation pending input." },
+          { "from": "evaluating", "to": "draft", "event": "rework", "description": "Return to draft for revision." },
+          { "from": "hold", "to": "evaluating", "event": "resume", "description": "Resume evaluation." },
+          { "from": "hold", "to": "archived", "event": "archive", "description": "Archive from hold." },
+          { "from": "accepted", "to": "archived", "event": "archive", "description": "Archive an accepted idea (superseded or no longer needed)." },
+          { "from": "rejected", "to": "archived", "event": "archive" },
+          { "from": ["draft", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": { "draft": "draft", "evaluating": "evaluating", "accepted": "accepted", "hold": "hold", "rejected": "rejected", "archived": "archived" }
+      }
+    },
+    "planning-research": {
+      "schema": {
+        "id_prefix": "PLAN-RES",
+        "id_pattern": "^PLAN-RES-[a-f0-9]{8}$",
+        "default_path": ".orqa/planning/research/",
+        "icon": "flask-conical",
+        "source_plugin": "@orqastudio/plugin-agile-planning",
+        "fields": {
+          "required": { "id": { "type": "string", "pattern": "^PLAN-RES-[a-f0-9]{8}$" } },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "methodology": { "type": "string" },
+            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "name": "planning-research",
+        "version": "0.1.0",
+        "artifact_type": "planning-research",
+        "plugin": "@orqastudio/plugin-agile-planning",
+        "description": "Planning research lifecycle state machine. Planning research artifacts are technical spikes and implementation feasibility analyses conducted during the planning stage.",
+        "initial_state": "proposed",
+        "states": {
+          "proposed": { "category": "planning", "description": "Research spike has been proposed but not yet started." },
+          "investigating": { "category": "active", "description": "Research spike is actively being investigated.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning research investigation started" } }] },
+          "hold": { "category": "active", "description": "Research is paused, waiting for resources or decisions." },
+          "concluded": { "category": "completed", "description": "Research spike has concluded with findings.", "on_enter": [{ "type": "set_field", "params": { "field": "concluded_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning research concluded" } }] },
+          "archived": { "category": "terminal", "description": "Research is archived." }
+        },
+        "transitions": [
+          { "from": "proposed", "to": "investigating", "event": "start", "description": "Begin investigating the technical spike." },
+          { "from": "investigating", "to": "concluded", "event": "conclude", "description": "Conclude investigation with findings." },
+          { "from": "investigating", "to": "hold", "event": "pause", "description": "Pause investigation pending resources." },
+          { "from": "hold", "to": "investigating", "event": "resume", "description": "Resume investigation." },
+          { "from": "hold", "to": "archived", "event": "archive", "description": "Archive from hold." },
+          { "from": "concluded", "to": "archived", "event": "archive" },
+          { "from": ["proposed", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": { "proposed": "proposed", "investigating": "investigating", "hold": "hold", "concluded": "concluded", "archived": "archived" }
+      }
+    },
+    "planning-decision": {
+      "schema": {
+        "id_prefix": "PLAN-AD",
+        "id_pattern": "^PLAN-AD-[a-f0-9]{8}$",
+        "default_path": ".orqa/planning/decisions/",
+        "icon": "scale",
+        "source_plugin": "@orqastudio/plugin-agile-planning",
+        "fields": {
+          "required": { "id": { "type": "string", "pattern": "^PLAN-AD-[a-f0-9]{8}$" } },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "name": "planning-decision",
+        "version": "0.1.0",
+        "artifact_type": "planning-decision",
+        "plugin": "@orqastudio/plugin-agile-planning",
+        "description": "Planning decision lifecycle state machine. Planning decisions are concrete architectural and implementation decisions made during the planning stage.",
+        "initial_state": "proposed",
+        "states": {
+          "proposed": { "category": "planning", "description": "Decision has been proposed but not yet reviewed." },
+          "reviewing": { "category": "active", "description": "Decision is being reviewed — options, trade-offs, constraints analysed.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning decision review started" } }] },
+          "hold": { "category": "active", "description": "Decision is paused, waiting for input or research results." },
+          "resolved": { "category": "completed", "description": "Decision has been resolved — choice made and recorded.", "on_enter": [{ "type": "set_field", "params": { "field": "resolved_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning decision resolved" } }] },
+          "deferred": { "category": "terminal", "description": "Decision has been deferred — not enough information to decide now.", "on_enter": [{ "type": "set_field", "params": { "field": "deferred_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Planning decision deferred" } }] },
+          "archived": { "category": "terminal", "description": "Decision is archived." }
+        },
+        "transitions": [
+          { "from": "proposed", "to": "reviewing", "event": "review", "description": "Begin reviewing the decision." },
+          { "from": "proposed", "to": "resolved", "event": "resolve", "description": "Fast-track resolve (clear-cut decision)." },
+          { "from": "reviewing", "to": "resolved", "event": "resolve", "description": "Resolve the decision." },
+          { "from": "reviewing", "to": "deferred", "event": "defer", "description": "Defer the decision — insufficient information." },
+          { "from": "reviewing", "to": "hold", "event": "pause", "description": "Pause review pending input." },
+          { "from": "reviewing", "to": "proposed", "event": "rework", "description": "Return to proposed for reformulation." },
+          { "from": "hold", "to": "reviewing", "event": "resume", "description": "Resume review." },
+          { "from": "hold", "to": "archived", "event": "archive", "description": "Archive from hold." },
+          { "from": "deferred", "to": "proposed", "event": "reopen", "description": "Reopen a deferred decision with new information." },
+          { "from": "resolved", "to": "archived", "event": "archive", "description": "Archive a resolved decision." },
+          { "from": "deferred", "to": "archived", "event": "archive" },
+          { "from": ["proposed", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
+        ],
+        "migration": { "proposed": "proposed", "reviewing": "reviewing", "hold": "hold", "resolved": "resolved", "deferred": "deferred", "archived": "archived" }
+      }
+    },
+    "wireframe": {
+      "schema": {
+        "id_prefix": "WF",
+        "id_pattern": "^WF-[a-f0-9]{8}$",
+        "default_path": ".orqa/planning/wireframes/",
+        "icon": "layout",
+        "source_plugin": "@orqastudio/plugin-agile-planning",
+        "fields": {
+          "required": { "id": { "type": "string", "pattern": "^WF-[a-f0-9]{8}$" } },
+          "optional": {
+            "title": { "type": "string" },
+            "description": { "type": ["string", "null"] },
+            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+          }
+        },
+        "additional_properties": true
+      },
+      "state_machine": {
+        "name": "wireframe",
+        "version": "0.1.0",
+        "artifact_type": "wireframe",
+        "plugin": "@orqastudio/plugin-agile-planning",
+        "description": "Wireframe lifecycle state machine. Wireframes are visual specifications produced during planning.",
+        "initial_state": "captured",
+        "states": {
+          "captured": { "category": "planning", "description": "Wireframe concept has been captured but not yet started." },
+          "exploring": { "category": "planning", "description": "Wireframe is being explored — defining scope, fidelity, target screens.", "on_enter": [{ "type": "append_log", "params": { "message": "Wireframe exploration started" } }] },
+          "active": { "category": "active", "description": "Wireframe is actively being designed.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Wireframe design activated" } }] },
+          "hold": { "category": "active", "description": "Wireframe work is paused, waiting for input or decisions." },
+          "review": { "category": "review", "description": "Wireframe is being reviewed for accuracy and completeness.", "on_enter": [{ "type": "append_log", "params": { "message": "Wireframe entered review" } }] },
+          "completed": { "category": "completed", "description": "Wireframe has been reviewed and accepted.", "on_enter": [{ "type": "set_field", "params": { "field": "completed_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Wireframe completed" } }] },
+          "surpassed": { "category": "terminal", "description": "Wireframe has been superseded by a newer design." },
+          "archived": { "category": "terminal", "description": "Wireframe is archived." }
+        },
+        "transitions": [
+          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin defining wireframe scope and fidelity." },
+          { "from": "captured", "to": "active", "event": "start", "description": "Fast-track directly to active design." },
+          { "from": "exploring", "to": "active", "event": "start", "description": "Begin active wireframe design." },
+          { "from": "exploring", "to": "review", "event": "submit_for_review", "description": "Submit exploration-phase wireframe for review." },
+          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit wireframe for review." },
+          { "from": "active", "to": "hold", "event": "pause", "description": "Pause wireframe work." },
+          { "from": "hold", "to": "active", "event": "resume", "description": "Resume paused wireframe work." },
+          { "from": "review", "to": "completed", "event": "approve", "description": "Wireframe accepted." },
+          { "from": "review", "to": "active", "event": "request_changes", "description": "Further design iteration needed.", "actions": [{ "type": "append_log", "params": { "message": "Changes requested during wireframe review" } }] },
+          { "from": "completed", "to": "surpassed", "event": "surpass", "description": "Mark as superseded by newer design." },
+          { "from": "completed", "to": "archived", "event": "archive" },
+          { "from": "surpassed", "to": "archived", "event": "archive" },
+          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from any non-active state." }
+        ],
+        "migration": { "captured": "captured", "exploring": "exploring", "active": "active", "hold": "hold", "review": "review", "completed": "completed", "surpassed": "surpassed", "archived": "archived" }
+      }
+    }
+  },
+  "relationship_types": {
+    "evolves-to": { "forward": "evolves-to", "inverse": "evolved-from", "from": ["planning-idea"], "to": ["planning-research"], "semantic": "lineage" },
+    "references": { "forward": "references", "inverse": "referenced-by", "from": ["planning-decision"], "to": ["discovery-research"], "semantic": "knowledge-flow" },
+    "implements": { "forward": "implements", "inverse": "implemented-by", "from": ["planning-decision"], "to": ["epic"], "semantic": "delivery" },
+    "visualises": { "forward": "visualises", "inverse": "visualised-by", "from": ["wireframe"], "to": ["planning-decision"], "semantic": "knowledge-flow" }
+  },
+  "contribution_metadata": [{ "plugin": "@orqastudio/plugin-agile-planning", "version": "0.1.4-dev" }]
+}

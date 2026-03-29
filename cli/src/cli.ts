@@ -23,6 +23,7 @@ import { runBuildCommand } from "./commands/build.js";
 import { runSummarizeCommand } from "./commands/summarize.js";
 import { runMetricsCommand } from "./commands/metrics.js";
 import { runMigrateCommand } from "./commands/migrate.js";
+import { runEnforceCommand } from "./commands/enforce.js";
 
 /** Read version dynamically from package.json so it never drifts from the published value. */
 const require = createRequire(import.meta.url);
@@ -37,7 +38,8 @@ Usage: orqa <command> [options]
 Commands:
   install     Dev environment setup (prereqs, submodules, deps, link)
   plugin      Plugin management (install, uninstall, list, update, link)
-  check       Code quality + governance (lint, format, validate, verify, enforce, audit)
+  enforce     Run enforcement checks dispatched from installed plugin manifests
+  check       Code quality + governance (lint, format, validate, verify, audit)
   test        Run test suites (rust, app)
   build       Production build (full, rust, app)
   graph       Browse the artifact graph
@@ -82,6 +84,12 @@ async function main(): Promise<void> {
 		case "plugin":
 			await runPluginCommand(commandArgs);
 			break;
+		case "enforce": {
+			const root = (await import("./lib/root.js")).getRoot();
+			const enforceExit = await runEnforceCommand(root, commandArgs);
+			if (enforceExit !== 0) process.exit(enforceExit);
+			break;
+		}
 		case "check":
 			await runCheckCommand(commandArgs);
 			break;

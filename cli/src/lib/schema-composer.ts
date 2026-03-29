@@ -122,47 +122,49 @@ function buildStateCategoriesFromWorkflows(
     return {};
   }
 
-  // Look for a resolved workflow whose artifact_type matches this schema key.
+  // Look for a resolved workflow that covers this artifact type.
+  // Resolved workflows are JSON files. Stage files embed artifact types under
+  // artifact_types[key].state_machine.states. Per-type standalone files have
+  // artifact_type and states at the top level.
   for (const file of fs.readdirSync(workflowsDir)) {
-    if (!file.endsWith(".resolved.yaml")) continue;
+    if (!file.endsWith(".resolved.json")) continue;
     try {
       const content = fs.readFileSync(path.join(workflowsDir, file), "utf-8");
-      // Check if this workflow covers this artifact type.
-      if (!content.includes(`artifact_type: ${artifactKey}`)) continue;
+      const workflow = JSON.parse(content) as Record<string, unknown>;
 
-      // Parse state categories from the YAML by scanning state blocks.
-      // Each state has a `category:` field. Build a map of category → [statuses].
+      // Find state machines that belong to this artifact type.
+      // Stage files: artifact_types[artifactKey].state_machine.states
+      // Standalone files: artifact_type === artifactKey && states at top level
+      let states: Record<string, { category?: string }> | null = null;
+
+      const artifactTypes = workflow["artifact_types"] as Record<string, unknown> | undefined;
+      if (artifactTypes && typeof artifactTypes === "object" && artifactKey in artifactTypes) {
+        const entry = artifactTypes[artifactKey] as Record<string, unknown> | undefined;
+        const sm = entry?.["state_machine"] as Record<string, unknown> | undefined;
+        if (sm?.["states"] && typeof sm["states"] === "object") {
+          states = sm["states"] as Record<string, { category?: string }>;
+        }
+      } else if (workflow["artifact_type"] === artifactKey && workflow["states"]) {
+        states = workflow["states"] as Record<string, { category?: string }>;
+      }
+
+      if (!states) continue;
+
+      // Build a map of category → [statuses] from the state definitions.
       const categories: Record<string, string[]> = {};
-      const lines = content.split("\n");
-      let currentState: string | null = null;
-      let inStatesBlock = false;
-
-      for (const line of lines) {
-        if (line.startsWith("states:")) {
-          inStatesBlock = true;
-          continue;
+      for (const [stateName, stateDef] of Object.entries(states)) {
+        const cat = stateDef?.category;
+        if (typeof cat === "string") {
+          if (!categories[cat]) categories[cat] = [];
+          categories[cat].push(stateName);
         }
-        if (inStatesBlock && line.match(/^ {2}\w/)) {
-          const stateMatch = line.match(/^ {2}(\w+):$/);
-          if (stateMatch) {
-            currentState = stateMatch[1] ?? null;
-          }
-          const categoryMatch = line.match(/^\s+category:\s+(.+)$/);
-          if (categoryMatch && currentState) {
-            const cat = categoryMatch[1].trim();
-            if (!categories[cat]) categories[cat] = [];
-            categories[cat].push(currentState);
-          }
-        }
-        // Stop parsing after transitions block begins.
-        if (line.startsWith("transitions:")) break;
       }
 
       if (Object.keys(categories).length > 0) {
         return categories;
       }
     } catch {
-      // Skip unreadable workflow files
+      // Skip unreadable or unparseable workflow files
     }
   }
 

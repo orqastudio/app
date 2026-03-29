@@ -3,11 +3,9 @@
   "version": "0.1.4-dev",
   "displayName": "Agile Documentation",
   "description": "Documentation standards stage-definition plugin. Fills the documentation-standards contribution point of the agile-methodology workflow with structured documentation creation, review, and publishing stages.",
-  "category": "workflow",
+  "categories": ["workflow"],
   "purpose": ["workflow"],
   "stage_slot": "documentation",
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "relationships": [],

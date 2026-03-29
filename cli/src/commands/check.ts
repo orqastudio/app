@@ -85,7 +85,8 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 	}
 	if (target === "enforce") {
 		const { runEnforceCommand } = await import("./enforce.js");
-		await runEnforceCommand(args.slice(1));
+		const enforceExit = await runEnforceCommand(root, args.slice(1));
+		if (enforceExit !== 0) process.exit(enforceExit);
 		return;
 	}
 	if (target === "audit") {
@@ -95,7 +96,7 @@ export async function runCheckCommand(args: string[]): Promise<void> {
 	}
 	if (target === "schema") {
 		const { runEnforceCommand } = await import("./enforce.js");
-		await runEnforceCommand(["schema", ...args.slice(1)]);
+		await runEnforceCommand(root, ["schema", ...args.slice(1)]);
 		return;
 	}
 

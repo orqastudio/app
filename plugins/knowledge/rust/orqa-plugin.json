@@ -3,13 +3,11 @@
   "displayName": "Rust",
   "version": "0.1.4-dev",
   "description": "Base Rust development infrastructure — clippy, rustfmt, cargo test configuration and coding standards enforcement.",
-  "category": "domain-knowledge",
+  "categories": ["domain-knowledge", "enforcement-generator"],
   "purpose": [
     "domain-knowledge",
     "infrastructure"
   ],
-  "affects_schema": false,
-  "affects_enforcement": true,
   "provides": {
     "enforcement_mechanisms": [
       {

@@ -1,0 +1,30 @@
+/**
+ * \@orqastudio/cli — library exports for programmatic use.
+ *
+ * Used by connectors, plugins, and other consumers that need
+ * plugin management, validation, graph browsing, or version management
+ * without spawning a subprocess.
+ */
+// Symlink utilities
+export { createSymlink, ensureSymlink, verifySymlink, removeSymlink, } from "./lib/symlink.js";
+// Plugin management
+export { installPlugin, uninstallPlugin, listInstalledPlugins } from "./lib/installer.js";
+export { fetchRegistry } from "./lib/registry.js";
+export { readLockfile, writeLockfile } from "./lib/lockfile.js";
+export { readManifest, validateManifest } from "./lib/manifest.js";
+// Graph browsing (daemon-backed)
+export { scanArtifactGraph, queryGraph, getGraphStats } from "./lib/graph.js";
+// Daemon client
+export { callDaemonGraph, isDaemonRunning } from "./lib/daemon-client.js";
+// Version management
+export { readCanonicalVersion, writeCanonicalVersion, syncVersions, checkVersionDrift, } from "./lib/version-sync.js";
+// Repo maintenance
+export { auditLicenses, DEFAULT_LICENSE_POLICY } from "./lib/license.js";
+export { auditReadmes, generateReadmeTemplate } from "./lib/readme.js";
+// Token tracking
+export { TokenTracker, recordRequest, recordAgentComplete, recordSessionSummary, readMetricEvents, filterEvents, computeTrends, getMetricsPath, } from "./lib/token-tracker.js";
+// Budget enforcement
+export { BudgetEnforcer, estimateCost, inferModelTier, suggestDowngrade, DEFAULT_BUDGETS, COST_PER_MTOK, MODEL_TIERS, } from "./lib/budget-enforcer.js";
+// Agent spawner
+export { createAgentConfig, selectModelTier, isValidRole, modelTierLabel, serializeFindings, parseFindingsHeader, UNIVERSAL_ROLES, DEFAULT_MODEL_TIERS, DEFAULT_TOKEN_BUDGETS, ROLE_TOOL_CONSTRAINTS, } from "./lib/agent-spawner.js";
+//# sourceMappingURL=index.js.map

@@ -3,12 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Discovery Stage",
   "description": "Discovery-stage artifact types — vision, personas, pillars, pivots, ideas, research, and strategic decisions. Fills the discovery-artifacts contribution point of agile-methodology.",
-  "category": "workflow",
+  "categories": ["workflow"],
   "purpose": ["workflow"],
   "stage_slot": "discovery",
   "role": null,
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [
       {

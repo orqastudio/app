@@ -6,14 +6,14 @@
  * 2. Identifies skeletons (files with `contribution_points`) and standalone workflows
  * 3. Merges stage-plugin contributions into skeleton contribution points
  * 4. Validates the merged result against the workflow schema structure
- * 5. Writes resolved workflows to `.orqa/workflows/<name>.resolved.yaml`
+ * 5. Writes resolved workflows to `.orqa/workflows/<name>.resolved.json`
  *
  * The runtime engine reads only resolved files — never raw plugin workflows.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import { parse as parseYaml } from "yaml";
 import {
 	STATE_CATEGORIES,
 	type WorkflowDefinition,
@@ -721,13 +721,13 @@ function buildIdPatternForSchema(idPrefix: string): string {
  * Write stage-based resolved workflow files from a resolved methodology skeleton.
  *
  * For each contribution_point in the skeleton that has a `stage` field, writes
- * a `<stage>.resolved.yaml` file containing:
+ * a `<stage>.resolved.json` file containing:
  * - The contribution workflow states/transitions from the stage plugin
  * - Artifact types provided by the contributing plugin (from its manifest)
  * - Relationship types relevant to this stage (from the contributing plugin)
  *
  * This satisfies DOC-fd3edf48 section 5.1: resolved workflows should be named
- * by stage (discovery.resolved.yaml, planning.resolved.yaml, etc.).
+ * by stage (discovery.resolved.json, planning.resolved.json, etc.).
  * @param skeleton - The skeleton workflow (e.g. agile-methodology).
  * @param contributions - The matched contributions map from matchContributions.
  * @param projectRoot - Absolute path to the project root.
@@ -840,7 +840,6 @@ function writeStageResolvedWorkflows(
 			: Object.keys(stageStates)[0];
 
 		const primaryPlugin = contributingPlugins[0]?.plugin ?? "unknown";
-		const primaryVersion = contributingPlugins[0]?.version ?? "unknown";
 
 		// Build the stage resolved YAML object.
 		const stageResolved: Record<string, unknown> = {
@@ -893,23 +892,10 @@ function writeStageResolvedWorkflows(
 		};
 		const fileBaseName = STAGE_FILE_NAMES[stageName] ?? stageName;
 
-		// Write the stage file.
-		const outputPath = path.join(outputDir, `${fileBaseName}.resolved.yaml`);
-		const header = [
-			"# AUTO-GENERATED — do not edit manually.",
-			`# Stage: ${stageName} (${point.name} slot in ${skeleton.definition.name})`,
-			`# Source plugin: ${primaryPlugin} v${primaryVersion}`,
-			`# Generated at: ${new Date().toISOString()}`,
-			"",
-		].join("\n");
-
-		const yamlContent = stringifyYaml(stageResolved, {
-			lineWidth: 120,
-			defaultKeyType: "PLAIN",
-			defaultStringType: "PLAIN",
-		});
-
-		fs.writeFileSync(outputPath, header + yamlContent, "utf-8");
+		// Write the stage file as JSON.
+		const outputPath = path.join(outputDir, `${fileBaseName}.resolved.json`);
+		const jsonContent = JSON.stringify(stageResolved, null, 2);
+		fs.writeFileSync(outputPath, jsonContent, "utf-8");
 	}
 }
 
@@ -917,7 +903,7 @@ function writeStageResolvedWorkflows(
  * Build a summary of an artifact type for inclusion in stage resolved files.
  *
  * Extracts the key fields from a plugin ArtifactSchema into the format used in
- * discovery.resolved.yaml and other stage files.
+ * discovery.resolved.json and other stage files.
  * @param schema - The artifact schema from the plugin manifest.
  * @param pluginName - The name of the plugin providing this artifact type.
  * @returns A plain object summary suitable for embedding in resolved YAML.
@@ -961,7 +947,7 @@ function buildArtifactTypeSummary(schema: ArtifactSchema, pluginName: string): R
 /**
  * Build a minimal state map from statusTransitions keys.
  *
- * Without the resolved workflow YAML available, we can only create placeholder
+ * Without the resolved workflow JSON available, we can only create placeholder
  * state entries from the status names. Full state details (category, on_enter)
  * come from the workflow resolver when stage states are contributed.
  * @param statusTransitions - Map of status names to their allowed next statuses.
@@ -1033,11 +1019,11 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
 		const outputPath = path.join(
 			outputDir,
-			`${overrideResult.definition.name}.resolved.yaml`,
+			`${overrideResult.definition.name}.resolved.json`,
 		);
 
-		// Write the resolved workflow with metadata header
-		const outputContent = buildResolvedYaml(overrideResult.definition, metadata);
+		// Write the resolved workflow as JSON
+		const outputContent = buildResolvedJson(overrideResult.definition, metadata);
 		fs.writeFileSync(outputPath, outputContent, "utf-8");
 
 		result.resolved.push({
@@ -1050,7 +1036,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 
 		// Write per-stage resolved files for methodology skeletons.
 		// Methodology skeletons have contribution_points with a `stage` field.
-		// Each stage gets its own <stage>.resolved.yaml alongside the main file.
+		// Each stage gets its own <stage>.resolved.json alongside the main file.
 		const hasStages = (skeleton.definition.contribution_points ?? []).some(
 			(p) => p.stage,
 		);
@@ -1085,10 +1071,10 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
 		const outputPath = path.join(
 			outputDir,
-			`${overrideResult.definition.name}.resolved.yaml`,
+			`${overrideResult.definition.name}.resolved.json`,
 		);
 
-		const outputContent = buildResolvedYaml(overrideResult.definition, metadata);
+		const outputContent = buildResolvedJson(overrideResult.definition, metadata);
 		fs.writeFileSync(outputPath, outputContent, "utf-8");
 
 		result.standalone.push({
@@ -1108,68 +1094,31 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 // ---------------------------------------------------------------------------
 
 /**
- * Build the resolved YAML file content with metadata comment header.
+ * Build the resolved JSON file content with resolution metadata embedded.
  *
  * The output is deterministic — same input produces same output. This makes
- * the resolved files diffable in version control.
+ * the resolved files diffable in version control. JSON is native to TypeScript
+ * and requires no parser dependency at runtime.
  * @param definition - The resolved workflow definition to serialize.
- * @param metadata - The resolution metadata to include in the comment header.
- * @returns The full YAML string with comment header.
+ * @param metadata - The resolution metadata to embed in the output.
+ * @returns The full JSON string.
  */
-function buildResolvedYaml(
+function buildResolvedJson(
 	definition: WorkflowDefinition,
 	metadata: ResolutionMetadata,
 ): string {
-	const lines: string[] = [];
+	// Embed resolution metadata directly in the JSON output for traceability.
+	const output = {
+		...definition,
+		_resolved_by: "orqa plugin install",
+		_skeleton: `${metadata.skeletonPlugin} (${metadata.skeletonFile})`,
+		_resolved_at: metadata.resolvedAt,
+		...(metadata.contributions.length > 0 ? { _contributions: metadata.contributions } : {}),
+		...(metadata.unfilledPoints.length > 0 ? { _unfilled_points: metadata.unfilledPoints } : {}),
+		...(metadata.overrides.length > 0 ? { _overrides: metadata.overrides } : {}),
+	};
 
-	// Metadata comment header
-	lines.push("# AUTO-GENERATED — do not edit manually.");
-	lines.push(`# Resolved by: orqa plugin install`);
-	lines.push(`# Skeleton: ${metadata.skeletonPlugin} (${metadata.skeletonFile})`);
-	if (metadata.contributions.length > 0) {
-		lines.push("# Contributions:");
-		for (const c of metadata.contributions) {
-			lines.push(`#   - ${c.plugin} → ${c.point} (+${c.statesAdded.length} states, +${c.transitionsAdded} transitions)`);
-		}
-	}
-	if (metadata.unfilledPoints.length > 0) {
-		lines.push(`# Unfilled contribution points: ${metadata.unfilledPoints.join(", ")}`);
-	}
-	if (metadata.overrides.length > 0) {
-		lines.push("# Project overrides:");
-		for (const o of metadata.overrides) {
-			const parts: string[] = [];
-			if (o.statesAdded.length > 0) parts.push(`+${o.statesAdded.length} states`);
-			if (o.statesReplaced.length > 0) parts.push(`~${o.statesReplaced.length} replaced`);
-			if (o.transitionsAdded > 0) parts.push(`+${o.transitionsAdded} transitions`);
-			if (o.fieldsOverridden.length > 0) parts.push(`fields: ${o.fieldsOverridden.join(", ")}`);
-			lines.push(`#   - ${o.file} (${parts.join(", ")})`);
-		}
-	}
-	lines.push(`# Resolved at: ${metadata.resolvedAt}`);
-	lines.push("");
-
-	// Serialize the definition — strip contribution_points from output
-	// since they are build-time metadata, not runtime data
-	const outputDefn = { ...definition };
-	if (outputDefn.contribution_points) {
-		// Keep contribution_points in the output for traceability but mark them as resolved
-		const resolvedPoints = outputDefn.contribution_points.map((p) => ({
-			...p,
-		}));
-		outputDefn.contribution_points = resolvedPoints;
-	}
-
-	// Use yaml stringify with sorted keys for deterministic output
-	const yamlContent = stringifyYaml(outputDefn, {
-		lineWidth: 120,
-		defaultKeyType: "PLAIN",
-		defaultStringType: "PLAIN",
-	});
-
-	lines.push(yamlContent);
-
-	return lines.join("\n");
+	return JSON.stringify(output, null, 2);
 }
 
 // ---------------------------------------------------------------------------

@@ -3,12 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Agile Review",
   "description": "Review stage definition — code review, gate checks, and acceptance verification. Contributes the review-process stage to the agile-methodology workflow skeleton.",
-  "category": "workflow",
+  "categories": ["workflow"],
   "purpose": ["workflow"],
   "stage_slot": "review",
   "role": null,
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "relationships": [],

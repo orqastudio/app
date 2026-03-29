@@ -3,7 +3,7 @@
  * and triggers regeneration of the Claude Code Plugin via generator.ts.
  *
  * Watches:
- *   - .orqa/workflows/*.resolved.yaml — workflow composition output
+ *   - .orqa/workflows/*.resolved.json — workflow composition output
  *   - .orqa/learning/rules/*.md       — active rule changes
  *   - plugins/*\/orqa-plugin.json     — plugin manifest changes
  *   - .orqa/schema.composed.json      — composed schema changes

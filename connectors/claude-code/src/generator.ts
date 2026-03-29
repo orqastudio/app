@@ -125,7 +125,7 @@ interface ContextResponse {
  * Fetch active rule titles and workflow names from the daemon POST /context endpoint.
  *
  * The daemon reads .orqa/learning/rules/*.md frontmatter and
- * .orqa/workflows/*.resolved.yaml filenames. Business logic for reading .orqa/
+ * .orqa/workflows/*.resolved.json filenames. Business logic for reading .orqa/
  * lives in the daemon, not the connector.
  *
  * Falls back to empty arrays when the daemon is unavailable — CLAUDE.md

@@ -3,12 +3,10 @@
   "version": "0.1.4-dev",
   "displayName": "Agile Planning",
   "description": "Planning stage methodology — scope analysis, estimation, prioritisation, plan finalisation, and planning-stage artifact types (planning-idea, planning-research, planning-decision, wireframe). A stage-definition plugin contributing the planning-methodology point to the agile-methodology workflow.",
-  "category": "workflow",
+  "categories": ["workflow"],
   "purpose": ["workflow"],
   "stage_slot": "planning",
   "role": null,
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [
       {

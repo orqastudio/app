@@ -3,13 +3,11 @@
   "version": "0.1.4-dev",
   "displayName": "Agile Governance",
   "description": "Agile governance methodology — the skeleton workflow with contribution points, relationship vocabulary, and content (knowledge, rules, docs) about the agile model. No artifact type definitions.",
-  "category": "methodology",
+  "categories": ["methodology"],
   "purpose": [
     "methodology"
   ],
   "role": "core:methodology",
-  "affects_schema": true,
-  "affects_enforcement": false,
   "provides": {
     "schemas": [],
     "agents": [
