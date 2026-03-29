@@ -18,6 +18,9 @@ import { getRoot } from "../lib/root.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
+import { installPluginDeps, buildPlugin, copyPluginContent, readContentManifest, writeContentManifest, processAggregatedFiles, } from "../lib/content-lifecycle.js";
+import { readManifest } from "../lib/manifest.js";
+import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
 const NODE_MIN_MAJOR = 22;
 const USAGE = `
 Usage: orqa install [subcommand]
@@ -369,38 +372,123 @@ function cmdPublish(root, dryRun) {
     }
 }
 // ── Plugin Content Sync ─────────────────────────────────────────────────────
+/**
+ * Sync all enabled plugins from project.json to .orqa/.
+ *
+ * project.json is the source of truth for which plugins are active and where
+ * they live. This function processes every plugin with enabled: true in order,
+ * then runs the aggregation pipeline (schema, workflows, prompt registry).
+ * @param root - Absolute path to the project root.
+ */
 function cmdPluginSync(root) {
     console.log("Syncing plugin content to .orqa/...");
-    try {
-        execSync("orqa plugin refresh", { cwd: root, stdio: "inherit" });
+    // Read project.json — it is the source of truth for plugin configuration.
+    const projectJsonPath = path.join(root, ".orqa", "project.json");
+    if (!fs.existsSync(projectJsonPath)) {
+        console.log("  No project.json found — skipping plugin sync.");
+        return;
     }
-    catch {
-        // Refresh may fail for npm deps on fresh clone — fall back to content-only sync
-        console.log("  Full refresh failed — falling back to content-only sync...");
+    let projectJson;
+    try {
+        projectJson = readProjectJson(root);
+    }
+    catch (e) {
+        console.error(`  Could not read project.json: ${e instanceof Error ? e.message : String(e)}`);
+        return;
+    }
+    const pluginsSection = (projectJson["plugins"] ?? {});
+    const enabledPlugins = Object.entries(pluginsSection).filter(([, cfg]) => cfg.enabled === true);
+    if (enabledPlugins.length === 0) {
+        console.log("  No enabled plugins in project.json.");
+    }
+    const contentManifest = readContentManifest(root);
+    let processed = 0;
+    for (const [name, cfg] of enabledPlugins) {
+        if (!cfg.path) {
+            console.error(`  Plugin ${name}: missing path in project.json — skipping.`);
+            continue;
+        }
+        // Resolve plugin directory relative to project root if not absolute.
+        const pluginDir = path.isAbsolute(cfg.path)
+            ? cfg.path
+            : path.join(root, cfg.path);
+        const manifestFile = path.join(pluginDir, "orqa-plugin.json");
+        if (!fs.existsSync(manifestFile)) {
+            console.error(`  Plugin ${name}: no orqa-plugin.json at ${pluginDir} — skipping.`);
+            continue;
+        }
+        let pluginManifest;
         try {
-            execSync(`node -e "
-const { copyPluginContent, readContentManifest, writeContentManifest } = require('./cli/dist/lib/content-lifecycle.js');
-const { readManifest } = require('./cli/dist/lib/manifest.js');
-const { listInstalledPlugins } = require('./cli/dist/lib/installer.js');
-const root = process.cwd();
-const m = readContentManifest(root);
-for (const p of listInstalledPlugins(root)) {
-  try {
-    const pm = readManifest(p.path);
-    const result = copyPluginContent(p.path, root, pm);
-    const count = Object.keys(result.copied).length;
-    if (count > 0) { m.plugins[p.name] = { version: pm.version, installed_at: new Date().toISOString(), files: result.copied }; }
-  } catch {}
-}
-writeContentManifest(root, m);
-console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins');
-"`, { cwd: root, stdio: "inherit" });
+            pluginManifest = readManifest(pluginDir);
         }
         catch (e) {
-            console.error(`  Content sync failed: ${e instanceof Error ? e.message : String(e)}`);
+            console.error(`  Plugin ${name}: manifest read failed — ${e instanceof Error ? e.message : String(e)}`);
+            continue;
         }
+        console.log(`  Processing ${name}@${pluginManifest.version}...`);
+        // Install npm deps and build.
+        try {
+            installPluginDeps(pluginDir, pluginManifest);
+            buildPlugin(pluginDir, pluginManifest);
+        }
+        catch (e) {
+            console.error(`    Build failed: ${e instanceof Error ? e.message : String(e)}`);
+            // Continue — content copy may still succeed for pre-built plugins.
+        }
+        // Copy content to .orqa/ using three-way diff to preserve user edits.
+        let copyResult;
+        try {
+            copyResult = copyPluginContent(pluginDir, root, pluginManifest, contentManifest);
+        }
+        catch (e) {
+            console.error(`    Content copy failed: ${e instanceof Error ? e.message : String(e)}`);
+            continue;
+        }
+        // Merge: skipped files retain their existing hashes.
+        const mergedFiles = { ...copyResult.copied };
+        const existingEntry = contentManifest.plugins[name];
+        if (existingEntry) {
+            for (const skipped of copyResult.skipped) {
+                const existing = existingEntry.files[skipped.path];
+                if (existing) {
+                    mergedFiles[skipped.path] = existing;
+                }
+            }
+        }
+        // Update content manifest entry for this plugin.
+        contentManifest.plugins[name] = {
+            version: pluginManifest.version,
+            installed_at: new Date().toISOString(),
+            files: mergedFiles,
+        };
+        const copiedCount = Object.keys(copyResult.copied).length;
+        if (copiedCount > 0) {
+            console.log(`    Copied ${copiedCount} file(s) to .orqa/`);
+        }
+        if (copyResult.skipped.length > 0) {
+            console.log(`    Skipped ${copyResult.skipped.length} user-modified file(s)`);
+        }
+        // Write back plugin registration so path/version stays current.
+        const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
+        updateProjectJsonPlugin(root, name, {
+            installed: true,
+            enabled: true,
+            path: shortPath,
+            ...(cfg.config ? { config: cfg.config } : {}),
+        });
+        processed++;
     }
-    // Resolve workflows from plugin contributions
+    // Persist updated content manifest after all plugins are processed.
+    writeContentManifest(root, contentManifest);
+    console.log(`  Processed ${processed}/${enabledPlugins.length} plugin(s).`);
+    // Process aggregated files from all plugins (e.g. rules, skills compiled into single files).
+    try {
+        processAggregatedFiles(root);
+    }
+    catch (e) {
+        console.error(`  Aggregated files failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+    // Resolve workflows from plugin contributions.
     console.log("Resolving workflows...");
     try {
         runWorkflowResolution(root);
@@ -408,7 +496,7 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
     catch (e) {
         console.error(`  Workflow resolution failed: ${e instanceof Error ? e.message : String(e)}`);
     }
-    // Compose schema from all installed plugin manifests
+    // Compose schema from all enabled plugin manifests.
     console.log("Composing schema...");
     try {
         const schemaPath = writeComposedSchema(root);
@@ -417,7 +505,7 @@ console.log('  Content synced for ' + Object.keys(m.plugins).length + ' plugins'
     catch (e) {
         console.error(`  Schema composition failed: ${e instanceof Error ? e.message : String(e)}`);
     }
-    // Generate prompt registry from all installed plugin knowledge_declarations
+    // Generate prompt registry from all enabled plugin knowledge declarations.
     console.log("Generating prompt registry...");
     try {
         const registryPath = generatePromptRegistry(root);

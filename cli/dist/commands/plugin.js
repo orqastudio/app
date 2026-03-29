@@ -91,7 +91,12 @@ export async function runPluginCommand(args) {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-function readProjectJson(projectRoot) {
+/**
+ * Read and parse .orqa/project.json.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Parsed project.json as a plain object.
+ */
+export function readProjectJson(projectRoot) {
     const p = path.join(projectRoot, ".orqa", "project.json");
     const raw = fs.readFileSync(p, "utf-8");
     return JSON.parse(raw);
@@ -154,7 +159,7 @@ function resolvePluginDir(name, projectRoot) {
  * @param name - Plugin name as it appears in project.json.
  * @param updates - Fields to merge into the existing plugin entry.
  */
-function updateProjectJsonPlugin(projectRoot, name, updates) {
+export function updateProjectJsonPlugin(projectRoot, name, updates) {
     const projectJsonPath = path.join(projectRoot, ".orqa", "project.json");
     if (!fs.existsSync(projectJsonPath)) {
         throw new Error(`project.json not found at ${projectJsonPath}`);

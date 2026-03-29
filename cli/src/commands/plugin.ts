@@ -113,7 +113,12 @@ export async function runPluginCommand(args: string[]): Promise<void> {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function readProjectJson(projectRoot: string): Record<string, unknown> {
+/**
+ * Read and parse .orqa/project.json.
+ * @param projectRoot - Absolute path to the project root.
+ * @returns Parsed project.json as a plain object.
+ */
+export function readProjectJson(projectRoot: string): Record<string, unknown> {
 	const p = path.join(projectRoot, ".orqa", "project.json");
 	const raw = fs.readFileSync(p, "utf-8");
 	return JSON.parse(raw) as Record<string, unknown>;
@@ -184,7 +189,7 @@ function resolvePluginDir(name: string, projectRoot: string): string | null {
  * @param name - Plugin name as it appears in project.json.
  * @param updates - Fields to merge into the existing plugin entry.
  */
-function updateProjectJsonPlugin(
+export function updateProjectJsonPlugin(
 	projectRoot: string,
 	name: string,
 	updates: Partial<PluginProjectConfig>,
