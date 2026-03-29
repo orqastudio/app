@@ -319,7 +319,8 @@ async function installFromLocalPath(
 
 	// P5-28: read post-install action flags from the manifest.
 	const requiresSchemaRecomposition = manifest.affects_schema ?? false;
-	const requiresEnforcementRegeneration = manifest.affects_enforcement ?? false;
+	// A non-empty enforcement array means the plugin participates in enforcement generation.
+	const requiresEnforcementRegeneration = (manifest.enforcement?.length ?? 0) > 0;
 
 	return {
 		name: manifest.name,
@@ -406,7 +407,8 @@ async function installFromGitHub(
 
 		// P5-28: read post-install action flags from the manifest.
 		const requiresSchemaRecomposition = manifest.affects_schema ?? false;
-		const requiresEnforcementRegeneration = manifest.affects_enforcement ?? false;
+		// A non-empty enforcement array means the plugin participates in enforcement generation.
+		const requiresEnforcementRegeneration = (manifest.enforcement?.length ?? 0) > 0;
 
 		return {
 			name: manifest.name,

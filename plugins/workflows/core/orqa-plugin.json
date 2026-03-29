@@ -766,6 +766,16 @@
         "key": "bcfeb64e",
         "id": "KNOW-bcfeb64e",
         "label": "Rule Enforcement"
+      },
+      {
+        "key": "126aa140",
+        "id": "KNOW-126aa140",
+        "label": "Quality Check Runner"
+      },
+      {
+        "key": "1c2d005d",
+        "id": "KNOW-1c2d005d",
+        "label": "Config Generation from Rules"
       }
     ],
     "hooks": [],
@@ -1182,6 +1192,38 @@
         "priority": "P2",
         "summary": "How OrqaStudio governance rules are enforced via PreToolUse hooks: enforcement entry format, event types (file/bash), actions (block/warn/inject).",
         "content_file": "knowledge/KNOW-bcfeb64e.md"
+      },
+      {
+        "id": "quality-check-runner",
+        "tier": "on-demand",
+        "roles": [
+          "implementer",
+          "reviewer"
+        ],
+        "tags": [
+          "quality",
+          "checks",
+          "orqa-check"
+        ],
+        "priority": "P2",
+        "summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
+        "content_file": "knowledge/KNOW-126aa140.md"
+      },
+      {
+        "id": "config-generation-from-rules",
+        "tier": "on-demand",
+        "roles": [
+          "implementer"
+        ],
+        "tags": [
+          "config-generation",
+          "eslint",
+          "clippy",
+          "enforcement"
+        ],
+        "priority": "P2",
+        "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
+        "content_file": "knowledge/KNOW-1c2d005d.md"
       }
     ]
   }

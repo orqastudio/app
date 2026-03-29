@@ -329,6 +329,18 @@ export interface PluginManifest {
 	displayName?: string;
 	/** Short description of what the plugin does. */
 	description?: string;
+	/**
+	 * The plugin's role(s) in the taxonomy. A plugin can appear in multiple categories.
+	 * Valid enforcement-related values: "enforcement-generator", "enforcement-contributor".
+	 */
+	categories: string[];
+	/**
+	 * Enforcement declarations — generators register engine + config + actions + watch;
+	 * contributors register contributes_to + rules_path.
+	 */
+	enforcement?: EnforcementDeclaration[];
+	/** Other plugin names this plugin depends on (must be installed first). */
+	plugin_dependencies?: string[];
 	/** Plugins this plugin conceptually extends (implies requires). */
 	extends?: string[];
 	/** Plugin dependencies — other plugin names that must be loaded first. */
@@ -354,12 +366,6 @@ export interface PluginManifest {
 	 */
 	affects_schema?: boolean;
 	/**
-	 * True when installing this plugin must trigger enforcement config regeneration.
-	 * Plugins that provide rules or enforcement mechanisms set this to true.
-	 * Missing field defaults to false (safe default per P5-28).
-	 */
-	affects_enforcement?: boolean;
-	/**
 	 * Plugin role — declares scope and domain using the pattern `scope:domain`.
 	 *
 	 * Scope values:
@@ -374,8 +380,6 @@ export interface PluginManifest {
 	 * - `core:governance` — governance methodology (e.g. agile-methodology, kanban)
 	 */
 	role?: string;
-	/** Plugin category. Canonical enum from targets/plugin-manifests/orqa-plugin.schema.json. */
-	category?: "methodology" | "workflow" | "domain-knowledge" | "connector" | "infrastructure" | null;
 	/**
 	 * Sidecar key(s) this plugin requires at runtime.
 	 * If specified, the plugin is only loaded when a matching sidecar provider
@@ -460,26 +464,80 @@ export interface KeyCollision {
 }
 
 // ---------------------------------------------------------------------------
-// Enforcement Mechanisms
+// Enforcement Plugin Model
 // ---------------------------------------------------------------------------
 
 /**
- * An enforcement mechanism provided by a plugin.
+ * A single enforcement action declaration (check or fix).
  *
- * Rules reference mechanisms by key in their `enforcement` entries.
- * The validator checks that every referenced mechanism is registered
- * by an installed plugin.
+ * Mirrors the Rust ActionDeclaration struct in engine/plugin/src/manifest.rs.
  */
-export interface EnforcementMechanism {
-	/** Unique mechanism key (e.g. "behavioral", "pre-commit", "eslint"). */
-	key: string;
-	/** Human-readable description. */
-	description: string;
+export interface ActionDeclaration {
+	/** The binary/tool to invoke (e.g. "eslint"). */
+	command: string;
+	/** Command-line arguments passed to the binary. */
+	args: string[];
+	/** Glob pattern for the files this action operates on. */
+	files: string;
+}
+
+/**
+ * Check and fix commands for an enforcement engine.
+ *
+ * Mirrors the Rust EnforcementActions struct.
+ */
+export interface EnforcementActions {
+	/** Command for running the enforcement check. */
+	check: ActionDeclaration;
+	/** Optional command for auto-fixing violations. Not all engines support fix. */
+	fix?: ActionDeclaration;
+}
+
+/**
+ * File watch declaration for a generator — triggers regeneration on change.
+ *
+ * Mirrors the Rust WatchDeclaration struct.
+ */
+export interface WatchDeclaration {
+	/** Glob patterns (relative to project root) that the daemon watches. */
+	paths: string[];
+	/** Optional YAML frontmatter query to filter which rule files trigger this generator. */
+	filter?: string;
+	/** Action to take on file change. Currently only "regenerate" is supported. */
+	on_change: "regenerate";
+}
+
+/**
+ * Declares how a plugin participates in the enforcement pipeline.
+ *
+ * A plugin with role "generator" owns an enforcement engine (e.g. eslint, tsconfig)
+ * and produces generated config. A plugin with role "contributor" feeds rules into
+ * another plugin's generator engine via contributes_to.
+ *
+ * Mirrors the Rust EnforcementDeclaration struct in engine/plugin/src/manifest.rs.
+ */
+export interface EnforcementDeclaration {
+	/** Sub-type of enforcement participation: "generator" or "contributor". */
+	role: "generator" | "contributor";
+	/** Engine name for generators — becomes the `orqa enforce --<engine>` CLI flag. */
+	engine?: string;
+	/** Path (relative to project root) where the generated config is written. Always under `.orqa/configs/`. */
+	config_output?: string;
+	/** Path (relative to plugin root) to the generator script/binary. */
+	generator?: string;
+	/** Commands for running enforcement checks and fixes. */
+	actions?: EnforcementActions;
+	/** File paths the daemon watches to trigger regeneration. */
+	watch?: WatchDeclaration;
+	/** File patterns this engine operates on — used for `--staged` filtering. */
+	file_types?: string[];
+	/** Path (relative to plugin root) to the plugin's own rule files, installed to `.orqa/learning/rules/<domain>/`. */
+	rules_path?: string;
 	/**
-	 * Strength level (1-10). Higher = stronger enforcement.
-	 * 1 = behavioral (prompt reminder), 10 = hard block.
+	 * For contributors: identifies which generator this feeds into.
+	 * Format: `<plugin-name>:<engine>` (e.g. `@orqastudio/plugin-typescript:eslint`).
 	 */
-	strength: number;
+	contributes_to?: string;
 }
 
 /** A bundled agent artifact reference inside a plugin manifest. */
@@ -508,6 +566,53 @@ export interface WorkflowRegistration {
 	artifact_type: string;
 	/** Relative path to the workflow YAML file within the plugin directory. */
 	path: string;
+}
+
+/**
+ * A plugin-registered custom viewer for a specific artifact type.
+ *
+ * ExplorerRouter checks these declarations before falling back to the
+ * default ArtifactViewer component. Enables plugins to supply rich,
+ * type-specific rendering without modifying core.
+ */
+export interface ArtifactViewerDeclaration {
+	/** Artifact type key this viewer handles (e.g. "task", "lesson"). */
+	artifact_type: string;
+	/** View component key registered in `provides.views` (e.g. "task-kanban-view"). */
+	view_key: string;
+}
+
+/**
+ * A plugin-provided agent role definition with a system-prompt template.
+ *
+ * Core-framework provides the eight base roles. Other plugins extend or
+ * override via the `role_definitions` list. The prompt pipeline merges
+ * all installed role definitions before generating per-agent prompts (P1).
+ */
+export interface RoleDefinition {
+	/** Unique role identifier (e.g. "implementer", "reviewer"). */
+	role: string;
+	/** Mustache-style system prompt template for this role. */
+	prompt_template: string;
+	/** One-sentence description of this role's purpose. */
+	description: string;
+}
+
+/**
+ * A plugin-registered settings page declaration.
+ *
+ * SettingsCategoryNav reads these declarations from the plugin registry
+ * and renders the matching view component in the settings panel.
+ */
+export interface SettingsPageDeclaration {
+	/** Unique page identifier (e.g. "plugin-software-settings"). */
+	id: string;
+	/** Display label shown in the settings sidebar (e.g. "Software Project"). */
+	label: string;
+	/** Settings section this page belongs to (e.g. "plugins", "integrations"). */
+	section: string;
+	/** View component key registered in `provides.views`. */
+	view_key: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -592,8 +697,6 @@ export interface PluginProvides {
 	cliTools?: CliToolRegistration[];
 	/** Hooks triggered on specific events. */
 	hooks?: HookRegistration[];
-	/** Enforcement mechanisms this plugin provides. */
-	enforcement_mechanisms?: EnforcementMechanism[];
 	/** Agent artifact references bundled with this plugin. */
 	agents?: BundledAgentRef[];
 	/** Knowledge artifact references bundled with this plugin. */
@@ -614,6 +717,21 @@ export interface PluginProvides {
 	knowledge_declarations?: KnowledgeDeclaration[];
 	/** Prompt section contributions (role definitions, stage instructions, etc.). */
 	prompt_sections?: PromptSection[];
+	/**
+	 * Custom artifact viewer declarations — maps artifact types to plugin view components.
+	 * ExplorerRouter checks these before falling back to the generic ArtifactViewer.
+	 */
+	artifact_viewers?: ArtifactViewerDeclaration[];
+	/**
+	 * Role definitions with system prompt templates contributed by this plugin.
+	 * Merged across all installed plugins by the prompt generation pipeline.
+	 */
+	role_definitions?: RoleDefinition[];
+	/**
+	 * Settings page declarations — each entry registers a page in the settings panel.
+	 * SettingsCategoryNav reads these from the plugin registry.
+	 */
+	settings_pages?: SettingsPageDeclaration[];
 }
 
 // ---------------------------------------------------------------------------

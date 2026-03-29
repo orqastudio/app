@@ -8,7 +8,7 @@
     "domain-knowledge"
   ],
   "affects_schema": false,
-  "affects_enforcement": false,
+  "affects_enforcement": true,
   "extends": [
     "@orqastudio/plugin-typescript"
   ],
@@ -442,6 +442,10 @@
     "knowledge": {
       "source": "knowledge",
       "target": ".orqa/documentation/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/learning/rules"
     }
   },
   "dependencies": {

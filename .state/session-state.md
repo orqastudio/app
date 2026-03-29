@@ -19,9 +19,28 @@ Top 3 blocking gaps:
 
 4 items need user clarification (see report).
 
-### Deferred Phase Review FAILs
+### Approved Architecture Decisions (user approved 2026-03-29)
 
-~20 FAILs documented in `.state/review/deferred-fails.md` — require architectural decisions or structural work (generator infrastructure, schema-driven frontend, connector generation, prompt-registry.json).
+All 14 deferrals resolved: 13 fix-now, 1 no-change (manifest `name` field).
+
+Key decisions:
+
+- **Enforcement generator model**: full implementation approved
+- **Plugin-to-engine mapping**: core-framework (prettier, markdownlint, artifact-validation, git hooks), typescript (eslint, tsconfig), rust (clippy, rustfmt), svelte (eslint contributor)
+- **coding-standards plugin**: DELETE — rules migrate to language plugins / core-framework
+- **MCP daemon-managed**: part of always-on layer (LSP, watchers, graph, MCP)
+- **Frontend**: 7 config files deleted → runtime from pluginRegistry, 4-item PLATFORM_NAVIGATION, artifact viewer extensible, BaseRole stays enum + plugin role_definitions
+- **Workflows**: source YAML → output JSON, stage workflows embed per-type state machines
+- **categories plural**: `categories: string[]` replaces singular `category`
+
+Designs at:
+
+- `.state/design/enforcement-plugin-model.md`
+- `.state/design/frontend-runtime-derivation.md`
+
+### Implementation In Progress
+
+~27 tasks across enforcement model + frontend runtime derivation.
 
 ---
 

@@ -1,13 +1,12 @@
 //! OrqaStudio daemon — persistent background process.
 //
 //! The daemon provides the always-on infrastructure layer for an OrqaStudio
-//! project: health monitoring, file watching, LSP server lifecycle management,
-//! and the system tray icon.
+//! project: health monitoring, file watching, LSP and MCP server lifecycle
+//! management, and the system tray icon.
 //!
-//! MCP is NOT managed by the daemon. MCP uses stdio transport — each LLM client
-//! (e.g., Claude Code) spawns its own `orqa-mcp-server` process. See mcp.rs for
-//! the full rationale. LSP is managed here because it uses TCP and legitimately
-//! runs as a single shared persistent process.
+//! Both LSP and MCP servers are managed by the daemon in TCP mode. This allows
+//! a single persistent process to serve all connected clients (editors for LSP,
+//! LLM clients for MCP) without each client managing its own subprocess.
 //!
 //! Startup sequence:
 //!   1. Locate the project root (walk up from CWD until .orqa/ is found).
@@ -19,9 +18,10 @@
 //!   7. Start the health HTTP endpoint.
 //!   8. Start file watchers on .orqa/ and plugins/.
 //!   9. Start LSP server subprocess in TCP mode (graceful degradation if binary absent).
-//!  10. Block until the shutdown signal fires.
-//!  11. Stop the LSP subprocess.
-//!  12. Clean up the PID file and exit.
+//!  10. Start MCP server subprocess in TCP mode (graceful degradation if binary absent).
+//!  11. Block until the shutdown signal fires.
+//!  12. Stop the MCP and LSP subprocesses.
+//!  13. Clean up the PID file and exit.
 
 mod compact_context;
 mod config;
@@ -130,11 +130,9 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
 /// Loads DaemonConfig from orqa.toml at the project root. Spawns the health
 /// server as a background tokio task. Starts the file watcher on `.orqa/` and
 /// `plugins/` (with a warning fallback if the watcher cannot start). Starts the
-/// LSP server subprocess in TCP mode; it degrades gracefully if the binary is
-/// not yet built. Runs the polling event loop until the shutdown flag is set,
-/// then stops the LSP subprocess.
-///
-/// MCP is not started here — see mcp.rs for why MCP is client-managed.
+/// LSP and MCP server subprocesses in TCP mode; both degrade gracefully if their
+/// binaries are not yet built. Runs the polling event loop until the shutdown
+/// flag is set, then stops both subprocesses.
 ///
 /// Called from `main()` on a background thread that owns the tokio runtime.
 async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
@@ -166,32 +164,39 @@ async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
         }
     };
 
-    // Start the LSP server subprocess in TCP mode. LSP is legitimately
-    // persistent — a single process serves all connected editors over TCP.
-    // MCP is not started here; clients spawn their own orqa-mcp-server process.
+    // Start the LSP server subprocess in TCP mode. A single process serves all
+    // connected editors simultaneously.
     let mut lsp_manager = lsp::start_lsp(&project_root, daemon_port);
 
-    run_event_loop(&shutdown_flag, &mut lsp_manager).await;
+    // Start the MCP server subprocess in TCP mode. A single process serves all
+    // connected LLM clients simultaneously. Degrades gracefully if the binary
+    // is absent — LLM clients can still spawn orqa-mcp-server in stdio mode.
+    let mut mcp_manager = mcp::start_mcp(&project_root, daemon_port);
 
-    // Graceful shutdown: stop the LSP subprocess before exiting.
+    run_event_loop(&shutdown_flag, &mut lsp_manager, &mut mcp_manager).await;
+
+    // Graceful shutdown: stop both subprocesses before exiting.
+    mcp_manager.stop();
     lsp_manager.stop();
 }
 
 /// Poll the shutdown flag and yield to the tokio runtime between checks.
 ///
-/// Also polls LSP subprocess status on each iteration so crashes are logged
-/// promptly. Polling every 250 ms adds negligible overhead for a long-running
-/// background process.
+/// Polls both LSP and MCP subprocess statuses on each iteration so crashes are
+/// logged promptly. Polling every 250 ms adds negligible overhead for a
+/// long-running background process.
 async fn run_event_loop(
     shutdown_flag: &Arc<AtomicBool>,
     lsp: &mut SubprocessManager,
+    mcp: &mut SubprocessManager,
 ) {
     loop {
         if shutdown_flag.load(Ordering::SeqCst) {
             break;
         }
-        // Poll LSP subprocess status to detect crashes and log them.
+        // Poll subprocess statuses to detect crashes and log them.
         lsp.check_status();
+        mcp.check_status();
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
     }
 }

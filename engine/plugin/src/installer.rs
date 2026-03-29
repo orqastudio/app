@@ -35,7 +35,7 @@ pub struct InstallResult {
     /// True when the installed plugin declares `affects_schema: true`.
     /// The caller must trigger schema recomposition after installation.
     pub requires_schema_recomposition: bool,
-    /// True when the installed plugin declares `affects_enforcement: true`.
+    /// True when the installed plugin declares enforcement entries.
     /// The caller must trigger enforcement config regeneration after installation.
     pub requires_enforcement_regeneration: bool,
 }
@@ -47,8 +47,8 @@ pub struct InstallResult {
 /// relationship key collisions with core and other installed plugins.
 /// If collisions are detected, they are returned in the result so the caller
 /// can prompt the user to merge or rename before finalising.
-/// The result flags (requires_schema_recomposition, requires_enforcement_regeneration)
-/// indicate what post-install actions the caller must trigger.
+/// The result flag `requires_schema_recomposition` indicates what post-install
+/// actions the caller must trigger.
 pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallResult, EngineError> {
     let manifest = read_manifest(source)?;
 
@@ -89,7 +89,8 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
 
     // P5-28: read post-install action flags from the manifest.
     let requires_schema_recomposition = manifest.install_constraints.affects_schema;
-    let requires_enforcement_regeneration = manifest.install_constraints.affects_enforcement;
+    // A non-empty enforcement array means the plugin participates in enforcement generation.
+    let requires_enforcement_regeneration = !manifest.enforcement.is_empty();
 
     Ok(InstallResult {
         name: manifest.name,
@@ -177,7 +178,8 @@ fn finalize_github_install(
 
     // P5-28: read post-install action flags from the manifest.
     let requires_schema_recomposition = manifest.install_constraints.affects_schema;
-    let requires_enforcement_regeneration = manifest.install_constraints.affects_enforcement;
+    // A plugin that declares any enforcement entries requires enforcement regeneration.
+    let requires_enforcement_regeneration = !manifest.enforcement.is_empty();
 
     Ok(InstallResult {
         name: manifest.name,
@@ -405,13 +407,17 @@ mod tests {
     }
 
     /// Write a minimal plugin manifest JSON to a directory for use in tests.
+    ///
+    /// Uses `enforcement_entries` as a JSON array fragment (e.g. `""` for none,
+    /// or a serialized array of enforcement declarations) to drive the
+    /// `requires_enforcement_regeneration` flag.
     fn write_plugin_manifest(
-        dir: &std::path::Path,
+        dir: &Path,
         name: &str,
         purpose: &[&str],
         stage_slot: Option<&str>,
         affects_schema: bool,
-        affects_enforcement: bool,
+        enforcement_entries: &str,
     ) {
         let stage_slot_json = match stage_slot {
             Some(s) => format!(r#",
@@ -428,12 +434,13 @@ mod tests {
             r#"{{
   "name": "{}",
   "version": "0.1.0",
+  "categories": ["domain-knowledge"],
   "provides": {{}},
   "purpose": [{}],
   "affects_schema": {},
-  "affects_enforcement": {}{}
+  "enforcement": {}{}
 }}"#,
-            name, purpose_json, affects_schema, affects_enforcement, stage_slot_json
+            name, purpose_json, affects_schema, enforcement_entries, stage_slot_json
         );
         std::fs::write(dir.join("orqa-plugin.json"), manifest).unwrap();
     }
@@ -450,7 +457,7 @@ mod tests {
             &["methodology"],
             None,
             true,  // affects_schema
-            false, // affects_enforcement
+            "[]",  // no enforcement entries
         );
 
         let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
@@ -460,17 +467,17 @@ mod tests {
 
     #[test]
     fn install_from_path_sets_enforcement_regeneration_flag() {
-        // A plugin with affects_enforcement: true must set requires_enforcement_regeneration.
+        // A plugin with enforcement declarations must set requires_enforcement_regeneration.
         let plugin_dir = tempfile::tempdir().unwrap();
         let project_dir = tempfile::tempdir().unwrap();
 
         write_plugin_manifest(
             plugin_dir.path(),
-            "@orqastudio/plugin-coding-standards",
+            "@orqastudio/plugin-typescript",
             &["infrastructure"],
             None,
             false, // affects_schema
-            true,  // affects_enforcement
+            r#"[{"role": "generator", "engine": "eslint"}]"#,
         );
 
         let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
@@ -480,8 +487,7 @@ mod tests {
 
     #[test]
     fn install_from_path_no_flags_for_knowledge_plugin() {
-        // A knowledge plugin (affects_schema: false, affects_enforcement: false)
-        // must not set either recomposition flag.
+        // A knowledge plugin with no enforcement entries must not set either recomposition flag.
         let plugin_dir = tempfile::tempdir().unwrap();
         let project_dir = tempfile::tempdir().unwrap();
 
@@ -491,7 +497,7 @@ mod tests {
             &["knowledge"],
             None,
             false, // affects_schema
-            false, // affects_enforcement
+            "[]",  // no enforcement entries
         );
 
         let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
@@ -517,7 +523,7 @@ mod tests {
             &["methodology"],
             None,
             true,
-            false,
+            "[]",
         );
 
         // Write a project.json so scan_plugins can find it.
@@ -549,7 +555,7 @@ mod tests {
             &["methodology"],
             None,
             true,
-            false,
+            "[]",
         );
 
         let result = install_from_path(second_methodology_dir.path(), project_dir.path());
@@ -581,7 +587,7 @@ mod tests {
             &["methodology"],
             None,
             true,
-            false,
+            "[]",
         );
 
         let orqa_dir = project_dir.path().join(".orqa");
@@ -612,7 +618,7 @@ mod tests {
             &["methodology"],
             None,
             true,
-            false,
+            "[]",
         );
 
         let result = install_from_path(reinstall_dir.path(), project_dir.path());
@@ -637,7 +643,7 @@ mod tests {
             &["workflow"],
             Some("discovery"),
             true,
-            false,
+            "[]",
         );
 
         let orqa_dir = project_dir.path().join(".orqa");
@@ -668,7 +674,7 @@ mod tests {
             &["workflow"],
             Some("discovery"),
             true,
-            false,
+            "[]",
         );
 
         let result = install_from_path(conflict_dir.path(), project_dir.path());
@@ -699,7 +705,7 @@ mod tests {
             &["workflow"],
             Some("discovery"),
             true,
-            false,
+            "[]",
         );
 
         let orqa_dir = project_dir.path().join(".orqa");
@@ -730,7 +736,7 @@ mod tests {
             &["workflow"],
             Some("planning"),
             true,
-            false,
+            "[]",
         );
 
         let result = install_from_path(planning_dir.path(), project_dir.path());

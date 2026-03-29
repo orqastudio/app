@@ -19,7 +19,6 @@ capabilities:
   - shell_execute
 knowledge_composition:
   always:
-    - coding-standards
     - error-handling
   stage_triggered:
     implement:

@@ -141,6 +141,9 @@ mod tests {
             version: "0.1.0".to_string(),
             display_name: None,
             description: None,
+            categories: vec!["domain-knowledge".to_string()],
+            enforcement: vec![],
+            plugin_dependencies: vec![],
             provides: PluginProvides {
                 schemas: vec![],
                 views: vec![],
@@ -150,13 +153,15 @@ mod tests {
                 cli_tools: vec![],
                 hooks: vec![],
                 agents: vec![],
+                artifact_viewers: vec![],
+                role_definitions: vec![],
+                settings_pages: vec![],
             },
             merge_decisions: vec![],
             install_constraints: PluginInstallConstraints {
                 purpose: purpose.iter().map(|s| s.to_string()).collect(),
                 stage_slot: stage_slot.map(String::from),
                 affects_schema: false,
-                affects_enforcement: false,
             },
         }
     }

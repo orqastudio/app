@@ -18,6 +18,10 @@
     "knowledge": {
       "source": "knowledge",
       "target": ".orqa/documentation/knowledge"
+    },
+    "rules": {
+      "source": "rules",
+      "target": ".orqa/learning/rules"
     }
   },
   "dependencies": {

@@ -472,7 +472,8 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 
 	// P5-28: gate recomposition and workflow resolution on manifest flags.
 	const requiresSchemaRecomposition = pluginManifest.affects_schema ?? false;
-	const requiresEnforcementRegeneration = pluginManifest.affects_enforcement ?? false;
+	// A non-empty enforcement array means the plugin participates in enforcement generation.
+	const requiresEnforcementRegeneration = (pluginManifest.enforcement?.length ?? 0) > 0;
 
 	if (requiresSchemaRecomposition) {
 		try {

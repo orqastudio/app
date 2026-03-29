@@ -1,4 +1,10 @@
 //! MCP server state and JSON-RPC dispatch loop.
+//!
+//! Supports two transports:
+//! - **stdio** (default): reads JSON-RPC from stdin, writes to stdout — used by
+//!   LLM clients that spawn `orqa-mcp-server` directly.
+//! - **TCP**: listens on `127.0.0.1:<port>` and handles one client connection —
+//!   used when the daemon manages the MCP server as a persistent process.
 
 use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
@@ -258,7 +264,7 @@ impl McpServer {
 }
 
 // ---------------------------------------------------------------------------
-// Public entry point
+// Public entry points
 // ---------------------------------------------------------------------------
 
 /// Run the MCP server over stdio.
@@ -317,6 +323,97 @@ pub fn run_with_daemon_port(
             let out = serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
             writeln!(stdout, "{out}").map_err(McpError::Io)?;
             stdout.flush().map_err(McpError::Io)?;
+        }
+    }
+
+    Ok(())
+}
+
+/// Run the MCP server over a TCP connection, connecting to the daemon on `daemon_port`.
+///
+/// Binds to `127.0.0.1:<tcp_port>` and waits for a single client connection.
+/// Once connected, handles the MCP JSON-RPC protocol over the TCP stream until
+/// the client disconnects. The MCP protocol is unchanged — only the transport
+/// layer differs from stdio mode.
+///
+/// Used by the daemon to run a persistent MCP server that LLM clients can
+/// connect to over TCP. Multiple sequential clients are served (each client
+/// causes the server to loop back and wait for the next connection).
+///
+/// # Errors
+///
+/// Returns `McpError::Io` if the TCP listener cannot be bound or a stream
+/// read/write fails.
+pub fn run_tcp(
+    project_root: &std::path::Path,
+    tcp_port: u16,
+    daemon_port: u16,
+) -> Result<(), McpError> {
+    use std::net::TcpListener;
+
+    let addr = format!("127.0.0.1:{tcp_port}");
+    let listener = TcpListener::bind(&addr).map_err(McpError::Io)?;
+    tracing::info!(addr, "MCP server listening on TCP");
+
+    loop {
+        let (stream, peer_addr) = listener.accept().map_err(McpError::Io)?;
+        tracing::info!(peer = %peer_addr, "MCP client connected");
+        serve_tcp_client(project_root, daemon_port, stream)?;
+        tracing::info!(peer = %peer_addr, "MCP client disconnected");
+    }
+}
+
+fn serve_tcp_client(
+    project_root: &std::path::Path,
+    daemon_port: u16,
+    stream: std::net::TcpStream,
+) -> Result<(), McpError> {
+    use std::io::BufReader;
+
+    let mut server = McpServer::with_daemon_port(project_root.to_path_buf(), daemon_port);
+    let writer_stream = stream.try_clone().map_err(McpError::Io)?;
+    let reader = BufReader::new(&stream);
+    let mut writer = writer_stream;
+
+    for line in reader.lines() {
+        let line = match line {
+            Ok(l) => l,
+            Err(e) => {
+                tracing::debug!(error = %e, "TCP read error — client disconnected");
+                break;
+            }
+        };
+
+        if line.trim().is_empty() {
+            continue;
+        }
+
+        let req: JsonRpcRequest = match serde_json::from_str(&line) {
+            Ok(r) => r,
+            Err(e) => {
+                let error_resp = JsonRpcResponse {
+                    jsonrpc: "2.0".into(),
+                    id: Value::Null,
+                    result: None,
+                    error: Some(JsonRpcError {
+                        code: -32700,
+                        message: format!("parse error: {e}"),
+                        data: None,
+                    }),
+                };
+                let out = serde_json::to_string(&error_resp)
+                    .map_err(|e| McpError::Json(e.to_string()))?;
+                writeln!(writer, "{out}").map_err(McpError::Io)?;
+                writer.flush().map_err(McpError::Io)?;
+                continue;
+            }
+        };
+
+        if let Some(resp) = server.handle_request(&req) {
+            let out =
+                serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
+            writeln!(writer, "{out}").map_err(McpError::Io)?;
+            writer.flush().map_err(McpError::Io)?;
         }
     }
 

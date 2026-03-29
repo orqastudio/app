@@ -23,6 +23,16 @@ pub struct PluginManifest {
     pub display_name: Option<String>,
     /// One-line description of the plugin.
     pub description: Option<String>,
+    /// The plugin's role(s) in the taxonomy. A plugin can appear in multiple categories.
+    /// Valid enforcement-related values: "enforcement-generator", "enforcement-contributor".
+    #[serde(default)]
+    pub categories: Vec<String>,
+    /// Enforcement declarations — generators and contributors register here.
+    #[serde(default)]
+    pub enforcement: Vec<EnforcementDeclaration>,
+    /// Other plugin names this plugin depends on (must be installed first).
+    #[serde(default)]
+    pub plugin_dependencies: Vec<String>,
     /// What this plugin contributes to the engine at runtime.
     pub provides: PluginProvides,
     /// Recorded decisions from previous installations when relationship or
@@ -35,6 +45,76 @@ pub struct PluginManifest {
     /// These fields are top-level in the manifest JSON (not nested under a sub-object).
     #[serde(flatten)]
     pub install_constraints: PluginInstallConstraints,
+}
+
+/// Declares how this plugin participates in the enforcement pipeline.
+///
+/// A plugin with role "generator" owns an enforcement engine (e.g. eslint, tsconfig)
+/// and produces generated config. A plugin with role "contributor" feeds rules into
+/// another plugin's generator engine via `contributes_to`.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EnforcementDeclaration {
+    /// Sub-type of enforcement participation: "generator" or "contributor".
+    pub role: String,
+    /// Engine name for generators — becomes the `orqa enforce --<engine>` CLI flag.
+    #[serde(default)]
+    pub engine: Option<String>,
+    /// Path (relative to project root) where the generated config is written.
+    /// Always under `.orqa/configs/`. Required for generators.
+    #[serde(default)]
+    pub config_output: Option<String>,
+    /// Path (relative to plugin root) to the generator script/binary. Required for generators.
+    #[serde(default)]
+    pub generator: Option<String>,
+    /// Commands for running enforcement checks and fixes. Required for generators.
+    #[serde(default)]
+    pub actions: Option<EnforcementActions>,
+    /// File paths the daemon watches to trigger regeneration. Required for generators.
+    #[serde(default)]
+    pub watch: Option<WatchDeclaration>,
+    /// File patterns this engine operates on — used for `--staged` filtering.
+    #[serde(default)]
+    pub file_types: Vec<String>,
+    /// Path (relative to plugin root) to the plugin's own rule files,
+    /// installed to `.orqa/learning/rules/<domain>/`.
+    #[serde(default)]
+    pub rules_path: Option<String>,
+    /// For contributors: identifies which generator this feeds into.
+    /// Format: `<plugin-name>:<engine>` (e.g. `@orqastudio/plugin-typescript:eslint`).
+    #[serde(default)]
+    pub contributes_to: Option<String>,
+}
+
+/// Check and fix commands for an enforcement engine.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EnforcementActions {
+    /// Command for running the enforcement check.
+    pub check: ActionDeclaration,
+    /// Optional command for auto-fixing violations. Not all engines support fix.
+    pub fix: Option<ActionDeclaration>,
+}
+
+/// A single enforcement action (check or fix).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ActionDeclaration {
+    /// The binary/tool to invoke (e.g. "eslint").
+    pub command: String,
+    /// Command-line arguments passed to the binary.
+    pub args: Vec<String>,
+    /// Glob pattern for the files this action operates on.
+    pub files: String,
+}
+
+/// File watch declaration for a generator — triggers regeneration on change.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WatchDeclaration {
+    /// Glob patterns (relative to project root) that the daemon watches.
+    pub paths: Vec<String>,
+    /// Optional YAML frontmatter query to filter which rule files trigger this generator.
+    #[serde(default)]
+    pub filter: Option<String>,
+    /// Action to take on file change. Currently only "regenerate" is supported.
+    pub on_change: String,
 }
 
 /// A recorded decision about a key collision during plugin installation.
@@ -73,6 +153,50 @@ pub struct AgentDefinition {
     pub capabilities: Vec<String>,
 }
 
+/// A plugin-registered custom viewer for a specific artifact type.
+///
+/// ExplorerRouter checks these declarations before falling back to the
+/// default ArtifactViewer component. Enables plugins to supply rich,
+/// type-specific rendering without modifying core.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArtifactViewerDeclaration {
+    /// Artifact type key this viewer handles (e.g. "task", "lesson").
+    pub artifact_type: String,
+    /// View component key registered in `provides.views` (e.g. "task-kanban-view").
+    pub view_key: String,
+}
+
+/// A plugin-provided agent role definition with a system-prompt template.
+///
+/// Core-framework provides the eight base roles. Other plugins extend or
+/// override via the `role_definitions` list. The prompt pipeline merges
+/// all installed role definitions before generating per-agent prompts (P1).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RoleDefinition {
+    /// Unique role identifier (e.g. "implementer", "reviewer").
+    pub role: String,
+    /// Mustache-style system prompt template for this role.
+    pub prompt_template: String,
+    /// One-sentence description of this role's purpose.
+    pub description: String,
+}
+
+/// A plugin-registered settings page declaration.
+///
+/// SettingsCategoryNav reads these declarations from the plugin registry
+/// and renders the matching view component in the settings panel.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SettingsPageDeclaration {
+    /// Unique page identifier (e.g. "plugin-software-settings").
+    pub id: String,
+    /// Display label shown in the settings sidebar (e.g. "Software Project").
+    pub label: String,
+    /// Settings section this page belongs to (e.g. "plugins", "integrations").
+    pub section: String,
+    /// View component key registered in `provides.views`.
+    pub view_key: String,
+}
+
 /// What a plugin declares it provides.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PluginProvides {
@@ -99,6 +223,18 @@ pub struct PluginProvides {
     /// Agent role definitions contributed by this plugin.
     #[serde(default)]
     pub agents: Vec<AgentDefinition>,
+    /// Custom artifact viewer declarations — maps artifact types to plugin view components.
+    /// ExplorerRouter checks these before falling back to the generic ArtifactViewer.
+    #[serde(default)]
+    pub artifact_viewers: Vec<ArtifactViewerDeclaration>,
+    /// Role definitions with system prompt templates contributed by this plugin.
+    /// Merged across all installed plugins by the prompt generation pipeline.
+    #[serde(default)]
+    pub role_definitions: Vec<RoleDefinition>,
+    /// Settings page declarations — each entry registers a page in the settings panel.
+    /// SettingsCategoryNav reads these from the plugin registry.
+    #[serde(default)]
+    pub settings_pages: Vec<SettingsPageDeclaration>,
 }
 
 /// Installation constraint metadata declared in a plugin manifest.
@@ -127,12 +263,6 @@ pub struct PluginInstallConstraints {
     /// Missing field defaults to false (safe default).
     #[serde(default)]
     pub affects_schema: bool,
-
-    /// True when installing this plugin must trigger enforcement config regeneration.
-    /// Plugins that provide rules or enforcement mechanisms set this to true.
-    /// Missing field defaults to false (safe default).
-    #[serde(default)]
-    pub affects_enforcement: bool,
 }
 
 const MANIFEST_FILENAME: &str = "orqa-plugin.json";
@@ -159,7 +289,8 @@ pub fn read_manifest(plugin_dir: &Path) -> Result<PluginManifest, EngineError> {
 
 /// Validate a plugin manifest, returning a list of error messages.
 ///
-/// An empty return value means the manifest is valid.
+/// An empty return value means the manifest is valid. Checks that required
+/// fields are non-empty and that the categories array is non-empty.
 pub fn validate_manifest(manifest: &PluginManifest) -> Vec<String> {
     let mut errors = Vec::new();
 
@@ -171,6 +302,10 @@ pub fn validate_manifest(manifest: &PluginManifest) -> Vec<String> {
         errors.push("missing required field: version".to_owned());
     }
 
+    if manifest.categories.is_empty() {
+        errors.push("missing required field: categories (must be non-empty)".to_owned());
+    }
+
     errors
 }
 
@@ -180,9 +315,11 @@ mod tests {
 
     #[test]
     fn deserialize_minimal_manifest() {
+        // A minimal manifest with required fields should deserialize without error.
         let json = r#"{
             "name": "@orqastudio/test-plugin",
             "version": "0.1.0",
+            "categories": ["domain-knowledge"],
             "provides": {
                 "schemas": [],
                 "views": [],
@@ -194,16 +331,23 @@ mod tests {
         let manifest: PluginManifest = serde_json::from_str(json).unwrap();
         assert_eq!(manifest.name, "@orqastudio/test-plugin");
         assert_eq!(manifest.version, "0.1.0");
+        assert_eq!(manifest.categories, vec!["domain-knowledge"]);
         assert!(manifest.provides.cli_tools.is_empty());
+        assert!(manifest.enforcement.is_empty());
+        assert!(manifest.plugin_dependencies.is_empty());
     }
 
     #[test]
     fn validate_rejects_empty_name() {
+        // An empty name must produce a validation error.
         let manifest = PluginManifest {
             name: String::new(),
             version: "0.1.0".to_string(),
             display_name: None,
             description: None,
+            categories: vec!["domain-knowledge".to_string()],
+            enforcement: vec![],
+            plugin_dependencies: vec![],
             provides: PluginProvides {
                 schemas: vec![],
                 views: vec![],
@@ -213,6 +357,9 @@ mod tests {
                 cli_tools: vec![],
                 hooks: vec![],
                 agents: vec![],
+                artifact_viewers: vec![],
+                role_definitions: vec![],
+                settings_pages: vec![],
             },
             merge_decisions: vec![],
             install_constraints: Default::default(),
@@ -224,11 +371,15 @@ mod tests {
 
     #[test]
     fn validate_rejects_empty_version() {
+        // An empty version must produce a validation error.
         let manifest = PluginManifest {
             name: "@orqastudio/test".to_string(),
             version: String::new(),
             display_name: None,
             description: None,
+            categories: vec!["domain-knowledge".to_string()],
+            enforcement: vec![],
+            plugin_dependencies: vec![],
             provides: PluginProvides {
                 schemas: vec![],
                 views: vec![],
@@ -238,6 +389,9 @@ mod tests {
                 cli_tools: vec![],
                 hooks: vec![],
                 agents: vec![],
+                artifact_viewers: vec![],
+                role_definitions: vec![],
+                settings_pages: vec![],
             },
             merge_decisions: vec![],
             install_constraints: Default::default(),
@@ -248,10 +402,44 @@ mod tests {
     }
 
     #[test]
+    fn validate_rejects_empty_categories() {
+        // An empty categories array must produce a validation error.
+        let manifest = PluginManifest {
+            name: "@orqastudio/test".to_string(),
+            version: "0.1.0".to_string(),
+            display_name: None,
+            description: None,
+            categories: vec![],
+            enforcement: vec![],
+            plugin_dependencies: vec![],
+            provides: PluginProvides {
+                schemas: vec![],
+                views: vec![],
+                widgets: vec![],
+                relationships: vec![],
+                sidecar: None,
+                cli_tools: vec![],
+                hooks: vec![],
+                agents: vec![],
+                artifact_viewers: vec![],
+                role_definitions: vec![],
+                settings_pages: vec![],
+            },
+            merge_decisions: vec![],
+            install_constraints: Default::default(),
+        };
+
+        let errors = validate_manifest(&manifest);
+        assert!(errors.iter().any(|e| e.contains("categories")));
+    }
+
+    #[test]
     fn deserialize_manifest_with_agents() {
+        // Agent definitions should round-trip through JSON correctly.
         let json = r#"{
             "name": "@orqastudio/core-framework",
             "version": "0.1.0",
+            "categories": ["infrastructure"],
             "provides": {
                 "agents": [
                     {
@@ -278,6 +466,7 @@ mod tests {
         let json = r#"{
             "name": "@orqastudio/knowledge-plugin",
             "version": "0.1.0",
+            "categories": ["domain-knowledge"],
             "provides": {}
         }"#;
 
@@ -285,7 +474,6 @@ mod tests {
         assert!(manifest.install_constraints.purpose.is_empty());
         assert!(manifest.install_constraints.stage_slot.is_none());
         assert!(!manifest.install_constraints.affects_schema);
-        assert!(!manifest.install_constraints.affects_enforcement);
     }
 
     #[test]
@@ -295,17 +483,16 @@ mod tests {
         let json = r#"{
             "name": "@orqastudio/plugin-agile-methodology",
             "version": "0.1.0",
+            "categories": ["methodology"],
             "provides": {},
             "purpose": ["methodology"],
-            "affects_schema": true,
-            "affects_enforcement": false
+            "affects_schema": true
         }"#;
 
         let manifest: PluginManifest = serde_json::from_str(json).unwrap();
         assert_eq!(manifest.install_constraints.purpose, vec!["methodology"]);
         assert!(manifest.install_constraints.stage_slot.is_none());
         assert!(manifest.install_constraints.affects_schema);
-        assert!(!manifest.install_constraints.affects_enforcement);
     }
 
     #[test]
@@ -315,11 +502,11 @@ mod tests {
         let json = r#"{
             "name": "@orqastudio/plugin-agile-discovery",
             "version": "0.1.0",
+            "categories": ["workflow"],
             "provides": {},
             "purpose": ["workflow"],
             "stage_slot": "discovery",
-            "affects_schema": true,
-            "affects_enforcement": false
+            "affects_schema": true
         }"#;
 
         let manifest: PluginManifest = serde_json::from_str(json).unwrap();
@@ -327,5 +514,87 @@ mod tests {
             manifest.install_constraints.stage_slot.as_deref(),
             Some("discovery")
         );
+    }
+
+    #[test]
+    fn deserialize_enforcement_generator_declaration() {
+        // An enforcement-generator plugin should deserialize its enforcement block correctly.
+        let json = r#"{
+            "name": "@orqastudio/plugin-typescript",
+            "version": "0.2.0-dev",
+            "categories": ["domain-knowledge", "enforcement-generator"],
+            "enforcement": [
+                {
+                    "role": "generator",
+                    "engine": "eslint",
+                    "config_output": ".orqa/configs/eslint.config.js",
+                    "generator": "scripts/generate-eslint-config.ts",
+                    "actions": {
+                        "check": {
+                            "command": "eslint",
+                            "args": ["--config", ".orqa/configs/eslint.config.js"],
+                            "files": "*.{ts,svelte,js}"
+                        }
+                    },
+                    "watch": {
+                        "paths": [".orqa/learning/rules/**/*.md"],
+                        "on_change": "regenerate"
+                    },
+                    "file_types": ["*.ts", "*.js"],
+                    "rules_path": "rules/eslint/"
+                }
+            ],
+            "provides": {}
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.enforcement.len(), 1);
+        let decl = &manifest.enforcement[0];
+        assert_eq!(decl.role, "generator");
+        assert_eq!(decl.engine.as_deref(), Some("eslint"));
+        assert_eq!(
+            decl.config_output.as_deref(),
+            Some(".orqa/configs/eslint.config.js")
+        );
+        assert!(decl.actions.is_some());
+        let actions = decl.actions.as_ref().unwrap();
+        assert_eq!(actions.check.command, "eslint");
+        assert!(actions.fix.is_none());
+        let watch = decl.watch.as_ref().unwrap();
+        assert_eq!(watch.on_change, "regenerate");
+        assert_eq!(decl.file_types, vec!["*.ts", "*.js"]);
+    }
+
+    #[test]
+    fn deserialize_enforcement_contributor_declaration() {
+        // An enforcement-contributor plugin should deserialize its enforcement block correctly.
+        let json = r#"{
+            "name": "@orqastudio/plugin-svelte",
+            "version": "0.2.0-dev",
+            "categories": ["domain-knowledge", "enforcement-contributor"],
+            "plugin_dependencies": ["@orqastudio/plugin-typescript"],
+            "enforcement": [
+                {
+                    "role": "contributor",
+                    "contributes_to": "@orqastudio/plugin-typescript:eslint",
+                    "rules_path": "rules/eslint/"
+                }
+            ],
+            "provides": {}
+        }"#;
+
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.enforcement.len(), 1);
+        assert_eq!(
+            manifest.plugin_dependencies,
+            vec!["@orqastudio/plugin-typescript"]
+        );
+        let decl = &manifest.enforcement[0];
+        assert_eq!(decl.role, "contributor");
+        assert_eq!(
+            decl.contributes_to.as_deref(),
+            Some("@orqastudio/plugin-typescript:eslint")
+        );
+        assert_eq!(decl.rules_path.as_deref(), Some("rules/eslint/"));
     }
 }
