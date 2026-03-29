@@ -27,7 +27,11 @@
 		artifactType: string;
 	} = $props();
 
-	/** Format an ISO date string to a readable date; returns null for invalid/null values. */
+	/**
+	 * Format an ISO date string to a readable date.
+	 * @param value - Raw date value from frontmatter
+	 * @returns Formatted date string or null for invalid values
+	 */
 	function formatDate(value: unknown): string | null {
 		if (value === null || value === undefined || value === "" || value === "null") return null;
 		try {
@@ -44,7 +48,11 @@
 		}
 	}
 
-/** Returns true if a value is non-empty (not null, undefined, empty string, or "null"). */
+	/**
+	 * Returns true if a value is non-empty.
+	 * @param value - Value to check
+	 * @returns True if non-null, non-empty
+	 */
 	function isPresent(value: unknown): boolean {
 		if (value === null || value === undefined) return false;
 		if (value === "" || value === "null") return false;
@@ -52,6 +60,10 @@
 		return true;
 	}
 
+	/**
+	 * @param value - Value to coerce to string array
+	 * @returns Array of strings
+	 */
 	function asArray(value: unknown): string[] {
 		if (Array.isArray(value)) return value.map(String);
 		if (typeof value === "string") return [value];
@@ -61,6 +73,10 @@
 	/** Classify a field key into its render type. */
 	type FieldType = "date" | "link" | "chip" | "boolean" | "generic";
 
+	/**
+	 * @param key - Frontmatter field key
+	 * @returns Render type for the field
+	 */
 	function fieldType(key: string): FieldType {
 		if (DATE_FIELDS.has(key)) return "date";
 		if (LINK_FIELDS.has(key)) return "link";
@@ -69,7 +85,11 @@
 		return "generic";
 	}
 
-	/** Humanize a kebab-case field key for display. */
+	/**
+	 * Humanize a kebab-case field key for display.
+	 * @param key - Kebab-case field key
+	 * @returns Human-readable label
+	 */
 	function humanizeKey(key: string): string {
 		return key
 			.replace(/-/g, " ")
@@ -95,7 +115,11 @@
 		);
 	});
 
-	/** Short date format for the header chip (e.g. "Jan 5"). */
+	/**
+	 * Short date format for the header chip.
+	 * @param value - Raw date value
+	 * @returns Short formatted date or null
+	 */
 	function shortDate(value: unknown): string | null {
 		if (value === null || value === undefined || value === "" || value === "null") return null;
 		try {
@@ -121,19 +145,12 @@
 		isPresent(metadata["gate"]) ? asArray(metadata["gate"]).filter(Boolean) : [],
 	);
 
-	/** Capabilities (or legacy tools) with human-friendly names for display. */
-	const appTools = $derived.by(() => {
-		// Prefer capabilities field (current); fall back to tools (legacy)
-		if (isPresent(metadata["capabilities"])) {
-			return asArray(metadata["capabilities"]).map(getCapabilityLabel);
-		}
-		if (isPresent(metadata["tools"])) {
-			return asArray(metadata["tools"])
-				.filter((t) => !t.startsWith("mcp__"))
-				.map(getCapabilityLabel);
-		}
-		return [];
-	});
+	/** Capabilities with human-friendly names for display. */
+	const appTools = $derived(
+		isPresent(metadata["capabilities"])
+			? asArray(metadata["capabilities"]).map(getCapabilityLabel)
+			: [],
+	);
 
 	/**
 	 * The ordered body entries from the metadata object, skipping:

@@ -5,6 +5,7 @@
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import { PipelineStages, type PipelineStage } from "@orqastudio/svelte-components/pure";
 	import { LESSON_STAGES } from "$lib/config/lesson-stages";
+	import { ARTIFACT_TYPES } from "$lib/config/governance-types";
 
 	// Stage definitions are sourced from config — the widget drives the pipeline visual
 	// from LESSON_STAGES so the stage list is defined in one place.
@@ -15,7 +16,7 @@
 		for (const s of stageDefinitions) {
 			counts[s.key] = 0;
 		}
-		for (const node of artifactGraphSDK.byType("lesson")) {
+		for (const node of artifactGraphSDK.byType(ARTIFACT_TYPES.lesson)) {
 			const s = node.status ?? "";
 			if (s in counts) {
 				counts[s]++;

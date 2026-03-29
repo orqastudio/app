@@ -13,7 +13,7 @@
 	import { getStores } from "@orqastudio/sdk";
 	import type { TraceabilityResult } from "@orqastudio/types";
 
-	const { artifactStore, projectStore, navigationStore, artifactGraphSDK } = getStores();
+	const { artifactStore, projectStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
 
 	// ---------------------------------------------------------------------------
@@ -97,6 +97,8 @@
 	 * Strip a leading `# Heading` line and the first paragraph from body content.
 	 * Used when the title and description are shown via FrontmatterHeader so they
 	 * are not duplicated in the markdown body.
+	 * @param body - Raw markdown body content
+	 * @returns Body with leading heading and description removed
 	 */
 	function stripLeadingHeadingAndDescription(body: string): string {
 		let text = body.trimStart();
@@ -202,11 +204,17 @@
 	});
 
 	/**
-	 * Pattern matching artifact IDs like EPIC-048, TASK-001, AD-017, MS-001, etc.
-	 * These are all-uppercase prefix + hyphen + digits.
+	 * Pattern matching artifact IDs derived from registered plugin schemas.
+	 * Uses prefixes declared by plugins rather than a hardcoded list.
 	 */
-	const ARTIFACT_ID_RE = /^[A-Z]+-\d+$/;
+	const ARTIFACT_ID_RE = $derived.by(() => {
+		const prefixes = pluginRegistry.allSchemas.map((s: { idPrefix?: string }) => s.idPrefix).filter(Boolean);
+		if (prefixes.length === 0) return /^[A-Z]+-\d+$/;
+		const escaped = prefixes.map((p: string) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+		return new RegExp(`^(${escaped.join("|")})-\\d+$`);
+	});
 
+	/** @param event - Click event on rendered markdown content */
 	function handleContentClick(event: MouseEvent) {
 		const anchor = (event.target as HTMLElement).closest("a");
 		if (!anchor) return;
