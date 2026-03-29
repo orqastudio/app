@@ -101,3 +101,58 @@ coordination logic should live in the app itself?
 - How do these frameworks handle tool access constraints and role boundaries
 
   compared to OrqaStudio's current enforcement model?
+
+## Logger as Agent Event Bus
+
+The native agent framework should subscribe to logger events so orchestrator agents are notified immediately of issues:
+
+- **Enforcement log subscription:** When an enforcement check fails (eslint error, clippy warning, test failure), the log event is fired through the logger library. The agent framework subscribes to these events.
+- **Immediate notification:** Orchestrator agents don't poll for problems — they receive enforcement events as they happen.
+- **Automatic remediation:** If configured, the orchestrator can automatically spawn a fix agent to address the violation, then re-run the check to verify the fix.
+- **Closed loop:** rule violation → log event → agent notification → auto-fix → re-validate. This is the enforcement-agent integration point.
+
+The logger evolves from passive recording to an event bus. Current implementation: log-to-file + stdout. Target: subscribable log events that bridge mechanical enforcement and autonomous agent response.
+
+### Pub/Sub and Persistence Layer
+
+Investigate formalizing the logger event bus as a proper pub/sub system:
+
+- **Pub/sub model:** Publishers (enforcement engines, daemon, watchers) emit structured events. Subscribers (agent framework, UI, CLI) register interest in event categories. Decoupled — publishers don't know who's listening.
+- **Persistence layer:** Events persisted to a durable store (not just log files). Enables: replay after restart, audit trail, historical analysis, event-driven agent recovery (agent picks up where it left off after a crash).
+- **Event categories:** enforcement-violation, enforcement-pass, config-generated, watcher-triggered, agent-spawned, agent-completed, artifact-changed, graph-rebuilt — each subscribable independently.
+- **Delivery guarantees:** At-least-once for enforcement violations (agents must not miss a failure). Best-effort for informational events.
+- **Candidate technologies:** In-process channels (tokio broadcast), SQLite-backed event log, or lightweight embedded message broker. Evaluate tradeoffs between complexity and reliability.
+- **Query interface:** Agents and UI should be able to query historical events — "show me all enforcement failures in the last hour" or "what changed since my last session?"
+
+### Full Project Activity Log
+
+The event bus should capture ALL significant project activity, not just enforcement:
+
+- **Messages:** Agent-to-agent, agent-to-user, orchestrator directives
+- **Sessions:** Start, end, context window usage, model, token counts
+- **File changes:** What changed, who (human vs agent), timestamp, diff summary
+- **Git events:** Commits, branches, merges, stash, with actor attribution
+- **Enforcement events:** Check runs, pass/fail, violations, auto-fixes
+- **Plugin events:** Install, uninstall, config regeneration, watcher triggers
+- **Artifact events:** Created, modified, status transitions, relationship changes
+
+This enables:
+
+- **Session recovery:** Replay event log from last checkpoint. Agent crashes mid-task → next agent reads history and resumes. No manual session-state.md needed — the event log IS the session state.
+- **Auditing:** "Show everything that happened to this file" / "What did the implementer do last sprint?" / "Which rules are violated most?"
+- **Learning loop:** Aggregate violation patterns → surface systemic issues → inform rule creation
+- **Accountability:** Full provenance chain for every change in the project
+
+### Metrics and Observability Tooling
+
+Evaluate proper metrics libraries and open-source observability tooling rather than building from scratch:
+
+- **Embedded-first approach:** OrqaStudio is a desktop app — prefer embedded solutions over server-side infrastructure.
+- **OpenTelemetry** (Rust SDK: `opentelemetry`, `tracing-opentelemetry`) — unified metrics/traces/logs standard. Works embedded, no external server needed. Natural fit for the existing `tracing` crate usage in the daemon. Agent workflow spans (orchestrator → implementer → reviewer) map directly to distributed traces.
+- **DuckDB** — already in the codebase for semantic search. Could serve double duty as event/metrics store. Analytical queries on event history ("violation frequency by rule over last month") are exactly what DuckDB excels at.
+- **SQLite WAL** — alternative embedded event store if DuckDB is too heavy for the event log use case. Write-ahead log gives persistence + concurrent read access.
+- **In-app dashboards:** The app already has dashboard widgets — extend with enforcement/agent metrics views. No need for external Grafana.
+- **Event streaming:** For pub/sub, prefer in-process channels (tokio broadcast) for real-time + DuckDB/SQLite for persistence. NATS/Redis only if the architecture moves to multi-process or hosted.
+- **Key principle:** Don't reinvent observability. Use OpenTelemetry standards so the data format is portable.
+- **Cloud model:** OrqaStudio is a local desktop app. Cloud persistence is via Forgejo (git remote) — artifacts, event logs, and metrics data live in the git repo. No hosted SaaS service planned. Each team member runs their own local instance; Forgejo provides shared persistence and collaboration. Metrics/analytics stay local (DuckDB). Shared visibility comes from the git repo, not a central dashboard server.
+- **Future consideration:** Metrics/observability data could also be committed to the git repo as saved state (periodic snapshots), or use a hosted observability backend for teams that want centralized dashboards. Keep the local-first model as default, with sync-to-git and hosted-backend as optional modes.

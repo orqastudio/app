@@ -23,6 +23,13 @@ The connector is **not in the runtime path** — it is a live generation pipelin
 
 Connector source lives in its own top-level directory. Does NOT live inside `.orqa/`.
 
+## Connector Language Boundary
+
+- **Connector source** is Rust — calls engine crates directly (not via daemon HTTP)
+- **Connector output** is in the target tool's native language (e.g., TypeScript/JS for Claude Code)
+- Daemon manages the connector's file watcher registrations via manifest declarations
+- Code generation happens via direct Rust crate linkage — no HTTP round-trips to daemon
+
 ## What the Generated Plugin Contains
 
 | Component | Purpose |
@@ -34,7 +41,7 @@ Connector source lives in its own top-level directory. Does NOT live inside `.or
 | hooks.json | Generated from plugin hook declarations, not static |
 | Validation rules | Generated from engine's artifact validation |
 
-Git hooks and linting configs come from their respective plugins (core, coding-standards, typescript, rust) — NOT from the connector.
+Git hooks and linting configs come from their respective plugins (core, coding-standards, typescript, rust) — NOT from the connector. Those plugins generate to `.orqa/configs/`, not into the connector output.
 
 ## What the Connector Source Must NOT Contain
 
@@ -58,6 +65,30 @@ receive event → call daemon/CLI → apply response
 ```text
 
 No business logic in hooks. Timeout values in seconds (not milliseconds).
+
+## Daemon File Watcher Registry
+
+The daemon watcher is **manifest-driven** — NOT hardcoded. This enforces P1.
+
+- Daemon reads watcher declarations from **generator** plugin manifests at startup (contributor plugins do NOT register watchers)
+- Generator watches the full rule path tree — covers all contributor rule files
+- When watched files change, daemon invokes the generator, which recomposes from all contributors
+- On plugin install/uninstall, generator re-runs immediately; watch registrations update without daemon restart
+
+**What is forbidden:**
+- `WATCH_DIRS` or `RULES_DIR` hardcoded in daemon source
+- Hardcoded handler dispatch based on file path patterns
+- Contributor plugins registering their own watchers (generator owns the watcher)
+
+**Generator manifest declaration:**
+```json
+{
+  "enforcement": { "role": "generator", "tool": "eslint", "output": ".orqa/configs/eslint.config.js" },
+  "watchers": [
+    { "paths": [".orqa/learning/rules/**/*.md"], "action": "regenerate", "output": ".orqa/configs/eslint.config.js" }
+  ]
+}
+```
 
 ## Development Strategy (Target-First)
 

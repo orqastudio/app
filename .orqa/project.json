@@ -28,114 +28,19 @@
     "lessons": 84,
     "decisions": 70,
     "rules": 59,
-    "knowledge": 128,
+    "documentation": 131,
     "has_claude_config": true
   },
   "icon": null,
   "show_thinking": false,
   "custom_system_prompt": null,
-  "artifacts": [
-    {
-      "key": "learning",
-      "label": "Learning",
-      "children": [
-        {
-          "key": "rules",
-          "label": "Rules",
-          "path": ".orqa/learning/rules"
-        },
-        {
-          "key": "lessons",
-          "label": "Lessons",
-          "path": ".orqa/learning/lessons"
-        },
-        {
-          "key": "decisions",
-          "label": "Decisions",
-          "path": ".orqa/learning/decisions"
-        }
-      ]
-    },
-    {
-      "key": "principles",
-      "label": "Principles",
-      "children": [
-        {
-          "key": "pillars",
-          "label": "Pillars",
-          "path": ".orqa/discovery/pillars"
-        },
-        {
-          "key": "personas",
-          "label": "Personas",
-          "path": ".orqa/discovery/personas"
-        },
-        {
-          "key": "vision",
-          "label": "Vision",
-          "path": ".orqa/discovery/vision"
-        }
-      ]
-    },
-    {
-      "key": "implementation",
-      "label": "Implementation",
-      "children": [
-        {
-          "key": "milestones",
-          "label": "Milestones",
-          "path": ".orqa/implementation/milestones"
-        },
-        {
-          "key": "epics",
-          "label": "Epics",
-          "path": ".orqa/implementation/epics"
-        },
-        {
-          "key": "tasks",
-          "label": "Tasks",
-          "path": ".orqa/implementation/tasks"
-        },
-        {
-          "key": "ideas",
-          "label": "Ideas",
-          "path": ".orqa/implementation/ideas"
-        }
-      ]
-    },
-    {
-      "key": "discovery",
-      "label": "Discovery",
-      "children": [
-        {
-          "key": "discovery-ideas",
-          "label": "Ideas",
-          "path": ".orqa/discovery/ideas"
-        },
-        {
-          "key": "research",
-          "label": "Research",
-          "path": ".orqa/discovery/research"
-        },
-        {
-          "key": "wireframes",
-          "label": "Wireframes",
-          "path": ".orqa/discovery/wireframes"
-        }
-      ]
-    },
-    {
-      "key": "docs",
-      "label": "Documentation",
-      "path": ".orqa/documentation"
-    }
-  ],
+  "artifacts": [],
   "artifactLinks": {
     "displayModes": {},
     "colors": {}
   },
   "statuses": [],
-  "implementation": {
+  "delivery": {
     "types": []
   },
   "relationships": [],

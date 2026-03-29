@@ -27,7 +27,13 @@ The generated output goes directly where the third-party tool expects it (e.g., 
 
 The connector source lives in its own top-level directory alongside app, daemon, plugins, etc. It does NOT live inside `.orqa/`.
 
-### 8.2 What the Generated Plugin Should Contain
+### 8.2 Connector Language Boundary
+
+The connector source is **Rust** — it calls engine crates directly (not via daemon HTTP). The connector generates a plugin in the **target tool's native language** — for Claude Code, this is TypeScript/JS (`.claude/` directory contents). The language of the output is determined by what the target tool requires, not by OrqaStudio internals.
+
+**Connector source calls engine crates directly.** It does not make HTTP calls to the daemon. The daemon runs the connector's file watcher registration, but code generation itself happens via direct crate linkage.
+
+### 8.3 What the Generated Plugin Should Contain
 
 | Component | Purpose |
 | ----------- | --------- |
@@ -42,7 +48,7 @@ Git hooks and linting configs are NOT part of the generated tool-native plugin. 
 
 The generated plugin enforces workflow constraints and agent permissions. Agents get scoped permissions matching their role — preventing them from modifying files outside their artifact scope.
 
-### 8.3 What the Connector Source Should NOT Contain
+### 8.4 What the Connector Source Should NOT Contain
 
 | Anti-Pattern | Why It's Wrong | Where It Belongs |
 | ------------- | --------------- | ----------------- |
@@ -57,7 +63,43 @@ The generated plugin enforces workflow constraints and agent permissions. Agents
 
 The connector's code should be generation, translation, and file-watching logic only. If it contains `if/else` trees, scoring algorithms, or domain-specific heuristics, it has exceeded its role. The generated hooks should be thin: receive event -> call engine (via CLI/MCP) -> apply response.
 
-### 8.4 Development Strategy
+### 8.5 Daemon File Watcher Registry
+
+The daemon manages file watchers on behalf of all installed plugins. The watcher system is **manifest-driven** — the daemon does NOT hardcode which paths to watch or what to do when they change. This is a P1 constraint: plugins provide definitions, the engine provides capabilities.
+
+**How the registry works:**
+
+1. At daemon startup, read watcher declarations from all installed **generator** plugin manifests
+2. Set up OS file watches for each declared path pattern (these paths cover rules installed by all contributors)
+3. When a watched file changes, invoke the generator plugin's tool — it reads rules from ALL contributors and recomposes the output
+4. On plugin install/uninstall, update watch registrations without restarting the daemon
+
+The key point: the **generator** plugin owns the watcher, not the contributor plugins. A contributor plugin installing new rules does not need to register its own watcher — the generator already watches the rule path tree. When a contributor is installed or uninstalled, the generator re-runs immediately to recompose from current contributors.
+
+**Generator manifest declaration example:**
+
+```json
+{
+  "enforcement": { "role": "generator", "tool": "eslint", "output": ".orqa/configs/eslint.config.js" },
+  "watchers": [
+    {
+      "paths": [".orqa/learning/rules/**/*.md"],
+      "action": "regenerate",
+      "output": ".orqa/configs/eslint.config.js"
+    }
+  ]
+}
+```
+
+**What is NOT allowed:**
+
+- Hardcoded `WATCH_DIRS` constants in daemon source — all watch paths come from manifests
+- Hardcoded `RULES_DIR` constants — rule paths come from plugin manifests
+- Hardcoded handler dispatch (e.g., `if changed_path.starts_with(".orqa/") { rebuild_graph() }`) — handlers come from manifest declarations
+
+The daemon watcher exists to keep generated outputs in sync with their source data. It does not contain business logic — it reads declarations and invokes the right generator when inputs change.
+
+### 8.6 Development Strategy
 
 The connector was built using a target-first approach:
 

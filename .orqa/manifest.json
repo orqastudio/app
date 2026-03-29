@@ -76,27 +76,55 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T09:46:54.458Z",
+      "installed_at": "2026-03-29T12:29:50.264Z",
       "files": {
         ".orqa/documentation/DOC-8cf6ef38.md": {
-          "sourceHash": "3e8f6263b59f778730efaed74d112e57b27c3d555b09cc3f61aee49867fbed35",
-          "installedHash": "3e8f6263b59f778730efaed74d112e57b27c3d555b09cc3f61aee49867fbed35"
+          "sourceHash": "66812c7dfe2bd4d442699d9973c75bd8bddae748871a0f7f69ed8982accad13d",
+          "installedHash": "66812c7dfe2bd4d442699d9973c75bd8bddae748871a0f7f69ed8982accad13d"
         },
         ".orqa/documentation/DOC-af962d42.md": {
-          "sourceHash": "6386f7db32f158b0527e61c4394b5441c2d4a85c2197c9fec2b1dae82bd7bce5",
-          "installedHash": "6386f7db32f158b0527e61c4394b5441c2d4a85c2197c9fec2b1dae82bd7bce5"
+          "sourceHash": "366cc5182d2ed106eaa62ab5f194125b06dbe8560bcadca798279eec70d6f9c1",
+          "installedHash": "366cc5182d2ed106eaa62ab5f194125b06dbe8560bcadca798279eec70d6f9c1"
         },
         ".orqa/documentation/DOC-db794473.md": {
-          "sourceHash": "f535c5b72296bbaf426ad17bfee43e7765b61b0d39d3b44bf4c4c3c5bd8c990c",
-          "installedHash": "f535c5b72296bbaf426ad17bfee43e7765b61b0d39d3b44bf4c4c3c5bd8c990c"
+          "sourceHash": "bf38302e50be0ef9da63c411f2e35c435c9e92a3a003f5aca00e5ffea8a25463",
+          "installedHash": "bf38302e50be0ef9da63c411f2e35c435c9e92a3a003f5aca00e5ffea8a25463"
         },
         ".orqa/documentation/DOC-ecc181cb.md": {
-          "sourceHash": "a66ca248fbb0ce5929de615419c83dbb9afdc94e26c95c471a41a571f253487a",
-          "installedHash": "a66ca248fbb0ce5929de615419c83dbb9afdc94e26c95c471a41a571f253487a"
+          "sourceHash": "214559178a544d7e6d917596ffc31e74f41ee468f0a9fe0b9e09d12268d324a3",
+          "installedHash": "214559178a544d7e6d917596ffc31e74f41ee468f0a9fe0b9e09d12268d324a3"
         },
         ".orqa/documentation/DOC-f0a1c9b5.md": {
-          "sourceHash": "e4cdc622005741dd35582db0307f1215b2be259ebd280ea1c0753a9e8b0e4c93",
-          "installedHash": "e4cdc622005741dd35582db0307f1215b2be259ebd280ea1c0753a9e8b0e4c93"
+          "sourceHash": "84aff715305aff2dcefb8c79798fef6c330fd30fb3d7aca1c7f25ca36e226996",
+          "installedHash": "84aff715305aff2dcefb8c79798fef6c330fd30fb3d7aca1c7f25ca36e226996"
+        },
+        ".orqa/documentation/knowledge/KNOW-40be8113.md": {
+          "sourceHash": "60cb4a182b29a8a2f5958c5c192376ff0db119fa94ac062f5e8de2b6bd3f8622",
+          "installedHash": "60cb4a182b29a8a2f5958c5c192376ff0db119fa94ac062f5e8de2b6bd3f8622"
+        },
+        ".orqa/documentation/knowledge/KNOW-481059d2.md": {
+          "sourceHash": "4797ca8cf4fdfd1008dc23a5815686d72d1c04cd99f3f7139aca70e7ac5b7a4c",
+          "installedHash": "4797ca8cf4fdfd1008dc23a5815686d72d1c04cd99f3f7139aca70e7ac5b7a4c"
+        },
+        ".orqa/documentation/knowledge/KNOW-990e4f85.md": {
+          "sourceHash": "f14b51ee211687ca7361a63fd114c7d33433b9b5e65f0beea2ed33553f65c216",
+          "installedHash": "f14b51ee211687ca7361a63fd114c7d33433b9b5e65f0beea2ed33553f65c216"
+        },
+        ".orqa/documentation/knowledge/KNOW-a0947420.md": {
+          "sourceHash": "c8d582cf2b6a4ba300c969ee0a61c30b93a2fcf74240572aa2049c8a7e166151",
+          "installedHash": "c8d582cf2b6a4ba300c969ee0a61c30b93a2fcf74240572aa2049c8a7e166151"
+        },
+        ".orqa/documentation/knowledge/KNOW-afaa4e88.md": {
+          "sourceHash": "17f815ccde79f5a59bfe7c74da0aea6f4449da9e44fc622d936c07499de35c19",
+          "installedHash": "17f815ccde79f5a59bfe7c74da0aea6f4449da9e44fc622d936c07499de35c19"
+        },
+        ".orqa/documentation/knowledge/KNOW-ea78c8e4.md": {
+          "sourceHash": "ee07887084258e9e22f5990a34d1d519f764f8ec43dd97623310871adeeec9ef",
+          "installedHash": "ee07887084258e9e22f5990a34d1d519f764f8ec43dd97623310871adeeec9ef"
+        },
+        ".orqa/documentation/knowledge/KNOW-ecc181cb.md": {
+          "sourceHash": "a7f97c166793d6350f5a52233d561b6621ed0e3274f7cfcb826c739455a2aede",
+          "installedHash": "a7f97c166793d6350f5a52233d561b6621ed0e3274f7cfcb826c739455a2aede"
         },
         ".orqa/learning/rules/RULE-f3dca71e.md": {
           "sourceHash": "d421c0317e769a5408d573cdd70783f32b475230bb3b7e447b0cb99ab8d02126",
@@ -106,8 +134,16 @@
     },
     "@orqastudio/plugin-coding-standards": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T09:46:55.447Z",
+      "installed_at": "2026-03-29T12:29:50.250Z",
       "files": {
+        ".orqa/documentation/knowledge/KNOW-126aa140.md": {
+          "sourceHash": "8ba03f5b78bb6e21fef40e741d6bba4481f34b2f85d470e0ffe54cf3c115ebd4",
+          "installedHash": "8ba03f5b78bb6e21fef40e741d6bba4481f34b2f85d470e0ffe54cf3c115ebd4"
+        },
+        ".orqa/documentation/knowledge/KNOW-1c2d005d.md": {
+          "sourceHash": "24f6c985873237c935e940c829038ed7c6beef22cfde321c4c1227bc792b4fee",
+          "installedHash": "24f6c985873237c935e940c829038ed7c6beef22cfde321c4c1227bc792b4fee"
+        },
         ".orqa/learning/rules/RULE-216e112e.md": {
           "sourceHash": "c214f16d2611fbbc8c3b8e2f22dd52b7777a6b1bcf700b5d86bf0ab894a9cd8d",
           "installedHash": "c214f16d2611fbbc8c3b8e2f22dd52b7777a6b1bcf700b5d86bf0ab894a9cd8d"
@@ -278,11 +314,35 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T09:46:55.515Z",
+      "installed_at": "2026-03-29T12:29:50.316Z",
       "files": {
+        ".claude/agents/AGENT-065a25cc.md": {
+          "sourceHash": "3f0dfc9b101bb322856c1e38b9fea4683664dacd43277269fb49eeb3597618d7",
+          "installedHash": "3f0dfc9b101bb322856c1e38b9fea4683664dacd43277269fb49eeb3597618d7"
+        },
+        ".claude/agents/AGENT-26e5029d.md": {
+          "sourceHash": "dd733ac9e9752a5b97162a7e79491069757ce0a2a7ccc5a02d54bbb78ffdd1be",
+          "installedHash": "dd733ac9e9752a5b97162a7e79491069757ce0a2a7ccc5a02d54bbb78ffdd1be"
+        },
         ".orqa/documentation/DOC-2372ed36.md": {
-          "sourceHash": "aeb44211c82b0e7d72b531c9669a7b358892036e29a133ca75026c34bf65bd7e",
-          "installedHash": "aeb44211c82b0e7d72b531c9669a7b358892036e29a133ca75026c34bf65bd7e"
+          "sourceHash": "18c4cf6093ac8ae6507bb0cd6e1856c4dcdb58542a76602043ea0c7bbdc2c70c",
+          "installedHash": "18c4cf6093ac8ae6507bb0cd6e1856c4dcdb58542a76602043ea0c7bbdc2c70c"
+        },
+        ".orqa/documentation/knowledge/KNOW-694ff7cb.md": {
+          "sourceHash": "6db77e6d354554f2896be5558ce9b04881ef85e55e6eebe5372701cf05a52ae0",
+          "installedHash": "6db77e6d354554f2896be5558ce9b04881ef85e55e6eebe5372701cf05a52ae0"
+        },
+        ".orqa/documentation/knowledge/KNOW-d4095bd9.md": {
+          "sourceHash": "e8999f5796692971361f4da6c85a0459568db1268f0d3684b06de81a4939eaf7",
+          "installedHash": "e8999f5796692971361f4da6c85a0459568db1268f0d3684b06de81a4939eaf7"
+        },
+        ".orqa/documentation/knowledge/KNOW-ea7898e4.md": {
+          "sourceHash": "3919aae3fbdc9e6375b65188ee6d7a90cec4fdacf26cdbc2262d18aa6be14fc6",
+          "installedHash": "3919aae3fbdc9e6375b65188ee6d7a90cec4fdacf26cdbc2262d18aa6be14fc6"
+        },
+        ".orqa/documentation/knowledge/KNOW-f7d03a2c.md": {
+          "sourceHash": "249bbe0ded8760eeb4e77025cd98d62fd53eae1b7e26e16b74d52b19324582fd",
+          "installedHash": "249bbe0ded8760eeb4e77025cd98d62fd53eae1b7e26e16b74d52b19324582fd"
         }
       }
     },
@@ -381,8 +441,25 @@
     },
     "@orqastudio/plugin-plugin-dev": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-03-26T09:46:55.481Z",
-      "files": {}
+      "installed_at": "2026-03-29T12:29:50.269Z",
+      "files": {
+        ".claude/agents/AGENT-ce86fb50.md": {
+          "sourceHash": "dfaec7f0f1a194de3c2ffc5fae48f2075ce3a8f541d38f6746a39f3244c5ebf2",
+          "installedHash": "dfaec7f0f1a194de3c2ffc5fae48f2075ce3a8f541d38f6746a39f3244c5ebf2"
+        },
+        ".orqa/documentation/knowledge/KNOW-1b7fa054.md": {
+          "sourceHash": "849f8843babfdfac3b2af8fdd959d408e299edb99b75dad27497a516552f39c0",
+          "installedHash": "849f8843babfdfac3b2af8fdd959d408e299edb99b75dad27497a516552f39c0"
+        },
+        ".orqa/documentation/knowledge/KNOW-2f38309a.md": {
+          "sourceHash": "4bbcb4b4398ce1d01d95efb7fc3d5099b7b87aa36e65d7bf7bd4da349e488d31",
+          "installedHash": "4bbcb4b4398ce1d01d95efb7fc3d5099b7b87aa36e65d7bf7bd4da349e488d31"
+        },
+        ".orqa/documentation/knowledge/KNOW-e6fee7a0.md": {
+          "sourceHash": "fe5680a48f44881702b32c49d9e3a378ddc16b910fd13af2736df82daee5c1f3",
+          "installedHash": "fe5680a48f44881702b32c49d9e3a378ddc16b910fd13af2736df82daee5c1f3"
+        }
+      }
     },
     "@orqastudio/plugin-agile-discovery": {
       "version": "0.1.4-dev",
