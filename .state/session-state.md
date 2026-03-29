@@ -46,25 +46,51 @@ Designs at:
 
 **Wave 3** (`c16d91f8b`): Plugin registry runtime derivation (7 static configs deleted), PLATFORM_NAVIGATION reduced to 4 fixed items, artifact viewer extensibility, dynamic settings pages, connector generation matches all targets (10/10), tray LSP/MCP status, RoadmapView epic drill-down, core-framework role_definitions
 
-### Remaining Work for Next Session
+### Completed in Final Round (commit f72210333)
 
-1. **Generator scripts** — manifest blocks and watcher registry are in place, but actual generator scripts (eslint, tsconfig, clippy, rustfmt, prettier, markdownlint) haven't been written yet. These read rule frontmatter and produce self-contained config files.
-
-2. **JSON schema if/then validation** — category-to-config-block enforcement in orqa-plugin.schema.json not yet implemented.
-
-3. **prompt-registry.json generation** — needs to be generated from plugin knowledge_declarations at install time, not hand-maintained.
-
-4. **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages fields in schema declarations need actual values in plugin manifests for runtime derivation to produce meaningful output.
-
-5. **Remove cross-package ESLint exports** — plugins/knowledge/typescript/src/eslint/ and svelte/src/eslint/ still export Node.js modules. Replace with generators once generator scripts exist.
-
-6. **GateCondition enum** — still hardcoded in engine/workflow/src/gates.rs. Needs string-based dispatch.
-
-7. **TrackerConfig verification_patterns** — hardcoded in engine/workflow/src/tracker.rs.
-
-8. **Complete target plugin.json** — targets/claude-code-plugin/plugin/.claude-plugin/plugin.json needs commands/hooks/skills/resources.
+Items 1-8 from the previous "Remaining Work" list are ALL done:
+- Generator scripts written (6), enforcement blocks added to manifests
+- JSON schema if/then validation implemented
+- prompt-registry.json generation from knowledge_declarations
+- Cross-package ESLint exports deleted (P1 violation removed)
+- GateCondition: Custom(String) variant, TrackerConfig: configurable patterns
+- Target plugin.json completed
 
 ---
+
+### REMAINING TASKS — DO NOT DELETE UNTIL USER SIGNS OFF
+
+These items remain from the migration and architecture review. Each must be individually verified and signed off before removal.
+
+**Infrastructure (fix first):**
+
+1. [ ] **Daemon runtime on Windows** — MCP/LSP spawn visible command windows (need CREATE_NO_WINDOW), system tray not appearing, daemon offline in app, no artifacts picked up, debug page not opening. IN PROGRESS.
+
+**Migration completion:**
+
+2. [ ] **Phase 10.4.1: Remove targets/ directory** — once all generation pipelines match their targets. Most now do. Requires final validation pass.
+
+**Architecture doc updates:**
+
+3. [ ] **DOC-fd3edf48** — update for per-type workflow embedding in stage files (29 YAML → 8 JSON)
+4. [ ] **DOC-762facfb** — remove githooks plugin reference (plugin deleted)
+
+**orqa install / orqa dev wiring:**
+
+5. [ ] **Generator invocation at install time** — `orqa install` should call each enforcement generator to produce `.orqa/configs/` files
+6. [ ] **System tray in orqa install/dev** — daemon startup wired into these commands
+
+**Frontend quality:**
+
+7. [ ] **Svelte-check pre-existing errors** — 23 errors in libs/svelte-components dist (lucide icon imports)
+8. [ ] **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages fields need actual values in plugin manifests for runtime derivation to work
+9. [ ] **Graph visualiser exposure to plugins** — not in window.__orqa globals map
+10. [ ] **Plugin developer documentation** — no README for the plugin view contract (window.__orqa shape, mount signature, vite externals)
+11. [ ] **ArtifactLink / MarkdownRenderer to shared library** — still private to app, violates dog-food principle
+
+**App UI (address after infrastructure):**
+
+12. [ ] **Iconography and layout issues** — user-reported, details TBD after daemon is working
 
 ---
 

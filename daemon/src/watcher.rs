@@ -426,6 +426,31 @@ fn matches_any_pattern(path: &Path, root: &Path, patterns: &[String]) -> bool {
     false
 }
 
+/// Log the result of a completed generator run.
+///
+/// Emits an info log on success and a warn log with the exit code and captured
+/// stderr on failure. Separated from `invoke_generator` to keep that function
+/// within clippy's line-count limit.
+fn log_generator_result(reg: &WatchRegistration, result: std::io::Result<std::process::Output>) {
+    match result {
+        Ok(output) => {
+            if output.status.success() {
+                info!(subsystem = "watcher", plugin = %reg.plugin_name,
+                    engine = %reg.engine, "[watcher] generator completed successfully");
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                warn!(subsystem = "watcher", plugin = %reg.plugin_name,
+                    engine = %reg.engine, exit_code = ?output.status.code(),
+                    stderr = %stderr, "[watcher] generator exited with error");
+            }
+        }
+        Err(e) => {
+            warn!(subsystem = "watcher", plugin = %reg.plugin_name,
+                engine = %reg.engine, error = %e, "[watcher] failed to spawn generator");
+        }
+    }
+}
+
 /// Invoke the generator script for a matching watch registration.
 ///
 /// Spawns the generator as a subprocess with the standard argument set defined
@@ -441,57 +466,28 @@ fn matches_any_pattern(path: &Path, root: &Path, patterns: &[String]) -> bool {
 fn invoke_generator(reg: &WatchRegistration, root: &Path) {
     let rules_dir = root.join(".orqa/learning/rules");
 
-    info!(
-        subsystem = "watcher",
-        plugin = %reg.plugin_name,
-        engine = %reg.engine,
-        generator = %reg.generator_path.display(),
-        "[watcher] invoking generator"
-    );
+    info!(subsystem = "watcher", plugin = %reg.plugin_name, engine = %reg.engine,
+        generator = %reg.generator_path.display(), "[watcher] invoking generator");
 
     let mut cmd = Command::new(&reg.generator_path);
-    cmd.arg("--project-root")
-        .arg(root)
-        .arg("--output")
-        .arg(&reg.config_output)
-        .arg("--rules-dir")
-        .arg(&rules_dir);
+    cmd.arg("--project-root").arg(root)
+        .arg("--output").arg(&reg.config_output)
+        .arg("--rules-dir").arg(&rules_dir);
 
     if let Some(filter) = &reg.filter {
         cmd.arg("--filter").arg(filter);
     }
 
-    match cmd.output() {
-        Ok(output) => {
-            if output.status.success() {
-                info!(
-                    subsystem = "watcher",
-                    plugin = %reg.plugin_name,
-                    engine = %reg.engine,
-                    "[watcher] generator completed successfully"
-                );
-            } else {
-                let stderr = String::from_utf8_lossy(&output.stderr);
-                warn!(
-                    subsystem = "watcher",
-                    plugin = %reg.plugin_name,
-                    engine = %reg.engine,
-                    exit_code = ?output.status.code(),
-                    stderr = %stderr,
-                    "[watcher] generator exited with error"
-                );
-            }
-        }
-        Err(e) => {
-            warn!(
-                subsystem = "watcher",
-                plugin = %reg.plugin_name,
-                engine = %reg.engine,
-                error = %e,
-                "[watcher] failed to spawn generator"
-            );
-        }
+    // On Windows, CREATE_NO_WINDOW prevents the generator subprocess from
+    // opening a visible console window when it runs in the background.
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
     }
+
+    log_generator_result(reg, cmd.output());
 }
 
 /// Return `true` if `path` is located under `root/subdir`.

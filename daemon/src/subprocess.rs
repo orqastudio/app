@@ -141,16 +141,27 @@ impl SubprocessManager {
             "spawning subprocess"
         );
 
-        let child = Command::new(&binary_path)
-            .arg(project_root)
+        let mut cmd = Command::new(&binary_path);
+        cmd.arg(project_root)
             .args(&self.args)
             // Stdin is null — subprocesses do not expect interactive input from
-            // the daemon. Stdout is discarded; stderr is inherited so subprocess
-            // logs appear in the daemon's stderr stream.
+            // the daemon. Stdout is discarded; stderr is captured so subprocess
+            // logs are available without opening a visible console window.
             .stdin(std::process::Stdio::null())
             .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::inherit())
-            .spawn()?;
+            .stderr(std::process::Stdio::piped());
+
+        // On Windows, CREATE_NO_WINDOW prevents the child process from opening
+        // a visible console window. Without this flag, every LSP/MCP subprocess
+        // pops up a black cmd.exe window on the desktop.
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+
+        let child = cmd.spawn()?;
 
         info!(
             name = %self.name,
@@ -231,13 +242,24 @@ impl SubprocessManager {
 /// Spawns the binary with `--help`, immediately kills it, and returns whether
 /// the spawn succeeded. This is the most portable cross-platform approach to
 /// PATH resolution without pulling in a `which` crate.
+///
+/// On Windows, CREATE_NO_WINDOW is set so the probe spawn does not flash a
+/// console window.
 fn which_binary(binary_name: &str) -> bool {
-    Command::new(binary_name)
-        .arg("--help")
+    let mut cmd = Command::new(binary_name);
+    cmd.arg("--help")
         .stdin(std::process::Stdio::null())
         .stdout(std::process::Stdio::null())
-        .stderr(std::process::Stdio::null())
-        .spawn()
+        .stderr(std::process::Stdio::null());
+
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        cmd.creation_flags(CREATE_NO_WINDOW);
+    }
+
+    cmd.spawn()
         .map(|mut child| {
             let _ = child.kill();
             let _ = child.wait();

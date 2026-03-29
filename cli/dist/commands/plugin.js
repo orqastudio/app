@@ -395,25 +395,19 @@ async function cmdInstallFirstParty(pluginDir, projectRoot) {
     console.log(`  Registered in .orqa/project.json`);
     // Run install lifecycle hook
     runLifecycleHook(pluginDir, pluginManifest, "install");
-    // P5-28: gate recomposition and workflow resolution on manifest flags.
-    const requiresSchemaRecomposition = pluginManifest.affects_schema ?? false;
-    // A non-empty enforcement array means the plugin participates in enforcement generation.
-    const requiresEnforcementRegeneration = (pluginManifest.enforcement?.length ?? 0) > 0;
-    if (requiresSchemaRecomposition) {
-        try {
-            writeComposedSchema(projectRoot);
-        }
-        catch {
-            // Non-fatal
-        }
+    // Recompose schema and workflows — always run after install to pick up
+    // any new schemas, relationships, or enforcement declarations.
+    try {
+        writeComposedSchema(projectRoot);
     }
-    if (requiresSchemaRecomposition || requiresEnforcementRegeneration) {
-        try {
-            runWorkflowResolution(projectRoot);
-        }
-        catch {
-            // Non-fatal — workflow resolution is best-effort during install
-        }
+    catch {
+        // Non-fatal
+    }
+    try {
+        runWorkflowResolution(projectRoot);
+    }
+    catch {
+        // Non-fatal
     }
     // Regenerate prompt registry after schema composition so knowledge declarations are current.
     try {
@@ -636,6 +630,13 @@ async function cmdRefresh(args) {
         if (copyResult.skipped.length > 0) {
             console.log(`  Skipped ${copyResult.skipped.length} user-modified file(s)`);
         }
+        // Ensure plugin is registered in project.json (fixes fresh-clone gap)
+        const shortPath = path.relative(projectRoot, pluginDir);
+        updateProjectJsonPlugin(projectRoot, p.name, {
+            installed: true,
+            enabled: true,
+            path: shortPath,
+        });
     }
     // Process aggregated files from all plugins
     try {
