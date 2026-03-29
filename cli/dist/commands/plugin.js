@@ -9,6 +9,7 @@ import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodology
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
 import { readContentManifest, writeContentManifest, copyPluginContent, removePluginContent, installPluginDeps, buildPlugin, runLifecycleHook, diffPluginContent, computeThreeWayState, findSourceFile, processAggregatedFiles, computeFileHash, } from "../lib/content-lifecycle.js";
+import { createHash } from "node:crypto";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
@@ -20,6 +21,7 @@ Subcommands:
   install <owner/repo|path> [-v]    Install a plugin
   uninstall <name>                  Remove a plugin
   update [name]                     Update one or all plugins
+  outdated                          List plugins whose source version or manifest has changed
   enable <name>                     Enable a plugin (copy content to .orqa/)
   disable <name>                    Disable a plugin (remove content from .orqa/)
   refresh [name]                    Re-sync content for one or all enabled plugins
@@ -52,6 +54,9 @@ export async function runPluginCommand(args) {
             break;
         case "update":
             await cmdUpdate(args.slice(1));
+            break;
+        case "outdated":
+            await cmdOutdated();
             break;
         case "enable":
             await cmdEnable(args.slice(1));
@@ -309,21 +314,27 @@ async function cmdInstall(args) {
     if (copiedCount > 0) {
         console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
     }
-    // Record ownership in .orqa/manifest.json
+    // Record ownership in .orqa/manifest.json including manifestHash for outdated detection.
     const contentManifest = readContentManifest(projectRoot);
+    const manifestFileInstall = path.join(result.path, "orqa-plugin.json");
+    const manifestHashInstall = createHash("sha256")
+        .update(fs.readFileSync(manifestFileInstall))
+        .digest("hex");
     contentManifest.plugins[result.name] = {
         version: result.version,
         installed_at: new Date().toISOString(),
+        manifestHash: manifestHashInstall,
         files: copyResult.copied,
     };
     writeContentManifest(projectRoot, contentManifest);
-    // Register in .orqa/project.json
+    // Register in .orqa/project.json — include version so outdated checks work.
     const projectJsonPath = path.join(projectRoot, ".orqa", "project.json");
     if (fs.existsSync(projectJsonPath)) {
         updateProjectJsonPlugin(projectRoot, result.name, {
             installed: true,
             enabled: true,
             path: shortPath,
+            version: result.version,
         });
         console.log(`  Registered ${result.name} in .orqa/project.json`);
     }
@@ -383,19 +394,25 @@ async function cmdInstallFirstParty(pluginDir, projectRoot) {
     if (copiedCount > 0) {
         console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
     }
-    // Record ownership in .orqa/manifest.json
+    // Record ownership in .orqa/manifest.json including manifestHash for outdated detection.
     const contentManifest = readContentManifest(projectRoot);
+    const manifestFileFirstParty = path.join(pluginDir, "orqa-plugin.json");
+    const manifestHashFirstParty = createHash("sha256")
+        .update(fs.readFileSync(manifestFileFirstParty))
+        .digest("hex");
     contentManifest.plugins[pluginManifest.name] = {
         version: pluginManifest.version,
         installed_at: new Date().toISOString(),
+        manifestHash: manifestHashFirstParty,
         files: copyResult.copied,
     };
     writeContentManifest(projectRoot, contentManifest);
-    // Register in .orqa/project.json
+    // Register in .orqa/project.json — include version so outdated checks work.
     updateProjectJsonPlugin(projectRoot, pluginManifest.name, {
         installed: true,
         enabled: true,
         path: shortPath,
+        version: pluginManifest.version,
     });
     console.log(`  Registered in .orqa/project.json`);
     // Run install lifecycle hook
@@ -506,6 +523,90 @@ async function cmdUpdate(args) {
             console.log(`Updated ${result.name} to ${result.version}`);
         }
     }
+}
+// ---------------------------------------------------------------------------
+// outdated
+// ---------------------------------------------------------------------------
+/**
+ * List all installed plugins whose source manifest hash or version differs
+ * from what is recorded in .orqa/manifest.json.
+ *
+ * For each enabled plugin in project.json this command:
+ *   1. Reads the current orqa-plugin.json version from the plugin directory.
+ *   2. Compares the version against the version recorded in manifest.json.
+ *   3. Compares the manifest hash against the manifestHash recorded in manifest.json.
+ * Plugins that fail either check are reported as outdated.
+ */
+async function cmdOutdated() {
+    const projectRoot = process.cwd();
+    let projectJson;
+    try {
+        projectJson = readProjectJson(projectRoot);
+    }
+    catch (e) {
+        console.error(`Could not read project.json: ${e instanceof Error ? e.message : String(e)}`);
+        process.exit(1);
+    }
+    const pluginsSection = (projectJson["plugins"] ?? {});
+    const contentManifest = readContentManifest(projectRoot);
+    const outdatedPlugins = [];
+    for (const [name, cfg] of Object.entries(pluginsSection)) {
+        if (!cfg.path)
+            continue;
+        const pluginDir = path.isAbsolute(cfg.path) ? cfg.path : path.join(projectRoot, cfg.path);
+        const manifestFile = path.join(pluginDir, "orqa-plugin.json");
+        if (!fs.existsSync(manifestFile))
+            continue;
+        let sourceManifest;
+        try {
+            sourceManifest = readManifest(pluginDir);
+        }
+        catch {
+            continue;
+        }
+        const manifestEntry = contentManifest.plugins[name];
+        const installedVersion = manifestEntry?.version ?? cfg.version ?? "(unknown)";
+        const reasons = [];
+        // Check version mismatch against manifest.json record.
+        if (manifestEntry?.version && manifestEntry.version !== sourceManifest.version) {
+            reasons.push(`version ${installedVersion} → ${sourceManifest.version}`);
+        }
+        // Check manifest hash mismatch — detects content changes even without a version bump.
+        if (manifestEntry) {
+            const currentHash = createHash("sha256")
+                .update(fs.readFileSync(manifestFile))
+                .digest("hex");
+            if (manifestEntry.manifestHash && currentHash !== manifestEntry.manifestHash) {
+                reasons.push("manifest content changed");
+            }
+            else if (!manifestEntry.manifestHash) {
+                // Entry predates manifestHash tracking — flag for refresh.
+                reasons.push("no manifest hash (run orqa install to record)");
+            }
+        }
+        else {
+            reasons.push("not in manifest.json (run orqa install to record)");
+        }
+        if (reasons.length > 0) {
+            outdatedPlugins.push({
+                name,
+                installedVersion,
+                sourceVersion: sourceManifest.version,
+                reason: reasons.join("; "),
+            });
+        }
+    }
+    if (outdatedPlugins.length === 0) {
+        console.log("All plugins are up to date.");
+        return;
+    }
+    console.log(`${outdatedPlugins.length} plugin(s) need updating:\n`);
+    for (const p of outdatedPlugins) {
+        console.log(`  ${p.name}`);
+        console.log(`    Installed: ${p.installedVersion}  Source: ${p.sourceVersion}`);
+        console.log(`    Reason: ${p.reason}`);
+    }
+    console.log("\nRun 'orqa plugin refresh [name]' or 'orqa install' to sync.");
 }
 // ---------------------------------------------------------------------------
 // enable

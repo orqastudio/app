@@ -27,6 +27,8 @@ export interface ContentManifest {
 export interface ContentManifestEntry {
     version: string;
     installed_at: string;
+    /** SHA-256 hash of the plugin's orqa-plugin.json at install time. Used by outdated checks to detect manifest changes even when version doesn't bump. */
+    manifestHash?: string;
     /** Relative paths from project root, using forward slashes → hash entries. */
     files: Record<string, FileHashEntry>;
 }

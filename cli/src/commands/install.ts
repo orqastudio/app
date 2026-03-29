@@ -29,6 +29,7 @@ import {
 	type FileHashEntry,
 } from "../lib/content-lifecycle.js";
 import { readManifest } from "../lib/manifest.js";
+import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
 import type { PluginProjectConfig } from "@orqastudio/types";
 
@@ -505,10 +506,15 @@ function cmdPluginSync(root: string): void {
 			}
 		}
 
-		// Update content manifest entry for this plugin.
+		// Update content manifest entry for this plugin including manifestHash for outdated detection.
+		const manifestFileSync = path.join(pluginDir, "orqa-plugin.json");
+		const manifestHashSync = createHash("sha256")
+			.update(fs.readFileSync(manifestFileSync))
+			.digest("hex");
 		contentManifest.plugins[name] = {
 			version: pluginManifest.version,
 			installed_at: new Date().toISOString(),
+			manifestHash: manifestHashSync,
 			files: mergedFiles,
 		};
 
@@ -520,12 +526,13 @@ function cmdPluginSync(root: string): void {
 			console.log(`    Skipped ${copyResult.skipped.length} user-modified file(s)`);
 		}
 
-		// Write back plugin registration so path/version stays current.
+		// Write back plugin registration so path and version stay current.
 		const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
 		updateProjectJsonPlugin(root, name, {
 			installed: true,
 			enabled: true,
 			path: shortPath,
+			version: pluginManifest.version,
 			...(cfg.config ? { config: cfg.config } : {}),
 		});
 

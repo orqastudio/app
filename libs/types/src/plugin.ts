@@ -837,6 +837,12 @@ export interface PluginProjectConfig {
 	enabled: boolean;
 	/** Relative path to the plugin directory (from project root). */
 	path: string;
+	/**
+	 * The version of the plugin at the time it was last installed.
+	 * Written by the install pipeline so that `orqa plugin outdated` can detect
+	 * when the source plugin has been updated since last install.
+	 */
+	version?: string;
 	/** Per-relationship overrides (key → enabled). */
 	relationships?: Record<string, boolean>;
 	/** Schema key aliases — resolves conflicts when multiple plugins register the same key. */
@@ -961,6 +967,38 @@ export interface PluginLockEntry {
 	sha256: string;
 	/** Installation timestamp (ISO 8601). */
 	installedAt: string;
+}
+
+/**
+ * An entry in orqa-lock.json tracking a single installed plugin.
+ *
+ * Stores the version, path, install timestamp, and content hashes so that
+ * `orqa plugin outdated` can detect changes in both version and manifest content.
+ */
+export interface OrqaPluginLockEntry {
+	/** Installed semver version string. */
+	version: string;
+	/** Relative path to the plugin directory from the project root. */
+	path: string;
+	/** ISO 8601 timestamp of when this plugin was last installed. */
+	installedAt: string;
+	/** SHA-256 hash of the plugin's orqa-plugin.json at install time. */
+	manifestHash: string;
+	/** SHA-256 hashes of individual content files keyed by their relative paths. */
+	contentHashes: Record<string, string>;
+}
+
+/**
+ * The orqa-lock.json file format.
+ *
+ * Tracks all installed plugins with version and content integrity information.
+ * Written to `.orqa/orqa-lock.json` after every install.
+ */
+export interface OrqaLockfile {
+	/** Lockfile format version — currently always 1. */
+	lockfileVersion: number;
+	/** Map of plugin name → lock entry. */
+	plugins: Record<string, OrqaPluginLockEntry>;
 }
 
 /** Progress event during plugin installation. */

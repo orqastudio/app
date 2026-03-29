@@ -20,6 +20,7 @@ import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
 import { installPluginDeps, buildPlugin, copyPluginContent, readContentManifest, writeContentManifest, processAggregatedFiles, } from "../lib/content-lifecycle.js";
 import { readManifest } from "../lib/manifest.js";
+import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
 const NODE_MIN_MAJOR = 22;
 const USAGE = `
@@ -455,10 +456,15 @@ function cmdPluginSync(root) {
                 }
             }
         }
-        // Update content manifest entry for this plugin.
+        // Update content manifest entry for this plugin including manifestHash for outdated detection.
+        const manifestFileSync = path.join(pluginDir, "orqa-plugin.json");
+        const manifestHashSync = createHash("sha256")
+            .update(fs.readFileSync(manifestFileSync))
+            .digest("hex");
         contentManifest.plugins[name] = {
             version: pluginManifest.version,
             installed_at: new Date().toISOString(),
+            manifestHash: manifestHashSync,
             files: mergedFiles,
         };
         const copiedCount = Object.keys(copyResult.copied).length;
@@ -468,12 +474,13 @@ function cmdPluginSync(root) {
         if (copyResult.skipped.length > 0) {
             console.log(`    Skipped ${copyResult.skipped.length} user-modified file(s)`);
         }
-        // Write back plugin registration so path/version stays current.
+        // Write back plugin registration so path and version stay current.
         const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
         updateProjectJsonPlugin(root, name, {
             installed: true,
             enabled: true,
             path: shortPath,
+            version: pluginManifest.version,
             ...(cfg.config ? { config: cfg.config } : {}),
         });
         processed++;
