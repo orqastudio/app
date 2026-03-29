@@ -10,7 +10,9 @@
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import ArtifactLink from "./ArtifactLink.svelte";
 	import type { TraceabilityResult, AncestryChain } from "@orqastudio/types";
-	import { iconForArtifactType } from "$lib/config/relationship-icons";
+	import { getStores } from "@orqastudio/sdk";
+
+	const { pluginRegistry } = getStores();
 
 	interface Props {
 		result: TraceabilityResult | null;
@@ -131,7 +133,7 @@
 												style={nodeIdx === 0 ? "" : `margin-left: ${nodeIdx * 8}px`}
 											>
 												<span class="shrink-0 text-muted-foreground">
-													<Icon name={iconForArtifactType(node.artifact_type)} size="xs" />
+													<Icon name={pluginRegistry.getIconForType(node.artifact_type)} size="xs" />
 												</span>
 												<ArtifactLink id={node.id} />
 												{#if node.artifact_type === "pillar" || node.artifact_type === "vision"}

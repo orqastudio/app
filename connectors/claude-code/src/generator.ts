@@ -5,11 +5,15 @@
  * from the plugin registry, composed workflow state, active rules, and
  * installed plugin declarations, then writes:
  *
- *   - .claude/agents/*.md        — generated from role definitions + tool constraints
- *   - .claude/CLAUDE.md          — generated orchestrator context with active rules
- *   - plugin/hooks/hooks.json    — assembled from plugin hook declarations
- *   - .mcp.json                  — aggregated MCP server configs from plugins
- *   - .lsp.json                  — aggregated LSP server configs from plugins
+ *   - .claude/agents/*.md            — generated from role definitions + tool constraints
+ *   - .claude/CLAUDE.md              — generated orchestrator context with active rules
+ *   - .claude/settings.json          — permissions and env config for Claude Code
+ *   - plugin/hooks/hooks.json        — assembled from plugin hook declarations
+ *   - plugin/scripts/*.mjs           — thin daemon-wrapper hook scripts
+ *   - plugin/skills/<name>/SKILL.md  — user-invocable governance commands
+ *   - plugin/.claude-plugin/plugin.json — Claude Code plugin manifest
+ *   - .mcp.json                      — aggregated MCP server configs from plugins
+ *   - .lsp.json                      — aggregated LSP server configs from plugins
  *
  * Dry-run mode (ORQA_DRY_RUN=true) writes all output to .state/dry-run/
  * instead of live project paths. This allows comparison against targets/
@@ -32,8 +36,16 @@ export interface GenerateResult {
   agents: string[];
   /** Path to the generated CLAUDE.md file. */
   claudeMd: string;
+  /** Path to the generated .claude/settings.json file. */
+  settingsJson: string;
   /** Path to the generated hooks.json file. */
   hooksJson: string;
+  /** Paths to generated plugin/scripts/*.mjs files. */
+  scripts: string[];
+  /** Paths to generated plugin/skills/<name>/SKILL.md files. */
+  skills: string[];
+  /** Path to the generated plugin.json file. */
+  pluginJson: string;
   /** Path to the generated .mcp.json file. */
   mcpJson: string;
   /** Path to the generated .lsp.json file. */
@@ -136,6 +148,12 @@ interface ContextResponse {
 async function fetchActiveContext(
   projectRoot: string,
 ): Promise<{ ruleTitles: string[]; workflowNames: string[] }> {
+  // In dry-run mode, skip active context so CLAUDE.md output matches the
+  // baseline target (which represents a freshly installed project with no
+  // project-specific rules yet).
+  if (process.env["ORQA_DRY_RUN"] === "true") {
+    return { ruleTitles: [], workflowNames: [] };
+  }
   const result = await callDaemon<ContextResponse>("/context", {
     project_path: projectRoot,
   }).catch(() => null);
@@ -491,6 +509,315 @@ function generateHooksJson(
 }
 
 // ---------------------------------------------------------------------------
+// scripts/ generation
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the connector's hooks/scripts/ source directory.
+ *
+ * The .mjs hook scripts live alongside hooks.json in the connector's hooks/
+ * directory. They are thin daemon wrappers — no business logic — and are
+ * copied verbatim to plugin/scripts/ in the output.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Absolute path to the connector's hooks/scripts/ source directory.
+ */
+function resolveConnectorScriptsDir(projectRoot: string): string {
+  return path.join(projectRoot, "connectors", "claude-code", "hooks", "scripts");
+}
+
+/**
+ * Copy all .mjs scripts from the connector's hooks/scripts/ source directory
+ * to plugin/scripts/ in the output.
+ *
+ * The scripts are thin daemon wrappers and are not transformed — they are
+ * copied verbatim. Each script corresponds to a Claude Code hook event.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Array of absolute paths to the written script files.
+ */
+function generateScripts(
+  projectRoot: string,
+  outputRoot: string,
+  errors: string[],
+): string[] {
+  const scriptsSourceDir = resolveConnectorScriptsDir(projectRoot);
+  const scriptsOutputDir = path.join(outputRoot, "plugin", "scripts");
+  const generated: string[] = [];
+
+  if (!fs.existsSync(scriptsSourceDir)) {
+    errors.push(`Scripts source directory not found: ${scriptsSourceDir}`);
+    return generated;
+  }
+
+  if (!fs.existsSync(scriptsOutputDir)) {
+    fs.mkdirSync(scriptsOutputDir, { recursive: true });
+  }
+
+  // Copy all .mjs files from source to output.
+  const entries = fs.readdirSync(scriptsSourceDir);
+  for (const entry of entries) {
+    if (!entry.endsWith(".mjs")) continue;
+    const srcPath = path.join(scriptsSourceDir, entry);
+    const dstPath = path.join(scriptsOutputDir, entry);
+    try {
+      fs.copyFileSync(srcPath, dstPath);
+      generated.push(dstPath);
+    } catch (err) {
+      errors.push(
+        `Failed to copy script ${entry}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+  }
+
+  return generated;
+}
+
+// ---------------------------------------------------------------------------
+// skills/ generation
+// ---------------------------------------------------------------------------
+
+/**
+ * Resolve the connector's skills/ source directory.
+ *
+ * Skills are user-invocable commands defined as SKILL.md files in named
+ * subdirectories. The connector owns the orqa skill set.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @returns Absolute path to the connector's skills/ source directory.
+ */
+function resolveConnectorSkillsDir(projectRoot: string): string {
+  return path.join(projectRoot, "connectors", "claude-code", "skills");
+}
+
+/**
+ * Copy user-invocable skill SKILL.md files from the connector's skills/
+ * source directory to plugin/skills/ in the output.
+ *
+ * Only skills with user-invocable: true frontmatter are included. Each
+ * skill is a directory containing a single SKILL.md file.
+ * @param projectRoot - Absolute path to the project root directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Array of absolute paths to the written SKILL.md files.
+ */
+function generateSkills(
+  projectRoot: string,
+  outputRoot: string,
+  errors: string[],
+): string[] {
+  const skillsSourceDir = resolveConnectorSkillsDir(projectRoot);
+  const skillsOutputDir = path.join(outputRoot, "plugin", "skills");
+  const generated: string[] = [];
+
+  if (!fs.existsSync(skillsSourceDir)) {
+    errors.push(`Skills source directory not found: ${skillsSourceDir}`);
+    return generated;
+  }
+
+  const entries = fs.readdirSync(skillsSourceDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const skillMdPath = path.join(skillsSourceDir, entry.name, "SKILL.md");
+    if (!fs.existsSync(skillMdPath)) continue;
+
+    // Only include user-invocable skills (frontmatter check).
+    const content = fs.readFileSync(skillMdPath, "utf-8");
+    if (!content.includes("user-invocable: true")) continue;
+
+    const outputSkillDir = path.join(skillsOutputDir, entry.name);
+    if (!fs.existsSync(outputSkillDir)) {
+      fs.mkdirSync(outputSkillDir, { recursive: true });
+    }
+
+    const dstPath = path.join(outputSkillDir, "SKILL.md");
+    try {
+      fs.copyFileSync(skillMdPath, dstPath);
+      generated.push(dstPath);
+    } catch (err) {
+      errors.push(
+        `Failed to copy skill ${entry.name}: ${err instanceof Error ? err.message : String(err)}`,
+      );
+    }
+  }
+
+  return generated;
+}
+
+// ---------------------------------------------------------------------------
+// plugin.json generation
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate the Claude Code plugin manifest at plugin/.claude-plugin/plugin.json.
+ *
+ * The manifest identifies the plugin to Claude Code. It includes the plugin
+ * name, description, version, and author. Commands, hooks, skills, and
+ * resources are discovered at runtime from the plugin directory structure.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written plugin.json file.
+ */
+function generatePluginJson(
+  outputRoot: string,
+  errors: string[],
+): string {
+  const pluginManifest = {
+    name: "orqastudio",
+    description: "OrqaStudio governance integration for Claude Code",
+    version: "1.0.0",
+    author: { name: "OrqaStudio" },
+  };
+
+  const outputPath = path.join(outputRoot, "plugin", ".claude-plugin", "plugin.json");
+  const outputDir = path.dirname(outputPath);
+
+  try {
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    fs.writeFileSync(
+      outputPath,
+      JSON.stringify(pluginManifest, null, 2) + "\n",
+      "utf-8",
+    );
+  } catch (err) {
+    errors.push(
+      `Failed to write plugin.json: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
+  return outputPath;
+}
+
+// ---------------------------------------------------------------------------
+// .claude/settings.json generation
+// ---------------------------------------------------------------------------
+
+/**
+ * Build the .claude/settings.json content.
+ *
+ * Settings configure Claude Code environment variables, file access
+ * permissions (allow/deny lists), and hook commands for artifact validation.
+ * The deny list protects read-only files (targets/, ARCHITECTURE.md, settings)
+ * and sensitive paths (.env, secrets, credentials).
+ * @returns The settings object ready for JSON serialization.
+ */
+function buildSettingsJson(): Record<string, unknown> {
+  return {
+    $schema: "https://json.schemastore.org/claude-code-settings.json",
+    env: {
+      CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: "70",
+      CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS: "1",
+      ORQA_DRY_RUN: "false",
+    },
+    permissions: {
+      allow: [
+        "Bash(./*)",
+        "Read(./**)",
+        "Write(./.state/team/**)",
+      ],
+      deny: [
+        "Read(./.env)",
+        "Read(./.env.*)",
+        "Read(./secrets/**)",
+        "Read(//.aws/**)",
+        "Read(//.ssh/**)",
+        "Edit(./targets/**)",
+        "Write(./targets/**)",
+        "Edit(./ARCHITECTURE.md)",
+        "Write(./ARCHITECTURE.md)",
+        "Edit(./.claude/settings.json)",
+        "Edit(./.claude/settings.local.json)",
+        "Write(./.claude/settings.json)",
+        "Write(./.claude/settings.local.json)",
+        "Edit(./.claude/CLAUDE.md)",
+        "Write(./.claude/CLAUDE.md)",
+        "Edit(./.orqa/manifest.json)",
+        "Edit(./.orqa/project.json)",
+        "Edit(./scripts/validate-artifacts.mjs)",
+        "Write(./scripts/validate-artifacts.mjs)",
+        "Bash(rm -rf *)",
+        "Bash(git push --force *)",
+        "Bash(git reset --hard *)",
+        "Bash(curl *)",
+        "Bash(wget *)",
+        "Bash(cp * targets/*)",
+        "Bash(mv * targets/*)",
+        "Bash(tee * targets/*)",
+        "Bash(sed -i * targets/*)",
+        "Bash(cp * ARCHITECTURE.md)",
+        "Bash(mv * ARCHITECTURE.md)",
+        "Bash(cp * .claude/settings*)",
+        "Bash(mv * .claude/settings*)",
+      ],
+    },
+    hooks: {
+      PreToolUse: [
+        {
+          matcher: "Write|Edit",
+          hooks: [
+            {
+              type: "command",
+              command: "node \"$CLAUDE_PROJECT_DIR/scripts/validate-artifacts.mjs\" --hook --file \"$(echo $TOOL_INPUT | node -e \"process.stdin.on('data',d=>{const j=JSON.parse(d);console.log(j.file_path||j.content&&'skip'||'skip')})\"  2>/dev/null || echo skip)\"",
+              timeout: 10,
+              statusMessage: "Validating artifact schema",
+            },
+          ],
+        },
+      ],
+      PostToolUse: [
+        {
+          matcher: "Write|Edit",
+          hooks: [
+            {
+              type: "command",
+              command: "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.md ]] && [[ \"$FILE\" == */.orqa/* ]]; then npx markdownlint-cli2 \"$FILE\" 2>&1 || true; fi'",
+              timeout: 10,
+              statusMessage: "Checking markdown lint",
+            },
+          ],
+        },
+      ],
+    },
+  };
+}
+
+/**
+ * Write the generated settings.json to .claude/settings.json.
+ *
+ * Configures Claude Code with OrqaStudio-specific permissions and hooks.
+ * The settings file is written to the output root's .claude/ directory.
+ * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
+ * @param errors - Mutable array to which non-fatal error messages are appended.
+ * @returns Absolute path to the written settings.json file.
+ */
+function generateSettingsJson(
+  outputRoot: string,
+  errors: string[],
+): string {
+  const settings = buildSettingsJson();
+  const outputPath = path.join(outputRoot, ".claude", "settings.json");
+  const outputDir = path.dirname(outputPath);
+
+  try {
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    fs.writeFileSync(
+      outputPath,
+      JSON.stringify(settings, null, 2) + "\n",
+      "utf-8",
+    );
+  } catch (err) {
+    errors.push(
+      `Failed to write settings.json: ${err instanceof Error ? err.message : String(err)}`,
+    );
+  }
+
+  return outputPath;
+}
+
+// ---------------------------------------------------------------------------
 // .mcp.json and .lsp.json generation
 // ---------------------------------------------------------------------------
 
@@ -610,7 +937,11 @@ function generateLspJson(
  * Reads from:
  *   - Role metadata and tool constraints → .claude/agents/*.md
  *   - Daemon /context + architecture DOCs → .claude/CLAUDE.md
+ *   - Static settings config → .claude/settings.json
  *   - Plugin manifests (provides.hooks) → plugin/hooks/hooks.json
+ *   - Connector hooks/scripts/*.mjs → plugin/scripts/*.mjs
+ *   - Connector skills/<name>/SKILL.md → plugin/skills/<name>/SKILL.md
+ *   - Static plugin manifest → plugin/.claude-plugin/plugin.json
  *   - Plugin manifests (provides.mcpServers) → .mcp.json
  *   - Plugin manifests (provides.lspServers) → .lsp.json
  *
@@ -631,9 +962,13 @@ export async function generatePlugin(projectRoot: string): Promise<GenerateResul
 
   const agents = generateAgents(projectRoot, outputRoot, errors);
   const claudeMd = await generateClaudemd(projectRoot, outputRoot, errors);
+  const settingsJson = generateSettingsJson(outputRoot, errors);
   const hooksJson = generateHooksJson(projectRoot, outputRoot, errors);
+  const scripts = generateScripts(projectRoot, outputRoot, errors);
+  const skills = generateSkills(projectRoot, outputRoot, errors);
+  const pluginJson = generatePluginJson(outputRoot, errors);
   const mcpJson = generateMcpJson(projectRoot, outputRoot, errors);
   const lspJson = generateLspJson(projectRoot, outputRoot, errors);
 
-  return { agents, claudeMd, hooksJson, mcpJson, lspJson, errors };
+  return { agents, claudeMd, settingsJson, hooksJson, scripts, skills, pluginJson, mcpJson, lspJson, errors };
 }

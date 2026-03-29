@@ -4,7 +4,6 @@
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
-	import { ARTIFACT_TYPES, RELATIONSHIP_SEMANTICS } from "$lib/config/governance-types";
 
 	import { PipelineStages, type PipelineStage, type PipelineEdge } from "@orqastudio/svelte-components/pure";
 
@@ -42,72 +41,73 @@
 		const findRels = (semantic: string): RelationshipType[] =>
 			allRels.filter((r) => r.semantic === semantic);
 
-		const govRels = findRels(RELATIONSHIP_SEMANTICS.governance);
-		const knowledgeRels = findRels(RELATIONSHIP_SEMANTICS.knowledgeFlow);
+		const govRels = findRels("governance");
+		const knowledgeRels = findRels("knowledge-flow");
 
-		// Build stages from the types that participate in governance + knowledge flow
+		// Build stages from the types that participate in governance + knowledge flow.
+		// Artifact type keys are read from the plugin registry so no static config import is needed.
 		const stages: StageDef[] = [];
 
 		// Lesson stage — lessons teach decisions, lessons get codified into rules
 		const lessonOutbound = [
-			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.lesson)).map((r) => r.key),
-			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.lesson)).map((r) => r.inverse),
+			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes("lesson")).map((r) => r.inverse),
 		];
 		if (lessonOutbound.length > 0) {
 			stages.push({
-				key: ARTIFACT_TYPES.lesson,
+				key: "lesson",
 				label: "Learning",
 				artifactNoun: "lessons",
-				artifactType: ARTIFACT_TYPES.lesson,
-				icon: "book-open",
+				artifactType: "lesson",
+				icon: pluginRegistry.getIconForType("lesson"),
 				outboundRelationships: lessonOutbound,
 			});
 		}
 
 		// Research stage — research informs decisions and guides epics
 		const researchOutbound = [
-			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.research)).map((r) => r.key),
-			...knowledgeRels.filter((r) => r.from.includes(ARTIFACT_TYPES.research)).map((r) => r.inverse),
+			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.key),
+			...knowledgeRels.filter((r) => r.from.includes("research")).map((r) => r.inverse),
 		];
 		if (researchOutbound.length > 0) {
 			stages.push({
-				key: ARTIFACT_TYPES.research,
+				key: "research",
 				label: "Research",
 				artifactNoun: "research docs",
-				artifactType: ARTIFACT_TYPES.research,
-				icon: "flask-conical",
+				artifactType: "research",
+				icon: pluginRegistry.getIconForType("research"),
 				outboundRelationships: researchOutbound,
 			});
 		}
 
 		// Decision stage — decisions drive epics and govern rules
 		const decisionOutbound = [
-			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.decision)).map((r) => r.key),
-			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.decision)).map((r) => r.inverse),
+			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes("decision")).map((r) => r.inverse),
 		];
 		if (decisionOutbound.length > 0) {
 			stages.push({
-				key: ARTIFACT_TYPES.decision,
+				key: "decision",
 				label: "Decisions",
 				artifactNoun: "decisions",
-				artifactType: ARTIFACT_TYPES.decision,
-				icon: "scale",
+				artifactType: "decision",
+				icon: pluginRegistry.getIconForType("decision"),
 				outboundRelationships: decisionOutbound,
 			});
 		}
 
 		// Rule stage — rules enforce decisions, codify lessons
 		const ruleOutbound = [
-			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.rule)).map((r) => r.key),
-			...govRels.filter((r) => r.from.includes(ARTIFACT_TYPES.rule)).map((r) => r.inverse),
+			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.key),
+			...govRels.filter((r) => r.from.includes("rule")).map((r) => r.inverse),
 		];
 		if (ruleOutbound.length > 0) {
 			stages.push({
-				key: ARTIFACT_TYPES.rule,
+				key: "rule",
 				label: "Rules",
 				artifactNoun: "rules",
-				artifactType: ARTIFACT_TYPES.rule,
-				icon: "shield",
+				artifactType: "rule",
+				icon: pluginRegistry.getIconForType("rule"),
 				outboundRelationships: ruleOutbound,
 			});
 		}

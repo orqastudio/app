@@ -3,7 +3,7 @@
 	import { CardRoot, CardContent } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { projectStore, settingsStore } = getStores();
+	const { projectStore, settingsStore, pluginRegistry } = getStores();
 	import ProviderSettings from "./ProviderSettings.svelte";
 	import ModelSettings from "./ModelSettings.svelte";
 	import AppearanceSettings from "./AppearanceSettings.svelte";
@@ -16,6 +16,7 @@
 	import ProjectStatusSettings from "./ProjectStatusSettings.svelte";
 	import RelationshipSettings from "./RelationshipSettings.svelte";
 	import PluginBrowser from "./PluginBrowser.svelte";
+	import PluginViewContainer from "$lib/components/plugin/PluginViewContainer.svelte";
 
 	interface Props {
 		activeSection?: string;
@@ -25,6 +26,16 @@
 
 	const section = $derived(activeSection ?? settingsStore.activeSection);
 	const project = $derived(projectStore.activeProject);
+
+	// A plugin settings section ID has the form "plugin:<pluginName>:<pageId>".
+	// Resolve it against the registry to find the view key to render.
+	const pluginPageMatch = $derived.by(() => {
+		if (!section.startsWith("plugin:")) return null;
+		const pages = pluginRegistry.getSettingsPages();
+		const page = pages.find((p) => `plugin:${p.pluginName}:${p.id}` === section);
+		return page ?? null;
+	});
+
 	const isProjectSection = $derived(
 		section === "project-general" ||
 		section === "project-scanning" ||
@@ -52,6 +63,13 @@
 
 		{#if section === "shortcuts"}
 			<ShortcutsSettings />
+		{/if}
+
+		{#if pluginPageMatch}
+			<PluginViewContainer
+				pluginName={pluginPageMatch.pluginName}
+				viewKey={pluginPageMatch.view_key}
+			/>
 		{/if}
 
 		{#if isProjectSection}

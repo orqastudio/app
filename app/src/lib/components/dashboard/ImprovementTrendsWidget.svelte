@@ -3,17 +3,16 @@
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
-	const { artifactGraphSDK } = getStores();
+	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { HealthSnapshot } from "@orqastudio/types";
-	import { GOVERNANCE_TYPES } from "$lib/config/governance-types";
 
 	let snapshots = $state<HealthSnapshot[]>([]);
 	let loading = $state(false);
 	let loaded = $state(false);
 
-	/** All governance artifacts with their created dates. */
+	/** All governance artifacts with their created dates — derived from plugin registry. */
 	const governanceArtifacts = $derived(
-		GOVERNANCE_TYPES.flatMap((type) => artifactGraphSDK.byType(type))
+		pluginRegistry.governanceSchemas.flatMap((s) => artifactGraphSDK.byType(s.key))
 	);
 
 	/**

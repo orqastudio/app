@@ -3,7 +3,7 @@
 	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { settingsStore } = getStores();
+	const { settingsStore, pluginRegistry } = getStores();
 
 	interface SettingsItem {
 		id: string;
@@ -67,71 +67,103 @@
 		},
 	];
 
-	// Project settings grouped by architecture section (Methodology / Sidecar / Connector / Plugins)
-	const projectGroups: SettingsGroup[] = [
-		{
-			label: "Methodology",
-			items: [
-				{
-					id: "project-general",
-					label: "General",
-					icon: "settings",
-					description: "Name, icon, description",
-				},
-				{
-					id: "project-status",
-					label: "Status Machine",
-					icon: "workflow",
-					description: "Statuses, transitions, auto rules",
-				},
-				{
-					id: "project-relationships",
-					label: "Relationships",
-					icon: "git-branch",
-					description: "Canonical and plugin relationships",
-				},
-				{
-					id: "project-artifact-links",
-					label: "Artifact Links",
-					icon: "link",
-					description: "Display mode, chip colours",
-				},
-			],
-		},
-		{
-			label: "Sidecar",
-			items: [
-				{
-					id: "project-scanning",
-					label: "Model & Scanning",
-					icon: "scan-search",
-					description: "Model, paths, stack detection",
-				},
-			],
-		},
-		{
-			label: "Connector",
-			items: [
-				{
-					id: "project-delivery",
-					label: "Delivery Pipeline",
-					icon: "rocket",
-					description: "Delivery types and hierarchy",
-				},
-			],
-		},
-		{
-			label: "Plugins",
-			items: [
-				{
-					id: "project-plugins",
-					label: "Plugins",
-					icon: "puzzle",
-					description: "Browse, install, manage plugins",
-				},
-			],
-		},
-	];
+	// Project settings grouped by architecture section (Methodology / Sidecar / Connector / Plugins).
+	// Plugin-contributed settings pages are appended to the matching section group, or
+	// to a new group if the section doesn't match any built-in group label.
+	const projectGroups: SettingsGroup[] = $derived.by(() => {
+		const baseGroups: SettingsGroup[] = [
+			{
+				label: "Methodology",
+				items: [
+					{
+						id: "project-general",
+						label: "General",
+						icon: "settings",
+						description: "Name, icon, description",
+					},
+					{
+						id: "project-status",
+						label: "Status Machine",
+						icon: "workflow",
+						description: "Statuses, transitions, auto rules",
+					},
+					{
+						id: "project-relationships",
+						label: "Relationships",
+						icon: "git-branch",
+						description: "Canonical and plugin relationships",
+					},
+					{
+						id: "project-artifact-links",
+						label: "Artifact Links",
+						icon: "link",
+						description: "Display mode, chip colours",
+					},
+				],
+			},
+			{
+				label: "Sidecar",
+				items: [
+					{
+						id: "project-scanning",
+						label: "Model & Scanning",
+						icon: "scan-search",
+						description: "Model, paths, stack detection",
+					},
+				],
+			},
+			{
+				label: "Connector",
+				items: [
+					{
+						id: "project-delivery",
+						label: "Delivery Pipeline",
+						icon: "rocket",
+						description: "Delivery types and hierarchy",
+					},
+				],
+			},
+			{
+				label: "Plugins",
+				items: [
+					{
+						id: "project-plugins",
+						label: "Plugins",
+						icon: "puzzle",
+						description: "Browse, install, manage plugins",
+					},
+				],
+			},
+		];
+
+		// Merge plugin-contributed settings pages into the appropriate group.
+		// Pages whose `section` matches a group label (case-insensitive) are appended
+		// to that group. Pages with no matching group create a new group keyed by section.
+		const pluginPages = pluginRegistry.getSettingsPages();
+		if (pluginPages.length === 0) return baseGroups;
+
+		// Clone groups so the base const is not mutated.
+		const groups: SettingsGroup[] = baseGroups.map((g) => ({ ...g, items: [...g.items] }));
+
+		for (const page of pluginPages) {
+			const targetSection = page.section.toLowerCase();
+			const existing = groups.find((g) => g.label.toLowerCase() === targetSection);
+			const item: SettingsItem = {
+				id: `plugin:${page.pluginName}:${page.id}`,
+				label: page.label,
+				icon: "puzzle",
+				description: page.pluginName,
+			};
+			if (existing) {
+				existing.items.push(item);
+			} else {
+				// Create a new group for this section
+				groups.push({ label: page.section, items: [item] });
+			}
+		}
+
+		return groups;
+	});
 </script>
 
 <ScrollArea class="h-full">

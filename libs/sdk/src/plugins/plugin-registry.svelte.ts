@@ -23,7 +23,12 @@ import type {
 	HookRegistration,
 	ProviderConfig,
 	AliasMapping,
+	SettingsPageDeclaration,
+	RoleDefinition,
+	SchemaCategory,
+	PipelineStageConfig,
 } from "@orqastudio/types";
+// SchemaCategory and PipelineStageConfig are used as return types for registry helper methods.
 import type { Component } from "svelte";
 
 // ---------------------------------------------------------------------------
@@ -667,6 +672,122 @@ export class PluginRegistry {
 	}
 
 	get blockedPlugins(): PluginManifest[] {
+		return [];
+	}
+
+	// -----------------------------------------------------------------------
+	// Settings Pages
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Get all settings page declarations across all registered plugins.
+	 * Used by SettingsCategoryNav to render plugin-contributed settings sections.
+	 */
+	getSettingsPages(): Array<SettingsPageDeclaration & { pluginName: string }> {
+		const pages: Array<SettingsPageDeclaration & { pluginName: string }> = [];
+		for (const [name, plugin] of this.plugins) {
+			if (plugin.manifest.provides.settings_pages) {
+				for (const page of plugin.manifest.provides.settings_pages) {
+					pages.push({ ...page, pluginName: name });
+				}
+			}
+		}
+		return pages;
+	}
+
+	// -----------------------------------------------------------------------
+	// Role Definitions
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Get all role definitions across all registered plugins.
+	 * Later registrations override earlier ones for the same role key.
+	 */
+	get allRoleDefinitions(): RoleDefinition[] {
+		const byRole = new Map<string, RoleDefinition>();
+		for (const [, plugin] of this.plugins) {
+			if (plugin.manifest.provides.role_definitions) {
+				for (const def of plugin.manifest.provides.role_definitions) {
+					byRole.set(def.role, def);
+				}
+			}
+		}
+		return Array.from(byRole.values());
+	}
+
+	// -----------------------------------------------------------------------
+	// Artifact Viewer Routing
+	// -----------------------------------------------------------------------
+
+	/**
+	 * Return the view_key registered by any plugin as a custom viewer for the
+	 * given artifact type, or null if no plugin claims that type.
+	 *
+	 * ExplorerRouter calls this before falling back to the generic ArtifactViewer.
+	 * @param schemaKey - The artifact type key (e.g. "task").
+	 * @returns The view key string, or null if no custom viewer is registered.
+	 */
+	getViewerForArtifactType(schemaKey: string): string | null {
+		for (const [, plugin] of this.plugins) {
+			for (const viewer of plugin.manifest.provides.artifact_viewers ?? []) {
+				if (viewer.artifact_type === schemaKey) return viewer.view_key;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get all schemas whose semantic field equals "governance".
+	 *
+	 * Components use this to compute governance artifact sets without
+	 * importing a static GOVERNANCE_TYPES constant.
+	 * @returns Array of artifact schemas with semantic === "governance".
+	 */
+	get governanceSchemas(): ArtifactSchema[] {
+		return this.allSchemas.filter((s) => s.semantic === "governance");
+	}
+
+	/**
+	 * Return the Lucide icon name for an artifact type from its schema.
+	 * Falls back to "file-text" when the type has no registered schema.
+	 *
+	 * Replaces the static relationship-icons.ts iconForArtifactType helper.
+	 * @param key - The artifact type key (e.g. "task", "epic").
+	 * @returns A Lucide icon name string.
+	 */
+	getIconForType(key: string): string {
+		return this.getSchema(key)?.icon ?? "file-text";
+	}
+
+	/**
+	 * Return the category definitions for an artifact type.
+	 *
+	 * Replaces the static category-colors.ts categoryColor helper. Callers
+	 * receive the full SchemaCategory list and can derive colors from the
+	 * hex `color` field rather than Tailwind class names.
+	 * @param schemaKey - The artifact type key (e.g. "lesson").
+	 * @returns Array of SchemaCategory, or an empty array when none are declared.
+	 */
+	getSchemaCategories(schemaKey: string): SchemaCategory[] {
+		return this.getSchema(schemaKey)?.categories ?? [];
+	}
+
+	/**
+	 * Return pipeline stage configuration for an artifact type from its workflow registration.
+	 *
+	 * Replaces the static lesson-stages.ts LESSON_STAGES constant. Returns the
+	 * pipeline_stages declared on the workflow registration for the given type,
+	 * or an empty array when no workflow or no pipeline stages are declared.
+	 * @param artifactType - The artifact type key (e.g. "lesson").
+	 * @returns Array of PipelineStageConfig, or an empty array when none are declared.
+	 */
+	getPipelineStages(artifactType: string): PipelineStageConfig[] {
+		for (const [, plugin] of this.plugins) {
+			const workflow = plugin.manifest.provides.workflows?.find(
+				(w) => w.artifact_type === artifactType,
+			);
+			if (workflow?.pipeline_stages) return workflow.pipeline_stages;
+		}
 		return [];
 	}
 }

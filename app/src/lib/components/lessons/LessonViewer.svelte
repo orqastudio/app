@@ -5,7 +5,23 @@
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
 	import type { Lesson } from "@orqastudio/types";
-	import { categoryColor } from "$lib/config/category-colors";
+	import { getStores } from "@orqastudio/sdk";
+
+	const { pluginRegistry } = getStores();
+
+	/**
+	 * Returns Tailwind class string for a lesson category badge.
+	 * Derives color from the lesson schema's categories declared in the plugin manifest.
+	 * Falls back to muted when the category has no declared color.
+	 * @param category - The lesson category key.
+	 * @returns A Tailwind class string for badge styling.
+	 */
+	function categoryColor(category: string): string {
+		const cats = pluginRegistry.getSchemaCategories("lesson");
+		const cat = cats.find((c) => c.key === category);
+		if (cat?.color) return `bg-[${cat.color}]/10 text-[${cat.color}]`;
+		return "bg-muted text-muted-foreground";
+	}
 
 	let {
 		lesson,

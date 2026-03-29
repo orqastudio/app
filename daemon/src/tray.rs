@@ -5,12 +5,18 @@
 // async runtime is therefore spawned on a background thread pool, and this
 // module's `run_tray_loop` drives the OS event loop on the main thread.
 //
+// The tray menu is rebuilt on every polling cycle so that LSP and MCP status
+// items remain current as subprocesses start, stop, or crash. Status is
+// shared from the background event loop via an `Arc<Mutex<SubprocessStatuses>>`.
+//
 // If tray initialisation fails (e.g., headless server environment without a
 // display), the daemon continues in headless mode — all functional subsystems
-// (health endpoint, file watchers, LSP) still operate normally.
+// (health endpoint, file watchers, LSP, MCP) still operate normally.
 
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
+
+use crate::subprocess::SubprocessStatus;
 
 /// Tray integration status returned by `run_tray_loop`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -19,6 +25,28 @@ pub enum TrayStatus {
     Exited,
     /// Tray could not be initialised — daemon is operating headless.
     Headless,
+}
+
+/// Subprocess statuses shared between the background event loop and the tray thread.
+///
+/// Updated by `run_event_loop` every 250 ms polling cycle. Read by the tray
+/// loop every 50 ms to rebuild the menu with current LSP and MCP status.
+#[derive(Debug, Clone, Copy)]
+pub struct SubprocessStatuses {
+    /// Last known status of the LSP server subprocess.
+    pub lsp: SubprocessStatus,
+    /// Last known status of the MCP server subprocess.
+    pub mcp: SubprocessStatus,
+}
+
+impl Default for SubprocessStatuses {
+    /// Default status before any subprocesses have been started.
+    fn default() -> Self {
+        Self {
+            lsp: SubprocessStatus::Stopped,
+            mcp: SubprocessStatus::Stopped,
+        }
+    }
 }
 
 /// The OrqaStudio fin icon, embedded at compile time from the brand assets.
@@ -58,14 +86,29 @@ fn build_icon() -> tray_icon::Icon {
         .expect("fallback RGBA data is always valid for 32x32 icon")
 }
 
-/// Build the tray context menu.
+/// Format a `SubprocessStatus` as a human-readable label for the tray menu.
+///
+/// Returns a short status string suitable for display next to the service name.
+fn status_label(status: SubprocessStatus) -> &'static str {
+    match status {
+        SubprocessStatus::Running => "running",
+        SubprocessStatus::Stopped => "stopped",
+        SubprocessStatus::Crashed => "crashed",
+        SubprocessStatus::BinaryNotFound => "not found",
+    }
+}
+
+/// Build the tray context menu with current LSP and MCP subprocess statuses.
 ///
 /// Menu structure:
 ///   - "OrqaStudio Daemon" header (disabled, non-interactive)
 ///   - Separator
+///   - "LSP: <status>" — current LSP server status (non-interactive)
+///   - "MCP: <status>" — current MCP server status (non-interactive)
+///   - Separator
 ///   - "Open App" — launches the OrqaStudio application
 ///   - "Quit" — triggers graceful daemon shutdown
-fn build_menu() -> (
+fn build_menu(statuses: SubprocessStatuses) -> (
     tray_icon::menu::Menu,
     tray_icon::menu::MenuId,
     tray_icon::menu::MenuId,
@@ -75,7 +118,18 @@ fn build_menu() -> (
     let menu = Menu::new();
 
     let header = MenuItem::new("OrqaStudio Daemon", false, None);
-    let separator = PredefinedMenuItem::separator();
+    let sep1 = PredefinedMenuItem::separator();
+    let lsp_item = MenuItem::new(
+        format!("LSP: {}", status_label(statuses.lsp)),
+        false,
+        None,
+    );
+    let mcp_item = MenuItem::new(
+        format!("MCP: {}", status_label(statuses.mcp)),
+        false,
+        None,
+    );
+    let sep2 = PredefinedMenuItem::separator();
     let open_item = MenuItem::new("Open App", true, None);
     let quit_item = MenuItem::new("Quit", true, None);
 
@@ -83,44 +137,61 @@ fn build_menu() -> (
     let quit_id = quit_item.id().clone();
 
     menu.append(&header).expect("menu append header");
-    menu.append(&separator).expect("menu append separator");
+    menu.append(&sep1).expect("menu append sep1");
+    menu.append(&lsp_item).expect("menu append lsp");
+    menu.append(&mcp_item).expect("menu append mcp");
+    menu.append(&sep2).expect("menu append sep2");
     menu.append(&open_item).expect("menu append open");
     menu.append(&quit_item).expect("menu append quit");
 
     (menu, open_id, quit_id)
 }
 
+/// Rebuild the tray context menu when subprocess statuses have changed.
+///
+/// Updates `tray` with a fresh menu and refreshes `quit_id`, `last_lsp`, and
+/// `last_mcp`. No-op when statuses match the last-rendered values.
+fn maybe_refresh_menu(
+    tray: &tray_icon::TrayIcon,
+    current: SubprocessStatuses,
+    quit_id: &mut tray_icon::menu::MenuId,
+    last_lsp: &mut SubprocessStatus,
+    last_mcp: &mut SubprocessStatus,
+) {
+    if current.lsp != *last_lsp || current.mcp != *last_mcp {
+        let (new_menu, _open_id, new_quit_id) = build_menu(current);
+        *quit_id = new_quit_id;
+        tray.set_menu(Some(Box::new(new_menu)));
+        *last_lsp = current.lsp;
+        *last_mcp = current.mcp;
+    }
+}
+
 /// Run the tray event loop on the calling thread (must be the main thread).
 ///
-/// Initialises the tray icon and context menu, then polls for menu events every
-/// 50 ms. Handles:
-///   - "Quit" menu item: sets the shutdown flag and returns `TrayStatus::Exited`
-///   - "Open App" menu item: logs intent (full app-launch logic is a follow-up)
-///   - External shutdown flag: returns `TrayStatus::Exited` when set by signal handler
-///
-/// Returns `TrayStatus::Headless` immediately if tray initialisation fails
-/// (e.g., no display server). The daemon continues operating without a tray in
-/// that case.
-pub fn run_tray_loop(shutdown_flag: Arc<AtomicBool>) -> TrayStatus {
+/// Polls for menu events every 50 ms. Rebuilds the menu whenever LSP or MCP
+/// subprocess statuses change so the tray reflects current state. Returns
+/// `TrayStatus::Headless` if tray initialisation fails.
+pub fn run_tray_loop(
+    shutdown_flag: Arc<AtomicBool>,
+    subprocess_statuses: Arc<Mutex<SubprocessStatuses>>,
+) -> TrayStatus {
     use tray_icon::TrayIconBuilder;
     use tray_icon::menu::MenuEvent;
 
     let icon = build_icon();
-    let (menu, _open_id, quit_id) = build_menu();
+    let initial = SubprocessStatuses::default();
+    let (initial_menu, _open_id, mut quit_id) = build_menu(initial);
 
-    let _tray = match TrayIconBuilder::new()
-        .with_menu(Box::new(menu))
+    let tray = match TrayIconBuilder::new()
+        .with_menu(Box::new(initial_menu))
         .with_tooltip("OrqaStudio Daemon")
         .with_icon(icon)
         .build()
     {
         Ok(t) => t,
         Err(e) => {
-            tracing::warn!(
-                subsystem = "tray",
-                error = %e,
-                "[tray] could not initialise system tray — running headless"
-            );
+            tracing::warn!(subsystem = "tray", error = %e, "[tray] could not initialise system tray — running headless");
             return TrayStatus::Headless;
         }
     };
@@ -128,24 +199,23 @@ pub fn run_tray_loop(shutdown_flag: Arc<AtomicBool>) -> TrayStatus {
     tracing::info!(subsystem = "tray", "[tray] system tray active");
 
     let menu_channel = MenuEvent::receiver();
+    let (mut last_lsp, mut last_mcp) = (initial.lsp, initial.mcp);
 
     loop {
-        // Check external shutdown flag first (set by Ctrl-C / SIGTERM handler).
         if shutdown_flag.load(Ordering::SeqCst) {
             break;
         }
+        let current = subprocess_statuses.lock().map(|g| *g).unwrap_or_default();
+        maybe_refresh_menu(&tray, current, &mut quit_id, &mut last_lsp, &mut last_mcp);
 
-        // Drain pending menu events without blocking.
         while let Ok(event) = menu_channel.try_recv() {
             if event.id == quit_id {
                 tracing::info!(subsystem = "tray", "[tray] Quit selected — initiating shutdown");
                 shutdown_flag.store(true, Ordering::SeqCst);
                 return TrayStatus::Exited;
             }
-            // "Open App" — log intent; launching the GUI is a follow-up.
             tracing::info!(subsystem = "tray", "[tray] Open App selected");
         }
-
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
 

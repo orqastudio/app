@@ -2,21 +2,32 @@
 	import { Icon, CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
-	const { artifactGraphSDK, navigationStore } = getStores();
+	const { artifactGraphSDK, navigationStore, pluginRegistry } = getStores();
 	import { PipelineStages, type PipelineStage } from "@orqastudio/svelte-components/pure";
-	import { LESSON_STAGES } from "$lib/config/lesson-stages";
-	import { ARTIFACT_TYPES } from "$lib/config/governance-types";
 
-	// Stage definitions are sourced from config — the widget drives the pipeline visual
-	// from LESSON_STAGES so the stage list is defined in one place.
-	const stageDefinitions = LESSON_STAGES;
+	/**
+	 * Map a hex color to an inline style string for a dot indicator.
+	 * Returns a CSS background-color inline style value.
+	 * @param hex - A hex color string (e.g. "#3b82f6").
+	 * @returns A Tailwind-compatible arbitrary value class or a fallback class.
+	 */
+	function hexToDotClass(hex: string): string {
+		// Use arbitrary Tailwind value syntax so dot colors come from plugin manifests.
+		return `bg-[${hex}]`;
+	}
+
+	/**
+	 * Stage definitions derived from the plugin registry workflow registration.
+	 * Falls back to an empty array when the lesson workflow has no pipeline_stages.
+	 */
+	const stageDefinitions = $derived(pluginRegistry.getPipelineStages("lesson"));
 
 	const stageCounts = $derived.by((): Record<string, number> => {
 		const counts: Record<string, number> = {};
 		for (const s of stageDefinitions) {
 			counts[s.key] = 0;
 		}
-		for (const node of artifactGraphSDK.byType(ARTIFACT_TYPES.lesson)) {
+		for (const node of artifactGraphSDK.byType("lesson")) {
 			const s = node.status ?? "";
 			if (s in counts) {
 				counts[s]++;
@@ -32,7 +43,8 @@
 				key: def.key,
 				label: def.label,
 				count,
-				dotColorClass: def.dotColorClass,
+				// Derive a Tailwind dot color from the hex color declared in the plugin manifest.
+				dotColorClass: hexToDotClass(def.color),
 				tooltipTitle: `${count} ${def.label.toLowerCase()} ${count === 1 ? "lesson" : "lessons"}`,
 			};
 		})

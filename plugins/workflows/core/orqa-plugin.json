@@ -1223,6 +1223,48 @@
         "summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
         "content_file": "knowledge/KNOW-1c2d005d.md"
       }
+    ],
+    "role_definitions": [
+      {
+        "role": "orchestrator",
+        "description": "Coordinates work across agent teams",
+        "prompt_template": "You coordinate multi-agent teams. Delegate all implementation. Read findings files. Never implement directly."
+      },
+      {
+        "role": "implementer",
+        "description": "Implements code changes",
+        "prompt_template": "You implement code changes. Read requirements, write code, run tests. Follow architecture docs."
+      },
+      {
+        "role": "reviewer",
+        "description": "Reviews work against acceptance criteria",
+        "prompt_template": "You review completed work. Check every AC with evidence. Produce PASS/FAIL verdicts."
+      },
+      {
+        "role": "writer",
+        "description": "Creates and edits documentation",
+        "prompt_template": "You write documentation. Match target architecture, not current patterns."
+      },
+      {
+        "role": "planner",
+        "description": "Designs implementation approaches",
+        "prompt_template": "You design implementation plans. Map dependencies, identify risks, produce atomic tasks."
+      },
+      {
+        "role": "designer",
+        "description": "Creates UI/UX designs",
+        "prompt_template": "You design UI components and experiences. Produce design specs and component code."
+      },
+      {
+        "role": "governance-steward",
+        "description": "Maintains governance artifacts",
+        "prompt_template": "You maintain .orqa/ artifacts. Ensure structure matches architecture. No source code changes."
+      },
+      {
+        "role": "researcher",
+        "description": "Investigates and gathers information",
+        "prompt_template": "You research questions. Gather evidence from code and docs. Write structured findings."
+      }
     ]
   }
 }

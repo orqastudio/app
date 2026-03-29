@@ -5,11 +5,8 @@
 	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
 	import { SvelteMap } from "svelte/reactivity";
 	import { getStores } from "@orqastudio/sdk";
-	import { ACTION_LABELS, DEFAULT_ACTION_LABEL } from "$lib/config/action-labels";
-	import { STATUS_ORDER } from "$lib/config/sort-orders";
-	import { ARTIFACT_TYPES, ARTIFACT_STATUSES } from "$lib/config/governance-types";
 
-	const { artifactGraphSDK, navigationStore } = getStores();
+	const { artifactGraphSDK, navigationStore, pluginRegistry, projectStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
 
 	// -------------------------------------------------------------------------
@@ -33,16 +30,17 @@
 	}
 
 	/**
-	 * Returns a human-readable action label for an artifact type.
+	 * Returns the review action label for an artifact type from its schema.
+	 * Falls back to "Review required" when the schema has no reviewAction.
 	 * @param type - The artifact type key.
 	 * @returns The action label string for the type.
 	 */
 	function actionLabel(type: string): string {
-		return ACTION_LABELS[type] ?? DEFAULT_ACTION_LABEL;
+		return pluginRegistry.getSchema(type)?.reviewAction ?? "Review required";
 	}
 
 	const pendingActions = $derived.by((): PendingAction[] => {
-		return artifactGraphSDK.byStatus(ARTIFACT_STATUSES.review).map((node) => ({
+		return artifactGraphSDK.byStatus("review").map((node) => ({
 			id: node.id,
 			title: node.title,
 			artifactType: node.artifact_type,
@@ -80,12 +78,17 @@
 		return 3;
 	}
 
+	/** Status sort index derived from the project status order. Lower index = higher priority. */
+	const statusOrder = $derived(
+		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i]))
+	);
+
 	const epicEntries = $derived.by((): EpicEntry[] => {
 		const entries: EpicEntry[] = [];
 
 		// Pre-index tasks by epic reference (frontmatter `epic` field)
 		const tasksByEpic = new SvelteMap<string, ArtifactNode[]>();
-		for (const task of artifactGraphSDK.byType(ARTIFACT_TYPES.task)) {
+		for (const task of artifactGraphSDK.byType("task")) {
 			const fm = task.frontmatter as Record<string, unknown>;
 			const epicId = typeof fm.epic === "string" ? fm.epic : null;
 			if (!epicId) continue;
@@ -94,17 +97,17 @@
 			tasksByEpic.set(epicId, existing);
 		}
 
-		for (const node of artifactGraphSDK.byType(ARTIFACT_TYPES.epic)) {
+		for (const node of artifactGraphSDK.byType("epic")) {
 			const status = node.status ?? "";
 			if (
-				status !== ARTIFACT_STATUSES.active &&
-				status !== ARTIFACT_STATUSES.ready &&
-				status !== ARTIFACT_STATUSES.prioritised
+				status !== "active" &&
+				status !== "ready" &&
+				status !== "prioritised"
 			) continue;
 
 			const tasks = tasksByEpic.get(node.id) ?? [];
 			const taskTotal = tasks.length;
-			const taskDone = tasks.filter((t) => t.status === ARTIFACT_STATUSES.completed).length;
+			const taskDone = tasks.filter((t) => t.status === "completed").length;
 			const taskProgress = taskTotal > 0 ? taskDone / taskTotal : null;
 
 			entries.push({
@@ -122,8 +125,8 @@
 
 		// active first, then ready; within each group sort by priority
 		return entries.sort((a, b) => {
-			const sa = STATUS_ORDER[a.status] ?? 99;
-			const sb = STATUS_ORDER[b.status] ?? 99;
+			const sa = statusOrder[a.status] ?? 99;
+			const sb = statusOrder[b.status] ?? 99;
 			if (sa !== sb) return sa - sb;
 			return priorityRank(a.priority) - priorityRank(b.priority);
 		});

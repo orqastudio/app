@@ -28,6 +28,36 @@ export interface ArtifactSchemaFrontmatter {
 	additionalProperties?: boolean;
 }
 
+/**
+ * A category grouping for artifacts within a schema, e.g. lesson categories.
+ *
+ * Plugins declare categories inside their schema definitions so the UI can
+ * derive category badges and color chips without hardcoded config files.
+ */
+export interface SchemaCategory {
+	/** Unique category key (e.g. "process", "coding"). */
+	key: string;
+	/** Display label. */
+	label: string;
+	/** Hex color string used for the category badge (e.g. "#3b82f6"). */
+	color: string;
+}
+
+/**
+ * A pipeline stage used for UI progress displays (e.g. lesson velocity widget).
+ *
+ * Declared per-workflow inside the plugin manifest so that pipeline stage
+ * definitions are co-located with the workflow they describe.
+ */
+export interface PipelineStageConfig {
+	/** Stage key matching a status value in this artifact type's workflow. */
+	key: string;
+	/** Display label. */
+	label: string;
+	/** Hex color string used for the stage dot indicator. */
+	color: string;
+}
+
 /** An artifact type schema provided by a plugin. */
 export interface ArtifactSchema {
 	/** Unique artifact type key (lowercase, hyphenated). */
@@ -46,6 +76,27 @@ export interface ArtifactSchema {
 	frontmatter: ArtifactSchemaFrontmatter;
 	/** Status transition rules specific to this type. */
 	statusTransitions: Record<string, string[]>;
+	/**
+	 * Semantic category for this artifact type (e.g. "governance", "delivery", "discovery").
+	 *
+	 * Used by the plugin registry to answer `governanceSchemas` queries without
+	 * enumerating hardcoded type keys. Plugins set this on each schema they provide.
+	 */
+	semantic?: string;
+	/**
+	 * Human-readable label for the review action required on this artifact type.
+	 *
+	 * Shown in the Decision Queue widget. When absent, the UI falls back to
+	 * a generic "Review required" label.
+	 */
+	reviewAction?: string;
+	/**
+	 * Category groupings for this artifact type (e.g. lesson categories).
+	 *
+	 * Plugins that support categorisation declare their categories here so the
+	 * UI can render category badges without importing a static config file.
+	 */
+	categories?: SchemaCategory[];
 }
 
 // ---------------------------------------------------------------------------
@@ -566,6 +617,13 @@ export interface WorkflowRegistration {
 	artifact_type: string;
 	/** Relative path to the workflow YAML file within the plugin directory. */
 	path: string;
+	/**
+	 * Ordered pipeline stages for UI progress displays (e.g. lesson velocity widget).
+	 *
+	 * Each stage maps to a status value in this workflow. The UI uses the stage
+	 * list to build pipeline visualisations without importing a static config file.
+	 */
+	pipeline_stages?: PipelineStageConfig[];
 }
 
 /**

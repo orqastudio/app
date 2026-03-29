@@ -118,6 +118,14 @@ export interface StatusDefinition {
 	spin?: boolean;
 	transitions?: string[];
 	auto_rules?: StatusAutoRule[];
+	/**
+	 * Optional hex color for this status used in dot indicators and badges.
+	 *
+	 * When absent, the UI applies a default color based on the status key.
+	 * Components derive milestone dot colors from this field instead of importing
+	 * a static milestone-config file.
+	 */
+	color?: string;
 }
 
 /** A child project reference in an organisation-mode project. */
@@ -237,46 +245,15 @@ export const PLATFORM_RELATIONSHIPS: readonly RelationshipType[] = PLATFORM_CONF
 export const PLATFORM_SEMANTICS = PLATFORM_CONFIG.semantics;
 
 /**
- * Default platform navigation groups (principles, learning, discovery).
- * These are the builtin groups that every project starts with.
- * Plugins add their own groups/items via defaultNavigation.
+ * Fixed platform navigation items that are always present.
+ *
+ * These four items are engine-level builtins — they are not methodology
+ * artifacts and must not be provided by plugins. All methodology groups
+ * (principles, discovery, learning, etc.) are contributed via plugin
+ * defaultNavigation and inserted by NavigationStore._buildDefaultNavTree.
  */
 export const PLATFORM_NAVIGATION: readonly NavigationItem[] = [
 	{ key: "project", type: "builtin", icon: "layout-dashboard" },
-	{
-		key: "principles",
-		type: "group",
-		icon: "landmark",
-		label: "Principles",
-		children: [
-			{ key: "pillars", type: "builtin", icon: "columns-3" },
-			{ key: "vision", type: "builtin", icon: "eye" },
-			{ key: "personas", type: "builtin", icon: "users" },
-			{ key: "grounding", type: "builtin", icon: "anchor" },
-		],
-	},
-	{
-		key: "discovery",
-		type: "group",
-		icon: "compass",
-		label: "Discovery",
-		children: [
-			{ key: "ideas", type: "builtin", icon: "lightbulb" },
-		],
-	},
-	{
-		key: "learning",
-		type: "group",
-		icon: "brain",
-		label: "Learning",
-		children: [
-			{ key: "decisions", type: "builtin", icon: "scale" },
-			{ key: "rules", type: "builtin", icon: "shield" },
-			{ key: "lessons", type: "builtin", icon: "book-open" },
-			{ key: "knowledge", type: "builtin", icon: "zap" },
-			{ key: "agents", type: "builtin", icon: "bot" },
-		],
-	},
 	{ key: "artifact-graph", type: "builtin", icon: "network" },
 	{ key: "plugins", type: "builtin", icon: "puzzle" },
 	{ key: "settings", type: "builtin", icon: "settings" },

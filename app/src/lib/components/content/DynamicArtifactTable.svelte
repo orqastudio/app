@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
 
-	const { artifactGraphSDK, navigationStore } = getStores();
+	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
 	import { statusIconName, resolveIcon } from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
-	import { PRIORITY_ORDER, STATUS_ORDER } from "$lib/config/sort-orders";
 
 	let {
 		parentId,
@@ -18,6 +17,20 @@
 		/** The frontmatter field that links children to parent (e.g. "epic"). */
 		refField: string;
 	} = $props();
+
+	/**
+	 * Priority sort order — P1 first, P2, P3, unset last.
+	 * Derived inline as a fixed platform constant (P1/P2/P3 are platform-level).
+	 */
+	const PRIORITY_ORDER: Record<string, number> = { P1: 0, P2: 1, P3: 2 };
+
+	/**
+	 * Status sort order derived from project settings.
+	 * Array index is the natural sort position — no static config needed.
+	 */
+	const statusOrder = $derived(
+		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i]))
+	);
 
 	/** Find all artifacts of childType where frontmatter[refField] matches parentId. */
 	const children = $derived.by((): ArtifactNode[] => {
@@ -38,8 +51,8 @@
 			const pa = PRIORITY_ORDER[a.priority ?? ""] ?? 99;
 			const pb = PRIORITY_ORDER[b.priority ?? ""] ?? 99;
 			if (pa !== pb) return pa - pb;
-			const sa = STATUS_ORDER[a.status ?? ""] ?? 50;
-			const sb = STATUS_ORDER[b.status ?? ""] ?? 50;
+			const sa = statusOrder[a.status ?? ""] ?? 50;
+			const sb = statusOrder[b.status ?? ""] ?? 50;
 			return sa - sb;
 		});
 

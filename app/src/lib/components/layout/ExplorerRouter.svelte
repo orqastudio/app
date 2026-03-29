@@ -13,7 +13,7 @@
 	import PluginViewContainer from "$lib/components/plugin/PluginViewContainer.svelte";
 	import PluginBrowser from "$lib/components/settings/PluginBrowser.svelte";
 
-	const { navigationStore } = getStores();
+	const { navigationStore, pluginRegistry, artifactGraphSDK } = getStores();
 
 	/**
 	 * Core view registry — maps route keys to components.
@@ -51,9 +51,24 @@
 			return { type: "core" as const, component: CORE_VIEWS[activity] };
 		}
 
-		// Artifact detail — show ArtifactViewer as soon as a path is selected.
-		// ArtifactViewer handles its own loading spinner internally.
-		if (navigationStore.selectedArtifactPath) {
+		// Artifact detail — check for a plugin-provided custom viewer before
+		// falling back to the generic ArtifactViewer. Plugins register custom
+		// viewers via artifact_viewers in their manifest's provides block.
+		const selectedPath = navigationStore.selectedArtifactPath;
+		if (selectedPath) {
+			const graphNode = artifactGraphSDK.resolveByPath(selectedPath);
+			const artifactType = graphNode?.artifact_type ?? activity;
+			const customViewKey = pluginRegistry.getViewerForArtifactType(artifactType);
+			if (customViewKey && graphNode) {
+				// A plugin has registered a custom viewer for this artifact type.
+				return {
+					type: "plugin" as const,
+					pluginName: graphNode.artifact_type,
+					viewKey: customViewKey,
+				};
+			}
+			// No custom viewer — use the generic ArtifactViewer.
+			// ArtifactViewer handles its own loading spinner internally.
 			return { type: "core" as const, component: ArtifactViewer };
 		}
 

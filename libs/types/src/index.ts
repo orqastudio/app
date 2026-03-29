@@ -239,4 +239,7 @@ export type {
 	ArtifactViewerDeclaration,
 	RoleDefinition,
 	SettingsPageDeclaration,
+	WorkflowRegistration,
+	SchemaCategory,
+	PipelineStageConfig,
 } from "./plugin.js";
