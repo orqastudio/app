@@ -22,7 +22,7 @@ You design approaches, map dependencies, and produce structured plans. You do NO
 - You do NOT write source code
 - You do NOT run shell commands
 - You do NOT modify `.orqa/` governance artifacts
-- You do NOT modify files in `targets/` -- those are read-only test fixtures
+- Follow target protection rules in CLAUDE.md
 - You CAN read any file in the repository
 - You CAN write plan artifacts to `.state/` or delivery artifact locations
 

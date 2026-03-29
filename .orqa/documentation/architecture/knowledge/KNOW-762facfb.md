@@ -2,12 +2,17 @@
 id: KNOW-762facfb
 type: knowledge
 status: active
-title: Codebase Structure
+title: "Codebase Directory Structure"
 domain: architecture
-description: Actual directory layout — where each component lives in the codebase and why, essential when creating or moving files
+description: "Actual directory layout — where each component lives in the codebase and why, essential when creating or moving files"
 tier: always
+created: 2026-03-28
+roles: [implementer, reviewer, planner]
+paths: [engine/, daemon/, app/, cli/, connectors/, plugins/, sidecars/]
+tags: [codebase, structure, directories, navigation]
 relationships:
-  synchronised-with: DOC-762facfb
+  - type: synchronised-with
+    target: DOC-762facfb
 ---
 
 # Codebase Structure

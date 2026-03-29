@@ -2,7 +2,7 @@
  * Shared access to the orqa-validation Rust binary / daemon.
  *
  * Both `orqa check` and `orqa enforce` use the same underlying validation
- * engine (libs/validation/).  This module provides the common helpers:
+ * engine (engine/validation/).  This module provides the common helpers:
  *
  *   findBinary()     — locate the compiled orqa-validation binary
  *   callDaemon()     — POST to the running daemon's /validate endpoint

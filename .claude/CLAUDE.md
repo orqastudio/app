@@ -67,6 +67,8 @@ The `targets/` directory contains hand-written target states that define what th
 
 **NEVER modify files in `targets/`.** Targets are only replaced when a generation pipeline produces output that matches or exceeds the hand-written version. During the migration, targets are read-only reference material.
 
+Note: The `targets/` directory will be removed once all generation pipelines produce output matching or exceeding the targets (Phase 10.4.1). Until then, targets are read-only reference material.
+
 ## Zero Tech Debt Enforcement
 
 This migration is an opportunity to establish the correct architecture from scratch. Zero legacy survives:
@@ -202,7 +204,7 @@ When agents discover unexpected findings during work (undocumented dependencies,
 - **Forward-only relationships** -- task stores `delivers: epic`, epic does NOT store `delivered-by: task`. Graph computes inverses.
 - **Plugin-composed everything** -- no governance patterns hardcoded in core.
 - **Daemon is business logic boundary** -- MCP/LSP are access protocols, not application boundaries.
-- **35 relationship types** -- semantic precision creates structure. Each type is a unique bond. Narrow from/to constraints.
+- **32 relationship types** -- semantic precision creates structure. Each type is a unique bond. Narrow from/to constraints.
 - **No backwards compatibility** -- pre-release, breaking changes expected, data migrated via `orqa migrate`.
 - **.state/ not tmp/** -- session state and metrics are operational data, not disposable.
 

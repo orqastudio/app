@@ -118,12 +118,6 @@
 					icon: "rocket",
 					description: "Delivery types and hierarchy",
 				},
-				{
-					id: "project-navigation",
-					label: "Navigation",
-					icon: "panel-left",
-					description: "Nav tree, item order, visibility",
-				},
 			],
 		},
 		{

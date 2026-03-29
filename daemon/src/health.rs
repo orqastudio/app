@@ -18,19 +18,24 @@ use axum::{Json, Router};
 use serde::Serialize;
 use tracing::{error, info};
 
+use crate::config::DaemonConfig;
+
 /// Default port for the daemon health endpoint.
 const DEFAULT_PORT: u16 = 9120;
 
 /// Environment variable that overrides the daemon port.
 const PORT_ENV_VAR: &str = "ORQA_PORT_BASE";
 
-/// Shared state passed to the health handler, containing startup time and PID.
+/// Shared state passed to all route handlers, containing startup metadata and
+/// runtime configuration loaded from orqa.toml.
 #[derive(Clone)]
 pub struct HealthState {
     /// Instant the daemon started — used to compute uptime.
     started_at: Arc<Instant>,
     /// PID of this daemon process.
     pid: u32,
+    /// Runtime configuration loaded from orqa.toml at startup.
+    pub config: DaemonConfig,
 }
 
 /// JSON response body for GET /health.
@@ -79,10 +84,11 @@ pub fn resolve_port() -> u16 {
 /// Binds to `127.0.0.1:<port>` and serves GET /health until the tokio runtime
 /// shuts down. Logs the bound address on startup. Returns an error if the port
 /// is already in use.
-pub async fn start(port: u16) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+pub async fn start(port: u16, config: DaemonConfig) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
         pid: std::process::id(),
+        config,
     };
 
     let app = Router::new()

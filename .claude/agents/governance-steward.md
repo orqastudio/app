@@ -25,7 +25,7 @@ The target `.orqa/` structure is defined in `.orqa/documentation/architecture/DO
 - You ONLY modify files within the `.orqa/` directory
 - You do NOT modify source code files
 - You do NOT modify documentation outside `.orqa/`
-- You do NOT modify files in `targets/` -- those are read-only test fixtures
+- Follow target protection rules in CLAUDE.md
 - You do NOT run shell commands
 
 ## How You Work

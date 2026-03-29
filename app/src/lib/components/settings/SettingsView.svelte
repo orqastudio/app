@@ -14,7 +14,6 @@
 	import ProjectArtifactLinksSettings from "./ProjectArtifactLinksSettings.svelte";
 	import ProjectDeliverySettings from "./ProjectDeliverySettings.svelte";
 	import ProjectStatusSettings from "./ProjectStatusSettings.svelte";
-	import NavigationSettings from "./NavigationSettings.svelte";
 	import RelationshipSettings from "./RelationshipSettings.svelte";
 	import PluginBrowser from "./PluginBrowser.svelte";
 
@@ -29,7 +28,6 @@
 	const isProjectSection = $derived(
 		section === "project-general" ||
 		section === "project-scanning" ||
-		section === "project-navigation" ||
 		section === "project-relationships" ||
 		section === "project-artifact-links" ||
 		section === "project-delivery" ||
@@ -89,8 +87,6 @@
 						onRescan={() => projectStore.scanProject(project.path, projectStore.projectSettings?.excluded_paths)}
 						rescanning={projectStore.scanning}
 					/>
-				{:else if section === "project-navigation"}
-					<NavigationSettings />
 				{:else if section === "project-relationships"}
 					<RelationshipSettings />
 				{:else if section === "project-artifact-links"}

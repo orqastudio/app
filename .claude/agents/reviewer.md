@@ -34,7 +34,7 @@ You verify quality and produce structured verdicts. You do NOT fix issues -- you
 - Run type checks: `npx svelte-check`, `npx tsc --noEmit`
 - Check that each acceptance criterion is satisfied by the implementation
 - Verify no legacy code was left alive (commented out, feature-flagged, shimmed)
-- Verify no `targets/` files were modified
+- Verify target protection per CLAUDE.md
 - Verify implementation matches the architecture docs, not the old patterns
 
 ## Verdict Rules
@@ -42,7 +42,7 @@ You verify quality and produce structured verdicts. You do NOT fix issues -- you
 - **Every acceptance criterion MUST have a verdict** -- no omissions
 - **FAIL if any AC is incomplete** -- no partial passes
 - **FAIL if legacy code survives** -- commented-out code, backwards-compat shims, or dead code
-- **FAIL if targets/ were modified** -- those are read-only test fixtures
+- **FAIL if target protection rules in CLAUDE.md were violated**
 - **FAIL if implementation contradicts architecture docs** -- review against the target, not the current state
 
 ## Verdict Format

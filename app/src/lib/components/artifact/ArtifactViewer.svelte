@@ -208,9 +208,9 @@
 	 * Uses prefixes declared by plugins rather than a hardcoded list.
 	 */
 	const ARTIFACT_ID_RE = $derived.by(() => {
-		const prefixes = pluginRegistry.allSchemas.map((s: { idPrefix?: string }) => s.idPrefix).filter(Boolean);
+		const prefixes = pluginRegistry.allSchemas.map((s: { idPrefix?: string }) => s.idPrefix).filter((p): p is string => !!p);
 		if (prefixes.length === 0) return /^[A-Z]+-\d+$/;
-		const escaped = prefixes.map((p: string) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+		const escaped = prefixes.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 		return new RegExp(`^(${escaped.join("|")})-\\d+$`);
 	});
 

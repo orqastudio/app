@@ -26,9 +26,23 @@ tags:
 
 ### New: `orqa clean`
 
-- Removes OrqaStudio-generated artifacts from a project
+Two modes to preserve artifact data by default:
+
+**Default: `orqa clean`** (safe)
+
+- Removes ONLY generated outputs — not user-authored artifacts
 - Cleans .orqa/configs/ (generated enforcement configs)
 - Cleans .orqa/workflows/*.resolved.yaml (generated workflows)
 - Cleans .orqa/schema.composed.json (generated schema)
-- Does NOT delete user-authored artifacts (rules, decisions, lessons, etc.)
-- Inverse of the generation pipeline — useful for fresh regeneration or project cleanup
+- Cleans .orqa/project.json (regenerated from plugin manifests)
+- Does NOT delete user-authored artifacts (rules, decisions, lessons, knowledge, epics, tasks, etc.)
+- Safe to run anytime — `orqa setup` or `orqa plugin install` regenerates everything
+- Use case: fresh regeneration after plugin changes, troubleshooting stale configs
+
+**Full: `orqa clean --full`** (destructive)
+
+- Removes the entire .orqa/ directory
+- Deletes ALL artifacts including user-authored content
+- Equivalent to starting from scratch
+- Requires confirmation prompt ("This will delete all governance artifacts. Continue? y/N")
+- Use case: complete project reset, removing OrqaStudio from a project entirely

@@ -2,12 +2,17 @@
 id: KNOW-4d531f5e
 type: knowledge
 status: active
-title: Connector Architecture
+title: "Connector Architecture and Boundary Rules"
 domain: architecture
-description: What a connector does, what the generated plugin contains, and what must NOT be in connector source code — boundary enforcement for connector work
+description: "What a connector does, what the generated plugin contains, anti-patterns to avoid, and daemon watcher integration — boundary enforcement for connector work"
 tier: always
+created: 2026-03-28
+roles: [implementer, reviewer, planner]
+paths: [connectors/, engine/plugin/]
+tags: [architecture, connector, generation, file-watcher]
 relationships:
-  synchronised-with: DOC-4d531f5e
+  - type: synchronised-with
+    target: DOC-4d531f5e
 ---
 
 # Connector Architecture

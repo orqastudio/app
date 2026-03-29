@@ -2,31 +2,37 @@
 id: KNOW-41ccf7c4
 type: knowledge
 status: active
-title: Plugin Architecture
+title: "Plugin System Overview and Taxonomy"
 domain: architecture
-description: Plugin taxonomy, purposes, composition pipeline, installation constraints — essential for understanding what plugins provide and how they compose
+description: "Plugin taxonomy, purposes, installation constraints, and the enforcement generator/contributor model — essential for understanding what plugins provide"
 tier: always
+created: 2026-03-28
+roles: [orchestrator, implementer, planner, governance-steward]
+paths: [plugins/, engine/plugin/]
+tags: [architecture, plugins, enforcement, taxonomy]
 relationships:
-  synchronised-with: DOC-41ccf7c4
+  - type: synchronised-with
+    target: DOC-41ccf7c4
 ---
 
 # Plugin Architecture
 
 ## Plugin Purposes
 
-Plugins declare `categories` as a plural array — a plugin participates in every category it declares. Valid values: `methodology`, `workflow`, `domain-knowledge`, `enforcement`, `connector`. The `typescript` plugin declares `["domain-knowledge", "enforcement"]`. The frontend tags and filters plugins by every declared category.
+Plugins declare `categories` as a plural array — a plugin participates in every category it declares. Valid values: `methodology`, `workflow`, `domain-knowledge`, `enforcement-generator`, `enforcement-contributor`, `connector`. Enforcement has two distinct sub-types — a plugin can declare one or both. The `typescript` plugin declares `["domain-knowledge", "enforcement-contributor"]`. The frontend tags and filters plugins by every declared category.
 
 **Categories must match config blocks — enforced by JSON schema (`if/then` conditionals):**
 
-| Category | Required block |
-| -------- | -------------- |
-| `"enforcement"` | `enforcement` block (engine, generator, actions, watch, file_types) |
-| `"domain-knowledge"` | `knowledge_declarations` block |
-| `"workflow"` | `workflows` block with `stage_slot` |
-| `"methodology"` | `methodology` block |
-| `"connector"` | `connector` block |
+| Category | Required block | Additional constraint |
+| -------- | -------------- | --------------------- |
+| `"enforcement-generator"` | `enforcement` block with `role: generator`, `engine`, `generator`, `actions`, `watch`, `file_types` | — |
+| `"enforcement-contributor"` | `enforcement` block with `role: contributor`, `contributes_to`, `rules_path` | `dependencies` must include the generator plugin named in `contributes_to` |
+| `"domain-knowledge"` | `knowledge_declarations` block | — |
+| `"workflow"` | `workflows` block with `stage_slot` | — |
+| `"methodology"` | `methodology` block | — |
+| `"connector"` | `connector` block | — |
 
-`orqa install` validates the manifest against the JSON schema before any installation action. A manifest claiming `"enforcement"` without an `enforcement` block is rejected at the schema level — not at runtime.
+`orqa install` validates the manifest against the JSON schema before any installation action. A manifest claiming `"enforcement-generator"` without the required `enforcement` block is rejected at the schema level — not at runtime. A manifest claiming `"enforcement-contributor"` without a `dependencies` entry on the generator plugin is also rejected.
 
 | Purpose | Effect at Install Time |
 | --------- | ---------------------- |
@@ -41,21 +47,26 @@ Plugins declare `categories` as a plural array — a plugin participates in ever
 
 ## Config Composition Pattern (Generator + Contributors) — Universal
 
-An **enforcement plugin** is any plugin that declares an `enforcement` section in its manifest. It can be standalone (dedicated to enforcement only) or multi-area (e.g., `typescript` provides domain knowledge AND tsconfig generator AND ESLint contributor rules). The `enforcement` section is a capability declaration, not a plugin category.
+An **enforcement plugin** is any plugin that declares an `enforcement` section in its manifest. There are two sub-types — a plugin can be one or both:
+
+- **`enforcement-generator`** — owns an enforcement engine: provides the generator script, actions, watcher, config output.
+- **`enforcement-contributor`** — provides rule files that feed into a generator. Must declare `dependencies` on the generator plugin it contributes to.
+
+A plugin can declare both (e.g., the ESLint plugin owns the generator AND contributes its own base rules). A plugin can combine enforcement with other categories (e.g., `typescript` is `["domain-knowledge", "enforcement-contributor"]`).
 
 This is the **universal enforcement model**. Every mechanical check follows the same pipeline regardless of tool — linting, formatting, type checking, grammar, accessibility, security scanning, license compliance, link checking, or anything else. The engine has no knowledge of specific tools.
 
 **The pipeline (always):**
 
 1. Rules in `.orqa/learning/rules/` declare what must be true
-2. Generator plugin translates rules → tool-specific config under `.orqa/configs/`
+2. `enforcement-generator` plugin translates rules → tool-specific config under `.orqa/configs/`
 3. Plugin registers enforcement commands via manifest `enforcement.engine` field (becomes CLI flag)
 4. Plugin declares file watchers in manifest
 5. `orqa enforce` dispatches to all registered engines — specific tools invisible to caller
 
-**Generator plugin** — owns one enforcement tool. Provides: generator, `enforcement.engine` declaration (becomes the `orqa enforce --<engine>` flag), `check`/`fix` command declarations, file watcher declarations, KNOW/DOC artifacts for the standards it enforces. Responsible for one output file under `.orqa/configs/`.
+**`enforcement-generator` plugin** — owns one enforcement tool. Provides: generator, `enforcement.engine` declaration (becomes the `orqa enforce --<engine>` flag), `check`/`fix` command declarations, file watcher declarations, KNOW/DOC artifacts for the standards it enforces. Responsible for one output file under `.orqa/configs/`.
 
-**Contributor plugins** — provide rule data, standards, compiler options, or any source material that feeds a generator. Also provide KNOW/DOC artifacts for their domain. Install data to `.orqa/learning/`. Declare which generator they contribute to. Do NOT generate config themselves.
+**`enforcement-contributor` plugins** — provide rule data, standards, compiler options, or any source material that feeds a generator. Also provide KNOW/DOC artifacts for their domain. Install data to `.orqa/learning/`. Declare `contributes_to` (the generator plugin name) and `dependencies` (must include that generator). Do NOT generate config themselves.
 
 **No cross-package imports.** Generated configs are self-contained. **No KNOW artifacts = incomplete plugin.**
 

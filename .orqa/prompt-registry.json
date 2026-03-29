@@ -1159,7 +1159,7 @@
         "stale-prevention"
       ],
       "priority": "P1",
-      "summary": "After any commit touching Rust source (libs/validation, libs/mcp-server, libs/lsp-server, app/backend), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files.",
+      "summary": "After any commit touching Rust source (engine/validation, engine/mcp-server, engine/lsp-server, app/backend), stop daemon, rebuild affected binary, restart daemon, verify. Rebuild is part of commit workflow, not a follow-up. Stale binaries serve outdated validation/graph/diagnostics, wasting tokens. No exceptions for small changes. PostToolUse hook warns on git commit with Rust files.",
       "content_file": ".orqa/learning/rules/RULE-aff3c5db.md"
     },
     {

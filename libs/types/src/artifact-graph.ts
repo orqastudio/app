@@ -101,9 +101,10 @@ export type CanonicalStatus =
 /** Alias for CanonicalStatus — used by the frontend. */
 export type ArtifactStatus = CanonicalStatus;
 
-/** Category of integrity issue found in the artifact graph.
+/**
+ * Category of integrity issue found in the artifact graph.
  *
- * Must stay in sync with `IntegrityCategory` in `libs/validation/src/types.rs`
+ * Must stay in sync with `IntegrityCategory` in `engine/validation/src/types.rs`
  * and `libs/types/src/platform/validation.schema.json`.
  */
 export type IntegrityCategory =
@@ -199,8 +200,10 @@ export interface AncestryNode {
     title: string;
     /** Artifact type string (e.g. "epic", "pillar"). */
     artifact_type: string;
-    /** The relationship type connecting this node to the next node upward.
-     *  Empty string for the terminal (pillar/vision) node. */
+    /**
+     * The relationship type connecting this node to the next node upward.
+     * Empty string for the terminal (pillar/vision) node.
+     */
     relationship: string;
 }
 
@@ -232,7 +235,8 @@ export interface TraceabilityResult {
     disconnected: boolean;
 }
 
-/** Extended structural health metrics from the backend artifact graph analysis.
+/**
+ * Extended structural health metrics from the backend artifact graph analysis.
  *
  * Returned by the `get_graph_health` Tauri command. Replaces the client-side
  * Cytoscape analysis previously done in GraphVisualiser.

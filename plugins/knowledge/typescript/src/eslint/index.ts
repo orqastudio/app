@@ -7,7 +7,7 @@ import type { ConfigArray } from "typescript-eslint";
  * Includes:
  * - typescript-eslint recommended rules
  * - Strict no-any enforcement
- * - Ban on @ts-ignore / @ts-expect-error without description
+ * - Ban on `@ts-ignore` / `@ts-expect-error` without description
  * - Unused vars configured to allow underscore-prefixed params
  *
  * Usage:
@@ -41,7 +41,7 @@ export const base: ConfigArray = tseslint.config(
 
       // Ban bare console usage — all logging must go through the centralized logger.
       // Only the logger implementation itself may use console directly.
-      "no-console": ["error", { allow: [] }],
+      "no-console": "error",
     },
   },
   {

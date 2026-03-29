@@ -38,7 +38,7 @@
 	 * Read from the plugin registry so it reflects the installed plugin,
 	 * not a hardcoded package name.
 	 */
-	const sidecarProviderName = $derived(pluginRegistry.activeSidecar?.label ?? "Claude Code");
+	const sidecarProviderName = $derived(pluginRegistry.activeSidecar?.label ?? "No sidecar");
 
 	const sidecarTooltip = $derived.by(() => {
 		const status = settingsStore.sidecarStatus;
@@ -77,6 +77,11 @@
 
 	const artifactCount = $derived(Math.max(artifactGraphSDK.graph.size, settingsStore.daemonHealth.artifacts ?? 0));
 
+	/**
+	 * Format a token count as a human-readable string (e.g. 1.2k, 3.4M).
+	 * @param count - The raw token count.
+	 * @returns A formatted string with k or M suffix where appropriate.
+	 */
 	function formatTokens(count: number): string {
 		if (count >= 1_000_000) {
 			return `${(count / 1_000_000).toFixed(1)}M`;
@@ -87,11 +92,13 @@
 		return String(count);
 	}
 
+	/** Navigate to the model settings section. */
 	function openModelSettings() {
 		settingsStore.setActiveSection("model");
 		navigationStore.setActivity("settings");
 	}
 
+	/** Navigate to the project-plugins settings section. */
 	function openPluginSettings() {
 		settingsStore.setActiveSection("project-plugins");
 		navigationStore.setActivity("settings");

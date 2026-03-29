@@ -57,7 +57,7 @@
     },
     "knowledge_declarations": {
       "type": "array",
-      "items": { "type": "object", "properties": { "id": { "type": "string" }, "content_file": { "type": ["string", "null"] }, "summary": { "type": "string" }, "tier": { "type": "string", "enum": ["core", "role", "task"] }, "roles": { "type": "array", "items": { "type": "string" } }, "stages": { "type": "array", "items": { "type": "string" } }, "tags": { "type": "array", "items": { "type": "string" } }, "priority": { "type": "integer" } }, "required": ["id"] }
+      "items": { "type": "object", "properties": { "id": { "type": "string" }, "content_file": { "type": ["string", "null"] }, "summary": { "type": "string" }, "tier": { "type": "string", "enum": ["always", "stage-triggered", "on-demand"] }, "roles": { "type": "array", "items": { "type": "string" } }, "stages": { "type": "array", "items": { "type": "string" } }, "tags": { "type": "array", "items": { "type": "string" } }, "priority": { "type": "integer" } }, "required": ["id"] }
     },
     "prompt_sections": {
       "type": "array",

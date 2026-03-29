@@ -11,7 +11,7 @@
  * orqa check audit        Full governance audit with escalation scanning
  * orqa check schema       Validate project.json and plugin manifests
  *
- * The validation engine (libs/validation/) runs the same checks as the LSP:
+ * The validation engine (engine/validation/) runs the same checks as the LSP:
  * schema validation, relationship type checks, broken links, missing inverses,
  * status transitions, and more. Plugin tools (eslint, clippy, etc.) are
  * discovered from installed plugin manifests (orqa-plugin.json).

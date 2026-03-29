@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	import { invoke } from "@tauri-apps/api/core";
 	import { convertFileSrc } from "@tauri-apps/api/core";
 	import { logger } from "@orqastudio/sdk";
+	import { getPluginPath } from "$lib/services/plugin-service.js";
 
 	const log = logger("plugin-view");
 
@@ -15,8 +15,8 @@
 
 	onMount(async () => {
 		try {
-			// Get the plugin's install path from the backend
-			const pluginPath = await invoke<string>("plugin_get_path", { name: pluginName });
+			// Get the plugin's install path from the backend via the plugin service.
+			const pluginPath = await getPluginPath(pluginName);
 
 			// Load the plugin's pre-bundled view module
 			// Plugins build to dist/views/{viewKey}.js

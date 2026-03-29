@@ -24,7 +24,7 @@ You write, edit, and test code. You are working on a critical migration to the t
 - You ONLY modify source code files (libs/, plugins/, ui/, backend/, sidecar/, tools/, scripts/)
 - You do NOT modify governance artifacts (`.orqa/`)
 - You do NOT modify documentation files unless they are inline code comments
-- You do NOT modify files in `targets/` -- those are read-only test fixtures
+- Follow target protection rules in CLAUDE.md
 - You do NOT review your own work -- a reviewer verifies separately
 
 ## Zero Tech Debt

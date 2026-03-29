@@ -394,18 +394,23 @@ async function cmdInstall(args: string[]): Promise<void> {
 	// Run install lifecycle hook
 	runLifecycleHook(result.path, pluginManifest, "install");
 
-	// Re-resolve workflows (new plugin may provide workflows or contributions)
-	try {
-		runWorkflowResolution(projectRoot);
-	} catch {
-		// Non-fatal — workflow resolution is best-effort during install
+	// P5-28: gate recomposition and workflow resolution on manifest flags.
+	const { requiresSchemaRecomposition, requiresEnforcementRegeneration } = result;
+
+	if (requiresSchemaRecomposition) {
+		try {
+			writeComposedSchema(projectRoot);
+		} catch {
+			// Non-fatal
+		}
 	}
 
-	// Recompose schema after new plugin installation
-	try {
-		writeComposedSchema(projectRoot);
-	} catch {
-		// Non-fatal
+	if (requiresSchemaRecomposition || requiresEnforcementRegeneration) {
+		try {
+			runWorkflowResolution(projectRoot);
+		} catch {
+			// Non-fatal — workflow resolution is best-effort during install
+		}
 	}
 
 	console.log(`\nPlugin ${result.name} installed successfully.`);
@@ -465,18 +470,24 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 	// Run install lifecycle hook
 	runLifecycleHook(pluginDir, pluginManifest, "install");
 
-	// Re-resolve workflows (new plugin may provide workflows or contributions)
-	try {
-		runWorkflowResolution(projectRoot);
-	} catch {
-		// Non-fatal — workflow resolution is best-effort during install
+	// P5-28: gate recomposition and workflow resolution on manifest flags.
+	const requiresSchemaRecomposition = pluginManifest.affects_schema ?? false;
+	const requiresEnforcementRegeneration = pluginManifest.affects_enforcement ?? false;
+
+	if (requiresSchemaRecomposition) {
+		try {
+			writeComposedSchema(projectRoot);
+		} catch {
+			// Non-fatal
+		}
 	}
 
-	// Recompose schema after new plugin installation
-	try {
-		writeComposedSchema(projectRoot);
-	} catch {
-		// Non-fatal
+	if (requiresSchemaRecomposition || requiresEnforcementRegeneration) {
+		try {
+			runWorkflowResolution(projectRoot);
+		} catch {
+			// Non-fatal — workflow resolution is best-effort during install
+		}
 	}
 
 	console.log(`\nPlugin ${pluginManifest.name} installed successfully.`);

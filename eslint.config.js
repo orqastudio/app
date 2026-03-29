@@ -92,7 +92,7 @@ export default tseslint.config(
 		ignores: ["src/lib/components/ui/**"],
 		rules: {
 			"no-restricted-syntax": [
-				"warn",
+				"error",
 				noInvokeInComponents,
 				noHtmlTitleAttribute,
 			],
@@ -104,7 +104,7 @@ export default tseslint.config(
 		files: ["src/lib/components/**/*.ts"],
 		ignores: ["src/lib/components/ui/**"],
 		rules: {
-			"no-restricted-syntax": ["warn", noInvokeInComponents],
+			"no-restricted-syntax": ["error", noInvokeInComponents],
 		},
 	},
 	// RULE-033: No HTML title attribute in Svelte files outside components.

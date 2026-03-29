@@ -24,6 +24,7 @@
 //!  12. Clean up the PID file and exit.
 
 mod compact_context;
+mod config;
 mod context;
 mod health;
 mod knowledge;
@@ -126,11 +127,12 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
 
 /// Start all daemon subsystems and block until the shutdown flag is set.
 ///
-/// Spawns the health server as a background tokio task. Starts the file
-/// watcher on `.orqa/` and `plugins/` (with a warning fallback if the watcher
-/// cannot start). Starts the LSP server subprocess in TCP mode; it degrades
-/// gracefully if the binary is not yet built. Runs the polling event loop until
-/// the shutdown flag is set, then stops the LSP subprocess.
+/// Loads DaemonConfig from orqa.toml at the project root. Spawns the health
+/// server as a background tokio task. Starts the file watcher on `.orqa/` and
+/// `plugins/` (with a warning fallback if the watcher cannot start). Starts the
+/// LSP server subprocess in TCP mode; it degrades gracefully if the binary is
+/// not yet built. Runs the polling event loop until the shutdown flag is set,
+/// then stops the LSP subprocess.
 ///
 /// MCP is not started here — see mcp.rs for why MCP is client-managed.
 ///
@@ -138,8 +140,11 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
 async fn run(project_root: PathBuf, shutdown_flag: Arc<AtomicBool>) {
     let daemon_port = health::resolve_port();
 
+    // Load runtime config from orqa.toml. Falls back to defaults when absent.
+    let daemon_config = config::DaemonConfig::load(&project_root);
+
     tokio::spawn(async move {
-        if let Err(e) = health::start(daemon_port).await {
+        if let Err(e) = health::start(daemon_port, daemon_config).await {
             error!(subsystem = "health", error = %e, "[health] health server failed");
         }
     });

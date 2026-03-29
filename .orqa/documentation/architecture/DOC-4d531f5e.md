@@ -6,6 +6,12 @@ title: Connector Architecture
 domain: architecture
 description: What a connector is, what the generated plugin should contain, anti-patterns to avoid, and the development strategy
 created: 2026-03-28T00:00:00.000Z
+updated: 2026-03-29
+relationships:
+  - type: references
+    target: DOC-41ccf7c4
+  - type: references
+    target: DOC-62969bc3
 ---
 
 # Connector Architecture

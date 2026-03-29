@@ -163,6 +163,7 @@ Keeping generated configs under `.orqa/configs/` avoids polluting the project ro
   "name": "@orqastudio/plugin-eslint",
   "categories": ["enforcement-generator", "enforcement-contributor"],
   "enforcement": {
+    "role": "generator",
     "engine": "eslint",
     "config_output": ".orqa/configs/eslint.config.js",
     "generator": "scripts/generate-config.rs",
@@ -175,17 +176,19 @@ Keeping generated configs under `.orqa/configs/` avoids polluting the project ro
       "filter": "enforcement_type: mechanical AND engine: eslint",
       "on_change": "regenerate"
     },
-    "file_types": ["*.ts", "*.svelte", "*.js"]
+    "file_types": ["*.ts", "*.svelte", "*.js"],
+    "rules_path": "rules/"
   }
 }
 ```
 
-A multi-area plugin declares all its categories:
+A plugin that participates in multiple areas declares all its categories:
 
 ```json
 {
   "name": "@orqastudio/plugin-typescript",
-  "categories": ["domain-knowledge", "enforcement"]
+  "categories": ["domain-knowledge", "enforcement-contributor"],
+  "dependencies": ["@orqastudio/plugin-eslint"]
 }
 ```
 
@@ -215,11 +218,12 @@ The daemon reads this manifest at startup and plugin install time:
 ```json
 {
   "name": "@orqastudio/plugin-typescript",
-  "categories": ["domain-knowledge", "enforcement"],
+  "categories": ["domain-knowledge", "enforcement-contributor"],
+  "dependencies": ["@orqastudio/plugin-eslint"],
   "enforcement": {
     "role": "contributor",
-    "contributes-to": "eslint",
-    "rules-path": ".orqa/learning/rules/typescript/"
+    "contributes_to": "@orqastudio/plugin-eslint",
+    "rules_path": "rules/"
   }
 }
 ```

@@ -26,7 +26,7 @@ Before building the generation pipelines, **hand-write the target outputs** as t
 
 **Regeneration safeguard:** Generation pipelines (connector, enforcement plugins) must support a **dry-run mode** controlled by an environment variable (`ORQA_DRY_RUN=true`). When dry-run is enabled, pipelines write their output to a comparison directory (e.g., `.state/dry-run/`) instead of overwriting live files. This allows generated output to be compared and validated against the hand-written targets without affecting the in-progress migration. The environment variable is set to `true` for the duration of the migration and switched to `false` only when the pipeline is validated. This applies to: connector generation (`.claude/`), enforcement config generation (git hooks, eslint, clippy, markdownlint, prettier), and resolved workflow generation.
 
-### Phase 1: Establish Target States and Migration Enforcement
+### Phase 1: Establish Target States and Migration Enforcement (COMPLETE)
 
 Hand-write the target outputs as test fixtures. These are the FIRST thing built — everything else validates against them. The enforcement tooling must be active before any other migration work begins.
 
@@ -82,7 +82,7 @@ These targets serve as:
 
 See **Appendix A** for the detailed target state specifications.
 
-### Phase 2: Engine Extraction
+### Phase 2: Engine Extraction (COMPLETE)
 
 Extract business logic from Tauri backend and CLI into Rust library crates:
 
@@ -97,7 +97,7 @@ Extract business logic from Tauri backend and CLI into Rust library crates:
 9. **Stream loop abstraction** — design proper traits for sidecar communication and event delivery
 10. **Absorb app/tools/ engine logic** — `verify-pipeline-integrity.mjs`, `verify-installed-content.mjs`, `lint-relationships.mjs` implement engine-level business logic
 
-### Phase 3: Daemon
+### Phase 3: Daemon (COMPLETE)
 
 Build the daemon as a standalone Rust process:
 
@@ -107,7 +107,7 @@ Build the daemon as a standalone Rust process:
 4. LSP server (consuming engine crates, validating against composed schema)
 5. Unified logging (future: split into metrics + logger)
 
-### Phase 4: Connector Cleanup
+### Phase 4: Connector Cleanup (COMPLETE)
 
 Refactor the connector to be pure generation + watching:
 
@@ -122,7 +122,7 @@ Refactor the connector to be pure generation + watching:
 9. `.claude/` directory becomes connector output — stop hand-maintaining `.claude/agents/` and `.claude/CLAUDE.md`
 10. Validate generated output against target Claude Code Plugin
 
-### Phase 5: Plugin Manifest Standardization
+### Phase 5: Plugin Manifest Standardization (COMPLETE)
 
 Update all plugin manifests to support the architecture:
 
@@ -137,7 +137,7 @@ Update all plugin manifests to support the architecture:
 9. Fix agile-documentation inconsistent workflow declaration format (flat string -> structured object)
 10. Rename plugins for clarity — names must make taxonomy self-evident (e.g., `agile-methodology` -> `agile-methodology`)
 
-### Phase 6: Content Cleanup (Zero Dead Weight)
+### Phase 6: Content Cleanup (Zero Dead Weight) (COMPLETE)
 
 Review and clean ALL governance content. Nothing survives that isn't accurate, relevant, and forward-compatible.
 
@@ -200,7 +200,7 @@ Review and clean ALL governance content. Nothing survives that isn't accurate, r
 - Remove legacy CLI aliases (no backwards compatibility per architecture)
 - Fix CLI version hardcoding in `cli.ts` to read from `package.json` dynamically
 
-### Phase 7: Governance Artifact Migration
+### Phase 7: Governance Artifact Migration (COMPLETE)
 
 Restructure `.orqa/` to match target structure:
 
@@ -231,7 +231,7 @@ Moved directories to match the target structure:
 11. Update `CLAUDE.md` to reflect the new architecture (or generate it via connector)
 12. Reconcile relationship type count (41 in plugins vs 30 stated in CLAUDE.md)
 
-### Phase 9: Frontend Alignment
+### Phase 9: Frontend Alignment (COMPLETE)
 
 Review and update the app frontend to work with the target architecture:
 
@@ -261,7 +261,7 @@ Review and update the app frontend to work with the target architecture:
 - Fix hardcoded sidecar plugin name in StatusBar
 - Deduplicate model options (currently in 3 files)
 
-### Phase 10: Validate Against Targets
+### Phase 10: Validate Against Targets (IN PROGRESS)
 
 For each target artifact from Phase 1:
 
@@ -271,7 +271,7 @@ For each target artifact from Phase 1:
 4. If gap: fix the generation pipeline, do not modify the target
 5. Remove `targets/` directory once all generation is validated
 
-### Phase 11: Post-Migration Documentation
+### Phase 11: Post-Migration Documentation (IN PROGRESS)
 
 Create proper project documentation and knowledge artifacts for all architecture content that remains relevant post-migration:
 

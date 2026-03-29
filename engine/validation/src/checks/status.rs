@@ -118,11 +118,6 @@ pub fn check_parent_child_consistency(
         .filter_map(|s| status_ordinal(s.as_str()).map(|pos| (s.as_str(), pos)))
         .collect();
 
-    if ctx.delivery.types.is_empty() {
-        check_parent_child_consistency_hardcoded(graph, &status_pos, checks);
-        return;
-    }
-
     for dtype in &ctx.delivery.types {
         let Some(parent_cfg) = &dtype.parent else {
             continue;
@@ -194,90 +189,4 @@ fn check_child_type_consistency(
             });
         }
     }
-}
-
-/// Hardcoded fallback for parent-child consistency when no delivery config is present.
-///
-/// Uses the same [`status_ordinal`] ordering as the main check so that lateral
-/// states (hold, blocked) are not falsely flagged.
-fn check_parent_child_consistency_hardcoded(
-    graph: &ArtifactGraph,
-    status_pos: &HashMap<&str, usize>,
-    checks: &mut Vec<IntegrityCheck>,
-) {
-    for node in graph.nodes.values() {
-        let Some(child_status) = node.status.as_deref() else {
-            continue;
-        };
-        let Some(&child_pos) = status_pos.get(child_status) else {
-            continue;
-        };
-
-        // Check epic parent.
-        // Only flag when parent is in a very early state (before active, ordinal < 4)
-        // and child is in a late state (completed or later, ordinal >= 6).
-        // An active epic with completed tasks is normal workflow — the epic has more tasks.
-        if let Some(parent_id) = node.frontmatter.get("epic").and_then(|v| v.as_str()) {
-            if let Some(parent) = graph.nodes.get(parent_id) {
-                if let Some(parent_status) = &parent.status {
-                    if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
-                        if child_pos > parent_pos && parent_pos < 4 && child_pos >= 6 {
-                            push_parent_child_inconsistency(
-                                checks,
-                                &node.id,
-                                child_status,
-                                parent_id,
-                                parent_status,
-                                "epic",
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        // Check milestone parent.
-        // Only flag when parent is in a very early state (before active, ordinal < 4)
-        // and child is in a late state (completed or later, ordinal >= 6).
-        if let Some(parent_id) = node.frontmatter.get("milestone").and_then(|v| v.as_str()) {
-            if let Some(parent) = graph.nodes.get(parent_id) {
-                if let Some(parent_status) = &parent.status {
-                    if let Some(&parent_pos) = status_pos.get(parent_status.as_str()) {
-                        if child_pos > parent_pos && parent_pos < 4 && child_pos >= 6 {
-                            push_parent_child_inconsistency(
-                                checks,
-                                &node.id,
-                                child_status,
-                                parent_id,
-                                parent_status,
-                                "milestone",
-                            );
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-fn push_parent_child_inconsistency(
-    checks: &mut Vec<IntegrityCheck>,
-    child_id: &str,
-    child_status: &str,
-    parent_id: &str,
-    parent_status: &str,
-    parent_label: &str,
-) {
-    checks.push(IntegrityCheck {
-        artifact_id: child_id.to_owned(),
-        category: IntegrityCategory::ParentChildInconsistency,
-        severity: IntegritySeverity::Error,
-        message: format!(
-            "{child_id} is '{child_status}' but {parent_label} {parent_id} is '{parent_status}' \u{2014} child is further along than parent",
-        ),
-        auto_fixable: false,
-        fix_description: Some(format!(
-            "Either advance {parent_id} to at least '{child_status}', or move {child_id} to a different {parent_label}",
-        )),
-    });
 }

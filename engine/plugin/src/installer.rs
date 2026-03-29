@@ -507,8 +507,9 @@ mod tests {
         let plugins_dir = project_dir.path().join("plugins");
         std::fs::create_dir_all(&plugins_dir).unwrap();
 
-        // Write an existing methodology plugin into the plugins/ dir.
-        let existing_dir = plugins_dir.join("agile-methodology");
+        // Write an existing methodology plugin into the plugins/methodology/ sub-dir.
+        let methodology_dir = plugins_dir.join("methodology");
+        let existing_dir = methodology_dir.join("agile-methodology");
         std::fs::create_dir_all(&existing_dir).unwrap();
         write_plugin_manifest(
             &existing_dir,
@@ -532,7 +533,7 @@ mod tests {
             "relationships": [],
             "plugins": {
                 "@orqastudio/plugin-agile-methodology": {
-                    "path": "plugins/agile-methodology",
+                    "path": "plugins/methodology/agile-methodology",
                     "installed": true,
                     "enabled": true
                 }
@@ -571,7 +572,8 @@ mod tests {
         let plugins_dir = project_dir.path().join("plugins");
         std::fs::create_dir_all(&plugins_dir).unwrap();
 
-        let existing_dir = plugins_dir.join("agile-methodology");
+        let methodology_dir = plugins_dir.join("methodology");
+        let existing_dir = methodology_dir.join("agile-methodology");
         std::fs::create_dir_all(&existing_dir).unwrap();
         write_plugin_manifest(
             &existing_dir,
@@ -594,7 +596,7 @@ mod tests {
             "relationships": [],
             "plugins": {
                 "@orqastudio/plugin-agile-methodology": {
-                    "path": "plugins/agile-methodology",
+                    "path": "plugins/methodology/agile-methodology",
                     "installed": true,
                     "enabled": true
                 }

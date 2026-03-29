@@ -9,13 +9,12 @@
 
 use std::path::{Path, PathBuf};
 
+use axum::extract::State;
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, warn};
 
-/// Downstream relationship count above which artifacts get a warning.
-/// Configurable via daemon config in the future.
-const DOWNSTREAM_WARN_THRESHOLD: u32 = 20;
+use crate::health::HealthState;
 
 /// Artifact types considered high-influence — changes ripple across the
 /// entire governance framework.
@@ -54,6 +53,7 @@ pub struct ParseResponse {
 /// (id, type), scans other .orqa/ files for references to this ID, then
 /// computes should_warn. Returns 400 if the file cannot be read.
 pub async fn parse_handler(
+    State(state): State<HealthState>,
     Json(req): Json<ParseRequest>,
 ) -> Result<Json<ParseResponse>, (StatusCode, String)> {
     let file_path = Path::new(&req.file);
@@ -79,8 +79,9 @@ pub async fn parse_handler(
         None => (0, None),
     };
 
+    let downstream_warn_threshold = state.config.downstream_warn_threshold;
     let high_influence = HIGH_INFLUENCE_TYPES.contains(&artifact_type.to_lowercase().as_str());
-    let should_warn = high_influence || downstream_count > DOWNSTREAM_WARN_THRESHOLD;
+    let should_warn = high_influence || downstream_count > downstream_warn_threshold;
 
     debug!(
         file = %req.file,
@@ -257,36 +258,41 @@ mod tests {
     // Test should_warn logic: high_influence alone triggers it.
     #[test]
     fn test_should_warn_high_influence() {
+        // Use the default threshold value from DaemonConfig.
+        let threshold = crate::config::DaemonConfig::default().downstream_warn_threshold;
         let high_influence = true;
         let downstream_count: u32 = 0;
-        let should_warn = high_influence || downstream_count > DOWNSTREAM_WARN_THRESHOLD;
+        let should_warn = high_influence || downstream_count > threshold;
         assert!(should_warn);
     }
 
     // Test should_warn logic: threshold alone triggers it.
     #[test]
     fn test_should_warn_threshold() {
+        let threshold = crate::config::DaemonConfig::default().downstream_warn_threshold;
         let high_influence = false;
-        let downstream_count: u32 = DOWNSTREAM_WARN_THRESHOLD + 1;
-        let should_warn = high_influence || downstream_count > DOWNSTREAM_WARN_THRESHOLD;
+        let downstream_count: u32 = threshold + 1;
+        let should_warn = high_influence || downstream_count > threshold;
         assert!(should_warn);
     }
 
     // Test should_warn logic: exactly at threshold — no warn.
     #[test]
     fn test_no_warn_at_threshold() {
+        let threshold = crate::config::DaemonConfig::default().downstream_warn_threshold;
         let high_influence = false;
-        let downstream_count: u32 = DOWNSTREAM_WARN_THRESHOLD;
-        let should_warn = high_influence || downstream_count > DOWNSTREAM_WARN_THRESHOLD;
+        let downstream_count: u32 = threshold;
+        let should_warn = high_influence || downstream_count > threshold;
         assert!(!should_warn);
     }
 
     // Test should_warn logic: below threshold, not high-influence — no warn.
     #[test]
     fn test_no_warn_below_threshold() {
+        let threshold = crate::config::DaemonConfig::default().downstream_warn_threshold;
         let high_influence = false;
-        let downstream_count: u32 = DOWNSTREAM_WARN_THRESHOLD - 1;
-        let should_warn = high_influence || downstream_count > DOWNSTREAM_WARN_THRESHOLD;
+        let downstream_count: u32 = threshold - 1;
+        let should_warn = high_influence || downstream_count > threshold;
         assert!(!should_warn);
     }
 }

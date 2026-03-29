@@ -25,6 +25,7 @@
 use std::collections::HashSet;
 use std::path::Path;
 
+use axum::extract::State;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
@@ -34,18 +35,7 @@ use orqa_engine::plugin::manifest::read_manifest;
 use orqa_engine::prompt::knowledge::KnowledgeInjector;
 use orqa_engine::search::embedder::Embedder;
 
-// ---------------------------------------------------------------------------
-// Thresholds — put as named constants so they are easy to tune without
-// hunting through handler body code.
-// ---------------------------------------------------------------------------
-
-/// Minimum cosine similarity score for a semantic result to be included.
-/// Matches MIN_SCORE in the TypeScript connector knowledge-injector.ts.
-const MIN_SCORE: f32 = 0.25;
-
-/// Maximum number of semantic search results to return.
-/// Matches MAX_SEMANTIC in the TypeScript connector knowledge-injector.ts.
-const MAX_SEMANTIC: usize = 5;
+use crate::health::HealthState;
 
 // ---------------------------------------------------------------------------
 // Role detection — driven by installed plugin manifests (P1)
@@ -206,7 +196,10 @@ pub struct KnowledgeResponse {
 /// (declared registry lookup) and Layer 2 (ONNX semantic search), deduplicates,
 /// and returns the combined results. Layer 2 degrades gracefully when the ONNX
 /// model is absent.
-pub async fn knowledge_handler(Json(req): Json<KnowledgeRequest>) -> Json<KnowledgeResponse> {
+pub async fn knowledge_handler(
+    State(state): State<HealthState>,
+    Json(req): Json<KnowledgeRequest>,
+) -> Json<KnowledgeResponse> {
     let project_path = Path::new(&req.project_path);
 
     // Load role names from installed plugin manifests and build detection patterns.
@@ -223,7 +216,13 @@ pub async fn knowledge_handler(Json(req): Json<KnowledgeRequest>) -> Json<Knowle
     let declared_ids: HashSet<String> = declared.iter().map(|e| e.id.clone()).collect();
 
     // Layer 2: semantic knowledge via ONNX embeddings.
-    let semantic = get_semantic_knowledge(&req.agent_prompt, project_path, &declared_ids);
+    let semantic = get_semantic_knowledge(
+        &req.agent_prompt,
+        project_path,
+        &declared_ids,
+        state.config.min_score,
+        state.config.max_semantic,
+    );
 
     // Combine Layer 1 + Layer 2.
     let mut entries: Vec<KnowledgeEntry> = declared;
@@ -295,14 +294,16 @@ fn get_declared_knowledge(project_path: &Path, role: &str) -> Vec<KnowledgeEntry
 ///
 /// Extracts a query from the agent prompt (first ~500 chars after the opening
 /// role paragraph), embeds it, and uses KnowledgeInjector to find matching
-/// knowledge artifacts. Results with score < MIN_SCORE or IDs already in
-/// `exclude_ids` are filtered out. At most MAX_SEMANTIC results are returned.
+/// knowledge artifacts. Results with score < min_score or IDs already in
+/// `exclude_ids` are filtered out. At most max_semantic results are returned.
 ///
 /// Returns an empty vec if the ONNX model is unavailable or any step fails.
 fn get_semantic_knowledge(
     prompt: &str,
     project_path: &Path,
     exclude_ids: &HashSet<String>,
+    min_score: f32,
+    max_semantic: usize,
 ) -> Vec<KnowledgeEntry> {
     // Resolve the model directory from platform app data dir.
     // Gracefully returns empty if the model is not installed.
@@ -331,17 +332,17 @@ fn get_semantic_knowledge(
         return Vec::new();
     };
 
-    // Request MAX_SEMANTIC + excluded count so that after filtering we still
-    // get up to MAX_SEMANTIC results — mirrors the TypeScript implementation.
-    let top_n = MAX_SEMANTIC + exclude_ids.len();
-    let matches = injector.match_prompt(&query_embedding, top_n, MIN_SCORE);
+    // Request max_semantic + excluded count so that after filtering we still
+    // get up to max_semantic results — mirrors the TypeScript implementation.
+    let top_n = max_semantic + exclude_ids.len();
+    let matches = injector.match_prompt(&query_embedding, top_n, min_score);
 
     let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
 
     matches
         .into_iter()
         .filter(|m| !exclude_ids.contains(&m.name))
-        .take(MAX_SEMANTIC)
+        .take(max_semantic)
         .map(|m| {
             let path = knowledge_dir.join(format!("{}.md", m.name));
             KnowledgeEntry {
