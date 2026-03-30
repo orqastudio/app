@@ -5,6 +5,17 @@
 // async runtime is therefore spawned on a background thread pool, and this
 // module's `run_tray_loop` drives the OS event loop on the main thread.
 //
+// On Windows the tray-icon crate requires a running Win32 message pump on the
+// thread that created the tray icon. Right-click context menus and all tray
+// window-proc events are only delivered when PeekMessage/DispatchMessage is
+// called. This module uses a platform-specific pump helper (see `pump_messages`)
+// instead of a bare `sleep` so that right-click menus work correctly.
+//
+// Left-click opens the app directly (same as "Open App" in the context menu).
+// The context menu therefore appears only on right-click. This is achieved by
+// setting `menu_on_left_click(false)` and handling `TrayIconEvent::Click` with
+// `MouseButton::Left` + `MouseButtonState::Up`.
+//
 // The tray menu is rebuilt on every polling cycle so that LSP and MCP status
 // items remain current as subprocesses start, stop, or crash. Status is
 // shared from the background event loop via an `Arc<Mutex<SubprocessStatuses>>`.
@@ -202,17 +213,118 @@ fn open_app() {
     }
 }
 
+/// Pump pending Win32 messages on Windows without blocking.
+///
+/// On Windows, tray-icon creates a hidden HWND whose window proc handles tray
+/// events (right-click menu, clicks, etc.). Those messages are only delivered
+/// when the owning thread pumps its Win32 message queue via PeekMessage +
+/// DispatchMessage. This function drains all currently queued messages and
+/// returns immediately, allowing the caller to sleep briefly and retry.
+///
+/// On non-Windows platforms this is a no-op — the tray library handles its
+/// own event delivery without requiring a message pump from the caller.
+#[cfg(windows)]
+#[allow(unsafe_code)]
+fn pump_messages() {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        DispatchMessageW, PeekMessageW, TranslateMessage, MSG, PM_REMOVE,
+    };
+
+    // Drain all currently pending Win32 messages. PeekMessage with PM_REMOVE
+    // retrieves and removes the message without blocking. We loop until the
+    // queue is empty, then return so the caller can sleep briefly.
+    loop {
+        let mut msg = MSG {
+            hwnd: std::ptr::null_mut(),
+            message: 0,
+            wParam: 0,
+            lParam: 0,
+            time: 0,
+            pt: windows_sys::Win32::Foundation::POINT { x: 0, y: 0 },
+        };
+        // Safety: msg is a valid stack-allocated MSG. null hwnd means all
+        // messages for this thread; 0/0 filter means all message types.
+        // &raw mut is used to avoid the clippy::borrow_as_ptr lint.
+        let has_message =
+            unsafe { PeekMessageW(&raw mut msg, std::ptr::null_mut(), 0, 0, PM_REMOVE) };
+        if has_message == 0 {
+            break;
+        }
+        // Safety: TranslateMessage and DispatchMessage are safe to call with a
+        // valid MSG. Keyboard messages that are not translated are silently
+        // ignored by DispatchMessageW.
+        unsafe {
+            let _ = TranslateMessage(&raw const msg);
+            DispatchMessageW(&raw const msg);
+        }
+    }
+}
+
+/// No-op on non-Windows platforms.
+///
+/// The tray library handles its own event delivery on macOS and Linux without
+/// requiring the caller to run a message pump.
+#[cfg(not(windows))]
+fn pump_messages() {}
+
+/// Process one iteration of pending tray events.
+///
+/// Drains the menu event channel (right-click items) and the tray icon event
+/// channel (left-click), then refreshes the menu if subprocess statuses changed.
+/// Returns `Some(TrayStatus::Exited)` when Quit is selected, `None` to continue.
+fn process_events(
+    tray: &tray_icon::TrayIcon,
+    open_id: &mut tray_icon::menu::MenuId,
+    quit_id: &mut tray_icon::menu::MenuId,
+    last_lsp: &mut SubprocessStatus,
+    last_mcp: &mut SubprocessStatus,
+    subprocess_statuses: &Arc<Mutex<SubprocessStatuses>>,
+    shutdown_flag: &Arc<AtomicBool>,
+) -> Option<TrayStatus> {
+    use tray_icon::{MouseButton, MouseButtonState, TrayIconEvent, menu::MenuEvent};
+
+    // Process right-click context menu events.
+    while let Ok(event) = MenuEvent::receiver().try_recv() {
+        if event.id == *quit_id {
+            tracing::info!(subsystem = "tray", "[tray] Quit selected — initiating shutdown");
+            shutdown_flag.store(true, Ordering::SeqCst);
+            return Some(TrayStatus::Exited);
+        }
+        if event.id == *open_id {
+            tracing::info!(subsystem = "tray", "[tray] Open App selected");
+            open_app();
+        }
+    }
+
+    // Process left-click events — open the app directly.
+    // Respond on ButtonUp to avoid double-firing with a DoubleClick that may follow.
+    while let Ok(event) = TrayIconEvent::receiver().try_recv() {
+        if let TrayIconEvent::Click {
+            button: MouseButton::Left,
+            button_state: MouseButtonState::Up,
+            ..
+        } = event
+        {
+            tracing::info!(subsystem = "tray", "[tray] left-click — opening app");
+            open_app();
+        }
+    }
+
+    let current = subprocess_statuses.lock().map(|g| *g).unwrap_or_default();
+    maybe_refresh_menu(tray, current, open_id, quit_id, last_lsp, last_mcp);
+    None
+}
+
 /// Run the tray event loop on the calling thread (must be the main thread).
 ///
-/// Polls for menu events every 50 ms. Rebuilds the menu whenever LSP or MCP
-/// subprocess statuses change so the tray reflects current state. Returns
-/// `TrayStatus::Headless` if tray initialisation fails.
+/// On each iteration: pumps the Win32 message queue (Windows only), processes
+/// pending menu and icon events, refreshes the menu if service statuses changed,
+/// then sleeps 50 ms. Returns `TrayStatus::Headless` if initialisation fails.
 pub fn run_tray_loop(
     shutdown_flag: Arc<AtomicBool>,
     subprocess_statuses: Arc<Mutex<SubprocessStatuses>>,
 ) -> TrayStatus {
     use tray_icon::TrayIconBuilder;
-    use tray_icon::menu::MenuEvent;
 
     let icon = build_icon();
     let initial = SubprocessStatuses::default();
@@ -220,6 +332,7 @@ pub fn run_tray_loop(
 
     let tray = match TrayIconBuilder::new()
         .with_menu(Box::new(initial_menu))
+        .with_menu_on_left_click(false)
         .with_tooltip("OrqaStudio Daemon")
         .with_icon(icon)
         .build()
@@ -233,27 +346,25 @@ pub fn run_tray_loop(
 
     tracing::info!(subsystem = "tray", "[tray] system tray active");
 
-    let menu_channel = MenuEvent::receiver();
     let (mut last_lsp, mut last_mcp) = (initial.lsp, initial.mcp);
 
     loop {
         if shutdown_flag.load(Ordering::SeqCst) {
             break;
         }
-        let current = subprocess_statuses.lock().map(|g| *g).unwrap_or_default();
-        maybe_refresh_menu(&tray, current, &mut open_id, &mut quit_id, &mut last_lsp, &mut last_mcp);
 
-        while let Ok(event) = menu_channel.try_recv() {
-            if event.id == quit_id {
-                tracing::info!(subsystem = "tray", "[tray] Quit selected — initiating shutdown");
-                shutdown_flag.store(true, Ordering::SeqCst);
-                return TrayStatus::Exited;
-            }
-            if event.id == open_id {
-                tracing::info!(subsystem = "tray", "[tray] Open App selected");
-                open_app();
-            }
+        // Pump the Win32 message queue so tray events reach the hidden HWND
+        // window proc. Without this, right-click menus never appear on Windows.
+        pump_messages();
+
+        if let Some(status) = process_events(
+            &tray, &mut open_id, &mut quit_id,
+            &mut last_lsp, &mut last_mcp,
+            &subprocess_statuses, &shutdown_flag,
+        ) {
+            return status;
         }
+
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
 

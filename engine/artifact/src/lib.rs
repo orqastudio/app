@@ -36,18 +36,31 @@ use orqa_engine_types::error::EngineError;
 /// replacing the old `artifacts` array in `project.json` (P1: Plugin-Composed Everything).
 ///
 /// Returns an empty vec when the schema file is absent, unreadable, or has no artifact types.
+/// Each failure path emits a `tracing::warn` so callers can diagnose empty nav trees.
 pub fn artifact_entries_from_schema(project_path: &Path) -> Vec<ArtifactEntry> {
     let schema_path = project_path.join(".orqa").join("schema.composed.json");
     let Ok(content) = std::fs::read_to_string(&schema_path) else {
+        tracing::warn!(
+            path = %schema_path.display(),
+            "schema.composed.json not found — returning empty nav tree"
+        );
         return Vec::new();
     };
     let Ok(schema) = serde_json::from_str::<serde_json::Value>(&content) else {
+        tracing::warn!(
+            path = %schema_path.display(),
+            "schema.composed.json could not be parsed as JSON — returning empty nav tree"
+        );
         return Vec::new();
     };
     let Some(artifact_types) = schema
         .get("artifactTypes")
         .and_then(|v| v.as_object())
     else {
+        tracing::warn!(
+            path = %schema_path.display(),
+            "schema.composed.json has no 'artifactTypes' object — returning empty nav tree"
+        );
         return Vec::new();
     };
 
