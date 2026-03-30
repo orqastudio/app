@@ -1,28 +1,28 @@
 #!/usr/bin/env node
-// SessionStart hook — all matchers
-//
-// Thin daemon wrapper: initializes the session and loads project context.
-// The daemon handles:
-//   - Installation verification (plugin state, required files)
-//   - Daemon health gate (blocks if daemon is unreachable)
-//   - Graph integrity checks
-//   - Session continuity (loads previous session state)
-//   - Git state warnings (stashes, uncommitted changes)
-//
-// No business logic here — all decisions are made by the daemon.
+/**
+ * SessionStart hook — all matchers
+ *
+ * Thin daemon wrapper: initializes the session and loads project context.
+ * Performs a daemon health gate (blocks the session if the daemon is unreachable),
+ * then delegates all session initialization to the daemon, and injects the
+ * previous session state into the context window if it exists.
+ * No business logic here — all decisions are made by the daemon.
+ */
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { getPort } from "@orqastudio/constants";
+import { readInput, callDaemon, outputBlock } from "../hooks/shared.js";
+import type { HookResult } from "../hooks/shared.js";
 
-const DAEMON_PORT = parseInt(process.env.ORQA_PORT_BASE || "10100", 10) || 10100;
+const DAEMON_PORT = getPort("daemon");
 const DAEMON_URL = `http://127.0.0.1:${DAEMON_PORT}`;
 
-async function main() {
-  let raw = "";
-  for await (const chunk of process.stdin) raw += chunk;
-  const input = JSON.parse(raw);
+/** Run the SessionStart hook. */
+async function main(): Promise<void> {
+  const input = await readInput();
 
-  const projectDir = input.cwd ?? process.env.CLAUDE_PROJECT_DIR ?? ".";
+  const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
   const stateDir = join(projectDir, ".state");
 
   // Session guard — only run once per session
@@ -39,36 +39,24 @@ async function main() {
       signal: AbortSignal.timeout(2000),
     });
   } catch {
-    const msg = [
+    outputBlock([
       "OrqaStudio daemon is not running. Rule enforcement requires the daemon.",
       "",
       "Start it with: orqa daemon start",
       `Daemon expected on port ${DAEMON_PORT}.`,
-    ].join("\n");
-    process.stderr.write(JSON.stringify({
-      hookSpecificOutput: { permissionDecision: "deny" },
-      systemMessage: msg,
-    }));
-    process.exit(2);
+    ]);
   }
 
   // Call daemon for session initialization
-  let result;
+  let result: HookResult;
   try {
-    const res = await fetch(`${DAEMON_URL}/hook`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event: "SessionStart" }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!res.ok) throw new Error(`daemon returned ${res.status}`);
-    result = await res.json();
+    result = await callDaemon<HookResult>("/hook", { event: "SessionStart" });
   } catch {
-    result = { messages: [] };
+    result = { action: "allow", messages: [], violations: [] };
   }
 
   // Load session continuity context
-  const parts = [];
+  const parts: string[] = [];
 
   if (result.messages?.length > 0) {
     parts.push(result.messages.join("\n"));
@@ -84,9 +72,7 @@ async function main() {
   }
 
   if (parts.length > 0) {
-    process.stdout.write(JSON.stringify({
-      systemMessage: parts.join("\n\n"),
-    }));
+    process.stdout.write(JSON.stringify({ systemMessage: parts.join("\n\n") }));
   }
 
   process.exit(0);

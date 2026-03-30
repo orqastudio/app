@@ -9,7 +9,7 @@
  *   - .claude/CLAUDE.md              — generated orchestrator context with active rules
  *   - .claude/settings.json          — permissions and env config for Claude Code
  *   - plugin/hooks/hooks.json        — assembled from plugin hook declarations
- *   - plugin/scripts/*.mjs           — thin daemon-wrapper hook scripts
+ *   - plugin/scripts/*.js             — thin daemon-wrapper hook scripts (compiled from src/scripts/)
  *   - plugin/skills/<name>/SKILL.md  — user-invocable governance commands
  *   - plugin/.claude-plugin/plugin.json — Claude Code plugin manifest
  *   - .mcp.json                      — aggregated MCP server configs from plugins
@@ -40,7 +40,7 @@ export interface GenerateResult {
   settingsJson: string;
   /** Path to the generated hooks.json file. */
   hooksJson: string;
-  /** Paths to generated plugin/scripts/*.mjs files. */
+  /** Paths to generated plugin/scripts/*.js files. */
   scripts: string[];
   /** Paths to generated plugin/skills/<name>/SKILL.md files. */
   skills: string[];
@@ -513,24 +513,23 @@ function generateHooksJson(
 // ---------------------------------------------------------------------------
 
 /**
- * Resolve the connector's hooks/scripts/ source directory.
+ * Resolve the connector's dist/scripts/ directory containing compiled hook scripts.
  *
- * The .mjs hook scripts live alongside hooks.json in the connector's hooks/
- * directory. They are thin daemon wrappers — no business logic — and are
- * copied verbatim to plugin/scripts/ in the output.
+ * Hook scripts are compiled TypeScript modules under src/scripts/ and output to
+ * dist/scripts/ by the connector's tsc build. They are thin daemon wrappers
+ * with no business logic and are copied verbatim to plugin/scripts/ in the output.
  * @param projectRoot - Absolute path to the project root directory.
- * @returns Absolute path to the connector's hooks/scripts/ source directory.
+ * @returns Absolute path to the connector's dist/scripts/ directory.
  */
 function resolveConnectorScriptsDir(projectRoot: string): string {
-  return path.join(projectRoot, "connectors", "claude-code", "hooks", "scripts");
+  return path.join(projectRoot, "connectors", "claude-code", "dist", "scripts");
 }
 
 /**
- * Copy all .mjs scripts from the connector's hooks/scripts/ source directory
- * to plugin/scripts/ in the output.
+ * Copy compiled hook scripts from dist/scripts/ to plugin/scripts/ in the output.
  *
- * The scripts are thin daemon wrappers and are not transformed — they are
- * copied verbatim. Each script corresponds to a Claude Code hook event.
+ * Only the runnable .js files are copied — declaration and map files are omitted.
+ * Each script corresponds to a Claude Code hook event and is a thin daemon wrapper.
  * @param projectRoot - Absolute path to the project root directory.
  * @param outputRoot - Absolute path to the output root (may differ in dry-run mode).
  * @param errors - Mutable array to which non-fatal error messages are appended.
@@ -554,10 +553,10 @@ function generateScripts(
     fs.mkdirSync(scriptsOutputDir, { recursive: true });
   }
 
-  // Copy all .mjs files from source to output.
+  // Copy only .js files (not .d.ts or .js.map) from dist/scripts/ to output.
   const entries = fs.readdirSync(scriptsSourceDir);
   for (const entry of entries) {
-    if (!entry.endsWith(".mjs")) continue;
+    if (!entry.endsWith(".js") || entry.endsWith(".d.ts")) continue;
     const srcPath = path.join(scriptsSourceDir, entry);
     const dstPath = path.join(scriptsOutputDir, entry);
     try {
@@ -939,7 +938,7 @@ function generateLspJson(
  *   - Daemon /context + architecture DOCs → .claude/CLAUDE.md
  *   - Static settings config → .claude/settings.json
  *   - Plugin manifests (provides.hooks) → plugin/hooks/hooks.json
- *   - Connector hooks/scripts/*.mjs → plugin/scripts/*.mjs
+ *   - Connector dist/scripts/*.js → plugin/scripts/*.js
  *   - Connector skills/<name>/SKILL.md → plugin/skills/<name>/SKILL.md
  *   - Static plugin manifest → plugin/.claude-plugin/plugin.json
  *   - Plugin manifests (provides.mcpServers) → .mcp.json

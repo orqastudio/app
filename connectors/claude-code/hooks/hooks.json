@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-tool-use.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/pre-tool-use.js",
             "timeout": 10
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-tool-use.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/pre-tool-use.js",
             "timeout": 10
           }
         ]
@@ -28,7 +28,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/post-tool-use.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/post-tool-use.js",
             "timeout": 10
           }
         ]
@@ -38,7 +38,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/post-tool-use.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/post-tool-use.js",
             "timeout": 10
           }
         ]
@@ -50,7 +50,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/user-prompt-submit.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/user-prompt-submit.js",
             "timeout": 10
           }
         ]
@@ -62,7 +62,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/session-start.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/session-start.js",
             "timeout": 15
           }
         ]
@@ -74,7 +74,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/stop.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/stop.js",
             "timeout": 10
           }
         ]
@@ -86,7 +86,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/pre-compact.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/pre-compact.js",
             "timeout": 10
           }
         ]
@@ -98,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/subagent-stop.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/subagent-stop.js",
             "timeout": 15
           }
         ]
@@ -110,7 +110,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/teammate-idle.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/teammate-idle.js",
             "timeout": 10
           }
         ]
@@ -122,7 +122,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/scripts/task-completed.mjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/dist/scripts/task-completed.js",
             "timeout": 10
           }
         ]

@@ -22,6 +22,8 @@ export type CanonicalEvent =
   | "SessionStart"
   | "SessionEnd"
   | "SubagentStop"
+  | "TeammateIdle"
+  | "TaskCompleted"
   | "PreCommit";
 
 /** Context sent to the daemon POST /hook endpoint. */
