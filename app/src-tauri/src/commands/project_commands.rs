@@ -20,7 +20,27 @@ use crate::state::AppState;
 /// Also loads the enforcement engine from `.orqa/rules/` if it exists.
 #[tauri::command]
 pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
-    let canonical = validate_directory_path(&path)?;
+    let raw_canonical = validate_directory_path(&path)?;
+
+    // Walk up to find the true project root (directory containing .orqa/).
+    // This handles cases where the app opens from a subdirectory like app/.
+    let canonical = {
+        let p = std::path::Path::new(&raw_canonical);
+        if p.join(".orqa").exists() {
+            raw_canonical.clone()
+        } else {
+            let mut current = p.to_path_buf();
+            let mut found = None;
+            while let Some(parent) = current.parent() {
+                if parent.join(".orqa").exists() {
+                    found = Some(parent.to_string_lossy().to_string());
+                    break;
+                }
+                current = parent.to_path_buf();
+            }
+            found.unwrap_or(raw_canonical)
+        }
+    };
     let conn = state
         .db
         .conn
