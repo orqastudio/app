@@ -255,24 +255,24 @@ export class PluginRegistry {
 
 		// Build component maps
 		const viewMap = new Map<string, Component>();
-		for (const view of manifest.provides.views) {
+		for (const view of manifest.provides.views ?? []) {
 			const comp = components[view.key];
 			if (comp) viewMap.set(view.key, comp);
 		}
 
 		const widgetMap = new Map<string, Component>();
-		for (const widget of manifest.provides.widgets) {
+		for (const widget of manifest.provides.widgets ?? []) {
 			const comp = components[widget.key];
 			if (comp) widgetMap.set(widget.key, comp);
 		}
 
 		// Register schemas
-		for (const schema of manifest.provides.schemas) {
+		for (const schema of manifest.provides.schemas ?? []) {
 			this.schemaOwnership.set(schema.key, manifest.name);
 		}
 
 		// Register relationships
-		for (const rel of manifest.provides.relationships) {
+		for (const rel of manifest.provides.relationships ?? []) {
 			this.relationshipOwnership.set(rel.key, manifest.name);
 			this.relationshipOwnership.set(rel.inverse, manifest.name);
 			this.relationshipDefs.set(rel.key, rel);
@@ -304,14 +304,14 @@ export class PluginRegistry {
 		if (!plugin) return;
 
 		// Remove schema ownership
-		for (const schema of plugin.manifest.provides.schemas) {
+		for (const schema of plugin.manifest.provides.schemas ?? []) {
 			if (this.schemaOwnership.get(schema.key) === pluginName) {
 				this.schemaOwnership.delete(schema.key);
 			}
 		}
 
 		// Remove relationship ownership
-		for (const rel of plugin.manifest.provides.relationships) {
+		for (const rel of plugin.manifest.provides.relationships ?? []) {
 			if (this.relationshipOwnership.get(rel.key) === pluginName) {
 				this.relationshipOwnership.delete(rel.key);
 				this.relationshipOwnership.delete(rel.inverse);
@@ -506,7 +506,7 @@ export class PluginRegistry {
 		const conflicts: RegistrationConflict[] = [];
 
 		// Schema key conflicts
-		for (const schema of manifest.provides.schemas) {
+		for (const schema of manifest.provides.schemas ?? []) {
 			const existingOwner = this.schemaOwnership.get(schema.key);
 			if (existingOwner && existingOwner !== manifest.name) {
 				conflicts.push({
@@ -520,7 +520,7 @@ export class PluginRegistry {
 		}
 
 		// Relationship conflicts
-		for (const rel of manifest.provides.relationships) {
+		for (const rel of manifest.provides.relationships ?? []) {
 			// Check forward key
 			const forwardOwner = this.relationshipOwnership.get(rel.key);
 			if (forwardOwner && forwardOwner !== manifest.name) {
