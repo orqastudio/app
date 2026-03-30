@@ -4,11 +4,13 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 /// Resolve the daemon port from the environment.
+///
+/// The daemon binds directly to ORQA_PORT_BASE (default 10100) with no offset.
 fn daemon_port() -> u16 {
     std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse::<u16>().ok())
-        .map_or(10258, |base| base + 58)
+        .unwrap_or(10100)
 }
 
 fn main() {

@@ -23,7 +23,7 @@ import { getRoot } from "../lib/root.js";
 // ---------------------------------------------------------------------------
 
 /** Default port for the orqa-daemon health endpoint (matches health.rs DEFAULT_PORT). */
-const DEFAULT_DAEMON_PORT = 9120;
+const DEFAULT_DAEMON_PORT = 10100;
 
 /**
  * Resolve the daemon port from the ORQA_PORT_BASE environment variable.

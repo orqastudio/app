@@ -6,7 +6,7 @@
 //
 // Usage:
 //   node dev.mjs                 Start the debug dashboard
-//   node dev.mjs --port <port>   Use a custom port (default: 10401)
+//   node dev.mjs --port <port>   Use a custom port (default: 10130)
 //
 // The dashboard provides:
 //   - Real-time process status (reads orqa dev's control file)
@@ -33,10 +33,10 @@ const CONTROL_FILE = join(DEV_ROOT, "tmp", "dev-controller.json");
 const SIGNAL_FILE = join(DEV_ROOT, "tmp", "dev-signal");
 const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
 
-// Dashboard port is fixed — it is not derived from ORQA_PORT_BASE (the daemon
-// port). The daemon health endpoint uses ORQA_PORT_BASE directly (default 9120),
-// while the debug dashboard has its own fixed port matching ports.ts.
-const DASHBOARD_PORT = 10401;
+// Dashboard port is ORQA_PORT_BASE + 30 (default 10130). Matches ports.ts
+// PORT_OFFSETS.dashboard. The daemon health endpoint uses ORQA_PORT_BASE
+// directly (default 10100).
+const DASHBOARD_PORT = 10130;
 
 const COLOURS = {
   reset: "\x1b[0m",

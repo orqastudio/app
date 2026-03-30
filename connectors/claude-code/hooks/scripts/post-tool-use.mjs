@@ -8,7 +8,7 @@
 //
 // No business logic here — all decisions are made by the daemon.
 
-const DAEMON_PORT = (parseInt(process.env.ORQA_PORT_BASE || "10200", 10) || 10200) + 58;
+const DAEMON_PORT = parseInt(process.env.ORQA_PORT_BASE || "10100", 10) || 10100;
 const DAEMON_URL = `http://127.0.0.1:${DAEMON_PORT}`;
 
 async function main() {

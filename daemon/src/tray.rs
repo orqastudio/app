@@ -171,8 +171,8 @@ fn maybe_refresh_menu(
     }
 }
 
-/// The local URL served by the OrqaStudio frontend dev server.
-const APP_URL: &str = "http://localhost:1420";
+/// The local URL served by the OrqaStudio frontend dev server (ORQA_PORT_BASE + 20, default 10120).
+const APP_URL: &str = "http://localhost:10120";
 
 /// Launch the OrqaStudio application in the default browser.
 ///

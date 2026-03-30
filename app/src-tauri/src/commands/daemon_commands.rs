@@ -22,7 +22,7 @@ pub struct DaemonHealthResponse {
 /// Query the daemon's health endpoint and return the result.
 ///
 /// Makes an HTTP GET to the daemon's `/health` endpoint with a 3-second timeout.
-/// The daemon port is derived from `ORQA_PORT_BASE` (default 10200) + offset 58.
+/// The daemon binds directly to ORQA_PORT_BASE (default 10100) with no offset.
 /// Returns the daemon's JSON response on success, or an error if the daemon is
 /// unreachable or returns a non-200 status.
 #[tauri::command]
@@ -30,7 +30,7 @@ pub async fn daemon_health() -> Result<DaemonHealthResponse, OrqaError> {
     let daemon_port: u16 = std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse::<u16>().ok())
-        .map_or(10258, |base| base + 58);
+        .unwrap_or(10100);
 
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(3))

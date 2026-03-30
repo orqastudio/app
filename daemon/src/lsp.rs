@@ -11,8 +11,8 @@
 //      subprocess lifecycle.
 //
 // The default TCP port for the LSP server is derived from `ORQA_PORT_BASE`
-// (the daemon health port, default 9120) plus an offset of 57. This gives a
-// default LSP port of 9177. The daemon health port is the single env var that
+// (the daemon health port, default 10100) plus an offset of 1. This gives a
+// default LSP port of 10101. The daemon health port is the single env var that
 // controls the port range for all daemon-adjacent services.
 //
 // If the binary is not found the daemon degrades gracefully and logs a warning.
@@ -27,16 +27,16 @@ use crate::subprocess::SubprocessManager;
 const LSP_BINARY: &str = "orqa-lsp-server";
 
 /// Port offset added to ORQA_PORT_BASE for the LSP TCP listener.
-const LSP_PORT_OFFSET: u16 = 57;
+const LSP_PORT_OFFSET: u16 = 1;
 
 /// Default daemon health port (matches health.rs DEFAULT_PORT).
-const DEFAULT_DAEMON_PORT: u16 = 9120;
+const DEFAULT_DAEMON_PORT: u16 = 10100;
 
 /// Resolve the TCP port for the LSP server.
 ///
-/// Reads `ORQA_PORT_BASE` (the daemon health port, default 9120) from the
-/// environment and adds `LSP_PORT_OFFSET` (57). This gives a default LSP port
-/// of 9177. Falls back to `DEFAULT_DAEMON_PORT + LSP_PORT_OFFSET` when the
+/// Reads `ORQA_PORT_BASE` (the daemon health port, default 10100) from the
+/// environment and adds `LSP_PORT_OFFSET` (1). This gives a default LSP port
+/// of 10101. Falls back to `DEFAULT_DAEMON_PORT + LSP_PORT_OFFSET` when the
 /// variable is absent or unparseable.
 pub fn resolve_lsp_port() -> u16 {
     let base: u16 = std::env::var("ORQA_PORT_BASE")

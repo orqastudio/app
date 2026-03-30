@@ -10,8 +10,8 @@
 //!
 //! # Port allocation
 //!
-//! The daemon uses `ORQA_PORT_BASE` (default 9120) as the base port. The MCP
-//! server listens at `ORQA_PORT_BASE + 58` (default 9178).
+//! The daemon uses `ORQA_PORT_BASE` (default 10100) as the base port. The MCP
+//! server listens at `ORQA_PORT_BASE + 2` (default 10102).
 //!
 //! # Public API
 //!
@@ -22,21 +22,21 @@
 //! orqa_mcp_server::run(Path::new("/my/project")).unwrap();
 //!
 //! // TCP mode (daemon-managed)
-//! orqa_mcp_server::run_tcp(Path::new("/my/project"), 9178, 9120).unwrap();
+//! orqa_mcp_server::run_tcp(Path::new("/my/project"), 10102, 10100).unwrap();
 //! ```
 
 /// Default port offset for the MCP server relative to `ORQA_PORT_BASE`.
-pub const MCP_PORT_OFFSET: u16 = 58;
+pub const MCP_PORT_OFFSET: u16 = 2;
 
 /// Resolve the default MCP TCP port from the environment.
 ///
-/// Returns `ORQA_PORT_BASE + MCP_PORT_OFFSET`. Defaults to 9178 when the
+/// Returns `ORQA_PORT_BASE + MCP_PORT_OFFSET`. Defaults to 10102 when the
 /// environment variable is absent or unparseable.
 pub fn default_mcp_port() -> u16 {
     let base: u16 = std::env::var("ORQA_PORT_BASE")
         .ok()
         .and_then(|s| s.parse().ok())
-        .unwrap_or(9120);
+        .unwrap_or(10100);
     base + MCP_PORT_OFFSET
 }
 

@@ -10,14 +10,14 @@
 //      subprocess lifecycle.
 //
 // The default TCP port for the MCP server is derived from `ORQA_PORT_BASE`
-// (the daemon health port, default 9120) plus an offset of 58. This gives a
-// default MCP port of 9178. The daemon health port is the single env var that
+// (the daemon health port, default 10100) plus an offset of 2. This gives a
+// default MCP port of 10102. The daemon health port is the single env var that
 // controls the port range for all daemon-adjacent services.
 //
 // Port allocation:
-//   Daemon health: ORQA_PORT_BASE + 0  (default 9120)
-//   LSP server:    ORQA_PORT_BASE + 57 (default 9177)
-//   MCP server:    ORQA_PORT_BASE + 58 (default 9178)
+//   Daemon health: ORQA_PORT_BASE + 0  (default 10100)
+//   LSP server:    ORQA_PORT_BASE + 1  (default 10101)
+//   MCP server:    ORQA_PORT_BASE + 2  (default 10102)
 //
 // If the binary is not found the daemon degrades gracefully and logs a warning.
 
@@ -31,16 +31,16 @@ use crate::subprocess::SubprocessManager;
 const MCP_BINARY: &str = "orqa-mcp-server";
 
 /// Port offset added to ORQA_PORT_BASE for the MCP TCP listener.
-const MCP_PORT_OFFSET: u16 = 58;
+const MCP_PORT_OFFSET: u16 = 2;
 
 /// Default daemon health port (matches health.rs DEFAULT_PORT).
-const DEFAULT_DAEMON_PORT: u16 = 9120;
+const DEFAULT_DAEMON_PORT: u16 = 10100;
 
 /// Resolve the TCP port for the MCP server.
 ///
-/// Reads `ORQA_PORT_BASE` (the daemon health port, default 9120) from the
-/// environment and adds `MCP_PORT_OFFSET` (58). This gives a default MCP port
-/// of 9178. Falls back to `DEFAULT_DAEMON_PORT + MCP_PORT_OFFSET` when the
+/// Reads `ORQA_PORT_BASE` (the daemon health port, default 10100) from the
+/// environment and adds `MCP_PORT_OFFSET` (2). This gives a default MCP port
+/// of 10102. Falls back to `DEFAULT_DAEMON_PORT + MCP_PORT_OFFSET` when the
 /// variable is absent or unparseable.
 pub fn resolve_mcp_port() -> u16 {
     let base: u16 = std::env::var("ORQA_PORT_BASE")

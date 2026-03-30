@@ -4,7 +4,7 @@
 // POST /prompt, POST /knowledge (knowledge injection), POST /context (active
 // rules and workflows for CLAUDE.md generation), and POST /session-start
 // (structured startup checks). The endpoint runs on the tokio runtime and binds
-// to 127.0.0.1:<ORQA_PORT_BASE> (default port 9120). This allows other tools
+// to 127.0.0.1:<ORQA_PORT_BASE> (default port 10100). This allows other tools
 // (app, CLI, connector) to check whether the daemon is alive without reading
 // the PID file directly.
 
@@ -21,7 +21,7 @@ use tracing::{error, info};
 use crate::config::DaemonConfig;
 
 /// Default port for the daemon health endpoint.
-const DEFAULT_PORT: u16 = 9120;
+const DEFAULT_PORT: u16 = 10100;
 
 /// Environment variable that overrides the daemon port.
 const PORT_ENV_VAR: &str = "ORQA_PORT_BASE";
@@ -62,7 +62,7 @@ async fn health_handler(State(state): State<HealthState>) -> Json<HealthResponse
 
 /// Resolve the port to bind from the environment or use the default.
 ///
-/// Reads `ORQA_PORT_BASE` and parses it as a u16. Falls back to 9120 if the
+/// Reads `ORQA_PORT_BASE` and parses it as a u16. Falls back to 10100 if the
 /// variable is absent or unparseable, logging a warning in the latter case.
 pub fn resolve_port() -> u16 {
     match std::env::var(PORT_ENV_VAR) {
