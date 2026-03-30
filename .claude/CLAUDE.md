@@ -61,14 +61,6 @@ The migration proceeds in phases. Each phase has prerequisites and completion cr
 
 Do NOT start Phase N+1 until Phase N is complete and ALL tasks in Phase N have independent PASS verdicts from a Reviewer agent. No exceptions.
 
-## Target Protection (NON-NEGOTIABLE)
-
-The `targets/` directory contains hand-written target states that define what the finished system would produce. These are test fixtures and validation benchmarks.
-
-**NEVER modify files in `targets/`.** Targets are only replaced when a generation pipeline produces output that matches or exceeds the hand-written version. During the migration, targets are read-only reference material.
-
-Note: The `targets/` directory will be removed once all generation pipelines produce output matching or exceeding the targets (Phase 10.4.1). Until then, targets are read-only reference material.
-
 ## Zero Tech Debt Enforcement
 
 This migration is an opportunity to establish the correct architecture from scratch. Zero legacy survives:
@@ -191,7 +183,6 @@ When agents discover unexpected findings during work (undocumented dependencies,
 - NEVER defer work from the approved plan without explicit user approval
 - NEVER skip an acceptance criterion because it seems hard or low-priority
 - NEVER leave legacy code alive -- delete it, don't comment it out
-- NEVER overwrite files in `targets/` -- they are read-only test fixtures
 - NEVER judge quality yourself -- delegate to a Reviewer agent
 - NEVER start the next phase until all tasks in the current phase have PASS verdicts
 - NEVER add backwards compatibility shims or feature flags for legacy code
