@@ -46,11 +46,26 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 				name: plugin.name,
 			});
 
+			// Ensure provides exists with default empty arrays — Tauri IPC
+			// may omit fields that are empty/null in the Rust struct.
+			if (!manifest.provides) {
+				(manifest as Record<string, unknown>).provides = {};
+			}
+			const p = manifest.provides;
+			if (!p.schemas) p.schemas = [];
+			if (!p.relationships) p.relationships = [];
+			if (!p.views) p.views = [];
+			if (!p.widgets) p.widgets = [];
+			if (!p.workflows) p.workflows = [];
+			if (!p.hooks) p.hooks = [];
+			if (!p.knowledge) p.knowledge = [];
+
 			// Register the manifest with empty components — views are loaded
 			// on demand via the plugin-view route, not compiled in.
 			registry.register(manifest, {});
 		} catch (err) {
-			log.error(`Failed to register plugin "${plugin.name}"`, err);
+			const msg = err instanceof Error ? err.message : JSON.stringify(err);
+			log.error(`Failed to register plugin "${plugin.name}": ${msg}`);
 		}
 	}
 }
