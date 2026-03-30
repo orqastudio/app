@@ -19,7 +19,7 @@
  * orqa dev tool           Run the debug-tool submodule
  */
 
-import { spawn, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
+import { spawn, exec as execAsync, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
 import { createServer as createNetServer } from "node:net";
 import * as path from "node:path";
 import * as fs from "node:fs";
@@ -210,6 +210,7 @@ interface ControlFileState {
 	state: string;
 	app: number | null;
 	search: number | null;
+	dashboard: number | null;
 }
 
 function getControlFilePath(root: string): string {
@@ -412,6 +413,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		state: "starting",
 		app: null,
 		search: null,
+		dashboard: null,
 	});
 
 	// ── 1. Start daemon ─────────────────────────────────────────────────
@@ -476,6 +478,10 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	//   - Launches the app window
 	const app = createManagedProcess("app", COLOURS.magenta);
 
+	// Tracks the detached dashboard process so it can be killed on shutdown.
+	// Set once when the dev environment first reaches "running" state.
+	let dashboardProc: NodeChildProcess | null = null;
+
 	async function startRust(): Promise<void> {
 		logCtrl("Starting Tauri app (cargo tauri dev)...");
 
@@ -483,6 +489,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			state: "building",
 			app: null,
 			search: searchProc.child?.pid ?? null,
+			dashboard: null,
 		});
 
 		spawnManaged(app, "cargo", [
@@ -520,10 +527,36 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			logCtrl("Tauri app may still be compiling — check the terminal.");
 		}
 
+		// Spawn the debug dashboard as a detached process so it survives across app
+		// restarts. Only launch it once — if it is already running (dashboardProc set),
+		// skip. The PID is stored in the control file so the dashboard server can read
+		// it and report controller status.
+		if (!dashboardProc) {
+			const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
+			dashboardProc = spawn("node", [dashboardScript], {
+				cwd: root,
+				detached: true,
+				stdio: "ignore",
+			});
+			dashboardProc.unref();
+			logSuccess(`Debug dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
+
+			// Open the dashboard in the default browser after a short delay so the
+			// server has time to bind its port.
+			setTimeout(() => {
+				const url = `http://localhost:${getPort("dashboard")}`;
+				const openCmd = isWindows() ? `start "" "${url}"` : platform() === "darwin" ? `open "${url}"` : `xdg-open "${url}"`;
+				execAsync(openCmd, (err: Error | null) => {
+					if (err) logCtrl(`Could not open browser: ${err.message}`);
+				});
+			}, 1_500);
+		}
+
 		writeControlFile(root, {
 			state: "running",
 			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
+			dashboard: dashboardProc?.pid ?? null,
 		});
 
 		// When app exits cleanly (code 0 = user closed window), shut down everything.
@@ -532,6 +565,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			if (code === 0 || code === null) {
 				logCtrl("App window closed. Shutting down...");
 				killManaged(searchProc);
+				if (dashboardProc?.pid) {
+					try { process.kill(dashboardProc.pid, "SIGKILL"); } catch { /* already dead */ }
+				}
 				removeControlFile(root);
 				cleanupSignalFile(root);
 				process.exit(0);
@@ -540,6 +576,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 					state: "app-crashed",
 					app: null,
 					search: searchProc.child?.pid ?? null,
+					dashboard: dashboardProc?.pid ?? null,
 				});
 				logCtrl(
 					`App crashed (code ${code}). Use 'orqa dev restart-tauri' to relaunch.`,
@@ -589,6 +626,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			state,
 			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
+			dashboard: dashboardProc?.pid ?? null,
 		});
 	}
 
@@ -650,6 +688,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			closeAllWatchers();
 			killManaged(app);
 			killManaged(searchProc);
+			if (dashboardProc?.pid) {
+				try { process.kill(dashboardProc.pid, "SIGKILL"); } catch { /* already dead */ }
+			}
 			removeControlFile(root);
 			cleanupSignalFile(root);
 			fs.unwatchFile(signalFile);
@@ -678,6 +719,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		fs.unwatchFile(signalFile);
 		killManaged(app);
 		killManaged(searchProc);
+		if (dashboardProc?.pid) {
+			try { process.kill(dashboardProc.pid, "SIGKILL"); } catch { /* already dead */ }
+		}
 		removeControlFile(root);
 		cleanupSignalFile(root);
 		process.exit(0);

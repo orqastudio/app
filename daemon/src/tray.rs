@@ -149,21 +149,55 @@ fn build_menu(statuses: SubprocessStatuses) -> (
 
 /// Rebuild the tray context menu when subprocess statuses have changed.
 ///
-/// Updates `tray` with a fresh menu and refreshes `quit_id`, `last_lsp`, and
-/// `last_mcp`. No-op when statuses match the last-rendered values.
+/// Updates `tray` with a fresh menu and refreshes `open_id`, `quit_id`,
+/// `last_lsp`, and `last_mcp`. No-op when statuses match the last-rendered
+/// values. Both IDs must be updated together because each `build_menu` call
+/// generates new `MenuId` values — stale IDs will never match incoming events.
 fn maybe_refresh_menu(
     tray: &tray_icon::TrayIcon,
     current: SubprocessStatuses,
+    open_id: &mut tray_icon::menu::MenuId,
     quit_id: &mut tray_icon::menu::MenuId,
     last_lsp: &mut SubprocessStatus,
     last_mcp: &mut SubprocessStatus,
 ) {
     if current.lsp != *last_lsp || current.mcp != *last_mcp {
-        let (new_menu, _open_id, new_quit_id) = build_menu(current);
+        let (new_menu, new_open_id, new_quit_id) = build_menu(current);
+        *open_id = new_open_id;
         *quit_id = new_quit_id;
         tray.set_menu(Some(Box::new(new_menu)));
         *last_lsp = current.lsp;
         *last_mcp = current.mcp;
+    }
+}
+
+/// The local URL served by the OrqaStudio frontend dev server.
+const APP_URL: &str = "http://localhost:1420";
+
+/// Launch the OrqaStudio application in the default browser.
+///
+/// Uses the platform-native mechanism to open the app URL:
+/// - macOS: `open <url>`
+/// - Windows: `cmd /c start <url>`
+/// - Linux/other: `xdg-open <url>`
+///
+/// Errors are logged but do not crash the daemon — the tray remains functional
+/// even when the app cannot be launched.
+fn open_app() {
+    #[cfg(target_os = "macos")]
+    let result = std::process::Command::new("open").arg(APP_URL).spawn();
+
+    #[cfg(target_os = "windows")]
+    let result = std::process::Command::new("cmd")
+        .args(["/c", "start", APP_URL])
+        .spawn();
+
+    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
+    let result = std::process::Command::new("xdg-open").arg(APP_URL).spawn();
+
+    match result {
+        Ok(_) => tracing::info!(subsystem = "tray", url = APP_URL, "[tray] opened app in browser"),
+        Err(e) => tracing::warn!(subsystem = "tray", error = %e, url = APP_URL, "[tray] failed to open app"),
     }
 }
 
@@ -181,7 +215,7 @@ pub fn run_tray_loop(
 
     let icon = build_icon();
     let initial = SubprocessStatuses::default();
-    let (initial_menu, _open_id, mut quit_id) = build_menu(initial);
+    let (initial_menu, mut open_id, mut quit_id) = build_menu(initial);
 
     let tray = match TrayIconBuilder::new()
         .with_menu(Box::new(initial_menu))
@@ -206,7 +240,7 @@ pub fn run_tray_loop(
             break;
         }
         let current = subprocess_statuses.lock().map(|g| *g).unwrap_or_default();
-        maybe_refresh_menu(&tray, current, &mut quit_id, &mut last_lsp, &mut last_mcp);
+        maybe_refresh_menu(&tray, current, &mut open_id, &mut quit_id, &mut last_lsp, &mut last_mcp);
 
         while let Ok(event) = menu_channel.try_recv() {
             if event.id == quit_id {
@@ -214,7 +248,10 @@ pub fn run_tray_loop(
                 shutdown_flag.store(true, Ordering::SeqCst);
                 return TrayStatus::Exited;
             }
-            tracing::info!(subsystem = "tray", "[tray] Open App selected");
+            if event.id == open_id {
+                tracing::info!(subsystem = "tray", "[tray] Open App selected");
+                open_app();
+            }
         }
         std::thread::sleep(std::time::Duration::from_millis(50));
     }

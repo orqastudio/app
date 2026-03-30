@@ -76,6 +76,9 @@ pub struct PluginProjectConfig {
     pub enabled: bool,
     /// Relative path to the plugin directory (from project root).
     pub path: String,
+    /// Installed version of the plugin (e.g. "0.1.4-dev").
+    #[serde(default)]
+    pub version: Option<String>,
     /// Per-relationship overrides (key -> enabled).
     #[serde(default)]
     pub relationships: Option<std::collections::HashMap<String, bool>>,
@@ -239,5 +242,31 @@ mod tests {
         assert!(settings.governance.is_none());
         assert!(!settings.show_thinking);
         assert!(settings.custom_system_prompt.is_none());
+    }
+
+    #[test]
+    fn plugin_config_with_version_deserializes() {
+        // Verifies that plugin entries with a "version" field (written by `orqa install`)
+        // are accepted by deny_unknown_fields deserialization.
+        let json = r#"{
+            "name": "test",
+            "plugins": {
+                "@orqastudio/plugin-cli": {
+                    "path": "plugins/knowledge/cli",
+                    "enabled": true,
+                    "version": "0.1.4-dev",
+                    "installed": true
+                }
+            }
+        }"#;
+        let settings: ProjectSettings =
+            serde_json::from_str(json).expect("deserialization with version field should succeed");
+        let plugin = settings
+            .plugins
+            .get("@orqastudio/plugin-cli")
+            .expect("plugin should be present");
+        assert_eq!(plugin.version.as_deref(), Some("0.1.4-dev"));
+        assert!(plugin.installed);
+        assert!(plugin.enabled);
     }
 }
