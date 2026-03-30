@@ -1,7 +1,7 @@
 /**
  * Artifact graph scanner and query engine for CLI usage.
  *
- * Delegates to the orqa-validation daemon (localhost:9120 by default) for all graph
+ * Delegates to the orqa-validation daemon (localhost:10100 by default) for all graph
  * operations. Falls back to the `orqa-validation` binary when the daemon
  * is unreachable. The CLI no longer reimplements scanning, type inference,
  * query filtering, or stats computation — these all live canonically in

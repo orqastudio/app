@@ -171,9 +171,6 @@ fn maybe_refresh_menu(
     }
 }
 
-/// The local URL served by the OrqaStudio frontend dev server (ORQA_PORT_BASE + 20, default 10120).
-const APP_URL: &str = "http://localhost:10120";
-
 /// Launch the OrqaStudio application in the default browser.
 ///
 /// Uses the platform-native mechanism to open the app URL:
@@ -184,20 +181,24 @@ const APP_URL: &str = "http://localhost:10120";
 /// Errors are logged but do not crash the daemon — the tray remains functional
 /// even when the app cannot be launched.
 fn open_app() {
+    use orqa_engine::ports::{resolve_port_base, VITE_PORT_OFFSET};
+    let port = resolve_port_base() + VITE_PORT_OFFSET;
+    let url = format!("http://localhost:{port}");
+
     #[cfg(target_os = "macos")]
-    let result = std::process::Command::new("open").arg(APP_URL).spawn();
+    let result = std::process::Command::new("open").arg(&url).spawn();
 
     #[cfg(target_os = "windows")]
     let result = std::process::Command::new("cmd")
-        .args(["/c", "start", APP_URL])
+        .args(["/c", "start", &url])
         .spawn();
 
     #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    let result = std::process::Command::new("xdg-open").arg(APP_URL).spawn();
+    let result = std::process::Command::new("xdg-open").arg(&url).spawn();
 
     match result {
-        Ok(_) => tracing::info!(subsystem = "tray", url = APP_URL, "[tray] opened app in browser"),
-        Err(e) => tracing::warn!(subsystem = "tray", error = %e, url = APP_URL, "[tray] failed to open app"),
+        Ok(_) => tracing::info!(subsystem = "tray", %url, "[tray] opened app in browser"),
+        Err(e) => tracing::warn!(subsystem = "tray", error = %e, %url, "[tray] failed to open app"),
     }
 }
 

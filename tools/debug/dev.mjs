@@ -33,10 +33,9 @@ const CONTROL_FILE = join(DEV_ROOT, "tmp", "dev-controller.json");
 const SIGNAL_FILE = join(DEV_ROOT, "tmp", "dev-signal");
 const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
 
-// Dashboard port is ORQA_PORT_BASE + 30 (default 10130). Matches ports.ts
-// PORT_OFFSETS.dashboard. The daemon health endpoint uses ORQA_PORT_BASE
-// directly (default 10100).
-const DASHBOARD_PORT = 10130;
+// Dashboard port is ORQA_PORT_BASE + 30 (default 10130).
+const PORT_BASE = parseInt(process.env.ORQA_PORT_BASE || "10100", 10) || 10100;
+const DASHBOARD_PORT = PORT_BASE + 30;
 
 const COLOURS = {
   reset: "\x1b[0m",

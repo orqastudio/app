@@ -17,6 +17,12 @@ pub const LSP_PORT_OFFSET: u16 = 1;
 /// Port offset for the MCP server.
 pub const MCP_PORT_OFFSET: u16 = 2;
 
+/// Port offset for the Vite dev server (frontend).
+pub const VITE_PORT_OFFSET: u16 = 20;
+
+/// Port offset for the debug dashboard.
+pub const DASHBOARD_PORT_OFFSET: u16 = 30;
+
 /// Port offset for the IPC socket used by the Tauri app for internal
 /// communication between the sidecar processes and the main app process.
 pub const IPC_SOCKET_PORT_OFFSET: u16 = 58;
