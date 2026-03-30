@@ -35,6 +35,14 @@
 	// Resolve what to render in the explorer panel
 	const resolved = $derived.by(() => {
 		const navItem = navigationStore.activeNavItem;
+		const activity = navigationStore.activeActivity;
+
+		// Core view by activity key — checked first so built-in views
+		// take priority over plugin views (e.g. roadmap is both a core
+		// component and a plugin nav item).
+		if (CORE_VIEWS[activity]) {
+			return { type: "core" as const, component: CORE_VIEWS[activity] };
+		}
 
 		// Plugin view — loaded at runtime from plugin bundle
 		if (navItem?.type === "plugin" && navItem.pluginSource) {
@@ -43,12 +51,6 @@
 				pluginName: navItem.pluginSource,
 				viewKey: navItem.key,
 			};
-		}
-
-		// Core view by activity key
-		const activity = navigationStore.activeActivity;
-		if (CORE_VIEWS[activity]) {
-			return { type: "core" as const, component: CORE_VIEWS[activity] };
 		}
 
 		// Artifact detail — check for a plugin-provided custom viewer before

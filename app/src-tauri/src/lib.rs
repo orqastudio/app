@@ -190,6 +190,49 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
     app.manage(app_state);
 
+    // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. In this mode:
+    // 1. Auto-complete first-run setup (skip the wizard)
+    // 2. Auto-open the project so a fresh DB is immediately usable
+    if let Ok(project_root) = std::env::var("ORQA_PROJECT_ROOT") {
+        let state: tauri::State<'_, state::AppState> = app.state();
+
+        // Mark first-run setup as complete — dev environment is already configured.
+        {
+            let conn = state
+                .db
+                .conn
+                .lock()
+                .expect("db lock for setup auto-complete");
+            if let Err(e) = repo::settings_repo::set(
+                &conn,
+                "setup_version",
+                &serde_json::json!(1u32),
+                "app",
+            ) {
+                tracing::warn!(err = %e, "failed to auto-complete setup");
+            } else {
+                tracing::info!("auto-completed first-run setup (dev mode)");
+            }
+        }
+
+        // Auto-open the project so artifacts are immediately available.
+        match commands::project_commands::project_open(project_root.clone(), state) {
+            Ok(project) => {
+                tracing::info!(
+                    path = %project.path,
+                    "auto-opened project from ORQA_PROJECT_ROOT"
+                );
+            }
+            Err(e) => {
+                tracing::warn!(
+                    root = %project_root,
+                    err = %e,
+                    "failed to auto-open project from ORQA_PROJECT_ROOT"
+                );
+            }
+        }
+    }
+
     let model_dir = app_dir.join("models").join("all-MiniLM-L6-v2");
     spawn_model_download(model_dir, Arc::clone(&tracker));
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
-	import { convertFileSrc } from "@tauri-apps/api/core";
+	import { onMount, onDestroy, tick } from "svelte";
+	import { readTextFile } from "@tauri-apps/plugin-fs";
 	import { logger } from "@orqastudio/sdk";
 	import { getPluginPath } from "$lib/services/plugin-service.js";
 
@@ -18,12 +18,15 @@
 			// Get the plugin's install path from the backend via the plugin service.
 			const pluginPath = await getPluginPath(pluginName);
 
-			// Load the plugin's pre-bundled view module
-			// Plugins build to dist/views/{viewKey}.js
+			// Load the plugin's pre-bundled IIFE view module.
+			// IIFE format resolves shared dependencies via output.globals
+			// (e.g. window.__orqa.svelte), so no import rewriting is needed.
 			const bundlePath = `${pluginPath}/dist/views/${viewKey}.js`;
-			const bundleUrl = convertFileSrc(bundlePath);
+			const content = await readTextFile(bundlePath);
 
-			const module = await import(/* @vite-ignore */ bundleUrl);
+			// Execute the IIFE. It returns the module exports object.
+			// eslint-disable-next-line no-new-func
+			const module = new Function(content + "\nreturn OrqaPluginView;")() as Record<string, unknown>;
 
 			if (!module.default && !module.mount) {
 				error = `Plugin "${pluginName}" view "${viewKey}" does not export a default component or mount function`;
@@ -31,18 +34,18 @@
 				return;
 			}
 
-			// Mount the plugin view into our container
+			// Set loading false so the container div renders, then mount into it
+			// on the next tick once the DOM has updated.
+			loading = false;
+			await tick();
+
 			if (typeof module.mount === "function") {
-				// Plugin provides a mount function (preferred)
 				cleanup = module.mount(container);
 			} else if (module.default) {
-				// Plugin exports a Svelte 5 component — use mount()
 				const { mount: svelteMount, unmount: svelteUnmount } = await import("svelte");
 				const instance = svelteMount(module.default, { target: container });
 				cleanup = () => svelteUnmount(instance);
 			}
-
-			loading = false;
 		} catch (err) {
 			log.error("Failed to load plugin view", { pluginName, viewKey, err });
 			error = `Failed to load plugin view: ${err instanceof Error ? err.message : String(err)}`;

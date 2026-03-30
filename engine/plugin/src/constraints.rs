@@ -158,6 +158,7 @@ mod tests {
                 settings_pages: vec![],
             },
             merge_decisions: vec![],
+            default_navigation: vec![],
             install_constraints: PluginInstallConstraints {
                 purpose: purpose.iter().map(|s| s.to_string()).collect(),
                 stage_slot: stage_slot.map(String::from),

@@ -3,7 +3,9 @@
   "version": "0.1.4-dev",
   "displayName": "Software Project",
   "description": "Software development lifecycle — delivery planning with milestones, epics and tasks, research discovery, bug tracking, roadmap views, and delivery pipeline widgets.",
-  "categories": ["workflow"],
+  "categories": [
+    "workflow"
+  ],
   "purpose": [
     "workflow"
   ],
@@ -238,34 +240,98 @@
         "artifact_type": "milestone",
         "path": "workflows/milestone.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "epic",
         "path": "workflows/epic.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "ready", "label": "Ready", "color": "#38bdf8" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "ready",
+            "label": "Ready",
+            "color": "#38bdf8"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "task",
         "path": "workflows/task.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "ready", "label": "Ready", "color": "#38bdf8" },
-          { "key": "prioritised", "label": "Prioritised", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "ready",
+            "label": "Ready",
+            "color": "#38bdf8"
+          },
+          {
+            "key": "prioritised",
+            "label": "Prioritised",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
@@ -742,10 +808,9 @@
       "label": "Discovery",
       "children": [
         {
-          "key": "research",
-          "type": "plugin",
-          "icon": "flask-conical",
-          "pluginSource": "@orqastudio/plugin-software-kanban"
+          "key": "discovery-research",
+          "type": "builtin",
+          "icon": "flask-conical"
         }
       ]
     },
@@ -763,21 +828,18 @@
         },
         {
           "key": "milestones",
-          "type": "plugin",
-          "icon": "flag",
-          "pluginSource": "@orqastudio/plugin-software-kanban"
+          "type": "builtin",
+          "icon": "flag"
         },
         {
           "key": "epics",
-          "type": "plugin",
-          "icon": "layers",
-          "pluginSource": "@orqastudio/plugin-software-kanban"
+          "type": "builtin",
+          "icon": "layers"
         },
         {
           "key": "tasks",
-          "type": "plugin",
-          "icon": "check-square",
-          "pluginSource": "@orqastudio/plugin-software-kanban"
+          "type": "builtin",
+          "icon": "check-square"
         }
       ]
     }

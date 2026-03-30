@@ -20,7 +20,9 @@ function forwardEntry(entry: LogEntry) {
 			message: `[${entry.source}] ${entry.message}`,
 		});
 		if (navigator.sendBeacon) {
-			const blob = new Blob([body], { type: "application/json" });
+			// Use text/plain to avoid CORS preflight (sendBeacon doesn't support it).
+			// The dashboard server parses the body as JSON regardless of Content-Type.
+			const blob = new Blob([body], { type: "text/plain" });
 			navigator.sendBeacon(DEV_LOG_URL, blob);
 		} else {
 			void fetch(DEV_LOG_URL, {

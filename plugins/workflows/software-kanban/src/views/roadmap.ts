@@ -6,12 +6,12 @@
  * function that unmounts the component.
  */
 
-import { mount, unmount } from "svelte";
+import { mount as svelteMount, unmount as svelteUnmount } from "svelte";
 import RoadmapView from "./RoadmapView.svelte";
 
 export function mount(container: HTMLElement): () => void {
-	const component = mount(RoadmapView, { target: container });
-	return () => unmount(component);
+	const component = svelteMount(RoadmapView, { target: container });
+	return () => svelteUnmount(component);
 }
 
 export default RoadmapView;

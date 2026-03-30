@@ -3,8 +3,12 @@
   "version": "0.1.4-dev",
   "displayName": "Discovery Stage",
   "description": "Discovery-stage artifact types — vision, personas, pillars, pivots, ideas, research, and strategic decisions. Fills the discovery-artifacts contribution point of agile-methodology.",
-  "categories": ["workflow"],
-  "purpose": ["workflow"],
+  "categories": [
+    "workflow"
+  ],
+  "purpose": [
+    "workflow"
+  ],
   "stage_slot": "discovery",
   "role": null,
   "provides": {
@@ -14,7 +18,7 @@
         "label": "Vision",
         "plural": "Vision",
         "icon": "eye",
-        "defaultPath": ".orqa/discovery",
+        "defaultPath": ".orqa/discovery/vision",
         "idPrefix": "VISION",
         "semantic": "discovery",
         "frontmatter": {
@@ -178,7 +182,7 @@
         "label": "Pivot",
         "plural": "Pivots",
         "icon": "refresh-cw",
-        "defaultPath": ".orqa/discovery",
+        "defaultPath": ".orqa/discovery/pivots",
         "idPrefix": "PIVOT",
         "semantic": "discovery",
         "reviewAction": "Review pivot",
@@ -420,33 +424,93 @@
         "artifact_type": "discovery-idea",
         "path": "workflows/discovery-idea.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "discovery-research",
         "path": "workflows/discovery-research.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "discovery-decision",
         "path": "workflows/discovery-decision.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
@@ -547,5 +611,45 @@
     "behavioral_rules": [],
     "knowledge_declarations": [],
     "content": {}
-  }
+  },
+  "defaultNavigation": [
+    {
+      "key": "discovery",
+      "type": "group",
+      "icon": "compass",
+      "label": "Discovery",
+      "children": [
+        {
+          "key": "vision",
+          "type": "builtin",
+          "icon": "eye"
+        },
+        {
+          "key": "pillars",
+          "type": "builtin",
+          "icon": "columns"
+        },
+        {
+          "key": "personas",
+          "type": "builtin",
+          "icon": "users"
+        },
+        {
+          "key": "pivots",
+          "type": "builtin",
+          "icon": "refresh-cw"
+        },
+        {
+          "key": "discovery-ideas",
+          "type": "builtin",
+          "icon": "lightbulb"
+        },
+        {
+          "key": "discovery-decisions",
+          "type": "builtin",
+          "icon": "scale"
+        }
+      ]
+    }
+  ]
 }

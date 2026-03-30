@@ -3,7 +3,11 @@
   "version": "0.1.4-dev",
   "displayName": "Core Framework",
   "description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
-  "categories": ["workflow", "infrastructure", "enforcement-generator"],
+  "categories": [
+    "workflow",
+    "infrastructure",
+    "enforcement-generator"
+  ],
   "purpose": [
     "workflow",
     "infrastructure"
@@ -20,21 +24,37 @@
       "actions": {
         "check": {
           "command": "prettier",
-          "args": ["--config", ".orqa/configs/.prettierrc", "--check"],
+          "args": [
+            "--config",
+            ".orqa/configs/.prettierrc",
+            "--check"
+          ],
           "files": "*.{ts,svelte,js,json,css}"
         },
         "fix": {
           "command": "prettier",
-          "args": ["--config", ".orqa/configs/.prettierrc", "--write"],
+          "args": [
+            "--config",
+            ".orqa/configs/.prettierrc",
+            "--write"
+          ],
           "files": "*.{ts,svelte,js,json,css}"
         }
       },
       "watch": {
-        "paths": [".orqa/learning/rules/**/*.md"],
+        "paths": [
+          ".orqa/learning/rules/**/*.md"
+        ],
         "filter": "engine: prettier",
         "on_change": "regenerate"
       },
-      "file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"],
+      "file_types": [
+        "*.ts",
+        "*.svelte",
+        "*.js",
+        "*.json",
+        "*.css"
+      ],
       "rules_path": "rules/prettier/"
     },
     {
@@ -45,16 +65,23 @@
       "actions": {
         "check": {
           "command": "markdownlint-cli2",
-          "args": ["--config", ".orqa/configs/.markdownlint.json"],
+          "args": [
+            "--config",
+            ".orqa/configs/.markdownlint.json"
+          ],
           "files": "*.md"
         }
       },
       "watch": {
-        "paths": [".orqa/learning/rules/**/*.md"],
+        "paths": [
+          ".orqa/learning/rules/**/*.md"
+        ],
         "filter": "engine: markdownlint",
         "on_change": "regenerate"
       },
-      "file_types": ["*.md"],
+      "file_types": [
+        "*.md"
+      ],
       "rules_path": "rules/markdownlint/"
     },
     {
@@ -65,20 +92,30 @@
       "actions": {
         "check": {
           "command": "node",
-          "args": ["scripts/validate-artifacts.mjs", "--staged"],
+          "args": [
+            "scripts/validate-artifacts.mjs",
+            "--staged"
+          ],
           "files": "*.md"
         },
         "fix": {
           "command": "node",
-          "args": ["scripts/validate-artifacts.mjs", "--fix"],
+          "args": [
+            "scripts/validate-artifacts.mjs",
+            "--fix"
+          ],
           "files": "*.md"
         }
       },
       "watch": {
-        "paths": [".orqa/**/*.md"],
+        "paths": [
+          ".orqa/**/*.md"
+        ],
         "on_change": "regenerate"
       },
-      "file_types": ["*.md"]
+      "file_types": [
+        "*.md"
+      ]
     }
   ],
   "content": {
@@ -254,11 +291,31 @@
         "semantic": "learning",
         "reviewAction": "Review lesson",
         "categories": [
-          { "key": "process", "label": "Process", "color": "#8b5cf6" },
-          { "key": "architecture", "label": "Architecture", "color": "#6366f1" },
-          { "key": "governance", "label": "Governance", "color": "#10b981" },
-          { "key": "coding", "label": "Coding", "color": "#f59e0b" },
-          { "key": "testing", "label": "Testing", "color": "#ef4444" }
+          {
+            "key": "process",
+            "label": "Process",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "architecture",
+            "label": "Architecture",
+            "color": "#6366f1"
+          },
+          {
+            "key": "governance",
+            "label": "Governance",
+            "color": "#10b981"
+          },
+          {
+            "key": "coding",
+            "label": "Coding",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "testing",
+            "label": "Testing",
+            "color": "#ef4444"
+          }
         ],
         "frontmatter": {
           "type": "object",
@@ -598,35 +655,103 @@
         "artifact_type": "decision",
         "path": "workflows/decision.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "rule",
         "path": "workflows/rule.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#10b981" },
-          { "key": "inactive", "label": "Inactive", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#10b981"
+          },
+          {
+            "key": "inactive",
+            "label": "Inactive",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          }
         ]
       },
       {
         "artifact_type": "lesson",
         "path": "workflows/lesson.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "recurring", "label": "Recurring", "color": "#ef4444" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" },
-          { "key": "promoted", "label": "Promoted", "color": "#6366f1" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "recurring",
+            "label": "Recurring",
+            "color": "#ef4444"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          },
+          {
+            "key": "promoted",
+            "label": "Promoted",
+            "color": "#6366f1"
+          }
         ]
       },
       {
@@ -1378,5 +1503,20 @@
         "prompt_template": "You research questions. Gather evidence from code and docs. Write structured findings."
       }
     ]
-  }
+  },
+  "defaultNavigation": [
+    {
+      "key": "agents",
+      "type": "group",
+      "icon": "bot",
+      "label": "Agents",
+      "children": [
+        {
+          "key": "agents",
+          "type": "builtin",
+          "icon": "bot"
+        }
+      ]
+    }
+  ]
 }

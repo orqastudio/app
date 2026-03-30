@@ -536,15 +536,13 @@ export class PluginRegistry {
 							detail: `relationship key "${rel.key}" already registered by "${forwardOwner}" with inverse "${existing.inverse}" (new: "${rel.inverse}")`,
 						});
 					} else if (!arraysEqual(existing.from, rel.from) || !arraysEqual(existing.to, rel.to)) {
-						conflicts.push({
-							type: "relationship-constraint",
-							key: rel.key,
-							existingPlugin: forwardOwner,
-							newPlugin: manifest.name,
-							detail: `relationship "${rel.key}" has conflicting type constraints — ` +
-								`existing: from [${existing.from}] to [${existing.to}], ` +
-								`new: from [${rel.from}] to [${rel.to}]`,
-						});
+						// Multiple plugins extend the same relationship with different type
+						// pairs. Merge (union) the from/to arrays instead of rejecting.
+						// This is the expected pattern: agile-discovery declares evolves-to
+						// for discovery types, agile-planning extends it for planning types.
+						const mergedFrom = [...new Set([...existing.from, ...rel.from])];
+						const mergedTo = [...new Set([...existing.to, ...rel.to])];
+						this.relationshipDefs.set(rel.key, { ...existing, from: mergedFrom, to: mergedTo });
 					}
 					// If key, inverse, from, and to all match — it's a duplicate, not a conflict.
 					// Silently skip (idempotent re-registration is fine).

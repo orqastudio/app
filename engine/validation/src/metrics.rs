@@ -97,6 +97,10 @@ impl GraphHealth {
 /// Uses iterative DFS with a cycle guard to avoid infinite loops.
 pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<AncestryChain> {
     let target_types: HashSet<&str> = ["pillar", "vision"].iter().copied().collect();
+    // Hard limits to prevent path explosion in dense graphs.
+    const MAX_DEPTH: usize = 15;
+    const MAX_RESULTS: usize = 20;
+    const MAX_STACK_SIZE: usize = 5_000;
 
     // Each stack frame is (current_id, path_so_far, visited_in_this_path)
     let mut stack: Vec<(String, Vec<AncestryNode>, HashSet<String>)> = Vec::new();
@@ -117,6 +121,14 @@ pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<Ancestr
     stack.push((artifact_id.to_owned(), vec![start_node], initial_visited));
 
     while let Some((current_id, path, visited)) = stack.pop() {
+        // Safety limits: stop exploring if we have enough results or the stack is too deep.
+        if results.len() >= MAX_RESULTS || stack.len() > MAX_STACK_SIZE {
+            break;
+        }
+        if path.len() > MAX_DEPTH {
+            continue;
+        }
+
         let Some(current_node) = graph.nodes.get(&current_id) else {
             continue;
         };

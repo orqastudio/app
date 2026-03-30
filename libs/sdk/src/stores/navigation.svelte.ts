@@ -212,15 +212,40 @@ export class NavigationStore {
 		const { pluginRegistry } = getStores();
 		const base = [...PLATFORM_NAVIGATION] as NavigationItem[];
 
-		// Collect plugin navigation contributions and insert before the bottom
-		// fixed items (artifact-graph, plugins, settings).
-		const pluginItems: NavigationItem[] = [];
+		// Collect plugin navigation contributions, merging groups that share the
+		// same key (e.g. multiple plugins contributing to "discovery").
+		const groupMap = new Map<string, NavigationItem>();
+		const insertionOrder: string[] = [];
+
 		for (const [, plugin] of pluginRegistry.plugins) {
 			if (plugin.manifest.defaultNavigation) {
-				for (const item of plugin.manifest.defaultNavigation) {
-					pluginItems.push(item as NavigationItem);
+				for (const raw of plugin.manifest.defaultNavigation) {
+					const item = raw as NavigationItem;
+					const existing = groupMap.get(item.key);
+					if (existing && existing.type === "group" && item.type === "group") {
+						// Merge children, avoiding duplicate keys
+						const existingKeys = new Set((existing.children ?? []).map((c) => c.key));
+						for (const child of item.children ?? []) {
+							if (!existingKeys.has(child.key)) {
+								(existing.children ??= []).push(child);
+							}
+						}
+					} else {
+						groupMap.set(item.key, { ...item });
+						insertionOrder.push(item.key);
+					}
 				}
 			}
+		}
+
+		// Deduplicate insertion order (first occurrence wins position)
+		const seen = new Set<string>();
+		const pluginItems: NavigationItem[] = [];
+		for (const key of insertionOrder) {
+			if (seen.has(key)) continue;
+			seen.add(key);
+			const item = groupMap.get(key);
+			if (item) pluginItems.push(item);
 		}
 
 		if (pluginItems.length === 0) return base;
@@ -438,8 +463,16 @@ export class NavigationStore {
 				if (configPath !== null) {
 					if (type.path === configPath) return type;
 				} else {
+					// Match by last path segment (e.g. "tasks" matches ".orqa/implementation/tasks")
 					const typeKey = type.path.split("/").pop();
 					if (typeKey === view) return type;
+					// Match stage-prefixed keys (e.g. "discovery-research" matches ".orqa/discovery/research")
+					// by joining the last two path segments with a hyphen.
+					const segments = type.path.split("/");
+					if (segments.length >= 2) {
+						const compound = `${segments[segments.length - 2]}-${segments[segments.length - 1]}`;
+						if (compound === view) return type;
+					}
 				}
 			}
 		}

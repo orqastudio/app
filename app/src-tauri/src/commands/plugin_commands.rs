@@ -114,24 +114,38 @@ fn find_plugin_dir(
     project_root: &std::path::Path,
     name: &str,
 ) -> Result<std::path::PathBuf, OrqaError> {
-    let plugins_dir = project_root.join("plugins");
-    if !plugins_dir.is_dir() {
-        return Err(OrqaError::Plugin(format!(
-            "plugins directory not found: {}",
-            plugins_dir.display()
-        )));
-    }
+    // Also check the connectors/ directory (connectors are one level deep).
+    for base in ["plugins", "connectors"] {
+        let base_dir = project_root.join(base);
+        if !base_dir.is_dir() {
+            continue;
+        }
 
-    // Scan each directory and match by manifest name
-    if let Ok(entries) = std::fs::read_dir(&plugins_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if !path.is_dir() {
-                continue;
-            }
-            if let Ok(manifest) = crate::plugins::manifest::read_manifest(&path) {
-                if manifest.name == name {
-                    return Ok(path);
+        if let Ok(entries) = std::fs::read_dir(&base_dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if !path.is_dir() {
+                    continue;
+                }
+                // Try direct child (connectors/<name>/orqa-plugin.json)
+                if let Ok(manifest) = crate::plugins::manifest::read_manifest(&path) {
+                    if manifest.name == name {
+                        return Ok(path);
+                    }
+                }
+                // Try taxonomy subdirectories (plugins/<taxonomy>/<name>/orqa-plugin.json)
+                if let Ok(sub_entries) = std::fs::read_dir(&path) {
+                    for sub_entry in sub_entries.flatten() {
+                        let sub_path = sub_entry.path();
+                        if !sub_path.is_dir() {
+                            continue;
+                        }
+                        if let Ok(manifest) = crate::plugins::manifest::read_manifest(&sub_path) {
+                            if manifest.name == name {
+                                return Ok(sub_path);
+                            }
+                        }
+                    }
                 }
             }
         }

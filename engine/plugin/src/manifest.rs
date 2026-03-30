@@ -40,6 +40,11 @@ pub struct PluginManifest {
     /// Key: the relationship/schema key. Value: the decision made.
     #[serde(default, rename = "mergeDecisions")]
     pub merge_decisions: Vec<MergeDecision>,
+    /// Default navigation tree contributed by this plugin.
+    /// Methodology and workflow plugins define how the sidebar should be structured
+    /// when no explicit project navigation is configured in project.json.
+    #[serde(default, rename = "defaultNavigation")]
+    pub default_navigation: Vec<serde_json::Value>,
     /// Installation constraints: purpose classification, stage slot, and
     /// post-install action flags. All fields default to safe values when absent.
     /// These fields are top-level in the manifest JSON (not nested under a sub-object).
@@ -362,6 +367,7 @@ mod tests {
                 settings_pages: vec![],
             },
             merge_decisions: vec![],
+            default_navigation: vec![],
             install_constraints: Default::default(),
         };
 
@@ -394,6 +400,7 @@ mod tests {
                 settings_pages: vec![],
             },
             merge_decisions: vec![],
+            default_navigation: vec![],
             install_constraints: Default::default(),
         };
 
@@ -426,6 +433,7 @@ mod tests {
                 settings_pages: vec![],
             },
             merge_decisions: vec![],
+            default_navigation: vec![],
             install_constraints: Default::default(),
         };
 

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T10:47:00.884Z",
+  "generatedAt": "2026-03-30T18:27:48.629Z",
   "description": "Composed schema generated from all installed plugins. Artifact types, relationship types, and validation constraints sourced from plugin manifests.",
   "artifactTypes": {
     "vision": {
@@ -10,7 +10,7 @@
       "label": "Vision",
       "plural": "Vision",
       "id_pattern": "^VISION-[a-f0-9]{8}$",
-      "default_path": ".orqa/discovery/",
+      "default_path": ".orqa/discovery/vision/",
       "icon": "eye",
       "source": "@orqastudio/plugin-agile-discovery",
       "fields": {
@@ -211,7 +211,7 @@
       "label": "Pivot",
       "plural": "Pivots",
       "id_pattern": "^PIVOT-[a-f0-9]{8}$",
-      "default_path": ".orqa/discovery/",
+      "default_path": ".orqa/discovery/pivots/",
       "icon": "refresh-cw",
       "source": "@orqastudio/plugin-agile-discovery",
       "fields": {

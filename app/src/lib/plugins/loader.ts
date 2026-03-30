@@ -35,8 +35,10 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 	let plugins: DiscoveredPlugin[];
 	try {
 		plugins = await invoke<DiscoveredPlugin[]>("plugin_list_installed");
-	} catch {
-		// No project loaded yet or IPC not ready
+		log.info(`Discovered ${plugins.length} plugin(s)`);
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : JSON.stringify(err);
+		log.warn(`plugin_list_installed failed: ${msg}`);
 		return;
 	}
 
@@ -45,6 +47,9 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 			const manifest = await invoke<PluginManifest>("plugin_get_manifest", {
 				name: plugin.name,
 			});
+			if ((manifest as Record<string, unknown>).defaultNavigation) {
+				log.info(`Plugin "${plugin.name}" has defaultNavigation with ${((manifest as Record<string, unknown>).defaultNavigation as unknown[]).length} items`);
+			}
 
 			// Ensure provides exists with default empty arrays — Tauri IPC
 			// may omit fields that are empty/null in the Rust struct.

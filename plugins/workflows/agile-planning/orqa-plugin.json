@@ -3,8 +3,12 @@
   "version": "0.1.4-dev",
   "displayName": "Agile Planning",
   "description": "Planning stage methodology — scope analysis, estimation, prioritisation, plan finalisation, and planning-stage artifact types (planning-idea, planning-research, planning-decision, wireframe). A stage-definition plugin contributing the planning-methodology point to the agile-methodology workflow.",
-  "categories": ["workflow"],
-  "purpose": ["workflow"],
+  "categories": [
+    "workflow"
+  ],
+  "purpose": [
+    "workflow"
+  ],
   "stage_slot": "planning",
   "role": null,
   "provides": {
@@ -315,44 +319,124 @@
         "artifact_type": "planning-idea",
         "path": "workflows/planning-idea.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "planning-research",
         "path": "workflows/planning-research.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "planning-decision",
         "path": "workflows/planning-decision.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       },
       {
         "artifact_type": "wireframe",
         "path": "workflows/wireframe.workflow.yaml",
         "pipeline_stages": [
-          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
-          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
-          { "key": "active", "label": "Active", "color": "#f59e0b" },
-          { "key": "review", "label": "Review", "color": "#8b5cf6" },
-          { "key": "completed", "label": "Completed", "color": "#10b981" }
+          {
+            "key": "captured",
+            "label": "Captured",
+            "color": "#94a3b8"
+          },
+          {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#60a5fa"
+          },
+          {
+            "key": "active",
+            "label": "Active",
+            "color": "#f59e0b"
+          },
+          {
+            "key": "review",
+            "label": "Review",
+            "color": "#8b5cf6"
+          },
+          {
+            "key": "completed",
+            "label": "Completed",
+            "color": "#10b981"
+          }
         ]
       }
     ]
@@ -362,5 +446,35 @@
       "source": "workflows",
       "target": ".orqa/workflows"
     }
-  }
+  },
+  "defaultNavigation": [
+    {
+      "key": "planning",
+      "type": "group",
+      "icon": "map",
+      "label": "Planning",
+      "children": [
+        {
+          "key": "planning-ideas",
+          "type": "builtin",
+          "icon": "lightbulb"
+        },
+        {
+          "key": "planning-research",
+          "type": "builtin",
+          "icon": "flask-conical"
+        },
+        {
+          "key": "planning-decisions",
+          "type": "builtin",
+          "icon": "scale"
+        },
+        {
+          "key": "wireframes",
+          "type": "builtin",
+          "icon": "layout"
+        }
+      ]
+    }
+  ]
 }

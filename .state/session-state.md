@@ -1,251 +1,63 @@
-## Session: 2026-03-29 (continued)
+## Session: 2026-03-30
 
-### Work Complete
+### Fixes Applied (uncommitted)
 
-**Commit e730f08ec:** Fixed 64 review FAILs across all 11 phases (0 validation errors).
-**This commit:** Architecture-principle review with 5 parallel reviewers.
+**Bug 1: `find_plugin_dir` only scanned 1 level deep (ROOT CAUSE)**
+- `app/src-tauri/src/commands/plugin_commands.rs` — `find_plugin_dir` now scans `plugins/<taxonomy>/<plugin>/` (2 levels) and `connectors/<plugin>/` (1 level)
+- This was THE reason no artifacts showed — plugins couldn't be loaded → no `defaultNavigation` → no sidebar items
 
-### Architecture-Principle Review Results
+**Bug 2: Fresh DB had no setup_version**
+- `app/src-tauri/src/lib.rs` — auto-complete first-run setup when `ORQA_PROJECT_ROOT` env var is set (dev mode)
 
-Full report: `.state/review/architecture-principle-review.md`
+**Bug 3: Fresh DB had no active project**
+- `app/src-tauri/src/lib.rs` — auto-open project from `ORQA_PROJECT_ROOT` env var
+- `cli/src/commands/dev.ts` — pass `ORQA_PROJECT_ROOT` env var to `cargo tauri dev`
 
-**34 PASS, 20 architecture gaps, 1 accepted-interim, 1 planned**
+**Bug 4: Dashboard control file path wrong**
+- `tools/debug/dev.mjs` — fixed path from `../tmp/dev-controller.json` to `.state/dev-controller.json`
 
-Top 3 blocking gaps:
+**Bug 5: sendBeacon CORS preflight**
+- `app/src/lib/utils/dev-console.ts` — changed Blob type from `application/json` to `text/plain`
 
-1. **Enforcement generator model** — Not implemented. Plugins don't provide generators, use legacy patterns.
-2. **`categories` array** — DOC-41ccf7c4 documents it, code uses singular `category`.
-3. **Artifact viewer not plugin-extensible** — Three-pillar architecture requires plugin-overridable viewers.
+**Bug 6: `defaultNavigation` missing from Rust PluginManifest**
+- `engine/plugin/src/manifest.rs` — added `default_navigation: Vec<serde_json::Value>` with `#[serde(rename = "defaultNavigation")]`
+- `engine/plugin/src/constraints.rs` — added field to test helper
 
-4 items need user clarification (see report).
+**Bug 7: Only software-kanban had `defaultNavigation`**
+- Added `defaultNavigation` to 5 more plugins:
+  - `plugins/workflows/agile-discovery/orqa-plugin.json` — Discovery group
+  - `plugins/workflows/agile-planning/orqa-plugin.json` — Planning group
+  - `plugins/workflows/agile-documentation/orqa-plugin.json` — Documentation group
+  - `plugins/workflows/agile-review/orqa-plugin.json` — Learning group
+  - `plugins/workflows/core/orqa-plugin.json` — Agents group
 
-### Approved Architecture Decisions (user approved 2026-03-29)
+**Bug 8: Duplicate nav groups not merged**
+- `libs/sdk/src/stores/navigation.svelte.ts` — `_buildDefaultNavTree()` now merges groups by key, unioning children
 
-All 14 deferrals resolved: 13 fix-now, 1 no-change (manifest `name` field).
+**Bug 9: Plugin relationship type conflicts blocked registration**
+- `libs/sdk/src/plugins/plugin-registry.svelte.ts` — `checkConflicts()` now merges (unions) from/to type arrays instead of rejecting when relationship key+inverse match
 
-Key decisions:
+**Bug 10: CSP blocked plugin view scripts**
+- `app/src-tauri/tauri.conf.json` — added `https://asset.localhost` to `script-src` and `connect-src`
 
-- **Enforcement generator model**: full implementation approved
-- **Plugin-to-engine mapping**: core-framework (prettier, markdownlint, artifact-validation, git hooks), typescript (eslint, tsconfig), rust (clippy, rustfmt), svelte (eslint contributor)
-- **coding-standards plugin**: DELETE — rules migrate to language plugins / core-framework
-- **MCP daemon-managed**: part of always-on layer (LSP, watchers, graph, MCP)
-- **Frontend**: 7 config files deleted → runtime from pluginRegistry, 4-item PLATFORM_NAVIGATION, artifact viewer extensible, BaseRole stays enum + plugin role_definitions
-- **Workflows**: source YAML → output JSON, stage workflows embed per-type state machines
-- **categories plural**: `categories: string[]` replaces singular `category`
+**Diagnostic logging added:**
+- `app/src-tauri/src/commands/artifact_commands.rs` — tracing for scan results
+- `app/src/lib/plugins/loader.ts` — logging for plugin discovery and defaultNavigation
 
-Designs at:
+### Current State
 
-- `.state/design/enforcement-plugin-model.md`
-- `.state/design/frontend-runtime-derivation.md`
+- App starts, auto-completes setup, auto-opens project ✓
+- Backend returns 16 groups / 1583 artifact nodes ✓
+- Plugins load successfully with from/to type merging ✓
+- 6 navigation groups: Discovery, Delivery, Planning, Documentation, Learning, Agents ✓
+- Plugin views fail to load via asset protocol (CSP fix applied, needs rebuild) ⚠
 
-### Implementation Complete — 3 Waves
+### Remaining Issues
 
-**Wave 1** (`3efe3e82c`): PluginManifest types (categories[], enforcement[], provides extensions), MCP TCP transport, coding-standards plugin deleted
+1. **Plugin view loading** — CSP fix applied but needs Rust rebuild + Vite restart
+2. **Daemon showing disconnected** — Frontend health check sees 0 artifacts/rules
+3. **Stale Vite process on port 10420** — `orqa dev kill` doesn't always kill Vite. Need to fix the kill logic.
+4. **Diagnostic logging should be cleaned up** before committing
 
-**Wave 2** (`da3460f95`): Daemon watcher registry (manifest-driven), orqa enforce (dynamic dispatch), resolved workflows YAML→JSON with embedded state machines, pre-commit hook simplified to `orqa enforce --staged`
-
-**Wave 3** (`c16d91f8b`): Plugin registry runtime derivation (7 static configs deleted), PLATFORM_NAVIGATION reduced to 4 fixed items, artifact viewer extensibility, dynamic settings pages, connector generation matches all targets (10/10), tray LSP/MCP status, RoadmapView epic drill-down, core-framework role_definitions
-
-### Completed in Final Round (commit f72210333)
-
-Items 1-8 from the previous "Remaining Work" list are ALL done:
-- Generator scripts written (6), enforcement blocks added to manifests
-- JSON schema if/then validation implemented
-- prompt-registry.json generation from knowledge_declarations
-- Cross-package ESLint exports deleted (P1 violation removed)
-- GateCondition: Custom(String) variant, TrackerConfig: configurable patterns
-- Target plugin.json completed
-
----
-
-### ALL MIGRATION TASKS COMPLETE
-
-Every item from the remaining list has been addressed:
-
-1. [x] **Daemon runtime on Windows** — CREATE_NO_WINDOW on all subprocesses (be00f7f57)
-2. [x] **Phase 10.4.1: targets/ removed** — 10/10 connector validation pass (597d96b1e)
-3. [x] **DOC-fd3edf48** — updated for JSON workflows with embedded state machines
-4. [x] **DOC-762facfb** — removed coding-standards and githooks references
-5. [x] **Generator invocation at install time** — wired into cmdPluginSync
-6. [x] **orqa dev calls plugin sync** — project.json-driven flow (bf2bf45f9)
-7. [x] **Svelte-check errors** — root tsconfig.json with bundler moduleResolution
-8. [x] **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages
-9. [x] **Graph visualiser exposed to plugins** — in window.__orqa
-10. [x] **Plugin developer docs** — PLUGIN-VIEWS.md + svelte-components README
-11. [x] **ArtifactLink + MarkdownRenderer** — promoted to @orqastudio/svelte-components/connected
-12. [x] **MCP/LSP double-launch** — dev controller no longer spawns them
-
-**Pending user verification:**
-
-- [ ] **App UI iconography and layout** — user to verify after running orqa dev
-- [ ] **Daemon actually works end-to-end** — user to verify tray, artifact pickup, debug page
-
----
-
-### Previous: Migration Review Remediation Complete + Architecture Docs Updated
-
-Commits this session:
-
-- `169f95660` — All 27 original review issues + architecture review fixes
-- `cbef92624` — 3 frontend fixes (LessonVelocityWidget, FrontmatterHeader, ArtifactViewer)
-- `65ab12b5b` — Architecture docs: enforcement plugin model, categories, orqa enforce
-
-### Build Status
-
-- cargo clippy: clean
-- cargo test: 987+ passed, 0 failed
-- validate-artifacts: 1586/1586 valid (note: Phase 7 review found 16 errors from regressions — need re-check)
-
----
-
-## NEXT SESSION: Fix All 84 Phase Review FAILs + Full Architecture Review
-
-### Priority 1: Fix 84 FAILs from Per-Phase Review
-
-Individual phase review reports at `.state/review/phase-review-N.md`
-
-#### Phase 1 — 7 FAILs
-
-1. P1-S2-01: ESLint target imports from plugin packages (wrong pattern — should be generated by enforcement plugin)
-2. P1-S2-04: Prettier crashes (prettier-plugin-svelte version incompatibility)
-3. P1-S3-01: ORQA_SKIP_SCHEMA_VALIDATION=true not set in CLAUDE.md
-4. P1-S3-03: ORQA_SKIP_SCHEMA_VALIDATION=true absent from settings.json env block
-5. P1-S4-01: Target plugin.json missing commands/hooks/skills/resources fields
-6. P1-S4-02: Target workflows are .yaml not .json; missing entry/exit criteria, agent_specializations, knowledge_injection_triggers; empty stage values in learning/review
-7. P1-S4-03: Target manifests use name instead of title; workflow plugins missing stage_slot
-
-#### Phase 2 — 2 FAILs
-
-1. P2-S10-01: app/tools/verify-pipeline-integrity.mjs not deleted (AC requires deletion)
-2. engine/validation/src/checks/status.rs: hardcoded fallback with "epic"/"milestone" strings
-
-#### Phase 3 — 2 FAILs
-
-1. P3-S3-01: MCP task spec says daemon-managed; actual (correct) design is client-managed. Spec needs updating.
-2. P3-S4-01: LSP status not shown in system tray
-
-#### Phase 4 — 2 FAILs
-
-1. P4-PRE-2: knowledge.rs MIN_SCORE/MAX_SEMANTIC are hardcoded consts, AC requires configurable
-2. P4-PRE-5: parse.rs DOWNSTREAM_WARN_THRESHOLD hardcoded, AC requires configurable
-
-#### Phase 5 — 14 FAILs
-
-1. P5-17: githooks plugin doesn't exist (deleted as zombie — spec needs updating or plugin needs creating)
-2. P5-20: agile-methodology provides.knowledge references old artifact IDs
-3. P5-22: software-kanban duplicate knowledge_declarations, 4 KNOW files don't exist on disk
-4. P5-28: affects_schema/affects_enforcement flags read but recomposition runs unconditionally
-5. P5-30: Missing findings document for core plugin naming
-6. P5-31: Missing findings document for extra roles
-7. P5-35: Missing findings document for knowledge composition design decision
-8. P5-36: Canonical schema tier enum stale (core/role/task vs always/stage-triggered/on-demand)
-9. P5-37: orqa check schema exits with 2 errors (missing plugin deps)
-10. P5-01: Same tier enum issue as P5-36
-11. P5-20 PARTIAL: provides.knowledge IDs don't match plugin-local files
-12. P5-28 PARTIAL: flag-gating not implemented
-13. P5-37 PARTIAL: install verification incomplete
-14. P5-36 PARTIAL: targets/ schema has wrong tier enum values
-
-#### Phase 6 — 3 FAILs
-
-1. 6.13: 6 DOC files at .orqa/documentation/ root (need topic subdirectory assignment)
-2. 6.16-18: 16 KNOW files missing tier field
-3. 6.27: prompt-registry.json still exists (runtime-justified but AC says delete)
-
-#### Phase 7 — 8 FAILs
-
-1. 7.7: KNOW-694ff7cb and KNOW-d4095bd9 have broken AGENT references
-2. 7.9: 5 grounding DOCs moved to reference/ instead of deleted+converted to KNOW
-3. 7.12: 16 KNOW files in documentation/knowledge/ without category subdirectory; count 144 vs expected 114
-4. 7.13: 6 DOC files at documentation/ root
-5. 7.15: 12 artifacts use name: instead of title:
-6. 7.16: 4 DOC files missing status:
-7. 7.17: 1 file has quoted status
-8. 7.22: agent.resolved.yaml still exists in .orqa/workflows/
-9. REGRESSION: KNOW-e3432947 duplicate title: field causing broken links
-
-#### Phase 8 — 3 FAILs
-
-1. 8.13: .forgejo/workflows/check.yml:33 has old plugins/typescript path
-2. 8.14: 5 files with stale old-path references (libs/ → engine/)
-3. 8.17: CLAUDE.md says 35 relationship types but actual count is 32
-
-#### Phase 9 — 13 FAILs
-
-1. 9.1.2: StatusBar fallback "Claude Code" not "No sidecar"
-2. 9.2.2-9.2.9: 8 config files are static, not schema-driven (accepted as interim per IDEA-a3f7c912 but ACs say derived)
-3. 9.3.1: PLATFORM_NAVIGATION hardcodes Principles/Discovery/Learning
-4. 9.4.1: NavigationSettings.svelte still exists
-5. 9.5.1: relationship-icons.ts static
-6. 9.5.2: category-colors.ts not found
-7. 9.6.2: RoadmapView no epic hierarchy
-8. 9.7.1: svelte-check 1 error (ArtifactViewer filter type); RULE-006 warn not error; invoke() in PluginViewContainer
-
-#### Phase 10 — 11 FAILs
-
-1. Regression: 8 BrokenLink validation errors (KNOW-e3432947 duplicate title, AGENT references)
-2. Connector: 2 agents not generated (designer, orchestrator)
-3. Connector: agents missing model/tools/maxTurns frontmatter
-4. Connector: hooks missing TeammateIdle/TaskCompleted events
-5. Connector: hook script paths wrong (dist/hooks/*.js vs scripts/*.mjs)
-6. Connector: scripts/ directory not generated
-7. Connector: skills/ directory not generated
-8. Connector: plugin.json not generated
-9. Connector: settings.json not generated
-10. Schema: 3 missing relationship types, 5 missing sections
-11. ESLint: imports packages instead of plugin-composed (wrong pattern — enforcement plugin model)
-
-#### Phase 11 — 19 FAILs
-
-1. KNOW count short (12 exist vs 16-18 required — need atomic sub-topic splits)
-2. All 12 KNOWs missing roles:, paths:, tags: injection metadata
-3. KNOW-6ac4abed wrong tier (should be stage-triggered) + missing roles: reviewer
-4. KNOW-dff413a0 wrong tier (should be on-demand)
-5. 5 KNOWs below 500-token minimum
-6. 4 DOCs missing relationships: frontmatter
-7. ARCHITECTURE.md deleted instead of updated (spec says update)
-8. 3 targets/ references in CLAUDE.md
-9. researcher.md references file-audit/ (3 occurrences)
-10. DOC-dff413a0 phase completion status not updated
-11. DOC-82123148 content not updated
-12. 6 DOCs lack KNOW counterparts
-13. Agent files reference targets/ and file-audit/
-
-### Cross-Cutting Architecture Findings
-
-See `.state/review/plugin-generation-findings.md` for full details:
-
-1. **MAJOR: Plugin enforcement model wrong** — Enforcement plugins must provide generators, not package exports. Generator/contributor pattern with daemon watcher registry. Architecture docs UPDATED in commit 65ab12b5b but CODE not yet updated.
-2. **MAJOR: Daemon watcher hardcoded** — WATCH_DIRS/RULES_DIR are constants. Must be manifest-driven.
-3. **MAJOR: CLI is TypeScript** — Should be Rust per DOC-62969bc3. Plans at .state/team/remediation-critical/plan-cli-rust.md
-4. **MAJOR: Connector is TypeScript** — Should be Rust generator. Plans at .state/team/remediation-critical/plan-connector-rust.md
-5. **targets/enforcement/ wrong model** — Static config files, should be generator outputs
-6. **Plugin cross-package exports** — svelte/typescript plugins export eslint/tsconfig as Node modules. Wrong pattern.
-7. **Pre-commit hook hardcodes tools** — Should call orqa enforce --staged
-
-### Priority 2: Full Architecture Review
-
-Run a COMPREHENSIVE architecture review that checks:
-
-- Does every component match what the architecture docs DESCRIBE?
-- Where architecture docs are ambiguous or silent on structure, RAISE for clarification then document
-- Use the UPDATED architecture docs (post-65ab12b5b) as the reference, not pre-session docs
-- Check enforcement plugin model compliance across all plugins
-- Check language boundary (Rust below, TypeScript frontend-only)
-- Check daemon watcher is manifest-driven (or flag that it isn't)
-- Check orqa enforce vs hardcoded pre-commit hook
-- Review prompts must be ARCHITECTURE-PRINCIPLE-DRIVEN, not just AC checklists
-
-### IDEAs Created This Session
-
-- IDEA-c7a3f1e2: Agent framework alternatives (Optio, NanoPM, ProofShot)
-- IDEA-d4b8e2a1: EmailMD email generation plugin
-- IDEA-e8b2f4a7: CLI + connector → Rust (language boundary)
-- IDEA-f3a9b7c4: Governance-enforceable patterns scan
-- IDEA-a2c5d8e3: orqa setup + orqa clean command naming
-- IDEA-1e4ef8ea: Updated with logger event bus, pub/sub, persistence, metrics
-
-### Planning Completed
-
-- CLI → Rust plan: .state/team/remediation-critical/plan-cli-rust.md (7 phases, ~35 tasks)
-- Connector → Rust plan: .state/team/remediation-critical/plan-connector-rust.md (13 tasks, 3 waves)
+### Investigation Artifacts
+- `.state/investigation/01-rust-pipeline.md` through `08-nav-entries-added.md`

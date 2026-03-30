@@ -1,9 +1,14 @@
 /**
  * Vite config for building plugin views.
  *
- * Plugin views are pre-bundled as ES modules that the app loads at runtime.
+ * Plugin views are pre-bundled as IIFE modules that the app loads at runtime.
  * Shared dependencies (SDK, components, Svelte) are resolved from
- * window.__orqa — not bundled into the plugin.
+ * window.__orqa globals — not bundled into the plugin.
+ *
+ * IIFE format is required because Rollup's `output.globals` option is
+ * silently ignored for ESM bundles. With IIFE, bare imports are replaced
+ * with references to the globals map, so the bundle has zero bare `import`
+ * statements and can be loaded via blob URL without import resolution.
  *
  * Output: dist/views/{viewKey}.js
  */
@@ -19,27 +24,33 @@ export default defineConfig({
 			entry: {
 				roadmap: resolve(__dirname, "src/views/roadmap.ts"),
 			},
-			formats: ["es"],
+			formats: ["iife"],
+			name: "OrqaPluginView",
 			fileName: (_, entryName) => `views/${entryName}.js`,
 		},
 		outDir: "dist",
 		rollupOptions: {
-			external: [
-				"@orqastudio/sdk",
-				"@orqastudio/svelte-components/pure",
-				"@orqastudio/svelte-components/connected",
-				"@orqastudio/graph-visualiser",
-				"@orqastudio/types",
-				"svelte",
-				"svelte/internal",
-			],
+			// Use a function to externalize all svelte/* subpaths (the compiler
+			// emits imports from svelte/internal/client, svelte/internal/disclose-version, etc.)
+			external: (id) => {
+				if (id === "svelte" || id.startsWith("svelte/")) return true;
+				if (id.startsWith("@orqastudio/")) return true;
+				return false;
+			},
 			output: {
-				globals: {
-					"@orqastudio/sdk": "window.__orqa.sdk",
-					"@orqastudio/svelte-components/pure": "window.__orqa.components",
-					"@orqastudio/svelte-components/connected": "window.__orqa.componentsConnected",
-					"@orqastudio/graph-visualiser": "window.__orqa.graphVisualiser",
-					"svelte": "window.__orqa.svelte",
+				globals: (id: string) => {
+					if (id === "svelte" || id.startsWith("svelte/")) return "window.__orqa.svelteInternal";
+					if (id.startsWith("@orqastudio/svelte-components/connected")) return "window.__orqa.componentsConnected";
+				if (id.startsWith("@orqastudio/svelte-components")) return "window.__orqa.components";
+					if (id.startsWith("@orqastudio/")) {
+						const map: Record<string, string> = {
+							"@orqastudio/sdk": "window.__orqa.sdk",
+							"@orqastudio/graph-visualiser": "window.__orqa.graphVisualiser",
+							"@orqastudio/types": "window.__orqa.types",
+						};
+						return map[id] ?? "window.__orqa.types";
+					}
+					return id;
 				},
 			},
 		},

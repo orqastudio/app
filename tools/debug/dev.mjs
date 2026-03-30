@@ -28,9 +28,8 @@ import {
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = resolve(process.cwd());
-const DEV_ROOT = resolve(PROJECT_ROOT, "..");
-const CONTROL_FILE = join(DEV_ROOT, "tmp", "dev-controller.json");
-const SIGNAL_FILE = join(DEV_ROOT, "tmp", "dev-signal");
+const CONTROL_FILE = join(PROJECT_ROOT, ".state", "dev-controller.json");
+const SIGNAL_FILE = join(PROJECT_ROOT, ".state", "dev-signal");
 const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
 
 // Dashboard port is ORQA_PORT_BASE + 30 (default 10130).
