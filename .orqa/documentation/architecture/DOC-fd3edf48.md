@@ -6,6 +6,7 @@ title: Governance Artifacts
 domain: architecture
 description: Target .orqa/ directory structure, artifact organization by methodology stage, and relationship flow
 created: 2026-03-28T00:00:00.000Z
+updated: 2026-03-29T00:00:00.000Z
 ---
 
 # Governance Artifacts
@@ -30,14 +31,15 @@ The target structure reflects the methodology's stages and the engine's artifact
   prompt-registry.json            # Generated: knowledge registry for prompt pipeline
   search.duckdb                   # Semantic search index
 
-  workflows/                      # Generated: resolved workflows, one per methodology stage
-    methodology.resolved.yaml     # The full resolved methodology
-    discovery.resolved.yaml       # Resolved discovery workflow
-    planning.resolved.yaml        # Resolved planning workflow
-    documentation.resolved.yaml   # Resolved documentation workflow
-    implementation.resolved.yaml  # Resolved implementation workflow
-    review.resolved.yaml          # Resolved review workflow
-    learning.resolved.yaml        # Resolved learning workflow
+  workflows/                          # Generated: resolved workflows, one per methodology stage
+    agile-methodology.resolved.json  # The full resolved methodology
+    discovery.resolved.json          # Resolved discovery workflow (embeds artifact_types state machines)
+    planning.resolved.json           # Resolved planning workflow (embeds artifact_types state machines)
+    documentation.resolved.json      # Resolved documentation workflow (embeds artifact_types state machines)
+    implementation.resolved.json     # Resolved implementation workflow (embeds artifact_types state machines)
+    review.resolved.json             # Resolved review workflow (embeds artifact_types state machines)
+    learning.resolved.json           # Resolved learning workflow (embeds artifact_types state machines)
+    <artifact-type>.resolved.json    # Per-artifact-type resolved files (one per type, same structure)
 
   discovery/                      # Discovery stage
     ideas/                        # DISCOVERY-IDEA artifacts
@@ -83,7 +85,7 @@ The target structure reflects the methodology's stages and the engine's artifact
 - Decisions split by level: `planning/decisions/` (tactical) and `learning/decisions/` (architectural/principle)
 - Knowledge lives WITH documentation — knowledge is documentation split into agent-consumable chunks with injection metadata
 - Wireframes are their own artifact type, not DOC
-- Resolved workflows named by stage, one per stage
+- Resolved workflows are JSON files named by stage (`.resolved.json`), one per stage plus per-artifact-type files; each stage file embeds per-type state machines under the `artifact_types` key
 - Composed schema and prompt registry are explicit generated artifacts
 
 ### 5.2 Relationships Define Flow

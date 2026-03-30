@@ -2,7 +2,7 @@
 //
 // Returns active project context that the connector uses when generating
 // CLAUDE.md: active rule titles (from .orqa/learning/rules/*.md frontmatter)
-// and active workflow names (from .orqa/workflows/*.resolved.yaml filenames).
+// and active workflow names (from .orqa/workflows/*.resolved.json filenames).
 //
 // The connector should not parse .orqa/ frontmatter or list .orqa/ directories
 // directly — all .orqa/ reads are business logic that belongs in the daemon.
@@ -25,7 +25,7 @@ pub struct ContextResponse {
     /// Rule titles extracted from .orqa/learning/rules/*.md frontmatter `title:` fields.
     /// Empty when the rules directory does not exist or no rules have titles.
     pub rule_titles: Vec<String>,
-    /// Workflow names from .orqa/workflows/*.resolved.yaml filenames (stem only).
+    /// Workflow names from .orqa/workflows/*.resolved.json filenames (stem only).
     /// Empty when the workflows directory does not exist.
     pub workflow_names: Vec<String>,
 }
@@ -74,9 +74,9 @@ fn read_rule_titles(project_path: &Path) -> Vec<String> {
     titles
 }
 
-/// Read workflow names from *.resolved.yaml filenames in .orqa/workflows/.
+/// Read workflow names from *.resolved.json filenames in .orqa/workflows/.
 ///
-/// Returns the file stem (name without the `.resolved.yaml` suffix).
+/// Returns the file stem (name without the `.resolved.json` suffix).
 fn read_workflow_names(project_path: &Path) -> Vec<String> {
     let workflows_dir = project_path.join(".orqa").join("workflows");
     if !workflows_dir.exists() {
@@ -95,7 +95,7 @@ fn read_workflow_names(project_path: &Path) -> Vec<String> {
             Some(n) => n.to_owned(),
             None => continue,
         };
-        if let Some(stem) = file_name.strip_suffix(".resolved.yaml") {
+        if let Some(stem) = file_name.strip_suffix(".resolved.json") {
             names.push(stem.to_owned());
         }
     }
@@ -220,12 +220,12 @@ mod tests {
     }
 
     #[test]
-    fn reads_workflow_names_from_resolved_yaml_files() {
+    fn reads_workflow_names_from_resolved_json_files() {
         let dir = make_temp_project();
         let workflows_dir = dir.path().join(".orqa").join("workflows");
         fs::create_dir_all(&workflows_dir).unwrap();
-        fs::write(workflows_dir.join("agile.resolved.yaml"), "").unwrap();
-        fs::write(workflows_dir.join("delivery.resolved.yaml"), "").unwrap();
+        fs::write(workflows_dir.join("agile.resolved.json"), "{}").unwrap();
+        fs::write(workflows_dir.join("delivery.resolved.json"), "{}").unwrap();
 
         let mut names = read_workflow_names(dir.path());
         names.sort();
@@ -233,7 +233,7 @@ mod tests {
     }
 
     #[test]
-    fn skips_non_resolved_yaml_files() {
+    fn skips_non_resolved_json_files() {
         let dir = make_temp_project();
         let workflows_dir = dir.path().join(".orqa").join("workflows");
         fs::create_dir_all(&workflows_dir).unwrap();

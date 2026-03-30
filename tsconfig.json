@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "module": "ESNext",
+    "declaration": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "libs/svelte-components/src/**/*.ts",
+    "libs/svelte-components/src/**/*.svelte"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

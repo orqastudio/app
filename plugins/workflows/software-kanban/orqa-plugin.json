@@ -18,6 +18,8 @@
         "icon": "flag",
         "defaultPath": ".orqa/implementation/milestones",
         "idPrefix": "MS",
+        "semantic": "delivery",
+        "reviewAction": "Review milestone",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -82,6 +84,8 @@
         "icon": "layers",
         "defaultPath": ".orqa/implementation/epics",
         "idPrefix": "EPIC",
+        "semantic": "delivery",
+        "reviewAction": "Review epic",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -137,6 +141,8 @@
         "icon": "check-square",
         "defaultPath": ".orqa/implementation/tasks",
         "idPrefix": "TASK",
+        "semantic": "delivery",
+        "reviewAction": "Review task",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -230,15 +236,37 @@
     "workflows": [
       {
         "artifact_type": "milestone",
-        "path": "workflows/milestone.workflow.yaml"
+        "path": "workflows/milestone.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "epic",
-        "path": "workflows/epic.workflow.yaml"
+        "path": "workflows/epic.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "ready", "label": "Ready", "color": "#38bdf8" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "task",
-        "path": "workflows/task.workflow.yaml"
+        "path": "workflows/task.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "ready", "label": "Ready", "color": "#38bdf8" },
+          { "key": "prioritised", "label": "Prioritised", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "epic",

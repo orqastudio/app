@@ -1,7 +1,9 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
 	import { Badge } from "@orqastudio/svelte-components/pure";
-	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
+	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
+	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
+	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
 	import StreamingIndicator from "./StreamingIndicator.svelte";
 
 	let { message, streamingContent }: { message: Message; streamingContent?: string } = $props();
@@ -27,7 +29,7 @@
 			{#if isActivelyStreaming}
 				<pre class="streaming-text whitespace-pre-wrap font-[inherit] text-sm">{displayContent}<span class="cursor-blink" aria-hidden="true"></span></pre>
 			{:else if displayContent}
-				<MarkdownRenderer content={displayContent} />
+				<MarkdownRenderer content={displayContent} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 			{:else if isStreaming}
 				<StreamingIndicator />
 			{/if}

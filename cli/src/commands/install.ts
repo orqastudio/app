@@ -11,7 +11,7 @@
  * No submodules, no npm link — workspaces resolve all \@orqastudio/* packages.
  */
 
-import { execSync } from "node:child_process";
+import { execSync, spawnSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as readline from "node:readline";
@@ -31,7 +31,7 @@ import {
 import { readManifest } from "../lib/manifest.js";
 import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
-import type { PluginProjectConfig } from "@orqastudio/types";
+import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const NODE_MIN_MAJOR = 22;
 
@@ -139,6 +139,69 @@ async function ask(question: string): Promise<string> {
 			resolve(answer.trim().toLowerCase());
 		});
 	});
+}
+
+// ── Generator invocation ─────────────────────────────────────────────────────
+
+/**
+ * Run enforcement generators declared in a plugin manifest.
+ *
+ * For each enforcement entry with role "generator" and a generator script path,
+ * resolves the script and output paths then invokes the script via node so that
+ * .orqa/configs/ is populated at install time. The rules-dir is always the
+ * project's .orqa/learning/rules directory.
+ * @param pluginDir - Absolute path to the plugin directory.
+ * @param pluginManifest - Parsed plugin manifest.
+ * @param projectRoot - Absolute path to the project root.
+ */
+export function runPluginGenerators(
+	pluginDir: string,
+	pluginManifest: PluginManifest,
+	projectRoot: string,
+): void {
+	const enforcement = pluginManifest.enforcement;
+	if (!enforcement || enforcement.length === 0) return;
+
+	// Ensure .orqa/configs/ exists before any generator writes into it.
+	const configsDir = path.join(projectRoot, ".orqa", "configs");
+	fs.mkdirSync(configsDir, { recursive: true });
+
+	const rulesDir = path.join(projectRoot, ".orqa", "learning", "rules");
+
+	for (const entry of enforcement) {
+		if (entry.role !== "generator" || !entry.generator) continue;
+
+		const generatorPath = path.join(pluginDir, entry.generator);
+		if (!fs.existsSync(generatorPath)) {
+			console.error(`    Generator not found: ${generatorPath} — skipping`);
+			continue;
+		}
+
+		if (!entry.config_output) {
+			console.error(`    Generator ${entry.generator}: missing config_output — skipping`);
+			continue;
+		}
+
+		const outputPath = path.join(projectRoot, entry.config_output);
+
+		// Ensure the output file's parent directory exists.
+		fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+
+		// Determine how to invoke the generator: .ts files need tsx; .js files use node directly.
+		const isTsScript = generatorPath.endsWith(".ts");
+		const argv = ["--project-root", projectRoot, "--output", outputPath, "--rules-dir", rulesDir];
+
+		console.log(`    Running generator: ${entry.generator} → ${entry.config_output}`);
+		const result = isTsScript
+			? spawnSync("npx", ["tsx", generatorPath, ...argv], { stdio: "inherit", shell: true })
+			: spawnSync("node", [generatorPath, ...argv], { stdio: "inherit" });
+
+		if (result.status !== 0) {
+			console.error(`    Generator failed (exit ${result.status ?? "unknown"}): ${entry.generator}`);
+		} else {
+			console.log(`    Generated: ${entry.config_output}`);
+		}
+	}
 }
 
 // ── Prereqs ─────────────────────────────────────────────────────────────────
@@ -535,6 +598,13 @@ export function cmdPluginSync(root: string): void {
 			version: pluginManifest.version,
 			...(cfg.config ? { config: cfg.config } : {}),
 		});
+
+		// Run enforcement generators declared in this plugin's manifest.
+		try {
+			runPluginGenerators(pluginDir, pluginManifest, root);
+		} catch (e) {
+			console.error(`    Generator run failed: ${e instanceof Error ? e.message : String(e)}`);
+		}
 
 		processed++;
 	}

@@ -9,7 +9,6 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parse as parseYaml } from "yaml";
 import { scanArtifactGraph, queryGraph, getGraphStats } from "../lib/graph.js";
 import type { GraphNode, GraphQueryOptions, GraphStats } from "../lib/graph.js";
 import { getRoot } from "../lib/root.js";
@@ -338,7 +337,10 @@ const CATEGORY_ICONS: Record<StateCategory, string> = {
 let statusCategoryCache: Map<string, StateCategory> | null = null;
 
 /**
- * Build a status-name → category map from resolved workflow YAML files.
+ * Build a status-name → category map from resolved workflow JSON files.
+ *
+ * Stage files embed per-type state machines under artifact_types[key].state_machine.states.
+ * Iterates all state definitions across all types in all stage files.
  * @returns Map of status name to state category.
  */
 function loadStatusCategories(): Map<string, StateCategory> {
@@ -357,15 +359,23 @@ function loadStatusCategories(): Map<string, StateCategory> {
 	}
 
 	for (const entry of entries) {
-		if (!entry.endsWith(".resolved.yaml")) continue;
+		if (!entry.endsWith(".resolved.json")) continue;
 		try {
 			const content = fs.readFileSync(path.join(workflowsDir, entry), "utf-8");
-			const parsed = parseYaml(content);
-			if (parsed?.states && typeof parsed.states === "object") {
-				for (const [stateName, stateDef] of Object.entries(parsed.states)) {
-					const sd = stateDef as Record<string, unknown>;
-					if (typeof sd.category === "string") {
-						map.set(stateName, sd.category as StateCategory);
+			const parsed = JSON.parse(content) as Record<string, unknown>;
+
+			// Extract states from all artifact_types entries.
+			const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
+			if (artifactTypes && typeof artifactTypes === "object") {
+				for (const typeDef of Object.values(artifactTypes)) {
+					const td = typeDef as Record<string, unknown> | undefined;
+					const sm = td?.["state_machine"] as Record<string, unknown> | undefined;
+					const states = sm?.["states"] as Record<string, Record<string, unknown>> | undefined;
+					if (!states) continue;
+					for (const [stateName, stateDef] of Object.entries(states)) {
+						if (typeof stateDef?.["category"] === "string") {
+							map.set(stateName, stateDef["category"] as StateCategory);
+						}
 					}
 				}
 			}

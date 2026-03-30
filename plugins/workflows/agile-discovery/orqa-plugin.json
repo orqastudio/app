@@ -16,6 +16,7 @@
         "icon": "eye",
         "defaultPath": ".orqa/discovery",
         "idPrefix": "VISION",
+        "semantic": "discovery",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -68,6 +69,7 @@
         "icon": "columns-3",
         "defaultPath": ".orqa/discovery/pillars",
         "idPrefix": "PILLAR",
+        "semantic": "discovery",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -126,6 +128,7 @@
         "icon": "users",
         "defaultPath": ".orqa/discovery/personas",
         "idPrefix": "PERSONA",
+        "semantic": "discovery",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -177,6 +180,8 @@
         "icon": "refresh-cw",
         "defaultPath": ".orqa/discovery",
         "idPrefix": "PIVOT",
+        "semantic": "discovery",
+        "reviewAction": "Review pivot",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -229,6 +234,8 @@
         "icon": "lightbulb",
         "defaultPath": ".orqa/discovery/ideas",
         "idPrefix": "DISC-IDEA",
+        "semantic": "discovery",
+        "reviewAction": "Assess idea",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -284,6 +291,8 @@
         "icon": "flask-conical",
         "defaultPath": ".orqa/discovery/research",
         "idPrefix": "DISC-RES",
+        "semantic": "discovery",
+        "reviewAction": "Review research",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -339,6 +348,8 @@
         "icon": "scale",
         "defaultPath": ".orqa/discovery/decisions",
         "idPrefix": "DISC-AD",
+        "semantic": "discovery",
+        "reviewAction": "Review decision",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -407,15 +418,36 @@
       },
       {
         "artifact_type": "discovery-idea",
-        "path": "workflows/discovery-idea.workflow.yaml"
+        "path": "workflows/discovery-idea.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "discovery-research",
-        "path": "workflows/discovery-research.workflow.yaml"
+        "path": "workflows/discovery-research.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "discovery-decision",
-        "path": "workflows/discovery-decision.workflow.yaml"
+        "path": "workflows/discovery-decision.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "epic",

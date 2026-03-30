@@ -6,6 +6,7 @@ title: Codebase Structure
 domain: architecture
 description: Directory layout for the orqastudio-dev codebase, organized to make architectural purposes self-evident
 created: 2026-03-28T00:00:00.000Z
+updated: 2026-03-29T00:00:00.000Z
 ---
 
 # Codebase Structure
@@ -76,9 +77,7 @@ orqastudio-dev/
       typescript/               # Domain knowledge: TypeScript
       systems-thinking/         # Domain knowledge: systems thinking
       plugin-dev/               # Domain knowledge: plugin development
-    infrastructure/             # Infrastructure plugins
-      coding-standards/         # Infrastructure: linting config generation
-      githooks/                 # Infrastructure: git hook generation
+    infrastructure/             # Infrastructure plugins (reserved for future infrastructure plugins)
 
   sidecars/                     # LLM provider sidecar integrations
     claude-agent-sdk/           # Claude agent SDK sidecar

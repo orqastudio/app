@@ -9,7 +9,7 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK } = getStores();
-	import ArtifactLink from "./ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import RelationshipGraphView from "./RelationshipGraphView.svelte";
 	import type { ArtifactRef } from "@orqastudio/types";
 

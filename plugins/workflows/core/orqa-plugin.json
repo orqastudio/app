@@ -112,6 +112,8 @@
         "icon": "scale",
         "defaultPath": ".orqa/learning/decisions",
         "idPrefix": "AD",
+        "semantic": "governance",
+        "reviewAction": "Review decision",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -165,6 +167,8 @@
         "icon": "shield",
         "defaultPath": ".orqa/learning/rules",
         "idPrefix": "RULE",
+        "semantic": "governance",
+        "reviewAction": "Review rule",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -247,6 +251,15 @@
         "icon": "book-open",
         "defaultPath": ".orqa/learning/lessons",
         "idPrefix": "IMPL",
+        "semantic": "learning",
+        "reviewAction": "Review lesson",
+        "categories": [
+          { "key": "process", "label": "Process", "color": "#8b5cf6" },
+          { "key": "architecture", "label": "Architecture", "color": "#6366f1" },
+          { "key": "governance", "label": "Governance", "color": "#10b981" },
+          { "key": "coding", "label": "Coding", "color": "#f59e0b" },
+          { "key": "testing", "label": "Testing", "color": "#ef4444" }
+        ],
         "frontmatter": {
           "type": "object",
           "required": [
@@ -307,6 +320,7 @@
         "icon": "zap",
         "defaultPath": ".orqa/documentation/knowledge",
         "idPrefix": "KNOW",
+        "semantic": "documentation",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -369,6 +383,8 @@
         "icon": "bot",
         "defaultPath": ".claude/agents",
         "idPrefix": "AGENT",
+        "semantic": "governance",
+        "reviewAction": "Review agent",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -440,6 +456,8 @@
         "icon": "scale",
         "defaultPath": ".orqa/learning/decisions",
         "idPrefix": "PD",
+        "semantic": "governance",
+        "reviewAction": "Review principle decision",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -524,6 +542,7 @@
         "icon": "file-text",
         "defaultPath": ".orqa/documentation",
         "idPrefix": "DOC",
+        "semantic": "documentation",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -577,15 +596,38 @@
       },
       {
         "artifact_type": "decision",
-        "path": "workflows/decision.workflow.yaml"
+        "path": "workflows/decision.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "rule",
-        "path": "workflows/rule.workflow.yaml"
+        "path": "workflows/rule.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#10b981" },
+          { "key": "inactive", "label": "Inactive", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" }
+        ]
       },
       {
         "artifact_type": "lesson",
-        "path": "workflows/lesson.workflow.yaml"
+        "path": "workflows/lesson.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "recurring", "label": "Recurring", "color": "#ef4444" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" },
+          { "key": "promoted", "label": "Promoted", "color": "#6366f1" }
+        ]
       },
       {
         "artifact_type": "knowledge",

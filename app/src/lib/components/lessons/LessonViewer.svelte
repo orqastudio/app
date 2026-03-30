@@ -3,7 +3,9 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
-	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
+	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
+	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
+	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
 	import type { Lesson } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -105,7 +107,7 @@
 	<!-- Body -->
 	<ScrollArea class="flex-1">
 		<div class="px-4 py-4">
-			<MarkdownRenderer content={lesson.body} />
+			<MarkdownRenderer content={lesson.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 		</div>
 	</ScrollArea>
 </div>

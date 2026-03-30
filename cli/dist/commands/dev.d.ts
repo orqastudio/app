@@ -4,6 +4,10 @@
  * `orqa dev` is the primary entry point for the development environment.
  * Run it in a separate terminal — it watches Rust sources and auto-rebuilds.
  *
+ * MCP and LSP server lifecycle is owned exclusively by the daemon. The dev
+ * controller starts the daemon and the daemon starts MCP/LSP. The controller
+ * does NOT spawn orqa-mcp-server or orqa-lsp-server directly.
+ *
  * orqa dev                Start the full dev environment (Vite + Tauri + daemon)
  * orqa dev stop           Stop gracefully
  * orqa dev kill           Force-kill all processes

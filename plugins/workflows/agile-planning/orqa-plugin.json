@@ -16,6 +16,8 @@
         "icon": "lightbulb",
         "defaultPath": ".orqa/planning/ideas",
         "idPrefix": "PLAN-IDEA",
+        "semantic": "planning",
+        "reviewAction": "Assess planning idea",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -71,6 +73,8 @@
         "icon": "flask-conical",
         "defaultPath": ".orqa/planning/research",
         "idPrefix": "PLAN-RES",
+        "semantic": "planning",
+        "reviewAction": "Review planning research",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -126,6 +130,8 @@
         "icon": "scale",
         "defaultPath": ".orqa/planning/decisions",
         "idPrefix": "PLAN-AD",
+        "semantic": "planning",
+        "reviewAction": "Review planning decision",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -179,6 +185,8 @@
         "icon": "layout",
         "defaultPath": ".orqa/planning/wireframes",
         "idPrefix": "WF",
+        "semantic": "planning",
+        "reviewAction": "Review wireframe",
         "frontmatter": {
           "type": "object",
           "required": [
@@ -305,19 +313,47 @@
       },
       {
         "artifact_type": "planning-idea",
-        "path": "workflows/planning-idea.workflow.yaml"
+        "path": "workflows/planning-idea.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "planning-research",
-        "path": "workflows/planning-research.workflow.yaml"
+        "path": "workflows/planning-research.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "planning-decision",
-        "path": "workflows/planning-decision.workflow.yaml"
+        "path": "workflows/planning-decision.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       },
       {
         "artifact_type": "wireframe",
-        "path": "workflows/wireframe.workflow.yaml"
+        "path": "workflows/wireframe.workflow.yaml",
+        "pipeline_stages": [
+          { "key": "captured", "label": "Captured", "color": "#94a3b8" },
+          { "key": "exploring", "label": "Exploring", "color": "#60a5fa" },
+          { "key": "active", "label": "Active", "color": "#f59e0b" },
+          { "key": "review", "label": "Review", "color": "#8b5cf6" },
+          { "key": "completed", "label": "Completed", "color": "#10b981" }
+        ]
       }
     ]
   },

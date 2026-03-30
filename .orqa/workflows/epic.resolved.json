@@ -1,0 +1,394 @@
+{
+  "name": "epic",
+  "version": "0.1.0",
+  "artifact_type": "epic",
+  "plugin": "@orqastudio/plugin-software-kanban",
+  "description": "Epic lifecycle state machine. Epics are large bodies of work composed of tasks. The epic workflow tracks discovery, planning, active delivery, review, and completion with a structured review gate.\n",
+  "initial_state": "captured",
+  "states": {
+    "captured": {
+      "category": "planning",
+      "description": "Epic has been captured but not yet explored."
+    },
+    "exploring": {
+      "category": "planning",
+      "description": "Epic is being explored — scope, feasibility, and tasks being defined.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Epic exploration started"
+          }
+        }
+      ]
+    },
+    "ready": {
+      "category": "planning",
+      "description": "Epic scope is defined and ready for prioritisation."
+    },
+    "prioritised": {
+      "category": "planning",
+      "description": "Epic has been prioritised and is ready for active delivery."
+    },
+    "active": {
+      "category": "active",
+      "description": "Epic delivery is in progress — tasks are being worked.",
+      "on_enter": [
+        {
+          "type": "set_field",
+          "params": {
+            "field": "started_at",
+            "value": "${now}"
+          }
+        },
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Epic activated"
+          }
+        }
+      ]
+    },
+    "hold": {
+      "category": "active",
+      "description": "Epic is paused, waiting for external input or decision."
+    },
+    "blocked": {
+      "category": "active",
+      "description": "Epic cannot proceed due to unresolved dependencies."
+    },
+    "review": {
+      "category": "review",
+      "description": "All tasks complete — epic is awaiting final review.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Epic entered review"
+          }
+        }
+      ]
+    },
+    "completed": {
+      "category": "completed",
+      "description": "Epic has been reviewed and accepted as complete.",
+      "on_enter": [
+        {
+          "type": "set_field",
+          "params": {
+            "field": "completed_at",
+            "value": "${now}"
+          }
+        },
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Epic completed"
+          }
+        }
+      ]
+    },
+    "surpassed": {
+      "category": "terminal",
+      "description": "Epic was completed but has been superseded."
+    },
+    "archived": {
+      "category": "terminal",
+      "description": "Epic is archived."
+    }
+  },
+  "transitions": [
+    {
+      "from": "captured",
+      "to": "exploring",
+      "event": "explore",
+      "description": "Begin exploring scope and feasibility."
+    },
+    {
+      "from": "captured",
+      "to": "ready",
+      "event": "fast_track",
+      "description": "Skip exploration for well-understood work.",
+      "guards": [
+        {
+          "type": "field_check",
+          "description": "Must have a description",
+          "params": {
+            "field": "description",
+            "operator": "not_empty"
+          }
+        }
+      ]
+    },
+    {
+      "from": "captured",
+      "to": "prioritised",
+      "event": "prioritise",
+      "description": "Fast-track to prioritised (urgent work)."
+    },
+    {
+      "from": "exploring",
+      "to": "ready",
+      "event": "scope_complete",
+      "description": "Exploration complete, scope is defined.",
+      "guards": [
+        {
+          "type": "field_check",
+          "description": "Must have a description",
+          "params": {
+            "field": "description",
+            "operator": "not_empty"
+          }
+        }
+      ]
+    },
+    {
+      "from": "exploring",
+      "to": "hold",
+      "event": "pause",
+      "description": "Pause exploration pending external input."
+    },
+    {
+      "from": "ready",
+      "to": "prioritised",
+      "event": "prioritise"
+    },
+    {
+      "from": "ready",
+      "to": "active",
+      "event": "start",
+      "description": "Begin delivery directly from ready."
+    },
+    {
+      "from": "prioritised",
+      "to": "active",
+      "event": "start",
+      "description": "Begin epic delivery."
+    },
+    {
+      "from": "prioritised",
+      "to": "ready",
+      "event": "deprioritise"
+    },
+    {
+      "from": "active",
+      "to": "hold",
+      "event": "pause"
+    },
+    {
+      "from": "active",
+      "to": "blocked",
+      "event": "block",
+      "guards": [
+        {
+          "type": "relationship_check",
+          "description": "Must have at least one depends-on relationship",
+          "params": {
+            "relationship_type": "depends-on",
+            "condition": "exists"
+          }
+        }
+      ]
+    },
+    {
+      "from": "active",
+      "to": "review",
+      "event": "submit_for_review",
+      "description": "All tasks complete — submit for review.",
+      "gate": "epic-review",
+      "guards": [
+        {
+          "type": "relationship_check",
+          "description": "All child tasks must be completed or archived",
+          "params": {
+            "relationship_type": "delivers",
+            "condition": "all_targets_in_status",
+            "statuses": [
+              "completed",
+              "surpassed",
+              "archived"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "from": "hold",
+      "to": "active",
+      "event": "resume"
+    },
+    {
+      "from": "hold",
+      "to": "ready",
+      "event": "replan"
+    },
+    {
+      "from": "blocked",
+      "to": "active",
+      "event": "unblock",
+      "guards": [
+        {
+          "type": "relationship_check",
+          "description": "All blocking dependencies must be resolved",
+          "params": {
+            "relationship_type": "depends-on",
+            "condition": "all_targets_in_status",
+            "statuses": [
+              "completed",
+              "surpassed",
+              "archived"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "from": "review",
+      "to": "completed",
+      "event": "approve"
+    },
+    {
+      "from": "review",
+      "to": "active",
+      "event": "request_changes",
+      "actions": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Changes requested during epic review"
+          }
+        }
+      ]
+    },
+    {
+      "from": "completed",
+      "to": "surpassed",
+      "event": "surpass"
+    },
+    {
+      "from": "surpassed",
+      "to": "archived",
+      "event": "archive"
+    },
+    {
+      "from": [
+        "captured",
+        "exploring",
+        "ready",
+        "prioritised",
+        "hold"
+      ],
+      "to": "archived",
+      "event": "archive"
+    }
+  ],
+  "gates": {
+    "epic-review": {
+      "pattern": "structured_review",
+      "description": "Epic completion review — AI pre-check then human review.",
+      "phases": {
+        "gather": {
+          "fields": [
+            "description",
+            "priority",
+            "relationships"
+          ],
+          "pre_checks": [
+            {
+              "type": "relationship_check",
+              "description": "All child tasks must be completed",
+              "params": {
+                "relationship_type": "delivers",
+                "condition": "all_targets_in_status",
+                "statuses": [
+                  "completed",
+                  "surpassed",
+                  "archived"
+                ]
+              }
+            },
+            {
+              "type": "field_check",
+              "description": "Description must exist",
+              "params": {
+                "field": "description",
+                "operator": "not_empty"
+              }
+            }
+          ],
+          "summary_template": "Epic: ${title} Tasks delivered: ${relationship_count:delivers} Status: All tasks in terminal state\n"
+        },
+        "present": {
+          "sections": [
+            {
+              "title": "Epic Overview",
+              "content_field": "description"
+            },
+            {
+              "title": "Delivered Tasks",
+              "content_template": "Task relationships: ${relationships:delivers}"
+            }
+          ],
+          "context_queries": [
+            "epic_task_summary"
+          ]
+        },
+        "collect": {
+          "verdicts": [
+            {
+              "key": "approve",
+              "label": "Approve — Epic Complete",
+              "transitions_to": "completed"
+            },
+            {
+              "key": "request_changes",
+              "label": "Request Changes",
+              "transitions_to": "active"
+            },
+            {
+              "key": "descope",
+              "label": "Descope — Reduce scope and complete",
+              "transitions_to": "completed"
+            }
+          ],
+          "require_rationale": true
+        },
+        "execute": {
+          "actions": [
+            {
+              "type": "append_log",
+              "params": {
+                "message": "Epic review verdict: ${verdict} by ${actor}"
+              }
+            }
+          ]
+        },
+        "learn": {
+          "on_fail": {
+            "create_lesson": true,
+            "track_recurrence": true
+          },
+          "on_pass": {
+            "track_cycle_time": true
+          }
+        }
+      }
+    }
+  },
+  "migration": {
+    "captured": "captured",
+    "exploring": "exploring",
+    "ready": "ready",
+    "prioritised": "prioritised",
+    "active": "active",
+    "hold": "hold",
+    "blocked": "blocked",
+    "review": "review",
+    "completed": "completed",
+    "surpassed": "surpassed",
+    "archived": "archived"
+  },
+  "_resolved_by": "orqa plugin install",
+  "_skeleton": "@orqastudio/plugin-software-kanban (workflows/epic.workflow.yaml)",
+  "_resolved_at": "2026-03-30T09:52:42.793Z"
+}

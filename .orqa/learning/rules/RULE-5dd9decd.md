@@ -4,27 +4,19 @@ type: rule
 title: Honest Reporting
 description: Report status accurately. Partial work reported as complete is worse than reporting it as incomplete.
 status: active
-enforcement_type: mechanical
 created: 2026-03-07
 updated: 2026-03-07
 enforcement:
-
-  - engine: behavioral
-
+  - mechanism: behavioral
     message: "Report status accurately; partial work reported as complete is worse than reporting it as incomplete; every completion report must include a What Is NOT Done section"
-
-  - engine: hook
-
+  - mechanism: hook
     type: Stop
     action: check
     description: "Stop hook scans completion reports for missing What Is NOT Done section"
 relationships:
-
   - target: PD-9baf6ee9
-
     type: enforces
 ---
-
 ## The Core Rule
 
 **Reporting partial work as complete is WORSE than reporting it as incomplete.**
@@ -52,7 +44,7 @@ Before marking ANY deliverable as complete, ask:
 Use these precise terms — not vague language like "mostly done" or "almost complete":
 
 | Term | Meaning | Example |
-| --- | --- | --- |
+| ------ | --------- | --------- |
 | **Done** | Works end-to-end as documented | "Session persistence: messages save to SQLite, reload on app restart" |
 | **Partially done** | Some paths work, others don't | "File tools: Read and Glob work, Write doesn't handle binary files" |
 | **Scaffolded** | Code exists but doesn't do real work | "Scanner runner exists but delegates to a TODO function" |
@@ -74,9 +66,9 @@ See [RULE-af5771e3](RULE-af5771e3) (no-stubs) > "Agent Completion Reports" for t
 
 Completion reports from review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include lesson documentation status:
 
-- Were any new IMPL entries added to `.orqa/process/lessons/`?
+- Were any new IMPL entries added to `.orqa/learning/lessons/`?
 - Were any existing IMPL entries updated with recurrence increments?
-- Was `.orqa/process/lessons/` checked for known patterns before reporting findings?
+- Was `.orqa/learning/lessons/` checked for known patterns before reporting findings?
 
 Review agents that skip lesson documentation are in violation of this rule AND [RULE-c603e90e](RULE-c603e90e) (lessons-learned).
 

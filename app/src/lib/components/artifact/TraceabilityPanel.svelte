@@ -8,7 +8,7 @@
 		Badge,
 	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import ArtifactLink from "./ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import type { TraceabilityResult, AncestryChain } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
 

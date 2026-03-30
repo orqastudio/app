@@ -6,7 +6,9 @@
 	import PipelineStepper from "./PipelineStepper.svelte";
 	import ReferencesPanel from "./ReferencesPanel.svelte";
 	import TraceabilityPanel from "./TraceabilityPanel.svelte";
-	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
+	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
+	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
+	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
@@ -305,9 +307,9 @@
 						<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
 						<div class="mt-4"></div>
 					{/if}
-					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} />
+					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 				{:else}
-					<MarkdownRenderer content={content} />
+					<MarkdownRenderer content={content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 				{/if}
 			</div>
 		</ScrollArea>

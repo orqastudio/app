@@ -1,7 +1,7 @@
 ---
 id: KNOW-694ff7cb
 type: knowledge
-name: Rust Testing Patterns
+title: Rust Testing Patterns
 summary: "Rust Testing Patterns. Tests live in `#[cfg(test)]` modules at the bottom of each source file. Integration tests in a `tests/` directory."
 status: active
 plugin: "@orqastudio/plugin-rust"

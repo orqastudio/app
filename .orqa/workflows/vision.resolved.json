@@ -1,0 +1,106 @@
+{
+  "name": "vision",
+  "version": "0.1.0",
+  "artifact_type": "vision",
+  "plugin": "@orqastudio/plugin-agile-discovery",
+  "description": "Vision lifecycle state machine. Vision artifacts are foundational, long-lived direction statements. The workflow is intentionally simple — visions are captured, activated, reviewed periodically, and eventually superseded or archived.\n",
+  "initial_state": "captured",
+  "states": {
+    "captured": {
+      "category": "planning",
+      "description": "Vision has been captured but not yet activated."
+    },
+    "active": {
+      "category": "active",
+      "description": "Vision is the active guiding direction.",
+      "on_enter": [
+        {
+          "type": "set_field",
+          "params": {
+            "field": "activated_at",
+            "value": "${now}"
+          }
+        },
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Vision activated"
+          }
+        }
+      ]
+    },
+    "review": {
+      "category": "review",
+      "description": "Vision is being reviewed for continued relevance.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Vision entered review"
+          }
+        }
+      ]
+    },
+    "surpassed": {
+      "category": "terminal",
+      "description": "Vision has been superseded by a newer direction."
+    },
+    "archived": {
+      "category": "terminal",
+      "description": "Vision is archived."
+    }
+  },
+  "transitions": [
+    {
+      "from": "captured",
+      "to": "active",
+      "event": "activate",
+      "description": "Activate this vision as the guiding direction."
+    },
+    {
+      "from": "active",
+      "to": "review",
+      "event": "submit_for_review",
+      "description": "Trigger periodic relevance review."
+    },
+    {
+      "from": "active",
+      "to": "archived",
+      "event": "archive",
+      "description": "Archive an active vision directly."
+    },
+    {
+      "from": "review",
+      "to": "active",
+      "event": "reaffirm",
+      "description": "Vision is still relevant — return to active."
+    },
+    {
+      "from": "review",
+      "to": "surpassed",
+      "event": "surpass",
+      "description": "Vision is no longer relevant — mark as superseded."
+    },
+    {
+      "from": "surpassed",
+      "to": "archived",
+      "event": "archive"
+    },
+    {
+      "from": "captured",
+      "to": "archived",
+      "event": "archive",
+      "description": "Archive a captured vision that was never activated."
+    }
+  ],
+  "migration": {
+    "captured": "captured",
+    "active": "active",
+    "review": "review",
+    "surpassed": "surpassed",
+    "archived": "archived"
+  },
+  "_resolved_by": "orqa plugin install",
+  "_skeleton": "@orqastudio/plugin-agile-discovery (workflows/vision.workflow.yaml)",
+  "_resolved_at": "2026-03-30T09:52:42.789Z"
+}

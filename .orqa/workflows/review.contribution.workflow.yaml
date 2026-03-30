@@ -1,0 +1,127 @@
+name: agile-review-contribution
+version: "0.1.0"
+artifact_type: epic
+plugin: "@orqastudio/plugin-agile-review"
+description: >
+  Review process contribution to the agile-methodology workflow skeleton.
+  Adds states and transitions for code review, gate checks, and acceptance
+  verification within a software development project. Integrates with
+  the gate engine's structured_review pattern.
+
+contributes_to:
+  workflow: agile-methodology
+  point: review-process
+  priority: 10
+
+initial_state: code_review
+
+states:
+  code_review:
+    category: review
+    description: "Code review — verify implementation quality, standards compliance, and correctness."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Code review started"
+
+  gate_check:
+    category: review
+    description: "Gate check — run automated pre-checks and gather review context."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Gate check started"
+
+  acceptance_verification:
+    category: review
+    description: "Acceptance verification — validate deliverables against acceptance criteria."
+    on_enter:
+      - type: append_log
+        params:
+          message: "Acceptance verification started"
+
+  review_complete:
+    category: review
+    description: "Review process complete — verdict rendered, ready to proceed."
+    on_enter:
+      - type: set_field
+        params:
+          field: review_completed_at
+          value: "${now}"
+      - type: append_log
+        params:
+          message: "Review complete"
+
+transitions:
+  # Review sub-workflow within the review stage
+  - from: review
+    to: code_review
+    event: begin_review
+    description: "Start the review process with code review."
+
+  - from: code_review
+    to: gate_check
+    event: code_review_passed
+    description: "Code review passed, run gate checks."
+
+  - from: code_review
+    to: implement
+    event: code_review_failed
+    description: "Code review failed — return to implementation for fixes."
+    actions:
+      - type: append_log
+        params:
+          message: "Code review failed — returning to implementation"
+
+  - from: gate_check
+    to: acceptance_verification
+    event: gate_passed
+    description: "Gate checks passed, proceed to acceptance verification."
+
+  - from: gate_check
+    to: implement
+    event: gate_failed
+    description: "Gate checks failed — return to implementation."
+    actions:
+      - type: append_log
+        params:
+          message: "Gate check failed — returning to implementation"
+
+  - from: acceptance_verification
+    to: review_complete
+    event: acceptance_confirmed
+    description: "Acceptance criteria met — review is complete."
+
+  - from: acceptance_verification
+    to: implement
+    event: acceptance_rejected
+    description: "Acceptance criteria not met — return to implementation."
+    actions:
+      - type: append_log
+        params:
+          message: "Acceptance verification failed — returning to implementation"
+
+  - from: review_complete
+    to: learn
+    event: review_passed
+    description: "Review passed, proceed to learning phase."
+
+  - from: review_complete
+    to: plan
+    event: major_rework
+    description: "Review found fundamental issues requiring re-planning."
+    actions:
+      - type: append_log
+        params:
+          message: "Major rework required — returning to planning"
+
+  # Rework within review
+  - from: gate_check
+    to: code_review
+    event: recheck_code
+    description: "Gate check revealed code issues — return to code review."
+
+  - from: acceptance_verification
+    to: code_review
+    event: restart_review
+    description: "Acceptance verification revealed issues — restart review from code review."

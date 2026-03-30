@@ -1,7 +1,7 @@
 ---
 id: DOC-4554ff3e
 type: doc
-name: Software Delivery Guide
+title: Software Delivery Guide
 category: how-to
 status: active
 plugin: "@orqastudio/plugin-software-kanban"

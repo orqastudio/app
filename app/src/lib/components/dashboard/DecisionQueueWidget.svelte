@@ -2,7 +2,7 @@
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 
-	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { SvelteMap } from "svelte/reactivity";
 	import { getStores } from "@orqastudio/sdk";
 

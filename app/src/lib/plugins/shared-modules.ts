@@ -13,6 +13,7 @@
 import * as sdk from "@orqastudio/sdk";
 import * as svelteComponents from "@orqastudio/svelte-components/pure";
 import * as svelteComponentsConnected from "@orqastudio/svelte-components/connected";
+import * as graphVisualiser from "@orqastudio/graph-visualiser";
 import * as svelte from "svelte";
 
 declare global {
@@ -21,6 +22,7 @@ declare global {
 			sdk: typeof sdk;
 			components: typeof svelteComponents;
 			componentsConnected: typeof svelteComponentsConnected;
+			graphVisualiser: typeof graphVisualiser;
 			svelte: typeof svelte;
 		};
 	}
@@ -31,6 +33,7 @@ export function exposeSharedModules(): void {
 		sdk,
 		components: svelteComponents,
 		componentsConnected: svelteComponentsConnected,
+		graphVisualiser,
 		svelte,
 	};
 }

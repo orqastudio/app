@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon } from "@orqastudio/svelte-components/pure";
-	import ArtifactLink from "./ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import GateQuestions from "./GateQuestions.svelte";
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
 	import { Badge } from "@orqastudio/svelte-components/pure";

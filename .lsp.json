@@ -1,31 +1,4 @@
 {
-  "rust": {
-    "command": "rust-analyzer",
-    "extensionToLanguage": {
-      ".rs": "rust"
-    }
-  },
-  "svelte": {
-    "command": "svelteserver",
-    "args": [
-      "--stdio"
-    ],
-    "extensionToLanguage": {
-      ".svelte": "svelte"
-    }
-  },
-  "typescript": {
-    "command": "typescript-language-server",
-    "args": [
-      "--stdio"
-    ],
-    "extensionToLanguage": {
-      ".ts": "typescript",
-      ".tsx": "typescriptreact",
-      ".js": "javascript",
-      ".jsx": "javascriptreact"
-    }
-  },
   "orqastudio": {
     "command": "orqa",
     "args": [

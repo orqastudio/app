@@ -1,7 +1,7 @@
 ---
 id: KNOW-73490bde
 type: knowledge
-name: Tauri v2 Patterns
+title: Tauri v2 Patterns
 summary: "Tauri v2 Patterns. All frontend-backend communication uses `#[tauri::command]` functions. No HTTP servers, no WebSockets, no shared memory."
 status: active
 plugin: "@orqastudio/plugin-tauri"

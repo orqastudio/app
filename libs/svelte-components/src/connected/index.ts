@@ -8,3 +8,4 @@ export { default as ActivityBar } from "./activity-bar/ActivityBar.svelte";
 export { default as NavSubPanel } from "./nav-sub-panel/NavSubPanel.svelte";
 export { default as StatusBar } from "./status-bar/StatusBar.svelte";
 export { default as ConnectedToolbar } from "./toolbar/Toolbar.svelte";
+export { default as MarkdownRenderer } from "./markdown-renderer/MarkdownRenderer.svelte";

@@ -7,7 +7,7 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, toast } = getStores();

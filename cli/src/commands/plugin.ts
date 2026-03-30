@@ -28,6 +28,7 @@ import { createHash } from "node:crypto";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
+import { runPluginGenerators } from "./install.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
 const USAGE = `
@@ -411,6 +412,15 @@ async function cmdInstall(args: string[]): Promise<void> {
 	// Run install lifecycle hook
 	runLifecycleHook(result.path, pluginManifest, "install");
 
+	// Run enforcement generators declared in the plugin manifest so .orqa/configs/
+	// is populated immediately after install.
+	try {
+		runPluginGenerators(result.path, pluginManifest, projectRoot);
+	} catch (e) {
+		// Non-fatal — generator failure should not block install
+		console.error(`  Generator run failed: ${e instanceof Error ? e.message : String(e)}`);
+	}
+
 	// P5-28: gate recomposition and workflow resolution on manifest flags.
 	const { requiresSchemaRecomposition, requiresEnforcementRegeneration } = result;
 
@@ -499,6 +509,15 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 
 	// Run install lifecycle hook
 	runLifecycleHook(pluginDir, pluginManifest, "install");
+
+	// Run enforcement generators declared in the plugin manifest so .orqa/configs/
+	// is populated immediately after install.
+	try {
+		runPluginGenerators(pluginDir, pluginManifest, projectRoot);
+	} catch (e) {
+		// Non-fatal — generator failure should not block install
+		console.error(`  Generator run failed: ${e instanceof Error ? e.message : String(e)}`);
+	}
 
 	// Recompose schema and workflows — always run after install to pick up
 	// any new schemas, relationships, or enforcement declarations.

@@ -3,14 +3,13 @@
  *
  * orqa migrate [options]
  *
- * Reads migration mappings from .orqa/workflows/*.resolved.yaml and updates
+ * Reads migration mappings from .orqa/workflows/*.resolved.json and updates
  * artifact frontmatter `status` fields accordingly. Only changes status values
  * that differ between old and new (i.e., actual renames, not identity mappings).
  */
 
 import { type Dirent, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { parse as parseYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
 import {
 	parseFrontmatterFromContent,
@@ -22,7 +21,7 @@ Usage: orqa migrate [options]
 
 Apply status migrations from workflow definitions to artifact frontmatter.
 
-Reads migration mappings from .orqa/workflows/*.resolved.yaml and updates
+Reads migration mappings from .orqa/workflows/*.resolved.json and updates
 each artifact's status field when it matches a migration "from" value.
 
 Options:
@@ -79,7 +78,7 @@ function loadMigrationMappings(projectRoot: string): MigrationMapping[] {
 	const mappings: MigrationMapping[] = [];
 
 	for (const entry of entries) {
-		if (!entry.name.endsWith(".resolved.yaml")) continue;
+		if (!entry.name.endsWith(".resolved.json")) continue;
 
 		const filePath = join(workflowDir, entry.name);
 		let content: string;
@@ -91,37 +90,40 @@ function loadMigrationMappings(projectRoot: string): MigrationMapping[] {
 
 		let parsed: Record<string, unknown>;
 		try {
-			parsed = parseYaml(content) as Record<string, unknown>;
+			parsed = JSON.parse(content) as Record<string, unknown>;
 		} catch {
 			continue;
 		}
 
-		const artifactType = parsed.artifact_type;
-		const workflowName = parsed.name;
-		const migration = parsed.migration;
+		// Stage files embed per-type state machines under artifact_types[key].state_machine.migration.
+		// Extract migration mappings for each artifact type in this stage file.
+		const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
+		if (!artifactTypes || typeof artifactTypes !== "object") continue;
 
-		if (
-			typeof artifactType !== "string" ||
-			typeof workflowName !== "string" ||
-			!migration ||
-			typeof migration !== "object"
-		) {
-			continue;
+		for (const [artifactType, typeDef] of Object.entries(artifactTypes)) {
+			const td = typeDef as Record<string, unknown> | undefined;
+			const sm = td?.["state_machine"] as Record<string, unknown> | undefined;
+			const migration = sm?.["migration"];
+
+			if (!migration || typeof migration !== "object") continue;
+
+			const migrationMap = migration as Record<string, string>;
+
+			// Only include if there are actual renames (from !== to)
+			const hasRenames = Object.entries(migrationMap).some(
+				([from, to]) => from !== to,
+			);
+			if (!hasRenames) continue;
+
+			// Use the stage file name as workflow name since standalone per-type files are gone.
+			const workflowName = entry.name.replace(".resolved.json", "");
+
+			mappings.push({
+				artifactType,
+				workflowName,
+				mappings: migrationMap,
+			});
 		}
-
-		const migrationMap = migration as Record<string, string>;
-
-		// Only include if there are actual renames (from !== to)
-		const hasRenames = Object.entries(migrationMap).some(
-			([from, to]) => from !== to,
-		);
-		if (!hasRenames) continue;
-
-		mappings.push({
-			artifactType: artifactType,
-			workflowName: workflowName as string,
-			mappings: migrationMap,
-		});
 	}
 
 	return mappings;
@@ -312,7 +314,7 @@ export async function runMigrateCommand(args: string[]): Promise<void> {
 	const mappings = loadMigrationMappings(projectRoot);
 
 	if (mappings.length === 0) {
-		console.log("No migration mappings found in .orqa/workflows/*.resolved.yaml");
+		console.log("No migration mappings found in .orqa/workflows/*.resolved.json");
 		console.log("(Only workflows with status renames are included.)");
 		return;
 	}

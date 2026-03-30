@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { SmallBadge } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
-	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
+	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
+	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
+	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -66,6 +68,6 @@
 
 	<!-- Body content -->
 	{#if body.trim()}
-		<MarkdownRenderer content={body} />
+		<MarkdownRenderer content={body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 	{/if}
 </div>

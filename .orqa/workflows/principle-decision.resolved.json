@@ -1,0 +1,175 @@
+{
+  "name": "principle-decision",
+  "version": "0.1.0",
+  "artifact_type": "principle-decision",
+  "plugin": "@orqastudio/plugin-core-framework",
+  "description": "Principle decision lifecycle state machine. Principle decisions capture high-influence governance choices — architectural decisions, design principles, and process guidelines. Tracks capture, exploration, active governance, review, and completion.\n",
+  "initial_state": "captured",
+  "states": {
+    "captured": {
+      "category": "planning",
+      "description": "Principle decision has been captured but not yet explored."
+    },
+    "exploring": {
+      "category": "planning",
+      "description": "Principle decision is being explored — rationale, alternatives, implications.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Principle decision exploration started"
+          }
+        }
+      ]
+    },
+    "active": {
+      "category": "active",
+      "description": "Principle decision is active and applies to the project.",
+      "on_enter": [
+        {
+          "type": "set_field",
+          "params": {
+            "field": "decided_at",
+            "value": "${now}"
+          }
+        },
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Principle decision activated"
+          }
+        }
+      ]
+    },
+    "hold": {
+      "category": "active",
+      "description": "Principle decision on hold pending further information or discussion."
+    },
+    "review": {
+      "category": "review",
+      "description": "Principle decision is being reviewed for continued relevance.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Principle decision entered review"
+          }
+        }
+      ]
+    },
+    "completed": {
+      "category": "completed",
+      "description": "Principle decision lifecycle complete.",
+      "on_enter": [
+        {
+          "type": "append_log",
+          "params": {
+            "message": "Principle decision completed"
+          }
+        }
+      ]
+    },
+    "surpassed": {
+      "category": "terminal",
+      "description": "Principle decision has been superseded by a newer decision."
+    },
+    "archived": {
+      "category": "terminal",
+      "description": "Principle decision is archived."
+    }
+  },
+  "transitions": [
+    {
+      "from": "captured",
+      "to": "exploring",
+      "event": "explore",
+      "description": "Begin exploring the principle decision."
+    },
+    {
+      "from": "exploring",
+      "to": "active",
+      "event": "decide",
+      "description": "Decision reached — activate."
+    },
+    {
+      "from": "exploring",
+      "to": "hold",
+      "event": "pause",
+      "description": "Pause exploration pending information."
+    },
+    {
+      "from": "active",
+      "to": "review",
+      "event": "submit_for_review",
+      "description": "Submit for periodic review."
+    },
+    {
+      "from": "active",
+      "to": "hold",
+      "event": "pause",
+      "description": "Pause the decision."
+    },
+    {
+      "from": "hold",
+      "to": "active",
+      "event": "resume",
+      "description": "Resume from hold."
+    },
+    {
+      "from": "hold",
+      "to": "exploring",
+      "event": "rescope",
+      "description": "Return to exploration for re-evaluation."
+    },
+    {
+      "from": "review",
+      "to": "active",
+      "event": "reaffirm",
+      "description": "Decision still applies — return to active."
+    },
+    {
+      "from": "review",
+      "to": "completed",
+      "event": "retire",
+      "description": "Decision is no longer needed."
+    },
+    {
+      "from": "completed",
+      "to": "surpassed",
+      "event": "surpass"
+    },
+    {
+      "from": "completed",
+      "to": "archived",
+      "event": "archive"
+    },
+    {
+      "from": "surpassed",
+      "to": "archived",
+      "event": "archive"
+    },
+    {
+      "from": [
+        "captured",
+        "exploring",
+        "hold"
+      ],
+      "to": "archived",
+      "event": "archive",
+      "description": "Archive from non-active states."
+    }
+  ],
+  "migration": {
+    "captured": "captured",
+    "exploring": "exploring",
+    "active": "active",
+    "hold": "hold",
+    "review": "review",
+    "completed": "completed",
+    "surpassed": "surpassed",
+    "archived": "archived"
+  },
+  "_resolved_by": "orqa plugin install",
+  "_skeleton": "@orqastudio/plugin-core-framework (workflows/principle-decision.workflow.yaml)",
+  "_resolved_at": "2026-03-30T09:52:42.792Z"
+}

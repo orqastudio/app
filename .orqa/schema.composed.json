@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-29T08:58:04.411Z",
+  "generatedAt": "2026-03-30T09:52:42.821Z",
   "description": "Composed schema generated from all installed plugins. Artifact types, relationship types, and validation constraints sourced from plugin manifests.",
   "artifactTypes": {
     "vision": {
@@ -56,7 +56,21 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured"
+        ],
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "pillar": {
       "id_prefix": "PILLAR",
@@ -115,7 +129,18 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "persona": {
       "id_prefix": "PERSONA",
@@ -168,7 +193,18 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "pivot": {
       "id_prefix": "PIVOT",
@@ -221,7 +257,22 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "discovery-idea": {
       "id_prefix": "DISC-IDEA",
@@ -277,7 +328,28 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "discovery-research": {
       "id_prefix": "DISC-RES",
@@ -333,7 +405,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "discovery-decision": {
       "id_prefix": "DISC-AD",
@@ -386,7 +477,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "planning-idea": {
       "id_prefix": "PLAN-IDEA",
@@ -442,7 +552,20 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "draft",
+          "evaluating"
+        ],
+        "active": [
+          "accepted",
+          "hold"
+        ],
+        "terminal": [
+          "rejected",
+          "archived"
+        ]
+      }
     },
     "planning-research": {
       "id_prefix": "PLAN-RES",
@@ -498,7 +621,21 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "proposed"
+        ],
+        "active": [
+          "investigating",
+          "hold"
+        ],
+        "completed": [
+          "concluded"
+        ],
+        "terminal": [
+          "archived"
+        ]
+      }
     },
     "planning-decision": {
       "id_prefix": "PLAN-AD",
@@ -551,7 +688,22 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "proposed"
+        ],
+        "active": [
+          "reviewing",
+          "hold"
+        ],
+        "completed": [
+          "resolved"
+        ],
+        "terminal": [
+          "deferred",
+          "archived"
+        ]
+      }
     },
     "wireframe": {
       "id_prefix": "WF",
@@ -604,7 +756,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "decision": {
       "id_prefix": "AD",
@@ -657,7 +828,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "rule": {
       "id_prefix": "RULE",
@@ -738,7 +928,27 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "inactive",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "lesson": {
       "id_prefix": "IMPL",
@@ -798,7 +1008,27 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "recurring"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "promoted",
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "knowledge": {
       "id_prefix": "KNOW",
@@ -862,7 +1092,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "agent": {
       "id_prefix": "AGENT",
@@ -933,7 +1182,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "principle-decision": {
       "id_prefix": "PD",
@@ -986,7 +1254,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "doc": {
       "id_prefix": "DOC",
@@ -1039,7 +1326,26 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "milestone": {
       "id_prefix": "MS",
@@ -1104,7 +1410,29 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold",
+          "blocked"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     },
     "epic": {
       "id_prefix": "EPIC",
@@ -1160,7 +1488,50 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "discover",
+          "plan",
+          "document",
+          "ideation",
+          "investigation",
+          "strategic_decision",
+          "discovery_complete",
+          "scope_analysis",
+          "estimation",
+          "prioritisation",
+          "plan_finalised",
+          "draft_docs"
+        ],
+        "active": [
+          "implement",
+          "publish_docs",
+          "task_assignment",
+          "development",
+          "testing",
+          "integration",
+          "implementation_complete"
+        ],
+        "review": [
+          "review",
+          "review_docs",
+          "code_review",
+          "gate_check",
+          "acceptance_verification",
+          "review_complete"
+        ],
+        "completed": [
+          "learn",
+          "capture",
+          "retrospective",
+          "pattern-tracking",
+          "recurrence-detection",
+          "learning_complete"
+        ],
+        "terminal": [
+          "done"
+        ]
+      }
     },
     "task": {
       "id_prefix": "TASK",
@@ -1222,7 +1593,28 @@
       "additionalProperties": true,
       "statuses": [],
       "initialStatus": "captured",
-      "stateCategories": {}
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold",
+          "blocked"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      }
     }
   },
   "relationshipTypes": [

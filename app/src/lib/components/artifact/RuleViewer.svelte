@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Icon, Badge } from "@orqastudio/svelte-components/pure";
-	import MarkdownRenderer from "$lib/components/content/MarkdownRenderer.svelte";
+	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
+	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
+	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { enforcementStore } = getStores();
@@ -106,5 +108,5 @@
 	{/if}
 
 	<!-- Rule content -->
-	<MarkdownRenderer {content} />
+	<MarkdownRenderer {content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 </div>

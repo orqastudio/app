@@ -1,377 +1,533 @@
 {
-  "name": "discovery",
   "version": "1.0.0",
+  "generated": true,
+  "generatedAt": "2026-03-30T09:52:42.784Z",
+  "description": "Resolved discover stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-discovery into the discovery-artifacts slot of agile-methodology.",
   "stage": "discover",
   "source_plugin": "@orqastudio/plugin-agile-discovery",
   "fills_slot": "discovery-artifacts",
   "methodology": "agile-methodology",
-  "description": "Resolved discover stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-discovery into the discovery-artifacts slot of agile-methodology.",
   "contribution_workflow": {
     "name": "discover-contribution",
     "initial_state": "discover",
     "states": {
-      "ideation": { "category": "planning", "description": "Capture and explore high-level product ideas." },
-      "investigation": { "category": "planning", "description": "Conduct research investigations to validate ideas." },
-      "strategic_decision": { "category": "planning", "description": "Make strategic decisions based on research findings." },
-      "discovery_complete": { "category": "planning", "description": "Discovery stage complete — ready to hand off to planning." }
+      "ideation": {
+        "category": "planning",
+        "description": "Capture and explore high-level product ideas.",
+        "on_enter": [
+          {
+            "type": "append_log",
+            "params": {
+              "message": "Discovery ideation started"
+            }
+          }
+        ]
+      },
+      "investigation": {
+        "category": "planning",
+        "description": "Conduct research investigations to validate ideas.",
+        "on_enter": [
+          {
+            "type": "append_log",
+            "params": {
+              "message": "Discovery investigation started"
+            }
+          }
+        ]
+      },
+      "strategic_decision": {
+        "category": "planning",
+        "description": "Make strategic decisions based on research findings.",
+        "on_enter": [
+          {
+            "type": "append_log",
+            "params": {
+              "message": "Strategic decision-making started"
+            }
+          }
+        ]
+      },
+      "discovery_complete": {
+        "category": "planning",
+        "description": "Discovery stage complete — ready to hand off to planning.",
+        "on_enter": [
+          {
+            "type": "append_log",
+            "params": {
+              "message": "Discovery complete"
+            }
+          }
+        ]
+      }
     },
     "transitions": [
-      { "from": "discover", "to": "ideation", "event": "begin_ideation", "description": "Start capturing and exploring ideas." },
-      { "from": "ideation", "to": "investigation", "event": "ideas_captured", "description": "Ideas captured, begin research investigation." },
-      { "from": "investigation", "to": "ideation", "event": "new_ideas", "description": "Research surfaced new ideas — return to ideation." },
-      { "from": "investigation", "to": "strategic_decision", "event": "research_complete", "description": "Research complete, make strategic decisions." },
-      { "from": "strategic_decision", "to": "investigation", "event": "needs_research", "description": "Decision requires more research." },
-      { "from": "strategic_decision", "to": "discovery_complete", "event": "decisions_made", "description": "Strategic decisions made, discovery is complete." },
-      { "from": "discovery_complete", "to": "plan", "event": "scope_defined", "description": "Hand off to planning stage." },
-      { "from": "ideation", "to": "strategic_decision", "event": "fast_track", "description": "Skip investigation for well-understood ideas." },
-      { "from": "ideation", "to": "discovery_complete", "event": "skip_to_complete", "description": "Simple discovery — ideas are clear, no investigation needed." }
+      {
+        "from": "discover",
+        "to": "ideation",
+        "event": "begin_ideation",
+        "description": "Start capturing and exploring ideas."
+      },
+      {
+        "from": "ideation",
+        "to": "investigation",
+        "event": "ideas_captured",
+        "description": "Ideas captured, begin research investigation."
+      },
+      {
+        "from": "investigation",
+        "to": "ideation",
+        "event": "new_ideas",
+        "description": "Research surfaced new ideas — return to ideation."
+      },
+      {
+        "from": "investigation",
+        "to": "strategic_decision",
+        "event": "research_complete",
+        "description": "Research complete, make strategic decisions."
+      },
+      {
+        "from": "strategic_decision",
+        "to": "investigation",
+        "event": "needs_research",
+        "description": "Decision requires more research."
+      },
+      {
+        "from": "strategic_decision",
+        "to": "discovery_complete",
+        "event": "decisions_made",
+        "description": "Strategic decisions made, discovery is complete."
+      },
+      {
+        "from": "discovery_complete",
+        "to": "plan",
+        "event": "scope_defined",
+        "description": "Hand off to planning stage."
+      },
+      {
+        "from": "ideation",
+        "to": "strategic_decision",
+        "event": "fast_track",
+        "description": "Skip investigation for well-understood ideas."
+      },
+      {
+        "from": "ideation",
+        "to": "discovery_complete",
+        "event": "skip_to_complete",
+        "description": "Simple discovery — ideas are clear, no investigation needed."
+      }
     ]
   },
   "artifact_types": {
     "vision": {
-      "schema": {
-        "id_prefix": "VISION",
-        "id_pattern": "^VISION-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/",
-        "icon": "eye",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^VISION-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "VISION",
+      "id_pattern": "^VISION-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/",
+      "icon": "eye",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^VISION-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "vision",
-        "version": "0.1.0",
-        "artifact_type": "vision",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Vision lifecycle state machine. Vision artifacts are foundational, long-lived direction statements. The workflow is intentionally simple — visions are captured, activated, reviewed periodically, and eventually superseded or archived.",
-        "initial_state": "captured",
-        "states": {
-          "captured": { "category": "planning", "description": "Vision has been captured but not yet activated." },
-          "active": { "category": "active", "description": "Vision is the active guiding direction.", "on_enter": [{ "type": "set_field", "params": { "field": "activated_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Vision activated" } }] },
-          "review": { "category": "review", "description": "Vision is being reviewed for continued relevance.", "on_enter": [{ "type": "append_log", "params": { "message": "Vision entered review" } }] },
-          "surpassed": { "category": "terminal", "description": "Vision has been superseded by a newer direction." },
-          "archived": { "category": "terminal", "description": "Vision is archived." }
-        },
-        "transitions": [
-          { "from": "captured", "to": "active", "event": "activate", "description": "Activate this vision as the guiding direction." },
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Trigger periodic relevance review." },
-          { "from": "active", "to": "archived", "event": "archive", "description": "Archive an active vision directly." },
-          { "from": "review", "to": "active", "event": "reaffirm", "description": "Vision is still relevant — return to active." },
-          { "from": "review", "to": "surpassed", "event": "surpass", "description": "Vision is no longer relevant — mark as superseded." },
-          { "from": "surpassed", "to": "archived", "event": "archive" },
-          { "from": "captured", "to": "archived", "event": "archive", "description": "Archive a captured vision that was never activated." }
-        ],
-        "migration": { "captured": "captured", "active": "active", "review": "review", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "pillar": {
-      "schema": {
-        "id_prefix": "PILLAR",
-        "id_pattern": "^PILLAR-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/pillars/",
-        "icon": "columns-3",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^PILLAR-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "gate": { "type": ["string", "array"] },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "PILLAR",
+      "id_pattern": "^PILLAR-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/pillars/",
+      "icon": "columns-3",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PILLAR-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gate": {
+            "type": [
+              "string",
+              "array"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "pillar",
-        "version": "0.1.0",
-        "artifact_type": "pillar",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Pillar lifecycle state machine. Pillars are foundational principles that uphold the vision. Like visions, they have a simple lifecycle — activated, reviewed, and eventually superseded or archived.",
-        "initial_state": "active",
-        "states": {
-          "active": { "category": "active", "description": "Pillar is an active guiding principle.", "on_enter": [{ "type": "append_log", "params": { "message": "Pillar activated" } }] },
-          "review": { "category": "review", "description": "Pillar is being reviewed for continued relevance.", "on_enter": [{ "type": "append_log", "params": { "message": "Pillar entered review" } }] },
-          "surpassed": { "category": "terminal", "description": "Pillar has been superseded by a revised principle." },
-          "archived": { "category": "terminal", "description": "Pillar is archived." }
-        },
-        "transitions": [
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Trigger periodic relevance review." },
-          { "from": "active", "to": "archived", "event": "archive", "description": "Archive a pillar directly." },
-          { "from": "review", "to": "active", "event": "reaffirm", "description": "Pillar is still relevant — return to active." },
-          { "from": "review", "to": "surpassed", "event": "surpass", "description": "Pillar is no longer relevant — mark as superseded." },
-          { "from": "surpassed", "to": "archived", "event": "archive" }
-        ],
-        "migration": { "active": "active", "review": "review", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "persona": {
-      "schema": {
-        "id_prefix": "PERSONA",
-        "id_pattern": "^PERSONA-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/personas/",
-        "icon": "users",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^PERSONA-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "PERSONA",
+      "id_pattern": "^PERSONA-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/personas/",
+      "icon": "users",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PERSONA-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "persona",
-        "version": "0.1.0",
-        "artifact_type": "persona",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Persona lifecycle state machine. Personas represent target users or stakeholders. They have a simple lifecycle — activated, reviewed periodically, and eventually superseded or archived.",
-        "initial_state": "active",
-        "states": {
-          "active": { "category": "active", "description": "Persona is an active target user profile.", "on_enter": [{ "type": "append_log", "params": { "message": "Persona activated" } }] },
-          "review": { "category": "review", "description": "Persona is being reviewed for continued relevance.", "on_enter": [{ "type": "append_log", "params": { "message": "Persona entered review" } }] },
-          "surpassed": { "category": "terminal", "description": "Persona has been superseded by a revised profile." },
-          "archived": { "category": "terminal", "description": "Persona is archived." }
-        },
-        "transitions": [
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Trigger periodic relevance review." },
-          { "from": "active", "to": "archived", "event": "archive", "description": "Archive a persona directly." },
-          { "from": "review", "to": "active", "event": "reaffirm", "description": "Persona is still relevant — return to active." },
-          { "from": "review", "to": "surpassed", "event": "surpass", "description": "Persona is no longer relevant — mark as superseded." },
-          { "from": "surpassed", "to": "archived", "event": "archive" }
-        ],
-        "migration": { "active": "active", "review": "review", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "pivot": {
-      "schema": {
-        "id_prefix": "PIVOT",
-        "id_pattern": "^PIVOT-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/",
-        "icon": "refresh-cw",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^PIVOT-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "PIVOT",
+      "id_pattern": "^PIVOT-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/",
+      "icon": "refresh-cw",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PIVOT-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "pivot",
-        "version": "0.1.0",
-        "artifact_type": "pivot",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Pivot lifecycle state machine. Pivots capture significant strategic direction changes. The workflow is intentionally linear — a pivot is explored, activated (decision made), completed (change implemented), and eventually archived.",
-        "initial_state": "captured",
-        "states": {
-          "captured": { "category": "planning", "description": "Pivot has been captured but not yet explored." },
-          "exploring": { "category": "planning", "description": "Pivot is being explored — impact assessment, alternatives, rationale.", "on_enter": [{ "type": "append_log", "params": { "message": "Pivot exploration started" } }] },
-          "active": { "category": "active", "description": "Pivot decision has been made — change is being implemented.", "on_enter": [{ "type": "set_field", "params": { "field": "decided_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Pivot activated" } }] },
-          "completed": { "category": "completed", "description": "Pivot change has been fully implemented.", "on_enter": [{ "type": "set_field", "params": { "field": "completed_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Pivot completed" } }] },
-          "surpassed": { "category": "terminal", "description": "Pivot has been superseded by a subsequent pivot." },
-          "archived": { "category": "terminal", "description": "Pivot is archived." }
-        },
-        "transitions": [
-          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring pivot impact and alternatives." },
-          { "from": "captured", "to": "active", "event": "activate", "description": "Fast-track to active implementation." },
-          { "from": "exploring", "to": "active", "event": "activate", "description": "Decide and begin implementing the pivot." },
-          { "from": "exploring", "to": "archived", "event": "archive", "description": "Archive during exploration (pivot not viable)." },
-          { "from": "active", "to": "completed", "event": "complete", "description": "Pivot change fully implemented." },
-          { "from": "completed", "to": "archived", "event": "archive" },
-          { "from": "completed", "to": "surpassed", "event": "surpass" },
-          { "from": "surpassed", "to": "archived", "event": "archive" },
-          { "from": "captured", "to": "archived", "event": "archive", "description": "Archive a captured pivot that was never explored." }
-        ],
-        "migration": { "captured": "captured", "exploring": "exploring", "active": "active", "completed": "completed", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "discovery-idea": {
-      "schema": {
-        "id_prefix": "DISC-IDEA",
-        "id_pattern": "^DISC-IDEA-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/ideas/",
-        "icon": "lightbulb",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "priority": { "type": "string" },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "DISC-IDEA",
+      "id_pattern": "^DISC-IDEA-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/ideas/",
+      "icon": "lightbulb",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "discovery-idea",
-        "version": "0.1.0",
-        "artifact_type": "discovery-idea",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Discovery idea lifecycle state machine. Discovery ideas are high-level product concepts captured during the discovery stage. They may evolve into research investigations or crystallise into strategic decisions.",
-        "initial_state": "captured",
-        "states": {
-          "captured": { "category": "planning", "description": "Idea has been captured but not yet explored." },
-          "exploring": { "category": "planning", "description": "Idea is being explored — feasibility, scope, impact being assessed.", "on_enter": [{ "type": "append_log", "params": { "message": "Idea exploration started" } }] },
-          "ready": { "category": "planning", "description": "Idea has been explored and is ready for prioritisation." },
-          "prioritised": { "category": "planning", "description": "Idea has been prioritised and is ready for active work." },
-          "active": { "category": "active", "description": "Idea is actively being developed or crystallised.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Idea activated" } }] },
-          "hold": { "category": "active", "description": "Idea is paused, waiting for external input or decision." },
-          "review": { "category": "review", "description": "Idea outcomes are being reviewed.", "on_enter": [{ "type": "append_log", "params": { "message": "Idea entered review" } }] },
-          "completed": { "category": "completed", "description": "Idea has been reviewed and accepted — outcomes delivered.", "on_enter": [{ "type": "set_field", "params": { "field": "completed_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Idea completed" } }] },
-          "surpassed": { "category": "terminal", "description": "Idea was completed but has been superseded." },
-          "archived": { "category": "terminal", "description": "Idea is archived." }
-        },
-        "transitions": [
-          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring feasibility and impact." },
-          { "from": "exploring", "to": "ready", "event": "scope_complete", "description": "Exploration complete, ready for prioritisation." },
-          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending input." },
-          { "from": "exploring", "to": "archived", "event": "archive", "description": "Archive during exploration (not viable)." },
-          { "from": "ready", "to": "prioritised", "event": "prioritise" },
-          { "from": "ready", "to": "hold", "event": "pause", "description": "Pause before prioritisation." },
-          { "from": "prioritised", "to": "active", "event": "start", "description": "Begin active work on this idea." },
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit idea outcomes for review." },
-          { "from": "active", "to": "hold", "event": "pause", "description": "Pause active work." },
-          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
-          { "from": "hold", "to": "ready", "event": "resume", "description": "Return to ready pool." },
-          { "from": "review", "to": "completed", "event": "approve", "description": "Idea outcomes accepted." },
-          { "from": "review", "to": "active", "event": "request_changes", "description": "Further work needed.", "actions": [{ "type": "append_log", "params": { "message": "Changes requested during idea review" } }] },
-          { "from": "completed", "to": "surpassed", "event": "surpass" },
-          { "from": "completed", "to": "archived", "event": "archive" },
-          { "from": "surpassed", "to": "archived", "event": "archive" },
-          { "from": ["captured", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
-        ],
-        "migration": { "captured": "captured", "exploring": "exploring", "ready": "ready", "prioritised": "prioritised", "active": "active", "hold": "hold", "review": "review", "completed": "completed", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "discovery-research": {
-      "schema": {
-        "id_prefix": "DISC-RES",
-        "id_pattern": "^DISC-RES-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/research/",
-        "icon": "flask-conical",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^(RES|DISC-RES)-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "methodology": { "type": "string" },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "DISC-RES",
+      "id_pattern": "^DISC-RES-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/research/",
+      "icon": "flask-conical",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(RES|DISC-RES)-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "methodology": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "discovery-research",
-        "version": "0.1.0",
-        "artifact_type": "discovery-research",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Discovery research lifecycle state machine. Research artifacts capture investigations, feasibility studies, and technical explorations during the discovery stage.",
-        "initial_state": "captured",
-        "states": {
-          "captured": { "category": "planning", "description": "Research topic has been captured but not yet started." },
-          "exploring": { "category": "planning", "description": "Research is being explored — defining scope, methodology, questions.", "on_enter": [{ "type": "append_log", "params": { "message": "Research exploration started" } }] },
-          "active": { "category": "active", "description": "Research is actively being conducted.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Research activated" } }] },
-          "hold": { "category": "active", "description": "Research is paused, waiting for external input or resources." },
-          "review": { "category": "review", "description": "Research findings are being reviewed.", "on_enter": [{ "type": "append_log", "params": { "message": "Research entered review" } }] },
-          "completed": { "category": "completed", "description": "Research has been reviewed and findings accepted.", "on_enter": [{ "type": "set_field", "params": { "field": "completed_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Research completed" } }] },
-          "surpassed": { "category": "terminal", "description": "Research has been superseded by newer findings." },
-          "archived": { "category": "terminal", "description": "Research is archived." }
-        },
-        "transitions": [
-          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin defining research scope and methodology." },
-          { "from": "captured", "to": "active", "event": "start", "description": "Fast-track directly to active research." },
-          { "from": "exploring", "to": "active", "event": "start", "description": "Begin active research." },
-          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending resources." },
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit research findings for review." },
-          { "from": "active", "to": "hold", "event": "pause", "description": "Pause research, waiting for input." },
-          { "from": "hold", "to": "active", "event": "resume", "description": "Resume paused research." },
-          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
-          { "from": "review", "to": "completed", "event": "approve", "description": "Research findings accepted." },
-          { "from": "review", "to": "active", "event": "request_changes", "description": "Further research needed.", "actions": [{ "type": "append_log", "params": { "message": "Changes requested during research review" } }] },
-          { "from": "completed", "to": "surpassed", "event": "surpass", "description": "Mark as superseded by newer research." },
-          { "from": "completed", "to": "archived", "event": "archive" },
-          { "from": "surpassed", "to": "archived", "event": "archive" },
-          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from any non-active state." }
-        ],
-        "migration": { "captured": "captured", "exploring": "exploring", "active": "active", "hold": "hold", "review": "review", "completed": "completed", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     },
     "discovery-decision": {
-      "schema": {
-        "id_prefix": "DISC-AD",
-        "id_pattern": "^DISC-AD-[a-f0-9]{8}$",
-        "default_path": ".orqa/discovery/decisions/",
-        "icon": "scale",
-        "source_plugin": "@orqastudio/plugin-agile-discovery",
-        "fields": {
-          "required": { "id": { "type": "string", "pattern": "^(AD|DISC-AD)-[a-f0-9]{8}$" } },
-          "optional": {
-            "title": { "type": "string" },
-            "description": { "type": ["string", "null"] },
-            "relationships": { "type": "array", "items": { "type": "object", "required": ["target", "type"], "properties": { "target": { "type": "string" }, "type": { "type": "string" }, "rationale": { "type": "string" } } } }
+      "id_prefix": "DISC-AD",
+      "id_pattern": "^DISC-AD-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/decisions/",
+      "icon": "scale",
+      "source_plugin": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(AD|DISC-AD)-[a-f0-9]{8}$"
           }
         },
-        "additional_properties": true
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
-      "state_machine": {
-        "name": "discovery-decision",
-        "version": "0.1.0",
-        "artifact_type": "discovery-decision",
-        "plugin": "@orqastudio/plugin-agile-discovery",
-        "description": "Discovery decision lifecycle state machine. Discovery decisions capture high-level strategic choices made during the discovery stage — product direction, market positioning, technology bets.",
-        "initial_state": "captured",
-        "states": {
-          "captured": { "category": "planning", "description": "Decision question has been captured but not yet explored." },
-          "exploring": { "category": "planning", "description": "Decision space is being explored — options, trade-offs, constraints.", "on_enter": [{ "type": "append_log", "params": { "message": "Decision exploration started" } }] },
-          "active": { "category": "active", "description": "Decision is actively being deliberated — a preferred option is being developed.", "on_enter": [{ "type": "set_field", "params": { "field": "started_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Decision deliberation active" } }] },
-          "hold": { "category": "active", "description": "Decision is paused, waiting for external input." },
-          "review": { "category": "review", "description": "Decision is being reviewed for acceptance.", "on_enter": [{ "type": "append_log", "params": { "message": "Decision entered review" } }] },
-          "completed": { "category": "completed", "description": "Decision has been accepted and recorded.", "on_enter": [{ "type": "set_field", "params": { "field": "decided_at", "value": "${now}" } }, { "type": "append_log", "params": { "message": "Decision recorded" } }] },
-          "surpassed": { "category": "terminal", "description": "Decision has been superseded by a newer decision." },
-          "archived": { "category": "terminal", "description": "Decision is archived." }
-        },
-        "transitions": [
-          { "from": "captured", "to": "exploring", "event": "explore", "description": "Begin exploring the decision space." },
-          { "from": "captured", "to": "active", "event": "start", "description": "Fast-track to active deliberation." },
-          { "from": "exploring", "to": "active", "event": "start", "description": "Begin active deliberation." },
-          { "from": "exploring", "to": "hold", "event": "pause", "description": "Pause exploration pending input." },
-          { "from": "active", "to": "review", "event": "submit_for_review", "description": "Submit decision for acceptance review." },
-          { "from": "active", "to": "hold", "event": "pause", "description": "Pause deliberation." },
-          { "from": "active", "to": "archived", "event": "archive", "description": "Archive decision (no longer relevant)." },
-          { "from": "hold", "to": "active", "event": "resume", "description": "Resume deliberation." },
-          { "from": "hold", "to": "exploring", "event": "rescope", "description": "Return to exploration for re-scoping." },
-          { "from": "review", "to": "completed", "event": "approve", "description": "Decision accepted and recorded." },
-          { "from": "review", "to": "active", "event": "request_changes", "description": "Further deliberation needed.", "actions": [{ "type": "append_log", "params": { "message": "Changes requested during decision review" } }] },
-          { "from": "completed", "to": "surpassed", "event": "surpass", "description": "Mark as superseded by a newer decision." },
-          { "from": "completed", "to": "archived", "event": "archive" },
-          { "from": "surpassed", "to": "archived", "event": "archive" },
-          { "from": ["captured", "exploring", "hold"], "to": "archived", "event": "archive", "description": "Archive from non-active states." }
-        ],
-        "migration": { "captured": "captured", "exploring": "exploring", "active": "active", "hold": "hold", "review": "review", "completed": "completed", "surpassed": "surpassed", "archived": "archived" }
-      }
+      "additional_properties": true
     }
   },
   "relationship_types": {
-    "evolves-to": { "forward": "evolves-to", "inverse": "evolved-from", "from": ["discovery-idea"], "to": ["discovery-research"], "semantic": "lineage" },
-    "drives": { "forward": "drives", "inverse": "driven-by", "from": ["vision"], "to": ["pillar"], "semantic": "foundation" },
-    "pivots": { "forward": "pivots", "inverse": "pivoted-by", "from": ["vision"], "to": ["pivot"], "semantic": "foundation" },
-    "hands-off-to": { "forward": "hands-off-to", "inverse": "handed-off-from", "from": ["discovery-decision"], "to": ["planning-idea"], "semantic": "lineage" },
-    "informs": { "forward": "informs", "inverse": "informed-by", "from": ["discovery-decision"], "to": ["planning-decision"], "semantic": "knowledge-flow" }
+    "evolves-to": {
+      "forward": "evolves-to",
+      "inverse": "evolved-from",
+      "from": [
+        "discovery-idea"
+      ],
+      "to": [
+        "discovery-research"
+      ],
+      "semantic": "lineage"
+    },
+    "drives": {
+      "forward": "drives",
+      "inverse": "driven-by",
+      "from": [
+        "vision"
+      ],
+      "to": [
+        "pillar"
+      ],
+      "semantic": "foundation"
+    },
+    "pivots": {
+      "forward": "pivots",
+      "inverse": "pivoted-by",
+      "from": [
+        "vision"
+      ],
+      "to": [
+        "pivot"
+      ],
+      "semantic": "foundation"
+    },
+    "hands-off-to": {
+      "forward": "hands-off-to",
+      "inverse": "handed-off-from",
+      "from": [
+        "discovery-decision"
+      ],
+      "to": [
+        "planning-idea"
+      ],
+      "semantic": "lineage"
+    },
+    "informs": {
+      "forward": "informs",
+      "inverse": "informed-by",
+      "from": [
+        "discovery-decision"
+      ],
+      "to": [
+        "planning-decision"
+      ],
+      "semantic": "knowledge-flow"
+    }
   },
-  "contribution_metadata": [{ "plugin": "@orqastudio/plugin-agile-discovery", "version": "0.1.4-dev" }]
+  "contribution_metadata": [
+    {
+      "plugin": "@orqastudio/plugin-agile-discovery",
+      "version": "0.1.4-dev"
+    }
+  ]
 }

@@ -3,34 +3,24 @@ id: "RULE-eb269afb"
 type: rule
 title: "Reusable Components"
 description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
-status: active
-enforcement_type: mechanical
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-11"
 enforcement:
-
-  - engine: behavioral
-
+  - mechanism: behavioral
     message: "Check shared component library before creating new UI elements; code reviewer rejects inline empty states, spinners, and error displays when shared components exist"
-
-  - engine: hook
-
+  - mechanism: hook
     type: PostToolUse
     event: file
     action: inject
     pattern: "ui/src/lib/components/**"
     description: "Knowledge injection triggered when writing to component directory"
 relationships:
-
   - target: "DOC-2c94f7ba"
-
     type: "documented-by"
-
   - target: "PD-9a7d7256"
-
     type: "enforces"
 ---
-
 ## Shared Component Library
 
 Before creating ANY new UI element, check the reusable component locations below.
@@ -38,7 +28,7 @@ Before creating ANY new UI element, check the reusable component locations below
 ### `$lib/components/shared/` — General-Purpose Components
 
 | Component | Purpose | Use When |
-| --- | --- | --- |
+| ----------- | --------- | ---------- |
 | `EmptyState` | Empty list/grid placeholder with optional icon, title, description, action | ANY page with no data to show |
 | `LoadingSpinner` | Branded (logo-pulse) or minimal (CSS) loading indicator, 3 sizes | ANY async data fetch |
 | `ErrorDisplay` | Error message with destructive styling and optional retry | ANY error state |
@@ -54,30 +44,30 @@ Before creating ANY new UI element, check the reusable component locations below
 ### `$lib/components/content/` — Content Rendering
 
 | Component | Purpose | Use When |
-| --- | --- | --- |
+| ----------- | --------- | ---------- |
 | `CodeBlock` | Syntax-highlighted code display with copy button | ANY code rendering |
 | `MarkdownRenderer` | Markdown content display with artifact links | ANY markdown rendering |
 
 ### `$lib/components/tool/` — Tool Integration
 
 | Component | Purpose | Use When |
-| --- | --- | --- |
+| ----------- | --------- | ---------- |
 | `ToolCallCard` | Tool call display with approval UI | ALL tool call rendering |
 
 ### `$lib/components/conversation/` — Conversation Components
 
 | Component | Purpose | Use When |
-| --- | --- | --- |
+| ----------- | --------- | ---------- |
 | `MessageBubble` | Base chat message bubble | Custom message rendering |
 | `UserMessage` / `AssistantMessage` / `SystemMessage` | Role-specific message wrappers | Conversation display |
 
 ## Rules
 
 1. **Search before creating** — Before writing a new component, search `$lib/components/` for existing ones
-2. **No inline empty states** — NEVER write `<div class="py-12 text-center"><p>No items</p></div>`. Use `\<EmptyState\>`
-3. **No inline loading states** — NEVER write custom spinners. Use `\<LoadingSpinner\>`
-4. **No inline error states** — NEVER write custom error cards. Use `\<ErrorDisplay\>`
-5. **No inline status displays** — NEVER write custom status badges. Use `\<StatusIndicator\>`
+2. **No inline empty states** — NEVER write `<div class="py-12 text-center"><p>No items</p></div>`. Use `<EmptyState>`
+3. **No inline loading states** — NEVER write custom spinners. Use `<LoadingSpinner>`
+4. **No inline error states** — NEVER write custom error cards. Use `<ErrorDisplay>`
+5. **No inline status displays** — NEVER write custom status badges. Use `<StatusIndicator>`
 6. **Consistent page patterns** — All list pages follow: loading -> empty -> content
 7. **shadcn-svelte first** — Use shadcn-svelte primitives (Button, Card, Dialog, etc.) before building custom components
 

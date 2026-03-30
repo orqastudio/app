@@ -3,31 +3,20 @@ id: "RULE-8cb4bd04"
 type: rule
 title: "Testing Standards"
 description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
-status: active
-enforcement_type: mechanical
+status: "active"
 created: "2026-03-07"
 updated: "2026-03-07"
 enforcement:
-
-  - engine: behavioral
-
+  - mechanism: behavioral
     message: "80%+ test coverage required; tests must be organised by layer; no skipping tests without documented justification"
-
-  - engine: pre-commit
-
+  - mechanism: pre-commit
     check: "make check"
     description: "make check runs make test-rust and make test-frontend"
-
-  - engine: cargo-test
-
+  - mechanism: cargo-test
     description: "cargo tarpaulin enforces 80% coverage per module"
-
-  - engine: vitest
-
+  - mechanism: vitest
 relationships:
-
   - target: "PD-a1c2ca06"
-
     type: "enforces"
 ---
 **Source of Truth:** This file defines testing patterns. `.orqa/documentation/development/coding-standards.md` defines coverage requirements.
@@ -35,7 +24,7 @@ relationships:
 ## Test Organisation
 
 | Location | Type | Purpose |
-| --- | --- | --- |
+| ---------- | ------ | --------- |
 | `backend/src-tauri/src/**/tests/` | Rust unit tests | Single-module logic, domain functions, utilities |
 | `backend/src-tauri/tests/` | Rust integration tests | Cross-module flows, database interactions, file system operations |
 | `ui/**/*.test.ts` | Frontend unit tests | Svelte components, stores, utility functions (Vitest) |

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { open } from "@tauri-apps/plugin-shell";
-	import ArtifactLink from "$lib/components/artifact/ArtifactLink.svelte";
+	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { getStores } from "@orqastudio/sdk";
 
 	let {

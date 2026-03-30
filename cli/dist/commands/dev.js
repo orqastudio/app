@@ -4,6 +4,10 @@
  * `orqa dev` is the primary entry point for the development environment.
  * Run it in a separate terminal — it watches Rust sources and auto-rebuilds.
  *
+ * MCP and LSP server lifecycle is owned exclusively by the daemon. The dev
+ * controller starts the daemon and the daemon starts MCP/LSP. The controller
+ * does NOT spawn orqa-mcp-server or orqa-lsp-server directly.
+ *
  * orqa dev                Start the full dev environment (Vite + Tauri + daemon)
  * orqa dev stop           Stop gracefully
  * orqa dev kill           Force-kill all processes
@@ -55,9 +59,8 @@ Subcommands:
   restart daemon      Restart the validation daemon
   restart frontend    Restart Vite dev server
   restart app         Restart Tauri app (rebuild + relaunch)
-  restart search      Restart search server (+ MCP)
-  restart mcp         Restart MCP server
-  restart lsp         Restart LSP server
+  restart search      Restart search server
+  restart daemon      Restart daemon (+ MCP and LSP, which the daemon owns)
   status              Show process status
   icons [--deploy]    Generate brand icons from SVG sources
   tool [args...]      Run the debug-tool submodule
@@ -322,8 +325,6 @@ async function startController(root, opts = { watch: true }) {
         state: "starting",
         app: null,
         search: null,
-        mcp: null,
-        lsp: null,
     });
     // ── 1. Start daemon ─────────────────────────────────────────────────
     logCtrl("Starting daemon...");
@@ -334,10 +335,10 @@ async function startController(root, opts = { watch: true }) {
     catch {
         logCtrl("Daemon start failed — services may not have graph access");
     }
-    // ── 2. Start search, MCP, LSP servers (pre-built binaries) ──────────
+    // ── 2. Start search server (pre-built binary) ────────────────────────
+    // MCP and LSP servers are managed exclusively by the daemon — do NOT spawn
+    // them here. The daemon started above owns their full lifecycle.
     const searchProc = createManagedProcess("search", COLOURS.orange);
-    const mcpProc = createManagedProcess("mcp", COLOURS.teal);
-    const lspProc = createManagedProcess("lsp", COLOURS.pink);
     /**
      * Find a pre-built binary in workspace target dirs.
      * @param name - Binary name without extension.
@@ -362,25 +363,8 @@ async function startController(root, opts = { watch: true }) {
             env: rustEnv(),
         });
     }
-    function startMcp() {
-        logCtrl("Starting MCP server...");
-        spawnManaged(mcpProc, findBin("orqa-mcp-server"), [appDir], {
-            stdinMode: "pipe",
-            env: rustEnv(),
-        });
-    }
-    function startLsp() {
-        logCtrl("Starting LSP server...");
-        spawnManaged(lspProc, findBin("orqa-lsp-server"), [appDir], {
-            stdinMode: "pipe",
-            env: rustEnv(),
-        });
-    }
     startSearch();
-    await sleep(2_000);
-    startMcp();
-    startLsp();
-    logSuccess("Search, MCP, and LSP servers started.");
+    logSuccess("Search server started.");
     // ── 4. TypeScript library watch builds ───────────────────────────────
     const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger"];
     for (const lib of tsLibs) {
@@ -405,8 +389,6 @@ async function startController(root, opts = { watch: true }) {
             state: "building",
             app: null,
             search: searchProc.child?.pid ?? null,
-            mcp: mcpProc.child?.pid ?? null,
-            lsp: lspProc.child?.pid ?? null,
         });
         spawnManaged(app, "cargo", [
             "tauri", "dev",
@@ -442,8 +424,6 @@ async function startController(root, opts = { watch: true }) {
             state: "running",
             app: app.child?.pid ?? null,
             search: searchProc.child?.pid ?? null,
-            mcp: mcpProc.child?.pid ?? null,
-            lsp: lspProc.child?.pid ?? null,
         });
         // When app exits cleanly (code 0 = user closed window), shut down everything.
         // Non-zero = crash → stay alive for restart-tauri.
@@ -451,8 +431,6 @@ async function startController(root, opts = { watch: true }) {
             if (code === 0 || code === null) {
                 logCtrl("App window closed. Shutting down...");
                 killManaged(searchProc);
-                killManaged(mcpProc);
-                killManaged(lspProc);
                 removeControlFile(root);
                 cleanupSignalFile(root);
                 process.exit(0);
@@ -462,8 +440,6 @@ async function startController(root, opts = { watch: true }) {
                     state: "app-crashed",
                     app: null,
                     search: searchProc.child?.pid ?? null,
-                    mcp: mcpProc.child?.pid ?? null,
-                    lsp: lspProc.child?.pid ?? null,
                 });
                 logCtrl(`App crashed (code ${code}). Use 'orqa dev restart-tauri' to relaunch.`);
             }
@@ -473,32 +449,23 @@ async function startController(root, opts = { watch: true }) {
     // ── 4. Rust Source File Watchers ────────────────────────────────────
     if (opts.watch) {
         logCtrl("Setting up Rust source file watchers...");
-        // daemon (engine/validation) and search (engine/search) are watched by cargo tauri dev.
-        // We only watch MCP and LSP which Tauri doesn't cover.
+        // The Tauri dev process watches app Rust sources. The daemon owns MCP and
+        // LSP and watches their source changes internally. The dev controller only
+        // needs to watch the search server, which Tauri does not cover.
         setupRustWatchers([
             {
-                label: "MCP server",
-                dir: path.join(libsDir, "mcp-server", "src"),
-                manifest: path.join(libsDir, "mcp-server", "Cargo.toml"),
+                label: "Search server",
+                dir: path.join(libsDir, "search-server", "src"),
+                manifest: path.join(libsDir, "search-server", "Cargo.toml"),
                 restart: async () => {
-                    killManaged(mcpProc);
+                    killManaged(searchProc);
                     await sleep(500);
-                    startMcp();
+                    startSearch();
                     writeFullControlFile("running");
                 },
             },
-            {
-                label: "LSP server",
-                dir: path.join(libsDir, "lsp-server", "src"),
-                manifest: path.join(libsDir, "lsp-server", "Cargo.toml"),
-                restart: async () => {
-                    killManaged(lspProc);
-                    await sleep(500);
-                    startLsp();
-                    writeFullControlFile("running");
-                },
-            },
-            // Tauri app watching is handled by cargo tauri dev — not our watcher
+            // MCP and LSP source watching is handled by the daemon
+            // Tauri app watching is handled by cargo tauri dev
         ]);
         logSuccess("Rust file watchers active.");
         logCtrl("Setting up plugin source watchers...");
@@ -516,8 +483,6 @@ async function startController(root, opts = { watch: true }) {
             state,
             app: app.child?.pid ?? null,
             search: searchProc.child?.pid ?? null,
-            mcp: mcpProc.child?.pid ?? null,
-            lsp: lspProc.child?.pid ?? null,
         });
     }
     async function processSignal(signal) {
@@ -530,31 +495,24 @@ async function startController(root, opts = { watch: true }) {
             logSuccess("App restarted.");
         }
         else if (signal === "restart-search") {
-            logCtrl("Restart search signal received — restarting search (and MCP)...");
-            killManaged(mcpProc);
+            logCtrl("Restart search signal received — restarting search server...");
             killManaged(searchProc);
             await sleep(500);
             startSearch();
-            await sleep(2_000);
-            startMcp();
             writeFullControlFile("running");
-            logSuccess("Search and MCP restarted.");
+            logSuccess("Search server restarted.");
         }
-        else if (signal === "restart-mcp") {
-            logCtrl("Restart MCP signal received...");
-            killManaged(mcpProc);
-            await sleep(500);
-            startMcp();
-            writeFullControlFile("running");
-            logSuccess("MCP server restarted.");
-        }
-        else if (signal === "restart-lsp") {
-            logCtrl("Restart LSP signal received...");
-            killManaged(lspProc);
-            await sleep(500);
-            startLsp();
-            writeFullControlFile("running");
-            logSuccess("LSP server restarted.");
+        else if (signal === "restart-mcp" || signal === "restart-lsp") {
+            // MCP and LSP are owned by the daemon — restart the daemon to restart them.
+            logCtrl(`${signal} received — restarting daemon (daemon owns MCP and LSP)...`);
+            try {
+                const { runDaemonCommand } = await import("./daemon.js");
+                await runDaemonCommand(["restart"]);
+                logSuccess("Daemon restarted (MCP and LSP restarted by daemon).");
+            }
+            catch {
+                logError("ctrl", "Daemon restart failed — may need manual restart");
+            }
         }
         else if (signal === "restart-daemon") {
             logCtrl("Restart daemon signal received...");
@@ -569,7 +527,7 @@ async function startController(root, opts = { watch: true }) {
         }
         else if (signal === "restart") {
             logCtrl("Full restart signal received — restarting everything...");
-            // Restart daemon first
+            // Restart daemon (it owns MCP and LSP — restarting it restarts them)
             try {
                 const { runDaemonCommand } = await import("./daemon.js");
                 await runDaemonCommand(["restart"]);
@@ -578,27 +536,12 @@ async function startController(root, opts = { watch: true }) {
             catch {
                 logError("ctrl", "Daemon restart failed");
             }
+            // Restart search server and app
+            killManaged(searchProc);
             killManaged(app);
-            killManaged(mcpProc);
-            killManaged(lspProc);
-            killManaged(searchProc);
-            // Restart daemon
-            try {
-                const { runDaemonCommand } = await import("./daemon.js");
-                await runDaemonCommand(["restart"]);
-            }
-            catch { /* ignore */ }
-            // Restart services
-            killManaged(searchProc);
-            killManaged(mcpProc);
-            killManaged(lspProc);
             await sleep(500);
             startSearch();
-            await sleep(2_000);
-            startMcp();
-            startLsp();
             // Restart app (cargo tauri dev)
-            killManaged(app);
             await sleep(1_000);
             await startRust();
             logSuccess("Full restart complete.");
@@ -608,8 +551,6 @@ async function startController(root, opts = { watch: true }) {
             closeAllWatchers();
             killManaged(app);
             killManaged(searchProc);
-            killManaged(mcpProc);
-            killManaged(lspProc);
             removeControlFile(root);
             cleanupSignalFile(root);
             fs.unwatchFile(signalFile);
@@ -630,15 +571,14 @@ async function startController(root, opts = { watch: true }) {
             // Signal file may not exist yet
         }
     });
-    // Handle Ctrl+C / terminal close
+    // Handle Ctrl+C / terminal close. MCP and LSP are owned by the daemon and
+    // will be stopped when the daemon shuts down via the OS process tree.
     function shutdown() {
         logCtrl("Shutting down...");
         closeAllWatchers();
         fs.unwatchFile(signalFile);
         killManaged(app);
         killManaged(searchProc);
-        killManaged(mcpProc);
-        killManaged(lspProc);
         removeControlFile(root);
         cleanupSignalFile(root);
         process.exit(0);
@@ -1015,10 +955,7 @@ function cmdStatus(root) {
         console.log(`App PID: ${ctrl.app}`);
     if (ctrl.search)
         console.log(`Search PID: ${ctrl.search}`);
-    if (ctrl.mcp)
-        console.log(`MCP PID: ${ctrl.mcp}`);
-    if (ctrl.lsp)
-        console.log(`LSP PID: ${ctrl.lsp}`);
+    console.log("MCP/LSP: managed by daemon (use 'orqa daemon status' for details)");
 }
 // ── Subcommand: icons ───────────────────────────────────────────────────────
 function cmdIcons(root, args) {
@@ -1095,11 +1032,12 @@ export async function runDevCommand(args) {
             }
             else {
                 const signalMap = {
-                    daemon: ["restart-daemon", "Restart daemon"],
+                    daemon: ["restart-daemon", "Restart daemon (restarts MCP and LSP)"],
                     app: ["restart-app", "Restart app (Vite + Tauri)"],
-                    search: ["restart-search", "Restart search (+ MCP)"],
-                    mcp: ["restart-mcp", "Restart MCP"],
-                    lsp: ["restart-lsp", "Restart LSP"],
+                    search: ["restart-search", "Restart search server"],
+                    // mcp and lsp route through the daemon — the daemon owns their lifecycle
+                    mcp: ["restart-mcp", "Restart MCP (via daemon restart)"],
+                    lsp: ["restart-lsp", "Restart LSP (via daemon restart)"],
                 };
                 const entry = signalMap[target];
                 if (entry) {

@@ -22,11 +22,11 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
-import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
+import { stringify as stringifyYaml } from "yaml";
 import { getRoot } from "../lib/root.js";
 import { parseFrontmatterFromFile } from "../lib/frontmatter.js";
 
-// ─── Workflow/schema helpers (read from resolved YAML, not hardcoded) ─────────
+// ─── Workflow/schema helpers (read from resolved JSON, not hardcoded) ─────────
 
 /**
  * Read the initial_state for an artifact type from its resolved workflow.
@@ -36,25 +36,19 @@ import { parseFrontmatterFromFile } from "../lib/frontmatter.js";
  */
 function getInitialStatus(projectDir: string, artifactType: string): string | null {
 	const workflowsDir = join(projectDir, ".orqa", "workflows");
-	// Try exact match first, then scan all for matching artifact_type
-	for (const name of [`${artifactType}.resolved.yaml`]) {
-		const filePath = join(workflowsDir, name);
-		if (existsSync(filePath)) {
-			try {
-				const parsed = parseYaml(readFileSync(filePath, "utf-8"));
-				if (parsed?.initial_state) return parsed.initial_state;
-			} catch { /* skip */ }
-		}
-	}
-	// Scan all resolved workflows for matching artifact_type
+	// Scan all resolved stage JSON files for matching artifact_types entry.
+	// Stage files embed per-type state machines under artifact_types[key].state_machine.
 	try {
 		const entries = readdirSync(workflowsDir, { encoding: "utf-8" }) as string[];
 		for (const entry of entries) {
-			if (!entry.endsWith(".resolved.yaml")) continue;
+			if (!entry.endsWith(".resolved.json")) continue;
 			try {
-				const parsed = parseYaml(readFileSync(join(workflowsDir, entry), "utf-8"));
-				if (parsed?.artifact_type === artifactType && parsed?.initial_state) {
-					return parsed.initial_state;
+				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<string, unknown>;
+				const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
+				if (artifactTypes && typeof artifactTypes === "object" && artifactType in artifactTypes) {
+					const typeDef = artifactTypes[artifactType] as Record<string, unknown> | undefined;
+					const sm = typeDef?.["state_machine"] as Record<string, unknown> | undefined;
+					if (typeof sm?.["initial_state"] === "string") return sm["initial_state"];
 				}
 			} catch { /* skip */ }
 		}
@@ -71,19 +65,23 @@ function getInitialStatus(projectDir: string, artifactType: string): string | nu
 function getActiveStatuses(projectDir: string, artifactType: string): Set<string> {
 	const result = new Set<string>();
 	const workflowsDir = join(projectDir, ".orqa", "workflows");
+	// Scan all resolved stage JSON files for the artifact type's state machine.
+	// Stage files embed per-type state machines under artifact_types[key].state_machine.states.
 	try {
 		const entries = readdirSync(workflowsDir, { encoding: "utf-8" }) as string[];
 		for (const entry of entries) {
-			if (!entry.endsWith(".resolved.yaml")) continue;
+			if (!entry.endsWith(".resolved.json")) continue;
 			try {
-				const parsed = parseYaml(readFileSync(join(workflowsDir, entry), "utf-8"));
-				if (parsed?.artifact_type !== artifactType) continue;
-				if (parsed?.states && typeof parsed.states === "object") {
-					for (const [stateName, stateDef] of Object.entries(parsed.states)) {
-						const sd = stateDef as Record<string, unknown>;
-						if (sd.category === "active") {
-							result.add(stateName);
-						}
+				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<string, unknown>;
+				const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
+				if (!artifactTypes || !(artifactType in artifactTypes)) continue;
+				const typeDef = artifactTypes[artifactType] as Record<string, unknown> | undefined;
+				const sm = typeDef?.["state_machine"] as Record<string, unknown> | undefined;
+				const states = sm?.["states"] as Record<string, Record<string, unknown>> | undefined;
+				if (!states) continue;
+				for (const [stateName, stateDef] of Object.entries(states)) {
+					if (stateDef?.["category"] === "active") {
+						result.add(stateName);
 					}
 				}
 			} catch { /* skip */ }
