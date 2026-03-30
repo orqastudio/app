@@ -10,7 +10,7 @@
  *   log.info("Opened artifact", path);
  *   log.perf("loadContent", () => fetchContent(path));
  *
- * All output is forwarded to the dev dashboard via HTTP POST to localhost:10401/log.
+ * All output is forwarded to the dev dashboard via HTTP POST to localhost:10130/log.
  * If the dashboard isn't running, the fire-and-forget request silently fails.
  */
 
@@ -37,7 +37,7 @@ export interface Logger {
 
 type LogSubscriber = (entry: LogEntry) => void;
 
-const DEV_LOG_URL = "http://localhost:10401/log";
+const DEV_LOG_URL = "http://localhost:10130/log";
 
 const subscribers: LogSubscriber[] = [];
 

@@ -2,7 +2,7 @@
  * Dev-mode logging setup.
  *
  * Connects the SDK's centralized logger to the dev controller dashboard.
- * In dev mode, all log entries are forwarded to http://localhost:10401/log.
+ * In dev mode, all log entries are forwarded to http://localhost:10130/log.
  *
  * Call `initDevConsole()` once at app startup.
  */
@@ -10,7 +10,7 @@
 import { subscribeToLogs, setLogLevel } from "@orqastudio/sdk";
 import type { LogEntry } from "@orqastudio/sdk";
 
-const DEV_LOG_URL = "http://localhost:10401/log";
+const DEV_LOG_URL = "http://localhost:10130/log";
 
 function forwardEntry(entry: LogEntry) {
 	try {
