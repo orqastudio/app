@@ -11,23 +11,19 @@ use super::helpers::active_project_path;
 
 /// Scan the active project and return a unified navigation tree.
 ///
-/// Reads artifact layout from the project's `.orqa/project.json` `artifacts` field.
-/// Each entry drives the scan — no folder-guessing. Returns an empty tree when no
-/// active project is set or when the `artifacts` config is absent.
+/// Derives artifact layout from `.orqa/schema.composed.json` — the schema is the
+/// single source of truth for which artifact types exist and where they live.
+/// No manual configuration in project.json is needed (P1: Plugin-Composed Everything).
+/// Returns an empty tree when no active project is set or when the schema is absent.
 #[tauri::command]
 pub fn artifact_scan_tree(state: State<'_, AppState>) -> Result<NavTree, OrqaError> {
     let project_path = active_project_path(&state)?;
+    let path = Path::new(&project_path);
 
-    // Load artifacts config from project.json — empty list if missing or unset.
-    let artifacts = crate::repo::project_settings_repo::read(&project_path)
-        .unwrap_or(None)
-        .map(|s| s.artifacts)
-        .unwrap_or_default();
+    // Derive artifact entries from the composed schema — schema is authoritative.
+    let entries = orqa_engine::artifact::artifact_entries_from_schema(path);
 
-    Ok(crate::domain::artifact_reader::artifact_scan_tree(
-        Path::new(&project_path),
-        &artifacts,
-    )?)
+    Ok(crate::domain::artifact_reader::artifact_scan_tree(path, &entries)?)
 }
 
 /// Start (or replace) the `.orqa/` file-system watcher for a project.

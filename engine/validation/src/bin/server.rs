@@ -58,7 +58,7 @@
 //! endpoints. The artifact graph, rules, and plugin schemas are loaded once on
 //! startup and held in memory for low-latency calls from hooks, LSP, MCP, and CLI.
 //!
-//! Default port: 9120 (reads `ORQA_PORT_BASE` directly). Writes a PID file to `<project-path>/.state/daemon.pid`.
+//! Default port: 10100 (reads `ORQA_PORT_BASE` directly). Writes a PID file to `<project-path>/.state/daemon.pid`.
 //!
 //! Endpoints:
 //!   GET  /health                — liveness + artifact counts
@@ -82,6 +82,7 @@
 use std::path::PathBuf;
 use std::process;
 
+use orqa_engine_types::ports::resolve_daemon_port;
 use orqa_validation::{
     auto_fix, compute_health,
     content::{extract_behavioral_messages, find_agent, find_knowledge},
@@ -574,12 +575,9 @@ fn run_daemon_cmd(args: &[String]) {
         process::exit(2);
     }
 
-    // ORQA_PORT_BASE is the daemon port directly (no offset). Matches
-    // daemon/src/health.rs resolve_port() and cli/src/lib/ports.ts.
-    let default_port: u16 = std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(9120);
+    // Daemon port is ORQA_PORT_BASE with no offset (default 10100). Uses
+    // orqa_engine_types::ports as single source of truth.
+    let default_port: u16 = resolve_daemon_port();
     let port: u16 = find_flag_value(args, "--port")
         .and_then(|s| s.parse().ok())
         .unwrap_or(default_port);

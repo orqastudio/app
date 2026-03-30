@@ -9,12 +9,12 @@
 //!
 //! **TCP mode** (for debugging with editors that support TCP):
 //! ```
-//! orqa-lsp-server /path/to/project --tcp 9257
+//! orqa-lsp-server /path/to/project --tcp 10101
 //! ```
 //!
-//! **Daemon port** (defaults to 9120):
+//! **Daemon port** (defaults to 10100):
 //! ```
-//! orqa-lsp-server /path/to/project --daemon-port 9120
+//! orqa-lsp-server /path/to/project --daemon-port 10100
 //! ```
 //!
 //! The project path is the root of the repository containing the `.orqa/`
@@ -22,17 +22,15 @@
 
 use std::path::PathBuf;
 
+use orqa_engine::ports::resolve_daemon_port;
 use tracing_subscriber::EnvFilter;
 
-/// Default port for the validation daemon HTTP API.
+/// Default port for the OrqaStudio daemon HTTP API.
 ///
-/// Reads `ORQA_PORT_BASE` directly as the daemon port (default 9120). This
-/// matches `daemon/src/health.rs resolve_port()` — no offset is applied.
+/// Delegates to `orqa_engine::ports::resolve_daemon_port()` which reads
+/// `ORQA_PORT_BASE` (default 10100).
 fn default_daemon_port() -> u16 {
-    std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(9120)
+    resolve_daemon_port()
 }
 
 #[tokio::main]
@@ -74,9 +72,9 @@ async fn main() {
 /// Supported argument forms:
 /// - `orqa-lsp-server`                                   → cwd, stdio, default daemon port
 /// - `orqa-lsp-server /path/to/project`                  → given path, stdio, default daemon port
-/// - `orqa-lsp-server --tcp 9257`                        → cwd, TCP 9257, default daemon port
-/// - `orqa-lsp-server /path/to/project --tcp 9257`
-/// - `orqa-lsp-server /path/to/project --daemon-port 9120`
+/// - `orqa-lsp-server --tcp 10101`                       → cwd, TCP 10101, default daemon port
+/// - `orqa-lsp-server /path/to/project --tcp 10101`
+/// - `orqa-lsp-server /path/to/project --daemon-port 10100`
 #[allow(clippy::too_many_lines)]
 fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
     let mut project_root: Option<PathBuf> = None;
@@ -139,6 +137,6 @@ fn print_usage() {
     tracing::info!("OrqaStudio LSP Server");
     tracing::info!("USAGE: orqa-lsp-server [PROJECT_PATH] [--tcp PORT] [--daemon-port PORT]");
     tracing::info!("ARGS:  PROJECT_PATH  Path to the project root (default: current directory)");
-    tracing::info!("OPTIONS: --tcp PORT, --daemon-port PORT (default: 9120), --help");
+    tracing::info!("OPTIONS: --tcp PORT, --daemon-port PORT (default: 10100), --help");
     tracing::info!("ENVIRONMENT: RUST_LOG  Tracing filter (default: info)");
 }

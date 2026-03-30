@@ -1,0 +1,30 @@
+{
+  "name": "@orqastudio/constants",
+  "version": "0.1.0-dev",
+  "description": "Shared port constants and configuration for the OrqaStudio ecosystem",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "license": "BSL-1.1",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit"
+  },
+  "files": [
+    "dist/",
+    "src/"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

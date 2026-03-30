@@ -7,13 +7,13 @@
 //! **stdio mode** (default — backwards compatible with all LLM clients):
 //! ```
 //! orqa-mcp-server <project-path>
-//! orqa-mcp-server <project-path> --daemon-port 9120
+//! orqa-mcp-server <project-path> --daemon-port 10100
 //! ```
 //!
 //! **TCP mode** (daemon-managed — single persistent process for multiple clients):
 //! ```
-//! orqa-mcp-server <project-path> --tcp 9178
-//! orqa-mcp-server <project-path> --tcp 9178 --daemon-port 9120
+//! orqa-mcp-server <project-path> --tcp 10102
+//! orqa-mcp-server <project-path> --tcp 10102 --daemon-port 10100
 //! ```
 //!
 //! The MCP protocol is identical in both modes — only the transport differs.
@@ -131,7 +131,7 @@ fn print_usage() {
     tracing::info!("ARGS:  PROJECT_PATH  Path to the project root (required)");
     tracing::info!("OPTIONS:");
     tracing::info!("  --tcp PORT         Listen on TCP 127.0.0.1:PORT instead of stdio");
-    tracing::info!("  --daemon-port PORT Connect to daemon on PORT (default: 9120)");
+    tracing::info!("  --daemon-port PORT Connect to daemon on PORT (default: 10100)");
     tracing::info!("  --help             Show this help");
     tracing::info!("ENVIRONMENT: RUST_LOG  Tracing filter (default: info)");
 }

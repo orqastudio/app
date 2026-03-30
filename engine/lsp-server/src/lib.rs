@@ -16,7 +16,7 @@
 //! #[tokio::main]
 //! async fn main() {
 //!     let project_root = Path::new("/path/to/project");
-//!     orqa_lsp_server::run_stdio(project_root, 9120 /* or read ORQA_PORT_BASE */).await.expect("LSP server failed");
+//!     orqa_lsp_server::run_stdio(project_root, 10100 /* or read ORQA_PORT_BASE */).await.expect("LSP server failed");
 //! }
 //! ```
 //!
@@ -28,7 +28,7 @@
 //! #[tokio::main]
 //! async fn main() {
 //!     let project_root = Path::new("/path/to/project");
-//!     orqa_lsp_server::run_tcp(project_root, 9257, 9120 /* or read ORQA_PORT_BASE */).await.expect("LSP server failed");
+//!     orqa_lsp_server::run_tcp(project_root, 10101, 10100 /* or read ORQA_PORT_BASE */).await.expect("LSP server failed");
 //! }
 //! ```
 

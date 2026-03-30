@@ -4,6 +4,8 @@
 //! does not need to make a direct `fetch()` call, which is blocked by Tauri's
 //! Content Security Policy inside the WebView.
 
+use orqa_engine::ports::resolve_daemon_port;
+
 use crate::error::OrqaError;
 
 /// Response shape returned by the daemon's `/health` endpoint.
@@ -22,15 +24,12 @@ pub struct DaemonHealthResponse {
 /// Query the daemon's health endpoint and return the result.
 ///
 /// Makes an HTTP GET to the daemon's `/health` endpoint with a 3-second timeout.
-/// The daemon binds directly to ORQA_PORT_BASE (default 10100) with no offset.
-/// Returns the daemon's JSON response on success, or an error if the daemon is
-/// unreachable or returns a non-200 status.
+/// The daemon port is resolved via `orqa_engine::ports::resolve_daemon_port()`
+/// (ORQA_PORT_BASE, default 10100). Returns the daemon's JSON response on
+/// success, or an error if the daemon is unreachable or returns a non-200 status.
 #[tauri::command]
 pub async fn daemon_health() -> Result<DaemonHealthResponse, OrqaError> {
-    let daemon_port: u16 = std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse::<u16>().ok())
-        .unwrap_or(10100);
+    let daemon_port = resolve_daemon_port();
 
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(3))

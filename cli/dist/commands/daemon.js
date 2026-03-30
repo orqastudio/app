@@ -16,25 +16,7 @@ import { spawn } from "node:child_process";
 import { existsSync, readFileSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
-// ---------------------------------------------------------------------------
-// Port resolution
-// ---------------------------------------------------------------------------
-/** Default port for the orqa-daemon health endpoint (matches health.rs DEFAULT_PORT). */
-const DEFAULT_DAEMON_PORT = 9120;
-/**
- * Resolve the daemon port from the ORQA_PORT_BASE environment variable.
- *
- * The daemon reads ORQA_PORT_BASE directly as the port number (not as a base
- * for an offset). This matches the Rust daemon's health.rs resolve_port().
- * @returns The daemon port number.
- */
-function getDaemonPort() {
-    const raw = process.env["ORQA_PORT_BASE"];
-    if (raw === undefined || raw === "")
-        return DEFAULT_DAEMON_PORT;
-    const n = parseInt(raw, 10);
-    return Number.isNaN(n) ? DEFAULT_DAEMON_PORT : n;
-}
+import { getPort, DEFAULT_PORT_BASE } from "../lib/ports.js";
 // ---------------------------------------------------------------------------
 // Usage
 // ---------------------------------------------------------------------------
@@ -53,7 +35,7 @@ Subcommands:
 Options:
   --help, -h    Show this help message
 
-The daemon port is configured via ORQA_PORT_BASE (default: ${DEFAULT_DAEMON_PORT}).
+The daemon port is configured via ORQA_PORT_BASE (default: ${DEFAULT_PORT_BASE}).
 `.trim();
 // ---------------------------------------------------------------------------
 // Entry point
@@ -99,7 +81,7 @@ export async function runDaemonCommand(args) {
  */
 async function daemonStart() {
     const projectRoot = getRoot();
-    const port = getDaemonPort();
+    const port = getPort("daemon");
     const pidPath = getPidPath(projectRoot);
     // Check if already running.
     const existing = readPid(pidPath);
@@ -226,7 +208,7 @@ async function daemonStatus() {
     const projectRoot = getRoot();
     const pidPath = getPidPath(projectRoot);
     const pid = readPid(pidPath);
-    const port = getDaemonPort();
+    const port = getPort("daemon");
     if (pid === null) {
         console.log("Daemon: stopped (no PID file)");
         return;

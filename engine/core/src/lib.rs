@@ -98,6 +98,11 @@ pub mod platform {
     pub use orqa_engine_types::platform::*;
 }
 
+/// Port constants and resolution helpers for all OrqaStudio services.
+pub mod ports {
+    pub use orqa_engine_types::ports::*;
+}
+
 /// Plugin lifecycle: manifest reading, discovery, collision detection,
 /// installation, lockfile management, registry browsing, hook dispatcher generation.
 pub mod plugin {

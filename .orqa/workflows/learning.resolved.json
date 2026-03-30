@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T09:52:42.787Z",
+  "generatedAt": "2026-03-30T10:47:00.849Z",
   "description": "Resolved learn stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-core-framework into the learning-pipeline slot of agile-methodology.",
   "stage": "learn",
   "source_plugin": "@orqastudio/plugin-core-framework",

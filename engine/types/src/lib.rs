@@ -16,6 +16,8 @@ pub mod error;
 pub mod paths;
 /// Platform-level type definitions shared across crates.
 pub mod platform;
+/// Port constants and resolution helpers for all OrqaStudio services.
+pub mod ports;
 /// Abstract traits defining engine contracts (capabilities, interfaces).
 pub mod traits;
 /// Shared data structures for all engine domain types.

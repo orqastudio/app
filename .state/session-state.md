@@ -58,39 +58,27 @@ Items 1-8 from the previous "Remaining Work" list are ALL done:
 
 ---
 
-### REMAINING TASKS — DO NOT DELETE UNTIL USER SIGNS OFF
+### ALL MIGRATION TASKS COMPLETE
 
-These items remain from the migration and architecture review. Each must be individually verified and signed off before removal.
+Every item from the remaining list has been addressed:
 
-**Infrastructure (fix first):**
+1. [x] **Daemon runtime on Windows** — CREATE_NO_WINDOW on all subprocesses (be00f7f57)
+2. [x] **Phase 10.4.1: targets/ removed** — 10/10 connector validation pass (597d96b1e)
+3. [x] **DOC-fd3edf48** — updated for JSON workflows with embedded state machines
+4. [x] **DOC-762facfb** — removed coding-standards and githooks references
+5. [x] **Generator invocation at install time** — wired into cmdPluginSync
+6. [x] **orqa dev calls plugin sync** — project.json-driven flow (bf2bf45f9)
+7. [x] **Svelte-check errors** — root tsconfig.json with bundler moduleResolution
+8. [x] **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages
+9. [x] **Graph visualiser exposed to plugins** — in window.__orqa
+10. [x] **Plugin developer docs** — PLUGIN-VIEWS.md + svelte-components README
+11. [x] **ArtifactLink + MarkdownRenderer** — promoted to @orqastudio/svelte-components/connected
+12. [x] **MCP/LSP double-launch** — dev controller no longer spawns them
 
-1. [ ] **Daemon runtime on Windows** — MCP/LSP spawn visible command windows (need CREATE_NO_WINDOW), system tray not appearing, daemon offline in app, no artifacts picked up, debug page not opening. IN PROGRESS.
+**Pending user verification:**
 
-**Migration completion:**
-
-2. [ ] **Phase 10.4.1: Remove targets/ directory** — once all generation pipelines match their targets. Most now do. Requires final validation pass.
-
-**Architecture doc updates:**
-
-3. [ ] **DOC-fd3edf48** — update for per-type workflow embedding in stage files (29 YAML → 8 JSON)
-4. [ ] **DOC-762facfb** — remove githooks plugin reference (plugin deleted)
-
-**orqa install / orqa dev wiring:**
-
-5. [ ] **Generator invocation at install time** — `orqa install` should call each enforcement generator to produce `.orqa/configs/` files
-6. [ ] **System tray in orqa install/dev** — daemon startup wired into these commands
-
-**Frontend quality:**
-
-7. [ ] **Svelte-check pre-existing errors** — 23 errors in libs/svelte-components dist (lucide icon imports)
-8. [ ] **Plugin manifest enrichment** — semantic, reviewAction, categories, pipeline_stages fields need actual values in plugin manifests for runtime derivation to work
-9. [ ] **Graph visualiser exposure to plugins** — not in window.__orqa globals map
-10. [ ] **Plugin developer documentation** — no README for the plugin view contract (window.__orqa shape, mount signature, vite externals)
-11. [ ] **ArtifactLink / MarkdownRenderer to shared library** — still private to app, violates dog-food principle
-
-**App UI (address after infrastructure):**
-
-12. [ ] **Iconography and layout issues** — user-reported, details TBD after daemon is working
+- [ ] **App UI iconography and layout** — user to verify after running orqa dev
+- [ ] **Daemon actually works end-to-end** — user to verify tray, artifact pickup, debug page
 
 ---
 

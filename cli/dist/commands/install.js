@@ -347,6 +347,7 @@ function exitWithRustInstructions(platform) {
 // ── Deps ────────────────────────────────────────────────────────────────────
 /** Build order — packages must be built before their dependents. */
 const BUILD_ORDER = [
+    { dir: "libs/constants", build: "npx tsc" },
     { dir: "libs/types", build: "npx tsc" },
     { dir: "libs/logger", build: "npx tsc" },
     { dir: "plugins/typescript", build: "npx tsc" },

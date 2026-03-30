@@ -375,6 +375,7 @@ const BUILD_ORDER: Array<{
 	dir: string;
 	build: string;
 }> = [
+	{ dir: "libs/constants", build: "npx tsc" },
 	{ dir: "libs/types", build: "npx tsc" },
 	{ dir: "libs/logger", build: "npx tsc" },
 	{ dir: "plugins/typescript", build: "npx tsc" },

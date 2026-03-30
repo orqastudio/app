@@ -25,19 +25,14 @@
 //! orqa_mcp_server::run_tcp(Path::new("/my/project"), 10102, 10100).unwrap();
 //! ```
 
-/// Default port offset for the MCP server relative to `ORQA_PORT_BASE`.
-pub const MCP_PORT_OFFSET: u16 = 2;
+use orqa_engine::ports;
 
 /// Resolve the default MCP TCP port from the environment.
 ///
 /// Returns `ORQA_PORT_BASE + MCP_PORT_OFFSET`. Defaults to 10102 when the
 /// environment variable is absent or unparseable.
 pub fn default_mcp_port() -> u16 {
-    let base: u16 = std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(10100);
-    base + MCP_PORT_OFFSET
+    ports::resolve_mcp_port()
 }
 
 /// Daemon proxy: delegate tool calls to the daemon when it is running.

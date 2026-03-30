@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T09:52:42.787Z",
+  "generatedAt": "2026-03-30T10:47:00.849Z",
   "description": "Resolved review stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-review into the review-process slot of agile-methodology.",
   "stage": "review",
   "source_plugin": "@orqastudio/plugin-agile-review",

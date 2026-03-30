@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T09:52:42.786Z",
+  "generatedAt": "2026-03-30T10:47:00.848Z",
   "description": "Resolved implement stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-software-kanban into the implementation-workflow slot of agile-methodology.",
   "stage": "implement",
   "source_plugin": "@orqastudio/plugin-software-kanban",

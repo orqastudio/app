@@ -21,30 +21,12 @@ use std::path::Path;
 
 use tracing::{info, warn};
 
+use orqa_engine::ports::resolve_lsp_port;
+
 use crate::subprocess::SubprocessManager;
 
 /// Binary name for the LSP server.
 const LSP_BINARY: &str = "orqa-lsp-server";
-
-/// Port offset added to ORQA_PORT_BASE for the LSP TCP listener.
-const LSP_PORT_OFFSET: u16 = 1;
-
-/// Default daemon health port (matches health.rs DEFAULT_PORT).
-const DEFAULT_DAEMON_PORT: u16 = 10100;
-
-/// Resolve the TCP port for the LSP server.
-///
-/// Reads `ORQA_PORT_BASE` (the daemon health port, default 10100) from the
-/// environment and adds `LSP_PORT_OFFSET` (1). This gives a default LSP port
-/// of 10101. Falls back to `DEFAULT_DAEMON_PORT + LSP_PORT_OFFSET` when the
-/// variable is absent or unparseable.
-pub fn resolve_lsp_port() -> u16 {
-    let base: u16 = std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(DEFAULT_DAEMON_PORT);
-    base + LSP_PORT_OFFSET
-}
 
 /// Build a `SubprocessManager` for the LSP server and attempt to start it.
 ///

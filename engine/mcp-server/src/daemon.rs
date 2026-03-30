@@ -1,4 +1,4 @@
-//! Blocking HTTP client for the `orqa-validation` daemon.
+//! Blocking HTTP client for the OrqaStudio daemon.
 //!
 //! Wraps the daemon REST API with typed helper methods. All calls are
 //! synchronous (blocking) because the MCP server's JSON-RPC loop is
@@ -16,17 +16,16 @@
 
 use serde_json::Value;
 
+use orqa_engine::ports::resolve_daemon_port;
+
 use crate::error::McpError;
 
-/// Default port for the validation daemon.
+/// Default port for the OrqaStudio daemon.
 ///
-/// Reads `ORQA_PORT_BASE` directly as the daemon port (default 9120). This
-/// matches `daemon/src/health.rs resolve_port()` — no offset is applied.
+/// Delegates to `orqa_engine::ports::resolve_daemon_port()` which reads
+/// `ORQA_PORT_BASE` (default 10100).
 pub fn default_daemon_port() -> u16 {
-    std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(9120)
+    resolve_daemon_port()
 }
 
 /// Blocking HTTP client bound to a specific daemon instance.

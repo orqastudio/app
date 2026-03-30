@@ -13,6 +13,8 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::thread;
 
+use orqa_engine::ports::resolve_daemon_port;
+
 use super::find_server_binary;
 
 /// Well-known file where the IPC port is stored.
@@ -199,15 +201,6 @@ fn spawn_server_bridge(
     }
 
     Ok(())
-}
-
-/// Resolve the daemon port from the environment, matching the convention
-/// used by the standalone binaries.
-fn resolve_daemon_port() -> u16 {
-    std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse::<u16>().ok())
-        .map_or(10258, |base| base + 58)
 }
 
 /// Read the IPC port from the well-known port file.

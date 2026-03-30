@@ -2,29 +2,16 @@
  * Shared I/O helpers for connector hooks.
  *
  * Each hook is a thin adapter: read stdin → call daemon → write stdout/stderr.
- * All enforcement logic lives in the Rust daemon at localhost:10100 by default
- * (port is ORQA_PORT_BASE, matched from daemon/src/health.rs resolve_port()).
+ * All enforcement logic lives in the Rust daemon. The daemon port is resolved
+ * via @orqastudio/constants getPort("daemon") (default: 10100).
  */
 
 import { spawnSync } from "node:child_process";
 import { relative } from "node:path";
+import { getPort } from "@orqastudio/constants";
 import type { HookInput } from "../types.js";
 
-/**
- * Resolve daemon port from ORQA_PORT_BASE.
- *
- * The daemon reads ORQA_PORT_BASE as the direct port number (not as a base for
- * an offset). This matches daemon/src/health.rs resolve_port(). Default: 10100.
- * @returns Port number to use when connecting to the daemon.
- */
-function getDaemonPort(): number {
-  const raw = process.env["ORQA_PORT_BASE"];
-  if (raw === undefined || raw === "") return 10100;
-  const n = parseInt(raw, 10);
-  return Number.isNaN(n) ? 10100 : n;
-}
-
-const DAEMON_BASE = `http://localhost:${getDaemonPort()}`;
+const DAEMON_BASE = `http://localhost:${getPort("daemon")}`;
 
 /** Canonical hook event (mirrors `@orqastudio/types` HookContext). */
 export type CanonicalEvent =

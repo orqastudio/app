@@ -18,13 +18,9 @@ use axum::{Json, Router};
 use serde::Serialize;
 use tracing::{error, info};
 
+use orqa_engine::ports::resolve_daemon_port;
+
 use crate::config::DaemonConfig;
-
-/// Default port for the daemon health endpoint.
-const DEFAULT_PORT: u16 = 10100;
-
-/// Environment variable that overrides the daemon port.
-const PORT_ENV_VAR: &str = "ORQA_PORT_BASE";
 
 /// Shared state passed to all route handlers, containing startup metadata and
 /// runtime configuration loaded from orqa.toml.
@@ -62,21 +58,10 @@ async fn health_handler(State(state): State<HealthState>) -> Json<HealthResponse
 
 /// Resolve the port to bind from the environment or use the default.
 ///
-/// Reads `ORQA_PORT_BASE` and parses it as a u16. Falls back to 10100 if the
-/// variable is absent or unparseable, logging a warning in the latter case.
+/// Delegates to `orqa_engine::ports::resolve_daemon_port()`. Falls back to
+/// `DEFAULT_PORT_BASE` when ORQA_PORT_BASE is absent or unparseable.
 pub fn resolve_port() -> u16 {
-    match std::env::var(PORT_ENV_VAR) {
-        Ok(val) => val.parse::<u16>().unwrap_or_else(|_| {
-            tracing::warn!(
-                env_var = PORT_ENV_VAR,
-                raw = val,
-                "could not parse port — using default {}",
-                DEFAULT_PORT
-            );
-            DEFAULT_PORT
-        }),
-        Err(_) => DEFAULT_PORT,
-    }
+    resolve_daemon_port()
 }
 
 /// Start the health HTTP server on the tokio runtime.

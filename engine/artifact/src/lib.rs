@@ -14,16 +14,65 @@
 //!
 //! Submodules:
 //!   `fs`     -- filesystem helpers: write, read, scan directories
-//!   `reader` -- navigation tree scanner driven by project.json artifact config
+//!   `reader` -- navigation tree scanner driven by schema.composed.json
 
 /// Filesystem helpers: write, read, and scan artifact directories.
 pub mod fs;
-/// Navigation tree scanner driven by project.json artifact config.
+/// Navigation tree scanner driven by schema.composed.json artifact config.
 pub mod reader;
+
+use std::path::Path;
 
 use rand::Rng;
 
+use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
 use orqa_engine_types::error::EngineError;
+
+/// Build artifact scanner entries from `schema.composed.json`.
+///
+/// Reads `.orqa/schema.composed.json` and maps each `artifactTypes` entry to an
+/// `ArtifactEntry::Type` using the schema's `label`, `icon`, and `default_path` fields.
+/// This is the single source of truth for which artifact types exist and where they live —
+/// replacing the old `artifacts` array in `project.json` (P1: Plugin-Composed Everything).
+///
+/// Returns an empty vec when the schema file is absent, unreadable, or has no artifact types.
+pub fn artifact_entries_from_schema(project_path: &Path) -> Vec<ArtifactEntry> {
+    let schema_path = project_path.join(".orqa").join("schema.composed.json");
+    let Ok(content) = std::fs::read_to_string(&schema_path) else {
+        return Vec::new();
+    };
+    let Ok(schema) = serde_json::from_str::<serde_json::Value>(&content) else {
+        return Vec::new();
+    };
+    let Some(artifact_types) = schema
+        .get("artifactTypes")
+        .and_then(|v| v.as_object())
+    else {
+        return Vec::new();
+    };
+
+    artifact_types
+        .iter()
+        .map(|(key, def)| {
+            ArtifactEntry::Type(ArtifactTypeConfig {
+                key: key.clone(),
+                label: def
+                    .get("label")
+                    .and_then(|v| v.as_str())
+                    .map(str::to_owned),
+                icon: def
+                    .get("icon")
+                    .and_then(|v| v.as_str())
+                    .map(str::to_owned),
+                path: def
+                    .get("default_path")
+                    .and_then(|v| v.as_str())
+                    // Strip trailing slash so path joins work consistently.
+                    .map_or_else(|| format!(".orqa/{key}"), |p| p.trim_end_matches('/').to_owned()),
+            })
+        })
+        .collect()
+}
 
 /// Generate a new artifact ID in `TYPE-XXXXXXXX` format (8 lowercase hex chars).
 ///

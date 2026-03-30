@@ -25,30 +25,12 @@ use std::path::Path;
 
 use tracing::{info, warn};
 
+use orqa_engine::ports::resolve_mcp_port;
+
 use crate::subprocess::SubprocessManager;
 
 /// Binary name for the MCP server.
 const MCP_BINARY: &str = "orqa-mcp-server";
-
-/// Port offset added to ORQA_PORT_BASE for the MCP TCP listener.
-const MCP_PORT_OFFSET: u16 = 2;
-
-/// Default daemon health port (matches health.rs DEFAULT_PORT).
-const DEFAULT_DAEMON_PORT: u16 = 10100;
-
-/// Resolve the TCP port for the MCP server.
-///
-/// Reads `ORQA_PORT_BASE` (the daemon health port, default 10100) from the
-/// environment and adds `MCP_PORT_OFFSET` (2). This gives a default MCP port
-/// of 10102. Falls back to `DEFAULT_DAEMON_PORT + MCP_PORT_OFFSET` when the
-/// variable is absent or unparseable.
-pub fn resolve_mcp_port() -> u16 {
-    let base: u16 = std::env::var("ORQA_PORT_BASE")
-        .ok()
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(DEFAULT_DAEMON_PORT);
-    base + MCP_PORT_OFFSET
-}
 
 /// Build a `SubprocessManager` for the MCP server and attempt to start it.
 ///
