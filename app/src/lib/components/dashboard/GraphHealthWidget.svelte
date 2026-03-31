@@ -4,6 +4,7 @@
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
+	import { fmt, pct } from "@orqastudio/sdk";
 
 	interface Props {
 		checks: IntegrityCheck[];
@@ -19,7 +20,7 @@
 
 	// Score: percentage of graph in the largest connected component.
 	const healthScore = $derived(
-		graphHealth ? Math.round(graphHealth.largest_component_ratio * 100) : 0
+		graphHealth ? pct(graphHealth.largest_component_ratio) : "0"
 	);
 
 	// Traffic light based on largest_component_ratio thresholds.
@@ -48,12 +49,23 @@
 	const warningCount = $derived(checks.filter((c) => c.severity === "Warning").length);
 	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
 
-	// Orphan severity: green <5%, amber 5-15%, red >15%
-	const orphanSeverity = $derived.by(() => {
+	// Outlier severity: green 0, amber 1-3, red >3
+	const outlierSeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.orphan_percentage > 15) return "text-destructive";
-		if (graphHealth.orphan_percentage > 5) return "text-warning";
-		return "text-emerald-500";
+		if (graphHealth.outlier_count === 0) return "text-emerald-500";
+		if (graphHealth.outlier_count <= 3) return "text-warning";
+		return "text-destructive";
+	});
+
+	// Outlier age distribution label (e.g. "2 stale, 1 aging")
+	const outlierAgeSummary = $derived.by(() => {
+		if (!graphHealth || graphHealth.outlier_count === 0) return null;
+		const d = graphHealth.outlier_age_distribution;
+		const parts: string[] = [];
+		if (d.stale > 0) parts.push(`${d.stale} stale`);
+		if (d.aging > 0) parts.push(`${d.aging} aging`);
+		if (d.fresh > 0) parts.push(`${d.fresh} fresh`);
+		return parts.length > 0 ? parts.join(", ") : null;
 	});
 
 	// Avg degree: green >=4, cyan 3-4, amber 2-3, red <2
@@ -65,11 +77,19 @@
 		return "text-destructive";
 	});
 
-	// Graph density: green >0.05, amber 0.01-0.05, red <0.01
-	const densitySeverity = $derived.by(() => {
+	// Delivery connectivity: green >=90%, amber 70-90%, red <70%
+	const deliverySeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.graph_density > 0.05) return "text-emerald-500";
-		if (graphHealth.graph_density > 0.01) return "text-warning";
+		if (graphHealth.delivery_connectivity >= 0.9) return "text-emerald-500";
+		if (graphHealth.delivery_connectivity >= 0.7) return "text-warning";
+		return "text-destructive";
+	});
+
+	// Learning connectivity: green >=80%, amber 50-80%, red <50%
+	const learningSeverity = $derived.by(() => {
+		if (!graphHealth) return "text-muted-foreground";
+		if (graphHealth.learning_connectivity >= 0.8) return "text-emerald-500";
+		if (graphHealth.learning_connectivity >= 0.5) return "text-warning";
 		return "text-destructive";
 	});
 
@@ -78,14 +98,6 @@
 		if (!graphHealth) return "text-muted-foreground";
 		if (graphHealth.pillar_traceability >= 80) return "text-emerald-500";
 		if (graphHealth.pillar_traceability >= 50) return "text-warning";
-		return "text-destructive";
-	});
-
-	// Bidirectionality: green >=0.7, amber 0.4-0.7, red <0.4
-	const bidirectionalitySeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.bidirectionality_ratio >= 0.7) return "text-emerald-500";
-		if (graphHealth.bidirectionality_ratio >= 0.4) return "text-warning";
 		return "text-destructive";
 	});
 
@@ -105,31 +117,24 @@
 
 		const alerts: ThresholdAlert[] = [];
 
-		if (graphHealth.orphan_percentage > 5) {
+		if (graphHealth.outlier_count > 0) {
 			alerts.push({
-				level: "amber",
-				message: `${graphHealth.orphan_percentage}% orphaned artifacts (threshold: 5%)`,
+				level: graphHealth.outlier_count > 3 ? "red" : "amber",
+				message: `${graphHealth.outlier_count} outlier artifact${graphHealth.outlier_count !== 1 ? "s" : ""} outside both pipelines`,
 			});
 		}
 
-		if (graphHealth.component_count > 3) {
+		if (graphHealth.delivery_connectivity < 0.9) {
 			alerts.push({
 				level: "amber",
-				message: `${graphHealth.component_count} disconnected clusters (threshold: 3)`,
+				message: `Delivery pipeline ${pct(graphHealth.delivery_connectivity)}% connected (target: 90%)`,
 			});
 		}
 
 		if (graphHealth.pillar_traceability < 90) {
 			alerts.push({
 				level: "red",
-				message: `Pillar traceability ${graphHealth.pillar_traceability}% — below 90% target`,
-			});
-		}
-
-		if (false && graphHealth.bidirectionality_ratio < 0.8) {
-			alerts.push({
-				level: "amber",
-				message: `Bidirectionality ${Math.round(graphHealth.bidirectionality_ratio * 100)}% — below 80% target`,
+				message: `Pillar traceability ${fmt(graphHealth.pillar_traceability)}% — below 90% target`,
 			});
 		}
 
@@ -161,33 +166,30 @@
 	<CardContent class="flex flex-1 flex-col gap-3 pt-0">
 		{#if graphHealth && graphHealth.total_nodes > 0}
 			<div class="grid grid-cols-2 gap-2 flex-1 text-center text-xs">
-				<!-- Clusters -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="network" size="sm" />
-						<span class="{graphHealth.component_count > 1 ? 'text-warning font-semibold' : 'text-muted-foreground'} tabular-nums">
-							{graphHealth.component_count}
-						</span>
-						<span class="text-muted-foreground">Cluster{graphHealth.component_count !== 1 ? "s" : ""}</span>
-					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
-						<p class="font-medium mb-1">Connected Components</p>
-						<p class="text-muted-foreground">The number of disconnected subgraphs. A healthy graph has 1 cluster — all artifacts are reachable from each other. Multiple clusters indicate orphaned groups of artifacts that aren't connected to the main knowledge graph.</p>
-					</TooltipContent>
-				</TooltipRoot>
-
-				<!-- Orphans -->
+				<!-- Outliers -->
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="unlink" size="sm" />
-						<span class="{orphanSeverity} font-semibold tabular-nums">
-							{graphHealth.orphan_count} <span class="font-normal">({graphHealth.orphan_percentage}%)</span>
+						<span class="{outlierSeverity} font-semibold tabular-nums">
+							{graphHealth.outlier_count}
 						</span>
-						<span class="text-muted-foreground">Orphans</span>
+						<span class="text-muted-foreground">Outlier{graphHealth.outlier_count !== 1 ? "s" : ""}</span>
+						{#if outlierAgeSummary}
+							<span class="text-muted-foreground/70 text-[10px] leading-tight">{outlierAgeSummary}</span>
+						{/if}
 					</TooltipTrigger>
 					<TooltipContent side="bottom" class="w-64 text-xs">
-						<p class="font-medium mb-1">Orphaned Artifacts</p>
-						<p class="text-muted-foreground">Artifacts with no incoming references — nothing points to them. They exist in isolation and won't be discovered through graph traversal. Each orphan should either be connected via relationships or removed if no longer relevant.</p>
+						<p class="font-medium mb-1">Pipeline Outliers</p>
+						<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline (task/epic/milestone/idea/research/decision/wireframe) and the learning pipeline (lesson/rule). Outliers need attention — connect them or archive them.</p>
+						{#if graphHealth.outlier_age_distribution.stale > 0}
+							<p class="text-destructive mt-1">{graphHealth.outlier_age_distribution.stale} stale (30d+ or no date) — priority action.</p>
+						{/if}
+						{#if graphHealth.outlier_age_distribution.aging > 0}
+							<p class="text-warning mt-1">{graphHealth.outlier_age_distribution.aging} aging (7–30d) — connect or archive soon.</p>
+						{/if}
+						{#if graphHealth.outlier_age_distribution.fresh > 0}
+							<p class="text-muted-foreground mt-1">{graphHealth.outlier_age_distribution.fresh} fresh (≤7d) — within grace period.</p>
+						{/if}
 					</TooltipContent>
 				</TooltipRoot>
 
@@ -195,12 +197,42 @@
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="git-branch" size="sm" />
-						<span class="{degreeSeverity} font-semibold tabular-nums">{graphHealth.avg_degree}</span>
+						<span class="{degreeSeverity} font-semibold tabular-nums">{fmt(graphHealth.avg_degree)}</span>
 						<span class="text-muted-foreground">Avg Degree</span>
 					</TooltipTrigger>
 					<TooltipContent side="bottom" class="w-64 text-xs">
 						<p class="font-medium mb-1">Average Connection Degree</p>
 						<p class="text-muted-foreground">The average number of relationships per artifact. Higher means a more interconnected knowledge graph. A well-connected graph has an average degree of 4+ — each artifact relates to multiple others.</p>
+					</TooltipContent>
+				</TooltipRoot>
+
+				<!-- Delivery Pipeline -->
+				<TooltipRoot delayDuration={300}>
+					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
+						<Icon name="package" size="sm" />
+						<span class="{deliverySeverity} font-semibold tabular-nums">
+							{pct(graphHealth.delivery_connectivity)}%
+						</span>
+						<span class="text-muted-foreground">Delivery</span>
+					</TooltipTrigger>
+					<TooltipContent side="bottom" class="w-64 text-xs">
+						<p class="font-medium mb-1">Delivery Pipeline Connectivity</p>
+						<p class="text-muted-foreground">Percentage of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) connected in the main delivery component. Target: 90%+.</p>
+					</TooltipContent>
+				</TooltipRoot>
+
+				<!-- Learning Pipeline -->
+				<TooltipRoot delayDuration={300}>
+					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
+						<Icon name="book-open" size="sm" />
+						<span class="{learningSeverity} font-semibold tabular-nums">
+							{pct(graphHealth.learning_connectivity)}%
+						</span>
+						<span class="text-muted-foreground">Learning</span>
+					</TooltipTrigger>
+					<TooltipContent side="bottom" class="w-64 text-xs">
+						<p class="font-medium mb-1">Learning Loop Connectivity</p>
+						<p class="text-muted-foreground">Percentage of learning artifacts (lesson, rule) connected to each other or to decisions. Disconnected lessons and rules are not feeding back into the delivery process. Target: 80%+.</p>
 					</TooltipContent>
 				</TooltipRoot>
 
@@ -238,7 +270,7 @@
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="target" size="sm" />
 						<span class="{traceabilitySeverity} font-semibold tabular-nums">
-							{graphHealth.pillar_traceability}%
+							{fmt(graphHealth.pillar_traceability)}%
 						</span>
 						<span class="text-muted-foreground">Traceability</span>
 					</TooltipTrigger>

@@ -405,23 +405,27 @@ pub fn store_health_snapshot(
     let project = project_repo::get_active(&conn)?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
+    // Map GraphHealth to NewHealthSnapshot. The snapshot schema tracks legacy
+    // fields (orphan_count, graph_density, component_count, bidirectionality_ratio)
+    // that no longer exist in GraphHealth; they are set to zero until the
+    // snapshot schema is migrated to the two-pipeline model.
     health_snapshot_repo::create(
         &conn,
         project.id,
         &NewHealthSnapshot {
             node_count: health.total_nodes as i64,
             edge_count: health.total_edges as i64,
-            orphan_count: health.orphan_count as i64,
+            orphan_count: health.outlier_count as i64,
             broken_ref_count: health.broken_ref_count as i64,
             error_count,
             warning_count,
             largest_component_ratio: health.largest_component_ratio,
-            orphan_percentage: health.orphan_percentage,
+            orphan_percentage: health.outlier_percentage,
             avg_degree: health.avg_degree,
-            graph_density: health.graph_density,
-            component_count: health.component_count as i64,
+            graph_density: 0.0,
+            component_count: 0,
             pillar_traceability: health.pillar_traceability,
-            bidirectionality_ratio: health.bidirectionality_ratio,
+            bidirectionality_ratio: 0.0,
         },
     )
 }

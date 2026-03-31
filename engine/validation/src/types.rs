@@ -319,22 +319,49 @@ pub struct HookViolation {
 // Graph health metrics
 // ---------------------------------------------------------------------------
 
+/// Age distribution of pipeline outliers, bucketed by how long ago they were created.
+///
+/// Only artifacts that pass all outlier filters (active, in-scope type, past grace period)
+/// are counted here. Artifacts without a `created` field are placed in the `stale` bucket
+/// because their age is unknown and they should be investigated.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct OutlierAgeDistribution {
+    /// Outliers created within the last 7 days — within grace period, informational only.
+    pub fresh: usize,
+    /// Outliers created 7–30 days ago — aging, should be connected or archived soon.
+    pub aging: usize,
+    /// Outliers created more than 30 days ago (or with no `created` date) — priority action items.
+    pub stale: usize,
+}
+
 /// Graph-theoretic health metrics for the artifact graph.
 ///
 /// These are computed purely in Rust from the graph data structure —
 /// no delegation to JavaScript.
+///
+/// The model tracks two pipelines:
+/// - Delivery: task → epic → milestone → idea → research → decision → wireframe
+/// - Learning: lesson → rule, both connecting back to decisions
+///
+/// Artifacts outside both pipelines (excluding archived, surpassed, knowledge,
+/// and doc types) are counted as outliers. Each outlier is only counted once it
+/// has exceeded the grace period for its artifact type. The `outlier_age_distribution`
+/// breaks down all age-eligible outliers by recency bucket.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GraphHealth {
-    /// Number of weakly connected components in the graph.
-    pub component_count: usize,
-    /// Number of nodes with no edges in either direction (excluding docs).
-    pub orphan_count: usize,
-    /// Percentage of nodes that are orphans (0.0–100.0).
-    pub orphan_percentage: f64,
+    /// Number of active pipeline outliers past their type-specific grace period.
+    pub outlier_count: usize,
+    /// Percentage of outliers relative to total active (non-archived, non-knowledge) nodes (0.0–100.0).
+    pub outlier_percentage: f64,
+    /// Age distribution of outliers: fresh (≤7d), aging (7–30d), stale (30d+ or no date).
+    pub outlier_age_distribution: OutlierAgeDistribution,
+    /// Fraction of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe)
+    /// that are connected to the main delivery component (0.0–1.0).
+    pub delivery_connectivity: f64,
+    /// Fraction of learning artifacts (lesson, rule) connected to each other or to decisions (0.0–1.0).
+    pub learning_connectivity: f64,
     /// Average number of edges per node (in + out combined, undirected).
     pub avg_degree: f64,
-    /// Graph density: actual edges / maximum possible edges (0.0–1.0).
-    pub graph_density: f64,
     /// Fraction of nodes in the largest connected component (0.0–1.0).
     pub largest_component_ratio: f64,
     /// Total number of primary nodes.
@@ -343,8 +370,6 @@ pub struct GraphHealth {
     pub total_edges: usize,
     /// Percentage of non-doc nodes that can trace a path to a pillar artifact (0.0–100.0).
     pub pillar_traceability: f64,
-    /// Ratio of relationship edges that have their inverse (0.0–1.0).
-    pub bidirectionality_ratio: f64,
     /// Number of broken references (target not in graph).
     pub broken_ref_count: usize,
 }

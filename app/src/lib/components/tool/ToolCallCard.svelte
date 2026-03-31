@@ -7,6 +7,7 @@
 	} from "@orqastudio/svelte-components/pure";
 	import ViolationBadge from "$lib/components/enforcement/ViolationBadge.svelte";
 	import { getToolDisplay } from "$lib/utils/tool-display";
+	import { fmt } from "@orqastudio/sdk";
 
 	// Parses "Rule 'rule-name' blocked..." text to extract rule name
 	function parseEnforcementRuleName(text: string): string | null {
@@ -94,7 +95,7 @@
 							{#if showFullInput}
 								Show less
 							{:else}
-								Show full input ({Math.round(toolInput!.length / 1000)}K chars)
+								Show full input ({fmt(toolInput!.length / 1000, 0)}K chars)
 							{/if}
 						</button>
 					{/if}
@@ -114,7 +115,7 @@
 							{#if showFullOutput}
 								Show less
 							{:else}
-								Show full output ({Math.round(toolOutput!.length / 1000)}K chars)
+								Show full output ({fmt(toolOutput!.length / 1000, 0)}K chars)
 							{/if}
 						</button>
 					{/if}

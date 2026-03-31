@@ -4,7 +4,7 @@
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { getStores, logger } from "@orqastudio/sdk";
+	import { getStores, logger, fmt } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
 	import type { CliToolRunResult } from "@orqastudio/types";
@@ -47,7 +47,7 @@
 	 */
 	function formatDuration(ms: number): string {
 		if (ms < 1000) return `${ms}ms`;
-		return `${(ms / 1000).toFixed(1)}s`;
+		return `${fmt(ms / 1000, 1)}s`;
 	}
 </script>
 

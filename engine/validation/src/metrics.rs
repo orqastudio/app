@@ -2,13 +2,22 @@
 //!
 //! All metrics are computed in Rust from the `ArtifactGraph` data structure.
 //! No delegation to JavaScript or external services.
+//!
+//! The health model tracks two named pipelines:
+//! - Delivery pipeline: task, epic, milestone, idea, research, decision, wireframe
+//! - Learning pipeline: lesson, rule
+//!
+//! Artifacts outside both pipelines (excluding archived/surpassed status and
+//! knowledge/doc types) are counted as outliers once they have exceeded the
+//! grace period for their artifact type. Grace periods give new artifacts time
+//! to be connected before they are flagged as attention items.
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{HashSet, VecDeque};
 
 use serde::{Deserialize, Serialize};
 
 use crate::graph::ArtifactGraph;
-use crate::types::GraphHealth;
+use crate::types::{GraphHealth, OutlierAgeDistribution};
 
 // ---------------------------------------------------------------------------
 // Traceability types
@@ -65,20 +74,103 @@ pub struct TraceabilityResult {
 // GraphHealth helpers
 // ---------------------------------------------------------------------------
 
+/// Artifact types belonging to the delivery pipeline.
+const DELIVERY_TYPES: &[&str] = &[
+    "task", "epic", "milestone", "idea", "research", "decision", "wireframe",
+];
+
+/// Artifact types belonging to the learning pipeline.
+const LEARNING_TYPES: &[&str] = &["lesson", "rule"];
+
+/// Status values that exclude an artifact from outlier analysis.
+const EXCLUDED_STATUSES: &[&str] = &["archived", "surpassed"];
+
+/// Artifact types that are excluded from outlier analysis entirely (connected
+/// via prompt injection or documentation, not graph relationships).
+const EXCLUDED_TYPES: &[&str] = &["knowledge", "doc"];
+
+/// Grace period in days before an artifact outside both pipelines is counted
+/// as an outlier. New artifacts need time to be connected. Keyed by type; any
+/// type not listed falls back to `DEFAULT_GRACE_DAYS`.
+///
+/// - ideas/research/decisions: 7 days (discovery artifacts, may take a week to find their epic)
+/// - lessons: 14 days (need time to recur before promotion to rule)
+/// - tasks/epics: 3 days (should be wired to a milestone quickly)
+/// - other pipeline types (milestone, rule, wireframe): 3 days
+const GRACE_PERIODS: &[(&str, i64)] = &[
+    ("idea", 7),
+    ("research", 7),
+    ("decision", 7),
+    ("lesson", 14),
+    ("task", 3),
+    ("epic", 3),
+    ("milestone", 3),
+    ("rule", 3),
+    ("wireframe", 3),
+];
+
+/// Grace period for artifact types not listed in `GRACE_PERIODS`.
+const DEFAULT_GRACE_DAYS: i64 = 7;
+
+/// Return the grace period in days for a given artifact type.
+fn grace_days(artifact_type: &str) -> i64 {
+    GRACE_PERIODS
+        .iter()
+        .find(|(t, _)| *t == artifact_type)
+        .map_or(DEFAULT_GRACE_DAYS, |(_, d)| *d)
+}
+
+/// Parse a `created` frontmatter value ("YYYY-MM-DD") and return age in whole days
+/// relative to `today_days` (days since Unix epoch). Returns `None` when the field
+/// is absent or cannot be parsed.
+fn parse_created_age(frontmatter: &serde_json::Value, today_days: i64) -> Option<i64> {
+    let date_str = frontmatter.get("created")?.as_str()?;
+    let parts: Vec<&str> = date_str.split('-').collect();
+    if parts.len() != 3 {
+        return None;
+    }
+    let year: i64 = parts[0].parse().ok()?;
+    let month: i64 = parts[1].parse().ok()?;
+    let day: i64 = parts[2].parse().ok()?;
+
+    // Days-since-epoch via the civil date formula (no external crates required).
+    // Gregorian proleptic calendar. Accurate for all modern dates.
+    let m = (month - 3).rem_euclid(12);
+    let y = year - (month < 3) as i64;
+    let era = y.div_euclid(400);
+    let yoe = y.rem_euclid(400);
+    let doy = (153 * m + 2) / 5 + day - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    let artifact_days = era * 146097 + doe - 719468;
+
+    Some((today_days - artifact_days).max(0))
+}
+
+/// Return today as days since the Unix epoch, using the system clock.
+///
+/// Falls back to 0 if the system time is unavailable (test environments, etc.).
+fn today_days_since_epoch() -> i64 {
+    use std::time::{SystemTime, UNIX_EPOCH};
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map(|d| d.as_secs() as i64 / 86400)
+        .unwrap_or(0)
+}
+
 impl GraphHealth {
     /// Return a zeroed `GraphHealth` for an empty graph.
     fn empty() -> Self {
         Self {
-            component_count: 0,
-            orphan_count: 0,
-            orphan_percentage: 0.0,
+            outlier_count: 0,
+            outlier_percentage: 0.0,
+            outlier_age_distribution: OutlierAgeDistribution::default(),
+            delivery_connectivity: 0.0,
+            learning_connectivity: 0.0,
             avg_degree: 0.0,
-            graph_density: 0.0,
             largest_component_ratio: 0.0,
             total_nodes: 0,
             total_edges: 0,
             pillar_traceability: 0.0,
-            bidirectionality_ratio: 0.0,
             broken_ref_count: 0,
         }
     }
@@ -306,6 +398,11 @@ pub fn compute_traceability(graph: &ArtifactGraph, artifact_id: &str) -> Traceab
 }
 
 /// Compute graph health metrics for the artifact graph.
+///
+/// Uses the two-pipeline model: delivery (task/epic/milestone/idea/research/decision/wireframe)
+/// and learning (lesson/rule). Artifacts outside both pipelines that are not
+/// archived, surpassed, knowledge, or doc, and that have exceeded their type's
+/// grace period, are counted as outliers.
 pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     // Work only with primary nodes (exclude bare-ID aliases in org mode).
     let primary_ids: Vec<&str> = graph
@@ -321,29 +418,31 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
         return GraphHealth::empty();
     }
 
+    let today = today_days_since_epoch();
     let primary_set: HashSet<&str> = primary_ids.iter().copied().collect();
     let total_edges = count_total_edges(graph, &primary_ids);
-    let (orphan_count, orphan_percentage) = count_orphans(graph, &primary_ids, total_nodes);
     let avg_degree = compute_avg_degree(graph, &primary_ids, total_nodes);
-    let graph_density = compute_graph_density(total_edges, total_nodes);
-    let (component_count, largest_component_size) =
+    let (_, largest_component_size) =
         compute_components(graph, &primary_ids, &primary_set);
     let largest_component_ratio = largest_component_size as f64 / total_nodes as f64;
     let pillar_traceability = compute_pillar_traceability(graph, &primary_ids);
-    let bidirectionality_ratio = compute_bidirectionality_ratio(graph, &primary_ids);
     let broken_ref_count = count_broken_refs(graph, &primary_ids);
+    let (outlier_count, outlier_percentage, outlier_age_distribution) =
+        compute_outliers(graph, &primary_ids, today);
+    let delivery_connectivity = compute_delivery_connectivity(graph, &primary_ids);
+    let learning_connectivity = compute_learning_connectivity(graph, &primary_ids);
 
     GraphHealth {
-        component_count,
-        orphan_count,
-        orphan_percentage,
+        outlier_count,
+        outlier_percentage,
+        outlier_age_distribution,
+        delivery_connectivity,
+        learning_connectivity,
         avg_degree,
-        graph_density,
         largest_component_ratio,
         total_nodes,
         total_edges,
         pillar_traceability,
-        bidirectionality_ratio,
         broken_ref_count,
     }
 }
@@ -357,19 +456,6 @@ fn count_total_edges(graph: &ArtifactGraph, primary_ids: &[&str]) -> usize {
         .sum()
 }
 
-/// Return `(orphan_count, orphan_percentage)` for non-doc nodes with no edges.
-fn count_orphans(graph: &ArtifactGraph, primary_ids: &[&str], total_nodes: usize) -> (usize, f64) {
-    let orphan_count = primary_ids
-        .iter()
-        .filter_map(|id| graph.nodes.get(*id))
-        .filter(|n| {
-            n.artifact_type != "doc" && n.references_out.is_empty() && n.references_in.is_empty()
-        })
-        .count();
-    let orphan_percentage = (orphan_count as f64 / total_nodes as f64) * 100.0;
-    (orphan_count, orphan_percentage)
-}
-
 /// Return the average (in + out) degree across all primary nodes.
 fn compute_avg_degree(graph: &ArtifactGraph, primary_ids: &[&str], total_nodes: usize) -> f64 {
     let total_degree: usize = primary_ids
@@ -378,16 +464,6 @@ fn compute_avg_degree(graph: &ArtifactGraph, primary_ids: &[&str], total_nodes: 
         .map(|n| n.references_out.len() + n.references_in.len())
         .sum();
     total_degree as f64 / total_nodes as f64
-}
-
-/// Return the directed graph density: `edges / (n * (n - 1))`.
-fn compute_graph_density(total_edges: usize, total_nodes: usize) -> f64 {
-    let max_edges = total_nodes.saturating_mul(total_nodes.saturating_sub(1));
-    if max_edges > 0 {
-        total_edges as f64 / max_edges as f64
-    } else {
-        0.0
-    }
 }
 
 /// Return the count of edges whose target is not present in the graph.
@@ -527,48 +603,193 @@ fn reverse_bfs_from_pillars<'a>(
     reachable
 }
 
-/// Compute the fraction of typed relationship edges whose type has a schema-defined inverse.
+/// Compute outlier count, outlier percentage, and age distribution.
 ///
-/// Under forward-only storage, inverse edges are computed at query time by the
-/// graph engine (Pass 2) rather than stored in artifact files. This metric
-/// therefore counts whether the relationship *schema* defines an inverse for
-/// each edge's type — not whether a stored inverse edge exists.
-fn compute_bidirectionality_ratio(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    // Build the set of relationship types that have a schema-defined inverse.
-    let inverse_map: HashMap<String, String> = crate::platform::PLATFORM
-        .relationships
-        .iter()
-        .flat_map(|rel| {
-            let mut pairs = vec![(rel.key.clone(), rel.inverse.clone())];
-            if rel.inverse != rel.key {
-                pairs.push((rel.inverse.clone(), rel.key.clone()));
-            }
-            pairs
-        })
-        .collect();
+/// An artifact is an outlier if ALL of the following are true:
+/// - Its status is NOT in `EXCLUDED_STATUSES` (not archived or surpassed)
+/// - Its type is NOT in `EXCLUDED_TYPES` (not knowledge or doc)
+/// - Its type is NOT in either `DELIVERY_TYPES` or `LEARNING_TYPES`
+/// - Its age exceeds the grace period for its type (new artifacts get time to be connected)
+///
+/// The age distribution covers all eligible outliers (pre- and post-grace-period), bucketed
+/// into fresh (≤7d), aging (7–30d), and stale (30d+ or no `created` date).
+/// The `outlier_count` only counts those that have exceeded their type's grace period.
+/// The percentage is computed over active (non-excluded) nodes only.
+fn compute_outliers(
+    graph: &ArtifactGraph,
+    primary_ids: &[&str],
+    today: i64,
+) -> (usize, f64, OutlierAgeDistribution) {
+    let delivery_set: HashSet<&str> = DELIVERY_TYPES.iter().copied().collect();
+    let learning_set: HashSet<&str> = LEARNING_TYPES.iter().copied().collect();
+    let excluded_type_set: HashSet<&str> = EXCLUDED_TYPES.iter().copied().collect();
+    let excluded_status_set: HashSet<&str> = EXCLUDED_STATUSES.iter().copied().collect();
 
-    // Count typed relationship edges and those with a schema-defined inverse.
-    let mut total: usize = 0;
-    let mut with_inverse: usize = 0;
+    let mut active_count: usize = 0;
+    let mut outlier_count: usize = 0;
+    let mut dist = OutlierAgeDistribution::default();
 
     for id in primary_ids {
         let Some(node) = graph.nodes.get(*id) else {
             continue;
         };
-        for ref_entry in &node.references_out {
-            let Some(rel_type) = ref_entry.relationship_type.as_deref() else {
-                continue;
-            };
-            total += 1;
-            if inverse_map.contains_key(rel_type) {
-                with_inverse += 1;
-            }
+
+        // Skip excluded types (knowledge, doc).
+        if excluded_type_set.contains(node.artifact_type.as_str()) {
+            continue;
+        }
+
+        // Skip archived or surpassed artifacts.
+        let status = node.status.as_deref().unwrap_or("");
+        if excluded_status_set.contains(status) {
+            continue;
+        }
+
+        active_count += 1;
+
+        // Artifact is a candidate outlier if it belongs to neither pipeline.
+        if delivery_set.contains(node.artifact_type.as_str())
+            || learning_set.contains(node.artifact_type.as_str())
+        {
+            continue;
+        }
+
+        // Age bucket and grace period check.
+        let age_days = parse_created_age(&node.frontmatter, today);
+        let grace = grace_days(&node.artifact_type);
+
+        // Classify into age bucket (stale = unknown age or 30d+).
+        match age_days {
+            Some(age) if age <= 7 => dist.fresh += 1,
+            Some(age) if age <= 30 => dist.aging += 1,
+            _ => dist.stale += 1,
+        }
+
+        // Only count as an outlier once the grace period has elapsed.
+        // Artifacts without a `created` date are treated as stale (age unknown ≥ grace).
+        let past_grace = age_days.is_none_or(|age| age >= grace);
+        if past_grace {
+            outlier_count += 1;
         }
     }
 
-    if total == 0 {
-        return 1.0; // vacuously true
+    let outlier_percentage = if active_count > 0 {
+        (outlier_count as f64 / active_count as f64) * 100.0
+    } else {
+        0.0
+    };
+
+    (outlier_count, outlier_percentage, dist)
+}
+
+/// Return the size of the largest weakly-connected component within a subset of nodes.
+///
+/// BFS traverses only edges where both endpoints are in `subset`. Used by the
+/// pipeline connectivity metrics to measure cohesion within a type-filtered group.
+fn largest_component_in_subset<'a>(
+    graph: &'a ArtifactGraph,
+    subset: &[&'a str],
+) -> usize {
+    let subset_set: HashSet<&str> = subset.iter().copied().collect();
+    let mut visited: HashSet<&str> = HashSet::new();
+    let mut largest: usize = 0;
+
+    for &start in subset {
+        if visited.contains(start) {
+            continue;
+        }
+        let mut queue: VecDeque<&str> = VecDeque::new();
+        queue.push_back(start);
+        visited.insert(start);
+        let mut size: usize = 0;
+        while let Some(cur) = queue.pop_front() {
+            size += 1;
+            let Some(node) = graph.nodes.get(cur) else { continue };
+            for r in &node.references_out {
+                let t = r.target_id.as_str();
+                if subset_set.contains(t) && !visited.contains(t) {
+                    visited.insert(t);
+                    queue.push_back(t);
+                }
+            }
+            for r in &node.references_in {
+                let s = r.source_id.as_str();
+                if subset_set.contains(s) && !visited.contains(s) {
+                    visited.insert(s);
+                    queue.push_back(s);
+                }
+            }
+        }
+        if size > largest { largest = size; }
+    }
+    largest
+}
+
+/// Compute what fraction of delivery-pipeline artifacts are in the largest
+/// weakly-connected component formed by delivery artifacts only.
+///
+/// Returns 0.0 when there are no delivery artifacts.
+fn compute_delivery_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
+    let delivery_set: HashSet<&str> = DELIVERY_TYPES.iter().copied().collect();
+    let delivery_ids: Vec<&str> = primary_ids
+        .iter()
+        .copied()
+        .filter(|id| graph.nodes.get(*id).is_some_and(|n| delivery_set.contains(n.artifact_type.as_str())))
+        .collect();
+    let total = delivery_ids.len();
+    if total == 0 { return 0.0; }
+    largest_component_in_subset(graph, &delivery_ids) as f64 / total as f64
+}
+
+/// Compute what fraction of learning-pipeline artifacts (lesson, rule) are
+/// connected to each other or to decision artifacts.
+///
+/// A learning artifact is "connected" when it has at least one edge (in or out)
+/// to another learning artifact OR to a decision artifact.
+///
+/// Returns 0.0 when there are no learning artifacts.
+fn compute_learning_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
+    let learning_set: HashSet<&str> = LEARNING_TYPES.iter().copied().collect();
+
+    let learning_ids: Vec<&str> = primary_ids
+        .iter()
+        .copied()
+        .filter(|id| {
+            graph
+                .nodes
+                .get(*id)
+                .is_some_and(|n| learning_set.contains(n.artifact_type.as_str()))
+        })
+        .collect();
+
+    let total_learning = learning_ids.len();
+    if total_learning == 0 {
+        return 0.0;
     }
 
-    with_inverse as f64 / total as f64
+    let connected_count = learning_ids
+        .iter()
+        .filter(|&&id| {
+            let Some(node) = graph.nodes.get(id) else {
+                return false;
+            };
+            // Connected if any outgoing edge reaches a learning or decision artifact.
+            let out_connected = node.references_out.iter().any(|r| {
+                graph
+                    .nodes
+                    .get(&r.target_id)
+                    .is_some_and(|t| learning_set.contains(t.artifact_type.as_str()) || t.artifact_type == "decision")
+            });
+            // Connected if any incoming edge comes from a learning or decision artifact.
+            let in_connected = node.references_in.iter().any(|r| {
+                graph
+                    .nodes
+                    .get(&r.source_id)
+                    .is_some_and(|s| learning_set.contains(s.artifact_type.as_str()) || s.artifact_type == "decision")
+            });
+            out_connected || in_connected
+        })
+        .count();
+
+    connected_count as f64 / total_learning as f64
 }

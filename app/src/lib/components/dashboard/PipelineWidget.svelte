@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, pct } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
@@ -275,9 +275,8 @@
 	 */
 	function computeStatusLabel(data: StageData): string | null {
 		if (data.count === 0) return null;
-		const pct = Math.round(data.connectivity * 100);
 		if (data.status === "isolated" || data.status === "attention") {
-			return `${pct}% connected`;
+			return `${pct(data.connectivity)}% connected`;
 		}
 		return null;
 	}

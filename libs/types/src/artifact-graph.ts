@@ -236,32 +236,52 @@ export interface TraceabilityResult {
 }
 
 /**
+ * Age distribution of pipeline outliers, bucketed by how long ago they were created.
+ *
+ * Only artifacts that pass all outlier filters (active, in-scope type, past grace period)
+ * contribute to the distribution. Artifacts without a `created` field go into `stale`
+ * because their age is unknown and they should be investigated.
+ */
+export interface OutlierAgeDistribution {
+    /** Outliers created within the last 7 days — within grace period, informational only. */
+    fresh: number;
+    /** Outliers created 7–30 days ago — aging, should be connected or archived soon. */
+    aging: number;
+    /** Outliers created more than 30 days ago (or with no `created` date) — priority action items. */
+    stale: number;
+}
+
+/**
  * Extended structural health metrics from the backend artifact graph analysis.
  *
- * Returned by the `get_graph_health` Tauri command. Replaces the client-side
- * Cytoscape analysis previously done in GraphVisualiser.
+ * Returned by the `get_graph_health` Tauri command. Models two named pipelines:
+ * - Delivery: task, epic, milestone, idea, research, decision, wireframe
+ * - Learning: lesson, rule
+ *
+ * Artifacts outside both pipelines that are not archived/surpassed/knowledge/doc
+ * are counted as outliers needing attention.
  */
 export interface GraphHealthData {
     /** Total number of nodes (excluding alias nodes). */
     total_nodes: number;
     /** Total number of directed edges. */
     total_edges: number;
-    /** Number of weakly-connected components. 1 = fully connected. */
-    component_count: number;
+    /** Number of active (non-archived, non-knowledge) artifacts outside both pipelines past their grace period. */
+    outlier_count: number;
+    /** outlier_count / active_nodes * 100 (0.0–100.0). */
+    outlier_percentage: number;
+    /** Age distribution of all candidate outliers (fresh ≤7d, aging 7–30d, stale 30d+ or no date). */
+    outlier_age_distribution: OutlierAgeDistribution;
+    /** Fraction of delivery artifacts in the main delivery component (0.0–1.0). */
+    delivery_connectivity: number;
+    /** Fraction of learning artifacts connected to each other or to decisions (0.0–1.0). */
+    learning_connectivity: number;
     /** Largest component size / total nodes (0.0–1.0). */
     largest_component_ratio: number;
-    /** Nodes with zero incoming references (excluding doc artifacts). */
-    orphan_count: number;
-    /** orphan_count / total_nodes * 100, rounded to 1 decimal place. */
-    orphan_percentage: number;
     /** Average number of relationships per node (edges * 2 / nodes). */
     avg_degree: number;
-    /** Edge density: edges / (nodes * (nodes - 1)), clamped 0.0–1.0. */
-    graph_density: number;
-    /** Percentage of rules with at least one grounded-by → pillar edge. */
+    /** Percentage of non-doc nodes that can trace a path to a pillar artifact (0.0–100.0). */
     pillar_traceability: number;
-    /** Ratio of typed relationship edges that have their inverse present (0.0–1.0). */
-    bidirectionality_ratio: number;
     /** Number of broken references (target not in graph). */
     broken_ref_count: number;
 }

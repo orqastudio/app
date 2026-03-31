@@ -13,6 +13,9 @@ export { invoke, extractErrorMessage, createStreamChannel } from "./ipc/invoke.j
 export { parseFrontmatter } from "./utils/frontmatter.js";
 export type { FrontmatterResult } from "./utils/frontmatter.js";
 
+// Number formatting
+export { fmt, pct } from "./utils/format.js";
+
 // Plugin registry
 export { PluginRegistry } from "./plugins/plugin-registry.svelte.js";
 export type { RegisteredPlugin, RegistrationConflict } from "./plugins/plugin-registry.svelte.js";

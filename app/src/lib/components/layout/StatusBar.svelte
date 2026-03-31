@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Icon } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, fmt } from "@orqastudio/sdk";
 
 	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
 	import finMark from "$lib/assets/fin-mark.svg";
@@ -84,10 +84,10 @@
 	 */
 	function formatTokens(count: number): string {
 		if (count >= 1_000_000) {
-			return `${(count / 1_000_000).toFixed(1)}M`;
+			return `${fmt(count / 1_000_000, 1)}M`;
 		}
 		if (count >= 1000) {
-			return `${(count / 1000).toFixed(1)}k`;
+			return `${fmt(count / 1000, 1)}k`;
 		}
 		return String(count);
 	}
