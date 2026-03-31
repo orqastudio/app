@@ -42,17 +42,15 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 		return;
 	}
 
+	// Load all manifests first, then register in dependency order.
+	const manifests = new Map<string, PluginManifest>();
 	for (const plugin of plugins) {
 		try {
 			const manifest = await invoke<PluginManifest>("plugin_get_manifest", {
 				name: plugin.name,
 			});
-			if ((manifest as Record<string, unknown>).defaultNavigation) {
-				log.info(`Plugin "${plugin.name}" has defaultNavigation with ${((manifest as Record<string, unknown>).defaultNavigation as unknown[]).length} items`);
-			}
 
-			// Ensure provides exists with default empty arrays — Tauri IPC
-			// may omit fields that are empty/null in the Rust struct.
+			// Ensure provides exists with default empty arrays.
 			if (!manifest.provides) {
 				(manifest as Record<string, unknown>).provides = {};
 			}
@@ -65,12 +63,40 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 			if (!p.hooks) p.hooks = [];
 			if (!p.knowledge) p.knowledge = [];
 
-			// Register the manifest with empty components — views are loaded
-			// on demand via the plugin-view route, not compiled in.
-			registry.register(manifest, {});
+			manifests.set(manifest.name, manifest);
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : JSON.stringify(err);
-			log.error(`Failed to register plugin "${plugin.name}": ${msg}`);
+			log.error(`Failed to load manifest for "${plugin.name}": ${msg}`);
 		}
 	}
+
+	// Register in dependency order — retry unresolved deps up to N passes.
+	const registered = new Set<string>();
+	const remaining = new Set(manifests.keys());
+	const maxPasses = remaining.size + 1;
+
+	for (let pass = 0; pass < maxPasses && remaining.size > 0; pass++) {
+		for (const name of [...remaining]) {
+			const manifest = manifests.get(name)!;
+			const deps = manifest.requires ?? [];
+			const unmet = deps.filter((d) => !registered.has(d) && manifests.has(d));
+			if (unmet.length > 0) continue; // retry next pass
+
+			try {
+				registry.register(manifest, {});
+				registered.add(name);
+				remaining.delete(name);
+			} catch (err) {
+				const msg = err instanceof Error ? err.message : JSON.stringify(err);
+				log.error(`Failed to register plugin "${name}": ${msg}`);
+				remaining.delete(name); // don't retry broken plugins
+			}
+		}
+	}
+
+	if (remaining.size > 0) {
+		log.warn(`${remaining.size} plugin(s) could not be registered (unresolved deps): ${[...remaining].join(", ")}`);
+	}
+
+	log.info(`Registered ${registered.size}/${manifests.size} plugin(s)`);
 }

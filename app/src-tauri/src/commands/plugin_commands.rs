@@ -169,6 +169,11 @@ pub fn plugin_get_path(
 }
 
 /// Read the plugin manifest for a specific installed plugin.
+///
+/// Returns the raw JSON from `orqa-plugin.json` without round-tripping through
+/// the Rust `PluginManifest` struct. This preserves all fields the frontend needs
+/// (workflows, pipeline_stages, knowledge_declarations, defaultNavigation, etc.)
+/// that the Rust struct does not model.
 #[tauri::command]
 pub fn plugin_get_manifest(
     name: String,
@@ -177,6 +182,12 @@ pub fn plugin_get_manifest(
     let project_path = active_project_path(&state)?;
     let project_root = std::path::Path::new(&project_path);
     let plugin_dir = find_plugin_dir(project_root, &name)?;
-    let manifest = crate::plugins::manifest::read_manifest(&plugin_dir)?;
-    serde_json::to_value(&manifest).map_err(|e| OrqaError::Serialization(e.to_string()))
+    let manifest_path = plugin_dir.join("orqa-plugin.json");
+    let contents = std::fs::read_to_string(&manifest_path).map_err(|e| {
+        OrqaError::Plugin(format!(
+            "failed to read manifest at {}: {e}",
+            manifest_path.display()
+        ))
+    })?;
+    serde_json::from_str(&contents).map_err(|e| OrqaError::Serialization(e.to_string()))
 }
