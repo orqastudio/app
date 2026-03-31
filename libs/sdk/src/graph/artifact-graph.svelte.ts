@@ -560,6 +560,7 @@ export class ArtifactGraphSDK {
 	private async _fetchAll(): Promise<void> {
 		// Use all known type keys from platform + registered plugins
 		const typeKeys = this.allTypeKeys;
+		log.info(`_fetchAll: querying ${typeKeys.length} type keys: ${typeKeys.join(", ")}`);
 
 		const [statsResult, ...typedNodes] = await Promise.all([
 			invoke<GraphStats>("get_graph_stats"),
@@ -571,12 +572,18 @@ export class ArtifactGraphSDK {
 		const newGraph = new SvelteMap<string, ArtifactNode>();
 		const newPathIndex = new SvelteMap<string, string>();
 
-		for (const nodes of typedNodes) {
+		for (let i = 0; i < typedNodes.length; i++) {
+			const nodes = typedNodes[i];
 			for (const node of nodes) {
 				newGraph.set(node.id, node);
 				newPathIndex.set(node.path, node.id);
 			}
+			if (nodes.length > 0) {
+				log.info(`  ${typeKeys[i]}: ${nodes.length} nodes`);
+			}
 		}
+
+		log.info(`_fetchAll complete: ${newGraph.size} total nodes (stats reports ${statsResult.total_nodes})`);
 
 		this.graph = newGraph;
 		this.pathIndex = newPathIndex;

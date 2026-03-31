@@ -44,17 +44,39 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
         }
 
         let plugin_path = project_root.join(&config.path);
+        let manifest_path = plugin_path.join("orqa-plugin.json");
 
-        if let Ok(manifest) = read_manifest(&plugin_path) {
-            discovered.push(DiscoveredPlugin {
-                name: manifest.name.clone(),
-                version: manifest.version.clone(),
-                display_name: manifest.display_name.clone(),
-                description: manifest.description.clone(),
-                path: plugin_path.to_string_lossy().into_owned(),
-                source: "installed".to_owned(),
-            });
-        }
+        // Read raw JSON to extract name/version/description. This avoids
+        // failures from strict Rust struct deserialization (e.g., agent
+        // definitions missing required fields like `title`).
+        let Ok(contents) = std::fs::read_to_string(&manifest_path) else {
+            continue;
+        };
+        let Ok(json) = serde_json::from_str::<serde_json::Value>(&contents) else {
+            continue;
+        };
+        let Some(name) = json.get("name").and_then(|v| v.as_str()) else {
+            continue;
+        };
+
+        discovered.push(DiscoveredPlugin {
+            name: name.to_owned(),
+            version: json
+                .get("version")
+                .and_then(|v| v.as_str())
+                .unwrap_or("0.0.0")
+                .to_owned(),
+            display_name: json
+                .get("displayName")
+                .and_then(|v| v.as_str())
+                .map(str::to_owned),
+            description: json
+                .get("description")
+                .and_then(|v| v.as_str())
+                .map(str::to_owned),
+            path: plugin_path.to_string_lossy().into_owned(),
+            source: "installed".to_owned(),
+        });
     }
 
     discovered

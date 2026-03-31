@@ -77,6 +77,7 @@ pub fn get_artifacts_by_type(
         .filter(|n| n.artifact_type == artifact_type)
         .cloned()
         .collect();
+    tracing::debug!(r#type = %artifact_type, count = nodes.len(), "get_artifacts_by_type");
     Ok(nodes)
 }
 
@@ -113,6 +114,15 @@ pub fn read_artifact_content(
 #[tauri::command]
 pub fn get_graph_stats(state: State<'_, AppState>) -> Result<GraphStats, OrqaError> {
     let graph = get_or_build_graph(&state)?;
+    // Log all distinct artifact types in the graph for debugging
+    let mut type_counts: std::collections::HashMap<&str, usize> = std::collections::HashMap::new();
+    for node in graph.nodes.values() {
+        *type_counts.entry(&node.artifact_type).or_insert(0) += 1;
+    }
+    let mut types_sorted: Vec<_> = type_counts.into_iter().collect();
+    types_sorted.sort_by(|a, b| b.1.cmp(&a.1));
+    let summary: Vec<String> = types_sorted.iter().map(|(t, c)| format!("{t}:{c}")).collect();
+    tracing::info!(total = graph.nodes.len(), types = %summary.join(" "), "graph_stats: all types in graph");
     Ok(graph_stats(&graph))
 }
 
