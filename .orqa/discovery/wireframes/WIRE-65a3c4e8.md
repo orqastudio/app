@@ -7,7 +7,9 @@ description: "Wireframe specification for the conversation view including messag
 created: "2026-03-02"
 updated: "2026-03-15"
 sort: 2
-relationships: []
+relationships:
+  - target: EPIC-5d5d0ae6
+    type: informs
 ---
 <!-- FRESHNESS NOTE (2026-03-15): The Component Mapping table (Section 5) lists `DiffView.svelte` as a separate component — this does not exist; diff display is handled inline within `ToolCallCard.svelte`. `TypingIndicator.svelte` is implemented as `StreamingIndicator.svelte`. The tool call card status badges for "Approved/Denied/Pending" (post-MVP approval flow) are not yet implemented — only Completed and Error exist. The welcome state heading is "OrqaStudio" not a star icon in current implementation. All other component names and behavior descriptions remain accurate. -->
 

@@ -8,7 +8,10 @@ created: "2026-03-09"
 updated: "2026-03-09"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - target: RULE-f609242f
+    type: promoted-to
+    rationale: "Lesson about 237 uncommitted files accumulating informed the Git Workflow rule's commit frequency requirements"
 ---
 
 ## What Happened

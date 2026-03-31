@@ -35,6 +35,8 @@ relationships:
     type: synchronised-with
   - target: KNOW-5704b089
     type: synchronised-with
+  - target: KNOW-47e8148e
+    type: synchronised-with
 ---
 
 # Svelte Development Guide

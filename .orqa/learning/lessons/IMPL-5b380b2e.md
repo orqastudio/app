@@ -8,7 +8,10 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - target: RULE-71352dc8
+    type: promoted-to
+    rationale: "Lesson about investigating systemically before fixing promoted to the UAT Process rule's collect-then-systematize approach"
 ---
 
 ## What Happened

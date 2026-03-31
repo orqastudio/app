@@ -185,16 +185,18 @@
         "inverseLabel": "Informed By",
         "from": [
           "research",
-          "discovery-research"
+          "discovery-research",
+          "wireframe"
         ],
         "to": [
           "decision",
           "discovery-decision",
           "research",
           "discovery-research",
-          "principle-decision"
+          "principle-decision",
+          "epic"
         ],
-        "description": "Research findings inform a decision or another research thread",
+        "description": "Research findings or wireframes inform a decision, research thread, or epic",
         "semantic": "knowledge-flow"
       },
       {

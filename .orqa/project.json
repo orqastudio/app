@@ -45,94 +45,99 @@
   "relationships": [],
   "plugins": {
     "@orqastudio/claude-code-connector": {
-      "path": "connectors/claude-code",
+      "path": "connectors\\claude-code",
       "enabled": true,
       "version": "0.1.0-dev",
       "installed": true
     },
     "@orqastudio/plugin-cli": {
-      "path": "plugins/knowledge/cli",
+      "path": "plugins\\knowledge\\cli",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-plugin-dev": {
-      "path": "plugins/knowledge/plugin-dev",
+      "path": "plugins\\knowledge\\plugin-dev",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-rust": {
-      "path": "plugins/knowledge/rust",
+      "path": "plugins\\knowledge\\rust",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-svelte": {
-      "path": "plugins/knowledge/svelte",
+      "path": "plugins\\knowledge\\svelte",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-systems-thinking": {
-      "path": "plugins/knowledge/systems-thinking",
+      "path": "plugins\\knowledge\\systems-thinking",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-tauri": {
-      "path": "plugins/knowledge/tauri",
+      "path": "plugins\\knowledge\\tauri",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-typescript": {
-      "path": "plugins/knowledge/typescript",
+      "path": "plugins\\knowledge\\typescript",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-agile-methodology": {
-      "path": "plugins/methodology/agile-methodology",
+      "path": "plugins\\methodology\\agile-methodology",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-agile-discovery": {
-      "path": "plugins/workflows/agile-discovery",
+      "path": "plugins\\workflows\\agile-discovery",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-agile-documentation": {
-      "path": "plugins/workflows/agile-documentation",
+      "path": "plugins\\workflows\\agile-documentation",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-agile-planning": {
-      "path": "plugins/workflows/agile-planning",
+      "path": "plugins\\workflows\\agile-planning",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-agile-review": {
-      "path": "plugins/workflows/agile-review",
+      "path": "plugins\\workflows\\agile-review",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-core-framework": {
-      "path": "plugins/workflows/core",
+      "path": "plugins\\workflows\\core",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
     },
     "@orqastudio/plugin-software-kanban": {
-      "path": "plugins/workflows/software-kanban",
+      "path": "plugins\\workflows\\software-kanban",
       "enabled": true,
       "version": "0.1.4-dev",
       "installed": true
+    },
+    "@orqastudio/plugin-claude": {
+      "installed": true,
+      "enabled": true,
+      "path": "sidecars\\claude-agent-sdk"
     }
   }
 }

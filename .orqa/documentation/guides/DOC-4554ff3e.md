@@ -23,6 +23,8 @@ relationships:
     type: synchronised-with
   - target: KNOW-bec7e87d
     type: synchronised-with
+  - target: KNOW-c278eda4
+    type: synchronised-with
 
 ---
 

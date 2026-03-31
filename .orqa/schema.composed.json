@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-31T11:59:53.123Z",
+  "generatedAt": "2026-03-31T14:18:01.987Z",
   "description": "Composed schema generated from all installed plugins. Artifact types, relationship types, and validation constraints sourced from plugin manifests.",
   "artifactTypes": {
     "vision": {
@@ -1765,16 +1765,18 @@
       "inverseLabel": "Informed By",
       "from": [
         "research",
-        "discovery-research"
+        "discovery-research",
+        "wireframe"
       ],
       "to": [
         "decision",
         "discovery-decision",
         "research",
         "discovery-research",
-        "principle-decision"
+        "principle-decision",
+        "epic"
       ],
-      "description": "Research findings inform a decision or another research thread",
+      "description": "Research findings or wireframes inform a decision, research thread, or epic",
       "semantic": "knowledge-flow"
     },
     {

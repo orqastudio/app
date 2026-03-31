@@ -7,7 +7,9 @@ description: "Wireframe specification for the artifact browser view showing gove
 created: "2026-03-02"
 updated: "2026-03-15"
 sort: 3
-relationships: []
+relationships:
+  - target: EPIC-9ddef7f9
+    type: informs
 ---
 <!-- FRESHNESS NOTE (2026-03-15): Section 6 "File Watching" refers to Tauri's `fs.watch` API — the implementation uses Tauri event listeners via the artifact graph SDK, not a direct `fs.watch` call. The viewer (Section 3) now includes additional panels not shown here: RelationshipsList, ReferencesPanel, PipelineStepper, ActionsNeeded, and AcceptanceCriteria (added in EPIC-c90fdd32). The list item anatomy and empty state sections remain accurate. -->
 

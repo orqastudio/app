@@ -11,6 +11,8 @@ category: plugin
 relationships:
   - target: KNOW-40e2eb99
     type: synchronised-with
+  - target: EPIC-c8195723
+    type: documents
 
 ---
 
