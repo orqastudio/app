@@ -302,15 +302,27 @@ fn load_plugin_relationships(
     let mut rels = Vec::new();
 
     for plugin in &plugins {
-        let plugin_dir = Path::new(&plugin.path);
-        if let Ok(manifest) = crate::plugins::manifest::read_manifest(plugin_dir) {
-            for rel_value in &manifest.provides.relationships {
-                if let Ok(schema) = serde_json::from_value::<
-                    crate::domain::integrity_engine::RelationshipSchema,
-                >(rel_value.clone())
-                {
-                    rels.push(schema);
-                }
+        let manifest_path = Path::new(&plugin.path).join("orqa-plugin.json");
+        let Ok(contents) = std::fs::read_to_string(&manifest_path) else {
+            continue;
+        };
+        let Ok(json) = serde_json::from_str::<serde_json::Value>(&contents) else {
+            continue;
+        };
+        let Some(provides) = json.get("provides") else {
+            continue;
+        };
+        let Some(relationships) = provides.get("relationships").and_then(|r| r.as_array())
+        else {
+            continue;
+        };
+
+        for rel_value in relationships {
+            if let Ok(schema) = serde_json::from_value::<
+                crate::domain::integrity_engine::RelationshipSchema,
+            >(rel_value.clone())
+            {
+                rels.push(schema);
             }
         }
     }
