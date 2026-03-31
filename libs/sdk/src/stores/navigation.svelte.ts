@@ -238,14 +238,26 @@ export class NavigationStore {
 			}
 		}
 
-		// Deduplicate insertion order (first occurrence wins position)
-		const seen = new Set<string>();
+		// Sort groups by pipeline stage order — tells the story of the workflow.
+		// Groups not in this list appear after all listed groups.
+		const STAGE_ORDER = ["discovery", "planning", "delivery", "learning", "documentation", "agents"];
 		const pluginItems: NavigationItem[] = [];
-		for (const key of insertionOrder) {
-			if (seen.has(key)) continue;
-			seen.add(key);
+		const ordered = new Set<string>();
+
+		for (const key of STAGE_ORDER) {
 			const item = groupMap.get(key);
-			if (item) pluginItems.push(item);
+			if (item) {
+				pluginItems.push(item);
+				ordered.add(key);
+			}
+		}
+		// Append any groups not in the stage order list
+		for (const key of insertionOrder) {
+			if (!ordered.has(key)) {
+				const item = groupMap.get(key);
+				if (item) pluginItems.push(item);
+				ordered.add(key);
+			}
 		}
 
 		if (pluginItems.length === 0) return base;

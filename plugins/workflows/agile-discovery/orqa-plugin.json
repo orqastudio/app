@@ -635,19 +635,24 @@
           "icon": "users"
         },
         {
-          "key": "pivots",
-          "type": "builtin",
-          "icon": "refresh-cw"
-        },
-        {
           "key": "discovery-ideas",
           "type": "builtin",
           "icon": "lightbulb"
         },
         {
+          "key": "discovery-research",
+          "type": "builtin",
+          "icon": "flask-conical"
+        },
+        {
           "key": "discovery-decisions",
           "type": "builtin",
           "icon": "scale"
+        },
+        {
+          "key": "pivots",
+          "type": "builtin",
+          "icon": "refresh-cw"
         }
       ]
     }
