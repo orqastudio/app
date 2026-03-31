@@ -180,15 +180,15 @@
 					</TooltipTrigger>
 					<TooltipContent side="bottom" class="w-64 text-xs">
 						<p class="font-medium mb-1">Pipeline Outliers</p>
-						<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline (task/epic/milestone/idea/research/decision/wireframe) and the learning pipeline (lesson/rule). Outliers need attention — connect them or archive them.</p>
+						<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline (task / epic / milestone / idea / research / decision / wireframe) and the learning pipeline (lesson / rule). Outliers need attention — connect them or archive them.</p>
 						{#if graphHealth.outlier_age_distribution.stale > 0}
-							<p class="text-destructive mt-1">{graphHealth.outlier_age_distribution.stale} stale (30d+ or no date) — priority action.</p>
+							<p class="text-destructive mt-1">{graphHealth.outlier_age_distribution.stale} stale (90d+ or no date) — priority action.</p>
 						{/if}
 						{#if graphHealth.outlier_age_distribution.aging > 0}
-							<p class="text-warning mt-1">{graphHealth.outlier_age_distribution.aging} aging (7–30d) — connect or archive soon.</p>
+							<p class="text-warning mt-1">{graphHealth.outlier_age_distribution.aging} aging (30–90d) — connect or archive soon.</p>
 						{/if}
 						{#if graphHealth.outlier_age_distribution.fresh > 0}
-							<p class="text-muted-foreground mt-1">{graphHealth.outlier_age_distribution.fresh} fresh (≤7d) — within grace period.</p>
+							<p class="text-muted-foreground mt-1">{graphHealth.outlier_age_distribution.fresh} fresh (≤30d) — within grace period.</p>
 						{/if}
 					</TooltipContent>
 				</TooltipRoot>

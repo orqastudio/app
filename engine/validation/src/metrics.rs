@@ -90,34 +90,21 @@ const EXCLUDED_STATUSES: &[&str] = &["archived", "surpassed"];
 const EXCLUDED_TYPES: &[&str] = &["knowledge", "doc"];
 
 /// Grace period in days before an artifact outside both pipelines is counted
-/// as an outlier. New artifacts need time to be connected. Keyed by type; any
-/// type not listed falls back to `DEFAULT_GRACE_DAYS`.
-///
-/// - ideas/research/decisions: 7 days (discovery artifacts, may take a week to find their epic)
-/// - lessons: 14 days (need time to recur before promotion to rule)
-/// - tasks/epics: 3 days (should be wired to a milestone quickly)
-/// - other pipeline types (milestone, rule, wireframe): 3 days
-const GRACE_PERIODS: &[(&str, i64)] = &[
-    ("idea", 7),
-    ("research", 7),
-    ("decision", 7),
-    ("lesson", 14),
-    ("task", 3),
-    ("epic", 3),
-    ("milestone", 3),
-    ("rule", 3),
-    ("wireframe", 3),
-];
+/// as an outlier. New artifacts need time to find their place in the system.
+/// All types use 30 days — real projects need breathing room.
+const DEFAULT_GRACE_DAYS: i64 = 30;
 
-/// Grace period for artifact types not listed in `GRACE_PERIODS`.
-const DEFAULT_GRACE_DAYS: i64 = 7;
+/// Age thresholds for the outlier distribution buckets.
+/// - Fresh: within grace period (≤30d) — expected, no action needed
+/// - Aging: between grace and stale (30–90d) — should be progressed or archived soon
+/// - Stale: older than 3 months (>90d) or no created date — priority action
+const AGING_THRESHOLD_DAYS: i64 = 30;
+const STALE_THRESHOLD_DAYS: i64 = 90;
 
 /// Return the grace period in days for a given artifact type.
-fn grace_days(artifact_type: &str) -> i64 {
-    GRACE_PERIODS
-        .iter()
-        .find(|(t, _)| *t == artifact_type)
-        .map_or(DEFAULT_GRACE_DAYS, |(_, d)| *d)
+/// Currently uniform across all types (30 days).
+fn grace_days(_artifact_type: &str) -> i64 {
+    DEFAULT_GRACE_DAYS
 }
 
 /// Parse a `created` frontmatter value ("YYYY-MM-DD") and return age in whole days
@@ -612,8 +599,8 @@ fn reverse_bfs_from_pillars<'a>(
 /// - Its age exceeds the grace period for its type (new artifacts get time to be connected)
 ///
 /// The age distribution covers all eligible outliers (pre- and post-grace-period), bucketed
-/// into fresh (≤7d), aging (7–30d), and stale (30d+ or no `created` date).
-/// The `outlier_count` only counts those that have exceeded their type's grace period.
+/// into fresh (≤30d), aging (30–90d), and stale (90d+ or no `created` date).
+/// The `outlier_count` only counts those that have exceeded the 30-day grace period.
 /// The percentage is computed over active (non-excluded) nodes only.
 fn compute_outliers(
     graph: &ArtifactGraph,
@@ -658,10 +645,10 @@ fn compute_outliers(
         let age_days = parse_created_age(&node.frontmatter, today);
         let grace = grace_days(&node.artifact_type);
 
-        // Classify into age bucket (stale = unknown age or 30d+).
+        // Classify into age bucket (stale = unknown age or 90d+).
         match age_days {
-            Some(age) if age <= 7 => dist.fresh += 1,
-            Some(age) if age <= 30 => dist.aging += 1,
+            Some(age) if age <= AGING_THRESHOLD_DAYS => dist.fresh += 1,
+            Some(age) if age <= STALE_THRESHOLD_DAYS => dist.aging += 1,
             _ => dist.stale += 1,
         }
 
