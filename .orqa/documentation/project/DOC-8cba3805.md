@@ -9,7 +9,10 @@ description: How governance artifacts are loaded and initialized when a project 
 created: 2026-03-04
 updated: 2026-03-09
 sort: 13
-relationships: []
+relationships:
+  - type: documents
+    target: PD-4ea9a290
+    rationale: "Governance bootstrap doc documents how .orqa/ as single source of truth is initialized"
 ---
 
 **Date:** 2026-03-04

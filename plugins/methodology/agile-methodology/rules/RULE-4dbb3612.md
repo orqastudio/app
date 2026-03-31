@@ -9,7 +9,10 @@ updated: 2026-03-21
 enforcement:
   - mechanism: behavioral
     message: "Any discovered enforcement gap is immediately CRITICAL priority; it is never deferred, scoped out, or addressed in a future epic"
-relationships: []
+relationships:
+  - type: enforces
+    target: PD-a1c2ca06
+    rationale: "Enforcement gap priority rule enforces the four-layer enforcement decision by ensuring no gap is tolerated"
 ---
 
 Governance without enforcement is a fiction. Every rule, architecture decision, and pillar gate question that lacks mechanical enforcement is an enforcement gap. **An enforcement gap is always CRITICAL.**

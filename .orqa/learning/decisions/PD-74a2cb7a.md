@@ -6,7 +6,10 @@ description: "Product pillars become structured artifacts in .orqa/principles/pi
 status: completed
 created: "2026-03-09"
 updated: "2026-03-13"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-0e8860dd
+    rationale: "Pillars as first-class planning artifacts decision drove the pillars epic"
 ---
 
 ## Decision

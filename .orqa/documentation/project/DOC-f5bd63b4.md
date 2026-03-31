@@ -9,7 +9,10 @@ description: "Architecture of the dev controller (tools/debug/dev.mjs) and the O
 created: "2026-03-12"
 updated: "2026-03-24"
 sort: 5
-relationships: []
+relationships:
+  - type: documents
+    target: PD-c8f41d2e
+    rationale: "Dev controller architecture doc documents the service dependency checks and dev orchestration decision"
 ---
 
 ## Overview

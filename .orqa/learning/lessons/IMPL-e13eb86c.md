@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-0777d74e
+    rationale: "Epics with all tasks done but not marked complete need UI surfacing — cautions process visibility dashboard"
 ---
 
 ## Pattern

@@ -9,7 +9,10 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-d074581f
+    rationale: "Research artifact must be created before investigation — cautions discovery & research artifacts"
 ---
 
 ## Pattern

@@ -8,6 +8,10 @@ recurrence: 1
 promoted-to: RULE-cd426b0d
 created: 2026-03-23
 tags: [dogfooding, session-management, proactive-behavior]
+relationships:
+  - type: promoted-to
+    target: RULE-cd426b0d
+    rationale: "Lesson about session state not written proactively promoted to mandatory session-end rule"
 ---
 
 ## Observation

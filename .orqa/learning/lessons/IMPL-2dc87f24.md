@@ -8,7 +8,10 @@ created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-14T00:00:00.000Z
 maturity: "observation"
 recurrence: 4
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Orchestrator asking permission when unblocked breaks flow — cautions agent lifecycle epic"
 ---
 
 ## Pattern

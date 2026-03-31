@@ -8,7 +8,10 @@ created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Decisions scrolled away by background work must be resurfaced — cautions agent lifecycle"
 ---
 
 ## Pattern

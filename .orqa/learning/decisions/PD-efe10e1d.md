@@ -6,7 +6,10 @@ description: "Accept that .claude/rules/ symlink loads all 44 rules into every C
 status: completed
 created: "2026-03-12"
 updated: "2026-03-12"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-5b353057
+    rationale: "CLI rule loading decision shaped the connector-as-thin-adapter epic's approach to rule injection"
 ---
 
 ## Decision

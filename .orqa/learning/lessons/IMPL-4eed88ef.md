@@ -8,7 +8,10 @@ created: 2026-03-21
 updated: 2026-03-21
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-489c0a47
+    rationale: "Lesson type shift signals dogfood readiness — cautions dogfood verification"
 ---
 
 ## Pattern

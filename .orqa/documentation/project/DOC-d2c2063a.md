@@ -9,7 +9,10 @@ description: Reference for all development commands available via make targets.
 created: 2026-03-05
 updated: 2026-03-24
 sort: 4
-relationships: []
+relationships:
+  - type: documents
+    target: PD-a44384d1
+    rationale: "Development commands doc documents the CLI as single developer interface decision"
 ---
 
 **Date:** 2026-03-05

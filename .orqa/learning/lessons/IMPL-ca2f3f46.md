@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 2
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Orchestrator writing governance artifacts directly instead of delegating — cautions agent lifecycle"
 ---
 
 ## Pattern

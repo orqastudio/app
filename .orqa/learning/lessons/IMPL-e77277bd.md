@@ -9,7 +9,10 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-2f1648f5
+    rationale: "Domain-neutral naming avoids renames when supporting multiple providers"
 ---
 
 ## What Happened

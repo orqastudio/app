@@ -6,7 +6,10 @@ description: "Core graph artifacts (schemas, traversal instructions, process mod
 status: completed
 created: 2026-03-12
 updated: 2026-03-12
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-c828007a
+    rationale: "Core graph firmware principle drove the graph foundation epic's two-layer editability model"
 ---
 
 ## Decision

@@ -6,7 +6,10 @@ description: "Enforcement is mechanical, not behavioral. Four layers cover all m
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-a60f5b6b
+    rationale: "Four enforcement layers decision drove the principle enforcement foundations epic"
 ---
 
 ## Decision

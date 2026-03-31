@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "observation"
 recurrence: 2
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Out-of-scope decisions require user approval — cautions agent lifecycle governance"
 ---
 
 ## Pattern

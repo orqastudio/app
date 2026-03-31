@@ -9,7 +9,10 @@ created: 2026-03-15
 updated: 2026-03-15
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-c828007a
+    rationale: "Body text refs without graph edges are invisible to traversal — cautions graph foundation"
 ---
 
 ## Pattern

@@ -14,7 +14,10 @@ tags:
   - enforcement
   - governance
   - plugin
-relationships: []
+relationships:
+  - type: documents
+    target: PD-a1c2ca06
+    rationale: "Hook execution semantics doc documents the four enforcement layers decision"
 ---
 
 # Hook Execution Semantics

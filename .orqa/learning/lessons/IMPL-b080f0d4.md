@@ -8,7 +8,10 @@ created: "2026-03-12"
 updated: "2026-03-12"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Orchestrator deferring scoped deliverables — cautions agent lifecycle"
 ---
 
 ## Pattern

@@ -9,7 +9,10 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Blocking vs non-blocking observation handling is user preference — cautions agent lifecycle"
 ---
 
 ## Pattern

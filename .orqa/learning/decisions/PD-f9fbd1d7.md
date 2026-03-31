@@ -6,7 +6,10 @@ description: "Documentation browsing is project-scoped and filesystem-driven. Do
 status: completed
 created: "2026-03-03"
 updated: "2026-03-13"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-4d60940b
+    rationale: "Filesystem-driven doc browsing decision drove documentation reorganisation epic"
 ---
 
 ## Decision

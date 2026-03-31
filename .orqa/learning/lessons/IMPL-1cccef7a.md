@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-c828007a
+    rationale: "Null relationship targets should link to tracking artifact — cautions graph foundation"
 ---
 
 ## Pattern

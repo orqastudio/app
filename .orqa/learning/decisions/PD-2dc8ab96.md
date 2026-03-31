@@ -6,7 +6,10 @@ description: "Every lint suppression annotation (#[allow(clippy::...)], eslint-d
 status: completed
 created: 2026-03-13T00:00:00.000Z
 updated: 2026-03-13T00:00:00.000Z
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-e24086ed
+    rationale: "Lint suppression audit trail decision drove the code quality audit and enforcement alignment epic"
 ---
 
 ## Decision

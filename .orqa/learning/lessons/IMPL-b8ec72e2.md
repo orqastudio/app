@@ -9,7 +9,10 @@ created: "2026-03-13"
 updated: "2026-03-28"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-dcc0bac6
+    rationale: "Plugin-sidecar pairing mechanism gap cautions plugin infrastructure epic"
 ---
 
 ## Pattern

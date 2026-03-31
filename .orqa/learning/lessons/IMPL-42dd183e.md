@@ -9,7 +9,10 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: understanding
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-3e6cad90
+    rationale: "Process improvements lost in conversation history cautions knowledge maturity pipeline"
 ---
 
 ## What Happened

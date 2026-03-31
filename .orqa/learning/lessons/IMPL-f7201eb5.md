@@ -9,7 +9,10 @@ created: 2026-03-15
 updated: 2026-03-15
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-2f1efbd5
+    rationale: "Blank lines corrupt YAML frontmatter parsing — cautions artifact system migration"
 ---
 
 ## Pattern

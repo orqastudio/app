@@ -9,7 +9,10 @@ status: active
 created: "2026-03-05"
 updated: "2026-03-05"
 sort: 18
-relationships: []
+relationships:
+  - type: documents
+    target: PD-430829f1
+    rationale: "Lesson promotion pipeline doc documents the knowledge maturity pipeline decision"
 ---
 **Date:** 2026-03-05
 

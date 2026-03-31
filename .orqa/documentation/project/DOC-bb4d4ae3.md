@@ -11,7 +11,10 @@ description: Design of the first-run setup wizard that guides users through init
 created: 2026-03-04
 updated: 2026-03-04
 sort: 14
-relationships: []
+relationships:
+  - type: documents
+    target: PD-23e27cf5
+    rationale: "First-run setup wizard doc documents the onboarding strategy decision"
 ---
 
 **Date:** 2026-03-04

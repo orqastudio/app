@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Observation creation should be delegated to background agents — cautions agent lifecycle"
 ---
 
 ## Pattern

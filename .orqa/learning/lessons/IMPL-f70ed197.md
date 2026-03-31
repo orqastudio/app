@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-3e6cad90
+    rationale: "Observation capture should never be gatekept — cautions knowledge maturity pipeline"
 ---
 
 ## Pattern

@@ -6,7 +6,10 @@ description: "Cross-artifact search uses AI semantic understanding rather than k
 status: completed
 created: "2026-03-11"
 updated: "2026-03-11"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-9ddef7f9
+    rationale: "AI-driven search decision drove the artifact browser sort/filter/search epic"
 ---
 
 ## Decision

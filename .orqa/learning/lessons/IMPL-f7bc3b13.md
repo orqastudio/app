@@ -8,7 +8,10 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-a1555708
+    rationale: "Extract domain logic before monolithic commands — cautions codebase quality"
 ---
 
 ## What Happened

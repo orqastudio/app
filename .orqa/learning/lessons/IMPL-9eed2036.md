@@ -8,6 +8,10 @@ recurrence: 1
 promoted-to: RULE-04684a16
 created: 2026-03-23
 tags: [dogfooding, agent-teams, honest-reporting]
+relationships:
+  - type: promoted-to
+    target: RULE-04684a16
+    rationale: "Lesson about unreliable agent message delivery promoted to mandatory findings-to-disk rule"
 ---
 
 ## Observation

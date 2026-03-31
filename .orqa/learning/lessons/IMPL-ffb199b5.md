@@ -8,7 +8,10 @@ created: "2026-03-07"
 updated: "2026-03-07"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-560cf78c
+    rationale: "Dev environment lifecycle should be automatic, not manual — cautions DX polish"
 ---
 
 ## Pattern

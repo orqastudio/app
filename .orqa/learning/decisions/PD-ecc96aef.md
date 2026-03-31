@@ -6,7 +6,10 @@ description: "Svelte 5 runes only ($state, $derived, $effect, $props). No Svelte
 status: completed
 created: 2026-03-02
 updated: 2026-03-13
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-c8195723
+    rationale: "Svelte 5 runes-only decision drove the coding standards plugins epic for frontend enforcement"
 ---
 
 ## Decision

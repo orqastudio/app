@@ -7,7 +7,10 @@ created: 2026-03-02
 updated: 2026-03-14
 sort: 3
 status: active
-relationships: []
+relationships:
+  - type: documents
+    target: PD-e711446e
+    rationale: "User personas doc documents the vision evolution decision for domain-agnostic clarity engine"
 ---
 **Date:** 2026-03-07
 

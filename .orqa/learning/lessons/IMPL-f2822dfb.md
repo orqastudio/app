@@ -9,7 +9,10 @@ created: 2026-03-13
 updated: 2026-03-13
 maturity: understanding
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-42a5330b
+    rationale: "Design discussion mode should be a loadable skill — cautions three-tier skill loading"
 ---
 
 ## Pattern

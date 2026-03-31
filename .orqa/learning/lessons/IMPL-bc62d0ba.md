@@ -9,7 +9,10 @@ created: 2026-03-07
 updated: 2026-03-07
 maturity: observation
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-560cf78c
+    rationale: "Vite optimize required after new deps to avoid Windows WebView2 white screen — cautions DX"
 ---
 
 ## Pattern

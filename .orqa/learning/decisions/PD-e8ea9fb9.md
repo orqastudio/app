@@ -6,7 +6,10 @@ description: "Each artifact type directory can contain a _navigation.json file t
 status: completed
 created: "2026-03-11"
 updated: "2026-03-11"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-9ddef7f9
+    rationale: "Config-driven navigation defaults decision drove the artifact browser epic's per-type navigation"
 ---
 
 ## Decision

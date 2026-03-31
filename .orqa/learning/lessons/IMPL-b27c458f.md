@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-3e6cad90
+    rationale: "Task completion should record lessons learned — cautions knowledge maturity pipeline"
 ---
 
 ## Pattern

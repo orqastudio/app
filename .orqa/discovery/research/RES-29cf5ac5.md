@@ -6,7 +6,10 @@ description: "Research how to reorganise .orqa/documentation/ into a book-like c
 status: completed
 created: 2026-03-14
 updated: 2026-03-14
-relationships: []
+relationships:
+  - type: informs
+    target: PD-f9fbd1d7
+    rationale: "Documentation reorganisation research informed the filesystem-driven doc browsing decision"
 ---
 
 ## Research Questions

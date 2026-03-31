@@ -6,7 +6,10 @@ description: "Statuses have two layers matching types and relationships. Canonic
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-f6da17ed
+    rationale: "Canonical status model decision drove the core workflow engine and state machines epic"
 ---
 
 ## Decision

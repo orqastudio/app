@@ -17,7 +17,10 @@ tier: always
 roles: [orchestrator]
 priority: P1
 tags: [session-state, priorities, proactive-handoff]
-relationships: []
+relationships:
+  - type: codifies
+    target: IMPL-30c3da78
+    rationale: "Rule codifies the lesson about proactive session state writing"
 ---
 
 ## Rule (NON-NEGOTIABLE)

@@ -6,7 +6,10 @@ description: Artifacts connect ONLY through typed relationships. No standalone f
 status: active
 created: 2026-03-15
 updated: 2026-03-15
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-c828007a
+    rationale: "Canonical relationship vocabulary decision drove the graph foundation epic for relationship storage and constraints"
 ---
 
 ## Decision

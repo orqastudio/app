@@ -8,7 +8,10 @@ created: 2026-03-14T00:00:00.000Z
 updated: 2026-03-14T00:00:00.000Z
 maturity: "observation"
 recurrence: 3
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Acceptance criteria not verified line-by-line (recurrence 3) — cautions agent lifecycle verification"
 ---
 
 ## Pattern

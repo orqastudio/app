@@ -6,7 +6,10 @@ description: Tauri invoke() commands are the only frontend-backend communication
 status: completed
 created: 2026-03-02
 updated: 2026-03-13
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-347a8c3d
+    rationale: "IPC boundary design decision shaped the Rust artifact platform engine's Tauri invoke interface"
 ---
 
 ## Decision

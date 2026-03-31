@@ -6,7 +6,10 @@ description: "When improving governance, tighten existing rules rather than crea
 status: completed
 created: "2026-03-13"
 updated: "2026-03-13"
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-a63fde02
+    rationale: "Conciseness over granularity decision shaped the prompt generation pipeline and knowledge architecture"
 ---
 
 ## Decision

@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-2f1efbd5
+    rationale: "Hardcoded .orqa/ paths should be configurable — cautions artifact system migration"
 ---
 
 ## Pattern

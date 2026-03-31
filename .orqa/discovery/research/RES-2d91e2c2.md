@@ -6,7 +6,10 @@ description: "How OrqaStudio stores, maps, and applies design tokens at runtime 
 status: completed
 created: "2026-03-02"
 updated: "2026-03-07"
-relationships: []
+relationships:
+  - type: informs
+    target: PD-33e315cc
+    rationale: "Design token research informed frontend library selections for theming"
 ---
 **Date:** 2026-03-02 | **Status:** Complete
 

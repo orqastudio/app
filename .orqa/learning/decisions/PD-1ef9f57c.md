@@ -6,7 +6,10 @@ status: active
 created: 2026-03-25T00:00:00.000Z
 updated: 2026-03-25T00:00:00.000Z
 description: "Resolutions for the 10 open questions raised in RES-d6e8ab11 (Agent Team Design v2). Covers workflow inheritance, guard language, cross-plugin coupling, versioning, summary generation, latency, budgets, daemon boundary, migration strategy, and backwards compatibility."
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-2867fe9a
+    rationale: "Team design v2 open question resolutions drove the dev environment migration epic"
 ---
 
 ## Decision

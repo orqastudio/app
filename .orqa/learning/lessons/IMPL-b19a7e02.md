@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "observation"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-a60f5b6b
+    rationale: "Enforcement epics must close the loop — directly cautions the principle enforcement foundations epic"
 ---
 
 ## Pattern

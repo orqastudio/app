@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-347a8c3d
+    rationale: "UI save destructively overwrites project.json — cautions Rust artifact platform engine data safety"
 ---
 
 ## Pattern

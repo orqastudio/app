@@ -9,7 +9,10 @@ created: "2026-03-07"
 updated: "2026-03-28"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-5b353057
+    rationale: "Governance divergence between .claude/ and .orqa/ — cautions connector as thin adapter"
 ---
 
 ## What Happened

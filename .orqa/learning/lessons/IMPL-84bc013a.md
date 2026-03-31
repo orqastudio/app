@@ -8,7 +8,10 @@ created: "2026-03-13"
 updated: "2026-03-13"
 maturity: "understanding"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-bbac7876
+    rationale: "Epic body drifts from actual work — cautions delivery pipeline consistency"
 ---
 
 ## Pattern

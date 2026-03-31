@@ -8,7 +8,10 @@ created: 2026-03-21T00:00:00.000Z
 updated: 2026-03-21T00:00:00.000Z
 maturity: "correction"
 recurrence: 1
-relationships: []
+relationships:
+  - type: cautions
+    target: EPIC-281f7857
+    rationale: "Orchestrator offering to stop violates continuous operation — cautions agent lifecycle"
 ---
 
 ## Pattern

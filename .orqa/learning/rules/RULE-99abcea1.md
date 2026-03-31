@@ -15,7 +15,10 @@ tier: always
 roles: [orchestrator]
 priority: P0
 tags: [agent-teams, delegation, orchestration]
-relationships: []
+relationships:
+  - type: enforces
+    target: PD-48b310f9
+    rationale: "Agent teams rule enforces the Universal Roles decision by requiring delegation to role-specific subagents"
 ---
 
 The orchestrator MUST use Claude Code's Agent tool to spawn subagents for all implementation, review, research, and documentation writing work. The Agent tool creates isolated subagent contexts with their own tool access and context windows, keeping the orchestrator's context clean for coordination.

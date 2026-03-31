@@ -6,7 +6,10 @@ status: active
 description: "All plugin functionality is expressed through a universal capability vocabulary declared in the manifest. No bespoke wiring code in individual plugins."
 created: 2026-03-23T00:00:00.000Z
 updated: 2026-03-23T00:00:00.000Z
-relationships: []
+relationships:
+  - type: drives
+    target: EPIC-dcc0bac6
+    rationale: "Universal plugin capability model decision drove the plugin infrastructure and delivery plugin extraction epic"
 ---
 
 ## Decision
