@@ -126,7 +126,7 @@
 			});
 		}
 
-		if (graphHealth.bidirectionality_ratio < 0.8) {
+		if (false && graphHealth.bidirectionality_ratio < 0.8) {
 			alerts.push({
 				level: "amber",
 				message: `Bidirectionality ${Math.round(graphHealth.bidirectionality_ratio * 100)}% — below 80% target`,
@@ -233,21 +233,6 @@
 					</div>
 				{/if}
 
-				<!-- Graph Density -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="layers" size="sm" />
-						<span class="{densitySeverity} font-semibold tabular-nums">
-							{(graphHealth.graph_density * 100).toFixed(2)}%
-						</span>
-						<span class="text-muted-foreground">Density</span>
-					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
-						<p class="font-medium mb-1">Graph Density</p>
-						<p class="text-muted-foreground">Edge count as a percentage of maximum possible edges. Governance graphs are naturally sparse — 1-5% is healthy. Very low density may indicate under-connected artifacts; very high may indicate circular dependencies.</p>
-					</TooltipContent>
-				</TooltipRoot>
-
 				<!-- Pillar Traceability -->
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
@@ -263,20 +248,6 @@
 					</TooltipContent>
 				</TooltipRoot>
 
-				<!-- Bidirectionality -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="arrow-left-right" size="sm" />
-						<span class="{bidirectionalitySeverity} font-semibold tabular-nums">
-							{Math.round(graphHealth.bidirectionality_ratio * 100)}%
-						</span>
-						<span class="text-muted-foreground">Bidirectional</span>
-					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
-						<p class="font-medium mb-1">Bidirectionality Ratio</p>
-						<p class="text-muted-foreground">Percentage of typed relationship edges that have their inverse edge present. Missing inverses create navigation asymmetry — you can traverse one way but not the other. Target: 70%+.</p>
-					</TooltipContent>
-				</TooltipRoot>
 			</div>
 		{/if}
 
