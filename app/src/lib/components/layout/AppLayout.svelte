@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from "svelte";
+	import { onMount, onDestroy, getContext } from "svelte";
 	import { listen } from "@tauri-apps/api/event";
 	import type { UnlistenFn } from "@tauri-apps/api/event";
 	import ActivityBar from "./ActivityBar.svelte";
@@ -22,6 +22,9 @@
 	import setupBackground from "$lib/assets/setup-background.png";
 
 	const { errorStore, navigationStore, settingsStore, artifactStore, projectStore, setupStore, enforcementStore, artifactGraphSDK } = getStores();
+
+	/** Promise that resolves once all plugins are registered (schemas available). */
+	const pluginsReady = getContext<Promise<void>>("pluginsReady");
 
 	/** Unlisten function for the artifact-changed event, cleaned up on destroy. */
 	let unlistenArtifactChanged: UnlistenFn | null = null;
@@ -90,12 +93,15 @@
 	});
 
 	// Initialize the artifact graph SDK when a project becomes active.
-	// The SDK starts the file watcher, builds the graph, and listens for
-	// "artifact-graph-updated" events for auto-refresh.
+	// Wait for plugins to be registered first so all schema type keys are
+	// available — otherwise _fetchAll runs with zero types and the graph
+	// appears empty until the schema-count $effect fires a re-fetch.
 	$effect(() => {
 		const project = projectStore.activeProject;
 		if (!project || needsSetup) return;
-		void artifactGraphSDK.initialize({ projectPath: project.path });
+		void pluginsReady.then(() =>
+			artifactGraphSDK.initialize({ projectPath: project.path }),
+		);
 	});
 
 	// Load enforcement rules and violation history when the rules activity is active
