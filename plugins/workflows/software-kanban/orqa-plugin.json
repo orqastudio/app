@@ -246,6 +246,11 @@
             "color": "#94a3b8"
           },
           {
+            "key": "exploring",
+            "label": "Exploring",
+            "color": "#8b5cf6"
+          },
+          {
             "key": "active",
             "label": "Active",
             "color": "#f59e0b"

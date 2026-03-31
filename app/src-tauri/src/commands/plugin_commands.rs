@@ -110,11 +110,20 @@ pub async fn plugin_check_updates(
 ///
 /// Plugin directory names don't always match the package name — e.g.
 /// `@orqastudio/plugin-claude` lives in `plugins/claude/`, not `plugins/plugin-claude/`.
+/// Read just the `name` field from an `orqa-plugin.json` manifest.
+/// Uses raw JSON parsing to avoid full struct deserialization failures
+/// from mismatched fields (agent definitions, etc.).
+fn read_manifest_name(dir: &std::path::Path) -> Option<String> {
+    let path = dir.join("orqa-plugin.json");
+    let content = std::fs::read_to_string(&path).ok()?;
+    let json: serde_json::Value = serde_json::from_str(&content).ok()?;
+    json.get("name")?.as_str().map(str::to_owned)
+}
+
 fn find_plugin_dir(
     project_root: &std::path::Path,
     name: &str,
 ) -> Result<std::path::PathBuf, OrqaError> {
-    // Also check the connectors/ directory (connectors are one level deep).
     for base in ["plugins", "connectors"] {
         let base_dir = project_root.join(base);
         if !base_dir.is_dir() {
@@ -128,10 +137,8 @@ fn find_plugin_dir(
                     continue;
                 }
                 // Try direct child (connectors/<name>/orqa-plugin.json)
-                if let Ok(manifest) = crate::plugins::manifest::read_manifest(&path) {
-                    if manifest.name == name {
-                        return Ok(path);
-                    }
+                if read_manifest_name(&path).as_deref() == Some(name) {
+                    return Ok(path);
                 }
                 // Try taxonomy subdirectories (plugins/<taxonomy>/<name>/orqa-plugin.json)
                 if let Ok(sub_entries) = std::fs::read_dir(&path) {
@@ -140,10 +147,8 @@ fn find_plugin_dir(
                         if !sub_path.is_dir() {
                             continue;
                         }
-                        if let Ok(manifest) = crate::plugins::manifest::read_manifest(&sub_path) {
-                            if manifest.name == name {
-                                return Ok(sub_path);
-                            }
+                        if read_manifest_name(&sub_path).as_deref() == Some(name) {
+                            return Ok(sub_path);
                         }
                     }
                 }
