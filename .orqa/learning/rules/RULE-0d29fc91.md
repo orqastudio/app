@@ -9,7 +9,7 @@ created: "2026-03-07"
 updated: "2026-03-07"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Prefer semantic search over Grep/Glob for any search spanning more than one file or directory; load the correct search knowledge for your context"
 relationships:

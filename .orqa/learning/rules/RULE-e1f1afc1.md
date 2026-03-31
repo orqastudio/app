@@ -9,11 +9,11 @@ created: "2026-03-11"
 updated: "2026-03-28"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "When agents touch specific code areas, relevant domain knowledge must be auto-injected; knowledge injection mappings must be kept up to date"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file
@@ -21,7 +21,7 @@ enforcement:
     pattern: "app/src-tauri/src/domain/**"
     knowledge: "orqa-domain-services, orqa-error-composition"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file
@@ -29,7 +29,7 @@ enforcement:
     pattern: "app/src-tauri/src/commands/**"
     knowledge: "orqa-ipc-patterns, orqa-error-composition"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file
@@ -37,7 +37,7 @@ enforcement:
     pattern: "app/src-tauri/src/repo/**"
     knowledge: "orqa-repository-pattern"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file
@@ -45,7 +45,7 @@ enforcement:
     pattern: "app/src/lib/components/**"
     knowledge: "component-extraction, svelte5-best-practices"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file

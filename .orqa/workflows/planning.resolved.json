@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T10:47:00.847Z",
+  "generatedAt": "2026-03-31T11:59:53.089Z",
   "description": "Resolved plan stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-planning into the planning-methodology slot of agile-methodology.",
   "stage": "plan",
   "source_plugin": "@orqastudio/plugin-agile-planning",
@@ -286,8 +286,8 @@
       "additional_properties": true
     },
     "wireframe": {
-      "id_prefix": "WF",
-      "id_pattern": "^WF-[a-f0-9]{8}$",
+      "id_prefix": "WIRE",
+      "id_pattern": "^WIRE-[a-f0-9]{8}$",
       "default_path": ".orqa/planning/wireframes/",
       "icon": "layout",
       "source_plugin": "@orqastudio/plugin-agile-planning",
@@ -295,7 +295,7 @@
         "required": {
           "id": {
             "type": "string",
-            "pattern": "^WF-[a-f0-9]{8}$"
+            "pattern": "^WIRE-[a-f0-9]{8}$"
           }
         },
         "optional": {
@@ -350,10 +350,12 @@
       "forward": "references",
       "inverse": "referenced-by",
       "from": [
-        "planning-decision"
+        "planning-decision",
+        "doc"
       ],
       "to": [
-        "discovery-research"
+        "discovery-research",
+        "doc"
       ],
       "semantic": "knowledge-flow"
     },

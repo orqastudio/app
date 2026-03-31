@@ -11,6 +11,9 @@ tags:
   - cli
   - rust
   - language-boundary
+relationships:
+  - type: benefits
+    target: PERSONA-477971bf
 ---
 
 ## Violation

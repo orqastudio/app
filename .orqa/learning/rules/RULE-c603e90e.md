@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-14
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Review agents must include a Lessons Logged section in output; orchestrator audits compliance during governance reviews"
 
-  - engine: hook
+  - mechanism: hook
 
     type: SessionStart
     action: surface

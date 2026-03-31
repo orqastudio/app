@@ -791,6 +791,36 @@
         "key": "onnx",
         "description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)",
         "strength": 4
+      },
+      {
+        "key": "pre-commit",
+        "description": "Git pre-commit hook check — runs before each commit to block non-compliant changes",
+        "strength": 7
+      },
+      {
+        "key": "lint",
+        "description": "Static analysis linter check (eslint, rustfmt, clippy, etc.)",
+        "strength": 6
+      },
+      {
+        "key": "svelte-check",
+        "description": "Svelte type checking and diagnostics via svelte-check",
+        "strength": 7
+      },
+      {
+        "key": "cargo-test",
+        "description": "Rust test suite via cargo test",
+        "strength": 7
+      },
+      {
+        "key": "vitest",
+        "description": "TypeScript/JavaScript test suite via vitest",
+        "strength": 7
+      },
+      {
+        "key": "tsc",
+        "description": "TypeScript type checking via tsc",
+        "strength": 7
       }
     ],
     "relationships": [],

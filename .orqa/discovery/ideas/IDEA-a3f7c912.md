@@ -4,6 +4,9 @@ type: discovery-idea
 status: captured
 title: Single schema source generating both TS and Rust types
 created: 2026-03-28T16:30:00.000Z
+relationships:
+  - type: benefits
+    target: PERSONA-477971bf
 ---
 
 # libs/schema/ as Single Source of Truth for Type Generation

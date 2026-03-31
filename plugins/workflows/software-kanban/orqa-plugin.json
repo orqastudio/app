@@ -503,7 +503,8 @@
         ],
         "to": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "description": "Work directly implements a decision — traces delivery back to governance",
         "semantic": "delivery"

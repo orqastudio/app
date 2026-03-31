@@ -10,6 +10,9 @@ tags:
   - cli
   - commands
   - naming
+relationships:
+  - type: benefits
+    target: PERSONA-477971bf
 ---
 
 ## Problem

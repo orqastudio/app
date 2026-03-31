@@ -9,7 +9,7 @@ created: 2026-03-07
 updated: 2026-03-07
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "No implementation work may begin until the artifact structure (epic and tasks) exists; agents must refuse to start unstructured requests"
 relationships:

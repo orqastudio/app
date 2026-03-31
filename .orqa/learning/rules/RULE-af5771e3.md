@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-12
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "No hardcoded fake data, TODO functions, or scaffolded implementations in production code; all implementations must be real"
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: file

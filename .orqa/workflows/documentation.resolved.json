@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T10:47:00.847Z",
+  "generatedAt": "2026-03-31T11:59:53.089Z",
   "description": "Resolved document stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-documentation into the documentation-standards slot of agile-methodology.",
   "stage": "document",
   "source_plugin": "@orqastudio/plugin-agile-documentation",

@@ -5,8 +5,10 @@ status: captured
 title: Move agent generation into app core framework
 created: 2026-03-28T14:00:00.000Z
 relationships:
-  - type: delivers
+  - type: realises
     target: EPIC-2451d1a9
+  - type: benefits
+    target: PERSONA-c4afd86b
 ---
 
 # Move Agent Generation into App Core Framework

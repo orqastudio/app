@@ -9,7 +9,7 @@ created: 2026-03-11
 updated: 2026-03-11
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Each universal role has a defined set of permitted tools; using tools outside a role's scope violates ownership boundaries; Reviewer and Researcher cannot use Edit/Write tools"
 relationships:

@@ -1,10 +1,13 @@
 ---
 id: IDEA-b4f72e91
-type: idea
+type: discovery-idea
 title: Database layer for generated queryable artifacts
 description: Replace JSON files with a queryable database (DuckDB, SQLite, or Mongo) for generated artifacts like prompt-registry.json, resolved workflows, and composed schemas
 status: captured
 created: 2026-03-29
+relationships:
+  - type: benefits
+    target: PERSONA-477971bf
 ---
 
 ## Context

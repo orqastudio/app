@@ -9,11 +9,11 @@ created: 2026-03-07
 updated: 2026-03-24
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Every feature must include all required layers in the same commit — no partial implementations across boundaries"
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Code reviewer verifies all layers exist for each new feature endpoint"
 summary: "Every feature crossing the IPC boundary must include all four layers in the same commit: backend command, IPC type (Rust + TypeScript), frontend store, UI component. Types must match across boundaries. Error handling end-to-end. General principle: no partial implementations across any service boundary."

@@ -11,6 +11,9 @@ tags:
   - plugins
   - governance
   - automation
+relationships:
+  - type: benefits
+    target: PERSONA-c4afd86b
 ---
 
 ## Context

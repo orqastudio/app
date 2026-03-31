@@ -9,11 +9,11 @@ created: "2026-03-07"
 updated: "2026-03-25"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Use 'orqa debug' to start the dev environment, not raw 'cargo tauri dev' or 'npm run dev'. Raw cargo test/clippy/fmt/build and npx commands are allowed for quality checks."
 
-  - engine: hook
+  - mechanism: hook
 
     type: PreToolUse
     event: bash

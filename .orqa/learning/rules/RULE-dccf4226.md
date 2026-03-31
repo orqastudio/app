@@ -9,7 +9,7 @@ created: 2026-03-07
 updated: 2026-03-12
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Every implementation plan must have an Architectural Compliance section and Systems Architecture Checklist before implementation begins; plans missing these sections are rejected"
 relationships:

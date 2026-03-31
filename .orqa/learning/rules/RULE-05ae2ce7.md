@@ -9,7 +9,7 @@ created: "2026-03-22"
 updated: "2026-03-22"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Orchestrator reads architecture decisions before delegating; every significant technical choice must be recorded as a decision artifact; plans must include an Architectural Compliance section"
 ---

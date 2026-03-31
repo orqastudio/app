@@ -9,30 +9,30 @@ created: 2026-03-07
 updated: 2026-03-13
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Follow Rust (rustfmt, clippy, thiserror) and TypeScript/Svelte 5 (strict TS, runes, shadcn-svelte) coding standards; 80%+ test coverage required"
 
-  - engine: pre-commit
+  - mechanism: pre-commit
 
     check: "make check"
 
-  - engine: lint
+  - mechanism: lint
 
     linter: rustfmt
 
-  - engine: lint
+  - mechanism: lint
 
     linter: clippy
 
-  - engine: lint
+  - mechanism: lint
 
     linter: eslint
 
-  - engine: svelte-check
-  - engine: cargo-test
-  - engine: vitest
-  - engine: tsc
+  - mechanism: svelte-check
+  - mechanism: cargo-test
+  - mechanism: vitest
+  - mechanism: tsc
 
 summary: "Rust: rustfmt, clippy pedantic, thiserror, no unwrap/panic. TypeScript/Svelte 5: strict TS, runes only ($state/$derived/$effect/$props), shadcn-svelte components, no emoji in UI. Both: 80%+ test coverage, no TODOs, no commented-out code. Enforced via make check pre-commit hook. Lint rules must align with documented standards."
 tier: stage-triggered

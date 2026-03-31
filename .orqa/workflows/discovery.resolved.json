@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-30T10:47:00.846Z",
+  "generatedAt": "2026-03-31T11:59:53.088Z",
   "description": "Resolved discover stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-discovery into the discovery-artifacts slot of agile-methodology.",
   "stage": "discover",
   "source_plugin": "@orqastudio/plugin-agile-discovery",
@@ -121,7 +121,7 @@
     "vision": {
       "id_prefix": "VISION",
       "id_pattern": "^VISION-[a-f0-9]{8}$",
-      "default_path": ".orqa/discovery/",
+      "default_path": ".orqa/discovery/vision/",
       "icon": "eye",
       "source_plugin": "@orqastudio/plugin-agile-discovery",
       "fields": {
@@ -271,7 +271,7 @@
     "pivot": {
       "id_prefix": "PIVOT",
       "id_pattern": "^PIVOT-[a-f0-9]{8}$",
-      "default_path": ".orqa/discovery/",
+      "default_path": ".orqa/discovery/pivots/",
       "icon": "refresh-cw",
       "source_plugin": "@orqastudio/plugin-agile-discovery",
       "fields": {

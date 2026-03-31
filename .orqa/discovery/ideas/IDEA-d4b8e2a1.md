@@ -11,6 +11,9 @@ tags:
   - email
   - communication
   - stakeholder
+relationships:
+  - type: benefits
+    target: PERSONA-c4afd86b
 ---
 
 ## Reference

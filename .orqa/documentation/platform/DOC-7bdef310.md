@@ -31,26 +31,26 @@ Every delegation includes three things: the role, the required skills, and the g
 
 | Work Type | Agent Role | Required Skills | Grounding Doc |
 | ----------- | ----------- | ---------------- | --------------- |
-| Rust backend code (`app/src-tauri/`) | Implementer | `backend-best-practices`, `tauri-v2`, `orqa-domain-services`, `orqa-error-composition` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Svelte frontend code (`ui/`) | Implementer | `frontend-best-practices`, `svelte5-best-practices`, `orqa-store-patterns` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Sidecar/streaming code (`sidecar/`) | Implementer | `orqa-streaming`, `backend-best-practices` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Database/repository code | Implementer | `orqa-repository-pattern`, `orqa-error-composition` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| IPC commands and types | Implementer | `orqa-ipc-patterns`, `tauri-v2` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Plugin hooks and scripts | Implementer | `orqa-governance` (for context), `backend-best-practices` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Refactoring | Implementer | `restructuring-methodology`, `diagnostic-methodology` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Debugging | Implementer | `diagnostic-methodology` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Test writing | Implementer | `test-engineering`, `orqa-testing` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Architecture assessment | Planner | `architecture`, `architectural-evaluation` | product-purpose ([DOC-a0490c49](DOC-a0490c49)) |
-| Implementation planning | Planner | `planning`, `architecture` | product-purpose ([DOC-a0490c49](DOC-a0490c49)) |
-| Code review | Reviewer | `code-quality-review`, `test-engineering` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| QA verification | Reviewer | `qa-verification` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| UX compliance review | Reviewer | `ux-compliance-review` | design-principles ([DOC-40b1498a](DOC-40b1498a)) |
-| Security assessment | Reviewer | `security-audit` | code-principles ([DOC-ebf19a16](DOC-ebf19a16)) |
-| Documentation content | Writer | `orqa-documentation` | artifact-principles ([DOC-0ea4c263](DOC-0ea4c263)) |
-| Investigation and research | Researcher | `research-methodology` | research-principles ([DOC-bdb520ae](DOC-bdb520ae)) |
-| UI/UX design | Designer | `component-extraction`, `svelte5-best-practices`, `tailwind-design-system` | design-principles ([DOC-40b1498a](DOC-40b1498a)) |
-| Governance artifacts (`.orqa/`) | Governance Steward | `orqa-governance`, `orqa-schema-compliance`, `orqa-documentation` | artifact-principles ([DOC-0ea4c263](DOC-0ea4c263)) |
-| Coordination only | Orchestrator | — | product-purpose ([DOC-a0490c49](DOC-a0490c49)) |
+| Rust backend code (`app/src-tauri/`) | Implementer | `backend-best-practices`, `tauri-v2`, `orqa-domain-services`, `orqa-error-composition` | code-principles |
+| Svelte frontend code (`ui/`) | Implementer | `frontend-best-practices`, `svelte5-best-practices`, `orqa-store-patterns` | code-principles |
+| Sidecar/streaming code (`sidecar/`) | Implementer | `orqa-streaming`, `backend-best-practices` | code-principles |
+| Database/repository code | Implementer | `orqa-repository-pattern`, `orqa-error-composition` | code-principles |
+| IPC commands and types | Implementer | `orqa-ipc-patterns`, `tauri-v2` | code-principles |
+| Plugin hooks and scripts | Implementer | `orqa-governance` (for context), `backend-best-practices` | code-principles |
+| Refactoring | Implementer | `restructuring-methodology`, `diagnostic-methodology` | code-principles |
+| Debugging | Implementer | `diagnostic-methodology` | code-principles |
+| Test writing | Implementer | `test-engineering`, `orqa-testing` | code-principles |
+| Architecture assessment | Planner | `architecture`, `architectural-evaluation` | product-purpose |
+| Implementation planning | Planner | `planning`, `architecture` | product-purpose |
+| Code review | Reviewer | `code-quality-review`, `test-engineering` | code-principles |
+| QA verification | Reviewer | `qa-verification` | code-principles |
+| UX compliance review | Reviewer | `ux-compliance-review` | design-principles |
+| Security assessment | Reviewer | `security-audit` | code-principles |
+| Documentation content | Writer | `orqa-documentation` | artifact-principles |
+| Investigation and research | Researcher | `research-methodology` | research-principles |
+| UI/UX design | Designer | `component-extraction`, `svelte5-best-practices`, `tailwind-design-system` | design-principles |
+| Governance artifacts (`.orqa/`) | Governance Steward | `orqa-governance`, `orqa-schema-compliance`, `orqa-documentation` | artifact-principles |
+| Coordination only | Orchestrator | — | product-purpose |
 
 ## Failure Signals
 

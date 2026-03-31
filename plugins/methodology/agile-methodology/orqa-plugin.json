@@ -90,7 +90,8 @@
         ],
         "to": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "description": "Idea crystallises into an architecture decision",
         "semantic": "lineage"
@@ -118,7 +119,8 @@
         "inverseLabel": "Driven By",
         "from": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "to": [
           "epic"
@@ -133,7 +135,8 @@
         "inverseLabel": "Governed By",
         "from": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "to": [
           "rule"
@@ -151,7 +154,8 @@
         ],
         "to": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "description": "Rule enforces a decision",
         "semantic": "governance",
@@ -187,7 +191,8 @@
           "decision",
           "discovery-decision",
           "research",
-          "discovery-research"
+          "discovery-research",
+          "principle-decision"
         ],
         "description": "Research findings inform a decision or another research thread",
         "semantic": "knowledge-flow"
@@ -202,7 +207,8 @@
         ],
         "to": [
           "decision",
-          "discovery-decision"
+          "discovery-decision",
+          "principle-decision"
         ],
         "description": "Lesson teaches a future decision",
         "semantic": "knowledge-flow"
@@ -286,7 +292,8 @@
           "decision",
           "discovery-decision",
           "rule",
-          "milestone"
+          "milestone",
+          "principle-decision"
         ],
         "description": "Document describes an artifact for human reference",
         "semantic": "knowledge-flow"

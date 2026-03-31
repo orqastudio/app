@@ -9,7 +9,7 @@ created: 2026-03-21
 updated: 2026-03-21
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Any discovered enforcement gap is immediately CRITICAL priority; it is never deferred, scoped out, or addressed in a future epic"
 relationships: []

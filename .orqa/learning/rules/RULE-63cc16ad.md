@@ -9,16 +9,16 @@ created: 2026-03-07
 updated: 2026-03-13
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Every path in project.json artifacts must resolve to an actual directory on disk; config-driven scanning with no hardcoded paths"
 
-  - engine: tool
+  - mechanism: tool
 
     command: "orqa enforce"
     description: "Artifact scanner validates all paths in project.json resolve to existing directories"
 
-  - engine: pre-commit
+  - mechanism: pre-commit
 
     check: "orqa enforce"
     description: "Pre-commit hook runs orqa enforce on staged .orqa files"

@@ -9,7 +9,7 @@ created: "2026-03-21"
 updated: "2026-03-21"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "All pre-release versions must use a -dev suffix; bare X.Y.Z version strings are reserved for production releases only"
 relationships: []

@@ -9,7 +9,7 @@ created: 2026-03-21
 updated: 2026-03-21
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Agents keep working until the task is done or a genuine blocker is encountered; never ask for permission to continue or propose stopping between steps"
 relationships:

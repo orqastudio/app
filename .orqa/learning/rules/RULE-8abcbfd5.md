@@ -9,11 +9,11 @@ created: 2026-03-11
 updated: 2026-03-13
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "Agent definitions must declare capabilities not tool names; orchestrator resolves capabilities to concrete tool names per provider mapping at delegation time"
 
-  - engine: json-schema
+  - mechanism: json-schema
 
     description: "Governance steward verifies agent YAML uses capabilities field not tool names"
 relationships:

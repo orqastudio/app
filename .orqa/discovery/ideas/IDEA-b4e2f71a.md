@@ -4,6 +4,9 @@ type: discovery-idea
 status: captured
 title: Product management utility plugins inspired by VizTools
 created: 2026-03-28T17:30:00.000Z
+relationships:
+  - type: benefits
+    target: PERSONA-c4afd86b
 ---
 
 # Product Management Utility Plugins

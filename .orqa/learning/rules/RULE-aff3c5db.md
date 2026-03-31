@@ -9,11 +9,11 @@ created: "2026-03-24"
 updated: "2026-03-28"
 enforcement:
 
-  - engine: behavioral
+  - mechanism: behavioral
 
     message: "After committing Rust source changes, stop the daemon, rebuild affected binaries, and restart. Stale binaries waste tokens by serving outdated validation, graph data, and diagnostics."
 
-  - engine: hook
+  - mechanism: hook
 
     type: PostToolUse
     event: bash

@@ -188,7 +188,7 @@
         "plural": "Wireframes",
         "icon": "layout",
         "defaultPath": ".orqa/planning/wireframes",
-        "idPrefix": "WF",
+        "idPrefix": "WIRE",
         "semantic": "planning",
         "reviewAction": "Review wireframe",
         "frontmatter": {
@@ -200,7 +200,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^WF-[a-f0-9]{8}$"
+              "pattern": "^WIRE-[a-f0-9]{8}$"
             },
             "title": {
               "type": "string"
@@ -272,12 +272,14 @@
         "label": "References",
         "inverseLabel": "Referenced By",
         "from": [
-          "planning-decision"
+          "planning-decision",
+          "doc"
         ],
         "to": [
-          "discovery-research"
+          "discovery-research",
+          "doc"
         ],
-        "description": "Planning decision references discovery research for context (cross-stage join)",
+        "description": "Planning decision or doc references discovery research or another doc for context",
         "semantic": "knowledge-flow"
       },
       {
