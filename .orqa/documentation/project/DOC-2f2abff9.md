@@ -9,7 +9,10 @@ description: "Infrastructure for serving and rendering wireframe assets within t
 created: "2026-03-02"
 updated: "2026-03-04"
 sort: 17
-relationships: []
+relationships:
+  - type: documents
+    target: PD-80f39962
+    rationale: "Wireframe serving infrastructure documents the core UI boundary decision"
 ---
 **Date:** 2026-03-02
 **References:** [Wireframing Research](RES-d067c8c2) (Q1 verdict: PlantUML Salt), SQLite Schema, Design System

@@ -9,7 +9,10 @@ description: "Design system tokens, spacing scale, color themes, and component s
 created: 2026-03-02
 updated: 2026-03-04
 sort: 5
-relationships: []
+relationships:
+  - type: documents
+    target: PD-33e315cc
+    rationale: "Design system documents the frontend library selections decision"
 ---
 
 **Date:** 2026-03-02

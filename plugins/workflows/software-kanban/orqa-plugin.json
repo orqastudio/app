@@ -353,7 +353,8 @@
         "inverseLabel": "Realised By",
         "from": [
           "idea",
-          "discovery-idea"
+          "discovery-idea",
+          "planning-idea"
         ],
         "to": [
           "epic",

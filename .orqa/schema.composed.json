@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-31T14:18:01.987Z",
+  "generatedAt": "2026-03-31T16:47:16.563Z",
   "description": "Composed schema generated from all installed plugins. Artifact types, relationship types, and validation constraints sourced from plugin manifests.",
   "artifactTypes": {
     "vision": {
@@ -510,7 +510,7 @@
         "required": {
           "id": {
             "type": "string",
-            "pattern": "^PLAN-IDEA-[a-f0-9]{8}$"
+            "pattern": "^(IDEA|PLAN-IDEA)-[a-f0-9]{8}$"
           }
         },
         "optional": {
@@ -579,7 +579,7 @@
         "required": {
           "id": {
             "type": "string",
-            "pattern": "^PLAN-RES-[a-f0-9]{8}$"
+            "pattern": "^(RES|PLAN-RES)-[a-f0-9]{8}$"
           }
         },
         "optional": {
@@ -1640,6 +1640,7 @@
       "from": [
         "idea",
         "discovery-idea",
+        "planning-idea",
         "epic"
       ],
       "to": [
@@ -1655,7 +1656,8 @@
       "inverseLabel": "Benefited By",
       "from": [
         "idea",
-        "discovery-idea"
+        "discovery-idea",
+        "planning-idea"
       ],
       "to": [
         "persona"
@@ -1670,11 +1672,13 @@
       "inverseLabel": "Crystallised By",
       "from": [
         "idea",
-        "discovery-idea"
+        "discovery-idea",
+        "planning-idea"
       ],
       "to": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "principle-decision"
       ],
       "description": "Idea crystallises into an architecture decision",
@@ -1687,11 +1691,13 @@
       "inverseLabel": "Spawned By",
       "from": [
         "idea",
-        "discovery-idea"
+        "discovery-idea",
+        "planning-idea"
       ],
       "to": [
         "research",
-        "discovery-research"
+        "discovery-research",
+        "planning-research"
       ],
       "description": "Idea spawns an investigation",
       "semantic": "lineage"
@@ -1704,6 +1710,7 @@
       "from": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "principle-decision"
       ],
       "to": [
@@ -1720,6 +1727,7 @@
       "from": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "principle-decision"
       ],
       "to": [
@@ -1739,6 +1747,7 @@
       "to": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "principle-decision"
       ],
       "description": "Rule enforces a decision",
@@ -1766,13 +1775,16 @@
       "from": [
         "research",
         "discovery-research",
+        "planning-research",
         "wireframe"
       ],
       "to": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "research",
         "discovery-research",
+        "planning-research",
         "principle-decision",
         "epic"
       ],
@@ -1790,6 +1802,7 @@
       "to": [
         "decision",
         "discovery-decision",
+        "planning-decision",
         "principle-decision"
       ],
       "description": "Lesson teaches a future decision",
@@ -1802,7 +1815,8 @@
       "inverseLabel": "Guided By",
       "from": [
         "research",
-        "discovery-research"
+        "discovery-research",
+        "planning-research"
       ],
       "to": [
         "epic"
@@ -1865,6 +1879,7 @@
         "epic",
         "decision",
         "discovery-decision",
+        "planning-decision",
         "rule",
         "milestone",
         "principle-decision"
@@ -1896,14 +1911,18 @@
       "from": [
         "idea",
         "discovery-idea",
+        "planning-idea",
         "research",
-        "discovery-research"
+        "discovery-research",
+        "planning-research"
       ],
       "to": [
         "idea",
         "discovery-idea",
+        "planning-idea",
         "research",
-        "discovery-research"
+        "discovery-research",
+        "planning-research"
       ],
       "description": "Artifacts consolidated — multiple ideas or research threads become one",
       "semantic": "lineage"
@@ -2031,7 +2050,8 @@
       "inverseLabel": "Realised By",
       "from": [
         "idea",
-        "discovery-idea"
+        "discovery-idea",
+        "planning-idea"
       ],
       "to": [
         "epic",

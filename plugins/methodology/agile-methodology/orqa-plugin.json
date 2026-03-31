@@ -52,6 +52,7 @@
         "from": [
           "idea",
           "discovery-idea",
+          "planning-idea",
           "epic"
         ],
         "to": [
@@ -67,7 +68,8 @@
         "inverseLabel": "Benefited By",
         "from": [
           "idea",
-          "discovery-idea"
+          "discovery-idea",
+          "planning-idea"
         ],
         "to": [
           "persona"
@@ -86,11 +88,13 @@
         "inverseLabel": "Crystallised By",
         "from": [
           "idea",
-          "discovery-idea"
+          "discovery-idea",
+          "planning-idea"
         ],
         "to": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "principle-decision"
         ],
         "description": "Idea crystallises into an architecture decision",
@@ -103,11 +107,13 @@
         "inverseLabel": "Spawned By",
         "from": [
           "idea",
-          "discovery-idea"
+          "discovery-idea",
+          "planning-idea"
         ],
         "to": [
           "research",
-          "discovery-research"
+          "discovery-research",
+          "planning-research"
         ],
         "description": "Idea spawns an investigation",
         "semantic": "lineage"
@@ -120,6 +126,7 @@
         "from": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "principle-decision"
         ],
         "to": [
@@ -136,6 +143,7 @@
         "from": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "principle-decision"
         ],
         "to": [
@@ -155,6 +163,7 @@
         "to": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "principle-decision"
         ],
         "description": "Rule enforces a decision",
@@ -186,13 +195,16 @@
         "from": [
           "research",
           "discovery-research",
+          "planning-research",
           "wireframe"
         ],
         "to": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "research",
           "discovery-research",
+          "planning-research",
           "principle-decision",
           "epic"
         ],
@@ -210,6 +222,7 @@
         "to": [
           "decision",
           "discovery-decision",
+          "planning-decision",
           "principle-decision"
         ],
         "description": "Lesson teaches a future decision",
@@ -222,7 +235,8 @@
         "inverseLabel": "Guided By",
         "from": [
           "research",
-          "discovery-research"
+          "discovery-research",
+          "planning-research"
         ],
         "to": [
           "epic"
@@ -293,6 +307,7 @@
           "epic",
           "decision",
           "discovery-decision",
+          "planning-decision",
           "rule",
           "milestone",
           "principle-decision"
@@ -324,14 +339,18 @@
         "from": [
           "idea",
           "discovery-idea",
+          "planning-idea",
           "research",
-          "discovery-research"
+          "discovery-research",
+          "planning-research"
         ],
         "to": [
           "idea",
           "discovery-idea",
+          "planning-idea",
           "research",
-          "discovery-research"
+          "discovery-research",
+          "planning-research"
         ],
         "description": "Artifacts consolidated — multiple ideas or research threads become one",
         "semantic": "lineage"

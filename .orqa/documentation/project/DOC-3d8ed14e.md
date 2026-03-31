@@ -7,6 +7,10 @@ category: architecture
 description: End-to-end architecture map of OrqaStudio — every system traced from entry point to persistence/display.
 status: active
 sort: 2
+relationships:
+  - type: documents
+    target: PD-7121ec20
+    rationale: "Core application architecture document documents the thick backend architecture decision"
 ---
 
 # Core Application Architecture

@@ -9,7 +9,10 @@ status: active
 created: 2026-03-14
 updated: 2026-03-14
 sort: 1
-relationships: []
+relationships:
+  - type: documents
+    target: PD-9ab3e0a4
+    rationale: "Plugin build guide documents the universal plugin capability model decision"
 ---
 
 ## What a Plugin Is

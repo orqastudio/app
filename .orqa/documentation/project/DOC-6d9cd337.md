@@ -9,7 +9,10 @@ description: "Responsive layout behavior across different window sizes and break
 created: "2026-03-02"
 updated: "2026-03-04"
 sort: 7
-relationships: []
+relationships:
+  - type: documents
+    target: PD-7cb83077
+    rationale: "Responsive behavior documents the three-zone layout decision"
 ---
 **Date:** 2026-03-02 | **Informed by:** Information Architecture, [Frontend Research](RES-80a476c7)
 

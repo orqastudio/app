@@ -31,7 +31,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^PLAN-IDEA-[a-f0-9]{8}$"
+              "pattern": "^(IDEA|PLAN-IDEA)-[a-f0-9]{8}$"
             },
             "title": {
               "type": "string"
@@ -88,7 +88,7 @@
           "properties": {
             "id": {
               "type": "string",
-              "pattern": "^PLAN-RES-[a-f0-9]{8}$"
+              "pattern": "^(RES|PLAN-RES)-[a-f0-9]{8}$"
             },
             "title": {
               "type": "string"

@@ -3,15 +3,18 @@ id: "IMPL-db8027b6"
 type: lesson
 title: "Lessons must flow forward — a review task should exist whenever observations accumulate"
 description: "Observations logged during an epic must not sit idle. A lesson review task should be added to the epic to triage each observation: implement now (if needed to complete the epic), promote to rule/skill, or defer to a future idea. Lessons without a forward path are dead weight in the system."
-status: completed
+status: promoted
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-31"
 maturity: "understanding"
 recurrence: 1
 relationships:
   - type: cautions
     target: EPIC-3e6cad90
     rationale: "Observations sitting idle without forward path cautions knowledge maturity pipeline"
+  - type: promoted-to
+    target: RULE-b10fe6d1
+    rationale: "Observation triage protocol added to artifact lifecycle rule"
 ---
 
 ## Pattern

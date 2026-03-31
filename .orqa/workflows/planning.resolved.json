@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "generated": true,
-  "generatedAt": "2026-03-31T14:18:01.940Z",
+  "generatedAt": "2026-03-31T16:47:16.510Z",
   "description": "Resolved plan stage workflow. Contains states, transitions, and artifact types contributed by @orqastudio/plugin-agile-planning into the planning-methodology slot of agile-methodology.",
   "stage": "plan",
   "source_plugin": "@orqastudio/plugin-agile-planning",
@@ -145,7 +145,7 @@
         "required": {
           "id": {
             "type": "string",
-            "pattern": "^PLAN-IDEA-[a-f0-9]{8}$"
+            "pattern": "^(IDEA|PLAN-IDEA)-[a-f0-9]{8}$"
           }
         },
         "optional": {
@@ -196,7 +196,7 @@
         "required": {
           "id": {
             "type": "string",
-            "pattern": "^PLAN-RES-[a-f0-9]{8}$"
+            "pattern": "^(RES|PLAN-RES)-[a-f0-9]{8}$"
           }
         },
         "optional": {

@@ -7,6 +7,10 @@ status: active
 recurrence: 1
 created: 2026-03-23
 tags: [dogfooding, tauri, architecture, ipc]
+relationships:
+  - type: teaches
+    target: PD-4e7faf0e
+    rationale: "Frontend must route through Tauri invoke — reinforces IPC boundary design decision"
 ---
 
 ## Observation

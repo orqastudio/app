@@ -3,15 +3,18 @@ id: "IMPL-b27c458f"
 type: "lesson"
 title: "Lessons learned should be recorded on task completion artifacts"
 description: "When a task is completed, any observations logged or recurrence incremented during that task should be recorded in the task artifact itself. This makes the learning visible to the user as part of the completion statement, not buried in conversation history."
-status: completed
+status: promoted
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-31"
 maturity: "understanding"
 recurrence: 1
 relationships:
   - type: cautions
     target: EPIC-3e6cad90
     rationale: "Task completion should record lessons learned — cautions knowledge maturity pipeline"
+  - type: promoted-to
+    target: RULE-b10fe6d1
+    rationale: "Task schema now requires Lessons section — promoted to artifact lifecycle rule"
 ---
 
 ## Pattern

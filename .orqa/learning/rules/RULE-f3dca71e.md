@@ -12,7 +12,10 @@ enforcement:
   - mechanism: behavioral
 
     message: "All pre-release versions must use a -dev suffix; bare X.Y.Z version strings are reserved for production releases only"
-relationships: []
+relationships:
+  - type: enforces
+    target: PD-a44384d1
+    rationale: "Version tagging rule enforces CLI as single interface decision — all versioning goes through orqa version commands"
 ---
 
 Version numbers communicate release intent. A bare `X.Y.Z` version string signals production-ready. Any version that is not production-ready MUST carry a `-dev` suffix.

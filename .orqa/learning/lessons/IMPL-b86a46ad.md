@@ -7,6 +7,10 @@ status: active
 recurrence: 1
 created: 2026-03-24
 tags: [memory, lessons, governance, sync-pattern]
+relationships:
+  - type: cautions
+    target: EPIC-3e6cad90
+    rationale: "Write-through pattern identifies a coverage gap in the learning pipeline — governance learnings must hit both memory and lesson pipeline"
 ---
 
 ## Observation

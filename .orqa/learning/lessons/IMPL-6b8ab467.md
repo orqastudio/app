@@ -5,9 +5,12 @@ title: Orchestrator repeatedly uses invalid relationship types in artifact front
 category: governance
 status: promoted
 recurrence: 2
-promoted-to: RULE-pending-relationship-validation
 created: 2026-03-23
 tags: [dogfooding, relationship-types, schema-compliance]
+relationships:
+  - type: promoted-to
+    target: RULE-23699df2
+    rationale: "Lesson about invalid relationship types promoted to artifact schema compliance rule"
 ---
 
 ## Observation

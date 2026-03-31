@@ -137,7 +137,8 @@
     "@orqastudio/plugin-claude": {
       "installed": true,
       "enabled": true,
-      "path": "sidecars\\claude-agent-sdk"
+      "path": "sidecars\\claude-agent-sdk",
+      "version": "0.1.0-dev"
     }
   }
 }

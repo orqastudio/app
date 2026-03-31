@@ -9,7 +9,10 @@ description: Practical guide for writing unit and integration tests for the Orqa
 created: 2026-03-14
 updated: 2026-03-14
 sort: 2
-relationships: []
+relationships:
+  - type: documents
+    target: PD-339e9223
+    rationale: "Rust testing guide documents the standards distribution pattern decision"
 ---
 
 ## Test Organisation

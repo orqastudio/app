@@ -7,6 +7,10 @@ status: active
 recurrence: 1
 created: 2026-03-23
 tags: [dogfooding, learning-loop, enforcement-gap]
+relationships:
+  - type: cautions
+    target: EPIC-3e6cad90
+    rationale: "Identifies self-review bypass gap in learning pipeline — orchestrator skips lesson creation when fixing its own mistakes"
 ---
 
 ## Observation

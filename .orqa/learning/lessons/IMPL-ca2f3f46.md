@@ -3,15 +3,18 @@ id: "IMPL-ca2f3f46"
 type: lesson
 title: "Orchestrator writes governance artifacts directly instead of delegating to Writer"
 description: "The orchestrator is creating IMPL, IDEA, and TASK artifacts itself rather than delegating to a Writer agent. This violates RULE-87ba1b81 in spirit — while governance artifacts are in the orchestrator's exception list, the volume of artifact creation during this session is implementation work that could be parallelised. Delegating artifact writes to a Writer agent would free the orchestrator to continue the design discussion without blocking on file creation."
-status: completed
+status: promoted
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-03-31"
 maturity: "understanding"
 recurrence: 2
 relationships:
   - type: cautions
     target: EPIC-281f7857
     rationale: "Orchestrator writing governance artifacts directly instead of delegating — cautions agent lifecycle"
+  - type: promoted-to
+    target: RULE-99abcea1
+    rationale: "Delegation violation absorbed into Use Agent Teams rule"
 ---
 
 ## Pattern

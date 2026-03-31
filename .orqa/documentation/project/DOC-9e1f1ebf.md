@@ -1,7 +1,7 @@
 ---
 id: DOC-9e1f1ebf
 type: doc
-status: active
+status: archived
 title: Go-To-Market Strategy
 domain: reclassify
 reclassify_as: idea

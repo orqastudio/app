@@ -3,15 +3,18 @@ id: "IMPL-2dc87f24"
 type: "lesson"
 title: "Orchestrator stops to ask permission when not blocked — breaks flow"
 description: "After completing Phase 1 of EPIC-a60f5b6b, the orchestrator asked 'shall I continue?' instead of just continuing. It was not blocked — no dependency gate, no user decision needed, no ambiguity. Asking permission when unblocked wastes the user's time and breaks momentum."
-status: completed
+status: promoted
 created: 2026-03-13T00:00:00.000Z
-updated: 2026-03-14T00:00:00.000Z
+updated: 2026-03-31
 maturity: "observation"
 recurrence: 4
 relationships:
   - type: cautions
     target: EPIC-281f7857
     rationale: "Orchestrator asking permission when unblocked breaks flow — cautions agent lifecycle epic"
+  - type: promoted-to
+    target: RULE-2f64cc63
+    rationale: "Recurrence 4 far exceeds promotion threshold — promoted to continuous operation rule"
 ---
 
 ## Pattern

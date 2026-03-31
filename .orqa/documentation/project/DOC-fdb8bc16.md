@@ -9,7 +9,10 @@ description: Practical guide for writing Vitest tests for Svelte 5 stores and co
 created: 2026-03-14
 updated: 2026-03-14
 sort: 3
-relationships: []
+relationships:
+  - type: documents
+    target: PD-339e9223
+    rationale: "Frontend testing guide documents the standards distribution pattern decision"
 ---
 
 ## Test Framework
