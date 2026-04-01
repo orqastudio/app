@@ -1,8 +1,11 @@
 /**
  * Centralized logger for OrqaStudio.
  *
- * Provides structured logging with levels, source tags, and dev controller
- * forwarding. Use this instead of bare `console.log` throughout the codebase.
+ * Provides structured logging with levels, source tags, and dual forwarding:
+ * - Dev dashboard at localhost:10130/log (for live SSE display)
+ * - Daemon event bus at localhost:10100/events (for persistence)
+ *
+ * Use this instead of bare `console.log` throughout the codebase.
  *
  * Usage:
  *   import { logger } from "@orqastudio/logger";
@@ -10,8 +13,7 @@
  *   log.info("Opened artifact", path);
  *   log.perf("loadContent", () => fetchContent(path));
  *
- * All output is forwarded to the dev dashboard via HTTP POST to localhost:10130/log.
- * If the dashboard isn't running, the fire-and-forget request silently fails.
+ * If either endpoint isn't running, the fire-and-forget request silently fails.
  */
 export type LogLevel = "debug" | "info" | "warn" | "error" | "perf";
 export interface LogEntry {

@@ -53,6 +53,7 @@ pub struct ParseResponse {
 /// Reads the file at the requested path, extracts YAML frontmatter fields
 /// (id, type), scans other .orqa/ files for references to this ID, then
 /// computes should_warn. Returns 400 if the file cannot be read.
+#[allow(clippy::too_many_lines)]
 pub async fn parse_handler(
     State(state): State<HealthState>,
     Json(req): Json<ParseRequest>,

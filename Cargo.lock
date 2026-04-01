@@ -3915,6 +3915,8 @@ dependencies = [
  "notify",
  "notify-debouncer-full 0.7.0",
  "orqa-engine",
+ "orqa-engine-types",
+ "rusqlite",
  "serde",
  "serde_json",
  "tempfile",

@@ -20,7 +20,7 @@ import { logger } from "@orqastudio/sdk";
 // Service class
 // ---------------------------------------------------------------------------
 
-const log = logger("graph-layout");
+const log = logger("graph-layout-worker");
 
 class GraphLayoutService {
     /** Computed node positions from the most recent layout run. */
@@ -58,7 +58,7 @@ class GraphLayoutService {
             } else if (msg.type === "progress") {
                 this.layoutProgress = msg.percent;
             } else if (msg.type === "error") {
-                log.error("worker error", msg.message);
+                log.error(msg.message);
                 this.layoutRunning = false;
                 this.layoutProgress = 0;
             }

@@ -26,6 +26,8 @@
 mod compact_context;
 mod config;
 mod context;
+mod event_bus;
+mod event_store;
 mod health;
 mod knowledge;
 mod logging;
@@ -136,20 +138,46 @@ fn register_shutdown_handler(shutdown_flag: Arc<AtomicBool>, project_root: PathB
 /// flag is set, then stops both subprocesses. Writes subprocess statuses to
 /// `subprocess_statuses` on every polling cycle for the tray thread to read.
 ///
+/// `event_bus` is created in `main()` before logging is initialised so the
+/// `EventBusLayer` can be registered in the tracing subscriber stack.  The same
+/// arc is passed here so all subsystems share a single bus instance.
+///
 /// Called from `main()` on a background thread that owns the tokio runtime.
+#[allow(clippy::too_many_lines)]
 async fn run(
     project_root: PathBuf,
     shutdown_flag: Arc<AtomicBool>,
     subprocess_statuses: Arc<Mutex<SubprocessStatuses>>,
+    event_bus: Arc<event_bus::EventBus>,
 ) {
     let daemon_port = health::resolve_port();
 
     // Load runtime config from orqa.toml. Falls back to defaults when absent.
     let daemon_config = config::DaemonConfig::load(&project_root);
 
-    tokio::spawn(async move {
-        if let Err(e) = health::start(daemon_port, daemon_config).await {
-            error!(subsystem = "health", error = %e, "[health] health server failed");
+    // Open the SQLite event store and spawn the background batch writer.
+    // Degrades gracefully if the database cannot be opened.
+    let event_store = match event_store::EventStore::open(&project_root) {
+        Ok(store) => {
+            event_store::spawn_batch_writer(Arc::clone(&event_bus), Arc::clone(&store));
+            Some(store)
+        }
+        Err(e) => {
+            warn!(
+                subsystem = "event-store",
+                error = %e,
+                "[event-store] could not open events.db — running without persistence"
+            );
+            None
+        }
+    };
+
+    tokio::spawn({
+        let bus = Arc::clone(&event_bus);
+        async move {
+            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store).await {
+                error!(subsystem = "health", error = %e, "[health] health server failed");
+            }
         }
     });
 
@@ -240,10 +268,15 @@ fn main() {
     // where to write the log file.
     let project_root = resolve_project_root();
 
+    // Create the event bus before logging is initialised so that the
+    // `EventBusLayer` can be registered in the subscriber stack.  All tracing
+    // events emitted after `logging::init` will flow through the bus.
+    let event_bus = event_bus::EventBus::new();
+
     // Logging must be initialised before any other subsystem so that all
     // startup events are captured. The guard keeps the background log-writer
     // thread alive for the lifetime of the process.
-    let _log_guard = logging::init(&project_root);
+    let _log_guard = logging::init(&project_root, Some(Arc::clone(&event_bus)));
 
     info!(
         subsystem = "health",
@@ -271,9 +304,10 @@ fn main() {
     let runtime_root = project_root.clone();
     let runtime_flag = Arc::clone(&shutdown_flag);
     let runtime_statuses = Arc::clone(&subprocess_statuses);
+    let runtime_bus = Arc::clone(&event_bus);
     let runtime_thread = std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().expect("failed to build tokio runtime");
-        rt.block_on(run(runtime_root, runtime_flag, runtime_statuses));
+        rt.block_on(run(runtime_root, runtime_flag, runtime_statuses, runtime_bus));
     });
 
     // Run the tray loop on the main thread. Returns when Quit is selected or

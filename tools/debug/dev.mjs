@@ -41,6 +41,9 @@ const CONTROLLER_LOG = join(PROJECT_ROOT, ".state", "dev-controller.log");
 const PORT_BASE = parseInt(process.env.ORQA_PORT_BASE || "10100", 10) || 10100;
 const DASHBOARD_PORT = PORT_BASE + 30;
 
+// Daemon event bus ingest endpoint. External log sources POST batches here.
+const DAEMON_EVENTS_URL = `http://127.0.0.1:${PORT_BASE}/events`;
+
 const COLOURS = {
   reset: "\x1b[0m",
   dim: "\x1b[2m",
@@ -54,6 +57,24 @@ const COLOURS = {
 function log(msg) {
   const ts = new Date().toLocaleTimeString();
   console.log(`${COLOURS.dim}${ts}${COLOURS.reset} ${COLOURS.cyan}[dashboard]${COLOURS.reset} ${msg}`);
+}
+
+/**
+ * Forward a batch of events to the daemon's POST /events ingest endpoint.
+ *
+ * Each event is a plain object matching IngestEvent in daemon/src/health.rs:
+ *   { level, source, category, message, timestamp }
+ *
+ * Fire-and-forget — failures are silently ignored so the dashboard never
+ * crashes when the daemon is not running. Requires Node 18+ for global fetch.
+ */
+function forwardToDaemon(events) {
+  if (typeof fetch === "undefined") return;
+  fetch(DAEMON_EVENTS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(events),
+  }).catch(() => { /* daemon not running — ignore */ });
 }
 
 // ── SSE Client Management ───────────────────────────────────────────────────
@@ -166,11 +187,25 @@ function startLogTail() {
       // The last part may be an incomplete line — keep it in the buffer
       lineBuffer = parts.pop();
 
+      const daemonBatch = [];
       for (const line of parts) {
         const parsed = parseLogLine(line);
         if (parsed) {
           sseBroadcast("controller-log", parsed);
+          // Collect for daemon event bus forwarding.
+          daemonBatch.push({
+            level: parsed.level,
+            source: "dev-controller",
+            category: parsed.source,
+            message: parsed.text,
+            timestamp: Date.now(),
+          });
         }
+      }
+      // Forward the batch to the daemon once per stream chunk to reduce
+      // the number of HTTP requests when the log is replayed at startup.
+      if (daemonBatch.length > 0) {
+        forwardToDaemon(daemonBatch);
       }
     });
 
@@ -256,7 +291,9 @@ const server = createHttpServer((req, res) => {
     return;
   }
 
-  // Frontend log forwarding (SDK logger POSTs here)
+  // Frontend log forwarding (SDK logger POSTs here).
+  // Each received entry is broadcast to dashboard SSE clients AND forwarded
+  // to the daemon event bus so it is persisted in the SQLite store.
   if (req.method === "POST" && req.url === "/log") {
     let body = "";
     req.on("data", (chunk) => { body += chunk; });
@@ -267,6 +304,14 @@ const server = createHttpServer((req, res) => {
         const level = data.level || "info";
         const text = data.message || "";
         sseBroadcast("log", { source, text, level, error: level === "error" });
+        // Forward to daemon event bus for persistence.
+        forwardToDaemon([{
+          level,
+          source,
+          category: source,
+          message: text,
+          timestamp: Date.now(),
+        }]);
       } catch { /* malformed — ignore */ }
       res.writeHead(204);
       res.end();

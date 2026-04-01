@@ -1,8 +1,11 @@
 /**
  * Centralized logger for OrqaStudio.
  *
- * Provides structured logging with levels, source tags, and dev controller
- * forwarding. Use this instead of bare `console.log` throughout the codebase.
+ * Provides structured logging with levels, source tags, and dual forwarding:
+ * - Dev dashboard at localhost:10130/log (for live SSE display)
+ * - Daemon event bus at localhost:10100/events (for persistence)
+ *
+ * Use this instead of bare `console.log` throughout the codebase.
  *
  * Usage:
  *   import { logger } from "@orqastudio/logger";
@@ -10,10 +13,12 @@
  *   log.info("Opened artifact", path);
  *   log.perf("loadContent", () => fetchContent(path));
  *
- * All output is forwarded to the dev dashboard via HTTP POST to localhost:10130/log.
- * If the dashboard isn't running, the fire-and-forget request silently fails.
+ * If either endpoint isn't running, the fire-and-forget request silently fails.
  */
 const DEV_LOG_URL = "http://localhost:10130/log";
+// Daemon event bus ingest URL — matches ORQA_PORT_BASE default of 10100.
+// This constant mirrors the port used by daemon/src/health.rs.
+const DAEMON_EVENTS_URL = "http://localhost:10100/events";
 const subscribers = [];
 let minLevel = "debug";
 const LEVEL_ORDER = {
@@ -46,6 +51,35 @@ function forwardToDashboard(level, source, message) {
         // Never fail
     }
 }
+/**
+ * Forward a log entry to the daemon's POST /events ingest endpoint.
+ *
+ * The daemon persists events in SQLite so they survive dashboard restarts.
+ * The `source` field maps to `EventSource::Frontend` on the Rust side.
+ * Fire-and-forget — silently fails when the daemon is not running.
+ */
+function forwardToDaemonBus(level, source, message) {
+    try {
+        if (typeof fetch === "undefined")
+            return;
+        const body = JSON.stringify([{
+                level,
+                source: "frontend",
+                category: source,
+                message: `[${source}] ${message}`,
+                timestamp: Date.now(),
+            }]);
+        void fetch(DAEMON_EVENTS_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body,
+            keepalive: true,
+        }).catch(() => { });
+    }
+    catch {
+        // Never fail
+    }
+}
 function emit(entry) {
     if (shouldLog(entry.level)) {
         const prefix = `[${entry.source}]`;
@@ -67,6 +101,7 @@ function emit(entry) {
         }
     }
     forwardToDashboard(entry.level, entry.source, entry.message);
+    forwardToDaemonBus(entry.level, entry.source, entry.message);
     for (const sub of subscribers) {
         try {
             sub(entry);

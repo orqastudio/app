@@ -5,6 +5,8 @@
 
 /// Artifact data types: parsed frontmatter, relationships, graph nodes.
 pub mod artifact;
+/// Structured event types for the daemon event bus.
+pub mod event;
 /// Enforcement types: rules, mechanisms, evaluation results.
 pub mod enforcement;
 /// Governance artifact types: epics, tasks, decisions.

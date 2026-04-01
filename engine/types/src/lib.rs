@@ -22,5 +22,8 @@ pub mod ports;
 pub mod traits;
 /// Shared data structures for all engine domain types.
 pub mod types;
+
+/// Re-exports of event types for direct access from this crate's root.
+pub use types::event::{EventLevel, EventSource, LogEvent};
 /// Utility helpers (time formatting, etc.).
 pub mod utils;
