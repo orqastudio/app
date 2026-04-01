@@ -6,6 +6,9 @@
 /// SSE event consumer — connects to daemon, buffers events, exposes IPC commands.
 pub mod events;
 
+/// IPC command for querying process status from the daemon health endpoint.
+pub mod process_status;
+
 use tauri::Manager as _;
 use tracing_subscriber::EnvFilter;
 
@@ -36,6 +39,7 @@ pub fn run() {
             events::get_events,
             events::clear_events,
             events::event_buffer_stats,
+            process_status::devtools_process_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running OrqaDev");

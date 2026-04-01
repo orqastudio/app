@@ -7,6 +7,9 @@
 	import { TabsRoot, TabsList, TabsTrigger, TabsContent } from "@orqastudio/svelte-components/pure";
 	import { StatusBar } from "@orqastudio/svelte-components/connected";
 	import { navigation, TABS } from "../stores/devtools-navigation.svelte.js";
+	import StorybookView from "./storybook/StorybookView.svelte";
+	import MetricsView from "./metrics/MetricsView.svelte";
+	import ProcessView from "./processes/ProcessView.svelte";
 
 	let {
 		children,
@@ -70,23 +73,17 @@
 			{@render children()}
 		</TabsContent>
 
-		<!-- Remaining tabs show placeholders until their implementation tasks land. -->
+		<!-- Processes tab — live process status grid. -->
 		<TabsContent value="processes" class="flex-1 overflow-hidden">
-			<div class="text-content-muted flex h-full items-center justify-center text-sm">
-				Processes view — coming soon
-			</div>
+			<ProcessView />
 		</TabsContent>
 
 		<TabsContent value="storybook" class="flex-1 overflow-hidden">
-			<div class="text-content-muted flex h-full items-center justify-center text-sm">
-				Storybook view — coming soon
-			</div>
+			<StorybookView />
 		</TabsContent>
 
 		<TabsContent value="metrics" class="flex-1 overflow-hidden">
-			<div class="text-content-muted flex h-full items-center justify-center text-sm">
-				Metrics view — coming soon
-			</div>
+			<MetricsView />
 		</TabsContent>
 	</TabsRoot>
 
