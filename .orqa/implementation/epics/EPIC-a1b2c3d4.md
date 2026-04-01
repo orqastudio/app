@@ -1,8 +1,8 @@
 ---
 id: EPIC-a1b2c3d4
 type: epic
-title: "OrqaDev: Comprehensive Dev Tooling & Logging Platform"
-description: "Transform the dev dashboard into a dedicated Tauri companion app with comprehensive logging, pub/sub event delivery, persistence, component storybook, and virtualised log viewer."
+title: "OrqaDev: Comprehensive Logging & Developer Tools"
+description: "Embed a full logging and debugging platform into the main OrqaStudio app. Pub/sub event delivery, persistence, virtualised log viewer, storybook, and process diagnostics — available in both production and dev mode via a toolbar link."
 status: captured
 created: "2026-04-01"
 updated: "2026-04-01"
@@ -23,7 +23,7 @@ relationships:
 
 ## Vision
 
-Replace the current `tools/debug/dev-dashboard.html` with a dedicated Tauri companion app (OrqaDev) that serves as the one-stop dev tooling support app for OrqaStudio development.
+Build a comprehensive logging and developer tools app that runs as a separate window, launched from the main OrqaStudio toolbar. Packaged alongside the main app in both production and dev builds — not a dev-only tool. Available anytime for live process debugging.
 
 ## Scope
 
@@ -102,13 +102,15 @@ Replace the current `tools/debug/dev-dashboard.html` with a dedicated Tauri comp
 16. Add persistence layer (SQLite initially, evaluate MongoDB for query flexibility)
 17. Wire all processes to the event bus
 
-### Phase 4: OrqaDev Companion App
-18. Scaffold OrqaDev Tauri app (uses `@orqastudio/svelte-components`)
-19. Build virtualised log table component (tanstack-table or similar)
-20. Implement log filtering/search UI (source, level, category, time range, full-text)
-21. Add process management view (start/stop/restart per process)
-22. Integrate Storybook rendering view for component development
-23. Add metrics/performance graphs view
+### Phase 4: OrqaDev App (separate window, dual launch)
+18. Scaffold OrqaDev as its own Tauri app (uses `@orqastudio/svelte-components`)
+19. Dual launch: standalone via `orqa dev` (launched FIRST to capture build output) AND from main app toolbar button (for live debugging in production)
+20. Build virtualised log table component (tanstack-table or similar)
+21. Implement log filtering/search UI (source, level, category, time range, full-text)
+22. Add process diagnostics view (daemon, MCP, LSP, search, watcher status)
+23. Integrate Storybook rendering view for component development
+24. Add metrics/performance graphs view
+25. Log levels: info in production, debug in dev — infrastructure always on
 
 ## Research Findings
 
@@ -122,8 +124,8 @@ Detailed logging gap analysis from 5 parallel researchers:
 ## Dependencies
 
 - `@orqastudio/svelte-components` package (shared with main app)
-- Tauri multi-window or separate app architecture decision
 - Virtualised table library evaluation (tanstack-table vs alternatives)
+- Tauri multi-window architecture for OrqaDev window
 
 ## Success Criteria
 
