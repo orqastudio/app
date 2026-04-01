@@ -79,24 +79,51 @@ Replace the current `tools/debug/dev-dashboard.html` with a dedicated Tauri comp
 
 ## Delivery Tasks
 
-1. Design event schema (structured log format)
-2. Implement pub/sub event bus (Rust, daemon-side)
-3. Add persistence layer (SQLite initially, migrate later if needed)
-4. Scaffold OrqaDev Tauri app
-5. Build virtualised log table component
-6. Implement log filtering/search UI
-7. Add process management view
-8. Integrate Storybook rendering
-9. Add frontend console forwarding
-10. Wire all processes to the event bus
-11. Fix dev controller startup order (dashboard first)
-12. Add comprehensive logging across all processes (per research findings)
+### Phase 1: Quick Wins (unblock dogfooding)
+1. Fix dev controller startup order — dashboard launches FIRST before any process
+2. Fix `errorStore.initBrowserHandlers()` — never called, window.onerror is dead
+3. Fix duplicate SDK log forwarding (logger + dev-console both send)
+4. Add browser console.log/warn/error intercept in dev mode → forward to dashboard
+5. Forward process stdout/stderr from dev controller to dashboard SSE stream
+
+### Phase 2: Comprehensive Logging (100+ gaps from research)
+6. Engine timing spans — `build_artifact_graph`, `validate`, `index`, `embed_chunks`
+7. Engine error surfacing — silent I/O failures in `walk_directory`, YAML parse failures
+8. Daemon handler timing — prompt, knowledge, context endpoints + ONNX operations
+9. Daemon lifecycle — config load warnings, generator timing, watcher events
+10. Tauri IPC timing — every `#[tauri::command]` entry/exit with duration
+11. Tauri lifecycle — session create/end, plugin install/uninstall, sidecar PID
+12. Frontend SDK — graph init timing, navigation events, IPC call durations
+13. Stream lifecycle — stream_start, turn_complete, stream_error with model/duration
+
+### Phase 3: Event Infrastructure
+14. Design structured event schema (timestamp, level, source, category, metadata)
+15. Implement pub/sub event bus (Rust, daemon-side) with guaranteed delivery
+16. Add persistence layer (SQLite initially, evaluate MongoDB for query flexibility)
+17. Wire all processes to the event bus
+
+### Phase 4: OrqaDev Companion App
+18. Scaffold OrqaDev Tauri app (uses `@orqastudio/svelte-components`)
+19. Build virtualised log table component (tanstack-table or similar)
+20. Implement log filtering/search UI (source, level, category, time range, full-text)
+21. Add process management view (start/stop/restart per process)
+22. Integrate Storybook rendering view for component development
+23. Add metrics/performance graphs view
+
+## Research Findings
+
+Detailed logging gap analysis from 5 parallel researchers:
+- `.state/investigation/24-logging-daemon.md` — 26 candidates (5 HIGH)
+- `.state/investigation/24-logging-app.md` — 40+ candidates (10 HIGH)
+- `.state/investigation/24-logging-engine.md` — 30 candidates (11 HIGH)
+- `.state/investigation/24-logging-frontend.md` — 8 critical gaps
+- `.state/investigation/24-logging-devcontroller.md` — 5 architectural issues
 
 ## Dependencies
 
-- Logging research findings (`.state/investigation/24-logging-*.md`)
-- `@orqastudio/svelte-components` package
+- `@orqastudio/svelte-components` package (shared with main app)
 - Tauri multi-window or separate app architecture decision
+- Virtualised table library evaluation (tanstack-table vs alternatives)
 
 ## Success Criteria
 
