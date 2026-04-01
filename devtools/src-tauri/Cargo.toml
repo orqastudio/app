@@ -1,0 +1,38 @@
+# Cargo manifest for OrqaDev — the developer tools companion app for OrqaStudio.
+# Provides daemon log viewing, artifact inspection, and plugin debugging.
+[package]
+name = "orqa-devtools"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaDev — developer tools companion app for OrqaStudio"
+
+[package.metadata.tauri]
+# tauri build metadata - managed by tauri-build
+
+[[bin]]
+name = "orqa-devtools"
+path = "src/main.rs"
+
+[lib]
+name = "orqa_devtools_lib"
+path = "src/lib.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+orqa-engine-types = { path = "../../engine/types" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+reqwest = { version = "0.12", features = ["json"] }
+tokio = { version = "1", features = ["full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+
+[lints]
+workspace = true
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]

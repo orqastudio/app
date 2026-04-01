@@ -18,6 +18,7 @@ members = [
     "engine/lsp-server",
     "app/src-tauri",
     "daemon",
+    "devtools/src-tauri",
 ]
 resolver = "2"
 
