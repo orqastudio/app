@@ -20,7 +20,7 @@ const DEV_LOG_URL = "http://localhost:10130/log";
 // This constant mirrors the port used by daemon/src/health.rs.
 const DAEMON_EVENTS_URL = "http://localhost:10100/events";
 const subscribers = [];
-let minLevel = "debug";
+let minLevel = "info";
 const LEVEL_ORDER = {
     debug: 0,
     info: 1,
@@ -161,5 +161,15 @@ export function subscribeToLogs(fn) {
 /** Set the minimum log level for console output. */
 export function setLogLevel(level) {
     minLevel = level;
+}
+/**
+ * Switch the console log level to "debug".
+ *
+ * Call this in dev builds or from the OrqaDev dashboard to see verbose output
+ * in the browser console. Forwarding to the dashboard and daemon bus is
+ * unaffected — those always send regardless of console level.
+ */
+export function initDevConsole() {
+    minLevel = "debug";
 }
 //# sourceMappingURL=index.js.map

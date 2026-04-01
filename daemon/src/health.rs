@@ -9,9 +9,14 @@
 // runtime and binds to 127.0.0.1:<ORQA_PORT_BASE> (default port 10100). This
 // allows other tools (app, CLI, connector) to check whether the daemon is alive
 // without reading the PID file directly.
+//
+// GET /health includes a `processes` array populated from a shared
+// `Arc<Mutex<Vec<ProcessSnapshot>>>` that the daemon event loop updates every
+// polling cycle. This allows OrqaDev to auto-discover managed subprocesses
+// without any hardcoded process list — new processes appear automatically.
 
 use std::net::SocketAddr;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
 use axum::extract::State;
@@ -30,6 +35,7 @@ use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
 use crate::config::DaemonConfig;
 use crate::event_bus::{EventBus, EventBusStats};
 use crate::event_store::{EventStore, EventQuery};
+use crate::subprocess::ProcessSnapshot;
 
 /// Shared state passed to all route handlers, containing startup metadata,
 /// runtime configuration loaded from orqa.toml, the central event bus, and
@@ -47,9 +53,17 @@ pub struct HealthState {
     /// Optional SQLite-backed event store for GET /events historical queries.
     /// Absent when the store failed to open at startup.
     pub event_store: Option<Arc<EventStore>>,
+    /// Snapshots of all managed subprocesses, updated by the event loop every
+    /// 250 ms. The health handler reads this to populate the `processes` array
+    /// without requiring access to the subprocess managers directly.
+    pub process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
 }
 
 /// JSON response body for GET /health.
+///
+/// The `processes` array is populated from the shared `process_snapshots`
+/// registry maintained by the daemon event loop. OrqaDev uses this array to
+/// auto-discover managed subprocesses without any hardcoded process names.
 #[derive(Serialize)]
 struct HealthResponse {
     status: &'static str,
@@ -57,6 +71,9 @@ struct HealthResponse {
     pid: u32,
     /// Point-in-time snapshot of event bus statistics.
     event_bus: EventBusStats,
+    /// Per-process detail for all managed subprocesses. Auto-populated from
+    /// the subprocess registry — new processes appear automatically.
+    processes: Vec<ProcessSnapshot>,
 }
 
 /// JSON body for a single event submitted via POST /events.
@@ -171,18 +188,25 @@ async fn events_query_handler(
     Json(serde_json::json!({ "events": events, "count": count }))
 }
 
-/// Handle GET /health by returning the current daemon status and bus stats.
+/// Handle GET /health by returning the current daemon status, bus stats, and
+/// per-process snapshots from the subprocess registry.
 ///
-/// Always returns `{"status": "ok", ...}` while the daemon is running. If the
-/// daemon were unresponsive, the HTTP connection would simply time out on the
-/// client side.
+/// Always returns `{"status": "ok", ...}` while the daemon is running. The
+/// `processes` array is cloned from the shared snapshot registry — no blocking
+/// required because the event loop holds the lock only briefly.
 async fn health_handler(State(state): State<HealthState>) -> Json<HealthResponse> {
     let uptime = state.started_at.elapsed();
+    let processes = state
+        .process_snapshots
+        .lock()
+        .map(|g| g.clone())
+        .unwrap_or_default();
     Json(HealthResponse {
         status: "ok",
         uptime_seconds: uptime.as_secs(),
         pid: state.pid,
         event_bus: state.event_bus.stats(),
+        processes,
     })
 }
 
@@ -229,13 +253,24 @@ pub fn resolve_port() -> u16 {
 ///
 /// `event_store` is optional — when absent (store failed to open), GET /events
 /// returns an empty list rather than an error.
-pub async fn start(port: u16, config: DaemonConfig, event_bus: Arc<EventBus>, event_store: Option<Arc<EventStore>>) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+///
+/// `process_snapshots` is the shared subprocess registry written by the event
+/// loop. The health handler reads it on every GET /health request so OrqaDev
+/// always receives current per-process detail.
+pub async fn start(
+    port: u16,
+    config: DaemonConfig,
+    event_bus: Arc<EventBus>,
+    event_store: Option<Arc<EventStore>>,
+    process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
         pid: std::process::id(),
         config,
         event_bus,
         event_store,
+        process_snapshots,
     };
 
     let app = Router::new()

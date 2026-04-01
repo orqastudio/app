@@ -1,6 +1,7 @@
 <!-- Individual log table row. Renders timestamp, level badge, source, category,
      and message columns. Clicking the row toggles an expanded metadata panel
-     that shows the raw metadata JSON for that event. Color-coded by level. -->
+     that shows the raw metadata JSON for that event. Color-coded by level.
+     A copy button appears on hover to copy the full entry to the clipboard. -->
 <script lang="ts">
 	import type { LogEvent } from "../../stores/log-store.svelte.js";
 
@@ -15,6 +16,25 @@
 
 	// Whether the metadata panel is expanded for this row.
 	let expanded = $state(false);
+
+	// Brief confirmation text shown after a successful copy.
+	let copyFeedback = $state<"idle" | "copied">("idle");
+
+	// Copy the full log entry as a JSON string to the system clipboard.
+	// Shows a brief "Copied" confirmation then resets to the icon.
+	async function copyToClipboard(e: MouseEvent): Promise<void> {
+		// Prevent the click from toggling the expand state.
+		e.stopPropagation();
+		try {
+			await navigator.clipboard.writeText(JSON.stringify(event, null, 2));
+			copyFeedback = "copied";
+			setTimeout(() => {
+				copyFeedback = "idle";
+			}, 1500);
+		} catch {
+			// Clipboard API unavailable or denied — silently ignore.
+		}
+	}
 
 	// Format a Unix millisecond timestamp as HH:MM:SS.mmm.
 	function formatTimestamp(ms: number): string {
@@ -56,11 +76,12 @@
 <!-- Absolute-positioned wrapper lets the virtualiser translate rows without
      reflowing the DOM. The inner content uses a normal block layout. -->
 <div
-	class="absolute left-0 right-0 {rowTintClass}"
+	class="group absolute left-0 right-0 {rowTintClass}"
 	{style}
 	role="row"
 >
-	<!-- Main row: fixed-height single line with all columns. -->
+	<!-- Main row: fixed-height single line with all columns. The copy button
+	     is positioned at the right edge and revealed on group hover. -->
 	<button
 		class="flex w-full cursor-pointer items-center gap-0 px-2 py-0 text-left hover:bg-surface-raised/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
 		style="height: 24px; line-height: 24px;"
@@ -93,6 +114,17 @@
 		<span class="min-w-0 flex-1 truncate text-[11px] text-content-base">
 			{event.message}
 		</span>
+	</button>
+
+	<!-- Copy-to-clipboard button: absolutely positioned at the right of the row,
+	     visible only when the row is hovered. Copies the full LogEvent as JSON. -->
+	<button
+		class="absolute right-1 top-0 hidden h-[24px] items-center rounded px-1.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base group-hover:flex"
+		onclick={copyToClipboard}
+		aria-label="Copy log entry to clipboard"
+		title="Copy as JSON"
+	>
+		{copyFeedback === "copied" ? "Copied" : "Copy"}
 	</button>
 
 	<!-- Expanded metadata panel: shown below the row when expanded. Rendered

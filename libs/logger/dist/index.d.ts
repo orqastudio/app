@@ -44,5 +44,13 @@ export declare function logger(source: string): Logger;
 export declare function subscribeToLogs(fn: LogSubscriber): () => void;
 /** Set the minimum log level for console output. */
 export declare function setLogLevel(level: LogLevel): void;
+/**
+ * Switch the console log level to "debug".
+ *
+ * Call this in dev builds or from the OrqaDev dashboard to see verbose output
+ * in the browser console. Forwarding to the dashboard and daemon bus is
+ * unaffected — those always send regardless of console level.
+ */
+export declare function initDevConsole(): void;
 export {};
 //# sourceMappingURL=index.d.ts.map

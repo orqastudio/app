@@ -30,9 +30,6 @@ const BATCH_SIZE: usize = 100;
 /// Maximum time to wait before flushing a non-empty batch.
 const FLUSH_INTERVAL: Duration = Duration::from_millis(500);
 
-/// Retention window in days: events older than this are purged on startup.
-const RETENTION_DAYS: i64 = 7;
-
 /// Milliseconds per day, used for retention cutoff arithmetic.
 const MS_PER_DAY: i64 = 86_400_000;
 
@@ -94,12 +91,17 @@ fn init_schema(conn: &Connection) -> Result<(), rusqlite::Error> {
 
 impl EventStore {
     /// Open (or create) `.state/events.db` inside `project_root`, initialise
-    /// the schema, purge events older than 7 days, and return the store.
+    /// the schema, purge events older than `retention_days` days, and return the store.
+    ///
+    /// `retention_days` controls how long events are kept. Events older than this
+    /// threshold are deleted immediately on open and again every 6 hours by the
+    /// periodic purge task spawned in `main.rs`.
     ///
     /// Returns an error if the database cannot be opened or schema migration
     /// fails — the caller should degrade gracefully.
     pub fn open(
         project_root: &Path,
+        retention_days: u32,
     ) -> Result<Arc<Self>, Box<dyn std::error::Error + Send + Sync>> {
         let state_dir = project_root.join(".state");
         std::fs::create_dir_all(&state_dir)?;
@@ -116,11 +118,12 @@ impl EventStore {
         });
 
         // Purge stale events immediately so we start with a clean window.
-        store.purge_sync(RETENTION_DAYS * MS_PER_DAY);
+        store.purge_sync(retention_days as i64 * MS_PER_DAY, retention_days);
 
         info!(
             subsystem = "event-store",
             path = %db_path.display(),
+            retention_days,
             "[event-store] opened"
         );
 
@@ -234,8 +237,9 @@ impl EventStore {
 
     /// Delete all events with `timestamp < (now - age_ms)` (Unix ms).
     ///
-    /// Called on startup with `RETENTION_DAYS * MS_PER_DAY` as the age.
-    pub fn purge_sync(&self, age_ms: i64) {
+    /// `retention_days` is used only for the log message — it must equal `age_ms / MS_PER_DAY`.
+    /// Must be called from a blocking context — use `purge` from async callers.
+    pub fn purge_sync(&self, age_ms: i64, retention_days: u32) {
         let now_ms = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
@@ -252,13 +256,33 @@ impl EventStore {
                 info!(
                     subsystem = "event-store",
                     deleted = n,
-                    "[event-store] purged {n} events older than {RETENTION_DAYS} days"
+                    retention_days,
+                    "[event-store] purged {n} events older than {retention_days} days"
                 );
             }
             Ok(_) => {}
             Err(e) => {
                 error!(subsystem = "event-store", error = %e, "[event-store] purge failed");
             }
+        }
+    }
+
+    /// Async wrapper around `purge_sync` for use from tokio task contexts.
+    ///
+    /// Offloads the blocking SQLite delete to `spawn_blocking` so it does not
+    /// stall the async runtime. Used by the 6-hour periodic purge task.
+    pub async fn purge(store: Arc<Self>, retention_days: u32) {
+        let age_ms = retention_days as i64 * MS_PER_DAY;
+        let result = tokio::task::spawn_blocking(move || {
+            store.purge_sync(age_ms, retention_days);
+        })
+        .await;
+        if let Err(e) = result {
+            error!(
+                subsystem = "event-store",
+                error = ?e,
+                "[event-store] spawn_blocking panicked during periodic purge"
+            );
         }
     }
 }

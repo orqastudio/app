@@ -19,11 +19,18 @@
 //      `tracing::info!` / `warn!` / `debug!` / `error!` call sites flow
 //      through the event bus automatically with no changes at the call sites.
 //
-// Log level is controlled via the `RUST_LOG` environment variable.  The
-// default level is `info`.  The event bus layer captures ALL levels (TRACE and
-// above) so that filtering is handled display-side.  All events are tagged with
-// a `subsystem` field so log queries can filter by `[mcp]`, `[lsp]`,
-// `[watcher]`, `[engine]`, or `[health]`.
+// Level configuration (in priority order):
+//   1. `ORQA_DEV=true` env var → forces "debug" for console and file layers.
+//   2. `RUST_LOG` env var → used directly as the filter string.
+//   3. `log_level` field in the `[daemon]` section of `orqa.toml`.
+//   4. Compiled-in default: "info".
+//
+// The event bus layer always uses LevelFilter::TRACE so ALL events reach the
+// bus regardless of the configured display level.  Level filtering for
+// display is handled by consumers (OrqaDev dashboard, log table).
+//
+// All events are tagged with a `subsystem` field so log queries can filter by
+// `[mcp]`, `[lsp]`, `[watcher]`, `[engine]`, or `[health]`.
 
 use std::path::Path;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -247,6 +254,10 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     // non-rolling appender writing to the same directory.
     let _ = std::fs::create_dir_all(&state_dir);
 
+    // Resolve the effective display log level. The event bus always receives
+    // TRACE regardless of this value.
+    let effective_level = resolve_log_level(project_root);
+
     // Build a daily-rolling file appender for structured JSON logs.
     let file_appender = tracing_appender::rolling::daily(&state_dir, "daemon.log");
     let (non_blocking_file, file_guard) = tracing_appender::non_blocking(file_appender);
@@ -255,7 +266,7 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     let json_layer = tracing_subscriber::fmt::layer()
         .json()
         .with_writer(non_blocking_file)
-        .with_filter(build_env_filter());
+        .with_filter(build_display_filter(&effective_level));
 
     // Console layer — human-readable, coloured, only when stdout is a TTY.
     // This avoids garbled ANSI codes in CI/service logs.
@@ -263,7 +274,7 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
         let layer = tracing_subscriber::fmt::layer()
             .with_ansi(true)
             .with_target(true)
-            .with_filter(build_env_filter());
+            .with_filter(build_display_filter(&effective_level));
         Some(layer)
     } else {
         None
@@ -284,7 +295,6 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
         .init();
 
     let tty_mode = is_tty();
-    let log_level = std::env::var("RUST_LOG").unwrap_or_else(|_| "info".to_owned());
     let log_file_path = state_dir.join("daemon.log");
 
     // Log the effective logging configuration immediately after initialization.
@@ -292,7 +302,7 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
         subsystem = "logging",
         log_file = %log_file_path.display(),
         tty = tty_mode,
-        level = %log_level,
+        level = %effective_level,
         "[logging] subscriber initialized"
     );
 
@@ -301,12 +311,53 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     }
 }
 
-/// Build the `EnvFilter` from `RUST_LOG`, defaulting to `info`.
+/// Resolve the display log level using the following priority:
+///
+///   1. `ORQA_DEV=true` → "debug"
+///   2. `RUST_LOG` env var → used as-is
+///   3. `log_level` in the `[daemon]` section of `orqa.toml`
+///   4. Compiled-in default: "info"
+///
+/// This is read at logging init time, before `DaemonConfig::load` runs, so
+/// we parse `orqa.toml` directly here using only the `log_level` key.
+fn resolve_log_level(project_root: &Path) -> String {
+    // ORQA_DEV=true forces debug regardless of any other setting.
+    if std::env::var("ORQA_DEV").as_deref() == Ok("true") {
+        return "debug".to_owned();
+    }
+
+    // RUST_LOG takes second priority for compatibility with the standard Rust
+    // logging ecosystem.
+    if let Ok(val) = std::env::var("RUST_LOG") {
+        if !val.is_empty() {
+            return val;
+        }
+    }
+
+    // Read log_level from the [daemon] section of orqa.toml.
+    let config_path = project_root.join("orqa.toml");
+    if let Ok(content) = std::fs::read_to_string(&config_path) {
+        if let Ok(table) = content.parse::<toml::Table>() {
+            if let Some(level) = table
+                .get("daemon")
+                .and_then(|d| d.get("log_level"))
+                .and_then(|v| v.as_str())
+            {
+                return level.to_owned();
+            }
+        }
+    }
+
+    // Compiled-in default.
+    "info".to_owned()
+}
+
+/// Build the display `EnvFilter` from the resolved level string.
 ///
 /// A separate call is needed for each layer because `EnvFilter` is not
 /// `Clone`.
-fn build_env_filter() -> EnvFilter {
-    EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"))
+fn build_display_filter(level: &str) -> EnvFilter {
+    EnvFilter::try_new(level).unwrap_or_else(|_| EnvFilter::new("info"))
 }
 
 /// Return `true` when stdout is connected to a terminal.

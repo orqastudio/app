@@ -385,11 +385,19 @@ if (portIdx !== -1 && process.argv[portIdx + 1]) {
   if (!Number.isNaN(p)) port = p;
 }
 
+// Deprecation notice — OrqaDev is now the default dev UI.
+console.log(`${COLOURS.yellow}╔══════════════════════════════════════════════════════════════╗${COLOURS.reset}`);
+console.log(`${COLOURS.yellow}║  DEPRECATION NOTICE: dev.mjs web dashboard is deprecated.    ║${COLOURS.reset}`);
+console.log(`${COLOURS.yellow}║  OrqaDev is now the default dev UI for `orqa dev`.            ║${COLOURS.reset}`);
+console.log(`${COLOURS.yellow}║  This dashboard will be removed in a future release.          ║${COLOURS.reset}`);
+console.log(`${COLOURS.yellow}╚══════════════════════════════════════════════════════════════╝${COLOURS.reset}`);
+console.log("");
+
 // Check if orqa dev is running
 const ctrl = readControlFile();
 if (!ctrl) {
   console.log(`${COLOURS.yellow}Warning: orqa dev does not appear to be running.${COLOURS.reset}`);
-  console.log(`Start it first: orqa dev`);
+  console.log(`Start it first: orqa dev --legacy-dashboard`);
   console.log(`Dashboard will show status once orqa dev starts.\n`);
 }
 

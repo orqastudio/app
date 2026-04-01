@@ -25,6 +25,15 @@ pub struct DaemonConfig {
     pub max_semantic: usize,
     /// Downstream relationship count above which artifacts get a warning.
     pub downstream_warn_threshold: u32,
+    /// Minimum log level for console and file output.
+    /// Valid values: "trace", "debug", "info", "warn", "error".
+    /// Overridden by the `ORQA_DEV=true` environment variable (forces "debug").
+    /// Defaults to "info" when absent.
+    pub log_level: String,
+    /// Number of days to retain log events in the SQLite event store.
+    /// Events older than this threshold are purged on startup and every 6 hours.
+    /// Configurable via `event_retention_days = 14` in `[daemon]` section of orqa.toml.
+    pub event_retention_days: u32,
 }
 
 impl Default for DaemonConfig {
@@ -34,6 +43,8 @@ impl Default for DaemonConfig {
             min_score: 0.25,
             max_semantic: 5,
             downstream_warn_threshold: 20,
+            log_level: "info".to_owned(),
+            event_retention_days: 7,
         }
     }
 }
@@ -56,6 +67,8 @@ impl DaemonConfig {
                             min_score = config.min_score,
                             max_semantic = config.max_semantic,
                             downstream_warn_threshold = config.downstream_warn_threshold,
+                            log_level = %config.log_level,
+                            event_retention_days = config.event_retention_days,
                             "[config] loaded daemon configuration from orqa.toml"
                         );
                         return config;
@@ -77,6 +90,8 @@ impl DaemonConfig {
             min_score = defaults.min_score,
             max_semantic = defaults.max_semantic,
             downstream_warn_threshold = defaults.downstream_warn_threshold,
+            log_level = %defaults.log_level,
+            event_retention_days = defaults.event_retention_days,
             "[config] no orqa.toml found — using compiled-in defaults"
         );
         defaults

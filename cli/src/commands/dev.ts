@@ -8,15 +8,16 @@
  * controller starts the daemon and the daemon starts MCP/LSP. The controller
  * does NOT spawn orqa-mcp-server or orqa-lsp-server directly.
  *
- * orqa dev                Start the full dev environment (Vite + Tauri + daemon)
- * orqa dev stop           Stop gracefully
- * orqa dev kill           Force-kill all processes
- * orqa dev restart        Restart Vite + Tauri
- * orqa dev restart-tauri  Restart Tauri only
- * orqa dev restart-vite   Restart Vite only
- * orqa dev status         Show process status
- * orqa dev icons          Generate brand icons from SVG sources
- * orqa dev tool           Run the debug-tool submodule
+ * orqa dev                        Start the full dev environment (Vite + Tauri + daemon)
+ * orqa dev --legacy-dashboard     Start with the legacy dev.mjs dashboard instead of OrqaDev
+ * orqa dev stop                   Stop gracefully
+ * orqa dev kill                   Force-kill all processes
+ * orqa dev restart                Restart Vite + Tauri
+ * orqa dev restart-tauri          Restart Tauri only
+ * orqa dev restart-vite           Restart Vite only
+ * orqa dev status                 Show process status
+ * orqa dev icons                  Generate brand icons from SVG sources
+ * orqa dev tool                   Run the debug-tool submodule
  */
 
 import { spawn, exec as execAsync, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
@@ -57,10 +58,10 @@ const COLOURS = {
 };
 
 const USAGE = `
-Usage: orqa dev [subcommand]
+Usage: orqa dev [subcommand] [flags]
 
 Subcommands:
-  (none)              Start the full dev environment
+  (none)              Start the full dev environment (launches OrqaDev by default)
   stop                Stop all processes gracefully
   kill                Force-kill all processes
   restart             Restart everything (daemon + frontend + app + services)
@@ -72,6 +73,9 @@ Subcommands:
   status              Show process status
   icons [--deploy]    Generate brand icons from SVG sources
   tool [args...]      Run the debug-tool submodule
+
+Flags:
+  --legacy-dashboard  Use the legacy dev.mjs web dashboard instead of OrqaDev (deprecated)
 `.trim();
 
 // ── Logging ─────────────────────────────────────────────────────────────────
@@ -385,7 +389,7 @@ async function killAll(root: string): Promise<void> {
 
 // ── Controller (foreground long-running process) ────────────────────────────
 
-async function startController(root: string, opts: { watch: boolean } = { watch: true }): Promise<void> {
+async function startController(root: string, opts: { watch: boolean; legacyDashboard?: boolean } = { watch: true }): Promise<void> {
 	const existing = readControlFile(root);
 	if (existing && processIsAlive(existing.pid)) {
 		logError(
@@ -426,11 +430,13 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		devtools: null,
 	});
 
-	// ── 0. Start debug dashboard ────────────────────────────────────────
-	// Spawn the dashboard before the daemon so the URL is visible early.
-	// It runs detached with stdio redirected to the controller log file so
-	// its output does not clutter the terminal but is still captured.
-	{
+	// ── 0. Start dev UI ─────────────────────────────────────────────────
+	// Launch OrqaDev by default. The legacy dev.mjs web dashboard is available
+	// via --legacy-dashboard for users who need it while transitioning.
+	let devtoolsProc: NodeChildProcess | null = null;
+
+	if (opts.legacyDashboard) {
+		// Legacy path: spawn the dev.mjs web dashboard (deprecated).
 		const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
 		const logPath = path.join(root, ".state", "dev-controller.log");
 		ensureStateDir(root);
@@ -442,7 +448,8 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		});
 		fs.closeSync(logFd);
 		dashboardProc.unref();
-		logSuccess(`Debug dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
+		logSuccess(`Legacy dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
+		logCtrl("--legacy-dashboard is deprecated. OrqaDev is now the default dev UI.");
 
 		// Open the dashboard in the default browser after a short delay so the
 		// server has time to bind its port.
@@ -453,21 +460,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 				if (err) logCtrl(`Could not open browser: ${err.message}`);
 			});
 		}, 1_500);
-	}
-
-	writeControlFile(root, {
-		state: "starting",
-		app: null,
-		search: null,
-		dashboard: dashboardProc?.pid ?? null,
-		devtools: null,
-	});
-
-	// ── 0.5. Start OrqaDev (devtools companion app) ──────────────────────
-	// Launch OrqaDev before the daemon so the developer can observe daemon
-	// startup in the devtools log viewer.
-	let devtoolsProc: NodeChildProcess | null = null;
-	{
+	} else {
+		// Default path: launch OrqaDev before the daemon so the developer can
+		// observe daemon startup in the devtools log viewer.
 		const devtoolsBin = findBin("orqa-devtools");
 		if (fs.existsSync(devtoolsBin)) {
 			logCtrl("Starting OrqaDev...");
@@ -479,18 +474,18 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			});
 			devtoolsProc.unref();
 			logSuccess(`OrqaDev started (PID ${devtoolsProc.pid ?? "?"}).`);
-
-			writeControlFile(root, {
-				state: "starting",
-				app: null,
-				search: null,
-				dashboard: dashboardProc?.pid ?? null,
-				devtools: devtoolsProc?.pid ?? null,
-			});
 		} else {
-			logCtrl("orqa-devtools binary not found — skipping DevTools launch.");
+			logCtrl("orqa-devtools binary not found — skipping OrqaDev launch.");
 		}
 	}
+
+	writeControlFile(root, {
+		state: "starting",
+		app: null,
+		search: null,
+		dashboard: dashboardProc?.pid ?? null,
+		devtools: devtoolsProc?.pid ?? null,
+	});
 
 	// ── 1. Start daemon ─────────────────────────────────────────────────
 	logCtrl("Starting daemon...");
@@ -1009,7 +1004,7 @@ function runNpmBuild(npmCmd: string, cwd: string): Promise<void> {
 
 // ── Subcommand: dev (spawn controller in background) ────────────────────────
 
-async function cmdDev(root: string): Promise<void> {
+async function cmdDev(root: string, opts: { legacyDashboard?: boolean } = {}): Promise<void> {
 	// Always start fresh — kill existing processes first
 	const existing = readControlFile(root);
 	if (existing && processIsAlive(existing.pid)) {
@@ -1088,7 +1083,9 @@ async function cmdDev(root: string): Promise<void> {
 	// Write controller output to a log file so we can debug startup failures
 	const logFile = path.join(root, ".state", "dev-controller.log");
 	const logFd = fs.openSync(logFile, "w");
-	const child = spawn(nodeCmd, [cliEntry, "dev", "__start-controller"], {
+	const controllerArgs = [cliEntry, "dev", "__start-controller"];
+	if (opts.legacyDashboard) controllerArgs.push("--legacy-dashboard");
+	const child = spawn(nodeCmd, controllerArgs, {
 		cwd: root,
 		detached: true,
 		stdio: ["ignore", logFd, logFd],
@@ -1272,14 +1269,18 @@ export async function runDevCommand(args: string[]): Promise<void> {
 	}
 
 	const root = getRoot();
-	const sub = args[0] ?? "dev";
+
+	// Strip global flags before dispatching to subcommands.
+	const legacyDashboard = args.includes("--legacy-dashboard");
+	const filteredArgs = args.filter((a) => a !== "--legacy-dashboard");
+	const sub = filteredArgs[0] ?? "dev";
 
 	switch (sub) {
 		case "dev":
-			await cmdDev(root);
+			await cmdDev(root, { legacyDashboard });
 			break;
 		case "__start-controller":
-			await startController(root);
+			await startController(root, { watch: true, legacyDashboard });
 			break;
 		case "stop":
 			await cmdStop(root);
@@ -1288,7 +1289,7 @@ export async function runDevCommand(args: string[]): Promise<void> {
 			await cmdKill(root);
 			break;
 		case "restart": {
-			const target = args[1];
+			const target = filteredArgs[1];
 			if (!target) {
 				await cmdSignal(root, "restart", "Full restart");
 			} else {
@@ -1315,10 +1316,10 @@ export async function runDevCommand(args: string[]): Promise<void> {
 			cmdStatus(root);
 			break;
 		case "icons":
-			cmdIcons(root, args.slice(1));
+			cmdIcons(root, filteredArgs.slice(1));
 			break;
 		case "tool":
-			cmdDebugTool(root, args.slice(1));
+			cmdDebugTool(root, filteredArgs.slice(1));
 			break;
 		default:
 			console.error(`Unknown subcommand: ${sub}`);

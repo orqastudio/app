@@ -46,7 +46,7 @@ const DAEMON_EVENTS_URL = "http://localhost:10100/events";
 
 const subscribers: LogSubscriber[] = [];
 
-let minLevel: LogLevel = "debug";
+let minLevel: LogLevel = "info";
 
 const LEVEL_ORDER: Record<LogLevel, number> = {
 	debug: 0,
@@ -191,4 +191,15 @@ export function subscribeToLogs(fn: LogSubscriber): () => void {
 /** Set the minimum log level for console output. */
 export function setLogLevel(level: LogLevel): void {
 	minLevel = level;
+}
+
+/**
+ * Switch the console log level to "debug".
+ *
+ * Call this in dev builds or from the OrqaDev dashboard to see verbose output
+ * in the browser console. Forwarding to the dashboard and daemon bus is
+ * unaffected — those always send regardless of console level.
+ */
+export function initDevConsole(): void {
+	minLevel = "debug";
 }

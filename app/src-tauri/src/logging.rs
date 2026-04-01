@@ -3,10 +3,11 @@
 //! Three tiers:
 //! - **All modes**: error-level logs emit `app-error` Tauri events so the
 //!   frontend can display them in an error toast.
-//! - **All modes**: all log events are forwarded to the daemon via HTTP POST to
-//!   `/events` so they appear in the central event bus (fire-and-forget, batched).
-//! - **Dev mode** (`debug_assertions`): info+ logs written to stderr so the dev
-//!   controller captures them and streams to the OrqaDev dashboard via SSE.
+//! - **All modes**: ALL log events (TRACE and above) are forwarded to the
+//!   daemon via HTTP POST to `/events` so they appear in the central event
+//!   bus (fire-and-forget, batched). Level filtering is handled display-side.
+//! - **Dev mode** (`debug_assertions`): debug+ logs written to stderr so the
+//!   dev controller captures them and streams to the OrqaDev dashboard via SSE.
 
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock};
@@ -238,8 +239,8 @@ where
 /// Must be called once, early in `setup`, before any tracing macros fire.
 ///
 /// - **All modes**: error-level logs emit `app-error` Tauri events.
-/// - **All modes**: all info+ logs are forwarded to the daemon event bus via HTTP.
-/// - **Dev mode** (`debug_assertions`): info+ logs also written to stderr.
+/// - **All modes**: ALL events (TRACE+) forwarded to the daemon event bus via HTTP.
+/// - **Dev mode** (`debug_assertions`): debug+ logs also written to stderr.
 pub fn init_logging(app: &AppHandle<Wry>) {
     let _ = APP_HANDLE.set(app.clone());
 
@@ -252,17 +253,17 @@ pub fn init_logging(app: &AppHandle<Wry>) {
         .without_time()
         .with_filter(EnvFilter::new("error,tao=off,wry=off"));
 
-    // Daemon forwarding layer — sends all info+ events to the daemon event bus.
+    // Daemon forwarding layer — sends ALL events (TRACE and above) to the
+    // daemon event bus. Level filtering for display is done by consumers.
     // tao/wry suppressed to avoid event bus noise from Tauri internals.
     let forwarder_layer = EventForwarderLayer::new()
         .with_filter(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info,tao=off,wry=off")),
+            EnvFilter::new("trace,tao=off,wry=off"),
         );
 
     #[cfg(debug_assertions)]
     {
-        // Dev mode: info+ to stderr (captured by dev controller).
+        // Dev mode: debug+ to stderr (captured by dev controller).
         // tao/wry warnings suppressed — benign event loop noise on Windows.
         let stderr_layer = fmt::layer()
             .with_writer(std::io::stderr)
@@ -270,7 +271,7 @@ pub fn init_logging(app: &AppHandle<Wry>) {
             .with_level(true)
             .with_filter(
                 EnvFilter::try_from_default_env()
-                    .unwrap_or_else(|_| EnvFilter::new("info,tao=off,wry=off")),
+                    .unwrap_or_else(|_| EnvFilter::new("debug,tao=off,wry=off")),
             );
 
         tracing_subscriber::registry()

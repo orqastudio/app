@@ -34,11 +34,22 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 /// Build and run the Tauri application event loop.
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
+        .plugin(
+            tauri_plugin_window_state::Builder::default()
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::all()
+                        & !tauri_plugin_window_state::StateFlags::DECORATIONS,
+                )
+                .build(),
+        )
         .setup(setup_app)
         .invoke_handler(tauri::generate_handler![
             events::get_events,
             events::clear_events,
             events::event_buffer_stats,
+            events::devtools_query_history,
             process_status::devtools_process_status,
         ])
         .run(tauri::generate_context!())

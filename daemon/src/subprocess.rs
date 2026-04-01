@@ -12,9 +12,12 @@
 //     phase enhancement). It logs the exit and marks the process as stopped.
 //   - `check_status` polls the child's exit code rather than sending a signal
 //     so the check is non-destructive on all platforms.
+//   - `binary_path` and `started_at` are recorded at spawn time so the health
+//     endpoint can report per-process detail without re-querying the OS.
 
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command};
+use std::time::Instant;
 
 use tracing::{error, info, warn};
 
@@ -37,6 +40,8 @@ pub enum SubprocessStatus {
 /// Holds the binary name, arguments, and (when running) a handle to the child.
 /// Callers start and stop the subprocess through `start` and `stop`. The
 /// `check_status` method polls the child's exit code to detect crashes.
+/// `binary_path` and `started_at` are set when the subprocess is successfully
+/// spawned so callers can report per-process detail for the health endpoint.
 pub struct SubprocessManager {
     /// Human-readable name for logging (e.g., "mcp-server").
     pub name: String,
@@ -51,6 +56,10 @@ pub struct SubprocessManager {
     /// Number of times this subprocess has crashed since it was created.
     /// Incremented each time `check_status` observes a non-zero exit code.
     pub crash_count: u32,
+    /// Resolved binary path recorded at spawn time. `None` until first successful start.
+    pub binary_path: Option<PathBuf>,
+    /// Instant the subprocess was most recently started. `None` until first successful start.
+    started_at: Option<Instant>,
 }
 
 impl SubprocessManager {
@@ -64,6 +73,23 @@ impl SubprocessManager {
             child: None,
             status: SubprocessStatus::Stopped,
             crash_count: 0,
+            binary_path: None,
+            started_at: None,
+        }
+    }
+
+    /// Return the PID of the running child, if any.
+    pub fn pid(&self) -> Option<u32> {
+        self.child.as_ref().map(std::process::Child::id)
+    }
+
+    /// Return uptime in seconds since the most recent successful start.
+    /// Returns `None` if the subprocess has never started or is not running.
+    pub fn uptime_seconds(&self) -> Option<u64> {
+        if self.status == SubprocessStatus::Running {
+            self.started_at.map(|t| t.elapsed().as_secs())
+        } else {
+            None
         }
     }
 
@@ -173,6 +199,8 @@ impl SubprocessManager {
             "subprocess started"
         );
 
+        self.binary_path = Some(binary_path);
+        self.started_at = Some(Instant::now());
         self.child = Some(child);
         self.status = SubprocessStatus::Running;
         Ok(())
@@ -240,6 +268,51 @@ impl SubprocessManager {
     /// Return `true` if the subprocess is currently running.
     pub fn is_running(&self) -> bool {
         self.status == SubprocessStatus::Running
+    }
+}
+
+/// A point-in-time snapshot of one managed subprocess, used by the health
+/// endpoint to report per-process detail without holding the subprocess lock.
+///
+/// Constructed by `SubprocessManager::snapshot` and serialised into the
+/// health response `processes` array. The daemon itself is added separately by
+/// the health handler because it is not a managed subprocess.
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ProcessSnapshot {
+    /// Human-readable name shown in OrqaDev (e.g., "LSP Server").
+    pub name: String,
+    /// Canonical log source identifier for log filtering (e.g., "lsp").
+    pub source: String,
+    /// Lifecycle status string: "running", "stopped", "crashed", or "not_found".
+    pub status: String,
+    /// OS process ID, populated only when the process is running.
+    pub pid: Option<u32>,
+    /// Uptime in seconds since last start. `None` when not running.
+    pub uptime_seconds: Option<u64>,
+    /// Absolute path to the binary that was spawned. `None` when never started.
+    pub binary_path: Option<String>,
+}
+
+impl SubprocessManager {
+    /// Build a `ProcessSnapshot` from the current manager state.
+    ///
+    /// Used by the health endpoint to expose per-process detail. The `source`
+    /// parameter is the canonical log source key (e.g., "lsp", "mcp") since
+    /// the manager's `name` field is an internal label, not a log source key.
+    pub fn snapshot(&self, source: &str) -> ProcessSnapshot {
+        ProcessSnapshot {
+            name: self.name.clone(),
+            source: source.to_owned(),
+            status: match self.status {
+                SubprocessStatus::Running => "running".to_owned(),
+                SubprocessStatus::Stopped => "stopped".to_owned(),
+                SubprocessStatus::Crashed => "crashed".to_owned(),
+                SubprocessStatus::BinaryNotFound => "not_found".to_owned(),
+            },
+            pid: self.pid(),
+            uptime_seconds: self.uptime_seconds(),
+            binary_path: self.binary_path.as_ref().map(|p| p.display().to_string()),
+        }
     }
 }
 

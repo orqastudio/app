@@ -8,15 +8,16 @@
  * controller starts the daemon and the daemon starts MCP/LSP. The controller
  * does NOT spawn orqa-mcp-server or orqa-lsp-server directly.
  *
- * orqa dev                Start the full dev environment (Vite + Tauri + daemon)
- * orqa dev stop           Stop gracefully
- * orqa dev kill           Force-kill all processes
- * orqa dev restart        Restart Vite + Tauri
- * orqa dev restart-tauri  Restart Tauri only
- * orqa dev restart-vite   Restart Vite only
- * orqa dev status         Show process status
- * orqa dev icons          Generate brand icons from SVG sources
- * orqa dev tool           Run the debug-tool submodule
+ * orqa dev                        Start the full dev environment (Vite + Tauri + daemon)
+ * orqa dev --legacy-dashboard     Start with the legacy dev.mjs dashboard instead of OrqaDev
+ * orqa dev stop                   Stop gracefully
+ * orqa dev kill                   Force-kill all processes
+ * orqa dev restart                Restart Vite + Tauri
+ * orqa dev restart-tauri          Restart Tauri only
+ * orqa dev restart-vite           Restart Vite only
+ * orqa dev status                 Show process status
+ * orqa dev icons                  Generate brand icons from SVG sources
+ * orqa dev tool                   Run the debug-tool submodule
  */
 /**
  * Dispatch the dev command: start the dev environment or a subcommand.

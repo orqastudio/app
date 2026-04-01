@@ -1,5 +1,12 @@
 // Navigation state store for OrqaDev. Tracks which tab is active using
 // Svelte 5 $state so components re-render reactively on tab changes.
+// Active tab is persisted to localStorage so it survives app restarts.
+//
+// Also tracks connection state to the daemon SSE stream, updated via the
+// orqa://connection-state Tauri event. The status bar reads this state to show
+// "Connected", "Reconnecting (attempt N)", or "Waiting for daemon...".
+
+import { listen } from "@tauri-apps/api/event";
 
 export type DevToolsTab = "logs" | "processes" | "storybook" | "metrics";
 
@@ -11,8 +18,77 @@ export const TABS: { value: DevToolsTab; label: string }[] = [
 	{ value: "metrics", label: "Metrics" },
 ];
 
+// The three connection states emitted by the Rust backend.
+export type ConnectionState =
+	| { state: "connected" }
+	| { state: "reconnecting"; attempt: number }
+	| { state: "waiting-for-daemon" };
+
+// localStorage key for the active tab.
+const STORAGE_KEY_TAB = "orqadev:activeTab";
+
+// Valid tab values — used to reject corrupted or stale persisted values.
+const VALID_TABS = new Set<DevToolsTab>(TABS.map((t) => t.value));
+
+// Restore the previously selected tab from localStorage, falling back to "logs"
+// if nothing is stored or the stored value is not a valid tab name.
+function loadPersistedTab(): DevToolsTab {
+	try {
+		const stored = localStorage.getItem(STORAGE_KEY_TAB);
+		if (stored && VALID_TABS.has(stored as DevToolsTab)) {
+			return stored as DevToolsTab;
+		}
+	} catch {
+		// localStorage unavailable (e.g., sandboxed context) — silently fall through.
+	}
+	return "logs";
+}
+
+// Persist the active tab to localStorage.
+function persistTab(tab: DevToolsTab): void {
+	try {
+		localStorage.setItem(STORAGE_KEY_TAB, tab);
+	} catch {
+		// Ignore write failures — persistence is best-effort.
+	}
+}
+
+// Return a human-readable status bar label for the given connection state.
+export function connectionLabel(conn: ConnectionState): string {
+	switch (conn.state) {
+		case "connected":
+			return "Connected";
+		case "reconnecting":
+			return `Reconnecting (attempt ${conn.attempt})`;
+		case "waiting-for-daemon":
+			return "Waiting for daemon...";
+	}
+}
+
 // Module-level reactive state. Exported as a plain object so any component
-// can read `navigation.activeTab` and write `navigation.activeTab = "logs"`.
-export const navigation = $state<{ activeTab: DevToolsTab }>({
-	activeTab: "logs",
+// can read `navigation.activeTab` / `navigation.connection` and write to them.
+// Tab is restored from localStorage; connection starts in waiting-for-daemon
+// state until the Rust backend emits its first orqa://connection-state event.
+export const navigation = $state<{
+	activeTab: DevToolsTab;
+	connection: ConnectionState;
+}>({
+	activeTab: loadPersistedTab(),
+	connection: { state: "waiting-for-daemon" },
+});
+
+// $effect runs after state initialises. Persists the active tab to localStorage
+// and subscribes to orqa://connection-state Tauri events so the status bar
+// reflects the live connection state from the Rust SSE consumer.
+$effect.root(() => {
+	$effect(() => {
+		persistTab(navigation.activeTab);
+	});
+
+	// Listen for connection state changes emitted by events.rs and update the
+	// reactive navigation state. The listener is set up once and runs for the
+	// lifetime of the app — no cleanup needed.
+	listen<ConnectionState>("orqa://connection-state", (event) => {
+		navigation.connection = event.payload;
+	});
 });

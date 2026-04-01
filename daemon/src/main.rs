@@ -45,7 +45,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
-use crate::subprocess::SubprocessManager;
+use crate::subprocess::{ProcessSnapshot, SubprocessManager};
 use crate::tray::SubprocessStatuses;
 
 use tracing::{error, info, warn};
@@ -155,11 +155,31 @@ async fn run(
     // Load runtime config from orqa.toml. Falls back to defaults when absent.
     let daemon_config = config::DaemonConfig::load(&project_root);
 
+    // Shared registry of process snapshots written by the event loop on every
+    // polling cycle. The health endpoint reads this to populate the `processes`
+    // array in GET /health, enabling OrqaDev auto-discovery.
+    let process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>> = Arc::new(Mutex::new(Vec::new()));
+
     // Open the SQLite event store and spawn the background batch writer.
     // Degrades gracefully if the database cannot be opened.
-    let event_store = match event_store::EventStore::open(&project_root) {
+    let event_store = match event_store::EventStore::open(&project_root, daemon_config.event_retention_days) {
         Ok(store) => {
             event_store::spawn_batch_writer(Arc::clone(&event_bus), Arc::clone(&store));
+
+            // Spawn a background task that purges expired events every 6 hours.
+            // This runs independently of the batch writer and uses its own interval.
+            let purge_store = Arc::clone(&store);
+            let retention_days = daemon_config.event_retention_days;
+            tokio::spawn(async move {
+                let mut interval = tokio::time::interval(std::time::Duration::from_secs(6 * 3600));
+                // Skip the immediate first tick — startup purge already ran inside open().
+                interval.tick().await;
+                loop {
+                    interval.tick().await;
+                    event_store::EventStore::purge(Arc::clone(&purge_store), retention_days).await;
+                }
+            });
+
             Some(store)
         }
         Err(e) => {
@@ -174,8 +194,9 @@ async fn run(
 
     tokio::spawn({
         let bus = Arc::clone(&event_bus);
+        let snapshots = Arc::clone(&process_snapshots);
         async move {
-            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store).await {
+            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store, snapshots).await {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }
         }
@@ -212,6 +233,7 @@ async fn run(
         &mut lsp_manager,
         &mut mcp_manager,
         &subprocess_statuses,
+        &process_snapshots,
     )
     .await;
 
@@ -223,14 +245,15 @@ async fn run(
 /// Poll the shutdown flag and yield to the tokio runtime between checks.
 ///
 /// Polls both LSP and MCP subprocess statuses on each iteration so crashes are
-/// logged promptly. Writes the latest statuses to `subprocess_statuses` after
-/// each poll so the tray thread can read them without blocking. Polling every
+/// logged promptly. Writes the latest statuses to `subprocess_statuses` for the
+/// tray thread and to `process_snapshots` for the health endpoint. Polling every
 /// 250 ms adds negligible overhead for a long-running background process.
 async fn run_event_loop(
     shutdown_flag: &Arc<AtomicBool>,
     lsp: &mut SubprocessManager,
     mcp: &mut SubprocessManager,
     subprocess_statuses: &Arc<Mutex<SubprocessStatuses>>,
+    process_snapshots: &Arc<Mutex<Vec<ProcessSnapshot>>>,
 ) {
     loop {
         if shutdown_flag.load(Ordering::SeqCst) {
@@ -244,6 +267,16 @@ async fn run_event_loop(
         if let Ok(mut guard) = subprocess_statuses.lock() {
             guard.lsp = lsp_status;
             guard.mcp = mcp_status;
+        }
+
+        // Update the process snapshot registry for the health endpoint.
+        // Each manager generates its own snapshot so the health handler never
+        // needs to access subprocess managers directly.
+        if let Ok(mut guard) = process_snapshots.lock() {
+            *guard = vec![
+                lsp.snapshot("lsp"),
+                mcp.snapshot("mcp"),
+            ];
         }
 
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;

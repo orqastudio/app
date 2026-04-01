@@ -1,6 +1,7 @@
 <!-- Process diagnostics view for OrqaDev. Renders a grid of ProcessCard components,
-     one for each managed process (Daemon, MCP, LSP, Search, Sidecar). Status is
-     polled from the daemon health endpoint every 2 seconds via the
+     auto-discovered from the daemon health endpoint's `processes` array. New
+     subprocesses registered in the daemon appear here automatically without any
+     frontend changes. Status is polled every 2 seconds via the
      devtools_process_status IPC command. Clicking a card fires a log-source filter
      event so users can navigate directly to that process's log entries. -->
 <script lang="ts">

@@ -10,13 +10,18 @@
 	import { onMount, onDestroy, tick } from "svelte";
 	import {
 		events,
+		filteredEvents,
 		connectionStatus,
 		totalReceived,
 		scrollLock,
 		startLogStream,
 		clearEvents,
+		loadHistory,
+		historyLoading,
+		historyExhausted,
 	} from "../../stores/log-store.svelte.js";
 	import LogRow from "./LogRow.svelte";
+	import LogExport from "./LogExport.svelte";
 
 	// Height of a collapsed row in pixels. Must match the inline style in LogRow.
 	const ROW_HEIGHT = 24;
@@ -57,10 +62,10 @@
 	// Cleanup function returned by startLogStream.
 	let stopLogStream: (() => void) | null = null;
 
-	// Compute the total scrollable height based on the current event list.
+	// Compute the total scrollable height based on the filtered event list.
 	// Expanded rows are taller; collapsed rows are ROW_HEIGHT each.
 	const totalHeight = $derived(
-		events.reduce((acc, ev) => {
+		filteredEvents.reduce((acc, ev) => {
 			return acc + (expandedRows.has(ev.id) ? EXPANDED_HEIGHT : ROW_HEIGHT);
 		}, 0),
 	);
@@ -70,17 +75,17 @@
 	const visibleRange = $derived.by(() => {
 		let cumulative = 0;
 		let start = 0;
-		let end = events.length;
+		let end = filteredEvents.length;
 		let foundStart = false;
 
-		for (let i = 0; i < events.length; i++) {
-			const rowH = expandedRows.has(events[i].id) ? EXPANDED_HEIGHT : ROW_HEIGHT;
+		for (let i = 0; i < filteredEvents.length; i++) {
+			const rowH = expandedRows.has(filteredEvents[i].id) ? EXPANDED_HEIGHT : ROW_HEIGHT;
 			if (!foundStart && cumulative + rowH > scrollTop - OVERSCAN * ROW_HEIGHT) {
 				start = Math.max(0, i - OVERSCAN);
 				foundStart = true;
 			}
 			if (cumulative > scrollTop + viewportHeight + OVERSCAN * ROW_HEIGHT) {
-				end = Math.min(events.length, i + OVERSCAN);
+				end = Math.min(filteredEvents.length, i + OVERSCAN);
 				break;
 			}
 			cumulative += rowH;
@@ -94,15 +99,15 @@
 	const rowOffsets = $derived.by(() => {
 		const offsets: number[] = [];
 		let cumulative = 0;
-		for (let i = 0; i < events.length; i++) {
+		for (let i = 0; i < filteredEvents.length; i++) {
 			offsets.push(cumulative);
-			cumulative += expandedRows.has(events[i].id) ? EXPANDED_HEIGHT : ROW_HEIGHT;
+			cumulative += expandedRows.has(filteredEvents[i].id) ? EXPANDED_HEIGHT : ROW_HEIGHT;
 		}
 		return offsets;
 	});
 
-	// Slice of events to render (visible + overscan).
-	const visibleEvents = $derived(events.slice(visibleRange.start, visibleRange.end));
+	// Slice of filtered events to render (visible + overscan).
+	const visibleEvents = $derived(filteredEvents.slice(visibleRange.start, visibleRange.end));
 
 	// Handle scroll events from the viewport. Updates scrollTop and, if the user
 	// scrolls up away from the bottom, disables scroll-lock.
@@ -133,10 +138,11 @@
 		scrollToBottom();
 	}
 
-	// When new events arrive and scroll-lock is on, scroll to bottom.
-	// Reads events.length as the reactive trigger so it fires on each append.
+	// When filtered events change and scroll-lock is on, scroll to bottom.
+	// Reads filteredEvents.length as the reactive trigger so it fires on each
+	// new event that passes the active filters.
 	$effect(() => {
-		if (events.length > 0 && scrollLock.enabled) {
+		if (filteredEvents.length > 0 && scrollLock.enabled) {
 			scrollToBottom();
 		}
 	});
@@ -179,7 +185,7 @@
 			{/if}
 		{/each}
 
-		<!-- Toolbar: scroll-lock toggle and clear button pinned to the right. -->
+		<!-- Toolbar: scroll-lock toggle, export, and clear buttons pinned to the right. -->
 		<div class="ml-auto flex shrink-0 items-center gap-1">
 			{#if !scrollLock.enabled}
 				<button
@@ -189,6 +195,7 @@
 					Follow
 				</button>
 			{/if}
+			<LogExport />
 			<button
 				class="rounded px-1.5 py-0.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base"
 				onclick={clearEvents}
@@ -198,6 +205,22 @@
 		</div>
 	</div>
 
+	<!-- Load earlier button: prepends history events before the oldest visible
+	     event. Shown above the virtualised scroll area so it is reachable without
+	     scrolling to the top (which would disable scroll-lock). Hidden when all
+	     available history has been loaded. -->
+	{#if !historyExhausted.value}
+		<div class="border-b border-border bg-surface-base flex shrink-0 items-center justify-center px-2" style="height: 24px;">
+			<button
+				class="rounded px-2 py-0.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base disabled:cursor-not-allowed disabled:opacity-40"
+				disabled={historyLoading.value}
+				onclick={loadHistory}
+			>
+				{historyLoading.value ? "Loading…" : "Load earlier"}
+			</button>
+		</div>
+	{/if}
+
 	<!-- Scrollable viewport: the only element that scrolls. Uses role="table" so
 	     screen readers understand the virtualised row structure. -->
 	<div
@@ -205,30 +228,34 @@
 		class="relative flex-1 overflow-x-hidden overflow-y-auto"
 		role="table"
 		aria-label="Log events"
-		aria-rowcount={events.length}
+		aria-rowcount={filteredEvents.length}
 		onscroll={handleScroll}
 	>
-		<!-- Spacer div: its height equals the total height of all rows so the
-		     scrollbar reflects the full dataset. Rows are absolutely positioned
-		     inside it via their pre-computed offsets. -->
+		<!-- Spacer div: its height equals the total height of all filtered rows so
+		     the scrollbar reflects the full filtered dataset. Rows are absolutely
+		     positioned inside it via their pre-computed offsets. -->
 		<div class="relative w-full" style="height: {totalHeight}px;">
 			{#each visibleEvents as ev (ev.id)}
 				<LogRow
 					event={ev}
-					style="top: {rowOffsets[events.indexOf(ev)]}px;"
+					style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;"
 				/>
 			{/each}
 		</div>
 
-		<!-- Empty state: shown before the first event arrives. -->
-		{#if events.length === 0}
+		<!-- Empty state: shown when there are no matching events. -->
+		{#if filteredEvents.length === 0}
 			<div class="flex h-full items-center justify-center text-sm text-content-muted">
-				{#if connectionStatus.value === "connecting"}
-					Waiting for events…
-				{:else if connectionStatus.value === "disconnected"}
-					Daemon disconnected — no events
+				{#if events.length === 0}
+					{#if connectionStatus.value === "connecting"}
+						Waiting for events…
+					{:else if connectionStatus.value === "disconnected"}
+						Daemon disconnected — no events
+					{:else}
+						No events yet
+					{/if}
 				{:else}
-					No events yet
+					No events match the active filters
 				{/if}
 			</div>
 		{/if}
@@ -239,7 +266,11 @@
 		class="border-t border-border bg-surface-base flex shrink-0 items-center gap-3 px-2 text-[10px] text-content-muted"
 		style="height: 20px;"
 	>
-		<span>{totalReceived.value} events received</span>
+		{#if filteredEvents.length !== events.length}
+			<span>{filteredEvents.length} of {totalReceived.value} events</span>
+		{:else}
+			<span>{totalReceived.value} events received</span>
+		{/if}
 		{#if scrollLock.enabled}
 			<span class="text-blue-400">Auto-scroll on</span>
 		{/if}

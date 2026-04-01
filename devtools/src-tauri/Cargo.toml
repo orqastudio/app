@@ -22,6 +22,9 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+tauri-plugin-dialog = { version = "2", features = [] }
+tauri-plugin-fs = { version = "2", features = [] }
+tauri-plugin-window-state = { version = "2", features = [] }
 orqa-engine-types = { path = "../../engine/types" }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
