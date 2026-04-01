@@ -8,11 +8,12 @@
 // thin adapter (architecture principle: daemon is the business-logic boundary).
 
 use std::path::{Path, PathBuf};
+use std::time::Instant;
 
 use axum::extract::State;
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, warn};
+use tracing::{debug, info, warn};
 
 use crate::health::HealthState;
 
@@ -56,6 +57,7 @@ pub async fn parse_handler(
     State(state): State<HealthState>,
     Json(req): Json<ParseRequest>,
 ) -> Result<Json<ParseResponse>, (StatusCode, String)> {
+    let start = Instant::now();
     let file_path = Path::new(&req.file);
 
     let content = std::fs::read_to_string(file_path).map_err(|e| {
@@ -82,15 +84,31 @@ pub async fn parse_handler(
     let downstream_warn_threshold = state.config.downstream_warn_threshold;
     let high_influence = HIGH_INFLUENCE_TYPES.contains(&artifact_type.to_lowercase().as_str());
     let should_warn = high_influence || downstream_count > downstream_warn_threshold;
+    let elapsed_ms = start.elapsed().as_millis() as u64;
 
-    debug!(
-        file = %req.file,
-        artifact_type = %artifact_type,
-        high_influence,
-        downstream_count,
-        should_warn,
-        "[parse] artifact parsed"
-    );
+    if should_warn {
+        info!(
+            subsystem = "parse",
+            elapsed_ms,
+            file = %req.file,
+            artifact_type = %artifact_type,
+            high_influence,
+            downstream_count,
+            should_warn,
+            "[parse] artifact parsed — warning required"
+        );
+    } else {
+        debug!(
+            subsystem = "parse",
+            elapsed_ms,
+            file = %req.file,
+            artifact_type = %artifact_type,
+            high_influence,
+            downstream_count,
+            should_warn,
+            "[parse] artifact parsed"
+        );
+    }
 
     Ok(Json(ParseResponse {
         id,

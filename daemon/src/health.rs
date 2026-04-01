@@ -90,11 +90,12 @@ pub async fn start(port: u16, config: DaemonConfig) -> Result<(), Box<dyn std::e
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
-    info!(addr = %addr, "health endpoint listening");
+    info!(subsystem = "health", port, "starting health endpoint");
+    info!(subsystem = "health", addr = %addr, "health endpoint listening");
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
     axum::serve(listener, app).await.map_err(|e| {
-        error!(error = %e, "health server error");
+        error!(subsystem = "health", error = %e, "health server error");
         e.into()
     })
 }

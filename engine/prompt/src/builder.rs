@@ -116,8 +116,12 @@ pub fn read_rules(project_path: &Path, rules_path: &str) -> Vec<(String, String)
             .unwrap_or("unknown")
             .to_owned();
 
-        if let Ok(contents) = std::fs::read_to_string(&path) {
-            rules.push((rule_name, contents));
+        match std::fs::read_to_string(&path) {
+            Ok(contents) => rules.push((rule_name, contents)),
+            Err(e) => {
+                // Surface rule file read failures instead of silently skipping them.
+                tracing::warn!(path = %path.display(), error = %e, "[engine] failed to read rule file");
+            }
         }
     }
 
@@ -344,7 +348,24 @@ pub fn build_system_prompt(
         }
     }
 
-    Ok(parts.join("\n"))
+    let prompt_text = parts.join("\n");
+
+    // Log token estimate for P5 enforcement: 1,500–4,000 tokens per agent prompt target.
+    // Counts are collected after assembly so the log reflects what was actually included.
+    let rule_count = rules.len();
+    let knowledge_count = catalog.len();
+    let agent_definition_count = agent_files.len();
+    let estimated_tokens = prompt_text.len() / 4;
+    tracing::debug!(
+        subsystem = "engine",
+        rule_count,
+        knowledge_count,
+        agent_definition_count,
+        estimated_tokens,
+        "[engine] build_system_prompt completed"
+    );
+
+    Ok(prompt_text)
 }
 
 /// Resolve the system prompt from a known project root path, logging on failure.

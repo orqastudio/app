@@ -58,7 +58,7 @@ pub fn init(project_root: &Path) -> LogGuard {
     let _ = std::fs::create_dir_all(&state_dir);
 
     // Build a daily-rolling file appender for structured JSON logs.
-    let file_appender = tracing_appender::rolling::daily(state_dir, "daemon.log");
+    let file_appender = tracing_appender::rolling::daily(&state_dir, "daemon.log");
     let (non_blocking_file, file_guard) = tracing_appender::non_blocking(file_appender);
 
     // JSON layer — always active, regardless of TTY state.
@@ -83,6 +83,19 @@ pub fn init(project_root: &Path) -> LogGuard {
         .with(json_layer)
         .with(console_layer)
         .init();
+
+    let tty_mode = is_tty();
+    let log_level = std::env::var("RUST_LOG").unwrap_or_else(|_| "info".to_string());
+    let log_file_path = state_dir.join("daemon.log");
+
+    // Log the effective logging configuration immediately after initialization.
+    tracing::info!(
+        subsystem = "logging",
+        log_file = %log_file_path.display(),
+        tty = tty_mode,
+        level = %log_level,
+        "[logging] subscriber initialized"
+    );
 
     LogGuard {
         _file_guard: file_guard,

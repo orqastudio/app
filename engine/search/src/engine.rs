@@ -34,11 +34,32 @@ impl SearchEngine {
         root: &Path,
         excluded_paths: &[String],
     ) -> Result<IndexStatus, SearchError> {
+        use std::collections::HashSet;
+        use std::time::Instant;
+        let start = Instant::now();
+
         self.project_root = Some(root.to_path_buf());
         let chunks = crate::chunker::chunk_codebase(root, excluded_paths)?;
+
+        let chunk_count = chunks.len();
+        let file_count = chunks
+            .iter()
+            .map(|c| c.file_path.as_str())
+            .collect::<HashSet<_>>()
+            .len();
+
         self.store.clear()?;
         self.store.insert_chunks(&chunks)?;
         let status = self.store.get_status()?;
+
+        tracing::info!(
+            subsystem = "engine",
+            elapsed_ms = start.elapsed().as_millis() as u64,
+            chunk_count = chunk_count,
+            file_count = file_count,
+            "[engine] index completed"
+        );
+
         Ok(status)
     }
 
@@ -74,6 +95,9 @@ impl SearchEngine {
     ///
     /// Processes chunks in batches of 32. Returns the count of newly embedded chunks.
     pub fn embed_chunks(&mut self) -> Result<u32, SearchError> {
+        use std::time::Instant;
+        let start = Instant::now();
+
         if self.embedder.is_none() {
             return Err(SearchError::Search("embedder not initialized".to_owned()));
         }
@@ -81,11 +105,19 @@ impl SearchEngine {
         let unembedded = self.store.get_unembedded_chunks()?;
 
         if unembedded.is_empty() {
+            tracing::info!(
+                subsystem = "engine",
+                elapsed_ms = start.elapsed().as_millis() as u64,
+                batch_count = 0u64,
+                total_chunks = 0u64,
+                "[engine] embed_chunks completed"
+            );
             return Ok(0);
         }
 
         let batch_size = 32;
         let mut total_embedded = 0u32;
+        let mut batch_count = 0u64;
 
         for batch in unembedded.chunks(batch_size) {
             let texts: Vec<&str> = batch.iter().map(|(_, content)| content.as_str()).collect();
@@ -105,7 +137,16 @@ impl SearchEngine {
 
             self.store.update_embeddings(&updates)?;
             total_embedded += updates.len() as u32;
+            batch_count += 1;
         }
+
+        tracing::info!(
+            subsystem = "engine",
+            elapsed_ms = start.elapsed().as_millis() as u64,
+            batch_count = batch_count,
+            total_chunks = total_embedded as u64,
+            "[engine] embed_chunks completed"
+        );
 
         Ok(total_embedded)
     }

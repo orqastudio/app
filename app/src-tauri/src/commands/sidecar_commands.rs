@@ -88,9 +88,11 @@ fn resolve_sidecar() -> (String, Vec<String>) {
 /// Returns Ok(()) if the sidecar is already connected or was successfully spawned.
 pub fn ensure_sidecar_running(state: &AppState) -> Result<(), OrqaError> {
     if state.sidecar.manager.is_connected() {
+        tracing::debug!("[sidecar] ensure_sidecar_running: already connected");
         return Ok(());
     }
 
+    tracing::info!("[sidecar] ensure_sidecar_running: spawning sidecar");
     let (command, args) = resolve_sidecar();
     let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
     state
@@ -120,6 +122,7 @@ pub fn sidecar_status(state: tauri::State<'_, AppState>) -> Result<SidecarStatus
 /// Kills any existing sidecar process and spawns a new one.
 #[tauri::command]
 pub fn sidecar_restart(state: tauri::State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
+    tracing::info!("[sidecar] sidecar_restart");
     let (command, args) = resolve_sidecar();
     let arg_refs: Vec<&str> = args.iter().map(String::as_str).collect();
     state.sidecar.manager.restart(&command, &arg_refs)

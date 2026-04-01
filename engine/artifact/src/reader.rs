@@ -254,7 +254,13 @@ fn scan_hooks_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, En
         }
 
         let (label, status, description, frontmatter) = if is_md {
-            let content = std::fs::read_to_string(entry.path()).unwrap_or_default();
+            let content = match std::fs::read_to_string(entry.path()) {
+                Ok(c) => c,
+                Err(e) => {
+                    tracing::warn!(path = %entry.path().display(), error = %e, "[engine] failed to read artifact file");
+                    String::new()
+                }
+            };
             let (_, title, status, description) = extract_basic_frontmatter(&content);
             let stem = name.trim_end_matches(".md");
             let label = title.unwrap_or_else(|| humanize_name(stem));
@@ -338,7 +344,13 @@ fn build_file_node(entry_path: &Path, name: &str, current_path: &str) -> Option<
     if !name.to_ascii_lowercase().ends_with(".md") {
         return None;
     }
-    let content = std::fs::read_to_string(entry_path).unwrap_or_default();
+    let content = match std::fs::read_to_string(entry_path) {
+        Ok(c) => c,
+        Err(e) => {
+            tracing::warn!(path = %entry_path.display(), error = %e, "[engine] failed to read artifact file");
+            String::new()
+        }
+    };
     let (_, title, status, description) = extract_basic_frontmatter(&content);
     let stem = name.trim_end_matches(".md");
     let label = title.unwrap_or_else(|| humanize_name(stem));
@@ -391,7 +403,13 @@ fn build_dir_node(
 fn read_readme_content(dir: &Path) -> String {
     let readme = dir.join("README.md");
     if readme.exists() {
-        std::fs::read_to_string(&readme).unwrap_or_default()
+        match std::fs::read_to_string(&readme) {
+            Ok(c) => c,
+            Err(e) => {
+                tracing::warn!(path = %readme.display(), error = %e, "[engine] failed to read README.md");
+                String::new()
+            }
+        }
     } else {
         String::new()
     }
@@ -430,7 +448,13 @@ fn extract_basic_frontmatter(
     };
 
     // Use the serde_yaml Value type to avoid coupling to any specific struct.
-    let value: serde_yaml::Value = serde_yaml::from_str(&yaml).unwrap_or(serde_yaml::Value::Null);
+    let value: serde_yaml::Value = match serde_yaml::from_str(&yaml) {
+        Ok(v) => v,
+        Err(e) => {
+            tracing::warn!(error = %e, "[engine] failed to parse YAML frontmatter in artifact file");
+            serde_yaml::Value::Null
+        }
+    };
 
     let get_str = |key: &str| -> Option<String> {
         value.get(key).and_then(|v| v.as_str()).map(str::to_owned)

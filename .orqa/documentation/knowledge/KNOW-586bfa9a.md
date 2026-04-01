@@ -1,0 +1,118 @@
+---
+id: KNOW-586bfa9a
+type: knowledge
+title: Knowledge Auto-Injection
+summary: "Agents need domain knowledge to do their jobs correctly. OrqaStudio ensures agents receive the right knowledge automatically through two mechanisms — **declared injection** from agent definitions and **semantic injection** based on task content."
+description: |
+  How OrqaStudio automatically injects relevant knowledge into agents at spawn time.
+  Two mechanisms: declared knowledge from agent employs relationships, and semantic
+  search for task-relevant knowledge. Hooks as the enforcement mechanism. Use when:
+  configuring agent knowledge, adding employs relationships, understanding why knowledge
+  appears in agent context, or debugging missing knowledge injection.
+status: active
+created: 2026-03-24
+updated: 2026-03-24
+category: methodology
+version: 1.0.0
+user-invocable: false
+relationships:
+  - target: DOC-586bfa9a
+    type: synchronised-with
+    rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
+---
+
+## Purpose
+
+Agents need domain knowledge to do their jobs correctly. OrqaStudio ensures agents receive the right knowledge automatically through two mechanisms — **declared injection** from agent definitions and **semantic injection** based on task content. This eliminates the failure mode where agents start work without reading the relevant knowledge.
+
+---
+
+## Two Injection Mechanisms
+
+### Mechanism 1: Declared Knowledge (employs relationships)
+
+Every agent definition has `relationships` in its YAML frontmatter. Relationships with `type: employs` declare which knowledge artifacts the agent needs:
+
+```yaml
+relationships:
+  - target: KNOW-e3432947
+    type: employs
+    rationale: "Plugin-canonical architecture — where artifacts belong"
+  - target: KNOW-57365826
+    type: employs
+    rationale: "Schema lookup before write"
+```text
+
+**At agent spawn time**, the platform reads the agent definition, follows all `employs` relationships, and loads the target knowledge artifacts into the agent's context.
+
+**This is deterministic** — the same agent always gets the same base knowledge. It covers the foundational knowledge every instance of that agent needs.
+
+### Mechanism 2: Semantic Search (task-relevant knowledge)
+
+When an agent is spawned with a task description, the platform runs a semantic search against the knowledge corpus to find knowledge artifacts relevant to the specific task — not just the agent's declared base knowledge.
+
+**At agent spawn time**, the platform:
+
+1. Takes the task description as a query
+2. Runs semantic search (ONNX embeddings) against all knowledge artifacts
+3. Ranks results by relevance score
+4. Injects the top-N relevant knowledge artifacts into the agent's context (deduplicating against declared knowledge already loaded)
+
+**This is dynamic** — different tasks surface different knowledge, even for the same agent type. It covers the situational knowledge that varies per task.
+
+---
+
+## How It Works Together
+
+```text
+Agent spawn
+    │
+    ├── Read agent definition
+    │   └── Follow employs → Load declared knowledge (Mechanism 1)
+    │
+    ├── Read task description
+    │   └── Semantic search → Load task-relevant knowledge (Mechanism 2)
+    │
+    └── Deduplicate and inject into agent context
+```text
+
+### Example
+
+An Implementer working on "add a new Tauri command for artifact validation":
+
+- **Declared knowledge** (from Implementer agent employs): composability, search, reasoning methodology
+- **Semantic search** (from task description): Tauri IPC patterns, error composition, validation engine architecture
+
+---
+
+## Enforcement via Hooks
+
+Knowledge injection is enforced by hooks in the connector plugin:
+
+| Hook | Event | What It Does |
+| ------ | ------- | ------------- |
+| **Agent spawn hook** | When a subagent is created | Reads agent definition, follows employs, loads knowledge |
+| **Task assignment hook** | When a task is delegated | Runs semantic search on task description, injects relevant knowledge |
+| **Dedup cache** | Per session | Tracks which knowledge has been injected to avoid re-injection |
+
+The dedup cache is ephemeral (lives in memory for the session). If a knowledge artifact was already injected via Mechanism 1, it won't be injected again via Mechanism 2.
+
+---
+
+## Agent Actions
+
+| Situation | Action |
+| ----------- | -------- |
+| Agent needs specific knowledge every time | Add an `employs` relationship in the agent's YAML frontmatter |
+| Agent needs knowledge only for certain tasks | Rely on semantic search — ensure the knowledge artifact has a good title and description for matching |
+| Knowledge not being injected | Check: (1) Does the employs relationship exist? (2) Does the knowledge artifact exist at the target ID? (3) Is the semantic search index up to date? |
+| Adding new knowledge | Create the artifact with a clear title and description. Semantic search will surface it for relevant tasks. Add employs to specific agents that always need it. |
+
+---
+
+## FORBIDDEN
+
+- Manually copying knowledge content into delegation prompts when auto-injection should handle it
+- Adding employs relationships for knowledge that is only occasionally relevant (use semantic search instead)
+- Skipping knowledge injection by spawning agents without going through the platform's spawn hook
+- Hardcoding knowledge content in agent system prompts instead of referencing knowledge artifacts

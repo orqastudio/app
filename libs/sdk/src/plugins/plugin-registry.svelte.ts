@@ -10,6 +10,7 @@
  */
 
 import { SvelteMap } from "svelte/reactivity";
+import { logger } from "../logger.js";
 import type {
 	PluginManifest,
 	PluginProjectConfig,
@@ -62,6 +63,8 @@ export interface RegistrationConflict {
 // ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
+
+const log = logger("plugins");
 
 export class PluginRegistry {
 	/** All registered plugins keyed by plugin name. */
@@ -293,6 +296,13 @@ export class PluginRegistry {
 			manifest,
 			views: viewMap,
 			widgets: widgetMap,
+		});
+
+		log.info("plugin registered", {
+			name: manifest.name,
+			schemas: (manifest.provides.schemas ?? []).length,
+			relationships: (manifest.provides.relationships ?? []).length,
+			views: (manifest.provides.views ?? []).length,
 		});
 	}
 

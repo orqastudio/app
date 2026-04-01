@@ -7,7 +7,6 @@
 use serde::Serialize;
 use std::path::Path;
 
-use super::manifest::read_manifest;
 use orqa_engine_types::config::load_project_settings;
 
 /// A discovered plugin from scanning the project.
@@ -49,11 +48,19 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
         // Read raw JSON to extract name/version/description. This avoids
         // failures from strict Rust struct deserialization (e.g., agent
         // definitions missing required fields like `title`).
-        let Ok(contents) = std::fs::read_to_string(&manifest_path) else {
-            continue;
+        let contents = match std::fs::read_to_string(&manifest_path) {
+            Ok(c) => c,
+            Err(e) => {
+                tracing::warn!(path = %manifest_path.display(), error = %e, "[plugins] failed to read plugin manifest");
+                continue;
+            }
         };
-        let Ok(json) = serde_json::from_str::<serde_json::Value>(&contents) else {
-            continue;
+        let json = match serde_json::from_str::<serde_json::Value>(&contents) {
+            Ok(v) => v,
+            Err(e) => {
+                tracing::warn!(path = %plugin_path.display(), error = %e, "[plugins] failed to parse plugin manifest JSON");
+                continue;
+            }
         };
         let Some(name) = json.get("name").and_then(|v| v.as_str()) else {
             continue;
@@ -78,6 +85,8 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
             source: "installed".to_owned(),
         });
     }
+
+    tracing::info!(count = discovered.len(), "[plugins] discovered {} plugins", discovered.len());
 
     discovered
 }

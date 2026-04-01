@@ -8,6 +8,7 @@
 // directly — all .orqa/ reads are business logic that belongs in the daemon.
 
 use std::path::Path;
+use std::time::Instant;
 
 use axum::Json;
 use serde::{Deserialize, Serialize};
@@ -36,9 +37,19 @@ pub struct ContextResponse {
 /// workflow filenames. Both reads degrade gracefully — missing directories
 /// return empty vecs rather than errors.
 pub async fn context_handler(Json(req): Json<ContextRequest>) -> Json<ContextResponse> {
+    let start = Instant::now();
     let project_path = Path::new(&req.project_path);
     let rule_titles = read_rule_titles(project_path);
     let workflow_names = read_workflow_names(project_path);
+
+    tracing::debug!(
+        subsystem = "context",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        rule_count = rule_titles.len(),
+        workflow_count = workflow_names.len(),
+        "[context] context_handler completed"
+    );
+
     Json(ContextResponse { rule_titles, workflow_names })
 }
 

@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use super::helpers::active_project_path;
 use crate::cli_tools::runner::{CliToolResult, CliToolStatus, RegisteredCliTool};
 use crate::error::OrqaError;
@@ -27,6 +29,13 @@ pub fn run_cli_tool(
     tool_key: String,
     state: tauri::State<'_, AppState>,
 ) -> Result<CliToolResult, OrqaError> {
+    tracing::info!(
+        plugin = %plugin_name,
+        tool_key = %tool_key,
+        "[cli_tool] run_cli_tool entry"
+    );
+    let start = Instant::now();
+
     let project_path = active_project_path(&state)?;
     let project_root = std::path::Path::new(&project_path);
 
@@ -38,11 +47,21 @@ pub fn run_cli_tool(
             OrqaError::NotFound(format!("CLI tool not found: {plugin_name}:{tool_key}"))
         })?;
 
-    state
+    let result = state
         .cli_tools
         .runner
         .run(tool, project_root)
-        .map_err(|e| OrqaError::Sidecar(format!("CLI tool execution failed: {e}")))
+        .map_err(|e| OrqaError::Sidecar(format!("CLI tool execution failed: {e}")))?;
+
+    tracing::info!(
+        plugin = %plugin_name,
+        tool_key = %tool_key,
+        exit_code = result.exit_code,
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        "[cli_tool] run_cli_tool complete"
+    );
+
+    Ok(result)
 }
 
 /// Get the status of all registered CLI tools (last run info).

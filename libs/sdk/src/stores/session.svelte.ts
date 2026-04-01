@@ -40,6 +40,7 @@ export class SessionStore {
 				model: model ?? "auto",
 			});
 			this.activeSession = session;
+			log.info(`createSession: created session_id=${session.id} for project_id=${projectId}`);
 			await this.persistActiveSessionId(session.id);
 			await this.loadSessions(projectId);
 			return session;
@@ -71,9 +72,11 @@ export class SessionStore {
 			this.activeSession = await invoke<Session>("session_get", {
 				sessionId,
 			});
+			log.info(`restoreSession: restored session_id=${sessionId}`);
 			return true;
 		} catch {
 			// Session no longer exists — clear persisted ID
+			log.info(`restoreSession: session_id=${sessionId} no longer exists, clearing`);
 			await this.clearPersistedSessionId();
 			return false;
 		} finally {

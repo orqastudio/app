@@ -1,5 +1,8 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
 import type { ClaudeCliInfo, SetupStatus, SetupStepStatus } from "@orqastudio/types";
+
+const log = logger("setup");
 
 const STEP_IDS = ["claude_cli", "claude_auth", "sidecar", "embedding_model", "complete"] as const;
 
@@ -27,6 +30,11 @@ export class SetupStore {
 		try {
 			const status = await invoke<SetupStatus>("get_setup_status");
 			this.setupComplete = status.setup_complete;
+			if (status.setup_complete) {
+				log.info("setup complete");
+			} else {
+				log.info("setup incomplete", { currentStep: this.stepId });
+			}
 		} catch (err) {
 			this.error = extractErrorMessage(err);
 			this.setupComplete = false;

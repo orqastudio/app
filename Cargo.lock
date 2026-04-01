@@ -3901,6 +3901,7 @@ dependencies = [
  "serde_json",
  "serde_yaml",
  "tempfile",
+ "tracing",
 ]
 
 [[package]]
@@ -3923,6 +3924,7 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "tray-icon",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]

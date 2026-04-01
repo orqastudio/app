@@ -413,11 +413,51 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	const appDir = path.join(root, "app");
 	const libsDir = path.join(root, "libs");
 
+	// Tracks the detached dashboard process so it can be killed on shutdown.
+	// Declared here so all writeControlFile calls can reference the PID.
+	let dashboardProc: NodeChildProcess | null = null;
+
 	writeControlFile(root, {
 		state: "starting",
 		app: null,
 		search: null,
 		dashboard: null,
+	});
+
+	// ── 0. Start debug dashboard ────────────────────────────────────────
+	// Spawn the dashboard before the daemon so the URL is visible early.
+	// It runs detached with stdio redirected to the controller log file so
+	// its output does not clutter the terminal but is still captured.
+	{
+		const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
+		const logPath = path.join(root, ".state", "dev-controller.log");
+		ensureStateDir(root);
+		const logFd = fs.openSync(logPath, "a");
+		dashboardProc = spawn("node", [dashboardScript], {
+			cwd: root,
+			detached: true,
+			stdio: ["ignore", logFd, logFd],
+		});
+		fs.closeSync(logFd);
+		dashboardProc.unref();
+		logSuccess(`Debug dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
+
+		// Open the dashboard in the default browser after a short delay so the
+		// server has time to bind its port.
+		setTimeout(() => {
+			const url = `http://localhost:${getPort("dashboard")}`;
+			const openCmd = isWindows() ? `start "" "${url}"` : platform() === "darwin" ? `open "${url}"` : `xdg-open "${url}"`;
+			execAsync(openCmd, (err: Error | null) => {
+				if (err) logCtrl(`Could not open browser: ${err.message}`);
+			});
+		}, 1_500);
+	}
+
+	writeControlFile(root, {
+		state: "starting",
+		app: null,
+		search: null,
+		dashboard: dashboardProc?.pid ?? null,
 	});
 
 	// ── 1. Start daemon ─────────────────────────────────────────────────
@@ -482,10 +522,6 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 	//   - Launches the app window
 	const app = createManagedProcess("app", COLOURS.magenta);
 
-	// Tracks the detached dashboard process so it can be killed on shutdown.
-	// Set once when the dev environment first reaches "running" state.
-	let dashboardProc: NodeChildProcess | null = null;
-
 	async function startRust(): Promise<void> {
 		logCtrl("Starting Tauri app (cargo tauri dev)...");
 
@@ -493,7 +529,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			state: "building",
 			app: null,
 			search: searchProc.child?.pid ?? null,
-			dashboard: null,
+			dashboard: dashboardProc?.pid ?? null,
 		});
 
 		spawnManaged(app, "cargo", [
@@ -529,31 +565,6 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			logSuccess("Tauri app loaded.");
 		} else {
 			logCtrl("Tauri app may still be compiling — check the terminal.");
-		}
-
-		// Spawn the debug dashboard as a detached process so it survives across app
-		// restarts. Only launch it once — if it is already running (dashboardProc set),
-		// skip. The PID is stored in the control file so the dashboard server can read
-		// it and report controller status.
-		if (!dashboardProc) {
-			const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
-			dashboardProc = spawn("node", [dashboardScript], {
-				cwd: root,
-				detached: true,
-				stdio: "ignore",
-			});
-			dashboardProc.unref();
-			logSuccess(`Debug dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
-
-			// Open the dashboard in the default browser after a short delay so the
-			// server has time to bind its port.
-			setTimeout(() => {
-				const url = `http://localhost:${getPort("dashboard")}`;
-				const openCmd = isWindows() ? `start "" "${url}"` : platform() === "darwin" ? `open "${url}"` : `xdg-open "${url}"`;
-				execAsync(openCmd, (err: Error | null) => {
-					if (err) logCtrl(`Could not open browser: ${err.message}`);
-				});
-			}, 1_500);
 		}
 
 		writeControlFile(root, {

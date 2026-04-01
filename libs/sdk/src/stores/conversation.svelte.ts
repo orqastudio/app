@@ -1,6 +1,9 @@
 import { SvelteMap, SvelteDate } from "svelte/reactivity";
 import type { Message, StreamEvent } from "@orqastudio/types";
 import { invoke, createStreamChannel, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
+
+const log = logger("conversation");
 
 export interface ToolCallState {
 	toolCallId: string;
@@ -69,6 +72,7 @@ export class ConversationStore {
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
 	private defaultModel: string = DEFAULT_MODEL_FALLBACK;
+	private streamStartTime: number | null = null;
 
 	/**
 	 * The resolved model name as reported by the backend, or null before the first stream.
@@ -255,6 +259,7 @@ export class ConversationStore {
 				this.streamingContent = "";
 				this.streamingThinking = "";
 				this.streamingMessageId = event.data.message_id;
+				this.streamStartTime = performance.now();
 				// Note: contextEntries are NOT reset here — SystemPromptSent and
 				// ContextInjected arrive BEFORE stream_start (emitted by Rust before
 				// the sidecar is called). Resetting here would wipe them out.
@@ -262,6 +267,7 @@ export class ConversationStore {
 				if (event.data.resolved_model) {
 					this.resolvedModel = event.data.resolved_model;
 				}
+				log.info(`stream_start: model=${event.data.resolved_model ?? "unknown"} message_id=${event.data.message_id}`);
 				break;
 
 			case "text_delta":
@@ -318,7 +324,12 @@ export class ConversationStore {
 				// Block completed, no special handling needed
 				break;
 
-			case "turn_complete":
+			case "turn_complete": {
+				const elapsed_ms = this.streamStartTime !== null
+					? (performance.now() - this.streamStartTime).toFixed(1)
+					: null;
+				this.streamStartTime = null;
+				log.info(`turn_complete: elapsed_ms=${elapsed_ms ?? "unknown"}`);
 				this.isStreaming = false;
 				this.streamingContent = "";
 				this.streamingThinking = "";
@@ -332,10 +343,13 @@ export class ConversationStore {
 					}
 				}
 				break;
+			}
 
 			case "stream_error":
+				log.error(`stream_error: ${event.data.message}`);
 				this.error = event.data.message;
 				this.isStreaming = false;
+				this.streamStartTime = null;
 				break;
 
 			case "stream_cancelled":

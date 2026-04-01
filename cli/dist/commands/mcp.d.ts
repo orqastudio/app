@@ -2,7 +2,7 @@
  * MCP command — spawns the pre-built orqa-mcp-server binary over stdio.
  *
  * The binary handles the MCP protocol on stdin/stdout and connects to the
- * orqa-validation daemon (HTTP localhost:9120 by default) for graph/search/validation.
+ * orqa-validation daemon (HTTP localhost:10100 by default) for graph/search/validation.
  * If the daemon isn't running, it is auto-started first.
  *
  * orqa mcp [project-path]

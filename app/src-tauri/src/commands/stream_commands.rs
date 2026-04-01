@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use crate::domain::process_state::ProcessStateExt;
 use crate::domain::provider_event::StreamEvent;
 use crate::domain::stream_loop::run_stream_loop;
@@ -167,6 +169,13 @@ pub fn stream_send_message(
         ));
     }
 
+    tracing::debug!(
+        session_id = session_id,
+        content_len = content.len(),
+        "[stream] stream_send_message entry"
+    );
+    let start = Instant::now();
+
     let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
     reset_process_state_if_new_session(&state, session_id);
     super::sidecar_commands::ensure_sidecar_running(&state)?;
@@ -212,12 +221,19 @@ pub fn stream_send_message(
     persist_assistant_message(&state, session_id, turn_index, &acc)?;
     emit_process_violations(&state, &on_event);
 
+    tracing::info!(
+        session_id = session_id,
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        "[stream] stream_send_message complete"
+    );
+
     Ok(user_message_id)
 }
 
 /// Request cancellation of an active stream for the given session.
 #[tauri::command]
 pub fn stream_stop(session_id: i64, state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
+    tracing::info!(session_id = session_id, "[stream] stream_stop");
     state
         .sidecar
         .manager
@@ -231,6 +247,11 @@ pub fn stream_tool_approval_respond(
     approved: bool,
     state: tauri::State<'_, AppState>,
 ) -> Result<(), OrqaError> {
+    tracing::info!(
+        tool_call_id = %tool_call_id,
+        approved = approved,
+        "[stream] stream_tool_approval_respond"
+    );
     let sender = state
         .sidecar
         .pending_approvals

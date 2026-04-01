@@ -115,6 +115,11 @@ pub fn apply_status_transition(
         )));
     }
 
+    tracing::info!(
+        artifact_id = %artifact_id,
+        status = %proposed_status,
+        "[status] apply_status_transition"
+    );
     domain_update_artifact_field(&full_path, "status", &proposed_status)?;
 
     // Refresh the graph cache so subsequent queries see the updated status.

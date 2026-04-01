@@ -1,4 +1,5 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
+import { logger } from "../logger.js";
 import type {
 	Project,
 	ProjectSummary,
@@ -7,6 +8,8 @@ import type {
 	ArtifactEntry,
 	NavigationItem,
 } from "@orqastudio/types";
+
+const log = logger("project");
 
 export class ProjectStore {
 	activeProject = $state<Project | null>(null);
@@ -54,13 +57,17 @@ export class ProjectStore {
 
 	/** Try to restore the last active project on app startup. */
 	async loadActiveProject() {
+		log.info("loadActiveProject: restoring last active project");
 		this.loading = true;
 		this.error = null;
 		try {
 			const project = await invoke<Project | null>("project_get_active");
 			if (project) {
 				this.activeProject = project;
+				log.info(`loadActiveProject: restored project at ${project.path}`);
 				await this.loadProjectSettings(project.path);
+			} else {
+				log.info("loadActiveProject: no active project found");
 			}
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
@@ -72,11 +79,13 @@ export class ProjectStore {
 
 	/** Open a project by its directory path. Creates a DB record if new. */
 	async openProject(path: string) {
+		log.info(`openProject: opening ${path}`);
 		this.loading = true;
 		this.error = null;
 		try {
 			const project = await invoke<Project>("project_open", { path });
 			this.activeProject = project;
+			log.info(`openProject: opened project id=${project.id} at ${path}`);
 			await this.loadProjects();
 			await this.loadProjectSettings(path);
 		} catch (err: unknown) {

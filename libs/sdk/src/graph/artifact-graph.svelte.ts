@@ -156,6 +156,9 @@ export class ArtifactGraphSDK {
 		this._initCalled = true;
 		this.config = config;
 
+		const initStart = performance.now();
+		log.info(`initialize: starting for ${config.projectPath}`);
+
 		if (config.watchFiles !== false) {
 			await invoke<void>("artifact_watch_start", { projectPath: config.projectPath }).catch((err: unknown) => {
 				log.warn("watcher failed to start", err);
@@ -165,6 +168,10 @@ export class ArtifactGraphSDK {
 		await this._loadAll();
 		this._lastSchemaCount = this.allTypeKeys.length;
 		this._initialized = true;
+
+		const elapsed_ms = (performance.now() - initStart).toFixed(1);
+		log.info(`initialize: complete in ${elapsed_ms}ms, ${this.graph.size} nodes`);
+
 		if (!this.unlistenFn) {
 			this.unlistenFn = await listen("artifact-graph-updated", () => {
 				void this.refresh();
@@ -188,10 +195,13 @@ export class ArtifactGraphSDK {
 		if (this.loading) return;
 		this.loading = true;
 		this.error = null;
+		const refreshStart = performance.now();
 		try {
 			await invoke<void>("refresh_artifact_graph");
 			await this._fetchAll();
 			this.lastRefresh = new Date();
+			const elapsed_ms = (performance.now() - refreshStart).toFixed(1);
+			log.info(`refresh: complete in ${elapsed_ms}ms`);
 		} catch (err: unknown) {
 			this.error = extractErrorMessage(err);
 		} finally {
@@ -560,6 +570,7 @@ export class ArtifactGraphSDK {
 	private async _fetchAll(): Promise<void> {
 		// Use all known type keys from platform + registered plugins
 		const typeKeys = this.allTypeKeys;
+		const fetchStart = performance.now();
 		log.info(`_fetchAll: querying ${typeKeys.length} type keys: ${typeKeys.join(", ")}`);
 
 		const [statsResult, ...typedNodes] = await Promise.all([
@@ -583,7 +594,8 @@ export class ArtifactGraphSDK {
 			}
 		}
 
-		log.info(`_fetchAll complete: ${newGraph.size} total nodes (stats reports ${statsResult.total_nodes})`);
+		const elapsed_ms = (performance.now() - fetchStart).toFixed(1);
+		log.info(`_fetchAll complete in ${elapsed_ms}ms: ${newGraph.size} total nodes (stats reports ${statsResult.total_nodes})`);
 
 		this.graph = newGraph;
 		this.pathIndex = newPathIndex;

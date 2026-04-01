@@ -196,6 +196,9 @@ pub(crate) fn build_valid_relationship_types(
 /// Invalid relationship types (not in core.json or plugins) are excluded from
 /// the graph and logged as warnings. They don't represent valid knowledge flow.
 pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, ValidationError> {
+    use std::time::Instant;
+    let start = Instant::now();
+
     let settings = load_settings(project_path);
     let type_registry = settings
         .as_ref()
@@ -235,6 +238,13 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, Valida
     if org_mode {
         insert_bare_id_aliases(&mut graph);
     }
+
+    tracing::info!(
+        subsystem = "engine",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        node_count = graph.nodes.len(),
+        "[engine] build_artifact_graph completed"
+    );
 
     Ok(graph)
 }
@@ -385,8 +395,12 @@ fn walk_directory(
     project_name: Option<&str>,
     valid_rel_types: &std::collections::HashSet<String>,
 ) -> Result<(), ValidationError> {
-    let Ok(entries) = std::fs::read_dir(dir) else {
-        return Ok(());
+    let entries = match std::fs::read_dir(dir) {
+        Ok(e) => e,
+        Err(e) => {
+            tracing::warn!(path = %dir.display(), error = %e, "[engine] failed to read directory");
+            return Ok(());
+        }
     };
 
     for entry in entries {
@@ -444,8 +458,13 @@ fn collect_node(
     let Some(fm_text) = fm_text else {
         return Ok(());
     };
-    let yaml_value: serde_yaml::Value =
-        serde_yaml::from_str(&fm_text).unwrap_or(serde_yaml::Value::Null);
+    let yaml_value: serde_yaml::Value = match serde_yaml::from_str(&fm_text) {
+        Ok(v) => v,
+        Err(e) => {
+            tracing::warn!(path = %file_path.display(), error = %e, "[engine] failed to parse YAML frontmatter");
+            serde_yaml::Value::Null
+        }
+    };
     let id = match yaml_value.get("id").and_then(|v| v.as_str()) {
         Some(s) if !s.trim().is_empty() => s.to_owned(),
         _ => return Ok(()),
@@ -793,7 +812,13 @@ fn type_from_path_heuristic(normalized: &str) -> String {
 }
 
 fn yaml_to_json(value: &serde_yaml::Value) -> serde_json::Value {
-    serde_json::to_value(value).unwrap_or(serde_json::Value::Null)
+    match serde_json::to_value(value) {
+        Ok(v) => v,
+        Err(e) => {
+            tracing::warn!(error = %e, "[engine] failed to convert YAML value to JSON");
+            serde_json::Value::Null
+        }
+    }
 }
 
 fn humanize_stem(file_path: &Path) -> String {

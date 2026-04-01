@@ -24,11 +24,12 @@
 
 use std::collections::HashSet;
 use std::path::Path;
+use std::time::Instant;
 
 use axum::extract::State;
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{debug, info, warn};
 
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
@@ -200,6 +201,10 @@ pub async fn knowledge_handler(
     State(state): State<HealthState>,
     Json(req): Json<KnowledgeRequest>,
 ) -> Json<KnowledgeResponse> {
+    let start = Instant::now();
+
+    info!(subsystem = "knowledge", "[knowledge] knowledge_handler entry");
+
     let project_path = Path::new(&req.project_path);
 
     // Load role names from installed plugin manifests and build detection patterns.
@@ -213,6 +218,7 @@ pub async fn knowledge_handler(
         Some(r) => get_declared_knowledge(project_path, r),
         None => Vec::new(),
     };
+    let declared_count = declared.len();
     let declared_ids: HashSet<String> = declared.iter().map(|e| e.id.clone()).collect();
 
     // Layer 2: semantic knowledge via ONNX embeddings.
@@ -222,6 +228,16 @@ pub async fn knowledge_handler(
         &declared_ids,
         state.config.min_score,
         state.config.max_semantic,
+    );
+    let semantic_count = semantic.len();
+
+    info!(
+        subsystem = "knowledge",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        role = %role.as_deref().unwrap_or("none"),
+        declared_count,
+        semantic_count,
+        "[knowledge] knowledge_handler completed"
     );
 
     // Combine Layer 1 + Layer 2.
@@ -308,10 +324,12 @@ fn get_semantic_knowledge(
     // Resolve the model directory from platform app data dir.
     // Gracefully returns empty if the model is not installed.
     let Some(model_dir) = resolve_model_dir() else {
+        debug!(subsystem = "knowledge", "[knowledge] get_semantic_knowledge: ONNX model directory not found — skipping semantic layer");
         return Vec::new();
     };
 
     let Ok(mut embedder) = Embedder::new(&model_dir) else {
+        debug!(subsystem = "knowledge", path = %model_dir.display(), "[knowledge] get_semantic_knowledge: failed to create embedder — skipping semantic layer");
         return Vec::new();
     };
 
@@ -321,14 +339,17 @@ fn get_semantic_knowledge(
 
     // Embed the query.
     let Ok(embeddings) = embedder.embed(&[query.as_str()]) else {
+        debug!(subsystem = "knowledge", "[knowledge] get_semantic_knowledge: embed call failed — skipping semantic layer");
         return Vec::new();
     };
     let Some(query_embedding) = embeddings.into_iter().next() else {
+        debug!(subsystem = "knowledge", "[knowledge] get_semantic_knowledge: embed returned no vectors — skipping semantic layer");
         return Vec::new();
     };
 
     // Load knowledge injector and find matches.
     let Ok(injector) = KnowledgeInjector::new(project_path, &mut embedder) else {
+        debug!(subsystem = "knowledge", "[knowledge] get_semantic_knowledge: failed to create KnowledgeInjector — skipping semantic layer");
         return Vec::new();
     };
 
@@ -403,9 +424,27 @@ pub fn resolve_model_dir() -> Option<std::path::PathBuf> {
     .flatten()
     .collect();
 
-    candidates
+    let found = candidates
         .into_iter()
-        .find(|dir| dir.join("model.onnx").exists() && dir.join("tokenizer.json").exists())
+        .find(|dir| dir.join("model.onnx").exists() && dir.join("tokenizer.json").exists());
+
+    match &found {
+        Some(dir) => {
+            info!(
+                subsystem = "knowledge",
+                path = %dir.display(),
+                "[knowledge] ONNX model found"
+            );
+        }
+        None => {
+            info!(
+                subsystem = "knowledge",
+                "[knowledge] ONNX model not found — semantic search disabled"
+            );
+        }
+    }
+
+    found
 }
 
 // ---------------------------------------------------------------------------

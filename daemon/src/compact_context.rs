@@ -10,6 +10,7 @@
 // using the engine's graph library — no inter-daemon calls are made.
 
 use std::path::Path;
+use std::time::Instant;
 
 use axum::{http::StatusCode, Json};
 use orqa_engine::graph::{build_artifact_graph, ArtifactNode};
@@ -259,9 +260,15 @@ fn days_to_date(days: u64) -> (u64, u64, u64) {
 pub async fn compact_context_handler(
     Json(req): Json<CompactContextRequest>,
 ) -> Result<Json<CompactContextResponse>, (StatusCode, String)> {
+    let start = Instant::now();
     let project_path = Path::new(&req.project_path);
 
     if !project_path.exists() {
+        tracing::warn!(
+            subsystem = "compact-context",
+            project_path = %req.project_path,
+            "[compact-context] project_path does not exist"
+        );
         return Err((
             StatusCode::BAD_REQUEST,
             format!("project_path does not exist: {}", req.project_path),
@@ -273,6 +280,7 @@ pub async fn compact_context_handler(
     let session_state = read_session_state(project_path);
 
     tracing::info!(
+        subsystem = "compact-context",
         project_path = %req.project_path,
         active_epics = epics.len(),
         active_tasks = tasks.len(),
@@ -282,6 +290,14 @@ pub async fn compact_context_handler(
 
     let context_document = compose_document(&epics, &tasks, &session_state);
     let summary = compose_summary(&epics, &tasks);
+
+    tracing::info!(
+        subsystem = "compact-context",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        active_epics = epics.len(),
+        active_tasks = tasks.len(),
+        "[compact-context] compact_context_handler completed"
+    );
 
     Ok(Json(CompactContextResponse {
         context_document,

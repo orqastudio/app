@@ -48,6 +48,9 @@ pub struct SubprocessManager {
     child: Option<Child>,
     /// Last known status.
     status: SubprocessStatus,
+    /// Number of times this subprocess has crashed since it was created.
+    /// Incremented each time `check_status` observes a non-zero exit code.
+    pub crash_count: u32,
 }
 
 impl SubprocessManager {
@@ -60,6 +63,7 @@ impl SubprocessManager {
             args,
             child: None,
             status: SubprocessStatus::Stopped,
+            crash_count: 0,
         }
     }
 
@@ -209,10 +213,12 @@ impl SubprocessManager {
                         info!(name = %self.name, pid, "subprocess exited cleanly");
                         self.status = SubprocessStatus::Stopped;
                     } else {
+                        self.crash_count += 1;
                         error!(
                             name = %self.name,
                             pid,
                             exit_status = ?exit_status,
+                            crash_count = self.crash_count,
                             "subprocess crashed"
                         );
                         self.status = SubprocessStatus::Crashed;

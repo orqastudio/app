@@ -1,23 +1,40 @@
 import { invoke as tauriInvoke } from "@tauri-apps/api/core";
 import { Channel } from "@tauri-apps/api/core";
 import type { OrqaError, StreamEvent } from "@orqastudio/types";
+import { logger } from "../logger.js";
 
+const log = logger("ipc");
+
+/**
+ * Wraps Tauri's invoke with performance timing and structured logging.
+ * Logs duration on success and error details on failure before re-throwing.
+ */
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
+	const start = performance.now();
 	try {
-		return await tauriInvoke<T>(cmd, args);
+		const result = await tauriInvoke<T>(cmd, args);
+		const duration_ms = (performance.now() - start).toFixed(1);
+		log.perf(`${cmd} (${duration_ms}ms)`);
+		return result;
 	} catch (error) {
+		const duration_ms = (performance.now() - start).toFixed(1);
 		if (typeof error === "string") {
 			try {
-				throw JSON.parse(error) as OrqaError;
+				const parsed = JSON.parse(error) as OrqaError;
+				log.error(`${cmd} failed after ${duration_ms}ms`, parsed.message ?? error);
+				throw parsed;
 			} catch (parseErr) {
 				// If the error string isn't valid JSON (e.g. a raw Tauri framework error),
 				// wrap it as a plain Error instead of letting the SyntaxError propagate.
 				if (parseErr instanceof SyntaxError) {
+					log.error(`${cmd} failed after ${duration_ms}ms`, error);
 					throw new Error(error);
 				}
 				throw parseErr;
 			}
 		}
+		const message = error instanceof Error ? error.message : String(error);
+		log.error(`${cmd} failed after ${duration_ms}ms`, message);
 		throw error;
 	}
 }

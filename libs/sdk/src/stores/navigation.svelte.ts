@@ -534,6 +534,7 @@ export class NavigationStore {
 	 * @param view - Activity key to navigate to.
 	 */
 	setActivity(view: string) {
+		log.info(`setActivity: ${this.activeActivity} → ${view}`);
 		this.activeActivity = view;
 		this.selectedArtifactPath = null;
 		this.breadcrumbs = [];

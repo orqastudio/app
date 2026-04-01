@@ -24,6 +24,10 @@ import {
   writeFileSync,
   readFileSync,
   existsSync,
+  statSync,
+  createReadStream,
+  watchFile,
+  unwatchFile,
 } from "node:fs";
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -31,6 +35,7 @@ const PROJECT_ROOT = resolve(process.cwd());
 const CONTROL_FILE = join(PROJECT_ROOT, ".state", "dev-controller.json");
 const SIGNAL_FILE = join(PROJECT_ROOT, ".state", "dev-signal");
 const DASHBOARD_HTML = join(SCRIPT_DIR, "dev-dashboard.html");
+const CONTROLLER_LOG = join(PROJECT_ROOT, ".state", "dev-controller.log");
 
 // Dashboard port is ORQA_PORT_BASE + 30 (default 10130).
 const PORT_BASE = parseInt(process.env.ORQA_PORT_BASE || "10100", 10) || 10100;
@@ -109,6 +114,96 @@ function pollStatus() {
 
 // Poll every 2 seconds
 setInterval(pollStatus, 2000);
+
+// ── Controller Log Tailing ──────────────────────────────────────────────────
+
+// SOURCE_PREFIX matches lines like "[search] something happened" or "[app] ..."
+const SOURCE_PREFIX_RE = /^\[([^\]]+)\]\s*(.*)/;
+
+/** Classify a log line level from its text content. */
+function classifyLevel(text) {
+  const lower = text.toLowerCase();
+  if (/\b(error|err!|panic|fatal)\b/.test(lower)) return "error";
+  if (/\b(warn|warning|warn!)\b/.test(lower)) return "warn";
+  return "info";
+}
+
+/** Parse a raw log line into { source, text, level } for SSE broadcast. */
+function parseLogLine(line) {
+  const trimmed = line.trimEnd();
+  if (!trimmed) return null;
+
+  const match = SOURCE_PREFIX_RE.exec(trimmed);
+  if (match) {
+    const source = match[1].toLowerCase();
+    const text = match[2];
+    return { source, text, level: classifyLevel(text) };
+  }
+
+  // No bracket prefix — emit as "ctrl" source
+  return { source: "ctrl", text: trimmed, level: classifyLevel(trimmed) };
+}
+
+/**
+ * Tail dev-controller.log and broadcast new lines as controller-log SSE events.
+ * Re-opens from position 0 when file is truncated (new orqa dev run resets the log).
+ */
+function startLogTail() {
+  // Track the current read position so we can detect truncation
+  let readPosition = 0;
+  // Incomplete line buffer between stream reads
+  let lineBuffer = "";
+
+  function openStreamFrom(position) {
+    if (!existsSync(CONTROLLER_LOG)) return;
+
+    const streamOpts = { start: position, encoding: "utf-8" };
+    const stream = createReadStream(CONTROLLER_LOG, streamOpts);
+
+    stream.on("data", (chunk) => {
+      lineBuffer += chunk;
+      const parts = lineBuffer.split("\n");
+      // The last part may be an incomplete line — keep it in the buffer
+      lineBuffer = parts.pop();
+
+      for (const line of parts) {
+        const parsed = parseLogLine(line);
+        if (parsed) {
+          sseBroadcast("controller-log", parsed);
+        }
+      }
+    });
+
+    stream.on("end", () => {
+      // Update position to end of what we just consumed
+      try {
+        const stats = statSync(CONTROLLER_LOG);
+        readPosition = stats.size;
+      } catch { /* file disappeared */ }
+    });
+
+    stream.on("error", () => { /* file may not exist yet */ });
+  }
+
+  // Watch for new content or file truncation
+  watchFile(CONTROLLER_LOG, { interval: 500 }, (curr, prev) => {
+    if (curr.size < prev.size) {
+      // File was truncated — new orqa dev run started
+      readPosition = 0;
+      lineBuffer = "";
+      log("Log file truncated — resetting tail position");
+      openStreamFrom(0);
+    } else if (curr.size > readPosition) {
+      // New content appended
+      openStreamFrom(readPosition);
+    }
+  });
+
+  // Read whatever is already in the log at startup
+  if (existsSync(CONTROLLER_LOG)) {
+    openStreamFrom(0);
+  }
+}
 
 // ── Command Execution ───────────────────────────────────────────────────────
 
@@ -257,6 +352,9 @@ server.listen(port, "127.0.0.1", () => {
   log(`Debug dashboard: http://localhost:${port}`);
   log("Watching orqa dev status every 2s");
   log("Press Ctrl+C to stop the dashboard");
+
+  // Begin tailing the controller log and forwarding lines as SSE events
+  startLogTail();
 });
 
 server.on("error", (err) => {

@@ -13,8 +13,10 @@ pub mod schema;
 pub mod status;
 pub mod structural;
 
+use std::time::Instant;
+
 use crate::graph::ArtifactGraph;
-use crate::types::{IntegrityCheck, ValidationContext};
+use crate::types::{IntegrityCheck, IntegritySeverity, ValidationContext};
 
 /// Run all schema-driven integrity checks on the graph.
 ///
@@ -22,6 +24,7 @@ use crate::types::{IntegrityCheck, ValidationContext};
 /// entirely by the `ValidationContext` — no relationship keys or artifact types
 /// are hardcoded.
 pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityCheck> {
+    let start = Instant::now();
     let mut checks = Vec::new();
 
     structural::check_broken_refs(graph, &mut checks);
@@ -60,6 +63,20 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
     if !ctx.delivery.types.is_empty() {
         delivery::check_delivery_paths(graph, ctx, &mut checks);
     }
+
+    let check_count = checks.len();
+    let error_count = checks
+        .iter()
+        .filter(|c| c.severity == IntegritySeverity::Error)
+        .count();
+
+    tracing::info!(
+        subsystem = "engine",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        check_count = check_count,
+        error_count = error_count,
+        "[engine] run_all integrity checks completed"
+    );
 
     checks
 }

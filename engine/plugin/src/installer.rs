@@ -53,10 +53,26 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
     let manifest = read_manifest(source)?;
 
     // P5-26: enforce one-methodology constraint.
-    check_one_methodology(&manifest, project_root).map_err(EngineError::from)?;
+    if let Err(e) = check_one_methodology(&manifest, project_root) {
+        tracing::warn!(
+            plugin = %manifest.name,
+            constraint = "one-methodology",
+            message = %e.message,
+            "[plugins] install constraint violated"
+        );
+        return Err(EngineError::from(e));
+    }
 
     // P5-27: enforce one-per-stage constraint.
-    check_one_per_stage(&manifest, project_root).map_err(EngineError::from)?;
+    if let Err(e) = check_one_per_stage(&manifest, project_root) {
+        tracing::warn!(
+            plugin = %manifest.name,
+            constraint = "one-per-stage",
+            message = %e.message,
+            "[plugins] install constraint violated"
+        );
+        return Err(EngineError::from(e));
+    }
 
     let incoming_rels: Vec<orqa_validation::RelationshipSchema> = manifest
         .provides
@@ -92,7 +108,7 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
     // A non-empty enforcement array means the plugin participates in enforcement generation.
     let requires_enforcement_regeneration = !manifest.enforcement.is_empty();
 
-    Ok(InstallResult {
+    let result = InstallResult {
         name: manifest.name,
         version: manifest.version,
         path: target.to_string_lossy().into_owned(),
@@ -100,7 +116,15 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
-    })
+    };
+
+    tracing::info!(
+        plugin = %result.name,
+        version = %result.version,
+        "[plugins] install_from_path succeeded"
+    );
+
+    Ok(result)
 }
 
 /// Install a plugin from a GitHub release .tar.gz archive.
@@ -126,29 +150,43 @@ pub async fn install_from_github(
     std::fs::create_dir_all(&tmp_dir)?;
 
     let manifest = extract_and_read_manifest(&bytes, &tmp_dir)?;
-    finalize_github_install(manifest, plugins_dir, tmp_dir, project_root, repo, sha256)
+    finalize_github_install(manifest, plugins_dir, tmp_dir, project_root, repo, &tag, sha256)
 }
 
 /// Enforce constraints, move extracted plugin into place, and build the result.
 ///
 /// Called by `install_from_github` after extraction. Cleans up the temp directory
-/// on any constraint or I/O error before returning.
+/// on any constraint or I/O error before returning. `resolved_ref` is the git tag
+/// that was resolved for this install, included in the success log for traceability.
 fn finalize_github_install(
     manifest: super::manifest::PluginManifest,
     plugins_dir: std::path::PathBuf,
     tmp_dir: std::path::PathBuf,
     project_root: &Path,
     repo: &str,
+    resolved_ref: &str,
     sha256: String,
 ) -> Result<InstallResult, EngineError> {
     // P5-26: enforce one-methodology constraint before moving files.
     if let Err(e) = check_one_methodology(&manifest, project_root) {
+        tracing::warn!(
+            plugin = %manifest.name,
+            constraint = "one-methodology",
+            message = %e.message,
+            "[plugins] install constraint violated"
+        );
         let _ = std::fs::remove_dir_all(&tmp_dir);
         return Err(e.into());
     }
 
     // P5-27: enforce one-per-stage constraint before moving files.
     if let Err(e) = check_one_per_stage(&manifest, project_root) {
+        tracing::warn!(
+            plugin = %manifest.name,
+            constraint = "one-per-stage",
+            message = %e.message,
+            "[plugins] install constraint violated"
+        );
         let _ = std::fs::remove_dir_all(&tmp_dir);
         return Err(e.into());
     }
@@ -181,7 +219,7 @@ fn finalize_github_install(
     // A plugin that declares any enforcement entries requires enforcement regeneration.
     let requires_enforcement_regeneration = !manifest.enforcement.is_empty();
 
-    Ok(InstallResult {
+    let result = InstallResult {
         name: manifest.name,
         version: manifest.version,
         path: target.to_string_lossy().into_owned(),
@@ -189,7 +227,16 @@ fn finalize_github_install(
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
-    })
+    };
+
+    tracing::info!(
+        plugin = %result.name,
+        version = %result.version,
+        resolved_ref = %resolved_ref,
+        "[plugins] install_from_github succeeded"
+    );
+
+    Ok(result)
 }
 
 /// Uninstall a plugin by name.

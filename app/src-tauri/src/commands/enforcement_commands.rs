@@ -64,9 +64,10 @@ pub fn enforcement_rules_reload(state: State<'_, AppState>) -> Result<usize, Orq
         .map_err(|e| OrqaError::Database(format!("enforcement lock poisoned: {e}")))?;
     *guard = Some(engine);
 
-    tracing::debug!(
-        "[enforcement] reloaded {count} rules from '{}'",
-        rules_dir.display()
+    tracing::info!(
+        count = count,
+        rules_dir = %rules_dir.display(),
+        "[enforcement] reloaded rules"
     );
     Ok(count)
 }
@@ -115,7 +116,14 @@ pub fn governance_scan(state: State<'_, AppState>) -> Result<GovernanceScanResul
         }
     };
 
-    governance_scanner::scan_governance(Path::new(&project_path), &artifacts)
+    let result = governance_scanner::scan_governance(Path::new(&project_path), &artifacts)?;
+    let file_count: usize = result.areas.iter().map(|a| a.files.len()).sum();
+    tracing::info!(
+        file_count = file_count,
+        area_count = result.areas.len(),
+        "[governance] scan complete"
+    );
+    Ok(result)
 }
 
 /// Resolve the active project's path from the database.

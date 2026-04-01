@@ -77,6 +77,12 @@ export class SettingsStore {
 		await this.loadAllSettings();
 		await this.refreshSidecarStatus();
 
+		log.info("settings initialized", {
+			theme: this.themeMode,
+			model: this.defaultModel,
+			fontSize: this.fontSize,
+		});
+
 		// Apply theme on init
 		this.applyTheme(this.themeMode);
 
@@ -243,8 +249,12 @@ export class SettingsStore {
 			}
 		}
 
+		const prevState = this.sidecarStatus.state;
 		try {
 			const status = await invoke<SidecarStatus>("sidecar_status");
+			if (status.state !== prevState) {
+				log.info("sidecar state transition", { state: status.state, pid: status.pid });
+			}
 			this.sidecarStatus = status;
 		} catch (err) {
 			log.error("failed to poll sidecar status", err);
@@ -277,6 +287,7 @@ export class SettingsStore {
 	}
 
 	async refreshDaemonHealth(): Promise<void> {
+		const prevState = this.daemonHealth.state;
 		try {
 			const data = await invoke<{
 				status: string;
@@ -285,27 +296,39 @@ export class SettingsStore {
 			}>("daemon_health");
 
 			if (data.status === "ok") {
-				this.daemonHealth = {
+				const next: DaemonHealth = {
 					state: "connected",
 					artifacts: data.artifacts,
 					rules: data.rules,
 					error: null,
 				};
+				if (next.state !== prevState) {
+					log.info("daemon health transition", { state: next.state, artifacts: next.artifacts });
+				}
+				this.daemonHealth = next;
 			} else {
-				this.daemonHealth = {
+				const next: DaemonHealth = {
 					state: "degraded",
 					artifacts: data.artifacts ?? 0,
 					rules: data.rules ?? 0,
 					error: `Unexpected status: ${data.status}`,
 				};
+				if (next.state !== prevState) {
+					log.info("daemon health transition", { state: next.state, artifacts: next.artifacts });
+				}
+				this.daemonHealth = next;
 			}
 		} catch (err: unknown) {
-			this.daemonHealth = {
+			const next: DaemonHealth = {
 				state: "disconnected",
 				artifacts: 0,
 				rules: 0,
 				error: extractErrorMessage(err),
 			};
+			if (next.state !== prevState) {
+				log.info("daemon health transition", { state: next.state, artifacts: next.artifacts });
+			}
+			this.daemonHealth = next;
 		}
 	}
 

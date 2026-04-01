@@ -600,6 +600,13 @@
         addLine(source, data.text, data.error || false, data.level);
       });
 
+      // controller-log events are lines forwarded from dev-controller.log
+      es.addEventListener('controller-log', (e) => {
+        const data = JSON.parse(e.data);
+        const source = data.source || 'ctrl';
+        addLine(source, data.text, data.level === 'error', data.level);
+      });
+
       es.addEventListener('status', (e) => {
         updateStatus(JSON.parse(e.data));
       });

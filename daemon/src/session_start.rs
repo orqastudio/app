@@ -13,7 +13,7 @@ use std::path::Path;
 use axum::Json;
 use orqa_engine::project::git;
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 /// Request body for POST /session-start.
 #[derive(Deserialize)]
@@ -75,6 +75,11 @@ fn check_installation(project_path: &Path) -> CheckResult {
             message: "connector installation verified".into(),
         }
     } else {
+        warn!(
+            subsystem = "session",
+            missing = missing.join(", "),
+            "connector installation incomplete — run orqa install"
+        );
         CheckResult {
             name: "installation".into(),
             passed: false,
@@ -120,12 +125,17 @@ fn check_graph_integrity(project_path: &Path) -> CheckResult {
         for path in entries {
             if let Ok(contents) = std::fs::read_to_string(&path) {
                 if serde_json::from_str::<serde_json::Value>(&contents).is_err() {
-                    errors.push(format!(
-                        "malformed JSON: {}",
-                        path.strip_prefix(project_path)
-                            .unwrap_or(&path)
-                            .display()
-                    ));
+                    let relative = path
+                        .strip_prefix(project_path)
+                        .unwrap_or(&path)
+                        .display()
+                        .to_string();
+                    warn!(
+                        subsystem = "session",
+                        file = %relative,
+                        "malformed JSON in .orqa/ artifact"
+                    );
+                    errors.push(format!("malformed JSON: {relative}"));
                 }
             }
         }
@@ -304,6 +314,11 @@ pub async fn session_start_handler(
     Json(req): Json<SessionStartRequest>,
 ) -> Json<SessionStartResponse> {
     let project_path = Path::new(&req.project_path);
+    info!(
+        subsystem = "session",
+        project_path = %project_path.display(),
+        "session-start request received"
+    );
     let mut warnings: Vec<String> = Vec::new();
 
     let installation_check = check_installation(project_path);

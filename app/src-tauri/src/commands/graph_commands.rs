@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::time::Instant;
 
 use tauri::{Emitter, Runtime, State};
 
@@ -43,7 +44,16 @@ fn get_or_build_graph(state: &State<'_, AppState>) -> Result<ArtifactGraph, Orqa
 
     // Graph is absent — build it now.
     let project_path = active_project_path(state)?;
+    let build_start = Instant::now();
     let graph = build_artifact_graph(Path::new(&project_path))?;
+    let elapsed_ms = build_start.elapsed().as_millis();
+
+    tracing::info!(
+        subsystem = "graph",
+        node_count = graph.nodes.len(),
+        elapsed_ms = elapsed_ms,
+        "get_or_build_graph: cache miss, graph built"
+    );
 
     let mut guard = state
         .artifacts
@@ -203,6 +213,8 @@ pub fn refresh_artifact_graph<R: Runtime>(
     app: tauri::AppHandle<R>,
     state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
+    tracing::info!(subsystem = "graph", "refresh_artifact_graph: entry");
+    let refresh_start = Instant::now();
     let project_path = active_project_path(&state)?;
     let project_root = Path::new(&project_path);
 
@@ -230,6 +242,7 @@ pub fn refresh_artifact_graph<R: Runtime>(
         (graph, pending)
     };
 
+    let final_node_count = final_graph.nodes.len();
     {
         let mut guard = state
             .artifacts
@@ -245,6 +258,12 @@ pub fn refresh_artifact_graph<R: Runtime>(
         }
     }
 
+    tracing::info!(
+        subsystem = "graph",
+        node_count = final_node_count,
+        elapsed_ms = refresh_start.elapsed().as_millis(),
+        "refresh_artifact_graph: exit"
+    );
     Ok(())
 }
 
@@ -369,6 +388,8 @@ pub fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, O
     );
     let applied = apply_fixes(&graph, &checks, Path::new(&project_path))?;
 
+    tracing::info!(subsystem = "graph", fix_count = applied.len(), "apply_auto_fixes: applied fixes");
+
     // Refresh the graph if any fixes were applied.
     if !applied.is_empty() {
         let new_graph = build_artifact_graph(Path::new(&project_path))?;
@@ -468,6 +489,7 @@ pub fn update_artifact_field(
         )));
     }
 
+    tracing::debug!(subsystem = "graph", artifact_id = %path, field = %field, "update_artifact_field");
     domain_update_artifact_field(&full_path, &field, &value)?;
 
     // Refresh the graph cache so subsequent queries reflect the change.

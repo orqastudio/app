@@ -26,12 +26,14 @@ pub fn session_create(
         .lock()
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
 
-    session_repo::create(
+    let session = session_repo::create(
         &conn,
         project_id,
         model_str.trim(),
         system_prompt.as_deref(),
-    )
+    )?;
+    tracing::info!(subsystem = "session", session_id = session.id, project_id = project_id, "session_create");
+    Ok(session)
 }
 
 /// List sessions for a project with optional status filter and pagination.
@@ -104,7 +106,9 @@ pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), Or
         .conn
         .lock()
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::end_session(&conn, session_id)
+    session_repo::end_session(&conn, session_id)?;
+    tracing::info!(subsystem = "session", session_id = session_id, "session_end");
+    Ok(())
 }
 
 /// Delete a session and its messages (cascading).
@@ -115,7 +119,9 @@ pub fn session_delete(session_id: i64, state: State<'_, AppState>) -> Result<(),
         .conn
         .lock()
         .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::delete(&conn, session_id)
+    session_repo::delete(&conn, session_id)?;
+    tracing::info!(subsystem = "session", session_id = session_id, "session_delete");
+    Ok(())
 }
 
 #[cfg(test)]

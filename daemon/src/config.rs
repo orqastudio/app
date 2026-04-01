@@ -7,6 +7,7 @@
 
 use serde::Deserialize;
 use std::path::Path;
+use tracing::{info, warn};
 
 /// Runtime configuration for the daemon.
 ///
@@ -47,11 +48,37 @@ impl DaemonConfig {
         let config_path = project_root.join("orqa.toml");
         if config_path.exists() {
             if let Ok(content) = std::fs::read_to_string(&config_path) {
-                if let Ok(config) = toml::from_str(&content) {
-                    return config;
+                match toml::from_str::<Self>(&content) {
+                    Ok(config) => {
+                        info!(
+                            subsystem = "config",
+                            path = %config_path.display(),
+                            min_score = config.min_score,
+                            max_semantic = config.max_semantic,
+                            downstream_warn_threshold = config.downstream_warn_threshold,
+                            "[config] loaded daemon configuration from orqa.toml"
+                        );
+                        return config;
+                    }
+                    Err(e) => {
+                        warn!(
+                            subsystem = "config",
+                            path = %config_path.display(),
+                            error = %e,
+                            "[config] orqa.toml exists but could not be parsed — using defaults"
+                        );
+                    }
                 }
             }
         }
-        Self::default()
+        let defaults = Self::default();
+        info!(
+            subsystem = "config",
+            min_score = defaults.min_score,
+            max_semantic = defaults.max_semantic,
+            downstream_warn_threshold = defaults.downstream_warn_threshold,
+            "[config] no orqa.toml found — using compiled-in defaults"
+        );
+        defaults
     }
 }

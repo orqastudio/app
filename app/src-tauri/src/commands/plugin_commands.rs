@@ -31,10 +31,12 @@ pub fn plugin_install_local(
     state: tauri::State<'_, AppState>,
 ) -> Result<installer::InstallResult, OrqaError> {
     let project_path = active_project_path(&state)?;
-    Ok(installer::install_from_path(
+    let result = installer::install_from_path(
         std::path::Path::new(&path),
         std::path::Path::new(&project_path),
-    )?)
+    )?;
+    tracing::info!(subsystem = "plugin", plugin_name = %result.name, source = "local", "plugin_install_local: success");
+    Ok(result)
 }
 
 /// Install a plugin from a GitHub release archive.
@@ -45,22 +47,23 @@ pub async fn plugin_install_github(
     state: tauri::State<'_, AppState>,
 ) -> Result<installer::InstallResult, OrqaError> {
     let project_path = active_project_path(&state)?;
-    Ok(installer::install_from_github(
+    let result = installer::install_from_github(
         &repo,
         version.as_deref(),
         std::path::Path::new(&project_path),
     )
-    .await?)
+    .await?;
+    tracing::info!(subsystem = "plugin", plugin_name = %result.name, repo = %repo, "plugin_install_github: success");
+    Ok(result)
 }
 
 /// Uninstall a plugin by name.
 #[tauri::command]
 pub fn plugin_uninstall(name: String, state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
     let project_path = active_project_path(&state)?;
-    Ok(installer::uninstall(
-        &name,
-        std::path::Path::new(&project_path),
-    )?)
+    installer::uninstall(&name, std::path::Path::new(&project_path))?;
+    tracing::info!(subsystem = "plugin", plugin_name = %name, "plugin_uninstall");
+    Ok(())
 }
 
 /// Check for available plugin updates by comparing lockfile versions against registry.

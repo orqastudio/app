@@ -24,11 +24,11 @@
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use notify::RecursiveMode;
 use notify_debouncer_full::{new_debouncer, DebounceEventResult, Debouncer, RecommendedCache};
-use tracing::{info, warn};
+use tracing::{debug, info, warn};
 
 use orqa_engine::enforcement::engine::EnforcementEngine;
 use orqa_engine::enforcement::store::load_rules;
@@ -349,6 +349,12 @@ fn handle_events(result: DebounceEventResult, root: &Path, registry: &[WatchRegi
                     continue;
                 }
 
+                debug!(
+                    subsystem = "watcher",
+                    changed_paths = ?relevant_paths,
+                    "[watcher] file change event"
+                );
+
                 for path in &relevant_paths {
                     // Infrastructure watches.
                     if path_is_under(path, root, ".orqa") {
@@ -487,7 +493,19 @@ fn invoke_generator(reg: &WatchRegistration, root: &Path) {
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
 
-    log_generator_result(reg, cmd.output());
+    let gen_start = Instant::now();
+    let result = cmd.output();
+    let elapsed_ms = gen_start.elapsed().as_millis() as u64;
+
+    info!(
+        subsystem = "watcher",
+        plugin = %reg.plugin_name,
+        engine = %reg.engine,
+        elapsed_ms,
+        "[watcher] generator finished"
+    );
+
+    log_generator_result(reg, result);
 }
 
 /// Return `true` if `path` is located under `root/subdir`.

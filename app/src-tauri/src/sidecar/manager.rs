@@ -146,6 +146,7 @@ impl SidecarManager {
         *lock_mutex(&self.start_time)? = Some(Instant::now());
         *lock_mutex(&self.state)? = SidecarState::Connected;
 
+        tracing::info!(subsystem = "sidecar", pid = child_pid, command = %command, "sidecar spawn: process started");
         Ok(())
     }
 
@@ -193,6 +194,7 @@ impl SidecarManager {
 
     /// Kill the sidecar process if running, updating state to `Stopped`.
     pub fn kill(&self) -> Result<(), OrqaError> {
+        tracing::info!(subsystem = "sidecar", "sidecar kill: entry");
         self.kill_inner()?;
         *lock_mutex(&self.state)? = SidecarState::Stopped;
         Ok(())
@@ -200,6 +202,7 @@ impl SidecarManager {
 
     /// Kill and restart the sidecar process.
     pub fn restart(&self, command: &str, args: &[&str]) -> Result<SidecarStatus, OrqaError> {
+        tracing::info!(subsystem = "sidecar", command = %command, "sidecar restart: entry");
         self.kill()?;
         self.spawn(command, args)?;
         Ok(self.status())

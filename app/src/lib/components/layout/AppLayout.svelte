@@ -15,8 +15,10 @@
 	import SetupWizard from "$lib/components/setup/SetupWizard.svelte";
 	import ArtifactSearchOverlay from "$lib/components/navigation/ArtifactSearchOverlay.svelte";
 	import { ErrorToast } from "@orqastudio/svelte-components/connected";
-	import { getStores } from "@orqastudio/sdk";
+	import { getStores, logger } from "@orqastudio/sdk";
 	import { initDevConsole } from "$lib/utils/dev-console";
+
+	const log = logger("lifecycle");
 
 	import { ResizablePaneGroup, ResizableHandle, ResizablePane } from "@orqastudio/svelte-components/pure";
 	import setupBackground from "$lib/assets/setup-background.png";
@@ -49,8 +51,10 @@
 	}
 
 	onMount(async () => {
+		log.info("app shell mounted");
 		settingsStore.initialize();
 		errorStore.initialize();
+		errorStore.initBrowserHandlers();
 		initDevConsole();
 		await setupStore.checkSetupStatus();
 		if (setupStore.setupComplete) {

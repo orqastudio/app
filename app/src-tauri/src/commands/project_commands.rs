@@ -20,6 +20,7 @@ use crate::state::AppState;
 /// Also loads the enforcement engine from `.orqa/rules/` if it exists.
 #[tauri::command]
 pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
+    tracing::info!(subsystem = "project", path = %path, "project_open: entry");
     let raw_canonical = validate_directory_path(&path)?;
 
     // Walk up to find the true project root (directory containing .orqa/).
@@ -68,6 +69,7 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
     load_tracker_config(&state, &canonical);
     load_process_gates(&state, &canonical);
 
+    tracing::info!(subsystem = "project", project_id = project.id, path = %canonical, "project_open: exit");
     Ok(project)
 }
 

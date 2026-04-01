@@ -43,6 +43,8 @@ const LSP_BINARY: &str = "orqa-lsp-server";
 pub fn start_lsp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     let lsp_port = resolve_lsp_port();
 
+    info!(subsystem = "lsp", lsp_port, "spawning LSP server");
+
     let args = vec![
         "--tcp".to_owned(),
         lsp_port.to_string(),
@@ -55,6 +57,7 @@ pub fn start_lsp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     match manager.start(project_root) {
         Ok(()) => {
             info!(
+                subsystem = "lsp",
                 status = ?manager.status(),
                 lsp_port,
                 "LSP server startup complete"
@@ -62,6 +65,7 @@ pub fn start_lsp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
         }
         Err(e) => {
             warn!(
+                subsystem = "lsp",
                 error = %e,
                 "failed to spawn LSP server — daemon continues without LSP"
             );

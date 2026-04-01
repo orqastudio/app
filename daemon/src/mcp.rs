@@ -48,6 +48,8 @@ const MCP_BINARY: &str = "orqa-mcp-server";
 pub fn start_mcp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     let mcp_port = resolve_mcp_port();
 
+    info!(subsystem = "mcp", mcp_port, "spawning MCP server");
+
     let args = vec![
         "--tcp".to_owned(),
         mcp_port.to_string(),
@@ -60,6 +62,7 @@ pub fn start_mcp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     match manager.start(project_root) {
         Ok(()) => {
             info!(
+                subsystem = "mcp",
                 status = ?manager.status(),
                 mcp_port,
                 "MCP server startup complete"
@@ -67,6 +70,7 @@ pub fn start_mcp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
         }
         Err(e) => {
             warn!(
+                subsystem = "mcp",
                 error = %e,
                 "failed to spawn MCP server — daemon continues without MCP"
             );

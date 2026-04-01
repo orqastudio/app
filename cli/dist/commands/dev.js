@@ -28,8 +28,12 @@ import { getPort } from "../lib/ports.js";
 function isWindows() { return platform() === "win32"; }
 function npm() { return isWindows() ? "npm.cmd" : "npm"; }
 function npx() { return isWindows() ? "npx.cmd" : "npx"; }
-function rustEnv() {
-    return { ...process.env, RUST_LOG: process.env["RUST_LOG"] ?? "debug" };
+function rustEnv(projectRoot) {
+    return {
+        ...process.env,
+        RUST_LOG: process.env["RUST_LOG"] ?? "debug",
+        ...(projectRoot ? { ORQA_PROJECT_ROOT: projectRoot } : {}),
+    };
 }
 const VITE_PORT = getPort("vite");
 const PORT_TIMEOUT_MS = 15_000;
@@ -361,7 +365,7 @@ async function startController(root, opts = { watch: true }) {
         logCtrl("Starting search server...");
         spawnManaged(searchProc, findBin("orqa-search-server"), [appDir], {
             stdinMode: "pipe",
-            env: rustEnv(),
+            env: rustEnv(root),
         });
     }
     startSearch();
@@ -399,7 +403,7 @@ async function startController(root, opts = { watch: true }) {
             "tauri", "dev",
         ], {
             cwd: appDir,
-            env: rustEnv(),
+            env: rustEnv(root),
         });
         // Wait for the app process to appear (cargo tauri dev compiles then launches)
         const appDeadline = Date.now() + 300_000; // 5 min for compilation

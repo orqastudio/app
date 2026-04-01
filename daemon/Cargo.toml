@@ -31,6 +31,14 @@ ctrlc = "3"
 tray-icon = "0.21"
 image = { version = "0.25", default-features = false, features = ["png"] }
 
+[target.'cfg(windows)'.dependencies]
+# Used to drive the Win32 message pump required by tray-icon on Windows.
+# tray-icon creates a hidden HWND; its window proc only fires when the
+# thread that owns the window calls PeekMessage/DispatchMessage.
+windows-sys = { version = "0.60", features = [
+    "Win32_UI_WindowsAndMessaging",
+] }
+
 [dev-dependencies]
 tempfile = "3"
 

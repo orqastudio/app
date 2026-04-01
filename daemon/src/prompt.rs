@@ -17,10 +17,11 @@
 
 use std::collections::HashMap;
 use std::path::Path;
+use std::time::Instant;
 
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 use orqa_engine::prompt::builder::{build_system_prompt, resolve_project_paths};
 use orqa_engine::prompt::knowledge::KnowledgeInjector;
@@ -154,7 +155,15 @@ pub struct PromptResponse {
 /// succeeds — classification only determines the workflow stage passed to the
 /// builder.
 pub async fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptResponse> {
+    let start = Instant::now();
     let project_path = Path::new(&req.project_path);
+
+    info!(
+        subsystem = "prompt",
+        role = %req.role,
+        "[prompt] prompt_handler entry"
+    );
+
     let classification = load_prompt_classification(project_path);
     let (prompt_type, method) = classify_message(&req.message, project_path, &classification);
     let stage = resolve_stage(&prompt_type, &classification);
@@ -163,6 +172,16 @@ pub async fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptRespon
     let (prompt_text, sections) = build_prompt_text(&req.role, stage_opt, project_path, &prompt_paths);
     let total_tokens = sections.iter().map(|s| s.tokens).sum();
     let budget = budget_for_role(&req.role).max(budget_for_type(&prompt_type));
+
+    info!(
+        subsystem = "prompt",
+        elapsed_ms = start.elapsed().as_millis() as u64,
+        prompt_type = %prompt_type,
+        method = %method,
+        tokens = total_tokens,
+        budget = budget,
+        "[prompt] prompt_handler completed"
+    );
 
     Json(PromptResponse {
         prompt: prompt_text,
