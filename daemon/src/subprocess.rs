@@ -80,7 +80,7 @@ impl SubprocessManager {
 
     /// Return the PID of the running child, if any.
     pub fn pid(&self) -> Option<u32> {
-        self.child.as_ref().map(std::process::Child::id)
+        self.child.as_ref().map(Child::id)
     }
 
     /// Return uptime in seconds since the most recent successful start.
