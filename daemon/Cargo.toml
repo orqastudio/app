@@ -18,6 +18,8 @@ path = "src/main.rs"
 orqa-engine = { path = "../engine/core" }
 orqa-engine-types = { path = "../engine/types" }
 tokio = { version = "1", features = ["full"] }
+tokio-stream = { version = "0.1", features = ["sync"] }
+futures-util = "0.3"
 axum = "0.8"
 notify = "8"
 notify-debouncer-full = "0.7"

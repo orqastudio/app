@@ -2,6 +2,7 @@
 	import { open } from "@tauri-apps/plugin-dialog";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { getVersion, getName } from "@tauri-apps/api/app";
+	import { invoke } from "@tauri-apps/api/core";
 	import logoStatic from "$lib/assets/logo-static.svg";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -66,6 +67,10 @@
 		settingsOpen = true;
 	}
 
+	async function handleLaunchDevtools(): Promise<void> {
+		await invoke("launch_devtools");
+	}
+
 	function handleDragStart(e: MouseEvent): void {
 		if (e.button !== 0) return;
 		const target = e.target as HTMLElement;
@@ -108,6 +113,13 @@
 	/>
 
 	<div class="flex-1"></div>
+	<button
+		class="flex h-10 items-center gap-1 border-l border-border px-3 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+		onclick={handleLaunchDevtools}
+		title="Open OrqaDev"
+	>
+		DevTools
+	</button>
 	<WindowControls />
 </div>
 

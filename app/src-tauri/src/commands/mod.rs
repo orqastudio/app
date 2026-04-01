@@ -4,6 +4,8 @@ pub mod artifact_commands;
 pub mod cli_tool_commands;
 /// Tauri IPC command: daemon health check.
 pub mod daemon_commands;
+/// Tauri IPC commands: OrqaDev companion app launch and status.
+pub mod devtools_commands;
 /// Tauri IPC commands: enforcement rule listing, reload, and violation queries.
 pub mod enforcement_commands;
 /// Tauri IPC commands: artifact graph queries, integrity scans, health snapshots.

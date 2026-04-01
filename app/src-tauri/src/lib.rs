@@ -326,6 +326,8 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::plugin_commands::plugin_get_manifest,
         commands::hook_commands::get_registered_hooks,
         commands::hook_commands::generate_hook_dispatchers,
+        commands::devtools_commands::launch_devtools,
+        commands::devtools_commands::is_devtools_running,
     ])
 }
 

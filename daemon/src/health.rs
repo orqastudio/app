@@ -3,11 +3,12 @@
 // Exposes GET /health (daemon liveness), POST /parse (artifact impact),
 // POST /prompt, POST /knowledge (knowledge injection), POST /context (active
 // rules and workflows for CLAUDE.md generation), POST /session-start
-// (structured startup checks), and POST /events (external event ingest from
-// frontend SDK and dev-controller). The endpoint runs on the tokio runtime and
-// binds to 127.0.0.1:<ORQA_PORT_BASE> (default port 10100). This allows other
-// tools (app, CLI, connector) to check whether the daemon is alive without
-// reading the PID file directly.
+// (structured startup checks), POST /events (external event ingest from
+// frontend SDK and dev-controller), and GET /events/stream (SSE stream of all
+// live events from the central event bus). The endpoint runs on the tokio
+// runtime and binds to 127.0.0.1:<ORQA_PORT_BASE> (default port 10100). This
+// allows other tools (app, CLI, connector) to check whether the daemon is alive
+// without reading the PID file directly.
 
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -15,9 +16,12 @@ use std::time::Instant;
 
 use axum::extract::State;
 use axum::http::StatusCode;
+use axum::response::sse::{Event, Sse};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use serde::{Deserialize, Serialize};
+use tokio_stream::wrappers::BroadcastStream;
+use tokio_stream::StreamExt as _;
 use tracing::{error, info};
 
 use orqa_engine::ports::resolve_daemon_port;
@@ -182,6 +186,33 @@ async fn health_handler(State(state): State<HealthState>) -> Json<HealthResponse
     })
 }
 
+/// Handle GET /events/stream — subscribe to the event bus and stream all
+/// events to the caller as Server-Sent Events.
+///
+/// Each event is serialized to JSON and delivered as a single SSE `data`
+/// field. The stream runs until the client disconnects or the event bus shuts
+/// down (sender dropped). Errors from the broadcast channel (e.g. lagged
+/// receiver) are logged and the stream is terminated.
+async fn events_stream_handler(
+    State(state): State<HealthState>,
+) -> Sse<impl futures_util::Stream<Item = Result<Event, axum::Error>>> {
+    let receiver = state.event_bus.subscribe();
+    let stream = BroadcastStream::new(receiver).filter_map(|result| match result {
+        Ok(event) => match serde_json::to_string(&event) {
+            Ok(json) => Some(Ok(Event::default().data(json))),
+            Err(e) => {
+                error!(subsystem = "sse", error = %e, "failed to serialize event for SSE");
+                None
+            }
+        },
+        Err(e) => {
+            error!(subsystem = "sse", error = %e, "SSE broadcast receiver error — stream ending");
+            None
+        }
+    });
+    Sse::new(stream)
+}
+
 /// Resolve the port to bind from the environment or use the default.
 ///
 /// Delegates to `orqa_engine::ports::resolve_daemon_port()`. Falls back to
@@ -212,6 +243,7 @@ pub async fn start(port: u16, config: DaemonConfig, event_bus: Arc<EventBus>, ev
         .route("/compact-context", post(crate::compact_context::compact_context_handler))
         .route("/context", post(crate::context::context_handler))
         .route("/events", get(events_query_handler).post(events_ingest_handler))
+        .route("/events/stream", get(events_stream_handler))
         .route("/knowledge", post(crate::knowledge::knowledge_handler))
         .route("/parse", post(crate::parse::parse_handler))
         .route("/prompt", post(crate::prompt::prompt_handler))

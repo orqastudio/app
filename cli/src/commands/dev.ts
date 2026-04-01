@@ -215,6 +215,7 @@ interface ControlFileState {
 	app: number | null;
 	search: number | null;
 	dashboard: number | null;
+	devtools: number | null;
 }
 
 function getControlFilePath(root: string): string {
@@ -339,7 +340,7 @@ async function killAll(root: string): Promise<void> {
 
 	// Find all OrqaStudio processes by name
 	for (const name of [
-		"orqa-studio", "cargo-tauri",
+		"orqa-studio", "orqa-devtools", "cargo-tauri",
 		"orqa-mcp-server", "orqa-lsp-server", "orqa-search-server", "orqa-validation",
 	]) {
 		for (const pid of findPidsByName(name)) {
@@ -422,6 +423,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		app: null,
 		search: null,
 		dashboard: null,
+		devtools: null,
 	});
 
 	// ── 0. Start debug dashboard ────────────────────────────────────────
@@ -458,7 +460,37 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 		app: null,
 		search: null,
 		dashboard: dashboardProc?.pid ?? null,
+		devtools: null,
 	});
+
+	// ── 0.5. Start OrqaDev (devtools companion app) ──────────────────────
+	// Launch OrqaDev before the daemon so the developer can observe daemon
+	// startup in the devtools log viewer.
+	let devtoolsProc: NodeChildProcess | null = null;
+	{
+		const devtoolsBin = findBin("orqa-devtools");
+		if (fs.existsSync(devtoolsBin)) {
+			logCtrl("Starting OrqaDev...");
+			devtoolsProc = spawn(devtoolsBin, [], {
+				cwd: root,
+				detached: true,
+				stdio: "ignore",
+				env: rustEnv(root),
+			});
+			devtoolsProc.unref();
+			logSuccess(`OrqaDev started (PID ${devtoolsProc.pid ?? "?"}).`);
+
+			writeControlFile(root, {
+				state: "starting",
+				app: null,
+				search: null,
+				dashboard: dashboardProc?.pid ?? null,
+				devtools: devtoolsProc?.pid ?? null,
+			});
+		} else {
+			logCtrl("orqa-devtools binary not found — skipping DevTools launch.");
+		}
+	}
 
 	// ── 1. Start daemon ─────────────────────────────────────────────────
 	logCtrl("Starting daemon...");
@@ -530,6 +562,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			app: null,
 			search: searchProc.child?.pid ?? null,
 			dashboard: dashboardProc?.pid ?? null,
+			devtools: devtoolsProc?.pid ?? null,
 		});
 
 		spawnManaged(app, "cargo", [
@@ -572,6 +605,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
 			dashboard: dashboardProc?.pid ?? null,
+			devtools: devtoolsProc?.pid ?? null,
 		});
 
 		// When app exits cleanly (code 0 = user closed window), shut down everything.
@@ -583,6 +617,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 				if (dashboardProc?.pid) {
 					try { process.kill(dashboardProc.pid, "SIGKILL"); } catch { /* already dead */ }
 				}
+				if (devtoolsProc?.pid) {
+					try { process.kill(devtoolsProc.pid, "SIGKILL"); } catch { /* already dead */ }
+				}
 				removeControlFile(root);
 				cleanupSignalFile(root);
 				process.exit(0);
@@ -592,6 +629,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 					app: null,
 					search: searchProc.child?.pid ?? null,
 					dashboard: dashboardProc?.pid ?? null,
+					devtools: devtoolsProc?.pid ?? null,
 				});
 				logCtrl(
 					`App crashed (code ${code}). Use 'orqa dev restart-tauri' to relaunch.`,
@@ -642,6 +680,7 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			app: app.child?.pid ?? null,
 			search: searchProc.child?.pid ?? null,
 			dashboard: dashboardProc?.pid ?? null,
+			devtools: devtoolsProc?.pid ?? null,
 		});
 	}
 
@@ -705,6 +744,9 @@ async function startController(root: string, opts: { watch: boolean } = { watch:
 			killManaged(searchProc);
 			if (dashboardProc?.pid) {
 				try { process.kill(dashboardProc.pid, "SIGKILL"); } catch { /* already dead */ }
+			}
+			if (devtoolsProc?.pid) {
+				try { process.kill(devtoolsProc.pid, "SIGKILL"); } catch { /* already dead */ }
 			}
 			removeControlFile(root);
 			cleanupSignalFile(root);
