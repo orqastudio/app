@@ -1,18 +1,27 @@
 # Cargo manifest for the orqa-graph library crate.
-# Provides the artifact graph construction, query, and traceability functions.
-# Currently a thin re-export layer over orqa-validation's graph module.
+# Provides the artifact graph construction, traversal, health metrics, and traceability functions.
+# Depends only on orqa-engine-types for shared type definitions.
 [package]
 name = "orqa-graph"
 version = "0.1.0-dev"
 edition = "2021"
-description = "OrqaStudio graph crate — artifact relationships and traceability"
+description = "OrqaStudio graph crate — artifact graph construction, health metrics, and traceability"
 
 [lib]
 name = "orqa_graph"
 path = "src/lib.rs"
 
 [dependencies]
-orqa-validation = { path = "../validation" }
+orqa-engine-types = { path = "../types" }
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml = "0.9"
+thiserror = "2"
+regex = "1"
+tracing = "0.1"
+
+[dev-dependencies]
+tempfile = "3"
 
 [lints]
 workspace = true

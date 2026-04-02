@@ -3,7 +3,7 @@
 // Project, ProjectSummary, DetectedStack, and ScanResult represent projects
 // managed by OrqaStudio, including detected technology stacks and scan results.
 
-pub use orqa_engine::types::project::*;
+pub use orqa_engine_types::types::project::*;
 
 #[cfg(test)]
 mod tests {

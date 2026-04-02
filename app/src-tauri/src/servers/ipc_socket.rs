@@ -13,7 +13,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::thread;
 
-use orqa_engine::ports::resolve_daemon_port;
+use orqa_engine_types::ports::resolve_daemon_port;
 
 use super::find_server_binary;
 

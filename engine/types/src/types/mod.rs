@@ -5,6 +5,8 @@
 
 /// Artifact data types: parsed frontmatter, relationships, graph nodes.
 pub mod artifact;
+/// Graph domain types: artifact graph, nodes, references, health metrics, traceability.
+pub mod graph;
 /// Structured event types for the daemon event bus.
 pub mod event;
 /// Enforcement types: rules, mechanisms, evaluation results.

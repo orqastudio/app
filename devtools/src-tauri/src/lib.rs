@@ -3,6 +3,9 @@
 //! Bootstraps the Tauri builder with logging, shared state (event ring buffer),
 //! and IPC commands for the developer tools companion app.
 
+/// Dev environment controller — spawns `orqa dev start-processes` and pipes output.
+pub mod dev_controller;
+
 /// SSE event consumer — connects to daemon, buffers events, exposes IPC commands.
 pub mod events;
 
@@ -28,6 +31,9 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     app.manage(std::sync::Arc::clone(&consumer_state));
     events::spawn_consumer(app.handle().clone(), consumer_state);
 
+    let dev_ctrl_state = dev_controller::DevControllerState::new();
+    app.manage(dev_ctrl_state);
+
     Ok(())
 }
 
@@ -51,6 +57,9 @@ pub fn run() {
             events::event_buffer_stats,
             events::devtools_query_history,
             process_status::devtools_process_status,
+            dev_controller::devtools_start_dev,
+            dev_controller::devtools_stop_dev,
+            dev_controller::devtools_dev_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running OrqaDev");

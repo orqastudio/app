@@ -4,7 +4,7 @@
 // support the design token extraction pipeline and track the lifecycle of the
 // LLM inference sidecar process.
 
-pub use orqa_engine::types::settings::*;
+pub use orqa_engine_types::types::settings::*;
 
 #[cfg(test)]
 mod tests {

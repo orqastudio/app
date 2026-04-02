@@ -28,7 +28,6 @@ pub mod auto_fix;
 pub mod checks;
 pub mod content;
 pub mod context;
-pub mod daemon;
 pub mod error;
 pub mod generated;
 pub mod graph;

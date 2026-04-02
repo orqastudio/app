@@ -1,18 +1,8 @@
-use std::collections::HashMap;
-use std::sync::mpsc::SyncSender;
 use std::sync::{Arc, Mutex};
 
 use rusqlite::Connection;
 
-use crate::cli_tools::runner::CliToolRunner;
-use crate::domain::artifact_graph::ArtifactGraph;
-use crate::domain::enforcement_engine::EnforcementEngine;
-use crate::domain::knowledge_injector::KnowledgeInjector;
-use crate::domain::process_gates::ProcessGateConfig;
-use crate::domain::process_state::SessionProcessState;
-use crate::domain::workflow_tracker::{TrackerConfig, WorkflowTracker};
-use crate::search::SearchEngine;
-use crate::sidecar::manager::SidecarManager;
+use crate::daemon_client::DaemonClient;
 use crate::startup::StartupTracker;
 use crate::watcher::SharedWatcher;
 
@@ -28,32 +18,6 @@ pub struct DbState {
     pub conn: Mutex<Connection>,
 }
 
-/// Sidecar process state.
-///
-/// The `SidecarManager` uses interior mutability via its own `Mutex` fields.
-/// `pending_approvals` holds one-shot channels keyed by `tool_call_id`.
-/// When a write/execute tool requires user approval, the stream loop parks on a
-/// sync channel receiver; the `stream_tool_approval_respond` command sends the
-/// boolean decision onto the channel to unblock the stream loop.
-pub struct SidecarState {
-    /// Manages the Claude sidecar child process lifecycle.
-    pub manager: SidecarManager,
-    /// Pending tool approval channels: `tool_call_id` -> sender for the approval decision.
-    ///
-    /// The stream loop inserts a sender before blocking on the corresponding receiver.
-    /// `stream_tool_approval_respond` looks up the sender by `tool_call_id`, sends the
-    /// boolean, and removes the entry.
-    pub pending_approvals: Mutex<HashMap<String, SyncSender<bool>>>,
-}
-
-/// Code search engine state.
-///
-/// The `SearchEngine` is lazily initialized when a project is first indexed.
-pub struct SearchState {
-    /// ONNX-based semantic search engine; `None` until a project is indexed.
-    pub engine: Mutex<Option<SearchEngine>>,
-}
-
 /// Long-running initialization task tracking.
 ///
 /// The `StartupTracker` tracks long-running initialization tasks for the frontend.
@@ -62,63 +26,26 @@ pub struct StartupState {
     pub tracker: Arc<StartupTracker>,
 }
 
-/// Rule enforcement engine state.
+/// Daemon HTTP client state.
 ///
-/// `None` until the first project is opened. Reloaded via `enforcement_rules_reload`.
-pub struct EnforcementState {
-    /// Compiled enforcement engine; `None` until a project is opened.
-    pub engine: Mutex<Option<EnforcementEngine>>,
+/// Holds a `DaemonClient` that all graph, validation, artifact, and stream
+/// commands use to delegate requests to the daemon. The client is cheap to
+/// clone (it wraps `reqwest::Client` which is `Arc`-backed internally).
+pub struct DaemonState {
+    /// HTTP client for all daemon API calls.
+    pub client: DaemonClient,
 }
 
-/// Session-level process compliance and workflow tracking.
+/// Artifact filesystem watcher state.
 ///
-/// Tracks whether docs were read and knowledge was loaded before code was written.
-/// Accumulates reads, writes, searches, and commands over the session lifetime.
-/// All reset when `stream_send_message` is called for a different session.
-/// Gate and tracker configs are loaded from the resolved workflow plugin config.
-pub struct SessionState {
-    /// Session-level process compliance state.
-    pub process_state: Mutex<SessionProcessState>,
-    /// Session-level workflow tracker for process gate evaluation.
-    pub workflow_tracker: Mutex<WorkflowTracker>,
-    /// Process gate definitions loaded from the resolved workflow plugin config.
-    pub process_gates: Mutex<Vec<ProcessGateConfig>>,
-    /// Path classification rules for the workflow tracker, from workflow plugin config.
-    ///
-    /// Wrapped in a `Mutex` so it can be replaced when a new project is opened via
-    /// `project_open`. The tracker is rebuilt with the new config at that point.
-    pub tracker_config: Mutex<TrackerConfig>,
-}
-
-/// Plugin CLI tool runner state.
-///
-/// Manages one-shot CLI tool execution and caches last-run results.
-pub struct CliToolState {
-    /// Executes plugin-contributed CLI tools and tracks their output.
-    pub runner: CliToolRunner,
-}
-
-/// Artifact graph and related filesystem state.
-///
-/// Includes the file watcher, cached bidirectional graph, and knowledge injector.
+/// The artifact graph is owned by the daemon — the app holds only the file
+/// watcher so the frontend receives change notifications when `.orqa/` changes.
 pub struct ArtifactState {
     /// Active `.orqa/` file-system watcher.
     ///
     /// Replaced via `artifact_watch_start` whenever a different project is opened.
     /// Dropping the inner value stops the underlying watcher.
     pub watcher: SharedWatcher,
-    /// Cached bidirectional artifact graph.
-    ///
-    /// `None` until the first graph query or an explicit `refresh_artifact_graph` call.
-    /// Invalidated (set to `None`) by the artifact watcher when `.orqa/` files change,
-    /// so the next query triggers a fresh build from disk.
-    pub graph: Mutex<Option<ArtifactGraph>>,
-    /// Prompt-based knowledge injector using semantic similarity.
-    ///
-    /// `None` until the embedder is ready and a project with knowledge artifacts is opened.
-    /// When available, the system prompt builder embeds the user's message and
-    /// injects the most relevant knowledge automatically.
-    pub knowledge_injector: Mutex<Option<KnowledgeInjector>>,
 }
 
 // ---------------------------------------------------------------------------
@@ -128,22 +55,15 @@ pub struct ArtifactState {
 /// Application state managed by Tauri.
 ///
 /// Decomposed into logical sub-structs for clarity and reduced lock contention.
-/// Tauri manages this as shared state across all commands.
+/// All engine operations are delegated to the daemon via `DaemonState`. The app
+/// is a pure UI layer with local SQLite for sessions, messages, and settings.
 pub struct AppState {
     /// SQLite database connection.
     pub db: DbState,
-    /// Claude sidecar process and tool approval state.
-    pub sidecar: SidecarState,
-    /// Semantic search engine for code and artifact indexing.
-    pub search: SearchState,
+    /// HTTP client for daemon API calls.
+    pub daemon: DaemonState,
     /// Startup task progress tracker.
     pub startup: StartupState,
-    /// Enforcement rule engine for governance validation.
-    pub enforcement: EnforcementState,
-    /// Session-level process compliance and workflow state.
-    pub session: SessionState,
-    /// Artifact graph, file watcher, and knowledge injector.
+    /// File watcher for artifact changes.
     pub artifacts: ArtifactState,
-    /// Plugin CLI tool runner.
-    pub cli_tools: CliToolState,
 }

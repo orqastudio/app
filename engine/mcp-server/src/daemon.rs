@@ -6,13 +6,14 @@
 //!
 //! # Endpoints used
 //!
-//! | Method | Path        | Used by tool       |
-//! |--------|-------------|--------------------|
-//! | GET    | `/health`   | `graph_stats`      |
-//! | POST   | `/query`    | `graph_query`      |
-//! | POST   | `/parse`    | `graph_resolve`    |
-//! | POST   | `/validate` | `graph_validate`   |
-//! | POST   | `/reload`   | `graph_refresh`    |
+//! | Method | Path                          | Used by tool          |
+//! |--------|-------------------------------|-----------------------|
+//! | GET    | `/health`                     | `graph_stats`         |
+//! | GET    | `/artifacts`                  | `graph_query`         |
+//! | GET    | `/artifacts/:id`              | `graph_resolve`       |
+//! | POST   | `/validation/scan`            | `graph_validate`      |
+//! | GET    | `/artifacts/:id/traceability` | `graph_traceability`  |
+//! | POST   | `/reload`                     | `graph_refresh`       |
 
 use serde_json::Value;
 
@@ -57,6 +58,17 @@ impl DaemonClient {
             .map_err(|e| McpError::Protocol(e.to_string()))
     }
 
+    fn get_with_query(&self, path: &str, params: &[(&str, &str)]) -> Result<Value, McpError> {
+        let url = format!("{}{path}", self.base_url);
+        self.client
+            .get(&url)
+            .query(params)
+            .send()
+            .map_err(|e| McpError::DaemonUnreachable(e.to_string()))?
+            .json::<Value>()
+            .map_err(|e| McpError::Protocol(e.to_string()))
+    }
+
     fn post(&self, path: &str, body: &Value) -> Result<Value, McpError> {
         let url = format!("{}{path}", self.base_url);
         self.client
@@ -77,33 +89,40 @@ impl DaemonClient {
         self.get("/health")
     }
 
-    /// `POST /query` — query the artifact graph.
+    /// `GET /artifacts` — query the artifact graph.
     ///
-    /// Accepts any subset of: `{ "type": "...", "status": "...", "id": "..." }`.
+    /// Accepts any subset of query parameters: `type`, `status`, `id`, `search`.
     pub fn query(&self, params: &Value) -> Result<Value, McpError> {
-        self.post("/query", params)
+        let mut query_pairs: Vec<(String, String)> = Vec::new();
+        if let Some(obj) = params.as_object() {
+            for (k, v) in obj {
+                if let Some(s) = v.as_str() {
+                    query_pairs.push((k.clone(), s.to_owned()));
+                }
+            }
+        }
+        let pairs_ref: Vec<(&str, &str)> = query_pairs
+            .iter()
+            .map(|(k, v)| (k.as_str(), v.as_str()))
+            .collect();
+        self.get_with_query("/artifacts", &pairs_ref)
     }
 
-    /// `POST /parse` — read and parse a single artifact file.
-    ///
-    /// `file` must be an absolute path.
-    pub fn parse(&self, absolute_path: &str) -> Result<Value, McpError> {
-        self.post("/parse", &serde_json::json!({ "file": absolute_path }))
+    /// `GET /artifacts/:id` — read and parse a single artifact by ID.
+    pub fn parse(&self, artifact_id: &str) -> Result<Value, McpError> {
+        self.get(&format!("/artifacts/{artifact_id}"))
     }
 
-    /// `POST /validate` — full graph validation report.
+    /// `POST /validation/scan` — full graph validation report.
     pub fn validate(&self) -> Result<Value, McpError> {
-        self.post("/validate", &serde_json::json!({ "fix": false }))
+        self.post("/validation/scan", &serde_json::json!({}))
     }
 
-    /// `POST /traceability` — compute traceability from the daemon's cached graph.
+    /// `GET /artifacts/:id/traceability` — full traceability chain for an artifact.
     ///
-    /// Uses the daemon's in-memory graph instead of rebuilding from disk.
+    /// Uses the daemon's cached graph for low-latency responses.
     pub fn traceability(&self, artifact_id: &str) -> Result<Value, McpError> {
-        self.post(
-            "/traceability",
-            &serde_json::json!({ "artifact_id": artifact_id }),
-        )
+        self.get(&format!("/artifacts/{artifact_id}/traceability"))
     }
 
     /// `POST /reload` — rebuild all graph state from disk.

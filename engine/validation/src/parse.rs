@@ -8,7 +8,8 @@ use std::collections::HashSet;
 use crate::checks::schema::{build_frontmatter_schema, validate_frontmatter};
 use crate::error::ValidationError;
 use crate::graph::{
-    build_valid_relationship_types, extract_frontmatter, infer_artifact_type, ArtifactGraph,
+    build_valid_relationship_types, extract_frontmatter, humanize_stem, infer_artifact_type,
+    ArtifactGraph,
 };
 use crate::platform::{scan_plugin_manifests, ArtifactTypeDef};
 use crate::types::{ParsedArtifact, ValidationResult};
@@ -365,35 +366,6 @@ fn validate_relationship_types(
             _ => {} // valid
         }
     }
-}
-
-fn humanize_stem(file_path: &Path) -> String {
-    let stem = file_path
-        .file_stem()
-        .map(|s| s.to_string_lossy().to_string())
-        .unwrap_or_default();
-
-    let all_caps = stem
-        .chars()
-        .all(|c| c.is_ascii_uppercase() || c == '-' || c == '_' || c.is_ascii_digit());
-    if stem.chars().any(|c| c.is_ascii_uppercase()) && all_caps {
-        return stem;
-    }
-
-    stem.split('-')
-        .map(|word| {
-            let mut chars = word.chars();
-            match chars.next() {
-                None => String::new(),
-                Some(first) => {
-                    let mut s = first.to_uppercase().to_string();
-                    s.extend(chars.flat_map(char::to_lowercase));
-                    s
-                }
-            }
-        })
-        .collect::<Vec<_>>()
-        .join(" ")
 }
 
 // ---------------------------------------------------------------------------

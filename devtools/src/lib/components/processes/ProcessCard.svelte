@@ -1,8 +1,20 @@
-<!-- Individual process status card. Displays process name, color-coded status dot,
-     PID, uptime, and memory usage. Clicking the card fires an onselect event so
-     the parent view can filter the log table to this process's source. Hovering
-     expands the card to show the binary path when available. -->
+<!-- Individual process status card. Displays process name, color-coded status
+     indicator, PID, uptime, memory usage, source footer, and binary path on
+     hover. Clicking the card fires an onselect event so the parent view can
+     filter the log table to this process's source. All layout and visual
+     treatment comes from the @orqastudio/svelte-components/pure library. -->
 <script lang="ts">
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		CardFooter,
+		Separator,
+		ConnectionIndicator,
+		type ConnectionState,
+	} from "@orqastudio/svelte-components/pure";
+
 	export type ProcessStatus = "running" | "stopped" | "crashed" | "not_found" | "unknown";
 
 	export interface ProcessInfo {
@@ -28,20 +40,21 @@
 	// Whether the card is currently hovered, showing the expanded binary path row.
 	let hovered = $state(false);
 
-	// Map status to a Tailwind colour class for the status dot.
-	const dotClass = $derived(
+	// Map ProcessStatus to the closest ConnectionState equivalent.
+	// running → connected (green), crashed → disconnected (red),
+	// stopped → waiting (muted/gray in context), not_found → waiting,
+	// unknown → reconnecting (yellow).
+	const connectionState = $derived<ConnectionState>(
 		process.status === "running"
-			? "bg-green-500"
+			? "connected"
 			: process.status === "crashed"
-				? "bg-red-500"
-				: process.status === "stopped"
-					? "bg-gray-400"
-					: process.status === "not_found"
-						? "bg-gray-600"
-						: "bg-yellow-400",
+				? "disconnected"
+				: process.status === "unknown"
+					? "reconnecting"
+					: "waiting",
 	);
 
-	// Human-readable status label.
+	// Human-readable status label passed to ConnectionIndicator as an override.
 	const statusLabel = $derived(
 		process.status === "running"
 			? "Running"
@@ -52,19 +65,6 @@
 					: process.status === "not_found"
 						? "Not found"
 						: "Unknown",
-	);
-
-	// Colour class for the status text label.
-	const statusTextClass = $derived(
-		process.status === "running"
-			? "text-green-500"
-			: process.status === "crashed"
-				? "text-red-500"
-				: process.status === "stopped"
-					? "text-content-muted"
-					: process.status === "not_found"
-						? "text-content-muted"
-						: "text-yellow-400",
 	);
 
 	// Format uptime_seconds into a human-readable string (e.g. "2h 14m" or "45s").
@@ -88,6 +88,14 @@
 		onselect?.(process.source);
 	}
 
+	// Allow keyboard activation so the card is operable without a pointer.
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			onselect?.(process.source);
+		}
+	}
+
 	// Extract the filename portion of a binary path for the compact display.
 	// Falls back to the full path when there is no directory separator.
 	function binaryFilename(path: string): string {
@@ -96,76 +104,150 @@
 	}
 </script>
 
-<!-- Card: rounded panel with a hover ring and a selected-state highlight.
-     Cursor pointer indicates the card is clickable to filter logs.
-     onmouseenter/leave toggle the hovered state to show/hide binary path. -->
-<button
-	class="bg-surface-raised border-border hover:border-border-focus flex w-full cursor-pointer flex-col gap-3 rounded-lg border p-4 text-left transition-colors
-	       {selected ? 'border-accent-base ring-accent-base ring-1' : ''}"
+<!-- CardRoot renders the card surface. role="button" with tabindex and
+     keyboard handler replicates the original <button> semantics while using
+     the library's card styling. aria-pressed tracks the selected state. -->
+<CardRoot
+	role="button"
+	tabindex={0}
+	aria-pressed={selected}
+	data-selected={selected}
 	onclick={handleClick}
+	onkeydown={handleKeydown}
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
-	aria-pressed={selected}
+	class="process-card"
 >
-	<!-- Header row: process name + status dot -->
-	<div class="flex items-center justify-between gap-2">
-		<span class="text-content-base text-sm font-medium">{process.name}</span>
-		<span class="flex items-center gap-1.5">
-			<span class="size-2.5 rounded-full {dotClass}"></span>
-			<span class="text-xs font-medium {statusTextClass}">{statusLabel}</span>
+	<!-- Header: process name on the left, connection state indicator on the right. -->
+	<CardHeader>
+		<CardTitle>{process.name}</CardTitle>
+		<span class="process-card__status">
+			<ConnectionIndicator state={connectionState} label={statusLabel} />
 		</span>
-	</div>
+	</CardHeader>
 
-	<!-- Detail rows: PID, uptime, memory. Each row is only rendered when the
-	     field is available so cards don't show empty dashes for every field. -->
-	<div class="flex flex-col gap-1">
+	<!-- Content: detail rows for PID, uptime, and memory when available. -->
+	<CardContent>
 		{#if process.pid !== null}
-			<div class="flex items-center justify-between">
-				<span class="text-content-muted text-xs">PID</span>
-				<span class="text-content-base font-mono text-xs">{process.pid}</span>
+			<div class="process-card__row">
+				<span class="process-card__label">PID</span>
+				<span class="process-card__value process-card__value--mono">{process.pid}</span>
 			</div>
 		{/if}
 
 		{#if process.uptime_seconds !== null}
-			<div class="flex items-center justify-between">
-				<span class="text-content-muted text-xs">Uptime</span>
-				<span class="text-content-base text-xs">{formatUptime(process.uptime_seconds)}</span>
+			<div class="process-card__row">
+				<span class="process-card__label">Uptime</span>
+				<span class="process-card__value">{formatUptime(process.uptime_seconds)}</span>
 			</div>
 		{/if}
 
 		{#if process.memory_bytes !== null}
-			<div class="flex items-center justify-between">
-				<span class="text-content-muted text-xs">Memory</span>
-				<span class="text-content-base text-xs">{formatMemory(process.memory_bytes)}</span>
+			<div class="process-card__row">
+				<span class="process-card__label">Memory</span>
+				<span class="process-card__value">{formatMemory(process.memory_bytes)}</span>
 			</div>
 		{/if}
 
-		<!-- When no detail fields are available, show a muted placeholder row so
-		     all cards have consistent height in the grid. -->
+		<!-- Placeholder row so all cards have consistent height when no details
+		     are available from the daemon yet. -->
 		{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
-			<span class="text-content-muted text-xs">No details available</span>
+			<span class="process-card__empty">No details available</span>
 		{/if}
-	</div>
+	</CardContent>
 
-	<!-- Footer: source identifier shown in small muted text for reference. -->
-	<div class="border-border border-t pt-2">
-		<span class="text-content-muted font-mono text-xs">source: {process.source}</span>
-	</div>
+	<Separator />
 
-	<!-- Binary path: shown on hover when the daemon has reported it.
-	     Displays the filename in the normal row and the full absolute path
-	     as a tooltip title. Hidden when the binary path is unavailable. -->
+	<!-- Footer: source identifier for log filtering reference. -->
+	<CardFooter>
+		<span class="process-card__source">source: {process.source}</span>
+	</CardFooter>
+
+	<!-- Binary path row: visible on hover when the daemon has reported the path.
+	     Shows the filename in the row and the full absolute path as a tooltip. -->
 	{#if hovered && process.binary_path !== null}
-		<div
-			class="border-border border-t pt-2"
-			title={process.binary_path}
-		>
-			<div class="flex items-center justify-between gap-2">
-				<span class="text-content-muted text-xs">Binary</span>
-				<span class="text-content-muted font-mono text-xs truncate max-w-[70%]" title={process.binary_path}>
+		<Separator />
+		<CardFooter title={process.binary_path}>
+			<div class="process-card__row process-card__row--full">
+				<span class="process-card__label">Binary</span>
+				<span class="process-card__value process-card__value--mono process-card__value--truncate" title={process.binary_path}>
 					{binaryFilename(process.binary_path)}
 				</span>
 			</div>
-		</div>
+		</CardFooter>
 	{/if}
-</button>
+</CardRoot>
+
+<style>
+	/* Clickable card: pointer cursor and selected-state highlight ring. */
+	:global(.process-card) {
+		cursor: pointer;
+		width: 100%;
+		text-align: left;
+		transition: border-color 150ms;
+	}
+
+	:global(.process-card[data-selected="true"]) {
+		border-color: var(--color-accent-base);
+		box-shadow: 0 0 0 1px var(--color-accent-base);
+	}
+
+	/* Header layout: name left, status indicator right. */
+	:global(.process-card [data-slot="card-header"]) {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	/* Status indicator sits beside the title. */
+	.process-card__status {
+		font-size: var(--text-xs);
+		font-weight: 500;
+	}
+
+	/* Detail rows: label on the left, value on the right. */
+	.process-card__row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	/* Full-width row variant used in the binary path footer. */
+	.process-card__row--full {
+		width: 100%;
+		gap: 0.5rem;
+	}
+
+	.process-card__label {
+		font-size: var(--text-xs);
+		color: var(--color-content-muted);
+	}
+
+	.process-card__value {
+		font-size: var(--text-xs);
+		color: var(--color-content-base);
+	}
+
+	.process-card__value--mono {
+		font-family: var(--font-mono);
+	}
+
+	.process-card__value--truncate {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 70%;
+	}
+
+	.process-card__empty {
+		font-size: var(--text-xs);
+		color: var(--color-content-muted);
+	}
+
+	.process-card__source {
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		color: var(--color-content-muted);
+	}
+</style>

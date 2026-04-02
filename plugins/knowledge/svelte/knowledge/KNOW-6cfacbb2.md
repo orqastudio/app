@@ -8,8 +8,6 @@ plugin: "@orqastudio/plugin-svelte"
 relationships:
   - target: DOC-fd1d12bb
     type: synchronised-with
-  - target: AGENT-6f55de0d
-    type: employed-by
 ---
 
 # ESLint Config Management

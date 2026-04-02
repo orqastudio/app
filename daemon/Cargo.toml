@@ -17,6 +17,17 @@ path = "src/main.rs"
 [dependencies]
 orqa-engine = { path = "../engine/core" }
 orqa-engine-types = { path = "../engine/types" }
+orqa-graph = { path = "../engine/graph" }
+orqa-validation = { path = "../engine/validation" }
+orqa-enforcement = { path = "../engine/enforcement" }
+orqa-workflow = { path = "../engine/workflow" }
+orqa-lesson = { path = "../engine/lesson" }
+orqa-plugin = { path = "../engine/plugin" }
+orqa-project = { path = "../engine/project" }
+orqa-search = { path = "../engine/search" }
+orqa-prompt = { path = "../engine/prompt" }
+orqa-artifact = { path = "../engine/artifact" }
+orqa-streaming = { path = "../engine/streaming" }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = { version = "0.1", features = ["sync"] }
 futures-util = "0.3"

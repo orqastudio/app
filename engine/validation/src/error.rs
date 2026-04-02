@@ -39,3 +39,13 @@ impl From<serde_yaml::Error> for ValidationError {
         Self::Yaml(e.to_string())
     }
 }
+
+/// Convert a graph construction error into a validation error.
+///
+/// Graph errors bubble up through validation callers that return ValidationError.
+/// This impl lets callers use `?` directly instead of `.map_err(|e| ...)`.
+impl From<orqa_graph::GraphError> for ValidationError {
+    fn from(e: orqa_graph::GraphError) -> Self {
+        Self::GraphBuild(e.to_string())
+    }
+}

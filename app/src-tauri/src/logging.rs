@@ -116,6 +116,12 @@ const BATCH_SIZE: usize = 50;
 /// Maximum time between flushes.
 const FLUSH_INTERVAL: Duration = Duration::from_millis(200);
 
+impl Default for EventForwarderLayer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EventForwarderLayer {
     /// Create a new `EventForwarderLayer` and spawn the background flush task.
     ///
@@ -125,25 +131,19 @@ impl EventForwarderLayer {
     pub fn new() -> Self {
         let queue: Arc<Mutex<Vec<ForwardedEvent>>> = Arc::new(Mutex::new(Vec::new()));
         let queue_ref = Arc::clone(&queue);
-        let daemon_port = orqa_engine::ports::resolve_daemon_port();
+        let daemon_port = orqa_engine_types::ports::resolve_daemon_port();
         let url = format!("http://localhost:{daemon_port}/events");
 
-        tokio::spawn(async move {
-            // A single shared reqwest client is more efficient than creating one
-            // per flush. Timeout is short — the daemon is local; don't stall long.
-            let client = match reqwest::Client::builder()
+        let flush_loop = async move {
+            let Ok(client) = reqwest::Client::builder()
                 .timeout(Duration::from_millis(500))
-                .build()
-            {
-                Ok(c) => c,
-                Err(_) => return,
-            };
+                .build() else { return };
 
             loop {
                 tokio::time::sleep(FLUSH_INTERVAL).await;
 
                 let batch: Vec<ForwardedEvent> = {
-                    let mut guard = queue_ref.lock().unwrap_or_else(|e| e.into_inner());
+                    let mut guard = queue_ref.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
                     if guard.is_empty() {
                         continue;
                     }
@@ -153,7 +153,11 @@ impl EventForwarderLayer {
                 // Fire-and-forget — ignore any error (daemon may not be running).
                 let _ = client.post(&url).json(&batch).send().await;
             }
-        });
+        };
+
+        // Use Tauri's async runtime spawn — it is available during setup,
+        // unlike bare tokio::spawn which panics before the reactor starts.
+        tauri::async_runtime::spawn(flush_loop);
 
         Self {
             queue,
@@ -165,7 +169,7 @@ impl EventForwarderLayer {
     /// immediate flush by appending a sentinel task.
     fn enqueue(&self, event: ForwardedEvent) {
         let should_flush = {
-            let mut guard = self.queue.lock().unwrap_or_else(|e| e.into_inner());
+            let mut guard = self.queue.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
             guard.push(event);
             guard.len() >= BATCH_SIZE
         };
@@ -204,7 +208,7 @@ where
             }
             fn record_str(&mut self, field: &tracing::field::Field, value: &str) {
                 if field.name() == "message" {
-                    self.0 = value.to_owned();
+                    value.clone_into(&mut self.0);
                 }
             }
         }
@@ -256,22 +260,26 @@ pub fn init_logging(app: &AppHandle<Wry>) {
     // Daemon forwarding layer — sends ALL events (TRACE and above) to the
     // daemon event bus. Level filtering for display is done by consumers.
     // tao/wry suppressed to avoid event bus noise from Tauri internals.
+    // reqwest/hyper/hyper_util suppressed because the forwarder USES reqwest —
+    // capturing its connection logs creates a feedback loop that floods the bus.
     let forwarder_layer = EventForwarderLayer::new()
         .with_filter(
-            EnvFilter::new("trace,tao=off,wry=off"),
+            EnvFilter::new("trace,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off"),
         );
 
     #[cfg(debug_assertions)]
     {
         // Dev mode: debug+ to stderr (captured by dev controller).
         // tao/wry warnings suppressed — benign event loop noise on Windows.
+        // reqwest/hyper suppressed — internal HTTP client noise from the
+        // forwarder and daemon health checks is not useful in dev output.
         let stderr_layer = fmt::layer()
             .with_writer(std::io::stderr)
             .with_target(true)
             .with_level(true)
             .with_filter(
                 EnvFilter::try_from_default_env()
-                    .unwrap_or_else(|_| EnvFilter::new("debug,tao=off,wry=off")),
+                    .unwrap_or_else(|_| EnvFilter::new("debug,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off")),
             );
 
         tracing_subscriber::registry()

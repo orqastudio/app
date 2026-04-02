@@ -3,6 +3,7 @@
      that shows the raw metadata JSON for that event. Color-coded by level.
      A copy button appears on hover to copy the full entry to the clipboard. -->
 <script lang="ts">
+	import { Button, Badge } from "@orqastudio/svelte-components/pure";
 	import type { LogEvent } from "../../stores/log-store.svelte.js";
 
 	let {
@@ -46,26 +47,27 @@
 		return `${hh}:${mm}:${ss}.${mmm}`;
 	}
 
-	// CSS classes for the level badge background and text, keyed by level string.
-	const LEVEL_BADGE: Record<string, string> = {
-		Debug: "bg-surface-raised text-content-muted",
-		Info: "bg-blue-500/15 text-blue-400",
-		Warn: "bg-yellow-500/15 text-yellow-400",
-		Error: "bg-red-500/20 text-red-400",
-		Perf: "bg-indigo-500/15 text-indigo-400",
+	// Badge variant for the level indicator, keyed by level string.
+	// Uses library Badge variants where they fit; falls back to secondary.
+	const LEVEL_BADGE_VARIANT: Record<string, "secondary" | "destructive" | "outline" | "default" | "warning"> = {
+		Debug: "outline",
+		Info: "default",
+		Warn: "warning",
+		Error: "destructive",
+		Perf: "secondary",
 	};
 
 	// CSS classes for the overall row background tint, keyed by level string.
 	// Debug rows are dimmed; others get a very subtle tint on the whole row.
 	const ROW_TINT: Record<string, string> = {
-		Debug: "opacity-50",
+		Debug: "log-row--debug",
 		Info: "",
-		Warn: "bg-yellow-500/5",
-		Error: "bg-red-500/8",
-		Perf: "bg-indigo-500/5",
+		Warn: "log-row--warn",
+		Error: "log-row--error",
+		Perf: "log-row--perf",
 	};
 
-	const badgeClass = $derived(LEVEL_BADGE[event.level] ?? "bg-surface-raised text-content-muted");
+	const badgeVariant = $derived(LEVEL_BADGE_VARIANT[event.level] ?? "outline");
 	const rowTintClass = $derived(ROW_TINT[event.level] ?? "");
 
 	// Pretty-print the metadata JSON for the expanded panel. Falls back to
@@ -76,63 +78,221 @@
 <!-- Absolute-positioned wrapper lets the virtualiser translate rows without
      reflowing the DOM. The inner content uses a normal block layout. -->
 <div
-	class="group absolute left-0 right-0 {rowTintClass}"
+	class="log-row {rowTintClass}"
 	{style}
 	role="row"
 >
 	<!-- Main row: fixed-height single line with all columns. The copy button
 	     is positioned at the right edge and revealed on group hover. -->
 	<button
-		class="flex w-full cursor-pointer items-center gap-0 px-2 py-0 text-left hover:bg-surface-raised/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
+		class="log-row__main"
 		style="height: 24px; line-height: 24px;"
 		onclick={() => (expanded = !expanded)}
 		aria-expanded={expanded}
 	>
 		<!-- Timestamp: monospace, fixed width so columns align. -->
-		<span class="w-[90px] shrink-0 font-mono text-[11px] text-content-muted tabular-nums">
+		<span class="log-row__timestamp">
 			{formatTimestamp(event.timestamp)}
 		</span>
 
-		<!-- Level badge: small pill aligned left. -->
-		<span
-			class="mr-2 w-[42px] shrink-0 rounded px-1 py-0.5 text-center font-mono text-[10px] font-medium uppercase leading-none {badgeClass}"
-		>
-			{event.level}
+		<!-- Level badge: small pill aligned left, using shared Badge component. -->
+		<span class="log-row__badge-cell">
+			<Badge variant={badgeVariant} class="log-row__badge">
+				{event.level}
+			</Badge>
 		</span>
 
 		<!-- Source: subtle muted label. -->
-		<span class="w-[80px] shrink-0 truncate text-[11px] text-content-muted">
+		<span class="log-row__source">
 			{event.source}
 		</span>
 
 		<!-- Category: slightly stronger colour. -->
-		<span class="w-[120px] shrink-0 truncate text-[11px] text-content-base/70">
+		<span class="log-row__category">
 			{event.category}
 		</span>
 
 		<!-- Message: fills remaining space, truncates with ellipsis. -->
-		<span class="min-w-0 flex-1 truncate text-[11px] text-content-base">
+		<span class="log-row__message">
 			{event.message}
 		</span>
 	</button>
 
 	<!-- Copy-to-clipboard button: absolutely positioned at the right of the row,
-	     visible only when the row is hovered. Copies the full LogEvent as JSON. -->
-	<button
-		class="absolute right-1 top-0 hidden h-[24px] items-center rounded px-1.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base group-hover:flex"
-		onclick={copyToClipboard}
-		aria-label="Copy log entry to clipboard"
-		title="Copy as JSON"
-	>
-		{copyFeedback === "copied" ? "Copied" : "Copy"}
-	</button>
+	     visible only when the row is hovered. Uses ghost icon-sm Button. -->
+	<span class="log-row__copy-wrapper">
+		<Button
+			variant="ghost"
+			size="icon-sm"
+			class="log-row__copy"
+			onclick={copyToClipboard}
+			aria-label="Copy log entry to clipboard"
+			title="Copy as JSON"
+		>
+			{copyFeedback === "copied" ? "Copied" : "Copy"}
+		</Button>
+	</span>
 
 	<!-- Expanded metadata panel: shown below the row when expanded. Rendered
 	     inline rather than absolutely so the virtualiser height calculation
 	     accounts for it via a separate measurement pass. -->
 	{#if expanded}
-		<div class="border-b border-border bg-surface-raised/40 px-[90px] py-2">
-			<pre class="max-h-60 overflow-auto font-mono text-[11px] text-content-base whitespace-pre-wrap">{metadataJson}</pre>
+		<div class="log-row__metadata">
+			<pre class="log-row__metadata-pre">{metadataJson}</pre>
 		</div>
 	{/if}
 </div>
+
+<style>
+	/* Outer row wrapper: absolute-positioned by the virtualiser. */
+	.log-row {
+		position: absolute;
+		left: 0;
+		right: 0;
+	}
+
+	/* Level-based background tints. */
+	.log-row--debug {
+		opacity: 0.5;
+	}
+
+	.log-row--warn {
+		background-color: color-mix(in srgb, var(--color-warning) 5%, transparent);
+	}
+
+	.log-row--error {
+		background-color: color-mix(in srgb, var(--color-destructive) 8%, transparent);
+	}
+
+	.log-row--perf {
+		background-color: color-mix(in srgb, #6366f1 5%, transparent);
+	}
+
+	/* Main row button: full-width flex, no default button chrome. */
+	.log-row__main {
+		display: flex;
+		width: 100%;
+		cursor: pointer;
+		align-items: center;
+		gap: 0;
+		padding: 0 var(--spacing-2);
+		text-align: left;
+		background: transparent;
+		border: none;
+	}
+
+	.log-row__main:hover {
+		background-color: color-mix(in srgb, var(--color-surface-raised) 60%, transparent);
+	}
+
+	.log-row__main:focus {
+		outline: none;
+	}
+
+	.log-row__main:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 1px var(--color-accent-base);
+	}
+
+	/* Timestamp column: monospace, fixed width, tabular figures. */
+	.log-row__timestamp {
+		width: 90px;
+		flex-shrink: 0;
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--color-content-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Badge cell: fixed width to match column header. */
+	.log-row__badge-cell {
+		width: 52px;
+		flex-shrink: 0;
+		margin-right: var(--spacing-2);
+		display: flex;
+		align-items: center;
+	}
+
+	/* Override Badge sizing to fit the compact 24px row height. */
+	:global(.log-row__badge) {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		line-height: 1;
+		padding: 1px var(--spacing-1);
+		text-transform: uppercase;
+		width: 42px;
+		justify-content: center;
+	}
+
+	/* Source column: muted, fixed width. */
+	.log-row__source {
+		width: 80px;
+		flex-shrink: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 11px;
+		color: var(--color-content-muted);
+	}
+
+	/* Category column: slightly stronger, fixed width. */
+	.log-row__category {
+		width: 120px;
+		flex-shrink: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 11px;
+		color: color-mix(in srgb, var(--color-content-base) 70%, transparent);
+	}
+
+	/* Message column: fills remaining width. */
+	.log-row__message {
+		min-width: 0;
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: 11px;
+		color: var(--color-content-base);
+	}
+
+	/* Copy button wrapper: absolute-positioned to the right; hidden by default,
+	   visible when the row is hovered via the group-hover pattern. */
+	.log-row__copy-wrapper {
+		position: absolute;
+		right: var(--spacing-1);
+		top: 0;
+		display: none;
+		height: 24px;
+		align-items: center;
+	}
+
+	.log-row:hover .log-row__copy-wrapper {
+		display: flex;
+	}
+
+	/* Override Button size to match the 24px row height. */
+	:global(.log-row__copy) {
+		height: 20px !important;
+		width: auto !important;
+		padding: 0 var(--spacing-1-5) !important;
+		font-size: 10px !important;
+	}
+
+	/* Expanded metadata panel: indented to align under the message column. */
+	.log-row__metadata {
+		border-bottom: 1px solid var(--color-border);
+		background-color: color-mix(in srgb, var(--color-surface-raised) 40%, transparent);
+		padding: var(--spacing-2) 0 var(--spacing-2) 90px;
+	}
+
+	.log-row__metadata-pre {
+		max-height: 15rem;
+		overflow: auto;
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--color-content-base);
+		white-space: pre-wrap;
+	}
+</style>

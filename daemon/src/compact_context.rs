@@ -257,7 +257,7 @@ fn days_to_date(days: u64) -> (u64, u64, u64) {
 /// Reads the artifact graph from disk, filters for active epics and in-progress
 /// tasks, reads any existing session state, and assembles the governance context
 /// document. Returns both the full document and a short summary.
-pub async fn compact_context_handler(
+pub fn compact_context_handler(
     Json(req): Json<CompactContextRequest>,
 ) -> Result<Json<CompactContextResponse>, (StatusCode, String)> {
     let start = Instant::now();

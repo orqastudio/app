@@ -9,7 +9,7 @@
 	import "../app.css";
 	import { TooltipProvider } from "@orqastudio/svelte-components/pure";
 	import DevToolsShell from "$lib/components/DevToolsShell.svelte";
-	import { navigation, TABS } from "$lib/stores/devtools-navigation.svelte.js";
+	import { navigation } from "$lib/stores/devtools-navigation.svelte.js";
 	import { clearFilters, clearEvents } from "$lib/stores/log-store.svelte.js";
 
 	let { children } = $props();
@@ -52,17 +52,6 @@
 		if (mod && e.key === "l") {
 			e.preventDefault();
 			clearEvents();
-			return;
-		}
-
-		// Ctrl+1–4 — switch to the tab at that position (1-indexed).
-		if (mod && e.key >= "1" && e.key <= "4") {
-			const index = parseInt(e.key, 10) - 1;
-			const tab = TABS[index];
-			if (tab) {
-				e.preventDefault();
-				navigation.activeTab = tab.value;
-			}
 			return;
 		}
 

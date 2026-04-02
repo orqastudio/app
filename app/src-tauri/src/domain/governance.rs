@@ -4,7 +4,7 @@
 // files (rules, hooks, agents, etc.). Surfaced in the governance UI to show
 // coverage and health of the governance setup.
 
-pub use orqa_engine::types::governance::*;
+pub use orqa_engine_types::types::governance::*;
 
 #[cfg(test)]
 mod tests {

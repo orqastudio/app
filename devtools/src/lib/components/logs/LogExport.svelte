@@ -5,8 +5,11 @@
 <script lang="ts">
 	import { save } from "@tauri-apps/plugin-dialog";
 	import { writeTextFile } from "@tauri-apps/plugin-fs";
-	import { filteredEvents } from "../../stores/log-store.svelte.js";
+	import { Button } from "@orqastudio/svelte-components/pure";
+	import { filteredEvents as getFilteredEvents } from "../../stores/log-store.svelte.js";
 	import type { LogEvent } from "../../stores/log-store.svelte.js";
+
+	const filteredEvents = $derived(getFilteredEvents());
 
 	// Whether a save operation is in progress (prevents double-clicks).
 	let saving = $state(false);
@@ -52,12 +55,24 @@
 </script>
 
 <!-- Export button: compact, sits in the log toolbar alongside Clear. -->
-<button
-	class="rounded px-1.5 py-0.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base disabled:opacity-40"
+<Button
+	variant="ghost"
+	size="icon-sm"
+	class="log-export__button"
 	onclick={handleExport}
 	disabled={saving || filteredEvents.length === 0}
 	title="Export visible logs as JSON"
 	aria-label="Export logs"
 >
 	{saving ? "Saving…" : "Export"}
-</button>
+</Button>
+
+<style>
+	/* Scale the ghost icon-sm button down to match the 24px toolbar row height. */
+	:global(.log-export__button) {
+		height: 20px !important;
+		width: auto !important;
+		padding: 0 var(--spacing-1-5) !important;
+		font-size: 10px !important;
+	}
+</style>

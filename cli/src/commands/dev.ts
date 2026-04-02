@@ -20,7 +20,7 @@
  * orqa dev tool                   Run the debug-tool submodule
  */
 
-import { spawn, exec as execAsync, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
+import { spawn, execSync, type ChildProcess as NodeChildProcess } from "node:child_process";
 import { createServer as createNetServer } from "node:net";
 import * as path from "node:path";
 import * as fs from "node:fs";
@@ -61,7 +61,8 @@ const USAGE = `
 Usage: orqa dev [subcommand] [flags]
 
 Subcommands:
-  (none)              Start the full dev environment (launches OrqaDev by default)
+  (none)              Launch OrqaDev (start processes from inside OrqaDev)
+  start-processes     Start all dev processes in the foreground (used by OrqaDev)
   stop                Stop all processes gracefully
   kill                Force-kill all processes
   restart             Restart everything (daemon + frontend + app + services)
@@ -209,6 +210,29 @@ function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Poll the daemon health endpoint until it responds 200 or the timeout elapses.
+ * Returns true if the daemon is ready, false if it timed out.
+ * @param port - Daemon HTTP port.
+ * @param timeoutMs - Maximum time to wait in milliseconds.
+ */
+async function waitForDaemon(port: number, timeoutMs: number): Promise<boolean> {
+	const deadline = Date.now() + timeoutMs;
+	const url = `http://127.0.0.1:${port}/health`;
+
+	while (Date.now() < deadline) {
+		try {
+			const res = await fetch(url);
+			if (res.ok) return true;
+		} catch {
+			// Daemon not yet listening — keep polling
+		}
+		await sleep(250);
+	}
+
+	return false;
+}
+
 // ── Control File (IPC) ──────────────────────────────────────────────────────
 
 // MCP and LSP are owned by the daemon — their PIDs are tracked by the daemon,
@@ -330,7 +354,7 @@ function killManaged(mp: ManagedProcess): void {
 
 // ── Kill All (orphan cleanup) ───────────────────────────────────────────────
 
-async function killAll(root: string): Promise<void> {
+async function killAll(root: string, opts: { preserveDevtools?: boolean } = {}): Promise<void> {
 	logCtrl("Stopping OrqaStudio processes...");
 
 	// Stop daemon gracefully first (it manages its own PID file)
@@ -342,18 +366,28 @@ async function killAll(root: string): Promise<void> {
 
 	const pidsToKill = new Set<number>();
 
-	// Find all OrqaStudio processes by name
-	for (const name of [
-		"orqa-studio", "orqa-devtools", "cargo-tauri",
+	// Find all OrqaStudio processes by name.
+	// When preserveDevtools is true (called from devtools via start-processes),
+	// skip orqa-devtools AND cargo-tauri (the devtools runs under cargo-tauri).
+	const processNames = [
+		"orqa-studio",
 		"orqa-mcp-server", "orqa-lsp-server", "orqa-search-server", "orqa-validation",
-	]) {
+	];
+	if (!opts.preserveDevtools) {
+		processNames.push("orqa-devtools", "cargo-tauri");
+	}
+	for (const name of processNames) {
 		for (const pid of findPidsByName(name)) {
 			logCtrl(`Found ${name} (PID ${pid})`);
 			pidsToKill.add(pid);
 		}
 	}
-	// Find by port (Vite, dashboard, daemon)
-	for (const port of [VITE_PORT, 5173, getPort("dashboard"), getPort("daemon")]) {
+	// Find by port (Vite, dashboard, daemon).
+	// When preserveDevtools, skip port 10421 (devtools Vite) and 5173 (could be devtools fallback).
+	const portsToCheck = opts.preserveDevtools
+		? [VITE_PORT, getPort("dashboard"), getPort("daemon")]
+		: [VITE_PORT, 5173, getPort("dashboard"), getPort("daemon")];
+	for (const port of portsToCheck) {
 		for (const pid of findPidsOnPort(port)) {
 			logCtrl(`Found process on port ${port} (PID ${pid})`);
 			pidsToKill.add(pid);
@@ -387,9 +421,29 @@ async function killAll(root: string): Promise<void> {
 	logSuccess("All processes stopped.");
 }
 
+// ── Binary Discovery ───────────────────────────────────────────────────────
+
+/**
+ * Find a pre-built binary in workspace target dirs.
+ * @param root - Project root directory.
+ * @param name - Binary name without extension.
+ * @returns Full path to the binary, falling back to name-only if not found.
+ */
+function findBin(root: string, name: string): string {
+	const ext = isWindows() ? ".exe" : "";
+	const candidates = [
+		path.join(root, "target", "debug", `${name}${ext}`),
+		path.join(root, "target", "release", `${name}${ext}`),
+	];
+	for (const c of candidates) {
+		if (fs.existsSync(c)) return c;
+	}
+	return `${name}${ext}`;
+}
+
 // ── Controller (foreground long-running process) ────────────────────────────
 
-async function startController(root: string, opts: { watch: boolean; legacyDashboard?: boolean } = { watch: true }): Promise<void> {
+async function startController(root: string, opts: { watch: boolean; legacyDashboard?: boolean; headless?: boolean } = { watch: true }): Promise<void> {
 	const existing = readControlFile(root);
 	if (existing && processIsAlive(existing.pid)) {
 		logError(
@@ -400,8 +454,11 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 	}
 	if (existing) removeControlFile(root);
 
-	// Kill any orphaned processes from previous runs
-	await killAll(root);
+	// Kill any orphaned processes from previous runs.
+	// Skip when headless — cmdStartProcesses already called killAll before building.
+	if (!opts.headless) {
+		await killAll(root);
+	}
 
 	console.log("");
 	console.log(
@@ -416,7 +473,6 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 	console.log("");
 
 	const appDir = path.join(root, "app");
-	const libsDir = path.join(root, "libs");
 
 	// Tracks the detached dashboard process so it can be killed on shutdown.
 	// Declared here so all writeControlFile calls can reference the PID.
@@ -430,53 +486,41 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 		devtools: null,
 	});
 
-	// ── 0. Start dev UI ─────────────────────────────────────────────────
-	// Launch OrqaDev by default. The legacy dev.mjs web dashboard is available
-	// via --legacy-dashboard for users who need it while transitioning.
+	// ── 0. Start dev UI (unless headless — OrqaDev launches this) ──────
 	let devtoolsProc: NodeChildProcess | null = null;
 
-	if (opts.legacyDashboard) {
-		// Legacy path: spawn the dev.mjs web dashboard (deprecated).
-		const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
-		const logPath = path.join(root, ".state", "dev-controller.log");
-		ensureStateDir(root);
-		const logFd = fs.openSync(logPath, "a");
-		dashboardProc = spawn("node", [dashboardScript], {
-			cwd: root,
-			detached: true,
-			stdio: ["ignore", logFd, logFd],
-		});
-		fs.closeSync(logFd);
-		dashboardProc.unref();
-		logSuccess(`Legacy dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
-		logCtrl("--legacy-dashboard is deprecated. OrqaDev is now the default dev UI.");
-
-		// Open the dashboard in the default browser after a short delay so the
-		// server has time to bind its port.
-		setTimeout(() => {
-			const url = `http://localhost:${getPort("dashboard")}`;
-			const openCmd = isWindows() ? `start "" "${url}"` : platform() === "darwin" ? `open "${url}"` : `xdg-open "${url}"`;
-			execAsync(openCmd, (err: Error | null) => {
-				if (err) logCtrl(`Could not open browser: ${err.message}`);
-			});
-		}, 1_500);
-	} else {
-		// Default path: launch OrqaDev before the daemon so the developer can
-		// observe daemon startup in the devtools log viewer.
-		const devtoolsBin = findBin("orqa-devtools");
-		if (fs.existsSync(devtoolsBin)) {
-			logCtrl("Starting OrqaDev...");
-			devtoolsProc = spawn(devtoolsBin, [], {
+	if (!opts.headless) {
+		if (opts.legacyDashboard) {
+			const dashboardScript = path.join(root, "tools", "debug", "dev.mjs");
+			const logPath = path.join(root, ".state", "dev-controller.log");
+			ensureStateDir(root);
+			const logFd = fs.openSync(logPath, "a");
+			dashboardProc = spawn("node", [dashboardScript], {
 				cwd: root,
 				detached: true,
-				stdio: "ignore",
-				env: rustEnv(root),
+				stdio: ["ignore", logFd, logFd],
 			});
-			devtoolsProc.unref();
-			logSuccess(`OrqaDev started (PID ${devtoolsProc.pid ?? "?"}).`);
+			fs.closeSync(logFd);
+			dashboardProc.unref();
+			logSuccess(`Legacy dashboard started (PID ${dashboardProc.pid ?? "?"}): http://localhost:${getPort("dashboard")}`);
 		} else {
-			logCtrl("orqa-devtools binary not found — skipping OrqaDev launch.");
+			const devtoolsBin = findBin(root, "orqa-devtools");
+			if (fs.existsSync(devtoolsBin)) {
+				logCtrl("Starting OrqaDev...");
+				devtoolsProc = spawn(devtoolsBin, [], {
+					cwd: root,
+					detached: true,
+					stdio: "ignore",
+					env: rustEnv(root),
+				});
+				devtoolsProc.unref();
+				logSuccess(`OrqaDev started (PID ${devtoolsProc.pid ?? "?"}).`);
+			} else {
+				logCtrl("orqa-devtools binary not found — skipping OrqaDev launch.");
+			}
 		}
+	} else {
+		logCtrl("Headless mode — skipping OrqaDev launch.");
 	}
 
 	writeControlFile(root, {
@@ -496,31 +540,24 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 		logCtrl("Daemon start failed — services may not have graph access");
 	}
 
+	// Wait for the daemon HTTP server to be ready before starting search and app.
+	// Polling /health every 250ms; 10 second timeout.
+	const daemonPort = getPort("daemon");
+	const daemonReady = await waitForDaemon(daemonPort, 10_000);
+	if (daemonReady) {
+		logSuccess(`Daemon ready on port ${daemonPort}.`);
+	} else {
+		logCtrl(`Daemon did not respond on port ${daemonPort} within 10s — proceeding anyway.`);
+	}
+
 	// ── 2. Start search server (pre-built binary) ────────────────────────
 	// MCP and LSP servers are managed exclusively by the daemon — do NOT spawn
 	// them here. The daemon started above owns their full lifecycle.
 	const searchProc = createManagedProcess("search", COLOURS.orange);
 
-	/**
-	 * Find a pre-built binary in workspace target dirs.
-	 * @param name - Binary name without extension.
-	 * @returns Full path to the binary, falling back to name-only if not found.
-	 */
-	function findBin(name: string): string {
-		const ext = isWindows() ? ".exe" : "";
-		const candidates = [
-			path.join(root, "target", "debug", `${name}${ext}`),
-			path.join(root, "target", "release", `${name}${ext}`),
-		];
-		for (const c of candidates) {
-			if (fs.existsSync(c)) return c;
-		}
-		return `${name}${ext}`;
-	}
-
 	function startSearch(): void {
 		logCtrl("Starting search server...");
-		spawnManaged(searchProc, findBin("orqa-search-server"), [appDir], {
+		spawnManaged(searchProc, findBin(root, "orqa-search-server"), [appDir], {
 			stdinMode: "pipe",
 			env: rustEnv(root),
 		});
@@ -530,7 +567,7 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 	logSuccess("Search server started.");
 
 	// ── 4. TypeScript library watch builds ───────────────────────────────
-	const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger"];
+	const tsLibs = ["libs/sdk", "libs/graph-visualiser", "libs/logger", "libs/types"];
 	for (const lib of tsLibs) {
 		const libDir = path.join(root, lib);
 		const tsconfigPath = path.join(libDir, "tsconfig.json");
@@ -541,7 +578,26 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 		logCtrl(`TypeScript watch: ${lib}`);
 	}
 
-	// ── 5. Start Tauri app (cargo tauri dev handles Vite + app) ─────────
+	// ── 4b. Svelte components watch build ───────────────────────────────
+	// svelte-package compiles the component library for consumers; --watch
+	// re-runs on every source change so downstream packages pick up updates.
+	const svelteComponentsDir = path.join(root, "libs", "svelte-components");
+	if (fs.existsSync(path.join(svelteComponentsDir, "package.json"))) {
+		const svelteWatch = createManagedProcess("tsc:svelte-components", COLOURS.dim);
+		spawnManaged(svelteWatch, npx(), ["svelte-package", "--watch"], { cwd: svelteComponentsDir });
+		logCtrl("TypeScript watch: libs/svelte-components");
+	}
+
+	// ── 5. Start Storybook dev server ───────────────────────────────────
+	const storybookDir = path.join(root, "libs", "svelte-components");
+	if (fs.existsSync(path.join(storybookDir, ".storybook"))) {
+		const storybook = createManagedProcess("storybook", COLOURS.teal);
+		const storybookPort = String(getPort("storybook"));
+		spawnManaged(storybook, npx(), ["storybook", "dev", "-p", storybookPort, "--no-open"], { cwd: storybookDir });
+		logCtrl(`Storybook dev server starting on port ${storybookPort}...`);
+	}
+
+	// ── 6. Start Tauri app (cargo tauri dev handles Vite + app) ─────────
 	// cargo tauri dev:
 	//   - Starts Vite via beforeDevCommand (HMR for frontend)
 	//   - Compiles the app in dev mode (uses devUrl, not frontendDist)
@@ -644,13 +700,28 @@ async function startController(root: string, opts: { watch: boolean; legacyDashb
 		setupRustWatchers([
 			{
 				label: "Search server",
-				dir: path.join(libsDir, "search-server", "src"),
-				manifest: path.join(libsDir, "search-server", "Cargo.toml"),
+				dir: path.join(root, "engine", "search", "src"),
+				manifest: path.join(root, "engine", "search", "Cargo.toml"),
 				restart: async () => {
 					killManaged(searchProc);
 					await sleep(500);
 					startSearch();
 					writeFullControlFile("running");
+				},
+			},
+			{
+				label: "Daemon",
+				dir: path.join(root, "daemon", "src"),
+				manifest: path.join(root, "daemon", "Cargo.toml"),
+				restart: async () => {
+					logCtrl("Daemon source changed — restarting daemon...");
+					try {
+						const { runDaemonCommand } = await import("./daemon.js");
+						await runDaemonCommand(["restart"]);
+						logSuccess("Daemon restarted.");
+					} catch {
+						logError("watch", "Daemon restart failed — may need manual restart");
+					}
 				},
 			},
 			// MCP and LSP source watching is handled by the daemon
@@ -1004,13 +1075,42 @@ function runNpmBuild(npmCmd: string, cwd: string): Promise<void> {
 
 // ── Subcommand: dev (spawn controller in background) ────────────────────────
 
-async function cmdDev(root: string, opts: { legacyDashboard?: boolean } = {}): Promise<void> {
-	// Always start fresh — kill existing processes first
-	const existing = readControlFile(root);
-	if (existing && processIsAlive(existing.pid)) {
-		logCtrl("Stopping existing dev environment...");
+async function cmdDev(root: string): Promise<void> {
+	const devtoolsDir = path.join(root, "devtools");
+	if (!fs.existsSync(path.join(devtoolsDir, "src-tauri", "tauri.conf.json"))) {
+		logError("ctrl", "devtools directory not found. Are you in the dev repo root?");
+		process.exit(1);
 	}
 
+	// Kill any previous OrqaDev instance so cargo can overwrite the binary.
+	const staleDevtools = findPidsByName("orqa-devtools");
+	if (staleDevtools.length > 0) {
+		logCtrl("Stopping previous OrqaDev instance...");
+		for (const pid of staleDevtools) {
+			killProcessTree(pid);
+		}
+		await sleep(1_000);
+	}
+
+	logCtrl("Launching OrqaDev (cargo tauri dev)...");
+	logCtrl("Build output will appear below. Ctrl+C to stop.\n");
+	const child = spawn("cargo", ["tauri", "dev"], {
+		cwd: devtoolsDir,
+		stdio: "inherit",
+		env: rustEnv(root),
+	});
+	child.on("close", (code) => {
+		process.exit(code ?? 0);
+	});
+}
+
+/**
+ * Start the process controller in the foreground with stdout/stderr piped.
+ * Called by OrqaDev via `orqa dev start-processes`. Runs all prep steps
+ * (npm install, cargo build, TS libs, plugin sync) then starts the
+ * long-running controller with file watchers.
+ */
+async function cmdStartProcesses(root: string): Promise<void> {
 	// 0. Rebuild the CLI itself (we may be running stale code)
 	logCtrl("Rebuilding CLI...");
 	try {
@@ -1030,25 +1130,23 @@ async function cmdDev(root: string, opts: { legacyDashboard?: boolean } = {}): P
 		logCtrl("npm install failed — dependencies may be stale");
 	}
 
-	// 2. Stop all running OrqaStudio processes so cargo can overwrite binaries
-	await killAll(root);
+	// 2. Stop all running OrqaStudio processes so cargo can overwrite binaries.
+	// Preserve devtools — this command is called FROM devtools.
+	await killAll(root, { preserveDevtools: true });
 
-	// 3. Build all Rust binaries
+	// 3. Build all Rust binaries (except the app — cargo tauri dev handles it)
 	logCtrl("Building Rust libraries and servers...");
 	try {
-		// Build everything except the app (which needs special feature flags)
-		execSync("cargo build --workspace --exclude orqa-studio --color always", { cwd: root, stdio: "inherit" });
+		execSync("cargo build --workspace --exclude orqa-studio --exclude orqa-devtools --color always", { cwd: root, stdio: "inherit" });
 	} catch {
 		logCtrl("Rust build failed — some binaries may be stale");
 	}
 
-
-	// 3. Initial TS library build (so dist/ exists for linked packages)
+	// 4. Initial TS library build (so dist/ exists for linked packages)
 	logCtrl("Building TypeScript libraries...");
-	for (const lib of ["libs/sdk", "libs/graph-visualiser", "libs/logger"]) {
+	for (const lib of ["libs/sdk", "libs/graph-visualiser", "libs/logger", "libs/types"]) {
 		const libDir = path.join(root, lib);
 		const distDir = path.join(libDir, "dist");
-		// Only build if dist/ doesn't exist yet — watchers handle incremental
 		if (!fs.existsSync(distDir)) {
 			try {
 				execSync(`${npm()} run build`, { cwd: libDir, stdio: "inherit" });
@@ -1058,13 +1156,12 @@ async function cmdDev(root: string, opts: { legacyDashboard?: boolean } = {}): P
 		}
 	}
 
-	// 4. Install plugins from project.json (builds, syncs content, composes schema)
+	// 5. Install plugins from project.json (builds, syncs content, composes schema)
 	logCtrl("Installing plugins from project.json...");
 	try {
 		const { cmdPluginSync } = await import("./install.js");
 		cmdPluginSync(root);
 	} catch {
-		// Non-fatal — content may be stale but dev can still start
 		logCtrl("Plugin sync failed — falling back to refresh...");
 		try {
 			const { runPluginCommand } = await import("./plugin.js");
@@ -1074,62 +1171,9 @@ async function cmdDev(root: string, opts: { legacyDashboard?: boolean } = {}): P
 		}
 	}
 
-
+	// 6. Start the long-running controller (daemon, search, Vite+Tauri, watchers)
 	logCtrl("Starting dev environment...");
-
-	// Spawn the controller as a detached process (this same script with __start-controller)
-	const nodeCmd = process.execPath;
-	const cliEntry = path.join(root, "cli/dist/cli.js");
-	// Write controller output to a log file so we can debug startup failures
-	const logFile = path.join(root, ".state", "dev-controller.log");
-	const logFd = fs.openSync(logFile, "w");
-	const controllerArgs = [cliEntry, "dev", "__start-controller"];
-	if (opts.legacyDashboard) controllerArgs.push("--legacy-dashboard");
-	const child = spawn(nodeCmd, controllerArgs, {
-		cwd: root,
-		detached: true,
-		stdio: ["ignore", logFd, logFd],
-		windowsHide: true,
-		env: { ...process.env },
-	});
-	child.unref();
-
-	logCtrl(`Controller spawned (PID ${child.pid}). Waiting for ready...`);
-
-	// Poll control file until state is "running"
-	const READY_TIMEOUT_MS = 300_000; // 5 minutes — Rust compilation can be slow
-	const deadline = Date.now() + READY_TIMEOUT_MS;
-	let lastState = "";
-
-	while (Date.now() < deadline) {
-		await sleep(POLL_INTERVAL_MS);
-		const ctrl = readControlFile(root);
-		if (!ctrl) continue;
-
-		if (!processIsAlive(ctrl.pid)) {
-			logError("ctrl", "Controller process died during startup.");
-			removeControlFile(root);
-			process.exit(1);
-		}
-
-		// Show state transitions
-		if (ctrl.state !== lastState) {
-			lastState = ctrl.state;
-			if (ctrl.state === "building") {
-				logCtrl("Building Rust app — this may take a few minutes...");
-			} else if (ctrl.state === "starting") {
-				logCtrl("Services starting...");
-			}
-		}
-
-		if (ctrl.state === "running") {
-			logSuccess("Dev environment ready. App loaded.");
-			return;
-		}
-	}
-
-	logError("ctrl", "Timed out waiting for dev environment to become ready.");
-	process.exit(1);
+	await startController(root, { watch: true, headless: true });
 }
 
 // ── Subcommand: stop ────────────────────────────────────────────────────────
@@ -1277,7 +1321,10 @@ export async function runDevCommand(args: string[]): Promise<void> {
 
 	switch (sub) {
 		case "dev":
-			await cmdDev(root, { legacyDashboard });
+			await cmdDev(root);
+			break;
+		case "start-processes":
+			await cmdStartProcesses(root);
 			break;
 		case "__start-controller":
 			await startController(root, { watch: true, legacyDashboard });

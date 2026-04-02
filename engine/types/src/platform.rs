@@ -88,7 +88,11 @@ pub struct SemanticDef {
     pub keys: Vec<String>,
 }
 
-/// An artifact type from core.json.
+/// An artifact type definition.
+///
+/// When loaded from `core.json`, only `key`, `label`, `icon`, and `id_prefix` are
+/// present. Plugin-contributed types additionally carry `frontmatter_schema` and
+/// `status_transitions`, which default to empty when deserialized from core.json.
 #[derive(Debug, Clone, Deserialize)]
 pub struct ArtifactTypeDef {
     /// Unique artifact type key (e.g. `"task"`, `"epic"`).
@@ -100,6 +104,31 @@ pub struct ArtifactTypeDef {
     /// ID prefix used to identify artifacts of this type (e.g. `"TASK-"`).
     #[serde(rename = "idPrefix")]
     pub id_prefix: String,
+    /// JSON Schema (draft 2020-12) for frontmatter validation.
+    /// Null/absent when the type is loaded from core.json (no validation schema there).
+    #[serde(default)]
+    pub frontmatter_schema: serde_json::Value,
+    /// Valid status transitions: maps each status key to the statuses it may transition to.
+    /// Empty when the type is loaded from core.json.
+    #[serde(default)]
+    pub status_transitions: HashMap<String, Vec<String>>,
+}
+
+impl ArtifactTypeDef {
+    /// Extract the `required` field names from the frontmatter JSON Schema.
+    /// Returns an empty vec if no `required` array is present.
+    pub fn frontmatter_required(&self) -> Vec<String> {
+        self.frontmatter_schema
+            .get("required")
+            .and_then(serde_json::Value::as_array)
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(serde_json::Value::as_str)
+                    .map(String::from)
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
 }
 
 /// The full platform config parsed from core.json.

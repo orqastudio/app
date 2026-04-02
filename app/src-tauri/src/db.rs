@@ -27,6 +27,7 @@ pub fn init_db(path: &str) -> Result<Connection, OrqaError> {
     conn.execute_batch(include_str!("../migrations/008_health_snapshots.sql"))?;
     conn.execute_batch(include_str!("../migrations/009_drop_artifacts_table.sql"))?;
     run_migration_010(&conn)?;
+    run_migration_011(&conn)?;
 
     Ok(conn)
 }
@@ -46,6 +47,7 @@ pub fn init_memory_db() -> Result<Connection, OrqaError> {
     conn.execute_batch(include_str!("../migrations/008_health_snapshots.sql"))?;
     conn.execute_batch(include_str!("../migrations/009_drop_artifacts_table.sql"))?;
     run_migration_010(&conn)?;
+    run_migration_011(&conn)?;
 
     Ok(conn)
 }
@@ -116,6 +118,60 @@ fn run_migration_010(conn: &Connection) -> Result<(), OrqaError> {
             .query_row([], |row| row.get::<_, i64>(0))
             .map(|count| count > 0)?;
 
+        if !exists {
+            conn.execute_batch(&format!(
+                "ALTER TABLE health_snapshots ADD COLUMN {col} {typedef}"
+            ))?;
+        }
+    }
+
+    Ok(())
+}
+
+/// Migration 011: Replace legacy structural graph metrics with outlier-based metrics.
+///
+/// Removes the old structural columns (orphan_count, orphan_percentage, graph_density,
+/// component_count, bidirectionality_ratio) that are no longer reported by the daemon's
+/// GraphHealth model, and adds the outlier-pipeline columns that match GraphHealth.
+///
+/// Idempotent — each DROP/ADD checks pragma_table_info first.
+fn run_migration_011(conn: &Connection) -> Result<(), OrqaError> {
+    // Drop legacy columns that are no longer in GraphHealth.
+    let legacy_columns = &[
+        "orphan_count",
+        "orphan_percentage",
+        "graph_density",
+        "component_count",
+        "bidirectionality_ratio",
+    ];
+    for col in legacy_columns {
+        let exists: bool = conn
+            .prepare(&format!(
+                "SELECT COUNT(*) FROM pragma_table_info('health_snapshots') WHERE name = '{col}'"
+            ))?
+            .query_row([], |row| row.get::<_, i64>(0))
+            .map(|count| count > 0)?;
+        if exists {
+            conn.execute_batch(&format!(
+                "ALTER TABLE health_snapshots DROP COLUMN {col}"
+            ))?;
+        }
+    }
+
+    // Add new outlier-model columns.
+    let new_columns: &[(&str, &str)] = &[
+        ("outlier_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("outlier_percentage", "REAL NOT NULL DEFAULT 0.0"),
+        ("delivery_connectivity", "REAL NOT NULL DEFAULT 0.0"),
+        ("learning_connectivity", "REAL NOT NULL DEFAULT 0.0"),
+    ];
+    for (col, typedef) in new_columns {
+        let exists: bool = conn
+            .prepare(&format!(
+                "SELECT COUNT(*) FROM pragma_table_info('health_snapshots') WHERE name = '{col}'"
+            ))?
+            .query_row([], |row| row.get::<_, i64>(0))
+            .map(|count| count > 0)?;
         if !exists {
             conn.execute_batch(&format!(
                 "ALTER TABLE health_snapshots ADD COLUMN {col} {typedef}"

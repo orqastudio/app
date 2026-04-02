@@ -32,19 +32,13 @@ thiserror = "2"
 tokio = { version = "1", features = ["full"] }
 base64 = "0.22.1"
 dirs-next = "2"
-glob = "0.3"
-regex = "1"
 reqwest = { version = "0.12", features = ["stream", "json"] }
-orqa-engine = { path = "../../engine/core" }
-orqa-validation = { path = "../../engine/validation" }
-sha2 = "0.10"
+orqa-engine-types = { path = "../../engine/types" }
+futures-util = "0.3"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
 notify = "8"
 notify-debouncer-full = "0.6"
-rand = "0.8"
-tar = "0.4"
-flate2 = "1"
 
 [dev-dependencies]
 tempfile = "3"

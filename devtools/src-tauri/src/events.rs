@@ -74,7 +74,9 @@ impl EventConsumerState {
 }
 
 /// Push a log event into the ring buffer, evicting the oldest if at capacity.
-async fn push_event(state: &Arc<EventConsumerState>, event: LogEvent) {
+///
+/// Public so `dev_controller` can inject parsed controller output as log events.
+pub async fn push_event_pub(state: &Arc<EventConsumerState>, event: LogEvent) {
     let mut buffer = state.buffer.lock().await;
     if buffer.len() >= RING_BUFFER_CAPACITY {
         buffer.pop_front();
@@ -150,7 +152,7 @@ async fn load_gap_events(
                 if let Err(e) = app.emit(TAURI_EVENT_NEW_LOG, &event) {
                     error!(subsystem = "event-consumer", error = %e, "failed to emit gap event");
                 }
-                push_event(state, event).await;
+                push_event_pub(state, event).await;
             }
             Err(e) => {
                 warn!(subsystem = "event-consumer", error = %e, "failed to parse gap event");
@@ -169,7 +171,7 @@ async fn load_gap_events(
 /// replay any events missed during the gap. Connection state transitions are
 /// emitted to the frontend via `orqa://connection-state` Tauri events.
 pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         // Unix-ms timestamp of the last received event; used to fill gaps on reconnect.
         let mut last_timestamp: Option<i64> = None;
         // Current sleep duration before the next attempt; doubles on each failure.
@@ -309,7 +311,7 @@ async fn process_sse_lines(
                             "failed to emit Tauri log event"
                         );
                     }
-                    push_event(state, event).await;
+                    push_event_pub(state, event).await;
                 }
                 Err(e) => {
                     warn!(

@@ -142,14 +142,15 @@ $effect.root(() => {
 
 // Derive the set of categories that have appeared in the event buffer so the
 // category filter dropdown only shows categories that exist in current data.
-export const knownCategories = $derived(
-	new Set(events.map((ev) => ev.category)),
-);
+// Exported as a function because Svelte 5 cannot export $derived from modules.
+export function knownCategories(): Set<string> {
+	return new Set(events.map((ev) => ev.category));
+}
 
 // Filtered view of the event buffer. Applies all active filters in order:
 // source → level → category → text search. An empty filter set passes all events.
-export const filteredEvents = $derived(
-	events.filter((ev) => {
+export function filteredEvents(): LogEvent[] {
+	return events.filter((ev) => {
 		if (filters.sources.size > 0 && !filters.sources.has(ev.source)) return false;
 		if (filters.levels.size > 0 && !filters.levels.has(ev.level)) return false;
 		if (filters.categories.size > 0 && !filters.categories.has(ev.category)) return false;
@@ -158,16 +159,18 @@ export const filteredEvents = $derived(
 			if (!ev.message.toLowerCase().includes(needle)) return false;
 		}
 		return true;
-	}),
-);
+	});
+}
 
 // Returns true when any filter is active (used to show the Clear button).
-export const hasActiveFilters = $derived(
-	filters.sources.size > 0 ||
-	filters.levels.size > 0 ||
-	filters.categories.size > 0 ||
-	filters.searchText.length > 0,
-);
+export function hasActiveFilters(): boolean {
+	return (
+		filters.sources.size > 0 ||
+		filters.levels.size > 0 ||
+		filters.categories.size > 0 ||
+		filters.searchText.length > 0
+	);
+}
 
 // Reset all filters to their default (show-all) state.
 export function clearFilters(): void {

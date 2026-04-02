@@ -4,7 +4,7 @@
 // represent chat messages within a session. These types flow from the database
 // through the Tauri IPC boundary to the frontend.
 
-pub use orqa_engine::types::message::*;
+pub use orqa_engine_types::types::message::*;
 
 #[cfg(test)]
 mod tests {

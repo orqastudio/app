@@ -1,9 +1,7 @@
-// Artifact domain types and logic — re-exported from orqa-engine.
+// Artifact domain types — re-exported from orqa-engine-types.
 //
-// All type definitions (structs/enums) and business logic (ID generation, type parsing,
-// path derivation, frontmatter extraction) live in the engine crate at
-// `orqa_engine::artifact` and `orqa_engine::types::artifact`. This module re-exports
-// them so the rest of the app can import from `crate::domain::artifact`.
+// Type definitions (NavTree, NavGroup, NavType, DocNode, ArtifactEntry, etc.)
+// live in orqa-engine-types and are re-exported here for use throughout the app.
+// All artifact scanning and tree-building is delegated to the daemon.
 
-pub use orqa_engine::artifact::*;
-pub use orqa_engine::types::artifact::*;
+pub use orqa_engine_types::types::artifact::*;

@@ -1,0 +1,14 @@
+-- Migration 011: Replace legacy structural graph metrics with outlier-based metrics.
+--
+-- The health snapshot model now tracks the outlier pipeline health model
+-- (delivery + learning connectivity, outlier counts) rather than raw structural
+-- metrics (orphan count, graph density, component count, bidirectionality ratio).
+--
+-- Legacy columns removed: orphan_count, orphan_percentage, graph_density,
+--   component_count, bidirectionality_ratio
+-- New columns added: outlier_count, outlier_percentage, delivery_connectivity,
+--   learning_connectivity
+--
+-- The actual ALTER TABLE statements are executed by run_migration_011() in db.rs
+-- using the idempotent pragma_table_info pattern.
+SELECT 1;

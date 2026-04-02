@@ -1,35 +1,47 @@
+<!-- Status bar rendered at the bottom of the app shell. Displays brand, active model,
+     token counters, artifact index state, sidecar status, and daemon health. -->
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
-	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		ConnectionIndicator,
+		Separator,
+		Button,
+		TooltipRoot,
+		TooltipTrigger,
+		TooltipContent,
+		type ConnectionState,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores, fmt } from "@orqastudio/sdk";
 
 	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
 	import finMark from "$lib/assets/fin-mark.svg";
 
-	const sidecarColor = $derived.by(() => {
+	/** Map the sidecar process state to a ConnectionIndicator state. */
+	const sidecarConnectionState = $derived.by((): ConnectionState => {
 		switch (settingsStore.sidecarStatus.state) {
 			case "connected":
-				return "bg-success";
+				return "connected";
 			case "starting":
-				return "bg-warning";
+				return "reconnecting";
 			case "error":
-				return "bg-destructive";
+				return "disconnected";
 			case "stopped":
 			case "not_started":
 			default:
-				return "bg-muted-foreground";
+				return "waiting";
 		}
 	});
 
-	const daemonColor = $derived.by(() => {
+	/** Map the daemon health state to a ConnectionIndicator state. */
+	const daemonConnectionState = $derived.by((): ConnectionState => {
 		switch (settingsStore.daemonHealth.state) {
 			case "connected":
-				return "bg-success";
+				return "connected";
 			case "degraded":
-				return "bg-warning";
+				return "reconnecting";
 			case "disconnected":
 			default:
-				return "bg-muted-foreground";
+				return "disconnected";
 		}
 	});
 
@@ -105,29 +117,29 @@
 	}
 </script>
 
-<div
-	class="flex h-8 items-center border-t border-border bg-muted/30 px-4 pb-1 text-xs text-muted-foreground"
->
+<div class="status-bar">
 	<!-- Left: Brand | Model -->
 	<div class="flex items-center gap-3">
 		<div class="flex items-center gap-1.5">
 			<img src={finMark} class="h-3.5 w-3.5" alt="" />
-			<span class="font-medium text-foreground/70">OrqaStudio</span>
+			<span class="brand-label">OrqaStudio</span>
 		</div>
 
-		<span class="h-3 w-px bg-border"></span>
+		<Separator orientation="vertical" class="h-3" />
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
+					<Button
 						{...props}
-						class="flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+						variant="ghost"
+						size="sm"
+						class="status-btn"
 						onclick={openModelSettings}
 					>
 						<Icon name="brain" size="xs" />
 						<span>{settingsStore.modelDisplayName}</span>
-					</button>
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -151,21 +163,23 @@
 		</div>
 	{/if}
 
-	<!-- Right: Tokens | Index | Sidecar status -->
+	<!-- Right: Tokens | Index | Sidecar status | Daemon health -->
 	<div class="flex items-center gap-3">
 		{#if hasTokens && session}
-			<span class="tabular-nums text-muted-foreground/70">
+			<span class="token-counter">
 				{formatTokens(session.total_input_tokens)}↑ {formatTokens(session.total_output_tokens)}↓
 			</span>
-			<span class="h-3 w-px bg-border"></span>
+			<Separator orientation="vertical" class="h-3" />
 		{/if}
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
+					<Button
 						{...props}
-						class="flex items-center gap-1 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground disabled:cursor-not-allowed disabled:opacity-50 {artifactGraphSDK.error ? 'text-destructive' : ''}"
+						variant="ghost"
+						size="sm"
+						class="status-btn {artifactGraphSDK.error ? 'text-destructive' : ''}"
 						onclick={() => artifactGraphSDK.refresh()}
 						disabled={artifactGraphSDK.loading}
 					>
@@ -178,7 +192,7 @@
 							<Icon name="database" size="xs" />
 							<span>{artifactCount}</span>
 						{/if}
-					</button>
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -186,19 +200,20 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<span class="h-3 w-px bg-border"></span>
+		<Separator orientation="vertical" class="h-3" />
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
+					<Button
 						{...props}
-						class="flex items-center gap-1.5 rounded px-1.5 py-0.5 transition-colors hover:bg-accent hover:text-accent-foreground"
+						variant="ghost"
+						size="sm"
+						class="status-btn"
 						onclick={openPluginSettings}
 					>
-						<span class="inline-block h-2 w-2 rounded-full {sidecarColor}"></span>
-						<span>{settingsStore.sidecarStateLabel}</span>
-					</button>
+						<ConnectionIndicator state={sidecarConnectionState} label={settingsStore.sidecarStateLabel} />
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -206,19 +221,20 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<span class="h-3 w-px bg-border"></span>
+		<Separator orientation="vertical" class="h-3" />
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
+					<Button
 						{...props}
-						class="flex items-center gap-1.5 rounded transition-colors hover:bg-accent hover:text-accent-foreground"
+						variant="ghost"
+						size="sm"
+						class="status-btn"
 						onclick={() => settingsStore.refreshDaemonHealth()}
 					>
-						<span class="inline-block h-2 w-2 rounded-full {daemonColor}"></span>
-						<span>{settingsStore.daemonStateLabel}</span>
-					</button>
+						<ConnectionIndicator state={daemonConnectionState} label={settingsStore.daemonStateLabel} />
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -227,3 +243,37 @@
 		</TooltipRoot>
 	</div>
 </div>
+
+<style>
+	/* Status bar container — fixed height, full-width footer strip. */
+	.status-bar {
+		display: flex;
+		height: 2rem;
+		align-items: center;
+		border-top: 1px solid var(--color-border);
+		background-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
+		padding: 0 1rem 0.25rem;
+		font-size: 0.75rem;
+		color: var(--color-muted-foreground);
+	}
+
+	/* Brand name — slightly subdued foreground to avoid competing with content. */
+	.brand-label {
+		font-weight: 500;
+		color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
+	}
+
+	/* Compact ghost button sized for the 2rem status bar row. */
+	:global(.status-btn) {
+		height: 1.5rem;
+		padding-inline: 0.375rem;
+		font-size: 0.75rem;
+		gap: 0.25rem;
+	}
+
+	/* Token counter — tabular numerics prevent layout shift as values change. */
+	.token-counter {
+		font-variant-numeric: tabular-nums;
+		color: color-mix(in srgb, var(--color-muted-foreground) 70%, transparent);
+	}
+</style>

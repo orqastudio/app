@@ -4,4 +4,4 @@
 // artifact graph health metrics. Snapshots are persisted by the daemon and
 // surfaced in the governance dashboard.
 
-pub use orqa_engine::types::health::*;
+pub use orqa_engine_types::types::health::*;

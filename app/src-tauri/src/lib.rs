@@ -1,31 +1,24 @@
 //! OrqaStudio Tauri application entry point.
 //!
 //! Bootstraps the Tauri builder with all plugins, commands, and application state.
+//! The app is a pure UI layer — all engine operations are delegated to the daemon.
 
-/// CLI tool runner and registration.
-pub mod cli_tools;
 /// Tauri IPC command handlers (all `#[tauri::command]` functions).
 pub mod commands;
+/// HTTP client for the OrqaStudio daemon REST API.
+pub mod daemon_client;
 /// SQLite database initialization and migrations.
 pub mod db;
-/// Domain logic: session management, prompt building, tool dispatch, workflow tracking.
+/// Domain logic: artifact types, session management, settings, and setup checks.
 pub mod domain;
 /// Application-level error type.
 pub mod error;
-/// Plugin hook lifecycle management.
-pub mod hooks;
 /// Structured logging initialization for the Tauri process.
 pub mod logging;
-/// Plugin discovery, installation, and lifecycle management.
-pub mod plugins;
-/// Persistence layer: SQLite-backed repositories for sessions, messages, and lessons.
+/// Persistence layer: SQLite-backed repositories for sessions, messages, and settings.
 pub mod repo;
-/// ONNX-based semantic search: indexing, chunking, and querying.
-pub mod search;
 /// Background server processes: IPC socket for CLI integration.
 pub mod servers;
-/// Claude sidecar process manager: spawn, restart, and health monitoring.
-pub mod sidecar;
 /// Application startup sequencing and task progress tracking.
 pub mod startup;
 /// Tauri `manage`-d application state structs.
@@ -37,8 +30,6 @@ use std::sync::Arc;
 
 use tauri::Manager;
 
-use crate::startup::TaskStatus;
-
 /// Initialize the SQLite database at `db_path` and return the connection.
 fn setup_database(db_path_str: &str) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
     let conn =
@@ -46,124 +37,28 @@ fn setup_database(db_path_str: &str) -> Result<rusqlite::Connection, Box<dyn std
     Ok(conn)
 }
 
-/// Construct and return the `AppState`, registering startup tasks.
+/// Construct and return the `AppState`.
 fn build_app_state(
     conn: rusqlite::Connection,
     tracker: &Arc<startup::StartupTracker>,
 ) -> Result<state::AppState, Box<dyn std::error::Error>> {
-    tracker.register("sidecar", "Sidecar")?;
-    tracker.register("embedding_model", "Embedding model")?;
-
     Ok(state::AppState {
         db: state::DbState {
             conn: std::sync::Mutex::new(conn),
         },
-        sidecar: state::SidecarState {
-            manager: sidecar::manager::SidecarManager::new(),
-            pending_approvals: std::sync::Mutex::new(std::collections::HashMap::new()),
-        },
-        search: state::SearchState {
-            engine: std::sync::Mutex::new(None),
+        daemon: state::DaemonState {
+            client: daemon_client::DaemonClient::new()?,
         },
         startup: state::StartupState {
             tracker: Arc::clone(tracker),
         },
-        enforcement: state::EnforcementState {
-            engine: std::sync::Mutex::new(None),
-        },
-        session: state::SessionState {
-            process_state: std::sync::Mutex::new(
-                domain::process_state::SessionProcessState::default(),
-            ),
-            tracker_config: std::sync::Mutex::new(
-                domain::workflow_config::default_tracker_config(),
-            ),
-            workflow_tracker: std::sync::Mutex::new(
-                domain::workflow_tracker::WorkflowTracker::new(
-                    domain::workflow_config::default_tracker_config(),
-                ),
-            ),
-            process_gates: std::sync::Mutex::new(
-                domain::workflow_config::default_process_gates(),
-            ),
-        },
         artifacts: state::ArtifactState {
             watcher: Arc::new(std::sync::Mutex::new(None)),
-            graph: std::sync::Mutex::new(None),
-            knowledge_injector: std::sync::Mutex::new(None),
-        },
-        cli_tools: state::CliToolState {
-            runner: cli_tools::runner::CliToolRunner::new(),
         },
     })
 }
 
-/// Auto-start the sidecar process, updating the tracker with the result.
-fn start_sidecar(app_state: &state::AppState, tracker: &Arc<startup::StartupTracker>) {
-    tracker
-        .update(
-            "sidecar",
-            TaskStatus::InProgress,
-            Some("Starting...".into()),
-        )
-        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-
-    match commands::sidecar_commands::ensure_sidecar_running(app_state) {
-        Ok(()) => {
-            tracker
-                .update("sidecar", TaskStatus::Done, None)
-                .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-        }
-        Err(e) => {
-            tracing::warn!("failed to auto-start sidecar: {e}");
-            tracker
-                .update("sidecar", TaskStatus::Error, Some(e.to_string()))
-                .unwrap_or_else(|err| tracing::warn!("tracker update failed: {err}"));
-        }
-    }
-}
-
-/// Spawn a background task that pre-downloads the embedding model.
-fn spawn_model_download(model_dir: std::path::PathBuf, tracker: Arc<startup::StartupTracker>) {
-    tracker
-        .update(
-            "embedding_model",
-            TaskStatus::InProgress,
-            Some("Checking...".into()),
-        )
-        .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-
-    tauri::async_runtime::spawn(async move {
-        match search::embedder::ensure_model_exists(&model_dir, |_file, downloaded, total| {
-            if let Some(total) = total {
-                let pct = (downloaded as f64 / total as f64 * 100.0) as u32;
-                tracker
-                    .update(
-                        "embedding_model",
-                        TaskStatus::InProgress,
-                        Some(format!("{pct}%")),
-                    )
-                    .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-            }
-        })
-        .await
-        {
-            Ok(()) => {
-                tracker
-                    .update("embedding_model", TaskStatus::Done, None)
-                    .unwrap_or_else(|e| tracing::warn!("tracker update failed: {e}"));
-            }
-            Err(e) => {
-                tracing::warn!("failed to pre-download embedding model: {e}");
-                tracker
-                    .update("embedding_model", TaskStatus::Error, Some(e.to_string()))
-                    .unwrap_or_else(|err| tracing::warn!("tracker update failed: {err}"));
-            }
-        }
-    });
-}
-
-/// Run the Tauri setup callback: initialise logging, database, sidecar, and model download.
+/// Run the Tauri setup callback: initialise logging and database.
 fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     logging::init_logging(app.handle());
 
@@ -183,60 +78,54 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let tracker = startup::StartupTracker::new();
     let app_state = build_app_state(conn, &tracker).map_err(|e| e.to_string())?;
 
-    start_sidecar(&app_state, &tracker);
-
     // Start IPC socket server for CLI ↔ App communication (orqa mcp / orqa lsp)
     servers::ipc_socket::start(None);
 
     app.manage(app_state);
 
-    // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. In this mode:
-    // 1. Auto-complete first-run setup (skip the wizard)
-    // 2. Auto-open the project so a fresh DB is immediately usable
+    // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. Auto-complete setup
+    // and open the project so a fresh DB is immediately usable.
     if let Ok(project_root) = std::env::var("ORQA_PROJECT_ROOT") {
-        let state: tauri::State<'_, state::AppState> = app.state();
+        auto_open_dev_project(app, &project_root);
+    }
 
-        // Mark first-run setup as complete — dev environment is already configured.
-        {
-            let conn = state
-                .db
-                .conn
-                .lock()
-                .expect("db lock for setup auto-complete");
-            if let Err(e) = repo::settings_repo::set(
-                &conn,
-                "setup_version",
-                &serde_json::json!(1u32),
-                "app",
-            ) {
-                tracing::warn!(err = %e, "failed to auto-complete setup");
-            } else {
-                tracing::info!("auto-completed first-run setup (dev mode)");
-            }
-        }
+    Ok(())
+}
 
-        // Auto-open the project so artifacts are immediately available.
-        match commands::project_commands::project_open(project_root.clone(), state) {
-            Ok(project) => {
-                tracing::info!(
-                    path = %project.path,
-                    "auto-opened project from ORQA_PROJECT_ROOT"
-                );
-            }
-            Err(e) => {
-                tracing::warn!(
-                    root = %project_root,
-                    err = %e,
-                    "failed to auto-open project from ORQA_PROJECT_ROOT"
-                );
-            }
+/// Auto-complete first-run setup and open the project when launched via `orqa dev`.
+///
+/// Called only when `ORQA_PROJECT_ROOT` is set. Marks setup as complete so the
+/// wizard is skipped, then calls `project_open` so artifacts are immediately available.
+fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
+    let state: tauri::State<'_, state::AppState> = app.state();
+
+    // Mark first-run setup as complete — dev environment is already configured.
+    {
+        let conn = state
+            .db
+            .conn
+            .lock()
+            .expect("db lock for setup auto-complete");
+        if let Err(e) = repo::settings_repo::set(
+            &conn,
+            "setup_version",
+            &serde_json::json!(1u32),
+            "app",
+        ) {
+            tracing::warn!(err = %e, "failed to auto-complete setup");
+        } else {
+            tracing::info!("auto-completed first-run setup (dev mode)");
         }
     }
 
-    let model_dir = app_dir.join("models").join("all-MiniLM-L6-v2");
-    spawn_model_download(model_dir, Arc::clone(&tracker));
-
-    Ok(())
+    match commands::project_commands::project_open(project_root.to_owned(), state) {
+        Ok(project) => {
+            tracing::info!(path = %project.path, "auto-opened project from ORQA_PROJECT_ROOT");
+        }
+        Err(e) => {
+            tracing::warn!(root = %project_root, err = %e, "failed to auto-open project from ORQA_PROJECT_ROOT");
+        }
+    }
 }
 
 /// Register all Tauri plugins on the builder.

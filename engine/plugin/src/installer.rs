@@ -49,6 +49,7 @@ pub struct InstallResult {
 /// can prompt the user to merge or rename before finalising.
 /// The result flag `requires_schema_recomposition` indicates what post-install
 /// actions the caller must trigger.
+#[allow(clippy::too_many_lines)]
 pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallResult, EngineError> {
     let manifest = read_manifest(source)?;
 
@@ -158,6 +159,7 @@ pub async fn install_from_github(
 /// Called by `install_from_github` after extraction. Cleans up the temp directory
 /// on any constraint or I/O error before returning. `resolved_ref` is the git tag
 /// that was resolved for this install, included in the success log for traceability.
+#[allow(clippy::too_many_lines)]
 fn finalize_github_install(
     manifest: super::manifest::PluginManifest,
     plugins_dir: std::path::PathBuf,

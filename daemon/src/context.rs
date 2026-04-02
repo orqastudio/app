@@ -36,7 +36,7 @@ pub struct ContextResponse {
 /// Reads rule titles from rule frontmatter and workflow names from resolved
 /// workflow filenames. Both reads degrade gracefully — missing directories
 /// return empty vecs rather than errors.
-pub async fn context_handler(Json(req): Json<ContextRequest>) -> Json<ContextResponse> {
+pub fn context_handler(Json(req): Json<ContextRequest>) -> Json<ContextResponse> {
     let start = Instant::now();
     let project_path = Path::new(&req.project_path);
     let rule_titles = read_rule_titles(project_path);

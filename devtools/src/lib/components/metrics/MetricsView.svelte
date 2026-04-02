@@ -13,7 +13,6 @@
 		ingestEvent,
 	} from "../../stores/metrics-store.svelte.js";
 	import TimingChart from "./TimingChart.svelte";
-	import { onMount, onDestroy } from "svelte";
 
 	// The currently expanded category key (null = none expanded).
 	let selectedCategory = $state<string | null>(null);
@@ -51,47 +50,9 @@
 	const errHistory = $derived(errorRateHistory());
 	const errTotal = $derived(totalErrorsInWindow());
 
-	// Demo mode: inject synthetic perf events so the view renders real data
-	// while the log store integration is not yet wired up. Each interval tick
-	// fires one event per category with a plausible random duration.
-	let demoTimer: ReturnType<typeof setInterval> | null = null;
-
-	// Pseudo-random base durations per category (milliseconds).
-	const DEMO_BASE: Record<string, number> = {
-		graph_build: 45,
-		prompt_gen: 120,
-		ipc: 8,
-		search_index: 30,
-	};
-
-	/** Fire one synthetic perf event per category plus occasional error events. */
-	function fireDemoEvents(): void {
-		for (const cat of CATEGORY_KEYS) {
-			const base = DEMO_BASE[cat] ?? 20;
-			// ±30% jitter around the base value.
-			const jitter = (Math.random() - 0.5) * 0.6 * base;
-			ingestEvent({
-				level: "perf",
-				category: cat,
-				durationMs: Math.max(1, Math.round(base + jitter)),
-				timestamp: Date.now(),
-			});
-		}
-		// Occasionally inject an error so the error rate panel shows activity.
-		if (Math.random() < 0.15) {
-			ingestEvent({ level: "error", category: "ipc", timestamp: Date.now() });
-		}
-	}
-
-	onMount(() => {
-		// Seed with a batch of events so sparklines render immediately.
-		for (let i = 0; i < 20; i++) fireDemoEvents();
-		demoTimer = setInterval(fireDemoEvents, 2000);
-	});
-
-	onDestroy(() => {
-		if (demoTimer !== null) clearInterval(demoTimer);
-	});
+	// Metrics are populated from real perf-level events ingested by the metrics
+	// store. No data is shown until the dev environment is running and emitting
+	// perf events through the daemon event bus.
 </script>
 
 <!-- Full-height scrollable content area. -->

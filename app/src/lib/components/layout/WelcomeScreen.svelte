@@ -1,7 +1,8 @@
 <script lang="ts">
+	// Welcome screen shown when no project is open. Delegates all layout to WelcomeHero.
 	import { open } from "@tauri-apps/plugin-dialog";
-	import { Icon, Button } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { WelcomeHero } from "@orqastudio/svelte-components/connected";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -9,6 +10,7 @@
 
 	let opening = $state(false);
 
+	// Opens the native folder picker and loads the selected project.
 	async function handleOpenProject() {
 		opening = true;
 		try {
@@ -26,29 +28,20 @@
 	}
 </script>
 
-<div
-	class="relative flex h-full w-full items-center justify-center overflow-hidden"
-	style="background-image: url({setupBackground}); background-size: cover; background-position: center;"
+<WelcomeHero
+	backgroundImage={setupBackground}
+	title="Welcome to OrqaStudio"
+	subtitle="Open a project to get started"
 >
-	<div class="absolute inset-0 bg-background/70"></div>
-
-	<div class="relative z-10 flex h-full flex-col items-center justify-between py-24">
-		<div class="text-center">
-			<h2 class="text-xl font-semibold">Welcome to OrqaStudio</h2>
-			<p class="mt-2 text-sm text-muted-foreground">Open a project to get started</p>
-		</div>
-		<div class="flex flex-col items-center gap-3">
-			{#if opening}
-				<LoadingSpinner />
-			{:else}
-				<Button variant="outline" onclick={handleOpenProject}>
-					<Icon name="folder-open" size="md" />
-					Open Project
-				</Button>
-			{/if}
-			{#if projectStore.error}
-				<p class="text-sm text-destructive">{projectStore.error}</p>
-			{/if}
-		</div>
-	</div>
-</div>
+	{#if opening}
+		<LoadingSpinner />
+	{:else}
+		<Button variant="outline" onclick={handleOpenProject}>
+			<Icon name="folder-open" size="md" />
+			Open Project
+		</Button>
+	{/if}
+	{#if projectStore.error}
+		<p class="text-sm text-destructive">{projectStore.error}</p>
+	{/if}
+</WelcomeHero>

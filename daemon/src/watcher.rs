@@ -32,9 +32,11 @@ use tracing::{debug, info, warn};
 
 use orqa_engine::enforcement::engine::EnforcementEngine;
 use orqa_engine::enforcement::store::load_rules;
-use orqa_engine::graph::build_artifact_graph;
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
+
+
+use crate::graph_state::GraphState;
 
 /// Infrastructure directories to always watch, relative to the project root.
 ///
@@ -188,12 +190,15 @@ fn build_registry(project_root: &Path) -> Vec<WatchRegistration> {
 ///   - Every unique directory prefix derived from plugin-declared watch paths.
 ///   - The infrastructure directories `.orqa/` and `plugins/`.
 ///
+/// When `.orqa/` or `plugins/` changes, calls `graph_state.reload()` to update
+/// the cached artifact graph and validation context in place.
+///
 /// Returns a [`WatchHandle`] that keeps the watcher alive for as long as it is
 /// held. Drop the handle to stop watching.
 ///
 /// Directories that do not exist are skipped with a warning. The watcher starts
 /// successfully even if no plugin watches or no infrastructure directories exist.
-pub fn start_watcher(project_root: &Path) -> notify::Result<WatchHandle> {
+pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Result<WatchHandle> {
     let root = project_root.to_path_buf();
 
     // Build the registry once here for directory collection, and again inside
@@ -208,7 +213,7 @@ pub fn start_watcher(project_root: &Path) -> notify::Result<WatchHandle> {
         None,
         move |result: DebounceEventResult| {
             let registry = build_registry(&root);
-            handle_events(result, &root, &registry);
+            handle_events(result, &root, &registry, &graph_state);
         },
     )?;
 
@@ -332,10 +337,17 @@ fn static_prefix_of(pattern: &str) -> String {
 /// Process a batch of debounced file-system events.
 ///
 /// For each non-ignored changed path:
-///   - If it falls under an infrastructure watch dir (`.orqa/` or `plugins/`),
-///     triggers the corresponding infrastructure action.
+///   - If it falls under `.orqa/`, calls `graph_state.reload()` to update the
+///     cached artifact graph and validation context, then reloads enforcement.
+///   - If it falls under `plugins/`, reloads plugin discovery and also reloads
+///     the graph because plugin manifests affect the validation context.
 ///   - If it matches any registered watch path pattern, invokes the generator.
-fn handle_events(result: DebounceEventResult, root: &Path, registry: &[WatchRegistration]) {
+fn handle_events(
+    result: DebounceEventResult,
+    root: &Path,
+    registry: &[WatchRegistration],
+    graph_state: &GraphState,
+) {
     match result {
         Ok(events) => {
             let mut orqa_changed = false;
@@ -373,12 +385,15 @@ fn handle_events(result: DebounceEventResult, root: &Path, registry: &[WatchRegi
             }
 
             if orqa_changed {
-                rebuild_graph(root);
+                // Reload the shared graph cache so all route handlers see updated state.
+                graph_state.reload(root);
                 reload_enforcement(root);
             }
 
             if plugins_changed {
                 reload_plugins(root);
+                // Plugin manifests affect the validation context — also reload graph.
+                graph_state.reload(root);
             }
         }
         Err(errors) => {
@@ -517,31 +532,6 @@ fn path_is_under(path: &Path, root: &Path, subdir: &str) -> bool {
     path.starts_with(root.join(subdir))
 }
 
-/// Rebuild the artifact graph after `.orqa/` changes.
-///
-/// Calls `build_artifact_graph` from the engine and logs the result at info
-/// level. Errors are logged at warn level so a broken artifact file does not
-/// crash the daemon.
-fn rebuild_graph(root: &Path) {
-    match build_artifact_graph(root) {
-        Ok(graph) => {
-            info!(
-                subsystem = "watcher",
-                artifact_count = graph.nodes.len(),
-                "[watcher] graph rebuilt ({} artifacts)",
-                graph.nodes.len()
-            );
-        }
-        Err(e) => {
-            warn!(
-                subsystem = "watcher",
-                error = %e,
-                "[watcher] graph rebuild failed"
-            );
-        }
-    }
-}
-
 /// Reload enforcement rules after `.orqa/` changes.
 ///
 /// Loads rules from `.orqa/learning/rules`, compiles the enforcement engine,
@@ -662,12 +652,6 @@ mod tests {
     fn reload_plugins_does_not_crash_on_missing_project() {
         // scan_plugins is infallible — returns empty vec for nonexistent root.
         reload_plugins(Path::new("/nonexistent/project/root"));
-    }
-
-    #[test]
-    fn rebuild_graph_logs_error_on_missing_project() {
-        // rebuild_graph is best-effort — must not panic.
-        rebuild_graph(Path::new("/nonexistent/project/root"));
     }
 
     #[test]

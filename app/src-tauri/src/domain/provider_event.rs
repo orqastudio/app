@@ -4,7 +4,7 @@
 // Tauri Channel<T> to the frontend during an LLM inference session. Each variant
 // maps to a TypeScript discriminated union on the frontend side.
 
-pub use orqa_engine::types::streaming::*;
+pub use orqa_engine_types::types::streaming::*;
 
 #[cfg(test)]
 mod tests {

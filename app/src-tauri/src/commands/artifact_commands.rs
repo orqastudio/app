@@ -1,39 +1,23 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use tauri::{AppHandle, Runtime, State};
 
-use crate::domain::artifact::NavTree;
+use orqa_engine_types::types::artifact::NavTree;
+
 use crate::error::OrqaError;
 use crate::state::AppState;
 use crate::watcher;
 
-use super::helpers::active_project_path;
-
-/// Scan the active project and return a unified navigation tree.
+/// Fetch the artifact navigation tree from the daemon.
 ///
-/// Derives artifact layout from `.orqa/schema.composed.json` — the schema is the
-/// single source of truth for which artifact types exist and where they live.
-/// No manual configuration in project.json is needed (P1: Plugin-Composed Everything).
-/// Returns an empty tree when no active project is set or when the schema is absent.
+/// Delegates to the daemon `GET /artifacts/tree` endpoint, which derives the
+/// tree from `.orqa/schema.composed.json` and scans the `.orqa/` directory.
+/// Returns an empty tree when no active project is set or when the daemon is
+/// unreachable.
 #[tauri::command]
-pub fn artifact_scan_tree(state: State<'_, AppState>) -> Result<NavTree, OrqaError> {
-    let project_path = active_project_path(&state)?;
-    let path = Path::new(&project_path);
-
-    tracing::info!(project_path = %project_path, "artifact_scan_tree called");
-
-    // Derive artifact entries from the composed schema — schema is authoritative.
-    let entries = orqa_engine::artifact::artifact_entries_from_schema(path);
-    tracing::info!(entries = entries.len(), "schema entries loaded");
-
-    let tree = crate::domain::artifact_reader::artifact_scan_tree(path, &entries)?;
-    tracing::info!(
-        groups = tree.groups.len(),
-        total_nodes = tree.groups.iter().map(|g| g.types.iter().map(|t| t.nodes.len()).sum::<usize>()).sum::<usize>(),
-        "artifact_scan_tree result"
-    );
-
-    Ok(tree)
+pub async fn artifact_scan_tree(state: State<'_, AppState>) -> Result<NavTree, OrqaError> {
+    tracing::info!("artifact_scan_tree called — delegating to daemon");
+    state.daemon.client.get_artifact_tree().await
 }
 
 /// Start (or replace) the `.orqa/` file-system watcher for a project.

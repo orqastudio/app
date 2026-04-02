@@ -14,6 +14,10 @@ use std::sync::LazyLock;
 
 use crate::types::{RelationshipConstraints, RelationshipSchema, StatusRule};
 
+// Re-export the canonical ArtifactTypeDef from engine/types so all callers get
+// the same type regardless of whether they import from validation or engine/types.
+pub use orqa_engine_types::platform::ArtifactTypeDef;
+
 /// A relationship definition from core.json.
 #[derive(Debug, Clone, Deserialize)]
 pub struct RelationshipDef {
@@ -101,42 +105,6 @@ pub struct EnforcementMechanism {
     /// Strength level (1-10). Higher = stronger enforcement.
     #[serde(default)]
     pub strength: u8,
-}
-
-/// An artifact type definition, contributed by a plugin manifest.
-#[derive(Debug, Clone)]
-pub struct ArtifactTypeDef {
-    /// Unique artifact type key (e.g. `"task"`, `"epic"`).
-    pub key: String,
-    /// Human-readable display label.
-    pub label: String,
-    /// Icon identifier for the UI.
-    pub icon: String,
-    /// ID prefix used to identify artifacts of this type (e.g. `"TASK-"`).
-    pub id_prefix: String,
-    /// JSON Schema (draft 2020-12) for frontmatter validation.
-    /// Stored as the raw JSON value from the plugin manifest's `frontmatter` field.
-    /// The schema builder enriches this with auto-derived `id` and `status` properties.
-    pub frontmatter_schema: serde_json::Value,
-    /// Valid status transitions: maps each status key to the statuses it may transition to.
-    pub status_transitions: HashMap<String, Vec<String>>,
-}
-
-impl ArtifactTypeDef {
-    /// Extract the `required` field names from the frontmatter JSON Schema.
-    /// Returns an empty vec if no `required` array is present.
-    pub fn frontmatter_required(&self) -> Vec<String> {
-        self.frontmatter_schema
-            .get("required")
-            .and_then(serde_json::Value::as_array)
-            .map(|arr| {
-                arr.iter()
-                    .filter_map(serde_json::Value::as_str)
-                    .map(String::from)
-                    .collect()
-            })
-            .unwrap_or_default()
-    }
 }
 
 /// The full platform config.

@@ -25,5 +25,11 @@ pub mod types;
 
 /// Re-exports of event types for direct access from this crate's root.
 pub use types::event::{EventLevel, EventSource, LogEvent};
+/// Re-exports of graph types for direct access from this crate's root.
+pub use types::graph::{
+    AncestryChain, AncestryNode, AppliedFix, ArtifactGraph, ArtifactNode, ArtifactRef,
+    GraphHealth, GraphStats, IntegrityCategory, IntegrityCheck, IntegritySeverity,
+    OutlierAgeDistribution, TracedArtifact, TraceabilityResult,
+};
 /// Utility helpers (time formatting, etc.).
 pub mod utils;

@@ -22,7 +22,7 @@ use std::{
 
 use notify::RecursiveMode;
 use notify_debouncer_full::new_debouncer;
-use tauri::{AppHandle, Emitter, Manager, Runtime};
+use tauri::{AppHandle, Emitter, Runtime};
 
 /// Event name emitted to all windows when `.orqa/` content changes.
 pub const ARTIFACT_CHANGED_EVENT: &str = "artifact-changed";
@@ -131,14 +131,12 @@ fn create_debouncer<R: Runtime>(
     .map_err(|e| format!("failed to create debouncer: {e}"))
 }
 
-/// Invalidate the cached artifact graph and emit change events to all windows.
+/// Emit artifact change events to all windows.
+///
+/// The daemon maintains its own file watcher and rebuilds the graph internally.
+/// The app watcher only needs to notify the frontend so it can re-fetch from
+/// the daemon after the next artifact query.
 fn invalidate_and_emit<R: Runtime>(app: &AppHandle<R>) {
-    if let Some(state) = app.try_state::<crate::state::AppState>() {
-        if let Ok(mut graph) = state.artifacts.graph.lock() {
-            *graph = None;
-        }
-    }
-
     if let Err(e) = app.emit(ARTIFACT_CHANGED_EVENT, ()) {
         tracing::warn!("[watcher] failed to emit artifact-changed event: {e}");
     }

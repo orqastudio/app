@@ -8,10 +8,6 @@ plugin: "@orqastudio/plugin-rust"
 relationships:
   - target: DOC-2372ed36
     type: synchronised-with
-  - target: AGENT-26e5029d
-    type: employed-by
-  - target: AGENT-065a25cc
-    type: employed-by
 ---
 
 # Rust Testing Patterns

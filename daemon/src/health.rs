@@ -35,6 +35,9 @@ use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
 use crate::config::DaemonConfig;
 use crate::event_bus::{EventBus, EventBusStats};
 use crate::event_store::{EventStore, EventQuery};
+use crate::graph_state::GraphState;
+use crate::routes::streaming::SessionStreamRegistry;
+use crate::store::DaemonStore;
 use crate::subprocess::ProcessSnapshot;
 
 /// Shared state passed to all route handlers, containing startup metadata,
@@ -57,6 +60,17 @@ pub struct HealthState {
     /// 250 ms. The health handler reads this to populate the `processes` array
     /// without requiring access to the subprocess managers directly.
     pub process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
+    /// Shared cached artifact graph and validation context. All artifact,
+    /// graph, and validation route handlers read from this.
+    pub graph_state: GraphState,
+    /// Optional SQLite-backed session/project/settings store. Absent when the
+    /// database cannot be opened (typically a permissions or disk issue).
+    pub daemon_store: Option<Arc<DaemonStore>>,
+    /// Per-session stream state for the daemon-side stream loop.
+    ///
+    /// Each active session has a broadcast channel for SSE delivery, a
+    /// cancellation flag, and a pending-approval map for tool approval.
+    pub stream_registry: SessionStreamRegistry,
 }
 
 /// JSON response body for GET /health.
@@ -69,6 +83,14 @@ struct HealthResponse {
     status: &'static str,
     uptime_seconds: u64,
     pid: u32,
+    /// Crate version of the daemon binary.
+    version: &'static str,
+    /// Absolute path to the project root the daemon is serving.
+    project_root: String,
+    /// Total number of artifacts in the cached graph.
+    artifact_count: usize,
+    /// Number of rule artifacts in the cached graph.
+    rule_count: usize,
     /// Point-in-time snapshot of event bus statistics.
     event_bus: EventBusStats,
     /// Per-process detail for all managed subprocesses. Auto-populated from
@@ -201,10 +223,22 @@ async fn health_handler(State(state): State<HealthState>) -> Json<HealthResponse
         .lock()
         .map(|g| g.clone())
         .unwrap_or_default();
+
+    let project_root = state
+        .graph_state
+        .0
+        .read()
+        .map(|g| g.project_root.to_string_lossy().to_string())
+        .unwrap_or_default();
+
     Json(HealthResponse {
         status: "ok",
         uptime_seconds: uptime.as_secs(),
         pid: state.pid,
+        version: env!("CARGO_PKG_VERSION"),
+        project_root,
+        artifact_count: state.graph_state.artifact_count(),
+        rule_count: state.graph_state.rule_count(),
         event_bus: state.event_bus.stats(),
         processes,
     })
@@ -237,6 +271,42 @@ async fn events_stream_handler(
     Sse::new(stream)
 }
 
+/// Handle POST /reload — rebuild the cached artifact graph and validation context from disk.
+///
+/// Returns the new artifact and rule counts. The watcher already calls
+/// `GraphState::reload()` on file changes, but this endpoint allows manual reload
+/// without requiring a file change event.
+async fn reload_handler(State(state): State<HealthState>) -> Json<serde_json::Value> {
+    let project_root = state
+        .graph_state
+        .0
+        .read()
+        .map(|g| g.project_root.clone())
+        .unwrap_or_default();
+
+    let artifact_count = state.graph_state.reload(&project_root);
+    let rule_count = state.graph_state.rule_count();
+
+    Json(serde_json::json!({
+        "status": "reloaded",
+        "artifacts": artifact_count,
+        "rules": rule_count,
+    }))
+}
+
+/// Handle POST /shutdown — initiate graceful daemon shutdown.
+///
+/// Schedules process exit after a brief delay so the 204 response is
+/// flushed to the caller before the process terminates. The same shutdown
+/// path used by the ctrlc handler fires after the response completes.
+async fn shutdown_handler() -> StatusCode {
+    tokio::spawn(async {
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+        std::process::exit(0);
+    });
+    StatusCode::NO_CONTENT
+}
+
 /// Resolve the port to bind from the environment or use the default.
 ///
 /// Delegates to `orqa_engine::ports::resolve_daemon_port()`. Falls back to
@@ -257,12 +327,15 @@ pub fn resolve_port() -> u16 {
 /// `process_snapshots` is the shared subprocess registry written by the event
 /// loop. The health handler reads it on every GET /health request so OrqaDev
 /// always receives current per-process detail.
+#[allow(clippy::too_many_lines)]
 pub async fn start(
     port: u16,
     config: DaemonConfig,
     event_bus: Arc<EventBus>,
     event_store: Option<Arc<EventStore>>,
     process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
+    graph_state: GraphState,
+    daemon_store: Option<Arc<DaemonStore>>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
@@ -271,21 +344,209 @@ pub async fn start(
         event_bus,
         event_store,
         process_snapshots,
+        graph_state,
+        daemon_store,
+        stream_registry: SessionStreamRegistry::new(),
     };
+
+    // Artifact routes — operate on the cached graph.
+    let artifact_router = Router::new()
+        .route("/", get(crate::routes::artifacts::list_artifacts))
+        .route("/tree", get(crate::routes::artifacts::get_artifact_tree))
+        .route("/:id", get(crate::routes::artifacts::get_artifact))
+        .route("/:id", axum::routing::put(crate::routes::artifacts::update_artifact))
+        .route("/:id/content", get(crate::routes::artifacts::get_artifact_content))
+        .route("/:id/traceability", get(crate::routes::artifacts::get_artifact_traceability))
+        .route("/:id/impact", get(crate::routes::artifacts::get_artifact_impact))
+        .with_state(state.graph_state.clone());
+
+    // Graph analytics routes.
+    let graph_router = Router::new()
+        .route("/stats", get(crate::routes::graph::get_graph_stats))
+        .route("/health", get(crate::routes::graph::get_graph_health))
+        .route(
+            "/health/snapshots",
+            get(crate::routes::graph::list_health_snapshots)
+                .post(crate::routes::graph::create_health_snapshot),
+        )
+        .with_state(state.graph_state.clone());
+
+    // Validation routes.
+    let validation_router = Router::new()
+        .route("/scan", post(crate::routes::validation::validation_scan))
+        .route("/fix", post(crate::routes::validation::validation_fix))
+        .route("/hook", post(crate::routes::validation::validation_hook))
+        .with_state(state.graph_state.clone());
+
+    // Enforcement routes — governance rule management.
+    let enforcement_router = Router::new()
+        .route("/rules", get(crate::routes::enforcement::list_enforcement_rules))
+        .route("/rules/reload", post(crate::routes::enforcement::reload_enforcement_rules))
+        .route("/violations", get(crate::routes::enforcement::list_enforcement_violations))
+        .route("/scan", post(crate::routes::enforcement::enforcement_scan))
+        .with_state(state.graph_state.clone());
+
+    // Search routes — codebase indexing and semantic/regex search.
+    let search_router = Router::new()
+        .route("/index", post(crate::routes::search::search_index))
+        .route("/embed", post(crate::routes::search::search_embed))
+        .route("/regex", post(crate::routes::search::search_regex))
+        .route("/semantic", post(crate::routes::search::search_semantic))
+        .route("/status", get(crate::routes::search::search_status))
+        .with_state(state.graph_state.clone());
+
+    // Workflow routes — status transition evaluation.
+    let workflow_router = Router::new()
+        .route("/transitions", get(crate::routes::workflow::list_transitions))
+        .route("/transitions/apply", post(crate::routes::workflow::apply_transition))
+        .with_state(state.graph_state.clone());
+
+    // Prompt routes — system prompt generation and knowledge injection.
+    let prompt_router = Router::new()
+        .route("/generate", post(crate::routes::prompt::generate_prompt))
+        .route("/knowledge", post(crate::routes::prompt::prompt_knowledge))
+        .route("/context", post(crate::routes::prompt::prompt_context))
+        .route("/compact-context", post(crate::routes::prompt::prompt_compact_context))
+        .with_state(state.clone());
+
+    // Plugin routes — plugin lifecycle management.
+    let plugin_router = Router::new()
+        .route("/", get(crate::routes::plugins::list_plugins))
+        .route("/registry", get(crate::routes::plugins::list_plugin_registry))
+        .route("/updates", get(crate::routes::plugins::check_plugin_updates))
+        .route("/install/local", post(crate::routes::plugins::install_plugin_local))
+        .route("/install/github", post(crate::routes::plugins::install_plugin_github))
+        .route("/:name", get(crate::routes::plugins::get_plugin))
+        .route("/:name", axum::routing::delete(crate::routes::plugins::uninstall_plugin))
+        .route("/:name/path", get(crate::routes::plugins::get_plugin_path))
+        .with_state(state.graph_state.clone());
+
+    // Agent routes — agent preamble and behavioral messages.
+    let agent_router = Router::new()
+        .route("/behavioral-messages", get(crate::routes::agents::get_behavioral_messages))
+        .route("/:role", get(crate::routes::agents::get_agent))
+        .with_state(state.graph_state.clone());
+
+    // Content routes — knowledge artifact loading.
+    let content_router = Router::new()
+        .route("/knowledge/:key", get(crate::routes::content::get_knowledge))
+        .with_state(state.graph_state.clone());
+
+    // Lesson routes — lesson CRUD and recurrence.
+    let lesson_router = Router::new()
+        .route("/", get(crate::routes::lessons::list_lessons).post(crate::routes::lessons::create_lesson))
+        .route("/:id/recurrence", axum::routing::put(crate::routes::lessons::increment_lesson_recurrence))
+        .with_state(state.graph_state.clone());
+
+    // Session routes — chat session and message management, plus daemon stream loop.
+    let session_router = Router::new()
+        .route("/", post(crate::routes::sessions::create_session).get(crate::routes::sessions::list_sessions))
+        .route("/:id", get(crate::routes::sessions::get_session)
+            .put(crate::routes::sessions::update_session)
+            .delete(crate::routes::sessions::delete_session))
+        .route("/:id/end", post(crate::routes::sessions::end_session))
+        .route("/:id/messages", get(crate::routes::sessions::list_session_messages)
+            .post(crate::routes::streaming::send_message))
+        .route("/:id/stream", get(crate::routes::streaming::session_stream))
+        .route("/:id/stop", post(crate::routes::streaming::stop_stream))
+        .route("/:id/tool-approval", post(crate::routes::streaming::tool_approval))
+        .with_state(state.clone());
+
+    // Project routes — project management, settings, scan, icon.
+    let project_router = Router::new()
+        .route("/", get(crate::routes::projects::list_projects))
+        .route("/active", get(crate::routes::projects::get_active_project))
+        .route("/open", post(crate::routes::projects::open_project))
+        .route("/settings", get(crate::routes::projects::get_project_settings)
+            .put(crate::routes::projects::update_project_settings))
+        .route("/scan", post(crate::routes::projects::scan_project_handler))
+        .route("/icon", post(crate::routes::projects::upload_project_icon)
+            .get(crate::routes::projects::get_project_icon))
+        .with_state(state.clone());
+
+    // Settings routes — app key/value settings store.
+    let settings_router = Router::new()
+        .route("/", get(crate::routes::settings::get_settings))
+        .route("/:key", axum::routing::put(crate::routes::settings::set_setting))
+        .with_state(state.clone());
+
+    // Sidecar routes — subprocess status and restart.
+    let sidecar_router = Router::new()
+        .route("/status", get(crate::routes::sidecar::get_sidecar_status))
+        .route("/restart", post(crate::routes::sidecar::restart_sidecar))
+        .with_state(state.clone());
+
+    // CLI tool routes — plugin-registered tool execution.
+    let cli_tools_router = Router::new()
+        .route("/", get(crate::routes::cli_tools::list_cli_tools))
+        .route("/status", get(crate::routes::cli_tools::get_cli_tool_status))
+        .route("/:plugin/:key/run", post(crate::routes::cli_tools::run_cli_tool))
+        .with_state(state.graph_state.clone());
+
+    // Hook routes — plugin hook registry and dispatcher generation.
+    let hooks_router = Router::new()
+        .route("/", get(crate::routes::hooks::list_hooks))
+        .route("/generate", post(crate::routes::hooks::generate_hook_dispatchers))
+        .with_state(state.graph_state.clone());
+
+    // Setup routes — wizard status and prerequisite checks.
+    let setup_router = Router::new()
+        .route("/status", get(crate::routes::setup::get_setup_status))
+        .route("/claude-cli", get(crate::routes::setup::check_claude_cli))
+        .route("/claude-auth", get(crate::routes::setup::check_claude_auth))
+        .route("/claude-reauth", post(crate::routes::setup::reauthenticate_claude))
+        .route("/embedding-model", get(crate::routes::setup::check_embedding_model))
+        .route("/complete", post(crate::routes::setup::complete_setup))
+        .with_state(state.clone());
+
+    // DevTools routes — OrqaDev window launch and status.
+    let devtools_router = Router::new()
+        .route("/launch", post(crate::routes::devtools::launch_devtools))
+        .route("/status", get(crate::routes::devtools::get_devtools_status))
+        .with_state(state.clone());
+
+    // Git routes — stash and uncommitted status.
+    let git_router = Router::new()
+        .route("/stashes", get(crate::routes::git::get_git_stashes))
+        .route("/status", get(crate::routes::git::get_git_status))
+        .with_state(state.graph_state.clone());
+
+    // Startup routes — daemon initialization task status.
+    let startup_router = Router::new()
+        .route("/status", get(crate::routes::startup::get_startup_status))
+        .with_state(state.clone());
 
     let app = Router::new()
         .route("/health", get(health_handler))
-        .route("/compact-context", post(crate::compact_context::compact_context_handler))
-        .route("/context", post(crate::context::context_handler))
+        .route("/reload", post(reload_handler))
+        .route("/shutdown", post(shutdown_handler))
         .route("/events", get(events_query_handler).post(events_ingest_handler))
         .route("/events/stream", get(events_stream_handler))
-        .route("/knowledge", post(crate::knowledge::knowledge_handler))
-        .route("/parse", post(crate::parse::parse_handler))
-        .route("/prompt", post(crate::prompt::prompt_handler))
         .route(
             "/session-start",
             post(crate::session_start::session_start_handler),
         )
+        .nest("/artifacts", artifact_router)
+        .nest("/graph", graph_router)
+        .nest("/validation", validation_router)
+        .nest("/enforcement", enforcement_router)
+        .nest("/search", search_router)
+        .nest("/workflow", workflow_router)
+        .nest("/prompt", prompt_router)
+        .nest("/plugins", plugin_router)
+        .nest("/agents", agent_router)
+        .nest("/content", content_router)
+        .nest("/lessons", lesson_router)
+        .nest("/sessions", session_router)
+        .nest("/projects", project_router)
+        .nest("/settings", settings_router)
+        .nest("/sidecar", sidecar_router)
+        .nest("/cli-tools", cli_tools_router)
+        .nest("/hooks", hooks_router)
+        .nest("/setup", setup_router)
+        .nest("/devtools", devtools_router)
+        .nest("/git", git_router)
+        .nest("/startup", startup_router)
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));

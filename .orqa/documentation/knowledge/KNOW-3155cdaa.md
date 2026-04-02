@@ -21,9 +21,6 @@ injection:
     - build
     - fix
     - create
-relationships:
-  - target: AGENT-4c94fe14
-    type: employed-by
 ---
 
 ## Orchestrator Reasoning Protocol

@@ -1,3 +1,10 @@
+// Health snapshot repository — SQLite persistence for point-in-time graph health metrics.
+//
+// Each snapshot captures the state of the artifact graph at the moment of an integrity
+// scan. Snapshots are used for trend sparklines on the governance dashboard. The schema
+// tracks the outlier-based pipeline health model (delivery + learning connectivity,
+// outlier counts) rather than raw structural metrics.
+
 use rusqlite::{params, Connection};
 
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
@@ -11,26 +18,25 @@ pub fn create(
 ) -> Result<HealthSnapshot, OrqaError> {
     conn.execute(
         "INSERT INTO health_snapshots \
-         (project_id, node_count, edge_count, orphan_count, broken_ref_count, \
-          error_count, warning_count, largest_component_ratio, orphan_percentage, \
-          avg_degree, graph_density, component_count, pillar_traceability, \
-          bidirectionality_ratio) \
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)",
+         (project_id, node_count, edge_count, broken_ref_count, \
+          error_count, warning_count, largest_component_ratio, avg_degree, \
+          pillar_traceability, outlier_count, outlier_percentage, \
+          delivery_connectivity, learning_connectivity) \
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)",
         params![
             project_id,
             snapshot.node_count,
             snapshot.edge_count,
-            snapshot.orphan_count,
             snapshot.broken_ref_count,
             snapshot.error_count,
             snapshot.warning_count,
             snapshot.largest_component_ratio,
-            snapshot.orphan_percentage,
             snapshot.avg_degree,
-            snapshot.graph_density,
-            snapshot.component_count,
             snapshot.pillar_traceability,
-            snapshot.bidirectionality_ratio,
+            snapshot.outlier_count,
+            snapshot.outlier_percentage,
+            snapshot.delivery_connectivity,
+            snapshot.learning_connectivity,
         ],
     )?;
 
@@ -41,10 +47,10 @@ pub fn create(
 /// Get a single snapshot by ID.
 pub fn get(conn: &Connection, id: i64) -> Result<HealthSnapshot, OrqaError> {
     conn.query_row(
-        "SELECT id, project_id, node_count, edge_count, orphan_count, \
-         broken_ref_count, error_count, warning_count, \
-         largest_component_ratio, orphan_percentage, avg_degree, graph_density, \
-         component_count, pillar_traceability, bidirectionality_ratio, created_at \
+        "SELECT id, project_id, node_count, edge_count, broken_ref_count, \
+         error_count, warning_count, largest_component_ratio, avg_degree, \
+         pillar_traceability, outlier_count, outlier_percentage, \
+         delivery_connectivity, learning_connectivity, created_at \
          FROM health_snapshots WHERE id = ?1",
         params![id],
         |row| {
@@ -53,18 +59,17 @@ pub fn get(conn: &Connection, id: i64) -> Result<HealthSnapshot, OrqaError> {
                 project_id: row.get(1)?,
                 node_count: row.get(2)?,
                 edge_count: row.get(3)?,
-                orphan_count: row.get(4)?,
-                broken_ref_count: row.get(5)?,
-                error_count: row.get(6)?,
-                warning_count: row.get(7)?,
-                largest_component_ratio: row.get(8)?,
-                orphan_percentage: row.get(9)?,
-                avg_degree: row.get(10)?,
-                graph_density: row.get(11)?,
-                component_count: row.get(12)?,
-                pillar_traceability: row.get(13)?,
-                bidirectionality_ratio: row.get(14)?,
-                created_at: row.get(15)?,
+                broken_ref_count: row.get(4)?,
+                error_count: row.get(5)?,
+                warning_count: row.get(6)?,
+                largest_component_ratio: row.get(7)?,
+                avg_degree: row.get(8)?,
+                pillar_traceability: row.get(9)?,
+                outlier_count: row.get(10)?,
+                outlier_percentage: row.get(11)?,
+                delivery_connectivity: row.get(12)?,
+                learning_connectivity: row.get(13)?,
+                created_at: row.get(14)?,
             })
         },
     )
@@ -83,10 +88,10 @@ pub fn get_recent(
     limit: i64,
 ) -> Result<Vec<HealthSnapshot>, OrqaError> {
     let mut stmt = conn.prepare(
-        "SELECT id, project_id, node_count, edge_count, orphan_count, \
-         broken_ref_count, error_count, warning_count, \
-         largest_component_ratio, orphan_percentage, avg_degree, graph_density, \
-         component_count, pillar_traceability, bidirectionality_ratio, created_at \
+        "SELECT id, project_id, node_count, edge_count, broken_ref_count, \
+         error_count, warning_count, largest_component_ratio, avg_degree, \
+         pillar_traceability, outlier_count, outlier_percentage, \
+         delivery_connectivity, learning_connectivity, created_at \
          FROM health_snapshots \
          WHERE project_id = ?1 \
          ORDER BY id DESC \
@@ -99,18 +104,17 @@ pub fn get_recent(
             project_id: row.get(1)?,
             node_count: row.get(2)?,
             edge_count: row.get(3)?,
-            orphan_count: row.get(4)?,
-            broken_ref_count: row.get(5)?,
-            error_count: row.get(6)?,
-            warning_count: row.get(7)?,
-            largest_component_ratio: row.get(8)?,
-            orphan_percentage: row.get(9)?,
-            avg_degree: row.get(10)?,
-            graph_density: row.get(11)?,
-            component_count: row.get(12)?,
-            pillar_traceability: row.get(13)?,
-            bidirectionality_ratio: row.get(14)?,
-            created_at: row.get(15)?,
+            broken_ref_count: row.get(4)?,
+            error_count: row.get(5)?,
+            warning_count: row.get(6)?,
+            largest_component_ratio: row.get(7)?,
+            avg_degree: row.get(8)?,
+            pillar_traceability: row.get(9)?,
+            outlier_count: row.get(10)?,
+            outlier_percentage: row.get(11)?,
+            delivery_connectivity: row.get(12)?,
+            learning_connectivity: row.get(13)?,
+            created_at: row.get(14)?,
         })
     })?;
 
@@ -146,29 +150,29 @@ mod tests {
             &NewHealthSnapshot {
                 node_count: 100,
                 edge_count: 200,
-                orphan_count: 5,
                 broken_ref_count: 2,
                 error_count: 3,
                 warning_count: 7,
                 largest_component_ratio: 0.95,
-                orphan_percentage: 5.0,
                 avg_degree: 4.0,
-                graph_density: 0.02,
-                component_count: 1,
                 pillar_traceability: 87.5,
-                bidirectionality_ratio: 0.9,
+                outlier_count: 5,
+                outlier_percentage: 5.0,
+                delivery_connectivity: 0.92,
+                learning_connectivity: 0.88,
             },
         )
         .expect("create");
 
         assert_eq!(snapshot.node_count, 100);
         assert_eq!(snapshot.edge_count, 200);
-        assert_eq!(snapshot.orphan_count, 5);
         assert_eq!(snapshot.broken_ref_count, 2);
         assert_eq!(snapshot.error_count, 3);
         assert_eq!(snapshot.warning_count, 7);
         assert!((snapshot.largest_component_ratio - 0.95).abs() < f64::EPSILON);
         assert!((snapshot.pillar_traceability - 87.5).abs() < f64::EPSILON);
+        assert_eq!(snapshot.outlier_count, 5);
+        assert!((snapshot.outlier_percentage - 5.0).abs() < f64::EPSILON);
         assert!(!snapshot.created_at.is_empty());
     }
 
@@ -177,24 +181,23 @@ mod tests {
         let conn = init_memory_db().expect("db init");
         let project_id = setup_project(&conn);
 
-        for i in 0..5 {
+        for i in 0..5_i64 {
             create(
                 &conn,
                 project_id,
                 &NewHealthSnapshot {
                     node_count: i * 10,
                     edge_count: 0,
-                    orphan_count: 0,
                     broken_ref_count: 0,
                     error_count: 0,
                     warning_count: 0,
                     largest_component_ratio: 0.0,
-                    orphan_percentage: 0.0,
                     avg_degree: 0.0,
-                    graph_density: 0.0,
-                    component_count: 0,
                     pillar_traceability: 100.0,
-                    bidirectionality_ratio: 1.0,
+                    outlier_count: 0,
+                    outlier_percentage: 0.0,
+                    delivery_connectivity: 1.0,
+                    learning_connectivity: 1.0,
                 },
             )
             .expect("create");

@@ -4,14 +4,22 @@
      log-store.svelte.ts so LogTable reacts automatically. -->
 <script lang="ts">
 	import {
+		Button,
+		Badge,
+		Input,
+	} from "@orqastudio/svelte-components/pure";
+	import {
 		filters,
-		hasActiveFilters,
-		knownCategories,
+		hasActiveFilters as getHasActiveFilters,
+		knownCategories as getKnownCategories,
 		clearFilters,
 		ALL_LEVELS,
 		ALL_SOURCES,
 		type LogEvent,
 	} from "../../stores/log-store.svelte.js";
+
+	const hasActiveFilters = $derived(getHasActiveFilters());
+	const knownCategories = $derived(getKnownCategories());
 
 	// Whether the source dropdown is open.
 	let sourceOpen = $state(false);
@@ -54,13 +62,14 @@
 		if (!target.closest("[data-category-dropdown]")) categoryOpen = false;
 	}
 
-	// CSS badge colours for level checkboxes, matching LogRow badges.
-	const LEVEL_COLOR: Record<string, string> = {
-		Debug: "text-content-muted",
-		Info: "text-blue-400",
-		Warn: "text-yellow-400",
-		Error: "text-red-400",
-		Perf: "text-indigo-400",
+	// Badge variant for the level indicators in the checkbox group.
+	// Matches the variants used in LogRow so the filter labels mirror the table.
+	const LEVEL_BADGE_VARIANT: Record<string, "secondary" | "destructive" | "outline" | "default" | "warning"> = {
+		Debug: "outline",
+		Info: "default",
+		Warn: "warning",
+		Error: "destructive",
+		Perf: "secondary",
 	};
 </script>
 
@@ -68,44 +77,48 @@
 
 <!-- Filter bar: compact single-line strip above the log table. -->
 <div
-	class="border-b border-border bg-surface-base flex shrink-0 flex-wrap items-center gap-2 px-2 py-1"
+	class="log-filters"
 	style="min-height: 32px;"
 	role="toolbar"
 	aria-label="Log filters"
 >
 	<!-- Source multi-select dropdown -->
-	<div class="relative" data-source-dropdown>
-		<button
-			class="flex items-center gap-1 rounded border border-border bg-surface-raised px-2 py-0.5 text-[11px] text-content-base transition-colors hover:border-border/80 hover:bg-surface-raised/80"
+	<div class="log-filters__dropdown" data-source-dropdown>
+		<Button
+			variant="outline"
+			size="sm"
+			class="log-filters__dropdown-trigger"
 			onclick={() => { sourceOpen = !sourceOpen; categoryOpen = false; }}
 			aria-haspopup="listbox"
 			aria-expanded={sourceOpen}
 		>
 			Source
 			{#if filters.sources.size > 0}
-				<span class="rounded bg-blue-500/20 px-1 text-[10px] text-blue-400">{filters.sources.size}</span>
+				<Badge variant="default" class="log-filters__count-badge">
+					{filters.sources.size}
+				</Badge>
 			{/if}
-			<span class="text-content-muted text-[9px]">{sourceOpen ? "▲" : "▼"}</span>
-		</button>
+			<span class="log-filters__chevron">{sourceOpen ? "▲" : "▼"}</span>
+		</Button>
 
 		{#if sourceOpen}
 			<div
-				class="absolute left-0 top-full z-10 mt-1 min-w-[130px] rounded border border-border bg-surface-raised shadow-lg"
+				class="log-filters__dropdown-panel"
 				role="listbox"
 				aria-multiselectable="true"
 				aria-label="Source filter"
 			>
 				{#each ALL_SOURCES as source (source)}
 					<button
-						class="flex w-full items-center gap-2 px-2 py-1 text-left text-[11px] transition-colors hover:bg-surface-base"
+						class="log-filters__option"
 						role="option"
 						aria-selected={filters.sources.has(source)}
 						onclick={() => toggleSource(source)}
 					>
 						<span
-							class="size-3 shrink-0 rounded-sm border border-border {filters.sources.has(source) ? 'bg-blue-500 border-blue-500' : 'bg-transparent'}"
+							class="log-filters__checkbox {filters.sources.has(source) ? 'log-filters__checkbox--checked' : ''}"
 						></span>
-						<span class="text-content-base">{source}</span>
+						<span class="log-filters__option-label">{source}</span>
 					</button>
 				{/each}
 			</div>
@@ -113,32 +126,39 @@
 	</div>
 
 	<!-- Level checkbox group (inline, no dropdown needed — only 5 values) -->
-	<div class="flex items-center gap-1.5" role="group" aria-label="Level filter">
+	<div class="log-filters__level-group" role="group" aria-label="Level filter">
 		{#each ALL_LEVELS as level (level)}
-			<label class="flex cursor-pointer items-center gap-1">
+			<label class="log-filters__level-label">
 				<input
 					type="checkbox"
-					class="sr-only"
+					class="log-filters__sr-only"
 					checked={filters.levels.has(level)}
 					onchange={() => toggleLevel(level)}
 				/>
 				<span
-					class="flex h-4 w-4 shrink-0 items-center justify-center rounded border {filters.levels.has(level) ? 'border-blue-500 bg-blue-500' : 'border-border bg-transparent'}"
+					class="log-filters__level-check {filters.levels.has(level) ? 'log-filters__level-check--checked' : ''}"
 					aria-hidden="true"
 				>
 					{#if filters.levels.has(level)}
-						<span class="text-[8px] text-white font-bold leading-none">✓</span>
+						<span class="log-filters__check-mark">✓</span>
 					{/if}
 				</span>
-				<span class="text-[11px] {LEVEL_COLOR[level] ?? 'text-content-base'}">{level}</span>
+				<Badge
+					variant={LEVEL_BADGE_VARIANT[level] ?? "outline"}
+					class="log-filters__level-badge"
+				>
+					{level}
+				</Badge>
 			</label>
 		{/each}
 	</div>
 
 	<!-- Category multi-select dropdown (populated from knownCategories) -->
-	<div class="relative" data-category-dropdown>
-		<button
-			class="flex items-center gap-1 rounded border border-border bg-surface-raised px-2 py-0.5 text-[11px] text-content-base transition-colors hover:border-border/80 hover:bg-surface-raised/80"
+	<div class="log-filters__dropdown" data-category-dropdown>
+		<Button
+			variant="outline"
+			size="sm"
+			class="log-filters__dropdown-trigger"
 			onclick={() => { categoryOpen = !categoryOpen; sourceOpen = false; }}
 			aria-haspopup="listbox"
 			aria-expanded={categoryOpen}
@@ -146,29 +166,31 @@
 		>
 			Category
 			{#if filters.categories.size > 0}
-				<span class="rounded bg-blue-500/20 px-1 text-[10px] text-blue-400">{filters.categories.size}</span>
+				<Badge variant="default" class="log-filters__count-badge">
+					{filters.categories.size}
+				</Badge>
 			{/if}
-			<span class="text-content-muted text-[9px]">{categoryOpen ? "▲" : "▼"}</span>
-		</button>
+			<span class="log-filters__chevron">{categoryOpen ? "▲" : "▼"}</span>
+		</Button>
 
 		{#if categoryOpen && knownCategories.size > 0}
 			<div
-				class="absolute left-0 top-full z-10 mt-1 max-h-48 min-w-[160px] overflow-y-auto rounded border border-border bg-surface-raised shadow-lg"
+				class="log-filters__dropdown-panel log-filters__dropdown-panel--scrollable"
 				role="listbox"
 				aria-multiselectable="true"
 				aria-label="Category filter"
 			>
 				{#each [...knownCategories].sort() as category (category)}
 					<button
-						class="flex w-full items-center gap-2 px-2 py-1 text-left text-[11px] transition-colors hover:bg-surface-base"
+						class="log-filters__option"
 						role="option"
 						aria-selected={filters.categories.has(category)}
 						onclick={() => toggleCategory(category)}
 					>
 						<span
-							class="size-3 shrink-0 rounded-sm border border-border {filters.categories.has(category) ? 'bg-blue-500 border-blue-500' : 'bg-transparent'}"
+							class="log-filters__checkbox {filters.categories.has(category) ? 'log-filters__checkbox--checked' : ''}"
 						></span>
-						<span class="truncate text-content-base">{category}</span>
+						<span class="log-filters__option-label log-filters__option-label--truncate">{category}</span>
 					</button>
 				{/each}
 			</div>
@@ -177,10 +199,10 @@
 
 	<!-- Full-text search input. The id allows the global Ctrl+F handler in
 	     +layout.svelte to focus this element from outside this component. -->
-	<input
+	<Input
 		id="log-search-input"
 		type="search"
-		class="h-6 min-w-[180px] flex-1 rounded border border-border bg-surface-raised px-2 text-[11px] text-content-base placeholder-content-muted outline-none transition-colors focus:border-blue-500/60 focus:ring-0"
+		class="log-filters__search"
 		placeholder="Search messages…"
 		bind:value={filters.searchText}
 		aria-label="Search log messages"
@@ -188,12 +210,202 @@
 
 	<!-- Clear all filters button — only visible when a filter is active -->
 	{#if hasActiveFilters}
-		<button
-			class="rounded border border-border px-2 py-0.5 text-[11px] text-content-muted transition-colors hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-400"
+		<Button
+			variant="outline"
+			size="sm"
+			class="log-filters__clear"
 			onclick={clearFilters}
 			aria-label="Clear all filters"
 		>
 			Clear filters
-		</button>
+		</Button>
 	{/if}
 </div>
+
+<style>
+	/* Filter bar: compact strip above the log table. */
+	.log-filters {
+		border-bottom: 1px solid var(--color-border);
+		background-color: var(--color-surface-base);
+		display: flex;
+		flex-shrink: 0;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacing-2);
+		padding: var(--spacing-1) var(--spacing-2);
+	}
+
+	/* Dropdown container: relative for the absolute panel. */
+	.log-filters__dropdown {
+		position: relative;
+	}
+
+	/* Override Button size for compact filter bar fit. */
+	:global(.log-filters__dropdown-trigger) {
+		font-size: 11px !important;
+		height: 24px !important;
+		padding: 0 var(--spacing-2) !important;
+		gap: var(--spacing-1) !important;
+	}
+
+	/* Count badge inside dropdown trigger: extra compact. */
+	:global(.log-filters__count-badge) {
+		font-size: 10px !important;
+		padding: 0 var(--spacing-1) !important;
+		line-height: 1 !important;
+	}
+
+	/* Chevron arrow in dropdown trigger. */
+	.log-filters__chevron {
+		font-size: 9px;
+		color: var(--color-content-muted);
+	}
+
+	/* Dropdown panel: floats below the trigger. */
+	.log-filters__dropdown-panel {
+		position: absolute;
+		left: 0;
+		top: 100%;
+		z-index: 10;
+		margin-top: var(--spacing-1);
+		min-width: 130px;
+		border-radius: var(--radius-md);
+		border: 1px solid var(--color-border);
+		background-color: var(--color-surface-raised);
+		box-shadow: var(--shadow-lg);
+	}
+
+	/* Scrollable variant for category dropdown. */
+	.log-filters__dropdown-panel--scrollable {
+		max-height: 12rem;
+		min-width: 160px;
+		overflow-y: auto;
+	}
+
+	/* Individual option row inside a dropdown. */
+	.log-filters__option {
+		display: flex;
+		width: 100%;
+		align-items: center;
+		gap: var(--spacing-2);
+		padding: var(--spacing-1) var(--spacing-2);
+		text-align: left;
+		font-size: 11px;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: background-color 150ms;
+	}
+
+	.log-filters__option:hover {
+		background-color: var(--color-surface-base);
+	}
+
+	/* Custom checkbox square. */
+	.log-filters__checkbox {
+		width: 12px;
+		height: 12px;
+		flex-shrink: 0;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--color-border);
+		background-color: transparent;
+	}
+
+	.log-filters__checkbox--checked {
+		background-color: var(--color-accent-base);
+		border-color: var(--color-accent-base);
+	}
+
+	/* Option label text. */
+	.log-filters__option-label {
+		color: var(--color-content-base);
+	}
+
+	.log-filters__option-label--truncate {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* Level group: inline row of checkbox + badge pairs. */
+	.log-filters__level-group {
+		display: flex;
+		align-items: center;
+		gap: var(--spacing-1-5);
+	}
+
+	.log-filters__level-label {
+		display: flex;
+		cursor: pointer;
+		align-items: center;
+		gap: var(--spacing-1);
+	}
+
+	/* Visually hidden native checkbox — accessible, not visible. */
+	.log-filters__sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border-width: 0;
+	}
+
+	/* Custom level checkbox square. */
+	.log-filters__level-check {
+		display: flex;
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--color-border);
+		background-color: transparent;
+	}
+
+	.log-filters__level-check--checked {
+		background-color: var(--color-accent-base);
+		border-color: var(--color-accent-base);
+	}
+
+	/* Check mark inside checked state. */
+	.log-filters__check-mark {
+		font-size: 8px;
+		color: white;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	/* Level badge label: compact variant. */
+	:global(.log-filters__level-badge) {
+		font-size: 10px !important;
+		padding: 1px var(--spacing-1) !important;
+		line-height: 1 !important;
+	}
+
+	/* Search input: stretches to fill remaining space, compact height for filter bar. */
+	:global(.log-filters__search) {
+		flex: 1 !important;
+		min-width: 180px !important;
+		height: 24px !important;
+		font-size: 11px !important;
+		padding: 0 var(--spacing-2) !important;
+	}
+
+	/* Clear filters: danger-accent hover state. */
+	:global(.log-filters__clear) {
+		font-size: 11px !important;
+		height: 24px !important;
+		padding: 0 var(--spacing-2) !important;
+	}
+
+	:global(.log-filters__clear:hover) {
+		border-color: color-mix(in srgb, var(--color-destructive) 40%, transparent) !important;
+		background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent) !important;
+		color: var(--color-destructive) !important;
+	}
+</style>

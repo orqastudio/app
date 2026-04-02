@@ -92,14 +92,13 @@ function toGraphNode(node: DaemonArtifactNode): GraphNode {
 /**
  * Scan the `.orqa/` directory and build an in-memory artifact graph.
  *
- * Delegates to the daemon's POST /query endpoint (no filters = all nodes).
+ * Delegates to the daemon's GET /artifacts endpoint (no filters = all nodes).
  * @returns Array of all graph nodes.
  */
 export async function scanArtifactGraph(): Promise<GraphNode[]> {
 	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
-		"POST",
-		"/query",
-		{},
+		"GET",
+		"/artifacts",
 	);
 	return daemonNodes.map(toGraphNode);
 }
@@ -107,7 +106,7 @@ export async function scanArtifactGraph(): Promise<GraphNode[]> {
 /**
  * Query the artifact graph with filters.
  *
- * Delegates to the daemon's POST /query endpoint with type/status/search
+ * Delegates to the daemon's GET /artifacts endpoint with type/status/search
  * filters. Post-filters locally for relatedTo, relationshipType, and limit
  * since the daemon doesn't support those directly.
  * @param _nodesOrOptions - Legacy nodes array (unused) or query options.
@@ -122,23 +121,24 @@ export async function queryGraph(
 	const options: GraphQueryOptions =
 		optionsArg ?? (_nodesOrOptions as GraphQueryOptions);
 
-	// Build daemon query body with the filters it supports natively.
-	const body: Record<string, unknown> = {};
+	// Build query string with the filters the daemon supports natively.
+	const params = new URLSearchParams();
 	if (options.type) {
 		// Daemon only accepts a single type string, not an array.
-		body.type = Array.isArray(options.type) ? options.type[0] : options.type;
+		params.set("type", Array.isArray(options.type) ? options.type[0] : options.type);
 	}
 	if (options.status) {
-		body.status = Array.isArray(options.status) ? options.status[0] : options.status;
+		params.set("status", Array.isArray(options.status) ? options.status[0] : options.status);
 	}
 	if (options.search) {
-		body.search = options.search;
+		params.set("search", options.search);
 	}
+	const qs = params.toString();
+	const path = qs ? `/artifacts?${qs}` : "/artifacts";
 
 	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
-		"POST",
-		"/query",
-		body,
+		"GET",
+		path,
 	);
 
 	let results = daemonNodes.map(toGraphNode);

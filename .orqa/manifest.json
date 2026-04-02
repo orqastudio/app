@@ -2,7 +2,7 @@
   "plugins": {
     "@orqastudio/plugin-agile-methodology": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.255Z",
+      "installed_at": "2026-04-01T17:05:48.426Z",
       "manifestHash": "4d1146aaed17051b423c274a2890347bcd24c09cde053a32d8b98279d741bc79",
       "files": {
         ".claude/agents/AGENT-7a06d10e.md": {
@@ -129,7 +129,7 @@
     },
     "@orqastudio/plugin-cli": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:19.873Z",
+      "installed_at": "2026-04-01T17:05:42.695Z",
       "manifestHash": "46d8694fabd98a2dfb9df1ff8a5c56603ec688d380707be5c98b9098d6a9957c",
       "files": {
         ".orqa/documentation/DOC-8cf6ef38.md": {
@@ -234,7 +234,7 @@
     },
     "@orqastudio/plugin-core-framework": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.295Z",
+      "installed_at": "2026-04-01T17:05:48.506Z",
       "manifestHash": "c88300efb7fc38d12d394425dff7607b54f52f7aab1dafe41036b91e74ab090b",
       "files": {
         ".claude/agents/AGENT-0aad40f4.md": {
@@ -541,7 +541,7 @@
     },
     "@orqastudio/plugin-rust": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:19.935Z",
+      "installed_at": "2026-04-01T17:05:42.746Z",
       "manifestHash": "99509387abab6ae827cbc7239f93daf05df0370e219fd5da642c40f68c97115b",
       "files": {
         ".claude/agents/AGENT-065a25cc.md": {
@@ -576,7 +576,7 @@
     },
     "@orqastudio/plugin-software-kanban": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:30.894Z",
+      "installed_at": "2026-04-01T17:05:51.980Z",
       "manifestHash": "b6c73bfd5f98dbe23c024e40b22e89fe6de0e1eb6d40f3b5d719eee649691fc7",
       "files": {
         ".orqa/documentation/DOC-4554ff3e.md": {
@@ -651,7 +651,7 @@
     },
     "@orqastudio/plugin-svelte": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:23.385Z",
+      "installed_at": "2026-04-01T17:05:45.118Z",
       "manifestHash": "f3679965fb1cb14d655067a40aac9bada5a0bb4d4a6645f445dc267dbf7775e2",
       "files": {
         ".claude/agents/AGENT-5de8c14f.md": {
@@ -734,7 +734,7 @@
     },
     "@orqastudio/plugin-tauri": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:23.398Z",
+      "installed_at": "2026-04-01T17:05:45.143Z",
       "manifestHash": "ca52b0750dbfe1963c42f6c6b28a2e22a06f14521781a4f4fc60fa0d5f75a98f",
       "files": {
         ".claude/agents/AGENT-65b56a0b.md": {
@@ -773,7 +773,7 @@
     },
     "@orqastudio/plugin-typescript": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:23.729Z",
+      "installed_at": "2026-04-01T17:05:46.078Z",
       "manifestHash": "e5c5c094792bb7396e2c77fcc670c6d25d656f5d2671cc450e30a091dfbce1c0",
       "files": {
         ".orqa/documentation/DOC-7062bce9.md": {
@@ -792,7 +792,7 @@
     },
     "@orqastudio/plugin-systems-thinking": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:23.392Z",
+      "installed_at": "2026-04-01T17:05:45.132Z",
       "manifestHash": "bfddea12786a05dfdc6ba70591a4c0cbc79a5e99ace8167465c525b963a645bc",
       "files": {
         ".orqa/documentation/knowledge/KNOW-0619a413.md": {
@@ -860,7 +860,7 @@
     },
     "@orqastudio/claude-code-connector": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-04-01T06:40:19.864Z",
+      "installed_at": "2026-04-01T17:05:42.672Z",
       "manifestHash": "6edbad77eddc823b44e028fe4a607187093215ea437039e2787c3835a0039d6a",
       "files": {
         ".orqa/documentation/connector/KNOW-03421ec0.md": {
@@ -875,13 +875,13 @@
     },
     "@orqastudio/plugin-claude": {
       "version": "0.1.0-dev",
-      "installed_at": "2026-04-01T06:40:31.095Z",
+      "installed_at": "2026-04-01T17:05:52.216Z",
       "manifestHash": "392e49602d7a78588e7807d7a19c3960cd528b5835df8fcd1f984430098f27ff",
       "files": {}
     },
     "@orqastudio/plugin-plugin-dev": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:19.877Z",
+      "installed_at": "2026-04-01T17:05:42.702Z",
       "manifestHash": "59fbc3158433bb812b87be1183e64b4498a1f5f6d21224d1777e3f3d2fe93653",
       "files": {
         ".claude/agents/AGENT-ce86fb50.md": {
@@ -904,13 +904,13 @@
     },
     "@orqastudio/plugin-agile-discovery": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.255Z",
+      "installed_at": "2026-04-01T17:05:48.427Z",
       "manifestHash": "fba3d055c9a7861b768f11d5ab2e0a5a076ed953ec414dac6c386eaea4f7ac75",
       "files": {}
     },
     "@orqastudio/plugin-agile-planning": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.260Z",
+      "installed_at": "2026-04-01T17:05:48.436Z",
       "manifestHash": "6e4f205975d1c68398a73cc26bbabd777ace67df8584bbc8e4ff629f539aa9bc",
       "files": {
         ".orqa/workflows/planning-decision.workflow.yaml": {
@@ -937,7 +937,7 @@
     },
     "@orqastudio/plugin-agile-review": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.262Z",
+      "installed_at": "2026-04-01T17:05:48.438Z",
       "manifestHash": "1b0fb9285bbaff9937a60b726b762bae03aad3e309a463d9605007ea93bc66ce",
       "files": {
         ".orqa/workflows/review.contribution.workflow.yaml": {
@@ -948,7 +948,7 @@
     },
     "@orqastudio/plugin-agile-documentation": {
       "version": "0.1.4-dev",
-      "installed_at": "2026-04-01T06:40:27.257Z",
+      "installed_at": "2026-04-01T17:05:48.429Z",
       "manifestHash": "c9184298c73ffcc7d8b2d9a2a76e188a10b606c79294dc41a2b8f0e4902b0474",
       "files": {
         ".orqa/workflows/documentation.contribution.workflow.yaml": {

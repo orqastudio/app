@@ -3,7 +3,7 @@
 //! Handles CLI mode flags (`--mcp`, `--lsp`) before launching the Tauri GUI.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use orqa_engine::ports::resolve_daemon_port;
+use orqa_engine_types::ports::resolve_daemon_port;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();

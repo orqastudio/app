@@ -5,4 +5,4 @@
 // defined there and re-exported here so app code can import from the
 // familiar `domain::paths` path without change.
 
-pub use orqa_engine::paths::*;
+pub use orqa_engine_types::paths::*;

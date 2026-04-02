@@ -25,6 +25,7 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
+    "@orqastudio/constants": "0.1.0-dev",
     "@orqastudio/svelte-components": "0.1.4-dev",
     "@orqastudio/types": "0.1.4-dev",
     "@orqastudio/sdk": "0.1.4-dev",

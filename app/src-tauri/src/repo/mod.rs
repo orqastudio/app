@@ -1,15 +1,9 @@
-/// Repository: CRUD for enforcement rule cache.
-pub mod enforcement_rules_repo;
 /// Repository: persistence for artifact graph health snapshots.
 pub mod health_snapshot_repo;
-/// Repository: CRUD for lessons (user-defined behavioral overrides).
-pub mod lesson_repo;
 /// Repository: CRUD for conversation messages.
 pub mod message_repo;
 /// Repository: CRUD for projects (open paths and metadata).
 pub mod project_repo;
-/// Repository: per-project settings read/write backed by SQLite.
-pub mod project_settings_repo;
 /// Repository: CRUD for conversation sessions.
 pub mod session_repo;
 /// Repository: key-value application settings store.

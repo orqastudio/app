@@ -8,9 +8,10 @@
      scrolls away from the bottom. The scroll-lock toggle button restores it. -->
 <script lang="ts">
 	import { onMount, onDestroy, tick } from "svelte";
+	import { Button } from "@orqastudio/svelte-components/pure";
 	import {
 		events,
-		filteredEvents,
+		filteredEvents as getFilteredEvents,
 		connectionStatus,
 		totalReceived,
 		scrollLock,
@@ -20,6 +21,8 @@
 		historyLoading,
 		historyExhausted,
 	} from "../../stores/log-store.svelte.js";
+
+	const filteredEvents = $derived(getFilteredEvents());
 	import LogRow from "./LogRow.svelte";
 	import LogExport from "./LogExport.svelte";
 
@@ -170,38 +173,42 @@
 </script>
 
 <!-- Outer container fills the height of the Logs tab content area. -->
-<div class="flex h-full flex-col overflow-hidden">
+<div class="log-table">
 	<!-- Column header bar: fixed, never scrolls. -->
 	<div
-		class="border-b border-border bg-surface-base flex shrink-0 items-center px-2 text-[10px] font-medium uppercase tracking-wider text-content-muted"
+		class="log-table__header"
 		style="height: 24px;"
 		role="row"
 	>
 		{#each COLUMNS as col (col.label)}
 			{#if col.width !== null}
-				<span class="shrink-0" style="width: {col.width}px;">{col.label}</span>
+				<span class="log-table__col-label log-table__col-label--fixed" style="width: {col.width}px;">{col.label}</span>
 			{:else}
-				<span class="min-w-0 flex-1">{col.label}</span>
+				<span class="log-table__col-label log-table__col-label--flex">{col.label}</span>
 			{/if}
 		{/each}
 
 		<!-- Toolbar: scroll-lock toggle, export, and clear buttons pinned to the right. -->
-		<div class="ml-auto flex shrink-0 items-center gap-1">
+		<div class="log-table__toolbar">
 			{#if !scrollLock.enabled}
-				<button
-					class="rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] text-blue-400 transition-colors hover:bg-blue-500/30"
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					class="log-table__follow-btn"
 					onclick={enableScrollLock}
 				>
 					Follow
-				</button>
+				</Button>
 			{/if}
 			<LogExport />
-			<button
-				class="rounded px-1.5 py-0.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base"
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="log-table__clear-btn"
 				onclick={clearEvents}
 			>
 				Clear
-			</button>
+			</Button>
 		</div>
 	</div>
 
@@ -210,14 +217,16 @@
 	     scrolling to the top (which would disable scroll-lock). Hidden when all
 	     available history has been loaded. -->
 	{#if !historyExhausted.value}
-		<div class="border-b border-border bg-surface-base flex shrink-0 items-center justify-center px-2" style="height: 24px;">
-			<button
-				class="rounded px-2 py-0.5 text-[10px] text-content-muted transition-colors hover:bg-surface-raised hover:text-content-base disabled:cursor-not-allowed disabled:opacity-40"
+		<div class="log-table__load-earlier" style="height: 24px;">
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="log-table__load-btn"
 				disabled={historyLoading.value}
 				onclick={loadHistory}
 			>
 				{historyLoading.value ? "Loading…" : "Load earlier"}
-			</button>
+			</Button>
 		</div>
 	{/if}
 
@@ -225,7 +234,7 @@
 	     screen readers understand the virtualised row structure. -->
 	<div
 		bind:this={viewport}
-		class="relative flex-1 overflow-x-hidden overflow-y-auto"
+		class="log-table__viewport"
 		role="table"
 		aria-label="Log events"
 		aria-rowcount={filteredEvents.length}
@@ -234,7 +243,7 @@
 		<!-- Spacer div: its height equals the total height of all filtered rows so
 		     the scrollbar reflects the full filtered dataset. Rows are absolutely
 		     positioned inside it via their pre-computed offsets. -->
-		<div class="relative w-full" style="height: {totalHeight}px;">
+		<div class="log-table__spacer" style="height: {totalHeight}px;">
 			{#each visibleEvents as ev (ev.id)}
 				<LogRow
 					event={ev}
@@ -245,7 +254,7 @@
 
 		<!-- Empty state: shown when there are no matching events. -->
 		{#if filteredEvents.length === 0}
-			<div class="flex h-full items-center justify-center text-sm text-content-muted">
+			<div class="log-table__empty">
 				{#if events.length === 0}
 					{#if connectionStatus.value === "connecting"}
 						Waiting for events…
@@ -263,7 +272,7 @@
 
 	<!-- Status strip: event count and auto-scroll indicator. -->
 	<div
-		class="border-t border-border bg-surface-base flex shrink-0 items-center gap-3 px-2 text-[10px] text-content-muted"
+		class="log-table__status"
 		style="height: 20px;"
 	>
 		{#if filteredEvents.length !== events.length}
@@ -272,7 +281,125 @@
 			<span>{totalReceived.value} events received</span>
 		{/if}
 		{#if scrollLock.enabled}
-			<span class="text-blue-400">Auto-scroll on</span>
+			<span class="log-table__autoscroll">Auto-scroll on</span>
 		{/if}
 	</div>
 </div>
+
+<style>
+	/* Outer wrapper: fills the Logs tab without overflow. */
+	.log-table {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	/* Fixed column header row. */
+	.log-table__header {
+		border-bottom: 1px solid var(--color-border);
+		background-color: var(--color-surface-base);
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		padding: 0 var(--spacing-2);
+		font-size: 10px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-content-muted);
+	}
+
+	/* Fixed-width column label. */
+	.log-table__col-label--fixed {
+		flex-shrink: 0;
+	}
+
+	/* Flex-fill column label (Message). */
+	.log-table__col-label--flex {
+		min-width: 0;
+		flex: 1;
+	}
+
+	/* Toolbar: right-aligned group of compact action buttons. */
+	.log-table__toolbar {
+		margin-left: auto;
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		gap: var(--spacing-1);
+	}
+
+	/* Compact 20px height override for toolbar buttons. */
+	:global(.log-table__follow-btn),
+	:global(.log-table__clear-btn),
+	:global(.log-table__load-btn) {
+		height: 20px !important;
+		width: auto !important;
+		padding: 0 var(--spacing-1-5) !important;
+		font-size: 10px !important;
+	}
+
+	/* Follow button: uses a blue tint to indicate active state. */
+	:global(.log-table__follow-btn) {
+		background-color: color-mix(in srgb, #3b82f6 20%, transparent) !important;
+		color: #60a5fa !important;
+	}
+
+	:global(.log-table__follow-btn:hover) {
+		background-color: color-mix(in srgb, #3b82f6 30%, transparent) !important;
+	}
+
+	/* Load-earlier bar. */
+	.log-table__load-earlier {
+		border-bottom: 1px solid var(--color-border);
+		background-color: var(--color-surface-base);
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		padding: 0 var(--spacing-2);
+	}
+
+	/* Scrollable viewport area. */
+	.log-table__viewport {
+		position: relative;
+		flex: 1;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	/* Spacer that carries the full virtual height. */
+	.log-table__spacer {
+		position: relative;
+		width: 100%;
+	}
+
+	/* Empty-state message centred in the viewport. */
+	.log-table__empty {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		font-size: var(--text-sm);
+		color: var(--color-content-muted);
+	}
+
+	/* Bottom status strip. */
+	.log-table__status {
+		border-top: 1px solid var(--color-border);
+		background-color: var(--color-surface-base);
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		gap: var(--spacing-3);
+		padding: 0 var(--spacing-2);
+		font-size: 10px;
+		color: var(--color-content-muted);
+	}
+
+	/* Auto-scroll indicator: blue accent text. */
+	.log-table__autoscroll {
+		color: #60a5fa;
+	}
+</style>

@@ -6,9 +6,6 @@ description: "Reasoning protocol for Reviewer agents. Provides a thinking framew
 status: active
 created: 2026-03-21
 updated: 2026-03-21
-relationships:
-  - target: AGENT-8e58cd87
-    type: employed-by
 ---
 
 ## Reviewer Reasoning Protocol

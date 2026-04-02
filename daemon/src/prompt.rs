@@ -154,7 +154,7 @@ pub struct PromptResponse {
 /// attempted in order. The prompt builder is called regardless of which tier
 /// succeeds — classification only determines the workflow stage passed to the
 /// builder.
-pub async fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptResponse> {
+pub fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptResponse> {
     let start = Instant::now();
     let project_path = Path::new(&req.project_path);
 

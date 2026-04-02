@@ -222,6 +222,7 @@ fn scan_type_nodes(
 /// Scan a hooks directory: `.sh` and `.md` files (excluding `README.md`) each become a node.
 ///
 /// Shell scripts have no YAML frontmatter, so their label is derived from the filename.
+#[allow(clippy::too_many_lines)]
 fn scan_hooks_nodes(type_dir: &Path, type_path: &str) -> Result<Vec<DocNode>, EngineError> {
     let mut nodes: Vec<DocNode> = Vec::new();
 

@@ -197,7 +197,7 @@ pub struct KnowledgeResponse {
 /// (declared registry lookup) and Layer 2 (ONNX semantic search), deduplicates,
 /// and returns the combined results. Layer 2 degrades gracefully when the ONNX
 /// model is absent.
-pub async fn knowledge_handler(
+pub fn knowledge_handler(
     State(state): State<HealthState>,
     Json(req): Json<KnowledgeRequest>,
 ) -> Json<KnowledgeResponse> {

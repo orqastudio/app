@@ -1,12 +1,12 @@
-//! orqa-streaming: Sidecar streaming module for the OrqaStudio engine.
+//! orqa-streaming: Sidecar protocol and pure streaming logic for OrqaStudio.
 //!
-//! Contains the sidecar protocol types (SidecarRequest, SidecarResponse) and
-//! the pure streaming logic that can be tested without a Tauri context:
-//! response translation, terminal detection, accumulation, and tool handlers
-//! that only use std operations.
+//! Contains the sidecar NDJSON protocol types (SidecarRequest, SidecarResponse)
+//! and the pure streaming functions that have no Tauri dependency: response
+//! translation, terminal detection, accumulation, and tool handler implementations
+//! using only std operations.
 //!
-//! The Tauri-specific stream loop driver (holding AppState and Channel<T>)
-//! remains in the app layer and calls into this module for all business logic.
+//! The daemon imports this crate to run the stream loop in-process and expose
+//! SSE endpoints. The Tauri app is a pure HTTP/SSE consumer of those endpoints.
 
 /// Sidecar NDJSON request/response protocol types.
 pub mod protocol;
@@ -26,3 +26,6 @@ pub use tools::{
     tool_write_file, truncate_tool_output, DEFAULT_READ_FILE_MAX_LINES, MAX_TOOL_OUTPUT_CHARS,
     READ_ONLY_TOOLS,
 };
+
+// Re-export the search engine so callers that need search can source it from orqa-streaming.
+pub use orqa_search::{chunker, embedder, store, types, SearchEngine, SearchError};

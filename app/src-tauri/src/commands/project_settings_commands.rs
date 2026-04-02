@@ -1,31 +1,38 @@
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
 use std::path::Path;
 
-use crate::domain::paths;
-use crate::domain::project_scanner::{self, ProjectScanResult};
-use crate::domain::project_settings::ProjectSettings;
-use crate::error::OrqaError;
-use crate::repo::project_settings_repo;
+use serde_json::Value;
+use tauri::State;
 
-/// Read project settings from the `.orqa/project.json` file.
+use crate::domain::paths;
+use crate::error::OrqaError;
+use crate::state::AppState;
+
+/// Read project settings from the daemon.
 ///
-/// Returns `None` if the settings file does not exist yet.
+/// Delegates to the daemon `GET /projects/settings` endpoint, which reads
+/// `project.json` for the active project. Returns `None` when no project.json
+/// exists (empty object returned by daemon is mapped to None).
 #[tauri::command]
-pub fn project_settings_read(path: String) -> Result<Option<ProjectSettings>, OrqaError> {
-    project_settings_repo::read(&path)
+pub async fn project_settings_read(state: State<'_, AppState>) -> Result<Option<Value>, OrqaError> {
+    let value = state.daemon.client.get_project_settings().await?;
+    // Daemon returns an empty object when no project.json exists.
+    if value.as_object().is_some_and(serde_json::Map::is_empty) {
+        Ok(None)
+    } else {
+        Ok(Some(value))
+    }
 }
 
-/// Write project settings to the `.orqa/project.json` file.
+/// Write project settings via the daemon.
 ///
-/// Creates the `.orqa/` directory if it does not exist.
-/// Returns the written settings for confirmation.
+/// Delegates to `PUT /projects/settings`. Returns the written settings value.
 #[tauri::command]
-pub fn project_settings_write(
-    path: String,
-    settings: ProjectSettings,
-) -> Result<ProjectSettings, OrqaError> {
-    project_settings_repo::write(&path, &settings)?;
-    Ok(settings)
+pub async fn project_settings_write(
+    state: State<'_, AppState>,
+    settings: Value,
+) -> Result<Value, OrqaError> {
+    state.daemon.client.write_project_settings(&settings).await
 }
 
 /// Upload a project icon by copying an image file to `.orqa/icon.{ext}`.
@@ -110,71 +117,19 @@ pub fn project_icon_read(project_path: String, icon_filename: String) -> Result<
     Ok(format!("data:{mime};base64,{encoded}"))
 }
 
-/// Scan a project directory for language, framework, and governance info.
+/// Scan the active project directory via the daemon.
 ///
-/// Uses the provided excluded paths or falls back to standard defaults.
+/// Delegates to `POST /projects/scan`, which detects languages, frameworks,
+/// and governance artifact counts. Returns the scan result as a JSON value.
 #[tauri::command]
-pub fn project_scan(
-    path: String,
-    excluded_paths: Option<Vec<String>>,
-) -> Result<ProjectScanResult, OrqaError> {
-    let defaults = vec![
-        "node_modules".to_owned(),
-        ".git".to_owned(),
-        "target".to_owned(),
-        "dist".to_owned(),
-        "build".to_owned(),
-    ];
-    let paths = excluded_paths.unwrap_or(defaults);
-    Ok(project_scanner::scan_project(&path, &paths)?)
+pub async fn project_scan(state: State<'_, AppState>) -> Result<Value, OrqaError> {
+    state.daemon.client.scan_project().await
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::project_settings::ProjectSettings;
-    use crate::repo::project_settings_repo;
-
-    #[test]
-    fn read_nonexistent_project_returns_none() {
-        let result = project_settings_repo::read("/nonexistent/project/path");
-        assert!(result.is_ok());
-        assert!(result.expect("should be Ok").is_none());
-    }
-
-    #[test]
-    fn write_and_read_settings_round_trip() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().to_str().expect("path");
-        let settings = ProjectSettings {
-            name: "test-project".to_owned(),
-            dogfood: false,
-            description: Some("A test".to_owned()),
-            default_model: "auto".to_owned(),
-            excluded_paths: vec!["node_modules".to_owned()],
-            stack: None,
-            governance: None,
-            icon: None,
-            show_thinking: false,
-            custom_system_prompt: None,
-            artifacts: vec![],
-            artifact_links: crate::domain::project_settings::ArtifactLinksConfig::default(),
-            statuses: vec![],
-            delivery: Default::default(),
-            relationships: vec![],
-            plugins: std::collections::HashMap::new(),
-        };
-
-        project_settings_repo::write(path, &settings).expect("write");
-        let loaded = project_settings_repo::read(path)
-            .expect("read")
-            .expect("should exist");
-        assert_eq!(loaded.name, "test-project");
-        assert_eq!(loaded.description, Some("A test".to_owned()));
-    }
-
     #[test]
     fn icon_upload_validates_missing_source() {
-        // The command checks source.exists() — a missing file returns NotFound
         let source = std::path::Path::new("/nonexistent/icon.png");
         assert!(!source.exists());
     }
@@ -193,41 +148,5 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let icon_path = dir.path().join(".orqa").join("icon.png");
         assert!(!icon_path.exists());
-    }
-
-    #[test]
-    fn project_scan_on_empty_dir() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let path = dir.path().to_str().expect("path");
-        let result =
-            crate::domain::project_scanner::scan_project(path, &["node_modules".to_owned()]);
-        assert!(result.is_ok());
-        let scan = result.expect("scan");
-        assert!(scan.stack.languages.is_empty());
-        assert!(scan.stack.frameworks.is_empty());
-    }
-
-    #[test]
-    fn project_scan_detects_rust() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        // Scanner detects languages by file extension, so we need a .rs file
-        let src_dir = dir.path().join("src");
-        std::fs::create_dir_all(&src_dir).expect("create src dir");
-        std::fs::write(src_dir.join("main.rs"), "fn main() {}\n").expect("write rs");
-        let path = dir.path().to_str().expect("path");
-        let result =
-            crate::domain::project_scanner::scan_project(path, &["node_modules".to_owned()]);
-        assert!(result.is_ok());
-        let scan = result.expect("scan");
-        assert!(scan.stack.languages.contains(&"rust".to_owned()));
-    }
-
-    #[test]
-    fn project_scan_nonexistent_dir_returns_error() {
-        let result = crate::domain::project_scanner::scan_project(
-            "/nonexistent/dir",
-            &["node_modules".to_owned()],
-        );
-        assert!(result.is_err());
     }
 }

@@ -48,29 +48,6 @@
 //!   --context '{"tool_name":"Bash","tool_input":{"command":"git push --force"}}'
 //! ```
 //!
-//! ## Daemon
-//!
-//! ```text
-//! orqa-validation daemon <project-path> [--port <port>]
-//! ```
-//!
-//! Starts an HTTP server that exposes all validation functionality as JSON API
-//! endpoints. The artifact graph, rules, and plugin schemas are loaded once on
-//! startup and held in memory for low-latency calls from hooks, LSP, MCP, and CLI.
-//!
-//! Default port: 10100 (reads `ORQA_PORT_BASE` directly). Writes a PID file to `<project-path>/.state/daemon.pid`.
-//!
-//! Endpoints:
-//!   GET  /health                — liveness + artifact counts
-//!   POST /parse                 — parse a single artifact file
-//!   POST /query                 — query the artifact graph
-//!   POST /hook                  — evaluate hook lifecycle rules
-//!   POST /content/agent         — load agent preamble
-//!   POST /content/knowledge     — load knowledge artifact
-//!   POST /content/behavioral    — extract behavioral messages
-//!   POST /validate              — full graph validation report
-//!   POST /reload                — rebuild all state from disk
-//!
 //! # Exit codes
 //!
 //! | Code | Meaning |
@@ -82,12 +59,10 @@
 use std::path::PathBuf;
 use std::process;
 
-use orqa_engine_types::ports::resolve_daemon_port;
 use orqa_validation::{
     auto_fix, compute_health,
     content::{extract_behavioral_messages, find_agent, find_knowledge},
     context::build_validation_context_complete,
-    daemon::run_daemon,
     evaluate_hook,
     graph::{build_artifact_graph, load_project_config},
     parse::{parse_artifact, query_artifacts},
@@ -121,8 +96,8 @@ fn main() {
 
     if args.len() < 2 {
         eprintln!(
-            "Usage:\n  {} <project-path> [--fix]\n  {} parse <file> [--project <project-path>]\n  {} query <project-path> [--type <type>] [--status <status>] [--id <id>]\n  {} hook <project-path> --event <event> --context '<json>'\n  {} daemon <project-path> [--port <port>]",
-            args[0], args[0], args[0], args[0], args[0]
+            "Usage:\n  {} <project-path> [--fix]\n  {} parse <file> [--project <project-path>]\n  {} query <project-path> [--type <type>] [--status <status>] [--id <id>]\n  {} hook <project-path> --event <event> --context '<json>'",
+            args[0], args[0], args[0], args[0]
         );
         process::exit(2);
     }
@@ -132,7 +107,6 @@ fn main() {
         "query" => run_query(&args),
         "hook" => run_hook(&args),
         "content" => run_content(&args),
-        "daemon" => run_daemon_cmd(&args),
         _ => run_validate(&args),
     }
 }
@@ -549,43 +523,6 @@ fn run_content_behavioral(args: &[String]) {
         }
         Err(e) => {
             eprintln!("Error extracting behavioral messages: {e}");
-            process::exit(2);
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// Daemon subcommand
-// ---------------------------------------------------------------------------
-
-fn run_daemon_cmd(args: &[String]) {
-    // orqa-validation daemon <project-path> [--port <port>]
-    if args.len() < 3 {
-        eprintln!("Usage: {} daemon <project-path> [--port <port>]", args[0]);
-        process::exit(2);
-    }
-
-    let project_path = PathBuf::from(&args[2]);
-
-    if !project_path.exists() {
-        eprintln!(
-            "Error: project path does not exist: {}",
-            project_path.display()
-        );
-        process::exit(2);
-    }
-
-    // Daemon port is ORQA_PORT_BASE with no offset (default 10100). Uses
-    // orqa_engine_types::ports as single source of truth.
-    let default_port: u16 = resolve_daemon_port();
-    let port: u16 = find_flag_value(args, "--port")
-        .and_then(|s| s.parse().ok())
-        .unwrap_or(default_port);
-
-    match run_daemon(&project_path, port) {
-        Ok(()) => process::exit(0),
-        Err(e) => {
-            eprintln!("Daemon error: {e}");
             process::exit(2);
         }
     }

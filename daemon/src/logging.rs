@@ -263,19 +263,26 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     let (non_blocking_file, file_guard) = tracing_appender::non_blocking(file_appender);
 
     // JSON layer — always active, regardless of TTY state.
-    let json_layer = tracing_subscriber::fmt::layer()
-        .json()
-        .with_writer(non_blocking_file)
-        .with_filter(build_display_filter(&effective_level));
+    // Boxed to erase the deeply-nested generic type and prevent Windows stack
+    // overflow during tracing_subscriber initialisation in debug builds.
+    let json_layer: Box<dyn Layer<_> + Send + Sync> =
+        tracing_subscriber::fmt::layer()
+            .json()
+            .with_writer(non_blocking_file)
+            .with_filter(build_display_filter(&effective_level))
+            .boxed();
 
     // Console layer — human-readable, coloured, only when stdout is a TTY.
     // This avoids garbled ANSI codes in CI/service logs.
-    let console_layer = if is_tty() {
-        let layer = tracing_subscriber::fmt::layer()
-            .with_ansi(true)
-            .with_target(true)
-            .with_filter(build_display_filter(&effective_level));
-        Some(layer)
+    // Boxed for the same reason as the JSON layer.
+    let console_layer: Option<Box<dyn Layer<_> + Send + Sync>> = if is_tty() {
+        Some(
+            tracing_subscriber::fmt::layer()
+                .with_ansi(true)
+                .with_target(true)
+                .with_filter(build_display_filter(&effective_level))
+                .boxed(),
+        )
     } else {
         None
     };
@@ -283,9 +290,11 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     // Event bus layer — converts every tracing event to a `LogEvent` and
     // publishes it.  Uses LevelFilter::TRACE so all events reach the bus;
     // display-side filtering is handled by consumers of the bus.
-    let bus_layer = bus.map(|b| {
+    // Boxed for the same reason as the other layers.
+    let bus_layer: Option<Box<dyn Layer<_> + Send + Sync>> = bus.map(|b| {
         EventBusLayer::new(b)
             .with_filter(tracing_subscriber::filter::LevelFilter::TRACE)
+            .boxed()
     });
 
     tracing_subscriber::registry()

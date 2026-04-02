@@ -13,8 +13,6 @@ user-invocable: true
 relationships:
   - target: DOC-bad8e26f
     type: synchronised-with
-  - target: AGENT-d1be3776
-    type: employed-by
 ---
 
 # Plugin Setup

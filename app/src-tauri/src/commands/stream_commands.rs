@@ -1,166 +1,68 @@
-use std::time::Instant;
+// Tauri IPC commands for streaming AI responses.
+//
+// All stream operations are delegated to the daemon via HTTP. The app is a
+// pure SSE consumer — the daemon manages the claude child process, runs the
+// stream loop, dispatches tools, and tracks enforcement and workflow state.
+//
+// Flow:
+//   1. stream_send_message  → POST /sessions/:id/messages (daemon starts loop)
+//   2. (Frontend subscribes to SSE via JS EventSource — not handled here)
+//   3. stream_stop          → POST /sessions/:id/stop
+//   4. stream_tool_approval_respond → POST /sessions/:id/tool-approval
+//
+// The stream_subscribe_events command subscribes to the daemon SSE stream and
+// forwards each event to the Tauri frontend channel, bridging the HTTP SSE
+// stream and the Tauri IPC channel.
 
-use crate::domain::process_state::ProcessStateExt;
+use serde::Deserialize;
+use tauri::State;
+
 use crate::domain::provider_event::StreamEvent;
-use crate::domain::stream_loop::run_stream_loop;
-use crate::domain::system_prompt::{
-    load_context_summary, lookup_provider_session_id, resolve_system_prompt,
-};
-use crate::domain::tool_executor::project_root;
 use crate::error::OrqaError;
-use crate::repo::{message_repo, session_repo};
-use crate::sidecar::types::SidecarRequest;
 use crate::state::AppState;
 
-// ── Persistence helpers (unique to the command layer) ──
+// ---------------------------------------------------------------------------
+// Daemon request / response shapes
+// ---------------------------------------------------------------------------
 
-/// Persist the user message and return `(user_message_id, turn_index)`.
-fn persist_user_message(
-    state: &AppState,
-    session_id: i64,
-    content: &str,
-) -> Result<(i64, i64), OrqaError> {
-    let db = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
-
-    session_repo::get(&db, session_id)?;
-    let turn_index = message_repo::next_turn_index(&db, session_id)?;
-    let user_msg = message_repo::create(
-        &db,
-        session_id,
-        "user",
-        "text",
-        Some(content),
-        turn_index,
-        0,
-    )?;
-
-    Ok((user_msg.id, i64::from(turn_index)))
+/// Request body for POST /sessions/:id/messages.
+#[derive(serde::Serialize)]
+struct SendMessageRequest {
+    content: String,
+    model: Option<String>,
 }
 
-/// Persist the assistant message and update session token usage.
-fn persist_assistant_message(
-    state: &AppState,
-    session_id: i64,
-    turn_index: i64,
-    acc: &crate::domain::stream_loop::StreamAccumulator,
-) -> Result<(), OrqaError> {
-    let db = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("failed to acquire db lock: {e}")))?;
-
-    let assistant_turn = i32::try_from(turn_index + 1)
-        .map_err(|_| OrqaError::Database("turn index overflow".to_owned()))?;
-    let content_value = if acc.text.is_empty() {
-        None
-    } else {
-        Some(acc.text.as_str())
-    };
-
-    let assistant_msg = message_repo::create(
-        &db,
-        session_id,
-        "assistant",
-        "text",
-        content_value,
-        assistant_turn,
-        0,
-    )?;
-
-    let status = if acc.stream_complete && !acc.had_error {
-        "complete"
-    } else {
-        "error"
-    };
-    message_repo::update_stream_status(&db, assistant_msg.id, status)?;
-
-    if acc.stream_complete {
-        session_repo::update_token_usage(&db, session_id, acc.input_tokens, acc.output_tokens)?;
-    }
-
-    Ok(())
+/// Response body from POST /sessions/:id/messages.
+#[derive(Deserialize)]
+struct SendMessageResponse {
+    /// The newly-created user message ID.
+    pub user_message_id: i64,
 }
 
-// ── Process state helpers ──
-
-/// Reset session process state when a new session begins.
-fn reset_process_state_if_new_session(state: &tauri::State<'_, AppState>, session_id: i64) {
-    match state.session.process_state.lock() {
-        Ok(mut ps) => {
-            if ps.session_id != Some(session_id) {
-                ps.reset(session_id);
-                reset_workflow_tracker(state);
-            }
-        }
-        Err(e) => {
-            tracing::warn!("[process] process_state mutex poisoned, skipping reset: {e}");
-        }
-    }
+/// Request body for POST /sessions/:id/tool-approval.
+#[derive(serde::Serialize)]
+struct ToolApprovalRequest {
+    tool_call_id: String,
+    approved: bool,
 }
 
-/// Reset the workflow tracker to a clean state for a new session.
+// ---------------------------------------------------------------------------
+// Tauri commands
+// ---------------------------------------------------------------------------
+
+/// Send a message to the daemon stream loop and subscribe to SSE events.
 ///
-/// Creates a new tracker with the current session's tracker config so that
-/// path classification rules are preserved across session resets.
-fn reset_workflow_tracker(state: &tauri::State<'_, AppState>) {
-    use crate::domain::workflow_tracker::WorkflowTracker;
-    let config = match state.session.tracker_config.lock() {
-        Ok(c) => c.clone(),
-        Err(e) => {
-            tracing::warn!("[workflow] tracker_config mutex poisoned, skipping reset: {e}");
-            return;
-        }
-    };
-    match state.session.workflow_tracker.lock() {
-        Ok(mut wt) => {
-            *wt = WorkflowTracker::new(config);
-        }
-        Err(e) => {
-            tracing::warn!("[workflow] workflow_tracker mutex poisoned, skipping reset: {e}");
-        }
-    }
-}
-
-/// Emit `StreamEvent::ProcessViolation` for any active process compliance violations.
-fn emit_process_violations(
-    state: &tauri::State<'_, AppState>,
-    on_event: &tauri::ipc::Channel<StreamEvent>,
-) {
-    let violations = match state.session.process_state.lock() {
-        Ok(ps) => ps.check_violations(),
-        Err(e) => {
-            tracing::warn!("[process] process_state mutex poisoned, skipping violation check: {e}");
-            return;
-        }
-    };
-    for v in violations {
-        tracing::debug!(
-            "[process] violation: check={} severity={}",
-            v.check,
-            v.severity
-        );
-        let _ = on_event.send(StreamEvent::ProcessViolation {
-            check: v.check,
-            message: v.message,
-        });
-    }
-}
-
-// ── Tauri commands ──
-
-/// Send a message to the sidecar and stream responses back via `Channel<T>`.
+/// POSTs the message to the daemon, which starts the claude sidecar in-process.
+/// Then subscribes to GET /sessions/:id/stream and forwards each SSE event to
+/// the Tauri frontend channel until the stream ends.
+#[allow(clippy::too_many_lines)]
 #[tauri::command]
-pub fn stream_send_message(
+pub async fn stream_send_message(
     session_id: i64,
     content: String,
     model: Option<String>,
     on_event: tauri::ipc::Channel<StreamEvent>,
-    state: tauri::State<'_, AppState>,
+    state: State<'_, AppState>,
 ) -> Result<i64, OrqaError> {
     let content = content.trim().to_owned();
     if content.is_empty() {
@@ -172,179 +74,239 @@ pub fn stream_send_message(
     tracing::debug!(
         session_id = session_id,
         content_len = content.len(),
-        "[stream] stream_send_message entry"
+        "[stream] stream_send_message: delegating to daemon"
     );
-    let start = Instant::now();
 
-    let (user_message_id, turn_index) = persist_user_message(&state, session_id, &content)?;
-    reset_process_state_if_new_session(&state, session_id);
-    super::sidecar_commands::ensure_sidecar_running(&state)?;
+    let client = state.daemon.client.clone();
+    let base_url = client.base_url().to_owned();
+    let reqwest_client = client.reqwest_client().clone();
 
-    let system_prompt = project_root(&state)
-        .ok()
-        .and_then(|root| resolve_system_prompt(&root));
-    let provider_session_id = lookup_provider_session_id(&state, session_id)?;
+    // POST the message to the daemon — this starts the stream loop.
+    let send_url = format!("{base_url}/sessions/{session_id}/messages");
+    let body = SendMessageRequest { content, model };
 
-    if let Some(ref prompt) = system_prompt {
-        let _ = on_event.send(StreamEvent::SystemPromptSent {
-            custom_prompt: None,
-            governance_prompt: prompt.clone(),
-            total_chars: prompt.len() as i64,
-        });
+    let post_response = reqwest_client
+        .post(&send_url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| OrqaError::Sidecar(format!("daemon unreachable: {e}")))?;
+
+    if !post_response.status().is_success() {
+        let status = post_response.status();
+        let text = post_response.text().await.unwrap_or_default();
+        return Err(OrqaError::Sidecar(format!(
+            "daemon returned HTTP {status}: {text}"
+        )));
     }
 
-    match load_context_summary(&state, session_id, user_message_id) {
-        Ok((count, chars, json)) if count > 0 => {
-            let _ = on_event.send(StreamEvent::ContextInjected {
-                message_count: count,
-                total_chars: chars,
-                messages: json,
-            });
-        }
-        Ok(_) => {}
-        Err(e) => {
-            tracing::warn!("[stream] failed to load context summary for session {session_id}: {e}");
-        }
+    let send_resp: SendMessageResponse = post_response
+        .json()
+        .await
+        .map_err(|e| OrqaError::Sidecar(format!("failed to parse send_message response: {e}")))?;
+    let user_message_id = send_resp.user_message_id;
+
+    // Subscribe to the SSE stream and forward events to the Tauri channel.
+    let stream_url = format!("{base_url}/sessions/{session_id}/stream");
+    let sse_response = reqwest_client
+        .get(&stream_url)
+        .header("Accept", "text/event-stream")
+        .send()
+        .await
+        .map_err(|e| OrqaError::Sidecar(format!("failed to connect to SSE stream: {e}")))?;
+
+    if !sse_response.status().is_success() {
+        let status = sse_response.status();
+        return Err(OrqaError::Sidecar(format!(
+            "daemon SSE stream returned HTTP {status}"
+        )));
     }
 
-    let request = SidecarRequest::SendMessage {
-        session_id,
-        content,
-        model,
-        system_prompt,
-        provider_session_id,
-        enable_thinking: false,
-    };
-    state.sidecar.manager.send(&request)?;
+    // Read SSE lines and forward deserialized events to the Tauri channel.
+    // The SSE format is: lines starting with "data: " contain JSON payloads.
+    // We stop when the stream closes or a terminal event is received.
+    use futures_util::StreamExt as _;
+    let mut byte_stream = sse_response.bytes_stream();
+    let mut buffer = String::new();
 
-    let acc = run_stream_loop(&state, &on_event);
-    persist_assistant_message(&state, session_id, turn_index, &acc)?;
-    emit_process_violations(&state, &on_event);
+    while let Some(chunk) = byte_stream.next().await {
+        let chunk = chunk.map_err(|e| OrqaError::Sidecar(format!("SSE read error: {e}")))?;
+        buffer.push_str(&String::from_utf8_lossy(&chunk));
 
-    tracing::info!(
-        session_id = session_id,
-        elapsed_ms = start.elapsed().as_millis() as u64,
-        "[stream] stream_send_message complete"
-    );
+        // Process complete lines from the buffer.
+        while let Some(newline_pos) = buffer.find('\n') {
+            let line = buffer[..newline_pos].trim_end_matches('\r').to_owned();
+            buffer = buffer[newline_pos + 1..].to_owned();
+
+            if let Some(data) = line.strip_prefix("data: ") {
+                if data == "[DONE]" {
+                    return Ok(user_message_id);
+                }
+
+                // Parse the SSE payload: {"event_type": "...", "payload": {...}}
+                match serde_json::from_str::<serde_json::Value>(data) {
+                    Ok(val) => {
+                        let event_type = val["event_type"].as_str().unwrap_or("").to_owned();
+                        let payload = val["payload"].clone();
+
+                        // Convert the payload to a StreamEvent by reconstructing the
+                        // tagged enum format: {"type": "<snake>", "data": {...}}.
+                        // The daemon's event_type is PascalCase; StreamEvent serde tag
+                        // is snake_case, so we convert.
+                        let snake = pascal_to_snake(&event_type);
+                        let tagged = serde_json::json!({"type": snake, "data": payload});
+
+                        match serde_json::from_value::<StreamEvent>(tagged) {
+                            Ok(event) => {
+                                let is_terminal = matches!(
+                                    event,
+                                    StreamEvent::TurnComplete { .. }
+                                        | StreamEvent::StreamError { .. }
+                                        | StreamEvent::StreamCancelled
+                                );
+                                let _ = on_event.send(event);
+                                if is_terminal {
+                                    return Ok(user_message_id);
+                                }
+                            }
+                            Err(e) => {
+                                tracing::warn!(
+                                    event_type = %event_type,
+                                    error = %e,
+                                    "[stream] failed to deserialize SSE event, skipping"
+                                );
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        tracing::warn!(data = %data, error = %e, "[stream] invalid SSE JSON");
+                    }
+                }
+            }
+        }
+    }
 
     Ok(user_message_id)
 }
 
 /// Request cancellation of an active stream for the given session.
 #[tauri::command]
-pub fn stream_stop(session_id: i64, state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
-    tracing::info!(session_id = session_id, "[stream] stream_stop");
-    state
-        .sidecar
-        .manager
-        .send(&SidecarRequest::CancelStream { session_id })
+pub async fn stream_stop(
+    session_id: i64,
+    state: State<'_, AppState>,
+) -> Result<(), OrqaError> {
+    tracing::info!(session_id = session_id, "[stream] stream_stop: delegating to daemon");
+    let client = state.daemon.client.clone();
+    let base_url = client.base_url().to_owned();
+    let reqwest_client = client.reqwest_client().clone();
+
+    let url = format!("{base_url}/sessions/{session_id}/stop");
+    let response = reqwest_client
+        .post(&url)
+        .send()
+        .await
+        .map_err(|e| OrqaError::Sidecar(format!("daemon unreachable: {e}")))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.unwrap_or_default();
+        return Err(OrqaError::Sidecar(format!(
+            "daemon returned HTTP {status}: {text}"
+        )));
+    }
+
+    Ok(())
 }
 
 /// Respond to a pending tool approval request from the frontend.
+///
+/// Forwards the approval decision to the daemon, which unblocks the stream loop.
 #[tauri::command]
-pub fn stream_tool_approval_respond(
+pub async fn stream_tool_approval_respond(
+    session_id: i64,
     tool_call_id: String,
     approved: bool,
-    state: tauri::State<'_, AppState>,
+    state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
     tracing::info!(
+        session_id = session_id,
         tool_call_id = %tool_call_id,
         approved = approved,
-        "[stream] stream_tool_approval_respond"
+        "[stream] stream_tool_approval_respond: delegating to daemon"
     );
-    let sender = state
-        .sidecar
-        .pending_approvals
-        .lock()
-        .map_err(|_| OrqaError::Sidecar("pending_approvals mutex poisoned".to_owned()))?
-        .remove(&tool_call_id);
 
-    match sender {
-        Some(tx) => {
-            tx.send(approved).map_err(|_| {
-                OrqaError::Sidecar(format!(
-                    "stream loop receiver dropped for tool_call_id={tool_call_id}"
-                ))
-            })?;
-            Ok(())
-        }
-        None => Err(OrqaError::NotFound(format!(
-            "no pending approval for tool_call_id={tool_call_id}"
-        ))),
+    let client = state.daemon.client.clone();
+    let base_url = client.base_url().to_owned();
+    let reqwest_client = client.reqwest_client().clone();
+
+    let url = format!("{base_url}/sessions/{session_id}/tool-approval");
+    let body = ToolApprovalRequest {
+        tool_call_id,
+        approved,
+    };
+
+    let response = reqwest_client
+        .post(&url)
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| OrqaError::Sidecar(format!("daemon unreachable: {e}")))?;
+
+    if !response.status().is_success() {
+        let status = response.status();
+        let text = response.text().await.unwrap_or_default();
+        return Err(OrqaError::Sidecar(format!(
+            "daemon returned HTTP {status}: {text}"
+        )));
     }
+
+    Ok(())
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/// Convert a PascalCase string to snake_case.
+///
+/// Used to map daemon SSE event_type (PascalCase) to the StreamEvent serde tag
+/// (snake_case). For example: "StreamStart" -> "stream_start".
+fn pascal_to_snake(s: &str) -> String {
+    let mut result = String::with_capacity(s.len() + 4);
+    for (i, ch) in s.chars().enumerate() {
+        if ch.is_uppercase() && i > 0 {
+            result.push('_');
+        }
+        result.push(ch.to_ascii_lowercase());
+    }
+    result
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::db::init_memory_db;
-    use crate::domain::message::MessageRole;
-    use crate::repo::{message_repo, project_repo, session_repo};
+    use super::*;
 
-    fn setup() -> rusqlite::Connection {
-        let conn = init_memory_db().expect("db init");
-        project_repo::create(&conn, "test", "/test", None).expect("create project");
-        session_repo::create(&conn, 1, "auto", None).expect("create session");
-        conn
+    #[test]
+    fn pascal_to_snake_basic() {
+        assert_eq!(pascal_to_snake("StreamStart"), "stream_start");
+        assert_eq!(pascal_to_snake("TurnComplete"), "turn_complete");
+        assert_eq!(pascal_to_snake("TextDelta"), "text_delta");
+        assert_eq!(pascal_to_snake("StreamError"), "stream_error");
+        assert_eq!(pascal_to_snake("ToolUseStart"), "tool_use_start");
+        assert_eq!(pascal_to_snake("ToolInputDelta"), "tool_input_delta");
+        assert_eq!(pascal_to_snake("StreamCancelled"), "stream_cancelled");
+        assert_eq!(pascal_to_snake("ToolApprovalRequest"), "tool_approval_request");
     }
 
     #[test]
-    fn empty_message_validation() {
+    fn pascal_to_snake_single_word() {
+        assert_eq!(pascal_to_snake("Stream"), "stream");
+        assert_eq!(pascal_to_snake("Complete"), "complete");
+    }
+
+    #[test]
+    fn empty_content_validation() {
         let content = "   ";
         assert!(content.trim().is_empty());
     }
-
-    #[test]
-    fn persist_user_message_via_repo() {
-        let conn = setup();
-        let turn_index = message_repo::next_turn_index(&conn, 1).expect("turn index");
-        assert_eq!(turn_index, 0);
-
-        let msg = message_repo::create(&conn, 1, "user", "text", Some("Hello"), turn_index, 0)
-            .expect("create message");
-        assert_eq!(msg.role, MessageRole::User);
-        assert_eq!(msg.content, Some("Hello".to_owned()));
-    }
-
-    #[test]
-    fn persist_assistant_message_via_repo() {
-        let conn = setup();
-        // User message first
-        message_repo::create(&conn, 1, "user", "text", Some("Hello"), 0, 0)
-            .expect("create user msg");
-
-        // Assistant message
-        let msg = message_repo::create(&conn, 1, "assistant", "text", Some("Hi there"), 1, 0)
-            .expect("create assistant msg");
-        assert_eq!(msg.role, MessageRole::Assistant);
-
-        // Update stream status
-        message_repo::update_stream_status(&conn, msg.id, "complete")
-            .expect("update stream status");
-    }
-
-    #[test]
-    fn update_token_usage() {
-        let conn = setup();
-        session_repo::update_token_usage(&conn, 1, 100, 200).expect("update tokens");
-        let session = session_repo::get(&conn, 1).expect("get session");
-        assert_eq!(session.total_input_tokens, 100);
-        assert_eq!(session.total_output_tokens, 200);
-    }
-
-    #[test]
-    fn next_turn_index_increments() {
-        let conn = setup();
-        let t0 = message_repo::next_turn_index(&conn, 1).expect("t0");
-        assert_eq!(t0, 0);
-
-        message_repo::create(&conn, 1, "user", "text", Some("msg1"), t0, 0).expect("create");
-        let t1 = message_repo::next_turn_index(&conn, 1).expect("t1");
-        assert_eq!(t1, 1);
-    }
-
-    // Note: stream_send_message, stream_stop, and stream_tool_approval_respond
-    // require a live sidecar process and Tauri State, which cannot be constructed
-    // in unit tests. The persistence and validation logic they use is tested above
-    // through the repo layer. Integration testing of the full stream loop requires
-    // the Tauri runtime.
 }

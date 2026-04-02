@@ -1,142 +1,76 @@
-use std::path::Path;
+// Tauri IPC commands for lesson management.
+//
+// All lesson operations are delegated to the daemon via HTTP. The daemon
+// owns lesson storage and the lesson filesystem. The app is a thin client.
+//
+// Endpoints used:
+//   GET /lessons                   — list all lessons
+//   POST /lessons                  — create a new lesson
+//   PUT /lessons/:id/recurrence    — increment lesson recurrence count
 
 use tauri::State;
 
-use crate::domain::lessons::{Lesson, NewLesson};
-use crate::domain::paths::ProjectPaths;
+use crate::daemon_client::NewLessonRequest;
 use crate::error::OrqaError;
-use crate::repo::lesson_repo;
 use crate::state::AppState;
+use orqa_engine_types::types::lesson::Lesson;
 
-/// List all lessons from the configured lessons directory in the active project.
-///
-/// Returns an empty list if the directory does not exist yet.
+/// List all lessons from the daemon.
 #[tauri::command]
-pub fn lessons_list(
-    project_path: String,
-    _state: State<'_, AppState>,
+pub async fn lessons_list(
+    _project_path: String,
+    state: State<'_, AppState>,
 ) -> Result<Vec<Lesson>, OrqaError> {
-    let paths = ProjectPaths::load(Path::new(&project_path))?;
-    lesson_repo::list(&paths)
+    state.daemon.client.list_lessons().await
 }
 
-/// Create a new lesson in the configured lessons directory.
-///
-/// Assigns the next available IMPL-NNN ID, writes the file, and returns the lesson.
+/// Create a new lesson via the daemon.
 #[tauri::command]
-pub fn lessons_create(
-    project_path: String,
+pub async fn lessons_create(
+    _project_path: String,
     title: String,
     category: String,
     body: String,
-    _state: State<'_, AppState>,
+    state: State<'_, AppState>,
 ) -> Result<Lesson, OrqaError> {
-    let new_lesson = NewLesson {
+    let req = NewLessonRequest {
         title,
         category,
         body,
     };
-    let paths = ProjectPaths::load(Path::new(&project_path))?;
-    lesson_repo::create(&paths, &new_lesson)
+    state.daemon.client.create_lesson(&req).await
 }
 
-/// Increment the recurrence count for a lesson and update its `updated` date.
-///
-/// Used by review agents when they see a pattern described by this lesson recur.
+/// Increment the recurrence count for a lesson via the daemon.
 #[tauri::command]
-pub fn lesson_increment_recurrence(
-    project_path: String,
+pub async fn lesson_increment_recurrence(
+    _project_path: String,
     id: String,
-    _state: State<'_, AppState>,
+    state: State<'_, AppState>,
 ) -> Result<Lesson, OrqaError> {
-    let paths = ProjectPaths::load(Path::new(&project_path))?;
-    lesson_repo::increment_recurrence(&paths, &id)
+    state.daemon.client.increment_lesson_recurrence(&id).await
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::lessons::NewLesson;
-    use crate::domain::paths::ProjectPaths;
-    use crate::repo::lesson_repo;
-    use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
+    use orqa_engine_types::types::lesson::Lesson;
 
-    fn make_project_paths(tmp: &tempfile::TempDir) -> ProjectPaths {
-        let settings = ProjectSettings {
-            name: "test".to_string(),
-            organisation: false,
-            projects: vec![],
-            artifacts: vec![ArtifactEntry::Group {
-                key: "process".to_string(),
-                label: None,
-                icon: None,
-                children: vec![ArtifactTypeConfig {
-                    key: "lessons".to_string(),
-                    label: None,
-                    icon: None,
-                    path: ".orqa/learning/lessons".to_string(),
-                }],
-            }],
-            statuses: vec![],
-            delivery: Default::default(),
-            relationships: vec![],
-            plugins: std::collections::HashMap::new(),
+    #[test]
+    fn lesson_serialization() {
+        let lesson = Lesson {
+            id: "IMPL-001".to_owned(),
+            title: "Test lesson".to_owned(),
+            category: "process".to_owned(),
+            recurrence: 1,
+            status: "active".to_owned(),
+            promoted_to: None,
+            created: "2026-04-01".to_owned(),
+            updated: "2026-04-01".to_owned(),
+            body: "## Body\nContent here.\n".to_owned(),
+            file_path: ".orqa/learning/lessons/IMPL-001.md".to_owned(),
         };
-        ProjectPaths::from_settings(tmp.path(), &settings)
-    }
-
-    #[test]
-    fn list_empty_project_returns_empty() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let paths = make_project_paths(&dir);
-        let lessons = lesson_repo::list(&paths).expect("should succeed");
-        assert!(lessons.is_empty());
-    }
-
-    #[test]
-    fn create_and_list_lessons() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let paths = make_project_paths(&dir);
-        let new = NewLesson {
-            title: "Test lesson".to_string(),
-            category: "process".to_string(),
-            body: "## Description\nContent here.\n".to_string(),
-        };
-        let lesson = lesson_repo::create(&paths, &new).expect("create");
-        assert_eq!(lesson.id, "IMPL-001");
-        assert_eq!(lesson.recurrence, 1);
-
-        let all = lesson_repo::list(&paths).expect("list");
-        assert_eq!(all.len(), 1);
-        assert_eq!(all[0].id, "IMPL-001");
-    }
-
-    #[test]
-    fn increment_recurrence_updates_count() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let paths = make_project_paths(&dir);
-        let new = NewLesson {
-            title: "Recurring pattern".to_string(),
-            category: "coding".to_string(),
-            body: "body".to_string(),
-        };
-        lesson_repo::create(&paths, &new).expect("create");
-        let updated = lesson_repo::increment_recurrence(&paths, "IMPL-001").expect("increment");
-        assert_eq!(updated.recurrence, 2);
-    }
-
-    #[test]
-    fn increment_nonexistent_returns_error() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let paths = make_project_paths(&dir);
-        let result = lesson_repo::increment_recurrence(&paths, "IMPL-999");
-        assert!(result.is_err());
-    }
-
-    #[test]
-    fn get_nonexistent_returns_not_found() {
-        let dir = tempfile::tempdir().expect("tempdir");
-        let paths = make_project_paths(&dir);
-        let result = lesson_repo::get(&paths, "IMPL-999");
-        assert!(result.is_err());
+        let json = serde_json::to_value(&lesson).expect("should serialize");
+        assert_eq!(json["id"], "IMPL-001");
+        assert_eq!(json["recurrence"], 1);
     }
 }

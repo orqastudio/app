@@ -1,32 +1,38 @@
+// Tauri IPC commands for git hook management.
+//
+// All hook operations are delegated to the daemon via HTTP. The daemon
+// owns the hook registry and dispatcher generation. The app is a thin client.
+//
+// Endpoints used:
+//   GET  /hooks          — list registered hooks from plugin manifests
+//   POST /hooks/generate — generate git hook dispatcher scripts
+
+use tauri::State;
+
+use crate::daemon_client::{HookGenerationResult, RegisteredHook};
 use crate::error::OrqaError;
-use crate::hooks::manager::{self, HookGenerationResult, RegisteredHook};
 use crate::state::AppState;
 
-use super::helpers::active_project_path;
-
 /// Get all registered hooks from plugin manifests.
-///
-/// Reads `plugin-hooks.json` from the active project root.
 #[tauri::command]
-pub fn get_registered_hooks(
-    state: tauri::State<'_, AppState>,
+pub async fn get_registered_hooks(
+    state: State<'_, AppState>,
 ) -> Result<Vec<RegisteredHook>, OrqaError> {
-    let project_path = active_project_path(&state)?;
-    Ok(manager::read_hook_registry(std::path::Path::new(
-        &project_path,
-    )))
+    state.daemon.client.list_hooks().await
 }
 
 /// Regenerate git hook dispatcher scripts from plugin registrations.
 ///
-/// Reads all hook registrations, groups by event, and writes thin
-/// dispatcher scripts to `.githooks/`. Existing non-generated hooks
-/// are preserved as `{event}.legacy`.
+/// Delegates to the daemon which reads hook registrations, groups by event,
+/// and writes dispatcher scripts to `.githooks/`.
 #[tauri::command]
-pub fn generate_hook_dispatchers(
-    state: tauri::State<'_, AppState>,
+pub async fn generate_hook_dispatchers(
+    state: State<'_, AppState>,
 ) -> Result<HookGenerationResult, OrqaError> {
-    let project_path = active_project_path(&state)?;
-    manager::generate_dispatchers(std::path::Path::new(&project_path))
-        .map_err(|e| OrqaError::FileSystem(format!("hook generation failed: {e}")))
+    state.daemon.client.generate_hook_dispatchers().await
+}
+
+#[cfg(test)]
+mod tests {
+    // Hook commands require daemon connectivity. Covered by integration tests.
 }

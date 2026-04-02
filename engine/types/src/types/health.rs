@@ -1,7 +1,12 @@
 //! Health snapshot domain types for the OrqaStudio engine.
 //!
 //! Defines structs representing point-in-time snapshots of artifact graph health metrics.
-//! Snapshots are persisted by the daemon and surfaced in the governance dashboard.
+//! Snapshots are persisted in the local SQLite database and surfaced in the governance dashboard.
+//!
+//! The model tracks the outlier-based pipeline health model:
+//! - Outliers: artifacts outside both delivery and learning pipelines, past their grace period.
+//! - Delivery connectivity: fraction of delivery artifacts connected to the main pipeline.
+//! - Learning connectivity: fraction of learning artifacts (lessons, rules) connected to decisions.
 
 use serde::{Deserialize, Serialize};
 
@@ -16,28 +21,26 @@ pub struct HealthSnapshot {
     pub node_count: i64,
     /// Total number of directed relationship edges.
     pub edge_count: i64,
-    /// Number of nodes with no edges in either direction.
-    pub orphan_count: i64,
     /// Number of relationship targets that do not exist in the graph.
     pub broken_ref_count: i64,
     /// Number of integrity check findings with severity Error.
     pub error_count: i64,
     /// Number of integrity check findings with severity Warning.
     pub warning_count: i64,
-    /// Largest connected component size / total nodes (0.0–1.0).
+    /// Fraction of nodes in the largest connected component (0.0–1.0).
     pub largest_component_ratio: f64,
-    /// Orphan count as a percentage of total nodes (0.0–100.0).
-    pub orphan_percentage: f64,
-    /// Average degree: (edges * 2) / nodes.
+    /// Average number of edges per node (in + out combined).
     pub avg_degree: f64,
-    /// Edge density: edges / (nodes * (nodes - 1)).
-    pub graph_density: f64,
-    /// Number of weakly-connected components.
-    pub component_count: i64,
-    /// Percentage of rules with at least one grounded-by → pillar relationship.
+    /// Percentage of non-doc nodes that trace to a pillar artifact (0.0–100.0).
     pub pillar_traceability: f64,
-    /// Ratio of typed relationship edges that have their inverse present.
-    pub bidirectionality_ratio: f64,
+    /// Number of active pipeline outliers past their type-specific grace period.
+    pub outlier_count: i64,
+    /// Percentage of outliers relative to total active nodes (0.0–100.0).
+    pub outlier_percentage: f64,
+    /// Fraction of delivery artifacts connected to the main delivery component (0.0–1.0).
+    pub delivery_connectivity: f64,
+    /// Fraction of learning artifacts connected to each other or to decisions (0.0–1.0).
+    pub learning_connectivity: f64,
     /// ISO-8601 timestamp when this snapshot was created.
     pub created_at: String,
 }
@@ -49,26 +52,24 @@ pub struct NewHealthSnapshot {
     pub node_count: i64,
     /// Total number of directed relationship edges.
     pub edge_count: i64,
-    /// Number of nodes with no edges in either direction.
-    pub orphan_count: i64,
     /// Number of relationship targets that do not exist in the graph.
     pub broken_ref_count: i64,
     /// Number of integrity check findings with severity Error.
     pub error_count: i64,
     /// Number of integrity check findings with severity Warning.
     pub warning_count: i64,
-    /// Largest connected component size / total nodes (0.0–1.0).
+    /// Fraction of nodes in the largest connected component (0.0–1.0).
     pub largest_component_ratio: f64,
-    /// Orphan count as a percentage of total nodes (0.0–100.0).
-    pub orphan_percentage: f64,
-    /// Average degree: (edges * 2) / nodes.
+    /// Average number of edges per node (in + out combined).
     pub avg_degree: f64,
-    /// Edge density: edges / (nodes * (nodes - 1)).
-    pub graph_density: f64,
-    /// Number of weakly-connected components.
-    pub component_count: i64,
-    /// Percentage of rules with at least one grounded-by → pillar relationship.
+    /// Percentage of non-doc nodes that trace to a pillar artifact (0.0–100.0).
     pub pillar_traceability: f64,
-    /// Ratio of typed relationship edges that have their inverse present.
-    pub bidirectionality_ratio: f64,
+    /// Number of active pipeline outliers past their type-specific grace period.
+    pub outlier_count: i64,
+    /// Percentage of outliers relative to total active nodes (0.0–100.0).
+    pub outlier_percentage: f64,
+    /// Fraction of delivery artifacts connected to the main delivery component (0.0–1.0).
+    pub delivery_connectivity: f64,
+    /// Fraction of learning artifacts connected to each other or to decisions (0.0–1.0).
+    pub learning_connectivity: f64,
 }

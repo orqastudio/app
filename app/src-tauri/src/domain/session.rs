@@ -4,7 +4,7 @@
 // primary unit of interaction between a user and an LLM sidecar. Sessions
 // contain messages, accumulate token counts, and transition through a lifecycle.
 
-pub use orqa_engine::types::session::*;
+pub use orqa_engine_types::types::session::*;
 
 #[cfg(test)]
 mod tests {

@@ -8,7 +8,7 @@
 //! On each document event the server:
 //! 1. Runs fast text-level checks (frontmatter structure, duplicate keys, ID
 //!    format, JSON Schema validation) using local logic on the unsaved buffer.
-//! 2. Calls the validation daemon `POST /validate` for graph-level checks
+//! 2. Calls the orqa-daemon `POST /validation/scan` for graph-level checks
 //!    (broken refs, missing inverses, type constraints, cardinality, cycles).
 //!
 //! Schema definitions are loaded from plugin manifests on startup. Plugins are
@@ -139,7 +139,7 @@ impl OrqaLspBackend {
 
     /// Fetch graph-level diagnostics from the daemon for `artifact_id`.
     ///
-    /// Calls `POST /validate` and filters the resulting `checks` to those
+    /// Calls `POST /validation/scan` and filters the resulting `findings` to those
     /// whose `artifact_id` matches. Returns an empty vec if the daemon is
     /// unavailable or the artifact has no ID yet.
     async fn daemon_validate(&self, artifact_id: Option<&str>) -> Vec<Diagnostic> {
@@ -147,11 +147,11 @@ impl OrqaLspBackend {
             return Vec::new();
         };
 
-        let url = format!("{}/validate", self.daemon_url);
+        let url = format!("{}/validation/scan", self.daemon_url);
         let resp = match self
             .http
             .post(&url)
-            .json(&serde_json::json!({ "fix": false }))
+            .json(&serde_json::json!({}))
             .send()
             .await
         {
@@ -163,14 +163,14 @@ impl OrqaLspBackend {
         };
 
         if !resp.status().is_success() {
-            tracing::warn!(status = %resp.status(), "daemon /validate returned non-success");
+            tracing::warn!(status = %resp.status(), "daemon /validation/scan returned non-success");
             return Vec::new();
         }
 
         let body: Value = match resp.json().await {
             Ok(v) => v,
             Err(e) => {
-                tracing::warn!(error = %e, "failed to parse daemon /validate response");
+                tracing::warn!(error = %e, "failed to parse daemon /validation/scan response");
                 return Vec::new();
             }
         };

@@ -28,15 +28,17 @@ mod config;
 mod context;
 mod event_bus;
 mod event_store;
+mod graph_state;
 mod health;
 mod knowledge;
 mod logging;
 mod lsp;
 mod mcp;
-mod parse;
 mod process;
 mod prompt;
+mod routes;
 mod session_start;
+mod store;
 mod subprocess;
 mod tray;
 mod watcher;
@@ -45,6 +47,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
+use crate::graph_state::GraphState;
 use crate::subprocess::{ProcessSnapshot, SubprocessManager};
 use crate::tray::SubprocessStatuses;
 
@@ -192,11 +195,51 @@ async fn run(
         }
     };
 
+    // Build the cached artifact graph and validation context. Failures are
+    // non-fatal — the daemon starts without graph state and attempts a reload
+    // on the next file change.
+    let graph_state = match GraphState::build(&project_root) {
+        Ok(gs) => {
+            info!(
+                subsystem = "graph-state",
+                artifact_count = gs.artifact_count(),
+                "[graph-state] initial graph built ({} artifacts)",
+                gs.artifact_count()
+            );
+            gs
+        }
+        Err(e) => {
+            warn!(
+                subsystem = "graph-state",
+                error = %e,
+                "[graph-state] could not build initial graph — starting without cached state"
+            );
+            // Build an empty graph state using a fresh empty graph.
+            // This is safe because all route handlers guard against empty state.
+            GraphState::build_empty(&project_root)
+        }
+    };
+
+    // Open the daemon SQLite store for sessions, projects, and settings.
+    // Degrades gracefully when the database cannot be opened.
+    let daemon_store = {
+        let db_path = project_root.join(".state/daemon.db");
+        match store::DaemonStore::open(db_path) {
+            Some(s) => Some(Arc::new(s)),
+            None => {
+                warn!(subsystem = "store", "[store] daemon.db unavailable — session/project/settings endpoints disabled");
+                None
+            }
+        }
+    };
+
     tokio::spawn({
         let bus = Arc::clone(&event_bus);
         let snapshots = Arc::clone(&process_snapshots);
+        let gs = graph_state.clone();
+        let ds = daemon_store.clone();
         async move {
-            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store, snapshots).await {
+            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store, snapshots, gs, ds).await {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }
         }
@@ -204,7 +247,7 @@ async fn run(
 
     // The watcher handle must be kept alive for the duration of the event loop.
     // If starting the watcher fails the daemon continues without file watching.
-    let _watcher_handle = match watcher::start_watcher(&project_root) {
+    let _watcher_handle = match watcher::start_watcher(&project_root, graph_state) {
         Ok(handle) => {
             info!(subsystem = "watcher", "[watcher] file watchers started");
             Some(handle)
@@ -283,24 +326,23 @@ async fn run_event_loop(
     }
 }
 
-/// Entry point for the daemon.
+/// All daemon startup and async runtime logic, run on the background thread.
 ///
-/// The system tray on Windows requires the GUI message pump on the main OS
-/// thread. Tokio's `#[tokio::main]` would own the main thread for the async
-/// runtime, blocking the message pump. To satisfy both requirements:
+/// On Windows the main OS thread stack is 1 MB. The layered
+/// `tracing_subscriber` with multiple `EnvFilter` layers involves deeply-
+/// nested generic types whose initialisation overflows 1 MB.  By executing
+/// ALL pre-flight work here, on a thread with an explicit 8 MB stack, we
+/// avoid the overflow entirely.  The main thread only receives the two
+/// `Arc`s it needs for the tray loop via a `std::sync::mpsc` channel, then
+/// blocks in `tray::run_tray_loop` which has a shallow stack profile.
 ///
-///   1. Perform all pre-flight setup synchronously on the main thread.
-///   2. Spawn the tokio runtime on a background thread (`runtime_thread`).
-///   3. Run the tray event loop on the main thread via `tray::run_tray_loop`.
-///   4. On tray exit (Quit or shutdown signal), join the background thread.
-///
-/// This arrangement means the tokio `run()` function and the tray loop share
-/// the `shutdown_flag` `AtomicBool` as the synchronisation primitive.
-fn main() {
-    // Project root must be found before logging is initialised so we know
-    // where to write the log file.
-    let project_root = resolve_project_root();
-
+/// Returns the `(shutdown_flag, subprocess_statuses)` pair via `tx` as soon
+/// as they are created so the main thread can start the tray without waiting
+/// for async subsystems.
+fn run_daemon(
+    project_root: PathBuf,
+    tx: std::sync::mpsc::SyncSender<(Arc<AtomicBool>, Arc<Mutex<SubprocessStatuses>>)>,
+) {
     // Create the event bus before logging is initialised so that the
     // `EventBusLayer` can be registered in the subscriber stack.  All tracing
     // events emitted after `logging::init` will flow through the bus.
@@ -328,41 +370,86 @@ fn main() {
     let shutdown_flag = Arc::new(AtomicBool::new(false));
     register_shutdown_handler(Arc::clone(&shutdown_flag), project_root.clone());
 
-    // Shared subprocess status snapshot: written by the background event loop,
-    // read by the tray thread to display LSP and MCP status in the menu.
+    // Shared subprocess status snapshot: written by the async event loop,
+    // read by the main-thread tray loop to display LSP/MCP status.
     let subprocess_statuses = Arc::new(Mutex::new(SubprocessStatuses::default()));
 
-    // Spawn the tokio runtime on a background thread so the main thread
-    // remains free for the OS GUI message pump (required by tray-icon).
-    let runtime_root = project_root.clone();
-    let runtime_flag = Arc::clone(&shutdown_flag);
-    let runtime_statuses = Arc::clone(&subprocess_statuses);
-    let runtime_bus = Arc::clone(&event_bus);
-    let runtime_thread = std::thread::spawn(move || {
-        let rt = tokio::runtime::Runtime::new().expect("failed to build tokio runtime");
-        rt.block_on(run(runtime_root, runtime_flag, runtime_statuses, runtime_bus));
-    });
+    // Send the two shared Arcs to the main thread so the tray can start.
+    // Use a rendezvous send (capacity 0) — the main thread is already blocked
+    // on recv() so this completes immediately.
+    let _ = tx.send((Arc::clone(&shutdown_flag), Arc::clone(&subprocess_statuses)));
 
-    // Run the tray loop on the main thread. Returns when Quit is selected or
-    // the shutdown flag is set externally.
-    let tray_status = tray::run_tray_loop(Arc::clone(&shutdown_flag), subprocess_statuses);
-    info!(
-        subsystem = "health",
-        status = ?tray_status,
-        "[health] system tray exited"
-    );
-
-    // Ensure the shutdown flag is set so the background tokio runtime exits
-    // its event loop even if the tray returned Headless.
-    shutdown_flag.store(true, Ordering::SeqCst);
-
-    // Wait for all async subsystems to finish cleanly.
-    if let Err(e) = runtime_thread.join() {
-        error!(subsystem = "health", error = ?e, "[health] runtime thread panicked");
-    }
+    // Start the tokio runtime and block until shutdown.
+    // Pin the run() future on the heap so its state machine (which captures
+    // all local variables across await points) does not consume stack space.
+    let rt = tokio::runtime::Runtime::new().expect("failed to build tokio runtime");
+    rt.block_on(Box::pin(run(
+        project_root.clone(),
+        Arc::clone(&shutdown_flag),
+        Arc::clone(&subprocess_statuses),
+        Arc::clone(&event_bus),
+    )));
 
     // Final cleanup in case the signal handler did not run (e.g., clean exit
     // via another code path).
     let _ = process::cleanup_pid(&project_root);
     info!(subsystem = "health", "[health] orqa-daemon stopped");
+}
+
+/// Entry point for the daemon.
+///
+/// The system tray on Windows requires the GUI message pump on the main OS
+/// thread.  On Windows, the default main thread stack is only 1 MB, which is
+/// too small for the deeply-nested generic types in `tracing_subscriber`.  To
+/// satisfy both constraints:
+///
+///   1. Create a rendezvous channel.
+///   2. Spawn a background thread with 8 MB stack (`daemon-runtime`) that runs
+///      ALL pre-flight setup (logging, PID, signal handler) and the tokio
+///      runtime.  As soon as the shared `Arc`s are ready it sends them over
+///      the channel and continues running the async event loop.
+///   3. The main thread receives the `Arc`s and enters the tray loop.
+///   4. On tray exit (Quit or shutdown signal) the main thread sets the
+///      shutdown flag and joins the background thread.
+fn main() {
+    // Project root resolution is lightweight (stat calls only) and safe on 1 MB.
+    let project_root = resolve_project_root();
+
+    // Rendezvous channel (capacity 0): the background thread sends the shared
+    // Arcs exactly once; the main thread blocks here until they arrive.
+    let (tx, rx) = std::sync::mpsc::sync_channel(0);
+
+    let bg_root = project_root.clone();
+    // Spawn with 8 MB stack. The main thread's 1 MB Windows stack is too
+    // small for daemon startup; 8 MB provides comfortable headroom.
+    let runtime_thread = std::thread::Builder::new()
+        .stack_size(8 * 1024 * 1024)
+        .name("daemon-runtime".to_owned())
+        .spawn(move || run_daemon(bg_root, tx))
+        .expect("failed to spawn runtime thread");
+
+    // Block until the background thread has finished pre-flight and sent the
+    // shared Arcs.  This is quick (< 100 ms in practice).
+    let (shutdown_flag, subprocess_statuses) = rx
+        .recv()
+        .expect("daemon-runtime thread exited before sending tray handles");
+
+    // Run the tray loop on the main thread (Win32 message pump requirement).
+    // Returns when Quit is selected or the shutdown flag is set externally.
+    let tray_status = tray::run_tray_loop(Arc::clone(&shutdown_flag), subprocess_statuses);
+
+    // Ensure the shutdown flag is set so the async event loop exits even if
+    // the tray returned Headless (no tray support on this platform).
+    shutdown_flag.store(true, Ordering::SeqCst);
+
+    // tray_status was already logged inside run_daemon via the tracing subscriber.
+    let _ = tray_status;
+
+    // Wait for all async subsystems to finish cleanly.
+    if let Err(e) = runtime_thread.join() {
+        // tracing may not be initialised if run_daemon panicked during logging::init,
+        // so fall back to stderr.
+        #[allow(clippy::print_stderr)]
+        { eprintln!("[health] runtime thread panicked: {e:?}"); }
+    }
 }

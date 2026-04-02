@@ -63,9 +63,6 @@ pub mod error {
 /// Artifact graph construction and query functions.
 pub mod graph {
     pub use orqa_graph::*;
-    pub use orqa_validation::graph::{
-        build_artifact_graph, graph_stats, ArtifactGraph, ArtifactNode, ArtifactRef, GraphStats,
-    };
 }
 
 /// Lesson parse/render logic and file-backed lesson store.
@@ -80,12 +77,12 @@ pub mod lesson {
 
 /// Graph-theoretic metric types and computation functions.
 pub mod metrics {
-    pub use orqa_validation::compute_health;
-    pub use orqa_validation::metrics::{
-        compute_traceability, find_siblings, trace_descendants, trace_to_pillars, AncestryChain,
-        AncestryNode, TraceabilityResult, TracedArtifact,
+    pub use orqa_graph::{
+        compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     };
-    pub use orqa_validation::types::GraphHealth;
+    pub use orqa_engine_types::{
+        AncestryChain, AncestryNode, GraphHealth, TraceabilityResult, TracedArtifact,
+    };
 }
 
 /// Path constants and config-driven path resolution.
@@ -296,8 +293,9 @@ pub mod validation {
         RelationshipSchema, StatusRule, ValidationContext, ValidationResult,
     };
     pub use orqa_validation::{
-        artifact_from_graph_node, is_hex_artifact_id, is_valid_artifact_id, parse_artifact,
-        query_artifacts, validate_file, FileFinding, FileSeverity,
+        artifact_from_graph_node, auto_fix, is_hex_artifact_id, is_valid_artifact_id,
+        parse_artifact, query_artifacts, update_artifact_field, validate, validate_file,
+        FileFinding, FileSeverity,
     };
     pub use orqa_validation::checks;
     pub use orqa_validation::platform;

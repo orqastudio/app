@@ -5,7 +5,7 @@
   "identifier": "studio.orqa.devtools",
   "build": {
     "frontendDist": "../build",
-    "devUrl": "http://localhost:10421",
+    "devUrl": "http://localhost:10140",
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build"
   },

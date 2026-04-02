@@ -1,7 +1,6 @@
-// Status transition evaluation — re-exported from orqa-engine.
+// Status transition types — re-exported from orqa-engine-types.
 //
-// All business logic has moved to `orqa_engine::workflow::transitions`.
-// This file re-exports the public API for use throughout the Tauri app.
+// ProposedTransition is defined in orqa_engine_types::types::workflow.
+// The evaluation logic runs in the daemon via GET /workflow/transitions.
 
-pub use orqa_engine::types::workflow::ProposedTransition;
-pub use orqa_engine::workflow::transitions::evaluate_transitions;
+pub use orqa_engine_types::types::workflow::ProposedTransition;

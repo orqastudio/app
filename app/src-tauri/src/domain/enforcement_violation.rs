@@ -4,4 +4,4 @@
 // enforcement_violations table. Populated when the enforcement engine blocks
 // or warns on a tool call; surfaced in the governance UI.
 
-pub use orqa_engine::types::enforcement::EnforcementViolation;
+pub use orqa_engine_types::types::enforcement::EnforcementViolation;

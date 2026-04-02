@@ -14,14 +14,6 @@ category: methodology
 user-invocable: false
 allowed-tools: "Read, Glob, Grep"
 relationships:
-  - target: AGENT-4c94fe14
-    type: employed-by
-  - target: AGENT-85be6ace
-    type: employed-by
-  - target: AGENT-e333508b
-    type: employed-by
-  - target: AGENT-bbad3d30
-    type: employed-by
   - target: DOC-bad8e26f
     type: synchronised-with
 

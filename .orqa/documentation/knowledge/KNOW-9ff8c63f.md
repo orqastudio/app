@@ -11,10 +11,6 @@ status: active
 category: methodology
 user-invocable: true
 relationships:
-  - target: AGENT-85be6ace
-    type: employed-by
-  - target: AGENT-e333508b
-    type: employed-by
   - target: DOC-bad8e26f
     type: synchronised-with
 

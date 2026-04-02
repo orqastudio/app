@@ -12,8 +12,6 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 use tokio::sync::broadcast;
-use tracing::warn;
-
 use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
 
 /// Capacity of the broadcast channel ring buffer.
@@ -64,34 +62,27 @@ impl EventBus {
     ///
     /// Non-blocking. If the buffer is full the oldest event is dropped
     /// automatically by the broadcast channel and `total_dropped` is
-    /// incremented. A warning is emitted so operators can tune buffer size.
+    /// incremented.
+    ///
+    /// This function MUST NOT call any tracing macros (info!, warn!, etc.).
+    /// The `EventBusLayer` in the tracing subscriber calls this function, so
+    /// any tracing emission here would cause infinite recursion:
+    ///   tracing event → EventBusLayer::on_event → publish → tracing warn →
+    ///   EventBusLayer::on_event → publish → ...
+    ///
+    /// Dropped-event counts are exposed via `EventBusStats` on GET /health
+    /// so operators can detect saturation without any tracing calls here.
     pub fn publish(&self, event: LogEvent) {
         match self.sender.send(event) {
             Ok(_) => {
                 self.total_published.fetch_add(1, Ordering::Relaxed);
             }
             Err(_) => {
-                // No subscribers — event is still counted as dropped because
-                // it was not delivered to anyone.
+                // No subscribers or all subscribers have been dropped.
+                // Increment the dropped counter so /health stats reflect this.
+                // Do NOT emit a tracing event here — that would recurse.
                 self.total_dropped.fetch_add(1, Ordering::Relaxed);
-                warn!(
-                    subsystem = "event-bus",
-                    "[event-bus] event dropped — no active subscribers"
-                );
             }
-        }
-
-        // Detect buffer-overflow drops by comparing the receiver lag. The
-        // broadcast channel drops old messages silently; we surface this
-        // through the stats so callers can detect gaps.
-        let dropped_count = self.sender.len();
-        if dropped_count >= BUS_CAPACITY.saturating_sub(100) {
-            warn!(
-                subsystem = "event-bus",
-                buffer_used = dropped_count,
-                capacity = BUS_CAPACITY,
-                "[event-bus] broadcast buffer near capacity — consider increasing BUS_CAPACITY"
-            );
         }
     }
 

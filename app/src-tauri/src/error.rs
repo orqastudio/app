@@ -75,15 +75,15 @@ impl From<serde_json::Error> for OrqaError {
 ///
 /// EngineError wraps the same underlying I/O, serialization, and validation errors that
 /// OrqaError already handles, so we forward to the matching variant.
-impl From<orqa_engine::error::EngineError> for OrqaError {
-    fn from(err: orqa_engine::error::EngineError) -> Self {
+impl From<orqa_engine_types::error::EngineError> for OrqaError {
+    fn from(err: orqa_engine_types::error::EngineError) -> Self {
         match err {
-            orqa_engine::error::EngineError::FileSystem(e) => Self::FileSystem(e.to_string()),
-            orqa_engine::error::EngineError::Serialization(e) => Self::Serialization(e.to_string()),
-            orqa_engine::error::EngineError::Validation(msg) => Self::Validation(msg),
-            orqa_engine::error::EngineError::Yaml(msg) => Self::Serialization(msg),
-            orqa_engine::error::EngineError::Scan(msg) => Self::Scan(msg),
-            orqa_engine::error::EngineError::Plugin(msg) => Self::Plugin(msg),
+            orqa_engine_types::error::EngineError::FileSystem(e) => Self::FileSystem(e.to_string()),
+            orqa_engine_types::error::EngineError::Serialization(e) => Self::Serialization(e.to_string()),
+            orqa_engine_types::error::EngineError::Validation(msg) => Self::Validation(msg),
+            orqa_engine_types::error::EngineError::Yaml(msg) => Self::Serialization(msg),
+            orqa_engine_types::error::EngineError::Scan(msg) => Self::Scan(msg),
+            orqa_engine_types::error::EngineError::Plugin(msg) => Self::Plugin(msg),
         }
     }
 }
@@ -94,29 +94,6 @@ impl From<rusqlite::Error> for OrqaError {
     }
 }
 
-impl From<orqa_engine::search::SearchError> for OrqaError {
-    fn from(err: orqa_engine::search::SearchError) -> Self {
-        Self::Search(err.to_string())
-    }
-}
-
-impl From<orqa_engine::search::store::StoreError> for OrqaError {
-    fn from(err: orqa_engine::search::store::StoreError) -> Self {
-        Self::Search(err.to_string())
-    }
-}
-
-impl From<orqa_engine::search::embedder::EmbedError> for OrqaError {
-    fn from(err: orqa_engine::search::embedder::EmbedError) -> Self {
-        Self::Search(err.to_string())
-    }
-}
-
-impl From<orqa_engine::search::chunker::ChunkError> for OrqaError {
-    fn from(err: orqa_engine::search::chunker::ChunkError) -> Self {
-        Self::Search(err.to_string())
-    }
-}
 
 #[cfg(test)]
 mod tests {

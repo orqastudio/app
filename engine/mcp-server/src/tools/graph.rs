@@ -165,23 +165,20 @@ pub fn tool_query(daemon: &DaemonClient, args: &Value) -> Result<String, String>
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
-/// `graph_resolve` — uses `POST /query` filtered by id to get the artifact.
+/// `graph_resolve` — uses `GET /artifacts/:id` to get a single artifact.
 pub fn tool_resolve(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let id = args
         .get("id")
         .and_then(|v| v.as_str())
         .ok_or("missing 'id'")?;
 
-    let result = daemon
-        .query(&json!({ "id": id }))
-        .map_err(|e| e.to_string())?;
+    let item = daemon.parse(id).map_err(|e| e.to_string())?;
 
-    let items = result.as_array().ok_or("daemon returned non-array")?;
-    let item = items
-        .first()
-        .ok_or_else(|| format!("artifact not found: {id}"))?;
+    if item.get("error").is_some() {
+        return Err(format!("artifact not found: {id}"));
+    }
 
-    serde_json::to_string_pretty(item).map_err(|e| e.to_string())
+    serde_json::to_string_pretty(&item).map_err(|e| e.to_string())
 }
 
 /// `graph_relationships` — uses `POST /query` to find the artifact, then

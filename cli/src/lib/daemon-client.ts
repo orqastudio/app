@@ -1,5 +1,5 @@
 /**
- * HTTP client for the orqa-validation daemon.
+ * HTTP client for the orqa-daemon.
  *
  * Daemon runs at localhost:10100 by default (port is ORQA_PORT_BASE, matched
  * from daemon/src/health.rs resolve_port()). Provides canonical graph
@@ -22,7 +22,7 @@ export interface DaemonArtifactRef {
 	relationship_type: string | null;
 }
 
-/** Mirrors the Rust `ArtifactNode` struct returned by POST /query. */
+/** Mirrors the Rust `ArtifactNode` struct returned by GET /artifacts. */
 export interface DaemonArtifactNode {
 	id: string;
 	project?: string;
@@ -161,26 +161,27 @@ function callBinaryFallback<T>(
 }
 
 /**
- * Build CLI args from the daemon endpoint path and body.
- * @param path - The daemon endpoint path (e.g. "/query").
- * @param body - The request body to map to CLI arguments.
+ * Build CLI args from the daemon endpoint path and query params/body.
+ * @param path - The daemon endpoint path (e.g. "/artifacts").
+ * @param body - The request body or query params to map to CLI arguments.
  * @returns Array of CLI arguments for the binary.
  */
 function buildBinaryArgs(path: string, body: unknown): string[] {
 	const b = (body ?? {}) as Record<string, unknown>;
 
+	if (path === "/artifacts" || path.startsWith("/artifacts?")) {
+		const args = ["query"];
+		if (b.type) args.push("--type", String(b.type));
+		if (b.status) args.push("--status", String(b.status));
+		if (b.id) args.push("--id", String(b.id));
+		if (b.search) args.push("--search", String(b.search));
+		return args;
+	}
+
 	switch (path) {
-		case "/query": {
-			const args = ["query", "--json"];
-			if (b.type) args.push("--type", String(b.type));
-			if (b.status) args.push("--status", String(b.status));
-			if (b.id) args.push("--id", String(b.id));
-			if (b.search) args.push("--search", String(b.search));
-			return args;
-		}
 		case "/health":
 			return ["health", "--json"];
-		case "/validate":
+		case "/validation/scan":
 			return ["validate", "--json"];
 		default:
 			throw new Error(`no binary fallback for endpoint: ${path}`);
