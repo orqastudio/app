@@ -5,13 +5,11 @@
 #![allow(dead_code, missing_docs)]
 
 pub mod config;
-pub mod graph;
 pub mod metrics;
 pub mod plugin_extension;
 pub mod validation;
 
 pub use config::*;
-pub use graph::*;
 pub use metrics::*;
 pub use plugin_extension::*;
 pub use validation::*;

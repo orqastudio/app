@@ -66,11 +66,10 @@ Subcommands:
   stop                Stop all processes gracefully
   kill                Force-kill all processes
   restart             Restart everything (daemon + frontend + app + services)
-  restart daemon      Restart the validation daemon
+  restart daemon      Restart daemon (+ MCP and LSP, which the daemon owns)
   restart frontend    Restart Vite dev server
   restart app         Restart Tauri app (rebuild + relaunch)
   restart search      Restart search server
-  restart daemon      Restart daemon (+ MCP and LSP, which the daemon owns)
   status              Show process status
   icons [--deploy]    Generate brand icons from SVG sources
   tool [args...]      Run the debug-tool submodule
