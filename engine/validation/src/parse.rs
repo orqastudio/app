@@ -653,4 +653,116 @@ relationships:
         assert_eq!(ids[1], "RULE-aaaaaaaa");
         assert_eq!(ids[2], "RULE-zzzzzzzz");
     }
+
+    // -----------------------------------------------------------------------
+    // passes_filters unit tests
+    // -----------------------------------------------------------------------
+
+    fn make_node(id: &str, artifact_type: &str, status: Option<&str>) -> crate::graph::ArtifactNode {
+        crate::graph::ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: format!(".orqa/test/{id}.md"),
+            artifact_type: artifact_type.to_owned(),
+            title: id.to_owned(),
+            description: None,
+            status: status.map(str::to_owned),
+            priority: None,
+            frontmatter: serde_json::json!({}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    #[test]
+    fn passes_filters_no_filters_always_passes() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(passes_filters(&node, None, None));
+    }
+
+    #[test]
+    fn passes_filters_type_filter_matches() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(passes_filters(&node, Some("rule"), None));
+    }
+
+    #[test]
+    fn passes_filters_type_filter_rejects() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(!passes_filters(&node, Some("epic"), None));
+    }
+
+    #[test]
+    fn passes_filters_status_filter_matches() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(passes_filters(&node, None, Some("active")));
+    }
+
+    #[test]
+    fn passes_filters_status_filter_rejects() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(!passes_filters(&node, None, Some("archived")));
+    }
+
+    #[test]
+    fn passes_filters_status_filter_rejects_when_node_has_no_status() {
+        let node = make_node("RULE-a1b2c3d4", "rule", None);
+        assert!(!passes_filters(&node, None, Some("active")));
+    }
+
+    // -----------------------------------------------------------------------
+    // passes_search unit tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn passes_search_no_filter_always_passes() {
+        let node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        assert!(passes_search(&node, None));
+    }
+
+    #[test]
+    fn passes_search_matches_title_case_insensitive() {
+        let mut node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        node.title = "Agent Delegation".to_owned();
+        assert!(passes_search(&node, Some("agent")));
+        assert!(passes_search(&node, Some("DELEGATION")));
+    }
+
+    #[test]
+    fn passes_search_matches_description() {
+        let mut node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        node.title = "Some Rule".to_owned();
+        node.description = Some("always delegate to background agents".to_owned());
+        assert!(passes_search(&node, Some("background")));
+    }
+
+    #[test]
+    fn passes_search_rejects_when_no_match() {
+        let mut node = make_node("RULE-a1b2c3d4", "rule", Some("active"));
+        node.title = "Agent Delegation".to_owned();
+        node.description = None;
+        assert!(!passes_search(&node, Some("planner")));
+    }
+
+    // -----------------------------------------------------------------------
+    // relative_path unit tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn relative_path_strips_project_prefix() {
+        let project = Path::new("/projects/my-app");
+        let file = Path::new("/projects/my-app/.orqa/learning/rules/RULE-a1b2c3d4.md");
+        let rel = relative_path(file, project);
+        assert_eq!(rel, ".orqa/learning/rules/RULE-a1b2c3d4.md");
+    }
+
+    #[test]
+    fn relative_path_returns_file_path_when_not_under_project() {
+        let project = Path::new("/projects/my-app");
+        let file = Path::new("/other/path/RULE-a1b2c3d4.md");
+        let rel = relative_path(file, project);
+        // When strip_prefix fails, falls back to the full file path
+        assert!(rel.ends_with("RULE-a1b2c3d4.md"));
+    }
 }
