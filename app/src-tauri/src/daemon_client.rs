@@ -741,7 +741,19 @@ impl DaemonClient {
 
 impl Default for DaemonClient {
     fn default() -> Self {
-        Self::new().expect("DaemonClient::new should not fail")
+        // new() only fails if reqwest::Client::builder().build() fails, which is
+        // effectively infallible on standard platforms (TLS initialization always
+        // succeeds with rustls/native-tls). The primary construction path uses
+        // DaemonClient::new()? to propagate errors. This impl exists for contexts
+        // that require Default (e.g. struct initialization without Result).
+        Self::new().unwrap_or_else(|e| {
+            // Fall back to a client with no timeout. This preserves the base_url
+            // so callers get predictable behaviour rather than a panic.
+            let client = Client::new();
+            let port = resolve_daemon_port();
+            tracing::warn!(error = %e, "DaemonClient::default() fell back to timeout-less client");
+            Self { client, base_url: format!("http://127.0.0.1:{port}") }
+        })
     }
 }
 

@@ -80,6 +80,8 @@ pub async fn validation_scan(
 ///
 /// When `fix: true`, applies auto-fixes to files on disk and reloads the graph.
 /// When `fix: false`, behaves like /validation/scan with an empty `fixes_applied`.
+/// The reload after fixing is wrapped in `spawn_blocking` because it does a full
+/// directory scan and must not block the tokio thread pool.
 pub async fn validation_fix(
     State(state): State<GraphState>,
     Json(req): Json<ValidationFixRequest>,
@@ -95,17 +97,30 @@ pub async fn validation_fix(
     };
 
     let fixes_applied = if req.fix {
-        let guard = state.0.read().map_err(|_| (
+        // Run auto_fix inside spawn_blocking: it borrows the graph state
+        // synchronously and writes to disk, so it must not run on the tokio thread.
+        let state_clone = state.clone();
+        let root_clone = project_root.clone();
+        let checks_clone = checks.clone();
+        let (result, _) = tokio::task::spawn_blocking(move || {
+            let guard = state_clone.0.read().map_err(|e| e.to_string())?;
+            let fixes = auto_fix(&guard.graph, &checks_clone, &root_clone)
+                .map_err(|e| e.to_string())?;
+            drop(guard);
+            // Reload graph so subsequent requests see the updated state.
+            // reload() walks the full .orqa/ directory tree — must stay in spawn_blocking.
+            let count = state_clone.reload(&root_clone);
+            Ok::<_, String>((fixes, count))
+        })
+        .await
+        .map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-        ))?;
-        let result = auto_fix(&guard.graph, &checks, &project_root).map_err(|e| (
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        ))?
+        .map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "FIX_FAILED" })),
+            Json(serde_json::json!({ "error": e, "code": "FIX_FAILED" })),
         ))?;
-        drop(guard);
-        // Reload graph so subsequent requests see the updated state.
-        state.reload(&project_root);
         result
     } else {
         Vec::new()

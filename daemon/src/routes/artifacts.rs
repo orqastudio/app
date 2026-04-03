@@ -193,7 +193,8 @@ pub async fn get_artifact(
 /// Handle GET /artifacts/:id/content — return raw file content from disk.
 ///
 /// Reads the artifact file from `project_root / node.path`. Returns 404 if the
-/// artifact is not in the graph and 500 if the file cannot be read.
+/// artifact is not in the graph and 500 if the file cannot be read. The file read
+/// is wrapped in `spawn_blocking` so it does not stall the tokio thread pool.
 pub async fn get_artifact_content(
     State(state): State<GraphState>,
     Path(id): Path<String>,
@@ -214,10 +215,16 @@ pub async fn get_artifact_content(
     };
 
     let file_path = project_root.join(&node.path);
-    let content = std::fs::read_to_string(&file_path).map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": format!("could not read file: {}", e), "code": "IO_ERROR" })),
-    ))?;
+    let content = tokio::task::spawn_blocking(move || std::fs::read_to_string(&file_path))
+        .await
+        .map_err(|e| (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        ))?
+        .map_err(|e| (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": format!("could not read file: {}", e), "code": "IO_ERROR" })),
+        ))?;
 
     Ok(Json(ContentResponse { content }))
 }
@@ -226,7 +233,8 @@ pub async fn get_artifact_content(
 ///
 /// Calls `update_artifact_field` from the validation crate to write the change to
 /// disk. After the write, triggers a graph reload so subsequent requests see the
-/// updated state.
+/// updated state. Both the disk write and the reload are wrapped in `spawn_blocking`
+/// because they perform synchronous I/O and must not block the tokio thread pool.
 pub async fn update_artifact(
     State(state): State<GraphState>,
     Path(id): Path<String>,
@@ -253,13 +261,28 @@ pub async fn update_artifact(
         other => other.to_string(),
     };
 
-    update_artifact_field(&file_path, &req.field, &value_str).map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-    ))?;
+    let field = req.field.clone();
+    tokio::task::spawn_blocking(move || update_artifact_field(&file_path, &field, &value_str))
+        .await
+        .map_err(|e| (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        ))?
+        .map_err(|e| (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+        ))?;
 
     // Reload the graph so subsequent requests see the updated state.
-    state.reload(&project_root);
+    // Wrapped in spawn_blocking because reload() does a full directory scan.
+    let state_clone = state.clone();
+    let root_clone = project_root.clone();
+    tokio::task::spawn_blocking(move || state_clone.reload(&root_clone))
+        .await
+        .map_err(|e| (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        ))?;
 
     Ok(Json(UpdateArtifactResponse {
         id,
