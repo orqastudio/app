@@ -3,14 +3,10 @@
 //! All metrics are computed in Rust from the `ArtifactGraph` data structure.
 //! No delegation to JavaScript or external services.
 //!
-//! The health model tracks two named pipelines:
-//! - Delivery pipeline: task, epic, milestone, idea, research, decision, wireframe
-//! - Learning pipeline: lesson, rule
-//!
-//! Artifacts outside both pipelines (excluding archived/surpassed status and
-//! knowledge/doc types) are counted as outliers once they have exceeded the
-//! grace period for their artifact type. Grace periods give new artifacts time
-//! to be connected before they are flagged as attention items.
+//! Pipeline classification (delivery types, learning types, excluded statuses,
+//! excluded types, root types) is caller-supplied via `PipelineCategories`.
+//! This module never hardcodes artifact type names or status values — those are
+//! governance decisions owned by plugins, not the engine.
 
 use std::collections::{HashSet, VecDeque};
 
@@ -20,23 +16,26 @@ use orqa_engine_types::{
 };
 
 // ---------------------------------------------------------------------------
-// Pipeline classification constants
+// Pipeline classification — caller-supplied, never hardcoded
 // ---------------------------------------------------------------------------
 
-/// Artifact types belonging to the delivery pipeline.
-const DELIVERY_TYPES: &[&str] = &[
-    "task", "epic", "milestone", "idea", "research", "decision", "wireframe",
-];
-
-/// Artifact types belonging to the learning pipeline.
-const LEARNING_TYPES: &[&str] = &["lesson", "rule"];
-
-/// Status values that exclude an artifact from outlier analysis.
-const EXCLUDED_STATUSES: &[&str] = &["archived", "surpassed"];
-
-/// Artifact types excluded from outlier analysis entirely (connected via prompt
-/// injection or documentation, not graph relationships).
-const EXCLUDED_TYPES: &[&str] = &["knowledge", "doc"];
+/// Caller-supplied pipeline classification for graph health and traceability.
+///
+/// The engine never hardcodes artifact type names or status values. Callers
+/// (daemon routes, CLI, tests) supply these slices from plugin registry data.
+/// This satisfies P1: the engine provides capabilities, plugins define governance.
+pub struct PipelineCategories<'a> {
+    /// Artifact types belonging to the delivery pipeline.
+    pub delivery: &'a [&'a str],
+    /// Artifact types belonging to the learning pipeline.
+    pub learning: &'a [&'a str],
+    /// Status values that exclude an artifact from outlier analysis.
+    pub excluded_statuses: &'a [&'a str],
+    /// Artifact types excluded from outlier analysis entirely.
+    pub excluded_types: &'a [&'a str],
+    /// Artifact type keys that act as pipeline roots (e.g. "pillar", "vision").
+    pub root_types: &'a [&'a str],
+}
 
 /// Grace period in days before an unconnected artifact is counted as an outlier.
 /// All types use 30 days — real projects need breathing room.
@@ -55,11 +54,9 @@ const STALE_THRESHOLD_DAYS: i64 = 90;
 
 /// Compute graph health metrics for the artifact graph.
 ///
-/// Uses the two-pipeline model: delivery (task/epic/milestone/idea/research/decision/wireframe)
-/// and learning (lesson/rule). Artifacts outside both pipelines that are not
-/// archived, surpassed, knowledge, or doc, and that have exceeded their type's
-/// grace period, are counted as outliers.
-pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
+/// Pipeline classification is supplied by the caller via `categories`. The
+/// engine does not hardcode any artifact type names or status values.
+pub fn compute_health(graph: &ArtifactGraph, categories: &PipelineCategories<'_>) -> GraphHealth {
     // Work only with primary nodes (exclude bare-ID aliases in org mode).
     let primary_ids: Vec<&str> = graph
         .nodes
@@ -80,12 +77,15 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
     let avg_degree = compute_avg_degree(graph, &primary_ids, total_nodes);
     let (_, largest_component_size) = compute_components(graph, &primary_ids, &primary_set);
     let largest_component_ratio = largest_component_size as f64 / total_nodes as f64;
-    let pillar_traceability = compute_pillar_traceability(graph, &primary_ids);
+    let pillar_traceability =
+        compute_pillar_traceability(graph, &primary_ids, categories.root_types);
     let broken_ref_count = count_broken_refs(graph, &primary_ids);
     let (outlier_count, outlier_percentage, outlier_age_distribution) =
-        compute_outliers(graph, &primary_ids, today);
-    let delivery_connectivity = compute_delivery_connectivity(graph, &primary_ids);
-    let learning_connectivity = compute_learning_connectivity(graph, &primary_ids);
+        compute_outliers(graph, &primary_ids, today, categories);
+    let delivery_connectivity =
+        compute_delivery_connectivity(graph, &primary_ids, categories.delivery);
+    let learning_connectivity =
+        compute_learning_connectivity(graph, &primary_ids, categories.learning);
 
     GraphHealth {
         outlier_count,
@@ -104,21 +104,27 @@ pub fn compute_health(graph: &ArtifactGraph) -> GraphHealth {
 
 /// Compute the full traceability result for a single artifact.
 ///
-/// Returns ancestry chains to pillars/visions, downstream descendants, and siblings.
-pub fn compute_traceability(graph: &ArtifactGraph, artifact_id: &str) -> TraceabilityResult {
-    let ancestry_chains = trace_to_pillars(graph, artifact_id);
+/// Returns ancestry chains to root types, downstream descendants, and siblings.
+/// The `categories` parameter supplies which types count as roots (e.g. "pillar", "vision").
+pub fn compute_traceability(
+    graph: &ArtifactGraph,
+    artifact_id: &str,
+    categories: &PipelineCategories<'_>,
+) -> TraceabilityResult {
+    let ancestry_chains = trace_to_pillars(graph, artifact_id, categories.root_types);
     let descendants = trace_descendants(graph, artifact_id, 10);
     let siblings = find_siblings(graph, artifact_id);
 
     // Impact radius: distinct descendants within 2 hops.
     let impact_radius = descendants.iter().filter(|d| d.depth <= 2).count();
 
+    let root_set: HashSet<&str> = categories.root_types.iter().copied().collect();
     let disconnected = ancestry_chains.is_empty()
         || ancestry_chains.iter().all(|chain| {
             chain
                 .path
                 .last()
-                .is_none_or(|n| n.artifact_type != "pillar" && n.artifact_type != "vision")
+                .is_none_or(|n| !root_set.contains(n.artifact_type.as_str()))
         });
 
     TraceabilityResult {
@@ -130,15 +136,21 @@ pub fn compute_traceability(graph: &ArtifactGraph, artifact_id: &str) -> Traceab
     }
 }
 
-/// Return ALL directed paths from `artifact_id` upward to any pillar or vision
-/// artifact, following `references_out` edges.
+/// Return ALL directed paths from `artifact_id` upward to any root artifact,
+/// following `references_out` edges.
 ///
-/// Each path is returned as an [`AncestryChain`] with nodes ordered from the
-/// query artifact (index 0) to the pillar/vision root (last index).
+/// `root_types` is a caller-supplied slice of artifact type keys that terminate
+/// traversal (e.g. `&["pillar", "vision"]`). Each path is returned as an
+/// [`AncestryChain`] with nodes ordered from the query artifact (index 0) to
+/// the root (last index).
 ///
 /// Uses iterative DFS with a cycle guard to avoid infinite loops.
-pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<AncestryChain> {
-    let target_types: HashSet<&str> = ["pillar", "vision"].iter().copied().collect();
+pub fn trace_to_pillars(
+    graph: &ArtifactGraph,
+    artifact_id: &str,
+    root_types: &[&str],
+) -> Vec<AncestryChain> {
+    let target_types: HashSet<&str> = root_types.iter().copied().collect();
     // Hard limits to prevent path explosion in dense graphs.
     const MAX_DEPTH: usize = 15;
     const MAX_RESULTS: usize = 20;
@@ -175,7 +187,7 @@ pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<Ancestr
             continue;
         };
 
-        // If we reached a pillar/vision with a non-trivial path, record the chain.
+        // If we reached a root type with a non-trivial path, record the chain.
         if target_types.contains(current_node.artifact_type.as_str()) && path.len() > 1 {
             results.push(AncestryChain { path: path.clone() });
             continue;
@@ -183,8 +195,8 @@ pub fn trace_to_pillars(graph: &ArtifactGraph, artifact_id: &str) -> Vec<Ancestr
 
         let has_upward_edge = expand_dfs_node(graph, current_node, &path, &visited, &mut stack);
 
-        // If this node has no upward edges and it IS a pillar/vision (len == 1
-        // means we started on a pillar), record as a trivially connected chain.
+        // If this node has no upward edges and it IS a root type (len == 1
+        // means we started on a root), record as a trivially connected chain.
         if !has_upward_edge && target_types.contains(current_node.artifact_type.as_str()) {
             results.push(AncestryChain { path: path.clone() });
         }
@@ -458,47 +470,55 @@ fn compute_components(
     (component_count, largest)
 }
 
-/// Compute what percentage of non-doc artifacts can trace a path to a pillar artifact.
+/// Compute what percentage of non-root artifacts can trace a path to a root artifact.
 ///
-/// Uses reverse BFS from all pillar nodes to find every node that can reach a pillar.
-fn compute_pillar_traceability(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    let pillar_ids: Vec<&str> = primary_ids
+/// `root_types` is a caller-supplied slice of type keys treated as pipeline roots.
+/// Uses reverse BFS from all root nodes to find every node that can reach one.
+fn compute_pillar_traceability(
+    graph: &ArtifactGraph,
+    primary_ids: &[&str],
+    root_types: &[&str],
+) -> f64 {
+    let root_set: HashSet<&str> = root_types.iter().copied().collect();
+
+    let root_ids: Vec<&str> = primary_ids
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            (node.artifact_type == "pillar").then_some(*id)
+            root_set.contains(node.artifact_type.as_str()).then_some(*id)
         })
         .collect();
 
-    if pillar_ids.is_empty() {
+    if root_ids.is_empty() {
         return 0.0;
     }
 
-    let reachable = reverse_bfs_from_pillars(graph, &pillar_ids);
+    let reachable = reverse_bfs_from_pillars(graph, &root_ids);
 
-    let non_doc_ids: Vec<&str> = primary_ids
+    // Non-root artifacts are those whose type is not in root_set.
+    let non_root_ids: Vec<&str> = primary_ids
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            (node.artifact_type != "doc").then_some(*id)
+            (!root_set.contains(node.artifact_type.as_str())).then_some(*id)
         })
         .collect();
 
-    let non_doc_count = non_doc_ids.len();
-    if non_doc_count == 0 {
+    let non_root_count = non_root_ids.len();
+    if non_root_count == 0 {
         return 0.0;
     }
 
-    let traceable = non_doc_ids
+    let traceable = non_root_ids
         .iter()
         .filter(|id| reachable.contains(*id))
         .count();
-    (traceable as f64 / non_doc_count as f64) * 100.0
+    (traceable as f64 / non_root_count as f64) * 100.0
 }
 
 /// BFS backwards from `pillar_ids` via `references_in` edges.
 ///
-/// Returns the set of artifact IDs that have at least one directed path to a pillar.
+/// Returns the set of artifact IDs that have at least one directed path to a root.
 fn reverse_bfs_from_pillars<'a>(
     graph: &'a ArtifactGraph,
     pillar_ids: &[&'a str],
@@ -530,19 +550,20 @@ fn reverse_bfs_from_pillars<'a>(
 /// Compute outlier count, outlier percentage, and age distribution.
 ///
 /// An artifact is an outlier if ALL of the following are true:
-/// - Its status is NOT archived or surpassed
-/// - Its type is NOT knowledge or doc
+/// - Its status is NOT in `categories.excluded_statuses`
+/// - Its type is NOT in `categories.excluded_types`
 /// - Its type is NOT in either the delivery or learning pipeline
 /// - Its age exceeds the grace period for its type
 fn compute_outliers(
     graph: &ArtifactGraph,
     primary_ids: &[&str],
     today: i64,
+    categories: &PipelineCategories<'_>,
 ) -> (usize, f64, OutlierAgeDistribution) {
-    let delivery_set: HashSet<&str> = DELIVERY_TYPES.iter().copied().collect();
-    let learning_set: HashSet<&str> = LEARNING_TYPES.iter().copied().collect();
-    let excluded_type_set: HashSet<&str> = EXCLUDED_TYPES.iter().copied().collect();
-    let excluded_status_set: HashSet<&str> = EXCLUDED_STATUSES.iter().copied().collect();
+    let delivery_set: HashSet<&str> = categories.delivery.iter().copied().collect();
+    let learning_set: HashSet<&str> = categories.learning.iter().copied().collect();
+    let excluded_type_set: HashSet<&str> = categories.excluded_types.iter().copied().collect();
+    let excluded_status_set: HashSet<&str> = categories.excluded_statuses.iter().copied().collect();
 
     let mut active_count: usize = 0;
     let mut outlier_count: usize = 0;
@@ -553,12 +574,12 @@ fn compute_outliers(
             continue;
         };
 
-        // Skip excluded types (knowledge, doc).
+        // Skip excluded types (e.g. knowledge, doc).
         if excluded_type_set.contains(node.artifact_type.as_str()) {
             continue;
         }
 
-        // Skip archived or surpassed artifacts.
+        // Skip excluded statuses (e.g. archived, surpassed).
         let status = node.status.as_deref().unwrap_or("");
         if excluded_status_set.contains(status) {
             continue;
@@ -585,7 +606,7 @@ fn compute_outliers(
         }
 
         // Only count as an outlier once the grace period has elapsed.
-        // Artifacts without a `created` date are treated as stale (age unknown ≥ grace).
+        // Artifacts without a `created` date are treated as stale (age unknown >= grace).
         let past_grace = age_days.is_none_or(|age| age >= grace);
         if past_grace {
             outlier_count += 1;
@@ -648,9 +669,14 @@ fn largest_component_in_subset<'a>(graph: &'a ArtifactGraph, subset: &[&'a str])
 /// Compute what fraction of delivery-pipeline artifacts are in the largest
 /// weakly-connected component formed by delivery artifacts only.
 ///
+/// `delivery_types` is a caller-supplied slice of artifact type keys.
 /// Returns 0.0 when there are no delivery artifacts.
-fn compute_delivery_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    let delivery_set: HashSet<&str> = DELIVERY_TYPES.iter().copied().collect();
+fn compute_delivery_connectivity(
+    graph: &ArtifactGraph,
+    primary_ids: &[&str],
+    delivery_types: &[&str],
+) -> f64 {
+    let delivery_set: HashSet<&str> = delivery_types.iter().copied().collect();
     let delivery_ids: Vec<&str> = primary_ids
         .iter()
         .copied()
@@ -668,12 +694,17 @@ fn compute_delivery_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) ->
     largest_component_in_subset(graph, &delivery_ids) as f64 / total as f64
 }
 
-/// Compute what fraction of learning-pipeline artifacts (lesson, rule) are
-/// connected to each other or to decision artifacts.
+/// Compute what fraction of learning-pipeline artifacts are connected to each
+/// other or to other learning artifacts.
 ///
+/// `learning_types` is a caller-supplied slice of artifact type keys.
 /// Returns 0.0 when there are no learning artifacts.
-fn compute_learning_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) -> f64 {
-    let learning_set: HashSet<&str> = LEARNING_TYPES.iter().copied().collect();
+fn compute_learning_connectivity(
+    graph: &ArtifactGraph,
+    primary_ids: &[&str],
+    learning_types: &[&str],
+) -> f64 {
+    let learning_set: HashSet<&str> = learning_types.iter().copied().collect();
 
     let learning_ids: Vec<&str> = primary_ids
         .iter()
@@ -697,17 +728,19 @@ fn compute_learning_connectivity(graph: &ArtifactGraph, primary_ids: &[&str]) ->
             let Some(node) = graph.nodes.get(id) else {
                 return false;
             };
-            // Connected if any outgoing edge reaches a learning or decision artifact.
+            // Connected if any outgoing edge reaches another learning artifact.
             let out_connected = node.references_out.iter().any(|r| {
-                graph.nodes.get(&r.target_id).is_some_and(|t| {
-                    learning_set.contains(t.artifact_type.as_str()) || t.artifact_type == "decision"
-                })
+                graph
+                    .nodes
+                    .get(&r.target_id)
+                    .is_some_and(|t| learning_set.contains(t.artifact_type.as_str()))
             });
-            // Connected if any incoming edge comes from a learning or decision artifact.
+            // Connected if any incoming edge comes from a learning artifact.
             let in_connected = node.references_in.iter().any(|r| {
-                graph.nodes.get(&r.source_id).is_some_and(|s| {
-                    learning_set.contains(s.artifact_type.as_str()) || s.artifact_type == "decision"
-                })
+                graph
+                    .nodes
+                    .get(&r.source_id)
+                    .is_some_and(|s| learning_set.contains(s.artifact_type.as_str()))
             });
             out_connected || in_connected
         })

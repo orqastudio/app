@@ -89,7 +89,7 @@ pub async fn get_agent(
 pub async fn get_behavioral_messages(
     State(state): State<GraphState>,
 ) -> Json<orqa_validation::content::BehavioralMessages> {
-    let (graph, project_root) = {
+    let (graph, project_root, rule_type_key) = {
         let Ok(guard) = state.0.read() else {
             return Json(orqa_validation::content::BehavioralMessages {
                 messages: Vec::new(),
@@ -98,10 +98,18 @@ pub async fn get_behavioral_messages(
                 behavioral_count: 0,
             });
         };
-        (guard.graph.clone(), guard.project_root.clone())
+        // Find the rule type key from the plugin registry, falling back to "rule".
+        // The engine does not hardcode "rule" — callers supply the type key from
+        // their plugin registry so any plugin can define the rule type.
+        let rule_key = guard
+            .artifact_types
+            .iter()
+            .find(|t| t.pipeline_category.as_deref() == Some("rule"))
+            .map_or_else(|| "rule".to_owned(), |t| t.key.clone());
+        (guard.graph.clone(), guard.project_root.clone(), rule_key)
     };
 
-    match extract_behavioral_messages(&graph, &project_root) {
+    match extract_behavioral_messages(&graph, &project_root, &rule_type_key) {
         Ok(result) => Json(result),
         Err(_) => Json(orqa_validation::content::BehavioralMessages {
             messages: Vec::new(),

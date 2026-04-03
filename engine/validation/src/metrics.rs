@@ -10,7 +10,8 @@ pub use orqa_engine_types::{
     TraceabilityResult,
 };
 
-// Re-export metric computation functions from orqa_graph.
+// Re-export metric computation functions and types from orqa_graph.
 pub use orqa_graph::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
+    PipelineCategories,
 };

@@ -415,6 +415,7 @@ mod tests {
                 "additionalProperties": true
             }),
             status_transitions: transitions,
+            pipeline_category: None,
         }
     }
 

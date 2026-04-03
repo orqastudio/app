@@ -383,6 +383,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({}),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         };
         let ctx = build_validation_context_with_types(
             &[],

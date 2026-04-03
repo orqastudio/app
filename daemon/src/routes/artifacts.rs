@@ -23,6 +23,7 @@ use orqa_artifact::reader::artifact_scan_tree;
 use orqa_engine_types::types::artifact::NavTree;
 use orqa_validation::auto_fix::update_artifact_field;
 use orqa_validation::metrics::compute_traceability;
+use orqa_validation::PipelineCategories;
 use orqa_validation::{ArtifactNode, TraceabilityResult};
 
 use crate::graph_state::GraphState;
@@ -314,7 +315,11 @@ pub async fn get_artifact_traceability(
         ));
     }
 
-    let result = compute_traceability(&guard.graph, &id);
+    let owned = guard.owned_pipeline_categories();
+    let (d, l, es, et, rt) = owned.as_str_vecs();
+    let result = compute_traceability(&guard.graph, &id, &PipelineCategories {
+        delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
+    });
     Ok(Json(result))
 }
 

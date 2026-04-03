@@ -182,6 +182,7 @@ pub fn find_knowledge(
 pub fn extract_behavioral_messages(
     graph: &ArtifactGraph,
     _project_root: &Path,
+    rule_type_key: &str,
 ) -> Result<BehavioralMessages, ValidationError> {
     let mut rules: Vec<BehavioralRule> = Vec::new();
     let mut rule_count: usize = 0;
@@ -193,7 +194,7 @@ pub fn extract_behavioral_messages(
             continue;
         }
 
-        if node.artifact_type != "rule" {
+        if node.artifact_type != rule_type_key {
             continue;
         }
 
@@ -607,7 +608,7 @@ mod tests {
             path_index: HashMap::new(),
         };
         let tmp = make_project();
-        let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
+        let result = extract_behavioral_messages(&graph, tmp.path(), "rule").expect("ok");
         assert!(result.messages.is_empty());
         assert_eq!(result.rule_count, 0);
         assert_eq!(result.behavioral_count, 0);
@@ -648,7 +649,7 @@ mod tests {
         graph.nodes.insert(node.id.clone(), node);
 
         let tmp = make_project();
-        let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
+        let result = extract_behavioral_messages(&graph, tmp.path(), "rule").expect("ok");
         assert_eq!(result.rule_count, 1);
         assert_eq!(result.behavioral_count, 2);
         assert_eq!(result.messages.len(), 2);
@@ -690,7 +691,7 @@ mod tests {
         graph.nodes.insert(node.id.clone(), node);
 
         let tmp = make_project();
-        let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
+        let result = extract_behavioral_messages(&graph, tmp.path(), "rule").expect("ok");
         assert!(result.messages.is_empty());
         assert_eq!(result.rule_count, 0);
     }
@@ -728,7 +729,7 @@ mod tests {
         graph.nodes.insert(node.id.clone(), node);
 
         let tmp = make_project();
-        let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
+        let result = extract_behavioral_messages(&graph, tmp.path(), "rule").expect("ok");
         assert!(result.messages.is_empty());
     }
 
@@ -767,7 +768,7 @@ mod tests {
         graph.nodes.insert(node.id.clone(), node);
 
         let tmp = make_project();
-        let result = extract_behavioral_messages(&graph, tmp.path()).expect("ok");
+        let result = extract_behavioral_messages(&graph, tmp.path(), "rule").expect("ok");
         assert_eq!(
             result.messages,
             vec!["Zebra rule", "Apple rule", "Mango rule"]

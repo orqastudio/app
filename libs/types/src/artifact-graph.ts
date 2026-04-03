@@ -56,50 +56,15 @@ export interface GraphStats {
     broken_ref_count: number;
 }
 
-/**
- * All artifact type strings that the Rust backend can infer from directory paths.
- * Mirrors the `infer_artifact_type` function in `artifact_graph.rs`.
- */
-export const ARTIFACT_TYPES = [
-    "epic",
-    "task",
-    "milestone",
-    "idea",
-    "decision",
-    "research",
-    "lesson",
-    "rule",
-    "agent",
-    "knowledge",
-    "hook",
-    "pillar",
-    "doc",
-] as const;
 
-export type ArtifactGraphType = (typeof ARTIFACT_TYPES)[number];
+/** Artifact type key string — from plugin registry, not a hardcoded enum. */
+export type ArtifactGraphType = string;
 
-/**
- * The 12 canonical artifact statuses.
- *
- * Projects define these in `project.json` with labels, icons, and auto-transition
- * rules. This type constrains the valid status values.
- */
-export type CanonicalStatus =
-    | "captured"
-    | "exploring"
-    | "ready"
-    | "prioritised"
-    | "active"
-    | "hold"
-    | "blocked"
-    | "review"
-    | "completed"
-    | "surpassed"
-    | "archived"
-    | "recurring";
+/** Artifact status string — from project.json, not a hardcoded enum. */
+export type CanonicalStatus = string;
 
 /** Alias for CanonicalStatus — used by the frontend. */
-export type ArtifactStatus = CanonicalStatus;
+export type ArtifactStatus = string;
 
 /**
  * Category of integrity issue found in the artifact graph.

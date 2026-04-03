@@ -31,6 +31,9 @@ pub struct GraphStateInner {
     /// /plugins endpoint (A4) to expose available types to the frontend.
     #[allow(dead_code)]
     pub artifact_types: Vec<ArtifactTypeDef>,
+    /// Terminal status values collected from plugin manifests.
+    /// Used to build PipelineCategories.excluded_statuses for callers.
+    pub terminal_statuses: Vec<String>,
     /// The project root this state was built from.
     pub project_root: PathBuf,
 }
@@ -65,6 +68,7 @@ impl GraphState {
             graph: ArtifactGraph::default(),
             ctx: build_validation_context(&[], &DeliveryConfig::default(), &[], &[]),
             artifact_types: Vec::new(),
+            terminal_statuses: Vec::new(),
             project_root: project_root.to_path_buf(),
         };
         Self(Arc::new(RwLock::new(inner)))
@@ -178,9 +182,77 @@ fn build_inner(project_root: &Path) -> Result<GraphStateInner, orqa_validation::
         graph,
         ctx,
         artifact_types: plugin_contributions.artifact_types,
+        terminal_statuses: plugin_contributions.terminal_statuses,
         project_root: project_root.to_path_buf(),
     })
 }
+
+/// Owned pipeline category data built from plugin contributions in GraphStateInner.
+///
+/// Holds Vec<String> so route handlers can build borrowed PipelineCategories from it
+/// by calling .as_ref_slices() and constructing PipelineCategories with &[&str].
+pub struct OwnedPipelineCategories {
+    /// Keys of artifact types in the delivery pipeline.
+    pub delivery: Vec<String>,
+    /// Keys of artifact types in the learning pipeline.
+    pub learning: Vec<String>,
+    /// Status values that exclude artifacts from outlier analysis.
+    pub excluded_statuses: Vec<String>,
+    /// Artifact type keys excluded from outlier analysis entirely.
+    pub excluded_types: Vec<String>,
+    /// Artifact type keys that act as pipeline roots (e.g. "pillar", "vision").
+    pub root_types: Vec<String>,
+}
+
+impl OwnedPipelineCategories {
+    /// Convert owned string vecs to borrowed `&str` slices for `PipelineCategories`.
+    ///
+    /// Returns five `Vec<&str>` tuples. Callers use these to construct a
+    /// `PipelineCategories<'_>` without repeating the `.iter().map(String::as_str)` pattern.
+    #[allow(clippy::type_complexity)]
+    pub fn as_str_vecs(&self) -> (Vec<&str>, Vec<&str>, Vec<&str>, Vec<&str>, Vec<&str>) {
+        (
+            self.delivery.iter().map(String::as_str).collect(),
+            self.learning.iter().map(String::as_str).collect(),
+            self.excluded_statuses.iter().map(String::as_str).collect(),
+            self.excluded_types.iter().map(String::as_str).collect(),
+            self.root_types.iter().map(String::as_str).collect(),
+        )
+    }
+}
+
+impl GraphStateInner {
+    /// Build a PipelineCategories instance from the inner state.
+    ///
+    /// Filters artifact_types by pipeline_category to populate delivery, learning,
+    /// excluded_types, and root_types. Uses terminal_statuses for excluded_statuses.
+    pub fn owned_pipeline_categories(&self) -> OwnedPipelineCategories {
+        let delivery = self.artifact_types.iter()
+            .filter(|t| t.pipeline_category.as_deref() == Some("delivery"))
+            .map(|t| t.key.clone())
+            .collect();
+        let learning = self.artifact_types.iter()
+            .filter(|t| t.pipeline_category.as_deref() == Some("learning"))
+            .map(|t| t.key.clone())
+            .collect();
+        let excluded_types = self.artifact_types.iter()
+            .filter(|t| t.pipeline_category.as_deref() == Some("excluded"))
+            .map(|t| t.key.clone())
+            .collect();
+        let root_types = self.artifact_types.iter()
+            .filter(|t| t.pipeline_category.as_deref() == Some("root"))
+            .map(|t| t.key.clone())
+            .collect();
+        OwnedPipelineCategories {
+            delivery,
+            learning,
+            excluded_statuses: self.terminal_statuses.clone(),
+            excluded_types,
+            root_types,
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {

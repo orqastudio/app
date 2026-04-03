@@ -86,21 +86,6 @@ export interface ArtifactLinksConfig {
 	colors: Record<string, string>;
 }
 
-/** Default per-type colours for artifact link chips. */
-export const DEFAULT_ARTIFACT_LINK_COLORS: Record<string, string> = {
-	EPIC: "#3b82f6",
-	TASK: "#06b6d4",
-	RULE: "#a78bfa",
-	AD: "#8b5cf6",
-	IDEA: "#c084fc",
-	IMPL: "#67e8f9",
-	KNOW: "#2dd4bf",
-	PILLAR: "#818cf8",
-	RES: "#6366f1",
-	MS: "#38bdf8",
-	DOC: "#94a3b8",
-	AGENT: "#f472b6",
-};
 
 /** An automatic transition rule on a status. */
 export interface StatusAutoRule {

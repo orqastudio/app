@@ -20,11 +20,8 @@ use crate::types::{ParsedArtifact, ValidationResult};
 
 /// Parse a single `.md` artifact file into a [`ParsedArtifact`].
 ///
-/// Steps:
-/// 1. Read the file and split frontmatter from body.
-/// 2. Parse the YAML frontmatter.
-/// 3. Infer the artifact type from the ID prefix using plugin schemas.
-/// 4. Run frontmatter schema validation against the inferred type.
+/// Thin runtime wrapper: reads the file and loads plugin schemas, then delegates
+/// all parsing logic to the pure [`parse_artifact_content`] function.
 ///
 /// Returns an error only on I/O or fatal parse failures. Schema validation
 /// errors are embedded in the returned [`ParsedArtifact::validation`] field.
@@ -34,33 +31,54 @@ pub fn parse_artifact(
 ) -> Result<ParsedArtifact, ValidationError> {
     let content = std::fs::read_to_string(file_path)
         .map_err(|e| ValidationError::FileSystem(e.to_string()))?;
-
-    let (yaml_value, body) = parse_frontmatter(file_path, &content)?;
-    let (id, title, status) = extract_scalar_fields(&yaml_value, file_path)?;
-    let frontmatter = serde_json::to_value(&yaml_value).unwrap_or(serde_json::Value::Null);
-
     let rel_path = relative_path(file_path, project_path);
     let plugin_contributions = scan_plugin_manifests(project_path);
-    let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
+    let valid_rel_types = build_valid_relationship_types(project_path);
+    parse_artifact_content(
+        &content,
+        &rel_path,
+        &plugin_contributions.artifact_types,
+        &valid_rel_types,
+    )
+}
 
+/// Parse artifact content from an in-memory string with no I/O.
+///
+/// Pure function: takes raw markdown content and metadata, returns a [`ParsedArtifact`]
+/// or a fatal [`ValidationError`]. Schema validation errors are embedded in the
+/// returned artifact's `validation` field rather than returned as `Err`.
+///
+/// `content` — full file contents including YAML frontmatter.
+/// `rel_path` — relative path string used for type inference and error context.
+/// `artifact_types` — plugin-provided type definitions for schema validation.
+/// `valid_rel_types` — valid relationship types from project and plugin schemas.
+#[allow(clippy::implicit_hasher)]
+pub fn parse_artifact_content(
+    content: &str,
+    rel_path: &str,
+    artifact_types: &[ArtifactTypeDef],
+    valid_rel_types: &HashSet<String>,
+) -> Result<ParsedArtifact, ValidationError> {
+    // Use a dummy path for error messages — rel_path provides context.
+    let dummy_path = Path::new(rel_path);
+
+    let (yaml_value, body) = parse_frontmatter(dummy_path, content)?;
+    let (id, title, status) = extract_scalar_fields(&yaml_value, dummy_path)?;
+    let frontmatter = serde_json::to_value(&yaml_value).unwrap_or(serde_json::Value::Null);
+
+    let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
     // Path-based registry requires project.json; we rely on ID prefix instead.
     let type_registry = Vec::new();
     let artifact_type = infer_artifact_type(
-        &rel_path,
+        rel_path,
         &type_registry,
         frontmatter_type,
         &id,
-        &plugin_contributions.artifact_types,
+        artifact_types,
     );
 
-    let mut validation = run_validation(
-        &frontmatter,
-        &artifact_type,
-        &plugin_contributions.artifact_types,
-    );
-
-    let valid_rel_types = build_valid_relationship_types(project_path);
-    validate_relationship_types(&yaml_value, &valid_rel_types, &mut validation);
+    let mut validation = run_validation(&frontmatter, &artifact_type, artifact_types);
+    validate_relationship_types(&yaml_value, valid_rel_types, &mut validation);
 
     Ok(ParsedArtifact {
         id,
@@ -764,5 +782,66 @@ relationships:
         let rel = relative_path(file, project);
         // When strip_prefix fails, falls back to the full file path
         assert!(rel.ends_with("RULE-a1b2c3d4.md"));
+    }
+
+    // -----------------------------------------------------------------------
+    // parse_artifact_content unit tests (pure function — no I/O)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn parse_artifact_content_minimal() {
+        let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\n---\n\n## Body\n";
+        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &HashSet::new())
+            .expect("parse");
+        assert_eq!(parsed.id, "RULE-a1b2c3d4");
+        assert_eq!(parsed.title, "My Rule");
+        assert_eq!(parsed.status.as_deref(), Some("active"));
+        assert!(parsed.validation.valid);
+    }
+
+    #[test]
+    fn parse_artifact_content_infers_type_from_frontmatter() {
+        // Type field in frontmatter takes precedence over path-based inference.
+        let content = "---\nid: EPIC-aabbccdd\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n";
+        let parsed = parse_artifact_content(content, ".orqa/implementation/epics/EPIC-aabbccdd.md", &[], &HashSet::new())
+            .expect("parse");
+        assert_eq!(parsed.artifact_type, "epic");
+    }
+
+    #[test]
+    fn parse_artifact_content_fails_on_missing_id() {
+        let content = "---\ntitle: No ID\n---\n\nBody.\n";
+        let result = parse_artifact_content(content, "no-id.md", &[], &HashSet::new());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_artifact_content_fails_on_missing_frontmatter() {
+        let content = "# Just a heading\n\nNo frontmatter.\n";
+        let result = parse_artifact_content(content, "no-fm.md", &[], &HashSet::new());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn parse_artifact_content_validates_relationship_types() {
+        let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\nrelationships:\n  - type: invalid-type\n    target: OTHER-001\n---\n";
+        let mut valid_types = HashSet::new();
+        valid_types.insert("depends-on".to_string());
+        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &valid_types)
+            .expect("parse");
+        // invalid-type is not in valid_types — should produce a validation error
+        assert!(!parsed.validation.valid);
+        assert!(parsed.validation.errors.iter().any(|e| e.contains("invalid-type")));
+    }
+
+    #[test]
+    fn parse_artifact_content_clean_when_valid_types() {
+        let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\nrelationships:\n  - type: depends-on\n    target: OTHER-001\n---\n";
+        let mut valid_types = HashSet::new();
+        valid_types.insert("depends-on".to_string());
+        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &valid_types)
+            .expect("parse");
+        assert!(parsed.validation.valid);
+        assert!(parsed.validation.errors.is_empty());
     }
 }

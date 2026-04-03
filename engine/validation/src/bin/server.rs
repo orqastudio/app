@@ -69,7 +69,7 @@ use orqa_validation::{
     platform::scan_plugin_manifests,
     types::{HookContext, IntegrityCategory, IntegritySeverity},
     validate, AppliedFix, EnforcementEvent, EnforcementResult, GraphHealth, HookResult,
-    IntegrityCheck, ValidationError,
+    IntegrityCheck, PipelineCategories, ValidationError,
 };
 use serde::Serialize;
 
@@ -151,6 +151,51 @@ fn run_validate(args: &[String]) {
     }
 }
 
+/// Owned pipeline category data built from plugin contributions.
+///
+/// Holds `Vec<String>` so the borrow checker can derive `PipelineCategories<'_>`
+/// from it without lifetime conflicts.
+struct OwnedCategories {
+    delivery: Vec<String>,
+    learning: Vec<String>,
+    excluded_statuses: Vec<String>,
+    excluded_types: Vec<String>,
+    root_types: Vec<String>,
+}
+
+impl OwnedCategories {
+    /// Build from plugin contributions by filtering artifact types by `pipeline_category`.
+    fn from_contributions(contributions: &orqa_validation::platform::PluginContributions) -> Self {
+        let by_cat = |cat: &str| -> Vec<String> {
+            contributions
+                .artifact_types
+                .iter()
+                .filter(|t| t.pipeline_category.as_deref() == Some(cat))
+                .map(|t| t.key.clone())
+                .collect()
+        };
+        Self {
+            delivery: by_cat("delivery"),
+            learning: by_cat("learning"),
+            excluded_statuses: contributions.terminal_statuses.clone(),
+            excluded_types: by_cat("excluded"),
+            root_types: by_cat("root"),
+        }
+    }
+
+    /// Borrow as `PipelineCategories` with lifetime tied to `&self`.
+    #[allow(clippy::type_complexity)]
+    fn as_pipeline_categories(&self) -> (Vec<&str>, Vec<&str>, Vec<&str>, Vec<&str>, Vec<&str>) {
+        (
+            self.delivery.iter().map(String::as_str).collect(),
+            self.learning.iter().map(String::as_str).collect(),
+            self.excluded_statuses.iter().map(String::as_str).collect(),
+            self.excluded_types.iter().map(String::as_str).collect(),
+            self.root_types.iter().map(String::as_str).collect(),
+        )
+    }
+}
+
 fn validate_project(
     project_path: &std::path::Path,
     apply_fixes_flag: bool,
@@ -169,23 +214,20 @@ fn validate_project(
         &plugin_contributions.enforcement_mechanisms,
     );
 
-    let checks = validate(&graph, &ctx);
-    let health = compute_health(&graph);
+    let owned = OwnedCategories::from_contributions(&plugin_contributions);
+    let (d, l, es, et, rt) = owned.as_pipeline_categories();
+    let categories = PipelineCategories { delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt };
 
+    let checks = validate(&graph, &ctx);
+    let health = compute_health(&graph, &categories);
     let fixes_applied = if apply_fixes_flag {
         Some(auto_fix(&graph, &checks, project_path)?)
     } else {
         None
     };
-
     let enforcement_events = checks_to_enforcement_events(&checks);
 
-    Ok(Report {
-        checks,
-        health,
-        fixes_applied,
-        enforcement_events,
-    })
+    Ok(Report { checks, health, fixes_applied, enforcement_events })
 }
 
 // ---------------------------------------------------------------------------
@@ -510,7 +552,17 @@ fn run_content_behavioral(args: &[String]) {
         }
     };
 
-    match extract_behavioral_messages(&graph, &project_path) {
+    let plugin_contributions = scan_plugin_manifests(&project_path);
+    // Determine the rule type key from plugin contributions — the type whose
+    // pipeline_category is "rule" is the source of behavioral rules.
+    // Fall back to "rule" if no plugin declares one explicitly.
+    let rule_type_key = plugin_contributions
+        .artifact_types
+        .iter()
+        .find(|t| t.pipeline_category.as_deref() == Some("rule"))
+        .map_or("rule", |t| t.key.as_str());
+
+    match extract_behavioral_messages(&graph, &project_path, rule_type_key) {
         Ok(result) => {
             match serde_json::to_string_pretty(&result) {
                 Ok(json) => println!("{json}"),

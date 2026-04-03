@@ -26,21 +26,8 @@ export interface ArtifactSummary {
 	file_modified_at: string | null;
 }
 
-export type ArtifactType =
-	| "agent"
-	| "decision"
-	| "doc"
-	| "epic"
-	| "idea"
-	| "knowledge"
-	| "lesson"
-	| "milestone"
-	| "persona"
-	| "pillar"
-	| "research"
-	| "rule"
-	| "task"
-	| "vision";
+/** Artifact type key — string from plugin registry, not a hardcoded enum. */
+export type ArtifactType = string;
 export type ComplianceStatus = "compliant" | "non_compliant" | "unknown" | "error";
 
 export interface ArtifactRelationship {

@@ -111,6 +111,7 @@ mod tests {
             id_prefix: key.to_uppercase(),
             frontmatter_schema: serde_json::json!({ "type": "object" }),
             status_transitions: transitions,
+            pipeline_category: None,
         }
     }
 
@@ -171,6 +172,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
             status_transitions: transitions.clone(),
+            pipeline_category: None,
         };
         let t2 = ArtifactTypeDef {
             key: "task".to_owned(),
@@ -179,6 +181,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
             status_transitions: transitions,
+            pipeline_category: None,
         };
         let mut checks = Vec::new();
         check_schema_conflicts(&[t1, t2], &[], &mut checks);
@@ -195,6 +198,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         };
         let t2 = ArtifactTypeDef {
             key: "task".to_owned(),
@@ -203,6 +207,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({"required": ["type", "status", "priority"]}),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         };
         let mut checks = Vec::new();
         check_schema_conflicts(&[t1, t2], &[], &mut checks);

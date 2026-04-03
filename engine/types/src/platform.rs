@@ -112,6 +112,10 @@ pub struct ArtifactTypeDef {
     /// Empty when the type is loaded from core.json.
     #[serde(default)]
     pub status_transitions: HashMap<String, Vec<String>>,
+    /// Pipeline category assigned by the plugin (e.g. "delivery", "learning", "root", "excluded").
+    /// None when the type has no explicit pipeline assignment.
+    #[serde(default, rename = "pipelineCategory")]
+    pub pipeline_category: Option<String>,
 }
 
 impl ArtifactTypeDef {
@@ -345,6 +349,7 @@ mod tests {
             id_prefix: "TASK".to_owned(),
             frontmatter_schema: serde_json::json!({}),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         };
         let required = def.frontmatter_required();
         assert!(required.is_empty());
@@ -361,6 +366,7 @@ mod tests {
                 "required": ["id", "type", "status", "title"]
             }),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         };
         let required = def.frontmatter_required();
         assert_eq!(required.len(), 4);

@@ -22,7 +22,6 @@ export type {
 } from "./project.js";
 export {
 	isArtifactGroup,
-	DEFAULT_ARTIFACT_LINK_COLORS,
 	PLATFORM_CONFIG,
 	PLATFORM_ARTIFACT_TYPES,
 	PLATFORM_RELATIONSHIPS,
@@ -176,7 +175,6 @@ export type {
 	TracedArtifact,
 	TraceabilityResult,
 } from "./artifact-graph.js";
-export { ARTIFACT_TYPES } from "./artifact-graph.js";
 
 export { buildInverseMap, hasSemantic, keysForSemantic } from "./constants.js";
 

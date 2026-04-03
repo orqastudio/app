@@ -15,6 +15,7 @@ use serde::{Deserialize, Serialize};
 
 use orqa_validation::hooks::evaluate_hook;
 use orqa_validation::metrics::compute_health;
+use orqa_validation::PipelineCategories;
 use orqa_validation::types::{GraphHealth, HookContext, HookResult, IntegrityCheck};
 use orqa_validation::{auto_fix, validate, AppliedFix};
 
@@ -71,7 +72,11 @@ pub async fn validation_scan(
     };
 
     let checks = validate(&guard.graph, &guard.ctx);
-    let health = compute_health(&guard.graph);
+    let owned = guard.owned_pipeline_categories();
+    let (d, l, es, et, rt) = owned.as_str_vecs();
+    let health = compute_health(&guard.graph, &PipelineCategories {
+        delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
+    });
 
     Json(ValidationScanResponse { checks, health })
 }
@@ -92,7 +97,11 @@ pub async fn validation_fix(
             Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
         ))?;
         let checks = validate(&guard.graph, &guard.ctx);
-        let health = compute_health(&guard.graph);
+        let owned = guard.owned_pipeline_categories();
+        let (d, l, es, et, rt) = owned.as_str_vecs();
+        let health = compute_health(&guard.graph, &PipelineCategories {
+            delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
+        });
         (checks, health, guard.project_root.clone())
     };
 

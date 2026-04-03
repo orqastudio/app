@@ -10,6 +10,7 @@
  *   - isPluginManifestNonEmpty (manifest.ts)
  *   - detectMethodologyConflict (installer.ts) — uses temp dirs
  *   - computeThreeWayState (content-lifecycle.ts) — uses temp dirs
+ *   - computeThreeWayStateFromHashes (content-lifecycle.ts) — pure, no I/O
  *   - createEvent (enforcement-log.ts)
  *   - applyOverrides (workflow-resolver.ts)
  *   - matchContributions (workflow-resolver.ts)
@@ -26,7 +27,7 @@ import { isValidVersion } from "../src/lib/version-sync.js";
 import { parseFrontmatterFromContent } from "../src/lib/frontmatter.js";
 import { validateManifest, isPluginManifestNonEmpty } from "../src/lib/manifest.js";
 import { detectMethodologyConflict } from "../src/lib/installer.js";
-import { computeThreeWayState, computeFileHash } from "../src/lib/content-lifecycle.js";
+import { computeThreeWayState, computeThreeWayStateFromHashes, computeFileHash } from "../src/lib/content-lifecycle.js";
 import { createEvent } from "../src/lib/enforcement-log.js";
 import {
 	applyOverrides,
@@ -557,6 +558,63 @@ describe("computeThreeWayState", () => {
 			pluginHash,
 		);
 		expect(result).toBe("conflict");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// computeThreeWayStateFromHashes
+// ---------------------------------------------------------------------------
+
+describe("computeThreeWayStateFromHashes", () => {
+	const BASE = "aabbccdd";
+	const OTHER = "11223344";
+	const THIRD = "99887766";
+
+	it("returns 'clean' when nothing changed", () => {
+		// currentInstalledHash equals both baseline hashes: no user change, no plugin change
+		expect(
+			computeThreeWayStateFromHashes(BASE, { installedHash: BASE, sourceHash: BASE }, BASE),
+		).toBe("clean");
+	});
+
+	it("returns 'clean' when all three hashes are the same but non-trivial value", () => {
+		// Ensures the comparison is value-based, not identity-based
+		const h = "deadbeef00112233";
+		expect(
+			computeThreeWayStateFromHashes(h, { installedHash: h, sourceHash: h }, h),
+		).toBe("clean");
+	});
+
+	it("returns 'plugin-updated' when only the plugin source changed", () => {
+		// currentInstalledHash === lastEntry.installedHash (user unchanged)
+		// currentSourceHash !== lastEntry.sourceHash (plugin changed)
+		expect(
+			computeThreeWayStateFromHashes(BASE, { installedHash: BASE, sourceHash: BASE }, OTHER),
+		).toBe("plugin-updated");
+	});
+
+	it("returns 'user-modified' when only the user changed the file", () => {
+		// currentInstalledHash !== lastEntry.installedHash (user changed)
+		// currentSourceHash === lastEntry.sourceHash (plugin unchanged)
+		expect(
+			computeThreeWayStateFromHashes(OTHER, { installedHash: BASE, sourceHash: BASE }, BASE),
+		).toBe("user-modified");
+	});
+
+	it("returns 'conflict' when both user and plugin changed the file", () => {
+		// currentInstalledHash !== lastEntry.installedHash (user changed)
+		// currentSourceHash !== lastEntry.sourceHash (plugin changed)
+		expect(
+			computeThreeWayStateFromHashes(OTHER, { installedHash: BASE, sourceHash: BASE }, THIRD),
+		).toBe("conflict");
+	});
+
+	it("returns 'conflict' when user and plugin both changed to the same new value", () => {
+		// Both independently changed to the same hash — still a conflict because
+		// the installedHash no longer matches the baseline.
+		expect(
+			computeThreeWayStateFromHashes(OTHER, { installedHash: BASE, sourceHash: BASE }, OTHER),
+		).toBe("conflict");
 	});
 });
 

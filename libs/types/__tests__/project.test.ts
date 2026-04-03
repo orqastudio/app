@@ -1,14 +1,13 @@
 /**
  * Tests for project.ts exports.
  *
- * Covers the isArtifactGroup type guard, DEFAULT_ARTIFACT_LINK_COLORS contract,
+ * Covers the isArtifactGroup type guard
  * and PLATFORM_CONFIG structure loaded from core.json.
  */
 
 import { describe, it, expect } from "vitest";
 import {
 	isArtifactGroup,
-	DEFAULT_ARTIFACT_LINK_COLORS,
 	PLATFORM_CONFIG,
 	PLATFORM_ARTIFACT_TYPES,
 	PLATFORM_RELATIONSHIPS,
@@ -49,29 +48,6 @@ describe("isArtifactGroup()", () => {
 		} else {
 			throw new Error("guard should have returned true");
 		}
-	});
-});
-
-// ---------------------------------------------------------------------------
-// DEFAULT_ARTIFACT_LINK_COLORS
-// ---------------------------------------------------------------------------
-
-describe("DEFAULT_ARTIFACT_LINK_COLORS", () => {
-	it("is a non-empty record", () => {
-		expect(Object.keys(DEFAULT_ARTIFACT_LINK_COLORS).length).toBeGreaterThan(0);
-	});
-
-	it("all values are hex color strings", () => {
-		for (const [, color] of Object.entries(DEFAULT_ARTIFACT_LINK_COLORS)) {
-			expect(color).toMatch(/^#[0-9a-fA-F]{3,8}$/);
-		}
-	});
-
-	it("contains EPIC, TASK, RULE, DOC entries", () => {
-		expect(DEFAULT_ARTIFACT_LINK_COLORS).toHaveProperty("EPIC");
-		expect(DEFAULT_ARTIFACT_LINK_COLORS).toHaveProperty("TASK");
-		expect(DEFAULT_ARTIFACT_LINK_COLORS).toHaveProperty("RULE");
-		expect(DEFAULT_ARTIFACT_LINK_COLORS).toHaveProperty("DOC");
 	});
 });
 

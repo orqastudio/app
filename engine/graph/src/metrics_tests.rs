@@ -13,9 +13,23 @@ mod tests {
 
     use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
 
-    use crate::metrics::{
+    use crate::metrics::{PipelineCategories,
         compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     };
+
+    /// Returns a PipelineCategories instance reflecting the agile methodology plugin.
+    ///
+    /// Used by tests that need to call compute_health, compute_traceability, and
+    /// trace_to_pillars without hardcoding type names in every test body.
+    fn agile_categories() -> PipelineCategories<'static> {
+        PipelineCategories {
+            delivery: &["task", "epic", "milestone", "idea", "research", "decision", "wireframe"],
+            learning: &["lesson", "rule"],
+            excluded_statuses: &["archived", "surpassed"],
+            excluded_types: &["knowledge", "doc"],
+            root_types: &["pillar", "vision"],
+        }
+    }
 
     // -------------------------------------------------------------------------
     // Graph builder helpers
@@ -165,7 +179,7 @@ mod tests {
     fn health_empty_graph_returns_all_zeros() {
         // An empty graph should yield a fully-zeroed GraphHealth (the Default).
         let graph = GraphBuilder::new().build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_nodes, 0);
         assert_eq!(health.total_edges, 0);
         assert_eq!(health.outlier_count, 0);
@@ -183,7 +197,7 @@ mod tests {
     fn health_single_isolated_node_has_no_edges() {
         // A single node with no relationships has 0 edges and avg_degree 0.
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_nodes, 1);
         assert_eq!(health.total_edges, 0);
         assert_eq!(health.avg_degree, 0.0);
@@ -206,7 +220,7 @@ mod tests {
             .edge("T-1", "EP-1")
             .edge("EP-1", "PIL-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         // All delivery-type nodes (epic + task) are connected → 1.0
         assert_eq!(health.delivery_connectivity, 1.0,
             "fully connected delivery nodes should have connectivity 1.0");
@@ -221,7 +235,7 @@ mod tests {
             .node("T-2", "task")
             .edge("T-1", "EP-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         // 3 delivery nodes (EP-1, T-1, T-2). EP-1 and T-1 form one component of
         // size 2, T-2 is isolated. Largest component = 2, total = 3 → ~0.667.
         assert!(
@@ -239,7 +253,7 @@ mod tests {
             .node("RULE-1", "rule")
             .edge("LES-1", "RULE-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.delivery_connectivity, 0.0);
     }
 
@@ -257,7 +271,7 @@ mod tests {
             .edge("LES-1", "DEC-1")
             .edge("RULE-1", "LES-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         // Both lesson and rule have connections to learning/decision → 1.0
         assert_eq!(health.learning_connectivity, 1.0,
             "all learning nodes should be connected");
@@ -266,7 +280,7 @@ mod tests {
     #[test]
     fn health_no_learning_nodes_yields_zero() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.learning_connectivity, 0.0);
     }
 
@@ -282,7 +296,7 @@ mod tests {
             .node("B", "task")
             .node("C", "task")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_nodes, 3);
         let expected = 1.0 / 3.0;
         assert!(
@@ -303,7 +317,7 @@ mod tests {
             .edge("A", "B")
             .edge("C", "D")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert!(
             (health.largest_component_ratio - 0.5).abs() < 1e-9,
             "two equal components → ratio 0.5, got {}",
@@ -342,7 +356,7 @@ mod tests {
         // "pillar" is neither a delivery nor a learning type, and has no `created` date
         // (treated as stale → past grace). Should be counted as an outlier.
         let graph = GraphBuilder::new().node("PIL-1", "pillar").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 1,
             "pillar with no created date must be counted as an outlier");
     }
@@ -354,7 +368,7 @@ mod tests {
         let graph = GraphBuilder::new()
             .node_with_created("PIL-1", "pillar", &today)
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "a node created today is within the grace period and should not be an outlier");
     }
@@ -363,7 +377,7 @@ mod tests {
     fn health_excluded_type_knowledge_not_counted_as_outlier() {
         // "knowledge" type is explicitly excluded from outlier analysis.
         let graph = GraphBuilder::new().node("KNOW-1", "knowledge").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "knowledge type must be excluded from outlier analysis");
     }
@@ -372,7 +386,7 @@ mod tests {
     fn health_excluded_type_doc_not_counted_as_outlier() {
         // "doc" type is explicitly excluded from outlier analysis.
         let graph = GraphBuilder::new().node("DOC-1", "doc").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "doc type must be excluded from outlier analysis");
     }
@@ -383,7 +397,7 @@ mod tests {
         let graph = GraphBuilder::new()
             .node_with_status("PIL-1", "pillar", "archived")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "archived artifact must not be an outlier");
     }
@@ -393,7 +407,7 @@ mod tests {
         let graph = GraphBuilder::new()
             .node_with_status("PIL-1", "pillar", "surpassed")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "surpassed artifact must not be an outlier");
     }
@@ -402,7 +416,7 @@ mod tests {
     fn health_delivery_type_task_not_an_outlier() {
         // "task" belongs to the delivery pipeline, so it must never be an outlier.
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "task is in the delivery pipeline and must never be an outlier");
     }
@@ -411,7 +425,7 @@ mod tests {
     fn health_learning_type_lesson_not_an_outlier() {
         // "lesson" is in the learning pipeline — never an outlier.
         let graph = GraphBuilder::new().node("LES-1", "lesson").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.outlier_count, 0,
             "lesson is in the learning pipeline and must never be an outlier");
     }
@@ -427,7 +441,7 @@ mod tests {
             .node("T-1", "task")
             .broken_edge("T-1", "MISSING-999")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.broken_ref_count, 1,
             "one edge pointing to a non-existent target must be counted as a broken ref");
     }
@@ -439,7 +453,7 @@ mod tests {
             .node("EP-1", "epic")
             .edge("T-1", "EP-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.broken_ref_count, 0);
     }
 
@@ -452,7 +466,7 @@ mod tests {
             .broken_edge("T-1", "GONE-1")
             .broken_edge("T-1", "GONE-2")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.broken_ref_count, 2);
     }
 
@@ -470,7 +484,7 @@ mod tests {
             .edge("A", "B")
             .edge("A", "C")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_edges, 2);
     }
 
@@ -482,7 +496,7 @@ mod tests {
             .node("B", "epic")
             .edge("A", "B")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert!(
             (health.avg_degree - 1.0).abs() < 1e-9,
             "avg_degree should be 1.0 for a single edge between 2 nodes, got {}",
@@ -504,7 +518,7 @@ mod tests {
             .edge("T-1", "EP-1")
             .edge("EP-1", "PIL-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert!(
             (health.pillar_traceability - 100.0).abs() < 1e-9,
             "all non-doc nodes can trace to pillar, expected 100.0%, got {}",
@@ -515,7 +529,7 @@ mod tests {
     #[test]
     fn health_pillar_traceability_zero_with_no_pillars() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.pillar_traceability, 0.0,
             "no pillars in graph → traceability must be 0");
     }
@@ -527,7 +541,7 @@ mod tests {
     #[test]
     fn traceability_unknown_artifact_returns_empty_result() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let result = compute_traceability(&graph, "NONEXISTENT-999");
+        let result = compute_traceability(&graph, "NONEXISTENT-999", &agile_categories());
         assert!(result.ancestry_chains.is_empty(),
             "unknown artifact must have no ancestry chains");
         assert!(result.descendants.is_empty(),
@@ -544,7 +558,7 @@ mod tests {
     #[test]
     fn traceability_isolated_artifact_is_disconnected() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let result = compute_traceability(&graph, "T-1");
+        let result = compute_traceability(&graph, "T-1", &agile_categories());
         assert!(result.disconnected,
             "task with no relationships should be marked disconnected");
         assert!(result.descendants.is_empty());
@@ -565,7 +579,7 @@ mod tests {
             .edge("T-1", "EP-1")
             .edge("EP-1", "PIL-1")
             .build();
-        let chains = trace_to_pillars(&graph, "T-1");
+        let chains = trace_to_pillars(&graph, "T-1", agile_categories().root_types);
         assert_eq!(chains.len(), 1, "exactly one ancestry chain expected");
         let path = &chains[0].path;
         // Path: T-1 (index 0) → EP-1 → PIL-1 (last)
@@ -577,7 +591,7 @@ mod tests {
     #[test]
     fn trace_to_pillars_isolated_task_returns_empty() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
-        let chains = trace_to_pillars(&graph, "T-1");
+        let chains = trace_to_pillars(&graph, "T-1", agile_categories().root_types);
         assert!(chains.is_empty(),
             "isolated task has no path to any pillar");
     }
@@ -592,7 +606,7 @@ mod tests {
             .edge("T-1", "EP-1")
             .edge("EP-1", "PIL-1")
             .build();
-        let chains = trace_to_pillars(&graph, "T-1");
+        let chains = trace_to_pillars(&graph, "T-1", agile_categories().root_types);
         let path = &chains[0].path;
         let ids: Vec<&str> = path.iter().map(|n| n.id.as_str()).collect();
         assert!(ids.contains(&"EP-1"),
@@ -603,7 +617,7 @@ mod tests {
     fn trace_to_pillars_direct_pillar_query() {
         // Querying a pillar directly: should return a trivial single-node chain.
         let graph = GraphBuilder::new().node("PIL-1", "pillar").build();
-        let chains = trace_to_pillars(&graph, "PIL-1");
+        let chains = trace_to_pillars(&graph, "PIL-1", agile_categories().root_types);
         // Single-node chain: the pillar itself.
         assert!(!chains.is_empty(),
             "querying a pillar should return a (trivial) chain");
@@ -616,7 +630,7 @@ mod tests {
         builder = builder.edge("A", "B").edge("B", "A");
         let graph = builder.build();
         // Must terminate without hanging.
-        let chains = trace_to_pillars(&graph, "A");
+        let chains = trace_to_pillars(&graph, "A", agile_categories().root_types);
         // There is no pillar, so chains should be empty (or at most trivial).
         // The critical property is that this terminates.
         let _ = chains;
@@ -717,7 +731,7 @@ mod tests {
             .edge("B", "C")
             .edge("C", "D")
             .build();
-        let result = compute_traceability(&graph, "A");
+        let result = compute_traceability(&graph, "A", &agile_categories());
         assert_eq!(result.impact_radius, 2,
             "only B (depth 1) and C (depth 2) are within the 2-hop impact radius");
     }
@@ -805,7 +819,7 @@ mod tests {
             .edge("A", "C")
             .edge("B", "C")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_edges, 3);
     }
 
@@ -826,7 +840,7 @@ mod tests {
             .edge("A", "C")
             .edge("A", "D")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert!(
             (health.avg_degree - 1.5).abs() < 1e-9,
             "expected avg_degree=1.5 for star graph, got {}",
@@ -848,7 +862,7 @@ mod tests {
             .broken_edge("T-1", "GONE-X")
             .broken_edge("T-1", "GONE-Y")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.broken_ref_count, 2);
     }
 
@@ -864,7 +878,7 @@ mod tests {
             .node("B", "epic")
             .node("C", "epic")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         // Largest component = 1 out of 3.
         assert!(
             (health.largest_component_ratio - (1.0 / 3.0)).abs() < 1e-9,
@@ -887,7 +901,7 @@ mod tests {
             .edge("T-1", "EP-1")
             .edge("EP-1", "PIL-1")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         // All 3 non-doc nodes should be reachable → 100%.
         assert!(
             (health.pillar_traceability - 100.0).abs() < 1e-9,
@@ -898,17 +912,18 @@ mod tests {
 
     #[test]
     fn reverse_bfs_from_pillars_isolated_node_not_traceable() {
-        // Pillar + isolated task: only pillar can trace to itself.
-        // Non-doc nodes: pillar + task = 2. Reachable from pillar = 1 (pillar only).
-        // Traceability = 1/2 = 50%.
+        // Pillar + isolated task: the task cannot reach the pillar.
+        // Denominator = non-root nodes = 1 (task only; pillar is a root type and excluded).
+        // Traceable non-root nodes = 0 (task has no edge to pillar).
+        // Traceability = 0/1 = 0%.
         let graph = GraphBuilder::new()
             .node("PIL-1", "pillar")
             .node("T-1", "task")
             .build();
-        let health = compute_health(&graph);
+        let health = compute_health(&graph, &agile_categories());
         assert!(
-            (health.pillar_traceability - 50.0).abs() < 1e-9,
-            "pillar traces to itself, task is unreachable → 50%, got {}",
+            health.pillar_traceability.abs() < 1e-9,
+            "isolated task cannot reach pillar → 0%, got {}",
             health.pillar_traceability
         );
     }

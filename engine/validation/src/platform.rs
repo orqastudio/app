@@ -158,6 +158,10 @@ struct PluginProvidesSchema {
     /// The value is the key of the base schema to extend.
     #[serde(default)]
     pub extends: Option<String>,
+    /// Pipeline category assigned to this type by the plugin manifest.
+    /// Propagated to the `ArtifactTypeDef` so callers can build `PipelineCategories` slices.
+    #[serde(default, rename = "pipelineCategory")]
+    pub pipeline_category: Option<String>,
 }
 
 /// A schema extension collected during plugin scanning.
@@ -196,6 +200,9 @@ struct PluginProvides {
     pub relationships: Vec<PluginProvidesRelationship>,
     #[serde(default)]
     pub enforcement_mechanisms: Vec<EnforcementMechanism>,
+    /// Terminal status values declared by this plugin (e.g. "archived", "surpassed").
+    #[serde(default, rename = "terminalStatuses")]
+    pub terminal_statuses: Vec<String>,
 }
 
 /// A minimal plugin manifest — only the `provides` block is needed.
@@ -217,6 +224,9 @@ pub struct PluginContributions {
     pub schema_extensions: Vec<SchemaExtension>,
     /// Enforcement mechanisms registered by plugins.
     pub enforcement_mechanisms: Vec<EnforcementMechanism>,
+    /// Deduplicated terminal status values collected across all plugin manifests.
+    /// Used by callers to build the excluded_statuses slice for PipelineCategories.
+    pub terminal_statuses: Vec<String>,
 }
 
 /// Scan plugin manifests under `project_root` and return the combined artifact
@@ -304,6 +314,11 @@ fn apply_manifest(manifest: PluginManifest, contributions: &mut PluginContributi
     contributions
         .enforcement_mechanisms
         .extend(manifest.provides.enforcement_mechanisms);
+    for status in manifest.provides.terminal_statuses {
+        if !contributions.terminal_statuses.contains(&status) {
+            contributions.terminal_statuses.push(status);
+        }
+    }
     for rel in manifest.provides.relationships {
         contributions.relationships.push(plugin_rel_to_schema(rel));
     }
@@ -332,6 +347,7 @@ fn apply_schema(schema: PluginProvidesSchema, contributions: &mut PluginContribu
             id_prefix: schema.id_prefix,
             frontmatter_schema,
             status_transitions: schema.status_transitions.unwrap_or_default(),
+            pipeline_category: schema.pipeline_category,
         });
     }
 }

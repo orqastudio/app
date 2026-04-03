@@ -303,6 +303,54 @@ pub fn build_system_prompt(
     stage: Option<&str>,
     paths: &ProjectPromptPaths,
 ) -> Result<String, std::io::Error> {
+    // Read all governance data from disk, then delegate assembly to the pure function.
+    let rules = read_rules(project_path, &paths.rules);
+    let catalog = list_knowledge_catalog(project_path, &paths.knowledge);
+    let claude_md = read_governance_file(project_path, &paths.claude_md)?;
+    let agent_files = read_installed_agent_files(project_path, &paths.agents);
+
+    let prompt_text = assemble_system_prompt(
+        role,
+        stage,
+        &rules,
+        &catalog,
+        claude_md.as_deref(),
+        &agent_files,
+    );
+
+    // Log token estimate for P5 enforcement: 1,500–4,000 tokens per agent prompt target.
+    let estimated_tokens = prompt_text.len() / 4;
+    tracing::debug!(
+        subsystem = "engine",
+        rule_count = rules.len(),
+        knowledge_count = catalog.len(),
+        agent_definition_count = agent_files.len(),
+        estimated_tokens,
+        "[engine] build_system_prompt completed"
+    );
+
+    Ok(prompt_text)
+}
+
+/// Assemble a system prompt from pre-loaded governance data with no I/O.
+///
+/// Pure function: takes all governance data as in-memory slices and strings,
+/// returns the assembled prompt text. Sections are included only when non-empty.
+///
+/// `role` — agent role label (e.g. "implementer", "reviewer").
+/// `stage` — optional workflow stage label.
+/// `rules` — (name, content) pairs for each active rule.
+/// `catalog` — (name, description) pairs for knowledge catalog entries.
+/// `claude_md` — optional contents of `.claude/CLAUDE.md`.
+/// `agent_files` — (name, content) pairs for installed agent definition files.
+pub fn assemble_system_prompt(
+    role: &str,
+    stage: Option<&str>,
+    rules: &[(String, String)],
+    catalog: &[(String, String)],
+    claude_md: Option<&str>,
+    agent_files: &[(String, String)],
+) -> String {
     let mut parts: Vec<String> = Vec::new();
 
     // Role/stage header gives the agent immediate context without consuming
@@ -313,59 +361,37 @@ pub fn build_system_prompt(
         parts.push(format!("# Project Governance\n\nRole: {role}"));
     }
 
-    let rules = read_rules(project_path, &paths.rules);
     if !rules.is_empty() {
         parts.push("\n## Rules".to_owned());
-        for (name, content) in &rules {
+        for (name, content) in rules {
             parts.push(format!("\n### {name}\n\n{content}"));
         }
     }
 
-    let catalog = list_knowledge_catalog(project_path, &paths.knowledge);
     if !catalog.is_empty() {
         parts.push("\n## Available Knowledge".to_owned());
         parts.push(
             "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_owned(),
         );
-        for (name, description) in &catalog {
+        for (name, description) in catalog {
             parts.push(format!("- **{name}**: {description}"));
         }
     }
 
-    if let Some(claude_md) = read_governance_file(project_path, &paths.claude_md)? {
+    if let Some(md) = claude_md {
         parts.push("\n## Project Instructions".to_owned());
-        parts.push(claude_md);
+        parts.push(md.to_owned());
     }
 
     // Agent definitions come from installed plugin content (P1: Plugin-Composed Everything).
-    // The agents directory is populated at plugin install time from
-    // each plugin's `content.agents` source directory.
-    let agent_files = read_installed_agent_files(project_path, &paths.agents);
     if !agent_files.is_empty() {
         parts.push("\n## Agent Definitions".to_owned());
-        for (_name, content) in &agent_files {
+        for (_name, content) in agent_files {
             parts.push(content.clone());
         }
     }
 
-    let prompt_text = parts.join("\n");
-
-    // Log token estimate for P5 enforcement: 1,500–4,000 tokens per agent prompt target.
-    // Counts are collected after assembly so the log reflects what was actually included.
-    let rule_count = rules.len();
-    let knowledge_count = catalog.len();
-    let agent_definition_count = agent_files.len();
-    let estimated_tokens = prompt_text.len() / 4;
-    tracing::debug!(
-        subsystem = "engine",
-        rule_count,
-        knowledge_count,
-        agent_definition_count,
-        estimated_tokens,
-        "[engine] build_system_prompt completed"
-    );
-
-    Ok(prompt_text)
+    parts.join("\n")
 }
 
 /// Resolve the system prompt from a known project root path, logging on failure.
@@ -759,5 +785,74 @@ mod tests {
         assert_eq!(paths.knowledge, DEFAULT_KNOWLEDGE_PATH);
         assert_eq!(paths.claude_md, DEFAULT_CLAUDE_MD_PATH);
         assert_eq!(paths.agents, DEFAULT_AGENTS_PATH);
+    }
+
+    // -----------------------------------------------------------------------
+    // assemble_system_prompt unit tests (pure function — no I/O)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn assemble_system_prompt_role_only() {
+        let prompt = assemble_system_prompt("implementer", None, &[], &[], None, &[]);
+        assert!(prompt.contains("Role: implementer"));
+        assert!(!prompt.contains("Stage:"));
+    }
+
+    #[test]
+    fn assemble_system_prompt_role_and_stage() {
+        let prompt = assemble_system_prompt("reviewer", Some("review"), &[], &[], None, &[]);
+        assert!(prompt.contains("Role: reviewer"));
+        assert!(prompt.contains("Stage: review"));
+    }
+
+    #[test]
+    fn assemble_system_prompt_includes_rules() {
+        let rules = vec![("no-debug".to_owned(), "No debug statements.".to_owned())];
+        let prompt = assemble_system_prompt("implementer", None, &rules, &[], None, &[]);
+        assert!(prompt.contains("## Rules"));
+        assert!(prompt.contains("no-debug"));
+        assert!(prompt.contains("No debug statements."));
+    }
+
+    #[test]
+    fn assemble_system_prompt_omits_rules_section_when_empty() {
+        let prompt = assemble_system_prompt("implementer", None, &[], &[], None, &[]);
+        assert!(!prompt.contains("## Rules"));
+    }
+
+    #[test]
+    fn assemble_system_prompt_includes_knowledge_catalog() {
+        let catalog = vec![("arch-overview".to_owned(), "Architecture overview.".to_owned())];
+        let prompt = assemble_system_prompt("general", None, &[], &catalog, None, &[]);
+        assert!(prompt.contains("## Available Knowledge"));
+        assert!(prompt.contains("arch-overview"));
+        assert!(prompt.contains("Architecture overview."));
+    }
+
+    #[test]
+    fn assemble_system_prompt_includes_claude_md() {
+        let prompt = assemble_system_prompt("general", None, &[], &[], Some("# My Project\n\nFollow the architecture."), &[]);
+        assert!(prompt.contains("## Project Instructions"));
+        assert!(prompt.contains("Follow the architecture."));
+    }
+
+    #[test]
+    fn assemble_system_prompt_omits_claude_md_when_none() {
+        let prompt = assemble_system_prompt("general", None, &[], &[], None, &[]);
+        assert!(!prompt.contains("## Project Instructions"));
+    }
+
+    #[test]
+    fn assemble_system_prompt_includes_agent_definitions() {
+        let agents = vec![("orchestrator".to_owned(), "# Orchestrator\n\nCoordinates workers.\n".to_owned())];
+        let prompt = assemble_system_prompt("general", None, &[], &[], None, &agents);
+        assert!(prompt.contains("## Agent Definitions"));
+        assert!(prompt.contains("Coordinates workers."));
+    }
+
+    #[test]
+    fn assemble_system_prompt_omits_agent_section_when_empty() {
+        let prompt = assemble_system_prompt("general", None, &[], &[], None, &[]);
+        assert!(!prompt.contains("## Agent Definitions"));
     }
 }

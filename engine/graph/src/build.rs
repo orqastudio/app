@@ -92,6 +92,61 @@ pub fn build_artifact_graph(project_path: &Path) -> Result<ArtifactGraph, GraphE
     Ok(graph)
 }
 
+/// Build an `ArtifactGraph` from pre-loaded file entries with no I/O.
+///
+/// Pure function — takes `(path, content)` pairs already read from disk and
+/// processes them identically to `build_artifact_graph`'s two-pass algorithm.
+/// Useful for testing and for callers that have already collected file contents.
+///
+/// Accepts a `HashSet` with any hasher; the set is used only for `contains` checks.
+#[allow(clippy::implicit_hasher)]
+pub fn build_graph_from_entries(
+    entries: Vec<(std::path::PathBuf, String)>,
+    project_root: &Path,
+    type_registry: &TypeRegistry,
+    valid_rel_types: &std::collections::HashSet<String>,
+) -> ArtifactGraph {
+    let mut graph = ArtifactGraph::default();
+
+    // Pass 1: parse each entry and collect nodes.
+    for (file_path, content) in entries {
+        let (fm_text, body) = extract_frontmatter(&content);
+        let Some(fm_text) = fm_text else { continue };
+        let yaml_value: serde_yaml::Value = match serde_yaml::from_str(&fm_text) {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let id = match yaml_value.get("id").and_then(|v| v.as_str()) {
+            Some(s) if !s.trim().is_empty() => s.to_owned(),
+            _ => continue,
+        };
+        let rel_path = file_path
+            .strip_prefix(project_root)
+            .unwrap_or(&file_path)
+            .to_string_lossy()
+            .replace('\\', "/");
+        let node = build_node(
+            id.clone(),
+            rel_path.clone(),
+            &file_path,
+            &yaml_value,
+            &body,
+            &NodeBuildCtx {
+                type_registry,
+                project_name: None,
+                valid_rel_types,
+            },
+        );
+        graph.nodes.insert(id.clone(), node);
+        graph.path_index.insert(rel_path, id);
+    }
+
+    // Pass 2: invert references — add backlinks to target nodes.
+    invert_references(&mut graph);
+
+    graph
+}
+
 /// Compute summary statistics for the graph.
 ///
 /// In organisation mode, bare-ID alias nodes are excluded from counts to avoid
@@ -220,7 +275,44 @@ pub fn infer_artifact_type(
         }
     }
 
-    type_from_path_heuristic(&normalized)
+    // Step 4: path-segment heuristic — map well-known directory name segments to type keys.
+    if let Some(t) = infer_type_from_path_segment(&normalized) {
+        return t.to_owned();
+    }
+
+    "doc".to_owned()
+}
+
+/// Map a well-known directory name segment in a normalized path to an artifact type key.
+///
+/// Scans path segments from right to left (most-specific first). Returns the first match
+/// or `None` if no segment matches the well-known set.
+fn infer_type_from_path_segment(normalized_path: &str) -> Option<&'static str> {
+    for segment in normalized_path.split('/').rev() {
+        let t = match segment {
+            "tasks" => "task",
+            "epics" => "epic",
+            "milestones" => "milestone",
+            "rules" => "rule",
+            "lessons" => "lesson",
+            "decisions" => "decision",
+            "reviews" => "review",
+            "agents" => "agent",
+            "personas" => "persona",
+            "principles" => "principle",
+            "pillars" => "pillar",
+            "visions" => "vision",
+            "pivots" => "pivot",
+            "discoveries" => "discovery",
+            "learnings" => "learning",
+            "docs" | "documentation" => "doc",
+            "knowledge" => "knowledge",
+            "wireframes" => "wireframe",
+            _ => continue,
+        };
+        return Some(t);
+    }
+    None
 }
 
 // ---------------------------------------------------------------------------
@@ -723,41 +815,6 @@ fn collect_body_refs(body: &str, source_id: &str) -> Vec<ArtifactRef> {
     });
 
     refs
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-fn type_from_path_heuristic(normalized: &str) -> String {
-    if normalized.contains("/epics/") {
-        "epic"
-    } else if normalized.contains("/tasks/") {
-        "task"
-    } else if normalized.contains("/milestones/") {
-        "milestone"
-    } else if normalized.contains("/ideas/") {
-        "idea"
-    } else if normalized.contains("/decisions/") {
-        "decision"
-    } else if normalized.contains("/research/") {
-        "research"
-    } else if normalized.contains("/lessons/") {
-        "lesson"
-    } else if normalized.contains("/rules/") {
-        "rule"
-    } else if normalized.contains("/agents/") {
-        "agent"
-    } else if normalized.contains("/knowledge/") {
-        "knowledge"
-    } else if normalized.contains("/hooks/") {
-        "hook"
-    } else if normalized.contains("/pillars/") {
-        "pillar"
-    } else {
-        "doc"
-    }
-    .to_owned()
 }
 
 fn yaml_to_json(value: &serde_yaml::Value) -> serde_json::Value {

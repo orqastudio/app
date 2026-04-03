@@ -11,7 +11,7 @@
 //! # Quick start
 //!
 //! ```no_run
-//! use orqa_validation::{validate, compute_health, auto_fix};
+//! use orqa_validation::{validate, compute_health, auto_fix, PipelineCategories};
 //! use orqa_validation::graph::build_artifact_graph;
 //! use orqa_validation::context::build_validation_context;
 //! use orqa_validation::settings::DeliveryConfig;
@@ -21,7 +21,9 @@
 //! let graph = build_artifact_graph(project_path).unwrap();
 //! let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[]);
 //! let checks = validate(&graph, &ctx);
-//! let health = compute_health(&graph);
+//! // PipelineCategories are supplied by the caller from plugin registry data.
+//! let categories = PipelineCategories { delivery: &[], learning: &[], excluded_statuses: &[], excluded_types: &[], root_types: &[] };
+//! let health = compute_health(&graph, &categories);
 //! ```
 
 pub mod auto_fix;
@@ -53,6 +55,7 @@ pub use graph::{
 };
 pub use hooks::evaluate_hook;
 pub use metrics::{
+    PipelineCategories,
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
 };

@@ -2,7 +2,6 @@
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ArtifactLinksConfig, ArtifactLinkDisplayMode } from "@orqastudio/types";
-	import { DEFAULT_ARTIFACT_LINK_COLORS } from "@orqastudio/types";
 
 	interface Props {
 		settings: ProjectSettings;
@@ -11,17 +10,18 @@
 
 	const props: Props = $props();
 
-	// Resolve effective config — merge defaults with persisted values.
+	// Effective colors are the persisted values from project settings only.
+	// Defaults come from the plugin registry, not hardcoded constants.
 	const effectiveColors = $derived.by((): Record<string, string> => {
-		return { ...DEFAULT_ARTIFACT_LINK_COLORS, ...(props.settings.artifactLinks?.colors ?? {}) };
+		return { ...(props.settings.artifactLinks?.colors ?? {}) };
 	});
 
 	const effectiveDisplayModes = $derived.by((): Record<string, ArtifactLinkDisplayMode> => {
 		return props.settings.artifactLinks?.displayModes ?? {};
 	});
 
-	/** All type prefixes, in display order. */
-	const prefixes = Object.keys(DEFAULT_ARTIFACT_LINK_COLORS);
+	/** All type prefixes, in display order — from persisted settings. */
+	const prefixes = $derived(Object.keys(effectiveColors));
 
 	function getDisplayMode(prefix: string): ArtifactLinkDisplayMode {
 		return effectiveDisplayModes[prefix] ?? "id";
@@ -52,12 +52,8 @@
 
 	function resetColor(prefix: string) {
 		const colors = { ...effectiveColors };
-		const defaultColor = DEFAULT_ARTIFACT_LINK_COLORS[prefix];
-		if (defaultColor) {
-			colors[prefix] = defaultColor;
-		} else {
-			delete colors[prefix];
-		}
+		// Remove color override — no hardcoded default to restore to.
+		delete colors[prefix];
 		props.onSave({
 			...props.settings,
 			artifactLinks: { ...buildConfig(), colors },
@@ -83,8 +79,8 @@
 		<!-- Per-type rows -->
 		<div class="space-y-1.5">
 			{#each prefixes as prefix (prefix)}
-				{@const color = effectiveColors[prefix] ?? DEFAULT_ARTIFACT_LINK_COLORS[prefix] ?? "#64748b"}
-				{@const isDefault = color === DEFAULT_ARTIFACT_LINK_COLORS[prefix]}
+				{@const color = effectiveColors[prefix] ?? "#64748b"}
+				{@const isDefault = false}
 				{@const mode = getDisplayMode(prefix)}
 
 				<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4">

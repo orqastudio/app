@@ -32,7 +32,8 @@ pub struct ProjectScanResult {
 ///
 /// Walks the filesystem up to `MAX_SCAN_DEPTH` levels deep, skipping
 /// directories listed in `excluded_paths`. Only reads directory entries
-/// (never file contents) for speed.
+/// (never file contents) for speed. Delegates stack classification to
+/// [`classify_project`].
 ///
 /// Returns `EngineError::Validation` if the path does not exist or is not a directory.
 /// Returns `EngineError::FileSystem` if directory traversal encounters an I/O error.
@@ -49,36 +50,16 @@ pub fn scan_project(
         )));
     }
 
-    let mut languages = HashSet::new();
-    let mut frameworks = HashSet::new();
-    let mut package_manager: Option<String> = None;
+    // Collect file names from the directory tree for language detection.
+    let mut all_file_names: Vec<String> = Vec::new();
+    collect_file_names(root, excluded_paths, 0, &mut all_file_names);
 
-    // Walk the tree for language detection by file extension.
-    walk_for_languages(root, excluded_paths, 0, &mut languages);
-
-    // Detect frameworks from root-level config files.
-    detect_root_frameworks(root, &mut frameworks);
-
-    // Detect package manager from root-level lock files.
-    if package_manager.is_none() {
-        package_manager = detect_package_manager(root);
-    }
+    // Collect root-level file names for framework and package manager detection.
+    let root_file_names: Vec<String> = collect_root_file_names(root);
 
     let has_claude_config = root.join(".claude").join("CLAUDE.md").exists();
 
-    let mut lang_vec: Vec<String> = languages.into_iter().collect();
-    lang_vec.sort();
-    let mut fw_vec: Vec<String> = frameworks.into_iter().collect();
-    fw_vec.sort();
-
-    let stack = DetectedStack {
-        languages: lang_vec,
-        frameworks: fw_vec,
-        package_manager,
-        has_claude_config,
-        has_design_tokens: false,
-    };
-
+    let stack = classify_project(&all_file_names, &root_file_names, has_claude_config);
     let governance = scan_governance(root);
     let elapsed = start.elapsed().as_millis() as u64;
 
@@ -89,14 +70,55 @@ pub fn scan_project(
     })
 }
 
-/// Recursively walk directories to detect languages by file extension.
+/// Classify the project stack from pre-collected file name lists with no I/O.
+///
+/// This is the pure core of stack detection. The caller is responsible for
+/// collecting file names by walking the filesystem. This function performs only
+/// pure in-memory classification from the supplied name lists.
+///
+/// `all_file_names` — file names (basename only, any depth) for language detection via extension.
+/// `root_file_names` — file names at the project root for framework and package manager detection.
+/// `has_claude_config` — whether `.claude/CLAUDE.md` exists (caller checks this).
+///
+/// Returns a [`DetectedStack`] with sorted languages and frameworks.
+pub fn classify_project(
+    all_file_names: &[String],
+    root_file_names: &[String],
+    has_claude_config: bool,
+) -> DetectedStack {
+    let mut languages = HashSet::new();
+    let mut frameworks = HashSet::new();
+
+    for name in all_file_names {
+        detect_language_from_name(name, &mut languages);
+    }
+
+    classify_root_frameworks(root_file_names, &mut frameworks);
+    let package_manager = classify_package_manager(root_file_names);
+
+    let mut lang_vec: Vec<String> = languages.into_iter().collect();
+    lang_vec.sort();
+    let mut fw_vec: Vec<String> = frameworks.into_iter().collect();
+    fw_vec.sort();
+
+    DetectedStack {
+        languages: lang_vec,
+        frameworks: fw_vec,
+        package_manager,
+        has_claude_config,
+        has_design_tokens: false,
+    }
+}
+
+/// Recursively walk directories and collect all file names for classification.
 ///
 /// Stops recursion at `MAX_SCAN_DEPTH` to bound execution time on large trees.
-fn walk_for_languages(
+/// Populates `names` with basename strings of all files found.
+fn collect_file_names(
     dir: &Path,
     excluded: &[String],
     depth: usize,
-    languages: &mut HashSet<String>,
+    names: &mut Vec<String>,
 ) {
     if depth > MAX_SCAN_DEPTH {
         return;
@@ -119,11 +141,27 @@ fn walk_for_languages(
         };
 
         if file_type.is_dir() {
-            walk_for_languages(&entry.path(), excluded, depth + 1, languages);
+            collect_file_names(&entry.path(), excluded, depth + 1, names);
         } else if file_type.is_file() {
-            detect_language_from_name(&name, languages);
+            names.push(name.to_string());
         }
     }
+}
+
+/// Collect file names from the project root directory (non-recursive).
+///
+/// Returns only the basenames of files at the root level. Used to supply
+/// root files to the pure [`classify_project`] function for framework and
+/// package manager detection.
+fn collect_root_file_names(root: &Path) -> Vec<String> {
+    let Ok(entries) = std::fs::read_dir(root) else {
+        return Vec::new();
+    };
+    entries
+        .flatten()
+        .filter(|e| e.file_type().is_ok_and(|ft| ft.is_file()))
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect()
 }
 
 /// Check if a directory or file name matches the exclusion list.
@@ -154,11 +192,12 @@ fn detect_language_from_name(name: &str, languages: &mut HashSet<String>) {
     languages.insert(lang.to_owned());
 }
 
-/// Detect frameworks by looking for well-known config files in the project root.
+/// Detect frameworks from a list of root-level file names.
 ///
-/// Only inspects the root directory (not recursive) because framework config files
+/// Pure function — accepts pre-collected root file names rather than walking the filesystem.
+/// Only considers root-level config files because framework config files
 /// are always at the project root by convention.
-fn detect_root_frameworks(root: &Path, frameworks: &mut HashSet<String>) {
+fn classify_root_frameworks(root_file_names: &[String], frameworks: &mut HashSet<String>) {
     let framework_indicators: &[(&[&str], &str)] = &[
         (&["Cargo.toml"], "cargo"),
         (&["svelte.config.js", "svelte.config.ts"], "svelte"),
@@ -176,7 +215,7 @@ fn detect_root_frameworks(root: &Path, frameworks: &mut HashSet<String>) {
 
     for (files, framework) in framework_indicators {
         for file in *files {
-            if root.join(file).exists() {
+            if root_file_names.iter().any(|n| n == file) {
                 frameworks.insert((*framework).to_owned());
                 break;
             }
@@ -184,10 +223,11 @@ fn detect_root_frameworks(root: &Path, frameworks: &mut HashSet<String>) {
     }
 }
 
-/// Detect the package manager from well-known lock files in the project root.
+/// Detect the package manager from a list of root-level file names.
 ///
+/// Pure function — accepts pre-collected root file names rather than walking the filesystem.
 /// Returns the first match found; precedence follows the order of the lock-file list.
-fn detect_package_manager(root: &Path) -> Option<String> {
+fn classify_package_manager(root_file_names: &[String]) -> Option<String> {
     let lock_files: &[(&str, &str)] = &[
         ("Cargo.lock", "cargo"),
         ("package-lock.json", "npm"),
@@ -198,7 +238,7 @@ fn detect_package_manager(root: &Path) -> Option<String> {
     ];
 
     for (file, manager) in lock_files {
-        if root.join(file).exists() {
+        if root_file_names.iter().any(|n| n == file) {
             return Some((*manager).to_owned());
         }
     }
@@ -341,6 +381,139 @@ mod tests {
     fn cleanup(dir: &Path) {
         let _ = fs::remove_dir_all(dir);
     }
+
+    // -----------------------------------------------------------------------
+    // classify_project unit tests (pure function — no I/O)
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn classify_project_detects_rust_language() {
+        let all_names = vec!["main.rs".to_owned(), "lib.rs".to_owned()];
+        let stack = classify_project(&all_names, &[], false);
+        assert!(stack.languages.contains(&"rust".to_owned()));
+    }
+
+    #[test]
+    fn classify_project_detects_multiple_languages() {
+        let all_names = vec!["app.ts".to_owned(), "main.rs".to_owned(), "script.py".to_owned()];
+        let stack = classify_project(&all_names, &[], false);
+        assert!(stack.languages.contains(&"rust".to_owned()));
+        assert!(stack.languages.contains(&"typescript".to_owned()));
+        assert!(stack.languages.contains(&"python".to_owned()));
+    }
+
+    #[test]
+    fn classify_project_detects_cargo_framework() {
+        let root_names = vec!["Cargo.toml".to_owned(), "Cargo.lock".to_owned()];
+        let stack = classify_project(&[], &root_names, false);
+        assert!(stack.frameworks.contains(&"cargo".to_owned()));
+        assert_eq!(stack.package_manager, Some("cargo".to_owned()));
+    }
+
+    #[test]
+    fn classify_project_detects_svelte_and_vite() {
+        let root_names = vec!["svelte.config.js".to_owned(), "vite.config.ts".to_owned()];
+        let stack = classify_project(&[], &root_names, false);
+        assert!(stack.frameworks.contains(&"svelte".to_owned()));
+        assert!(stack.frameworks.contains(&"vite".to_owned()));
+    }
+
+    #[test]
+    fn classify_project_respects_has_claude_config() {
+        let stack = classify_project(&[], &[], true);
+        assert!(stack.has_claude_config);
+        let stack = classify_project(&[], &[], false);
+        assert!(!stack.has_claude_config);
+    }
+
+    #[test]
+    fn classify_project_languages_sorted() {
+        let all_names = vec!["z.ts".to_owned(), "a.rs".to_owned(), "m.py".to_owned()];
+        let stack = classify_project(&all_names, &[], false);
+        // Languages should be in sorted order
+        let sorted: Vec<String> = {
+            let mut v = stack.languages.clone();
+            v.sort();
+            v
+        };
+        assert_eq!(stack.languages, sorted);
+    }
+
+    #[test]
+    fn classify_project_empty_inputs() {
+        let stack = classify_project(&[], &[], false);
+        assert!(stack.languages.is_empty());
+        assert!(stack.frameworks.is_empty());
+        assert!(stack.package_manager.is_none());
+        assert!(!stack.has_claude_config);
+        assert!(!stack.has_design_tokens);
+    }
+
+    #[test]
+    fn classify_package_manager_priority_cargo_over_npm() {
+        let names = vec!["Cargo.lock".to_owned(), "package-lock.json".to_owned()];
+        let pm = classify_package_manager(&names);
+        assert_eq!(pm, Some("cargo".to_owned()));
+    }
+
+    #[test]
+    fn classify_package_manager_npm() {
+        let names = vec!["package-lock.json".to_owned()];
+        assert_eq!(classify_package_manager(&names), Some("npm".to_owned()));
+    }
+
+    #[test]
+    fn classify_package_manager_none_when_no_lock() {
+        assert_eq!(classify_package_manager(&[]), None);
+    }
+
+    #[test]
+    fn classify_package_manager_yarn() {
+        let names = vec!["yarn.lock".to_owned()];
+        assert_eq!(classify_package_manager(&names), Some("yarn".to_owned()));
+    }
+
+    #[test]
+    fn classify_package_manager_pnpm() {
+        let names = vec!["pnpm-lock.yaml".to_owned()];
+        assert_eq!(classify_package_manager(&names), Some("pnpm".to_owned()));
+    }
+
+    #[test]
+    fn classify_root_frameworks_svelte_and_vite() {
+        let names = vec!["svelte.config.js".to_owned(), "vite.config.ts".to_owned()];
+        let mut frameworks = HashSet::new();
+        classify_root_frameworks(&names, &mut frameworks);
+        assert!(frameworks.contains("svelte"));
+        assert!(frameworks.contains("vite"));
+    }
+
+    #[test]
+    fn classify_root_frameworks_nextjs() {
+        let names = vec!["next.config.js".to_owned()];
+        let mut frameworks = HashSet::new();
+        classify_root_frameworks(&names, &mut frameworks);
+        assert!(frameworks.contains("nextjs"));
+    }
+
+    #[test]
+    fn classify_root_frameworks_angular() {
+        let names = vec!["angular.json".to_owned()];
+        let mut frameworks = HashSet::new();
+        classify_root_frameworks(&names, &mut frameworks);
+        assert!(frameworks.contains("angular"));
+    }
+
+    #[test]
+    fn classify_root_frameworks_empty_list_no_frameworks() {
+        let mut frameworks = HashSet::new();
+        classify_root_frameworks(&[], &mut frameworks);
+        assert!(frameworks.is_empty());
+    }
+
+    // -----------------------------------------------------------------------
+    // Integration tests (use the filesystem)
+    // -----------------------------------------------------------------------
 
     #[test]
     fn empty_directory_returns_empty_results() {
@@ -586,100 +759,6 @@ mod tests {
     }
 
     #[test]
-    fn detect_package_manager_prefers_first_match() {
-        let dir = create_test_dir("pkg_manager_priority");
-
-        // Create Cargo.lock — should be detected first (highest precedence)
-        fs::write(dir.join("Cargo.lock"), "").expect("write");
-        fs::write(dir.join("package-lock.json"), "{}").expect("write");
-
-        let result = detect_package_manager(&dir);
-        assert_eq!(result, Some("cargo".to_owned()));
-
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_package_manager_npm() {
-        let dir = create_test_dir("pkg_manager_npm");
-        fs::write(dir.join("package-lock.json"), "{}").expect("write");
-        assert_eq!(detect_package_manager(&dir), Some("npm".to_owned()));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_package_manager_yarn() {
-        let dir = create_test_dir("pkg_manager_yarn");
-        fs::write(dir.join("yarn.lock"), "").expect("write");
-        assert_eq!(detect_package_manager(&dir), Some("yarn".to_owned()));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_package_manager_pnpm() {
-        let dir = create_test_dir("pkg_manager_pnpm");
-        fs::write(dir.join("pnpm-lock.yaml"), "").expect("write");
-        assert_eq!(detect_package_manager(&dir), Some("pnpm".to_owned()));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_package_manager_none_when_no_lock_file() {
-        let dir = create_test_dir("pkg_manager_none");
-        assert_eq!(detect_package_manager(&dir), None);
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_root_frameworks_svelte_and_vite() {
-        let dir = create_test_dir("frameworks_svelte");
-        fs::write(dir.join("svelte.config.js"), "").expect("write");
-        fs::write(dir.join("vite.config.ts"), "").expect("write");
-
-        let mut frameworks = HashSet::new();
-        detect_root_frameworks(&dir, &mut frameworks);
-
-        assert!(frameworks.contains("svelte"));
-        assert!(frameworks.contains("vite"));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_root_frameworks_nextjs() {
-        let dir = create_test_dir("frameworks_nextjs");
-        fs::write(dir.join("next.config.js"), "").expect("write");
-
-        let mut frameworks = HashSet::new();
-        detect_root_frameworks(&dir, &mut frameworks);
-
-        assert!(frameworks.contains("nextjs"));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_root_frameworks_angular() {
-        let dir = create_test_dir("frameworks_angular");
-        fs::write(dir.join("angular.json"), "{}").expect("write");
-
-        let mut frameworks = HashSet::new();
-        detect_root_frameworks(&dir, &mut frameworks);
-
-        assert!(frameworks.contains("angular"));
-        cleanup(&dir);
-    }
-
-    #[test]
-    fn detect_root_frameworks_empty_dir_no_frameworks() {
-        let dir = create_test_dir("frameworks_empty");
-
-        let mut frameworks = HashSet::new();
-        detect_root_frameworks(&dir, &mut frameworks);
-
-        assert!(frameworks.is_empty());
-        cleanup(&dir);
-    }
-
-    #[test]
     fn count_md_files_in_dir_counts_correctly() {
         let dir = create_test_dir("count_md");
         fs::write(dir.join("a.md"), "").expect("write");
@@ -695,5 +774,4 @@ mod tests {
         let dir = std::env::temp_dir().join("orqa_test_nonexistent_dir_xyz987");
         assert_eq!(count_md_files_in_dir(&dir), 0);
     }
-
 }

@@ -206,6 +206,7 @@ mod tests {
             id_prefix: id_prefix.to_owned(),
             frontmatter_schema,
             status_transitions,
+            pipeline_category: None,
         }
     }
 

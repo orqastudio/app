@@ -799,6 +799,7 @@ mod tests {
             id_prefix: id_prefix.to_owned(),
             frontmatter_schema: serde_json::json!({}),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         }
     }
 
@@ -813,6 +814,7 @@ mod tests {
                 "required": required
             }),
             status_transitions: HashMap::new(),
+            pipeline_category: None,
         }
     }
 
@@ -833,6 +835,7 @@ mod tests {
             id_prefix: id_prefix.to_owned(),
             frontmatter_schema: serde_json::json!({}),
             status_transitions: map,
+            pipeline_category: None,
         }
     }
 

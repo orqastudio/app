@@ -7,15 +7,18 @@
 //! - `infer_artifact_type`: path-based heuristic for well-known directory names
 //! - `extract_frontmatter`: edge cases (no markers, empty body, multiple `---` blocks)
 //! - `humanize_stem`: additional casing variants
+//! - `build_graph_from_entries`: pure function — builds graph from pre-loaded entries, no I/O
 
 #[cfg(test)]
 mod tests {
     use std::fs;
     use std::path::PathBuf;
+    use std::collections::HashSet;
     use tempfile::TempDir;
 
     use crate::build::{
-        build_artifact_graph, extract_frontmatter, graph_stats, humanize_stem, infer_artifact_type,
+        build_artifact_graph, build_graph_from_entries, extract_frontmatter, graph_stats,
+        humanize_stem, infer_artifact_type,
     };
 
     // -------------------------------------------------------------------------
@@ -299,5 +302,82 @@ mod tests {
     fn humanize_stem_already_titled_unchanged() {
         let path = PathBuf::from("TASK-042.md");
         assert_eq!(humanize_stem(&path), "TASK-042");
+    }
+
+    // -------------------------------------------------------------------------
+    // build_graph_from_entries — pure function
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn build_graph_from_entries_single_node() {
+        // A single entry with valid frontmatter produces one node.
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let root = tmp.path();
+        let path = root.join(".orqa/implementation/epics/EPIC-001.md");
+        let content = "---\nid: EPIC-001\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n".to_owned();
+        let entries = vec![(path, content)];
+        let graph = build_graph_from_entries(entries, root, &Vec::new(), &HashSet::new());
+        assert_eq!(graph.nodes.len(), 1);
+        let node = graph.nodes.get("EPIC-001").expect("node");
+        assert_eq!(node.id, "EPIC-001");
+        assert_eq!(node.artifact_type, "epic");
+    }
+
+    #[test]
+    fn build_graph_from_entries_no_frontmatter_skipped() {
+        // An entry without frontmatter markers produces no node.
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let root = tmp.path();
+        let path = root.join(".orqa/implementation/tasks/TASK-001.md");
+        let content = "Just plain text, no YAML.".to_owned();
+        let entries = vec![(path, content)];
+        let graph = build_graph_from_entries(entries, root, &Vec::new(), &HashSet::new());
+        assert!(graph.nodes.is_empty());
+    }
+
+    #[test]
+    fn build_graph_from_entries_no_id_skipped() {
+        // An entry with frontmatter but no `id` field produces no node.
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let root = tmp.path();
+        let path = root.join(".orqa/implementation/tasks/TASK-001.md");
+        let content = "---\ntitle: No ID Here\n---\n# Body\n".to_owned();
+        let entries = vec![(path, content)];
+        let graph = build_graph_from_entries(entries, root, &Vec::new(), &HashSet::new());
+        assert!(graph.nodes.is_empty());
+    }
+
+    #[test]
+    fn build_graph_from_entries_backlinks_inverted() {
+        // Two entries where TASK-001 references EPIC-001 must produce a backlink on EPIC-001.
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let root = tmp.path();
+        let valid_types: HashSet<String> = ["delivers".to_owned()].into_iter().collect();
+        let entries = vec![
+            (
+                root.join(".orqa/implementation/tasks/TASK-001.md"),
+                "---\nid: TASK-001\ntype: task\ntitle: My Task\nrelationships:\n  - target: EPIC-001\n    type: delivers\n---\n".to_owned(),
+            ),
+            (
+                root.join(".orqa/implementation/epics/EPIC-001.md"),
+                "---\nid: EPIC-001\ntype: epic\ntitle: My Epic\n---\n".to_owned(),
+            ),
+        ];
+        let graph = build_graph_from_entries(entries, root, &Vec::new(), &valid_types);
+        assert_eq!(graph.nodes.len(), 2);
+        let task = graph.nodes.get("TASK-001").expect("task node");
+        assert_eq!(task.references_out.len(), 1);
+        assert_eq!(task.references_out[0].target_id, "EPIC-001");
+        let epic = graph.nodes.get("EPIC-001").expect("epic node");
+        assert_eq!(epic.references_in.len(), 1, "backlink from TASK-001 must appear on EPIC-001");
+        assert_eq!(epic.references_in[0].source_id, "TASK-001");
+    }
+
+    #[test]
+    fn build_graph_from_entries_empty_produces_empty_graph() {
+        let tmp = tempfile::tempdir().expect("tempdir");
+        let graph = build_graph_from_entries(vec![], tmp.path(), &Vec::new(), &HashSet::new());
+        assert!(graph.nodes.is_empty());
+        assert!(graph.path_index.is_empty());
     }
 }

@@ -28,10 +28,12 @@ pub use orqa_engine_types::{
 
 // Re-export the most commonly used public API at crate root.
 pub use build::{
-    build_artifact_graph, build_valid_relationship_types, extract_frontmatter, graph_stats,
-    humanize_stem, infer_artifact_type, load_project_config, TypeRegistry,
+    build_artifact_graph, build_graph_from_entries, build_valid_relationship_types,
+    extract_frontmatter, graph_stats, humanize_stem, infer_artifact_type, load_project_config,
+    TypeRegistry,
 };
 pub use error::GraphError;
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
+    PipelineCategories,
 };

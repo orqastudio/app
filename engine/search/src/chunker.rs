@@ -75,13 +75,14 @@ fn read_eligible_file(
 /// Walk a codebase rooted at `root`, respecting `.gitignore`, and split
 /// every eligible text file into chunks of approximately `TARGET_CHUNK_LINES` lines.
 ///
+/// Thin runtime wrapper: walks the filesystem and collects eligible file contents,
+/// then delegates chunking logic to the pure [`chunk_entries`] function.
+///
 /// `excluded_paths` contains path prefixes (relative to root) that should be skipped.
 pub fn chunk_codebase(
     root: &Path,
     excluded_paths: &[String],
 ) -> Result<Vec<ChunkInfo>, ChunkError> {
-    let mut chunks = Vec::new();
-
     let walker = WalkBuilder::new(root)
         .hidden(true)
         .git_ignore(true)
@@ -89,6 +90,7 @@ pub fn chunk_codebase(
         .git_exclude(true)
         .build();
 
+    let mut entries: Vec<(std::path::PathBuf, String)> = Vec::new();
     for entry_result in walker {
         let entry = entry_result.map_err(|e| ChunkError::Walk(e.to_string()))?;
 
@@ -103,12 +105,26 @@ pub fn chunk_codebase(
             continue;
         };
 
-        let language = detect_language(abs_path);
-        let file_chunks = split_into_chunks(&content, &rel_path, language.as_deref());
-        chunks.extend(file_chunks);
+        entries.push((abs_path.to_owned(), content));
     }
 
-    Ok(chunks)
+    Ok(chunk_entries(entries))
+}
+
+/// Split a pre-collected list of file entries into chunks with no I/O.
+///
+/// Pure function: takes `(path, content)` pairs and returns [`ChunkInfo`] chunks.
+/// The caller is responsible for reading file contents and filtering ineligible files.
+/// Language detection uses the file extension from the path.
+pub fn chunk_entries(entries: Vec<(std::path::PathBuf, String)>) -> Vec<ChunkInfo> {
+    let mut chunks = Vec::new();
+    for (path, content) in &entries {
+        let rel_str = path.to_string_lossy().replace('\\', "/");
+        let language = detect_language(path);
+        let file_chunks = split_into_chunks(content, &rel_str, language.as_deref());
+        chunks.extend(file_chunks);
+    }
+    chunks
 }
 
 /// Check whether a file's extension is in the binary skip list.
@@ -476,5 +492,53 @@ mod tests {
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "missing");
         let err = ChunkError::Io(io_err);
         assert!(err.to_string().contains("IO error"));
+    }
+
+    // ── chunk_entries unit tests (pure function — no I/O) ────────────────
+
+    #[test]
+    fn chunk_entries_empty_input_returns_no_chunks() {
+        let result = chunk_entries(Vec::new());
+        assert!(result.is_empty());
+    }
+
+    #[test]
+    fn chunk_entries_single_file_produces_chunks() {
+        let path = std::path::PathBuf::from("src/main.rs");
+        let content = "fn main() {\n    println!(\"hello\");\n}\n".to_owned();
+        let chunks = chunk_entries(vec![(path, content)]);
+        assert_eq!(chunks.len(), 1);
+        assert_eq!(chunks[0].language.as_deref(), Some("rust"));
+        assert!(chunks[0].content.contains("main"));
+    }
+
+    #[test]
+    fn chunk_entries_detects_language_from_path_extension() {
+        let ts_path = std::path::PathBuf::from("app/index.ts");
+        let py_path = std::path::PathBuf::from("script.py");
+        let chunks = chunk_entries(vec![
+            (ts_path, "const x = 1;".to_owned()),
+            (py_path, "x = 1".to_owned()),
+        ]);
+        let languages: Vec<Option<&str>> = chunks.iter().map(|c| c.language.as_deref()).collect();
+        assert!(languages.contains(&Some("typescript")));
+        assert!(languages.contains(&Some("python")));
+    }
+
+    #[test]
+    fn chunk_entries_normalises_path_separators() {
+        // Windows-style path with backslashes — output should use forward slashes.
+        let path = std::path::PathBuf::from("src\\lib\\mod.rs");
+        let chunks = chunk_entries(vec![(path, "pub mod m;".to_owned())]);
+        assert!(!chunks[0].file_path.contains('\\'));
+    }
+
+    #[test]
+    fn chunk_entries_large_file_splits_into_multiple_chunks() {
+        let path = std::path::PathBuf::from("big.rs");
+        let lines: Vec<String> = (1..=200).map(|i| format!("let x{i} = {i};")).collect();
+        let content = lines.join("\n");
+        let chunks = chunk_entries(vec![(path, content)]);
+        assert!(chunks.len() >= 2, "expected multiple chunks, got {}", chunks.len());
     }
 }
