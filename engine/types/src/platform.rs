@@ -295,4 +295,76 @@ mod tests {
         let map = build_inverse_map(&[]);
         assert!(map.is_empty());
     }
+
+    #[test]
+    fn build_merged_inverse_map_includes_project_relationships() {
+        let project_rels = vec![
+            ProjectRelationshipConfig {
+                key: "custom-rel".to_owned(),
+                inverse: "custom-rel-by".to_owned(),
+                label: "custom rel".to_owned(),
+                inverse_label: "custom rel by".to_owned(),
+            },
+        ];
+        let map = build_merged_inverse_map(&project_rels);
+        // Project relationship should be present alongside platform defaults.
+        assert_eq!(map.get("custom-rel"), Some(&"custom-rel-by".to_owned()));
+        assert_eq!(map.get("custom-rel-by"), Some(&"custom-rel".to_owned()));
+    }
+
+    #[test]
+    fn build_merged_inverse_map_empty_project_rels_equals_platform_map() {
+        // With no project relationships, merged map == platform map.
+        let merged = build_merged_inverse_map(&[]);
+        let platform = build_inverse_map(&PLATFORM.relationships);
+        // Both should have the same keys and values.
+        for (key, val) in &platform {
+            assert_eq!(merged.get(key), Some(val));
+        }
+    }
+
+    #[test]
+    fn keys_for_semantic_returns_empty_for_missing_semantic() {
+        // No semantic named "nonexistent" exists in the (empty) platform config.
+        let keys = keys_for_semantic("nonexistent");
+        assert!(keys.is_empty());
+    }
+
+    #[test]
+    fn has_semantic_returns_false_for_missing_key() {
+        // Without any platform relationships, no key has any semantic.
+        assert!(!has_semantic("delivers", "delivery"));
+    }
+
+    #[test]
+    fn artifact_type_def_frontmatter_required_returns_empty_for_empty_schema() {
+        let def = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "task-icon".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({}),
+            status_transitions: HashMap::new(),
+        };
+        let required = def.frontmatter_required();
+        assert!(required.is_empty());
+    }
+
+    #[test]
+    fn artifact_type_def_frontmatter_required_extracts_fields() {
+        let def = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "task-icon".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({
+                "required": ["id", "type", "status", "title"]
+            }),
+            status_transitions: HashMap::new(),
+        };
+        let required = def.frontmatter_required();
+        assert_eq!(required.len(), 4);
+        assert!(required.contains(&"id".to_owned()));
+        assert!(required.contains(&"status".to_owned()));
+    }
 }

@@ -284,3 +284,181 @@ pub struct TraceabilityResult {
     /// True when no path exists to any pillar or vision artifact.
     pub disconnected: bool,
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn make_node(id: &str, artifact_type: &str) -> ArtifactNode {
+        ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: format!(".orqa/test/{id}.md"),
+            artifact_type: artifact_type.to_owned(),
+            title: format!("{id} Title"),
+            description: Some("A test node.".to_owned()),
+            status: Some("active".to_owned()),
+            priority: Some("P1".to_owned()),
+            frontmatter: serde_json::json!({"id": id, "type": artifact_type}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    // -----------------------------------------------------------------------
+    // ArtifactGraph default / construction
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn artifact_graph_default_is_empty() {
+        let graph = ArtifactGraph::default();
+        assert!(graph.nodes.is_empty());
+        assert!(graph.path_index.is_empty());
+    }
+
+    #[test]
+    fn artifact_graph_serde_round_trip() {
+        let mut graph = ArtifactGraph::default();
+        graph.nodes.insert("TASK-001".to_owned(), make_node("TASK-001", "task"));
+        graph.path_index.insert(".orqa/tasks/TASK-001.md".to_owned(), "TASK-001".to_owned());
+
+        let json = serde_json::to_string(&graph).expect("serialize");
+        let restored: ArtifactGraph = serde_json::from_str(&json).expect("deserialize");
+
+        assert_eq!(restored.nodes.len(), 1);
+        assert!(restored.nodes.contains_key("TASK-001"));
+        assert_eq!(
+            restored.path_index.get(".orqa/tasks/TASK-001.md"),
+            Some(&"TASK-001".to_owned())
+        );
+    }
+
+    // -----------------------------------------------------------------------
+    // ArtifactNode serde
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn artifact_node_serde_round_trip() {
+        let node = make_node("EPIC-001", "epic");
+        let json = serde_json::to_string(&node).expect("serialize");
+        let restored: ArtifactNode = serde_json::from_str(&json).expect("deserialize");
+
+        assert_eq!(restored.id, "EPIC-001");
+        assert_eq!(restored.artifact_type, "epic");
+        assert_eq!(restored.status, Some("active".to_owned()));
+        assert_eq!(restored.priority, Some("P1".to_owned()));
+    }
+
+    #[test]
+    fn artifact_node_optional_project_omitted_in_json() {
+        let node = make_node("TASK-001", "task"); // project is None
+        let json = serde_json::to_string(&node).expect("serialize");
+        // skip_serializing_if = "Option::is_none" means the key should be absent
+        assert!(!json.contains("\"project\""));
+    }
+
+    #[test]
+    fn artifact_node_project_present_when_set() {
+        let mut node = make_node("TASK-001", "task");
+        node.project = Some("my-app".to_owned());
+        let json = serde_json::to_string(&node).expect("serialize");
+        assert!(json.contains("my-app"));
+    }
+
+    // -----------------------------------------------------------------------
+    // ArtifactRef serde
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn artifact_ref_serde_round_trip() {
+        let aref = ArtifactRef {
+            target_id: "EPIC-001".to_owned(),
+            field: "relationships".to_owned(),
+            source_id: "TASK-001".to_owned(),
+            relationship_type: Some("delivers".to_owned()),
+        };
+        let json = serde_json::to_string(&aref).expect("serialize");
+        let restored: ArtifactRef = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.target_id, "EPIC-001");
+        assert_eq!(restored.relationship_type, Some("delivers".to_owned()));
+    }
+
+    // -----------------------------------------------------------------------
+    // GraphHealth default
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn graph_health_default_is_zero() {
+        let h = GraphHealth::default();
+        assert_eq!(h.outlier_count, 0);
+        assert_eq!(h.total_nodes, 0);
+        assert_eq!(h.total_edges, 0);
+        assert_eq!(h.avg_degree, 0.0);
+        assert_eq!(h.broken_ref_count, 0);
+    }
+
+    #[test]
+    fn graph_health_serde_round_trip() {
+        let h = GraphHealth {
+            outlier_count: 5,
+            outlier_percentage: 12.5,
+            outlier_age_distribution: OutlierAgeDistribution {
+                fresh: 1,
+                aging: 2,
+                stale: 2,
+            },
+            delivery_connectivity: 0.8,
+            learning_connectivity: 0.9,
+            avg_degree: 3.2,
+            largest_component_ratio: 0.95,
+            total_nodes: 40,
+            total_edges: 64,
+            pillar_traceability: 75.0,
+            broken_ref_count: 2,
+        };
+        let json = serde_json::to_string(&h).expect("serialize");
+        let restored: GraphHealth = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.outlier_count, 5);
+        assert_eq!(restored.total_nodes, 40);
+        assert_eq!(restored.outlier_age_distribution.aging, 2);
+    }
+
+    // -----------------------------------------------------------------------
+    // IntegrityCategory / IntegritySeverity equality
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn integrity_category_equality() {
+        assert_eq!(IntegrityCategory::BrokenLink, IntegrityCategory::BrokenLink);
+        assert_ne!(IntegrityCategory::BrokenLink, IntegrityCategory::InvalidStatus);
+    }
+
+    #[test]
+    fn integrity_severity_equality() {
+        assert_eq!(IntegritySeverity::Error, IntegritySeverity::Error);
+        assert_ne!(IntegritySeverity::Error, IntegritySeverity::Warning);
+    }
+
+    // -----------------------------------------------------------------------
+    // GraphStats
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn graph_stats_serde_round_trip() {
+        let stats = GraphStats {
+            node_count: 100,
+            edge_count: 250,
+            orphan_count: 10,
+            broken_ref_count: 3,
+        };
+        let json = serde_json::to_string(&stats).expect("serialize");
+        let restored: GraphStats = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.node_count, 100);
+        assert_eq!(restored.broken_ref_count, 3);
+    }
+}

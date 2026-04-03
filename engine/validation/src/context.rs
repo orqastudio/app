@@ -371,4 +371,138 @@ mod tests {
             .count();
         assert_eq!(entry_count, 1);
     }
+
+    #[test]
+    fn build_validation_context_with_types_populates_artifact_types() {
+        use crate::platform::ArtifactTypeDef;
+
+        let type_def = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "task".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({}),
+            status_transitions: HashMap::new(),
+        };
+        let ctx = build_validation_context_with_types(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            &[],
+            &[type_def],
+        );
+        assert_eq!(ctx.artifact_types.len(), 1);
+        assert_eq!(ctx.artifact_types[0].key, "task");
+    }
+
+    #[test]
+    fn build_validation_context_full_populates_schema_extensions() {
+        use crate::platform::SchemaExtension;
+
+        let ext = SchemaExtension {
+            target_key: "task".to_owned(),
+            frontmatter_schema: serde_json::json!({"properties": {"priority": {"type": "string"}}}),
+        };
+        let ctx = build_validation_context_full(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            &[],
+            &[],
+            &[ext],
+        );
+        assert_eq!(ctx.schema_extensions.len(), 1);
+        assert_eq!(ctx.schema_extensions[0].target_key, "task");
+    }
+
+    #[test]
+    fn build_validation_context_complete_populates_enforcement_mechanisms() {
+        use crate::platform::EnforcementMechanism;
+
+        let mechanism = EnforcementMechanism {
+            key: "eslint".to_owned(),
+            description: "JavaScript linter".to_owned(),
+            strength: 7,
+        };
+        let ctx = build_validation_context_complete(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            &[],
+            &[],
+            &[],
+            &[mechanism],
+        );
+        assert_eq!(ctx.enforcement_mechanisms.len(), 1);
+        assert_eq!(ctx.enforcement_mechanisms[0].key, "eslint");
+        assert_eq!(ctx.enforcement_mechanisms[0].strength, 7);
+    }
+
+    #[test]
+    fn plugin_relationship_without_constraints_does_not_override_platform_constraints() {
+        // A plugin extending a platform relationship that has constraints should
+        // not clear those constraints (only sets constraints when existing has none).
+        let plugin_rel = RelationshipSchema {
+            key: "test-constrained".to_owned(),
+            inverse: "test-constrained-by".to_owned(),
+            description: "Test".to_owned(),
+            from: vec!["task".to_owned()],
+            to: vec!["epic".to_owned()],
+            semantic: None,
+            constraints: Some(crate::types::RelationshipConstraints {
+                required: Some(true),
+                min_count: Some(1),
+                max_count: None,
+                require_inverse: None,
+                status_rules: vec![],
+            }),
+        };
+        // First pass: add it as the base
+        let ctx1 = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel.clone()]);
+        let base = ctx1.relationships.iter().find(|r| r.key == "test-constrained").unwrap();
+        assert!(base.constraints.is_some());
+
+        // Second pass: another plugin adds from/to but no constraints
+        let extension = RelationshipSchema {
+            key: "test-constrained".to_owned(),
+            inverse: "test-constrained-by".to_owned(),
+            description: "Extension".to_owned(),
+            from: vec!["epic".to_owned()],
+            to: vec!["milestone".to_owned()],
+            semantic: None,
+            constraints: None,
+        };
+        let ctx2 = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel, extension]);
+        let rel = ctx2.relationships.iter().find(|r| r.key == "test-constrained").unwrap();
+        // Constraints should still be present from the first definition
+        assert!(rel.constraints.is_some());
+        // from/to should be merged
+        assert!(rel.from.contains(&"task".to_owned()));
+        assert!(rel.from.contains(&"epic".to_owned()));
+    }
+
+    #[test]
+    fn duplicate_project_relationship_key_is_not_added_again() {
+        // If a project relationship key is already in the inverse_map (e.g. from a plugin),
+        // it should not be added as a duplicate schema entry.
+        let plugin_rel = RelationshipSchema {
+            key: "shared-rel".to_owned(),
+            inverse: "shared-rel-by".to_owned(),
+            description: "Plugin shared".to_owned(),
+            from: vec![],
+            to: vec![],
+            semantic: None,
+            constraints: None,
+        };
+        let project_rel = ProjectRelationshipConfig {
+            key: "shared-rel".to_owned(),
+            inverse: "shared-rel-by".to_owned(),
+            label: "shared".to_owned(),
+            inverse_label: "shared by".to_owned(),
+        };
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[project_rel], &[plugin_rel]);
+        // Should only appear once in relationships list
+        let count = ctx.relationships.iter().filter(|r| r.key == "shared-rel").count();
+        assert_eq!(count, 1);
+    }
 }

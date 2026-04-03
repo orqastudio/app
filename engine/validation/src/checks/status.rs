@@ -394,4 +394,120 @@ mod tests {
         check_parent_child_consistency(&graph, &ctx, &mut checks);
         assert!(checks.is_empty());
     }
+
+    #[test]
+    fn suggest_status_fix_returns_none_for_completely_unknown_status() {
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let suggestion = suggest_status_fix("completely-unknown-xyz", &valid);
+        assert!(suggestion.is_none());
+    }
+
+    #[test]
+    fn suggest_status_fix_returns_exact_match_over_legacy_map() {
+        // "done" maps to "completed" via legacy map, but if "done" is also in the valid
+        // list it should be returned as an exact match.
+        let valid = vec!["done".to_string(), "active".to_string()];
+        let suggestion = suggest_status_fix("done", &valid);
+        assert_eq!(suggestion, Some("done"));
+    }
+
+    #[test]
+    fn suggest_status_fix_legacy_todo_maps_to_ready() {
+        let valid = vec!["ready".to_string(), "active".to_string()];
+        let suggestion = suggest_status_fix("todo", &valid);
+        assert_eq!(suggestion, Some("ready"));
+    }
+
+    #[test]
+    fn suggest_status_fix_legacy_wip_maps_to_active() {
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let suggestion = suggest_status_fix("wip", &valid);
+        assert_eq!(suggestion, Some("active"));
+    }
+
+    #[test]
+    fn invalid_status_produces_auto_fixable_check_when_suggestion_exists() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", "done"); // "done" maps to "completed"
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_statuses(&["active", "completed"]);
+        let mut checks = vec![];
+        check_valid_statuses(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert!(checks[0].auto_fixable);
+        assert!(checks[0].fix_description.as_deref().unwrap_or("").contains("completed"));
+    }
+
+    #[test]
+    fn invalid_status_produces_non_auto_fixable_check_when_no_suggestion() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", "completely-unknown-xyz");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_statuses(&["active", "completed"]);
+        let mut checks = vec![];
+        check_valid_statuses(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert!(!checks[0].auto_fixable);
+    }
+
+    #[test]
+    fn status_ordinal_lateral_states_share_active_ordinal() {
+        // hold and blocked should have the same ordinal as active so they
+        // do not trigger false parent-child inconsistency.
+        assert_eq!(status_ordinal("hold"), status_ordinal("active"));
+        assert_eq!(status_ordinal("blocked"), status_ordinal("active"));
+    }
+
+    #[test]
+    fn status_ordinal_surpassed_above_completed() {
+        // surpassed (7) > completed (6) — a surpassed child of a completed parent is valid.
+        let surpassed = status_ordinal("surpassed").unwrap();
+        let completed = status_ordinal("completed").unwrap();
+        assert!(surpassed > completed);
+    }
+
+    #[test]
+    fn parent_child_consistency_no_delivery_types_is_noop() {
+        // Empty delivery config should produce no checks regardless of graph state.
+        let mut graph = ArtifactGraph::default();
+        let task = make_node("TASK-A", "task", "completed");
+        graph.nodes.insert("TASK-A".to_owned(), task);
+
+        let ctx = make_ctx_with_delivery(&["captured", "active", "completed"], vec![]);
+        let mut checks = vec![];
+        check_parent_child_consistency(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn completed_task_with_ready_epic_is_flagged() {
+        // Task is "completed" (ordinal 6) but parent epic is "ready" (ordinal 2 < 4).
+        let mut graph = ArtifactGraph::default();
+        let mut task = make_node("TASK-A", "task", "completed");
+        let epic = make_node("EPIC-B", "epic", "ready");
+        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), task);
+        graph.nodes.insert("EPIC-B".to_owned(), epic);
+
+        let ctx = make_ctx_with_delivery(
+            &["captured", "ready", "active", "completed"],
+            vec![DeliveryTypeConfig {
+                key: "task".to_owned(),
+                label: "Tasks".to_owned(),
+                path: ".orqa/implementation/tasks/".to_owned(),
+                parent: Some(DeliveryParentConfig {
+                    parent_type: "epic".to_owned(),
+                    relationship: "delivers".to_owned(),
+                }),
+                gate_field: None,
+            }],
+        );
+
+        let mut checks = vec![];
+        check_parent_child_consistency(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::ParentChildInconsistency);
+    }
 }

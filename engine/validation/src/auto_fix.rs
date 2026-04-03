@@ -672,4 +672,178 @@ mod tests {
         let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
         assert!(applied.is_empty());
     }
+
+    // -------------------------------------------------------------------------
+    // insert_field_in_file tests
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn insert_field_after_id_line() {
+        let raw = "---\nid: TASK-001\nstatus: active\n---\nBody.\n";
+        let result = insert_field_in_file(raw, "id:", "type: task");
+        let result = result.expect("should succeed");
+        // "type: task" should appear after the id line
+        let lines: Vec<&str> = result.lines().collect();
+        let id_pos = lines.iter().position(|l| l.starts_with("id:")).unwrap();
+        assert_eq!(lines[id_pos + 1], "type: task");
+    }
+
+    #[test]
+    fn insert_field_returns_none_when_anchor_missing() {
+        let raw = "---\nstatus: active\n---\nBody.\n";
+        // "id:" is not present — should return None
+        let result = insert_field_in_file(raw, "id:", "type: task");
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn insert_field_returns_none_when_no_frontmatter() {
+        let raw = "No frontmatter here at all.\n";
+        let result = insert_field_in_file(raw, "id:", "type: task");
+        assert!(result.is_none());
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — TypePrefixMismatch fix
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_type_prefix_mismatch_rewrites_type_field() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        let content = "---\nid: RULE-001\ntype: task\nstatus: active\n---\nBody.\n";
+        fs::write(dir.path().join("rule.md"), content).unwrap();
+
+        let graph = make_graph_with_node("RULE-001", "rule.md");
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::TypePrefixMismatch,
+            severity: IntegritySeverity::Error,
+            artifact_id: "RULE-001".to_owned(),
+            message: "type mismatch".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Change type: task to type: rule".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert_eq!(applied.len(), 1);
+        let written = fs::read_to_string(dir.path().join("rule.md")).unwrap();
+        assert!(written.contains("type: rule"));
+        assert!(!written.contains("type: task"));
+    }
+
+    #[test]
+    fn apply_fixes_type_prefix_mismatch_missing_file_skips_gracefully() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        // Node references a file that doesn't exist
+        let graph = make_graph_with_node("RULE-001", "nonexistent.md");
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::TypePrefixMismatch,
+            severity: IntegritySeverity::Error,
+            artifact_id: "RULE-001".to_owned(),
+            message: "type mismatch".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Change type: task to type: rule".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert!(applied.is_empty());
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — MissingType fix
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_missing_type_inserts_type_field() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        let content = "---\nid: TASK-001\nstatus: active\n---\nBody.\n";
+        fs::write(dir.path().join("task.md"), content).unwrap();
+
+        let mut graph = make_graph_with_node("TASK-001", "task.md");
+        // Set the artifact_type so the fix knows what type to add
+        if let Some(node) = graph.nodes.get_mut("TASK-001") {
+            node.artifact_type = "task".to_owned();
+        }
+
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::MissingType,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-001".to_owned(),
+            message: "missing type".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Add type: task".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert_eq!(applied.len(), 1);
+        let written = fs::read_to_string(dir.path().join("task.md")).unwrap();
+        assert!(written.contains("type: task"));
+    }
+
+    #[test]
+    fn apply_fixes_missing_type_skips_when_type_already_present() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        // Already has type: task
+        let content = "---\nid: TASK-001\ntype: task\nstatus: active\n---\nBody.\n";
+        fs::write(dir.path().join("task.md"), content).unwrap();
+
+        let mut graph = make_graph_with_node("TASK-001", "task.md");
+        if let Some(node) = graph.nodes.get_mut("TASK-001") {
+            node.artifact_type = "task".to_owned();
+        }
+
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::MissingType,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-001".to_owned(),
+            message: "missing type".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Add type: task".to_owned()),
+        }];
+
+        // Guard should prevent re-adding when type: is already present
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert!(applied.is_empty());
+    }
+
+    // -------------------------------------------------------------------------
+    // update_artifact_field — indented fields
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn update_artifact_field_preserves_indented_sibling_fields() {
+        let dir = tempfile::tempdir().unwrap();
+        let content = "---\nid: TASK-001\nstatus: pending\npriority: P1\n---\nBody.\n";
+        let path = write_temp_artifact(&dir, "task.md", content);
+        update_artifact_field(&path, "status", "active").expect("update");
+        let written = fs::read_to_string(&path).unwrap();
+        assert!(written.contains("priority: P1"));
+        assert!(written.contains("status: active"));
+        assert!(!written.contains("status: pending"));
+    }
+
+    // -------------------------------------------------------------------------
+    // find_node — qualified key lookup
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn find_node_finds_by_bare_id() {
+        let graph = make_graph_with_node("TASK-001", "task.md");
+        let node = find_node(&graph, "TASK-001");
+        assert!(node.is_some());
+    }
+
+    #[test]
+    fn find_node_returns_none_for_unknown_id() {
+        let graph = ArtifactGraph::default();
+        let node = find_node(&graph, "TASK-UNKNOWN");
+        assert!(node.is_none());
+    }
 }

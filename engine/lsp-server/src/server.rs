@@ -433,6 +433,198 @@ impl LanguageServer for OrqaLspBackend {
 // Entry points
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // -----------------------------------------------------------------------
+    // extract_artifact_id
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn extract_artifact_id_returns_id_from_frontmatter() {
+        let content = "---\nid: EPIC-a1b2c3d4\ntitle: My Epic\n---\nBody.\n";
+        let id = OrqaLspBackend::extract_artifact_id(content);
+        assert_eq!(id, Some("EPIC-a1b2c3d4".to_owned()));
+    }
+
+    #[test]
+    fn extract_artifact_id_returns_none_when_no_frontmatter() {
+        let content = "# No frontmatter\nJust a body.\n";
+        let id = OrqaLspBackend::extract_artifact_id(content);
+        assert!(id.is_none());
+    }
+
+    #[test]
+    fn extract_artifact_id_returns_none_when_no_id_field() {
+        let content = "---\ntitle: My Epic\nstatus: active\n---\nBody.\n";
+        let id = OrqaLspBackend::extract_artifact_id(content);
+        assert!(id.is_none());
+    }
+
+    #[test]
+    fn extract_artifact_id_strips_quotes_from_id() {
+        let content = "---\nid: \"TASK-a1b2c3d4\"\ntitle: My Task\n---\nBody.\n";
+        let id = OrqaLspBackend::extract_artifact_id(content);
+        assert_eq!(id, Some("TASK-a1b2c3d4".to_owned()));
+    }
+
+    #[test]
+    fn extract_artifact_id_returns_none_for_empty_content() {
+        let id = OrqaLspBackend::extract_artifact_id("");
+        assert!(id.is_none());
+    }
+
+    // -----------------------------------------------------------------------
+    // category_label_from_str
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn category_label_broken_link() {
+        assert_eq!(category_label_from_str("BrokenLink"), "[broken-link]");
+    }
+
+    #[test]
+    fn category_label_type_constraint() {
+        assert_eq!(category_label_from_str("TypeConstraintViolation"), "[type-constraint]");
+    }
+
+    #[test]
+    fn category_label_invalid_status() {
+        assert_eq!(category_label_from_str("InvalidStatus"), "[invalid-status]");
+    }
+
+    #[test]
+    fn category_label_missing_type() {
+        assert_eq!(category_label_from_str("MissingType"), "[missing-type]");
+    }
+
+    #[test]
+    fn category_label_missing_status() {
+        assert_eq!(category_label_from_str("MissingStatus"), "[missing-status]");
+    }
+
+    #[test]
+    fn category_label_schema_violation() {
+        assert_eq!(category_label_from_str("SchemaViolation"), "[schema-violation]");
+    }
+
+    #[test]
+    fn category_label_unknown_falls_through_to_check() {
+        assert_eq!(category_label_from_str("UnknownCategory"), "[check]");
+    }
+
+    #[test]
+    fn category_label_duplicate_relationship() {
+        assert_eq!(category_label_from_str("DuplicateRelationship"), "[duplicate-relationship]");
+    }
+
+    #[test]
+    fn category_label_circular_dep() {
+        assert_eq!(category_label_from_str("CircularDependency"), "[circular-dep]");
+    }
+
+    // -----------------------------------------------------------------------
+    // integrity_check_value_to_diagnostic
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn diagnostic_from_error_check() {
+        let check = serde_json::json!({
+            "message": "broken link to EPIC-001",
+            "severity": "Error",
+            "category": "BrokenLink",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check);
+        assert!(diag.is_some());
+        let diag = diag.unwrap();
+        assert_eq!(diag.severity, Some(DiagnosticSeverity::ERROR));
+        assert!(diag.message.contains("[broken-link]"));
+        assert!(diag.message.contains("broken link to EPIC-001"));
+    }
+
+    #[test]
+    fn diagnostic_from_warning_check() {
+        let check = serde_json::json!({
+            "message": "status inconsistency",
+            "severity": "Warning",
+            "category": "InvalidStatus",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check);
+        assert!(diag.is_some());
+        let diag = diag.unwrap();
+        assert_eq!(diag.severity, Some(DiagnosticSeverity::WARNING));
+    }
+
+    #[test]
+    fn diagnostic_appends_fix_description_when_present() {
+        let check = serde_json::json!({
+            "message": "invalid status 'done'",
+            "severity": "Error",
+            "category": "InvalidStatus",
+            "artifact_id": "TASK-001",
+            "fix_description": "Change status to 'completed'"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check).unwrap();
+        assert!(diag.message.contains("auto-fix"));
+        assert!(diag.message.contains("Change status to 'completed'"));
+    }
+
+    #[test]
+    fn diagnostic_returns_none_when_no_message_field() {
+        let check = serde_json::json!({
+            "severity": "Error",
+            "category": "BrokenLink",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check);
+        assert!(diag.is_none());
+    }
+
+    #[test]
+    fn diagnostic_source_is_orqastudio() {
+        let check = serde_json::json!({
+            "message": "test",
+            "severity": "Error",
+            "category": "BrokenLink",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check).unwrap();
+        assert_eq!(diag.source, Some("orqastudio".into()));
+    }
+
+    #[test]
+    fn diagnostic_range_starts_at_line_zero() {
+        let check = serde_json::json!({
+            "message": "test",
+            "severity": "Error",
+            "category": "BrokenLink",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check).unwrap();
+        assert_eq!(diag.range.start.line, 0);
+        assert_eq!(diag.range.start.character, 0);
+    }
+
+    #[test]
+    fn diagnostic_unknown_severity_defaults_to_error() {
+        let check = serde_json::json!({
+            "message": "test",
+            "severity": "Surprise",
+            "category": "BrokenLink",
+            "artifact_id": "TASK-001"
+        });
+        let diag = integrity_check_value_to_diagnostic(&check).unwrap();
+        assert_eq!(diag.severity, Some(DiagnosticSeverity::ERROR));
+    }
+}
+
 /// Run the LSP server over stdio.
 ///
 /// This is the standard LSP transport. The editor launches this binary and

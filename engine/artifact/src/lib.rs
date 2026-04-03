@@ -494,4 +494,118 @@ mod tests {
             Err(EngineError::Validation(_))
         ));
     }
+
+    // -------------------------------------------------------------------------
+    // parse_frontmatter<T>
+    // -------------------------------------------------------------------------
+
+    /// Minimal struct used to verify parse_frontmatter with a concrete type.
+    #[derive(Debug, serde::Deserialize, Default, PartialEq)]
+    struct TestFm {
+        title: Option<String>,
+        count: Option<u32>,
+    }
+
+    #[test]
+    fn parse_frontmatter_valid_yaml_deserializes_fields() {
+        // A well-formed frontmatter block must parse into the target type.
+        let content = "---\ntitle: Hello\ncount: 42\n---\nBody text.";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm.title.as_deref(), Some("Hello"));
+        assert_eq!(fm.count, Some(42));
+        assert_eq!(body, "Body text.");
+    }
+
+    #[test]
+    fn parse_frontmatter_invalid_yaml_returns_default() {
+        // When YAML is structurally valid but cannot parse into T, T::default() is returned.
+        // Use a type that will fail when the YAML value has the wrong type.
+        #[derive(Debug, serde::Deserialize, Default, PartialEq)]
+        struct StrictFm {
+            count: u32,
+        }
+        // "count" is a string here, not a u32 — deserialization into StrictFm must fail.
+        let content = "---\ncount: not-a-number\n---\nBody.";
+        let (fm, body): (StrictFm, _) = parse_frontmatter(content);
+        // Falls back to Default::default() — count is 0 for u32.
+        assert_eq!(fm.count, 0);
+        assert_eq!(body, "Body.");
+    }
+
+    #[test]
+    fn parse_frontmatter_missing_frontmatter_returns_default_and_full_content() {
+        // When there are no --- delimiters, default T is returned and body is full content.
+        let content = "No frontmatter here.\nJust body text.";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm, TestFm::default());
+        assert_eq!(body, content);
+    }
+
+    #[test]
+    fn parse_frontmatter_empty_content_returns_default_and_empty_body() {
+        // Empty input produces default T and empty body.
+        let content = "";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm, TestFm::default());
+        assert_eq!(body, "");
+    }
+
+    #[test]
+    fn parse_frontmatter_empty_frontmatter_block_returns_default() {
+        // An empty --- block (no fields) can't fill required fields — falls to default.
+        let content = "---\n---\nBody.";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        // Both fields are Option, so an empty map deserializes to all None.
+        assert_eq!(fm.title, None);
+        assert_eq!(fm.count, None);
+        assert_eq!(body, "Body.");
+    }
+
+    #[test]
+    fn parse_frontmatter_with_serde_json_value_type() {
+        // parse_frontmatter works with serde_json::Value, capturing arbitrary YAML.
+        let content = "---\nfoo: bar\nnested:\n  key: value\n---\nBody.";
+        let (fm, body): (serde_json::Value, _) = parse_frontmatter(content);
+        assert_eq!(fm["foo"], serde_json::json!("bar"));
+        assert_eq!(fm["nested"]["key"], serde_json::json!("value"));
+        assert_eq!(body, "Body.");
+    }
+
+    #[test]
+    fn parse_frontmatter_with_hashmap_type() {
+        // parse_frontmatter works with HashMap<String, String> for simple flat YAML.
+        use std::collections::HashMap;
+        let content = "---\nstatus: active\nowner: alice\n---\nContent.";
+        let (fm, body): (HashMap<String, String>, _) = parse_frontmatter(content);
+        assert_eq!(fm.get("status").map(String::as_str), Some("active"));
+        assert_eq!(fm.get("owner").map(String::as_str), Some("alice"));
+        assert_eq!(body, "Content.");
+    }
+
+    #[test]
+    fn parse_frontmatter_leading_whitespace_before_delimiter() {
+        // Leading whitespace before --- is handled by extract_frontmatter (trim_start).
+        let content = "\n\n---\ntitle: Whitespace\n---\nBody.";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm.title.as_deref(), Some("Whitespace"));
+        assert_eq!(body, "Body.");
+    }
+
+    #[test]
+    fn parse_frontmatter_unclosed_delimiter_returns_default_and_full_content() {
+        // An unclosed frontmatter block falls back to default T and full content.
+        let content = "---\ntitle: Unclosed\nNo closing delimiter";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm, TestFm::default());
+        assert_eq!(body, content);
+    }
+
+    #[test]
+    fn parse_frontmatter_body_is_multiline() {
+        // The body after --- must preserve all lines.
+        let content = "---\ntitle: Multi\n---\nLine 1.\nLine 2.\nLine 3.";
+        let (fm, body): (TestFm, _) = parse_frontmatter(content);
+        assert_eq!(fm.title.as_deref(), Some("Multi"));
+        assert_eq!(body, "Line 1.\nLine 2.\nLine 3.");
+    }
 }

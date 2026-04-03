@@ -73,3 +73,113 @@ pub struct NewHealthSnapshot {
     /// Fraction of learning artifacts connected to each other or to decisions (0.0–1.0).
     pub learning_connectivity: f64,
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sample_snapshot() -> HealthSnapshot {
+        HealthSnapshot {
+            id: 1,
+            project_id: 42,
+            node_count: 100,
+            edge_count: 200,
+            broken_ref_count: 3,
+            error_count: 5,
+            warning_count: 2,
+            largest_component_ratio: 0.92,
+            avg_degree: 4.0,
+            pillar_traceability: 80.0,
+            outlier_count: 7,
+            outlier_percentage: 7.0,
+            delivery_connectivity: 0.85,
+            learning_connectivity: 0.75,
+            created_at: "2026-04-01T00:00:00Z".to_owned(),
+        }
+    }
+
+    fn sample_new_snapshot() -> NewHealthSnapshot {
+        NewHealthSnapshot {
+            node_count: 50,
+            edge_count: 80,
+            broken_ref_count: 1,
+            error_count: 2,
+            warning_count: 0,
+            largest_component_ratio: 0.98,
+            avg_degree: 3.2,
+            pillar_traceability: 90.0,
+            outlier_count: 2,
+            outlier_percentage: 4.0,
+            delivery_connectivity: 0.95,
+            learning_connectivity: 0.88,
+        }
+    }
+
+    #[test]
+    fn health_snapshot_serde_round_trip() {
+        let snap = sample_snapshot();
+        let json = serde_json::to_string(&snap).expect("serialize");
+        let restored: HealthSnapshot = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.id, 1);
+        assert_eq!(restored.project_id, 42);
+        assert_eq!(restored.node_count, 100);
+        assert_eq!(restored.broken_ref_count, 3);
+        assert!((restored.largest_component_ratio - 0.92).abs() < 1e-9);
+        assert_eq!(restored.created_at, "2026-04-01T00:00:00Z");
+    }
+
+    #[test]
+    fn new_health_snapshot_serde_round_trip() {
+        let snap = sample_new_snapshot();
+        let json = serde_json::to_string(&snap).expect("serialize");
+        let restored: NewHealthSnapshot = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.node_count, 50);
+        assert_eq!(restored.error_count, 2);
+        assert!((restored.delivery_connectivity - 0.95).abs() < 1e-9);
+    }
+
+    #[test]
+    fn health_snapshot_fields_preserve_precision() {
+        let mut snap = sample_snapshot();
+        snap.outlier_percentage = 33.333_333_333;
+        let json = serde_json::to_string(&snap).expect("serialize");
+        let restored: HealthSnapshot = serde_json::from_str(&json).expect("deserialize");
+        assert!((restored.outlier_percentage - 33.333_333_333).abs() < 1e-6);
+    }
+
+    #[test]
+    fn new_health_snapshot_zero_values_round_trip() {
+        let snap = NewHealthSnapshot {
+            node_count: 0,
+            edge_count: 0,
+            broken_ref_count: 0,
+            error_count: 0,
+            warning_count: 0,
+            largest_component_ratio: 0.0,
+            avg_degree: 0.0,
+            pillar_traceability: 0.0,
+            outlier_count: 0,
+            outlier_percentage: 0.0,
+            delivery_connectivity: 0.0,
+            learning_connectivity: 0.0,
+        };
+        let json = serde_json::to_string(&snap).expect("serialize");
+        let restored: NewHealthSnapshot = serde_json::from_str(&json).expect("deserialize");
+        assert_eq!(restored.node_count, 0);
+        assert_eq!(restored.avg_degree, 0.0);
+    }
+
+    #[test]
+    fn health_snapshot_clone_produces_equal_values() {
+        let snap = sample_snapshot();
+        let cloned = snap.clone();
+        assert_eq!(cloned.id, snap.id);
+        assert_eq!(cloned.project_id, snap.project_id);
+        assert_eq!(cloned.node_count, snap.node_count);
+        assert_eq!(cloned.created_at, snap.created_at);
+    }
+}
