@@ -18,6 +18,8 @@ export const PORT_OFFSETS = {
   vite: 20,
   dashboard: 30,
   sync: 31,
+  devtools: 40,
+  storybook: 50,
 } as const;
 
 /** Names of all known OrqaStudio services. */

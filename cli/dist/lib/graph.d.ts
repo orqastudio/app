@@ -49,14 +49,14 @@ export interface GraphStats {
 /**
  * Scan the `.orqa/` directory and build an in-memory artifact graph.
  *
- * Delegates to the daemon's POST /query endpoint (no filters = all nodes).
+ * Delegates to the daemon's GET /artifacts endpoint (no filters = all nodes).
  * @returns Array of all graph nodes.
  */
 export declare function scanArtifactGraph(): Promise<GraphNode[]>;
 /**
  * Query the artifact graph with filters.
  *
- * Delegates to the daemon's POST /query endpoint with type/status/search
+ * Delegates to the daemon's GET /artifacts endpoint with type/status/search
  * filters. Post-filters locally for relatedTo, relationshipType, and limit
  * since the daemon doesn't support those directly.
  * @param _nodesOrOptions - Legacy nodes array (unused) or query options.

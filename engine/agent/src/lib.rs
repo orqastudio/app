@@ -8,3 +8,6 @@
 pub mod types;
 
 pub use types::{AgentSpec, BaseRole, TaskAgent};
+
+#[cfg(test)]
+mod agent_tests;

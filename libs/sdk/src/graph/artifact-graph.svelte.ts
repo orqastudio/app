@@ -584,7 +584,7 @@ export class ArtifactGraphSDK {
 		const newPathIndex = new SvelteMap<string, string>();
 
 		for (let i = 0; i < typedNodes.length; i++) {
-			const nodes = typedNodes[i];
+			const nodes = typedNodes[i] ?? [];
 			for (const node of nodes) {
 				newGraph.set(node.id, node);
 				newPathIndex.set(node.path, node.id);
@@ -595,7 +595,7 @@ export class ArtifactGraphSDK {
 		}
 
 		const elapsed_ms = (performance.now() - fetchStart).toFixed(1);
-		log.info(`_fetchAll complete in ${elapsed_ms}ms: ${newGraph.size} total nodes (stats reports ${statsResult.total_nodes})`);
+		log.info(`_fetchAll complete in ${elapsed_ms}ms: ${newGraph.size} total nodes (stats reports ${statsResult.node_count})`);
 
 		this.graph = newGraph;
 		this.pathIndex = newPathIndex;

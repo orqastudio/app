@@ -53,3 +53,6 @@ pub mod types;
 // Re-export the primary entry points and error type at the crate root.
 pub use error::McpError;
 pub use server::{run, run_tcp, run_with_daemon_port};
+
+#[cfg(test)]
+mod mcp_tests;

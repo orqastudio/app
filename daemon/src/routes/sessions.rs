@@ -281,3 +281,373 @@ pub async fn list_session_messages(
     ))?
 }
 
+// ---------------------------------------------------------------------------
+// Route tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use axum::body::Body;
+    use axum::http::{Method, Request, StatusCode};
+    use axum::routing::{get, post};
+    use axum::Router;
+    use http_body_util::BodyExt as _;
+    use std::sync::Arc;
+    use tower::ServiceExt as _;
+
+    use crate::graph_state::GraphState;
+    use crate::store::{project_create, DaemonStore};
+
+    /// Build an axum Router wiring the session routes to a fresh in-memory store.
+    ///
+    /// Returns (Router, project_id) so tests can create sessions without
+    /// needing to hit a /projects route.
+    fn session_router() -> (Router, i64) {
+        let db_file = tempfile::NamedTempFile::new().expect("tempfile");
+        let store = DaemonStore::open(db_file.path().to_path_buf())
+            .map(Arc::new)
+            .expect("store open");
+
+        // Create a seed project so we have a valid project_id for sessions.
+        let project_id = {
+            let conn = store.connect().expect("connect");
+            project_create(&conn, "test-project", "/test/project", None)
+                .expect("project_create")
+                .id
+        };
+
+        // Keep the tempfile alive for the lifetime of this function by leaking it.
+        // This is safe in tests — the OS cleans up temp files after the process exits.
+        std::mem::forget(db_file);
+
+        let state = HealthState::for_test(
+            GraphState::build_empty(std::path::Path::new("/tmp/test")),
+            Some(Arc::clone(&store)),
+        );
+
+        // Use {id} capture syntax (axum 0.8+) for the path parameters.
+        let session_sub = Router::new()
+            .route("/", post(create_session).get(list_sessions))
+            .route(
+                "/{id}",
+                get(get_session)
+                    .put(update_session)
+                    .delete(delete_session),
+            )
+            .route("/{id}/end", post(end_session))
+            .route("/{id}/messages", get(list_session_messages))
+            .with_state(state);
+
+        let router = Router::new().nest("/sessions", session_sub);
+
+        (router, project_id)
+    }
+
+    fn json_body(val: serde_json::Value) -> Body {
+        Body::from(serde_json::to_vec(&val).unwrap())
+    }
+
+    async fn body_json(body: Body) -> serde_json::Value {
+        let bytes = body.collect().await.unwrap().to_bytes();
+        serde_json::from_slice(&bytes).expect("response must be valid JSON")
+    }
+
+    // ---- POST /sessions -------------------------------------------------------
+
+    #[tokio::test]
+    async fn post_sessions_creates_session_and_returns_201() {
+        // POST /sessions must return 201 with id and status="active".
+        let (app, project_id) = session_router();
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({
+                        "project_id": project_id,
+                        "model": "auto"
+                    })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::CREATED);
+        let body = body_json(resp.into_body()).await;
+        assert!(body["id"].as_i64().is_some(), "response must include integer id");
+        assert_eq!(body["status"], "active");
+    }
+
+    #[tokio::test]
+    async fn post_sessions_response_has_project_id() {
+        // The created session must carry the project_id we supplied.
+        let (app, project_id) = session_router();
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["project_id"], project_id);
+    }
+
+    // ---- GET /sessions --------------------------------------------------------
+
+    #[tokio::test]
+    async fn get_sessions_returns_200_with_list() {
+        // GET /sessions must return 200 with a JSON array (empty or populated).
+        let (app, project_id) = session_router();
+        // Create one session first.
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(create_resp.status(), StatusCode::CREATED);
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri("/sessions")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        let list = body.as_array().expect("response must be a JSON array");
+        assert_eq!(list.len(), 1);
+    }
+
+    // ---- GET /sessions/:id ----------------------------------------------------
+
+    #[tokio::test]
+    async fn get_session_returns_created_session() {
+        // GET /sessions/:id must return the same session we just created.
+        let (app, project_id) = session_router();
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let created = body_json(create_resp.into_body()).await;
+        let id = created["id"].as_i64().unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri(format!("/sessions/{id}"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["id"], id);
+        assert_eq!(body["project_id"], project_id);
+    }
+
+    #[tokio::test]
+    async fn get_session_returns_404_for_nonexistent() {
+        // Requesting a session that doesn't exist must return 404.
+        let (app, _) = session_router();
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri("/sessions/9999")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+    }
+
+    // ---- PUT /sessions/:id ----------------------------------------------------
+
+    #[tokio::test]
+    async fn put_session_updates_title() {
+        // After PUT with a new title, the title field must reflect the change.
+        let (app, project_id) = session_router();
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let created = body_json(create_resp.into_body()).await;
+        let id = created["id"].as_i64().unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::PUT)
+                    .uri(format!("/sessions/{id}"))
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "title": "My Session" })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["title"], "My Session");
+    }
+
+    // ---- DELETE /sessions/:id -------------------------------------------------
+
+    #[tokio::test]
+    async fn delete_session_returns_204() {
+        // DELETE /sessions/:id must return 204 No Content.
+        let (app, project_id) = session_router();
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let created = body_json(create_resp.into_body()).await;
+        let id = created["id"].as_i64().unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::DELETE)
+                    .uri(format!("/sessions/{id}"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::NO_CONTENT);
+    }
+
+    #[tokio::test]
+    async fn after_delete_get_session_returns_404() {
+        // After DELETE, GET /sessions/:id must return 404.
+        let (app, project_id) = session_router();
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let created = body_json(create_resp.into_body()).await;
+        let id = created["id"].as_i64().unwrap();
+
+        app.clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::DELETE)
+                    .uri(format!("/sessions/{id}"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri(format!("/sessions/{id}"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
+    }
+
+    // ---- GET /sessions/:id/messages -------------------------------------------
+
+    #[tokio::test]
+    async fn get_session_messages_on_new_session_returns_empty_array() {
+        // A freshly created session must return an empty messages array.
+        let (app, project_id) = session_router();
+        let create_resp = app
+            .clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::POST)
+                    .uri("/sessions")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "project_id": project_id })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        let created = body_json(create_resp.into_body()).await;
+        let id = created["id"].as_i64().unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri(format!("/sessions/{id}/messages"))
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        let messages = body.as_array().expect("messages must be a JSON array");
+        assert!(messages.is_empty(), "new session must have no messages");
+    }
+}
+

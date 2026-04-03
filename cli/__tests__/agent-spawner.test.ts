@@ -290,7 +290,7 @@ describe("createAgentConfig", () => {
 		expect(config.modelTier).toBe("opus");
 	});
 
-	it("generates a prompt via the pipeline", () => {
+	it("does not include prompt fields — prompt generation is the daemon's job", () => {
 		const config = createAgentConfig({
 			role: "reviewer",
 			workflowStage: "review",
@@ -298,9 +298,11 @@ describe("createAgentConfig", () => {
 			projectPath: projectDir,
 		});
 
-		// With an empty registry, the prompt still contains role + task context
-		expect(config.prompt).toContain("reviewer");
-		expect(config.promptResult).toBeDefined();
+		// AgentSpawnConfig intentionally has no prompt field.
+		// Prompt generation belongs in the Rust engine (/prompt/generate endpoint).
+		expect((config as Record<string, unknown>)["prompt"]).toBeUndefined();
+		expect((config as Record<string, unknown>)["promptResult"]).toBeUndefined();
+		expect(config.role).toBe("reviewer");
 	});
 
 	it("sets findings path when team context is provided", () => {
@@ -327,7 +329,7 @@ describe("createAgentConfig", () => {
 		expect(config.findingsPath).toBeNull();
 	});
 
-	it("passes acceptance criteria to the prompt pipeline", () => {
+	it("passes acceptance criteria through to task context", () => {
 		const config = createAgentConfig({
 			role: "implementer",
 			taskDescription: "Add the new feature",
@@ -339,8 +341,7 @@ describe("createAgentConfig", () => {
 			"Tests pass",
 			"No regressions",
 		]);
-		// Task context should appear in the prompt
-		expect(config.prompt).toContain("Add the new feature");
+		expect(config.taskContext.description).toBe("Add the new feature");
 	});
 
 	it("applies custom model tier overrides", () => {

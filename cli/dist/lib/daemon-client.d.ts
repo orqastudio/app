@@ -1,5 +1,5 @@
 /**
- * HTTP client for the orqa-validation daemon.
+ * HTTP client for the orqa-daemon.
  *
  * Daemon runs at localhost:10100 by default (port is ORQA_PORT_BASE, matched
  * from daemon/src/health.rs resolve_port()). Provides canonical graph
@@ -13,7 +13,7 @@ export interface DaemonArtifactRef {
     source_id: string;
     relationship_type: string | null;
 }
-/** Mirrors the Rust `ArtifactNode` struct returned by POST /query. */
+/** Mirrors the Rust `ArtifactNode` struct returned by GET /artifacts. */
 export interface DaemonArtifactNode {
     id: string;
     project?: string;

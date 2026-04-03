@@ -138,3 +138,161 @@ pub struct EventBusStats {
     /// Number of active subscribers at the time of the snapshot.
     pub subscriber_count: usize,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+
+    /// Build a minimal LogEvent for use in tests.
+    fn make_event(id: u64, message: &str) -> LogEvent {
+        LogEvent {
+            id,
+            timestamp: 1_000_000 + id as i64,
+            level: EventLevel::Info,
+            source: EventSource::Daemon,
+            category: "test".to_owned(),
+            message: message.to_owned(),
+            metadata: serde_json::Value::Null,
+            session_id: None,
+        }
+    }
+
+    /// A fresh bus has zero published and zero dropped events.
+    #[test]
+    fn new_bus_has_clean_stats() {
+        let bus = EventBus::new();
+        let stats = bus.stats();
+        assert_eq!(stats.total_published, 0, "published should start at 0");
+        assert_eq!(stats.total_dropped, 0, "dropped should start at 0");
+        assert_eq!(stats.subscriber_count, 0, "no subscribers at construction");
+    }
+
+    /// Publishing when a subscriber exists delivers the event with correct fields.
+    #[tokio::test]
+    async fn publish_with_subscriber_delivers_event() {
+        let bus = EventBus::new();
+        let mut rx = bus.subscribe();
+        let event = make_event(1, "hello");
+
+        bus.publish(event.clone());
+
+        let received = rx.try_recv().expect("subscriber should receive the event");
+        assert_eq!(received.id, 1);
+        assert_eq!(received.message, "hello");
+        assert_eq!(received.source, EventSource::Daemon);
+
+        let stats = bus.stats();
+        assert_eq!(stats.total_published, 1);
+        assert_eq!(stats.total_dropped, 0);
+    }
+
+    /// Publishing when no subscribers exist increments the drop counter.
+    #[test]
+    fn publish_without_subscribers_increments_dropped() {
+        let bus = EventBus::new();
+        // No subscriber — no rx created.
+        bus.publish(make_event(1, "dropped"));
+
+        let stats = bus.stats();
+        assert_eq!(stats.total_published, 0, "no subscriber means nothing was sent");
+        assert_eq!(stats.total_dropped, 1, "drop counter must increment");
+    }
+
+    /// Stats correctly reflect both published and dropped counts across
+    /// a sequence of mixed operations.
+    #[tokio::test]
+    async fn stats_accurately_track_published_and_dropped() {
+        let bus = EventBus::new();
+
+        // Publish 3 events to a live subscriber.
+        let rx = bus.subscribe();
+        for i in 0..3 {
+            bus.publish(make_event(i, "live"));
+        }
+
+        // Drop the subscriber, then publish 2 more events — both should drop.
+        drop(rx);
+        for i in 3..5 {
+            bus.publish(make_event(i, "after drop"));
+        }
+
+        let stats = bus.stats();
+        assert_eq!(stats.total_published, 3);
+        assert_eq!(stats.total_dropped, 2);
+    }
+
+    /// next_ingest_id returns strictly increasing values across calls.
+    #[test]
+    fn next_ingest_id_is_monotonically_increasing() {
+        let bus = EventBus::new();
+        let id1 = bus.next_ingest_id();
+        let id2 = bus.next_ingest_id();
+        let id3 = bus.next_ingest_id();
+        assert!(id1 < id2, "id2 must be greater than id1");
+        assert!(id2 < id3, "id3 must be greater than id2");
+    }
+
+    /// Multiple subscribers all receive the same published event.
+    #[tokio::test]
+    async fn multiple_subscribers_each_receive_event() {
+        let bus = EventBus::new();
+        let mut rx1 = bus.subscribe();
+        let mut rx2 = bus.subscribe();
+        let mut rx3 = bus.subscribe();
+
+        bus.publish(make_event(42, "broadcast"));
+
+        let e1 = rx1.try_recv().expect("subscriber 1 should receive");
+        let e2 = rx2.try_recv().expect("subscriber 2 should receive");
+        let e3 = rx3.try_recv().expect("subscriber 3 should receive");
+
+        // All three must see the same event identity and content.
+        assert_eq!(e1.id, 42);
+        assert_eq!(e2.id, 42);
+        assert_eq!(e3.id, 42);
+        assert_eq!(e1.message, "broadcast");
+        assert_eq!(e2.message, "broadcast");
+        assert_eq!(e3.message, "broadcast");
+
+        assert_eq!(bus.stats().total_published, 1, "counted once, not per subscriber");
+    }
+
+    /// A subscriber created AFTER a publish does not receive the earlier event.
+    /// The bus is not a replay log — subscribers only get events published after
+    /// they subscribe.
+    #[tokio::test]
+    async fn late_subscriber_does_not_replay_past_events() {
+        let bus = EventBus::new();
+
+        // Publish before any subscriber exists.
+        bus.publish(make_event(1, "before subscriber"));
+
+        // Subscribe after the publish.
+        let mut rx = bus.subscribe();
+
+        // The subscriber queue must be empty.
+        assert!(
+            rx.try_recv().is_err(),
+            "late subscriber must not receive events published before it subscribed"
+        );
+    }
+
+    /// shutdown sends a sentinel event that subscribers can detect as the bus
+    /// terminator. The sentinel uses id=u64::MAX and category="bus".
+    #[tokio::test]
+    async fn shutdown_sends_terminator_to_subscribers() {
+        let bus = EventBus::new();
+        let mut rx = bus.subscribe();
+
+        bus.shutdown();
+
+        let event = rx.try_recv().expect("shutdown must deliver a terminator event");
+        assert_eq!(event.id, u64::MAX, "shutdown event must use id=u64::MAX sentinel");
+        assert_eq!(event.category, "bus");
+        assert!(
+            event.message.contains("shutting down"),
+            "shutdown message must describe intent"
+        );
+    }
+}

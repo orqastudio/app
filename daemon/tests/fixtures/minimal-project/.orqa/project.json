@@ -1,0 +1,37 @@
+{
+  "name": "Test Project",
+  "description": "Minimal fixture project for daemon integration tests.",
+  "default_model": "auto",
+  "excluded_paths": [
+    "node_modules",
+    ".git",
+    "target"
+  ],
+  "stack": {
+    "languages": ["rust"],
+    "frameworks": ["cargo"],
+    "package_manager": "cargo",
+    "has_claude_config": false,
+    "has_design_tokens": false
+  },
+  "governance": {
+    "lessons": 0,
+    "decisions": 0,
+    "rules": 1,
+    "documentation": 0,
+    "has_claude_config": false
+  },
+  "statuses": [],
+  "delivery": {
+    "types": []
+  },
+  "relationships": [
+    {
+      "key": "delivers",
+      "inverse": "delivered-by",
+      "label": "Delivers",
+      "inverse_label": "Delivered By"
+    }
+  ],
+  "plugins": {}
+}

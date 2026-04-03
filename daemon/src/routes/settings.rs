@@ -114,3 +114,174 @@ pub async fn set_setting(
         Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
     ))?
 }
+
+// ---------------------------------------------------------------------------
+// Route tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use axum::body::Body;
+    use axum::http::{Method, Request, StatusCode};
+    use axum::routing::{get, put};
+    use axum::Router;
+    use http_body_util::BodyExt as _;
+    use std::sync::Arc;
+    use tower::ServiceExt as _;
+
+    use crate::graph_state::GraphState;
+    use crate::store::DaemonStore;
+
+    /// Build a fresh router with the settings routes wired to a temp-file store.
+    ///
+    /// Returns (Router, tempfile) — caller must hold the tempfile to keep the DB alive.
+    fn settings_router() -> (Router, tempfile::NamedTempFile) {
+        let db_file = tempfile::NamedTempFile::new().expect("tempfile");
+        let store = DaemonStore::open(db_file.path().to_path_buf())
+            .map(Arc::new)
+            .expect("store open");
+
+        let state = HealthState::for_test(
+            GraphState::build_empty(std::path::Path::new("/tmp/test")),
+            Some(Arc::clone(&store)),
+        );
+
+        let settings_sub = Router::new()
+            .route("/", get(get_settings))
+            .route("/{key}", put(set_setting))
+            .with_state(state);
+
+        let router = Router::new().nest("/settings", settings_sub);
+
+        (router, db_file)
+    }
+
+    fn json_body(val: serde_json::Value) -> Body {
+        Body::from(serde_json::to_vec(&val).unwrap())
+    }
+
+    async fn body_json(body: Body) -> serde_json::Value {
+        let bytes = body.collect().await.unwrap().to_bytes();
+        serde_json::from_slice(&bytes).expect("response must be valid JSON")
+    }
+
+    // ---- GET /settings --------------------------------------------------------
+
+    #[tokio::test]
+    async fn get_settings_returns_empty_object_initially() {
+        // With no settings stored, GET /settings must return an empty JSON object.
+        let (app, _db) = settings_router();
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri("/settings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        let obj = body.as_object().expect("settings must be a JSON object");
+        assert!(obj.is_empty(), "initially no settings must be present");
+    }
+
+    // ---- PUT /settings/:key ---------------------------------------------------
+
+    #[tokio::test]
+    async fn put_settings_sets_value() {
+        // PUT /settings/theme_mode must persist the value.
+        let (app, _db) = settings_router();
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::PUT)
+                    .uri("/settings/theme_mode")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "value": "dark" })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["key"], "theme_mode");
+        assert_eq!(body["value"], "dark");
+    }
+
+    #[tokio::test]
+    async fn get_settings_returns_previously_set_value() {
+        // After PUT, GET /settings must include the key we set.
+        let (app, _db) = settings_router();
+
+        app.clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::PUT)
+                    .uri("/settings/theme_mode")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "value": "dark" })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri("/settings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(resp.status(), StatusCode::OK);
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["theme_mode"], "dark");
+    }
+
+    #[tokio::test]
+    async fn settings_json_round_trip_complex_value() {
+        // A complex JSON object must survive a PUT then GET cycle unchanged.
+        let (app, _db) = settings_router();
+        let complex = serde_json::json!({
+            "enabled": true,
+            "count": 42,
+            "tags": ["a", "b"],
+            "nested": { "x": 1 }
+        });
+
+        app.clone()
+            .oneshot(
+                Request::builder()
+                    .method(Method::PUT)
+                    .uri("/settings/complex_cfg")
+                    .header("content-type", "application/json")
+                    .body(json_body(serde_json::json!({ "value": complex })))
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let resp = app
+            .oneshot(
+                Request::builder()
+                    .method(Method::GET)
+                    .uri("/settings")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        let body = body_json(resp.into_body()).await;
+        assert_eq!(body["complex_cfg"], complex);
+    }
+}

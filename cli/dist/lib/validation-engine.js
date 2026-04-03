@@ -5,7 +5,7 @@
  * engine (engine/validation/).  This module provides the common helpers:
  *
  *   findBinary()     — locate the compiled orqa-validation binary
- *   callDaemon()     — POST to the running daemon's /validate endpoint
+ *   callDaemon()     — POST to the running daemon's /validation/scan endpoint
  *   runRustBinary()  — exec the binary directly and capture JSON output
  *   runValidation()  — daemon-first, binary-fallback orchestration
  */
@@ -48,7 +48,7 @@ export function findBinary(projectRoot) {
 import { getPort } from "./ports.js";
 const DAEMON_PORT = getPort("daemon");
 /**
- * Call the running daemon's /validate endpoint.
+ * Call the running daemon's /validation/scan endpoint.
  * Returns the raw JSON response string, or null if the daemon is unreachable.
  * @param targetPath - Path to the file or directory to validate.
  * @param autoFix - Whether to automatically apply fixes.
@@ -59,10 +59,11 @@ export async function callDaemon(targetPath, autoFix) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 500);
         try {
-            const response = await fetch(`http://127.0.0.1:${DAEMON_PORT}/validate`, {
+            const endpoint = autoFix ? "/validation/fix" : "/validation/scan";
+            const response = await fetch(`http://127.0.0.1:${DAEMON_PORT}${endpoint}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ path: targetPath, fix: autoFix }),
+                body: JSON.stringify({ path: targetPath, apply: autoFix }),
                 signal: controller.signal,
             });
             if (!response.ok)

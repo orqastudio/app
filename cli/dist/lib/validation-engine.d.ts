@@ -5,7 +5,7 @@
  * engine (engine/validation/).  This module provides the common helpers:
  *
  *   findBinary()     — locate the compiled orqa-validation binary
- *   callDaemon()     — POST to the running daemon's /validate endpoint
+ *   callDaemon()     — POST to the running daemon's /validation/scan endpoint
  *   runRustBinary()  — exec the binary directly and capture JSON output
  *   runValidation()  — daemon-first, binary-fallback orchestration
  */
@@ -41,7 +41,7 @@ export interface ValidationReport {
  */
 export declare function findBinary(projectRoot: string): string | null;
 /**
- * Call the running daemon's /validate endpoint.
+ * Call the running daemon's /validation/scan endpoint.
  * Returns the raw JSON response string, or null if the daemon is unreachable.
  * @param targetPath - Path to the file or directory to validate.
  * @param autoFix - Whether to automatically apply fixes.

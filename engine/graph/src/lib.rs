@@ -13,6 +13,12 @@ pub mod build;
 pub mod error;
 pub mod metrics;
 
+#[cfg(test)]
+mod metrics_tests;
+
+#[cfg(test)]
+mod build_tests;
+
 // Re-export graph data types and metric types from engine/types so consumers can access
 // them via this crate without depending on engine/types directly.
 pub use orqa_engine_types::{

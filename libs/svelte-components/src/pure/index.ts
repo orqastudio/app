@@ -49,3 +49,4 @@ export { ProgressBar } from "./progress-bar/index.js";
 export { ViewContainer } from "./view-container/index.js";
 export { Toolbar } from "./toolbar/index.js";
 export { NavItem } from "./nav-item/index.js";
+export { ConnectionIndicator, type ConnectionState } from "./connection-indicator/index.js";

@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "generated": true,
+  "generatedAt": "2026-04-01T00:00:00.000Z",
+  "description": "Minimal composed schema for daemon integration test fixtures.",
+  "artifactTypes": {
+    "epic": {
+      "id_prefix": "EPIC",
+      "label": "Epic",
+      "plural": "Epics",
+      "id_pattern": "^EPIC-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/epics/",
+      "icon": "layers",
+      "source": "@orqastudio/plugin-agile-methodology",
+      "fields": {
+        "required": {
+          "id": { "type": "string", "pattern": "^EPIC-[a-f0-9]{8}$" }
+        },
+        "optional": {
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "status": { "type": "string" },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["target", "type"],
+              "properties": {
+                "target": { "type": "string" },
+                "type": { "type": "string" },
+                "rationale": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": ["backlog", "active", "done", "archived"],
+      "initialStatus": "backlog"
+    },
+    "task": {
+      "id_prefix": "TASK",
+      "label": "Task",
+      "plural": "Tasks",
+      "id_pattern": "^TASK-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/tasks/",
+      "icon": "check-square",
+      "source": "@orqastudio/plugin-agile-methodology",
+      "fields": {
+        "required": {
+          "id": { "type": "string", "pattern": "^TASK-[a-f0-9]{8}$" }
+        },
+        "optional": {
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "status": { "type": "string" },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["target", "type"],
+              "properties": {
+                "target": { "type": "string" },
+                "type": { "type": "string" },
+                "rationale": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": ["todo", "in-progress", "done", "archived"],
+      "initialStatus": "todo"
+    },
+    "rule": {
+      "id_prefix": "RULE",
+      "label": "Rule",
+      "plural": "Rules",
+      "id_pattern": "^RULE-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/rules/",
+      "icon": "shield",
+      "source": "@orqastudio/plugin-agile-methodology",
+      "fields": {
+        "required": {
+          "id": { "type": "string", "pattern": "^RULE-[a-f0-9]{8}$" }
+        },
+        "optional": {
+          "title": { "type": "string" },
+          "description": { "type": ["string", "null"] },
+          "status": { "type": "string" }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": ["active", "archived"],
+      "initialStatus": "active"
+    }
+  },
+  "relationshipTypes": {
+    "delivers": {
+      "label": "Delivers",
+      "from": ["task"],
+      "to": ["epic"],
+      "source": "@orqastudio/plugin-agile-methodology"
+    }
+  }
+}

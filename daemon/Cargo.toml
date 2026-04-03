@@ -14,6 +14,10 @@ description = "OrqaStudio daemon — persistent background process for file watc
 name = "orqa-daemon"
 path = "src/main.rs"
 
+[lib]
+name = "orqa_daemon_lib"
+path = "src/lib.rs"
+
 [dependencies]
 orqa-engine = { path = "../engine/core" }
 orqa-engine-types = { path = "../engine/types" }
@@ -56,6 +60,9 @@ windows-sys = { version = "0.60", features = [
 
 [dev-dependencies]
 tempfile = "3"
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 [lints]
 workspace = true

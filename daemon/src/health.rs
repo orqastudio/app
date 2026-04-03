@@ -73,6 +73,32 @@ pub struct HealthState {
     pub stream_registry: SessionStreamRegistry,
 }
 
+impl HealthState {
+    /// Construct a minimal `HealthState` for use in tests.
+    ///
+    /// Provides sensible defaults for fields that route handlers under test do
+    /// not access. This avoids exposing private fields (`started_at`, `pid`)
+    /// to route test modules and integration test helpers.
+    #[doc(hidden)]
+    #[allow(dead_code)]
+    pub fn for_test(
+        graph_state: GraphState,
+        daemon_store: Option<Arc<DaemonStore>>,
+    ) -> Self {
+        Self {
+            started_at: Arc::new(Instant::now()),
+            pid: std::process::id(),
+            config: DaemonConfig::default(),
+            event_bus: EventBus::new(),
+            event_store: None,
+            process_snapshots: Arc::new(Mutex::new(Vec::<ProcessSnapshot>::new())),
+            graph_state,
+            daemon_store,
+            stream_registry: SessionStreamRegistry::new(),
+        }
+    }
+}
+
 /// JSON response body for GET /health.
 ///
 /// The `processes` array is populated from the shared `process_snapshots`
