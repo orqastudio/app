@@ -397,7 +397,7 @@ mod tests {
     use super::*;
 
     fn make_epic_type() -> ArtifactTypeDef {
-        let mut transitions = std::collections::HashMap::new();
+        let mut transitions = HashMap::new();
         transitions.insert("captured".to_owned(), vec!["active".to_owned()]);
         transitions.insert("active".to_owned(), vec!["completed".to_owned()]);
         transitions.insert("completed".to_owned(), vec![]);

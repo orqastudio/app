@@ -190,3 +190,208 @@ fn check_child_type_consistency(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::settings::{DeliveryConfig, DeliveryParentConfig, DeliveryTypeConfig};
+    use crate::types::ValidationContext;
+    use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
+    use std::collections::{HashMap, HashSet};
+
+    fn make_node(id: &str, artifact_type: &str, status: &str) -> ArtifactNode {
+        ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: format!(".orqa/test/{id}.md"),
+            artifact_type: artifact_type.to_owned(),
+            title: id.to_owned(),
+            description: None,
+            status: Some(status.to_owned()),
+            priority: None,
+            frontmatter: serde_json::json!({"type": artifact_type, "status": status}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    fn make_ref(source: &str, target: &str, rel_type: &str) -> ArtifactRef {
+        ArtifactRef {
+            target_id: target.to_owned(),
+            field: "relationships".to_owned(),
+            source_id: source.to_owned(),
+            relationship_type: Some(rel_type.to_owned()),
+        }
+    }
+
+    fn make_ctx_with_statuses(statuses: &[&str]) -> ValidationContext {
+        ValidationContext {
+            relationships: vec![],
+            inverse_map: HashMap::new(),
+            valid_statuses: statuses.iter().map(|s| s.to_string()).collect(),
+            delivery: DeliveryConfig { types: vec![] },
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        }
+    }
+
+    fn make_ctx_with_delivery(
+        statuses: &[&str],
+        delivery_types: Vec<DeliveryTypeConfig>,
+    ) -> ValidationContext {
+        ValidationContext {
+            relationships: vec![],
+            inverse_map: HashMap::new(),
+            valid_statuses: statuses.iter().map(|s| s.to_string()).collect(),
+            delivery: DeliveryConfig { types: delivery_types },
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        }
+    }
+
+    // --- check_valid_statuses ---
+
+    #[test]
+    fn invalid_status_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", "unknown-status");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_statuses(&["active", "completed"]);
+        let mut checks = vec![];
+        check_valid_statuses(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::InvalidStatus);
+        assert!(checks[0].message.contains("unknown-status"));
+    }
+
+    #[test]
+    fn valid_status_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", "active");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_statuses(&["active", "completed"]);
+        let mut checks = vec![];
+        check_valid_statuses(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn legacy_status_maps_to_canonical_replacement() {
+        // "draft" is a legacy status; "captured" is its canonical replacement.
+        let valid = vec!["captured".to_string(), "active".to_string()];
+        let suggestion = suggest_status_fix("draft", &valid);
+        assert_eq!(suggestion, Some("captured"));
+    }
+
+    #[test]
+    fn case_insensitive_status_match_is_suggested() {
+        // "Active" should match "active" in the valid list.
+        let valid = vec!["active".to_string(), "completed".to_string()];
+        let suggestion = suggest_status_fix("Active", &valid);
+        assert_eq!(suggestion, Some("active"));
+    }
+
+    #[test]
+    fn node_with_no_status_is_skipped_for_status_check() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task", "active");
+        node.status = None;
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_statuses(&["active"]);
+        let mut checks = vec![];
+        check_valid_statuses(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_parent_child_consistency ---
+
+    #[test]
+    fn completed_task_with_captured_epic_is_flagged() {
+        // Task is "completed" (ordinal 6) but its parent epic is "captured" (ordinal 0).
+        let mut graph = ArtifactGraph::default();
+        let mut task = make_node("TASK-A", "task", "completed");
+        let epic = make_node("EPIC-B", "epic", "captured");
+        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), task);
+        graph.nodes.insert("EPIC-B".to_owned(), epic);
+
+        let ctx = make_ctx_with_delivery(
+            &["captured", "active", "completed"],
+            vec![DeliveryTypeConfig {
+                key: "task".to_owned(),
+                label: "Tasks".to_owned(),
+                path: ".orqa/implementation/tasks/".to_owned(),
+                parent: Some(DeliveryParentConfig {
+                    parent_type: "epic".to_owned(),
+                    relationship: "delivers".to_owned(),
+                }),
+                gate_field: None,
+            }],
+        );
+
+        let mut checks = vec![];
+        check_parent_child_consistency(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::ParentChildInconsistency);
+        assert!(checks[0].message.contains("TASK-A"));
+    }
+
+    #[test]
+    fn completed_task_with_active_epic_is_not_flagged() {
+        // An active epic with a completed task is normal — the epic has more work to do.
+        let mut graph = ArtifactGraph::default();
+        let mut task = make_node("TASK-A", "task", "completed");
+        let epic = make_node("EPIC-B", "epic", "active");
+        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), task);
+        graph.nodes.insert("EPIC-B".to_owned(), epic);
+
+        let ctx = make_ctx_with_delivery(
+            &["captured", "active", "completed"],
+            vec![DeliveryTypeConfig {
+                key: "task".to_owned(),
+                label: "Tasks".to_owned(),
+                path: ".orqa/implementation/tasks/".to_owned(),
+                parent: Some(DeliveryParentConfig {
+                    parent_type: "epic".to_owned(),
+                    relationship: "delivers".to_owned(),
+                }),
+                gate_field: None,
+            }],
+        );
+
+        let mut checks = vec![];
+        check_parent_child_consistency(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn delivery_type_without_parent_config_skips_consistency_check() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", "completed");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_delivery(
+            &["captured", "active", "completed"],
+            vec![DeliveryTypeConfig {
+                key: "task".to_owned(),
+                label: "Tasks".to_owned(),
+                path: ".orqa/implementation/tasks/".to_owned(),
+                parent: None,
+                gate_field: None,
+            }],
+        );
+
+        let mut checks = vec![];
+        check_parent_child_consistency(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+}

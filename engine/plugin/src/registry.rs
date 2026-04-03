@@ -179,4 +179,57 @@ mod tests {
         assert_eq!(catalog.version, 1);
         assert!(catalog.plugins.is_empty());
     }
+
+    #[test]
+    fn registry_cache_new_is_empty() {
+        let cache = RegistryCache::new();
+        // A freshly created cache should have no entries.
+        let official = cache.official.lock().unwrap();
+        assert!(official.is_none());
+        let community = cache.community.lock().unwrap();
+        assert!(community.is_none());
+    }
+
+    #[test]
+    fn registry_cache_default_is_same_as_new() {
+        let cache = RegistryCache::default();
+        let official = cache.official.lock().unwrap();
+        assert!(official.is_none());
+    }
+
+    #[test]
+    fn registry_cache_invalidate_clears_entries() {
+        let cache = RegistryCache::new();
+        // Manually populate a cache entry.
+        {
+            let mut guard = cache.official.lock().unwrap();
+            *guard = Some(CacheEntry {
+                data: RegistryCatalog {
+                    version: 1,
+                    source: "official".to_owned(),
+                    plugins: vec![],
+                },
+                fetched_at: Instant::now(),
+            });
+        }
+        // Invalidate should clear it.
+        cache.invalidate();
+        let guard = cache.official.lock().unwrap();
+        assert!(guard.is_none(), "cache should be empty after invalidate");
+    }
+
+    #[test]
+    fn registry_entry_default_capabilities_is_empty() {
+        // Capabilities field defaults to empty when absent from JSON.
+        let json = r#"{
+            "name": "@test/plugin",
+            "displayName": "Test",
+            "description": "desc",
+            "repo": "test/plugin",
+            "category": "test",
+            "icon": "circle"
+        }"#;
+        let entry: RegistryEntry = serde_json::from_str(json).unwrap();
+        assert!(entry.capabilities.is_empty());
+    }
 }

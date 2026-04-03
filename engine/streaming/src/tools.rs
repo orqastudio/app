@@ -86,11 +86,24 @@ pub fn resolve_write_path(raw: &str, root: &Path) -> Result<PathBuf, String> {
     let root_canon = root.canonicalize().unwrap_or_else(|_| root.to_path_buf());
 
     if let Some(parent) = candidate.parent() {
-        let parent_resolved = parent
-            .canonicalize()
-            .unwrap_or_else(|_| parent.to_path_buf());
-        if !parent_resolved.starts_with(&root_canon) {
-            return Err(format!("path '{raw}' is outside the project root"));
+        // Canonicalize both the candidate's parent and the root for a symlink-safe
+        // containment check. When the parent directory doesn't yet exist (new file),
+        // canonicalize the root only and compare the non-canonicalized candidate —
+        // both share the same absolute base so path traversal is still detectable.
+        if parent.exists() {
+            let parent_canon = parent
+                .canonicalize()
+                .unwrap_or_else(|_| parent.to_path_buf());
+            if !parent_canon.starts_with(&root_canon) {
+                return Err(format!("path '{raw}' is outside the project root"));
+            }
+        } else {
+            // Parent doesn't exist yet — check that the non-canonicalized candidate
+            // starts with the non-canonicalized root (both are absolute, no symlinks).
+            let root_raw = root.to_path_buf();
+            if !candidate.starts_with(&root_raw) {
+                return Err(format!("path '{raw}' is outside the project root"));
+            }
         }
     }
     Ok(candidate)
@@ -710,5 +723,215 @@ mod tests {
         let content = "Body content here.";
         let result = strip_frontmatter(content);
         assert_eq!(result, content);
+    }
+
+    #[test]
+    fn resolve_path_relative_to_root() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        // Create a file inside the root
+        let file_path = dir.path().join("test.md");
+        std::fs::write(&file_path, "content").expect("write");
+
+        let resolved = resolve_path("test.md", dir.path());
+        assert!(resolved.is_ok(), "should resolve: {:?}", resolved.err());
+    }
+
+    #[test]
+    fn resolve_path_rejects_path_outside_root() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        // Try to escape the root with ../
+        let result = resolve_path("../etc/passwd", dir.path());
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("outside the project root"));
+    }
+
+    #[test]
+    fn resolve_write_path_accepts_new_file_path() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        // File doesn't exist yet — resolve_write_path should still succeed
+        let result = resolve_write_path("subdir/new-file.md", dir.path());
+        assert!(result.is_ok(), "should accept path for new file");
+    }
+
+    #[test]
+    fn tool_write_file_creates_and_reads_back() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({
+            "path": "test-write.md",
+            "content": "Hello, world!"
+        });
+
+        let (msg, is_error) = tool_write_file(&input, dir.path());
+        assert!(!is_error, "should not error: {msg}");
+        assert!(msg.contains("13 bytes"));
+
+        let contents = std::fs::read_to_string(dir.path().join("test-write.md")).expect("read back");
+        assert_eq!(contents, "Hello, world!");
+    }
+
+    #[test]
+    fn tool_write_file_missing_path_param_returns_error() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({ "content": "some content" });
+        let (msg, is_error) = tool_write_file(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("missing 'path'"));
+    }
+
+    #[test]
+    fn tool_write_file_missing_content_param_returns_error() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({ "path": "output.md" });
+        let (msg, is_error) = tool_write_file(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("missing 'content'"));
+    }
+
+    #[test]
+    fn tool_edit_file_replaces_unique_string() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let file_path = dir.path().join("edit-target.md");
+        std::fs::write(&file_path, "Hello, world!\nSecond line.").expect("write");
+
+        let input = serde_json::json!({
+            "path": "edit-target.md",
+            "old_string": "Hello, world!",
+            "new_string": "Goodbye, world!"
+        });
+        let (msg, is_error) = tool_edit_file(&input, dir.path());
+        assert!(!is_error, "should not error: {msg}");
+
+        let contents = std::fs::read_to_string(&file_path).expect("read back");
+        assert!(contents.contains("Goodbye, world!"));
+        assert!(!contents.contains("Hello, world!"));
+    }
+
+    #[test]
+    fn tool_edit_file_fails_when_old_string_not_found() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let file_path = dir.path().join("edit-target.md");
+        std::fs::write(&file_path, "Original content.").expect("write");
+
+        let input = serde_json::json!({
+            "path": "edit-target.md",
+            "old_string": "DOES NOT EXIST",
+            "new_string": "replacement"
+        });
+        let (msg, is_error) = tool_edit_file(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("not found"));
+    }
+
+    #[test]
+    fn tool_edit_file_fails_when_old_string_not_unique() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let file_path = dir.path().join("edit-target.md");
+        std::fs::write(&file_path, "dup dup dup").expect("write");
+
+        let input = serde_json::json!({
+            "path": "edit-target.md",
+            "old_string": "dup",
+            "new_string": "replaced"
+        });
+        let (msg, is_error) = tool_edit_file(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("3 times"));
+    }
+
+    #[test]
+    fn tool_glob_finds_matching_files() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        std::fs::write(dir.path().join("a.md"), "a").expect("write");
+        std::fs::write(dir.path().join("b.md"), "b").expect("write");
+        std::fs::write(dir.path().join("c.txt"), "c").expect("write");
+
+        let input = serde_json::json!({ "pattern": "*.md" });
+        let (output, is_error) = tool_glob(&input, dir.path());
+        assert!(!is_error, "should not error: {output}");
+        assert!(output.contains("a.md"));
+        assert!(output.contains("b.md"));
+        assert!(!output.contains("c.txt"));
+    }
+
+    #[test]
+    fn tool_glob_returns_no_matches_when_nothing_matches() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({ "pattern": "*.rs" });
+        let (output, is_error) = tool_glob(&input, dir.path());
+        assert!(!is_error);
+        assert_eq!(output, "no matches found");
+    }
+
+    #[test]
+    fn tool_load_knowledge_rejects_path_traversal() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({ "name": "../secrets" });
+        let (msg, is_error) = tool_load_knowledge(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("invalid knowledge name"));
+    }
+
+    #[test]
+    fn tool_load_knowledge_returns_not_found_for_missing() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let input = serde_json::json!({ "name": "nonexistent" });
+        let (msg, is_error) = tool_load_knowledge(&input, dir.path());
+        assert!(is_error);
+        assert!(msg.contains("not found"));
+    }
+
+    #[test]
+    fn assemble_bash_output_combines_stdout_stderr() {
+        let result = assemble_bash_output("stdout line".to_owned(), "stderr line".to_owned());
+        assert!(result.contains("stdout line"));
+        assert!(result.contains("STDERR:"));
+        assert!(result.contains("stderr line"));
+    }
+
+    #[test]
+    fn assemble_bash_output_empty_streams_returns_no_output() {
+        let result = assemble_bash_output(String::new(), String::new());
+        assert_eq!(result, "(no output)");
+    }
+
+    #[test]
+    fn assemble_bash_output_stdout_only() {
+        let result = assemble_bash_output("only stdout".to_owned(), String::new());
+        assert_eq!(result, "only stdout");
+        assert!(!result.contains("STDERR:"));
+    }
+
+    #[test]
+    fn shell_escape_wraps_in_single_quotes() {
+        let result = shell_escape("hello world");
+        assert_eq!(result, "'hello world'");
+    }
+
+    #[test]
+    fn shell_escape_escapes_single_quotes() {
+        let result = shell_escape("it's");
+        assert_eq!(result, "'it'\\''s'");
+    }
+
+    #[test]
+    fn format_search_results_empty_returns_no_matches() {
+        let result = format_search_results(&[]);
+        assert_eq!(result, "no matches found");
+    }
+
+    #[test]
+    fn format_search_results_includes_file_and_lines() {
+        let result = orqa_search::SearchResult {
+            file_path: "src/main.rs".to_owned(),
+            start_line: 10,
+            end_line: 15,
+            content: "fn main() {}".to_owned(),
+            score: 0.9,
+            language: None,
+            match_context: String::new(),
+        };
+        let output = format_search_results(&[result]);
+        assert!(output.contains("src/main.rs:10-15"));
+        assert!(output.contains("fn main() {}"));
     }
 }

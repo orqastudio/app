@@ -377,4 +377,121 @@ mod tests {
         assert!(fm.is_none());
         assert_eq!(body, "Just body text.");
     }
+
+    #[test]
+    fn extract_frontmatter_with_leading_whitespace() {
+        // Leading whitespace before --- is fine (trimmed before checking)
+        let content = "\n---\ntitle: Test\n---\nBody.";
+        let (fm, body) = extract_frontmatter(content);
+        assert!(fm.is_some());
+        assert_eq!(body, "Body.");
+    }
+
+    #[test]
+    fn extract_frontmatter_unclosed_delimiter_returns_none() {
+        // A --- open with no closing --- should return None
+        let content = "---\ntitle: Test\nBody with no closing delimiter";
+        let (fm, body) = extract_frontmatter(content);
+        assert!(fm.is_none());
+        assert_eq!(body, content);
+    }
+
+    #[test]
+    fn extract_frontmatter_empty_frontmatter() {
+        let content = "---\n---\nBody text.";
+        let (fm, body) = extract_frontmatter(content);
+        // Empty frontmatter block is valid
+        assert!(fm.is_some());
+        assert_eq!(body, "Body text.");
+    }
+
+    #[test]
+    fn extract_frontmatter_preserves_multiline_body() {
+        let content = "---\ntitle: Test\n---\nLine 1.\nLine 2.\nLine 3.";
+        let (fm, body) = extract_frontmatter(content);
+        assert!(fm.is_some());
+        assert_eq!(body, "Line 1.\nLine 2.\nLine 3.");
+    }
+
+    #[test]
+    fn is_valid_artifact_id_rejects_empty_prefix_segment() {
+        // Double dash produces an empty prefix segment — should be rejected
+        assert!(!is_valid_artifact_id("TASK--001"));
+        assert!(!is_valid_artifact_id("-TASK-001"));
+    }
+
+    #[test]
+    fn is_valid_artifact_id_rejects_mixed_case_prefix() {
+        // Prefix must be all uppercase
+        assert!(!is_valid_artifact_id("Task-001"));
+        assert!(!is_valid_artifact_id("TASK-abc-001")); // lowercase mid-segment
+    }
+
+    #[test]
+    fn artifact_entries_from_schema_returns_empty_for_missing_file() {
+        // A nonexistent project root has no schema file — returns empty vec
+        let entries = artifact_entries_from_schema(Path::new("/nonexistent/project"));
+        assert!(entries.is_empty());
+    }
+
+    #[test]
+    fn artifact_entries_from_schema_returns_empty_for_invalid_json() {
+        let dir = tempfile::tempdir().unwrap();
+        let orqa_dir = dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        std::fs::write(orqa_dir.join("schema.composed.json"), "not json").unwrap();
+        let entries = artifact_entries_from_schema(dir.path());
+        assert!(entries.is_empty());
+    }
+
+    #[test]
+    fn artifact_entries_from_schema_returns_empty_when_no_artifact_types_key() {
+        let dir = tempfile::tempdir().unwrap();
+        let orqa_dir = dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        std::fs::write(
+            orqa_dir.join("schema.composed.json"),
+            r#"{"version": 1}"#,
+        )
+        .unwrap();
+        let entries = artifact_entries_from_schema(dir.path());
+        assert!(entries.is_empty());
+    }
+
+    #[test]
+    fn artifact_entries_from_schema_returns_entries_for_valid_schema() {
+        let dir = tempfile::tempdir().unwrap();
+        let orqa_dir = dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        let schema = r#"{
+            "artifactTypes": {
+                "task": {
+                    "label": "Tasks",
+                    "icon": "check",
+                    "default_path": ".orqa/implementation/tasks/"
+                },
+                "epic": {
+                    "label": "Epics",
+                    "icon": "map",
+                    "default_path": ".orqa/implementation/epics/"
+                }
+            }
+        }"#;
+        std::fs::write(orqa_dir.join("schema.composed.json"), schema).unwrap();
+
+        let entries = artifact_entries_from_schema(dir.path());
+        assert_eq!(entries.len(), 2);
+        // All entries should be ArtifactEntry::Type
+        for entry in &entries {
+            assert!(matches!(entry, ArtifactEntry::Type(_)));
+        }
+    }
+
+    #[test]
+    fn validate_artifact_type_key_rejects_backslash() {
+        assert!(matches!(
+            validate_artifact_type_key("foo\\bar"),
+            Err(EngineError::Validation(_))
+        ));
+    }
 }

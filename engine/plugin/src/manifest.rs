@@ -605,4 +605,126 @@ mod tests {
         );
         assert_eq!(decl.rules_path.as_deref(), Some("rules/eslint/"));
     }
+
+    #[test]
+    fn read_manifest_returns_error_when_file_absent() {
+        let dir = tempfile::tempdir().unwrap();
+        let result = read_manifest(dir.path());
+        assert!(result.is_err());
+        let err = result.unwrap_err().to_string();
+        assert!(err.contains("manifest not found") || err.contains("not found"));
+    }
+
+    #[test]
+    fn read_manifest_returns_error_on_invalid_json() {
+        let dir = tempfile::tempdir().unwrap();
+        std::fs::write(dir.path().join(MANIFEST_FILENAME), "not json").unwrap();
+        let result = read_manifest(dir.path());
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn read_manifest_succeeds_with_valid_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {}
+        }"#;
+        std::fs::write(dir.path().join(MANIFEST_FILENAME), json).unwrap();
+        let manifest = read_manifest(dir.path()).unwrap();
+        assert_eq!(manifest.name, "@orqastudio/plugin-test");
+        assert_eq!(manifest.version, "0.1.0");
+    }
+
+    #[test]
+    fn validate_manifest_passes_for_valid_manifest() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "1.0.0",
+            "categories": ["methodology"],
+            "provides": {}
+        }"#;
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        let errors = validate_manifest(&manifest);
+        assert!(errors.is_empty(), "valid manifest produced errors: {errors:?}");
+    }
+
+    #[test]
+    fn validate_manifest_reports_all_missing_fields() {
+        let manifest = PluginManifest {
+            name: String::new(),
+            version: String::new(),
+            display_name: None,
+            description: None,
+            categories: vec![],
+            enforcement: vec![],
+            plugin_dependencies: vec![],
+            provides: PluginProvides {
+                schemas: vec![],
+                views: vec![],
+                widgets: vec![],
+                relationships: vec![],
+                sidecar: None,
+                cli_tools: vec![],
+                hooks: vec![],
+                agents: vec![],
+                artifact_viewers: vec![],
+                role_definitions: vec![],
+                settings_pages: vec![],
+            },
+            merge_decisions: vec![],
+            default_navigation: vec![],
+            install_constraints: Default::default(),
+        };
+        let errors = validate_manifest(&manifest);
+        assert!(errors.len() >= 3, "expected at least 3 errors, got: {errors:?}");
+    }
+
+    #[test]
+    fn deserialize_manifest_with_merge_decisions() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-software",
+            "version": "0.1.0",
+            "categories": ["methodology"],
+            "provides": {},
+            "mergeDecisions": [
+                {
+                    "key": "delivers",
+                    "decision": "merged",
+                    "existingSource": "core"
+                }
+            ]
+        }"#;
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.merge_decisions.len(), 1);
+        assert_eq!(manifest.merge_decisions[0].key, "delivers");
+        assert_eq!(manifest.merge_decisions[0].decision, "merged");
+        assert_eq!(manifest.merge_decisions[0].existing_source, "core");
+        assert!(manifest.merge_decisions[0].original_key.is_none());
+    }
+
+    #[test]
+    fn deserialize_manifest_with_settings_page() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {
+                "settings_pages": [
+                    {
+                        "id": "plugin-test-settings",
+                        "label": "Test Settings",
+                        "section": "plugins",
+                        "view_key": "PluginTestSettings"
+                    }
+                ]
+            }
+        }"#;
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        assert_eq!(manifest.provides.settings_pages.len(), 1);
+        assert_eq!(manifest.provides.settings_pages[0].id, "plugin-test-settings");
+        assert_eq!(manifest.provides.settings_pages[0].section, "plugins");
+    }
 }

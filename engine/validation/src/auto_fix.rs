@@ -478,3 +478,198 @@ fn insert_field_in_file(raw_content: &str, anchor_prefix: &str, new_field: &str)
 
     Some(result.join("\n"))
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use orqa_engine_types::{ArtifactGraph, ArtifactNode};
+    use std::fs;
+    use tempfile::TempDir;
+
+    fn write_temp_artifact(dir: &TempDir, name: &str, content: &str) -> std::path::PathBuf {
+        let path = dir.path().join(name);
+        fs::write(&path, content).expect("write temp artifact");
+        path
+    }
+
+    fn make_node(id: &str, rel_path: &str) -> ArtifactNode {
+        ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: rel_path.to_owned(),
+            artifact_type: "task".to_owned(),
+            title: id.to_owned(),
+            description: None,
+            status: Some("active".to_owned()),
+            priority: None,
+            frontmatter: serde_json::json!({}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    fn make_graph_with_node(id: &str, rel_path: &str) -> ArtifactGraph {
+        let mut graph = ArtifactGraph::default();
+        graph.nodes.insert(id.to_owned(), make_node(id, rel_path));
+        graph
+    }
+
+    // -------------------------------------------------------------------------
+    // update_artifact_field tests
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn update_artifact_field_replaces_status() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = write_temp_artifact(
+            &dir,
+            "task.md",
+            "---\nid: TASK-001\nstatus: invalid-status\n---\nBody.\n",
+        );
+        update_artifact_field(&path, "status", "active").expect("update should succeed");
+        let contents = fs::read_to_string(&path).unwrap();
+        assert!(contents.contains("status: active"));
+        assert!(!contents.contains("invalid-status"));
+    }
+
+    #[test]
+    fn update_artifact_field_preserves_body() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = write_temp_artifact(
+            &dir,
+            "task.md",
+            "---\nid: TASK-001\nstatus: old\n---\n## My Body\n\nContent here.\n",
+        );
+        update_artifact_field(&path, "status", "active").expect("update should succeed");
+        let contents = fs::read_to_string(&path).unwrap();
+        assert!(contents.contains("## My Body"));
+        assert!(contents.contains("Content here."));
+    }
+
+    #[test]
+    fn update_artifact_field_errors_on_missing_field() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = write_temp_artifact(
+            &dir,
+            "task.md",
+            "---\nid: TASK-001\n---\nBody.\n",
+        );
+        let result = update_artifact_field(&path, "status", "active");
+        assert!(result.is_err(), "should fail when field is absent");
+    }
+
+    #[test]
+    fn update_artifact_field_errors_without_frontmatter() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = write_temp_artifact(&dir, "task.md", "no frontmatter here\n");
+        let result = update_artifact_field(&path, "status", "active");
+        assert!(result.is_err());
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — skip non-fixable checks
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_skips_non_fixable_checks() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        let graph = ArtifactGraph::default();
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::BrokenLink,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-001".to_owned(),
+            message: "broken link".to_owned(),
+            auto_fixable: false,
+            fix_description: None,
+        }];
+        let result = apply_fixes(&graph, &checks, dir.path()).expect("apply_fixes should not error");
+        assert!(result.is_empty());
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — InvalidStatus fix
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_invalid_status_rewrites_field() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        let artifact_content = "---\nid: TASK-001\nstatus: done\n---\nBody.\n";
+        fs::write(dir.path().join("task.md"), artifact_content).unwrap();
+
+        let graph = make_graph_with_node("TASK-001", "task.md");
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::InvalidStatus,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-001".to_owned(),
+            message: "invalid status".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Change status to 'completed'".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert_eq!(applied.len(), 1);
+        let contents = fs::read_to_string(dir.path().join("task.md")).unwrap();
+        assert!(contents.contains("status: completed"));
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — MissingStatus fix
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_missing_status_adds_captured() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        // No status field
+        let artifact_content = "---\nid: TASK-001\ntype: task\n---\nBody.\n";
+        fs::write(dir.path().join("task.md"), artifact_content).unwrap();
+
+        let graph = make_graph_with_node("TASK-001", "task.md");
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::MissingStatus,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-001".to_owned(),
+            message: "missing status".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Add status: captured".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert_eq!(applied.len(), 1);
+        let contents = fs::read_to_string(dir.path().join("task.md")).unwrap();
+        assert!(contents.contains("status: captured"));
+    }
+
+    // -------------------------------------------------------------------------
+    // apply_fixes — artifact not in graph is skipped gracefully
+    // -------------------------------------------------------------------------
+
+    #[test]
+    fn apply_fixes_skips_unknown_artifact_id() {
+        use orqa_engine_types::{IntegrityCategory, IntegrityCheck, IntegritySeverity};
+
+        let dir = tempfile::tempdir().unwrap();
+        let graph = ArtifactGraph::default(); // empty graph
+        let checks = vec![IntegrityCheck {
+            category: IntegrityCategory::InvalidStatus,
+            severity: IntegritySeverity::Error,
+            artifact_id: "TASK-UNKNOWN".to_owned(),
+            message: "invalid status".to_owned(),
+            auto_fixable: true,
+            fix_description: Some("Change status to 'active'".to_owned()),
+        }];
+
+        let applied = apply_fixes(&graph, &checks, dir.path()).expect("apply");
+        assert!(applied.is_empty());
+    }
+}

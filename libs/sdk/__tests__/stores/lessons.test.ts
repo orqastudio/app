@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup.js";
 
-import { lessonStore } from "../../src/stores/lessons.svelte.js";
+import { LessonStore } from "../../src/stores/lessons.svelte.js";
 import type { Lesson } from "@orqastudio/types";
 
 const makeFakeLesson = (overrides: Partial<Lesson> = {}): Lesson => ({
@@ -18,11 +18,11 @@ const makeFakeLesson = (overrides: Partial<Lesson> = {}): Lesson => ({
 	...overrides,
 });
 
+let lessonStore: LessonStore;
+
 beforeEach(() => {
 	mockInvoke.mockReset();
-	lessonStore.lessons = [];
-	lessonStore.loading = false;
-	lessonStore.error = null;
+	lessonStore = new LessonStore();
 });
 
 describe("LessonStore", () => {

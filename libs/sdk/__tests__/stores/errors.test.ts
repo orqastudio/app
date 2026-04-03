@@ -12,12 +12,13 @@ if (typeof globalThis.window === "undefined") {
 	};
 }
 
-import { errorStore } from "../../src/stores/errors.svelte.js";
+import { ErrorStoreImpl } from "../../src/stores/errors.svelte.js";
+
+let errorStore: ErrorStoreImpl;
 
 beforeEach(() => {
 	vi.useFakeTimers();
-	errorStore.destroy();
-	errorStore.dismissAll();
+	errorStore = new ErrorStoreImpl();
 });
 
 afterEach(() => {

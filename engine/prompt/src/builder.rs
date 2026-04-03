@@ -617,4 +617,147 @@ mod tests {
         // which happens on actual IO errors — missing dirs are tolerated.
         assert!(result.is_some());
     }
+
+    #[test]
+    fn read_governance_file_returns_content_when_present() {
+        let dir = make_project();
+        let claude_dir = dir.path().join(".claude");
+        fs::create_dir_all(&claude_dir).expect("create dir");
+        fs::write(claude_dir.join("CLAUDE.md"), "# My project\n").expect("write");
+
+        let result =
+            read_governance_file(dir.path(), ".claude/CLAUDE.md").expect("should not error");
+        assert_eq!(result, Some("# My project\n".to_owned()));
+    }
+
+    #[test]
+    fn find_artifact_path_direct_type_entry() {
+        let value = serde_json::json!({
+            "artifacts": [
+                { "key": "knowledge", "label": "Knowledge", "path": ".orqa/docs/knowledge" }
+            ]
+        });
+        assert_eq!(
+            find_artifact_path(&value, "knowledge"),
+            Some(".orqa/docs/knowledge".to_owned())
+        );
+    }
+
+    #[test]
+    fn find_artifact_path_nested_in_group() {
+        let value = serde_json::json!({
+            "artifacts": [
+                {
+                    "key": "learning",
+                    "label": "Learning",
+                    "children": [
+                        { "key": "rules", "label": "Rules", "path": ".orqa/custom/rules" }
+                    ]
+                }
+            ]
+        });
+        assert_eq!(
+            find_artifact_path(&value, "rules"),
+            Some(".orqa/custom/rules".to_owned())
+        );
+    }
+
+    #[test]
+    fn find_artifact_path_missing_key_returns_none() {
+        let value = serde_json::json!({
+            "artifacts": [
+                { "key": "knowledge", "label": "Knowledge", "path": ".orqa/docs/knowledge" }
+            ]
+        });
+        assert_eq!(find_artifact_path(&value, "rules"), None);
+    }
+
+    #[test]
+    fn find_artifact_path_no_artifacts_key_returns_none() {
+        let value = serde_json::json!({ "name": "project" });
+        assert_eq!(find_artifact_path(&value, "rules"), None);
+    }
+
+    #[test]
+    fn list_knowledge_catalog_ignores_non_md_files() {
+        let dir = make_project();
+        let know_dir = dir
+            .path()
+            .join(".orqa")
+            .join("documentation")
+            .join("knowledge");
+        fs::create_dir_all(&know_dir).expect("create knowledge dir");
+        fs::write(know_dir.join("note.txt"), "ignored").expect("write");
+        fs::write(know_dir.join("know.md"), "# Title\n\nContent").expect("write");
+
+        let catalog = list_knowledge_catalog(dir.path(), DEFAULT_KNOWLEDGE_PATH);
+        assert_eq!(catalog.len(), 1);
+        assert_eq!(catalog[0].0, "know");
+    }
+
+    #[test]
+    fn list_knowledge_catalog_sorted_alphabetically() {
+        let dir = make_project();
+        let know_dir = dir
+            .path()
+            .join(".orqa")
+            .join("documentation")
+            .join("knowledge");
+        fs::create_dir_all(&know_dir).expect("create knowledge dir");
+        fs::write(know_dir.join("zzz.md"), "# ZZZ").expect("write");
+        fs::write(know_dir.join("aaa.md"), "# AAA").expect("write");
+
+        let catalog = list_knowledge_catalog(dir.path(), DEFAULT_KNOWLEDGE_PATH);
+        assert_eq!(catalog.len(), 2);
+        assert_eq!(catalog[0].0, "aaa");
+        assert_eq!(catalog[1].0, "zzz");
+    }
+
+    #[test]
+    fn read_rules_sorted_alphabetically() {
+        let dir = make_project();
+        let rules_dir = dir.path().join(".orqa").join("learning").join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+        fs::write(rules_dir.join("zzz.md"), "rule z").expect("write");
+        fs::write(rules_dir.join("aaa.md"), "rule a").expect("write");
+
+        let rules = read_rules(dir.path(), DEFAULT_RULES_PATH);
+        assert_eq!(rules.len(), 2);
+        assert_eq!(rules[0].0, "aaa");
+        assert_eq!(rules[1].0, "zzz");
+    }
+
+    #[test]
+    fn read_rules_ignores_non_md_files() {
+        let dir = make_project();
+        let rules_dir = dir.path().join(".orqa").join("learning").join("rules");
+        fs::create_dir_all(&rules_dir).expect("create rules dir");
+        fs::write(rules_dir.join("note.txt"), "ignored").expect("write");
+        fs::write(rules_dir.join("rule.md"), "rule content").expect("write");
+
+        let rules = read_rules(dir.path(), DEFAULT_RULES_PATH);
+        assert_eq!(rules.len(), 1);
+        assert_eq!(rules[0].0, "rule");
+        assert_eq!(rules[0].1, "rule content");
+    }
+
+    #[test]
+    fn resolve_project_paths_falls_back_for_invalid_json() {
+        let dir = make_project();
+        let orqa_dir = dir.path().join(".orqa");
+        fs::create_dir_all(&orqa_dir).expect("create .orqa");
+        fs::write(orqa_dir.join("project.json"), "not valid json").expect("write");
+
+        let paths = resolve_project_paths(dir.path());
+        assert_eq!(paths.rules, DEFAULT_RULES_PATH);
+    }
+
+    #[test]
+    fn project_prompt_paths_default_values() {
+        let paths = ProjectPromptPaths::default();
+        assert_eq!(paths.rules, DEFAULT_RULES_PATH);
+        assert_eq!(paths.knowledge, DEFAULT_KNOWLEDGE_PATH);
+        assert_eq!(paths.claude_md, DEFAULT_CLAUDE_MD_PATH);
+        assert_eq!(paths.agents, DEFAULT_AGENTS_PATH);
+    }
 }

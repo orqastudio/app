@@ -102,4 +102,104 @@ mod tests {
         let plugins = scan_plugins(&PathBuf::from("/nonexistent"));
         assert!(plugins.is_empty());
     }
+
+    /// Write a minimal project.json with the given plugin entries.
+    fn write_project_json(dir: &Path, content: &str) {
+        let orqa_dir = dir.join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).expect("create .orqa");
+        std::fs::write(orqa_dir.join("project.json"), content).expect("write project.json");
+    }
+
+    #[test]
+    fn disabled_plugin_is_not_returned() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        write_project_json(
+            dir.path(),
+            r#"{"id":"proj","name":"test","plugins":{"my-plugin":{"path":"plugins/my-plugin","installed":true,"enabled":false}}}"#,
+        );
+        let plugins = scan_plugins(dir.path());
+        assert!(plugins.is_empty(), "disabled plugin should not be returned");
+    }
+
+    #[test]
+    fn not_installed_plugin_is_not_returned() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        write_project_json(
+            dir.path(),
+            r#"{"id":"proj","name":"test","plugins":{"my-plugin":{"path":"plugins/my-plugin","installed":false,"enabled":true}}}"#,
+        );
+        let plugins = scan_plugins(dir.path());
+        assert!(plugins.is_empty(), "uninstalled plugin should not be returned");
+    }
+
+    #[test]
+    fn installed_and_enabled_plugin_with_manifest_is_returned() {
+        let dir = tempfile::tempdir().expect("tempdir");
+
+        // Create the plugin directory and manifest.
+        let plugin_dir = dir.path().join("plugins").join("my-plugin");
+        std::fs::create_dir_all(&plugin_dir).expect("create plugin dir");
+        std::fs::write(
+            plugin_dir.join("orqa-plugin.json"),
+            r#"{"name":"@test/my-plugin","version":"1.0.0","displayName":"My Plugin","description":"A test plugin"}"#,
+        )
+        .expect("write manifest");
+
+        write_project_json(
+            dir.path(),
+            r#"{"id":"proj","name":"test","plugins":{"my-plugin":{"path":"plugins/my-plugin","installed":true,"enabled":true}}}"#,
+        );
+
+        let plugins = scan_plugins(dir.path());
+        assert_eq!(plugins.len(), 1);
+        assert_eq!(plugins[0].name, "@test/my-plugin");
+        assert_eq!(plugins[0].version, "1.0.0");
+        assert_eq!(plugins[0].display_name.as_deref(), Some("My Plugin"));
+        assert_eq!(plugins[0].description.as_deref(), Some("A test plugin"));
+        assert_eq!(plugins[0].source, "installed");
+    }
+
+    #[test]
+    fn plugin_manifest_missing_name_field_is_skipped() {
+        let dir = tempfile::tempdir().expect("tempdir");
+
+        // Manifest without a name field — plugin should be skipped.
+        let plugin_dir = dir.path().join("plugins").join("broken-plugin");
+        std::fs::create_dir_all(&plugin_dir).expect("create plugin dir");
+        std::fs::write(
+            plugin_dir.join("orqa-plugin.json"),
+            r#"{"version":"1.0.0"}"#, // no "name"
+        )
+        .expect("write manifest");
+
+        write_project_json(
+            dir.path(),
+            r#"{"id":"proj","name":"test","plugins":{"broken-plugin":{"path":"plugins/broken-plugin","installed":true,"enabled":true}}}"#,
+        );
+
+        let plugins = scan_plugins(dir.path());
+        assert!(plugins.is_empty(), "plugin without name should be skipped");
+    }
+
+    #[test]
+    fn plugin_with_missing_version_defaults_to_zero() {
+        let dir = tempfile::tempdir().expect("tempdir");
+
+        let plugin_dir = dir.path().join("plugins").join("no-version");
+        std::fs::create_dir_all(&plugin_dir).expect("create plugin dir");
+        std::fs::write(
+            plugin_dir.join("orqa-plugin.json"),
+            r#"{"name":"@test/no-version"}"#, // no "version"
+        )
+        .expect("write manifest");
+
+        write_project_json(
+            dir.path(),
+            r#"{"id":"proj","name":"test","plugins":{"no-version":{"path":"plugins/no-version","installed":true,"enabled":true}}}"#,
+        );
+
+        let plugins = scan_plugins(dir.path());
+        assert_eq!(plugins.len(), 1);
+        assert_eq!(plugins[0].version, "0.0.0");
+    }
 }

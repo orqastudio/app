@@ -155,4 +155,58 @@ mod tests {
         check_schema_conflicts(&types, &resolutions, &mut checks);
         assert!(checks.is_empty());
     }
+
+    #[test]
+    fn identical_definitions_from_two_plugins_do_not_conflict() {
+        // Same key, same transitions — no conflict.
+        let transitions = {
+            let mut m = HashMap::new();
+            m.insert("active".to_owned(), vec!["completed".to_owned()]);
+            m
+        };
+        let t1 = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "file".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
+            status_transitions: transitions.clone(),
+        };
+        let t2 = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "file".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
+            status_transitions: transitions,
+        };
+        let mut checks = Vec::new();
+        check_schema_conflicts(&[t1, t2], &[], &mut checks);
+        assert!(checks.is_empty(), "identical definitions should not conflict");
+    }
+
+    #[test]
+    fn required_field_conflict_is_detected() {
+        // Two plugins define "task" with different required fields.
+        let t1 = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "file".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({"required": ["type", "status"]}),
+            status_transitions: HashMap::new(),
+        };
+        let t2 = ArtifactTypeDef {
+            key: "task".to_owned(),
+            label: "Task".to_owned(),
+            icon: "file".to_owned(),
+            id_prefix: "TASK".to_owned(),
+            frontmatter_schema: serde_json::json!({"required": ["type", "status", "priority"]}),
+            status_transitions: HashMap::new(),
+        };
+        let mut checks = Vec::new();
+        check_schema_conflicts(&[t1, t2], &[], &mut checks);
+        assert!(!checks.is_empty(), "differing required fields should be a conflict");
+        assert!(checks[0].message.contains("required fields"));
+    }
 }

@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup";
 
-import { conversationStore } from "../../src/stores/conversation.svelte";
+import { ConversationStore } from "../../src/stores/conversation.svelte";
 import type { Message, StreamEvent } from "@orqastudio/types";
+
+let conversationStore: ConversationStore;
 
 const fakeMessage: Message = {
 	id: 1,
@@ -32,7 +34,7 @@ const fakeAssistantMessage: Message = {
 
 beforeEach(() => {
 	mockInvoke.mockReset();
-	conversationStore.clear();
+	conversationStore = new ConversationStore();
 });
 
 describe("ConversationStore", () => {

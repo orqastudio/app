@@ -453,6 +453,583 @@ pub fn check_frontmatter_requirements(
     }
 }
 
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::platform::ArtifactTypeDef;
+    use crate::types::{IntegrityCategory, RelationshipConstraints, RelationshipSchema, ValidationContext};
+    use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
+    use std::collections::{HashMap, HashSet};
+
+    fn make_node(id: &str, artifact_type: &str) -> ArtifactNode {
+        ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: format!(".orqa/test/{id}.md"),
+            artifact_type: artifact_type.to_owned(),
+            title: id.to_owned(),
+            description: None,
+            status: Some("active".to_owned()),
+            priority: None,
+            frontmatter: serde_json::json!({"type": artifact_type, "status": "active"}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    fn make_ref(source: &str, target: &str, rel_type: &str) -> ArtifactRef {
+        ArtifactRef {
+            target_id: target.to_owned(),
+            field: "relationships".to_owned(),
+            source_id: source.to_owned(),
+            relationship_type: Some(rel_type.to_owned()),
+        }
+    }
+
+    fn make_ctx(rel_key: &str, from: &[&str], to: &[&str]) -> ValidationContext {
+        let schema = RelationshipSchema {
+            key: rel_key.to_owned(),
+            inverse: format!("{rel_key}-inverse"),
+            description: String::new(),
+            from: from.iter().map(|s| s.to_string()).collect(),
+            to: to.iter().map(|s| s.to_string()).collect(),
+            semantic: None,
+            constraints: None,
+        };
+        ValidationContext {
+            relationships: vec![schema],
+            inverse_map: HashMap::new(),
+            valid_statuses: vec![],
+            delivery: Default::default(),
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        }
+    }
+
+    // --- check_broken_refs ---
+
+    #[test]
+    fn broken_ref_to_missing_node_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.references_out.push(make_ref("TASK-A", "TASK-MISSING", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let mut checks = vec![];
+        check_broken_refs(&graph, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::BrokenLink);
+        assert!(checks[0].message.contains("TASK-MISSING"));
+    }
+
+    #[test]
+    fn no_broken_refs_when_target_exists() {
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("EPIC-B", "epic");
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("EPIC-B".to_owned(), node_b);
+
+        let mut checks = vec![];
+        check_broken_refs(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn empty_graph_has_no_broken_refs() {
+        let graph = ArtifactGraph::default();
+        let mut checks = vec![];
+        check_broken_refs(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_relationship_type_constraints ---
+
+    #[test]
+    fn from_type_violation_flagged() {
+        // Node is type "task" but schema says only "epic" may use "delivers"
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("EPIC-B", "epic");
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("EPIC-B".to_owned(), node_b);
+
+        let ctx = make_ctx("delivers", &["epic"], &[]);
+        let mut checks = vec![];
+        check_relationship_type_constraints(&graph, &ctx, &mut checks);
+        assert!(!checks.is_empty());
+        assert_eq!(checks[0].category, IntegrityCategory::TypeConstraintViolation);
+    }
+
+    #[test]
+    fn to_type_violation_flagged() {
+        // Schema says "delivers" only targets "epic", but target is "task"
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("TASK-B", "task");
+        node_a.references_out.push(make_ref("TASK-A", "TASK-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("TASK-B".to_owned(), node_b);
+
+        let ctx = make_ctx("delivers", &[], &["epic"]);
+        let mut checks = vec![];
+        check_relationship_type_constraints(&graph, &ctx, &mut checks);
+        assert!(!checks.is_empty());
+        assert_eq!(checks[0].category, IntegrityCategory::TypeConstraintViolation);
+    }
+
+    #[test]
+    fn valid_type_constraints_produce_no_checks() {
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("EPIC-B", "epic");
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("EPIC-B".to_owned(), node_b);
+
+        let ctx = make_ctx("delivers", &["task"], &["epic"]);
+        let mut checks = vec![];
+        check_relationship_type_constraints(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_missing_type_field ---
+
+    #[test]
+    fn node_without_type_in_frontmatter_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.frontmatter = serde_json::json!({"status": "active"}); // no "type" key
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let mut checks = vec![];
+        check_missing_type_field(&graph, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::MissingType);
+    }
+
+    #[test]
+    fn doc_type_is_excluded_from_missing_type_check() {
+        // Generic "doc" fallback should not be flagged
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("SOME-DOC", "doc");
+        node.frontmatter = serde_json::json!({}); // no type key — but type is "doc"
+        graph.nodes.insert("SOME-DOC".to_owned(), node);
+
+        let mut checks = vec![];
+        check_missing_type_field(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn node_with_type_field_is_not_flagged() {
+        let mut graph = ArtifactGraph::default();
+        graph.nodes.insert("TASK-A".to_owned(), make_node("TASK-A", "task"));
+        let mut checks = vec![];
+        check_missing_type_field(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_duplicate_relationships ---
+
+    #[test]
+    fn duplicate_rel_to_same_target_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("EPIC-B", "epic");
+        // Two identical relationship edges
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("EPIC-B".to_owned(), node_b);
+
+        let mut checks = vec![];
+        check_duplicate_relationships(&graph, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::DuplicateRelationship);
+    }
+
+    #[test]
+    fn different_rel_types_to_same_target_not_duplicate() {
+        let mut graph = ArtifactGraph::default();
+        let mut node_a = make_node("TASK-A", "task");
+        let node_b = make_node("EPIC-B", "epic");
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "implements"));
+        graph.nodes.insert("TASK-A".to_owned(), node_a);
+        graph.nodes.insert("EPIC-B".to_owned(), node_b);
+
+        let mut checks = vec![];
+        check_duplicate_relationships(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_filename_matches_id ---
+
+    #[test]
+    fn filename_mismatch_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-abc123", "task");
+        node.path = ".orqa/implementation/tasks/TASK-001.md".to_owned(); // stem != id
+        graph.nodes.insert("TASK-abc123".to_owned(), node);
+
+        let mut checks = vec![];
+        check_filename_matches_id(&graph, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::FilenameMismatch);
+    }
+
+    #[test]
+    fn matching_filename_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-abc123", "task");
+        node.path = ".orqa/implementation/tasks/TASK-abc123.md".to_owned();
+        graph.nodes.insert("TASK-abc123".to_owned(), node);
+
+        let mut checks = vec![];
+        check_filename_matches_id(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn qualified_project_prefix_ids_are_skipped_for_filename_check() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("app::RULE-xyz", "rule");
+        node.path = ".orqa/rules/RULE-xyz.md".to_owned();
+        graph.nodes.insert("app::RULE-xyz".to_owned(), node);
+
+        let mut checks = vec![];
+        check_filename_matches_id(&graph, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_required_relationships ---
+
+    #[test]
+    fn required_rel_missing_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task"); // no outgoing "delivers" rel
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let schema = RelationshipSchema {
+            key: "delivers".to_owned(),
+            inverse: "delivered-by".to_owned(),
+            description: String::new(),
+            from: vec!["task".to_owned()],
+            to: vec!["epic".to_owned()],
+            semantic: None,
+            constraints: Some(RelationshipConstraints {
+                required: Some(true),
+                min_count: Some(1),
+                max_count: None,
+                require_inverse: None,
+                status_rules: vec![],
+            }),
+        };
+        let ctx = ValidationContext {
+            relationships: vec![schema],
+            inverse_map: HashMap::new(),
+            valid_statuses: vec![],
+            delivery: Default::default(),
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        };
+        let mut checks = vec![];
+        check_required_relationships(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::RequiredRelationshipMissing);
+    }
+
+    #[test]
+    fn completed_artifact_skips_required_rel_check() {
+        // A "completed" artifact should not be checked for required relationships.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.status = Some("completed".to_owned());
+        node.frontmatter = serde_json::json!({"type": "task", "status": "completed"});
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let schema = RelationshipSchema {
+            key: "delivers".to_owned(),
+            inverse: "delivered-by".to_owned(),
+            description: String::new(),
+            from: vec!["task".to_owned()],
+            to: vec![],
+            semantic: None,
+            constraints: Some(RelationshipConstraints {
+                required: Some(true),
+                min_count: Some(1),
+                max_count: None,
+                require_inverse: None,
+                status_rules: vec![],
+            }),
+        };
+        let ctx = ValidationContext {
+            relationships: vec![schema],
+            inverse_map: HashMap::new(),
+            valid_statuses: vec![],
+            delivery: Default::default(),
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        };
+        let mut checks = vec![];
+        check_required_relationships(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // Helper: build a minimal ArtifactTypeDef for tests.
+    fn make_type_def(key: &str, id_prefix: &str) -> ArtifactTypeDef {
+        ArtifactTypeDef {
+            key: key.to_owned(),
+            label: key.to_owned(),
+            icon: String::new(),
+            id_prefix: id_prefix.to_owned(),
+            frontmatter_schema: serde_json::json!({}),
+            status_transitions: HashMap::new(),
+        }
+    }
+
+    // Helper: build an ArtifactTypeDef that requires specific frontmatter fields.
+    fn make_type_def_requiring(key: &str, id_prefix: &str, required: &[&str]) -> ArtifactTypeDef {
+        ArtifactTypeDef {
+            key: key.to_owned(),
+            label: key.to_owned(),
+            icon: String::new(),
+            id_prefix: id_prefix.to_owned(),
+            frontmatter_schema: serde_json::json!({
+                "required": required
+            }),
+            status_transitions: HashMap::new(),
+        }
+    }
+
+    // Helper: build an ArtifactTypeDef with declared status transitions.
+    fn make_type_def_with_statuses(
+        key: &str,
+        id_prefix: &str,
+        transitions: &[(&str, &[&str])],
+    ) -> ArtifactTypeDef {
+        let map: HashMap<String, Vec<String>> = transitions
+            .iter()
+            .map(|(k, vs)| (k.to_string(), vs.iter().map(|s| s.to_string()).collect()))
+            .collect();
+        ArtifactTypeDef {
+            key: key.to_owned(),
+            label: key.to_owned(),
+            icon: String::new(),
+            id_prefix: id_prefix.to_owned(),
+            frontmatter_schema: serde_json::json!({}),
+            status_transitions: map,
+        }
+    }
+
+    // --- check_status_transitions ---
+
+    #[test]
+    fn invalid_status_is_flagged() {
+        // Node has status "unknown" which is not in the declared transitions.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.status = Some("unknown".to_owned());
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def =
+            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"]), ("completed", &[])]);
+        let mut checks = vec![];
+        check_status_transitions(&graph, &[type_def], &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::SchemaViolation);
+        assert!(checks[0].message.contains("unknown"));
+    }
+
+    #[test]
+    fn valid_status_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.status = Some("active".to_owned());
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def =
+            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"]), ("completed", &[])]);
+        let mut checks = vec![];
+        check_status_transitions(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn type_with_no_status_transitions_is_skipped() {
+        // Types that declare no transitions should not be checked.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.status = Some("any-status-at-all".to_owned());
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def("task", "TASK"); // no status_transitions
+        let mut checks = vec![];
+        check_status_transitions(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn node_with_no_status_is_skipped_for_status_transitions() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.status = None;
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def =
+            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"])]);
+        let mut checks = vec![];
+        check_status_transitions(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_frontmatter_requirements ---
+
+    #[test]
+    fn missing_required_frontmatter_field_is_flagged() {
+        // Node of type "task" is missing "priority" which the schema requires.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.frontmatter = serde_json::json!({"type": "task", "status": "active"}); // no "priority"
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def_requiring("task", "TASK", &["type", "status", "priority"]);
+        let mut checks = vec![];
+        check_frontmatter_requirements(&graph, &[type_def], &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::SchemaViolation);
+        assert!(checks[0].message.contains("priority"));
+    }
+
+    #[test]
+    fn all_required_fields_present_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task"); // has type + status in frontmatter
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def_requiring("task", "TASK", &["type", "status"]);
+        let mut checks = vec![];
+        check_frontmatter_requirements(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn type_with_no_required_fields_is_skipped() {
+        // A type with no `required` schema array should produce no checks.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.frontmatter = serde_json::json!({}); // empty frontmatter
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def("task", "TASK"); // no required fields declared
+        let mut checks = vec![];
+        check_frontmatter_requirements(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    // --- check_missing_status_field ---
+
+    #[test]
+    fn node_missing_status_when_type_requires_it_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.frontmatter = serde_json::json!({"type": "task"}); // no "status"
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def_requiring("task", "TASK", &["type", "status"]);
+        let mut checks = vec![];
+        check_missing_status_field(&graph, &[type_def], &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::MissingStatus);
+        assert!(checks[0].message.contains("TASK-A"));
+    }
+
+    #[test]
+    fn node_with_status_present_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task"); // frontmatter has "status": "active"
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let type_def = make_type_def_requiring("task", "TASK", &["type", "status"]);
+        let mut checks = vec![];
+        check_missing_status_field(&graph, &[type_def], &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn empty_artifact_types_skips_status_check() {
+        // With no artifact type definitions loaded, status checks are skipped entirely.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-A", "task");
+        node.frontmatter = serde_json::json!({}); // no status
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let mut checks = vec![];
+        check_missing_status_field(&graph, &[], &mut checks); // empty artifact_types
+        assert!(checks.is_empty());
+    }
+
+    // --- check_type_prefix_mismatch ---
+
+    #[test]
+    fn type_mismatch_with_id_prefix_is_flagged() {
+        // Node has id "RULE-abc123" (RULE prefix => rule type) but type: "task".
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("RULE-abc123", "rule");
+        node.frontmatter = serde_json::json!({"type": "task"}); // type says task but id says rule
+        graph.nodes.insert("RULE-abc123".to_owned(), node);
+
+        let type_defs = vec![
+            make_type_def("task", "TASK"),
+            make_type_def("rule", "RULE"),
+        ];
+        let mut checks = vec![];
+        check_type_prefix_mismatch(&graph, &type_defs, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::TypePrefixMismatch);
+        assert!(checks[0].message.contains("RULE-abc123"));
+    }
+
+    #[test]
+    fn matching_type_and_prefix_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-abc123", "task"); // frontmatter has type: task, id prefix TASK
+        graph.nodes.insert("TASK-abc123".to_owned(), node);
+
+        let type_defs = vec![make_type_def("task", "TASK")];
+        let mut checks = vec![];
+        check_type_prefix_mismatch(&graph, &type_defs, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn no_artifact_types_skips_prefix_check() {
+        // Without type definitions, no prefix checks can be performed.
+        let mut graph = ArtifactGraph::default();
+        let mut node = make_node("TASK-abc123", "task");
+        node.frontmatter = serde_json::json!({"type": "wrong-type"});
+        graph.nodes.insert("TASK-abc123".to_owned(), node);
+
+        let mut checks = vec![];
+        check_type_prefix_mismatch(&graph, &[], &mut checks); // no type definitions
+        assert!(checks.is_empty());
+    }
+}
+
 /// Check that artifact status values are valid per the type's declared status transitions.
 ///
 /// Status transitions are declared in the plugin manifest's

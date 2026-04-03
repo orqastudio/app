@@ -1,16 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mockInvoke } from "./setup";
 
-// Mock the artifact-graph SDK before importing the store
-vi.mock("../../src/graph/artifact-graph.svelte", () => ({
-	artifactGraphSDK: {
-		readContent: vi.fn(),
-		resolve: vi.fn(),
-	},
+// ArtifactStore.loadContent delegates to getStores().artifactGraphSDK.readContent
+const mockReadContent = vi.fn();
+vi.mock("../../src/registry.svelte.js", () => ({
+	getStores: () => ({
+		artifactGraphSDK: { readContent: mockReadContent, resolve: vi.fn() },
+	}),
 }));
 
-import { artifactStore } from "../../src/stores/artifact.svelte";
-import { artifactGraphSDK } from "../../src/graph/artifact-graph.svelte";
+import { ArtifactStore } from "../../src/stores/artifact.svelte";
 import type { NavTree } from "@orqastudio/types";
 
 const fakeNavTree: NavTree = {
@@ -34,10 +33,12 @@ const fakeNavTree: NavTree = {
 	],
 };
 
+let artifactStore: ArtifactStore;
+
 beforeEach(() => {
 	mockInvoke.mockReset();
-	vi.mocked(artifactGraphSDK.readContent).mockReset();
-	artifactStore.clear();
+	mockReadContent.mockReset();
+	artifactStore = new ArtifactStore();
 });
 
 describe("ArtifactStore", () => {
@@ -95,17 +96,17 @@ describe("ArtifactStore", () => {
 
 	describe("loadContent", () => {
 		it("loads content via SDK", async () => {
-			vi.mocked(artifactGraphSDK.readContent).mockResolvedValueOnce("# Hello\nContent here");
+			mockReadContent.mockResolvedValueOnce("# Hello\nContent here");
 
 			await artifactStore.loadContent(".orqa/implementation/epics/EPIC-001.md");
 
-			expect(artifactGraphSDK.readContent).toHaveBeenCalledWith(".orqa/implementation/epics/EPIC-001.md");
+			expect(mockReadContent).toHaveBeenCalledWith(".orqa/implementation/epics/EPIC-001.md");
 			expect(artifactStore.activeContent).toBe("# Hello\nContent here");
 			expect(artifactStore.activeContentLoading).toBe(false);
 		});
 
 		it("sets error on failure", async () => {
-			vi.mocked(artifactGraphSDK.readContent).mockRejectedValueOnce(new Error("File not found"));
+			mockReadContent.mockRejectedValueOnce(new Error("File not found"));
 
 			await artifactStore.loadContent("nonexistent.md");
 
@@ -122,8 +123,9 @@ describe("ArtifactStore", () => {
 			artifactStore.invalidateNavTree();
 
 			// Tree is nulled immediately
-			// loadNavTree is called (async) — we just verify invoke was called
-			// Wait for the async call to complete
+			expect(artifactStore.navTree).toBeNull();
+
+			// loadNavTree is called async — wait for it to complete
 			await vi.waitFor(() => {
 				expect(mockInvoke).toHaveBeenCalledWith("artifact_scan_tree", undefined);
 			});

@@ -267,4 +267,72 @@ Test body.
         assert!(optional(&map, "promoted-to").is_none());
         assert!(optional(&map, "not-present").is_none());
     }
+
+    #[test]
+    fn parse_non_integer_recurrence_returns_error() {
+        // recurrence must be an integer — "two" should fail parsing
+        let content = "---\nid: IMPL-003\ntitle: \"Test\"\ncategory: coding\nrecurrence: two\nstatus: active\npromoted-to: null\ncreated: 2026-01-01\nupdated: 2026-01-01\n---\nbody\n";
+        let result = parse_lesson(content, ".orqa/learning/lessons/IMPL-003.md");
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        assert!(err.contains("not a valid integer"), "got: {err}");
+    }
+
+    #[test]
+    fn render_lesson_with_promoted_to_value() {
+        let lesson = Lesson {
+            id: "IMPL-004".to_owned(),
+            title: "Promoted lesson".to_owned(),
+            category: "coding".to_owned(),
+            recurrence: 1,
+            status: "promoted".to_owned(),
+            promoted_to: Some("RULE-abc123".to_owned()),
+            created: "2026-01-01".to_owned(),
+            updated: "2026-01-02".to_owned(),
+            body: "Body text.".to_owned(),
+            file_path: ".orqa/learning/lessons/IMPL-004.md".to_owned(),
+        };
+        let rendered = render_lesson(&lesson);
+        assert!(rendered.contains("promoted-to: \"RULE-abc123\""));
+        assert!(rendered.contains("status: promoted"));
+    }
+
+    #[test]
+    fn render_lesson_without_promoted_to_emits_null() {
+        let lesson = Lesson {
+            id: "IMPL-005".to_owned(),
+            title: "Not promoted".to_owned(),
+            category: "process".to_owned(),
+            recurrence: 0,
+            status: "active".to_owned(),
+            promoted_to: None,
+            created: "2026-01-01".to_owned(),
+            updated: "2026-01-01".to_owned(),
+            body: String::new(),
+            file_path: ".orqa/learning/lessons/IMPL-005.md".to_owned(),
+        };
+        let rendered = render_lesson(&lesson);
+        assert!(rendered.contains("promoted-to: null"));
+    }
+
+    #[test]
+    fn parse_lesson_with_leading_whitespace_before_delimiter() {
+        // Content starting with leading newline before --- should still parse
+        let content = "\n---\nid: IMPL-006\ntitle: \"Test\"\ncategory: coding\nrecurrence: 1\nstatus: active\npromoted-to: null\ncreated: 2026-01-01\nupdated: 2026-01-01\n---\nbody\n";
+        let result = parse_lesson(content, ".orqa/learning/lessons/IMPL-006.md");
+        assert!(result.is_ok(), "should parse with leading whitespace: {:?}", result.err());
+    }
+
+    #[test]
+    fn parse_frontmatter_map_single_quoted_value() {
+        let map = parse_frontmatter_map("title: 'My title'\n");
+        assert_eq!(map.get("title").cloned().flatten(), Some("My title".to_owned()));
+    }
+
+    #[test]
+    fn parse_frontmatter_map_empty_value_returns_none() {
+        let map = parse_frontmatter_map("field: \n");
+        // Empty value should be stored as None
+        assert_eq!(map.get("field").cloned(), Some(None));
+    }
 }

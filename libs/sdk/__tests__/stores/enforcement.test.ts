@@ -1,15 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup.js";
 
-import { enforcementStore } from "../../src/stores/enforcement.svelte.js";
+import { EnforcementStore } from "../../src/stores/enforcement.svelte.js";
 import type { EnforcementRule, EnforcementViolation } from "@orqastudio/types";
+
+let enforcementStore: EnforcementStore;
 
 beforeEach(() => {
 	mockInvoke.mockReset();
-	enforcementStore.rules = [];
-	enforcementStore.violations = [];
-	enforcementStore.loading = false;
-	enforcementStore.error = null;
+	enforcementStore = new EnforcementStore();
 });
 
 describe("EnforcementStore", () => {

@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup.js";
 
-import { setupStore } from "../../src/stores/setup.svelte.js";
+import { SetupStore } from "../../src/stores/setup.svelte.js";
 import type { ClaudeCliInfo, SetupStatus, SetupStepStatus } from "@orqastudio/types";
+
+let setupStore: SetupStore;
 
 beforeEach(() => {
 	mockInvoke.mockReset();
-	setupStore.reset();
-	setupStore.setupComplete = true;
+	setupStore = new SetupStore();
 });
 
 describe("SetupStore", () => {

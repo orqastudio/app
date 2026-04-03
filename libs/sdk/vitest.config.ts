@@ -1,13 +1,13 @@
-import { mergeConfig, defineConfig } from "vitest/config";
+// Vitest configuration for @orqastudio/sdk.
+// Uses jsdom so browser DOM APIs are available without a real browser.
+// Svelte 5 runes compilation is handled by vite-plugin-svelte.
+import { defineConfig } from "vitest/config";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { svelteVitestConfig } from "@orqastudio/test-config/config";
 
-export default mergeConfig(
-	svelteVitestConfig,
-	defineConfig({
-		plugins: [svelte()],
-		test: {
-			include: ["__tests__/**/*.test.ts"],
-		},
-	}),
-);
+export default defineConfig({
+	plugins: [svelte({ hot: false })],
+	test: {
+		environment: "jsdom",
+		include: ["__tests__/**/*.test.ts"],
+	},
+});

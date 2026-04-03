@@ -431,6 +431,75 @@ mod tests {
     }
 
     #[test]
+    fn lesson_store_error_display() {
+        // Verify Display implementations produce meaningful messages.
+        let e = LessonStoreError::NotConfigured("lessons not set".to_owned());
+        assert!(e.to_string().contains("not configured"));
+
+        let e = LessonStoreError::NotFound("IMPL-999".to_owned());
+        assert!(e.to_string().contains("IMPL-999"));
+
+        let e = LessonStoreError::Parse("bad frontmatter".to_owned());
+        assert!(e.to_string().contains("parse error"));
+
+        let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "file missing");
+        let e = LessonStoreError::from(io_err);
+        assert!(e.to_string().contains("I/O error"));
+    }
+
+    #[test]
+    fn parse_impl_number_no_md_extension() {
+        // File without .md suffix should return None.
+        assert_eq!(parse_impl_number("IMPL-001"), None);
+    }
+
+    #[test]
+    fn trait_write_creates_readable_file() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let store = make_store(&dir);
+        let lesson = Lesson {
+            id: "IMPL-007".to_owned(),
+            title: "Written".to_owned(),
+            category: "process".to_owned(),
+            recurrence: 5,
+            status: "active".to_owned(),
+            promoted_to: None,
+            created: "2026-01-01".to_owned(),
+            updated: "2026-01-01".to_owned(),
+            body: "Written body.".to_owned(),
+            file_path: ".orqa/learning/lessons/IMPL-007.md".to_owned(),
+        };
+
+        let lessons_dir = dir.path().join(".orqa/learning/lessons");
+        std::fs::create_dir_all(&lessons_dir).expect("create dir");
+        let file_path = lessons_dir.join("IMPL-007.md");
+
+        LessonStore::write(&store, &file_path, &lesson).expect("trait write");
+        let read_back = LessonStore::read(&store, &file_path).expect("trait read");
+        assert_eq!(read_back.id, "IMPL-007");
+        assert_eq!(read_back.recurrence, 5);
+    }
+
+    #[test]
+    fn trait_scan_empty_dir_returns_empty() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let store = make_store(&dir);
+        let lessons_dir = dir.path().join(".orqa/learning/lessons");
+        std::fs::create_dir_all(&lessons_dir).expect("create dir");
+        let scanned = LessonStore::scan(&store, &lessons_dir).expect("scan");
+        assert!(scanned.is_empty());
+    }
+
+    #[test]
+    fn trait_scan_nonexistent_dir_returns_empty() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let store = make_store(&dir);
+        let nonexistent = dir.path().join("does/not/exist");
+        let scanned = LessonStore::scan(&store, &nonexistent).expect("scan nonexistent");
+        assert!(scanned.is_empty());
+    }
+
+    #[test]
     fn trait_read_and_write_roundtrip() {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);

@@ -336,6 +336,168 @@ fn apply_schema(schema: PluginProvidesSchema, contributions: &mut PluginContribu
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+    use tempfile::TempDir;
+
+    fn make_project() -> TempDir {
+        tempfile::tempdir().expect("tempdir")
+    }
+
+    fn write_plugin_manifest(dir: &std::path::Path, name: &str, json: &str) {
+        fs::create_dir_all(dir).expect("create dir");
+        fs::write(dir.join("orqa-plugin.json"), json).expect("write manifest");
+    }
+
+    #[test]
+    fn scan_empty_project_returns_empty_contributions() {
+        let tmp = make_project();
+        let contributions = scan_plugin_manifests(tmp.path());
+        assert!(contributions.artifact_types.is_empty());
+        assert!(contributions.relationships.is_empty());
+        assert!(contributions.enforcement_mechanisms.is_empty());
+    }
+
+    #[test]
+    fn scan_plugins_dir_loads_artifact_types() {
+        let tmp = make_project();
+        let plugin_dir = tmp.path().join("plugins").join("methodology").join("my-plugin");
+        let manifest = r#"{
+            "name": "@test/my-plugin",
+            "provides": {
+                "schemas": [
+                    {
+                        "key": "task",
+                        "idPrefix": "TASK",
+                        "label": "Tasks",
+                        "icon": "check"
+                    }
+                ]
+            }
+        }"#;
+        write_plugin_manifest(&plugin_dir, "my-plugin", manifest);
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        assert_eq!(contributions.artifact_types.len(), 1);
+        assert_eq!(contributions.artifact_types[0].key, "task");
+        assert_eq!(contributions.artifact_types[0].id_prefix, "TASK");
+    }
+
+    #[test]
+    fn scan_connectors_dir_loads_relationships() {
+        let tmp = make_project();
+        let connector_dir = tmp.path().join("connectors").join("my-connector");
+        let manifest = r#"{
+            "name": "@test/connector",
+            "provides": {
+                "relationships": [
+                    {
+                        "key": "delivers",
+                        "inverse": "delivered-by",
+                        "from": ["task"],
+                        "to": ["epic"]
+                    }
+                ]
+            }
+        }"#;
+        write_plugin_manifest(&connector_dir, "connector", manifest);
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        assert_eq!(contributions.relationships.len(), 1);
+        assert_eq!(contributions.relationships[0].key, "delivers");
+        assert_eq!(contributions.relationships[0].inverse, "delivered-by");
+    }
+
+    #[test]
+    fn malformed_manifest_is_skipped() {
+        let tmp = make_project();
+        let plugin_dir = tmp.path().join("plugins").join("bad").join("malformed");
+        fs::create_dir_all(&plugin_dir).expect("create dir");
+        fs::write(plugin_dir.join("orqa-plugin.json"), "not valid json").expect("write");
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        // Malformed manifest should be silently skipped.
+        assert!(contributions.artifact_types.is_empty());
+    }
+
+    #[test]
+    fn schema_extension_is_classified_correctly() {
+        let tmp = make_project();
+        let plugin_dir = tmp.path().join("plugins").join("ext").join("my-ext");
+        let manifest = r#"{
+            "name": "@test/ext",
+            "provides": {
+                "schemas": [
+                    {
+                        "key": "task-extended",
+                        "idPrefix": "TASK",
+                        "extends": "task",
+                        "frontmatter": {"properties": {"priority": {"type": "string"}}}
+                    }
+                ]
+            }
+        }"#;
+        write_plugin_manifest(&plugin_dir, "my-ext", manifest);
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        // Extension schema goes to schema_extensions, not artifact_types.
+        assert!(contributions.artifact_types.is_empty());
+        assert_eq!(contributions.schema_extensions.len(), 1);
+        assert_eq!(contributions.schema_extensions[0].target_key, "task");
+    }
+
+    #[test]
+    fn null_frontmatter_defaults_to_open_object_schema() {
+        let tmp = make_project();
+        let plugin_dir = tmp.path().join("plugins").join("open").join("my-open");
+        let manifest = r#"{
+            "name": "@test/open",
+            "provides": {
+                "schemas": [
+                    {"key": "note", "idPrefix": "NOTE", "label": "Notes", "icon": "file"}
+                ]
+            }
+        }"#;
+        write_plugin_manifest(&plugin_dir, "my-open", manifest);
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        assert_eq!(contributions.artifact_types.len(), 1);
+        // Null frontmatter → default open object schema.
+        let schema = &contributions.artifact_types[0].frontmatter_schema;
+        assert_eq!(schema["type"], "object");
+        assert_eq!(schema["additionalProperties"], true);
+    }
+
+    #[test]
+    fn enforcement_mechanisms_loaded_from_manifest() {
+        let tmp = make_project();
+        let connector_dir = tmp.path().join("connectors").join("enforcer");
+        let manifest = r#"{
+            "name": "@test/enforcer",
+            "provides": {
+                "enforcement_mechanisms": [
+                    {"key": "pre-commit", "description": "Git pre-commit hook", "strength": 8}
+                ]
+            }
+        }"#;
+        write_plugin_manifest(&connector_dir, "enforcer", manifest);
+
+        let contributions = scan_plugin_manifests(tmp.path());
+        assert_eq!(contributions.enforcement_mechanisms.len(), 1);
+        assert_eq!(contributions.enforcement_mechanisms[0].key, "pre-commit");
+        assert_eq!(contributions.enforcement_mechanisms[0].strength, 8);
+    }
+
+    #[test]
+    fn platform_static_has_empty_defaults() {
+        // PLATFORM static should have empty defaults — plugins are the source of truth.
+        assert!(PLATFORM.artifact_types.is_empty());
+        assert!(PLATFORM.relationships.is_empty());
+    }
+}
+
 /// Convert a plugin-provided relationship to the canonical `RelationshipSchema` type.
 fn plugin_rel_to_schema(rel: PluginProvidesRelationship) -> RelationshipSchema {
     let constraints = rel.constraints.map(|c| RelationshipConstraints {

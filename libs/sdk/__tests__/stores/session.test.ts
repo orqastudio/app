@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup";
 
-import { sessionStore } from "../../src/stores/session.svelte";
+import { SessionStore } from "../../src/stores/session.svelte.js";
 import type { Session, SessionSummary } from "@orqastudio/types";
 
 const fakeSession: Session = {
@@ -24,9 +24,11 @@ const fakeSummary: SessionSummary = {
 	updated_at: "2026-01-01T00:00:00Z",
 };
 
+let sessionStore: SessionStore;
+
 beforeEach(() => {
 	mockInvoke.mockReset();
-	sessionStore.clear();
+	sessionStore = new SessionStore();
 });
 
 describe("SessionStore", () => {

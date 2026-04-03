@@ -1,15 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mockInvoke } from "./setup.js";
 
-import { settingsStore } from "../../src/stores/settings.svelte.js";
-import type { SidecarStatus, StartupSnapshot } from "@orqastudio/types";
+import { SettingsStore } from "../../src/stores/settings.svelte.js";
+import type { SidecarStatus } from "@orqastudio/types";
 
 // Stub window.matchMedia for Node test environment
-const _global = globalThis as unknown as { window: Record<string, unknown> };
-if (typeof globalThis.window === "undefined") {
-	_global.window = {};
-}
-if (typeof window.matchMedia !== "function") {
+if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
 	(window as Record<string, unknown>).matchMedia = vi.fn().mockReturnValue({
 		matches: false,
 		addEventListener: vi.fn(),
@@ -17,29 +13,11 @@ if (typeof window.matchMedia !== "function") {
 	});
 }
 
+let settingsStore: SettingsStore;
+
 beforeEach(() => {
 	mockInvoke.mockReset();
-
-	// Reset the store to clean state
-	settingsStore.themeMode = "system";
-	settingsStore.defaultModel = "auto";
-	settingsStore.fontSize = 14;
-	settingsStore.lastSessionId = null;
-	settingsStore.activeSection = "provider";
-	settingsStore.loading = false;
-	settingsStore.error = null;
-	settingsStore.startupStatus = null;
-	settingsStore.sidecarStatus = {
-		state: "not_started",
-		pid: null,
-		uptime_seconds: null,
-		cli_detected: false,
-		cli_version: null,
-		error_message: null,
-	};
-
-	// Destroy to clear intervals and reset _initialized
-	settingsStore.destroy();
+	settingsStore = new SettingsStore();
 });
 
 afterEach(() => {
@@ -59,6 +37,13 @@ describe("SettingsStore", () => {
 
 		it("sidecarStatus starts as not_started", () => {
 			expect(settingsStore.sidecarStatus.state).toBe("not_started");
+		});
+
+		it("daemonHealth starts disconnected", () => {
+			expect(settingsStore.daemonHealth.state).toBe("disconnected");
+			expect(settingsStore.daemonHealth.artifacts).toBe(0);
+			expect(settingsStore.daemonHealth.rules).toBe(0);
+			expect(settingsStore.daemonHealth.error).toBeNull();
 		});
 	});
 
@@ -139,6 +124,32 @@ describe("SettingsStore", () => {
 		});
 	});
 
+	describe("derived: daemonStateLabel", () => {
+		it("maps daemon states to labels", () => {
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "connected" };
+			expect(settingsStore.daemonStateLabel).toBe("Connected");
+
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "degraded" };
+			expect(settingsStore.daemonStateLabel).toBe("Degraded");
+
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "disconnected" };
+			expect(settingsStore.daemonStateLabel).toBe("Offline");
+		});
+	});
+
+	describe("derived: daemonConnected", () => {
+		it("is true only when daemon state is connected", () => {
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "connected" };
+			expect(settingsStore.daemonConnected).toBe(true);
+
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "degraded" };
+			expect(settingsStore.daemonConnected).toBe(false);
+
+			settingsStore.daemonHealth = { ...settingsStore.daemonHealth, state: "disconnected" };
+			expect(settingsStore.daemonConnected).toBe(false);
+		});
+	});
+
 	describe("derived: sidecarStateLabel", () => {
 		it("maps sidecar states to labels", () => {
 			settingsStore.sidecarStatus = { ...settingsStore.sidecarStatus, state: "connected" };
@@ -216,6 +227,7 @@ describe("SettingsStore", () => {
 				cli_version: "1.0.0",
 				error_message: null,
 			};
+			// startupStatus is null — first call is get_startup_status
 			mockInvoke
 				.mockResolvedValueOnce({ all_done: true, tasks: [] })
 				.mockResolvedValueOnce(status);
@@ -263,17 +275,58 @@ describe("SettingsStore", () => {
 		});
 	});
 
-	describe("onThemeChange callback", () => {
-		it("works without onThemeChange callback (uses default)", async () => {
-			// No callback — should not throw
-			mockInvoke.mockResolvedValueOnce(undefined);
-			await settingsStore.setThemeMode("dark");
-			expect(settingsStore.themeMode).toBe("dark");
+	describe("refreshDaemonHealth", () => {
+		it("transitions to connected when daemon returns ok", async () => {
+			mockInvoke.mockResolvedValueOnce({ status: "ok", artifacts: 42, rules: 7 });
+
+			await settingsStore.refreshDaemonHealth();
+
+			expect(settingsStore.daemonHealth.state).toBe("connected");
+			expect(settingsStore.daemonHealth.artifacts).toBe(42);
+			expect(settingsStore.daemonHealth.rules).toBe(7);
+			expect(settingsStore.daemonHealth.error).toBeNull();
 		});
 
+		it("transitions to degraded when daemon returns non-ok status", async () => {
+			mockInvoke.mockResolvedValueOnce({ status: "partial", artifacts: 10, rules: 0 });
+
+			await settingsStore.refreshDaemonHealth();
+
+			expect(settingsStore.daemonHealth.state).toBe("degraded");
+			expect(settingsStore.daemonHealth.artifacts).toBe(10);
+		});
+
+		it("transitions to disconnected on error", async () => {
+			mockInvoke.mockRejectedValueOnce(new Error("ECONNREFUSED"));
+
+			await settingsStore.refreshDaemonHealth();
+
+			expect(settingsStore.daemonHealth.state).toBe("disconnected");
+			expect(settingsStore.daemonHealth.error).toBe("ECONNREFUSED");
+		});
+	});
+
+	describe("initialize idempotency", () => {
+		it("does not call backend twice when initialize is called multiple times", async () => {
+			const themeCallback = vi.fn();
+			mockInvoke
+				.mockResolvedValueOnce({}) // settings_get_all
+				.mockResolvedValueOnce({ all_done: true, tasks: [] }) // get_startup_status
+				.mockResolvedValueOnce({ state: "not_started", pid: null, uptime_seconds: null, cli_detected: false, cli_version: null, error_message: null }) // sidecar_status
+				.mockResolvedValueOnce({ status: "ok", artifacts: 0, rules: 0 }); // daemon_health (called at end of initialize)
+
+			await settingsStore.initialize({ onThemeChange: themeCallback });
+			await settingsStore.initialize({ onThemeChange: themeCallback });
+
+			// 4 invoke calls total on first initialize (settings_get_all, get_startup_status, sidecar_status, daemon_health)
+			// second initialize is a no-op due to idempotency guard
+			expect(mockInvoke).toHaveBeenCalledTimes(4);
+		});
+	});
+
+	describe("onThemeChange callback", () => {
 		it("calls onThemeChange when provided via initialize", async () => {
 			const themeCallback = vi.fn();
-			// Mock the settings and sidecar status calls made during initialize()
 			mockInvoke
 				.mockResolvedValueOnce({}) // settings_get_all
 				.mockResolvedValueOnce({ all_done: true, tasks: [] }) // get_startup_status

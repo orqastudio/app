@@ -25,3 +25,14 @@ Object.defineProperty(window, "__TAURI_INTERNALS__", {
 	},
 	writable: true,
 });
+
+// bits-ui's ScrollArea and other layout components use ResizeObserver which is
+// not available in jsdom. Provide a no-op stub so components can mount without
+// crashing in tests. Tests do not verify scroll behavior.
+if (typeof globalThis.ResizeObserver === "undefined") {
+	globalThis.ResizeObserver = class ResizeObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	};
+}

@@ -245,6 +245,38 @@ mod tests {
     }
 
     #[test]
+    fn default_model_is_auto() {
+        let settings: ProjectSettings =
+            serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
+        assert_eq!(settings.default_model, "auto");
+    }
+
+    #[test]
+    fn default_excluded_paths_has_five_entries() {
+        let settings: ProjectSettings =
+            serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
+        assert_eq!(settings.excluded_paths.len(), 5);
+        assert!(settings.excluded_paths.contains(&"node_modules".to_owned()));
+        assert!(settings.excluded_paths.contains(&"target".to_owned()));
+        assert!(settings.excluded_paths.contains(&"dist".to_owned()));
+    }
+
+    #[test]
+    fn artifact_link_display_mode_default_is_id() {
+        let mode: ArtifactLinkDisplayMode = Default::default();
+        assert_eq!(mode, ArtifactLinkDisplayMode::Id);
+    }
+
+    #[test]
+    fn artifact_link_display_mode_serde_roundtrip() {
+        let json = r#""title""#;
+        let mode: ArtifactLinkDisplayMode = serde_json::from_str(json).expect("parse");
+        assert_eq!(mode, ArtifactLinkDisplayMode::Title);
+        let back = serde_json::to_string(&mode).expect("serialize");
+        assert_eq!(back, r#""title""#);
+    }
+
+    #[test]
     fn plugin_config_with_version_deserializes() {
         // Verifies that plugin entries with a "version" field (written by `orqa install`)
         // are accepted by deny_unknown_fields deserialization.

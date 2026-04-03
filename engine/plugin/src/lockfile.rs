@@ -103,4 +103,93 @@ mod tests {
         assert_eq!(read_back.plugins.len(), 1);
         assert_eq!(read_back.plugins[0].name, "@orqastudio/test");
     }
+
+    #[test]
+    fn roundtrip_preserves_all_fields() {
+        let dir = tempfile::tempdir().unwrap();
+        let entry = LockEntry {
+            name: "@orqastudio/plugin-software".to_string(),
+            version: "1.2.3-dev".to_string(),
+            repo: "orqastudio/plugin-software".to_string(),
+            sha256: "deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234".to_string(),
+            installed_at: "2026-04-01T12:00:00Z".to_string(),
+        };
+        let lockfile = Lockfile {
+            version: 1,
+            plugins: vec![entry],
+        };
+
+        write_lockfile(dir.path(), &lockfile).unwrap();
+        let read_back = read_lockfile(dir.path());
+
+        assert_eq!(read_back.version, 1);
+        assert_eq!(read_back.plugins.len(), 1);
+        let p = &read_back.plugins[0];
+        assert_eq!(p.version, "1.2.3-dev");
+        assert_eq!(p.repo, "orqastudio/plugin-software");
+        assert_eq!(p.installed_at, "2026-04-01T12:00:00Z");
+    }
+
+    #[test]
+    fn write_then_overwrite_replaces_entries() {
+        let dir = tempfile::tempdir().unwrap();
+        let lockfile_v1 = Lockfile {
+            version: 1,
+            plugins: vec![LockEntry {
+                name: "@orqastudio/plugin-a".to_string(),
+                version: "0.1.0".to_string(),
+                repo: "orqastudio/plugin-a".to_string(),
+                sha256: "aaa".to_string(),
+                installed_at: "2026-01-01T00:00:00Z".to_string(),
+            }],
+        };
+        write_lockfile(dir.path(), &lockfile_v1).unwrap();
+
+        let lockfile_v2 = Lockfile {
+            version: 1,
+            plugins: vec![
+                LockEntry {
+                    name: "@orqastudio/plugin-a".to_string(),
+                    version: "0.2.0".to_string(),
+                    repo: "orqastudio/plugin-a".to_string(),
+                    sha256: "bbb".to_string(),
+                    installed_at: "2026-02-01T00:00:00Z".to_string(),
+                },
+                LockEntry {
+                    name: "@orqastudio/plugin-b".to_string(),
+                    version: "1.0.0".to_string(),
+                    repo: "orqastudio/plugin-b".to_string(),
+                    sha256: "ccc".to_string(),
+                    installed_at: "2026-02-01T00:00:00Z".to_string(),
+                },
+            ],
+        };
+        write_lockfile(dir.path(), &lockfile_v2).unwrap();
+
+        let read_back = read_lockfile(dir.path());
+        assert_eq!(read_back.plugins.len(), 2);
+        assert_eq!(read_back.plugins[0].version, "0.2.0");
+    }
+
+    #[test]
+    fn corrupt_lockfile_returns_empty() {
+        let dir = tempfile::tempdir().unwrap();
+        // Write invalid JSON
+        std::fs::write(dir.path().join(LOCKFILE_NAME), "not json at all").unwrap();
+        let lockfile = read_lockfile(dir.path());
+        assert_eq!(lockfile.version, 1);
+        assert!(lockfile.plugins.is_empty());
+    }
+
+    #[test]
+    fn lockfile_trailing_newline_is_written() {
+        let dir = tempfile::tempdir().unwrap();
+        let lockfile = Lockfile {
+            version: 1,
+            plugins: vec![],
+        };
+        write_lockfile(dir.path(), &lockfile).unwrap();
+        let raw = std::fs::read_to_string(dir.path().join(LOCKFILE_NAME)).unwrap();
+        assert!(raw.ends_with('\n'));
+    }
 }

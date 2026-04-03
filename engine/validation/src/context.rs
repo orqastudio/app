@@ -227,3 +227,148 @@ fn collect_dependency_keys(relationships: &[RelationshipSchema]) -> HashSet<Stri
     }
     dependency_keys
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::settings::DeliveryConfig;
+
+    #[test]
+    fn empty_inputs_produce_valid_context() {
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[]);
+        // Platform relationships are always present from PLATFORM config.
+        // We just verify the context is usable (no panic).
+        let _ = ctx.relationships.len();
+        let _ = ctx.inverse_map.len();
+    }
+
+    #[test]
+    fn plugin_relationships_extend_platform_relationships() {
+        let plugin_rel = RelationshipSchema {
+            key: "test-custom-rel".to_owned(),
+            inverse: "test-custom-rel-by".to_owned(),
+            description: "A test plugin relationship".to_owned(),
+            from: vec!["task".to_owned()],
+            to: vec!["epic".to_owned()],
+            semantic: None,
+            constraints: None,
+        };
+        let ctx =
+            build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel.clone()]);
+        assert!(ctx
+            .relationships
+            .iter()
+            .any(|r| r.key == "test-custom-rel"));
+    }
+
+    #[test]
+    fn plugin_relationship_inverse_is_registered() {
+        let plugin_rel = RelationshipSchema {
+            key: "test-custom-rel".to_owned(),
+            inverse: "test-custom-rel-by".to_owned(),
+            description: "Test".to_owned(),
+            from: vec![],
+            to: vec![],
+            semantic: None,
+            constraints: None,
+        };
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel]);
+        assert!(ctx.inverse_map.contains_key("test-custom-rel"));
+        assert!(ctx.inverse_map.contains_key("test-custom-rel-by"));
+    }
+
+    #[test]
+    fn plugin_relationship_extends_existing_from_to_types() {
+        // Find a platform relationship to extend (pick one that exists)
+        let platform_rel_key = PLATFORM.relationships.first().map(|r| r.key.as_str());
+        let Some(key) = platform_rel_key else {
+            return; // skip if platform is empty
+        };
+        let inverse = PLATFORM
+            .relationships
+            .iter()
+            .find(|r| r.key == key)
+            .map(|r| r.inverse.as_str())
+            .unwrap_or("inverse");
+
+        let plugin_rel = RelationshipSchema {
+            key: key.to_owned(),
+            inverse: inverse.to_owned(),
+            description: "Extended".to_owned(),
+            from: vec!["plugin-type".to_owned()],
+            to: vec!["plugin-target".to_owned()],
+            semantic: None,
+            constraints: None,
+        };
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel]);
+        let rel = ctx.relationships.iter().find(|r| r.key == key).unwrap();
+        // "plugin-type" should be added to the from list
+        assert!(rel.from.contains(&"plugin-type".to_owned()));
+        assert!(rel.to.contains(&"plugin-target".to_owned()));
+    }
+
+    #[test]
+    fn project_relationships_are_added_when_not_already_present() {
+        let project_rel = ProjectRelationshipConfig {
+            key: "project-custom-link".to_owned(),
+            inverse: "project-custom-link-by".to_owned(),
+            label: "links".to_owned(),
+            inverse_label: "linked by".to_owned(),
+        };
+        let ctx =
+            build_validation_context(&[], &DeliveryConfig::default(), &[project_rel], &[]);
+        assert!(ctx
+            .relationships
+            .iter()
+            .any(|r| r.key == "project-custom-link"));
+        assert!(ctx.inverse_map.contains_key("project-custom-link"));
+        assert!(ctx.inverse_map.contains_key("project-custom-link-by"));
+    }
+
+    #[test]
+    fn dependency_keys_include_plugin_dependency_semantics() {
+        let dep_rel = RelationshipSchema {
+            key: "blocks".to_owned(),
+            inverse: "blocked-by".to_owned(),
+            description: "Blocks another task".to_owned(),
+            from: vec![],
+            to: vec![],
+            semantic: Some("dependency".to_owned()),
+            constraints: None,
+        };
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[], &[dep_rel]);
+        assert!(ctx.dependency_keys.contains("blocks"));
+        assert!(ctx.dependency_keys.contains("blocked-by"));
+    }
+
+    #[test]
+    fn valid_statuses_are_passed_through() {
+        let statuses = vec!["active".to_owned(), "archived".to_owned(), "draft".to_owned()];
+        let ctx = build_validation_context(&statuses, &DeliveryConfig::default(), &[], &[]);
+        assert_eq!(ctx.valid_statuses, statuses);
+    }
+
+    #[test]
+    fn self_inverse_relationship_only_registered_once() {
+        // A self-inverse rel (key == inverse) should not create two entries
+        let self_inv = ProjectRelationshipConfig {
+            key: "peer-of".to_owned(),
+            inverse: "peer-of".to_owned(),
+            label: "peer of".to_owned(),
+            inverse_label: "peer of".to_owned(),
+        };
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[self_inv], &[]);
+        // key should appear exactly once in inverse_map
+        assert!(ctx.inverse_map.contains_key("peer-of"));
+        let entry_count = ctx
+            .inverse_map
+            .iter()
+            .filter(|(k, _)| k.as_str() == "peer-of")
+            .count();
+        assert_eq!(entry_count, 1);
+    }
+}

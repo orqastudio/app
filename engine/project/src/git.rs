@@ -23,6 +23,41 @@ impl StashList {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn stash_list_is_empty_when_output_is_empty() {
+        let stash = StashList {
+            output: String::new(),
+        };
+        assert!(stash.is_empty());
+    }
+
+    #[test]
+    fn stash_list_is_not_empty_when_has_output() {
+        let stash = StashList {
+            output: "stash@{0}: on main: my stash".to_owned(),
+        };
+        assert!(!stash.is_empty());
+    }
+
+    #[test]
+    fn stash_list_on_nonexistent_path_returns_none() {
+        // Git cannot operate on a nonexistent directory.
+        let result = stash_list(std::path::Path::new("/nonexistent/path/that/cannot/exist"));
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn uncommitted_status_on_nonexistent_path_returns_none() {
+        let result =
+            uncommitted_status(std::path::Path::new("/nonexistent/path/that/cannot/exist"));
+        assert!(result.is_none());
+    }
+}
+
 /// Result of a git status query on a specific branch.
 #[derive(Debug, Clone)]
 pub struct UncommittedStatus {

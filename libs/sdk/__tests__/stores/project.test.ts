@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mockInvoke } from "./setup";
 
-import { projectStore } from "../../src/stores/project.svelte";
+import { ProjectStore } from "../../src/stores/project.svelte.js";
 import type { Project, ProjectSummary, ProjectSettings, ProjectScanResult } from "@orqastudio/types";
 
 const fakeProject: Project = {
@@ -33,9 +33,11 @@ const fakeSettings: ProjectSettings = {
 	],
 };
 
+let projectStore: ProjectStore;
+
 beforeEach(() => {
 	mockInvoke.mockReset();
-	projectStore.clear();
+	projectStore = new ProjectStore();
 });
 
 describe("ProjectStore", () => {

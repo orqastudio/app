@@ -571,4 +571,129 @@ mod tests {
         let path = find_artifact_path_in_config(&config, "rules");
         assert!(path.is_none());
     }
+
+    #[test]
+    fn is_excluded_matches_exact_name() {
+        let excluded = vec!["node_modules".to_owned(), ".git".to_owned()];
+        assert!(is_excluded("node_modules", &excluded));
+        assert!(is_excluded(".git", &excluded));
+        assert!(!is_excluded("src", &excluded));
+    }
+
+    #[test]
+    fn is_excluded_empty_list_never_excludes() {
+        assert!(!is_excluded("anything", &[]));
+    }
+
+    #[test]
+    fn detect_package_manager_prefers_first_match() {
+        let dir = create_test_dir("pkg_manager_priority");
+
+        // Create Cargo.lock — should be detected first (highest precedence)
+        fs::write(dir.join("Cargo.lock"), "").expect("write");
+        fs::write(dir.join("package-lock.json"), "{}").expect("write");
+
+        let result = detect_package_manager(&dir);
+        assert_eq!(result, Some("cargo".to_owned()));
+
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_package_manager_npm() {
+        let dir = create_test_dir("pkg_manager_npm");
+        fs::write(dir.join("package-lock.json"), "{}").expect("write");
+        assert_eq!(detect_package_manager(&dir), Some("npm".to_owned()));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_package_manager_yarn() {
+        let dir = create_test_dir("pkg_manager_yarn");
+        fs::write(dir.join("yarn.lock"), "").expect("write");
+        assert_eq!(detect_package_manager(&dir), Some("yarn".to_owned()));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_package_manager_pnpm() {
+        let dir = create_test_dir("pkg_manager_pnpm");
+        fs::write(dir.join("pnpm-lock.yaml"), "").expect("write");
+        assert_eq!(detect_package_manager(&dir), Some("pnpm".to_owned()));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_package_manager_none_when_no_lock_file() {
+        let dir = create_test_dir("pkg_manager_none");
+        assert_eq!(detect_package_manager(&dir), None);
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_root_frameworks_svelte_and_vite() {
+        let dir = create_test_dir("frameworks_svelte");
+        fs::write(dir.join("svelte.config.js"), "").expect("write");
+        fs::write(dir.join("vite.config.ts"), "").expect("write");
+
+        let mut frameworks = HashSet::new();
+        detect_root_frameworks(&dir, &mut frameworks);
+
+        assert!(frameworks.contains("svelte"));
+        assert!(frameworks.contains("vite"));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_root_frameworks_nextjs() {
+        let dir = create_test_dir("frameworks_nextjs");
+        fs::write(dir.join("next.config.js"), "").expect("write");
+
+        let mut frameworks = HashSet::new();
+        detect_root_frameworks(&dir, &mut frameworks);
+
+        assert!(frameworks.contains("nextjs"));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_root_frameworks_angular() {
+        let dir = create_test_dir("frameworks_angular");
+        fs::write(dir.join("angular.json"), "{}").expect("write");
+
+        let mut frameworks = HashSet::new();
+        detect_root_frameworks(&dir, &mut frameworks);
+
+        assert!(frameworks.contains("angular"));
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn detect_root_frameworks_empty_dir_no_frameworks() {
+        let dir = create_test_dir("frameworks_empty");
+
+        let mut frameworks = HashSet::new();
+        detect_root_frameworks(&dir, &mut frameworks);
+
+        assert!(frameworks.is_empty());
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn count_md_files_in_dir_counts_correctly() {
+        let dir = create_test_dir("count_md");
+        fs::write(dir.join("a.md"), "").expect("write");
+        fs::write(dir.join("b.md"), "").expect("write");
+        fs::write(dir.join("c.txt"), "").expect("write"); // ignored
+
+        assert_eq!(count_md_files_in_dir(&dir), 2);
+        cleanup(&dir);
+    }
+
+    #[test]
+    fn count_md_files_in_dir_nonexistent_returns_zero() {
+        let dir = std::env::temp_dir().join("orqa_test_nonexistent_dir_xyz987");
+        assert_eq!(count_md_files_in_dir(&dir), 0);
+    }
+
 }

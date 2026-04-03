@@ -152,3 +152,178 @@ fn push_wrong_parent_type_check(
         )),
     });
 }
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::settings::{DeliveryConfig, DeliveryParentConfig, DeliveryTypeConfig};
+    use crate::types::{IntegrityCategory, ValidationContext};
+    use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
+    use std::collections::{HashMap, HashSet};
+
+    fn make_node(id: &str, artifact_type: &str, path: &str) -> ArtifactNode {
+        ArtifactNode {
+            id: id.to_owned(),
+            project: None,
+            path: path.to_owned(),
+            artifact_type: artifact_type.to_owned(),
+            title: id.to_owned(),
+            description: None,
+            status: Some("active".to_owned()),
+            priority: None,
+            frontmatter: serde_json::json!({"type": artifact_type, "status": "active"}),
+            body: None,
+            references_out: vec![],
+            references_in: vec![],
+        }
+    }
+
+    fn make_ref(source: &str, target: &str, rel_type: &str) -> ArtifactRef {
+        ArtifactRef {
+            target_id: target.to_owned(),
+            field: "relationships".to_owned(),
+            source_id: source.to_owned(),
+            relationship_type: Some(rel_type.to_owned()),
+        }
+    }
+
+    fn make_ctx_with_delivery(types: Vec<DeliveryTypeConfig>) -> ValidationContext {
+        ValidationContext {
+            relationships: vec![],
+            inverse_map: HashMap::new(),
+            valid_statuses: vec![],
+            delivery: DeliveryConfig { types },
+            dependency_keys: HashSet::new(),
+            artifact_types: vec![],
+            schema_extensions: vec![],
+            enforcement_mechanisms: vec![],
+        }
+    }
+
+    #[test]
+    fn artifact_outside_configured_delivery_path_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", ".orqa/implementation/unknown-zone/TASK-A.md");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        // Configure a delivery type that does NOT cover the node's path
+        let ctx = make_ctx_with_delivery(vec![DeliveryTypeConfig {
+            key: "task".to_owned(),
+            label: "Tasks".to_owned(),
+            path: ".orqa/implementation/tasks/".to_owned(),
+            parent: None,
+            gate_field: None,
+        }]);
+
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::DeliveryPathMismatch);
+        assert!(checks[0].message.contains("TASK-A"));
+    }
+
+    #[test]
+    fn artifact_type_mismatch_for_delivery_path_is_flagged() {
+        // Node is type "epic" but lives under the "task" delivery path
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("EPIC-A", "epic", ".orqa/implementation/tasks/EPIC-A.md");
+        graph.nodes.insert("EPIC-A".to_owned(), node);
+
+        let ctx = make_ctx_with_delivery(vec![DeliveryTypeConfig {
+            key: "task".to_owned(),
+            label: "Tasks".to_owned(),
+            path: ".orqa/implementation/tasks/".to_owned(),
+            parent: None,
+            gate_field: None,
+        }]);
+
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::DeliveryPathMismatch);
+        assert!(checks[0].message.contains("epic"));
+    }
+
+    #[test]
+    fn artifact_with_valid_path_and_parent_produces_no_check() {
+        let mut graph = ArtifactGraph::default();
+        let mut task_node = make_node("TASK-A", "task", ".orqa/implementation/tasks/TASK-A.md");
+        let epic_node = make_node("EPIC-B", "epic", ".orqa/epics/EPIC-B.md");
+
+        // Task delivers to its epic parent
+        task_node.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+
+        graph.nodes.insert("TASK-A".to_owned(), task_node);
+        graph.nodes.insert("EPIC-B".to_owned(), epic_node);
+
+        let ctx = make_ctx_with_delivery(vec![DeliveryTypeConfig {
+            key: "task".to_owned(),
+            label: "Tasks".to_owned(),
+            path: ".orqa/implementation/tasks/".to_owned(),
+            parent: Some(DeliveryParentConfig {
+                parent_type: "epic".to_owned(),
+                relationship: "delivers".to_owned(),
+            }),
+            gate_field: None,
+        }]);
+
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn missing_parent_relationship_is_flagged() {
+        let mut graph = ArtifactGraph::default();
+        // Task has no outgoing "delivers" relationship
+        let task_node = make_node("TASK-A", "task", ".orqa/implementation/tasks/TASK-A.md");
+        graph.nodes.insert("TASK-A".to_owned(), task_node);
+
+        let ctx = make_ctx_with_delivery(vec![DeliveryTypeConfig {
+            key: "task".to_owned(),
+            label: "Tasks".to_owned(),
+            path: ".orqa/implementation/tasks/".to_owned(),
+            parent: Some(DeliveryParentConfig {
+                parent_type: "epic".to_owned(),
+                relationship: "delivers".to_owned(),
+            }),
+            gate_field: None,
+        }]);
+
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::DeliveryPathMismatch);
+        assert!(checks[0].message.contains("delivers"));
+    }
+
+    #[test]
+    fn artifacts_not_under_implementation_are_ignored() {
+        // Nodes outside .orqa/implementation/ should not be checked at all
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("EPIC-A", "epic", ".orqa/epics/EPIC-A.md");
+        graph.nodes.insert("EPIC-A".to_owned(), node);
+
+        let ctx = make_ctx_with_delivery(vec![]);
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert!(checks.is_empty());
+    }
+
+    #[test]
+    fn empty_delivery_config_flags_all_implementation_artifacts() {
+        let mut graph = ArtifactGraph::default();
+        let node = make_node("TASK-A", "task", ".orqa/implementation/tasks/TASK-A.md");
+        graph.nodes.insert("TASK-A".to_owned(), node);
+
+        let ctx = make_ctx_with_delivery(vec![]); // no delivery types configured
+        let mut checks = vec![];
+        check_delivery_paths(&graph, &ctx, &mut checks);
+        assert_eq!(checks.len(), 1);
+        assert_eq!(checks[0].category, IntegrityCategory::DeliveryPathMismatch);
+    }
+}
