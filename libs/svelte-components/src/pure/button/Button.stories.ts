@@ -8,7 +8,7 @@ const meta = {
 	argTypes: {
 		variant: {
 			control: "select",
-			options: ["default", "destructive", "outline", "secondary", "ghost", "link"],
+			options: ["default", "destructive", "outline", "secondary", "ghost", "link", "card"],
 		},
 		size: {
 			control: "select",
@@ -58,4 +58,9 @@ export const Large: Story = {
 
 export const Disabled: Story = {
 	args: { disabled: true },
+};
+
+// Kanban card use case: full-width card button with stacked content lines.
+export const Card: Story = {
+	args: { variant: "card" },
 };

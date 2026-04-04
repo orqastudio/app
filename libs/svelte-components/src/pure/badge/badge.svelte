@@ -13,11 +13,15 @@
 					"bg-destructive [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/70 border-transparent text-white",
 				outline: "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
 			warning: "bg-warning/15 text-warning border-warning/30 [a&]:hover:bg-warning/25",
+				success: "bg-success/15 text-success border-success/30 [a&]:hover:bg-success/25",
 			},
 			size: {
 				default: "text-xs",
 				sm: "text-[11px] leading-none",
 				xs: "text-[10px] leading-none px-1",
+			},
+			capitalize: {
+				true: "capitalize",
 			},
 		},
 		defaultVariants: {
@@ -28,6 +32,7 @@
 
 	export type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
 	export type BadgeSize = VariantProps<typeof badgeVariants>["size"];
+	export type BadgeCapitalize = VariantProps<typeof badgeVariants>["capitalize"];
 </script>
 
 <script lang="ts">
@@ -38,12 +43,14 @@
 		href,
 		variant = "default",
 		size = "default",
+		capitalize = false,
 		children,
 	}: {
 		ref?: HTMLElement | null;
 		href?: string;
 		variant?: BadgeVariant;
 		size?: BadgeSize;
+		capitalize?: boolean;
 		children?: Snippet;
 	} = $props();
 </script>
@@ -53,7 +60,7 @@
 	bind:this={ref}
 	data-slot="badge"
 	{href}
-	class={badgeVariants({ variant, size })}
+	class={badgeVariants({ variant, size, capitalize: capitalize || undefined })}
 >
 	{@render children?.()}
 </svelte:element>

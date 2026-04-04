@@ -67,7 +67,7 @@ export { DashboardCard } from "./dashboard-card/index.js";
 export { ProgressBar } from "./progress-bar/index.js";
 export { ViewContainer } from "./view-container/index.js";
 export { Toolbar } from "./toolbar/index.js";
-export { Stack, HStack, Grid, Spacer, Center } from "./layout/index.js";
+export { Stack, HStack, Grid, Spacer, Center, Box } from "./layout/index.js";
 export { NavItem } from "./nav-item/index.js";
 export { ConnectionIndicator, type ConnectionState } from "./connection-indicator/index.js";
 export { Kbd } from "./kbd/index.js";
@@ -84,3 +84,8 @@ export { ChatBubble, ChatInput, StreamingDots, ChatContainer } from "./chat/inde
 export { Checkbox } from "./checkbox/index.js";
 export { Switch } from "./switch/index.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group/index.js";
+
+// Small utility primitives
+export { Dot } from "./dot/index.js";
+export { CountBadge } from "./count-badge/index.js";
+export { VerticalText } from "./vertical-text/index.js";
