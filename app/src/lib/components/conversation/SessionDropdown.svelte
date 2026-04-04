@@ -1,19 +1,25 @@
 <script lang="ts">
 	import type { SessionSummary, SessionStatus } from "@orqastudio/types";
-	import { Icon,
+	import { assertNever } from "@orqastudio/types";
+	import {
+		Icon,
 		PopoverRoot as Popover,
 		PopoverContent,
 		PopoverTrigger,
+		Button,
+		Badge,
+		Separator,
+		ScrollArea,
+		SearchInput,
+		ConfirmDialog as ConfirmDeleteDialog,
+		EmptyState,
+		ErrorDisplay,
+		LoadingSpinner,
+		Heading,
+		HStack,
+		Caption,
+		Text,
 	} from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
-	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { Separator } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
-	import { SearchInput } from "@orqastudio/svelte-components/pure";
-	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
-	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 
 	let {
 		sessions,
@@ -92,7 +98,7 @@
 			case "abandoned":
 				return "outline";
 			default:
-				return "secondary";
+				return assertNever(status);
 		}
 	}
 
@@ -107,7 +113,7 @@
 			case "abandoned":
 				return "Abandoned";
 			default:
-				return status;
+				return assertNever(status);
 		}
 	}
 
@@ -134,15 +140,15 @@
 	<PopoverTrigger>
 		{@render children?.()}
 	</PopoverTrigger>
-	<PopoverContent align="start" class="w-80 p-0">
+	<PopoverContent align="start">
 		<!-- Header with New Session -->
-		<div class="flex items-center justify-between p-3 pb-2">
-			<h3 class="text-sm font-semibold">Sessions</h3>
-			<Button variant="ghost" size="sm" onclick={handleNewSession} class="h-7 gap-1 px-2 text-xs">
+		<HStack justify="between">
+			<Heading level={5}>Sessions</Heading>
+			<Button variant="ghost" size="sm" onclick={handleNewSession}>
 				<Icon name="plus" size="sm" />
 				New Session
 			</Button>
-		</div>
+		</HStack>
 
 		<!-- Search -->
 		<div class="px-3 pb-2">
@@ -152,11 +158,11 @@
 		<Separator />
 
 		<!-- Session list -->
-		<ScrollArea class="max-h-64">
+		<ScrollArea maxHeight="md">
 			{#if loading}
-				<div class="flex items-center justify-center py-6">
+				<HStack justify="center">
 					<LoadingSpinner />
-				</div>
+				</HStack>
 			{:else if error}
 				<div class="px-3 py-4">
 					<ErrorDisplay message={error} onRetry={onRetry} />
@@ -170,43 +176,44 @@
 				<div class="p-1">
 					{#each filteredSessions as session (session.id)}
 						{@const isActive = session.id === activeSessionId}
-						<div
-							class="group flex w-full cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-accent {isActive ? 'bg-accent/50' : ''}"
+						<HStack
+							align="start"
+							gap={2}
+							full
 							onclick={() => handleSelect(session.id)}
-							onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(session.id); } }}
+							onkeydown={(e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(session.id); } }}
 							role="option"
 							aria-selected={isActive}
-							tabindex="0"
+							tabindex={0}
 						>
 							<div class="min-w-0 flex-1">
-								<div class="flex items-center gap-1.5">
-									<span class="truncate text-sm font-medium {isActive ? 'text-foreground' : 'text-foreground/80'}">
-										{session.title ?? "Untitled"}
-									</span>
-									<Badge variant={statusVariant(session.status)} class="shrink-0 text-[10px] px-1.5 py-0">
+								<HStack gap={1} wrap>
+									<Text variant="label" truncate>{session.title ?? "Untitled"}</Text>
+									<Badge variant={statusVariant(session.status)} size="xs">
 										{statusLabel(session.status)}
 									</Badge>
-								</div>
-								<div class="mt-0.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-									<span>{session.message_count} messages</span>
-									<span class="text-muted-foreground/50">|</span>
-									<span>{formatRelativeTime(session.updated_at)}</span>
-								</div>
+								</HStack>
+								<HStack gap={2}>
+									<Caption>{session.message_count} messages</Caption>
+									<Caption tone="muted">|</Caption>
+									<Caption>{formatRelativeTime(session.updated_at)}</Caption>
+								</HStack>
 								{#if session.preview}
-									<p class="mt-0.5 truncate text-[11px] text-muted-foreground/70">
+									<Caption truncate>
 										{session.preview}
-									</p>
+									</Caption>
 								{/if}
 							</div>
 							<!-- Delete button -->
-							<button
-								class="mt-0.5 shrink-0 rounded p-1 text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+							<Button
+								variant="ghost"
+								size="icon-sm"
 								onclick={(e) => handleDeleteClick(e, session.id, session.title ?? "Untitled")}
 								aria-label="Delete session"
 							>
 								<Icon name="trash-2" size="sm" />
-							</button>
-						</div>
+							</Button>
+						</HStack>
 					{/each}
 				</div>
 			{/if}

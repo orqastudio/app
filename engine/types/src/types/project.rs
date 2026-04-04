@@ -3,6 +3,15 @@
 //! Defines structs representing projects managed by OrqaStudio, including detected
 //! technology stacks and scan results. Projects are the top-level container for
 //! sessions, artifacts, and governance content.
+//!
+//! # ID representation
+//!
+//! `id` and `project_id` fields are raw `i64` SQLite rowids. Full newtype wrappers
+//! (`ProjectId(i64)`) would require changes across `orqa-storage`,
+//! `orqa-engine-types`, and both Tauri backends simultaneously. The current
+//! representation is kept as `i64` to preserve a single migration boundary.
+//! The storage layer is the correct place to introduce typed IDs when that
+//! refactor is scoped.
 
 use std::collections::HashMap;
 

@@ -166,44 +166,38 @@
 	});
 </script>
 
-<ScrollArea class="h-full">
+<ScrollArea full>
 	<div class="p-2">
 		{#if mode === "app"}
-			<div class="space-y-0.5">
+			<div class="flex flex-col gap-0">
 				{#each appCategories as item (item.id)}
 					<button
-						class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"
-						class:bg-accent={currentSection === item.id}
-						class:text-accent-foreground={currentSection === item.id}
+						class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
 						onclick={() => handleSectionChange(item.id)}
 					>
 						<Icon name={item.icon} size="md" />
-						<div class="min-w-0">
-							<div class="truncate text-sm font-medium">{item.label}</div>
-							<div class="truncate text-xs text-muted-foreground">{item.description}</div>
+						<div class="flex min-w-0 flex-col items-start gap-0">
+							<span class="truncate text-sm font-medium">{item.label}</span>
+							<span class="truncate text-xs text-muted-foreground">{item.description}</span>
 						</div>
 					</button>
 				{/each}
 			</div>
 		{:else}
-			<div class="space-y-4">
+			<div class="flex flex-col gap-4">
 				{#each projectGroups as group (group.label)}
-					<div>
-						<div class="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-							{group.label}
-						</div>
-						<div class="space-y-0.5">
+					<div class="flex flex-col gap-0">
+						<span class="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group.label}</span>
+						<div class="flex flex-col gap-0">
 							{#each group.items as item (item.id)}
 								<button
-									class="flex w-full items-center gap-2 rounded px-2 py-2 text-left transition-colors hover:bg-accent/50"
-									class:bg-accent={currentSection === item.id}
-									class:text-accent-foreground={currentSection === item.id}
+									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
 									onclick={() => handleSectionChange(item.id)}
 								>
 									<Icon name={item.icon} size="md" />
-									<div class="min-w-0">
-										<div class="truncate text-sm font-medium">{item.label}</div>
-										<div class="truncate text-xs text-muted-foreground">{item.description}</div>
+									<div class="flex min-w-0 flex-col items-start gap-0">
+										<span class="truncate text-sm font-medium">{item.label}</span>
+										<span class="truncate text-xs text-muted-foreground">{item.description}</span>
 									</div>
 								</button>
 							{/each}

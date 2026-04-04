@@ -157,14 +157,18 @@ pub static PLATFORM: LazyLock<PlatformConfig> = LazyLock::new(|| {
 /// Returns a HashMap where each key maps to its inverse, and vice versa.
 /// This replaces the hardcoded `INVERSE_MAP` constant.
 pub fn build_inverse_map(rels: &[RelationshipDef]) -> HashMap<String, String> {
-    let mut map = HashMap::new();
-    for rel in rels {
-        map.insert(rel.key.clone(), rel.inverse.clone());
-        if rel.inverse != rel.key {
-            map.insert(rel.inverse.clone(), rel.key.clone());
-        }
-    }
-    map
+    rels.iter()
+        .flat_map(|rel| {
+            // Each relationship contributes the forward pair plus the reverse pair
+            // when the inverse is distinct (self-inverse relationships map only one way).
+            let forward = (rel.key.clone(), rel.inverse.clone());
+            if rel.inverse == rel.key {
+                vec![forward]
+            } else {
+                vec![forward, (rel.inverse.clone(), rel.key.clone())]
+            }
+        })
+        .collect()
 }
 
 /// Build a merged inverse map from platform + project relationships.
@@ -174,14 +178,21 @@ pub fn build_inverse_map(rels: &[RelationshipDef]) -> HashMap<String, String> {
 pub fn build_merged_inverse_map(
     project_relationships: &[ProjectRelationshipConfig],
 ) -> HashMap<String, String> {
-    let mut map = build_inverse_map(&PLATFORM.relationships);
-    for pr in project_relationships {
-        map.insert(pr.key.clone(), pr.inverse.clone());
-        if pr.inverse != pr.key {
-            map.insert(pr.inverse.clone(), pr.key.clone());
-        }
-    }
-    map
+    let base = build_inverse_map(&PLATFORM.relationships);
+    project_relationships
+        .iter()
+        .flat_map(|pr| {
+            let forward = (pr.key.clone(), pr.inverse.clone());
+            if pr.inverse == pr.key {
+                vec![forward]
+            } else {
+                vec![forward, (pr.inverse.clone(), pr.key.clone())]
+            }
+        })
+        .fold(base, |mut acc, (k, v)| {
+            acc.insert(k, v);
+            acc
+        })
 }
 
 /// Get all relationship keys that belong to a given semantic category.

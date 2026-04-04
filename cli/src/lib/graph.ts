@@ -19,19 +19,19 @@ import {
 
 export interface GraphNode {
 	/** Artifact ID (e.g. "EPIC-082"). */
-	id: string;
+	readonly id: string;
 	/** Artifact type (e.g. "epic", "task", "decision"). */
-	type: string;
+	readonly type: string;
 	/** Title from frontmatter or first heading. */
-	title: string;
+	readonly title: string;
 	/** Current status. */
-	status: string;
+	readonly status: string;
 	/** Relative file path from project root. */
-	path: string;
+	readonly path: string;
 	/** Relationships declared in frontmatter. */
-	relationships: Array<{ target: string; type: string }>;
+	readonly relationships: ReadonlyArray<{ readonly target: string; readonly type: string }>;
 	/** Raw frontmatter fields. */
-	frontmatter: Record<string, unknown>;
+	readonly frontmatter: Record<string, unknown>;
 }
 
 export interface GraphQueryOptions {
@@ -50,10 +50,10 @@ export interface GraphQueryOptions {
 }
 
 export interface GraphStats {
-	totalNodes: number;
-	totalRelationships: number;
-	byType: Record<string, number>;
-	byStatus: Record<string, number>;
+	readonly totalNodes: number;
+	readonly totalRelationships: number;
+	readonly byType: Record<string, number>;
+	readonly byStatus: Record<string, number>;
 }
 
 // ---------------------------------------------------------------------------

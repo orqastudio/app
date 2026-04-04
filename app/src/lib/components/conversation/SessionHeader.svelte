@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Session, SessionSummary } from "@orqastudio/types";
-	import { Icon, Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading } from "@orqastudio/svelte-components/pure";
 	import SessionDropdown from "./SessionDropdown.svelte";
 
 	let {
@@ -73,20 +73,20 @@
 	</SessionDropdown>
 
 	<!-- Session title -->
-	<div class="flex min-w-0 flex-1 items-center gap-1.5">
+	<div class="flex min-w-0 flex-1 items-center gap-1">
 		{#if isEditing}
 			<input
 				bind:this={inputRef}
 				bind:value={editTitle}
 				onblur={finishEditing}
 				onkeydown={handleTitleKeydown}
-				class="min-w-0 flex-1 rounded border border-input bg-transparent px-1.5 py-0.5 text-sm outline-none focus-visible:border-ring"
+				class="min-w-0 flex-1 h-7 rounded border border-border bg-background px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
 			/>
 			<Button variant="ghost" size="icon-sm" onclick={finishEditing} aria-label="Save title">
 				<Icon name="check" size="sm" />
 			</Button>
 		{:else}
-			<h2 class="min-w-0 flex-1 truncate text-sm font-medium">{displayTitle}</h2>
+			<span class="min-w-0 flex-1 truncate"><Heading level={5}>{displayTitle}</Heading></span>
 			<Button variant="ghost" size="icon-sm" onclick={startEditing} aria-label="Edit title">
 				<Icon name="pencil" size="sm" />
 			</Button>

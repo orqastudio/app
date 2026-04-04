@@ -61,24 +61,22 @@ pub fn scan_governance(
 /// one area each. Each area is scanned recursively so that nested directory layouts
 /// (e.g. documentation with architecture/product subdirs) are fully covered.
 fn scan_artifact_areas(project_path: &Path, artifacts: &[ArtifactEntry]) -> Vec<GovernanceArea> {
-    let mut areas = Vec::new();
-
-    for entry in artifacts {
-        match entry {
-            ArtifactEntry::Group { key: _, label: _, icon: _, children } => {
-                for child in children {
+    artifacts
+        .iter()
+        .flat_map(|entry| match entry {
+            ArtifactEntry::Group { key: _, label: _, icon: _, children } => children
+                .iter()
+                .map(|child| {
                     let dir = project_path.join(&child.path);
-                    areas.push(scan_recursive_area(&child.key, &dir));
-                }
-            }
+                    scan_recursive_area(&child.key, &dir)
+                })
+                .collect::<Vec<_>>(),
             ArtifactEntry::Type(type_config) => {
                 let dir = project_path.join(&type_config.path);
-                areas.push(scan_recursive_area(&type_config.key, &dir));
+                vec![scan_recursive_area(&type_config.key, &dir)]
             }
-        }
-    }
-
-    areas
+        })
+        .collect()
 }
 
 /// Scan a directory tree recursively for `.md` governance files.
@@ -86,12 +84,13 @@ fn scan_artifact_areas(project_path: &Path, artifacts: &[ArtifactEntry]) -> Vec<
 /// The area is considered covered if at least one `.md` file is found. Files at
 /// any depth below `dir` are included.
 fn scan_recursive_area(name: &str, dir: &Path) -> GovernanceArea {
-    let mut files = Vec::new();
-
-    if dir.is_dir() {
-        collect_files_recursive(dir, &mut files);
-        files.sort_by(|a, b| a.path.cmp(&b.path));
-    }
+    let files = if dir.is_dir() {
+        let mut collected = collect_files_recursive(dir);
+        collected.sort_by(|a, b| a.path.cmp(&b.path));
+        collected
+    } else {
+        Vec::new()
+    };
 
     let covered = !files.is_empty();
     GovernanceArea {
@@ -102,27 +101,32 @@ fn scan_recursive_area(name: &str, dir: &Path) -> GovernanceArea {
     }
 }
 
-/// Walk `dir` recursively, appending `.md` files to `out`.
-fn collect_files_recursive(dir: &Path, out: &mut Vec<GovernanceFile>) {
+/// Walk `dir` recursively and return all `.md` files found.
+fn collect_files_recursive(dir: &Path) -> Vec<GovernanceFile> {
     let Ok(entries) = std::fs::read_dir(dir) else {
-        return;
+        return Vec::new();
     };
-    for entry in entries.flatten() {
-        let path = entry.path();
-        if path.is_dir() {
-            collect_files_recursive(&path, out);
-        } else if path.is_file() {
-            let matches = path
-                .extension()
-                .and_then(|e| e.to_str())
-                .is_some_and(|e| e == "md");
-            if matches {
-                if let Some(f) = read_governance_file(&path) {
-                    out.push(f);
+    entries
+        .flatten()
+        .flat_map(|entry| {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_files_recursive(&path)
+            } else if path.is_file() {
+                let is_md = path
+                    .extension()
+                    .and_then(|e| e.to_str())
+                    .is_some_and(|e| e == "md");
+                if is_md {
+                    read_governance_file(&path).map(|f| vec![f]).unwrap_or_default()
+                } else {
+                    Vec::new()
                 }
+            } else {
+                Vec::new()
             }
-        }
-    }
+        })
+        .collect()
 }
 
 /// Read a governance file using its absolute path as the stored path.

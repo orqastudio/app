@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Center } from "../layout/index.js";
+
 	let {
 		size = "md",
 	}: {
@@ -12,8 +14,8 @@
 	};
 </script>
 
-<div class="flex items-center justify-center">
+<Center>
 	<div
 		class="animate-spin rounded-full border-2 border-muted border-t-primary {sizeClasses[size]}"
 	></div>
-</div>
+</Center>

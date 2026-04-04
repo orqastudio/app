@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
@@ -69,7 +69,7 @@
 			No configuration found. Scan this project to detect its stack and create settings.
 		</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
+	<CardContent>
 		<div class="flex items-center gap-2 text-sm">
 			<Icon name="folder-open" size="md" />
 			<span class="font-mono text-xs text-muted-foreground">{props.projectPath}</span>
@@ -77,15 +77,15 @@
 
 		<Separator />
 
-		<div>
-			<label class="text-sm font-medium" for="wizard-project-name">Project Name</label>
-			<Input
-				id="wizard-project-name"
-				class="mt-1 max-w-xs"
-				bind:value={projectName}
-				placeholder="Project name"
-			/>
-		</div>
+		<FormGroup label="Project Name" for="wizard-project-name">
+			<div class="max-w-xs">
+				<Input
+					id="wizard-project-name"
+					bind:value={projectName}
+					placeholder="Project name"
+				/>
+			</div>
+		</FormGroup>
 
 		{#if !scanned}
 			<Button
@@ -105,8 +105,8 @@
 
 		{#if scanResult}
 			<Separator />
-			<div class="space-y-3">
-				<h4 class="text-sm font-medium">Detected Stack</h4>
+			<div class="flex flex-col gap-3">
+				<Heading level={4}>Detected Stack</Heading>
 				{#if scanResult.stack.languages.length > 0}
 					<div class="flex flex-wrap gap-1.5">
 						{#each scanResult.stack.languages as lang (lang)}
@@ -114,7 +114,7 @@
 						{/each}
 					</div>
 				{:else}
-					<p class="text-xs text-muted-foreground">No languages detected</p>
+					<span class="text-xs text-muted-foreground">No languages detected</span>
 				{/if}
 
 				{#if scanResult.stack.frameworks.length > 0}
@@ -126,14 +126,12 @@
 				{/if}
 
 				{#if scanResult.stack.package_manager}
-					<p class="text-xs text-muted-foreground">
-						Package manager: {scanResult.stack.package_manager}
-					</p>
+					<span class="text-xs text-muted-foreground">Package manager: {scanResult.stack.package_manager}</span>
 				{/if}
 			</div>
 
-			<div class="space-y-2">
-				<h4 class="text-sm font-medium">Governance</h4>
+			<div class="flex flex-col gap-2">
+				<Heading level={4}>Governance</Heading>
 				<div class="grid grid-cols-3 gap-2 text-xs">
 					<div class="rounded border p-2 text-center">
 						<div class="text-lg font-semibold">{scanResult.governance.docs}</div>
@@ -164,9 +162,9 @@
 				</div>
 			</div>
 
-			<p class="text-xs text-muted-foreground">
+			<span class="text-xs text-muted-foreground">
 				Scanned in {scanResult.scan_duration_ms}ms
-			</p>
+			</span>
 
 			<Separator />
 

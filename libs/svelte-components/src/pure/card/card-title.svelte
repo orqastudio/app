@@ -1,20 +1,26 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "../../utils/cn.js";
+	import { cn } from "../../utils/cn.js";
+
+	interface CardTitleProps {
+		/** Title text size. */
+		size?: "xs" | "sm" | "base" | "lg" | "xl";
+		children?: import("svelte").Snippet;
+	}
 
 	let {
-		ref = $bindable(null),
-		class: className,
+		size = "base",
 		children,
-		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: CardTitleProps = $props();
+
+	const sizeMap: Record<string, string> = {
+		xs: "text-xs font-semibold",
+		sm: "text-sm font-semibold",
+		base: "leading-none font-semibold",
+		lg: "text-lg font-semibold",
+		xl: "text-xl font-semibold",
+	};
 </script>
 
-<div
-	bind:this={ref}
-	data-slot="card-title"
-	class={cn("leading-none font-semibold", className)}
-	{...restProps}
->
+<div data-slot="card-title" class={cn(sizeMap[size])}>
 	{@render children?.()}
 </div>

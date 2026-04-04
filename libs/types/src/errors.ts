@@ -1,5 +1,5 @@
 export interface OrqaError {
-	code:
+	readonly code:
 		| "not_found"
 		| "database"
 		| "file_system"
@@ -8,5 +8,5 @@ export interface OrqaError {
 		| "scan"
 		| "serialization"
 		| "permission_denied";
-	message: string;
+	readonly message: string;
 }

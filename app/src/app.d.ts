@@ -8,4 +8,7 @@ declare global {
   }
 }
 
+// Svelte internal module used only in tests for effect_root access.
+declare module 'svelte/internal/client';
+
 export {};

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardContent, Heading } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import ViolationsPanel from "$lib/components/governance/ViolationsPanel.svelte";
@@ -62,7 +62,7 @@
 			<div class="space-y-6 p-6">
 				<!-- Header -->
 				<div class="space-y-1">
-					<h1 class="text-2xl font-semibold tracking-tight">{config.label}</h1>
+					<Heading level={1}>{config.label}</Heading>
 					<p class="text-sm text-muted-foreground">{config.description}</p>
 					<p class="text-xs text-muted-foreground">
 						Source: <code class="rounded bg-muted px-1 py-0.5">{config.location}</code>
@@ -72,12 +72,12 @@
 				{#if category === "rules" && (enforcementStore.blockCount > 0 || enforcementStore.warnCount > 0)}
 					<div class="flex items-center gap-2">
 						{#if enforcementStore.blockCount > 0}
-							<Badge variant="destructive" class="text-xs px-1.5 py-0.5">
+							<Badge variant="destructive" size="sm">
 								{enforcementStore.blockCount} blocked
 							</Badge>
 						{/if}
 						{#if enforcementStore.warnCount > 0}
-							<Badge variant="warning" class="text-xs px-1.5 py-0.5">
+							<Badge variant="warning" size="sm">
 								{enforcementStore.warnCount} warned
 							</Badge>
 						{/if}
@@ -86,10 +86,12 @@
 
 				{#if items.length === 0}
 					<CardRoot>
-						<CardContent class="py-8 text-center">
-							<p class="text-sm text-muted-foreground">
-								No {config.label.toLowerCase()} found. Add files to <code class="rounded bg-muted px-1 py-0.5 text-xs">{config.location}</code> and re-scan.
-							</p>
+						<CardContent>
+							<div class="py-8 text-center">
+								<p class="text-sm text-muted-foreground">
+									No {config.label.toLowerCase()} found. Add files to <code class="rounded bg-muted px-1 py-0.5 text-xs">{config.location}</code> and re-scan.
+								</p>
+							</div>
 						</CardContent>
 					</CardRoot>
 				{:else}
@@ -102,12 +104,12 @@
 					<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 						{#each items as item (item.path)}
 							<button
-								class="text-left"
+								class="h-auto w-full p-0 text-left rounded-md hover:bg-accent/50 transition-colors"
 								onclick={() => item.path && handleItemClick(item.label, item.path)}
 							>
-								<CardRoot class="transition-colors hover:bg-accent/50">
-									<CardContent class="p-4">
-										<div class="flex items-start gap-3">
+								<CardRoot>
+									<CardContent>
+										<div class="flex items-start gap-3 p-4">
 											<Icon name={config.icon} size="md" />
 											<div class="min-w-0 flex-1">
 												<p class="truncate text-sm font-medium">{item.label}</p>
@@ -120,17 +122,17 @@
 											{#if category === "rules" && violationsByRule[item.label]}
 												{@const counts = violationsByRule[item.label]}
 												<div class="flex shrink-0 items-center gap-1">
-													{#if counts.blocks > 0}
-														<Badge variant="destructive" class="h-4 px-1 py-0 text-xs">
-															{counts.blocks}
-														</Badge>
-													{/if}
-													{#if counts.warns > 0}
-														<Badge variant="warning" class="h-4 px-1 py-0 text-xs">
-															{counts.warns}
-														</Badge>
-													{/if}
-												</div>
+												{#if counts.blocks > 0}
+													<Badge variant="destructive" size="xs">
+														{counts.blocks}
+													</Badge>
+												{/if}
+												{#if counts.warns > 0}
+													<Badge variant="warning" size="xs">
+														{counts.warns}
+													</Badge>
+												{/if}
+											</div>
 											{/if}
 										</div>
 									</CardContent>

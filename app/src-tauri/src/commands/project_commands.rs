@@ -1,30 +1,30 @@
 // Tauri IPC commands for project management.
 //
-// Projects are persisted in the local SQLite database. The daemon is notified
-// about the active project root via the settings API so it can load rules,
-// workflows, and artifacts. The app is a thin client for project registration.
+// Projects are persisted in the project-scoped SQLite database. The daemon is
+// notified about the active project root via the settings API so it can load
+// rules, workflows, and artifacts. The app is a thin client for project registration.
 
 use std::path::Path;
+use std::sync::Arc;
 
 use tauri::State;
 
+use crate::db::open_project_storage;
 use crate::domain::project::{Project, ProjectSummary};
 use crate::error::OrqaError;
-use crate::repo::project_repo;
 use crate::state::AppState;
 
 /// Open an existing directory as an OrqaStudio project.
 ///
-/// If the directory is already registered, returns the existing project.
-/// Otherwise creates a new project record. Walks up the directory tree
-/// to find the root containing `.orqa/` so subdirectory paths work correctly.
+/// Resolves the canonical project root (directory containing `.orqa/`),
+/// opens project-scoped storage at that root, registers or touches the project
+/// record, and stores the storage in `AppState`. Returns the `Project` record.
 #[tauri::command]
 pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project, OrqaError> {
     tracing::info!(subsystem = "project", path = %path, "project_open: entry");
     let raw_canonical = validate_directory_path(&path)?;
 
     // Walk up to find the true project root (directory containing .orqa/).
-    // This handles cases where the app opens from a subdirectory like app/.
     let canonical = {
         let p = Path::new(&raw_canonical);
         if p.join(".orqa").exists() {
@@ -43,25 +43,25 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
         }
     };
 
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
+    // Open (or create) project-scoped storage at the project root.
+    let storage = open_project_storage(Path::new(&canonical))?;
 
-    // Check if already registered
-    let project = match project_repo::get_by_path(&conn, &canonical) {
+    // Register or touch the project record.
+    let projects = storage.projects();
+    let project = match projects.get_by_path(&canonical) {
         Ok(project) => {
-            // Touch the updated_at timestamp so it surfaces as the active project
-            project_repo::touch_updated_at(&conn, project.id)?;
-            project_repo::get(&conn, project.id)?
+            projects.touch_updated_at(project.id)?;
+            projects.get(project.id)?
         }
-        Err(OrqaError::NotFound(_)) => {
+        Err(orqa_storage::StorageError::NotFound(_)) => {
             let name = derive_project_name(&canonical);
-            project_repo::create(&conn, &name, &canonical, None)?
+            projects.create(&name, &canonical, None)?
         }
-        Err(e) => return Err(e),
+        Err(e) => return Err(OrqaError::Database(e.to_string())),
     };
+
+    // Swap the active storage in AppState.
+    state.db.set(Arc::clone(&storage))?;
 
     tracing::info!(subsystem = "project", project_id = project.id, path = %canonical, "project_open: exit");
     Ok(project)
@@ -70,23 +70,15 @@ pub fn project_open(path: String, state: State<'_, AppState>) -> Result<Project,
 /// Get the most recently active project, if any.
 #[tauri::command]
 pub fn project_get_active(state: State<'_, AppState>) -> Result<Option<Project>, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    project_repo::get_active(&conn)
+    let storage = state.db.get()?;
+    Ok(storage.projects().get_active()?)
 }
 
 /// List all projects with summary information.
 #[tauri::command]
 pub fn project_list(state: State<'_, AppState>) -> Result<Vec<ProjectSummary>, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    project_repo::list(&conn)
+    let storage = state.db.get()?;
+    Ok(storage.projects().list()?)
 }
 
 /// Validate that a path exists and is a directory, returning the canonical path string.
@@ -119,7 +111,6 @@ fn derive_project_name(path: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::init_memory_db;
 
     #[test]
     fn derive_project_name_from_path() {
@@ -136,11 +127,13 @@ mod tests {
 
     #[test]
     fn project_get_delegates_to_repo() {
-        let conn = init_memory_db().expect("db init");
-        let project =
-            project_repo::create(&conn, "test", "/test/path", Some("desc")).expect("create");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let project = storage
+            .projects()
+            .create("test", "/test/path", Some("desc"))
+            .expect("create");
 
-        let fetched = project_repo::get(&conn, project.id).expect("get");
+        let fetched = storage.projects().get(project.id).expect("get");
         assert_eq!(fetched.name, "test");
         assert_eq!(fetched.path, "/test/path");
         assert_eq!(fetched.description.as_deref(), Some("desc"));
@@ -148,18 +141,20 @@ mod tests {
 
     #[test]
     fn project_get_active_empty_db() {
-        let conn = init_memory_db().expect("db init");
-        let result = project_repo::get_active(&conn).expect("get_active");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let result = storage.projects().get_active().expect("get_active");
         assert!(result.is_none());
     }
 
     #[test]
     fn project_get_active_returns_most_recent() {
-        let conn = init_memory_db().expect("db init");
-        project_repo::create(&conn, "old", "/old", None).expect("create");
-        project_repo::create(&conn, "new", "/new", None).expect("create");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        storage.projects().create("old", "/old", None).expect("create");
+        storage.projects().create("new", "/new", None).expect("create");
 
-        let active = project_repo::get_active(&conn)
+        let active = storage
+            .projects()
+            .get_active()
             .expect("get_active")
             .expect("should have project");
         assert_eq!(active.name, "new");
@@ -167,21 +162,20 @@ mod tests {
 
     #[test]
     fn project_list_returns_all() {
-        let conn = init_memory_db().expect("db init");
-        project_repo::create(&conn, "p1", "/p1", None).expect("create");
-        project_repo::create(&conn, "p2", "/p2", None).expect("create");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        storage.projects().create("p1", "/p1", None).expect("create");
+        storage.projects().create("p2", "/p2", None).expect("create");
 
-        let projects = project_repo::list(&conn).expect("list");
+        let projects = storage.projects().list().expect("list");
         assert_eq!(projects.len(), 2);
     }
 
     #[test]
     fn project_open_existing_returns_project() {
-        let conn = init_memory_db().expect("db init");
-        let original = project_repo::create(&conn, "test", "/tmp", None).expect("create");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let original = storage.projects().create("test", "/tmp", None).expect("create");
 
-        // Simulate reopening by path lookup
-        let fetched = project_repo::get_by_path(&conn, "/tmp").expect("get_by_path");
+        let fetched = storage.projects().get_by_path("/tmp").expect("get_by_path");
         assert_eq!(fetched.id, original.id);
         assert_eq!(fetched.name, "test");
     }

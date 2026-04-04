@@ -16,7 +16,7 @@
 	{open}
 	onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}
 >
-	<DialogContent class="max-w-sm">
+	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>Not an Orqa Project</DialogTitle>
 			<DialogDescription>

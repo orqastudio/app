@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Icon, Button } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, Caption } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, artifactGraphSDK } = getStores();
@@ -112,27 +111,25 @@
 						class="h-12 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
 					/>
 					{#if query}
-						<Button
-							variant="ghost"
-							size="icon"
-							class="h-6 w-6"
+						<button
+							class="flex h-6 w-6 items-center justify-center rounded hover:bg-accent"
 							onclick={() => {
 								query = "";
 								inputEl?.focus();
 							}}
 						>
 							<Icon name="x" size="sm" />
-						</Button>
+						</button>
 					{/if}
 				</div>
 
 				<!-- Results -->
 				{#if query.trim() && results.length > 0}
-					<ScrollArea class="max-h-[40vh]">
+					<div class="max-h-[40vh] overflow-y-auto">
 						<div class="p-1">
 							{#each results as node, i (node.id)}
 								<button
-									class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors {i === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
+									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm {i === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
 									onclick={() => selectResult(node)}
 									onmouseenter={() => {
 										selectedIndex = i;
@@ -164,22 +161,20 @@
 									<span class="min-w-0 flex-1 truncate">{node.title}</span>
 
 									<!-- Type -->
-									<span
-										class="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground"
-									>
+									<span class="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">
 										{node.artifact_type}
 									</span>
 								</button>
 							{/each}
 						</div>
-					</ScrollArea>
+					</div>
 				{:else if query.trim()}
-					<div class="px-3 py-6 text-center text-sm text-muted-foreground">
-						No matching artifacts
+					<div class="flex items-center justify-center px-3 py-6">
+						<Caption>No matching artifacts</Caption>
 					</div>
 				{:else}
-					<div class="px-3 py-6 text-center text-sm text-muted-foreground">
-						Type to search across all artifacts
+					<div class="flex items-center justify-center px-3 py-6">
+						<Caption>Type to search across all artifacts</Caption>
 					</div>
 				{/if}
 

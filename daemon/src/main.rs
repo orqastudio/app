@@ -27,7 +27,6 @@ mod compact_context;
 mod config;
 mod context;
 mod event_bus;
-mod event_store;
 mod graph_state;
 mod health;
 mod knowledge;
@@ -38,7 +37,6 @@ mod process;
 mod prompt;
 mod routes;
 mod session_start;
-mod store;
 mod subprocess;
 mod tray;
 mod watcher;
@@ -47,9 +45,101 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
+use orqa_engine_types::types::event::LogEvent;
+use orqa_storage::Storage;
+use tokio::sync::broadcast;
+
 use crate::graph_state::GraphState;
 use crate::subprocess::{ProcessSnapshot, SubprocessManager};
 use crate::tray::SubprocessStatuses;
+
+/// Maximum events to accumulate before flushing to SQLite.
+const EVENT_BATCH_SIZE: usize = 100;
+
+/// Maximum time to wait before flushing a non-empty event batch.
+const EVENT_FLUSH_INTERVAL: std::time::Duration = std::time::Duration::from_millis(500);
+
+/// Spawn a background tokio task that drains the event bus into unified storage.
+///
+/// Subscribes to `bus`, accumulates events into a local batch, and flushes
+/// to the `log_events` table via `spawn_blocking` when the batch reaches
+/// `EVENT_BATCH_SIZE` or `EVENT_FLUSH_INTERVAL` elapses — whichever comes first.
+/// Exits automatically when the bus sender is dropped (daemon shutdown),
+/// after flushing any remaining events.
+fn spawn_event_batch_writer(bus: Arc<event_bus::EventBus>, storage: Arc<Storage>) {
+    tokio::spawn(async move {
+        let mut rx: broadcast::Receiver<LogEvent> = bus.subscribe();
+        let mut batch: Vec<LogEvent> = Vec::with_capacity(EVENT_BATCH_SIZE);
+        let flush_interval = tokio::time::interval(EVENT_FLUSH_INTERVAL);
+        tokio::pin!(flush_interval);
+
+        loop {
+            tokio::select! {
+                biased;
+
+                result = rx.recv() => {
+                    match result {
+                        Ok(event) => {
+                            batch.push(event);
+                            if batch.len() >= EVENT_BATCH_SIZE {
+                                flush_event_batch(&storage, &mut batch).await;
+                            }
+                        }
+                        Err(broadcast::error::RecvError::Lagged(n)) => {
+                            warn!(
+                                subsystem = "storage",
+                                dropped = n,
+                                "[storage] event bus lagged — {n} events lost"
+                            );
+                        }
+                        Err(broadcast::error::RecvError::Closed) => {
+                            if !batch.is_empty() {
+                                flush_event_batch(&storage, &mut batch).await;
+                            }
+                            info!(
+                                subsystem = "storage",
+                                "[storage] event bus closed, batch writer exiting"
+                            );
+                            break;
+                        }
+                    }
+                }
+
+                _ = flush_interval.tick() => {
+                    if !batch.is_empty() {
+                        flush_event_batch(&storage, &mut batch).await;
+                    }
+                }
+            }
+        }
+    });
+}
+
+/// Move `batch` into `spawn_blocking` and flush it to the events repo.
+///
+/// Clears `batch` after dispatching. The `Arc<Storage>` clone ensures the
+/// storage outlives the blocking closure.
+async fn flush_event_batch(storage: &Arc<Storage>, batch: &mut Vec<LogEvent>) {
+    let storage_clone = Arc::clone(storage);
+    let events = std::mem::take(batch);
+    if let Err(e) = tokio::task::spawn_blocking(move || {
+        if let Err(e) = storage_clone.events().insert_batch(events) {
+            error!(
+                subsystem = "storage",
+                error = %e,
+                "[storage] event batch insert failed"
+            );
+        }
+    })
+    .await
+    {
+        error!(
+            subsystem = "storage",
+            error = ?e,
+            "[storage] spawn_blocking panicked during event flush"
+        );
+    }
+}
 
 use tracing::{error, info, warn};
 
@@ -163,15 +253,17 @@ async fn run(
     // array in GET /health, enabling OrqaDev auto-discovery.
     let process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>> = Arc::new(Mutex::new(Vec::new()));
 
-    // Open the SQLite event store and spawn the background batch writer.
+    // Open the unified SQLite storage at .state/orqa.db. This replaces the
+    // separate daemon.db and events.db that previously lived in .state/.
     // Degrades gracefully if the database cannot be opened.
-    let event_store = match event_store::EventStore::open(&project_root, daemon_config.event_retention_days) {
-        Ok(store) => {
-            event_store::spawn_batch_writer(Arc::clone(&event_bus), Arc::clone(&store));
+    let storage = match Storage::open(&project_root) {
+        Ok(s) => {
+            // Spawn background batch writer: drains the event bus into the
+            // unified storage's log_events table via batched inserts.
+            spawn_event_batch_writer(Arc::clone(&event_bus), Arc::clone(&s));
 
             // Spawn a background task that purges expired events every 6 hours.
-            // This runs independently of the batch writer and uses its own interval.
-            let purge_store = Arc::clone(&store);
+            let purge_storage = Arc::clone(&s);
             let retention_days = daemon_config.event_retention_days;
             tokio::spawn(async move {
                 let mut interval = tokio::time::interval(std::time::Duration::from_secs(6 * 3600));
@@ -179,17 +271,26 @@ async fn run(
                 interval.tick().await;
                 loop {
                     interval.tick().await;
-                    event_store::EventStore::purge(Arc::clone(&purge_store), retention_days).await;
+                    let s = Arc::clone(&purge_storage);
+                    if let Err(e) = tokio::task::spawn_blocking(move || {
+                        s.events().purge(retention_days)
+                    }).await {
+                        error!(
+                            subsystem = "storage",
+                            error = ?e,
+                            "[storage] spawn_blocking panicked during event purge"
+                        );
+                    }
                 }
             });
 
-            Some(store)
+            Some(s)
         }
         Err(e) => {
             warn!(
-                subsystem = "event-store",
+                subsystem = "storage",
                 error = %e,
-                "[event-store] could not open events.db — running without persistence"
+                "[storage] could not open orqa.db — running without persistence"
             );
             None
         }
@@ -220,26 +321,13 @@ async fn run(
         }
     };
 
-    // Open the daemon SQLite store for sessions, projects, and settings.
-    // Degrades gracefully when the database cannot be opened.
-    let daemon_store = {
-        let db_path = project_root.join(".state/daemon.db");
-        match store::DaemonStore::open(db_path) {
-            Some(s) => Some(Arc::new(s)),
-            None => {
-                warn!(subsystem = "store", "[store] daemon.db unavailable — session/project/settings endpoints disabled");
-                None
-            }
-        }
-    };
-
     tokio::spawn({
         let bus = Arc::clone(&event_bus);
         let snapshots = Arc::clone(&process_snapshots);
         let gs = graph_state.clone();
-        let ds = daemon_store.clone();
+        let st = storage.clone();
         async move {
-            if let Err(e) = health::start(daemon_port, daemon_config, bus, event_store, snapshots, gs, ds).await {
+            if let Err(e) = health::start(daemon_port, daemon_config, bus, st, snapshots, gs).await {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }
         }

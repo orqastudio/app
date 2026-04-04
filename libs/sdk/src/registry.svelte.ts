@@ -29,22 +29,22 @@ import { PluginStore } from "./stores/plugin.svelte.js";
 
 /** The full set of SDK store instances. */
 export interface OrqaStores {
-    artifactGraphSDK: ArtifactGraphSDK;
-    sessionStore: SessionStore;
-    projectStore: ProjectStore;
-    artifactStore: ArtifactStore;
-    conversationStore: ConversationStore;
-    enforcementStore: EnforcementStore;
-    lessonStore: LessonStore;
-    setupStore: SetupStore;
-    settingsStore: SettingsStore;
-    errorStore: ErrorStoreImpl;
-    navigationStore: NavigationStore;
-    toastStore: ToastStore;
-    pluginRegistry: PluginRegistry;
-    pluginStore: PluginStore;
+    readonly artifactGraphSDK: ArtifactGraphSDK;
+    readonly sessionStore: SessionStore;
+    readonly projectStore: ProjectStore;
+    readonly artifactStore: ArtifactStore;
+    readonly conversationStore: ConversationStore;
+    readonly enforcementStore: EnforcementStore;
+    readonly lessonStore: LessonStore;
+    readonly setupStore: SetupStore;
+    readonly settingsStore: SettingsStore;
+    readonly errorStore: ErrorStoreImpl;
+    readonly navigationStore: NavigationStore;
+    readonly toastStore: ToastStore;
+    readonly pluginRegistry: PluginRegistry;
+    readonly pluginStore: PluginStore;
     /** Convenience functions: toast.success(), toast.error(), etc. */
-    toast: ReturnType<typeof createToastConvenience>;
+    readonly toast: ReturnType<typeof createToastConvenience>;
 }
 
 // ---------------------------------------------------------------------------

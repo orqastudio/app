@@ -7,7 +7,7 @@
 pub mod commands;
 /// HTTP client for the OrqaStudio daemon REST API.
 pub mod daemon_client;
-/// SQLite database initialization and migrations.
+/// Project-scoped storage initialization (thin wrapper over engine/storage).
 pub mod db;
 /// Domain logic: artifact types, session management, settings, and setup checks.
 pub mod domain;
@@ -15,8 +15,6 @@ pub mod domain;
 pub mod error;
 /// Structured logging initialization for the Tauri process.
 pub mod logging;
-/// Persistence layer: SQLite-backed repositories for sessions, messages, and settings.
-pub mod repo;
 /// Background server processes: IPC socket for CLI integration.
 pub mod servers;
 /// Application startup sequencing and task progress tracking.
@@ -26,25 +24,19 @@ pub mod state;
 /// File system watcher for `.orqa/` artifact change detection.
 pub mod watcher;
 
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use tauri::Manager;
 
-/// Initialize the SQLite database at `db_path` and return the connection.
-fn setup_database(db_path_str: &str) -> Result<rusqlite::Connection, Box<dyn std::error::Error>> {
-    let conn =
-        db::init_db(db_path_str).map_err(|e| format!("failed to initialize database: {e}"))?;
-    Ok(conn)
-}
-
-/// Construct and return the `AppState`.
+/// Construct and return the initial `AppState` with no project open.
+///
+/// Storage starts as `None` — it is populated by the first `project_open` call.
 fn build_app_state(
-    conn: rusqlite::Connection,
     tracker: &Arc<startup::StartupTracker>,
 ) -> Result<state::AppState, Box<dyn std::error::Error>> {
     Ok(state::AppState {
-        db: state::DbState {
-            conn: std::sync::Mutex::new(conn),
+        db: state::StorageState {
+            storage: Mutex::new(None),
         },
         daemon: state::DaemonState {
             client: daemon_client::DaemonClient::new()?,
@@ -53,38 +45,25 @@ fn build_app_state(
             tracker: Arc::clone(tracker),
         },
         artifacts: state::ArtifactState {
-            watcher: Arc::new(std::sync::Mutex::new(None)),
+            watcher: Arc::new(Mutex::new(None)),
         },
     })
 }
 
-/// Run the Tauri setup callback: initialise logging and database.
+/// Run the Tauri setup callback: initialise logging and application state.
 fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     logging::init_logging(app.handle());
 
-    let app_dir = app
-        .path()
-        .app_data_dir()
-        .map_err(|e| format!("failed to resolve app data dir: {e}"))?;
-    std::fs::create_dir_all(&app_dir).map_err(|e| format!("failed to create app data dir: {e}"))?;
-
-    let db_path = app_dir.join("orqa.db");
-    let db_path_str = db_path
-        .to_str()
-        .ok_or_else(|| "app data path is not valid UTF-8".to_owned())?;
-
-    let conn = setup_database(db_path_str).map_err(|e| e.to_string())?;
-
     let tracker = startup::StartupTracker::new();
-    let app_state = build_app_state(conn, &tracker).map_err(|e| e.to_string())?;
+    let app_state = build_app_state(&tracker).map_err(|e| e.to_string())?;
 
     // Start IPC socket server for CLI ↔ App communication (orqa mcp / orqa lsp)
     servers::ipc_socket::start(None);
 
     app.manage(app_state);
 
-    // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. Auto-complete setup
-    // and open the project so a fresh DB is immediately usable.
+    // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. Open the project
+    // storage and auto-complete setup so a fresh DB is immediately usable.
     if let Ok(project_root) = std::env::var("ORQA_PROJECT_ROOT") {
         auto_open_dev_project(app, &project_root);
     }
@@ -92,31 +71,12 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Auto-complete first-run setup and open the project when launched via `orqa dev`.
+/// Auto-open a project when launched via `orqa dev`.
 ///
-/// Called only when `ORQA_PROJECT_ROOT` is set. Marks setup as complete so the
-/// wizard is skipped, then calls `project_open` so artifacts are immediately available.
+/// Calls `project_open` which opens project-scoped storage and stores it in
+/// AppState, then marks setup complete so the wizard is skipped.
 fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
     let state: tauri::State<'_, state::AppState> = app.state();
-
-    // Mark first-run setup as complete — dev environment is already configured.
-    {
-        let conn = state
-            .db
-            .conn
-            .lock()
-            .expect("db lock for setup auto-complete");
-        if let Err(e) = repo::settings_repo::set(
-            &conn,
-            "setup_version",
-            &serde_json::json!(1u32),
-            "app",
-        ) {
-            tracing::warn!(err = %e, "failed to auto-complete setup");
-        } else {
-            tracing::info!("auto-completed first-run setup (dev mode)");
-        }
-    }
 
     match commands::project_commands::project_open(project_root.to_owned(), state) {
         Ok(project) => {
@@ -124,6 +84,20 @@ fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
         }
         Err(e) => {
             tracing::warn!(root = %project_root, err = %e, "failed to auto-open project from ORQA_PROJECT_ROOT");
+            return;
+        }
+    }
+
+    // Mark first-run setup as complete — dev environment is already configured.
+    let state: tauri::State<'_, state::AppState> = app.state();
+    if let Ok(storage) = state.db.get() {
+        if let Err(e) = storage
+            .settings()
+            .set("setup_version", &serde_json::json!(1u32), "app")
+        {
+            tracing::warn!(err = %e, "failed to auto-complete setup");
+        } else {
+            tracing::info!("auto-completed first-run setup (dev mode)");
         }
     }
 }
@@ -226,5 +200,8 @@ pub fn run() {
     let builder = register_plugins(builder);
     register_commands(builder)
         .run(tauri::generate_context!())
+        // BINARY ENTRY POINT: Tauri's builder pattern returns Result but provides no
+        // graceful recovery path — if the event loop fails to start the process must
+        // exit. This is the correct use of `.expect()` in a binary entry point.
         .expect("error while running tauri application");
 }

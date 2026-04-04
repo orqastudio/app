@@ -22,23 +22,23 @@
 		<CardTitle>Claude CLI</CardTitle>
 		<CardDescription>Claude Code CLI version and authentication status</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
+	<CardContent>
 		{#if cliChecking}
 			<div class="flex items-center gap-2 text-sm">
 				<Icon name="loader-circle" size="md" />
 				<span class="text-muted-foreground">Checking CLI status...</span>
 			</div>
 		{:else if setupStore.cliInfo}
-			<div class="space-y-3">
+			<div class="flex flex-col gap-3">
 				<div class="flex items-center gap-2 text-sm">
 					<span class="w-32 text-muted-foreground">Installed:</span>
 					{#if setupStore.cliInfo.installed}
-						<div class="flex items-center gap-1.5">
+						<div class="flex items-center gap-1">
 							<Icon name="circle-check" size="md" />
 							<span>Yes</span>
 						</div>
 					{:else}
-						<div class="flex items-center gap-1.5">
+						<div class="flex items-center gap-1">
 							<Icon name="circle-x" size="md" />
 							<span class="text-destructive">Not found</span>
 						</div>
@@ -62,12 +62,12 @@
 				<div class="flex items-center gap-2 text-sm">
 					<span class="w-32 text-muted-foreground">Authenticated:</span>
 					{#if setupStore.cliInfo.authenticated}
-						<div class="flex items-center gap-1.5">
+						<div class="flex items-center gap-1">
 							<Icon name="shield-check" size="md" />
 							<span>Yes</span>
 						</div>
 					{:else}
-						<div class="flex items-center gap-1.5">
+						<div class="flex items-center gap-1">
 							<Icon name="circle-x" size="md" />
 							<span class="text-warning">Not authenticated</span>
 						</div>
@@ -84,12 +84,12 @@
 				{/if}
 			</div>
 		{:else}
-			<p class="text-sm text-muted-foreground">CLI status not checked yet.</p>
+			<span class="text-sm text-muted-foreground">CLI status not checked yet.</span>
 		{/if}
 
 		<Separator />
 
-		<div class="flex gap-2">
+		<div class="flex items-center gap-2">
 			<Button variant="outline" size="sm" onclick={onCheckCli} disabled={cliChecking}>
 				<Icon name="refresh-cw" size="sm" />
 				Re-check Status

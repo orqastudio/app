@@ -7,6 +7,10 @@
 // 50,000-event ring buffer; when full, the oldest event is evicted. The
 // frontend queries events via IPC commands exposed here.
 //
+// Write-through persistence: after every push_event_pub call, the event is
+// also queued to the EventBatchWriter for SQLite persistence. This adds
+// zero latency to the hot path — the channel send is non-blocking.
+//
 // Reconnection uses exponential backoff starting at 1 s, doubling each attempt
 // up to a maximum of 30 s. On each reconnect, missed events are loaded from the
 // daemon's SQLite history via GET /events?after=<last_timestamp>. Connection
@@ -14,16 +18,25 @@
 
 use std::collections::VecDeque;
 use std::sync::Arc;
+use std::time::Duration;
 
 use orqa_engine_types::ports::resolve_daemon_port;
 use orqa_engine_types::types::event::LogEvent;
+use orqa_storage::Storage;
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Emitter, State};
+use tauri::{AppHandle, Emitter, Manager as _, State};
 use tokio::sync::Mutex;
+use tokio::sync::mpsc;
 use tracing::{error, info, warn};
 
 /// Maximum number of events retained in the ring buffer.
 const RING_BUFFER_CAPACITY: usize = 50_000;
+
+/// Maximum events to accumulate before flushing to SQLite.
+const BATCH_SIZE: usize = 100;
+
+/// Maximum time to wait before flushing a non-empty batch.
+const FLUSH_INTERVAL: Duration = Duration::from_millis(500);
 
 /// Tauri event name used to push new log events to the frontend.
 const TAURI_EVENT_NEW_LOG: &str = "orqa://log-event";
@@ -36,6 +49,103 @@ const BACKOFF_INITIAL_SECS: u64 = 1;
 
 /// Maximum reconnect backoff in seconds.
 const BACKOFF_MAX_SECS: u64 = 30;
+
+/// Non-blocking batch writer that queues events through an mpsc channel and
+/// flushes them to `orqa-storage` via a background task.
+///
+/// This replaces the SessionDb batch writer. Callers use `queue_event()` which
+/// is a non-blocking send; the background flush loop calls
+/// `storage.devtools().insert_events()` in a `spawn_blocking` context.
+pub struct EventBatchWriter {
+    /// Channel sender for queuing events.
+    tx: mpsc::UnboundedSender<LogEvent>,
+}
+
+impl EventBatchWriter {
+    /// Create a new batch writer bound to `storage` and `session_id`, and spawn
+    /// the background flush loop.
+    pub fn new(storage: Arc<Storage>, session_id: String) -> Self {
+        let (tx, rx) = mpsc::unbounded_channel::<LogEvent>();
+        spawn_flush_loop(storage, session_id, rx);
+        Self { tx }
+    }
+
+    /// Queue a single event for batched write to SQLite.
+    ///
+    /// Non-blocking: the event is sent on the unbounded channel and the
+    /// background flush loop handles the actual INSERT.
+    pub fn queue_event(&self, event: LogEvent) {
+        if self.tx.send(event).is_err() {
+            warn!(subsystem = "event-batch-writer", "channel closed, event dropped");
+        }
+    }
+}
+
+/// Spawn the background tokio task that drains the channel into the database.
+///
+/// Accumulates events into a local batch and flushes via `spawn_blocking` when
+/// the batch reaches `BATCH_SIZE` or `FLUSH_INTERVAL` elapses. Exits when the
+/// channel is closed (i.e., when `EventBatchWriter` is dropped), flushing any
+/// remaining events.
+fn spawn_flush_loop(
+    storage: Arc<Storage>,
+    session_id: String,
+    mut rx: mpsc::UnboundedReceiver<LogEvent>,
+) {
+    tauri::async_runtime::spawn(async move {
+        let mut batch: Vec<LogEvent> = Vec::with_capacity(BATCH_SIZE);
+        let flush_interval = tokio::time::interval(FLUSH_INTERVAL);
+        tokio::pin!(flush_interval);
+
+        loop {
+            tokio::select! {
+                biased;
+
+                maybe_event = rx.recv() => {
+                    match maybe_event {
+                        Some(event) => {
+                            batch.push(event);
+                            if batch.len() >= BATCH_SIZE {
+                                flush(&storage, &session_id, &mut batch).await;
+                            }
+                        }
+                        None => {
+                            // Channel closed — flush remaining events and exit.
+                            if !batch.is_empty() {
+                                flush(&storage, &session_id, &mut batch).await;
+                            }
+                            info!(subsystem = "event-batch-writer", "flush loop exiting");
+                            break;
+                        }
+                    }
+                }
+
+                _ = flush_interval.tick() => {
+                    if !batch.is_empty() {
+                        flush(&storage, &session_id, &mut batch).await;
+                    }
+                }
+            }
+        }
+    });
+}
+
+/// Move `batch` into `spawn_blocking` and flush it to SQLite via `DevtoolsRepo`.
+async fn flush(storage: &Arc<Storage>, session_id: &str, batch: &mut Vec<LogEvent>) {
+    let storage_clone = Arc::clone(storage);
+    let sid = session_id.to_owned();
+    let events = std::mem::take(batch);
+    if let Err(e) = tokio::task::spawn_blocking(move || {
+        storage_clone
+            .devtools()
+            .insert_events(&sid, events)
+            .map_err(|e| e.to_string())
+    })
+    .await
+    {
+        error!(subsystem = "event-batch-writer", error = ?e, "spawn_blocking panicked during flush");
+    }
+}
 
 /// Connection state emitted to the frontend via `orqa://connection-state` events.
 ///
@@ -131,12 +241,13 @@ async fn fetch_events_json(url: &str) -> Option<Vec<serde_json::Value>> {
 /// Load events missed during a disconnect from the daemon's SQLite history.
 ///
 /// Queries `GET /events?after=<after_ms>&limit=5000` and pushes each returned
-/// event into the ring buffer and emits it to the frontend. Silently no-ops
-/// when the daemon is unreachable — the subsequent live stream attempt will
-/// surface the connectivity error.
+/// event into the ring buffer, emits it to the frontend, and queues it for
+/// SQLite persistence. Silently no-ops when the daemon is unreachable — the
+/// subsequent live stream attempt will surface the connectivity error.
 async fn load_gap_events(
     app: &AppHandle,
     state: &Arc<EventConsumerState>,
+    batch_writer: &Arc<EventBatchWriter>,
     base_url: &str,
     after_ms: i64,
 ) {
@@ -152,6 +263,8 @@ async fn load_gap_events(
                 if let Err(e) = app.emit(TAURI_EVENT_NEW_LOG, &event) {
                     error!(subsystem = "event-consumer", error = %e, "failed to emit gap event");
                 }
+                // Persist to SQLite before moving event into ring buffer.
+                batch_writer.queue_event(event.clone());
                 push_event_pub(state, event).await;
             }
             Err(e) => {
@@ -170,6 +283,9 @@ async fn load_gap_events(
 /// to the live stream, the task queries `/events?after=<last_timestamp>` to
 /// replay any events missed during the gap. Connection state transitions are
 /// emitted to the frontend via `orqa://connection-state` Tauri events.
+///
+/// Every event pushed to the ring buffer is also queued to the `EventBatchWriter`
+/// for SQLite persistence via the non-blocking batch writer channel.
 pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
     tauri::async_runtime::spawn(async move {
         // Unix-ms timestamp of the last received event; used to fill gaps on reconnect.
@@ -186,13 +302,18 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
             let base_url = format!("http://127.0.0.1:{port}");
             let stream_url = format!("{base_url}/events/stream");
 
+            // Retrieve batch_writer from managed state each loop iteration.
+            let batch_writer = app
+                .try_state::<Arc<EventBatchWriter>>()
+                .map(|s| Arc::clone(&s));
+
             if first_attempt {
                 emit_connection_state(&app, &ConnectionState::WaitingForDaemon);
                 info!(subsystem = "event-consumer", %stream_url, "connecting to daemon SSE stream");
             } else {
                 // Fill the event gap before reconnecting to the live stream.
-                if let Some(ts) = last_timestamp {
-                    load_gap_events(&app, &state, &base_url, ts).await;
+                if let (Some(ts), Some(ref bw)) = (last_timestamp, &batch_writer) {
+                    load_gap_events(&app, &state, bw, &base_url, ts).await;
                 }
                 emit_connection_state(&app, &ConnectionState::Reconnecting { attempt });
                 info!(
@@ -203,7 +324,8 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
                 );
             }
 
-            match connect_and_consume(&app, Arc::clone(&state), &stream_url, &mut last_timestamp).await {
+            let bw_for_consume = batch_writer.clone();
+            match connect_and_consume(&app, Arc::clone(&state), bw_for_consume, &stream_url, &mut last_timestamp).await {
                 Ok(()) => {
                     info!(subsystem = "event-consumer", "SSE stream ended cleanly — reconnecting");
                     // Server closed the stream gracefully; reset backoff.
@@ -224,7 +346,7 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
 
             // Notify the frontend we are pausing before the next attempt.
             emit_connection_state(&app, &ConnectionState::WaitingForDaemon);
-            tokio::time::sleep(tokio::time::Duration::from_secs(backoff_secs)).await;
+            tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
 
             // Double the backoff, capped at BACKOFF_MAX_SECS.
             backoff_secs = (backoff_secs * 2).min(BACKOFF_MAX_SECS);
@@ -237,13 +359,15 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
 ///
 /// Reads the response body in chunks, accumulating bytes until newlines are
 /// found. Each `data:` SSE line is parsed as a `LogEvent`, stored in the ring
-/// buffer, and emitted as a Tauri frontend event. Emits a `Connected` state
-/// event when the HTTP response is successfully established. Updates
-/// `last_timestamp` on each event so the caller can fill gaps on reconnect.
-/// Returns `Ok(())` when the server closes the stream, or an error on failure.
+/// buffer, emitted as a Tauri frontend event, and queued for SQLite persistence.
+/// Emits a `Connected` state event when the HTTP response is successfully
+/// established. Updates `last_timestamp` on each event so the caller can fill
+/// gaps on reconnect. Returns `Ok(())` when the server closes the stream, or an
+/// error on failure.
 async fn connect_and_consume(
     app: &AppHandle,
     state: Arc<EventConsumerState>,
+    batch_writer: Option<Arc<EventBatchWriter>>,
     url: &str,
     last_timestamp: &mut Option<i64>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
@@ -273,7 +397,7 @@ async fn connect_and_consume(
             }
         };
         line_buf.push_str(text);
-        process_sse_lines(app, &state, &mut line_buf, last_timestamp).await;
+        process_sse_lines(app, &state, batch_writer.as_ref(), &mut line_buf, last_timestamp).await;
     }
     Ok(())
 }
@@ -283,10 +407,12 @@ async fn connect_and_consume(
 /// Each complete line ending with `\n` is extracted, `data:` prefix stripped,
 /// and the payload deserialized as `LogEvent`. Incomplete trailing data is left
 /// in `buf` for the next chunk. Updates `last_timestamp` to the most recent
-/// event's timestamp so reconnect logic can query the missed event gap.
+/// event's timestamp so reconnect logic can query the missed event gap. Each
+/// parsed event is also queued for SQLite persistence via the batch writer.
 async fn process_sse_lines(
     app: &AppHandle,
     state: &Arc<EventConsumerState>,
+    batch_writer: Option<&Arc<EventBatchWriter>>,
     buf: &mut String,
     last_timestamp: &mut Option<i64>,
 ) {
@@ -310,6 +436,10 @@ async fn process_sse_lines(
                             error = %e,
                             "failed to emit Tauri log event"
                         );
+                    }
+                    // Queue for SQLite persistence before moving into ring buffer.
+                    if let Some(bw) = batch_writer {
+                        bw.queue_event(event.clone());
                     }
                     push_event_pub(state, event).await;
                 }

@@ -2,7 +2,7 @@
 //
 // These routes let the frontend wizard guide users through the initial
 // setup steps: Claude CLI installation, authentication, and embedding
-// model availability. Setup completion state is stored in the daemon SQLite
+// model availability. Setup completion state is stored in the unified SQLite
 // settings table under the key "setup_version" in scope "app".
 //
 // Endpoints:
@@ -19,7 +19,6 @@ use axum::Json;
 use serde::Serialize;
 
 use crate::health::HealthState;
-use crate::store::{settings_get, settings_set};
 
 // ---------------------------------------------------------------------------
 // Setup versioning
@@ -59,8 +58,8 @@ pub struct ClaudeCliInfo {
     pub authenticated: bool,
 }
 
-/// Response helper when the daemon store is unavailable.
-fn store_unavailable() -> (StatusCode, Json<serde_json::Value>) {
+/// Response helper when the storage is unavailable.
+fn storage_unavailable() -> (StatusCode, Json<serde_json::Value>) {
     (
         StatusCode::SERVICE_UNAVAILABLE,
         Json(serde_json::json!({
@@ -142,15 +141,11 @@ fn is_claude_authenticated() -> bool {
 pub async fn get_setup_status(
     State(state): State<HealthState>,
 ) -> Result<Json<SetupStatus>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-
-        let stored_version = settings_get(&conn, "setup_version", "app")
+        let stored_version = storage.settings()
+            .get("setup_version", "app")
             .ok()
             .flatten()
             .and_then(|v| v.as_u64())
@@ -274,25 +269,16 @@ pub async fn check_embedding_model() -> Json<serde_json::Value> {
 pub async fn complete_setup(
     State(state): State<HealthState>,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-
-        settings_set(
-            &conn,
-            "setup_version",
-            &serde_json::json!(CURRENT_SETUP_VERSION),
-            "app",
-        )
-        .map(|()| StatusCode::NO_CONTENT)
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e, "code": "SETTINGS_SAVE_FAILED" })),
-        ))
+        storage.settings()
+            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
+            .map(|()| StatusCode::NO_CONTENT)
+            .map_err(|e| (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "SETTINGS_SAVE_FAILED" })),
+            ))
     })
     .await
     .map_err(|e| (

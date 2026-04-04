@@ -21,8 +21,8 @@ import * as path from "node:path";
 import { ensureSymlink, listInstalledPlugins, readManifest } from "@orqastudio/cli";
 
 export interface ConnectorSetupResult {
-	symlinkAgents: "created" | "skipped" | "exists" | "replaced";
-	pluginAgentCount: number;
+	readonly symlinkAgents: "created" | "skipped" | "exists" | "replaced";
+	readonly pluginAgentCount: number;
 }
 
 /**
@@ -171,18 +171,17 @@ function setupMergedAgentsDir(
 /**
  * Count the total number of plugin agent entries across all installed plugins.
  * Uses the CLI registry to enumerate plugins rather than raw filesystem scanning.
+ * Uses .reduce() to sum counts without imperative accumulation.
  * @param projectRoot - Absolute path to the project root directory.
  * @returns Total count of agent entries declared across all installed plugin manifests.
  */
 function countPluginAgents(projectRoot: string): number {
-	let count = 0;
-	for (const plugin of listInstalledPlugins(projectRoot)) {
+	return listInstalledPlugins(projectRoot).reduce((count, plugin) => {
 		try {
 			const manifest = readManifest(plugin.path);
-			count += manifest.provides?.agents?.length ?? 0;
+			return count + (manifest.provides?.agents?.length ?? 0);
 		} catch {
-			// Skip invalid
+			return count;
 		}
-	}
-	return count;
+	}, 0);
 }

@@ -50,8 +50,8 @@ const DEFAULT_OPTIONS: Record<string, unknown> = {
  * Entries missing either `option` or `value` are silently skipped.
  */
 function applyOverrides(
-  base: Record<string, unknown>,
-  entries: EnforcementEntry[],
+  base: Readonly<Record<string, unknown>>,
+  entries: readonly EnforcementEntry[],
 ): Record<string, unknown> {
   const result = { ...base };
   for (const entry of entries) {

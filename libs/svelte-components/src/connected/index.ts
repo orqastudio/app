@@ -10,3 +10,4 @@ export { default as StatusBar } from "./status-bar/StatusBar.svelte";
 export { default as ConnectedToolbar } from "./toolbar/Toolbar.svelte";
 export { default as MarkdownRenderer } from "./markdown-renderer/MarkdownRenderer.svelte";
 export { default as WelcomeHero } from "./welcome-hero/WelcomeHero.svelte";
+export { ConnectedChatInput } from "./chat/index.js";

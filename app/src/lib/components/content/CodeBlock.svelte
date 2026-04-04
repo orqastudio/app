@@ -53,9 +53,9 @@
 
 <div class="group relative border border-border bg-muted/30">
 	<div class="flex items-center justify-between border-b border-border px-1 py-1">
-		<Badge variant="secondary" class="font-mono text-[10px] uppercase">{displayLang}</Badge>
+		<span class="font-mono"><Badge variant="secondary" size="xs">{displayLang.toUpperCase()}</Badge></span>
 		<button
-			class="flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground opacity-0 transition-opacity hover:bg-accent group-hover:opacity-100"
+			class="flex h-auto items-center gap-1 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 hover:text-foreground"
 			onclick={copyToClipboard}
 		>
 			{#if copied}
@@ -66,7 +66,7 @@
 			{/if}
 		</button>
 	</div>
-	<ScrollArea orientation="horizontal" class="codeblock-highlight text-sm [&_pre]:!bg-transparent [&_pre]:!p-1 [&_pre]:!my-0 [&_code]:!bg-transparent">
+	<div class="codeblock-highlight text-sm [&_pre]:!bg-transparent [&_pre]:!p-1 [&_pre]:!my-0 [&_code]:!bg-transparent overflow-x-auto">
 		<Highlight language={resolvedLang} code={text} />
-	</ScrollArea>
+	</div>
 </div>

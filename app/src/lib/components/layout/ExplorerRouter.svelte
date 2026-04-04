@@ -91,8 +91,8 @@
 			viewKey={resolved.viewKey}
 		/>
 	{:else if resolved.type === "placeholder"}
-		<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
-			Select an item to view it
+		<div class="flex h-full items-center justify-center">
+			<span class="text-sm text-muted-foreground">Select an item to view it</span>
 		</div>
 	{:else}
 		{@const ViewComponent = resolved.component}

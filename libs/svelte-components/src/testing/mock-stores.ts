@@ -9,18 +9,18 @@
 import { FIXTURE_ARTIFACTS, FIXTURE_PROJECT_SETTINGS } from "./fixtures.js";
 
 export interface MockStoreOverrides {
-	projectStore?: Partial<{
-		hasProject: boolean;
-		projectName: string;
-		projectPath: string;
-		settings: typeof FIXTURE_PROJECT_SETTINGS;
-	}>;
-	settingsStore?: Partial<{
-		theme: "light" | "dark" | "system";
-		model: string;
-	}>;
-	artifacts?: typeof FIXTURE_ARTIFACTS;
-	toasts?: Array<{ id: string; message: string; type: "info" | "error" | "success" | "warning" }>;
+	readonly projectStore?: Readonly<Partial<{
+		readonly hasProject: boolean;
+		readonly projectName: string;
+		readonly projectPath: string;
+		readonly settings: typeof FIXTURE_PROJECT_SETTINGS;
+	}>>;
+	readonly settingsStore?: Readonly<Partial<{
+		readonly theme: "light" | "dark" | "system";
+		readonly model: string;
+	}>>;
+	readonly artifacts?: typeof FIXTURE_ARTIFACTS;
+	readonly toasts?: ReadonlyArray<{ readonly id: string; readonly message: string; readonly type: "info" | "error" | "success" | "warning" }>;
 }
 
 export function createMockStores(overrides?: MockStoreOverrides) {

@@ -18,7 +18,7 @@ use tracing::{info, warn};
 
 use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
 
-use crate::events::EventConsumerState;
+use crate::events::{EventBatchWriter, EventConsumerState};
 
 /// Tauri event name for new log events (matches events.rs constant).
 const TAURI_EVENT_NEW_LOG: &str = "orqa://log-event";
@@ -78,7 +78,48 @@ fn next_id() -> u64 {
 /// The controller prefixes lines as: `HH:MM:SS [source] message`
 /// We extract the source tag and message. Lines without the prefix pattern
 /// are treated as dev-controller output.
+///
+/// JSON lines (from the ProcessManager) are parsed as structured NodeEvents
+/// and mapped to the appropriate source/level/category/message.
+#[allow(clippy::too_many_lines)]
 fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String) {
+    // Detect structured JSON events from the ProcessManager.
+    let trimmed = line.trim();
+    if trimmed.starts_with('{') {
+        if let Ok(val) = serde_json::from_str::<serde_json::Value>(trimmed) {
+            let status = val.get("status").and_then(|v| v.as_str()).unwrap_or("");
+            let node_id = val.get("nodeId").and_then(|v| v.as_str()).unwrap_or("pm");
+            let node_name = val.get("nodeName").and_then(|v| v.as_str()).unwrap_or("");
+            let error = val.get("error").and_then(|v| v.as_str()).unwrap_or("");
+            let duration = val.get("durationMs").and_then(serde_json::Value::as_u64);
+
+            let level = match status {
+                "build-failed" | "crashed" => EventLevel::Error,
+                _ => EventLevel::Info,
+            };
+
+            let category = format!("process:{node_id}");
+
+            let message = match status {
+                "building" | "rebuilding" => format!("Building {node_name}..."),
+                "built" => match duration {
+                    Some(ms) => format!("Built {node_name} in {ms}ms"),
+                    None => format!("Built {node_name}"),
+                },
+                "build-failed" => format!("Build failed for {node_name}: {error}"),
+                "starting" => format!("Starting {node_name}..."),
+                "running" => format!("{node_name} running"),
+                "watching" => format!("Watching {node_name}"),
+                "stopping" => format!("Stopping {node_name}..."),
+                "stopped" => format!("{node_name} stopped"),
+                "crashed" => format!("{node_name} crashed: {error}"),
+                _ => format!("{node_name}: {status}"),
+            };
+
+            return (EventSource::DevController, level, category, message);
+        }
+    }
+
     // Strip ANSI escape codes for parsing (keep original for message)
     let stripped = strip_ansi(line);
 
@@ -147,10 +188,12 @@ fn strip_ansi(s: &str) -> String {
     result
 }
 
-/// Push a log event into the ring buffer and emit it to the frontend.
+/// Push a log event into the ring buffer, emit it to the frontend, and queue
+/// it for SQLite persistence via the batch writer.
 async fn emit_log(
     app: &AppHandle,
     state: &Arc<EventConsumerState>,
+    batch_writer: &Arc<EventBatchWriter>,
     source: EventSource,
     level: EventLevel,
     category: String,
@@ -167,10 +210,13 @@ async fn emit_log(
         session_id: None,
     };
 
-    // Push to ring buffer
+    // Push to ring buffer.
     crate::events::push_event_pub(state, event.clone()).await;
 
-    // Emit to frontend
+    // Queue for SQLite persistence. Non-blocking channel send.
+    batch_writer.queue_event(event.clone());
+
+    // Emit to frontend.
     let _ = app.emit(TAURI_EVENT_NEW_LOG, &event);
 }
 
@@ -185,6 +231,7 @@ pub async fn devtools_start_dev(
     app: AppHandle,
     dev_state: State<'_, Arc<DevControllerState>>,
     event_state: State<'_, Arc<EventConsumerState>>,
+    batch_writer: State<'_, Arc<EventBatchWriter>>,
 ) -> Result<(), String> {
     if dev_state.running.load(Ordering::Relaxed) {
         return Err("Dev environment is already running".into());
@@ -202,11 +249,13 @@ pub async fn devtools_start_dev(
 
     let dev_state_ref = Arc::clone(&dev_state);
     let event_state_ref = Arc::clone(&event_state);
+    let batch_writer_ref = Arc::clone(&batch_writer);
 
     tauri::async_runtime::spawn(async move {
         emit_log(
             &app,
             &event_state_ref,
+            &batch_writer_ref,
             EventSource::DevController,
             EventLevel::Info,
             "controller".into(),
@@ -228,6 +277,7 @@ pub async fn devtools_start_dev(
                 emit_log(
                     &app,
                     &event_state_ref,
+                    &batch_writer_ref,
                     EventSource::DevController,
                     EventLevel::Error,
                     "controller".into(),
@@ -240,7 +290,7 @@ pub async fn devtools_start_dev(
             }
         };
 
-        // Store child PID for stop command
+        // Store child PID for stop command.
         if let Some(pid) = child.id() {
             *dev_state_ref.child_id.lock().await = Some(pid);
         }
@@ -253,6 +303,7 @@ pub async fn devtools_start_dev(
 
         let app_out = app.clone();
         let state_out = Arc::clone(&event_state_ref);
+        let bw_out = Arc::clone(&batch_writer_ref);
         let stdout_task = tauri::async_runtime::spawn(async move {
             if let Some(stdout) = stdout {
                 let reader = BufReader::new(stdout);
@@ -262,13 +313,14 @@ pub async fn devtools_start_dev(
                         continue;
                     }
                     let (source, level, category, message) = parse_controller_line(&line);
-                    emit_log(&app_out, &state_out, source, level, category, message).await;
+                    emit_log(&app_out, &state_out, &bw_out, source, level, category, message).await;
                 }
             }
         });
 
         let app_err = app.clone();
         let state_err = Arc::clone(&event_state_ref);
+        let bw_err = Arc::clone(&batch_writer_ref);
         let stderr_task = tauri::async_runtime::spawn(async move {
             if let Some(stderr) = stderr {
                 let reader = BufReader::new(stderr);
@@ -278,12 +330,12 @@ pub async fn devtools_start_dev(
                         continue;
                     }
                     let (source, level, category, message) = parse_controller_line(&line);
-                    emit_log(&app_err, &state_err, source, level, category, message).await;
+                    emit_log(&app_err, &state_err, &bw_err, source, level, category, message).await;
                 }
             }
         });
 
-        // Wait for the child process to exit
+        // Wait for the child process to exit.
         let _ = stdout_task.await;
         let _ = stderr_task.await;
         let status = child.wait().await;
@@ -297,6 +349,7 @@ pub async fn devtools_start_dev(
         emit_log(
             &app,
             &event_state_ref,
+            &batch_writer_ref,
             EventSource::DevController,
             EventLevel::Info,
             "controller".into(),
@@ -319,6 +372,7 @@ pub async fn devtools_stop_dev(
     app: AppHandle,
     dev_state: State<'_, Arc<DevControllerState>>,
     event_state: State<'_, Arc<EventConsumerState>>,
+    batch_writer: State<'_, Arc<EventBatchWriter>>,
 ) -> Result<(), String> {
     if !dev_state.running.load(Ordering::Relaxed) {
         return Err("Dev environment is not running".into());
@@ -329,6 +383,7 @@ pub async fn devtools_stop_dev(
     emit_log(
         &app,
         &event_state,
+        &batch_writer,
         EventSource::DevController,
         EventLevel::Info,
         "controller".into(),

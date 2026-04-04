@@ -19,24 +19,24 @@ export type CanonicalHookEvent =
 
 /** Context passed to the hook engine for evaluation. */
 export interface HookContext {
-	event: CanonicalHookEvent;
-	tool_name?: string;
-	tool_input?: unknown;
-	file_path?: string;
-	user_message?: string;
-	agent_type?: string;
+	readonly event: CanonicalHookEvent;
+	readonly tool_name?: string;
+	readonly tool_input?: unknown;
+	readonly file_path?: string;
+	readonly user_message?: string;
+	readonly agent_type?: string;
 }
 
 /** Result from the hook engine after evaluating rules. */
 export interface HookResult {
-	action: "allow" | "block" | "warn";
-	messages: string[];
-	violations: HookViolation[];
+	readonly action: "allow" | "block" | "warn";
+	readonly messages: readonly string[];
+	readonly violations: readonly HookViolation[];
 }
 
 /** A single rule violation found during hook evaluation. */
 export interface HookViolation {
-	rule_id: string;
-	action: string;
-	message: string;
+	readonly rule_id: string;
+	readonly action: string;
+	readonly message: string;
 }

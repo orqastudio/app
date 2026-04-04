@@ -10,28 +10,28 @@
  *   runValidation()  — daemon-first, binary-fallback orchestration
  */
 export interface ValidationCheck {
-    category: string;
-    severity: string;
-    artifact_id: string;
-    message: string;
+    readonly category: string;
+    readonly severity: string;
+    readonly artifact_id: string;
+    readonly message: string;
 }
 export interface AppliedFix {
-    artifact_id: string;
-    description: string;
+    readonly artifact_id: string;
+    readonly description: string;
 }
 export interface EnforcementEvent {
-    mechanism: string;
-    check_type: string;
-    rule_id: string | null;
-    artifact_id: string | null;
-    result: string;
-    message: string;
+    readonly mechanism: string;
+    readonly check_type: string;
+    readonly rule_id: string | null;
+    readonly artifact_id: string | null;
+    readonly result: string;
+    readonly message: string;
 }
 export interface ValidationReport {
-    checks: ValidationCheck[];
-    health: Record<string, unknown> | null;
-    fixes_applied: AppliedFix[];
-    enforcement_events: EnforcementEvent[];
+    readonly checks: ValidationCheck[];
+    readonly health: Record<string, unknown> | null;
+    readonly fixes_applied: AppliedFix[];
+    readonly enforcement_events: EnforcementEvent[];
 }
 /**
  * Find the Rust validation binary. Checks common build locations relative to

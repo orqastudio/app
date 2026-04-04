@@ -2,7 +2,7 @@
      Clicking a milestone card drills into a kanban of its epics grouped by status.
      Breadcrumb navigation and a back button return to the milestone board. -->
 <script lang="ts">
-	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, Heading, Badge } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ArtifactNode } from "@orqastudio/types";
 	import type { PipelineStageConfig } from "@orqastudio/types";
@@ -179,14 +179,14 @@
 	}
 </script>
 
-<ScrollArea class="h-full">
+<div class="h-full overflow-y-auto">
 	<div class="flex flex-col gap-6 p-6">
 
 		<!-- Breadcrumb / back navigation -->
 		<div class="flex items-center gap-2">
 			{#if selectedMilestone}
 				<button
-					class="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+					class="flex items-center gap-1 rounded px-2 py-1 text-sm text-muted-foreground hover:bg-accent"
 					onclick={backToMilestones}
 				>
 					<Icon name="chevron-left" size="sm" />
@@ -195,7 +195,7 @@
 				<span class="text-muted-foreground">/</span>
 				<span class="text-sm font-medium truncate max-w-xs">{selectedMilestone.title}</span>
 			{:else}
-				<h1 class="text-2xl font-bold">Roadmap</h1>
+				<Heading level={1}>Roadmap</Heading>
 			{/if}
 		</div>
 
@@ -230,12 +230,12 @@
 								{#each cards as ms (ms.id)}
 									{@const statusColor = colorForStatus(milestoneStages, ms.status)}
 									{@const deadline = (ms.frontmatter as Record<string, unknown>)?.deadline as string | undefined}
-									<div class="rounded-md border border-border bg-card p-3 flex flex-col gap-1.5">
+									<div class="flex flex-col gap-1 rounded-md border border-border bg-card p-3">
 										<!-- Title row -->
 										<div class="flex items-start gap-2">
 											<div class="mt-1 h-2 w-2 shrink-0 rounded-full" style={dotStyle(statusColor)}></div>
 											<button
-												class="flex-1 text-left text-sm font-medium leading-snug hover:underline underline-offset-2 truncate"
+												class="h-auto flex-1 text-left text-sm font-medium leading-snug hover:underline"
 												onclick={() => drillIntoMilestone(ms)}
 											>
 												{ms.title}
@@ -257,7 +257,7 @@
 												<span></span>
 											{/if}
 											<button
-												class="text-xs text-muted-foreground hover:text-foreground transition-colors"
+												class="flex h-auto items-center p-0 text-xs text-muted-foreground hover:text-foreground"
 												onclick={() => openMilestone(ms)}
 												title="Open artifact"
 											>
@@ -310,12 +310,12 @@
 							<div class="flex flex-col gap-2">
 								{#each cards as epic (epic.id)}
 									{@const statusColor = colorForStatus(epicStages, epic.status)}
-									<div class="rounded-md border border-border bg-card p-3 flex flex-col gap-1.5">
+									<div class="flex flex-col gap-1 rounded-md border border-border bg-card p-3">
 										<!-- Title row -->
 										<div class="flex items-start gap-2">
 											<div class="mt-1 h-2 w-2 shrink-0 rounded-full" style={dotStyle(statusColor)}></div>
 											<button
-												class="flex-1 text-left text-sm font-medium leading-snug hover:underline underline-offset-2 truncate"
+												class="h-auto flex-1 text-left text-sm font-medium leading-snug hover:underline"
 												onclick={() => openEpic(epic)}
 											>
 												{epic.title}
@@ -329,9 +329,7 @@
 										<!-- Priority badge -->
 										{#if epic.priority}
 											<div class="pl-4">
-												<span class="rounded px-1.5 py-0.5 text-xs font-medium bg-muted text-muted-foreground">
-													{epic.priority}
-												</span>
+												<Badge variant="secondary">{epic.priority}</Badge>
 											</div>
 										{/if}
 									</div>
@@ -350,4 +348,4 @@
 		{/if}
 
 	</div>
-</ScrollArea>
+</div>

@@ -7,6 +7,8 @@
 		Button,
 		Badge,
 		Input,
+		Checkbox,
+		Label,
 	} from "@orqastudio/svelte-components/pure";
 	import {
 		filters,
@@ -109,7 +111,8 @@
 				aria-label="Source filter"
 			>
 				{#each ALL_SOURCES as source (source)}
-					<button
+					<Button
+						variant="ghost"
 						class="log-filters__option"
 						role="option"
 						aria-selected={filters.sources.has(source)}
@@ -119,7 +122,7 @@
 							class="log-filters__checkbox {filters.sources.has(source) ? 'log-filters__checkbox--checked' : ''}"
 						></span>
 						<span class="log-filters__option-label">{source}</span>
-					</button>
+					</Button>
 				{/each}
 			</div>
 		{/if}
@@ -128,28 +131,20 @@
 	<!-- Level checkbox group (inline, no dropdown needed — only 5 values) -->
 	<div class="log-filters__level-group" role="group" aria-label="Level filter">
 		{#each ALL_LEVELS as level (level)}
-			<label class="log-filters__level-label">
-				<input
-					type="checkbox"
-					class="log-filters__sr-only"
+			<Label class="log-filters__level-label">
+				<Checkbox
 					checked={filters.levels.has(level)}
-					onchange={() => toggleLevel(level)}
+					onCheckedChange={() => toggleLevel(level)}
+					class="log-filters__level-checkbox"
+					aria-label={level}
 				/>
-				<span
-					class="log-filters__level-check {filters.levels.has(level) ? 'log-filters__level-check--checked' : ''}"
-					aria-hidden="true"
-				>
-					{#if filters.levels.has(level)}
-						<span class="log-filters__check-mark">✓</span>
-					{/if}
-				</span>
 				<Badge
 					variant={LEVEL_BADGE_VARIANT[level] ?? "outline"}
 					class="log-filters__level-badge"
 				>
 					{level}
 				</Badge>
-			</label>
+			</Label>
 		{/each}
 	</div>
 
@@ -181,7 +176,8 @@
 				aria-label="Category filter"
 			>
 				{#each [...knownCategories].sort() as category (category)}
-					<button
+					<Button
+						variant="ghost"
 						class="log-filters__option"
 						role="option"
 						aria-selected={filters.categories.has(category)}
@@ -191,7 +187,7 @@
 							class="log-filters__checkbox {filters.categories.has(category) ? 'log-filters__checkbox--checked' : ''}"
 						></span>
 						<span class="log-filters__option-label log-filters__option-label--truncate">{category}</span>
-					</button>
+					</Button>
 				{/each}
 			</div>
 		{/if}
@@ -282,23 +278,18 @@
 		overflow-y: auto;
 	}
 
-	/* Individual option row inside a dropdown. */
-	.log-filters__option {
-		display: flex;
-		width: 100%;
-		align-items: center;
-		gap: var(--spacing-2);
-		padding: var(--spacing-1) var(--spacing-2);
-		text-align: left;
-		font-size: 11px;
-		background: transparent;
-		border: none;
-		cursor: pointer;
-		transition: background-color 150ms;
-	}
-
-	.log-filters__option:hover {
-		background-color: var(--color-surface-base);
+	/* Individual option row inside a dropdown — overrides Button defaults for compact list fit. */
+	:global(.log-filters__option) {
+		display: flex !important;
+		width: 100% !important;
+		justify-content: flex-start !important;
+		align-items: center !important;
+		gap: var(--spacing-2) !important;
+		padding: var(--spacing-1) var(--spacing-2) !important;
+		text-align: left !important;
+		font-size: 11px !important;
+		height: auto !important;
+		border-radius: 0 !important;
 	}
 
 	/* Custom checkbox square. */
@@ -334,50 +325,13 @@
 		gap: var(--spacing-1-5);
 	}
 
-	.log-filters__level-label {
-		display: flex;
-		cursor: pointer;
-		align-items: center;
-		gap: var(--spacing-1);
-	}
-
-	/* Visually hidden native checkbox — accessible, not visible. */
-	.log-filters__sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border-width: 0;
-	}
-
-	/* Custom level checkbox square. */
-	.log-filters__level-check {
-		display: flex;
-		width: 16px;
-		height: 16px;
-		flex-shrink: 0;
-		align-items: center;
-		justify-content: center;
-		border-radius: var(--radius-sm);
-		border: 1px solid var(--color-border);
-		background-color: transparent;
-	}
-
-	.log-filters__level-check--checked {
-		background-color: var(--color-accent-base);
-		border-color: var(--color-accent-base);
-	}
-
-	/* Check mark inside checked state. */
-	.log-filters__check-mark {
-		font-size: 8px;
-		color: white;
-		font-weight: 700;
-		line-height: 1;
+	:global(.log-filters__level-label) {
+		display: flex !important;
+		cursor: pointer !important;
+		align-items: center !important;
+		gap: var(--spacing-1) !important;
+		font-size: inherit !important;
+		font-weight: inherit !important;
 	}
 
 	/* Level badge label: compact variant. */

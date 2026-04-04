@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { SvelteMap } from "svelte/reactivity";
@@ -149,18 +148,20 @@
 </script>
 
 {#if hasData}
-	<CardRoot class="gap-2">
-		<CardHeader class="pb-1">
-			<CardTitle class="flex items-center gap-1.5 text-sm font-semibold">
-				<Icon name="compass" size="md" />
-				Purpose
+	<CardRoot>
+		<CardHeader compact>
+			<CardTitle>
+				<div class="flex items-center gap-1">
+					<Icon name="compass" size="md" />
+					Purpose
+				</div>
 			</CardTitle>
-			<CardDescription class="text-xs">What's Next</CardDescription>
+			<CardDescription>What's Next</CardDescription>
 			<!-- Tab buttons in Card.Action -->
 			<CardAction>
 				<div class="flex items-center gap-0">
 					<button
-						class="px-2 py-1 text-xs transition-colors border-b-2 {activeTab === 'actions' ? 'border-foreground text-foreground font-medium' : 'border-transparent text-muted-foreground hover:text-foreground'}"
+						class="rounded-none border-b-2 px-2 py-1 text-xs {activeTab === 'actions' ? 'border-foreground font-medium text-foreground' : 'border-transparent text-muted-foreground'} hover:bg-accent"
 						onclick={() => (activeTab = "actions")}
 					>
 						Actions
@@ -171,7 +172,7 @@
 						{/if}
 					</button>
 					<button
-						class="px-2 py-1 text-xs transition-colors border-b-2 {activeTab === 'epics' ? 'border-foreground text-foreground font-medium' : 'border-transparent text-muted-foreground hover:text-foreground'}"
+						class="rounded-none border-b-2 px-2 py-1 text-xs {activeTab === 'epics' ? 'border-foreground font-medium text-foreground' : 'border-transparent text-muted-foreground'} hover:bg-accent"
 						onclick={() => (activeTab = "epics")}
 					>
 						Epics
@@ -179,8 +180,8 @@
 				</div>
 			</CardAction>
 		</CardHeader>
-		<CardContent class="p-0">
-			<ScrollArea class="h-[280px] px-3 pb-3">
+		<CardContent>
+			<div class="h-[280px] overflow-y-auto px-3 pb-3">
 			{#if activeTab === "actions"}
 				<!-- ---------------------------------------------------------- -->
 				<!-- Actions tab: all artifacts needing attention               -->
@@ -224,10 +225,10 @@
 										<p class="truncate text-[10px] text-muted-foreground">{epic.description}</p>
 									{/if}
 									{#if epic.taskProgress !== null}
-										<div class="flex items-center gap-1.5 mt-0.5">
+										<div class="mt-0.5 flex items-center gap-1">
 											<div class="h-1 flex-1 rounded-full bg-muted overflow-hidden">
 												<div
-													class="h-full rounded-full bg-emerald-500 transition-all"
+													class="h-full rounded-full bg-success transition-all"
 													style:width="{Math.round(epic.taskProgress * 100)}%"
 												></div>
 											</div>
@@ -245,14 +246,14 @@
 					</div>
 
 					<button
-						class="mt-2 w-full text-center text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+						class="mt-2 w-full rounded px-2 py-1 text-center text-xs text-muted-foreground underline underline-offset-2 hover:bg-accent"
 						onclick={openRoadmap}
 					>
 						View roadmap
 					</button>
 				{/if}
 			{/if}
-			</ScrollArea>
+			</div>
 		</CardContent>
 	</CardRoot>
 {/if}

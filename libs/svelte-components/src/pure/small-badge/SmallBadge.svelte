@@ -11,4 +11,4 @@
 	} = $props();
 </script>
 
-<Badge {variant} class="text-[11px] leading-none">{@render children()}</Badge>
+<Badge {variant} size="sm">{@render children()}</Badge>

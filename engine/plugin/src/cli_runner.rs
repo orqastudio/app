@@ -178,6 +178,9 @@ impl CliToolRunner {
     /// Get the status of all registered CLI tools (last run info).
     pub fn statuses(&self, project_root: &Path) -> Vec<CliToolStatus> {
         let tools = read_cli_tool_registry(project_root);
+        // Recover the inner value from a poisoned lock. The cache holds only
+        // display-level run results — stale data is acceptable, no invariant is
+        // violated by reading through a poison boundary.
         let cache = self
             .last_results
             .lock()

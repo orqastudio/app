@@ -88,9 +88,12 @@ impl From<orqa_engine_types::error::EngineError> for OrqaError {
     }
 }
 
-impl From<rusqlite::Error> for OrqaError {
-    fn from(err: rusqlite::Error) -> Self {
-        Self::Database(err.to_string())
+impl From<orqa_storage::StorageError> for OrqaError {
+    fn from(err: orqa_storage::StorageError) -> Self {
+        match err {
+            orqa_storage::StorageError::NotFound(msg) => Self::NotFound(msg),
+            other => Self::Database(other.to_string()),
+        }
     }
 }
 

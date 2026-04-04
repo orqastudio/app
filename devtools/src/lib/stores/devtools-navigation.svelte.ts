@@ -7,6 +7,7 @@
 // "Connected", "Reconnecting (attempt N)", or "Waiting for daemon...".
 
 import { listen } from "@tauri-apps/api/event";
+import { assertNever } from "@orqastudio/types";
 
 export type DevToolsTab = "logs" | "processes" | "storybook" | "metrics";
 
@@ -62,6 +63,8 @@ export function connectionLabel(conn: ConnectionState): string {
 			return `Reconnecting (attempt ${conn.attempt})`;
 		case "waiting-for-daemon":
 			return "Waiting for daemon...";
+		default:
+			return assertNever(conn);
 	}
 }
 

@@ -6,18 +6,16 @@
 		title,
 		description,
 		children,
-		class: className = "",
 	}: {
 		title: string;
 		description?: string;
 		children: Snippet;
-		class?: string;
 	} = $props();
 </script>
 
-<Card class={className}>
+<Card>
 	<CardHeader>
-		<CardTitle class="text-sm font-medium">{title}</CardTitle>
+		<CardTitle size="sm">{title}</CardTitle>
 		{#if description}
 			<CardDescription>{description}</CardDescription>
 		{/if}

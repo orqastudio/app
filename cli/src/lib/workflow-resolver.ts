@@ -32,106 +32,106 @@ import { readManifest } from "./manifest.js";
 /** A raw workflow file discovered in a plugin's workflows/ directory. */
 export interface DiscoveredWorkflow {
 	/** Absolute path to the YAML file. */
-	filePath: string;
+	readonly filePath: string;
 	/** Plugin directory that owns this file. */
-	pluginDir: string;
+	readonly pluginDir: string;
 	/** Plugin name from the manifest (or from the workflow's plugin field). */
-	pluginName: string;
+	readonly pluginName: string;
 	/** Parsed workflow definition. */
-	definition: WorkflowDefinition;
+	readonly definition: WorkflowDefinition;
 	/** Whether this workflow has contribution points (i.e. is a skeleton). */
-	isSkeleton: boolean;
+	readonly isSkeleton: boolean;
 }
 
 /** A contribution that a stage-definition plugin makes to a skeleton. */
 export interface WorkflowContribution {
 	/** The contribution point name this targets. */
-	targetPoint: string;
+	readonly targetPoint: string;
 	/** The workflow name this targets. */
-	targetWorkflow: string;
+	readonly targetWorkflow: string;
 	/** States to merge into the skeleton. */
-	states: Record<string, WorkflowState>;
+	readonly states: Record<string, WorkflowState>;
 	/** Transitions to merge into the skeleton. */
-	transitions: Transition[];
+	readonly transitions: Transition[];
 	/** Priority for ordering (higher = merged later, wins on conflict). */
-	priority: number;
+	readonly priority: number;
 	/** Plugin that provides this contribution. */
-	pluginName: string;
+	readonly pluginName: string;
 	/** Source file path. */
-	filePath: string;
+	readonly filePath: string;
 }
 
 /** Metadata about which plugins contributed to a resolved workflow. */
 export interface ResolutionMetadata {
 	/** Skeleton source plugin. */
-	skeletonPlugin: string;
+	readonly skeletonPlugin: string;
 	/** Skeleton source file. */
-	skeletonFile: string;
+	readonly skeletonFile: string;
 	/** Contributions that were merged. */
-	contributions: Array<{
-		plugin: string;
-		point: string;
-		statesAdded: string[];
-		transitionsAdded: number;
+	readonly contributions: Array<{
+		readonly plugin: string;
+		readonly point: string;
+		readonly statesAdded: string[];
+		readonly transitionsAdded: number;
 	}>;
 	/** Contribution points that were not filled. */
-	unfilledPoints: string[];
+	readonly unfilledPoints: string[];
 	/** Contribution points that were required but not filled. */
-	unfilledRequired: string[];
+	readonly unfilledRequired: string[];
 	/** Project-level overrides that were applied. */
-	overrides: Array<{
-		file: string;
-		statesAdded: string[];
-		statesReplaced: string[];
-		transitionsAdded: number;
-		fieldsOverridden: string[];
+	readonly overrides: Array<{
+		readonly file: string;
+		readonly statesAdded: string[];
+		readonly statesReplaced: string[];
+		readonly transitionsAdded: number;
+		readonly fieldsOverridden: string[];
 	}>;
 	/** Timestamp of resolution. */
-	resolvedAt: string;
+	readonly resolvedAt: string;
 }
 
 /** A project-level override targeting a specific resolved workflow. */
 export interface WorkflowOverride {
 	/** Which resolved workflow to override (matches workflow name). */
-	target_workflow: string;
+	readonly target_workflow: string;
 	/** States to add or replace (keyed by state name). */
-	states?: Record<string, WorkflowState>;
+	readonly states?: Record<string, WorkflowState>;
 	/** Transitions to add. */
-	transitions?: Transition[];
+	readonly transitions?: Transition[];
 	/** Top-level field overrides (description, initial_state, etc.). */
-	fields?: Record<string, unknown>;
+	readonly fields?: Record<string, unknown>;
 }
 
 /** A discovered override file. */
 interface DiscoveredOverride {
 	/** Absolute path to the override YAML file. */
-	filePath: string;
+	readonly filePath: string;
 	/** Parsed override definition. */
-	override: WorkflowOverride;
+	readonly override: WorkflowOverride;
 }
 
 /** Result of resolving a single workflow. */
 export interface ResolvedWorkflowResult {
 	/** The workflow name. */
-	name: string;
+	readonly name: string;
 	/** The resolved workflow definition. */
-	definition: WorkflowDefinition;
+	readonly definition: WorkflowDefinition;
 	/** Resolution metadata. */
-	metadata: ResolutionMetadata;
+	readonly metadata: ResolutionMetadata;
 	/** Validation errors (empty if valid). */
-	errors: string[];
+	readonly errors: string[];
 	/** Output file path. */
-	outputPath: string;
+	readonly outputPath: string;
 }
 
 /** Result of resolving all workflows in a project. */
 export interface ResolveAllResult {
 	/** Successfully resolved workflows. */
-	resolved: ResolvedWorkflowResult[];
+	readonly resolved: ResolvedWorkflowResult[];
 	/** Standalone workflows (no contribution points, written as-is). */
-	standalone: ResolvedWorkflowResult[];
+	readonly standalone: ResolvedWorkflowResult[];
 	/** Errors encountered during discovery or resolution. */
-	errors: string[];
+	readonly errors: string[];
 }
 
 // ---------------------------------------------------------------------------

@@ -6,41 +6,49 @@
  * enforcement) come from `@orqastudio/types`.
  */
 
-/** JSON input passed to hooks via stdin by Claude Code. */
-export interface HookInput {
-	tool_name?: string;
-	tool_input?: HookToolInput;
-	cwd?: string;
-	content?: string;
-	response?: string;
-	/** UserPromptSubmit: the user's message text. */
-	user_message?: string;
-	/** UserPromptSubmit: alias for user_message used in some hook payloads. */
-	prompt?: string;
-	/** SubagentStop / UserPromptSubmit: agent role identifier. */
-	agent_type?: string;
-}
-
 /** Tool input fields that may be present depending on the tool. */
 export interface HookToolInput {
-	command?: string;
-	file_path?: string;
-	content?: string;
-	old_string?: string;
-	new_string?: string;
-	pattern?: string;
-	search?: string;
+	readonly command?: string;
+	readonly file_path?: string;
+	readonly content?: string;
+	readonly old_string?: string;
+	readonly new_string?: string;
+	readonly pattern?: string;
+	readonly search?: string;
+}
+
+/**
+ * JSON input passed to hooks via stdin by Claude Code.
+ *
+ * Claude Code sends different subsets of these fields depending on the event.
+ * All fields are optional because each hook script knows its own event type
+ * implicitly (by filename) — Claude Code does not inject a discriminant.
+ * The connector maps these raw inputs to HookContext (with a typed event field)
+ * before forwarding to the daemon.
+ */
+export interface HookInput {
+	readonly tool_name?: string;
+	readonly tool_input?: HookToolInput;
+	readonly cwd?: string;
+	readonly content?: string;
+	readonly response?: string;
+	/** UserPromptSubmit: the user's message text. */
+	readonly user_message?: string;
+	/** UserPromptSubmit: alias for user_message used in some hook payloads. */
+	readonly prompt?: string;
+	/** SubagentStop / UserPromptSubmit: agent role identifier. */
+	readonly agent_type?: string;
 }
 
 /** Hook output that blocks the tool call (written to stderr, exit 2). */
 export interface HookBlockOutput {
-	hookSpecificOutput: { permissionDecision: "deny" };
-	systemMessage: string;
+	readonly hookSpecificOutput: { readonly permissionDecision: "deny" };
+	readonly systemMessage: string;
 }
 
 /** Hook output that warns but allows (written to stdout, exit 0). */
 export interface HookWarnOutput {
-	systemMessage: string;
+	readonly systemMessage: string;
 }
 
 /** Telemetry event details. */

@@ -1,20 +1,11 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "../../utils/cn.js";
-	import type { HTMLAttributes } from "svelte/elements";
+	interface CardActionProps {
+		children?: import("svelte").Snippet;
+	}
 
-	let {
-		ref = $bindable(null),
-		class: className,
-		children,
-		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	let { children }: CardActionProps = $props();
 </script>
 
-<div
-	bind:this={ref}
-	data-slot="card-action"
-	class={cn("col-start-2 row-span-2 row-start-1 self-start justify-self-end", className)}
-	{...restProps}
->
+<div data-slot="card-action" class="col-start-2 row-span-2 row-start-1 self-start justify-self-end">
 	{@render children?.()}
 </div>

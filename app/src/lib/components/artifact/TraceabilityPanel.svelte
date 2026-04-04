@@ -6,6 +6,7 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 		Badge,
+		HStack,
 	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
@@ -80,7 +81,7 @@
 				</span>
 				<span>Traceability</span>
 				{#if result.disconnected}
-					<Badge variant="destructive" class="ml-1 px-1 py-0 text-[9px]">disconnected</Badge>
+					<Badge variant="destructive" size="xs">disconnected</Badge>
 				{:else if result.impact_radius > 0}
 					<span class="ml-auto text-[10px] text-muted-foreground">
 						{result.impact_radius} affected
@@ -112,7 +113,7 @@
 							{#each uniqueChains as chain, chainIdx (chainIdx)}
 								<div class="space-y-0.5">
 									{#each chain.path as node, nodeIdx (node.id + nodeIdx)}
-										<div class="flex items-center gap-1.5">
+										<HStack gap={1}>
 											<!-- Indent guide line -->
 											{#if nodeIdx > 0}
 												<div
@@ -137,9 +138,7 @@
 												</span>
 												<ArtifactLink id={node.id} />
 												{#if node.artifact_type === "pillar" || node.artifact_type === "vision"}
-													<Badge variant="secondary" class="px-1 py-0 text-[9px] capitalize">
-														{node.artifact_type}
-													</Badge>
+													<span class="capitalize"><Badge variant="secondary" size="xs">{node.artifact_type}</Badge></span>
 												{/if}
 											</div>
 
@@ -149,7 +148,7 @@
 													via {node.relationship}
 												</span>
 											{/if}
-										</div>
+										</HStack>
 									{/each}
 								</div>
 							{/each}
@@ -161,25 +160,27 @@
 						<div class="space-y-1">
 							<Collapsible bind:open={descendantsOpen}>
 								<CollapsibleTrigger
-									class="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+									class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
 								>
-									<span class={descendantsOpen ? "rotate-90 transition-transform" : "transition-transform"}>
-										<Icon name="chevron-right" size="xs" />
-									</span>
-									What does this affect?
-									<span class="ml-1 text-[10px] text-muted-foreground">
-										({result.descendants.length})
-									</span>
+									<HStack gap={1}>
+										<span class={descendantsOpen ? "rotate-90 transition-transform" : "transition-transform"}>
+											<Icon name="chevron-right" size="xs" />
+										</span>
+										What does this affect?
+										<span class="ml-1 text-[10px] text-muted-foreground">
+											({result.descendants.length})
+										</span>
+									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
 									<div class="flex flex-wrap gap-1 pt-1 pl-3">
 										{#each visibleDescendants as desc (desc.id)}
-											<div class="flex items-center gap-1">
+											<HStack gap={1}>
 												<ArtifactLink id={desc.id} />
 												{#if desc.depth > 1}
 													<span class="text-[10px] text-muted-foreground/50">+{desc.depth}</span>
 												{/if}
-											</div>
+											</HStack>
 										{/each}
 										{#if result.descendants.length > 20}
 											<span class="text-[10px] text-muted-foreground">
@@ -197,15 +198,17 @@
 						<div class="space-y-1">
 							<Collapsible bind:open={siblingsOpen}>
 								<CollapsibleTrigger
-									class="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
+									class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
 								>
-									<span class={siblingsOpen ? "rotate-90 transition-transform" : "transition-transform"}>
-										<Icon name="chevron-right" size="xs" />
-									</span>
-									Related work
-									<span class="ml-1 text-[10px] text-muted-foreground">
-										({result.siblings.length})
-									</span>
+									<HStack gap={1}>
+										<span class={siblingsOpen ? "rotate-90 transition-transform" : "transition-transform"}>
+											<Icon name="chevron-right" size="xs" />
+										</span>
+										Related work
+										<span class="ml-1 text-[10px] text-muted-foreground">
+											({result.siblings.length})
+										</span>
+									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
 									<div class="flex flex-wrap gap-1 pt-1 pl-3">

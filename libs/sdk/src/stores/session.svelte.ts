@@ -89,10 +89,7 @@ export class SessionStore {
 		if (this.activeSession && this.activeSession.id === sessionId) {
 			this.activeSession = { ...this.activeSession, title };
 		}
-		const summary = this.sessions.find((s) => s.id === sessionId);
-		if (summary) {
-			summary.title = title;
-		}
+		this.sessions = this.sessions.map((s) => s.id === sessionId ? { ...s, title } : s);
 	}
 
 	async updateTitle(sessionId: number, title: string): Promise<void> {
@@ -105,10 +102,7 @@ export class SessionStore {
 			if (this.activeSession && this.activeSession.id === sessionId) {
 				this.activeSession = { ...this.activeSession, title };
 			}
-			const summary = this.sessions.find((s) => s.id === sessionId);
-			if (summary) {
-				summary.title = title;
-			}
+			this.sessions = this.sessions.map((s) => s.id === sessionId ? { ...s, title } : s);
 		} catch (err) {
 			this.error = extractErrorMessage(err);
 		}
@@ -121,10 +115,9 @@ export class SessionStore {
 			if (this.activeSession && this.activeSession.id === sessionId) {
 				this.activeSession = { ...this.activeSession, status: "completed" };
 			}
-			const summary = this.sessions.find((s) => s.id === sessionId);
-			if (summary) {
-				summary.status = "completed";
-			}
+			this.sessions = this.sessions.map((s) =>
+				s.id === sessionId ? { ...s, status: "completed" as const } : s,
+			);
 		} catch (err) {
 			this.error = extractErrorMessage(err);
 		}

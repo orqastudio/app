@@ -50,6 +50,13 @@ pub(crate) struct OrqaLspBackend {
     http: HttpClient,
     /// Artifact type definitions loaded from plugin manifests.
     /// Refreshed when a plugin manifest (`orqa-plugin.json`) is saved.
+    ///
+    /// Shared mutable state is required here because the LSP server is a long-lived tokio
+    /// task that handles concurrent requests, and `load_artifact_types` (called on
+    /// `initialized` and on manifest saves) must update the definitions while readers
+    /// (code-action handlers) concurrently query them. Lock scope is narrow: writes hold
+    /// the lock only for the `*types = ...` assignment; reads hold it only for the
+    /// `.find(...)` call in `valid_statuses_for_prefix`.
     artifact_types: Arc<RwLock<Vec<ArtifactTypeDef>>>,
 }
 
@@ -340,6 +347,8 @@ impl LanguageServer for OrqaLspBackend {
 
         // Scan existing diagnostics for [invalid-status] and [schema] status errors
         // and offer quick-fix replacements with valid alternatives.
+        // The outer loop is kept imperative because the async call to `valid_statuses_for_prefix`
+        // makes a streaming iterator chain over diagnostics impractical without async combinators.
         for diag in &params.context.diagnostics {
             if diag.source.as_deref() != Some("orqastudio") {
                 continue;
@@ -373,35 +382,34 @@ impl LanguageServer for OrqaLspBackend {
                 continue;
             }
 
-            // Find the status line and its range in the document.
-            let mut status_range = None;
-            for (i, line) in content.lines().enumerate() {
-                if line.starts_with("status:") {
-                    let value_start = "status:".len();
-                    let trimmed_value = line[value_start..].trim();
-                    // Compute column range for the status value.
-                    let col_start = line.find(trimmed_value).unwrap_or(value_start) as u32;
-                    let col_end = col_start + trimmed_value.len() as u32;
-                    status_range = Some(Range::new(
-                        Position::new(i as u32, col_start),
-                        Position::new(i as u32, col_end),
-                    ));
-                    break;
+            // Find the status line and its range in the document using find_map.
+            let status_range = content.lines().enumerate().find_map(|(i, line)| {
+                if !line.starts_with("status:") {
+                    return None;
                 }
-            }
+                let value_start = "status:".len();
+                let trimmed_value = line[value_start..].trim();
+                // Compute column range for the status value.
+                let col_start = line.find(trimmed_value).unwrap_or(value_start) as u32;
+                let col_end = col_start + trimmed_value.len() as u32;
+                Some(Range::new(
+                    Position::new(i as u32, col_start),
+                    Position::new(i as u32, col_end),
+                ))
+            });
 
             let Some(range) = status_range else { continue };
 
-            for status in &valid_statuses {
-                let mut changes = std::collections::HashMap::new();
-                changes.insert(
+            // Build one CodeAction per valid status replacement and extend the actions list.
+            actions.extend(valid_statuses.iter().map(|status| {
+                let changes = std::collections::HashMap::from([(
                     uri.clone(),
                     vec![TextEdit {
                         range,
                         new_text: status.clone(),
                     }],
-                );
-                actions.push(CodeActionOrCommand::CodeAction(CodeAction {
+                )]);
+                CodeActionOrCommand::CodeAction(CodeAction {
                     title: format!("Change status to \"{status}\""),
                     kind: Some(CodeActionKind::QUICKFIX),
                     diagnostics: Some(vec![diag.clone()]),
@@ -410,8 +418,8 @@ impl LanguageServer for OrqaLspBackend {
                         ..Default::default()
                     }),
                     ..Default::default()
-                }));
-            }
+                })
+            }));
         }
 
         if actions.is_empty() {

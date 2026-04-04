@@ -1,15 +1,26 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "../../utils/cn.js";
+	import { cn } from "../../utils/cn.js";
+
+	interface CardContentProps {
+		/** Reduce padding for compact layouts. */
+		compact?: boolean;
+		/** Remove all padding (flush content against card edges). */
+		flush?: boolean;
+		children?: import("svelte").Snippet;
+	}
 
 	let {
-		ref = $bindable(null),
-		class: className,
+		compact = false,
+		flush = false,
 		children,
-		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: CardContentProps = $props();
 </script>
 
-<div bind:this={ref} data-slot="card-content" class={cn("px-6 pb-6", className)} {...restProps}>
+<div
+	data-slot="card-content"
+	class={cn(
+		flush ? "px-0 pb-0" : compact ? "px-4 pb-3" : "px-6 pb-6",
+	)}
+>
 	{@render children?.()}
 </div>

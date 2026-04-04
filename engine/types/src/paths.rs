@@ -50,20 +50,21 @@ impl ProjectPaths {
     ///
     /// Useful when the settings have already been read (avoids double file I/O).
     pub fn from_settings(project_root: &Path, settings: &ProjectSettings) -> Self {
-        let mut artifact_paths = HashMap::new();
-
-        for entry in &settings.artifacts {
-            match entry {
-                ArtifactEntry::Group { children, .. } => {
-                    for child in children {
-                        artifact_paths.insert(child.key.clone(), child.path.clone());
-                    }
-                }
+        // Flatten each entry to (key, path) pairs: groups expand their children,
+        // single types contribute one pair each.
+        let artifact_paths: HashMap<String, String> = settings
+            .artifacts
+            .iter()
+            .flat_map(|entry| match entry {
+                ArtifactEntry::Group { children, .. } => children
+                    .iter()
+                    .map(|child| (child.key.clone(), child.path.clone()))
+                    .collect::<Vec<_>>(),
                 ArtifactEntry::Type(config) => {
-                    artifact_paths.insert(config.key.clone(), config.path.clone());
+                    vec![(config.key.clone(), config.path.clone())]
                 }
-            }
-        }
+            })
+            .collect();
 
         Self {
             project_root: project_root.to_path_buf(),

@@ -50,8 +50,8 @@ const BASE_COMPILER_OPTIONS: Record<string, unknown> = {
  * value to set). Entries missing either field are silently skipped.
  */
 function applyRuleOverrides(
-  base: Record<string, unknown>,
-  entries: EnforcementEntry[],
+  base: Readonly<Record<string, unknown>>,
+  entries: readonly EnforcementEntry[],
 ): Record<string, unknown> {
   const result = { ...base };
   for (const entry of entries) {

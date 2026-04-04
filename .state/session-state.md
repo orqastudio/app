@@ -1,63 +1,54 @@
-## Session: 2026-03-30
+# Session State — 2026-04-04
 
-### Fixes Applied (uncommitted)
+## What was done this session
 
-**Bug 1: `find_plugin_dir` only scanned 1 level deep (ROOT CAUSE)**
-- `app/src-tauri/src/commands/plugin_commands.rs` — `find_plugin_dir` now scans `plugins/<taxonomy>/<plugin>/` (2 levels) and `connectors/<plugin>/` (1 level)
-- This was THE reason no artifacts showed — plugins couldn't be loaded → no `defaultNavigation` → no sidebar items
+### 1. Process Manager Library (`cli/src/lib/process-manager.ts`)
 
-**Bug 2: Fresh DB had no setup_version**
-- `app/src-tauri/src/lib.rs` — auto-complete first-run setup when `ORQA_PROJECT_ROOT` env var is set (dev mode)
+- Dependency-aware graph reads from package.json + Cargo.toml (no hardcoded lists)
+- Tier-based parallel builds via Kahn's algorithm
+- Service lifecycle with health polling and crash recovery (exponential backoff)
+- File watch coordinator with 500ms debounce and cascading rebuilds
+- Refactored dev.ts from 1373 → 548 lines
+- `orqa dev graph` subcommand
+- Fixed `shell: isWindows()` for Windows .cmd wrappers
+- Fixed `taskkill /T /F` for fast process kills
+- Fixed `findPidsByNames()` batched discovery
+- Added Storybook launch in startServices()
+- Added pre-build libs in cmdDev() before devtools Vite starts
 
-**Bug 3: Fresh DB had no active project**
-- `app/src-tauri/src/lib.rs` — auto-open project from `ORQA_PROJECT_ROOT` env var
-- `cli/src/commands/dev.ts` — pass `ORQA_PROJECT_ROOT` env var to `cargo tauri dev`
+### 2. Unified Storage (`engine/storage/`)
 
-**Bug 4: Dashboard control file path wrong**
-- `tools/debug/dev.mjs` — fixed path from `../tmp/dev-controller.json` to `.state/dev-controller.json`
+- Consolidated 4 SQLite DBs into one `.state/orqa.db`
+- 15 files, 9 repos
+- `Frozen<T>` immutability wrapper for storage boundary
+- App, daemon, devtools all wired to use engine/storage
+- Session database with lifecycle, batch writer, 30-day retention
 
-**Bug 5: sendBeacon CORS preflight**
-- `app/src/lib/utils/dev-console.ts` — changed Blob type from `application/json` to `text/plain`
+### 3. FP Audit and Fixes
 
-**Bug 6: `defaultNavigation` missing from Rust PluginManifest**
-- `engine/plugin/src/manifest.rs` — added `default_navigation: Vec<serde_json::Value>` with `#[serde(rename = "defaultNavigation")]`
-- `engine/plugin/src/constraints.rs` — added field to test helper
+- 23 domain reports at `.state/findings/fp-audit/`
+- All CRITICAL items PASS across entire codebase
+- Push-loops converted to iterator chains across all Rust engine crates
+- `readonly` + `assertNever` added system-wide in TypeScript
+- `deepFreeze()` on all IPC invoke results
+- `DeepReadonly<T>` utility type
 
-**Bug 7: Only software-kanban had `defaultNavigation`**
-- Added `defaultNavigation` to 5 more plugins:
-  - `plugins/workflows/agile-discovery/orqa-plugin.json` — Discovery group
-  - `plugins/workflows/agile-planning/orqa-plugin.json` — Planning group
-  - `plugins/workflows/agile-documentation/orqa-plugin.json` — Documentation group
-  - `plugins/workflows/agile-review/orqa-plugin.json` — Learning group
-  - `plugins/workflows/core/orqa-plugin.json` — Agents group
+### 4. UI Component Library
 
-**Bug 8: Duplicate nav groups not merged**
-- `libs/sdk/src/stores/navigation.svelte.ts` — `_buildDefaultNavTree()` now merges groups by key, unioning children
+- Created 19 new ORQA primitives: Table, Typography, Layout, FormGroup, Link, Kbd, Prose, VisuallyHidden, Checkbox, Switch, RadioGroup, Chat family
+- Typography stack with semantic variants
+- Storybook stories for all components
+- RULE-55092f35 governance rule for component story enforcement
+- Swept 100+ component files replacing raw HTML/Tailwind with ORQA primitives
+- Removed `class` prop from Card family and typography components
 
-**Bug 9: Plugin relationship type conflicts blocked registration**
-- `libs/sdk/src/plugins/plugin-registry.svelte.ts` — `checkConflicts()` now merges (unions) from/to type arrays instead of rejecting when relationship key+inverse match
+## Compilation status
 
-**Bug 10: CSP blocked plugin view scripts**
-- `app/src-tauri/tauri.conf.json` — added `https://asset.localhost` to `script-src` and `connect-src`
+- `cargo check --workspace` — clean
+- `orqa enforce --stories` — all pass
 
-**Diagnostic logging added:**
-- `app/src-tauri/src/commands/artifact_commands.rs` — tracing for scan results
-- `app/src/lib/plugins/loader.ts` — logging for plugin discovery and defaultNavigation
+## Next priorities
 
-### Current State
-
-- App starts, auto-completes setup, auto-opens project ✓
-- Backend returns 16 groups / 1583 artifact nodes ✓
-- Plugins load successfully with from/to type merging ✓
-- 6 navigation groups: Discovery, Delivery, Planning, Documentation, Learning, Agents ✓
-- Plugin views fail to load via asset protocol (CSP fix applied, needs rebuild) ⚠
-
-### Remaining Issues
-
-1. **Plugin view loading** — CSP fix applied but needs Rust rebuild + Vite restart
-2. **Daemon showing disconnected** — Frontend health check sees 0 artifacts/rules
-3. **Stale Vite process on port 10420** — `orqa dev kill` doesn't always kill Vite. Need to fix the kill logic.
-4. **Diagnostic logging should be cleaned up** before committing
-
-### Investigation Artifacts
-- `.state/investigation/01-rust-pipeline.md` through `08-nav-entries-added.md`
+- Complete `class` prop removal from all remaining ORQA components
+- Audit app/devtools/plugins for zero raw HTML and zero Tailwind violations
+- Test full dev environment: `orqa dev` end-to-end

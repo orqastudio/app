@@ -44,7 +44,7 @@ export class EnforcementStore {
 	}
 
 	addViolation(v: EnforcementViolation): void {
-		this.violations.push(v);
+		this.violations = [...this.violations, v];
 	}
 
 	clearViolations(): void {

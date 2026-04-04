@@ -4,14 +4,21 @@
      - Running: AppShell with ActivityBar, StatusBar, and content views -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { Button, LoadingSpinner, resolveIcon, ConnectionIndicator } from "@orqastudio/svelte-components/pure";
+	import { Button, LoadingSpinner, resolveIcon, ConnectionIndicator, Caption } from "@orqastudio/svelte-components/pure";
 	import { AppShell, ActivityBar, StatusBar, WelcomeHero, type ActivityBarItem } from "@orqastudio/svelte-components/connected";
 	import { navigation, type DevToolsTab, connectionLabel } from "../stores/devtools-navigation.svelte.js";
+	import { assertNever } from "@orqastudio/types";
 	import {
 		devController,
 		startDev,
 		stopDev,
 	} from "../stores/dev-controller.svelte.js";
+	import {
+		viewingHistorical,
+		activeSessionId,
+		sessions,
+		sessionDisplayLabel,
+	} from "../stores/session-store.svelte.js";
 	import StorybookView from "./storybook/StorybookView.svelte";
 	import MetricsView from "./metrics/MetricsView.svelte";
 	import ProcessView from "./processes/ProcessView.svelte";
@@ -74,6 +81,13 @@
 		},
 	]);
 
+	// Exhaustiveness guard for the active tab switch in the template.
+	// Called in the {:else} branch — if a new DevToolsTab variant is added without
+	// updating the template, this will throw at compile time (never type check).
+	function assertTabNever(tab: never): never {
+		return assertNever(tab);
+	}
+
 	function handleKeydown(e: KeyboardEvent): void {
 		if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {
 			const target = e.target as HTMLElement;
@@ -112,6 +126,9 @@
 				<StorybookView />
 			{:else if navigation.activeTab === "metrics"}
 				<MetricsView />
+			{:else}
+				{@const _exhaustive = assertTabNever(navigation.activeTab)}
+				{_exhaustive}
 			{/if}
 		{/snippet}
 
@@ -121,7 +138,14 @@
 					<ConnectionIndicator state={connectionState} label={connectionLabel(navigation.connection)} />
 				{/snippet}
 				{#snippet right()}
-					{devController.state}
+					{#if viewingHistorical.value}
+						{@const session = sessions.find((s) => s.id === activeSessionId.value)}
+						<Caption class="overflow-hidden text-ellipsis whitespace-nowrap italic text-primary max-w-[240px]">
+							Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
+						</Caption>
+					{:else}
+						<Caption>{devController.state}</Caption>
+					{/if}
 				{/snippet}
 			</StatusBar>
 		{/snippet}
@@ -147,3 +171,4 @@
 {/if}
 
 <HelpPanel bind:open={helpOpen} />
+

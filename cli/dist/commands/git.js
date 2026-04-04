@@ -127,8 +127,8 @@ function safeReaddir(dir) {
  * @returns The component name or category string.
  */
 function classifyFile(filePath, components) {
-    // Longest-prefix match against known components
-    for (const comp of components.sort((a, b) => b.length - a.length)) {
+    // Longest-prefix match against known components (spread before sort to avoid mutating caller's array).
+    for (const comp of [...components].sort((a, b) => b.length - a.length)) {
         if (filePath.startsWith(comp + "/") || filePath === comp) {
             return comp;
         }

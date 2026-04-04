@@ -1,0 +1,30 @@
+# Cargo manifest for the orqa-storage crate.
+# Owns the single unified SQLite database for OrqaStudio: projects, sessions,
+# messages, settings, themes, violations, health snapshots, log events, and
+# devtools sessions. All other crates and binaries depend on this crate for
+# database access. Consolidates the four previously separate SQLite databases.
+[package]
+name = "orqa-storage"
+version = "0.1.0-dev"
+edition = "2021"
+description = "OrqaStudio unified SQLite storage — single source of truth for all persistent data"
+
+[lib]
+name = "orqa_storage"
+path = "src/lib.rs"
+
+[dependencies]
+rusqlite = { version = "0.33", features = ["bundled"] }
+uuid = { version = "1", features = ["v4"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+tracing = "0.1"
+tokio = { version = "1", features = ["rt", "sync"] }
+orqa-engine-types = { path = "../types" }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

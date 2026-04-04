@@ -2,20 +2,20 @@ export type LessonStatus = "active" | "promoted" | "resolved";
 export type LessonCategory = "process" | "coding" | "architecture";
 
 export interface Lesson {
-	id: string;
-	title: string;
-	category: string;
-	recurrence: number;
-	status: LessonStatus;
-	promoted_to: string | null;
-	created: string;
-	updated: string;
-	body: string;
-	file_path: string;
+	readonly id: string;
+	readonly title: string;
+	readonly category: string;
+	readonly recurrence: number;
+	readonly status: LessonStatus;
+	readonly promoted_to: string | null;
+	readonly created: string;
+	readonly updated: string;
+	readonly body: string;
+	readonly file_path: string;
 }
 
 export interface NewLesson {
-	title: string;
-	category: LessonCategory;
-	body: string;
+	readonly title: string;
+	readonly category: LessonCategory;
+	readonly body: string;
 }

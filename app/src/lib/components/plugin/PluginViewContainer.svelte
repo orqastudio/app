@@ -3,6 +3,7 @@
 	import { readTextFile } from "@tauri-apps/plugin-fs";
 	import { logger } from "@orqastudio/sdk";
 	import { getPluginPath } from "$lib/services/plugin-service.js";
+	import { Caption, CardRoot, ScrollArea } from "@orqastudio/svelte-components/pure";
 
 	const log = logger("plugin-view");
 
@@ -43,7 +44,8 @@
 				cleanup = module.mount(container);
 			} else if (module.default) {
 				const { mount: svelteMount, unmount: svelteUnmount } = await import("svelte");
-				const instance = svelteMount(module.default, { target: container });
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const instance = svelteMount(module.default as any, { target: container });
 				cleanup = () => svelteUnmount(instance);
 			}
 		} catch (err) {
@@ -58,18 +60,20 @@
 	});
 </script>
 
-<div class="plugin-view-container h-full w-full overflow-auto">
+<ScrollArea full>
 	{#if loading}
-		<div class="flex h-full items-center justify-center text-muted-foreground">
-			Loading plugin view...
+		<div class="flex h-full items-center justify-center">
+			<Caption>Loading plugin view...</Caption>
 		</div>
 	{:else if error}
 		<div class="flex h-full items-center justify-center">
-			<div class="max-w-md rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-				<p class="text-sm text-destructive">{error}</p>
-			</div>
+			<CardRoot>
+				<div class="max-w-md p-4">
+					<span class="text-sm text-destructive">{error}</span>
+				</div>
+			</CardRoot>
 		</div>
 	{:else}
 		<div bind:this={container} class="h-full w-full"></div>
 	{/if}
-</div>
+</ScrollArea>

@@ -1,7 +1,16 @@
+<!-- MilestoneCard: displays a milestone with epic progress, in-progress, and critical epics. -->
 <script lang="ts">
 	import type { ArtifactNode } from "@orqastudio/types";
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
-	import { SmallBadge } from "@orqastudio/svelte-components/pure";
+	import {
+		SmallBadge,
+		Button,
+		Text,
+		Caption,
+		ProgressBar,
+		HStack,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 
 	let {
 		milestone,
@@ -23,86 +32,69 @@
 	} = $props();
 
 	const epicLabelPlural = $derived(`${epicLabel.toLowerCase()}s`);
-
-	const progressPct = $derived(
-		epicCount > 0 ? (doneEpicCount / epicCount) * 100 : 0,
-	);
 </script>
 
-<button
-	class="group w-full rounded-xl border border-border bg-card p-4 text-left transition-all hover:border-border/80 hover:bg-accent/40 hover:shadow-sm"
+<Button
+	variant="ghost"
+	class="group h-auto w-full rounded-xl border border-border bg-card p-4 text-left hover:border-border/80 hover:bg-accent/40 hover:shadow-sm"
 	onclick={onClick}
 >
-	<!-- Header -->
-	<div class="flex items-start justify-between gap-3">
-		<div class="flex min-w-0 flex-col gap-1">
-			<span class="truncate text-sm font-semibold leading-tight">{milestone.title}</span>
-			{#if milestone.description}
-				<p class="line-clamp-2 text-xs text-muted-foreground">{milestone.description}</p>
-			{/if}
-		</div>
-		<div class="shrink-0">
-			<StatusIndicator status={milestone.status ?? "planning"} mode="badge" />
-		</div>
-	</div>
-
-	<!-- Progress -->
-	{#if epicCount > 0}
-		<div class="mt-3">
-			<div class="mb-1 flex items-center justify-between">
-				<span class="text-[10px] text-muted-foreground uppercase tracking-wide">Progress</span>
-				<span class="text-[10px] tabular-nums text-muted-foreground">
-					{doneEpicCount}/{epicCount} {epicLabelPlural}
-				</span>
+	<Stack gap={3}>
+		<!-- Header -->
+		<HStack gap={3} align="start">
+			<Stack gap={1} class="min-w-0 flex-1">
+				<Text size="sm" class="truncate font-semibold leading-tight">{milestone.title}</Text>
+				{#if milestone.description}
+					<Caption class="line-clamp-2">{milestone.description}</Caption>
+				{/if}
+			</Stack>
+			<div class="shrink-0">
+				<StatusIndicator status={milestone.status ?? "planning"} mode="badge" />
 			</div>
-			<div class="h-1.5 rounded-full bg-muted">
-				<div
-					class="h-1.5 rounded-full bg-emerald-500 transition-all duration-300"
-					style="width: {progressPct}%"
-				></div>
-			</div>
-		</div>
-	{:else}
-		<p class="mt-3 text-[10px] text-muted-foreground">No {epicLabelPlural} yet</p>
-	{/if}
+		</HStack>
 
-	<!-- In-progress epics -->
-	{#if inProgressEpics.length > 0}
-		<div class="mt-3 border-t border-border/50 pt-2">
-			<p class="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">Now</p>
-			<div class="flex flex-col gap-1">
+		<!-- Progress -->
+		{#if epicCount > 0}
+			<ProgressBar
+				label={`${doneEpicCount}/${epicCount} ${epicLabelPlural}`}
+				current={doneEpicCount}
+				total={epicCount}
+				colorClass="bg-emerald-500"
+			/>
+		{:else}
+			<Caption>No {epicLabelPlural} yet</Caption>
+		{/if}
+
+		<!-- In-progress epics -->
+		{#if inProgressEpics.length > 0}
+			<Stack gap={1} class="border-t border-border/50 pt-2">
+				<Caption class="uppercase tracking-wide">Now</Caption>
 				{#each inProgressEpics.slice(0, 2) as epic (epic.id)}
-					<div class="flex items-center gap-1.5 text-xs">
+					<HStack gap={1} align="center">
 						<span class="block h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500"></span>
-						<span class="truncate text-muted-foreground">{epic.title}</span>
-					</div>
+						<Caption class="truncate">{epic.title}</Caption>
+					</HStack>
 				{/each}
 				{#if inProgressEpics.length > 2}
-					<span class="text-[10px] text-muted-foreground/60">
-						+{inProgressEpics.length - 2} more
-					</span>
+					<Caption class="opacity-60">+{inProgressEpics.length - 2} more</Caption>
 				{/if}
-			</div>
-		</div>
-	{/if}
+			</Stack>
+		{/if}
 
-	<!-- Critical P1 epics not done -->
-	{#if criticalEpics.length > 0}
-		<div class="mt-2 border-t border-border/50 pt-2">
-			<p class="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">Critical</p>
-			<div class="flex flex-col gap-1">
+		<!-- Critical P1 epics not done -->
+		{#if criticalEpics.length > 0}
+			<Stack gap={1} class="border-t border-border/50 pt-2">
+				<Caption class="uppercase tracking-wide">Critical</Caption>
 				{#each criticalEpics.slice(0, 2) as epic (epic.id)}
-					<div class="flex items-center gap-1.5 text-xs">
+					<HStack gap={1} align="center">
 						<SmallBadge variant="destructive">P1</SmallBadge>
-						<span class="truncate text-muted-foreground">{epic.title}</span>
-					</div>
+						<Caption class="truncate">{epic.title}</Caption>
+					</HStack>
 				{/each}
 				{#if criticalEpics.length > 2}
-					<span class="text-[10px] text-muted-foreground/60">
-						+{criticalEpics.length - 2} more
-					</span>
+					<Caption class="opacity-60">+{criticalEpics.length - 2} more</Caption>
 				{/if}
-			</div>
-		</div>
-	{/if}
-</button>
+			</Stack>
+		{/if}
+	</Stack>
+</Button>

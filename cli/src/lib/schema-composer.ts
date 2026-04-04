@@ -22,55 +22,55 @@ import type { ArtifactSchema } from "@orqastudio/types";
 /** A single composed artifact type entry in schema.composed.json. */
 interface ComposedArtifactType {
   /** ID prefix used in artifact identifiers. */
-  id_prefix: string;
+  readonly id_prefix: string;
   /** Singular display label. */
-  label: string;
+  readonly label: string;
   /** Plural display label (optional). */
-  plural?: string;
+  readonly plural?: string;
   /** Regex pattern for valid IDs. */
-  id_pattern: string;
+  readonly id_pattern: string;
   /** Default path within .orqa/ for artifacts of this type. */
-  default_path: string;
+  readonly default_path: string;
   /** Lucide icon name. */
-  icon: string;
+  readonly icon: string;
   /** Plugin that provides this schema. */
-  source: string;
+  readonly source: string;
   /** Frontmatter field schema split into required and optional. */
-  fields: {
-    required: Record<string, unknown>;
-    optional: Record<string, unknown>;
+  readonly fields: {
+    readonly required: Record<string, unknown>;
+    readonly optional: Record<string, unknown>;
   };
   /** Whether additional frontmatter properties are allowed. */
-  additionalProperties: boolean;
+  readonly additionalProperties: boolean;
   /** Valid status values for this type. */
-  statuses: string[];
+  readonly statuses: string[];
   /** Initial status when the artifact is created. */
-  initialStatus: string;
+  readonly initialStatus: string;
   /** Map of state category → list of statuses in that category. */
-  stateCategories: Record<string, string[]>;
+  readonly stateCategories: Record<string, string[]>;
 }
 
 /** The top-level schema.composed.json structure. */
 interface ComposedSchema {
-  $schema: string;
-  version: string;
-  generated: boolean;
-  generatedAt: string;
-  description: string;
-  artifactTypes: Record<string, ComposedArtifactType>;
-  relationshipTypes: RelationshipTypeSummary[];
+  readonly $schema: string;
+  readonly version: string;
+  readonly generated: boolean;
+  readonly generatedAt: string;
+  readonly description: string;
+  readonly artifactTypes: Record<string, ComposedArtifactType>;
+  readonly relationshipTypes: RelationshipTypeSummary[];
 }
 
 /** A relationship type entry in the composed schema. */
 interface RelationshipTypeSummary {
-  key: string;
-  inverse: string;
-  label: string;
-  inverseLabel: string;
-  from: string[];
-  to: string[];
-  description: string;
-  semantic?: string;
+  readonly key: string;
+  readonly inverse: string;
+  readonly label: string;
+  readonly inverseLabel: string;
+  readonly from: string[];
+  readonly to: string[];
+  readonly description: string;
+  readonly semantic?: string;
 }
 
 // ---------------------------------------------------------------------------

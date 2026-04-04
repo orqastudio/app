@@ -47,7 +47,7 @@
 	);
 </script>
 
-<ScrollArea class="h-full">
+<ScrollArea maxHeight="viewport">
 	<div class="space-y-6 p-6">
 		{#if section === "provider"}
 			<ProviderSettings />
@@ -75,8 +75,8 @@
 		{#if isProjectSection}
 			{#if !project}
 				<CardRoot>
-					<CardContent class="py-8">
-						<div class="flex items-center gap-2 text-sm text-muted-foreground">
+					<CardContent>
+						<div class="flex items-center gap-2 py-8 text-sm text-muted-foreground">
 							<Icon name="circle-x" size="md" />
 							No project loaded
 						</div>
@@ -84,9 +84,11 @@
 				</CardRoot>
 			{:else if !projectStore.settingsLoaded}
 				<CardRoot>
-					<CardContent class="flex items-center gap-2 py-8">
-						<Icon name="loader-circle" size="md" />
-						<span class="text-sm text-muted-foreground">Loading project settings...</span>
+					<CardContent>
+						<div class="flex items-center gap-2 py-8">
+							<Icon name="loader-circle" size="md" />
+							<span class="text-sm text-muted-foreground">Loading project settings...</span>
+						</div>
 					</CardContent>
 				</CardRoot>
 			{:else if projectStore.hasSettings && projectStore.projectSettings}

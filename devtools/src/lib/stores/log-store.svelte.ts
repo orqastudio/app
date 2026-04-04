@@ -3,16 +3,27 @@
 // reactive state for the event list, connection status, scroll-lock toggle,
 // and filter state for source/level/category/text filtering. Filter state is
 // persisted to localStorage so selections survive app restarts.
+//
+// Historical mode: when viewingHistorical.value (from session-store) is true,
+// events are loaded from SQLite via query_session_events instead of the live
+// ring buffer. Switching modes clears the buffer and re-populates it from the
+// appropriate source. The Tauri event listener is paused while viewing history.
 
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
+import {
+	viewingHistorical,
+	activeSessionId,
+	loadSessionEvents,
+	type DevToolsSession,
+} from "./session-store.svelte.js";
 
 // Shape of a log event as emitted by the Tauri backend.
 export interface LogEvent {
-	id: number;
-	timestamp: number; // Unix ms
-	level: "Debug" | "Info" | "Warn" | "Error" | "Perf";
-	source:
+	readonly id: number;
+	readonly timestamp: number; // Unix ms
+	readonly level: "Debug" | "Info" | "Warn" | "Error" | "Perf";
+	readonly source:
 		| "Daemon"
 		| "App"
 		| "Frontend"
@@ -21,10 +32,10 @@ export interface LogEvent {
 		| "LSP"
 		| "Search"
 		| "Worker";
-	category: string;
-	message: string;
-	metadata: unknown;
-	session_id: string | null;
+	readonly category: string;
+	readonly message: string;
+	readonly metadata: unknown;
+	readonly session_id: string | null;
 }
 
 // All valid log levels in display order.
@@ -236,6 +247,22 @@ export const historyLoading = $state<{ value: boolean }>({ value: false });
 // Set to true when loadHistory returns fewer events than the page size.
 export const historyExhausted = $state<{ value: boolean }>({ value: false });
 
+// Whether the store is currently in historical session browsing mode.
+// Components read this to hide the Follow button and show the session banner.
+export const historicalMode = $state<{ value: boolean }>({ value: false });
+
+// Total event count for the historical session being browsed.
+export const historicalTotal = $state<{ value: number }>({ value: 0 });
+
+// Whether more historical events can be loaded (pagination).
+export const historicalExhausted = $state<{ value: boolean }>({ value: false });
+
+// Offset for the next historical page load.
+let historicalOffset = 0;
+
+// Page size for historical session queries.
+const HISTORICAL_PAGE_SIZE = 1000;
+
 // Page size for history queries — matches the IPC command cap.
 const HISTORY_PAGE_SIZE = 1000;
 
@@ -319,4 +346,118 @@ export async function loadHistory(): Promise<void> {
 	} finally {
 		historyLoading.value = false;
 	}
+}
+
+/**
+ * Map a raw JSON object from query_session_events into a LogEvent. The SQLite
+ * store serialises level/source via Rust's Debug/Display formatting which
+ * matches the TypeScript union types used in the frontend.
+ */
+function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
+	return {
+		id: Number(obj.id ?? obj.rowid),
+		timestamp: Number(obj.timestamp),
+		level: obj.level as LogEvent["level"],
+		source: obj.source as LogEvent["source"],
+		category: String(obj.category ?? ""),
+		message: String(obj.message ?? ""),
+		metadata: obj.metadata ?? null,
+		session_id: (obj.session_id as string | null) ?? null,
+	};
+}
+
+/**
+ * Switch the log view to a historical session. Stops the Tauri live listener,
+ * clears the buffer, loads the first page of events from SQLite, and sets
+ * historicalMode so components update their UI accordingly.
+ */
+export async function enterHistoricalMode(session: DevToolsSession): Promise<void> {
+	// Pause live streaming while browsing history.
+	if (unlisten !== null) {
+		unlisten();
+		unlisten = null;
+	}
+
+	// Clear the buffer and reset pagination state.
+	events.splice(0, events.length);
+	totalReceived.value = 0;
+	historicalOffset = 0;
+	historicalExhausted.value = false;
+	historicalTotal.value = 0;
+
+	// Disable auto-scroll; the user is exploring static data.
+	scrollLock.enabled = false;
+
+	historicalMode.value = true;
+
+	await loadMoreHistoricalEvents(session.id);
+}
+
+/**
+ * Load the next page of events for the current historical session and append
+ * them to the buffer. Updates historicalOffset and historicalExhausted.
+ */
+export async function loadMoreHistoricalEvents(sessionId: string): Promise<void> {
+	if (historyLoading.value || historicalExhausted.value) return;
+
+	historyLoading.value = true;
+	try {
+		const response = await loadSessionEvents({
+			session_id: sessionId,
+			offset: historicalOffset,
+			limit: HISTORICAL_PAGE_SIZE,
+		});
+
+		historicalTotal.value = response.total;
+
+		const page: LogEvent[] = (response.events as Record<string, unknown>[]).map(rawToLogEvent);
+
+		if (page.length < HISTORICAL_PAGE_SIZE) {
+			historicalExhausted.value = true;
+		}
+
+		historicalOffset += page.length;
+		events.push(...page);
+		totalReceived.value = events.length;
+	} catch (err) {
+		console.error("[log-store] historical load failed:", err);
+	} finally {
+		historyLoading.value = false;
+	}
+}
+
+/**
+ * Return the log view to the live ring buffer stream. Re-subscribes to the
+ * Tauri log event, repopulates the buffer from the in-memory ring buffer via
+ * the get_events IPC command, and re-enables auto-scroll.
+ */
+export async function exitHistoricalMode(): Promise<void> {
+	historicalMode.value = false;
+	historicalOffset = 0;
+	historicalExhausted.value = false;
+	historicalTotal.value = 0;
+
+	// Clear the buffer before repopulating from the ring buffer.
+	events.splice(0, events.length);
+	totalReceived.value = 0;
+
+	// Re-enable auto-scroll for the live feed.
+	scrollLock.enabled = true;
+
+	// Repopulate from the backend ring buffer so events already in memory are shown.
+	try {
+		const response = await invoke<{
+			events: Record<string, unknown>[];
+			total: number;
+			dropped: number;
+		}>("get_events", { params: { limit: DISPLAY_BUFFER_MAX } });
+		const buffered: LogEvent[] = response.events.map(rawToLogEvent);
+		events.push(...buffered);
+		totalReceived.value = response.total;
+	} catch (err) {
+		console.error("[log-store] ring buffer repopulation failed:", err);
+	}
+
+	// Re-subscribe to live Tauri events.
+	await startLogStream();
 }

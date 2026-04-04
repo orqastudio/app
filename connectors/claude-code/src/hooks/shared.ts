@@ -9,6 +9,7 @@
 import { spawnSync } from "node:child_process";
 import { relative } from "node:path";
 import { getPort } from "@orqastudio/constants";
+import { assertNever } from "@orqastudio/types";
 import type { HookInput } from "../types.js";
 
 const DAEMON_BASE = `http://localhost:${getPort("daemon")}`;
@@ -28,31 +29,32 @@ export type CanonicalEvent =
 
 /** Context sent to the daemon POST /hook endpoint. */
 export interface HookContext {
-  event: CanonicalEvent;
-  tool_name?: string;
-  tool_input?: unknown;
-  file_path?: string;
-  user_message?: string;
-  agent_type?: string;
+  readonly event: CanonicalEvent;
+  readonly tool_name?: string;
+  readonly tool_input?: unknown;
+  readonly file_path?: string;
+  readonly user_message?: string;
+  readonly agent_type?: string;
 }
 
 /** Result returned by the daemon POST /hook endpoint. */
 export interface HookResult {
-  action: "allow" | "block" | "warn";
-  messages: string[];
-  violations: Array<{ rule_id: string; action: string; message: string }>;
+  readonly action: "allow" | "block" | "warn";
+  readonly messages: string[];
+  readonly violations: ReadonlyArray<{ readonly rule_id: string; readonly action: string; readonly message: string }>;
 }
 
 /**
  * Read Claude Code hook JSON from stdin.
+ * Collects all chunks into a buffer and parses the complete JSON payload.
  * @returns Parsed HookInput from the hook event payload.
  */
 export async function readInput(): Promise<HookInput> {
-  let raw = "";
+  const chunks: Buffer[] = [];
   for await (const chunk of process.stdin) {
-    raw += chunk;
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
-  return JSON.parse(raw) as HookInput;
+  return JSON.parse(Buffer.concat(chunks).toString("utf-8")) as HookInput;
 }
 
 /**
@@ -79,22 +81,32 @@ export async function callDaemon<T>(path: string, body: unknown): Promise<T> {
   }
 }
 
+/** Known Claude Code event names that map to canonical OrqaStudio events. */
+const CC_EVENT_MAP: Readonly<Record<string, CanonicalEvent>> = {
+  PreToolUse: "PreAction",
+  PostToolUse: "PostAction",
+  UserPromptSubmit: "PromptSubmit",
+  PreCompact: "PreCompact",
+  SessionStart: "SessionStart",
+  Stop: "SessionEnd",
+  SubagentStop: "SubagentStop",
+  TeammateIdle: "TeammateIdle",
+  TaskCompleted: "TaskCompleted",
+  PreCommit: "PreCommit",
+} as const;
+
 /**
  * Map a Claude Code hook event name to a canonical event name.
+ * Throws on unrecognised event names rather than silently passing through.
  * @param ccEvent - The raw Claude Code hook event name (e.g. "PreToolUse").
  * @returns The canonical OrqaStudio event name.
  */
 export function mapEvent(ccEvent: string): CanonicalEvent {
-  const map: Record<string, CanonicalEvent> = {
-    PreToolUse: "PreAction",
-    PostToolUse: "PostAction",
-    UserPromptSubmit: "PromptSubmit",
-    PreCompact: "PreCompact",
-    SessionStart: "SessionStart",
-    Stop: "SessionEnd",
-    SubagentStop: "SubagentStop",
-  };
-  return map[ccEvent] ?? (ccEvent as CanonicalEvent);
+  const mapped = CC_EVENT_MAP[ccEvent];
+  if (mapped === undefined) {
+    throw new Error(`Unrecognised Claude Code event: ${ccEvent}`);
+  }
+  return mapped;
 }
 
 /**
@@ -102,7 +114,7 @@ export function mapEvent(ccEvent: string): CanonicalEvent {
  * This denies the tool call in Claude Code. Never returns — exits the process.
  * @param messages - Array of message strings to join and send to the agent.
  */
-export function outputBlock(messages: string[]): never {
+export function outputBlock(messages: readonly string[]): never {
   process.stderr.write(
     JSON.stringify({
       hookSpecificOutput: { permissionDecision: "deny" },
@@ -117,7 +129,7 @@ export function outputBlock(messages: string[]): never {
  * The tool call proceeds but the agent sees the message.
  * @param messages - Array of message strings to join and send to the agent.
  */
-export function outputWarn(messages: string[]): void {
+export function outputWarn(messages: readonly string[]): void {
   process.stdout.write(JSON.stringify({ systemMessage: messages.join("\n") }));
 }
 

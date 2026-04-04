@@ -41,10 +41,12 @@ describe("StreamingIndicator", () => {
 
 	it("is visible when tools are active even if content exists", () => {
 		const mockToolCall = {
+			toolCallId: "call-1",
 			toolName: "bash",
-			input: { command: "ls" },
+			input: JSON.stringify({ command: "ls" }),
+			output: null,
+			isError: false,
 			isComplete: false,
-			callId: "call-1",
 		};
 		render(StreamingIndicator, { props: { hasContent: true, toolCalls: [mockToolCall] } });
 		// Phase label from mock: "Working..."
@@ -53,8 +55,8 @@ describe("StreamingIndicator", () => {
 
 	it("shows tool progress counter when tools are active", () => {
 		const toolCalls = [
-			{ toolName: "bash", input: {}, isComplete: true, callId: "c1" },
-			{ toolName: "read", input: {}, isComplete: false, callId: "c2" },
+			{ toolCallId: "c1", toolName: "bash", input: "{}", output: null, isError: false, isComplete: true },
+			{ toolCallId: "c2", toolName: "read", input: "{}", output: null, isError: false, isComplete: false },
 		];
 		render(StreamingIndicator, { props: { hasContent: false, toolCalls } });
 		// 1 of 2 tools complete

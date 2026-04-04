@@ -1,19 +1,19 @@
 export interface Message {
-	id: number;
-	session_id: number;
-	role: MessageRole;
-	content_type: ContentType;
-	content: string | null;
-	tool_call_id: string | null;
-	tool_name: string | null;
-	tool_input: string | null;
-	tool_is_error: boolean;
-	turn_index: number;
-	block_index: number;
-	stream_status: StreamStatus;
-	input_tokens: number | null;
-	output_tokens: number | null;
-	created_at: string;
+	readonly id: number;
+	readonly session_id: number;
+	readonly role: MessageRole;
+	readonly content_type: ContentType;
+	readonly content: string | null;
+	readonly tool_call_id: string | null;
+	readonly tool_name: string | null;
+	readonly tool_input: string | null;
+	readonly tool_is_error: boolean;
+	readonly turn_index: number;
+	readonly block_index: number;
+	readonly stream_status: StreamStatus;
+	readonly input_tokens: number | null;
+	readonly output_tokens: number | null;
+	readonly created_at: string;
 }
 
 export type MessageRole = "user" | "assistant" | "system";
@@ -22,10 +22,10 @@ export type StreamStatus = "pending" | "complete" | "error";
 export type MessageId = number;
 
 export interface SearchResult {
-	message_id: number;
-	session_id: number;
-	session_title: string | null;
-	content: string;
-	highlighted: string;
-	rank: number;
+	readonly message_id: number;
+	readonly session_id: number;
+	readonly session_title: string | null;
+	readonly content: string;
+	readonly highlighted: string;
+	readonly rank: number;
 }

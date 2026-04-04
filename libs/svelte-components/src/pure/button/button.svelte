@@ -24,6 +24,9 @@
 				"icon-sm": "size-8",
 				"icon-lg": "size-10",
 			},
+			full: {
+				true: "w-full",
+			},
 		},
 		defaultVariants: {
 			variant: "default",
@@ -34,18 +37,20 @@
 	export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 	export type ButtonSize = VariantProps<typeof buttonVariants>["size"];
 
-	export type ButtonProps = WithElementRef<HTMLButtonAttributes> &
-		WithElementRef<HTMLAnchorAttributes> & {
+	export type ButtonProps = WithElementRef<Omit<HTMLButtonAttributes, "class">> &
+		WithElementRef<Omit<HTMLAnchorAttributes, "class">> & {
 			variant?: ButtonVariant;
 			size?: ButtonSize;
+			/** When true, expands to full width. */
+			full?: boolean;
 		};
 </script>
 
 <script lang="ts">
 	let {
-		class: className,
 		variant = "default",
 		size = "default",
+		full = false,
 		ref = $bindable(null),
 		href = undefined,
 		type = "button",
@@ -59,7 +64,7 @@
 	<a
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={buttonVariants({ variant, size, full: full || undefined })}
 		href={disabled ? undefined : href}
 		aria-disabled={disabled}
 		role={disabled ? "link" : undefined}
@@ -72,7 +77,7 @@
 	<button
 		bind:this={ref}
 		data-slot="button"
-		class={cn(buttonVariants({ variant, size }), className)}
+		class={buttonVariants({ variant, size, full: full || undefined })}
 		{type}
 		{disabled}
 		{...restProps}

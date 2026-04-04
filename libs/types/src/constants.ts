@@ -10,14 +10,13 @@ import type { RelationshipType } from "./plugin.js";
 export function buildInverseMap(
 	relationships: ReadonlyArray<Pick<RelationshipType, "key" | "inverse">>,
 ): ReadonlyMap<string, string> {
-	const map = new Map<string, string>();
-	for (const rel of relationships) {
-		map.set(rel.key, rel.inverse);
-		if (rel.inverse !== rel.key) {
-			map.set(rel.inverse, rel.key);
-		}
-	}
-	return map;
+	return new Map(
+		relationships.flatMap((rel) =>
+			rel.inverse !== rel.key
+				? [[rel.key, rel.inverse], [rel.inverse, rel.key]]
+				: [[rel.key, rel.inverse]],
+		),
+	);
 }
 
 /**
@@ -28,7 +27,7 @@ export function buildInverseMap(
  * without hardcoding specific relationship keys.
  */
 export function hasSemantic(
-	semantics: Record<string, { keys: string[] }>,
+	semantics: Readonly<Record<string, { readonly keys: readonly string[] }>>,
 	relationshipKey: string,
 	semanticName: string,
 ): boolean {
@@ -41,9 +40,9 @@ export function hasSemantic(
  * Usage: `keysForSemantic(semantics, "lineage")` → ["evolves-into", "evolves-from", "merged-into", "merged-from"]
  */
 export function keysForSemantic(
-	semantics: Record<string, { keys: string[] }>,
+	semantics: Readonly<Record<string, { readonly keys: readonly string[] }>>,
 	semanticName: string,
-): string[] {
+): readonly string[] {
 	return semantics[semanticName]?.keys ?? [];
 }
 

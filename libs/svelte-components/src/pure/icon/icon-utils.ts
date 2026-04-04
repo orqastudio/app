@@ -217,7 +217,7 @@ export const DEFAULT_ICON_MAP: Record<string, Component> = {
  */
 export function resolveIcon(
 	name: string | undefined,
-	customRegistry?: Record<string, Component>,
+	customRegistry?: Readonly<Record<string, Component>>,
 ): Component {
 	if (!name) return CircleDotIcon;
 	if (customRegistry && name in customRegistry) return customRegistry[name];

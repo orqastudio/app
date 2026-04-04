@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { Icon } from "@orqastudio/svelte-components/pure";
 
 	let isMaximized = $state(false);
 
-	$effect(() => {
-		getCurrentWindow()
+	// Fetch maximized state once on mount — no reactive dependencies need re-running this.
+	onMount(() => {
+		void getCurrentWindow()
 			.isMaximized()
 			.then((m) => {
 				isMaximized = m;
@@ -33,14 +35,14 @@
 
 <div class="flex items-center">
 	<button
-		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground"
+		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-accent hover:text-foreground"
 		onclick={minimize}
 		aria-label="Minimize"
 	>
 		<Icon name="minus" size="sm" />
 	</button>
 	<button
-		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground"
+		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-accent hover:text-foreground"
 		onclick={toggleMaximize}
 		aria-label={isMaximized ? "Restore" : "Maximize"}
 	>
@@ -51,7 +53,7 @@
 		{/if}
 	</button>
 	<button
-		class="flex h-8 w-10 items-center justify-center text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
+		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
 		onclick={close}
 		aria-label="Close"
 	>

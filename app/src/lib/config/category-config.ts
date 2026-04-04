@@ -4,11 +4,11 @@
 // process is gone, delivery → implementation, principles → discovery.
 
 export interface CategoryConfig {
-	icon: string;
-	label: string;
-	singular: string;
-	description: string;
-	location: string;
+	readonly icon: string;
+	readonly label: string;
+	readonly singular: string;
+	readonly description: string;
+	readonly location: string;
 }
 
 // Maps ActivityView category keys to their display configuration.

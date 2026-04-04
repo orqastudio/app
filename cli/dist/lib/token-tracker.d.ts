@@ -14,36 +14,36 @@
  */
 /** Level 1 — Per-request metrics captured for every API call. */
 export interface RequestMetrics {
-    timestamp: string;
-    agentId: string;
-    taskId?: string;
-    inputTokens: number;
-    outputTokens: number;
-    cacheHitTokens: number;
-    reasoningTokens: number;
-    model: string;
-    latencyMs: number;
+    readonly timestamp: string;
+    readonly agentId: string;
+    readonly taskId?: string;
+    readonly inputTokens: number;
+    readonly outputTokens: number;
+    readonly cacheHitTokens: number;
+    readonly reasoningTokens: number;
+    readonly model: string;
+    readonly latencyMs: number;
 }
 /** Level 2 — Per-agent aggregate metrics across an agent's lifetime. */
 export interface AgentMetrics {
-    agentId: string;
-    role: string;
-    model: string;
-    totalInputTokens: number;
-    totalOutputTokens: number;
-    contextUtilization: number;
-    requestCount: number;
-    lifetimeMs: number;
+    readonly agentId: string;
+    readonly role: string;
+    readonly model: string;
+    readonly totalInputTokens: number;
+    readonly totalOutputTokens: number;
+    readonly contextUtilization: number;
+    readonly requestCount: number;
+    readonly lifetimeMs: number;
 }
 /** Level 3 — Per-session aggregate metrics. */
 export interface SessionMetrics {
-    sessionId: string;
-    startTime: string;
-    totalTokens: number;
-    totalCost: number;
-    agentSpawns: number;
-    overheadRatio: number;
-    teamSpawnCost: number;
+    readonly sessionId: string;
+    readonly startTime: string;
+    readonly totalTokens: number;
+    readonly totalCost: number;
+    readonly agentSpawns: number;
+    readonly overheadRatio: number;
+    readonly teamSpawnCost: number;
 }
 /** Discriminated union for JSONL events. */
 export type MetricEvent = {

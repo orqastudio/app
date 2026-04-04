@@ -6,7 +6,7 @@
 		subscriptionType: string | null | undefined;
 		rateLimitTier: string | null | undefined;
 		expiresAt: number | null | undefined;
-		scopes: string[];
+		scopes: readonly string[];
 	}
 
 	const { subscriptionType, rateLimitTier, expiresAt, scopes }: Props = $props();
@@ -68,13 +68,11 @@
 </script>
 
 <Separator />
-<div class="rounded-lg border bg-muted/30 p-4 space-y-3">
+<div class="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
 	<div class="flex items-center justify-between">
 		<span class="text-sm font-medium">Subscription</span>
 		{#if subscriptionType}
-			<Badge variant="default" class="text-xs capitalize">
-				{formatSubscriptionType(subscriptionType)}
-			</Badge>
+			<Badge variant="default"><span class="text-xs capitalize">{formatSubscriptionType(subscriptionType)}</span></Badge>
 		{/if}
 	</div>
 
@@ -100,7 +98,7 @@
 			<span class="w-28 shrink-0 text-muted-foreground">Scopes:</span>
 			<div class="flex flex-wrap gap-1">
 				{#each scopes as scope (scope)}
-					<Badge variant="outline" class="text-xs font-mono">{formatScope(scope)}</Badge>
+					<Badge variant="outline"><span class="text-xs font-mono">{formatScope(scope)}</span></Badge>
 				{/each}
 			</div>
 		</div>

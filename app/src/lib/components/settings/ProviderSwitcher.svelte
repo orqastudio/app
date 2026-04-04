@@ -2,7 +2,6 @@
 	import { Icon } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { pluginRegistry, toast } = getStores();
@@ -22,13 +21,15 @@
 </script>
 
 {#if sidecars.length > 0}
-<CardRoot class="gap-2">
-	<CardHeader class="pb-2">
-		<CardTitle class="flex items-center gap-1.5 text-sm font-semibold">
-			<Icon name="cpu" size="md" />
-			AI Provider
+<CardRoot>
+	<CardHeader compact>
+		<CardTitle>
+			<div class="flex items-center gap-1.5">
+				<Icon name="cpu" size="md" />
+				AI Provider
+			</div>
 		</CardTitle>
-		<CardDescription class="text-xs">
+		<CardDescription>
 			{#if hasMultiple}
 				Select which AI provider to use for the sidecar.
 			{:else}
@@ -36,36 +37,28 @@
 			{/if}
 		</CardDescription>
 	</CardHeader>
-	<CardContent class="pt-0">
-		<div class="space-y-2">
+	<CardContent>
+		<div class="flex flex-col gap-2">
 			{#each sidecars as sidecar (sidecar.key)}
 				{@const isActive = sidecar.key === activeKey}
-				<div
-					class="flex items-center justify-between rounded border px-3 py-2 {isActive
-						? 'border-primary bg-primary/5'
-						: 'border-border'}"
-				>
+				<div class="flex items-center justify-between rounded border px-3 py-2 {isActive ? 'border-primary bg-primary/5' : 'border-border'}">
 					<div class="flex items-center gap-2">
 						<Icon name={isActive ? "circle-check" : "circle-dashed"} size="sm" />
-						<div>
-							<p class="text-xs font-medium">{sidecar.label}</p>
-							<p class="text-[10px] text-muted-foreground">
-								{sidecar.runtime} &middot; {sidecar.entrypoint}
-							</p>
+						<div class="flex flex-col gap-0">
+							<span class="text-xs font-medium">{sidecar.label}</span>
+							<span class="text-xs text-muted-foreground">{sidecar.runtime} &middot; {sidecar.entrypoint}</span>
 						</div>
 					</div>
 					<div class="flex items-center gap-2">
 						{#if isActive}
-							<Badge variant="outline" class="text-[10px] px-1.5 py-0">Active</Badge>
+							<Badge variant="outline" size="xs">Active</Badge>
 						{:else}
-							<Button
-								variant="ghost"
-								size="sm"
-								class="h-7 px-2 text-xs"
+							<button
+								class="flex h-7 items-center rounded px-2 text-xs hover:bg-accent"
 								onclick={() => switchProvider(sidecar.key)}
 							>
 								Switch
-							</Button>
+							</button>
 						{/if}
 					</div>
 				</div>
@@ -75,10 +68,10 @@
 		{#if sidecars.length > 0}
 			<div class="mt-3 flex items-start gap-2 rounded bg-muted/50 p-2">
 				<Icon name="info" size="sm" />
-				<p class="text-[10px] text-muted-foreground">
+				<span class="text-xs text-muted-foreground">
 					Provider changes take effect after restarting the app. The sidecar
 					will reconnect using the selected provider's configuration.
-				</p>
+				</span>
 			</div>
 		{/if}
 	</CardContent>

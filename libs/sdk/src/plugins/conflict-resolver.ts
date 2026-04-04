@@ -11,6 +11,7 @@ import type {
 	PluginManifest,
 	ConflictResolutionSuggestion,
 } from "@orqastudio/types";
+import { assertNever } from "@orqastudio/types";
 import { logger } from "../logger.js";
 import type { RegistrationConflict } from "./plugin-registry.svelte.js";
 
@@ -20,10 +21,10 @@ const log = logger("conflict-resolver");
  * Build a system prompt for the AI to resolve plugin conflicts.
  */
 export function buildConflictResolutionPrompt(
-	conflicts: RegistrationConflict[],
+	conflicts: readonly RegistrationConflict[],
 	existingManifest: PluginManifest,
 	newManifest: PluginManifest,
-	projectContext?: { vision?: string; pillars?: string[] },
+	projectContext?: { readonly vision?: string; readonly pillars?: readonly string[] },
 ): string {
 	const conflictDescriptions = conflicts.map((c) => {
 		switch (c.type) {
@@ -33,6 +34,8 @@ export function buildConflictResolutionPrompt(
 				return `Relationship conflict: both plugins register relationship "${c.key}"`;
 			case "relationship-constraint":
 				return `Relationship constraint conflict: "${c.key}" has different from/to types`;
+			default:
+				return assertNever(c.type);
 		}
 	});
 

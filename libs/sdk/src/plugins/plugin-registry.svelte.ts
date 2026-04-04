@@ -98,7 +98,7 @@ export class PluginRegistry {
 	 * Must be called before any plugin registration.
 	 * Platform relationships cannot be overridden by plugins.
 	 */
-	registerPlatformRelationships(relationships: RelationshipType[]): void {
+	registerPlatformRelationships(relationships: readonly RelationshipType[]): void {
 		for (const rel of relationships) {
 			this.relationshipOwnership.set(rel.key, "platform");
 			this.relationshipOwnership.set(rel.inverse, "platform");
@@ -354,33 +354,21 @@ export class PluginRegistry {
 	 * Get all registered artifact schemas across all plugins.
 	 */
 	get allSchemas(): ArtifactSchema[] {
-		const schemas: ArtifactSchema[] = [];
-		for (const [, plugin] of this.plugins) {
-			schemas.push(...plugin.manifest.provides.schemas);
-		}
-		return schemas;
+		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.schemas);
 	}
 
 	/**
 	 * Get all registered view registrations across all plugins.
 	 */
 	get allViews(): ViewRegistration[] {
-		const views: ViewRegistration[] = [];
-		for (const [, plugin] of this.plugins) {
-			views.push(...plugin.manifest.provides.views);
-		}
-		return views;
+		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.views);
 	}
 
 	/**
 	 * Get all registered widget registrations across all plugins.
 	 */
 	get allWidgets(): WidgetRegistration[] {
-		const widgets: WidgetRegistration[] = [];
-		for (const [, plugin] of this.plugins) {
-			widgets.push(...plugin.manifest.provides.widgets);
-		}
-		return widgets;
+		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.widgets);
 	}
 
 	/**
@@ -447,39 +435,25 @@ export class PluginRegistry {
 	 * Get all sidecar registrations across all plugins.
 	 */
 	get sidecarProviders(): SidecarRegistration[] {
-		const sidecars: SidecarRegistration[] = [];
-		for (const [, plugin] of this.plugins) {
-			if (plugin.manifest.provides.sidecar) {
-				sidecars.push(plugin.manifest.provides.sidecar);
-			}
-		}
-		return sidecars;
+		return Array.from(this.plugins.values())
+			.filter((p) => p.manifest.provides.sidecar !== undefined)
+			.map((p) => p.manifest.provides.sidecar as SidecarRegistration);
 	}
 
 	/**
 	 * Get all CLI tool registrations across all plugins.
 	 */
 	get allCliTools(): CliToolRegistration[] {
-		const tools: CliToolRegistration[] = [];
-		for (const [, plugin] of this.plugins) {
-			if (plugin.manifest.provides.cliTools) {
-				tools.push(...plugin.manifest.provides.cliTools);
-			}
-		}
-		return tools;
+		return Array.from(this.plugins.values())
+			.flatMap((p) => p.manifest.provides.cliTools ?? []);
 	}
 
 	/**
 	 * Get all hook registrations across all plugins.
 	 */
 	get allHooks(): HookRegistration[] {
-		const hooks: HookRegistration[] = [];
-		for (const [, plugin] of this.plugins) {
-			if (plugin.manifest.provides.hooks) {
-				hooks.push(...plugin.manifest.provides.hooks);
-			}
-		}
-		return hooks;
+		return Array.from(this.plugins.values())
+			.flatMap((p) => p.manifest.provides.hooks ?? []);
 	}
 
 	// -----------------------------------------------------------------------
@@ -692,15 +666,9 @@ export class PluginRegistry {
 	 * Used by SettingsCategoryNav to render plugin-contributed settings sections.
 	 */
 	getSettingsPages(): Array<SettingsPageDeclaration & { pluginName: string }> {
-		const pages: Array<SettingsPageDeclaration & { pluginName: string }> = [];
-		for (const [name, plugin] of this.plugins) {
-			if (plugin.manifest.provides.settings_pages) {
-				for (const page of plugin.manifest.provides.settings_pages) {
-					pages.push({ ...page, pluginName: name });
-				}
-			}
-		}
-		return pages;
+		return Array.from(this.plugins.entries()).flatMap(([name, plugin]) =>
+			(plugin.manifest.provides.settings_pages ?? []).map((page) => ({ ...page, pluginName: name })),
+		);
 	}
 
 	// -----------------------------------------------------------------------

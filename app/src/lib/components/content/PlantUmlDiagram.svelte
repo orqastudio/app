@@ -184,7 +184,7 @@
 	});
 </script>
 
-<div class="plantuml-diagram overflow-x-auto rounded border border-border bg-muted/30 p-4">
+<div class="plantuml-diagram rounded border border-border bg-muted/30 p-4 overflow-x-auto">
 	{#if loading}
 		<div class="flex items-center justify-center py-8 text-xs text-muted-foreground">
 			Loading PlantUML diagram...

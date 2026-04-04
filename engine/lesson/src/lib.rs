@@ -54,9 +54,10 @@ fn split_frontmatter(content: &str) -> Result<(String, &str), String> {
 /// set of frontmatter field names (P1: Plugin-Composed Everything). Known
 /// fields are extracted from the map after it is built.
 fn parse_frontmatter_map(frontmatter: &str) -> std::collections::HashMap<String, Option<String>> {
-    let mut map = std::collections::HashMap::new();
-    for line in frontmatter.lines() {
-        if let Some(colon_pos) = line.find(':') {
+    frontmatter
+        .lines()
+        .filter_map(|line| {
+            let colon_pos = line.find(':')?;
             let key = line[..colon_pos].trim().to_owned();
             let raw = line[colon_pos + 1..].trim();
             let value = if raw.is_empty() || raw == "null" {
@@ -64,10 +65,9 @@ fn parse_frontmatter_map(frontmatter: &str) -> std::collections::HashMap<String,
             } else {
                 Some(raw.trim_matches('"').trim_matches('\'').to_owned())
             };
-            map.insert(key, value);
-        }
-    }
-    map
+            Some((key, value))
+        })
+        .collect()
 }
 
 /// Extract a required field from the frontmatter map, returning an error if absent or null.

@@ -56,17 +56,18 @@ pub struct SessionStartResponse {
 /// each missing item individually so the connector can surface precise guidance.
 fn check_installation(project_path: &Path) -> CheckResult {
     let claude_dir = project_path.join(".claude");
-    let mut missing: Vec<&str> = Vec::new();
 
-    if !claude_dir.join("agents").exists() {
-        missing.push(".claude/agents");
-    }
-    if !claude_dir.join("rules").exists() {
-        missing.push(".claude/rules");
-    }
-    if !claude_dir.join("CLAUDE.md").exists() {
-        missing.push(".claude/CLAUDE.md");
-    }
+    // Collect names of required paths that do not exist on disk.
+    let required: &[(&str, &str)] = &[
+        ("agents", ".claude/agents"),
+        ("rules", ".claude/rules"),
+        ("CLAUDE.md", ".claude/CLAUDE.md"),
+    ];
+    let missing: Vec<&str> = required
+        .iter()
+        .filter(|(name, _label)| !claude_dir.join(name).exists())
+        .map(|(_name, label)| *label)
+        .collect();
 
     if missing.is_empty() {
         CheckResult {
@@ -119,27 +120,29 @@ fn check_graph_integrity(project_path: &Path) -> CheckResult {
         };
     }
 
-    // Walk .orqa/ and attempt to parse every .json file.
-    let mut errors: Vec<String> = Vec::new();
-    if let Ok(entries) = walk_json_files(&orqa_dir) {
-        for path in entries {
-            if let Ok(contents) = std::fs::read_to_string(&path) {
-                if serde_json::from_str::<serde_json::Value>(&contents).is_err() {
-                    let relative = path
-                        .strip_prefix(project_path)
-                        .unwrap_or(&path)
-                        .display()
-                        .to_string();
-                    warn!(
-                        subsystem = "session",
-                        file = %relative,
-                        "malformed JSON in .orqa/ artifact"
-                    );
-                    errors.push(format!("malformed JSON: {relative}"));
-                }
+    // Walk .orqa/ and collect error messages for any files that fail JSON parse.
+    let errors: Vec<String> = walk_json_files(&orqa_dir)
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|path| {
+            let contents = std::fs::read_to_string(&path).ok()?;
+            if serde_json::from_str::<serde_json::Value>(&contents).is_err() {
+                let relative = path
+                    .strip_prefix(project_path)
+                    .unwrap_or(&path)
+                    .display()
+                    .to_string();
+                warn!(
+                    subsystem = "session",
+                    file = %relative,
+                    "malformed JSON in .orqa/ artifact"
+                );
+                Some(format!("malformed JSON: {relative}"))
+            } else {
+                None
             }
-        }
-    }
+        })
+        .collect();
 
     if errors.is_empty() {
         CheckResult {

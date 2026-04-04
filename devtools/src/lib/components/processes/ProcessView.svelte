@@ -5,7 +5,8 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import { invoke } from "@tauri-apps/api/core";
-	import { Button, ConnectionIndicator, EmptyState } from "@orqastudio/svelte-components/pure";
+	import { Button, ConnectionIndicator, EmptyState, Stack, HStack, Grid, Heading, Text, Caption, Code, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { assertNever } from "@orqastudio/types";
 	import ProcessCard from "./ProcessCard.svelte";
 	import type { ProcessInfo } from "./ProcessCard.svelte";
 	import {
@@ -53,15 +54,23 @@
 		}
 	}
 
-	const buttonLabel = $derived(
-		devController.state === "starting"
-			? "Starting..."
-			: devController.state === "stopping"
-				? "Stopping..."
-				: devController.state === "running"
-					? "Stop Dev Environment"
-					: "Start Dev Environment",
-	);
+	// Resolve button label from the current dev controller state with exhaustiveness check.
+	function resolveButtonLabel(state: typeof devController.state): string {
+		switch (state) {
+			case "starting":
+				return "Starting...";
+			case "stopping":
+				return "Stopping...";
+			case "running":
+				return "Stop Dev Environment";
+			case "stopped":
+				return "Start Dev Environment";
+			default:
+				return assertNever(state);
+		}
+	}
+
+	const buttonLabel = $derived(resolveButtonLabel(devController.state));
 
 	// Map poll error / running state to a ConnectionIndicator state value.
 	const connectionState = $derived(
@@ -89,11 +98,13 @@
 	});
 </script>
 
-<div class="process-view">
-	<!-- Dev environment control -->
-	<div class="process-view__header">
-		<h2 class="process-view__title">Dev Environment</h2>
-		<div class="process-view__controls">
+<!-- Outer container: fills the tab content area with vertical scroll. -->
+<ScrollArea class="h-full">
+<Stack gap={4} class="p-4">
+	<!-- Dev environment control: title on left, controls on right. -->
+	<HStack justify="between">
+		<Heading level={5}>Dev Environment</Heading>
+		<HStack gap={3}>
 			{#if pollError || (initialized && isRunning)}
 				<ConnectionIndicator state={connectionState} label={connectionLabel} />
 			{/if}
@@ -105,12 +116,14 @@
 			>
 				{buttonLabel}
 			</Button>
-		</div>
-	</div>
+		</HStack>
+	</HStack>
 
 	<!-- Process grid -->
 	{#if !initialized}
-		<div class="process-view__loading">Loading process status...</div>
+		<div class="process-view__loading">
+			<Text muted>Loading process status...</Text>
+		</div>
 	{:else if processes.length === 0 && !isRunning}
 		<div class="process-view__empty-wrapper">
 			<EmptyState
@@ -119,7 +132,8 @@
 			/>
 		</div>
 	{:else}
-		<div class="process-view__grid">
+		<!-- Responsive card grid: 2 → md:3 → lg:5 columns. -->
+		<Grid cols={2} md={3} gap={3} class="process-view__grid">
 			{#each processes as process (process.source)}
 				<ProcessCard
 					{process}
@@ -127,58 +141,28 @@
 					onselect={handleSelect}
 				/>
 			{/each}
-		</div>
+		</Grid>
 
 		{#if selectedSource !== null}
 			<div class="process-view__filter-hint">
-				Showing logs for source <span class="process-view__filter-hint-source">{selectedSource}</span>.
-				Click the card again to clear the filter. Navigate to the
-				<span class="process-view__filter-hint-nav">Logs</span> tab to see filtered entries.
+				<Text size="xs" muted>
+					Showing logs for source <Code>{selectedSource}</Code>.
+					Click the card again to clear the filter. Navigate to the
+					<Text size="xs">Logs</Text> tab to see filtered entries.
+				</Text>
 			</div>
 		{/if}
 	{/if}
-</div>
+</Stack>
+</ScrollArea>
 
 <style>
-	/* Outer container: fills the tab content area with vertical scroll. */
-	.process-view {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		overflow: auto;
-		padding: var(--spacing-4);
-		gap: var(--spacing-4);
-	}
-
-	/* Top bar: title on the left, controls on the right. */
-	.process-view__header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.process-view__title {
-		font-size: var(--text-sm);
-		font-weight: 600;
-		color: var(--color-content-base);
-	}
-
-	/* Controls group: indicator + button aligned right. */
-	.process-view__controls {
-		display: flex;
-		align-items: center;
-		gap: var(--spacing-3);
-		font-size: var(--text-xs);
-	}
-
 	/* Loading placeholder centred in the remaining space. */
 	.process-view__loading {
 		flex: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: var(--text-sm);
-		color: var(--color-content-muted);
 	}
 
 	/* Empty state wrapper: centred, fills available height. */
@@ -189,21 +173,10 @@
 		justify-content: center;
 	}
 
-	/* Responsive card grid. */
-	.process-view__grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: var(--spacing-3);
-	}
-
-	@media (min-width: 768px) {
-		.process-view__grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-	}
-
+	/* lg:5 columns is not in Grid's built-in map so we override globally.
+	   Grid passes the class down to its inner div. */
 	@media (min-width: 1024px) {
-		.process-view__grid {
+		:global(.process-view__grid) {
 			grid-template-columns: repeat(5, 1fr);
 		}
 	}
@@ -214,17 +187,5 @@
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		padding: var(--spacing-2) var(--spacing-3);
-		font-size: var(--text-xs);
-		color: var(--color-content-muted);
-	}
-
-	.process-view__filter-hint-source {
-		font-family: var(--font-mono);
-		color: var(--color-content-base);
-	}
-
-	.process-view__filter-hint-nav {
-		color: var(--color-content-base);
-		font-weight: 500;
 	}
 </style>

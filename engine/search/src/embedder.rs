@@ -244,41 +244,41 @@ fn postprocess_embeddings(
 ) -> Vec<Vec<f32>> {
     let output_shape = output_array.shape();
     let hidden_dim = output_shape[2];
-    let mut embeddings = Vec::with_capacity(batch_size);
 
-    for i in 0..batch_size {
-        let row_slice = output_array.index_axis(Axis(0), i);
-        let row_offset = i * max_len;
-        let mut sum = vec![0.0f32; hidden_dim];
-        let mut count = 0.0f32;
+    (0..batch_size)
+        .map(|i| {
+            let row_slice = output_array.index_axis(Axis(0), i);
+            let row_offset = i * max_len;
 
-        for j in 0..output_shape[1] {
-            if attention_mask[row_offset + j] == 1 {
-                let token_embedding = row_slice.index_axis(Axis(0), j);
-                for (k, val) in token_embedding.iter().enumerate() {
-                    sum[k] += val;
+            // Accumulate mean-pooled embedding over attention-masked tokens.
+            // Element-wise accumulation across hidden_dim requires indexed mutation;
+            // an iterator cannot directly update a Vec<f32> by index without enumerate.
+            let mut sum = vec![0.0f32; hidden_dim];
+            let mut count = 0.0f32;
+            for j in 0..output_shape[1] {
+                if attention_mask[row_offset + j] == 1 {
+                    let token_embedding = row_slice.index_axis(Axis(0), j);
+                    for (k, val) in token_embedding.iter().enumerate() {
+                        sum[k] += val;
+                    }
+                    count += 1.0;
                 }
-                count += 1.0;
             }
-        }
 
-        if count > 0.0 {
-            for val in &mut sum {
-                *val /= count;
+            // Divide by token count, then L2-normalize.
+            let mean: Vec<f32> = if count > 0.0 {
+                sum.iter().map(|x| x / count).collect()
+            } else {
+                sum
+            };
+            let norm: f32 = mean.iter().map(|x| x * x).sum::<f32>().sqrt();
+            if norm > 0.0 {
+                mean.iter().map(|x| x / norm).collect()
+            } else {
+                mean
             }
-        }
-
-        let norm: f32 = sum.iter().map(|x| x * x).sum::<f32>().sqrt();
-        if norm > 0.0 {
-            for val in &mut sum {
-                *val /= norm;
-            }
-        }
-
-        embeddings.push(sum);
-    }
-
-    embeddings
+        })
+        .collect()
 }
 
 #[cfg(test)]

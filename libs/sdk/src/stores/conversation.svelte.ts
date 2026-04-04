@@ -1,40 +1,50 @@
 import { SvelteMap, SvelteDate } from "svelte/reactivity";
 import type { Message, StreamEvent } from "@orqastudio/types";
+import { assertNever } from "@orqastudio/types";
 import { invoke, createStreamChannel, extractErrorMessage } from "../ipc/invoke.js";
 import { logger } from "../logger.js";
 
 const log = logger("conversation");
 
 export interface ToolCallState {
-	toolCallId: string;
-	toolName: string;
-	input: string;
-	output: string | null;
-	isError: boolean;
-	isComplete: boolean;
+	readonly toolCallId: string;
+	readonly toolName: string;
+	readonly input: string;
+	readonly output: string | null;
+	readonly isError: boolean;
+	readonly isComplete: boolean;
 }
 
 export type ContextEntry =
 	| {
-			type: "system_prompt_sent";
-			customPrompt: string | null;
-			governancePrompt: string;
-			totalChars: number;
+			readonly type: "system_prompt_sent";
+			readonly customPrompt: string | null;
+			readonly governancePrompt: string;
+			readonly totalChars: number;
 	  }
 	| {
-			type: "context_injected";
-			messageCount: number;
-			totalChars: number;
-			messages: string;
+			readonly type: "context_injected";
+			readonly messageCount: number;
+			readonly totalChars: number;
+			readonly messages: string;
 	  };
 
 /** State for a pending tool approval — drives the approval dialog. */
 export interface PendingApproval {
-	toolCallId: string;
-	toolName: string;
+	readonly toolCallId: string;
+	readonly toolName: string;
 	/** Raw JSON string of tool parameters, for display. */
-	input: string;
+	readonly input: string;
 }
+
+/**
+ * Conversation status as a discriminated union.
+ * - idle: no active operation
+ * - loading: loading messages from the backend
+ * - streaming: model is actively generating a response
+ * - error: last operation failed (error message in ConversationStore.error)
+ */
+export type ConversationStatus = "idle" | "loading" | "streaming" | "error";
 
 /** Default model used when no explicit model is configured. */
 const DEFAULT_MODEL_FALLBACK = "auto";
@@ -47,10 +57,12 @@ export class ConversationStore {
 	streamingContent = $state("");
 	/** Accumulated thinking content while the model is streaming. */
 	streamingThinking = $state("");
-	/** True while the model is actively streaming a response. */
-	isStreaming = $state(false);
-	/** True while messages are being loaded from the backend. */
-	isLoading = $state(false);
+	/** Current conversation status — use this instead of inspecting isStreaming/isLoading separately. */
+	status = $state<ConversationStatus>("idle");
+	/** True while the model is actively streaming a response. Derived from status. */
+	get isStreaming(): boolean { return this.status === "streaming"; }
+	/** True while messages are being loaded from the backend. Derived from status. */
+	get isLoading(): boolean { return this.status === "loading"; }
 	/** Last error message, or null if none. */
 	error = $state<string | null>(null);
 	/** Active tool call states, keyed by tool_call_id. */
@@ -60,14 +72,14 @@ export class ConversationStore {
 	/** Non-null when a write/execute tool is waiting for user approval. */
 	pendingApproval = $state<PendingApproval | null>(null);
 	/** Process compliance violations from the most recent turn. */
-	processViolations = $state<Array<{ check: string; message: string }>>([]);
+	processViolations = $state<Array<{ readonly check: string; readonly message: string }>>([]);
 	/** Context entries sent to the model at the start of the most recent turn. */
 	contextEntries = $state<ContextEntry[]>([]);
 	/**
 	 * Last auto-generated title update received from the backend. Components observe this
 	 * to propagate the change to the session store without creating a cross-store dependency.
 	 */
-	lastTitleUpdate = $state<{ sessionId: number; title: string } | null>(null);
+	lastTitleUpdate = $state<{ readonly sessionId: number; readonly title: string } | null>(null);
 
 	private resolvedModel = $state<string | null>(null);
 	private streamingMessageId = $state<number | null>(null);
@@ -106,16 +118,16 @@ export class ConversationStore {
 	 * @param sessionId - ID of the session whose messages to load.
 	 */
 	async loadMessages(sessionId: number): Promise<void> {
-		this.isLoading = true;
+		this.status = "loading";
 		this.error = null;
 		try {
 			this.messages = await invoke<Message[]>("message_list", {
 				sessionId,
 			});
+			this.status = "idle";
 		} catch (err) {
 			this.error = extractErrorMessage(err);
-		} finally {
-			this.isLoading = false;
+			this.status = "error";
 		}
 	}
 
@@ -132,7 +144,7 @@ export class ConversationStore {
 		this.streamingMessageId = null;
 		this.processViolations = [];
 		this.contextEntries = [];
-		this.isStreaming = true;
+		this.status = "streaming";
 
 		// Optimistically add the user message to the UI immediately
 		const nextTurn = this.messages.length > 0
@@ -170,7 +182,7 @@ export class ConversationStore {
 			});
 		} catch (err) {
 			this.error = extractErrorMessage(err);
-			this.isStreaming = false;
+			this.status = "error";
 		}
 	}
 
@@ -191,8 +203,7 @@ export class ConversationStore {
 		this.messages = [];
 		this.streamingContent = "";
 		this.streamingThinking = "";
-		this.isStreaming = false;
-		this.isLoading = false;
+		this.status = "idle";
 		this.error = null;
 		this.activeToolCalls = new SvelteMap();
 		this.resolvedModel = null;
@@ -250,12 +261,14 @@ export class ConversationStore {
 
 	/**
 	 * Dispatch a single stream event to the appropriate store state update.
+	 * Exhaustively handles all StreamEvent variants — adding a new variant without
+	 * a case here will produce a compile error via assertNever.
 	 * @param event - The stream event received from the sidecar.
 	 */
 	private handleStreamEvent(event: StreamEvent) {
 		switch (event.type) {
 			case "stream_start":
-				this.isStreaming = true;
+				this.status = "streaming";
 				this.streamingContent = "";
 				this.streamingThinking = "";
 				this.streamingMessageId = event.data.message_id;
@@ -330,7 +343,7 @@ export class ConversationStore {
 					: null;
 				this.streamStartTime = null;
 				log.info(`turn_complete: elapsed_ms=${elapsed_ms ?? "unknown"}`);
-				this.isStreaming = false;
+				this.status = "idle";
 				this.streamingContent = "";
 				this.streamingThinking = "";
 				this.activeToolCalls = new SvelteMap();
@@ -348,12 +361,12 @@ export class ConversationStore {
 			case "stream_error":
 				log.error(`stream_error: ${event.data.message}`);
 				this.error = event.data.message;
-				this.isStreaming = false;
+				this.status = "error";
 				this.streamStartTime = null;
 				break;
 
 			case "stream_cancelled":
-				this.isStreaming = false;
+				this.status = "idle";
 				break;
 
 			case "tool_approval_request":
@@ -402,6 +415,9 @@ export class ConversationStore {
 					},
 				];
 				break;
+
+			default:
+				assertNever(event);
 		}
 	}
 }

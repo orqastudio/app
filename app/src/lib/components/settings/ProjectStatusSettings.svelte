@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
+	import { Switch } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, StatusDefinition, StatusAutoRule } from "@orqastudio/types";
 
 	interface Props {
@@ -218,9 +219,9 @@
 			Define status values, icons, allowed transitions, and auto-progression rules. Drag to reorder.
 		</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
+	<CardContent>
 		{#if localStatuses.length === 0}
-			<p class="text-sm text-muted-foreground">No statuses defined. Add one below.</p>
+			<span class="text-sm text-muted-foreground">No statuses defined. Add one below.</span>
 		{:else}
 			{#each localStatuses as status, index (status.key + index)}
 				{@const isDragging = dragIndex === index}
@@ -238,40 +239,30 @@
 					<div class="flex items-center gap-2">
 						<Icon name="grip-vertical" size="md" />
 						<span class="flex-1 font-mono text-xs font-semibold text-muted-foreground">{status.key}</span>
-						<Button
-							variant="ghost"
-							size="sm"
-							class="h-7 px-2 text-muted-foreground hover:text-destructive"
+						<button
+							class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
 							onclick={() => requestDelete(index)}
 						>
 							<Icon name="trash-2" size="sm" />
-						</Button>
+						</button>
 					</div>
 
 					<!-- Label + Icon + Spin -->
 					<div class="grid grid-cols-[1fr_1fr_auto] gap-3 items-end">
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="s-label-{index}">
-								Label
-							</label>
+						<FormGroup label="Label" for="s-label-{index}">
 							<Input
 								id="s-label-{index}"
 								value={status.label}
 								oninput={(e) => updateField(index, "label", e.currentTarget.value)}
-								class="h-7 text-xs"
 								placeholder="Display label"
 							/>
-						</div>
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="s-icon-{index}">
-								Icon
-							</label>
+						</FormGroup>
+						<FormGroup label="Icon" for="s-icon-{index}">
 							<div class="flex items-center gap-2">
 								<Input
 									id="s-icon-{index}"
 									value={status.icon}
 									oninput={(e) => updateField(index, "icon", e.currentTarget.value)}
-									class="h-7 font-mono text-xs"
 									placeholder="e.g. circle"
 								/>
 								<span class="shrink-0 text-base leading-none" aria-label="Icon preview">
@@ -280,37 +271,31 @@
 									{/if}
 								</span>
 							</div>
-						</div>
-						<div class="flex items-center gap-1.5 pb-0.5">
-							<button
-								class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors {status.spin ? 'bg-primary' : 'bg-muted-foreground/30'}"
-								onclick={() => updateField(index, "spin", !status.spin)}
-								role="switch"
-								aria-checked={status.spin ?? false}
+						</FormGroup>
+						<div class="flex items-center gap-1">
+							<Switch
+								checked={status.spin ?? false}
+								size="sm"
 								aria-label="Spin icon"
-							>
-								<span
-									class="inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform {status.spin ? 'translate-x-4' : 'translate-x-0.5'}"
-								></span>
-							</button>
+								onCheckedChange={(v) => updateField(index, "spin", v)}
+							/>
 							<span class="text-xs text-muted-foreground">Spin</span>
 						</div>
 					</div>
 
 					<!-- Transitions -->
 					<div class="space-y-1">
-						<span class="text-xs font-medium text-muted-foreground">Allowed transitions</span>
+						<span class="text-xs text-muted-foreground">Allowed transitions</span>
 						<div class="flex flex-wrap gap-1.5">
 							{#each localStatuses.filter((s) => s.key !== status.key) as target (target.key)}
 								{@const active = (status.transitions ?? []).includes(target.key)}
-								<button
-									class="rounded border px-2 py-0.5 text-xs transition-colors {active
-										? 'border-primary bg-primary text-primary-foreground'
-										: 'border-border bg-background text-muted-foreground hover:bg-accent/50'}"
+								<Button
+									variant={active ? "default" : "outline"}
+									size="sm"
 									onclick={() => toggleTransition(index, target.key)}
 								>
 									{target.label || target.key}
-								</button>
+								</Button>
 							{/each}
 							{#if localStatuses.filter((s) => s.key !== status.key).length === 0}
 								<span class="text-xs text-muted-foreground">No other statuses yet</span>
@@ -321,19 +306,17 @@
 					<!-- Auto rules -->
 					<div class="space-y-1.5">
 						<div class="flex items-center justify-between">
-							<span class="text-xs font-medium text-muted-foreground">Auto-transition rules</span>
-							<Button
-								variant="ghost"
-								size="sm"
-								class="h-6 px-2 text-xs"
+							<span class="text-xs text-muted-foreground">Auto-transition rules</span>
+							<button
+								class="flex items-center gap-1 rounded px-2 py-1 text-xs hover:bg-accent"
 								onclick={() => addAutoRule(index)}
 							>
 								<Icon name="plus" size="xs" />
 								Add rule
-							</Button>
+							</button>
 						</div>
 						{#if (status.auto_rules ?? []).length === 0}
-							<p class="text-xs text-muted-foreground">No auto-transition rules.</p>
+							<span class="text-xs text-muted-foreground">No auto-transition rules.</span>
 						{:else}
 							<div class="space-y-1.5">
 								{#each status.auto_rules ?? [] as rule, rIndex (rIndex)}
@@ -341,7 +324,6 @@
 										<Input
 											value={rule.condition}
 											oninput={(e) => updateAutoRule(index, rIndex, "condition", e.currentTarget.value)}
-											class="h-7 flex-1 font-mono text-xs"
 											placeholder="condition"
 										/>
 										<span class="shrink-0 text-xs text-muted-foreground">→</span>
@@ -355,14 +337,12 @@
 												<option value={target.key}>{target.label || target.key}</option>
 											{/each}
 										</select>
-										<Button
-											variant="ghost"
-											size="sm"
-											class="h-7 px-1.5 text-muted-foreground hover:text-destructive"
+										<button
+											class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
 											onclick={() => removeAutoRule(index, rIndex)}
 										>
 											<Icon name="trash-2" size="sm" />
-										</Button>
+										</button>
 									</div>
 								{/each}
 							</div>
@@ -376,7 +356,7 @@
 			{/each}
 		{/if}
 
-		<Button variant="outline" size="sm" onclick={addStatus} class="w-full">
+		<Button variant="outline" size="sm" onclick={addStatus}>
 			<Icon name="plus" size="sm" />
 			Add Status
 		</Button>

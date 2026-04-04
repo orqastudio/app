@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Badge } from "@orqastudio/svelte-components/pure";
+	import { Icon, Badge, HStack } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -62,12 +62,12 @@
 		{/if}
 
 		{#if ruleBlockCount > 0}
-			<Badge variant="destructive" class="h-5 px-1.5 text-xs">
+			<Badge variant="destructive" size="sm">
 				{ruleBlockCount} blocked
 			</Badge>
 		{/if}
 		{#if ruleWarnCount > 0}
-			<Badge variant="warning" class="h-5 px-1.5 text-xs">
+			<Badge variant="warning" size="sm">
 				{ruleWarnCount} warned
 			</Badge>
 		{/if}
@@ -77,7 +77,7 @@
 	{#if ruleViolations.length > 0}
 		<div class="rounded-md border border-border">
 			<button
-				class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide hover:bg-muted/50"
+				class="flex w-full items-center gap-1.5 justify-start px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wide rounded-md hover:bg-accent"
 				onclick={() => (violationsExpanded = !violationsExpanded)}
 			>
 				{#if violationsExpanded}
@@ -90,7 +90,7 @@
 			{#if violationsExpanded}
 				<div class="space-y-1 border-t border-border px-3 py-2">
 					{#each ruleViolations as violation (violation.timestamp)}
-						<div class="flex items-start gap-2">
+						<HStack gap={2} align="start">
 							{#if violation.action === "Block"}
 								<Icon name="shield" size="xs" />
 							{:else}
@@ -100,7 +100,7 @@
 								<span class="block truncate font-mono text-xs text-muted-foreground">{violation.tool_name}</span>
 								<span class="text-xs text-muted-foreground">{violation.detail}</span>
 							</div>
-						</div>
+						</HStack>
 					{/each}
 				</div>
 			{/if}

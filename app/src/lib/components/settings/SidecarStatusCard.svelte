@@ -37,11 +37,11 @@
 		<CardTitle>Provider</CardTitle>
 		<CardDescription>Claude Code CLI connection and sidecar status</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
-		<div class="space-y-3">
+	<CardContent>
+		<div class="flex flex-col gap-3">
 			<div class="flex items-center gap-2 text-sm">
 				<span class="w-32 text-muted-foreground">Sidecar Status:</span>
-				<div class="flex items-center gap-1.5">
+				<div class="flex items-center gap-1">
 					{#if settingsStore.sidecarStatus.state === "connected"}
 						<Icon name="circle-check" size="md" />
 					{:else if settingsStore.sidecarStatus.state === "starting"}
@@ -74,12 +74,12 @@
 			<div class="flex items-center gap-2 text-sm">
 				<span class="w-32 text-muted-foreground">CLI Detected:</span>
 				{#if settingsStore.sidecarStatus.cli_detected}
-					<div class="flex items-center gap-1.5">
+					<div class="flex items-center gap-1">
 						<Icon name="circle-check" size="md" />
 						<span>{settingsStore.sidecarStatus.cli_version ?? "Unknown version"}</span>
 					</div>
 				{:else}
-					<div class="flex items-center gap-1.5">
+					<div class="flex items-center gap-1">
 						<Icon name="circle-x" size="md" />
 						<span class="text-muted-foreground">Not found</span>
 					</div>

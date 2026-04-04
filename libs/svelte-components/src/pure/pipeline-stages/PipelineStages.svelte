@@ -3,23 +3,23 @@
 	import type { Component } from "svelte";
 
 	export type PipelineStage = {
-		key: string;
-		label: string;
-		count: number;
-		dotColorClass?: string;
-		icon?: Component;
-		borderClass?: string;
-		bgClass?: string;
-		iconClass?: string;
-		statusLabel?: string | null;
-		statusLabelClass?: string;
-		tooltipTitle?: string | null;
-		tooltipBody?: string | null;
+		readonly key: string;
+		readonly label: string;
+		readonly count: number;
+		readonly dotColorClass?: string;
+		readonly icon?: Component;
+		readonly borderClass?: string;
+		readonly bgClass?: string;
+		readonly iconClass?: string;
+		readonly statusLabel?: string | null;
+		readonly statusLabelClass?: string;
+		readonly tooltipTitle?: string | null;
+		readonly tooltipBody?: string | null;
 	};
 
 	export type PipelineEdge = {
-		count: number;
-		colorClass?: string;
+		readonly count: number;
+		readonly colorClass?: string;
 	};
 
 	let {
@@ -27,8 +27,8 @@
 		edges,
 		onStageClick,
 	}: {
-		stages: PipelineStage[];
-		edges?: PipelineEdge[];
+		stages: readonly PipelineStage[];
+		edges?: readonly PipelineEdge[];
 		onStageClick?: (key: string) => void;
 	} = $props();
 
@@ -65,7 +65,7 @@
 						{/if}
 					{/snippet}
 				</TooltipTrigger>
-				<TooltipContent side="bottom" class="max-w-[240px]">
+				<TooltipContent side="bottom">
 					<p class="text-xs font-medium">{stage.tooltipTitle}</p>
 					{#if stage.tooltipBody}
 						<p class="mt-1 text-xs text-muted-foreground">{stage.tooltipBody}</p>

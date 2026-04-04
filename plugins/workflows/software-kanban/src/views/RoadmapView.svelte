@@ -1,9 +1,20 @@
+<!-- RoadmapView: top-level plugin view. Accesses stores and delegates all data to child components.
+     Provides drill-down from milestone horizon board → epic kanban → task kanban. -->
 <script lang="ts">
 	import { Icon, EmptyState } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
+	import {
+		Heading,
+		Text,
+		Caption,
+		Stack,
+		HStack,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
+	// Store access boundary: only RoadmapView (the plugin root component) accesses
+	// stores directly. All child components receive data via props (props-in, events-out).
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
 	import type { ArtifactNode } from "@orqastudio/types";
 
@@ -120,11 +131,11 @@
 	}
 
 	type HorizonCol = {
-		key: string;
-		label: string;
-		description: string;
-		milestones: ArtifactNode[];
-		isDone?: boolean;
+		readonly key: string;
+		readonly label: string;
+		readonly description: string;
+		readonly milestones: readonly ArtifactNode[];
+		readonly isDone?: boolean;
 	};
 
 	const horizonColumns = $derived.by((): HorizonCol[] => {
@@ -259,12 +270,12 @@
 	}
 </script>
 
-<div class="flex h-full flex-col">
+<Stack gap={0} class="h-full">
 	<!-- Breadcrumb bar -->
 	{#if drillLevel > 0}
-		<div class="flex items-center border-b border-border px-6 py-2">
+		<HStack align="center" class="border-b border-border px-6 py-2">
 			<DrilldownBreadcrumbs items={breadcrumbItems} />
-		</div>
+		</HStack>
 	{/if}
 
 	<!-- Main content -->
@@ -290,18 +301,16 @@
 			</div>
 		{:else if drillLevel === 0}
 			<!-- Level 0: Horizon board -->
-			<div class="flex h-full flex-col px-6 py-4">
-				<div class="mb-4">
-					<div class="flex items-center gap-3">
-						<Icon name="kanban" size="xl" />
-						<div>
-							<h1 class="text-xl font-bold">Roadmap</h1>
-							<p class="text-xs text-muted-foreground">
-								Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
-							</p>
-						</div>
-					</div>
-				</div>
+			<Stack gap={4} class="h-full px-6 py-4">
+				<HStack gap={3} align="center">
+					<Icon name="kanban" size="xl" />
+					<Stack gap={0}>
+						<Heading level={2}>Roadmap</Heading>
+						<Text size="xs" muted>
+							Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
+						</Text>
+					</Stack>
+				</HStack>
 				<div class="min-h-0 flex-1 overflow-hidden">
 					<HorizonBoard
 						columns={horizonColumns}
@@ -314,34 +323,26 @@
 							updateField(ms, "horizon", horizon)}
 					/>
 				</div>
-			</div>
+			</Stack>
 		{:else if drillLevel === 1 && selectedMilestone}
 			<!-- Level 1: Milestone → Epics kanban -->
-			<div class="flex h-full flex-col px-6 py-4">
+			<Stack gap={4} class="h-full px-6 py-4">
 				<!-- Milestone detail header -->
-				<div class="mb-4">
-					<div class="flex items-start gap-2">
-						<div>
-							<p class="text-[10px] font-mono text-muted-foreground/60">
-								{selectedMilestone.id}
-							</p>
-							<h1 class="text-xl font-bold">{selectedMilestone.title}</h1>
-							{#if selectedMilestone.description}
-								<p class="mt-0.5 text-sm text-muted-foreground">
-									{selectedMilestone.description}
-								</p>
-							{/if}
-							{#if milestoneEpics.length > 0}
-								{@const doneCount = milestoneEpics.filter(
-									(e) => e.status === "completed",
-								).length}
-								<p class="mt-1 text-xs text-muted-foreground">
-									{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
-								</p>
-							{/if}
-						</div>
-					</div>
-				</div>
+				<Stack gap={0}>
+					<Caption class="font-mono opacity-60">{selectedMilestone.id}</Caption>
+					<Heading level={2}>{selectedMilestone.title}</Heading>
+					{#if selectedMilestone.description}
+						<Text size="sm" muted class="mt-0.5">{selectedMilestone.description}</Text>
+					{/if}
+					{#if milestoneEpics.length > 0}
+						{@const doneCount = milestoneEpics.filter(
+							(e) => e.status === "completed",
+						).length}
+						<Caption class="mt-1">
+							{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
+						</Caption>
+					{/if}
+				</Stack>
 
 				<!-- Epics kanban -->
 				<div class="min-h-0 flex-1 overflow-hidden">
@@ -354,32 +355,26 @@
 						getTaskCount={(epicId) => taskCountForEpic(epicId)}
 					/>
 				</div>
-			</div>
+			</Stack>
 		{:else if drillLevel === 2 && selectedEpic}
 			<!-- Level 2: Epic → Tasks kanban -->
-			<div class="flex h-full flex-col px-6 py-4">
+			<Stack gap={4} class="h-full px-6 py-4">
 				<!-- Epic detail header -->
-				<div class="mb-4">
-					<div>
-						<p class="text-[10px] font-mono text-muted-foreground/60">
-							{selectedEpic.id}
-						</p>
-						<h1 class="text-xl font-bold">{selectedEpic.title}</h1>
-						{#if selectedEpic.description}
-							<p class="mt-0.5 text-sm text-muted-foreground">
-								{selectedEpic.description}
-							</p>
-						{/if}
-						{#if epicTasks.length > 0}
-							{@const doneCount = epicTasks.filter(
-								(t) => t.status === "completed",
-							).length}
-							<p class="mt-1 text-xs text-muted-foreground">
-								{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
-							</p>
-						{/if}
-					</div>
-				</div>
+				<Stack gap={0}>
+					<Caption class="font-mono opacity-60">{selectedEpic.id}</Caption>
+					<Heading level={2}>{selectedEpic.title}</Heading>
+					{#if selectedEpic.description}
+						<Text size="sm" muted class="mt-0.5">{selectedEpic.description}</Text>
+					{/if}
+					{#if epicTasks.length > 0}
+						{@const doneCount = epicTasks.filter(
+							(t) => t.status === "completed",
+						).length}
+						<Caption class="mt-1">
+							{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
+						</Caption>
+					{/if}
+				</Stack>
 
 				<!-- Tasks kanban -->
 				<div class="min-h-0 flex-1 overflow-hidden">
@@ -391,7 +386,7 @@
 							updateField(task, "status", newStatus)}
 					/>
 				</div>
-			</div>
+			</Stack>
 		{/if}
 	</div>
-</div>
+</Stack>

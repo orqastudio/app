@@ -706,7 +706,7 @@ export class NavigationStore {
 	 * @param normalizedPath - Forward-slash-normalized path to match.
 	 * @returns The matching node, or null.
 	 */
-	private _findNodeInList(nodes: NavDocNode[], normalizedPath: string): NavDocNode | null {
+	private _findNodeInList(nodes: readonly NavDocNode[], normalizedPath: string): NavDocNode | null {
 		for (const node of nodes) {
 			if (node.children) {
 				const found = this._findNodeInList(node.children, normalizedPath);

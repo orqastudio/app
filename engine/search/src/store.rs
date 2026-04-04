@@ -129,11 +129,7 @@ impl SearchStore {
         } else {
             stmt.query_map([], map_chunk_row)?
         };
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?);
-        }
-        Ok(result)
+        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
     }
 
     /// Get the current status of the search index.
@@ -193,11 +189,7 @@ impl SearchStore {
         let rows = stmt.query_map([], |row| {
             Ok((row.get::<_, i32>(0)?, row.get::<_, String>(1)?))
         })?;
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?);
-        }
-        Ok(result)
+        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
     }
 
     /// Semantic search by computing cosine similarity against stored embeddings.
@@ -233,11 +225,7 @@ impl SearchStore {
                 id, file_path, start_line, end_line, content, language, embedding,
             ))
         })?;
-        let mut result = Vec::new();
-        for row in rows {
-            result.push(row?);
-        }
-        Ok(result)
+        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
     }
 }
 

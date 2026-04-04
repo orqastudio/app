@@ -3,6 +3,9 @@
 </script>
 
 <script lang="ts">
+	import { HStack } from "../layout/index.js";
+	import { Text } from "../typography/index.js";
+
 	let {
 		state = "waiting",
 		label,
@@ -30,7 +33,7 @@
 	);
 </script>
 
-<span class="flex items-center gap-1.5">
+<HStack gap={1.5}>
 	<span class="size-2 rounded-full {dotClass}"></span>
-	<span>{label ?? defaultLabel}</span>
-</span>
+	<Text variant="caption">{label ?? defaultLabel}</Text>
+</HStack>

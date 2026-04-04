@@ -98,21 +98,22 @@ impl FileLessonStore {
         }
 
         let entries = std::fs::read_dir(&lessons_dir)?;
-        let mut lessons = Vec::new();
         let project_root = self.paths.project_root();
 
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().and_then(|e| e.to_str()) != Some("md") {
-                continue;
-            }
-            match read_lesson_file(&path, project_root) {
-                Ok(lesson) => lessons.push(lesson),
-                Err(e) => {
-                    tracing::warn!("skipping unparseable lesson file {}: {}", path.display(), e);
+        let mut lessons: Vec<Lesson> = entries
+            .flatten()
+            .filter(|entry| entry.path().extension().and_then(|e| e.to_str()) == Some("md"))
+            .filter_map(|entry| {
+                let path = entry.path();
+                match read_lesson_file(&path, project_root) {
+                    Ok(lesson) => Some(lesson),
+                    Err(e) => {
+                        tracing::warn!("skipping unparseable lesson file {}: {}", path.display(), e);
+                        None
+                    }
                 }
-            }
-        }
+            })
+            .collect();
 
         lessons.sort_by(|a, b| a.id.cmp(&b.id));
         Ok(lessons)

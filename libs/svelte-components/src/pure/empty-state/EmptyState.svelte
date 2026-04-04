@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Icon } from "../icon/index.js";
 	import { Button } from "../button/index.js";
+	import { Stack, Center } from "../layout/index.js";
+	import { Text } from "../typography/index.js";
 
 	let {
 		icon,
@@ -15,17 +17,19 @@
 	} = $props();
 </script>
 
-<div class="flex flex-col items-center justify-center py-12 text-center">
-	{#if icon}
-		<div class="mb-4"><Icon name={icon} size="xl" /></div>
-	{/if}
-	<h3 class="text-lg font-semibold">{title}</h3>
-	{#if description}
-		<p class="mt-1 text-sm text-muted-foreground">{description}</p>
-	{/if}
-	{#if action}
-		<Button variant="default" size="sm" class="mt-4" onclick={action.onclick}>
-			{action.label}
-		</Button>
-	{/if}
-</div>
+<Center>
+	<Stack align="center" gap={2}>
+		{#if icon}
+			<Icon name={icon} size="xl" />
+		{/if}
+		<Text variant="heading-sm">{title}</Text>
+		{#if description}
+			<Text variant="caption">{description}</Text>
+		{/if}
+		{#if action}
+			<Button variant="default" size="sm" onclick={action.onclick}>
+				{action.label}
+			</Button>
+		{/if}
+	</Stack>
+</Center>

@@ -19,11 +19,11 @@
 export type LogLevel = "debug" | "info" | "warn" | "error" | "perf";
 
 export interface LogEntry {
-	level: LogLevel;
-	source: string;
-	message: string;
-	timestamp: number;
-	data?: unknown;
+	readonly level: LogLevel;
+	readonly source: string;
+	readonly message: string;
+	readonly timestamp: number;
+	readonly data?: unknown;
 }
 
 export interface Logger {
@@ -44,7 +44,8 @@ const DEV_LOG_URL = "http://localhost:10130/log";
 // This constant mirrors the port used by daemon/src/health.rs.
 const DAEMON_EVENTS_URL = "http://localhost:10100/events";
 
-const subscribers: LogSubscriber[] = [];
+// Immutable reassignment pattern — subscribers is replaced rather than mutated in place.
+let subscribers: readonly LogSubscriber[] = [];
 
 let minLevel: LogLevel = "info";
 
@@ -123,21 +124,27 @@ function emit(entry: LogEntry): void {
 			case "perf":
 				console.log(`${prefix} ⏱ ${entry.message}`, entry.data ?? "");
 				break;
-			default:
+			case "info":
 				console.log(prefix, entry.message, entry.data ?? "");
+				break;
+			default: {
+				// Exhaustiveness check — compile error if a new LogLevel is added without a case.
+				const _exhaustive: never = entry.level;
+				console.log(prefix, entry.message, entry.data ?? "");
+			}
 		}
 	}
 
 	forwardToDashboard(entry.level, entry.source, entry.message);
 	forwardToDaemonBus(entry.level, entry.source, entry.message);
 
-	for (const sub of subscribers) {
+	subscribers.forEach((sub) => {
 		try {
 			sub(entry);
 		} catch {
 			// Don't let subscriber errors break logging
 		}
-	}
+	});
 }
 
 /**
@@ -181,10 +188,9 @@ export function logger(source: string): Logger {
 
 /** Subscribe to all log entries (for in-app error display, telemetry, etc.) */
 export function subscribeToLogs(fn: LogSubscriber): () => void {
-	subscribers.push(fn);
+	subscribers = [...subscribers, fn];
 	return () => {
-		const idx = subscribers.indexOf(fn);
-		if (idx >= 0) subscribers.splice(idx, 1);
+		subscribers = subscribers.filter((s) => s !== fn);
 	};
 }
 

@@ -1,6 +1,7 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import { logger } from "../logger.js";
 import type { SidecarStatus, StartupSnapshot, StartupTask } from "@orqastudio/types";
+import { assertNever } from "@orqastudio/types";
 
 const log = logger("settings");
 
@@ -341,7 +342,7 @@ export class SettingsStore {
 			case "disconnected":
 				return "Offline";
 			default:
-				return "Offline";
+				return assertNever(this.daemonHealth.state);
 		}
 	}
 
@@ -360,7 +361,7 @@ export class SettingsStore {
 			case "claude-haiku-4-5":
 				return "Haiku";
 			default:
-				return "Auto";
+				return assertNever(this.defaultModel);
 		}
 	}
 
@@ -377,7 +378,7 @@ export class SettingsStore {
 			case "not_started":
 				return "Claude Code (Offline)";
 			default:
-				return "Claude Code (Offline)";
+				return assertNever(this.sidecarStatus.state);
 		}
 	}
 

@@ -4,7 +4,7 @@
 	import { getStores, logger } from "@orqastudio/sdk";
 	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import { graphLayoutService } from "$lib/services/graph-layout.svelte";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Toolbar, Caption } from "@orqastudio/svelte-components/pure";
 	import GraphHealthPanel from "./GraphHealthPanel.svelte";
 	import type { GraphHealthData, HealthSnapshot } from "@orqastudio/types";
 
@@ -197,29 +197,26 @@
 
 <div class="relative flex h-full flex-col">
 	<!-- Toolbar -->
-	<div class="flex items-center justify-between border-b border-border px-4 py-2">
-		<div class="flex items-center gap-2">
+	<Toolbar>
+		{#snippet left()}
 			<span class="text-sm font-medium">Artifact Graph</span>
 			{#if artifactGraphSDK.stats}
-				<span class="text-xs text-muted-foreground">
+				<Caption>
 					{artifactGraphSDK.stats.node_count} nodes · {artifactGraphSDK.stats.edge_count} edges
-				</span>
+				</Caption>
 			{/if}
-		</div>
-		<button
-			class="flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-			onclick={() => { healthPanelOpen = !healthPanelOpen; }}
-			aria-label={healthPanelOpen ? "Hide health panel" : "Show health panel"}
-		>
-			{#if healthPanelOpen}
+		{/snippet}
+		{#snippet right()}
+			<button
+				class="flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-accent"
+				onclick={() => { healthPanelOpen = !healthPanelOpen; }}
+				aria-label={healthPanelOpen ? "Hide health panel" : "Show health panel"}
+			>
 				<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-				Hide Health
-			{:else}
-				<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-				Health
-			{/if}
-		</button>
-	</div>
+				{healthPanelOpen ? "Hide Health" : "Health"}
+			</button>
+		{/snippet}
+	</Toolbar>
 
 	<!-- Main content area: graph + health panel side by side -->
 	<div class="flex flex-1 overflow-hidden">
@@ -230,8 +227,8 @@
 					<LoadingSpinner size="lg" />
 				</div>
 			{:else if artifactGraphSDK.graph.size === 0}
-				<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
-					No artifacts found. Open a project to explore its graph.
+				<div class="flex h-full items-center justify-center">
+					<Caption>No artifacts found. Open a project to explore its graph.</Caption>
 				</div>
 			{:else}
 				<div
@@ -243,9 +240,9 @@
 				{#if graphLayoutService.layoutRunning}
 					<div class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/60 backdrop-blur-[2px]">
 						<LoadingSpinner size="lg" />
-						<p class="text-sm font-medium text-muted-foreground">
+						<span class="text-xs font-medium text-muted-foreground">
 							Laying out {artifactGraphSDK.graph.size} nodes…
-						</p>
+						</span>
 					</div>
 				{/if}
 			{/if}

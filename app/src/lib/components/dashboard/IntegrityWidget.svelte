@@ -7,11 +7,13 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, HStack } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, toast } = getStores();
 	import type { IntegrityCheck, IntegrityCategory, IntegritySeverity } from "@orqastudio/types";
+	import { assertNever } from "@orqastudio/types";
 
 	let checks = $state<IntegrityCheck[]>([]);
 	let loading = $state(false);
@@ -81,6 +83,8 @@
 				case "message":
 					cmp = a.message.localeCompare(b.message);
 					break;
+				default:
+					assertNever(sortColumn);
 			}
 			return sortAsc ? cmp : -cmp;
 		});
@@ -145,54 +149,56 @@
 
 {#if scanned && checks.length === 0 && !error}
 	<!-- Collapsed "all clear" state — minimal footprint -->
-	<div class="mb-4 flex items-center gap-2 rounded-lg border border-border px-3 py-2">
-		<Icon name="shield-check" size="md" />
-		<span class="text-sm text-muted-foreground">Pipeline Health</span>
-		<span class="text-xs text-green-600 dark:text-green-400">All clear</span>
-		{#if loading}
-			<LoadingSpinner size="sm" />
-		{/if}
+	<div class="mb-4 rounded-lg border border-border px-3 py-2">
+		<HStack gap={2}>
+			<Icon name="shield-check" size="md" />
+			<span class="text-sm text-muted-foreground">Pipeline Health</span>
+			<span class="text-xs text-success">All clear</span>
+			{#if loading}
+				<LoadingSpinner size="sm" />
+			{/if}
+		</HStack>
 	</div>
 {:else}
-<CardRoot class="gap-2">
-	<CardHeader class="pb-2">
-		<CardTitle class="text-sm font-semibold">
-			<div class="flex items-center gap-2">
+<CardRoot gap={2}>
+	<CardHeader compact>
+		<CardTitle size="sm">
+			<HStack gap={2}>
 				<Icon name="shield-alert" size="md" />
 				Pipeline Health
 				{#if loading}
 					<LoadingSpinner size="sm" />
 				{/if}
-			</div>
+			</HStack>
 		</CardTitle>
 		<!-- Error/Warning counts in Card.Action as badges -->
 		{#if scanned && (errorCount > 0 || warningCount > 0)}
 			<CardAction>
-				<div class="flex items-center gap-1.5">
+				<HStack gap={1}>
 					{#if errorCount > 0}
-						<Badge variant="destructive" class="text-[10px] px-1.5 py-0">
+						<Badge variant="destructive" size="xs">
 							{errorCount} Error{errorCount !== 1 ? "s" : ""}
 						</Badge>
 					{/if}
 					{#if warningCount > 0}
-						<Badge variant="warning" class="text-[10px] px-1.5 py-0">
+						<Badge variant="warning" size="xs">
 							{warningCount} Warning{warningCount !== 1 ? "s" : ""}
 						</Badge>
 					{/if}
 					{#if infoCount > 0}
-						<Badge variant="secondary" class="text-[10px] px-1.5 py-0">
+						<Badge variant="secondary" size="xs">
 							{infoCount} Info
 						</Badge>
 					{/if}
-				</div>
+				</HStack>
 			</CardAction>
 		{/if}
 	</CardHeader>
-	<CardContent class="pt-0">
+	<CardContent compact>
 		{#if !scanned && loading}
-			<div class="flex items-center justify-center py-4">
+			<HStack justify="center">
 				<LoadingSpinner />
-			</div>
+			</HStack>
 		{:else if error}
 			<p class="text-sm text-destructive">{error}</p>
 		{:else if !scanned}
@@ -201,7 +207,7 @@
 			</p>
 		{:else}
 			<!-- Filters: category selector left, severity pills right-aligned -->
-			<div class="mb-3 flex items-center justify-between gap-3">
+			<HStack gap={3} justify="between">
 				<SelectMenu
 					items={[
 						{ value: "all", label: "All categories" },
@@ -213,87 +219,64 @@
 					triggerSize="sm"
 					align="start"
 				/>
-				<!-- Severity filter pills — active uses colored text + subtle bg, not solid fill -->
-				<div class="flex items-center gap-1">
+				<!-- Severity filter pills -->
+				<HStack gap={1}>
 					<Button
 						variant={severityFilter === "all" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'all' ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-50 dark:bg-cyan-950/40 hover:bg-cyan-100 dark:hover:bg-cyan-950/60' : ''}"
 						onclick={() => (severityFilter = "all")}
 					>All</Button>
 					<Button
 						variant={severityFilter === "Error" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'Error' ? 'text-destructive bg-destructive/10 hover:bg-destructive/15' : ''}"
 						onclick={() => (severityFilter = "Error")}
 					>Errors</Button>
 					<Button
 						variant={severityFilter === "Warning" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'Warning' ? 'text-warning bg-warning/10 hover:bg-warning/15' : ''}"
 						onclick={() => (severityFilter = "Warning")}
 					>Warnings</Button>
 					<Button
 						variant={severityFilter === "Info" ? "secondary" : "ghost"}
 						size="sm"
-						class="h-7 px-2 text-xs {severityFilter === 'Info' ? 'text-muted-foreground bg-muted hover:bg-muted/80' : ''}"
 						onclick={() => (severityFilter = "Info")}
 					>Info</Button>
-				</div>
-			</div>
+				</HStack>
+			</HStack>
 
 			<!-- Data table -->
-			<ScrollArea class="h-64 rounded border border-border">
-				<table class="w-full text-xs">
-					<thead class="sticky top-0 bg-muted/80 backdrop-blur">
-						<tr>
-							<th class="w-8 px-2 py-1.5 text-left">
-								<button
-									class="flex items-center gap-0.5 text-muted-foreground hover:text-foreground"
-									onclick={() => toggleSort("severity")}
-								>
-									<Icon name="arrow-up-down" size="xs" />
-								</button>
-							</th>
-							<th class="px-2 py-1.5 text-right">
-								<button
-									class="flex items-center justify-end gap-0.5 w-full text-muted-foreground hover:text-foreground"
-									onclick={() => toggleSort("category")}
-								>
-									Category
-									{#if sortColumn === "category"}
-										<Icon name="arrow-up-down" size="xs" />
-									{/if}
-								</button>
-							</th>
-							<th class="px-2 py-1.5 text-left">
-								<button
-									class="flex items-center gap-0.5 text-muted-foreground hover:text-foreground"
-									onclick={() => toggleSort("artifact")}
-								>
-									Artifact
-									{#if sortColumn === "artifact"}
-										<Icon name="arrow-up-down" size="xs" />
-									{/if}
-								</button>
-							</th>
-							<th class="px-2 py-1.5 text-left">
-								<button
-									class="flex items-center gap-0.5 text-muted-foreground hover:text-foreground"
-									onclick={() => toggleSort("message")}
-								>
-									Message
-									{#if sortColumn === "message"}
-										<Icon name="arrow-up-down" size="xs" />
-									{/if}
-								</button>
-							</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-border">
+			<ScrollArea maxHeight="md">
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead
+								width="xs"
+								sortable
+								sorted={sortColumn === "severity" ? (sortAsc ? "asc" : "desc") : false}
+								onclick={() => toggleSort("severity")}
+							></TableHead>
+							<TableHead
+								align="right"
+								sortable
+								sorted={sortColumn === "category" ? (sortAsc ? "asc" : "desc") : false}
+								onclick={() => toggleSort("category")}
+							>Category</TableHead>
+							<TableHead
+								sortable
+								sorted={sortColumn === "artifact" ? (sortAsc ? "asc" : "desc") : false}
+								onclick={() => toggleSort("artifact")}
+							>Artifact</TableHead>
+							<TableHead
+								sortable
+								sorted={sortColumn === "message" ? (sortAsc ? "asc" : "desc") : false}
+								onclick={() => toggleSort("message")}
+							>Message</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
 						{#each tableChecks as check, i (check.artifact_id + check.category + check.message + i)}
-							<tr class="hover:bg-accent/30">
-								<td class="px-2 py-1.5">
+							<TableRow interactive>
+								<TableCell>
 									{#if check.severity === "Error"}
 										<Icon name="circle-alert" size="sm" />
 									{:else if check.severity === "Warning"}
@@ -301,23 +284,23 @@
 									{:else}
 										<Icon name="info" size="sm" />
 									{/if}
-								</td>
-								<td class="whitespace-nowrap px-2 py-1.5 text-muted-foreground text-right">
+								</TableCell>
+								<TableCell>
 									{categoryLabels[check.category]}
-								</td>
-								<td class="px-2 py-1.5">
+								</TableCell>
+								<TableCell>
 									<ArtifactLink id={check.artifact_id} />
-								</td>
-								<td class="px-2 py-1.5 text-muted-foreground">
+								</TableCell>
+								<TableCell>
 									{check.message}
 									{#if check.auto_fixable}
-										<span class="ml-1 text-[10px] text-green-600 dark:text-green-400">(auto-fixable)</span>
+										<span class="ml-1 text-[10px] text-success">(auto-fixable)</span>
 									{/if}
-								</td>
-							</tr>
+								</TableCell>
+							</TableRow>
 						{/each}
-					</tbody>
-				</table>
+					</TableBody>
+				</Table>
 			</ScrollArea>
 		{/if}
 	</CardContent>

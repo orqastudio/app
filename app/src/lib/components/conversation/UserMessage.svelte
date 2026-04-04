@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
+	import { Caption } from "@orqastudio/svelte-components/pure";
 
 	let { message }: { message: Message } = $props();
 
@@ -16,6 +17,6 @@
 		<div class="rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-primary-foreground">
 			<p class="whitespace-pre-wrap text-sm">{message.content ?? ""}</p>
 		</div>
-		<p class="text-right text-xs text-muted-foreground">{formattedTime}</p>
+		<Caption block>{formattedTime}</Caption>
 	</div>
 </div>

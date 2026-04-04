@@ -1,10 +1,15 @@
 <script lang="ts">
-	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
-	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
-	import { SearchInput } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		ScrollArea,
+		Badge,
+		EmptyState,
+		SearchInput,
+		LoadingSpinner,
+		ErrorDisplay,
+		Heading,
+		Caption,
+	} from "@orqastudio/svelte-components/pure";
 	import { logger } from "@orqastudio/sdk";
 	import type { StoredEnforcementViolation } from "@orqastudio/types";
 
@@ -60,15 +65,15 @@
 	<!-- Header with summary counts -->
 	<div class="border-b border-border px-4 py-3">
 		<div class="flex items-center justify-between">
-			<h2 class="text-sm font-semibold">Violation History</h2>
+			<Heading level={5}>Violation History</Heading>
 			<div class="flex items-center gap-2">
 				{#if blockCount > 0}
-					<Badge variant="destructive" class="h-5 px-1.5 text-xs">
+					<Badge variant="destructive" size="sm">
 						{blockCount} blocked
 					</Badge>
 				{/if}
 				{#if warnCount > 0}
-					<Badge variant="warning" class="h-5 px-1.5 text-xs">
+					<Badge variant="warning" size="sm">
 						{warnCount} warned
 					</Badge>
 				{/if}
@@ -87,10 +92,7 @@
 			<div class="flex items-center gap-1">
 				{#each (["all", "block", "warn"] as const) as opt (opt)}
 					<button
-						class="rounded px-2 py-1 text-xs transition-colors"
-						class:bg-accent={actionFilter === opt}
-						class:text-accent-foreground={actionFilter === opt}
-						class:text-muted-foreground={actionFilter !== opt}
+						class="h-7 rounded px-2 text-xs {actionFilter === opt ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}"
 						onclick={() => { actionFilter = opt; }}
 					>
 						{opt === "all" ? "All" : opt === "block" ? "Blocks" : "Warns"}
@@ -126,7 +128,7 @@
 				{/if}
 			</div>
 		{:else}
-			<ScrollArea class="h-full">
+			<ScrollArea full>
 				<div class="divide-y divide-border">
 					{#each filtered as v (v.id)}
 						<div class="flex items-start gap-3 px-4 py-2.5 hover:bg-muted/30">
@@ -143,27 +145,27 @@
 							<div class="min-w-0 flex-1">
 								<div class="flex items-center gap-2">
 									<span class="truncate text-xs font-medium">{v.rule_name}</span>
-									<Badge
+									<span class="shrink-0"><Badge
 										variant={v.action.toLowerCase() === "block" ? "destructive" : "warning"}
-										class="h-4 shrink-0 px-1 py-0 text-xs"
+										size="xs"
 									>
 										{v.action.toLowerCase()}
-									</Badge>
+									</Badge></span>
 								</div>
-								<span class="block truncate font-mono text-xs text-muted-foreground">
+								<span class="block truncate font-mono text-[10px] text-muted-foreground">
 									{v.tool_name}
 								</span>
 								{#if v.detail}
-									<span class="block truncate text-xs text-muted-foreground">
+									<span class="block truncate text-[10px] text-muted-foreground">
 										{v.detail}
 									</span>
 								{/if}
 							</div>
 
 							<!-- Timestamp -->
-							<div class="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
+							<div class="flex shrink-0 items-center gap-1">
 								<Icon name="clock" size="xs" />
-								<span>{formatTimestamp(v.created_at)}</span>
+								<Caption>{formatTimestamp(v.created_at)}</Caption>
 							</div>
 						</div>
 					{/each}
@@ -174,8 +176,8 @@
 
 	<!-- Footer with result count -->
 	{#if !loading && !error && violations.length > 0}
-		<div class="border-t border-border px-4 py-2 text-xs text-muted-foreground">
-			{filtered.length} of {violations.length} {violations.length === 1 ? "violation" : "violations"}
+		<div class="border-t border-border px-4 py-2">
+			<Caption>{filtered.length} of {violations.length} {violations.length === 1 ? "violation" : "violations"}</Caption>
 		</div>
 	{/if}
 </div>

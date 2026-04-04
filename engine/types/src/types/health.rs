@@ -7,6 +7,11 @@
 //! - Outliers: artifacts outside both delivery and learning pipelines, past their grace period.
 //! - Delivery connectivity: fraction of delivery artifacts connected to the main pipeline.
 //! - Learning connectivity: fraction of learning artifacts (lessons, rules) connected to decisions.
+//!
+//! # ID representation
+//!
+//! `id` and `project_id` are raw `i64` SQLite rowids, consistent with the rest of the
+//! engine types. See the note in `types::project` for the rationale.
 
 use serde::{Deserialize, Serialize};
 

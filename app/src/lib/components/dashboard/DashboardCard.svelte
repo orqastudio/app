@@ -7,29 +7,26 @@
 		description,
 		action,
 		children,
-		class: className = "",
 	}: {
 		title?: string;
 		description?: string;
 		action?: Snippet;
 		children?: Snippet;
-		class?: string;
 	} = $props();
 </script>
 
 <!--
 	DashboardCard — consistent card wrapper for all dashboard widgets.
-	Reduces the gap-6 default on Card.Root to gap-2 so header→content
-	spacing is tighter across the dashboard.
+	Uses gap={2} on CardRoot and compact CardHeader/CardContent for tighter spacing.
 -->
-<CardRoot class="gap-2 {className}">
+<CardRoot gap={2}>
 	{#if title || description || action}
-		<CardHeader class="pb-2">
+		<CardHeader compact>
 			{#if title}
-				<CardTitle class="text-sm font-semibold">{title}</CardTitle>
+				<CardTitle>{title}</CardTitle>
 			{/if}
 			{#if description}
-				<CardDescription class="text-xs">{description}</CardDescription>
+				<CardDescription>{description}</CardDescription>
 			{/if}
 			{#if action}
 				<CardAction>
@@ -38,7 +35,7 @@
 			{/if}
 		</CardHeader>
 	{/if}
-	<CardContent class="pt-0">
+	<CardContent>
 		{@render children?.()}
 	</CardContent>
 </CardRoot>

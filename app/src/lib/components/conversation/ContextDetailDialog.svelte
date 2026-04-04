@@ -77,20 +77,20 @@
 </script>
 
 <DialogRoot bind:open>
-	<DialogContent class="flex max-h-[80vh] flex-col gap-0 p-0 sm:max-w-2xl">
-		<DialogHeader class="border-b border-border px-6 py-4">
+	<DialogContent>
+		<DialogHeader>
 			<DialogTitle>{dialogTitle}</DialogTitle>
 			<DialogDescription>{dialogDescription}</DialogDescription>
 		</DialogHeader>
 
-		<Tabs value="structured" class="flex min-h-0 flex-1 flex-col">
-			<TabsList class="mx-6 mt-4 w-fit shrink-0">
+		<Tabs value="structured">
+			<TabsList>
 				<TabsTrigger value="structured">Structured</TabsTrigger>
 				<TabsTrigger value="raw">Raw</TabsTrigger>
 			</TabsList>
 
-			<TabsContent value="structured" class="min-h-0 flex-1 overflow-hidden px-6 pb-6 pt-4">
-				<ScrollArea class="h-full">
+			<TabsContent value="structured">
+				<ScrollArea full>
 					{#if entry.type === "system_prompt_sent"}
 						<div class="space-y-3">
 							{#if entry.customPrompt}
@@ -166,8 +166,8 @@
 				</ScrollArea>
 			</TabsContent>
 
-			<TabsContent value="raw" class="min-h-0 flex-1 overflow-hidden px-6 pb-6 pt-4">
-				<ScrollArea class="h-full">
+			<TabsContent value="raw">
+				<ScrollArea full>
 					<pre
 						class="whitespace-pre-wrap break-words rounded-md bg-muted/20 p-4 font-mono text-xs text-foreground">{rawText}</pre>
 				</ScrollArea>

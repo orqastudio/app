@@ -93,14 +93,14 @@ impl DaemonClient {
     ///
     /// Accepts any subset of query parameters: `type`, `status`, `id`, `search`.
     pub fn query(&self, params: &Value) -> Result<Value, McpError> {
-        let mut query_pairs: Vec<(String, String)> = Vec::new();
-        if let Some(obj) = params.as_object() {
-            for (k, v) in obj {
-                if let Some(s) = v.as_str() {
-                    query_pairs.push((k.clone(), s.to_owned()));
-                }
-            }
-        }
+        let query_pairs: Vec<(String, String)> = params
+            .as_object()
+            .into_iter()
+            .flat_map(|obj| {
+                obj.iter()
+                    .filter_map(|(k, v)| v.as_str().map(|s| (k.clone(), s.to_owned())))
+            })
+            .collect();
         let pairs_ref: Vec<(&str, &str)> = query_pairs
             .iter()
             .map(|(k, v)| (k.as_str(), v.as_str()))

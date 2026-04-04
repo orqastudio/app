@@ -1,8 +1,9 @@
 // Session routes: full CRUD for agent sessions and their messages.
 //
-// Sessions are stored in the daemon SQLite database (.state/daemon.db).
-// All handlers require HealthState so they can access the DaemonStore.
-// Database operations run via spawn_blocking to keep the tokio runtime free.
+// Sessions are stored in the unified SQLite database (.state/orqa.db) via the
+// engine/storage crate. All handlers use `HealthState::storage` to access the
+// sessions and messages repos. Database operations run via spawn_blocking to
+// keep the tokio runtime free.
 //
 // Endpoints:
 //   POST   /sessions               — create a new session
@@ -18,11 +19,10 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde::Deserialize;
 
+use orqa_engine_types::types::message::Message;
+use orqa_engine_types::types::session::{Session, SessionSummary};
+
 use crate::health::HealthState;
-use crate::store::{
-    message_list, session_create, session_delete, session_get, session_list,
-    session_update_status, session_update_title, Message, Session, SessionSummary,
-};
 
 // ---------------------------------------------------------------------------
 // Request / response shapes
@@ -57,8 +57,8 @@ pub struct UpdateSessionRequest {
     pub status: Option<String>,
 }
 
-/// Response when the daemon store is unavailable.
-fn store_unavailable() -> (StatusCode, Json<serde_json::Value>) {
+/// Response when the storage layer is unavailable.
+fn storage_unavailable() -> (StatusCode, Json<serde_json::Value>) {
     (
         StatusCode::SERVICE_UNAVAILABLE,
         Json(serde_json::json!({
@@ -77,21 +77,19 @@ pub async fn create_session(
     State(state): State<HealthState>,
     Json(req): Json<CreateSessionRequest>,
 ) -> Result<(StatusCode, Json<Session>), (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
     let model = req.model.unwrap_or_else(|| "auto".to_owned());
     let system_prompt = req.system_prompt.clone();
     let project_id = req.project_id;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-        session_create(&conn, project_id, &model, system_prompt.as_deref())
+        storage
+            .sessions()
+            .create(project_id, &model, system_prompt.as_deref())
             .map(|s| (StatusCode::CREATED, Json(s)))
             .map_err(|e| (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "CREATE_FAILED" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
             ))
     })
     .await
@@ -106,20 +104,24 @@ pub async fn list_sessions(
     State(state): State<HealthState>,
     Query(query): Query<ListSessionsQuery>,
 ) -> Result<Json<Vec<SessionSummary>>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
     let project_id = query.project_id;
     let status = query.status.clone();
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
+        let result = if let Some(pid) = project_id {
+            storage
+                .sessions()
+                .list(pid, status.as_deref(), 1000, 0)
+        } else {
+            storage
+                .sessions()
+                .list_all(status.as_deref())
+        };
 
-        session_list(&conn, project_id, status.as_deref())
-            .map(Json).map_err(|e| (
+        result.map(Json).map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e, "code": "LIST_FAILED" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
         ))
     })
     .await
@@ -134,22 +136,20 @@ pub async fn get_session(
     State(state): State<HealthState>,
     Path(id): Path<i64>,
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-        session_get(&conn, id)
+        storage
+            .sessions()
+            .get(id)
             .map(Json)
             .map_err(|e| {
-                let (status, code) = if e.contains("not found") {
+                let (status, code) = if e.to_string().contains("NotFound") || e.to_string().contains("not found") {
                     (StatusCode::NOT_FOUND, "NOT_FOUND")
                 } else {
                     (StatusCode::INTERNAL_SERVER_ERROR, "DB_ERROR")
                 };
-                (status, Json(serde_json::json!({ "error": e, "code": code })))
+                (status, Json(serde_json::json!({ "error": e.to_string(), "code": code })))
             })
     })
     .await
@@ -165,32 +165,29 @@ pub async fn update_session(
     Path(id): Path<i64>,
     Json(req): Json<UpdateSessionRequest>,
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-
         if let Some(title) = req.title {
-            session_update_title(&conn, id, &title).map_err(|e| (
+            storage.sessions().update_title(id, &title).map_err(|e| (
                 StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e, "code": "UPDATE_FAILED" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
             ))?;
         }
         if let Some(status) = req.status {
-            session_update_status(&conn, id, &status).map_err(|e| (
+            storage.sessions().update_status(id, &status).map_err(|e| (
                 StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e, "code": "UPDATE_FAILED" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
             ))?;
         }
 
-        session_get(&conn, id)
+        storage
+            .sessions()
+            .get(id)
             .map(Json)
             .map_err(|e| (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "DB_ERROR" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
             ))
     })
     .await
@@ -205,16 +202,12 @@ pub async fn delete_session(
     State(state): State<HealthState>,
     Path(id): Path<i64>,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
+        storage.sessions().delete(id).map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-        session_delete(&conn, id).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e, "code": "DELETE_FAILED" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
         ))?;
         Ok(StatusCode::NO_CONTENT)
     })
@@ -230,22 +223,20 @@ pub async fn end_session(
     State(state): State<HealthState>,
     Path(id): Path<i64>,
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-        session_update_status(&conn, id, "completed").map_err(|e| (
+        storage.sessions().end_session(id).map_err(|e| (
             StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e, "code": "UPDATE_FAILED" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
         ))?;
-        session_get(&conn, id)
+        storage
+            .sessions()
+            .get(id)
             .map(Json)
             .map_err(|e| (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "DB_ERROR" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
             ))
     })
     .await
@@ -260,18 +251,16 @@ pub async fn list_session_messages(
     State(state): State<HealthState>,
     Path(id): Path<i64>,
 ) -> Result<Json<Vec<Message>>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-        message_list(&conn, id)
+        storage
+            .messages()
+            .list(id, 10_000, 0)
             .map(Json)
             .map_err(|e| (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "LIST_FAILED" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
             ))
     })
     .await
@@ -297,34 +286,29 @@ mod tests {
     use std::sync::Arc;
     use tower::ServiceExt as _;
 
+    use orqa_storage::Storage;
+
     use crate::graph_state::GraphState;
-    use crate::store::{project_create, DaemonStore};
 
     /// Build an axum Router wiring the session routes to a fresh in-memory store.
     ///
     /// Returns (Router, project_id) so tests can create sessions without
     /// needing to hit a /projects route.
     fn session_router() -> (Router, i64) {
-        let db_file = tempfile::NamedTempFile::new().expect("tempfile");
-        let store = DaemonStore::open(db_file.path().to_path_buf())
-            .map(Arc::new)
-            .expect("store open");
+        let storage = Storage::open_in_memory().expect("in-memory storage");
 
         // Create a seed project so we have a valid project_id for sessions.
-        let project_id = {
-            let conn = store.connect().expect("connect");
-            project_create(&conn, "test-project", "/test/project", None)
-                .expect("project_create")
-                .id
-        };
+        let project_id = storage
+            .projects()
+            .create("test-project", "/test/project", None)
+            .expect("project_create")
+            .id;
 
-        // Keep the tempfile alive for the lifetime of this function by leaking it.
-        // This is safe in tests — the OS cleans up temp files after the process exits.
-        std::mem::forget(db_file);
+        let storage = Arc::new(storage);
 
         let state = HealthState::for_test(
             GraphState::build_empty(std::path::Path::new("/tmp/test")),
-            Some(Arc::clone(&store)),
+            Some(Arc::clone(&storage)),
         );
 
         // Use {id} capture syntax (axum 0.8+) for the path parameters.
@@ -650,4 +634,3 @@ mod tests {
         assert!(messages.is_empty(), "new session must have no messages");
     }
 }
-

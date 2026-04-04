@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Icon } from "../icon/index.js";
 	import { SmallBadge } from "../small-badge/index.js";
+	import { HStack } from "../layout/index.js";
+	import { Text } from "../typography/index.js";
 	import type { BadgeVariant } from "../badge/index.js";
 
 	let {
@@ -17,13 +19,13 @@
 </script>
 
 {#if items.length > 0}
-	<div class="flex flex-wrap items-center gap-1.5">
-		<span class="flex items-center gap-1 text-xs text-muted-foreground">
+	<HStack gap={1.5} wrap>
+		<HStack gap={1}>
 			<Icon name={icon} size="sm" />
-			{label}
-		</span>
+			<Text variant="caption">{label}</Text>
+		</HStack>
 		{#each items as item, i (i)}
 			<SmallBadge variant={badgeVariant}>{item}</SmallBadge>
 		{/each}
-	</div>
+	</HStack>
 {/if}

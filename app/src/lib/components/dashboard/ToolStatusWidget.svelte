@@ -2,7 +2,6 @@
 	import { Icon } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger, fmt } from "@orqastudio/sdk";
 
@@ -52,22 +51,22 @@
 </script>
 
 {#if hasTools}
-<CardRoot class="gap-2">
-	<CardHeader class="pb-2">
-		<CardTitle class="text-sm font-semibold">
+<CardRoot>
+	<CardHeader compact>
+		<CardTitle>
 			<div class="flex items-center gap-2">
 				<Icon name="wrench" size="md" />
 				Plugin CLI Tools
 			</div>
 		</CardTitle>
 		<CardAction>
-			<Badge variant="outline" class="text-[10px] px-1.5 py-0">
+			<Badge variant="outline" size="xs">
 				{pluginStore.cliToolStatuses.length} tool{pluginStore.cliToolStatuses.length !== 1 ? "s" : ""}
 			</Badge>
 		</CardAction>
 	</CardHeader>
-	<CardContent class="pt-0">
-		<div class="space-y-2">
+	<CardContent>
+		<div class="flex flex-col gap-2">
 			{#each pluginStore.cliToolStatuses as tool (`${tool.plugin}:${tool.tool_key}`)}
 				{@const isRunning = running === `${tool.plugin}:${tool.tool_key}`}
 				<div class="flex items-center justify-between rounded border border-border px-3 py-2">
@@ -93,10 +92,8 @@
 							</p>
 						</div>
 					</div>
-					<Button
-						variant="ghost"
-						size="sm"
-						class="h-7 px-2 text-xs"
+					<button
+						class="flex h-7 items-center rounded px-2 text-xs hover:bg-accent disabled:opacity-50"
 						disabled={isRunning}
 						onclick={() => runTool(tool.plugin, tool.tool_key)}
 					>
@@ -105,7 +102,7 @@
 						{:else}
 							Run
 						{/if}
-					</Button>
+					</button>
 				</div>
 			{/each}
 		</div>
@@ -119,7 +116,9 @@
 				<summary class="cursor-pointer text-xs text-muted-foreground">
 					Last run output
 				</summary>
-				<pre class="mt-1 max-h-32 overflow-auto rounded bg-muted p-2 text-[10px]">{lastResult.stderr || lastResult.stdout}</pre>
+				<div class="mt-1 max-h-32 overflow-y-auto rounded bg-muted">
+					<pre class="p-2 text-[10px]">{lastResult.stderr || lastResult.stdout}</pre>
+				</div>
 			</details>
 		{/if}
 	</CardContent>

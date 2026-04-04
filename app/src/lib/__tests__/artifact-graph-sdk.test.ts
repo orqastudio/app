@@ -85,7 +85,7 @@ function makeRegistry(overrides: Partial<PluginRegistry> = {}): PluginRegistry {
 		allSchemas: [],
 		allRelationships: [],
 		plugins: new Map(),
-		getRelationship: () => undefined,
+		getRelationship: () => null,
 		validateRelationship: () => null,
 		getSchema: () => undefined,
 		resolveNavigationItem: (item: unknown) => ({ ...(item as object), label: "" }) as never,
@@ -306,7 +306,7 @@ describe("ArtifactGraphSDK.missingInverses", () => {
 			getRelationship: (key: string) =>
 				key === "delivers"
 					? ({ key: "delivers", inverse: "delivered-by", semantic: "lineage" } as never)
-					: undefined,
+					: null,
 		});
 
 		const deliversRef = makeRef({
@@ -332,7 +332,7 @@ describe("ArtifactGraphSDK.missingInverses", () => {
 			getRelationship: (key: string) =>
 				key === "delivers"
 					? ({ key: "delivers", inverse: "delivered-by", semantic: "lineage" } as never)
-					: undefined,
+					: null,
 		});
 
 		const deliversRef = makeRef({

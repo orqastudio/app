@@ -2,6 +2,8 @@
 	import type { Component, Snippet } from "svelte";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import { cn } from "../../utils/cn.js";
+	import { HStack, Stack } from "../layout/index.js";
+	import { Text, Caption } from "../typography/index.js";
 
 	let {
 		icon: Icon,

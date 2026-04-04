@@ -4,6 +4,7 @@
 	import { getVersion, getName } from "@tauri-apps/api/app";
 	import { invoke } from "@tauri-apps/api/core";
 	import logoStatic from "$lib/assets/logo-static.svg";
+	import { Spacer } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { projectStore } = getStores();
@@ -112,9 +113,9 @@
 		onExit={() => getCurrentWindow().close()}
 	/>
 
-	<div class="flex-1"></div>
+	<Spacer />
 	<button
-		class="flex h-10 items-center gap-1 border-l border-border px-3 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+		class="h-10 rounded-none border-l border-border px-3 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
 		onclick={handleLaunchDevtools}
 		title="Open OrqaDev"
 	>

@@ -86,14 +86,12 @@ pub fn classify_project(
     root_file_names: &[String],
     has_claude_config: bool,
 ) -> DetectedStack {
-    let mut languages = HashSet::new();
-    let mut frameworks = HashSet::new();
+    let languages: HashSet<String> = all_file_names
+        .iter()
+        .filter_map(|name| infer_language_from_name(name).map(str::to_owned))
+        .collect();
 
-    for name in all_file_names {
-        detect_language_from_name(name, &mut languages);
-    }
-
-    classify_root_frameworks(root_file_names, &mut frameworks);
+    let frameworks: HashSet<String> = collect_frameworks(root_file_names);
     let package_manager = classify_package_manager(root_file_names);
 
     let mut lang_vec: Vec<String> = languages.into_iter().collect();
@@ -169,35 +167,46 @@ fn is_excluded(name: &str, excluded: &[String]) -> bool {
     excluded.iter().any(|e| e == name)
 }
 
-/// Infer a programming language from a file's extension and insert it into the set.
+/// Infer a programming language from a file's extension.
 ///
-/// Only recognises extensions that map unambiguously to a single language.
-/// Unrecognised extensions are silently ignored.
-fn detect_language_from_name(name: &str, languages: &mut HashSet<String>) {
-    let lang = match name.rsplit('.').next() {
-        Some("rs") => "rust",
-        Some("ts" | "tsx") => "typescript",
-        Some("js" | "jsx") => "javascript",
-        Some("py") => "python",
-        Some("go") => "go",
-        Some("svelte") => "svelte",
-        Some("java") => "java",
-        Some("kt") => "kotlin",
-        Some("rb") => "ruby",
-        Some("cs") => "c#",
-        Some("cpp" | "cc" | "cxx") => "c++",
-        Some("c" | "h") => "c",
-        _ => return,
-    };
-    languages.insert(lang.to_owned());
+/// Returns the language name when the extension maps unambiguously to a single language,
+/// or `None` for unrecognised extensions. Pure function — no side effects.
+fn infer_language_from_name(name: &str) -> Option<&'static str> {
+    match name.rsplit('.').next() {
+        Some("rs") => Some("rust"),
+        Some("ts" | "tsx") => Some("typescript"),
+        Some("js" | "jsx") => Some("javascript"),
+        Some("py") => Some("python"),
+        Some("go") => Some("go"),
+        Some("svelte") => Some("svelte"),
+        Some("java") => Some("java"),
+        Some("kt") => Some("kotlin"),
+        Some("rb") => Some("ruby"),
+        Some("cs") => Some("c#"),
+        Some("cpp" | "cc" | "cxx") => Some("c++"),
+        Some("c" | "h") => Some("c"),
+        _ => None,
+    }
 }
 
-/// Detect frameworks from a list of root-level file names.
+/// Detect a programming language from a file name and insert it into the provided set.
+///
+/// Delegates to `infer_language_from_name` for the extension lookup. Unrecognised
+/// extensions are silently ignored. Used by tests to exercise the language detection
+/// logic through the accumulator API.
+#[cfg(test)]
+fn detect_language_from_name(name: &str, languages: &mut HashSet<String>) {
+    if let Some(lang) = infer_language_from_name(name) {
+        languages.insert(lang.to_owned());
+    }
+}
+
+/// Detect frameworks from a list of root-level file names and return them as a set.
 ///
 /// Pure function — accepts pre-collected root file names rather than walking the filesystem.
 /// Only considers root-level config files because framework config files
 /// are always at the project root by convention.
-fn classify_root_frameworks(root_file_names: &[String], frameworks: &mut HashSet<String>) {
+fn collect_frameworks(root_file_names: &[String]) -> HashSet<String> {
     let framework_indicators: &[(&[&str], &str)] = &[
         (&["Cargo.toml"], "cargo"),
         (&["svelte.config.js", "svelte.config.ts"], "svelte"),
@@ -213,14 +222,25 @@ fn classify_root_frameworks(root_file_names: &[String], frameworks: &mut HashSet
         (&["vue.config.js"], "vue"),
     ];
 
-    for (files, framework) in framework_indicators {
-        for file in *files {
-            if root_file_names.iter().any(|n| n == file) {
-                frameworks.insert((*framework).to_owned());
-                break;
+    framework_indicators
+        .iter()
+        .filter_map(|(files, framework)| {
+            if files.iter().any(|f| root_file_names.iter().any(|n| n == f)) {
+                Some((*framework).to_owned())
+            } else {
+                None
             }
-        }
-    }
+        })
+        .collect()
+}
+
+/// Detect frameworks from a list of root-level file names and insert them into the provided set.
+///
+/// Delegates to `collect_frameworks` for the detection logic. Mutating-output variant
+/// used by tests to exercise the framework detection logic through the accumulator API.
+#[cfg(test)]
+fn classify_root_frameworks(root_file_names: &[String], frameworks: &mut HashSet<String>) {
+    frameworks.extend(collect_frameworks(root_file_names));
 }
 
 /// Detect the package manager from a list of root-level file names.

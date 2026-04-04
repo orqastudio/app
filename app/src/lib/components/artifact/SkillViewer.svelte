@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SmallBadge } from "@orqastudio/svelte-components/pure";
+	import { SmallBadge, HStack } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -53,9 +53,9 @@
 	<!-- Structured header -->
 	<div class="space-y-3 border-b border-border pb-4">
 		{#if version}
-			<div class="flex items-center gap-1.5">
+			<HStack gap={1}>
 				<SmallBadge variant="outline">v{version}</SmallBadge>
-			</div>
+			</HStack>
 		{/if}
 
 		{#if description}

@@ -85,11 +85,11 @@
 		<div class="ml-3 mt-1 space-y-2 border-l-2 border-border pl-4">
 			{#if displayInput}
 				<div>
-					<p class="mb-1 text-xs font-medium text-muted-foreground">Input</p>
+					<span class="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Input</span>
 					<CodeBlock text={displayInput} lang="json" />
 					{#if inputIsTruncated}
 						<button
-							class="mt-1 text-xs text-muted-foreground hover:text-foreground"
+							class="mt-1 h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
 							onclick={() => (showFullInput = !showFullInput)}
 						>
 							{#if showFullInput}
@@ -103,13 +103,13 @@
 			{/if}
 			{#if displayOutput}
 				<div>
-					<p class="mb-1 text-xs font-medium text-muted-foreground">
+					<span class="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
 						{isError ? "Error" : "Output"}
-					</p>
+					</span>
 					<CodeBlock text={displayOutput} lang={isError ? "" : "json"} />
 					{#if outputIsTruncated}
 						<button
-							class="mt-1 text-xs text-muted-foreground hover:text-foreground"
+							class="mt-1 h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
 							onclick={() => (showFullOutput = !showFullOutput)}
 						>
 							{#if showFullOutput}
@@ -122,7 +122,7 @@
 				</div>
 			{/if}
 			{#if !isComplete}
-				<p class="text-xs italic text-muted-foreground">Running...</p>
+				<span class="text-[10px] italic uppercase tracking-wide text-muted-foreground">Running...</span>
 			{/if}
 		</div>
 	</CollapsibleContent>

@@ -114,6 +114,16 @@ export async function runEnforceCommand(projectRoot, args) {
             }
         }
     }
+    // 1b. Register built-in enforcement checks derived from rules.
+    // RULE-55092f35: Component Library Story Requirement
+    engines.set("stories", {
+        plugin: "core",
+        engine: "stories",
+        check: { command: "__builtin:stories", args: [], files: "*.svelte" },
+        fix: undefined,
+        fileTypes: ["*.svelte"],
+        configOutput: null,
+    });
     // 2. Parse flags.
     const staged = args.includes("--staged");
     const fix = args.includes("--fix");
@@ -157,7 +167,10 @@ export async function runEnforceCommand(projectRoot, args) {
             if (files.length === 0)
                 continue; // No relevant staged files for this engine.
         }
-        const exitCode = runAction(action, files);
+        // Handle built-in enforcement checks (registered from rules, not plugins).
+        const exitCode = action.command.startsWith("__builtin:")
+            ? runBuiltinCheck(projectRoot, action.command, files)
+            : runAction(action, files);
         if (exitCode !== 0)
             allPassed = false;
     }
@@ -697,5 +710,80 @@ function getFlag(args, flag) {
     if (idx === -1 || idx + 1 >= args.length)
         return undefined;
     return args[idx + 1];
+}
+// ── Built-in enforcement checks (rule-driven, not plugin-provided) ──────────
+/**
+ * Dispatch a built-in enforcement check. These are registered from rules
+ * (not plugin manifests) and run inline instead of spawning a subprocess.
+ *
+ * @param projectRoot - Absolute path to the project root.
+ * @param command - Built-in command name (e.g. "__builtin:stories").
+ * @param files - Filtered staged files, or null to check all.
+ * @returns 0 if passed, 1 if violations found.
+ */
+function runBuiltinCheck(projectRoot, command, files) {
+    const name = command.replace("__builtin:", "");
+    switch (name) {
+        case "stories":
+            return checkComponentStories(projectRoot, files);
+        default:
+            console.error(`Unknown built-in check: ${name}`);
+            return 1;
+    }
+}
+/**
+ * RULE-55092f35: Verify every component directory in the svelte-components
+ * library has at least one .stories.ts file.
+ *
+ * When staged files are provided, only checks directories containing staged
+ * .svelte files. Otherwise checks all directories.
+ *
+ * @returns 0 if all components have stories, 1 if violations found.
+ */
+function checkComponentStories(root, stagedFiles) {
+    const libRoot = join(root, "libs", "svelte-components", "src");
+    const dirs = ["pure", "connected"];
+    const violations = [];
+    // When --staged, only check directories that have staged .svelte files.
+    const stagedDirs = stagedFiles
+        ? new Set(stagedFiles
+            .filter((f) => f.startsWith("libs/svelte-components/src/") && f.endsWith(".svelte"))
+            .map((f) => {
+            const parts = f.split("/");
+            // e.g. libs/svelte-components/src/pure/table/Table.svelte → pure/table
+            return parts.length >= 6 ? `${parts[3]}/${parts[4]}` : null;
+        })
+            .filter((d) => d !== null))
+        : null;
+    for (const sub of dirs) {
+        const baseDir = join(root, "libs", "svelte-components", "src", sub);
+        if (!existsSync(baseDir))
+            continue;
+        for (const entry of readdirSync(baseDir, { withFileTypes: true })) {
+            if (!entry.isDirectory())
+                continue;
+            // Skip if --staged and this directory has no staged files.
+            if (stagedDirs && !stagedDirs.has(`${sub}/${entry.name}`))
+                continue;
+            const compDir = join(baseDir, entry.name);
+            const files = readdirSync(compDir);
+            const hasSvelte = files.some((f) => f.endsWith(".svelte") && !f.endsWith(".stories.svelte"));
+            if (!hasSvelte)
+                continue;
+            const hasStory = files.some((f) => f.includes(".stories."));
+            if (!hasStory) {
+                violations.push(`${sub}/${entry.name}`);
+            }
+        }
+    }
+    if (violations.length === 0) {
+        console.log("  stories (RULE-55092f35): ✓ all components have stories");
+        return 0;
+    }
+    console.log(`  stories (RULE-55092f35): ✗ ${violations.length} component(s) missing stories`);
+    for (const v of violations) {
+        console.log(`    • libs/svelte-components/src/${v}/`);
+    }
+    return 1;
 }
 //# sourceMappingURL=enforce.js.map

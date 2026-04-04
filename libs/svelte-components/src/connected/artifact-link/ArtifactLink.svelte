@@ -123,7 +123,7 @@
 				</button>
 			{/snippet}
 		</TooltipTrigger>
-		<TooltipContent side="top" class="max-w-xs" avoidCollisions={true} collisionPadding={8} sideOffset={4}>
+		<TooltipContent side="top" avoidCollisions={true} collisionPadding={8} sideOffset={4}>
 			{#if resolved.node}
 				{@const node = resolved.node}
 				<div class="space-y-1 text-xs">

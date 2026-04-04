@@ -6,6 +6,29 @@ import { logger } from "../logger.js";
 const log = logger("ipc");
 
 /**
+ * Recursively deep-freeze an object so it cannot be mutated after crossing
+ * the IPC boundary. Enforces immutability at the storage↔frontend edge.
+ *
+ * Returns the same reference (frozen in place) for zero-allocation overhead.
+ * Primitives and null pass through unchanged.
+ */
+function deepFreeze<T>(obj: T): Readonly<T> {
+	if (obj === null || obj === undefined || typeof obj !== "object") {
+		return obj;
+	}
+	Object.freeze(obj);
+	const values = Array.isArray(obj)
+		? obj
+		: Object.values(obj as Record<string, unknown>);
+	for (const value of values) {
+		if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
+			deepFreeze(value);
+		}
+	}
+	return obj as Readonly<T>;
+}
+
+/**
  * Wraps Tauri's invoke with performance timing and structured logging.
  * Logs duration on success and error details on failure before re-throwing.
  */
@@ -15,7 +38,9 @@ export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Pr
 		const result = await tauriInvoke<T>(cmd, args);
 		const duration_ms = (performance.now() - start).toFixed(1);
 		log.perf(`${cmd} (${duration_ms}ms)`);
-		return result;
+		// Freeze at the IPC boundary: data from storage is immutable by default.
+		// Stores that need mutable copies must explicitly spread/clone.
+		return deepFreeze(result);
 	} catch (error) {
 		const duration_ms = (performance.now() - start).toFixed(1);
 		if (typeof error === "string") {

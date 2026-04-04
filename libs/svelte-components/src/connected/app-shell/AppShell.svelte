@@ -44,19 +44,21 @@
 		{/if}
 
 		{#if showChatPanel && chatPanel}
-			<ResizablePaneGroup direction="horizontal" class="flex-1">
-				<ResizablePane defaultSize={mainPanelSize} minSize={30}>
-					<div class="h-full overflow-hidden">
-						{@render mainContent()}
-					</div>
-				</ResizablePane>
-				<ResizableHandle />
-				<ResizablePane defaultSize={chatPanelSize} minSize={20}>
-					<div class="flex h-full flex-col bg-chat">
-						{@render chatPanel()}
-					</div>
-				</ResizablePane>
-			</ResizablePaneGroup>
+			<div class="min-w-0 flex-1">
+				<ResizablePaneGroup direction="horizontal">
+					<ResizablePane defaultSize={mainPanelSize} minSize={30}>
+						<div class="h-full overflow-hidden">
+							{@render mainContent()}
+						</div>
+					</ResizablePane>
+					<ResizableHandle />
+					<ResizablePane defaultSize={chatPanelSize} minSize={20}>
+						<div class="flex h-full flex-col bg-chat">
+							{@render chatPanel()}
+						</div>
+					</ResizablePane>
+				</ResizablePaneGroup>
+			</div>
 		{:else}
 			<div class="min-w-0 flex-1 overflow-hidden">
 				{@render mainContent()}

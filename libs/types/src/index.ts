@@ -241,3 +241,46 @@ export type {
 	SchemaCategory,
 	PipelineStageConfig,
 } from "./plugin.js";
+
+/**
+ * Exhaustiveness check utility. Use as the default case in switch statements
+ * over discriminated unions to get a compile-time error when a new variant
+ * is added but not handled.
+ *
+ * @example
+ * ```ts
+ * type Status = "active" | "completed" | "error";
+ * function handle(s: Status) {
+ *   switch (s) {
+ *     case "active": return "...";
+ *     case "completed": return "...";
+ *     case "error": return "...";
+ *     default: return assertNever(s);
+ *   }
+ * }
+ * ```
+ */
+export function assertNever(value: never, message?: string): never {
+	throw new Error(message ?? `Unexpected value: ${value as unknown}`);
+}
+
+/**
+ * Recursive readonly type. Makes all properties and nested objects/arrays
+ * deeply immutable at the type level. Use for data crossing the IPC boundary.
+ *
+ * @example
+ * ```ts
+ * type FrozenProject = DeepReadonly<Project>;
+ * // FrozenProject.name is readonly string
+ * // FrozenProject.sessions[0].title is readonly string
+ * ```
+ */
+export type DeepReadonly<T> = T extends (infer U)[]
+	? ReadonlyArray<DeepReadonly<U>>
+	: T extends Map<infer K, infer V>
+		? ReadonlyMap<DeepReadonly<K>, DeepReadonly<V>>
+		: T extends Set<infer U>
+			? ReadonlySet<DeepReadonly<U>>
+			: T extends object
+				? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+				: T;

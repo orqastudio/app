@@ -59,7 +59,7 @@
 				File
 			</DropdownMenuTrigger>
 		</div>
-		<DropdownMenuContent align="start" class="w-52">
+		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onNewProject)}>
 				<Icon name="folder-plus" size="md" />
 				New Project...
@@ -97,7 +97,7 @@
 				Edit
 			</DropdownMenuTrigger>
 		</div>
-		<DropdownMenuContent align="start" class="w-52">
+		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onSettings)}>
 				<Icon name="sliders-horizontal" size="md" />
 				Settings
@@ -119,7 +119,7 @@
 				Help
 			</DropdownMenuTrigger>
 		</div>
-		<DropdownMenuContent align="start" class="w-52">
+		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onAbout)}>
 				<Icon name="info" size="md" />
 				About

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Badge } from "@orqastudio/svelte-components/pure";
+	import { Badge, Caption } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -35,9 +35,9 @@
 			{/if}
 		</div>
 		<div class="flex items-center gap-2">
-			<p class="text-xs text-muted-foreground">{formattedTime}</p>
+			<Caption>{formattedTime}</Caption>
 			{#if message.input_tokens || message.output_tokens}
-				<Badge variant="outline" class="text-[10px]">
+				<Badge variant="outline" size="xs">
 					{message.input_tokens ?? 0}↑ {message.output_tokens ?? 0}↓
 				</Badge>
 			{/if}

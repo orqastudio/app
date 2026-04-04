@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon,
+	import { Icon, HStack,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -33,21 +33,23 @@
 
 <Collapsible bind:open>
 	<CollapsibleTrigger
-		class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+		class="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
 	>
-		<Icon name="chevron-right" size="sm" />
-		{@const ToolIcon = displayInfo.icon}
-		<ToolIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-		<span class="flex-1 truncate font-mono text-xs">{label}</span>
-		{#if errorCount > 0}
-			<span class="flex items-center gap-1 text-xs text-destructive">
-				<Icon name="x-circle" size="sm" />
-				{errorCount}
-				{errorCount === 1 ? "error" : "errors"}
-			</span>
-		{:else}
-			<Icon name="check-circle" size="sm" />
-		{/if}
+		<HStack gap={2}>
+			<Icon name="chevron-right" size="sm" />
+			{@const ToolIcon = displayInfo.icon}
+			<ToolIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+			<span class="flex-1 truncate font-mono text-xs">{label}</span>
+			{#if errorCount > 0}
+				<div class="flex items-center gap-1 text-xs text-destructive">
+					<Icon name="x-circle" size="sm" />
+					{errorCount}
+					{errorCount === 1 ? "error" : "errors"}
+				</div>
+			{:else}
+				<Icon name="check-circle" size="sm" />
+			{/if}
+		</HStack>
 	</CollapsibleTrigger>
 	<CollapsibleContent>
 		<div class="ml-3 mt-1 space-y-1 border-l-2 border-border pl-4">

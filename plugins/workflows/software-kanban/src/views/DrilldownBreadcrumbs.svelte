@@ -1,31 +1,26 @@
+<!-- DrilldownBreadcrumbs: renders roadmap drill-down navigation using the Breadcrumb primitive. -->
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Breadcrumb, type BreadcrumbItem } from "@orqastudio/svelte-components/pure";
 
-	type BreadcrumbItem = {
+	type BreadcrumbItemDef = {
 		label: string;
 		onClick: () => void;
 	};
 
-	let { items }: { items: BreadcrumbItem[] } = $props();
+	let { items }: { items: BreadcrumbItemDef[] } = $props();
+
+	// Map to the Breadcrumb primitive's item shape.
+	// The first item acts as the home link (showHome + onHome), remaining items are segments.
+	const breadcrumbItems = $derived<BreadcrumbItem[]>(
+		items.slice(1).map((item) => ({ label: item.label, onClick: item.onClick })),
+	);
+
+	const homeItem = $derived(items[0]);
 </script>
 
-<nav class="flex items-center gap-1 text-sm" aria-label="Roadmap navigation">
-	{#each items as item, i (i)}
-		{#if i > 0}
-			<Icon name="chevron-right" size="sm" />
-		{/if}
-		{#if i === items.length - 1}
-			<span class="font-medium text-foreground truncate max-w-[240px]">{item.label}</span>
-		{:else}
-			<button
-				class="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors truncate max-w-[200px]"
-				onclick={item.onClick}
-			>
-				{#if i === 0}
-					<Icon name="home" size="sm" />
-				{/if}
-				<span>{item.label}</span>
-			</button>
-		{/if}
-	{/each}
-</nav>
+<Breadcrumb
+	items={breadcrumbItems}
+	showHome={true}
+	onHome={homeItem?.onClick}
+	maxWidth="240px"
+/>

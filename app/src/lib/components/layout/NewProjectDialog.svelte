@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { open } from "@tauri-apps/plugin-dialog";
-	import { Icon, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Stack, HStack, Text, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { projectStore } = getStores();
@@ -41,36 +41,32 @@
 	open={dialogOpen}
 	onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
 >
-	<DialogContent class="max-w-md">
+	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>New Project</DialogTitle>
 			<DialogDescription>Choose how to create your Orqa project.</DialogDescription>
 		</DialogHeader>
-		<div class="grid gap-3 py-2">
-			<button
-				class="flex items-start gap-4 rounded-lg border border-border p-4 text-left transition-colors hover:bg-accent"
+		<Stack gap={2}>
+			<Button
+				variant="outline"
 				onclick={handleCreateFromScratch}
 			>
 				<Icon name="square-plus" size="xl" />
-				<div>
-					<p class="text-sm font-medium">Create From Scratch</p>
-					<p class="text-xs text-muted-foreground">
-						Start with a fresh project in an empty folder.
-					</p>
-				</div>
-			</button>
-			<button
-				class="flex items-start gap-4 rounded-lg border border-border p-4 text-left transition-colors hover:bg-accent"
+				<Stack gap={1} align="start">
+					<Text variant="label">Create From Scratch</Text>
+					<Text variant="caption">Start with a fresh project in an empty folder.</Text>
+				</Stack>
+			</Button>
+			<Button
+				variant="outline"
 				onclick={handleInitializeExisting}
 			>
 				<Icon name="folder-code" size="xl" />
-				<div>
-					<p class="text-sm font-medium">Initialize Existing Folder</p>
-					<p class="text-xs text-muted-foreground">
-						Set up Orqa in an existing codebase. Your files stay untouched — only an .orqa/ config directory is added.
-					</p>
-				</div>
-			</button>
-		</div>
+				<Stack gap={1} align="start">
+					<Text variant="label">Initialize Existing Folder</Text>
+					<Text variant="caption">Set up Orqa in an existing codebase. Your files stay untouched — only an .orqa/ config directory is added.</Text>
+				</Stack>
+			</Button>
+		</Stack>
 	</DialogContent>
 </DialogRoot>

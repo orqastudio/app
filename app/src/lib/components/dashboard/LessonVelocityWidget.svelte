@@ -79,23 +79,23 @@
 </script>
 
 {#if hasData}
-	<CardRoot class="gap-2 h-full">
-		<CardHeader class="pb-2">
-			<CardTitle class="text-sm font-semibold">
+	<CardRoot full>
+		<CardHeader compact>
+			<CardTitle>
 				<div class="flex items-center gap-2">
 					<Icon name="trending-up" size="md" />
 					Lesson Velocity
 				</div>
 			</CardTitle>
 		</CardHeader>
-		<CardContent class="pt-0">
+		<CardContent>
 			<PipelineStages
 				stages={pipelineStages}
 				onStageClick={(key) => navigateToLessons(key)}
 			/>
 
 			<!-- Summary text -->
-			<div class="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+			<div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
 				{#if awaitingPromotion === 0}
 					<Icon name="check-circle-2" size="sm" />
 				{:else}

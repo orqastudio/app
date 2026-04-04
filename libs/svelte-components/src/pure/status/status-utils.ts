@@ -4,11 +4,11 @@
  */
 
 export interface StatusConfig {
-	key: string;
-	label: string;
-	icon: string;
-	color?: string;
-	spin?: boolean;
+	readonly key: string;
+	readonly label: string;
+	readonly icon: string;
+	readonly color?: string;
+	readonly spin?: boolean;
 }
 
 /** Default OrqaStudio canonical statuses. */
@@ -31,7 +31,7 @@ export const DEFAULT_STATUSES: StatusConfig[] = [
  * Resolve a status key to its full config.
  * Searches the provided statuses first, falls back to defaults.
  */
-export function resolveStatus(key: string, statuses?: StatusConfig[]): StatusConfig {
+export function resolveStatus(key: string, statuses?: readonly StatusConfig[]): StatusConfig {
 	const k = key.toLowerCase();
 	const found = (statuses ?? DEFAULT_STATUSES).find((s) => s.key === k);
 	if (found) return found;
@@ -44,22 +44,22 @@ export function resolveStatus(key: string, statuses?: StatusConfig[]): StatusCon
 }
 
 /** Get the display label for a status key. */
-export function statusLabel(key: string, statuses?: StatusConfig[]): string {
+export function statusLabel(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).label;
 }
 
 /** Get the icon name for a status key. */
-export function statusIconName(key: string, statuses?: StatusConfig[]): string {
+export function statusIconName(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).icon;
 }
 
 /** Get the semantic color for a status key. */
-export function statusColor(key: string, statuses?: StatusConfig[]): string {
+export function statusColor(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).color ?? "muted";
 }
 
 /** Whether a status should show a spinning animation. */
-export function statusIsSpinning(key: string, statuses?: StatusConfig[]): boolean {
+export function statusIsSpinning(key: string, statuses?: readonly StatusConfig[]): boolean {
 	return resolveStatus(key, statuses).spin === true;
 }
 
@@ -76,7 +76,7 @@ export const STATUS_COLOR_CLASSES: Record<string, string> = {
 };
 
 /** Get the Tailwind text color class for a status key. */
-export function statusColorClass(key: string, statuses?: StatusConfig[]): string {
+export function statusColorClass(key: string, statuses?: readonly StatusConfig[]): string {
 	const color = statusColor(key, statuses);
 	return STATUS_COLOR_CLASSES[color] ?? "text-muted-foreground";
 }

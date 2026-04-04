@@ -19,6 +19,8 @@
  *   #/                                     → Default (chat/welcome)
  */
 
+import { assertNever } from "@orqastudio/types";
+
 // Navigation functions — injected by the app during initialization.
 // The SDK can't import $app/navigation directly (it's a standalone library).
 // The app calls injectNavigation() with SvelteKit's pushState/replaceState.
@@ -135,6 +137,8 @@ export function parseHash(hash: string): ParsedRoute {
 
 /**
  * Build a hash string from route parameters.
+ * Exhaustively handles all ParsedRoute variants — adding a new type without a
+ * case here will produce a compile error via assertNever.
  */
 export function buildHash(route: ParsedRoute): string {
 	switch (route.type) {
@@ -152,8 +156,10 @@ export function buildHash(route: ParsedRoute): string {
 			return `#/artifacts/${route.activity}/${route.artifactPath}`;
 		case "artifacts":
 			return route.activity ? `#/artifacts/${route.activity}` : "#/artifacts";
-		default:
+		case "default":
 			return "#/";
+		default:
+			return assertNever(route.type);
 	}
 }
 

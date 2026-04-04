@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, SmallBadge } from "@orqastudio/svelte-components/pure";
+	import { Icon, SmallBadge, HStack } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -62,13 +62,13 @@
 		<MetadataRow icon="wrench" label="Capabilities" items={capabilities} badgeVariant="secondary" />
 		<MetadataRow icon="brain" label="Knowledge" items={knowledge} badgeVariant="outline" />
 		{#if model}
-			<div class="flex items-center gap-1.5">
-				<span class="flex items-center gap-1 text-xs text-muted-foreground">
+			<HStack gap={1}>
+				<div class="flex items-center gap-1 text-xs text-muted-foreground">
 					<Icon name="cpu" size="sm" />
 					Model
-				</span>
+				</div>
 				<SmallBadge variant="default">{model}</SmallBadge>
-			</div>
+			</HStack>
 		{/if}
 	</div>
 

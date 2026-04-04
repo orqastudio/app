@@ -588,7 +588,7 @@ pub async fn send_message(
         ));
     }
 
-    let store = state.daemon_store.clone().ok_or_else(|| (
+    let storage = state.storage.clone().ok_or_else(|| (
         StatusCode::SERVICE_UNAVAILABLE,
         Json(serde_json::json!({ "error": "session store unavailable", "code": "STORE_UNAVAILABLE" })),
     ))?;
@@ -607,15 +607,13 @@ pub async fn send_message(
 
     // Persist the user message and get its ID and the current provider session ID.
     let content_clone = content.clone();
-    let store_clone = Arc::clone(&store);
+    let storage_clone = Arc::clone(&storage);
     let (user_message_id, provider_session_id) = tokio::task::spawn_blocking(move || {
-        let conn = store_clone.connect().map_err(|e| e.to_string())?;
-        crate::store::session_get(&conn, session_id)
+        let session = storage_clone.sessions().get(session_id)
             .map_err(|e| format!("session not found: {e}"))?;
-        let turn_index = crate::store::message_next_turn_index(&conn, session_id)
+        let turn_index = storage_clone.messages().next_turn_index(session_id)
             .map_err(|e| format!("next turn index: {e}"))?;
-        let msg = crate::store::message_create(
-            &conn,
+        let msg = storage_clone.messages().create(
             session_id,
             "user",
             "text",
@@ -623,8 +621,6 @@ pub async fn send_message(
             turn_index,
             0,
         ).map_err(|e| format!("create user message: {e}"))?;
-        let session = crate::store::session_get(&conn, session_id)
-            .map_err(|e| format!("re-fetch session: {e}"))?;
         Ok::<(i64, Option<String>), String>((msg.id, session.provider_session_id))
     })
     .await
@@ -646,7 +642,7 @@ pub async fn send_message(
     let cancelled = Arc::clone(&stream_entry.cancelled);
     let pending_approvals = Arc::clone(&stream_entry.pending_approvals);
     let registry = state.stream_registry.clone();
-    let store_for_loop = Arc::clone(&store);
+    let storage_for_loop = Arc::clone(&storage);
 
     // Spawn the blocking stream loop on a dedicated thread.
     // stdin/stdout I/O must not run on the tokio executor.
@@ -670,11 +666,10 @@ pub async fn send_message(
         );
 
         // Persist the assistant message.
-        if let Ok(conn) = store_for_loop.connect() {
-            let turn_index = crate::store::message_next_turn_index(&conn, session_id).unwrap_or(1);
+        {
+            let turn_index = storage_for_loop.messages().next_turn_index(session_id).unwrap_or(1);
             let content_val = if acc.text.is_empty() { None } else { Some(acc.text.as_str()) };
-            if let Ok(assistant_msg) = crate::store::message_create(
-                &conn,
+            if let Ok(assistant_msg) = storage_for_loop.messages().create(
                 session_id,
                 "assistant",
                 "text",
@@ -683,11 +678,10 @@ pub async fn send_message(
                 0,
             ) {
                 let status = if acc.stream_complete && !acc.had_error { "complete" } else { "error" };
-                let _ = crate::store::message_update_stream_status(&conn, assistant_msg.id, status);
+                let _ = storage_for_loop.messages().update_stream_status(assistant_msg.id, status);
             }
             if acc.stream_complete {
-                let _ = crate::store::session_update_token_usage(
-                    &conn,
+                let _ = storage_for_loop.sessions().update_token_usage(
                     session_id,
                     acc.input_tokens,
                     acc.output_tokens,

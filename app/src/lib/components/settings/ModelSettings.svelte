@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { DefaultModel } from "@orqastudio/sdk";
@@ -23,22 +23,19 @@
 		<CardTitle>Model</CardTitle>
 		<CardDescription>Select the default Claude model for new sessions</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
-		<div>
-			<span class="text-sm font-medium">Default Model</span>
-			<div class="mt-1">
-				<SelectMenu
-					items={modelOptions}
-					selected={settingsStore.defaultModel}
-					onSelect={handleModelChange}
-					triggerLabel={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.label ?? "Auto"}
-					triggerSize="default"
-					align="start"
-				/>
-			</div>
-			<p class="mt-1.5 text-xs text-muted-foreground">
-				{modelOptions.find((o) => o.value === settingsStore.defaultModel)?.description ?? ""}
-			</p>
-		</div>
+	<CardContent>
+		<FormGroup
+			label="Default Model"
+			description={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.description ?? ""}
+		>
+			<SelectMenu
+				items={modelOptions}
+				selected={settingsStore.defaultModel}
+				onSelect={handleModelChange}
+				triggerLabel={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.label ?? "Auto"}
+				triggerSize="default"
+				align="start"
+			/>
+		</FormGroup>
 	</CardContent>
 </CardRoot>

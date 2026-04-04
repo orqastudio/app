@@ -8,7 +8,8 @@
      scrolls away from the bottom. The scroll-lock toggle button restores it. -->
 <script lang="ts">
 	import { onMount, onDestroy, tick } from "svelte";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, Caption } from "@orqastudio/svelte-components/pure";
+	import { assertNever } from "@orqastudio/types";
 	import {
 		events,
 		filteredEvents as getFilteredEvents,
@@ -20,7 +21,18 @@
 		loadHistory,
 		historyLoading,
 		historyExhausted,
+		historicalMode,
+		historicalTotal,
+		historicalExhausted,
+		loadMoreHistoricalEvents,
+		exitHistoricalMode,
 	} from "../../stores/log-store.svelte.js";
+	import {
+		activeSessionId,
+		sessionDisplayLabel,
+		sessions,
+		switchToCurrentSession,
+	} from "../../stores/session-store.svelte.js";
 
 	const filteredEvents = $derived(getFilteredEvents());
 	import LogRow from "./LogRow.svelte";
@@ -64,6 +76,41 @@
 
 	// Cleanup function returned by startLogStream.
 	let stopLogStream: (() => void) | null = null;
+
+	// Display label for the historical session currently being viewed.
+	const historicalSessionLabel = $derived(
+		sessions.find((s) => s.id === activeSessionId.value)
+			? sessionDisplayLabel(sessions.find((s) => s.id === activeSessionId.value)!)
+			: "historical session"
+	);
+
+	// Resolve the empty-state message for the connection status with exhaustiveness check.
+	function connectionEmptyMessage(status: typeof connectionStatus.value): string {
+		switch (status) {
+			case "connecting":
+				return "Waiting for events\u2026";
+			case "disconnected":
+				return "Daemon disconnected \u2014 no events";
+			case "connected":
+				return "No events yet";
+			default:
+				return assertNever(status);
+		}
+	}
+
+	// Load more events for the current historical session.
+	async function handleLoadMore(): Promise<void> {
+		if (activeSessionId.value) {
+			await loadMoreHistoricalEvents(activeSessionId.value);
+		}
+	}
+
+	// Return to the live feed from the historical banner button. Updates both
+	// session-store state and log-store so the ring buffer stream is re-activated.
+	async function handleReturnToLive(): Promise<void> {
+		await switchToCurrentSession();
+		await exitHistoricalMode();
+	}
 
 	// Compute the total scrollable height based on the filtered event list.
 	// Expanded rows are taller; collapsed rows are ROW_HEIGHT each.
@@ -188,9 +235,11 @@
 			{/if}
 		{/each}
 
-		<!-- Toolbar: scroll-lock toggle, export, and clear buttons pinned to the right. -->
+		<!-- Toolbar: scroll-lock toggle, export, and clear buttons pinned to the right.
+		     Follow button is hidden when viewing a historical session because auto-scroll
+		     is meaningless for static data. -->
 		<div class="log-table__toolbar">
-			{#if !scrollLock.enabled}
+			{#if !historicalMode.value && !scrollLock.enabled}
 				<Button
 					variant="ghost"
 					size="icon-sm"
@@ -212,11 +261,30 @@
 		</div>
 	</div>
 
+	<!-- Historical session banner: shown above the viewport when viewing a past
+	     session. Displays the session label and a "Return to live" button. -->
+	{#if historicalMode.value}
+		<div class="log-table__historical-banner">
+			<Caption class="overflow-hidden text-ellipsis whitespace-nowrap italic log-table__historical-label">
+				Viewing historical session — {historicalSessionLabel}
+			</Caption>
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="log-table__return-btn"
+				onclick={handleReturnToLive}
+			>
+				Return to live
+			</Button>
+		</div>
+	{/if}
+
 	<!-- Load earlier button: prepends history events before the oldest visible
 	     event. Shown above the virtualised scroll area so it is reachable without
 	     scrolling to the top (which would disable scroll-lock). Hidden when all
-	     available history has been loaded. -->
-	{#if !historyExhausted.value}
+	     available history has been loaded. Hidden during historical mode (load-more
+	     is shown at the bottom instead). -->
+	{#if !historyExhausted.value && !historicalMode.value}
 		<div class="log-table__load-earlier" style="height: 24px;">
 			<Button
 				variant="ghost"
@@ -256,13 +324,7 @@
 		{#if filteredEvents.length === 0}
 			<div class="log-table__empty">
 				{#if events.length === 0}
-					{#if connectionStatus.value === "connecting"}
-						Waiting for events…
-					{:else if connectionStatus.value === "disconnected"}
-						Daemon disconnected — no events
-					{:else}
-						No events yet
-					{/if}
+					{connectionEmptyMessage(connectionStatus.value)}
 				{:else}
 					No events match the active filters
 				{/if}
@@ -270,18 +332,37 @@
 		{/if}
 	</div>
 
-	<!-- Status strip: event count and auto-scroll indicator. -->
+	<!-- Load more button: shown below the viewport when viewing a historical session
+	     and more pages are available. Appends the next page of events to the buffer. -->
+	{#if historicalMode.value && !historicalExhausted.value}
+		<div class="log-table__load-earlier" style="height: 24px;">
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				class="log-table__load-btn"
+				disabled={historyLoading.value}
+				onclick={handleLoadMore}
+			>
+				{historyLoading.value ? "Loading…" : "Load more"}
+			</Button>
+		</div>
+	{/if}
+
+	<!-- Status strip: event count and auto-scroll indicator. When viewing a
+	     historical session the strip shows the session total and loaded count. -->
 	<div
 		class="log-table__status"
 		style="height: 20px;"
 	>
-		{#if filteredEvents.length !== events.length}
-			<span>{filteredEvents.length} of {totalReceived.value} events</span>
+		{#if historicalMode.value}
+			<Caption>{events.length} of {historicalTotal.value} events loaded</Caption>
+		{:else if filteredEvents.length !== events.length}
+			<Caption>{filteredEvents.length} of {totalReceived.value} events</Caption>
 		{:else}
-			<span>{totalReceived.value} events received</span>
+			<Caption>{totalReceived.value} events received</Caption>
 		{/if}
-		{#if scrollLock.enabled}
-			<span class="log-table__autoscroll">Auto-scroll on</span>
+		{#if !historicalMode.value && scrollLock.enabled}
+			<Caption class="log-table__autoscroll-label">Auto-scroll on</Caption>
 		{/if}
 	</div>
 </div>
@@ -340,14 +421,37 @@
 		font-size: 10px !important;
 	}
 
-	/* Follow button: uses a blue tint to indicate active state. */
+	/* Follow button: uses primary tint to indicate active auto-scroll state. */
 	:global(.log-table__follow-btn) {
-		background-color: color-mix(in srgb, #3b82f6 20%, transparent) !important;
-		color: #60a5fa !important;
+		background-color: color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
+		color: var(--color-primary) !important;
 	}
 
 	:global(.log-table__follow-btn:hover) {
-		background-color: color-mix(in srgb, #3b82f6 30%, transparent) !important;
+		background-color: color-mix(in srgb, var(--color-primary) 30%, transparent) !important;
+	}
+
+	/* Historical session banner: shown between header and load-earlier bar. */
+	.log-table__historical-banner {
+		border-bottom: 1px solid var(--color-border);
+		background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-background));
+		display: flex;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacing-2);
+		padding: 0 var(--spacing-2);
+		height: 24px;
+	}
+
+	/* Return to live button: primary text to pair with the banner. */
+	:global(.log-table__return-btn) {
+		height: 20px !important;
+		width: auto !important;
+		padding: 0 var(--spacing-1-5) !important;
+		font-size: 10px !important;
+		color: var(--color-primary) !important;
+		flex-shrink: 0;
 	}
 
 	/* Load-earlier bar. */
@@ -398,8 +502,14 @@
 		color: var(--color-content-muted);
 	}
 
-	/* Auto-scroll indicator: blue accent text. */
-	.log-table__autoscroll {
-		color: #60a5fa;
+	/* Historical session label: primary color indicates "info" state. */
+	:global(.log-table__historical-label) {
+		color: var(--color-primary) !important;
 	}
+
+	/* Auto-scroll active indicator: primary color to pair with the follow button. */
+	:global(.log-table__autoscroll-label) {
+		color: var(--color-primary) !important;
+	}
+
 </style>

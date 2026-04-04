@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
-	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent, LoadingSpinner, Button, Caption, Stack, HStack, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import type { GraphHealthData, HealthSnapshot } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
 
@@ -32,8 +30,8 @@
 	});
 
 	const overallDotClass = $derived.by(() => {
-		if (overallStatus === "green") return "bg-green-500";
-		if (overallStatus === "amber") return "bg-amber-500";
+		if (overallStatus === "green") return "bg-success";
+		if (overallStatus === "amber") return "bg-warning";
 		if (overallStatus === "red") return "bg-destructive";
 		return "bg-muted-foreground/30";
 	});
@@ -43,7 +41,7 @@
 	// Outlier severity: green 0, amber 1-3, red >3
 	const outlierSeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.outlier_count === 0) return "text-emerald-500";
+		if (health.outlier_count === 0) return "text-success";
 		if (health.outlier_count <= 3) return "text-warning";
 		return "text-destructive";
 	});
@@ -55,8 +53,8 @@
 
 	const degreeSeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.avg_degree >= 4) return "text-emerald-500";
-		if (health.avg_degree >= 3) return "text-cyan-500";
+		if (health.avg_degree >= 4) return "text-success";
+		if (health.avg_degree >= 3) return "text-primary";
 		if (health.avg_degree >= 2) return "text-warning";
 		return "text-destructive";
 	});
@@ -64,7 +62,7 @@
 	// Delivery connectivity: green >=90%, amber 70-90%, red <70%
 	const deliverySeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.delivery_connectivity >= 0.9) return "text-emerald-500";
+		if (health.delivery_connectivity >= 0.9) return "text-success";
 		if (health.delivery_connectivity >= 0.7) return "text-warning";
 		return "text-destructive";
 	});
@@ -72,27 +70,27 @@
 	// Learning connectivity: green >=80%, amber 50-80%, red <50%
 	const learningSeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.learning_connectivity >= 0.8) return "text-emerald-500";
+		if (health.learning_connectivity >= 0.8) return "text-success";
 		if (health.learning_connectivity >= 0.5) return "text-warning";
 		return "text-destructive";
 	});
 
 	const traceabilitySeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.pillar_traceability >= 80) return "text-emerald-500";
+		if (health.pillar_traceability >= 80) return "text-success";
 		if (health.pillar_traceability >= 50) return "text-warning";
 		return "text-destructive";
 	});
 
 	const brokenRefSeverity = $derived.by(() => {
 		if (!health) return "text-muted-foreground";
-		if (health.broken_ref_count === 0) return "text-emerald-500";
+		if (health.broken_ref_count === 0) return "text-success";
 		if (health.broken_ref_count <= 3) return "text-warning";
 		return "text-destructive";
 	});
 
 	const connectivityClass = $derived.by(() => {
-		if (overallStatus === "green") return "text-emerald-500";
+		if (overallStatus === "green") return "text-success";
 		if (overallStatus === "amber") return "text-warning";
 		if (overallStatus === "red") return "text-destructive";
 		return "text-muted-foreground";
@@ -120,7 +118,7 @@
 		if (!diff) return "hidden";
 		const positive = diff.startsWith("+");
 		const good = higherIsBetter ? positive : !positive;
-		return `text-[10px] ${good ? "text-emerald-500" : "text-destructive"}`;
+		return `text-[10px] ${good ? "text-success" : "text-destructive"}`;
 	}
 
 	// Pre-compute all delta strings and their classes as derived values.
@@ -167,92 +165,96 @@
 	);
 </script>
 
-<div class="flex h-full flex-col overflow-y-auto border-l border-border bg-background">
+<ScrollArea full>
+<Stack gap={0}>
 	<!-- Panel header -->
 	<div class="flex items-center justify-between border-b border-border px-3 py-2">
-		<div class="flex items-center gap-1.5">
+		<HStack gap={1}>
 			<Icon name="activity" size="sm" />
-			<span class="text-xs font-semibold">Graph Health</span>
-		</div>
-		<div class="flex items-center gap-2">
+			<Caption>Graph Health</Caption>
+		</HStack>
+		<HStack gap={2}>
 			{#if loading}
 				<LoadingSpinner size="sm" />
 			{:else if health && health.total_nodes > 0}
-				<span class="tabular-nums text-xs font-semibold">{healthScore}%</span>
+				<Caption>{healthScore}%</Caption>
 				<span class="relative flex h-2.5 w-2.5 shrink-0 items-center justify-center">
 					<span class="absolute h-2.5 w-2.5 rounded-full {overallDotClass} opacity-30"></span>
 					<span class="h-1.5 w-1.5 rounded-full {overallDotClass}"></span>
 				</span>
 			{/if}
-			<button
-				class="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+			<Button
+				variant="ghost"
+				size="icon-sm"
 				onclick={onRefresh}
 				disabled={loading}
 				aria-label="Refresh health metrics"
 			>
 				<Icon name="refresh-cw" size="sm" />
-			</button>
-		</div>
+			</Button>
+		</HStack>
 	</div>
 
 	{#if loading && !health}
-		<div class="flex flex-1 items-center justify-center">
+		<HStack justify="center">
 			<LoadingSpinner size="md" />
-		</div>
+		</HStack>
 	{:else if !health || health.total_nodes === 0}
-		<div class="flex flex-1 flex-col items-center justify-center gap-2 px-4 text-center text-xs text-muted-foreground">
-			<Icon name="activity" size="md" />
-			<p>No graph data yet.</p>
-			<p>Open a project to analyse health.</p>
+		<div class="flex flex-1 items-center justify-center px-4 text-center">
+			<Stack gap={2} align="center">
+				<Icon name="activity" size="md" />
+				<Caption>No graph data yet.</Caption>
+				<Caption>Open a project to analyse health.</Caption>
+			</Stack>
 		</div>
 	{:else}
-		<div class="flex flex-col divide-y divide-border">
+		<Stack gap={0}>
 
 			<!-- Size overview -->
 			<div class="px-3 py-2">
-				<p class="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Overview</p>
+				<Caption>Overview</Caption>
 				<div class="grid grid-cols-2 gap-1.5 text-xs">
-					<div class="flex items-center justify-between">
+					<HStack justify="between">
 						<span class="text-muted-foreground">Nodes</span>
 						<span class="font-semibold tabular-nums">{health.total_nodes}</span>
-					</div>
-					<div class="flex items-center justify-between">
+					</HStack>
+					<HStack justify="between">
 						<span class="text-muted-foreground">Edges</span>
 						<span class="font-semibold tabular-nums">{health.total_edges}</span>
-					</div>
+					</HStack>
 				</div>
 			</div>
 
 			<!-- Connectivity metrics -->
 			<div class="px-3 py-2">
-				<p class="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Connectivity</p>
-				<div class="flex flex-col gap-1.5 text-xs">
+				<Caption>Connectivity</Caption>
+				<Stack gap={1}>
 
 					<!-- Outliers -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="unlink" size="xs" />
-								Outliers
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{outlierSeverity} font-semibold tabular-nums">
-									{health.outlier_count}
-								</span>
-								<span class={outlierDeltaClass}>{outlierDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="unlink" size="xs" />
+									<span>Outliers</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{outlierSeverity} font-semibold tabular-nums">{health.outlier_count}</span>
+									<span class={outlierDeltaClass}>{outlierDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Pipeline Outliers</p>
-							<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline and the learning pipeline. Excludes archived, surpassed, knowledge, and doc artifacts.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Pipeline Outliers</span>
+							<Caption>Active artifacts outside both the delivery pipeline and the learning pipeline. Excludes archived, surpassed, knowledge, and doc artifacts.</Caption>
 							{#if health.outlier_age_distribution.stale > 0}
-								<p class="text-destructive mt-1">{health.outlier_age_distribution.stale} stale (30d+) — priority.</p>
+								<span class="text-xs text-destructive mt-1 block">{health.outlier_age_distribution.stale} stale (30d+) — priority.</span>
 							{/if}
 							{#if health.outlier_age_distribution.aging > 0}
-								<p class="text-warning mt-1">{health.outlier_age_distribution.aging} aging (7–30d).</p>
+								<span class="text-xs text-warning mt-1 block">{health.outlier_age_distribution.aging} aging (7–30d).</span>
 							{/if}
 							{#if health.outlier_age_distribution.fresh > 0}
-								<p class="text-muted-foreground mt-1">{health.outlier_age_distribution.fresh} fresh (≤7d).</p>
+								<span class="text-xs mt-1 block">{health.outlier_age_distribution.fresh} fresh (≤7d).</span>
 							{/if}
 						</TooltipContent>
 					</TooltipRoot>
@@ -274,145 +276,150 @@
 
 					<!-- Connectivity score -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="link" size="xs" />
-								Connectivity
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{connectivityClass} font-semibold tabular-nums">
-									{healthScore}%
-								</span>
-								<span class={connectivityDeltaClass}>{connectivityDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="link" size="xs" />
+									<span>Connectivity</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{connectivityClass} font-semibold tabular-nums">{healthScore}%</span>
+									<span class={connectivityDeltaClass}>{connectivityDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Largest Component Ratio</p>
-							<p class="text-muted-foreground">Percentage of artifacts in the largest connected group. Target: 90%+.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Largest Component Ratio</span>
+							<Caption>Percentage of artifacts in the largest connected group. Target: 90%+.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
 
 					<!-- Avg Degree -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="git-branch" size="xs" />
-								Avg Degree
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{degreeSeverity} font-semibold tabular-nums">{health.avg_degree}</span>
-								<span class={degreeDeltaClass}>{degreeDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="git-branch" size="xs" />
+									<span>Avg Degree</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{degreeSeverity} font-semibold tabular-nums">{health.avg_degree}</span>
+									<span class={degreeDeltaClass}>{degreeDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Average Connection Degree</p>
-							<p class="text-muted-foreground">Average relationships per artifact. Target: 4+ for a well-connected graph.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Average Connection Degree</span>
+							<Caption>Average relationships per artifact. Target: 4+ for a well-connected graph.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
 
 					<!-- Broken refs -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="link-2-off" size="xs" />
-								Broken Refs
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{brokenRefSeverity} font-semibold tabular-nums">{health.broken_ref_count}</span>
-								<span class={brokenRefDeltaClass}>{brokenRefDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="link-2-off" size="xs" />
+									<span>Broken Refs</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{brokenRefSeverity} font-semibold tabular-nums">{health.broken_ref_count}</span>
+									<span class={brokenRefDeltaClass}>{brokenRefDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Broken References</p>
-							<p class="text-muted-foreground">References whose target artifact does not exist in the graph. Target: 0.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Broken References</span>
+							<Caption>References whose target artifact does not exist in the graph. Target: 0.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
-				</div>
+				</Stack>
 			</div>
 
 			<!-- Pipeline metrics -->
 			<div class="px-3 py-2">
-				<p class="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Pipelines</p>
-				<div class="flex flex-col gap-1.5 text-xs">
+				<Caption>Pipelines</Caption>
+				<Stack gap={1}>
 
 					<!-- Delivery pipeline -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="package" size="xs" />
-								Delivery
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{deliverySeverity} font-semibold tabular-nums">
-									{pct(health.delivery_connectivity)}%
-								</span>
-								<span class={deliveryDeltaClass}>{deliveryDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="package" size="xs" />
+									<span>Delivery</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{deliverySeverity} font-semibold tabular-nums">{pct(health.delivery_connectivity)}%</span>
+									<span class={deliveryDeltaClass}>{deliveryDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Delivery Pipeline Connectivity</p>
-							<p class="text-muted-foreground">% of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) in the main delivery component. Target: 90%+.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Delivery Pipeline Connectivity</span>
+							<Caption>% of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) in the main delivery component. Target: 90%+.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
 
 					<!-- Learning pipeline -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="book-open" size="xs" />
-								Learning
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{learningSeverity} font-semibold tabular-nums">
-									{pct(health.learning_connectivity)}%
-								</span>
-								<span class={learningDeltaClass}>{learningDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="book-open" size="xs" />
+									<span>Learning</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{learningSeverity} font-semibold tabular-nums">{pct(health.learning_connectivity)}%</span>
+									<span class={learningDeltaClass}>{learningDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Learning Loop Connectivity</p>
-							<p class="text-muted-foreground">% of learning artifacts (lesson, rule) connected to each other or to decisions. Target: 80%+.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Learning Loop Connectivity</span>
+							<Caption>% of learning artifacts (lesson, rule) connected to each other or to decisions. Target: 80%+.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
-				</div>
+				</Stack>
 			</div>
 
 			<!-- Governance metrics -->
 			<div class="px-3 py-2">
-				<p class="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Governance</p>
-				<div class="flex flex-col gap-1.5 text-xs">
+				<Caption>Governance</Caption>
+				<Stack gap={1}>
 
 					<!-- Pillar Traceability -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
-							<span class="flex items-center gap-1 text-muted-foreground">
-								<Icon name="target" size="xs" />
-								Traceability
-							</span>
-							<div class="flex items-center gap-1.5">
-								<span class="{traceabilitySeverity} font-semibold tabular-nums">
-									{health.pillar_traceability}%
-								</span>
-								<span class={traceabilityDeltaClass}>{traceabilityDelta}</span>
+						<TooltipTrigger class="w-full rounded px-1 py-0.5 hover:bg-muted/60 transition-colors text-left">
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-1 text-muted-foreground">
+									<Icon name="target" size="xs" />
+									<span>Traceability</span>
+								</div>
+								<div class="flex items-center gap-1">
+									<span class="{traceabilitySeverity} font-semibold tabular-nums">{health.pillar_traceability}%</span>
+									<span class={traceabilityDeltaClass}>{traceabilityDelta}</span>
+								</div>
 							</div>
 						</TooltipTrigger>
-						<TooltipContent side="left" class="w-56 text-xs">
-							<p class="font-medium mb-1">Pillar Traceability</p>
-							<p class="text-muted-foreground">% of rules grounded by at least one pillar via a grounded-by relationship. Target: 80%+.</p>
+						<TooltipContent side="left">
+							<span class="text-xs font-medium mb-1 block">Pillar Traceability</span>
+							<Caption>% of rules grounded by at least one pillar via a grounded-by relationship. Target: 80%+.</Caption>
 						</TooltipContent>
 					</TooltipRoot>
-				</div>
+				</Stack>
 			</div>
 
 			<!-- Historical comparison note -->
 			{#if snapshots.length > 1 && prevDate}
 				<div class="px-3 py-2">
-					<p class="text-[10px] text-muted-foreground">
+					<Caption>
 						Deltas vs. previous snapshot ({prevDate})
-					</p>
+					</Caption>
 				</div>
 			{/if}
 
-		</div>
+		</Stack>
 	{/if}
-</div>
+</Stack>
+</ScrollArea>

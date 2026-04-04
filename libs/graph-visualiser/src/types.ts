@@ -2,9 +2,9 @@ import type { ArtifactNode } from "@orqastudio/types";
 
 /** Cached node position from a layout computation. */
 export interface NodePosition {
-    id: string;
-    x: number;
-    y: number;
+    readonly id: string;
+    readonly x: number;
+    readonly y: number;
 }
 
 /**

@@ -5,23 +5,25 @@
 
 // Shape of a single event received from the daemon event bus.
 export interface PerfEvent {
-	level: "trace" | "debug" | "info" | "warn" | "error" | "perf";
-	category: string;
+	readonly level: "trace" | "debug" | "info" | "warn" | "error" | "perf";
+	readonly category: string;
 	// Duration in milliseconds for perf events.
-	durationMs?: number;
+	readonly durationMs?: number;
 	// Timestamp in milliseconds since epoch (or ISO string — we normalise to ms).
-	timestamp?: number | string;
+	readonly timestamp?: number | string;
 	// Optional source label, e.g. "ipc" or "search".
-	source?: string;
-	message?: string;
+	readonly source?: string;
+	readonly message?: string;
 }
 
-// Aggregated stats for one metric category.
+// Aggregated stats for one metric category. The identity fields (category, label)
+// are readonly; the numeric accumulators are intentionally mutable — recordValue()
+// updates them in-place on $state data for Svelte reactivity.
 export interface MetricStats {
 	// Category key, e.g. "graph_build" or "ipc".
-	category: string;
+	readonly category: string;
 	// Human-readable display label.
-	label: string;
+	readonly label: string;
 	// Most recent recorded value in ms.
 	current: number;
 	min: number;

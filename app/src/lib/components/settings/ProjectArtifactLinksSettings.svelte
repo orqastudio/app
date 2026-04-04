@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ArtifactLinksConfig, ArtifactLinkDisplayMode } from "@orqastudio/types";
 
@@ -66,7 +67,7 @@
 		<CardTitle>Artifact Links</CardTitle>
 		<CardDescription>Control how artifact link chips are displayed across the app</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-3">
+	<CardContent>
 		<!-- Column headers -->
 		<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4 px-1">
 			<span class="text-xs font-medium text-muted-foreground">Type</span>
@@ -90,17 +91,13 @@
 					<!-- Display mode toggle -->
 					<div class="flex gap-1.5">
 						<button
-							class="rounded border px-2 py-0.5 text-xs transition-colors {mode === 'id'
-								? 'border-primary bg-primary text-primary-foreground'
-								: 'border-border bg-background text-muted-foreground hover:bg-accent/50'}"
+							class="flex h-6 items-center rounded px-2 text-xs {mode === 'id' ? 'bg-primary text-primary-foreground' : 'border border-border hover:bg-accent'}"
 							onclick={() => handleDisplayModeChange(prefix, "id")}
 						>
 							ID
 						</button>
 						<button
-							class="rounded border px-2 py-0.5 text-xs transition-colors {mode === 'title'
-								? 'border-primary bg-primary text-primary-foreground'
-								: 'border-border bg-background text-muted-foreground hover:bg-accent/50'}"
+							class="flex h-6 items-center rounded px-2 text-xs {mode === 'title' ? 'bg-primary text-primary-foreground' : 'border border-border hover:bg-accent'}"
 							onclick={() => handleDisplayModeChange(prefix, "title")}
 						>
 							Title
@@ -126,7 +123,7 @@
 						</label>
 						{#if !isDefault}
 							<button
-								class="text-[10px] text-muted-foreground hover:text-foreground"
+								class="h-auto px-0 text-[10px] text-muted-foreground hover:text-foreground"
 								aria-label="Reset to default"
 								onclick={() => resetColor(prefix)}
 							>

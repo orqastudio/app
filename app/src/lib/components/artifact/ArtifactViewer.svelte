@@ -9,7 +9,7 @@
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Heading } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -279,7 +279,8 @@
 				/>
 			{/if}
 		{/if}
-		<ScrollArea class="min-h-0 flex-1" onclick={handleContentClick}>
+		<div class="min-h-0 flex-1" role="presentation" onclick={handleContentClick}>
+		<ScrollArea full>
 			<div class="p-6">
 				{#if fileExtension === "sh"}
 					<HookViewer {content} />
@@ -296,7 +297,7 @@
 						<!-- Title + description only, no metadata card -->
 						{@const title = parsedContent.metadata["title"] as string}
 						{@const description = parsedContent.metadata["description"] as string | undefined}
-						<h1 class="mb-1 text-2xl font-bold leading-snug">{title}</h1>
+						<Heading level={1}>{title}</Heading>
 						{#if description}
 							<p class="mb-6 text-sm leading-relaxed text-muted-foreground">{description}</p>
 						{:else}
@@ -313,6 +314,7 @@
 				{/if}
 			</div>
 		</ScrollArea>
+		</div>
 	{:else}
 		<div class="flex flex-1 items-center justify-center text-sm text-muted-foreground">
 			Select an artifact to view its contents

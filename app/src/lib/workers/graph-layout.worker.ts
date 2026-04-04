@@ -29,14 +29,14 @@ try {
 // ---------------------------------------------------------------------------
 
 export type WorkerRequest = {
-    type: "layout";
-    elements: Array<{ group: string; data: Record<string, unknown> }>;
+    readonly type: "layout";
+    readonly elements: ReadonlyArray<{ readonly group: string; readonly data: Readonly<Record<string, unknown>> }>;
 };
 
 export type WorkerResponse =
-    | { type: "positions"; positions: Array<{ id: string; x: number; y: number }> }
-    | { type: "progress"; percent: number }
-    | { type: "error"; message: string };
+    | { readonly type: "positions"; readonly positions: ReadonlyArray<{ readonly id: string; readonly x: number; readonly y: number }> }
+    | { readonly type: "progress"; readonly percent: number }
+    | { readonly type: "error"; readonly message: string };
 
 // ---------------------------------------------------------------------------
 // Layout handler

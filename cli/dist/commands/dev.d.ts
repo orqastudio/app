@@ -1,27 +1,22 @@
 /**
- * Dev environment — manages Vite + Tauri + daemon + watch mode.
+ * Dev environment — thin CLI dispatch layer.
  *
  * `orqa dev` is the primary entry point for the development environment.
- * Run it in a separate terminal — it watches Rust sources and auto-rebuilds.
+ * Process management (build, watch, restart, service lifecycle) is handled by
+ * ProcessManager in lib/process-manager.ts. This file is a dispatch layer only.
  *
- * MCP and LSP server lifecycle is owned exclusively by the daemon. The dev
- * controller starts the daemon and the daemon starts MCP/LSP. The controller
- * does NOT spawn orqa-mcp-server or orqa-lsp-server directly.
- *
- * orqa dev                        Start the full dev environment (Vite + Tauri + daemon)
- * orqa dev --legacy-dashboard     Start with the legacy dev.mjs dashboard instead of OrqaDev
- * orqa dev stop                   Stop gracefully
+ * orqa dev                        Launch OrqaDev (cargo tauri dev for devtools)
+ * orqa dev start-processes        Build + start all dev processes (called by OrqaDev)
+ * orqa dev stop                   Stop gracefully via signal file
  * orqa dev kill                   Force-kill all processes
- * orqa dev restart                Restart Vite + Tauri
- * orqa dev restart-tauri          Restart Tauri only
- * orqa dev restart-vite           Restart Vite only
+ * orqa dev restart [target]       Send restart signal to running controller
  * orqa dev status                 Show process status
- * orqa dev icons                  Generate brand icons from SVG sources
- * orqa dev tool                   Run the debug-tool submodule
+ * orqa dev graph                  Print the dependency graph build tiers
+ * orqa dev icons [--deploy]       Generate brand icons from SVG sources
+ * orqa dev tool [args...]         Run the debug-tool submodule
  */
 /**
- * Dispatch the dev command: start the dev environment or a subcommand.
- * @param args - CLI arguments after "dev".
+ * Dispatch the dev command to the appropriate subcommand handler.
  */
 export declare function runDevCommand(args: string[]): Promise<void>;
 //# sourceMappingURL=dev.d.ts.map

@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, CardAction, Heading } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
@@ -75,23 +74,25 @@
 	}
 </script>
 
-<CardRoot class="w-full">
-	<CardHeader class="pb-3">
-		<CardTitle class="flex items-center gap-2 text-base">
-			<Icon name="target" size="md" />
-			Active Milestone
+<CardRoot>
+	<CardHeader compact>
+		<CardTitle>
+			<div class="flex items-center gap-2">
+				<Icon name="target" size="md" />
+				Active Milestone
+			</div>
 		</CardTitle>
 		<CardAction>
 			{#if activeMilestone}
-				<Button variant="ghost" size="sm" onclick={openMilestone} class="h-7 text-xs">
+				<button class="flex h-7 items-center gap-1 rounded px-2 text-xs hover:bg-accent" onclick={openMilestone}>
 					<Icon name="kanban" size="sm" />
 					View Roadmap
-				</Button>
+				</button>
 			{:else}
-				<Button variant="ghost" size="sm" onclick={openRoadmap} class="h-7 text-xs">
+				<button class="flex h-7 items-center gap-1 rounded px-2 text-xs hover:bg-accent" onclick={openRoadmap}>
 					<Icon name="map" size="sm" />
 					Roadmap
-				</Button>
+				</button>
 			{/if}
 		</CardAction>
 	</CardHeader>
@@ -103,7 +104,7 @@
 			<p class="text-sm text-muted-foreground">
 				No active milestone.
 				<button
-					class="ml-1 underline underline-offset-2 hover:text-foreground"
+					class="ml-1 h-auto p-0 text-sm text-muted-foreground underline underline-offset-2"
 					onclick={openRoadmap}
 				>Open Roadmap</button> to plan one.
 			</p>
@@ -111,7 +112,7 @@
 			<!-- Title + deadline row -->
 			<div class="mb-3 flex items-start justify-between gap-4">
 				<div>
-					<h2 class="text-lg font-semibold leading-tight">{activeMilestone.node.title}</h2>
+					<Heading level={2}>{activeMilestone.node.title}</Heading>
 					{#if activeMilestone.node.description}
 						<p class="mt-0.5 text-sm text-muted-foreground line-clamp-2">
 							{activeMilestone.node.description}

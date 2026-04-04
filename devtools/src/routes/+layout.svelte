@@ -7,7 +7,7 @@
 	//   Ctrl+1–4        — switch to the corresponding tab
 	//   Escape          — clear all active log filters
 	import "../app.css";
-	import { TooltipProvider } from "@orqastudio/svelte-components/pure";
+	import { TooltipProvider, Stack } from "@orqastudio/svelte-components/pure";
 	import DevToolsShell from "$lib/components/DevToolsShell.svelte";
 	import { navigation } from "$lib/stores/devtools-navigation.svelte.js";
 	import { clearFilters, clearEvents } from "$lib/stores/log-store.svelte.js";
@@ -66,9 +66,9 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <TooltipProvider>
-	<div class="bg-surface-base text-content-base flex h-screen flex-col overflow-hidden">
+	<Stack gap={0} class="bg-surface-base text-content-base h-screen overflow-hidden">
 		<DevToolsShell>
 			{@render children()}
 		</DevToolsShell>
-	</div>
+	</Stack>
 </TooltipProvider>

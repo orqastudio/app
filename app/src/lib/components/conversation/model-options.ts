@@ -2,9 +2,9 @@
 // All UI components that need model options import from here.
 
 export interface ModelOption {
-	value: string;
-	label: string;
-	description: string;
+	readonly value: string;
+	readonly label: string;
+	readonly description: string;
 }
 
 /** The "auto" sentinel value lets the backend choose the best model for each request. */

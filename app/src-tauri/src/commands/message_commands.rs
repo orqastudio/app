@@ -1,8 +1,11 @@
+// Tauri IPC commands for message retrieval.
+//
+// Messages are persisted in the project-scoped SQLite database via engine/storage.
+
 use tauri::State;
 
 use crate::domain::message::Message;
 use crate::error::OrqaError;
-use crate::repo::message_repo;
 use crate::state::AppState;
 
 /// List messages for a session with pagination.
@@ -27,35 +30,40 @@ pub fn message_list(
         ));
     }
 
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    message_repo::list(&conn, session_id, limit_val, offset_val)
+    let storage = state.db.get()?;
+    Ok(storage.messages().list(session_id, limit_val, offset_val)?)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::db::init_memory_db;
     use crate::domain::message::MessageRole;
-    use crate::repo::{message_repo, project_repo, session_repo};
 
-    fn setup() -> rusqlite::Connection {
-        let conn = init_memory_db().expect("db init");
-        project_repo::create(&conn, "test", "/test", None).expect("create project");
-        session_repo::create(&conn, 1, "auto", None).expect("create session");
-        conn
+    fn setup() -> (orqa_storage::Storage, i64) {
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let project = storage
+            .projects()
+            .create("test", "/test", None)
+            .expect("create project");
+        storage
+            .sessions()
+            .create(project.id, "auto", None)
+            .expect("create session");
+        (storage, 1)
     }
 
     #[test]
     fn list_messages_default_pagination() {
-        let conn = setup();
-        message_repo::create(&conn, 1, "user", "text", Some("Hello"), 0, 0).expect("create");
-        message_repo::create(&conn, 1, "assistant", "text", Some("Hi"), 1, 0).expect("create");
+        let (storage, session_id) = setup();
+        storage
+            .messages()
+            .create(session_id, "user", "text", Some("Hello"), 0, 0)
+            .expect("create");
+        storage
+            .messages()
+            .create(session_id, "assistant", "text", Some("Hi"), 1, 0)
+            .expect("create");
 
-        let messages = message_repo::list(&conn, 1, 100, 0).expect("list");
+        let messages = storage.messages().list(session_id, 100, 0).expect("list");
         assert_eq!(messages.len(), 2);
         assert_eq!(messages[0].role, MessageRole::User);
         assert_eq!(messages[1].role, MessageRole::Assistant);
@@ -63,57 +71,52 @@ mod tests {
 
     #[test]
     fn list_messages_with_pagination() {
-        let conn = setup();
+        let (storage, session_id) = setup();
         for i in 0..5 {
-            message_repo::create(&conn, 1, "user", "text", Some("msg"), i, 0).expect("create");
+            storage
+                .messages()
+                .create(session_id, "user", "text", Some("msg"), i, 0)
+                .expect("create");
         }
 
-        let page = message_repo::list(&conn, 1, 2, 0).expect("page 1");
+        let page = storage.messages().list(session_id, 2, 0).expect("page 1");
         assert_eq!(page.len(), 2);
 
-        let page = message_repo::list(&conn, 1, 2, 4).expect("page 3");
+        let page = storage.messages().list(session_id, 2, 4).expect("page 3");
         assert_eq!(page.len(), 1);
     }
 
     #[test]
     fn list_empty_session() {
-        let conn = setup();
-        let messages = message_repo::list(&conn, 1, 100, 0).expect("list");
+        let (storage, session_id) = setup();
+        let messages = storage.messages().list(session_id, 100, 0).expect("list");
         assert!(messages.is_empty());
     }
 
     #[test]
     fn search_finds_matching_messages() {
-        let conn = setup();
-        message_repo::create(
-            &conn,
-            1,
-            "user",
-            "text",
-            Some("How do I fix the parsing bug?"),
-            0,
-            0,
-        )
-        .expect("create");
-        message_repo::create(
-            &conn,
-            1,
-            "assistant",
-            "text",
-            Some("Update the parser module"),
-            1,
-            0,
-        )
-        .expect("create");
+        let (storage, session_id) = setup();
+        storage
+            .messages()
+            .create(session_id, "user", "text", Some("How do I fix the parsing bug?"), 0, 0)
+            .expect("create");
+        storage
+            .messages()
+            .create(session_id, "assistant", "text", Some("Update the parser module"), 1, 0)
+            .expect("create");
 
-        let results = message_repo::search(&conn, 1, "parsing", 10).expect("search");
+        // search uses project_id=1 (the project in setup)
+        let results = storage.messages().search(1, "parsing", 10).expect("search");
         assert!(!results.is_empty());
     }
 
     #[test]
     fn search_empty_returns_nothing() {
-        let conn = setup();
-        let results = message_repo::search(&conn, 1, "nonexistent_term_xyz", 10).expect("search");
+        let (storage, _session_id) = setup();
+        let results = storage
+            .messages()
+            .search(1, "nonexistent_term_xyz", 10)
+            .expect("search");
         assert!(results.is_empty());
     }
 

@@ -97,7 +97,15 @@ pub fn apply_fixes(
                     applied.push(fix);
                 }
             }
-            _ => {}
+            _ => {
+                // No auto-fix defined for this category. New IntegrityCategory variants
+                // should be reviewed here to determine whether an auto-fix is warranted.
+                tracing::debug!(
+                    "[auto_fix] no auto-fix handler for category {:?} on artifact '{}'",
+                    check.category,
+                    check.artifact_id
+                );
+            }
         }
     }
 

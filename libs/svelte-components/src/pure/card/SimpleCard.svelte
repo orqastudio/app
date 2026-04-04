@@ -2,7 +2,8 @@
 	import type { Snippet } from "svelte";
 
 	type CardBaseProps = {
-		class?: string;
+		variant?: "default" | "warning" | "destructive" | "ghost";
+		gap?: 0 | 1 | 2 | 3 | 4;
 		children: Snippet;
 		footer?: Snippet;
 	};
@@ -42,7 +43,8 @@
 	let {
 		title,
 		description,
-		class: className,
+		variant = "default",
+		gap = 0,
 		header,
 		footer,
 		action,
@@ -50,7 +52,7 @@
 	}: CardProps = $props();
 </script>
 
-<Root class={className}>
+<Root {variant} {gap}>
 	{#if header}
 		{@render header()}
 	{:else if title}

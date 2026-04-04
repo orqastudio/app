@@ -13,11 +13,9 @@
 
 pub mod config;
 pub mod event_bus;
-pub mod event_store;
 pub mod graph_state;
 pub mod health;
 pub mod routes;
-pub mod store;
 
 // Internal modules that route handlers depend on — re-exported so the binary
 // can still access them via `crate::` paths after the refactor.

@@ -15,6 +15,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { randomUUID } from "node:crypto";
+import { assertNever } from "@orqastudio/types";
 // ---------------------------------------------------------------------------
 // Metrics File Path
 // ---------------------------------------------------------------------------
@@ -217,28 +218,35 @@ export function computeTrends(projectRoot, periodDays) {
     let totalInput = 0;
     const modelCounts = {};
     for (const event of events) {
-        if (event._type === "request") {
-            const d = event.data;
-            if (d.timestamp < cutoffIso)
-                continue;
-            totalRequests++;
-            totalTokens += d.inputTokens + d.outputTokens;
-            totalInput += d.inputTokens;
-            totalCacheHit += d.cacheHitTokens;
-            modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
-        }
-        else if (event._type === "agent_complete") {
-            const d = event.data;
-            // Agent events don't have a direct timestamp; count all within period
-            totalAgents++;
-            modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
-        }
-        else if (event._type === "session_summary") {
-            const d = event.data;
-            if (d.startTime < cutoffIso)
-                continue;
-            totalSessions++;
-            totalCost += d.totalCost;
+        switch (event._type) {
+            case "request": {
+                const d = event.data;
+                if (d.timestamp < cutoffIso)
+                    continue;
+                totalRequests++;
+                totalTokens += d.inputTokens + d.outputTokens;
+                totalInput += d.inputTokens;
+                totalCacheHit += d.cacheHitTokens;
+                modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
+                break;
+            }
+            case "agent_complete": {
+                const d = event.data;
+                // Agent events don't have a direct timestamp; count all within period
+                totalAgents++;
+                modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
+                break;
+            }
+            case "session_summary": {
+                const d = event.data;
+                if (d.startTime < cutoffIso)
+                    continue;
+                totalSessions++;
+                totalCost += d.totalCost;
+                break;
+            }
+            default:
+                assertNever(event);
         }
     }
     const avgCacheHitRate = totalInput > 0

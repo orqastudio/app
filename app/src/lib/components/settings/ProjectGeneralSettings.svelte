@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
@@ -60,9 +60,8 @@
 		<CardTitle>General</CardTitle>
 		<CardDescription>Project identity and description</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
-		<div class="space-y-2">
-			<span class="text-sm font-medium">Project Icon</span>
+	<CardContent>
+		<FormGroup label="Project Icon">
 			<div class="flex items-center gap-3">
 				{#if props.iconDataUrl}
 					<img
@@ -75,7 +74,7 @@
 						<Icon name="image" size="lg" />
 					</div>
 				{/if}
-				<div class="flex gap-2">
+				<div class="flex items-center gap-2">
 					<Button variant="outline" size="sm" onclick={handleIconUpload}>
 						<Icon name="upload" size="sm" />
 						{props.iconDataUrl ? "Change" : "Upload"}
@@ -88,30 +87,30 @@
 					{/if}
 				</div>
 			</div>
-		</div>
+		</FormGroup>
 
 		<Separator />
 
-		<div>
-			<label class="text-sm font-medium" for="settings-name">Name</label>
-			<Input
-				id="settings-name"
-				class="mt-1 max-w-xs"
-				bind:value={localName}
-				onblur={handleBlurSave}
-			/>
-		</div>
+		<FormGroup label="Name" for="settings-name">
+			<div class="max-w-xs">
+				<Input
+					id="settings-name"
+					bind:value={localName}
+					onblur={handleBlurSave}
+				/>
+			</div>
+		</FormGroup>
 
-		<div>
-			<label class="text-sm font-medium" for="settings-description">Description</label>
-			<Textarea
-				id="settings-description"
-				class="mt-1 max-w-md"
-				bind:value={localDescription}
-				onblur={handleBlurSave}
-				placeholder="Brief project description"
-				rows={2}
-			/>
-		</div>
+		<FormGroup label="Description" for="settings-description">
+			<div class="max-w-md">
+				<Textarea
+					id="settings-description"
+					bind:value={localDescription}
+					onblur={handleBlurSave}
+					placeholder="Brief project description"
+					rows={2}
+				/>
+			</div>
+		</FormGroup>
 	</CardContent>
 </CardRoot>

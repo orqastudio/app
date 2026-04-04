@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, Heading } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
 	import { EmptyState } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -76,7 +76,7 @@
 	}
 </script>
 
-<ScrollArea class="h-full">
+<div class="h-full overflow-y-auto">
 	<div class="p-6">
 		{#if !project}
 			<EmptyState
@@ -87,21 +87,19 @@
 			/>
 		{:else}
 			<!-- Project header -->
-			<div class="mb-6">
-				<div class="flex items-center gap-3">
-					{#if projectStore.iconDataUrl}
-						<img src={projectStore.iconDataUrl} alt={projectName} class="h-12 w-12 rounded object-contain" />
+			<div class="mb-6 flex items-center gap-3">
+				{#if projectStore.iconDataUrl}
+					<img src={projectStore.iconDataUrl} alt={projectName} class="h-12 w-12 rounded object-contain" />
+				{:else}
+					<Icon name="folder-open" size="xl" />
+				{/if}
+				<div>
+					<Heading level={1}>{projectName}</Heading>
+					{#if projectStore.projectSettings?.description}
+						<p class="text-sm text-muted-foreground">{projectStore.projectSettings.description}</p>
 					{:else}
-						<Icon name="folder-open" size="xl" />
+						<p class="text-sm text-muted-foreground">{project.path}</p>
 					{/if}
-					<div>
-						<h1 class="text-2xl font-bold">{projectName}</h1>
-						{#if projectStore.projectSettings?.description}
-							<p class="text-sm text-muted-foreground">{projectStore.projectSettings.description}</p>
-						{:else}
-							<p class="text-sm text-muted-foreground">{project.path}</p>
-						{/if}
-					</div>
 				</div>
 			</div>
 
@@ -125,15 +123,17 @@
 					/>
 
 					<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
-					<CardRoot class="gap-2 overflow-hidden">
-						<CardHeader class="pb-2">
-							<CardTitle class="flex items-center gap-1.5 text-sm font-semibold">
-								<Icon name="trending-up" size="md" />
-								Learning
+					<CardRoot>
+						<CardHeader compact>
+							<CardTitle>
+								<div class="flex items-center gap-1">
+									<Icon name="trending-up" size="md" />
+									Learning
+								</div>
 							</CardTitle>
-							<CardDescription class="text-xs">How You're Improving</CardDescription>
+							<CardDescription>How You're Improving</CardDescription>
 						</CardHeader>
-						<CardContent class="flex flex-col px-0 pt-0 pb-0">
+						<CardContent>
 							<ImprovementTrendsWidget />
 						</CardContent>
 					</CardRoot>
@@ -144,15 +144,11 @@
 
 				<!-- Row 3: Knowledge Pipeline + Lesson Velocity — same height via h-full on both cards -->
 				<div class="grid grid-cols-3 gap-4 items-stretch">
-					<div class="col-span-2 flex">
-						<div class="w-full">
-							<PipelineWidget />
-						</div>
+					<div class="col-span-2">
+						<PipelineWidget />
 					</div>
-					<div class="col-span-1 flex">
-						<div class="w-full">
-							<LessonVelocityWidget />
-						</div>
+					<div class="col-span-1">
+						<LessonVelocityWidget />
 					</div>
 				</div>
 
@@ -165,4 +161,4 @@
 			</div>
 		{/if}
 	</div>
-</ScrollArea>
+</div>

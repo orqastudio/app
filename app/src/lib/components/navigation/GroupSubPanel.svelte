@@ -51,8 +51,7 @@
 				{#snippet child({ props })}
 					<button
 						{...props}
-						class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors
-							{isActive
+						class="flex w-full items-center justify-start gap-2 px-3 py-2 text-sm {isActive
 							? 'bg-accent text-accent-foreground font-medium'
 							: 'text-muted-foreground hover:bg-accent/40 hover:text-foreground'}"
 						onclick={() => navigationStore.setSubCategory(sub.key)}

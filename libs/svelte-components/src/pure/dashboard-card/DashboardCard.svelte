@@ -7,24 +7,22 @@
 		description,
 		action,
 		children,
-		class: className = "",
 	}: {
 		title?: string;
 		description?: string;
 		action?: Snippet;
 		children?: Snippet;
-		class?: string;
 	} = $props();
 </script>
 
-<CardRoot class="gap-2 {className}">
+<CardRoot gap={2}>
 	{#if title || description || action}
-		<CardHeader class="pb-2">
+		<CardHeader compact={true}>
 			{#if title}
-				<CardTitle class="text-sm font-semibold">{title}</CardTitle>
+				<CardTitle size="sm">{title}</CardTitle>
 			{/if}
 			{#if description}
-				<CardDescription class="text-xs">{description}</CardDescription>
+				<CardDescription size="xs">{description}</CardDescription>
 			{/if}
 			{#if action}
 				<CardAction>
@@ -33,7 +31,7 @@
 			{/if}
 		</CardHeader>
 	{/if}
-	<CardContent class="pt-0">
+	<CardContent compact={true}>
 		{@render children?.()}
 	</CardContent>
 </CardRoot>

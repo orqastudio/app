@@ -3,6 +3,15 @@
 //! Defines structs and enums representing agent sessions — the primary unit of
 //! interaction between a user and an LLM sidecar. Sessions contain messages,
 //! accumulate token counts, and transition through a defined lifecycle.
+//!
+//! # ID representation
+//!
+//! `id` and `project_id` are raw `i64` SQLite rowids. Full newtype wrappers
+//! (`SessionId(i64)`, `ProjectId(i64)`) would require changes across
+//! `orqa-storage`, `orqa-engine-types`, and both Tauri backends simultaneously.
+//! The current representation is kept as `i64` to preserve a single migration
+//! boundary. The storage layer is the correct place to introduce typed IDs when
+//! that refactor is scoped.
 
 use serde::{Deserialize, Serialize};
 

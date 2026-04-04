@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon,
+	import { Icon, HStack,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -100,11 +100,12 @@
 		<Collapsible bind:open={panelOpen}>
 			<div class="flex items-center justify-between">
 				<CollapsibleTrigger
-					class="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+					class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
 				>
-					<Icon name="chevron-right" size="xs" />
-					Relationships
-
+					<HStack gap={1}>
+						<Icon name="chevron-right" size="xs" />
+						Relationships
+					</HStack>
 				</CollapsibleTrigger>
 				{#if panelOpen}
 					<TooltipRoot>
@@ -112,7 +113,7 @@
 							{#snippet child({ props })}
 								<button
 									{...props}
-									class="rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+									class="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-foreground"
 									onclick={() => { viewMode = viewMode === "list" ? "graph" : "list"; }}
 								>
 									{#if viewMode === "list"}
@@ -157,7 +158,7 @@
 										{/each}
 										{#if refs.length > 3}
 											<button
-												class="rounded px-1 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+												class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
 												onclick={() => toggleExpanded(dirKey)}
 											>
 												{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
@@ -185,7 +186,7 @@
 										{/each}
 										{#if refs.length > 3}
 											<button
-												class="rounded px-1 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+												class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
 												onclick={() => toggleExpanded(dirKey)}
 											>
 												{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}

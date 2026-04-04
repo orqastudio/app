@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
@@ -113,56 +113,43 @@
 		<CardTitle>Delivery Pipeline</CardTitle>
 		<CardDescription>Define the delivery types and hierarchy for this project</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
+	<CardContent>
 		{#if localTypes.length === 0}
-			<p class="text-sm text-muted-foreground">No delivery types defined. Add one below.</p>
+			<span class="text-sm text-muted-foreground">No delivery types defined. Add one below.</span>
 		{:else}
 			{#each localTypes as type, index (type.key + index)}
 				<div class="rounded-md border p-3 space-y-3">
 					<div class="flex items-center justify-between">
 						<span class="font-mono text-xs font-semibold text-muted-foreground">{type.key}</span>
-						<Button
-							variant="ghost"
-							size="sm"
-							class="h-7 px-2 text-muted-foreground hover:text-destructive"
+						<button
+							class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
 							onclick={() => requestDelete(index)}
 						>
 							<Icon name="trash-2" size="sm" />
-						</Button>
+						</button>
 					</div>
 
 					<div class="grid grid-cols-2 gap-3">
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="label-{index}">
-								Label
-							</label>
+						<FormGroup label="Label" for="label-{index}">
 							<Input
 								id="label-{index}"
 								value={type.label}
 								oninput={(e) => updateType(index, "label", e.currentTarget.value)}
-								class="h-7 text-xs"
 								placeholder="Display label"
 							/>
-						</div>
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="path-{index}">
-								Path
-							</label>
+						</FormGroup>
+						<FormGroup label="Path" for="path-{index}">
 							<Input
 								id="path-{index}"
 								value={type.path}
 								oninput={(e) => updateType(index, "path", e.currentTarget.value)}
-								class="h-7 font-mono text-xs"
 								placeholder=".orqa/delivery/..."
 							/>
-						</div>
+						</FormGroup>
 					</div>
 
 					<div class="grid grid-cols-2 gap-3">
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="parent-type-{index}">
-								Parent type
-							</label>
+						<FormGroup label="Parent type" for="parent-type-{index}">
 							<select
 								id="parent-type-{index}"
 								class="flex h-7 w-full rounded-md border border-input bg-background px-2 py-0.5 text-xs ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -174,34 +161,26 @@
 									<option value={opt.value}>{opt.label}</option>
 								{/each}
 							</select>
-						</div>
-						<div class="space-y-1">
-							<label class="text-xs font-medium text-muted-foreground" for="parent-rel-{index}">
-								Parent relationship
-							</label>
+						</FormGroup>
+						<FormGroup label="Parent relationship" for="parent-rel-{index}">
 							<Input
 								id="parent-rel-{index}"
 								value={type.parent?.relationship ?? ""}
 								oninput={(e) => updateParentRelationship(index, e.currentTarget.value)}
 								disabled={!type.parent?.type}
-								class="h-7 font-mono text-xs"
 								placeholder="e.g. delivers"
 							/>
-						</div>
+						</FormGroup>
 					</div>
 
-					<div class="space-y-1">
-						<label class="text-xs font-medium text-muted-foreground" for="gate-{index}">
-							Gate field <span class="text-muted-foreground/60">(optional)</span>
-						</label>
+					<FormGroup label="Gate field (optional)" for="gate-{index}">
 						<Input
 							id="gate-{index}"
 							value={type.gate_field ?? ""}
 							oninput={(e) => updateGateField(index, e.currentTarget.value)}
-							class="h-7 font-mono text-xs"
 							placeholder="e.g. gate"
 						/>
-					</div>
+					</FormGroup>
 				</div>
 
 				{#if index < localTypes.length - 1}
@@ -210,10 +189,10 @@
 			{/each}
 		{/if}
 
-		<Button variant="outline" size="sm" onclick={addType} class="w-full">
+		<button class="flex w-full items-center justify-center gap-1 rounded border border-border px-3 py-1.5 text-sm hover:bg-accent" onclick={addType}>
 			<Icon name="plus" size="sm" />
 			Add Delivery Type
-		</Button>
+		</button>
 	</CardContent>
 </CardRoot>
 

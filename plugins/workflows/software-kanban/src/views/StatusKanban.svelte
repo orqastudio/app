@@ -1,15 +1,26 @@
+<!-- StatusKanban: displays artifact nodes as a kanban board grouped by status or priority.
+     Supports drag-and-drop to change status/priority and an all-done celebration state. -->
 <script lang="ts">
 	import type { ArtifactNode } from "@orqastudio/types";
+	import { assertNever } from "@orqastudio/types";
 	import CollapsibleColumn from "./CollapsibleColumn.svelte";
 	import KanbanCard from "./KanbanCard.svelte";
-	import { SelectMenu } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
+	import {
+		SelectMenu,
+		EmptyState,
+		Caption,
+		HStack,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 
 	type ColumnDef = {
-		key: string;
-		label: string;
-		isDone?: boolean;
+		readonly key: string;
+		readonly label: string;
+		readonly isDone?: boolean;
 	};
+
+	/** Discriminated union of valid grouping modes for the status kanban. */
+	type GroupBy = "status" | "priority";
 
 	let {
 		nodes,
@@ -18,19 +29,19 @@
 		onFieldChange,
 		getTaskCount,
 	}: {
-		nodes: ArtifactNode[];
-		columns: ColumnDef[];
-		onCardClick?: (node: ArtifactNode) => void;
-		onFieldChange?: (node: ArtifactNode, newValue: string) => Promise<void>;
-		getTaskCount?: (nodeId: string) => { done: number; total: number } | undefined;
+		readonly nodes: readonly ArtifactNode[];
+		readonly columns: readonly ColumnDef[];
+		readonly onCardClick?: (node: ArtifactNode) => void;
+		readonly onFieldChange?: (node: ArtifactNode, newValue: string) => Promise<void>;
+		readonly getTaskCount?: (nodeId: string) => { readonly done: number; readonly total: number } | undefined;
 	} = $props();
 
 	// Grouping options
-	const GROUP_OPTIONS = [
+	const GROUP_OPTIONS: ReadonlyArray<{ readonly value: GroupBy; readonly label: string }> = [
 		{ value: "status", label: "Group by Status" },
 		{ value: "priority", label: "Group by Priority" },
 	];
-	let groupBy = $state("status");
+	let groupBy = $state<GroupBy>("status");
 	const groupByLabel = $derived(
 		GROUP_OPTIONS.find((o) => o.value === groupBy)?.label ?? "Group by Status",
 	);
@@ -44,12 +55,14 @@
 	function nodesForColumn(colKey: string): ArtifactNode[] {
 		if (groupBy === "priority") {
 			// Remap priority columns to P1/P2/P3/none
-			return nodes.filter((n) => (n.priority ?? "none") === colKey);
+			return nodes.filter((n) => (n.priority ?? "none") === colKey) as ArtifactNode[];
 		}
-		// Default: status-based column
-		return nodes.filter(
-			(n) => (n.status ?? "").toLowerCase() === colKey.toLowerCase(),
-		);
+		if (groupBy === "status") {
+			return nodes.filter(
+				(n) => (n.status ?? "").toLowerCase() === colKey.toLowerCase(),
+			) as ArtifactNode[];
+		}
+		return assertNever(groupBy);
 	}
 
 	function handleDragStart(e: DragEvent, node: ArtifactNode) {
@@ -74,14 +87,18 @@
 	}
 
 	// Priority columns (used when groupBy === "priority")
-	const PRIORITY_COLUMNS: ColumnDef[] = [
+	const PRIORITY_COLUMNS: readonly ColumnDef[] = [
 		{ key: "P1", label: "P1 — Critical" },
 		{ key: "P2", label: "P2 — High" },
 		{ key: "P3", label: "P3 — Normal" },
 		{ key: "none", label: "Unranked", isDone: true },
 	];
 
-	const activeColumns = $derived(groupBy === "priority" ? PRIORITY_COLUMNS : columns);
+	const activeColumns = $derived.by((): readonly ColumnDef[] => {
+		if (groupBy === "priority") return PRIORITY_COLUMNS;
+		if (groupBy === "status") return columns;
+		return assertNever(groupBy);
+	});
 
 	const totalNodes = $derived(nodes.length);
 
@@ -110,23 +127,21 @@
 	}
 </script>
 
-<div class="flex h-full flex-col gap-3">
+<Stack gap={3} class="h-full">
 	<!-- Toolbar -->
-	<div class="flex items-center justify-between">
-		<span class="text-xs text-muted-foreground">
-			{doneNodes}/{totalNodes} Done
-		</span>
+	<HStack justify="between" align="center">
+		<Caption class="tabular-nums">{doneNodes}/{totalNodes} Done</Caption>
 		<SelectMenu
-			items={GROUP_OPTIONS}
+			items={GROUP_OPTIONS as Array<{ value: string; label: string }>}
 			selected={groupBy}
 			onSelect={(v) => {
-				groupBy = v;
+				groupBy = v as GroupBy;
 				showBoardOverride = false;
 			}}
 			triggerLabel={groupByLabel}
 			triggerSize="sm"
 		/>
-	</div>
+	</HStack>
 
 	<!-- All-done state -->
 	{#if isAllDone}
@@ -168,9 +183,7 @@
 							onDrop={(e) => handleDrop(e, col.key)}
 						>
 							{#if colNodes.length === 0}
-								<div
-									class="rounded border border-dashed border-border p-3 text-center text-xs text-muted-foreground"
-								>
+								<div class="rounded border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
 									No items
 								</div>
 							{:else}
@@ -191,4 +204,4 @@
 			</div>
 		</div>
 	{/if}
-</div>
+</Stack>

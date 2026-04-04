@@ -307,3 +307,4 @@ function findProjectDir(root: string, pluginName: string): string | null {
 
 	return fs.existsSync(root) ? root : null;
 }
+

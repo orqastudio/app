@@ -1,12 +1,8 @@
 <script lang="ts" module>
 	import type { Snippet } from "svelte";
 
-	type ResizableBaseProps = {
+	type ResizableTwoPane = {
 		direction?: "horizontal" | "vertical";
-		class?: string;
-	};
-
-	type ResizableTwoPane = ResizableBaseProps & {
 		main: Snippet;
 		side: Snippet;
 		mainSize?: number;
@@ -16,7 +12,8 @@
 		children?: never;
 	};
 
-	type ResizableCustom = ResizableBaseProps & {
+	type ResizableCustom = {
+		direction?: "horizontal" | "vertical";
 		children: Snippet;
 		main?: never;
 		side?: never;
@@ -36,7 +33,6 @@
 
 	let {
 		direction = "horizontal",
-		class: className,
 		main,
 		side,
 		mainSize = 70,
@@ -47,7 +43,7 @@
 	}: ResizableProps = $props();
 </script>
 
-<PaneGroup {direction} class={className}>
+<PaneGroup {direction}>
 	{#if children}
 		{@render children()}
 	{:else if main && side}

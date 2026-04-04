@@ -3,7 +3,7 @@
      reference sections: keyboard shortcuts, event schema, and filter syntax.
      Closed by pressing Escape or clicking the backdrop. -->
 <script lang="ts">
-	import { Button, Badge, Separator, ScrollArea, CardRoot, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Button, Badge, Separator, ScrollArea, CardRoot, CardContent, Kbd, Stack, HStack, Heading, Text, Caption, Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@orqastudio/svelte-components/pure";
 
 	// Whether the panel is visible. Exported so the parent (DevToolsShell) can
 	// toggle it from the toolbar button and the ? keyboard shortcut handler.
@@ -47,13 +47,14 @@
 		["session_id", "string | null", "Active session when event was emitted"],
 	];
 
-	// Log level badges with their display colors for section 3.
+	// Log level badges with semantic color classes for section 3.
+	// Matches the badge variants used in LogRow and LogFilters.
 	const levels: [string, string][] = [
-		["Debug", "text-content-muted"],
-		["Info", "text-blue-400"],
-		["Warn", "text-yellow-400"],
-		["Error", "text-red-400"],
-		["Perf", "text-indigo-400"],
+		["Debug", "text-muted-foreground"],
+		["Info", "text-primary"],
+		["Warn", "text-warning"],
+		["Error", "text-destructive"],
+		["Perf", "text-secondary-foreground"],
 	];
 </script>
 
@@ -93,30 +94,27 @@
 
 		<!-- Scrollable content area via ScrollArea to get styled scrollbars. -->
 		<ScrollArea class="flex-1">
-			<div class="px-3 py-3 text-[12px]">
+			<Stack gap={0} class="px-3 py-3">
 
-				<!-- SECTION 1: Keyboard shortcuts. Each shortcut key rendered as an
-				     outline Badge to communicate its <kbd> semantics visually. -->
+				<!-- SECTION 1: Keyboard shortcuts. Each shortcut key rendered with Kbd
+				     component to communicate keyboard semantics. -->
 				<CardRoot class="border-border bg-transparent shadow-none">
 					<CardContent class="px-0 pb-0 pt-0">
-						<h2 class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-content-muted">
-							Keyboard Shortcuts
-						</h2>
-						<table class="w-full border-collapse">
-							<tbody>
+						<Heading level={6} class="mb-2">Keyboard Shortcuts</Heading>
+						<Table class="help-panel__table">
+							<TableBody>
 								{#each shortcuts as [key, description]}
-									<tr class="border-b border-border/40 last:border-0">
-										<td class="py-1.5 pr-3 align-top">
-											<Badge
-												variant="outline"
-												class="font-mono text-[10px] leading-none whitespace-nowrap text-content-base"
-											>{key}</Badge>
-										</td>
-										<td class="py-1.5 text-content-base/80 align-top">{description}</td>
-									</tr>
+									<TableRow class="help-panel__table-row">
+										<TableCell class="help-panel__table-cell help-panel__table-cell--key">
+											<Kbd>{key}</Kbd>
+										</TableCell>
+										<TableCell class="help-panel__table-cell">
+											<Caption>{description}</Caption>
+										</TableCell>
+									</TableRow>
 								{/each}
-							</tbody>
-						</table>
+							</TableBody>
+						</Table>
 					</CardContent>
 				</CardRoot>
 
@@ -126,40 +124,38 @@
 				     to visually distinguish them from prose description text. -->
 				<CardRoot class="border-border bg-transparent shadow-none">
 					<CardContent class="px-0 pb-0 pt-0">
-						<h2 class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-content-muted">
-							Event Schema
-						</h2>
-						<p class="mb-2 text-content-muted">
-							Each log event has the following fields:
-						</p>
-						<table class="w-full border-collapse">
-							<thead>
-								<tr class="border-b border-border">
-									<th class="pb-1 pr-3 text-left text-[10px] font-semibold text-content-muted">Field</th>
-									<th class="pb-1 pr-3 text-left text-[10px] font-semibold text-content-muted">Type</th>
-									<th class="pb-1 text-left text-[10px] font-semibold text-content-muted">Description</th>
-								</tr>
-							</thead>
-							<tbody>
+						<Heading level={6} class="mb-2">Event Schema</Heading>
+						<Caption class="mb-2 block">Each log event has the following fields:</Caption>
+						<Table class="help-panel__table">
+							<TableHeader>
+								<TableRow class="help-panel__table-row">
+									<TableHead class="help-panel__table-head"><Caption>Field</Caption></TableHead>
+									<TableHead class="help-panel__table-head"><Caption>Type</Caption></TableHead>
+									<TableHead class="help-panel__table-head"><Caption>Description</Caption></TableHead>
+								</TableRow>
+							</TableHeader>
+							<TableBody>
 								{#each schemaFields as [field, type, desc]}
-									<tr class="border-b border-border/40 last:border-0">
-										<td class="py-1.5 pr-3 align-top">
+									<TableRow class="help-panel__table-row">
+										<TableCell class="help-panel__table-cell">
 											<Badge
 												variant="outline"
-												class="font-mono text-[11px] text-blue-400 whitespace-nowrap"
+												class="font-mono text-[11px] help-panel__field-badge whitespace-nowrap"
 											>{field}</Badge>
-										</td>
-										<td class="py-1.5 pr-3 align-top">
+										</TableCell>
+										<TableCell class="help-panel__table-cell">
 											<Badge
 												variant="outline"
-												class="font-mono text-[10px] text-indigo-400 whitespace-nowrap"
+												class="font-mono text-[10px] help-panel__type-badge whitespace-nowrap"
 											>{type}</Badge>
-										</td>
-										<td class="py-1.5 text-content-base/80 align-top">{desc}</td>
-									</tr>
+										</TableCell>
+										<TableCell class="help-panel__table-cell">
+											<Caption>{desc}</Caption>
+										</TableCell>
+									</TableRow>
 								{/each}
-							</tbody>
-						</table>
+							</TableBody>
+						</Table>
 					</CardContent>
 				</CardRoot>
 
@@ -169,61 +165,97 @@
 				     color classes to match the colors shown in the log table. -->
 				<CardRoot class="border-border bg-transparent shadow-none">
 					<CardContent class="px-0 pb-0 pt-0">
-						<h2 class="mb-2 text-[11px] font-semibold uppercase tracking-wider text-content-muted">
-							Filter Syntax
-						</h2>
+						<Heading level={6} class="mb-2">Filter Syntax</Heading>
 
-						<p class="mb-3 text-content-muted">
-							The search box matches against the <Badge variant="outline" class="font-mono text-[10px] text-content-base">message</Badge> field as a case-insensitive substring.
-						</p>
+						<Caption class="mb-3 block">
+							The search box matches against the <Badge variant="outline" class="font-mono text-[10px] text-foreground">message</Badge> field as a case-insensitive substring.
+						</Caption>
 
-						<div class="mb-3">
-							<p class="mb-1 font-semibold text-content-base">Source filter</p>
-							<p class="mb-1.5 text-content-muted">
-								Select one or more sources from the <span class="font-semibold text-content-base">Source</span> dropdown.
-								Only events from the selected sources are shown. Clearing the selection shows all sources.
-							</p>
-							<CardRoot class="border-border shadow-none">
-								<CardContent class="px-2 py-1.5">
-									<span class="font-mono text-[11px] text-content-base">
-										Daemon, App, Frontend, DevController, MCP, LSP, Search, Worker
-									</span>
-								</CardContent>
-							</CardRoot>
-						</div>
+						<Stack gap={3}>
+							<Stack gap={1}>
+								<Text size="xs" class="font-semibold">Source filter</Text>
+								<Caption>
+									Select one or more sources from the <Text size="xs" class="font-semibold">Source</Text> dropdown.
+									Only events from the selected sources are shown. Clearing the selection shows all sources.
+								</Caption>
+								<CardRoot class="border-border shadow-none">
+									<CardContent class="px-2 py-1.5">
+										<Badge variant="outline" class="font-mono text-[10px]">
+											Daemon, App, Frontend, DevController, MCP, LSP, Search, Worker
+										</Badge>
+									</CardContent>
+								</CardRoot>
+							</Stack>
 
-						<div class="mb-3">
-							<p class="mb-1 font-semibold text-content-base">Level filter</p>
-							<p class="mb-1.5 text-content-muted">
-								Toggle individual levels using the checkboxes in the filter bar.
-								Multiple levels can be active simultaneously.
-							</p>
-							<div class="flex flex-wrap gap-1">
-								{#each levels as [level, cls]}
-									<Badge variant="outline" class="font-mono text-[10px] {cls}">{level}</Badge>
-								{/each}
-							</div>
-						</div>
+							<Stack gap={1}>
+								<Text size="xs" class="font-semibold">Level filter</Text>
+								<Caption>
+									Toggle individual levels using the checkboxes in the filter bar.
+									Multiple levels can be active simultaneously.
+								</Caption>
+								<HStack gap={1} wrap={true}>
+									{#each levels as [level, cls]}
+										<Badge variant="outline" class="font-mono text-[10px] {cls}">{level}</Badge>
+									{/each}
+								</HStack>
+							</Stack>
 
-						<div class="mb-3">
-							<p class="mb-1 font-semibold text-content-base">Category filter</p>
-							<p class="text-content-muted">
-								Select one or more categories from the <span class="font-semibold text-content-base">Category</span> dropdown.
-								The list is populated from categories present in the current event buffer.
-							</p>
-						</div>
+							<Stack gap={1}>
+								<Text size="xs" class="font-semibold">Category filter</Text>
+								<Caption>
+									Select one or more categories from the <Text size="xs" class="font-semibold">Category</Text> dropdown.
+									The list is populated from categories present in the current event buffer.
+								</Caption>
+							</Stack>
 
-						<div>
-							<p class="mb-1 font-semibold text-content-base">Combining filters</p>
-							<p class="text-content-muted">
-								All active filters are combined with AND logic: an event must match every active
-								filter to be shown. Use <span class="font-semibold text-content-base">Clear filters</span> to reset all at once.
-							</p>
-						</div>
+							<Stack gap={1}>
+								<Text size="xs" class="font-semibold">Combining filters</Text>
+								<Caption>
+									All active filters are combined with AND logic: an event must match every active
+									filter to be shown. Use <Text size="xs" class="font-semibold">Clear filters</Text> to reset all at once.
+								</Caption>
+							</Stack>
+						</Stack>
 					</CardContent>
 				</CardRoot>
 
-			</div>
+			</Stack>
 		</ScrollArea>
 	</aside>
 {/if}
+
+<style>
+	/* Compact table layout for help sections: removes default Table padding. */
+	:global(.help-panel__table) {
+		width: 100%;
+	}
+
+	:global(.help-panel__table-row) {
+		border-bottom-width: 1px;
+	}
+
+	:global(.help-panel__table-head) {
+		padding: 4px 12px 4px 0;
+		text-align: left;
+		vertical-align: top;
+	}
+
+	:global(.help-panel__table-cell) {
+		padding: 6px 12px 6px 0;
+		vertical-align: top;
+	}
+
+	:global(.help-panel__table-cell--key) {
+		white-space: nowrap;
+	}
+
+	/* Field badge: primary color for field names in the event schema. */
+	:global(.help-panel__field-badge) {
+		color: var(--color-primary) !important;
+	}
+
+	/* Type badge: secondary foreground for type annotations. */
+	:global(.help-panel__type-badge) {
+		color: var(--color-secondary-foreground) !important;
+	}
+</style>

@@ -3,7 +3,7 @@
      Used by MetricsView to show the detailed distribution view when a metric
      cell is selected. -->
 <script lang="ts">
-	import { sparklinePath } from "@orqastudio/svelte-components/pure";
+	import { sparklinePath, Stack, HStack, Text, Caption } from "@orqastudio/svelte-components/pure";
 	import type { MetricStats } from "../../stores/metrics-store.svelte.js";
 
 	let {
@@ -37,15 +37,15 @@
 
 <!-- Chart container. Text sizes are set as inline SVG attributes so they are not
      affected by Tailwind's text reset. -->
-<div class="flex flex-col gap-1">
-	<span class="text-xs font-medium text-content-base">{stats.label}</span>
+<Stack gap={1}>
+	<Text size="xs" class="font-medium">{stats.label}</Text>
 
 	{#if stats.history.length < 2}
 		<div
-			class="flex items-center justify-center rounded bg-surface-raised text-xs text-content-muted"
+			class="flex items-center justify-center rounded bg-surface-raised"
 			style="width:{width}px;height:{height}px"
 		>
-			Waiting for data…
+			<Caption>Waiting for data…</Caption>
 		</div>
 	{:else}
 		<svg
@@ -106,10 +106,10 @@
 			>{yMax}ms</text>
 		</svg>
 
-		<!-- X-axis labels: first sample and last sample count -->
-		<div class="flex justify-between text-[10px] text-content-muted" style="width:{width}px">
-			<span>−{stats.history.length} samples</span>
-			<span>now</span>
-		</div>
+		<!-- X-axis labels: first sample and last sample count. -->
+		<HStack justify="between" style="width:{width}px">
+			<Caption>−{stats.history.length} samples</Caption>
+			<Caption>now</Caption>
+		</HStack>
 	{/if}
-</div>
+</Stack>

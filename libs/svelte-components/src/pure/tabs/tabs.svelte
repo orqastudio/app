@@ -1,19 +1,17 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from "bits-ui";
-	import { cn } from "../../utils/cn.js";
 
 	let {
 		ref = $bindable(null),
 		value = $bindable(""),
-		class: className,
 		...restProps
-	}: TabsPrimitive.RootProps = $props();
+	}: Omit<TabsPrimitive.RootProps, "class"> = $props();
 </script>
 
 <TabsPrimitive.Root
 	bind:ref
 	bind:value
 	data-slot="tabs"
-	class={cn("flex flex-col gap-2", className)}
+	class="flex flex-col gap-2"
 	{...restProps}
 />

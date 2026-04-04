@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardContent, HStack, Heading } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import GateQuestions from "./GateQuestions.svelte";
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
@@ -185,7 +185,7 @@
 
 <!-- Title -->
 {#if title}
-	<h1 class="mb-1 text-2xl font-bold leading-snug">{title}</h1>
+	<Heading level={1}>{title}</Heading>
 {/if}
 
 <!-- Description -->
@@ -196,156 +196,158 @@
 {/if}
 
 <!-- Metadata card -->
-<div class="mb-4 space-y-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
-	<!-- ID + Status/Priority row — only rendered when at least one value is present -->
-	{#if id || (status && isPresent(status)) || priority || dateChip}
-		<div class="flex justify-between gap-3" class:items-center={!hasBody} class:items-start={hasBody}>
-			<div class="space-y-0.5">
-				{#if id}
-					<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-						{artifactType} · {id}
-					</p>
-				{/if}
-			</div>
-
-			<div class="flex shrink-0 items-center gap-2">
-				{#if createdShort}
-					<Badge variant="secondary" class="text-muted-foreground">
-						<Icon name="calendar-plus" size="xs" />{createdShort}
-					</Badge>
-				{/if}
-				{#if updatedShort && updatedShort !== createdShort}
-					<Badge variant="secondary" class="text-muted-foreground">
-						<Icon name="calendar-check" size="xs" />{updatedShort}
-					</Badge>
-				{/if}
-				{#if priority}
-					<Badge variant="outline" class={priorityClass(priority)}>
-						{priorityLabel(priority)}
-					</Badge>
-				{/if}
-				{#if status && isPresent(status)}
-					<StatusIndicator {status} mode="badge" />
-				{/if}
-			</div>
-		</div>
-	{/if}
-
-	<!-- Scoring dimensions (shown near priority when present) -->
-	{#if priority && scoringEntries.length > 0}
-		<div class="flex items-baseline gap-2">
-			<span class="w-[7rem] shrink-0 text-xs font-medium text-muted-foreground">
-				<span class="inline-flex items-center gap-1">
-					<Icon name="scale" size="xs" />Scoring
-				</span>
-			</span>
-			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-				{#each scoringEntries as [key, val] (key)}
-					<Badge variant="secondary" class="font-normal">
-						<span class="text-muted-foreground">{humanizeKey(key)}:</span> {String(val)}
-					</Badge>
-				{/each}
-			</div>
-		</div>
-	{/if}
-
-	<!-- Dynamic body — YAML source order, type-dispatched -->
-	{#each bodyEntries as [key, value] (key)}
-		{@const type = fieldType(key)}
-		{#if type === "date"}
-			{@const formatted = formatDate(value)}
-			{#if formatted}
-				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					<span class="text-xs text-foreground">{formatted}</span>
+<CardRoot gap={0}>
+	<CardContent>
+		<!-- ID + Status/Priority row — only rendered when at least one value is present -->
+		{#if id || (status && isPresent(status)) || priority || dateChip}
+			<div class="flex justify-between gap-3" class:items-center={!hasBody} class:items-start={hasBody}>
+				<div class="space-y-0.5">
+					{#if id}
+						<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+							{artifactType} · {id}
+						</p>
+					{/if}
 				</div>
-			{/if}
 
-		{:else if type === "link"}
-			{@const vals = asArray(value).filter(Boolean)}
-			{#if vals.length > 0}
-				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each vals as val, i (i)}
-							<ArtifactLink id={val.trim()} />
-						{/each}
-					</div>
+				<div class="flex shrink-0 items-center gap-2">
+					{#if createdShort}
+						<span class="text-muted-foreground"><Badge variant="secondary">
+							<Icon name="calendar-plus" size="xs" />{createdShort}
+						</Badge></span>
+					{/if}
+					{#if updatedShort && updatedShort !== createdShort}
+						<span class="text-muted-foreground"><Badge variant="secondary">
+							<Icon name="calendar-check" size="xs" />{updatedShort}
+						</Badge></span>
+					{/if}
+					{#if priority}
+						<span class={priorityClass(priority)}><Badge variant="outline">
+							{priorityLabel(priority)}
+						</Badge></span>
+					{/if}
+					{#if status && isPresent(status)}
+						<StatusIndicator {status} mode="badge" />
+					{/if}
 				</div>
-			{/if}
-
-		{:else if type === "chip"}
-			{@const items = asArray(value).filter(Boolean)}
-			{#if items.length > 0}
-				<div class="flex items-baseline gap-2">
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each items as item, i (i)}
-							<Badge variant="secondary" class="capitalize">{item}</Badge>
-						{/each}
-					</div>
-				</div>
-			{/if}
-
-		{:else if type === "boolean"}
-			<div class="flex items-center gap-2">
-				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-					{humanizeKey(key)}
-				</span>
-				{#if value}
-					<Icon name="check" size="md" />
-				{:else}
-					<Icon name="x" size="md" />
-				{/if}
-			</div>
-
-		{:else}
-			<!-- generic -->
-			<div class="flex items-baseline gap-2">
-				<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-					{humanizeKey(key)}
-				</span>
-				{#if Array.isArray(value)}
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each value as v, i (i)}
-							<Badge variant="secondary" class="capitalize">{v}</Badge>
-						{/each}
-					</div>
-				{:else if typeof value === "object" && value !== null}
-					<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-						{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
-							<Badge variant="secondary">
-								<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
-							</Badge>
-						{/each}
-					</div>
-				{:else}
-					<span class="min-w-0 flex-1 text-xs capitalize text-foreground">{String(value)}</span>
-				{/if}
 			</div>
 		{/if}
-	{/each}
 
-	<!-- Capabilities (human-friendly names) -->
-	{#if appTools.length > 0}
-		<div class="flex items-baseline gap-2">
-			<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
-				<Icon name="wrench" size="xs" />Capabilities
-			</span>
-			<div class="flex min-w-0 flex-1 flex-wrap gap-1">
-				{#each appTools as tool, i (i)}
-					<Badge variant="secondary">{tool}</Badge>
-				{/each}
-			</div>
-		</div>
-	{/if}
+		<!-- Scoring dimensions (shown near priority when present) -->
+		{#if priority && scoringEntries.length > 0}
+			<HStack align="baseline" gap={2}>
+				<span class="w-[7rem] shrink-0 text-xs font-medium text-muted-foreground">
+					<HStack gap={1}>
+						<Icon name="scale" size="xs" />Scoring
+					</HStack>
+				</span>
+				<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+					{#each scoringEntries as [key, val] (key)}
+						<Badge variant="secondary">
+							<span class="font-normal"><span class="text-muted-foreground">{humanizeKey(key)}:</span> {String(val)}</span>
+						</Badge>
+					{/each}
+				</div>
+			</HStack>
+		{/if}
 
-	<!-- Gate question(s) — always last -->
-	<GateQuestions questions={gateQuestions} />
-</div>
+		<!-- Dynamic body — YAML source order, type-dispatched -->
+		{#each bodyEntries as [key, value] (key)}
+			{@const type = fieldType(key)}
+			{#if type === "date"}
+				{@const formatted = formatDate(value)}
+				{#if formatted}
+					<HStack align="baseline" gap={2}>
+						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+							{humanizeKey(key)}
+						</span>
+						<span class="text-xs text-foreground">{formatted}</span>
+					</HStack>
+				{/if}
+
+			{:else if type === "link"}
+				{@const vals = asArray(value).filter(Boolean)}
+				{#if vals.length > 0}
+					<HStack align="baseline" gap={2}>
+						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+							{humanizeKey(key)}
+						</span>
+						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+							{#each vals as val, i (i)}
+								<ArtifactLink id={val.trim()} />
+							{/each}
+						</div>
+					</HStack>
+				{/if}
+
+			{:else if type === "chip"}
+				{@const items = asArray(value).filter(Boolean)}
+				{#if items.length > 0}
+					<HStack align="baseline" gap={2}>
+						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+							{humanizeKey(key)}
+						</span>
+						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+							{#each items as item, i (i)}
+								<span class="capitalize"><Badge variant="secondary">{item}</Badge></span>
+							{/each}
+						</div>
+					</HStack>
+				{/if}
+
+			{:else if type === "boolean"}
+				<HStack gap={2}>
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+						{humanizeKey(key)}
+					</span>
+					{#if value}
+						<Icon name="check" size="md" />
+					{:else}
+						<Icon name="x" size="md" />
+					{/if}
+				</HStack>
+
+			{:else}
+				<!-- generic -->
+				<HStack align="baseline" gap={2}>
+					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
+						{humanizeKey(key)}
+					</span>
+					{#if Array.isArray(value)}
+						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+							{#each value as v, i (i)}
+								<span class="capitalize"><Badge variant="secondary">{v}</Badge></span>
+							{/each}
+						</div>
+					{:else if typeof value === "object" && value !== null}
+						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+							{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
+								<Badge variant="secondary">
+									<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
+								</Badge>
+							{/each}
+						</div>
+					{:else}
+						<span class="min-w-0 flex-1 text-xs capitalize text-foreground">{String(value)}</span>
+					{/if}
+				</HStack>
+			{/if}
+		{/each}
+
+		<!-- Capabilities (human-friendly names) -->
+		{#if appTools.length > 0}
+			<HStack align="baseline" gap={2}>
+				<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
+					<Icon name="wrench" size="xs" />Capabilities
+				</span>
+				<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+					{#each appTools as tool, i (i)}
+						<Badge variant="secondary">{tool}</Badge>
+					{/each}
+				</div>
+			</HStack>
+		{/if}
+
+		<!-- Gate question(s) — always last -->
+		<GateQuestions questions={gateQuestions} />
+	</CardContent>
+</CardRoot>

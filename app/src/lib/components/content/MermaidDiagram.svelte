@@ -2,6 +2,7 @@
 	import { onMount } from "svelte";
 	import mermaid from "mermaid";
 
+
 	let { text }: { text: string } = $props();
 
 	let svgContent = $state<string | null>(null);
@@ -65,7 +66,7 @@
 	});
 </script>
 
-<div class="mermaid-diagram overflow-x-auto rounded border border-border bg-muted/30 p-4">
+<div class="mermaid-diagram rounded border border-border bg-muted/30 p-4 overflow-x-auto">
 	{#if rendering && !error && !svgContent}
 		<div class="flex items-center justify-center py-8 text-xs text-muted-foreground">
 			Rendering diagram...

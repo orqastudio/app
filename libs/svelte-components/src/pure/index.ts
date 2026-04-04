@@ -1,3 +1,18 @@
+// Component inventory:
+// ── Interaction ── Button, Input, Textarea, SearchInput, SelectMenu
+// ── Layout ── Stack, HStack, Grid, Center, Spacer, Toolbar, Separator, ScrollArea, Resizable*
+// ── Typography ── Heading, Text, Label, Caption, Code, Kbd, Prose
+// ── Data Display ── Table*, Badge, SmallBadge, Icon, Status, MetadataRow, MetricCell, Sparkline, ProgressBar, PipelineStages
+// ── Feedback ── LoadingSpinner, ErrorDisplay, EmptyState, ConnectionIndicator
+// ── Overlay ── Dialog*, AlertDialog*, ConfirmDialog, DropdownMenu*, Tooltip*, Popover*
+// ── Navigation ── Tabs*, Breadcrumb, NavItem, Link
+// ── Container ── Card*, SimpleCard, FormCard, ListCard, DashboardCard, ViewContainer, Collapsible*
+// ── Form ── FormGroup, FormSection, Checkbox, Switch, RadioGroup
+// ── Utility ── VisuallyHidden, ThinkingBlock
+
+// Typography primitives
+export { Heading, Text, Label, Caption, Code } from "./typography/index.js";
+
 // Single-export primitives
 export { Button, buttonVariants, type ButtonProps, type ButtonVariant, type ButtonSize } from "./button/index.js";
 export { Badge, badgeVariants, type BadgeVariant } from "./badge/index.js";
@@ -41,6 +56,10 @@ export { ThinkingBlock } from "./thinking-block/index.js";
 export { ConfirmDialog } from "./confirm-dialog/index.js";
 export { Breadcrumb, type BreadcrumbItem } from "./breadcrumb/index.js";
 
+// Form primitives
+export { FormGroup, FormSection } from "./form-group/index.js";
+export { Link } from "./link/index.js";
+
 // Pattern abstractions
 export { FormCard } from "./form-card/index.js";
 export { ListCard } from "./list-card/index.js";
@@ -48,5 +67,20 @@ export { DashboardCard } from "./dashboard-card/index.js";
 export { ProgressBar } from "./progress-bar/index.js";
 export { ViewContainer } from "./view-container/index.js";
 export { Toolbar } from "./toolbar/index.js";
+export { Stack, HStack, Grid, Spacer, Center } from "./layout/index.js";
 export { NavItem } from "./nav-item/index.js";
 export { ConnectionIndicator, type ConnectionState } from "./connection-indicator/index.js";
+export { Kbd } from "./kbd/index.js";
+export { Prose } from "./prose/index.js";
+export { VisuallyHidden } from "./visually-hidden/index.js";
+
+// Table
+export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption } from "./table/index.js";
+
+// Chat primitives
+export { ChatBubble, ChatInput, StreamingDots, ChatContainer } from "./chat/index.js";
+
+// Form controls
+export { Checkbox } from "./checkbox/index.js";
+export { Switch } from "./switch/index.js";
+export { RadioGroup, RadioGroupItem } from "./radio-group/index.js";

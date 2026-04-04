@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Text, Heading, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Input } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import {
 		getStores,
@@ -11,6 +12,7 @@
 	} from "@orqastudio/sdk";
 	import type { RegistrationConflict } from "@orqastudio/sdk";
 	import type { PluginManifest, ConflictResolutionSuggestion } from "@orqastudio/types";
+	import { assertNever } from "@orqastudio/types";
 
 	const { conversationStore } = getStores();
 
@@ -115,6 +117,8 @@
 					};
 				}
 				break;
+			default:
+				assertNever(suggestion.strategy);
 		}
 	}
 
@@ -145,67 +149,70 @@
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
 	<div class="w-full max-w-lg space-y-4 rounded-lg border border-border bg-background p-6 shadow-lg">
 		<!-- Header -->
-		<div class="flex items-center gap-3">
+		<HStack gap={3}>
 			<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
 				<Icon name="triangle-alert" size="md" />
 			</div>
-			<div>
-				<h2 class="text-sm font-semibold">Plugin Conflicts Detected</h2>
-				<p class="text-xs text-muted-foreground">
+			<Stack gap={0}>
+				<Heading level={4}>Plugin Conflicts Detected</Heading>
+				<Text variant="caption" tone="muted">
 					{newManifest.displayName ?? newManifest.name} conflicts with {existingManifest.displayName ?? existingManifest.name}
-				</p>
-			</div>
-		</div>
+				</Text>
+			</Stack>
+		</HStack>
 
 		<!-- Conflicts -->
-		<div class="max-h-80 space-y-3 overflow-y-auto">
+		<ScrollArea maxHeight="lg">
+		<div class="space-y-3">
 			{#each conflicts as conflict (conflict.key)}
-				<CardRoot class="gap-1">
-					<CardHeader class="pb-1">
-						<CardTitle class="text-xs font-semibold">
-							<div class="flex items-center gap-2">
-								<Badge variant="outline" class="text-[9px] px-1 py-0">{conflict.type}</Badge>
+				<CardRoot gap={1}>
+					<CardHeader>
+						<CardTitle>
+							<HStack gap={2}>
+								<Badge variant="outline" size="xs">{conflict.type}</Badge>
 								<code class="text-xs">{conflict.key}</code>
-							</div>
+							</HStack>
 						</CardTitle>
 					</CardHeader>
-					<CardContent class="pt-0 space-y-2">
+					<CardContent>
 						<p class="text-[10px] text-muted-foreground">{conflict.detail}</p>
 
 						<!-- Resolution status -->
 						{#if resolutions[conflict.key]}
 							<div class="flex items-center justify-between rounded bg-accent/30 px-2 py-1.5">
-								<div class="text-xs">
+								<Text variant="caption">
 									<span class="text-muted-foreground">Rename</span>
 									<span class="font-medium">{resolutions[conflict.key].plugin}</span>
 									<span class="text-muted-foreground">→</span>
 									<code class="font-semibold">{resolutions[conflict.key].alias}</code>
-								</div>
-								<button
-									class="text-xs text-muted-foreground hover:text-foreground"
+								</Text>
+								<Button
+									variant="ghost"
+									size="icon-sm"
 									onclick={() => clearResolution(conflict.key)}
 								>
 									<Icon name="x" size="sm" />
-								</button>
+								</Button>
 							</div>
 						{:else}
 							<!-- AI suggestions for this conflict -->
 							{#if loadingSuggestions}
 								<div class="flex items-center gap-2 py-2">
 									<LoadingSpinner size="sm" />
-									<span class="text-[10px] text-muted-foreground">Getting AI suggestions...</span>
+									<Text variant="caption" tone="muted">Getting AI suggestions...</Text>
 								</div>
 							{:else}
 								{@const conflictSuggestions = suggestions.filter((s) => s.key === conflict.key)}
 								{#if conflictSuggestions.length > 0}
 									<div class="space-y-1">
 										{#each conflictSuggestions as suggestion (suggestion.key)}
-											<button
-												class="w-full rounded border border-border px-2 py-1.5 text-left transition-colors hover:bg-accent/30"
+											<Button
+												variant="outline"
+												size="sm"
 												onclick={() => applySuggestion(suggestion)}
 											>
-												<div class="flex items-center justify-between">
-													<div class="text-xs">
+												<div class="flex w-full items-center justify-between">
+													<Text variant="caption">
 														{#if suggestion.strategy === "rename-new" && suggestion.newAlias}
 															Rename new → <code class="font-semibold">{suggestion.newAlias}</code>
 														{:else if suggestion.strategy === "rename-existing" && suggestion.existingAlias}
@@ -213,21 +220,19 @@
 														{:else if suggestion.strategy === "rename-both"}
 															Rename both → <code class="font-semibold">{suggestion.newAlias}</code> / <code class="font-semibold">{suggestion.existingAlias}</code>
 														{/if}
-													</div>
+													</Text>
 													<Icon name="chevron-right" size="sm" />
 												</div>
-												<p class="mt-0.5 text-[10px] text-muted-foreground">{suggestion.rationale}</p>
-											</button>
+												<Text variant="caption" tone="muted">{suggestion.rationale}</Text>
+											</Button>
 										{/each}
 									</div>
 								{/if}
 
 								<!-- Custom input -->
 								{#if customMode[conflict.key]}
-									<div class="flex gap-2">
-										<input
-											type="text"
-											class="flex-1 rounded border border-border bg-background px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-ring"
+									<HStack gap={2}>
+										<Input
 											placeholder="Enter custom alias..."
 											bind:value={customInputs[conflict.key]}
 											onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") applyCustom(conflict.key); }}
@@ -235,7 +240,6 @@
 										<Button
 											variant="default"
 											size="sm"
-											class="h-7 px-2 text-xs"
 											disabled={!customInputs[conflict.key]?.trim()}
 											onclick={() => applyCustom(conflict.key)}
 										>
@@ -244,19 +248,19 @@
 										<Button
 											variant="ghost"
 											size="sm"
-											class="h-7 px-2 text-xs"
 											onclick={() => { customMode[conflict.key] = false; }}
 										>
 											Cancel
 										</Button>
-									</div>
+									</HStack>
 								{:else}
-									<button
-										class="text-xs text-muted-foreground hover:text-foreground"
+									<Button
+										variant="ghost"
+										size="sm"
 										onclick={() => { customMode[conflict.key] = true; }}
 									>
 										Enter custom alias...
-									</button>
+									</Button>
 								{/if}
 							{/if}
 						{/if}
@@ -264,20 +268,20 @@
 				</CardRoot>
 			{/each}
 		</div>
+		</ScrollArea>
 
 		{#if suggestionsError}
 			<p class="text-[10px] text-muted-foreground">{suggestionsError}</p>
 		{/if}
 
 		<!-- Actions -->
-		<div class="flex justify-end gap-2 pt-2 border-t border-border">
-			<Button variant="ghost" size="sm" class="text-xs" onclick={onCancel}>
+		<div class="flex items-center justify-end gap-2 border-t border-border pt-2">
+			<Button variant="ghost" size="sm" onclick={onCancel}>
 				Cancel Install
 			</Button>
 			<Button
 				variant="default"
 				size="sm"
-				class="text-xs"
 				disabled={!allResolved}
 				onclick={() => onResolve(resolutions)}
 			>

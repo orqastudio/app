@@ -68,7 +68,7 @@
 					<DropdownMenuItemComponent
 						onclick={entry.onclick}
 						disabled={entry.disabled}
-						class={entry.destructive ? "text-destructive focus:text-destructive" : ""}
+						variant={entry.destructive ? "destructive" : "default"}
 					>
 						{#if entry.icon}
 							<entry.icon class="h-4 w-4" />

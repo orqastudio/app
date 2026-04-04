@@ -40,7 +40,7 @@ function normaliseSeverity(raw: unknown): "error" | "warn" | "off" {
  * engine. Entries without a `rule` field are skipped.
  */
 function buildRulesFromEntries(
-  entries: EnforcementEntry[],
+  entries: readonly EnforcementEntry[],
 ): Record<string, unknown> {
   const rules: Record<string, unknown> = {};
 

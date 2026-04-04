@@ -3,6 +3,7 @@
 	import LessonList from "./LessonList.svelte";
 	import LessonViewer from "./LessonViewer.svelte";
 	import { getStores } from "@orqastudio/sdk";
+	import { Caption } from "@orqastudio/svelte-components/pure";
 
 	const { lessonStore, projectStore } = getStores();
 	import type { Lesson } from "@orqastudio/types";
@@ -56,8 +57,8 @@
 		{#if selectedLesson}
 			<LessonViewer lesson={selectedLesson} onIncrementRecurrence={handleIncrementRecurrence} />
 		{:else}
-			<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
-				Select a lesson to view it
+			<div class="flex h-full items-center justify-center">
+				<Caption>Select a lesson to view it</Caption>
 			</div>
 		{/if}
 	</div>

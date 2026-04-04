@@ -1,36 +1,36 @@
 export interface ResolvedTheme {
-	project_id: number;
-	tokens: Record<string, ThemeToken>;
-	source_files: string[];
-	has_overrides: boolean;
+	readonly project_id: number;
+	readonly tokens: Readonly<Record<string, ThemeToken>>;
+	readonly source_files: readonly string[];
+	readonly has_overrides: boolean;
 }
 
 export interface ThemeToken {
-	name: string;
-	value_light: string;
-	value_dark: string | null;
-	source: "extracted" | "override" | "default";
+	readonly name: string;
+	readonly value_light: string;
+	readonly value_dark: string | null;
+	readonly source: "extracted" | "override" | "default";
 }
 
 export interface SidecarStatus {
-	state: SidecarState;
-	pid: number | null;
-	uptime_seconds: number | null;
-	cli_detected: boolean;
-	cli_version: string | null;
-	error_message: string | null;
+	readonly state: SidecarState;
+	readonly pid: number | null;
+	readonly uptime_seconds: number | null;
+	readonly cli_detected: boolean;
+	readonly cli_version: string | null;
+	readonly error_message: string | null;
 }
 
 export type SidecarState = "not_started" | "starting" | "connected" | "error" | "stopped";
 
 export interface StartupTask {
-	id: string;
-	label: string;
-	status: "pending" | "in_progress" | "done" | "error";
-	detail: string | null;
+	readonly id: string;
+	readonly label: string;
+	readonly status: "pending" | "in_progress" | "done" | "error";
+	readonly detail: string | null;
 }
 
 export interface StartupSnapshot {
-	tasks: StartupTask[];
-	all_done: boolean;
+	readonly tasks: readonly StartupTask[];
+	readonly all_done: boolean;
 }

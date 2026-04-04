@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -35,10 +34,10 @@
 	const chronological = $derived([...snapshots].reverse());
 
 	interface SparklineConfig {
-		label: string;
-		key: keyof HealthSnapshot;
-		color: string;
-		strokeColor: string;
+		readonly label: string;
+		readonly key: keyof HealthSnapshot;
+		readonly color: string;
+		readonly strokeColor: string;
 	}
 
 	const sparklines: SparklineConfig[] = [
@@ -59,7 +58,7 @@
 	 * @param height - The total SVG height in pixels.
 	 * @returns An SVG path `d` attribute string, or an empty string if fewer than 2 points.
 	 */
-	function sparklinePath(data: HealthSnapshot[], key: keyof HealthSnapshot, width: number, height: number): string {
+	function sparklinePath(data: readonly HealthSnapshot[], key: keyof HealthSnapshot, width: number, height: number): string {
 		if (data.length < 2) return "";
 		const values = data.map((s) => Number(s[key]));
 		const max = Math.max(...values, 1); // At least 1 to avoid division by zero
@@ -141,15 +140,15 @@
 		const pct = trendPercent(key);
 		if (pct === null || pct === 0) return "text-muted-foreground";
 		// For these metrics, lower is better
-		if (pct < 0) return "text-green-500";
+		if (pct < 0) return "text-success";
 		return "text-destructive";
 	}
 </script>
 
 {#if loaded && snapshots.length >= 2}
 	<CardRoot>
-		<CardHeader class="pb-3">
-			<CardTitle class="text-base">
+		<CardHeader compact>
+			<CardTitle>
 				<div class="flex items-center gap-2">
 					<Icon name="trending-up" size="md" />
 					Health Trends
@@ -164,11 +163,11 @@
 			{:else}
 				<div class="grid grid-cols-2 gap-6">
 					{#each sparklines as config (config.key)}
-						<div class="space-y-1">
+						<div class="flex flex-col gap-1">
 							<!-- Header: label + latest value -->
 							<div class="flex items-baseline justify-between">
 								<span class="text-xs text-muted-foreground">{config.label}</span>
-								<div class="flex items-center gap-1.5">
+								<div class="flex items-baseline gap-1">
 									<span class="text-lg font-semibold tabular-nums {config.color}">
 										{latestValue(config.key)}
 									</span>

@@ -89,10 +89,9 @@ fn build_existing_relationships(
     project_root: &std::path::Path,
     incoming_plugin_name: &str,
 ) -> Vec<(String, RelationshipSchema)> {
-    let mut existing: Vec<(String, RelationshipSchema)> = Vec::new();
-
-    for rel in &PLATFORM.relationships {
-        existing.push((
+    // Core relationships from the platform static.
+    let core_rels = PLATFORM.relationships.iter().map(|rel| {
+        (
             "core".to_owned(),
             RelationshipSchema {
                 key: rel.key.clone(),
@@ -103,26 +102,30 @@ fn build_existing_relationships(
                 semantic: rel.semantic.clone(),
                 constraints: None,
             },
-        ));
-    }
+        )
+    });
 
-    let installed = scan_plugins(project_root);
-    for plugin in &installed {
-        if plugin.name == incoming_plugin_name {
-            continue;
-        }
-        let plugin_dir = std::path::Path::new(&plugin.path);
-        if let Ok(manifest) = read_manifest(plugin_dir) {
-            for rel_value in &manifest.provides.relationships {
-                if let Ok(schema) = serde_json::from_value::<RelationshipSchema>(rel_value.clone())
-                {
-                    existing.push((plugin.name.clone(), schema));
-                }
-            }
-        }
-    }
+    // Plugin-provided relationships from installed (non-incoming) plugins.
+    let plugin_rels = scan_plugins(project_root)
+        .into_iter()
+        .filter(|plugin| plugin.name != incoming_plugin_name)
+        .filter_map(|plugin| {
+            let plugin_dir = std::path::Path::new(&plugin.path).to_path_buf();
+            read_manifest(&plugin_dir).ok().map(|manifest| (plugin.name, manifest))
+        })
+        .flat_map(|(name, manifest)| {
+            manifest
+                .provides
+                .relationships
+                .into_iter()
+                .filter_map(move |rel_value| {
+                    serde_json::from_value::<RelationshipSchema>(rel_value)
+                        .ok()
+                        .map(|schema| (name.clone(), schema))
+                })
+        });
 
-    existing
+    core_rels.chain(plugin_rels).collect()
 }
 
 #[cfg(test)]

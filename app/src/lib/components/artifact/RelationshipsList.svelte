@@ -80,9 +80,7 @@
 		<div class="space-y-1">
 			{#each [...grouped] as [type, rels] (type)}
 				<div class="grid grid-cols-2 items-baseline gap-2">
-					<Badge variant="outline" class="justify-self-start text-[10px] font-medium capitalize">
-						{humanizeType(type)}
-					</Badge>
+					<span class="justify-self-start capitalize"><Badge variant="outline" size="xs">{humanizeType(type)}</Badge></span>
 					<div class="flex min-w-0 flex-wrap items-center gap-1">
 						{#each visibleRels(type, rels) as rel, i (i)}
 							{#if rel.target}
@@ -107,7 +105,7 @@
 											</span>
 										{/snippet}
 									</TooltipTrigger>
-									<TooltipContent side="top" class="max-w-xs">
+									<TooltipContent side="top">
 										<p class="text-xs">{rel.rationale}</p>
 									</TooltipContent>
 								</TooltipRoot>
@@ -115,7 +113,7 @@
 						{/each}
 						{#if rels.length > 3}
 							<button
-								class="rounded px-1 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+								class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
 								onclick={() => toggleExpanded(type)}
 							>
 								{isExpanded(type) ? "hide" : `\u2026 +${rels.length - 3}`}

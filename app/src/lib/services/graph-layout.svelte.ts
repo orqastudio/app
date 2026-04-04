@@ -15,6 +15,7 @@
 import type cytoscape from "cytoscape";
 import type { WorkerRequest, WorkerResponse } from "$lib/workers/graph-layout.worker";
 import { logger } from "@orqastudio/sdk";
+import { assertNever } from "@orqastudio/types";
 
 // ---------------------------------------------------------------------------
 // Service class
@@ -51,16 +52,22 @@ class GraphLayoutService {
         this.worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
             const msg = event.data;
 
-            if (msg.type === "positions") {
-                this.positions = msg.positions;
-                this.layoutRunning = false;
-                this.layoutProgress = 100;
-            } else if (msg.type === "progress") {
-                this.layoutProgress = msg.percent;
-            } else if (msg.type === "error") {
-                log.error(msg.message);
-                this.layoutRunning = false;
-                this.layoutProgress = 0;
+            switch (msg.type) {
+                case "positions":
+                    this.positions = [...msg.positions];
+                    this.layoutRunning = false;
+                    this.layoutProgress = 100;
+                    break;
+                case "progress":
+                    this.layoutProgress = msg.percent;
+                    break;
+                case "error":
+                    log.error(msg.message);
+                    this.layoutRunning = false;
+                    this.layoutProgress = 0;
+                    break;
+                default:
+                    assertNever(msg);
             }
         };
 

@@ -17,11 +17,11 @@
 		<CardDescription>Reference card for available shortcuts</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<div class="space-y-2">
+		<div class="flex flex-col gap-2">
 			{#each shortcuts as shortcut (shortcut.key)}
 				<div class="flex items-center justify-between rounded px-2 py-1.5 text-sm hover:bg-muted/50">
 					<span class="text-muted-foreground">{shortcut.action}</span>
-					<Badge variant="outline" class="font-mono text-xs">{shortcut.key}</Badge>
+					<Badge variant="outline"><span class="font-mono text-xs">{shortcut.key}</span></Badge>
 				</div>
 			{/each}
 		</div>

@@ -351,6 +351,21 @@ export function computeThreeWayState(relPath, projectRoot, lastEntry, currentSou
         return "missing";
     }
     const currentInstalledHash = computeFileHash(absPath);
+    return computeThreeWayStateFromHashes(currentInstalledHash, lastEntry, currentSourceHash);
+}
+/**
+ * Pure three-way diff state computation from pre-computed hashes with no I/O.
+ *
+ * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
+ * by comparing the current installed hash against the baseline recorded at install
+ * time and the current plugin source hash.
+ *
+ * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
+ * @param lastEntry - The hash entry recorded at last install (baseline hashes).
+ * @param currentSourceHash - Current hash of the file in the plugin source.
+ * @returns The three-way state of the file.
+ */
+export function computeThreeWayStateFromHashes(currentInstalledHash, lastEntry, currentSourceHash) {
     const userChanged = currentInstalledHash !== lastEntry.installedHash;
     const pluginChanged = currentSourceHash !== lastEntry.sourceHash;
     if (!userChanged && !pluginChanged)

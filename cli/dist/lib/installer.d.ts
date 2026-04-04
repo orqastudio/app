@@ -11,57 +11,57 @@
 import type { PluginManifest } from "@orqastudio/types";
 export interface InstallOptions {
     /** GitHub owner/repo or local filesystem path. */
-    source: string;
+    readonly source: string;
     /** Specific version tag (e.g. "v0.2.0"). Defaults to latest release. */
-    version?: string;
+    readonly version?: string;
     /** Project root directory (defaults to cwd). */
-    projectRoot?: string;
+    readonly projectRoot?: string;
     /**
      * Optional post-install callback invoked after the plugin is extracted and locked.
      * Connectors use this to perform their own wiring (e.g. .claude/ directory setup).
      * @param pluginDir - The directory where the plugin was installed.
      * @param projectRoot - The project root directory.
      */
-    postInstall?: (pluginDir: string, projectRoot: string) => void;
+    readonly postInstall?: (pluginDir: string, projectRoot: string) => void;
 }
 export interface InstallResult {
-    name: string;
-    version: string;
-    path: string;
-    source: "github" | "local";
+    readonly name: string;
+    readonly version: string;
+    readonly path: string;
+    readonly source: "github" | "local";
     /** Key collisions detected during installation. Empty when none. */
-    collisions: KeyCollisionResult[];
+    readonly collisions: KeyCollisionResult[];
     /**
      * True when the installed plugin declares affectsSchema: true.
      * The caller must trigger schema recomposition after installation (P5-28).
      */
-    requiresSchemaRecomposition: boolean;
+    readonly requiresSchemaRecomposition: boolean;
     /**
      * True when the installed plugin declares affectsEnforcement: true.
      * The caller must trigger enforcement config regeneration after installation (P5-28).
      */
-    requiresEnforcementRegeneration: boolean;
+    readonly requiresEnforcementRegeneration: boolean;
 }
 export interface KeyCollisionResult {
-    key: string;
-    existingSource: string;
-    existingDescription: string;
-    existingSemantic?: string;
-    existingFrom: string[];
-    existingTo: string[];
-    incomingDescription: string;
-    incomingSemantic?: string;
-    incomingFrom: string[];
-    incomingTo: string[];
-    semanticMatch: boolean;
+    readonly key: string;
+    readonly existingSource: string;
+    readonly existingDescription: string;
+    readonly existingSemantic?: string;
+    readonly existingFrom: string[];
+    readonly existingTo: string[];
+    readonly incomingDescription: string;
+    readonly incomingSemantic?: string;
+    readonly incomingFrom: string[];
+    readonly incomingTo: string[];
+    readonly semanticMatch: boolean;
 }
 export interface MethodologyConflict {
     /** The incoming plugin that is being installed. */
-    incomingPlugin: string;
+    readonly incomingPlugin: string;
     /** The core role that conflicts (e.g. "core:discovery"). */
-    role: string;
+    readonly role: string;
     /** The already-installed plugin that occupies this role. */
-    existingPlugin: string;
+    readonly existingPlugin: string;
 }
 /**
  * Detect methodology exclusivity conflicts (legacy role-based check).

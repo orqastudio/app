@@ -141,15 +141,17 @@
 		{:else if hasProject && needsSetup}
 			<!-- Project needs setup — show wizard only, no chat/nav/activity bar -->
 			<div
-				class="relative flex flex-1 items-center justify-center overflow-hidden"
+				class="relative flex-1 overflow-hidden"
 				style="background-image: url({setupBackground}); background-size: cover; background-position: center;"
 			>
 				<div class="absolute inset-0 bg-background/70"></div>
-				<div class="relative z-10 w-full max-w-lg px-4">
-					<ProjectSetupWizard
-						projectPath={projectStore.projectPath ?? ""}
-						onComplete={() => {}}
-					/>
+				<div class="relative z-10 flex h-full w-full items-center justify-center px-4">
+					<div class="w-full max-w-lg">
+						<ProjectSetupWizard
+							projectPath={projectStore.projectPath ?? ""}
+							onComplete={() => {}}
+						/>
+					</div>
 				</div>
 			</div>
 		{:else if hasProject}
@@ -178,25 +180,25 @@
 					{/if}
 				</div>
 			{:else}
-				<ResizablePaneGroup direction="horizontal" class="flex-1">
-					<ResizablePane defaultSize={70} minSize={30}>
-						<ExplorerRouter />
-					</ResizablePane>
-					<ResizableHandle />
-					<ResizablePane defaultSize={30} minSize={20}>
-						<div class="flex h-full flex-col bg-chat">
-							<ConversationView />
-						</div>
-					</ResizablePane>
-				</ResizablePaneGroup>
+				<div class="min-w-0 flex-1">
+					<ResizablePaneGroup direction="horizontal">
+						<ResizablePane defaultSize={70} minSize={30}>
+							<ExplorerRouter />
+						</ResizablePane>
+						<ResizableHandle />
+						<ResizablePane defaultSize={30} minSize={20}>
+							<div class="flex h-full flex-col bg-chat">
+								<ConversationView />
+							</div>
+						</ResizablePane>
+					</ResizablePaneGroup>
+				</div>
 			{/if}
 
 		{:else}
 			<!-- No project loaded — welcome screen, no sidebar -->
-			<div class="flex flex-1 overflow-hidden">
-				<div class="flex-1 overflow-hidden">
-					<WelcomeScreen />
-				</div>
+			<div class="flex-1 overflow-hidden">
+				<WelcomeScreen />
 			</div>
 		{/if}
 	</div>

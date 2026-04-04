@@ -4,14 +4,13 @@
 	import {
 		Icon,
 		ConnectionIndicator,
-		Separator,
-		Button,
 		TooltipRoot,
 		TooltipTrigger,
 		TooltipContent,
 		type ConnectionState,
 	} from "@orqastudio/svelte-components/pure";
 	import { getStores, fmt } from "@orqastudio/sdk";
+	import { assertNever } from "@orqastudio/types";
 
 	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
 	import finMark from "$lib/assets/fin-mark.svg";
@@ -26,9 +25,11 @@
 			case "error":
 				return "disconnected";
 			case "stopped":
-			case "not_started":
-			default:
 				return "waiting";
+			case "not_started":
+				return "waiting";
+			default:
+				return assertNever(settingsStore.sidecarStatus.state);
 		}
 	});
 
@@ -40,8 +41,9 @@
 			case "degraded":
 				return "reconnecting";
 			case "disconnected":
-			default:
 				return "disconnected";
+			default:
+				return assertNever(settingsStore.daemonHealth.state);
 		}
 	});
 
@@ -66,7 +68,7 @@
 			case "not_started":
 				return "No providers configured";
 			default:
-				return "No providers configured";
+				return assertNever(status.state);
 		}
 	});
 
@@ -120,26 +122,24 @@
 <div class="status-bar">
 	<!-- Left: Brand | Model -->
 	<div class="flex items-center gap-3">
-		<div class="flex items-center gap-1.5">
+		<div class="flex items-center gap-1">
 			<img src={finMark} class="h-3.5 w-3.5" alt="" />
 			<span class="brand-label">OrqaStudio</span>
 		</div>
 
-		<Separator orientation="vertical" class="h-3" />
+		<div class="h-3 w-px bg-border"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button
+					<button
 						{...props}
-						variant="ghost"
-						size="sm"
 						class="status-btn"
 						onclick={openModelSettings}
 					>
 						<Icon name="brain" size="xs" />
 						<span>{settingsStore.modelDisplayName}</span>
-					</Button>
+					</button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -148,12 +148,11 @@
 		</TooltipRoot>
 	</div>
 
-	<!-- Center: spacer -->
 	<div class="flex-1"></div>
 
 	<!-- Startup task indicator -->
 	{#if settingsStore.activeStartupTask}
-		<div class="mr-4 flex items-center gap-1.5">
+		<div class="mr-4 flex items-center gap-1">
 			<Icon name="loader-circle" size="xs" />
 			<span>
 				{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
@@ -169,16 +168,14 @@
 			<span class="token-counter">
 				{formatTokens(session.total_input_tokens)}↑ {formatTokens(session.total_output_tokens)}↓
 			</span>
-			<Separator orientation="vertical" class="h-3" />
+			<div class="h-3 w-px bg-border"></div>
 		{/if}
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button
+					<button
 						{...props}
-						variant="ghost"
-						size="sm"
 						class="status-btn {artifactGraphSDK.error ? 'text-destructive' : ''}"
 						onclick={() => artifactGraphSDK.refresh()}
 						disabled={artifactGraphSDK.loading}
@@ -192,7 +189,7 @@
 							<Icon name="database" size="xs" />
 							<span>{artifactCount}</span>
 						{/if}
-					</Button>
+					</button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -200,20 +197,18 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<Separator orientation="vertical" class="h-3" />
+		<div class="h-3 w-px bg-border"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button
+					<button
 						{...props}
-						variant="ghost"
-						size="sm"
 						class="status-btn"
 						onclick={openPluginSettings}
 					>
 						<ConnectionIndicator state={sidecarConnectionState} label={settingsStore.sidecarStateLabel} />
-					</Button>
+					</button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -221,20 +216,18 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<Separator orientation="vertical" class="h-3" />
+		<div class="h-3 w-px bg-border"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button
+					<button
 						{...props}
-						variant="ghost"
-						size="sm"
 						class="status-btn"
 						onclick={() => settingsStore.refreshDaemonHealth()}
 					>
 						<ConnectionIndicator state={daemonConnectionState} label={settingsStore.daemonStateLabel} />
-					</Button>
+					</button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">

@@ -1,20 +1,24 @@
 <script lang="ts">
-	import { cn, type WithElementRef } from "../../utils/cn.js";
-	import type { HTMLAttributes } from "svelte/elements";
+	import { cn } from "../../utils/cn.js";
+
+	interface CardFooterProps {
+		/** Reduce top padding for compact layouts. */
+		compact?: boolean;
+		children?: import("svelte").Snippet;
+	}
 
 	let {
-		ref = $bindable(null),
-		class: className,
+		compact = false,
 		children,
-		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLDivElement>> = $props();
+	}: CardFooterProps = $props();
 </script>
 
 <div
-	bind:this={ref}
 	data-slot="card-footer"
-	class={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-	{...restProps}
+	class={cn(
+		"flex items-center px-6",
+		compact ? "pt-2" : "[.border-t]:pt-6",
+	)}
 >
 	{@render children?.()}
 </div>

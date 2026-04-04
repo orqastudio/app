@@ -1,13 +1,17 @@
-<!-- OrqaDev Logs tab — the default view. Renders the filter bar above the
-     virtualised log table. Both components share the filter state in
-     log-store.svelte.ts so filtering is reactive without prop-drilling. -->
+<!-- OrqaDev Logs tab — the default view. Renders the session picker, filter bar,
+     and virtualised log table. All components share reactive state from the
+     session and log stores so session switching and filtering are reactive
+     without prop-drilling. -->
 <script lang="ts">
+	import { Stack } from "@orqastudio/svelte-components/pure";
+	import SessionPicker from "$lib/components/logs/SessionPicker.svelte";
 	import LogFilters from "$lib/components/logs/LogFilters.svelte";
 	import LogTable from "$lib/components/logs/LogTable.svelte";
 </script>
 
-<!-- Flex column so LogFilters is pinned above LogTable and LogTable fills the rest. -->
-<div class="flex h-full flex-col overflow-hidden">
+<!-- Vertical stack: SessionPicker and LogFilters pinned above, LogTable fills the rest. -->
+<Stack gap={0} class="h-full overflow-hidden">
+	<SessionPicker />
 	<LogFilters />
 	<LogTable />
-</div>
+</Stack>

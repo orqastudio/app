@@ -20,15 +20,15 @@
 		<DialogHeader>
 			<div class="flex items-center gap-3">
 				<img src={logoPulse} alt="OrqaStudio" class="h-10 w-10" />
-				<div>
+				<div class="flex flex-col gap-1">
 					<DialogTitle>{appName}</DialogTitle>
 					<DialogDescription>Version {appVersion}</DialogDescription>
 				</div>
 			</div>
 		</DialogHeader>
-		<div class="space-y-2 text-sm text-muted-foreground">
-			<p>A managed agentic development environment powered by Claude.</p>
-			<p class="text-xs">Built with Tauri, Svelte, and Rust.</p>
+		<div class="flex flex-col gap-2">
+			<span class="text-sm text-muted-foreground">A managed agentic development environment powered by Claude.</span>
+			<span class="text-xs text-muted-foreground">Built with Tauri, Svelte, and Rust.</span>
 		</div>
 	</DialogContent>
 </DialogRoot>

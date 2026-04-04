@@ -4,6 +4,7 @@
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
+	import { assertNever } from "@orqastudio/types";
 
 	import { PipelineStages, type PipelineStage, type PipelineEdge } from "@orqastudio/svelte-components/pure";
 
@@ -249,9 +250,10 @@
 	 */
 	function statusBorderClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "border-red-400 dark:border-red-600";
-			case "attention": return "border-amber-400 dark:border-amber-600";
-			default:          return "border-border";
+			case "isolated":  return "border-destructive";
+			case "attention": return "border-warning";
+			case "healthy":   return "border-border";
+			default:          return assertNever(status);
 		}
 	}
 
@@ -262,9 +264,10 @@
 	 */
 	function statusBgClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "bg-red-50 dark:bg-red-950/30";
-			case "attention": return "bg-amber-50 dark:bg-amber-950/30";
-			default:          return "bg-muted/30";
+			case "isolated":  return "bg-destructive/10";
+			case "attention": return "bg-warning/10";
+			case "healthy":   return "bg-muted/30";
+			default:          return assertNever(status);
 		}
 	}
 
@@ -288,9 +291,10 @@
 	 */
 	function statusLabelClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "text-red-500";
-			case "attention": return "text-amber-500";
-			default:          return "text-muted-foreground";
+			case "isolated":  return "text-destructive";
+			case "attention": return "text-warning";
+			case "healthy":   return "text-muted-foreground";
+			default:          return assertNever(status);
 		}
 	}
 
@@ -301,9 +305,10 @@
 	 */
 	function statusDotColorClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "bg-red-500";
-			case "attention": return "bg-amber-500";
-			default:          return "bg-muted-foreground/50";
+			case "isolated":  return "bg-destructive";
+			case "attention": return "bg-warning";
+			case "healthy":   return "bg-muted-foreground/50";
+			default:          return assertNever(status);
 		}
 	}
 
@@ -328,30 +333,30 @@
 </script>
 
 {#if hasData}
-	<CardRoot class="gap-2 h-full">
-		<CardHeader class="pb-2">
-			<CardTitle class="text-sm font-semibold">
+	<CardRoot full>
+		<CardHeader compact>
+			<CardTitle>
 				<div class="flex items-center gap-2">
 					<Icon name="workflow" size="md" />
 					Governance Pipeline
 				</div>
 			</CardTitle>
 		</CardHeader>
-		<CardContent class="pt-0">
+		<CardContent>
 			<div class="pb-2">
 				<PipelineStages stages={pipelineStages} edges={pipelineEdges} />
 			</div>
 
 			<!-- Legend -->
 			<div class="mt-3 flex items-center gap-4 text-[10px] text-muted-foreground">
-				<span class="flex items-center gap-1">
-					<span class="inline-block h-2 w-2 rounded-full bg-red-400"></span>
+				<div class="flex items-center gap-1">
+					<span class="inline-block h-2 w-2 rounded-full bg-destructive"></span>
 					Isolated (&lt;30% connected)
-				</span>
-				<span class="flex items-center gap-1">
-					<span class="inline-block h-2 w-2 rounded-full bg-amber-400"></span>
+				</div>
+				<div class="flex items-center gap-1">
+					<span class="inline-block h-2 w-2 rounded-full bg-warning"></span>
 					Attention (30-70% connected)
-				</span>
+				</div>
 			</div>
 		</CardContent>
 	</CardRoot>

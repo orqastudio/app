@@ -4,7 +4,7 @@
      Clicking a metric cell expands a TimingChart below the grid.
      Also shows an error-rate sparkline covering the last 30 minutes. -->
 <script lang="ts">
-	import { DashboardCard, MetricCell, Sparkline } from "@orqastudio/svelte-components/pure";
+	import { DashboardCard, MetricCell, Sparkline, Stack, HStack, Grid, Heading, Text, Caption, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import {
 		metrics,
 		METRIC_CATEGORIES,
@@ -56,16 +56,17 @@
 </script>
 
 <!-- Full-height scrollable content area. -->
-<div class="flex h-full flex-col gap-4 overflow-y-auto p-4">
+<ScrollArea class="h-full">
+<Stack gap={4} class="p-4">
 
-	<!-- Section heading -->
-	<div class="flex items-center justify-between">
-		<span class="text-sm font-semibold text-content-base">Performance Metrics</span>
-		<span class="text-xs text-content-muted">{metrics.totalEvents} events processed</span>
-	</div>
+	<!-- Section heading: title left, event count right. -->
+	<HStack justify="between">
+		<Heading level={5}>Performance Metrics</Heading>
+		<Caption>{metrics.totalEvents} events processed</Caption>
+	</HStack>
 
 	<!-- Four metric cards in a responsive 2×2 grid. -->
-	<div class="grid grid-cols-2 gap-3">
+	<Grid cols={2} gap={3}>
 		{#each CATEGORY_KEYS as cat (cat)}
 			{@const stats = metrics.byCategory[cat]}
 			{@const isSelected = selectedCategory === cat}
@@ -96,19 +97,19 @@
 								padding={2}
 							/>
 						{:else}
-							<div class="h-8 text-xs text-content-muted flex items-center">Waiting…</div>
+							<HStack class="h-8"><Caption>Waiting…</Caption></HStack>
 						{/if}
 						<!-- Min / avg / max row below the sparkline. -->
-						<div class="mt-1 flex justify-between text-[10px] text-content-muted tabular-nums">
-							<span>min {fmtMs(stats.min)}</span>
-							<span>avg {fmtMs(stats.avg)}</span>
-							<span>max {fmtMs(stats.max)}</span>
-						</div>
+						<HStack justify="between" class="mt-1 tabular-nums">
+							<Caption>min {fmtMs(stats.min)}</Caption>
+							<Caption>avg {fmtMs(stats.avg)}</Caption>
+							<Caption>max {fmtMs(stats.max)}</Caption>
+						</HStack>
 					</MetricCell>
 				</DashboardCard>
 			</div>
 		{/each}
-	</div>
+	</Grid>
 
 	<!-- Expanded timing chart — shown below the grid when a category is selected. -->
 	{#if selectedCategory && metrics.byCategory[selectedCategory]}
@@ -119,16 +120,16 @@
 
 	<!-- Error rate panel: errors-per-minute sparkline over the last 30 minutes. -->
 	<DashboardCard title="Error Rate" description="Errors per minute — last 30 minutes">
-		<div class="flex flex-col gap-2">
-			<div class="flex items-baseline justify-between">
-				<span class="text-xs text-content-muted">Total in window</span>
-				<span
-					class="text-lg font-semibold tabular-nums
-					       {errTotal > 0 ? 'text-destructive' : 'text-success'}"
+		<Stack gap={2}>
+			<HStack justify="between" align="baseline">
+				<Caption>Total in window</Caption>
+				<Text
+					size="lg"
+					class="font-semibold tabular-nums {errTotal > 0 ? 'text-destructive' : 'text-success'}"
 				>
 					{errTotal}
-				</span>
-			</div>
+				</Text>
+			</HStack>
 			{#if errHistory.length >= 2}
 				<Sparkline
 					values={errHistory}
@@ -142,13 +143,14 @@
 					fixedMin={0}
 				/>
 			{:else}
-				<div class="h-12 text-xs text-content-muted flex items-center">No error data yet</div>
+				<HStack class="h-12"><Caption>No error data yet</Caption></HStack>
 			{/if}
-			<div class="flex justify-between text-[10px] text-content-muted">
-				<span>−30 min</span>
-				<span>now</span>
-			</div>
-		</div>
+			<HStack justify="between">
+				<Caption>−30 min</Caption>
+				<Caption>now</Caption>
+			</HStack>
+		</Stack>
 	</DashboardCard>
 
-</div>
+</Stack>
+</ScrollArea>

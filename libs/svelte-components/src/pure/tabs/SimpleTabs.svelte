@@ -8,17 +8,14 @@
 		disabled?: boolean;
 	};
 
-	type TabsBaseProps = {
+	type TabsWithDefs = {
 		value?: string;
-		class?: string;
-	};
-
-	type TabsWithDefs = TabsBaseProps & {
 		tabs: TabDef[];
 		children?: never;
 	};
 
-	type TabsWithContent = TabsBaseProps & {
+	type TabsWithContent = {
+		value?: string;
 		children: Snippet;
 		tabs?: never;
 	};
@@ -34,12 +31,13 @@
 
 	let {
 		value = $bindable(""),
-		class: className,
 		tabs,
 		children,
 	}: TabsProps = $props();
 
-	// Default to first tab if no value provided
+	// $derived cannot be used here because `value` is $bindable — a parent may update it at any time.
+	// This $effect initialises the default selection once when tabs load and no value is provided.
+	// It is a true side effect (mutating a bindable prop), not derived computation.
 	$effect(() => {
 		if (!value && tabs && tabs.length > 0) {
 			value = tabs[0].value;
@@ -47,7 +45,7 @@
 	});
 </script>
 
-<TabsRoot bind:value class={className}>
+<TabsRoot bind:value>
 	{#if children}
 		{@render children()}
 	{:else if tabs}

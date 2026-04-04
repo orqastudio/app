@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
 
@@ -33,8 +31,8 @@
 	});
 
 	const circleClass = $derived.by(() => {
-		if (status === "green") return "bg-green-500";
-		if (status === "amber") return "bg-amber-500";
+		if (status === "green") return "bg-success";
+		if (status === "amber") return "bg-warning";
 		if (status === "red") return "bg-destructive";
 		return "bg-muted-foreground/30";
 	});
@@ -52,7 +50,7 @@
 	// Outlier severity: green 0, amber 1-3, red >3
 	const outlierSeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.outlier_count === 0) return "text-emerald-500";
+		if (graphHealth.outlier_count === 0) return "text-success";
 		if (graphHealth.outlier_count <= 3) return "text-warning";
 		return "text-destructive";
 	});
@@ -71,8 +69,8 @@
 	// Avg degree: green >=4, cyan 3-4, amber 2-3, red <2
 	const degreeSeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.avg_degree >= 4) return "text-emerald-500";
-		if (graphHealth.avg_degree >= 3) return "text-cyan-500";
+		if (graphHealth.avg_degree >= 4) return "text-success";
+		if (graphHealth.avg_degree >= 3) return "text-primary";
 		if (graphHealth.avg_degree >= 2) return "text-warning";
 		return "text-destructive";
 	});
@@ -80,7 +78,7 @@
 	// Delivery connectivity: green >=90%, amber 70-90%, red <70%
 	const deliverySeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.delivery_connectivity >= 0.9) return "text-emerald-500";
+		if (graphHealth.delivery_connectivity >= 0.9) return "text-success";
 		if (graphHealth.delivery_connectivity >= 0.7) return "text-warning";
 		return "text-destructive";
 	});
@@ -88,7 +86,7 @@
 	// Learning connectivity: green >=80%, amber 50-80%, red <50%
 	const learningSeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.learning_connectivity >= 0.8) return "text-emerald-500";
+		if (graphHealth.learning_connectivity >= 0.8) return "text-success";
 		if (graphHealth.learning_connectivity >= 0.5) return "text-warning";
 		return "text-destructive";
 	});
@@ -96,7 +94,7 @@
 	// Pillar traceability: green >=80%, amber 50-80%, red <50%
 	const traceabilitySeverity = $derived.by(() => {
 		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.pillar_traceability >= 80) return "text-emerald-500";
+		if (graphHealth.pillar_traceability >= 80) return "text-success";
 		if (graphHealth.pillar_traceability >= 50) return "text-warning";
 		return "text-destructive";
 	});
@@ -142,13 +140,15 @@
 	});
 </script>
 
-<CardRoot class="gap-2 flex flex-col h-full">
-	<CardHeader class="pb-2">
-		<CardTitle class="flex items-center gap-1.5 text-sm font-semibold">
-			<Icon name="eye" size="md" />
-			Clarity
+<CardRoot gap={2} full>
+	<CardHeader compact>
+		<CardTitle size="sm">
+			<div class="flex items-center gap-1">
+				<Icon name="eye" size="md" />
+				Clarity
+			</div>
 		</CardTitle>
-		<CardDescription class="text-xs">Where You Are</CardDescription>
+		<CardDescription size="xs">Where You Are</CardDescription>
 		<CardAction>
 			{#if loading}
 				<LoadingSpinner size="sm" />
@@ -163,7 +163,8 @@
 			{/if}
 		</CardAction>
 	</CardHeader>
-	<CardContent class="flex flex-1 flex-col gap-3 pt-0">
+	<CardContent compact>
+		<div class="flex flex-col gap-3">
 		{#if graphHealth && graphHealth.total_nodes > 0}
 			<div class="grid grid-cols-2 gap-2 flex-1 text-center text-xs">
 				<!-- Outliers -->
@@ -178,7 +179,7 @@
 							<span class="text-muted-foreground/70 text-[10px] leading-tight">{outlierAgeSummary}</span>
 						{/if}
 					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
+					<TooltipContent side="bottom">
 						<p class="font-medium mb-1">Pipeline Outliers</p>
 						<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline (task / epic / milestone / idea / research / decision / wireframe) and the learning pipeline (lesson / rule). Outliers need attention — connect them or archive them.</p>
 						{#if graphHealth.outlier_age_distribution.stale > 0}
@@ -200,7 +201,7 @@
 						<span class="{degreeSeverity} font-semibold tabular-nums">{fmt(graphHealth.avg_degree)}</span>
 						<span class="text-muted-foreground">Avg Degree</span>
 					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
+					<TooltipContent side="bottom">
 						<p class="font-medium mb-1">Average Connection Degree</p>
 						<p class="text-muted-foreground">The average number of relationships per artifact. Higher means a more interconnected knowledge graph. A well-connected graph has an average degree of 4+ — each artifact relates to multiple others.</p>
 					</TooltipContent>
@@ -215,7 +216,7 @@
 						</span>
 						<span class="text-muted-foreground">Delivery</span>
 					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
+					<TooltipContent side="bottom">
 						<p class="font-medium mb-1">Delivery Pipeline Connectivity</p>
 						<p class="text-muted-foreground">Percentage of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) connected in the main delivery component. Target: 90%+.</p>
 					</TooltipContent>
@@ -230,7 +231,7 @@
 						</span>
 						<span class="text-muted-foreground">Learning</span>
 					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
+					<TooltipContent side="bottom">
 						<p class="font-medium mb-1">Learning Loop Connectivity</p>
 						<p class="text-muted-foreground">Percentage of learning artifacts (lesson, rule) connected to each other or to decisions. Disconnected lessons and rules are not feeding back into the delivery process. Target: 80%+.</p>
 					</TooltipContent>
@@ -248,11 +249,11 @@
 								<span class="text-warning font-semibold tabular-nums">{warningCount}W</span>
 							{:else}
 								<Icon name="circle-alert" size="sm" />
-								<span class="text-emerald-500 font-semibold">Clean</span>
+								<span class="text-success font-semibold">Clean</span>
 							{/if}
 							<span class="text-muted-foreground">Integrity</span>
 						</TooltipTrigger>
-						<TooltipContent side="bottom" class="w-64 text-xs">
+						<TooltipContent side="bottom">
 							<p class="font-medium mb-1">Integrity Scan Results</p>
 							<p class="text-muted-foreground">File-level checks: broken references, invalid statuses, missing required fields, schema violations. Errors must be fixed. Warnings indicate potential issues. Use Auto-fix for machine-fixable problems.</p>
 						</TooltipContent>
@@ -274,7 +275,7 @@
 						</span>
 						<span class="text-muted-foreground">Traceability</span>
 					</TooltipTrigger>
-					<TooltipContent side="bottom" class="w-64 text-xs">
+					<TooltipContent side="bottom">
 						<p class="font-medium mb-1">Pillar Traceability</p>
 						<p class="text-muted-foreground">Percentage of rules that are grounded by at least one pillar via a grounded-by relationship. Rules without pillar grounding are unanchored — they enforce something with no stated rationale.</p>
 					</TooltipContent>
@@ -288,9 +289,9 @@
 			<div class="flex flex-col gap-1">
 				{#each thresholdAlerts as alert (alert.message)}
 					<div
-						class="flex items-center gap-1.5 rounded px-2 py-1 text-xs {alert.level === 'red'
+						class="flex items-center gap-1 rounded px-2 py-1 text-xs {alert.level === 'red'
 							? 'bg-destructive/10 text-destructive'
-							: 'bg-amber-500/10 text-amber-600 dark:text-amber-400'}"
+							: 'bg-warning/10 text-warning'}"
 					>
 						<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
 						<span>{alert.message}</span>
@@ -301,22 +302,23 @@
 
 		<!-- Actions -->
 		<div class="grid grid-cols-2 gap-2 mt-auto">
-			<Button variant="outline" size="sm" onclick={onScan} disabled={loading || fixing}>
+			<button class="flex items-center justify-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={onScan} disabled={loading || fixing}>
 				{#if loading}
 					<span class="mr-2"><LoadingSpinner size="sm" /></span>
 				{:else}
 					<Icon name="scan" size="sm" />
 				{/if}
 				Scan
-			</Button>
-			<Button variant="outline" size="sm" onclick={onAutoFix} disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}>
+			</button>
+			<button class="flex items-center justify-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={onAutoFix} disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}>
 				{#if fixing}
 					<span class="mr-2"><LoadingSpinner size="sm" /></span>
 				{:else}
 					<Icon name="wrench" size="sm" />
 				{/if}
 				Auto-fix{scanned && fixableCount > 0 ? ` (${fixableCount})` : ""}
-			</Button>
+			</button>
+		</div>
 		</div>
 	</CardContent>
 </CardRoot>

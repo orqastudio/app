@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack } from "@orqastudio/svelte-components/pure";
 
 	const { artifactGraphSDK, projectStore } = getStores();
 
@@ -57,7 +57,7 @@
 {#if stages.length > 0 && currentIndex >= 0}
 	<div class="mb-5">
 		<!-- Row 1: circles and connector lines, vertically centered on circles -->
-		<div class="flex items-center gap-0">
+		<HStack gap={0}>
 			{#each stages as stage, i (stage.key)}
 				{@const isPast = i < currentIndex}
 				{@const isCurrent = i === currentIndex}
@@ -76,10 +76,10 @@
 				<div class="flex items-center justify-center">
 					{#if isReachable}
 						<button
-							onclick={() => handleTransition(stage.key)}
-							disabled={transitioning}
-							class="flex h-4 w-4 items-center justify-center rounded-full border border-primary/50 bg-primary/5 transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50"
-						></button>
+						class="h-4 w-4 rounded-full border border-primary/50 bg-primary/5 p-0 hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
+						onclick={() => handleTransition(stage.key)}
+						disabled={transitioning}
+					></button>
 					{:else if isPast}
 						<div
 							class="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20"
@@ -99,7 +99,7 @@
 					{/if}
 				</div>
 			{/each}
-		</div>
+		</HStack>
 
 		<!-- Row 2: labels, positioned to align under their circles -->
 		<div class="mt-1 flex items-start gap-0">
@@ -121,12 +121,12 @@
 						</span>
 					{:else if isReachable}
 						<button
-							onclick={() => handleTransition(stage.key)}
-							disabled={transitioning}
-							class="text-[9px] leading-tight whitespace-nowrap text-primary/60 underline-offset-2 hover:underline disabled:pointer-events-none disabled:opacity-50"
-						>
-							{stage.label}
-						</button>
+						class="text-[9px] leading-tight whitespace-nowrap text-primary/60 hover:underline disabled:pointer-events-none disabled:opacity-50"
+						onclick={() => handleTransition(stage.key)}
+						disabled={transitioning}
+					>
+						{stage.label}
+					</button>
 					{:else if isPast}
 						<span class="text-[9px] leading-tight whitespace-nowrap text-muted-foreground/60">
 							{stage.label}

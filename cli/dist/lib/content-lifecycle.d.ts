@@ -9,17 +9,17 @@
  */
 import type { PluginManifest, PluginContentMapping } from "@orqastudio/types";
 export interface FileHashEntry {
-    sourceHash: string;
-    installedHash: string;
+    readonly sourceHash: string;
+    readonly installedHash: string;
 }
 export type ThreeWayState = "clean" | "plugin-updated" | "user-modified" | "conflict" | "missing";
 export interface ThreeWayFileStatus {
-    path: string;
-    state: ThreeWayState;
+    readonly path: string;
+    readonly state: ThreeWayState;
 }
 export interface CopyResult {
-    copied: Record<string, FileHashEntry>;
-    skipped: ThreeWayFileStatus[];
+    readonly copied: Record<string, FileHashEntry>;
+    readonly skipped: ThreeWayFileStatus[];
 }
 export interface ContentManifest {
     plugins: Record<string, ContentManifestEntry>;
@@ -33,17 +33,17 @@ export interface ContentManifestEntry {
     files: Record<string, FileHashEntry>;
 }
 export interface ContentDiffResult {
-    pluginName: string;
+    readonly pluginName: string;
     /** Files whose content is identical between plugin source and .orqa/ copy. */
-    identical: string[];
+    readonly identical: string[];
     /** Files in .orqa/ that differ from the plugin source. */
-    modified: string[];
+    readonly modified: string[];
     /** Files in the manifest but deleted from .orqa/. */
-    missing: string[];
+    readonly missing: string[];
     /** Files found in the plugin's target dirs that are not in the manifest. */
-    orphaned: string[];
+    readonly orphaned: string[];
     /** Three-way state for each tracked file. */
-    threeWay: ThreeWayFileStatus[];
+    readonly threeWay: ThreeWayFileStatus[];
 }
 /**
  * Read `.orqa/manifest.json` from the project root.
@@ -140,6 +140,19 @@ export declare function refreshPluginContent(pluginDir: string, projectRoot: str
  * @returns The three-way state of the file.
  */
 export declare function computeThreeWayState(relPath: string, projectRoot: string, lastEntry: FileHashEntry, currentSourceHash: string): ThreeWayState;
+/**
+ * Pure three-way diff state computation from pre-computed hashes with no I/O.
+ *
+ * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
+ * by comparing the current installed hash against the baseline recorded at install
+ * time and the current plugin source hash.
+ *
+ * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
+ * @param lastEntry - The hash entry recorded at last install (baseline hashes).
+ * @param currentSourceHash - Current hash of the file in the plugin source.
+ * @returns The three-way state of the file.
+ */
+export declare function computeThreeWayStateFromHashes(currentInstalledHash: string, lastEntry: FileHashEntry, currentSourceHash: string): ThreeWayState;
 /**
  * Compute the SHA-256 hash of a file.
  * @param filePath - Absolute path to the file to hash.

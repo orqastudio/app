@@ -4,7 +4,7 @@
 		DropdownMenuSeparator,
 		DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
 		PopoverRoot as Popover, PopoverTrigger, PopoverContent,
-		Button,
+		Button, HStack, Stack, Caption,
 		statusIconName, resolveIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
@@ -28,15 +28,15 @@
 		onFilterChange,
 		onGroupChange,
 	}: {
-		sortableFields: SortableField[];
-		filterableFields: FilterableField[];
+		sortableFields: readonly SortableField[];
+		filterableFields: readonly FilterableField[];
 		navigationConfig?: NavigationConfig;
-		nodes: DocNode[];
-		currentSort: SortConfig;
-		currentFilters: Record<string, string[]>;
+		nodes: readonly DocNode[];
+		currentSort: Readonly<SortConfig>;
+		currentFilters: Readonly<Record<string, readonly string[]>>;
 		currentGroup: string | null;
 		onSortChange: (sort: SortConfig) => void;
-		onFilterChange: (filters: Record<string, string[]>) => void;
+		onFilterChange: (filters: Record<string, readonly string[]>) => void;
 		onGroupChange: (group: string | null) => void;
 	} = $props();
 
@@ -82,18 +82,18 @@
 
 	function toggleFilter(field: string, value: string) {
 		const current = currentFilters[field] ?? [];
-		const updated = current.includes(value)
+		const updated: readonly string[] = current.includes(value)
 			? current.filter((v) => v !== value)
 			: [...current, value];
-		onFilterChange({ ...currentFilters, [field]: updated });
+		onFilterChange({ ...currentFilters, [field]: updated } as Record<string, readonly string[]>);
 	}
 
 	function clearFieldFilters(field: string) {
-		onFilterChange({ ...currentFilters, [field]: [] });
+		onFilterChange({ ...currentFilters, [field]: [] as readonly string[] } as Record<string, readonly string[]>);
 	}
 
 	function clearAllFilters() {
-		const cleared: Record<string, string[]> = {};
+		const cleared: Record<string, readonly string[]> = {};
 		for (const key of Object.keys(currentFilters)) {
 			cleared[key] = [];
 		}
@@ -125,7 +125,7 @@
 	]);
 </script>
 
-<div class="flex h-10 items-center justify-end gap-1 border-b border-border px-2">
+<div class="flex items-center justify-end gap-1 h-10 border-b border-border px-2">
 	<!-- Sort dropdown -->
 	<div class="relative">
 		<DropdownMenuRoot>
@@ -135,14 +135,13 @@
 						{...props}
 						variant="ghost"
 						size="icon-sm"
-						class="text-muted-foreground hover:text-foreground {isNonDefaultSort ? 'text-foreground' : ''}"
 					>
 						<Icon name="arrow-up-down" size="sm" />
 					</Button>
 				{/snippet}
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align="start" class="w-52">
-				<DropdownMenuLabel class="text-xs text-muted-foreground">Sort by</DropdownMenuLabel>
+			<DropdownMenuContent align="start">
+				<DropdownMenuLabel>Sort by</DropdownMenuLabel>
 				<DropdownMenuRadioGroup value={sortValue} onValueChange={setSortFromValue}>
 					{#each sortOptions as option (option.value)}
 						<DropdownMenuRadioItem value={option.value}>
@@ -153,27 +152,27 @@
 
 				{#if filterableFields.length > 0}
 					<DropdownMenuSeparator />
-					<DropdownMenuLabel class="text-xs text-muted-foreground">Group by</DropdownMenuLabel>
+					<DropdownMenuLabel>Group by</DropdownMenuLabel>
 					<DropdownMenuItem onclick={() => onGroupChange(null)}>
-						<span class="flex items-center gap-2">
+						<HStack gap={2}>
 							{#if currentGroup === null}
 								<Icon name="check" size="sm" />
 							{:else}
 								<span class="h-3.5 w-3.5"></span>
 							{/if}
 							None
-						</span>
+						</HStack>
 					</DropdownMenuItem>
 					{#each filterableFields as field (field.name)}
 						<DropdownMenuItem onclick={() => onGroupChange(field.name)}>
-							<span class="flex items-center gap-2">
+							<HStack gap={2}>
 								{#if currentGroup === field.name}
 									<Icon name="check" size="sm" />
 								{:else}
 									<span class="h-3.5 w-3.5"></span>
 								{/if}
 								{humanizeField(field.name)}
-							</span>
+							</HStack>
 						</DropdownMenuItem>
 					{/each}
 				{/if}
@@ -181,7 +180,7 @@
 		</DropdownMenuRoot>
 		{#if isNonDefaultSort}
 			<span
-				class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-blue-500"
+				class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
 			></span>
 		{/if}
 	</div>
@@ -196,36 +195,36 @@
 							{...props}
 							variant="ghost"
 							size="icon-sm"
-							class="text-muted-foreground hover:text-foreground {hasActiveFilters ? 'text-foreground' : ''}"
 						>
 							<Icon name="filter" size="sm" />
 						</Button>
 					{/snippet}
 				</PopoverTrigger>
-				<PopoverContent align="start" class="w-64 p-0">
-					<div class="flex flex-col">
+				<PopoverContent align="start">
+					<Stack gap={0}>
 						{#each filterableFields as field (field.name)}
 							{@const counts = countFieldValues(nodes, field.name)}
 							<div class="border-b border-border last:border-0">
-								<div class="flex items-center justify-between px-3 py-2">
-									<span class="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+								<HStack justify="between">
+									<Caption>
 										{humanizeField(field.name)}
-									</span>
+									</Caption>
 									{#if (currentFilters[field.name] ?? []).length > 0}
-										<button
-											class="text-[10px] text-muted-foreground hover:text-foreground"
+										<Button
+											variant="ghost"
+											size="sm"
 											onclick={() => clearFieldFilters(field.name)}
 										>
 											Clear
-										</button>
+										</Button>
 									{/if}
-								</div>
-								<div class="flex flex-col pb-1">
+								</HStack>
+								<Stack gap={0}>
 									{#each field.values as value (value)}
 										{@const active = isFilterActive(field.name, value)}
 										{@const count = counts[value] ?? 0}
-										<button
-											class="flex items-center gap-2 px-3 py-1.5 text-left text-sm hover:bg-accent/50"
+										<Button
+											variant="ghost"
 											onclick={() => toggleFilter(field.name, value)}
 										>
 											<!-- Checkbox indicator -->
@@ -245,30 +244,30 @@
 											{/if}
 											<span class="flex-1 capitalize">{humanizeValue(value)}</span>
 											{#if count > 0}
-												<span class="tabular-nums text-[10px] text-muted-foreground">{count}</span>
+												<Caption>{count}</Caption>
 											{/if}
-										</button>
+										</Button>
 									{/each}
-								</div>
+								</Stack>
 							</div>
 						{/each}
 
 						{#if hasActiveFilters}
 							<div class="border-t border-border p-2">
-								<button
-									class="w-full rounded px-2 py-1.5 text-center text-xs text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+								<Button
+									variant="ghost"
 									onclick={clearAllFilters}
 								>
 									Clear all filters
-								</button>
+								</Button>
 							</div>
 						{/if}
-					</div>
+					</Stack>
 				</PopoverContent>
 			</Popover>
 			{#if hasActiveFilters}
 				<span
-					class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-blue-500"
+					class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
 				></span>
 			{/if}
 		</div>

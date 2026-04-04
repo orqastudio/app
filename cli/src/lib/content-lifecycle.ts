@@ -19,20 +19,20 @@ import type { PluginManifest, PluginContentMapping } from "@orqastudio/types";
 // ---------------------------------------------------------------------------
 
 export interface FileHashEntry {
-	sourceHash: string;
-	installedHash: string;
+	readonly sourceHash: string;
+	readonly installedHash: string;
 }
 
 export type ThreeWayState = "clean" | "plugin-updated" | "user-modified" | "conflict" | "missing";
 
 export interface ThreeWayFileStatus {
-	path: string;
-	state: ThreeWayState;
+	readonly path: string;
+	readonly state: ThreeWayState;
 }
 
 export interface CopyResult {
-	copied: Record<string, FileHashEntry>;
-	skipped: ThreeWayFileStatus[];
+	readonly copied: Record<string, FileHashEntry>;
+	readonly skipped: ThreeWayFileStatus[];
 }
 
 export interface ContentManifest {
@@ -49,17 +49,17 @@ export interface ContentManifestEntry {
 }
 
 export interface ContentDiffResult {
-	pluginName: string;
+	readonly pluginName: string;
 	/** Files whose content is identical between plugin source and .orqa/ copy. */
-	identical: string[];
+	readonly identical: string[];
 	/** Files in .orqa/ that differ from the plugin source. */
-	modified: string[];
+	readonly modified: string[];
 	/** Files in the manifest but deleted from .orqa/. */
-	missing: string[];
+	readonly missing: string[];
 	/** Files found in the plugin's target dirs that are not in the manifest. */
-	orphaned: string[];
+	readonly orphaned: string[];
 	/** Three-way state for each tracked file. */
-	threeWay: ThreeWayFileStatus[];
+	readonly threeWay: ThreeWayFileStatus[];
 }
 
 // ---------------------------------------------------------------------------

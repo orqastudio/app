@@ -132,14 +132,9 @@ export class ArtifactGraphSDK {
 
 	/** Get all relationship keys for a given semantic category. */
 	keysForSemantic(semantic: string): string[] {
-		const keys: string[] = [];
-		for (const rel of this.registry.allRelationships) {
-			if (rel.semantic === semantic) {
-				keys.push(rel.key);
-				if (rel.inverse !== rel.key) keys.push(rel.inverse);
-			}
-		}
-		return keys;
+		return this.registry.allRelationships
+			.filter((rel) => rel.semantic === semantic)
+			.flatMap((rel) => rel.inverse !== rel.key ? [rel.key, rel.inverse] : [rel.key]);
 	}
 
 	/** Validate a relationship between two artifact types. Returns null if valid. */
@@ -240,11 +235,11 @@ export class ArtifactGraphSDK {
 	// Relationship queries — synchronous
 	// -----------------------------------------------------------------------
 
-	referencesFrom(id: string): ArtifactRef[] {
+	referencesFrom(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_out ?? [];
 	}
 
-	referencesTo(id: string): ArtifactRef[] {
+	referencesTo(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_in ?? [];
 	}
 
@@ -253,23 +248,11 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	byType(type: string): ArtifactNode[] {
-		const result: ArtifactNode[] = [];
-		for (const node of this.graph.values()) {
-			if (node.artifact_type === type) {
-				result.push(node);
-			}
-		}
-		return result;
+		return Array.from(this.graph.values()).filter((n) => n.artifact_type === type);
 	}
 
 	byStatus(status: string): ArtifactNode[] {
-		const result: ArtifactNode[] = [];
-		for (const node of this.graph.values()) {
-			if (node.status === status) {
-				result.push(node);
-			}
-		}
-		return result;
+		return Array.from(this.graph.values()).filter((n) => n.status === status);
 	}
 
 	// -----------------------------------------------------------------------
@@ -290,25 +273,15 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	brokenRefs(): ArtifactRef[] {
-		const result: ArtifactRef[] = [];
-		for (const node of this.graph.values()) {
-			for (const ref of node.references_out) {
-				if (!this.graph.has(ref.target_id)) {
-					result.push(ref);
-				}
-			}
-		}
-		return result;
+		return Array.from(this.graph.values()).flatMap((node) =>
+			node.references_out.filter((ref) => !this.graph.has(ref.target_id)),
+		);
 	}
 
 	orphans(): ArtifactNode[] {
-		const result: ArtifactNode[] = [];
-		for (const node of this.graph.values()) {
-			if (node.references_out.length === 0 && node.references_in.length === 0) {
-				result.push(node);
-			}
-		}
-		return result;
+		return Array.from(this.graph.values()).filter(
+			(n) => n.references_out.length === 0 && n.references_in.length === 0,
+		);
 	}
 
 	// -----------------------------------------------------------------------
@@ -318,27 +291,23 @@ export class ArtifactGraphSDK {
 	traverse(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
 		if (!node) return [];
-		const result: ArtifactNode[] = [];
-		for (const ref of node.references_out) {
-			if (ref.relationship_type === relationshipType) {
+		return node.references_out
+			.filter((ref) => ref.relationship_type === relationshipType)
+			.flatMap((ref) => {
 				const target = this.graph.get(ref.target_id);
-				if (target) result.push(target);
-			}
-		}
-		return result;
+				return target ? [target] : [];
+			});
 	}
 
 	traverseIncoming(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
 		if (!node) return [];
-		const result: ArtifactNode[] = [];
-		for (const ref of node.references_in) {
-			if (ref.relationship_type === relationshipType) {
+		return node.references_in
+			.filter((ref) => ref.relationship_type === relationshipType)
+			.flatMap((ref) => {
 				const source = this.graph.get(ref.source_id);
-				if (source) result.push(source);
-			}
-		}
-		return result;
+				return source ? [source] : [];
+			});
 	}
 
 	/** Get all outgoing relationships from an artifact with resolved targets. */
@@ -608,7 +577,7 @@ export class ArtifactGraphSDK {
 		}
 	}
 
-	private _notifySubscribers(newGraph: Map<string, ArtifactNode>): void {
+	private _notifySubscribers(newGraph: ReadonlyMap<string, ArtifactNode>): void {
 		for (const [id, callbacks] of this.nodeSubscribers) {
 			const node = newGraph.get(id);
 			if (node) {

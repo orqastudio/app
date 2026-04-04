@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { CollapsibleRoot as Collapsible, CollapsibleTrigger, CollapsibleContent } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { EmptyState } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
+	import { Caption } from "@orqastudio/svelte-components/pure";
 	import { ArtifactListItem } from "@orqastudio/svelte-components/connected";
 	import ArtifactToolbar from "$lib/components/navigation/ArtifactToolbar.svelte";
 	import { getStores } from "@orqastudio/sdk";
@@ -73,7 +73,7 @@
 	// ---- View state (reactive, per category) ----
 
 	let currentSort = $state<SortConfig>({ field: "title", direction: "asc" });
-	let currentFilters = $state<Record<string, string[]>>({});
+	let currentFilters = $state<Readonly<Record<string, readonly string[]>>>({});
 	let currentGroup = $state<string | null>(null);
 
 	// When category changes, load the view state for it
@@ -87,19 +87,19 @@
 	function handleSortChange(sort: SortConfig) {
 		currentSort = sort;
 		const state = getViewState(category);
-		state.sort = sort;
+		viewStates.set(category, { ...state, sort });
 	}
 
-	function handleFilterChange(filters: Record<string, string[]>) {
+	function handleFilterChange(filters: Record<string, readonly string[]>) {
 		currentFilters = filters;
 		const state = getViewState(category);
-		state.filters = filters;
+		viewStates.set(category, { ...state, filters });
 	}
 
 	function handleGroupChange(group: string | null) {
 		currentGroup = group;
 		const state = getViewState(category);
-		state.group = group;
+		viewStates.set(category, { ...state, group });
 	}
 
 	// ---- Processed nodes (filter → sort) ----
@@ -189,7 +189,7 @@
 		/>
 	{/if}
 
-	<ScrollArea class="min-h-0 flex-1">
+	<div class="min-h-0 flex-1 overflow-y-auto">
 		<div class="p-1">
 			{#if loading}
 				<div class="flex items-center justify-center py-8">
@@ -208,8 +208,8 @@
 					/>
 				</div>
 			{:else if processedNodes.length === 0}
-				<div class="px-2 py-4 text-center text-xs text-muted-foreground">
-					No matching items.
+				<div class="flex items-center justify-center px-2 py-4">
+					<Caption>No matching items.</Caption>
 				</div>
 			{:else if isTree}
 				<div class="space-y-0.5 p-1">
@@ -255,7 +255,7 @@
 				{/each}
 			{/if}
 		</div>
-	</ScrollArea>
+	</div>
 </div>
 
 {#snippet treeSection(node: DocNode, depth: number)}

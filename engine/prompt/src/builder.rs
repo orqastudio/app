@@ -55,34 +55,33 @@ pub fn read_governance_file(
 /// on demand via the `load_knowledge` tool (P5: token efficiency).
 pub fn list_knowledge_catalog(project_path: &Path, knowledge_path: &str) -> Vec<(String, String)> {
     let knowledge_dir = project_path.join(knowledge_path);
-    let mut catalog = Vec::new();
-
     let Ok(read_dir) = std::fs::read_dir(&knowledge_dir) else {
-        return catalog;
+        return Vec::new();
     };
 
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if !path.is_file() || path.extension().is_none_or(|e| e != "md") {
-            continue;
-        }
-
-        let knowledge_name = path
-            .file_stem()
-            .map(|s| s.to_string_lossy().into_owned())
-            .unwrap_or_default();
-        let description = std::fs::read_to_string(&path)
-            .ok()
-            .and_then(|content| {
-                content
-                    .lines()
-                    .find(|l| !l.trim().is_empty())
-                    .map(|l| l.trim_start_matches('#').trim().to_owned())
-            })
-            .unwrap_or_else(|| "No description".to_owned());
-
-        catalog.push((knowledge_name, description));
-    }
+    let mut catalog: Vec<(String, String)> = read_dir
+        .flatten()
+        .filter_map(|entry| {
+            let path = entry.path();
+            if !path.is_file() || path.extension().is_none_or(|e| e != "md") {
+                return None;
+            }
+            let knowledge_name = path
+                .file_stem()
+                .map(|s| s.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            let description = std::fs::read_to_string(&path)
+                .ok()
+                .and_then(|content| {
+                    content
+                        .lines()
+                        .find(|l| !l.trim().is_empty())
+                        .map(|l| l.trim_start_matches('#').trim().to_owned())
+                })
+                .unwrap_or_else(|| "No description".to_owned());
+            Some((knowledge_name, description))
+        })
+        .collect();
 
     catalog.sort_by(|a, b| a.0.cmp(&b.0));
     catalog
@@ -98,32 +97,32 @@ pub fn list_knowledge_catalog(project_path: &Path, knowledge_path: &str) -> Vec<
 /// Rules are included in full because they are always relevant to every agent (P5).
 pub fn read_rules(project_path: &Path, rules_path: &str) -> Vec<(String, String)> {
     let rules_dir = project_path.join(rules_path);
-    let mut rules = Vec::new();
-
     let Ok(read_dir) = std::fs::read_dir(&rules_dir) else {
-        return rules;
+        return Vec::new();
     };
 
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if path.extension().and_then(|e| e.to_str()) != Some("md") {
-            continue;
-        }
-
-        let rule_name = path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("unknown")
-            .to_owned();
-
-        match std::fs::read_to_string(&path) {
-            Ok(contents) => rules.push((rule_name, contents)),
-            Err(e) => {
-                // Surface rule file read failures instead of silently skipping them.
-                tracing::warn!(path = %path.display(), error = %e, "[engine] failed to read rule file");
+    let mut rules: Vec<(String, String)> = read_dir
+        .flatten()
+        .filter(|entry| {
+            entry.path().extension().and_then(|e| e.to_str()) == Some("md")
+        })
+        .filter_map(|entry| {
+            let path = entry.path();
+            let rule_name = path
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("unknown")
+                .to_owned();
+            match std::fs::read_to_string(&path) {
+                Ok(contents) => Some((rule_name, contents)),
+                Err(e) => {
+                    // Surface rule file read failures instead of silently skipping them.
+                    tracing::warn!(path = %path.display(), error = %e, "[engine] failed to read rule file");
+                    None
+                }
             }
-        }
-    }
+        })
+        .collect();
 
     rules.sort_by(|a, b| a.0.cmp(&b.0));
     rules
@@ -141,20 +140,12 @@ pub fn read_rules(project_path: &Path, rules_path: &str) -> Vec<(String, String)
 /// markdown content of individual agents should read `.claude/agents/` directly.
 /// Returns an empty vec if no installed plugins define agents.
 pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinition> {
-    let mut agents: Vec<AgentDefinition> = Vec::new();
-
     // Primary source: provides.agents in installed plugin manifests.
-    let discovered = scan_plugins(project_path);
-    for plugin in &discovered {
-        let plugin_path = Path::new(&plugin.path);
-        if let Ok(manifest) = read_manifest(plugin_path) {
-            for agent_def in manifest.provides.agents {
-                agents.push(agent_def);
-            }
-        }
-    }
-
-    agents
+    scan_plugins(project_path)
+        .iter()
+        .filter_map(|plugin| read_manifest(Path::new(&plugin.path)).ok())
+        .flat_map(|manifest| manifest.provides.agents)
+        .collect()
 }
 
 /// Read agent markdown files from the installed agents directory.
@@ -166,28 +157,25 @@ pub fn collect_plugin_agent_definitions(project_path: &Path) -> Vec<AgentDefinit
 /// Returns an empty vec if the agents directory does not exist.
 fn read_installed_agent_files(project_path: &Path, agents_path: &str) -> Vec<(String, String)> {
     let agents_dir = project_path.join(agents_path);
-    let mut agent_files = Vec::new();
-
     let Ok(read_dir) = std::fs::read_dir(&agents_dir) else {
-        return agent_files;
+        return Vec::new();
     };
 
-    for entry in read_dir.flatten() {
-        let path = entry.path();
-        if !path.is_file() || path.extension().and_then(|e| e.to_str()) != Some("md") {
-            continue;
-        }
-
-        let stem = path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("unknown")
-            .to_owned();
-
-        if let Ok(contents) = std::fs::read_to_string(&path) {
-            agent_files.push((stem, contents));
-        }
-    }
+    let mut agent_files: Vec<(String, String)> = read_dir
+        .flatten()
+        .filter_map(|entry| {
+            let path = entry.path();
+            if !path.is_file() || path.extension().and_then(|e| e.to_str()) != Some("md") {
+                return None;
+            }
+            let stem = path
+                .file_stem()
+                .and_then(|s| s.to_str())
+                .unwrap_or("unknown")
+                .to_owned();
+            std::fs::read_to_string(&path).ok().map(|contents| (stem, contents))
+        })
+        .collect();
 
     agent_files.sort_by(|a, b| a.0.cmp(&b.0));
     agent_files
@@ -351,47 +339,53 @@ pub fn assemble_system_prompt(
     claude_md: Option<&str>,
     agent_files: &[(String, String)],
 ) -> String {
-    let mut parts: Vec<String> = Vec::new();
-
     // Role/stage header gives the agent immediate context without consuming
     // a large token budget (P5: token efficiency).
-    if let Some(s) = stage {
-        parts.push(format!("# Project Governance\n\nRole: {role} | Stage: {s}"));
+    let header = if let Some(s) = stage {
+        format!("# Project Governance\n\nRole: {role} | Stage: {s}")
     } else {
-        parts.push(format!("# Project Governance\n\nRole: {role}"));
-    }
+        format!("# Project Governance\n\nRole: {role}")
+    };
 
-    if !rules.is_empty() {
-        parts.push("\n## Rules".to_owned());
-        for (name, content) in rules {
-            parts.push(format!("\n### {name}\n\n{content}"));
-        }
-    }
+    let rules_section: Vec<String> = if rules.is_empty() {
+        Vec::new()
+    } else {
+        std::iter::once("\n## Rules".to_owned())
+            .chain(rules.iter().map(|(name, content)| format!("\n### {name}\n\n{content}")))
+            .collect()
+    };
 
-    if !catalog.is_empty() {
-        parts.push("\n## Available Knowledge".to_owned());
-        parts.push(
-            "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_owned(),
-        );
-        for (name, description) in catalog {
-            parts.push(format!("- **{name}**: {description}"));
-        }
-    }
+    let knowledge_section: Vec<String> = if catalog.is_empty() {
+        Vec::new()
+    } else {
+        std::iter::once("\n## Available Knowledge".to_owned())
+            .chain(std::iter::once(
+                "Use the `load_knowledge` tool to load the full content of any knowledge artifact by name.".to_owned(),
+            ))
+            .chain(catalog.iter().map(|(name, description)| format!("- **{name}**: {description}")))
+            .collect()
+    };
 
-    if let Some(md) = claude_md {
-        parts.push("\n## Project Instructions".to_owned());
-        parts.push(md.to_owned());
-    }
+    let instructions_section: Vec<String> = claude_md
+        .map(|md| vec!["\n## Project Instructions".to_owned(), md.to_owned()])
+        .unwrap_or_default();
 
     // Agent definitions come from installed plugin content (P1: Plugin-Composed Everything).
-    if !agent_files.is_empty() {
-        parts.push("\n## Agent Definitions".to_owned());
-        for (_name, content) in agent_files {
-            parts.push(content.clone());
-        }
-    }
+    let agents_section: Vec<String> = if agent_files.is_empty() {
+        Vec::new()
+    } else {
+        std::iter::once("\n## Agent Definitions".to_owned())
+            .chain(agent_files.iter().map(|(_name, content)| content.clone()))
+            .collect()
+    };
 
-    parts.join("\n")
+    std::iter::once(header)
+        .chain(rules_section)
+        .chain(knowledge_section)
+        .chain(instructions_section)
+        .chain(agents_section)
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 /// Resolve the system prompt from a known project root path, logging on failure.

@@ -34,17 +34,17 @@ import {
  */
 interface AgentDefinition {
 	/** File name without extension, used as the .claude/agents/<name>.md path. */
-	fileName: string;
+	readonly fileName: string;
 	/** YAML frontmatter: name field (displayed in Claude Code UI). */
-	displayName: string;
+	readonly displayName: string;
 	/** YAML frontmatter: description field. */
-	description: string;
+	readonly description: string;
 	/** YAML frontmatter: tools field (comma-separated). */
-	tools: string;
+	readonly tools: string;
 	/** YAML frontmatter: maxTurns field. */
-	maxTurns: number;
+	readonly maxTurns: number;
 	/** Full markdown body after the frontmatter (no leading/trailing blank lines). */
-	body: string;
+	readonly body: string;
 }
 
 /** Code documentation standard injected into roles that create or modify files. */

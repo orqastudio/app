@@ -1,8 +1,16 @@
+// Tauri IPC commands for session management.
+//
+// Sessions are persisted in the project-scoped SQLite database via engine/storage.
+//
+// ID representation: `session_id` and `project_id` parameters are raw `i64` SQLite
+// rowids. Tauri's IPC boundary deserializes JSON numbers directly to Rust primitives;
+// newtype wrappers across IPC would require custom serde implementations on every
+// command parameter. The storage layer is the correct migration point for typed IDs.
+
 use tauri::State;
 
 use crate::domain::session::{Session, SessionSummary};
 use crate::error::OrqaError;
-use crate::repo::session_repo;
 use crate::state::AppState;
 
 /// Create a new session for a project.
@@ -20,14 +28,8 @@ pub fn session_create(
         return Err(OrqaError::Validation("model cannot be empty".to_owned()));
     }
 
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let session = session_repo::create(
-        &conn,
+    let storage = state.db.get()?;
+    let session = storage.sessions().create(
         project_id,
         model_str.trim(),
         system_prompt.as_deref(),
@@ -59,24 +61,17 @@ pub fn session_list(
         ));
     }
 
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    session_repo::list(&conn, project_id, status.as_deref(), limit_val, offset_val)
+    let storage = state.db.get()?;
+    Ok(storage
+        .sessions()
+        .list(project_id, status.as_deref(), limit_val, offset_val)?)
 }
 
 /// Get a session by its ID.
 #[tauri::command]
 pub fn session_get(session_id: i64, state: State<'_, AppState>) -> Result<Session, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::get(&conn, session_id)
+    let storage = state.db.get()?;
+    Ok(storage.sessions().get(session_id)?)
 }
 
 /// Update the title of a session.
@@ -90,23 +85,15 @@ pub fn session_update_title(
         return Err(OrqaError::Validation("title cannot be empty".to_owned()));
     }
 
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::update_title(&conn, session_id, title.trim())
+    let storage = state.db.get()?;
+    Ok(storage.sessions().update_title(session_id, title.trim())?)
 }
 
 /// End a session (mark as completed).
 #[tauri::command]
 pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::end_session(&conn, session_id)?;
+    let storage = state.db.get()?;
+    storage.sessions().end_session(session_id)?;
     tracing::info!(subsystem = "session", session_id = session_id, "session_end");
     Ok(())
 }
@@ -114,32 +101,29 @@ pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), Or
 /// Delete a session and its messages (cascading).
 #[tauri::command]
 pub fn session_delete(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-    session_repo::delete(&conn, session_id)?;
+    let storage = state.db.get()?;
+    storage.sessions().delete(session_id)?;
     tracing::info!(subsystem = "session", session_id = session_id, "session_delete");
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::db::init_memory_db;
     use crate::domain::session::SessionStatus;
-    use crate::repo::{project_repo, session_repo};
 
-    fn setup() -> rusqlite::Connection {
-        let conn = init_memory_db().expect("db init");
-        project_repo::create(&conn, "test", "/test", None).expect("create project");
-        conn
+    fn setup() -> (orqa_storage::Storage, i64) {
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let project = storage
+            .projects()
+            .create("test", "/test", None)
+            .expect("create project");
+        (storage, project.id)
     }
 
     #[test]
     fn create_session_with_defaults() {
-        let conn = setup();
-        let session = session_repo::create(&conn, 1, "auto", None).expect("create");
+        let (storage, project_id) = setup();
+        let session = storage.sessions().create(project_id, "auto", None).expect("create");
         assert_eq!(session.model, "auto");
         assert_eq!(session.status, SessionStatus::Active);
         assert!(session.system_prompt.is_none());
@@ -147,14 +131,11 @@ mod tests {
 
     #[test]
     fn create_session_with_model_and_prompt() {
-        let conn = setup();
-        let session = session_repo::create(
-            &conn,
-            1,
-            "claude-opus-4-6",
-            Some("You are a helpful assistant"),
-        )
-        .expect("create");
+        let (storage, project_id) = setup();
+        let session = storage
+            .sessions()
+            .create(project_id, "claude-opus-4-6", Some("You are a helpful assistant"))
+            .expect("create");
         assert_eq!(session.model, "claude-opus-4-6");
         assert_eq!(
             session.system_prompt.as_deref(),
@@ -164,95 +145,94 @@ mod tests {
 
     #[test]
     fn list_sessions_with_defaults() {
-        let conn = setup();
-        session_repo::create(&conn, 1, "auto", None).expect("create s1");
-        session_repo::create(&conn, 1, "auto", None).expect("create s2");
+        let (storage, project_id) = setup();
+        storage.sessions().create(project_id, "auto", None).expect("create s1");
+        storage.sessions().create(project_id, "auto", None).expect("create s2");
 
-        let sessions = session_repo::list(&conn, 1, None, 50, 0).expect("list");
+        let sessions = storage.sessions().list(project_id, None, 50, 0).expect("list");
         assert_eq!(sessions.len(), 2);
     }
 
     #[test]
     fn list_sessions_with_status_filter() {
-        let conn = setup();
-        session_repo::create(&conn, 1, "auto", None).expect("create s1");
-        let s2 = session_repo::create(&conn, 1, "auto", None).expect("create s2");
-        session_repo::end_session(&conn, s2.id).expect("end s2");
+        let (storage, project_id) = setup();
+        storage.sessions().create(project_id, "auto", None).expect("create s1");
+        let s2 = storage.sessions().create(project_id, "auto", None).expect("create s2");
+        storage.sessions().end_session(s2.id).expect("end s2");
 
-        let active = session_repo::list(&conn, 1, Some("active"), 50, 0).expect("list active");
+        let active = storage.sessions().list(project_id, Some("active"), 50, 0).expect("list active");
         assert_eq!(active.len(), 1);
 
-        let completed =
-            session_repo::list(&conn, 1, Some("completed"), 50, 0).expect("list completed");
+        let completed = storage.sessions().list(project_id, Some("completed"), 50, 0).expect("list completed");
         assert_eq!(completed.len(), 1);
     }
 
     #[test]
     fn list_sessions_with_pagination() {
-        let conn = setup();
+        let (storage, project_id) = setup();
         for _ in 0..5 {
-            session_repo::create(&conn, 1, "auto", None).expect("create");
+            storage.sessions().create(project_id, "auto", None).expect("create");
         }
 
-        let page = session_repo::list(&conn, 1, None, 2, 0).expect("page 1");
+        let page = storage.sessions().list(project_id, None, 2, 0).expect("page 1");
         assert_eq!(page.len(), 2);
 
-        let page = session_repo::list(&conn, 1, None, 2, 4).expect("page 3");
+        let page = storage.sessions().list(project_id, None, 2, 4).expect("page 3");
         assert_eq!(page.len(), 1);
     }
 
     #[test]
     fn get_session_by_id() {
-        let conn = setup();
-        let created = session_repo::create(&conn, 1, "auto", None).expect("create");
-        let fetched = session_repo::get(&conn, created.id).expect("get");
+        let (storage, project_id) = setup();
+        let created = storage.sessions().create(project_id, "auto", None).expect("create");
+        let fetched = storage.sessions().get(created.id).expect("get");
         assert_eq!(fetched.id, created.id);
         assert_eq!(fetched.model, "auto");
     }
 
     #[test]
     fn get_nonexistent_session() {
-        let conn = setup();
-        let result = session_repo::get(&conn, 999);
+        let (storage, _) = setup();
+        let result = storage.sessions().get(999);
         assert!(result.is_err());
     }
 
     #[test]
     fn update_title_works() {
-        let conn = setup();
-        let session = session_repo::create(&conn, 1, "auto", None).expect("create");
+        let (storage, project_id) = setup();
+        let session = storage.sessions().create(project_id, "auto", None).expect("create");
         assert!(session.title.is_none());
 
-        session_repo::update_title(&conn, session.id, "My Session").expect("update");
-        let fetched = session_repo::get(&conn, session.id).expect("get");
+        storage.sessions().update_title(session.id, "My Session").expect("update");
+        let fetched = storage.sessions().get(session.id).expect("get");
         assert_eq!(fetched.title.as_deref(), Some("My Session"));
     }
 
     #[test]
     fn end_session_marks_completed() {
-        let conn = setup();
-        let session = session_repo::create(&conn, 1, "auto", None).expect("create");
+        let (storage, project_id) = setup();
+        let session = storage.sessions().create(project_id, "auto", None).expect("create");
         assert_eq!(session.status, SessionStatus::Active);
 
-        session_repo::end_session(&conn, session.id).expect("end");
-        let fetched = session_repo::get(&conn, session.id).expect("get");
+        storage.sessions().end_session(session.id).expect("end");
+        let fetched = storage.sessions().get(session.id).expect("get");
         assert_eq!(fetched.status, SessionStatus::Completed);
     }
 
     #[test]
     fn delete_session_cascades() {
-        let conn = setup();
-        let session = session_repo::create(&conn, 1, "auto", None).expect("create");
-        session_repo::delete(&conn, session.id).expect("delete");
+        let (storage, project_id) = setup();
+        let session = storage.sessions().create(project_id, "auto", None).expect("create");
+        storage.sessions().delete(session.id).expect("delete");
 
-        let result = session_repo::get(&conn, session.id);
+        let result = storage.sessions().get(session.id);
         assert!(result.is_err());
     }
 
     #[test]
     fn delete_nonexistent_session() {
-        let conn = setup();
-        let result = session_repo::delete(&conn, 999);
+        let (storage, _) = setup();
+        let result = storage.sessions().delete(999);
         assert!(result.is_err());
     }
 

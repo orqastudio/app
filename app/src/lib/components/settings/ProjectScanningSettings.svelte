@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
+	import { Switch } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ProjectScanResult } from "@orqastudio/types";
 	import { CLAUDE_MODEL_OPTIONS } from "$lib/components/conversation/model-options";
 
@@ -93,99 +93,89 @@
 		<CardTitle>Model & Scanning</CardTitle>
 		<CardDescription>Default model, excluded paths, and detected project stack</CardDescription>
 	</CardHeader>
-	<CardContent class="space-y-4">
-		<div>
-			<span class="text-sm font-medium">Default Model</span>
-			<div class="mt-1">
-				<SelectMenu
-					items={modelOptions}
-					selected={localModel}
-					onSelect={handleModelChange}
-					triggerLabel={modelOptions.find((o) => o.value === localModel)?.label ?? "Auto"}
-					triggerSize="default"
-					align="start"
-				/>
+	<CardContent>
+		<FormGroup
+			label="Default Model"
+			description={modelOptions.find((o) => o.value === localModel)?.description ?? ""}
+		>
+			<SelectMenu
+				items={modelOptions}
+				selected={localModel}
+				onSelect={handleModelChange}
+				triggerLabel={modelOptions.find((o) => o.value === localModel)?.label ?? "Auto"}
+				triggerSize="default"
+				align="start"
+			/>
+		</FormGroup>
+
+		<Separator />
+
+		<div class="flex items-center justify-between">
+			<div class="flex flex-col gap-0.5">
+				<span class="text-sm font-medium">Show Thinking</span>
+				<span class="text-xs text-muted-foreground">Stream Claude's reasoning process during responses</span>
 			</div>
-			<p class="mt-1 text-xs text-muted-foreground">
-				{modelOptions.find((o) => o.value === localModel)?.description ?? ""}
-			</p>
+			<Switch
+				bind:checked={localShowThinking}
+				size="sm"
+				aria-label="Toggle show thinking"
+				onCheckedChange={() => props.onSave(buildSettings())}
+			/>
 		</div>
 
 		<Separator />
 
-		<div>
-			<div class="flex items-center justify-between">
-				<div>
-					<span class="text-sm font-medium">Show Thinking</span>
-					<p class="text-xs text-muted-foreground">Stream Claude's reasoning process during responses</p>
+		<FormGroup
+			label="Custom System Prompt"
+			description="Prepended to the auto-generated governance prompt on every turn"
+		>
+			<Textarea
+				bind:value={localCustomPrompt}
+				placeholder="Enter custom instructions..."
+				onblur={() => props.onSave(buildSettings())}
+			/>
+			{#if localCustomPrompt.trim()}
+				<span class="text-xs text-muted-foreground">{localCustomPrompt.trim().length} characters</span>
+			{/if}
+		</FormGroup>
+
+		<Separator />
+
+		<div class="flex flex-col gap-2">
+			<Heading level={4}>Excluded Paths</Heading>
+			<div class="flex flex-wrap gap-1.5">
+				{#each localExcludedPaths as path (path)}
+					<span class="inline-flex items-center gap-1 rounded border border-border pr-1 text-xs">
+						{path}
+						<button class="flex h-4 w-4 items-center justify-center rounded hover:bg-accent" onclick={() => removeExcludedPath(path)}>
+							<Icon name="x" size="xs" />
+						</button>
+					</span>
+				{/each}
+			</div>
+			<div class="flex items-center gap-2">
+				<div class="max-w-[200px]">
+					<Input
+						bind:value={newExcludedPath}
+						placeholder="Add path..."
+						onkeydown={(e: KeyboardEvent) => {
+							if (e.key === "Enter") addExcludedPath();
+						}}
+					/>
 				</div>
-				<button
-					class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors {localShowThinking ? 'bg-primary' : 'bg-muted-foreground/30'}"
-					onclick={() => { localShowThinking = !localShowThinking; props.onSave(buildSettings()); }}
-					role="switch"
-					aria-checked={localShowThinking}
-					aria-label="Toggle show thinking"
-				>
-					<span class="inline-block h-4 w-4 transform rounded-full bg-background shadow-sm transition-transform {localShowThinking ? 'translate-x-4' : 'translate-x-0.5'}"></span>
+				<button class="flex items-center rounded border border-border px-2 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={addExcludedPath} disabled={!newExcludedPath.trim()}>
+					<Icon name="plus" size="sm" />
 				</button>
 			</div>
 		</div>
 
 		<Separator />
 
-		<div class="space-y-2">
-			<span class="text-sm font-medium">Custom System Prompt</span>
-			<p class="text-xs text-muted-foreground">Prepended to the auto-generated governance prompt on every turn</p>
-			<Textarea
-				bind:value={localCustomPrompt}
-				placeholder="Enter custom instructions..."
-				class="min-h-[100px] resize-y font-mono text-xs"
-				onblur={() => props.onSave(buildSettings())}
-			/>
-			{#if localCustomPrompt.trim()}
-				<p class="text-xs text-muted-foreground">{localCustomPrompt.trim().length} characters</p>
-			{/if}
-		</div>
-
-		<Separator />
-
-		<div class="space-y-2">
-			<h4 class="text-sm font-medium">Excluded Paths</h4>
-			<div class="flex flex-wrap gap-1.5">
-				{#each localExcludedPaths as path (path)}
-					<Badge variant="outline" class="gap-1 pr-1">
-						{path}
-						<button
-							class="ml-0.5 rounded-sm hover:bg-muted"
-							onclick={() => removeExcludedPath(path)}
-						>
-							<Icon name="x" size="xs" />
-						</button>
-					</Badge>
-				{/each}
-			</div>
-			<div class="flex items-center gap-2">
-				<Input
-					class="max-w-[200px]"
-					bind:value={newExcludedPath}
-					placeholder="Add path..."
-					onkeydown={(e: KeyboardEvent) => {
-						if (e.key === "Enter") addExcludedPath();
-					}}
-				/>
-				<Button variant="outline" size="sm" onclick={addExcludedPath} disabled={!newExcludedPath.trim()}>
-					<Icon name="plus" size="sm" />
-				</Button>
-			</div>
-		</div>
-
-		<Separator />
-
 		{#if props.settings.stack}
-			<div class="space-y-2">
+			<div class="flex flex-col gap-2">
 				<div class="flex items-center justify-between">
-					<h4 class="text-sm font-medium">Detected Stack</h4>
-					<Button variant="ghost" size="sm" onclick={handleRescan} disabled={props.rescanning}>
+					<Heading level={4}>Detected Stack</Heading>
+					<button class="flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent disabled:opacity-50" onclick={handleRescan} disabled={props.rescanning}>
 						{#if props.rescanning}
 							<Icon name="loader-circle" size="sm" />
 							Scanning...
@@ -193,10 +183,10 @@
 							<Icon name="refresh-cw" size="sm" />
 							Re-scan
 						{/if}
-					</Button>
+					</button>
 				</div>
 				{#if props.settings.stack.languages.length > 0}
-					<div class="space-y-1">
+					<div class="flex flex-col gap-1">
 						<span class="text-xs text-muted-foreground">Languages</span>
 						<div class="flex flex-wrap gap-1.5">
 							{#each props.settings.stack.languages as lang (lang)}
@@ -206,7 +196,7 @@
 					</div>
 				{/if}
 				{#if props.settings.stack.frameworks.length > 0}
-					<div class="space-y-1">
+					<div class="flex flex-col gap-1">
 						<span class="text-xs text-muted-foreground">Frameworks</span>
 						<div class="flex flex-wrap gap-1.5">
 							{#each props.settings.stack.frameworks as fw (fw)}
@@ -216,16 +206,14 @@
 					</div>
 				{/if}
 				{#if props.settings.stack.package_manager}
-					<p class="text-xs text-muted-foreground">
-						Package manager: {props.settings.stack.package_manager}
-					</p>
+					<span class="text-xs text-muted-foreground">Package manager: {props.settings.stack.package_manager}</span>
 				{/if}
 			</div>
 		{:else}
-			<div class="space-y-2">
+			<div class="flex flex-col gap-2">
 				<div class="flex items-center justify-between">
-					<h4 class="text-sm font-medium">Detected Stack</h4>
-					<Button variant="ghost" size="sm" onclick={handleRescan} disabled={props.rescanning}>
+					<Heading level={4}>Detected Stack</Heading>
+					<button class="flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent disabled:opacity-50" onclick={handleRescan} disabled={props.rescanning}>
 						{#if props.rescanning}
 							<Icon name="loader-circle" size="sm" />
 							Scanning...
@@ -233,9 +221,9 @@
 							<Icon name="refresh-cw" size="sm" />
 							Scan
 						{/if}
-					</Button>
+					</button>
 				</div>
-				<p class="text-xs text-muted-foreground">No scan results yet. Click Scan to detect your project stack.</p>
+				<span class="text-xs text-muted-foreground">No scan results yet. Click Scan to detect your project stack.</span>
 			</div>
 		{/if}
 	</CardContent>

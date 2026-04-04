@@ -84,7 +84,8 @@
 >
 	<!-- Main row: fixed-height single line with all columns. The copy button
 	     is positioned at the right edge and revealed on group hover. -->
-	<button
+	<Button
+		variant="ghost"
 		class="log-row__main"
 		style="height: 24px; line-height: 24px;"
 		onclick={() => (expanded = !expanded)}
@@ -116,7 +117,7 @@
 		<span class="log-row__message">
 			{event.message}
 		</span>
-	</button>
+	</Button>
 
 	<!-- Copy-to-clipboard button: absolutely positioned at the right of the row,
 	     visible only when the row is hovered. Uses ghost icon-sm Button. -->
@@ -165,33 +166,24 @@
 	}
 
 	.log-row--perf {
-		background-color: color-mix(in srgb, #6366f1 5%, transparent);
+		background-color: color-mix(in srgb, var(--color-secondary) 20%, transparent);
 	}
 
-	/* Main row button: full-width flex, no default button chrome. */
-	.log-row__main {
-		display: flex;
-		width: 100%;
-		cursor: pointer;
-		align-items: center;
-		gap: 0;
-		padding: 0 var(--spacing-2);
-		text-align: left;
-		background: transparent;
-		border: none;
+	/* Main row button: full-width flex, overrides Button defaults for compact row display. */
+	:global(.log-row__main) {
+		display: flex !important;
+		width: 100% !important;
+		cursor: pointer !important;
+		align-items: center !important;
+		gap: 0 !important;
+		padding: 0 var(--spacing-2) !important;
+		text-align: left !important;
+		justify-content: flex-start !important;
+		border-radius: 0 !important;
 	}
 
-	.log-row__main:hover {
-		background-color: color-mix(in srgb, var(--color-surface-raised) 60%, transparent);
-	}
-
-	.log-row__main:focus {
-		outline: none;
-	}
-
-	.log-row__main:focus-visible {
-		outline: none;
-		box-shadow: inset 0 0 0 1px var(--color-accent-base);
+	:global(.log-row__main:focus-visible) {
+		box-shadow: inset 0 0 0 1px var(--color-ring) !important;
 	}
 
 	/* Timestamp column: monospace, fixed width, tabular figures. */
@@ -243,7 +235,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		font-size: 11px;
-		color: color-mix(in srgb, var(--color-content-base) 70%, transparent);
+		color: var(--color-muted-foreground);
 	}
 
 	/* Message column: fills remaining width. */
@@ -254,7 +246,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		font-size: 11px;
-		color: var(--color-content-base);
+		color: var(--color-foreground);
 	}
 
 	/* Copy button wrapper: absolute-positioned to the right; hidden by default,
@@ -283,7 +275,7 @@
 	/* Expanded metadata panel: indented to align under the message column. */
 	.log-row__metadata {
 		border-bottom: 1px solid var(--color-border);
-		background-color: color-mix(in srgb, var(--color-surface-raised) 40%, transparent);
+		background-color: color-mix(in srgb, var(--color-muted) 40%, transparent);
 		padding: var(--spacing-2) 0 var(--spacing-2) 90px;
 	}
 
@@ -292,7 +284,7 @@
 		overflow: auto;
 		font-family: var(--font-mono);
 		font-size: 11px;
-		color: var(--color-content-base);
+		color: var(--color-foreground);
 		white-space: pre-wrap;
 	}
 </style>

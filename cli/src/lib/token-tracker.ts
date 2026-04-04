@@ -16,6 +16,7 @@
 import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { randomUUID } from "node:crypto";
+import { assertNever } from "@orqastudio/types";
 
 // ---------------------------------------------------------------------------
 // Metric Types
@@ -23,38 +24,38 @@ import { randomUUID } from "node:crypto";
 
 /** Level 1 — Per-request metrics captured for every API call. */
 export interface RequestMetrics {
-	timestamp: string;
-	agentId: string;
-	taskId?: string;
-	inputTokens: number;
-	outputTokens: number;
-	cacheHitTokens: number;
-	reasoningTokens: number;
-	model: string;
-	latencyMs: number;
+	readonly timestamp: string;
+	readonly agentId: string;
+	readonly taskId?: string;
+	readonly inputTokens: number;
+	readonly outputTokens: number;
+	readonly cacheHitTokens: number;
+	readonly reasoningTokens: number;
+	readonly model: string;
+	readonly latencyMs: number;
 }
 
 /** Level 2 — Per-agent aggregate metrics across an agent's lifetime. */
 export interface AgentMetrics {
-	agentId: string;
-	role: string;
-	model: string;
-	totalInputTokens: number;
-	totalOutputTokens: number;
-	contextUtilization: number;
-	requestCount: number;
-	lifetimeMs: number;
+	readonly agentId: string;
+	readonly role: string;
+	readonly model: string;
+	readonly totalInputTokens: number;
+	readonly totalOutputTokens: number;
+	readonly contextUtilization: number;
+	readonly requestCount: number;
+	readonly lifetimeMs: number;
 }
 
 /** Level 3 — Per-session aggregate metrics. */
 export interface SessionMetrics {
-	sessionId: string;
-	startTime: string;
-	totalTokens: number;
-	totalCost: number;
-	agentSpawns: number;
-	overheadRatio: number;
-	teamSpawnCost: number;
+	readonly sessionId: string;
+	readonly startTime: string;
+	readonly totalTokens: number;
+	readonly totalCost: number;
+	readonly agentSpawns: number;
+	readonly overheadRatio: number;
+	readonly teamSpawnCost: number;
 }
 
 /** Discriminated union for JSONL events. */
@@ -324,24 +325,33 @@ export function computeTrends(
 	const modelCounts: Record<string, number> = {};
 
 	for (const event of events) {
-		if (event._type === "request") {
-			const d = event.data;
-			if (d.timestamp < cutoffIso) continue;
-			totalRequests++;
-			totalTokens += d.inputTokens + d.outputTokens;
-			totalInput += d.inputTokens;
-			totalCacheHit += d.cacheHitTokens;
-			modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
-		} else if (event._type === "agent_complete") {
-			const d = event.data;
-			// Agent events don't have a direct timestamp; count all within period
-			totalAgents++;
-			modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
-		} else if (event._type === "session_summary") {
-			const d = event.data;
-			if (d.startTime < cutoffIso) continue;
-			totalSessions++;
-			totalCost += d.totalCost;
+		switch (event._type) {
+			case "request": {
+				const d = event.data;
+				if (d.timestamp < cutoffIso) continue;
+				totalRequests++;
+				totalTokens += d.inputTokens + d.outputTokens;
+				totalInput += d.inputTokens;
+				totalCacheHit += d.cacheHitTokens;
+				modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
+				break;
+			}
+			case "agent_complete": {
+				const d = event.data;
+				// Agent events don't have a direct timestamp; count all within period
+				totalAgents++;
+				modelCounts[d.model] = (modelCounts[d.model] ?? 0) + 1;
+				break;
+			}
+			case "session_summary": {
+				const d = event.data;
+				if (d.startTime < cutoffIso) continue;
+				totalSessions++;
+				totalCost += d.totalCost;
+				break;
+			}
+			default:
+				assertNever(event);
 		}
 	}
 

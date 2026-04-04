@@ -13,16 +13,16 @@ import * as path from "node:path";
 /** Parsed CLI arguments for every generator script. */
 export interface GeneratorArgs {
   /** Absolute path to the project root. */
-  projectRoot: string;
+  readonly projectRoot: string;
   /** Absolute path to write the generated config file. */
-  output: string;
+  readonly output: string;
   /** Absolute path to the rules directory (.orqa/learning/rules/). */
-  rulesDir: string;
+  readonly rulesDir: string;
   /**
    * When true, write to .state/dry-run/<engine>/ instead of the live output
    * path.
    */
-  dryRun: boolean;
+  readonly dryRun: boolean;
 }
 
 /**
@@ -31,21 +31,21 @@ export interface GeneratorArgs {
  * ignored.
  */
 export interface EnforcementEntry {
-  /** The enforcement mechanism — "mechanical", "behavioral", "hook", etc. */
-  mechanism?: string;
+  /** The enforcement mechanism — "mechanical", "behavioral", or "hook". */
+  readonly mechanism?: "mechanical" | "behavioral" | "hook";
   /** The engine this entry targets (e.g., "eslint", "clippy"). */
-  engine?: string;
+  readonly engine?: string;
   /** Engine-specific rule name (e.g., "@typescript-eslint/no-explicit-any"). */
-  rule?: string;
+  readonly rule?: string;
   /** Severity level — "error" or "warn". */
-  severity?: string;
+  readonly severity?: "error" | "warn";
   /**
    * Arbitrary engine-specific options. Parsed from the `options` mapping in
    * frontmatter when present.
    */
-  options?: Record<string, unknown>;
+  readonly options?: Readonly<Record<string, unknown>>;
   /** Human-readable description of the enforcement requirement. */
-  description?: string;
+  readonly description?: string;
   /** Arbitrary additional key/value pairs from the frontmatter entry. */
   [key: string]: unknown;
 }
@@ -53,11 +53,11 @@ export interface EnforcementEntry {
 /** A parsed rule file including its id, title, and enforcement entries. */
 export interface ParsedRule {
   /** Rule identifier (e.g., "RULE-abc12345"). */
-  id: string;
+  readonly id: string;
   /** Rule title. */
-  title: string;
+  readonly title: string;
   /** All enforcement entries from the frontmatter array. */
-  enforcement: EnforcementEntry[];
+  readonly enforcement: readonly EnforcementEntry[];
 }
 
 /**
@@ -99,13 +99,9 @@ export function parseArgs(): GeneratorArgs {
  */
 export function scanRules(rulesDir: string): ParsedRule[] {
   if (!fs.existsSync(rulesDir)) return [];
-
-  const results: ParsedRule[] = [];
-  collectMdFiles(rulesDir).forEach((filePath) => {
-    const rule = parseRuleFile(filePath);
-    if (rule) results.push(rule);
-  });
-  return results;
+  return collectMdFiles(rulesDir)
+    .map((filePath) => parseRuleFile(filePath))
+    .filter((rule): rule is ParsedRule => rule !== null);
 }
 
 /**
@@ -113,7 +109,7 @@ export function scanRules(rulesDir: string): ParsedRule[] {
  * targeting the specified engine.
  */
 export function filterByEngine(
-  rules: ParsedRule[],
+  rules: readonly ParsedRule[],
   engine: string,
 ): ParsedRule[] {
   return rules
@@ -132,7 +128,7 @@ export function filterByEngine(
  * is created if it does not exist.
  */
 export function resolveOutputPath(
-  args: GeneratorArgs,
+  args: Readonly<GeneratorArgs>,
   engine: string,
 ): string {
   if (!args.dryRun) return args.output;
@@ -165,32 +161,27 @@ export function writeOutput(outputPath: string, content: string): void {
 
 /**
  * Collect all .md file paths recursively under a directory.
+ * Uses .flatMap() to avoid imperative accumulation.
  */
 function collectMdFiles(dir: string): string[] {
-  const result: string[] = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      result.push(...collectMdFiles(full));
-    } else if (entry.isFile() && entry.name.endsWith(".md")) {
-      result.push(full);
-    }
-  }
-  return result;
+    if (entry.isDirectory()) return collectMdFiles(full);
+    return entry.isFile() && entry.name.endsWith(".md") ? [full] : [];
+  });
 }
 
 /**
- * Parse a single Markdown file and extract its frontmatter as a ParsedRule.
+ * Parse the content of a rule Markdown file and extract its frontmatter as a ParsedRule.
  *
+ * Pure function — no filesystem access. Accepts the file content as a string.
  * Returns null when:
- * - The file has no YAML frontmatter block
+ * - The content has no YAML frontmatter block
  * - The frontmatter has no `id` field
  * - The `status` field is present and not "active"
  * - The `enforcement` array is absent or empty
  */
-function parseRuleFile(filePath: string): ParsedRule | null {
-  const content = fs.readFileSync(filePath, "utf-8");
-
+export function parseRuleContent(content: string): ParsedRule | null {
   // Extract the frontmatter block between the first pair of --- delimiters.
   const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match || !match[1]) return null;
@@ -208,6 +199,17 @@ function parseRuleFile(filePath: string): ParsedRule | null {
   if (enforcement.length === 0) return null;
 
   return { id, title, enforcement };
+}
+
+/**
+ * Read a rule Markdown file from disk and parse it.
+ *
+ * I/O boundary — reads the file then delegates all parsing to parseRuleContent.
+ * Returns null when the file cannot be parsed as a valid rule.
+ */
+function parseRuleFile(filePath: string): ParsedRule | null {
+  const content = fs.readFileSync(filePath, "utf-8");
+  return parseRuleContent(content);
 }
 
 /**
@@ -235,6 +237,15 @@ function extractScalar(yaml: string, key: string): string | undefined {
  * It does NOT handle multi-line values or anchors. Rule files are expected to
  * keep enforcement entries simple.
  */
+/**
+ * Mutable builder for a single enforcement entry during parsing.
+ * Cast to EnforcementEntry once construction is complete.
+ */
+type MutableEnforcementEntry = {
+  [key: string]: unknown;
+  options?: Record<string, unknown>;
+};
+
 function parseEnforcementArray(yaml: string): EnforcementEntry[] {
   const enforcementIdx = yaml.indexOf("enforcement:");
   if (enforcementIdx === -1) return [];
@@ -253,7 +264,8 @@ function parseEnforcementArray(yaml: string): EnforcementEntry[] {
     // Stop when we hit the next top-level key (no leading spaces, not a list).
     if (/^\S/.test(raw) && !raw.trimStart().startsWith("-")) break;
 
-    const entry: EnforcementEntry = {};
+    // Use a mutable builder; readonly properties are on EnforcementEntry (the public type).
+    const entry: MutableEnforcementEntry = {};
     let inOptions = false;
     const lines = raw.split("\n");
 
@@ -291,7 +303,7 @@ function parseEnforcementArray(yaml: string): EnforcementEntry[] {
 
     // Only include entries that have at least one meaningful field.
     if (Object.keys(entry).length > 0) {
-      entries.push(entry);
+      entries.push(entry as EnforcementEntry);
     }
   }
 

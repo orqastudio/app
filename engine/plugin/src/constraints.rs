@@ -28,6 +28,77 @@ impl From<ConstraintViolation> for EngineError {
     }
 }
 
+/// Pure: check the one-methodology constraint against a pre-loaded list of installed manifests.
+///
+/// Returns an error if any manifest in `installed_manifests` is a methodology plugin that is
+/// not the same plugin as `incoming` (reinstall is allowed). I/O is done by the caller.
+fn check_one_methodology_pure(
+    incoming: &PluginManifest,
+    installed_manifests: &[PluginManifest],
+) -> Result<(), ConstraintViolation> {
+    for manifest in installed_manifests {
+        if manifest.name == incoming.name {
+            continue;
+        }
+        if manifest
+            .install_constraints
+            .purpose
+            .iter()
+            .any(|p| p == "methodology")
+        {
+            return Err(ConstraintViolation {
+                message: format!(
+                    "cannot install methodology plugin '{}': project already has methodology \
+                     plugin '{}' installed. Only one methodology plugin is allowed per project. \
+                     Uninstall '{}' first.",
+                    incoming.name, manifest.name, manifest.name
+                ),
+            });
+        }
+    }
+    Ok(())
+}
+
+/// Pure: check the one-per-stage constraint against a pre-loaded list of installed manifests.
+///
+/// Returns an error if any manifest in `installed_manifests` occupies `incoming_slot` and is
+/// not the same plugin as `incoming`. I/O is done by the caller.
+fn check_one_per_stage_pure(
+    incoming: &PluginManifest,
+    incoming_slot: &str,
+    installed_manifests: &[PluginManifest],
+) -> Result<(), ConstraintViolation> {
+    for manifest in installed_manifests {
+        if manifest.name == incoming.name {
+            continue;
+        }
+        if let Some(existing_slot) = &manifest.install_constraints.stage_slot {
+            if existing_slot == incoming_slot {
+                return Err(ConstraintViolation {
+                    message: format!(
+                        "cannot install workflow plugin '{}': stage slot '{}' is already \
+                         filled by '{}'. Only one workflow plugin may occupy each stage slot. \
+                         Uninstall '{}' first.",
+                        incoming.name, incoming_slot, manifest.name, manifest.name
+                    ),
+                });
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Load manifests for all currently installed plugins at `project_root`.
+///
+/// Plugins whose manifests cannot be read are silently skipped — a missing or
+/// corrupt manifest does not block constraint checking for valid plugins.
+fn load_installed_manifests(project_root: &Path) -> Vec<PluginManifest> {
+    scan_plugins(project_root)
+        .into_iter()
+        .filter_map(|plugin| read_manifest(Path::new(&plugin.path)).ok())
+        .collect()
+}
+
 /// P5-26: Enforce one-methodology-plugin-per-project.
 ///
 /// Reads all currently installed plugins and checks whether any of them declare
@@ -50,35 +121,8 @@ pub fn check_one_methodology(
         return Ok(());
     }
 
-    // Scan installed plugins and look for an existing methodology plugin.
-    let installed = scan_plugins(project_root);
-    for plugin in &installed {
-        // Skip the plugin being reinstalled — same name is an update, not a conflict.
-        if plugin.name == incoming.name {
-            continue;
-        }
-
-        let plugin_dir = Path::new(&plugin.path);
-        if let Ok(manifest) = read_manifest(plugin_dir) {
-            if manifest
-                .install_constraints
-                .purpose
-                .iter()
-                .any(|p| p == "methodology")
-            {
-                return Err(ConstraintViolation {
-                    message: format!(
-                        "cannot install methodology plugin '{}': project already has methodology \
-                         plugin '{}' installed. Only one methodology plugin is allowed per project. \
-                         Uninstall '{}' first.",
-                        incoming.name, manifest.name, manifest.name
-                    ),
-                });
-            }
-        }
-    }
-
-    Ok(())
+    let installed_manifests = load_installed_manifests(project_root);
+    check_one_methodology_pure(incoming, &installed_manifests)
 }
 
 /// P5-27: Enforce one-workflow-plugin-per-stage.
@@ -98,35 +142,8 @@ pub fn check_one_per_stage(
         return Ok(());
     };
 
-    // Scan installed plugins and look for an existing plugin filling the same slot.
-    let installed = scan_plugins(project_root);
-    for plugin in &installed {
-        // Skip the plugin being reinstalled — same name is an update, not a conflict.
-        if plugin.name == incoming.name {
-            continue;
-        }
-
-        let plugin_dir = Path::new(&plugin.path);
-        if let Ok(manifest) = read_manifest(plugin_dir) {
-            if let Some(existing_slot) = &manifest.install_constraints.stage_slot {
-                if existing_slot == incoming_slot {
-                    return Err(ConstraintViolation {
-                        message: format!(
-                            "cannot install workflow plugin '{}': stage slot '{}' is already \
-                             filled by '{}'. Only one workflow plugin may occupy each stage slot. \
-                             Uninstall '{}' first.",
-                            incoming.name,
-                            incoming_slot,
-                            manifest.name,
-                            manifest.name
-                        ),
-                    });
-                }
-            }
-        }
-    }
-
-    Ok(())
+    let installed_manifests = load_installed_manifests(project_root);
+    check_one_per_stage_pure(incoming, incoming_slot, &installed_manifests)
 }
 
 #[cfg(test)]

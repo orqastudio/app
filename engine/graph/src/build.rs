@@ -335,20 +335,19 @@ fn load_settings(project_path: &Path) -> Option<ProjectSettings> {
 ///
 /// Maps directory path segments to artifact type keys, enabling path-based type inference.
 fn build_type_registry(settings: &ProjectSettings) -> TypeRegistry {
-    let mut registry = Vec::new();
-    for entry in &settings.artifacts {
-        match entry {
-            ArtifactEntry::Group { children, .. } => {
-                for child in children {
-                    registry.push((child.path.replace('\\', "/"), child.key.clone()));
-                }
-            }
+    settings
+        .artifacts
+        .iter()
+        .flat_map(|entry| match entry {
+            ArtifactEntry::Group { children, .. } => children
+                .iter()
+                .map(|child| (child.path.replace('\\', "/"), child.key.clone()))
+                .collect::<Vec<_>>(),
             ArtifactEntry::Type(type_config) => {
-                registry.push((type_config.path.replace('\\', "/"), type_config.key.clone()));
+                vec![(type_config.path.replace('\\', "/"), type_config.key.clone())]
             }
-        }
-    }
-    registry
+        })
+        .collect()
 }
 
 /// Build a set of valid relationship type keys from core.json + plugin manifests.
@@ -738,23 +737,24 @@ fn filter_valid_refs(
     source_id: &str,
     valid_rel_types: &std::collections::HashSet<String>,
 ) -> Vec<ArtifactRef> {
-    let mut out = Vec::new();
-    for r in all_refs {
-        if let Some(ref rel_type) = r.relationship_type {
-            if !valid_rel_types.is_empty() && !valid_rel_types.contains(rel_type) {
-                tracing::warn!(
-                    artifact = %source_id,
-                    relationship = %rel_type,
-                    target = %r.target_id,
-                    "Skipping invalid relationship type '{}' on {} — not defined in project.json or any plugin schema",
-                    rel_type, source_id,
-                );
-                continue;
+    all_refs
+        .into_iter()
+        .filter(|r| {
+            if let Some(rel_type) = &r.relationship_type {
+                if !valid_rel_types.is_empty() && !valid_rel_types.contains(rel_type) {
+                    tracing::warn!(
+                        artifact = %source_id,
+                        relationship = %rel_type,
+                        target = %r.target_id,
+                        "Skipping invalid relationship type '{}' on {} — not defined in project.json or any plugin schema",
+                        rel_type, source_id,
+                    );
+                    return false;
+                }
             }
-        }
-        out.push(r);
-    }
-    out
+            true
+        })
+        .collect()
 }
 
 /// Collect relationship entries from the `relationships:` frontmatter sequence.
@@ -765,28 +765,25 @@ fn collect_relationship_refs(yaml_value: &serde_yaml::Value, source_id: &str) ->
     else {
         return Vec::new();
     };
-    let mut refs = Vec::new();
-    for item in seq {
-        let target = item
-            .get("target")
-            .and_then(|v| v.as_str())
-            .map(|s| s.trim().to_owned());
-        let rel_type = item
-            .get("type")
-            .and_then(|v| v.as_str())
-            .map(|s| s.trim().to_owned());
-        if let Some(target_id) = target {
-            if !target_id.is_empty() {
-                refs.push(ArtifactRef {
-                    target_id,
-                    field: "relationships".to_owned(),
-                    source_id: source_id.to_owned(),
-                    relationship_type: rel_type,
-                });
-            }
-        }
-    }
-    refs
+    seq.iter()
+        .filter_map(|item| {
+            let target_id = item
+                .get("target")
+                .and_then(|v| v.as_str())
+                .map(|s| s.trim().to_owned())
+                .filter(|s| !s.is_empty())?;
+            let rel_type = item
+                .get("type")
+                .and_then(|v| v.as_str())
+                .map(|s| s.trim().to_owned());
+            Some(ArtifactRef {
+                target_id,
+                field: "relationships".to_owned(),
+                source_id: source_id.to_owned(),
+                relationship_type: rel_type,
+            })
+        })
+        .collect()
 }
 
 /// Collect body-text markdown link references in the form `[text](ARTIFACT-ID)`.

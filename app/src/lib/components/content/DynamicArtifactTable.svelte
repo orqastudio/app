@@ -2,7 +2,7 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
-	import { statusIconName, resolveIcon } from "@orqastudio/svelte-components/pure";
+	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge } from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
 
 	let {
@@ -66,58 +66,56 @@
 
 {#if children.length > 0}
 	<div class="my-4 overflow-hidden rounded-lg border">
-		<table class="w-full text-sm">
-			<thead>
-				<tr class="border-b bg-muted/50 text-left text-xs text-muted-foreground">
-					<th class="w-6 px-3 py-2"></th>
-					<th class="px-3 py-2">ID</th>
-					<th class="px-3 py-2">Title</th>
-					<th class="px-3 py-2">Priority</th>
-					<th class="px-3 py-2">Status</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Table>
+			<TableHeader>
+				<TableRow>
+					<TableHead width="xs"></TableHead>
+					<TableHead>ID</TableHead>
+					<TableHead>Title</TableHead>
+					<TableHead>Priority</TableHead>
+					<TableHead>Status</TableHead>
+				</TableRow>
+			</TableHeader>
+			<TableBody>
 				{#each children as child (child.id)}
-					<tr
-						class="cursor-pointer border-b last:border-b-0 hover:bg-muted/30 transition-colors"
+					<TableRow
+						interactive
 						onclick={() => navigateTo(child.id)}
 						role="button"
-						tabindex="0"
+						tabindex={0}
 						onkeydown={(e) => { if (e.key === "Enter" || e.key === " ") navigateTo(child.id); }}
 					>
-						<!-- Status dot -->
-						<td class="px-3 py-2">
+						<!-- Status icon -->
+						<TableCell>
 							{#if child.status}
 								{@const StatusIcon = resolveIcon(statusIconName(child.status))}
 								<StatusIcon class="h-3.5 w-3.5 text-muted-foreground" />
 							{/if}
-						</td>
+						</TableCell>
 						<!-- ID -->
-						<td class="px-3 py-2 font-mono text-xs text-muted-foreground">
+						<TableCell mono>
 							{child.id}
-						</td>
+						</TableCell>
 						<!-- Title -->
-						<td class="px-3 py-2 font-medium">
+						<TableCell>
 							{child.title}
-						</td>
+						</TableCell>
 						<!-- Priority -->
-						<td class="px-3 py-2">
+						<TableCell>
 							{#if child.priority}
-								<span class="rounded bg-muted px-1.5 py-0.5 text-xs font-medium">
-									{child.priority}
-								</span>
+								<span class="font-medium"><Badge variant="secondary">{child.priority}</Badge></span>
 							{:else}
 								<span class="text-xs text-muted-foreground">--</span>
 							{/if}
-						</td>
+						</TableCell>
 						<!-- Status -->
-						<td class="px-3 py-2 text-xs capitalize text-muted-foreground">
+						<TableCell>
 							{child.status ?? "--"}
-						</td>
-					</tr>
+						</TableCell>
+					</TableRow>
 				{/each}
-			</tbody>
-		</table>
+			</TableBody>
+		</Table>
 	</div>
 {:else}
 	<div class="my-4 rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">

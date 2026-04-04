@@ -5,8 +5,6 @@
 		DropdownMenuItem,
 		DropdownMenuTrigger,
 	} from "../dropdown-menu/index.js";
-	import { Button } from "../button/index.js";
-	import type { ButtonSize } from "../button/button.svelte";
 	import CheckIcon from "@lucide/svelte/icons/check";
 	import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
 
@@ -26,15 +24,18 @@
 		align?: "start" | "end";
 	} = $props();
 
-	const buttonSize: ButtonSize = $derived(triggerSize === "sm" ? "sm" : "default");
+	// Inline trigger classes: outline button, small size, compact gap, xs text.
+	const triggerClass = $derived(
+		triggerSize === "sm"
+			? "focus-visible:border-ring focus-visible:ring-ring/50 inline-flex shrink-0 items-center justify-center gap-1 rounded-md border bg-background px-3 text-xs font-medium shadow-xs transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 h-8"
+			: "focus-visible:border-ring focus-visible:ring-ring/50 inline-flex shrink-0 items-center justify-center gap-1 rounded-md border bg-background px-4 text-sm font-medium shadow-xs transition-all outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 h-9",
+	);
 </script>
 
 <DropdownMenuRoot>
-	<DropdownMenuTrigger>
-		<Button variant="outline" size={buttonSize} class="gap-1 text-xs">
-			{triggerLabel}
-			<ChevronDownIcon class="h-3 w-3" />
-		</Button>
+	<DropdownMenuTrigger class={triggerClass}>
+		{triggerLabel}
+		<ChevronDownIcon class="h-3 w-3" />
 	</DropdownMenuTrigger>
 	<DropdownMenuContent {align}>
 		{#each items as item (item.value)}

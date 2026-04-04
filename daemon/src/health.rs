@@ -31,18 +31,32 @@ use tracing::{error, info};
 
 use orqa_engine::ports::resolve_daemon_port;
 use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+use orqa_storage::Storage;
 
 use crate::config::DaemonConfig;
 use crate::event_bus::{EventBus, EventBusStats};
-use crate::event_store::{EventStore, EventQuery};
 use crate::graph_state::GraphState;
 use crate::routes::streaming::SessionStreamRegistry;
-use crate::store::DaemonStore;
 use crate::subprocess::ProcessSnapshot;
+
+/// Query parameters accepted by `GET /events`.
+///
+/// All fields are optional. Deserialized from the URL query string by axum.
+#[derive(Debug, Deserialize)]
+pub struct EventQuery {
+    /// Filter by source subsystem name (matches `EventSource` Display string).
+    pub source: Option<String>,
+    /// Filter by level name (matches `EventLevel` Debug string, e.g. "Error").
+    pub level: Option<String>,
+    /// Unix timestamp in milliseconds — return only events at or after this time.
+    pub after: Option<i64>,
+    /// Maximum number of events to return (capped at 5000).
+    pub limit: Option<i64>,
+}
 
 /// Shared state passed to all route handlers, containing startup metadata,
 /// runtime configuration loaded from orqa.toml, the central event bus, and
-/// the optional SQLite event store for historical event queries.
+/// the unified SQLite storage for all persistence operations.
 #[derive(Clone)]
 pub struct HealthState {
     /// Instant the daemon started — used to compute uptime.
@@ -53,9 +67,9 @@ pub struct HealthState {
     pub config: DaemonConfig,
     /// Shared event bus — exposes stats to the health endpoint.
     pub event_bus: Arc<EventBus>,
-    /// Optional SQLite-backed event store for GET /events historical queries.
-    /// Absent when the store failed to open at startup.
-    pub event_store: Option<Arc<EventStore>>,
+    /// Unified SQLite storage for sessions, projects, settings, and events.
+    /// Absent when the database cannot be opened (typically a permissions issue).
+    pub storage: Option<Arc<Storage>>,
     /// Snapshots of all managed subprocesses, updated by the event loop every
     /// 250 ms. The health handler reads this to populate the `processes` array
     /// without requiring access to the subprocess managers directly.
@@ -63,9 +77,6 @@ pub struct HealthState {
     /// Shared cached artifact graph and validation context. All artifact,
     /// graph, and validation route handlers read from this.
     pub graph_state: GraphState,
-    /// Optional SQLite-backed session/project/settings store. Absent when the
-    /// database cannot be opened (typically a permissions or disk issue).
-    pub daemon_store: Option<Arc<DaemonStore>>,
     /// Per-session stream state for the daemon-side stream loop.
     ///
     /// Each active session has a broadcast channel for SSE delivery, a
@@ -83,17 +94,16 @@ impl HealthState {
     #[allow(dead_code)]
     pub fn for_test(
         graph_state: GraphState,
-        daemon_store: Option<Arc<DaemonStore>>,
+        storage: Option<Arc<Storage>>,
     ) -> Self {
         Self {
             started_at: Arc::new(Instant::now()),
             pid: std::process::id(),
             config: DaemonConfig::default(),
             event_bus: EventBus::new(),
-            event_store: None,
+            storage,
             process_snapshots: Arc::new(Mutex::new(Vec::<ProcessSnapshot>::new())),
             graph_state,
-            daemon_store,
             stream_registry: SessionStreamRegistry::new(),
         }
     }
@@ -217,20 +227,28 @@ async fn events_ingest_handler(
 
 /// Handle GET /events — return stored events matching the query parameters.
 ///
-/// Delegates to `EventStore::query_sync` via `spawn_blocking`. Returns an
-/// empty list when the store is absent (store failed to open at startup).
+/// Delegates to the events repo via `spawn_blocking`. Returns an empty list
+/// when storage is absent (failed to open at startup).
 async fn events_query_handler(
     State(state): State<HealthState>,
     axum::extract::Query(query): axum::extract::Query<EventQuery>,
 ) -> Json<serde_json::Value> {
-    let Some(store) = state.event_store else {
+    let Some(storage) = state.storage else {
         return Json(serde_json::json!({ "events": [], "count": 0 }));
     };
 
-    let filter = crate::event_store::EventFilter::from(query);
-    let events = tokio::task::spawn_blocking(move || store.query_sync(&filter))
-        .await
-        .unwrap_or_default();
+    let filter = orqa_storage::repo::events::EventFilter {
+        source: query.source,
+        level: query.level,
+        after: query.after,
+        limit: query.limit,
+    };
+
+    let events = tokio::task::spawn_blocking(move || {
+        storage.events().query(&filter).unwrap_or_default()
+    })
+    .await
+    .unwrap_or_default();
 
     let count = events.len();
     Json(serde_json::json!({ "events": events, "count": count }))
@@ -347,8 +365,8 @@ pub fn resolve_port() -> u16 {
 /// tokio runtime shuts down. Logs the bound address on startup. Returns an
 /// error if the port is already in use.
 ///
-/// `event_store` is optional — when absent (store failed to open), GET /events
-/// returns an empty list rather than an error.
+/// `storage` is optional — when absent (failed to open), session/project/settings
+/// endpoints return 503 and GET /events returns an empty list.
 ///
 /// `process_snapshots` is the shared subprocess registry written by the event
 /// loop. The health handler reads it on every GET /health request so OrqaDev
@@ -358,20 +376,18 @@ pub async fn start(
     port: u16,
     config: DaemonConfig,
     event_bus: Arc<EventBus>,
-    event_store: Option<Arc<EventStore>>,
+    storage: Option<Arc<Storage>>,
     process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
     graph_state: GraphState,
-    daemon_store: Option<Arc<DaemonStore>>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
         pid: std::process::id(),
         config,
         event_bus,
-        event_store,
+        storage,
         process_snapshots,
         graph_state,
-        daemon_store,
         stream_registry: SessionStreamRegistry::new(),
     };
 

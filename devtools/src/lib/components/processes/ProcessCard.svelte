@@ -12,19 +12,24 @@
 		CardFooter,
 		Separator,
 		ConnectionIndicator,
+		HStack,
+		Caption,
+		Text,
+		Code,
 		type ConnectionState,
 	} from "@orqastudio/svelte-components/pure";
+	import { assertNever } from "@orqastudio/types";
 
 	export type ProcessStatus = "running" | "stopped" | "crashed" | "not_found" | "unknown";
 
 	export interface ProcessInfo {
-		name: string;
-		source: string;
-		status: ProcessStatus;
-		pid: number | null;
-		uptime_seconds: number | null;
-		memory_bytes: number | null;
-		binary_path: string | null;
+		readonly name: string;
+		readonly source: string;
+		readonly status: ProcessStatus;
+		readonly pid: number | null;
+		readonly uptime_seconds: number | null;
+		readonly memory_bytes: number | null;
+		readonly binary_path: string | null;
 	}
 
 	let {
@@ -44,28 +49,42 @@
 	// running → connected (green), crashed → disconnected (red),
 	// stopped → waiting (muted/gray in context), not_found → waiting,
 	// unknown → reconnecting (yellow).
-	const connectionState = $derived<ConnectionState>(
-		process.status === "running"
-			? "connected"
-			: process.status === "crashed"
-				? "disconnected"
-				: process.status === "unknown"
-					? "reconnecting"
-					: "waiting",
-	);
+	function resolveConnectionState(status: ProcessStatus): ConnectionState {
+		switch (status) {
+			case "running":
+				return "connected";
+			case "crashed":
+				return "disconnected";
+			case "unknown":
+				return "reconnecting";
+			case "stopped":
+			case "not_found":
+				return "waiting";
+			default:
+				return assertNever(status);
+		}
+	}
 
 	// Human-readable status label passed to ConnectionIndicator as an override.
-	const statusLabel = $derived(
-		process.status === "running"
-			? "Running"
-			: process.status === "crashed"
-				? "Crashed"
-				: process.status === "stopped"
-					? "Stopped"
-					: process.status === "not_found"
-						? "Not found"
-						: "Unknown",
-	);
+	function resolveStatusLabel(status: ProcessStatus): string {
+		switch (status) {
+			case "running":
+				return "Running";
+			case "crashed":
+				return "Crashed";
+			case "stopped":
+				return "Stopped";
+			case "not_found":
+				return "Not found";
+			case "unknown":
+				return "Unknown";
+			default:
+				return assertNever(status);
+		}
+	}
+
+	const connectionState = $derived<ConnectionState>(resolveConnectionState(process.status));
+	const statusLabel = $derived(resolveStatusLabel(process.status));
 
 	// Format uptime_seconds into a human-readable string (e.g. "2h 14m" or "45s").
 	function formatUptime(seconds: number): string {
@@ -129,30 +148,30 @@
 	<!-- Content: detail rows for PID, uptime, and memory when available. -->
 	<CardContent>
 		{#if process.pid !== null}
-			<div class="process-card__row">
-				<span class="process-card__label">PID</span>
-				<span class="process-card__value process-card__value--mono">{process.pid}</span>
-			</div>
+			<HStack justify="between">
+				<Caption>PID</Caption>
+				<Code class="text-xs">{process.pid}</Code>
+			</HStack>
 		{/if}
 
 		{#if process.uptime_seconds !== null}
-			<div class="process-card__row">
-				<span class="process-card__label">Uptime</span>
-				<span class="process-card__value">{formatUptime(process.uptime_seconds)}</span>
-			</div>
+			<HStack justify="between">
+				<Caption>Uptime</Caption>
+				<Text size="xs">{formatUptime(process.uptime_seconds)}</Text>
+			</HStack>
 		{/if}
 
 		{#if process.memory_bytes !== null}
-			<div class="process-card__row">
-				<span class="process-card__label">Memory</span>
-				<span class="process-card__value">{formatMemory(process.memory_bytes)}</span>
-			</div>
+			<HStack justify="between">
+				<Caption>Memory</Caption>
+				<Text size="xs">{formatMemory(process.memory_bytes)}</Text>
+			</HStack>
 		{/if}
 
 		<!-- Placeholder row so all cards have consistent height when no details
 		     are available from the daemon yet. -->
 		{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
-			<span class="process-card__empty">No details available</span>
+			<Caption>No details available</Caption>
 		{/if}
 	</CardContent>
 
@@ -160,7 +179,7 @@
 
 	<!-- Footer: source identifier for log filtering reference. -->
 	<CardFooter>
-		<span class="process-card__source">source: {process.source}</span>
+		<Code class="text-xs">{process.source}</Code>
 	</CardFooter>
 
 	<!-- Binary path row: visible on hover when the daemon has reported the path.
@@ -168,12 +187,12 @@
 	{#if hovered && process.binary_path !== null}
 		<Separator />
 		<CardFooter title={process.binary_path}>
-			<div class="process-card__row process-card__row--full">
-				<span class="process-card__label">Binary</span>
-				<span class="process-card__value process-card__value--mono process-card__value--truncate" title={process.binary_path}>
-					{binaryFilename(process.binary_path)}
+			<HStack justify="between" class="w-full gap-2">
+				<Caption>Binary</Caption>
+				<span title={process.binary_path} class="overflow-hidden text-ellipsis whitespace-nowrap max-w-[70%]">
+					<Code class="text-xs">{binaryFilename(process.binary_path)}</Code>
 				</span>
-			</div>
+			</HStack>
 		</CardFooter>
 	{/if}
 </CardRoot>
@@ -204,50 +223,5 @@
 	.process-card__status {
 		font-size: var(--text-xs);
 		font-weight: 500;
-	}
-
-	/* Detail rows: label on the left, value on the right. */
-	.process-card__row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	/* Full-width row variant used in the binary path footer. */
-	.process-card__row--full {
-		width: 100%;
-		gap: 0.5rem;
-	}
-
-	.process-card__label {
-		font-size: var(--text-xs);
-		color: var(--color-content-muted);
-	}
-
-	.process-card__value {
-		font-size: var(--text-xs);
-		color: var(--color-content-base);
-	}
-
-	.process-card__value--mono {
-		font-family: var(--font-mono);
-	}
-
-	.process-card__value--truncate {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 70%;
-	}
-
-	.process-card__empty {
-		font-size: var(--text-xs);
-		color: var(--color-content-muted);
-	}
-
-	.process-card__source {
-		font-family: var(--font-mono);
-		font-size: var(--text-xs);
-		color: var(--color-content-muted);
 	}
 </style>

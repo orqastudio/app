@@ -2,9 +2,9 @@ import type { DocNode, SortConfig, FilterableField } from "@orqastudio/types";
 
 /** Filter nodes by frontmatter values. */
 export function applyFilters(
-	nodes: DocNode[],
-	filters: Record<string, string[]>,
-): DocNode[] {
+	nodes: readonly DocNode[],
+	filters: Readonly<Record<string, readonly string[]>>,
+): readonly DocNode[] {
 	// If no active filters, return all nodes unchanged
 	const activeFilters = Object.entries(filters).filter(([, vals]) => vals.length > 0);
 	if (activeFilters.length === 0) return nodes;
@@ -23,7 +23,7 @@ export function applyFilters(
 }
 
 /** Sort nodes by a frontmatter field. */
-export function applySort(nodes: DocNode[], sort: SortConfig): DocNode[] {
+export function applySort(nodes: readonly DocNode[], sort: Readonly<SortConfig>): DocNode[] {
 	if (!sort.field || sort.field === "title") {
 		// Sort by label
 		const sorted = [...nodes].sort((a, b) => {
@@ -65,10 +65,10 @@ export function applySort(nodes: DocNode[], sort: SortConfig): DocNode[] {
 
 /** Group nodes by a frontmatter field value. */
 export function applyGrouping(
-	nodes: DocNode[],
+	nodes: readonly DocNode[],
 	groupField: string,
-	groupOrder: string[] | undefined,
-	filterableFields: FilterableField[],
+	groupOrder: readonly string[] | undefined,
+	filterableFields: readonly FilterableField[],
 ): { label: string; nodes: DocNode[] }[] {
 	// Partition nodes into groups
 	const groups = new Map<string, DocNode[]>();
@@ -127,19 +127,18 @@ export function applyGrouping(
 
 /** Count how many nodes match each value of a filterable field. */
 export function countFieldValues(
-	nodes: DocNode[],
+	nodes: readonly DocNode[],
 	fieldName: string,
 ): Record<string, number> {
-	const counts: Record<string, number> = {};
-	for (const node of nodes) {
-		if (node.children !== null) continue;
+	return nodes.reduce<Record<string, number>>((counts, node) => {
+		if (node.children !== null) return counts;
 		const raw = node.frontmatter?.[fieldName];
 		if (raw !== null && raw !== undefined) {
 			const value = String(raw);
-			counts[value] = (counts[value] ?? 0) + 1;
+			return { ...counts, [value]: (counts[value] ?? 0) + 1 };
 		}
-	}
-	return counts;
+		return counts;
+	}, {});
 }
 
 /** Humanize a field value for display (replace hyphens/underscores with spaces, title-case). */

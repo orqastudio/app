@@ -119,55 +119,55 @@ fn compose_document(
     tasks: &[ArtifactItem],
     session_state: &str,
 ) -> String {
-    let mut lines: Vec<String> = Vec::new();
-
-    lines.push("# Governance Context (saved before compaction)".to_owned());
-    lines.push(String::new());
-    lines.push(format!("Saved: {}", chrono_timestamp()));
-    lines.push(String::new());
-
-    if !epics.is_empty() {
-        lines.push("## Active Epics".to_owned());
-        lines.push(String::new());
-        for e in epics {
-            lines.push(format!("- **{}**: {}", e.id, e.title));
-        }
-        lines.push(String::new());
-    }
-
-    if !tasks.is_empty() {
-        lines.push("## Active Tasks".to_owned());
-        lines.push(String::new());
-        for t in tasks {
-            let status_label = t
-                .status
-                .as_deref()
-                .unwrap_or("active");
-            lines.push(format!("- **{}** [{}]: {}", t.id, status_label, t.title));
-        }
-        lines.push(String::new());
-    }
-
-    if !session_state.is_empty() {
-        lines.push("## Previous Session State".to_owned());
-        lines.push(String::new());
-        lines.push(session_state.to_owned());
-    }
-
-    lines.push(String::new());
-    lines.push("## Recovery Instructions".to_owned());
-    lines.push(String::new());
-    lines.push("After compaction, re-read:".to_owned());
-    lines.push("1. The active epic files listed above".to_owned());
-    lines.push("2. The active task files listed above".to_owned());
-    lines.push(
-        "3. Your role definition as resolved by the plugin system (use the prompt generation \
-         pipeline to regenerate your agent context from installed plugins)"
-            .to_owned(),
+    // Build each optional section as a String, then join non-empty sections.
+    let header = format!(
+        "# Governance Context (saved before compaction)\n\nSaved: {}",
+        chrono_timestamp()
     );
-    lines.push("4. Any skills referenced by the current tasks".to_owned());
 
-    lines.join("\n")
+    let epics_section = if epics.is_empty() {
+        String::new()
+    } else {
+        let items: String = epics
+            .iter()
+            .map(|e| format!("- **{}**: {}", e.id, e.title))
+            .collect::<Vec<_>>()
+            .join("\n");
+        format!("## Active Epics\n\n{items}")
+    };
+
+    let tasks_section = if tasks.is_empty() {
+        String::new()
+    } else {
+        let items: String = tasks
+            .iter()
+            .map(|t| {
+                let status_label = t.status.as_deref().unwrap_or("active");
+                format!("- **{}** [{}]: {}", t.id, status_label, t.title)
+            })
+            .collect::<Vec<_>>()
+            .join("\n");
+        format!("## Active Tasks\n\n{items}")
+    };
+
+    let session_section = if session_state.is_empty() {
+        String::new()
+    } else {
+        format!("## Previous Session State\n\n{session_state}")
+    };
+
+    let recovery = "## Recovery Instructions\n\nAfter compaction, re-read:\n\
+        1. The active epic files listed above\n\
+        2. The active task files listed above\n\
+        3. Your role definition as resolved by the plugin system (use the prompt generation \
+        pipeline to regenerate your agent context from installed plugins)\n\
+        4. Any skills referenced by the current tasks";
+
+    [header, epics_section, tasks_section, session_section, recovery.to_owned()]
+        .into_iter()
+        .filter(|s| !s.is_empty())
+        .collect::<Vec<_>>()
+        .join("\n\n")
 }
 
 /// Build a short summary string for the response and telemetry.

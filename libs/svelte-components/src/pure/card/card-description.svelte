@@ -1,20 +1,21 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "../../utils/cn.js";
+	import { cn } from "../../utils/cn.js";
+
+	interface CardDescriptionProps {
+		/** Text size. */
+		size?: "xs" | "sm";
+		children?: import("svelte").Snippet;
+	}
 
 	let {
-		ref = $bindable(null),
-		class: className,
+		size = "sm",
 		children,
-		...restProps
-	}: WithElementRef<HTMLAttributes<HTMLParagraphElement>> = $props();
+	}: CardDescriptionProps = $props();
 </script>
 
 <p
-	bind:this={ref}
 	data-slot="card-description"
-	class={cn("text-muted-foreground text-sm", className)}
-	{...restProps}
+	class={cn("text-muted-foreground", size === "xs" ? "text-xs" : "text-sm")}
 >
 	{@render children?.()}
 </p>

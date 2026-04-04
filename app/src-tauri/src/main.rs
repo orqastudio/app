@@ -15,6 +15,8 @@ fn main() {
             .position(|a| a == "--mcp")
             .and_then(|i| args.get(i + 1))
             .map_or_else(
+                // BINARY ENTRY POINT: current_dir() failure is an unrecoverable OS
+                // error in a CLI binary — no project path means no MCP server.
                 || std::env::current_dir().expect("failed to get current dir"),
                 std::path::PathBuf::from,
             );
@@ -38,6 +40,8 @@ fn main() {
             .position(|a| a == "--lsp")
             .and_then(|i| args.get(i + 1))
             .map_or_else(
+                // BINARY ENTRY POINT: current_dir() failure is an unrecoverable OS
+                // error in a CLI binary — no project path means no LSP server.
                 || std::env::current_dir().expect("failed to get current dir"),
                 std::path::PathBuf::from,
             );

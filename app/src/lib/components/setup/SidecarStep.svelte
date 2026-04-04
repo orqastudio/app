@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Text } from "@orqastudio/svelte-components/pure";
 	import { extractErrorMessage, logger } from "@orqastudio/sdk";
 
 	const log = logger("setup");
@@ -54,26 +54,26 @@
 	});
 </script>
 
-<div class="space-y-4 text-center">
+<div class="flex flex-col items-center gap-4 text-center">
 	<Icon name="cpu" size="xl" />
-	<h3 class="text-lg font-semibold">Sidecar Process</h3>
-	<p class="text-sm text-muted-foreground">Starting the Agent SDK sidecar</p>
+	<Heading level={3}>Sidecar Process</Heading>
+	<Text tone="muted">Starting the Agent SDK sidecar</Text>
 
 	{#if starting}
 		<LoadingSpinner size="md" />
-		<p class="text-xs text-muted-foreground">Starting sidecar...</p>
+		<span class="text-xs text-muted-foreground">Starting sidecar...</span>
 	{:else if setupStore.error}
 		<ErrorDisplay message={setupStore.error} onRetry={start} />
 	{:else if setupStore.sidecarStarted}
-		<div class="space-y-2">
+		<div class="flex flex-col items-center gap-2">
 			<Icon name="circle-check" size="xl" />
 			<p class="text-sm font-medium text-success">Sidecar connected</p>
 			{#if settingsStore.sidecarStatus.pid}
-				<p class="text-xs text-muted-foreground">PID: {settingsStore.sidecarStatus.pid}</p>
+				<span class="text-xs text-muted-foreground">PID: {settingsStore.sidecarStatus.pid}</span>
 			{/if}
 		</div>
 	{:else}
-		<div class="space-y-3">
+		<div class="flex flex-col items-center gap-3">
 			<p class="text-sm text-warning">Sidecar not running</p>
 			<Button variant="outline" onclick={start}>Retry</Button>
 		</div>

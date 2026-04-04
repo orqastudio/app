@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Icon,
+	import { Icon, HStack,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -90,28 +90,30 @@
 {#if totalTools > 0}
 	<Collapsible bind:open>
 		<CollapsibleTrigger
-			class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+			class="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
 		>
-			<Icon name="chevron-right" size="sm" />
-			<Icon name="wrench" size="sm" />
-			<span class="flex-1 text-xs text-muted-foreground">{summaryLabel}</span>
-			{#if errorCount > 0}
-				<span class="flex items-center gap-1 text-xs text-destructive">
-					<Icon name="x-circle" size="sm" />
-					{errorCount} {errorCount === 1 ? "error" : "errors"}
-				</span>
-			{/if}
+			<HStack gap={2}>
+				<Icon name="chevron-right" size="sm" />
+				<Icon name="wrench" size="sm" />
+				<span class="flex-1 text-xs text-muted-foreground">{summaryLabel}</span>
+				{#if errorCount > 0}
+					<div class="flex items-center gap-1 text-xs text-destructive">
+						<Icon name="x-circle" size="sm" />
+						{errorCount} {errorCount === 1 ? "error" : "errors"}
+					</div>
+				{/if}
+			</HStack>
 		</CollapsibleTrigger>
 		<CollapsibleContent>
 			<div class="ml-3 mt-1 space-y-1 border-l-2 border-border pl-4">
 				{#if summaryParts.length > 0}
 					<div class="flex flex-wrap gap-2 py-1">
 						{#each summaryParts as part (part.name)}
-							{@const Icon = part.icon}
-							<span class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-								<Icon class="h-3 w-3" />
+							{@const PartIcon = part.icon}
+							<div class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+								<PartIcon class="h-3 w-3" />
 								{part.label} ({part.count})
-							</span>
+							</div>
 						{/each}
 					</div>
 				{/if}

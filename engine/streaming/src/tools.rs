@@ -405,22 +405,16 @@ pub fn tool_glob(input: &serde_json::Value, root: &Path) -> (String, bool) {
 
     match glob::glob(&pattern_str) {
         Ok(entries) => {
-            let mut paths: Vec<String> = Vec::new();
-            for entry in entries {
-                match entry {
-                    Ok(path) => {
-                        let display = path
-                            .strip_prefix(root)
-                            .unwrap_or(&path)
-                            .to_string_lossy()
-                            .into_owned();
-                        paths.push(display);
-                    }
-                    Err(e) => {
-                        paths.push(format!("(error: {e})"));
-                    }
-                }
-            }
+            let paths: Vec<String> = entries
+                .map(|entry| match entry {
+                    Ok(path) => path
+                        .strip_prefix(root)
+                        .unwrap_or(&path)
+                        .to_string_lossy()
+                        .into_owned(),
+                    Err(e) => format!("(error: {e})"),
+                })
+                .collect();
             if paths.is_empty() {
                 ("no matches found".to_owned(), false)
             } else {

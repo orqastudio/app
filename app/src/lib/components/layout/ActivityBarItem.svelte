@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent, VisuallyHidden } from "@orqastudio/svelte-components/pure";
 
 	let {
 		icon,
@@ -19,13 +19,13 @@
 		{#snippet child({ props })}
 			<button
 				{...props}
-				class="mb-1 flex h-10 w-10 items-center justify-center rounded-md transition-colors
-					{active
+				class="mb-1 flex h-10 w-10 items-center justify-center rounded-md transition-colors {active
 					? 'bg-accent text-accent-foreground'
 					: 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'}"
 				{onclick}
 			>
 				<Icon name={icon} size="lg" />
+				<VisuallyHidden>{label}</VisuallyHidden>
 			</button>
 		{/snippet}
 	</TooltipTrigger>

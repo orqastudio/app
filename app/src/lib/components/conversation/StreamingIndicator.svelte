@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { ToolCallState } from "@orqastudio/sdk";
 	import { getActivityPhase, getEphemeralLabel } from "$lib/utils/tool-display";
+	import { Caption, StreamingDots } from "@orqastudio/svelte-components/pure";
 
 	let {
 		hasContent = false,
@@ -76,28 +77,18 @@
 
 {#if visible}
 	<div class="flex flex-col gap-1 px-4 py-2">
-		<div class="flex items-center gap-2 text-sm text-muted-foreground">
-			<div class="flex gap-1">
-				<span
-					class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:0ms]"
-				></span>
-				<span
-					class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:150ms]"
-				></span>
-				<span
-					class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary/60 [animation-delay:300ms]"
-				></span>
-			</div>
-			<span class="font-medium">{statusLabel}...</span>
+		<div class="flex items-center gap-2">
+			<StreamingDots />
+			<span class="text-sm font-medium text-muted-foreground">{statusLabel}...</span>
 			{#if hasActiveTools}
-				<span class="text-xs tabular-nums text-muted-foreground/70">
+				<span class="text-xs tabular-nums opacity-70">
 					({toolCalls.filter((t) => t.isComplete).length}/{toolCalls.length} tools)
 				</span>
 			{/if}
 		</div>
 		{#if ephemeralText}
-			<div class="flex items-center gap-2 pl-7 text-xs text-muted-foreground/70">
-				<span class="truncate">{ephemeralText}</span>
+			<div class="flex items-center gap-2 pl-7">
+				<Caption truncate>{ephemeralText}</Caption>
 			</div>
 		{/if}
 	</div>

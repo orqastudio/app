@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, EmptyState, LoadingSpinner, ErrorDisplay, Button, Text } from "@orqastudio/svelte-components/pure";
 	import SessionHeader from "./SessionHeader.svelte";
 	import MessageBubble from "./MessageBubble.svelte";
 	import MessageInput from "./MessageInput.svelte";
@@ -235,14 +232,15 @@
 
 		<!-- Resume notification banner -->
 		{#if showResumeBanner}
-			<div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2 text-sm text-muted-foreground">
-				<span>Session resumed after restart. Send a message to continue.</span>
-				<button
-					class="ml-2 text-xs hover:text-foreground"
+			<div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2">
+				<Text tone="muted">Session resumed after restart. Send a message to continue.</Text>
+				<Button
+					variant="ghost"
+					size="sm"
 					onclick={() => { showResumeBanner = false; }}
 				>
 					Dismiss
-				</button>
+				</Button>
 			</div>
 		{/if}
 
@@ -270,7 +268,7 @@
 					/>
 				</div>
 			{:else}
-				<ScrollArea class="h-full" bind:viewportRef={scrollViewportRef}>
+				<ScrollArea full bind:viewportRef={scrollViewportRef}>
 					<div class="space-y-4 p-4" onscroll={handleScroll}>
 						<!-- Context entries — inline system messages showing what was sent to Claude -->
 						{#each contextEntries as entry, i (entry.type + i)}
@@ -322,8 +320,8 @@
 						{#if processViolations.length > 0}
 							<div class="space-y-1 px-4">
 								{#each processViolations as violation (violation.check)}
-									<div class="rounded-md border border-warning/30 bg-warning/10 px-3 py-2 text-sm text-warning">
-										<span class="font-medium">Process:</span> {violation.message}
+									<div class="rounded-md border border-warning/30 bg-warning/10 px-3 py-2">
+										<span class="text-sm text-warning"><span class="font-medium">Process:</span> {violation.message}</span>
 									</div>
 								{/each}
 							</div>
@@ -334,7 +332,7 @@
 				<!-- Scroll to bottom button -->
 				{#if userScrolledUp}
 					<button
-						class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground shadow-md transition-colors hover:bg-muted"
+						class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-sm shadow-md hover:bg-accent"
 						onclick={scrollToBottom}
 					>
 						Scroll to bottom

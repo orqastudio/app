@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { Stack, HStack } from "../layout/index.js";
+	import { Text } from "../typography/index.js";
+
 	let {
 		label,
 		current,
@@ -14,15 +17,15 @@
 	const percentage = $derived(total > 0 ? Math.round((current / total) * 100) : 0);
 </script>
 
-<div class="flex flex-col gap-1">
-	<div class="flex items-center justify-between text-xs">
-		<span class="text-muted-foreground">{label}</span>
-		<span class="tabular-nums text-foreground">{current}/{total}</span>
-	</div>
+<Stack gap={1}>
+	<HStack justify="between">
+		<Text variant="caption">{label}</Text>
+		<Text variant="tabular">{current}/{total}</Text>
+	</HStack>
 	<div class="h-1.5 w-full rounded-full bg-muted">
 		<div
 			class="h-full rounded-full transition-all {colorClass}"
 			style="width: {percentage}%"
 		></div>
 	</div>
-</div>
+</Stack>

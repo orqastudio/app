@@ -1,8 +1,12 @@
+// Tauri IPC commands for the first-run setup wizard.
+//
+// Setup completion is stored as `setup_version` in the project-scoped settings.
+// If no project is open yet, setup is considered incomplete.
+
 use tauri::Manager;
 
 use crate::domain::setup::{self, ClaudeCliInfo, SetupStatus, SetupStepStatus, StepStatus};
 use crate::error::OrqaError;
-use crate::repo::settings_repo;
 use crate::state::AppState;
 
 /// Current setup wizard version. Bump when new setup steps are added.
@@ -46,21 +50,18 @@ fn default_steps() -> Vec<SetupStepStatus> {
 
 /// Query the current setup status.
 ///
-/// Reads the stored `setup_version` from settings. If the stored version
-/// is missing or less than `CURRENT_SETUP_VERSION`, setup is incomplete.
+/// Reads the stored `setup_version` from settings. If no project is open
+/// (storage not initialised), setup is incomplete.
 #[tauri::command]
 pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    let stored = settings_repo::get(&conn, "setup_version", "app")?;
-
-    let stored_version = stored.and_then(|v| v.as_u64()).map_or(0, |v| v as u32);
-
-    let setup_complete = stored_version >= CURRENT_SETUP_VERSION;
+    let (setup_complete, stored_version) = match state.db.get() {
+        Ok(storage) => {
+            let stored = storage.settings().get("setup_version", "app")?;
+            let version = stored.and_then(|v| v.as_u64()).map_or(0, |v| v as u32);
+            (version >= CURRENT_SETUP_VERSION, version)
+        }
+        Err(_) => (false, 0),
+    };
 
     Ok(SetupStatus {
         setup_complete,
@@ -127,35 +128,28 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
 }
 
 /// Mark setup as complete by storing the current version in settings.
+///
+/// Requires an open project (storage must be initialised via `project_open`).
 #[tauri::command]
 pub fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
-    let conn = state
-        .db
-        .conn
-        .lock()
-        .map_err(|e| OrqaError::Database(format!("lock poisoned: {e}")))?;
-
-    settings_repo::set(
-        &conn,
+    let storage = state.db.get()?;
+    Ok(storage.settings().set(
         "setup_version",
         &serde_json::json!(CURRENT_SETUP_VERSION),
         "app",
-    )
+    )?)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::init_memory_db;
-    use crate::repo::settings_repo;
 
     #[test]
     fn get_setup_status_incomplete_when_no_version() {
-        let conn = init_memory_db().expect("db init");
-        let stored = settings_repo::get(&conn, "setup_version", "app").expect("get");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        let stored = storage.settings().get("setup_version", "app").expect("get");
         assert!(stored.is_none());
 
-        // Simulate what the command does without tauri::State
         let stored_version = 0_u32;
         let status = SetupStatus {
             setup_complete: stored_version >= CURRENT_SETUP_VERSION,
@@ -174,16 +168,15 @@ mod tests {
 
     #[test]
     fn get_setup_status_complete_when_version_matches() {
-        let conn = init_memory_db().expect("db init");
-        settings_repo::set(
-            &conn,
-            "setup_version",
-            &serde_json::json!(CURRENT_SETUP_VERSION),
-            "app",
-        )
-        .expect("set");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        storage
+            .settings()
+            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
+            .expect("set");
 
-        let stored = settings_repo::get(&conn, "setup_version", "app")
+        let stored = storage
+            .settings()
+            .get("setup_version", "app")
             .expect("get")
             .expect("should exist");
         let stored_version = stored.as_u64().map(|v| v as u32).unwrap_or(0);
@@ -201,23 +194,19 @@ mod tests {
 
     #[test]
     fn complete_setup_stores_version() {
-        let conn = init_memory_db().expect("db init");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
 
-        // Before: no version
-        let before = settings_repo::get(&conn, "setup_version", "app").expect("get");
+        let before = storage.settings().get("setup_version", "app").expect("get");
         assert!(before.is_none());
 
-        // Simulate what complete_setup does
-        settings_repo::set(
-            &conn,
-            "setup_version",
-            &serde_json::json!(CURRENT_SETUP_VERSION),
-            "app",
-        )
-        .expect("set");
+        storage
+            .settings()
+            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
+            .expect("set");
 
-        // After: version matches
-        let after = settings_repo::get(&conn, "setup_version", "app")
+        let after = storage
+            .settings()
+            .get("setup_version", "app")
             .expect("get")
             .expect("should exist");
         assert_eq!(after, serde_json::json!(CURRENT_SETUP_VERSION));
@@ -259,9 +248,6 @@ mod tests {
 
     #[test]
     fn check_claude_cli_handles_missing_binary() {
-        // Run the command against a non-existent binary to test the error path.
-        // We cannot call check_claude_cli directly since it uses the real "claude"
-        // binary, but we can verify the ClaudeCliInfo construction for the not-found case.
         let info = ClaudeCliInfo {
             installed: false,
             version: None,
@@ -280,11 +266,15 @@ mod tests {
 
     #[test]
     fn setup_status_incomplete_when_version_too_low() {
-        let conn = init_memory_db().expect("db init");
-        // Store version 0 (lower than CURRENT_SETUP_VERSION)
-        settings_repo::set(&conn, "setup_version", &serde_json::json!(0), "app").expect("set");
+        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+        storage
+            .settings()
+            .set("setup_version", &serde_json::json!(0), "app")
+            .expect("set");
 
-        let stored = settings_repo::get(&conn, "setup_version", "app")
+        let stored = storage
+            .settings()
+            .get("setup_version", "app")
             .expect("get")
             .expect("should exist");
         let stored_version = stored.as_u64().map(|v| v as u32).unwrap_or(0);

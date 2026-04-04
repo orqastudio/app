@@ -33,25 +33,25 @@ import { callDaemon } from "./hooks/shared.js";
 /** Output of a single generator run. */
 export interface GenerateResult {
   /** Paths to generated agent .md files. */
-  agents: string[];
+  readonly agents: string[];
   /** Path to the generated CLAUDE.md file. */
-  claudeMd: string;
+  readonly claudeMd: string;
   /** Path to the generated .claude/settings.json file. */
-  settingsJson: string;
+  readonly settingsJson: string;
   /** Path to the generated hooks.json file. */
-  hooksJson: string;
+  readonly hooksJson: string;
   /** Paths to generated plugin/scripts/*.js files. */
-  scripts: string[];
+  readonly scripts: string[];
   /** Paths to generated plugin/skills/<name>/SKILL.md files. */
-  skills: string[];
+  readonly skills: string[];
   /** Path to the generated plugin.json file. */
-  pluginJson: string;
+  readonly pluginJson: string;
   /** Path to the generated .mcp.json file. */
-  mcpJson: string;
+  readonly mcpJson: string;
   /** Path to the generated .lsp.json file. */
-  lspJson: string;
+  readonly lspJson: string;
   /** Non-fatal errors encountered during generation. */
-  errors: string[];
+  readonly errors: string[];
 }
 
 // ---------------------------------------------------------------------------
@@ -60,20 +60,20 @@ export interface GenerateResult {
 
 /** A single Claude Code hook command entry. */
 interface HookEntry {
-  type: "command";
-  command: string;
-  timeout: number;
+  readonly type: "command";
+  readonly command: string;
+  readonly timeout: number;
 }
 
 /** A matcher group within a Claude Code hook event. */
 interface HookMatcherGroup {
-  matcher: string;
-  hooks: HookEntry[];
+  readonly matcher: string;
+  readonly hooks: HookEntry[];
 }
 
 /** The top-level hooks.json structure. */
 interface HooksJson {
-  hooks: Record<string, HookMatcherGroup[]>;
+  readonly hooks: Record<string, HookMatcherGroup[]>;
 }
 
 // ---------------------------------------------------------------------------
@@ -129,8 +129,8 @@ function generateAgents(
 
 /** Response shape for POST /context. */
 interface ContextResponse {
-  rule_titles: string[];
-  workflow_names: string[];
+  readonly rule_titles: string[];
+  readonly workflow_names: string[];
 }
 
 /**
@@ -373,9 +373,7 @@ Architecture documentation and knowledge are available as project governance art
 
     if (ruleTitles.length > 0) {
       lines.push(`\nActive rules (${ruleTitles.length}):`);
-      for (const title of ruleTitles) {
-        lines.push(`- ${title}`);
-      }
+      lines.push(...ruleTitles.map((title) => `- ${title}`));
     }
   }
 

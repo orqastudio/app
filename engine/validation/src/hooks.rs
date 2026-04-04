@@ -94,6 +94,9 @@ use crate::types::{HookContext, HookResult, HookViolation};
 /// artifact graph, then tests each active rule's enforcement entries against
 /// the context.
 ///
+/// Performs I/O (graph build, plugin manifest scan, manifest ownership check)
+/// then delegates to the pure `evaluate_hook_pure` for rule evaluation.
+///
 /// Never panics. I/O errors (missing `.orqa/` directory, etc.) are treated as
 /// "no violations found" with action `"allow"`.
 pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
@@ -112,12 +115,27 @@ pub fn evaluate_hook(ctx: &HookContext, project_root: &Path) -> HookResult {
         &plugin_contributions.artifact_types,
     );
 
+    let manifest_violation = check_manifest_ownership(ctx, project_root);
+    evaluate_hook_pure(ctx, &rules, manifest_violation)
+}
+
+/// Pure core of hook evaluation: takes pre-loaded rules and an optional manifest
+/// violation and returns the aggregated [`HookResult`].
+///
+/// No filesystem I/O. All I/O is performed by the caller (`evaluate_hook`) before
+/// calling this function. Separating the pure logic here enables unit testing
+/// without filesystem setup.
+pub fn evaluate_hook_pure(
+    ctx: &HookContext,
+    rules: &[crate::types::ParsedArtifact],
+    manifest_violation: Option<HookViolation>,
+) -> HookResult {
     let mut violations: Vec<HookViolation> = Vec::new();
-    if let Some(violation) = check_manifest_ownership(ctx, project_root) {
+    if let Some(violation) = manifest_violation {
         violations.push(violation);
     }
 
-    for rule in &rules {
+    for rule in rules {
         evaluate_rule_entries(ctx, rule, &mut violations);
     }
 

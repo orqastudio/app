@@ -41,6 +41,16 @@ pub struct GraphStateInner {
 /// Shared reference to the cached graph state, safe for concurrent read access.
 ///
 /// Handlers receive a clone of this `Arc<RwLock<>>` via axum's `State` extractor.
+///
+/// Lock scope rationale (R9): `RwLock` is used because the file watcher needs
+/// exclusive write access during reload while route handlers read concurrently.
+/// Reads are lock-held only for the duration of a single field access or clone
+/// (see `rule_count`, `artifact_count`, `find_node`) — never across await points.
+/// The write lock in `reload` is held only while swapping `*guard = inner`, not
+/// during the (potentially slow) `build_inner` call that precedes it. This keeps
+/// contention minimal. An `ArcSwap<GraphStateInner>` would eliminate reader
+/// blocking entirely but requires an additional dependency; the current pattern
+/// is acceptable given the low reload frequency (file-watcher events, not hot path).
 #[derive(Clone)]
 pub struct GraphState(pub Arc<RwLock<GraphStateInner>>);
 

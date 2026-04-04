@@ -2,7 +2,7 @@
 	import { type VariantProps, tv } from "tailwind-variants";
 
 	export const badgeVariants = tv({
-		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-2 overflow-hidden rounded border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3",
+		base: "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex w-fit shrink-0 items-center justify-center gap-2 overflow-hidden rounded border px-2 py-0.5 font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] [&>svg]:pointer-events-none [&>svg]:size-3",
 		variants: {
 			variant: {
 				default:
@@ -14,28 +14,37 @@
 				outline: "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
 			warning: "bg-warning/15 text-warning border-warning/30 [a&]:hover:bg-warning/25",
 			},
+			size: {
+				default: "text-xs",
+				sm: "text-[11px] leading-none",
+				xs: "text-[10px] leading-none px-1",
+			},
 		},
 		defaultVariants: {
 			variant: "default",
+			size: "default",
 		},
 	});
 
 	export type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
+	export type BadgeSize = VariantProps<typeof badgeVariants>["size"];
 </script>
 
 <script lang="ts">
-	import type { HTMLAnchorAttributes } from "svelte/elements";
-	import { cn, type WithElementRef } from "../../utils/cn.js";
+	import type { Snippet } from "svelte";
 
 	let {
 		ref = $bindable(null),
 		href,
-		class: className,
 		variant = "default",
+		size = "default",
 		children,
-		...restProps
-	}: WithElementRef<HTMLAnchorAttributes> & {
+	}: {
+		ref?: HTMLElement | null;
+		href?: string;
 		variant?: BadgeVariant;
+		size?: BadgeSize;
+		children?: Snippet;
 	} = $props();
 </script>
 
@@ -44,8 +53,7 @@
 	bind:this={ref}
 	data-slot="badge"
 	{href}
-	class={cn(badgeVariants({ variant }), className)}
-	{...restProps}
+	class={badgeVariants({ variant, size })}
 >
 	{@render children?.()}
 </svelte:element>

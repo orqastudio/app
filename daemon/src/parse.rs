@@ -174,34 +174,29 @@ fn count_downstream(
         return (0, None);
     }
 
-    let mut count: u32 = 0;
-    let mut examples: Vec<String> = Vec::new();
+    // Collect stems of files (up to 3 for the summary) that reference artifact_id,
+    // excluding the artifact itself. Count all matches for the downstream_count field.
+    let referencing: Vec<String> = collect_md_files(&orqa_dir)
+        .unwrap_or_default()
+        .into_iter()
+        .filter(|entry| entry != self_path)
+        .filter_map(|entry| {
+            let text = std::fs::read_to_string(&entry).ok()?;
+            if text.contains(artifact_id.as_str()) {
+                entry.file_stem().and_then(|s| s.to_str()).map(str::to_owned)
+            } else {
+                None
+            }
+        })
+        .collect();
 
-    if let Ok(entries) = collect_md_files(&orqa_dir) {
-        for entry in entries {
-            // Skip the artifact itself.
-            if entry == self_path {
-                continue;
-            }
-            if let Ok(text) = std::fs::read_to_string(&entry) {
-                if text.contains(artifact_id.as_str()) {
-                    count += 1;
-                    if examples.len() < 3 {
-                        // Use the file stem as a human-readable label.
-                        if let Some(stem) = entry.file_stem().and_then(|s| s.to_str()) {
-                            examples.push(stem.to_owned());
-                        }
-                    }
-                }
-            }
-        }
-    }
+    let count = referencing.len() as u32;
+    let examples: Vec<String> = referencing.into_iter().take(3).collect();
 
     let summary = if count == 0 {
         None
-    } else if examples.is_empty() {
-        Some(format!("{count} reference(s)"))
     } else {
+        // examples holds up to 3 stems; tail describes any overflow beyond 3.
         let tail = if count > examples.len() as u32 {
             format!(", and {} more", count - examples.len() as u32)
         } else {

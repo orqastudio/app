@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { Icon, Badge } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Badge,
+		LoadingSpinner,
+		ErrorDisplay,
+		EmptyState,
+		Caption,
+	} from "@orqastudio/svelte-components/pure";
 	import type { Lesson } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -64,15 +67,15 @@
 			<Icon name="book-open" size="md" />
 			<span class="text-sm font-medium">Lessons</span>
 		</div>
-		<div class="flex items-center gap-1.5">
+		<div class="flex items-center gap-1">
 			{#if promotionCandidates.length > 0}
-				<Badge variant="secondary" class="text-xs px-1.5 py-0.5">
+				<Badge variant="secondary" size="sm">
 					<Icon name="trending-up" size="xs" />
 					{promotionCandidates.length} ready to promote
 				</Badge>
 			{/if}
 			{#if promotedCount > 0}
-				<Badge variant="outline" class="text-xs px-1.5 py-0.5">
+				<Badge variant="outline" size="sm">
 					<Icon name="check-circle" size="xs" />
 					{promotedCount} promoted
 				</Badge>
@@ -80,7 +83,7 @@
 		</div>
 	</div>
 
-	<ScrollArea class="flex-1">
+	<div class="flex-1 overflow-y-auto">
 		<div class="p-2">
 			{#if loading && lessons.length === 0}
 				<div class="flex justify-center py-8">
@@ -97,19 +100,19 @@
 			{:else}
 				<!-- Active lessons -->
 				{#if activeCount > 0}
-					<p class="mb-1.5 px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
 						Active ({activeCount})
-					</p>
+					</span>
 					<div class="mb-3 space-y-1">
 						{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
 							<button
-								class="w-full rounded-md px-2 py-2 text-left transition-colors hover:bg-accent {selectedId === lesson.id ? 'bg-accent' : ''}"
+								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'hover:bg-accent/50'}"
 								onclick={() => onSelect(lesson)}
 							>
 								<div class="flex items-start justify-between gap-2">
 									<div class="min-w-0 flex-1">
-										<div class="flex items-center gap-1.5">
-											<span class="font-mono text-[11px] text-muted-foreground">{lesson.id}</span>
+										<div class="flex items-center gap-1">
+											<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
 											<span
 												class="rounded px-1 py-0.5 text-[10px] font-medium {categoryColor(lesson.category)}"
 											>
@@ -120,7 +123,7 @@
 									</div>
 									<div class="flex shrink-0 flex-col items-end gap-1">
 										{#if lesson.recurrence >= 2}
-											<Badge variant="secondary" class="text-[10px] px-1 py-0">
+											<Badge variant="secondary" size="xs">
 												x{lesson.recurrence}
 											</Badge>
 										{/if}
@@ -133,26 +136,26 @@
 
 				<!-- Promoted lessons -->
 				{#if promotedCount > 0}
-					<p class="mb-1.5 px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
 						Promoted ({promotedCount})
-					</p>
+					</span>
 					<div class="mb-3 space-y-1">
 						{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
 							<button
-								class="w-full rounded-md px-2 py-2 text-left transition-colors hover:bg-accent {selectedId === lesson.id ? 'bg-accent' : ''}"
+								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'hover:bg-accent/50'}"
 								onclick={() => onSelect(lesson)}
 							>
 								<div class="flex items-start justify-between gap-2">
 									<div class="min-w-0 flex-1">
-										<div class="flex items-center gap-1.5">
-											<span class="font-mono text-[11px] text-muted-foreground">{lesson.id}</span>
-											<Badge variant={statusVariant(lesson.status)} class="text-[10px] px-1 py-0">
+										<div class="flex items-center gap-1">
+											<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
+											<Badge variant={statusVariant(lesson.status)} size="xs">
 												{lesson.status}
 											</Badge>
 										</div>
-										<p class="mt-0.5 truncate text-xs font-medium text-muted-foreground">
+										<Caption truncate>
 											{lesson.title}
-										</p>
+										</Caption>
 									</div>
 								</div>
 							</button>
@@ -162,18 +165,18 @@
 
 				<!-- Resolved lessons -->
 				{#if lessons.some((l) => l.status === "resolved")}
-					<p class="mb-1.5 px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
 						Resolved
-					</p>
+					</span>
 					<div class="space-y-1">
 						{#each lessons.filter((l) => l.status === "resolved") as lesson (lesson.id)}
 							<button
-								class="w-full rounded-md px-2 py-2 text-left opacity-60 transition-colors hover:bg-accent hover:opacity-100 {selectedId === lesson.id ? 'bg-accent opacity-100' : ''}"
+								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'opacity-60 hover:bg-accent/50 hover:opacity-100'}"
 								onclick={() => onSelect(lesson)}
 							>
-								<div class="flex items-center gap-1.5">
-									<span class="font-mono text-[11px] text-muted-foreground">{lesson.id}</span>
-									<p class="truncate text-xs text-muted-foreground">{lesson.title}</p>
+								<div class="flex items-center gap-1">
+									<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
+									<Caption truncate>{lesson.title}</Caption>
 								</div>
 							</button>
 						{/each}
@@ -181,5 +184,5 @@
 				{/if}
 			{/if}
 		</div>
-	</ScrollArea>
+	</div>
 </div>

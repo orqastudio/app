@@ -15,12 +15,12 @@ import { invoke } from "@tauri-apps/api/core";
 const log = logger("plugins");
 
 interface DiscoveredPlugin {
-	name: string;
-	version: string;
-	display_name: string | null;
-	description: string | null;
-	path: string;
-	source: string;
+	readonly name: string;
+	readonly version: string;
+	readonly display_name: string | null;
+	readonly description: string | null;
+	readonly path: string;
+	readonly source: string;
 }
 
 /**
@@ -52,7 +52,7 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 
 			// Ensure provides exists with default empty arrays.
 			if (!manifest.provides) {
-				(manifest as Record<string, unknown>).provides = {};
+				(manifest as unknown as Record<string, unknown>).provides = {};
 			}
 			const p = manifest.provides;
 			if (!p.schemas) p.schemas = [];

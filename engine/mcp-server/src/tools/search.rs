@@ -222,15 +222,21 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     )
     .map_err(|e| format!("regex compile error: {e}"))?;
 
-    let mut symbols: Vec<String> = Vec::new();
-    for result in &semantic_results {
-        for cap in symbol_pattern.captures_iter(&result.content) {
-            let sym = cap[1].to_string();
-            if sym.len() > 2 && !symbols.contains(&sym) {
-                symbols.push(sym);
+    let symbols: Vec<String> = semantic_results
+        .iter()
+        .flat_map(|result| {
+            symbol_pattern
+                .captures_iter(&result.content)
+                .map(|cap| cap[1].to_string())
+                .collect::<Vec<_>>()
+        })
+        .filter(|sym| sym.len() > 2)
+        .fold(Vec::new(), |mut acc, sym| {
+            if !acc.contains(&sym) {
+                acc.push(sym);
             }
-        }
-    }
+            acc
+        });
 
     // Step 3: Regex follow-up for extracted symbols
     let mut follow_up_results = Vec::new();

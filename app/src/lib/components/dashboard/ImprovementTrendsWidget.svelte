@@ -198,7 +198,7 @@
 	function trendColorClass(m: MetricConfig): string {
 		const pct = percentChange(m);
 		if (pct === null || pct === 0) return "text-muted-foreground";
-		return isImprovement(m, pct) ? "text-green-500" : "text-destructive";
+		return isImprovement(m, pct) ? "text-success" : "text-destructive";
 	}
 
 	/**
@@ -269,11 +269,11 @@
 			{@const path = hasTrend ? sparklinePath(values, m.fixedMin, m.fixedMax) : ""}
 			{@const isLeft = idx % 2 === 0}
 			{@const isTop = idx < 2}
-			<div class="flex min-h-0 flex-col overflow-hidden {isLeft && 'border-r border-border'} {isTop && 'border-t border-border'}">
+			<div class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-r border-border' : ''} {isTop ? 'border-t border-border' : ''}">
 				<!-- Metric header -->
-				<div class="flex items-center justify-between px-3 pt-3 pb-1">
+				<div class="flex items-center justify-between px-3 pb-1 pt-3">
 					<span class="text-xs font-medium text-muted-foreground">{m.label}</span>
-					<div class="flex items-baseline gap-1.5">
+					<div class="flex items-baseline gap-1">
 						<span class="text-base font-semibold tabular-nums">
 							{currentValue(m)}{m.unit ?? ""}
 						</span>

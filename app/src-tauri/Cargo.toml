@@ -19,7 +19,6 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
-rusqlite = { version = "0.33", features = ["bundled"] }
 tauri-plugin-fs = { version = "2", features = ["watch"] }
 tauri-plugin-shell = { version = "2", features = [] }
 tauri-plugin-store = { version = "2", features = [] }
@@ -34,6 +33,7 @@ base64 = "0.22.1"
 dirs-next = "2"
 reqwest = { version = "0.12", features = ["stream", "json"] }
 orqa-engine-types = { path = "../../engine/types" }
+orqa-storage = { path = "../../engine/storage" }
 futures-util = "0.3"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }

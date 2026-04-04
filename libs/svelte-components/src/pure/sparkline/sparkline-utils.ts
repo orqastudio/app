@@ -8,10 +8,10 @@
  * Normalises values to fit within the given width/height.
  */
 export function sparklinePath(
-	values: number[],
+	values: readonly number[],
 	width: number,
 	height: number,
-	options?: { padding?: number; fixedMin?: number; fixedMax?: number },
+	options?: { readonly padding?: number; readonly fixedMin?: number; readonly fixedMax?: number },
 ): string {
 	if (values.length < 2) return "";
 	const padding = options?.padding ?? 4;

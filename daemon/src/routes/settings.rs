@@ -1,8 +1,8 @@
 // App settings routes: read and write key/value settings in SQLite.
 //
-// Settings are stored in the daemon SQLite database (.state/daemon.db)
-// under the `settings` table with a (key, scope) primary key. All
-// handlers require HealthState so they can access the DaemonStore.
+// Settings are stored in the unified SQLite storage (.state/orqa.db) under the
+// `settings` table with a (key, scope) primary key. All handlers require
+// HealthState so they can access the unified Storage.
 //
 // Endpoints:
 //   GET /settings           — list all settings, optionally filtered by scope
@@ -14,7 +14,6 @@ use axum::Json;
 use serde::Deserialize;
 
 use crate::health::HealthState;
-use crate::store::{settings_get_all, settings_set};
 
 // ---------------------------------------------------------------------------
 // Request / response shapes
@@ -36,8 +35,8 @@ pub struct SetSettingRequest {
     pub scope: Option<String>,
 }
 
-/// Response helper when the daemon store is unavailable.
-fn store_unavailable() -> (StatusCode, Json<serde_json::Value>) {
+/// Response helper when the storage is unavailable.
+fn storage_unavailable() -> (StatusCode, Json<serde_json::Value>) {
     (
         StatusCode::SERVICE_UNAVAILABLE,
         Json(serde_json::json!({
@@ -54,25 +53,26 @@ fn store_unavailable() -> (StatusCode, Json<serde_json::Value>) {
 /// Handle GET /settings — return all settings optionally filtered by scope.
 ///
 /// Returns a flat key/value map where values are JSON. When the store is
-/// absent, returns an empty map rather than an error.
+/// absent, returns 503 rather than an empty map.
 pub async fn get_settings(
     State(state): State<HealthState>,
     Query(query): Query<GetSettingsQuery>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
     let scope = query.scope.clone();
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
+        let result = if let Some(ref s) = scope {
+            storage.settings().get_all(s)
+        } else {
+            storage.settings().get_all_any_scope()
+        };
 
-        settings_get_all(&conn, scope.as_deref())
+        result
             .map(|m| Json(serde_json::to_value(m).unwrap_or(serde_json::Value::Object(serde_json::Map::new()))))
             .map_err(|e| (
                 StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "LIST_FAILED" })),
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
             ))
     })
     .await
@@ -91,19 +91,14 @@ pub async fn set_setting(
     Path(key): Path<String>,
     Json(req): Json<SetSettingRequest>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
-    let store = state.daemon_store.clone().ok_or_else(store_unavailable)?;
+    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
     let scope = req.scope.unwrap_or_else(|| "app".to_owned());
     let value = req.value.clone();
 
     tokio::task::spawn_blocking(move || {
-        let conn = store.connect().map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-        ))?;
-
-        settings_set(&conn, &key, &value, &scope).map_err(|e| (
+        storage.settings().set(&key, &value, &scope).map_err(|e| (
             StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e, "code": "SET_FAILED" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "SET_FAILED" })),
         ))?;
 
         Ok(Json(serde_json::json!({ "key": key, "value": value, "scope": scope })))
@@ -132,20 +127,17 @@ mod tests {
     use tower::ServiceExt as _;
 
     use crate::graph_state::GraphState;
-    use crate::store::DaemonStore;
+    use orqa_storage::Storage;
 
-    /// Build a fresh router with the settings routes wired to a temp-file store.
-    ///
-    /// Returns (Router, tempfile) — caller must hold the tempfile to keep the DB alive.
-    fn settings_router() -> (Router, tempfile::NamedTempFile) {
-        let db_file = tempfile::NamedTempFile::new().expect("tempfile");
-        let store = DaemonStore::open(db_file.path().to_path_buf())
+    /// Build a fresh router with the settings routes wired to an in-memory store.
+    fn settings_router() -> Router {
+        let storage = Storage::open_in_memory()
             .map(Arc::new)
-            .expect("store open");
+            .expect("in-memory storage");
 
         let state = HealthState::for_test(
             GraphState::build_empty(std::path::Path::new("/tmp/test")),
-            Some(Arc::clone(&store)),
+            Some(Arc::clone(&storage)),
         );
 
         let settings_sub = Router::new()
@@ -153,9 +145,7 @@ mod tests {
             .route("/{key}", put(set_setting))
             .with_state(state);
 
-        let router = Router::new().nest("/settings", settings_sub);
-
-        (router, db_file)
+        Router::new().nest("/settings", settings_sub)
     }
 
     fn json_body(val: serde_json::Value) -> Body {
@@ -172,7 +162,7 @@ mod tests {
     #[tokio::test]
     async fn get_settings_returns_empty_object_initially() {
         // With no settings stored, GET /settings must return an empty JSON object.
-        let (app, _db) = settings_router();
+        let app = settings_router();
         let resp = app
             .oneshot(
                 Request::builder()
@@ -195,7 +185,7 @@ mod tests {
     #[tokio::test]
     async fn put_settings_sets_value() {
         // PUT /settings/theme_mode must persist the value.
-        let (app, _db) = settings_router();
+        let app = settings_router();
         let resp = app
             .oneshot(
                 Request::builder()
@@ -217,7 +207,7 @@ mod tests {
     #[tokio::test]
     async fn get_settings_returns_previously_set_value() {
         // After PUT, GET /settings must include the key we set.
-        let (app, _db) = settings_router();
+        let app = settings_router();
 
         app.clone()
             .oneshot(
@@ -250,7 +240,7 @@ mod tests {
     #[tokio::test]
     async fn settings_json_round_trip_complex_value() {
         // A complex JSON object must survive a PUT then GET cycle unchanged.
-        let (app, _db) = settings_router();
+        let app = settings_router();
         let complex = serde_json::json!({
             "enabled": true,
             "count": 42,

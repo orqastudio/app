@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Text } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -66,32 +66,32 @@
 	});
 </script>
 
-<div class="space-y-4 text-center">
+<div class="flex flex-col items-center gap-4 text-center">
 	<Icon name="brain" size="xl" />
-	<h3 class="text-lg font-semibold">Embedding Model</h3>
-	<p class="text-sm text-muted-foreground">Preparing semantic search model</p>
+	<Heading level={3}>Embedding Model</Heading>
+	<Text tone="muted">Preparing semantic search model</Text>
 
 	{#if checking}
 		<LoadingSpinner size="md" />
 		{#if downloadProgress()}
-			<p class="text-xs text-muted-foreground">Downloading: {downloadProgress()}</p>
+			<span class="text-xs text-muted-foreground">Downloading: {downloadProgress()}</span>
 		{:else}
-			<p class="text-xs text-muted-foreground">Checking model...</p>
+			<span class="text-xs text-muted-foreground">Checking model...</span>
 		{/if}
 	{:else if setupStore.error}
 		<ErrorDisplay message={setupStore.error} onRetry={check} />
 	{:else if setupStore.embeddingStatus?.status === "complete"}
-		<div class="space-y-2">
+		<div class="flex flex-col items-center gap-2">
 			<Icon name="circle-check" size="xl" />
 			<p class="text-sm font-medium text-success">Model ready</p>
-			<p class="text-xs text-muted-foreground">{EMBEDDING_MODEL_NAME}</p>
+			<span class="text-xs text-muted-foreground">{EMBEDDING_MODEL_NAME}</span>
 		</div>
 	{:else}
-		<div class="space-y-3">
+		<div class="flex flex-col items-center gap-3">
 			<p class="text-sm text-warning">Model not available</p>
-			<p class="text-xs text-muted-foreground">
+			<span class="text-xs text-muted-foreground">
 				The embedding model will be downloaded automatically when the app starts.
-			</p>
+			</span>
 			<Button variant="outline" onclick={check}>Check Again</Button>
 		</div>
 	{/if}

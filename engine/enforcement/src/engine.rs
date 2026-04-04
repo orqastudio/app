@@ -109,19 +109,17 @@ fn collect_glob_paths(pattern: &str) -> Result<Vec<String>, EngineError> {
     let entries = glob::glob(pattern)
         .map_err(|e| EngineError::Scan(format!("invalid glob pattern '{pattern}': {e}")))?;
 
-    let mut paths = Vec::new();
-    for entry in entries {
-        match entry {
-            Ok(path) => {
-                if let Some(s) = path.to_str() {
-                    paths.push(s.to_owned());
-                }
-            }
+    // I/O errors on individual entries are logged and skipped; a bad pattern
+    // returns Err above, so we only filter_map here for per-entry glob errors.
+    let paths = entries
+        .filter_map(|entry| match entry {
+            Ok(path) => path.to_str().map(str::to_owned),
             Err(e) => {
                 tracing::warn!("[enforcement] glob entry error for '{pattern}': {e}");
+                None
             }
-        }
-    }
+        })
+        .collect();
 
     Ok(paths)
 }
@@ -139,33 +137,35 @@ fn scan_content(
     ce: &CompiledEntry,
     rule: &EnforcementRule,
 ) -> Vec<ScanFinding> {
-    let mut findings = Vec::new();
+    content
+        .lines()
+        .enumerate()
+        .filter_map(|(idx, line)| {
+            let all_match = ce
+                .compiled_conditions
+                .iter()
+                .all(|(field, re)| match field.as_str() {
+                    "content" => re.is_match(line),
+                    other => {
+                        tracing::warn!("[enforcement] unknown scan condition field: '{other}'");
+                        false
+                    }
+                });
 
-    for (idx, line) in content.lines().enumerate() {
-        let all_match = ce
-            .compiled_conditions
-            .iter()
-            .all(|(field, re)| match field.as_str() {
-                "content" => re.is_match(line),
-                other => {
-                    tracing::warn!("[enforcement] unknown scan condition field: '{other}'");
-                    false
-                }
-            });
-
-        if all_match {
-            findings.push(ScanFinding {
-                rule_name: rule.name.clone(),
-                action: ce.action.clone(),
-                file_path: file_path.to_owned(),
-                line: idx + 1,
-                content: line.trim().to_owned(),
-                message: prose_excerpt(&rule.prose),
-            });
-        }
-    }
-
-    findings
+            if all_match {
+                Some(ScanFinding {
+                    rule_name: rule.name.clone(),
+                    action: ce.action.clone(),
+                    file_path: file_path.to_owned(),
+                    line: idx + 1,
+                    content: line.trim().to_owned(),
+                    message: prose_excerpt(&rule.prose),
+                })
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 
 /// The enforcement engine. Holds parsed rules and pre-compiled regexes.
@@ -185,15 +185,15 @@ impl EnforcementEngine {
     /// compiles regexes and builds internal indices. Invalid regex patterns are
     /// skipped with a warning.
     pub fn new(rules: Vec<EnforcementRule>) -> Self {
-        let mut compiled = Vec::new();
-
-        for (idx, rule) in rules.iter().enumerate() {
-            for entry in &rule.entries {
-                if let Some(ce) = compile_entry(entry, idx, &rule.name) {
-                    compiled.push(ce);
-                }
-            }
-        }
+        let compiled: Vec<CompiledEntry> = rules
+            .iter()
+            .enumerate()
+            .flat_map(|(idx, rule)| {
+                rule.entries
+                    .iter()
+                    .filter_map(move |entry| compile_entry(entry, idx, &rule.name))
+            })
+            .collect();
 
         tracing::debug!(
             "[enforcement] loaded {} rules, {} compiled entries",
@@ -211,37 +211,35 @@ impl EnforcementEngine {
     ///
     /// Entries with `event: lint` are skipped — they are declarative only.
     pub fn evaluate_file(&self, file_path: &str, new_text: &str) -> Vec<Verdict> {
-        let mut verdicts = Vec::new();
-
-        for ce in &self.compiled {
-            if ce.event != EventType::File {
-                continue;
-            }
-
-            let all_match = ce.compiled_conditions.iter().all(|(field, re)| {
-                let value = match field.as_str() {
-                    "file_path" => file_path,
-                    "new_text" => new_text,
-                    other => {
-                        tracing::warn!("[enforcement] unknown condition field: '{other}'");
-                        return false;
-                    }
-                };
-                re.is_match(value)
-            });
-
-            if all_match {
-                let rule = &self.rules[ce.rule_index];
-                verdicts.push(Verdict {
-                    rule_name: rule.name.clone(),
-                    action: ce.action.clone(),
-                    message: prose_excerpt(&rule.prose),
-                    knowledge: ce.knowledge.clone(),
+        self.compiled
+            .iter()
+            .filter(|ce| ce.event == EventType::File)
+            .filter_map(|ce| {
+                let all_match = ce.compiled_conditions.iter().all(|(field, re)| {
+                    let value = match field.as_str() {
+                        "file_path" => file_path,
+                        "new_text" => new_text,
+                        other => {
+                            tracing::warn!("[enforcement] unknown condition field: '{other}'");
+                            return false;
+                        }
+                    };
+                    re.is_match(value)
                 });
-            }
-        }
 
-        verdicts
+                if all_match {
+                    let rule = &self.rules[ce.rule_index];
+                    Some(Verdict {
+                        rule_name: rule.name.clone(),
+                        action: ce.action.clone(),
+                        message: prose_excerpt(&rule.prose),
+                        knowledge: ce.knowledge.clone(),
+                    })
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     /// Evaluate a bash tool call.
@@ -251,30 +249,28 @@ impl EnforcementEngine {
     ///
     /// Entries with `event: lint` are skipped — they are declarative only.
     pub fn evaluate_bash(&self, command: &str) -> Vec<Verdict> {
-        let mut verdicts = Vec::new();
+        self.compiled
+            .iter()
+            .filter(|ce| ce.event == EventType::Bash)
+            .filter_map(|ce| {
+                let matches = ce
+                    .compiled_bash_pattern
+                    .as_ref()
+                    .is_some_and(|re| re.is_match(command));
 
-        for ce in &self.compiled {
-            if ce.event != EventType::Bash {
-                continue;
-            }
-
-            let matches = ce
-                .compiled_bash_pattern
-                .as_ref()
-                .is_some_and(|re| re.is_match(command));
-
-            if matches {
-                let rule = &self.rules[ce.rule_index];
-                verdicts.push(Verdict {
-                    rule_name: rule.name.clone(),
-                    action: ce.action.clone(),
-                    message: prose_excerpt(&rule.prose),
-                    knowledge: ce.knowledge.clone(),
-                });
-            }
-        }
-
-        verdicts
+                if matches {
+                    let rule = &self.rules[ce.rule_index];
+                    Some(Verdict {
+                        rule_name: rule.name.clone(),
+                        action: ce.action.clone(),
+                        message: prose_excerpt(&rule.prose),
+                        knowledge: ce.knowledge.clone(),
+                    })
+                } else {
+                    None
+                }
+            })
+            .collect()
     }
 
     /// Scan project files for governance violations defined by `event: scan` entries.

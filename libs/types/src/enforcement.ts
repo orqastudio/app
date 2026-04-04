@@ -1,40 +1,40 @@
 export interface EnforcementRule {
-	name: string;
-	scope: string; // "system" | "project"
-	entries: EnforcementEntry[];
-	prose: string;
+	readonly name: string;
+	readonly scope: string; // "system" | "project"
+	readonly entries: readonly EnforcementEntry[];
+	readonly prose: string;
 }
 
 export interface EnforcementEntry {
-	event: "File" | "Bash";
-	action: "Block" | "Warn";
-	conditions: Condition[];
-	pattern: string | null;
+	readonly event: "File" | "Bash";
+	readonly action: "Block" | "Warn";
+	readonly conditions: readonly Condition[];
+	readonly pattern: string | null;
 }
 
 export interface Condition {
-	field: string;
-	pattern: string;
+	readonly field: string;
+	readonly pattern: string;
 }
 
 export interface EnforcementViolation {
-	rule_name: string;
-	action: "Block" | "Warn";
-	tool_name: string;
-	detail: string;
-	timestamp: string;
+	readonly rule_name: string;
+	readonly action: "Block" | "Warn";
+	readonly tool_name: string;
+	readonly detail: string;
+	readonly timestamp: string;
 }
 
 /** A violation record loaded from the SQLite `enforcement_violations` table. */
 export interface StoredEnforcementViolation {
-	id: number;
-	project_id: number;
-	rule_name: string;
+	readonly id: number;
+	readonly project_id: number;
+	readonly rule_name: string;
 	/** Lower-case: "block" or "warn" (as stored in SQLite). */
-	action: string;
-	tool_name: string;
-	detail: string | null;
-	created_at: string;
+	readonly action: string;
+	readonly tool_name: string;
+	readonly detail: string | null;
+	readonly created_at: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -70,25 +70,25 @@ export type EnforcementResolution =
  */
 export interface EnforcementEvent {
 	/** Unique event ID (UUID v4 or nanoid). */
-	id: string;
+	readonly id: string;
 	/** ISO 8601 timestamp. */
-	timestamp: string;
+	readonly timestamp: string;
 	/** Mechanism key that produced this event (e.g. "json-schema", "hook", "lint"). */
-	mechanism: string;
+	readonly mechanism: string;
 	/** Hook or check type within the mechanism (e.g. "PreToolUse", "frontmatter"). */
-	type: string;
+	readonly type: string;
 	/** Rule ID that triggered this enforcement, if applicable. */
-	rule_id: string | null;
+	readonly rule_id: string | null;
 	/** Artifact ID being checked, if applicable. */
-	artifact_id: string | null;
+	readonly artifact_id: string | null;
 	/** Check result. */
-	result: EnforcementResult;
+	readonly result: EnforcementResult;
 	/** Human-readable message describing the finding. */
-	message: string;
+	readonly message: string;
 	/** Source that produced this event. */
-	source: "validator" | "lsp" | "hook" | "pre-commit" | "cli";
+	readonly source: "validator" | "lsp" | "hook" | "pre-commit" | "cli";
 	/** Resolution status (starts as "unresolved" for fail/warn events). */
-	resolution: EnforcementResolution;
+	readonly resolution: EnforcementResolution;
 }
 
 /**
@@ -97,11 +97,11 @@ export interface EnforcementEvent {
  */
 export interface EnforcementResponse {
 	/** The enforcement event ID this responds to. */
-	event_id: string;
+	readonly event_id: string;
 	/** ISO 8601 timestamp of the response. */
-	timestamp: string;
+	readonly timestamp: string;
 	/** Action taken by the agent. */
-	action: EnforcementResolution;
+	readonly action: EnforcementResolution;
 	/** Human-readable detail about what was done. */
-	detail: string;
+	readonly detail: string;
 }

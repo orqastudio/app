@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, TooltipRoot as Tooltip, TooltipContent, TooltipTrigger } from "@orqastudio/svelte-components/pure";
+	import { Icon, TooltipRoot as Tooltip, TooltipContent, TooltipTrigger, Caption, Code } from "@orqastudio/svelte-components/pure";
 
 	let {
 		action,
@@ -31,6 +31,6 @@
 		{/if}
 	</TooltipTrigger>
 	<TooltipContent>
-		<p class="text-xs">Rule: <span class="font-mono">{ruleName}</span></p>
+		<Caption>Rule: <Code>{ruleName}</Code></Caption>
 	</TooltipContent>
 </Tooltip>

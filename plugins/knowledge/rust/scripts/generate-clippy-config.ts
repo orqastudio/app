@@ -32,9 +32,9 @@ import {
 type ClippyLevel = "deny" | "warn" | "allow";
 
 interface ClippyLintGroup {
-  deny: string[];
-  warn: string[];
-  allow: string[];
+  readonly deny: string[];
+  readonly warn: string[];
+  readonly allow: string[];
 }
 
 /**
@@ -52,17 +52,19 @@ function normaliseLevel(raw: unknown): ClippyLevel {
 /**
  * Group lint names from enforcement entries by their level.
  *
- * Entries without a `lint` field are skipped.
+ * Entries without a `lint` field are skipped. Uses .reduce() to build the
+ * group object without imperative mutation.
  */
-function groupByLevel(entries: EnforcementEntry[]): ClippyLintGroup {
-  const groups: ClippyLintGroup = { deny: [], warn: [], allow: [] };
-  for (const entry of entries) {
-    const lint = entry["lint"] as string | undefined;
-    if (!lint) continue;
-    const level = normaliseLevel(entry["level"]);
-    groups[level].push(lint);
-  }
-  return groups;
+function groupByLevel(entries: readonly EnforcementEntry[]): ClippyLintGroup {
+  return entries.reduce<ClippyLintGroup>(
+    (groups, entry) => {
+      const lint = entry["lint"] as string | undefined;
+      if (!lint) return groups;
+      const level = normaliseLevel(entry["level"]);
+      return { ...groups, [level]: [...groups[level], lint] };
+    },
+    { deny: [], warn: [], allow: [] },
+  );
 }
 
 /**

@@ -64,19 +64,19 @@ const BASE_ROLE_NAMES: &[&str] = &[
 /// in environments where plugins have not been installed yet.
 fn load_role_names_from_plugins(project_path: &Path) -> Vec<String> {
     let discovered = scan_plugins(project_path);
-    let mut names: Vec<String> = Vec::new();
 
-    for plugin in &discovered {
-        let plugin_path = Path::new(&plugin.path);
-        if let Ok(manifest) = read_manifest(plugin_path) {
-            for agent in manifest.provides.agents {
-                let id = agent.id.to_lowercase();
-                if !names.contains(&id) {
-                    names.push(id);
-                }
+    // Collect unique lowercase role IDs from all plugin manifests.
+    let names: Vec<String> = discovered
+        .iter()
+        .filter_map(|plugin| read_manifest(Path::new(&plugin.path)).ok())
+        .flat_map(|manifest| manifest.provides.agents)
+        .map(|agent| agent.id.to_lowercase())
+        .fold(Vec::new(), |mut acc, id| {
+            if !acc.contains(&id) {
+                acc.push(id);
             }
-        }
-    }
+            acc
+        });
 
     if names.is_empty() {
         // Fallback: use the base role names so the daemon is usable before plugins install.
@@ -100,16 +100,21 @@ fn load_role_names_from_plugins(project_path: &Path) -> Vec<String> {
 /// Returns a `Vec<(pattern, role_id)>` in the same shape as the old static
 /// `ROLE_PATTERNS` constant, so `detect_role_with_patterns` can use it.
 fn build_role_patterns(role_names: &[String]) -> Vec<(String, String)> {
-    let mut patterns = Vec::new();
-    for role in role_names {
-        let role_lower = role.to_lowercase();
-        // Normalise role id: spaces become hyphens (e.g. "governance steward" -> "governance-steward").
-        let role_id = role_lower.replace(' ', "-");
-        patterns.push((format!("you are an {role_lower}"), role_id.clone()));
-        patterns.push((format!("you are a {role_lower}"), role_id.clone()));
-        patterns.push((format!("you are {role_lower}"), role_id.clone()));
-    }
-    patterns
+    // For each role, generate three phrase variants covering "you are an/a/[bare] {role}".
+    // Patterns are matched case-insensitively; role IDs normalise spaces to hyphens.
+    role_names
+        .iter()
+        .flat_map(|role| {
+            let role_lower = role.to_lowercase();
+            // Normalise role id: spaces become hyphens (e.g. "governance steward" -> "governance-steward").
+            let role_id = role_lower.replace(' ', "-");
+            [
+                (format!("you are an {role_lower}"), role_id.clone()),
+                (format!("you are a {role_lower}"), role_id.clone()),
+                (format!("you are {role_lower}"), role_id),
+            ]
+        })
+        .collect()
 }
 
 /// Detect the agent role from the prompt text using the given pattern list.
@@ -294,7 +299,7 @@ fn get_declared_knowledge(project_path: &Path, role: &str) -> Vec<KnowledgeEntry
             KnowledgeEntry {
                 id: entry.id,
                 title,
-                path: entry.content_file.expect("filter guarantees content_file is Some"),
+                path: entry.content_file.unwrap_or_default(),
                 source: "declared".to_owned(),
                 score: None,
             }

@@ -38,7 +38,7 @@
 	}
 </script>
 
-<div class="flex w-12 flex-col items-center border-r border-border bg-muted/30 py-2">
+<div class="flex w-12 flex-col items-center gap-0 border-r border-border bg-muted/30 py-2">
 	{#if navItems}
 		<!-- Render main nav items, skipping bottom fixed items -->
 		{#each navItems as item (item.key)}
