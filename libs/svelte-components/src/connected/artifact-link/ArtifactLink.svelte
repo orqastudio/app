@@ -2,7 +2,7 @@
 	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent } from "../../pure/index.js";
 	import { getStores } from "@orqastudio/sdk";
 	import { statusIconName, statusIsSpinning, resolveIcon } from "../../pure/index.js";
-	import { DEFAULT_ARTIFACT_LINK_COLORS } from "@orqastudio/types";
+
 
 	const { navigationStore, artifactGraphSDK, projectStore } = getStores();
 
@@ -49,7 +49,7 @@
 	const chipColor = $derived.by((): string | null => {
 		if (!typePrefix) return null;
 		const colors = projectStore.projectSettings?.artifactLinks?.colors ?? {};
-		return colors[typePrefix] ?? DEFAULT_ARTIFACT_LINK_COLORS[typePrefix] ?? null;
+		return colors[typePrefix] ?? null;
 	});
 
 	/**
