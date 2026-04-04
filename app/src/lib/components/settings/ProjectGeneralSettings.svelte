@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Box } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
@@ -62,19 +62,20 @@
 	</CardHeader>
 	<CardContent>
 		<FormGroup label="Project Icon">
-			<div class="flex items-center gap-3">
+			<HStack gap={3}>
 				{#if props.iconDataUrl}
+					<!-- img is a legitimate exception — Image primitive follow-up needed -->
 					<img
 						src={props.iconDataUrl}
 						alt="Project icon"
 						class="h-10 w-10 rounded border object-contain"
 					/>
 				{:else}
-					<div class="flex h-10 w-10 items-center justify-center rounded border bg-muted">
+					<Box rounded="md" border padding={2} background="muted">
 						<Icon name="image" size="lg" />
-					</div>
+					</Box>
 				{/if}
-				<div class="flex items-center gap-2">
+				<HStack gap={2}>
 					<Button variant="outline" size="sm" onclick={handleIconUpload}>
 						<Icon name="upload" size="sm" />
 						{props.iconDataUrl ? "Change" : "Upload"}
@@ -85,24 +86,24 @@
 							Remove
 						</Button>
 					{/if}
-				</div>
-			</div>
+				</HStack>
+			</HStack>
 		</FormGroup>
 
 		<Separator />
 
 		<FormGroup label="Name" for="settings-name">
-			<div class="max-w-xs">
+			<Box>
 				<Input
 					id="settings-name"
 					bind:value={localName}
 					onblur={handleBlurSave}
 				/>
-			</div>
+			</Box>
 		</FormGroup>
 
 		<FormGroup label="Description" for="settings-description">
-			<div class="max-w-md">
+			<Box>
 				<Textarea
 					id="settings-description"
 					bind:value={localDescription}
@@ -110,7 +111,7 @@
 					placeholder="Brief project description"
 					rows={2}
 				/>
-			</div>
+			</Box>
 		</FormGroup>
 	</CardContent>
 </CardRoot>

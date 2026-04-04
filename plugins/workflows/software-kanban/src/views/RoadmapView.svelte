@@ -10,6 +10,8 @@
 		Caption,
 		Stack,
 		HStack,
+		Box,
+		Center,
 	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -270,48 +272,48 @@
 	}
 </script>
 
-<Stack gap={0} class="h-full">
+<Stack gap={0} height="full">
 	<!-- Breadcrumb bar -->
 	{#if drillLevel > 0}
-		<HStack align="center" class="border-b border-border px-6 py-2">
+		<HStack align="center" borderBottom paddingX={6} paddingY={2}>
 			<DrilldownBreadcrumbs items={breadcrumbItems} />
 		</HStack>
 	{/if}
 
 	<!-- Main content -->
-	<div class="flex min-h-0 flex-1 flex-col">
+	<Stack flex={1} minHeight={0}>
 		{#if graphLoading && !hasData}
-			<div class="flex flex-1 items-center justify-center">
+			<Center flex={1}>
 				<LoadingSpinner />
-			</div>
+			</Center>
 		{:else if graphError && !hasData}
-			<div class="p-6">
+			<Box padding={6}>
 				<ErrorDisplay
 					message={graphError}
 					onRetry={() => artifactGraphSDK.refresh()}
 				/>
-			</div>
+			</Box>
 		{:else if !hasData}
-			<div class="flex flex-1 items-center justify-center">
+			<Center flex={1}>
 				<EmptyState
 					icon="kanban"
 					title="No {rootLabel.toLowerCase()}s found"
 					description="Create {rootLabel.toLowerCase()}s to see them here."
 				/>
-			</div>
+			</Center>
 		{:else if drillLevel === 0}
 			<!-- Level 0: Horizon board -->
-			<Stack gap={4} class="h-full px-6 py-4">
+			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
 				<HStack gap={3} align="center">
 					<Icon name="kanban" size="xl" />
 					<Stack gap={0}>
 						<Heading level={2}>Roadmap</Heading>
-						<Text size="xs" muted>
+						<Caption>
 							Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
-						</Text>
+						</Caption>
 					</Stack>
 				</HStack>
-				<div class="min-h-0 flex-1 overflow-hidden">
+				<Box minHeight={0} flex={1} overflow="hidden">
 					<HorizonBoard
 						columns={horizonColumns}
 						{epics}
@@ -322,30 +324,34 @@
 						onHorizonChange={async (ms, horizon) =>
 							updateField(ms, "horizon", horizon)}
 					/>
-				</div>
+				</Box>
 			</Stack>
 		{:else if drillLevel === 1 && selectedMilestone}
 			<!-- Level 1: Milestone → Epics kanban -->
-			<Stack gap={4} class="h-full px-6 py-4">
+			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
 				<!-- Milestone detail header -->
 				<Stack gap={0}>
-					<Caption class="font-mono opacity-60">{selectedMilestone.id}</Caption>
+					<Caption variant="caption-mono">{selectedMilestone.id}</Caption>
 					<Heading level={2}>{selectedMilestone.title}</Heading>
 					{#if selectedMilestone.description}
-						<Text size="sm" muted class="mt-0.5">{selectedMilestone.description}</Text>
+						<Box marginTop={1}>
+							<Text variant="body-muted">{selectedMilestone.description}</Text>
+						</Box>
 					{/if}
 					{#if milestoneEpics.length > 0}
 						{@const doneCount = milestoneEpics.filter(
 							(e) => e.status === "completed",
 						).length}
-						<Caption class="mt-1">
-							{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
-						</Caption>
+						<Box marginTop={1}>
+							<Caption>
+								{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
+							</Caption>
+						</Box>
 					{/if}
 				</Stack>
 
 				<!-- Epics kanban -->
-				<div class="min-h-0 flex-1 overflow-hidden">
+				<Box minHeight={0} flex={1} overflow="hidden">
 					<StatusKanban
 						nodes={milestoneEpics}
 						columns={epicColumns}
@@ -354,30 +360,34 @@
 							updateField(epic, "status", newStatus)}
 						getTaskCount={(epicId) => taskCountForEpic(epicId)}
 					/>
-				</div>
+				</Box>
 			</Stack>
 		{:else if drillLevel === 2 && selectedEpic}
 			<!-- Level 2: Epic → Tasks kanban -->
-			<Stack gap={4} class="h-full px-6 py-4">
+			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
 				<!-- Epic detail header -->
 				<Stack gap={0}>
-					<Caption class="font-mono opacity-60">{selectedEpic.id}</Caption>
+					<Caption variant="caption-mono">{selectedEpic.id}</Caption>
 					<Heading level={2}>{selectedEpic.title}</Heading>
 					{#if selectedEpic.description}
-						<Text size="sm" muted class="mt-0.5">{selectedEpic.description}</Text>
+						<Box marginTop={1}>
+							<Text variant="body-muted">{selectedEpic.description}</Text>
+						</Box>
 					{/if}
 					{#if epicTasks.length > 0}
 						{@const doneCount = epicTasks.filter(
 							(t) => t.status === "completed",
 						).length}
-						<Caption class="mt-1">
-							{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
-						</Caption>
+						<Box marginTop={1}>
+							<Caption>
+								{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
+							</Caption>
+						</Box>
 					{/if}
 				</Stack>
 
 				<!-- Tasks kanban -->
-				<div class="min-h-0 flex-1 overflow-hidden">
+				<Box minHeight={0} flex={1} overflow="hidden">
 					<StatusKanban
 						nodes={epicTasks}
 						columns={TASK_COLUMNS}
@@ -385,8 +395,8 @@
 						onFieldChange={async (task, newStatus) =>
 							updateField(task, "status", newStatus)}
 					/>
-				</div>
+				</Box>
 			</Stack>
 		{/if}
-	</div>
+	</Stack>
 </Stack>

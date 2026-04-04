@@ -140,9 +140,13 @@
 				{#snippet right()}
 					{#if viewingHistorical.value}
 						{@const session = sessions.find((s) => s.id === activeSessionId.value)}
-						<Caption class="overflow-hidden text-ellipsis whitespace-nowrap italic text-primary max-w-[240px]">
+						<!-- Wrapper span: provides scoped hook for the historical session label override.
+						     Caption does not accept class; all visual treatment comes from scoped CSS. -->
+					<span class="status-bar__historical-label">
+						<Caption>
 							Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
 						</Caption>
+					</span>
 					{:else}
 						<Caption>{devController.state}</Caption>
 					{/if}
@@ -172,3 +176,16 @@
 
 <HelpPanel bind:open={helpOpen} />
 
+<style>
+	/* Historical session label in the status bar right slot.
+	   Truncates to 240px and styles in primary italic to indicate browsing mode. */
+	.status-bar__historical-label {
+		display: block;
+		max-width: 240px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-style: italic;
+		color: var(--color-primary);
+	}
+</style>

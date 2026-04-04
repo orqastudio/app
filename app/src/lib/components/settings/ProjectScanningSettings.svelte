@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge } from "@orqastudio/svelte-components/pure";
+	import { Badge, Button, HStack, Stack, Caption, Text, Box } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
@@ -110,18 +110,18 @@
 
 		<Separator />
 
-		<div class="flex items-center justify-between">
-			<div class="flex flex-col gap-0.5">
-				<span class="text-sm font-medium">Show Thinking</span>
-				<span class="text-xs text-muted-foreground">Stream Claude's reasoning process during responses</span>
-			</div>
+		<HStack justify="between">
+			<Stack gap={0}>
+				<Text variant="body-strong">Show Thinking</Text>
+				<Caption tone="muted">Stream Claude's reasoning process during responses</Caption>
+			</Stack>
 			<Switch
 				bind:checked={localShowThinking}
 				size="sm"
 				aria-label="Toggle show thinking"
 				onCheckedChange={() => props.onSave(buildSettings())}
 			/>
-		</div>
+		</HStack>
 
 		<Separator />
 
@@ -141,41 +141,41 @@
 
 		<Separator />
 
-		<div class="flex flex-col gap-2">
+		<Stack gap={2}>
 			<Heading level={4}>Excluded Paths</Heading>
-			<div class="flex flex-wrap gap-1.5">
+			<HStack gap={1} wrap>
 				{#each localExcludedPaths as path (path)}
-					<span class="inline-flex items-center gap-1 rounded border border-border pr-1 text-xs">
-						{path}
-						<button class="flex h-4 w-4 items-center justify-center rounded hover:bg-accent" onclick={() => removeExcludedPath(path)}>
-							<Icon name="x" size="xs" />
-						</button>
-					</span>
+					<Box border rounded="md" paddingX={1}>
+						<HStack gap={1}>
+							<Caption>{path}</Caption>
+							<Button variant="ghost" size="icon-sm" onclick={() => removeExcludedPath(path)}>
+								<Icon name="x" size="xs" />
+							</Button>
+						</HStack>
+					</Box>
 				{/each}
-			</div>
-			<div class="flex items-center gap-2">
-				<div class="max-w-[200px]">
-					<Input
-						bind:value={newExcludedPath}
-						placeholder="Add path..."
-						onkeydown={(e: KeyboardEvent) => {
-							if (e.key === "Enter") addExcludedPath();
-						}}
-					/>
-				</div>
-				<button class="flex items-center rounded border border-border px-2 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={addExcludedPath} disabled={!newExcludedPath.trim()}>
+			</HStack>
+			<HStack gap={2}>
+				<Input
+					bind:value={newExcludedPath}
+					placeholder="Add path..."
+					onkeydown={(e: KeyboardEvent) => {
+						if (e.key === "Enter") addExcludedPath();
+					}}
+				/>
+				<Button variant="outline" size="sm" onclick={addExcludedPath} disabled={!newExcludedPath.trim()}>
 					<Icon name="plus" size="sm" />
-				</button>
-			</div>
-		</div>
+				</Button>
+			</HStack>
+		</Stack>
 
 		<Separator />
 
 		{#if props.settings.stack}
-			<div class="flex flex-col gap-2">
-				<div class="flex items-center justify-between">
+			<Stack gap={2}>
+				<HStack justify="between">
 					<Heading level={4}>Detected Stack</Heading>
-					<button class="flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent disabled:opacity-50" onclick={handleRescan} disabled={props.rescanning}>
+					<Button variant="ghost" size="sm" onclick={handleRescan} disabled={props.rescanning}>
 						{#if props.rescanning}
 							<Icon name="loader-circle" size="sm" />
 							Scanning...
@@ -183,37 +183,37 @@
 							<Icon name="refresh-cw" size="sm" />
 							Re-scan
 						{/if}
-					</button>
-				</div>
+					</Button>
+				</HStack>
 				{#if props.settings.stack.languages.length > 0}
-					<div class="flex flex-col gap-1">
-						<span class="text-xs text-muted-foreground">Languages</span>
-						<div class="flex flex-wrap gap-1.5">
+					<Stack gap={1}>
+						<Caption tone="muted">Languages</Caption>
+						<HStack gap={1} wrap>
 							{#each props.settings.stack.languages as lang (lang)}
 								<Badge variant="secondary">{lang}</Badge>
 							{/each}
-						</div>
-					</div>
+						</HStack>
+					</Stack>
 				{/if}
 				{#if props.settings.stack.frameworks.length > 0}
-					<div class="flex flex-col gap-1">
-						<span class="text-xs text-muted-foreground">Frameworks</span>
-						<div class="flex flex-wrap gap-1.5">
+					<Stack gap={1}>
+						<Caption tone="muted">Frameworks</Caption>
+						<HStack gap={1} wrap>
 							{#each props.settings.stack.frameworks as fw (fw)}
 								<Badge variant="outline">{fw}</Badge>
 							{/each}
-						</div>
-					</div>
+						</HStack>
+					</Stack>
 				{/if}
 				{#if props.settings.stack.package_manager}
-					<span class="text-xs text-muted-foreground">Package manager: {props.settings.stack.package_manager}</span>
+					<Caption tone="muted">Package manager: {props.settings.stack.package_manager}</Caption>
 				{/if}
-			</div>
+			</Stack>
 		{:else}
-			<div class="flex flex-col gap-2">
-				<div class="flex items-center justify-between">
+			<Stack gap={2}>
+				<HStack justify="between">
 					<Heading level={4}>Detected Stack</Heading>
-					<button class="flex items-center gap-1 rounded px-2 py-1 text-sm hover:bg-accent disabled:opacity-50" onclick={handleRescan} disabled={props.rescanning}>
+					<Button variant="ghost" size="sm" onclick={handleRescan} disabled={props.rescanning}>
 						{#if props.rescanning}
 							<Icon name="loader-circle" size="sm" />
 							Scanning...
@@ -221,10 +221,10 @@
 							<Icon name="refresh-cw" size="sm" />
 							Scan
 						{/if}
-					</button>
-				</div>
-				<span class="text-xs text-muted-foreground">No scan results yet. Click Scan to detect your project stack.</span>
-			</div>
+					</Button>
+				</HStack>
+				<Caption tone="muted">No scan results yet. Click Scan to detect your project stack.</Caption>
+			</Stack>
 		{/if}
 	</CardContent>
 </CardRoot>

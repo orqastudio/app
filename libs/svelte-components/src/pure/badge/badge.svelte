@@ -37,6 +37,7 @@
 
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
@@ -45,7 +46,8 @@
 		size = "default",
 		capitalize = false,
 		children,
-	}: {
+		...restProps
+	}: Omit<HTMLAttributes<HTMLElement>, "class" | "style"> & {
 		ref?: HTMLElement | null;
 		href?: string;
 		variant?: BadgeVariant;
@@ -61,6 +63,7 @@
 	data-slot="badge"
 	{href}
 	class={badgeVariants({ variant, size, capitalize: capitalize || undefined })}
+	{...restProps}
 >
 	{@render children?.()}
 </svelte:element>

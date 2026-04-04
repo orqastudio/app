@@ -8,7 +8,7 @@
      viewing a historical session and reactivates the ring buffer stream. -->
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { Button, HStack, Caption } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Caption, Badge, Input } from "@orqastudio/svelte-components/pure";
 	import {
 		sessions,
 		viewingHistorical,
@@ -135,45 +135,54 @@
 
 <svelte:document onclick={handleDocumentClick} />
 
-<!-- Session picker bar: always visible above the filter strip. -->
+<!-- Session picker bar: always visible above the filter strip.
+     Scoped CSS class provides layout; no Tailwind utility classes used. -->
 <div
 	class="session-picker"
-	style="min-height: 28px;"
 	data-session-picker
 >
 	{#if viewingHistorical.value}
-		<!-- Historical banner: shown when a past session is being viewed. -->
-		<HStack justify="between" class="w-full gap-2">
-			<Caption class="overflow-hidden text-ellipsis whitespace-nowrap italic session-picker__historical-label">
-				Viewing: {displayedSession ? sessionDisplayLabel(displayedSession) : "historical session"}
-			</Caption>
-			<Button
-				variant="ghost"
-				size="icon-sm"
-				class="session-picker__return-btn"
-				onclick={handleReturnToLive}
-			>
-				Return to live
-			</Button>
+		<!-- Historical banner: shown when a past session is being viewed.
+		     HStack provides the flex-row layout. -->
+		<HStack justify="between" full gap={2}>
+			<!-- Scoped div provides the primary color and italic styling for the label. -->
+			<div class="session-picker__historical-label">
+				<Caption truncate>
+					Viewing: {displayedSession ? sessionDisplayLabel(displayedSession) : "historical session"}
+				</Caption>
+			</div>
+			<!-- Wrapper span with display:contents provides :global() hook for Button override. -->
+			<span class="session-picker__return-wrap" style="display: contents;">
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					onclick={handleReturnToLive}
+				>
+					Return to live
+				</Button>
+			</span>
 		</HStack>
 	{:else}
-		<!-- Compact trigger: shows session count and opens dropdown. -->
+		<!-- Compact trigger: shows session count and opens dropdown.
+		     Scoped class provides the flex alignment. -->
 		<div class="session-picker__trigger-row">
-			<Button
-				variant="ghost"
-				size="icon-sm"
-				class="session-picker__trigger"
-				onclick={toggleDropdown}
-				aria-haspopup="listbox"
-				aria-expanded={dropdownOpen}
-			>
-				Sessions ({sessions.length})
-				<span class="session-picker__chevron">{dropdownOpen ? "▲" : "▼"}</span>
-			</Button>
+			<span class="session-picker__trigger-wrap" style="display: contents;">
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					onclick={toggleDropdown}
+					aria-haspopup="listbox"
+					aria-expanded={dropdownOpen}
+				>
+					Sessions ({sessions.length})
+					<!-- Chevron rendered inline; no raw span needed. -->
+					{dropdownOpen ? "▲" : "▼"}
+				</Button>
+			</span>
 		</div>
 	{/if}
 
-	<!-- Dropdown panel: session list. -->
+	<!-- Dropdown panel: session list. Scoped CSS class provides positioning. -->
 	{#if dropdownOpen}
 		<div
 			class="session-picker__panel"
@@ -181,74 +190,90 @@
 			aria-label="Session list"
 		>
 			{#if sessions.length === 0}
-				<div class="session-picker__empty">No sessions yet</div>
+				<!-- Empty message: scoped div provides padding + centering. -->
+				<div class="session-picker__empty">
+					<Caption>No sessions yet</Caption>
+				</div>
 			{:else}
 				{#each sessions as session (session.id)}
-					<!-- Each session row: click to view, "..." for context menu. -->
+					<!-- Each session row: click to view, "..." for context menu.
+					     Scoped class + data attrs drive row styling. -->
 					<div
-						class="session-picker__row {session.is_current ? 'session-picker__row--current' : ''} {activeSessionId.value === session.id ? 'session-picker__row--active' : ''}"
+						class="session-picker__row"
+						data-current={session.is_current}
+						data-active={activeSessionId.value === session.id}
 						role="option"
 						aria-selected={activeSessionId.value === session.id || (session.is_current && !viewingHistorical.value)}
 					>
 						{#if renamingId === session.id}
-							<!-- Inline rename input. -->
-							<input
-								class="session-picker__rename-input"
-								type="text"
-								bind:value={renameValue}
-								onblur={commitRename}
-								onkeydown={handleRenameKeydown}
-								placeholder="Session label…"
-								autofocus
-							/>
+							<!-- Inline rename: ORQA Input component replaces raw input.
+							     Wrapper span provides :global() hook for compact fit override. -->
+							<span class="session-picker__rename-wrap">
+								<Input
+									type="text"
+									bind:value={renameValue}
+									onblur={commitRename}
+									onkeydown={handleRenameKeydown}
+									placeholder="Session label…"
+									autofocus
+								/>
+							</span>
 						{:else}
-							<!-- Clickable session info. -->
-							<Button
-								variant="ghost"
-								class="session-picker__row-content"
-								onclick={() => handleSelectSession(session)}
-							>
-								<span class="session-picker__session-label">
-									{sessionDisplayLabel(session)}
-									{#if session.is_current}
-										<span class="session-picker__current-badge">live</span>
-									{:else if session.ended_at === null}
-										<span class="session-picker__interrupted-badge">interrupted</span>
-									{/if}
-								</span>
-								<Caption>
-									{sessionDuration(session)} &middot; {session.event_count} events
-								</Caption>
-							</Button>
+							<!-- Clickable session info: wrapper span for Button override. -->
+							<span class="session-picker__row-content-wrap" style="display: contents;">
+								<Button
+									variant="ghost"
+									onclick={() => handleSelectSession(session)}
+								>
+									<div class="session-picker__session-label">
+										{sessionDisplayLabel(session)}
+										{#if session.is_current}
+											<!-- Badge success variant provides the live indicator. -->
+											<Badge variant="success" size="xs">live</Badge>
+										{:else if session.ended_at === null}
+											<!-- Badge warning variant provides the interrupted indicator. -->
+											<Badge variant="warning" size="xs">interrupted</Badge>
+										{/if}
+									</div>
+									<Caption>
+										{sessionDuration(session)} &middot; {session.event_count} events
+									</Caption>
+								</Button>
+							</span>
 
-							<!-- Context menu trigger. -->
-							<Button
-								variant="ghost"
-								class="session-picker__menu-btn"
-								onclick={(e) => toggleContextMenu(session.id, e)}
-								aria-label="Session options"
-							>
-								&hellip;
-							</Button>
+							<!-- Context menu trigger: wrapper span for Button override. -->
+							<span class="session-picker__menu-wrap" style="display: contents;">
+								<Button
+									variant="ghost"
+									onclick={(e) => toggleContextMenu(session.id, e)}
+									aria-label="Session options"
+								>
+									&hellip;
+								</Button>
+							</span>
 
-							<!-- Context menu panel. -->
+							<!-- Context menu panel: scoped CSS class provides positioning. -->
 							{#if contextMenuId === session.id}
 								<div class="session-picker__context-menu">
-									<Button
-										variant="ghost"
-										class="session-picker__context-item"
-										onclick={(e) => startRename(session, e)}
-									>
-										Rename
-									</Button>
-									{#if !session.is_current}
+									<!-- Wrapper span for context item Button override. -->
+									<span class="session-picker__context-item-wrap" style="display: contents;">
 										<Button
 											variant="ghost"
-											class="session-picker__context-item session-picker__context-item--danger"
-											onclick={(e) => handleDelete(session, e)}
+											onclick={(e) => startRename(session, e)}
 										>
-											Delete
+											Rename
 										</Button>
+									</span>
+									{#if !session.is_current}
+										<!-- Danger item gets its own wrapper for color override. -->
+										<span class="session-picker__context-item-wrap session-picker__context-item-danger-wrap" style="display: contents;">
+											<Button
+												variant="ghost"
+												onclick={(e) => handleDelete(session, e)}
+											>
+												Delete
+											</Button>
+										</span>
 									{/if}
 								</div>
 							{/if}
@@ -270,6 +295,7 @@
 		flex-shrink: 0;
 		align-items: center;
 		padding: 0 var(--spacing-2);
+		min-height: 28px;
 	}
 
 	/* Trigger row: left-aligned. */
@@ -278,24 +304,23 @@
 		align-items: center;
 	}
 
-	:global(.session-picker__trigger) {
+	/* Trigger button: compact font and height.
+	   Targets Button inside the trigger wrapper span. */
+	:global(.session-picker__trigger-wrap button) {
 		font-size: 11px !important;
 		height: 22px !important;
 		padding: 0 var(--spacing-1-5) !important;
 		gap: var(--spacing-1) !important;
 	}
 
-	:global(.session-picker__return-btn) {
+	/* Return to live button: primary text to pair with the banner.
+	   Targets Button inside the return wrapper span. */
+	:global(.session-picker__return-wrap button) {
 		font-size: 11px !important;
 		height: 22px !important;
 		padding: 0 var(--spacing-1-5) !important;
 		flex-shrink: 0;
 		color: var(--color-primary) !important;
-	}
-
-	.session-picker__chevron {
-		font-size: 9px;
-		color: var(--color-content-muted);
 	}
 
 	/* Dropdown panel. */
@@ -314,10 +339,9 @@
 		box-shadow: var(--shadow-lg);
 	}
 
+	/* Empty message: centred with padding. */
 	.session-picker__empty {
-		padding: var(--spacing-3) var(--spacing-3);
-		font-size: 11px;
-		color: var(--color-content-muted);
+		padding: var(--spacing-3);
 		text-align: center;
 	}
 
@@ -334,17 +358,18 @@
 	}
 
 	/* Current session: subtle primary tint. */
-	.session-picker__row--current {
+	.session-picker__row[data-current="true"] {
 		background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
 	}
 
 	/* Active (being viewed) session: stronger primary tint. */
-	.session-picker__row--active {
+	.session-picker__row[data-active="true"] {
 		background-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
 	}
 
-	/* Main clickable content area of a row — overrides Button defaults for column layout. */
-	:global(.session-picker__row-content) {
+	/* Main clickable content area of a row: column layout, fills available width.
+	   Targets Button inside the row-content wrapper span. */
+	:global(.session-picker__row-content-wrap button) {
 		display: flex !important;
 		flex: 1 !important;
 		flex-direction: column !important;
@@ -358,6 +383,7 @@
 		justify-content: flex-start !important;
 	}
 
+	/* Session label row: name + badge indicators. */
 	.session-picker__session-label {
 		display: flex;
 		align-items: center;
@@ -371,32 +397,18 @@
 		max-width: 100%;
 	}
 
-	.session-picker__current-badge {
-		font-size: 9px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-success);
-		border: 1px solid color-mix(in srgb, var(--color-success) 40%, transparent);
-		border-radius: 3px;
-		padding: 0 3px;
-		flex-shrink: 0;
+	/* Historical session label wrapper: primary color + italic to indicate navigation state. */
+	.session-picker__historical-label {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		color: var(--color-primary);
+		font-style: italic;
 	}
 
-	.session-picker__interrupted-badge {
-		font-size: 9px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-warning);
-		border: 1px solid color-mix(in srgb, var(--color-warning) 40%, transparent);
-		border-radius: 3px;
-		padding: 0 3px;
-		flex-shrink: 0;
-	}
-
-	/* "..." context menu trigger — overrides Button defaults for icon-sized trigger. */
-	:global(.session-picker__menu-btn) {
+	/* "..." context menu trigger: compact icon-sized button.
+	   Targets Button inside the menu wrapper span. */
+	:global(.session-picker__menu-wrap button) {
 		flex-shrink: 0 !important;
 		width: 24px !important;
 		height: 100% !important;
@@ -419,8 +431,9 @@
 		overflow: hidden;
 	}
 
-	/* Context menu items — overrides Button defaults for compact menu item display. */
-	:global(.session-picker__context-item) {
+	/* Context menu items: full-width compact buttons.
+	   Targets Button inside the context item wrapper span. */
+	:global(.session-picker__context-item-wrap button) {
 		display: flex !important;
 		width: 100% !important;
 		padding: var(--spacing-1-5) var(--spacing-2) !important;
@@ -431,30 +444,27 @@
 		border-radius: 0 !important;
 	}
 
-	:global(.session-picker__context-item--danger) {
+	/* Danger variant for the delete action. */
+	:global(.session-picker__context-item-danger-wrap button) {
 		color: var(--color-destructive) !important;
 	}
 
-	:global(.session-picker__context-item--danger:hover) {
+	:global(.session-picker__context-item-danger-wrap button:hover) {
 		background-color: color-mix(in srgb, var(--color-destructive) 10%, transparent) !important;
 	}
 
-	/* Historical session label: uses primary color to indicate "info/navigation" state. */
-	:global(.session-picker__historical-label) {
-		color: var(--color-primary) !important;
+	/* Inline rename input wrapper: provides compact fit within the session row. */
+	.session-picker__rename-wrap {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		margin: var(--spacing-1) var(--spacing-2);
 	}
 
-	/* Inline rename input. */
-	.session-picker__rename-input {
-		flex: 1;
-		margin: var(--spacing-1) var(--spacing-2);
-		height: 22px;
-		padding: 0 var(--spacing-1-5);
-		font-size: 11px;
-		background-color: var(--color-surface-base);
-		border: 1px solid var(--color-accent-base);
-		border-radius: var(--radius-sm);
-		color: var(--color-content-base);
-		outline: none;
+	/* Input inside rename wrapper: compact height and font. */
+	:global(.session-picker__rename-wrap input) {
+		height: 22px !important;
+		padding: 0 var(--spacing-1-5) !important;
+		font-size: 11px !important;
 	}
 </style>

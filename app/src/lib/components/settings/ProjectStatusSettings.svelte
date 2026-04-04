@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Box, Grid, Caption, Text, SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
@@ -221,13 +221,14 @@
 	</CardHeader>
 	<CardContent>
 		{#if localStatuses.length === 0}
-			<span class="text-sm text-muted-foreground">No statuses defined. Add one below.</span>
+			<Caption tone="muted">No statuses defined. Add one below.</Caption>
 		{:else}
 			{#each localStatuses as status, index (status.key + index)}
 				{@const isDragging = dragIndex === index}
 				{@const isDragTarget = dragOverIndex === index && dragIndex !== null && dragIndex !== index}
+				<!-- Draggable container: native drag API requires raw div — not expressible via Box props -->
 				<div
-					class="rounded-md border p-3 space-y-3 transition-opacity {isDragging ? 'opacity-40' : 'opacity-100'} {isDragTarget ? 'border-primary' : ''}"
+					class="rounded-md border p-3"
 					draggable="true"
 					ondragstart={() => handleDragStart(index)}
 					ondragover={(e) => handleDragOver(e, index)}
@@ -235,119 +236,118 @@
 					ondragend={handleDragEnd}
 					role="listitem"
 				>
-					<!-- Header row: drag handle, key, delete -->
-					<div class="flex items-center gap-2">
-						<Icon name="grip-vertical" size="md" />
-						<span class="flex-1 font-mono text-xs font-semibold text-muted-foreground">{status.key}</span>
-						<button
-							class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
-							onclick={() => requestDelete(index)}
-						>
-							<Icon name="trash-2" size="sm" />
-						</button>
-					</div>
-
-					<!-- Label + Icon + Spin -->
-					<div class="grid grid-cols-[1fr_1fr_auto] gap-3 items-end">
-						<FormGroup label="Label" for="s-label-{index}">
-							<Input
-								id="s-label-{index}"
-								value={status.label}
-								oninput={(e) => updateField(index, "label", e.currentTarget.value)}
-								placeholder="Display label"
-							/>
-						</FormGroup>
-						<FormGroup label="Icon" for="s-icon-{index}">
-							<div class="flex items-center gap-2">
-								<Input
-									id="s-icon-{index}"
-									value={status.icon}
-									oninput={(e) => updateField(index, "icon", e.currentTarget.value)}
-									placeholder="e.g. circle"
-								/>
-								<span class="shrink-0 text-base leading-none" aria-label="Icon preview">
-									{#if status.icon}
-										<span class="font-mono text-[10px] text-muted-foreground">{status.icon}</span>
-									{/if}
-								</span>
-							</div>
-						</FormGroup>
-						<div class="flex items-center gap-1">
-							<Switch
-								checked={status.spin ?? false}
+					<Stack gap={3}>
+						<!-- Header row: drag handle, key, delete -->
+						<HStack gap={2}>
+							<Icon name="grip-vertical" size="md" />
+							<Caption variant="caption-mono" tone="muted">{status.key}</Caption>
+							<Button
+								variant="ghost"
 								size="sm"
-								aria-label="Spin icon"
-								onCheckedChange={(v) => updateField(index, "spin", v)}
-							/>
-							<span class="text-xs text-muted-foreground">Spin</span>
-						</div>
-					</div>
-
-					<!-- Transitions -->
-					<div class="space-y-1">
-						<span class="text-xs text-muted-foreground">Allowed transitions</span>
-						<div class="flex flex-wrap gap-1.5">
-							{#each localStatuses.filter((s) => s.key !== status.key) as target (target.key)}
-								{@const active = (status.transitions ?? []).includes(target.key)}
-								<Button
-									variant={active ? "default" : "outline"}
-									size="sm"
-									onclick={() => toggleTransition(index, target.key)}
-								>
-									{target.label || target.key}
-								</Button>
-							{/each}
-							{#if localStatuses.filter((s) => s.key !== status.key).length === 0}
-								<span class="text-xs text-muted-foreground">No other statuses yet</span>
-							{/if}
-						</div>
-					</div>
-
-					<!-- Auto rules -->
-					<div class="space-y-1.5">
-						<div class="flex items-center justify-between">
-							<span class="text-xs text-muted-foreground">Auto-transition rules</span>
-							<button
-								class="flex items-center gap-1 rounded px-2 py-1 text-xs hover:bg-accent"
-								onclick={() => addAutoRule(index)}
+								onclick={() => requestDelete(index)}
 							>
-								<Icon name="plus" size="xs" />
-								Add rule
-							</button>
-						</div>
-						{#if (status.auto_rules ?? []).length === 0}
-							<span class="text-xs text-muted-foreground">No auto-transition rules.</span>
-						{:else}
-							<div class="space-y-1.5">
-								{#each status.auto_rules ?? [] as rule, rIndex (rIndex)}
-									<div class="flex items-center gap-2">
-										<Input
-											value={rule.condition}
-											oninput={(e) => updateAutoRule(index, rIndex, "condition", e.currentTarget.value)}
-											placeholder="condition"
-										/>
-										<span class="shrink-0 text-xs text-muted-foreground">→</span>
-										<select
-											class="flex h-7 flex-1 rounded-md border border-input bg-background px-2 py-0.5 text-xs ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-											value={rule.target}
-											onchange={(e) => updateAutoRule(index, rIndex, "target", e.currentTarget.value)}
-										>
-											<option value="">Select target</option>
-											{#each localStatuses.filter((s) => s.key !== status.key) as target (target.key)}
-												<option value={target.key}>{target.label || target.key}</option>
-											{/each}
-										</select>
-										<button
-											class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
-											onclick={() => removeAutoRule(index, rIndex)}
-										>
-											<Icon name="trash-2" size="sm" />
-										</button>
-									</div>
+								<Icon name="trash-2" size="sm" />
+							</Button>
+						</HStack>
+
+						<!-- Label + Icon + Spin -->
+						<HStack gap={3} align="end">
+							<FormGroup label="Label" for="s-label-{index}">
+								<Input
+									id="s-label-{index}"
+									value={status.label}
+									oninput={(e) => updateField(index, "label", e.currentTarget.value)}
+									placeholder="Display label"
+								/>
+							</FormGroup>
+							<FormGroup label="Icon" for="s-icon-{index}">
+								<HStack gap={2}>
+									<Input
+										id="s-icon-{index}"
+										value={status.icon}
+										oninput={(e) => updateField(index, "icon", e.currentTarget.value)}
+										placeholder="e.g. circle"
+									/>
+									{#if status.icon}
+										<Caption variant="caption-mono" tone="muted">{status.icon}</Caption>
+									{/if}
+								</HStack>
+							</FormGroup>
+							<HStack gap={1}>
+								<Switch
+									checked={status.spin ?? false}
+									size="sm"
+									aria-label="Spin icon"
+									onCheckedChange={(v) => updateField(index, "spin", v)}
+								/>
+								<Caption tone="muted">Spin</Caption>
+							</HStack>
+						</HStack>
+
+						<!-- Transitions -->
+						<Stack gap={1}>
+							<Caption tone="muted">Allowed transitions</Caption>
+							<HStack gap={1} wrap>
+								{#each localStatuses.filter((s) => s.key !== status.key) as target (target.key)}
+									{@const active = (status.transitions ?? []).includes(target.key)}
+									<Button
+										variant={active ? "default" : "outline"}
+										size="sm"
+										onclick={() => toggleTransition(index, target.key)}
+									>
+										{target.label || target.key}
+									</Button>
 								{/each}
-							</div>
-						{/if}
-					</div>
+								{#if localStatuses.filter((s) => s.key !== status.key).length === 0}
+									<Caption tone="muted">No other statuses yet</Caption>
+								{/if}
+							</HStack>
+						</Stack>
+
+						<!-- Auto rules -->
+						<Stack gap={1}>
+							<HStack justify="between">
+								<Caption tone="muted">Auto-transition rules</Caption>
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={() => addAutoRule(index)}
+								>
+									<Icon name="plus" size="xs" />
+									Add rule
+								</Button>
+							</HStack>
+							{#if (status.auto_rules ?? []).length === 0}
+								<Caption tone="muted">No auto-transition rules.</Caption>
+							{:else}
+								<Stack gap={1}>
+									{#each status.auto_rules ?? [] as rule, rIndex (rIndex)}
+										<HStack gap={2}>
+											<Input
+												value={rule.condition}
+												oninput={(e) => updateAutoRule(index, rIndex, "condition", e.currentTarget.value)}
+												placeholder="condition"
+											/>
+											<Caption tone="muted">→</Caption>
+											<SelectMenu
+												items={[{ label: "Select target", value: "" }, ...localStatuses.filter((s) => s.key !== status.key).map((t) => ({ label: t.label || t.key, value: t.key }))]}
+												selected={rule.target}
+												onSelect={(v) => updateAutoRule(index, rIndex, "target", v)}
+												triggerLabel={localStatuses.find((s) => s.key === rule.target)?.label || rule.target || "Select target"}
+											/>
+											<Button
+												variant="ghost"
+												size="sm"
+												onclick={() => removeAutoRule(index, rIndex)}
+											>
+												<Icon name="trash-2" size="sm" />
+											</Button>
+										</HStack>
+									{/each}
+								</Stack>
+							{/if}
+						</Stack>
+					</Stack>
 				</div>
 
 				{#if index < localStatuses.length - 1}

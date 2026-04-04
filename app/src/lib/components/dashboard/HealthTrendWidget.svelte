@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, LoadingSpinner, Stack, HStack, Grid, Caption, Text } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -33,18 +33,20 @@
 	// Reverse so oldest is first (for left-to-right sparkline)
 	const chronological = $derived([...snapshots].reverse());
 
+	type SparklineTone = "destructive" | "warning" | "muted";
+
 	interface SparklineConfig {
 		readonly label: string;
 		readonly key: keyof HealthSnapshot;
-		readonly color: string;
+		readonly tone: SparklineTone;
 		readonly strokeColor: string;
 	}
 
 	const sparklines: SparklineConfig[] = [
-		{ label: "Errors", key: "error_count", color: "text-destructive", strokeColor: "#ef4444" },
-		{ label: "Warnings", key: "warning_count", color: "text-warning", strokeColor: "#f59e0b" },
-		{ label: "Orphans", key: "orphan_count", color: "text-muted-foreground", strokeColor: "#6b7280" },
-		{ label: "Broken Refs", key: "broken_ref_count", color: "text-muted-foreground", strokeColor: "#6b7280" },
+		{ label: "Errors", key: "error_count", tone: "destructive", strokeColor: "#ef4444" },
+		{ label: "Warnings", key: "warning_count", tone: "warning", strokeColor: "#f59e0b" },
+		{ label: "Orphans", key: "orphan_count", tone: "muted", strokeColor: "#6b7280" },
+		{ label: "Broken Refs", key: "broken_ref_count", tone: "muted", strokeColor: "#6b7280" },
 	];
 
 	const SPARKLINE_WIDTH = 120;
@@ -131,17 +133,17 @@
 	}
 
 	/**
-	 * Returns a Tailwind text color class for the trend direction of a snapshot field.
+	 * Returns the semantic tone for the trend direction of a snapshot field.
 	 * For health metrics, lower values are better so increases render as destructive.
 	 * @param key - The snapshot field to evaluate.
-	 * @returns A Tailwind text color class string.
+	 * @returns A tone string for ORQA Text/Caption components, or null when neutral.
 	 */
-	function trendColor(key: keyof HealthSnapshot): string {
-		const pct = trendPercent(key);
-		if (pct === null || pct === 0) return "text-muted-foreground";
+	function trendTone(key: keyof HealthSnapshot): "success" | "destructive" | "muted" {
+		const p = trendPercent(key);
+		if (p === null || p === 0) return "muted";
 		// For these metrics, lower is better
-		if (pct < 0) return "text-success";
-		return "text-destructive";
+		if (p < 0) return "success";
+		return "destructive";
 	}
 </script>
 
@@ -149,41 +151,43 @@
 	<CardRoot>
 		<CardHeader compact>
 			<CardTitle>
-				<div class="flex items-center gap-2">
+				<HStack gap={2}>
 					<Icon name="trending-up" size="md" />
 					Health Trends
-				</div>
+				</HStack>
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
 			{#if loading}
-				<div class="flex items-center justify-center py-4">
+				<Stack gap={0} align="center" paddingY={4}>
 					<LoadingSpinner />
-				</div>
+				</Stack>
 			{:else}
-				<div class="grid grid-cols-2 gap-6">
+				<Grid cols={2} gap={6}>
 					{#each sparklines as config (config.key)}
-						<div class="flex flex-col gap-1">
+						<Stack gap={1}>
 							<!-- Header: label + latest value -->
-							<div class="flex items-baseline justify-between">
-								<span class="text-xs text-muted-foreground">{config.label}</span>
-								<div class="flex items-baseline gap-1">
-									<span class="text-lg font-semibold tabular-nums {config.color}">
+							<HStack justify="between" align="baseline">
+								<Caption>{config.label}</Caption>
+								<HStack gap={1} align="baseline">
+									<Text variant="heading-base" tone={config.tone}>
 										{latestValue(config.key)}
-									</span>
+									</Text>
 									{#if trendPercent(config.key) !== null}
-										<span class="text-xs font-medium {trendColor(config.key)}">
+										<Caption variant="caption-strong" tone={trendTone(config.key)}>
 											{trendArrow(config.key)} {trendIndicator(config.key)}
-										</span>
+										</Caption>
 									{/if}
-								</div>
-							</div>
-							<!-- Sparkline with y-axis scale -->
-							<div class="flex items-start gap-1">
-								<div class="flex flex-col justify-between text-[9px] tabular-nums text-muted-foreground/60" style="height: {SPARKLINE_HEIGHT}px;">
+								</HStack>
+							</HStack>
+							<!-- Sparkline with y-axis scale — custom SVG chart, wrapped in HStack -->
+							<HStack gap={1} align="start">
+								<!-- Y-axis scale labels use style for precise height alignment -->
+								<div style="display: flex; flex-direction: column; justify-content: space-between; height: {SPARKLINE_HEIGHT}px; font-size: 9px; font-variant-numeric: tabular-nums; color: hsl(var(--muted-foreground) / 0.6);">
 									<span>{maxValue(config.key)}</span>
 									<span>0</span>
 								</div>
+								<!-- Custom SVG sparkline — no ORQA primitive fits this shape -->
 								<svg
 									width={SPARKLINE_WIDTH}
 									height={SPARKLINE_HEIGHT}
@@ -192,17 +196,14 @@
 									fill="none"
 									xmlns="http://www.w3.org/2000/svg"
 								>
-									<!-- Faint baseline at y=0 -->
 									<line
 										x1="0"
 										y1={SPARKLINE_HEIGHT - 4}
 										x2={SPARKLINE_WIDTH}
 										y2={SPARKLINE_HEIGHT - 4}
-										stroke="currentColor"
+										stroke="hsl(var(--muted-foreground) / 0.2)"
 										stroke-width="0.5"
-										class="text-muted-foreground/20"
 									/>
-									<!-- Area fill under the sparkline -->
 									{#if sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
 										{@const pathD = sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
 										<path
@@ -220,13 +221,13 @@
 										/>
 									{/if}
 								</svg>
-							</div>
-						</div>
+							</HStack>
+						</Stack>
 					{/each}
-				</div>
-				<p class="mt-3 text-[10px] text-muted-foreground">
-					Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}
-				</p>
+				</Grid>
+				<Stack gap={0} marginTop={3}>
+					<Caption>Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}</Caption>
+				</Stack>
 			{/if}
 		</CardContent>
 	</CardRoot>

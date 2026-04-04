@@ -5,7 +5,6 @@
 	import type { ArtifactNode } from "@orqastudio/types";
 	import { assertNever } from "@orqastudio/types";
 	import MilestoneCard from "./MilestoneCard.svelte";
-	import { cn } from "@orqastudio/svelte-components";
 	import {
 		SelectMenu,
 		Badge,
@@ -20,6 +19,10 @@
 		CollapsibleContent,
 		Stack,
 		HStack,
+		Box,
+		Center,
+		CountBadge,
+		VerticalText,
 	} from "@orqastudio/svelte-components/pure";
 
 	type HorizonColumn = {
@@ -194,10 +197,10 @@
 
 </script>
 
-<Stack gap={3} class="h-full">
+<Stack gap={3} height="full">
 	<!-- Toolbar -->
 	<HStack justify="between" align="center">
-		<Caption class="tabular-nums">
+		<Caption variant="caption-tabular">
 			{allMilestones.filter(m => m.status === 'complete').length}/{allMilestones.length} Done
 		</Caption>
 		<SelectMenu
@@ -210,8 +213,8 @@
 	</HStack>
 
 	<!-- Horizon columns -->
-	<div class="min-h-0 flex-1">
-		<div class="flex h-full gap-4 pb-4">
+	<Box minHeight={0} flex={1}>
+		<HStack gap={4} height="full" paddingBottom={4}>
 			{#each activeColumns as col (col.key)}
 				{@const isCollapsed = col.isDone === true && collapsedCols.has(col.key)}
 				{@const isDrop = dropTargetKey === col.key}
@@ -219,123 +222,180 @@
 
 				{@const isColOpen = !isCollapsed}
 
-				<CollapsibleRoot
-					open={isColOpen}
-					onOpenChange={(open) => { if (!open) collapsedCols.add(col.key); else collapsedCols.delete(col.key); }}
-					class="flex h-full"
-				>
-					{#if isCollapsed}
-						<!-- Thin collapsed bar for done column -->
-						<CollapsibleTrigger
-							class={cn(
-								"flex w-10 shrink-0 cursor-pointer flex-col items-center rounded-xl border border-dashed border-border bg-muted/30 transition-colors hover:bg-muted/50",
-								isDrop && "border-primary bg-primary/10",
-							)}
-							ondragover={(e) => handleDragOver(e, col.key)}
-							ondragleave={handleDragLeave}
-							ondrop={(e) => handleDrop(e, col.key)}
-							aria-label="Expand {col.label} column"
-						>
-							<div class="flex flex-1 flex-col items-center justify-center gap-2 py-4">
-								<!-- Rotated title — writing-mode requires inline style -->
-								<span
-									class="text-xs font-medium text-muted-foreground select-none capitalize"
-									style="writing-mode: vertical-rl; transform: rotate(180deg);"
-								>
-									{col.label}
-								</span>
-								{#if col.milestones.length > 0}
-									<span class="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-semibold tabular-nums text-muted-foreground">
-										{col.milestones.length}
-									</span>
-								{/if}
+				<!-- horizon-col class provides h-full flex layout for CollapsibleRoot. -->
+				<div class="horizon-col">
+					<CollapsibleRoot
+						open={isColOpen}
+						onOpenChange={(open) => { if (!open) collapsedCols.add(col.key); else collapsedCols.delete(col.key); }}
+					>
+						{#if isCollapsed}
+							<!-- Thin collapsed bar for done column. collapsed-bar class applied via scoped CSS. -->
+							<div
+								class="collapsed-bar"
+								class:drag-over={isDrop}
+								ondragover={(e) => handleDragOver(e, col.key)}
+								ondragleave={handleDragLeave}
+								ondrop={(e) => handleDrop(e, col.key)}
+								role="region"
+								aria-label="{col.label} column (collapsed)"
+							>
+								<CollapsibleTrigger aria-label="Expand {col.label} column">
+									<Center flex={1} gap={2}>
+										<VerticalText variant="caption" tone="muted">{col.label}</VerticalText>
+										{#if col.milestones.length > 0}
+											<CountBadge count={col.milestones.length} variant="muted" />
+										{/if}
+									</Center>
+								</CollapsibleTrigger>
 							</div>
-						</CollapsibleTrigger>
-					{:else}
-						<!-- Expanded column -->
-						<div
-							class={cn(
-								"flex min-w-[12rem] flex-1 flex-col rounded-xl border border-border bg-muted/5 transition-colors",
-								isDrop && "border-primary bg-primary/5",
-							)}
-							ondragover={(e) => handleDragOver(e, col.key)}
-							ondragleave={handleDragLeave}
-							ondrop={(e) => handleDrop(e, col.key)}
-							role="region"
-							aria-label="{col.label} horizon column"
-						>
-							<!-- Column header -->
-							<div class="border-b border-border px-4 py-3">
-								<HStack justify="between" align="center">
-									<HStack gap={2} align="center">
-										<Badge variant="outline" class="text-xs font-semibold capitalize">
-											{col.label}
-										</Badge>
-										{#if col.isDone && totalMilestones > 0}
-											<Caption class="tabular-nums">
-												{col.milestones.length}/{totalMilestones} Done
-											</Caption>
+						{:else}
+							<!-- Expanded column. column-expanded provides border/bg/min-width via scoped CSS. -->
+							<div
+								class="column-expanded"
+								class:drag-over={isDrop}
+								ondragover={(e) => handleDragOver(e, col.key)}
+								ondragleave={handleDragLeave}
+								ondrop={(e) => handleDrop(e, col.key)}
+								role="region"
+								aria-label="{col.label} horizon column"
+							>
+								<!-- Column header -->
+								<Box borderBottom paddingX={4} paddingY={3}>
+									<HStack justify="between" align="center">
+										<HStack gap={2} align="center">
+											<Badge variant="outline" size="sm" capitalize>
+												{col.label}
+											</Badge>
+											{#if col.isDone && totalMilestones > 0}
+												<Caption variant="caption-tabular">
+													{col.milestones.length}/{totalMilestones} Done
+												</Caption>
+											{/if}
+										</HStack>
+										{#if col.isDone}
+											<CollapsibleTrigger>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													aria-label="Collapse {col.label}"
+												>
+													<Icon name="chevron-right" size="sm" />
+												</Button>
+											</CollapsibleTrigger>
 										{/if}
 									</HStack>
-									{#if col.isDone}
-										<CollapsibleTrigger>
-											<Button
-												variant="ghost"
-												size="icon-sm"
-												aria-label="Collapse {col.label}"
-											>
-												<Icon name="chevron-right" size="sm" />
-											</Button>
-										</CollapsibleTrigger>
+									{#if col.description}
+										<Box marginTop={1}>
+											<Caption>{col.description}</Caption>
+										</Box>
 									{/if}
-								</HStack>
-								{#if col.description}
-									<Caption class="mt-1">{col.description}</Caption>
-								{/if}
-							</div>
+								</Box>
 
-							<!-- Milestone cards -->
-							<CollapsibleContent class="min-h-0 flex-1">
-								<ScrollArea class="h-full" orientation="vertical">
-									<div class="flex flex-col gap-3 p-3" role="list">
-										{#if col.milestones.length === 0}
-											<EmptyState
-												title="No {rootLabel.toLowerCase()}s"
-												description="Drop a {rootLabel.toLowerCase()} here."
-											/>
-										{:else}
-											{#each col.milestones as ms (ms.id)}
-												{@const msEpics = epicsForMilestone(ms.id)}
-												{@const doneCount = msEpics.filter((e) => e.status === "completed").length}
-												{@const inProgress = msEpics.filter((e) => e.status === "active")}
-												{@const critical = msEpics.filter(
-													(e) => e.priority === "P1" && e.status !== "completed",
-												)}
-												<div
-													draggable={onHorizonChange !== undefined && sortBy === "horizon"}
-													ondragstart={(e) => handleDragStart(e, ms)}
-													class={cn(onHorizonChange && sortBy === "horizon" && "cursor-grab active:cursor-grabbing")}
-													role="listitem"
-												>
-													<MilestoneCard
-														milestone={ms}
-														epicCount={msEpics.length}
-														doneEpicCount={doneCount}
-														inProgressEpics={inProgress}
-														criticalEpics={critical}
-														{epicLabel}
-														onClick={() => onMilestoneClick(ms)}
+								<!-- Milestone cards -->
+								<CollapsibleContent>
+									<Box minHeight={0} flex={1}>
+										<ScrollArea full orientation="vertical">
+											<Stack gap={3} padding={3} role="list">
+												{#if col.milestones.length === 0}
+													<EmptyState
+														title="No {rootLabel.toLowerCase()}s"
+														description="Drop a {rootLabel.toLowerCase()} here."
 													/>
-												</div>
-											{/each}
-										{/if}
-									</div>
-								</ScrollArea>
-							</CollapsibleContent>
-						</div>
-					{/if}
-				</CollapsibleRoot>
+												{:else}
+													{#each col.milestones as ms (ms.id)}
+														{@const msEpics = epicsForMilestone(ms.id)}
+														{@const doneCount = msEpics.filter((e) => e.status === "completed").length}
+														{@const inProgress = msEpics.filter((e) => e.status === "active")}
+														{@const critical = msEpics.filter(
+															(e) => e.priority === "P1" && e.status !== "completed",
+														)}
+														<!-- Raw div required: HTML5 drag API needs a native draggable element.
+														     Cursor classes moved to scoped CSS. -->
+														<div
+															draggable={onHorizonChange !== undefined && sortBy === "horizon"}
+															ondragstart={(e) => handleDragStart(e, ms)}
+															class:draggable-item={onHorizonChange && sortBy === "horizon"}
+															role="listitem"
+														>
+															<MilestoneCard
+																milestone={ms}
+																epicCount={msEpics.length}
+																doneEpicCount={doneCount}
+																inProgressEpics={inProgress}
+																criticalEpics={critical}
+																{epicLabel}
+																onClick={() => onMilestoneClick(ms)}
+															/>
+														</div>
+													{/each}
+												{/if}
+											</Stack>
+										</ScrollArea>
+									</Box>
+								</CollapsibleContent>
+							</div>
+						{/if}
+					</CollapsibleRoot>
+				</div>
 			{/each}
-		</div>
-	</div>
+		</HStack>
+	</Box>
 </Stack>
+
+<style>
+	/* Provides h-full flex layout for the CollapsibleRoot wrapper. */
+	.horizon-col {
+		display: flex;
+		height: 100%;
+	}
+
+	/* Thin vertical bar appearance for collapsed column state. */
+	.collapsed-bar {
+		display: flex;
+		width: 2.5rem;
+		flex-shrink: 0;
+		flex-direction: column;
+		align-items: center;
+		border-radius: 0.75rem;
+		border: 1px dashed var(--color-border);
+		background-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
+		transition: background-color 0.15s;
+		cursor: pointer;
+	}
+
+	.collapsed-bar:hover {
+		background-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+	}
+
+	.collapsed-bar.drag-over {
+		border-color: var(--color-primary);
+		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+	}
+
+	/* Full column container: sets min-width, flex layout, rounded border, and bg. */
+	.column-expanded {
+		display: flex;
+		min-width: 12rem;
+		flex: 1;
+		flex-direction: column;
+		border-radius: 0.75rem;
+		border: 1px solid var(--color-border);
+		background-color: color-mix(in srgb, var(--color-muted) 5%, transparent);
+		transition: border-color 0.15s, background-color 0.15s;
+	}
+
+	.column-expanded.drag-over {
+		border-color: var(--color-primary);
+		background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+	}
+
+	/* Cursor for draggable milestone list items. The draggable div cannot use typed
+	   props because HTML5 drag API requires a native element. */
+	.draggable-item {
+		cursor: grab;
+	}
+
+	.draggable-item:active {
+		cursor: grabbing;
+	}
+</style>

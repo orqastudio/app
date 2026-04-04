@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Badge, Button, HStack, Stack, Grid, Caption, Text, Box } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -70,21 +69,19 @@
 		</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<div class="flex items-center gap-2 text-sm">
+		<HStack gap={2}>
 			<Icon name="folder-open" size="md" />
-			<span class="font-mono text-xs text-muted-foreground">{props.projectPath}</span>
-		</div>
+			<Caption variant="caption-mono" tone="muted">{props.projectPath}</Caption>
+		</HStack>
 
 		<Separator />
 
 		<FormGroup label="Project Name" for="wizard-project-name">
-			<div class="max-w-xs">
-				<Input
-					id="wizard-project-name"
-					bind:value={projectName}
-					placeholder="Project name"
-				/>
-			</div>
+			<Input
+				id="wizard-project-name"
+				bind:value={projectName}
+				placeholder="Project name"
+			/>
 		</FormGroup>
 
 		{#if !scanned}
@@ -105,66 +102,74 @@
 
 		{#if scanResult}
 			<Separator />
-			<div class="flex flex-col gap-3">
+			<Stack gap={3}>
 				<Heading level={4}>Detected Stack</Heading>
 				{#if scanResult.stack.languages.length > 0}
-					<div class="flex flex-wrap gap-1.5">
+					<HStack gap={1} wrap>
 						{#each scanResult.stack.languages as lang (lang)}
 							<Badge variant="secondary">{lang}</Badge>
 						{/each}
-					</div>
+					</HStack>
 				{:else}
-					<span class="text-xs text-muted-foreground">No languages detected</span>
+					<Caption tone="muted">No languages detected</Caption>
 				{/if}
 
 				{#if scanResult.stack.frameworks.length > 0}
-					<div class="flex flex-wrap gap-1.5">
+					<HStack gap={1} wrap>
 						{#each scanResult.stack.frameworks as fw (fw)}
 							<Badge variant="outline">{fw}</Badge>
 						{/each}
-					</div>
+					</HStack>
 				{/if}
 
 				{#if scanResult.stack.package_manager}
-					<span class="text-xs text-muted-foreground">Package manager: {scanResult.stack.package_manager}</span>
+					<Caption tone="muted">Package manager: {scanResult.stack.package_manager}</Caption>
 				{/if}
-			</div>
+			</Stack>
 
-			<div class="flex flex-col gap-2">
+			<Stack gap={2}>
 				<Heading level={4}>Governance</Heading>
-				<div class="grid grid-cols-3 gap-2 text-xs">
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">{scanResult.governance.docs}</div>
-						<div class="text-muted-foreground">Docs</div>
-					</div>
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">{scanResult.governance.agents}</div>
-						<div class="text-muted-foreground">Agents</div>
-					</div>
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">{scanResult.governance.rules}</div>
-						<div class="text-muted-foreground">Rules</div>
-					</div>
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">{scanResult.governance.knowledge}</div>
-						<div class="text-muted-foreground">Knowledge</div>
-					</div>
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">{scanResult.governance.hooks}</div>
-						<div class="text-muted-foreground">Hooks</div>
-					</div>
-					<div class="rounded border p-2 text-center">
-						<div class="text-lg font-semibold">
-							{scanResult.governance.has_claude_config ? "Yes" : "No"}
-						</div>
-						<div class="text-muted-foreground">CLAUDE.md</div>
-					</div>
-				</div>
-			</div>
+				<Grid cols={3} gap={2}>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.docs}</Text>
+							<Caption tone="muted">Docs</Caption>
+						</Stack>
+					</Box>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.agents}</Text>
+							<Caption tone="muted">Agents</Caption>
+						</Stack>
+					</Box>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.rules}</Text>
+							<Caption tone="muted">Rules</Caption>
+						</Stack>
+					</Box>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.knowledge}</Text>
+							<Caption tone="muted">Knowledge</Caption>
+						</Stack>
+					</Box>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.hooks}</Text>
+							<Caption tone="muted">Hooks</Caption>
+						</Stack>
+					</Box>
+					<Box padding={2} border rounded="md">
+						<Stack gap={0} align="center">
+							<Text variant="heading-base">{scanResult.governance.has_claude_config ? "Yes" : "No"}</Text>
+							<Caption tone="muted">CLAUDE.md</Caption>
+						</Stack>
+					</Box>
+				</Grid>
+			</Stack>
 
-			<span class="text-xs text-muted-foreground">
-				Scanned in {scanResult.scan_duration_ms}ms
-			</span>
+			<Caption tone="muted">Scanned in {scanResult.scan_duration_ms}ms</Caption>
 
 			<Separator />
 

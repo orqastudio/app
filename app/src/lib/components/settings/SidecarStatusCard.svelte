@@ -1,30 +1,10 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Caption, Box } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { settingsStore } = getStores();
-
-	/**
-	 * Returns a Tailwind text color class for the given sidecar connection state.
-	 * @param state - The sidecar connection state string.
-	 * @returns A Tailwind text color class string.
-	 */
-	function sidecarStatusColor(state: string): string {
-		switch (state) {
-			case "connected":
-				return "text-success";
-			case "starting":
-				return "text-warning";
-			case "error":
-				return "text-destructive";
-			case "stopped":
-			case "not_started":
-			default:
-				return "text-muted-foreground";
-		}
-	}
 
 	/** Requests a sidecar restart through the settings store. */
 	function handleRestart(): void {
@@ -38,10 +18,10 @@
 		<CardDescription>Claude Code CLI connection and sidecar status</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<div class="flex flex-col gap-3">
-			<div class="flex items-center gap-2 text-sm">
-				<span class="w-32 text-muted-foreground">Sidecar Status:</span>
-				<div class="flex items-center gap-1">
+		<Stack gap={3}>
+			<HStack gap={2}>
+				<Caption tone="muted">Sidecar Status:</Caption>
+				<HStack gap={1}>
 					{#if settingsStore.sidecarStatus.state === "connected"}
 						<Icon name="circle-check" size="md" />
 					{:else if settingsStore.sidecarStatus.state === "starting"}
@@ -51,47 +31,46 @@
 					{:else}
 						<Icon name="circle-dot" size="md" />
 					{/if}
-					<span class={sidecarStatusColor(settingsStore.sidecarStatus.state)}>
-						{settingsStore.sidecarStateLabel}
-					</span>
-				</div>
-			</div>
+					<Caption>{settingsStore.sidecarStateLabel}</Caption>
+				</HStack>
+			</HStack>
 
 			{#if settingsStore.sidecarStatus.pid !== null}
-				<div class="flex items-center gap-2 text-sm">
-					<span class="w-32 text-muted-foreground">Process ID:</span>
-					<span>{settingsStore.sidecarStatus.pid}</span>
-				</div>
+				<HStack gap={2}>
+					<Caption tone="muted">Process ID:</Caption>
+					<Caption>{settingsStore.sidecarStatus.pid}</Caption>
+				</HStack>
 			{/if}
 
 			{#if settingsStore.sidecarStatus.uptime_seconds !== null}
-				<div class="flex items-center gap-2 text-sm">
-					<span class="w-32 text-muted-foreground">Uptime:</span>
-					<span>{Math.floor(settingsStore.sidecarStatus.uptime_seconds)}s</span>
-				</div>
+				<HStack gap={2}>
+					<Caption tone="muted">Uptime:</Caption>
+					<Caption>{Math.floor(settingsStore.sidecarStatus.uptime_seconds)}s</Caption>
+				</HStack>
 			{/if}
 
-			<div class="flex items-center gap-2 text-sm">
-				<span class="w-32 text-muted-foreground">CLI Detected:</span>
+			<HStack gap={2}>
+				<Caption tone="muted">CLI Detected:</Caption>
 				{#if settingsStore.sidecarStatus.cli_detected}
-					<div class="flex items-center gap-1">
+					<HStack gap={1}>
 						<Icon name="circle-check" size="md" />
-						<span>{settingsStore.sidecarStatus.cli_version ?? "Unknown version"}</span>
-					</div>
+						<Caption>{settingsStore.sidecarStatus.cli_version ?? "Unknown version"}</Caption>
+					</HStack>
 				{:else}
-					<div class="flex items-center gap-1">
+					<HStack gap={1}>
 						<Icon name="circle-x" size="md" />
-						<span class="text-muted-foreground">Not found</span>
-					</div>
+						<Caption tone="muted">Not found</Caption>
+					</HStack>
 				{/if}
-			</div>
+			</HStack>
 
 			{#if settingsStore.sidecarStatus.error_message}
+				<!-- Error message box: destructive/30 border and destructive/10 bg are not in Box typed props — keep as raw div -->
 				<div class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
 					{settingsStore.sidecarStatus.error_message}
 				</div>
 			{/if}
-		</div>
+		</Stack>
 
 		<Separator />
 

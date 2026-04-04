@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, Stack, HStack, Caption, Text, Button, ScrollArea } from "@orqastudio/svelte-components/pure";
 
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { SvelteMap } from "svelte/reactivity";
@@ -151,106 +151,102 @@
 	<CardRoot>
 		<CardHeader compact>
 			<CardTitle>
-				<div class="flex items-center gap-1">
+				<HStack gap={1}>
 					<Icon name="compass" size="md" />
 					Purpose
-				</div>
+				</HStack>
 			</CardTitle>
 			<CardDescription>What's Next</CardDescription>
-			<!-- Tab buttons in Card.Action -->
+			<!-- Tab buttons in Card.Action — ghost variant, secondary when active -->
 			<CardAction>
-				<div class="flex items-center gap-0">
-					<button
-						class="rounded-none border-b-2 px-2 py-1 text-xs {activeTab === 'actions' ? 'border-foreground font-medium text-foreground' : 'border-transparent text-muted-foreground'} hover:bg-accent"
+				<HStack gap={0}>
+					<Button
+						variant={activeTab === "actions" ? "secondary" : "ghost"}
+						size="sm"
 						onclick={() => (activeTab = "actions")}
 					>
 						Actions
 						{#if pendingActions.length > 0}
-							<span class="ml-1 text-[10px] tabular-nums {activeTab === 'actions' ? 'text-foreground' : 'text-muted-foreground'}">
-								{pendingActions.length}
-							</span>
+							<Caption variant="caption-tabular">{pendingActions.length}</Caption>
 						{/if}
-					</button>
-					<button
-						class="rounded-none border-b-2 px-2 py-1 text-xs {activeTab === 'epics' ? 'border-foreground font-medium text-foreground' : 'border-transparent text-muted-foreground'} hover:bg-accent"
+					</Button>
+					<Button
+						variant={activeTab === "epics" ? "secondary" : "ghost"}
+						size="sm"
 						onclick={() => (activeTab = "epics")}
 					>
 						Epics
-					</button>
-				</div>
+					</Button>
+				</HStack>
 			</CardAction>
 		</CardHeader>
 		<CardContent>
-			<div class="h-[280px] overflow-y-auto px-3 pb-3">
+			<!-- Fixed-height scroll area for the queue content — 280px matches card layout budget -->
+			<div style="height: 280px; overflow-y: auto; padding: 0 0.75rem 0.75rem;">
 			{#if activeTab === "actions"}
 				<!-- ---------------------------------------------------------- -->
 				<!-- Actions tab: all artifacts needing attention               -->
 				<!-- ---------------------------------------------------------- -->
 				{#if pendingActions.length === 0}
-					<div class="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+					<HStack gap={2} paddingY={4}>
 						<Icon name="check-circle-2" size="md" />
-						<span>No pending actions — everything is moving</span>
-					</div>
+						<Text variant="body-muted">No pending actions — everything is moving</Text>
+					</HStack>
 				{:else}
-					<div class="space-y-1">
+					<Stack gap={1}>
 						{#each pendingActions as action (action.id)}
-							<div class="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/50">
-								<div class="min-w-0 flex-1">
-									<p class="truncate text-xs font-medium">{action.action}</p>
-									<p class="truncate text-[10px] text-muted-foreground">{action.title}</p>
-								</div>
+							<HStack gap={2} paddingX={2} paddingY={1}>
+								<Stack gap={0} flex={1}>
+									<Text variant="caption-strong" truncate>{action.action}</Text>
+									<Caption truncate>{action.title}</Caption>
+								</Stack>
 								<div class="shrink-0">
 									<ArtifactLink id={action.id} displayLabel={action.id} />
 								</div>
-							</div>
+							</HStack>
 						{/each}
-					</div>
+					</Stack>
 				{/if}
 			{:else}
 				<!-- ---------------------------------------------------------- -->
 				<!-- Epics tab: in-progress + next ready epics                  -->
 				<!-- ---------------------------------------------------------- -->
 				{#if epicEntries.length === 0}
-					<div class="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+					<HStack gap={2} paddingY={4}>
 						<Icon name="map" size="md" />
-						<span>No active or ready epics</span>
-					</div>
+						<Text variant="body-muted">No active or ready epics</Text>
+					</HStack>
 				{:else}
-					<div class="space-y-1">
+					<Stack gap={1}>
 						{#each epicEntries as epic (epic.id)}
-							<div class="flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-accent/50">
-								<div class="min-w-0 flex-1">
-									<p class="truncate text-xs font-medium">{epic.title}</p>
+							<HStack gap={2} paddingX={2} paddingY={1}>
+								<Stack gap={0} flex={1}>
+									<Text variant="caption-strong" truncate>{epic.title}</Text>
 									{#if epic.description}
-										<p class="truncate text-[10px] text-muted-foreground">{epic.description}</p>
+										<Caption truncate>{epic.description}</Caption>
 									{/if}
 									{#if epic.taskProgress !== null}
-										<div class="mt-0.5 flex items-center gap-1">
+										<HStack gap={1} align="center" marginTop={1}>
 											<div class="h-1 flex-1 rounded-full bg-muted overflow-hidden">
 												<div
 													class="h-full rounded-full bg-success transition-all"
 													style:width="{Math.round(epic.taskProgress * 100)}%"
 												></div>
 											</div>
-											<span class="text-[10px] text-muted-foreground tabular-nums shrink-0">
-												{epic.taskDone}/{epic.taskTotal}
-											</span>
-										</div>
+											<Caption variant="caption-tabular">{epic.taskDone}/{epic.taskTotal}</Caption>
+										</HStack>
 									{/if}
-								</div>
+								</Stack>
 								<div class="shrink-0">
 									<ArtifactLink id={epic.id} displayLabel={epic.id} />
 								</div>
-							</div>
+							</HStack>
 						{/each}
-					</div>
+					</Stack>
 
-					<button
-						class="mt-2 w-full rounded px-2 py-1 text-center text-xs text-muted-foreground underline underline-offset-2 hover:bg-accent"
-						onclick={openRoadmap}
-					>
+					<Button variant="ghost" size="sm" onclick={openRoadmap}>
 						View roadmap
-					</button>
+					</Button>
 				{/if}
 			{/if}
 			</div>

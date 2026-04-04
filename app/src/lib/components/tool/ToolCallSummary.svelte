@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Icon, HStack,
+	import { Icon, HStack, Caption, Stack, Badge,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -95,37 +95,41 @@
 			<HStack gap={2}>
 				<Icon name="chevron-right" size="sm" />
 				<Icon name="wrench" size="sm" />
-				<span class="flex-1 text-xs text-muted-foreground">{summaryLabel}</span>
+				<!-- flex-1 is structural (fills trigger row); Caption provides the text styling -->
+				<span class="flex-1"><Caption tone="muted">{summaryLabel}</Caption></span>
 				{#if errorCount > 0}
-					<div class="flex items-center gap-1 text-xs text-destructive">
+					<HStack gap={1}>
 						<Icon name="x-circle" size="sm" />
-						{errorCount} {errorCount === 1 ? "error" : "errors"}
-					</div>
+						<Caption tone="destructive">{errorCount} {errorCount === 1 ? "error" : "errors"}</Caption>
+					</HStack>
 				{/if}
 			</HStack>
 		</CollapsibleTrigger>
 		<CollapsibleContent>
-			<div class="ml-3 mt-1 space-y-1 border-l-2 border-border pl-4">
-				{#if summaryParts.length > 0}
-					<div class="flex flex-wrap gap-2 py-1">
-						{#each summaryParts as part (part.name)}
-							{@const PartIcon = part.icon}
-							<div class="flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-								<PartIcon class="h-3 w-3" />
-								{part.label} ({part.count})
-							</div>
-						{/each}
-					</div>
-				{/if}
-				{#each toolPairs as pair (pair.id)}
-					<ToolCallCard
-						toolName={pair.toolName}
-						toolInput={pair.input}
-						toolOutput={pair.output}
-						isError={pair.isError}
-						isComplete={true}
-					/>
-				{/each}
+			<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
+			<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+				<Stack gap={1}>
+					{#if summaryParts.length > 0}
+						<HStack gap={2} paddingY={1} wrap>
+							{#each summaryParts as part (part.name)}
+								{@const PartIcon = part.icon}
+								<Badge variant="outline" size="xs">
+									<PartIcon class="h-3 w-3" />
+									{part.label} ({part.count})
+								</Badge>
+							{/each}
+						</HStack>
+					{/if}
+					{#each toolPairs as pair (pair.id)}
+						<ToolCallCard
+							toolName={pair.toolName}
+							toolInput={pair.input}
+							toolOutput={pair.output}
+							isError={pair.isError}
+							isComplete={true}
+						/>
+					{/each}
+				</Stack>
 			</div>
 		</CollapsibleContent>
 	</Collapsible>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Caption, Text, Stack, HStack } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -191,14 +191,14 @@
 	}
 
 	/**
-	 * Returns a Tailwind text color class for a metric's trend, reflecting improvement vs regression.
+	 * Returns the semantic tone for a metric's trend, reflecting improvement vs regression.
 	 * @param m - The metric configuration.
-	 * @returns A Tailwind text color class string.
+	 * @returns A tone string for ORQA Text/Caption components.
 	 */
-	function trendColorClass(m: MetricConfig): string {
+	function trendTone(m: MetricConfig): "success" | "destructive" | "muted" {
 		const pct = percentChange(m);
-		if (pct === null || pct === 0) return "text-muted-foreground";
-		return isImprovement(m, pct) ? "text-success" : "text-destructive";
+		if (pct === null || pct === 0) return "muted";
+		return isImprovement(m, pct) ? "success" : "destructive";
 	}
 
 	/**
@@ -258,37 +258,38 @@
 		Single card containing a 2x2 grid of trend cells.
 		Card title / description are injected by ProjectDashboard.
 		Dividers between cells via border-r / border-b on each cell.
+		The grid cell borders are structural layout — no ORQA primitive handles per-cell dividers.
 	-->
 	<div class="grid h-full grid-cols-2 grid-rows-2 overflow-hidden">
 		{#each metrics as m, idx (m.label)}
 			{@const values = sparklineValues(m)}
 			{@const arrow = trendArrow(m)}
 			{@const label = trendLabel(m)}
-			{@const colorClass = trendColorClass(m)}
+			{@const tone = trendTone(m)}
 			{@const stroke = strokeColor(m)}
 			{@const path = hasTrend ? sparklinePath(values, m.fixedMin, m.fixedMax) : ""}
 			{@const isLeft = idx % 2 === 0}
 			{@const isTop = idx < 2}
 			<div class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-r border-border' : ''} {isTop ? 'border-t border-border' : ''}">
 				<!-- Metric header -->
-				<div class="flex items-center justify-between px-3 pb-1 pt-3">
-					<span class="text-xs font-medium text-muted-foreground">{m.label}</span>
-					<div class="flex items-baseline gap-1">
-						<span class="text-base font-semibold tabular-nums">
+				<HStack justify="between" paddingX={3} paddingTop={3} paddingBottom={1}>
+					<Caption variant="caption-strong">{m.label}</Caption>
+					<HStack gap={1} align="baseline">
+						<Text variant="heading-base">
 							{currentValue(m)}{m.unit ?? ""}
-						</span>
+						</Text>
 						{#if arrow}
-							<span class="text-[10px] font-medium {colorClass}">
+							<Caption variant="caption-strong" {tone}>
 								{arrow} {label}
-							</span>
+							</Caption>
 						{/if}
-					</div>
-				</div>
-				<!-- Sparkline — flush to cell edges -->
+					</HStack>
+				</HStack>
+				<!-- Sparkline — flush to cell edges — custom SVG chart -->
 				{#if loading}
-					<div class="flex items-center justify-center py-3">
+					<Stack gap={0} align="center" paddingY={3}>
 						<LoadingSpinner size="sm" />
-					</div>
+					</Stack>
 				{:else if path}
 					<svg
 						class="flex-1 w-full min-h-0"
@@ -297,13 +298,11 @@
 						fill="none"
 						xmlns="http://www.w3.org/2000/svg"
 					>
-						<!-- Area fill -->
 						<path
 							d="{path} L100,{SPARKLINE_HEIGHT - 2} L0,{SPARKLINE_HEIGHT - 2} Z"
 							fill={stroke}
 							fill-opacity="0.12"
 						/>
-						<!-- Line -->
 						<path
 							d={path}
 							stroke={stroke}
@@ -314,9 +313,9 @@
 						/>
 					</svg>
 				{:else}
-					<div class="px-3 pb-3">
-						<p class="text-[10px] text-muted-foreground">No trend data yet</p>
-					</div>
+					<Stack gap={0} paddingX={3} paddingBottom={3}>
+						<Caption>No trend data yet</Caption>
+					</Stack>
 				{/if}
 			</div>
 		{/each}

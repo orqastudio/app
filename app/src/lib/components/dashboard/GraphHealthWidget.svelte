@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, LoadingSpinner, Button, HStack, Stack, Text, Caption, Grid } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
@@ -48,11 +48,12 @@
 	const fixableCount = $derived(checks.filter((c) => c.auto_fixable).length);
 
 	// Outlier severity: green 0, amber 1-3, red >3
-	const outlierSeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.outlier_count === 0) return "text-success";
-		if (graphHealth.outlier_count <= 3) return "text-warning";
-		return "text-destructive";
+	type MetricTone = "success" | "warning" | "destructive" | "muted";
+	const outlierTone = $derived.by((): MetricTone => {
+		if (!graphHealth) return "muted";
+		if (graphHealth.outlier_count === 0) return "success";
+		if (graphHealth.outlier_count <= 3) return "warning";
+		return "destructive";
 	});
 
 	// Outlier age distribution label (e.g. "2 stale, 1 aging")
@@ -66,37 +67,36 @@
 		return parts.length > 0 ? parts.join(", ") : null;
 	});
 
-	// Avg degree: green >=4, cyan 3-4, amber 2-3, red <2
-	const degreeSeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.avg_degree >= 4) return "text-success";
-		if (graphHealth.avg_degree >= 3) return "text-primary";
-		if (graphHealth.avg_degree >= 2) return "text-warning";
-		return "text-destructive";
+	// Avg degree: green >=4, amber 2-3, red <2 (text-primary not a valid tone; map to success as closest)
+	const degreeTone = $derived.by((): MetricTone => {
+		if (!graphHealth) return "muted";
+		if (graphHealth.avg_degree >= 3) return "success";
+		if (graphHealth.avg_degree >= 2) return "warning";
+		return "destructive";
 	});
 
 	// Delivery connectivity: green >=90%, amber 70-90%, red <70%
-	const deliverySeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.delivery_connectivity >= 0.9) return "text-success";
-		if (graphHealth.delivery_connectivity >= 0.7) return "text-warning";
-		return "text-destructive";
+	const deliveryTone = $derived.by((): MetricTone => {
+		if (!graphHealth) return "muted";
+		if (graphHealth.delivery_connectivity >= 0.9) return "success";
+		if (graphHealth.delivery_connectivity >= 0.7) return "warning";
+		return "destructive";
 	});
 
 	// Learning connectivity: green >=80%, amber 50-80%, red <50%
-	const learningSeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.learning_connectivity >= 0.8) return "text-success";
-		if (graphHealth.learning_connectivity >= 0.5) return "text-warning";
-		return "text-destructive";
+	const learningTone = $derived.by((): MetricTone => {
+		if (!graphHealth) return "muted";
+		if (graphHealth.learning_connectivity >= 0.8) return "success";
+		if (graphHealth.learning_connectivity >= 0.5) return "warning";
+		return "destructive";
 	});
 
 	// Pillar traceability: green >=80%, amber 50-80%, red <50%
-	const traceabilitySeverity = $derived.by(() => {
-		if (!graphHealth) return "text-muted-foreground";
-		if (graphHealth.pillar_traceability >= 80) return "text-success";
-		if (graphHealth.pillar_traceability >= 50) return "text-warning";
-		return "text-destructive";
+	const traceabilityTone = $derived.by((): MetricTone => {
+		if (!graphHealth) return "muted";
+		if (graphHealth.pillar_traceability >= 80) return "success";
+		if (graphHealth.pillar_traceability >= 50) return "warning";
+		return "destructive";
 	});
 
 	// ---------------------------------------------------------------------------
@@ -143,53 +143,53 @@
 <CardRoot gap={2} full>
 	<CardHeader compact>
 		<CardTitle size="sm">
-			<div class="flex items-center gap-1">
+			<HStack gap={1}>
 				<Icon name="eye" size="md" />
 				Clarity
-			</div>
+			</HStack>
 		</CardTitle>
 		<CardDescription size="xs">Where You Are</CardDescription>
 		<CardAction>
 			{#if loading}
 				<LoadingSpinner size="sm" />
 			{:else}
-				<div class="flex items-center gap-2">
-					<span class="text-sm font-semibold tabular-nums">{scoreLabel}</span>
-					<span class="relative flex h-3 w-3 shrink-0 items-center justify-center">
+				<HStack gap={2}>
+					<Text variant="body-strong">{scoreLabel}</Text>
+					<span aria-hidden="true" style="position: relative; display: flex; height: 0.75rem; width: 0.75rem; flex-shrink: 0; align-items: center; justify-content: center;">
 						<span class="absolute h-3 w-3 rounded-full {circleClass} opacity-30"></span>
 						<span class="h-1.5 w-1.5 rounded-full {circleClass}"></span>
 					</span>
-				</div>
+				</HStack>
 			{/if}
 		</CardAction>
 	</CardHeader>
 	<CardContent compact>
-		<div class="flex flex-col gap-3">
+		<Stack gap={3}>
 		{#if graphHealth && graphHealth.total_nodes > 0}
-			<div class="grid grid-cols-2 gap-2 flex-1 text-center text-xs">
+			<Grid cols={2} gap={2}>
 				<!-- Outliers -->
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="unlink" size="sm" />
-						<span class="{outlierSeverity} font-semibold tabular-nums">
+						<Caption variant="caption-tabular" tone={outlierTone}>
 							{graphHealth.outlier_count}
-						</span>
-						<span class="text-muted-foreground">Outlier{graphHealth.outlier_count !== 1 ? "s" : ""}</span>
+						</Caption>
+						<Caption>Outlier{graphHealth.outlier_count !== 1 ? "s" : ""}</Caption>
 						{#if outlierAgeSummary}
-							<span class="text-muted-foreground/70 text-[10px] leading-tight">{outlierAgeSummary}</span>
+							<Caption tone="muted">{outlierAgeSummary}</Caption>
 						{/if}
 					</TooltipTrigger>
 					<TooltipContent side="bottom">
-						<p class="font-medium mb-1">Pipeline Outliers</p>
-						<p class="text-muted-foreground">Active artifacts outside both the delivery pipeline (task / epic / milestone / idea / research / decision / wireframe) and the learning pipeline (lesson / rule). Outliers need attention — connect them or archive them.</p>
+						<Text variant="body-strong" block>Pipeline Outliers</Text>
+						<Text variant="body-muted" block>Active artifacts outside both the delivery pipeline (task / epic / milestone / idea / research / decision / wireframe) and the learning pipeline (lesson / rule). Outliers need attention — connect them or archive them.</Text>
 						{#if graphHealth.outlier_age_distribution.stale > 0}
-							<p class="text-destructive mt-1">{graphHealth.outlier_age_distribution.stale} stale (90d+ or no date) — priority action.</p>
+							<Text variant="body" tone="destructive" block>{graphHealth.outlier_age_distribution.stale} stale (90d+ or no date) — priority action.</Text>
 						{/if}
 						{#if graphHealth.outlier_age_distribution.aging > 0}
-							<p class="text-warning mt-1">{graphHealth.outlier_age_distribution.aging} aging (30–90d) — connect or archive soon.</p>
+							<Text variant="body" tone="warning" block>{graphHealth.outlier_age_distribution.aging} aging (30–90d) — connect or archive soon.</Text>
 						{/if}
 						{#if graphHealth.outlier_age_distribution.fresh > 0}
-							<p class="text-muted-foreground mt-1">{graphHealth.outlier_age_distribution.fresh} fresh (≤30d) — within grace period.</p>
+							<Text variant="body-muted" block>{graphHealth.outlier_age_distribution.fresh} fresh (≤30d) — within grace period.</Text>
 						{/if}
 					</TooltipContent>
 				</TooltipRoot>
@@ -198,12 +198,12 @@
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="git-branch" size="sm" />
-						<span class="{degreeSeverity} font-semibold tabular-nums">{fmt(graphHealth.avg_degree)}</span>
-						<span class="text-muted-foreground">Avg Degree</span>
+						<Caption variant="caption-tabular" tone={degreeTone}>{fmt(graphHealth.avg_degree)}</Caption>
+						<Caption>Avg Degree</Caption>
 					</TooltipTrigger>
 					<TooltipContent side="bottom">
-						<p class="font-medium mb-1">Average Connection Degree</p>
-						<p class="text-muted-foreground">The average number of relationships per artifact. Higher means a more interconnected knowledge graph. A well-connected graph has an average degree of 4+ — each artifact relates to multiple others.</p>
+						<Text variant="body-strong" block>Average Connection Degree</Text>
+						<Text variant="body-muted" block>The average number of relationships per artifact. Higher means a more interconnected knowledge graph. A well-connected graph has an average degree of 4+ — each artifact relates to multiple others.</Text>
 					</TooltipContent>
 				</TooltipRoot>
 
@@ -211,14 +211,14 @@
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="package" size="sm" />
-						<span class="{deliverySeverity} font-semibold tabular-nums">
+						<Caption variant="caption-tabular" tone={deliveryTone}>
 							{pct(graphHealth.delivery_connectivity)}%
-						</span>
-						<span class="text-muted-foreground">Delivery</span>
+						</Caption>
+						<Caption>Delivery</Caption>
 					</TooltipTrigger>
 					<TooltipContent side="bottom">
-						<p class="font-medium mb-1">Delivery Pipeline Connectivity</p>
-						<p class="text-muted-foreground">Percentage of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) connected in the main delivery component. Target: 90%+.</p>
+						<Text variant="body-strong" block>Delivery Pipeline Connectivity</Text>
+						<Text variant="body-muted" block>Percentage of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) connected in the main delivery component. Target: 90%+.</Text>
 					</TooltipContent>
 				</TooltipRoot>
 
@@ -226,14 +226,14 @@
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="book-open" size="sm" />
-						<span class="{learningSeverity} font-semibold tabular-nums">
+						<Caption variant="caption-tabular" tone={learningTone}>
 							{pct(graphHealth.learning_connectivity)}%
-						</span>
-						<span class="text-muted-foreground">Learning</span>
+						</Caption>
+						<Caption>Learning</Caption>
 					</TooltipTrigger>
 					<TooltipContent side="bottom">
-						<p class="font-medium mb-1">Learning Loop Connectivity</p>
-						<p class="text-muted-foreground">Percentage of learning artifacts (lesson, rule) connected to each other or to decisions. Disconnected lessons and rules are not feeding back into the delivery process. Target: 80%+.</p>
+						<Text variant="body-strong" block>Learning Loop Connectivity</Text>
+						<Text variant="body-muted" block>Percentage of learning artifacts (lesson, rule) connected to each other or to decisions. Disconnected lessons and rules are not feeding back into the delivery process. Target: 80%+.</Text>
 					</TooltipContent>
 				</TooltipRoot>
 
@@ -243,82 +243,78 @@
 						<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 							{#if errorCount > 0}
 								<Icon name="circle-alert" size="sm" />
-								<span class="text-destructive font-semibold tabular-nums">{errorCount}E / {warningCount}W</span>
+								<Caption variant="caption-tabular" tone="destructive">{errorCount}E / {warningCount}W</Caption>
 							{:else if warningCount > 0}
 								<Icon name="triangle-alert" size="sm" />
-								<span class="text-warning font-semibold tabular-nums">{warningCount}W</span>
+								<Caption variant="caption-tabular" tone="warning">{warningCount}W</Caption>
 							{:else}
 								<Icon name="circle-alert" size="sm" />
-								<span class="text-success font-semibold">Clean</span>
+								<Caption tone="success">Clean</Caption>
 							{/if}
-							<span class="text-muted-foreground">Integrity</span>
+							<Caption>Integrity</Caption>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
-							<p class="font-medium mb-1">Integrity Scan Results</p>
-							<p class="text-muted-foreground">File-level checks: broken references, invalid statuses, missing required fields, schema violations. Errors must be fixed. Warnings indicate potential issues. Use Auto-fix for machine-fixable problems.</p>
+							<Text variant="body-strong" block>Integrity Scan Results</Text>
+							<Text variant="body-muted" block>File-level checks: broken references, invalid statuses, missing required fields, schema violations. Errors must be fixed. Warnings indicate potential issues. Use Auto-fix for machine-fixable problems.</Text>
 						</TooltipContent>
 					</TooltipRoot>
 				{:else}
-					<div class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 text-muted-foreground">
+					<Stack gap={1} align="center" paddingY={3}>
 						<Icon name="scan" size="sm" />
-						<span class="tabular-nums">—</span>
-						<span>Integrity</span>
-					</div>
+						<Caption variant="caption-tabular">—</Caption>
+						<Caption>Integrity</Caption>
+					</Stack>
 				{/if}
 
 				<!-- Pillar Traceability -->
 				<TooltipRoot delayDuration={300}>
 					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
 						<Icon name="target" size="sm" />
-						<span class="{traceabilitySeverity} font-semibold tabular-nums">
+						<Caption variant="caption-tabular" tone={traceabilityTone}>
 							{fmt(graphHealth.pillar_traceability)}%
-						</span>
-						<span class="text-muted-foreground">Traceability</span>
+						</Caption>
+						<Caption>Traceability</Caption>
 					</TooltipTrigger>
 					<TooltipContent side="bottom">
-						<p class="font-medium mb-1">Pillar Traceability</p>
-						<p class="text-muted-foreground">Percentage of rules that are grounded by at least one pillar via a grounded-by relationship. Rules without pillar grounding are unanchored — they enforce something with no stated rationale.</p>
+						<Text variant="body-strong" block>Pillar Traceability</Text>
+						<Text variant="body-muted" block>Percentage of rules that are grounded by at least one pillar via a grounded-by relationship. Rules without pillar grounding are unanchored — they enforce something with no stated rationale.</Text>
 					</TooltipContent>
 				</TooltipRoot>
 
-			</div>
+			</Grid>
 		{/if}
 
 		<!-- Threshold alerts -->
 		{#if thresholdAlerts.length > 0}
-			<div class="flex flex-col gap-1">
+			<Stack gap={1}>
 				{#each thresholdAlerts as alert (alert.message)}
-					<div
-						class="flex items-center gap-1 rounded px-2 py-1 text-xs {alert.level === 'red'
-							? 'bg-destructive/10 text-destructive'
-							: 'bg-warning/10 text-warning'}"
-					>
+					<HStack gap={1} paddingX={2} paddingY={1}>
 						<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
-						<span>{alert.message}</span>
-					</div>
+						<Caption tone={alert.level === "red" ? "destructive" : "warning"}>{alert.message}</Caption>
+					</HStack>
 				{/each}
-			</div>
+			</Stack>
 		{/if}
 
-		<!-- Actions -->
-		<div class="grid grid-cols-2 gap-2 mt-auto">
-			<button class="flex items-center justify-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={onScan} disabled={loading || fixing}>
+		<!-- Scan and Auto-fix action buttons -->
+		<Grid cols={2} gap={2}>
+			<Button variant="outline" size="sm" onclick={onScan} disabled={loading || fixing}>
 				{#if loading}
-					<span class="mr-2"><LoadingSpinner size="sm" /></span>
+					<LoadingSpinner size="sm" />
 				{:else}
 					<Icon name="scan" size="sm" />
 				{/if}
 				Scan
-			</button>
-			<button class="flex items-center justify-center gap-1 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent disabled:opacity-50" onclick={onAutoFix} disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}>
+			</Button>
+			<Button variant="outline" size="sm" onclick={onAutoFix} disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}>
 				{#if fixing}
-					<span class="mr-2"><LoadingSpinner size="sm" /></span>
+					<LoadingSpinner size="sm" />
 				{:else}
 					<Icon name="wrench" size="sm" />
 				{/if}
 				Auto-fix{scanned && fixableCount > 0 ? ` (${fixableCount})` : ""}
-			</button>
-		</div>
-		</div>
+			</Button>
+		</Grid>
+		</Stack>
 	</CardContent>
 </CardRoot>

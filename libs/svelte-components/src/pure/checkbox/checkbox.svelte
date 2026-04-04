@@ -3,11 +3,13 @@
 <script lang="ts">
 	import { Checkbox as CheckboxPrimitive } from "bits-ui";
 	import { cn } from "../../utils/cn.js";
+	import type { HTMLButtonAttributes } from "svelte/elements";
 
 	let {
 		checked = $bindable(false),
 		disabled = false,
-	}: {
+		...restProps
+	}: Omit<HTMLButtonAttributes, "class" | "style"> & {
 		checked?: boolean;
 		disabled?: boolean;
 	} = $props();
@@ -24,6 +26,7 @@
 		"data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-primary-foreground",
 		"transition-colors",
 	)}
+	{...restProps}
 >
 	{#snippet children({ checked: isChecked })}
 		<!-- Check icon shown only when checked. -->

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ScrollArea, EmptyState, LoadingSpinner, ErrorDisplay, Button, Text } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, EmptyState, LoadingSpinner, ErrorDisplay, Button, Text, Stack, HStack, Box, Center, Caption } from "@orqastudio/svelte-components/pure";
 	import SessionHeader from "./SessionHeader.svelte";
 	import MessageBubble from "./MessageBubble.svelte";
 	import MessageInput from "./MessageInput.svelte";
@@ -208,11 +208,11 @@
 	});
 </script>
 
-<div class="flex h-full flex-col">
+<Stack height="full">
 	{#if !initialized}
-		<div class="flex h-full items-center justify-center">
+		<Center full>
 			<LoadingSpinner />
-		</div>
+		</Center>
 	{:else if session}
 		<!-- Session header -->
 		<SessionHeader
@@ -232,7 +232,7 @@
 
 		<!-- Resume notification banner -->
 		{#if showResumeBanner}
-			<div class="flex items-center justify-between border-b border-border bg-muted/50 px-4 py-2">
+			<HStack justify="between" paddingX={4} paddingY={2} borderBottom>
 				<Text tone="muted">Session resumed after restart. Send a message to continue.</Text>
 				<Button
 					variant="ghost"
@@ -241,35 +241,37 @@
 				>
 					Dismiss
 				</Button>
-			</div>
+			</HStack>
 		{/if}
 
-		<!-- Message area -->
-		<div class="relative flex-1 overflow-hidden">
+		<!-- Message area; relative + flex-1 + overflow-hidden are structural layout constraints -->
+		<Box position="relative" flex={1} overflow="hidden">
 			{#if isLoading}
-				<div class="flex h-full items-center justify-center">
+				<Center full>
 					<LoadingSpinner />
-				</div>
+				</Center>
 			{:else if error}
-				<div class="flex h-full items-center justify-center p-4">
+				<Center full padding={4}>
 					<ErrorDisplay
 						message={error}
 						onRetry={() => {
 							if (session) conversationStore.loadMessages(session.id);
 						}}
 					/>
-				</div>
+				</Center>
 			{:else if messages.length === 0 && !isStreaming}
-				<div class="flex h-full items-center justify-center">
+				<Center full>
 					<EmptyState
 						icon="message-square"
 						title="No messages yet"
 						description="Send a message to start the conversation."
 					/>
-				</div>
+				</Center>
 			{:else}
 				<ScrollArea full bind:viewportRef={scrollViewportRef}>
-					<div class="space-y-4 p-4" onscroll={handleScroll}>
+					<!-- onscroll requires a raw DOM element; no ORQA primitive supports scroll event handlers -->
+					<div class="p-4" onscroll={handleScroll}>
+					<Stack gap={4}>
 						<!-- Context entries — inline system messages showing what was sent to Claude -->
 						{#each contextEntries as entry, i (entry.type + i)}
 							<ContextEntryComponent {entry} />
@@ -277,9 +279,9 @@
 
 						{#each displayEntries as entry (entry.kind === "message" ? entry.message.id : entry.key)}
 							{#if entry.kind === "tool-summary"}
-								<div class="px-4">
+								<Box paddingX={4}>
 									<ToolCallSummary messages={entry.messages} />
-								</div>
+								</Box>
 							{:else}
 								<MessageBubble
 									message={entry.message}
@@ -300,46 +302,47 @@
 
 						<!-- Thinking block — ephemeral reasoning display below activity -->
 						{#if streamingThinking}
-							<div class="px-4">
+							<Box paddingX={4}>
 								<ThinkingBlock content={streamingThinking} isStreaming={isStreaming} />
-							</div>
+							</Box>
 						{/if}
 
 						<!-- Tool approval dialog — rendered inline in the message stream -->
 						{#if pendingApproval}
-							<div class="px-4">
+							<Box paddingX={4}>
 								<ToolApprovalDialog
 									approval={pendingApproval}
 									onApprove={() => conversationStore.respondToApproval(true)}
 									onDeny={() => conversationStore.respondToApproval(false)}
 								/>
-							</div>
+							</Box>
 						{/if}
 
 						<!-- Process violation warnings -->
 						{#if processViolations.length > 0}
-							<div class="space-y-1 px-4">
+							<Stack gap={1}>
 								{#each processViolations as violation (violation.check)}
+									<!-- warning/10 bg and warning/30 border are design tokens; Box only supports named bg tokens -->
 									<div class="rounded-md border border-warning/30 bg-warning/10 px-3 py-2">
-										<span class="text-sm text-warning"><span class="font-medium">Process:</span> {violation.message}</span>
+										<Text tone="warning"><Text variant="body-strong">Process:</Text> {violation.message}</Text>
 									</div>
 								{/each}
-							</div>
+							</Stack>
 						{/if}
+					</Stack>
 					</div>
 				</ScrollArea>
 
-				<!-- Scroll to bottom button -->
+				<!-- Scroll to bottom button; absolute + translate-x positioning has no ORQA primitive -->
 				{#if userScrolledUp}
-					<button
-						class="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-border bg-background px-3 py-1 text-sm shadow-md hover:bg-accent"
-						onclick={scrollToBottom}
-					>
-						Scroll to bottom
-					</button>
+					<div class="absolute bottom-2 left-1/2 -translate-x-1/2">
+						<Button variant="outline" size="sm" onclick={scrollToBottom}>
+							Scroll to bottom
+						</Button>
+					</div>
 				{/if}
 			{/if}
-		</div>
+		</Box>
 
 		<!-- Input area -->
 		<MessageInput
@@ -349,7 +352,7 @@
 		/>
 	{:else}
 		<!-- No session selected -->
-		<div class="flex h-full items-center justify-center">
+		<Center full>
 			<EmptyState
 				icon="message-square"
 				title="No session active"
@@ -359,6 +362,6 @@
 					onclick: handleNewSession,
 				}}
 			/>
-		</div>
+		</Center>
 	{/if}
-</div>
+</Stack>

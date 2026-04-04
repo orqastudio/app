@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Caption, Code } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -24,55 +24,55 @@
 	</CardHeader>
 	<CardContent>
 		{#if cliChecking}
-			<div class="flex items-center gap-2 text-sm">
+			<HStack gap={2}>
 				<Icon name="loader-circle" size="md" />
-				<span class="text-muted-foreground">Checking CLI status...</span>
-			</div>
+				<Caption tone="muted">Checking CLI status...</Caption>
+			</HStack>
 		{:else if setupStore.cliInfo}
-			<div class="flex flex-col gap-3">
-				<div class="flex items-center gap-2 text-sm">
-					<span class="w-32 text-muted-foreground">Installed:</span>
+			<Stack gap={3}>
+				<HStack gap={2}>
+					<Caption tone="muted">Installed:</Caption>
 					{#if setupStore.cliInfo.installed}
-						<div class="flex items-center gap-1">
+						<HStack gap={1}>
 							<Icon name="circle-check" size="md" />
-							<span>Yes</span>
-						</div>
+							<Caption>Yes</Caption>
+						</HStack>
 					{:else}
-						<div class="flex items-center gap-1">
+						<HStack gap={1}>
 							<Icon name="circle-x" size="md" />
-							<span class="text-destructive">Not found</span>
-						</div>
+							<Caption tone="destructive">Not found</Caption>
+						</HStack>
 					{/if}
-				</div>
+				</HStack>
 
 				{#if setupStore.cliInfo.version}
-					<div class="flex items-center gap-2 text-sm">
-						<span class="w-32 text-muted-foreground">Version:</span>
-						<span class="font-mono text-xs">{setupStore.cliInfo.version}</span>
-					</div>
+					<HStack gap={2}>
+						<Caption tone="muted">Version:</Caption>
+						<Code>{setupStore.cliInfo.version}</Code>
+					</HStack>
 				{/if}
 
 				{#if setupStore.cliInfo.path}
-					<div class="flex items-center gap-2 text-sm">
-						<span class="w-32 text-muted-foreground">Path:</span>
-						<span class="font-mono text-xs">{setupStore.cliInfo.path}</span>
-					</div>
+					<HStack gap={2}>
+						<Caption tone="muted">Path:</Caption>
+						<Code>{setupStore.cliInfo.path}</Code>
+					</HStack>
 				{/if}
 
-				<div class="flex items-center gap-2 text-sm">
-					<span class="w-32 text-muted-foreground">Authenticated:</span>
+				<HStack gap={2}>
+					<Caption tone="muted">Authenticated:</Caption>
 					{#if setupStore.cliInfo.authenticated}
-						<div class="flex items-center gap-1">
+						<HStack gap={1}>
 							<Icon name="shield-check" size="md" />
-							<span>Yes</span>
-						</div>
+							<Caption>Yes</Caption>
+						</HStack>
 					{:else}
-						<div class="flex items-center gap-1">
+						<HStack gap={1}>
 							<Icon name="circle-x" size="md" />
-							<span class="text-warning">Not authenticated</span>
-						</div>
+							<Caption tone="warning">Not authenticated</Caption>
+						</HStack>
 					{/if}
-				</div>
+				</HStack>
 
 				{#if setupStore.cliInfo.authenticated}
 					<CliSubscriptionInfo
@@ -82,14 +82,14 @@
 						scopes={setupStore.cliInfo.scopes}
 					/>
 				{/if}
-			</div>
+			</Stack>
 		{:else}
-			<span class="text-sm text-muted-foreground">CLI status not checked yet.</span>
+			<Caption tone="muted">CLI status not checked yet.</Caption>
 		{/if}
 
 		<Separator />
 
-		<div class="flex items-center gap-2">
+		<HStack gap={2}>
 			<Button variant="outline" size="sm" onclick={onCheckCli} disabled={cliChecking}>
 				<Icon name="refresh-cw" size="sm" />
 				Re-check Status
@@ -108,6 +108,6 @@
 					Re-authenticate
 				{/if}
 			</Button>
-		</div>
+		</HStack>
 	</CardContent>
 </CardRoot>

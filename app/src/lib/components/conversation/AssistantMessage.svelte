@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Badge, Caption } from "@orqastudio/svelte-components/pure";
+	import { Badge, Caption, Stack, HStack } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -23,27 +23,32 @@
 	);
 </script>
 
-<div class="flex justify-start">
-	<div class="max-w-[85%] space-y-1">
+<HStack align="start" justify="start">
+	<!-- max-w-[85%] is a responsive sizing constraint with no ORQA primitive equivalent -->
+	<div class="max-w-[85%]">
+	<Stack gap={1}>
+		<!-- rounded-2xl rounded-tl-sm border bg-muted/50 are visual card styles; no ORQA equivalent for asymmetric radius -->
 		<div class="rounded-2xl rounded-tl-sm border border-border bg-muted/50 px-4 py-2.5">
 			{#if isActivelyStreaming}
-				<pre class="streaming-text whitespace-pre-wrap font-[inherit] text-sm">{displayContent}<span class="cursor-blink" aria-hidden="true"></span></pre>
+				<!-- streaming-text is a scoped style class; pre is structural for whitespace preservation during streaming -->
+				<pre class="streaming-text">{displayContent}<span class="cursor-blink" aria-hidden="true"></span></pre>
 			{:else if displayContent}
 				<MarkdownRenderer content={displayContent} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 			{:else if isStreaming}
 				<StreamingIndicator />
 			{/if}
 		</div>
-		<div class="flex items-center gap-2">
+		<HStack gap={2}>
 			<Caption>{formattedTime}</Caption>
 			{#if message.input_tokens || message.output_tokens}
 				<Badge variant="outline" size="xs">
 					{message.input_tokens ?? 0}↑ {message.output_tokens ?? 0}↓
 				</Badge>
 			{/if}
-		</div>
+		</HStack>
+	</Stack>
 	</div>
-</div>
+</HStack>
 
 <style>
 	.streaming-text {

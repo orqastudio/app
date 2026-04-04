@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CodeBlock from "$lib/components/content/CodeBlock.svelte";
-	import { Icon,
+	import { Icon, Button, Caption, Stack, HStack,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -70,7 +70,8 @@
 		<Icon name="chevron-right" size="sm" />
 		{@const ToolIcon = displayInfo.icon}
 		<ToolIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-		<span class="flex-1 truncate font-mono text-xs">{displayInfo.label}</span>
+		<!-- flex-1 is structural (fills trigger row); caption-mono provides the text styling -->
+		<span class="flex-1"><Caption variant="caption-mono" truncate>{displayInfo.label}</Caption></span>
 		{#if isEnforcementBlock && enforcementRuleName}
 			<ViolationBadge action="Block" ruleName={enforcementRuleName} />
 		{:else if isComplete && isError}
@@ -82,48 +83,51 @@
 		{/if}
 	</CollapsibleTrigger>
 	<CollapsibleContent>
-		<div class="ml-3 mt-1 space-y-2 border-l-2 border-border pl-4">
-			{#if displayInput}
-				<div>
-					<span class="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Input</span>
-					<CodeBlock text={displayInput} lang="json" />
-					{#if inputIsTruncated}
-						<button
-							class="mt-1 h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-							onclick={() => (showFullInput = !showFullInput)}
-						>
-							{#if showFullInput}
-								Show less
-							{:else}
-								Show full input ({fmt(toolInput!.length / 1000, 0)}K chars)
-							{/if}
-						</button>
-					{/if}
-				</div>
-			{/if}
-			{#if displayOutput}
-				<div>
-					<span class="mb-1 block text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-						{isError ? "Error" : "Output"}
-					</span>
-					<CodeBlock text={displayOutput} lang={isError ? "" : "json"} />
-					{#if outputIsTruncated}
-						<button
-							class="mt-1 h-auto p-0 text-xs text-muted-foreground hover:text-foreground"
-							onclick={() => (showFullOutput = !showFullOutput)}
-						>
-							{#if showFullOutput}
-								Show less
-							{:else}
-								Show full output ({fmt(toolOutput!.length / 1000, 0)}K chars)
-							{/if}
-						</button>
-					{/if}
-				</div>
-			{/if}
-			{#if !isComplete}
-				<span class="text-[10px] italic uppercase tracking-wide text-muted-foreground">Running...</span>
-			{/if}
+		<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
+		<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+			<Stack gap={2}>
+				{#if displayInput}
+					<Stack gap={1}>
+						<Caption variant="caption-strong">Input</Caption>
+						<CodeBlock text={displayInput} lang="json" />
+						{#if inputIsTruncated}
+							<Button
+								variant="ghost"
+								size="sm"
+								onclick={() => (showFullInput = !showFullInput)}
+							>
+								{#if showFullInput}
+									Show less
+								{:else}
+									Show full input ({fmt(toolInput!.length / 1000, 0)}K chars)
+								{/if}
+							</Button>
+						{/if}
+					</Stack>
+				{/if}
+				{#if displayOutput}
+					<Stack gap={1}>
+						<Caption variant="caption-strong">{isError ? "Error" : "Output"}</Caption>
+						<CodeBlock text={displayOutput} lang={isError ? "" : "json"} />
+						{#if outputIsTruncated}
+							<Button
+								variant="ghost"
+								size="sm"
+								onclick={() => (showFullOutput = !showFullOutput)}
+							>
+								{#if showFullOutput}
+									Show less
+								{:else}
+									Show full output ({fmt(toolOutput!.length / 1000, 0)}K chars)
+								{/if}
+							</Button>
+						{/if}
+					</Stack>
+				{/if}
+				{#if !isComplete}
+					<Caption variant="caption-strong">Running...</Caption>
+				{/if}
+			</Stack>
 		</div>
 	</CollapsibleContent>
 </Collapsible>

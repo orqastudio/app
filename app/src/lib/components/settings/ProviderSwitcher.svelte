@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Box, Caption, Text, Button } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -38,41 +38,42 @@
 		</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<div class="flex flex-col gap-2">
+		<Stack gap={2}>
 			{#each sidecars as sidecar (sidecar.key)}
 				{@const isActive = sidecar.key === activeKey}
-				<div class="flex items-center justify-between rounded border px-3 py-2 {isActive ? 'border-primary bg-primary/5' : 'border-border'}">
-					<div class="flex items-center gap-2">
-						<Icon name={isActive ? "circle-check" : "circle-dashed"} size="sm" />
-						<div class="flex flex-col gap-0">
-							<span class="text-xs font-medium">{sidecar.label}</span>
-							<span class="text-xs text-muted-foreground">{sidecar.runtime} &middot; {sidecar.entrypoint}</span>
-						</div>
-					</div>
-					<div class="flex items-center gap-2">
-						{#if isActive}
-							<Badge variant="outline" size="xs">Active</Badge>
-						{:else}
-							<button
-								class="flex h-7 items-center rounded px-2 text-xs hover:bg-accent"
-								onclick={() => switchProvider(sidecar.key)}
-							>
-								Switch
-							</button>
-						{/if}
-					</div>
-				</div>
+				<Box border rounded="md" paddingX={3} paddingY={2}>
+					<HStack justify="between">
+						<HStack gap={2}>
+							<Icon name={isActive ? "circle-check" : "circle-dashed"} size="sm" />
+							<Stack gap={0}>
+								<Caption variant="caption-strong">{sidecar.label}</Caption>
+								<Caption tone="muted">{sidecar.runtime} · {sidecar.entrypoint}</Caption>
+							</Stack>
+						</HStack>
+						<HStack gap={2}>
+							{#if isActive}
+								<Badge variant="outline" size="xs">Active</Badge>
+							{:else}
+								<Button variant="ghost" size="sm" onclick={() => switchProvider(sidecar.key)}>
+									Switch
+								</Button>
+							{/if}
+						</HStack>
+					</HStack>
+				</Box>
 			{/each}
-		</div>
+		</Stack>
 
 		{#if sidecars.length > 0}
-			<div class="mt-3 flex items-start gap-2 rounded bg-muted/50 p-2">
-				<Icon name="info" size="sm" />
-				<span class="text-xs text-muted-foreground">
-					Provider changes take effect after restarting the app. The sidecar
-					will reconnect using the selected provider's configuration.
-				</span>
-			</div>
+			<Box rounded="md" background="muted" paddingX={2} paddingY={2} marginTop={3}>
+				<HStack gap={2} align="start">
+					<Icon name="info" size="sm" />
+					<Caption tone="muted">
+						Provider changes take effect after restarting the app. The sidecar
+						will reconnect using the selected provider's configuration.
+					</Caption>
+				</HStack>
+			</Box>
 		{/if}
 	</CardContent>
 </CardRoot>

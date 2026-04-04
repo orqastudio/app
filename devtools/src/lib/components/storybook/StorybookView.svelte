@@ -3,7 +3,7 @@
      Shows an empty state when the server is not reachable. -->
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	import { ConnectionIndicator, EmptyState } from "@orqastudio/svelte-components/pure";
+	import { ConnectionIndicator, EmptyState, Box } from "@orqastudio/svelte-components/pure";
 	import type { ConnectionState } from "@orqastudio/svelte-components/pure";
 
 	import { DEFAULT_PORT_BASE, PORT_OFFSETS } from "@orqastudio/constants";
@@ -66,20 +66,21 @@
 
 <!-- Fill the full height of the tab content area. Position the connection
      indicator absolutely so it floats over both the iframe and the empty state. -->
-<div class="relative h-full w-full">
+<Box position="relative" height="full" width="full">
 	<!-- Connection status indicator: positioned top-right over the iframe or the
 	     empty state so it is always visible regardless of which branch renders. -->
-	<div class="absolute right-3 top-3 z-10">
+	<Box position="absolute" right={3} top={3} zIndex={10}>
 		<ConnectionIndicator state={connectionState} label={connectionLabel} />
-	</div>
+	</Box>
 
 	{#if isRunning}
 		<!-- Storybook iframe. sandbox allows scripts and same-origin access so that
-		     Storybook's own navigation can function normally inside the frame. -->
+		     Storybook's own navigation can function normally inside the frame.
+		     iframe is not a prohibited element; Tailwind classes moved to scoped CSS. -->
 		<iframe
 			src={STORYBOOK_URL}
 			title="Storybook"
-			class="h-full w-full flex-1 border-0"
+			class="storybook-iframe"
 			sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
 		></iframe>
 	{:else if checked}
@@ -90,4 +91,14 @@
 			description="Start the dev server to use this view: cd libs/svelte-components && npm run storybook — the view will load automatically once the server is up."
 		/>
 	{/if}
-</div>
+</Box>
+
+<style>
+	/* Storybook iframe: fills the full container area, no border. */
+	.storybook-iframe {
+		height: 100%;
+		width: 100%;
+		flex: 1;
+		border: none;
+	}
+</style>

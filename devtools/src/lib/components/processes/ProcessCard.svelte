@@ -14,8 +14,8 @@
 		ConnectionIndicator,
 		HStack,
 		Caption,
-		Text,
 		Code,
+		Box,
 		type ConnectionState,
 	} from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
@@ -123,105 +123,118 @@
 	}
 </script>
 
-<!-- CardRoot renders the card surface. role="button" with tabindex and
-     keyboard handler replicates the original <button> semantics while using
-     the library's card styling. aria-pressed tracks the selected state. -->
-<CardRoot
-	role="button"
-	tabindex={0}
-	aria-pressed={selected}
-	data-selected={selected}
-	onclick={handleClick}
-	onkeydown={handleKeydown}
-	onmouseenter={() => (hovered = true)}
-	onmouseleave={() => (hovered = false)}
-	class="process-card"
->
-	<!-- Header: process name on the left, connection state indicator on the right. -->
-	<CardHeader>
-		<CardTitle>{process.name}</CardTitle>
-		<span class="process-card__status">
-			<ConnectionIndicator state={connectionState} label={statusLabel} />
-		</span>
-	</CardHeader>
+<!-- Wrapper span: provides :global() hook for card styling overrides.
+     CardRoot does not accept class; data-selected is passed through restProps. -->
+<span class="process-card__wrap" style="display: contents;">
+	<CardRoot
+		data-selected={selected}
+		onclick={handleClick}
+		onkeydown={handleKeydown}
+		onmouseenter={() => (hovered = true)}
+		onmouseleave={() => (hovered = false)}
+		aria-pressed={selected}
+		tabindex={0}
+	>
+		<!-- Header: process name on the left, connection state indicator on the right.
+		     Box provides the container for the status indicator without a raw span. -->
+		<CardHeader>
+			<CardTitle>{process.name}</CardTitle>
+			<Box>
+				<ConnectionIndicator state={connectionState} label={statusLabel} />
+			</Box>
+		</CardHeader>
 
-	<!-- Content: detail rows for PID, uptime, and memory when available. -->
-	<CardContent>
-		{#if process.pid !== null}
-			<HStack justify="between">
-				<Caption>PID</Caption>
-				<Code class="text-xs">{process.pid}</Code>
-			</HStack>
-		{/if}
+		<!-- Content: detail rows for PID, uptime, and memory when available. -->
+		<CardContent>
+			{#if process.pid !== null}
+				<HStack justify="between">
+					<Caption>PID</Caption>
+					<!-- Code already renders text-xs font-mono; no extra class needed. -->
+					<Code>{process.pid}</Code>
+				</HStack>
+			{/if}
 
-		{#if process.uptime_seconds !== null}
-			<HStack justify="between">
-				<Caption>Uptime</Caption>
-				<Text size="xs">{formatUptime(process.uptime_seconds)}</Text>
-			</HStack>
-		{/if}
+			{#if process.uptime_seconds !== null}
+				<HStack justify="between">
+					<Caption>Uptime</Caption>
+					<!-- Caption renders text-xs; replaces unsupported <Text size="xs">. -->
+					<Caption>{formatUptime(process.uptime_seconds)}</Caption>
+				</HStack>
+			{/if}
 
-		{#if process.memory_bytes !== null}
-			<HStack justify="between">
-				<Caption>Memory</Caption>
-				<Text size="xs">{formatMemory(process.memory_bytes)}</Text>
-			</HStack>
-		{/if}
+			{#if process.memory_bytes !== null}
+				<HStack justify="between">
+					<Caption>Memory</Caption>
+					<!-- Caption renders text-xs; replaces unsupported <Text size="xs">. -->
+					<Caption>{formatMemory(process.memory_bytes)}</Caption>
+				</HStack>
+			{/if}
 
-		<!-- Placeholder row so all cards have consistent height when no details
-		     are available from the daemon yet. -->
-		{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
-			<Caption>No details available</Caption>
-		{/if}
-	</CardContent>
+			<!-- Placeholder row so all cards have consistent height when no details
+			     are available from the daemon yet. -->
+			{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
+				<Caption>No details available</Caption>
+			{/if}
+		</CardContent>
 
-	<Separator />
-
-	<!-- Footer: source identifier for log filtering reference. -->
-	<CardFooter>
-		<Code class="text-xs">{process.source}</Code>
-	</CardFooter>
-
-	<!-- Binary path row: visible on hover when the daemon has reported the path.
-	     Shows the filename in the row and the full absolute path as a tooltip. -->
-	{#if hovered && process.binary_path !== null}
 		<Separator />
-		<CardFooter title={process.binary_path}>
-			<HStack justify="between" class="w-full gap-2">
-				<Caption>Binary</Caption>
-				<span title={process.binary_path} class="overflow-hidden text-ellipsis whitespace-nowrap max-w-[70%]">
-					<Code class="text-xs">{binaryFilename(process.binary_path)}</Code>
-				</span>
-			</HStack>
+
+		<!-- Footer: source identifier for log filtering reference. -->
+		<CardFooter>
+			<Code>{process.source}</Code>
 		</CardFooter>
-	{/if}
-</CardRoot>
+
+		<!-- Binary path row: visible on hover when the daemon has reported the path.
+		     Shows the filename in the row and the full absolute path as a tooltip. -->
+		{#if hovered && process.binary_path !== null}
+			<Separator />
+			<!-- CardFooter title forwards to the underlying div via restProps. -->
+			<CardFooter title={process.binary_path}>
+				<HStack justify="between" full gap={2}>
+					<Caption>Binary</Caption>
+					<!-- Box with overflow hidden contains the truncated filename. -->
+					<Box overflow="hidden">
+						<!-- Wrapper span targets the code element for truncation styles. -->
+						<span class="process-card__binary-wrap" style="display: contents;">
+							<Code>{binaryFilename(process.binary_path)}</Code>
+						</span>
+					</Box>
+				</HStack>
+			</CardFooter>
+		{/if}
+	</CardRoot>
+</span>
 
 <style>
-	/* Clickable card: pointer cursor and selected-state highlight ring. */
-	:global(.process-card) {
+	/* Clickable card: pointer cursor, full width, and selected-state highlight ring.
+	   Targets CardRoot inside the wrapper span via data-slot. */
+	:global(.process-card__wrap [data-slot="card"]) {
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
 		transition: border-color 150ms;
 	}
 
-	:global(.process-card[data-selected="true"]) {
+	:global(.process-card__wrap [data-slot="card"][data-selected="true"]) {
 		border-color: var(--color-accent-base);
 		box-shadow: 0 0 0 1px var(--color-accent-base);
 	}
 
 	/* Header layout: name left, status indicator right. */
-	:global(.process-card [data-slot="card-header"]) {
+	:global(.process-card__wrap [data-slot="card-header"]) {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		justify-content: space-between;
 	}
 
-	/* Status indicator sits beside the title. */
-	.process-card__status {
-		font-size: var(--text-xs);
-		font-weight: 500;
+	/* Binary filename code: truncates with ellipsis within the Box overflow container.
+	   Targets code element inside the binary wrapper span. */
+	:global(.process-card__binary-wrap code) {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: 70%;
+		display: block;
 	}
 </style>

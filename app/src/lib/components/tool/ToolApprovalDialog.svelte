@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Button, Text, Code } from "@orqastudio/svelte-components/pure";
 	import { CardRoot as Card, CardContent, CardFooter, CardHeader, CardTitle } from "@orqastudio/svelte-components/pure";
 	import CodeBlock from "$lib/components/content/CodeBlock.svelte";
 	import { logger } from "@orqastudio/sdk";
@@ -41,28 +41,22 @@
 		</CardTitle>
 	</CardHeader>
 	<CardContent compact>
-		<p class="mb-2 text-xs text-muted-foreground">
-			Claude wants to run <span class="font-mono text-foreground">{stripToolName(approval.toolName)}</span> with the
+		<Text variant="caption" block>
+			Claude wants to run <Code>{stripToolName(approval.toolName)}</Code> with the
 			following parameters. Allow this action?
-		</p>
+		</Text>
 		<CodeBlock text={formattedInput()} lang="json" />
 	</CardContent>
 	<CardFooter compact>
-		<div class="flex items-center gap-2">
-			<button
-				class="flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90"
-				onclick={onApprove}
-			>
+		<HStack gap={2}>
+			<Button variant="default" size="sm" onclick={onApprove}>
 				<Icon name="check" size="sm" />
 				Approve
-			</button>
-			<button
-				class="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm hover:bg-accent"
-				onclick={onDeny}
-			>
+			</Button>
+			<Button variant="destructive" size="sm" onclick={onDeny}>
 				<Icon name="x" size="sm" />
 				Deny
-			</button>
-		</div>
+			</Button>
+		</HStack>
 	</CardFooter>
 </Card>

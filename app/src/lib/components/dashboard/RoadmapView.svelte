@@ -2,7 +2,7 @@
      Clicking a milestone card drills into a kanban of its epics grouped by status.
      Breadcrumb navigation and a back button return to the milestone board. -->
 <script lang="ts">
-	import { Icon, Heading, Badge } from "@orqastudio/svelte-components/pure";
+	import { Icon, Heading, Badge, Button, HStack, Stack, Text, Caption, Box } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ArtifactNode } from "@orqastudio/types";
 	import type { PipelineStageConfig } from "@orqastudio/types";
@@ -179,101 +179,91 @@
 	}
 </script>
 
-<div class="h-full overflow-y-auto">
-	<div class="flex flex-col gap-6 p-6">
+<Box height="full" overflow="auto">
+	<Stack gap={6} padding={6}>
 
 		<!-- Breadcrumb / back navigation -->
-		<div class="flex items-center gap-2">
+		<HStack gap={2}>
 			{#if selectedMilestone}
-				<button
-					class="flex items-center gap-1 rounded px-2 py-1 text-sm text-muted-foreground hover:bg-accent"
-					onclick={backToMilestones}
-				>
+				<Button variant="ghost" size="sm" onclick={backToMilestones}>
 					<Icon name="chevron-left" size="sm" />
 					Roadmap
-				</button>
-				<span class="text-muted-foreground">/</span>
-				<span class="text-sm font-medium truncate max-w-xs">{selectedMilestone.title}</span>
+				</Button>
+				<Caption>/</Caption>
+				<Text variant="body-strong" truncate>{selectedMilestone.title}</Text>
 			{:else}
 				<Heading level={1}>Roadmap</Heading>
 			{/if}
-		</div>
+		</HStack>
 
 		{#if !selectedMilestone}
 			<!-- ================================================================
 			     TOP LEVEL: Milestone kanban board
 			     ================================================================ -->
 			{#if milestones.length === 0}
-				<div class="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+				<Stack gap={2} align="center" padding={8}>
 					<Icon name="map" size="xl" />
-					<p class="mt-2">No milestones yet.</p>
-					<p class="mt-1">Create milestone artifacts in your delivery tree to build a roadmap.</p>
-				</div>
+					<Text variant="body-muted" block>No milestones yet.</Text>
+					<Text variant="body-muted" block>Create milestone artifacts in your delivery tree to build a roadmap.</Text>
+				</Stack>
 			{:else}
+				<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
 				<div class="grid gap-4" style="grid-template-columns: repeat({milestoneStages.length}, minmax(200px, 1fr));">
 					{#each milestoneStages as stage (stage.key)}
 						{@const cards = milestoneColumns.get(stage.key) ?? []}
-						<div class="flex flex-col gap-2">
-							<!-- Column header -->
-							<div
-								class="rounded px-3 py-1.5"
-								style={columnHeaderStyle(stage.color)}
-							>
-								<span class="text-xs font-semibold uppercase tracking-wide" style={columnLabelStyle(stage.color)}>
-									{stage.label}
-								</span>
-								<span class="ml-2 text-xs text-muted-foreground">({cards.length})</span>
-							</div>
+						<Stack gap={2}>
+							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required -->
+							<HStack paddingX={3} paddingY={1} style={columnHeaderStyle(stage.color)}>
+								<!-- Stage label with dynamic color — Text has no style prop; span wrapper used -->
+								<span style={columnLabelStyle(stage.color)}><Text variant="overline">{stage.label}</Text></span>
+								<Caption>({cards.length})</Caption>
+							</HStack>
 
 							<!-- Cards -->
-							<div class="flex flex-col gap-2">
+							<Stack gap={2}>
 								{#each cards as ms (ms.id)}
 									{@const statusColor = colorForStatus(milestoneStages, ms.status)}
 									{@const deadline = (ms.frontmatter as Record<string, unknown>)?.deadline as string | undefined}
-									<div class="flex flex-col gap-1 rounded-md border border-border bg-card p-3">
-										<!-- Title row -->
-										<div class="flex items-start gap-2">
-											<div class="mt-1 h-2 w-2 shrink-0 rounded-full" style={dotStyle(statusColor)}></div>
-											<button
-												class="h-auto flex-1 text-left text-sm font-medium leading-snug hover:underline"
-												onclick={() => drillIntoMilestone(ms)}
-											>
-												{ms.title}
-											</button>
-										</div>
+									<Box border rounded="md" background="card" padding={3}>
+										<Stack gap={1}>
+											<!-- Title row -->
+											<HStack gap={2} align="start">
+												<!-- Status dot with inline color from plugin manifest -->
+												<span aria-hidden="true" style="display: inline-block; margin-top: 0.25rem; height: 0.5rem; width: 0.5rem; flex-shrink: 0; border-radius: 9999px; {dotStyle(statusColor)}"></span>
+												<Button variant="ghost" size="sm" onclick={() => drillIntoMilestone(ms)}>
+													{ms.title}
+												</Button>
+											</HStack>
 
-										{#if ms.description}
-											<p class="text-xs text-muted-foreground line-clamp-2 pl-4">{ms.description}</p>
-										{/if}
-
-										<!-- Actions row -->
-										<div class="flex items-center justify-between pl-4 pt-0.5">
-											{#if deadline}
-												<div class="flex items-center gap-1 text-xs text-muted-foreground">
-													<Icon name="calendar" size="sm" />
-													{deadline}
-												</div>
-											{:else}
-												<span></span>
+											{#if ms.description}
+												<Caption lineClamp={2}>{ms.description}</Caption>
 											{/if}
-											<button
-												class="flex h-auto items-center p-0 text-xs text-muted-foreground hover:text-foreground"
-												onclick={() => openMilestone(ms)}
-												title="Open artifact"
-											>
-												<Icon name="external-link" size="sm" />
-											</button>
-										</div>
-									</div>
+
+											<!-- Actions row -->
+											<HStack justify="between">
+												{#if deadline}
+													<HStack gap={1}>
+														<Icon name="calendar" size="sm" />
+														<Caption>{deadline}</Caption>
+													</HStack>
+												{:else}
+													<span></span>
+												{/if}
+												<Button variant="ghost" size="sm" onclick={() => openMilestone(ms)}>
+													<Icon name="external-link" size="sm" />
+												</Button>
+											</HStack>
+										</Stack>
+									</Box>
 								{/each}
 
 								{#if cards.length === 0}
-									<div class="rounded-md border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
-										No milestones
-									</div>
+									<Box border rounded="md" padding={3}>
+										<Caption>No milestones</Caption>
+									</Box>
 								{/if}
-							</div>
-						</div>
+							</Stack>
+						</Stack>
 					{/each}
 				</div>
 			{/if}
@@ -285,67 +275,62 @@
 			{@const allEpics = epicsForMilestone(selectedMilestone)}
 
 			{#if allEpics.length === 0}
-				<div class="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+				<Stack gap={2} align="center" padding={8}>
 					<Icon name="layers" size="xl" />
-					<p class="mt-2">No epics linked to this milestone yet.</p>
-					<p class="mt-1">Create epic artifacts with a "fulfils" relationship to <strong>{selectedMilestone.title}</strong>.</p>
-				</div>
+					<Text variant="body-muted" block>No epics linked to this milestone yet.</Text>
+					<Text variant="body-muted" block>Create epic artifacts with a "fulfils" relationship to <strong>{selectedMilestone.title}</strong>.</Text>
+				</Stack>
 			{:else}
+				<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
 				<div class="grid gap-4" style="grid-template-columns: repeat({epicStages.length}, minmax(200px, 1fr));">
 					{#each epicStages as stage (stage.key)}
 						{@const cards = epicColumns.get(stage.key) ?? []}
-						<div class="flex flex-col gap-2">
-							<!-- Column header -->
-							<div
-								class="rounded px-3 py-1.5"
-								style={columnHeaderStyle(stage.color)}
-							>
-								<span class="text-xs font-semibold uppercase tracking-wide" style={columnLabelStyle(stage.color)}>
-									{stage.label}
-								</span>
-								<span class="ml-2 text-xs text-muted-foreground">({cards.length})</span>
-							</div>
+						<Stack gap={2}>
+							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required -->
+							<HStack paddingX={3} paddingY={1} style={columnHeaderStyle(stage.color)}>
+								<!-- Stage label with dynamic color — Text has no style prop; span wrapper used -->
+								<span style={columnLabelStyle(stage.color)}><Text variant="overline">{stage.label}</Text></span>
+								<Caption>({cards.length})</Caption>
+							</HStack>
 
 							<!-- Cards -->
-							<div class="flex flex-col gap-2">
+							<Stack gap={2}>
 								{#each cards as epic (epic.id)}
 									{@const statusColor = colorForStatus(epicStages, epic.status)}
-									<div class="flex flex-col gap-1 rounded-md border border-border bg-card p-3">
-										<!-- Title row -->
-										<div class="flex items-start gap-2">
-											<div class="mt-1 h-2 w-2 shrink-0 rounded-full" style={dotStyle(statusColor)}></div>
-											<button
-												class="h-auto flex-1 text-left text-sm font-medium leading-snug hover:underline"
-												onclick={() => openEpic(epic)}
-											>
-												{epic.title}
-											</button>
-										</div>
+									<Box border rounded="md" background="card" padding={3}>
+										<Stack gap={1}>
+											<!-- Title row -->
+											<HStack gap={2} align="start">
+												<!-- Status dot with inline color from plugin manifest -->
+												<span aria-hidden="true" style="display: inline-block; margin-top: 0.25rem; height: 0.5rem; width: 0.5rem; flex-shrink: 0; border-radius: 9999px; {dotStyle(statusColor)}"></span>
+												<Button variant="ghost" size="sm" onclick={() => openEpic(epic)}>
+													{epic.title}
+												</Button>
+											</HStack>
 
-										{#if epic.description}
-											<p class="text-xs text-muted-foreground line-clamp-2 pl-4">{epic.description}</p>
-										{/if}
+											{#if epic.description}
+												<Caption lineClamp={2}>{epic.description}</Caption>
+											{/if}
 
-										<!-- Priority badge -->
-										{#if epic.priority}
-											<div class="pl-4">
+											<!-- Priority badge -->
+											{#if epic.priority}
 												<Badge variant="secondary">{epic.priority}</Badge>
-											</div>
-										{/if}
-									</div>
+											{/if}
+										</Stack>
+									</Box>
 								{/each}
 
 								{#if cards.length === 0}
-									<div class="rounded-md border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
-										No epics
-									</div>
+									<Box border rounded="md" padding={3}>
+										<Caption>No epics</Caption>
+									</Box>
 								{/if}
-							</div>
-						</div>
+							</Stack>
+						</Stack>
 					{/each}
 				</div>
 			{/if}
 		{/if}
 
-	</div>
-</div>
+	</Stack>
+</Box>

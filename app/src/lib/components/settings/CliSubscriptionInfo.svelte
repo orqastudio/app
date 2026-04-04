@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Badge } from "@orqastudio/svelte-components/pure";
+	import { Badge, HStack, Stack, Caption, Text, Code, Box } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 
 	interface Props {
@@ -68,39 +68,39 @@
 </script>
 
 <Separator />
-<div class="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
-	<div class="flex items-center justify-between">
-		<span class="text-sm font-medium">Subscription</span>
+<Box padding={4} rounded="lg" border background="muted">
+<Stack gap={3}>
+	<HStack gap={2} justify="between">
+		<Text variant="body-strong">Subscription</Text>
 		{#if subscriptionType}
-			<Badge variant="default"><span class="text-xs capitalize">{formatSubscriptionType(subscriptionType)}</span></Badge>
+			<Badge variant="default"><Caption variant="caption">{formatSubscriptionType(subscriptionType)}</Caption></Badge>
 		{/if}
-	</div>
+	</HStack>
 
 	{#if rateLimitTier}
-		<div class="flex items-center gap-2 text-sm">
-			<span class="w-28 text-muted-foreground">Rate Limit:</span>
-			<span class="font-mono text-xs">{formatRateLimitTier(rateLimitTier)}</span>
-		</div>
+		<HStack gap={2}>
+			<Caption tone="muted">Rate Limit:</Caption>
+			<Code>{formatRateLimitTier(rateLimitTier)}</Code>
+		</HStack>
 	{/if}
 
 	{#if expiresAt}
 		{@const expiry = formatExpiry(expiresAt)}
-		<div class="flex items-center gap-2 text-sm">
-			<span class="w-28 text-muted-foreground">Token Expiry:</span>
-			<span class={expiry.expired ? "text-destructive font-medium" : ""}>
-				{expiry.label}
-			</span>
-		</div>
+		<HStack gap={2}>
+			<Caption tone="muted">Token Expiry:</Caption>
+			<Caption tone={expiry.expired ? "destructive" : undefined}>{expiry.label}</Caption>
+		</HStack>
 	{/if}
 
 	{#if scopes.length > 0}
-		<div class="flex items-start gap-2 text-sm">
-			<span class="w-28 shrink-0 text-muted-foreground">Scopes:</span>
-			<div class="flex flex-wrap gap-1">
+		<HStack gap={2} align="start">
+			<Caption tone="muted">Scopes:</Caption>
+			<HStack gap={1} wrap>
 				{#each scopes as scope (scope)}
-					<Badge variant="outline"><span class="text-xs font-mono">{formatScope(scope)}</span></Badge>
+					<Badge variant="outline"><Caption variant="caption-mono">{formatScope(scope)}</Caption></Badge>
 				{/each}
-			</div>
-		</div>
+			</HStack>
+		</HStack>
 	{/if}
-</div>
+</Stack>
+</Box>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Caption, Dot } from "@orqastudio/svelte-components/pure";
 	import { getStores, pct } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
@@ -336,28 +336,28 @@
 	<CardRoot full>
 		<CardHeader compact>
 			<CardTitle>
-				<div class="flex items-center gap-2">
+				<HStack gap={2}>
 					<Icon name="workflow" size="md" />
 					Governance Pipeline
-				</div>
+				</HStack>
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<div class="pb-2">
+			<Stack gap={0} paddingBottom={2}>
 				<PipelineStages stages={pipelineStages} edges={pipelineEdges} />
-			</div>
+			</Stack>
 
 			<!-- Legend -->
-			<div class="mt-3 flex items-center gap-4 text-[10px] text-muted-foreground">
-				<div class="flex items-center gap-1">
-					<span class="inline-block h-2 w-2 rounded-full bg-destructive"></span>
-					Isolated (&lt;30% connected)
-				</div>
-				<div class="flex items-center gap-1">
-					<span class="inline-block h-2 w-2 rounded-full bg-warning"></span>
-					Attention (30-70% connected)
-				</div>
-			</div>
+			<HStack gap={4} marginTop={3}>
+				<HStack gap={1}>
+					<Dot size="md" color="destructive" />
+					<Caption>Isolated (&lt;30% connected)</Caption>
+				</HStack>
+				<HStack gap={1}>
+					<Dot size="md" color="warning" />
+					<Caption>Attention (30-70% connected)</Caption>
+				</HStack>
+			</HStack>
 		</CardContent>
 	</CardRoot>
 {/if}

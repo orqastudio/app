@@ -3,7 +3,7 @@
      that shows the raw metadata JSON for that event. Color-coded by level.
      A copy button appears on hover to copy the full entry to the clipboard. -->
 <script lang="ts">
-	import { Button, Badge } from "@orqastudio/svelte-components/pure";
+	import { Button, Badge, Code } from "@orqastudio/svelte-components/pure";
 	import type { LogEvent } from "../../stores/log-store.svelte.js";
 
 	let {
@@ -83,10 +83,12 @@
 	role="row"
 >
 	<!-- Main row: fixed-height single line with all columns. The copy button
-	     is positioned at the right edge and revealed on group hover. -->
+	     is positioned at the right edge and revealed on group hover.
+	     Wrapper span with display:contents is invisible to layout; scoped class
+	     provides the hook for :global() CSS overrides on the Button inside. -->
+	<span class="log-row__main-wrap" style="display: contents;">
 	<Button
 		variant="ghost"
-		class="log-row__main"
 		style="height: 24px; line-height: 24px;"
 		onclick={() => (expanded = !expanded)}
 		aria-expanded={expanded}
@@ -96,11 +98,15 @@
 			{formatTimestamp(event.timestamp)}
 		</span>
 
-		<!-- Level badge: small pill aligned left, using shared Badge component. -->
+		<!-- Level badge: small pill aligned left, using shared Badge component.
+		     Wrapper span with display:contents provides :global() hook without
+		     affecting layout. -->
 		<span class="log-row__badge-cell">
-			<Badge variant={badgeVariant} class="log-row__badge">
-				{event.level}
-			</Badge>
+			<span class="log-row__badge-wrap" style="display: contents;">
+				<Badge variant={badgeVariant}>
+					{event.level}
+				</Badge>
+			</span>
 		</span>
 
 		<!-- Source: subtle muted label. -->
@@ -118,20 +124,22 @@
 			{event.message}
 		</span>
 	</Button>
+	</span>
 
 	<!-- Copy-to-clipboard button: absolutely positioned at the right of the row,
-	     visible only when the row is hovered. Uses ghost icon-sm Button. -->
+	     visible only when the row is hovered. Wrapper span provides scoped hook. -->
 	<span class="log-row__copy-wrapper">
-		<Button
-			variant="ghost"
-			size="icon-sm"
-			class="log-row__copy"
-			onclick={copyToClipboard}
-			aria-label="Copy log entry to clipboard"
-			title="Copy as JSON"
-		>
-			{copyFeedback === "copied" ? "Copied" : "Copy"}
-		</Button>
+		<span class="log-row__copy-inner" style="display: contents;">
+			<Button
+				variant="ghost"
+				size="icon-sm"
+				onclick={copyToClipboard}
+				aria-label="Copy log entry to clipboard"
+				title="Copy as JSON"
+			>
+				{copyFeedback === "copied" ? "Copied" : "Copy"}
+			</Button>
+		</span>
 	</span>
 
 	<!-- Expanded metadata panel: shown below the row when expanded. Rendered
@@ -139,7 +147,11 @@
 	     accounts for it via a separate measurement pass. -->
 	{#if expanded}
 		<div class="log-row__metadata">
-			<pre class="log-row__metadata-pre">{metadataJson}</pre>
+			<!-- Code block replaces raw pre element for metadata JSON display.
+		     Scoped wrapper provides the :global() hook without passing class to Code. -->
+		<span class="log-row__code-wrap">
+			<Code block={true}>{metadataJson}</Code>
+		</span>
 		</div>
 	{/if}
 </div>
@@ -169,8 +181,9 @@
 		background-color: color-mix(in srgb, var(--color-secondary) 20%, transparent);
 	}
 
-	/* Main row button: full-width flex, overrides Button defaults for compact row display. */
-	:global(.log-row__main) {
+	/* Main row button: full-width flex, overrides Button defaults for compact row display.
+	   Targets the button element inside the .log-row__main-wrap display:contents span. */
+	:global(.log-row__main-wrap button) {
 		display: flex !important;
 		width: 100% !important;
 		cursor: pointer !important;
@@ -182,7 +195,7 @@
 		border-radius: 0 !important;
 	}
 
-	:global(.log-row__main:focus-visible) {
+	:global(.log-row__main-wrap button:focus-visible) {
 		box-shadow: inset 0 0 0 1px var(--color-ring) !important;
 	}
 
@@ -205,8 +218,9 @@
 		align-items: center;
 	}
 
-	/* Override Badge sizing to fit the compact 24px row height. */
-	:global(.log-row__badge) {
+	/* Override Badge sizing to fit the compact 24px row height.
+	   Targets the badge element inside the .log-row__badge-wrap display:contents span. */
+	:global(.log-row__badge-wrap [data-slot="badge"]) {
 		font-family: var(--font-mono);
 		font-size: 10px;
 		line-height: 1;
@@ -264,8 +278,9 @@
 		display: flex;
 	}
 
-	/* Override Button size to match the 24px row height. */
-	:global(.log-row__copy) {
+	/* Override Button size to match the 24px row height.
+	   Targets the button element inside the .log-row__copy-inner display:contents span. */
+	:global(.log-row__copy-inner button) {
 		height: 20px !important;
 		width: auto !important;
 		padding: 0 var(--spacing-1-5) !important;
@@ -279,7 +294,9 @@
 		padding: var(--spacing-2) 0 var(--spacing-2) 90px;
 	}
 
-	.log-row__metadata-pre {
+	/* Code block for metadata JSON: compact pre-wrap display inside the expanded panel.
+	   Targets the pre element inside the .log-row__code-wrap span. */
+	:global(.log-row__code-wrap pre) {
 		max-height: 15rem;
 		overflow: auto;
 		font-family: var(--font-mono);

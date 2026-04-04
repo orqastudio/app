@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { ToolCallState } from "@orqastudio/sdk";
 	import { getActivityPhase, getEphemeralLabel } from "$lib/utils/tool-display";
-	import { Caption, Text, StreamingDots } from "@orqastudio/svelte-components/pure";
+	import { Caption, Text, StreamingDots, Stack, HStack } from "@orqastudio/svelte-components/pure";
 
 	let {
 		hasContent = false,
@@ -76,20 +76,18 @@
 </script>
 
 {#if visible}
-	<div class="flex flex-col gap-1 px-4 py-2">
-		<div class="flex items-center gap-2">
+	<Stack gap={1} paddingX={4} paddingY={2}>
+		<HStack gap={2}>
 			<StreamingDots />
-			<span class="text-sm font-medium text-muted-foreground">{statusLabel}...</span>
+			<Text variant="body-strong-muted">{statusLabel}...</Text>
 			{#if hasActiveTools}
 				<Text variant="tabular">
 					({toolCalls.filter((t) => t.isComplete).length}/{toolCalls.length} tools)
 				</Text>
 			{/if}
-		</div>
+		</HStack>
 		{#if ephemeralText}
-			<div class="flex items-center gap-2 pl-7">
-				<Caption truncate>{ephemeralText}</Caption>
-			</div>
+			<Caption truncate>{ephemeralText}</Caption>
 		{/if}
-	</div>
+	</Stack>
 {/if}

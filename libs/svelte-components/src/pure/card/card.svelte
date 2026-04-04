@@ -1,7 +1,12 @@
 <script lang="ts">
 	import { cn } from "../../utils/cn.js";
+	import type { HTMLAttributes } from "svelte/elements";
+	import type { Snippet } from "svelte";
 
-	interface CardProps {
+	// Card extends HTMLAttributes with class and style blocked. All semantic props
+	// (aria-*, data-*, role, tabindex, onclick, onkeydown, events) flow via
+	// ...restProps. Typed props are the only styling interface.
+	interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, "class" | "style"> {
 		/** Visual variant — controls border and background colors. */
 		variant?: "default" | "warning" | "destructive" | "ghost";
 		/** Gap between child sections. */
@@ -10,10 +15,7 @@
 		interactive?: boolean;
 		/** Fill available height. */
 		full?: boolean;
-		/** Click handler for interactive cards. */
-		onclick?: (e: MouseEvent) => void;
-		/** Svelte children snippet. */
-		children?: import("svelte").Snippet;
+		children?: Snippet;
 	}
 
 	let {
@@ -23,6 +25,7 @@
 		full = false,
 		onclick,
 		children,
+		...restProps
 	}: CardProps = $props();
 
 	const gapMap: Record<number, string> = {
@@ -53,6 +56,7 @@
 	{onclick}
 	role={onclick ? "button" : undefined}
 	tabindex={onclick ? 0 : undefined}
+	{...restProps}
 >
 	{@render children?.()}
 </div>

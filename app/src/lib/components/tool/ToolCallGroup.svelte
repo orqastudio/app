@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack,
+	import { Icon, HStack, Caption, Stack,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -39,29 +39,32 @@
 			<Icon name="chevron-right" size="sm" />
 			{@const ToolIcon = displayInfo.icon}
 			<ToolIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-			<span class="flex-1 truncate font-mono text-xs">{label}</span>
+			<!-- flex-1 is structural (fills trigger row); caption-mono provides the text styling -->
+			<span class="flex-1"><Caption variant="caption-mono" truncate>{label}</Caption></span>
 			{#if errorCount > 0}
-				<div class="flex items-center gap-1 text-xs text-destructive">
+				<HStack gap={1}>
 					<Icon name="x-circle" size="sm" />
-					{errorCount}
-					{errorCount === 1 ? "error" : "errors"}
-				</div>
+					<Caption tone="destructive">{errorCount} {errorCount === 1 ? "error" : "errors"}</Caption>
+				</HStack>
 			{:else}
 				<Icon name="check-circle" size="sm" />
 			{/if}
 		</HStack>
 	</CollapsibleTrigger>
 	<CollapsibleContent>
-		<div class="ml-3 mt-1 space-y-1 border-l-2 border-border pl-4">
-			{#each toolCalls as toolCall (toolCall.toolCallId)}
-				<ToolCallCard
-					toolName={toolCall.toolName}
-					toolInput={toolCall.input}
-					toolOutput={toolCall.output}
-					isError={toolCall.isError}
-					isComplete={toolCall.isComplete}
-				/>
-			{/each}
+		<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
+		<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+			<Stack gap={1}>
+				{#each toolCalls as toolCall (toolCall.toolCallId)}
+					<ToolCallCard
+						toolName={toolCall.toolName}
+						toolInput={toolCall.input}
+						toolOutput={toolCall.output}
+						isError={toolCall.isError}
+						isComplete={toolCall.isComplete}
+					/>
+				{/each}
+			</Stack>
 		</div>
 	</CollapsibleContent>
 </Collapsible>

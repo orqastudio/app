@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, Stack, HStack, Box, Grid, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
@@ -115,73 +115,71 @@
 	</CardHeader>
 	<CardContent>
 		{#if localTypes.length === 0}
-			<span class="text-sm text-muted-foreground">No delivery types defined. Add one below.</span>
+			<Caption tone="muted">No delivery types defined. Add one below.</Caption>
 		{:else}
 			{#each localTypes as type, index (type.key + index)}
-				<div class="rounded-md border p-3 space-y-3">
-					<div class="flex items-center justify-between">
-						<span class="font-mono text-xs font-semibold text-muted-foreground">{type.key}</span>
-						<button
-							class="flex h-7 items-center rounded px-2 text-muted-foreground hover:bg-accent hover:text-destructive"
-							onclick={() => requestDelete(index)}
-						>
-							<Icon name="trash-2" size="sm" />
-						</button>
-					</div>
-
-					<div class="grid grid-cols-2 gap-3">
-						<FormGroup label="Label" for="label-{index}">
-							<Input
-								id="label-{index}"
-								value={type.label}
-								oninput={(e) => updateType(index, "label", e.currentTarget.value)}
-								placeholder="Display label"
-							/>
-						</FormGroup>
-						<FormGroup label="Path" for="path-{index}">
-							<Input
-								id="path-{index}"
-								value={type.path}
-								oninput={(e) => updateType(index, "path", e.currentTarget.value)}
-								placeholder=".orqa/delivery/..."
-							/>
-						</FormGroup>
-					</div>
-
-					<div class="grid grid-cols-2 gap-3">
-						<FormGroup label="Parent type" for="parent-type-{index}">
-							<select
-								id="parent-type-{index}"
-								class="flex h-7 w-full rounded-md border border-input bg-background px-2 py-0.5 text-xs ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-								value={type.parent?.type ?? ""}
-								onchange={(e) => updateParentType(index, e.currentTarget.value)}
+				<Box padding={3} rounded="md" border>
+					<Stack gap={3}>
+						<HStack justify="between">
+							<Caption variant="caption-mono" tone="muted">{type.key}</Caption>
+							<Button
+								variant="ghost"
+								size="sm"
+								onclick={() => requestDelete(index)}
 							>
-								<option value="">None</option>
-								{#each typeKeyOptions.filter((o) => o.value !== type.key) as opt (opt.value)}
-									<option value={opt.value}>{opt.label}</option>
-								{/each}
-							</select>
-						</FormGroup>
-						<FormGroup label="Parent relationship" for="parent-rel-{index}">
+								<Icon name="trash-2" size="sm" />
+							</Button>
+						</HStack>
+
+						<Grid cols={2} gap={3}>
+							<FormGroup label="Label" for="label-{index}">
+								<Input
+									id="label-{index}"
+									value={type.label}
+									oninput={(e) => updateType(index, "label", e.currentTarget.value)}
+									placeholder="Display label"
+								/>
+							</FormGroup>
+							<FormGroup label="Path" for="path-{index}">
+								<Input
+									id="path-{index}"
+									value={type.path}
+									oninput={(e) => updateType(index, "path", e.currentTarget.value)}
+									placeholder=".orqa/delivery/..."
+								/>
+							</FormGroup>
+						</Grid>
+
+						<Grid cols={2} gap={3}>
+							<FormGroup label="Parent type" for="parent-type-{index}">
+								<SelectMenu
+									items={[{ label: "None", value: "" }, ...typeKeyOptions.filter((o) => o.value !== type.key)]}
+									selected={type.parent?.type ?? ""}
+									onSelect={(v) => updateParentType(index, v)}
+									triggerLabel={typeKeyOptions.find((o) => o.value === (type.parent?.type ?? ""))?.label ?? "None"}
+								/>
+							</FormGroup>
+							<FormGroup label="Parent relationship" for="parent-rel-{index}">
+								<Input
+									id="parent-rel-{index}"
+									value={type.parent?.relationship ?? ""}
+									oninput={(e) => updateParentRelationship(index, e.currentTarget.value)}
+									disabled={!type.parent?.type}
+									placeholder="e.g. delivers"
+								/>
+							</FormGroup>
+						</Grid>
+
+						<FormGroup label="Gate field (optional)" for="gate-{index}">
 							<Input
-								id="parent-rel-{index}"
-								value={type.parent?.relationship ?? ""}
-								oninput={(e) => updateParentRelationship(index, e.currentTarget.value)}
-								disabled={!type.parent?.type}
-								placeholder="e.g. delivers"
+								id="gate-{index}"
+								value={type.gate_field ?? ""}
+								oninput={(e) => updateGateField(index, e.currentTarget.value)}
+								placeholder="e.g. gate"
 							/>
 						</FormGroup>
-					</div>
-
-					<FormGroup label="Gate field (optional)" for="gate-{index}">
-						<Input
-							id="gate-{index}"
-							value={type.gate_field ?? ""}
-							oninput={(e) => updateGateField(index, e.currentTarget.value)}
-							placeholder="e.g. gate"
-						/>
-					</FormGroup>
-				</div>
+					</Stack>
+				</Box>
 
 				{#if index < localTypes.length - 1}
 					<Separator />
@@ -189,10 +187,10 @@
 			{/each}
 		{/if}
 
-		<button class="flex w-full items-center justify-center gap-1 rounded border border-border px-3 py-1.5 text-sm hover:bg-accent" onclick={addType}>
+		<Button variant="outline" size="sm" onclick={addType}>
 			<Icon name="plus" size="sm" />
 			Add Delivery Type
-		</button>
+		</Button>
 	</CardContent>
 </CardRoot>
 

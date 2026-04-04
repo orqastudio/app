@@ -10,6 +10,8 @@
 		ProgressBar,
 		HStack,
 		Stack,
+		Box,
+		Dot,
 	} from "@orqastudio/svelte-components/pure";
 
 	let {
@@ -35,22 +37,21 @@
 </script>
 
 <Button
-	variant="ghost"
-	class="group h-auto w-full rounded-xl border border-border bg-card p-4 text-left hover:border-border/80 hover:bg-accent/40 hover:shadow-sm"
+	variant="card"
 	onclick={onClick}
 >
 	<Stack gap={3}>
 		<!-- Header -->
 		<HStack gap={3} align="start">
-			<Stack gap={1} class="min-w-0 flex-1">
-				<Text size="sm" class="truncate font-semibold leading-tight">{milestone.title}</Text>
+			<Stack gap={1} minHeight={0} flex={1}>
+				<Text variant="body-strong" truncate>{milestone.title}</Text>
 				{#if milestone.description}
-					<Caption class="line-clamp-2">{milestone.description}</Caption>
+					<Caption lineClamp={2}>{milestone.description}</Caption>
 				{/if}
 			</Stack>
-			<div class="shrink-0">
+			<Box flex={0}>
 				<StatusIndicator status={milestone.status ?? "planning"} mode="badge" />
-			</div>
+			</Box>
 		</HStack>
 
 		<!-- Progress -->
@@ -67,32 +68,32 @@
 
 		<!-- In-progress epics -->
 		{#if inProgressEpics.length > 0}
-			<Stack gap={1} class="border-t border-border/50 pt-2">
-				<Caption class="uppercase tracking-wide">Now</Caption>
+			<Stack gap={1} borderTop paddingTop={2}>
+				<Text variant="overline-muted">Now</Text>
 				{#each inProgressEpics.slice(0, 2) as epic (epic.id)}
 					<HStack gap={1} align="center">
-						<span class="block h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500"></span>
-						<Caption class="truncate">{epic.title}</Caption>
+						<Dot size="sm" color="info" />
+						<Caption truncate>{epic.title}</Caption>
 					</HStack>
 				{/each}
 				{#if inProgressEpics.length > 2}
-					<Caption class="opacity-60">+{inProgressEpics.length - 2} more</Caption>
+					<Caption tone="muted">+{inProgressEpics.length - 2} more</Caption>
 				{/if}
 			</Stack>
 		{/if}
 
 		<!-- Critical P1 epics not done -->
 		{#if criticalEpics.length > 0}
-			<Stack gap={1} class="border-t border-border/50 pt-2">
-				<Caption class="uppercase tracking-wide">Critical</Caption>
+			<Stack gap={1} borderTop paddingTop={2}>
+				<Text variant="overline-muted">Critical</Text>
 				{#each criticalEpics.slice(0, 2) as epic (epic.id)}
 					<HStack gap={1} align="center">
 						<SmallBadge variant="destructive">P1</SmallBadge>
-						<Caption class="truncate">{epic.title}</Caption>
+						<Caption truncate>{epic.title}</Caption>
 					</HStack>
 				{/each}
 				{#if criticalEpics.length > 2}
-					<Caption class="opacity-60">+{criticalEpics.length - 2} more</Caption>
+					<Caption tone="muted">+{criticalEpics.length - 2} more</Caption>
 				{/if}
 			</Stack>
 		{/if}

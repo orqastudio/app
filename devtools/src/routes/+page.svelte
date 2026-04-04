@@ -9,8 +9,9 @@
 	import LogTable from "$lib/components/logs/LogTable.svelte";
 </script>
 
-<!-- Vertical stack: SessionPicker and LogFilters pinned above, LogTable fills the rest. -->
-<Stack gap={0} class="h-full overflow-hidden">
+<!-- Vertical stack: SessionPicker and LogFilters pinned above, LogTable fills the rest.
+     height="full" and overflow="hidden" bound the virtualized log table. -->
+<Stack gap={0} height="full" overflow="hidden">
 	<SessionPicker />
 	<LogFilters />
 	<LogTable />

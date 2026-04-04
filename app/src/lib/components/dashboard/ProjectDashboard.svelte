@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Icon, Heading } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
+	import { EmptyState, Stack, HStack, Grid, Text, Box } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import MilestoneContextCard from "./MilestoneContextCard.svelte";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
@@ -76,8 +76,8 @@
 	}
 </script>
 
-<div class="h-full overflow-y-auto">
-	<div class="p-6">
+<Box height="full" overflow="auto">
+	<Stack gap={4} padding={6}>
 		{#if !project}
 			<EmptyState
 				icon="folder-open"
@@ -87,78 +87,75 @@
 			/>
 		{:else}
 			<!-- Project header -->
-			<div class="mb-6 flex items-center gap-3">
+			<HStack gap={3} align="center">
 				{#if projectStore.iconDataUrl}
-					<img src={projectStore.iconDataUrl} alt={projectName} class="h-12 w-12 rounded object-contain" />
+					<!-- Project icon image — no ORQA Image primitive; img is the minimal exception here -->
+					<img src={projectStore.iconDataUrl} alt={projectName} style="height: 3rem; width: 3rem; border-radius: 0.375rem; object-fit: contain;" />
 				{:else}
 					<Icon name="folder-open" size="xl" />
 				{/if}
-				<div>
+				<Stack gap={0}>
 					<Heading level={1}>{projectName}</Heading>
 					{#if projectStore.projectSettings?.description}
-						<p class="text-sm text-muted-foreground">{projectStore.projectSettings.description}</p>
+						<Text variant="body-muted">{projectStore.projectSettings.description}</Text>
 					{:else}
-						<p class="text-sm text-muted-foreground">{project.path}</p>
+						<Text variant="body-muted">{project.path}</Text>
 					{/if}
+				</Stack>
+			</HStack>
+
+			<!-- Row 1: MilestoneContextCard — full width -->
+			<MilestoneContextCard />
+
+			<!-- Row 2: Three pillar columns — each card carries its own title -->
+			<Grid cols={1} md={3} gap={4}>
+				<!-- Column 1: Where You Are (Clarity) — title lives inside GraphHealthWidget -->
+				<GraphHealthWidget
+					checks={healthChecks}
+					loading={healthLoading}
+					fixing={healthFixing}
+					scanned={healthScanned}
+					{graphHealth}
+					onScan={runHealthScan}
+					onAutoFix={runHealthAutoFix}
+				/>
+
+				<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
+				<CardRoot>
+					<CardHeader compact>
+						<CardTitle>
+							<HStack gap={1}>
+								<Icon name="trending-up" size="md" />
+								Learning
+							</HStack>
+						</CardTitle>
+						<CardDescription>How You're Improving</CardDescription>
+					</CardHeader>
+					<CardContent>
+						<ImprovementTrendsWidget />
+					</CardContent>
+				</CardRoot>
+
+				<!-- Column 3: What's Next (Purpose) — title lives inside DecisionQueueWidget -->
+				<DecisionQueueWidget />
+			</Grid>
+
+			<!-- Row 3: Knowledge Pipeline (2/3) + Lesson Velocity (1/3) -->
+			<!-- Grid primitive doesn't support column span overrides; use CSS grid directly -->
+			<div class="grid grid-cols-3 gap-4 items-stretch">
+				<div class="col-span-2">
+					<PipelineWidget />
+				</div>
+				<div class="col-span-1">
+					<LessonVelocityWidget />
 				</div>
 			</div>
 
-			<!-- Narrative layout -->
-			<div class="flex flex-col gap-4">
+			<!-- Row 4: Pipeline Health — full width at bottom -->
+			<IntegrityWidget />
 
-				<!-- Row 1: MilestoneContextCard — full width -->
-				<MilestoneContextCard />
-
-				<!-- Row 2: Three pillar columns — each card carries its own title -->
-				<div class="grid grid-cols-1 gap-4 md:grid-cols-3 items-stretch">
-					<!-- Column 1: Where You Are (Clarity) — title lives inside GraphHealthWidget -->
-					<GraphHealthWidget
-						checks={healthChecks}
-						loading={healthLoading}
-						fixing={healthFixing}
-						scanned={healthScanned}
-						{graphHealth}
-						onScan={runHealthScan}
-						onAutoFix={runHealthAutoFix}
-					/>
-
-					<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
-					<CardRoot>
-						<CardHeader compact>
-							<CardTitle>
-								<div class="flex items-center gap-1">
-									<Icon name="trending-up" size="md" />
-									Learning
-								</div>
-							</CardTitle>
-							<CardDescription>How You're Improving</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<ImprovementTrendsWidget />
-						</CardContent>
-					</CardRoot>
-
-					<!-- Column 3: What's Next (Purpose) — title lives inside DecisionQueueWidget -->
-					<DecisionQueueWidget />
-				</div>
-
-				<!-- Row 3: Knowledge Pipeline + Lesson Velocity — same height via h-full on both cards -->
-				<div class="grid grid-cols-3 gap-4 items-stretch">
-					<div class="col-span-2">
-						<PipelineWidget />
-					</div>
-					<div class="col-span-1">
-						<LessonVelocityWidget />
-					</div>
-				</div>
-
-				<!-- Row 4: Pipeline Health — full width at bottom -->
-				<IntegrityWidget />
-
-				<!-- Row 5: Plugin Tools — shows registered tool statuses with Run buttons -->
-				<ToolStatusWidget />
-
-			</div>
+			<!-- Row 5: Plugin Tools — shows registered tool statuses with Run buttons -->
+			<ToolStatusWidget />
 		{/if}
-	</div>
-</div>
+	</Stack>
+</Box>

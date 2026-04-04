@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import { invoke } from "@tauri-apps/api/core";
-	import { Button, ConnectionIndicator, EmptyState, Stack, HStack, Grid, Heading, Text, Caption, Code, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Button, ConnectionIndicator, EmptyState, Stack, HStack, Grid, Heading, Text, Caption, Code, ScrollArea, Center, Box } from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
 	import ProcessCard from "./ProcessCard.svelte";
 	import type { ProcessInfo } from "./ProcessCard.svelte";
@@ -99,8 +99,8 @@
 </script>
 
 <!-- Outer container: fills the tab content area with vertical scroll. -->
-<ScrollArea class="h-full">
-<Stack gap={4} class="p-4">
+<ScrollArea full>
+<Stack gap={4} padding={4}>
 	<!-- Dev environment control: title on left, controls on right. -->
 	<HStack justify="between">
 		<Heading level={5}>Dev Environment</Heading>
@@ -121,34 +121,40 @@
 
 	<!-- Process grid -->
 	{#if !initialized}
-		<div class="process-view__loading">
-			<Text muted>Loading process status...</Text>
-		</div>
+		<!-- Center replaces the raw centering div. -->
+		<Center full>
+			<Text variant="body-muted">Loading process status...</Text>
+		</Center>
 	{:else if processes.length === 0 && !isRunning}
-		<div class="process-view__empty-wrapper">
+		<!-- Center replaces the raw centering div for the empty state. -->
+		<Center full>
 			<EmptyState
 				title="Dev environment is stopped"
 				description='Click "Start Dev Environment" to launch daemon, search, Vite, and Tauri.'
 			/>
-		</div>
+		</Center>
 	{:else}
-		<!-- Responsive card grid: 2 → md:3 → lg:5 columns. -->
-		<Grid cols={2} md={3} gap={3} class="process-view__grid">
-			{#each processes as process (process.source)}
-				<ProcessCard
-					{process}
-					selected={selectedSource === process.source}
-					onselect={handleSelect}
-				/>
-			{/each}
-		</Grid>
+		<!-- Responsive card grid: 2 → md:3 → lg:5 columns.
+		     Wrapper div provides the scoped lg:5-column override since Grid has no lg prop. -->
+		<div class="process-view__grid-wrap">
+			<Grid cols={2} md={3} gap={3}>
+				{#each processes as process (process.source)}
+					<ProcessCard
+						{process}
+						selected={selectedSource === process.source}
+						onselect={handleSelect}
+					/>
+				{/each}
+			</Grid>
+		</div>
 
 		{#if selectedSource !== null}
+			<!-- Scoped CSS class provides the hint strip visual treatment. -->
 			<div class="process-view__filter-hint">
-				<Text size="xs" muted>
+				<Text variant="body-muted" block>
 					Showing logs for source <Code>{selectedSource}</Code>.
 					Click the card again to clear the filter. Navigate to the
-					<Text size="xs">Logs</Text> tab to see filtered entries.
+					<Text variant="body">Logs</Text> tab to see filtered entries.
 				</Text>
 			</div>
 		{/if}
@@ -157,27 +163,11 @@
 </ScrollArea>
 
 <style>
-	/* Loading placeholder centred in the remaining space. */
-	.process-view__loading {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	/* Empty state wrapper: centred, fills available height. */
-	.process-view__empty-wrapper {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	/* lg:5 columns is not in Grid's built-in map so we override globally.
-	   Grid passes the class down to its inner div. */
+	/* Wrapper div for the process grid. lg breakpoint overrides to 5 columns
+	   since Grid's built-in md max prop does not cover lg. */
 	@media (min-width: 1024px) {
-		:global(.process-view__grid) {
-			grid-template-columns: repeat(5, 1fr);
+		:global(.process-view__grid-wrap > div) {
+			grid-template-columns: repeat(5, 1fr) !important;
 		}
 	}
 

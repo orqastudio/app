@@ -7,7 +7,7 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, HStack } from "@orqastudio/svelte-components/pure";
+	import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, HStack, Stack, Box, Text } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -149,16 +149,16 @@
 
 {#if scanned && checks.length === 0 && !error}
 	<!-- Collapsed "all clear" state — minimal footprint -->
-	<div class="mb-4 rounded-lg border border-border px-3 py-2">
+	<Box border rounded="lg" paddingX={3} paddingY={2}>
 		<HStack gap={2}>
 			<Icon name="shield-check" size="md" />
-			<span class="text-sm text-muted-foreground">Pipeline Health</span>
-			<span class="text-xs text-success">All clear</span>
+			<Text variant="body-muted">Pipeline Health</Text>
+			<Text variant="caption" tone="success">All clear</Text>
 			{#if loading}
 				<LoadingSpinner size="sm" />
 			{/if}
 		</HStack>
-	</div>
+	</Box>
 {:else}
 <CardRoot gap={2}>
 	<CardHeader compact>
@@ -200,11 +200,9 @@
 				<LoadingSpinner />
 			</HStack>
 		{:else if error}
-			<p class="text-sm text-destructive">{error}</p>
+			<Text variant="body" tone="destructive" block>{error}</Text>
 		{:else if !scanned}
-			<p class="text-sm text-muted-foreground">
-				Waiting for artifact graph...
-			</p>
+			<Text variant="body-muted" block>Waiting for artifact graph...</Text>
 		{:else}
 			<!-- Filters: category selector left, severity pills right-aligned -->
 			<HStack gap={3} justify="between">
@@ -294,7 +292,7 @@
 								<TableCell>
 									{check.message}
 									{#if check.auto_fixable}
-										<span class="ml-1 text-[10px] text-success">(auto-fixable)</span>
+										<Text variant="caption" tone="success">(auto-fixable)</Text>
 									{/if}
 								</TableCell>
 							</TableRow>

@@ -56,8 +56,8 @@
 </script>
 
 <!-- Full-height scrollable content area. -->
-<ScrollArea class="h-full">
-<Stack gap={4} class="p-4">
+<ScrollArea full>
+<Stack gap={4} padding={4}>
 
 	<!-- Section heading: title left, event count right. -->
 	<HStack justify="between">
@@ -70,11 +70,13 @@
 		{#each CATEGORY_KEYS as cat (cat)}
 			{@const stats = metrics.byCategory[cat]}
 			{@const isSelected = selectedCategory === cat}
+			<!-- Scoped div wrapper provides border+selected state styling. Tailwind class=
+			     pattern replaced with data-selected attribute + scoped CSS. -->
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
-				class="cursor-pointer rounded-lg border transition-colors
-				       {isSelected ? 'border-primary/40 bg-surface-raised' : 'border-border hover:border-border/80 hover:bg-surface-raised/50'}"
+				class="metrics-card"
+				data-selected={isSelected}
 				onclick={() => toggleCategory(cat)}
 			>
 				<DashboardCard>
@@ -97,13 +99,14 @@
 								padding={2}
 							/>
 						{:else}
-							<HStack class="h-8"><Caption>Waiting…</Caption></HStack>
+							<!-- Scoped class provides height without Tailwind utility on HStack. -->
+							<div class="metrics-card__waiting"><Caption>Waiting…</Caption></div>
 						{/if}
-						<!-- Min / avg / max row below the sparkline. -->
-						<HStack justify="between" class="mt-1 tabular-nums">
-							<Caption>min {fmtMs(stats.min)}</Caption>
-							<Caption>avg {fmtMs(stats.avg)}</Caption>
-							<Caption>max {fmtMs(stats.max)}</Caption>
+						<!-- Min / avg / max row: caption-tabular variant for numeric alignment. -->
+						<HStack justify="between" marginTop={1}>
+							<Caption variant="caption-tabular">min {fmtMs(stats.min)}</Caption>
+							<Caption variant="caption-tabular">avg {fmtMs(stats.avg)}</Caption>
+							<Caption variant="caption-tabular">max {fmtMs(stats.max)}</Caption>
 						</HStack>
 					</MetricCell>
 				</DashboardCard>
@@ -113,7 +116,7 @@
 
 	<!-- Expanded timing chart — shown below the grid when a category is selected. -->
 	{#if selectedCategory && metrics.byCategory[selectedCategory]}
-		<div class="rounded-lg border border-border bg-surface-raised p-4">
+		<div class="metrics-chart-card">
 			<TimingChart stats={metrics.byCategory[selectedCategory]} width={560} height={100} />
 		</div>
 	{/if}
@@ -123,9 +126,10 @@
 		<Stack gap={2}>
 			<HStack justify="between" align="baseline">
 				<Caption>Total in window</Caption>
+				<!-- tone prop drives color; heading-base provides semibold weight for emphasis. -->
 				<Text
-					size="lg"
-					class="font-semibold tabular-nums {errTotal > 0 ? 'text-destructive' : 'text-success'}"
+					variant="heading-base"
+					tone={errTotal > 0 ? "destructive" : "success"}
 				>
 					{errTotal}
 				</Text>
@@ -143,7 +147,8 @@
 					fixedMin={0}
 				/>
 			{:else}
-				<HStack class="h-12"><Caption>No error data yet</Caption></HStack>
+				<!-- Scoped class provides height without Tailwind utility on HStack. -->
+				<div class="metrics-card__error-waiting"><Caption>No error data yet</Caption></div>
 			{/if}
 			<HStack justify="between">
 				<Caption>−30 min</Caption>
@@ -154,3 +159,46 @@
 
 </Stack>
 </ScrollArea>
+
+<style>
+	/* Metric card wrapper: border, rounded corners, pointer cursor, and hover/selected states. */
+	.metrics-card {
+		cursor: pointer;
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-border);
+		transition: border-color 150ms, background-color 150ms;
+	}
+
+	.metrics-card:hover {
+		border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+		background-color: color-mix(in srgb, var(--color-surface-raised) 50%, transparent);
+	}
+
+	/* Selected state: stronger primary-tinted border + raised background. */
+	.metrics-card[data-selected="true"] {
+		border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+		background-color: var(--color-surface-raised);
+	}
+
+	/* Expanded chart card: raised surface with padding. */
+	.metrics-chart-card {
+		border-radius: var(--radius-lg);
+		border: 1px solid var(--color-border);
+		background-color: var(--color-surface-raised);
+		padding: var(--spacing-4);
+	}
+
+	/* Compact waiting-for-data placeholder within metric cells. */
+	.metrics-card__waiting {
+		display: flex;
+		align-items: center;
+		height: 2rem;
+	}
+
+	/* Compact waiting state for the error rate panel. */
+	.metrics-card__error-waiting {
+		display: flex;
+		align-items: center;
+		height: 3rem;
+	}
+</style>

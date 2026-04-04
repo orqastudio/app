@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Text, Caption, Code, Box, Grid } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
@@ -416,7 +416,7 @@
 
 	{#if detailView}
 		<!-- Detail View -->
-		<div class="space-y-3">
+		<Stack gap={3}>
 			<Button
 				variant="ghost"
 				size="sm"
@@ -464,32 +464,32 @@
 				</CardHeader>
 				<CardContent>
 					<Text variant="caption" tone="muted">{detailView.plugin.description ?? "No description"}</Text>
-					<div class="mt-2 flex items-center gap-2">
+					<HStack gap={2} marginTop={2} wrap>
 						{#if detailView.plugin.version}
-							<Text variant="caption" tone="muted">v{detailView.plugin.version}</Text>
+							<Caption tone="muted">v{detailView.plugin.version}</Caption>
 						{/if}
 						{#if detailView.plugin.repo}
-							<Text variant="caption" tone="muted">{detailView.plugin.repo}</Text>
+							<Caption tone="muted">{detailView.plugin.repo}</Caption>
 						{/if}
 						{#if detailView.plugin.source}
-							<Text variant="caption" tone="muted">{detailView.plugin.source}</Text>
+							<Caption tone="muted">{detailView.plugin.source}</Caption>
 						{/if}
-					</div>
+					</HStack>
 					{#if detailView.plugin.capabilities?.length}
-						<div class="mt-2 flex flex-wrap gap-1">
+						<HStack gap={1} wrap marginTop={2}>
 							{#each detailView.plugin.capabilities as cap (cap)}
 								<Badge variant="outline" size="xs">{cap}</Badge>
 							{/each}
-						</div>
+						</HStack>
 					{/if}
 				</CardContent>
 			</CardRoot>
 
 			<!-- Manifest details (installed plugins only) -->
 			{#if detailLoading}
-				<div class="flex items-center justify-center py-6">
+				<HStack justify="center" paddingY={6}>
 					<LoadingSpinner size="md" />
-				</div>
+				</HStack>
 			{:else if detailManifest}
 				{#if detailManifest.provides.schemas.length > 0}
 					<CardRoot gap={1}>
@@ -516,15 +516,14 @@
 							<CardTitle>Relationships ({detailManifest.provides.relationships.length})</CardTitle>
 						</CardHeader>
 						<CardContent>
-							<div class="space-y-1">
+							<Stack gap={1}>
 								{#each detailManifest.provides.relationships as rel (rel.key)}
-									<div class="text-xs">
-										<span class="font-medium">{rel.label}</span>
-										<span class="text-muted-foreground"> / {rel.inverse}</span>
-										<p class="text-[10px] text-muted-foreground">{rel.description}</p>
-									</div>
+									<Stack gap={0}>
+										<Caption variant="caption-strong">{rel.label} <Caption tone="muted">/ {rel.inverse}</Caption></Caption>
+										<Caption tone="muted">{rel.description}</Caption>
+									</Stack>
 								{/each}
-							</div>
+							</Stack>
 						</CardContent>
 					</CardRoot>
 				{/if}
@@ -590,10 +589,11 @@
 					</CardRoot>
 				{/if}
 			{/if}
-		</div>
+		</Stack>
 	{:else}
 		<!-- Tab bar -->
-		<div class="flex items-center gap-1 rounded-md border border-border p-1">
+		<Box border rounded="md" paddingY={1} paddingX={1}>
+			<HStack gap={1}>
 			{#each (["installed", "official", "community", "groups"] as Tab[]) as tab (tab)}
 				<Button
 					variant={activeTab === tab ? "default" : "ghost"}
@@ -603,24 +603,23 @@
 					{tab.charAt(0).toUpperCase() + tab.slice(1)}
 				</Button>
 			{/each}
-		</div>
+			</HStack>
+		</Box>
 
 		<!-- Installed tab -->
 		{#if activeTab === "installed"}
-			<div class="space-y-2">
+			<Stack gap={2}>
 				{#each installed as plugin (plugin.name)}
 					<CardRoot gap={2} interactive onclick={() => showDetail(plugin, "installed")}>
 						<CardContent>
 							<HStack justify="between">
-								<div>
-									<p class="text-xs font-medium">{displayName(plugin)}</p>
-									<p class="text-[10px] text-muted-foreground">
-										v{plugin.version ?? "?"} — {plugin.source ?? "local"}
-									</p>
+								<Stack gap={0}>
+									<Caption variant="caption-strong">{displayName(plugin)}</Caption>
+									<Caption tone="muted">v{plugin.version ?? "?"} — {plugin.source ?? "local"}</Caption>
 									{#if plugin.description}
-										<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
+										<Caption tone="muted" lineClamp={1}>{plugin.description}</Caption>
 									{/if}
-								</div>
+								</Stack>
 								<HStack gap={2}>
 									<Icon name="chevron-right" size="sm" />
 								</HStack>
@@ -628,42 +627,42 @@
 						</CardContent>
 					</CardRoot>
 				{:else}
-					<p class="py-4 text-center text-xs text-muted-foreground">
+					<Caption tone="muted" block>
 						No plugins installed yet. Browse the Official tab or use Manual Install below.
-					</p>
+					</Caption>
 				{/each}
-			</div>
+			</Stack>
 
 		<!-- Official tab -->
 		{:else if activeTab === "official"}
 			{#if pluginStore.loadingRegistry}
-				<div class="flex items-center justify-center py-8">
+				<HStack justify="center" paddingY={8}>
 					<LoadingSpinner size="md" />
-				</div>
+				</HStack>
 			{:else}
-				<div class="space-y-2">
+				<Stack gap={2}>
 					{#each official as plugin (plugin.name)}
 						<CardRoot gap={2} interactive onclick={() => showDetail(plugin, "registry")}>
 							<CardContent>
 								<HStack justify="between">
-									<div>
+									<Stack gap={0}>
 										<HStack gap={2}>
 											<Icon name={plugin.icon ?? "puzzle"} size="sm" />
-											<p class="text-xs font-medium">{displayName(plugin)}</p>
+											<Caption variant="caption-strong">{displayName(plugin)}</Caption>
 											{#if isInstalled(plugin.name)}
 												<Badge variant="outline" size="xs">Installed</Badge>
 											{/if}
 										</HStack>
-										<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
+										<Caption tone="muted" lineClamp={1}>{plugin.description}</Caption>
 										{#if plugin.capabilities?.length}
-											<div class="mt-1 flex flex-wrap gap-1">
+											<HStack gap={1} wrap marginTop={1}>
 												{#each plugin.capabilities as cap (cap)}
 													<Badge variant="outline" size="xs">{cap}</Badge>
 												{/each}
-											</div>
+											</HStack>
 										{/if}
-									</div>
-									<div class="flex shrink-0 items-center gap-2">
+									</Stack>
+									<HStack gap={2} flex={0}>
 										{#if !isInstalled(plugin.name)}
 											<Button
 												variant="default"
@@ -679,42 +678,40 @@
 											</Button>
 										{/if}
 										<Icon name="chevron-right" size="sm" />
-									</div>
+									</HStack>
 								</HStack>
 							</CardContent>
 						</CardRoot>
 					{:else}
-						<p class="py-4 text-center text-xs text-muted-foreground">
-							No official plugins available yet.
-						</p>
+						<Caption tone="muted" block>No official plugins available yet.</Caption>
 					{/each}
-				</div>
+				</Stack>
 			{/if}
 
 		<!-- Community tab -->
 		{:else if activeTab === "community"}
 			{#if pluginStore.loadingRegistry}
-				<div class="flex items-center justify-center py-8">
+				<HStack justify="center" paddingY={8}>
 					<LoadingSpinner size="md" />
-				</div>
+				</HStack>
 			{:else}
-				<div class="space-y-2">
+				<Stack gap={2}>
 					{#each community as plugin (plugin.name)}
 						<CardRoot gap={2} interactive onclick={() => showDetail(plugin, "registry")}>
 							<CardContent>
 								<HStack justify="between">
-									<div>
+									<Stack gap={0}>
 										<HStack gap={2}>
 											<Icon name={plugin.icon ?? "puzzle"} size="sm" />
-											<p class="text-xs font-medium">{displayName(plugin)}</p>
+											<Caption variant="caption-strong">{displayName(plugin)}</Caption>
 											<Badge variant="secondary" size="xs">Community</Badge>
 											{#if isInstalled(plugin.name)}
 												<Badge variant="outline" size="xs">Installed</Badge>
 											{/if}
 										</HStack>
-										<p class="mt-1 text-[10px] text-muted-foreground line-clamp-1">{plugin.description}</p>
-									</div>
-									<div class="flex shrink-0 items-center gap-2">
+										<Caption tone="muted" lineClamp={1}>{plugin.description}</Caption>
+									</Stack>
+									<HStack gap={2} flex={0}>
 										{#if !isInstalled(plugin.name)}
 											<Button
 												variant="outline"
@@ -730,29 +727,25 @@
 											</Button>
 										{/if}
 										<Icon name="chevron-right" size="sm" />
-									</div>
+									</HStack>
 								</HStack>
 							</CardContent>
 						</CardRoot>
 					{:else}
-						<p class="py-4 text-center text-xs text-muted-foreground">
-							No community plugins available yet.
-						</p>
+						<Caption tone="muted" block>No community plugins available yet.</Caption>
 					{/each}
-				</div>
+				</Stack>
 			{/if}
 		<!-- Groups tab — plugin bundles derived from registry categories -->
 		{:else if activeTab === "groups"}
 			{#if pluginStore.loadingRegistry}
-				<div class="flex items-center justify-center py-8">
+				<HStack justify="center" paddingY={8}>
 					<LoadingSpinner size="md" />
-				</div>
+				</HStack>
 			{:else if bundles.length === 0}
-				<p class="py-4 text-center text-xs text-muted-foreground">
-					No plugin bundles available. Check the Official tab for individual plugins.
-				</p>
+				<Caption tone="muted" block>No plugin bundles available. Check the Official tab for individual plugins.</Caption>
 			{:else}
-				<div class="space-y-2">
+				<Stack gap={2}>
 					{#each bundles as bundle (bundle.key)}
 						<CardRoot gap={2}>
 							<CardHeader>
@@ -783,24 +776,24 @@
 								</CardAction>
 							</CardHeader>
 							<CardContent>
-								<p class="text-[10px] text-muted-foreground">{bundle.description}</p>
-								<div class="mt-2 space-y-1">
+								<Caption tone="muted">{bundle.description}</Caption>
+								<Stack gap={1} marginTop={2}>
 									{#each bundle.plugins as plugin (plugin.name)}
-										<div class="flex items-center justify-between text-xs">
-											<HStack gap={1.5}>
+										<HStack justify="between">
+											<HStack gap={1}>
 												<Icon name={plugin.icon ?? "puzzle"} size="sm" />
-												<span>{plugin.displayName ?? plugin.display_name ?? plugin.name}</span>
+												<Caption>{plugin.displayName ?? plugin.display_name ?? plugin.name}</Caption>
 											</HStack>
 											{#if isInstalled(plugin.name)}
 												<Badge variant="outline" size="xs">Installed</Badge>
 											{/if}
-										</div>
+										</HStack>
 									{/each}
-								</div>
+								</Stack>
 							</CardContent>
 						</CardRoot>
 					{/each}
-				</div>
+				</Stack>
 			{/if}
 		{/if}
 
@@ -810,9 +803,7 @@
 				<CardTitle>Manual Install</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<p class="mb-2 text-[10px] text-muted-foreground">
-					Enter a GitHub repo (owner/repo), a specific version (owner/repo@v0.2.0), or a local filesystem path.
-				</p>
+				<Caption tone="muted">Enter a GitHub repo (owner/repo), a specific version (owner/repo@v0.2.0), or a local filesystem path.</Caption>
 				<HStack gap={2}>
 					<Input
 						placeholder="orqastudio/orqastudio-plugin-claude"

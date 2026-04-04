@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { Button } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Grid, Caption } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ArtifactLinksConfig, ArtifactLinkDisplayMode } from "@orqastudio/types";
 
@@ -69,43 +69,46 @@
 	</CardHeader>
 	<CardContent>
 		<!-- Column headers -->
-		<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4 px-1">
-			<span class="text-xs font-medium text-muted-foreground">Type</span>
-			<span class="text-xs font-medium text-muted-foreground">Display</span>
-			<span class="text-xs font-medium text-muted-foreground">Colour</span>
-		</div>
+		<HStack gap={4} paddingX={1}>
+			<Caption variant="caption-strong" tone="muted">Type</Caption>
+			<Caption variant="caption-strong" tone="muted">Display</Caption>
+			<Caption variant="caption-strong" tone="muted">Colour</Caption>
+		</HStack>
 
 		<Separator />
 
 		<!-- Per-type rows -->
-		<div class="space-y-1.5">
+		<Stack gap={1}>
 			{#each prefixes as prefix (prefix)}
 				{@const color = effectiveColors[prefix] ?? "#64748b"}
 				{@const isDefault = false}
 				{@const mode = getDisplayMode(prefix)}
 
-				<div class="grid grid-cols-[6rem_1fr_8rem] items-center gap-x-4">
+				<HStack gap={4}>
 					<!-- Type label -->
-					<span class="font-mono text-xs font-semibold">{prefix}</span>
+					<Caption variant="caption-mono">{prefix}</Caption>
 
 					<!-- Display mode toggle -->
-					<div class="flex gap-1.5">
-						<button
-							class="flex h-6 items-center rounded px-2 text-xs {mode === 'id' ? 'bg-primary text-primary-foreground' : 'border border-border hover:bg-accent'}"
+					<HStack gap={1}>
+						<Button
+							variant={mode === "id" ? "default" : "outline"}
+							size="sm"
 							onclick={() => handleDisplayModeChange(prefix, "id")}
 						>
 							ID
-						</button>
-						<button
-							class="flex h-6 items-center rounded px-2 text-xs {mode === 'title' ? 'bg-primary text-primary-foreground' : 'border border-border hover:bg-accent'}"
+						</Button>
+						<Button
+							variant={mode === "title" ? "default" : "outline"}
+							size="sm"
 							onclick={() => handleDisplayModeChange(prefix, "title")}
 						>
 							Title
-						</button>
-					</div>
+						</Button>
+					</HStack>
 
-					<!-- Colour swatch + native picker + reset -->
-					<div class="flex items-center gap-1.5">
+					<!-- Colour swatch + native picker + reset.
+					     input[type=color] is a legitimate exception — ColorInput primitive follow-up needed. -->
+					<HStack gap={1}>
 						<label class="flex cursor-pointer items-center gap-1" aria-label="Pick colour for {prefix}">
 							<span
 								class="inline-block h-4 w-4 shrink-0 rounded border border-border"
@@ -122,17 +125,18 @@
 							/>
 						</label>
 						{#if !isDefault}
-							<button
-								class="h-auto px-0 text-[10px] text-muted-foreground hover:text-foreground"
+							<Button
+								variant="ghost"
+								size="sm"
 								aria-label="Reset to default"
 								onclick={() => resetColor(prefix)}
 							>
 								↩
-							</button>
+							</Button>
 						{/if}
-					</div>
-				</div>
+					</HStack>
+				</HStack>
 			{/each}
-		</div>
+		</Stack>
 	</CardContent>
 </CardRoot>

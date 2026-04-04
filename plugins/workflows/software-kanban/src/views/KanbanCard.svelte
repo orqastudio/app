@@ -37,9 +37,9 @@
 	<Stack gap={2}>
 		<!-- Title row -->
 		<HStack gap={2} align="start">
-			<HStack gap={2} align="center" class="min-w-0 flex-1">
+			<HStack gap={2} align="center" minHeight={0} flex={1}>
 				<StatusIndicator status={node.status ?? "captured"} mode="dot" />
-				<Text size="sm" class="truncate font-medium">{node.title}</Text>
+				<Text variant="body-strong" truncate>{node.title}</Text>
 			</HStack>
 			{#if node.priority}
 				<SmallBadge variant={priorityVariant(node.priority)}>
@@ -50,7 +50,7 @@
 
 		<!-- Description -->
 		{#if node.description}
-			<Caption class="line-clamp-2">{node.description}</Caption>
+			<Caption lineClamp={2}>{node.description}</Caption>
 		{/if}
 
 		<!-- Task progress bar -->
@@ -68,15 +68,14 @@
 			{#if node.project}
 				<SmallBadge variant="secondary">{node.project}</SmallBadge>
 			{/if}
-			<Caption class="font-mono opacity-60">{node.id}</Caption>
+			<Caption variant="caption-mono">{node.id}</Caption>
 		</HStack>
 	</Stack>
 {/snippet}
 
 {#if onClick}
 	<Button
-		variant="ghost"
-		class="h-auto w-full rounded-lg border border-border bg-card p-3 text-left hover:bg-accent/50 hover:border-border/80"
+		variant="card"
 		draggable={onDragStart !== undefined}
 		ondragstart={onDragStart}
 		onclick={onClick}
@@ -84,12 +83,28 @@
 		{@render cardContent()}
 	</Button>
 {:else}
-	<CardRoot
-		class="w-full cursor-grab rounded-lg p-3 active:cursor-grabbing"
+	<!-- Raw div wrapper provides drag cursor and drag events; CardRoot provides visual card appearance. -->
+	<div
+		class="drag-wrapper"
 		draggable={onDragStart !== undefined}
 		ondragstart={onDragStart}
 		role="listitem"
 	>
-		{@render cardContent()}
-	</CardRoot>
+		<CardRoot>
+			{@render cardContent()}
+		</CardRoot>
+	</div>
 {/if}
+
+<style>
+	/* Cursor styling for draggable card list items. The drag-wrapper is a raw div
+	   because HTML5 drag API requires a native element, and cursor-grab cannot be
+	   expressed as a typed prop on CardRoot. */
+	.drag-wrapper {
+		cursor: grab;
+		width: 100%;
+	}
+	.drag-wrapper:active {
+		cursor: grabbing;
+	}
+</style>

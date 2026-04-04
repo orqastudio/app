@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Heading } from "@orqastudio/svelte-components/pure";
+	import { Icon, Heading, HStack, Stack, Caption, Text, Button, Box, Badge } from "@orqastudio/svelte-components/pure";
 	import type { PluginManifest } from "@orqastudio/types";
 
 	interface Props {
@@ -23,57 +23,61 @@
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
-	<div class="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-lg">
-		<div class="flex items-center gap-3">
-			<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-				<Icon name="puzzle" size="lg" />
-			</div>
-			<div class="flex flex-col gap-0">
-				<Heading level={3}>Install Plugin</Heading>
-				<span class="text-sm text-muted-foreground">{manifest.displayName ?? manifest.name}</span>
-			</div>
-		</div>
+	<Box padding={6} rounded="lg" border background="card">
+		<Stack gap={4}>
+			<HStack gap={3}>
+				<Box rounded="lg" padding={2} background="muted">
+					<Icon name="puzzle" size="lg" />
+				</Box>
+				<Stack gap={0}>
+					<Heading level={3}>Install Plugin</Heading>
+					<Text variant="body-muted">{manifest.displayName ?? manifest.name}</Text>
+				</Stack>
+			</HStack>
 
-		{#if manifest.description}
-			<p class="mt-3 text-sm text-muted-foreground">{manifest.description}</p>
-		{/if}
-
-		<div class="mt-4 flex flex-col gap-3">
-			<div class="flex items-center gap-1">
-				<span class="text-sm font-medium">Provides:</span>
-				<span class="text-sm text-muted-foreground">
-					{manifest.provides.schemas.length} artifact types,
-					{manifest.provides.views.length} views,
-					{manifest.provides.relationships.length} relationships
-				</span>
-			</div>
-
-			{#if hasNavItems}
-				<div class="flex flex-col gap-2">
-					<span class="text-sm font-medium">This plugin wants to add to your navigation:</span>
-					<div class="flex flex-col gap-1 rounded-md border border-border bg-muted/30 p-3">
-						{#each navItems as item (item.key)}
-							<div class="flex items-center gap-2">
-								<Icon name={item.icon} size="sm" />
-								<span class="text-sm">{item.label ?? humanizeKey(item.key)}</span>
-								{#if item.children}
-									<span class="text-xs text-muted-foreground">({item.children.length} items)</span>
-								{/if}
-							</div>
-						{/each}
-					</div>
-				</div>
+			{#if manifest.description}
+				<Text variant="body-muted" block>{manifest.description}</Text>
 			{/if}
-		</div>
 
-		<div class="mt-6 flex items-center justify-end gap-2">
-			<button class="flex items-center rounded px-3 py-1.5 text-sm hover:bg-accent" onclick={onClose}>Cancel</button>
-			{#if hasNavItems}
-				<button class="flex items-center rounded border border-border px-3 py-1.5 text-sm hover:bg-accent" onclick={onReject}>Install Without Navigation</button>
-			{/if}
-			<button class="flex items-center rounded bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90" onclick={onAccept}>
-				{hasNavItems ? "Accept & Install" : "Install"}
-			</button>
-		</div>
-	</div>
+			<Stack gap={3}>
+				<HStack gap={1}>
+					<Text variant="body-strong">Provides:</Text>
+					<Text variant="body-muted">
+						{manifest.provides.schemas.length} artifact types,
+						{manifest.provides.views.length} views,
+						{manifest.provides.relationships.length} relationships
+					</Text>
+				</HStack>
+
+				{#if hasNavItems}
+					<Stack gap={2}>
+						<Text variant="body-strong">This plugin wants to add to your navigation:</Text>
+						<Box padding={3} rounded="md" border background="muted">
+							<Stack gap={1}>
+								{#each navItems as item (item.key)}
+									<HStack gap={2}>
+										<Icon name={item.icon} size="sm" />
+										<Text>{item.label ?? humanizeKey(item.key)}</Text>
+										{#if item.children}
+											<Caption tone="muted">({item.children.length} items)</Caption>
+										{/if}
+									</HStack>
+								{/each}
+							</Stack>
+						</Box>
+					</Stack>
+				{/if}
+			</Stack>
+
+			<HStack gap={2} justify="end">
+				<Button variant="ghost" size="sm" onclick={onClose}>Cancel</Button>
+				{#if hasNavItems}
+					<Button variant="outline" size="sm" onclick={onReject}>Install Without Navigation</Button>
+				{/if}
+				<Button variant="default" size="sm" onclick={onAccept}>
+					{hasNavItems ? "Accept & Install" : "Install"}
+				</Button>
+			</HStack>
+		</Stack>
+	</Box>
 </div>

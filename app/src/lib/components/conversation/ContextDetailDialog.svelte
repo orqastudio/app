@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Icon, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
 	import { TabsRoot as Tabs, TabsContent, TabsList, TabsTrigger } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, Stack, HStack, Box, Code, Caption, Text } from "@orqastudio/svelte-components/pure";
 	import {
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
@@ -92,31 +92,28 @@
 			<TabsContent value="structured">
 				<ScrollArea full>
 					{#if entry.type === "system_prompt_sent"}
-						<div class="space-y-3">
+						<Stack gap={3}>
 							{#if entry.customPrompt}
 								<Collapsible bind:open={customPromptOpen}>
 									<CollapsibleTrigger
 										class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
 									>
 										<Icon name="chevron-right" size="sm" />
-										<span class="flex-1 text-xs font-medium text-foreground">Custom Prompt</span>
-										<span class="text-xs text-muted-foreground">
-											{entry.customPrompt.length.toLocaleString()} chars
-										</span>
+										<!-- flex-1 is structural (fills trigger row) -->
+										<span class="flex-1"><Text variant="body-strong">Custom Prompt</Text></span>
+										<Caption>{entry.customPrompt.length.toLocaleString()} chars</Caption>
 									</CollapsibleTrigger>
 									<CollapsibleContent>
+										<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
 										<div class="ml-3 mt-1 border-l-2 border-border pl-4">
-											<pre
-												class="whitespace-pre-wrap break-words rounded-md bg-muted/20 p-3 font-mono text-xs text-foreground">{entry.customPrompt}</pre>
+											<Code block>{entry.customPrompt}</Code>
 										</div>
 									</CollapsibleContent>
 								</Collapsible>
 							{:else}
-								<div
-									class="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground"
-								>
-									No custom prompt — using governance prompt only.
-								</div>
+								<Box padding={2} border rounded="lg">
+									<Caption>No custom prompt — using governance prompt only.</Caption>
+								</Box>
 							{/if}
 
 							<Collapsible bind:open={governancePromptOpen}>
@@ -124,52 +121,40 @@
 									class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
 								>
 									<Icon name="chevron-right" size="sm" />
-									<span class="flex-1 text-xs font-medium text-foreground"
-										>Governance Prompt</span
-									>
-									<span class="text-xs text-muted-foreground">
-										{entry.governancePrompt.length.toLocaleString()} chars
-									</span>
+									<!-- flex-1 is structural (fills trigger row) -->
+									<span class="flex-1"><Text variant="body-strong">Governance Prompt</Text></span>
+									<Caption>{entry.governancePrompt.length.toLocaleString()} chars</Caption>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
+									<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
 									<div class="ml-3 mt-1 border-l-2 border-border pl-4">
-										<pre
-											class="whitespace-pre-wrap break-words rounded-md bg-muted/20 p-3 font-mono text-xs text-foreground">{entry.governancePrompt}</pre>
+										<Code block>{entry.governancePrompt}</Code>
 									</div>
 								</CollapsibleContent>
 							</Collapsible>
-						</div>
+						</Stack>
 					{:else if entry.type === "context_injected"}
-						<div class="space-y-2">
+						<Stack gap={2}>
 							{#if parsedMessages.length === 0}
-								<div
-									class="rounded-lg border border-border bg-muted/20 px-3 py-2 text-xs text-muted-foreground"
-								>
-									Unable to parse injected messages.
-								</div>
+								<Box padding={2} border rounded="lg">
+									<Caption>Unable to parse injected messages.</Caption>
+								</Box>
 							{:else}
 								{#each parsedMessages as msg, i (i)}
-									<div class="rounded-lg border border-border bg-muted/20 p-3 text-xs">
-										<div
-											class="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground"
-										>
-											{roleLabel(msg.role)}
-										</div>
-										<div class="line-clamp-6 whitespace-pre-wrap break-words text-foreground">
-											{msg.content}
-										</div>
-									</div>
+									<Box padding={3} border rounded="lg">
+										<Caption variant="caption-strong">{roleLabel(msg.role)}</Caption>
+										<Text variant="body">{msg.content}</Text>
+									</Box>
 								{/each}
 							{/if}
-						</div>
+						</Stack>
 					{/if}
 				</ScrollArea>
 			</TabsContent>
 
 			<TabsContent value="raw">
 				<ScrollArea full>
-					<pre
-						class="whitespace-pre-wrap break-words rounded-md bg-muted/20 p-4 font-mono text-xs text-foreground">{rawText}</pre>
+					<Code block>{rawText}</Code>
 				</ScrollArea>
 			</TabsContent>
 		</Tabs>

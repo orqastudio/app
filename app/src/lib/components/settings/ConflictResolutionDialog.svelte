@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack, Stack, Text, Heading, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Text, Heading, ScrollArea, Box, Caption, Code } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
@@ -147,7 +147,8 @@
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-	<div class="w-full max-w-lg space-y-4 rounded-lg border border-border bg-background p-6 shadow-lg">
+	<Box padding={6} rounded="lg" border>
+	<Stack gap={4}>
 		<!-- Header -->
 		<HStack gap={3}>
 			<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
@@ -163,119 +164,119 @@
 
 		<!-- Conflicts -->
 		<ScrollArea maxHeight="lg">
-		<div class="space-y-3">
-			{#each conflicts as conflict (conflict.key)}
-				<CardRoot gap={1}>
-					<CardHeader>
-						<CardTitle>
-							<HStack gap={2}>
-								<Badge variant="outline" size="xs">{conflict.type}</Badge>
-								<code class="text-xs">{conflict.key}</code>
-							</HStack>
-						</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<p class="text-[10px] text-muted-foreground">{conflict.detail}</p>
+			<Stack gap={3}>
+				{#each conflicts as conflict (conflict.key)}
+					<CardRoot gap={1}>
+						<CardHeader>
+							<CardTitle>
+								<HStack gap={2}>
+									<Badge variant="outline" size="xs">{conflict.type}</Badge>
+									<Code>{conflict.key}</Code>
+								</HStack>
+							</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<Caption tone="muted">{conflict.detail}</Caption>
 
-						<!-- Resolution status -->
-						{#if resolutions[conflict.key]}
-							<div class="flex items-center justify-between rounded bg-accent/30 px-2 py-1.5">
-								<Text variant="caption">
-									<span class="text-muted-foreground">Rename</span>
-									<span class="font-medium">{resolutions[conflict.key].plugin}</span>
-									<span class="text-muted-foreground">→</span>
-									<code class="font-semibold">{resolutions[conflict.key].alias}</code>
-								</Text>
-								<Button
-									variant="ghost"
-									size="icon-sm"
-									onclick={() => clearResolution(conflict.key)}
-								>
-									<Icon name="x" size="sm" />
-								</Button>
-							</div>
-						{:else}
-							<!-- AI suggestions for this conflict -->
-							{#if loadingSuggestions}
-								<div class="flex items-center gap-2 py-2">
-									<LoadingSpinner size="sm" />
-									<Text variant="caption" tone="muted">Getting AI suggestions...</Text>
-								</div>
+							<!-- Resolution status -->
+							{#if resolutions[conflict.key]}
+								<HStack gap={2} justify="between" paddingX={2} paddingY={1}>
+									<Text variant="caption">
+										<Caption tone="muted">Rename</Caption>
+										<Caption>{resolutions[conflict.key].plugin}</Caption>
+										<Caption tone="muted">→</Caption>
+										<Code>{resolutions[conflict.key].alias}</Code>
+									</Text>
+									<Button
+										variant="ghost"
+										size="icon-sm"
+										onclick={() => clearResolution(conflict.key)}
+									>
+										<Icon name="x" size="sm" />
+									</Button>
+								</HStack>
 							{:else}
-								{@const conflictSuggestions = suggestions.filter((s) => s.key === conflict.key)}
-								{#if conflictSuggestions.length > 0}
-									<div class="space-y-1">
-										{#each conflictSuggestions as suggestion (suggestion.key)}
-											<Button
-												variant="outline"
-												size="sm"
-												onclick={() => applySuggestion(suggestion)}
-											>
-												<div class="flex w-full items-center justify-between">
-													<Text variant="caption">
-														{#if suggestion.strategy === "rename-new" && suggestion.newAlias}
-															Rename new → <code class="font-semibold">{suggestion.newAlias}</code>
-														{:else if suggestion.strategy === "rename-existing" && suggestion.existingAlias}
-															Rename existing → <code class="font-semibold">{suggestion.existingAlias}</code>
-														{:else if suggestion.strategy === "rename-both"}
-															Rename both → <code class="font-semibold">{suggestion.newAlias}</code> / <code class="font-semibold">{suggestion.existingAlias}</code>
-														{/if}
-													</Text>
-													<Icon name="chevron-right" size="sm" />
-												</div>
-												<Text variant="caption" tone="muted">{suggestion.rationale}</Text>
-											</Button>
-										{/each}
-									</div>
-								{/if}
+								<!-- AI suggestions for this conflict -->
+								{#if loadingSuggestions}
+									<HStack gap={2} paddingY={2}>
+										<LoadingSpinner size="sm" />
+										<Caption tone="muted">Getting AI suggestions...</Caption>
+									</HStack>
+								{:else}
+									{@const conflictSuggestions = suggestions.filter((s) => s.key === conflict.key)}
+									{#if conflictSuggestions.length > 0}
+										<Stack gap={1}>
+											{#each conflictSuggestions as suggestion (suggestion.key)}
+												<Button
+													variant="outline"
+													size="sm"
+													onclick={() => applySuggestion(suggestion)}
+												>
+													<HStack gap={2} justify="between">
+														<Caption>
+															{#if suggestion.strategy === "rename-new" && suggestion.newAlias}
+																Rename new → <Code>{suggestion.newAlias}</Code>
+															{:else if suggestion.strategy === "rename-existing" && suggestion.existingAlias}
+																Rename existing → <Code>{suggestion.existingAlias}</Code>
+															{:else if suggestion.strategy === "rename-both"}
+																Rename both → <Code>{suggestion.newAlias}</Code> / <Code>{suggestion.existingAlias}</Code>
+															{/if}
+														</Caption>
+														<Icon name="chevron-right" size="sm" />
+													</HStack>
+													<Caption tone="muted">{suggestion.rationale}</Caption>
+												</Button>
+											{/each}
+										</Stack>
+									{/if}
 
-								<!-- Custom input -->
-								{#if customMode[conflict.key]}
-									<HStack gap={2}>
-										<Input
-											placeholder="Enter custom alias..."
-											bind:value={customInputs[conflict.key]}
-											onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") applyCustom(conflict.key); }}
-										/>
-										<Button
-											variant="default"
-											size="sm"
-											disabled={!customInputs[conflict.key]?.trim()}
-											onclick={() => applyCustom(conflict.key)}
-										>
-											Apply
-										</Button>
+									<!-- Custom input -->
+									{#if customMode[conflict.key]}
+										<HStack gap={2}>
+											<Input
+												placeholder="Enter custom alias..."
+												bind:value={customInputs[conflict.key]}
+												onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") applyCustom(conflict.key); }}
+											/>
+											<Button
+												variant="default"
+												size="sm"
+												disabled={!customInputs[conflict.key]?.trim()}
+												onclick={() => applyCustom(conflict.key)}
+											>
+												Apply
+											</Button>
+											<Button
+												variant="ghost"
+												size="sm"
+												onclick={() => { customMode[conflict.key] = false; }}
+											>
+												Cancel
+											</Button>
+										</HStack>
+									{:else}
 										<Button
 											variant="ghost"
 											size="sm"
-											onclick={() => { customMode[conflict.key] = false; }}
+											onclick={() => { customMode[conflict.key] = true; }}
 										>
-											Cancel
+											Enter custom alias...
 										</Button>
-									</HStack>
-								{:else}
-									<Button
-										variant="ghost"
-										size="sm"
-										onclick={() => { customMode[conflict.key] = true; }}
-									>
-										Enter custom alias...
-									</Button>
+									{/if}
 								{/if}
 							{/if}
-						{/if}
-					</CardContent>
-				</CardRoot>
-			{/each}
-		</div>
+						</CardContent>
+					</CardRoot>
+				{/each}
+			</Stack>
 		</ScrollArea>
 
 		{#if suggestionsError}
-			<p class="text-[10px] text-muted-foreground">{suggestionsError}</p>
+			<Caption tone="muted">{suggestionsError}</Caption>
 		{/if}
 
 		<!-- Actions -->
-		<div class="flex items-center justify-end gap-2 border-t border-border pt-2">
+		<HStack gap={2} justify="end" borderTop paddingTop={2}>
 			<Button variant="ghost" size="sm" onclick={onCancel}>
 				Cancel Install
 			</Button>
@@ -291,6 +292,7 @@
 					Resolve all conflicts to continue
 				{/if}
 			</Button>
-		</div>
-	</div>
+		</HStack>
+	</Stack>
+	</Box>
 </div>

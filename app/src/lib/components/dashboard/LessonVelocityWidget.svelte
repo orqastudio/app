@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Text, Caption, Dot } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, pluginRegistry } = getStores();
@@ -82,10 +82,10 @@
 	<CardRoot full>
 		<CardHeader compact>
 			<CardTitle>
-				<div class="flex items-center gap-2">
+				<HStack gap={2}>
 					<Icon name="trending-up" size="md" />
 					Lesson Velocity
-				</div>
+				</HStack>
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
@@ -95,14 +95,14 @@
 			/>
 
 			<!-- Summary text -->
-			<div class="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+			<HStack gap={1} marginTop={3}>
 				{#if awaitingPromotion === 0}
 					<Icon name="check-circle-2" size="sm" />
 				{:else}
-					<span class="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+					<Dot size="sm" color="warning" />
 				{/if}
-				<span>{summaryText}</span>
-			</div>
+				<Caption>{summaryText}</Caption>
+			</HStack>
 		</CardContent>
 	</CardRoot>
 {/if}

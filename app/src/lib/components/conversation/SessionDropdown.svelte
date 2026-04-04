@@ -17,6 +17,7 @@
 		LoadingSpinner,
 		Heading,
 		HStack,
+		Box,
 		Caption,
 		Text,
 	} from "@orqastudio/svelte-components/pure";
@@ -151,9 +152,9 @@
 		</HStack>
 
 		<!-- Search -->
-		<div class="px-3 pb-2">
+		<Box paddingX={3} paddingBottom={2}>
 			<SearchInput bind:value={searchQuery} placeholder="Search sessions..." size="sm" />
-		</div>
+		</Box>
 
 		<Separator />
 
@@ -164,16 +165,16 @@
 					<LoadingSpinner />
 				</HStack>
 			{:else if error}
-				<div class="px-3 py-4">
+				<Box paddingX={3} paddingY={4}>
 					<ErrorDisplay message={error} onRetry={onRetry} />
-				</div>
+				</Box>
 			{:else if filteredSessions.length === 0}
 				<EmptyState
 					icon="message-square"
 					title={searchQuery.trim().length > 0 ? "No matching sessions" : "No sessions yet"}
 				/>
 			{:else}
-				<div class="p-1">
+				<Box padding={1}>
 					{#each filteredSessions as session (session.id)}
 						{@const isActive = session.id === activeSessionId}
 						<HStack
@@ -215,7 +216,7 @@
 							</Button>
 						</HStack>
 					{/each}
-				</div>
+				</Box>
 			{/if}
 		</ScrollArea>
 	</PopoverContent>

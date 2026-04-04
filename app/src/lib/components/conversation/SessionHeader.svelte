@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Session, SessionSummary } from "@orqastudio/types";
-	import { Icon, Button, Heading } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, HStack } from "@orqastudio/svelte-components/pure";
 	import SessionDropdown from "./SessionDropdown.svelte";
 
 	let {
@@ -55,7 +55,7 @@
 	}
 </script>
 
-<div class="flex items-center gap-2 border-b border-border px-3 py-2">
+<HStack gap={2} align="center" paddingX={3} paddingY={2} borderBottom>
 	<!-- Session dropdown trigger -->
 	<SessionDropdown
 		{sessions}
@@ -72,9 +72,10 @@
 		</Button>
 	</SessionDropdown>
 
-	<!-- Session title -->
+	<!-- Session title; min-w-0 flex-1 are structural layout constraints -->
 	<div class="flex min-w-0 flex-1 items-center gap-1">
 		{#if isEditing}
+			<!-- input requires direct DOM binding; no ORQA Input has bind:this + onblur -->
 			<input
 				bind:this={inputRef}
 				bind:value={editTitle}
@@ -97,4 +98,4 @@
 	<Button variant="ghost" size="icon-sm" onclick={onNewSession} aria-label="New session">
 		<Icon name="plus" size="md" />
 	</Button>
-</div>
+</HStack>

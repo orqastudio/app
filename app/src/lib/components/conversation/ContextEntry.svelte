@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ContextEntry as ContextEntryType } from "@orqastudio/sdk";
-	import { Icon, Caption } from "@orqastudio/svelte-components/pure";
+	import { Icon, Caption, Button } from "@orqastudio/svelte-components/pure";
 	import ContextDetailDialog from "./ContextDetailDialog.svelte";
 
 	let { entry }: { entry: ContextEntryType } = $props();
@@ -15,8 +15,9 @@
 	});
 </script>
 
-<button
-	class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left h-auto justify-start hover:bg-accent"
+<Button
+	variant="ghost"
+	full
 	onclick={() => {
 		dialogOpen = true;
 	}}
@@ -27,7 +28,7 @@
 		<Icon name="message-square" size="sm" />
 	{/if}
 	<Caption>{summaryText}</Caption>
-</button>
+</Button>
 
 {#if dialogOpen}
 	<ContextDetailDialog {entry} bind:open={dialogOpen} />

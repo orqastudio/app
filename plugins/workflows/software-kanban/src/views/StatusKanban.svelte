@@ -11,6 +11,8 @@
 		Caption,
 		HStack,
 		Stack,
+		Box,
+		Center,
 	} from "@orqastudio/svelte-components/pure";
 
 	type ColumnDef = {
@@ -127,10 +129,10 @@
 	}
 </script>
 
-<Stack gap={3} class="h-full">
+<Stack gap={3} height="full">
 	<!-- Toolbar -->
 	<HStack justify="between" align="center">
-		<Caption class="tabular-nums">{doneNodes}/{totalNodes} Done</Caption>
+		<Caption variant="caption-tabular">{doneNodes}/{totalNodes} Done</Caption>
 		<SelectMenu
 			items={GROUP_OPTIONS as Array<{ value: string; label: string }>}
 			selected={groupBy}
@@ -145,7 +147,7 @@
 
 	<!-- All-done state -->
 	{#if isAllDone}
-		<div class="flex flex-1 items-center justify-center">
+		<Center flex={1}>
 			<EmptyState
 				icon="circle-check-big"
 				title="All completed"
@@ -157,19 +159,19 @@
 					},
 				}}
 			/>
-		</div>
+		</Center>
 	{:else}
 		<!-- Kanban columns -->
-		<div class="min-h-0 flex-1">
-			<div class="flex h-full gap-3 pb-2">
+		<Box minHeight={0} flex={1}>
+			<HStack gap={3} height="full" paddingBottom={2}>
 				{#if totalNodes === 0}
-					<div class="flex flex-1 items-center justify-center">
+					<Center flex={1}>
 						<EmptyState
 							icon="layers"
 							title="No items"
 							description="Nothing to show here yet."
 						/>
-					</div>
+					</Center>
 				{:else}
 					{#each activeColumns as col (col.key)}
 						{@const colNodes = nodesForColumn(col.key)}
@@ -183,9 +185,7 @@
 							onDrop={(e) => handleDrop(e, col.key)}
 						>
 							{#if colNodes.length === 0}
-								<div class="rounded border border-dashed border-border p-3 text-center text-xs text-muted-foreground">
-									No items
-								</div>
+								<Caption>No items</Caption>
 							{:else}
 								{#each colNodes as node (node.id)}
 									<KanbanCard
@@ -201,7 +201,7 @@
 						</CollapsibleColumn>
 					{/each}
 				{/if}
-			</div>
-		</div>
+			</HStack>
+		</Box>
 	{/if}
 </Stack>

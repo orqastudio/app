@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { ScrollArea, Heading, Text } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, Heading, Text, HStack, Stack, Box, Caption } from "@orqastudio/svelte-components/pure";
 	import { PLATFORM_RELATIONSHIPS } from "@orqastudio/types";
 
 	const { pluginRegistry } = getStores();
@@ -18,67 +18,71 @@
 	}
 </script>
 
-<div class="space-y-6 p-6">
-	<div class="flex flex-col gap-1">
+<Stack gap={6} padding={6}>
+	<Stack gap={1}>
 		<Heading level={2}>Relationships</Heading>
 		<Text tone="muted">
 			Canonical relationships ship with the platform and cannot be removed.
 			Plugins can contribute additional relationship types.
 		</Text>
-	</div>
+	</Stack>
 
 	<!-- Canonical Relationships -->
-	<div class="flex flex-col gap-2">
-		<Text variant="caption" tone="muted">Platform (Canonical)</Text>
+	<Stack gap={2}>
+		<Caption tone="muted">Platform (Canonical)</Caption>
 		<ScrollArea maxHeight="lg">
-			<div class="flex flex-col gap-1">
+			<Stack gap={1}>
 				{#each PLATFORM_RELATIONSHIPS as rel (rel.key)}
-					<div class="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2">
-						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-2 text-sm">
-								<span class="font-medium">{rel.label}</span>
-								<Text tone="muted">/</Text>
-								<span class="font-medium">{rel.inverseLabel}</span>
-							</div>
-							<div class="flex items-center gap-2">
-								<Text variant="caption" tone="muted">{rel.key} / {rel.inverse}</Text>
-								<Text variant="caption" tone="muted">|</Text>
-								<Text variant="caption" tone="muted">{typeConstraint(rel.from as unknown as string[])} → {typeConstraint(rel.to as unknown as string[])}</Text>
-							</div>
-						</div>
-						<span class="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">Platform</span>
-					</div>
+					<Box border rounded="md" paddingX={3} paddingY={2}>
+						<HStack gap={3}>
+							<Box flex={1}>
+								<HStack gap={2}>
+									<Text variant="body-strong">{rel.label}</Text>
+									<Text tone="muted">/</Text>
+									<Text variant="body-strong">{rel.inverseLabel}</Text>
+								</HStack>
+								<HStack gap={2}>
+									<Caption tone="muted">{rel.key} / {rel.inverse}</Caption>
+									<Caption tone="muted">|</Caption>
+									<Caption tone="muted">{typeConstraint(rel.from as unknown as string[])} → {typeConstraint(rel.to as unknown as string[])}</Caption>
+								</HStack>
+							</Box>
+							<Caption>Platform</Caption>
+						</HStack>
+					</Box>
 				{/each}
-			</div>
+			</Stack>
 		</ScrollArea>
-	</div>
+	</Stack>
 
 	<!-- Plugin Relationships -->
 	{#if pluginRelationships.length > 0}
-		<div class="flex flex-col gap-2">
-			<Text variant="caption" tone="muted">Plugin-Contributed</Text>
-			<div class="flex flex-col gap-1">
+		<Stack gap={2}>
+			<Caption tone="muted">Plugin-Contributed</Caption>
+			<Stack gap={1}>
 				{#each pluginRelationships as rel (rel.key)}
-					<div class="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2">
-						<div class="min-w-0 flex-1">
-							<div class="flex items-center gap-2 text-sm">
-								<span class="font-medium">{rel.label}</span>
-								<Text tone="muted">/</Text>
-								<span class="font-medium">{rel.inverseLabel}</span>
-							</div>
-							<div class="flex items-center gap-2">
-								<Text variant="caption" tone="muted">{rel.key} / {rel.inverse}</Text>
-								<Text variant="caption" tone="muted">|</Text>
-								<Text variant="caption" tone="muted">{typeConstraint(rel.from)} → {typeConstraint(rel.to)}</Text>
-							</div>
-							{#if rel.description}
-								<Text variant="caption" tone="muted">{rel.description}</Text>
-							{/if}
-						</div>
-						<span class="rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">Plugin</span>
-					</div>
+					<Box border rounded="md" paddingX={3} paddingY={2}>
+						<HStack gap={3}>
+							<Box flex={1}>
+								<HStack gap={2}>
+									<Text variant="body-strong">{rel.label}</Text>
+									<Text tone="muted">/</Text>
+									<Text variant="body-strong">{rel.inverseLabel}</Text>
+								</HStack>
+								<HStack gap={2}>
+									<Caption tone="muted">{rel.key} / {rel.inverse}</Caption>
+									<Caption tone="muted">|</Caption>
+									<Caption tone="muted">{typeConstraint(rel.from)} → {typeConstraint(rel.to)}</Caption>
+								</HStack>
+								{#if rel.description}
+									<Caption tone="muted">{rel.description}</Caption>
+								{/if}
+							</Box>
+							<Caption>Plugin</Caption>
+						</HStack>
+					</Box>
 				{/each}
-			</div>
-		</div>
+			</Stack>
+		</Stack>
 	{/if}
-</div>
+</Stack>

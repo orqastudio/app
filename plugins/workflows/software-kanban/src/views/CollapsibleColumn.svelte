@@ -3,7 +3,6 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { untrack } from "svelte";
-	import { cn } from "@orqastudio/svelte-components";
 	import {
 		Icon,
 		ScrollArea,
@@ -13,6 +12,12 @@
 		CollapsibleRoot,
 		CollapsibleTrigger,
 		CollapsibleContent,
+		HStack,
+		Stack,
+		Box,
+		CountBadge,
+		VerticalText,
+		Center,
 	} from "@orqastudio/svelte-components/pure";
 
 	let {
@@ -65,85 +70,120 @@
 	}
 </script>
 
-<CollapsibleRoot bind:open={isOpen} class="flex h-full flex-col">
-	{#if !isOpen}
-		<!-- Collapsed: thin vertical bar acts as the trigger -->
-		<CollapsibleTrigger
-			class={cn(
-				"flex w-10 shrink-0 flex-col items-center rounded-lg border border-dashed border-border bg-muted/30 transition-colors hover:bg-muted/50 cursor-pointer h-full",
-				isDragOver && "border-primary bg-primary/10",
-			)}
-			ondragover={handleDragOver}
-			ondragleave={handleDragLeave}
-			ondrop={handleDrop}
-			aria-label="Expand {title} column"
-		>
-			<div class="flex flex-1 flex-col items-center justify-center gap-2 py-4">
-				<!-- Rotated title using a raw span — writing-mode cannot be set via className -->
-				<span
-					class="text-xs text-muted-foreground select-none"
-					style="writing-mode: vertical-rl; transform: rotate(180deg);"
-				>
-					{title}
-				</span>
-				{#if count > 0}
-					<span
-						class={cn(
-							"flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums",
-							isDone
-								? "bg-emerald-500/20 text-emerald-700 dark:text-emerald-400"
-								: "bg-muted text-muted-foreground",
-						)}
-					>
-						{count}
-					</span>
-				{/if}
+<!-- Outer wrapper provides h-full flex-col layout for CollapsibleRoot. -->
+<Stack gap={0} height="full">
+	<CollapsibleRoot bind:open={isOpen}>
+		{#if !isOpen}
+			<!-- Collapsed: thin vertical bar acts as the trigger. -->
+			<!-- collapsed-bar class applies the column bar appearance via scoped CSS. -->
+			<div
+				class="collapsed-bar"
+				class:drag-over={isDragOver}
+				ondragover={handleDragOver}
+				ondragleave={handleDragLeave}
+				ondrop={handleDrop}
+				role="region"
+				aria-label="{title} column (collapsed)"
+			>
+				<CollapsibleTrigger aria-label="Expand {title} column">
+					<Center flex={1} gap={2}>
+						<VerticalText variant="caption" tone="muted">{title}</VerticalText>
+						{#if count > 0}
+							<CountBadge {count} variant={isDone ? "success" : "muted"} />
+						{/if}
+					</Center>
+				</CollapsibleTrigger>
 			</div>
-		</CollapsibleTrigger>
-	{:else}
-		<!-- Expanded: full column -->
-		<div
-			class={cn(
-				"flex min-w-56 flex-1 flex-col rounded-lg border border-border bg-muted/10 transition-colors",
-				isDragOver && "border-primary bg-primary/5",
-			)}
-			ondragover={handleDragOver}
-			ondragleave={handleDragLeave}
-			ondrop={handleDrop}
-			role="region"
-			aria-label="{title} column"
-		>
-			<!-- Column header -->
-			<div class="flex items-center justify-between border-b border-border px-3 py-2">
-				<div class="flex items-center gap-2">
-					<Badge variant="outline" class="text-xs font-semibold capitalize">
-						{title}
-					</Badge>
-					{#if doneCount !== undefined && totalCount !== undefined}
-						<Caption class="tabular-nums">{doneCount}/{totalCount} Done</Caption>
+		{:else}
+			<!-- Expanded: full column. column-expanded class applies border/bg/layout via scoped CSS. -->
+			<div
+				class="column-expanded"
+				class:drag-over={isDragOver}
+				ondragover={handleDragOver}
+				ondragleave={handleDragLeave}
+				ondrop={handleDrop}
+				role="region"
+				aria-label="{title} column"
+			>
+				<!-- Column header -->
+				<HStack justify="between" borderBottom paddingX={3} paddingY={2}>
+					<HStack gap={2} align="center">
+						<Badge variant="outline" size="sm" capitalize>
+							{title}
+						</Badge>
+						{#if doneCount !== undefined && totalCount !== undefined}
+							<Caption variant="caption-tabular">{doneCount}/{totalCount} Done</Caption>
+						{/if}
+					</HStack>
+					{#if isDone}
+						<CollapsibleTrigger>
+							<Button
+								variant="ghost"
+								size="icon-sm"
+								aria-label="Collapse {title} column"
+							>
+								<Icon name="chevron-right" size="sm" />
+							</Button>
+						</CollapsibleTrigger>
 					{/if}
-				</div>
-				{#if isDone}
-					<CollapsibleTrigger>
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							aria-label="Collapse {title} column"
-						>
-							<Icon name="chevron-right" size="sm" />
-						</Button>
-					</CollapsibleTrigger>
-				{/if}
-			</div>
+				</HStack>
 
-			<!-- Column content -->
-			<CollapsibleContent class="min-h-0 flex-1">
-				<ScrollArea class="h-full" orientation="vertical">
-					<div class="flex flex-col gap-2 p-2" role="list">
-						{@render children()}
-					</div>
-				</ScrollArea>
-			</CollapsibleContent>
-		</div>
-	{/if}
-</CollapsibleRoot>
+				<!-- Column content -->
+				<CollapsibleContent>
+					<Box minHeight={0} flex={1}>
+						<ScrollArea full orientation="vertical">
+							<Stack gap={2} padding={2} role="list">
+								{@render children()}
+							</Stack>
+						</ScrollArea>
+					</Box>
+				</CollapsibleContent>
+			</div>
+		{/if}
+	</CollapsibleRoot>
+</Stack>
+
+<style>
+	/* Thin vertical bar appearance for collapsed column state.
+	   Writing-mode and complex flex layout cannot be expressed as typed props
+	   on CollapsibleTrigger, so scoped CSS is used here. */
+	.collapsed-bar {
+		display: flex;
+		width: 2.5rem;
+		flex-shrink: 0;
+		flex-direction: column;
+		align-items: center;
+		border-radius: 0.5rem;
+		border: 1px dashed var(--color-border);
+		background-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
+		transition: background-color 0.15s;
+		cursor: pointer;
+		height: 100%;
+	}
+
+	.collapsed-bar:hover {
+		background-color: color-mix(in srgb, var(--color-muted) 50%, transparent);
+	}
+
+	.collapsed-bar.drag-over {
+		border-color: var(--color-primary);
+		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+	}
+
+	/* Full column container: sets min-width, flex layout, rounded border, and bg. */
+	.column-expanded {
+		display: flex;
+		min-width: 14rem;
+		flex: 1;
+		flex-direction: column;
+		border-radius: 0.5rem;
+		border: 1px solid var(--color-border);
+		background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
+		transition: border-color 0.15s, background-color 0.15s;
+	}
+
+	.column-expanded.drag-over {
+		border-color: var(--color-primary);
+		background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+	}
+</style>
