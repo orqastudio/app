@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ContextEntry as ContextEntryType } from "@orqastudio/sdk";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, Caption } from "@orqastudio/svelte-components/pure";
 	import ContextDetailDialog from "./ContextDetailDialog.svelte";
 
 	let { entry }: { entry: ContextEntryType } = $props();
@@ -26,7 +26,7 @@
 	{:else}
 		<Icon name="message-square" size="sm" />
 	{/if}
-	<span class="flex-1 text-xs text-muted-foreground">{summaryText}</span>
+	<Caption>{summaryText}</Caption>
 </button>
 
 {#if dialogOpen}

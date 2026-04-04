@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
+	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
 	import logoPulse from "$lib/assets/logo-pulse.svg";
 
 	interface Props {
@@ -18,17 +18,17 @@
 >
 	<DialogContent>
 		<DialogHeader>
-			<div class="flex items-center gap-3">
+			<HStack gap={3}>
 				<img src={logoPulse} alt="OrqaStudio" class="h-10 w-10" />
-				<div class="flex flex-col gap-1">
+				<Stack gap={1}>
 					<DialogTitle>{appName}</DialogTitle>
 					<DialogDescription>Version {appVersion}</DialogDescription>
-				</div>
-			</div>
+				</Stack>
+			</HStack>
 		</DialogHeader>
-		<div class="flex flex-col gap-2">
-			<span class="text-sm text-muted-foreground">A managed agentic development environment powered by Claude.</span>
-			<span class="text-xs text-muted-foreground">Built with Tauri, Svelte, and Rust.</span>
-		</div>
+		<Stack gap={2}>
+			<Text tone="muted">A managed agentic development environment powered by Claude.</Text>
+			<Text variant="caption" tone="muted">Built with Tauri, Svelte, and Rust.</Text>
+		</Stack>
 	</DialogContent>
 </DialogRoot>

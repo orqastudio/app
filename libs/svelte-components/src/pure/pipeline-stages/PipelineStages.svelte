@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "../tooltip/index.js";
+	import { HStack } from "../layout/index.js";
 	import type { Component } from "svelte";
 
 	export type PipelineStage = {
@@ -41,7 +42,7 @@
 	}
 </script>
 
-<div class="flex items-stretch gap-1.5">
+<HStack gap={1.5} align="stretch">
 	{#each stages as stage, i (stage.key)}
 		{#if stage.tooltipTitle}
 			<TooltipRoot>
@@ -116,7 +117,7 @@
 			{/if}
 		{/if}
 	{/each}
-</div>
+</HStack>
 
 {#snippet stageInner(stage: PipelineStage)}
 	{#if stage.icon}

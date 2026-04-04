@@ -47,6 +47,7 @@
 		"aria-label": ariaLabel,
 		onclick,
 		onkeydown,
+		style,
 		children,
 	}: {
 		gap?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
@@ -61,6 +62,8 @@
 		"aria-label"?: string;
 		onclick?: (e: MouseEvent) => void;
 		onkeydown?: (e: KeyboardEvent) => void;
+		/** Inline style for dynamic positioning (e.g. indentation). */
+		style?: string;
 		children?: Snippet;
 	} = $props();
 
@@ -85,6 +88,7 @@
 	aria-label={ariaLabel}
 	{onclick}
 	{onkeydown}
+	{style}
 >
 	{@render children?.()}
 </div>

@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Component } from "svelte";
 	import { cn } from "../../utils/cn.js";
+	import { Stack, HStack } from "../layout/index.js";
+	import { Text, Caption } from "../typography/index.js";
 
 	let {
 		title,
@@ -26,15 +28,15 @@
 	)}
 	{onclick}
 >
-	<span class="flex items-center gap-1.5 truncate text-sm font-medium">
+	<HStack gap={1.5}>
 		{#if StatusIcon}
 			<StatusIcon class="inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 		{:else if badge}
 			<span class="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] font-normal text-muted-foreground">{badge}</span>
 		{/if}
-		<span class="truncate">{title}</span>
-	</span>
+		<span class="truncate text-sm font-medium">{title}</span>
+	</HStack>
 	{#if description}
-		<p class="truncate text-xs text-muted-foreground">{description}</p>
+		<Caption truncate>{description}</Caption>
 	{/if}
 </button>

@@ -3,7 +3,7 @@
 	import { Icon } from "../icon/index.js";
 	import { Button } from "../button/index.js";
 	import { Textarea } from "../textarea/index.js";
-	import { HStack } from "../layout/index.js";
+	import { HStack, Center } from "../layout/index.js";
 	import { Caption } from "../typography/index.js";
 	import { Kbd } from "../kbd/index.js";
 
@@ -91,9 +91,9 @@
 			</Button>
 		{/if}
 	</HStack>
-	<div class="mt-1 text-center">
+	<Center>
 		<Caption block>
 			<Kbd>Enter</Kbd> to send, <Kbd>Shift+Enter</Kbd> for newline
 		</Caption>
-	</div>
+	</Center>
 </div>

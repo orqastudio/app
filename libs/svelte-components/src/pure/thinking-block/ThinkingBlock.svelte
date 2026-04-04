@@ -6,6 +6,7 @@
 		CollapsibleContent,
 		CollapsibleTrigger,
 	} from "../collapsible/index.js";
+	import { Text } from "../typography/index.js";
 
 	let { content, isStreaming = false }: { content: string; isStreaming?: boolean } = $props();
 
@@ -27,9 +28,7 @@
 				class="h-3.5 w-3.5 shrink-0 text-warning transition-transform {open ? 'rotate-90' : ''}"
 			/>
 			<BrainIcon class="h-3.5 w-3.5 shrink-0 text-warning" />
-			<span class="flex-1 text-xs text-warning">
-				{isStreaming ? "Reasoning..." : "Reasoning"}
-			</span>
+			<Text variant="caption" tone="warning">{isStreaming ? "Reasoning..." : "Reasoning"}</Text>
 			{#if isStreaming}
 				<span class="h-2 w-2 animate-pulse rounded-full bg-warning"></span>
 			{/if}

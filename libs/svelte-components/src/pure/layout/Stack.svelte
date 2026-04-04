@@ -19,10 +19,13 @@
 	let {
 		gap = 2,
 		align = "start",
+		full = false,
 		children,
 	}: {
 		gap?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
 		align?: "start" | "center" | "end" | "stretch";
+		/** When true, expands to fill the full height of the parent. */
+		full?: boolean;
 		children?: Snippet;
 	} = $props();
 
@@ -37,6 +40,7 @@
 		align === "end" && "items-end",
 		align === "stretch" && "items-stretch",
 		align === "start" && "items-start",
+		full && "h-full",
 	)}
 >
 	{@render children?.()}

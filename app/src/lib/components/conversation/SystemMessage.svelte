@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Caption, Text } from "@orqastudio/svelte-components/pure";
+	import { Caption } from "@orqastudio/svelte-components/pure";
 
 	let { message }: { message: Message } = $props();
 
@@ -13,10 +13,6 @@
 			? 'bg-destructive/10'
 			: 'bg-muted/30'}"
 	>
-		{#if isError}
-			<Caption>{message.content ?? ""}</Caption>
-		{:else}
-			<Caption>{message.content ?? ""}</Caption>
-		{/if}
+		<Caption tone={isError ? "destructive" : undefined}>{message.content ?? ""}</Caption>
 	</div>
 </div>

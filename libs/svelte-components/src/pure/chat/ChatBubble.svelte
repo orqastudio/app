@@ -1,6 +1,7 @@
 <!-- Message bubble wrapper with role-based styling. Content is passed as a child snippet. -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
+	import { HStack } from "../layout/index.js";
 
 	let {
 		role,
@@ -13,21 +14,21 @@
 </script>
 
 {#if role === "user"}
-	<div class="flex justify-end">
+	<HStack justify="end">
 		<div class="max-w-[80%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-primary-foreground">
 			{#if children}{@render children()}{/if}
 		</div>
-	</div>
+	</HStack>
 {:else if role === "assistant"}
-	<div class="flex justify-start">
+	<HStack justify="start">
 		<div class="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted/50 px-4 py-2.5">
 			{#if children}{@render children()}{/if}
 		</div>
-	</div>
+	</HStack>
 {:else}
-	<div class="flex justify-center">
+	<HStack justify="center">
 		<div class="max-w-[90%] rounded-lg bg-muted/30 px-4 py-2">
 			{#if children}{@render children()}{/if}
 		</div>
-	</div>
+	</HStack>
 {/if}

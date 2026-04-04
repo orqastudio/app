@@ -19,6 +19,7 @@ const meta = {
 			options: ["start", "center", "end", "between", "around"],
 		},
 		wrap: { control: "boolean" },
+		full: { control: "boolean" },
 	},
 } satisfies Meta;
 

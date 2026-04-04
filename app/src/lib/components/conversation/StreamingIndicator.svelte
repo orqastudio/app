@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { ToolCallState } from "@orqastudio/sdk";
 	import { getActivityPhase, getEphemeralLabel } from "$lib/utils/tool-display";
-	import { Caption, StreamingDots } from "@orqastudio/svelte-components/pure";
+	import { Caption, Text, StreamingDots } from "@orqastudio/svelte-components/pure";
 
 	let {
 		hasContent = false,
@@ -81,9 +81,9 @@
 			<StreamingDots />
 			<span class="text-sm font-medium text-muted-foreground">{statusLabel}...</span>
 			{#if hasActiveTools}
-				<span class="text-xs tabular-nums opacity-70">
+				<Text variant="tabular">
 					({toolCalls.filter((t) => t.isComplete).length}/{toolCalls.length} tools)
-				</span>
+				</Text>
 			{/if}
 		</div>
 		{#if ephemeralText}

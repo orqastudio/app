@@ -129,18 +129,15 @@
 											{/if}
 
 											<!-- Artifact chip -->
-											<div
-												class="flex items-center gap-1"
-												style={nodeIdx === 0 ? "" : `margin-left: ${nodeIdx * 8}px`}
-											>
+											<HStack gap={1} style={nodeIdx === 0 ? "" : `margin-left: ${nodeIdx * 8}px`}>
 												<span class="shrink-0 text-muted-foreground">
 													<Icon name={pluginRegistry.getIconForType(node.artifact_type)} size="xs" />
 												</span>
 												<ArtifactLink id={node.id} />
 												{#if node.artifact_type === "pillar" || node.artifact_type === "vision"}
-													<span class="capitalize"><Badge variant="secondary" size="xs">{node.artifact_type}</Badge></span>
+													<Badge variant="secondary" size="xs">{node.artifact_type}</Badge>
 												{/if}
-											</div>
+											</HStack>
 
 											<!-- Relationship label between nodes -->
 											{#if node.relationship && nodeIdx < chain.path.length - 1}

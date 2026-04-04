@@ -2,8 +2,7 @@
 	import type { Component, Snippet } from "svelte";
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import { cn } from "../../utils/cn.js";
-	import { HStack, Stack } from "../layout/index.js";
-	import { Text, Caption } from "../typography/index.js";
+	import { Stack } from "../layout/index.js";
 
 	let {
 		icon: Icon,
@@ -33,7 +32,7 @@
 	}
 </script>
 
-<div>
+<Stack gap={0}>
 	<button
 		class={cn(
 			"flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm hover:bg-accent/50",
@@ -59,4 +58,4 @@
 			{@render children()}
 		</div>
 	{/if}
-</div>
+</Stack>
