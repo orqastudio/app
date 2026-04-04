@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Welcome screen shown when no project is open. Delegates all layout to WelcomeHero.
 	import { open } from "@tauri-apps/plugin-dialog";
-	import { Icon, Button, LoadingSpinner } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, LoadingSpinner, Text } from "@orqastudio/svelte-components/pure";
 	import { WelcomeHero } from "@orqastudio/svelte-components/connected";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import { getStores } from "@orqastudio/sdk";
@@ -42,6 +42,6 @@
 		</Button>
 	{/if}
 	{#if projectStore.error}
-		<p class="text-sm text-destructive">{projectStore.error}</p>
+		<Text variant="body" tone="destructive" block>{projectStore.error}</Text>
 	{/if}
 </WelcomeHero>

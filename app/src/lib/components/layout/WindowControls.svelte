@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, HStack } from "@orqastudio/svelte-components/pure";
 
 	let isMaximized = $state(false);
 
@@ -33,30 +33,18 @@
 	}
 </script>
 
-<div class="flex items-center">
-	<button
-		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-accent hover:text-foreground"
-		onclick={minimize}
-		aria-label="Minimize"
-	>
+<HStack gap={0}>
+	<Button variant="ghost" size="icon-sm" onclick={minimize} aria-label="Minimize">
 		<Icon name="minus" size="sm" />
-	</button>
-	<button
-		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-accent hover:text-foreground"
-		onclick={toggleMaximize}
-		aria-label={isMaximized ? "Restore" : "Maximize"}
-	>
+	</Button>
+	<Button variant="ghost" size="icon-sm" onclick={toggleMaximize} aria-label={isMaximized ? "Restore" : "Maximize"}>
 		{#if isMaximized}
 			<Icon name="copy" size="xs" />
 		{:else}
 			<Icon name="square" size="xs" />
 		{/if}
-	</button>
-	<button
-		class="flex h-8 w-10 items-center justify-center rounded-none text-muted-foreground hover:bg-destructive hover:text-destructive-foreground"
-		onclick={close}
-		aria-label="Close"
-	>
+	</Button>
+	<Button variant="ghost" size="icon-sm" onclick={close} aria-label="Close">
 		<Icon name="x" size="sm" />
-	</button>
-</div>
+	</Button>
+</HStack>

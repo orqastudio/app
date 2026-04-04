@@ -3,7 +3,7 @@
 	import LessonList from "./LessonList.svelte";
 	import LessonViewer from "./LessonViewer.svelte";
 	import { getStores } from "@orqastudio/sdk";
-	import { Caption } from "@orqastudio/svelte-components/pure";
+	import { Caption, HStack, Center } from "@orqastudio/svelte-components/pure";
 
 	const { lessonStore, projectStore } = getStores();
 	import type { Lesson } from "@orqastudio/types";
@@ -39,9 +39,9 @@
 	}
 </script>
 
-<div class="flex h-full">
+<HStack gap={0} style="height: 100%;">
 	<!-- Lesson list sidebar (240px) -->
-	<div class="w-60 shrink-0 overflow-hidden border-r border-border">
+	<div style="width: 15rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid hsl(var(--border));">
 		<LessonList
 			lessons={lessonStore.lessons}
 			loading={lessonStore.loading}
@@ -53,13 +53,13 @@
 	</div>
 
 	<!-- Lesson viewer -->
-	<div class="min-w-0 flex-1 overflow-hidden">
+	<div style="min-width: 0; flex: 1; overflow: hidden;">
 		{#if selectedLesson}
 			<LessonViewer lesson={selectedLesson} onIncrementRecurrence={handleIncrementRecurrence} />
 		{:else}
-			<div class="flex h-full items-center justify-center">
+			<Center full>
 				<Caption>Select a lesson to view it</Caption>
-			</div>
+			</Center>
 		{/if}
 	</div>
-</div>
+</HStack>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Text, Caption, Code, Stack, HStack } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -30,32 +30,32 @@
 	});
 </script>
 
-<div class="flex flex-col items-center gap-4 text-center">
+<Stack gap={4} align="center">
 	<Icon name="shield-check" size="xl" />
 	<Heading level={3}>Authentication</Heading>
 	<Text tone="muted">Verifying Claude CLI authentication</Text>
 
 	{#if checking}
 		<LoadingSpinner size="md" />
-		<span class="text-xs text-muted-foreground">Checking authentication...</span>
+		<Caption tone="muted">Checking authentication...</Caption>
 	{:else if setupStore.error}
 		<ErrorDisplay message={setupStore.error} onRetry={check} />
 	{:else if setupStore.cliInfo?.authenticated}
-		<div class="flex flex-col items-center gap-2">
+		<Stack gap={2} align="center">
 			<Icon name="circle-check" size="xl" />
-			<p class="text-sm font-medium text-success">Authenticated</p>
+			<Text tone="success" variant="body-strong">Authenticated</Text>
 			{#if setupStore.cliInfo.subscription_type}
-				<span class="text-xs text-muted-foreground">Plan: {setupStore.cliInfo.subscription_type}</span>
+				<Caption tone="muted">Plan: {setupStore.cliInfo.subscription_type}</Caption>
 			{/if}
-		</div>
+		</Stack>
 	{:else}
-		<div class="flex flex-col items-center gap-3">
-			<p class="text-sm text-warning">Not authenticated</p>
-			<span class="text-xs text-muted-foreground">
-				Run <code class="rounded bg-muted px-1 py-0.5">claude</code> in your terminal and
+		<Stack gap={3} align="center">
+			<Text tone="warning">Not authenticated</Text>
+			<Caption tone="muted">
+				Run <Code>claude</Code> in your terminal and
 				follow the login prompts to authenticate.
-			</span>
+			</Caption>
 			<Button variant="outline" onclick={check}>Check Again</Button>
-		</div>
+		</Stack>
 	{/if}
-</div>
+</Stack>

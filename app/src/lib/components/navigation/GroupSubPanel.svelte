@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { TooltipRoot, TooltipTrigger } from "@orqastudio/svelte-components/pure";
+	import { TooltipRoot, TooltipTrigger, Stack } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, projectStore, artifactStore } = getStores();
@@ -42,7 +42,7 @@
 	const activeSubCategory = $derived(navigationStore.activeSubCategory);
 </script>
 
-<div class="flex flex-col">
+<Stack gap={0}>
 	{#each subCategories as sub (sub.key)}
 		{@const subIconName = resolveIconName(sub.icon ?? getSubCategoryIcon(sub.key))}
 		{@const isActive = activeSubCategory === sub.key}
@@ -63,4 +63,4 @@
 			</TooltipTrigger>
 		</TooltipRoot>
 	{/each}
-</div>
+</Stack>

@@ -3,7 +3,7 @@
 	// PLATFORM_NAVIGATION merged with plugin defaultNavigation. The navigation
 	// tree is always available once a project is open; this component does not
 	// fall back to legacy artifact config rendering.
-	import { Separator } from "@orqastudio/svelte-components/pure";
+	import { Separator, Spacer, Box } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, settingsStore } = getStores();
@@ -57,7 +57,7 @@
 			{/if}
 		{/each}
 
-		<div class="flex-1"></div>
+		<Spacer />
 
 		<!-- Bottom items: Artifact Graph, Search, Plugins, Settings -->
 		{@const graphItem = navItems.find((i) => i.key === "artifact-graph")}
@@ -77,9 +77,9 @@
 			onclick={() => navigationStore.toggleSearch()}
 		/>
 
-		<div class="my-1 w-6">
+		<Box paddingY={1}>
 			<Separator />
-		</div>
+		</Box>
 
 		{@const pluginsItem = navItems.find((i) => i.key === "plugins")}
 		{#if pluginsItem && !pluginsItem.hidden}

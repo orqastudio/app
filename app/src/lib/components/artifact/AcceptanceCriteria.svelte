@@ -1,5 +1,6 @@
+<!-- Renders a list of acceptance criteria for a task artifact, using check icons when the task is completed. -->
 <script lang="ts">
-	import { Icon, CardRoot, CardContent } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardContent, Stack, HStack, Text } from "@orqastudio/svelte-components/pure";
 
 	let {
 		criteria,
@@ -15,21 +16,19 @@
 {#if criteria.length > 0}
 	<CardRoot>
 		<CardContent>
-			<p class="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-				Acceptance Criteria
-			</p>
-			<ul class="space-y-1.5">
+			<Text variant="overline-muted" block>Acceptance Criteria</Text>
+			<Stack gap={1.5} marginTop={2}>
 				{#each criteria as item, i (i)}
-					<li class="flex items-start gap-2 text-sm {isDone ? 'text-muted-foreground' : 'text-foreground'}">
+					<HStack gap={2} align="start">
 						{#if isDone}
 							<Icon name="square-check" size="sm" />
 						{:else}
 							<Icon name="square" size="sm" />
 						{/if}
-						<span class={isDone ? 'line-through' : ''}>{item}</span>
-					</li>
+						<Text variant={isDone ? "body-muted" : "body"}>{item}</Text>
+					</HStack>
 				{/each}
-			</ul>
+			</Stack>
 		</CardContent>
 	</CardRoot>
 {/if}

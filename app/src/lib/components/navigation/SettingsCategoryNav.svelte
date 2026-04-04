@@ -1,6 +1,6 @@
 <!-- Settings category navigation with architecture-aligned section groups. -->
 <script lang="ts">
-	import { Icon, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, ScrollArea, Stack, Box, Text } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { settingsStore, pluginRegistry } = getStores();
@@ -167,44 +167,46 @@
 </script>
 
 <ScrollArea full>
-	<div class="p-2">
+	<Box padding={2}>
 		{#if mode === "app"}
-			<div class="flex flex-col gap-0">
+			<Stack gap={0}>
 				{#each appCategories as item (item.id)}
 					<button
 						class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
 						onclick={() => handleSectionChange(item.id)}
 					>
 						<Icon name={item.icon} size="md" />
-						<div class="flex min-w-0 flex-col items-start gap-0">
-							<span class="truncate text-sm font-medium">{item.label}</span>
-							<span class="truncate text-xs text-muted-foreground">{item.description}</span>
-						</div>
+						<Stack gap={0} align="start" minHeight={0}>
+							<Text variant="label" truncate>{item.label}</Text>
+							<Text variant="caption" truncate>{item.description}</Text>
+						</Stack>
 					</button>
 				{/each}
-			</div>
+			</Stack>
 		{:else}
-			<div class="flex flex-col gap-4">
+			<Stack gap={4}>
 				{#each projectGroups as group (group.label)}
-					<div class="flex flex-col gap-0">
-						<span class="mb-1 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group.label}</span>
-						<div class="flex flex-col gap-0">
+					<Stack gap={0}>
+						<Box paddingX={2} paddingBottom={1}>
+							<Text variant="overline-muted">{group.label}</Text>
+						</Box>
+						<Stack gap={0}>
 							{#each group.items as item (item.id)}
 								<button
 									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
 									onclick={() => handleSectionChange(item.id)}
 								>
 									<Icon name={item.icon} size="md" />
-									<div class="flex min-w-0 flex-col items-start gap-0">
-										<span class="truncate text-sm font-medium">{item.label}</span>
-										<span class="truncate text-xs text-muted-foreground">{item.description}</span>
-									</div>
+									<Stack gap={0} align="start" minHeight={0}>
+										<Text variant="label" truncate>{item.label}</Text>
+										<Text variant="caption" truncate>{item.description}</Text>
+									</Stack>
 								</button>
 							{/each}
-						</div>
-					</div>
+						</Stack>
+					</Stack>
 				{/each}
-			</div>
+			</Stack>
 		{/if}
-	</div>
+	</Box>
 </ScrollArea>

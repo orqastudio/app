@@ -4,7 +4,7 @@
 		DropdownMenuSeparator,
 		DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
 		PopoverRoot as Popover, PopoverTrigger, PopoverContent,
-		Button, HStack, Stack, Caption,
+		Button, HStack, Stack, Box, Caption,
 		statusIconName, resolveIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
@@ -125,9 +125,9 @@
 	]);
 </script>
 
-<div class="flex items-center justify-end gap-1 h-10 border-b border-border px-2">
+<div class="flex h-10 items-center justify-end gap-1 border-b border-border px-2">
 	<!-- Sort dropdown -->
-	<div class="relative">
+	<Box position="relative">
 		<DropdownMenuRoot>
 			<DropdownMenuTrigger>
 				{#snippet child({ props })}
@@ -183,11 +183,11 @@
 				class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
 			></span>
 		{/if}
-	</div>
+	</Box>
 
 	<!-- Filter popover -->
 	{#if filterableFields.length > 0}
-		<div class="relative">
+		<Box position="relative">
 			<Popover>
 				<PopoverTrigger>
 					{#snippet child({ props })}
@@ -204,7 +204,7 @@
 					<Stack gap={0}>
 						{#each filterableFields as field (field.name)}
 							{@const counts = countFieldValues(nodes, field.name)}
-							<div class="border-b border-border last:border-0">
+							<Box borderBottom>
 								<HStack justify="between">
 									<Caption>
 										{humanizeField(field.name)}
@@ -249,18 +249,18 @@
 										</Button>
 									{/each}
 								</Stack>
-							</div>
+							</Box>
 						{/each}
 
 						{#if hasActiveFilters}
-							<div class="border-t border-border p-2">
+							<Box borderTop padding={2}>
 								<Button
 									variant="ghost"
 									onclick={clearAllFilters}
 								>
 									Clear all filters
 								</Button>
-							</div>
+							</Box>
 						{/if}
 					</Stack>
 				</PopoverContent>
@@ -270,6 +270,6 @@
 					class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
 				></span>
 			{/if}
-		</div>
+		</Box>
 	{/if}
 </div>

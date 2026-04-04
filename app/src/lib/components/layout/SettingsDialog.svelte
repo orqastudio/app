@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button, HStack, DialogRoot, DialogContent, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, HStack, Box, DialogRoot, DialogContent, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
 	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import SettingsCategoryNav from "$lib/components/navigation/SettingsCategoryNav.svelte";
 
@@ -30,13 +30,13 @@
 				<Icon name="x" size="md" />
 			</Button>
 		</HStack>
-		<div class="flex flex-1 overflow-hidden">
+		<HStack gap={0} flex={1} overflow="hidden">
 			<div class="w-56 shrink-0 border-r border-border">
 				<SettingsCategoryNav mode="app" activeSection={dialogSection} onSectionChange={(s) => { dialogSection = s; }} />
 			</div>
-			<div class="flex-1 overflow-hidden">
+			<Box flex={1} overflow="hidden">
 				<SettingsView activeSection={dialogSection} />
-			</div>
-		</div>
+			</Box>
+		</HStack>
 	</DialogContent>
 </DialogRoot>

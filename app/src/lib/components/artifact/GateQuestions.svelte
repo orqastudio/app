@@ -1,4 +1,7 @@
+<!-- Renders gate questions from a milestone or pillar artifact. Uses a bordered box to visually distinguish the question block. -->
 <script lang="ts">
+	import { Stack, Text, Box } from "@orqastudio/svelte-components/pure";
+
 	let {
 		questions,
 	}: {
@@ -9,12 +12,14 @@
 </script>
 
 {#if questions.length > 0}
-	<div>
-		<p class="mb-2 text-xs font-medium text-muted-foreground">{label}</p>
-		<blockquote class="space-y-2 border-l-2 border-muted-foreground/30 pl-3">
-			{#each questions as question, i (i)}
-				<p class="text-xs italic text-foreground">"{question}"</p>
-			{/each}
-		</blockquote>
-	</div>
+	<Stack gap={2}>
+		<Text variant="caption">{label}</Text>
+		<Box borderTop paddingX={3} paddingY={2}>
+			<Stack gap={2}>
+				{#each questions as question, i (i)}
+					<Text variant="caption" block>"{question}"</Text>
+				{/each}
+			</Stack>
+		</Box>
+	</Stack>
 {/if}

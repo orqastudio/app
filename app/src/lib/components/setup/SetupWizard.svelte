@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, Caption, HStack, Dot } from "@orqastudio/svelte-components/pure";
 	import ClaudeCliStep from "./ClaudeCliStep.svelte";
 	import ClaudeAuthStep from "./ClaudeAuthStep.svelte";
 	import SidecarStep from "./SidecarStep.svelte";
@@ -25,39 +25,36 @@
 	}
 </script>
 
-<div
-	class="relative flex h-full w-full items-center justify-center overflow-hidden"
-	style="background-image: url({setupBackground}); background-size: cover; background-position: center;"
->
-	<div class="absolute inset-0 bg-background/70"></div>
+<!-- Full-screen background with cover image -->
+<div style="position: relative; display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; overflow: hidden; background-image: url({setupBackground}); background-size: cover; background-position: center;">
+	<!-- Backdrop overlay -->
+	<div style="position: absolute; inset: 0; background: hsl(var(--background) / 0.7);"></div>
 
-	<div class="relative z-10 w-full max-w-lg px-4">
+	<!-- Centered card container -->
+	<div style="position: relative; z-index: 10; width: 100%; max-width: 32rem; padding: 0 1rem;">
 		<CardRoot>
 			<CardHeader>
-				<div class="text-center">
+				<div style="text-align: center;">
 					<CardTitle>Welcome to OrqaStudio</CardTitle>
 					<CardDescription>
 						Let's make sure everything is set up for managed agentic development.
 					</CardDescription>
 
-					<!-- Step indicator -->
-					<div class="flex items-center justify-center gap-2 pt-3">
+					<!-- Step indicator dots -->
+					<HStack gap={2} justify="center" style="padding-top: 0.75rem;">
 						{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
-							<div
-								class="h-2 w-2 rounded-full transition-colors {i < setupStore.currentStep
-									? 'bg-primary'
-									: i === setupStore.currentStep
-										? 'bg-primary'
-										: 'bg-muted'}"
-							></div>
+							<Dot
+								color={i <= setupStore.currentStep ? "primary" : "muted"}
+								size="md"
+							/>
 						{/each}
-					</div>
-					<span class="text-xs text-muted-foreground">Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</span>
+					</HStack>
+					<Caption tone="muted">Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</Caption>
 				</div>
 			</CardHeader>
 
 			<CardContent>
-				<div class="min-h-[200px]">
+				<div style="min-height: 12.5rem;">
 					{#if setupStore.stepId === "claude_cli"}
 						<ClaudeCliStep onComplete={handleStepComplete} />
 					{:else if setupStore.stepId === "claude_auth"}

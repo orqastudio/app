@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@orqastudio/svelte-components/pure";
+	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Box, Text } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 
 	interface Props {
@@ -24,9 +24,9 @@
 			</DialogDescription>
 		</DialogHeader>
 		{#if pendingPath}
-			<p class="rounded bg-muted px-3 py-2 text-xs font-mono text-muted-foreground truncate">
-				{pendingPath}
-			</p>
+			<Box background="muted" rounded="md" paddingX={3} paddingY={2}>
+				<Text variant="caption-mono" truncate>{pendingPath}</Text>
+			</Box>
 		{/if}
 		<DialogFooter>
 			<Button variant="outline" onclick={onCancel}>Cancel</Button>

@@ -3,7 +3,7 @@
 	import { readTextFile } from "@tauri-apps/plugin-fs";
 	import { logger } from "@orqastudio/sdk";
 	import { getPluginPath } from "$lib/services/plugin-service.js";
-	import { Caption, CardRoot, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Caption, CardRoot, ScrollArea, Center, Text } from "@orqastudio/svelte-components/pure";
 
 	const log = logger("plugin-view");
 
@@ -62,18 +62,19 @@
 
 <ScrollArea full>
 	{#if loading}
-		<div class="flex h-full items-center justify-center">
+		<Center full>
 			<Caption>Loading plugin view...</Caption>
-		</div>
+		</Center>
 	{:else if error}
-		<div class="flex h-full items-center justify-center">
+		<Center full>
 			<CardRoot>
-				<div class="max-w-md p-4">
-					<span class="text-sm text-destructive">{error}</span>
+				<div style="max-width: 28rem; padding: 1rem;">
+					<Text tone="destructive">{error}</Text>
 				</div>
 			</CardRoot>
-		</div>
+		</Center>
 	{:else}
-		<div bind:this={container} class="h-full w-full"></div>
+		<!-- bind:this is a legitimate exception — plugin mount target -->
+		<div bind:this={container} style="height: 100%; width: 100%;"></div>
 	{/if}
 </ScrollArea>

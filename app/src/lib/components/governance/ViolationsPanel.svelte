@@ -9,6 +9,12 @@
 		ErrorDisplay,
 		Heading,
 		Caption,
+		Button,
+		Center,
+		HStack,
+		Stack,
+		Box,
+		Text,
 	} from "@orqastudio/svelte-components/pure";
 	import { logger } from "@orqastudio/sdk";
 	import type { StoredEnforcementViolation } from "@orqastudio/types";
@@ -61,12 +67,12 @@
 	}
 </script>
 
-<div class="flex h-full flex-col">
+<Stack gap={0} height="full">
 	<!-- Header with summary counts -->
-	<div class="border-b border-border px-4 py-3">
-		<div class="flex items-center justify-between">
+	<Box borderBottom paddingX={4} paddingY={3}>
+		<HStack justify="between">
 			<Heading level={5}>Violation History</Heading>
-			<div class="flex items-center gap-2">
+			<HStack gap={2}>
 				{#if blockCount > 0}
 					<Badge variant="destructive" size="sm">
 						{blockCount} blocked
@@ -77,43 +83,44 @@
 						{warnCount} warned
 					</Badge>
 				{/if}
-			</div>
-		</div>
+			</HStack>
+		</HStack>
 
 		<!-- Filters -->
-		<div class="mt-2 flex items-center gap-2">
-			<div class="flex-1">
+		<HStack gap={2} marginTop={2}>
+			<Box flex={1}>
 				<SearchInput
 					bind:value={ruleFilter}
 					placeholder="Filter by rule name..."
 					size="xs"
 				/>
-			</div>
-			<div class="flex items-center gap-1">
+			</Box>
+			<HStack gap={1}>
 				{#each (["all", "block", "warn"] as const) as opt (opt)}
-					<button
-						class="h-7 rounded px-2 text-xs {actionFilter === opt ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-accent'}"
+					<Button
+						variant={actionFilter === opt ? "secondary" : "ghost"}
+						size="sm"
 						onclick={() => { actionFilter = opt; }}
 					>
 						{opt === "all" ? "All" : opt === "block" ? "Blocks" : "Warns"}
-					</button>
+					</Button>
 				{/each}
-			</div>
-		</div>
-	</div>
+			</HStack>
+		</HStack>
+	</Box>
 
 	<!-- Content -->
-	<div class="min-h-0 flex-1">
+	<Box minHeight={0} flex={1}>
 		{#if loading}
-			<div class="flex h-full items-center justify-center">
+			<Center full>
 				<LoadingSpinner />
-			</div>
+			</Center>
 		{:else if error}
-			<div class="flex h-full items-center justify-center px-4">
+			<Center full padding={4}>
 				<ErrorDisplay message={error} onRetry={onRetry} />
-			</div>
+			</Center>
 		{:else if filtered.length === 0}
-			<div class="flex h-full items-center justify-center">
+			<Center full>
 				{#if violations.length === 0}
 					<EmptyState
 						icon="shield"
@@ -126,58 +133,54 @@
 						description="No violations match your current filters."
 					/>
 				{/if}
-			</div>
+			</Center>
 		{:else}
 			<ScrollArea full>
-				<div class="divide-y divide-border">
+				<Stack gap={0}>
 					{#each filtered as v (v.id)}
-						<div class="flex items-start gap-3 px-4 py-2.5 hover:bg-muted/30">
+						<HStack gap={3} borderBottom paddingX={4} paddingY={2} align="start">
 							<!-- Action icon -->
-							<div class="mt-0.5 shrink-0">
+							<Box flex={0} marginTop={1}>
 								{#if v.action.toLowerCase() === "block"}
 									<Icon name="shield" size="sm" />
 								{:else}
 									<Icon name="alert-triangle" size="sm" />
 								{/if}
-							</div>
+							</Box>
 
-							<!-- Details -->
-							<div class="min-w-0 flex-1">
-								<div class="flex items-center gap-2">
-									<span class="truncate text-xs font-medium">{v.rule_name}</span>
-									<span class="shrink-0"><Badge
+							<!-- Details — min-width: 0 prevents flex child overflow -->
+							<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+								<HStack gap={2}>
+									<Text variant="caption-strong" truncate>{v.rule_name}</Text>
+									<Badge
 										variant={v.action.toLowerCase() === "block" ? "destructive" : "warning"}
 										size="xs"
 									>
 										{v.action.toLowerCase()}
-									</Badge></span>
-								</div>
-								<span class="block truncate font-mono text-[10px] text-muted-foreground">
-									{v.tool_name}
-								</span>
+									</Badge>
+								</HStack>
+								<Caption variant="caption-mono" truncate>{v.tool_name}</Caption>
 								{#if v.detail}
-									<span class="block truncate text-[10px] text-muted-foreground">
-										{v.detail}
-									</span>
+									<Caption truncate>{v.detail}</Caption>
 								{/if}
 							</div>
 
 							<!-- Timestamp -->
-							<div class="flex shrink-0 items-center gap-1">
+							<HStack gap={1} flex={0}>
 								<Icon name="clock" size="xs" />
 								<Caption>{formatTimestamp(v.created_at)}</Caption>
-							</div>
-						</div>
+							</HStack>
+						</HStack>
 					{/each}
-				</div>
+				</Stack>
 			</ScrollArea>
 		{/if}
-	</div>
+	</Box>
 
 	<!-- Footer with result count -->
 	{#if !loading && !error && violations.length > 0}
-		<div class="border-t border-border px-4 py-2">
+		<Box borderTop paddingX={4} paddingY={2}>
 			<Caption>{filtered.length} of {violations.length} {violations.length === 1 ? "violation" : "violations"}</Caption>
-		</div>
+		</Box>
 	{/if}
-</div>
+</Stack>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import { Caption, Center } from "@orqastudio/svelte-components/pure";
 
 	let { text }: { text: string } = $props();
 
@@ -184,18 +185,19 @@
 	});
 </script>
 
-<div class="plantuml-diagram rounded border border-border bg-muted/30 p-4 overflow-x-auto">
+<!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
+<div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
 	{#if loading}
-		<div class="flex items-center justify-center py-8 text-xs text-muted-foreground">
-			Loading PlantUML diagram...
-		</div>
+		<Center padding={8}>
+			<Caption tone="muted">Loading PlantUML diagram...</Caption>
+		</Center>
 	{:else if error}
-		<div class="rounded bg-destructive/10 p-3 text-xs text-destructive">
-			<p class="font-semibold">PlantUML render error</p>
-			<pre class="mt-1 whitespace-pre-wrap">{error}</pre>
+		<div style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;">
+			<Caption variant="caption-strong" tone="destructive">PlantUML render error</Caption>
+			<pre style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
 		</div>
 	{:else if svgContent}
-		<div class="flex justify-center [&_svg]:max-w-full">
+		<div style="display: flex; justify-content: center;">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- PlantUML server returns SVG content that must be rendered as HTML -->
 			{@html svgContent}
 		</div>

@@ -1,6 +1,8 @@
+<!-- Master-detail layout: file browser on the left, artifact viewer on the right. Auto-loads category README when nothing is selected. -->
 <script lang="ts">
 	import ArtifactNav from "$lib/components/navigation/ArtifactNav.svelte";
 	import ArtifactViewer from "./ArtifactViewer.svelte";
+	import { HStack, Box, Text } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ActivityView } from "@orqastudio/sdk";
 
@@ -32,20 +34,21 @@
 	});
 </script>
 
-<div class="flex h-full">
-	<!-- File Browser (240px) -->
-	<div class="w-60 shrink-0 overflow-hidden border-r border-border">
+<!-- HStack fills full height; the sidebar has a fixed w-60 which Box does not support, so it uses a bare div. -->
+<HStack gap={0} height="full">
+	<!-- File Browser: w-60 is a specific size not in Box's width map, so a bare div is used here. -->
+	<div class="w-60 shrink-0 overflow-hidden border-r border-border h-full">
 		<ArtifactNav category={activity} />
 	</div>
 
 	<!-- Viewer -->
-	<div class="min-w-0 flex-1 overflow-hidden">
+	<Box flex={1} minWidth={0} overflow="hidden">
 		{#if hasSelection}
 			<ArtifactViewer />
 		{:else}
-			<div class="flex h-full items-center justify-center text-sm text-muted-foreground">
-				Select an item to view it
-			</div>
+			<HStack justify="center" align="center" height="full">
+				<Text variant="body-muted">Select an item to view it</Text>
+			</HStack>
 		{/if}
-	</div>
-</div>
+	</Box>
+</HStack>

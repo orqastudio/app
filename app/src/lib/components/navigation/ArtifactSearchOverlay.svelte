@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Caption } from "@orqastudio/svelte-components/pure";
+	import { Icon, Caption, Box, Stack, HStack, Text, Button, SearchInput } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, artifactGraphSDK } = getStores();
@@ -88,7 +88,7 @@
 </script>
 
 {#if open}
-	<!-- Backdrop -->
+	<!-- Backdrop — fixed overlay that intercepts clicks outside the search card -->
 	<div
 		class="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm"
 		onclick={handleBackdropClick}
@@ -101,8 +101,8 @@
 		<!-- Centred card in upper third -->
 		<div class="mx-auto mt-[15vh] w-full max-w-xl px-4">
 			<div class="rounded-lg border border-border bg-popover shadow-2xl">
-				<!-- Search input -->
-				<div class="flex items-center gap-2 border-b border-border px-3">
+				<!-- Search input row -->
+				<HStack gap={2} paddingX={3} borderBottom>
 					<Icon name="search" size="md" />
 					<input
 						bind:this={inputEl}
@@ -111,22 +111,24 @@
 						class="h-12 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
 					/>
 					{#if query}
-						<button
-							class="flex h-6 w-6 items-center justify-center rounded hover:bg-accent"
+						<Button
+							variant="ghost"
+							size="icon-sm"
 							onclick={() => {
 								query = "";
 								inputEl?.focus();
 							}}
+							aria-label="Clear search"
 						>
 							<Icon name="x" size="sm" />
-						</button>
+						</Button>
 					{/if}
-				</div>
+				</HStack>
 
-				<!-- Results -->
+				<!-- Results list -->
 				{#if query.trim() && results.length > 0}
-					<div class="max-h-[40vh] overflow-y-auto">
-						<div class="p-1">
+					<Box overflow="auto">
+						<Box padding={1}>
 							{#each results as node, i (node.id)}
 								<button
 									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm {i === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
@@ -151,9 +153,7 @@
 									{/if}
 
 									<!-- ID badge -->
-									<span
-										class="shrink-0 rounded bg-muted px-1 py-0.5 font-mono text-[11px] text-muted-foreground"
-									>
+									<span class="shrink-0 rounded bg-muted px-1 py-0.5 font-mono text-[11px] text-muted-foreground">
 										{node.id}
 									</span>
 
@@ -161,34 +161,30 @@
 									<span class="min-w-0 flex-1 truncate">{node.title}</span>
 
 									<!-- Type -->
-									<span class="shrink-0 text-xs uppercase tracking-wider text-muted-foreground">
-										{node.artifact_type}
-									</span>
+									<Text variant="caption" truncate>{node.artifact_type}</Text>
 								</button>
 							{/each}
-						</div>
-					</div>
+						</Box>
+					</Box>
 				{:else if query.trim()}
-					<div class="flex items-center justify-center px-3 py-6">
+					<Box paddingX={3} paddingY={6}>
 						<Caption>No matching artifacts</Caption>
-					</div>
+					</Box>
 				{:else}
-					<div class="flex items-center justify-center px-3 py-6">
+					<Box paddingX={3} paddingY={6}>
 						<Caption>Type to search across all artifacts</Caption>
-					</div>
+					</Box>
 				{/if}
 
 				<!-- Footer hint -->
-				<div
-					class="flex items-center justify-between border-t border-border px-3 py-1.5 text-[10px] text-muted-foreground"
-				>
-					<span>↑↓ Navigate</span>
+				<HStack justify="between" paddingX={3} paddingY={1} borderTop>
+					<Text variant="caption">↑↓ Navigate</Text>
 					{#if query.trim() && results.length > 0}
-						<span>{results.length}{results.length >= 50 ? "+" : ""} results</span>
+						<Text variant="caption">{results.length}{results.length >= 50 ? "+" : ""} results</Text>
 					{/if}
-					<span>↵ Open</span>
-					<span>Esc Close</span>
-				</div>
+					<Text variant="caption">↵ Open</Text>
+					<Text variant="caption">Esc Close</Text>
+				</HStack>
 			</div>
 		</div>
 	</div>

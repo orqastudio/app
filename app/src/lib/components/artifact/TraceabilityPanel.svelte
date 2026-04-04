@@ -1,3 +1,4 @@
+<!-- Collapsible panel showing artifact traceability: ancestry chains (why it exists), descendants (what it affects), and siblings (related work). -->
 <script lang="ts">
 	import { SvelteSet } from "svelte/reactivity";
 	import {
@@ -7,6 +8,10 @@
 		CollapsibleTrigger,
 		Badge,
 		HStack,
+		Stack,
+		Box,
+		Text,
+		Caption,
 	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
@@ -60,18 +65,18 @@
 </script>
 
 {#if loading}
-	<div class="border-b border-border px-4 py-2">
-		<div class="flex items-center gap-2 text-xs text-muted-foreground">
+	<Box borderBottom paddingX={4} paddingY={2}>
+		<HStack gap={2}>
 			<LoadingSpinner size="sm" />
-			<span>Loading traceability…</span>
-		</div>
-	</div>
+			<Caption>Loading traceability…</Caption>
+		</HStack>
+	</Box>
 {:else if error}
-	<div class="border-b border-border px-4 py-2">
-		<p class="text-xs text-destructive">{error}</p>
-	</div>
+	<Box borderBottom paddingX={4} paddingY={2}>
+		<Text variant="caption" tone="destructive" block>{error}</Text>
+	</Box>
 {:else if result}
-	<div class="border-b border-border px-4 py-2">
+	<Box borderBottom paddingX={4} paddingY={2}>
 		<Collapsible bind:open>
 			<CollapsibleTrigger
 				class="flex w-full items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -90,9 +95,9 @@
 			</CollapsibleTrigger>
 
 			<CollapsibleContent>
-				<div class="space-y-3 pt-2 pl-4">
+				<Stack gap={3} paddingTop={2} paddingX={4}>
 
-					<!-- Disconnected warning -->
+					<!-- Disconnected warning — bg-warning/10 is not in Box background map, kept as div. -->
 					{#if result.disconnected}
 						<div class="flex items-start gap-2 rounded border border-warning/30 bg-warning/10 px-2 py-1.5">
 							<span class="mt-0.5 shrink-0 text-warning">
@@ -106,15 +111,13 @@
 
 					<!-- Ancestry chains -->
 					{#if uniqueChains.length > 0}
-						<div class="space-y-2">
-							<span class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-								Why does this exist?
-							</span>
+						<Stack gap={2}>
+							<Caption variant="caption-strong" block>Why does this exist?</Caption>
 							{#each uniqueChains as chain, chainIdx (chainIdx)}
-								<div class="space-y-0.5">
+								<Stack gap={0.5}>
 									{#each chain.path as node, nodeIdx (node.id + nodeIdx)}
 										<HStack gap={1}>
-											<!-- Indent guide line -->
+											<!-- Indent guide line — style= indentation is dynamic, must use inline style. -->
 											{#if nodeIdx > 0}
 												<div
 													class="ml-1 h-full w-px shrink-0 self-stretch bg-border"
@@ -147,14 +150,14 @@
 											{/if}
 										</HStack>
 									{/each}
-								</div>
+								</Stack>
 							{/each}
-						</div>
+						</Stack>
 					{/if}
 
 					<!-- Descendants -->
 					{#if result.descendants.length > 0}
-						<div class="space-y-1">
+						<Stack gap={1}>
 							<Collapsible bind:open={descendantsOpen}>
 								<CollapsibleTrigger
 									class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
@@ -170,7 +173,7 @@
 									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
-									<div class="flex flex-wrap gap-1 pt-1 pl-3">
+									<HStack wrap gap={1} paddingTop={1} paddingX={3}>
 										{#each visibleDescendants as desc (desc.id)}
 											<HStack gap={1}>
 												<ArtifactLink id={desc.id} />
@@ -180,19 +183,17 @@
 											</HStack>
 										{/each}
 										{#if result.descendants.length > 20}
-											<span class="text-[10px] text-muted-foreground">
-												… and {result.descendants.length - 20} more
-											</span>
+											<Caption>… and {result.descendants.length - 20} more</Caption>
 										{/if}
-									</div>
+									</HStack>
 								</CollapsibleContent>
 							</Collapsible>
-						</div>
+						</Stack>
 					{/if}
 
 					<!-- Siblings -->
 					{#if result.siblings.length > 0}
-						<div class="space-y-1">
+						<Stack gap={1}>
 							<Collapsible bind:open={siblingsOpen}>
 								<CollapsibleTrigger
 									class="text-[10px] font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground transition-colors"
@@ -208,21 +209,21 @@
 									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
-									<div class="flex flex-wrap gap-1 pt-1 pl-3">
+									<HStack wrap gap={1} paddingTop={1} paddingX={3}>
 										{#each result.siblings as siblingId (siblingId)}
 											<ArtifactLink id={siblingId} />
 										{/each}
-									</div>
+									</HStack>
 								</CollapsibleContent>
 							</Collapsible>
-						</div>
+						</Stack>
 					{/if}
 
 					{#if !hasContent && !result.disconnected}
-						<p class="text-[11px] text-muted-foreground">No traceability data for this artifact.</p>
+						<Caption block>No traceability data for this artifact.</Caption>
 					{/if}
-				</div>
+				</Stack>
 			</CollapsibleContent>
 		</Collapsible>
-	</div>
+	</Box>
 {/if}

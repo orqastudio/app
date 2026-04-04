@@ -43,7 +43,7 @@
 {#if isArtifactLink}
 	<ArtifactLink id={href} />
 {:else if isExternal}
-	<a {href} {title} class="cursor-pointer" onclick={handleExternalClick}>
+	<a {href} {title} onclick={handleExternalClick}>
 		{@render children?.()}
 	</a>
 {:else}

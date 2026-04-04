@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent, VisuallyHidden } from "@orqastudio/svelte-components/pure";
+	import { Icon, Text, TooltipRoot, TooltipTrigger, TooltipContent, VisuallyHidden } from "@orqastudio/svelte-components/pure";
 
 	let {
 		icon,
@@ -30,6 +30,6 @@
 		{/snippet}
 	</TooltipTrigger>
 	<TooltipContent side="right">
-		<p>{label}</p>
+		<Text variant="body">{label}</Text>
 	</TooltipContent>
 </TooltipRoot>

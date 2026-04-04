@@ -1,5 +1,6 @@
+<!-- Collapsible panel showing incoming and outgoing references for an artifact. Supports list and graph views. -->
 <script lang="ts">
-	import { Icon, HStack,
+	import { Icon, HStack, Stack, Box, Caption, Button,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -86,7 +87,6 @@
 		expandedGroups.set(key, !isExpanded(key));
 	}
 
-	/** Resolve status dot color class for an artifact ID. */
 	/** Get visible refs for a group (respecting overflow toggle). */
 	function visibleRefs(groupKey: string, direction: string, refs: ArtifactRef[]): ArtifactRef[] {
 		const key = `${direction}:${groupKey}`;
@@ -96,14 +96,14 @@
 </script>
 
 {#if totalRefs > 0}
-	<div class="border-b border-border px-4 py-2">
+	<Box borderBottom paddingX={4} paddingY={2}>
 		<Collapsible bind:open={panelOpen}>
-			<div class="flex items-center justify-between">
+			<HStack justify="between">
 				<CollapsibleTrigger
 					class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
 				>
 					<HStack gap={1}>
-						<Icon name="chevron-right" size="xs" />
+						<Icon name="chevron-right" size="sm" />
 						Relationships
 					</HStack>
 				</CollapsibleTrigger>
@@ -125,81 +125,81 @@
 							{/snippet}
 						</TooltipTrigger>
 						<TooltipContent side="top">
-							<p>{viewMode === "list" ? "Graph view" : "List view"}</p>
+							<Caption>{viewMode === "list" ? "Graph view" : "List view"}</Caption>
 						</TooltipContent>
 					</TooltipRoot>
 				{/if}
-			</div>
+			</HStack>
 			<CollapsibleContent>
 				{#if viewMode === "graph"}
-					<div class="pt-1.5">
+					<Box paddingTop={1}>
 						<RelationshipGraphView
 							{artifactId}
 							{incomingRefs}
 							{outgoingRefs}
 						/>
-					</div>
+					</Box>
 				{:else}
-				<div class="space-y-2 pt-1.5 pl-4">
-					{#if incomingRefs.length > 0}
-						<div class="space-y-1.5">
+					<Stack gap={2} paddingTop={1} paddingX={4}>
+						{#if incomingRefs.length > 0}
+							<Stack gap={1}>
+								{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
+									{@const dirKey = `in:${groupKey}`}
+									<!-- grid with 2 cols: type label left, links right. w-[arbitrary] not in Grid, kept as div. -->
+									<div class="grid grid-cols-2 items-baseline gap-2">
+										<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+											{humanizeLabel(groupKey)}
+										</span>
 
-							{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
-								{@const dirKey = `in:${groupKey}`}
-								<div class="grid grid-cols-2 items-baseline gap-2">
-									<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
-										{humanizeLabel(groupKey)}
-									</span>
-
-									<div class="flex min-w-0 flex-wrap items-center gap-1">
-										{#each visibleRefs(groupKey, "in", refs) as ref, i ("in:" + ref.source_id + ref.relationship_type + i)}
-											<ArtifactLink id={ref.source_id} />
-
-										{/each}
-										{#if refs.length > 3}
-											<button
-												class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
-												onclick={() => toggleExpanded(dirKey)}
-											>
-												{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
-											</button>
-										{/if}
+										<Box flex={1} minWidth={0}><HStack wrap gap={1}>
+											{#each visibleRefs(groupKey, "in", refs) as ref, i ("in:" + ref.source_id + ref.relationship_type + i)}
+												<ArtifactLink id={ref.source_id} />
+											{/each}
+											{#if refs.length > 3}
+												<Button
+													variant="ghost"
+													size="sm"
+													onclick={() => toggleExpanded(dirKey)}
+												>
+													{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
+												</Button>
+											{/if}
+										</HStack></Box>
 									</div>
-								</div>
-							{/each}
-						</div>
-					{/if}
+								{/each}
+							</Stack>
+						{/if}
 
-					{#if outgoingRefs.length > 0}
-						<div class="space-y-1.5">
+						{#if outgoingRefs.length > 0}
+							<Stack gap={1}>
+								{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
+									{@const dirKey = `out:${groupKey}`}
+									<div class="grid grid-cols-2 items-baseline gap-2">
+										<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+											{humanizeLabel(groupKey)}
+										</span>
 
-							{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
-								{@const dirKey = `out:${groupKey}`}
-								<div class="grid grid-cols-2 items-baseline gap-2">
-									<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
-										{humanizeLabel(groupKey)}
-									</span>
-
-									<div class="flex min-w-0 flex-wrap items-center gap-1">
-										{#each visibleRefs(groupKey, "out", refs) as ref, i ("out:" + ref.target_id + ref.relationship_type + i)}
-											<ArtifactLink id={ref.target_id} />
-										{/each}
-										{#if refs.length > 3}
-											<button
-												class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
-												onclick={() => toggleExpanded(dirKey)}
-											>
-												{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
-											</button>
-										{/if}
+										<Box flex={1} minWidth={0}><HStack wrap gap={1}>
+											{#each visibleRefs(groupKey, "out", refs) as ref, i ("out:" + ref.target_id + ref.relationship_type + i)}
+												<ArtifactLink id={ref.target_id} />
+											{/each}
+											{#if refs.length > 3}
+												<Button
+													variant="ghost"
+													size="sm"
+													onclick={() => toggleExpanded(dirKey)}
+												>
+													{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
+												</Button>
+											{/if}
+										</HStack></Box>
 									</div>
-								</div>
-							{/each}
-						</div>
-					{/if}
-				</div>
+								{/each}
+							</Stack>
+						{/if}
+					</Stack>
 				{/if}
 			</CollapsibleContent>
 		</Collapsible>
-	</div>
+	</Box>
 {/if}

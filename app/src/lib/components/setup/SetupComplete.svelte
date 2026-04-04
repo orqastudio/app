@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button, Heading } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Caption, Text, Stack, HStack } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { setupStore } = getStores();
@@ -22,28 +22,31 @@
 	}
 </script>
 
-<div class="flex flex-col items-center gap-6 text-center">
+<Stack gap={6} align="center">
 	<Icon name="rocket" size="xl" />
 	<Heading level={3}>All Set</Heading>
-	<span class="text-sm text-muted-foreground">OrqaStudio is configured and ready to use.</span>
+	<Caption tone="muted">OrqaStudio is configured and ready to use.</Caption>
 
-	<div class="mx-auto flex max-w-xs flex-col gap-2 text-left">
-		<div class="flex items-center gap-2 text-sm">
-			<Icon name="circle-check" size="md" />
-			<span>Claude CLI installed</span>
-		</div>
-		<div class="flex items-center gap-2 text-sm">
-			<Icon name="circle-check" size="md" />
-			<span>Authentication verified</span>
-		</div>
-		<div class="flex items-center gap-2 text-sm">
-			<Icon name="circle-check" size="md" />
-			<span>Sidecar connected</span>
-		</div>
-		<div class="flex items-center gap-2 text-sm">
-			<Icon name="circle-check" size="md" />
-			<span>Embedding model ready</span>
-		</div>
+	<!-- max-width and text-align cannot be expressed via Stack typed props -->
+	<div style="max-width: 20rem; text-align: left;">
+		<Stack gap={2}>
+			<HStack gap={2}>
+				<Icon name="circle-check" size="md" />
+				<Text>Claude CLI installed</Text>
+			</HStack>
+			<HStack gap={2}>
+				<Icon name="circle-check" size="md" />
+				<Text>Authentication verified</Text>
+			</HStack>
+			<HStack gap={2}>
+				<Icon name="circle-check" size="md" />
+				<Text>Sidecar connected</Text>
+			</HStack>
+			<HStack gap={2}>
+				<Icon name="circle-check" size="md" />
+				<Text>Embedding model ready</Text>
+			</HStack>
+		</Stack>
 	</div>
 
 	<Button onclick={handleComplete} disabled={completing}>
@@ -53,4 +56,4 @@
 			Get Started
 		{/if}
 	</Button>
-</div>
+</Stack>

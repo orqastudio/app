@@ -1,3 +1,4 @@
+<!-- Renders the selected artifact's content: breadcrumb, metadata, pipeline stepper, acceptance criteria, and markdown body. -->
 <script lang="ts">
 	import AcceptanceCriteria from "./AcceptanceCriteria.svelte";
 	import Breadcrumb from "./Breadcrumb.svelte";
@@ -9,7 +10,7 @@
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
-	import { LoadingSpinner, Heading } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Heading, Stack, HStack, Box, Text } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -251,23 +252,23 @@
 
 </script>
 
-<div class="flex h-full flex-col">
-	<!-- Breadcrumb bar (hidden on home/landing pages) -->
+<Stack height="full" gap={0}>
+	<!-- Breadcrumb bar (hidden on home/landing pages). h-10 is a specific Tailwind height not in HStack's height map. -->
 	{#if breadcrumbs.length > 0}
-		<div class="flex h-10 items-center justify-between border-b border-border px-4">
+		<div class="flex h-10 items-center justify-between border-b border-border px-4 shrink-0">
 			<Breadcrumb items={breadcrumbs} />
 		</div>
 	{/if}
 
 	<!-- Content -->
 	{#if artifactStore.activeContentLoading}
-		<div class="flex flex-1 items-center justify-center">
+		<HStack justify="center" align="center" flex={1}>
 			<LoadingSpinner size="lg" />
-		</div>
+		</HStack>
 	{:else if artifactStore.activeContentError}
-		<div class="flex flex-1 items-center justify-center px-4">
+		<HStack justify="center" align="center" flex={1} paddingX={4}>
 			<ErrorDisplay message={artifactStore.activeContentError} />
-		</div>
+		</HStack>
 	{:else if content}
 		{#if currentPath && !isReadme}
 			<ReferencesPanel artifactPath={currentPath} />
@@ -279,45 +280,47 @@
 				/>
 			{/if}
 		{/if}
-		<div class="min-h-0 flex-1" role="presentation" onclick={handleContentClick}>
-		<ScrollArea full>
-			<div class="p-6">
-				{#if fileExtension === "sh"}
-					<HookViewer {content} />
-				{:else if parsedContent}
-					{#if hasMetadataFields}
-						{#if artifactStatus && pipelineStages.length > 0}
-							<PipelineStepper stages={pipelineStages} status={artifactStatus} path={currentPath ?? ""} />
+		<!-- role="presentation" and onclick preserved for artifact link navigation -->
+		<Box flex={1} minHeight={0} role="presentation" onclick={handleContentClick}>
+			<ScrollArea full>
+				<Box padding={6}>
+					{#if fileExtension === "sh"}
+						<HookViewer {content} />
+					{:else if parsedContent}
+						{#if hasMetadataFields}
+							{#if artifactStatus && pipelineStages.length > 0}
+								<PipelineStepper stages={pipelineStages} status={artifactStatus} path={currentPath ?? ""} />
+							{/if}
+							<FrontmatterHeader
+								metadata={parsedContent.metadata}
+								{artifactType}
+							/>
+						{:else if hasFrontmatterTitle}
+							<!-- Title + description only, no metadata card -->
+							{@const title = parsedContent.metadata["title"] as string}
+							{@const description = parsedContent.metadata["description"] as string | undefined}
+							<Heading level={1}>{title}</Heading>
+							{#if description}
+								<!-- leading-relaxed is not a Text variant; kept as p. -->
+								<p class="mb-6 text-sm leading-relaxed text-muted-foreground">{description}</p>
+							{:else}
+								<Box marginTop={6}></Box>
+							{/if}
 						{/if}
-						<FrontmatterHeader
-							metadata={parsedContent.metadata}
-							{artifactType}
-						/>
-					{:else if hasFrontmatterTitle}
-						<!-- Title + description only, no metadata card -->
-						{@const title = parsedContent.metadata["title"] as string}
-						{@const description = parsedContent.metadata["description"] as string | undefined}
-						<Heading level={1}>{title}</Heading>
-						{#if description}
-							<p class="mb-6 text-sm leading-relaxed text-muted-foreground">{description}</p>
-						{:else}
-							<div class="mb-6"></div>
+						{#if acceptanceCriteria.length > 0}
+							<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
+							<Box marginTop={4}></Box>
 						{/if}
+						<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+					{:else}
+						<MarkdownRenderer content={content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 					{/if}
-					{#if acceptanceCriteria.length > 0}
-						<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
-						<div class="mt-4"></div>
-					{/if}
-					<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
-				{:else}
-					<MarkdownRenderer content={content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
-				{/if}
-			</div>
-		</ScrollArea>
-		</div>
+				</Box>
+			</ScrollArea>
+		</Box>
 	{:else}
-		<div class="flex flex-1 items-center justify-center text-sm text-muted-foreground">
-			Select an artifact to view its contents
-		</div>
+		<HStack justify="center" align="center" flex={1}>
+			<Text variant="body-muted">Select an artifact to view its contents</Text>
+		</HStack>
 	{/if}
-</div>
+</Stack>

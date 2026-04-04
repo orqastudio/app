@@ -6,6 +6,13 @@
 		ErrorDisplay,
 		EmptyState,
 		Caption,
+		Button,
+		Center,
+		HStack,
+		Stack,
+		Text,
+		Box,
+		ScrollArea,
 	} from "@orqastudio/svelte-components/pure";
 	import type { Lesson } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
@@ -60,14 +67,14 @@
 	}
 </script>
 
-<div class="flex h-full flex-col">
+<Stack gap={0} height="full">
 	<!-- Header -->
-	<div class="flex items-center justify-between border-b border-border px-3 py-2">
-		<div class="flex items-center gap-2">
+	<HStack justify="between" borderBottom paddingX={3} paddingY={2}>
+		<HStack gap={2}>
 			<Icon name="book-open" size="md" />
-			<span class="text-sm font-medium">Lessons</span>
-		</div>
-		<div class="flex items-center gap-1">
+			<Text variant="body-strong">Lessons</Text>
+		</HStack>
+		<HStack gap={1}>
 			{#if promotionCandidates.length > 0}
 				<Badge variant="secondary" size="sm">
 					<Icon name="trending-up" size="xs" />
@@ -80,15 +87,15 @@
 					{promotedCount} promoted
 				</Badge>
 			{/if}
-		</div>
-	</div>
+		</HStack>
+	</HStack>
 
-	<div class="flex-1 overflow-y-auto">
-		<div class="p-2">
+	<ScrollArea full>
+		<Box padding={2}>
 			{#if loading && lessons.length === 0}
-				<div class="flex justify-center py-8">
+				<Center padding={8}>
 					<LoadingSpinner />
-				</div>
+				</Center>
 			{:else if error}
 				<ErrorDisplay message="Failed to load lessons: {error}" {onRetry} />
 			{:else if lessons.length === 0}
@@ -100,89 +107,93 @@
 			{:else}
 				<!-- Active lessons -->
 				{#if activeCount > 0}
-					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<Text variant="overline-muted" block>
 						Active ({activeCount})
-					</span>
-					<div class="mb-3 space-y-1">
+					</Text>
+					<Stack gap={1} marginTop={1}>
 						{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
-							<button
-								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'hover:bg-accent/50'}"
+							<Button
+								variant="ghost"
+								size="sm"
+								full
 								onclick={() => onSelect(lesson)}
+								aria-pressed={selectedId === lesson.id}
+								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
 							>
-								<div class="flex items-start justify-between gap-2">
-									<div class="min-w-0 flex-1">
-										<div class="flex items-center gap-1">
-											<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
-											<span
-												class="rounded px-1 py-0.5 text-[10px] font-medium {categoryColor(lesson.category)}"
-											>
+								<HStack justify="between" gap={1} align="start" full>
+									<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+										<HStack gap={1}>
+											<Caption variant="caption-mono">{lesson.id}</Caption>
+											<span class={`rounded px-1 py-0.5 text-[10px] font-medium ${categoryColor(lesson.category)}`}>
 												{lesson.category}
 											</span>
-										</div>
-										<p class="mt-0.5 truncate text-xs font-medium">{lesson.title}</p>
+										</HStack>
+										<Caption truncate>{lesson.title}</Caption>
 									</div>
-									<div class="flex shrink-0 flex-col items-end gap-1">
-										{#if lesson.recurrence >= 2}
-											<Badge variant="secondary" size="xs">
-												x{lesson.recurrence}
-											</Badge>
-										{/if}
-									</div>
-								</div>
-							</button>
+									{#if lesson.recurrence >= 2}
+										<Badge variant="secondary" size="xs">
+											x{lesson.recurrence}
+										</Badge>
+									{/if}
+								</HStack>
+							</Button>
 						{/each}
-					</div>
+					</Stack>
 				{/if}
 
 				<!-- Promoted lessons -->
 				{#if promotedCount > 0}
-					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<Text variant="overline-muted" block>
 						Promoted ({promotedCount})
-					</span>
-					<div class="mb-3 space-y-1">
+					</Text>
+					<Stack gap={1} marginTop={1}>
 						{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
-							<button
-								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'hover:bg-accent/50'}"
+							<Button
+								variant="ghost"
+								size="sm"
+								full
 								onclick={() => onSelect(lesson)}
+								aria-pressed={selectedId === lesson.id}
+								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
 							>
-								<div class="flex items-start justify-between gap-2">
-									<div class="min-w-0 flex-1">
-										<div class="flex items-center gap-1">
-											<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
-											<Badge variant={statusVariant(lesson.status)} size="xs">
-												{lesson.status}
-											</Badge>
-										</div>
-										<Caption truncate>
-											{lesson.title}
-										</Caption>
-									</div>
+								<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+									<HStack gap={1}>
+										<Caption variant="caption-mono">{lesson.id}</Caption>
+										<Badge variant={statusVariant(lesson.status)} size="xs">
+											{lesson.status}
+										</Badge>
+									</HStack>
+									<Caption truncate>{lesson.title}</Caption>
 								</div>
-							</button>
+							</Button>
 						{/each}
-					</div>
+					</Stack>
 				{/if}
 
 				<!-- Resolved lessons -->
 				{#if lessons.some((l) => l.status === "resolved")}
-					<span class="mb-1.5 block px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+					<Text variant="overline-muted" block>
 						Resolved
-					</span>
-					<div class="space-y-1">
+					</Text>
+					<Stack gap={1}>
 						{#each lessons.filter((l) => l.status === "resolved") as lesson (lesson.id)}
-							<button
-								class="w-full rounded-md px-2 py-2 text-left {selectedId === lesson.id ? 'bg-accent' : 'opacity-60 hover:bg-accent/50 hover:opacity-100'}"
+							<Button
+								variant="ghost"
+								size="sm"
+								full
 								onclick={() => onSelect(lesson)}
+								aria-pressed={selectedId === lesson.id}
+								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem; opacity: {selectedId === lesson.id ? 1 : 0.6};"
 							>
-								<div class="flex items-center gap-1">
-									<span class="font-mono text-xs text-muted-foreground">{lesson.id}</span>
+								<HStack gap={1}>
+									<Caption variant="caption-mono">{lesson.id}</Caption>
 									<Caption truncate>{lesson.title}</Caption>
-								</div>
-							</button>
+								</HStack>
+							</Button>
 						{/each}
-					</div>
+					</Stack>
 				{/if}
 			{/if}
-		</div>
-	</div>
-</div>
+		</Box>
+	</ScrollArea>
+</Stack>

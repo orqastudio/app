@@ -3,7 +3,7 @@
 	import { EmptyState } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
-	import { Caption } from "@orqastudio/svelte-components/pure";
+	import { Caption, Stack, Box, Center } from "@orqastudio/svelte-components/pure";
 	import { ArtifactListItem } from "@orqastudio/svelte-components/connected";
 	import ArtifactToolbar from "$lib/components/navigation/ArtifactToolbar.svelte";
 	import { getStores } from "@orqastudio/sdk";
@@ -173,7 +173,7 @@
 
 </script>
 
-<div class="flex h-full flex-col">
+<Stack gap={0} height="full">
 	{#if !isTree}
 		<ArtifactToolbar
 			sortableFields={currentNavType?.sortable_fields ?? []}
@@ -189,37 +189,37 @@
 		/>
 	{/if}
 
-	<div class="min-h-0 flex-1 overflow-y-auto">
-		<div class="p-1">
+	<Box minHeight={0} flex={1} overflow="auto">
+		<Box padding={1}>
 			{#if loading}
-				<div class="flex items-center justify-center py-8">
+				<Center padding={4}>
 					<LoadingSpinner />
-				</div>
+				</Center>
 			{:else if treeError}
-				<div class="px-2 py-4">
+				<Box paddingX={2} paddingY={4}>
 					<ErrorDisplay message={treeError} onRetry={() => artifactStore.loadNavTree()} />
-				</div>
+				</Box>
 			{:else if rawNodes.length === 0}
-				<div class="px-2 py-8">
+				<Box paddingX={2} paddingY={4}>
 					<EmptyState
 						icon="file-text"
 						title="No {categoryLabel.toLowerCase()} yet"
 						description="No {categoryLabel.toLowerCase()} files found in this project."
 					/>
-				</div>
+				</Box>
 			{:else if processedNodes.length === 0}
-				<div class="flex items-center justify-center px-2 py-4">
+				<Center padding={2}>
 					<Caption>No matching items.</Caption>
-				</div>
+				</Center>
 			{:else if isTree}
-				<div class="space-y-0.5 p-1">
+				<Stack gap={0} padding={1}>
 					{#each processedNodes as node (node.path ?? node.label)}
 						{@render treeSection(node, 0)}
 					{/each}
-				</div>
+				</Stack>
 			{:else if groupedNodes !== null}
 				{@const collapsedDefaults = currentNavType?.navigation_config?.defaults?.collapsed_groups ?? []}
-				<div class="space-y-0.5">
+				<Stack gap={0}>
 					{#each groupedNodes as group (group.label)}
 						<Collapsible open={!collapsedDefaults.includes(group.label.toLowerCase())}>
 							<CollapsibleTrigger
@@ -235,14 +235,14 @@
 										label={node.label}
 										description={node.description ?? undefined}
 										status={node.status ?? undefined}
-														path={node.path ?? undefined}
+										path={node.path ?? undefined}
 										onclick={() => handleLeafClick(node)}
 									/>
 								{/each}
 							</CollapsibleContent>
 						</Collapsible>
 					{/each}
-				</div>
+				</Stack>
 			{:else}
 				{#each processedNodes as node (node.path)}
 					<ArtifactListItem
@@ -254,9 +254,9 @@
 					/>
 				{/each}
 			{/if}
-		</div>
-	</div>
-</div>
+		</Box>
+	</Box>
+</Stack>
 
 {#snippet treeSection(node: DocNode, depth: number)}
 	{#if node.children}
@@ -277,6 +277,7 @@
 			</CollapsibleContent>
 		</Collapsible>
 	{:else if node.path}
+		<!-- Dynamic pixel indentation cannot be expressed via Box props; style attribute retained -->
 		<div style="padding-left: {depth * 12}px">
 			<ArtifactListItem
 				label={node.label}

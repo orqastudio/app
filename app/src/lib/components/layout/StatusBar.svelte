@@ -4,6 +4,11 @@
 	import {
 		Icon,
 		ConnectionIndicator,
+		HStack,
+		Box,
+		Text,
+		Spacer,
+		Separator,
 		TooltipRoot,
 		TooltipTrigger,
 		TooltipContent,
@@ -143,12 +148,12 @@
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
-				<p>Change model</p>
+				<Text variant="body">Change model</Text>
 			</TooltipContent>
 		</TooltipRoot>
 	</div>
 
-	<div class="flex-1"></div>
+	<Spacer />
 
 	<!-- Startup task indicator -->
 	{#if settingsStore.activeStartupTask}
@@ -193,7 +198,7 @@
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
-				<p>{artifactGraphSDK.error ? `Index error: ${artifactGraphSDK.error}` : "Rebuild artifact graph index"}</p>
+				<Text variant="body">{artifactGraphSDK.error ? `Index error: ${artifactGraphSDK.error}` : "Rebuild artifact graph index"}</Text>
 			</TooltipContent>
 		</TooltipRoot>
 
@@ -212,7 +217,7 @@
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
-				<p>{sidecarTooltip}</p>
+				<Text variant="body">{sidecarTooltip}</Text>
 			</TooltipContent>
 		</TooltipRoot>
 
@@ -231,7 +236,7 @@
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
-				<p>{daemonTooltip}</p>
+				<Text variant="body">{daemonTooltip}</Text>
 			</TooltipContent>
 		</TooltipRoot>
 	</div>

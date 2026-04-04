@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Text, Caption, Stack } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -66,7 +66,7 @@
 	});
 </script>
 
-<div class="flex flex-col items-center gap-4 text-center">
+<Stack gap={4} align="center">
 	<Icon name="brain" size="xl" />
 	<Heading level={3}>Embedding Model</Heading>
 	<Text tone="muted">Preparing semantic search model</Text>
@@ -74,25 +74,25 @@
 	{#if checking}
 		<LoadingSpinner size="md" />
 		{#if downloadProgress()}
-			<span class="text-xs text-muted-foreground">Downloading: {downloadProgress()}</span>
+			<Caption tone="muted">Downloading: {downloadProgress()}</Caption>
 		{:else}
-			<span class="text-xs text-muted-foreground">Checking model...</span>
+			<Caption tone="muted">Checking model...</Caption>
 		{/if}
 	{:else if setupStore.error}
 		<ErrorDisplay message={setupStore.error} onRetry={check} />
 	{:else if setupStore.embeddingStatus?.status === "complete"}
-		<div class="flex flex-col items-center gap-2">
+		<Stack gap={2} align="center">
 			<Icon name="circle-check" size="xl" />
-			<p class="text-sm font-medium text-success">Model ready</p>
-			<span class="text-xs text-muted-foreground">{EMBEDDING_MODEL_NAME}</span>
-		</div>
+			<Text tone="success" variant="body-strong">Model ready</Text>
+			<Caption tone="muted">{EMBEDDING_MODEL_NAME}</Caption>
+		</Stack>
 	{:else}
-		<div class="flex flex-col items-center gap-3">
-			<p class="text-sm text-warning">Model not available</p>
-			<span class="text-xs text-muted-foreground">
+		<Stack gap={3} align="center">
+			<Text tone="warning">Model not available</Text>
+			<Caption tone="muted">
 				The embedding model will be downloaded automatically when the app starts.
-			</span>
+			</Caption>
 			<Button variant="outline" onclick={check}>Check Again</Button>
-		</div>
+		</Stack>
 	{/if}
-</div>
+</Stack>

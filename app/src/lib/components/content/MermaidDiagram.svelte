@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import mermaid from "mermaid";
+	import { Caption, Center } from "@orqastudio/svelte-components/pure";
 
 
 	let { text }: { text: string } = $props();
@@ -66,19 +67,20 @@
 	});
 </script>
 
-<div class="mermaid-diagram rounded border border-border bg-muted/30 p-4 overflow-x-auto">
+<!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
+<div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
 	{#if rendering && !error && !svgContent}
-		<div class="flex items-center justify-center py-8 text-xs text-muted-foreground">
-			Rendering diagram...
-		</div>
+		<Center padding={8}>
+			<Caption tone="muted">Rendering diagram...</Caption>
+		</Center>
 	{/if}
 	{#if error}
-		<div class="rounded bg-destructive/10 p-3 text-xs text-destructive">
-			<p class="font-semibold">Mermaid render error</p>
-			<pre class="mt-1 whitespace-pre-wrap">{error}</pre>
+		<div style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;">
+			<Caption variant="caption-strong" tone="destructive">Mermaid render error</Caption>
+			<pre style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
 		</div>
 	{:else if svgContent}
-		<div class="flex justify-center [&_svg]:max-w-full">
+		<div style="display: flex; justify-content: center;">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- Mermaid produces sanitized SVG via its own securityLevel setting -->
 			{@html svgContent}
 		</div>

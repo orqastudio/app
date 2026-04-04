@@ -3,6 +3,7 @@
 	// based on the current navigation state (activity, plugin views, artifact selection).
 	import { getStores } from "@orqastudio/sdk";
 	import { type Component } from "svelte";
+	import { Box, Center, Text } from "@orqastudio/svelte-components/pure";
 
 	// Core view components — registered by route key
 	import ProjectDashboard from "$lib/components/dashboard/ProjectDashboard.svelte";
@@ -84,18 +85,18 @@
 	});
 </script>
 
-<div class="h-full w-full">
+<Box height="full" width="full">
 	{#if resolved.type === "plugin"}
 		<PluginViewContainer
 			pluginName={resolved.pluginName}
 			viewKey={resolved.viewKey}
 		/>
 	{:else if resolved.type === "placeholder"}
-		<div class="flex h-full items-center justify-center">
-			<span class="text-sm text-muted-foreground">Select an item to view it</span>
-		</div>
+		<Center full>
+			<Text variant="body-muted">Select an item to view it</Text>
+		</Center>
 	{:else}
 		{@const ViewComponent = resolved.component}
 		<ViewComponent />
 	{/if}
-</div>
+</Box>

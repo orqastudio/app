@@ -1,5 +1,6 @@
+<!-- Renders an enforcement rule: load status, scope, violation counts, and full markdown content. -->
 <script lang="ts">
-	import { Icon, Badge, HStack } from "@orqastudio/svelte-components/pure";
+	import { Icon, Badge, HStack, Stack, Box, Text, Button } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -29,36 +30,36 @@
 	let violationsExpanded = $state(true);
 </script>
 
-<div class="space-y-4">
-	<!-- Enforcement status bar -->
+<Stack gap={4}>
+	<!-- Enforcement status bar — flex-wrap not in HStack props, kept as div. -->
 	<div class="flex flex-wrap items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2">
 		{#if isLoaded}
-			<div class="flex items-center gap-1 text-xs text-success">
+			<HStack gap={1}>
 				<Icon name="check-circle" size="sm" />
-				<span>Loaded</span>
-			</div>
+				<Text variant="caption" tone="success">Loaded</Text>
+			</HStack>
 		{:else}
-			<div class="flex items-center gap-1 text-xs text-muted-foreground">
+			<HStack gap={1}>
 				<Icon name="circle-dashed" size="sm" />
-				<span>Not loaded</span>
-			</div>
+				<Text variant="caption">Not loaded</Text>
+			</HStack>
 		{/if}
 
 		{#if matchedRule}
 			<span class="text-muted-foreground">|</span>
-			<div class="flex items-center gap-1 text-xs text-muted-foreground">
+			<HStack gap={1}>
 				{#if matchedRule.scope === "system"}
 					<Icon name="globe" size="xs" />
-					<span>System</span>
+					<Text variant="caption">System</Text>
 				{:else}
 					<Icon name="folder" size="xs" />
-					<span>Project</span>
+					<Text variant="caption">Project</Text>
 				{/if}
-			</div>
+			</HStack>
 			<span class="text-muted-foreground">|</span>
-			<span class="text-xs text-muted-foreground">
+			<Text variant="caption">
 				{matchedRule.entries.length} {matchedRule.entries.length === 1 ? "entry" : "entries"}
-			</span>
+			</Text>
 		{/if}
 
 		{#if ruleBlockCount > 0}
@@ -75,20 +76,23 @@
 
 	<!-- Violation details (collapsible) -->
 	{#if ruleViolations.length > 0}
-		<div class="rounded-md border border-border">
-			<button
-				class="flex w-full items-center gap-1.5 justify-start px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wide rounded-md hover:bg-accent"
+		<Box border rounded="md">
+			<Button
+				variant="ghost"
+				full
 				onclick={() => (violationsExpanded = !violationsExpanded)}
 			>
-				{#if violationsExpanded}
-					<Icon name="chevron-down" size="xs" />
-				{:else}
-					<Icon name="chevron-right" size="xs" />
-				{/if}
-				Session Violations ({ruleViolations.length})
-			</button>
+				<HStack gap={1}>
+					{#if violationsExpanded}
+						<Icon name="chevron-down" size="xs" />
+					{:else}
+						<Icon name="chevron-right" size="xs" />
+					{/if}
+					<Text variant="overline">Session Violations ({ruleViolations.length})</Text>
+				</HStack>
+			</Button>
 			{#if violationsExpanded}
-				<div class="space-y-1 border-t border-border px-3 py-2">
+				<Stack gap={1} borderTop paddingX={3} paddingY={2}>
 					{#each ruleViolations as violation (violation.timestamp)}
 						<HStack gap={2} align="start">
 							{#if violation.action === "Block"}
@@ -96,17 +100,17 @@
 							{:else}
 								<Icon name="alert-triangle" size="xs" />
 							{/if}
-							<div class="min-w-0 flex-1">
-								<span class="block truncate font-mono text-xs text-muted-foreground">{violation.tool_name}</span>
-								<span class="text-xs text-muted-foreground">{violation.detail}</span>
-							</div>
+							<Box flex={1} minWidth={0}>
+								<Text variant="caption-mono" truncate block>{violation.tool_name}</Text>
+								<Text variant="caption" block>{violation.detail}</Text>
+							</Box>
 						</HStack>
 					{/each}
-				</div>
+				</Stack>
 			{/if}
-		</div>
+		</Box>
 	{/if}
 
 	<!-- Rule content -->
 	<MarkdownRenderer {content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
-</div>
+</Stack>

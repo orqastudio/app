@@ -1,8 +1,8 @@
+<!-- Renders grouped relationships for an artifact: type badge on the left, artifact links on the right. Supports overflow toggling per group. -->
 <script lang="ts">
 	import { SvelteMap } from "svelte/reactivity";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Icon, Stack, HStack, Box, Text, Badge, Button } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
-	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -75,13 +75,13 @@
 </script>
 
 {#if relationships.length > 0}
-	<div class="space-y-1.5">
-		<span class="text-xs font-medium text-muted-foreground">Relationships</span>
-		<div class="space-y-1">
+	<Stack gap={1.5}>
+		<Text variant="caption">Relationships</Text>
+		<Stack gap={1}>
 			{#each [...grouped] as [type, rels] (type)}
-				<div class="grid grid-cols-2 items-baseline gap-2">
-					<span class="justify-self-start capitalize"><Badge variant="outline" size="xs">{humanizeType(type)}</Badge></span>
-					<div class="flex min-w-0 flex-wrap items-center gap-1">
+				<HStack gap={2} align="baseline">
+					<span class="justify-self-start capitalize"><Badge variant="outline" size="sm">{humanizeType(type)}</Badge></span>
+					<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 						{#each visibleRels(type, rels) as rel, i (i)}
 							{#if rel.target}
 								{@const label = chipLabel(rel.target ?? "")}
@@ -100,28 +100,29 @@
 													? 'border-muted-foreground/30 bg-muted text-muted-foreground'
 													: 'border-warning/30 bg-warning/10 text-warning'}"
 											>
-												<Icon name="circle-alert" size="xs" />
+												<Icon name="circle-alert" size="sm" />
 												{rel.intended ? "intentional gap" : "unresolved"}
 											</span>
 										{/snippet}
 									</TooltipTrigger>
 									<TooltipContent side="top">
-										<p class="text-xs">{rel.rationale}</p>
+										<Text variant="caption">{rel.rationale}</Text>
 									</TooltipContent>
 								</TooltipRoot>
 							{/if}
 						{/each}
 						{#if rels.length > 3}
-							<button
-								class="h-auto px-1 py-0.5 text-[10px] text-muted-foreground hover:text-foreground"
+							<Button
+								variant="ghost"
+								size="sm"
 								onclick={() => toggleExpanded(type)}
 							>
 								{isExpanded(type) ? "hide" : `\u2026 +${rels.length - 3}`}
-							</button>
+							</Button>
 						{/if}
-					</div>
-				</div>
+					</HStack></Box>
+				</HStack>
 			{/each}
-		</div>
-	</div>
+		</Stack>
+	</Stack>
 {/if}

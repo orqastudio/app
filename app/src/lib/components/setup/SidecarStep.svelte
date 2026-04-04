@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, Button, Heading, Text, Caption, Stack } from "@orqastudio/svelte-components/pure";
 	import { extractErrorMessage, logger } from "@orqastudio/sdk";
 
 	const log = logger("setup");
@@ -54,28 +54,28 @@
 	});
 </script>
 
-<div class="flex flex-col items-center gap-4 text-center">
+<Stack gap={4} align="center">
 	<Icon name="cpu" size="xl" />
 	<Heading level={3}>Sidecar Process</Heading>
 	<Text tone="muted">Starting the Agent SDK sidecar</Text>
 
 	{#if starting}
 		<LoadingSpinner size="md" />
-		<span class="text-xs text-muted-foreground">Starting sidecar...</span>
+		<Caption tone="muted">Starting sidecar...</Caption>
 	{:else if setupStore.error}
 		<ErrorDisplay message={setupStore.error} onRetry={start} />
 	{:else if setupStore.sidecarStarted}
-		<div class="flex flex-col items-center gap-2">
+		<Stack gap={2} align="center">
 			<Icon name="circle-check" size="xl" />
-			<p class="text-sm font-medium text-success">Sidecar connected</p>
+			<Text tone="success" variant="body-strong">Sidecar connected</Text>
 			{#if settingsStore.sidecarStatus.pid}
-				<span class="text-xs text-muted-foreground">PID: {settingsStore.sidecarStatus.pid}</span>
+				<Caption tone="muted">PID: {settingsStore.sidecarStatus.pid}</Caption>
 			{/if}
-		</div>
+		</Stack>
 	{:else}
-		<div class="flex flex-col items-center gap-3">
-			<p class="text-sm text-warning">Sidecar not running</p>
+		<Stack gap={3} align="center">
+			<Text tone="warning">Sidecar not running</Text>
 			<Button variant="outline" onclick={start}>Retry</Button>
-		</div>
+		</Stack>
 	{/if}
-</div>
+</Stack>

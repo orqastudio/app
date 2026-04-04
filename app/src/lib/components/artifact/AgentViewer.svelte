@@ -1,5 +1,6 @@
+<!-- Renders an agent artifact: description, capabilities, knowledge, model, and markdown body. -->
 <script lang="ts">
-	import { Icon, SmallBadge, HStack } from "@orqastudio/svelte-components/pure";
+	import { Icon, SmallBadge, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -52,28 +53,28 @@
 	);
 </script>
 
-<div class="space-y-4">
+<Stack gap={4}>
 	<!-- Structured header -->
-	<div class="space-y-3 border-b border-border pb-4">
+	<Stack gap={3} borderBottom paddingBottom={4}>
 		{#if description}
-			<p class="text-sm text-muted-foreground">{description}</p>
+			<Text variant="body-muted" block>{description}</Text>
 		{/if}
 
 		<MetadataRow icon="wrench" label="Capabilities" items={capabilities} badgeVariant="secondary" />
 		<MetadataRow icon="brain" label="Knowledge" items={knowledge} badgeVariant="outline" />
 		{#if model}
 			<HStack gap={1}>
-				<div class="flex items-center gap-1 text-xs text-muted-foreground">
+				<HStack gap={1}>
 					<Icon name="cpu" size="sm" />
-					Model
-				</div>
+					<Text variant="caption">Model</Text>
+				</HStack>
 				<SmallBadge variant="default">{model}</SmallBadge>
 			</HStack>
 		{/if}
-	</div>
+	</Stack>
 
 	<!-- Body content -->
 	{#if body.trim()}
 		<MarkdownRenderer content={body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 	{/if}
-</div>
+</Stack>

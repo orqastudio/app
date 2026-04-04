@@ -1,6 +1,9 @@
+<!-- Renders a horizontal pipeline progress indicator for artifact lifecycle stages.
+     The circle and connector-line elements use raw divs because their specific pixel sizes
+     (h-px, h-4, w-4, rounded-full, etc.) are not expressible via ORQA layout primitives. -->
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { Icon, HStack } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Box } from "@orqastudio/svelte-components/pure";
 
 	const { artifactGraphSDK, projectStore } = getStores();
 
@@ -55,7 +58,7 @@
 </script>
 
 {#if stages.length > 0 && currentIndex >= 0}
-	<div class="mb-5">
+	<Box marginTop={0} paddingBottom={4}>
 		<!-- Row 1: circles and connector lines, vertically centered on circles -->
 		<HStack gap={0}>
 			{#each stages as stage, i (stage.key)}
@@ -72,7 +75,7 @@
 					></div>
 				{/if}
 
-				<!-- Circle indicator -->
+				<!-- Circle indicator — specific sizes (h-4, w-4, rounded-full) require raw divs. -->
 				<div class="flex items-center justify-center">
 					{#if isReachable}
 						<button
@@ -102,7 +105,7 @@
 		</HStack>
 
 		<!-- Row 2: labels, positioned to align under their circles -->
-		<div class="mt-1 flex items-start gap-0">
+		<HStack gap={0} align="start" marginTop={1}>
 			{#each stages as stage, i (stage.key)}
 				{@const isPast = i < currentIndex}
 				{@const isCurrent = i === currentIndex}
@@ -138,6 +141,6 @@
 					{/if}
 				</div>
 			{/each}
-		</div>
-	</div>
+		</HStack>
+	</Box>
 {/if}

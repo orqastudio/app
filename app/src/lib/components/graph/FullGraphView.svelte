@@ -4,7 +4,7 @@
 	import { getStores, logger } from "@orqastudio/sdk";
 	import { getGraphViz } from "$lib/graph-viz.svelte";
 	import { graphLayoutService } from "$lib/services/graph-layout.svelte";
-	import { LoadingSpinner, Toolbar, Caption } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Toolbar, Caption, Button, Icon, HStack, Stack, Center, Text } from "@orqastudio/svelte-components/pure";
 	import GraphHealthPanel from "./GraphHealthPanel.svelte";
 	import type { GraphHealthData, HealthSnapshot } from "@orqastudio/types";
 
@@ -195,11 +195,11 @@
 	});
 </script>
 
-<div class="relative flex h-full flex-col">
+<Stack height="full" overflow="hidden" gap={0}>
 	<!-- Toolbar -->
 	<Toolbar>
 		{#snippet left()}
-			<span class="text-sm font-medium">Artifact Graph</span>
+			<Text variant="body-strong">Artifact Graph</Text>
 			{#if artifactGraphSDK.stats}
 				<Caption>
 					{artifactGraphSDK.stats.node_count} nodes · {artifactGraphSDK.stats.edge_count} edges
@@ -207,42 +207,41 @@
 			{/if}
 		{/snippet}
 		{#snippet right()}
-			<button
-				class="flex items-center gap-1 rounded-md px-2 py-1 text-xs hover:bg-accent"
+			<Button
+				variant="ghost"
+				size="sm"
 				onclick={() => { healthPanelOpen = !healthPanelOpen; }}
 				aria-label={healthPanelOpen ? "Hide health panel" : "Show health panel"}
 			>
-				<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+				<Icon name="activity" size="sm" />
 				{healthPanelOpen ? "Hide Health" : "Health"}
-			</button>
+			</Button>
 		{/snippet}
 	</Toolbar>
 
 	<!-- Main content area: graph + health panel side by side -->
-	<div class="flex flex-1 overflow-hidden">
-		<!-- Graph area -->
-		<div class="relative flex-1 overflow-hidden">
+	<HStack flex={1} overflow="hidden" gap={0}>
+		<!-- Graph area: the bind:this container for Cytoscape is a legitimate exception -->
+		<div style="position: relative; flex: 1; overflow: hidden;">
 			{#if artifactGraphSDK.loading}
-				<div class="flex h-full items-center justify-center">
+				<Center full>
 					<LoadingSpinner size="lg" />
-				</div>
+				</Center>
 			{:else if artifactGraphSDK.graph.size === 0}
-				<div class="flex h-full items-center justify-center">
+				<Center full>
 					<Caption>No artifacts found. Open a project to explore its graph.</Caption>
-				</div>
+				</Center>
 			{:else}
 				<div
 					bind:this={container}
-					class="h-full w-full"
+					style="height: 100%; width: 100%;"
 					role="img"
 					aria-label="Full artifact relationship graph"
 				></div>
 				{#if graphLayoutService.layoutRunning}
-					<div class="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-background/60 backdrop-blur-[2px]">
+					<div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: hsl(var(--background) / 0.6); backdrop-filter: blur(2px);">
 						<LoadingSpinner size="lg" />
-						<span class="text-xs font-medium text-muted-foreground">
-							Laying out {artifactGraphSDK.graph.size} nodes…
-						</span>
+						<Caption>Laying out {artifactGraphSDK.graph.size} nodes…</Caption>
 					</div>
 				{/if}
 			{/if}
@@ -250,7 +249,7 @@
 
 		<!-- Health panel sidebar -->
 		{#if healthPanelOpen}
-			<div class="w-52 shrink-0 overflow-hidden">
+			<div style="width: 13rem; flex-shrink: 0; overflow: hidden;">
 				<GraphHealthPanel
 					health={graphHealth}
 					snapshots={healthSnapshots}
@@ -259,5 +258,5 @@
 				/>
 			</div>
 		{/if}
-	</div>
-</div>
+	</HStack>
+</Stack>

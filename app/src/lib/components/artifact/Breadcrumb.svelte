@@ -1,6 +1,7 @@
+<!-- Artifact breadcrumb navigation using the ORQA Breadcrumb primitive. Home navigates to the artifact list; intermediate segments return to list root. -->
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { Breadcrumb, type BreadcrumbItem } from "@orqastudio/svelte-components/pure";
 
 	const { navigationStore } = getStores();
 
@@ -25,29 +26,16 @@
 			navigationStore.closeArtifact();
 		}
 	}
+
+	/** Map string items to BreadcrumbItem objects with click handlers for non-leaf segments. */
+	const breadcrumbItems = $derived(
+		items.map((item, index): BreadcrumbItem => {
+			if (index < items.length - 1) {
+				return { label: item, onClick: () => handleSegmentClick(index) };
+			}
+			return item;
+		})
+	);
 </script>
 
-<nav>
-	<div class="flex items-center gap-1 text-sm">
-		<button
-			class="flex items-center rounded p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-			onclick={handleHome}
-		>
-			<Icon name="home" size="sm" />
-		</button>
-
-		{#each items as item, index (index)}
-			<Icon name="chevron-right" size="xs" />
-			{#if index === items.length - 1}
-				<span class="font-medium text-foreground">{item}</span>
-			{:else}
-				<button
-					class="rounded px-2 py-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-					onclick={() => handleSegmentClick(index)}
-				>
-					{item}
-				</button>
-			{/if}
-		{/each}
-	</div>
-</nav>
+<Breadcrumb items={breadcrumbItems} onHome={handleHome} />

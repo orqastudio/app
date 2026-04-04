@@ -20,7 +20,7 @@
 
 	const log = logger("lifecycle");
 
-	import { ResizablePaneGroup, ResizableHandle, ResizablePane } from "@orqastudio/svelte-components/pure";
+	import { ResizablePaneGroup, ResizableHandle, ResizablePane, Stack, HStack, Box } from "@orqastudio/svelte-components/pure";
 	import setupBackground from "$lib/assets/setup-background.png";
 
 	const { errorStore, navigationStore, settingsStore, artifactStore, projectStore, setupStore, enforcementStore, artifactGraphSDK } = getStores();
@@ -125,12 +125,12 @@
 	});
 </script>
 
-<div class="flex h-screen flex-col bg-background text-foreground">
+<Stack gap={0} height="screen">
 	<!-- Toolbar -->
 	<Toolbar />
 
 	<!-- Main Content Area -->
-	<div class="flex flex-1 overflow-hidden">
+	<HStack gap={0} flex={1} overflow="hidden">
 		{#if setupNeeded}
 			<!-- First-run setup wizard — blocks all other content -->
 			<SetupWizard
@@ -172,15 +172,15 @@
 
 			<!-- Explorer + Chat (resizable) -->
 			{#if hideChatPanel}
-				<div class="min-w-0 flex-1 overflow-hidden">
+				<Box flex={1} minWidth={0} overflow="hidden">
 					{#if navigationStore.activeActivity === "settings"}
 						<SettingsView />
 					{:else}
 						<WelcomeScreen />
 					{/if}
-				</div>
+				</Box>
 			{:else}
-				<div class="min-w-0 flex-1">
+				<Box flex={1} minWidth={0}>
 					<ResizablePaneGroup direction="horizontal">
 						<ResizablePane defaultSize={70} minSize={30}>
 							<ExplorerRouter />
@@ -192,16 +192,16 @@
 							</div>
 						</ResizablePane>
 					</ResizablePaneGroup>
-				</div>
+				</Box>
 			{/if}
 
 		{:else}
 			<!-- No project loaded — welcome screen, no sidebar -->
-			<div class="flex-1 overflow-hidden">
+			<Box flex={1} overflow="hidden">
 				<WelcomeScreen />
-			</div>
+			</Box>
 		{/if}
-	</div>
+	</HStack>
 
 	<!-- Status Bar -->
 	<StatusBar />
@@ -211,4 +211,4 @@
 
 	<!-- Global error toast — surfaces backend, sidecar, and frontend errors -->
 	<ErrorToast />
-</div>
+</Stack>

@@ -1,9 +1,9 @@
+<!-- Renders structured frontmatter fields for a governance artifact: title, description, status, priority, dates, links, chips, and gate questions. -->
 <script lang="ts">
-	import { Icon, CardRoot, CardContent, HStack, Heading } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardContent, HStack, Box, Heading, Badge, Stack } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import GateQuestions from "./GateQuestions.svelte";
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
-	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getCapabilityLabel } from "$lib/utils/tool-display";
 	import { logger } from "@orqastudio/sdk";
 	import {
@@ -188,11 +188,11 @@
 	<Heading level={1}>{title}</Heading>
 {/if}
 
-<!-- Description -->
+<!-- Description — leading-relaxed is not in Text variants, kept as p. -->
 {#if description}
 	<p class="mb-4 text-sm leading-relaxed text-muted-foreground">{description}</p>
 {:else if title}
-	<div class="mb-4"></div>
+	<Box marginTop={4}></Box>
 {/if}
 
 <!-- Metadata card -->
@@ -200,16 +200,17 @@
 	<CardContent>
 		<!-- ID + Status/Priority row — only rendered when at least one value is present -->
 		{#if id || (status && isPresent(status)) || priority || dateChip}
-			<div class="flex justify-between gap-3" class:items-center={!hasBody} class:items-start={hasBody}>
-				<div class="space-y-0.5">
+			<HStack justify="between" gap={3} align={hasBody ? "start" : "center"}>
+				<Stack gap={0.5}>
 					{#if id}
+						<!-- tracking-widest and uppercase not in Text variants, kept as p. -->
 						<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
 							{artifactType} · {id}
 						</p>
 					{/if}
-				</div>
+				</Stack>
 
-				<div class="flex shrink-0 items-center gap-2">
+				<HStack gap={2} flex={0}>
 					{#if createdShort}
 						<span class="text-muted-foreground"><Badge variant="secondary">
 							<Icon name="calendar-plus" size="xs" />{createdShort}
@@ -228,25 +229,26 @@
 					{#if status && isPresent(status)}
 						<StatusIndicator {status} mode="badge" />
 					{/if}
-				</div>
-			</div>
+				</HStack>
+			</HStack>
 		{/if}
 
 		<!-- Scoring dimensions (shown near priority when present) -->
 		{#if priority && scoringEntries.length > 0}
 			<HStack align="baseline" gap={2}>
+				<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
 				<span class="w-[7rem] shrink-0 text-xs font-medium text-muted-foreground">
 					<HStack gap={1}>
 						<Icon name="scale" size="xs" />Scoring
 					</HStack>
 				</span>
-				<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+				<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 					{#each scoringEntries as [key, val] (key)}
 						<Badge variant="secondary">
 							<span class="font-normal"><span class="text-muted-foreground">{humanizeKey(key)}:</span> {String(val)}</span>
 						</Badge>
 					{/each}
-				</div>
+				</HStack></Box>
 			</HStack>
 		{/if}
 
@@ -257,6 +259,7 @@
 				{@const formatted = formatDate(value)}
 				{#if formatted}
 					<HStack align="baseline" gap={2}>
+						<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
 						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 							{humanizeKey(key)}
 						</span>
@@ -271,11 +274,11 @@
 						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 							{humanizeKey(key)}
 						</span>
-						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 							{#each vals as val, i (i)}
 								<ArtifactLink id={val.trim()} />
 							{/each}
-						</div>
+						</HStack></Box>
 					</HStack>
 				{/if}
 
@@ -286,11 +289,11 @@
 						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
 							{humanizeKey(key)}
 						</span>
-						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 							{#each items as item, i (i)}
 								<span class="capitalize"><Badge variant="secondary">{item}</Badge></span>
 							{/each}
-						</div>
+						</HStack></Box>
 					</HStack>
 				{/if}
 
@@ -313,19 +316,19 @@
 						{humanizeKey(key)}
 					</span>
 					{#if Array.isArray(value)}
-						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 							{#each value as v, i (i)}
 								<span class="capitalize"><Badge variant="secondary">{v}</Badge></span>
 							{/each}
-						</div>
+						</HStack></Box>
 					{:else if typeof value === "object" && value !== null}
-						<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 							{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
 								<Badge variant="secondary">
 									<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
 								</Badge>
 							{/each}
-						</div>
+						</HStack></Box>
 					{:else}
 						<span class="min-w-0 flex-1 text-xs capitalize text-foreground">{String(value)}</span>
 					{/if}
@@ -336,14 +339,15 @@
 		<!-- Capabilities (human-friendly names) -->
 		{#if appTools.length > 0}
 			<HStack align="baseline" gap={2}>
+				<!-- w-[7rem] + capitalize not in Stack/Box primitives, kept as span. -->
 				<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
 					<Icon name="wrench" size="xs" />Capabilities
 				</span>
-				<div class="flex min-w-0 flex-1 flex-wrap gap-1">
+				<Box flex={1} minWidth={0}><HStack wrap gap={1}>
 					{#each appTools as tool, i (i)}
 						<Badge variant="secondary">{tool}</Badge>
 					{/each}
-				</div>
+				</HStack></Box>
 			</HStack>
 		{/if}
 

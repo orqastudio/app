@@ -2,7 +2,7 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
-	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge } from "@orqastudio/svelte-components/pure";
+	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge, Box, Caption } from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
 
 	let {
@@ -65,7 +65,7 @@
 </script>
 
 {#if children.length > 0}
-	<div class="my-4 overflow-hidden rounded-lg border">
+	<Box overflow="hidden" rounded="lg" border marginTop={4}>
 		<Table>
 			<TableHeader>
 				<TableRow>
@@ -103,9 +103,9 @@
 						<!-- Priority -->
 						<TableCell>
 							{#if child.priority}
-								<span class="font-medium"><Badge variant="secondary">{child.priority}</Badge></span>
+								<Badge variant="secondary">{child.priority}</Badge>
 							{:else}
-								<span class="text-xs text-muted-foreground">--</span>
+								<Caption tone="muted">--</Caption>
 							{/if}
 						</TableCell>
 						<!-- Status -->
@@ -116,9 +116,10 @@
 				{/each}
 			</TableBody>
 		</Table>
-	</div>
+	</Box>
 {:else}
-	<div class="my-4 rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-		No {childType} artifacts found for {parentId}
+	<!-- Inline style required: dashed border-style and text-align cannot be expressed via Box typed props -->
+	<div style="margin-top: 1rem; border-radius: 0.5rem; border: 1px dashed hsl(var(--border)); padding: 1rem; text-align: center;">
+		<Caption tone="muted">No {childType} artifacts found for {parentId}</Caption>
 	</div>
 {/if}
