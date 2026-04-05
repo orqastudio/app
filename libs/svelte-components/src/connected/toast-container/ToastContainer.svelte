@@ -4,7 +4,7 @@
 	import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
 	import InfoIcon from "@lucide/svelte/icons/info";
 	import XIcon from "@lucide/svelte/icons/x";
-	import { getStores } from "../../testing/mock-stores.js";
+	import { getStores } from "@orqastudio/sdk";
 
 	type ToastType = "success" | "error" | "warning" | "info";
 

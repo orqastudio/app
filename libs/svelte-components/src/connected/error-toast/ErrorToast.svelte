@@ -1,7 +1,7 @@
 <script lang="ts">
 	import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
 	import XIcon from "@lucide/svelte/icons/x";
-	import { getStores } from "../../testing/mock-stores.js";
+	import { getStores } from "@orqastudio/sdk";
 
 	const stores = getStores();
 

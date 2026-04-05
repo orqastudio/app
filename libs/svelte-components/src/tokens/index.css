@@ -2,6 +2,15 @@
 @plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 
+/* Scan the rest of the svelte-components library for Tailwind classes.
+   Tailwind v4 excludes node_modules from auto-detection, so without this
+   directive literal class strings that only appear inside library source
+   files (like the typed-prop maps in Stack/HStack/Box) are silently
+   dropped from any consumer's generated CSS. Path is relative to this
+   file — resolves to src/ during library dev and dist/ when consumers
+   import "@orqastudio/svelte-components/tokens". */
+@source "../**/*.{svelte,ts,js}";
+
 @custom-variant dark (&:is(.dark *));
 
 @import "./colors.css";

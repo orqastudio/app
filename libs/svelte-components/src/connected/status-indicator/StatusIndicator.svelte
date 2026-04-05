@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Status } from "../../pure/status/index.js";
-	import { getStores } from "../../testing/mock-stores.js";
+	import { getStores } from "@orqastudio/sdk";
 	import type { StatusConfig } from "../../pure/status/status-utils.js";
 
 	let {
