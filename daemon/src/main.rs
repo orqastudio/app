@@ -143,6 +143,47 @@ async fn flush_event_batch(storage: &Arc<Storage>, batch: &mut Vec<LogEvent>) {
 
 use tracing::{error, info, warn};
 
+/// Install a panic hook that logs panics through the tracing subscriber before
+/// chaining to the default hook (which writes to stderr).
+///
+/// Without this, panics in `tokio::spawn`'d tasks are silently swallowed: the
+/// tokio executor catches the unwind and drops the task without surfacing
+/// anything to tracing, and the default panic hook only writes to stderr —
+/// which, when the daemon runs detached without a TTY, goes nowhere. That
+/// turned a routing-syntax panic in the health router into a mysterious hang
+/// with no log trail. This hook ensures every panic hits `.state/daemon.log`.
+///
+/// Must be called after `logging::init` so the tracing subscriber is live.
+/// Panics before that point still fall through to the default hook.
+fn install_panic_hook() {
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        let location = info
+            .location()
+            .map(|loc| format!("{}:{}:{}", loc.file(), loc.line(), loc.column()))
+            .unwrap_or_else(|| "unknown".to_owned());
+        let message = info
+            .payload()
+            .downcast_ref::<&str>()
+            .copied()
+            .map(ToOwned::to_owned)
+            .or_else(|| info.payload().downcast_ref::<String>().cloned())
+            .unwrap_or_else(|| "<non-string panic payload>".to_owned());
+        let thread = std::thread::current()
+            .name()
+            .unwrap_or("<unnamed>")
+            .to_owned();
+        error!(
+            subsystem = "panic",
+            thread = %thread,
+            location = %location,
+            "thread '{thread}' panicked at {location}: {message}"
+        );
+        // Chain to the default hook so stderr still gets the full backtrace.
+        default_hook(info);
+    }));
+}
+
 /// Resolve the project root, exiting with a helpful message if none is found.
 ///
 /// This is a startup-time failure — there is no useful work the daemon can do
@@ -440,6 +481,11 @@ fn run_daemon(
     // startup events are captured. The guard keeps the background log-writer
     // thread alive for the lifetime of the process.
     let _log_guard = logging::init(&project_root, Some(Arc::clone(&event_bus)));
+
+    // Install the panic hook immediately after logging — from this point on,
+    // panics in any thread or tokio task are logged to daemon.log before the
+    // default hook writes to stderr.
+    install_panic_hook();
 
     info!(
         subsystem = "health",
