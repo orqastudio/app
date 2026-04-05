@@ -395,11 +395,11 @@ pub async fn start(
     let artifact_router = Router::new()
         .route("/", get(crate::routes::artifacts::list_artifacts))
         .route("/tree", get(crate::routes::artifacts::get_artifact_tree))
-        .route("/:id", get(crate::routes::artifacts::get_artifact))
-        .route("/:id", axum::routing::put(crate::routes::artifacts::update_artifact))
-        .route("/:id/content", get(crate::routes::artifacts::get_artifact_content))
-        .route("/:id/traceability", get(crate::routes::artifacts::get_artifact_traceability))
-        .route("/:id/impact", get(crate::routes::artifacts::get_artifact_impact))
+        .route("/{id}", get(crate::routes::artifacts::get_artifact))
+        .route("/{id}", axum::routing::put(crate::routes::artifacts::update_artifact))
+        .route("/{id}/content", get(crate::routes::artifacts::get_artifact_content))
+        .route("/{id}/traceability", get(crate::routes::artifacts::get_artifact_traceability))
+        .route("/{id}/impact", get(crate::routes::artifacts::get_artifact_impact))
         .with_state(state.graph_state.clone());
 
     // Graph analytics routes.
@@ -458,40 +458,40 @@ pub async fn start(
         .route("/updates", get(crate::routes::plugins::check_plugin_updates))
         .route("/install/local", post(crate::routes::plugins::install_plugin_local))
         .route("/install/github", post(crate::routes::plugins::install_plugin_github))
-        .route("/:name", get(crate::routes::plugins::get_plugin))
-        .route("/:name", axum::routing::delete(crate::routes::plugins::uninstall_plugin))
-        .route("/:name/path", get(crate::routes::plugins::get_plugin_path))
+        .route("/{name}", get(crate::routes::plugins::get_plugin))
+        .route("/{name}", axum::routing::delete(crate::routes::plugins::uninstall_plugin))
+        .route("/{name}/path", get(crate::routes::plugins::get_plugin_path))
         .with_state(state.graph_state.clone());
 
     // Agent routes — agent preamble and behavioral messages.
     let agent_router = Router::new()
         .route("/behavioral-messages", get(crate::routes::agents::get_behavioral_messages))
-        .route("/:role", get(crate::routes::agents::get_agent))
+        .route("/{role}", get(crate::routes::agents::get_agent))
         .with_state(state.graph_state.clone());
 
     // Content routes — knowledge artifact loading.
     let content_router = Router::new()
-        .route("/knowledge/:key", get(crate::routes::content::get_knowledge))
+        .route("/knowledge/{key}", get(crate::routes::content::get_knowledge))
         .with_state(state.graph_state.clone());
 
     // Lesson routes — lesson CRUD and recurrence.
     let lesson_router = Router::new()
         .route("/", get(crate::routes::lessons::list_lessons).post(crate::routes::lessons::create_lesson))
-        .route("/:id/recurrence", axum::routing::put(crate::routes::lessons::increment_lesson_recurrence))
+        .route("/{id}/recurrence", axum::routing::put(crate::routes::lessons::increment_lesson_recurrence))
         .with_state(state.graph_state.clone());
 
     // Session routes — chat session and message management, plus daemon stream loop.
     let session_router = Router::new()
         .route("/", post(crate::routes::sessions::create_session).get(crate::routes::sessions::list_sessions))
-        .route("/:id", get(crate::routes::sessions::get_session)
+        .route("/{id}", get(crate::routes::sessions::get_session)
             .put(crate::routes::sessions::update_session)
             .delete(crate::routes::sessions::delete_session))
-        .route("/:id/end", post(crate::routes::sessions::end_session))
-        .route("/:id/messages", get(crate::routes::sessions::list_session_messages)
+        .route("/{id}/end", post(crate::routes::sessions::end_session))
+        .route("/{id}/messages", get(crate::routes::sessions::list_session_messages)
             .post(crate::routes::streaming::send_message))
-        .route("/:id/stream", get(crate::routes::streaming::session_stream))
-        .route("/:id/stop", post(crate::routes::streaming::stop_stream))
-        .route("/:id/tool-approval", post(crate::routes::streaming::tool_approval))
+        .route("/{id}/stream", get(crate::routes::streaming::session_stream))
+        .route("/{id}/stop", post(crate::routes::streaming::stop_stream))
+        .route("/{id}/tool-approval", post(crate::routes::streaming::tool_approval))
         .with_state(state.clone());
 
     // Project routes — project management, settings, scan, icon.
@@ -509,7 +509,7 @@ pub async fn start(
     // Settings routes — app key/value settings store.
     let settings_router = Router::new()
         .route("/", get(crate::routes::settings::get_settings))
-        .route("/:key", axum::routing::put(crate::routes::settings::set_setting))
+        .route("/{key}", axum::routing::put(crate::routes::settings::set_setting))
         .with_state(state.clone());
 
     // Sidecar routes — subprocess status and restart.
@@ -522,7 +522,7 @@ pub async fn start(
     let cli_tools_router = Router::new()
         .route("/", get(crate::routes::cli_tools::list_cli_tools))
         .route("/status", get(crate::routes::cli_tools::get_cli_tool_status))
-        .route("/:plugin/:key/run", post(crate::routes::cli_tools::run_cli_tool))
+        .route("/{plugin}/{key}/run", post(crate::routes::cli_tools::run_cli_tool))
         .with_state(state.graph_state.clone());
 
     // Hook routes — plugin hook registry and dispatcher generation.
