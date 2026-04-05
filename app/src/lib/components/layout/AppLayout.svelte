@@ -125,7 +125,7 @@
 	});
 </script>
 
-<Stack gap={0} height="screen" width="screen" align="stretch" overflow="hidden">
+<Stack gap={0} height="screen" width="screen" overflow="hidden">
 	<!-- Toolbar -->
 	<Toolbar />
 

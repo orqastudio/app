@@ -120,7 +120,7 @@
 
 	let {
 		gap = 2,
-		align = "start",
+		align = "stretch",
 		full = false,
 		padding,
 		paddingX,
