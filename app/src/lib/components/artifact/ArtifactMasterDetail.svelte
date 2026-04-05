@@ -35,7 +35,7 @@
 </script>
 
 <!-- HStack fills full height; the sidebar has a fixed w-60 which Box does not support, so it uses a bare div. -->
-<HStack gap={0} height="full">
+<HStack gap={0} height="full" align="stretch">
 	<!-- File Browser: w-60 is a specific size not in Box's width map, so a bare div is used here. -->
 	<div class="w-60 shrink-0 overflow-hidden border-r border-border h-full">
 		<ArtifactNav category={activity} />

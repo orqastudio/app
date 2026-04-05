@@ -129,8 +129,10 @@
 	<!-- Toolbar -->
 	<Toolbar />
 
-	<!-- Main Content Area -->
-	<HStack gap={0} flex={1} overflow="hidden">
+	<!-- Main Content Area. align="stretch" is required so children fill the
+	     available height — HStack's default is align="center" which collapses
+	     children to content height and breaks nested h-full centering. -->
+	<HStack gap={0} flex={1} align="stretch" overflow="hidden">
 		{#if setupNeeded}
 			<!-- First-run setup wizard — blocks all other content -->
 			<SetupWizard

@@ -279,6 +279,21 @@ async function killAll(root: string, opts: { preserveDevtools?: boolean } = {}):
 		}
 	}
 
+	// Remove the stale daemon PID file unconditionally. Windows reuses PIDs,
+	// so leaving a dead daemon's PID in .state/daemon.pid causes the next
+	// daemon start to see the reused PID as "a live daemon" and exit with
+	// "a daemon instance is already running". Deleting the file here closes
+	// that race regardless of how the daemon was terminated.
+	const daemonPidFile = path.join(root, ".state", "daemon.pid");
+	if (fs.existsSync(daemonPidFile)) {
+		try {
+			fs.unlinkSync(daemonPidFile);
+			logCtrl("Removed stale daemon PID file.");
+		} catch (e) {
+			logCtrl(`Could not remove ${daemonPidFile}: ${(e as Error).message}`);
+		}
+	}
+
 	removeControlFile(root);
 	logSuccess("All processes stopped.");
 }

@@ -30,7 +30,7 @@
 				<Icon name="x" size="md" />
 			</Button>
 		</HStack>
-		<HStack gap={0} flex={1} overflow="hidden">
+		<HStack gap={0} flex={1} align="stretch" overflow="hidden">
 			<div class="w-56 shrink-0 border-r border-border">
 				<SettingsCategoryNav mode="app" activeSection={dialogSection} onSectionChange={(s) => { dialogSection = s; }} />
 			</div>

@@ -187,9 +187,24 @@ async function killAll(root, opts = {}) {
             pidsToKill.add(pid);
         }
     }
+    // Base ports that killAll always reclaims (daemon + its subservices + app vite).
+    const basePorts = [
+        getPort("daemon"),
+        getPort("lsp"),
+        getPort("mcp"),
+        VITE_PORT,
+        getPort("dashboard"),
+        getPort("sync"),
+    ];
+    // Devtools-owned ports — only reclaim when we're NOT preserving devtools.
+    const devtoolsPorts = [
+        getPort("devtools"),
+        getPort("storybook"),
+        5173, // legacy default Vite port
+    ];
     const portsToCheck = opts.preserveDevtools
-        ? [VITE_PORT, getPort("dashboard"), getPort("daemon")]
-        : [VITE_PORT, 5173, getPort("dashboard"), getPort("daemon")];
+        ? basePorts
+        : [...basePorts, ...devtoolsPorts];
     for (const port of portsToCheck) {
         for (const pid of findPidsOnPort(port)) {
             logCtrl(`Found process on port ${port} (PID ${pid})`);
@@ -206,16 +221,36 @@ async function killAll(root, opts = {}) {
         }
     }
     logCtrl("Waiting for ports to release...");
-    const freed = await waitForPort(VITE_PORT, PORT_TIMEOUT_MS, true);
-    if (!freed) {
-        for (const pid of findPidsOnPort(VITE_PORT)) {
-            logCtrl(`Force killing PID ${pid} on port ${VITE_PORT}...`);
+    // Wait on every port we just reclaimed — a zombie on any of them will
+    // block the next `orqa dev` start. Previously only VITE_PORT was checked,
+    // which let the devtools Vite (port 10140) survive.
+    for (const port of portsToCheck) {
+        const freed = await waitForPort(port, PORT_TIMEOUT_MS, true);
+        if (freed)
+            continue;
+        for (const pid of findPidsOnPort(port)) {
+            logCtrl(`Force killing PID ${pid} on port ${port}...`);
             killProcessTree(pid);
         }
-        const retried = await waitForPort(VITE_PORT, 5_000, true);
+        const retried = await waitForPort(port, 5_000, true);
         if (!retried) {
-            logError("ctrl", `FAILED: Port ${VITE_PORT} still in use`);
+            logError("ctrl", `FAILED: Port ${port} still in use`);
             process.exit(1);
+        }
+    }
+    // Remove the stale daemon PID file unconditionally. Windows reuses PIDs,
+    // so leaving a dead daemon's PID in .state/daemon.pid causes the next
+    // daemon start to see the reused PID as "a live daemon" and exit with
+    // "a daemon instance is already running". Deleting the file here closes
+    // that race regardless of how the daemon was terminated.
+    const daemonPidFile = path.join(root, ".state", "daemon.pid");
+    if (fs.existsSync(daemonPidFile)) {
+        try {
+            fs.unlinkSync(daemonPidFile);
+            logCtrl("Removed stale daemon PID file.");
+        }
+        catch (e) {
+            logCtrl(`Could not remove ${daemonPidFile}: ${e.message}`);
         }
     }
     removeControlFile(root);
