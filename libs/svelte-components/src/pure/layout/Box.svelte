@@ -79,6 +79,7 @@
 	// Maps width values to Tailwind width classes.
 	const widthMap: Record<string, string> = {
 		full: "w-full",
+		screen: "w-screen",
 		auto: "w-auto",
 	};
 
@@ -223,7 +224,7 @@
 		/** Fixed height shorthand. */
 		height?: "full" | "screen";
 		/** Fixed width shorthand. */
-		width?: "full" | "auto";
+		width?: "full" | "screen" | "auto";
 		/** Overflow behaviour. */
 		overflow?: "hidden" | "auto" | "scroll" | "visible";
 		/** Sets min-h-0 to allow flex children to shrink below content size. */

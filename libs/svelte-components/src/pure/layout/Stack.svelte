@@ -87,6 +87,12 @@
 		screen: "h-screen",
 	};
 
+	// Maps width values to Tailwind width classes.
+	const widthMap: Record<string, string> = {
+		full: "w-full",
+		screen: "w-screen",
+	};
+
 	// Maps overflow values to Tailwind overflow classes.
 	const overflowMap: Record<string, string> = {
 		hidden: "overflow-hidden",
@@ -122,6 +128,7 @@
 		paddingTop,
 		paddingBottom,
 		height,
+		width,
 		overflow,
 		minHeight,
 		flex,
@@ -149,6 +156,8 @@
 		paddingBottom?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
 		/** Fixed height shorthand. */
 		height?: "full" | "screen";
+		/** Fixed width shorthand. */
+		width?: "full" | "screen";
 		/** Overflow behaviour. */
 		overflow?: "hidden" | "auto" | "scroll" | "visible";
 		/** Sets min-h-0 to allow flex children to shrink below content size. */
@@ -174,6 +183,7 @@
 	const paddingTopClass = $derived(paddingTop != null ? paddingTopMap[paddingTop] : undefined);
 	const paddingBottomClass = $derived(paddingBottom != null ? paddingBottomMap[paddingBottom] : undefined);
 	const heightClass = $derived(height != null ? heightMap[height] : undefined);
+	const widthClass = $derived(width != null ? widthMap[width] : undefined);
 	const overflowClass = $derived(overflow != null ? overflowMap[overflow] : undefined);
 	const flexClass = $derived(flex != null ? flexMap[flex] : undefined);
 	const marginTopClass = $derived(marginTop != null ? marginTopMap[marginTop] : undefined);
@@ -194,6 +204,7 @@
 		paddingTopClass,
 		paddingBottomClass,
 		heightClass,
+		widthClass,
 		overflowClass,
 		minHeight === 0 && "min-h-0",
 		flexClass,

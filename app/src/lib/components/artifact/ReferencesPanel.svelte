@@ -39,11 +39,11 @@
 
 	// Full refs only computed when the panel is open — deferred to avoid
 	// expensive graph traversal + rendering on every artifact load
-	const incomingRefs = $derived<ArtifactRef[]>(
+	const incomingRefs = $derived<readonly ArtifactRef[]>(
 		panelOpen && artifactId ? artifactGraphSDK.referencesTo(artifactId) : [],
 	);
 
-	const outgoingRefs = $derived<ArtifactRef[]>(
+	const outgoingRefs = $derived<readonly ArtifactRef[]>(
 		panelOpen && artifactId ? artifactGraphSDK.referencesFrom(artifactId) : [],
 	);
 
@@ -56,7 +56,7 @@
 	}
 
 	/** Group refs by relationship_type (or field as fallback). */
-	function groupRefs(refs: ArtifactRef[]): SvelteMap<string, ArtifactRef[]> {
+	function groupRefs(refs: readonly ArtifactRef[]): SvelteMap<string, ArtifactRef[]> {
 		const groups = new SvelteMap<string, ArtifactRef[]>();
 		for (const ref of refs) {
 			const key = ref.relationship_type ?? ref.field;

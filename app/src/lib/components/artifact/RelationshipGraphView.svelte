@@ -19,8 +19,8 @@
 		outgoingRefs,
 	}: {
 		artifactId: string;
-		incomingRefs: ArtifactRef[];
-		outgoingRefs: ArtifactRef[];
+		incomingRefs: readonly ArtifactRef[];
+		outgoingRefs: readonly ArtifactRef[];
 	} = $props();
 
 	/** Container div bound by the template. */
