@@ -162,6 +162,45 @@ function packageNameToId(name: string): string {
 }
 
 /**
+ * Return the newest file mtime (in ms since epoch) anywhere under `dir`,
+ * walking recursively. Returns 0 when `dir` is empty or unreadable.
+ *
+ * Used for incremental build skipping: if the newest dist/ file is newer than
+ * the newest src/ file, the library is up-to-date and can skip a rebuild.
+ * Skips node_modules and dotfiles for speed — those directories aren't source
+ * inputs or build outputs.
+ */
+function newestMtime(dir: string): number {
+	let newest = 0;
+	const stack: string[] = [dir];
+	while (stack.length > 0) {
+		const current = stack.pop();
+		if (current === undefined) break;
+		let entries: fs.Dirent[];
+		try {
+			entries = fs.readdirSync(current, { withFileTypes: true });
+		} catch {
+			continue;
+		}
+		for (const entry of entries) {
+			if (entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			const full = path.join(current, entry.name);
+			if (entry.isDirectory()) {
+				stack.push(full);
+			} else if (entry.isFile()) {
+				try {
+					const mtime = fs.statSync(full).mtimeMs;
+					if (mtime > newest) newest = mtime;
+				} catch {
+					// Ignore stat failures — best-effort scan.
+				}
+			}
+		}
+	}
+	return newest;
+}
+
+/**
  * Return the watchPatterns for a given NodeKind.
  */
 function watchPatternsForKind(kind: NodeKind): string[] {
@@ -805,6 +844,28 @@ export class ProcessManager {
 			return;
 		}
 
+		// Skip rebuild when dist/ is already newer than src/. svelte-package and
+		// tsc both rimraf their output dir before writing, so rebuilding a library
+		// whose consumers (app Vite, devtools Vite) are already reading from dist/
+		// causes import-resolution panics during the tens-of-ms gap. Incremental
+		// skip makes orqa dev start-processes race-free and dramatically faster.
+		if (this.isLibraryUpToDate(node)) {
+			node.status = "built";
+			node.lastBuiltAt = Date.now();
+			this.log(node.id, `${node.name} is up to date — skipping rebuild`);
+			this.emitEvent({
+				timestamp: Date.now(),
+				nodeId: node.id,
+				nodeName: node.name,
+				status: "built",
+				trigger: "startup",
+				durationMs: 0,
+				error: null,
+				changedFile: null,
+			});
+			return;
+		}
+
 		const startedAt = Date.now();
 		node.status = "building";
 		node.lastError = null;
@@ -866,6 +927,35 @@ export class ProcessManager {
 			this.logJson(event);
 			this.log(node.id, `build failed for ${node.name}: ${error}`);
 			throw err;
+		}
+	}
+
+	/**
+	 * Return true when the node's dist/ output is newer than every file in src/.
+	 *
+	 * Applies only to ts-library and svelte-library nodes — those are the kinds
+	 * that delete their output dir during rebuild and cause Vite resolution races
+	 * when consumers are already reading from dist/. Other kinds (rust-workspace,
+	 * plugin, tauri-app) always rebuild because cargo/plugins have their own
+	 * incremental logic.
+	 *
+	 * Conservative: returns false on any I/O error, missing dist/, or empty src/.
+	 * A false return just means "rebuild to be safe" — never produces a wrong
+	 * skip.
+	 */
+	private isLibraryUpToDate(node: ProcessNode): boolean {
+		if (node.kind !== "ts-library" && node.kind !== "svelte-library") {
+			return false;
+		}
+		const srcDir = path.join(node.rootDir, "src");
+		const distDir = path.join(node.rootDir, "dist");
+		if (!fs.existsSync(srcDir) || !fs.existsSync(distDir)) return false;
+		try {
+			const srcMtime = newestMtime(srcDir);
+			const distMtime = newestMtime(distDir);
+			return distMtime >= srcMtime && distMtime > 0;
+		} catch {
+			return false;
 		}
 	}
 
