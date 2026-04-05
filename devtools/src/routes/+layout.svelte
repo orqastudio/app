@@ -66,7 +66,7 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <TooltipProvider>
-	<Stack gap={0} height="screen" width="screen" overflow="hidden">
+	<Stack gap={0} height="screen" width="screen" align="stretch" overflow="hidden">
 		<DevToolsShell>
 			{@render children()}
 		</DevToolsShell>
