@@ -2,12 +2,12 @@
 // ── Interaction ── Button, Input, Textarea, SearchInput, SelectMenu
 // ── Layout ── Stack, HStack, Grid, Center, Spacer, Toolbar, Separator, ScrollArea, Resizable*
 // ── Typography ── Heading, Text, Label, Caption, Code, Kbd, Prose
-// ── Data Display ── Table*, Badge, SmallBadge, Icon, Status, MetadataRow, MetricCell, Sparkline, ProgressBar, PipelineStages
+// ── Data Display ── Table*, Badge, SmallBadge, Icon, Status, MetadataRow, MetricCell, Sparkline, ProgressBar, PipelineStages, IssueRow
 // ── Feedback ── LoadingSpinner, ErrorDisplay, EmptyState, ConnectionIndicator
 // ── Overlay ── Dialog*, AlertDialog*, ConfirmDialog, DropdownMenu*, Tooltip*, Popover*
 // ── Navigation ── Tabs*, Breadcrumb, NavItem, Link
 // ── Container ── Card*, SimpleCard, FormCard, ListCard, DashboardCard, ViewContainer, Collapsible*
-// ── Form ── FormGroup, FormSection, Checkbox, Switch, RadioGroup
+// ── Form ── FormGroup, FormSection, Checkbox, Switch, RadioGroup, IssueFilters
 // ── Utility ── VisuallyHidden, ThinkingBlock
 
 // Typography primitives
@@ -209,6 +209,10 @@ export { ChatBubble, ChatInput, StreamingDots, ChatContainer } from "./chat/inde
 export { Checkbox } from "./checkbox/index.js";
 export { Switch } from "./switch/index.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group/index.js";
+
+// Issue management components
+export { IssueRow } from "./issue-row/index.js";
+export { IssueFilters } from "./issue-filters/index.js";
 
 // Small utility primitives
 export { Dot } from "./dot/index.js";

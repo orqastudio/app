@@ -35,6 +35,7 @@
 	import MetricsView from "./metrics/MetricsView.svelte";
 	import ProcessView from "./processes/ProcessView.svelte";
 	import HelpPanel from "./help/HelpPanel.svelte";
+	import IssuesView from "./issues/IssuesView.svelte";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import finMark from "$lib/assets/fin-mark.svg";
 
@@ -58,7 +59,8 @@
 	const showWorkspace = $derived(devController.state === "running");
 
 	const NAV_DEFS: { key: DevToolsTab; icon: string; label: string }[] = [
-		{ key: "logs", icon: "terminal", label: "Logs" },
+		{ key: "issues", icon: "alert-circle", label: "Issues" },
+		{ key: "stream", icon: "list", label: "Stream" },
 		{ key: "processes", icon: "cpu", label: "Processes" },
 		{ key: "storybook", icon: "book-open", label: "Storybook" },
 		{ key: "metrics", icon: "activity", label: "Metrics" },
@@ -111,7 +113,7 @@
 
 	/**
 	 * Handle keydown: ? key toggles the help panel when not typing in an input field.
-	 * Ctrl+1–4 navigate directly to the corresponding tab.
+	 * Ctrl+1–5 navigate directly to the corresponding tab.
 	 * @param e - The keyboard event from the document keydown listener.
 	 */
 	function handleKeydown(e: KeyboardEvent): void {
@@ -144,7 +146,9 @@
 		{/snippet}
 
 		{#snippet mainContent()}
-			{#if navigation.activeTab === "logs"}
+			{#if navigation.activeTab === "issues"}
+				<IssuesView />
+			{:else if navigation.activeTab === "stream"}
 				{@render children()}
 			{:else if navigation.activeTab === "processes"}
 				<ProcessView />

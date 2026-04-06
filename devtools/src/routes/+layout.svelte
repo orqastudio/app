@@ -2,9 +2,9 @@
 	// Root layout for OrqaDev. Wraps the entire app in TooltipProvider and
 	// mounts the DevToolsShell, which owns tab navigation and the status bar.
 	// Also registers the global keyboard shortcuts for the entire app:
-	//   Ctrl+F / Cmd+F  — focus the log search input
+	//   Ctrl+F / Cmd+F  — focus the stream search input
 	//   Ctrl+L / Cmd+L  — clear the log event buffer
-	//   Ctrl+1–4        — switch to the corresponding tab
+	//   Ctrl+1–5        — switch to the corresponding tab
 	//   Escape          — clear all active log filters
 	import "../app.css";
 	import { TooltipProvider, Stack } from "@orqastudio/svelte-components/pure";
@@ -38,11 +38,11 @@
 
 		// Ctrl+F / Cmd+F — focus the log search input.
 		// This shortcut fires even when an input is focused so the user can always
-		// jump to the search box without first clicking away. We switch to the Logs
+		// jump to the search box without first clicking away. We switch to the Stream
 		// tab first in case the user is on another tab.
 		if (mod && e.key === "f") {
 			e.preventDefault();
-			navigation.activeTab = "logs";
+			navigation.activeTab = "stream";
 			// Use rAF so the Logs tab content is mounted before we try to focus.
 			requestAnimationFrame(() => {
 				const searchInput = document.getElementById("log-search-input");

@@ -9,11 +9,13 @@
 import { listen } from "@tauri-apps/api/event";
 import { assertNever } from "@orqastudio/types";
 
-export type DevToolsTab = "logs" | "processes" | "storybook" | "metrics";
+export type DevToolsTab = "issues" | "stream" | "processes" | "storybook" | "metrics";
 
-// All four tabs with their display labels, ordered for the tab bar.
+// All five tabs with their display labels, ordered for the tab bar.
+// "issues" is first and is the default active tab.
 export const TABS: { value: DevToolsTab; label: string }[] = [
-	{ value: "logs", label: "Logs" },
+	{ value: "issues", label: "Issues" },
+	{ value: "stream", label: "Stream" },
 	{ value: "processes", label: "Processes" },
 	{ value: "storybook", label: "Storybook" },
 	{ value: "metrics", label: "Metrics" },
@@ -31,18 +33,30 @@ const STORAGE_KEY_TAB = "orqadev:activeTab";
 // Valid tab values — used to reject corrupted or stale persisted values.
 const VALID_TABS = new Set<DevToolsTab>(TABS.map((t) => t.value));
 
-// Restore the previously selected tab from localStorage, falling back to "logs"
+// Migrate legacy tab names from localStorage to their current equivalents.
+// "logs" was renamed to "stream" — map it so existing installations don't lose
+// their persisted tab selection.
+function migrateLegacyTab(stored: string): string {
+	if (stored === "logs") return "stream";
+	return stored;
+}
+
+// Restore the previously selected tab from localStorage, falling back to "issues"
 // if nothing is stored or the stored value is not a valid tab name.
+// Applies legacy migration before validation so renamed tabs are handled correctly.
 function loadPersistedTab(): DevToolsTab {
 	try {
-		const stored = localStorage.getItem(STORAGE_KEY_TAB);
-		if (stored && VALID_TABS.has(stored as DevToolsTab)) {
-			return stored as DevToolsTab;
+		const raw = localStorage.getItem(STORAGE_KEY_TAB);
+		if (raw) {
+			const stored = migrateLegacyTab(raw);
+			if (VALID_TABS.has(stored as DevToolsTab)) {
+				return stored as DevToolsTab;
+			}
 		}
 	} catch {
 		// localStorage unavailable (e.g., sandboxed context) — silently fall through.
 	}
-	return "logs";
+	return "issues";
 }
 
 // Persist the active tab to localStorage.
