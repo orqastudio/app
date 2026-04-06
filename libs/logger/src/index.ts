@@ -24,6 +24,16 @@ export interface LogEntry {
 	readonly message: string;
 	readonly timestamp: number;
 	readonly data?: unknown;
+	readonly stackFrames?: StackFrame[];
+}
+
+/** A single parsed frame from a JS Error.stack string. */
+export interface StackFrame {
+	readonly file: string;
+	readonly line?: number;
+	readonly col?: number;
+	readonly function?: string;
+	readonly raw?: string;
 }
 
 export interface Logger {
@@ -61,6 +71,67 @@ function shouldLog(level: LogLevel): boolean {
 	return LEVEL_ORDER[level] >= LEVEL_ORDER[minLevel];
 }
 
+/**
+ * Parse a JS Error.stack string into StackFrame objects, skipping internal frames.
+ * Handles both Chrome format (`at fn (file:line:col)`) and Firefox format (`fn@file:line:col`).
+ * @param stack - The raw stack trace string from Error().stack.
+ * @param skipCount - Number of internal frames to skip from the top.
+ * @returns Parsed stack frames with file, line, col, function name, capped at 5 frames.
+ */
+function parseCallStack(stack: string | undefined, skipCount: number): StackFrame[] {
+	if (!stack) return [];
+	const lines = stack.split("\n").slice(1); // Remove the "Error" header line
+	const frames: StackFrame[] = [];
+	let skipped = 0;
+
+	for (const line of lines) {
+		const trimmed = line.trim();
+		if (!trimmed) continue;
+
+		// Skip the specified number of internal logger frames.
+		if (skipped < skipCount) {
+			skipped++;
+			continue;
+		}
+
+		// Chrome/V8 format: "    at FunctionName (file:line:col)" or "    at file:line:col"
+		const chromeMatch = trimmed.match(/^at\s+(?:([\w$./<>[\] ]+?)\s+\()?(.+):(\d+):(\d+)\)?$/);
+		if (chromeMatch) {
+			const [, fnName, file, lineStr, colStr] = chromeMatch;
+			frames.push({
+				file: file ?? "",
+				line: lineStr !== undefined ? Number(lineStr) : undefined,
+				col: colStr !== undefined ? Number(colStr) : undefined,
+				function: fnName?.trim() || undefined,
+				raw: trimmed,
+			});
+			if (frames.length >= 5) break;
+			continue;
+		}
+
+		// Firefox/Safari format: "functionName@file:line:col" or "@file:line:col"
+		const firefoxMatch = trimmed.match(/^([\w$./<>[\]]*)?@(.+):(\d+):(\d+)$/);
+		if (firefoxMatch) {
+			const [, fnName, file, lineStr, colStr] = firefoxMatch;
+			frames.push({
+				file: file ?? "",
+				line: lineStr !== undefined ? Number(lineStr) : undefined,
+				col: colStr !== undefined ? Number(colStr) : undefined,
+				function: fnName || undefined,
+				raw: trimmed,
+			});
+			if (frames.length >= 5) break;
+			continue;
+		}
+
+		// Unrecognised frame — include as raw only.
+		frames.push({ file: "", raw: trimmed });
+		if (frames.length >= 5) break;
+	}
+
+	return frames;
+}
+
 function forwardToDashboard(level: string, source: string, message: string): void {
 	try {
 		const body = JSON.stringify({ level, source, message: `[${source}] ${message}` });
@@ -89,19 +160,27 @@ function forwardToDashboard(level: string, source: string, message: string): voi
  * @param level - Log severity level string.
  * @param source - Module name that produced the log entry.
  * @param message - Human-readable log message text.
+ * @param stackFrames - Optional parsed call stack frames (warn/error only).
  */
-function forwardToDaemonBus(level: string, source: string, message: string): void {
+function forwardToDaemonBus(
+	level: string,
+	source: string,
+	message: string,
+	stackFrames?: StackFrame[],
+): void {
 	try {
 		if (typeof fetch === "undefined") return;
-		const body = JSON.stringify([
-			{
-				level,
-				source: "frontend",
-				category: source,
-				message: `[${source}] ${message}`,
-				timestamp: Date.now(),
-			},
-		]);
+		const event: Record<string, unknown> = {
+			level,
+			source: "frontend",
+			category: source,
+			message: `[${source}] ${message}`,
+			timestamp: Date.now(),
+		};
+		if (stackFrames !== undefined && stackFrames.length > 0) {
+			event.stack_frames = stackFrames;
+		}
+		const body = JSON.stringify([event]);
 		void fetch(DAEMON_EVENTS_URL, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -142,7 +221,7 @@ function emit(entry: LogEntry): void {
 	}
 
 	forwardToDashboard(entry.level, entry.source, entry.message);
-	forwardToDaemonBus(entry.level, entry.source, entry.message);
+	forwardToDaemonBus(entry.level, entry.source, entry.message, entry.stackFrames);
 
 	subscribers.forEach((sub) => {
 		try {
@@ -179,21 +258,29 @@ export function logger(source: string): Logger {
 			});
 		},
 		warn(message: string, ...data: unknown[]) {
+			// Capture stack at call site. skipCount=1 skips this warn() frame so
+			// frame[0] is the actual caller outside the logger.
+			const stackFrames = parseCallStack(new Error().stack, 1);
 			emit({
 				level: "warn",
 				source,
 				message,
 				timestamp: Date.now(),
 				data: data.length ? data : undefined,
+				stackFrames: stackFrames.length > 0 ? stackFrames : undefined,
 			});
 		},
 		error(message: string, ...data: unknown[]) {
+			// Capture stack at call site. skipCount=1 skips this error() frame so
+			// frame[0] is the actual caller outside the logger.
+			const stackFrames = parseCallStack(new Error().stack, 1);
 			emit({
 				level: "error",
 				source,
 				message,
 				timestamp: Date.now(),
 				data: data.length ? data : undefined,
+				stackFrames: stackFrames.length > 0 ? stackFrames : undefined,
 			});
 		},
 		perf(label: string, fn?: () => unknown) {

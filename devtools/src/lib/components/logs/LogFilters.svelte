@@ -44,7 +44,7 @@
 	 * @param value - The value to add if absent or remove if present.
 	 * @returns A new SvelteSet with the toggled membership.
 	 */
-	function toggleSet<T>(set: Set<T>, value: T): Set<T> {
+	function toggleSet<T>(set: Set<T>, value: T): SvelteSet<T> {
 		const next = new SvelteSet(set);
 		if (next.has(value)) {
 			next.delete(value);

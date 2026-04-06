@@ -56,12 +56,36 @@ const DAEMON_BASE = `http://127.0.0.1:${DAEMON_PORT}`;
 const TIMEOUT_MS = 5000;
 
 // ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Capture the call-site source location from the current stack trace.
+ * Skips internal frames (getCallSite itself and callDaemonGraph) to surface
+ * the actual CLI command file that initiated the request, giving the daemon
+ * observability into which command triggered each graph query or validation.
+ * @returns Object with file path and optional line number of the call site.
+ */
+function getCallSite(): { file: string; line?: number } {
+	const stack = new Error().stack;
+	if (!stack) return { file: "unknown" };
+	// Skip frame 0 (Error), frame 1 (getCallSite), frame 2 (callDaemonGraph) — use frame 3
+	const lines = stack.split("\n");
+	const frame = lines[3] || lines[2] || lines[1] || "";
+	const match = frame.match(/\((.+):(\d+):\d+\)/) || frame.match(/at (.+):(\d+):\d+/);
+	if (match) return { file: match[1], line: parseInt(match[2], 10) };
+	return { file: frame.trim() };
+}
+
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
 /**
  * Call a daemon endpoint. Falls back to the `orqa-validation` binary if
  * the daemon is unreachable.
+ * Attaches x-source-file and x-source-line headers so the daemon can log
+ * which CLI command originated the request.
  * @param method - HTTP method (GET or POST)
  * @param path - Endpoint path (e.g. "/query")
  * @param body - JSON body for POST requests
@@ -72,10 +96,15 @@ export async function callDaemonGraph<T>(
 	path: string,
 	body?: unknown,
 ): Promise<T> {
+	const callSite = getCallSite();
 	try {
 		const options: RequestInit = {
 			method,
-			headers: { "Content-Type": "application/json" },
+			headers: {
+				"Content-Type": "application/json",
+				"x-source-file": callSite.file,
+				"x-source-line": String(callSite.line ?? ""),
+			},
 			signal: AbortSignal.timeout(TIMEOUT_MS),
 		};
 		if (body !== undefined) {
@@ -122,16 +151,12 @@ export async function isDaemonRunning(): Promise<boolean> {
  * @param body - Request body to pass as CLI arguments.
  * @returns Parsed JSON output from the binary.
  */
-function callBinaryFallback<T>(
-	_method: string,
-	path: string,
-	body: unknown,
-): T {
+function callBinaryFallback<T>(_method: string, path: string, body: unknown): T {
 	const binary = findBinary(process.cwd());
 	if (!binary) {
 		throw new Error(
 			"orqa-validation daemon is not running and binary not found. " +
-			"Start the daemon with `orqa-validation daemon` or build the binary.",
+				"Start the daemon with `orqa-validation daemon` or build the binary.",
 		);
 	}
 
