@@ -1,4 +1,6 @@
 // Test harness helpers for orqa-daemon integration tests.
+// Each function is used by at least one test binary; unused-in-binary warnings are suppressed.
+#![allow(dead_code)]
 //
 // Provides factory functions for building the full axum Router and daemon state
 // objects from the minimal fixture project at `tests/fixtures/minimal-project/`.
@@ -14,8 +16,8 @@ use std::sync::RwLock;
 
 use std::sync::Arc;
 
-use axum::Router;
 use axum::routing::get;
+use axum::Router;
 
 use orqa_validation::context::build_validation_context_complete;
 use orqa_validation::graph::{build_artifact_graph, graph_stats, load_project_config};
@@ -26,8 +28,7 @@ use orqa_validation::platform::scan_plugin_manifests;
 /// Resolved at compile time relative to the cargo manifest dir so it works
 /// regardless of which directory tests are invoked from.
 pub fn fixture_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("tests/fixtures/minimal-project")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/minimal-project")
 }
 
 /// Build a full axum Router using real route handlers from `orqa_daemon_lib`,
@@ -44,8 +45,7 @@ pub fn build_app_router() -> Router {
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    let graph_state = GraphState::build(&root)
-        .unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
 
     let state = HealthState::for_test(graph_state, None);
     orqa_daemon_lib::build_router(state)
@@ -65,8 +65,7 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    let graph_state = GraphState::build(&root)
-        .unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
 
     // Base routes: /reload, /artifacts/*, /graph/* via HealthState.
     let state = HealthState::for_test(graph_state.clone(), None);
@@ -74,25 +73,34 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
 
     // Plugin routes — GET /plugins, GET /plugins/{name}, GET /plugins/{name}/path.
     let plugin_router = Router::new()
-        .route("/", axum::routing::get(orqa_daemon_lib::routes::plugins::list_plugins))
-        .route("/{name}", axum::routing::get(orqa_daemon_lib::routes::plugins::get_plugin))
-        .route("/{name}/path", axum::routing::get(orqa_daemon_lib::routes::plugins::get_plugin_path))
+        .route("/", get(orqa_daemon_lib::routes::plugins::list_plugins))
+        .route("/{name}", get(orqa_daemon_lib::routes::plugins::get_plugin))
+        .route(
+            "/{name}/path",
+            get(orqa_daemon_lib::routes::plugins::get_plugin_path),
+        )
         .with_state(graph_state.clone());
 
     // Workflow routes — GET /workflow/transitions.
     let workflow_router = Router::new()
-        .route("/transitions", axum::routing::get(orqa_daemon_lib::routes::workflow::list_transitions))
+        .route(
+            "/transitions",
+            get(orqa_daemon_lib::routes::workflow::list_transitions),
+        )
         .with_state(graph_state.clone());
 
     // Agent routes — GET /agents/behavioral-messages, GET /agents/{role}.
     let agent_router = Router::new()
-        .route("/behavioral-messages", axum::routing::get(orqa_daemon_lib::routes::agents::get_behavioral_messages))
-        .route("/{role}", axum::routing::get(orqa_daemon_lib::routes::agents::get_agent))
+        .route(
+            "/behavioral-messages",
+            get(orqa_daemon_lib::routes::agents::get_behavioral_messages),
+        )
+        .route("/{role}", get(orqa_daemon_lib::routes::agents::get_agent))
         .with_state(graph_state.clone());
 
     // Hook routes — GET /hooks.
     let hook_router = Router::new()
-        .route("/", axum::routing::get(orqa_daemon_lib::routes::hooks::list_hooks))
+        .route("/", get(orqa_daemon_lib::routes::hooks::list_hooks))
         .with_state(graph_state.clone());
 
     // Inline health handler that mirrors the real GET /health response shape
@@ -115,7 +123,7 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
     };
 
     let router = base
-        .route("/health", axum::routing::get(health_handler))
+        .route("/health", get(health_handler))
         .nest("/plugins", plugin_router)
         .nest("/workflow", workflow_router)
         .nest("/agents", agent_router)
@@ -132,6 +140,7 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
 /// Callers use `tower::ServiceExt::oneshot` to dispatch test requests directly
 /// without occupying a real socket. All state is built from the minimal fixture
 /// project, producing a real graph with real artifacts.
+#[allow(clippy::too_many_lines)]
 pub fn build_test_router() -> Router {
     let root = fixture_dir();
 
@@ -165,7 +174,7 @@ pub fn build_test_router() -> Router {
             get(move || {
                 let s = Arc::clone(&health_state);
                 async move {
-                    let guard = s.read().unwrap();
+                    let guard = s.read().expect("RwLock not poisoned");
                     let artifact_count = guard.0.nodes.len();
                     axum::Json(serde_json::json!({
                         "status": "ok",
@@ -181,7 +190,7 @@ pub fn build_test_router() -> Router {
             get(move || {
                 let s = Arc::clone(&artifacts_state);
                 async move {
-                    let guard = s.read().unwrap();
+                    let guard = s.read().expect("RwLock not poisoned");
                     let nodes: Vec<serde_json::Value> = guard
                         .0
                         .nodes
@@ -204,7 +213,7 @@ pub fn build_test_router() -> Router {
             get(move || {
                 let s = Arc::clone(&stats_state);
                 async move {
-                    let guard = s.read().unwrap();
+                    let guard = s.read().expect("RwLock not poisoned");
                     let stats = graph_stats(&guard.0);
                     axum::Json(serde_json::json!({
                         "node_count": stats.node_count,

@@ -42,8 +42,8 @@ async fn health_returns_200_and_ok_status() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&body_bytes)
-        .expect("health response must be valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&body_bytes).expect("health response must be valid JSON");
 
     assert_eq!(
         body["status"],
@@ -73,10 +73,12 @@ async fn artifacts_returns_non_empty_list() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&body_bytes)
-        .expect("artifacts response must be valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&body_bytes).expect("artifacts response must be valid JSON");
 
-    let artifacts = body.as_array().expect("artifacts response must be a JSON array");
+    let artifacts = body
+        .as_array()
+        .expect("artifacts response must be a JSON array");
     assert!(
         !artifacts.is_empty(),
         "artifacts list must not be empty — fixture project has 3 artifacts"
@@ -105,8 +107,8 @@ async fn graph_stats_returns_positive_node_count() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&body_bytes)
-        .expect("graph/stats response must be valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&body_bytes).expect("graph/stats response must be valid JSON");
 
     let node_count = body["node_count"]
         .as_u64()

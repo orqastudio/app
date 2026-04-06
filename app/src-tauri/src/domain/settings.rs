@@ -71,11 +71,11 @@ mod tests {
     fn resolved_theme_roundtrip() {
         let mut tokens = HashMap::new();
         tokens.insert(
-            "primary".to_string(),
+            "primary".to_owned(),
             ThemeToken {
-                name: "primary".to_string(),
-                value_light: "oklch(0.7 0.15 250)".to_string(),
-                value_dark: Some("oklch(0.8 0.15 250)".to_string()),
+                name: "primary".to_owned(),
+                value_light: "oklch(0.7 0.15 250)".to_owned(),
+                value_dark: Some("oklch(0.8 0.15 250)".to_owned()),
                 source: ThemeTokenSource::Extracted,
             },
         );
@@ -83,7 +83,7 @@ mod tests {
         let theme = ResolvedTheme {
             project_id: 1,
             tokens,
-            source_files: vec!["tailwind.config.ts".to_string()],
+            source_files: vec!["tailwind.config.ts".to_owned()],
             has_overrides: false,
         };
 
@@ -103,7 +103,7 @@ mod tests {
             pid: Some(12345),
             uptime_seconds: Some(3600),
             cli_detected: true,
-            cli_version: Some("1.0.0".to_string()),
+            cli_version: Some("1.0.0".to_owned()),
             error_message: None,
         };
 
@@ -121,7 +121,7 @@ mod tests {
             uptime_seconds: None,
             cli_detected: false,
             cli_version: None,
-            error_message: Some("claude CLI not found in PATH".to_string()),
+            error_message: Some("claude CLI not found in PATH".to_owned()),
         };
 
         let json = serde_json::to_value(&status).expect("serialization should succeed");

@@ -192,16 +192,16 @@ mod tests {
     #[test]
     fn parse_entry_file_block() {
         let raw = RawEntry {
-            event: "file".to_string(),
-            action: "block".to_string(),
+            event: "file".to_owned(),
+            action: "block".to_owned(),
             conditions: vec![
                 RawCondition {
-                    field: "file_path".to_string(),
-                    pattern: r"\.rs$".to_string(),
+                    field: "file_path".to_owned(),
+                    pattern: r"\.rs$".to_owned(),
                 },
                 RawCondition {
-                    field: "new_text".to_string(),
-                    pattern: r"unwrap\(\)".to_string(),
+                    field: "new_text".to_owned(),
+                    pattern: r"unwrap\(\)".to_owned(),
                 },
             ],
             pattern: None,
@@ -217,10 +217,10 @@ mod tests {
     #[test]
     fn parse_entry_bash_warn() {
         let raw = RawEntry {
-            event: "bash".to_string(),
-            action: "warn".to_string(),
+            event: "bash".to_owned(),
+            action: "warn".to_owned(),
             conditions: vec![],
-            pattern: Some("--no-verify".to_string()),
+            pattern: Some("--no-verify".to_owned()),
             scope: None,
             skills: vec![],
         };
@@ -233,15 +233,15 @@ mod tests {
     #[test]
     fn parse_entry_inject_with_knowledge() {
         let raw = RawEntry {
-            event: "file".to_string(),
-            action: "inject".to_string(),
+            event: "file".to_owned(),
+            action: "inject".to_owned(),
             conditions: vec![RawCondition {
-                field: "file_path".to_string(),
-                pattern: r"src-tauri/.*\.rs$".to_string(),
+                field: "file_path".to_owned(),
+                pattern: r"src-tauri/.*\.rs$".to_owned(),
             }],
             pattern: None,
             scope: None,
-            skills: vec!["rust-async-patterns".to_string(), "tauri-v2".to_string()],
+            skills: vec!["rust-async-patterns".to_owned(), "tauri-v2".to_owned()],
         };
         let entry = parse_entry(raw).expect("should parse");
         assert_eq!(entry.event, EventType::File);
@@ -252,8 +252,8 @@ mod tests {
     #[test]
     fn parse_entry_lint_event() {
         let raw = RawEntry {
-            event: "lint".to_string(),
-            action: "warn".to_string(),
+            event: "lint".to_owned(),
+            action: "warn".to_owned(),
             conditions: vec![],
             pattern: None,
             scope: None,
@@ -266,8 +266,8 @@ mod tests {
     #[test]
     fn parse_entry_unknown_event_errors() {
         let raw = RawEntry {
-            event: "network".to_string(),
-            action: "block".to_string(),
+            event: "network".to_owned(),
+            action: "block".to_owned(),
             conditions: vec![],
             pattern: None,
             scope: None,
@@ -279,8 +279,8 @@ mod tests {
     #[test]
     fn parse_entry_unknown_action_errors() {
         let raw = RawEntry {
-            event: "file".to_string(),
-            action: "ignore".to_string(),
+            event: "file".to_owned(),
+            action: "ignore".to_owned(),
             conditions: vec![],
             pattern: None,
             scope: None,
@@ -292,14 +292,14 @@ mod tests {
     #[test]
     fn parse_entry_scan_with_scope() {
         let raw = RawEntry {
-            event: "scan".to_string(),
-            action: "warn".to_string(),
+            event: "scan".to_owned(),
+            action: "warn".to_owned(),
             conditions: vec![RawCondition {
-                field: "content".to_string(),
-                pattern: r"unwrap\(\)".to_string(),
+                field: "content".to_owned(),
+                pattern: r"unwrap\(\)".to_owned(),
             }],
             pattern: None,
-            scope: Some(".claude/agents/*.md".to_string()),
+            scope: Some(".claude/agents/*.md".to_owned()),
             skills: vec![],
         };
         let entry = parse_entry(raw).expect("should parse");

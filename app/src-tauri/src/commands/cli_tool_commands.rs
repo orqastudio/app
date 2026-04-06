@@ -47,9 +47,7 @@ pub async fn run_cli_tool(
 
 /// Get the status of all registered CLI tools (last run info).
 #[tauri::command]
-pub async fn cli_tool_status(
-    state: State<'_, AppState>,
-) -> Result<Vec<CliToolStatus>, OrqaError> {
+pub async fn cli_tool_status(state: State<'_, AppState>) -> Result<Vec<CliToolStatus>, OrqaError> {
     state.daemon.client.get_cli_tool_status().await
 }
 

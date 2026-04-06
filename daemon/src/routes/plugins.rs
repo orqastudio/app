@@ -103,9 +103,7 @@ fn registry_cache() -> Arc<RegistryCache> {
 /// Handle GET /plugins — list all installed and enabled plugins.
 ///
 /// Reads project.json to discover plugins with installed:true and enabled:true.
-pub async fn list_plugins(
-    State(state): State<GraphState>,
-) -> Json<Vec<DiscoveredPlugin>> {
+pub async fn list_plugins(State(state): State<GraphState>) -> Json<Vec<DiscoveredPlugin>> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(Vec::new());
@@ -134,23 +132,23 @@ pub async fn get_plugin(
     };
 
     let plugins = scan_plugins(&project_root);
-    let plugin = plugins
-        .iter()
-        .find(|p| p.name == name)
-        .ok_or_else(|| (
+    let plugin = plugins.iter().find(|p| p.name == name).ok_or_else(|| {
+        (
             StatusCode::NOT_FOUND,
             Json(serde_json::json!({
                 "error": format!("plugin '{}' not found", name),
                 "code": "NOT_FOUND"
             })),
-        ))?;
+        )
+    })?;
 
     let plugin_path = std::path::Path::new(&plugin.path);
-    let manifest_raw = read_manifest(plugin_path)
-        .map_err(|e| (
+    let manifest_raw = read_manifest(plugin_path).map_err(|e| {
+        (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({ "error": e.to_string(), "code": "MANIFEST_ERROR" })),
-        ))?;
+        )
+    })?;
 
     let manifest_json = serde_json::to_value(&manifest_raw).unwrap_or(serde_json::Value::Null);
 
@@ -179,16 +177,15 @@ pub async fn get_plugin_path(
     };
 
     let plugins = scan_plugins(&project_root);
-    let plugin = plugins
-        .iter()
-        .find(|p| p.name == name)
-        .ok_or_else(|| (
+    let plugin = plugins.iter().find(|p| p.name == name).ok_or_else(|| {
+        (
             StatusCode::NOT_FOUND,
             Json(serde_json::json!({
                 "error": format!("plugin '{}' not found", name),
                 "code": "NOT_FOUND"
             })),
-        ))?;
+        )
+    })?;
 
     Ok(Json(PluginPathResponse {
         name: plugin.name.clone(),
@@ -216,18 +213,21 @@ pub async fn install_plugin_local(
 
     let source_path = std::path::PathBuf::from(&req.path);
 
-    let result = tokio::task::spawn_blocking(move || {
-        install_from_path(&source_path, &project_root)
-    })
-    .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_PANIC" })),
-    ))?
-    .map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_FAILED" })),
-    ))?;
+    let result =
+        tokio::task::spawn_blocking(move || install_from_path(&source_path, &project_root))
+            .await
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_PANIC" })),
+                )
+            })?
+            .map_err(|e| {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_FAILED" })),
+                )
+            })?;
 
     // Reload the graph to pick up any schema changes from the new plugin.
     let project_root = {
@@ -265,10 +265,12 @@ pub async fn install_plugin_github(
         &project_root,
     )
     .await
-    .map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_FAILED" })),
-    ))?;
+    .map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "INSTALL_FAILED" })),
+        )
+    })?;
 
     let project_root = {
         let Ok(guard) = state.0.read() else {
@@ -298,18 +300,20 @@ pub async fn uninstall_plugin(
         guard.project_root.clone()
     };
 
-    tokio::task::spawn_blocking(move || {
-        orqa_plugin::installer::uninstall(&name, &project_root)
-    })
-    .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_PANIC" })),
-    ))?
-    .map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_FAILED" })),
-    ))?;
+    tokio::task::spawn_blocking(move || orqa_plugin::installer::uninstall(&name, &project_root))
+        .await
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_PANIC" })),
+            )
+        })?
+        .map_err(|e| {
+            (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_FAILED" })),
+            )
+        })?;
 
     state.reload(&{
         let Ok(guard) = state.0.read() else {
@@ -329,17 +333,10 @@ pub async fn list_plugin_registry(
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
     let cache = registry_cache();
 
-    let (official, community) = tokio::join!(
-        cache.fetch("official"),
-        cache.fetch("community"),
-    );
+    let (official, community) = tokio::join!(cache.fetch("official"), cache.fetch("community"),);
 
-    let official_plugins = official
-        .map(|c| c.plugins)
-        .unwrap_or_default();
-    let community_plugins = community
-        .map(|c| c.plugins)
-        .unwrap_or_default();
+    let official_plugins = official.map(|c| c.plugins).unwrap_or_default();
+    let community_plugins = community.map(|c| c.plugins).unwrap_or_default();
 
     Ok(Json(serde_json::json!({
         "official": official_plugins,
@@ -351,9 +348,7 @@ pub async fn list_plugin_registry(
 ///
 /// Compares installed plugin versions against the registry to detect updates.
 /// Returns all installed plugins with an `update_available` flag.
-pub async fn check_plugin_updates(
-    State(state): State<GraphState>,
-) -> Json<Vec<PluginUpdateInfo>> {
+pub async fn check_plugin_updates(State(state): State<GraphState>) -> Json<Vec<PluginUpdateInfo>> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(Vec::new());
@@ -367,10 +362,7 @@ pub async fn check_plugin_updates(
     }
 
     let cache = registry_cache();
-    let (official, community) = tokio::join!(
-        cache.fetch("official"),
-        cache.fetch("community"),
-    );
+    let (official, community) = tokio::join!(cache.fetch("official"), cache.fetch("community"),);
 
     // Build a map of name -> latest_version from the registry.
     let mut registry_versions: std::collections::HashMap<String, String> =
@@ -379,7 +371,9 @@ pub async fn check_plugin_updates(
         for entry in catalog.plugins {
             // Registry entries don't carry a version directly. Use lockfile.
             // For now, mark update_available as false when no version data.
-            registry_versions.entry(entry.name).or_insert_with(|| "unknown".to_owned());
+            registry_versions
+                .entry(entry.name)
+                .or_insert_with(|| "unknown".to_owned());
         }
     }
 

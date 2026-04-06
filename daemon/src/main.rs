@@ -158,10 +158,10 @@ use tracing::{error, info, warn};
 fn install_panic_hook() {
     let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
-        let location = info
-            .location()
-            .map(|loc| format!("{}:{}:{}", loc.file(), loc.line(), loc.column()))
-            .unwrap_or_else(|| "unknown".to_owned());
+        let location = info.location().map_or_else(
+            || "unknown".to_owned(),
+            |loc| format!("{}:{}:{}", loc.file(), loc.line(), loc.column()),
+        );
         let message = info
             .payload()
             .downcast_ref::<&str>()
@@ -195,7 +195,9 @@ fn resolve_project_root() -> PathBuf {
         Err(e) => {
             // Logging is not yet initialised at this point — print directly to stderr.
             #[allow(clippy::print_stderr)]
-            { eprintln!("error: no OrqaStudio project found — {e}"); }
+            {
+                eprintln!("error: no OrqaStudio project found — {e}");
+            }
             std::process::exit(1);
         }
     }
@@ -313,9 +315,9 @@ async fn run(
                 loop {
                     interval.tick().await;
                     let s = Arc::clone(&purge_storage);
-                    if let Err(e) = tokio::task::spawn_blocking(move || {
-                        s.events().purge(retention_days)
-                    }).await {
+                    if let Err(e) =
+                        tokio::task::spawn_blocking(move || s.events().purge(retention_days)).await
+                    {
                         error!(
                             subsystem = "storage",
                             error = ?e,
@@ -368,7 +370,8 @@ async fn run(
         let gs = graph_state.clone();
         let st = storage.clone();
         async move {
-            if let Err(e) = health::start(daemon_port, daemon_config, bus, st, snapshots, gs).await {
+            if let Err(e) = health::start(daemon_port, daemon_config, bus, st, snapshots, gs).await
+            {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }
         }
@@ -445,10 +448,7 @@ async fn run_event_loop(
         // Each manager generates its own snapshot so the health handler never
         // needs to access subprocess managers directly.
         if let Ok(mut guard) = process_snapshots.lock() {
-            *guard = vec![
-                lsp.snapshot("lsp"),
-                mcp.snapshot("mcp"),
-            ];
+            *guard = vec![lsp.snapshot("lsp"), mcp.snapshot("mcp")];
         }
 
         tokio::time::sleep(std::time::Duration::from_millis(250)).await;
@@ -584,6 +584,8 @@ fn main() {
         // tracing may not be initialised if run_daemon panicked during logging::init,
         // so fall back to stderr.
         #[allow(clippy::print_stderr)]
-        { eprintln!("[health] runtime thread panicked: {e:?}"); }
+        {
+            eprintln!("[health] runtime thread panicked: {e:?}");
+        }
     }
 }

@@ -63,10 +63,7 @@ pub async fn plugin_install_github(
 
 /// Uninstall a plugin by name.
 #[tauri::command]
-pub async fn plugin_uninstall(
-    name: String,
-    state: State<'_, AppState>,
-) -> Result<(), OrqaError> {
+pub async fn plugin_uninstall(name: String, state: State<'_, AppState>) -> Result<(), OrqaError> {
     tracing::info!(subsystem = "plugin", plugin_name = %name, "plugin_uninstall: delegating to daemon");
     state.daemon.client.uninstall_plugin(&name).await
 }
@@ -92,9 +89,7 @@ pub async fn plugin_get_path(
         .get("path")
         .and_then(|v| v.as_str())
         .map(str::to_owned)
-        .ok_or_else(|| {
-            OrqaError::Sidecar("daemon response missing 'path' field".to_owned())
-        })
+        .ok_or_else(|| OrqaError::Sidecar("daemon response missing 'path' field".to_owned()))
 }
 
 /// Read the plugin manifest for a specific installed plugin.

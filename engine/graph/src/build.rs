@@ -354,9 +354,7 @@ fn build_type_registry(settings: &ProjectSettings) -> TypeRegistry {
 ///
 /// Reads from project.json relationships and from plugin/connector manifests under
 /// `project_path`. Used during graph construction to filter invalid relationship types.
-pub fn build_valid_relationship_types(
-    project_path: &Path,
-) -> std::collections::HashSet<String> {
+pub fn build_valid_relationship_types(project_path: &Path) -> std::collections::HashSet<String> {
     let mut valid = std::collections::HashSet::new();
 
     // Project-level relationships (from project.json).
@@ -616,8 +614,8 @@ fn collect_node(
     project_name: Option<&str>,
     valid_rel_types: &std::collections::HashSet<String>,
 ) -> Result<(), GraphError> {
-    let content = std::fs::read_to_string(file_path)
-        .map_err(|e| GraphError::FileSystem(e.to_string()))?;
+    let content =
+        std::fs::read_to_string(file_path).map_err(|e| GraphError::FileSystem(e.to_string()))?;
     let (fm_text, body) = extract_frontmatter(&content);
     let Some(fm_text) = fm_text else {
         return Ok(());
@@ -703,7 +701,8 @@ fn build_node(
     let frontmatter_type = yaml_value.get("type").and_then(|v| v.as_str());
     // Graph construction never has plugin types at hand; type inference relies on
     // path-based registry and frontmatter `type` field only.
-    let artifact_type = infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id, &[]);
+    let artifact_type =
+        infer_artifact_type(&rel_path, ctx.type_registry, frontmatter_type, &id, &[]);
     let frontmatter = yaml_to_json(yaml_value);
 
     let mut references_out = filter_valid_refs(

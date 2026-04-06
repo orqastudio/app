@@ -15,8 +15,8 @@ use serde::{Deserialize, Serialize};
 
 use orqa_validation::hooks::evaluate_hook;
 use orqa_validation::metrics::compute_health;
-use orqa_validation::PipelineCategories;
 use orqa_validation::types::{GraphHealth, HookContext, HookResult, IntegrityCheck};
+use orqa_validation::PipelineCategories;
 use orqa_validation::{auto_fix, validate, AppliedFix};
 
 use crate::graph_state::GraphState;
@@ -61,9 +61,7 @@ pub struct ValidationFixResponse {
 ///
 /// Uses the cached graph and validation context. Returns findings and current
 /// health metrics. No disk I/O beyond what is already cached.
-pub async fn validation_scan(
-    State(state): State<GraphState>,
-) -> Json<ValidationScanResponse> {
+pub async fn validation_scan(State(state): State<GraphState>) -> Json<ValidationScanResponse> {
     let Ok(guard) = state.0.read() else {
         return Json(ValidationScanResponse {
             checks: Vec::new(),
@@ -74,9 +72,16 @@ pub async fn validation_scan(
     let checks = validate(&guard.graph, &guard.ctx);
     let owned = guard.owned_pipeline_categories();
     let (d, l, es, et, rt) = owned.as_str_vecs();
-    let health = compute_health(&guard.graph, &PipelineCategories {
-        delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
-    });
+    let health = compute_health(
+        &guard.graph,
+        &PipelineCategories {
+            delivery: &d,
+            learning: &l,
+            excluded_statuses: &es,
+            excluded_types: &et,
+            root_types: &rt,
+        },
+    );
 
     Json(ValidationScanResponse { checks, health })
 }
@@ -92,16 +97,25 @@ pub async fn validation_fix(
     Json(req): Json<ValidationFixRequest>,
 ) -> Result<Json<ValidationFixResponse>, (StatusCode, Json<serde_json::Value>)> {
     let (checks, health, project_root) = {
-        let guard = state.0.read().map_err(|_| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-        ))?;
+        let guard = state.0.read().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            )
+        })?;
         let checks = validate(&guard.graph, &guard.ctx);
         let owned = guard.owned_pipeline_categories();
         let (d, l, es, et, rt) = owned.as_str_vecs();
-        let health = compute_health(&guard.graph, &PipelineCategories {
-            delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
-        });
+        let health = compute_health(
+            &guard.graph,
+            &PipelineCategories {
+                delivery: &d,
+                learning: &l,
+                excluded_statuses: &es,
+                excluded_types: &et,
+                root_types: &rt,
+            },
+        );
         (checks, health, guard.project_root.clone())
     };
 
@@ -113,8 +127,8 @@ pub async fn validation_fix(
         let checks_clone = checks.clone();
         let (result, _) = tokio::task::spawn_blocking(move || {
             let guard = state_clone.0.read().map_err(|e| e.to_string())?;
-            let fixes = auto_fix(&guard.graph, &checks_clone, &root_clone)
-                .map_err(|e| e.to_string())?;
+            let fixes =
+                auto_fix(&guard.graph, &checks_clone, &root_clone).map_err(|e| e.to_string())?;
             drop(guard);
             // Reload graph so subsequent requests see the updated state.
             // reload() walks the full .orqa/ directory tree — must stay in spawn_blocking.
@@ -122,14 +136,18 @@ pub async fn validation_fix(
             Ok::<_, String>((fixes, count))
         })
         .await
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        ))?
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e, "code": "FIX_FAILED" })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            )
+        })?
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e, "code": "FIX_FAILED" })),
+            )
+        })?;
         result
     } else {
         Vec::new()
@@ -151,10 +169,12 @@ pub async fn validation_hook(
     Json(ctx): Json<HookContext>,
 ) -> Result<Json<HookResult>, (StatusCode, Json<serde_json::Value>)> {
     let project_root = {
-        let guard = state.0.read().map_err(|_| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-        ))?;
+        let guard = state.0.read().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            )
+        })?;
         guard.project_root.clone()
     };
 

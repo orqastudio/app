@@ -10,8 +10,8 @@ use serde::{Deserialize, Serialize};
 
 use orqa_engine_types::types::event::LogEvent;
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Summary of a devtools session returned by `DevtoolsRepo::list_sessions`.
 #[derive(Debug, Clone, Serialize)]
@@ -83,11 +83,7 @@ impl DevtoolsRepo<'_> {
     ///
     /// The caller (DevtoolsApp startup) generates the UUID and records the
     /// current time so it owns the session lifecycle.
-    pub fn create_session(
-        &self,
-        session_id: &str,
-        started_at: i64,
-    ) -> Result<(), StorageError> {
+    pub fn create_session(&self, session_id: &str, started_at: i64) -> Result<(), StorageError> {
         let conn = self.storage.conn()?;
         conn.execute(
             "INSERT INTO devtools_sessions (id, started_at) VALUES (?1, ?2)",
@@ -204,10 +200,7 @@ impl DevtoolsRepo<'_> {
     }
 
     /// Get metadata for a specific session by id.
-    pub fn get_session(
-        &self,
-        session_id: &str,
-    ) -> Result<DevtoolsSessionInfo, StorageError> {
+    pub fn get_session(&self, session_id: &str) -> Result<DevtoolsSessionInfo, StorageError> {
         let conn = self.storage.conn()?;
         conn.query_row(
             "SELECT id, started_at, label, event_count \
@@ -311,10 +304,9 @@ impl DevtoolsRepo<'_> {
             let mut total_params = vec![query.session_id.clone()];
             total_params.extend_from_slice(&bind_values);
             count_stmt
-                .query_row(
-                    rusqlite::params_from_iter(total_params.iter()),
-                    |row| row.get::<_, i64>(0),
-                )
+                .query_row(rusqlite::params_from_iter(total_params.iter()), |row| {
+                    row.get::<_, i64>(0)
+                })
                 .map_err(|e| StorageError::Database(e.to_string()))? as usize
         };
 
@@ -337,30 +329,38 @@ impl DevtoolsRepo<'_> {
             .prepare(&data_sql)
             .map_err(|e| StorageError::Database(e.to_string()))?;
         let events: Vec<serde_json::Value> = data_stmt
-            .query_map(
-                rusqlite::params_from_iter(data_params.iter()),
-                |row| {
-                    let metadata_str: String = row.get(8)?;
-                    Ok((
-                        row.get::<_, i64>(0)?,
-                        row.get::<_, i64>(1)?,
-                        row.get::<_, String>(2)?,
-                        row.get::<_, i64>(3)?,
-                        row.get::<_, String>(4)?,
-                        row.get::<_, String>(5)?,
-                        row.get::<_, String>(6)?,
-                        row.get::<_, String>(7)?,
-                        metadata_str,
-                        row.get::<_, Option<i64>>(9)?,
-                    ))
-                },
-            )
+            .query_map(rusqlite::params_from_iter(data_params.iter()), |row| {
+                let metadata_str: String = row.get(8)?;
+                Ok((
+                    row.get::<_, i64>(0)?,
+                    row.get::<_, i64>(1)?,
+                    row.get::<_, String>(2)?,
+                    row.get::<_, i64>(3)?,
+                    row.get::<_, String>(4)?,
+                    row.get::<_, String>(5)?,
+                    row.get::<_, String>(6)?,
+                    row.get::<_, String>(7)?,
+                    metadata_str,
+                    row.get::<_, Option<i64>>(9)?,
+                ))
+            })
             .map_err(|e| StorageError::Database(e.to_string()))?
             .filter_map(Result::ok)
             .map(
-                |(rowid, original_id, session_id, timestamp, level, source, category, message, metadata_str, daemon_event_id)| {
-                    let metadata = serde_json::from_str(&metadata_str)
-                        .unwrap_or(serde_json::Value::Null);
+                |(
+                    rowid,
+                    original_id,
+                    session_id,
+                    timestamp,
+                    level,
+                    source,
+                    category,
+                    message,
+                    metadata_str,
+                    daemon_event_id,
+                )| {
+                    let metadata =
+                        serde_json::from_str(&metadata_str).unwrap_or(serde_json::Value::Null);
                     serde_json::json!({
                         "rowid":           rowid,
                         "id":              original_id,
@@ -410,6 +410,10 @@ mod tests {
             message: format!("msg-{id}"),
             metadata: serde_json::Value::Null,
             session_id: None,
+            fingerprint: None,
+            message_template: None,
+            correlation_id: None,
+            stack_frames: None,
         }
     }
 

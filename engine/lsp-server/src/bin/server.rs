@@ -89,7 +89,10 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
                 if i < args.len() {
                     tcp_port = args[i].parse::<u16>().ok();
                     if tcp_port.is_none() {
-                        tracing::error!(port = args[i].as_str(), "invalid port, expected a number 1-65535");
+                        tracing::error!(
+                            port = args[i].as_str(),
+                            "invalid port, expected a number 1-65535"
+                        );
                         std::process::exit(2);
                     }
                 } else {
@@ -103,7 +106,10 @@ fn parse_args(args: &[String]) -> (PathBuf, Option<u16>, u16) {
                     if let Ok(p) = args[i].parse::<u16>() {
                         daemon_port = p;
                     } else {
-                        tracing::error!(port = args[i].as_str(), "invalid daemon port, expected a number 1-65535");
+                        tracing::error!(
+                            port = args[i].as_str(),
+                            "invalid daemon port, expected a number 1-65535"
+                        );
                         std::process::exit(2);
                     }
                 } else {

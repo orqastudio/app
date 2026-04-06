@@ -1374,9 +1374,9 @@ mod tests {
             event: "PreAction".to_owned(),
             tool_name: Some(tool.to_owned()),
             tool_input: None,
-            file_path: file_path.map(|s| s.to_owned()),
+            file_path: file_path.map(ToOwned::to_owned),
             user_message: None,
-            agent_type: agent_type.map(|s| s.to_owned()),
+            agent_type: agent_type.map(ToOwned::to_owned),
         }
     }
 

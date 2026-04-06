@@ -37,9 +37,7 @@ pub struct RestartRequest {
 /// Reads from the shared process_snapshots registry that the daemon event
 /// loop updates every 250 ms. Returns an empty list if no subprocesses are
 /// registered.
-pub async fn get_sidecar_status(
-    State(state): State<HealthState>,
-) -> Json<Vec<ProcessSnapshot>> {
+pub async fn get_sidecar_status(State(state): State<HealthState>) -> Json<Vec<ProcessSnapshot>> {
     let snapshots = state
         .process_snapshots
         .lock()

@@ -9,11 +9,12 @@
 //                                 violations, health_snapshots, FTS5 triggers
 //   2  log_events               — daemon log_events table
 //   3  devtools_sessions        — devtools_sessions + devtools_events tables
+//   4  issue_groups             — issue_groups table + fingerprint column on event tables
 
 use rusqlite::Connection;
 
 use crate::error::StorageError;
-use crate::schema::{CORE_SCHEMA, DEVTOOLS_SCHEMA, LOG_EVENTS_SCHEMA};
+use crate::schema::{CORE_SCHEMA, DEVTOOLS_SCHEMA, ISSUE_GROUPS_SCHEMA, LOG_EVENTS_SCHEMA};
 
 /// Ensure the `_migrations` tracking table exists.
 fn ensure_migrations_table(conn: &Connection) -> Result<(), StorageError> {
@@ -73,6 +74,12 @@ pub fn run_migrations(conn: &Connection) -> Result<(), StorageError> {
         record_migration(conn, 3, "devtools_sessions")?;
     }
 
+    // Migration 4 — Issue groups: event deduplication and fingerprint tracking.
+    if !is_applied(conn, 4)? {
+        conn.execute_batch(ISSUE_GROUPS_SCHEMA)?;
+        record_migration(conn, 4, "issue_groups")?;
+    }
+
     Ok(())
 }
 
@@ -92,14 +99,10 @@ mod tests {
         run_migrations(&conn).expect("second run is idempotent");
 
         let count: i64 = conn
-            .query_row(
-                "SELECT COUNT(*) FROM _migrations",
-                [],
-                |r| r.get(0),
-            )
+            .query_row("SELECT COUNT(*) FROM _migrations", [], |r| r.get(0))
             .expect("count");
-        // Should record exactly 3 migrations.
-        assert_eq!(count, 3, "should record 3 migrations");
+        // Should record exactly 4 migrations.
+        assert_eq!(count, 4, "should record 4 migrations");
     }
 
     #[test]
@@ -119,6 +122,7 @@ mod tests {
             "log_events",
             "devtools_sessions",
             "devtools_events",
+            "issue_groups",
         ] {
             let exists: i64 = conn
                 .query_row(

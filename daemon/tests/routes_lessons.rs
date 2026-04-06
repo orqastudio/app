@@ -62,7 +62,8 @@ fn build_lessons_router() -> (axum::Router, tempfile::TempDir) {
     });
     std::fs::write(
         dir.path().join(".orqa/project.json"),
-        serde_json::to_string_pretty(&project_json).unwrap(),
+        serde_json::to_string_pretty(&project_json)
+            .expect("project_json serialization must succeed"),
     )
     .expect("project.json must be written");
 
@@ -70,10 +71,7 @@ fn build_lessons_router() -> (axum::Router, tempfile::TempDir) {
 
     let router = axum::Router::new()
         .route("/lessons", get(list_lessons).post(create_lesson))
-        .route(
-            "/lessons/{id}/recurrence",
-            put(increment_lesson_recurrence),
-        )
+        .route("/lessons/{id}/recurrence", put(increment_lesson_recurrence))
         .with_state(graph_state);
 
     (router, dir)
@@ -81,7 +79,12 @@ fn build_lessons_router() -> (axum::Router, tempfile::TempDir) {
 
 /// Parse the response body into a serde_json::Value.
 async fn parse_body(response: axum::response::Response) -> serde_json::Value {
-    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let bytes = response
+        .into_body()
+        .collect()
+        .await
+        .expect("body collection must succeed")
+        .to_bytes();
     serde_json::from_slice(&bytes).expect("response must be valid JSON")
 }
 
@@ -240,12 +243,13 @@ async fn lessons_created_lesson_appears_in_list() {
     let list_body = parse_body(get_resp).await;
     let lessons = list_body.as_array().expect("must be array");
 
-    assert_eq!(lessons.len(), 1, "exactly one lesson must exist after one POST");
+    assert_eq!(
+        lessons.len(),
+        1,
+        "exactly one lesson must exist after one POST"
+    );
 
-    let ids: Vec<&str> = lessons
-        .iter()
-        .filter_map(|l| l["id"].as_str())
-        .collect();
+    let ids: Vec<&str> = lessons.iter().filter_map(|l| l["id"].as_str()).collect();
     assert!(
         ids.contains(&created_id.as_str()),
         "GET /lessons must include the lesson created by POST, id={created_id}"

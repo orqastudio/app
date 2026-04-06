@@ -347,10 +347,10 @@ mod tests {
         // An empty name must produce a validation error.
         let manifest = PluginManifest {
             name: String::new(),
-            version: "0.1.0".to_string(),
+            version: "0.1.0".to_owned(),
             display_name: None,
             description: None,
-            categories: vec!["domain-knowledge".to_string()],
+            categories: vec!["domain-knowledge".to_owned()],
             enforcement: vec![],
             plugin_dependencies: vec![],
             provides: PluginProvides {
@@ -368,7 +368,7 @@ mod tests {
             },
             merge_decisions: vec![],
             default_navigation: vec![],
-            install_constraints: Default::default(),
+            install_constraints: PluginInstallConstraints::default(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -379,11 +379,11 @@ mod tests {
     fn validate_rejects_empty_version() {
         // An empty version must produce a validation error.
         let manifest = PluginManifest {
-            name: "@orqastudio/test".to_string(),
+            name: "@orqastudio/test".to_owned(),
             version: String::new(),
             display_name: None,
             description: None,
-            categories: vec!["domain-knowledge".to_string()],
+            categories: vec!["domain-knowledge".to_owned()],
             enforcement: vec![],
             plugin_dependencies: vec![],
             provides: PluginProvides {
@@ -401,7 +401,7 @@ mod tests {
             },
             merge_decisions: vec![],
             default_navigation: vec![],
-            install_constraints: Default::default(),
+            install_constraints: PluginInstallConstraints::default(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -412,8 +412,8 @@ mod tests {
     fn validate_rejects_empty_categories() {
         // An empty categories array must produce a validation error.
         let manifest = PluginManifest {
-            name: "@orqastudio/test".to_string(),
-            version: "0.1.0".to_string(),
+            name: "@orqastudio/test".to_owned(),
+            version: "0.1.0".to_owned(),
             display_name: None,
             description: None,
             categories: vec![],
@@ -434,7 +434,7 @@ mod tests {
             },
             merge_decisions: vec![],
             default_navigation: vec![],
-            install_constraints: Default::default(),
+            install_constraints: PluginInstallConstraints::default(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -648,7 +648,10 @@ mod tests {
         }"#;
         let manifest: PluginManifest = serde_json::from_str(json).unwrap();
         let errors = validate_manifest(&manifest);
-        assert!(errors.is_empty(), "valid manifest produced errors: {errors:?}");
+        assert!(
+            errors.is_empty(),
+            "valid manifest produced errors: {errors:?}"
+        );
     }
 
     #[test]
@@ -676,10 +679,13 @@ mod tests {
             },
             merge_decisions: vec![],
             default_navigation: vec![],
-            install_constraints: Default::default(),
+            install_constraints: PluginInstallConstraints::default(),
         };
         let errors = validate_manifest(&manifest);
-        assert!(errors.len() >= 3, "expected at least 3 errors, got: {errors:?}");
+        assert!(
+            errors.len() >= 3,
+            "expected at least 3 errors, got: {errors:?}"
+        );
     }
 
     #[test]
@@ -724,7 +730,10 @@ mod tests {
         }"#;
         let manifest: PluginManifest = serde_json::from_str(json).unwrap();
         assert_eq!(manifest.provides.settings_pages.len(), 1);
-        assert_eq!(manifest.provides.settings_pages[0].id, "plugin-test-settings");
+        assert_eq!(
+            manifest.provides.settings_pages[0].id,
+            "plugin-test-settings"
+        );
         assert_eq!(manifest.provides.settings_pages[0].section, "plugins");
     }
 }

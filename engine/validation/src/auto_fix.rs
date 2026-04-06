@@ -562,11 +562,7 @@ mod tests {
     #[test]
     fn update_artifact_field_errors_on_missing_field() {
         let dir = tempfile::tempdir().unwrap();
-        let path = write_temp_artifact(
-            &dir,
-            "task.md",
-            "---\nid: TASK-001\n---\nBody.\n",
-        );
+        let path = write_temp_artifact(&dir, "task.md", "---\nid: TASK-001\n---\nBody.\n");
         let result = update_artifact_field(&path, "status", "active");
         assert!(result.is_err(), "should fail when field is absent");
     }
@@ -597,7 +593,8 @@ mod tests {
             auto_fixable: false,
             fix_description: None,
         }];
-        let result = apply_fixes(&graph, &checks, dir.path()).expect("apply_fixes should not error");
+        let result =
+            apply_fixes(&graph, &checks, dir.path()).expect("apply_fixes should not error");
         assert!(result.is_empty());
     }
 

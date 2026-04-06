@@ -79,7 +79,9 @@ impl From<orqa_engine_types::error::EngineError> for OrqaError {
     fn from(err: orqa_engine_types::error::EngineError) -> Self {
         match err {
             orqa_engine_types::error::EngineError::FileSystem(e) => Self::FileSystem(e.to_string()),
-            orqa_engine_types::error::EngineError::Serialization(e) => Self::Serialization(e.to_string()),
+            orqa_engine_types::error::EngineError::Serialization(e) => {
+                Self::Serialization(e.to_string())
+            }
             orqa_engine_types::error::EngineError::Validation(msg) => Self::Validation(msg),
             orqa_engine_types::error::EngineError::Yaml(msg) => Self::Serialization(msg),
             orqa_engine_types::error::EngineError::Scan(msg) => Self::Scan(msg),
@@ -97,14 +99,13 @@ impl From<orqa_storage::StorageError> for OrqaError {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn serialize_not_found() {
-        let err = OrqaError::NotFound("project 42".to_string());
+        let err = OrqaError::NotFound("project 42".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "not_found");
         assert_eq!(json["message"], "project 42");
@@ -112,7 +113,7 @@ mod tests {
 
     #[test]
     fn serialize_database() {
-        let err = OrqaError::Database("connection refused".to_string());
+        let err = OrqaError::Database("connection refused".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "database");
         assert_eq!(json["message"], "connection refused");
@@ -120,7 +121,7 @@ mod tests {
 
     #[test]
     fn serialize_file_system() {
-        let err = OrqaError::FileSystem("no such file".to_string());
+        let err = OrqaError::FileSystem("no such file".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "file_system");
         assert_eq!(json["message"], "no such file");
@@ -128,7 +129,7 @@ mod tests {
 
     #[test]
     fn serialize_sidecar() {
-        let err = OrqaError::Sidecar("process exited".to_string());
+        let err = OrqaError::Sidecar("process exited".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "sidecar");
         assert_eq!(json["message"], "process exited");
@@ -136,7 +137,7 @@ mod tests {
 
     #[test]
     fn serialize_validation() {
-        let err = OrqaError::Validation("name is empty".to_string());
+        let err = OrqaError::Validation("name is empty".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "validation");
         assert_eq!(json["message"], "name is empty");
@@ -144,7 +145,7 @@ mod tests {
 
     #[test]
     fn serialize_scan() {
-        let err = OrqaError::Scan("tier 2 failed".to_string());
+        let err = OrqaError::Scan("tier 2 failed".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "scan");
         assert_eq!(json["message"], "tier 2 failed");
@@ -152,7 +153,7 @@ mod tests {
 
     #[test]
     fn serialize_serialization() {
-        let err = OrqaError::Serialization("invalid utf-8".to_string());
+        let err = OrqaError::Serialization("invalid utf-8".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "serialization");
         assert_eq!(json["message"], "invalid utf-8");
@@ -160,7 +161,7 @@ mod tests {
 
     #[test]
     fn serialize_permission_denied() {
-        let err = OrqaError::PermissionDenied("path outside scope".to_string());
+        let err = OrqaError::PermissionDenied("path outside scope".to_owned());
         let json = serde_json::to_value(&err).expect("serialization should succeed");
         assert_eq!(json["code"], "permission_denied");
         assert_eq!(json["message"], "path outside scope");
@@ -168,10 +169,10 @@ mod tests {
 
     #[test]
     fn display_uses_thiserror_format() {
-        let err = OrqaError::NotFound("session 99".to_string());
+        let err = OrqaError::NotFound("session 99".to_owned());
         assert_eq!(err.to_string(), "not found: session 99");
 
-        let err = OrqaError::Database("timeout".to_string());
+        let err = OrqaError::Database("timeout".to_owned());
         assert_eq!(err.to_string(), "database error: timeout");
     }
 
@@ -223,14 +224,11 @@ mod tests {
             assert_eq!(
                 json["code"].as_str(),
                 Some(*expected_code),
-                "variant {:?} should serialize with code {:?}",
-                variant,
-                expected_code
+                "variant {variant:?} should serialize with code {expected_code:?}"
             );
             assert!(
                 json["message"].is_string(),
-                "variant {:?} should have a string message",
-                variant
+                "variant {variant:?} should have a string message"
             );
         }
     }

@@ -13,8 +13,9 @@ mod tests {
 
     use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
 
-    use crate::metrics::{PipelineCategories,
+    use crate::metrics::{
         compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
+        PipelineCategories,
     };
 
     /// Returns a PipelineCategories instance reflecting the agile methodology plugin.
@@ -23,7 +24,15 @@ mod tests {
     /// trace_to_pillars without hardcoding type names in every test body.
     fn agile_categories() -> PipelineCategories<'static> {
         PipelineCategories {
-            delivery: &["task", "epic", "milestone", "idea", "research", "decision", "wireframe"],
+            delivery: &[
+                "task",
+                "epic",
+                "milestone",
+                "idea",
+                "research",
+                "decision",
+                "wireframe",
+            ],
             learning: &["lesson", "rule"],
             excluded_statuses: &["archived", "surpassed"],
             excluded_types: &["knowledge", "doc"],
@@ -79,12 +88,7 @@ mod tests {
         }
 
         /// Add a node with an explicit created date (ISO "YYYY-MM-DD").
-        fn node_with_created(
-            mut self,
-            id: &str,
-            artifact_type: &str,
-            created: &str,
-        ) -> Self {
+        fn node_with_created(mut self, id: &str, artifact_type: &str, created: &str) -> Self {
             self.add_node(NodeSpec {
                 id,
                 artifact_type,
@@ -184,9 +188,9 @@ mod tests {
         assert_eq!(health.total_edges, 0);
         assert_eq!(health.outlier_count, 0);
         assert_eq!(health.broken_ref_count, 0);
-        assert_eq!(health.delivery_connectivity, 0.0);
-        assert_eq!(health.learning_connectivity, 0.0);
-        assert_eq!(health.avg_degree, 0.0);
+        assert!((health.delivery_connectivity - 0.0_f64).abs() < f64::EPSILON);
+        assert!((health.learning_connectivity - 0.0_f64).abs() < f64::EPSILON);
+        assert!((health.avg_degree - 0.0_f64).abs() < f64::EPSILON);
     }
 
     // -------------------------------------------------------------------------
@@ -200,8 +204,11 @@ mod tests {
         let health = compute_health(&graph, &agile_categories());
         assert_eq!(health.total_nodes, 1);
         assert_eq!(health.total_edges, 0);
-        assert_eq!(health.avg_degree, 0.0);
-        assert_eq!(health.largest_component_ratio, 1.0, "one node = 100% in its own component");
+        assert!((health.avg_degree - 0.0_f64).abs() < f64::EPSILON);
+        assert!(
+            (health.largest_component_ratio - 1.0_f64).abs() < f64::EPSILON,
+            "one node = 100% in its own component"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -222,8 +229,10 @@ mod tests {
             .build();
         let health = compute_health(&graph, &agile_categories());
         // All delivery-type nodes (epic + task) are connected → 1.0
-        assert_eq!(health.delivery_connectivity, 1.0,
-            "fully connected delivery nodes should have connectivity 1.0");
+        assert!(
+            (health.delivery_connectivity - 1.0_f64).abs() < f64::EPSILON,
+            "fully connected delivery nodes should have connectivity 1.0"
+        );
     }
 
     #[test]
@@ -254,7 +263,7 @@ mod tests {
             .edge("LES-1", "RULE-1")
             .build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.delivery_connectivity, 0.0);
+        assert!((health.delivery_connectivity - 0.0_f64).abs() < f64::EPSILON);
     }
 
     // -------------------------------------------------------------------------
@@ -273,15 +282,17 @@ mod tests {
             .build();
         let health = compute_health(&graph, &agile_categories());
         // Both lesson and rule have connections to learning/decision → 1.0
-        assert_eq!(health.learning_connectivity, 1.0,
-            "all learning nodes should be connected");
+        assert!(
+            (health.learning_connectivity - 1.0_f64).abs() < f64::EPSILON,
+            "all learning nodes should be connected"
+        );
     }
 
     #[test]
     fn health_no_learning_nodes_yields_zero() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.learning_connectivity, 0.0);
+        assert!((health.learning_connectivity - 0.0_f64).abs() < f64::EPSILON);
     }
 
     // -------------------------------------------------------------------------
@@ -348,7 +359,7 @@ mod tests {
         let d = doy - (153 * mp + 2) / 5 + 1;
         let m = if mp < 10 { mp + 3 } else { mp - 9 };
         let y = if m <= 2 { y + 1 } else { y };
-        format!("{:04}-{:02}-{:02}", y, m, d)
+        format!("{y:04}-{m:02}-{d:02}")
     }
 
     #[test]
@@ -357,8 +368,10 @@ mod tests {
         // (treated as stale → past grace). Should be counted as an outlier.
         let graph = GraphBuilder::new().node("PIL-1", "pillar").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 1,
-            "pillar with no created date must be counted as an outlier");
+        assert_eq!(
+            health.outlier_count, 1,
+            "pillar with no created date must be counted as an outlier"
+        );
     }
 
     #[test]
@@ -369,8 +382,10 @@ mod tests {
             .node_with_created("PIL-1", "pillar", &today)
             .build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "a node created today is within the grace period and should not be an outlier");
+        assert_eq!(
+            health.outlier_count, 0,
+            "a node created today is within the grace period and should not be an outlier"
+        );
     }
 
     #[test]
@@ -378,8 +393,10 @@ mod tests {
         // "knowledge" type is explicitly excluded from outlier analysis.
         let graph = GraphBuilder::new().node("KNOW-1", "knowledge").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "knowledge type must be excluded from outlier analysis");
+        assert_eq!(
+            health.outlier_count, 0,
+            "knowledge type must be excluded from outlier analysis"
+        );
     }
 
     #[test]
@@ -387,8 +404,10 @@ mod tests {
         // "doc" type is explicitly excluded from outlier analysis.
         let graph = GraphBuilder::new().node("DOC-1", "doc").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "doc type must be excluded from outlier analysis");
+        assert_eq!(
+            health.outlier_count, 0,
+            "doc type must be excluded from outlier analysis"
+        );
     }
 
     #[test]
@@ -398,8 +417,10 @@ mod tests {
             .node_with_status("PIL-1", "pillar", "archived")
             .build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "archived artifact must not be an outlier");
+        assert_eq!(
+            health.outlier_count, 0,
+            "archived artifact must not be an outlier"
+        );
     }
 
     #[test]
@@ -408,8 +429,10 @@ mod tests {
             .node_with_status("PIL-1", "pillar", "surpassed")
             .build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "surpassed artifact must not be an outlier");
+        assert_eq!(
+            health.outlier_count, 0,
+            "surpassed artifact must not be an outlier"
+        );
     }
 
     #[test]
@@ -417,8 +440,10 @@ mod tests {
         // "task" belongs to the delivery pipeline, so it must never be an outlier.
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "task is in the delivery pipeline and must never be an outlier");
+        assert_eq!(
+            health.outlier_count, 0,
+            "task is in the delivery pipeline and must never be an outlier"
+        );
     }
 
     #[test]
@@ -426,8 +451,10 @@ mod tests {
         // "lesson" is in the learning pipeline — never an outlier.
         let graph = GraphBuilder::new().node("LES-1", "lesson").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.outlier_count, 0,
-            "lesson is in the learning pipeline and must never be an outlier");
+        assert_eq!(
+            health.outlier_count, 0,
+            "lesson is in the learning pipeline and must never be an outlier"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -442,8 +469,10 @@ mod tests {
             .broken_edge("T-1", "MISSING-999")
             .build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.broken_ref_count, 1,
-            "one edge pointing to a non-existent target must be counted as a broken ref");
+        assert_eq!(
+            health.broken_ref_count, 1,
+            "one edge pointing to a non-existent target must be counted as a broken ref"
+        );
     }
 
     #[test]
@@ -530,8 +559,10 @@ mod tests {
     fn health_pillar_traceability_zero_with_no_pillars() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let health = compute_health(&graph, &agile_categories());
-        assert_eq!(health.pillar_traceability, 0.0,
-            "no pillars in graph → traceability must be 0");
+        assert!(
+            (health.pillar_traceability - 0.0_f64).abs() < f64::EPSILON,
+            "no pillars in graph → traceability must be 0"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -542,12 +573,18 @@ mod tests {
     fn traceability_unknown_artifact_returns_empty_result() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let result = compute_traceability(&graph, "NONEXISTENT-999", &agile_categories());
-        assert!(result.ancestry_chains.is_empty(),
-            "unknown artifact must have no ancestry chains");
-        assert!(result.descendants.is_empty(),
-            "unknown artifact must have no descendants");
-        assert!(result.siblings.is_empty(),
-            "unknown artifact must have no siblings");
+        assert!(
+            result.ancestry_chains.is_empty(),
+            "unknown artifact must have no ancestry chains"
+        );
+        assert!(
+            result.descendants.is_empty(),
+            "unknown artifact must have no descendants"
+        );
+        assert!(
+            result.siblings.is_empty(),
+            "unknown artifact must have no siblings"
+        );
         assert_eq!(result.impact_radius, 0);
     }
 
@@ -559,8 +596,10 @@ mod tests {
     fn traceability_isolated_artifact_is_disconnected() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let result = compute_traceability(&graph, "T-1", &agile_categories());
-        assert!(result.disconnected,
-            "task with no relationships should be marked disconnected");
+        assert!(
+            result.disconnected,
+            "task with no relationships should be marked disconnected"
+        );
         assert!(result.descendants.is_empty());
         assert!(result.siblings.is_empty());
     }
@@ -592,8 +631,7 @@ mod tests {
     fn trace_to_pillars_isolated_task_returns_empty() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let chains = trace_to_pillars(&graph, "T-1", agile_categories().root_types);
-        assert!(chains.is_empty(),
-            "isolated task has no path to any pillar");
+        assert!(chains.is_empty(), "isolated task has no path to any pillar");
     }
 
     #[test]
@@ -609,8 +647,10 @@ mod tests {
         let chains = trace_to_pillars(&graph, "T-1", agile_categories().root_types);
         let path = &chains[0].path;
         let ids: Vec<&str> = path.iter().map(|n| n.id.as_str()).collect();
-        assert!(ids.contains(&"EP-1"),
-            "epic must appear in the ancestry path from task to pillar");
+        assert!(
+            ids.contains(&"EP-1"),
+            "epic must appear in the ancestry path from task to pillar"
+        );
     }
 
     #[test]
@@ -619,8 +659,10 @@ mod tests {
         let graph = GraphBuilder::new().node("PIL-1", "pillar").build();
         let chains = trace_to_pillars(&graph, "PIL-1", agile_categories().root_types);
         // Single-node chain: the pillar itself.
-        assert!(!chains.is_empty(),
-            "querying a pillar should return a (trivial) chain");
+        assert!(
+            !chains.is_empty(),
+            "querying a pillar should return a (trivial) chain"
+        );
     }
 
     #[test]
@@ -671,8 +713,14 @@ mod tests {
         let descendants = trace_descendants(&graph, "A", 1);
         let ids: Vec<&str> = descendants.iter().map(|d| d.id.as_str()).collect();
         assert!(ids.contains(&"B"), "B is at depth 1 and must be included");
-        assert!(!ids.contains(&"C"), "C is at depth 2 and must be excluded with max_depth=1");
-        assert!(!ids.contains(&"D"), "D is at depth 3 and must be excluded with max_depth=1");
+        assert!(
+            !ids.contains(&"C"),
+            "C is at depth 2 and must be excluded with max_depth=1"
+        );
+        assert!(
+            !ids.contains(&"D"),
+            "D is at depth 3 and must be excluded with max_depth=1"
+        );
     }
 
     #[test]
@@ -684,7 +732,10 @@ mod tests {
             .build();
         let descendants = trace_descendants(&graph, "A", 10);
         let ids: Vec<&str> = descendants.iter().map(|d| d.id.as_str()).collect();
-        assert!(!ids.contains(&"A"), "the starting node must not appear in its own descendants");
+        assert!(
+            !ids.contains(&"A"),
+            "the starting node must not appear in its own descendants"
+        );
     }
 
     #[test]
@@ -698,8 +749,14 @@ mod tests {
             .edge("B", "C")
             .build();
         let descendants = trace_descendants(&graph, "A", 10);
-        let b = descendants.iter().find(|d| d.id == "B").expect("B not found");
-        let c = descendants.iter().find(|d| d.id == "C").expect("C not found");
+        let b = descendants
+            .iter()
+            .find(|d| d.id == "B")
+            .expect("B not found");
+        let c = descendants
+            .iter()
+            .find(|d| d.id == "C")
+            .expect("C not found");
         assert_eq!(b.depth, 1);
         assert_eq!(c.depth, 2);
     }
@@ -732,8 +789,10 @@ mod tests {
             .edge("C", "D")
             .build();
         let result = compute_traceability(&graph, "A", &agile_categories());
-        assert_eq!(result.impact_radius, 2,
-            "only B (depth 1) and C (depth 2) are within the 2-hop impact radius");
+        assert_eq!(
+            result.impact_radius, 2,
+            "only B (depth 1) and C (depth 2) are within the 2-hop impact radius"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -751,16 +810,17 @@ mod tests {
             .edge("T-2", "EP-1")
             .build();
         let siblings = find_siblings(&graph, "T-1");
-        assert!(siblings.contains(&"T-2".to_owned()),
-            "T-2 must be a sibling of T-1 because both deliver EP-1");
+        assert!(
+            siblings.contains(&"T-2".to_owned()),
+            "T-2 must be a sibling of T-1 because both deliver EP-1"
+        );
     }
 
     #[test]
     fn siblings_task_with_no_parent_returns_empty() {
         let graph = GraphBuilder::new().node("T-1", "task").build();
         let siblings = find_siblings(&graph, "T-1");
-        assert!(siblings.is_empty(),
-            "isolated task has no siblings");
+        assert!(siblings.is_empty(), "isolated task has no siblings");
     }
 
     #[test]
@@ -773,8 +833,10 @@ mod tests {
             .edge("T-2", "EP-1")
             .build();
         let siblings = find_siblings(&graph, "T-1");
-        assert!(!siblings.contains(&"T-1".to_owned()),
-            "a task must not appear as its own sibling");
+        assert!(
+            !siblings.contains(&"T-1".to_owned()),
+            "a task must not appear as its own sibling"
+        );
     }
 
     #[test]
@@ -793,8 +855,10 @@ mod tests {
             .build();
         let siblings = find_siblings(&graph, "T-1");
         assert!(siblings.contains(&"T-2".to_owned()));
-        assert!(!siblings.contains(&"T-3".to_owned()),
-            "T-3 delivers a different epic and must not appear as sibling of T-1");
+        assert!(
+            !siblings.contains(&"T-3".to_owned()),
+            "T-3 delivers a different epic and must not appear as sibling of T-1"
+        );
     }
 
     #[test]

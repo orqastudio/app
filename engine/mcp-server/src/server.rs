@@ -410,8 +410,7 @@ fn serve_tcp_client(
         };
 
         if let Some(resp) = server.handle_request(&req) {
-            let out =
-                serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
+            let out = serde_json::to_string(&resp).map_err(|e| McpError::Json(e.to_string()))?;
             writeln!(writer, "{out}").map_err(McpError::Io)?;
             writer.flush().map_err(McpError::Io)?;
         }

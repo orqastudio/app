@@ -97,44 +97,44 @@ impl ProjectPaths {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
+    use crate::config::{ArtifactEntry, ArtifactTypeConfig, DeliveryConfig, ProjectSettings};
 
     fn sample_settings() -> ProjectSettings {
         ProjectSettings {
-            name: "test".to_string(),
+            name: "test".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![
                 ArtifactEntry::Group {
-                    key: "learning".to_string(),
+                    key: "learning".to_owned(),
                     label: None,
                     icon: None,
                     children: vec![
                         ArtifactTypeConfig {
-                            key: "lessons".to_string(),
+                            key: "lessons".to_owned(),
                             label: None,
                             icon: None,
-                            path: ".orqa/learning/lessons".to_string(),
+                            path: ".orqa/learning/lessons".to_owned(),
                         },
                         ArtifactTypeConfig {
-                            key: "decisions".to_string(),
+                            key: "decisions".to_owned(),
                             label: None,
                             icon: None,
-                            path: ".orqa/learning/decisions".to_string(),
+                            path: ".orqa/learning/decisions".to_owned(),
                         },
                     ],
                 },
                 ArtifactEntry::Type(ArtifactTypeConfig {
-                    key: "docs".to_string(),
+                    key: "docs".to_owned(),
                     label: None,
                     icon: None,
-                    path: ".orqa/documentation".to_string(),
+                    path: ".orqa/documentation".to_owned(),
                 }),
             ],
             statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             relationships: vec![],
-            plugins: std::collections::HashMap::new(),
+            plugins: HashMap::new(),
         }
     }
 
@@ -184,14 +184,14 @@ mod tests {
     fn empty_artifacts_produces_empty_map() {
         let root = Path::new("/projects/my-app");
         let settings = ProjectSettings {
-            name: "empty".to_string(),
+            name: "empty".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![],
             statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             relationships: vec![],
-            plugins: std::collections::HashMap::new(),
+            plugins: HashMap::new(),
         };
         let paths = ProjectPaths::from_settings(root, &settings);
 

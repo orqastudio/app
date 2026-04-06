@@ -4,12 +4,12 @@
 // top-level container for sessions, messages, and governance artifacts. All
 // SQL is ported directly from app/src-tauri/src/repo/project_repo.rs.
 
-use rusqlite::{OptionalExtension, params};
+use rusqlite::{params, OptionalExtension};
 
 use orqa_engine_types::types::project::{DetectedStack, Project, ProjectSummary};
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Zero-cost repository handle for the `projects` table.
 ///
@@ -137,10 +137,7 @@ impl ProjectRepo<'_> {
     }
 
     /// Internal helper: fetch a project by id from an existing open connection.
-    fn get_conn(
-        conn: &rusqlite::Connection,
-        id: i64,
-    ) -> Result<Project, StorageError> {
+    fn get_conn(conn: &rusqlite::Connection, id: i64) -> Result<Project, StorageError> {
         conn.query_row(
             "SELECT id, name, path, description, detected_stack, created_at, updated_at \
              FROM projects WHERE id = ?1",
@@ -148,9 +145,7 @@ impl ProjectRepo<'_> {
             map_project,
         )
         .map_err(|e| match e {
-            rusqlite::Error::QueryReturnedNoRows => {
-                StorageError::NotFound(format!("project {id}"))
-            }
+            rusqlite::Error::QueryReturnedNoRows => StorageError::NotFound(format!("project {id}")),
             other => StorageError::Database(other.to_string()),
         })
     }
@@ -209,7 +204,8 @@ mod tests {
     fn get_by_path_works() {
         let storage = open_test_storage();
         let repo = storage.projects();
-        repo.create("forge", "/home/user/forge", None).expect("create");
+        repo.create("forge", "/home/user/forge", None)
+            .expect("create");
         let project = repo.get_by_path("/home/user/forge").expect("get_by_path");
         assert_eq!(project.name, "forge");
     }

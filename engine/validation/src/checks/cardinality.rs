@@ -63,8 +63,9 @@ pub fn check_cardinality(
 mod tests {
     use super::*;
     use crate::types::{RelationshipConstraints, RelationshipSchema, ValidationContext};
+    use orqa_engine_types::config::DeliveryConfig;
     use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
-    use std::collections::HashMap;
+    use std::collections::{HashMap, HashSet};
 
     fn make_context(rel_key: &str, max: usize) -> ValidationContext {
         let schema = RelationshipSchema {
@@ -86,8 +87,8 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
-            dependency_keys: Default::default(),
+            delivery: DeliveryConfig::default(),
+            dependency_keys: HashSet::default(),
             artifact_types: vec![],
             schema_extensions: vec![],
             enforcement_mechanisms: vec![],
@@ -161,8 +162,8 @@ mod tests {
         assert_eq!(checks.len(), 1);
         assert_eq!(checks[0].artifact_id, "TASK-001");
         assert!(checks[0].message.contains("delivers"));
-        assert!(checks[0].message.contains("3"));
-        assert!(checks[0].message.contains("1"));
+        assert!(checks[0].message.contains('3'));
+        assert!(checks[0].message.contains('1'));
     }
 
     #[test]
@@ -233,8 +234,8 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
-            dependency_keys: Default::default(),
+            delivery: DeliveryConfig::default(),
+            dependency_keys: HashSet::default(),
             artifact_types: vec![],
             schema_extensions: vec![],
             enforcement_mechanisms: vec![],

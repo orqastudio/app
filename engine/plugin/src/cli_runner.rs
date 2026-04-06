@@ -259,10 +259,10 @@ mod tests {
     #[test]
     fn cli_tool_result_serialization() {
         let result = CliToolResult {
-            plugin: "@orqastudio/plugin-integrity".to_string(),
-            tool_key: "integrity-check".to_string(),
+            plugin: "@orqastudio/plugin-integrity".to_owned(),
+            tool_key: "integrity-check".to_owned(),
             exit_code: 0,
-            stdout: r#"{"errors":0,"warnings":0}"#.to_string(),
+            stdout: r#"{"errors":0,"warnings":0}"#.to_owned(),
             stderr: String::new(),
             duration_ms: 1234,
             completed_at: 1710000000,
@@ -276,14 +276,14 @@ mod tests {
     fn run_returns_error_for_unsupported_runtime() {
         let runner = CliToolRunner::new();
         let tool = RegisteredCliTool {
-            plugin: "test".to_string(),
-            key: "test-tool".to_string(),
-            label: "Test".to_string(),
-            icon: "wrench".to_string(),
-            runtime: "python".to_string(),
-            entrypoint: "test.py".to_string(),
+            plugin: "test".to_owned(),
+            key: "test-tool".to_owned(),
+            label: "Test".to_owned(),
+            icon: "wrench".to_owned(),
+            runtime: "python".to_owned(),
+            entrypoint: "test.py".to_owned(),
             args: vec![],
-            category: "custom".to_string(),
+            category: "custom".to_owned(),
         };
         let result = runner.run(&tool, &PathBuf::from("/tmp"));
         assert!(result.is_err());

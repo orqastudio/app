@@ -570,7 +570,7 @@ mod tests {
 
     #[test]
     fn truncate_tool_output_short_output_unchanged() {
-        let short = "hello world".to_string();
+        let short = "hello world".to_owned();
         let result = truncate_tool_output(short.clone());
         assert_eq!(result, short);
     }
@@ -759,7 +759,8 @@ mod tests {
         assert!(!is_error, "should not error: {msg}");
         assert!(msg.contains("13 bytes"));
 
-        let contents = std::fs::read_to_string(dir.path().join("test-write.md")).expect("read back");
+        let contents =
+            std::fs::read_to_string(dir.path().join("test-write.md")).expect("read back");
         assert_eq!(contents, "Hello, world!");
     }
 

@@ -46,9 +46,18 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route("/", get(routes::artifacts::list_artifacts))
         .route("/tree", get(routes::artifacts::get_artifact_tree))
         .route("/{id}", get(routes::artifacts::get_artifact))
-        .route("/{id}", axum::routing::put(routes::artifacts::update_artifact))
-        .route("/{id}/content", get(routes::artifacts::get_artifact_content))
-        .route("/{id}/traceability", get(routes::artifacts::get_artifact_traceability))
+        .route(
+            "/{id}",
+            axum::routing::put(routes::artifacts::update_artifact),
+        )
+        .route(
+            "/{id}/content",
+            get(routes::artifacts::get_artifact_content),
+        )
+        .route(
+            "/{id}/traceability",
+            get(routes::artifacts::get_artifact_traceability),
+        )
         .route("/{id}/impact", get(routes::artifacts::get_artifact_impact))
         .with_state(state.graph_state.clone());
 
@@ -57,8 +66,7 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route("/health", get(routes::graph::get_graph_health))
         .route(
             "/health/snapshots",
-            get(routes::graph::list_health_snapshots)
-                .post(routes::graph::create_health_snapshot),
+            get(routes::graph::list_health_snapshots).post(routes::graph::create_health_snapshot),
         )
         .with_state(state.graph_state.clone());
 

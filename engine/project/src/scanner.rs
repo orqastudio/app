@@ -112,12 +112,7 @@ pub fn classify_project(
 ///
 /// Stops recursion at `MAX_SCAN_DEPTH` to bound execution time on large trees.
 /// Populates `names` with basename strings of all files found.
-fn collect_file_names(
-    dir: &Path,
-    excluded: &[String],
-    depth: usize,
-    names: &mut Vec<String>,
-) {
+fn collect_file_names(dir: &Path, excluded: &[String], depth: usize, names: &mut Vec<String>) {
     if depth > MAX_SCAN_DEPTH {
         return;
     }
@@ -415,7 +410,11 @@ mod tests {
 
     #[test]
     fn classify_project_detects_multiple_languages() {
-        let all_names = vec!["app.ts".to_owned(), "main.rs".to_owned(), "script.py".to_owned()];
+        let all_names = vec![
+            "app.ts".to_owned(),
+            "main.rs".to_owned(),
+            "script.py".to_owned(),
+        ];
         let stack = classify_project(&all_names, &[], false);
         assert!(stack.languages.contains(&"rust".to_owned()));
         assert!(stack.languages.contains(&"typescript".to_owned()));
@@ -566,9 +565,9 @@ mod tests {
         let dir_str = dir.to_str().expect("path");
         let result = scan_project(dir_str, &[]).expect("scan");
 
-        assert!(result.stack.languages.contains(&"rust".to_string()));
-        assert!(result.stack.frameworks.contains(&"cargo".to_string()));
-        assert_eq!(result.stack.package_manager, Some("cargo".to_string()));
+        assert!(result.stack.languages.contains(&"rust".to_owned()));
+        assert!(result.stack.frameworks.contains(&"cargo".to_owned()));
+        assert_eq!(result.stack.package_manager, Some("cargo".to_owned()));
 
         cleanup(&dir);
     }
@@ -604,7 +603,7 @@ mod tests {
         fs::write(claude_dir.join("CLAUDE.md"), "# Config").expect("write");
 
         let dir_str = dir.to_str().expect("path");
-        let excluded = vec![".git".to_string()];
+        let excluded = vec![".git".to_owned()];
         let result = scan_project(dir_str, &excluded).expect("scan");
 
         assert_eq!(result.governance.rules, 1);
@@ -629,12 +628,12 @@ mod tests {
         fs::write(dir.join("app.ts"), "const x = 1").expect("write");
 
         let dir_str = dir.to_str().expect("path");
-        let excluded = vec!["node_modules".to_string()];
+        let excluded = vec!["node_modules".to_owned()];
         let result = scan_project(dir_str, &excluded).expect("scan");
 
         // Should find TypeScript but NOT JavaScript (from node_modules)
-        assert!(result.stack.languages.contains(&"typescript".to_string()));
-        assert!(!result.stack.languages.contains(&"javascript".to_string()));
+        assert!(result.stack.languages.contains(&"typescript".to_owned()));
+        assert!(!result.stack.languages.contains(&"javascript".to_owned()));
 
         cleanup(&dir);
     }

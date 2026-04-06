@@ -220,8 +220,8 @@ mod tests {
 
     fn make_rel(key: &str, inverse: &str, semantic: Option<&str>) -> RelationshipDef {
         RelationshipDef {
-            key: key.to_string(),
-            inverse: inverse.to_string(),
+            key: key.to_owned(),
+            inverse: inverse.to_owned(),
             label: String::new(),
             from: Vec::new(),
             to: Vec::new(),
@@ -238,8 +238,8 @@ mod tests {
         min_count: Option<usize>,
     ) -> RelationshipDef {
         RelationshipDef {
-            key: key.to_string(),
-            inverse: inverse.to_string(),
+            key: key.to_owned(),
+            inverse: inverse.to_owned(),
             label: String::new(),
             from: Vec::new(),
             to: Vec::new(),
@@ -313,14 +313,12 @@ mod tests {
 
     #[test]
     fn build_merged_inverse_map_includes_project_relationships() {
-        let project_rels = vec![
-            ProjectRelationshipConfig {
-                key: "custom-rel".to_owned(),
-                inverse: "custom-rel-by".to_owned(),
-                label: "custom rel".to_owned(),
-                inverse_label: "custom rel by".to_owned(),
-            },
-        ];
+        let project_rels = vec![ProjectRelationshipConfig {
+            key: "custom-rel".to_owned(),
+            inverse: "custom-rel-by".to_owned(),
+            label: "custom rel".to_owned(),
+            inverse_label: "custom rel by".to_owned(),
+        }];
         let map = build_merged_inverse_map(&project_rels);
         // Project relationship should be present alongside platform defaults.
         assert_eq!(map.get("custom-rel"), Some(&"custom-rel-by".to_owned()));

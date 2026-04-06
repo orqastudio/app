@@ -173,7 +173,9 @@ fn read_installed_agent_files(project_path: &Path, agents_path: &str) -> Vec<(St
                 .and_then(|s| s.to_str())
                 .unwrap_or("unknown")
                 .to_owned();
-            std::fs::read_to_string(&path).ok().map(|contents| (stem, contents))
+            std::fs::read_to_string(&path)
+                .ok()
+                .map(|contents| (stem, contents))
         })
         .collect();
 
@@ -223,8 +225,8 @@ pub fn resolve_project_paths(project_path: &Path) -> ProjectPromptPaths {
         return ProjectPromptPaths::default();
     };
 
-    let rules = find_artifact_path(&value, "rules")
-        .unwrap_or_else(|| DEFAULT_RULES_PATH.to_owned());
+    let rules =
+        find_artifact_path(&value, "rules").unwrap_or_else(|| DEFAULT_RULES_PATH.to_owned());
     let knowledge = find_artifact_path(&value, "knowledge")
         .unwrap_or_else(|| DEFAULT_KNOWLEDGE_PATH.to_owned());
 
@@ -245,16 +247,33 @@ pub fn find_artifact_path(value: &serde_json::Value, key: &str) -> Option<String
     let artifacts = value.get("artifacts")?.as_array()?;
     for entry in artifacts {
         // Direct type entry with matching key.
-        if entry.get("key").and_then(|v: &serde_json::Value| v.as_str()) == Some(key) {
-            if let Some(path) = entry.get("path").and_then(|v: &serde_json::Value| v.as_str()) {
+        if entry
+            .get("key")
+            .and_then(|v: &serde_json::Value| v.as_str())
+            == Some(key)
+        {
+            if let Some(path) = entry
+                .get("path")
+                .and_then(|v: &serde_json::Value| v.as_str())
+            {
                 return Some(path.to_owned());
             }
         }
         // Group entry — search children.
-        if let Some(children) = entry.get("children").and_then(|v: &serde_json::Value| v.as_array()) {
+        if let Some(children) = entry
+            .get("children")
+            .and_then(|v: &serde_json::Value| v.as_array())
+        {
             for child in children {
-                if child.get("key").and_then(|v: &serde_json::Value| v.as_str()) == Some(key) {
-                    if let Some(path) = child.get("path").and_then(|v: &serde_json::Value| v.as_str()) {
+                if child
+                    .get("key")
+                    .and_then(|v: &serde_json::Value| v.as_str())
+                    == Some(key)
+                {
+                    if let Some(path) = child
+                        .get("path")
+                        .and_then(|v: &serde_json::Value| v.as_str())
+                    {
                         return Some(path.to_owned());
                     }
                 }
@@ -351,7 +370,11 @@ pub fn assemble_system_prompt(
         Vec::new()
     } else {
         std::iter::once("\n## Rules".to_owned())
-            .chain(rules.iter().map(|(name, content)| format!("\n### {name}\n\n{content}")))
+            .chain(
+                rules
+                    .iter()
+                    .map(|(name, content)| format!("\n### {name}\n\n{content}")),
+            )
             .collect()
     };
 
@@ -439,9 +462,8 @@ mod tests {
     fn build_system_prompt_includes_role_and_stage() {
         let dir = make_project();
         let paths = default_paths();
-        let prompt =
-            build_system_prompt(dir.path(), "reviewer", Some("review"), &paths)
-                .expect("should succeed");
+        let prompt = build_system_prompt(dir.path(), "reviewer", Some("review"), &paths)
+            .expect("should succeed");
         assert!(prompt.contains("Role: reviewer"));
         assert!(prompt.contains("Stage: review"));
     }
@@ -472,11 +494,7 @@ mod tests {
         let dir = make_project();
         let rules_dir = dir.path().join("custom").join("rules");
         fs::create_dir_all(&rules_dir).expect("create rules dir");
-        fs::write(
-            rules_dir.join("my-rule.md"),
-            "Custom rule content.",
-        )
-        .expect("write rule");
+        fs::write(rules_dir.join("my-rule.md"), "Custom rule content.").expect("write rule");
 
         let paths = ProjectPromptPaths {
             rules: "custom/rules".to_owned(),
@@ -816,7 +834,10 @@ mod tests {
 
     #[test]
     fn assemble_system_prompt_includes_knowledge_catalog() {
-        let catalog = vec![("arch-overview".to_owned(), "Architecture overview.".to_owned())];
+        let catalog = vec![(
+            "arch-overview".to_owned(),
+            "Architecture overview.".to_owned(),
+        )];
         let prompt = assemble_system_prompt("general", None, &[], &catalog, None, &[]);
         assert!(prompt.contains("## Available Knowledge"));
         assert!(prompt.contains("arch-overview"));
@@ -825,7 +846,14 @@ mod tests {
 
     #[test]
     fn assemble_system_prompt_includes_claude_md() {
-        let prompt = assemble_system_prompt("general", None, &[], &[], Some("# My Project\n\nFollow the architecture."), &[]);
+        let prompt = assemble_system_prompt(
+            "general",
+            None,
+            &[],
+            &[],
+            Some("# My Project\n\nFollow the architecture."),
+            &[],
+        );
         assert!(prompt.contains("## Project Instructions"));
         assert!(prompt.contains("Follow the architecture."));
     }
@@ -838,7 +866,10 @@ mod tests {
 
     #[test]
     fn assemble_system_prompt_includes_agent_definitions() {
-        let agents = vec![("orchestrator".to_owned(), "# Orchestrator\n\nCoordinates workers.\n".to_owned())];
+        let agents = vec![(
+            "orchestrator".to_owned(),
+            "# Orchestrator\n\nCoordinates workers.\n".to_owned(),
+        )];
         let prompt = assemble_system_prompt("general", None, &[], &[], None, &agents);
         assert!(prompt.contains("## Agent Definitions"));
         assert!(prompt.contains("Coordinates workers."));

@@ -53,10 +53,7 @@ pub fn artifact_entries_from_schema(project_path: &Path) -> Vec<ArtifactEntry> {
         );
         return Vec::new();
     };
-    let Some(artifact_types) = schema
-        .get("artifactTypes")
-        .and_then(|v| v.as_object())
-    else {
+    let Some(artifact_types) = schema.get("artifactTypes").and_then(|v| v.as_object()) else {
         tracing::warn!(
             path = %schema_path.display(),
             "schema.composed.json has no 'artifactTypes' object — returning empty nav tree"
@@ -69,19 +66,16 @@ pub fn artifact_entries_from_schema(project_path: &Path) -> Vec<ArtifactEntry> {
         .map(|(key, def)| {
             ArtifactEntry::Type(ArtifactTypeConfig {
                 key: key.clone(),
-                label: def
-                    .get("label")
-                    .and_then(|v| v.as_str())
-                    .map(str::to_owned),
-                icon: def
-                    .get("icon")
-                    .and_then(|v| v.as_str())
-                    .map(str::to_owned),
+                label: def.get("label").and_then(|v| v.as_str()).map(str::to_owned),
+                icon: def.get("icon").and_then(|v| v.as_str()).map(str::to_owned),
                 path: def
                     .get("default_path")
                     .and_then(|v| v.as_str())
                     // Strip trailing slash so path joins work consistently.
-                    .map_or_else(|| format!(".orqa/{key}"), |p| p.trim_end_matches('/').to_owned()),
+                    .map_or_else(
+                        || format!(".orqa/{key}"),
+                        |p| p.trim_end_matches('/').to_owned(),
+                    ),
             })
         })
         .collect()
@@ -249,8 +243,8 @@ mod tests {
     #[test]
     fn artifact_relationship_uses_type_field() {
         let rel = ArtifactRelationship {
-            relationship_type: "references".to_string(),
-            target: ".orqa/learning/rules/coding-standards.md".to_string(),
+            relationship_type: "references".to_owned(),
+            target: ".orqa/learning/rules/coding-standards.md".to_owned(),
         };
 
         let json = serde_json::to_value(&rel).expect("serialization should succeed");
@@ -263,22 +257,22 @@ mod tests {
         let artifact = Artifact {
             id: 1,
             project_id: 1,
-            artifact_type: "rule".to_string(),
-            rel_path: ".orqa/learning/rules/no-stubs.md".to_string(),
-            name: "no-stubs".to_string(),
-            description: Some("No stubs or placeholders".to_string()),
-            content: "# No Stubs\n\nContent here.".to_string(),
-            file_hash: Some("abc123".to_string()),
+            artifact_type: "rule".to_owned(),
+            rel_path: ".orqa/learning/rules/no-stubs.md".to_owned(),
+            name: "no-stubs".to_owned(),
+            description: Some("No stubs or placeholders".to_owned()),
+            content: "# No Stubs\n\nContent here.".to_owned(),
+            file_hash: Some("abc123".to_owned()),
             file_size: Some(1024),
-            file_modified_at: Some("2026-03-03T00:00:00Z".to_string()),
+            file_modified_at: Some("2026-03-03T00:00:00Z".to_owned()),
             compliance_status: ComplianceStatus::Compliant,
             relationships: Some(vec![ArtifactRelationship {
-                relationship_type: "references".to_string(),
-                target: ".orqa/learning/rules/error-ownership.md".to_string(),
+                relationship_type: "references".to_owned(),
+                target: ".orqa/learning/rules/error-ownership.md".to_owned(),
             }]),
             metadata: Some(serde_json::json!({"priority": "high"})),
-            created_at: "2026-03-03T00:00:00Z".to_string(),
-            updated_at: "2026-03-03T00:00:00Z".to_string(),
+            created_at: "2026-03-03T00:00:00Z".to_owned(),
+            updated_at: "2026-03-03T00:00:00Z".to_owned(),
         };
 
         let json = serde_json::to_string(&artifact).expect("serialization should succeed");
@@ -303,10 +297,10 @@ mod tests {
     fn artifact_summary_serialization() {
         let summary = ArtifactSummary {
             id: 1,
-            artifact_type: "agent".to_string(),
-            rel_path: ".claude/agents/backend-engineer.md".to_string(),
-            name: "backend-engineer".to_string(),
-            description: Some("Rust backend agent".to_string()),
+            artifact_type: "agent".to_owned(),
+            rel_path: ".claude/agents/backend-engineer.md".to_owned(),
+            name: "backend-engineer".to_owned(),
+            description: Some("Rust backend agent".to_owned()),
             compliance_status: ComplianceStatus::Unknown,
             file_modified_at: None,
         };
@@ -449,11 +443,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let orqa_dir = dir.path().join(".orqa");
         std::fs::create_dir_all(&orqa_dir).unwrap();
-        std::fs::write(
-            orqa_dir.join("schema.composed.json"),
-            r#"{"version": 1}"#,
-        )
-        .unwrap();
+        std::fs::write(orqa_dir.join("schema.composed.json"), r#"{"version": 1}"#).unwrap();
         let entries = artifact_entries_from_schema(dir.path());
         assert!(entries.is_empty());
     }

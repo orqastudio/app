@@ -64,10 +64,7 @@ pub async fn parse_handler(
 
     let content = std::fs::read_to_string(file_path).map_err(|e| {
         warn!(file = %req.file, error = %e, "[parse] could not read file");
-        (
-            StatusCode::BAD_REQUEST,
-            format!("could not read file: {e}"),
-        )
+        (StatusCode::BAD_REQUEST, format!("could not read file: {e}"))
     })?;
 
     let (id, artifact_type) = extract_frontmatter(&content);
@@ -183,7 +180,10 @@ fn count_downstream(
         .filter_map(|entry| {
             let text = std::fs::read_to_string(&entry).ok()?;
             if text.contains(artifact_id.as_str()) {
-                entry.file_stem().and_then(|s| s.to_str()).map(str::to_owned)
+                entry
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .map(str::to_owned)
             } else {
                 None
             }
@@ -263,10 +263,16 @@ mod tests {
     #[test]
     fn test_high_influence_types() {
         for t in ["epic", "principle", "decision"] {
-            assert!(HIGH_INFLUENCE_TYPES.contains(&t), "{t} should be high-influence");
+            assert!(
+                HIGH_INFLUENCE_TYPES.contains(&t),
+                "{t} should be high-influence"
+            );
         }
         for t in ["task", "story", "bug"] {
-            assert!(!HIGH_INFLUENCE_TYPES.contains(&t), "{t} should NOT be high-influence");
+            assert!(
+                !HIGH_INFLUENCE_TYPES.contains(&t),
+                "{t} should NOT be high-influence"
+            );
         }
     }
 

@@ -197,6 +197,37 @@ CREATE INDEX IF NOT EXISTS idx_log_events_source    ON log_events(source);
 CREATE INDEX IF NOT EXISTS idx_log_events_level     ON log_events(level);
 ";
 
+/// Migration 4 — Issue groups table for devtools event deduplication,
+/// plus fingerprint column on existing event tables.
+///
+/// The issue_groups table stores one row per unique fingerprint (derived from
+/// source + level + message_template + stack_top). Occurrence metadata (count,
+/// first/last seen, sparkline) is maintained by the daemon's event bus as events
+/// arrive. The fingerprint columns on log_events and devtools_events are nullable
+/// for backward compatibility with rows that predate this migration.
+pub const ISSUE_GROUPS_SCHEMA: &str = "
+-- Issue groups: deduplicated event fingerprints with occurrence metadata.
+CREATE TABLE IF NOT EXISTS issue_groups (
+    fingerprint     TEXT PRIMARY KEY,
+    title           TEXT NOT NULL,
+    component       TEXT NOT NULL,
+    level           TEXT NOT NULL,
+    first_seen      INTEGER NOT NULL,
+    last_seen       INTEGER NOT NULL,
+    count           INTEGER NOT NULL DEFAULT 1,
+    sparkline_buckets TEXT NOT NULL DEFAULT '[]',
+    recent_event_ids TEXT NOT NULL DEFAULT '[]'
+);
+
+CREATE INDEX IF NOT EXISTS idx_issue_groups_last_seen ON issue_groups(last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_issue_groups_count ON issue_groups(count DESC);
+CREATE INDEX IF NOT EXISTS idx_issue_groups_component ON issue_groups(component);
+
+-- Add fingerprint column to existing event tables (nullable for backward compat).
+ALTER TABLE log_events ADD COLUMN fingerprint TEXT;
+ALTER TABLE devtools_events ADD COLUMN fingerprint TEXT;
+";
+
 /// Devtools session tables (previously devtools-sessions.db).
 /// Each open/close cycle of the devtools window is one devtools_session row.
 pub const DEVTOOLS_SCHEMA: &str = "

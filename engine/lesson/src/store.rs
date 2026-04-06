@@ -108,7 +108,11 @@ impl FileLessonStore {
                 match read_lesson_file(&path, project_root) {
                     Ok(lesson) => Some(lesson),
                     Err(e) => {
-                        tracing::warn!("skipping unparseable lesson file {}: {}", path.display(), e);
+                        tracing::warn!(
+                            "skipping unparseable lesson file {}: {}",
+                            path.display(),
+                            e
+                        );
                         None
                     }
                 }
@@ -257,8 +261,9 @@ fn read_lesson_file(file_path: &Path, project_root: &Path) -> Result<Lesson, Les
         |_| file_path.to_string_lossy().replace('\\', "/"),
         |p| p.to_string_lossy().replace('\\', "/"),
     );
-    parse_lesson(&content, &relative)
-        .map_err(|e| LessonStoreError::Parse(format!("failed to parse {}: {e}", file_path.display())))
+    parse_lesson(&content, &relative).map_err(|e| {
+        LessonStoreError::Parse(format!("failed to parse {}: {e}", file_path.display()))
+    })
 }
 
 /// Parse the numeric suffix from a filename like `IMPL-042.md`.
@@ -271,7 +276,9 @@ fn parse_impl_number(filename: &str) -> Option<u32> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use orqa_validation::settings::{ArtifactEntry, ArtifactTypeConfig, ProjectSettings};
+    use orqa_validation::settings::{
+        ArtifactEntry, ArtifactTypeConfig, DeliveryConfig, ProjectSettings,
+    };
     use tempfile::TempDir;
 
     fn make_store(tmp: &TempDir) -> FileLessonStore {
@@ -282,22 +289,22 @@ mod tests {
 
     fn make_settings() -> ProjectSettings {
         ProjectSettings {
-            name: "test".to_string(),
+            name: "test".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![ArtifactEntry::Group {
-                key: "process".to_string(),
+                key: "process".to_owned(),
                 label: None,
                 icon: None,
                 children: vec![ArtifactTypeConfig {
-                    key: "lessons".to_string(),
+                    key: "lessons".to_owned(),
                     label: None,
                     icon: None,
-                    path: ".orqa/learning/lessons".to_string(),
+                    path: ".orqa/learning/lessons".to_owned(),
                 }],
             }],
             statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             relationships: vec![],
             plugins: std::collections::HashMap::new(),
         }
@@ -316,9 +323,9 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = NewLesson {
-            title: "Test lesson".to_string(),
-            category: "process".to_string(),
-            body: "## Description\nSome content.\n".to_string(),
+            title: "Test lesson".to_owned(),
+            category: "process".to_owned(),
+            body: "## Description\nSome content.\n".to_owned(),
         };
         let lesson = store.create(&new).expect("create should succeed");
         assert_eq!(lesson.id, "IMPL-001");
@@ -328,9 +335,7 @@ mod tests {
         assert_eq!(lesson.status, "active");
         assert_eq!(lesson.file_path, ".orqa/learning/lessons/IMPL-001.md");
 
-        let file = dir
-            .path()
-            .join(".orqa/learning/lessons/IMPL-001.md");
+        let file = dir.path().join(".orqa/learning/lessons/IMPL-001.md");
         assert!(file.exists(), "lesson file should be created on disk");
     }
 
@@ -339,9 +344,9 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = |title: &str| NewLesson {
-            title: title.to_string(),
-            category: "coding".to_string(),
-            body: "body".to_string(),
+            title: title.to_owned(),
+            category: "coding".to_owned(),
+            body: "body".to_owned(),
         };
         let l1 = store.create(&new("First")).expect("create first");
         let l2 = store.create(&new("Second")).expect("create second");
@@ -356,9 +361,9 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = NewLesson {
-            title: "My lesson".to_string(),
-            category: "architecture".to_string(),
-            body: "body".to_string(),
+            title: "My lesson".to_owned(),
+            category: "architecture".to_owned(),
+            body: "body".to_owned(),
         };
         store.create(&new).expect("create");
         let lesson = store.get("IMPL-001").expect("get should succeed");
@@ -378,9 +383,9 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = |title: &str| NewLesson {
-            title: title.to_string(),
-            category: "process".to_string(),
-            body: "body".to_string(),
+            title: title.to_owned(),
+            category: "process".to_owned(),
+            body: "body".to_owned(),
         };
         store.create(&new("C")).expect("c");
         store.create(&new("A")).expect("a");
@@ -397,14 +402,12 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = NewLesson {
-            title: "Recurring".to_string(),
-            category: "process".to_string(),
-            body: "body".to_string(),
+            title: "Recurring".to_owned(),
+            category: "process".to_owned(),
+            body: "body".to_owned(),
         };
         store.create(&new).expect("create");
-        let updated = store
-            .increment_recurrence("IMPL-001")
-            .expect("increment");
+        let updated = store.increment_recurrence("IMPL-001").expect("increment");
         assert_eq!(updated.recurrence, 2);
 
         let reloaded = store.get("IMPL-001").expect("reload");
@@ -505,14 +508,12 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = NewLesson {
-            title: "Roundtrip".to_string(),
-            category: "coding".to_string(),
-            body: "body content\n".to_string(),
+            title: "Roundtrip".to_owned(),
+            category: "coding".to_owned(),
+            body: "body content\n".to_owned(),
         };
         let lesson = store.create(&new).expect("create");
-        let file_path = dir
-            .path()
-            .join(".orqa/learning/lessons/IMPL-001.md");
+        let file_path = dir.path().join(".orqa/learning/lessons/IMPL-001.md");
 
         let read_back = LessonStore::read(&store, &file_path).expect("trait read");
         assert_eq!(read_back.id, lesson.id);
@@ -524,9 +525,9 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let store = make_store(&dir);
         let new = |t: &str| NewLesson {
-            title: t.to_string(),
-            category: "process".to_string(),
-            body: "body".to_string(),
+            title: t.to_owned(),
+            category: "process".to_owned(),
+            body: "body".to_owned(),
         };
         store.create(&new("One")).expect("one");
         store.create(&new("Two")).expect("two");

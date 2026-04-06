@@ -86,7 +86,11 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
         });
     }
 
-    tracing::info!(count = discovered.len(), "[plugins] discovered {} plugins", discovered.len());
+    tracing::info!(
+        count = discovered.len(),
+        "[plugins] discovered {} plugins",
+        discovered.len()
+    );
 
     discovered
 }
@@ -129,7 +133,10 @@ mod tests {
             r#"{"id":"proj","name":"test","plugins":{"my-plugin":{"path":"plugins/my-plugin","installed":false,"enabled":true}}}"#,
         );
         let plugins = scan_plugins(dir.path());
-        assert!(plugins.is_empty(), "uninstalled plugin should not be returned");
+        assert!(
+            plugins.is_empty(),
+            "uninstalled plugin should not be returned"
+        );
     }
 
     #[test]

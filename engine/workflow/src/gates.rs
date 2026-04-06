@@ -12,9 +12,9 @@
 //!   - `write` — evaluated once per file write event
 //!   - `stop`  — evaluated once per turn-complete event
 
+use crate::tracker::WorkflowTracker;
 use orqa_engine_types::types::enforcement::{RuleAction, Verdict};
 use orqa_engine_types::types::workflow::GateResult;
-use crate::tracker::WorkflowTracker;
 
 /// When a process gate fires relative to agent activity.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -129,20 +129,15 @@ fn evaluate_gate(
 
     let fired = match &config.condition {
         GateCondition::FirstCodeWriteWithoutResearch => {
-            let fires = writing_code
-                && !tracker.has_done_any_research()
-                && !tracker.first_code_write_gated;
+            let fires =
+                writing_code && !tracker.has_done_any_research() && !tracker.first_code_write_gated;
             if fires {
                 tracker.first_code_write_gated = true;
             }
             fires
         }
-        GateCondition::CodeWriteWithoutDocs => {
-            writing_code && !tracker.has_read_any_docs()
-        }
-        GateCondition::CodeWriteWithoutPlanning => {
-            writing_code && !tracker.has_read_any_planning()
-        }
+        GateCondition::CodeWriteWithoutDocs => writing_code && !tracker.has_read_any_docs(),
+        GateCondition::CodeWriteWithoutPlanning => writing_code && !tracker.has_read_any_planning(),
         GateCondition::CodeWrittenWithoutVerification => {
             tracker.has_written_code() && !tracker.has_run_verification()
         }
@@ -372,7 +367,12 @@ mod tests {
     fn write_event_no_research_no_docs_no_planning_fires_all_three_gates() {
         let gates = standard_gates();
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(
             fired.contains(&"understand-first"),
@@ -392,7 +392,12 @@ mod tests {
     fn write_event_returns_three_results_for_code_file() {
         let gates = standard_gates();
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         // Only write-triggered gates are returned (3 of 5).
         assert_eq!(results.len(), 3);
         let names = all_gate_names(&results);
@@ -420,12 +425,22 @@ mod tests {
         let gates = standard_gates();
         let mut t = standard_tracker();
         // First write — gate fires
-        let results1 = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results1 = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired1 = gates_fired(&results1);
         assert!(fired1.contains(&"understand-first"));
 
         // Second write — gate must NOT fire again
-        let results2 = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/bar.rs"));
+        let results2 = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/bar.rs"),
+        );
         let fired2 = gates_fired(&results2);
         assert!(
             !fired2.contains(&"understand-first"),
@@ -438,7 +453,12 @@ mod tests {
         let gates = standard_gates();
         let mut t = standard_tracker();
         t.record_search();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"understand-first"));
     }
@@ -448,7 +468,12 @@ mod tests {
         let gates = standard_gates();
         let mut t = standard_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"understand-first"));
     }
@@ -458,7 +483,12 @@ mod tests {
         let gates = standard_gates();
         let mut t = standard_tracker();
         t.record_read(".orqa/documentation/architecture/overview.md");
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"docs-before-code"));
     }
@@ -468,7 +498,12 @@ mod tests {
         let gates = standard_gates();
         let mut t = standard_tracker();
         t.record_read(".orqa/implementation/epics/EPIC-042.md");
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(!fired.contains(&"plan-before-build"));
     }
@@ -480,12 +515,16 @@ mod tests {
         t.record_read(".orqa/documentation/architecture/overview.md");
         t.record_read(".orqa/implementation/epics/EPIC-042.md");
         t.record_search();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let fired = gates_fired(&results);
         assert!(
             fired.is_empty(),
-            "no gates should fire when fully prepared: {:?}",
-            fired
+            "no gates should fire when fully prepared: {fired:?}"
         );
     }
 
@@ -637,7 +676,12 @@ mod tests {
     fn understand_first_message_contains_key_phrase() {
         let gates = standard_gates();
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let g = results
             .iter()
             .find(|r| r.gate_name == "understand-first")
@@ -650,7 +694,12 @@ mod tests {
     fn docs_before_code_message_contains_key_phrase() {
         let gates = standard_gates();
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let g = results
             .iter()
             .find(|r| r.gate_name == "docs-before-code")
@@ -667,7 +716,12 @@ mod tests {
     fn plan_before_build_message_contains_key_phrase() {
         let gates = standard_gates();
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src-tauri/src/foo.rs"));
+        let results = evaluate_process_gates(
+            &gates,
+            &mut t,
+            GateTrigger::Write,
+            Some("src-tauri/src/foo.rs"),
+        );
         let g = results
             .iter()
             .find(|r| r.gate_name == "plan-before-build")
@@ -722,14 +776,12 @@ mod tests {
 
     #[test]
     fn custom_gate_names_and_conditions_work() {
-        let gates = vec![
-            ProcessGateConfig::new(
-                "my-custom-gate",
-                GateTrigger::Stop,
-                GateCondition::CodeWrittenWithoutVerification,
-                "CUSTOM: run your tests!",
-            ),
-        ];
+        let gates = vec![ProcessGateConfig::new(
+            "my-custom-gate",
+            GateTrigger::Stop,
+            GateCondition::CodeWrittenWithoutVerification,
+            "CUSTOM: run your tests!",
+        )];
         let mut t = standard_tracker();
         t.record_write("src/lib.rs");
         let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Stop, None);
@@ -743,7 +795,8 @@ mod tests {
     fn empty_gates_config_produces_no_results() {
         let gates: Vec<ProcessGateConfig> = vec![];
         let mut t = standard_tracker();
-        let write_results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src/lib.rs"));
+        let write_results =
+            evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src/lib.rs"));
         let stop_results = evaluate_process_gates(&gates, &mut t, GateTrigger::Stop, None);
         assert!(write_results.is_empty());
         assert!(stop_results.is_empty());
@@ -761,7 +814,8 @@ mod tests {
             "PLUGIN: custom message",
         )];
         let mut t = standard_tracker();
-        let results = evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src/lib.rs"));
+        let results =
+            evaluate_process_gates(&gates, &mut t, GateTrigger::Write, Some("src/lib.rs"));
         assert_eq!(results.len(), 1);
         assert!(!results[0].fired, "custom condition must not fire (pass)");
     }
@@ -793,6 +847,9 @@ mod tests {
         let mut t = standard_tracker();
         t.record_write("src/lib.rs");
         let verdicts = evaluate_stop_verdicts(&gates, &t);
-        assert!(verdicts.is_empty(), "custom condition must produce no verdicts");
+        assert!(
+            verdicts.is_empty(),
+            "custom condition must produce no verdicts"
+        );
     }
 }

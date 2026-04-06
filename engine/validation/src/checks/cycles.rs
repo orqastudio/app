@@ -134,6 +134,7 @@ fn report_cycle(
 mod tests {
     use super::*;
     use crate::types::{RelationshipSchema, ValidationContext};
+    use orqa_engine_types::config::DeliveryConfig;
     use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
     use std::collections::HashMap;
 
@@ -158,7 +159,7 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             dependency_keys: dep_keys,
             artifact_types: vec![],
             schema_extensions: vec![],
@@ -213,7 +214,7 @@ mod tests {
             relationships: vec![],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             dependency_keys: HashSet::new(), // no dep keys
             artifact_types: vec![],
             schema_extensions: vec![],

@@ -48,9 +48,7 @@ pub struct StartupSnapshot {
 /// Reports the state of the artifact graph (loaded/empty) and all managed
 /// subprocesses. The frontend uses this to show a loading screen until the
 /// daemon is fully ready.
-pub async fn get_startup_status(
-    State(state): State<HealthState>,
-) -> Json<StartupSnapshot> {
+pub async fn get_startup_status(State(state): State<HealthState>) -> Json<StartupSnapshot> {
     let mut tasks = Vec::new();
 
     // Graph loading task: report ready when artifact count > 0 or the graph

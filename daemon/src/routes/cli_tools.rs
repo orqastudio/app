@@ -14,7 +14,7 @@ use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use axum::Json;
 
-use orqa_plugin::cli_runner::{CliToolRunner, CliToolResult};
+use orqa_plugin::cli_runner::{CliToolResult, CliToolRunner};
 
 use crate::graph_state::GraphState;
 
@@ -26,9 +26,7 @@ use crate::graph_state::GraphState;
 ///
 /// Reads `plugin-cli-tools.json` from the project root and returns the full
 /// list of discovered tools.
-pub async fn list_cli_tools(
-    State(state): State<GraphState>,
-) -> Json<serde_json::Value> {
+pub async fn list_cli_tools(State(state): State<GraphState>) -> Json<serde_json::Value> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(serde_json::json!({ "tools": [] }));
@@ -78,30 +76,28 @@ pub async fn run_cli_tool(
                     "code": "NOT_FOUND"
                 })),
             )),
-            Some(t) => {
-                runner.run(t, &project_root)
-                    .map(Json)
-                    .map_err(|e| (
-                        StatusCode::INTERNAL_SERVER_ERROR,
-                        Json(serde_json::json!({ "error": e, "code": "RUN_FAILED" })),
-                    ))
-            }
+            Some(t) => runner.run(t, &project_root).map(Json).map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e, "code": "RUN_FAILED" })),
+                )
+            }),
         }
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /cli-tools/status — return the last-run result for each tool.
 ///
 /// Returns a map of plugin/key -> CliToolStatus representing the last known
 /// run outcome for every registered tool. Absent means never run.
-pub async fn get_cli_tool_status(
-    State(state): State<GraphState>,
-) -> Json<serde_json::Value> {
+pub async fn get_cli_tool_status(State(state): State<GraphState>) -> Json<serde_json::Value> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(serde_json::json!({ "statuses": [] }));

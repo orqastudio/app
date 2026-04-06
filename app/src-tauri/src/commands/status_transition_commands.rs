@@ -64,7 +64,6 @@ pub async fn apply_status_transition(
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[test]
     fn empty_artifact_id_is_invalid() {

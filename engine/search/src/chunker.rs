@@ -486,7 +486,7 @@ mod tests {
 
     #[test]
     fn chunk_error_display_messages() {
-        let err = ChunkError::Walk("bad entry".to_string());
+        let err = ChunkError::Walk("bad entry".to_owned());
         assert_eq!(err.to_string(), "walk error: bad entry");
 
         let io_err = std::io::Error::new(std::io::ErrorKind::NotFound, "missing");
@@ -539,6 +539,10 @@ mod tests {
         let lines: Vec<String> = (1..=200).map(|i| format!("let x{i} = {i};")).collect();
         let content = lines.join("\n");
         let chunks = chunk_entries(vec![(path, content)]);
-        assert!(chunks.len() >= 2, "expected multiple chunks, got {}", chunks.len());
+        assert!(
+            chunks.len() >= 2,
+            "expected multiple chunks, got {}",
+            chunks.len()
+        );
     }
 }

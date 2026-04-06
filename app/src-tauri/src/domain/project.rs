@@ -14,18 +14,18 @@ mod tests {
     fn project_roundtrip() {
         let project = Project {
             id: 1,
-            name: "forge".to_string(),
-            path: "/home/user/forge".to_string(),
-            description: Some("A desktop app".to_string()),
+            name: "forge".to_owned(),
+            path: "/home/user/forge".to_owned(),
+            description: Some("A desktop app".to_owned()),
             detected_stack: Some(DetectedStack {
-                languages: vec!["rust".to_string(), "typescript".to_string()],
-                frameworks: vec!["tauri".to_string(), "svelte".to_string()],
-                package_manager: Some("npm".to_string()),
+                languages: vec!["rust".to_owned(), "typescript".to_owned()],
+                frameworks: vec!["tauri".to_owned(), "svelte".to_owned()],
+                package_manager: Some("npm".to_owned()),
                 has_claude_config: true,
                 has_design_tokens: false,
             }),
-            created_at: "2026-03-03T00:00:00Z".to_string(),
-            updated_at: "2026-03-03T00:00:00Z".to_string(),
+            created_at: "2026-03-03T00:00:00Z".to_owned(),
+            updated_at: "2026-03-03T00:00:00Z".to_owned(),
         };
 
         let json = serde_json::to_string(&project).expect("serialization should succeed");
@@ -41,12 +41,12 @@ mod tests {
     fn project_summary_serialization() {
         let summary = ProjectSummary {
             id: 1,
-            name: "test".to_string(),
-            path: "/tmp/test".to_string(),
+            name: "test".to_owned(),
+            path: "/tmp/test".to_owned(),
             detected_stack: None,
             session_count: 5,
             artifact_count: 12,
-            updated_at: "2026-03-03T00:00:00Z".to_string(),
+            updated_at: "2026-03-03T00:00:00Z".to_owned(),
         };
 
         let json = serde_json::to_value(&summary).expect("serialization should succeed");
@@ -58,13 +58,13 @@ mod tests {
     #[test]
     fn scan_result_with_artifact_counts() {
         let mut counts = HashMap::new();
-        counts.insert("agent".to_string(), 5);
-        counts.insert("rule".to_string(), 20);
+        counts.insert("agent".to_owned(), 5);
+        counts.insert("rule".to_owned(), 20);
 
         let result = ScanResult {
             project_id: 1,
             detected_stack: DetectedStack {
-                languages: vec!["rust".to_string()],
+                languages: vec!["rust".to_owned()],
                 frameworks: vec![],
                 package_manager: None,
                 has_claude_config: true,

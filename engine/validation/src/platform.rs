@@ -352,6 +352,36 @@ fn apply_schema(schema: PluginProvidesSchema, contributions: &mut PluginContribu
     }
 }
 
+/// Convert a plugin-provided relationship to the canonical `RelationshipSchema` type.
+fn plugin_rel_to_schema(rel: PluginProvidesRelationship) -> RelationshipSchema {
+    let constraints = rel.constraints.map(|c| RelationshipConstraints {
+        required: c.required,
+        min_count: c.min_count,
+        max_count: c.max_count,
+        require_inverse: c.require_inverse,
+        status_rules: c
+            .status_rules
+            .into_iter()
+            .map(|sr| StatusRule {
+                evaluate: sr.evaluate,
+                condition: sr.condition,
+                statuses: sr.statuses,
+                proposed_status: sr.proposed_status,
+                description: sr.description,
+            })
+            .collect(),
+    });
+    RelationshipSchema {
+        key: rel.key,
+        inverse: rel.inverse,
+        description: rel.description,
+        from: rel.from,
+        to: rel.to,
+        semantic: rel.semantic,
+        constraints,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -362,7 +392,7 @@ mod tests {
         tempfile::tempdir().expect("tempdir")
     }
 
-    fn write_plugin_manifest(dir: &std::path::Path, name: &str, json: &str) {
+    fn write_plugin_manifest(dir: &Path, _name: &str, json: &str) {
         fs::create_dir_all(dir).expect("create dir");
         fs::write(dir.join("orqa-plugin.json"), json).expect("write manifest");
     }
@@ -379,7 +409,11 @@ mod tests {
     #[test]
     fn scan_plugins_dir_loads_artifact_types() {
         let tmp = make_project();
-        let plugin_dir = tmp.path().join("plugins").join("methodology").join("my-plugin");
+        let plugin_dir = tmp
+            .path()
+            .join("plugins")
+            .join("methodology")
+            .join("my-plugin");
         let manifest = r#"{
             "name": "@test/my-plugin",
             "provides": {
@@ -511,35 +545,5 @@ mod tests {
         // PLATFORM static should have empty defaults — plugins are the source of truth.
         assert!(PLATFORM.artifact_types.is_empty());
         assert!(PLATFORM.relationships.is_empty());
-    }
-}
-
-/// Convert a plugin-provided relationship to the canonical `RelationshipSchema` type.
-fn plugin_rel_to_schema(rel: PluginProvidesRelationship) -> RelationshipSchema {
-    let constraints = rel.constraints.map(|c| RelationshipConstraints {
-        required: c.required,
-        min_count: c.min_count,
-        max_count: c.max_count,
-        require_inverse: c.require_inverse,
-        status_rules: c
-            .status_rules
-            .into_iter()
-            .map(|sr| StatusRule {
-                evaluate: sr.evaluate,
-                condition: sr.condition,
-                statuses: sr.statuses,
-                proposed_status: sr.proposed_status,
-                description: sr.description,
-            })
-            .collect(),
-    });
-    RelationshipSchema {
-        key: rel.key,
-        inverse: rel.inverse,
-        description: rel.description,
-        from: rel.from,
-        to: rel.to,
-        semantic: rel.semantic,
-        constraints,
     }
 }

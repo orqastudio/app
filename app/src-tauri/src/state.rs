@@ -31,13 +31,9 @@ impl StorageState {
     pub fn get(&self) -> Result<Arc<Storage>, crate::error::OrqaError> {
         self.storage
             .lock()
-            .map_err(|e| {
-                crate::error::OrqaError::Database(format!("storage lock poisoned: {e}"))
-            })?
+            .map_err(|e| crate::error::OrqaError::Database(format!("storage lock poisoned: {e}")))?
             .clone()
-            .ok_or_else(|| {
-                crate::error::OrqaError::NotFound("no project is open".to_owned())
-            })
+            .ok_or_else(|| crate::error::OrqaError::NotFound("no project is open".to_owned()))
     }
 
     /// Replace the active storage with a new project's storage.

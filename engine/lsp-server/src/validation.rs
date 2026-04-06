@@ -10,8 +10,8 @@
 //! The CLI (`orqa check`) calls the same shared engine directly and formats
 //! findings as text — no LSP `Diagnostic` conversion needed there.
 
-use orqa_engine::validation::checks::file_level::{self, FileFinding, FileSeverity};
 use orqa_engine::graph::ArtifactGraph;
+use orqa_engine::validation::checks::file_level::{self, FileFinding, FileSeverity};
 use orqa_engine::validation::ArtifactTypeDef;
 use tower_lsp::lsp_types::{Diagnostic, DiagnosticSeverity, Position, Range};
 
@@ -120,7 +120,8 @@ mod tests {
     fn validate_file_converts_findings() {
         // Missing frontmatter → engine returns a finding, adapter converts to Diagnostic
         let content = "# No frontmatter\n";
-        let diagnostics = validate_file(".orqa/implementation/epics/EPIC-001.md", content, None, &[]);
+        let diagnostics =
+            validate_file(".orqa/implementation/epics/EPIC-001.md", content, None, &[]);
         assert_eq!(diagnostics.len(), 1);
         assert!(diagnostics[0].message.contains("frontmatter"));
         assert_eq!(diagnostics[0].severity, Some(DiagnosticSeverity::ERROR));

@@ -27,8 +27,7 @@ fn build_enforcement_router() -> axum::Router {
     };
 
     let root = helpers::fixture_dir();
-    let graph_state = GraphState::build(&root)
-        .unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
 
     axum::Router::new()
         .route("/enforcement/rules", get(list_enforcement_rules))
@@ -121,7 +120,9 @@ async fn enforcement_rules_reload_returns_same_rules_as_list() {
 
     let reload_bytes = reload_resp.into_body().collect().await.unwrap().to_bytes();
     let reload_body: serde_json::Value = serde_json::from_slice(&reload_bytes).unwrap();
-    let reload_rules = reload_body.as_array().expect("reload must return a JSON array");
+    let reload_rules = reload_body
+        .as_array()
+        .expect("reload must return a JSON array");
 
     assert_eq!(
         list_rules.len(),
@@ -200,10 +201,7 @@ async fn enforcement_scan_returns_governance_scan_result() {
         body.get("rules").is_some(),
         "scan result must include 'rules', got: {body}"
     );
-    assert!(
-        body["rules"].is_array(),
-        "'rules' must be a JSON array"
-    );
+    assert!(body["rules"].is_array(), "'rules' must be a JSON array");
     assert!(
         body.get("governance").is_some(),
         "scan result must include 'governance', got: {body}"

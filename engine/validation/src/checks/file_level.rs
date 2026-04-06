@@ -475,7 +475,12 @@ mod tests {
     fn schema_catches_invalid_status() {
         let types = vec![make_epic_type()];
         let content = "---\nid: EPIC-deadbeef\nstatus: wip\n---\n# Body\n";
-        let findings = validate_file(".orqa/implementation/epics/EPIC-001.md", content, None, &types);
+        let findings = validate_file(
+            ".orqa/implementation/epics/EPIC-001.md",
+            content,
+            None,
+            &types,
+        );
         assert!(
             findings.iter().any(|f| f.message.contains("[schema]")),
             "Expected schema validation error for invalid status, got: {findings:?}"
@@ -486,7 +491,12 @@ mod tests {
     fn no_schema_error_for_valid_status() {
         let types = vec![make_epic_type()];
         let content = "---\nid: EPIC-deadbeef\nstatus: active\n---\n# Body\n";
-        let findings = validate_file(".orqa/implementation/epics/EPIC-001.md", content, None, &types);
+        let findings = validate_file(
+            ".orqa/implementation/epics/EPIC-001.md",
+            content,
+            None,
+            &types,
+        );
         assert!(
             !findings.iter().any(|f| f.message.contains("[schema]")),
             "Expected no schema errors, got: {findings:?}"
@@ -523,7 +533,12 @@ mod tests {
     #[test]
     fn knowledge_artifact_missing_synchronised_with() {
         let content = "---\nid: KNOW-001\ntype: knowledge\n---\n# Body\n";
-        let findings = validate_file(".orqa/documentation/knowledge/KNOW-001.md", content, None, &[]);
+        let findings = validate_file(
+            ".orqa/documentation/knowledge/KNOW-001.md",
+            content,
+            None,
+            &[],
+        );
         assert!(findings
             .iter()
             .any(|f| f.message.contains("synchronised-with")));

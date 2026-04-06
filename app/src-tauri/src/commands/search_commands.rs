@@ -77,11 +77,11 @@ mod tests {
         let tracker = StartupTracker::new();
         tracker.register("task1", "Task 1").expect("register");
         tracker
-            .update("task1", TaskStatus::Error, Some("failed".to_string()))
+            .update("task1", TaskStatus::Error, Some("failed".to_owned()))
             .expect("update");
 
         let snapshot = tracker.snapshot().expect("snapshot");
         assert!(snapshot.all_done);
-        assert_eq!(snapshot.tasks[0].detail, Some("failed".to_string()));
+        assert_eq!(snapshot.tasks[0].detail, Some("failed".to_owned()));
     }
 }

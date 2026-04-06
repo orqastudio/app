@@ -191,11 +191,11 @@ pub async fn stream_send_message(
 
 /// Request cancellation of an active stream for the given session.
 #[tauri::command]
-pub async fn stream_stop(
-    session_id: i64,
-    state: State<'_, AppState>,
-) -> Result<(), OrqaError> {
-    tracing::info!(session_id = session_id, "[stream] stream_stop: delegating to daemon");
+pub async fn stream_stop(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
+    tracing::info!(
+        session_id = session_id,
+        "[stream] stream_stop: delegating to daemon"
+    );
     let client = state.daemon.client.clone();
     let base_url = client.base_url().to_owned();
     let reqwest_client = client.reqwest_client().clone();
@@ -295,7 +295,10 @@ mod tests {
         assert_eq!(pascal_to_snake("ToolUseStart"), "tool_use_start");
         assert_eq!(pascal_to_snake("ToolInputDelta"), "tool_input_delta");
         assert_eq!(pascal_to_snake("StreamCancelled"), "stream_cancelled");
-        assert_eq!(pascal_to_snake("ToolApprovalRequest"), "tool_approval_request");
+        assert_eq!(
+            pascal_to_snake("ToolApprovalRequest"),
+            "tool_approval_request"
+        );
     }
 
     #[test]

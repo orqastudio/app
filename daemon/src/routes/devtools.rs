@@ -32,7 +32,10 @@ pub async fn launch_devtools(
     let already_running = state
         .process_snapshots
         .lock()
-        .map(|g| g.iter().any(|s| s.name.contains("devtools") && s.status == "running"))
+        .map(|g| {
+            g.iter()
+                .any(|s| s.name.contains("devtools") && s.status == "running")
+        })
         .unwrap_or(false);
 
     if already_running {
@@ -43,14 +46,16 @@ pub async fn launch_devtools(
     }
 
     // Find the binary next to the current executable.
-    let binary = crate::subprocess::SubprocessManager::find_binary("orqa-devtools")
-        .ok_or_else(|| (
-            StatusCode::NOT_FOUND,
-            Json(serde_json::json!({
-                "error": "orqa-devtools binary not found",
-                "code": "BINARY_NOT_FOUND"
-            })),
-        ))?;
+    let binary =
+        crate::subprocess::SubprocessManager::find_binary("orqa-devtools").ok_or_else(|| {
+            (
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({
+                    "error": "orqa-devtools binary not found",
+                    "code": "BINARY_NOT_FOUND"
+                })),
+            )
+        })?;
 
     let port_arg = resolve_daemon_port().to_string();
     let spawned = std::process::Command::new(&binary)
@@ -78,16 +83,18 @@ pub async fn launch_devtools(
 ///
 /// Checks the process_snapshots registry for a devtools entry. Falls back
 /// to a binary probe when not tracked as a snapshot.
-pub async fn get_devtools_status(
-    State(state): State<HealthState>,
-) -> Json<serde_json::Value> {
+pub async fn get_devtools_status(State(state): State<HealthState>) -> Json<serde_json::Value> {
     let running = state
         .process_snapshots
         .lock()
-        .map(|g| g.iter().any(|s| s.name.contains("devtools") && s.status == "running"))
+        .map(|g| {
+            g.iter()
+                .any(|s| s.name.contains("devtools") && s.status == "running")
+        })
         .unwrap_or(false);
 
-    let binary_available = crate::subprocess::SubprocessManager::find_binary("orqa-devtools").is_some();
+    let binary_available =
+        crate::subprocess::SubprocessManager::find_binary("orqa-devtools").is_some();
 
     Json(serde_json::json!({
         "running": running,

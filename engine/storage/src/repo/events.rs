@@ -9,8 +9,8 @@ use rusqlite::params;
 
 use orqa_engine_types::types::event::LogEvent;
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Milliseconds per day, used for retention cutoff arithmetic.
 const MS_PER_DAY: i64 = 86_400_000;
@@ -71,7 +71,8 @@ impl EventRepo<'_> {
                 .map_err(|e| StorageError::Database(e.to_string()))?;
             }
         }
-        tx.commit().map_err(|e| StorageError::Database(e.to_string()))?;
+        tx.commit()
+            .map_err(|e| StorageError::Database(e.to_string()))?;
         Ok(())
     }
 
@@ -100,7 +101,9 @@ impl EventRepo<'_> {
              ORDER BY timestamp ASC LIMIT {limit}"
         );
 
-        let mut stmt = conn.prepare(&sql).map_err(|e| StorageError::Database(e.to_string()))?;
+        let mut stmt = conn
+            .prepare(&sql)
+            .map_err(|e| StorageError::Database(e.to_string()))?;
         let rows: Vec<serde_json::Value> = match (&filter.source, &filter.level) {
             (Some(src), Some(lvl)) => stmt
                 .query_map(params![after, src, lvl], row_to_json)
@@ -137,7 +140,10 @@ impl EventRepo<'_> {
             .as_millis() as i64;
         let cutoff = now_ms - (retention_days as i64 * MS_PER_DAY);
         let conn = self.storage.conn()?;
-        let deleted = conn.execute("DELETE FROM log_events WHERE timestamp < ?1", params![cutoff])?;
+        let deleted = conn.execute(
+            "DELETE FROM log_events WHERE timestamp < ?1",
+            params![cutoff],
+        )?;
         Ok(deleted)
     }
 }
@@ -192,6 +198,10 @@ mod tests {
             message: message.to_owned(),
             metadata: serde_json::Value::Null,
             session_id: None,
+            fingerprint: None,
+            message_template: None,
+            correlation_id: None,
+            stack_frames: None,
         }
     }
 
@@ -245,6 +255,10 @@ mod tests {
             message: "should not appear".to_owned(),
             metadata: serde_json::Value::Null,
             session_id: None,
+            fingerprint: None,
+            message_template: None,
+            correlation_id: None,
+            stack_frames: None,
         };
         storage
             .events()

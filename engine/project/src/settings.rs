@@ -174,15 +174,15 @@ mod tests {
 
     fn sample_settings() -> ProjectSettings {
         ProjectSettings {
-            name: "test-project".to_string(),
+            name: "test-project".to_owned(),
             dogfood: false,
-            description: Some("A test project".to_string()),
-            default_model: "auto".to_string(),
+            description: Some("A test project".to_owned()),
+            default_model: "auto".to_owned(),
             excluded_paths: default_excluded_paths(),
             stack: Some(DetectedStack {
-                languages: vec!["rust".to_string()],
-                frameworks: vec!["tauri".to_string()],
-                package_manager: Some("cargo".to_string()),
+                languages: vec!["rust".to_owned()],
+                frameworks: vec!["tauri".to_owned()],
+                package_manager: Some("cargo".to_owned()),
                 has_claude_config: true,
                 has_design_tokens: false,
             }),
@@ -246,15 +246,13 @@ mod tests {
 
     #[test]
     fn default_model_is_auto() {
-        let settings: ProjectSettings =
-            serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
+        let settings: ProjectSettings = serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
         assert_eq!(settings.default_model, "auto");
     }
 
     #[test]
     fn default_excluded_paths_has_five_entries() {
-        let settings: ProjectSettings =
-            serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
+        let settings: ProjectSettings = serde_json::from_str(r#"{"name":"test"}"#).expect("parse");
         assert_eq!(settings.excluded_paths.len(), 5);
         assert!(settings.excluded_paths.contains(&"node_modules".to_owned()));
         assert!(settings.excluded_paths.contains(&"target".to_owned()));
@@ -263,7 +261,7 @@ mod tests {
 
     #[test]
     fn artifact_link_display_mode_default_is_id() {
-        let mode: ArtifactLinkDisplayMode = Default::default();
+        let mode: ArtifactLinkDisplayMode = ArtifactLinkDisplayMode::default();
         assert_eq!(mode, ArtifactLinkDisplayMode::Id);
     }
 

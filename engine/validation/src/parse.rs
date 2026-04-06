@@ -540,7 +540,7 @@ mod tests {
     #[test]
     fn validate_relationship_types_flags_invalid() {
         let yaml: serde_yaml::Value = serde_yaml::from_str(
-            r#"
+            r"
 id: RULE-test0001
 title: Test
 relationships:
@@ -549,13 +549,13 @@ relationships:
   - type: bogus-type
     target: TASK-bbb
   - target: TASK-ccc
-"#,
+",
         )
         .expect("yaml");
 
         let mut valid_types = HashSet::new();
-        valid_types.insert("depends-on".to_string());
-        valid_types.insert("blocks".to_string());
+        valid_types.insert("depends-on".to_owned());
+        valid_types.insert("blocks".to_owned());
 
         let mut validation = ValidationResult {
             valid: true,
@@ -583,13 +583,13 @@ relationships:
     #[test]
     fn validate_relationship_types_skips_when_vocabulary_empty() {
         let yaml: serde_yaml::Value = serde_yaml::from_str(
-            r#"
+            r"
 id: RULE-test0002
 title: Test
 relationships:
   - type: anything-goes
     target: TASK-aaa
-"#,
+",
         )
         .expect("yaml");
 
@@ -611,7 +611,7 @@ relationships:
     #[test]
     fn validate_relationship_types_all_valid() {
         let yaml: serde_yaml::Value = serde_yaml::from_str(
-            r#"
+            r"
 id: RULE-test0003
 title: Test
 relationships:
@@ -619,13 +619,13 @@ relationships:
     target: TASK-aaa
   - type: blocks
     target: TASK-bbb
-"#,
+",
         )
         .expect("yaml");
 
         let mut valid_types = HashSet::new();
-        valid_types.insert("depends-on".to_string());
-        valid_types.insert("blocks".to_string());
+        valid_types.insert("depends-on".to_owned());
+        valid_types.insert("blocks".to_owned());
 
         let mut validation = ValidationResult {
             valid: true,
@@ -676,7 +676,11 @@ relationships:
     // passes_filters unit tests
     // -----------------------------------------------------------------------
 
-    fn make_node(id: &str, artifact_type: &str, status: Option<&str>) -> crate::graph::ArtifactNode {
+    fn make_node(
+        id: &str,
+        artifact_type: &str,
+        status: Option<&str>,
+    ) -> crate::graph::ArtifactNode {
         crate::graph::ArtifactNode {
             id: id.to_owned(),
             project: None,
@@ -791,8 +795,13 @@ relationships:
     #[test]
     fn parse_artifact_content_minimal() {
         let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\n---\n\n## Body\n";
-        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &HashSet::new())
-            .expect("parse");
+        let parsed = parse_artifact_content(
+            content,
+            ".orqa/learning/rules/RULE-a1b2c3d4.md",
+            &[],
+            &HashSet::new(),
+        )
+        .expect("parse");
         assert_eq!(parsed.id, "RULE-a1b2c3d4");
         assert_eq!(parsed.title, "My Rule");
         assert_eq!(parsed.status.as_deref(), Some("active"));
@@ -802,9 +811,15 @@ relationships:
     #[test]
     fn parse_artifact_content_infers_type_from_frontmatter() {
         // Type field in frontmatter takes precedence over path-based inference.
-        let content = "---\nid: EPIC-aabbccdd\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n";
-        let parsed = parse_artifact_content(content, ".orqa/implementation/epics/EPIC-aabbccdd.md", &[], &HashSet::new())
-            .expect("parse");
+        let content =
+            "---\nid: EPIC-aabbccdd\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n";
+        let parsed = parse_artifact_content(
+            content,
+            ".orqa/implementation/epics/EPIC-aabbccdd.md",
+            &[],
+            &HashSet::new(),
+        )
+        .expect("parse");
         assert_eq!(parsed.artifact_type, "epic");
     }
 
@@ -826,21 +841,35 @@ relationships:
     fn parse_artifact_content_validates_relationship_types() {
         let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\nrelationships:\n  - type: invalid-type\n    target: OTHER-001\n---\n";
         let mut valid_types = HashSet::new();
-        valid_types.insert("depends-on".to_string());
-        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &valid_types)
-            .expect("parse");
+        valid_types.insert("depends-on".to_owned());
+        let parsed = parse_artifact_content(
+            content,
+            ".orqa/learning/rules/RULE-a1b2c3d4.md",
+            &[],
+            &valid_types,
+        )
+        .expect("parse");
         // invalid-type is not in valid_types — should produce a validation error
         assert!(!parsed.validation.valid);
-        assert!(parsed.validation.errors.iter().any(|e| e.contains("invalid-type")));
+        assert!(parsed
+            .validation
+            .errors
+            .iter()
+            .any(|e| e.contains("invalid-type")));
     }
 
     #[test]
     fn parse_artifact_content_clean_when_valid_types() {
         let content = "---\nid: RULE-a1b2c3d4\ntitle: My Rule\nstatus: active\nrelationships:\n  - type: depends-on\n    target: OTHER-001\n---\n";
         let mut valid_types = HashSet::new();
-        valid_types.insert("depends-on".to_string());
-        let parsed = parse_artifact_content(content, ".orqa/learning/rules/RULE-a1b2c3d4.md", &[], &valid_types)
-            .expect("parse");
+        valid_types.insert("depends-on".to_owned());
+        let parsed = parse_artifact_content(
+            content,
+            ".orqa/learning/rules/RULE-a1b2c3d4.md",
+            &[],
+            &valid_types,
+        )
+        .expect("parse");
         assert!(parsed.validation.valid);
         assert!(parsed.validation.errors.is_empty());
     }

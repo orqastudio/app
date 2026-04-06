@@ -80,16 +80,20 @@ pub async fn list_projects(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        storage.projects().list().map(Json).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-        ))
+        storage.projects().list().map(Json).map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /projects/active — return the most recently used project.
@@ -100,24 +104,24 @@ pub async fn get_active_project(
 ) -> Result<Json<Project>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        match storage.projects().get_active() {
-            Ok(Some(p)) => Ok(Json(p)),
-            Ok(None) => Err((
-                StatusCode::NOT_FOUND,
-                Json(serde_json::json!({ "error": "no active project", "code": "NOT_FOUND" })),
-            )),
-            Err(e) => Err((
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-            )),
-        }
+    tokio::task::spawn_blocking(move || match storage.projects().get_active() {
+        Ok(Some(p)) => Ok(Json(p)),
+        Ok(None) => Err((
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({ "error": "no active project", "code": "NOT_FOUND" })),
+        )),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle POST /projects/open — open a project by path, creating a record if needed.
@@ -177,10 +181,12 @@ pub async fn open_project(
 pub async fn get_project_settings(
     State(state): State<HealthState>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
-    ))?;
+    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
+        )
+    })?;
 
     tokio::task::spawn_blocking(move || {
         let store = FileProjectSettingsStore::new();
@@ -194,10 +200,12 @@ pub async fn get_project_settings(
         }
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle PUT /projects/settings — write project.json for the active project.
@@ -208,10 +216,12 @@ pub async fn update_project_settings(
     State(state): State<HealthState>,
     Json(req): Json<UpdateProjectSettingsRequest>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
-    ))?;
+    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
+        )
+    })?;
     let settings = req.settings.clone();
 
     tokio::task::spawn_blocking(move || {
@@ -224,10 +234,12 @@ pub async fn update_project_settings(
             ))
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle POST /projects/scan — scan the project filesystem for stack and governance info.
@@ -237,25 +249,31 @@ pub async fn update_project_settings(
 pub async fn scan_project_handler(
     State(state): State<HealthState>,
 ) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
-    ))?;
+    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
+        )
+    })?;
 
     tokio::task::spawn_blocking(move || {
         let path_str = project_root.to_string_lossy().to_string();
         scan_project(&path_str, &[])
             .map(|r| Json(serde_json::to_value(&r).unwrap_or(serde_json::Value::Null)))
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "SCAN_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "SCAN_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle POST /projects/icon — store an uploaded project icon.
@@ -266,29 +284,37 @@ pub async fn upload_project_icon(
     State(state): State<HealthState>,
     body: Bytes,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
-    ))?;
+    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
+        )
+    })?;
 
     tokio::task::spawn_blocking(move || {
         let state_dir = project_root.join(".state");
-        std::fs::create_dir_all(&state_dir).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "IO_ERROR" })),
-        ))?;
+        std::fs::create_dir_all(&state_dir).map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "IO_ERROR" })),
+            )
+        })?;
         let icon_path = state_dir.join("project-icon");
-        std::fs::write(&icon_path, &body).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "IO_ERROR" })),
-        ))?;
+        std::fs::write(&icon_path, &body).map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "IO_ERROR" })),
+            )
+        })?;
         Ok(StatusCode::NO_CONTENT)
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /projects/icon — read the project icon bytes.
@@ -298,10 +324,12 @@ pub async fn upload_project_icon(
 pub async fn get_project_icon(
     State(state): State<HealthState>,
 ) -> Result<Bytes, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
-    ))?;
+    let project_root = project_root_from_graph(&state.graph_state).ok_or_else(|| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "project root unavailable", "code": "STATE_ERROR" })),
+        )
+    })?;
 
     tokio::task::spawn_blocking(move || {
         let icon_path = project_root.join(".state/project-icon");
@@ -311,18 +339,20 @@ pub async fn get_project_icon(
                 Json(serde_json::json!({ "error": "no project icon set", "code": "NOT_FOUND" })),
             ));
         }
-        std::fs::read(&icon_path)
-            .map(Bytes::from)
-            .map_err(|e| (
+        std::fs::read(&icon_path).map(Bytes::from).map_err(|e| {
+            (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": e.to_string(), "code": "IO_ERROR" })),
-            ))
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 // ---------------------------------------------------------------------------
@@ -347,8 +377,7 @@ mod tests {
     /// Absolute path to the minimal fixture project, matching the integration test
     /// fixture so project_root is a real directory for settings handlers.
     fn fixture_root() -> std::path::PathBuf {
-        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests/fixtures/minimal-project")
+        std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/minimal-project")
     }
 
     /// Build a Router wiring the project routes to a fresh in-memory store.

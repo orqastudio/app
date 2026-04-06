@@ -11,8 +11,8 @@ use orqa_engine_types::types::message::{
     ContentType, Message, MessageRole, SearchResult, StreamStatus,
 };
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Parameters for creating a tool-related message (tool_use or tool_result).
 pub struct NewToolMessage<'a> {
@@ -61,17 +61,21 @@ impl MessageRepo<'_> {
             "INSERT INTO messages \
              (session_id, role, content_type, content, turn_index, block_index) \
              VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-            params![session_id, role, content_type, content, turn_index, block_index],
+            params![
+                session_id,
+                role,
+                content_type,
+                content,
+                turn_index,
+                block_index
+            ],
         )?;
         let id = conn.last_insert_rowid();
         get_conn(&conn, id)
     }
 
     /// Create a tool-related message (tool_use or tool_result).
-    pub fn create_tool_message(
-        &self,
-        msg: &NewToolMessage<'_>,
-    ) -> Result<Message, StorageError> {
+    pub fn create_tool_message(&self, msg: &NewToolMessage<'_>) -> Result<Message, StorageError> {
         let conn = self.storage.conn()?;
         conn.execute(
             "INSERT INTO messages \
@@ -339,14 +343,31 @@ mod tests {
         let storage = setup();
         storage
             .messages()
-            .create(1, "user", "text", Some("How do I fix the parsing bug?"), 0, 0)
+            .create(
+                1,
+                "user",
+                "text",
+                Some("How do I fix the parsing bug?"),
+                0,
+                0,
+            )
             .expect("create");
         storage
             .messages()
-            .create(1, "assistant", "text", Some("You need to update the parser"), 1, 0)
+            .create(
+                1,
+                "assistant",
+                "text",
+                Some("You need to update the parser"),
+                1,
+                0,
+            )
             .expect("create");
 
         let results = storage.messages().search(1, "parsing", 10).expect("search");
-        assert!(!results.is_empty(), "FTS should find messages matching 'parsing'");
+        assert!(
+            !results.is_empty(),
+            "FTS should find messages matching 'parsing'"
+        );
     }
 }

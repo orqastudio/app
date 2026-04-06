@@ -77,18 +77,18 @@ mod tests {
     #[tokio::test]
     async fn returns_title_when_summary_non_empty() {
         let client = StubSidecar {
-            summary: "  Discussing Rust ownership  ".to_string(),
+            summary: "  Discussing Rust ownership  ".to_owned(),
         };
-        let result = generate_session_title(&client, &["user: hello".to_string()])
+        let result = generate_session_title(&client, &["user: hello".to_owned()])
             .await
             .expect("should succeed");
-        assert_eq!(result, Some("Discussing Rust ownership".to_string()));
+        assert_eq!(result, Some("Discussing Rust ownership".to_owned()));
     }
 
     #[tokio::test]
     async fn returns_none_when_summary_empty() {
         let client = EmptySidecar;
-        let result = generate_session_title(&client, &["user: hello".to_string()])
+        let result = generate_session_title(&client, &["user: hello".to_owned()])
             .await
             .expect("should succeed");
         assert_eq!(result, None);
@@ -97,7 +97,7 @@ mod tests {
     #[tokio::test]
     async fn propagates_sidecar_error() {
         let client = ErrorSidecar;
-        let result = generate_session_title(&client, &["user: hello".to_string()]).await;
+        let result = generate_session_title(&client, &["user: hello".to_owned()]).await;
         assert!(result.is_err());
     }
 }

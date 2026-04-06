@@ -149,8 +149,14 @@ mod tests {
     #[test]
     fn project_get_active_returns_most_recent() {
         let storage = orqa_storage::Storage::open_in_memory().expect("db init");
-        storage.projects().create("old", "/old", None).expect("create");
-        storage.projects().create("new", "/new", None).expect("create");
+        storage
+            .projects()
+            .create("old", "/old", None)
+            .expect("create");
+        storage
+            .projects()
+            .create("new", "/new", None)
+            .expect("create");
 
         let active = storage
             .projects()
@@ -163,8 +169,14 @@ mod tests {
     #[test]
     fn project_list_returns_all() {
         let storage = orqa_storage::Storage::open_in_memory().expect("db init");
-        storage.projects().create("p1", "/p1", None).expect("create");
-        storage.projects().create("p2", "/p2", None).expect("create");
+        storage
+            .projects()
+            .create("p1", "/p1", None)
+            .expect("create");
+        storage
+            .projects()
+            .create("p2", "/p2", None)
+            .expect("create");
 
         let projects = storage.projects().list().expect("list");
         assert_eq!(projects.len(), 2);
@@ -173,7 +185,10 @@ mod tests {
     #[test]
     fn project_open_existing_returns_project() {
         let storage = orqa_storage::Storage::open_in_memory().expect("db init");
-        let original = storage.projects().create("test", "/tmp", None).expect("create");
+        let original = storage
+            .projects()
+            .create("test", "/tmp", None)
+            .expect("create");
 
         let fetched = storage.projects().get_by_path("/tmp").expect("get_by_path");
         assert_eq!(fetched.id, original.id);

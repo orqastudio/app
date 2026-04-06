@@ -9,8 +9,8 @@ use rusqlite::params;
 
 use orqa_engine_types::types::health::{HealthSnapshot, NewHealthSnapshot};
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Zero-cost repository handle for the `health_snapshots` table.
 ///
@@ -159,7 +159,10 @@ mod tests {
     #[test]
     fn create_and_get_snapshot() {
         let storage = setup();
-        let snap = storage.health().create(1, &sample_snapshot()).expect("create");
+        let snap = storage
+            .health()
+            .create(1, &sample_snapshot())
+            .expect("create");
         assert_eq!(snap.node_count, 100);
         assert_eq!(snap.edge_count, 200);
         assert_eq!(snap.outlier_count, 5);

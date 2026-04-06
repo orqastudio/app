@@ -8,8 +8,8 @@ use rusqlite::params;
 
 use orqa_engine_types::types::enforcement::EnforcementViolation;
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Zero-cost repository handle for the `enforcement_violations` table.
 ///
@@ -83,7 +83,7 @@ impl ViolationsRepo<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
     use crate::Storage;
 
     fn setup() -> Storage {
@@ -102,7 +102,10 @@ mod tests {
             .violations()
             .record(1, "RULE-001", "block", "write_file", Some("detail"))
             .expect("record");
-        let violations = storage.violations().list_for_project(1, None).expect("list");
+        let violations = storage
+            .violations()
+            .list_for_project(1, None)
+            .expect("list");
         assert_eq!(violations.len(), 1);
         assert_eq!(violations[0].rule_name, "RULE-001");
         assert_eq!(violations[0].action, "block");
@@ -127,7 +130,10 @@ mod tests {
     #[test]
     fn list_empty_when_no_violations() {
         let storage = setup();
-        let violations = storage.violations().list_for_project(1, None).expect("list");
+        let violations = storage
+            .violations()
+            .list_for_project(1, None)
+            .expect("list");
         assert!(violations.is_empty());
     }
 }

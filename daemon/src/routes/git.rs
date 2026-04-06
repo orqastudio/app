@@ -24,9 +24,7 @@ use crate::graph_state::GraphState;
 ///
 /// Returns the stash list from `git stash list`. Returns an empty list
 /// when the project is not a git repository or git is not installed.
-pub async fn get_git_stashes(
-    State(state): State<GraphState>,
-) -> Json<serde_json::Value> {
+pub async fn get_git_stashes(State(state): State<GraphState>) -> Json<serde_json::Value> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(serde_json::json!({ "stashes": [] }));
@@ -67,10 +65,12 @@ pub async fn get_git_status(
 
     let result = tokio::task::spawn_blocking(move || uncommitted_status(&project_root))
         .await
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            )
+        })?;
 
     match result {
         Some(status) => Ok(Json(serde_json::json!({
@@ -78,6 +78,8 @@ pub async fn get_git_status(
             "uncommitted_count": status.uncommitted_count,
             "clean": status.uncommitted_count == 0,
         }))),
-        None => Ok(Json(serde_json::json!({ "branch": null, "uncommitted_count": 0, "clean": true }))),
+        None => Ok(Json(
+            serde_json::json!({ "branch": null, "uncommitted_count": 0, "clean": true }),
+        )),
     }
 }

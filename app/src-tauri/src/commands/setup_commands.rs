@@ -171,7 +171,11 @@ mod tests {
         let storage = orqa_storage::Storage::open_in_memory().expect("db init");
         storage
             .settings()
-            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
+            .set(
+                "setup_version",
+                &serde_json::json!(CURRENT_SETUP_VERSION),
+                "app",
+            )
             .expect("set");
 
         let stored = storage
@@ -179,7 +183,7 @@ mod tests {
             .get("setup_version", "app")
             .expect("get")
             .expect("should exist");
-        let stored_version = stored.as_u64().map(|v| v as u32).unwrap_or(0);
+        let stored_version = stored.as_u64().map_or(0, |v| v as u32);
 
         let status = SetupStatus {
             setup_complete: stored_version >= CURRENT_SETUP_VERSION,
@@ -201,7 +205,11 @@ mod tests {
 
         storage
             .settings()
-            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
+            .set(
+                "setup_version",
+                &serde_json::json!(CURRENT_SETUP_VERSION),
+                "app",
+            )
             .expect("set");
 
         let after = storage
@@ -277,7 +285,7 @@ mod tests {
             .get("setup_version", "app")
             .expect("get")
             .expect("should exist");
-        let stored_version = stored.as_u64().map(|v| v as u32).unwrap_or(0);
+        let stored_version = stored.as_u64().map_or(0, |v| v as u32);
 
         assert!(stored_version < CURRENT_SETUP_VERSION);
         assert!(!stored_version >= CURRENT_SETUP_VERSION);

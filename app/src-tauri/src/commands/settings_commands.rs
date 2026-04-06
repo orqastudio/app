@@ -70,7 +70,10 @@ mod tests {
     fn set_and_get_object_value() {
         let storage = orqa_storage::Storage::open_in_memory().expect("db init");
         let value = serde_json::json!({"font_size": 14, "wrap": true});
-        storage.settings().set("editor", &value, "app").expect("set");
+        storage
+            .settings()
+            .set("editor", &value, "app")
+            .expect("set");
 
         let fetched = storage
             .settings()

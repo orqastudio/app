@@ -22,8 +22,8 @@ mod build_tests;
 // Re-export graph data types and metric types from engine/types so consumers can access
 // them via this crate without depending on engine/types directly.
 pub use orqa_engine_types::{
-    AncestryChain, AncestryNode, ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth,
-    GraphStats, OutlierAgeDistribution, TracedArtifact, TraceabilityResult,
+    AncestryChain, AncestryNode, ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth, GraphStats,
+    OutlierAgeDistribution, TraceabilityResult, TracedArtifact,
 };
 
 // Re-export the most commonly used public API at crate root.

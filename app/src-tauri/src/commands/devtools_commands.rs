@@ -26,7 +26,10 @@ fn find_devtools_bin() -> String {
     let workspace_root = std::path::Path::new("../..").to_path_buf();
     let candidates = [
         workspace_root.join("target").join("debug").join(&bin_name),
-        workspace_root.join("target").join("release").join(&bin_name),
+        workspace_root
+            .join("target")
+            .join("release")
+            .join(&bin_name),
     ];
 
     for candidate in &candidates {
@@ -99,9 +102,7 @@ pub fn is_devtools_running() -> bool {
 
     #[cfg(not(windows))]
     {
-        let output = Command::new("pgrep")
-            .args(["-f", DEVTOOLS_BIN])
-            .output();
+        let output = Command::new("pgrep").args(["-f", DEVTOOLS_BIN]).output();
 
         if let Ok(out) = output {
             return !out.stdout.is_empty();

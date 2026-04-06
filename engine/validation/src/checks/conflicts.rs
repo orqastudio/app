@@ -185,7 +185,10 @@ mod tests {
         };
         let mut checks = Vec::new();
         check_schema_conflicts(&[t1, t2], &[], &mut checks);
-        assert!(checks.is_empty(), "identical definitions should not conflict");
+        assert!(
+            checks.is_empty(),
+            "identical definitions should not conflict"
+        );
     }
 
     #[test]
@@ -211,7 +214,10 @@ mod tests {
         };
         let mut checks = Vec::new();
         check_schema_conflicts(&[t1, t2], &[], &mut checks);
-        assert!(!checks.is_empty(), "differing required fields should be a conflict");
+        assert!(
+            !checks.is_empty(),
+            "differing required fields should be a conflict"
+        );
         assert!(checks[0].message.contains("required fields"));
     }
 }

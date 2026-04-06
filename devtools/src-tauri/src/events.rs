@@ -25,8 +25,8 @@ use orqa_engine_types::types::event::LogEvent;
 use orqa_storage::Storage;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager as _, State};
-use tokio::sync::Mutex;
 use tokio::sync::mpsc;
+use tokio::sync::Mutex;
 use tracing::{error, info, warn};
 
 /// Maximum number of events retained in the ring buffer.
@@ -43,6 +43,9 @@ const TAURI_EVENT_NEW_LOG: &str = "orqa://log-event";
 
 /// Tauri event name used to broadcast connection state changes to the frontend.
 const TAURI_EVENT_CONNECTION: &str = "orqa://connection-state";
+
+/// Tauri event name emitted after an issue group is created or updated.
+const TAURI_EVENT_ISSUE_GROUP_UPDATE: &str = "orqa://issue-group-update";
 
 /// Initial reconnect backoff in seconds.
 const BACKOFF_INITIAL_SECS: u64 = 1;
@@ -76,7 +79,10 @@ impl EventBatchWriter {
     /// background flush loop handles the actual INSERT.
     pub fn queue_event(&self, event: LogEvent) {
         if self.tx.send(event).is_err() {
-            warn!(subsystem = "event-batch-writer", "channel closed, event dropped");
+            warn!(
+                subsystem = "event-batch-writer",
+                "channel closed, event dropped"
+            );
         }
     }
 }
@@ -233,7 +239,10 @@ async fn fetch_events_json(url: &str) -> Option<Vec<serde_json::Value>> {
         .and_then(|v| v.as_array())
         .cloned()
         .or_else(|| {
-            warn!(subsystem = "event-consumer", "event response missing 'events' array");
+            warn!(
+                subsystem = "event-consumer",
+                "event response missing 'events' array"
+            );
             None
         })
 }
@@ -252,9 +261,14 @@ async fn load_gap_events(
     after_ms: i64,
 ) {
     let url = format!("{base_url}/events?after={after_ms}&limit=5000");
-    info!(subsystem = "event-consumer", after_ms, "loading gap events from SQLite history");
+    info!(
+        subsystem = "event-consumer",
+        after_ms, "loading gap events from SQLite history"
+    );
 
-    let Some(events) = fetch_events_json(&url).await else { return };
+    let Some(events) = fetch_events_json(&url).await else {
+        return;
+    };
 
     let count = events.len();
     for raw in events {
@@ -265,6 +279,10 @@ async fn load_gap_events(
                 }
                 // Persist to SQLite before moving event into ring buffer.
                 batch_writer.queue_event(event.clone());
+                // Upsert into issue_groups for gap-fill events with a fingerprint.
+                if event.fingerprint.is_some() {
+                    upsert_issue_group(app.clone(), event.clone());
+                }
                 push_event_pub(state, event).await;
             }
             Err(e) => {
@@ -272,7 +290,10 @@ async fn load_gap_events(
             }
         }
     }
-    info!(subsystem = "event-consumer", count, "loaded gap events from SQLite history");
+    info!(
+        subsystem = "event-consumer",
+        count, "loaded gap events from SQLite history"
+    );
 }
 
 /// Spawn the background SSE consumer task.
@@ -318,16 +339,25 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
                 emit_connection_state(&app, &ConnectionState::Reconnecting { attempt });
                 info!(
                     subsystem = "event-consumer",
-                    attempt,
-                    backoff_secs,
-                    "reconnecting to daemon SSE stream"
+                    attempt, backoff_secs, "reconnecting to daemon SSE stream"
                 );
             }
 
             let bw_for_consume = batch_writer.clone();
-            match connect_and_consume(&app, Arc::clone(&state), bw_for_consume, &stream_url, &mut last_timestamp).await {
+            match connect_and_consume(
+                &app,
+                Arc::clone(&state),
+                bw_for_consume,
+                &stream_url,
+                &mut last_timestamp,
+            )
+            .await
+            {
                 Ok(()) => {
-                    info!(subsystem = "event-consumer", "SSE stream ended cleanly — reconnecting");
+                    info!(
+                        subsystem = "event-consumer",
+                        "SSE stream ended cleanly — reconnecting"
+                    );
                     // Server closed the stream gracefully; reset backoff.
                     backoff_secs = BACKOFF_INITIAL_SECS;
                     attempt = 1;
@@ -397,7 +427,14 @@ async fn connect_and_consume(
             }
         };
         line_buf.push_str(text);
-        process_sse_lines(app, &state, batch_writer.as_ref(), &mut line_buf, last_timestamp).await;
+        process_sse_lines(
+            app,
+            &state,
+            batch_writer.as_ref(),
+            &mut line_buf,
+            last_timestamp,
+        )
+        .await;
     }
     Ok(())
 }
@@ -441,6 +478,12 @@ async fn process_sse_lines(
                     if let Some(bw) = batch_writer {
                         bw.queue_event(event.clone());
                     }
+                    // Upsert into issue_groups if the event carries a fingerprint.
+                    // This is fire-and-forget: a spawned task handles the blocking
+                    // SQLite write and emits the group-update event when done.
+                    if event.fingerprint.is_some() {
+                        upsert_issue_group(app.clone(), event.clone());
+                    }
                     push_event_pub(state, event).await;
                 }
                 Err(e) => {
@@ -454,6 +497,84 @@ async fn process_sse_lines(
             }
         }
     }
+}
+
+/// Perform the blocking SQLite upsert and group read for `upsert_issue_group`.
+///
+/// Returns the updated `IssueGroup` on success, or a String error.
+fn do_upsert_blocking(
+    storage: Arc<Storage>,
+    fp: String,
+    title: String,
+    component: String,
+    level: String,
+    timestamp_ms: i64,
+    event_id: u64,
+) -> Result<Option<orqa_storage::repo::issue_groups::IssueGroup>, String> {
+    storage
+        .issue_groups()
+        .upsert(&fp, &title, &component, &level, timestamp_ms, event_id)
+        .map_err(|e| e.to_string())?;
+    storage.issue_groups().get(&fp).map_err(|e| e.to_string())
+}
+
+/// Fire-and-forget helper that upserts a fingerprinted event into `issue_groups`
+/// and emits an `orqa://issue-group-update` Tauri event with the updated group.
+///
+/// Called from the event ingest paths (live SSE and gap-fill) for any event that
+/// carries a non-None fingerprint. Spawns a new async task so the caller is never
+/// blocked by the SQLite write. Retrieves `Storage` from managed app state.
+pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
+    tauri::async_runtime::spawn(async move {
+        let Some(fp) = event.fingerprint.as_deref().map(str::to_owned) else {
+            return;
+        };
+        let title = event
+            .message_template
+            .as_deref()
+            .unwrap_or(&event.message)
+            .to_owned();
+        let component = event.source.to_string();
+        let level = event.level.to_string();
+
+        let Some(storage) = app.try_state::<Arc<Storage>>().map(|s| Arc::clone(&s)) else {
+            error!(
+                subsystem = "issue-group-upsert",
+                fingerprint = %fp,
+                "storage not in managed state — upsert skipped"
+            );
+            return;
+        };
+
+        let result = tokio::task::spawn_blocking(move || {
+            do_upsert_blocking(
+                storage,
+                fp,
+                title,
+                component,
+                level,
+                event.timestamp,
+                event.id,
+            )
+        })
+        .await;
+
+        match result {
+            Err(e) => {
+                error!(subsystem = "issue-group-upsert", error = ?e, "spawn_blocking panicked")
+            }
+            Ok(Err(e)) => error!(subsystem = "issue-group-upsert", error = %e, "upsert failed"),
+            Ok(Ok(None)) => error!(
+                subsystem = "issue-group-upsert",
+                "group missing after upsert"
+            ),
+            Ok(Ok(Some(group))) => {
+                if let Err(e) = app.emit(TAURI_EVENT_ISSUE_GROUP_UPDATE, &group) {
+                    error!(subsystem = "issue-group-upsert", error = %e, "failed to emit event");
+                }
+            }
+        }
+    });
 }
 
 /// Query parameters for the `get_events` IPC command.
@@ -586,7 +707,11 @@ struct DaemonEventsResponse {
 /// bound; `before` filtering is applied after the response is received.
 fn build_history_url(port: u16, params: &HistoryQueryParams, limit: u32) -> String {
     // When paging backward we fetch a larger window so we can trim client-side.
-    let fetch_limit = if params.before.is_some() { 5000_u32 } else { limit };
+    let fetch_limit = if params.before.is_some() {
+        5000_u32
+    } else {
+        limit
+    };
     let mut parts = vec![format!("limit={fetch_limit}")];
     if let Some(ref source) = params.source {
         parts.push(format!("source={source}"));
@@ -599,7 +724,11 @@ fn build_history_url(port: u16, params: &HistoryQueryParams, limit: u32) -> Stri
 
 /// Filter `events` to those with timestamp < `before` and return the last
 /// `limit` of them (most recent before the cutoff).
-fn apply_before_cutoff(mut events: Vec<serde_json::Value>, before: i64, limit: usize) -> Vec<serde_json::Value> {
+fn apply_before_cutoff(
+    mut events: Vec<serde_json::Value>,
+    before: i64,
+    limit: usize,
+) -> Vec<serde_json::Value> {
     events.retain(|ev| {
         ev.get("timestamp")
             .and_then(serde_json::Value::as_i64)

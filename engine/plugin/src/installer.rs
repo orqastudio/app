@@ -151,7 +151,15 @@ pub async fn install_from_github(
     std::fs::create_dir_all(&tmp_dir)?;
 
     let manifest = extract_and_read_manifest(&bytes, &tmp_dir)?;
-    finalize_github_install(manifest, plugins_dir, tmp_dir, project_root, repo, &tag, sha256)
+    finalize_github_install(
+        manifest,
+        plugins_dir,
+        tmp_dir,
+        project_root,
+        repo,
+        &tag,
+        sha256,
+    )
 }
 
 /// Enforce constraints, move extracted plugin into place, and build the result.
@@ -205,7 +213,11 @@ fn finalize_github_install(
         &manifest.name,
     );
 
-    let short_name = manifest.name.split('/').next_back().unwrap_or(&manifest.name);
+    let short_name = manifest
+        .name
+        .split('/')
+        .next_back()
+        .unwrap_or(&manifest.name);
     let target = plugins_dir.join(short_name);
     if target.exists() {
         std::fs::remove_dir_all(&target)?;
@@ -469,27 +481,28 @@ mod tests {
         enforcement_entries: &str,
     ) {
         let stage_slot_json = match stage_slot {
-            Some(s) => format!(r#",
-  "stage_slot": "{}""#, s),
+            Some(s) => format!(
+                r#",
+  "stage_slot": "{s}""#
+            ),
             None => String::new(),
         };
         let purpose_json = purpose
             .iter()
-            .map(|p| format!(r#""{}""#, p))
+            .map(|p| format!(r#""{p}""#))
             .collect::<Vec<_>>()
             .join(", ");
         // Fields are top-level in the manifest JSON using snake_case, matching actual plugin manifests.
         let manifest = format!(
             r#"{{
-  "name": "{}",
+  "name": "{name}",
   "version": "0.1.0",
   "categories": ["domain-knowledge"],
   "provides": {{}},
-  "purpose": [{}],
-  "affects_schema": {},
-  "enforcement": {}{}
-}}"#,
-            name, purpose_json, affects_schema, enforcement_entries, stage_slot_json
+  "purpose": [{purpose_json}],
+  "affects_schema": {affects_schema},
+  "enforcement": {enforcement_entries}{stage_slot_json}
+}}"#
         );
         std::fs::write(dir.join("orqa-plugin.json"), manifest).unwrap();
     }
@@ -505,8 +518,8 @@ mod tests {
             "@orqastudio/plugin-agile-methodology",
             &["methodology"],
             None,
-            true,  // affects_schema
-            "[]",  // no enforcement entries
+            true, // affects_schema
+            "[]", // no enforcement entries
         );
 
         let result = install_from_path(plugin_dir.path(), project_dir.path()).unwrap();
@@ -555,6 +568,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn install_from_path_rejects_second_methodology_plugin() {
         // Installing a second methodology plugin must fail.
         // Set up a project with an already-installed methodology plugin.
@@ -678,6 +692,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn install_from_path_rejects_stage_slot_conflict() {
         // Installing a workflow plugin whose stage_slot is already filled must fail.
         let project_dir = tempfile::tempdir().unwrap();

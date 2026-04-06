@@ -75,11 +75,37 @@ impl fmt::Display for EventSource {
     }
 }
 
+/// A single resolved source location in a stack trace.
+///
+/// Used within `LogEvent.stack_frames` to represent symbolicated call-stack
+/// positions for error-level events. Raw unsymbolicated frames are preserved
+/// as a fallback so no information is lost if symbolication fails.
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct StackFrame {
+    /// Source file path (relative to project root when resolved).
+    pub file: String,
+    /// Line number in the source file.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub line: Option<u32>,
+    /// Column number in the source file.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub col: Option<u32>,
+    /// Function or method name.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub function: Option<String>,
+    /// Raw unsymbolicated frame string (preserved as fallback).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub raw: Option<String>,
+}
+
 /// A structured log event emitted by any OrqaStudio component.
 ///
 /// All events flowing through the daemon's event bus use this type.
 /// The `metadata` field carries structured context that varies by event category.
 /// The `session_id` ties events to a specific agent session when applicable.
+/// The `fingerprint` and `message_template` fields support IssueGroup deduplication:
+/// identical logical errors share a fingerprint regardless of dynamic token values.
+/// The `correlation_id` links related events that cross IPC boundaries.
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct LogEvent {
     /// Monotonically increasing event identifier within a daemon session.
@@ -98,4 +124,18 @@ pub struct LogEvent {
     pub metadata: serde_json::Value,
     /// Agent session this event belongs to, if applicable.
     pub session_id: Option<String>,
+    /// Canonical fingerprint derived from (source, level, message_template, stack_top).
+    /// Used to group identical events into IssueGroups.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fingerprint: Option<String>,
+    /// The parameterized message template with dynamic tokens stripped.
+    /// E.g. "Failed to load {artifact_id}" instead of "Failed to load RULE-00700241".
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message_template: Option<String>,
+    /// Correlation ID linking events across IPC boundaries for trace reconstruction.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub correlation_id: Option<String>,
+    /// Resolved source stack frames for error-level events.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub stack_frames: Option<Vec<StackFrame>>,
 }

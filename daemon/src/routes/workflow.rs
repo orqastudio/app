@@ -76,9 +76,7 @@ fn load_status_definitions(project_root: &std::path::Path) -> Vec<StatusDefiniti
 ///
 /// Reads the cached graph and project status definitions, then returns all
 /// transitions the workflow engine proposes. No mutations are performed.
-pub async fn list_transitions(
-    State(state): State<GraphState>,
-) -> Json<Vec<ProposedTransition>> {
+pub async fn list_transitions(State(state): State<GraphState>) -> Json<Vec<ProposedTransition>> {
     let (graph, project_root) = {
         let Ok(guard) = state.0.read() else {
             return Json(Vec::new());
@@ -107,24 +105,31 @@ pub async fn apply_transition(
                 Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
             ));
         };
-        let node = guard.graph.nodes.get(&req.artifact_id)
+        let node = guard
+            .graph
+            .nodes
+            .get(&req.artifact_id)
             .or_else(|| guard.graph.nodes.values().find(|n| n.id == req.artifact_id))
-            .ok_or_else(|| (
-                StatusCode::NOT_FOUND,
-                Json(serde_json::json!({
-                    "error": format!("artifact '{}' not found", req.artifact_id),
-                    "code": "NOT_FOUND"
-                })),
-            ))?;
+            .ok_or_else(|| {
+                (
+                    StatusCode::NOT_FOUND,
+                    Json(serde_json::json!({
+                        "error": format!("artifact '{}' not found", req.artifact_id),
+                        "code": "NOT_FOUND"
+                    })),
+                )
+            })?;
         let old_status = node.status.clone().unwrap_or_default();
         let file_path = guard.project_root.join(&node.path);
         (file_path, old_status, guard.project_root.clone())
     };
 
-    update_artifact_field(&file_path, "status", &req.proposed_status).map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-    ))?;
+    update_artifact_field(&file_path, "status", &req.proposed_status).map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+        )
+    })?;
 
     state.reload(&project_root);
 

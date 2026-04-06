@@ -12,6 +12,8 @@
 pub mod config;
 /// Unified error types for engine operations.
 pub mod error;
+/// Fingerprinting utilities for log event deduplication.
+pub mod fingerprint;
 /// Filesystem path resolution for project artifacts and state.
 pub mod paths;
 /// Platform-level type definitions shared across crates.
@@ -27,9 +29,9 @@ pub mod types;
 pub use types::event::{EventLevel, EventSource, LogEvent};
 /// Re-exports of graph types for direct access from this crate's root.
 pub use types::graph::{
-    AncestryChain, AncestryNode, AppliedFix, ArtifactGraph, ArtifactNode, ArtifactRef,
-    GraphHealth, GraphStats, IntegrityCategory, IntegrityCheck, IntegritySeverity,
-    OutlierAgeDistribution, TracedArtifact, TraceabilityResult,
+    AncestryChain, AncestryNode, AppliedFix, ArtifactGraph, ArtifactNode, ArtifactRef, GraphHealth,
+    GraphStats, IntegrityCategory, IntegrityCheck, IntegritySeverity, OutlierAgeDistribution,
+    TraceabilityResult, TracedArtifact,
 };
 /// Utility helpers (time formatting, etc.).
 pub mod utils;

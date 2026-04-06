@@ -257,12 +257,13 @@ mod tests {
             semantic: None,
             constraints: None,
         };
-        let ctx =
-            build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel.clone()]);
-        assert!(ctx
-            .relationships
-            .iter()
-            .any(|r| r.key == "test-custom-rel"));
+        let ctx = build_validation_context(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            std::slice::from_ref(&plugin_rel),
+        );
+        assert!(ctx.relationships.iter().any(|r| r.key == "test-custom-rel"));
     }
 
     #[test]
@@ -292,8 +293,7 @@ mod tests {
             .relationships
             .iter()
             .find(|r| r.key == key)
-            .map(|r| r.inverse.as_str())
-            .unwrap_or("inverse");
+            .map_or("inverse", |r| r.inverse.as_str());
 
         let plugin_rel = RelationshipSchema {
             key: key.to_owned(),
@@ -319,8 +319,7 @@ mod tests {
             label: "links".to_owned(),
             inverse_label: "linked by".to_owned(),
         };
-        let ctx =
-            build_validation_context(&[], &DeliveryConfig::default(), &[project_rel], &[]);
+        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[project_rel], &[]);
         assert!(ctx
             .relationships
             .iter()
@@ -347,7 +346,11 @@ mod tests {
 
     #[test]
     fn valid_statuses_are_passed_through() {
-        let statuses = vec!["active".to_owned(), "archived".to_owned(), "draft".to_owned()];
+        let statuses = vec![
+            "active".to_owned(),
+            "archived".to_owned(),
+            "draft".to_owned(),
+        ];
         let ctx = build_validation_context(&statuses, &DeliveryConfig::default(), &[], &[]);
         assert_eq!(ctx.valid_statuses, statuses);
     }
@@ -404,14 +407,8 @@ mod tests {
             target_key: "task".to_owned(),
             frontmatter_schema: serde_json::json!({"properties": {"priority": {"type": "string"}}}),
         };
-        let ctx = build_validation_context_full(
-            &[],
-            &DeliveryConfig::default(),
-            &[],
-            &[],
-            &[],
-            &[ext],
-        );
+        let ctx =
+            build_validation_context_full(&[], &DeliveryConfig::default(), &[], &[], &[], &[ext]);
         assert_eq!(ctx.schema_extensions.len(), 1);
         assert_eq!(ctx.schema_extensions[0].target_key, "task");
     }
@@ -450,7 +447,7 @@ mod tests {
             from: vec!["task".to_owned()],
             to: vec!["epic".to_owned()],
             semantic: None,
-            constraints: Some(crate::types::RelationshipConstraints {
+            constraints: Some(RelationshipConstraints {
                 required: Some(true),
                 min_count: Some(1),
                 max_count: None,
@@ -459,8 +456,17 @@ mod tests {
             }),
         };
         // First pass: add it as the base
-        let ctx1 = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel.clone()]);
-        let base = ctx1.relationships.iter().find(|r| r.key == "test-constrained").unwrap();
+        let ctx1 = build_validation_context(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            std::slice::from_ref(&plugin_rel),
+        );
+        let base = ctx1
+            .relationships
+            .iter()
+            .find(|r| r.key == "test-constrained")
+            .unwrap();
         assert!(base.constraints.is_some());
 
         // Second pass: another plugin adds from/to but no constraints
@@ -473,8 +479,17 @@ mod tests {
             semantic: None,
             constraints: None,
         };
-        let ctx2 = build_validation_context(&[], &DeliveryConfig::default(), &[], &[plugin_rel, extension]);
-        let rel = ctx2.relationships.iter().find(|r| r.key == "test-constrained").unwrap();
+        let ctx2 = build_validation_context(
+            &[],
+            &DeliveryConfig::default(),
+            &[],
+            &[plugin_rel, extension],
+        );
+        let rel = ctx2
+            .relationships
+            .iter()
+            .find(|r| r.key == "test-constrained")
+            .unwrap();
         // Constraints should still be present from the first definition
         assert!(rel.constraints.is_some());
         // from/to should be merged
@@ -501,9 +516,18 @@ mod tests {
             label: "shared".to_owned(),
             inverse_label: "shared by".to_owned(),
         };
-        let ctx = build_validation_context(&[], &DeliveryConfig::default(), &[project_rel], &[plugin_rel]);
+        let ctx = build_validation_context(
+            &[],
+            &DeliveryConfig::default(),
+            &[project_rel],
+            &[plugin_rel],
+        );
         // Should only appear once in relationships list
-        let count = ctx.relationships.iter().filter(|r| r.key == "shared-rel").count();
+        let count = ctx
+            .relationships
+            .iter()
+            .filter(|r| r.key == "shared-rel")
+            .count();
         assert_eq!(count, 1);
     }
 }

@@ -17,9 +17,9 @@ use serde::{Deserialize, Serialize};
 
 use orqa_validation::graph::graph_stats;
 use orqa_validation::metrics::compute_health;
-use orqa_validation::PipelineCategories;
 use orqa_validation::types::GraphHealth;
 use orqa_validation::GraphStats;
+use orqa_validation::PipelineCategories;
 
 use crate::graph_state::GraphState;
 
@@ -92,9 +92,16 @@ pub async fn get_graph_health(State(state): State<GraphState>) -> Json<GraphHeal
 
     let owned = guard.owned_pipeline_categories();
     let (d, l, es, et, rt) = owned.as_str_vecs();
-    let health = compute_health(&guard.graph, &PipelineCategories {
-        delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
-    });
+    let health = compute_health(
+        &guard.graph,
+        &PipelineCategories {
+            delivery: &d,
+            learning: &l,
+            excluded_statuses: &es,
+            excluded_types: &et,
+            root_types: &rt,
+        },
+    );
     Json(health)
 }
 
@@ -110,8 +117,6 @@ pub async fn list_health_snapshots() -> Json<Vec<serde_json::Value>> {
 ///
 /// Snapshot persistence is implemented in a later task (A4). Returns 501 until
 /// the SQLite snapshot store is wired up.
-pub async fn create_health_snapshot(
-    Json(_req): Json<HealthSnapshotRequest>,
-) -> StatusCode {
+pub async fn create_health_snapshot(Json(_req): Json<HealthSnapshotRequest>) -> StatusCode {
     StatusCode::NOT_IMPLEMENTED
 }

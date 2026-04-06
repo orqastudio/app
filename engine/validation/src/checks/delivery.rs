@@ -207,7 +207,11 @@ mod tests {
     #[test]
     fn artifact_outside_configured_delivery_path_is_flagged() {
         let mut graph = ArtifactGraph::default();
-        let node = make_node("TASK-A", "task", ".orqa/implementation/unknown-zone/TASK-A.md");
+        let node = make_node(
+            "TASK-A",
+            "task",
+            ".orqa/implementation/unknown-zone/TASK-A.md",
+        );
         graph.nodes.insert("TASK-A".to_owned(), node);
 
         // Configure a delivery type that does NOT cover the node's path
@@ -255,7 +259,9 @@ mod tests {
         let epic_node = make_node("EPIC-B", "epic", ".orqa/epics/EPIC-B.md");
 
         // Task delivers to its epic parent
-        task_node.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        task_node
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
 
         graph.nodes.insert("TASK-A".to_owned(), task_node);
         graph.nodes.insert("EPIC-B".to_owned(), epic_node);

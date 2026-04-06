@@ -87,7 +87,9 @@ fn load_prompt_classification(project_path: &Path) -> PromptClassification {
     };
 
     for entry in paths.flatten() {
-        let Ok(content) = std::fs::read_to_string(&entry) else { continue };
+        let Ok(content) = std::fs::read_to_string(&entry) else {
+            continue;
+        };
         let manifest: PluginManifest = match serde_json::from_str(&content) {
             Ok(m) => m,
             Err(_) => continue,
@@ -97,7 +99,9 @@ fn load_prompt_classification(project_path: &Path) -> PromptClassification {
         }
     }
 
-    warn!("[prompt] no plugin provides prompt_classification — all prompts will default to 'general'");
+    warn!(
+        "[prompt] no plugin provides prompt_classification — all prompts will default to 'general'"
+    );
     PromptClassification::default()
 }
 
@@ -168,8 +172,13 @@ pub fn prompt_handler(Json(req): Json<PromptRequest>) -> Json<PromptResponse> {
     let (prompt_type, method) = classify_message(&req.message, project_path, &classification);
     let stage = resolve_stage(&prompt_type, &classification);
     let prompt_paths = resolve_project_paths(project_path);
-    let stage_opt = if stage == "general" { None } else { Some(stage) };
-    let (prompt_text, sections) = build_prompt_text(&req.role, stage_opt, project_path, &prompt_paths);
+    let stage_opt = if stage == "general" {
+        None
+    } else {
+        Some(stage)
+    };
+    let (prompt_text, sections) =
+        build_prompt_text(&req.role, stage_opt, project_path, &prompt_paths);
     let total_tokens = sections.iter().map(|s| s.tokens).sum();
     let budget = budget_for_role(&req.role).max(budget_for_type(&prompt_type));
 
@@ -226,7 +235,10 @@ fn build_prompt_text(
         Ok(text) => {
             let token_estimate = estimate_tokens(&text);
             let sections = vec![SectionInfo {
-                name: format!("system-prompt[role={role},stage={}]", stage_opt.unwrap_or("general")),
+                name: format!(
+                    "system-prompt[role={role},stage={}]",
+                    stage_opt.unwrap_or("general")
+                ),
                 tokens: token_estimate,
             }];
             (text, sections)
@@ -293,7 +305,10 @@ fn classify_with_onnx(
     // We cannot read thinking-mode frontmatter from just the artifact name here,
     // so we use the artifact name as the lookup key against all installed knowledge
     // artifacts, reading the thinking-mode field from the matched artifact file.
-    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
+    let knowledge_dir = project_path
+        .join(".orqa")
+        .join("documentation")
+        .join("knowledge");
     for m in &matches {
         let artifact_path = knowledge_dir.join(format!("{}.md", m.name));
         if let Ok(content) = std::fs::read_to_string(&artifact_path) {
@@ -474,123 +489,124 @@ mod tests {
     use super::*;
 
     /// Build a fully populated PromptClassification matching the agile-methodology plugin data.
+    #[allow(clippy::too_many_lines)]
     fn test_classification() -> PromptClassification {
         let mut thinking_mode_exceptions = HashMap::new();
-        thinking_mode_exceptions.insert("learning-loop".to_string(), "governance".to_string());
+        thinking_mode_exceptions.insert("learning-loop".to_owned(), "governance".to_owned());
         thinking_mode_exceptions.insert(
-            "dogfood-implementation".to_string(),
-            "implementation".to_string(),
+            "dogfood-implementation".to_owned(),
+            "implementation".to_owned(),
         );
 
         let prompt_types = vec![
-            "implementation".to_string(),
-            "planning".to_string(),
-            "review".to_string(),
-            "debugging".to_string(),
-            "research".to_string(),
-            "documentation".to_string(),
-            "governance".to_string(),
-            "general".to_string(),
+            "implementation".to_owned(),
+            "planning".to_owned(),
+            "review".to_owned(),
+            "debugging".to_owned(),
+            "research".to_owned(),
+            "documentation".to_owned(),
+            "governance".to_owned(),
+            "general".to_owned(),
         ];
 
         let mut stage_mappings = HashMap::new();
-        stage_mappings.insert("implementation".to_string(), "implement".to_string());
-        stage_mappings.insert("planning".to_string(), "plan".to_string());
-        stage_mappings.insert("review".to_string(), "review".to_string());
-        stage_mappings.insert("debugging".to_string(), "debug".to_string());
-        stage_mappings.insert("research".to_string(), "research".to_string());
-        stage_mappings.insert("documentation".to_string(), "document".to_string());
-        stage_mappings.insert("governance".to_string(), "govern".to_string());
-        stage_mappings.insert("general".to_string(), "general".to_string());
+        stage_mappings.insert("implementation".to_owned(), "implement".to_owned());
+        stage_mappings.insert("planning".to_owned(), "plan".to_owned());
+        stage_mappings.insert("review".to_owned(), "review".to_owned());
+        stage_mappings.insert("debugging".to_owned(), "debug".to_owned());
+        stage_mappings.insert("research".to_owned(), "research".to_owned());
+        stage_mappings.insert("documentation".to_owned(), "document".to_owned());
+        stage_mappings.insert("governance".to_owned(), "govern".to_owned());
+        stage_mappings.insert("general".to_owned(), "general".to_owned());
 
         let mut keyword_patterns = HashMap::new();
         keyword_patterns.insert(
-            "implementation".to_string(),
+            "implementation".to_owned(),
             vec![
-                "implement".to_string(),
-                "build".to_string(),
-                "create".to_string(),
-                "add".to_string(),
-                "write code".to_string(),
-                "fix bug".to_string(),
-                "refactor".to_string(),
-                "migrate".to_string(),
-                "wire up".to_string(),
-                "hook up".to_string(),
+                "implement".to_owned(),
+                "build".to_owned(),
+                "create".to_owned(),
+                "add".to_owned(),
+                "write code".to_owned(),
+                "fix bug".to_owned(),
+                "refactor".to_owned(),
+                "migrate".to_owned(),
+                "wire up".to_owned(),
+                "hook up".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "debugging".to_string(),
+            "debugging".to_owned(),
             vec![
-                "debug".to_string(),
-                "investigate".to_string(),
-                "why does".to_string(),
-                "broken".to_string(),
-                "error".to_string(),
-                "crash".to_string(),
-                "failing".to_string(),
-                "not working".to_string(),
-                "trace".to_string(),
+                "debug".to_owned(),
+                "investigate".to_owned(),
+                "why does".to_owned(),
+                "broken".to_owned(),
+                "error".to_owned(),
+                "crash".to_owned(),
+                "failing".to_owned(),
+                "not working".to_owned(),
+                "trace".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "review".to_string(),
+            "review".to_owned(),
             vec![
-                "review".to_string(),
-                "audit".to_string(),
-                "check".to_string(),
-                "verify".to_string(),
-                "validate".to_string(),
-                "assess".to_string(),
-                "compliance".to_string(),
+                "review".to_owned(),
+                "audit".to_owned(),
+                "check".to_owned(),
+                "verify".to_owned(),
+                "validate".to_owned(),
+                "assess".to_owned(),
+                "compliance".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "research".to_string(),
+            "research".to_owned(),
             vec![
-                "research".to_string(),
-                "explore".to_string(),
-                "investigate options".to_string(),
-                "compare".to_string(),
-                "evaluate".to_string(),
-                "what are the".to_string(),
+                "research".to_owned(),
+                "explore".to_owned(),
+                "investigate options".to_owned(),
+                "compare".to_owned(),
+                "evaluate".to_owned(),
+                "what are the".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "planning".to_string(),
+            "planning".to_owned(),
             vec![
-                "plan".to_string(),
-                "design".to_string(),
-                "scope".to_string(),
-                "epic".to_string(),
-                "roadmap".to_string(),
-                "milestone".to_string(),
-                "break down".to_string(),
-                "approach".to_string(),
+                "plan".to_owned(),
+                "design".to_owned(),
+                "scope".to_owned(),
+                "epic".to_owned(),
+                "roadmap".to_owned(),
+                "milestone".to_owned(),
+                "break down".to_owned(),
+                "approach".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "documentation".to_string(),
+            "documentation".to_owned(),
             vec![
-                "document".to_string(),
-                "docs".to_string(),
-                "write up".to_string(),
-                "describe".to_string(),
-                "explain".to_string(),
-                "specification".to_string(),
+                "document".to_owned(),
+                "docs".to_owned(),
+                "write up".to_owned(),
+                "describe".to_owned(),
+                "explain".to_owned(),
+                "specification".to_owned(),
             ],
         );
         keyword_patterns.insert(
-            "governance".to_string(),
+            "governance".to_owned(),
             vec![
-                "rule".to_string(),
-                "governance".to_string(),
-                "enforce".to_string(),
-                "lesson".to_string(),
-                "artifact".to_string(),
-                "pillar".to_string(),
-                "promote".to_string(),
-                "knowledge".to_string(),
+                "rule".to_owned(),
+                "governance".to_owned(),
+                "enforce".to_owned(),
+                "lesson".to_owned(),
+                "artifact".to_owned(),
+                "pillar".to_owned(),
+                "promote".to_owned(),
+                "knowledge".to_owned(),
             ],
         );
 
@@ -605,16 +621,28 @@ mod tests {
     #[test]
     fn classify_by_keyword_implementation() {
         let c = test_classification();
-        assert_eq!(classify_by_keyword("implement the login flow", &c), "implementation");
-        assert_eq!(classify_by_keyword("build the parser", &c), "implementation");
+        assert_eq!(
+            classify_by_keyword("implement the login flow", &c),
+            "implementation"
+        );
+        assert_eq!(
+            classify_by_keyword("build the parser", &c),
+            "implementation"
+        );
         assert_eq!(classify_by_keyword("fix bug in auth", &c), "implementation");
     }
 
     #[test]
     fn classify_by_keyword_debugging() {
         let c = test_classification();
-        assert_eq!(classify_by_keyword("why does the server crash", &c), "debugging");
-        assert_eq!(classify_by_keyword("investigate the failing test", &c), "debugging");
+        assert_eq!(
+            classify_by_keyword("why does the server crash", &c),
+            "debugging"
+        );
+        assert_eq!(
+            classify_by_keyword("investigate the failing test", &c),
+            "debugging"
+        );
     }
 
     #[test]
@@ -627,7 +655,10 @@ mod tests {
     #[test]
     fn classify_by_keyword_planning() {
         let c = test_classification();
-        assert_eq!(classify_by_keyword("plan the migration approach", &c), "planning");
+        assert_eq!(
+            classify_by_keyword("plan the migration approach", &c),
+            "planning"
+        );
         assert_eq!(classify_by_keyword("design the new schema", &c), "planning");
     }
 
@@ -635,20 +666,32 @@ mod tests {
     fn classify_by_keyword_documentation() {
         let c = test_classification();
         assert_eq!(classify_by_keyword("document the API", &c), "documentation");
-        assert_eq!(classify_by_keyword("write up the spec", &c), "documentation");
+        assert_eq!(
+            classify_by_keyword("write up the spec", &c),
+            "documentation"
+        );
     }
 
     #[test]
     fn classify_by_keyword_research() {
         let c = test_classification();
-        assert_eq!(classify_by_keyword("research ONNX embedding options", &c), "research");
-        assert_eq!(classify_by_keyword("compare two approaches", &c), "research");
+        assert_eq!(
+            classify_by_keyword("research ONNX embedding options", &c),
+            "research"
+        );
+        assert_eq!(
+            classify_by_keyword("compare two approaches", &c),
+            "research"
+        );
     }
 
     #[test]
     fn classify_by_keyword_governance() {
         let c = test_classification();
-        assert_eq!(classify_by_keyword("enforce the rule about tests", &c), "governance");
+        assert_eq!(
+            classify_by_keyword("enforce the rule about tests", &c),
+            "governance"
+        );
         assert_eq!(classify_by_keyword("promote this lesson", &c), "governance");
     }
 
@@ -679,11 +722,11 @@ mod tests {
         let c = test_classification();
         assert_eq!(
             resolve_thinking_mode("learning-loop", &c),
-            Some("governance".to_string())
+            Some("governance".to_owned())
         );
         assert_eq!(
             resolve_thinking_mode("dogfood-implementation", &c),
-            Some("implementation".to_string())
+            Some("implementation".to_owned())
         );
     }
 
@@ -692,11 +735,11 @@ mod tests {
         let c = test_classification();
         assert_eq!(
             resolve_thinking_mode("review", &c),
-            Some("review".to_string())
+            Some("review".to_owned())
         );
         assert_eq!(
             resolve_thinking_mode("research", &c),
-            Some("research".to_string())
+            Some("research".to_owned())
         );
     }
 
@@ -711,7 +754,7 @@ mod tests {
         let content = "---\ntitle: Test\nthinking-mode: governance\n---\n# Body";
         assert_eq!(
             extract_thinking_mode(content),
-            Some("governance".to_string())
+            Some("governance".to_owned())
         );
     }
 
@@ -766,7 +809,10 @@ mod tests {
     #[test]
     fn empty_classification_falls_back_to_general() {
         let c = PromptClassification::default();
-        assert_eq!(classify_by_keyword("implement the login flow", &c), "general");
+        assert_eq!(
+            classify_by_keyword("implement the login flow", &c),
+            "general"
+        );
         assert_eq!(resolve_stage("implementation", &c), "general");
         assert!(resolve_thinking_mode("review", &c).is_none());
     }

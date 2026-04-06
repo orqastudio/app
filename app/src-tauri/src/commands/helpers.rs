@@ -12,10 +12,9 @@ use crate::state::AppState;
 /// Falls back to the stored path when no `.orqa/` ancestor can be found.
 pub fn active_project_path(state: &tauri::State<'_, AppState>) -> Result<String, OrqaError> {
     let storage = state.db.get()?;
-    let project = storage
-        .projects()
-        .get_active()?
-        .ok_or_else(|| OrqaError::NotFound("no active project — open a project first".to_owned()))?;
+    let project = storage.projects().get_active()?.ok_or_else(|| {
+        OrqaError::NotFound("no active project — open a project first".to_owned())
+    })?;
 
     let path = project.path;
 

@@ -79,7 +79,10 @@ fn build_icon() -> tray_icon::Icon {
     }
 
     // Fallback: 32x32 cyan circle if PNG decode fails.
-    tracing::warn!(subsystem = "tray", "[tray] fin icon decode failed — using fallback");
+    tracing::warn!(
+        subsystem = "tray",
+        "[tray] fin icon decode failed — using fallback"
+    );
     let size: u32 = 32;
     let mut rgba = Vec::with_capacity((size * size * 4) as usize);
     for y in 0..size {
@@ -119,7 +122,9 @@ fn status_label(status: SubprocessStatus) -> &'static str {
 ///   - Separator
 ///   - "Open App" — launches the OrqaStudio application
 ///   - "Quit" — triggers graceful daemon shutdown
-fn build_menu(statuses: SubprocessStatuses) -> (
+fn build_menu(
+    statuses: SubprocessStatuses,
+) -> (
     tray_icon::menu::Menu,
     tray_icon::menu::MenuId,
     tray_icon::menu::MenuId,
@@ -130,16 +135,8 @@ fn build_menu(statuses: SubprocessStatuses) -> (
 
     let header = MenuItem::new("OrqaStudio Daemon", false, None);
     let sep1 = PredefinedMenuItem::separator();
-    let lsp_item = MenuItem::new(
-        format!("LSP: {}", status_label(statuses.lsp)),
-        false,
-        None,
-    );
-    let mcp_item = MenuItem::new(
-        format!("MCP: {}", status_label(statuses.mcp)),
-        false,
-        None,
-    );
+    let lsp_item = MenuItem::new(format!("LSP: {}", status_label(statuses.lsp)), false, None);
+    let mcp_item = MenuItem::new(format!("MCP: {}", status_label(statuses.mcp)), false, None);
     let sep2 = PredefinedMenuItem::separator();
     let open_item = MenuItem::new("Open App", true, None);
     let quit_item = MenuItem::new("Quit", true, None);
@@ -281,12 +278,15 @@ fn process_events(
     subprocess_statuses: &Arc<Mutex<SubprocessStatuses>>,
     shutdown_flag: &Arc<AtomicBool>,
 ) -> Option<TrayStatus> {
-    use tray_icon::{MouseButton, MouseButtonState, TrayIconEvent, menu::MenuEvent};
+    use tray_icon::{menu::MenuEvent, MouseButton, MouseButtonState, TrayIconEvent};
 
     // Process right-click context menu events.
     while let Ok(event) = MenuEvent::receiver().try_recv() {
         if event.id == *quit_id {
-            tracing::info!(subsystem = "tray", "[tray] Quit selected — initiating shutdown");
+            tracing::info!(
+                subsystem = "tray",
+                "[tray] Quit selected — initiating shutdown"
+            );
             shutdown_flag.store(true, Ordering::SeqCst);
             return Some(TrayStatus::Exited);
         }
@@ -358,9 +358,13 @@ pub fn run_tray_loop(
         pump_messages();
 
         if let Some(status) = process_events(
-            &tray, &mut open_id, &mut quit_id,
-            &mut last_lsp, &mut last_mcp,
-            &subprocess_statuses, &shutdown_flag,
+            &tray,
+            &mut open_id,
+            &mut quit_id,
+            &mut last_lsp,
+            &mut last_mcp,
+            &subprocess_statuses,
+            &shutdown_flag,
         ) {
             return status;
         }

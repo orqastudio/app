@@ -42,9 +42,7 @@ fn make_lesson_store(project_root: &std::path::Path) -> Result<FileLessonStore, 
 ///
 /// Returns an empty list if no lessons directory is configured or no lessons
 /// have been created yet.
-pub async fn list_lessons(
-    State(state): State<GraphState>,
-) -> Json<Vec<Lesson>> {
+pub async fn list_lessons(State(state): State<GraphState>) -> Json<Vec<Lesson>> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(Vec::new());
@@ -77,15 +75,19 @@ pub async fn create_lesson(
         guard.project_root.clone()
     };
 
-    let store = make_lesson_store(&project_root).map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "STORE_ERROR" })),
-    ))?;
+    let store = make_lesson_store(&project_root).map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "STORE_ERROR" })),
+        )
+    })?;
 
-    let lesson = store.create(&req).map_err(|e| (
-        StatusCode::UNPROCESSABLE_ENTITY,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
-    ))?;
+    let lesson = store.create(&req).map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
+        )
+    })?;
 
     Ok((StatusCode::CREATED, Json(lesson)))
 }
@@ -108,10 +110,12 @@ pub async fn increment_lesson_recurrence(
         guard.project_root.clone()
     };
 
-    let store = make_lesson_store(&project_root).map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "STORE_ERROR" })),
-    ))?;
+    let store = make_lesson_store(&project_root).map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "STORE_ERROR" })),
+        )
+    })?;
 
     store.increment_recurrence(&id).map(Json).map_err(|e| {
         let (status, code) = match &e {
@@ -120,6 +124,9 @@ pub async fn increment_lesson_recurrence(
             }
             _ => (StatusCode::UNPROCESSABLE_ENTITY, "UPDATE_FAILED"),
         };
-        (status, Json(serde_json::json!({ "error": e.to_string(), "code": code })))
+        (
+            status,
+            Json(serde_json::json!({ "error": e.to_string(), "code": code })),
+        )
     })
 }

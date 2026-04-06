@@ -15,16 +15,16 @@ path = "src/lib.rs"
 
 [dependencies]
 rusqlite = { version = "0.33", features = ["bundled"] }
-uuid = { version = "1", features = ["v4"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 tracing = "0.1"
 tokio = { version = "1", features = ["rt", "sync"] }
 orqa-engine-types = { path = "../types" }
+# Used by open_in_memory() to create stable temp-file-backed databases for tests.
+tempfile = "3"
 
 [dev-dependencies]
-tempfile = "3"
 
 [lints]
 workspace = true

@@ -7,8 +7,8 @@
 
 use rusqlite::params;
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// A raw theme row from the `project_themes` table.
 #[derive(Debug, Clone)]
@@ -145,7 +145,7 @@ impl ThemeRepo<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
     use crate::Storage;
 
     fn setup() -> Storage {

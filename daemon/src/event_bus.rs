@@ -11,8 +11,8 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
-use tokio::sync::broadcast;
 use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+use tokio::sync::broadcast;
 
 /// Capacity of the broadcast channel ring buffer.
 const BUS_CAPACITY: usize = 10_000;
@@ -115,6 +115,10 @@ impl EventBus {
             message: "event bus shutting down".to_owned(),
             metadata: serde_json::Value::Null,
             session_id: None,
+            fingerprint: None,
+            message_template: None,
+            correlation_id: None,
+            stack_frames: None,
         });
     }
 
@@ -155,6 +159,10 @@ mod tests {
             message: message.to_owned(),
             metadata: serde_json::Value::Null,
             session_id: None,
+            fingerprint: None,
+            message_template: None,
+            correlation_id: None,
+            stack_frames: None,
         }
     }
 
@@ -195,7 +203,10 @@ mod tests {
         bus.publish(make_event(1, "dropped"));
 
         let stats = bus.stats();
-        assert_eq!(stats.total_published, 0, "no subscriber means nothing was sent");
+        assert_eq!(
+            stats.total_published, 0,
+            "no subscriber means nothing was sent"
+        );
         assert_eq!(stats.total_dropped, 1, "drop counter must increment");
     }
 
@@ -255,7 +266,11 @@ mod tests {
         assert_eq!(e2.message, "broadcast");
         assert_eq!(e3.message, "broadcast");
 
-        assert_eq!(bus.stats().total_published, 1, "counted once, not per subscriber");
+        assert_eq!(
+            bus.stats().total_published,
+            1,
+            "counted once, not per subscriber"
+        );
     }
 
     /// A subscriber created AFTER a publish does not receive the earlier event.
@@ -287,8 +302,14 @@ mod tests {
 
         bus.shutdown();
 
-        let event = rx.try_recv().expect("shutdown must deliver a terminator event");
-        assert_eq!(event.id, u64::MAX, "shutdown event must use id=u64::MAX sentinel");
+        let event = rx
+            .try_recv()
+            .expect("shutdown must deliver a terminator event");
+        assert_eq!(
+            event.id,
+            u64::MAX,
+            "shutdown event must use id=u64::MAX sentinel"
+        );
         assert_eq!(event.category, "bus");
         assert!(
             event.message.contains("shutting down"),

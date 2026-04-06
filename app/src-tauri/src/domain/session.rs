@@ -50,8 +50,8 @@ mod tests {
         let session = Session {
             id: 1,
             project_id: 1,
-            title: Some("Initial setup".to_string()),
-            model: "auto".to_string(),
+            title: Some("Initial setup".to_owned()),
+            model: "auto".to_owned(),
             system_prompt: None,
             status: SessionStatus::Active,
             summary: None,
@@ -60,8 +60,8 @@ mod tests {
             total_output_tokens: 0,
             total_cost_usd: 0.0,
             provider_session_id: None,
-            created_at: "2026-03-03T00:00:00Z".to_string(),
-            updated_at: "2026-03-03T00:00:00Z".to_string(),
+            created_at: "2026-03-03T00:00:00Z".to_owned(),
+            updated_at: "2026-03-03T00:00:00Z".to_owned(),
             title_manually_set: false,
         };
 
@@ -78,12 +78,12 @@ mod tests {
     fn session_summary_serialization() {
         let summary = SessionSummary {
             id: 1,
-            title: Some("Test session".to_string()),
+            title: Some("Test session".to_owned()),
             status: SessionStatus::Completed,
             message_count: 42,
-            preview: Some("How do I...".to_string()),
-            created_at: "2026-03-03T00:00:00Z".to_string(),
-            updated_at: "2026-03-03T00:00:00Z".to_string(),
+            preview: Some("How do I...".to_owned()),
+            created_at: "2026-03-03T00:00:00Z".to_owned(),
+            updated_at: "2026-03-03T00:00:00Z".to_owned(),
         };
 
         let json = serde_json::to_value(&summary).expect("serialization should succeed");

@@ -127,7 +127,12 @@ pub async fn list_artifacts(
                     // This is the canonical node — include it.
                 } else {
                     // Check if there's a duplicate alias: node.id exists as a key without project.
-                    if guard.graph.nodes.get(key.as_str()).is_some_and(|n| n.project.is_none()) {
+                    if guard
+                        .graph
+                        .nodes
+                        .get(key.as_str())
+                        .is_some_and(|n| n.project.is_none())
+                    {
                         return false;
                     }
                 }
@@ -186,7 +191,9 @@ pub async fn get_artifact(
         Some(node) => Ok(Json(node)),
         None => Err((
             StatusCode::NOT_FOUND,
-            Json(serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" })),
+            Json(
+                serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" }),
+            ),
         )),
     }
 }
@@ -201,10 +208,12 @@ pub async fn get_artifact_content(
     Path(id): Path<String>,
 ) -> Result<Json<ContentResponse>, (StatusCode, Json<serde_json::Value>)> {
     let (node, project_root) = {
-        let guard = state.0.read().map_err(|_| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-        ))?;
+        let guard = state.0.read().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            )
+        })?;
         let node = guard.graph.nodes.get(&id)
             .or_else(|| guard.graph.nodes.values().find(|n| n.id == id))
             .cloned()
@@ -242,10 +251,12 @@ pub async fn update_artifact(
     Json(req): Json<UpdateArtifactRequest>,
 ) -> Result<Json<UpdateArtifactResponse>, (StatusCode, Json<serde_json::Value>)> {
     let (file_path, project_root) = {
-        let guard = state.0.read().map_err(|_| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-        ))?;
+        let guard = state.0.read().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            )
+        })?;
         let node = guard.graph.nodes.get(&id)
             .or_else(|| guard.graph.nodes.values().find(|n| n.id == id))
             .cloned()
@@ -265,14 +276,18 @@ pub async fn update_artifact(
     let field = req.field.clone();
     tokio::task::spawn_blocking(move || update_artifact_field(&file_path, &field, &value_str))
         .await
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        ))?
-        .map_err(|e| (
-            StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            )
+        })?
+        .map_err(|e| {
+            (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+            )
+        })?;
 
     // Reload the graph so subsequent requests see the updated state.
     // Wrapped in spawn_blocking because reload() does a full directory scan.
@@ -280,10 +295,12 @@ pub async fn update_artifact(
     let root_clone = project_root.clone();
     tokio::task::spawn_blocking(move || state_clone.reload(&root_clone))
         .await
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            )
+        })?;
 
     Ok(Json(UpdateArtifactResponse {
         id,
@@ -300,26 +317,36 @@ pub async fn get_artifact_traceability(
     State(state): State<GraphState>,
     Path(id): Path<String>,
 ) -> Result<Json<TraceabilityResult>, (StatusCode, Json<serde_json::Value>)> {
-    let guard = state.0.read().map_err(|_| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-    ))?;
+    let guard = state.0.read().map_err(|_| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+        )
+    })?;
 
     // Verify artifact exists.
-    if !guard.graph.nodes.contains_key(&id)
-        && !guard.graph.nodes.values().any(|n| n.id == id)
-    {
+    if !guard.graph.nodes.contains_key(&id) && !guard.graph.nodes.values().any(|n| n.id == id) {
         return Err((
             StatusCode::NOT_FOUND,
-            Json(serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" })),
+            Json(
+                serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" }),
+            ),
         ));
     }
 
     let owned = guard.owned_pipeline_categories();
     let (d, l, es, et, rt) = owned.as_str_vecs();
-    let result = compute_traceability(&guard.graph, &id, &PipelineCategories {
-        delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt,
-    });
+    let result = compute_traceability(
+        &guard.graph,
+        &id,
+        &PipelineCategories {
+            delivery: &d,
+            learning: &l,
+            excluded_statuses: &es,
+            excluded_types: &et,
+            root_types: &rt,
+        },
+    );
     Ok(Json(result))
 }
 
@@ -350,7 +377,11 @@ pub async fn get_artifact_impact(
     let downstream_summary = if downstream_count == 0 {
         "No incoming references".to_owned()
     } else if examples.len() < downstream_count {
-        format!("{}, and {} more", examples.join(", "), downstream_count - examples.len())
+        format!(
+            "{}, and {} more",
+            examples.join(", "),
+            downstream_count - examples.len()
+        )
     } else {
         examples.join(", ")
     };
@@ -391,14 +422,18 @@ pub async fn get_artifact_tree(
         let entries = artifact_entries_from_schema(&project_root);
         artifact_scan_tree(&project_root, &entries)
             .map(Json)
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "SCAN_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "SCAN_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }

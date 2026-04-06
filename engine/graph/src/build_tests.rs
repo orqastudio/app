@@ -11,9 +11,9 @@
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
     use std::fs;
     use std::path::PathBuf;
-    use std::collections::HashSet;
     use tempfile::TempDir;
 
     use crate::build::{
@@ -45,7 +45,11 @@ mod tests {
         let tmp = make_project();
         let dir = tmp.path().join(".orqa/implementation/epics");
 
-        write_file(&dir, "BAD.md", "---\n: this is: not valid yaml: [\n---\n# Body\n");
+        write_file(
+            &dir,
+            "BAD.md",
+            "---\n: this is: not valid yaml: [\n---\n# Body\n",
+        );
         write_file(
             &dir,
             "EPIC-001.md",
@@ -54,7 +58,11 @@ mod tests {
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
         // The bad file has no parseable `id`, so only EPIC-001 makes it in.
-        assert_eq!(graph.nodes.len(), 1, "bad file must be skipped; good file must survive");
+        assert_eq!(
+            graph.nodes.len(),
+            1,
+            "bad file must be skipped; good file must survive"
+        );
         assert!(graph.nodes.contains_key("EPIC-001"));
     }
 
@@ -66,7 +74,10 @@ mod tests {
         write_file(&dir, "TASK-001.md", "Just plain body text, no YAML.\n");
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        assert!(graph.nodes.is_empty(), "file without frontmatter must produce no node");
+        assert!(
+            graph.nodes.is_empty(),
+            "file without frontmatter must produce no node"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -87,13 +98,25 @@ mod tests {
         );
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
-        assert!(graph.nodes.contains_key("TASK-001"), "source node must be in graph");
-        assert!(!graph.nodes.contains_key("EPIC-MISSING"), "missing target must NOT be in graph");
+        assert!(
+            graph.nodes.contains_key("TASK-001"),
+            "source node must be in graph"
+        );
+        assert!(
+            !graph.nodes.contains_key("EPIC-MISSING"),
+            "missing target must NOT be in graph"
+        );
 
         let task = graph.nodes.get("TASK-001").expect("node");
-        let ref_targets: Vec<&str> = task.references_out.iter().map(|r| r.target_id.as_str()).collect();
-        assert!(ref_targets.contains(&"EPIC-MISSING"),
-            "the broken ref must still be recorded in references_out");
+        let ref_targets: Vec<&str> = task
+            .references_out
+            .iter()
+            .map(|r| r.target_id.as_str())
+            .collect();
+        assert!(
+            ref_targets.contains(&"EPIC-MISSING"),
+            "the broken ref must still be recorded in references_out"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -126,7 +149,10 @@ mod tests {
         let stats = graph_stats(&graph);
         assert_eq!(stats.node_count, 1);
         assert_eq!(stats.edge_count, 0);
-        assert_eq!(stats.orphan_count, 1, "an isolated task must be counted as an orphan");
+        assert_eq!(
+            stats.orphan_count, 1,
+            "an isolated task must be counted as an orphan"
+        );
         assert_eq!(stats.broken_ref_count, 0);
     }
 
@@ -152,7 +178,10 @@ mod tests {
         let stats = graph_stats(&graph);
         assert_eq!(stats.node_count, 2);
         assert_eq!(stats.edge_count, 1, "one directed edge TASK-001→EPIC-001");
-        assert_eq!(stats.orphan_count, 0, "both nodes are connected — no orphans");
+        assert_eq!(
+            stats.orphan_count, 0,
+            "both nodes are connected — no orphans"
+        );
     }
 
     #[test]
@@ -168,8 +197,10 @@ mod tests {
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let stats = graph_stats(&graph);
-        assert_eq!(stats.broken_ref_count, 1,
-            "reference to a non-existent target must increment broken_ref_count");
+        assert_eq!(
+            stats.broken_ref_count, 1,
+            "reference to a non-existent target must increment broken_ref_count"
+        );
     }
 
     #[test]
@@ -186,7 +217,10 @@ mod tests {
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let stats = graph_stats(&graph);
         assert_eq!(stats.node_count, 1);
-        assert_eq!(stats.orphan_count, 0, "doc-type nodes must not count as orphans");
+        assert_eq!(
+            stats.orphan_count, 0,
+            "doc-type nodes must not count as orphans"
+        );
     }
 
     #[test]
@@ -209,8 +243,10 @@ mod tests {
 
         let graph = build_artifact_graph(tmp.path()).expect("build");
         let stats = graph_stats(&graph);
-        assert_eq!(stats.broken_ref_count, 2,
-            "two of three refs point to missing targets → broken_ref_count=2");
+        assert_eq!(
+            stats.broken_ref_count, 2,
+            "two of three refs point to missing targets → broken_ref_count=2"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -219,28 +255,57 @@ mod tests {
 
     #[test]
     fn infer_type_tasks_path_returns_task() {
-        let t = infer_artifact_type(".orqa/implementation/tasks/TASK-001.md", &Vec::new(), None, "TASK-001", &[]);
+        let t = infer_artifact_type(
+            ".orqa/implementation/tasks/TASK-001.md",
+            &Vec::new(),
+            None,
+            "TASK-001",
+            &[],
+        );
         assert_eq!(t, "task", "path under 'tasks' must infer type 'task'");
     }
 
     #[test]
     fn infer_type_epics_path_returns_epic() {
-        let t = infer_artifact_type(".orqa/implementation/epics/EPIC-001.md", &Vec::new(), None, "EPIC-001", &[]);
+        let t = infer_artifact_type(
+            ".orqa/implementation/epics/EPIC-001.md",
+            &Vec::new(),
+            None,
+            "EPIC-001",
+            &[],
+        );
         assert_eq!(t, "epic");
     }
 
     #[test]
     fn infer_type_frontmatter_type_takes_precedence_over_path() {
         // Explicit `type:` in frontmatter beats all other inference.
-        let t = infer_artifact_type(".orqa/implementation/tasks/T-1.md", &Vec::new(), Some("pillar"), "T-1", &[]);
-        assert_eq!(t, "pillar",
-            "frontmatter type must override path-based inference");
+        let t = infer_artifact_type(
+            ".orqa/implementation/tasks/T-1.md",
+            &Vec::new(),
+            Some("pillar"),
+            "T-1",
+            &[],
+        );
+        assert_eq!(
+            t, "pillar",
+            "frontmatter type must override path-based inference"
+        );
     }
 
     #[test]
     fn infer_type_unknown_path_falls_back_to_doc() {
-        let t = infer_artifact_type(".orqa/unknown-subdir/XYZ-001.md", &Vec::new(), None, "XYZ-001", &[]);
-        assert_eq!(t, "doc", "path with no known prefix must fall back to 'doc'");
+        let t = infer_artifact_type(
+            ".orqa/unknown-subdir/XYZ-001.md",
+            &Vec::new(),
+            None,
+            "XYZ-001",
+            &[],
+        );
+        assert_eq!(
+            t, "doc",
+            "path with no known prefix must fall back to 'doc'"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -251,7 +316,10 @@ mod tests {
     fn extract_frontmatter_no_markers_returns_none_and_full_content() {
         let content = "# Just a heading\n\nSome body text.";
         let (fm, body) = extract_frontmatter(content);
-        assert!(fm.is_none(), "content without --- markers has no frontmatter");
+        assert!(
+            fm.is_none(),
+            "content without --- markers has no frontmatter"
+        );
         assert_eq!(body, content, "body must be the full original content");
     }
 
@@ -260,7 +328,10 @@ mod tests {
         let content = "---\nid: EPIC-001\n---\n";
         let (fm, body) = extract_frontmatter(content);
         assert_eq!(fm.as_deref(), Some("id: EPIC-001"));
-        assert_eq!(body, "", "body must be empty string when nothing follows the closing ---");
+        assert_eq!(
+            body, "",
+            "body must be empty string when nothing follows the closing ---"
+        );
     }
 
     #[test]
@@ -269,8 +340,14 @@ mod tests {
         let content = "---\n\nid: TASK-001\ntitle: My Task\n\n---\n# Body\n";
         let (fm, _body) = extract_frontmatter(content);
         let fm = fm.expect("frontmatter");
-        assert!(!fm.starts_with('\n'), "frontmatter must not start with a newline");
-        assert!(!fm.ends_with('\n'), "frontmatter must not end with a newline");
+        assert!(
+            !fm.starts_with('\n'),
+            "frontmatter must not start with a newline"
+        );
+        assert!(
+            !fm.ends_with('\n'),
+            "frontmatter must not end with a newline"
+        );
     }
 
     #[test]
@@ -278,7 +355,10 @@ mod tests {
         // Body after the closing --- must be returned verbatim (minus leading newline).
         let content = "---\nid: EPIC-001\n---\n## Description\n\nSome text here.\n";
         let (_fm, body) = extract_frontmatter(content);
-        assert!(body.contains("## Description"), "body content must be preserved");
+        assert!(
+            body.contains("## Description"),
+            "body content must be preserved"
+        );
         assert!(body.contains("Some text here."));
     }
 
@@ -314,7 +394,8 @@ mod tests {
         let tmp = tempfile::tempdir().expect("tempdir");
         let root = tmp.path();
         let path = root.join(".orqa/implementation/epics/EPIC-001.md");
-        let content = "---\nid: EPIC-001\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n".to_owned();
+        let content = "---\nid: EPIC-001\ntype: epic\ntitle: My Epic\nstatus: draft\n---\n# Body\n"
+            .to_owned();
         let entries = vec![(path, content)];
         let graph = build_graph_from_entries(entries, root, &Vec::new(), &HashSet::new());
         assert_eq!(graph.nodes.len(), 1);
@@ -369,7 +450,11 @@ mod tests {
         assert_eq!(task.references_out.len(), 1);
         assert_eq!(task.references_out[0].target_id, "EPIC-001");
         let epic = graph.nodes.get("EPIC-001").expect("epic node");
-        assert_eq!(epic.references_in.len(), 1, "backlink from TASK-001 must appear on EPIC-001");
+        assert_eq!(
+            epic.references_in.len(),
+            1,
+            "backlink from TASK-001 must appear on EPIC-001"
+        );
         assert_eq!(epic.references_in[0].source_id, "TASK-001");
     }
 

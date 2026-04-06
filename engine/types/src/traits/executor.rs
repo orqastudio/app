@@ -28,10 +28,7 @@ pub trait ToolExecutionContext: Send + Sync {
     ///
     /// Returns the file contents as a UTF-8 string on success, or an error
     /// if the file does not exist or cannot be read.
-    fn read_file(
-        &self,
-        path: &Path,
-    ) -> Result<String, Box<dyn std::error::Error + Send + Sync>>;
+    fn read_file(&self, path: &Path) -> Result<String, Box<dyn std::error::Error + Send + Sync>>;
 
     /// Write `content` to the file at `path`, creating parent directories as needed.
     ///

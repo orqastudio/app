@@ -1,4 +1,4 @@
-// Integration tests for miscellaneous daemon routes.
+//! Integration tests for miscellaneous daemon routes.
 //
 // Covers routes not exercised by smoke.rs:
 //   GET  /plugins                      — list installed plugins (empty for fixture)
@@ -48,8 +48,8 @@ async fn plugins_list_returns_200_and_json_array() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/plugins must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/plugins must return valid JSON");
 
     assert!(
         body.is_array(),
@@ -100,8 +100,8 @@ async fn workflow_transitions_returns_200_and_array() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/workflow/transitions must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/workflow/transitions must return valid JSON");
 
     assert!(
         body.is_array(),
@@ -134,8 +134,8 @@ async fn agents_behavioral_messages_returns_200_and_has_messages_field() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/agents/behavioral-messages must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/agents/behavioral-messages must return valid JSON");
 
     assert!(
         body.get("messages").is_some(),
@@ -198,8 +198,8 @@ async fn hooks_list_returns_200_with_hooks_key() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/hooks must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/hooks must return valid JSON");
 
     assert!(
         body.get("hooks").is_some(),
@@ -238,8 +238,8 @@ async fn reload_returns_reloaded_status_and_counts() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/reload must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/reload must return valid JSON");
 
     assert_eq!(
         body["status"],
@@ -291,8 +291,8 @@ async fn graph_health_returns_200_with_metrics() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/graph/health must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/graph/health must return valid JSON");
 
     assert!(
         body.get("outlier_count").is_some(),
@@ -329,8 +329,8 @@ async fn graph_stats_broken_refs_is_zero_for_clean_fixture() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/graph/stats must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/graph/stats must return valid JSON");
 
     assert_eq!(
         body["broken_refs"].as_u64().unwrap_or(u64::MAX),
@@ -361,8 +361,8 @@ async fn artifacts_get_known_id_returns_correct_artifact() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/artifacts/:id must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/artifacts/:id must return valid JSON");
 
     assert_eq!(
         body["artifact_type"],
@@ -414,8 +414,8 @@ async fn artifacts_filter_by_type_returns_matching_subset() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/artifacts?type=epic must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/artifacts?type=epic must return valid JSON");
 
     let list = body.as_array().expect("response must be an array");
     assert_eq!(list.len(), 1, "fixture has exactly 1 epic");
@@ -446,8 +446,8 @@ async fn artifacts_filter_by_type_rule_returns_one() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("/artifacts?type=rule must return valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("/artifacts?type=rule must return valid JSON");
 
     let list = body.as_array().expect("response must be an array");
     assert_eq!(list.len(), 1, "fixture has exactly 1 rule artifact");
@@ -471,8 +471,8 @@ async fn artifacts_filter_by_unknown_type_returns_empty_array() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("response must be valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("response must be valid JSON");
 
     let list = body.as_array().expect("response must be an array");
     assert!(
@@ -503,8 +503,8 @@ async fn health_response_has_positive_pid() {
     assert_eq!(response.status(), StatusCode::OK);
 
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    let body: serde_json::Value = serde_json::from_slice(&bytes)
-        .expect("health response must be valid JSON");
+    let body: serde_json::Value =
+        serde_json::from_slice(&bytes).expect("health response must be valid JSON");
 
     let pid = body["pid"]
         .as_u64()

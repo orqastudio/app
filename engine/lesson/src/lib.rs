@@ -83,10 +83,7 @@ fn required(
 }
 
 /// Extract an optional nullable field from the frontmatter map.
-fn optional(
-    map: &std::collections::HashMap<String, Option<String>>,
-    key: &str,
-) -> Option<String> {
+fn optional(map: &std::collections::HashMap<String, Option<String>>, key: &str) -> Option<String> {
     map.get(key).and_then(Clone::clone)
 }
 
@@ -226,13 +223,19 @@ Test body.
     #[test]
     fn parse_frontmatter_map_unquoted_value() {
         let map = parse_frontmatter_map("category: process\n");
-        assert_eq!(map.get("category").cloned().flatten(), Some("process".to_owned()));
+        assert_eq!(
+            map.get("category").cloned().flatten(),
+            Some("process".to_owned())
+        );
     }
 
     #[test]
     fn parse_frontmatter_map_quoted_value() {
         let map = parse_frontmatter_map("title: \"My title\"\n");
-        assert_eq!(map.get("title").cloned().flatten(), Some("My title".to_owned()));
+        assert_eq!(
+            map.get("title").cloned().flatten(),
+            Some("My title".to_owned())
+        );
     }
 
     #[test]
@@ -320,13 +323,20 @@ Test body.
         // Content starting with leading newline before --- should still parse
         let content = "\n---\nid: IMPL-006\ntitle: \"Test\"\ncategory: coding\nrecurrence: 1\nstatus: active\npromoted-to: null\ncreated: 2026-01-01\nupdated: 2026-01-01\n---\nbody\n";
         let result = parse_lesson(content, ".orqa/learning/lessons/IMPL-006.md");
-        assert!(result.is_ok(), "should parse with leading whitespace: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "should parse with leading whitespace: {:?}",
+            result.err()
+        );
     }
 
     #[test]
     fn parse_frontmatter_map_single_quoted_value() {
         let map = parse_frontmatter_map("title: 'My title'\n");
-        assert_eq!(map.get("title").cloned().flatten(), Some("My title".to_owned()));
+        assert_eq!(
+            map.get("title").cloned().flatten(),
+            Some("My title".to_owned())
+        );
     }
 
     #[test]

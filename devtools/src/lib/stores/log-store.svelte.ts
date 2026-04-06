@@ -14,6 +14,15 @@ import { invoke } from "@tauri-apps/api/core";
 import { SvelteSet } from "svelte/reactivity";
 import { loadSessionEvents, type DevToolsSession } from "./session-store.svelte.js";
 
+// A single parsed stack frame as serialised by the backend.
+export interface StackFrame {
+	readonly file: string;
+	readonly line?: number;
+	readonly col?: number;
+	readonly function?: string;
+	readonly raw?: string;
+}
+
 // Shape of a log event as emitted by the Tauri backend.
 export interface LogEvent {
 	readonly id: number;
@@ -32,6 +41,11 @@ export interface LogEvent {
 	readonly message: string;
 	readonly metadata: unknown;
 	readonly session_id: string | null;
+	// Fields added in Task 1.1 for issue grouping and error attribution.
+	readonly fingerprint?: string;
+	readonly message_template?: string;
+	readonly correlation_id?: string;
+	readonly stack_frames?: StackFrame[];
 }
 
 // All valid log levels in display order.

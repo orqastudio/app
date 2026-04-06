@@ -154,11 +154,11 @@ mod tests {
 
     fn make_manifest(name: &str, purpose: &[&str], stage_slot: Option<&str>) -> PluginManifest {
         PluginManifest {
-            name: name.to_string(),
-            version: "0.1.0".to_string(),
+            name: name.to_owned(),
+            version: "0.1.0".to_owned(),
             display_name: None,
             description: None,
-            categories: vec!["domain-knowledge".to_string()],
+            categories: vec!["domain-knowledge".to_owned()],
             enforcement: vec![],
             plugin_dependencies: vec![],
             provides: PluginProvides {
@@ -177,7 +177,7 @@ mod tests {
             merge_decisions: vec![],
             default_navigation: vec![],
             install_constraints: PluginInstallConstraints {
-                purpose: purpose.iter().map(|s| s.to_string()).collect(),
+                purpose: purpose.iter().map(ToString::to_string).collect(),
                 stage_slot: stage_slot.map(String::from),
                 affects_schema: false,
             },
@@ -195,7 +195,11 @@ mod tests {
     #[test]
     fn methodology_plugin_passes_when_no_existing_methodology() {
         // First methodology install — no installed plugins, check passes.
-        let incoming = make_manifest("@orqastudio/plugin-agile-methodology", &["methodology"], None);
+        let incoming = make_manifest(
+            "@orqastudio/plugin-agile-methodology",
+            &["methodology"],
+            None,
+        );
         let result = check_one_methodology(&incoming, &PathBuf::from("/nonexistent"));
         assert!(result.is_ok());
     }
@@ -224,7 +228,7 @@ mod tests {
     fn constraint_violation_converts_to_engine_error() {
         // ConstraintViolation should convert to EngineError::Plugin.
         let violation = ConstraintViolation {
-            message: "test error".to_string(),
+            message: "test error".to_owned(),
         };
         let err: EngineError = violation.into();
         assert!(matches!(err, EngineError::Plugin(_)));

@@ -301,10 +301,9 @@ impl DaemonClient {
             )));
         }
 
-        response
-            .json::<T>()
-            .await
-            .map_err(|e| OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}")))
+        response.json::<T>().await.map_err(|e| {
+            OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}"))
+        })
     }
 
     /// GET `{base_url}{path}` with query parameters and deserialize the JSON response.
@@ -330,10 +329,9 @@ impl DaemonClient {
             )));
         }
 
-        response
-            .json::<T>()
-            .await
-            .map_err(|e| OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}")))
+        response.json::<T>().await.map_err(|e| {
+            OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}"))
+        })
     }
 
     /// POST `{base_url}{path}` with a JSON body and deserialize the JSON response.
@@ -359,10 +357,9 @@ impl DaemonClient {
             )));
         }
 
-        response
-            .json::<T>()
-            .await
-            .map_err(|e| OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}")))
+        response.json::<T>().await.map_err(|e| {
+            OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}"))
+        })
     }
 
     /// PUT `{base_url}{path}` with a JSON body and deserialize the JSON response.
@@ -388,10 +385,9 @@ impl DaemonClient {
             )));
         }
 
-        response
-            .json::<T>()
-            .await
-            .map_err(|e| OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}")))
+        response.json::<T>().await.map_err(|e| {
+            OrqaError::Sidecar(format!("failed to parse daemon response from {url}: {e}"))
+        })
     }
 
     // ---------------------------------------------------------------------------
@@ -526,11 +522,14 @@ impl DaemonClient {
 
     /// POST /enforcement/rules/reload — reload enforcement rules from disk.
     pub async fn reload_enforcement_rules(&self) -> Result<Vec<EnforcementRule>, OrqaError> {
-        self.post("/enforcement/rules/reload", &serde_json::json!({})).await
+        self.post("/enforcement/rules/reload", &serde_json::json!({}))
+            .await
     }
 
     /// GET /enforcement/violations — list recorded enforcement violations.
-    pub async fn list_enforcement_violations(&self) -> Result<Vec<EnforcementViolation>, OrqaError> {
+    pub async fn list_enforcement_violations(
+        &self,
+    ) -> Result<Vec<EnforcementViolation>, OrqaError> {
         self.get("/enforcement/violations").await
     }
 
@@ -580,7 +579,11 @@ impl DaemonClient {
 
     /// POST /plugins/install/local — install a plugin from a local path.
     pub async fn install_plugin_local(&self, path: &str) -> Result<Value, OrqaError> {
-        self.post("/plugins/install/local", &serde_json::json!({ "path": path })).await
+        self.post(
+            "/plugins/install/local",
+            &serde_json::json!({ "path": path }),
+        )
+        .await
     }
 
     /// POST /plugins/install/github — install a plugin from GitHub.
@@ -716,7 +719,11 @@ impl DaemonClient {
     /// Overwrites the full project.json with the provided value. Returns the
     /// written value on success.
     pub async fn write_project_settings(&self, settings: &Value) -> Result<Value, OrqaError> {
-        self.put("/projects/settings", &serde_json::json!({ "settings": settings })).await
+        self.put(
+            "/projects/settings",
+            &serde_json::json!({ "settings": settings }),
+        )
+        .await
     }
 
     /// POST /projects/scan — scan the project filesystem for stack and governance info.
@@ -752,7 +759,10 @@ impl Default for DaemonClient {
             let client = Client::new();
             let port = resolve_daemon_port();
             tracing::warn!(error = %e, "DaemonClient::default() fell back to timeout-less client");
-            Self { client, base_url: format!("http://127.0.0.1:{port}") }
+            Self {
+                client,
+                base_url: format!("http://127.0.0.1:{port}"),
+            }
         })
     }
 }
@@ -778,7 +788,7 @@ mod tests {
                 .timeout(Duration::from_secs(5))
                 .build()
                 .expect("test client must build"),
-            base_url: base_url.to_string(),
+            base_url: base_url.to_owned(),
         }
     }
 
@@ -950,7 +960,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.query_artifacts(None, None).await
+        let result = client
+            .query_artifacts(None, None)
+            .await
             .expect("query_artifacts() must succeed");
 
         assert_eq!(result.len(), 1);
@@ -968,9 +980,14 @@ mod tests {
 
         let client = client_for(&server.uri());
         // query_artifacts with type filter must not panic and must return an array.
-        let result = client.query_artifacts(Some("epic"), None).await
+        let result = client
+            .query_artifacts(Some("epic"), None)
+            .await
             .expect("query_artifacts() with type filter must succeed");
-        assert!(result.is_empty(), "mock returns empty array for filtered query");
+        assert!(
+            result.is_empty(),
+            "mock returns empty array for filtered query"
+        );
     }
 
     #[tokio::test]
@@ -994,7 +1011,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.get_artifact("EPIC-001").await
+        let result = client
+            .get_artifact("EPIC-001")
+            .await
             .expect("get_artifact() must succeed for known ID");
 
         assert_eq!(result.id, "EPIC-001");
@@ -1038,7 +1057,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.get_graph_stats().await
+        let result = client
+            .get_graph_stats()
+            .await
             .expect("get_graph_stats() must succeed");
 
         assert_eq!(result.node_count, 10);
@@ -1110,7 +1131,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.run_validation_scan().await
+        let result = client
+            .run_validation_scan()
+            .await
             .expect("run_validation_scan() must succeed");
 
         assert!(result.checks.is_empty(), "no checks in mock response");
@@ -1127,7 +1150,10 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.list_hooks().await.expect("list_hooks() must succeed");
+        let result = client
+            .list_hooks()
+            .await
+            .expect("list_hooks() must succeed");
         assert!(result.is_empty(), "empty hooks list from mock");
     }
 
@@ -1141,7 +1167,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.query_artifacts(None, Some("active")).await
+        let result = client
+            .query_artifacts(None, Some("active"))
+            .await
             .expect("query with status filter must succeed");
         assert!(result.is_empty());
     }
@@ -1167,7 +1195,9 @@ mod tests {
             .await;
 
         let client = client_for(&server.uri());
-        let result = client.get_graph_health().await
+        let result = client
+            .get_graph_health()
+            .await
             .expect("get_graph_health() must succeed");
 
         assert_eq!(result.total_nodes, 8);

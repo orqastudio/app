@@ -91,7 +91,11 @@ fn resolve_cli_path() -> Option<String> {
                 .unwrap_or("")
                 .trim()
                 .to_owned();
-            if path.is_empty() { None } else { Some(path) }
+            if path.is_empty() {
+                None
+            } else {
+                Some(path)
+            }
         }
         _ => None,
     }
@@ -127,7 +131,9 @@ fn is_claude_authenticated() -> bool {
         .join(".credentials.json");
 
     creds.exists()
-        && std::fs::metadata(&creds).map(|m| m.len() > 2).unwrap_or(false)
+        && std::fs::metadata(&creds)
+            .map(|m| m.len() > 2)
+            .unwrap_or(false)
 }
 
 // ---------------------------------------------------------------------------
@@ -144,7 +150,8 @@ pub async fn get_setup_status(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        let stored_version = storage.settings()
+        let stored_version = storage
+            .settings()
             .get("setup_version", "app")
             .ok()
             .flatten()
@@ -152,9 +159,24 @@ pub async fn get_setup_status(
             .unwrap_or(0);
 
         let steps = vec![
-            SetupStepStatus { id: "claude_cli", label: "Claude CLI", status: "pending", detail: None },
-            SetupStepStatus { id: "authentication", label: "Authentication", status: "pending", detail: None },
-            SetupStepStatus { id: "embedding_model", label: "Embedding Model", status: "pending", detail: None },
+            SetupStepStatus {
+                id: "claude_cli",
+                label: "Claude CLI",
+                status: "pending",
+                detail: None,
+            },
+            SetupStepStatus {
+                id: "authentication",
+                label: "Authentication",
+                status: "pending",
+                detail: None,
+            },
+            SetupStepStatus {
+                id: "embedding_model",
+                label: "Embedding Model",
+                status: "pending",
+                detail: None,
+            },
         ];
 
         Ok(Json(SetupStatus {
@@ -165,10 +187,12 @@ pub async fn get_setup_status(
         }))
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /setup/claude-cli — check Claude CLI installation.
@@ -281,8 +305,10 @@ pub async fn complete_setup(
             ))
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }

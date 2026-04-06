@@ -10,6 +10,8 @@ pub mod devtools;
 pub mod events;
 /// Health snapshot persistence for graph integrity trend data.
 pub mod health;
+/// Issue group deduplication and incremental update persistence.
+pub mod issue_groups;
 /// Message persistence for session turns and content blocks.
 pub mod messages;
 /// Project persistence — top-level container for sessions and artifacts.

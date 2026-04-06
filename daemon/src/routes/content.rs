@@ -58,17 +58,21 @@ pub async fn get_knowledge(
     };
 
     let knowledge = find_knowledge(&project_root, &key)
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "KNOWLEDGE_SCAN_ERROR" })),
-        ))?
-        .ok_or_else(|| (
-            StatusCode::NOT_FOUND,
-            Json(serde_json::json!({
-                "error": format!("knowledge key '{}' not found", key),
-                "code": "NOT_FOUND"
-            })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "KNOWLEDGE_SCAN_ERROR" })),
+            )
+        })?
+        .ok_or_else(|| {
+            (
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({
+                    "error": format!("knowledge key '{}' not found", key),
+                    "code": "NOT_FOUND"
+                })),
+            )
+        })?;
 
     // Synthesise a relative file_path from the artifact id for the response.
     let file_path = format!(".orqa/documentation/knowledge/{}.md", knowledge.id);

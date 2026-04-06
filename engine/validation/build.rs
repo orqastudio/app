@@ -18,7 +18,12 @@
 // - unwrap_used: .unwrap() in build scripts panics with a clear build error message
 // - print_stderr: eprintln! is Cargo's API for build warnings (cargo:warning=...)
 // - too_many_lines: code-generation functions are intentionally long
-#![allow(clippy::too_many_lines, clippy::unwrap_used, clippy::print_stderr, missing_docs)]
+#![allow(
+    clippy::too_many_lines,
+    clippy::unwrap_used,
+    clippy::print_stderr,
+    missing_docs
+)]
 
 use std::fmt::Write as FmtWrite;
 use std::fs;

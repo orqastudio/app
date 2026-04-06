@@ -35,12 +35,14 @@ use orqa_engine_types::types::streaming::StreamEvent;
 use orqa_prompt::resolve_system_prompt;
 use orqa_search::SearchEngine;
 use orqa_streaming::protocol::{SidecarRequest, SidecarResponse};
-use orqa_streaming::stream_loop::{accumulate_response, is_terminal, translate_response, StreamAccumulator};
+use orqa_streaming::stream_loop::{
+    accumulate_response, is_terminal, translate_response, StreamAccumulator,
+};
 use orqa_streaming::tools::{
     format_search_results, tool_bash, tool_edit_file, tool_glob, tool_grep, tool_load_knowledge,
     tool_read_file, tool_write_file, truncate_tool_output, READ_ONLY_TOOLS,
 };
-use orqa_workflow::gates::{ProcessGateConfig, evaluate_stop_verdicts, evaluate_write_verdicts};
+use orqa_workflow::gates::{evaluate_stop_verdicts, evaluate_write_verdicts, ProcessGateConfig};
 use orqa_workflow::tracker::{TrackerConfig, WorkflowTracker};
 
 use crate::health::HealthState;
@@ -76,7 +78,10 @@ impl SessionStreamEvent {
         // Convert snake_case type tag to PascalCase for the frontend.
         let event_type = snake_to_pascal(type_tag);
         let payload = obj.get("data").cloned().unwrap_or(serde_json::Value::Null);
-        Some(Self { event_type, payload })
+        Some(Self {
+            event_type,
+            payload,
+        })
     }
 
     /// Create a bare error event (not from a StreamEvent variant).
@@ -208,7 +213,10 @@ fn find_claude_binary() -> Result<String, String> {
             return Ok(candidate.to_owned());
         }
     }
-    Err("claude binary not found — install with: npm install -g @anthropic-ai/claude-code".to_owned())
+    Err(
+        "claude binary not found — install with: npm install -g @anthropic-ai/claude-code"
+            .to_owned(),
+    )
 }
 
 /// Spawn the claude sidecar for `session_id` rooted at `project_root`.
@@ -217,8 +225,14 @@ fn find_claude_binary() -> Result<String, String> {
 fn spawn_sidecar(
     session_id: i64,
     project_root: &Path,
-) -> Result<(std::process::Child, std::process::ChildStdin, BufReader<std::process::ChildStdout>), String>
-{
+) -> Result<
+    (
+        std::process::Child,
+        std::process::ChildStdin,
+        BufReader<std::process::ChildStdout>,
+    ),
+    String,
+> {
     let binary = find_claude_binary()?;
 
     let mut child = std::process::Command::new(&binary)
@@ -231,24 +245,41 @@ fn spawn_sidecar(
         .spawn()
         .map_err(|e| format!("failed to spawn sidecar '{binary}': {e}"))?;
 
-    let stdin = child.stdin.take().ok_or_else(|| "child stdin unavailable".to_owned())?;
-    let stdout = child.stdout.take().ok_or_else(|| "child stdout unavailable".to_owned())?;
+    let stdin = child
+        .stdin
+        .take()
+        .ok_or_else(|| "child stdin unavailable".to_owned())?;
+    let stdout = child
+        .stdout
+        .take()
+        .ok_or_else(|| "child stdout unavailable".to_owned())?;
     Ok((child, stdin, BufReader::new(stdout)))
 }
 
 /// Serialise and write a `SidecarRequest` to the sidecar's stdin.
-fn send_to_sidecar(stdin: &mut std::process::ChildStdin, req: &SidecarRequest) -> Result<(), String> {
+fn send_to_sidecar(
+    stdin: &mut std::process::ChildStdin,
+    req: &SidecarRequest,
+) -> Result<(), String> {
     let json = serde_json::to_string(req).map_err(|e| format!("serialise request: {e}"))?;
-    stdin.write_all(json.as_bytes()).map_err(|e| format!("write to sidecar: {e}"))?;
-    stdin.write_all(b"\n").map_err(|e| format!("write newline: {e}"))?;
-    stdin.flush().map_err(|e| format!("flush sidecar stdin: {e}"))?;
+    stdin
+        .write_all(json.as_bytes())
+        .map_err(|e| format!("write to sidecar: {e}"))?;
+    stdin
+        .write_all(b"\n")
+        .map_err(|e| format!("write newline: {e}"))?;
+    stdin
+        .flush()
+        .map_err(|e| format!("flush sidecar stdin: {e}"))?;
     Ok(())
 }
 
 /// Read and deserialise the next `SidecarResponse` from the sidecar's stdout.
 ///
 /// Returns `None` on EOF or parse error.
-fn read_sidecar_response(reader: &mut BufReader<std::process::ChildStdout>) -> Option<SidecarResponse> {
+fn read_sidecar_response(
+    reader: &mut BufReader<std::process::ChildStdout>,
+) -> Option<SidecarResponse> {
     let mut line = String::new();
     match reader.read_line(&mut line) {
         Ok(0) | Err(_) => None,
@@ -281,9 +312,7 @@ impl SessionEngineState {
     ///
     /// Loads enforcement rules from disk. Search engine starts as None.
     fn new(project_root: PathBuf) -> Self {
-        let enforcement = load_rules(&project_root)
-            .ok()
-            .map(EnforcementEngine::new);
+        let enforcement = load_rules(&project_root).ok().map(EnforcementEngine::new);
 
         Self {
             enforcement,
@@ -352,11 +381,17 @@ fn track_and_enforce(tool_name: &str, input: &serde_json::Value, state: &mut Ses
                 state.tracker.record_write(path);
                 let verdicts = evaluate_write_verdicts(&state.gates, &mut state.tracker, path);
                 for v in &verdicts {
-                    debug!("[enforcement] gate fired at write: rule='{}' action={:?}", v.rule_name, v.action);
+                    debug!(
+                        "[enforcement] gate fired at write: rule='{}' action={:?}",
+                        v.rule_name, v.action
+                    );
                 }
                 if let Some(ref engine) = state.enforcement {
                     for v in &engine.evaluate_file(path, "") {
-                        debug!("[enforcement] rule='{}' fired at write: {}", v.rule_name, v.message);
+                        debug!(
+                            "[enforcement] rule='{}' fired at write: {}",
+                            v.rule_name, v.message
+                        );
                     }
                 }
             }
@@ -366,7 +401,10 @@ fn track_and_enforce(tool_name: &str, input: &serde_json::Value, state: &mut Ses
                 state.tracker.record_command(cmd);
                 if let Some(ref engine) = state.enforcement {
                     for v in &engine.evaluate_bash(cmd) {
-                        debug!("[enforcement] rule='{}' fired at bash: {}", v.rule_name, v.message);
+                        debug!(
+                            "[enforcement] rule='{}' fired at bash: {}",
+                            v.rule_name, v.message
+                        );
                     }
                 }
             }
@@ -426,7 +464,10 @@ fn run_loop_blocking(
         Ok(r) => r,
         Err(e) => {
             error!("[streaming] session {session_id}: failed to spawn sidecar: {e}");
-            publish(&sender, SessionStreamEvent::error("sidecar_spawn_error", &e, false));
+            publish(
+                &sender,
+                SessionStreamEvent::error("sidecar_spawn_error", &e, false),
+            );
             acc.had_error = true;
             return acc;
         }
@@ -443,7 +484,10 @@ fn run_loop_blocking(
     };
     if let Err(e) = send_to_sidecar(&mut stdin, &request) {
         error!("[streaming] session {session_id}: failed to send to sidecar: {e}");
-        publish(&sender, SessionStreamEvent::error("sidecar_send_error", &e, false));
+        publish(
+            &sender,
+            SessionStreamEvent::error("sidecar_send_error", &e, false),
+        );
         let _ = child.kill();
         acc.had_error = true;
         return acc;
@@ -461,19 +505,29 @@ fn run_loop_blocking(
 
         let Some(response) = read_sidecar_response(&mut reader) else {
             if !cancelled.load(Ordering::Relaxed) {
-                publish(&sender, SessionStreamEvent::error(
-                    "sidecar_eof",
-                    "sidecar process closed unexpectedly",
-                    false,
-                ));
+                publish(
+                    &sender,
+                    SessionStreamEvent::error(
+                        "sidecar_eof",
+                        "sidecar process closed unexpectedly",
+                        false,
+                    ),
+                );
                 acc.had_error = true;
             }
             break;
         };
 
         // ToolExecute — dispatch synchronously and return result to sidecar.
-        if let SidecarResponse::ToolExecute { ref tool_call_id, ref tool_name, ref input } = response {
-            debug!("[streaming] session {session_id}: ToolExecute id={tool_call_id} tool={tool_name}");
+        if let SidecarResponse::ToolExecute {
+            ref tool_call_id,
+            ref tool_name,
+            ref input,
+        } = response
+        {
+            debug!(
+                "[streaming] session {session_id}: ToolExecute id={tool_call_id} tool={tool_name}"
+            );
             let input_val: serde_json::Value = serde_json::from_str(input).unwrap_or_default();
             track_and_enforce(tool_name, &input_val, &mut engine_state);
             let (raw_output, is_error) = dispatch_tool(tool_name, &input_val, &mut engine_state);
@@ -484,7 +538,10 @@ fn run_loop_blocking(
                 is_error,
             };
             if let Err(e) = send_to_sidecar(&mut stdin, &result_req) {
-                publish(&sender, SessionStreamEvent::error("tool_result_send_error", &e, false));
+                publish(
+                    &sender,
+                    SessionStreamEvent::error("tool_result_send_error", &e, false),
+                );
                 acc.had_error = true;
                 break;
             }
@@ -492,7 +549,12 @@ fn run_loop_blocking(
         }
 
         // ToolApprovalRequest — auto-approve read-only tools; block on user decision otherwise.
-        if let SidecarResponse::ToolApprovalRequest { ref tool_call_id, ref tool_name, ref input } = response {
+        if let SidecarResponse::ToolApprovalRequest {
+            ref tool_call_id,
+            ref tool_name,
+            ref input,
+        } = response
+        {
             debug!("[streaming] session {session_id}: ToolApprovalRequest id={tool_call_id} tool={tool_name}");
 
             let approved = if READ_ONLY_TOOLS.contains(&tool_name.as_str()) {
@@ -502,17 +564,22 @@ fn run_loop_blocking(
                 // Register a oneshot sender and notify the SSE consumer.
                 let (tx, rx) = tokio::sync::oneshot::channel::<bool>();
                 {
-                    let mut map = pending_approvals.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+                    let mut map = pending_approvals
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner);
                     map.insert(tool_call_id.clone(), tx);
                 }
-                publish(&sender, SessionStreamEvent {
-                    event_type: "ToolApprovalRequest".to_owned(),
-                    payload: serde_json::json!({
-                        "tool_call_id": tool_call_id,
-                        "tool_name": tool_name,
-                        "input": input,
-                    }),
-                });
+                publish(
+                    &sender,
+                    SessionStreamEvent {
+                        event_type: "ToolApprovalRequest".to_owned(),
+                        payload: serde_json::json!({
+                            "tool_call_id": tool_call_id,
+                            "tool_name": tool_name,
+                            "input": input,
+                        }),
+                    },
+                );
                 // Block until POST /tool-approval delivers the decision.
                 rx.blocking_recv().unwrap_or(false)
             };
@@ -520,10 +587,17 @@ fn run_loop_blocking(
             let approval_req = SidecarRequest::ToolApproval {
                 tool_call_id: tool_call_id.clone(),
                 approved,
-                reason: if approved { None } else { Some("denied by user".to_owned()) },
+                reason: if approved {
+                    None
+                } else {
+                    Some("denied by user".to_owned())
+                },
             };
             if let Err(e) = send_to_sidecar(&mut stdin, &approval_req) {
-                publish(&sender, SessionStreamEvent::error("tool_approval_send_error", &e, false));
+                publish(
+                    &sender,
+                    SessionStreamEvent::error("tool_approval_send_error", &e, false),
+                );
                 acc.had_error = true;
                 break;
             }
@@ -531,7 +605,11 @@ fn run_loop_blocking(
         }
 
         // SessionInitialized — log the provider session ID (persisted by caller after loop).
-        if let SidecarResponse::SessionInitialized { session_id: _, ref provider_session_id } = response {
+        if let SidecarResponse::SessionInitialized {
+            session_id: _,
+            ref provider_session_id,
+        } = response
+        {
             debug!("[streaming] session {session_id}: provider_session_id={provider_session_id}");
         }
 
@@ -542,7 +620,10 @@ fn run_loop_blocking(
         if matches!(response, SidecarResponse::TurnComplete { .. }) {
             let verdicts = evaluate_stop_verdicts(&engine_state.gates, &engine_state.tracker);
             for v in &verdicts {
-                debug!("[enforcement] gate fired at stop: rule='{}' action={:?}", v.rule_name, v.action);
+                debug!(
+                    "[enforcement] gate fired at stop: rule='{}' action={:?}",
+                    v.rule_name, v.action
+                );
             }
         }
 
@@ -584,7 +665,9 @@ pub async fn send_message(
     if content.is_empty() {
         return Err((
             StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": "message content cannot be empty", "code": "EMPTY_CONTENT" })),
+            Json(
+                serde_json::json!({ "error": "message content cannot be empty", "code": "EMPTY_CONTENT" }),
+            ),
         ));
     }
 
@@ -609,29 +692,40 @@ pub async fn send_message(
     let content_clone = content.clone();
     let storage_clone = Arc::clone(&storage);
     let (user_message_id, provider_session_id) = tokio::task::spawn_blocking(move || {
-        let session = storage_clone.sessions().get(session_id)
+        let session = storage_clone
+            .sessions()
+            .get(session_id)
             .map_err(|e| format!("session not found: {e}"))?;
-        let turn_index = storage_clone.messages().next_turn_index(session_id)
+        let turn_index = storage_clone
+            .messages()
+            .next_turn_index(session_id)
             .map_err(|e| format!("next turn index: {e}"))?;
-        let msg = storage_clone.messages().create(
-            session_id,
-            "user",
-            "text",
-            Some(&content_clone),
-            turn_index,
-            0,
-        ).map_err(|e| format!("create user message: {e}"))?;
+        let msg = storage_clone
+            .messages()
+            .create(
+                session_id,
+                "user",
+                "text",
+                Some(&content_clone),
+                turn_index,
+                0,
+            )
+            .map_err(|e| format!("create user message: {e}"))?;
         Ok::<(i64, Option<String>), String>((msg.id, session.provider_session_id))
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "DB_ERROR" })),
-    ))?;
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "DB_ERROR" })),
+        )
+    })?;
 
     // Resolve the system prompt from disk.
     let system_prompt = resolve_system_prompt(&project_root);
@@ -667,8 +761,15 @@ pub async fn send_message(
 
         // Persist the assistant message.
         {
-            let turn_index = storage_for_loop.messages().next_turn_index(session_id).unwrap_or(1);
-            let content_val = if acc.text.is_empty() { None } else { Some(acc.text.as_str()) };
+            let turn_index = storage_for_loop
+                .messages()
+                .next_turn_index(session_id)
+                .unwrap_or(1);
+            let content_val = if acc.text.is_empty() {
+                None
+            } else {
+                Some(acc.text.as_str())
+            };
             if let Ok(assistant_msg) = storage_for_loop.messages().create(
                 session_id,
                 "assistant",
@@ -677,8 +778,14 @@ pub async fn send_message(
                 turn_index,
                 0,
             ) {
-                let status = if acc.stream_complete && !acc.had_error { "complete" } else { "error" };
-                let _ = storage_for_loop.messages().update_stream_status(assistant_msg.id, status);
+                let status = if acc.stream_complete && !acc.had_error {
+                    "complete"
+                } else {
+                    "error"
+                };
+                let _ = storage_for_loop
+                    .messages()
+                    .update_stream_status(assistant_msg.id, status);
             }
             if acc.stream_complete {
                 let _ = storage_for_loop.sessions().update_token_usage(
@@ -721,13 +828,15 @@ pub async fn session_stream(
     Sse<impl futures_util::Stream<Item = Result<Event, axum::Error>>>,
     (StatusCode, Json<serde_json::Value>),
 > {
-    let entry = state.stream_registry.get(session_id).ok_or_else(|| (
-        StatusCode::NOT_FOUND,
-        Json(serde_json::json!({
-            "error": format!("no active stream for session {session_id}"),
-            "code": "NO_STREAM",
-        })),
-    ))?;
+    let entry = state.stream_registry.get(session_id).ok_or_else(|| {
+        (
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({
+                "error": format!("no active stream for session {session_id}"),
+                "code": "NO_STREAM",
+            })),
+        )
+    })?;
 
     let receiver = entry.sender.subscribe();
     let stream = BroadcastStream::new(receiver).filter_map(|result| match result {
@@ -755,13 +864,15 @@ pub async fn stop_stream(
     State(state): State<HealthState>,
     AxumPath(session_id): AxumPath<i64>,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let entry = state.stream_registry.get(session_id).ok_or_else(|| (
-        StatusCode::NOT_FOUND,
-        Json(serde_json::json!({
-            "error": format!("no active stream for session {session_id}"),
-            "code": "NO_STREAM",
-        })),
-    ))?;
+    let entry = state.stream_registry.get(session_id).ok_or_else(|| {
+        (
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({
+                "error": format!("no active stream for session {session_id}"),
+                "code": "NO_STREAM",
+            })),
+        )
+    })?;
     entry.cancelled.store(true, Ordering::Relaxed);
     info!("[streaming] session {session_id}: stop requested");
     Ok(StatusCode::NO_CONTENT)
@@ -777,13 +888,15 @@ pub async fn tool_approval(
     AxumPath(session_id): AxumPath<i64>,
     Json(req): Json<ToolApprovalRequest>,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let entry = state.stream_registry.get(session_id).ok_or_else(|| (
-        StatusCode::NOT_FOUND,
-        Json(serde_json::json!({
-            "error": format!("no active stream for session {session_id}"),
-            "code": "NO_STREAM",
-        })),
-    ))?;
+    let entry = state.stream_registry.get(session_id).ok_or_else(|| {
+        (
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({
+                "error": format!("no active stream for session {session_id}"),
+                "code": "NO_STREAM",
+            })),
+        )
+    })?;
 
     let sender = {
         let mut map = entry.pending_approvals

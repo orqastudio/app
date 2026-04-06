@@ -16,17 +16,13 @@ use crate::state::AppState;
 
 /// Query the current status of the claude subprocess managed by the daemon.
 #[tauri::command]
-pub async fn sidecar_status(
-    state: State<'_, AppState>,
-) -> Result<SidecarStatus, OrqaError> {
+pub async fn sidecar_status(state: State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
     state.daemon.client.get_sidecar_status().await
 }
 
 /// Restart the claude subprocess via the daemon.
 #[tauri::command]
-pub async fn sidecar_restart(
-    state: State<'_, AppState>,
-) -> Result<SidecarStatus, OrqaError> {
+pub async fn sidecar_restart(state: State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
     tracing::info!("[sidecar] sidecar_restart: delegating to daemon");
     state.daemon.client.restart_sidecar().await
 }

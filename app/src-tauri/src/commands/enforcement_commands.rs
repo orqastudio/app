@@ -60,7 +60,9 @@ pub async fn governance_scan(
 
 #[cfg(test)]
 mod tests {
-    use orqa_engine_types::types::enforcement::{EnforcementEntry, EnforcementRule, EventType, RuleAction};
+    use orqa_engine_types::types::enforcement::{
+        EnforcementEntry, EnforcementRule, EventType, RuleAction,
+    };
 
     #[test]
     fn enforcement_rule_serialization() {

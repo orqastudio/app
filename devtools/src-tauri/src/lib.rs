@@ -15,6 +15,9 @@ pub mod process_status;
 /// IPC command wrappers for the session database backed by orqa-storage.
 pub mod session_commands;
 
+/// IPC command wrappers for issue group queries backed by orqa-storage.
+pub mod issue_group_commands;
+
 use std::sync::Arc;
 
 use orqa_storage::Storage;
@@ -39,17 +42,16 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // Resolve the project root from env var or fall back to cwd.
     // The CLI sets ORQA_PROJECT_ROOT when launching devtools so the DB lands
     // in the correct .state/ directory for the current project.
-    let project_root = std::env::var("ORQA_PROJECT_ROOT")
-        .map_or_else(
-            // BINARY ENTRY POINT: current_dir() failure is an unrecoverable OS error —
-            // OrqaDev cannot determine which project to open without a working directory.
-            |_| std::env::current_dir().expect("cannot read cwd"),
-            std::path::PathBuf::from,
-        );
+    let project_root = std::env::var("ORQA_PROJECT_ROOT").map_or_else(
+        // BINARY ENTRY POINT: current_dir() failure is an unrecoverable OS error —
+        // OrqaDev cannot determine which project to open without a working directory.
+        |_| std::env::current_dir().expect("cannot read cwd"),
+        std::path::PathBuf::from,
+    );
 
     // Open the unified storage and register it as managed state.
-    let storage = Storage::open(&project_root)
-        .map_err(|e| format!("failed to open storage: {e}"))?;
+    let storage =
+        Storage::open(&project_root).map_err(|e| format!("failed to open storage: {e}"))?;
 
     // Mark any orphaned sessions from a previous crash as interrupted
     // before creating the new session.
@@ -130,6 +132,8 @@ pub fn run() {
             session_commands::get_current_session,
             session_commands::rename_session,
             session_commands::delete_session,
+            issue_group_commands::devtools_list_issue_groups,
+            issue_group_commands::devtools_get_issue_group,
         ])
         .build(tauri::generate_context!())
         // BINARY ENTRY POINT: Tauri's builder `.build()` returns Result but if it

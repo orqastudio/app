@@ -55,9 +55,8 @@ pub use graph::{
 };
 pub use hooks::evaluate_hook;
 pub use metrics::{
-    PipelineCategories,
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
-    AncestryChain, AncestryNode, TraceabilityResult, TracedArtifact,
+    AncestryChain, AncestryNode, PipelineCategories, TraceabilityResult, TracedArtifact,
 };
 pub use parse::{artifact_from_graph_node, parse_artifact, query_artifacts};
 pub use types::{

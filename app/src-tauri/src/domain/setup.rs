@@ -350,14 +350,14 @@ mod tests {
             stored_version: 0,
             steps: vec![
                 SetupStepStatus {
-                    id: "claude_cli".to_string(),
-                    label: "Claude CLI".to_string(),
+                    id: "claude_cli".to_owned(),
+                    label: "Claude CLI".to_owned(),
                     status: StepStatus::Complete,
-                    detail: Some("v1.2.3".to_string()),
+                    detail: Some("v1.2.3".to_owned()),
                 },
                 SetupStepStatus {
-                    id: "authentication".to_string(),
-                    label: "Authentication".to_string(),
+                    id: "authentication".to_owned(),
+                    label: "Authentication".to_owned(),
                     status: StepStatus::Pending,
                     detail: None,
                 },
@@ -384,10 +384,10 @@ mod tests {
             current_version: 1,
             stored_version: 1,
             steps: vec![SetupStepStatus {
-                id: "embedding_model".to_string(),
-                label: "Embedding Model".to_string(),
+                id: "embedding_model".to_owned(),
+                label: "Embedding Model".to_owned(),
                 status: StepStatus::ActionRequired,
-                detail: Some("Model not downloaded".to_string()),
+                detail: Some("Model not downloaded".to_owned()),
             }],
         };
 
@@ -402,12 +402,12 @@ mod tests {
     fn claude_cli_info_roundtrip() {
         let info = ClaudeCliInfo {
             installed: true,
-            version: Some("1.0.42".to_string()),
-            path: Some("/usr/local/bin/claude".to_string()),
+            version: Some("1.0.42".to_owned()),
+            path: Some("/usr/local/bin/claude".to_owned()),
             authenticated: true,
-            subscription_type: Some("pro".to_string()),
-            rate_limit_tier: Some("default_claude_pro".to_string()),
-            scopes: vec!["user:inference".to_string(), "user:profile".to_string()],
+            subscription_type: Some("pro".to_owned()),
+            rate_limit_tier: Some("default_claude_pro".to_owned()),
+            scopes: vec!["user:inference".to_owned(), "user:profile".to_owned()],
             expires_at: Some(1772671490973),
         };
 

@@ -87,16 +87,20 @@ pub async fn create_session(
             .sessions()
             .create(project_id, &model, system_prompt.as_deref())
             .map(|s| (StatusCode::CREATED, Json(s)))
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /sessions — list sessions with optional project_id and status filters.
@@ -110,25 +114,25 @@ pub async fn list_sessions(
 
     tokio::task::spawn_blocking(move || {
         let result = if let Some(pid) = project_id {
-            storage
-                .sessions()
-                .list(pid, status.as_deref(), 1000, 0)
+            storage.sessions().list(pid, status.as_deref(), 1000, 0)
         } else {
-            storage
-                .sessions()
-                .list_all(status.as_deref())
+            storage.sessions().list_all(status.as_deref())
         };
 
-        result.map(Json).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-        ))
+        result.map(Json).map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /sessions/:id — get a single session by ID.
@@ -139,24 +143,26 @@ pub async fn get_session(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        storage
-            .sessions()
-            .get(id)
-            .map(Json)
-            .map_err(|e| {
-                let (status, code) = if e.to_string().contains("NotFound") || e.to_string().contains("not found") {
+        storage.sessions().get(id).map(Json).map_err(|e| {
+            let (status, code) =
+                if e.to_string().contains("NotFound") || e.to_string().contains("not found") {
                     (StatusCode::NOT_FOUND, "NOT_FOUND")
                 } else {
                     (StatusCode::INTERNAL_SERVER_ERROR, "DB_ERROR")
                 };
-                (status, Json(serde_json::json!({ "error": e.to_string(), "code": code })))
-            })
+            (
+                status,
+                Json(serde_json::json!({ "error": e.to_string(), "code": code })),
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle PUT /sessions/:id — update a session's title and/or status.
@@ -169,32 +175,36 @@ pub async fn update_session(
 
     tokio::task::spawn_blocking(move || {
         if let Some(title) = req.title {
-            storage.sessions().update_title(id, &title).map_err(|e| (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-            ))?;
+            storage.sessions().update_title(id, &title).map_err(|e| {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+                )
+            })?;
         }
         if let Some(status) = req.status {
-            storage.sessions().update_status(id, &status).map_err(|e| (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-            ))?;
+            storage.sessions().update_status(id, &status).map_err(|e| {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+                )
+            })?;
         }
 
-        storage
-            .sessions()
-            .get(id)
-            .map(Json)
-            .map_err(|e| (
+        storage.sessions().get(id).map(Json).map_err(|e| {
+            (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-            ))
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle DELETE /sessions/:id — permanently delete a session and its messages.
@@ -205,17 +215,21 @@ pub async fn delete_session(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        storage.sessions().delete(id).map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
-        ))?;
+        storage.sessions().delete(id).map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
+            )
+        })?;
         Ok(StatusCode::NO_CONTENT)
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle POST /sessions/:id/end — mark a session as completed.
@@ -226,24 +240,26 @@ pub async fn end_session(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
     tokio::task::spawn_blocking(move || {
-        storage.sessions().end_session(id).map_err(|e| (
-            StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-        ))?;
-        storage
-            .sessions()
-            .get(id)
-            .map(Json)
-            .map_err(|e| (
+        storage.sessions().end_session(id).map_err(|e| {
+            (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+            )
+        })?;
+        storage.sessions().get(id).map(Json).map_err(|e| {
+            (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-            ))
+            )
+        })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle GET /sessions/:id/messages — list all messages in a session.
@@ -258,16 +274,20 @@ pub async fn list_session_messages(
             .messages()
             .list(id, 10_000, 0)
             .map(Json)
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 // ---------------------------------------------------------------------------
@@ -316,9 +336,7 @@ mod tests {
             .route("/", post(create_session).get(list_sessions))
             .route(
                 "/{id}",
-                get(get_session)
-                    .put(update_session)
-                    .delete(delete_session),
+                get(get_session).put(update_session).delete(delete_session),
             )
             .route("/{id}/end", post(end_session))
             .route("/{id}/messages", get(list_session_messages))
@@ -361,7 +379,10 @@ mod tests {
 
         assert_eq!(resp.status(), StatusCode::CREATED);
         let body = body_json(resp.into_body()).await;
-        assert!(body["id"].as_i64().is_some(), "response must include integer id");
+        assert!(
+            body["id"].as_i64().is_some(),
+            "response must include integer id"
+        );
         assert_eq!(body["status"], "active");
     }
 

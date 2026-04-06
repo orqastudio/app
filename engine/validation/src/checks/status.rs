@@ -229,7 +229,7 @@ mod tests {
         ValidationContext {
             relationships: vec![],
             inverse_map: HashMap::new(),
-            valid_statuses: statuses.iter().map(|s| s.to_string()).collect(),
+            valid_statuses: statuses.iter().map(ToString::to_string).collect(),
             delivery: DeliveryConfig { types: vec![] },
             dependency_keys: HashSet::new(),
             artifact_types: vec![],
@@ -245,8 +245,10 @@ mod tests {
         ValidationContext {
             relationships: vec![],
             inverse_map: HashMap::new(),
-            valid_statuses: statuses.iter().map(|s| s.to_string()).collect(),
-            delivery: DeliveryConfig { types: delivery_types },
+            valid_statuses: statuses.iter().map(ToString::to_string).collect(),
+            delivery: DeliveryConfig {
+                types: delivery_types,
+            },
             dependency_keys: HashSet::new(),
             artifact_types: vec![],
             schema_extensions: vec![],
@@ -285,7 +287,7 @@ mod tests {
     #[test]
     fn legacy_status_maps_to_canonical_replacement() {
         // "draft" is a legacy status; "captured" is its canonical replacement.
-        let valid = vec!["captured".to_string(), "active".to_string()];
+        let valid = vec!["captured".to_owned(), "active".to_owned()];
         let suggestion = suggest_status_fix("draft", &valid);
         assert_eq!(suggestion, Some("captured"));
     }
@@ -293,7 +295,7 @@ mod tests {
     #[test]
     fn case_insensitive_status_match_is_suggested() {
         // "Active" should match "active" in the valid list.
-        let valid = vec!["active".to_string(), "completed".to_string()];
+        let valid = vec!["active".to_owned(), "completed".to_owned()];
         let suggestion = suggest_status_fix("Active", &valid);
         assert_eq!(suggestion, Some("active"));
     }
@@ -319,7 +321,8 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut task = make_node("TASK-A", "task", "completed");
         let epic = make_node("EPIC-B", "epic", "captured");
-        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        task.references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), task);
         graph.nodes.insert("EPIC-B".to_owned(), epic);
 
@@ -340,7 +343,10 @@ mod tests {
         let mut checks = vec![];
         check_parent_child_consistency(&graph, &ctx, &mut checks);
         assert_eq!(checks.len(), 1);
-        assert_eq!(checks[0].category, IntegrityCategory::ParentChildInconsistency);
+        assert_eq!(
+            checks[0].category,
+            IntegrityCategory::ParentChildInconsistency
+        );
         assert!(checks[0].message.contains("TASK-A"));
     }
 
@@ -350,7 +356,8 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut task = make_node("TASK-A", "task", "completed");
         let epic = make_node("EPIC-B", "epic", "active");
-        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        task.references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), task);
         graph.nodes.insert("EPIC-B".to_owned(), epic);
 
@@ -397,7 +404,7 @@ mod tests {
 
     #[test]
     fn suggest_status_fix_returns_none_for_completely_unknown_status() {
-        let valid = vec!["active".to_string(), "completed".to_string()];
+        let valid = vec!["active".to_owned(), "completed".to_owned()];
         let suggestion = suggest_status_fix("completely-unknown-xyz", &valid);
         assert!(suggestion.is_none());
     }
@@ -406,21 +413,21 @@ mod tests {
     fn suggest_status_fix_returns_exact_match_over_legacy_map() {
         // "done" maps to "completed" via legacy map, but if "done" is also in the valid
         // list it should be returned as an exact match.
-        let valid = vec!["done".to_string(), "active".to_string()];
+        let valid = vec!["done".to_owned(), "active".to_owned()];
         let suggestion = suggest_status_fix("done", &valid);
         assert_eq!(suggestion, Some("done"));
     }
 
     #[test]
     fn suggest_status_fix_legacy_todo_maps_to_ready() {
-        let valid = vec!["ready".to_string(), "active".to_string()];
+        let valid = vec!["ready".to_owned(), "active".to_owned()];
         let suggestion = suggest_status_fix("todo", &valid);
         assert_eq!(suggestion, Some("ready"));
     }
 
     #[test]
     fn suggest_status_fix_legacy_wip_maps_to_active() {
-        let valid = vec!["active".to_string(), "completed".to_string()];
+        let valid = vec!["active".to_owned(), "completed".to_owned()];
         let suggestion = suggest_status_fix("wip", &valid);
         assert_eq!(suggestion, Some("active"));
     }
@@ -436,7 +443,11 @@ mod tests {
         check_valid_statuses(&graph, &ctx, &mut checks);
         assert_eq!(checks.len(), 1);
         assert!(checks[0].auto_fixable);
-        assert!(checks[0].fix_description.as_deref().unwrap_or("").contains("completed"));
+        assert!(checks[0]
+            .fix_description
+            .as_deref()
+            .unwrap_or("")
+            .contains("completed"));
     }
 
     #[test]
@@ -487,7 +498,8 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut task = make_node("TASK-A", "task", "completed");
         let epic = make_node("EPIC-B", "epic", "ready");
-        task.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        task.references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), task);
         graph.nodes.insert("EPIC-B".to_owned(), epic);
 
@@ -508,6 +520,9 @@ mod tests {
         let mut checks = vec![];
         check_parent_child_consistency(&graph, &ctx, &mut checks);
         assert_eq!(checks.len(), 1);
-        assert_eq!(checks[0].category, IntegrityCategory::ParentChildInconsistency);
+        assert_eq!(
+            checks[0].category,
+            IntegrityCategory::ParentChildInconsistency
+        );
     }
 }

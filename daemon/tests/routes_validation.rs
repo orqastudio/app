@@ -22,13 +22,10 @@ use tower::ServiceExt as _;
 fn build_validation_router() -> axum::Router {
     use axum::routing::post;
     use orqa_daemon_lib::graph_state::GraphState;
-    use orqa_daemon_lib::routes::validation::{
-        validation_fix, validation_hook, validation_scan,
-    };
+    use orqa_daemon_lib::routes::validation::{validation_fix, validation_hook, validation_scan};
 
     let root = helpers::fixture_dir();
-    let graph_state = GraphState::build(&root)
-        .unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
 
     axum::Router::new()
         .route("/validation/scan", post(validation_scan))

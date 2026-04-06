@@ -135,9 +135,15 @@ fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String
                 _ => EventSource::DevController,
             };
 
-            let level = if stripped.contains("[31m") || message.contains("error") || message.contains("ERROR") {
+            let level = if stripped.contains("[31m")
+                || message.contains("error")
+                || message.contains("ERROR")
+            {
                 EventLevel::Error
-            } else if stripped.contains("[33m") || message.contains("warning") || message.contains("WARN") {
+            } else if stripped.contains("[33m")
+                || message.contains("warning")
+                || message.contains("WARN")
+            {
                 EventLevel::Warn
             } else if stripped.contains("[32m") {
                 EventLevel::Info
@@ -208,6 +214,10 @@ async fn emit_log(
         message: message.clone(),
         metadata: serde_json::Value::Null,
         session_id: None,
+        fingerprint: None,
+        message_template: None,
+        correlation_id: None,
+        stack_frames: None,
     };
 
     // Push to ring buffer.
@@ -313,7 +323,10 @@ pub async fn devtools_start_dev(
                         continue;
                     }
                     let (source, level, category, message) = parse_controller_line(&line);
-                    emit_log(&app_out, &state_out, &bw_out, source, level, category, message).await;
+                    emit_log(
+                        &app_out, &state_out, &bw_out, source, level, category, message,
+                    )
+                    .await;
                 }
             }
         });
@@ -330,7 +343,10 @@ pub async fn devtools_start_dev(
                         continue;
                     }
                     let (source, level, category, message) = parse_controller_line(&line);
-                    emit_log(&app_err, &state_err, &bw_err, source, level, category, message).await;
+                    emit_log(
+                        &app_err, &state_err, &bw_err, source, level, category, message,
+                    )
+                    .await;
                 }
             }
         });
@@ -342,7 +358,10 @@ pub async fn devtools_start_dev(
 
         let exit_msg = match status {
             Ok(s) if s.success() => "Dev environment stopped.".to_owned(),
-            Ok(s) => format!("Dev environment exited with code {}", s.code().unwrap_or(-1)),
+            Ok(s) => format!(
+                "Dev environment exited with code {}",
+                s.code().unwrap_or(-1)
+            ),
             Err(e) => format!("Dev environment process error: {e}"),
         };
 
@@ -398,11 +417,7 @@ pub async fn devtools_stop_dev(
         "orqa"
     };
 
-    match Command::new(orqa_cmd)
-        .args(["dev", "stop"])
-        .output()
-        .await
-    {
+    match Command::new(orqa_cmd).args(["dev", "stop"]).output().await {
         Ok(output) => {
             if !output.status.success() {
                 let stderr = String::from_utf8_lossy(&output.stderr);

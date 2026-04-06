@@ -14,7 +14,7 @@ mod tests {
     fn stream_start_serialization() {
         let event = StreamEvent::StreamStart {
             message_id: 42,
-            resolved_model: Some("claude-opus-4-6".to_string()),
+            resolved_model: Some("claude-opus-4-6".to_owned()),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -26,7 +26,7 @@ mod tests {
     #[test]
     fn text_delta_serialization() {
         let event = StreamEvent::TextDelta {
-            content: "Hello ".to_string(),
+            content: "Hello ".to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -37,7 +37,7 @@ mod tests {
     #[test]
     fn thinking_delta_serialization() {
         let event = StreamEvent::ThinkingDelta {
-            content: "Let me think...".to_string(),
+            content: "Let me think...".to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -48,8 +48,8 @@ mod tests {
     #[test]
     fn tool_use_start_serialization() {
         let event = StreamEvent::ToolUseStart {
-            tool_call_id: "call_abc123".to_string(),
-            tool_name: "read_file".to_string(),
+            tool_call_id: "call_abc123".to_owned(),
+            tool_name: "read_file".to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -61,8 +61,8 @@ mod tests {
     #[test]
     fn tool_input_delta_serialization() {
         let event = StreamEvent::ToolInputDelta {
-            tool_call_id: "call_abc123".to_string(),
-            content: r#"{"path": "/src"#.to_string(),
+            tool_call_id: "call_abc123".to_owned(),
+            content: r#"{"path": "/src"#.to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -73,9 +73,9 @@ mod tests {
     #[test]
     fn tool_result_serialization() {
         let event = StreamEvent::ToolResult {
-            tool_call_id: "call_abc123".to_string(),
-            tool_name: "read_file".to_string(),
-            result: "file contents here".to_string(),
+            tool_call_id: "call_abc123".to_owned(),
+            tool_name: "read_file".to_owned(),
+            result: "file contents here".to_owned(),
             is_error: false,
         };
 
@@ -90,7 +90,7 @@ mod tests {
     fn block_complete_serialization() {
         let event = StreamEvent::BlockComplete {
             block_index: 0,
-            content_type: "text".to_string(),
+            content_type: "text".to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -115,8 +115,8 @@ mod tests {
     #[test]
     fn stream_error_serialization() {
         let event = StreamEvent::StreamError {
-            code: "rate_limit".to_string(),
-            message: "Too many requests".to_string(),
+            code: "rate_limit".to_owned(),
+            message: "Too many requests".to_owned(),
             recoverable: true,
         };
 
@@ -140,9 +140,9 @@ mod tests {
     #[test]
     fn tool_approval_request_serialization() {
         let event = StreamEvent::ToolApprovalRequest {
-            tool_call_id: "call_abc123".to_string(),
-            tool_name: "write_file".to_string(),
-            input: r#"{"path":"/tmp/out.txt","content":"hello"}"#.to_string(),
+            tool_call_id: "call_abc123".to_owned(),
+            tool_name: "write_file".to_owned(),
+            input: r#"{"path":"/tmp/out.txt","content":"hello"}"#.to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -159,7 +159,7 @@ mod tests {
     fn session_title_updated_serialization() {
         let event = StreamEvent::SessionTitleUpdated {
             session_id: 42,
-            title: "Rust ownership deep dive".to_string(),
+            title: "Rust ownership deep dive".to_owned(),
         };
 
         let json = serde_json::to_value(&event).expect("serialization should succeed");
@@ -176,7 +176,7 @@ mod tests {
                 resolved_model: None,
             },
             StreamEvent::TextDelta {
-                content: "hi".to_string(),
+                content: "hi".to_owned(),
             },
             StreamEvent::TurnComplete {
                 input_tokens: 100,

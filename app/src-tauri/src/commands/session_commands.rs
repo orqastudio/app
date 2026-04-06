@@ -29,12 +29,16 @@ pub fn session_create(
     }
 
     let storage = state.db.get()?;
-    let session = storage.sessions().create(
-        project_id,
-        model_str.trim(),
-        system_prompt.as_deref(),
-    )?;
-    tracing::info!(subsystem = "session", session_id = session.id, project_id = project_id, "session_create");
+    let session =
+        storage
+            .sessions()
+            .create(project_id, model_str.trim(), system_prompt.as_deref())?;
+    tracing::info!(
+        subsystem = "session",
+        session_id = session.id,
+        project_id = project_id,
+        "session_create"
+    );
     Ok(session)
 }
 
@@ -51,9 +55,7 @@ pub fn session_list(
     let offset_val = offset.unwrap_or(0);
 
     if limit_val < 0 {
-        return Err(OrqaError::Validation(
-            "limit cannot be negative".to_owned(),
-        ));
+        return Err(OrqaError::Validation("limit cannot be negative".to_owned()));
     }
     if offset_val < 0 {
         return Err(OrqaError::Validation(
@@ -94,7 +96,11 @@ pub fn session_update_title(
 pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let storage = state.db.get()?;
     storage.sessions().end_session(session_id)?;
-    tracing::info!(subsystem = "session", session_id = session_id, "session_end");
+    tracing::info!(
+        subsystem = "session",
+        session_id = session_id,
+        "session_end"
+    );
     Ok(())
 }
 
@@ -103,7 +109,11 @@ pub fn session_end(session_id: i64, state: State<'_, AppState>) -> Result<(), Or
 pub fn session_delete(session_id: i64, state: State<'_, AppState>) -> Result<(), OrqaError> {
     let storage = state.db.get()?;
     storage.sessions().delete(session_id)?;
-    tracing::info!(subsystem = "session", session_id = session_id, "session_delete");
+    tracing::info!(
+        subsystem = "session",
+        session_id = session_id,
+        "session_delete"
+    );
     Ok(())
 }
 
@@ -123,7 +133,10 @@ mod tests {
     #[test]
     fn create_session_with_defaults() {
         let (storage, project_id) = setup();
-        let session = storage.sessions().create(project_id, "auto", None).expect("create");
+        let session = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create");
         assert_eq!(session.model, "auto");
         assert_eq!(session.status, SessionStatus::Active);
         assert!(session.system_prompt.is_none());
@@ -134,7 +147,11 @@ mod tests {
         let (storage, project_id) = setup();
         let session = storage
             .sessions()
-            .create(project_id, "claude-opus-4-6", Some("You are a helpful assistant"))
+            .create(
+                project_id,
+                "claude-opus-4-6",
+                Some("You are a helpful assistant"),
+            )
             .expect("create");
         assert_eq!(session.model, "claude-opus-4-6");
         assert_eq!(
@@ -146,24 +163,45 @@ mod tests {
     #[test]
     fn list_sessions_with_defaults() {
         let (storage, project_id) = setup();
-        storage.sessions().create(project_id, "auto", None).expect("create s1");
-        storage.sessions().create(project_id, "auto", None).expect("create s2");
+        storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create s1");
+        storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create s2");
 
-        let sessions = storage.sessions().list(project_id, None, 50, 0).expect("list");
+        let sessions = storage
+            .sessions()
+            .list(project_id, None, 50, 0)
+            .expect("list");
         assert_eq!(sessions.len(), 2);
     }
 
     #[test]
     fn list_sessions_with_status_filter() {
         let (storage, project_id) = setup();
-        storage.sessions().create(project_id, "auto", None).expect("create s1");
-        let s2 = storage.sessions().create(project_id, "auto", None).expect("create s2");
+        storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create s1");
+        let s2 = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create s2");
         storage.sessions().end_session(s2.id).expect("end s2");
 
-        let active = storage.sessions().list(project_id, Some("active"), 50, 0).expect("list active");
+        let active = storage
+            .sessions()
+            .list(project_id, Some("active"), 50, 0)
+            .expect("list active");
         assert_eq!(active.len(), 1);
 
-        let completed = storage.sessions().list(project_id, Some("completed"), 50, 0).expect("list completed");
+        let completed = storage
+            .sessions()
+            .list(project_id, Some("completed"), 50, 0)
+            .expect("list completed");
         assert_eq!(completed.len(), 1);
     }
 
@@ -171,20 +209,32 @@ mod tests {
     fn list_sessions_with_pagination() {
         let (storage, project_id) = setup();
         for _ in 0..5 {
-            storage.sessions().create(project_id, "auto", None).expect("create");
+            storage
+                .sessions()
+                .create(project_id, "auto", None)
+                .expect("create");
         }
 
-        let page = storage.sessions().list(project_id, None, 2, 0).expect("page 1");
+        let page = storage
+            .sessions()
+            .list(project_id, None, 2, 0)
+            .expect("page 1");
         assert_eq!(page.len(), 2);
 
-        let page = storage.sessions().list(project_id, None, 2, 4).expect("page 3");
+        let page = storage
+            .sessions()
+            .list(project_id, None, 2, 4)
+            .expect("page 3");
         assert_eq!(page.len(), 1);
     }
 
     #[test]
     fn get_session_by_id() {
         let (storage, project_id) = setup();
-        let created = storage.sessions().create(project_id, "auto", None).expect("create");
+        let created = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create");
         let fetched = storage.sessions().get(created.id).expect("get");
         assert_eq!(fetched.id, created.id);
         assert_eq!(fetched.model, "auto");
@@ -200,10 +250,16 @@ mod tests {
     #[test]
     fn update_title_works() {
         let (storage, project_id) = setup();
-        let session = storage.sessions().create(project_id, "auto", None).expect("create");
+        let session = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create");
         assert!(session.title.is_none());
 
-        storage.sessions().update_title(session.id, "My Session").expect("update");
+        storage
+            .sessions()
+            .update_title(session.id, "My Session")
+            .expect("update");
         let fetched = storage.sessions().get(session.id).expect("get");
         assert_eq!(fetched.title.as_deref(), Some("My Session"));
     }
@@ -211,7 +267,10 @@ mod tests {
     #[test]
     fn end_session_marks_completed() {
         let (storage, project_id) = setup();
-        let session = storage.sessions().create(project_id, "auto", None).expect("create");
+        let session = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create");
         assert_eq!(session.status, SessionStatus::Active);
 
         storage.sessions().end_session(session.id).expect("end");
@@ -222,7 +281,10 @@ mod tests {
     #[test]
     fn delete_session_cascades() {
         let (storage, project_id) = setup();
-        let session = storage.sessions().create(project_id, "auto", None).expect("create");
+        let session = storage
+            .sessions()
+            .create(project_id, "auto", None)
+            .expect("create");
         storage.sessions().delete(session.id).expect("delete");
 
         let result = storage.sessions().get(session.id);

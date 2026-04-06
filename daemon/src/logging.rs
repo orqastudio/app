@@ -43,7 +43,8 @@ use tracing_subscriber::registry::LookupSpan;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, Layer};
 
-use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
+use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent, StackFrame};
 
 use crate::event_bus::EventBus;
 
@@ -119,12 +120,16 @@ impl tracing::field::Visit for FieldVisitor {
             "message" => self.message = Some(value.to_owned()),
             "subsystem" => {
                 self.subsystem = Some(value.to_owned());
-                self.fields
-                    .insert(field.name().to_owned(), serde_json::Value::String(value.to_owned()));
+                self.fields.insert(
+                    field.name().to_owned(),
+                    serde_json::Value::String(value.to_owned()),
+                );
             }
             other => {
-                self.fields
-                    .insert(other.to_owned(), serde_json::Value::String(value.to_owned()));
+                self.fields.insert(
+                    other.to_owned(),
+                    serde_json::Value::String(value.to_owned()),
+                );
             }
         }
     }
@@ -147,21 +152,25 @@ impl tracing::field::Visit for FieldVisitor {
     }
 
     fn record_i64(&mut self, field: &tracing::field::Field, value: i64) {
-        self.fields
-            .insert(field.name().to_owned(), serde_json::Value::Number(value.into()));
+        self.fields.insert(
+            field.name().to_owned(),
+            serde_json::Value::Number(value.into()),
+        );
     }
 
     fn record_u64(&mut self, field: &tracing::field::Field, value: u64) {
         // u64 may not fit in serde_json::Number (which is i64/u64/f64 internally),
         // but serde_json does support u64, so this is safe.
         if let Some(n) = serde_json::Number::from_f64(value as f64) {
-            self.fields.insert(field.name().to_owned(), serde_json::Value::Number(n));
+            self.fields
+                .insert(field.name().to_owned(), serde_json::Value::Number(n));
         }
     }
 
     fn record_f64(&mut self, field: &tracing::field::Field, value: f64) {
         if let Some(n) = serde_json::Number::from_f64(value) {
-            self.fields.insert(field.name().to_owned(), serde_json::Value::Number(n));
+            self.fields
+                .insert(field.name().to_owned(), serde_json::Value::Number(n));
         }
     }
 
@@ -214,6 +223,24 @@ where
             .map(|d| d.as_millis() as i64)
             .unwrap_or(0);
 
+        // Compute stable message template and fingerprint for IssueGroup deduplication.
+        let template = extract_template(&message);
+        let fp = compute_fingerprint(
+            &EventSource::Daemon.to_string(),
+            &level.to_string(),
+            &template,
+            "", // stack_top — empty for now, wired in Task 3.3
+        );
+
+        // Capture a backtrace for Error-level events only, since force_capture
+        // is expensive and callers expect it only on genuine errors.
+        let stack_frames = if level == EventLevel::Error {
+            let bt = std::backtrace::Backtrace::force_capture();
+            Some(parse_backtrace(&bt))
+        } else {
+            None
+        };
+
         let log_event = LogEvent {
             id: self.next_id(),
             timestamp,
@@ -223,10 +250,115 @@ where
             message,
             metadata,
             session_id: None,
+            fingerprint: Some(fp),
+            message_template: Some(template),
+            correlation_id: None,
+            stack_frames,
         };
 
         self.bus.publish(log_event);
     }
+}
+
+/// Parse a `std::backtrace::Backtrace` into a capped list of `StackFrame` values.
+///
+/// Converts the backtrace to its string representation, then extracts file,
+/// line, and function information from each frame. Runtime noise frames from
+/// tokio, std, and tracing internals are filtered out so only application
+/// frames appear. Caps the output at 20 frames so `stack_frames` stays
+/// compact for serialization and display.
+#[allow(clippy::too_many_lines)]
+fn parse_backtrace(bt: &std::backtrace::Backtrace) -> Vec<StackFrame> {
+    // The runtime-noise prefixes to skip. These belong to the async/tracing
+    // scaffolding rather than the application's own call stack.
+    const SKIP_PREFIXES: &[&str] = &[
+        "tokio::",
+        "std::",
+        "core::",
+        "tracing::",
+        "tracing_subscriber::",
+        "tracing_appender::",
+        "__rust_",
+        "rust_begin_unwind",
+        "backtrace::",
+    ];
+
+    const MAX_FRAMES: usize = 20;
+
+    let bt_str = bt.to_string();
+    let mut frames = Vec::with_capacity(MAX_FRAMES);
+
+    // The backtrace string format is platform-dependent but typically looks like:
+    //
+    //    N: function::name
+    //             at /path/to/file.rs:line:col
+    //
+    // We collect (function, file, line) by pairing lines: a function line
+    // followed by an optional "at ..." location line.
+    let mut lines = bt_str.lines().peekable();
+    while let Some(line) = lines.next() {
+        let trimmed = line.trim();
+
+        // Frame index lines: "0: function_name" or "0: 0x... - function_name"
+        let func_candidate = if let Some(rest) = trimmed
+            .split_once(':')
+            .map(|x| x.1)
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+        {
+            // Strip leading hex addresses: "0x... - func_name"
+            if let Some(after_dash) = rest.split(" - ").nth(1) {
+                after_dash.trim().to_owned()
+            } else {
+                rest.to_owned()
+            }
+        } else {
+            continue;
+        };
+
+        // Skip runtime-noise frames.
+        if SKIP_PREFIXES.iter().any(|p| func_candidate.starts_with(p)) {
+            // Consume the matching "at ..." line if present so we don't
+            // misattribute it to the next frame.
+            if lines.peek().is_some_and(|l| l.trim().starts_with("at ")) {
+                lines.next();
+            }
+            continue;
+        }
+
+        // Look ahead for the "at file:line:col" location.
+        let (file, line_no) = if lines.peek().is_some_and(|l| l.trim().starts_with("at ")) {
+            let at_line = lines
+                .next()
+                .expect("peeked Some, next must succeed")
+                .trim()
+                .to_owned();
+            // Format: "at /path/to/file.rs:line:col"
+            let location = at_line.strip_prefix("at ").unwrap_or(&at_line);
+            // Split off trailing :col then :line.
+            let mut parts = location.rsplitn(3, ':');
+            let _col = parts.next();
+            let line_num: Option<u32> = parts.next().and_then(|s| s.parse().ok());
+            let file_path = parts.next().unwrap_or(location).to_owned();
+            (file_path, line_num)
+        } else {
+            (func_candidate.clone(), None)
+        };
+
+        frames.push(StackFrame {
+            file,
+            line: line_no,
+            col: None,
+            function: Some(func_candidate),
+            raw: None,
+        });
+
+        if frames.len() >= MAX_FRAMES {
+            break;
+        }
+    }
+
+    frames
 }
 
 /// Initialise structured logging with file, optional console, and optional
@@ -265,12 +397,11 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     // JSON layer — always active, regardless of TTY state.
     // Boxed to erase the deeply-nested generic type and prevent Windows stack
     // overflow during tracing_subscriber initialisation in debug builds.
-    let json_layer: Box<dyn Layer<_> + Send + Sync> =
-        tracing_subscriber::fmt::layer()
-            .json()
-            .with_writer(non_blocking_file)
-            .with_filter(build_display_filter(&effective_level))
-            .boxed();
+    let json_layer: Box<dyn Layer<_> + Send + Sync> = tracing_subscriber::fmt::layer()
+        .json()
+        .with_writer(non_blocking_file)
+        .with_filter(build_display_filter(&effective_level))
+        .boxed();
 
     // Console layer — human-readable, coloured, only when stdout is a TTY.
     // This avoids garbled ANSI codes in CI/service logs.

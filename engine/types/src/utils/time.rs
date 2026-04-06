@@ -232,6 +232,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::case_sensitive_file_extension_comparisons)] // ".000Z" is an ISO timestamp suffix, not a file extension
     fn format_unix_timestamp_length_and_structure() {
         let ts = format_unix_timestamp(0);
         assert_eq!(ts.len(), 24);

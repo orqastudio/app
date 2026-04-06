@@ -119,7 +119,9 @@ mod tests {
             "excluded_paths": ["node_modules", ".git"]
         });
 
-        store.save(tmp.path(), &settings).expect("save should succeed");
+        store
+            .save(tmp.path(), &settings)
+            .expect("save should succeed");
 
         let loaded = store
             .load(tmp.path())
@@ -161,9 +163,14 @@ mod tests {
         let store = FileProjectSettingsStore::new();
 
         let settings = serde_json::json!({"name": "new-project"});
-        store.save(tmp.path(), &settings).expect("save should succeed");
+        store
+            .save(tmp.path(), &settings)
+            .expect("save should succeed");
 
         let settings_file = tmp.path().join(SETTINGS_FILE);
-        assert!(settings_file.exists(), ".orqa/project.json should be created");
+        assert!(
+            settings_file.exists(),
+            ".orqa/project.json should be created"
+        );
     }
 }

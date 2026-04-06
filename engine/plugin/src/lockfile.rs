@@ -89,11 +89,11 @@ mod tests {
         let lockfile = Lockfile {
             version: 1,
             plugins: vec![LockEntry {
-                name: "@orqastudio/test".to_string(),
-                version: "0.1.0".to_string(),
-                repo: "orqastudio/test".to_string(),
-                sha256: "abc123".to_string(),
-                installed_at: "2026-03-17T00:00:00Z".to_string(),
+                name: "@orqastudio/test".to_owned(),
+                version: "0.1.0".to_owned(),
+                repo: "orqastudio/test".to_owned(),
+                sha256: "abc123".to_owned(),
+                installed_at: "2026-03-17T00:00:00Z".to_owned(),
             }],
         };
 
@@ -108,11 +108,11 @@ mod tests {
     fn roundtrip_preserves_all_fields() {
         let dir = tempfile::tempdir().unwrap();
         let entry = LockEntry {
-            name: "@orqastudio/plugin-software".to_string(),
-            version: "1.2.3-dev".to_string(),
-            repo: "orqastudio/plugin-software".to_string(),
-            sha256: "deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234".to_string(),
-            installed_at: "2026-04-01T12:00:00Z".to_string(),
+            name: "@orqastudio/plugin-software".to_owned(),
+            version: "1.2.3-dev".to_owned(),
+            repo: "orqastudio/plugin-software".to_owned(),
+            sha256: "deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234deadbeefcafe1234".to_owned(),
+            installed_at: "2026-04-01T12:00:00Z".to_owned(),
         };
         let lockfile = Lockfile {
             version: 1,
@@ -136,11 +136,11 @@ mod tests {
         let lockfile_v1 = Lockfile {
             version: 1,
             plugins: vec![LockEntry {
-                name: "@orqastudio/plugin-a".to_string(),
-                version: "0.1.0".to_string(),
-                repo: "orqastudio/plugin-a".to_string(),
-                sha256: "aaa".to_string(),
-                installed_at: "2026-01-01T00:00:00Z".to_string(),
+                name: "@orqastudio/plugin-a".to_owned(),
+                version: "0.1.0".to_owned(),
+                repo: "orqastudio/plugin-a".to_owned(),
+                sha256: "aaa".to_owned(),
+                installed_at: "2026-01-01T00:00:00Z".to_owned(),
             }],
         };
         write_lockfile(dir.path(), &lockfile_v1).unwrap();
@@ -149,18 +149,18 @@ mod tests {
             version: 1,
             plugins: vec![
                 LockEntry {
-                    name: "@orqastudio/plugin-a".to_string(),
-                    version: "0.2.0".to_string(),
-                    repo: "orqastudio/plugin-a".to_string(),
-                    sha256: "bbb".to_string(),
-                    installed_at: "2026-02-01T00:00:00Z".to_string(),
+                    name: "@orqastudio/plugin-a".to_owned(),
+                    version: "0.2.0".to_owned(),
+                    repo: "orqastudio/plugin-a".to_owned(),
+                    sha256: "bbb".to_owned(),
+                    installed_at: "2026-02-01T00:00:00Z".to_owned(),
                 },
                 LockEntry {
-                    name: "@orqastudio/plugin-b".to_string(),
-                    version: "1.0.0".to_string(),
-                    repo: "orqastudio/plugin-b".to_string(),
-                    sha256: "ccc".to_string(),
-                    installed_at: "2026-02-01T00:00:00Z".to_string(),
+                    name: "@orqastudio/plugin-b".to_owned(),
+                    version: "1.0.0".to_owned(),
+                    repo: "orqastudio/plugin-b".to_owned(),
+                    sha256: "ccc".to_owned(),
+                    installed_at: "2026-02-01T00:00:00Z".to_owned(),
                 },
             ],
         };

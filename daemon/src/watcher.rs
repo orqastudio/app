@@ -35,7 +35,6 @@ use orqa_engine::enforcement::store::load_rules;
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
 
-
 use crate::graph_state::GraphState;
 
 /// Infrastructure directories to always watch, relative to the project root.
@@ -102,7 +101,9 @@ fn declaration_to_registration(
     if decl.role != "generator" {
         return None;
     }
-    let Some(watch) = &decl.watch else { return None };
+    let Some(watch) = &decl.watch else {
+        return None;
+    };
     let Some(engine) = &decl.engine else {
         warn!(subsystem = "watcher", plugin = %plugin_name,
             "[watcher] generator declaration missing engine field — skipping");
@@ -491,9 +492,12 @@ fn invoke_generator(reg: &WatchRegistration, root: &Path) {
         generator = %reg.generator_path.display(), "[watcher] invoking generator");
 
     let mut cmd = Command::new(&reg.generator_path);
-    cmd.arg("--project-root").arg(root)
-        .arg("--output").arg(&reg.config_output)
-        .arg("--rules-dir").arg(&rules_dir);
+    cmd.arg("--project-root")
+        .arg(root)
+        .arg("--output")
+        .arg(&reg.config_output)
+        .arg("--rules-dir")
+        .arg(&rules_dir);
 
     if let Some(filter) = &reg.filter {
         cmd.arg("--filter").arg(filter);
@@ -667,10 +671,7 @@ mod tests {
             static_prefix_of(".orqa/learning/rules/**/*.md"),
             ".orqa/learning/rules"
         );
-        assert_eq!(
-            static_prefix_of("plugins/**/orqa-plugin.json"),
-            "plugins"
-        );
+        assert_eq!(static_prefix_of("plugins/**/orqa-plugin.json"), "plugins");
         assert_eq!(static_prefix_of(".orqa/**/*.md"), ".orqa");
     }
 
@@ -688,7 +689,7 @@ mod tests {
         // A path that matches the pattern should return true.
         let root = PathBuf::from("/project");
         let path = PathBuf::from("/project/.orqa/learning/rules/ts/rule-001.md");
-        let patterns = vec![".orqa/learning/rules/**/*.md".to_string()];
+        let patterns = vec![".orqa/learning/rules/**/*.md".to_owned()];
         assert!(matches_any_pattern(&path, &root, &patterns));
     }
 
@@ -697,7 +698,7 @@ mod tests {
         // A path that does not match should return false.
         let root = PathBuf::from("/project");
         let path = PathBuf::from("/project/.orqa/configs/eslint.config.js");
-        let patterns = vec![".orqa/learning/rules/**/*.md".to_string()];
+        let patterns = vec![".orqa/learning/rules/**/*.md".to_owned()];
         assert!(!matches_any_pattern(&path, &root, &patterns));
     }
 

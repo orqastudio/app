@@ -24,9 +24,7 @@ use crate::graph_state::GraphState;
 ///
 /// Reads the hook registry from plugin manifests for the current project.
 /// Returns an empty list if no plugins provide hooks.
-pub async fn list_hooks(
-    State(state): State<GraphState>,
-) -> Json<serde_json::Value> {
+pub async fn list_hooks(State(state): State<GraphState>) -> Json<serde_json::Value> {
     let project_root = {
         let Ok(guard) = state.0.read() else {
             return Json(serde_json::json!({ "hooks": [] }));
@@ -34,11 +32,9 @@ pub async fn list_hooks(
         guard.project_root.clone()
     };
 
-    let result = tokio::task::spawn_blocking(move || {
-        read_hook_registry(&project_root)
-    })
-    .await
-    .unwrap_or_default();
+    let result = tokio::task::spawn_blocking(move || read_hook_registry(&project_root))
+        .await
+        .unwrap_or_default();
 
     Json(serde_json::json!({ "hooks": result }))
 }
@@ -64,14 +60,18 @@ pub async fn generate_hook_dispatchers(
     tokio::task::spawn_blocking(move || {
         generate_dispatchers(&project_root)
             .map(|r| Json(serde_json::to_value(&r).unwrap_or(serde_json::Value::Null)))
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e, "code": "GENERATE_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e, "code": "GENERATE_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }

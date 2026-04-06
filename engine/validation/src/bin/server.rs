@@ -216,7 +216,13 @@ fn validate_project(
 
     let owned = OwnedCategories::from_contributions(&plugin_contributions);
     let (d, l, es, et, rt) = owned.as_pipeline_categories();
-    let categories = PipelineCategories { delivery: &d, learning: &l, excluded_statuses: &es, excluded_types: &et, root_types: &rt };
+    let categories = PipelineCategories {
+        delivery: &d,
+        learning: &l,
+        excluded_statuses: &es,
+        excluded_types: &et,
+        root_types: &rt,
+    };
 
     let checks = validate(&graph, &ctx);
     let health = compute_health(&graph, &categories);
@@ -227,7 +233,12 @@ fn validate_project(
     };
     let enforcement_events = checks_to_enforcement_events(&checks);
 
-    Ok(Report { checks, health, fixes_applied, enforcement_events })
+    Ok(Report {
+        checks,
+        health,
+        fixes_applied,
+        enforcement_events,
+    })
 }
 
 // ---------------------------------------------------------------------------

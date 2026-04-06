@@ -21,8 +21,7 @@ use tracing_subscriber::{
     layer::SubscriberExt,
     registry::LookupSpan,
     util::SubscriberInitExt,
-    EnvFilter,
-    Layer,
+    EnvFilter, Layer,
 };
 
 /// Global app handle for emitting events from the tracing layer.
@@ -137,13 +136,18 @@ impl EventForwarderLayer {
         let flush_loop = async move {
             let Ok(client) = reqwest::Client::builder()
                 .timeout(Duration::from_millis(500))
-                .build() else { return };
+                .build()
+            else {
+                return;
+            };
 
             loop {
                 tokio::time::sleep(FLUSH_INTERVAL).await;
 
                 let batch: Vec<ForwardedEvent> = {
-                    let mut guard = queue_ref.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+                    let mut guard = queue_ref
+                        .lock()
+                        .unwrap_or_else(std::sync::PoisonError::into_inner);
                     if guard.is_empty() {
                         continue;
                     }
@@ -169,7 +173,10 @@ impl EventForwarderLayer {
     /// immediate flush by appending a sentinel task.
     fn enqueue(&self, event: ForwardedEvent) {
         let should_flush = {
-            let mut guard = self.queue.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            let mut guard = self
+                .queue
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
             guard.push(event);
             guard.len() >= BATCH_SIZE
         };
@@ -262,10 +269,9 @@ pub fn init_logging(app: &AppHandle<Wry>) {
     // tao/wry suppressed to avoid event bus noise from Tauri internals.
     // reqwest/hyper/hyper_util suppressed because the forwarder USES reqwest —
     // capturing its connection logs creates a feedback loop that floods the bus.
-    let forwarder_layer = EventForwarderLayer::new()
-        .with_filter(
-            EnvFilter::new("trace,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off"),
-        );
+    let forwarder_layer = EventForwarderLayer::new().with_filter(EnvFilter::new(
+        "trace,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off",
+    ));
 
     #[cfg(debug_assertions)]
     {
@@ -277,10 +283,9 @@ pub fn init_logging(app: &AppHandle<Wry>) {
             .with_writer(std::io::stderr)
             .with_target(true)
             .with_level(true)
-            .with_filter(
-                EnvFilter::try_from_default_env()
-                    .unwrap_or_else(|_| EnvFilter::new("debug,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off")),
-            );
+            .with_filter(EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+                EnvFilter::new("debug,tao=off,wry=off,reqwest=off,hyper=off,hyper_util=off")
+            }));
 
         tracing_subscriber::registry()
             .with(stderr_layer)
@@ -317,9 +322,9 @@ mod tests {
     #[test]
     fn app_error_event_serializes() {
         let event = AppErrorEvent {
-            source: "rust".to_string(),
-            message: "something broke".to_string(),
-            level: "error".to_string(),
+            source: "rust".to_owned(),
+            message: "something broke".to_owned(),
+            level: "error".to_owned(),
         };
         let json = serde_json::to_value(&event).expect("should serialize");
         assert_eq!(json["source"], "rust");

@@ -175,7 +175,7 @@ mod tests {
         let json = serde_json::to_string(&snap).expect("serialize");
         let restored: NewHealthSnapshot = serde_json::from_str(&json).expect("deserialize");
         assert_eq!(restored.node_count, 0);
-        assert_eq!(restored.avg_degree, 0.0);
+        assert!((restored.avg_degree - 0.0_f64).abs() < f64::EPSILON);
     }
 
     #[test]

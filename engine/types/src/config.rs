@@ -208,12 +208,12 @@ mod tests {
 
     fn minimal_settings() -> ProjectSettings {
         ProjectSettings {
-            name: "test".to_string(),
+            name: "test".to_owned(),
             organisation: false,
             projects: vec![],
             artifacts: vec![],
             statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             relationships: vec![],
             plugins: HashMap::new(),
         }

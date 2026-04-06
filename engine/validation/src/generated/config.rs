@@ -144,4 +144,3 @@ pub struct ProjectSettings {
     #[serde(skip_serializing_if = "Option::is_none", default)]
     pub plugins: Option<std::collections::HashMap<String, PluginProjectConfig>>,
 }
-

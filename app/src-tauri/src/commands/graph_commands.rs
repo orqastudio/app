@@ -20,7 +20,9 @@ use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
 use crate::error::OrqaError;
 use crate::state::AppState;
 
-pub use orqa_engine_types::{AppliedFix, ArtifactNode, GraphStats, IntegrityCheck, TraceabilityResult};
+pub use orqa_engine_types::{
+    AppliedFix, ArtifactNode, GraphStats, IntegrityCheck, TraceabilityResult,
+};
 
 /// Tauri event name emitted when non-auto-apply transitions are pending.
 const STATUS_TRANSITIONS_AVAILABLE_EVENT: &str = "status-transitions-available";
@@ -52,9 +54,7 @@ pub async fn get_artifacts_by_type(
         ));
     }
     let client = daemon_client(&state)?;
-    let nodes = client
-        .query_artifacts(Some(&artifact_type), None)
-        .await?;
+    let nodes = client.query_artifacts(Some(&artifact_type), None).await?;
     tracing::debug!(r#type = %artifact_type, count = nodes.len(), "get_artifacts_by_type");
     Ok(nodes)
 }
@@ -94,9 +94,7 @@ pub async fn read_artifact_content(
 ///
 /// Delegates to GET /graph/stats on the daemon.
 #[tauri::command]
-pub async fn get_graph_stats(
-    state: State<'_, AppState>,
-) -> Result<GraphStats, OrqaError> {
+pub async fn get_graph_stats(state: State<'_, AppState>) -> Result<GraphStats, OrqaError> {
     let client = daemon_client(&state)?;
     let resp = client.get_graph_stats().await?;
     // Map daemon's broken_refs field name to the canonical broken_ref_count.
@@ -113,9 +111,7 @@ pub async fn get_graph_stats(
 /// Delegates to GET /graph/health on the daemon. Returns the daemon's JSON
 /// health response shape directly.
 #[tauri::command]
-pub async fn get_graph_health(
-    state: State<'_, AppState>,
-) -> Result<DaemonGraphHealth, OrqaError> {
+pub async fn get_graph_health(state: State<'_, AppState>) -> Result<DaemonGraphHealth, OrqaError> {
     let client = daemon_client(&state)?;
     client.get_graph_health().await
 }
@@ -144,7 +140,10 @@ pub async fn refresh_artifact_graph<R: Runtime>(
     app: tauri::AppHandle<R>,
     state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
-    tracing::info!(subsystem = "graph", "refresh_artifact_graph: delegating to daemon");
+    tracing::info!(
+        subsystem = "graph",
+        "refresh_artifact_graph: delegating to daemon"
+    );
     let client = daemon_client(&state)?;
     let resp = client.reload().await?;
     tracing::info!(
@@ -180,9 +179,7 @@ pub async fn run_integrity_scan(
 ///
 /// Delegates to POST /validation/fix on the daemon.
 #[tauri::command]
-pub async fn apply_auto_fixes(
-    state: State<'_, AppState>,
-) -> Result<Vec<AppliedFix>, OrqaError> {
+pub async fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, OrqaError> {
     let client = daemon_client(&state)?;
     let resp = client.run_validation_fix().await?;
     tracing::info!(
@@ -262,9 +259,7 @@ pub async fn update_artifact_field(
     let node = all_nodes
         .into_iter()
         .find(|n| n.path == normalized || n.path.ends_with(&normalized))
-        .ok_or_else(|| {
-            OrqaError::NotFound(format!("artifact not found: {path}"))
-        })?;
+        .ok_or_else(|| OrqaError::NotFound(format!("artifact not found: {path}")))?;
 
     tracing::debug!(
         subsystem = "graph",
@@ -290,7 +285,9 @@ pub fn get_health_snapshots(
         .get_active()?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
-    Ok(storage.health().get_recent(project.id, limit.unwrap_or(30))?)
+    Ok(storage
+        .health()
+        .get_recent(project.id, limit.unwrap_or(30))?)
 }
 
 #[cfg(test)]

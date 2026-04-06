@@ -249,12 +249,12 @@ mod tests {
     #[test]
     fn hook_command_line_node_runtime() {
         let hook = RegisteredHook {
-            plugin: "test".to_string(),
-            key: "test-hook".to_string(),
-            event: "pre-commit".to_string(),
-            runtime: "node".to_string(),
-            entrypoint: "dist/hook.js".to_string(),
-            args: vec!["--json".to_string()],
+            plugin: "test".to_owned(),
+            key: "test-hook".to_owned(),
+            event: "pre-commit".to_owned(),
+            runtime: "node".to_owned(),
+            entrypoint: "dist/hook.js".to_owned(),
+            args: vec!["--json".to_owned()],
         };
         let cmd = hook_command_line(&hook);
         assert_eq!(cmd, "node \"dist/hook.js\" \"--json\"");
@@ -263,11 +263,11 @@ mod tests {
     #[test]
     fn hook_command_line_system_runtime() {
         let hook = RegisteredHook {
-            plugin: "test".to_string(),
-            key: "test-hook".to_string(),
-            event: "pre-commit".to_string(),
-            runtime: "system".to_string(),
-            entrypoint: "scripts/check.sh".to_string(),
+            plugin: "test".to_owned(),
+            key: "test-hook".to_owned(),
+            event: "pre-commit".to_owned(),
+            runtime: "system".to_owned(),
+            entrypoint: "scripts/check.sh".to_owned(),
             args: vec![],
         };
         let cmd = hook_command_line(&hook);
@@ -277,12 +277,12 @@ mod tests {
     #[test]
     fn generate_dispatcher_includes_marker() {
         let hook = RegisteredHook {
-            plugin: "@orqastudio/plugin-integrity".to_string(),
-            key: "pre-commit-integrity".to_string(),
-            event: "pre-commit".to_string(),
-            runtime: "node".to_string(),
-            entrypoint: "node_modules/.bin/orqa-integrity".to_string(),
-            args: vec!["--json".to_string()],
+            plugin: "@orqastudio/plugin-integrity".to_owned(),
+            key: "pre-commit-integrity".to_owned(),
+            event: "pre-commit".to_owned(),
+            runtime: "node".to_owned(),
+            entrypoint: "node_modules/.bin/orqa-integrity".to_owned(),
+            args: vec!["--json".to_owned()],
         };
         let script = generate_dispatcher("pre-commit", &[&hook]);
         assert!(script.contains(GENERATED_MARKER));
@@ -293,19 +293,19 @@ mod tests {
     #[test]
     fn generate_dispatcher_multiple_hooks() {
         let hook1 = RegisteredHook {
-            plugin: "plugin-a".to_string(),
-            key: "check-a".to_string(),
-            event: "pre-commit".to_string(),
-            runtime: "node".to_string(),
-            entrypoint: "a/check.js".to_string(),
+            plugin: "plugin-a".to_owned(),
+            key: "check-a".to_owned(),
+            event: "pre-commit".to_owned(),
+            runtime: "node".to_owned(),
+            entrypoint: "a/check.js".to_owned(),
             args: vec![],
         };
         let hook2 = RegisteredHook {
-            plugin: "plugin-b".to_string(),
-            key: "check-b".to_string(),
-            event: "pre-commit".to_string(),
-            runtime: "system".to_string(),
-            entrypoint: "b/check.sh".to_string(),
+            plugin: "plugin-b".to_owned(),
+            key: "check-b".to_owned(),
+            event: "pre-commit".to_owned(),
+            runtime: "system".to_owned(),
+            entrypoint: "b/check.sh".to_owned(),
             args: vec![],
         };
         let script = generate_dispatcher("pre-commit", &[&hook1, &hook2]);

@@ -453,6 +453,89 @@ pub fn check_frontmatter_requirements(
     }
 }
 
+/// Check that artifact status values are valid per the type's declared status transitions.
+///
+/// Status transitions are declared in the plugin manifest's
+/// `provides.schemas[].statusTransitions` map. Only types that declare a transitions
+/// map are validated; types with no declared transitions are skipped. An artifact whose
+/// current status is not a key in the map is flagged as a warning.
+pub fn check_status_transitions(
+    graph: &ArtifactGraph,
+    artifact_types: &[ArtifactTypeDef],
+    checks: &mut Vec<IntegrityCheck>,
+) {
+    let type_map: HashMap<&str, &ArtifactTypeDef> =
+        artifact_types.iter().map(|t| (t.key.as_str(), t)).collect();
+
+    for node in graph.nodes.values() {
+        let Some(type_def) = type_map.get(node.artifact_type.as_str()) else {
+            continue;
+        };
+
+        if type_def.status_transitions.is_empty() {
+            continue;
+        }
+
+        let Some(status) = &node.status else {
+            continue;
+        };
+
+        if !type_def.status_transitions.contains_key(status.as_str()) {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::SchemaViolation,
+                severity: IntegritySeverity::Error,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "Status '{}' is not defined in schema transitions for type '{}'",
+                    status, node.artifact_type
+                ),
+                auto_fixable: false,
+                fix_description: None,
+            });
+        }
+    }
+}
+
+/// Check that the filename (stem, without extension) matches the artifact's `id`.
+///
+/// The convention is `<ID>.md` — e.g., `EPIC-fb1822c2.md` for id `EPIC-fb1822c2`.
+/// Legacy sequential filenames (e.g., `TASK-100.md` with id `TASK-4cfabe07`) are
+/// flagged as warnings with an auto-fix suggestion to rename.
+pub fn check_filename_matches_id(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
+    for node in graph.nodes.values() {
+        // Extract filename stem from the path (last component, without .md)
+        let path = &node.path;
+        let stem = path
+            .rsplit('/')
+            .next()
+            .unwrap_or(path)
+            .strip_suffix(".md")
+            .unwrap_or(path);
+
+        // Skip qualified project-prefixed keys (e.g., "app::RULE-xyz")
+        if node.id.contains("::") {
+            continue;
+        }
+
+        if stem != node.id {
+            checks.push(IntegrityCheck {
+                category: IntegrityCategory::FilenameMismatch,
+                severity: IntegritySeverity::Error,
+                artifact_id: node.id.clone(),
+                message: format!(
+                    "Filename '{}' does not match id '{}' — expected '{}.md'",
+                    stem, node.id, node.id
+                ),
+                auto_fixable: true,
+                fix_description: Some(format!(
+                    "Rename file from '{}.md' to '{}.md'",
+                    stem, node.id
+                )),
+            });
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -461,7 +544,10 @@ pub fn check_frontmatter_requirements(
 mod tests {
     use super::*;
     use crate::platform::ArtifactTypeDef;
-    use crate::types::{IntegrityCategory, RelationshipConstraints, RelationshipSchema, ValidationContext};
+    use crate::types::{
+        IntegrityCategory, RelationshipConstraints, RelationshipSchema, ValidationContext,
+    };
+    use orqa_engine_types::config::DeliveryConfig;
     use orqa_engine_types::{ArtifactGraph, ArtifactNode, ArtifactRef};
     use std::collections::{HashMap, HashSet};
 
@@ -496,8 +582,8 @@ mod tests {
             key: rel_key.to_owned(),
             inverse: format!("{rel_key}-inverse"),
             description: String::new(),
-            from: from.iter().map(|s| s.to_string()).collect(),
-            to: to.iter().map(|s| s.to_string()).collect(),
+            from: from.iter().map(ToString::to_string).collect(),
+            to: to.iter().map(ToString::to_string).collect(),
             semantic: None,
             constraints: None,
         };
@@ -505,7 +591,7 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             dependency_keys: HashSet::new(),
             artifact_types: vec![],
             schema_extensions: vec![],
@@ -519,7 +605,8 @@ mod tests {
     fn broken_ref_to_missing_node_is_flagged() {
         let mut graph = ArtifactGraph::default();
         let mut node = make_node("TASK-A", "task");
-        node.references_out.push(make_ref("TASK-A", "TASK-MISSING", "delivers"));
+        node.references_out
+            .push(make_ref("TASK-A", "TASK-MISSING", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node);
 
         let mut checks = vec![];
@@ -534,7 +621,9 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("EPIC-B", "epic");
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("EPIC-B".to_owned(), node_b);
 
@@ -559,7 +648,9 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("EPIC-B", "epic");
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("EPIC-B".to_owned(), node_b);
 
@@ -567,7 +658,10 @@ mod tests {
         let mut checks = vec![];
         check_relationship_type_constraints(&graph, &ctx, &mut checks);
         assert!(!checks.is_empty());
-        assert_eq!(checks[0].category, IntegrityCategory::TypeConstraintViolation);
+        assert_eq!(
+            checks[0].category,
+            IntegrityCategory::TypeConstraintViolation
+        );
     }
 
     #[test]
@@ -576,7 +670,9 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("TASK-B", "task");
-        node_a.references_out.push(make_ref("TASK-A", "TASK-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "TASK-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("TASK-B".to_owned(), node_b);
 
@@ -584,7 +680,10 @@ mod tests {
         let mut checks = vec![];
         check_relationship_type_constraints(&graph, &ctx, &mut checks);
         assert!(!checks.is_empty());
-        assert_eq!(checks[0].category, IntegrityCategory::TypeConstraintViolation);
+        assert_eq!(
+            checks[0].category,
+            IntegrityCategory::TypeConstraintViolation
+        );
     }
 
     #[test]
@@ -592,7 +691,9 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("EPIC-B", "epic");
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("EPIC-B".to_owned(), node_b);
 
@@ -633,7 +734,9 @@ mod tests {
     #[test]
     fn node_with_type_field_is_not_flagged() {
         let mut graph = ArtifactGraph::default();
-        graph.nodes.insert("TASK-A".to_owned(), make_node("TASK-A", "task"));
+        graph
+            .nodes
+            .insert("TASK-A".to_owned(), make_node("TASK-A", "task"));
         let mut checks = vec![];
         check_missing_type_field(&graph, &mut checks);
         assert!(checks.is_empty());
@@ -647,8 +750,12 @@ mod tests {
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("EPIC-B", "epic");
         // Two identical relationship edges
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("EPIC-B".to_owned(), node_b);
 
@@ -663,8 +770,12 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node_a = make_node("TASK-A", "task");
         let node_b = make_node("EPIC-B", "epic");
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "delivers"));
-        node_a.references_out.push(make_ref("TASK-A", "EPIC-B", "implements"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "delivers"));
+        node_a
+            .references_out
+            .push(make_ref("TASK-A", "EPIC-B", "implements"));
         graph.nodes.insert("TASK-A".to_owned(), node_a);
         graph.nodes.insert("EPIC-B".to_owned(), node_b);
 
@@ -739,7 +850,7 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             dependency_keys: HashSet::new(),
             artifact_types: vec![],
             schema_extensions: vec![],
@@ -748,7 +859,10 @@ mod tests {
         let mut checks = vec![];
         check_required_relationships(&graph, &ctx, &mut checks);
         assert_eq!(checks.len(), 1);
-        assert_eq!(checks[0].category, IntegrityCategory::RequiredRelationshipMissing);
+        assert_eq!(
+            checks[0].category,
+            IntegrityCategory::RequiredRelationshipMissing
+        );
     }
 
     #[test]
@@ -779,7 +893,7 @@ mod tests {
             relationships: vec![schema],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
+            delivery: DeliveryConfig::default(),
             dependency_keys: HashSet::new(),
             artifact_types: vec![],
             schema_extensions: vec![],
@@ -826,7 +940,7 @@ mod tests {
     ) -> ArtifactTypeDef {
         let map: HashMap<String, Vec<String>> = transitions
             .iter()
-            .map(|(k, vs)| (k.to_string(), vs.iter().map(|s| s.to_string()).collect()))
+            .map(|(k, vs)| (k.to_string(), vs.iter().map(ToString::to_string).collect()))
             .collect();
         ArtifactTypeDef {
             key: key.to_owned(),
@@ -849,8 +963,11 @@ mod tests {
         node.status = Some("unknown".to_owned());
         graph.nodes.insert("TASK-A".to_owned(), node);
 
-        let type_def =
-            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"]), ("completed", &[])]);
+        let type_def = make_type_def_with_statuses(
+            "task",
+            "TASK",
+            &[("active", &["completed"]), ("completed", &[])],
+        );
         let mut checks = vec![];
         check_status_transitions(&graph, &[type_def], &mut checks);
         assert_eq!(checks.len(), 1);
@@ -865,8 +982,11 @@ mod tests {
         node.status = Some("active".to_owned());
         graph.nodes.insert("TASK-A".to_owned(), node);
 
-        let type_def =
-            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"]), ("completed", &[])]);
+        let type_def = make_type_def_with_statuses(
+            "task",
+            "TASK",
+            &[("active", &["completed"]), ("completed", &[])],
+        );
         let mut checks = vec![];
         check_status_transitions(&graph, &[type_def], &mut checks);
         assert!(checks.is_empty());
@@ -893,8 +1013,7 @@ mod tests {
         node.status = None;
         graph.nodes.insert("TASK-A".to_owned(), node);
 
-        let type_def =
-            make_type_def_with_statuses("task", "TASK", &[("active", &["completed"])]);
+        let type_def = make_type_def_with_statuses("task", "TASK", &[("active", &["completed"])]);
         let mut checks = vec![];
         check_status_transitions(&graph, &[type_def], &mut checks);
         assert!(checks.is_empty());
@@ -996,10 +1115,7 @@ mod tests {
         node.frontmatter = serde_json::json!({"type": "task"}); // type says task but id says rule
         graph.nodes.insert("RULE-abc123".to_owned(), node);
 
-        let type_defs = vec![
-            make_type_def("task", "TASK"),
-            make_type_def("rule", "RULE"),
-        ];
+        let type_defs = vec![make_type_def("task", "TASK"), make_type_def("rule", "RULE")];
         let mut checks = vec![];
         check_type_prefix_mismatch(&graph, &type_defs, &mut checks);
         assert_eq!(checks.len(), 1);
@@ -1030,88 +1146,5 @@ mod tests {
         let mut checks = vec![];
         check_type_prefix_mismatch(&graph, &[], &mut checks); // no type definitions
         assert!(checks.is_empty());
-    }
-}
-
-/// Check that artifact status values are valid per the type's declared status transitions.
-///
-/// Status transitions are declared in the plugin manifest's
-/// `provides.schemas[].statusTransitions` map. Only types that declare a transitions
-/// map are validated; types with no declared transitions are skipped. An artifact whose
-/// current status is not a key in the map is flagged as a warning.
-pub fn check_status_transitions(
-    graph: &ArtifactGraph,
-    artifact_types: &[ArtifactTypeDef],
-    checks: &mut Vec<IntegrityCheck>,
-) {
-    let type_map: HashMap<&str, &ArtifactTypeDef> =
-        artifact_types.iter().map(|t| (t.key.as_str(), t)).collect();
-
-    for node in graph.nodes.values() {
-        let Some(type_def) = type_map.get(node.artifact_type.as_str()) else {
-            continue;
-        };
-
-        if type_def.status_transitions.is_empty() {
-            continue;
-        }
-
-        let Some(status) = &node.status else {
-            continue;
-        };
-
-        if !type_def.status_transitions.contains_key(status.as_str()) {
-            checks.push(IntegrityCheck {
-                category: IntegrityCategory::SchemaViolation,
-                severity: IntegritySeverity::Error,
-                artifact_id: node.id.clone(),
-                message: format!(
-                    "Status '{}' is not defined in schema transitions for type '{}'",
-                    status, node.artifact_type
-                ),
-                auto_fixable: false,
-                fix_description: None,
-            });
-        }
-    }
-}
-
-/// Check that the filename (stem, without extension) matches the artifact's `id`.
-///
-/// The convention is `<ID>.md` — e.g., `EPIC-fb1822c2.md` for id `EPIC-fb1822c2`.
-/// Legacy sequential filenames (e.g., `TASK-100.md` with id `TASK-4cfabe07`) are
-/// flagged as warnings with an auto-fix suggestion to rename.
-pub fn check_filename_matches_id(graph: &ArtifactGraph, checks: &mut Vec<IntegrityCheck>) {
-    for node in graph.nodes.values() {
-        // Extract filename stem from the path (last component, without .md)
-        let path = &node.path;
-        let stem = path
-            .rsplit('/')
-            .next()
-            .unwrap_or(path)
-            .strip_suffix(".md")
-            .unwrap_or(path);
-
-        // Skip qualified project-prefixed keys (e.g., "app::RULE-xyz")
-        if node.id.contains("::") {
-            continue;
-        }
-
-        if stem != node.id {
-            checks.push(IntegrityCheck {
-                category: IntegrityCategory::FilenameMismatch,
-                severity: IntegritySeverity::Error,
-                artifact_id: node.id.clone(),
-                message: format!(
-                    "Filename '{}' does not match id '{}' — expected '{}.md'",
-                    stem, node.id, node.id
-                ),
-                auto_fixable: true,
-                fix_description: Some(format!(
-                    "Rename file from '{}.md' to '{}.md'",
-                    stem, node.id
-                )),
-            });
-        }
     }
 }

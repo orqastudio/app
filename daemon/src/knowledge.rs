@@ -208,7 +208,10 @@ pub fn knowledge_handler(
 ) -> Json<KnowledgeResponse> {
     let start = Instant::now();
 
-    info!(subsystem = "knowledge", "[knowledge] knowledge_handler entry");
+    info!(
+        subsystem = "knowledge",
+        "[knowledge] knowledge_handler entry"
+    );
 
     let project_path = Path::new(&req.project_path);
 
@@ -282,9 +285,7 @@ fn get_declared_knowledge(project_path: &Path, role: &str) -> Vec<KnowledgeEntry
     registry
         .knowledge
         .into_iter()
-        .filter(|entry| {
-            entry.content_file.is_some() && entry.roles.iter().any(|r| r == role)
-        })
+        .filter(|entry| entry.content_file.is_some() && entry.roles.iter().any(|r| r == role))
         .map(|entry| {
             // Derive the title from the first line of the summary, capped at 80 chars.
             let title = entry
@@ -344,7 +345,10 @@ fn get_semantic_knowledge(
 
     // Embed the query.
     let Ok(embeddings) = embedder.embed(&[query.as_str()]) else {
-        debug!(subsystem = "knowledge", "[knowledge] get_semantic_knowledge: embed call failed — skipping semantic layer");
+        debug!(
+            subsystem = "knowledge",
+            "[knowledge] get_semantic_knowledge: embed call failed — skipping semantic layer"
+        );
         return Vec::new();
     };
     let Some(query_embedding) = embeddings.into_iter().next() else {
@@ -363,7 +367,10 @@ fn get_semantic_knowledge(
     let top_n = max_semantic + exclude_ids.len();
     let matches = injector.match_prompt(&query_embedding, top_n, min_score);
 
-    let knowledge_dir = project_path.join(".orqa").join("documentation").join("knowledge");
+    let knowledge_dir = project_path
+        .join(".orqa")
+        .join("documentation")
+        .join("knowledge");
 
     matches
         .into_iter()
@@ -422,7 +429,9 @@ pub fn resolve_model_dir() -> Option<std::path::PathBuf> {
     });
 
     let candidates: Vec<std::path::PathBuf> = [
-        std::env::var("ORQA_MODEL_DIR").ok().map(std::path::PathBuf::from),
+        std::env::var("ORQA_MODEL_DIR")
+            .ok()
+            .map(std::path::PathBuf::from),
         platform_dir.map(|d| d.join("models").join("all-MiniLM-L6-v2")),
     ]
     .into_iter()
@@ -466,7 +475,7 @@ mod tests {
 
     /// Build patterns from the base role names for use in tests.
     fn base_patterns() -> Vec<(String, String)> {
-        let names: Vec<String> = BASE_ROLE_NAMES.iter().map(|s| s.to_string()).collect();
+        let names: Vec<String> = BASE_ROLE_NAMES.iter().map(ToString::to_string).collect();
         build_role_patterns(&names)
     }
 
@@ -475,7 +484,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are an Implementer. Your task is...", &patterns),
-            Some("implementer".to_string())
+            Some("implementer".to_owned())
         );
     }
 
@@ -484,7 +493,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are a Researcher working on...", &patterns),
-            Some("researcher".to_string())
+            Some("researcher".to_owned())
         );
     }
 
@@ -493,7 +502,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are a Reviewer. Verify that...", &patterns),
-            Some("reviewer".to_string())
+            Some("reviewer".to_owned())
         );
     }
 
@@ -502,7 +511,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are a Planner. Design the approach.", &patterns),
-            Some("planner".to_string())
+            Some("planner".to_owned())
         );
     }
 
@@ -511,7 +520,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are a Writer. Document this.", &patterns),
-            Some("writer".to_string())
+            Some("writer".to_owned())
         );
     }
 
@@ -520,7 +529,7 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("You are a Designer. Create the layout.", &patterns),
-            Some("designer".to_string())
+            Some("designer".to_owned())
         );
     }
 
@@ -532,7 +541,7 @@ mod tests {
                 "You are a Governance Steward. Maintain the artifacts.",
                 &patterns
             ),
-            Some("governance-steward".to_string())
+            Some("governance-steward".to_owned())
         );
     }
 
@@ -552,13 +561,13 @@ mod tests {
         let patterns = base_patterns();
         assert_eq!(
             detect_role_with_patterns("YOU ARE AN IMPLEMENTER working on...", &patterns),
-            Some("implementer".to_string())
+            Some("implementer".to_owned())
         );
     }
 
     #[test]
     fn build_role_patterns_generates_three_variants_per_role() {
-        let patterns = build_role_patterns(&["analyst".to_string()]);
+        let patterns = build_role_patterns(&["analyst".to_owned()]);
         // Each role generates 3 patterns: "you are an", "you are a", "you are".
         assert_eq!(patterns.len(), 3);
         assert!(patterns.iter().any(|(p, _)| p == "you are an analyst"));
@@ -570,7 +579,7 @@ mod tests {
 
     #[test]
     fn build_role_patterns_normalises_space_to_hyphen_in_id() {
-        let patterns = build_role_patterns(&["governance steward".to_string()]);
+        let patterns = build_role_patterns(&["governance steward".to_owned()]);
         assert!(patterns.iter().all(|(_, r)| r == "governance-steward"));
     }
 
@@ -579,7 +588,7 @@ mod tests {
         // With no project.json and no installed plugins, must fall back to BASE_ROLE_NAMES.
         let tmp = tempfile::tempdir().expect("tempdir");
         let names = load_role_names_from_plugins(tmp.path());
-        let base: Vec<String> = BASE_ROLE_NAMES.iter().map(|s| s.to_string()).collect();
+        let base: Vec<String> = BASE_ROLE_NAMES.iter().map(ToString::to_string).collect();
         assert_eq!(names, base);
     }
 
@@ -761,7 +770,7 @@ mod tests {
     fn declared_ids_excluded_from_semantic_set() {
         // Verify the exclude logic: if Layer 1 already has KNOW-abc123,
         // the semantic results should not include it.
-        let declared_ids: HashSet<String> = ["KNOW-abc123".to_string()].into_iter().collect();
+        let declared_ids: HashSet<String> = ["KNOW-abc123".to_owned()].into_iter().collect();
         assert!(declared_ids.contains("KNOW-abc123"));
         assert!(!declared_ids.contains("KNOW-def456"));
     }

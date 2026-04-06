@@ -57,17 +57,21 @@ pub async fn get_agent(
     };
 
     let agent = find_agent(&project_root, &role)
-        .map_err(|e| (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "AGENT_SCAN_ERROR" })),
-        ))?
-        .ok_or_else(|| (
-            StatusCode::NOT_FOUND,
-            Json(serde_json::json!({
-                "error": format!("agent role '{}' not found", role),
-                "code": "NOT_FOUND"
-            })),
-        ))?;
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "AGENT_SCAN_ERROR" })),
+            )
+        })?
+        .ok_or_else(|| {
+            (
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({
+                    "error": format!("agent role '{}' not found", role),
+                    "code": "NOT_FOUND"
+                })),
+            )
+        })?;
 
     // The AgentContent itself contains the preamble and file path via frontmatter.
     // We synthesise a file_path from the agent's id for backwards compatibility.

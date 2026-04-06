@@ -84,10 +84,7 @@ fn check_installation(project_path: &Path) -> CheckResult {
         CheckResult {
             name: "installation".into(),
             passed: false,
-            message: format!(
-                "missing: {} — run orqa install",
-                missing.join(", ")
-            ),
+            message: format!("missing: {} — run orqa install", missing.join(", ")),
         }
     }
 }
@@ -350,10 +347,10 @@ pub async fn session_start_handler(
 mod tests {
     use super::*;
     use std::fs;
-    use std::path::PathBuf;
+    use std::path::Path;
 
     /// Create a minimal project directory tree for testing.
-    fn make_project(tmp: &PathBuf) {
+    fn make_project(tmp: &Path) {
         fs::create_dir_all(tmp.join(".claude/agents")).unwrap();
         fs::create_dir_all(tmp.join(".claude/rules")).unwrap();
         fs::write(tmp.join(".claude/CLAUDE.md"), "# test").unwrap();
@@ -363,7 +360,7 @@ mod tests {
 
     #[test]
     fn installation_check_passes_when_all_present() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_install_pass");
+        let tmp = std::env::temp_dir().join("orqa_test_install_pass");
         make_project(&tmp);
         let result = check_installation(&tmp);
         assert!(result.passed, "expected pass, got: {}", result.message);
@@ -372,7 +369,7 @@ mod tests {
 
     #[test]
     fn installation_check_fails_when_agents_missing() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_install_fail");
+        let tmp = std::env::temp_dir().join("orqa_test_install_fail");
         make_project(&tmp);
         fs::remove_dir_all(tmp.join(".claude/agents")).unwrap();
         let result = check_installation(&tmp);
@@ -389,7 +386,7 @@ mod tests {
 
     #[test]
     fn graph_integrity_passes_on_valid_json() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_graph_pass");
+        let tmp = std::env::temp_dir().join("orqa_test_graph_pass");
         make_project(&tmp);
         fs::write(tmp.join(".orqa/artifact.json"), r#"{"id":"test"}"#).unwrap();
         let result = check_graph_integrity(&tmp);
@@ -399,7 +396,7 @@ mod tests {
 
     #[test]
     fn graph_integrity_fails_on_malformed_json() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_graph_fail");
+        let tmp = std::env::temp_dir().join("orqa_test_graph_fail");
         make_project(&tmp);
         fs::write(tmp.join(".orqa/broken.json"), "{ not json }").unwrap();
         let result = check_graph_integrity(&tmp);
@@ -409,7 +406,7 @@ mod tests {
 
     #[test]
     fn read_state_file_returns_none_when_absent() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_state_absent");
+        let tmp = std::env::temp_dir().join("orqa_test_state_absent");
         make_project(&tmp);
         let result = read_state_file(&tmp, ".state/session-state.md");
         assert!(result.is_none());
@@ -418,7 +415,7 @@ mod tests {
 
     #[test]
     fn read_state_file_returns_contents_when_present() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_state_present");
+        let tmp = std::env::temp_dir().join("orqa_test_state_present");
         make_project(&tmp);
         fs::write(tmp.join(".state/session-state.md"), "# session").unwrap();
         let result = read_state_file(&tmp, ".state/session-state.md");
@@ -428,20 +425,16 @@ mod tests {
 
     #[test]
     fn dogfood_detected_when_flag_true() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_dogfood");
+        let tmp = std::env::temp_dir().join("orqa_test_dogfood");
         make_project(&tmp);
-        fs::write(
-            tmp.join(".orqa/project.json"),
-            r#"{"dogfood":true}"#,
-        )
-        .unwrap();
+        fs::write(tmp.join(".orqa/project.json"), r#"{"dogfood":true}"#).unwrap();
         assert!(detect_dogfood(&tmp));
         fs::remove_dir_all(&tmp).ok();
     }
 
     #[test]
     fn dogfood_not_detected_when_flag_false() {
-        let tmp = PathBuf::from(std::env::temp_dir()).join("orqa_test_no_dogfood");
+        let tmp = std::env::temp_dir().join("orqa_test_no_dogfood");
         make_project(&tmp);
         fs::write(tmp.join(".orqa/project.json"), r#"{"dogfood":false}"#).unwrap();
         assert!(!detect_dogfood(&tmp));

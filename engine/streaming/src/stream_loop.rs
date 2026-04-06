@@ -233,7 +233,7 @@ mod tests {
     fn translate_stream_start() {
         let resp = SidecarResponse::StreamStart {
             message_id: 42,
-            resolved_model: Some("claude-opus-4-6".to_string()),
+            resolved_model: Some("claude-opus-4-6".to_owned()),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -251,7 +251,7 @@ mod tests {
     #[test]
     fn translate_text_delta() {
         let resp = SidecarResponse::TextDelta {
-            content: "Hello ".to_string(),
+            content: "Hello ".to_owned(),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -263,7 +263,7 @@ mod tests {
     #[test]
     fn translate_thinking_delta() {
         let resp = SidecarResponse::ThinkingDelta {
-            content: "Let me consider...".to_string(),
+            content: "Let me consider...".to_owned(),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -275,8 +275,8 @@ mod tests {
     #[test]
     fn translate_tool_use_start() {
         let resp = SidecarResponse::ToolUseStart {
-            tool_call_id: "call_001".to_string(),
-            tool_name: "read_file".to_string(),
+            tool_call_id: "call_001".to_owned(),
+            tool_name: "read_file".to_owned(),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -294,8 +294,8 @@ mod tests {
     #[test]
     fn translate_tool_input_delta() {
         let resp = SidecarResponse::ToolInputDelta {
-            tool_call_id: "call_001".to_string(),
-            content: r#"{"path":"#.to_string(),
+            tool_call_id: "call_001".to_owned(),
+            content: r#"{"path":"#.to_owned(),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -313,9 +313,9 @@ mod tests {
     #[test]
     fn translate_tool_result() {
         let resp = SidecarResponse::ToolResult {
-            tool_call_id: "call_001".to_string(),
-            tool_name: "read_file".to_string(),
-            result: "file contents".to_string(),
+            tool_call_id: "call_001".to_owned(),
+            tool_name: "read_file".to_owned(),
+            result: "file contents".to_owned(),
             is_error: false,
         };
         let event = translate_response(&resp).expect("should translate");
@@ -339,7 +339,7 @@ mod tests {
     fn translate_block_complete() {
         let resp = SidecarResponse::BlockComplete {
             block_index: 2,
-            content_type: "text".to_string(),
+            content_type: "text".to_owned(),
         };
         let event = translate_response(&resp).expect("should translate");
         match event {
@@ -376,8 +376,8 @@ mod tests {
     #[test]
     fn translate_stream_error_event() {
         let resp = SidecarResponse::StreamError {
-            code: "rate_limit".to_string(),
-            message: "Too many requests".to_string(),
+            code: "rate_limit".to_owned(),
+            message: "Too many requests".to_owned(),
             recoverable: true,
         };
         let event = translate_response(&resp).expect("should translate");
@@ -405,7 +405,7 @@ mod tests {
     #[test]
     fn translate_health_ok_returns_none() {
         let resp = SidecarResponse::HealthOk {
-            version: "0.1.0".to_string(),
+            version: "0.1.0".to_owned(),
         };
         assert!(translate_response(&resp).is_none());
     }
@@ -414,7 +414,7 @@ mod tests {
     fn translate_summary_result_returns_none() {
         let resp = SidecarResponse::SummaryResult {
             session_id: 1,
-            summary: "a summary".to_string(),
+            summary: "a summary".to_owned(),
         };
         assert!(translate_response(&resp).is_none());
     }
@@ -433,8 +433,8 @@ mod tests {
     #[test]
     fn stream_error_is_terminal() {
         let resp = SidecarResponse::StreamError {
-            code: "err".to_string(),
-            message: "failed".to_string(),
+            code: "err".to_owned(),
+            message: "failed".to_owned(),
             recoverable: false,
         };
         assert!(is_terminal(&resp));
@@ -449,7 +449,7 @@ mod tests {
     #[test]
     fn text_delta_is_not_terminal() {
         let resp = SidecarResponse::TextDelta {
-            content: "hello".to_string(),
+            content: "hello".to_owned(),
         };
         assert!(!is_terminal(&resp));
     }
@@ -467,7 +467,7 @@ mod tests {
     fn block_complete_is_not_terminal() {
         let resp = SidecarResponse::BlockComplete {
             block_index: 0,
-            content_type: "text".to_string(),
+            content_type: "text".to_owned(),
         };
         assert!(!is_terminal(&resp));
     }
@@ -475,7 +475,7 @@ mod tests {
     #[test]
     fn health_ok_is_not_terminal() {
         let resp = SidecarResponse::HealthOk {
-            version: "1.0".to_string(),
+            version: "1.0".to_owned(),
         };
         assert!(!is_terminal(&resp));
     }
@@ -485,9 +485,9 @@ mod tests {
     #[test]
     fn translate_tool_execute_returns_none() {
         let resp = SidecarResponse::ToolExecute {
-            tool_call_id: "call_010".to_string(),
-            tool_name: "read_file".to_string(),
-            input: r#"{"path":"/src/main.rs"}"#.to_string(),
+            tool_call_id: "call_010".to_owned(),
+            tool_name: "read_file".to_owned(),
+            input: r#"{"path":"/src/main.rs"}"#.to_owned(),
         };
         assert!(translate_response(&resp).is_none());
     }
@@ -495,9 +495,9 @@ mod tests {
     #[test]
     fn translate_tool_approval_request_returns_event() {
         let resp = SidecarResponse::ToolApprovalRequest {
-            tool_call_id: "call_011".to_string(),
-            tool_name: "write_file".to_string(),
-            input: r#"{"path":"/tmp/out.txt"}"#.to_string(),
+            tool_call_id: "call_011".to_owned(),
+            tool_name: "write_file".to_owned(),
+            input: r#"{"path":"/tmp/out.txt"}"#.to_owned(),
         };
         let event = translate_response(&resp);
         assert!(event.is_some());
@@ -518,9 +518,9 @@ mod tests {
     #[test]
     fn tool_execute_is_not_terminal() {
         let resp = SidecarResponse::ToolExecute {
-            tool_call_id: "call_010".to_string(),
-            tool_name: "read_file".to_string(),
-            input: "{}".to_string(),
+            tool_call_id: "call_010".to_owned(),
+            tool_name: "read_file".to_owned(),
+            input: "{}".to_owned(),
         };
         assert!(!is_terminal(&resp));
     }
@@ -528,9 +528,9 @@ mod tests {
     #[test]
     fn tool_approval_request_is_not_terminal() {
         let resp = SidecarResponse::ToolApprovalRequest {
-            tool_call_id: "call_011".to_string(),
-            tool_name: "write_file".to_string(),
-            input: "{}".to_string(),
+            tool_call_id: "call_011".to_owned(),
+            tool_name: "write_file".to_owned(),
+            input: "{}".to_owned(),
         };
         assert!(!is_terminal(&resp));
     }
@@ -545,17 +545,17 @@ mod tests {
                 resolved_model: None,
             },
             SidecarResponse::TextDelta {
-                content: "Hello".to_string(),
+                content: "Hello".to_owned(),
             },
             SidecarResponse::TextDelta {
-                content: ", ".to_string(),
+                content: ", ".to_owned(),
             },
             SidecarResponse::TextDelta {
-                content: "world!".to_string(),
+                content: "world!".to_owned(),
             },
             SidecarResponse::BlockComplete {
                 block_index: 0,
-                content_type: "text".to_string(),
+                content_type: "text".to_owned(),
             },
             SidecarResponse::TurnComplete {
                 input_tokens: 100,
@@ -592,8 +592,8 @@ mod tests {
         };
         accumulate_response(
             &SidecarResponse::StreamError {
-                code: "err".to_string(),
-                message: "fail".to_string(),
+                code: "err".to_owned(),
+                message: "fail".to_owned(),
                 recoverable: false,
             },
             &mut acc,
@@ -633,8 +633,8 @@ mod tests {
     #[test]
     fn translate_stream_error_context_overflow_gets_friendly_message() {
         let resp = SidecarResponse::StreamError {
-            code: "context_length_exceeded".to_string(),
-            message: "Input is too long".to_string(),
+            code: "context_length_exceeded".to_owned(),
+            message: "Input is too long".to_owned(),
             recoverable: false,
         };
         let event = translate_response(&resp).expect("should translate");
@@ -650,8 +650,8 @@ mod tests {
     #[test]
     fn translate_stream_error_normal_error_keeps_original_message() {
         let resp = SidecarResponse::StreamError {
-            code: "rate_limit".to_string(),
-            message: "Too many requests".to_string(),
+            code: "rate_limit".to_owned(),
+            message: "Too many requests".to_owned(),
             recoverable: true,
         };
         let event = translate_response(&resp).expect("should translate");

@@ -129,7 +129,8 @@ impl SearchStore {
         } else {
             stmt.query_map([], map_chunk_row)?
         };
-        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
+        rows.collect::<Result<Vec<_>, _>>()
+            .map_err(StoreError::from)
     }
 
     /// Get the current status of the search index.
@@ -189,7 +190,8 @@ impl SearchStore {
         let rows = stmt.query_map([], |row| {
             Ok((row.get::<_, i32>(0)?, row.get::<_, String>(1)?))
         })?;
-        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
+        rows.collect::<Result<Vec<_>, _>>()
+            .map_err(StoreError::from)
     }
 
     /// Semantic search by computing cosine similarity against stored embeddings.
@@ -225,7 +227,8 @@ impl SearchStore {
                 id, file_path, start_line, end_line, content, language, embedding,
             ))
         })?;
-        rows.collect::<Result<Vec<_>, _>>().map_err(StoreError::from)
+        rows.collect::<Result<Vec<_>, _>>()
+            .map_err(StoreError::from)
     }
 }
 
@@ -405,10 +408,10 @@ mod tests {
         lang: Option<&str>,
     ) -> ChunkInfo {
         ChunkInfo {
-            file_path: path.to_string(),
+            file_path: path.to_owned(),
             start_line: start,
             end_line: end,
-            content: content.to_string(),
+            content: content.to_owned(),
             language: lang.map(String::from),
         }
     }
@@ -688,7 +691,7 @@ mod tests {
 
     #[test]
     fn floats_to_bytes_roundtrip() {
-        let original = vec![1.0f32, -2.5, 3.14159, 0.0, f32::MAX, f32::MIN];
+        let original = vec![1.0f32, -2.5, 1.23456, 0.0, f32::MAX, f32::MIN];
         let bytes = floats_to_bytes(&original);
         let recovered = bytes_to_floats(&bytes);
         assert_eq!(original, recovered);
@@ -729,19 +732,19 @@ mod tests {
     fn cosine_similarity_different_lengths_returns_zero() {
         let a = vec![1.0f32, 2.0];
         let b = vec![1.0f32, 2.0, 3.0];
-        assert_eq!(cosine_similarity(&a, &b), 0.0);
+        assert!((cosine_similarity(&a, &b) - 0.0_f64).abs() < f64::EPSILON);
     }
 
     #[test]
     fn cosine_similarity_empty_returns_zero() {
         let empty: Vec<f32> = vec![];
-        assert_eq!(cosine_similarity(&empty, &empty), 0.0);
+        assert!((cosine_similarity(&empty, &empty) - 0.0_f64).abs() < f64::EPSILON);
     }
 
     #[test]
     fn cosine_similarity_zero_vectors_returns_zero() {
         let z = vec![0.0f32, 0.0, 0.0];
-        assert_eq!(cosine_similarity(&z, &z), 0.0);
+        assert!((cosine_similarity(&z, &z) - 0.0_f64).abs() < f64::EPSILON);
     }
 
     #[test]

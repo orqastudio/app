@@ -46,14 +46,13 @@ mod tests {
     #[test]
     fn stash_list_on_nonexistent_path_returns_none() {
         // Git cannot operate on a nonexistent directory.
-        let result = stash_list(std::path::Path::new("/nonexistent/path/that/cannot/exist"));
+        let result = stash_list(Path::new("/nonexistent/path/that/cannot/exist"));
         assert!(result.is_none());
     }
 
     #[test]
     fn uncommitted_status_on_nonexistent_path_returns_none() {
-        let result =
-            uncommitted_status(std::path::Path::new("/nonexistent/path/that/cannot/exist"));
+        let result = uncommitted_status(Path::new("/nonexistent/path/that/cannot/exist"));
         assert!(result.is_none());
     }
 }

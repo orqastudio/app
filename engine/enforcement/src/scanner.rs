@@ -64,7 +64,12 @@ fn scan_artifact_areas(project_path: &Path, artifacts: &[ArtifactEntry]) -> Vec<
     artifacts
         .iter()
         .flat_map(|entry| match entry {
-            ArtifactEntry::Group { key: _, label: _, icon: _, children } => children
+            ArtifactEntry::Group {
+                key: _,
+                label: _,
+                icon: _,
+                children,
+            } => children
                 .iter()
                 .map(|child| {
                     let dir = project_path.join(&child.path);
@@ -118,7 +123,9 @@ fn collect_files_recursive(dir: &Path) -> Vec<GovernanceFile> {
                     .and_then(|e| e.to_str())
                     .is_some_and(|e| e == "md");
                 if is_md {
-                    read_governance_file(&path).map(|f| vec![f]).unwrap_or_default()
+                    read_governance_file(&path)
+                        .map(|f| vec![f])
+                        .unwrap_or_default()
                 } else {
                     Vec::new()
                 }
@@ -217,7 +224,7 @@ mod tests {
         let artifacts = test_artifacts();
         let result = scan_governance(&dir, &artifacts).expect("scan");
 
-        assert_eq!(result.coverage_ratio, 0.0);
+        assert!((result.coverage_ratio - 0.0_f64).abs() < f64::EPSILON);
         assert_eq!(result.areas.len(), 3);
         for area in &result.areas {
             assert!(!area.covered);
@@ -232,7 +239,7 @@ mod tests {
         let result = scan_governance(&dir, &[]).expect("scan");
 
         assert_eq!(result.areas.len(), 0);
-        assert_eq!(result.coverage_ratio, 0.0);
+        assert!((result.coverage_ratio - 0.0_f64).abs() < f64::EPSILON);
 
         cleanup(&dir);
     }
@@ -249,11 +256,15 @@ mod tests {
         fs::write(dir.join(".orqa/learning/lessons/IMPL-001.md"), "# Lesson").expect("write");
 
         fs::create_dir_all(dir.join(".orqa/documentation/architecture")).expect("mkdir");
-        fs::write(dir.join(".orqa/documentation/architecture/overview.md"), "# Arch").expect("write");
+        fs::write(
+            dir.join(".orqa/documentation/architecture/overview.md"),
+            "# Arch",
+        )
+        .expect("write");
 
         let result = scan_governance(&dir, &artifacts).expect("scan");
         assert_eq!(result.areas.len(), 3);
-        assert_eq!(result.coverage_ratio, 1.0);
+        assert!((result.coverage_ratio - 1.0_f64).abs() < f64::EPSILON);
 
         cleanup(&dir);
     }
@@ -305,10 +316,7 @@ mod tests {
 
     #[test]
     fn nonexistent_path_returns_error() {
-        let result = scan_governance(
-            Path::new("/nonexistent/governance/test/path/xyz"),
-            &[],
-        );
+        let result = scan_governance(Path::new("/nonexistent/governance/test/path/xyz"), &[]);
         assert!(result.is_err());
         assert!(matches!(result, Err(EngineError::Validation(_))));
     }
@@ -325,8 +333,16 @@ mod tests {
 
         fs::create_dir_all(dir.join(".orqa/documentation/architecture")).expect("mkdir");
         fs::create_dir_all(dir.join(".orqa/documentation/product")).expect("mkdir");
-        fs::write(dir.join(".orqa/documentation/architecture/decisions.md"), "# Decisions").expect("write");
-        fs::write(dir.join(".orqa/documentation/product/vision.md"), "# Vision").expect("write");
+        fs::write(
+            dir.join(".orqa/documentation/architecture/decisions.md"),
+            "# Decisions",
+        )
+        .expect("write");
+        fs::write(
+            dir.join(".orqa/documentation/product/vision.md"),
+            "# Vision",
+        )
+        .expect("write");
 
         let result = scan_governance(&dir, &artifacts).expect("scan");
         let doc_area = result
@@ -377,10 +393,18 @@ mod tests {
         let result = scan_governance(&dir, &artifacts).expect("scan");
         assert_eq!(result.areas.len(), 2);
 
-        let agents_area = result.areas.iter().find(|a| a.name == "agents").expect("agents");
+        let agents_area = result
+            .areas
+            .iter()
+            .find(|a| a.name == "agents")
+            .expect("agents");
         assert!(agents_area.covered);
 
-        let knowledge_area = result.areas.iter().find(|a| a.name == "knowledge").expect("knowledge");
+        let knowledge_area = result
+            .areas
+            .iter()
+            .find(|a| a.name == "knowledge")
+            .expect("knowledge");
         assert!(!knowledge_area.covered);
 
         assert!((result.coverage_ratio - 0.5).abs() < 1e-9);

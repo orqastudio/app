@@ -7,10 +7,10 @@
 
 use std::collections::HashMap;
 
-use rusqlite::{OptionalExtension, params};
+use rusqlite::{params, OptionalExtension};
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Zero-cost repository handle for the `settings` table.
 ///
@@ -23,11 +23,7 @@ impl SettingsRepo<'_> {
     /// Get a single setting value by key and scope.
     ///
     /// Returns `None` if the key does not exist in the given scope.
-    pub fn get(
-        &self,
-        key: &str,
-        scope: &str,
-    ) -> Result<Option<serde_json::Value>, StorageError> {
+    pub fn get(&self, key: &str, scope: &str) -> Result<Option<serde_json::Value>, StorageError> {
         let conn = self.storage.conn()?;
         let value: Option<String> = conn
             .query_row(
@@ -72,8 +68,7 @@ impl SettingsRepo<'_> {
     /// with an explicit scope when the scope is known.
     pub fn get_all_any_scope(&self) -> Result<HashMap<String, serde_json::Value>, StorageError> {
         let conn = self.storage.conn()?;
-        let mut stmt =
-            conn.prepare("SELECT key, value FROM settings ORDER BY key ASC")?;
+        let mut stmt = conn.prepare("SELECT key, value FROM settings ORDER BY key ASC")?;
 
         let rows = stmt.query_map([], |row| {
             let key: String = row.get(0)?;
@@ -90,10 +85,7 @@ impl SettingsRepo<'_> {
     }
 
     /// Get all settings for a given scope, ordered by key.
-    pub fn get_all(
-        &self,
-        scope: &str,
-    ) -> Result<HashMap<String, serde_json::Value>, StorageError> {
+    pub fn get_all(&self, scope: &str) -> Result<HashMap<String, serde_json::Value>, StorageError> {
         let conn = self.storage.conn()?;
         let mut stmt =
             conn.prepare("SELECT key, value FROM settings WHERE scope = ?1 ORDER BY key ASC")?;
@@ -115,7 +107,7 @@ impl SettingsRepo<'_> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
     use crate::Storage;
 
     #[test]

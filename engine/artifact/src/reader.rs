@@ -672,10 +672,10 @@ mod tests {
     fn type_entry_with_no_directory_returns_empty_tree() {
         let tmp = make_temp_project();
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "ideas".to_string(),
+            key: "ideas".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/implementation/ideas".to_string(),
+            path: ".orqa/implementation/ideas".to_owned(),
         })];
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
         // Directory doesn't exist — type has no nodes, so the group is dropped.
@@ -701,10 +701,10 @@ mod tests {
         .expect("write readme");
 
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "ideas".to_string(),
+            key: "ideas".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/implementation/ideas".to_string(),
+            path: ".orqa/implementation/ideas".to_owned(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
@@ -734,10 +734,10 @@ mod tests {
 
         // No README — label should be humanized from key.
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "my-ideas".to_string(),
+            key: "my-ideas".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/implementation/ideas".to_string(),
+            path: ".orqa/implementation/ideas".to_owned(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
@@ -767,21 +767,21 @@ mod tests {
         fs::write(epics_dir.join("README.md"), "---\nlabel: Epics\n---\n").expect("epics readme");
 
         let entries = vec![ArtifactEntry::Group {
-            key: "delivery".to_string(),
+            key: "delivery".to_owned(),
             label: None,
             icon: None,
             children: vec![
                 ArtifactTypeConfig {
-                    key: "ideas".to_string(),
+                    key: "ideas".to_owned(),
                     label: None,
                     icon: None,
-                    path: ".orqa/implementation/ideas".to_string(),
+                    path: ".orqa/implementation/ideas".to_owned(),
                 },
                 ArtifactTypeConfig {
-                    key: "epics".to_string(),
+                    key: "epics".to_owned(),
                     label: None,
                     icon: None,
-                    path: ".orqa/implementation/epics".to_string(),
+                    path: ".orqa/implementation/epics".to_owned(),
                 },
             ],
         }];
@@ -798,6 +798,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn recursive_scan_builds_tree_for_subdirectories() {
         let tmp = make_temp_project();
 
@@ -839,10 +840,10 @@ mod tests {
         fs::create_dir_all(&empty_dir).expect("empty dir");
 
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "docs".to_string(),
+            key: "docs".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/documentation".to_string(),
+            path: ".orqa/documentation".to_owned(),
         })];
 
         let tree = artifact_scan_tree(tmp.path(), &entries).expect("scan");
@@ -876,7 +877,7 @@ mod tests {
         assert_eq!(arch_children[0].label, "Architecture Decisions");
         assert_eq!(
             arch_children[0].path,
-            Some(".orqa/documentation/architecture/decisions.md".to_string())
+            Some(".orqa/documentation/architecture/decisions.md".to_owned())
         );
         assert_eq!(arch_children[1].label, "Overview");
 
@@ -895,7 +896,7 @@ mod tests {
         assert_eq!(deep_children[0].label, "Deep Doc");
         assert_eq!(
             deep_children[0].path,
-            Some(".orqa/documentation/product/deep/deep-doc.md".to_string())
+            Some(".orqa/documentation/product/deep/deep-doc.md".to_owned())
         );
         assert_eq!(product_children[1].label, "Vision");
     }

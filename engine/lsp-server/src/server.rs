@@ -437,6 +437,50 @@ impl LanguageServer for OrqaLspBackend {
     }
 }
 
+/// Run the LSP server over stdio.
+///
+/// This is the standard LSP transport. The editor launches this binary and
+/// communicates over stdin/stdout.
+pub async fn run_stdio(
+    project_root: &Path,
+    daemon_port: u16,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let stdin = tokio::io::stdin();
+    let stdout = tokio::io::stdout();
+
+    let project_root = project_root.to_path_buf();
+    let (service, socket) =
+        LspService::new(|client| OrqaLspBackend::new(client, project_root, daemon_port));
+    Server::new(stdin, stdout, socket).serve(service).await;
+
+    Ok(())
+}
+
+/// Run the LSP server over a TCP connection.
+///
+/// Useful for debugging with editors that support TCP LSP connections.
+pub async fn run_tcp(
+    project_root: &Path,
+    port: u16,
+    daemon_port: u16,
+) -> Result<(), Box<dyn std::error::Error>> {
+    use tokio::net::TcpListener;
+
+    let addr = format!("127.0.0.1:{port}");
+    let listener = TcpListener::bind(&addr).await?;
+    tracing::info!("OrqaStudio LSP server listening on {addr}");
+
+    let (stream, _) = listener.accept().await?;
+    let (read, write) = tokio::io::split(stream);
+
+    let project_root = project_root.to_path_buf();
+    let (service, socket) =
+        LspService::new(|client| OrqaLspBackend::new(client, project_root, daemon_port));
+    Server::new(read, write, socket).serve(service).await;
+
+    Ok(())
+}
+
 // ---------------------------------------------------------------------------
 // Entry points
 // ---------------------------------------------------------------------------
@@ -498,7 +542,10 @@ mod tests {
 
     #[test]
     fn category_label_type_constraint() {
-        assert_eq!(category_label_from_str("TypeConstraintViolation"), "[type-constraint]");
+        assert_eq!(
+            category_label_from_str("TypeConstraintViolation"),
+            "[type-constraint]"
+        );
     }
 
     #[test]
@@ -518,7 +565,10 @@ mod tests {
 
     #[test]
     fn category_label_schema_violation() {
-        assert_eq!(category_label_from_str("SchemaViolation"), "[schema-violation]");
+        assert_eq!(
+            category_label_from_str("SchemaViolation"),
+            "[schema-violation]"
+        );
     }
 
     #[test]
@@ -528,12 +578,18 @@ mod tests {
 
     #[test]
     fn category_label_duplicate_relationship() {
-        assert_eq!(category_label_from_str("DuplicateRelationship"), "[duplicate-relationship]");
+        assert_eq!(
+            category_label_from_str("DuplicateRelationship"),
+            "[duplicate-relationship]"
+        );
     }
 
     #[test]
     fn category_label_circular_dep() {
-        assert_eq!(category_label_from_str("CircularDependency"), "[circular-dep]");
+        assert_eq!(
+            category_label_from_str("CircularDependency"),
+            "[circular-dep]"
+        );
     }
 
     // -----------------------------------------------------------------------
@@ -631,48 +687,4 @@ mod tests {
         let diag = integrity_check_value_to_diagnostic(&check).unwrap();
         assert_eq!(diag.severity, Some(DiagnosticSeverity::ERROR));
     }
-}
-
-/// Run the LSP server over stdio.
-///
-/// This is the standard LSP transport. The editor launches this binary and
-/// communicates over stdin/stdout.
-pub async fn run_stdio(
-    project_root: &Path,
-    daemon_port: u16,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let stdin = tokio::io::stdin();
-    let stdout = tokio::io::stdout();
-
-    let project_root = project_root.to_path_buf();
-    let (service, socket) =
-        LspService::new(|client| OrqaLspBackend::new(client, project_root, daemon_port));
-    Server::new(stdin, stdout, socket).serve(service).await;
-
-    Ok(())
-}
-
-/// Run the LSP server over a TCP connection.
-///
-/// Useful for debugging with editors that support TCP LSP connections.
-pub async fn run_tcp(
-    project_root: &Path,
-    port: u16,
-    daemon_port: u16,
-) -> Result<(), Box<dyn std::error::Error>> {
-    use tokio::net::TcpListener;
-
-    let addr = format!("127.0.0.1:{port}");
-    let listener = TcpListener::bind(&addr).await?;
-    tracing::info!("OrqaStudio LSP server listening on {addr}");
-
-    let (stream, _) = listener.accept().await?;
-    let (read, write) = tokio::io::split(stream);
-
-    let project_root = project_root.to_path_buf();
-    let (service, socket) =
-        LspService::new(|client| OrqaLspBackend::new(client, project_root, daemon_port));
-    Server::new(read, write, socket).serve(service).await;
-
-    Ok(())
 }

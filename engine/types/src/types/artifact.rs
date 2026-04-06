@@ -281,4 +281,3 @@ pub struct NavTree {
     /// All top-level groups discovered from `.orqa/` and `docs/`.
     pub groups: Vec<NavGroup>,
 }
-

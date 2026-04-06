@@ -307,10 +307,10 @@ mod tests {
         use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
         let root = Path::new("/tmp/project");
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "rule".to_string(),
+            key: "rule".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/learning/rules".to_string(),
+            path: ".orqa/learning/rules".to_owned(),
         })];
         let dir = governance_dir(root, "rule", &entries);
         assert_eq!(dir, Some(root.join(".orqa/learning/rules")));
@@ -321,10 +321,10 @@ mod tests {
         use orqa_engine_types::config::{ArtifactEntry, ArtifactTypeConfig};
         let root = Path::new("/tmp/project");
         let entries = vec![ArtifactEntry::Type(ArtifactTypeConfig {
-            key: "rule".to_string(),
+            key: "rule".to_owned(),
             label: None,
             icon: None,
-            path: ".orqa/learning/rules".to_string(),
+            path: ".orqa/learning/rules".to_owned(),
         })];
         // "epic" is not in this config — returns None.
         assert!(governance_dir(root, "epic", &entries).is_none());

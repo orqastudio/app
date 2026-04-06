@@ -324,8 +324,12 @@ mod tests {
     #[test]
     fn artifact_graph_serde_round_trip() {
         let mut graph = ArtifactGraph::default();
-        graph.nodes.insert("TASK-001".to_owned(), make_node("TASK-001", "task"));
-        graph.path_index.insert(".orqa/tasks/TASK-001.md".to_owned(), "TASK-001".to_owned());
+        graph
+            .nodes
+            .insert("TASK-001".to_owned(), make_node("TASK-001", "task"));
+        graph
+            .path_index
+            .insert(".orqa/tasks/TASK-001.md".to_owned(), "TASK-001".to_owned());
 
         let json = serde_json::to_string(&graph).expect("serialize");
         let restored: ArtifactGraph = serde_json::from_str(&json).expect("deserialize");
@@ -398,7 +402,7 @@ mod tests {
         assert_eq!(h.outlier_count, 0);
         assert_eq!(h.total_nodes, 0);
         assert_eq!(h.total_edges, 0);
-        assert_eq!(h.avg_degree, 0.0);
+        assert!((h.avg_degree - 0.0_f64).abs() < f64::EPSILON);
         assert_eq!(h.broken_ref_count, 0);
     }
 
@@ -435,7 +439,10 @@ mod tests {
     #[test]
     fn integrity_category_equality() {
         assert_eq!(IntegrityCategory::BrokenLink, IntegrityCategory::BrokenLink);
-        assert_ne!(IntegrityCategory::BrokenLink, IntegrityCategory::InvalidStatus);
+        assert_ne!(
+            IntegrityCategory::BrokenLink,
+            IntegrityCategory::InvalidStatus
+        );
     }
 
     #[test]

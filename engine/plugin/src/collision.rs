@@ -111,7 +111,9 @@ fn build_existing_relationships(
         .filter(|plugin| plugin.name != incoming_plugin_name)
         .filter_map(|plugin| {
             let plugin_dir = std::path::Path::new(&plugin.path).to_path_buf();
-            read_manifest(&plugin_dir).ok().map(|manifest| (plugin.name, manifest))
+            read_manifest(&plugin_dir)
+                .ok()
+                .map(|manifest| (plugin.name, manifest))
         })
         .flat_map(|(name, manifest)| {
             manifest
@@ -135,12 +137,12 @@ mod tests {
 
     fn make_schema(key: &str, semantic: &str, from: &[&str], to: &[&str]) -> RelationshipSchema {
         RelationshipSchema {
-            key: key.to_string(),
+            key: key.to_owned(),
             inverse: format!("{key}-inverse"),
             description: format!("Test {key}"),
-            from: from.iter().map(|s| s.to_string()).collect(),
-            to: to.iter().map(|s| s.to_string()).collect(),
-            semantic: Some(semantic.to_string()),
+            from: from.iter().map(ToString::to_string).collect(),
+            to: to.iter().map(ToString::to_string).collect(),
+            semantic: Some(semantic.to_owned()),
             constraints: None,
         }
     }
@@ -172,12 +174,12 @@ mod tests {
     fn semantic_match_flag_computed_correctly() {
         // Two schemas with the same semantic: semantic_match == true.
         let existing = RelationshipSchema {
-            key: "grounded".to_string(),
-            inverse: "grounded-by".to_string(),
-            description: "existing".to_string(),
+            key: "grounded".to_owned(),
+            inverse: "grounded-by".to_owned(),
+            description: "existing".to_owned(),
             from: vec![],
             to: vec![],
-            semantic: Some("foundation".to_string()),
+            semantic: Some("foundation".to_owned()),
             constraints: None,
         };
         let incoming = make_schema("grounded", "foundation", &["research"], &["pillar"]);

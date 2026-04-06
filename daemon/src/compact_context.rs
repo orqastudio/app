@@ -114,11 +114,7 @@ fn read_session_state(project_path: &Path) -> String {
 /// reference the plugin-resolved agent role rather than any hardcoded path —
 /// this satisfies P1 (Plugin-Composed Everything) and avoids hardcoding
 /// `.orqa/process/agents/orchestrator.md`.
-fn compose_document(
-    epics: &[ArtifactItem],
-    tasks: &[ArtifactItem],
-    session_state: &str,
-) -> String {
+fn compose_document(epics: &[ArtifactItem], tasks: &[ArtifactItem], session_state: &str) -> String {
     // Build each optional section as a String, then join non-empty sections.
     let header = format!(
         "# Governance Context (saved before compaction)\n\nSaved: {}",
@@ -163,11 +159,17 @@ fn compose_document(
         pipeline to regenerate your agent context from installed plugins)\n\
         4. Any skills referenced by the current tasks";
 
-    [header, epics_section, tasks_section, session_section, recovery.to_owned()]
-        .into_iter()
-        .filter(|s| !s.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n\n")
+    [
+        header,
+        epics_section,
+        tasks_section,
+        session_section,
+        recovery.to_owned(),
+    ]
+    .into_iter()
+    .filter(|s| !s.is_empty())
+    .collect::<Vec<_>>()
+    .join("\n\n")
 }
 
 /// Build a short summary string for the response and telemetry.
@@ -192,11 +194,7 @@ fn compose_summary(epics: &[ArtifactItem], tasks: &[ArtifactItem]) -> String {
             "Active tasks: {}",
             tasks
                 .iter()
-                .map(|t| format!(
-                    "{} [{}]",
-                    t.id,
-                    t.status.as_deref().unwrap_or("active")
-                ))
+                .map(|t| format!("{} [{}]", t.id, t.status.as_deref().unwrap_or("active")))
                 .collect::<Vec<_>>()
                 .join(", ")
         )
@@ -311,7 +309,14 @@ mod tests {
     use std::fs;
 
     /// Create a minimal artifact markdown file with YAML frontmatter.
-    fn write_artifact(dir: &std::path::Path, filename: &str, id: &str, title: &str, artifact_type: &str, status: &str) {
+    fn write_artifact(
+        dir: &Path,
+        filename: &str,
+        id: &str,
+        title: &str,
+        artifact_type: &str,
+        status: &str,
+    ) {
         let content = format!(
             "---\nid: {id}\ntitle: {title}\ntype: {artifact_type}\nstatus: {status}\n---\n\nBody.\n"
         );
@@ -331,8 +336,22 @@ mod tests {
         let epics_dir = dir.path().join(".orqa").join("delivery").join("epics");
         fs::create_dir_all(&epics_dir).expect("create epics dir");
 
-        write_artifact(&epics_dir, "EPIC-001.md", "EPIC-001", "Alpha Feature", "epic", "active");
-        write_artifact(&epics_dir, "EPIC-002.md", "EPIC-002", "Beta Feature", "epic", "completed");
+        write_artifact(
+            &epics_dir,
+            "EPIC-001.md",
+            "EPIC-001",
+            "Alpha Feature",
+            "epic",
+            "active",
+        );
+        write_artifact(
+            &epics_dir,
+            "EPIC-002.md",
+            "EPIC-002",
+            "Beta Feature",
+            "epic",
+            "completed",
+        );
 
         let results = query_artifacts(dir.path(), "epic", "active");
         assert_eq!(results.len(), 1);
@@ -346,8 +365,22 @@ mod tests {
         let tasks_dir = dir.path().join(".orqa").join("delivery").join("tasks");
         fs::create_dir_all(&tasks_dir).expect("create tasks dir");
 
-        write_artifact(&tasks_dir, "TASK-001.md", "TASK-001", "Do work", "task", "pending");
-        write_artifact(&tasks_dir, "TASK-002.md", "TASK-002", "In flight", "task", "in-progress");
+        write_artifact(
+            &tasks_dir,
+            "TASK-001.md",
+            "TASK-001",
+            "Do work",
+            "task",
+            "pending",
+        );
+        write_artifact(
+            &tasks_dir,
+            "TASK-002.md",
+            "TASK-002",
+            "In flight",
+            "task",
+            "in-progress",
+        );
 
         let results = query_artifacts(dir.path(), "task", "in-progress");
         assert_eq!(results.len(), 1);
@@ -366,7 +399,8 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let state_dir = dir.path().join(".state");
         fs::create_dir_all(&state_dir).expect("create .state dir");
-        fs::write(state_dir.join("session-state.md"), "# Session\n\nDoing X.").expect("write state");
+        fs::write(state_dir.join("session-state.md"), "# Session\n\nDoing X.")
+            .expect("write state");
 
         let state = read_session_state(dir.path());
         assert!(state.contains("Doing X"));
@@ -375,9 +409,9 @@ mod tests {
     #[test]
     fn compose_document_includes_recovery_instructions_without_hardcoded_path() {
         let epics = vec![ArtifactItem {
-            id: "EPIC-001".to_string(),
-            title: "My Epic".to_string(),
-            status: Some("active".to_string()),
+            id: "EPIC-001".to_owned(),
+            title: "My Epic".to_owned(),
+            status: Some("active".to_owned()),
         }];
         let tasks: Vec<ArtifactItem> = Vec::new();
         let doc = compose_document(&epics, &tasks, "");
@@ -393,9 +427,9 @@ mod tests {
     #[test]
     fn compose_document_includes_active_epics_section() {
         let epics = vec![ArtifactItem {
-            id: "EPIC-042".to_string(),
-            title: "Big Feature".to_string(),
-            status: Some("active".to_string()),
+            id: "EPIC-042".to_owned(),
+            title: "Big Feature".to_owned(),
+            status: Some("active".to_owned()),
         }];
         let tasks: Vec<ArtifactItem> = Vec::new();
         let doc = compose_document(&epics, &tasks, "");
@@ -409,9 +443,9 @@ mod tests {
     fn compose_document_includes_active_tasks_section() {
         let epics: Vec<ArtifactItem> = Vec::new();
         let tasks = vec![ArtifactItem {
-            id: "TASK-007".to_string(),
-            title: "Fix the thing".to_string(),
-            status: Some("in-progress".to_string()),
+            id: "TASK-007".to_owned(),
+            title: "Fix the thing".to_owned(),
+            status: Some("in-progress".to_owned()),
         }];
         let doc = compose_document(&epics, &tasks, "");
 
@@ -448,8 +482,16 @@ mod tests {
     #[test]
     fn compose_summary_lists_epic_ids() {
         let epics = vec![
-            ArtifactItem { id: "EPIC-001".to_string(), title: "A".to_string(), status: None },
-            ArtifactItem { id: "EPIC-002".to_string(), title: "B".to_string(), status: None },
+            ArtifactItem {
+                id: "EPIC-001".to_owned(),
+                title: "A".to_owned(),
+                status: None,
+            },
+            ArtifactItem {
+                id: "EPIC-002".to_owned(),
+                title: "B".to_owned(),
+                status: None,
+            },
         ];
         let summary = compose_summary(&epics, &[]);
         assert!(summary.contains("EPIC-001"));

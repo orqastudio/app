@@ -20,9 +20,7 @@ pub fn message_list(
     let offset_val = offset.unwrap_or(0);
 
     if limit_val < 0 {
-        return Err(OrqaError::Validation(
-            "limit cannot be negative".to_owned(),
-        ));
+        return Err(OrqaError::Validation("limit cannot be negative".to_owned()));
     }
     if offset_val < 0 {
         return Err(OrqaError::Validation(
@@ -98,11 +96,25 @@ mod tests {
         let (storage, session_id) = setup();
         storage
             .messages()
-            .create(session_id, "user", "text", Some("How do I fix the parsing bug?"), 0, 0)
+            .create(
+                session_id,
+                "user",
+                "text",
+                Some("How do I fix the parsing bug?"),
+                0,
+                0,
+            )
             .expect("create");
         storage
             .messages()
-            .create(session_id, "assistant", "text", Some("Update the parser module"), 1, 0)
+            .create(
+                session_id,
+                "assistant",
+                "text",
+                Some("Update the parser module"),
+                1,
+                0,
+            )
             .expect("create");
 
         // search uses project_id=1 (the project in setup)

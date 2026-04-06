@@ -77,11 +77,11 @@ pub mod lesson {
 
 /// Graph-theoretic metric types and computation functions.
 pub mod metrics {
-    pub use orqa_graph::{
-        compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
-    };
     pub use orqa_engine_types::{
         AncestryChain, AncestryNode, GraphHealth, TraceabilityResult, TracedArtifact,
+    };
+    pub use orqa_graph::{
+        compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     };
 }
 
@@ -279,27 +279,30 @@ pub mod utils {
 
 /// Integrity check types, context-building functions, and validation.
 pub mod validation {
-    pub use orqa_validation::context::{build_validation_context, build_validation_context_with_types};
+    pub use orqa_validation::checks;
+    pub use orqa_validation::context::{
+        build_validation_context, build_validation_context_with_types,
+    };
     pub use orqa_validation::error::ValidationError;
     pub use orqa_validation::evaluate_hook;
+    pub use orqa_validation::platform;
     pub use orqa_validation::platform::{
-        ArtifactTypeDef, EnforcementMechanism, PluginContributions, SchemaExtension,
-        scan_plugin_manifests,
+        scan_plugin_manifests, ArtifactTypeDef, EnforcementMechanism, PluginContributions,
+        SchemaExtension,
     };
     pub use orqa_validation::settings::DeliveryConfig;
+    pub use orqa_validation::types;
     pub use orqa_validation::types::{
         AppliedFix, EnforcementEvent, EnforcementResult, HookContext, HookResult, HookViolation,
-        IntegrityCategory, IntegrityCheck, IntegritySeverity, ParsedArtifact, RelationshipConstraints,
-        RelationshipSchema, StatusRule, ValidationContext, ValidationResult,
+        IntegrityCategory, IntegrityCheck, IntegritySeverity, ParsedArtifact,
+        RelationshipConstraints, RelationshipSchema, StatusRule, ValidationContext,
+        ValidationResult,
     };
     pub use orqa_validation::{
         artifact_from_graph_node, auto_fix, is_hex_artifact_id, is_valid_artifact_id,
         parse_artifact, query_artifacts, update_artifact_field, validate, validate_file,
         FileFinding, FileSeverity,
     };
-    pub use orqa_validation::checks;
-    pub use orqa_validation::platform;
-    pub use orqa_validation::types;
 }
 
 /// Status transition evaluation, process state tracking, session activity tracking.

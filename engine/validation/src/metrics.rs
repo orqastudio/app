@@ -6,8 +6,8 @@
 
 // Re-export traceability and health types from engine/types.
 pub use orqa_engine_types::{
-    AncestryChain, AncestryNode, GraphHealth, OutlierAgeDistribution, TracedArtifact,
-    TraceabilityResult,
+    AncestryChain, AncestryNode, GraphHealth, OutlierAgeDistribution, TraceabilityResult,
+    TracedArtifact,
 };
 
 // Re-export metric computation functions and types from orqa_graph.

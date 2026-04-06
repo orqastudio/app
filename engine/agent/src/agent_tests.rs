@@ -19,14 +19,38 @@ mod tests {
     #[test]
     fn base_role_serializes_to_snake_case() {
         // The CLAUDE.md role table uses snake_case keys — verify each variant.
-        assert_eq!(serde_json::to_value(&BaseRole::Orchestrator).unwrap(), json!("orchestrator"));
-        assert_eq!(serde_json::to_value(&BaseRole::Implementer).unwrap(), json!("implementer"));
-        assert_eq!(serde_json::to_value(&BaseRole::Reviewer).unwrap(), json!("reviewer"));
-        assert_eq!(serde_json::to_value(&BaseRole::Researcher).unwrap(), json!("researcher"));
-        assert_eq!(serde_json::to_value(&BaseRole::Writer).unwrap(), json!("writer"));
-        assert_eq!(serde_json::to_value(&BaseRole::Planner).unwrap(), json!("planner"));
-        assert_eq!(serde_json::to_value(&BaseRole::Designer).unwrap(), json!("designer"));
-        assert_eq!(serde_json::to_value(&BaseRole::GovernanceSteward).unwrap(), json!("governance_steward"));
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Orchestrator).unwrap(),
+            json!("orchestrator")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Implementer).unwrap(),
+            json!("implementer")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Reviewer).unwrap(),
+            json!("reviewer")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Researcher).unwrap(),
+            json!("researcher")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Writer).unwrap(),
+            json!("writer")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Planner).unwrap(),
+            json!("planner")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::Designer).unwrap(),
+            json!("designer")
+        );
+        assert_eq!(
+            serde_json::to_value(&BaseRole::GovernanceSteward).unwrap(),
+            json!("governance_steward")
+        );
     }
 
     #[test]
@@ -80,8 +104,10 @@ mod tests {
         };
         let json_val = serde_json::to_value(&spec).expect("serialize");
         let recovered: AgentSpec = serde_json::from_value(json_val).expect("deserialize");
-        assert!(recovered.tool_access.is_empty(),
-            "empty tool_access must round-trip as empty");
+        assert!(
+            recovered.tool_access.is_empty(),
+            "empty tool_access must round-trip as empty"
+        );
     }
 
     // -------------------------------------------------------------------------

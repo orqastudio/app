@@ -95,7 +95,7 @@ mod tests {
             session_id: 1,
             role: MessageRole::User,
             content_type: ContentType::Text,
-            content: Some("Hello, how are you?".to_string()),
+            content: Some("Hello, how are you?".to_owned()),
             tool_call_id: None,
             tool_name: None,
             tool_input: None,
@@ -105,7 +105,7 @@ mod tests {
             stream_status: StreamStatus::Complete,
             input_tokens: Some(10),
             output_tokens: None,
-            created_at: "2026-03-03T00:00:00Z".to_string(),
+            created_at: "2026-03-03T00:00:00Z".to_owned(),
         };
 
         let json = serde_json::to_string(&msg).expect("serialization should succeed");
@@ -123,9 +123,9 @@ mod tests {
         let result = SearchResult {
             message_id: 5,
             session_id: 1,
-            session_title: Some("Debug session".to_string()),
-            content: "Fix the parsing bug".to_string(),
-            highlighted: "Fix the <mark>parsing</mark> bug".to_string(),
+            session_title: Some("Debug session".to_owned()),
+            content: "Fix the parsing bug".to_owned(),
+            highlighted: "Fix the <mark>parsing</mark> bug".to_owned(),
             rank: 0.95,
         };
 

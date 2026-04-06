@@ -50,7 +50,10 @@ pub fn context_handler(Json(req): Json<ContextRequest>) -> Json<ContextResponse>
         "[context] context_handler completed"
     );
 
-    Json(ContextResponse { rule_titles, workflow_names })
+    Json(ContextResponse {
+        rule_titles,
+        workflow_names,
+    })
 }
 
 /// Read `title:` values from frontmatter of all *.md files in .orqa/learning/rules/.
@@ -159,7 +162,10 @@ mod tests {
     #[test]
     fn extracts_title_from_well_formed_frontmatter() {
         let content = "---\ntitle: My Rule\nid: RULE-abc\n---\nBody text.\n";
-        assert_eq!(extract_frontmatter_title(content), Some("My Rule".to_string()));
+        assert_eq!(
+            extract_frontmatter_title(content),
+            Some("My Rule".to_owned())
+        );
     }
 
     #[test]
@@ -177,7 +183,10 @@ mod tests {
     #[test]
     fn strips_quotes_from_title() {
         let content = "---\ntitle: \"Quoted Title\"\n---\nBody.\n";
-        assert_eq!(extract_frontmatter_title(content), Some("Quoted Title".to_string()));
+        assert_eq!(
+            extract_frontmatter_title(content),
+            Some("Quoted Title".to_owned())
+        );
     }
 
     // ── read_rule_titles ──

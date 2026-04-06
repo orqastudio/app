@@ -61,8 +61,8 @@ impl GraphState {
     /// context failures are non-fatal — we fall back to a minimal context rather
     /// than refusing to start.
     pub fn build(project_root: &Path) -> Result<Self, String> {
-        let inner = build_inner(project_root)
-            .map_err(|e| format!("graph state build failed: {e}"))?;
+        let inner =
+            build_inner(project_root).map_err(|e| format!("graph state build failed: {e}"))?;
         Ok(Self(Arc::new(RwLock::new(inner))))
     }
 
@@ -157,12 +157,7 @@ impl GraphState {
                 if let Some(node) = guard.graph.nodes.get(id) {
                     return Some(node.clone());
                 }
-                guard
-                    .graph
-                    .nodes
-                    .values()
-                    .find(|n| n.id == id)
-                    .cloned()
+                guard.graph.nodes.values().find(|n| n.id == id).cloned()
             }
             Err(_) => None,
         }
@@ -237,19 +232,27 @@ impl GraphStateInner {
     /// Filters artifact_types by pipeline_category to populate delivery, learning,
     /// excluded_types, and root_types. Uses terminal_statuses for excluded_statuses.
     pub fn owned_pipeline_categories(&self) -> OwnedPipelineCategories {
-        let delivery = self.artifact_types.iter()
+        let delivery = self
+            .artifact_types
+            .iter()
             .filter(|t| t.pipeline_category.as_deref() == Some("delivery"))
             .map(|t| t.key.clone())
             .collect();
-        let learning = self.artifact_types.iter()
+        let learning = self
+            .artifact_types
+            .iter()
             .filter(|t| t.pipeline_category.as_deref() == Some("learning"))
             .map(|t| t.key.clone())
             .collect();
-        let excluded_types = self.artifact_types.iter()
+        let excluded_types = self
+            .artifact_types
+            .iter()
             .filter(|t| t.pipeline_category.as_deref() == Some("excluded"))
             .map(|t| t.key.clone())
             .collect();
-        let root_types = self.artifact_types.iter()
+        let root_types = self
+            .artifact_types
+            .iter()
             .filter(|t| t.pipeline_category.as_deref() == Some("root"))
             .map(|t| t.key.clone())
             .collect();
@@ -263,7 +266,6 @@ impl GraphStateInner {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -273,8 +275,7 @@ mod tests {
     fn fixture_root() -> PathBuf {
         // __file__ resolves to daemon/src/graph_state.rs at compile time.
         // The fixture lives at daemon/tests/fixtures/minimal-project/.
-        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("tests/fixtures/minimal-project")
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/minimal-project")
     }
 
     // -------------------------------------------------------------------------
@@ -300,8 +301,7 @@ mod tests {
         let state = GraphState::build_empty(&root);
         let guard = state.0.read().unwrap();
         assert_eq!(
-            guard.project_root,
-            root,
+            guard.project_root, root,
             "project_root must match the path passed to build_empty"
         );
     }
@@ -314,7 +314,10 @@ mod tests {
         // If the ValidationContext were in a broken state, acquiring the read lock
         // would either panic or the guard would be poisoned. Accessing it here
         // verifies it is at least structurally valid.
-        let guard = state.0.read().expect("lock must not be poisoned after build_empty");
+        let guard = state
+            .0
+            .read()
+            .expect("lock must not be poisoned after build_empty");
         // The context exists — its type itself is the proof of a valid build.
         let _ = &guard.ctx;
     }
@@ -453,7 +456,11 @@ mod tests {
             "reload on a path with no .orqa/ must return 0"
         );
         // Must not panic — daemon keeps serving, just with empty state.
-        assert_eq!(state.artifact_count(), 0, "state must reflect the empty graph");
+        assert_eq!(
+            state.artifact_count(),
+            0,
+            "state must reflect the empty graph"
+        );
     }
 
     // -------------------------------------------------------------------------

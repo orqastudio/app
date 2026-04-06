@@ -64,7 +64,11 @@ async fn list_artifacts_filter_by_type_returns_matching_subset() {
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
     let items = json.as_array().expect("list response must be a JSON array");
 
-    assert_eq!(items.len(), 1, "type=epic filter must return exactly 1 artifact");
+    assert_eq!(
+        items.len(),
+        1,
+        "type=epic filter must return exactly 1 artifact"
+    );
     assert_eq!(items[0]["id"], "EPIC-test001");
     assert_eq!(items[0]["artifact_type"], "epic");
 }
@@ -86,7 +90,11 @@ async fn list_artifacts_filter_by_nonexistent_type_returns_empty() {
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
     let items = json.as_array().expect("list response must be a JSON array");
 
-    assert_eq!(items.len(), 0, "filter by nonexistent type must return empty array");
+    assert_eq!(
+        items.len(),
+        0,
+        "filter by nonexistent type must return empty array"
+    );
 }
 
 /// GET /artifacts?status=active returns EPIC-test001 and RULE-test001 (both active).
@@ -107,12 +115,20 @@ async fn list_artifacts_filter_by_status_returns_matching_subset() {
     let items = json.as_array().expect("list response must be a JSON array");
 
     // EPIC-test001 and RULE-test001 are active; TASK-test001 is todo.
-    assert_eq!(items.len(), 2, "status=active filter must return 2 artifacts");
-    let ids: Vec<&str> = items.iter()
-        .map(|v| v["id"].as_str().unwrap())
-        .collect();
-    assert!(ids.contains(&"EPIC-test001"), "active set must include EPIC-test001");
-    assert!(ids.contains(&"RULE-test001"), "active set must include RULE-test001");
+    assert_eq!(
+        items.len(),
+        2,
+        "status=active filter must return 2 artifacts"
+    );
+    let ids: Vec<&str> = items.iter().map(|v| v["id"].as_str().unwrap()).collect();
+    assert!(
+        ids.contains(&"EPIC-test001"),
+        "active set must include EPIC-test001"
+    );
+    assert!(
+        ids.contains(&"RULE-test001"),
+        "active set must include RULE-test001"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -175,11 +191,19 @@ async fn get_artifact_content_returns_200_with_markdown() {
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
-    let content = json["content"].as_str().expect("content field must be a string");
+    let content = json["content"]
+        .as_str()
+        .expect("content field must be a string");
     assert!(!content.is_empty(), "artifact content must not be empty");
     // Fixture file has YAML frontmatter — presence of `---` confirms raw file is returned.
-    assert!(content.contains("---"), "content must include YAML frontmatter delimiter");
-    assert!(content.contains("EPIC-test001"), "content must include the artifact ID");
+    assert!(
+        content.contains("---"),
+        "content must include YAML frontmatter delimiter"
+    );
+    assert!(
+        content.contains("EPIC-test001"),
+        "content must include the artifact ID"
+    );
 }
 
 /// GET /artifacts/DOES-NOT-EXIST/content returns 404.
@@ -220,11 +244,26 @@ async fn get_artifact_traceability_returns_200_with_valid_fields() {
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
     // Verify TraceabilityResult fields are present.
-    assert!(json.get("ancestry_chains").is_some(), "traceability must include ancestry_chains");
-    assert!(json.get("descendants").is_some(), "traceability must include descendants");
-    assert!(json.get("siblings").is_some(), "traceability must include siblings");
-    assert!(json.get("impact_radius").is_some(), "traceability must include impact_radius");
-    assert!(json.get("disconnected").is_some(), "traceability must include disconnected");
+    assert!(
+        json.get("ancestry_chains").is_some(),
+        "traceability must include ancestry_chains"
+    );
+    assert!(
+        json.get("descendants").is_some(),
+        "traceability must include descendants"
+    );
+    assert!(
+        json.get("siblings").is_some(),
+        "traceability must include siblings"
+    );
+    assert!(
+        json.get("impact_radius").is_some(),
+        "traceability must include impact_radius"
+    );
+    assert!(
+        json.get("disconnected").is_some(),
+        "traceability must include disconnected"
+    );
 }
 
 /// GET /artifacts/DOES-NOT-EXIST/traceability returns 404.
@@ -281,7 +320,9 @@ async fn update_artifact_returns_200_with_updated_field() {
         .method("PUT")
         .uri("/artifacts/EPIC-test001")
         .header("content-type", "application/json")
-        .body(Body::from(r#"{"field":"description","value":"Updated by integration test"}"#))
+        .body(Body::from(
+            r#"{"field":"description","value":"Updated by integration test"}"#,
+        ))
         .unwrap();
 
     let response = router.oneshot(request).await.unwrap();

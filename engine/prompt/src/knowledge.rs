@@ -52,7 +52,10 @@ impl KnowledgeInjector {
         project_dir: &Path,
         embedder: &mut Embedder,
     ) -> Result<Self, KnowledgeInjectorError> {
-        let knowledge_dir = project_dir.join(".orqa").join("documentation").join("knowledge");
+        let knowledge_dir = project_dir
+            .join(".orqa")
+            .join("documentation")
+            .join("knowledge");
         let item_metas = discover_knowledge_descriptions(&knowledge_dir)?;
 
         if item_metas.is_empty() {
@@ -273,20 +276,20 @@ mod tests {
     fn zero_vector_returns_zero() {
         let a = vec![0.0, 0.0, 0.0];
         let b = vec![1.0, 2.0, 3.0];
-        assert_eq!(cosine_similarity(&a, &b), 0.0);
-        assert_eq!(cosine_similarity(&b, &a), 0.0);
+        assert!((cosine_similarity(&a, &b) - 0.0_f32).abs() < f32::EPSILON);
+        assert!((cosine_similarity(&b, &a) - 0.0_f32).abs() < f32::EPSILON);
     }
 
     #[test]
     fn different_lengths_returns_zero() {
         let a = vec![1.0, 0.0];
         let b = vec![1.0, 0.0, 0.0];
-        assert_eq!(cosine_similarity(&a, &b), 0.0);
+        assert!((cosine_similarity(&a, &b) - 0.0_f32).abs() < f32::EPSILON);
     }
 
     #[test]
     fn empty_vectors_returns_zero() {
-        assert_eq!(cosine_similarity(&[], &[]), 0.0);
+        assert!((cosine_similarity(&[], &[]) - 0.0_f32).abs() < f32::EPSILON);
     }
 
     #[test]
@@ -326,7 +329,7 @@ mod tests {
         let fm = "title: Test\ndescription: \"Tauri IPC patterns\"";
         assert_eq!(
             parse_description_field(fm),
-            Some("Tauri IPC patterns".to_string())
+            Some("Tauri IPC patterns".to_owned())
         );
     }
 
@@ -335,7 +338,7 @@ mod tests {
         let fm = "title: Test\ndescription: Tauri IPC patterns";
         assert_eq!(
             parse_description_field(fm),
-            Some("Tauri IPC patterns".to_string())
+            Some("Tauri IPC patterns".to_owned())
         );
     }
 
@@ -344,7 +347,7 @@ mod tests {
         let fm = "title: Test\ndescription: |\n  Line one\n  Line two\nstatus: active";
         assert_eq!(
             parse_description_field(fm),
-            Some("Line one Line two".to_string())
+            Some("Line one Line two".to_owned())
         );
     }
 
@@ -353,7 +356,7 @@ mod tests {
         let fm = "title: Test\ndescription: >\n  Line one\n  Line two\nstatus: active";
         assert_eq!(
             parse_description_field(fm),
-            Some("Line one Line two".to_string())
+            Some("Line one Line two".to_owned())
         );
     }
 
@@ -376,18 +379,18 @@ mod tests {
         let injector = KnowledgeInjector {
             items: vec![
                 KnowledgeEmbedding {
-                    name: "item-a".to_string(),
-                    description: "A".to_string(),
+                    name: "item-a".to_owned(),
+                    description: "A".to_owned(),
                     embedding: vec![1.0, 0.0, 0.0],
                 },
                 KnowledgeEmbedding {
-                    name: "item-b".to_string(),
-                    description: "B".to_string(),
+                    name: "item-b".to_owned(),
+                    description: "B".to_owned(),
                     embedding: vec![0.7, 0.7, 0.0],
                 },
                 KnowledgeEmbedding {
-                    name: "item-c".to_string(),
-                    description: "C".to_string(),
+                    name: "item-c".to_owned(),
+                    description: "C".to_owned(),
                     embedding: vec![0.0, 0.0, 1.0],
                 },
             ],
@@ -407,13 +410,13 @@ mod tests {
         let injector = KnowledgeInjector {
             items: vec![
                 KnowledgeEmbedding {
-                    name: "relevant".to_string(),
-                    description: "R".to_string(),
+                    name: "relevant".to_owned(),
+                    description: "R".to_owned(),
                     embedding: vec![1.0, 0.0],
                 },
                 KnowledgeEmbedding {
-                    name: "irrelevant".to_string(),
-                    description: "I".to_string(),
+                    name: "irrelevant".to_owned(),
+                    description: "I".to_owned(),
                     embedding: vec![0.0, 1.0],
                 },
             ],
@@ -438,18 +441,18 @@ mod tests {
         let injector = KnowledgeInjector {
             items: vec![
                 KnowledgeEmbedding {
-                    name: "a".to_string(),
-                    description: "A".to_string(),
+                    name: "a".to_owned(),
+                    description: "A".to_owned(),
                     embedding: vec![1.0, 0.0],
                 },
                 KnowledgeEmbedding {
-                    name: "b".to_string(),
-                    description: "B".to_string(),
+                    name: "b".to_owned(),
+                    description: "B".to_owned(),
                     embedding: vec![0.9, 0.1],
                 },
                 KnowledgeEmbedding {
-                    name: "c".to_string(),
-                    description: "C".to_string(),
+                    name: "c".to_owned(),
+                    description: "C".to_owned(),
                     embedding: vec![0.8, 0.2],
                 },
             ],
@@ -467,13 +470,13 @@ mod tests {
         let injector = KnowledgeInjector {
             items: vec![
                 KnowledgeEmbedding {
-                    name: "a".to_string(),
-                    description: "A".to_string(),
+                    name: "a".to_owned(),
+                    description: "A".to_owned(),
                     embedding: vec![1.0],
                 },
                 KnowledgeEmbedding {
-                    name: "b".to_string(),
-                    description: "B".to_string(),
+                    name: "b".to_owned(),
+                    description: "B".to_owned(),
                     embedding: vec![1.0],
                 },
             ],

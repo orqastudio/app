@@ -26,10 +26,7 @@ pub trait EventEmitter: Send + Sync {
     ///
     /// Used to signal fatal streaming errors to the consumer. Returns an error
     /// if the notification cannot be delivered.
-    fn emit_error(
-        &self,
-        error: &str,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
+    fn emit_error(&self, error: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 }
 
 /// Abstraction for sending messages to and checking the status of a sidecar process.
@@ -43,10 +40,7 @@ pub trait SidecarTransport: Send + Sync {
     ///
     /// The `message` parameter is a serialized NDJSON line. Returns an error
     /// if the sidecar is not running or the write fails.
-    fn send_message(
-        &self,
-        message: &str,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
+    fn send_message(&self, message: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>>;
 
     /// Return `true` if the sidecar process is currently connected and running.
     fn is_connected(&self) -> bool;

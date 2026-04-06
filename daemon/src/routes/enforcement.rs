@@ -58,9 +58,7 @@ fn load_project_rules(project_root: &std::path::Path) -> Vec<EnforcementRule> {
 ///
 /// Loads rules from the learning/rules directory under the project root.
 /// Returns an empty list if the directory is absent.
-pub async fn list_enforcement_rules(
-    State(state): State<GraphState>,
-) -> Json<Vec<EnforcementRule>> {
+pub async fn list_enforcement_rules(State(state): State<GraphState>) -> Json<Vec<EnforcementRule>> {
     let Ok(guard) = state.0.read() else {
         return Json(Vec::new());
     };

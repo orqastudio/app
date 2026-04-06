@@ -88,17 +88,19 @@ pub fn run_all(graph: &ArtifactGraph, ctx: &ValidationContext) -> Vec<IntegrityC
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::types::{ValidationContext, RelationshipSchema};
+    use crate::types::ValidationContext;
+    use orqa_engine_types::config::DeliveryConfig;
     use orqa_engine_types::{ArtifactGraph, ArtifactNode};
     use std::collections::HashMap;
+    use std::collections::HashSet;
 
     fn empty_ctx() -> ValidationContext {
         ValidationContext {
             relationships: vec![],
             inverse_map: HashMap::new(),
             valid_statuses: vec![],
-            delivery: Default::default(),
-            dependency_keys: Default::default(),
+            delivery: DeliveryConfig::default(),
+            dependency_keys: HashSet::default(),
             artifact_types: vec![],
             schema_extensions: vec![],
             enforcement_mechanisms: vec![],
@@ -178,7 +180,7 @@ mod tests {
         // This verifies the gate prevents false positives on projects with no delivery config.
         let graph = ArtifactGraph::default();
         let ctx = ValidationContext {
-            delivery: Default::default(), // empty types
+            delivery: DeliveryConfig::default(), // empty types
             ..empty_ctx()
         };
         let checks = run_all(&graph, &ctx);
@@ -192,17 +194,16 @@ mod tests {
         let mut graph = ArtifactGraph::default();
         let mut node = make_node("TASK-a1b2c3d4", "task");
         // Remove the type field from frontmatter
-        node.frontmatter
-            .as_object_mut()
-            .unwrap()
-            .remove("type");
+        node.frontmatter.as_object_mut().unwrap().remove("type");
         graph.nodes.insert(node.id.clone(), node);
 
         let ctx = empty_ctx();
         let checks = run_all(&graph, &ctx);
         assert!(
-            checks.iter().any(|c| c.artifact_id == "TASK-a1b2c3d4"
-                && c.message.to_lowercase().contains("type")),
+            checks
+                .iter()
+                .any(|c| c.artifact_id == "TASK-a1b2c3d4"
+                    && c.message.to_lowercase().contains("type")),
             "Expected a 'missing type field' check"
         );
     }

@@ -12,7 +12,9 @@
 mod types_tests {
     use serde_json::{json, Value};
 
-    use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource, McpToolDefinition};
+    use crate::types::{
+        JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource, McpToolDefinition,
+    };
 
     // -------------------------------------------------------------------------
     // JsonRpcRequest deserialization
@@ -71,8 +73,10 @@ mod types_tests {
         let v: Value = serde_json::from_str(&s).expect("roundtrip");
         assert_eq!(v["jsonrpc"], "2.0");
         assert_eq!(v["id"], json!(1));
-        assert!(v.get("error").is_none() || v["error"].is_null(),
-            "error field must be absent in a success response");
+        assert!(
+            v.get("error").is_none() || v["error"].is_null(),
+            "error field must be absent in a success response"
+        );
     }
 
     #[test]
@@ -92,8 +96,10 @@ mod types_tests {
         let v: Value = serde_json::from_str(&s).expect("roundtrip");
         assert_eq!(v["error"]["code"], -32601);
         assert_eq!(v["error"]["message"], "method not found");
-        assert!(v.get("result").is_none() || v["result"].is_null(),
-            "result must be absent in an error response");
+        assert!(
+            v.get("result").is_none() || v["result"].is_null(),
+            "result must be absent in an error response"
+        );
     }
 
     #[test]
@@ -105,8 +111,10 @@ mod types_tests {
             data: None,
         };
         let s = serde_json::to_string(&err).expect("serialize");
-        assert!(!s.contains("\"data\""),
-            "data field must be omitted when None");
+        assert!(
+            !s.contains("\"data\""),
+            "data field must be omitted when None"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -150,8 +158,10 @@ mod error_tests {
     #[test]
     fn error_daemon_unreachable_display_contains_message() {
         let e = McpError::DaemonUnreachable("connection refused".into());
-        assert!(e.to_string().contains("connection refused"),
-            "DaemonUnreachable display must include the reason");
+        assert!(
+            e.to_string().contains("connection refused"),
+            "DaemonUnreachable display must include the reason"
+        );
     }
 
     #[test]
@@ -178,8 +188,8 @@ mod error_tests {
 
 #[cfg(test)]
 mod tool_tests {
-    use std::path::PathBuf;
     use serde_json::json;
+    use std::path::PathBuf;
     use tempfile::TempDir;
 
     use crate::tools::graph as graph_tools;
@@ -203,8 +213,10 @@ mod tool_tests {
             "graph_refresh",
             "graph_traceability",
         ] {
-            assert!(names.contains(expected),
-                "tool_definitions must include '{expected}'");
+            assert!(
+                names.contains(expected),
+                "tool_definitions must include '{expected}'"
+            );
         }
     }
 
@@ -212,18 +224,28 @@ mod tool_tests {
     fn graph_tool_definitions_each_have_input_schema() {
         let defs = graph_tools::tool_definitions();
         for def in &defs {
-            assert!(def.input_schema.is_object(),
-                "tool '{}' must have an object input_schema", def.name);
+            assert!(
+                def.input_schema.is_object(),
+                "tool '{}' must have an object input_schema",
+                def.name
+            );
         }
     }
 
     #[test]
     fn graph_resolve_schema_has_required_id() {
         let defs = graph_tools::tool_definitions();
-        let resolve = defs.iter().find(|d| d.name == "graph_resolve").expect("graph_resolve");
+        let resolve = defs
+            .iter()
+            .find(|d| d.name == "graph_resolve")
+            .expect("graph_resolve");
         let required = resolve.input_schema.get("required").expect("required");
         assert!(
-            required.as_array().unwrap().iter().any(|v| v.as_str() == Some("id")),
+            required
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|v| v.as_str() == Some("id")),
             "graph_resolve must declare 'id' as required"
         );
     }
@@ -231,10 +253,17 @@ mod tool_tests {
     #[test]
     fn graph_traceability_schema_has_required_artifact_id() {
         let defs = graph_tools::tool_definitions();
-        let trace = defs.iter().find(|d| d.name == "graph_traceability").expect("graph_traceability");
+        let trace = defs
+            .iter()
+            .find(|d| d.name == "graph_traceability")
+            .expect("graph_traceability");
         let required = trace.input_schema.get("required").expect("required");
         assert!(
-            required.as_array().unwrap().iter().any(|v| v.as_str() == Some("artifact_id")),
+            required
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|v| v.as_str() == Some("artifact_id")),
             "graph_traceability must declare 'artifact_id' as required"
         );
     }
@@ -252,7 +281,10 @@ mod tool_tests {
         let root = tmp.path().to_path_buf();
         let args = json!({ "path": "hello.md" });
         let result = graph_tools::tool_read(&root, &args);
-        assert!(result.is_ok(), "tool_read should succeed for an existing file");
+        assert!(
+            result.is_ok(),
+            "tool_read should succeed for an existing file"
+        );
         assert!(result.unwrap().contains("Hello world"));
     }
 
@@ -263,8 +295,10 @@ mod tool_tests {
         let args = json!({});
         let result = graph_tools::tool_read(&root, &args);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("missing 'path'"),
-            "error must mention the missing 'path' argument");
+        assert!(
+            result.unwrap_err().contains("missing 'path'"),
+            "error must mention the missing 'path' argument"
+        );
     }
 
     #[test]
@@ -274,8 +308,10 @@ mod tool_tests {
         let args = json!({ "path": "../../etc/passwd" });
         let result = graph_tools::tool_read(&root, &args);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("path traversal not allowed"),
-            "path traversal attempt must return the traversal error");
+        assert!(
+            result.unwrap_err().contains("path traversal not allowed"),
+            "path traversal attempt must return the traversal error"
+        );
     }
 
     #[test]
@@ -283,8 +319,10 @@ mod tool_tests {
         let tmp = TempDir::new().expect("tempdir");
         let args = json!({ "path": "does-not-exist.md" });
         let result = graph_tools::tool_read(tmp.path(), &args);
-        assert!(result.is_err(),
-            "tool_read for a non-existent file must return an error");
+        assert!(
+            result.is_err(),
+            "tool_read for a non-existent file must return an error"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -304,8 +342,10 @@ mod tool_tests {
         let args = json!({});
         let result = crate::tools::graph::tool_traceability(&daemon, &args);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("missing 'artifact_id'"),
-            "must error on missing artifact_id before making an HTTP call");
+        assert!(
+            result.unwrap_err().contains("missing 'artifact_id'"),
+            "must error on missing artifact_id before making an HTTP call"
+        );
     }
 
     #[test]
@@ -315,8 +355,10 @@ mod tool_tests {
         let args = json!({ "artifact_id": "   " });
         let result = crate::tools::graph::tool_traceability(&daemon, &args);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("cannot be empty"),
-            "whitespace-only artifact_id must be rejected");
+        assert!(
+            result.unwrap_err().contains("cannot be empty"),
+            "whitespace-only artifact_id must be rejected"
+        );
     }
 }
 
@@ -331,8 +373,10 @@ mod daemon_client_tests {
         // DaemonUnreachable (not a panic, not a wrong error type).
         let client = DaemonClient::new(19999);
         let result = client.health();
-        assert!(matches!(result, Err(crate::error::McpError::DaemonUnreachable(_))),
-            "call to a non-listening port must produce DaemonUnreachable");
+        assert!(
+            matches!(result, Err(crate::error::McpError::DaemonUnreachable(_))),
+            "call to a non-listening port must produce DaemonUnreachable"
+        );
     }
 
     #[test]
@@ -343,15 +387,24 @@ mod daemon_client_tests {
         let client_b = DaemonClient::new(19996);
         let err_a = client_a.health().unwrap_err();
         let err_b = client_b.health().unwrap_err();
-        assert!(matches!(err_a, crate::error::McpError::DaemonUnreachable(_)));
-        assert!(matches!(err_b, crate::error::McpError::DaemonUnreachable(_)));
+        assert!(matches!(
+            err_a,
+            crate::error::McpError::DaemonUnreachable(_)
+        ));
+        assert!(matches!(
+            err_b,
+            crate::error::McpError::DaemonUnreachable(_)
+        ));
     }
 
     #[test]
     fn daemon_client_query_unreachable_returns_daemon_unreachable() {
         let client = DaemonClient::new(19998);
         let result = client.query(&serde_json::json!({"type": "task"}));
-        assert!(matches!(result, Err(crate::error::McpError::DaemonUnreachable(_))));
+        assert!(matches!(
+            result,
+            Err(crate::error::McpError::DaemonUnreachable(_))
+        ));
     }
 
     // -------------------------------------------------------------------------
@@ -364,8 +417,10 @@ mod daemon_client_tests {
         // default base (10100) plus the daemon offset (0), which is 10100.
         std::env::remove_var("ORQA_PORT_BASE");
         let port = default_daemon_port();
-        assert_eq!(port, 10100,
-            "default_daemon_port must be 10100 when ORQA_PORT_BASE is not set");
+        assert_eq!(
+            port, 10100,
+            "default_daemon_port must be 10100 when ORQA_PORT_BASE is not set"
+        );
     }
 
     #[test]
@@ -375,8 +430,10 @@ mod daemon_client_tests {
         let port = default_daemon_port();
         std::env::remove_var("ORQA_PORT_BASE");
         // Daemon offset is 0, so port == base.
-        assert_eq!(port, 20000,
-            "default_daemon_port must use ORQA_PORT_BASE when set");
+        assert_eq!(
+            port, 20000,
+            "default_daemon_port must use ORQA_PORT_BASE when set"
+        );
     }
 
     #[test]
@@ -385,8 +442,10 @@ mod daemon_client_tests {
         std::env::set_var("ORQA_PORT_BASE", "not-a-port");
         let port = default_daemon_port();
         std::env::remove_var("ORQA_PORT_BASE");
-        assert_eq!(port, 10100,
-            "default_daemon_port must fall back to 10100 for an invalid env var");
+        assert_eq!(
+            port, 10100,
+            "default_daemon_port must fall back to 10100 for an invalid env var"
+        );
     }
 }
 
@@ -394,8 +453,8 @@ mod daemon_client_tests {
 mod server_tests {
     use std::path::PathBuf;
 
-    use crate::server::McpServer;
     use crate::daemon::default_daemon_port;
+    use crate::server::McpServer;
 
     // -------------------------------------------------------------------------
     // McpServer::new
@@ -459,9 +518,16 @@ mod search_tool_tests {
         // All four search tools must be present by name.
         let defs = search_tools::tool_definitions();
         let names: Vec<&str> = defs.iter().map(|d| d.name.as_str()).collect();
-        for expected in &["search_regex", "search_semantic", "search_research", "search_status"] {
-            assert!(names.contains(expected),
-                "search tool_definitions must include '{expected}'");
+        for expected in &[
+            "search_regex",
+            "search_semantic",
+            "search_research",
+            "search_status",
+        ] {
+            assert!(
+                names.contains(expected),
+                "search tool_definitions must include '{expected}'"
+            );
         }
     }
 
@@ -481,12 +547,14 @@ mod search_tool_tests {
         for def in &defs {
             assert!(
                 def.input_schema.is_object(),
-                "tool '{}' must have an object input_schema", def.name
+                "tool '{}' must have an object input_schema",
+                def.name
             );
             assert_eq!(
                 def.input_schema.get("type").and_then(|v| v.as_str()),
                 Some("object"),
-                "tool '{}' input_schema must have type=object", def.name
+                "tool '{}' input_schema must have type=object",
+                def.name
             );
         }
     }
@@ -495,10 +563,17 @@ mod search_tool_tests {
     fn search_regex_schema_has_required_pattern() {
         // search_regex requires the 'pattern' field.
         let defs = search_tools::tool_definitions();
-        let def = defs.iter().find(|d| d.name == "search_regex").expect("search_regex");
+        let def = defs
+            .iter()
+            .find(|d| d.name == "search_regex")
+            .expect("search_regex");
         let required = def.input_schema.get("required").expect("required field");
         assert!(
-            required.as_array().unwrap().iter().any(|v| v.as_str() == Some("pattern")),
+            required
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|v| v.as_str() == Some("pattern")),
             "search_regex must declare 'pattern' as required"
         );
     }
@@ -507,10 +582,17 @@ mod search_tool_tests {
     fn search_semantic_schema_has_required_query() {
         // search_semantic requires the 'query' field.
         let defs = search_tools::tool_definitions();
-        let def = defs.iter().find(|d| d.name == "search_semantic").expect("search_semantic");
+        let def = defs
+            .iter()
+            .find(|d| d.name == "search_semantic")
+            .expect("search_semantic");
         let required = def.input_schema.get("required").expect("required field");
         assert!(
-            required.as_array().unwrap().iter().any(|v| v.as_str() == Some("query")),
+            required
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|v| v.as_str() == Some("query")),
             "search_semantic must declare 'query' as required"
         );
     }
@@ -519,10 +601,17 @@ mod search_tool_tests {
     fn search_research_schema_has_required_question() {
         // search_research requires the 'question' field.
         let defs = search_tools::tool_definitions();
-        let def = defs.iter().find(|d| d.name == "search_research").expect("search_research");
+        let def = defs
+            .iter()
+            .find(|d| d.name == "search_research")
+            .expect("search_research");
         let required = def.input_schema.get("required").expect("required field");
         assert!(
-            required.as_array().unwrap().iter().any(|v| v.as_str() == Some("question")),
+            required
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|v| v.as_str() == Some("question")),
             "search_research must declare 'question' as required"
         );
     }
@@ -531,13 +620,16 @@ mod search_tool_tests {
     fn search_status_schema_has_no_required_fields() {
         // search_status takes no parameters — it must not declare any required fields.
         let defs = search_tools::tool_definitions();
-        let def = defs.iter().find(|d| d.name == "search_status").expect("search_status");
+        let def = defs
+            .iter()
+            .find(|d| d.name == "search_status")
+            .expect("search_status");
         // Either `required` is absent, or it is an empty array.
         let required = def.input_schema.get("required");
         match required {
             None => {} // acceptable — omitted means no required fields
             Some(r) => assert!(
-                r.as_array().map_or(true, |a| a.is_empty()),
+                r.as_array().is_none_or(Vec::is_empty),
                 "search_status must have no required fields"
             ),
         }
@@ -550,7 +642,8 @@ mod search_tool_tests {
         for def in &defs {
             assert!(
                 !def.description.is_empty(),
-                "tool '{}' must have a non-empty description", def.name
+                "tool '{}' must have a non-empty description",
+                def.name
             );
         }
     }

@@ -8,8 +8,8 @@ use rusqlite::params;
 
 use orqa_engine_types::types::session::{Session, SessionStatus, SessionSummary};
 
-use crate::Storage;
 use crate::error::StorageError;
+use crate::Storage;
 
 /// Zero-cost repository handle for the `sessions` table.
 ///
@@ -73,7 +73,10 @@ impl SessionRepo<'_> {
 
         let mut stmt = conn.prepare(sql)?;
         let rows = if let Some(status) = status_filter {
-            stmt.query_map(params![project_id, status, limit, offset], map_session_summary)?
+            stmt.query_map(
+                params![project_id, status, limit, offset],
+                map_session_summary,
+            )?
         } else {
             stmt.query_map(params![project_id, limit, offset], map_session_summary)?
         };
@@ -99,16 +102,17 @@ impl SessionRepo<'_> {
              FROM sessions s";
 
         let mut stmt;
-        let rows: Box<dyn Iterator<Item = rusqlite::Result<SessionSummary>>> =
-            if let Some(status) = status_filter {
-                let sql = format!("{base} WHERE s.status = ?1 ORDER BY s.updated_at DESC LIMIT 1000");
-                stmt = conn.prepare(&sql)?;
-                Box::new(stmt.query_map(params![status], map_session_summary)?)
-            } else {
-                let sql = format!("{base} ORDER BY s.updated_at DESC LIMIT 1000");
-                stmt = conn.prepare(&sql)?;
-                Box::new(stmt.query_map([], map_session_summary)?)
-            };
+        let rows: Box<dyn Iterator<Item = rusqlite::Result<SessionSummary>>> = if let Some(status) =
+            status_filter
+        {
+            let sql = format!("{base} WHERE s.status = ?1 ORDER BY s.updated_at DESC LIMIT 1000");
+            stmt = conn.prepare(&sql)?;
+            Box::new(stmt.query_map(params![status], map_session_summary)?)
+        } else {
+            let sql = format!("{base} ORDER BY s.updated_at DESC LIMIT 1000");
+            stmt = conn.prepare(&sql)?;
+            Box::new(stmt.query_map([], map_session_summary)?)
+        };
 
         rows.map(|row| row.map_err(|e| StorageError::Database(e.to_string())))
             .collect()
@@ -386,20 +390,11 @@ mod tests {
     fn list_sessions_pagination() {
         let storage = setup();
         for _ in 0..5 {
-            storage
-                .sessions()
-                .create(1, "auto", None)
-                .expect("create");
+            storage.sessions().create(1, "auto", None).expect("create");
         }
-        let page1 = storage
-            .sessions()
-            .list(1, None, 2, 0)
-            .expect("page 1");
+        let page1 = storage.sessions().list(1, None, 2, 0).expect("page 1");
         assert_eq!(page1.len(), 2);
-        let page3 = storage
-            .sessions()
-            .list(1, None, 2, 4)
-            .expect("page 3");
+        let page3 = storage.sessions().list(1, None, 2, 4).expect("page 3");
         assert_eq!(page3.len(), 1);
     }
 }

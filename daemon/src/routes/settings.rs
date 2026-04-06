@@ -69,17 +69,26 @@ pub async fn get_settings(
         };
 
         result
-            .map(|m| Json(serde_json::to_value(m).unwrap_or(serde_json::Value::Object(serde_json::Map::new()))))
-            .map_err(|e| (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-            ))
+            .map(|m| {
+                Json(
+                    serde_json::to_value(m)
+                        .unwrap_or(serde_json::Value::Object(serde_json::Map::new())),
+                )
+            })
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+                )
+            })
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 /// Handle PUT /settings/:key — upsert a setting value by key.
@@ -96,18 +105,24 @@ pub async fn set_setting(
     let value = req.value.clone();
 
     tokio::task::spawn_blocking(move || {
-        storage.settings().set(&key, &value, &scope).map_err(|e| (
-            StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "SET_FAILED" })),
-        ))?;
+        storage.settings().set(&key, &value, &scope).map_err(|e| {
+            (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "SET_FAILED" })),
+            )
+        })?;
 
-        Ok(Json(serde_json::json!({ "key": key, "value": value, "scope": scope })))
+        Ok(Json(
+            serde_json::json!({ "key": key, "value": value, "scope": scope }),
+        ))
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+        )
+    })?
 }
 
 // ---------------------------------------------------------------------------

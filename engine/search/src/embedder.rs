@@ -281,6 +281,66 @@ fn postprocess_embeddings(
         .collect()
 }
 
+/// Download a single file from `url` to `dest`, streaming through a `.part` file.
+async fn download_file<F>(
+    url: &str,
+    dest: &Path,
+    display_name: &str,
+    progress_cb: &F,
+) -> Result<(), EmbedError>
+where
+    F: Fn(&str, u64, Option<u64>),
+{
+    let client = reqwest::Client::new();
+    let response = client.get(url).send().await.map_err(|e| {
+        EmbedError::Download(format!("HTTP request failed for {display_name}: {e}"))
+    })?;
+
+    if !response.status().is_success() {
+        return Err(EmbedError::Download(format!(
+            "HTTP {} downloading {display_name} from {url}",
+            response.status()
+        )));
+    }
+
+    let total_size = response.content_length();
+    let part_path = dest.with_extension("part");
+
+    let mut file = tokio::fs::File::create(&part_path).await.map_err(|e| {
+        EmbedError::Download(format!("failed to create {}: {e}", part_path.display()))
+    })?;
+
+    let mut downloaded: u64 = 0;
+    let mut stream = response.bytes_stream();
+
+    while let Some(chunk_result) = stream.next().await {
+        let chunk = chunk_result.map_err(|e| {
+            EmbedError::Download(format!("download stream error for {display_name}: {e}"))
+        })?;
+        file.write_all(&chunk)
+            .await
+            .map_err(|e| EmbedError::Download(format!("write error for {display_name}: {e}")))?;
+        downloaded += chunk.len() as u64;
+        progress_cb(display_name, downloaded, total_size);
+    }
+
+    file.flush()
+        .await
+        .map_err(|e| EmbedError::Download(format!("flush error for {display_name}: {e}")))?;
+    drop(file);
+
+    // Rename .part to final name (atomic on most filesystems)
+    tokio::fs::rename(&part_path, dest).await.map_err(|e| {
+        EmbedError::Download(format!(
+            "failed to rename {} to {}: {e}",
+            part_path.display(),
+            dest.display()
+        ))
+    })?;
+
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -421,16 +481,16 @@ mod tests {
 
     #[test]
     fn embed_error_display_messages() {
-        let err = EmbedError::ModelNotFound("/path/to/model.onnx".to_string());
+        let err = EmbedError::ModelNotFound("/path/to/model.onnx".to_owned());
         assert_eq!(err.to_string(), "model not found: /path/to/model.onnx");
 
-        let err = EmbedError::Tokenizer("bad token".to_string());
+        let err = EmbedError::Tokenizer("bad token".to_owned());
         assert_eq!(err.to_string(), "tokenizer error: bad token");
 
-        let err = EmbedError::Ort("session failed".to_string());
+        let err = EmbedError::Ort("session failed".to_owned());
         assert_eq!(err.to_string(), "ONNX runtime error: session failed");
 
-        let err = EmbedError::Download("network error".to_string());
+        let err = EmbedError::Download("network error".to_owned());
         assert_eq!(err.to_string(), "download error: network error");
     }
 
@@ -443,64 +503,4 @@ mod tests {
         assert!(local_names.contains(&"model.onnx"));
         assert!(local_names.contains(&"tokenizer.json"));
     }
-}
-
-/// Download a single file from `url` to `dest`, streaming through a `.part` file.
-async fn download_file<F>(
-    url: &str,
-    dest: &Path,
-    display_name: &str,
-    progress_cb: &F,
-) -> Result<(), EmbedError>
-where
-    F: Fn(&str, u64, Option<u64>),
-{
-    let client = reqwest::Client::new();
-    let response = client.get(url).send().await.map_err(|e| {
-        EmbedError::Download(format!("HTTP request failed for {display_name}: {e}"))
-    })?;
-
-    if !response.status().is_success() {
-        return Err(EmbedError::Download(format!(
-            "HTTP {} downloading {display_name} from {url}",
-            response.status()
-        )));
-    }
-
-    let total_size = response.content_length();
-    let part_path = dest.with_extension("part");
-
-    let mut file = tokio::fs::File::create(&part_path).await.map_err(|e| {
-        EmbedError::Download(format!("failed to create {}: {e}", part_path.display()))
-    })?;
-
-    let mut downloaded: u64 = 0;
-    let mut stream = response.bytes_stream();
-
-    while let Some(chunk_result) = stream.next().await {
-        let chunk = chunk_result.map_err(|e| {
-            EmbedError::Download(format!("download stream error for {display_name}: {e}"))
-        })?;
-        file.write_all(&chunk)
-            .await
-            .map_err(|e| EmbedError::Download(format!("write error for {display_name}: {e}")))?;
-        downloaded += chunk.len() as u64;
-        progress_cb(display_name, downloaded, total_size);
-    }
-
-    file.flush()
-        .await
-        .map_err(|e| EmbedError::Download(format!("flush error for {display_name}: {e}")))?;
-    drop(file);
-
-    // Rename .part to final name (atomic on most filesystems)
-    tokio::fs::rename(&part_path, dest).await.map_err(|e| {
-        EmbedError::Download(format!(
-            "failed to rename {} to {}: {e}",
-            part_path.display(),
-            dest.display()
-        ))
-    })?;
-
-    Ok(())
 }

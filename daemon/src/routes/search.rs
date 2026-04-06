@@ -103,23 +103,32 @@ pub async fn search_index(
     let exclude = req.exclude.clone();
 
     tokio::task::spawn_blocking(move || {
-        let mut engine = orqa_search::SearchEngine::new(&db)
-            .map_err(|e| e.to_string())?;
-        engine.index(&project_root, &exclude)
+        let mut engine = orqa_search::SearchEngine::new(&db).map_err(|e| e.to_string())?;
+        engine
+            .index(&project_root, &exclude)
             .map_err(|e| e.to_string())?;
         let status = engine.get_status().map_err(|e| e.to_string())?;
         Ok::<_, String>(status.chunk_count)
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "INDEX_PANIC" })),
-    ))?
-    .map(|chunk_count| Json(IndexResponse { status: "indexed".to_owned(), chunk_count }))
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "INDEX_FAILED" })),
-    ))
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "INDEX_PANIC" })),
+        )
+    })?
+    .map(|chunk_count| {
+        Json(IndexResponse {
+            status: "indexed".to_owned(),
+            chunk_count,
+        })
+    })
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "INDEX_FAILED" })),
+        )
+    })
 }
 
 /// Handle POST /search/embed — generate ONNX embeddings for unembedded chunks.
@@ -139,8 +148,10 @@ pub async fn search_embed(
         guard.project_root.clone()
     };
 
-    let model_dir = std::env::var("ORQA_EMBED_MODEL")
-        .map_or_else(|_| dirs_next_home().join(".orqa/models/bge-small-en"), std::path::PathBuf::from);
+    let model_dir = std::env::var("ORQA_EMBED_MODEL").map_or_else(
+        |_| dirs_next_home().join(".orqa/models/bge-small-en"),
+        std::path::PathBuf::from,
+    );
 
     if !model_dir.exists() {
         return Err((
@@ -155,24 +166,32 @@ pub async fn search_embed(
     let db = db_path(&project_root);
 
     tokio::task::spawn_blocking(move || {
-        let mut engine = orqa_search::SearchEngine::new(&db)
+        let mut engine = orqa_search::SearchEngine::new(&db).map_err(|e| e.to_string())?;
+        engine
+            .init_embedder_sync(&model_dir)
             .map_err(|e| e.to_string())?;
-        engine.init_embedder_sync(&model_dir)
-            .map_err(|e| e.to_string())?;
-        let embedded = engine.embed_chunks()
-            .map_err(|e| e.to_string())?;
+        let embedded = engine.embed_chunks().map_err(|e| e.to_string())?;
         Ok::<_, String>(embedded)
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "EMBED_PANIC" })),
-    ))?
-    .map(|chunk_count| Json(IndexResponse { status: "embedded".to_owned(), chunk_count }))
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "EMBED_FAILED" })),
-    ))
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "EMBED_PANIC" })),
+        )
+    })?
+    .map(|chunk_count| {
+        Json(IndexResponse {
+            status: "embedded".to_owned(),
+            chunk_count,
+        })
+    })
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "EMBED_FAILED" })),
+        )
+    })
 }
 
 /// Handle POST /search/regex — regex search over the indexed codebase.
@@ -198,21 +217,25 @@ pub async fn search_regex(
     let max_results = req.max_results;
 
     tokio::task::spawn_blocking(move || {
-        let engine = orqa_search::SearchEngine::new(&db)
-            .map_err(|e| e.to_string())?;
-        engine.search_regex(&pattern, path_filter.as_deref(), max_results as u32)
+        let engine = orqa_search::SearchEngine::new(&db).map_err(|e| e.to_string())?;
+        engine
+            .search_regex(&pattern, path_filter.as_deref(), max_results as u32)
             .map_err(|e| e.to_string())
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "SEARCH_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "SEARCH_PANIC" })),
+        )
+    })?
     .map(Json)
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "SEARCH_FAILED" })),
-    ))
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "SEARCH_FAILED" })),
+        )
+    })
 }
 
 /// Handle POST /search/semantic — semantic search using ONNX embeddings.
@@ -233,8 +256,10 @@ pub async fn search_semantic(
         guard.project_root.clone()
     };
 
-    let model_dir = std::env::var("ORQA_EMBED_MODEL")
-        .map_or_else(|_| dirs_next_home().join(".orqa/models/bge-small-en"), std::path::PathBuf::from);
+    let model_dir = std::env::var("ORQA_EMBED_MODEL").map_or_else(
+        |_| dirs_next_home().join(".orqa/models/bge-small-en"),
+        std::path::PathBuf::from,
+    );
 
     if !model_dir.exists() {
         return Err((
@@ -251,23 +276,28 @@ pub async fn search_semantic(
     let max_results = req.max_results;
 
     tokio::task::spawn_blocking(move || {
-        let mut engine = orqa_search::SearchEngine::new(&db)
+        let mut engine = orqa_search::SearchEngine::new(&db).map_err(|e| e.to_string())?;
+        engine
+            .init_embedder_sync(&model_dir)
             .map_err(|e| e.to_string())?;
-        engine.init_embedder_sync(&model_dir)
-            .map_err(|e| e.to_string())?;
-        engine.search_semantic(&query, max_results as u32)
+        engine
+            .search_semantic(&query, max_results as u32)
             .map_err(|e| e.to_string())
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "SEARCH_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "SEARCH_PANIC" })),
+        )
+    })?
     .map(Json)
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "SEARCH_FAILED" })),
-    ))
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "SEARCH_FAILED" })),
+        )
+    })
 }
 
 /// Handle GET /search/status — return the current index status.
@@ -290,20 +320,23 @@ pub async fn search_status(
     let db = db_path(&project_root);
 
     tokio::task::spawn_blocking(move || {
-        let engine = orqa_search::SearchEngine::new(&db)
-            .map_err(|e| e.to_string())?;
+        let engine = orqa_search::SearchEngine::new(&db).map_err(|e| e.to_string())?;
         engine.get_status().map_err(|e| e.to_string())
     })
     .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "STATUS_PANIC" })),
-    ))?
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "STATUS_PANIC" })),
+        )
+    })?
     .map(Json)
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e, "code": "STATUS_FAILED" })),
-    ))
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e, "code": "STATUS_FAILED" })),
+        )
+    })
 }
 
 /// Return the user's home directory path.
@@ -312,5 +345,8 @@ pub async fn search_status(
 fn dirs_next_home() -> std::path::PathBuf {
     std::env::var("HOME")
         .or_else(|_| std::env::var("USERPROFILE"))
-        .map_or_else(|_| std::path::PathBuf::from("/tmp"), std::path::PathBuf::from)
+        .map_or_else(
+            |_| std::path::PathBuf::from("/tmp"),
+            std::path::PathBuf::from,
+        )
 }

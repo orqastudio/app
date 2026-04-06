@@ -12,7 +12,7 @@ use std::collections::{HashSet, VecDeque};
 
 use orqa_engine_types::{
     AncestryChain, AncestryNode, ArtifactGraph, ArtifactNode, GraphHealth, OutlierAgeDistribution,
-    TracedArtifact, TraceabilityResult,
+    TraceabilityResult, TracedArtifact,
 };
 
 // ---------------------------------------------------------------------------
@@ -485,7 +485,9 @@ fn compute_pillar_traceability(
         .iter()
         .filter_map(|id| {
             let node = graph.nodes.get(*id)?;
-            root_set.contains(node.artifact_type.as_str()).then_some(*id)
+            root_set
+                .contains(node.artifact_type.as_str())
+                .then_some(*id)
         })
         .collect();
 
