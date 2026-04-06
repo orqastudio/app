@@ -3,7 +3,7 @@
 	import { EmptyState } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
-	import { Caption, Stack, Box, Center } from "@orqastudio/svelte-components/pure";
+	import { Caption, Stack, Box, Center, Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { ArtifactListItem } from "@orqastudio/svelte-components/connected";
 	import ArtifactToolbar from "$lib/components/navigation/ArtifactToolbar.svelte";
 	import { getStores } from "@orqastudio/sdk";
@@ -189,30 +189,31 @@
 		/>
 	{/if}
 
-	<Box minHeight={0} flex={1} overflow="auto">
-		<Box padding={1}>
+	<Box minHeight={0} flex={1}>
+		<ScrollArea>
+		<Panel padding="tight">
 			{#if loading}
-				<Center padding={4}>
+				<Panel padding="normal"><Center full>
 					<LoadingSpinner />
-				</Center>
+				</Center></Panel>
 			{:else if treeError}
-				<Box paddingX={2} paddingY={4}>
+				<Panel padding="normal">
 					<ErrorDisplay message={treeError} onRetry={() => artifactStore.loadNavTree()} />
-				</Box>
+				</Panel>
 			{:else if rawNodes.length === 0}
-				<Box paddingX={2} paddingY={4}>
+				<Panel padding="normal">
 					<EmptyState
 						icon="file-text"
 						title="No {categoryLabel.toLowerCase()} yet"
 						description="No {categoryLabel.toLowerCase()} files found in this project."
 					/>
-				</Box>
+				</Panel>
 			{:else if processedNodes.length === 0}
-				<Center padding={2}>
+				<Panel padding="tight"><Center full>
 					<Caption>No matching items.</Caption>
-				</Center>
+				</Center></Panel>
 			{:else if isTree}
-				<Stack gap={0} padding={1}>
+				<Stack gap={0}>
 					{#each processedNodes as node (node.path ?? node.label)}
 						{@render treeSection(node, 0)}
 					{/each}
@@ -254,7 +255,8 @@
 					/>
 				{/each}
 			{/if}
-		</Box>
+		</Panel>
+		</ScrollArea>
 	</Box>
 </Stack>
 

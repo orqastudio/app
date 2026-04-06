@@ -39,8 +39,8 @@
 	}
 </script>
 
-<HStack gap={0} style="height: 100%;">
-	<!-- Lesson list sidebar (240px) -->
+<HStack gap={0} height="full">
+	<!-- Lesson list sidebar (240px); border-right requires raw div — no ORQA primitive supports single-side border without padding -->
 	<div style="width: 15rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid hsl(var(--border));">
 		<LessonList
 			lessons={lessonStore.lessons}

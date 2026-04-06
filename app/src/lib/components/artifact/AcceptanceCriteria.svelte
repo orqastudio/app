@@ -16,18 +16,20 @@
 {#if criteria.length > 0}
 	<CardRoot>
 		<CardContent>
-			<Text variant="overline-muted" block>Acceptance Criteria</Text>
-			<Stack gap={1.5} marginTop={2}>
-				{#each criteria as item, i (i)}
-					<HStack gap={2} align="start">
-						{#if isDone}
-							<Icon name="square-check" size="sm" />
-						{:else}
-							<Icon name="square" size="sm" />
-						{/if}
-						<Text variant={isDone ? "body-muted" : "body"}>{item}</Text>
-					</HStack>
-				{/each}
+			<Stack gap={2}>
+				<Text variant="overline-muted" block>Acceptance Criteria</Text>
+				<Stack gap={1.5}>
+					{#each criteria as item, i (i)}
+						<HStack gap={2} align="start">
+							{#if isDone}
+								<Icon name="square-check" size="sm" />
+							{:else}
+								<Icon name="square" size="sm" />
+							{/if}
+							<Text variant={isDone ? "body-muted" : "body"}>{item}</Text>
+						</HStack>
+					{/each}
+				</Stack>
 			</Stack>
 		</CardContent>
 	</CardRoot>

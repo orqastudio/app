@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { Caption, Center } from "@orqastudio/svelte-components/pure";
+	import { Caption, Center, Panel } from "@orqastudio/svelte-components/pure";
 
 	let { text }: { text: string } = $props();
 
@@ -188,8 +188,10 @@
 <!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
 <div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
 	{#if loading}
-		<Center padding={8}>
-			<Caption tone="muted">Loading PlantUML diagram...</Caption>
+		<Center>
+			<Panel padding="loose">
+				<Caption tone="muted">Loading PlantUML diagram...</Caption>
+			</Panel>
 		</Center>
 	{:else if error}
 		<div style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;">

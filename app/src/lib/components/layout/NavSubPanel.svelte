@@ -2,7 +2,7 @@
 	// Navigation sub-panel — secondary panel rendered to the right of the activity bar.
 	// Shows context-sensitive content: settings nav, group children, artifact list,
 	// or plugin browser depending on the active activity.
-	import { Caption, Stack, HStack, Box, Center, Text } from "@orqastudio/svelte-components/pure";
+	import { Caption, Box, Center, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import SettingsCategoryNav from "$lib/components/navigation/SettingsCategoryNav.svelte";
 	import GroupSubPanel from "$lib/components/navigation/GroupSubPanel.svelte";
 	import ArtifactNav from "$lib/components/navigation/ArtifactNav.svelte";
@@ -30,20 +30,20 @@
 	</div>
 
 	<!-- Panel content -->
-	<Box flex={1} overflow="hidden">
+	<Box flex={1}>
 		{#if navigationStore.activeGroup !== null}
 			<GroupSubPanel group={navigationStore.activeGroup} />
 		{:else if navigationStore.activeActivity === "settings"}
 			<SettingsCategoryNav mode="project" />
 		{:else if navigationStore.activeActivity === "chat"}
-			<Center full padding={4}>
+			<Panel padding="normal"><Center full>
 				<Caption>Session list will be available in a future update.</Caption>
-			</Center>
+			</Center></Panel>
 		{:else if navigationStore.activeActivity === "plugins"}
 			<!-- Plugin browser is displayed in the main explorer area. -->
-			<Center full padding={4}>
+			<Panel padding="normal"><Center full>
 				<Caption>Select a tab in the plugin browser.</Caption>
-			</Center>
+			</Center></Panel>
 		{:else if navigationStore.isArtifactActivity}
 			<ArtifactNav category={navigationStore.activeActivity} />
 		{/if}

@@ -188,11 +188,11 @@
 	<Heading level={1}>{title}</Heading>
 {/if}
 
-<!-- Description — leading-relaxed is not in Text variants, kept as p. -->
+<!-- Description + metadata card share a Stack gap={4} so no marginTop or mb-* spacers are needed. -->
+<Stack gap={4}>
 {#if description}
-	<p class="mb-4 text-sm leading-relaxed text-muted-foreground">{description}</p>
-{:else if title}
-	<Box marginTop={4}></Box>
+	<!-- leading-relaxed is not in Text variants, kept as p. -->
+	<p class="text-sm leading-relaxed text-muted-foreground">{description}</p>
 {/if}
 
 <!-- Metadata card -->
@@ -355,3 +355,4 @@
 		<GateQuestions questions={gateQuestions} />
 	</CardContent>
 </CardRoot>
+</Stack>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Caption, Box, Stack, HStack, Text, Button, SearchInput } from "@orqastudio/svelte-components/pure";
+	import { Icon, Caption, Box, HStack, Text, Button, Panel, SectionHeader, SectionFooter, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, artifactGraphSDK } = getStores();
@@ -102,7 +102,7 @@
 		<div class="mx-auto mt-[15vh] w-full max-w-xl px-4">
 			<div class="rounded-lg border border-border bg-popover shadow-2xl">
 				<!-- Search input row -->
-				<HStack gap={2} paddingX={3} borderBottom>
+				<SectionHeader>
 					<Icon name="search" size="md" />
 					<input
 						bind:this={inputEl}
@@ -123,12 +123,13 @@
 							<Icon name="x" size="sm" />
 						</Button>
 					{/if}
-				</HStack>
+				</SectionHeader>
 
 				<!-- Results list -->
 				{#if query.trim() && results.length > 0}
-					<Box overflow="auto">
-						<Box padding={1}>
+					<Box>
+						<ScrollArea>
+						<Panel padding="tight">
 							{#each results as node, i (node.id)}
 								<button
 									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm {i === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
@@ -164,27 +165,34 @@
 									<Text variant="caption" truncate>{node.artifact_type}</Text>
 								</button>
 							{/each}
-						</Box>
+					</Panel>
+					</ScrollArea>
 					</Box>
 				{:else if query.trim()}
-					<Box paddingX={3} paddingY={6}>
+					<Panel padding="loose">
 						<Caption>No matching artifacts</Caption>
-					</Box>
+					</Panel>
 				{:else}
-					<Box paddingX={3} paddingY={6}>
+					<Panel padding="loose">
 						<Caption>Type to search across all artifacts</Caption>
-					</Box>
+					</Panel>
 				{/if}
 
 				<!-- Footer hint -->
-				<HStack justify="between" paddingX={3} paddingY={1} borderTop>
-					<Text variant="caption">↑↓ Navigate</Text>
-					{#if query.trim() && results.length > 0}
-						<Text variant="caption">{results.length}{results.length >= 50 ? "+" : ""} results</Text>
-					{/if}
-					<Text variant="caption">↵ Open</Text>
-					<Text variant="caption">Esc Close</Text>
-				</HStack>
+				<SectionFooter variant="compact">
+					{#snippet start()}
+						<Text variant="caption">↑↓ Navigate</Text>
+					{/snippet}
+					{#snippet end()}
+						<HStack gap={2}>
+							{#if query.trim() && results.length > 0}
+								<Text variant="caption">{results.length}{results.length >= 50 ? "+" : ""} results</Text>
+							{/if}
+							<Text variant="caption">↵ Open</Text>
+							<Text variant="caption">Esc Close</Text>
+						</HStack>
+					{/snippet}
+				</SectionFooter>
 			</div>
 		</div>
 	</div>

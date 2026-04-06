@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, Stack, HStack, Caption, Text, Button, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, Stack, HStack, Caption, Text, Button } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { SvelteMap } from "svelte/reactivity";
@@ -188,14 +189,17 @@
 				<!-- Actions tab: all artifacts needing attention               -->
 				<!-- ---------------------------------------------------------- -->
 				{#if pendingActions.length === 0}
-					<HStack gap={2} paddingY={4}>
+					<Panel padding="normal">
+					<HStack gap={2}>
 						<Icon name="check-circle-2" size="md" />
 						<Text variant="body-muted">No pending actions — everything is moving</Text>
 					</HStack>
+					</Panel>
 				{:else}
 					<Stack gap={1}>
 						{#each pendingActions as action (action.id)}
-							<HStack gap={2} paddingX={2} paddingY={1}>
+							<Panel padding="tight">
+							<HStack gap={2}>
 								<Stack gap={0} flex={1}>
 									<Text variant="caption-strong" truncate>{action.action}</Text>
 									<Caption truncate>{action.title}</Caption>
@@ -204,6 +208,7 @@
 									<ArtifactLink id={action.id} displayLabel={action.id} />
 								</div>
 							</HStack>
+							</Panel>
 						{/each}
 					</Stack>
 				{/if}
@@ -212,21 +217,24 @@
 				<!-- Epics tab: in-progress + next ready epics                  -->
 				<!-- ---------------------------------------------------------- -->
 				{#if epicEntries.length === 0}
-					<HStack gap={2} paddingY={4}>
+					<Panel padding="normal">
+					<HStack gap={2}>
 						<Icon name="map" size="md" />
 						<Text variant="body-muted">No active or ready epics</Text>
 					</HStack>
+					</Panel>
 				{:else}
 					<Stack gap={1}>
 						{#each epicEntries as epic (epic.id)}
-							<HStack gap={2} paddingX={2} paddingY={1}>
-								<Stack gap={0} flex={1}>
+							<Panel padding="tight">
+							<HStack gap={2}>
+								<Stack gap={1} flex={1}>
 									<Text variant="caption-strong" truncate>{epic.title}</Text>
 									{#if epic.description}
 										<Caption truncate>{epic.description}</Caption>
 									{/if}
 									{#if epic.taskProgress !== null}
-										<HStack gap={1} align="center" marginTop={1}>
+										<HStack gap={1} align="center">
 											<div class="h-1 flex-1 rounded-full bg-muted overflow-hidden">
 												<div
 													class="h-full rounded-full bg-success transition-all"
@@ -241,6 +249,7 @@
 									<ArtifactLink id={epic.id} displayLabel={epic.id} />
 								</div>
 							</HStack>
+							</Panel>
 						{/each}
 					</Stack>
 

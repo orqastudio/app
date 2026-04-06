@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Caption, Box } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Caption } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 

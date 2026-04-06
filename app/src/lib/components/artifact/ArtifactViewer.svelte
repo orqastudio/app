@@ -10,7 +10,7 @@
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
-	import { LoadingSpinner, Heading, Stack, HStack, Box, Text } from "@orqastudio/svelte-components/pure";
+	import { LoadingSpinner, Heading, Stack, HStack, Box, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -266,8 +266,10 @@
 			<LoadingSpinner size="lg" />
 		</HStack>
 	{:else if artifactStore.activeContentError}
-		<HStack justify="center" align="center" flex={1} paddingX={4}>
-			<ErrorDisplay message={artifactStore.activeContentError} />
+		<HStack justify="center" align="center" flex={1}>
+			<Panel padding="normal">
+				<ErrorDisplay message={artifactStore.activeContentError} />
+			</Panel>
 		</HStack>
 	{:else if content}
 		{#if currentPath && !isReadme}
@@ -283,7 +285,7 @@
 		<!-- role="presentation" and onclick preserved for artifact link navigation -->
 		<Box flex={1} minHeight={0} role="presentation" onclick={handleContentClick}>
 			<ScrollArea full>
-				<Box padding={6}>
+				<Panel padding="loose">
 					{#if fileExtension === "sh"}
 						<HookViewer {content} />
 					{:else if parsedContent}
@@ -299,23 +301,24 @@
 							<!-- Title + description only, no metadata card -->
 							{@const title = parsedContent.metadata["title"] as string}
 							{@const description = parsedContent.metadata["description"] as string | undefined}
-							<Heading level={1}>{title}</Heading>
-							{#if description}
-								<!-- leading-relaxed is not a Text variant; kept as p. -->
-								<p class="mb-6 text-sm leading-relaxed text-muted-foreground">{description}</p>
-							{:else}
-								<Box marginTop={6}></Box>
+							<Stack gap={6}>
+								<Heading level={1}>{title}</Heading>
+								{#if description}
+									<!-- leading-relaxed is not a Text variant; kept as p. -->
+									<p class="text-sm leading-relaxed text-muted-foreground">{description}</p>
+								{/if}
+							</Stack>
+						{/if}
+						<Stack gap={4}>
+							{#if acceptanceCriteria.length > 0}
+								<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
 							{/if}
-						{/if}
-						{#if acceptanceCriteria.length > 0}
-							<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
-							<Box marginTop={4}></Box>
-						{/if}
-						<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+							<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+						</Stack>
 					{:else}
 						<MarkdownRenderer content={content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
 					{/if}
-				</Box>
+				</Panel>
 			</ScrollArea>
 		</Box>
 	{:else}

@@ -1,6 +1,6 @@
 <!-- Settings category navigation with architecture-aligned section groups. -->
 <script lang="ts">
-	import { Icon, ScrollArea, Stack, Box, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, ScrollArea, Stack, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { settingsStore, pluginRegistry } = getStores();
@@ -167,7 +167,7 @@
 </script>
 
 <ScrollArea full>
-	<Box padding={2}>
+	<Panel padding="tight">
 		{#if mode === "app"}
 			<Stack gap={0}>
 				{#each appCategories as item (item.id)}
@@ -186,10 +186,10 @@
 		{:else}
 			<Stack gap={4}>
 				{#each projectGroups as group (group.label)}
-					<Stack gap={0}>
-						<Box paddingX={2} paddingBottom={1}>
+					<Stack gap={1}>
+						<Panel padding="tight">
 							<Text variant="overline-muted">{group.label}</Text>
-						</Box>
+						</Panel>
 						<Stack gap={0}>
 							{#each group.items as item (item.id)}
 								<button
@@ -208,5 +208,5 @@
 				{/each}
 			</Stack>
 		{/if}
-	</Box>
+	</Panel>
 </ScrollArea>

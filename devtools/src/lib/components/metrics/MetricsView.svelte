@@ -4,13 +4,12 @@
      Clicking a metric cell expands a TimingChart below the grid.
      Also shows an error-rate sparkline covering the last 30 minutes. -->
 <script lang="ts">
-	import { DashboardCard, MetricCell, Sparkline, Stack, HStack, Grid, Heading, Text, Caption, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { DashboardCard, MetricCell, Panel, Sparkline, Stack, HStack, Grid, Heading, Text, Caption, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import {
 		metrics,
 		METRIC_CATEGORIES,
 		errorRateHistory,
 		totalErrorsInWindow,
-		ingestEvent,
 	} from "../../stores/metrics-store.svelte.js";
 	import TimingChart from "./TimingChart.svelte";
 
@@ -57,7 +56,8 @@
 
 <!-- Full-height scrollable content area. -->
 <ScrollArea full>
-<Stack gap={4} padding={4}>
+<Panel padding="normal">
+<Stack gap={4}>
 
 	<!-- Section heading: title left, event count right. -->
 	<HStack justify="between">
@@ -87,27 +87,29 @@
 						lowerIsBetter={true}
 					>
 						<!-- Sparkline of last 100 values — uses the shared Sparkline component. -->
-						{#if stats.history.length >= 2}
-							<Sparkline
-								values={stats.history}
-								width={120}
-								height={32}
-								strokeColor="oklch(var(--color-primary))"
-								strokeWidth={1.5}
-								fillOpacity={0.1}
-								showBaseline={false}
-								padding={2}
-							/>
-						{:else}
-							<!-- Scoped class provides height without Tailwind utility on HStack. -->
-							<div class="metrics-card__waiting"><Caption>Waiting…</Caption></div>
-						{/if}
-						<!-- Min / avg / max row: caption-tabular variant for numeric alignment. -->
-						<HStack justify="between" marginTop={1}>
-							<Caption variant="caption-tabular">min {fmtMs(stats.min)}</Caption>
-							<Caption variant="caption-tabular">avg {fmtMs(stats.avg)}</Caption>
-							<Caption variant="caption-tabular">max {fmtMs(stats.max)}</Caption>
-						</HStack>
+						<Stack gap={1}>
+							{#if stats.history.length >= 2}
+								<Sparkline
+									values={stats.history}
+									width={120}
+									height={32}
+									strokeColor="oklch(var(--color-primary))"
+									strokeWidth={1.5}
+									fillOpacity={0.1}
+									showBaseline={false}
+									padding={2}
+								/>
+							{:else}
+								<!-- Scoped class provides height without Tailwind utility on HStack. -->
+								<div class="metrics-card__waiting"><Caption>Waiting…</Caption></div>
+							{/if}
+							<!-- Min / avg / max row: caption-tabular variant for numeric alignment. -->
+							<HStack justify="between">
+								<Caption variant="caption-tabular">min {fmtMs(stats.min)}</Caption>
+								<Caption variant="caption-tabular">avg {fmtMs(stats.avg)}</Caption>
+								<Caption variant="caption-tabular">max {fmtMs(stats.max)}</Caption>
+							</HStack>
+						</Stack>
 					</MetricCell>
 				</DashboardCard>
 			</div>
@@ -158,6 +160,7 @@
 	</DashboardCard>
 
 </Stack>
+</Panel>
 </ScrollArea>
 
 <style>

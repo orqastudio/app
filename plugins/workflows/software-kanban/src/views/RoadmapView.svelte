@@ -6,6 +6,8 @@
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import {
 		Heading,
+		Panel,
+		SectionHeader,
 		Text,
 		Caption,
 		Stack,
@@ -275,9 +277,9 @@
 <Stack gap={0} height="full">
 	<!-- Breadcrumb bar -->
 	{#if drillLevel > 0}
-		<HStack align="center" borderBottom paddingX={6} paddingY={2}>
+		<SectionHeader>
 			<DrilldownBreadcrumbs items={breadcrumbItems} />
-		</HStack>
+		</SectionHeader>
 	{/if}
 
 	<!-- Main content -->
@@ -287,12 +289,12 @@
 				<LoadingSpinner />
 			</Center>
 		{:else if graphError && !hasData}
-			<Box padding={6}>
+			<Panel padding="loose">
 				<ErrorDisplay
 					message={graphError}
 					onRetry={() => artifactGraphSDK.refresh()}
 				/>
-			</Box>
+			</Panel>
 		{:else if !hasData}
 			<Center flex={1}>
 				<EmptyState
@@ -303,7 +305,8 @@
 			</Center>
 		{:else if drillLevel === 0}
 			<!-- Level 0: Horizon board -->
-			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
+			<Panel padding="loose" full>
+			<Stack gap={4} height="full">
 				<HStack gap={3} align="center">
 					<Icon name="kanban" size="xl" />
 					<Stack gap={0}>
@@ -313,7 +316,7 @@
 						</Caption>
 					</Stack>
 				</HStack>
-				<Box minHeight={0} flex={1} overflow="hidden">
+				<Box minHeight={0} flex={1}>
 					<HorizonBoard
 						columns={horizonColumns}
 						{epics}
@@ -326,32 +329,32 @@
 					/>
 				</Box>
 			</Stack>
+			</Panel>
 		{:else if drillLevel === 1 && selectedMilestone}
 			<!-- Level 1: Milestone → Epics kanban -->
-			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
+			<Panel padding="loose" full>
+			<Stack gap={4} height="full">
 				<!-- Milestone detail header -->
-				<Stack gap={0}>
-					<Caption variant="caption-mono">{selectedMilestone.id}</Caption>
-					<Heading level={2}>{selectedMilestone.title}</Heading>
+				<Stack gap={1}>
+					<Stack gap={0}>
+						<Caption variant="caption-mono">{selectedMilestone.id}</Caption>
+						<Heading level={2}>{selectedMilestone.title}</Heading>
+					</Stack>
 					{#if selectedMilestone.description}
-						<Box marginTop={1}>
-							<Text variant="body-muted">{selectedMilestone.description}</Text>
-						</Box>
+						<Text variant="body-muted">{selectedMilestone.description}</Text>
 					{/if}
 					{#if milestoneEpics.length > 0}
 						{@const doneCount = milestoneEpics.filter(
 							(e) => e.status === "completed",
 						).length}
-						<Box marginTop={1}>
-							<Caption>
-								{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
-							</Caption>
-						</Box>
+						<Caption>
+							{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
+						</Caption>
 					{/if}
 				</Stack>
 
 				<!-- Epics kanban -->
-				<Box minHeight={0} flex={1} overflow="hidden">
+				<Box minHeight={0} flex={1}>
 					<StatusKanban
 						nodes={milestoneEpics}
 						columns={epicColumns}
@@ -362,32 +365,32 @@
 					/>
 				</Box>
 			</Stack>
+			</Panel>
 		{:else if drillLevel === 2 && selectedEpic}
 			<!-- Level 2: Epic → Tasks kanban -->
-			<Stack gap={4} height="full" paddingX={6} paddingY={4}>
+			<Panel padding="loose" full>
+			<Stack gap={4} height="full">
 				<!-- Epic detail header -->
-				<Stack gap={0}>
-					<Caption variant="caption-mono">{selectedEpic.id}</Caption>
-					<Heading level={2}>{selectedEpic.title}</Heading>
+				<Stack gap={1}>
+					<Stack gap={0}>
+						<Caption variant="caption-mono">{selectedEpic.id}</Caption>
+						<Heading level={2}>{selectedEpic.title}</Heading>
+					</Stack>
 					{#if selectedEpic.description}
-						<Box marginTop={1}>
-							<Text variant="body-muted">{selectedEpic.description}</Text>
-						</Box>
+						<Text variant="body-muted">{selectedEpic.description}</Text>
 					{/if}
 					{#if epicTasks.length > 0}
 						{@const doneCount = epicTasks.filter(
 							(t) => t.status === "completed",
 						).length}
-						<Box marginTop={1}>
-							<Caption>
-								{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
-							</Caption>
-						</Box>
+						<Caption>
+							{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
+						</Caption>
 					{/if}
 				</Stack>
 
 				<!-- Tasks kanban -->
-				<Box minHeight={0} flex={1} overflow="hidden">
+				<Box minHeight={0} flex={1}>
 					<StatusKanban
 						nodes={epicTasks}
 						columns={TASK_COLUMNS}
@@ -397,6 +400,7 @@
 					/>
 				</Box>
 			</Stack>
+			</Panel>
 		{/if}
 	</Stack>
 </Stack>

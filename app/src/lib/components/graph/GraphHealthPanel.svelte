@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent, LoadingSpinner, Button, Caption, Stack, HStack, ScrollArea, Text, Box, Center, Dot } from "@orqastudio/svelte-components/pure";
+	import { Icon, TooltipRoot, TooltipTrigger, TooltipContent, LoadingSpinner, Button, Caption, Stack, HStack, ScrollArea, Text, Center, Dot, SectionHeader, Panel } from "@orqastudio/svelte-components/pure";
 	import type { GraphHealthData, HealthSnapshot } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
 
@@ -173,47 +173,53 @@
 <ScrollArea full>
 <Stack gap={0}>
 	<!-- Panel header -->
-	<HStack justify="between" borderBottom paddingX={3} paddingY={2}>
-		<HStack gap={1}>
-			<Icon name="activity" size="sm" />
-			<Caption>Graph Health</Caption>
-		</HStack>
-		<HStack gap={2}>
-			{#if loading}
-				<LoadingSpinner size="sm" />
-			{:else if health && health.total_nodes > 0}
-				<Caption>{healthScore}%</Caption>
-				<Dot color={overallDotColor} size="sm" />
-			{/if}
-			<Button
-				variant="ghost"
-				size="icon-sm"
-				onclick={onRefresh}
-				disabled={loading}
-				aria-label="Refresh health metrics"
-			>
-				<Icon name="refresh-cw" size="sm" />
-			</Button>
-		</HStack>
-	</HStack>
+	<SectionHeader>
+		{#snippet start()}
+			<HStack gap={1}>
+				<Icon name="activity" size="sm" />
+				<Caption>Graph Health</Caption>
+			</HStack>
+		{/snippet}
+		{#snippet end()}
+			<HStack gap={2}>
+				{#if loading}
+					<LoadingSpinner size="sm" />
+				{:else if health && health.total_nodes > 0}
+					<Caption>{healthScore}%</Caption>
+					<Dot color={overallDotColor} size="sm" />
+				{/if}
+				<Button
+					variant="ghost"
+					size="icon-sm"
+					onclick={onRefresh}
+					disabled={loading}
+					aria-label="Refresh health metrics"
+				>
+					<Icon name="refresh-cw" size="sm" />
+				</Button>
+			</HStack>
+		{/snippet}
+	</SectionHeader>
 
 	{#if loading && !health}
 		<Center>
 			<LoadingSpinner size="md" />
 		</Center>
 	{:else if !health || health.total_nodes === 0}
-		<Center flex={1} padding={4}>
-			<Stack gap={2} align="center">
-				<Icon name="activity" size="md" />
-				<Caption>No graph data yet.</Caption>
-				<Caption>Open a project to analyse health.</Caption>
-			</Stack>
+		<Center flex={1}>
+			<Panel padding="normal">
+				<Stack gap={2} align="center">
+					<Icon name="activity" size="md" />
+					<Caption>No graph data yet.</Caption>
+					<Caption>Open a project to analyse health.</Caption>
+				</Stack>
+			</Panel>
 		</Center>
 	{:else}
 		<Stack gap={0}>
 
 			<!-- Size overview -->
-			<Box paddingX={3} paddingY={2}>
+			<Panel padding="tight">
 				<Caption>Overview</Caption>
 				<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem;">
 					<HStack justify="between">
@@ -225,10 +231,10 @@
 						<Text variant="caption-tabular">{health.total_edges}</Text>
 					</HStack>
 				</div>
-			</Box>
+			</Panel>
 
 			<!-- Connectivity metrics -->
-			<Box paddingX={3} paddingY={2}>
+			<Panel padding="tight">
 				<Caption>Connectivity</Caption>
 				<Stack gap={1}>
 
@@ -263,7 +269,7 @@
 
 					<!-- Outlier age distribution sub-row -->
 					{#if showOutlierAgeDistribution}
-						<HStack justify="end" gap={2} paddingX={1}>
+						<HStack justify="end" gap={2}>
 							{#if health.outlier_age_distribution.stale > 0}
 								<Caption tone="destructive">{health.outlier_age_distribution.stale} stale</Caption>
 							{/if}
@@ -336,10 +342,10 @@
 						</TooltipContent>
 					</TooltipRoot>
 				</Stack>
-			</Box>
+			</Panel>
 
 			<!-- Pipeline metrics -->
-			<Box paddingX={3} paddingY={2}>
+			<Panel padding="tight">
 				<Caption>Pipelines</Caption>
 				<Stack gap={1}>
 
@@ -383,10 +389,10 @@
 						</TooltipContent>
 					</TooltipRoot>
 				</Stack>
-			</Box>
+			</Panel>
 
 			<!-- Governance metrics -->
-			<Box paddingX={3} paddingY={2}>
+			<Panel padding="tight">
 				<Caption>Governance</Caption>
 				<Stack gap={1}>
 
@@ -410,15 +416,15 @@
 						</TooltipContent>
 					</TooltipRoot>
 				</Stack>
-			</Box>
+			</Panel>
 
 			<!-- Historical comparison note -->
 			{#if snapshots.length > 1 && prevDate}
-				<Box paddingX={3} paddingY={2}>
+				<Panel padding="tight">
 					<Caption>
 						Deltas vs. previous snapshot ({prevDate})
 					</Caption>
-				</Box>
+				</Panel>
 			{/if}
 
 		</Stack>

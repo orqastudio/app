@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack, Stack, Text, Heading, ScrollArea, Box, Caption, Code } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Text, Heading, ScrollArea, Panel, Caption, Code } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
@@ -147,7 +147,7 @@
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-	<Box padding={6} rounded="lg" border>
+	<Panel padding="loose" rounded="lg" border="all">
 	<Stack gap={4}>
 		<!-- Header -->
 		<HStack gap={3}>
@@ -180,7 +180,8 @@
 
 							<!-- Resolution status -->
 							{#if resolutions[conflict.key]}
-								<HStack gap={2} justify="between" paddingX={2} paddingY={1}>
+								<Panel padding="tight">
+								<HStack gap={2} justify="between">
 									<Text variant="caption">
 										<Caption tone="muted">Rename</Caption>
 										<Caption>{resolutions[conflict.key].plugin}</Caption>
@@ -195,13 +196,16 @@
 										<Icon name="x" size="sm" />
 									</Button>
 								</HStack>
+								</Panel>
 							{:else}
 								<!-- AI suggestions for this conflict -->
 								{#if loadingSuggestions}
-									<HStack gap={2} paddingY={2}>
+									<Panel padding="tight">
+									<HStack gap={2}>
 										<LoadingSpinner size="sm" />
 										<Caption tone="muted">Getting AI suggestions...</Caption>
 									</HStack>
+									</Panel>
 								{:else}
 									{@const conflictSuggestions = suggestions.filter((s) => s.key === conflict.key)}
 									{#if conflictSuggestions.length > 0}
@@ -276,7 +280,8 @@
 		{/if}
 
 		<!-- Actions -->
-		<HStack gap={2} justify="end" borderTop paddingTop={2}>
+		<Panel border="top" padding="tight">
+		<HStack gap={2} justify="end">
 			<Button variant="ghost" size="sm" onclick={onCancel}>
 				Cancel Install
 			</Button>
@@ -293,6 +298,7 @@
 				{/if}
 			</Button>
 		</HStack>
+		</Panel>
 	</Stack>
-	</Box>
+	</Panel>
 </div>

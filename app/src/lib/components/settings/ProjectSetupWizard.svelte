@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge, Button, HStack, Stack, Grid, Caption, Text, Box } from "@orqastudio/svelte-components/pure";
+	import { Badge, Button, HStack, Stack, Grid, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -130,42 +130,42 @@
 			<Stack gap={2}>
 				<Heading level={4}>Governance</Heading>
 				<Grid cols={3} gap={2}>
-					<Box padding={2} border rounded="md">
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.docs}</Text>
 							<Caption tone="muted">Docs</Caption>
 						</Stack>
-					</Box>
-					<Box padding={2} border rounded="md">
+					</Panel>
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.agents}</Text>
 							<Caption tone="muted">Agents</Caption>
 						</Stack>
-					</Box>
-					<Box padding={2} border rounded="md">
+					</Panel>
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.rules}</Text>
 							<Caption tone="muted">Rules</Caption>
 						</Stack>
-					</Box>
-					<Box padding={2} border rounded="md">
+					</Panel>
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.knowledge}</Text>
 							<Caption tone="muted">Knowledge</Caption>
 						</Stack>
-					</Box>
-					<Box padding={2} border rounded="md">
+					</Panel>
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.hooks}</Text>
 							<Caption tone="muted">Hooks</Caption>
 						</Stack>
-					</Box>
-					<Box padding={2} border rounded="md">
+					</Panel>
+					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
 							<Text variant="heading-base">{scanResult.governance.has_claude_config ? "Yes" : "No"}</Text>
 							<Caption tone="muted">CLAUDE.md</Caption>
 						</Stack>
-					</Box>
+					</Panel>
 				</Grid>
 			</Stack>
 

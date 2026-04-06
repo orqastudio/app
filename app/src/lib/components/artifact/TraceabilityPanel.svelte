@@ -9,9 +9,9 @@
 		Badge,
 		HStack,
 		Stack,
-		Box,
 		Text,
 		Caption,
+		Panel,
 	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
@@ -65,18 +65,18 @@
 </script>
 
 {#if loading}
-	<Box borderBottom paddingX={4} paddingY={2}>
+	<Panel padding="tight" border="bottom">
 		<HStack gap={2}>
 			<LoadingSpinner size="sm" />
 			<Caption>Loading traceability…</Caption>
 		</HStack>
-	</Box>
+	</Panel>
 {:else if error}
-	<Box borderBottom paddingX={4} paddingY={2}>
+	<Panel padding="tight" border="bottom">
 		<Text variant="caption" tone="destructive" block>{error}</Text>
-	</Box>
+	</Panel>
 {:else if result}
-	<Box borderBottom paddingX={4} paddingY={2}>
+	<Panel padding="tight" border="bottom">
 		<Collapsible bind:open>
 			<CollapsibleTrigger
 				class="flex w-full items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -95,7 +95,8 @@
 			</CollapsibleTrigger>
 
 			<CollapsibleContent>
-				<Stack gap={3} paddingTop={2} paddingX={4}>
+				<Panel padding="normal">
+				<Stack gap={3}>
 
 					<!-- Disconnected warning — bg-warning/10 is not in Box background map, kept as div. -->
 					{#if result.disconnected}
@@ -131,8 +132,8 @@
 												</span>
 											{/if}
 
-											<!-- Artifact chip -->
-											<HStack gap={1} style={nodeIdx === 0 ? "" : `margin-left: ${nodeIdx * 8}px`}>
+											<!-- Artifact chip — indent by node depth in the chain (capped at 8 levels). -->
+											<HStack gap={1} indent={Math.min(nodeIdx, 8) as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}>
 												<span class="shrink-0 text-muted-foreground">
 													<Icon name={pluginRegistry.getIconForType(node.artifact_type)} size="xs" />
 												</span>
@@ -173,7 +174,7 @@
 									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
-									<HStack wrap gap={1} paddingTop={1} paddingX={3}>
+									<Panel padding="tight"><HStack wrap gap={1}>
 										{#each visibleDescendants as desc (desc.id)}
 											<HStack gap={1}>
 												<ArtifactLink id={desc.id} />
@@ -185,7 +186,7 @@
 										{#if result.descendants.length > 20}
 											<Caption>… and {result.descendants.length - 20} more</Caption>
 										{/if}
-									</HStack>
+									</HStack></Panel>
 								</CollapsibleContent>
 							</Collapsible>
 						</Stack>
@@ -209,11 +210,11 @@
 									</HStack>
 								</CollapsibleTrigger>
 								<CollapsibleContent>
-									<HStack wrap gap={1} paddingTop={1} paddingX={3}>
+									<Panel padding="tight"><HStack wrap gap={1}>
 										{#each result.siblings as siblingId (siblingId)}
 											<ArtifactLink id={siblingId} />
 										{/each}
-									</HStack>
+									</HStack></Panel>
 								</CollapsibleContent>
 							</Collapsible>
 						</Stack>
@@ -223,7 +224,8 @@
 						<Caption block>No traceability data for this artifact.</Caption>
 					{/if}
 				</Stack>
+				</Panel>
 			</CollapsibleContent>
 		</Collapsible>
-	</Box>
+	</Panel>
 {/if}

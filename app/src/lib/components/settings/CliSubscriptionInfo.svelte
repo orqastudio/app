@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Badge, HStack, Stack, Caption, Text, Code, Box } from "@orqastudio/svelte-components/pure";
+	import { Badge, HStack, Stack, Caption, Text, Code, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 
 	interface Props {
@@ -68,7 +68,7 @@
 </script>
 
 <Separator />
-<Box padding={4} rounded="lg" border background="muted">
+<Panel padding="normal" rounded="lg" border="all" background="muted">
 <Stack gap={3}>
 	<HStack gap={2} justify="between">
 		<Text variant="body-strong">Subscription</Text>
@@ -103,4 +103,4 @@
 		</HStack>
 	{/if}
 </Stack>
-</Box>
+</Panel>

@@ -10,8 +10,8 @@
 </script>
 
 <!-- Vertical stack: SessionPicker and LogFilters pinned above, LogTable fills the rest.
-     height="full" and overflow="hidden" bound the virtualized log table. -->
-<Stack gap={0} height="full" overflow="hidden">
+     height="full" bounds the virtualized log table within the tab content area. -->
+<Stack gap={0} height="full">
 	<SessionPicker />
 	<LogFilters />
 	<LogTable />

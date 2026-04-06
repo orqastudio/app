@@ -125,14 +125,14 @@
 	});
 </script>
 
-<Stack gap={0} height="screen" width="screen" overflow="hidden">
+<Stack gap={0} height="screen" width="screen">
 	<!-- Toolbar -->
 	<Toolbar />
 
 	<!-- Main Content Area. align="stretch" is required so children fill the
 	     available height — HStack's default is align="center" which collapses
 	     children to content height and breaks nested h-full centering. -->
-	<HStack gap={0} flex={1} align="stretch" overflow="hidden">
+	<HStack gap={0} flex={1} align="stretch">
 		{#if setupNeeded}
 			<!-- First-run setup wizard — blocks all other content -->
 			<SetupWizard
@@ -174,7 +174,7 @@
 
 			<!-- Explorer + Chat (resizable) -->
 			{#if hideChatPanel}
-				<Box flex={1} minWidth={0} overflow="hidden">
+				<Box flex={1} minWidth={0}>
 					{#if navigationStore.activeActivity === "settings"}
 						<SettingsView />
 					{:else}
@@ -199,7 +199,7 @@
 
 		{:else}
 			<!-- No project loaded — welcome screen, no sidebar -->
-			<Box flex={1} overflow="hidden">
+			<Box flex={1}>
 				<WelcomeScreen />
 			</Box>
 		{/if}

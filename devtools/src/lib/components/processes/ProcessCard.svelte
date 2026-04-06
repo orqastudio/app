@@ -192,8 +192,8 @@
 			<CardFooter title={process.binary_path}>
 				<HStack justify="between" full gap={2}>
 					<Caption>Binary</Caption>
-					<!-- Box with overflow hidden contains the truncated filename. -->
-					<Box overflow="hidden">
+					<!-- Box contains the truncated filename. -->
+					<Box>
 						<!-- Wrapper span targets the code element for truncation styles. -->
 						<span class="process-card__binary-wrap" style="display: contents;">
 							<Code>{binaryFilename(process.binary_path)}</Code>

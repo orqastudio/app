@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, LoadingSpinner, Button, HStack, Stack, Text, Caption, Grid } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
@@ -259,11 +260,13 @@
 						</TooltipContent>
 					</TooltipRoot>
 				{:else}
-					<Stack gap={1} align="center" paddingY={3}>
+					<Panel padding="normal">
+					<Stack gap={1} align="center">
 						<Icon name="scan" size="sm" />
 						<Caption variant="caption-tabular">—</Caption>
 						<Caption>Integrity</Caption>
 					</Stack>
+					</Panel>
 				{/if}
 
 				<!-- Pillar Traceability -->
@@ -288,10 +291,12 @@
 		{#if thresholdAlerts.length > 0}
 			<Stack gap={1}>
 				{#each thresholdAlerts as alert (alert.message)}
-					<HStack gap={1} paddingX={2} paddingY={1}>
+					<Panel padding="tight">
+					<HStack gap={1}>
 						<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
 						<Caption tone={alert.level === "red" ? "destructive" : "warning"}>{alert.message}</Caption>
 					</HStack>
+					</Panel>
 				{/each}
 			</Stack>
 		{/if}

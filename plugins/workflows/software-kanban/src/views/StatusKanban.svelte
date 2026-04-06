@@ -163,7 +163,7 @@
 	{:else}
 		<!-- Kanban columns -->
 		<Box minHeight={0} flex={1}>
-			<HStack gap={3} height="full" paddingBottom={2}>
+			<HStack gap={3} height="full">
 				{#if totalNodes === 0}
 					<Center flex={1}>
 						<EmptyState

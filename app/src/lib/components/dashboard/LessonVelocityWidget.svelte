@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Text, Caption, Dot } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Caption, Dot } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, pluginRegistry } = getStores();
@@ -89,13 +89,14 @@
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
+			<Stack gap={3}>
 			<PipelineStages
 				stages={pipelineStages}
 				onStageClick={(key) => navigateToLessons(key)}
 			/>
 
 			<!-- Summary text -->
-			<HStack gap={1} marginTop={3}>
+			<HStack gap={1}>
 				{#if awaitingPromotion === 0}
 					<Icon name="check-circle-2" size="sm" />
 				{:else}
@@ -103,6 +104,7 @@
 				{/if}
 				<Caption>{summaryText}</Caption>
 			</HStack>
+			</Stack>
 		</CardContent>
 	</CardRoot>
 {/if}

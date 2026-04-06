@@ -11,8 +11,9 @@
 		HStack,
 		Stack,
 		Text,
-		Box,
 		ScrollArea,
+		SectionHeader,
+		Panel,
 	} from "@orqastudio/svelte-components/pure";
 	import type { Lesson } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
@@ -69,32 +70,38 @@
 
 <Stack gap={0} height="full">
 	<!-- Header -->
-	<HStack justify="between" borderBottom paddingX={3} paddingY={2}>
-		<HStack gap={2}>
-			<Icon name="book-open" size="md" />
-			<Text variant="body-strong">Lessons</Text>
-		</HStack>
-		<HStack gap={1}>
-			{#if promotionCandidates.length > 0}
-				<Badge variant="secondary" size="sm">
-					<Icon name="trending-up" size="xs" />
-					{promotionCandidates.length} ready to promote
-				</Badge>
-			{/if}
-			{#if promotedCount > 0}
-				<Badge variant="outline" size="sm">
-					<Icon name="check-circle" size="xs" />
-					{promotedCount} promoted
-				</Badge>
-			{/if}
-		</HStack>
-	</HStack>
+	<SectionHeader>
+		{#snippet start()}
+			<HStack gap={2}>
+				<Icon name="book-open" size="md" />
+				<Text variant="body-strong">Lessons</Text>
+			</HStack>
+		{/snippet}
+		{#snippet end()}
+			<HStack gap={1}>
+				{#if promotionCandidates.length > 0}
+					<Badge variant="secondary" size="sm">
+						<Icon name="trending-up" size="xs" />
+						{promotionCandidates.length} ready to promote
+					</Badge>
+				{/if}
+				{#if promotedCount > 0}
+					<Badge variant="outline" size="sm">
+						<Icon name="check-circle" size="xs" />
+						{promotedCount} promoted
+					</Badge>
+				{/if}
+			</HStack>
+		{/snippet}
+	</SectionHeader>
 
 	<ScrollArea full>
-		<Box padding={2}>
+		<Panel padding="tight">
 			{#if loading && lessons.length === 0}
-				<Center padding={8}>
-					<LoadingSpinner />
+				<Center>
+					<Panel padding="loose">
+						<LoadingSpinner />
+					</Panel>
 				</Center>
 			{:else if error}
 				<ErrorDisplay message="Failed to load lessons: {error}" {onRetry} />
@@ -107,10 +114,11 @@
 			{:else}
 				<!-- Active lessons -->
 				{#if activeCount > 0}
+					<Stack gap={1}>
 					<Text variant="overline-muted" block>
 						Active ({activeCount})
 					</Text>
-					<Stack gap={1} marginTop={1}>
+					<Stack gap={1}>
 						{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
 							<Button
 								variant="ghost"
@@ -139,14 +147,16 @@
 							</Button>
 						{/each}
 					</Stack>
+					</Stack>
 				{/if}
 
 				<!-- Promoted lessons -->
 				{#if promotedCount > 0}
+					<Stack gap={1}>
 					<Text variant="overline-muted" block>
 						Promoted ({promotedCount})
 					</Text>
-					<Stack gap={1} marginTop={1}>
+					<Stack gap={1}>
 						{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
 							<Button
 								variant="ghost"
@@ -168,10 +178,12 @@
 							</Button>
 						{/each}
 					</Stack>
+					</Stack>
 				{/if}
 
 				<!-- Resolved lessons -->
 				{#if lessons.some((l) => l.status === "resolved")}
+					<Stack gap={1}>
 					<Text variant="overline-muted" block>
 						Resolved
 					</Text>
@@ -192,8 +204,9 @@
 							</Button>
 						{/each}
 					</Stack>
+					</Stack>
 				{/if}
 			{/if}
-		</Box>
+		</Panel>
 	</ScrollArea>
 </Stack>

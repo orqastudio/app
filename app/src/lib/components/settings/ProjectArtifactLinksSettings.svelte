@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Grid, Caption } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Caption, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import type { ProjectSettings, ArtifactLinksConfig, ArtifactLinkDisplayMode } from "@orqastudio/types";
 
@@ -69,11 +69,13 @@
 	</CardHeader>
 	<CardContent>
 		<!-- Column headers -->
-		<HStack gap={4} paddingX={1}>
+		<Panel padding="tight">
+		<HStack gap={4}>
 			<Caption variant="caption-strong" tone="muted">Type</Caption>
 			<Caption variant="caption-strong" tone="muted">Display</Caption>
 			<Caption variant="caption-strong" tone="muted">Colour</Caption>
 		</HStack>
+		</Panel>
 
 		<Separator />
 

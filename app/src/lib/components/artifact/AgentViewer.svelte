@@ -1,6 +1,6 @@
 <!-- Renders an agent artifact: description, capabilities, knowledge, model, and markdown body. -->
 <script lang="ts">
-	import { Icon, SmallBadge, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
+	import { Icon, SmallBadge, HStack, Stack, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -55,7 +55,7 @@
 
 <Stack gap={4}>
 	<!-- Structured header -->
-	<Stack gap={3} borderBottom paddingBottom={4}>
+	<Panel padding="normal" border="bottom"><Stack gap={3}>
 		{#if description}
 			<Text variant="body-muted" block>{description}</Text>
 		{/if}
@@ -71,7 +71,7 @@
 				<SmallBadge variant="default">{model}</SmallBadge>
 			</HStack>
 		{/if}
-	</Stack>
+	</Stack></Panel>
 
 	<!-- Body content -->
 	{#if body.trim()}

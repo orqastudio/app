@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
 	import mermaid from "mermaid";
-	import { Caption, Center } from "@orqastudio/svelte-components/pure";
+	import { Caption, Center, Panel } from "@orqastudio/svelte-components/pure";
 
 
 	let { text }: { text: string } = $props();
@@ -70,8 +70,10 @@
 <!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
 <div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
 	{#if rendering && !error && !svgContent}
-		<Center padding={8}>
-			<Caption tone="muted">Rendering diagram...</Caption>
+		<Center>
+			<Panel padding="loose">
+				<Caption tone="muted">Rendering diagram...</Caption>
+			</Panel>
 		</Center>
 	{/if}
 	{#if error}

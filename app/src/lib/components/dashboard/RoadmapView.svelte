@@ -2,7 +2,9 @@
      Clicking a milestone card drills into a kanban of its epics grouped by status.
      Breadcrumb navigation and a back button return to the milestone board. -->
 <script lang="ts">
-	import { Icon, Heading, Badge, Button, HStack, Stack, Text, Caption, Box } from "@orqastudio/svelte-components/pure";
+	import { SvelteMap } from "svelte/reactivity";
+	import { Icon, Heading, Badge, Button, HStack, Stack, Text, Caption } from "@orqastudio/svelte-components/pure";
+	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ArtifactNode } from "@orqastudio/types";
 	import type { PipelineStageConfig } from "@orqastudio/types";
@@ -44,7 +46,7 @@
 		stages: PipelineStageConfig[],
 	): Map<string, ArtifactNode[]> {
 		const fallbackKey = stages[0]?.key ?? "unknown";
-		const map = new Map<string, ArtifactNode[]>();
+		const map = new SvelteMap<string, ArtifactNode[]>();
 		for (const stage of stages) {
 			map.set(stage.key, []);
 		}
@@ -179,8 +181,9 @@
 	}
 </script>
 
-<Box height="full" overflow="auto">
-	<Stack gap={6} padding={6}>
+<ScrollArea full>
+	<Panel padding="loose">
+	<Stack gap={6}>
 
 		<!-- Breadcrumb / back navigation -->
 		<HStack gap={2}>
@@ -201,30 +204,35 @@
 			     TOP LEVEL: Milestone kanban board
 			     ================================================================ -->
 			{#if milestones.length === 0}
-				<Stack gap={2} align="center" padding={8}>
+				<Panel padding="loose">
+				<Stack gap={2} align="center">
 					<Icon name="map" size="xl" />
 					<Text variant="body-muted" block>No milestones yet.</Text>
 					<Text variant="body-muted" block>Create milestone artifacts in your delivery tree to build a roadmap.</Text>
 				</Stack>
+				</Panel>
 			{:else}
 				<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
 				<div class="grid gap-4" style="grid-template-columns: repeat({milestoneStages.length}, minmax(200px, 1fr));">
 					{#each milestoneStages as stage (stage.key)}
 						{@const cards = milestoneColumns.get(stage.key) ?? []}
 						<Stack gap={2}>
-							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required -->
-							<HStack paddingX={3} paddingY={1} style={columnHeaderStyle(stage.color)}>
+							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required on the span wrapper, not on HStack -->
+							<!-- FOLLOW-UP: HStack style prop removed; border-left dynamic color moved to outer span wrapper; see findings -->
+							<span style={columnHeaderStyle(stage.color)}>
+							<HStack>
 								<!-- Stage label with dynamic color — Text has no style prop; span wrapper used -->
 								<span style={columnLabelStyle(stage.color)}><Text variant="overline">{stage.label}</Text></span>
 								<Caption>({cards.length})</Caption>
 							</HStack>
+							</span>
 
 							<!-- Cards -->
 							<Stack gap={2}>
 								{#each cards as ms (ms.id)}
 									{@const statusColor = colorForStatus(milestoneStages, ms.status)}
 									{@const deadline = (ms.frontmatter as Record<string, unknown>)?.deadline as string | undefined}
-									<Box border rounded="md" background="card" padding={3}>
+									<Panel padding="normal" border="all" rounded="md" background="card">
 										<Stack gap={1}>
 											<!-- Title row -->
 											<HStack gap={2} align="start">
@@ -254,13 +262,13 @@
 												</Button>
 											</HStack>
 										</Stack>
-									</Box>
+									</Panel>
 								{/each}
 
 								{#if cards.length === 0}
-									<Box border rounded="md" padding={3}>
+									<Panel padding="normal" border="all" rounded="md">
 										<Caption>No milestones</Caption>
-									</Box>
+									</Panel>
 								{/if}
 							</Stack>
 						</Stack>
@@ -275,29 +283,34 @@
 			{@const allEpics = epicsForMilestone(selectedMilestone)}
 
 			{#if allEpics.length === 0}
-				<Stack gap={2} align="center" padding={8}>
+				<Panel padding="loose">
+				<Stack gap={2} align="center">
 					<Icon name="layers" size="xl" />
 					<Text variant="body-muted" block>No epics linked to this milestone yet.</Text>
 					<Text variant="body-muted" block>Create epic artifacts with a "fulfils" relationship to <strong>{selectedMilestone.title}</strong>.</Text>
 				</Stack>
+				</Panel>
 			{:else}
 				<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
 				<div class="grid gap-4" style="grid-template-columns: repeat({epicStages.length}, minmax(200px, 1fr));">
 					{#each epicStages as stage (stage.key)}
 						{@const cards = epicColumns.get(stage.key) ?? []}
 						<Stack gap={2}>
-							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required -->
-							<HStack paddingX={3} paddingY={1} style={columnHeaderStyle(stage.color)}>
+							<!-- Column header — stage color border and text color are dynamic from plugin registry; inline style required on the span wrapper, not on HStack -->
+							<!-- FOLLOW-UP: HStack style prop removed; border-left dynamic color moved to outer span wrapper; see findings -->
+							<span style={columnHeaderStyle(stage.color)}>
+							<HStack>
 								<!-- Stage label with dynamic color — Text has no style prop; span wrapper used -->
 								<span style={columnLabelStyle(stage.color)}><Text variant="overline">{stage.label}</Text></span>
 								<Caption>({cards.length})</Caption>
 							</HStack>
+							</span>
 
 							<!-- Cards -->
 							<Stack gap={2}>
 								{#each cards as epic (epic.id)}
 									{@const statusColor = colorForStatus(epicStages, epic.status)}
-									<Box border rounded="md" background="card" padding={3}>
+									<Panel padding="normal" border="all" rounded="md" background="card">
 										<Stack gap={1}>
 											<!-- Title row -->
 											<HStack gap={2} align="start">
@@ -317,13 +330,13 @@
 												<Badge variant="secondary">{epic.priority}</Badge>
 											{/if}
 										</Stack>
-									</Box>
+									</Panel>
 								{/each}
 
 								{#if cards.length === 0}
-									<Box border rounded="md" padding={3}>
+									<Panel padding="normal" border="all" rounded="md">
 										<Caption>No epics</Caption>
-									</Box>
+									</Panel>
 								{/if}
 							</Stack>
 						</Stack>
@@ -333,4 +346,5 @@
 		{/if}
 
 	</Stack>
-</Box>
+	</Panel>
+</ScrollArea>

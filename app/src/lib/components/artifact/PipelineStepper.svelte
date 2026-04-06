@@ -3,7 +3,7 @@
      (h-px, h-4, w-4, rounded-full, etc.) are not expressible via ORQA layout primitives. -->
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { Icon, HStack, Box } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Panel } from "@orqastudio/svelte-components/pure";
 
 	const { artifactGraphSDK, projectStore } = getStores();
 
@@ -58,7 +58,8 @@
 </script>
 
 {#if stages.length > 0 && currentIndex >= 0}
-	<Box marginTop={0} paddingBottom={4}>
+	<Panel padding="normal">
+		<Stack gap={1}>
 		<!-- Row 1: circles and connector lines, vertically centered on circles -->
 		<HStack gap={0}>
 			{#each stages as stage, i (stage.key)}
@@ -105,7 +106,7 @@
 		</HStack>
 
 		<!-- Row 2: labels, positioned to align under their circles -->
-		<HStack gap={0} align="start" marginTop={1}>
+		<HStack gap={0} align="start">
 			{#each stages as stage, i (stage.key)}
 				{@const isPast = i < currentIndex}
 				{@const isCurrent = i === currentIndex}
@@ -142,5 +143,6 @@
 				</div>
 			{/each}
 		</HStack>
-	</Box>
+		</Stack>
+	</Panel>
 {/if}

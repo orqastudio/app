@@ -1,6 +1,6 @@
 <!-- Collapsible panel showing incoming and outgoing references for an artifact. Supports list and graph views. -->
 <script lang="ts">
-	import { Icon, HStack, Stack, Box, Caption, Button,
+	import { Icon, HStack, Stack, Box, Caption, Button, Panel,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -96,7 +96,7 @@
 </script>
 
 {#if totalRefs > 0}
-	<Box borderBottom paddingX={4} paddingY={2}>
+	<Panel padding="tight" border="bottom">
 		<Collapsible bind:open={panelOpen}>
 			<HStack justify="between">
 				<CollapsibleTrigger
@@ -131,16 +131,16 @@
 				{/if}
 			</HStack>
 			<CollapsibleContent>
+				<Stack gap={1}>
 				{#if viewMode === "graph"}
-					<Box paddingTop={1}>
-						<RelationshipGraphView
-							{artifactId}
-							{incomingRefs}
-							{outgoingRefs}
-						/>
-					</Box>
+					<RelationshipGraphView
+						{artifactId}
+						{incomingRefs}
+						{outgoingRefs}
+					/>
 				{:else}
-					<Stack gap={2} paddingTop={1} paddingX={4}>
+					<Panel padding="normal">
+					<Stack gap={2}>
 						{#if incomingRefs.length > 0}
 							<Stack gap={1}>
 								{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
@@ -198,8 +198,10 @@
 							</Stack>
 						{/if}
 					</Stack>
+					</Panel>
 				{/if}
+				</Stack>
 			</CollapsibleContent>
 		</Collapsible>
-	</Box>
+	</Panel>
 {/if}

@@ -8,10 +8,11 @@
 	import {
 		SelectMenu,
 		Badge,
+		Panel,
+		SectionHeader,
 		ScrollArea,
 		Button,
 		Caption,
-		Text,
 		Icon,
 		EmptyState,
 		CollapsibleRoot,
@@ -59,14 +60,6 @@
 
 	// Collapsed state for the "done" column — SvelteSet is inherently reactive
 	const collapsedCols = new SvelteSet<string>(["done"]);
-
-	function toggleCollapsed(key: string) {
-		if (collapsedCols.has(key)) {
-			collapsedCols.delete(key);
-		} else {
-			collapsedCols.add(key);
-		}
-	}
 
 	// Drag and drop
 	let dragMilestoneId = $state<string | null>(null);
@@ -214,7 +207,7 @@
 
 	<!-- Horizon columns -->
 	<Box minHeight={0} flex={1}>
-		<HStack gap={4} height="full" paddingBottom={4}>
+		<HStack gap={4} height="full">
 			{#each activeColumns as col (col.key)}
 				{@const isCollapsed = col.isDone === true && collapsedCols.has(col.key)}
 				{@const isDrop = dropTargetKey === col.key}
@@ -260,8 +253,8 @@
 								aria-label="{col.label} horizon column"
 							>
 								<!-- Column header -->
-								<Box borderBottom paddingX={4} paddingY={3}>
-									<HStack justify="between" align="center">
+								<SectionHeader>
+									{#snippet start()}
 										<HStack gap={2} align="center">
 											<Badge variant="outline" size="sm" capitalize>
 												{col.label}
@@ -272,6 +265,8 @@
 												</Caption>
 											{/if}
 										</HStack>
+									{/snippet}
+									{#snippet end()}
 										{#if col.isDone}
 											<CollapsibleTrigger>
 												<Button
@@ -283,19 +278,20 @@
 												</Button>
 											</CollapsibleTrigger>
 										{/if}
-									</HStack>
-									{#if col.description}
-										<Box marginTop={1}>
-											<Caption>{col.description}</Caption>
-										</Box>
-									{/if}
-								</Box>
+									{/snippet}
+								</SectionHeader>
+								{#if col.description}
+									<Panel padding="tight">
+										<Caption>{col.description}</Caption>
+									</Panel>
+								{/if}
 
 								<!-- Milestone cards -->
 								<CollapsibleContent>
 									<Box minHeight={0} flex={1}>
 										<ScrollArea full orientation="vertical">
-											<Stack gap={3} padding={3} role="list">
+											<Panel padding="normal">
+											<Stack gap={3} role="list">
 												{#if col.milestones.length === 0}
 													<EmptyState
 														title="No {rootLabel.toLowerCase()}s"
@@ -330,6 +326,7 @@
 													{/each}
 												{/if}
 											</Stack>
+										</Panel>
 										</ScrollArea>
 									</Box>
 								</CollapsibleContent>

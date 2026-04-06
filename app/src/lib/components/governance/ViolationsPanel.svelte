@@ -15,6 +15,8 @@
 		Stack,
 		Box,
 		Text,
+		Panel,
+		SectionFooter,
 	} from "@orqastudio/svelte-components/pure";
 	import { logger } from "@orqastudio/sdk";
 	import type { StoredEnforcementViolation } from "@orqastudio/types";
@@ -69,45 +71,47 @@
 
 <Stack gap={0} height="full">
 	<!-- Header with summary counts -->
-	<Box borderBottom paddingX={4} paddingY={3}>
-		<HStack justify="between">
-			<Heading level={5}>Violation History</Heading>
-			<HStack gap={2}>
-				{#if blockCount > 0}
-					<Badge variant="destructive" size="sm">
-						{blockCount} blocked
-					</Badge>
-				{/if}
-				{#if warnCount > 0}
-					<Badge variant="warning" size="sm">
-						{warnCount} warned
-					</Badge>
-				{/if}
+	<Panel padding="normal" border="bottom">
+		<Stack gap={2}>
+			<HStack justify="between">
+				<Heading level={5}>Violation History</Heading>
+				<HStack gap={2}>
+					{#if blockCount > 0}
+						<Badge variant="destructive" size="sm">
+							{blockCount} blocked
+						</Badge>
+					{/if}
+					{#if warnCount > 0}
+						<Badge variant="warning" size="sm">
+							{warnCount} warned
+						</Badge>
+					{/if}
+				</HStack>
 			</HStack>
-		</HStack>
 
-		<!-- Filters -->
-		<HStack gap={2} marginTop={2}>
-			<Box flex={1}>
-				<SearchInput
-					bind:value={ruleFilter}
-					placeholder="Filter by rule name..."
-					size="xs"
-				/>
-			</Box>
-			<HStack gap={1}>
-				{#each (["all", "block", "warn"] as const) as opt (opt)}
-					<Button
-						variant={actionFilter === opt ? "secondary" : "ghost"}
-						size="sm"
-						onclick={() => { actionFilter = opt; }}
-					>
-						{opt === "all" ? "All" : opt === "block" ? "Blocks" : "Warns"}
-					</Button>
-				{/each}
+			<!-- Filters -->
+			<HStack gap={2}>
+				<Box flex={1}>
+					<SearchInput
+						bind:value={ruleFilter}
+						placeholder="Filter by rule name..."
+						size="xs"
+					/>
+				</Box>
+				<HStack gap={1}>
+					{#each (["all", "block", "warn"] as const) as opt (opt)}
+						<Button
+							variant={actionFilter === opt ? "secondary" : "ghost"}
+							size="sm"
+							onclick={() => { actionFilter = opt; }}
+						>
+							{opt === "all" ? "All" : opt === "block" ? "Blocks" : "Warns"}
+						</Button>
+					{/each}
+				</HStack>
 			</HStack>
-		</HStack>
-	</Box>
+		</Stack>
+	</Panel>
 
 	<!-- Content -->
 	<Box minHeight={0} flex={1}>
@@ -116,8 +120,10 @@
 				<LoadingSpinner />
 			</Center>
 		{:else if error}
-			<Center full padding={4}>
-				<ErrorDisplay message={error} onRetry={onRetry} />
+			<Center full>
+				<Panel padding="normal">
+					<ErrorDisplay message={error} onRetry={onRetry} />
+				</Panel>
 			</Center>
 		{:else if filtered.length === 0}
 			<Center full>
@@ -138,39 +144,41 @@
 			<ScrollArea full>
 				<Stack gap={0}>
 					{#each filtered as v (v.id)}
-						<HStack gap={3} borderBottom paddingX={4} paddingY={2} align="start">
-							<!-- Action icon -->
-							<Box flex={0} marginTop={1}>
-								{#if v.action.toLowerCase() === "block"}
-									<Icon name="shield" size="sm" />
-								{:else}
-									<Icon name="alert-triangle" size="sm" />
-								{/if}
-							</Box>
+						<Panel padding="tight" border="bottom">
+							<HStack gap={3} align="start">
+								<!-- Action icon; top alignment via Box with structural flex={0} -->
+								<Box flex={0}>
+									{#if v.action.toLowerCase() === "block"}
+										<Icon name="shield" size="sm" />
+									{:else}
+										<Icon name="alert-triangle" size="sm" />
+									{/if}
+								</Box>
 
-							<!-- Details — min-width: 0 prevents flex child overflow -->
-							<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
-								<HStack gap={2}>
-									<Text variant="caption-strong" truncate>{v.rule_name}</Text>
-									<Badge
-										variant={v.action.toLowerCase() === "block" ? "destructive" : "warning"}
-										size="xs"
-									>
-										{v.action.toLowerCase()}
-									</Badge>
+								<!-- Details — min-width: 0 prevents flex child overflow -->
+								<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+									<HStack gap={2}>
+										<Text variant="caption-strong" truncate>{v.rule_name}</Text>
+										<Badge
+											variant={v.action.toLowerCase() === "block" ? "destructive" : "warning"}
+											size="xs"
+										>
+											{v.action.toLowerCase()}
+										</Badge>
+									</HStack>
+									<Caption variant="caption-mono" truncate>{v.tool_name}</Caption>
+									{#if v.detail}
+										<Caption truncate>{v.detail}</Caption>
+									{/if}
+								</div>
+
+								<!-- Timestamp -->
+								<HStack gap={1} flex={0}>
+									<Icon name="clock" size="xs" />
+									<Caption>{formatTimestamp(v.created_at)}</Caption>
 								</HStack>
-								<Caption variant="caption-mono" truncate>{v.tool_name}</Caption>
-								{#if v.detail}
-									<Caption truncate>{v.detail}</Caption>
-								{/if}
-							</div>
-
-							<!-- Timestamp -->
-							<HStack gap={1} flex={0}>
-								<Icon name="clock" size="xs" />
-								<Caption>{formatTimestamp(v.created_at)}</Caption>
 							</HStack>
-						</HStack>
+						</Panel>
 					{/each}
 				</Stack>
 			</ScrollArea>
@@ -179,8 +187,8 @@
 
 	<!-- Footer with result count -->
 	{#if !loading && !error && violations.length > 0}
-		<Box borderTop paddingX={4} paddingY={2}>
+		<SectionFooter>
 			<Caption>{filtered.length} of {violations.length} {violations.length === 1 ? "violation" : "violations"}</Caption>
-		</Box>
+		</SectionFooter>
 	{/if}
 </Stack>

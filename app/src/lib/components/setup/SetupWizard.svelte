@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, Caption, HStack, Dot } from "@orqastudio/svelte-components/pure";
+	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, Caption, HStack, Dot, Stack } from "@orqastudio/svelte-components/pure";
 	import ClaudeCliStep from "./ClaudeCliStep.svelte";
 	import ClaudeAuthStep from "./ClaudeAuthStep.svelte";
 	import SidecarStep from "./SidecarStep.svelte";
@@ -40,15 +40,17 @@
 						Let's make sure everything is set up for managed agentic development.
 					</CardDescription>
 
-					<!-- Step indicator dots -->
-					<HStack gap={2} justify="center" style="padding-top: 0.75rem;">
-						{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
-							<Dot
-								color={i <= setupStore.currentStep ? "primary" : "muted"}
-								size="md"
-							/>
-						{/each}
-					</HStack>
+					<!-- Step indicator dots; gap provides spacing between description and dots -->
+					<Stack gap={3}>
+						<HStack gap={2} justify="center">
+							{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
+								<Dot
+									color={i <= setupStore.currentStep ? "primary" : "muted"}
+									size="md"
+								/>
+							{/each}
+						</HStack>
+					</Stack>
 					<Caption tone="muted">Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</Caption>
 				</div>
 			</CardHeader>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ScrollArea, EmptyState, LoadingSpinner, ErrorDisplay, Button, Text, Stack, HStack, Box, Center, Caption } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, EmptyState, LoadingSpinner, ErrorDisplay, Button, Text, Stack, Box, Center, Panel, SectionHeader } from "@orqastudio/svelte-components/pure";
 	import SessionHeader from "./SessionHeader.svelte";
 	import MessageBubble from "./MessageBubble.svelte";
 	import MessageInput from "./MessageInput.svelte";
@@ -232,32 +232,38 @@
 
 		<!-- Resume notification banner -->
 		{#if showResumeBanner}
-			<HStack justify="between" paddingX={4} paddingY={2} borderBottom>
-				<Text tone="muted">Session resumed after restart. Send a message to continue.</Text>
-				<Button
-					variant="ghost"
-					size="sm"
-					onclick={() => { showResumeBanner = false; }}
-				>
-					Dismiss
-				</Button>
-			</HStack>
+			<SectionHeader>
+				{#snippet start()}
+					<Text tone="muted">Session resumed after restart. Send a message to continue.</Text>
+				{/snippet}
+				{#snippet end()}
+					<Button
+						variant="ghost"
+						size="sm"
+						onclick={() => { showResumeBanner = false; }}
+					>
+						Dismiss
+					</Button>
+				{/snippet}
+			</SectionHeader>
 		{/if}
 
-		<!-- Message area; relative + flex-1 + overflow-hidden are structural layout constraints -->
-		<Box position="relative" flex={1} overflow="hidden">
+		<!-- Message area; relative + flex-1 are structural layout constraints -->
+		<Box position="relative" flex={1}>
 			{#if isLoading}
 				<Center full>
 					<LoadingSpinner />
 				</Center>
 			{:else if error}
-				<Center full padding={4}>
-					<ErrorDisplay
-						message={error}
-						onRetry={() => {
-							if (session) conversationStore.loadMessages(session.id);
-						}}
-					/>
+				<Center full>
+					<Panel padding="normal">
+						<ErrorDisplay
+							message={error}
+							onRetry={() => {
+								if (session) conversationStore.loadMessages(session.id);
+							}}
+						/>
+					</Panel>
 				</Center>
 			{:else if messages.length === 0 && !isStreaming}
 				<Center full>
@@ -279,9 +285,9 @@
 
 						{#each displayEntries as entry (entry.kind === "message" ? entry.message.id : entry.key)}
 							{#if entry.kind === "tool-summary"}
-								<Box paddingX={4}>
+								<Panel padding="normal">
 									<ToolCallSummary messages={entry.messages} />
-								</Box>
+								</Panel>
 							{:else}
 								<MessageBubble
 									message={entry.message}
@@ -302,20 +308,20 @@
 
 						<!-- Thinking block — ephemeral reasoning display below activity -->
 						{#if streamingThinking}
-							<Box paddingX={4}>
+							<Panel padding="normal">
 								<ThinkingBlock content={streamingThinking} isStreaming={isStreaming} />
-							</Box>
+							</Panel>
 						{/if}
 
 						<!-- Tool approval dialog — rendered inline in the message stream -->
 						{#if pendingApproval}
-							<Box paddingX={4}>
+							<Panel padding="normal">
 								<ToolApprovalDialog
 									approval={pendingApproval}
 									onApprove={() => conversationStore.respondToApproval(true)}
 									onDeny={() => conversationStore.respondToApproval(false)}
 								/>
-							</Box>
+							</Panel>
 						{/if}
 
 						<!-- Process violation warnings -->

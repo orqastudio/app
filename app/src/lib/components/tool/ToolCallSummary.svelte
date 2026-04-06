@@ -110,7 +110,7 @@
 			<div class="ml-3 mt-1 border-l-2 border-border pl-4">
 				<Stack gap={1}>
 					{#if summaryParts.length > 0}
-						<HStack gap={2} paddingY={1} wrap>
+						<HStack gap={2} wrap>
 							{#each summaryParts as part (part.name)}
 								{@const PartIcon = part.icon}
 								<Badge variant="outline" size="xs">

@@ -1,6 +1,6 @@
 <!-- Renders a skill artifact: version badge, description, allowed tools, tags, and markdown body. -->
 <script lang="ts">
-	import { SmallBadge, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
+	import { SmallBadge, HStack, Stack, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { MetadataRow } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -52,7 +52,7 @@
 
 <Stack gap={4}>
 	<!-- Structured header -->
-	<Stack gap={3} borderBottom paddingBottom={4}>
+	<Panel padding="normal" border="bottom"><Stack gap={3}>
 		{#if version}
 			<HStack gap={1}>
 				<SmallBadge variant="outline">v{version}</SmallBadge>
@@ -65,7 +65,7 @@
 
 		<MetadataRow icon="wrench" label="Allowed Tools" items={allowedTools} badgeVariant="secondary" />
 		<MetadataRow icon="tag" label="Tags" items={tags} badgeVariant="outline" />
-	</Stack>
+	</Stack></Panel>
 
 	<!-- Body content -->
 	{#if body.trim()}

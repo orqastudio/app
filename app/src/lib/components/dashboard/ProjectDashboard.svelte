@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Icon, Heading } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
-	import { EmptyState, Stack, HStack, Grid, Text, Box } from "@orqastudio/svelte-components/pure";
+	import { EmptyState, Stack, HStack, Grid, Text } from "@orqastudio/svelte-components/pure";
+	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import MilestoneContextCard from "./MilestoneContextCard.svelte";
 	import IntegrityWidget from "./IntegrityWidget.svelte";
@@ -76,8 +77,9 @@
 	}
 </script>
 
-<Box height="full" overflow="auto">
-	<Stack gap={4} padding={6}>
+<ScrollArea full>
+	<Panel padding="loose">
+	<Stack gap={4}>
 		{#if !project}
 			<EmptyState
 				icon="folder-open"
@@ -158,4 +160,5 @@
 			<ToolStatusWidget />
 		{/if}
 	</Stack>
-</Box>
+	</Panel>
+</ScrollArea>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, HStack, Stack, Box, Caption, Text, Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Panel, Caption, Button } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -38,10 +38,11 @@
 		</CardDescription>
 	</CardHeader>
 	<CardContent>
+		<Stack gap={3}>
 		<Stack gap={2}>
 			{#each sidecars as sidecar (sidecar.key)}
 				{@const isActive = sidecar.key === activeKey}
-				<Box border rounded="md" paddingX={3} paddingY={2}>
+				<Panel padding="tight" border="all" rounded="md">
 					<HStack justify="between">
 						<HStack gap={2}>
 							<Icon name={isActive ? "circle-check" : "circle-dashed"} size="sm" />
@@ -60,12 +61,12 @@
 							{/if}
 						</HStack>
 					</HStack>
-				</Box>
+				</Panel>
 			{/each}
 		</Stack>
 
 		{#if sidecars.length > 0}
-			<Box rounded="md" background="muted" paddingX={2} paddingY={2} marginTop={3}>
+			<Panel padding="tight" rounded="md" background="muted">
 				<HStack gap={2} align="start">
 					<Icon name="info" size="sm" />
 					<Caption tone="muted">
@@ -73,8 +74,9 @@
 						will reconnect using the selected provider's configuration.
 					</Caption>
 				</HStack>
-			</Box>
+			</Panel>
 		{/if}
+		</Stack>
 	</CardContent>
 </CardRoot>
 {/if}

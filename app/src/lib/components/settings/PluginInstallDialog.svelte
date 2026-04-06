@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Heading, HStack, Stack, Caption, Text, Button, Box, Badge } from "@orqastudio/svelte-components/pure";
+	import { Icon, Heading, HStack, Stack, Caption, Text, Button, Panel } from "@orqastudio/svelte-components/pure";
 	import type { PluginManifest } from "@orqastudio/types";
 
 	interface Props {
@@ -23,12 +23,12 @@
 </script>
 
 <div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
-	<Box padding={6} rounded="lg" border background="card">
+	<Panel padding="loose" rounded="lg" border="all" background="card">
 		<Stack gap={4}>
 			<HStack gap={3}>
-				<Box rounded="lg" padding={2} background="muted">
+				<Panel padding="tight" rounded="lg" background="muted">
 					<Icon name="puzzle" size="lg" />
-				</Box>
+				</Panel>
 				<Stack gap={0}>
 					<Heading level={3}>Install Plugin</Heading>
 					<Text variant="body-muted">{manifest.displayName ?? manifest.name}</Text>
@@ -52,7 +52,7 @@
 				{#if hasNavItems}
 					<Stack gap={2}>
 						<Text variant="body-strong">This plugin wants to add to your navigation:</Text>
-						<Box padding={3} rounded="md" border background="muted">
+						<Panel padding="normal" rounded="md" border="all" background="muted">
 							<Stack gap={1}>
 								{#each navItems as item (item.key)}
 									<HStack gap={2}>
@@ -64,7 +64,7 @@
 									</HStack>
 								{/each}
 							</Stack>
-						</Box>
+						</Panel>
 					</Stack>
 				{/if}
 			</Stack>
@@ -79,5 +79,5 @@
 				</Button>
 			</HStack>
 		</Stack>
-	</Box>
+	</Panel>
 </div>

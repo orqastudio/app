@@ -1,6 +1,6 @@
 <!-- Landing page for an artifact category: shows all items in a card grid with violation counts for rules. -->
 <script lang="ts">
-	import { Icon, CardRoot, CardContent, Heading, Badge, Stack, HStack, Grid, Text, Caption, Box } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardContent, Heading, Badge, Stack, HStack, Grid, Text, Caption, Box, Panel } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import ViolationsPanel from "$lib/components/governance/ViolationsPanel.svelte";
@@ -52,14 +52,17 @@
 				<LoadingSpinner />
 			</HStack>
 		{:else if artifactStore.navTreeError}
-			<HStack justify="center" align="center" flex={1} height="full" paddingX={4}>
-				<ErrorDisplay
-					message={artifactStore.navTreeError}
-					onRetry={() => artifactStore.loadNavTree()}
-				/>
+			<HStack justify="center" align="center" flex={1} height="full">
+				<Panel padding="normal">
+					<ErrorDisplay
+						message={artifactStore.navTreeError}
+						onRetry={() => artifactStore.loadNavTree()}
+					/>
+				</Panel>
 			</HStack>
 		{:else}
-			<Stack gap={6} padding={6}>
+			<Panel padding="loose">
+			<Stack gap={6}>
 				<!-- Header -->
 				<Stack gap={1}>
 					<Heading level={1}>{config.label}</Heading>
@@ -87,11 +90,13 @@
 				{#if items.length === 0}
 					<CardRoot>
 						<CardContent>
-							<Stack align="center" paddingY={8}>
-								<Text variant="body-muted" block>
-									No {config.label.toLowerCase()} found. Add files to <code class="rounded bg-muted px-1 py-0.5 text-xs">{config.location}</code> and re-scan.
-								</Text>
-							</Stack>
+							<Panel padding="loose">
+								<Stack align="center">
+									<Text variant="body-muted" block>
+										No {config.label.toLowerCase()} found. Add files to <code class="rounded bg-muted px-1 py-0.5 text-xs">{config.location}</code> and re-scan.
+									</Text>
+								</Stack>
+							</Panel>
 						</CardContent>
 					</CardRoot>
 				{:else}
@@ -109,30 +114,32 @@
 							>
 								<CardRoot>
 									<CardContent>
-										<HStack gap={3} padding={4} align="start">
-											<Icon name={config.icon} size="md" />
-											<Box flex={1} minWidth={0}>
-												<Text variant="label" truncate block>{item.label}</Text>
-												{#if item.description}
-													<Caption lineClamp={2} block>{item.description}</Caption>
+										<Panel padding="normal">
+											<HStack gap={3} align="start">
+												<Icon name={config.icon} size="md" />
+												<Box flex={1} minWidth={0}>
+													<Text variant="label" truncate block>{item.label}</Text>
+													{#if item.description}
+														<Caption lineClamp={2} block>{item.description}</Caption>
+													{/if}
+												</Box>
+												{#if category === "rules" && violationsByRule[item.label]}
+													{@const counts = violationsByRule[item.label]}
+													<HStack gap={1} flex={0}>
+														{#if counts.blocks > 0}
+															<Badge variant="destructive" size="xs">
+																{counts.blocks}
+															</Badge>
+														{/if}
+														{#if counts.warns > 0}
+															<Badge variant="warning" size="xs">
+																{counts.warns}
+															</Badge>
+														{/if}
+													</HStack>
 												{/if}
-											</Box>
-											{#if category === "rules" && violationsByRule[item.label]}
-												{@const counts = violationsByRule[item.label]}
-												<HStack gap={1} flex={0}>
-													{#if counts.blocks > 0}
-														<Badge variant="destructive" size="xs">
-															{counts.blocks}
-														</Badge>
-													{/if}
-													{#if counts.warns > 0}
-														<Badge variant="warning" size="xs">
-															{counts.warns}
-														</Badge>
-													{/if}
-												</HStack>
-											{/if}
-										</HStack>
+											</HStack>
+										</Panel>
 									</CardContent>
 								</CardRoot>
 							</button>
@@ -142,16 +149,17 @@
 
 				<!-- Violation history panel (rules category only) -->
 				{#if category === "rules"}
-					<Box marginTop={2} height="full" overflow="hidden" rounded="md" border>
+					<Panel border="all" rounded="md" height="full">
 						<ViolationsPanel
 							violations={enforcementStore.violationHistory}
 							loading={enforcementStore.historyLoading}
 							error={enforcementStore.historyError}
 							onRetry={() => enforcementStore.loadViolationHistory()}
 						/>
-					</Box>
+					</Panel>
 				{/if}
 			</Stack>
+			</Panel>
 		{/if}
 	</Stack>
 {/if}

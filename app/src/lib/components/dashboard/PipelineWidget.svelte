@@ -343,21 +343,21 @@
 			</CardTitle>
 		</CardHeader>
 		<CardContent>
-			<Stack gap={0} paddingBottom={2}>
+			<Stack gap={3}>
 				<PipelineStages stages={pipelineStages} edges={pipelineEdges} />
-			</Stack>
 
-			<!-- Legend -->
-			<HStack gap={4} marginTop={3}>
-				<HStack gap={1}>
-					<Dot size="md" color="destructive" />
-					<Caption>Isolated (&lt;30% connected)</Caption>
+				<!-- Legend -->
+				<HStack gap={4}>
+					<HStack gap={1}>
+						<Dot size="md" color="destructive" />
+						<Caption>Isolated (&lt;30% connected)</Caption>
+					</HStack>
+					<HStack gap={1}>
+						<Dot size="md" color="warning" />
+						<Caption>Attention (30-70% connected)</Caption>
+					</HStack>
 				</HStack>
-				<HStack gap={1}>
-					<Dot size="md" color="warning" />
-					<Caption>Attention (30-70% connected)</Caption>
-				</HStack>
-			</HStack>
+			</Stack>
 		</CardContent>
 	</CardRoot>
 {/if}

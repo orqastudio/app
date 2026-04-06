@@ -5,6 +5,8 @@
 	import { untrack } from "svelte";
 	import {
 		Icon,
+		Panel,
+		SectionHeader,
 		ScrollArea,
 		Badge,
 		Button,
@@ -106,35 +108,41 @@
 				aria-label="{title} column"
 			>
 				<!-- Column header -->
-				<HStack justify="between" borderBottom paddingX={3} paddingY={2}>
-					<HStack gap={2} align="center">
-						<Badge variant="outline" size="sm" capitalize>
-							{title}
-						</Badge>
-						{#if doneCount !== undefined && totalCount !== undefined}
-							<Caption variant="caption-tabular">{doneCount}/{totalCount} Done</Caption>
+				<SectionHeader>
+					{#snippet start()}
+						<HStack gap={2} align="center">
+							<Badge variant="outline" size="sm" capitalize>
+								{title}
+							</Badge>
+							{#if doneCount !== undefined && totalCount !== undefined}
+								<Caption variant="caption-tabular">{doneCount}/{totalCount} Done</Caption>
+							{/if}
+						</HStack>
+					{/snippet}
+					{#snippet end()}
+						{#if isDone}
+							<CollapsibleTrigger>
+								<Button
+									variant="ghost"
+									size="icon-sm"
+									aria-label="Collapse {title} column"
+								>
+									<Icon name="chevron-right" size="sm" />
+								</Button>
+							</CollapsibleTrigger>
 						{/if}
-					</HStack>
-					{#if isDone}
-						<CollapsibleTrigger>
-							<Button
-								variant="ghost"
-								size="icon-sm"
-								aria-label="Collapse {title} column"
-							>
-								<Icon name="chevron-right" size="sm" />
-							</Button>
-						</CollapsibleTrigger>
-					{/if}
-				</HStack>
+					{/snippet}
+				</SectionHeader>
 
 				<!-- Column content -->
 				<CollapsibleContent>
 					<Box minHeight={0} flex={1}>
 						<ScrollArea full orientation="vertical">
-							<Stack gap={2} padding={2} role="list">
+							<Panel padding="tight">
+							<Stack gap={2} role="list">
 								{@render children()}
 							</Stack>
+							</Panel>
 						</ScrollArea>
 					</Box>
 				</CollapsibleContent>

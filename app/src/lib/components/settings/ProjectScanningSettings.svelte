@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge, Button, HStack, Stack, Caption, Text, Box } from "@orqastudio/svelte-components/pure";
+	import { Badge, Button, HStack, Stack, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
@@ -145,14 +145,14 @@
 			<Heading level={4}>Excluded Paths</Heading>
 			<HStack gap={1} wrap>
 				{#each localExcludedPaths as path (path)}
-					<Box border rounded="md" paddingX={1}>
+					<Panel padding="tight" border="all" rounded="md">
 						<HStack gap={1}>
 							<Caption>{path}</Caption>
 							<Button variant="ghost" size="icon-sm" onclick={() => removeExcludedPath(path)}>
 								<Icon name="x" size="xs" />
 							</Button>
 						</HStack>
-					</Box>
+					</Panel>
 				{/each}
 			</HStack>
 			<HStack gap={2}>

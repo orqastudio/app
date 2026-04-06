@@ -17,11 +17,11 @@
  */
 export type LogLevel = "debug" | "info" | "warn" | "error" | "perf";
 export interface LogEntry {
-    level: LogLevel;
-    source: string;
-    message: string;
-    timestamp: number;
-    data?: unknown;
+    readonly level: LogLevel;
+    readonly source: string;
+    readonly message: string;
+    readonly timestamp: number;
+    readonly data?: unknown;
 }
 export interface Logger {
     debug(message: string, ...data: unknown[]): void;

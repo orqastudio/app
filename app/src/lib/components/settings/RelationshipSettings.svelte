@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getStores } from "@orqastudio/sdk";
-	import { ScrollArea, Heading, Text, HStack, Stack, Box, Caption } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, Heading, Text, HStack, Stack, Panel, Caption } from "@orqastudio/svelte-components/pure";
 	import { PLATFORM_RELATIONSHIPS } from "@orqastudio/types";
 
 	const { pluginRegistry } = getStores();
@@ -18,7 +18,8 @@
 	}
 </script>
 
-<Stack gap={6} padding={6}>
+<Panel padding="loose">
+<Stack gap={6}>
 	<Stack gap={1}>
 		<Heading level={2}>Relationships</Heading>
 		<Text tone="muted">
@@ -33,9 +34,9 @@
 		<ScrollArea maxHeight="lg">
 			<Stack gap={1}>
 				{#each PLATFORM_RELATIONSHIPS as rel (rel.key)}
-					<Box border rounded="md" paddingX={3} paddingY={2}>
+					<Panel padding="tight" border="all" rounded="md">
 						<HStack gap={3}>
-							<Box flex={1}>
+							<Stack flex={1} gap={0}>
 								<HStack gap={2}>
 									<Text variant="body-strong">{rel.label}</Text>
 									<Text tone="muted">/</Text>
@@ -46,10 +47,10 @@
 									<Caption tone="muted">|</Caption>
 									<Caption tone="muted">{typeConstraint(rel.from as unknown as string[])} → {typeConstraint(rel.to as unknown as string[])}</Caption>
 								</HStack>
-							</Box>
+							</Stack>
 							<Caption>Platform</Caption>
 						</HStack>
-					</Box>
+					</Panel>
 				{/each}
 			</Stack>
 		</ScrollArea>
@@ -61,9 +62,9 @@
 			<Caption tone="muted">Plugin-Contributed</Caption>
 			<Stack gap={1}>
 				{#each pluginRelationships as rel (rel.key)}
-					<Box border rounded="md" paddingX={3} paddingY={2}>
+					<Panel padding="tight" border="all" rounded="md">
 						<HStack gap={3}>
-							<Box flex={1}>
+							<Stack flex={1} gap={0}>
 								<HStack gap={2}>
 									<Text variant="body-strong">{rel.label}</Text>
 									<Text tone="muted">/</Text>
@@ -77,12 +78,13 @@
 								{#if rel.description}
 									<Caption tone="muted">{rel.description}</Caption>
 								{/if}
-							</Box>
+							</Stack>
 							<Caption>Plugin</Caption>
 						</HStack>
-					</Box>
+					</Panel>
 				{/each}
 			</Stack>
 		</Stack>
 	{/if}
 </Stack>
+</Panel>

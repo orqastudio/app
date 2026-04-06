@@ -2,7 +2,7 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
-	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge, Box, Caption } from "@orqastudio/svelte-components/pure";
+	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge, Caption, Panel } from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
 
 	let {
@@ -65,7 +65,7 @@
 </script>
 
 {#if children.length > 0}
-	<Box overflow="hidden" rounded="lg" border marginTop={4}>
+	<Panel padding="none" border="all" rounded="lg">
 		<Table>
 			<TableHeader>
 				<TableRow>
@@ -116,7 +116,7 @@
 				{/each}
 			</TableBody>
 		</Table>
-	</Box>
+	</Panel>
 {:else}
 	<!-- Inline style required: dashed border-style and text-align cannot be expressed via Box typed props -->
 	<div style="margin-top: 1rem; border-radius: 0.5rem; border: 1px dashed hsl(var(--border)); padding: 1rem; text-align: center;">

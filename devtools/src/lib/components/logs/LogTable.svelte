@@ -8,7 +8,7 @@
      scrolls away from the bottom. The scroll-lock toggle button restores it. -->
 <script lang="ts">
 	import { onMount, onDestroy, tick } from "svelte";
-	import { Button, Caption, HStack, Stack } from "@orqastudio/svelte-components/pure";
+	import { Button, Caption, HStack, SectionHeader, SectionFooter, Stack } from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
 	import {
 		events,
@@ -221,15 +221,11 @@
 </script>
 
 <!-- Outer container: Stack fills the height of the Logs tab content area. -->
-<Stack gap={0} height="full" overflow="hidden">
-	<!-- Column header bar: HStack provides the flex-row layout; scoped CSS provides
-	     the fixed height, border, and typographic treatment. -->
-	<HStack
-		paddingX={2}
-		borderBottom
-		gap={0}
+<Stack gap={0} height="full">
+	<!-- Column header bar: SectionHeader compact provides px-2 py-1 border-b layout. -->
+	<SectionHeader
+		variant="compact"
 		role="row"
-		style="height: 24px; flex-shrink: 0;"
 	>
 		{#each COLUMNS as col (col.label)}
 			{#if col.width !== null}
@@ -267,13 +263,13 @@
 				</Button>
 			</span>
 		</div>
-	</HStack>
+	</SectionHeader>
 
 	<!-- Historical session banner: shown above the viewport when viewing a past
 	     session. Scoped div provides the height/bg; HStack wraps the inner content. -->
 	{#if historicalMode.value}
 		<div class="log-table__historical-banner">
-			<HStack justify="between" paddingX={2} gap={2} full>
+			<HStack justify="between" gap={2} full>
 				<div class="log-table__historical-label">
 					<Caption truncate>
 						Viewing historical session — {historicalSessionLabel}
@@ -298,7 +294,8 @@
 	     available history has been loaded. Hidden during historical mode (load-more
 	     is shown at the bottom instead). -->
 	{#if !historyExhausted.value && !historicalMode.value}
-		<HStack justify="center" borderBottom style="height: 24px; flex-shrink: 0;" paddingX={2}>
+		<!-- SectionHeader compact provides border-b and centered layout. -->
+		<SectionHeader variant="compact">
 			<span class="log-table__load-wrap" style="display: contents;">
 				<Button
 					variant="ghost"
@@ -309,7 +306,7 @@
 					{historyLoading.value ? "Loading…" : "Load earlier"}
 				</Button>
 			</span>
-		</HStack>
+		</SectionHeader>
 	{/if}
 
 	<!-- Scrollable viewport: the only element that scrolls.
@@ -352,7 +349,8 @@
 	<!-- Load more button: shown below the viewport when viewing a historical session
 	     and more pages are available. Appends the next page of events to the buffer. -->
 	{#if historicalMode.value && !historicalExhausted.value}
-		<HStack justify="center" borderTop style="height: 24px; flex-shrink: 0;" paddingX={2}>
+		<!-- SectionFooter compact provides border-t and centered layout. -->
+		<SectionFooter variant="compact">
 			<span class="log-table__load-wrap" style="display: contents;">
 				<Button
 					variant="ghost"
@@ -363,12 +361,12 @@
 					{historyLoading.value ? "Loading…" : "Load more"}
 				</Button>
 			</span>
-		</HStack>
+		</SectionFooter>
 	{/if}
 
-	<!-- Status strip: scoped div provides height/border/bg; HStack provides inner layout. -->
+	<!-- Status strip: scoped div provides height/border/bg/padding; HStack provides inner layout. -->
 	<div class="log-table__status">
-		<HStack paddingX={2} gap={3} full>
+		<HStack gap={3} full>
 			{#if historicalMode.value}
 				<Caption variant="caption-tabular">{events.length} of {historicalTotal.value} events loaded</Caption>
 			{:else if filteredEvents.length !== events.length}
@@ -445,6 +443,7 @@
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
+		padding: 0 var(--spacing-2);
 	}
 
 	/* Historical label wrapper: flex-1 so it truncates before the return button. */
@@ -493,6 +492,7 @@
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
+		padding: 0 var(--spacing-2);
 	}
 
 	/* Auto-scroll active indicator: primary color to pair with the follow button. */

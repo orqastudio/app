@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, CardAction, Heading, Button, HStack, Stack, Text, Caption, ProgressBar, Box } from "@orqastudio/svelte-components/pure";
+	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, CardAction, Heading, Button, HStack, Stack, Text, Caption, ProgressBar } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore } = getStores();
@@ -50,15 +51,6 @@
 	const graphReady = $derived(artifactGraphSDK.graph.size > 0);
 
 	// -------------------------------------------------------------------------
-	// Progress bar helpers
-	// -------------------------------------------------------------------------
-
-	const progressPercent = $derived.by((): number => {
-		if (!activeMilestone || activeMilestone.p1Total === 0) return 0;
-		return Math.round((activeMilestone.p1Done / activeMilestone.p1Total) * 100);
-	});
-
-	// -------------------------------------------------------------------------
 	// Navigation
 	// -------------------------------------------------------------------------
 
@@ -105,8 +97,9 @@
 				<Button variant="ghost" size="sm" onclick={openRoadmap}>Open Roadmap</Button> to plan one.
 			</Text>
 		{:else}
-			<!-- Title + deadline row -->
-			<HStack justify="between" align="start" gap={4} paddingBottom={3}>
+			<!-- Title + deadline row + gate question wrapped in a Stack for uniform spacing -->
+			<Stack gap={3}>
+			<HStack justify="between" align="start" gap={4}>
 				<Stack gap={0} flex={1}>
 					<Heading level={2}>{activeMilestone.node.title}</Heading>
 					{#if activeMilestone.node.description}
@@ -123,11 +116,12 @@
 
 			<!-- Gate question -->
 			{#if activeMilestone.gate}
-				<Box background="muted" rounded="md" paddingY={2}>
+				<Panel padding="tight" background="muted" rounded="md">
 					<Text variant="overline-muted" block>Gate question</Text>
 					<Text variant="body" block>"{activeMilestone.gate}"</Text>
-				</Box>
+				</Panel>
 			{/if}
+			</Stack>
 
 			<!-- P1 epic progress -->
 			{#if activeMilestone.p1Total > 0}

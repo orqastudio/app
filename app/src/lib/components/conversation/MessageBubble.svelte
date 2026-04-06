@@ -4,7 +4,7 @@
 	import AssistantMessage from "./AssistantMessage.svelte";
 	import SystemMessage from "./SystemMessage.svelte";
 	import ToolCallCard from "$lib/components/tool/ToolCallCard.svelte";
-	import { Box } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 
 	let {
 		message,
@@ -19,7 +19,7 @@
 </script>
 
 {#if isToolUse || isToolResult}
-	<Box paddingX={4}>
+	<Panel padding="normal">
 		<ToolCallCard
 			toolName={message.tool_name ?? "unknown"}
 			toolInput={isToolUse ? message.content : message.tool_input}
@@ -27,7 +27,7 @@
 			isError={message.tool_is_error}
 			isComplete={message.stream_status === "complete"}
 		/>
-	</Box>
+	</Panel>
 {:else if message.role === "user"}
 	<UserMessage {message} />
 {:else if message.role === "assistant"}

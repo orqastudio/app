@@ -3,7 +3,7 @@
      Used by MetricsView to show the detailed distribution view when a metric
      cell is selected. -->
 <script lang="ts">
-	import { sparklinePath, Stack, HStack, Text, Caption } from "@orqastudio/svelte-components/pure";
+	import { sparklinePath, Stack, Text, Caption } from "@orqastudio/svelte-components/pure";
 	import type { MetricStats } from "../../stores/metrics-store.svelte.js";
 
 	let {
@@ -19,7 +19,8 @@
 
 	const PADDING = 8;
 	const LABEL_HEIGHT = 16;
-	// Reserve space at bottom for x-axis labels.
+	// X-axis labels are rendered inside the SVG so no HTML overlay is needed.
+	// Reserve space at the bottom of the SVG for the label row.
 	const chartHeight = $derived(height - LABEL_HEIGHT);
 
 	// Generate the SVG path for the timing values.
@@ -55,12 +56,14 @@
 	{:else}
 		<!-- SVG is a legitimate exception. Tailwind class= removed from SVG elements;
 		     fill/stroke values use CSS variable references directly. Scoped class
-		     provides the rounded background since Box has no style prop for dynamic width. -->
+		     provides the rounded background since Box has no style prop for dynamic width.
+		     X-axis labels render inside the SVG below the plot area so HTML never has
+		     to match the dynamic pixel width of the chart. -->
 		<div class="timing-chart__svg-wrapper" style="width:{width}px;">
 			<svg
 				{width}
-				height={chartHeight}
-				viewBox="0 0 {width} {chartHeight}"
+				{height}
+				viewBox="0 0 {width} {height}"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 			>
@@ -105,15 +108,29 @@
 					font-size="9"
 					fill="hsl(var(--muted-foreground) / 0.6)"
 				>{yMax}ms</text>
+
+				<!-- X-axis labels: first/last sample markers, rendered as native SVG
+				     text so they pin to the plot's exact pixel width without an HTML
+				     overlay. Tabular-nums styling applied via inline style because
+				     Svelte's SVG attribute types don't expose font-variant-numeric. -->
+				<text
+					x={PADDING}
+					y={height - 4}
+					font-size="10"
+					fill="hsl(var(--muted-foreground))"
+					text-anchor="start"
+					style="font-variant-numeric: tabular-nums;"
+				>−{stats.history.length} samples</text>
+				<text
+					x={width - PADDING}
+					y={height - 4}
+					font-size="10"
+					fill="hsl(var(--muted-foreground))"
+					text-anchor="end"
+					style="font-variant-numeric: tabular-nums;"
+				>now</text>
 			</svg>
 		</div>
-
-		<!-- X-axis labels: first sample and last sample count.
-		     caption-tabular variant provides tabular-nums styling. -->
-		<HStack justify="between" style="width:{width}px" marginTop={1}>
-			<Caption variant="caption-tabular">−{stats.history.length} samples</Caption>
-			<Caption variant="caption-tabular">now</Caption>
-		</HStack>
 	{/if}
 </Stack>
 

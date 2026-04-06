@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, LoadingSpinner, Stack, HStack, Grid, Caption, Text } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -159,10 +160,13 @@
 		</CardHeader>
 		<CardContent>
 			{#if loading}
-				<Stack gap={0} align="center" paddingY={4}>
+				<Panel padding="normal">
+				<Stack gap={0} align="center">
 					<LoadingSpinner />
 				</Stack>
+				</Panel>
 			{:else}
+				<Stack gap={3}>
 				<Grid cols={2} gap={6}>
 					{#each sparklines as config (config.key)}
 						<Stack gap={1}>
@@ -225,8 +229,9 @@
 						</Stack>
 					{/each}
 				</Grid>
-				<Stack gap={0} marginTop={3}>
+				<Stack gap={0}>
 					<Caption>Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}</Caption>
+				</Stack>
 				</Stack>
 			{/if}
 		</CardContent>

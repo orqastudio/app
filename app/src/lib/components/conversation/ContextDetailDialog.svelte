@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Icon, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
 	import { TabsRoot as Tabs, TabsContent, TabsList, TabsTrigger } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea, Stack, HStack, Box, Code, Caption, Text } from "@orqastudio/svelte-components/pure";
+	import { ScrollArea, Stack, Code, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
 	import {
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
@@ -111,9 +111,9 @@
 									</CollapsibleContent>
 								</Collapsible>
 							{:else}
-								<Box padding={2} border rounded="lg">
+								<Panel padding="tight" border="all" rounded="lg">
 									<Caption>No custom prompt — using governance prompt only.</Caption>
-								</Box>
+								</Panel>
 							{/if}
 
 							<Collapsible bind:open={governancePromptOpen}>
@@ -136,15 +136,15 @@
 					{:else if entry.type === "context_injected"}
 						<Stack gap={2}>
 							{#if parsedMessages.length === 0}
-								<Box padding={2} border rounded="lg">
+								<Panel padding="tight" border="all" rounded="lg">
 									<Caption>Unable to parse injected messages.</Caption>
-								</Box>
+								</Panel>
 							{:else}
 								{#each parsedMessages as msg, i (i)}
-									<Box padding={3} border rounded="lg">
+									<Panel padding="normal" border="all" rounded="lg">
 										<Caption variant="caption-strong">{roleLabel(msg.role)}</Caption>
 										<Text variant="body">{msg.content}</Text>
-									</Box>
+									</Panel>
 								{/each}
 							{/if}
 						</Stack>

@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { Icon, Badge, Button, HStack } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea } from "@orqastudio/svelte-components/pure";
+	import { Icon, Badge, Button, SectionHeader } from "@orqastudio/svelte-components/pure";
 	import { Highlight, type LanguageType } from "svelte-highlight";
 	import bash from "svelte-highlight/languages/bash";
 	import rust from "svelte-highlight/languages/rust";
@@ -53,22 +52,26 @@
 
 <!-- Inline style required: background opacity cannot be expressed via Box typed props -->
 <div style="border: 1px solid hsl(var(--border)); border-radius: 0.375rem; background: hsl(var(--muted) / 0.3);">
-	<HStack justify="between" borderBottom paddingX={1} paddingY={1}>
-		<Badge variant="secondary" size="xs">{displayLang.toUpperCase()}</Badge>
-		<Button
-			variant="ghost"
-			size="sm"
-			onclick={copyToClipboard}
-			aria-label={copied ? "Copied to clipboard" : "Copy code to clipboard"}
-		>
-			{#if copied}
-				<Icon name="check" size="sm" />
-				Copied
-			{:else}
-				<Icon name="copy" size="sm" />
-			{/if}
-		</Button>
-	</HStack>
+	<SectionHeader variant="compact">
+		{#snippet start()}
+			<Badge variant="secondary" size="xs">{displayLang.toUpperCase()}</Badge>
+		{/snippet}
+		{#snippet end()}
+			<Button
+				variant="ghost"
+				size="sm"
+				onclick={copyToClipboard}
+				aria-label={copied ? "Copied to clipboard" : "Copy code to clipboard"}
+			>
+				{#if copied}
+					<Icon name="check" size="sm" />
+					Copied
+				{:else}
+					<Icon name="copy" size="sm" />
+				{/if}
+			</Button>
+		{/snippet}
+	</SectionHeader>
 	<div class="codeblock-highlight text-sm [&_pre]:!bg-transparent [&_pre]:!p-1 [&_pre]:!my-0 [&_code]:!bg-transparent overflow-x-auto">
 		<Highlight language={resolvedLang} code={text} />
 	</div>

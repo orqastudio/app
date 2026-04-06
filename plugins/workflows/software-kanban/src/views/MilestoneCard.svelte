@@ -5,6 +5,7 @@
 	import {
 		SmallBadge,
 		Button,
+		Panel,
 		Text,
 		Caption,
 		ProgressBar,
@@ -68,34 +69,38 @@
 
 		<!-- In-progress epics -->
 		{#if inProgressEpics.length > 0}
-			<Stack gap={1} borderTop paddingTop={2}>
-				<Text variant="overline-muted">Now</Text>
-				{#each inProgressEpics.slice(0, 2) as epic (epic.id)}
-					<HStack gap={1} align="center">
-						<Dot size="sm" color="info" />
-						<Caption truncate>{epic.title}</Caption>
-					</HStack>
-				{/each}
-				{#if inProgressEpics.length > 2}
-					<Caption tone="muted">+{inProgressEpics.length - 2} more</Caption>
-				{/if}
-			</Stack>
+			<Panel padding="tight" border="top">
+				<Stack gap={1}>
+					<Text variant="overline-muted">Now</Text>
+					{#each inProgressEpics.slice(0, 2) as epic (epic.id)}
+						<HStack gap={1} align="center">
+							<Dot size="sm" color="info" />
+							<Caption truncate>{epic.title}</Caption>
+						</HStack>
+					{/each}
+					{#if inProgressEpics.length > 2}
+						<Caption tone="muted">+{inProgressEpics.length - 2} more</Caption>
+					{/if}
+				</Stack>
+			</Panel>
 		{/if}
 
 		<!-- Critical P1 epics not done -->
 		{#if criticalEpics.length > 0}
-			<Stack gap={1} borderTop paddingTop={2}>
-				<Text variant="overline-muted">Critical</Text>
-				{#each criticalEpics.slice(0, 2) as epic (epic.id)}
-					<HStack gap={1} align="center">
-						<SmallBadge variant="destructive">P1</SmallBadge>
-						<Caption truncate>{epic.title}</Caption>
-					</HStack>
-				{/each}
-				{#if criticalEpics.length > 2}
-					<Caption tone="muted">+{criticalEpics.length - 2} more</Caption>
-				{/if}
-			</Stack>
+			<Panel padding="tight" border="top">
+				<Stack gap={1}>
+					<Text variant="overline-muted">Critical</Text>
+					{#each criticalEpics.slice(0, 2) as epic (epic.id)}
+						<HStack gap={1} align="center">
+							<SmallBadge variant="destructive">P1</SmallBadge>
+							<Caption truncate>{epic.title}</Caption>
+						</HStack>
+					{/each}
+					{#if criticalEpics.length > 2}
+						<Caption tone="muted">+{criticalEpics.length - 2} more</Caption>
+					{/if}
+				</Stack>
+			</Panel>
 		{/if}
 	</Stack>
 </Button>

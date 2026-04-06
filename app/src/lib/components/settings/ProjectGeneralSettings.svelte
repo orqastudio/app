@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Box } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
@@ -71,9 +71,9 @@
 						class="h-10 w-10 rounded border object-contain"
 					/>
 				{:else}
-					<Box rounded="md" border padding={2} background="muted">
+					<Panel padding="tight" rounded="md" border="all" background="muted">
 						<Icon name="image" size="lg" />
-					</Box>
+					</Panel>
 				{/if}
 				<HStack gap={2}>
 					<Button variant="outline" size="sm" onclick={handleIconUpload}>
@@ -93,25 +93,21 @@
 		<Separator />
 
 		<FormGroup label="Name" for="settings-name">
-			<Box>
-				<Input
-					id="settings-name"
-					bind:value={localName}
-					onblur={handleBlurSave}
-				/>
-			</Box>
+			<Input
+				id="settings-name"
+				bind:value={localName}
+				onblur={handleBlurSave}
+			/>
 		</FormGroup>
 
 		<FormGroup label="Description" for="settings-description">
-			<Box>
-				<Textarea
-					id="settings-description"
-					bind:value={localDescription}
-					onblur={handleBlurSave}
-					placeholder="Brief project description"
-					rows={2}
-				/>
-			</Box>
+			<Textarea
+				id="settings-description"
+				bind:value={localDescription}
+				onblur={handleBlurSave}
+				placeholder="Brief project description"
+				rows={2}
+			/>
 		</FormGroup>
 	</CardContent>
 </CardRoot>

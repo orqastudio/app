@@ -195,7 +195,7 @@
 	});
 </script>
 
-<Stack height="full" overflow="hidden" gap={0}>
+<Stack height="full" gap={0}>
 	<!-- Toolbar -->
 	<Toolbar>
 		{#snippet left()}
@@ -220,7 +220,7 @@
 	</Toolbar>
 
 	<!-- Main content area: graph + health panel side by side -->
-	<HStack flex={1} overflow="hidden" gap={0} align="stretch">
+	<HStack flex={1} gap={0} align="stretch">
 		<!-- Graph area: the bind:this container for Cytoscape is a legitimate exception -->
 		<div style="position: relative; flex: 1; overflow: hidden;">
 			{#if artifactGraphSDK.loading}

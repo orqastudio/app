@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button, Stack, HStack, Box, Grid, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
+	import { Button, Stack, HStack, Panel, Grid, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
@@ -118,7 +118,7 @@
 			<Caption tone="muted">No delivery types defined. Add one below.</Caption>
 		{:else}
 			{#each localTypes as type, index (type.key + index)}
-				<Box padding={3} rounded="md" border>
+				<Panel padding="normal" rounded="md" border="all">
 					<Stack gap={3}>
 						<HStack justify="between">
 							<Caption variant="caption-mono" tone="muted">{type.key}</Caption>
@@ -179,7 +179,7 @@
 							/>
 						</FormGroup>
 					</Stack>
-				</Box>
+				</Panel>
 
 				{#if index < localTypes.length - 1}
 					<Separator />

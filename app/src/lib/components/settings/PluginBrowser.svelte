@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Icon, HStack, Stack, Text, Caption, Code, Box, Grid } from "@orqastudio/svelte-components/pure";
+	import { Icon, HStack, Stack, Text, Caption } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
@@ -463,8 +464,9 @@
 					</CardAction>
 				</CardHeader>
 				<CardContent>
+					<Stack gap={2}>
 					<Text variant="caption" tone="muted">{detailView.plugin.description ?? "No description"}</Text>
-					<HStack gap={2} marginTop={2} wrap>
+					<HStack gap={2} wrap>
 						{#if detailView.plugin.version}
 							<Caption tone="muted">v{detailView.plugin.version}</Caption>
 						{/if}
@@ -476,20 +478,23 @@
 						{/if}
 					</HStack>
 					{#if detailView.plugin.capabilities?.length}
-						<HStack gap={1} wrap marginTop={2}>
+						<HStack gap={1} wrap>
 							{#each detailView.plugin.capabilities as cap (cap)}
 								<Badge variant="outline" size="xs">{cap}</Badge>
 							{/each}
 						</HStack>
 					{/if}
+					</Stack>
 				</CardContent>
 			</CardRoot>
 
 			<!-- Manifest details (installed plugins only) -->
 			{#if detailLoading}
-				<HStack justify="center" paddingY={6}>
+				<Panel padding="loose">
+				<HStack justify="center">
 					<LoadingSpinner size="md" />
 				</HStack>
+				</Panel>
 			{:else if detailManifest}
 				{#if detailManifest.provides.schemas.length > 0}
 					<CardRoot gap={1}>
@@ -592,7 +597,7 @@
 		</Stack>
 	{:else}
 		<!-- Tab bar -->
-		<Box border rounded="md" paddingY={1} paddingX={1}>
+		<Panel padding="tight" border="all" rounded="md">
 			<HStack gap={1}>
 			{#each (["installed", "official", "community", "groups"] as Tab[]) as tab (tab)}
 				<Button
@@ -604,7 +609,7 @@
 				</Button>
 			{/each}
 			</HStack>
-		</Box>
+		</Panel>
 
 		<!-- Installed tab -->
 		{#if activeTab === "installed"}
@@ -636,16 +641,18 @@
 		<!-- Official tab -->
 		{:else if activeTab === "official"}
 			{#if pluginStore.loadingRegistry}
-				<HStack justify="center" paddingY={8}>
+				<Panel padding="loose">
+				<HStack justify="center">
 					<LoadingSpinner size="md" />
 				</HStack>
+				</Panel>
 			{:else}
 				<Stack gap={2}>
 					{#each official as plugin (plugin.name)}
 						<CardRoot gap={2} interactive onclick={() => showDetail(plugin, "registry")}>
 							<CardContent>
 								<HStack justify="between">
-									<Stack gap={0}>
+									<Stack gap={1}>
 										<HStack gap={2}>
 											<Icon name={plugin.icon ?? "puzzle"} size="sm" />
 											<Caption variant="caption-strong">{displayName(plugin)}</Caption>
@@ -655,7 +662,7 @@
 										</HStack>
 										<Caption tone="muted" lineClamp={1}>{plugin.description}</Caption>
 										{#if plugin.capabilities?.length}
-											<HStack gap={1} wrap marginTop={1}>
+											<HStack gap={1} wrap>
 												{#each plugin.capabilities as cap (cap)}
 													<Badge variant="outline" size="xs">{cap}</Badge>
 												{/each}
@@ -691,9 +698,11 @@
 		<!-- Community tab -->
 		{:else if activeTab === "community"}
 			{#if pluginStore.loadingRegistry}
-				<HStack justify="center" paddingY={8}>
+				<Panel padding="loose">
+				<HStack justify="center">
 					<LoadingSpinner size="md" />
 				</HStack>
+				</Panel>
 			{:else}
 				<Stack gap={2}>
 					{#each community as plugin (plugin.name)}
@@ -739,9 +748,11 @@
 		<!-- Groups tab — plugin bundles derived from registry categories -->
 		{:else if activeTab === "groups"}
 			{#if pluginStore.loadingRegistry}
-				<HStack justify="center" paddingY={8}>
+				<Panel padding="loose">
+				<HStack justify="center">
 					<LoadingSpinner size="md" />
 				</HStack>
+				</Panel>
 			{:else if bundles.length === 0}
 				<Caption tone="muted" block>No plugin bundles available. Check the Official tab for individual plugins.</Caption>
 			{:else}
@@ -776,8 +787,9 @@
 								</CardAction>
 							</CardHeader>
 							<CardContent>
+								<Stack gap={2}>
 								<Caption tone="muted">{bundle.description}</Caption>
-								<Stack gap={1} marginTop={2}>
+								<Stack gap={1}>
 									{#each bundle.plugins as plugin (plugin.name)}
 										<HStack justify="between">
 											<HStack gap={1}>
@@ -789,6 +801,7 @@
 											{/if}
 										</HStack>
 									{/each}
+								</Stack>
 								</Stack>
 							</CardContent>
 						</CardRoot>

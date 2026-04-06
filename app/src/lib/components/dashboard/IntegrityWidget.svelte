@@ -7,7 +7,8 @@
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, HStack, Stack, Box, Text } from "@orqastudio/svelte-components/pure";
+	import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, HStack, Text } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -149,7 +150,7 @@
 
 {#if scanned && checks.length === 0 && !error}
 	<!-- Collapsed "all clear" state — minimal footprint -->
-	<Box border rounded="lg" paddingX={3} paddingY={2}>
+	<Panel padding="tight" border="all" rounded="lg">
 		<HStack gap={2}>
 			<Icon name="shield-check" size="md" />
 			<Text variant="body-muted">Pipeline Health</Text>
@@ -158,7 +159,7 @@
 				<LoadingSpinner size="sm" />
 			{/if}
 		</HStack>
-	</Box>
+	</Panel>
 {:else}
 <CardRoot gap={2}>
 	<CardHeader compact>

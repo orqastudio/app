@@ -3,7 +3,7 @@
      reference sections: keyboard shortcuts, event schema, and filter syntax.
      Closed by pressing Escape or clicking the backdrop. -->
 <script lang="ts">
-	import { Button, Badge, Separator, ScrollArea, CardRoot, CardContent, Kbd, Stack, HStack, Heading, Text, Caption, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Icon, Box } from "@orqastudio/svelte-components/pure";
+	import { Button, Badge, Panel, SectionHeader, Separator, ScrollArea, CardRoot, CardContent, Kbd, Stack, HStack, Heading, Text, Caption, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Icon, Box } from "@orqastudio/svelte-components/pure";
 
 	// Whether the panel is visible. Exported so the parent (DevToolsShell) can
 	// toggle it from the toolbar button and the ? keyboard shortcut handler.
@@ -76,16 +76,17 @@
 		right={0}
 		top={0}
 		zIndex={50}
-		overflow="hidden"
 		aria-label="Help panel"
 	>
 		<!-- Panel wrapper: full height flex column, scoped CSS provides width and border. -->
 		<div class="help-panel" role="complementary">
-			<!-- Panel header: HStack provides flex-row layout. Scoped CSS provides height/border. -->
-			<div class="help-panel__header">
-				<HStack justify="between" full paddingX={3}>
+			<!-- Panel header: SectionHeader provides px-3 py-2 border-b layout. -->
+			<SectionHeader>
+				{#snippet start()}
 					<!-- Text body-strong replaces raw span with font-medium. -->
 					<Text variant="body-strong">Help</Text>
+				{/snippet}
+				{#snippet end()}
 					<!-- Wrapper span with display:contents provides :global() hook for Button override. -->
 					<span class="help-panel__close-wrap" style="display: contents;">
 						<Button
@@ -98,12 +99,13 @@
 							<Icon name="x" size="sm" />
 						</Button>
 					</span>
-				</HStack>
-			</div>
+				{/snippet}
+			</SectionHeader>
 
 			<!-- Scrollable content area via ScrollArea for styled scrollbars. -->
 			<ScrollArea full>
-				<Stack gap={0} paddingX={3} paddingY={3}>
+				<Panel padding="normal">
+				<Stack gap={0}>
 
 					<!-- SECTION 1: Keyboard shortcuts. -->
 					<CardRoot>
@@ -212,7 +214,7 @@
 										Multiple levels can be active simultaneously.
 									</Caption>
 									<HStack gap={1} wrap={true}>
-										{#each levels as [level, tone]}
+										{#each levels as [level]}
 											<!-- Badge provides the visual level pill; data-level drives color
 											     via scoped CSS. Now accepted via Badge restProps. -->
 											<Badge variant="outline" size="xs" data-level={level}>{level}</Badge>
@@ -240,6 +242,7 @@
 					</CardRoot>
 
 				</Stack>
+				</Panel>
 			</ScrollArea>
 		</div>
 	</Box>
@@ -262,15 +265,6 @@
 		border-left: 1px solid var(--color-border);
 		background-color: var(--color-surface-base);
 		box-shadow: var(--shadow-xl);
-	}
-
-	/* Panel header: compact fixed-height bar with bottom border. */
-	.help-panel__header {
-		display: flex;
-		align-items: center;
-		height: 2.25rem; /* h-9 */
-		flex-shrink: 0;
-		border-bottom: 1px solid var(--color-border);
 	}
 
 	/* Close button: compact, muted color.

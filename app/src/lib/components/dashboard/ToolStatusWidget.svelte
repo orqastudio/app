@@ -3,7 +3,8 @@
 	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Box, Caption, Code, CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "@orqastudio/svelte-components/pure";
+	import { Button, HStack, Stack, Caption, Code, CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger, fmt } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -70,7 +71,7 @@
 		<Stack gap={2}>
 			{#each pluginStore.cliToolStatuses as tool (`${tool.plugin}:${tool.tool_key}`)}
 				{@const isRunning = running === `${tool.plugin}:${tool.tool_key}`}
-				<Box border rounded="md" paddingX={3} paddingY={2}>
+				<Panel padding="tight" border="all" rounded="md">
 					<HStack justify="between">
 						<HStack gap={2}>
 							{#if tool.success === true}
@@ -104,7 +105,7 @@
 							{/if}
 						</Button>
 					</HStack>
-				</Box>
+				</Panel>
 			{/each}
 		</Stack>
 

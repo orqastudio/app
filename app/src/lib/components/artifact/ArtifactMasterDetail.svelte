@@ -42,7 +42,7 @@
 	</div>
 
 	<!-- Viewer -->
-	<Box flex={1} minWidth={0} overflow="hidden">
+	<Box flex={1} minWidth={0}>
 		{#if hasSelection}
 			<ArtifactViewer />
 		{:else}

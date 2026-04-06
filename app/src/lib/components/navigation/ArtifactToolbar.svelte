@@ -4,7 +4,7 @@
 		DropdownMenuSeparator,
 		DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
 		PopoverRoot as Popover, PopoverTrigger, PopoverContent,
-		Button, HStack, Stack, Box, Caption,
+		Button, HStack, Stack, Box, Caption, Panel, SectionFooter,
 		statusIconName, resolveIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
@@ -204,7 +204,7 @@
 					<Stack gap={0}>
 						{#each filterableFields as field (field.name)}
 							{@const counts = countFieldValues(nodes, field.name)}
-							<Box borderBottom>
+							<Panel padding="tight" border="bottom">
 								<HStack justify="between">
 									<Caption>
 										{humanizeField(field.name)}
@@ -249,18 +249,18 @@
 										</Button>
 									{/each}
 								</Stack>
-							</Box>
+							</Panel>
 						{/each}
 
 						{#if hasActiveFilters}
-							<Box borderTop padding={2}>
+							<SectionFooter variant="compact">
 								<Button
 									variant="ghost"
 									onclick={clearAllFilters}
 								>
 									Clear all filters
 								</Button>
-							</Box>
+							</SectionFooter>
 						{/if}
 					</Stack>
 				</PopoverContent>

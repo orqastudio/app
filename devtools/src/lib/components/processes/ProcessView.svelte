@@ -5,7 +5,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import { invoke } from "@tauri-apps/api/core";
-	import { Button, ConnectionIndicator, EmptyState, Stack, HStack, Grid, Heading, Text, Caption, Code, ScrollArea, Center, Box } from "@orqastudio/svelte-components/pure";
+	import { Button, ConnectionIndicator, EmptyState, Panel, Stack, HStack, Grid, Heading, Text, Code, ScrollArea, Center } from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
 	import ProcessCard from "./ProcessCard.svelte";
 	import type { ProcessInfo } from "./ProcessCard.svelte";
@@ -100,7 +100,8 @@
 
 <!-- Outer container: fills the tab content area with vertical scroll. -->
 <ScrollArea full>
-<Stack gap={4} padding={4}>
+<Panel padding="normal">
+<Stack gap={4}>
 	<!-- Dev environment control: title on left, controls on right. -->
 	<HStack justify="between">
 		<Heading level={5}>Dev Environment</Heading>
@@ -160,6 +161,7 @@
 		{/if}
 	{/if}
 </Stack>
+</Panel>
 </ScrollArea>
 
 <style>

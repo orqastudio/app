@@ -1,6 +1,6 @@
 <!-- Renders an enforcement rule: load status, scope, violation counts, and full markdown content. -->
 <script lang="ts">
-	import { Icon, Badge, HStack, Stack, Box, Text, Button } from "@orqastudio/svelte-components/pure";
+	import { Icon, Badge, HStack, Stack, Box, Text, Button, Panel } from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -76,7 +76,7 @@
 
 	<!-- Violation details (collapsible) -->
 	{#if ruleViolations.length > 0}
-		<Box border rounded="md">
+		<Panel padding="none" border="all" rounded="md">
 			<Button
 				variant="ghost"
 				full
@@ -92,7 +92,8 @@
 				</HStack>
 			</Button>
 			{#if violationsExpanded}
-				<Stack gap={1} borderTop paddingX={3} paddingY={2}>
+				<Panel padding="tight" border="top">
+					<Stack gap={1}>
 					{#each ruleViolations as violation (violation.timestamp)}
 						<HStack gap={2} align="start">
 							{#if violation.action === "Block"}
@@ -106,9 +107,10 @@
 							</Box>
 						</HStack>
 					{/each}
-				</Stack>
+					</Stack>
+				</Panel>
 			{/if}
-		</Box>
+		</Panel>
 	{/if}
 
 	<!-- Rule content -->

@@ -3,7 +3,7 @@
 	import MermaidDiagram from "$lib/components/content/MermaidDiagram.svelte";
 	import PlantUmlDiagram from "$lib/components/content/PlantUmlDiagram.svelte";
 	import DynamicArtifactTable from "$lib/components/content/DynamicArtifactTable.svelte";
-	import { HStack, Icon, Caption } from "@orqastudio/svelte-components/pure";
+	import { Callout, Caption } from "@orqastudio/svelte-components/pure";
 
 	let {
 		text,
@@ -50,10 +50,9 @@
 			refField={artifactTableProps.field}
 		/>
 	{:else}
-		<HStack gap={2} style="margin: 1rem 0; border-radius: 0.5rem; border: 1px dashed hsl(var(--warning) / 0.5); background: hsl(var(--warning) / 0.05); padding: 0.75rem;">
-			<Icon name="alert-triangle" size="sm" />
+		<Callout tone="warning" border="dashed" iconName="alert-triangle">
 			<Caption tone="warning">Invalid artifacts directive: requires type, parent, and field attributes.</Caption>
-		</HStack>
+		</Callout>
 	{/if}
 {:else}
 	<CodeBlock {text} {lang} />

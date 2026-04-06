@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { LoadingSpinner, Caption, Text, Stack, HStack } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
 	const log = logger("dashboard");
@@ -272,7 +273,8 @@
 			{@const isTop = idx < 2}
 			<div class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-r border-border' : ''} {isTop ? 'border-t border-border' : ''}">
 				<!-- Metric header -->
-				<HStack justify="between" paddingX={3} paddingTop={3} paddingBottom={1}>
+				<Panel padding="normal">
+				<HStack justify="between">
 					<Caption variant="caption-strong">{m.label}</Caption>
 					<HStack gap={1} align="baseline">
 						<Text variant="heading-base">
@@ -285,11 +287,14 @@
 						{/if}
 					</HStack>
 				</HStack>
+				</Panel>
 				<!-- Sparkline — flush to cell edges — custom SVG chart -->
 				{#if loading}
-					<Stack gap={0} align="center" paddingY={3}>
+					<Panel padding="normal">
+					<Stack gap={0} align="center">
 						<LoadingSpinner size="sm" />
 					</Stack>
+					</Panel>
 				{:else if path}
 					<svg
 						class="flex-1 w-full min-h-0"
@@ -313,9 +318,11 @@
 						/>
 					</svg>
 				{:else}
-					<Stack gap={0} paddingX={3} paddingBottom={3}>
+					<Panel padding="normal">
+					<Stack gap={0}>
 						<Caption>No trend data yet</Caption>
 					</Stack>
+					</Panel>
 				{/if}
 			</div>
 		{/each}

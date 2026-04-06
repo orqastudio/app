@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Icon, ScrollArea, HStack, Stack, Caption } from "@orqastudio/svelte-components/pure";
+	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { CardRoot, CardContent } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -48,7 +49,8 @@
 </script>
 
 <ScrollArea maxHeight="viewport">
-	<Stack gap={6} padding={6}>
+	<Panel padding="loose">
+	<Stack gap={6}>
 		{#if section === "provider"}
 			<ProviderSettings />
 		{/if}
@@ -76,19 +78,23 @@
 			{#if !project}
 				<CardRoot>
 					<CardContent>
-						<HStack gap={2} paddingY={8}>
+						<Panel padding="loose">
+						<HStack gap={2}>
 							<Icon name="circle-x" size="md" />
 							<Caption tone="muted">No project loaded</Caption>
 						</HStack>
+						</Panel>
 					</CardContent>
 				</CardRoot>
 			{:else if !projectStore.settingsLoaded}
 				<CardRoot>
 					<CardContent>
-						<HStack gap={2} paddingY={8}>
+						<Panel padding="loose">
+						<HStack gap={2}>
 							<Icon name="loader-circle" size="md" />
 							<Caption tone="muted">Loading project settings...</Caption>
 						</HStack>
+						</Panel>
 					</CardContent>
 				</CardRoot>
 			{:else if projectStore.hasSettings && projectStore.projectSettings}
@@ -135,4 +141,5 @@
 			{/if}
 		{/if}
 	</Stack>
+	</Panel>
 </ScrollArea>
