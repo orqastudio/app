@@ -23,6 +23,7 @@ use tracing::{info, warn};
 
 use orqa_engine::ports::resolve_lsp_port;
 
+use crate::correlation::current_correlation_id;
 use crate::subprocess::SubprocessManager;
 
 /// Binary name for the LSP server.
@@ -53,6 +54,12 @@ pub fn start_lsp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     ];
 
     let mut manager = SubprocessManager::new("lsp-server", LSP_BINARY, args);
+
+    // Forward the active correlation ID so the LSP server can include it in
+    // its own logs, enabling end-to-end tracing from daemon to LSP.
+    if let Some(trace_id) = current_correlation_id() {
+        manager.set_env("ORQA_TRACE_ID", trace_id);
+    }
 
     match manager.start(project_root) {
         Ok(()) => {

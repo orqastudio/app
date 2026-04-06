@@ -94,8 +94,28 @@
 		}
 	}
 
+	/**
+	 * Maps issue severity level to a sparkline stroke color using CSS custom properties.
+	 * Mirrors the SmallBadge variant semantics for visual consistency.
+	 * @param l - The severity level string (Error, Warn, Info, Debug, Perf).
+	 * @returns A CSS color string for the sparkline stroke.
+	 */
+	function levelToSparklineColor(l: string): string {
+		switch (l) {
+			case "Error":
+				return "hsl(var(--destructive))";
+			case "Warn":
+				return "hsl(var(--warning))";
+			case "Info":
+				return "hsl(var(--primary))";
+			default:
+				return "hsl(var(--muted-foreground))";
+		}
+	}
+
 	const variant = $derived(levelToVariant(level));
 	const time = $derived(relativeTime(last_seen));
+	const sparklineColor = $derived(levelToSparklineColor(level));
 </script>
 
 <div
@@ -118,5 +138,5 @@
 
 	<CountBadge {count} />
 
-	<Sparkline values={sparkline_buckets} width={80} height={24} />
+	<Sparkline values={sparkline_buckets} width={80} height={24} strokeColor={sparklineColor} />
 </div>

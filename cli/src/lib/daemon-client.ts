@@ -8,6 +8,7 @@
  */
 
 import { spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { findBinary } from "./validation-engine.js";
 
 // ---------------------------------------------------------------------------
@@ -60,6 +61,16 @@ const TIMEOUT_MS = 5000;
 // ---------------------------------------------------------------------------
 
 /**
+ * Generate a short correlation ID for an outgoing HTTP request.
+ * Uses Node.js `crypto.randomBytes`. Returns the first 16 hex characters —
+ * compact for headers while still providing ~64 bits of entropy.
+ * @returns A 16-character hex string correlation ID.
+ */
+function generateCorrelationId(): string {
+	return randomBytes(8).toString("hex");
+}
+
+/**
  * Capture the call-site source location from the current stack trace.
  * Skips internal frames (getCallSite itself and callDaemonGraph) to surface
  * the actual CLI command file that initiated the request, giving the daemon
@@ -102,6 +113,7 @@ export async function callDaemonGraph<T>(
 			method,
 			headers: {
 				"Content-Type": "application/json",
+				"x-request-id": generateCorrelationId(),
 				"x-source-file": callSite.file,
 				"x-source-line": String(callSite.line ?? ""),
 			},

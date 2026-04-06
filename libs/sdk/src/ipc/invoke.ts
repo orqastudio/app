@@ -6,6 +6,17 @@ import { logger } from "../logger.js";
 const log = logger("ipc");
 
 /**
+ * Generate a short correlation ID for tracing a single IPC call across the
+ * Tauri boundary. Uses the Web Crypto API (available in all Tauri webviews).
+ * Returns the first 16 hex characters of a UUID v4 — compact enough for log
+ * fields while still having ~64 bits of entropy.
+ * @returns A 16-character hex string correlation ID.
+ */
+function generateCorrelationId(): string {
+	return crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+}
+
+/**
  * Recursively deep-freeze an object so it cannot be mutated after crossing
  * the IPC boundary. Enforces immutability at the storage↔frontend edge.
  *
@@ -37,8 +48,13 @@ function deepFreeze<T>(obj: T): Readonly<T> {
  */
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
 	const start = performance.now();
+	// Inject a correlation ID so this frontend action can be linked to daemon
+	// log events. The Tauri command receives it as `_correlation_id` and can
+	// forward it to any downstream HTTP calls it makes to the daemon.
+	const correlationId = generateCorrelationId();
+	const argsWithId: Record<string, unknown> = { ...args, _correlation_id: correlationId };
 	try {
-		const result = await tauriInvoke<T>(cmd, args);
+		const result = await tauriInvoke<T>(cmd, argsWithId);
 		const duration_ms = (performance.now() - start).toFixed(1);
 		log.perf(`${cmd} (${duration_ms}ms)`);
 		// Freeze at the IPC boundary: data from storage is immutable by default.

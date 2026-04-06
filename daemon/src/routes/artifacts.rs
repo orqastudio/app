@@ -245,6 +245,7 @@ pub async fn get_artifact_content(
 /// disk. After the write, triggers a graph reload so subsequent requests see the
 /// updated state. Both the disk write and the reload are wrapped in `spawn_blocking`
 /// because they perform synchronous I/O and must not block the tokio thread pool.
+#[allow(clippy::too_many_lines)]
 pub async fn update_artifact(
     State(state): State<GraphState>,
     Path(id): Path<String>,

@@ -27,6 +27,7 @@ use tracing::{info, warn};
 
 use orqa_engine::ports::resolve_mcp_port;
 
+use crate::correlation::current_correlation_id;
 use crate::subprocess::SubprocessManager;
 
 /// Binary name for the MCP server.
@@ -58,6 +59,12 @@ pub fn start_mcp(project_root: &Path, daemon_port: u16) -> SubprocessManager {
     ];
 
     let mut manager = SubprocessManager::new("mcp-server", MCP_BINARY, args);
+
+    // Forward the active correlation ID so the MCP server can include it in
+    // its own logs, enabling end-to-end tracing from daemon to MCP.
+    if let Some(trace_id) = current_correlation_id() {
+        manager.set_env("ORQA_TRACE_ID", trace_id);
+    }
 
     match manager.start(project_root) {
         Ok(()) => {

@@ -5,13 +5,15 @@
 // Also tracks connection state to the daemon SSE stream, updated via the
 // orqa://connection-state Tauri event. The status bar reads this state to show
 // "Connected", "Reconnecting (attempt N)", or "Waiting for daemon...".
+//
+// Tabs: issues, stream, processes, storybook, metrics, trace.
 
 import { listen } from "@tauri-apps/api/event";
 import { assertNever } from "@orqastudio/types";
 
-export type DevToolsTab = "issues" | "stream" | "processes" | "storybook" | "metrics";
+export type DevToolsTab = "issues" | "stream" | "processes" | "storybook" | "metrics" | "trace";
 
-// All five tabs with their display labels, ordered for the tab bar.
+// All six tabs with their display labels, ordered for the tab bar.
 // "issues" is first and is the default active tab.
 export const TABS: { value: DevToolsTab; label: string }[] = [
 	{ value: "issues", label: "Issues" },
@@ -19,6 +21,7 @@ export const TABS: { value: DevToolsTab; label: string }[] = [
 	{ value: "processes", label: "Processes" },
 	{ value: "storybook", label: "Storybook" },
 	{ value: "metrics", label: "Metrics" },
+	{ value: "trace", label: "Trace" },
 ];
 
 // The three connection states emitted by the Rust backend.

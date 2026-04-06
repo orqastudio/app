@@ -49,6 +49,10 @@ pub struct SubprocessManager {
     pub binary: String,
     /// Arguments to pass to the binary on startup.
     pub args: Vec<String>,
+    /// Additional environment variables to set for the child process. These
+    /// are merged on top of the daemon's inherited environment. Callers use
+    /// `set_env` to add trace context (e.g., `ORQA_TRACE_ID`) before spawning.
+    pub env_vars: Vec<(String, String)>,
     /// Handle to the running child process, if any.
     child: Option<Child>,
     /// Last known status.
@@ -70,12 +74,20 @@ impl SubprocessManager {
             name: name.into(),
             binary: binary.into(),
             args,
+            env_vars: Vec::new(),
             child: None,
             status: SubprocessStatus::Stopped,
             crash_count: 0,
             binary_path: None,
             started_at: None,
         }
+    }
+
+    /// Add an environment variable that will be set on the child process at
+    /// spawn time. Call this before `start`. Repeated calls accumulate; later
+    /// entries with the same key override earlier ones.
+    pub fn set_env(&mut self, key: impl Into<String>, value: impl Into<String>) {
+        self.env_vars.push((key.into(), value.into()));
     }
 
     /// Return the PID of the running child, if any.
@@ -180,6 +192,11 @@ impl SubprocessManager {
             .stdin(std::process::Stdio::null())
             .stdout(std::process::Stdio::null())
             .stderr(std::process::Stdio::piped());
+
+        // Propagate any caller-supplied environment variables (e.g. ORQA_TRACE_ID).
+        for (key, val) in &self.env_vars {
+            cmd.env(key, val);
+        }
 
         // On Windows, CREATE_NO_WINDOW prevents the child process from opening
         // a visible console window. Without this flag, every LSP/MCP subprocess

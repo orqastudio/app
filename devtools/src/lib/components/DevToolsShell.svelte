@@ -14,8 +14,10 @@
 		StackFrameList,
 		ContextTable,
 		RawJson,
+		AiExplainButton,
 		type ContextEntry,
 	} from "@orqastudio/svelte-components/pure";
+	import { emit } from "@tauri-apps/api/event";
 	import {
 		AppShell,
 		ActivityBar,
@@ -51,6 +53,8 @@
 	import ProcessView from "./processes/ProcessView.svelte";
 	import HelpPanel from "./help/HelpPanel.svelte";
 	import IssuesView from "./issues/IssuesView.svelte";
+	import TraceView from "./trace/TraceView.svelte";
+	import { selectTrace } from "../stores/trace-store.svelte.js";
 	import setupBackground from "$lib/assets/setup-background.png";
 	import finMark from "$lib/assets/fin-mark.svg";
 
@@ -79,6 +83,7 @@
 		{ key: "processes", icon: "cpu", label: "Processes" },
 		{ key: "storybook", icon: "book-open", label: "Storybook" },
 		{ key: "metrics", icon: "activity", label: "Metrics" },
+		{ key: "trace", icon: "git-branch", label: "Trace" },
 	];
 
 	const topItems: ActivityBarItem[] = $derived(
@@ -162,6 +167,29 @@
 		return entries;
 	}
 
+	/**
+	 * Handle the AI explain action: emit the built prompt as a Tauri event
+	 * so the app's chat view can pick it up and populate the input.
+	 * @param prompt - The formatted explanation prompt built from the selected event.
+	 */
+	async function handleAiExplain(prompt: string): Promise<void> {
+		await emit("orqa://ai-explain-request", prompt);
+	}
+
+	/**
+	 * Handle a ContextTable value click. When the user clicks the correlation_id
+	 * entry, selects that ID in the trace store and navigates to the Trace tab so
+	 * the timeline renders the correlated events immediately.
+	 * @param key - The context entry key that was clicked.
+	 * @param value - The context entry value that was clicked.
+	 */
+	function handleContextValueClick(key: string, value: string): void {
+		if (key === "correlation_id") {
+			selectTrace(value);
+			navigation.activeTab = "trace";
+		}
+	}
+
 	// Reactive references to drawer state via getter functions. These re-run
 	// any time the underlying $state values change so the template stays current.
 	const drawerOpen = $derived(isDrawerOpen());
@@ -170,7 +198,7 @@
 
 	/**
 	 * Handle keydown: ? key toggles the help panel when not typing in an input field.
-	 * Ctrl+1–5 navigate directly to the corresponding tab.
+	 * Ctrl+1–6 navigate directly to the corresponding tab.
 	 * @param e - The keyboard event from the document keydown listener.
 	 */
 	function handleKeydown(e: KeyboardEvent): void {
@@ -217,6 +245,8 @@
 						<StorybookView />
 					{:else if navigation.activeTab === "metrics"}
 						<MetricsView />
+					{:else if navigation.activeTab === "trace"}
+						<TraceView />
 					{:else}
 						{@const _exhaustive = assertTabNever(navigation.activeTab)}
 						{_exhaustive}
@@ -232,11 +262,17 @@
 					onprev={prevEvent}
 					ontabchange={setTab}
 				>
+					{#snippet toolbarContent()}
+						<AiExplainButton event={drawerEvent} onexplain={handleAiExplain} />
+					{/snippet}
 					{#snippet stackContent()}
 						<StackFrameList frames={drawerEvent?.stack_frames ?? []} />
 					{/snippet}
 					{#snippet contextContent()}
-						<ContextTable entries={buildContextEntries(drawerEvent)} />
+						<ContextTable
+							entries={buildContextEntries(drawerEvent)}
+							onValueClick={handleContextValueClick}
+						/>
 					{/snippet}
 					{#snippet rawContent()}
 						<RawJson data={drawerEvent} />

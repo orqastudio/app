@@ -92,6 +92,7 @@ pub async fn validation_scan(State(state): State<GraphState>) -> Json<Validation
 /// When `fix: false`, behaves like /validation/scan with an empty `fixes_applied`.
 /// The reload after fixing is wrapped in `spawn_blocking` because it does a full
 /// directory scan and must not block the tokio thread pool.
+#[allow(clippy::too_many_lines)]
 pub async fn validation_fix(
     State(state): State<GraphState>,
     Json(req): Json<ValidationFixRequest>,

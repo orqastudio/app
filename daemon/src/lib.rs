@@ -12,9 +12,11 @@
 #![allow(missing_docs)]
 
 pub mod config;
+pub mod correlation;
 pub mod event_bus;
 pub mod graph_state;
 pub mod health;
+pub mod middleware;
 pub mod routes;
 
 // Internal modules that route handlers depend on — re-exported so the binary
@@ -74,6 +76,9 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route("/reload", post(health_reload_handler))
         .nest("/artifacts", artifact_router)
         .nest("/graph", graph_router)
+        .layer(axum::middleware::from_fn(
+            middleware::correlation_id_middleware,
+        ))
         .with_state(state)
 }
 

@@ -561,7 +561,7 @@ pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
 
         match result {
             Err(e) => {
-                error!(subsystem = "issue-group-upsert", error = ?e, "spawn_blocking panicked")
+                error!(subsystem = "issue-group-upsert", error = ?e, "spawn_blocking panicked");
             }
             Ok(Err(e)) => error!(subsystem = "issue-group-upsert", error = %e, "upsert failed"),
             Ok(Ok(None)) => error!(

@@ -46,6 +46,7 @@ use tracing_subscriber::{EnvFilter, Layer};
 use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
 use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent, StackFrame};
 
+use crate::correlation::current_correlation_id;
 use crate::event_bus::EventBus;
 
 /// Handle that keeps the non-blocking log writer alive.
@@ -252,7 +253,9 @@ where
             session_id: None,
             fingerprint: Some(fp),
             message_template: Some(template),
-            correlation_id: None,
+            // Read the task-local correlation ID if we are executing inside a
+            // request scope. Background tasks will get None.
+            correlation_id: current_correlation_id(),
             stack_frames,
         };
 

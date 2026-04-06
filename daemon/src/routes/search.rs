@@ -135,6 +135,7 @@ pub async fn search_index(
 ///
 /// Requires a BGE-small-en-v1.5 model directory. The model path is read from
 /// the ORQA_EMBED_MODEL environment variable (defaults to ~/.orqa/models/bge-small-en).
+#[allow(clippy::too_many_lines)]
 pub async fn search_embed(
     State(state): State<GraphState>,
 ) -> Result<Json<IndexResponse>, (StatusCode, Json<serde_json::Value>)> {

@@ -55,6 +55,8 @@
 		relatedContent?: Snippet;
 		/** Content for the Raw tab. */
 		rawContent?: Snippet;
+		/** Optional toolbar actions rendered before the navigation buttons in the header. */
+		toolbarContent?: Snippet;
 	}
 
 	let {
@@ -68,6 +70,7 @@
 		contextContent,
 		relatedContent,
 		rawContent,
+		toolbarContent,
 	}: EventDrawerProps = $props();
 
 	/**
@@ -109,6 +112,7 @@
 				{/snippet}
 				{#snippet end()}
 					<HStack gap={1}>
+						{@render toolbarContent?.()}
 						<Button variant="ghost" size="icon-sm" onclick={onprev} aria-label="Previous event">
 							<Icon name="chevron-up" size="sm" />
 						</Button>

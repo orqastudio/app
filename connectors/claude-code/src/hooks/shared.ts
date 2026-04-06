@@ -7,6 +7,7 @@
  */
 
 import { spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { relative } from "node:path";
 import { getPort } from "@orqastudio/constants";
 import type { HookInput } from "../types.js";
@@ -61,6 +62,17 @@ export async function readInput(): Promise<HookInput> {
 }
 
 /**
+ * Generate a short correlation ID for an outgoing HTTP request.
+ * Uses Node.js `crypto.randomBytes` (available in all Node.js environments).
+ * Returns the first 16 hex characters — compact for headers while still
+ * providing ~64 bits of entropy.
+ * @returns A 16-character hex string correlation ID.
+ */
+function generateCorrelationId(): string {
+	return randomBytes(8).toString("hex");
+}
+
+/**
  * Capture the call-site source location from the current stack trace.
  * Skips internal frames (getCallSite itself and callDaemon) to surface the
  * actual hook file that initiated the request, giving the daemon observability
@@ -95,6 +107,7 @@ export async function callDaemon<T>(path: string, body: unknown): Promise<T> {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"x-request-id": generateCorrelationId(),
 				"x-source-file": callSite.file,
 				"x-source-line": String(callSite.line ?? ""),
 			},

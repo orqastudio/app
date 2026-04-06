@@ -21,9 +21,12 @@ use std::time::Instant;
 
 use axum::extract::State;
 use axum::http::StatusCode;
+use axum::middleware as axum_mw;
 use axum::response::sse::{Event, Sse};
 use axum::routing::{get, post};
 use axum::{Json, Router};
+
+use crate::middleware::correlation_id_middleware;
 use serde::{Deserialize, Serialize};
 use tokio_stream::wrappers::BroadcastStream;
 use tokio_stream::StreamExt as _;
@@ -706,6 +709,7 @@ pub async fn start(
         .nest("/devtools", devtools_router)
         .nest("/git", git_router)
         .nest("/startup", startup_router)
+        .layer(axum_mw::from_fn(correlation_id_middleware))
         .with_state(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));

@@ -26,6 +26,7 @@
 mod compact_context;
 mod config;
 mod context;
+mod correlation;
 mod event_bus;
 mod graph_state;
 mod health;
@@ -33,6 +34,7 @@ mod knowledge;
 mod logging;
 mod lsp;
 mod mcp;
+mod middleware;
 mod process;
 mod prompt;
 mod routes;

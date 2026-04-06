@@ -9,7 +9,7 @@
 // ── Container ── Card*, SimpleCard, FormCard, ListCard, DashboardCard, ViewContainer, Collapsible*
 // ── Form ── FormGroup, FormSection, Checkbox, Switch, RadioGroup, IssueFilters
 // ── Utility ── VisuallyHidden, ThinkingBlock
-// ── DevTools ── StackFrameList, EventDrawer, ContextTable, RawJson
+// ── DevTools ── StackFrameList, EventDrawer, ContextTable, RawJson, AiExplainButton, TraceTimeline
 
 // Typography primitives
 export { Heading, Text, Label, Caption, Code } from "./typography/index.js";
@@ -225,3 +225,14 @@ export { StackFrameList } from "./stack-frame-list/index.js";
 export { EventDrawer } from "./event-drawer/index.js";
 export { ContextTable, type ContextEntry } from "./context-table/index.js";
 export { RawJson } from "./raw-json/index.js";
+
+// DevTools Step 5 components
+export {
+	AiExplainButton,
+	buildExplainPrompt,
+	type AiExplainButtonProps,
+	type ExplainEvent,
+} from "./ai-explain-button/index.js";
+
+// DevTools Step 6b components
+export { TraceTimeline, type TraceEvent, type TraceTimelineProps } from "./trace-timeline/index.js";
