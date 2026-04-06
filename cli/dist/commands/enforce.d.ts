@@ -19,9 +19,9 @@
  */
 /**
  * Dispatch the enforce command. Returns an exit code (0 = all passed, 1 = failure).
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce".
+ * @returns 0 if all checks passed, 1 if any failed.
  */
 export declare function runEnforceCommand(projectRoot: string, args: string[]): Promise<number>;
 //# sourceMappingURL=enforce.d.ts.map

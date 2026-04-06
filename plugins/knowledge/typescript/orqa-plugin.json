@@ -39,8 +39,7 @@
 			"actions": {
 				"check": {
 					"command": "tsc",
-					"args": ["--noEmit", "--project", "."],
-					"files": "*.ts"
+					"args": ["--noEmit", "--project", "."]
 				}
 			},
 			"watch": {

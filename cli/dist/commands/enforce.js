@@ -50,9 +50,9 @@ Subcommands:
 `.trim();
 /**
  * Dispatch the enforce command. Returns an exit code (0 = all passed, 1 = failure).
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce".
+ * @returns 0 if all checks passed, 1 if any failed.
  */
 export async function runEnforceCommand(projectRoot, args) {
     if (args[0] === "--help" || args[0] === "-h") {
@@ -160,12 +160,19 @@ export async function runEnforceCommand(projectRoot, args) {
             console.log(`Skipping ${engine.engine}: config not generated yet (run orqa install)`);
             continue;
         }
-        // Filter files if --staged.
-        let files = stagedFiles;
-        if (files !== null && engine.fileTypes.length > 0) {
-            files = filterByPatterns(files, engine.fileTypes);
-            if (files.length === 0)
-                continue; // No relevant staged files for this engine.
+        // Filter staged files by engine file-type patterns. When no relevant
+        // staged files exist, skip the engine entirely.
+        // When the action declares a `files` pattern, pass individual files.
+        // When it does not (e.g. tsc --project), run without file args.
+        let files = null;
+        if (stagedFiles !== null && engine.fileTypes.length > 0) {
+            const relevant = filterByPatterns(stagedFiles, engine.fileTypes);
+            if (relevant.length === 0)
+                continue; // No relevant staged files — skip engine.
+            if (action.files) {
+                files = relevant;
+            }
+            // else: files stays null → engine runs project-wide without file args
         }
         // Handle built-in enforcement checks (registered from rules, not plugins).
         const exitCode = action.command.startsWith("__builtin:")
@@ -180,6 +187,7 @@ export async function runEnforceCommand(projectRoot, args) {
  * Get the list of staged files from git.
  *
  * Returns an array of relative file paths that are staged for commit.
+ * @returns Staged file paths relative to the repo root.
  */
 function getStagedFiles() {
     try {
@@ -198,9 +206,9 @@ function getStagedFiles() {
  *
  * Supports simple extension patterns like "*.ts", "*.{ts,svelte,js}", and "*.rs".
  * Files that match at least one pattern are included.
- *
  * @param files - Array of file paths to filter.
  * @param patterns - Array of glob patterns to match against (e.g. ["*.ts", "*.svelte"]).
+ * @returns Files that match at least one pattern.
  */
 function filterByPatterns(files, patterns) {
     return files.filter((file) => patterns.some((pattern) => matchesPattern(file, pattern)));
@@ -210,9 +218,9 @@ function filterByPatterns(files, patterns) {
  *
  * Handles "*.ext" and "*.{ext1,ext2}" style patterns. Path components are ignored —
  * only the file extension/suffix is matched.
- *
  * @param file - The file path to test.
  * @param pattern - The glob pattern (e.g. "*.ts", "*.{ts,svelte}").
+ * @returns True if the file matches the pattern.
  */
 function matchesPattern(file, pattern) {
     // Expand brace patterns like "*.{ts,svelte,js}" into individual patterns.
@@ -235,9 +243,9 @@ function matchesPattern(file, pattern) {
  * If files is provided, it is appended to the command arguments so the tool
  * operates only on those files. If files is null (not --staged), the tool
  * runs without file arguments (operates on all files per its own config).
- *
  * @param action - The action declaration from the plugin manifest.
  * @param files - Filtered staged file list, or null to run on all files.
+ * @returns The process exit code (0 = success).
  */
 function runAction(action, files) {
     const argv = [...action.args];
@@ -264,7 +272,6 @@ function runAction(action, files) {
 // ---------------------------------------------------------------------------
 /**
  * Log an agent's response to an enforcement event.
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce response".
  */
@@ -279,7 +286,10 @@ async function handleResponse(projectRoot, args) {
         return;
     }
     const validActions = [
-        "fixed", "deferred", "overridden", "false-positive",
+        "fixed",
+        "deferred",
+        "overridden",
+        "false-positive",
     ];
     if (!validActions.includes(action)) {
         console.error(`Invalid action "${action}". Must be one of: ${validActions.join(", ")}`);
@@ -299,7 +309,6 @@ async function handleResponse(projectRoot, args) {
 // ---------------------------------------------------------------------------
 /**
  * Show an enforcement coverage report summarising events and responses.
- *
  * @param projectRoot - Absolute path to the project root.
  * @param jsonOutput - When true, emit JSON instead of human-readable text.
  */
@@ -320,7 +329,10 @@ async function showReport(projectRoot, jsonOutput) {
     if (jsonOutput) {
         console.log(JSON.stringify({
             total_events: totalEvents,
-            fails, warns, passes, resolved,
+            fails,
+            warns,
+            passes,
+            resolved,
             unresolved: Math.max(0, unresolved),
             by_mechanism: Object.fromEntries(byMechanism),
         }, null, 2));
@@ -350,9 +362,9 @@ async function showReport(projectRoot, jsonOutput) {
  * Each test entry describes a scenario that SHOULD trigger enforcement.
  * The runner creates a virtual artifact from the `input`, runs schema
  * validation, and checks the result matches `expect` (pass/fail/warn).
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce test".
+ * @returns 0 if all tests passed, 1 if any failed.
  */
 async function handleTest(projectRoot, args) {
     const ruleFilter = getFlag(args, "--rule");
@@ -443,7 +455,6 @@ const APPROVAL_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
  * Request an enforcement override. Returns a challenge requiring human approval.
  *
  * orqa enforce override --rule RULE-xxx --reason "Emergency hotfix"
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce override".
  */
@@ -523,7 +534,6 @@ async function handleOverride(projectRoot, args) {
  * Approve an override request. Must be run by a human.
  *
  * orqa enforce approve 73829
- *
  * @param projectRoot - Absolute path to the project root.
  * @param code - The approval code from the override challenge.
  */
@@ -566,7 +576,6 @@ async function handleApprove(projectRoot, code) {
  * Show per-rule enforcement metrics computed from the enforcement log.
  *
  * orqa enforce metrics [--json]
- *
  * @param projectRoot - Absolute path to the project root.
  * @param args - CLI arguments after "enforce metrics".
  */
@@ -582,8 +591,14 @@ async function handleMetrics(projectRoot, args) {
     for (const event of events) {
         const ruleId = event.rule_id ?? event.artifact_id ?? "unknown";
         const m = ruleMetrics.get(ruleId) ?? {
-            fires: 0, fails: 0, warns: 0, resolved: 0,
-            fixed: 0, deferred: 0, overridden: 0, false_positive: 0,
+            fires: 0,
+            fails: 0,
+            warns: 0,
+            resolved: 0,
+            fixed: 0,
+            deferred: 0,
+            overridden: 0,
+            false_positive: 0,
         };
         m.fires++;
         if (event.result === "fail")
@@ -635,9 +650,7 @@ async function handleMetrics(projectRoot, args) {
         console.log("Enforcement Metrics");
         console.log("===================\n");
         for (const [ruleId, m] of [...ruleMetrics.entries()].sort((a, b) => b[1].fires - a[1].fires)) {
-            const resRate = m.fails + m.warns > 0
-                ? `${((m.resolved / (m.fails + m.warns)) * 100).toFixed(0)}%`
-                : "n/a";
+            const resRate = m.fails + m.warns > 0 ? `${((m.resolved / (m.fails + m.warns)) * 100).toFixed(0)}%` : "n/a";
             console.log(`${ruleId}:`);
             console.log(`  Fires: ${m.fires}  Fails: ${m.fails}  Warns: ${m.warns}`);
             console.log(`  Resolved: ${m.resolved} (${resRate})  Fixed: ${m.fixed}  Overridden: ${m.overridden}  FP: ${m.false_positive}`);
@@ -655,8 +668,8 @@ async function handleMetrics(projectRoot, args) {
 // ---------------------------------------------------------------------------
 /**
  * Find rule directories contributed by installed plugins.
- *
  * @param projectRoot - Absolute path to the project root.
+ * @returns Array of absolute paths to plugin rule directories.
  */
 function findPluginRuleDirs(projectRoot) {
     const dirs = [];
@@ -674,8 +687,8 @@ function findPluginRuleDirs(projectRoot) {
 }
 /**
  * Load a JSON approvals/pending file, returning an empty object on error.
- *
  * @param filePath - Absolute path to the JSON file.
+ * @returns Parsed approval records, or empty object on error.
  */
 function loadApprovals(filePath) {
     try {
@@ -689,7 +702,6 @@ function loadApprovals(filePath) {
 }
 /**
  * Write a JSON approvals/pending file, creating parent directories as needed.
- *
  * @param filePath - Absolute path to the JSON file.
  * @param data - The data to write.
  */
@@ -701,9 +713,9 @@ function writeApprovals(filePath, data) {
 }
 /**
  * Extract a named flag value from an args array (e.g. --flag value).
- *
  * @param args - The argument array to search.
  * @param flag - The flag name (e.g. "--event-id").
+ * @returns The flag value, or undefined if not found.
  */
 function getFlag(args, flag) {
     const idx = args.indexOf(flag);
@@ -715,7 +727,6 @@ function getFlag(args, flag) {
 /**
  * Dispatch a built-in enforcement check. These are registered from rules
  * (not plugin manifests) and run inline instead of spawning a subprocess.
- *
  * @param projectRoot - Absolute path to the project root.
  * @param command - Built-in command name (e.g. "__builtin:stories").
  * @param files - Filtered staged files, or null to check all.
@@ -737,11 +748,11 @@ function runBuiltinCheck(projectRoot, command, files) {
  *
  * When staged files are provided, only checks directories containing staged
  * .svelte files. Otherwise checks all directories.
- *
+ * @param root - Absolute path to the project root.
+ * @param stagedFiles - Staged file list for scoped checking, or null for all.
  * @returns 0 if all components have stories, 1 if violations found.
  */
 function checkComponentStories(root, stagedFiles) {
-    const libRoot = join(root, "libs", "svelte-components", "src");
     const dirs = ["pure", "connected"];
     const violations = [];
     // When --staged, only check directories that have staged .svelte files.

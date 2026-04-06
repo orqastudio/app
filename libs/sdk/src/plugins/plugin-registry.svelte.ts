@@ -9,7 +9,7 @@
  * cause registration to fail.
  */
 
-import { SvelteMap } from "svelte/reactivity";
+import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { logger } from "../logger.js";
 import type {
 	PluginManifest,
@@ -99,7 +99,7 @@ export class PluginRegistry {
 	 * Register platform (core.json) relationships as the baseline.
 	 * Must be called before any plugin registration.
 	 * Platform relationships cannot be overridden by plugins.
-	 * @param relationships
+	 * @param relationships - The array of platform relationship type definitions to register.
 	 */
 	registerPlatformRelationships(relationships: readonly RelationshipType[]): void {
 		for (const rel of relationships) {
@@ -127,7 +127,7 @@ export class PluginRegistry {
 	/**
 	 * Load plugin project configs (from project.json).
 	 * Must be called before plugin registration so aliases are available.
-	 * @param configs
+	 * @param configs - A map of plugin name to its project configuration (aliases, enabled state, path).
 	 */
 	loadPluginConfigs(configs: Record<string, PluginProjectConfig>): void {
 		for (const [pluginName, config] of Object.entries(configs)) {
@@ -154,7 +154,8 @@ export class PluginRegistry {
 	/**
 	 * Resolve a key — returns the canonical key if an alias was provided,
 	 * or the alias if a canonical key was provided and has one.
-	 * @param key
+	 * @param key - The key to resolve (may be a canonical key or a project-local alias).
+	 * @returns The canonical key if the input is an alias, otherwise the key unchanged.
 	 */
 	resolveKey(key: string): string {
 		return this.aliasToCanonical.get(key) ?? key;
@@ -162,7 +163,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get the project-local alias for a canonical key, or the key itself if no alias.
-	 * @param canonicalKey
+	 * @param canonicalKey - The canonical key to look up in the alias map.
+	 * @returns The project-local alias string, or the canonical key when no alias is set.
 	 */
 	getAlias(canonicalKey: string): string {
 		return this.canonicalToAlias.get(canonicalKey) ?? canonicalKey;
@@ -171,11 +173,11 @@ export class PluginRegistry {
 	/**
 	 * Set an alias for a conflict resolution. Updates the maps immediately.
 	 * Caller is responsible for persisting to project.json.
-	 * @param pluginName
-	 * @param type
-	 * @param canonicalKey
-	 * @param alias
-	 * @param label
+	 * @param pluginName - The name of the plugin that owns the canonical key.
+	 * @param type - Whether this alias applies to a "schema" key or a "relationship" key.
+	 * @param canonicalKey - The canonical key being aliased.
+	 * @param alias - The project-local alias to assign.
+	 * @param label - Optional human-readable label for the alias in the project context.
 	 */
 	setAlias(
 		pluginName: string,
@@ -205,7 +207,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get the plugin project config for serialization back to project.json.
-	 * @param pluginName
+	 * @param pluginName - The name of the plugin whose config to retrieve.
+	 * @returns The plugin's project configuration, or null if no config is stored.
 	 */
 	getPluginConfig(pluginName: string): PluginProjectConfig | null {
 		return this.pluginConfigs.get(pluginName) ?? null;
@@ -213,6 +216,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all plugin configs for serialization.
+	 * @returns A plain object mapping plugin names to their project configurations.
 	 */
 	get allPluginConfigs(): Record<string, PluginProjectConfig> {
 		const result: Record<string, PluginProjectConfig> = {};
@@ -230,7 +234,7 @@ export class PluginRegistry {
 	 * Register a plugin with its manifest and component map.
 	 * @param manifest - The plugin manifest.
 	 * @param components - Map of component keys to Svelte components.
-	 * @throws If dependencies unmet, schemas conflict, or relationships conflict.
+	 * @throws {Error} If dependencies are unmet, schemas conflict, or relationships conflict.
 	 */
 	register(manifest: PluginManifest, components: Record<string, Component>): void {
 		// Check dependencies
@@ -269,13 +273,13 @@ export class PluginRegistry {
 		}
 
 		// Build component maps
-		const viewMap = new Map<string, Component>();
+		const viewMap = new SvelteMap<string, Component>();
 		for (const view of manifest.provides.views ?? []) {
 			const comp = components[view.key];
 			if (comp) viewMap.set(view.key, comp);
 		}
 
-		const widgetMap = new Map<string, Component>();
+		const widgetMap = new SvelteMap<string, Component>();
 		for (const widget of manifest.provides.widgets ?? []) {
 			const comp = components[widget.key];
 			if (comp) widgetMap.set(widget.key, comp);
@@ -320,7 +324,7 @@ export class PluginRegistry {
 
 	/**
 	 * Unregister a plugin and remove its schema/relationship ownership.
-	 * @param pluginName
+	 * @param pluginName - The name of the plugin to unregister.
 	 */
 	unregister(pluginName: string): void {
 		const plugin = this.plugins.get(pluginName);
@@ -352,7 +356,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get the artifact schema for a given type key.
-	 * @param key
+	 * @param key - The artifact type key to look up (e.g. "task", "epic").
+	 * @returns The matching ArtifactSchema, or null if no plugin owns that key.
 	 */
 	getSchema(key: string): ArtifactSchema | null {
 		const owner = this.schemaOwnership.get(key);
@@ -366,6 +371,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all registered artifact schemas across all plugins.
+	 * @returns A flat array of every ArtifactSchema contributed by registered plugins.
 	 */
 	get allSchemas(): ArtifactSchema[] {
 		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.schemas);
@@ -373,6 +379,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all registered view registrations across all plugins.
+	 * @returns A flat array of every ViewRegistration contributed by registered plugins.
 	 */
 	get allViews(): ViewRegistration[] {
 		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.views);
@@ -380,6 +387,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all registered widget registrations across all plugins.
+	 * @returns A flat array of every WidgetRegistration contributed by registered plugins.
 	 */
 	get allWidgets(): WidgetRegistration[] {
 		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.widgets);
@@ -387,9 +395,10 @@ export class PluginRegistry {
 
 	/**
 	 * Get all relationship types across platform + all plugins.
+	 * @returns A deduplicated array of RelationshipType forward definitions (inverses excluded).
 	 */
 	get allRelationships(): RelationshipType[] {
-		const seen = new Set<string>();
+		const seen = new SvelteSet<string>();
 		const rels: RelationshipType[] = [];
 		for (const [key, rel] of this.relationshipDefs) {
 			// Only include forward keys (not inverses) to avoid duplicates
@@ -408,7 +417,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get a relationship definition by key (forward or inverse).
-	 * @param key
+	 * @param key - The relationship key to look up (forward or inverse form).
+	 * @returns The RelationshipType definition, or null if the key is not registered.
 	 */
 	getRelationship(key: string): RelationshipType | null {
 		return this.relationshipDefs.get(key) ?? null;
@@ -416,7 +426,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get the owner of a relationship key ("platform" or plugin name).
-	 * @param key
+	 * @param key - The relationship key whose owner to look up.
+	 * @returns The owner string ("platform" or the plugin name), or null if not registered.
 	 */
 	getRelationshipOwner(key: string): string | null {
 		return this.relationshipOwnership.get(key) ?? null;
@@ -425,9 +436,10 @@ export class PluginRegistry {
 	/**
 	 * Validate that a relationship between two artifact types is allowed.
 	 * Returns null if valid, or an error message if invalid.
-	 * @param relationshipKey
-	 * @param fromType
-	 * @param toType
+	 * @param relationshipKey - The relationship key to validate.
+	 * @param fromType - The artifact type of the source (from) artifact.
+	 * @param toType - The artifact type of the target (to) artifact.
+	 * @returns Null if the relationship is valid, or an error message string describing the violation.
 	 */
 	validateRelationship(relationshipKey: string, fromType: string, toType: string): string | null {
 		const rel = this.relationshipDefs.get(relationshipKey);
@@ -452,6 +464,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all sidecar registrations across all plugins.
+	 * @returns An array of SidecarRegistration objects from plugins that provide a sidecar.
 	 */
 	get sidecarProviders(): SidecarRegistration[] {
 		return Array.from(this.plugins.values())
@@ -461,6 +474,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all CLI tool registrations across all plugins.
+	 * @returns A flat array of every CliToolRegistration contributed by registered plugins.
 	 */
 	get allCliTools(): CliToolRegistration[] {
 		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.cliTools ?? []);
@@ -468,6 +482,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all hook registrations across all plugins.
+	 * @returns A flat array of every HookRegistration contributed by registered plugins.
 	 */
 	get allHooks(): HookRegistration[] {
 		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.hooks ?? []);
@@ -479,8 +494,9 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a view component from a specific plugin.
-	 * @param pluginSource
-	 * @param viewKey
+	 * @param pluginSource - The name of the plugin that registered the view.
+	 * @param viewKey - The key of the view to resolve.
+	 * @returns The Svelte Component for the view, or null if the plugin or view is not found.
 	 */
 	getViewComponent(pluginSource: string, viewKey: string): Component | null {
 		const plugin = this.plugins.get(pluginSource);
@@ -490,8 +506,9 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a widget component from a specific plugin.
-	 * @param pluginSource
-	 * @param widgetKey
+	 * @param pluginSource - The name of the plugin that registered the widget.
+	 * @param widgetKey - The key of the widget to resolve.
+	 * @returns The Svelte Component for the widget, or null if the plugin or widget is not found.
 	 */
 	getWidgetComponent(pluginSource: string, widgetKey: string): Component | null {
 		const plugin = this.plugins.get(pluginSource);
@@ -506,7 +523,8 @@ export class PluginRegistry {
 	/**
 	 * Check for all conflicts: schema keys, relationship keys, and
 	 * relationship constraint mismatches.
-	 * @param manifest
+	 * @param manifest - The plugin manifest to check against already-registered plugins.
+	 * @returns An array of RegistrationConflict objects describing every detected conflict.
 	 */
 	checkConflicts(manifest: PluginManifest): RegistrationConflict[] {
 		const conflicts: RegistrationConflict[] = [];
@@ -546,8 +564,8 @@ export class PluginRegistry {
 						// pairs. Merge (union) the from/to arrays instead of rejecting.
 						// This is the expected pattern: agile-discovery declares evolves-to
 						// for discovery types, agile-planning extends it for planning types.
-						const mergedFrom = [...new Set([...existing.from, ...rel.from])];
-						const mergedTo = [...new Set([...existing.to, ...rel.to])];
+						const mergedFrom = [...new SvelteSet([...existing.from, ...rel.from])];
+						const mergedTo = [...new SvelteSet([...existing.to, ...rel.to])];
 						this.relationshipDefs.set(rel.key, { ...existing, from: mergedFrom, to: mergedTo });
 					}
 					// If key, inverse, from, and to all match — it's a duplicate, not a conflict.
@@ -577,7 +595,8 @@ export class PluginRegistry {
 
 	/**
 	 * Get a specific plugin registration.
-	 * @param pluginName
+	 * @param pluginName - The name of the plugin to retrieve.
+	 * @returns The RegisteredPlugin object, or null if the plugin is not registered.
 	 */
 	getPlugin(pluginName: string): RegisteredPlugin | null {
 		return this.plugins.get(pluginName) ?? null;
@@ -585,7 +604,8 @@ export class PluginRegistry {
 
 	/**
 	 * Check if a plugin is registered and enabled.
-	 * @param pluginName
+	 * @param pluginName - The name of the plugin to check.
+	 * @returns True if the plugin is currently registered, false otherwise.
 	 */
 	isPluginActive(pluginName: string): boolean {
 		return this.plugins.has(pluginName);
@@ -593,6 +613,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get all plugin names in dependency order.
+	 * @returns An array of plugin name strings in the order they were registered.
 	 */
 	get pluginNames(): string[] {
 		return Array.from(this.plugins.keys());
@@ -600,7 +621,8 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a navigation item's label and icon from plugin registrations.
-	 * @param item
+	 * @param item - The navigation item to resolve, potentially referencing a plugin view or schema.
+	 * @returns A fully resolved navigation item with label, icon, type, and optional plugin source.
 	 */
 	resolveNavigationItem(item: NavigationItem): {
 		key: string;
@@ -649,7 +671,9 @@ export class PluginRegistry {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
+	 * Get the key of the currently active sidecar provider.
+	 * Falls back to the first registered sidecar if no explicit selection has been made.
+	 * @returns The active sidecar key string, or null if no sidecars are registered.
 	 */
 	get activeSidecarKey(): string | null {
 		if (this.providerConfig.activeSidecar) {
@@ -660,7 +684,8 @@ export class PluginRegistry {
 	}
 
 	/**
-	 *
+	 * Get the full registration object for the currently active sidecar provider.
+	 * @returns The active SidecarRegistration, or null if no sidecar is active.
 	 */
 	get activeSidecar(): SidecarRegistration | null {
 		const key = this.activeSidecarKey;
@@ -669,8 +694,8 @@ export class PluginRegistry {
 	}
 
 	/**
-	 *
-	 * @param key
+	 * Set the active sidecar provider by key. Updates the provider config immediately.
+	 * @param key - The sidecar key to activate (must match a registered sidecar's key).
 	 */
 	setActiveSidecar(key: string): void {
 		this.providerConfig = {
@@ -680,8 +705,9 @@ export class PluginRegistry {
 	}
 
 	/**
-	 *
-	 * @param manifest
+	 * Check whether all sidecar requirements declared by a plugin manifest are currently satisfied.
+	 * @param manifest - The plugin manifest whose sidecar requirements to validate.
+	 * @returns True if all required sidecars are registered, false if any are missing.
 	 */
 	isSidecarSatisfied(manifest: PluginManifest): boolean {
 		if (!manifest.requiresSidecar) return true;
@@ -693,7 +719,8 @@ export class PluginRegistry {
 	}
 
 	/**
-	 *
+	 * Get the list of plugin manifests that cannot be registered due to unmet sidecar requirements.
+	 * @returns An array of PluginManifest objects for plugins blocked by missing sidecar dependencies.
 	 */
 	get blockedPlugins(): PluginManifest[] {
 		return [];
@@ -706,6 +733,7 @@ export class PluginRegistry {
 	/**
 	 * Get all settings page declarations across all registered plugins.
 	 * Used by SettingsCategoryNav to render plugin-contributed settings sections.
+	 * @returns An array of settings page declarations augmented with the contributing plugin name.
 	 */
 	getSettingsPages(): Array<SettingsPageDeclaration & { pluginName: string }> {
 		return Array.from(this.plugins.entries()).flatMap(([name, plugin]) =>
@@ -723,9 +751,10 @@ export class PluginRegistry {
 	/**
 	 * Get all role definitions across all registered plugins.
 	 * Later registrations override earlier ones for the same role key.
+	 * @returns A deduplicated array of RoleDefinition objects, with later plugins winning on key conflicts.
 	 */
 	get allRoleDefinitions(): RoleDefinition[] {
-		const byRole = new Map<string, RoleDefinition>();
+		const byRole = new SvelteMap<string, RoleDefinition>();
 		for (const [, plugin] of this.plugins) {
 			if (plugin.manifest.provides.role_definitions) {
 				for (const def of plugin.manifest.provides.role_definitions) {

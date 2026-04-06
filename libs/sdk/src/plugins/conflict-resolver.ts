@@ -91,8 +91,10 @@ Respond with a JSON array of ConflictResolutionSuggestion objects:
 }
 
 /**
- * Parse the AI's response into typed suggestions.
- * @param response
+ * Parse the AI's response into typed conflict resolution suggestions.
+ * Extracts JSON from the response, which may be wrapped in a markdown code block.
+ * @param response - The raw string response from the AI containing JSON suggestions.
+ * @returns An array of valid ConflictResolutionSuggestion objects, or an empty array if parsing fails.
  */
 export function parseConflictResolutionResponse(response: string): ConflictResolutionSuggestion[] {
 	// Extract JSON from response (may be wrapped in markdown code block)
