@@ -2,21 +2,24 @@ import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import type { Lesson } from "@orqastudio/types";
 
 /**
- *
+ * Reactive store managing lessons loaded from the backend, including creation and recurrence tracking.
  */
 export class LessonStore {
 	lessons = $state<Lesson[]>([]);
 	loading = $state(false);
 	error = $state<string | null>(null);
 
-	/** Lessons with recurrence >= 2 and status "active" — ready for promotion. */
+	/**
+	 * Lessons with recurrence >= 2 and status "active" — ready for promotion.
+	 * @returns The list of lessons eligible for promotion to rules.
+	 */
 	get promotionCandidates(): Lesson[] {
 		return this.lessons.filter((l) => l.recurrence >= 2 && l.status === "active");
 	}
 
 	/**
-	 *
-	 * @param projectPath
+	 * Loads all lessons for the given project from the backend and updates reactive state.
+	 * @param projectPath - Absolute path to the project root.
 	 */
 	async loadLessons(projectPath: string): Promise<void> {
 		this.loading = true;
@@ -31,11 +34,11 @@ export class LessonStore {
 	}
 
 	/**
-	 *
-	 * @param projectPath
-	 * @param title
-	 * @param category
-	 * @param body
+	 * Creates a new lesson in the backend and appends it to the local lessons list.
+	 * @param projectPath - Absolute path to the project root.
+	 * @param title - Short title summarising the lesson learned.
+	 * @param category - Category tag used to group related lessons.
+	 * @param body - Full Markdown body describing the lesson in detail.
 	 */
 	async createLesson(
 		projectPath: string,
@@ -58,9 +61,9 @@ export class LessonStore {
 	}
 
 	/**
-	 *
-	 * @param projectPath
-	 * @param id
+	 * Increments the recurrence counter on a lesson, signalling it has been observed again.
+	 * @param projectPath - Absolute path to the project root.
+	 * @param id - The unique identifier of the lesson to update.
 	 */
 	async incrementRecurrence(projectPath: string, id: string): Promise<void> {
 		this.error = null;

@@ -37,7 +37,7 @@ export class ArtifactStore {
 
 	/**
 	 * Load artifact content for viewing. Delegates to the SDK which reads from disk each time.
-	 * @param path
+	 * @param path - Absolute file path of the artifact to load content for.
 	 */
 	async loadContent(path: string) {
 		this.activeContentLoading = true;
@@ -64,7 +64,7 @@ export class ArtifactStore {
 	}
 
 	/**
-	 *
+	 * Resets all artifact store state to its initial empty values, releasing any loaded content and nav tree.
 	 */
 	clear() {
 		this.navTree = null;

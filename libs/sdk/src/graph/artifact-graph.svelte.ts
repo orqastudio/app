@@ -12,7 +12,7 @@
  * or artifact types anywhere in this module.
  */
 
-import { SvelteMap, SvelteSet } from "svelte/reactivity";
+import { SvelteMap, SvelteSet, SvelteDate } from "svelte/reactivity";
 import { listen } from "@tauri-apps/api/event";
 import type { UnlistenFn } from "@tauri-apps/api/event";
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
@@ -26,8 +26,6 @@ import type {
 	HealthSnapshot,
 	GraphHealthData,
 	ProposedTransition,
-	RelationshipType,
-	PlatformArtifactType,
 	TraceabilityResult,
 } from "@orqastudio/types";
 import { PLATFORM_CONFIG } from "@orqastudio/types";
@@ -58,7 +56,10 @@ export interface ArtifactGraphConfig {
 const log = logger("graph");
 
 /**
+ * In-memory artifact graph SDK backed by Svelte 5 reactive state.
  *
+ * After initialize() is called, all resolution and query methods operate
+ * synchronously on the cached data — no IPC round-trips for lookups.
  */
 export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
@@ -78,7 +79,7 @@ export class ArtifactGraphSDK {
 	loading = $state(false);
 
 	/** Timestamp of the last successful refresh. */
-	lastRefresh = $state<Date | null>(null);
+	lastRefresh = $state<SvelteDate | null>(null);
 
 	/** Error message from the last failed operation, or null when healthy. */
 	error = $state<string | null>(null);
@@ -91,8 +92,8 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	private registry: PluginRegistry;
-	private nodeSubscribers = new Map<string, NodeCallback[]>();
-	private typeSubscribers = new Map<string, TypeCallback[]>();
+	private nodeSubscribers = new SvelteMap<string, NodeCallback[]>();
+	private typeSubscribers = new SvelteMap<string, TypeCallback[]>();
 	private refreshCallbacks: RefreshCallback[] = [];
 	private unlistenFn: UnlistenFn | null = null;
 	private unlistenTransitionsFn: UnlistenFn | null = null;
@@ -102,8 +103,8 @@ export class ArtifactGraphSDK {
 	private _lastSchemaCount = 0;
 
 	/**
-	 *
-	 * @param registry
+	 * Create a new SDK instance bound to a plugin registry.
+	 * @param registry - The plugin registry used for schema and relationship resolution.
 	 */
 	constructor(registry: PluginRegistry) {
 		this.registry = registry;
@@ -124,16 +125,20 @@ export class ArtifactGraphSDK {
 	// Schema access — all from the PluginRegistry
 	// -----------------------------------------------------------------------
 
-	/** All known artifact type keys (platform + plugin-registered). */
+	/**
+	 * All known artifact type keys (platform + plugin-registered).
+	 * @returns Deduplicated array of type key strings from platform config and registered plugins.
+	 */
 	private get allTypeKeys(): string[] {
 		const platformKeys = PLATFORM_CONFIG.artifactTypes.map((t) => t.key);
 		const pluginKeys = this.registry.allSchemas.map((s) => s.key);
-		return [...new Set([...platformKeys, ...pluginKeys])];
+		return [...new SvelteSet([...platformKeys, ...pluginKeys])];
 	}
 
 	/**
 	 * Get the inverse of a relationship key, or undefined if unknown.
-	 * @param key
+	 * @param key - The forward relationship key to look up.
+	 * @returns The inverse relationship key, or undefined when the key is not registered.
 	 */
 	getInverse(key: string): string | undefined {
 		const rel = this.registry.getRelationship(key);
@@ -142,7 +147,8 @@ export class ArtifactGraphSDK {
 
 	/**
 	 * Get all relationship keys for a given semantic category.
-	 * @param semantic
+	 * @param semantic - The semantic category name (e.g. "foundation", "governance").
+	 * @returns Array of relationship keys (both forward and inverse) for that semantic.
 	 */
 	keysForSemantic(semantic: string): string[] {
 		return this.registry.allRelationships
@@ -152,9 +158,10 @@ export class ArtifactGraphSDK {
 
 	/**
 	 * Validate a relationship between two artifact types. Returns null if valid.
-	 * @param key
-	 * @param fromType
-	 * @param toType
+	 * @param key - The relationship key to validate.
+	 * @param fromType - The artifact type of the source node.
+	 * @param toType - The artifact type of the target node.
+	 * @returns Null when valid, or an error message string when invalid.
 	 */
 	validateRelationship(key: string, fromType: string, toType: string): string | null {
 		return this.registry.validateRelationship(key, fromType, toType);
@@ -165,8 +172,8 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param config
+	 * Initialize the SDK: start the file watcher, load all artifacts, and subscribe to events.
+	 * @param config - SDK configuration including project path and watcher options.
 	 */
 	async initialize(config: ArtifactGraphConfig): Promise<void> {
 		if (this._initCalled) return;
@@ -207,14 +214,15 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
+	 * Clear the list of pending status transitions proposed by the backend engine.
 	 */
 	clearPendingTransitions(): void {
 		this.pendingTransitions = [];
 	}
 
 	/**
-	 *
+	 * Trigger a full graph refresh: re-invoke the backend scan and fetch all nodes.
+	 * @returns A promise that resolves when the graph has been updated.
 	 */
 	async refresh(): Promise<void> {
 		if (this.loading) return;
@@ -224,7 +232,7 @@ export class ArtifactGraphSDK {
 		try {
 			await invoke<void>("refresh_artifact_graph");
 			await this._fetchAll();
-			this.lastRefresh = new Date();
+			this.lastRefresh = new SvelteDate();
 			const elapsed_ms = (performance.now() - refreshStart).toFixed(1);
 			log.info(`refresh: complete in ${elapsed_ms}ms`);
 		} catch (err: unknown) {
@@ -235,8 +243,9 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
-	 * @param callback
+	 * Register a callback to be invoked after every successful graph refresh.
+	 * @param callback - Function to call when the graph has been refreshed.
+	 * @returns An unsubscribe function that removes the callback when called.
 	 */
 	onRefresh(callback: RefreshCallback): () => void {
 		this.refreshCallbacks.push(callback);
@@ -250,8 +259,9 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param id
+	 * Resolve an artifact by ID from the in-memory graph.
+	 * @param id - The artifact ID to look up.
+	 * @returns The matching ArtifactNode, or undefined when not found.
 	 */
 	resolve(id: string): ArtifactNode | undefined {
 		const direct = this.graph.get(id);
@@ -264,8 +274,9 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
-	 * @param path
+	 * Resolve an artifact by its file path using the path index.
+	 * @param path - The relative file path to look up.
+	 * @returns The matching ArtifactNode, or undefined when not indexed.
 	 */
 	resolveByPath(path: string): ArtifactNode | undefined {
 		const id = this.pathIndex.get(path);
@@ -278,16 +289,18 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param id
+	 * Get all outgoing references from an artifact.
+	 * @param id - The artifact ID to query.
+	 * @returns Read-only array of outgoing ArtifactRef records, or empty when not found.
 	 */
 	referencesFrom(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_out ?? [];
 	}
 
 	/**
-	 *
-	 * @param id
+	 * Get all incoming references to an artifact.
+	 * @param id - The artifact ID to query.
+	 * @returns Read-only array of incoming ArtifactRef records, or empty when not found.
 	 */
 	referencesTo(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_in ?? [];
@@ -298,16 +311,18 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param type
+	 * Get all artifacts of a given type from the in-memory graph.
+	 * @param type - The artifact type key to filter by (e.g. "task", "epic").
+	 * @returns Array of matching ArtifactNode records.
 	 */
 	byType(type: string): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter((n) => n.artifact_type === type);
 	}
 
 	/**
-	 *
-	 * @param status
+	 * Get all artifacts with a given status from the in-memory graph.
+	 * @param status - The status value to filter by (e.g. "active", "done").
+	 * @returns Array of matching ArtifactNode records.
 	 */
 	byStatus(status: string): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter((n) => n.status === status);
@@ -318,18 +333,19 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param path
+	 * Read the raw file content for an artifact from disk.
+	 * @param path - The relative file path to read.
+	 * @returns The raw file content as a string.
 	 */
 	async readContent(path: string): Promise<string> {
 		return invoke<string>("read_artifact_content", { path });
 	}
 
 	/**
-	 *
-	 * @param path
-	 * @param field
-	 * @param value
+	 * Update a single frontmatter field in an artifact file and refresh the graph.
+	 * @param path - The relative file path of the artifact to update.
+	 * @param field - The frontmatter field name to update.
+	 * @param value - The new string value to write.
 	 */
 	async updateField(path: string, field: string, value: string): Promise<void> {
 		await invoke<void>("update_artifact_field", { path, field, value });
@@ -341,7 +357,8 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
+	 * Find all outgoing references that point to non-existent artifact IDs.
+	 * @returns Array of ArtifactRef records whose target_id is not in the graph.
 	 */
 	brokenRefs(): ArtifactRef[] {
 		return Array.from(this.graph.values()).flatMap((node) =>
@@ -350,7 +367,8 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
+	 * Find all artifacts with no incoming or outgoing references.
+	 * @returns Array of ArtifactNode records that are completely disconnected from the graph.
 	 */
 	orphans(): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter(
@@ -363,9 +381,10 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param id
-	 * @param relationshipType
+	 * Follow outgoing references of a specific relationship type from an artifact.
+	 * @param id - The starting artifact ID.
+	 * @param relationshipType - The relationship key to follow (e.g. "delivers").
+	 * @returns Array of ArtifactNode records reachable via that relationship type.
 	 */
 	traverse(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
@@ -379,9 +398,10 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
-	 * @param id
-	 * @param relationshipType
+	 * Follow incoming references of a specific relationship type to an artifact.
+	 * @param id - The target artifact ID.
+	 * @param relationshipType - The relationship key to follow in reverse (e.g. "delivers").
+	 * @returns Array of ArtifactNode records that reference this artifact via that type.
 	 */
 	traverseIncoming(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
@@ -396,7 +416,8 @@ export class ArtifactGraphSDK {
 
 	/**
 	 * Get all outgoing relationships from an artifact with resolved targets.
-	 * @param id
+	 * @param id - The artifact ID to query.
+	 * @returns Array of objects containing the resolved target node, relationship type, and optional rationale.
 	 */
 	relationshipsFrom(id: string): { target: ArtifactNode; type: string; rationale?: string }[] {
 		const node = this.graph.get(id);
@@ -404,7 +425,7 @@ export class ArtifactGraphSDK {
 		const result: { target: ArtifactNode; type: string; rationale?: string }[] = [];
 
 		const fmRelationships = (node.frontmatter as Record<string, unknown>)?.relationships;
-		const rationales = new Map<string, string>();
+		const rationales = new SvelteMap<string, string>();
 		if (Array.isArray(fmRelationships)) {
 			for (const rel of fmRelationships) {
 				const r = rel as Record<string, unknown>;
@@ -440,7 +461,8 @@ export class ArtifactGraphSDK {
 	 * (things this artifact drives — epics, rules, decisions)
 	 *
 	 * All relationship keys are derived from the registry — nothing hardcoded.
-	 * @param id
+	 * @param id - The artifact ID to use as the starting point.
+	 * @returns Object with upstream and downstream arrays of resolved ArtifactNode records.
 	 */
 	pipelineChain(id: string): { upstream: ArtifactNode[]; downstream: ArtifactNode[] } {
 		const upstream: ArtifactNode[] = [];
@@ -448,8 +470,8 @@ export class ArtifactGraphSDK {
 		const visited = new SvelteSet<string>();
 
 		// Build upstream/downstream key sets from all registered relationships
-		const upstreamKeys = new Set<string>();
-		const downstreamKeys = new Set<string>();
+		const upstreamKeys = new SvelteSet<string>();
+		const downstreamKeys = new SvelteSet<string>();
 
 		for (const rel of this.registry.allRelationships) {
 			const sem = rel.semantic;
@@ -498,7 +520,10 @@ export class ArtifactGraphSDK {
 		return { upstream, downstream };
 	}
 
-	/** Find relationships where the inverse edge is missing. Uses registry inverse map. */
+	/**
+	 * Find relationships where the inverse edge is missing. Uses registry inverse map.
+	 * @returns Array of objects containing the ref with no inverse and the expected inverse key.
+	 */
 	missingInverses(): { ref: ArtifactRef; expectedInverse: string }[] {
 		const result: { ref: ArtifactRef; expectedInverse: string }[] = [];
 		for (const node of this.graph.values()) {
@@ -526,15 +551,17 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
+	 * Run a full integrity scan on all artifacts via the backend.
+	 * @returns Array of IntegrityCheck results identifying structural issues.
 	 */
 	async runIntegrityScan(): Promise<IntegrityCheck[]> {
 		return invoke<IntegrityCheck[]>("run_integrity_scan");
 	}
 
 	/**
-	 *
-	 * @param checks
+	 * Apply automatic fixes for the provided integrity check results.
+	 * @param checks - The integrity check results to attempt fixing.
+	 * @returns Array of AppliedFix records describing what was changed.
 	 */
 	async applyAutoFixes(checks: IntegrityCheck[]): Promise<AppliedFix[]> {
 		return invoke<AppliedFix[]>("apply_auto_fixes", { checks });
@@ -545,9 +572,10 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param errorCount
-	 * @param warningCount
+	 * Persist a health snapshot to the backend database.
+	 * @param errorCount - The number of errors recorded in this snapshot.
+	 * @param warningCount - The number of warnings recorded in this snapshot.
+	 * @returns The stored HealthSnapshot record with timestamp and ID.
 	 */
 	async storeHealthSnapshot(errorCount: number, warningCount: number): Promise<HealthSnapshot> {
 		return invoke<HealthSnapshot>("store_health_snapshot", {
@@ -557,8 +585,9 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
-	 * @param limit
+	 * Fetch recent health snapshots from the backend database.
+	 * @param limit - Maximum number of snapshots to return; defaults to snapshotLimit from config.
+	 * @returns Array of HealthSnapshot records ordered by timestamp, newest first.
 	 */
 	async getHealthSnapshots(limit?: number): Promise<HealthSnapshot[]> {
 		const effectiveLimit = limit ?? this.config?.snapshotLimit ?? 30;
@@ -571,6 +600,7 @@ export class ArtifactGraphSDK {
 	 * Returns `GraphHealthData` computed by the Rust `compute_graph_health` function,
 	 * including component count, orphan percentage, density, traceability, and
 	 * bidirectionality. Use this instead of the client-side Cytoscape analysis.
+	 * @returns GraphHealthData with structural metrics computed by the backend.
 	 */
 	async getGraphHealth(): Promise<GraphHealthData> {
 		return invoke<GraphHealthData>("get_graph_health");
@@ -582,7 +612,8 @@ export class ArtifactGraphSDK {
 	 * Returns ancestry chains to pillar/vision roots, all downstream descendants
 	 * with BFS depth, sibling artifacts sharing a common parent, impact radius,
 	 * and a disconnected flag when no path to any pillar exists.
-	 * @param id
+	 * @param id - The artifact ID to compute traceability for.
+	 * @returns TraceabilityResult with ancestors, descendants, siblings, and connectivity data.
 	 */
 	async getTraceability(id: string): Promise<TraceabilityResult> {
 		return invoke<TraceabilityResult>("get_artifact_traceability", { id });
@@ -593,9 +624,10 @@ export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param id
-	 * @param callback
+	 * Subscribe to updates for a specific artifact by ID.
+	 * @param id - The artifact ID to watch for changes.
+	 * @param callback - Function called with the updated ArtifactNode on each refresh.
+	 * @returns An unsubscribe function that removes this callback when called.
 	 */
 	subscribe(id: string, callback: NodeCallback): () => void {
 		const existing = this.nodeSubscribers.get(id) ?? [];
@@ -614,9 +646,10 @@ export class ArtifactGraphSDK {
 	}
 
 	/**
-	 *
-	 * @param type
-	 * @param callback
+	 * Subscribe to updates for all artifacts of a given type.
+	 * @param type - The artifact type key to watch (e.g. "task", "epic").
+	 * @param callback - Function called with the full array of matching nodes on each refresh.
+	 * @returns An unsubscribe function that removes this callback when called.
 	 */
 	subscribeType(type: string, callback: TypeCallback): () => void {
 		const existing = this.typeSubscribers.get(type) ?? [];
@@ -645,7 +678,7 @@ export class ArtifactGraphSDK {
 		try {
 			await invoke<void>("refresh_artifact_graph");
 			await this._fetchAll();
-			this.lastRefresh = new Date();
+			this.lastRefresh = new SvelteDate();
 		} catch (err: unknown) {
 			this.error = extractErrorMessage(err);
 		} finally {

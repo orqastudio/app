@@ -59,11 +59,17 @@ export class ConversationStore {
 	streamingThinking = $state("");
 	/** Current conversation status — use this instead of inspecting isStreaming/isLoading separately. */
 	status = $state<ConversationStatus>("idle");
-	/** True while the model is actively streaming a response. Derived from status. */
+	/**
+	 * True while the model is actively streaming a response. Derived from status.
+	 * @returns Whether the conversation is currently in the streaming state.
+	 */
 	get isStreaming(): boolean {
 		return this.status === "streaming";
 	}
-	/** True while messages are being loaded from the backend. Derived from status. */
+	/**
+	 * True while messages are being loaded from the backend. Derived from status.
+	 * @returns Whether the conversation is currently in the loading state.
+	 */
 	get isLoading(): boolean {
 		return this.status === "loading";
 	}

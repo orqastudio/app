@@ -5,7 +5,7 @@ import { logger } from "../logger.js";
 const log = logger("session");
 
 /**
- *
+ * Reactive store managing conversation sessions, including loading, creation, selection, and deletion.
  */
 export class SessionStore {
 	sessions = $state<SessionSummary[]>([]);
@@ -14,22 +14,24 @@ export class SessionStore {
 	error = $state<string | null>(null);
 
 	/**
-	 *
+	 * Returns true when a session is currently active.
+	 * @returns Whether there is a currently active session.
 	 */
 	get hasActiveSession(): boolean {
 		return this.activeSession !== null;
 	}
 
 	/**
-	 *
+	 * Returns the numeric ID of the active session, or null if no session is active.
+	 * @returns The active session ID, or null.
 	 */
 	get activeSessionId(): number | null {
 		return this.activeSession?.id ?? null;
 	}
 
 	/**
-	 *
-	 * @param projectId
+	 * Loads all session summaries for the given project from the backend.
+	 * @param projectId - The numeric ID of the project whose sessions to load.
 	 */
 	async loadSessions(projectId: number): Promise<void> {
 		this.isLoading = true;
@@ -46,9 +48,10 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param projectId
-	 * @param model
+	 * Creates a new session for the project, sets it as active, and refreshes the sessions list.
+	 * @param projectId - The numeric ID of the project to create the session under.
+	 * @param model - Optional model identifier; defaults to "auto" when omitted.
+	 * @returns The newly created session object.
 	 */
 	async createSession(projectId: number, model?: string): Promise<Session> {
 		this.error = null;
@@ -69,8 +72,8 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Fetches the full session by ID and sets it as the active session.
+	 * @param sessionId - The numeric ID of the session to select.
 	 */
 	async selectSession(sessionId: number): Promise<void> {
 		this.isLoading = true;
@@ -88,8 +91,9 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Attempts to restore a previously active session by ID; clears the persisted ID if the session no longer exists.
+	 * @param sessionId - The numeric ID of the session to restore.
+	 * @returns True if the session was restored, false if it no longer exists.
 	 */
 	async restoreSession(sessionId: number): Promise<boolean> {
 		this.isLoading = true;
@@ -112,8 +116,8 @@ export class SessionStore {
 
 	/**
 	 * Handle an auto-generated title update from the backend.
-	 * @param sessionId
-	 * @param title
+	 * @param sessionId - The numeric ID of the session whose title was updated.
+	 * @param title - The new title string to apply to the session.
 	 */
 	handleTitleUpdate(sessionId: number, title: string): void {
 		if (this.activeSession && this.activeSession.id === sessionId) {
@@ -123,9 +127,9 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param sessionId
-	 * @param title
+	 * Persists a manually set title to the backend and updates local reactive state.
+	 * @param sessionId - The numeric ID of the session to rename.
+	 * @param title - The new title to assign.
 	 */
 	async updateTitle(sessionId: number, title: string): Promise<void> {
 		this.error = null;
@@ -144,8 +148,8 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Marks a session as completed in the backend and updates the local session list.
+	 * @param sessionId - The numeric ID of the session to end.
 	 */
 	async endSession(sessionId: number): Promise<void> {
 		this.error = null;
@@ -163,8 +167,8 @@ export class SessionStore {
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Deletes a session from the backend, optimistically removing it from the local list first.
+	 * @param sessionId - The numeric ID of the session to delete.
 	 */
 	async deleteSession(sessionId: number): Promise<void> {
 		this.error = null;
@@ -182,7 +186,7 @@ export class SessionStore {
 	}
 
 	/**
-	 *
+	 * Resets all session state to its initial empty values.
 	 */
 	clear() {
 		this.sessions = [];

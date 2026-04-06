@@ -13,7 +13,7 @@
  * Path resolution uses plugin schemas exclusively — no fallback to legacy config.
  */
 
-import { SvelteSet } from "svelte/reactivity";
+import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { getStores } from "../registry.svelte.js";
 import type { NavDocNode, NavType, NavigationItem } from "@orqastudio/types";
 import { PLATFORM_NAVIGATION } from "@orqastudio/types";
@@ -220,7 +220,7 @@ export class NavigationStore {
 
 		// Collect plugin navigation contributions, merging groups that share the
 		// same key (e.g. multiple plugins contributing to "discovery").
-		const groupMap = new Map<string, NavigationItem>();
+		const groupMap = new SvelteMap<string, NavigationItem>();
 		const insertionOrder: string[] = [];
 
 		for (const [, plugin] of pluginRegistry.plugins) {
@@ -230,7 +230,7 @@ export class NavigationStore {
 					const existing = groupMap.get(item.key);
 					if (existing && existing.type === "group" && item.type === "group") {
 						// Merge children, avoiding duplicate keys
-						const existingKeys = new Set((existing.children ?? []).map((c) => c.key));
+						const existingKeys = new SvelteSet((existing.children ?? []).map((c) => c.key));
 						for (const child of item.children ?? []) {
 							if (!existingKeys.has(child.key)) {
 								(existing.children ??= []).push(child);
@@ -255,7 +255,7 @@ export class NavigationStore {
 			"agents",
 		];
 		const pluginItems: NavigationItem[] = [];
-		const ordered = new Set<string>();
+		const ordered = new SvelteSet<string>();
 
 		for (const key of STAGE_ORDER) {
 			const item = groupMap.get(key);

@@ -6,7 +6,7 @@ import type {
 } from "@orqastudio/types";
 
 /**
- *
+ * Reactive store managing enforcement rules and active violations, plus persistent violation history from the backend.
  */
 export class EnforcementStore {
 	rules = $state<EnforcementRule[]>([]);
@@ -22,7 +22,7 @@ export class EnforcementStore {
 	warnCount = $derived(this.violations.filter((v) => v.action === "Warn").length);
 
 	/**
-	 *
+	 * Fetches the current enforcement rules from the backend and updates reactive state.
 	 */
 	async loadRules(): Promise<void> {
 		this.loading = true;
@@ -37,7 +37,7 @@ export class EnforcementStore {
 	}
 
 	/**
-	 *
+	 * Instructs the backend to reload rules from disk, then refreshes the local rules list.
 	 */
 	async reloadRules(): Promise<void> {
 		this.loading = true;
@@ -53,22 +53,22 @@ export class EnforcementStore {
 	}
 
 	/**
-	 *
-	 * @param v
+	 * Appends a new enforcement violation to the in-memory violations list.
+	 * @param v - The violation event received from the enforcement engine.
 	 */
 	addViolation(v: EnforcementViolation): void {
 		this.violations = [...this.violations, v];
 	}
 
 	/**
-	 *
+	 * Clears all in-memory enforcement violations for the current session.
 	 */
 	clearViolations(): void {
 		this.violations = [];
 	}
 
 	/**
-	 *
+	 * Loads the persistent violation history from the backend database and updates reactive state.
 	 */
 	async loadViolationHistory(): Promise<void> {
 		this.historyLoading = true;

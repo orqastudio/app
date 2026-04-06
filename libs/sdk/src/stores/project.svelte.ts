@@ -12,7 +12,7 @@ import type {
 const log = logger("project");
 
 /**
- *
+ * Reactive store managing the active project, project list, settings, icon, and scanning state.
  */
 export class ProjectStore {
 	activeProject = $state<Project | null>(null);
@@ -27,28 +27,32 @@ export class ProjectStore {
 	iconDataUrl = $state<string | null>(null);
 
 	/**
-	 *
+	 * Returns true when a project is currently open.
+	 * @returns Whether an active project is loaded.
 	 */
 	get hasProject(): boolean {
 		return this.activeProject !== null;
 	}
 
 	/**
-	 *
+	 * Returns true when project settings have been loaded from disk.
+	 * @returns Whether project settings are available.
 	 */
 	get hasSettings(): boolean {
 		return this.projectSettings !== null;
 	}
 
 	/**
-	 *
+	 * Returns the filesystem path of the active project, or null if none is open.
+	 * @returns The active project path, or null.
 	 */
 	get projectPath(): string | null {
 		return this.activeProject?.path ?? null;
 	}
 
 	/**
-	 *
+	 * Returns a summary of artifact counts for the active project from the project list cache.
+	 * @returns A record mapping count labels to their numeric values.
 	 */
 	get artifactCounts(): Record<string, number> {
 		if (!this.activeProject) return {};
@@ -57,18 +61,25 @@ export class ProjectStore {
 	}
 
 	/**
-	 *
+	 * Returns the artifact configuration entries from the loaded project settings.
+	 * @returns The array of artifact entries, or an empty array if settings are not loaded.
 	 */
 	get artifactConfig(): ArtifactEntry[] {
 		return this.projectSettings?.artifacts ?? [];
 	}
 
-	/** Navigation tree from project.json. Null if not configured (legacy projects). */
+	/**
+	 * Navigation tree from project.json. Null if not configured (legacy projects).
+	 * @returns The navigation tree array, or null if the project has no explicit navigation config.
+	 */
 	get navigation(): NavigationItem[] | null {
 		return this.projectSettings?.navigation ?? null;
 	}
 
-	/** Whether this project uses the new navigation model. */
+	/**
+	 * Whether this project uses the new navigation model.
+	 * @returns True when the project has an explicit navigation configuration.
+	 */
 	get hasNavigation(): boolean {
 		return this.navigation !== null;
 	}
@@ -97,7 +108,7 @@ export class ProjectStore {
 
 	/**
 	 * Open a project by its directory path. Creates a DB record if new.
-	 * @param path
+	 * @param path - Absolute filesystem path to the project root directory.
 	 */
 	async openProject(path: string) {
 		log.info(`openProject: opening ${path}`);
@@ -130,7 +141,7 @@ export class ProjectStore {
 
 	/**
 	 * Load project settings from .orqa/project.json
-	 * @param path
+	 * @param path - Absolute filesystem path to the project root directory.
 	 */
 	async loadProjectSettings(path: string) {
 		this.settingsLoaded = false;
@@ -153,8 +164,8 @@ export class ProjectStore {
 
 	/**
 	 * Save project settings to .orqa/project.json
-	 * @param path
-	 * @param settings
+	 * @param path - Absolute filesystem path to the project root directory.
+	 * @param settings - The complete project settings object to write.
 	 */
 	async saveProjectSettings(path: string, settings: ProjectSettings) {
 		try {
@@ -167,9 +178,10 @@ export class ProjectStore {
 	}
 
 	/**
-	 * Scan the project filesystem for stack and governance info
-	 * @param path
-	 * @param excludedPaths
+	 * Scan the project filesystem for stack and governance info.
+	 * @param path - Absolute filesystem path to the project root directory.
+	 * @param excludedPaths - Optional list of paths to exclude from the scan.
+	 * @returns The scan result, or null if the scan failed.
 	 */
 	async scanProject(path: string, excludedPaths?: string[]): Promise<ProjectScanResult | null> {
 		this.scanning = true;
@@ -190,7 +202,7 @@ export class ProjectStore {
 
 	/**
 	 * Upload a project icon from a file path
-	 * @param sourcePath
+	 * @param sourcePath - Absolute path to the image file to use as the project icon.
 	 */
 	async uploadIcon(sourcePath: string) {
 		if (!this.projectPath || !this.projectSettings) {
@@ -239,7 +251,8 @@ export class ProjectStore {
 
 	/**
 	 * Check whether a directory is an initialized Orqa project.
-	 * @param path
+	 * @param path - Absolute filesystem path to the directory to check.
+	 * @returns True if the directory contains valid Orqa project settings.
 	 */
 	async checkIsOrqaProject(path: string): Promise<boolean> {
 		const settings = await invoke<ProjectSettings | null>("project_settings_read", { path });
@@ -256,8 +269,8 @@ export class ProjectStore {
 	}
 
 	/**
-	 *
-	 * @param project
+	 * Directly sets the active project and clears any previous error state.
+	 * @param project - The project to activate, or null to clear the active project.
 	 */
 	setActiveProject(project: Project | null) {
 		this.activeProject = project;
@@ -265,24 +278,24 @@ export class ProjectStore {
 	}
 
 	/**
-	 *
-	 * @param projects
+	 * Directly replaces the full list of known projects.
+	 * @param projects - The array of project summaries to set.
 	 */
 	setProjects(projects: ProjectSummary[]) {
 		this.projects = projects;
 	}
 
 	/**
-	 *
-	 * @param loading
+	 * Directly sets the loading state flag.
+	 * @param loading - True to indicate an async operation is in progress.
 	 */
 	setLoading(loading: boolean) {
 		this.loading = loading;
 	}
 
 	/**
-	 *
-	 * @param error
+	 * Sets an error message and clears the loading flag.
+	 * @param error - The error message to display, or null to clear the error.
 	 */
 	setError(error: string | null) {
 		this.error = error;
@@ -290,7 +303,7 @@ export class ProjectStore {
 	}
 
 	/**
-	 *
+	 * Resets all project store state to its initial empty values.
 	 */
 	clear() {
 		this.activeProject = null;

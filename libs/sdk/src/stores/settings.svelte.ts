@@ -395,14 +395,16 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Returns true when the daemon is in the connected state.
+	 * @returns Whether the daemon is currently connected.
 	 */
 	get daemonConnected(): boolean {
 		return this.daemonHealth.state === "connected";
 	}
 
 	/**
-	 *
+	 * Returns a short human-readable label for the currently selected default model.
+	 * @returns A display string for the default model.
 	 */
 	get modelDisplayName(): string {
 		switch (this.defaultModel) {
@@ -420,7 +422,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Returns a human-readable label for the current sidecar connection state.
+	 * @returns A display string for the sidecar state.
 	 */
 	get sidecarStateLabel(): string {
 		switch (this.sidecarStatus.state) {
@@ -440,7 +443,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Returns true when the sidecar process is in the connected state.
+	 * @returns Whether the sidecar is currently connected.
 	 */
 	get sidecarConnected(): boolean {
 		return this.sidecarStatus.state === "connected";
