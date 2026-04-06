@@ -3,10 +3,12 @@
 	import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 	import { cn } from "../../utils/cn.js";
 	import { Stack } from "../layout/index.js";
+	import { Text } from "../typography/index.js";
 
 	let {
 		icon: Icon,
 		label,
+		description,
 		badge,
 		active = false,
 		expanded = $bindable(false),
@@ -16,6 +18,8 @@
 	}: {
 		icon?: Component;
 		label: string;
+		/** Optional subtitle shown below the label in a smaller, muted style. */
+		description?: string;
 		badge?: string | number;
 		active?: boolean;
 		expanded?: boolean;
@@ -52,7 +56,14 @@
 		{#if Icon}
 			<Icon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
 		{/if}
-		<span class="flex-1 truncate text-left">{label}</span>
+		{#if description}
+			<Stack gap={0} align="start" minHeight={0} flex={1}>
+				<Text variant="label" truncate>{label}</Text>
+				<Text variant="caption" truncate>{description}</Text>
+			</Stack>
+		{:else}
+			<span class="flex-1 truncate text-left">{label}</span>
+		{/if}
 		{#if badge !== undefined}
 			<span
 				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 text-[10px] tabular-nums"

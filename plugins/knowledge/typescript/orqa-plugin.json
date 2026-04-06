@@ -14,7 +14,13 @@
 			"actions": {
 				"check": {
 					"command": "eslint",
-					"args": ["--config", ".orqa/configs/eslint.config.js", "--max-warnings", "0"],
+					"args": [
+						"--config",
+						".orqa/configs/eslint.config.js",
+						"--max-warnings",
+						"0",
+						"--no-warn-ignored"
+					],
 					"files": "*.{ts,svelte,js}"
 				},
 				"fix": {

@@ -249,9 +249,7 @@ export function computeTrends(projectRoot, periodDays) {
                 assertNever(event);
         }
     }
-    const avgCacheHitRate = totalInput > 0
-        ? Math.round((totalCacheHit / totalInput) * 1000) / 1000
-        : 0;
+    const avgCacheHitRate = totalInput > 0 ? Math.round((totalCacheHit / totalInput) * 1000) / 1000 : 0;
     return {
         periodDays,
         totalTokens,

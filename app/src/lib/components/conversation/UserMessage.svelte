@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Caption, Stack, HStack, Text } from "@orqastudio/svelte-components/pure";
+	import { Caption, Stack, HStack, ChatBubble, Text } from "@orqastudio/svelte-components/pure";
 
 	let { message }: { message: Message } = $props();
 
@@ -12,15 +12,11 @@
 	);
 </script>
 
-<HStack justify="end">
-	<!-- max-w-[80%] is a responsive sizing constraint with no ORQA primitive equivalent -->
-	<div class="max-w-[80%]">
-		<Stack gap={1}>
-			<!-- rounded-2xl rounded-tr-sm bg-primary are chat bubble visual styles; no ORQA equivalent for asymmetric radius or primary bg -->
-			<div class="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2.5">
-				<Text variant="body" block>{message.content ?? ""}</Text>
-			</div>
-			<Caption block>{formattedTime}</Caption>
-		</Stack>
-	</div>
-</HStack>
+<Stack gap={1}>
+	<ChatBubble role="user">
+		<Text variant="body" block>{message.content ?? ""}</Text>
+	</ChatBubble>
+	<HStack justify="end">
+		<Caption block>{formattedTime}</Caption>
+	</HStack>
+</Stack>

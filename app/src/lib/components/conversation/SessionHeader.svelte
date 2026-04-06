@@ -1,6 +1,14 @@
 <script lang="ts">
 	import type { Session, SessionSummary } from "@orqastudio/types";
-	import { Icon, Button, Heading, SectionHeader } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Button,
+		Heading,
+		HStack,
+		Box,
+		SectionHeader,
+		Input,
+	} from "@orqastudio/svelte-components/pure";
 	import SessionDropdown from "./SessionDropdown.svelte";
 
 	let {
@@ -83,27 +91,25 @@
 			</Button>
 		</SessionDropdown>
 
-		<!-- Session title; min-w-0 flex-1 are structural layout constraints -->
-		<div class="flex min-w-0 flex-1 items-center gap-1">
+		<HStack gap={1} flex={1} minWidth={0}>
 			{#if isEditing}
-				<!-- input requires direct DOM binding; no ORQA Input has bind:this + onblur -->
-				<input
-					bind:this={inputRef}
+				<Input
+					bind:ref={inputRef}
 					bind:value={editTitle}
+					size="compact"
 					onblur={finishEditing}
 					onkeydown={handleTitleKeydown}
-					class="border-border bg-background focus:ring-ring h-7 min-w-0 flex-1 rounded border px-2 text-sm focus:ring-1 focus:outline-none"
 				/>
 				<Button variant="ghost" size="icon-sm" onclick={finishEditing} aria-label="Save title">
 					<Icon name="check" size="sm" />
 				</Button>
 			{:else}
-				<span class="min-w-0 flex-1 truncate"><Heading level={5}>{displayTitle}</Heading></span>
+				<Box flex={1} minWidth={0} truncate><Heading level={5}>{displayTitle}</Heading></Box>
 				<Button variant="ghost" size="icon-sm" onclick={startEditing} aria-label="Edit title">
 					<Icon name="pencil" size="sm" />
 				</Button>
 			{/if}
-		</div>
+		</HStack>
 	{/snippet}
 	{#snippet end()}
 		<!-- New session -->

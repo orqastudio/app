@@ -13,13 +13,13 @@ export { fetchRegistry } from "./lib/registry.js";
 export { readLockfile, writeLockfile } from "./lib/lockfile.js";
 export { readManifest, validateManifest } from "./lib/manifest.js";
 // Graph browsing (daemon-backed)
-export { scanArtifactGraph, queryGraph, getGraphStats } from "./lib/graph.js";
+export { scanArtifactGraph, queryGraph, getGraphStats, } from "./lib/graph.js";
 // Daemon client
-export { callDaemonGraph, isDaemonRunning } from "./lib/daemon-client.js";
+export { callDaemonGraph, isDaemonRunning, } from "./lib/daemon-client.js";
 // Version management
 export { readCanonicalVersion, writeCanonicalVersion, syncVersions, checkVersionDrift, } from "./lib/version-sync.js";
 // Repo maintenance
-export { auditLicenses, DEFAULT_LICENSE_POLICY } from "./lib/license.js";
+export { auditLicenses, DEFAULT_LICENSE_POLICY, } from "./lib/license.js";
 export { auditReadmes, generateReadmeTemplate } from "./lib/readme.js";
 // Token tracking
 export { TokenTracker, recordRequest, recordAgentComplete, recordSessionSummary, readMetricEvents, filterEvents, computeTrends, getMetricsPath, } from "./lib/token-tracker.js";

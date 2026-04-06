@@ -22,12 +22,13 @@
 		| "heading-base"
 		| "heading-sm";
 
-	export type TextTone = "warning" | "destructive" | "success" | "muted";
+	export type TextTone = "warning" | "destructive" | "success" | "muted" | "primary";
 
 	export interface TextProps {
 		variant?: TextVariant;
 		truncate?: boolean;
 		tone?: TextTone;
+		italic?: boolean;
 		block?: boolean;
 		lineClamp?: 1 | 2 | 3 | 4;
 		children?: Snippet;
@@ -37,6 +38,7 @@
 		variant = "body",
 		truncate = false,
 		tone,
+		italic = false,
 		block = false,
 		lineClamp,
 		children,
@@ -69,6 +71,7 @@
 		destructive: "text-destructive",
 		success: "text-success",
 		muted: "text-muted-foreground",
+		primary: "text-primary",
 	};
 
 	// Maps lineClamp value to its Tailwind class. Truncate takes precedence when both are set.
@@ -95,6 +98,7 @@
 			tone ? toneClasses[tone] : null,
 			truncate ? "truncate" : lineClamp ? lineClampClasses[lineClamp] : null,
 			block ? "block" : null,
+			italic ? "italic" : null,
 		]
 			.filter(Boolean)
 			.join(" "),

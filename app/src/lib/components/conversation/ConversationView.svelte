@@ -11,6 +11,7 @@
 		Center,
 		Panel,
 		SectionHeader,
+		Callout,
 	} from "@orqastudio/svelte-components/pure";
 	import SessionHeader from "./SessionHeader.svelte";
 	import MessageBubble from "./MessageBubble.svelte";
@@ -312,9 +313,8 @@
 					/>
 				</Center>
 			{:else}
-				<ScrollArea full bind:viewportRef={scrollViewportRef}>
-					<!-- onscroll requires a raw DOM element; no ORQA primitive supports scroll event handlers -->
-					<div class="p-4" onscroll={handleScroll}>
+				<ScrollArea full bind:viewportRef={scrollViewportRef} onscroll={handleScroll}>
+					<Panel padding="normal">
 						<Stack gap={4}>
 							<!-- Context entries — inline system messages showing what was sent to Claude -->
 							{#each contextEntries as entry, i (entry.type + i)}
@@ -366,24 +366,22 @@
 							{#if processViolations.length > 0}
 								<Stack gap={1}>
 									{#each processViolations as violation (violation.check)}
-										<!-- warning/10 bg and warning/30 border are design tokens; Box only supports named bg tokens -->
-										<div class="border-warning/30 bg-warning/10 rounded-md border px-3 py-2">
+										<Callout tone="warning" align="start">
 											<Text tone="warning"
 												><Text variant="body-strong">Process:</Text> {violation.message}</Text
 											>
-										</div>
+										</Callout>
 									{/each}
 								</Stack>
 							{/if}
 						</Stack>
-					</div>
+					</Panel>
 				</ScrollArea>
 
-				<!-- Scroll to bottom button; absolute + translate-x positioning has no ORQA primitive -->
 				{#if userScrolledUp}
-					<div class="absolute bottom-2 left-1/2 -translate-x-1/2">
+					<Box position="absolute" bottom={2} left="1/2" transform="center-x">
 						<Button variant="outline" size="sm" onclick={scrollToBottom}>Scroll to bottom</Button>
-					</div>
+					</Box>
 				{/if}
 			{/if}
 		</Box>

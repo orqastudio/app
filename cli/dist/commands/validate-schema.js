@@ -29,9 +29,7 @@ function mergePluginDeps(requires, extendsField) {
 const REQUIRED_PLUGIN_CATEGORIES = ["language", "framework"];
 function checkRequiredCategories(plugins) {
     const categories = new Set(plugins.map((p) => p.category).filter(Boolean));
-    return REQUIRED_PLUGIN_CATEGORIES
-        .filter((cat) => !categories.has(cat))
-        .map((cat) => ({
+    return REQUIRED_PLUGIN_CATEGORIES.filter((cat) => !categories.has(cat)).map((cat) => ({
         plugin: "(project)",
         severity: "warning",
         message: `No plugin provides the "${cat}" category — consider installing one`,
@@ -189,7 +187,9 @@ function validateProjectJson(filePath) {
     const plugins = data["plugins"];
     if (plugins && typeof plugins === "object" && !Array.isArray(plugins)) {
         for (const [pluginName, pluginConfig] of Object.entries(plugins)) {
-            if (typeof pluginConfig !== "object" || pluginConfig === null || Array.isArray(pluginConfig)) {
+            if (typeof pluginConfig !== "object" ||
+                pluginConfig === null ||
+                Array.isArray(pluginConfig)) {
                 findings.push({
                     file: relPath,
                     field: `plugins.${pluginName}`,

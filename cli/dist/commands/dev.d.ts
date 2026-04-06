@@ -17,6 +17,7 @@
  */
 /**
  * Dispatch the dev command to the appropriate subcommand handler.
+ * @param args - Positional arguments passed after `orqa dev`, used to select the subcommand.
  */
 export declare function runDevCommand(args: string[]): Promise<void>;
 //# sourceMappingURL=dev.d.ts.map

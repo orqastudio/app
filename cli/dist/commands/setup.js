@@ -48,7 +48,12 @@ const BUILD_ORDER = [
         link: true,
     },
     // Layer 4: plugins (install deps + link, build if needed)
-    { dir: "plugins/software", deps: ["@orqastudio/types", "@orqastudio/sdk", "@orqastudio/svelte-components"], build: "npm run build", link: false },
+    {
+        dir: "plugins/software",
+        deps: ["@orqastudio/types", "@orqastudio/sdk", "@orqastudio/svelte-components"],
+        build: "npm run build",
+        link: false,
+    },
     { dir: "plugins/claude", deps: ["@orqastudio/claude-code-cli"], build: "", link: false },
     { dir: "plugins/cli", deps: ["@orqastudio/cli", "@orqastudio/types"], build: "", link: false },
     { dir: "plugins/svelte", deps: ["@orqastudio/types"], build: "", link: false },
@@ -114,7 +119,8 @@ async function cmdLink() {
     if (fs.existsSync(path.join(appDir, "package.json"))) {
         console.log("\n--- app ---");
         run("npm install", appDir);
-        const allLibs = BUILD_ORDER.filter((e) => e.link).map((e) => {
+        const allLibs = BUILD_ORDER.filter((e) => e.link)
+            .map((e) => {
             const pkgPath = path.join(root, e.dir, "package.json");
             try {
                 const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
@@ -123,7 +129,8 @@ async function cmdLink() {
             catch {
                 return null;
             }
-        }).filter(Boolean);
+        })
+            .filter(Boolean);
         if (allLibs.length > 0) {
             run(`npm link ${allLibs.join(" ")}`, appDir);
         }

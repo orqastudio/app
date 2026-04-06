@@ -13,6 +13,8 @@
 		gap?: 0 | 1 | 2 | 3 | 4;
 		/** Makes the card interactive (hover highlight + pointer cursor). */
 		interactive?: boolean;
+		/** Shows a selected-state ring using the accent color. Requires interactive=true. */
+		selected?: boolean;
 		/** Fill available height. */
 		full?: boolean;
 		children?: Snippet;
@@ -22,6 +24,7 @@
 		variant = "default",
 		gap = 0,
 		interactive = false,
+		selected = false,
 		full = false,
 		onclick,
 		children,
@@ -51,6 +54,7 @@
 		variantMap[variant],
 		gapMap[gap],
 		interactive && "hover:bg-accent/30 cursor-pointer transition-colors",
+		selected && "border-accent shadow-[0_0_0_1px_hsl(var(--accent))]",
 		full && "h-full",
 	)}
 	{onclick}

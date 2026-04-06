@@ -5,10 +5,13 @@
 		Icon,
 		ConnectionIndicator,
 		Text,
-		Spacer,
+		Button,
+		Separator,
+		SectionFooter,
 		TooltipRoot,
 		TooltipTrigger,
 		TooltipContent,
+		AppIcon,
 		type ConnectionState,
 	} from "@orqastudio/svelte-components/pure";
 	import { getStores, fmt } from "@orqastudio/sdk";
@@ -123,60 +126,56 @@
 	}
 </script>
 
-<div class="status-bar">
-	<!-- Left: Brand | Model -->
-	<div class="flex items-center gap-3">
-		<div class="flex items-center gap-1">
-			<img src={finMark} class="h-3.5 w-3.5" alt="" />
-			<span class="brand-label">OrqaStudio</span>
-		</div>
+<SectionFooter variant="status-bar">
+	{#snippet start()}
+		<!-- Brand -->
+		<AppIcon src={finMark} alt="" size="xs" />
+		<Text variant="body-strong">OrqaStudio</Text>
 
-		<div class="bg-border h-3 w-px"></div>
+		<Separator orientation="vertical" />
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button {...props} class="status-btn" onclick={openModelSettings}>
+					<Button {...props} variant="ghost" size="status" onclick={openModelSettings}>
 						<Icon name="brain" size="xs" />
-						<span>{settingsStore.modelDisplayName}</span>
-					</button>
+						{settingsStore.modelDisplayName}
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
 				<Text variant="body">Change model</Text>
 			</TooltipContent>
 		</TooltipRoot>
-	</div>
 
-	<Spacer />
-
-	<!-- Startup task indicator -->
-	{#if settingsStore.activeStartupTask}
-		<div class="mr-4 flex items-center gap-1">
+		<!-- Startup task indicator -->
+		{#if settingsStore.activeStartupTask}
 			<Icon name="loader-circle" size="xs" />
-			<span>
+			<Text variant="caption">
 				{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
 					? `: ${settingsStore.activeStartupTask.detail}`
 					: "..."}
-			</span>
-		</div>
-	{/if}
+			</Text>
+		{/if}
+	{/snippet}
 
-	<!-- Right: Tokens | Index | Sidecar status | Daemon health -->
-	<div class="flex items-center gap-3">
+	{#snippet end()}
+		<!-- Token counters -->
 		{#if hasTokens && session}
-			<span class="token-counter">
+			<Text variant="caption-tabular">
 				{formatTokens(session.total_input_tokens)}↑ {formatTokens(session.total_output_tokens)}↓
-			</span>
-			<div class="bg-border h-3 w-px"></div>
+			</Text>
+			<Separator orientation="vertical" />
 		{/if}
 
+		<!-- Artifact index -->
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
+					<Button
 						{...props}
-						class="status-btn {artifactGraphSDK.error ? 'text-destructive' : ''}"
+						variant="ghost"
+						size="status"
 						onclick={() => artifactGraphSDK.refresh()}
 						disabled={artifactGraphSDK.loading}
 					>
@@ -184,12 +183,12 @@
 							<Icon name="loader-circle" size="xs" />
 						{:else if artifactGraphSDK.error}
 							<Icon name="triangle-alert" size="xs" />
-							<span>Index Error</span>
+							Index Error
 						{:else}
 							<Icon name="database" size="xs" />
-							<span>{artifactCount}</span>
+							{artifactCount}
 						{/if}
-					</button>
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -201,17 +200,18 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<div class="bg-border h-3 w-px"></div>
+		<Separator orientation="vertical" />
 
+		<!-- Sidecar status -->
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button {...props} class="status-btn" onclick={openPluginSettings}>
+					<Button {...props} variant="ghost" size="status" onclick={openPluginSettings}>
 						<ConnectionIndicator
 							state={sidecarConnectionState}
 							label={settingsStore.sidecarStateLabel}
 						/>
-					</button>
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
@@ -219,56 +219,28 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<div class="bg-border h-3 w-px"></div>
+		<Separator orientation="vertical" />
 
+		<!-- Daemon health -->
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button {...props} class="status-btn" onclick={() => settingsStore.refreshDaemonHealth()}>
+					<Button
+						{...props}
+						variant="ghost"
+						size="status"
+						onclick={() => settingsStore.refreshDaemonHealth()}
+					>
 						<ConnectionIndicator
 							state={daemonConnectionState}
 							label={settingsStore.daemonStateLabel}
 						/>
-					</button>
+					</Button>
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
 				<Text variant="body">{daemonTooltip}</Text>
 			</TooltipContent>
 		</TooltipRoot>
-	</div>
-</div>
-
-<style>
-	/* Status bar container — fixed height, full-width footer strip. */
-	.status-bar {
-		display: flex;
-		height: 2rem;
-		align-items: center;
-		border-top: 1px solid var(--color-border);
-		background-color: color-mix(in srgb, var(--color-muted) 30%, transparent);
-		padding: 0 1rem 0.25rem;
-		font-size: 0.75rem;
-		color: var(--color-muted-foreground);
-	}
-
-	/* Brand name — slightly subdued foreground to avoid competing with content. */
-	.brand-label {
-		font-weight: 500;
-		color: color-mix(in srgb, var(--color-foreground) 70%, transparent);
-	}
-
-	/* Compact ghost button sized for the 2rem status bar row. */
-	:global(.status-btn) {
-		height: 1.5rem;
-		padding-inline: 0.375rem;
-		font-size: 0.75rem;
-		gap: 0.25rem;
-	}
-
-	/* Token counter — tabular numerics prevent layout shift as values change. */
-	.token-counter {
-		font-variant-numeric: tabular-nums;
-		color: color-mix(in srgb, var(--color-muted-foreground) 70%, transparent);
-	}
-</style>
+	{/snippet}
+</SectionFooter>

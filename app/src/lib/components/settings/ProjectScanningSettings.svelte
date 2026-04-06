@@ -152,9 +152,7 @@
 				onblur={() => props.onSave(buildSettings())}
 			/>
 			{#if localCustomPrompt.trim()}
-				<span class="text-muted-foreground text-xs"
-					>{localCustomPrompt.trim().length} characters</span
-				>
+				<Caption tone="muted">{localCustomPrompt.trim().length} characters</Caption>
 			{/if}
 		</FormGroup>
 

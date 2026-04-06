@@ -37,6 +37,8 @@ export interface DaemonHealthResponse {
 /**
  * Call a daemon endpoint. Falls back to the `orqa-validation` binary if
  * the daemon is unreachable.
+ * Attaches x-source-file and x-source-line headers so the daemon can log
+ * which CLI command originated the request.
  * @param method - HTTP method (GET or POST)
  * @param path - Endpoint path (e.g. "/query")
  * @param body - JSON body for POST requests

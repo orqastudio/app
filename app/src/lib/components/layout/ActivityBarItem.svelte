@@ -1,11 +1,10 @@
 <script lang="ts">
 	import {
-		Icon,
-		Text,
+		ActivityBarButton,
 		TooltipRoot,
 		TooltipTrigger,
 		TooltipContent,
-		VisuallyHidden,
+		Text,
 	} from "@orqastudio/svelte-components/pure";
 
 	let {
@@ -24,16 +23,7 @@
 <TooltipRoot>
 	<TooltipTrigger>
 		{#snippet child({ props })}
-			<button
-				{...props}
-				class="mb-1 flex h-10 w-10 items-center justify-center rounded-md transition-colors {active
-					? 'bg-accent text-accent-foreground'
-					: 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'}"
-				{onclick}
-			>
-				<Icon name={icon} size="lg" />
-				<VisuallyHidden>{label}</VisuallyHidden>
-			</button>
+			<ActivityBarButton {...props} {icon} {label} {active} {onclick} />
 		{/snippet}
 	</TooltipTrigger>
 	<TooltipContent side="right">

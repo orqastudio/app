@@ -6,6 +6,8 @@
 		Caption,
 		Stack,
 		Badge,
+		Box,
+		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -100,8 +102,8 @@
 			<HStack gap={2}>
 				<Icon name="chevron-right" size="sm" />
 				<Icon name="wrench" size="sm" />
-				<!-- flex-1 is structural (fills trigger row); Caption provides the text styling -->
-				<span class="flex-1"><Caption tone="muted">{summaryLabel}</Caption></span>
+				<!-- flex-1 fills the trigger row so the error indicator sits flush right -->
+				<Box flex={1} minWidth={0}><Caption tone="muted">{summaryLabel}</Caption></Box>
 				{#if errorCount > 0}
 					<HStack gap={1}>
 						<Icon name="x-circle" size="sm" />
@@ -113,8 +115,7 @@
 			</HStack>
 		</CollapsibleTrigger>
 		<CollapsibleContent>
-			<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-			<div class="border-border mt-1 ml-3 border-l-2 pl-4">
+			<IndentedBlock>
 				<Stack gap={1}>
 					{#if summaryParts.length > 0}
 						<HStack gap={2} wrap>
@@ -137,7 +138,7 @@
 						/>
 					{/each}
 				</Stack>
-			</div>
+			</IndentedBlock>
 		</CollapsibleContent>
 	</Collapsible>
 {/if}

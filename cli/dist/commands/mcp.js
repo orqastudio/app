@@ -71,7 +71,9 @@ export async function runMcpCommand(args) {
     // Check if daemon is running — warn if not, but don't auto-start.
     // The daemon is managed by `orqa dev` in a separate terminal.
     if (!(await isDaemonHealthy())) {
-        process.stderr.write("Warning: daemon not running on port " + DAEMON_PORT + ". " +
+        process.stderr.write("Warning: daemon not running on port " +
+            DAEMON_PORT +
+            ". " +
             "Start dev environment with `orqa dev` in a separate terminal.\n");
     }
     // Spawn the MCP server binary with stdio bridging

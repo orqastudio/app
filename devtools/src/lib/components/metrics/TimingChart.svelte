@@ -3,7 +3,13 @@
      Used by MetricsView to show the detailed distribution view when a metric
      cell is selected. -->
 <script lang="ts">
-	import { sparklinePath, Stack, Text, Caption } from "@orqastudio/svelte-components/pure";
+	import {
+		sparklinePath,
+		Stack,
+		Text,
+		Caption,
+		SurfaceBox,
+	} from "@orqastudio/svelte-components/pure";
 	import type { MetricStats } from "../../stores/metrics-store.svelte.js";
 
 	let {
@@ -42,19 +48,19 @@
 	<Text variant="body-strong">{stats.label}</Text>
 
 	{#if stats.history.length < 2}
-		<!-- Waiting-for-data placeholder: centered caption in a rounded muted box.
-		     Dynamic width/height require inline style since Box has no style prop;
-		     scoped class provides the background+radius. -->
-		<div class="timing-chart__placeholder" style="width:{width}px;height:{height}px">
+		<!-- Waiting-for-data placeholder: SurfaceBox center with dynamic inline dimensions.
+		     Dynamic pixel width/height require the style prop — SurfaceBox is the only library
+		     component that accepts a freeform style string for data-driven chart sizing. -->
+		<SurfaceBox center style="width:{width}px;height:{height}px">
 			<Caption>Waiting for data…</Caption>
-		</div>
+		</SurfaceBox>
 	{:else}
 		<!-- SVG is a legitimate exception. Tailwind class= removed from SVG elements;
-		     fill/stroke values use CSS variable references directly. Scoped class
-		     provides the rounded background since Box has no style prop for dynamic width.
+		     fill/stroke values use CSS variable references directly. SurfaceBox provides
+		     rounded background since Box has no style prop for dynamic width.
 		     X-axis labels render inside the SVG below the plot area so HTML never has
 		     to match the dynamic pixel width of the chart. -->
-		<div class="timing-chart__svg-wrapper" style="width:{width}px;">
+		<SurfaceBox style="width:{width}px;">
 			<svg
 				{width}
 				{height}
@@ -119,24 +125,6 @@
 					style="font-variant-numeric: tabular-nums;">now</text
 				>
 			</svg>
-		</div>
+		</SurfaceBox>
 	{/if}
 </Stack>
-
-<style>
-	/* Placeholder shown when there are fewer than 2 data points. */
-	.timing-chart__placeholder {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: var(--radius-md);
-		background-color: var(--color-surface-raised);
-	}
-
-	/* Container for the SVG chart — provides rounded corners and muted background. */
-	.timing-chart__svg-wrapper {
-		border-radius: var(--radius-md);
-		background-color: var(--color-surface-raised);
-		overflow: hidden;
-	}
-</style>

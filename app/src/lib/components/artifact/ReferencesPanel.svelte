@@ -7,6 +7,7 @@
 		Box,
 		Caption,
 		Button,
+		Badge,
 		Panel,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
@@ -141,9 +142,10 @@
 					<TooltipRoot>
 						<TooltipTrigger>
 							{#snippet child({ props })}
-								<button
+								<Button
 									{...props}
-									class="text-muted-foreground hover:bg-accent hover:text-foreground flex h-6 w-6 items-center justify-center rounded"
+									variant="ghost"
+									size="icon-sm"
 									onclick={() => {
 										viewMode = viewMode === "list" ? "graph" : "list";
 									}}
@@ -153,7 +155,7 @@
 									{:else}
 										<Icon name="list" size="sm" />
 									{/if}
-								</button>
+								</Button>
 							{/snippet}
 						</TooltipTrigger>
 						<TooltipContent side="top">
@@ -173,13 +175,10 @@
 									<Stack gap={1}>
 										{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
 											{@const dirKey = `in:${groupKey}`}
-											<!-- grid with 2 cols: type label left, links right. w-[arbitrary] not in Grid, kept as div. -->
-											<div class="grid grid-cols-2 items-baseline gap-2">
-												<span
-													class="border-muted-foreground/20 bg-muted text-muted-foreground justify-self-start rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize"
-												>
+											<HStack align="baseline" gap={2}>
+												<Badge variant="secondary" size="xs" capitalize>
 													{humanizeLabel(groupKey)}
-												</span>
+												</Badge>
 
 												<Box flex={1} minWidth={0}
 													><HStack wrap gap={1}>
@@ -197,7 +196,7 @@
 														{/if}
 													</HStack></Box
 												>
-											</div>
+											</HStack>
 										{/each}
 									</Stack>
 								{/if}
@@ -206,12 +205,10 @@
 									<Stack gap={1}>
 										{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
 											{@const dirKey = `out:${groupKey}`}
-											<div class="grid grid-cols-2 items-baseline gap-2">
-												<span
-													class="border-muted-foreground/20 bg-muted text-muted-foreground justify-self-start rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize"
-												>
+											<HStack align="baseline" gap={2}>
+												<Badge variant="secondary" size="xs" capitalize>
 													{humanizeLabel(groupKey)}
-												</span>
+												</Badge>
 
 												<Box flex={1} minWidth={0}
 													><HStack wrap gap={1}>
@@ -229,7 +226,7 @@
 														{/if}
 													</HStack></Box
 												>
-											</div>
+											</HStack>
 										{/each}
 									</Stack>
 								{/if}

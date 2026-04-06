@@ -8,7 +8,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { parseFrontmatterFromContent, writeFrontmatter, } from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 const USAGE = `
 Usage: orqa id <subcommand> [options]
 
@@ -58,7 +58,10 @@ function walkFiles(dir, results = []) {
         return results;
     }
     for (const entry of entries) {
-        if (entry.name.startsWith(".") || entry.name === "node_modules" || entry.name === "dist" || entry.name === "target")
+        if (entry.name.startsWith(".") ||
+            entry.name === "node_modules" ||
+            entry.name === "dist" ||
+            entry.name === "target")
             continue;
         const full = join(dir, entry.name);
         if (entry.isDirectory())
@@ -248,7 +251,7 @@ export async function runIdCommand(args) {
         case "generate": {
             const positional = subArgs.filter((a) => !a.startsWith("--"));
             if (positional.length < 2) {
-                console.error('Usage: orqa id generate <TYPE> <TITLE>');
+                console.error("Usage: orqa id generate <TYPE> <TITLE>");
                 console.error('Example: orqa id generate TASK "Fix broken tests"');
                 process.exit(1);
             }

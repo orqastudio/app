@@ -61,27 +61,14 @@
 	}
 </script>
 
-<!-- Export button: compact, sits in the log toolbar alongside Clear.
-     Wrapper span provides the :global() hook for the height override. -->
-<span class="log-export__wrap" style="display: contents;">
-	<Button
-		variant="ghost"
-		size="icon-sm"
-		onclick={handleExport}
-		disabled={saving || filteredEvents.length === 0}
-		title="Export visible logs as JSON"
-		aria-label="Export logs"
-	>
-		{saving ? "Saving…" : "Export"}
-	</Button>
-</span>
-
-<style>
-	/* Scale the ghost icon-sm button down to match the 24px toolbar row height. */
-	:global(.log-export__wrap button) {
-		height: 20px !important;
-		width: auto !important;
-		padding: 0 var(--spacing-1-5) !important;
-		font-size: 10px !important;
-	}
-</style>
+<!-- Export button: xs size fits the compact 24px log toolbar row height. -->
+<Button
+	variant="ghost"
+	size="xs"
+	onclick={handleExport}
+	disabled={saving || filteredEvents.length === 0}
+	title="Export visible logs as JSON"
+	aria-label="Export logs"
+>
+	{saving ? "Saving…" : "Export"}
+</Button>

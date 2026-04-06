@@ -14,6 +14,7 @@
 		Text,
 		Caption,
 		Grid,
+		GlowDot,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
@@ -50,13 +51,6 @@
 		if (graphHealth.largest_component_ratio > 0.9) return "green";
 		if (graphHealth.largest_component_ratio > 0.7) return "amber";
 		return "red";
-	});
-
-	const circleClass = $derived.by(() => {
-		if (status === "green") return "bg-success";
-		if (status === "amber") return "bg-warning";
-		if (status === "red") return "bg-destructive";
-		return "bg-muted-foreground/30";
 	});
 
 	const scoreLabel = $derived.by(() => {
@@ -175,15 +169,11 @@
 			{#if loading}
 				<LoadingSpinner size="sm" />
 			{:else}
-				<HStack gap={2}>
+				<HStack gap={2} align="center">
 					<Text variant="body-strong">{scoreLabel}</Text>
-					<span
-						aria-hidden="true"
-						style="position: relative; display: flex; height: 0.75rem; width: 0.75rem; flex-shrink: 0; align-items: center; justify-content: center;"
-					>
-						<span class="absolute h-3 w-3 rounded-full {circleClass} opacity-30"></span>
-						<span class="h-1.5 w-1.5 rounded-full {circleClass}"></span>
-					</span>
+					<!-- Compound glow dot: outer ring (opacity-30) + inner solid dot centred via flex.
+					     Extracted to GlowDot in libs/svelte-components/src/pure/glow-dot/ — use that component when available. -->
+					<GlowDot tone={status} />
 				</HStack>
 			{/if}
 		</CardAction>

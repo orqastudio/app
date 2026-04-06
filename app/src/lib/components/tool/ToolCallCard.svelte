@@ -5,6 +5,8 @@
 		Button,
 		Caption,
 		Stack,
+		Box,
+		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -79,10 +81,10 @@
 		<Icon name="chevron-right" size="sm" />
 		{@const ToolIcon = displayInfo.icon}
 		<ToolIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
-		<!-- flex-1 is structural (fills trigger row); caption-mono provides the text styling -->
-		<span class="flex-1"
-			><Caption variant="caption-mono" truncate>{displayInfo.label}</Caption></span
-		>
+		<!-- flex-1 fills the trigger row so the status icon sits flush right -->
+		<Box flex={1} minWidth={0}>
+			<Caption variant="caption-mono" truncate>{displayInfo.label}</Caption>
+		</Box>
 		{#if isEnforcementBlock && enforcementRuleName}
 			<ViolationBadge action="Block" ruleName={enforcementRuleName} />
 		{:else if isComplete && isError}
@@ -94,8 +96,7 @@
 		{/if}
 	</CollapsibleTrigger>
 	<CollapsibleContent>
-		<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-		<div class="border-border mt-1 ml-3 border-l-2 pl-4">
+		<IndentedBlock>
 			<Stack gap={2}>
 				{#if displayInput}
 					<Stack gap={1}>
@@ -131,6 +132,6 @@
 					<Caption variant="caption-strong">Running...</Caption>
 				{/if}
 			</Stack>
-		</div>
+		</IndentedBlock>
 	</CollapsibleContent>
 </Collapsible>

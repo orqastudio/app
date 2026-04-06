@@ -408,7 +408,7 @@
 	}
 </script>
 
-<div class="space-y-4">
+<Stack gap={4}>
 	<!-- Header -->
 	<CardRoot>
 		<CardHeader>
@@ -515,8 +515,8 @@
 								{#each detailManifest.provides.schemas as schema (schema.key)}
 									<HStack gap={2}>
 										<Icon name={schema.icon} size="sm" />
-										<span class="text-xs font-medium">{schema.label}</span>
-										<Text variant="caption" tone="muted">({schema.key})</Text>
+										<Caption variant="caption-strong">{schema.label}</Caption>
+										<Caption tone="muted">({schema.key})</Caption>
 									</HStack>
 								{/each}
 							</Stack>
@@ -879,7 +879,7 @@
 			</CardContent>
 		</CardRoot>
 	{/if}
-</div>
+</Stack>
 
 <!-- Conflict Resolution Dialog (rendered outside main layout for overlay) -->
 {#if conflictDialog}

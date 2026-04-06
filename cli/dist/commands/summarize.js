@@ -10,7 +10,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseFrontmatterFromContent, writeFrontmatter, } from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 import { getRoot } from "../lib/root.js";
 /**
  * Estimate token count for a string using a simple character-based heuristic.
@@ -103,9 +103,7 @@ function extractPurpose(title, body, description) {
             !trimmed.startsWith("-") &&
             !trimmed.startsWith("|") &&
             !trimmed.startsWith("```")) {
-            return trimmed.length > 150
-                ? trimmed.substring(0, 147) + "..."
-                : trimmed;
+            return trimmed.length > 150 ? trimmed.substring(0, 147) + "..." : trimmed;
         }
     }
     return title;
@@ -131,16 +129,13 @@ function extractKeyPoints(body) {
                     !nextLine.startsWith("#") &&
                     !nextLine.startsWith("```") &&
                     !nextLine.startsWith("|")) {
-                    const point = nextLine.length > 80
-                        ? nextLine.substring(0, 77) + "..."
-                        : nextLine;
+                    const point = nextLine.length > 80 ? nextLine.substring(0, 77) + "..." : nextLine;
                     points.push(`${heading}: ${point}`);
                     break;
                 }
             }
             // If no meaningful line found, just use the heading
-            if (points.length === 0 ||
-                !points[points.length - 1].startsWith(heading)) {
+            if (points.length === 0 || !points[points.length - 1].startsWith(heading)) {
                 points.push(heading);
             }
         }
@@ -172,9 +167,7 @@ function extractWhenToUse(body, description) {
             for (let j = i + 1; j < lines.length && j < i + 3; j++) {
                 const next = lines[j].trim();
                 if (next.length > 10 && !next.startsWith("#")) {
-                    return next.length > 100
-                        ? next.substring(0, 97) + "..."
-                        : next;
+                    return next.length > 100 ? next.substring(0, 97) + "..." : next;
                 }
             }
         }

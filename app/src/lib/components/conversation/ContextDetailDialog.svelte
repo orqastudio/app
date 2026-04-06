@@ -20,11 +20,13 @@
 		Caption,
 		Text,
 		Panel,
+		Box,
+		IndentedBlock,
 	} from "@orqastudio/svelte-components/pure";
 	import {
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 	} from "@orqastudio/svelte-components/pure";
 	import { logger } from "@orqastudio/sdk";
 	import type { ContextEntry as ContextEntryType } from "@orqastudio/sdk";
@@ -115,19 +117,15 @@
 						<Stack gap={3}>
 							{#if entry.customPrompt}
 								<Collapsible bind:open={customPromptOpen}>
-									<CollapsibleTrigger
-										class="border-border bg-muted/30 hover:bg-muted/50 flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors"
-									>
+									<CollapsibleSection>
 										<Icon name="chevron-right" size="sm" />
-										<!-- flex-1 is structural (fills trigger row) -->
-										<span class="flex-1"><Text variant="body-strong">Custom Prompt</Text></span>
+										<Box flex={1}><Text variant="body-strong">Custom Prompt</Text></Box>
 										<Caption>{entry.customPrompt.length.toLocaleString()} chars</Caption>
-									</CollapsibleTrigger>
+									</CollapsibleSection>
 									<CollapsibleContent>
-										<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-										<div class="border-border mt-1 ml-3 border-l-2 pl-4">
+										<IndentedBlock>
 											<Code block>{entry.customPrompt}</Code>
-										</div>
+										</IndentedBlock>
 									</CollapsibleContent>
 								</Collapsible>
 							{:else}
@@ -137,19 +135,15 @@
 							{/if}
 
 							<Collapsible bind:open={governancePromptOpen}>
-								<CollapsibleTrigger
-									class="border-border bg-muted/30 hover:bg-muted/50 flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors"
-								>
+								<CollapsibleSection>
 									<Icon name="chevron-right" size="sm" />
-									<!-- flex-1 is structural (fills trigger row) -->
-									<span class="flex-1"><Text variant="body-strong">Governance Prompt</Text></span>
+									<Box flex={1}><Text variant="body-strong">Governance Prompt</Text></Box>
 									<Caption>{entry.governancePrompt.length.toLocaleString()} chars</Caption>
-								</CollapsibleTrigger>
+								</CollapsibleSection>
 								<CollapsibleContent>
-									<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-									<div class="border-border mt-1 ml-3 border-l-2 pl-4">
+									<IndentedBlock>
 										<Code block>{entry.governancePrompt}</Code>
-									</div>
+									</IndentedBlock>
 								</CollapsibleContent>
 							</Collapsible>
 						</Stack>

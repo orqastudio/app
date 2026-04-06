@@ -48,9 +48,7 @@ export async function runTestCommand(args) {
     const root = getRoot();
     const target = args[0];
     const suites = getSuites(root);
-    const toRun = target
-        ? suites.filter((s) => s.key === target)
-        : suites;
+    const toRun = target ? suites.filter((s) => s.key === target) : suites;
     if (target && toRun.length === 0) {
         console.error(`Unknown target: ${target}`);
         console.error(USAGE);

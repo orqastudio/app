@@ -50,6 +50,9 @@ export {
 	CollapsibleRoot,
 	CollapsibleTrigger,
 	CollapsibleContent,
+	TreeCollapsibleTrigger,
+	CollapsibleGroupHeader,
+	CollapsibleSection,
 } from "./collapsible/index.js";
 
 // Composed primitives (simple props or custom snippets, parts available)
@@ -113,6 +116,7 @@ export {
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuPortal,
+	MenuBarTrigger,
 } from "./dropdown-menu/index.js";
 export {
 	Tabs,
@@ -181,11 +185,11 @@ export { ListCard } from "./list-card/index.js";
 export { DashboardCard } from "./dashboard-card/index.js";
 export { ProgressBar } from "./progress-bar/index.js";
 export { ViewContainer } from "./view-container/index.js";
-export { Toolbar } from "./toolbar/index.js";
+export { Toolbar, WindowTitleBar } from "./toolbar/index.js";
 export { Panel } from "./panel/index.js";
 export { SectionHeader, SectionFooter } from "./section-header/index.js";
 export { Callout } from "./callout/index.js";
-export { Stack, HStack, Grid, Spacer, Center, Box } from "./layout/index.js";
+export { Stack, HStack, Grid, Spacer, Center, Box, BackgroundImage } from "./layout/index.js";
 export { NavItem } from "./nav-item/index.js";
 export { ConnectionIndicator, type ConnectionState } from "./connection-indicator/index.js";
 export { Kbd } from "./kbd/index.js";
@@ -204,10 +208,16 @@ export {
 } from "./table/index.js";
 
 // Chat primitives
-export { ChatBubble, ChatInput, StreamingDots, ChatContainer } from "./chat/index.js";
+export {
+	ChatBubble,
+	ChatInput,
+	StreamingDots,
+	StreamingText,
+	ChatContainer,
+} from "./chat/index.js";
 
 // Form controls
-export { Checkbox } from "./checkbox/index.js";
+export { Checkbox, CheckIndicator } from "./checkbox/index.js";
 export { Switch } from "./switch/index.js";
 export { RadioGroup, RadioGroupItem } from "./radio-group/index.js";
 
@@ -215,10 +225,29 @@ export { RadioGroup, RadioGroupItem } from "./radio-group/index.js";
 export { IssueRow } from "./issue-row/index.js";
 export { IssueFilters } from "./issue-filters/index.js";
 
+// Category badge (dynamic color from plugin-declared categories)
+export { CategoryBadge } from "./category-badge/index.js";
+
+// Sidebar layout (fixed-width panel with border divider)
+export { Sidebar } from "./sidebar/index.js";
+
+// FieldLabel — fixed-width muted label for two-column key-value rows
+export { FieldLabel } from "./field-label/index.js";
+
+// PipelineStepper — horizontal progress indicator for artifact lifecycle stages
+export { PipelineStepper, type PipelineStepperStage } from "./pipeline-stepper/index.js";
+
 // Small utility primitives
 export { Dot } from "./dot/index.js";
+export { GlowDot } from "./glow-dot/index.js";
+export { ColorDot } from "./color-dot/index.js";
 export { CountBadge } from "./count-badge/index.js";
 export { VerticalText } from "./vertical-text/index.js";
+export { IndentedBlock } from "./indented-block/index.js";
+export { TreeGuideLine, TreeIndentIcon, TreeIndent } from "./tree-guide-line/index.js";
+export { HighlightWrapper } from "./highlight-wrapper/index.js";
+export { PreText } from "./pre-text/index.js";
+export { LoadingOverlay } from "./loading-overlay/index.js";
 
 // DevTools Step 4 components
 export { StackFrameList } from "./stack-frame-list/index.js";
@@ -236,3 +265,31 @@ export {
 
 // DevTools Step 6b components
 export { TraceTimeline, type TraceEvent, type TraceTimelineProps } from "./trace-timeline/index.js";
+
+// Side panel shell (fixed-width slide-out drawer with border, bg, shadow)
+export { SidePanel } from "./side-panel/index.js";
+
+// Log row primitives for virtualised devtools log tables
+export { LogRowShell, LogRowActions, LogRowMetadata } from "./log-row-shell/index.js";
+export { LogColumn } from "./log-column/index.js";
+export { LogLevelBadge } from "./log-level-badge/index.js";
+export { LogViewport, LogSpacer } from "./log-viewport/index.js";
+export { LogColLabel } from "./log-col-label/index.js";
+
+// SelectPanel — compact inline picker dropdown (session picker, option lists)
+export { SelectPanel, SelectRow, ContextMenu, PickerShell } from "./select-panel/index.js";
+
+// SurfaceBox — rounded raised-surface container for chart wrappers and placeholders
+export { SurfaceBox } from "./surface-box/index.js";
+
+// Backdrop — fixed full-viewport overlay for command palettes and custom modals
+export { Backdrop } from "./backdrop/index.js";
+
+// SearchOverlay primitives — SearchCard, SearchBarInput, SearchResultItem
+export { SearchCard, SearchBarInput, SearchResultItem } from "./search-overlay/index.js";
+
+// AppIcon — application logo image with fixed size and pointer-events disabled
+export { AppIcon } from "./app-icon/index.js";
+
+// ActivityBar — icon-only square navigation buttons for the vertical activity bar
+export { ActivityBarButton } from "./activity-bar/index.js";

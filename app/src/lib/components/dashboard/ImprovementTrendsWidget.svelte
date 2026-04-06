@@ -257,7 +257,8 @@
 		Single card containing a 2x2 grid of trend cells.
 		Card title / description are injected by ProjectDashboard.
 		Dividers between cells via border-r / border-b on each cell.
-		The grid cell borders are structural layout — no ORQA primitive handles per-cell dividers.
+		Per-cell conditional borders (top/right based on position index) cannot be expressed via
+		Grid props — Grid applies uniform gaps, not per-edge borders. Raw grid+div retained here.
 	-->
 	<div class="grid h-full grid-cols-2 grid-rows-2 overflow-hidden">
 		{#each metrics as m, idx (m.label)}

@@ -359,7 +359,6 @@ export function computeThreeWayState(relPath, projectRoot, lastEntry, currentSou
  * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
  * by comparing the current installed hash against the baseline recorded at install
  * time and the current plugin source hash.
- *
  * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
  * @param lastEntry - The hash entry recorded at last install (baseline hashes).
  * @param currentSourceHash - Current hash of the file in the plugin source.
@@ -401,7 +400,9 @@ function isInsideWorkspace(dir) {
                     return true;
                 }
             }
-            catch { /* ignore */ }
+            catch {
+                /* ignore */
+            }
         }
         current = path.dirname(current);
     }
@@ -545,13 +546,9 @@ export function processAggregatedFiles(projectRoot) {
         }
         // Apply wrapper if specified
         const firstDecl = decls[0];
-        const output = firstDecl.wrapper
-            ? { [firstDecl.wrapper]: collected }
-            : collected;
+        const output = firstDecl.wrapper ? { [firstDecl.wrapper]: collected } : collected;
         const newContent = JSON.stringify(output, null, 2);
-        const existingContent = fs.existsSync(outputPath)
-            ? fs.readFileSync(outputPath, "utf-8")
-            : "";
+        const existingContent = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf-8") : "";
         if (newContent !== existingContent) {
             fs.writeFileSync(outputPath, newContent);
         }

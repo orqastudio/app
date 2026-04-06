@@ -52,27 +52,26 @@
 	<div style="position: relative; z-index: 10; width: 100%; max-width: 32rem; padding: 0 1rem;">
 		<CardRoot>
 			<CardHeader>
-				<div style="text-align: center;">
+				<Stack gap={2} align="center">
 					<CardTitle>Welcome to OrqaStudio</CardTitle>
 					<CardDescription>
 						Let's make sure everything is set up for managed agentic development.
 					</CardDescription>
 
-					<!-- Step indicator dots; gap provides spacing between description and dots -->
-					<Stack gap={3}>
-						<HStack gap={2} justify="center">
-							{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
-								<Dot color={i <= setupStore.currentStep ? "primary" : "muted"} size="md" />
-							{/each}
-						</HStack>
-					</Stack>
+					<!-- Step indicator dots -->
+					<HStack gap={2} justify="center">
+						{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
+							<Dot color={i <= setupStore.currentStep ? "primary" : "muted"} size="md" />
+						{/each}
+					</HStack>
 					<Caption tone="muted"
 						>Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</Caption
 					>
-				</div>
+				</Stack>
 			</CardHeader>
 
 			<CardContent>
+				<!-- min-height prevents card from collapsing during step transitions; 12.5rem cannot be expressed via Stack props -->
 				<div style="min-height: 12.5rem;">
 					{#if setupStore.stepId === "claude_cli"}
 						<ClaudeCliStep onComplete={handleStepComplete} />

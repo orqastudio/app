@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { Caption, Center, Panel } from "@orqastudio/svelte-components/pure";
+	import { Caption, Center, Panel, Callout, PreText } from "@orqastudio/svelte-components/pure";
 
 	let { text }: { text: string } = $props();
 
@@ -207,10 +207,7 @@
 	});
 </script>
 
-<!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
-<div
-	style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;"
->
+<Panel background="muted-subtle" border="all" rounded="sm" padding="normal">
 	{#if loading}
 		<Center>
 			<Panel padding="loose">
@@ -218,17 +215,14 @@
 			</Panel>
 		</Center>
 	{:else if error}
-		<div
-			style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;"
-		>
+		<Callout tone="destructive" density="normal">
 			<Caption variant="caption-strong" tone="destructive">PlantUML render error</Caption>
-			<pre
-				style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
-		</div>
+			<PreText>{error}</PreText>
+		</Callout>
 	{:else if svgContent}
-		<div style="display: flex; justify-content: center;">
+		<Center>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- PlantUML server returns SVG content that must be rendered as HTML -->
 			{@html svgContent}
-		</div>
+		</Center>
 	{/if}
-</div>
+</Panel>

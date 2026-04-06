@@ -7,6 +7,7 @@
 	import { invoke } from "@tauri-apps/api/core";
 	import {
 		Button,
+		Callout,
 		ConnectionIndicator,
 		EmptyState,
 		Panel,
@@ -157,49 +158,28 @@
 					/>
 				</Center>
 			{:else}
-				<!-- Responsive card grid: 2 → md:3 → lg:5 columns.
-		     Wrapper div provides the scoped lg:5-column override since Grid has no lg prop. -->
-				<div class="process-view__grid-wrap">
-					<Grid cols={2} md={3} gap={3}>
-						{#each processes as process (process.source)}
-							<ProcessCard
-								{process}
-								selected={selectedSource === process.source}
-								onselect={handleSelect}
-							/>
-						{/each}
-					</Grid>
-				</div>
+				<!-- Responsive card grid: 2 → md:3 → lg:5 columns. Grid handles all breakpoints natively. -->
+				<Grid cols={2} md={3} lg={5} gap={3}>
+					{#each processes as process (process.source)}
+						<ProcessCard
+							{process}
+							selected={selectedSource === process.source}
+							onselect={handleSelect}
+						/>
+					{/each}
+				</Grid>
 
 				{#if selectedSource !== null}
-					<!-- Scoped CSS class provides the hint strip visual treatment. -->
-					<div class="process-view__filter-hint">
+					<!-- Filter hint: Callout muted provides the bordered raised-surface strip. -->
+					<Callout tone="muted" align="start">
 						<Text variant="body-muted" block>
 							Showing logs for source <Code>{selectedSource}</Code>. Click the card again to clear
 							the filter. Navigate to the
 							<Text variant="body">Logs</Text> tab to see filtered entries.
 						</Text>
-					</div>
+					</Callout>
 				{/if}
 			{/if}
 		</Stack>
 	</Panel>
 </ScrollArea>
-
-<style>
-	/* Wrapper div for the process grid. lg breakpoint overrides to 5 columns
-	   since Grid's built-in md max prop does not cover lg. */
-	@media (min-width: 1024px) {
-		:global(.process-view__grid-wrap > div) {
-			grid-template-columns: repeat(5, 1fr) !important;
-		}
-	}
-
-	/* Hint strip shown when a source filter is active. */
-	.process-view__filter-hint {
-		background-color: var(--color-surface-raised);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-		padding: var(--spacing-2) var(--spacing-3);
-	}
-</style>

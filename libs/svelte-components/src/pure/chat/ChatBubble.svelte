@@ -1,16 +1,23 @@
-<!-- Message bubble wrapper with role-based styling. Content is passed as a child snippet. -->
+<!-- Message bubble wrapper with role-based styling. Content is passed as a child snippet.
+     The system role supports a tone prop to switch between default (muted) and destructive styles. -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { HStack } from "../layout/index.js";
 
 	let {
 		role,
+		tone = "default",
 		children,
 	}: {
 		/** The speaker role — controls alignment and color treatment. */
 		role: "user" | "assistant" | "system";
+		/** Only applies to role="system". "destructive" renders error styling; "default" renders muted. */
+		tone?: "default" | "destructive";
 		children?: Snippet;
 	} = $props();
+
+	/** Resolves the background class for system bubbles based on tone. */
+	const systemBgClass = $derived(tone === "destructive" ? "bg-destructive/10" : "bg-muted/30");
 </script>
 
 {#if role === "user"}
@@ -29,7 +36,7 @@
 	</HStack>
 {:else}
 	<HStack justify="center">
-		<div class="bg-muted/30 max-w-[90%] rounded-lg px-4 py-2">
+		<div class="max-w-[90%] rounded-lg px-4 py-2 {systemBgClass}">
 			{#if children}{@render children()}{/if}
 		</div>
 	</HStack>

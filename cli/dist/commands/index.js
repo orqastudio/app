@@ -47,8 +47,7 @@ function parseOptions(args) {
     // Resolve model dir: CLI arg > env var > default
     if (!modelDir) {
         modelDir =
-            process.env.ORQA_MODEL_DIR ??
-                join(resolve(projectPath), "models", "all-MiniLM-L6-v2");
+            process.env.ORQA_MODEL_DIR ?? join(resolve(projectPath), "models", "all-MiniLM-L6-v2");
     }
     // Resolve db path: CLI arg > default
     if (!dbPath) {

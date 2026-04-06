@@ -239,9 +239,7 @@ export function createAgentConfig(params) {
     // Get tool constraints for this role
     const toolConstraints = ROLE_TOOL_CONSTRAINTS[role];
     // Compute findings path if team context is provided
-    const findingsPath = teamName && taskId
-        ? `.state/team/${teamName}/task-${taskId}.md`
-        : null;
+    const findingsPath = teamName && taskId ? `.state/team/${teamName}/task-${taskId}.md` : null;
     // Default token budget per role tier if not specified
     const effectiveBudget = tokenBudget ?? DEFAULT_TOKEN_BUDGETS[modelTier];
     return {

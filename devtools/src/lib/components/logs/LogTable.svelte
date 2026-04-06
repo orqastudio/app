@@ -11,10 +11,15 @@
 	import {
 		Button,
 		Caption,
+		Center,
 		HStack,
-		SectionHeader,
+		LogColLabel,
+		LogSpacer,
+		LogViewport,
 		SectionFooter,
+		SectionHeader,
 		Stack,
+		Box,
 	} from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
 	import {
@@ -77,8 +82,7 @@
 		{ label: "Message", width: null }, // flex-1, fills rest
 	];
 
-	// Reference to the scrollable viewport div.
-	// Legitimate exception: raw div with bind:this required for virtualisation scroll binding.
+	// Reference to the scrollable viewport div — bound via LogViewport's ref prop.
 	let viewport: HTMLDivElement | null = $state(null);
 
 	// Current scrollTop of the viewport.
@@ -241,91 +245,70 @@
 
 <!-- Outer container: Stack fills the height of the Logs tab content area. -->
 <Stack gap={0} height="full">
-	<!-- Column header bar: SectionHeader compact provides px-2 py-1 border-b layout. -->
+	<!-- Column header bar: SectionHeader compact provides px-2 py-1 border-b layout.
+	     Col labels in an HStack with gap-0 so they align with LogRow columns.
+	     Toolbar (scroll-lock, export, clear) in a zero-gap HStack pushed to the end. -->
 	<SectionHeader variant="compact" role="row">
-		{#each COLUMNS as col (col.label)}
-			{#if col.width !== null}
-				<div class="log-table__col-label log-table__col-label--fixed" style="width: {col.width}px;">
-					{col.label}
-				</div>
-			{:else}
-				<div class="log-table__col-label log-table__col-label--flex">{col.label}</div>
-			{/if}
-		{/each}
-
-		<!-- Toolbar: scroll-lock toggle, export, and clear buttons pinned to the right.
-		     Follow button is hidden when viewing a historical session because auto-scroll
-		     is meaningless for static data. -->
-		<div class="log-table__toolbar">
-			{#if !historicalMode.value && !scrollLock.enabled}
-				<!-- Wrapper span with display:contents is invisible to flex layout;
-				     scoped class provides the hook for :global() CSS overrides. -->
-				<span class="log-table__follow-wrap" style="display: contents;">
-					<Button variant="ghost" size="icon-sm" onclick={enableScrollLock}>Follow</Button>
-				</span>
-			{/if}
-			<LogExport />
-			<span class="log-table__clear-wrap" style="display: contents;">
-				<Button variant="ghost" size="icon-sm" onclick={clearEvents}>Clear</Button>
-			</span>
-		</div>
+		{#snippet start()}
+			<HStack gap={0}>
+				{#each COLUMNS as col (col.label)}
+					<LogColLabel width={col.width ?? undefined} fill={col.width === null}>
+						{col.label}
+					</LogColLabel>
+				{/each}
+			</HStack>
+		{/snippet}
+		{#snippet end()}
+			<HStack gap={1}>
+				{#if !historicalMode.value && !scrollLock.enabled}
+					<!-- Follow button: primary-tinted to indicate auto-scroll is available. -->
+					<Button variant="ghost" size="xs" onclick={enableScrollLock}>Follow</Button>
+				{/if}
+				<LogExport />
+				<Button variant="ghost" size="xs" onclick={clearEvents}>Clear</Button>
+			</HStack>
+		{/snippet}
 	</SectionHeader>
 
-	<!-- Historical session banner: shown above the viewport when viewing a past
-	     session. Scoped div provides the height/bg; HStack wraps the inner content. -->
+	<!-- Historical session banner: shown above the viewport when viewing a past session.
+	     SectionHeader compact with primary-subtle background provides the tinted strip. -->
 	{#if historicalMode.value}
-		<div class="log-table__historical-banner">
-			<HStack justify="between" gap={2} full>
-				<div class="log-table__historical-label">
-					<Caption truncate>
+		<SectionHeader variant="compact" background="primary-subtle">
+			{#snippet start()}
+				<Box flex={1} minWidth={0}>
+					<Caption truncate tone="primary" italic>
 						Viewing historical session — {historicalSessionLabel}
 					</Caption>
-				</div>
-				<span class="log-table__return-wrap" style="display: contents;">
-					<Button variant="ghost" size="icon-sm" onclick={handleReturnToLive}>
-						Return to live
-					</Button>
-				</span>
-			</HStack>
-		</div>
-	{/if}
-
-	<!-- Load earlier button: prepends history events before the oldest visible
-	     event. Shown above the virtualised scroll area so it is reachable without
-	     scrolling to the top (which would disable scroll-lock). Hidden when all
-	     available history has been loaded. Hidden during historical mode (load-more
-	     is shown at the bottom instead). -->
-	{#if !historyExhausted.value && !historicalMode.value}
-		<!-- SectionHeader compact provides border-b and centered layout. -->
-		<SectionHeader variant="compact">
-			<span class="log-table__load-wrap" style="display: contents;">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					disabled={historyLoading.value}
-					onclick={loadHistory}
-				>
-					{historyLoading.value ? "Loading…" : "Load earlier"}
-				</Button>
-			</span>
+				</Box>
+			{/snippet}
+			{#snippet end()}
+				<Button variant="ghost" size="xs" onclick={handleReturnToLive}>Return to live</Button>
+			{/snippet}
 		</SectionHeader>
 	{/if}
 
-	<!-- Scrollable viewport: the only element that scrolls.
-	     LEGITIMATE EXCEPTION: raw div with bind:this required for virtualisation.
-	     role="table" communicates the virtualised row structure to screen readers. -->
-	<div
-		bind:this={viewport}
-		class="log-table__viewport"
-		role="table"
-		aria-label="Log events"
-		aria-rowcount={filteredEvents.length}
+	<!-- Load earlier button: prepends history events before the oldest visible
+	     event. Hidden when all available history has been loaded or in historical mode. -->
+	{#if !historyExhausted.value && !historicalMode.value}
+		<SectionHeader variant="compact">
+			<Button variant="ghost" size="xs" disabled={historyLoading.value} onclick={loadHistory}>
+				{historyLoading.value ? "Loading…" : "Load earlier"}
+			</Button>
+		</SectionHeader>
+	{/if}
+
+	<!-- Scrollable viewport: LogViewport handles the bind:this and role/aria attrs.
+	     The ref binding is required for virtualisation scroll position tracking. -->
+	<LogViewport
+		bind:ref={viewport}
+		ariaLabel="Log events"
+		ariaRowCount={filteredEvents.length}
 		onscroll={handleScroll}
 	>
-		<!-- Spacer div: its height equals the total height of all filtered rows so
+		<!-- LogSpacer: its height equals the total height of all filtered rows so
 		     the scrollbar reflects the full filtered dataset. Rows are absolutely
 		     positioned inside it via their pre-computed offsets. -->
-		<div class="log-table__spacer" style="height: {totalHeight}px;">
+		<LogSpacer height={totalHeight}>
 			{#each visibleEvents as ev (ev.id)}
 				<LogRow
 					event={ev}
@@ -333,11 +316,11 @@
 					ondraweropen={handleRowClick}
 				/>
 			{/each}
-		</div>
+		</LogSpacer>
 
 		<!-- Empty state: centered caption shown when there are no matching events. -->
 		{#if filteredEvents.length === 0}
-			<div class="log-table__empty">
+			<Center full>
 				<Caption>
 					{#if events.length === 0}
 						{connectionEmptyMessage(connectionStatus.value)}
@@ -345,31 +328,23 @@
 						No events match the active filters
 					{/if}
 				</Caption>
-			</div>
+			</Center>
 		{/if}
-	</div>
+	</LogViewport>
 
 	<!-- Load more button: shown below the viewport when viewing a historical session
-	     and more pages are available. Appends the next page of events to the buffer. -->
+	     and more pages are available. SectionFooter compact provides border-t layout. -->
 	{#if historicalMode.value && !historicalExhausted.value}
-		<!-- SectionFooter compact provides border-t and centered layout. -->
 		<SectionFooter variant="compact">
-			<span class="log-table__load-wrap" style="display: contents;">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					disabled={historyLoading.value}
-					onclick={handleLoadMore}
-				>
-					{historyLoading.value ? "Loading…" : "Load more"}
-				</Button>
-			</span>
+			<Button variant="ghost" size="xs" disabled={historyLoading.value} onclick={handleLoadMore}>
+				{historyLoading.value ? "Loading…" : "Load more"}
+			</Button>
 		</SectionFooter>
 	{/if}
 
-	<!-- Status strip: scoped div provides height/border/bg/padding; HStack provides inner layout. -->
-	<div class="log-table__status">
-		<HStack gap={3} full>
+	<!-- Status strip: SectionFooter compact provides border-t, bg-surface, px-2 py-1. -->
+	<SectionFooter variant="compact" background="surface">
+		{#snippet start()}
 			{#if historicalMode.value}
 				<Caption variant="caption-tabular"
 					>{events.length} of {historicalTotal.value} events loaded</Caption
@@ -381,129 +356,12 @@
 			{:else}
 				<Caption variant="caption-tabular">{totalReceived.value} events received</Caption>
 			{/if}
+		{/snippet}
+		{#snippet end()}
 			{#if !historicalMode.value && scrollLock.enabled}
-				<div class="log-table__autoscroll-label"><Caption>Auto-scroll on</Caption></div>
+				<!-- Primary tone pairs with the Follow button to confirm auto-scroll is active. -->
+				<Caption tone="primary">Auto-scroll on</Caption>
 			{/if}
-		</HStack>
-	</div>
+		{/snippet}
+	</SectionFooter>
 </Stack>
-
-<style>
-	/* Column header labels. */
-	.log-table__col-label {
-		font-size: 10px;
-		font-weight: 500;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--color-content-muted);
-		background-color: var(--color-surface-base);
-	}
-
-	/* Fixed-width column label. */
-	.log-table__col-label--fixed {
-		flex-shrink: 0;
-	}
-
-	/* Flex-fill column label (Message). */
-	.log-table__col-label--flex {
-		min-width: 0;
-		flex: 1;
-	}
-
-	/* Toolbar: right-aligned group of compact action buttons. */
-	.log-table__toolbar {
-		margin-left: auto;
-		display: flex;
-		flex-shrink: 0;
-		align-items: center;
-		gap: var(--spacing-1);
-	}
-
-	/* Compact 20px height override for toolbar and load buttons. Wrappers use
-	   display:contents so they are invisible to flex layout; the :global() selectors
-	   target the Button's rendered button element inside each wrapper span. */
-	:global(.log-table__follow-wrap button),
-	:global(.log-table__clear-wrap button),
-	:global(.log-table__load-wrap button),
-	:global(.log-table__return-wrap button) {
-		height: 20px !important;
-		width: auto !important;
-		padding: 0 var(--spacing-1-5) !important;
-		font-size: 10px !important;
-	}
-
-	/* Follow button: uses primary tint to indicate active auto-scroll state. */
-	:global(.log-table__follow-wrap button) {
-		background-color: color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
-		color: var(--color-primary) !important;
-	}
-
-	:global(.log-table__follow-wrap button:hover) {
-		background-color: color-mix(in srgb, var(--color-primary) 30%, transparent) !important;
-	}
-
-	/* Historical session banner: shown between header and load-earlier bar. */
-	.log-table__historical-banner {
-		background-color: color-mix(in srgb, var(--color-primary) 8%, var(--color-background));
-		border-bottom: 1px solid var(--color-border);
-		height: 24px;
-		flex-shrink: 0;
-		display: flex;
-		align-items: center;
-		padding: 0 var(--spacing-2);
-	}
-
-	/* Historical label wrapper: flex-1 so it truncates before the return button. */
-	.log-table__historical-label {
-		flex: 1;
-		min-width: 0;
-		overflow: hidden;
-		color: var(--color-primary);
-		font-style: italic;
-	}
-
-	/* Return to live button: primary text to pair with the banner.
-	   Height/padding already covered by the shared rule above. */
-	:global(.log-table__return-wrap button) {
-		color: var(--color-primary) !important;
-		flex-shrink: 0;
-	}
-
-	/* Scrollable viewport area. */
-	.log-table__viewport {
-		position: relative;
-		flex: 1;
-		overflow-x: hidden;
-		overflow-y: auto;
-	}
-
-	/* Spacer that carries the full virtual height. */
-	.log-table__spacer {
-		position: relative;
-		width: 100%;
-	}
-
-	/* Empty-state message centred in the viewport. */
-	.log-table__empty {
-		display: flex;
-		height: 100%;
-		align-items: center;
-		justify-content: center;
-	}
-
-	/* Status strip: compact bottom bar. */
-	.log-table__status {
-		border-top: 1px solid var(--color-border);
-		background-color: var(--color-surface-base);
-		height: 20px;
-		flex-shrink: 0;
-		display: flex;
-		align-items: center;
-		padding: 0 var(--spacing-2);
-	}
-
-	/* Auto-scroll active indicator: primary color to pair with the follow button. */
-	.log-table__autoscroll-label {
-		color: var(--color-primary);
-	}
-</style>

@@ -4,6 +4,7 @@
 		Button,
 		HStack,
 		Box,
+		Panel,
 		DialogRoot,
 		DialogContent,
 		DialogTitle,
@@ -38,7 +39,7 @@
 			</Button>
 		</HStack>
 		<HStack gap={0} flex={1} align="stretch">
-			<div class="border-border w-56 shrink-0 border-r">
+			<Panel fixedWidth="nav-lg" border="right" padding="none">
 				<SettingsCategoryNav
 					mode="app"
 					activeSection={dialogSection}
@@ -46,7 +47,7 @@
 						dialogSection = s;
 					}}
 				/>
-			</div>
+			</Panel>
 			<Box flex={1}>
 				<SettingsView activeSection={dialogSection} />
 			</Box>

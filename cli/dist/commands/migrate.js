@@ -10,7 +10,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { getRoot } from "../lib/root.js";
-import { parseFrontmatterFromContent, writeFrontmatter, } from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 const USAGE = `
 Usage: orqa migrate [options]
 
@@ -134,10 +134,7 @@ function walkFiles(dir, results = []) {
  * @returns Map of artifact type to list of artifact summaries.
  */
 function scanArtifacts(projectRoot) {
-    const scanDirs = [
-        join(projectRoot, ".orqa"),
-        join(projectRoot, "app", ".orqa"),
-    ];
+    const scanDirs = [join(projectRoot, ".orqa"), join(projectRoot, "app", ".orqa")];
     const allFiles = scanDirs.flatMap((d) => walkFiles(d));
     const byType = new Map();
     for (const file of allFiles) {
@@ -287,9 +284,7 @@ export async function runMigrateCommand(args) {
     // Step 3: Report
     console.log(`Found ${changes.length} artifact(s) to migrate${typeFilter ? ` (type: ${typeFilter})` : ""}:\n`);
     for (const change of changes) {
-        const rel = change.file
-            .replace(projectRoot + "/", "")
-            .replace(projectRoot + "\\", "");
+        const rel = change.file.replace(projectRoot + "/", "").replace(projectRoot + "\\", "");
         console.log(`  ${change.artifactId} (${change.artifactType}): ${change.oldStatus} -> ${change.newStatus}`);
         console.log(`    ${rel}`);
     }

@@ -5,7 +5,8 @@
      Also shows an error-rate sparkline covering the last 30 minutes. -->
 <script lang="ts">
 	import {
-		DashboardCard,
+		CardRoot,
+		CardContent,
 		MetricCell,
 		Panel,
 		Sparkline,
@@ -15,7 +16,9 @@
 		Heading,
 		Text,
 		Caption,
+		Center,
 		ScrollArea,
+		SurfaceBox,
 	} from "@orqastudio/svelte-components/pure";
 	import {
 		metrics,
@@ -81,17 +84,19 @@
 				<Caption>{metrics.totalEvents} events processed</Caption>
 			</HStack>
 
-			<!-- Four metric cards in a responsive 2×2 grid. -->
+			<!-- Four metric cards in a responsive 2×2 grid.
+			     CardRoot with interactive+selected replaces the scoped div wrapper + DashboardCard. -->
 			<Grid cols={2} gap={3}>
 				{#each CATEGORY_KEYS as cat (cat)}
 					{@const stats = metrics.byCategory[cat]}
 					{@const isSelected = selectedCategory === cat}
-					<!-- Scoped div wrapper provides border+selected state styling. Tailwind class=
-			     pattern replaced with data-selected attribute + scoped CSS. -->
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="metrics-card" data-selected={isSelected} onclick={() => toggleCategory(cat)}>
-						<DashboardCard>
+					<CardRoot
+						interactive={true}
+						selected={isSelected}
+						gap={2}
+						onclick={() => toggleCategory(cat)}
+					>
+						<CardContent compact={true}>
 							<MetricCell
 								label={stats.label}
 								value={fmtMs(stats.current)}
@@ -112,8 +117,10 @@
 											padding={2}
 										/>
 									{:else}
-										<!-- Scoped class provides height without Tailwind utility on HStack. -->
-										<div class="metrics-card__waiting"><Caption>Waiting…</Caption></div>
+										<!-- Centered placeholder while waiting for first data points. -->
+										<Center>
+											<Caption>Waiting…</Caption>
+										</Center>
 									{/if}
 									<!-- Min / avg / max row: caption-tabular variant for numeric alignment. -->
 									<HStack justify="between">
@@ -123,97 +130,60 @@
 									</HStack>
 								</Stack>
 							</MetricCell>
-						</DashboardCard>
-					</div>
+						</CardContent>
+					</CardRoot>
 				{/each}
 			</Grid>
 
-			<!-- Expanded timing chart — shown below the grid when a category is selected. -->
+			<!-- Expanded timing chart: SurfaceBox provides rounded raised background with padding. -->
 			{#if selectedCategory && metrics.byCategory[selectedCategory]}
-				<div class="metrics-chart-card">
+				<SurfaceBox padding="md">
 					<TimingChart stats={metrics.byCategory[selectedCategory]} width={560} height={100} />
-				</div>
+				</SurfaceBox>
 			{/if}
 
 			<!-- Error rate panel: errors-per-minute sparkline over the last 30 minutes. -->
-			<DashboardCard title="Error Rate" description="Errors per minute — last 30 minutes">
-				<Stack gap={2}>
-					<HStack justify="between" align="baseline">
-						<Caption>Total in window</Caption>
-						<!-- tone prop drives color; heading-base provides semibold weight for emphasis. -->
-						<Text variant="heading-base" tone={errTotal > 0 ? "destructive" : "success"}>
-							{errTotal}
-						</Text>
-					</HStack>
-					{#if errHistory.length >= 2}
-						<Sparkline
-							values={errHistory}
-							width={280}
-							height={48}
-							strokeColor={errTotal > 0
-								? "oklch(var(--color-destructive))"
-								: "oklch(var(--color-success))"}
-							strokeWidth={1.5}
-							fillOpacity={0.1}
-							showBaseline={true}
-							padding={4}
-							fixedMin={0}
-						/>
-					{:else}
-						<!-- Scoped class provides height without Tailwind utility on HStack. -->
-						<div class="metrics-card__error-waiting"><Caption>No error data yet</Caption></div>
-					{/if}
-					<HStack justify="between">
-						<Caption>−30 min</Caption>
-						<Caption>now</Caption>
-					</HStack>
-				</Stack>
-			</DashboardCard>
+			<CardRoot gap={2}>
+				<CardContent>
+					<Stack gap={2}>
+						<HStack justify="between" align="baseline">
+							<Caption>Error Rate</Caption>
+							<Caption>Errors per minute — last 30 minutes</Caption>
+						</HStack>
+						<HStack justify="between" align="baseline">
+							<Caption>Total in window</Caption>
+							<!-- tone prop drives color; heading-base provides semibold weight for emphasis. -->
+							<Text variant="heading-base" tone={errTotal > 0 ? "destructive" : "success"}>
+								{errTotal}
+							</Text>
+						</HStack>
+						{#if errHistory.length >= 2}
+							<Sparkline
+								values={errHistory}
+								width={280}
+								height={48}
+								strokeColor={errTotal > 0
+									? "oklch(var(--color-destructive))"
+									: "oklch(var(--color-success))"}
+								strokeWidth={1.5}
+								fillOpacity={0.1}
+								showBaseline={true}
+								padding={4}
+								fixedMin={0}
+							/>
+						{:else}
+							<!-- Centered placeholder while waiting for first error data. -->
+							<Center>
+								<Caption>No error data yet</Caption>
+							</Center>
+						{/if}
+						<HStack justify="between">
+							<Caption>−30 min</Caption>
+							<Caption>now</Caption>
+						</HStack>
+					</Stack>
+				</CardContent>
+			</CardRoot>
 		</Stack>
 	</Panel>
 </ScrollArea>
-
-<style>
-	/* Metric card wrapper: border, rounded corners, pointer cursor, and hover/selected states. */
-	.metrics-card {
-		cursor: pointer;
-		border-radius: var(--radius-lg);
-		border: 1px solid var(--color-border);
-		transition:
-			border-color 150ms,
-			background-color 150ms;
-	}
-
-	.metrics-card:hover {
-		border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
-		background-color: color-mix(in srgb, var(--color-surface-raised) 50%, transparent);
-	}
-
-	/* Selected state: stronger primary-tinted border + raised background. */
-	.metrics-card[data-selected="true"] {
-		border-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
-		background-color: var(--color-surface-raised);
-	}
-
-	/* Expanded chart card: raised surface with padding. */
-	.metrics-chart-card {
-		border-radius: var(--radius-lg);
-		border: 1px solid var(--color-border);
-		background-color: var(--color-surface-raised);
-		padding: var(--spacing-4);
-	}
-
-	/* Compact waiting-for-data placeholder within metric cells. */
-	.metrics-card__waiting {
-		display: flex;
-		align-items: center;
-		height: 2rem;
-	}
-
-	/* Compact waiting state for the error rate panel. */
-	.metrics-card__error-waiting {
-		display: flex;
-		align-items: center;
-		height: 3rem;
-	}
-</style>

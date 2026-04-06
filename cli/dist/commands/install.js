@@ -461,9 +461,7 @@ export function cmdPluginSync(root) {
             continue;
         }
         // Resolve plugin directory relative to project root if not absolute.
-        const pluginDir = path.isAbsolute(cfg.path)
-            ? cfg.path
-            : path.join(root, cfg.path);
+        const pluginDir = path.isAbsolute(cfg.path) ? cfg.path : path.join(root, cfg.path);
         const manifestFile = path.join(pluginDir, "orqa-plugin.json");
         if (!fs.existsSync(manifestFile)) {
             console.error(`  Plugin ${name}: no orqa-plugin.json at ${pluginDir} — skipping.`);
@@ -617,7 +615,10 @@ function cmdSmokeTest(root) {
     const appCheckDir = path.join(root, "app");
     if (fs.existsSync(path.join(appCheckDir, "package.json"))) {
         try {
-            execSync("npx svelte-check --threshold error", { cwd: appCheckDir, stdio: ["pipe", "pipe", "pipe"] });
+            execSync("npx svelte-check --threshold error", {
+                cwd: appCheckDir,
+                stdio: ["pipe", "pipe", "pipe"],
+            });
             console.log("  ✓ svelte-check passes");
         }
         catch {

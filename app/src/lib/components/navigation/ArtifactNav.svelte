@@ -1,19 +1,19 @@
 <script lang="ts">
 	import {
 		CollapsibleRoot as Collapsible,
-		CollapsibleTrigger,
 		CollapsibleContent,
-	} from "@orqastudio/svelte-components/pure";
-	import { EmptyState } from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
-	import {
+		CollapsibleGroupHeader,
+		TreeCollapsibleTrigger,
+		EmptyState,
+		LoadingSpinner,
+		ErrorDisplay,
 		Caption,
 		Stack,
 		Box,
 		Center,
 		Panel,
 		ScrollArea,
+		TreeIndent,
 	} from "@orqastudio/svelte-components/pure";
 	import { ArtifactListItem } from "@orqastudio/svelte-components/connected";
 	import ArtifactToolbar from "$lib/components/navigation/ArtifactToolbar.svelte";
@@ -275,15 +275,7 @@
 					<Stack gap={0}>
 						{#each groupedNodes as group (group.label)}
 							<Collapsible open={!collapsedDefaults.includes(group.label.toLowerCase())}>
-								<CollapsibleTrigger
-									class="text-muted-foreground hover:bg-accent/50 flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-xs font-semibold tracking-wide uppercase"
-								>
-									<Icon name="chevron-right" size="xs" />
-									{group.label}
-									<span class="ml-auto text-[10px] font-normal tabular-nums"
-										>{group.nodes.length}</span
-									>
-								</CollapsibleTrigger>
+								<CollapsibleGroupHeader label={group.label} count={group.nodes.length} />
 								<CollapsibleContent>
 									{#each group.nodes as node (node.path)}
 										<ArtifactListItem
@@ -318,14 +310,11 @@
 	{#if node.children}
 		{@const dirIconName = resolveDirectoryIcon(node.icon)}
 		<Collapsible open={true}>
-			<CollapsibleTrigger
-				class="text-muted-foreground hover:bg-accent/50 flex w-full items-center gap-1 rounded px-1 py-1 text-xs font-semibold tracking-wide uppercase"
-				style="padding-left: {depth * 12 + 4}px"
-			>
+			<TreeCollapsibleTrigger {depth}>
 				<Icon name="chevron-right" size="xs" />
 				<Icon name={dirIconName} size="xs" />
 				{node.label}
-			</CollapsibleTrigger>
+			</TreeCollapsibleTrigger>
 			<CollapsibleContent>
 				{#each node.children as child (child.path ?? child.label)}
 					{@render treeSection(child, depth + 1)}
@@ -333,8 +322,7 @@
 			</CollapsibleContent>
 		</Collapsible>
 	{:else if node.path}
-		<!-- Dynamic pixel indentation cannot be expressed via Box props; style attribute retained -->
-		<div style="padding-left: {depth * 12}px">
+		<TreeIndent {depth}>
 			<ArtifactListItem
 				label={node.label}
 				description={node.description ?? undefined}
@@ -342,6 +330,6 @@
 				path={node.path ?? undefined}
 				onclick={() => handleLeafClick(node)}
 			/>
-		</div>
+		</TreeIndent>
 	{/if}
 {/snippet}

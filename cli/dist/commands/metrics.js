@@ -92,9 +92,7 @@ function printAgentSummary(agents) {
         return;
     }
     // Sort by total tokens descending
-    const sorted = [...agents].sort((a, b) => b.totalInputTokens +
-        b.totalOutputTokens -
-        (a.totalInputTokens + a.totalOutputTokens));
+    const sorted = [...agents].sort((a, b) => b.totalInputTokens + b.totalOutputTokens - (a.totalInputTokens + a.totalOutputTokens));
     console.log("Top Agents by Token Usage");
     console.log("-------------------------");
     const top = sorted.slice(0, 10);
@@ -147,8 +145,7 @@ export async function runMetricsCommand(args) {
         const output = {};
         if (options.showSession) {
             const sessions = filterEvents(events, "session_summary").map((e) => e.data);
-            output.session =
-                sessions.length > 0 ? sessions[sessions.length - 1] : null;
+            output.session = sessions.length > 0 ? sessions[sessions.length - 1] : null;
         }
         if (options.showAgents) {
             output.agents = filterEvents(events, "agent_complete").map((e) => e.data);

@@ -152,8 +152,8 @@
 									{/if}
 								</Box>
 
-								<!-- Details — min-width: 0 prevents flex child overflow -->
-								<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+								<!-- Details — flex:1 + minWidth:0 prevents flex child overflow -->
+								<Stack gap={0} flex={1} minWidth={0}>
 									<HStack gap={2}>
 										<Text variant="caption-strong" truncate>{v.rule_name}</Text>
 										<Badge
@@ -167,7 +167,7 @@
 									{#if v.detail}
 										<Caption truncate>{v.detail}</Caption>
 									{/if}
-								</div>
+								</Stack>
 
 								<!-- Timestamp -->
 								<HStack gap={1} flex={0}>

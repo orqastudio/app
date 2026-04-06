@@ -12,6 +12,7 @@
 		Caption,
 		Text,
 		Button,
+		Box,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 
@@ -192,6 +193,7 @@
 		</CardHeader>
 		<CardContent>
 			<!-- Fixed-height scroll area for the queue content — 280px matches card layout budget -->
+			<!-- ScrollArea has a fixed-height variant but requires explicit height; inline style needed for 280px budget -->
 			<div style="height: 280px; overflow-y: auto; padding: 0 0.75rem 0.75rem;">
 				{#if activeTab === "actions"}
 					<!-- ---------------------------------------------------------- -->
@@ -213,9 +215,9 @@
 											<Text variant="caption-strong" truncate>{action.action}</Text>
 											<Caption truncate>{action.title}</Caption>
 										</Stack>
-										<div class="shrink-0">
+										<Box flex={0}>
 											<ArtifactLink id={action.id} displayLabel={action.id} />
-										</div>
+										</Box>
 									</HStack>
 								</Panel>
 							{/each}
@@ -256,9 +258,9 @@
 												</HStack>
 											{/if}
 										</Stack>
-										<div class="shrink-0">
+										<Box flex={0}>
 											<ArtifactLink id={epic.id} displayLabel={epic.id} />
-										</div>
+										</Box>
 									</HStack>
 								</Panel>
 							{/each}

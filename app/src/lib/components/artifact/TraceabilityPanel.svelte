@@ -12,8 +12,11 @@
 		Text,
 		Caption,
 		Panel,
+		Callout,
+		LoadingSpinner,
+		TreeGuideLine,
+		TreeIndentIcon,
 	} from "@orqastudio/svelte-components/pure";
-	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import type { TraceabilityResult, AncestryChain } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
@@ -78,35 +81,26 @@
 			<CollapsibleTrigger
 				class="text-muted-foreground hover:text-foreground flex w-full items-center gap-1 text-xs font-medium transition-colors"
 			>
-				<span class={open ? "rotate-90 transition-transform" : "transition-transform"}>
-					<Icon name="chevron-right" size="xs" />
-				</span>
-				<span>Traceability</span>
+				<Icon name="chevron-right" size="xs" rotate90={open} />
+				Traceability
 				{#if result.disconnected}
 					<Badge variant="destructive" size="xs">disconnected</Badge>
 				{:else if result.impact_radius > 0}
-					<span class="text-muted-foreground ml-auto text-[10px]">
-						{result.impact_radius} affected
-					</span>
+					<Caption tone="muted">{result.impact_radius} affected</Caption>
 				{/if}
 			</CollapsibleTrigger>
 
 			<CollapsibleContent>
 				<Panel padding="normal">
 					<Stack gap={3}>
-						<!-- Disconnected warning — bg-warning/10 is not in Box background map, kept as div. -->
+						<!-- Disconnected warning -->
 						{#if result.disconnected}
-							<div
-								class="border-warning/30 bg-warning/10 flex items-start gap-2 rounded border px-2 py-1.5"
-							>
-								<span class="text-warning mt-0.5 shrink-0">
-									<Icon name="triangle-alert" size="xs" />
-								</span>
-								<p class="text-warning text-[11px] leading-snug">
+							<Callout tone="warning" density="compact" align="start" iconName="triangle-alert">
+								<Caption tone="warning">
 									This artifact has no path to any pillar. It is disconnected from the vision
 									hierarchy.
-								</p>
-							</div>
+								</Caption>
+							</Callout>
 						{/if}
 
 						<!-- Ancestry chains -->
@@ -117,18 +111,10 @@
 									<Stack gap={0.5}>
 										{#each chain.path as node, nodeIdx (node.id + nodeIdx)}
 											<HStack gap={1}>
-												<!-- Indent guide line — style= indentation is dynamic, must use inline style. -->
+												<!-- Indent guide line at depth-computed offset -->
 												{#if nodeIdx > 0}
-													<div
-														class="bg-border ml-1 h-full w-px shrink-0 self-stretch"
-														style="margin-left: {(nodeIdx - 1) * 12}px"
-													></div>
-													<span
-														class="text-muted-foreground/50 shrink-0"
-														style="margin-left: {(nodeIdx - 1) * 12}px"
-													>
-														<Icon name="corner-down-right" size="xs" />
-													</span>
+													<TreeGuideLine depth={nodeIdx - 1} />
+													<TreeIndentIcon name="corner-down-right" depth={nodeIdx - 1} />
 												{/if}
 
 												<!-- Artifact chip — indent by node depth in the chain (capped at 8 levels). -->
@@ -136,12 +122,11 @@
 													gap={1}
 													indent={Math.min(nodeIdx, 8) as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8}
 												>
-													<span class="text-muted-foreground shrink-0">
-														<Icon
-															name={pluginRegistry.getIconForType(node.artifact_type)}
-															size="xs"
-														/>
-													</span>
+													<Icon
+														tone="muted"
+														name={pluginRegistry.getIconForType(node.artifact_type)}
+														size="xs"
+													/>
 													<ArtifactLink id={node.id} />
 													{#if node.artifact_type === "pillar" || node.artifact_type === "vision"}
 														<Badge variant="secondary" size="xs">{node.artifact_type}</Badge>
@@ -150,9 +135,7 @@
 
 												<!-- Relationship label between nodes -->
 												{#if node.relationship && nodeIdx < chain.path.length - 1}
-													<span class="text-muted-foreground/60 ml-1 text-[10px] italic">
-														via {node.relationship}
-													</span>
+													<Caption tone="muted" italic>via {node.relationship}</Caption>
 												{/if}
 											</HStack>
 										{/each}
@@ -169,17 +152,9 @@
 										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
 									>
 										<HStack gap={1}>
-											<span
-												class={descendantsOpen
-													? "rotate-90 transition-transform"
-													: "transition-transform"}
-											>
-												<Icon name="chevron-right" size="xs" />
-											</span>
+											<Icon name="chevron-right" size="xs" rotate90={descendantsOpen} />
 											What does this affect?
-											<span class="text-muted-foreground ml-1 text-[10px]">
-												({result.descendants.length})
-											</span>
+											<Caption tone="muted">({result.descendants.length})</Caption>
 										</HStack>
 									</CollapsibleTrigger>
 									<CollapsibleContent>
@@ -189,8 +164,7 @@
 													<HStack gap={1}>
 														<ArtifactLink id={desc.id} />
 														{#if desc.depth > 1}
-															<span class="text-muted-foreground/50 text-[10px]">+{desc.depth}</span
-															>
+															<Caption tone="muted">+{desc.depth}</Caption>
 														{/if}
 													</HStack>
 												{/each}
@@ -212,17 +186,9 @@
 										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
 									>
 										<HStack gap={1}>
-											<span
-												class={siblingsOpen
-													? "rotate-90 transition-transform"
-													: "transition-transform"}
-											>
-												<Icon name="chevron-right" size="xs" />
-											</span>
+											<Icon name="chevron-right" size="xs" rotate90={siblingsOpen} />
 											Related work
-											<span class="text-muted-foreground ml-1 text-[10px]">
-												({result.siblings.length})
-											</span>
+											<Caption tone="muted">({result.siblings.length})</Caption>
 										</HStack>
 									</CollapsibleTrigger>
 									<CollapsibleContent>

@@ -14,6 +14,7 @@
 		ScrollArea,
 		SectionHeader,
 		Panel,
+		CategoryBadge,
 	} from "@orqastudio/svelte-components/pure";
 	import type { Lesson } from "@orqastudio/types";
 	import { getStores } from "@orqastudio/sdk";
@@ -21,17 +22,15 @@
 	const { pluginRegistry } = getStores();
 
 	/**
-	 * Returns Tailwind class string for a lesson category badge.
-	 * Derives color from the lesson schema's categories declared in the plugin manifest.
-	 * Falls back to muted when the category has no declared color.
+	 * Resolve the hex color for a lesson category from the plugin registry.
+	 * Returns undefined when no color is declared, letting CategoryBadge fall back to muted.
 	 * @param category - The lesson category key.
-	 * @returns A Tailwind class string for badge styling.
+	 * @returns A hex color string or undefined.
 	 */
-	function categoryColor(category: string): string {
+	function categoryHexColor(category: string): string | undefined {
 		const cats = pluginRegistry.getSchemaCategories("lesson");
 		const cat = cats.find((c) => c.key === category);
-		if (cat?.color) return `bg-[${cat.color}]/10 text-[${cat.color}]`;
-		return "bg-muted text-muted-foreground";
+		return cat?.color;
 	}
 
 	let {
@@ -127,24 +126,21 @@
 							{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
 								<Button
 									variant="ghost"
-									size="sm"
-									full
+									size="list-item"
 									onclick={() => onSelect(lesson)}
 									aria-pressed={selectedId === lesson.id}
-									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
 								>
 									<HStack justify="between" gap={1} align="start" full>
-										<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+										<Stack flex={1} minWidth={0} gap={0}>
 											<HStack gap={1}>
 												<Caption variant="caption-mono">{lesson.id}</Caption>
-												<span
-													class={`rounded px-1 py-0.5 text-[10px] font-medium ${categoryColor(lesson.category)}`}
-												>
-													{lesson.category}
-												</span>
+												<CategoryBadge
+													category={lesson.category}
+													color={categoryHexColor(lesson.category)}
+												/>
 											</HStack>
 											<Caption truncate>{lesson.title}</Caption>
-										</div>
+										</Stack>
 										{#if lesson.recurrence >= 2}
 											<Badge variant="secondary" size="xs">
 												x{lesson.recurrence}
@@ -167,13 +163,11 @@
 							{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
 								<Button
 									variant="ghost"
-									size="sm"
-									full
+									size="list-item"
 									onclick={() => onSelect(lesson)}
 									aria-pressed={selectedId === lesson.id}
-									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
 								>
-									<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+									<Stack flex={1} minWidth={0} gap={0}>
 										<HStack gap={1}>
 											<Caption variant="caption-mono">{lesson.id}</Caption>
 											<Badge variant={statusVariant(lesson.status)} size="xs">
@@ -181,7 +175,7 @@
 											</Badge>
 										</HStack>
 										<Caption truncate>{lesson.title}</Caption>
-									</div>
+									</Stack>
 								</Button>
 							{/each}
 						</Stack>
@@ -196,14 +190,10 @@
 							{#each lessons.filter((l) => l.status === "resolved") as lesson (lesson.id)}
 								<Button
 									variant="ghost"
-									size="sm"
-									full
+									size="list-item"
+									faded={selectedId !== lesson.id}
 									onclick={() => onSelect(lesson)}
 									aria-pressed={selectedId === lesson.id}
-									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem; opacity: {selectedId ===
-									lesson.id
-										? 1
-										: 0.6};"
 								>
 									<HStack gap={1}>
 										<Caption variant="caption-mono">{lesson.id}</Caption>

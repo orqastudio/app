@@ -13,6 +13,7 @@
 		SectionHeader,
 		Callout,
 		Separator,
+		CategoryBadge,
 	} from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -23,17 +24,15 @@
 	const { pluginRegistry } = getStores();
 
 	/**
-	 * Returns Tailwind class string for a lesson category badge.
-	 * Derives color from the lesson schema's categories declared in the plugin manifest.
-	 * Falls back to muted when the category has no declared color.
+	 * Resolve the hex color for a lesson category from the plugin registry.
+	 * Returns undefined when no color is declared, letting CategoryBadge fall back to muted.
 	 * @param category - The lesson category key.
-	 * @returns A Tailwind class string for badge styling.
+	 * @returns A hex color string or undefined.
 	 */
-	function categoryColor(category: string): string {
+	function categoryHexColor(category: string): string | undefined {
 		const cats = pluginRegistry.getSchemaCategories("lesson");
 		const cat = cats.find((c) => c.key === category);
-		if (cat?.color) return `bg-[${cat.color}]/10 text-[${cat.color}]`;
-		return "bg-muted text-muted-foreground";
+		return cat?.color;
 	}
 
 	let {
@@ -55,11 +54,7 @@
 				<Stack gap={1} flex={1} minHeight={0}>
 					<HStack gap={2}>
 						<Caption variant="caption-mono">{lesson.id}</Caption>
-						<span
-							class={`rounded px-1.5 py-0.5 text-[11px] font-medium ${categoryColor(lesson.category)}`}
-						>
-							{lesson.category}
-						</span>
+						<CategoryBadge category={lesson.category} color={categoryHexColor(lesson.category)} />
 						{#if lesson.status !== "active"}
 							<Badge variant="secondary" size="xs">
 								{lesson.status}

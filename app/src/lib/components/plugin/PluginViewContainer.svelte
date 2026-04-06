@@ -3,7 +3,14 @@
 	import { readTextFile } from "@tauri-apps/plugin-fs";
 	import { logger } from "@orqastudio/sdk";
 	import { getPluginPath } from "$lib/services/plugin-service.js";
-	import { Caption, CardRoot, ScrollArea, Center, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		Caption,
+		CardRoot,
+		CardContent,
+		ScrollArea,
+		Center,
+		Text,
+	} from "@orqastudio/svelte-components/pure";
 
 	const log = logger("plugin-view");
 
@@ -71,13 +78,14 @@
 	{:else if error}
 		<Center full>
 			<CardRoot>
-				<div style="max-width: 28rem; padding: 1rem;">
+				<CardContent>
 					<Text tone="destructive">{error}</Text>
-				</div>
+				</CardContent>
 			</CardRoot>
 		</Center>
 	{:else}
-		<!-- bind:this is a legitimate exception — plugin mount target -->
+		<!-- bind:this is a legitimate exception — plugin IIFE mount target requires a raw HTMLDivElement ref;
+		     Svelte component bind:this gives the component instance, not the DOM node -->
 		<div bind:this={container} style="height: 100%; width: 100%;"></div>
 	{/if}
 </ScrollArea>

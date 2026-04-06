@@ -5,7 +5,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodologyConflict } from "../lib/installer.js";
+import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodologyConflict, } from "../lib/installer.js";
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
 import { readContentManifest, writeContentManifest, copyPluginContent, removePluginContent, installPluginDeps, buildPlugin, runLifecycleHook, diffPluginContent, computeThreeWayState, findSourceFile, processAggregatedFiles, computeFileHash, } from "../lib/content-lifecycle.js";
@@ -271,7 +271,12 @@ async function cmdInstall(args) {
             const answer = await ask(`  "${c.key}" — [m]erge or [r]ename? (suggested: ${suggestion}) `);
             const choice = answer.trim().toLowerCase();
             if (choice === "r" || choice === "rename") {
-                decisions.push({ key: c.key, decision: "renamed", existingSource: c.existingSource, originalKey: c.key });
+                decisions.push({
+                    key: c.key,
+                    decision: "renamed",
+                    existingSource: c.existingSource,
+                    originalKey: c.key,
+                });
                 console.log(`    -> Will namespace as plugin-specific key\n`);
             }
             else {
@@ -592,9 +597,7 @@ async function cmdOutdated() {
         }
         // Check manifest hash mismatch — detects content changes even without a version bump.
         if (manifestEntry) {
-            const currentHash = createHash("sha256")
-                .update(fs.readFileSync(manifestFile))
-                .digest("hex");
+            const currentHash = createHash("sha256").update(fs.readFileSync(manifestFile)).digest("hex");
             if (manifestEntry.manifestHash && currentHash !== manifestEntry.manifestHash) {
                 reasons.push("manifest content changed");
             }
@@ -692,9 +695,7 @@ async function cmdRefresh(args) {
     const projectRoot = process.cwd();
     // Collect plugins to refresh
     const installed = listInstalledPlugins(projectRoot);
-    const toRefresh = targetName
-        ? installed.filter((p) => p.name === targetName)
-        : installed;
+    const toRefresh = targetName ? installed.filter((p) => p.name === targetName) : installed;
     if (toRefresh.length === 0) {
         console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
         return;
@@ -794,9 +795,7 @@ async function cmdDiff(args) {
     const useJson = args.includes("--json");
     const projectRoot = process.cwd();
     const installed = listInstalledPlugins(projectRoot);
-    const toDiff = targetName
-        ? installed.filter((p) => p.name === targetName)
-        : installed;
+    const toDiff = targetName ? installed.filter((p) => p.name === targetName) : installed;
     if (toDiff.length === 0) {
         console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
         return;
@@ -915,9 +914,7 @@ async function cmdStatus(args) {
     const useJson = args.includes("--json");
     const projectRoot = process.cwd();
     const installed = listInstalledPlugins(projectRoot);
-    const toCheck = targetName
-        ? installed.filter((p) => p.name === targetName)
-        : installed;
+    const toCheck = targetName ? installed.filter((p) => p.name === targetName) : installed;
     if (toCheck.length === 0) {
         console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
         return;
@@ -932,9 +929,7 @@ async function cmdStatus(args) {
         const fileStatuses = [];
         for (const [relPath, hashEntry] of Object.entries(entry.files)) {
             const sourceFile = findSourceFile(p.path, pluginManifest, relPath);
-            const sourceHash = sourceFile && fs.existsSync(sourceFile)
-                ? computeFileHash(sourceFile)
-                : "";
+            const sourceHash = sourceFile && fs.existsSync(sourceFile) ? computeFileHash(sourceFile) : "";
             const state = computeThreeWayState(relPath, projectRoot, hashEntry, sourceHash);
             fileStatuses.push({ path: relPath, state });
         }
@@ -947,11 +942,17 @@ async function cmdStatus(args) {
     for (const result of allResults) {
         console.log(`\n${result.plugin}:`);
         for (const f of result.files) {
-            const icon = f.state === "clean" ? " " :
-                f.state === "plugin-updated" ? "P" :
-                    f.state === "user-modified" ? "U" :
-                        f.state === "conflict" ? "C" :
-                            f.state === "missing" ? "!" : "?";
+            const icon = f.state === "clean"
+                ? " "
+                : f.state === "plugin-updated"
+                    ? "P"
+                    : f.state === "user-modified"
+                        ? "U"
+                        : f.state === "conflict"
+                            ? "C"
+                            : f.state === "missing"
+                                ? "!"
+                                : "?";
             console.log(`  [${icon}] ${path.basename(f.path)}: ${f.state}`);
         }
     }

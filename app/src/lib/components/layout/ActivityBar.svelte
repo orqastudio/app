@@ -47,7 +47,15 @@
 	}
 </script>
 
-<div class="border-border bg-muted/30 flex w-12 flex-col items-center gap-0 border-r py-2">
+<Panel
+	fixedWidth="icon-bar"
+	border="right"
+	background="muted-subtle"
+	direction="column"
+	align="center"
+	padding="none"
+	full
+>
 	{#if navItems}
 		<!-- Render main nav items, skipping bottom fixed items -->
 		{#each navItems as item (item.key)}
@@ -119,4 +127,4 @@
 			/>
 		{/if}
 	{/if}
-</div>
+</Panel>

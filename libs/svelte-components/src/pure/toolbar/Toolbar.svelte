@@ -1,3 +1,5 @@
+<!-- Toolbar — horizontal bar with left/center/right zones.
+     For Tauri window title bars that need drag region support, use WindowTitleBar instead. -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { HStack, Spacer } from "../layout/index.js";

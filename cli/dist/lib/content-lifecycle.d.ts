@@ -146,7 +146,6 @@ export declare function computeThreeWayState(relPath: string, projectRoot: strin
  * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
  * by comparing the current installed hash against the baseline recorded at install
  * time and the current plugin source hash.
- *
  * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
  * @param lastEntry - The hash entry recorded at last install (baseline hashes).
  * @param currentSourceHash - Current hash of the file in the plugin source.

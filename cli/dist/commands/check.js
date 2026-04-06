@@ -21,7 +21,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { loadPluginTools, extractEnforcementEntries, generateConfigs, } from "../lib/config-generator.js";
 import { getRoot } from "../lib/root.js";
-import { runValidation, formatReport, } from "../lib/validation-engine.js";
+import { runValidation, formatReport } from "../lib/validation-engine.js";
 const USAGE = `
 Usage: orqa check [subcommand]
 

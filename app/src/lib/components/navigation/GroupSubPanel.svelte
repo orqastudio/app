@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { TooltipRoot, TooltipTrigger, Stack } from "@orqastudio/svelte-components/pure";
+	import { TooltipRoot, TooltipTrigger, Stack, NavItem } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, projectStore, artifactStore } = getStores();
 	import { isArtifactGroup } from "@orqastudio/types";
-	import { Icon } from "@orqastudio/svelte-components/pure";
+	import { resolveIcon } from "@orqastudio/svelte-components/pure";
 
 	let { group }: { group: string } = $props();
 
@@ -54,18 +54,15 @@
 		{@const subIconName = resolveIconName(sub.icon ?? getSubCategoryIcon(sub.key))}
 		{@const isActive = activeSubCategory === sub.key}
 		<TooltipRoot>
-			<TooltipTrigger class="w-full">
+			<TooltipTrigger full>
 				{#snippet child({ props })}
-					<button
+					<NavItem
 						{...props}
-						class="flex w-full items-center justify-start gap-2 px-3 py-2 text-sm {isActive
-							? 'bg-accent text-accent-foreground font-medium'
-							: 'text-muted-foreground hover:bg-accent/40 hover:text-foreground'}"
+						icon={resolveIcon(subIconName)}
+						label={sub.label}
+						active={isActive}
 						onclick={() => navigationStore.setSubCategory(sub.key)}
-					>
-						<Icon name={subIconName} size="md" />
-						<span class="truncate">{sub.label}</span>
-					</button>
+					/>
 				{/snippet}
 			</TooltipTrigger>
 		</TooltipRoot>

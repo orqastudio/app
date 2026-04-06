@@ -17,6 +17,7 @@
 		LoadingSpinner,
 		Heading,
 		HStack,
+		Box,
 		Caption,
 		Text,
 		Panel,
@@ -221,7 +222,7 @@
 							aria-selected={isActive}
 							tabindex={0}
 						>
-							<div class="min-w-0 flex-1">
+							<Box flex={1} minWidth={0}>
 								<HStack gap={1} wrap>
 									<Text variant="label" truncate>{session.title ?? "Untitled"}</Text>
 									<Badge variant={statusVariant(session.status)} size="xs">
@@ -238,7 +239,7 @@
 										{session.preview}
 									</Caption>
 								{/if}
-							</div>
+							</Box>
 							<!-- Delete button -->
 							<Button
 								variant="ghost"

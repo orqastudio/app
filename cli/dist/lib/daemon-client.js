@@ -7,6 +7,7 @@
  * `orqa-validation` binary when the daemon is unreachable.
  */
 import { spawnSync } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { findBinary } from "./validation-engine.js";
 // ---------------------------------------------------------------------------
 // Configuration
@@ -16,21 +17,60 @@ const DAEMON_PORT = getPort("daemon");
 const DAEMON_BASE = `http://127.0.0.1:${DAEMON_PORT}`;
 const TIMEOUT_MS = 5000;
 // ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+/**
+ * Generate a short correlation ID for an outgoing HTTP request.
+ * Uses Node.js `crypto.randomBytes`. Returns the first 16 hex characters —
+ * compact for headers while still providing ~64 bits of entropy.
+ * @returns A 16-character hex string correlation ID.
+ */
+function generateCorrelationId() {
+    return randomBytes(8).toString("hex");
+}
+/**
+ * Capture the call-site source location from the current stack trace.
+ * Skips internal frames (getCallSite itself and callDaemonGraph) to surface
+ * the actual CLI command file that initiated the request, giving the daemon
+ * observability into which command triggered each graph query or validation.
+ * @returns Object with file path and optional line number of the call site.
+ */
+function getCallSite() {
+    const stack = new Error().stack;
+    if (!stack)
+        return { file: "unknown" };
+    // Skip frame 0 (Error), frame 1 (getCallSite), frame 2 (callDaemonGraph) — use frame 3
+    const lines = stack.split("\n");
+    const frame = lines[3] || lines[2] || lines[1] || "";
+    const match = frame.match(/\((.+):(\d+):\d+\)/) || frame.match(/at (.+):(\d+):\d+/);
+    if (match)
+        return { file: match[1], line: parseInt(match[2], 10) };
+    return { file: frame.trim() };
+}
+// ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 /**
  * Call a daemon endpoint. Falls back to the `orqa-validation` binary if
  * the daemon is unreachable.
+ * Attaches x-source-file and x-source-line headers so the daemon can log
+ * which CLI command originated the request.
  * @param method - HTTP method (GET or POST)
  * @param path - Endpoint path (e.g. "/query")
  * @param body - JSON body for POST requests
  * @returns The parsed JSON response from the daemon or binary fallback.
  */
 export async function callDaemonGraph(method, path, body) {
+    const callSite = getCallSite();
     try {
         const options = {
             method,
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                "x-request-id": generateCorrelationId(),
+                "x-source-file": callSite.file,
+                "x-source-line": String(callSite.line ?? ""),
+            },
             signal: AbortSignal.timeout(TIMEOUT_MS),
         };
         if (body !== undefined) {

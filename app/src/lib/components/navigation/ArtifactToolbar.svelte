@@ -17,10 +17,13 @@
 		Stack,
 		Box,
 		Caption,
+		Text,
 		Panel,
+		SectionHeader,
 		SectionFooter,
+		Dot,
+		CheckIndicator,
 		statusIconName,
-		resolveIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
 	import type {
@@ -168,131 +171,126 @@
 	]);
 </script>
 
-<div class="border-border flex h-10 items-center justify-end gap-1 border-b px-2">
-	<!-- Sort dropdown -->
-	<Box position="relative">
-		<DropdownMenuRoot>
-			<DropdownMenuTrigger>
-				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="icon-sm">
-						<Icon name="arrow-up-down" size="sm" />
-					</Button>
-				{/snippet}
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="start">
-				<DropdownMenuLabel>Sort by</DropdownMenuLabel>
-				<DropdownMenuRadioGroup value={sortValue} onValueChange={setSortFromValue}>
-					{#each sortOptions as option (option.value)}
-						<DropdownMenuRadioItem value={option.value}>
-							{option.label}
-						</DropdownMenuRadioItem>
-					{/each}
-				</DropdownMenuRadioGroup>
-
-				{#if filterableFields.length > 0}
-					<DropdownMenuSeparator />
-					<DropdownMenuLabel>Group by</DropdownMenuLabel>
-					<DropdownMenuItem onclick={() => onGroupChange(null)}>
-						<HStack gap={2}>
-							{#if currentGroup === null}
-								<Icon name="check" size="sm" />
-							{:else}
-								<span class="h-3.5 w-3.5"></span>
-							{/if}
-							None
-						</HStack>
-					</DropdownMenuItem>
-					{#each filterableFields as field (field.name)}
-						<DropdownMenuItem onclick={() => onGroupChange(field.name)}>
-							<HStack gap={2}>
-								{#if currentGroup === field.name}
-									<Icon name="check" size="sm" />
-								{:else}
-									<span class="h-3.5 w-3.5"></span>
-								{/if}
-								{humanizeField(field.name)}
-							</HStack>
-						</DropdownMenuItem>
-					{/each}
-				{/if}
-			</DropdownMenuContent>
-		</DropdownMenuRoot>
-		{#if isNonDefaultSort}
-			<span
-				class="bg-primary pointer-events-none absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full"
-			></span>
-		{/if}
-	</Box>
-
-	<!-- Filter popover -->
-	{#if filterableFields.length > 0}
+<SectionHeader variant="compact">
+	{#snippet end()}
+		<!-- Sort dropdown -->
 		<Box position="relative">
-			<Popover>
-				<PopoverTrigger>
+			<DropdownMenuRoot>
+				<DropdownMenuTrigger>
 					{#snippet child({ props })}
 						<Button {...props} variant="ghost" size="icon-sm">
-							<Icon name="filter" size="sm" />
+							<Icon name="arrow-up-down" size="sm" />
 						</Button>
 					{/snippet}
-				</PopoverTrigger>
-				<PopoverContent align="start">
-					<Stack gap={0}>
-						{#each filterableFields as field (field.name)}
-							{@const counts = countFieldValues(nodes, field.name)}
-							<Panel padding="tight" border="bottom">
-								<HStack justify="between">
-									<Caption>
-										{humanizeField(field.name)}
-									</Caption>
-									{#if (currentFilters[field.name] ?? []).length > 0}
-										<Button variant="ghost" size="sm" onclick={() => clearFieldFilters(field.name)}>
-											Clear
-										</Button>
-									{/if}
-								</HStack>
-								<Stack gap={0}>
-									{#each field.values as value (value)}
-										{@const active = isFilterActive(field.name, value)}
-										{@const count = counts[value] ?? 0}
-										<Button variant="ghost" onclick={() => toggleFilter(field.name, value)}>
-											<!-- Checkbox indicator -->
-											<span
-												class="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm border {active
-													? 'border-primary bg-primary'
-													: 'border-muted-foreground/40'}"
-											>
-												{#if active}
-													<Icon name="check" size="md" />
-												{/if}
-											</span>
-											<!-- Status icon if this is a status field -->
-											{#if field.name === "status"}
-												{@const StatusIcon = resolveIcon(statusIconName(value))}
-												<StatusIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
-											{/if}
-											<span class="flex-1 capitalize">{humanizeValue(value)}</span>
-											{#if count > 0}
-												<Caption>{count}</Caption>
-											{/if}
-										</Button>
-									{/each}
-								</Stack>
-							</Panel>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="start">
+					<DropdownMenuLabel>Sort by</DropdownMenuLabel>
+					<DropdownMenuRadioGroup value={sortValue} onValueChange={setSortFromValue}>
+						{#each sortOptions as option (option.value)}
+							<DropdownMenuRadioItem value={option.value}>
+								{option.label}
+							</DropdownMenuRadioItem>
 						{/each}
+					</DropdownMenuRadioGroup>
 
-						{#if hasActiveFilters}
-							<SectionFooter variant="compact">
-								<Button variant="ghost" onclick={clearAllFilters}>Clear all filters</Button>
-							</SectionFooter>
-						{/if}
-					</Stack>
-				</PopoverContent>
-			</Popover>
-			{#if hasActiveFilters}
-				<span
-					class="bg-primary pointer-events-none absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full"
-				></span>
+					{#if filterableFields.length > 0}
+						<DropdownMenuSeparator />
+						<DropdownMenuLabel>Group by</DropdownMenuLabel>
+						<DropdownMenuItem onclick={() => onGroupChange(null)}>
+							<HStack gap={2}>
+								{#if currentGroup === null}
+									<Icon name="check" size="sm" />
+								{:else}
+									<Box size="icon-sm" />
+								{/if}
+								None
+							</HStack>
+						</DropdownMenuItem>
+						{#each filterableFields as field (field.name)}
+							<DropdownMenuItem onclick={() => onGroupChange(field.name)}>
+								<HStack gap={2}>
+									{#if currentGroup === field.name}
+										<Icon name="check" size="sm" />
+									{:else}
+										<Box size="icon-sm" />
+									{/if}
+									{humanizeField(field.name)}
+								</HStack>
+							</DropdownMenuItem>
+						{/each}
+					{/if}
+				</DropdownMenuContent>
+			</DropdownMenuRoot>
+			{#if isNonDefaultSort}
+				<Box position="absolute" top={0.5} right={0.5}>
+					<Dot size="xs" color="primary" />
+				</Box>
 			{/if}
 		</Box>
-	{/if}
-</div>
+
+		<!-- Filter popover -->
+		{#if filterableFields.length > 0}
+			<Box position="relative">
+				<Popover>
+					<PopoverTrigger>
+						{#snippet child({ props })}
+							<Button {...props} variant="ghost" size="icon-sm">
+								<Icon name="filter" size="sm" />
+							</Button>
+						{/snippet}
+					</PopoverTrigger>
+					<PopoverContent align="start">
+						<Stack gap={0}>
+							{#each filterableFields as field (field.name)}
+								{@const counts = countFieldValues(nodes, field.name)}
+								<Panel padding="tight" border="bottom">
+									<HStack justify="between">
+										<Caption>
+											{humanizeField(field.name)}
+										</Caption>
+										{#if (currentFilters[field.name] ?? []).length > 0}
+											<Button
+												variant="ghost"
+												size="sm"
+												onclick={() => clearFieldFilters(field.name)}
+											>
+												Clear
+											</Button>
+										{/if}
+									</HStack>
+									<Stack gap={0}>
+										{#each field.values as value (value)}
+											{@const active = isFilterActive(field.name, value)}
+											{@const count = counts[value] ?? 0}
+											<Button variant="ghost" onclick={() => toggleFilter(field.name, value)}>
+												<CheckIndicator checked={active} />
+												{#if field.name === "status"}
+													<Icon name={statusIconName(value)} size="sm" />
+												{/if}
+												<Box flex={1}><Text variant="body">{humanizeValue(value)}</Text></Box>
+												{#if count > 0}
+													<Caption>{count}</Caption>
+												{/if}
+											</Button>
+										{/each}
+									</Stack>
+								</Panel>
+							{/each}
+
+							{#if hasActiveFilters}
+								<SectionFooter variant="compact">
+									<Button variant="ghost" onclick={clearAllFilters}>Clear all filters</Button>
+								</SectionFooter>
+							{/if}
+						</Stack>
+					</PopoverContent>
+				</Popover>
+				{#if hasActiveFilters}
+					<Box position="absolute" top={0.5} right={0.5}>
+						<Dot size="xs" color="primary" />
+					</Box>
+				{/if}
+			</Box>
+		{/if}
+	{/snippet}
+</SectionHeader>

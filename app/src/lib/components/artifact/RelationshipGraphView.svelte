@@ -9,6 +9,7 @@
 
 	const { artifactGraphSDK, navigationStore } = getStores();
 	import type { ArtifactRef } from "@orqastudio/types";
+	import { Box } from "@orqastudio/svelte-components/pure";
 
 	// Register layout extension once (safe to call multiple times — cytoscape deduplicates)
 	cytoscape.use(coseBilkent);
@@ -23,7 +24,7 @@
 		outgoingRefs: readonly ArtifactRef[];
 	} = $props();
 
-	/** Container div bound by the template. */
+	/** Container div bound by the template via Box ref. */
 	let container = $state<HTMLDivElement | undefined>(undefined);
 
 	/** The cytoscape instance, cleaned up on destroy. */
@@ -245,9 +246,10 @@
 	});
 </script>
 
-<div
-	bind:this={container}
-	class="h-full w-full"
+<Box
+	bind:ref={container}
+	height="full"
+	width="full"
 	role="img"
 	aria-label="Relationship graph for {artifactId}"
-></div>
+/>

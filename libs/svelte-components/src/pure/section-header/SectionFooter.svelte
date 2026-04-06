@@ -21,6 +21,9 @@ Variants:
 		section: "px-3 py-2 border-t border-border",
 		subsection: "px-3 py-1.5 border-t border-border",
 		compact: "px-2 py-1 border-t border-border",
+		// App-level status bar: fixed 2rem height, small text, muted foreground, right-edge padding offset for status icons
+		"status-bar":
+			"h-8 px-4 pb-[0.25rem] border-t border-border text-xs text-muted-foreground bg-[color-mix(in_srgb,var(--color-muted)_30%,transparent)]",
 	};
 
 	const backgroundMap: Record<string, string> = {
@@ -28,6 +31,8 @@ Variants:
 		card: "bg-card",
 		muted: "bg-muted",
 		surface: "bg-surface",
+		// Primary-tinted: used for historical-session banners.
+		"primary-subtle": "bg-primary/8",
 	};
 
 	let {
@@ -39,7 +44,7 @@ Variants:
 		role,
 		"aria-label": ariaLabel,
 	}: {
-		variant?: "section" | "subsection" | "compact";
+		variant?: "section" | "subsection" | "compact" | "status-bar";
 		background?: "none" | "card" | "muted" | "surface";
 		start?: Snippet;
 		end?: Snippet;

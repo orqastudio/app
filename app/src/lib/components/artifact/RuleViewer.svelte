@@ -9,6 +9,7 @@
 		Text,
 		Button,
 		Panel,
+		Separator,
 	} from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
@@ -34,51 +35,51 @@
 </script>
 
 <Stack gap={4}>
-	<!-- Enforcement status bar — flex-wrap not in HStack props, kept as div. -->
-	<div
-		class="border-border bg-muted/30 flex flex-wrap items-center gap-2 rounded-md border px-3 py-2"
-	>
-		{#if isLoaded}
-			<HStack gap={1}>
-				<Icon name="check-circle" size="sm" />
-				<Text variant="caption" tone="success">Loaded</Text>
-			</HStack>
-		{:else}
-			<HStack gap={1}>
-				<Icon name="circle-dashed" size="sm" />
-				<Text variant="caption">Not loaded</Text>
-			</HStack>
-		{/if}
+	<!-- Enforcement status bar -->
+	<Panel background="muted-subtle" border="all" rounded="md" padding="tight">
+		<HStack wrap gap={2}>
+			{#if isLoaded}
+				<HStack gap={1}>
+					<Icon name="check-circle" size="sm" />
+					<Text variant="caption" tone="success">Loaded</Text>
+				</HStack>
+			{:else}
+				<HStack gap={1}>
+					<Icon name="circle-dashed" size="sm" />
+					<Text variant="caption">Not loaded</Text>
+				</HStack>
+			{/if}
 
-		{#if matchedRule}
-			<span class="text-muted-foreground">|</span>
-			<HStack gap={1}>
-				{#if matchedRule.scope === "system"}
-					<Icon name="globe" size="xs" />
-					<Text variant="caption">System</Text>
-				{:else}
-					<Icon name="folder" size="xs" />
-					<Text variant="caption">Project</Text>
-				{/if}
-			</HStack>
-			<span class="text-muted-foreground">|</span>
-			<Text variant="caption">
-				{matchedRule.entries.length}
-				{matchedRule.entries.length === 1 ? "entry" : "entries"}
-			</Text>
-		{/if}
+			{#if matchedRule}
+				<Separator orientation="vertical" />
+				<HStack gap={1}>
+					{#if matchedRule.scope === "system"}
+						<Icon name="globe" size="xs" />
+						<Text variant="caption">System</Text>
+					{:else}
+						<Icon name="folder" size="xs" />
+						<Text variant="caption">Project</Text>
+					{/if}
+				</HStack>
+				<Separator orientation="vertical" />
+				<Text variant="caption">
+					{matchedRule.entries.length}
+					{matchedRule.entries.length === 1 ? "entry" : "entries"}
+				</Text>
+			{/if}
 
-		{#if ruleBlockCount > 0}
-			<Badge variant="destructive" size="sm">
-				{ruleBlockCount} blocked
-			</Badge>
-		{/if}
-		{#if ruleWarnCount > 0}
-			<Badge variant="warning" size="sm">
-				{ruleWarnCount} warned
-			</Badge>
-		{/if}
-	</div>
+			{#if ruleBlockCount > 0}
+				<Badge variant="destructive" size="sm">
+					{ruleBlockCount} blocked
+				</Badge>
+			{/if}
+			{#if ruleWarnCount > 0}
+				<Badge variant="warning" size="sm">
+					{ruleWarnCount} warned
+				</Badge>
+			{/if}
+		</HStack>
+	</Panel>
 
 	<!-- Violation details (collapsible) -->
 	{#if ruleViolations.length > 0}

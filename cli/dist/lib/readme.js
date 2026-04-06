@@ -46,8 +46,8 @@ const LANGUAGE_DETECTORS = [
 ];
 function hasFileWithExt(dir, ext) {
     try {
-        return fs.readdirSync(dir).some((f) => f.endsWith(ext)) ||
-            fs.readdirSync(path.join(dir, "src")).some((f) => f.endsWith(ext));
+        return (fs.readdirSync(dir).some((f) => f.endsWith(ext)) ||
+            fs.readdirSync(path.join(dir, "src")).some((f) => f.endsWith(ext)));
     }
     catch {
         return false;
@@ -99,9 +99,7 @@ export function auditReadmes(projectRoot) {
 function checkReadme(dir, name) {
     const readmePath = path.join(dir, "README.md");
     // Detect languages present in this repo
-    const detectedLanguages = LANGUAGE_DETECTORS
-        .filter((d) => d.detect(dir))
-        .map((d) => d.name);
+    const detectedLanguages = LANGUAGE_DETECTORS.filter((d) => d.detect(dir)).map((d) => d.name);
     if (!fs.existsSync(readmePath)) {
         return {
             dir,

@@ -81,12 +81,14 @@ ScrollArea. There is no overflow prop — by design. -->
 		height,
 		width,
 		minHeight,
+		minWidth,
 		flex,
 		indent,
 		role,
 		tabindex,
 		"aria-selected": ariaSelected,
 		"aria-label": ariaLabel,
+		"data-menu-bar": dataMenuBar,
 		onclick,
 		onkeydown,
 		children,
@@ -103,6 +105,8 @@ ScrollArea. There is no overflow prop — by design. -->
 		width?: "full" | "screen";
 		/** Sets min-h-0 to allow flex children to shrink below content size. */
 		minHeight?: 0;
+		/** Sets min-w-0 to allow flex children to shrink below content size in the inline axis. */
+		minWidth?: 0;
 		/** flex-none (0) or flex-1 (1) shorthand. */
 		flex?: 0 | 1;
 		/** Tree depth. Each level adds 8px of left margin. Clamped to 0-8. */
@@ -111,6 +115,8 @@ ScrollArea. There is no overflow prop — by design. -->
 		tabindex?: number;
 		"aria-selected"?: boolean;
 		"aria-label"?: string;
+		/** Marks this row as a menu bar, excluding it from Tauri window drag regions. */
+		"data-menu-bar"?: boolean;
 		onclick?: (e: MouseEvent) => void;
 		onkeydown?: (e: KeyboardEvent) => void;
 		children?: Snippet;
@@ -137,6 +143,7 @@ ScrollArea. There is no overflow prop — by design. -->
 		heightClass,
 		widthClass,
 		minHeight === 0 && "min-h-0",
+		minWidth === 0 && "min-w-0",
 		flexClass,
 		indentClass,
 	)}
@@ -144,6 +151,7 @@ ScrollArea. There is no overflow prop — by design. -->
 	{tabindex}
 	aria-selected={ariaSelected}
 	aria-label={ariaLabel}
+	data-menu-bar={dataMenuBar || undefined}
 	{onclick}
 	{onkeydown}
 >

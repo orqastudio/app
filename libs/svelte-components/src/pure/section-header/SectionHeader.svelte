@@ -26,6 +26,7 @@ Variants:
 	let {
 		variant = "section",
 		background = "none",
+		position,
 		start,
 		end,
 		children,
@@ -33,7 +34,12 @@ Variants:
 		"aria-label": ariaLabel,
 	}: {
 		variant?: "section" | "subsection" | "compact";
-		background?: "none" | "card" | "muted" | "surface";
+		background?: "none" | "card" | "muted" | "surface" | "primary-subtle";
+		/**
+		 * When "relative", sets position:relative and removes overflow:hidden so absolutely-positioned
+		 * children (e.g. dropdown panels) are anchored to this header and not clipped.
+		 */
+		position?: "relative";
 		start?: Snippet;
 		end?: Snippet;
 		children?: Snippet;
@@ -48,13 +54,17 @@ Variants:
 		card: "bg-card",
 		muted: "bg-muted",
 		surface: "bg-surface",
+		// Primary-tinted: used for historical-session banners in the log table.
+		"primary-subtle": "bg-primary/8",
 	};
 	const backgroundClass = $derived(backgroundMap[background] ?? "");
 </script>
 
 <div
 	class={cn(
-		"flex items-center justify-between gap-2 overflow-hidden",
+		"flex items-center justify-between gap-2",
+		position !== "relative" && "overflow-hidden",
+		position === "relative" && "relative",
 		variantClass,
 		backgroundClass,
 	)}

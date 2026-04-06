@@ -18,6 +18,8 @@
 				default: "text-xs",
 				sm: "text-[11px] leading-none",
 				xs: "text-[10px] leading-none px-1",
+				// Log table column badge: fixed 42px width, centered, uppercase monospace.
+				log: "w-[42px] justify-center font-mono text-[10px] uppercase leading-none px-1",
 			},
 			capitalize: {
 				true: "capitalize",

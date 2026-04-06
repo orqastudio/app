@@ -133,12 +133,19 @@ export function checkVersionDrift(projectRoot) {
                     continue;
                 for (const [key, val] of Object.entries(data[section])) {
                     if (key.startsWith("@orqastudio/") && val !== canonical) {
-                        drift.push({ file: `${filePath} → ${key}`, found: val, expected: canonical, type: "dependency" });
+                        drift.push({
+                            file: `${filePath} → ${key}`,
+                            found: val,
+                            expected: canonical,
+                            type: "dependency",
+                        });
                     }
                 }
             }
         }
-        catch { /* skip */ }
+        catch {
+            /* skip */
+        }
     };
     // Scan all known locations
     for (const dir of ["libs", "plugins", "connectors", "sidecars"]) {
@@ -163,7 +170,9 @@ export function checkVersionDrift(projectRoot) {
                 drift.push({ file: cargoToml, found: match[1], expected: canonical, type: "cargo" });
             }
         }
-        catch { /* skip */ }
+        catch {
+            /* skip */
+        }
     }
     return drift;
 }

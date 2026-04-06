@@ -50,10 +50,12 @@ ScrollArea. There is no overflow prop — by design. -->
 		height,
 		width,
 		minHeight,
+		minWidth,
 		flex,
 		role,
 		tabindex,
 		"aria-label": ariaLabel,
+		"aria-multiselectable": ariaMultiselectable,
 		children,
 	}: {
 		gap?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
@@ -66,11 +68,14 @@ ScrollArea. There is no overflow prop — by design. -->
 		width?: "full" | "screen";
 		/** Sets min-h-0 to allow flex children to shrink below content size. */
 		minHeight?: 0;
+		/** Sets min-w-0 to allow flex children to shrink below content size. */
+		minWidth?: 0;
 		/** flex-none (0) or flex-1 (1) shorthand. */
 		flex?: 0 | 1;
 		role?: string;
 		tabindex?: number;
 		"aria-label"?: string;
+		"aria-multiselectable"?: boolean | "true" | "false";
 		children?: Snippet;
 	} = $props();
 
@@ -92,11 +97,13 @@ ScrollArea. There is no overflow prop — by design. -->
 		heightClass,
 		widthClass,
 		minHeight === 0 && "min-h-0",
+		minWidth === 0 && "min-w-0",
 		flexClass,
 	)}
 	{role}
 	{tabindex}
 	aria-label={ariaLabel}
+	aria-multiselectable={ariaMultiselectable}
 >
 	{@render children?.()}
 </div>

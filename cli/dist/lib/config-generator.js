@@ -42,7 +42,9 @@ export function extractEnforcementEntries(rulesDir) {
                 continue;
             for (const entry of enforcement) {
                 const e = entry;
-                if (typeof e["plugin"] === "string" && typeof e["tool"] === "string" && Array.isArray(e["config"])) {
+                if (typeof e["plugin"] === "string" &&
+                    typeof e["tool"] === "string" &&
+                    Array.isArray(e["config"])) {
                     entries.push({
                         plugin: e["plugin"],
                         tool: e["tool"],
@@ -51,7 +53,9 @@ export function extractEnforcementEntries(rulesDir) {
                 }
             }
         }
-        catch { /* skip unparseable */ }
+        catch {
+            /* skip unparseable */
+        }
     }
     return entries;
 }
@@ -88,7 +92,9 @@ export function loadPluginTools(projectRoot) {
             }
             result.set(pluginName, toolMap);
         }
-        catch { /* skip */ }
+        catch {
+            /* skip */
+        }
     }
     return result;
 }
@@ -136,9 +142,7 @@ function buildJsonConfig(configs, toolName) {
         const rules = {};
         for (const c of configs) {
             if (c["rule"] && c["severity"]) {
-                rules[c["rule"]] = c["options"]
-                    ? [c["severity"], c["options"]]
-                    : c["severity"];
+                rules[c["rule"]] = c["options"] ? [c["severity"], c["options"]] : c["severity"];
             }
         }
         return { rules };

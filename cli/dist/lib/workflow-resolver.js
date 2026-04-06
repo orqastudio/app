@@ -76,7 +76,9 @@ export function discoverWorkflows(projectRoot) {
             }
         }
         // Scan for workflow files
-        const workflowFiles = fs.readdirSync(workflowsDir).filter((f) => f.endsWith(".workflow.yaml") || f.endsWith(".workflow.yml"));
+        const workflowFiles = fs
+            .readdirSync(workflowsDir)
+            .filter((f) => f.endsWith(".workflow.yaml") || f.endsWith(".workflow.yml"));
         for (const file of workflowFiles) {
             const filePath = path.join(workflowsDir, file);
             try {
@@ -91,8 +93,7 @@ export function discoverWorkflows(projectRoot) {
                     errors.push(`${filePath}: Missing required fields (name, states, transitions)`);
                     continue;
                 }
-                const isSkeleton = Array.isArray(parsed.contribution_points) &&
-                    parsed.contribution_points.length > 0;
+                const isSkeleton = Array.isArray(parsed.contribution_points) && parsed.contribution_points.length > 0;
                 workflows.push({
                     filePath,
                     pluginDir,
@@ -127,7 +128,9 @@ export function discoverOverrides(projectRoot) {
     if (!fs.existsSync(overridesDir)) {
         return { overrides, errors };
     }
-    const files = fs.readdirSync(overridesDir).filter((f) => f.endsWith(".override.yaml") || f.endsWith(".override.yml"));
+    const files = fs
+        .readdirSync(overridesDir)
+        .filter((f) => f.endsWith(".override.yaml") || f.endsWith(".override.yml"));
     for (const file of files) {
         const filePath = path.join(overridesDir, file);
         try {
@@ -203,11 +206,7 @@ export function applyOverrides(definition, overrides, metadata) {
         }
         // Apply top-level field overrides
         if (override.fields) {
-            const allowedFields = new Set([
-                "description",
-                "initial_state",
-                "version",
-            ]);
+            const allowedFields = new Set(["description", "initial_state", "version"]);
             for (const [field, value] of Object.entries(override.fields)) {
                 if (!allowedFields.has(field)) {
                     errors.push(`${filePath}: Cannot override field "${field}" — only ${[...allowedFields].join(", ")} are allowed`);
@@ -217,7 +216,9 @@ export function applyOverrides(definition, overrides, metadata) {
                 fieldsOverridden.push(field);
             }
         }
-        const relPath = path.relative(path.join(path.dirname(filePath), "..", ".."), filePath).replace(/\\/g, "/");
+        const relPath = path
+            .relative(path.join(path.dirname(filePath), "..", ".."), filePath)
+            .replace(/\\/g, "/");
         metadata.overrides.push({
             file: relPath,
             statesAdded,
@@ -417,9 +418,7 @@ export function validateResolvedWorkflow(definition, metadata) {
         }
     }
     // Transition references
-    const gateNames = definition.gates
-        ? new Set(Object.keys(definition.gates))
-        : new Set();
+    const gateNames = definition.gates ? new Set(Object.keys(definition.gates)) : new Set();
     for (let i = 0; i < definition.transitions.length; i++) {
         const t = definition.transitions[i];
         const fromStates = Array.isArray(t.from) ? t.from : [t.from];
@@ -557,9 +556,9 @@ function writeStageResolvedWorkflows(skeleton, contributions, projectRoot, outpu
         }
         // Determine initial state for the stage contribution workflow.
         const initialState = stageTransitions.length > 0
-            ? (Array.isArray(stageTransitions[0].from)
+            ? ((Array.isArray(stageTransitions[0].from)
                 ? stageTransitions[0].from[0]
-                : stageTransitions[0].from) ?? Object.keys(stageStates)[0]
+                : stageTransitions[0].from) ?? Object.keys(stageStates)[0])
             : Object.keys(stageStates)[0];
         const primaryPlugin = contributingPlugins[0]?.plugin ?? "unknown";
         // Build the stage resolved YAML object.
@@ -639,20 +638,20 @@ function buildArtifactTypeSummary(schema, pluginName) {
     return {
         id_prefix: schema.idPrefix,
         id_pattern: buildIdPatternForSchema(schema.idPrefix),
-        default_path: schema.defaultPath.endsWith("/")
-            ? schema.defaultPath
-            : schema.defaultPath + "/",
+        default_path: schema.defaultPath.endsWith("/") ? schema.defaultPath : schema.defaultPath + "/",
         icon: schema.icon,
         source_plugin: pluginName,
         fields: { required, optional },
         additional_properties: schema.frontmatter.additionalProperties ?? true,
-        ...(statuses.length > 0 ? {
-            state_machine: {
-                initial_state: statuses[0],
-                states: buildStateMapFromTransitions(schema.statusTransitions ?? {}),
-                transitions: [],
-            },
-        } : {}),
+        ...(statuses.length > 0
+            ? {
+                state_machine: {
+                    initial_state: statuses[0],
+                    states: buildStateMapFromTransitions(schema.statusTransitions ?? {}),
+                    transitions: [],
+                },
+            }
+            : {}),
     };
 }
 /**

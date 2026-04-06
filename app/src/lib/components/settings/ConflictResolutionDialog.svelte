@@ -152,11 +152,13 @@
 	}
 </script>
 
+<!-- Exception: fixed overlay with backdrop-blur-sm — requires CSS positioning/filter not expressible via ORQA layout primitives -->
 <div class="bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
 	<Panel padding="loose" rounded="lg" border="all">
 		<Stack gap={4}>
 			<!-- Header -->
 			<HStack gap={3}>
+				<!-- Exception: amber warning circle — bg-amber-500/10 is a semantic warning color not in the Panel background token set -->
 				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
 					<Icon name="triangle-alert" size="md" />
 				</div>

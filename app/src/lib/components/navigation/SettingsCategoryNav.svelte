@@ -1,6 +1,13 @@
 <!-- Settings category navigation with architecture-aligned section groups. -->
 <script lang="ts">
-	import { Icon, ScrollArea, Stack, Text, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		ScrollArea,
+		Stack,
+		Text,
+		Panel,
+		NavItem,
+		resolveIcon,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { settingsStore, pluginRegistry } = getStores();
@@ -171,19 +178,13 @@
 		{#if mode === "app"}
 			<Stack gap={0}>
 				{#each appCategories as item (item.id)}
-					<button
-						class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection ===
-						item.id
-							? 'bg-accent text-accent-foreground'
-							: 'hover:bg-accent/50'}"
+					<NavItem
+						icon={resolveIcon(item.icon)}
+						label={item.label}
+						description={item.description}
+						active={currentSection === item.id}
 						onclick={() => handleSectionChange(item.id)}
-					>
-						<Icon name={item.icon} size="md" />
-						<Stack gap={0} align="start" minHeight={0}>
-							<Text variant="label" truncate>{item.label}</Text>
-							<Text variant="caption" truncate>{item.description}</Text>
-						</Stack>
-					</button>
+					/>
 				{/each}
 			</Stack>
 		{:else}
@@ -195,19 +196,13 @@
 						</Panel>
 						<Stack gap={0}>
 							{#each group.items as item (item.id)}
-								<button
-									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection ===
-									item.id
-										? 'bg-accent text-accent-foreground'
-										: 'hover:bg-accent/50'}"
+								<NavItem
+									icon={resolveIcon(item.icon)}
+									label={item.label}
+									description={item.description}
+									active={currentSection === item.id}
 									onclick={() => handleSectionChange(item.id)}
-								>
-									<Icon name={item.icon} size="md" />
-									<Stack gap={0} align="start" minHeight={0}>
-										<Text variant="label" truncate>{item.label}</Text>
-										<Text variant="caption" truncate>{item.description}</Text>
-									</Stack>
-								</button>
+								/>
 							{/each}
 						</Stack>
 					</Stack>

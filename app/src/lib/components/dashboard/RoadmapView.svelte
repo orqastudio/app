@@ -12,6 +12,7 @@
 		Stack,
 		Text,
 		Caption,
+		ColorDot,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -167,15 +168,6 @@
 	}
 
 	/**
-	 * CSS inline style string for a card's status dot.
-	 * @param color - Hex color string.
-	 * @returns CSS style attribute value.
-	 */
-	function dotStyle(color: string): string {
-		return `background-color: ${color};`;
-	}
-
-	/**
 	 * Return the color for a given status key within a stage list.
 	 * Falls back to a neutral grey when the status is not found.
 	 * @param stages - The stage list to search.
@@ -251,13 +243,8 @@
 											<Stack gap={1}>
 												<!-- Title row -->
 												<HStack gap={2} align="start">
-													<!-- Status dot with inline color from plugin manifest -->
-													<span
-														aria-hidden="true"
-														style="display: inline-block; margin-top: 0.25rem; height: 0.5rem; width: 0.5rem; flex-shrink: 0; border-radius: 9999px; {dotStyle(
-															statusColor,
-														)}"
-													></span>
+													<!-- Status dot: dynamic color from plugin manifest, not in design token palette -->
+													<ColorDot color={statusColor} />
 													<Button variant="ghost" size="sm" onclick={() => drillIntoMilestone(ms)}>
 														{ms.title}
 													</Button>
@@ -342,13 +329,8 @@
 											<Stack gap={1}>
 												<!-- Title row -->
 												<HStack gap={2} align="start">
-													<!-- Status dot with inline color from plugin manifest -->
-													<span
-														aria-hidden="true"
-														style="display: inline-block; margin-top: 0.25rem; height: 0.5rem; width: 0.5rem; flex-shrink: 0; border-radius: 9999px; {dotStyle(
-															statusColor,
-														)}"
-													></span>
+													<!-- Status dot: dynamic color from plugin manifest, not in design token palette -->
+													<ColorDot color={statusColor} />
 													<Button variant="ghost" size="sm" onclick={() => openEpic(epic)}>
 														{epic.title}
 													</Button>

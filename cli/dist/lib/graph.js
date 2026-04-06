@@ -7,7 +7,7 @@
  * query filtering, or stats computation — these all live canonically in
  * the Rust validation crate.
  */
-import { callDaemonGraph, } from "./daemon-client.js";
+import { callDaemonGraph } from "./daemon-client.js";
 // ---------------------------------------------------------------------------
 // Conversion: daemon ArtifactNode → CLI GraphNode
 // ---------------------------------------------------------------------------

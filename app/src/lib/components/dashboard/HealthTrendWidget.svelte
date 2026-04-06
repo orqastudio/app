@@ -206,7 +206,8 @@
 								</HStack>
 								<!-- Sparkline with y-axis scale — custom SVG chart, wrapped in HStack -->
 								<HStack gap={1} align="start">
-									<!-- Y-axis scale labels use style for precise height alignment -->
+									<!-- Y-axis scale: fixed pixel height must match SVG viewBox; font-size 9px + tabular-nums
+								     cannot be expressed via Stack typed props — inline style is the precise exception here -->
 									<div
 										style="display: flex; flex-direction: column; justify-content: space-between; height: {SPARKLINE_HEIGHT}px; font-size: 9px; font-variant-numeric: tabular-nums; color: hsl(var(--muted-foreground) / 0.6);"
 									>

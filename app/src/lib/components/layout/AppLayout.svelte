@@ -27,6 +27,8 @@
 		Stack,
 		HStack,
 		Box,
+		BackgroundImage,
+		Panel,
 	} from "@orqastudio/svelte-components/pure";
 	import setupBackground from "$lib/assets/setup-background.png";
 
@@ -157,20 +159,11 @@
 			/>
 		{:else if hasProject && needsSetup}
 			<!-- Project needs setup — show wizard only, no chat/nav/activity bar -->
-			<div
-				class="relative flex-1 overflow-hidden"
-				style="background-image: url({setupBackground}); background-size: cover; background-position: center;"
-			>
-				<div class="bg-background/70 absolute inset-0"></div>
-				<div class="relative z-10 flex h-full w-full items-center justify-center px-4">
-					<div class="w-full max-w-lg">
-						<ProjectSetupWizard
-							projectPath={projectStore.projectPath ?? ""}
-							onComplete={() => {}}
-						/>
-					</div>
-				</div>
-			</div>
+			<BackgroundImage src={setupBackground} overlay>
+				<Box maxWidth="lg" width="full">
+					<ProjectSetupWizard projectPath={projectStore.projectPath ?? ""} onComplete={() => {}} />
+				</Box>
+			</BackgroundImage>
 		{:else if hasProject}
 			<!-- Activity Bar (48px fixed width) — project only -->
 			<ActivityBar />
@@ -182,9 +175,9 @@
 
 			<!-- Level 3: Artifact List Panel — shows individual artifacts within the active category -->
 			{#if navigationStore.isArtifactActivity}
-				<div class="border-border flex w-[240px] flex-col overflow-hidden border-r">
+				<Panel fixedWidth="nav-md" border="right" direction="column" full padding="none">
 					<ArtifactNav category={navigationStore.activeActivity} />
-				</div>
+				</Panel>
 			{/if}
 
 			<!-- Explorer + Chat (resizable) -->
@@ -204,9 +197,9 @@
 						</ResizablePane>
 						<ResizableHandle />
 						<ResizablePane defaultSize={30} minSize={20}>
-							<div class="bg-chat flex h-full flex-col">
+							<Stack height="full">
 								<ConversationView />
-							</div>
+							</Stack>
 						</ResizablePane>
 					</ResizablePaneGroup>
 				</Box>

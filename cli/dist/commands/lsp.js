@@ -66,12 +66,13 @@ export async function runLspCommand(args) {
     const projectRoot = getRoot();
     const lspBinary = findLspBinary(projectRoot);
     if (lspBinary === null) {
-        process.stderr.write("orqa-lsp-server binary not found.\n" +
-            "Build it with: cargo build -p orqa-lsp-server\n");
+        process.stderr.write("orqa-lsp-server binary not found.\n" + "Build it with: cargo build -p orqa-lsp-server\n");
         process.exit(1);
     }
     if (!(await isDaemonHealthy())) {
-        process.stderr.write("Warning: daemon not running on port " + DAEMON_PORT + ". " +
+        process.stderr.write("Warning: daemon not running on port " +
+            DAEMON_PORT +
+            ". " +
             "Start dev environment with `orqa dev` in a separate terminal.\n");
     }
     const child = spawn(lspBinary, [projectPath, "--daemon-port", String(DAEMON_PORT)], {

@@ -6,8 +6,8 @@ NO margin. Anything decorative belongs in a purpose-built component (Panel,
 Card, Toolbar, SectionHeader).
 
 The only props Box exposes are:
-  • STRUCTURAL  — flex, height, width, minHeight, minWidth, position, inset,
-                  top, right, bottom, left, zIndex
+  • STRUCTURAL  — flex, height, width, maxWidth, minHeight, minWidth, position,
+                  inset, top, right, bottom, left, zIndex
   • WIRING      — children, role, tabindex, aria-*, onclick
 
 Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea. -->
@@ -26,6 +26,15 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		auto: "w-auto",
 	};
 
+	// Closed-set max-width tokens. Use for constraining content width in fixed-width containers.
+	const maxWidthMap: Record<string, string> = {
+		"60": "max-w-60",
+		xs: "max-w-xs",
+		sm: "max-w-sm",
+		md: "max-w-md",
+		lg: "max-w-lg",
+	};
+
 	const positionMap: Record<string, string> = {
 		relative: "relative",
 		absolute: "absolute",
@@ -37,15 +46,17 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		0: "inset-0",
 	};
 
-	const topMap: Record<number, string> = {
+	const topMap: Record<string, string> = {
 		0: "top-0",
+		0.5: "top-0.5",
 		1: "top-1",
 		2: "top-2",
 		3: "top-3",
 	};
 
-	const rightMap: Record<number, string> = {
+	const rightMap: Record<string, string> = {
 		0: "right-0",
+		0.5: "right-0.5",
 		1: "right-1",
 		2: "right-2",
 		3: "right-3",
@@ -58,11 +69,12 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		3: "bottom-3",
 	};
 
-	const leftMap: Record<number, string> = {
+	const leftMap: Record<string, string> = {
 		0: "left-0",
 		1: "left-1",
 		2: "left-2",
 		3: "left-3",
+		"1/2": "left-1/2",
 	};
 
 	const zIndexMap: Record<number, string> = {
@@ -73,14 +85,28 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		50: "z-50",
 	};
 
+	// Transform presets. "center-x" horizontally centres an absolute/fixed element using
+	// left-1/2 + -translate-x-1/2. Used for floating overlays (e.g. scroll-to-bottom button).
+	const transformMap: Record<string, string> = {
+		"center-x": "-translate-x-1/2",
+	};
+
+	// Fixed icon-sized square presets. Used as invisible spacers for menu icon column alignment.
+	const sizeMap: Record<string, string> = {
+		"icon-sm": "h-3.5 w-3.5 shrink-0",
+		"icon-md": "h-4 w-4 shrink-0",
+	};
+
 	const flexMap: Record<number, string> = {
 		0: "flex-none",
 		1: "flex-1",
 	};
 
 	let {
+		ref = $bindable<HTMLDivElement | undefined>(undefined),
 		height,
 		width,
+		maxWidth,
 		minHeight,
 		minWidth,
 		position,
@@ -91,16 +117,25 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		left,
 		zIndex,
 		flex,
+		transform,
+		size,
+		truncate,
 		role,
 		tabindex,
 		"aria-label": ariaLabel,
+		"aria-hidden": ariaHidden,
 		onclick,
+		onmouseenter,
 		children,
 	}: {
+		/** Bindable reference to the underlying div element (e.g. for canvas/Cytoscape mounting). */
+		ref?: HTMLDivElement;
 		/** Fixed height shorthand. */
 		height?: "full" | "screen";
 		/** Fixed width shorthand. */
 		width?: "full" | "screen" | "auto";
+		/** Maximum width token. Use "60" for 240px, or xs/sm/md/lg for standard widths. */
+		maxWidth?: "60" | "xs" | "sm" | "md" | "lg";
 		/** Sets min-h-0 to allow flex children to shrink below content size. */
 		minHeight?: 0;
 		/** Sets min-w-0 to allow flex children to shrink below content size. */
@@ -110,26 +145,35 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		/** Sets inset-0 (all four offsets to 0). */
 		inset?: 0;
 		/** Top offset. */
-		top?: 0 | 1 | 2 | 3;
+		top?: 0 | 0.5 | 1 | 2 | 3;
 		/** Right offset. */
-		right?: 0 | 1 | 2 | 3;
+		right?: 0 | 0.5 | 1 | 2 | 3;
 		/** Bottom offset. */
 		bottom?: 0 | 1 | 2 | 3;
-		/** Left offset. */
-		left?: 0 | 1 | 2 | 3;
+		/** Left offset. Use "1/2" with transform="center-x" to horizontally centre an absolute element. */
+		left?: 0 | 1 | 2 | 3 | "1/2";
 		/** z-index layer. */
 		zIndex?: 10 | 20 | 30 | 40 | 50;
 		/** flex-none (0) or flex-1 (1) shorthand. */
 		flex?: 0 | 1;
+		/** Transform preset. "center-x" applies -translate-x-1/2 for centering via left-1/2. */
+		transform?: "center-x";
+		/** Fixed icon-sized square. Used as invisible spacers for icon column alignment in menus. */
+		size?: "icon-sm" | "icon-md";
+		/** When true, truncates overflowing text with an ellipsis. */
+		truncate?: boolean;
 		role?: string;
 		tabindex?: number;
 		"aria-label"?: string;
+		"aria-hidden"?: boolean | "true" | "false";
 		onclick?: (e: MouseEvent) => void;
+		onmouseenter?: (e: MouseEvent) => void;
 		children?: Snippet;
 	} = $props();
 
 	const heightClass = $derived(height != null ? heightMap[height] : undefined);
 	const widthClass = $derived(width != null ? widthMap[width] : undefined);
+	const maxWidthClass = $derived(maxWidth != null ? maxWidthMap[maxWidth] : undefined);
 	const positionClass = $derived(position != null ? positionMap[position] : undefined);
 	const insetClass = $derived(inset != null ? insetMap[inset] : undefined);
 	const topClass = $derived(top != null ? topMap[top] : undefined);
@@ -138,13 +182,17 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 	const leftClass = $derived(left != null ? leftMap[left] : undefined);
 	const zIndexClass = $derived(zIndex != null ? zIndexMap[zIndex] : undefined);
 	const flexClass = $derived(flex != null ? flexMap[flex] : undefined);
+	const transformClass = $derived(transform != null ? transformMap[transform] : undefined);
+	const sizeClass = $derived(size != null ? sizeMap[size] : undefined);
 </script>
 
 <div
+	bind:this={ref}
 	class={cn(
 		"overflow-hidden",
 		heightClass,
 		widthClass,
+		maxWidthClass,
 		minHeight === 0 && "min-h-0",
 		minWidth === 0 && "min-w-0",
 		positionClass,
@@ -155,12 +203,17 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		leftClass,
 		zIndexClass,
 		flexClass,
+		transformClass,
+		sizeClass,
+		truncate && "truncate",
 		onclick && "cursor-pointer",
 	)}
 	{role}
 	{tabindex}
 	aria-label={ariaLabel}
+	aria-hidden={ariaHidden}
 	{onclick}
+	{onmouseenter}
 >
 	{@render children?.()}
 </div>

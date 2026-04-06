@@ -10,10 +10,10 @@ export { installPlugin, uninstallPlugin, listInstalledPlugins } from "./lib/inst
 export { fetchRegistry } from "./lib/registry.js";
 export { readLockfile, writeLockfile } from "./lib/lockfile.js";
 export { readManifest, validateManifest } from "./lib/manifest.js";
-export { scanArtifactGraph, queryGraph, getGraphStats, type GraphNode, type GraphQueryOptions, type GraphStats } from "./lib/graph.js";
-export { callDaemonGraph, isDaemonRunning, type DaemonArtifactNode, type DaemonArtifactRef, type DaemonHealthResponse } from "./lib/daemon-client.js";
+export { scanArtifactGraph, queryGraph, getGraphStats, type GraphNode, type GraphQueryOptions, type GraphStats, } from "./lib/graph.js";
+export { callDaemonGraph, isDaemonRunning, type DaemonArtifactNode, type DaemonArtifactRef, type DaemonHealthResponse, } from "./lib/daemon-client.js";
 export { readCanonicalVersion, writeCanonicalVersion, syncVersions, checkVersionDrift, } from "./lib/version-sync.js";
-export { auditLicenses, DEFAULT_LICENSE_POLICY, type LicenseAuditResult, type LicensePolicy } from "./lib/license.js";
+export { auditLicenses, DEFAULT_LICENSE_POLICY, type LicenseAuditResult, type LicensePolicy, } from "./lib/license.js";
 export { auditReadmes, generateReadmeTemplate, type ReadmeAuditResult } from "./lib/readme.js";
 export { TokenTracker, recordRequest, recordAgentComplete, recordSessionSummary, readMetricEvents, filterEvents, computeTrends, getMetricsPath, type RequestMetrics, type AgentMetrics, type SessionMetrics, type MetricEvent, type TrendMetrics, } from "./lib/token-tracker.js";
 export { BudgetEnforcer, estimateCost, inferModelTier, suggestDowngrade, DEFAULT_BUDGETS, COST_PER_MTOK, MODEL_TIERS, type BudgetConfig, type BudgetCheckResult, type BudgetSeverity, } from "./lib/budget-enforcer.js";

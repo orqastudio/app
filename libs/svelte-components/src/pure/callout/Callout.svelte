@@ -42,6 +42,7 @@ no free colors, paddings, or radii. -->
 		tone = "info",
 		density = "normal",
 		border = "solid",
+		align = "center",
 		icon,
 		iconName,
 		children,
@@ -54,6 +55,8 @@ no free colors, paddings, or radii. -->
 		density?: "compact" | "normal";
 		/** Border style. */
 		border?: "solid" | "dashed";
+		/** Flex alignment of icon and content. Use "start" for multi-line content. */
+		align?: "center" | "start";
 		/** Custom icon component (Lucide or compatible). Overrides iconName. */
 		icon?: Component;
 		/** Named icon via the design system icon map. */
@@ -66,11 +69,13 @@ no free colors, paddings, or radii. -->
 	const toneClass = $derived(toneMap[tone] ?? toneMap.info);
 	const densityClass = $derived(densityMap[density] ?? densityMap.normal);
 	const borderClass = $derived(borderStyleMap[border] ?? borderStyleMap.solid);
+	const alignClass = $derived(align === "start" ? "items-start" : "items-center");
 </script>
 
 <div
 	class={cn(
-		"flex items-center gap-2 overflow-hidden rounded-md",
+		"flex gap-2 overflow-hidden rounded-md",
+		alignClass,
 		toneClass,
 		densityClass,
 		borderClass,

@@ -32,6 +32,65 @@ const LEVEL_ORDER = {
 function shouldLog(level) {
     return LEVEL_ORDER[level] >= LEVEL_ORDER[minLevel];
 }
+/**
+ * Parse a JS Error.stack string into StackFrame objects, skipping internal frames.
+ * Handles both Chrome format (`at fn (file:line:col)`) and Firefox format (`fn@file:line:col`).
+ * @param stack - The raw stack trace string from Error().stack.
+ * @param skipCount - Number of internal frames to skip from the top.
+ * @returns Parsed stack frames with file, line, col, function name, capped at 5 frames.
+ */
+function parseCallStack(stack, skipCount) {
+    if (!stack)
+        return [];
+    const lines = stack.split("\n").slice(1); // Remove the "Error" header line
+    const frames = [];
+    let skipped = 0;
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed)
+            continue;
+        // Skip the specified number of internal logger frames.
+        if (skipped < skipCount) {
+            skipped++;
+            continue;
+        }
+        // Chrome/V8 format: "    at FunctionName (file:line:col)" or "    at file:line:col"
+        const chromeMatch = trimmed.match(/^at\s+(?:([\w$./<>[\] ]+?)\s+\()?(.+):(\d+):(\d+)\)?$/);
+        if (chromeMatch) {
+            const [, fnName, file, lineStr, colStr] = chromeMatch;
+            frames.push({
+                file: file ?? "",
+                line: lineStr !== undefined ? Number(lineStr) : undefined,
+                col: colStr !== undefined ? Number(colStr) : undefined,
+                function: fnName?.trim() || undefined,
+                raw: trimmed,
+            });
+            if (frames.length >= 5)
+                break;
+            continue;
+        }
+        // Firefox/Safari format: "functionName@file:line:col" or "@file:line:col"
+        const firefoxMatch = trimmed.match(/^([\w$./<>[\]]*)?@(.+):(\d+):(\d+)$/);
+        if (firefoxMatch) {
+            const [, fnName, file, lineStr, colStr] = firefoxMatch;
+            frames.push({
+                file: file ?? "",
+                line: lineStr !== undefined ? Number(lineStr) : undefined,
+                col: colStr !== undefined ? Number(colStr) : undefined,
+                function: fnName || undefined,
+                raw: trimmed,
+            });
+            if (frames.length >= 5)
+                break;
+            continue;
+        }
+        // Unrecognised frame — include as raw only.
+        frames.push({ file: "", raw: trimmed });
+        if (frames.length >= 5)
+            break;
+    }
+    return frames;
+}
 function forwardToDashboard(level, source, message) {
     try {
         const body = JSON.stringify({ level, source, message: `[${source}] ${message}` });
@@ -58,18 +117,26 @@ function forwardToDashboard(level, source, message) {
  * The daemon persists events in SQLite so they survive dashboard restarts.
  * The `source` field maps to `EventSource::Frontend` on the Rust side.
  * Fire-and-forget — silently fails when the daemon is not running.
+ * @param level - Log severity level string.
+ * @param source - Module name that produced the log entry.
+ * @param message - Human-readable log message text.
+ * @param stackFrames - Optional parsed call stack frames (warn/error only).
  */
-function forwardToDaemonBus(level, source, message) {
+function forwardToDaemonBus(level, source, message, stackFrames) {
     try {
         if (typeof fetch === "undefined")
             return;
-        const body = JSON.stringify([{
-                level,
-                source: "frontend",
-                category: source,
-                message: `[${source}] ${message}`,
-                timestamp: Date.now(),
-            }]);
+        const event = {
+            level,
+            source: "frontend",
+            category: source,
+            message: `[${source}] ${message}`,
+            timestamp: Date.now(),
+        };
+        if (stackFrames !== undefined && stackFrames.length > 0) {
+            event.stack_frames = stackFrames;
+        }
+        const body = JSON.stringify([event]);
         void fetch(DAEMON_EVENTS_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -102,13 +169,14 @@ function emit(entry) {
                 break;
             default: {
                 // Exhaustiveness check — compile error if a new LogLevel is added without a case.
-                const _exhaustive = entry.level;
+                const exhaustive = entry.level;
+                void exhaustive;
                 console.log(prefix, entry.message, entry.data ?? "");
             }
         }
     }
     forwardToDashboard(entry.level, entry.source, entry.message);
-    forwardToDaemonBus(entry.level, entry.source, entry.message);
+    forwardToDaemonBus(entry.level, entry.source, entry.message, entry.stackFrames);
     subscribers.forEach((sub) => {
         try {
             sub(entry);
@@ -120,22 +188,54 @@ function emit(entry) {
 }
 /**
  * Create a scoped logger for a module.
- *
  * @param source - Module name (e.g. "navigation", "artifact", "graph")
+ * @returns A Logger instance bound to the given source tag.
  */
 export function logger(source) {
     return {
         debug(message, ...data) {
-            emit({ level: "debug", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+            emit({
+                level: "debug",
+                source,
+                message,
+                timestamp: Date.now(),
+                data: data.length ? data : undefined,
+            });
         },
         info(message, ...data) {
-            emit({ level: "info", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+            emit({
+                level: "info",
+                source,
+                message,
+                timestamp: Date.now(),
+                data: data.length ? data : undefined,
+            });
         },
         warn(message, ...data) {
-            emit({ level: "warn", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+            // Capture stack at call site. skipCount=1 skips this warn() frame so
+            // frame[0] is the actual caller outside the logger.
+            const stackFrames = parseCallStack(new Error().stack, 1);
+            emit({
+                level: "warn",
+                source,
+                message,
+                timestamp: Date.now(),
+                data: data.length ? data : undefined,
+                stackFrames: stackFrames.length > 0 ? stackFrames : undefined,
+            });
         },
         error(message, ...data) {
-            emit({ level: "error", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+            // Capture stack at call site. skipCount=1 skips this error() frame so
+            // frame[0] is the actual caller outside the logger.
+            const stackFrames = parseCallStack(new Error().stack, 1);
+            emit({
+                level: "error",
+                source,
+                message,
+                timestamp: Date.now(),
+                data: data.length ? data : undefined,
+                stackFrames: stackFrames.length > 0 ? stackFrames : undefined,
+            });
         },
         perf(label, fn) {
             if (!fn) {
@@ -156,14 +256,21 @@ export function logger(source) {
         },
     };
 }
-/** Subscribe to all log entries (for in-app error display, telemetry, etc.) */
+/**
+ * Subscribe to all log entries (for in-app error display, telemetry, etc.)
+ * @param fn - Callback invoked for every emitted log entry.
+ * @returns An unsubscribe function that removes the subscriber.
+ */
 export function subscribeToLogs(fn) {
     subscribers = [...subscribers, fn];
     return () => {
         subscribers = subscribers.filter((s) => s !== fn);
     };
 }
-/** Set the minimum log level for console output. */
+/**
+ * Set the minimum log level for console output.
+ * @param level - Minimum level; entries below this are suppressed from console.
+ */
 export function setLogLevel(level) {
     minLevel = level;
 }

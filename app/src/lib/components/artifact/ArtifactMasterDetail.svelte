@@ -2,7 +2,7 @@
 <script lang="ts">
 	import ArtifactNav from "$lib/components/navigation/ArtifactNav.svelte";
 	import ArtifactViewer from "./ArtifactViewer.svelte";
-	import { HStack, Box, Text } from "@orqastudio/svelte-components/pure";
+	import { HStack, Box, Text, Sidebar } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ActivityView } from "@orqastudio/sdk";
 
@@ -34,12 +34,12 @@
 	});
 </script>
 
-<!-- HStack fills full height; the sidebar has a fixed w-60 which Box does not support, so it uses a bare div. -->
+<!-- HStack fills full height; Sidebar provides the fixed w-60 with a right border. -->
 <HStack gap={0} height="full" align="stretch">
-	<!-- File Browser: w-60 is a specific size not in Box's width map, so a bare div is used here. -->
-	<div class="border-border h-full w-60 shrink-0 overflow-hidden border-r">
+	<!-- File Browser -->
+	<Sidebar width="md">
 		<ArtifactNav category={activity} />
-	</div>
+	</Sidebar>
 
 	<!-- Viewer -->
 	<Box flex={1} minWidth={0}>

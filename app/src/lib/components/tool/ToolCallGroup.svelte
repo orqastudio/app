@@ -4,6 +4,8 @@
 		HStack,
 		Caption,
 		Stack,
+		Box,
+		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -43,8 +45,8 @@
 			<Icon name="chevron-right" size="sm" />
 			{@const ToolIcon = displayInfo.icon}
 			<ToolIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
-			<!-- flex-1 is structural (fills trigger row); caption-mono provides the text styling -->
-			<span class="flex-1"><Caption variant="caption-mono" truncate>{label}</Caption></span>
+			<!-- flex-1 fills the trigger row so the status icon sits flush right -->
+			<Box flex={1} minWidth={0}><Caption variant="caption-mono" truncate>{label}</Caption></Box>
 			{#if errorCount > 0}
 				<HStack gap={1}>
 					<Icon name="x-circle" size="sm" />
@@ -56,8 +58,7 @@
 		</HStack>
 	</CollapsibleTrigger>
 	<CollapsibleContent>
-		<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-		<div class="border-border mt-1 ml-3 border-l-2 pl-4">
+		<IndentedBlock>
 			<Stack gap={1}>
 				{#each toolCalls as toolCall (toolCall.toolCallId)}
 					<ToolCallCard
@@ -69,6 +70,6 @@
 					/>
 				{/each}
 			</Stack>
-		</div>
+		</IndentedBlock>
 	</CollapsibleContent>
 </Collapsible>

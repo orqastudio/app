@@ -9,15 +9,24 @@
 	export interface CaptionProps {
 		variant?: CaptionVariant;
 		truncate?: boolean;
-		tone?: "warning" | "destructive" | "success" | "muted";
+		tone?: "warning" | "destructive" | "success" | "muted" | "primary";
+		italic?: boolean;
 		block?: boolean;
 		lineClamp?: 1 | 2 | 3 | 4;
 		children?: Snippet;
 	}
 
-	let { variant = "caption", truncate, tone, block, lineClamp, children }: CaptionProps = $props();
+	let {
+		variant = "caption",
+		truncate,
+		tone,
+		italic,
+		block,
+		lineClamp,
+		children,
+	}: CaptionProps = $props();
 </script>
 
-<Text {variant} {truncate} {tone} {block} {lineClamp}>
+<Text {variant} {truncate} {tone} {italic} {block} {lineClamp}>
 	{@render children?.()}
 </Text>

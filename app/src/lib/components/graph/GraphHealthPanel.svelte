@@ -9,6 +9,7 @@
 		Caption,
 		Stack,
 		HStack,
+		Grid,
 		ScrollArea,
 		Text,
 		Center,
@@ -251,7 +252,7 @@
 				<!-- Size overview -->
 				<Panel padding="tight">
 					<Caption>Overview</Caption>
-					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem;">
+					<Grid cols={2} gap={1.5}>
 						<HStack justify="between">
 							<Caption tone="muted">Nodes</Caption>
 							<Text variant="caption-tabular">{health.total_nodes}</Text>
@@ -260,7 +261,7 @@
 							<Caption tone="muted">Edges</Caption>
 							<Text variant="caption-tabular">{health.total_edges}</Text>
 						</HStack>
-					</div>
+					</Grid>
 				</Panel>
 
 				<!-- Connectivity metrics -->

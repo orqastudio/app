@@ -80,11 +80,12 @@
 	{#if isRunning}
 		<!-- Storybook iframe. sandbox allows scripts and same-origin access so that
 		     Storybook's own navigation can function normally inside the frame.
-		     iframe is not a prohibited element; Tailwind classes moved to scoped CSS. -->
+		     iframe is not a prohibited element; inline style used here because the
+		     fill-container dimensions are fixed and not driven by Tailwind tokens. -->
 		<iframe
 			src={STORYBOOK_URL}
 			title="Storybook"
-			class="storybook-iframe"
+			style="height: 100%; width: 100%; flex: 1; border: none;"
 			sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
 		></iframe>
 	{:else if checked}
@@ -96,13 +97,3 @@
 		/>
 	{/if}
 </Box>
-
-<style>
-	/* Storybook iframe: fills the full container area, no border. */
-	.storybook-iframe {
-		height: 100%;
-		width: 100%;
-		flex: 1;
-		border: none;
-	}
-</style>

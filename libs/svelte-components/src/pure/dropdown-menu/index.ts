@@ -25,3 +25,4 @@ export { default as DropdownMenuCheckboxItem } from "./dropdown-menu-checkbox-it
 export { default as DropdownMenuRadioGroup } from "./dropdown-menu-radio-group.svelte";
 export { default as DropdownMenuRadioItem } from "./dropdown-menu-radio-item.svelte";
 export { default as DropdownMenuPortal } from "./dropdown-menu-portal.svelte";
+export { default as MenuBarTrigger } from "./MenuBarTrigger.svelte";

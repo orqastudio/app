@@ -50,10 +50,14 @@ function getInitialStatus(projectDir, artifactType) {
                         return sm["initial_state"];
                 }
             }
-            catch { /* skip */ }
+            catch {
+                /* skip */
+            }
         }
     }
-    catch { /* skip */ }
+    catch {
+        /* skip */
+    }
     return null;
 }
 /**
@@ -88,10 +92,14 @@ function getActiveStatuses(projectDir, artifactType) {
                     }
                 }
             }
-            catch { /* skip */ }
+            catch {
+                /* skip */
+            }
         }
     }
-    catch { /* skip */ }
+    catch {
+        /* skip */
+    }
     return result;
 }
 /**
@@ -120,7 +128,9 @@ function getTaskToEpicRelationship(projectDir) {
                     }
                 }
             }
-            catch { /* skip */ }
+            catch {
+                /* skip */
+            }
         }
     }
     return null;
@@ -311,7 +321,9 @@ function findActiveEpic(projectDir) {
         if (!entry.endsWith(".md"))
             continue;
         const fm = parseFrontmatterFromFile(join(epicsDir, entry));
-        if (typeof fm?.status === "string" && activeStatuses.has(fm.status) && typeof fm.id === "string") {
+        if (typeof fm?.status === "string" &&
+            activeStatuses.has(fm.status) &&
+            typeof fm.id === "string") {
             return fm.id;
         }
     }
@@ -340,7 +352,9 @@ function nextTaskFilename(tasksDir) {
 function createTaskArtifact(projectDir, finding, epicId) {
     const today = new Date().toISOString().slice(0, 10);
     const titleVerb = finding.reason === "promote" ? "Promote" : "Strengthen enforcement for";
-    const titleTarget = finding.ruleId ? `${finding.ruleId} (from ${finding.lessonId})` : `lesson ${finding.lessonId}`;
+    const titleTarget = finding.ruleId
+        ? `${finding.ruleId} (from ${finding.lessonId})`
+        : `lesson ${finding.lessonId}`;
     const title = `ESCALATION: ${titleVerb} ${titleTarget} (recurrence ${finding.recurrence})`;
     const taskId = generateIdFromTitle("TASK", title);
     const relationships = [

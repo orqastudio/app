@@ -11,6 +11,7 @@
 		Grid,
 		Text,
 		Caption,
+		Code,
 		Box,
 		Panel,
 	} from "@orqastudio/svelte-components/pure";
@@ -86,7 +87,7 @@
 						<Heading level={1}>{config.label}</Heading>
 						<Text variant="body-muted" block>{config.description}</Text>
 						<Text variant="caption" block>
-							Source: <code class="bg-muted rounded px-1 py-0.5">{config.location}</code>
+							Source: <Code>{config.location}</Code>
 						</Text>
 					</Stack>
 
@@ -112,8 +113,7 @@
 									<Stack align="center">
 										<Text variant="body-muted" block>
 											No {config.label.toLowerCase()} found. Add files to
-											<code class="bg-muted rounded px-1 py-0.5 text-xs">{config.location}</code> and
-											re-scan.
+											<Code>{config.location}</Code> and re-scan.
 										</Text>
 									</Stack>
 								</Panel>
@@ -130,41 +130,39 @@
 						<!-- Card grid -->
 						<Grid cols={1} sm={2} lg={3} gap={2}>
 							{#each items as item (item.path)}
-								<button
-									class="hover:bg-accent/50 h-auto w-full rounded-md p-0 text-left transition-colors"
+								<CardRoot
+									interactive
 									onclick={() => item.path && handleItemClick(item.label, item.path)}
 								>
-									<CardRoot>
-										<CardContent>
-											<Panel padding="normal">
-												<HStack gap={3} align="start">
-													<Icon name={config.icon} size="md" />
-													<Box flex={1} minWidth={0}>
-														<Text variant="label" truncate block>{item.label}</Text>
-														{#if item.description}
-															<Caption lineClamp={2} block>{item.description}</Caption>
-														{/if}
-													</Box>
-													{#if category === "rules" && violationsByRule[item.label]}
-														{@const counts = violationsByRule[item.label]}
-														<HStack gap={1} flex={0}>
-															{#if counts.blocks > 0}
-																<Badge variant="destructive" size="xs">
-																	{counts.blocks}
-																</Badge>
-															{/if}
-															{#if counts.warns > 0}
-																<Badge variant="warning" size="xs">
-																	{counts.warns}
-																</Badge>
-															{/if}
-														</HStack>
+									<CardContent>
+										<Panel padding="normal">
+											<HStack gap={3} align="start">
+												<Icon name={config.icon} size="md" />
+												<Box flex={1} minWidth={0}>
+													<Text variant="label" truncate block>{item.label}</Text>
+													{#if item.description}
+														<Caption lineClamp={2} block>{item.description}</Caption>
 													{/if}
-												</HStack>
-											</Panel>
-										</CardContent>
-									</CardRoot>
-								</button>
+												</Box>
+												{#if category === "rules" && violationsByRule[item.label]}
+													{@const counts = violationsByRule[item.label]}
+													<HStack gap={1} flex={0}>
+														{#if counts.blocks > 0}
+															<Badge variant="destructive" size="xs">
+																{counts.blocks}
+															</Badge>
+														{/if}
+														{#if counts.warns > 0}
+															<Badge variant="warning" size="xs">
+																{counts.warns}
+															</Badge>
+														{/if}
+													</HStack>
+												{/if}
+											</HStack>
+										</Panel>
+									</CardContent>
+								</CardRoot>
 							{/each}
 						</Grid>
 					{/if}

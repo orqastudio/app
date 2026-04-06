@@ -18,6 +18,7 @@
 		Box,
 		Text,
 		Panel,
+		SectionHeader,
 	} from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
@@ -262,11 +263,13 @@
 </script>
 
 <Stack height="full" gap={0}>
-	<!-- Breadcrumb bar (hidden on home/landing pages). h-10 is a specific Tailwind height not in HStack's height map. -->
+	<!-- Breadcrumb bar (hidden on home/landing pages). -->
 	{#if breadcrumbs.length > 0}
-		<div class="border-border flex h-10 shrink-0 items-center justify-between border-b px-4">
-			<Breadcrumb items={breadcrumbs} />
-		</div>
+		<SectionHeader>
+			{#snippet start()}
+				<Breadcrumb items={breadcrumbs} />
+			{/snippet}
+		</SectionHeader>
 	{/if}
 
 	<!-- Content -->
@@ -314,8 +317,7 @@
 							<Stack gap={6}>
 								<Heading level={1}>{title}</Heading>
 								{#if description}
-									<!-- leading-relaxed is not a Text variant; kept as p. -->
-									<p class="text-muted-foreground text-sm leading-relaxed">{description}</p>
+									<Text variant="body-muted" block>{description}</Text>
 								{/if}
 							</Stack>
 						{/if}

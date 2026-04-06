@@ -106,9 +106,7 @@
 		<Stack gap={1}>
 			{#each [...grouped] as [type, rels] (type)}
 				<HStack gap={2} align="baseline">
-					<span class="justify-self-start capitalize"
-						><Badge variant="outline" size="sm">{humanizeType(type)}</Badge></span
-					>
+					<Badge variant="outline" size="sm" capitalize>{humanizeType(type)}</Badge>
 					<Box flex={1} minWidth={0}
 						><HStack wrap gap={1}>
 							{#each visibleRels(type, rels) as rel, i (i)}
@@ -123,15 +121,14 @@
 									<TooltipRoot>
 										<TooltipTrigger>
 											{#snippet child({ props })}
-												<span
+												<Badge
 													{...props}
-													class="inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[11px] font-medium {rel.intended
-														? 'border-muted-foreground/30 bg-muted text-muted-foreground'
-														: 'border-warning/30 bg-warning/10 text-warning'}"
+													variant={rel.intended ? "secondary" : "warning"}
+													size="sm"
 												>
 													<Icon name="circle-alert" size="sm" />
 													{rel.intended ? "intentional gap" : "unresolved"}
-												</span>
+												</Badge>
 											{/snippet}
 										</TooltipTrigger>
 										<TooltipContent side="top">

@@ -8,6 +8,7 @@
 		HStack,
 		Stack,
 		Text,
+		AppIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import logoPulse from "$lib/assets/logo-pulse.svg";
 
@@ -30,7 +31,7 @@
 	<DialogContent>
 		<DialogHeader>
 			<HStack gap={3}>
-				<img src={logoPulse} alt="OrqaStudio" class="h-10 w-10" />
+				<AppIcon src={logoPulse} alt="OrqaStudio" size="md" />
 				<Stack gap={1}>
 					<DialogTitle>{appName}</DialogTitle>
 					<DialogDescription>Version {appVersion}</DialogDescription>

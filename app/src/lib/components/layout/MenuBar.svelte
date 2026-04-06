@@ -1,8 +1,10 @@
 <script lang="ts">
 	import {
 		Icon,
+		HStack,
+		Box,
 		DropdownMenuRoot,
-		DropdownMenuTrigger,
+		MenuBarTrigger,
 		DropdownMenuItem,
 		DropdownMenuContent,
 		DropdownMenuSeparator,
@@ -30,9 +32,6 @@
 
 	let activeMenu = $state<string | null>(null);
 	const menuMode = $derived(activeMenu !== null);
-
-	const triggerClass =
-		"flex h-7 items-center rounded px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground";
 
 	/**
 	 * Toggle the specified menu open or close it if already open.
@@ -62,8 +61,7 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="flex items-center px-1" data-menu-bar>
+<HStack gap={0} data-menu-bar={true}>
 	<!-- File menu -->
 	<DropdownMenuRoot
 		open={activeMenu === "file"}
@@ -71,18 +69,16 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div onmouseenter={() => handleMenuHover("file")}>
-			<DropdownMenuTrigger
-				class={triggerClass}
+		<Box onmouseenter={() => handleMenuHover("file")}>
+			<MenuBarTrigger
 				onclick={(e: MouseEvent) => {
 					e.preventDefault();
 					handleMenuClick("file");
 				}}
 			>
 				File
-			</DropdownMenuTrigger>
-		</div>
+			</MenuBarTrigger>
+		</Box>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onNewProject)}>
 				<Icon name="folder-plus" size="md" />
@@ -114,18 +110,16 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div onmouseenter={() => handleMenuHover("edit")}>
-			<DropdownMenuTrigger
-				class={triggerClass}
+		<Box onmouseenter={() => handleMenuHover("edit")}>
+			<MenuBarTrigger
 				onclick={(e: MouseEvent) => {
 					e.preventDefault();
 					handleMenuClick("edit");
 				}}
 			>
 				Edit
-			</DropdownMenuTrigger>
-		</div>
+			</MenuBarTrigger>
+		</Box>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onSettings)}>
 				<Icon name="sliders-horizontal" size="md" />
@@ -141,18 +135,16 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div onmouseenter={() => handleMenuHover("help")}>
-			<DropdownMenuTrigger
-				class={triggerClass}
+		<Box onmouseenter={() => handleMenuHover("help")}>
+			<MenuBarTrigger
 				onclick={(e: MouseEvent) => {
 					e.preventDefault();
 					handleMenuClick("help");
 				}}
 			>
 				Help
-			</DropdownMenuTrigger>
-		</div>
+			</MenuBarTrigger>
+		</Box>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onAbout)}>
 				<Icon name="info" size="md" />
@@ -160,4 +152,4 @@
 			</DropdownMenuItem>
 		</DropdownMenuContent>
 	</DropdownMenuRoot>
-</div>
+</HStack>

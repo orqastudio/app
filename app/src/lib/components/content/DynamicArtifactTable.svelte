@@ -4,7 +4,7 @@
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
 	import {
 		statusIconName,
-		resolveIcon,
+		Icon,
 		Table,
 		TableHeader,
 		TableBody,
@@ -13,6 +13,7 @@
 		TableCell,
 		Badge,
 		Caption,
+		Center,
 		Panel,
 	} from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
@@ -106,8 +107,7 @@
 						<!-- Status icon -->
 						<TableCell>
 							{#if child.status}
-								{@const StatusIcon = resolveIcon(statusIconName(child.status))}
-								<StatusIcon class="text-muted-foreground h-3.5 w-3.5" />
+								<Icon name={statusIconName(child.status)} size="sm" tone="muted" />
 							{/if}
 						</TableCell>
 						<!-- ID -->
@@ -136,10 +136,9 @@
 		</Table>
 	</Panel>
 {:else}
-	<!-- Inline style required: dashed border-style and text-align cannot be expressed via Box typed props -->
-	<div
-		style="margin-top: 1rem; border-radius: 0.5rem; border: 1px dashed hsl(var(--border)); padding: 1rem; text-align: center;"
-	>
-		<Caption tone="muted">No {childType} artifacts found for {parentId}</Caption>
-	</div>
+	<Panel border="dashed" rounded="lg" padding="normal">
+		<Center>
+			<Caption tone="muted">No {childType} artifacts found for {parentId}</Caption>
+		</Center>
+	</Panel>
 {/if}

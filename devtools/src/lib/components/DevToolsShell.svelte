@@ -15,6 +15,8 @@
 		ContextTable,
 		RawJson,
 		AiExplainButton,
+		HStack,
+		Box,
 		type ContextEntry,
 	} from "@orqastudio/svelte-components/pure";
 	import { emit } from "@tauri-apps/api/event";
@@ -233,8 +235,8 @@
 		{#snippet mainContent()}
 			<!-- Main content area + optional EventDrawer side panel. The drawer renders
 			     alongside the active tab so it persists across tab switches. -->
-			<div class="shell__content-with-drawer">
-				<div class="shell__main-pane">
+			<HStack height="full">
+				<Box flex={1} minWidth={0}>
 					{#if navigation.activeTab === "issues"}
 						<IssuesView />
 					{:else if navigation.activeTab === "stream"}
@@ -251,7 +253,7 @@
 						{@const _exhaustive = assertTabNever(navigation.activeTab)}
 						{_exhaustive}
 					{/if}
-				</div>
+				</Box>
 
 				<EventDrawer
 					open={drawerOpen}
@@ -278,7 +280,7 @@
 						<RawJson data={drawerEvent} />
 					{/snippet}
 				</EventDrawer>
-			</div>
+			</HStack>
 		{/snippet}
 
 		{#snippet statusBar()}
@@ -292,13 +294,12 @@
 				{#snippet right()}
 					{#if viewingHistorical.value}
 						{@const session = sessions.find((s) => s.id === activeSessionId.value)}
-						<!-- Wrapper span: provides scoped hook for the historical session label override.
-						     Caption does not accept class; all visual treatment comes from scoped CSS. -->
-						<span class="status-bar__historical-label">
-							<Caption>
+						<!-- Box constrains width so Caption truncate works within the status bar slot. -->
+						<Box maxWidth="60">
+							<Caption truncate tone="primary" italic>
 								Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
 							</Caption>
-						</span>
+						</Box>
 					{:else}
 						<Caption>{devController.state}</Caption>
 					{/if}
@@ -325,34 +326,3 @@
 {/if}
 
 <HelpPanel bind:open={helpOpen} />
-
-<style>
-	/* Historical session label in the status bar right slot.
-	   Truncates to 240px and styles in primary italic to indicate browsing mode. */
-	.status-bar__historical-label {
-		display: block;
-		max-width: 240px;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		font-style: italic;
-		color: var(--color-primary);
-	}
-
-	/* Flex row containing the main content pane and the optional EventDrawer. The
-	   drawer sits to the right of the active view and persists across tab switches
-	   so users can keep an event in view while navigating. */
-	.shell__content-with-drawer {
-		display: flex;
-		flex-direction: row;
-		height: 100%;
-		overflow: hidden;
-	}
-
-	/* Main pane expands to fill all space not consumed by the drawer. */
-	.shell__main-pane {
-		flex: 1;
-		min-width: 0;
-		overflow: hidden;
-	}
-</style>

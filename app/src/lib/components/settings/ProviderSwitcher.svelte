@@ -30,10 +30,10 @@
 	<CardRoot>
 		<CardHeader compact>
 			<CardTitle>
-				<div class="flex items-center gap-1.5">
+				<HStack gap={1}>
 					<Icon name="cpu" size="md" />
 					AI Provider
-				</div>
+				</HStack>
 			</CardTitle>
 			<CardDescription>
 				{#if hasMultiple}

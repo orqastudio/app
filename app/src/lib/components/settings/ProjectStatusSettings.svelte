@@ -8,7 +8,14 @@
 		CardContent,
 		FormGroup,
 	} from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		HStack,
+		Stack,
+		Caption,
+		SelectMenu,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
@@ -226,12 +233,13 @@
 			<Caption tone="muted">No statuses defined. Add one below.</Caption>
 		{:else}
 			{#each localStatuses as status, index (status.key + index)}
-				<!-- Draggable container: native drag API requires raw div — not expressible via Box props -->
-				<div
-					class="rounded-md border p-3"
-					draggable="true"
+				<Panel
+					padding="tight"
+					border="all"
+					rounded="md"
+					draggable={true}
 					ondragstart={() => handleDragStart(index)}
-					ondragover={(e) => handleDragOver(e)}
+					ondragover={handleDragOver}
 					ondrop={() => handleDrop(index)}
 					ondragend={handleDragEnd}
 					role="listitem"
@@ -348,7 +356,7 @@
 							{/if}
 						</Stack>
 					</Stack>
-				</div>
+				</Panel>
 
 				{#if index < localStatuses.length - 1}
 					<Separator />

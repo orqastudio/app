@@ -48,7 +48,9 @@ export function detectMethodologyConflict(manifest, projectRoot) {
                     };
                 }
             }
-            catch { /* skip invalid */ }
+            catch {
+                /* skip invalid */
+            }
         }
     }
     return null;
@@ -163,7 +165,9 @@ function detectCollisions(manifest, projectRoot) {
                     existing.push({ source: installed.name, rel });
                 }
             }
-            catch { /* skip invalid */ }
+            catch {
+                /* skip invalid */
+            }
         }
     }
     // Check incoming relationships against existing
@@ -266,9 +270,7 @@ async function installFromGitHub(repo, version, pluginsDirectory, projectRoot, p
         await extractTarGz(buffer, tmpDir);
         // Find the manifest in extracted contents
         const entries = fs.readdirSync(tmpDir);
-        const extractedDir = entries.length === 1
-            ? path.join(tmpDir, entries[0])
-            : tmpDir;
+        const extractedDir = entries.length === 1 ? path.join(tmpDir, entries[0]) : tmpDir;
         const manifest = readManifest(extractedDir);
         const errors = validateManifest(manifest);
         if (errors.length > 0) {
@@ -318,7 +320,9 @@ async function installFromGitHub(repo, version, pluginsDirectory, projectRoot, p
     }
 }
 async function fetchLatestTag(repo) {
-    const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, { headers: { Accept: "application/vnd.github.v3+json" } });
+    const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+        headers: { Accept: "application/vnd.github.v3+json" },
+    });
     if (!response.ok) {
         throw new Error(`Failed to fetch latest release for ${repo}: ${response.status}`);
     }

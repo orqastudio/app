@@ -22,6 +22,15 @@ export interface LogEntry {
     readonly message: string;
     readonly timestamp: number;
     readonly data?: unknown;
+    readonly stackFrames?: StackFrame[];
+}
+/** A single parsed frame from a JS Error.stack string. */
+export interface StackFrame {
+    readonly file: string;
+    readonly line?: number;
+    readonly col?: number;
+    readonly function?: string;
+    readonly raw?: string;
 }
 export interface Logger {
     debug(message: string, ...data: unknown[]): void;
@@ -37,16 +46,18 @@ type LogSubscriber = (entry: LogEntry) => void;
 /**
  * Create a scoped logger for a module.
  * @param source - Module name (e.g. "navigation", "artifact", "graph")
+ * @returns A Logger instance bound to the given source tag.
  */
 export declare function logger(source: string): Logger;
 /**
  * Subscribe to all log entries (for in-app error display, telemetry, etc.)
- * @param fn
+ * @param fn - Callback invoked for every emitted log entry.
+ * @returns An unsubscribe function that removes the subscriber.
  */
 export declare function subscribeToLogs(fn: LogSubscriber): () => void;
 /**
  * Set the minimum log level for console output.
- * @param level
+ * @param level - Minimum level; entries below this are suppressed from console.
  */
 export declare function setLogLevel(level: LogLevel): void;
 /**

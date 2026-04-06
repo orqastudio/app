@@ -17,6 +17,7 @@
 		orientation = "vertical",
 		full = false,
 		maxHeight,
+		onscroll,
 		children,
 	}: {
 		ref?: HTMLElement | null;
@@ -26,6 +27,8 @@
 		full?: boolean;
 		/** Constrains the scroll area to a named height token. */
 		maxHeight?: "sm" | "md" | "lg" | "xl" | "viewport";
+		/** Fired when the scroll viewport is scrolled. */
+		onscroll?: (e: Event) => void;
 		children?: import("svelte").Snippet;
 	} = $props();
 
@@ -37,6 +40,7 @@
 		bind:ref={viewportRef}
 		data-slot="scroll-area-viewport"
 		class="size-full rounded-[inherit]"
+		{onscroll}
 	>
 		{@render children?.()}
 	</ScrollAreaPrimitive.Viewport>

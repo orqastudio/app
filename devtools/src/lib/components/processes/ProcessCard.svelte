@@ -10,12 +10,12 @@
 		CardTitle,
 		CardContent,
 		CardFooter,
+		CardAction,
 		Separator,
 		ConnectionIndicator,
 		HStack,
 		Caption,
 		Code,
-		Box,
 		type ConnectionState,
 	} from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
@@ -145,118 +145,76 @@
 	}
 </script>
 
-<!-- Wrapper span: provides :global() hook for card styling overrides.
-     CardRoot does not accept class; data-selected is passed through restProps. -->
-<span class="process-card__wrap" style="display: contents;">
-	<CardRoot
-		data-selected={selected}
-		onclick={handleClick}
-		onkeydown={handleKeydown}
-		onmouseenter={() => (hovered = true)}
-		onmouseleave={() => (hovered = false)}
-		aria-pressed={selected}
-		tabindex={0}
-	>
-		<!-- Header: process name on the left, connection state indicator on the right.
-		     Box provides the container for the status indicator without a raw span. -->
-		<CardHeader>
-			<CardTitle>{process.name}</CardTitle>
-			<Box>
-				<ConnectionIndicator state={connectionState} label={statusLabel} />
-			</Box>
-		</CardHeader>
+<!-- CardRoot: interactive adds pointer cursor + hover highlight.
+     selected adds accent border ring when this process is the active source filter. -->
+<CardRoot
+	interactive={true}
+	{selected}
+	onclick={handleClick}
+	onkeydown={handleKeydown}
+	onmouseenter={() => (hovered = true)}
+	onmouseleave={() => (hovered = false)}
+	aria-pressed={selected}
+	tabindex={0}
+>
+	<!-- Header: process name on the left, connection state indicator via CardAction on the right.
+	     CardHeader with compact reduces vertical padding for the dense process card layout. -->
+	<CardHeader compact={true}>
+		<CardTitle>{process.name}</CardTitle>
+		<CardAction>
+			<ConnectionIndicator state={connectionState} label={statusLabel} />
+		</CardAction>
+	</CardHeader>
 
-		<!-- Content: detail rows for PID, uptime, and memory when available. -->
-		<CardContent>
-			{#if process.pid !== null}
-				<HStack justify="between">
-					<Caption>PID</Caption>
-					<!-- Code already renders text-xs font-mono; no extra class needed. -->
-					<Code>{process.pid}</Code>
-				</HStack>
-			{/if}
-
-			{#if process.uptime_seconds !== null}
-				<HStack justify="between">
-					<Caption>Uptime</Caption>
-					<!-- Caption renders text-xs; replaces unsupported <Text size="xs">. -->
-					<Caption>{formatUptime(process.uptime_seconds)}</Caption>
-				</HStack>
-			{/if}
-
-			{#if process.memory_bytes !== null}
-				<HStack justify="between">
-					<Caption>Memory</Caption>
-					<!-- Caption renders text-xs; replaces unsupported <Text size="xs">. -->
-					<Caption>{formatMemory(process.memory_bytes)}</Caption>
-				</HStack>
-			{/if}
-
-			<!-- Placeholder row so all cards have consistent height when no details
-			     are available from the daemon yet. -->
-			{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
-				<Caption>No details available</Caption>
-			{/if}
-		</CardContent>
-
-		<Separator />
-
-		<!-- Footer: source identifier for log filtering reference. -->
-		<CardFooter>
-			<Code>{process.source}</Code>
-		</CardFooter>
-
-		<!-- Binary path row: visible on hover when the daemon has reported the path.
-		     Shows the filename in the row and the full absolute path as a tooltip. -->
-		{#if hovered && process.binary_path !== null}
-			<Separator />
-			<!-- CardFooter title forwards to the underlying div via restProps. -->
-			<CardFooter title={process.binary_path}>
-				<HStack justify="between" full gap={2}>
-					<Caption>Binary</Caption>
-					<!-- Box contains the truncated filename. -->
-					<Box>
-						<!-- Wrapper span targets the code element for truncation styles. -->
-						<span class="process-card__binary-wrap" style="display: contents;">
-							<Code>{binaryFilename(process.binary_path)}</Code>
-						</span>
-					</Box>
-				</HStack>
-			</CardFooter>
+	<!-- Content: detail rows for PID, uptime, and memory when available. -->
+	<CardContent compact={true}>
+		{#if process.pid !== null}
+			<HStack justify="between">
+				<Caption>PID</Caption>
+				<!-- Code already renders text-xs font-mono; no extra class needed. -->
+				<Code>{process.pid}</Code>
+			</HStack>
 		{/if}
-	</CardRoot>
-</span>
 
-<style>
-	/* Clickable card: pointer cursor, full width, and selected-state highlight ring.
-	   Targets CardRoot inside the wrapper span via data-slot. */
-	:global(.process-card__wrap [data-slot="card"]) {
-		cursor: pointer;
-		width: 100%;
-		text-align: left;
-		transition: border-color 150ms;
-	}
+		{#if process.uptime_seconds !== null}
+			<HStack justify="between">
+				<Caption>Uptime</Caption>
+				<Caption>{formatUptime(process.uptime_seconds)}</Caption>
+			</HStack>
+		{/if}
 
-	:global(.process-card__wrap [data-slot="card"][data-selected="true"]) {
-		border-color: var(--color-accent-base);
-		box-shadow: 0 0 0 1px var(--color-accent-base);
-	}
+		{#if process.memory_bytes !== null}
+			<HStack justify="between">
+				<Caption>Memory</Caption>
+				<Caption>{formatMemory(process.memory_bytes)}</Caption>
+			</HStack>
+		{/if}
 
-	/* Header layout: name left, status indicator right. */
-	:global(.process-card__wrap [data-slot="card-header"]) {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: space-between;
-	}
+		<!-- Placeholder row so all cards have consistent height when no details
+		     are available from the daemon yet. -->
+		{#if process.pid === null && process.uptime_seconds === null && process.memory_bytes === null}
+			<Caption>No details available</Caption>
+		{/if}
+	</CardContent>
 
-	/* Binary filename code: truncates with ellipsis within the Box overflow container.
-	   Targets code element inside the binary wrapper span. */
-	:global(.process-card__binary-wrap code) {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		max-width: 70%;
-		display: block;
-	}
-</style>
+	<Separator />
+
+	<!-- Footer: source identifier for log filtering reference. -->
+	<CardFooter>
+		<Code>{process.source}</Code>
+	</CardFooter>
+
+	<!-- Binary path row: visible on hover when the daemon has reported the path.
+	     Shows the filename truncated in the row and the full absolute path as a tooltip. -->
+	{#if hovered && process.binary_path !== null}
+		<Separator />
+		<!-- CardFooter title forwards to the underlying div via restProps. -->
+		<CardFooter title={process.binary_path}>
+			<HStack justify="between" full gap={2}>
+				<Caption>Binary</Caption>
+				<!-- Code truncate clips the filename with ellipsis within its container. -->
+				<Code truncate>{binaryFilename(process.binary_path)}</Code>
+			</HStack>
+		</CardFooter>
+	{/if}
+</CardRoot>

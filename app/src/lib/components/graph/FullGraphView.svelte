@@ -6,13 +6,16 @@
 	import { graphLayoutService } from "$lib/services/graph-layout.svelte";
 	import {
 		LoadingSpinner,
+		LoadingOverlay,
 		Toolbar,
 		Caption,
 		Button,
 		Icon,
 		HStack,
 		Stack,
+		Box,
 		Center,
+		Panel,
 		Text,
 	} from "@orqastudio/svelte-components/pure";
 	import GraphHealthPanel from "./GraphHealthPanel.svelte";
@@ -247,8 +250,8 @@
 
 	<!-- Main content area: graph + health panel side by side -->
 	<HStack flex={1} gap={0} align="stretch">
-		<!-- Graph area: the bind:this container for Cytoscape is a legitimate exception -->
-		<div style="position: relative; flex: 1; overflow: hidden;">
+		<!-- Graph area — Box provides position:relative + flex:1 for cytoscape container -->
+		<Box position="relative" flex={1} minWidth={0}>
 			{#if artifactGraphSDK.loading}
 				<Center full>
 					<LoadingSpinner size="lg" />
@@ -258,33 +261,32 @@
 					<Caption>No artifacts found. Open a project to explore its graph.</Caption>
 				</Center>
 			{:else}
-				<div
-					bind:this={container}
-					style="height: 100%; width: 100%;"
+				<Box
+					bind:ref={container}
+					height="full"
+					width="full"
 					role="img"
 					aria-label="Full artifact relationship graph"
-				></div>
+				/>
 				{#if graphLayoutService.layoutRunning}
-					<div
-						style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; background: hsl(var(--background) / 0.6); backdrop-filter: blur(2px);"
-					>
+					<LoadingOverlay>
 						<LoadingSpinner size="lg" />
 						<Caption>Laying out {artifactGraphSDK.graph.size} nodes…</Caption>
-					</div>
+					</LoadingOverlay>
 				{/if}
 			{/if}
-		</div>
+		</Box>
 
 		<!-- Health panel sidebar -->
 		{#if healthPanelOpen}
-			<div style="width: 13rem; flex-shrink: 0; overflow: hidden;">
+			<Panel fixedWidth="nav-sm" direction="column">
 				<GraphHealthPanel
 					health={graphHealth}
 					snapshots={healthSnapshots}
 					loading={healthLoading}
 					onRefresh={loadHealth}
 				/>
-			</div>
+			</Panel>
 		{/if}
 	</HStack>
 </Stack>

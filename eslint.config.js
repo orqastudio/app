@@ -16,12 +16,15 @@ const noInvokeInComponents = {
 		"Component purity violation (RULE-006): invoke() must not be called in components. Move the invoke() call to a store or page, and pass data via props.",
 };
 
-/** RULE-033: No HTML title attribute — use shadcn Tooltip instead */
+/**
+ * RULE-033: No HTML title attribute — use shadcn Tooltip instead.
+ * Exempt: title on svg (SVG accessibility), title on iframe (WCAG 2.4.1 mandatory).
+ */
 const noHtmlTitleAttribute = {
 	selector:
-		"SvelteElement[kind='html'] > SvelteStartTag > SvelteAttribute[key.name='title']",
+		"SvelteElement[kind='html']:not([name.name='svg']):not([name.name='iframe']) > SvelteStartTag > SvelteAttribute[key.name='title']",
 	message:
-		"Tooltip violation (RULE-033): Use shadcn <Tooltip.Root> instead of HTML title attribute. Exempt: alt on images, title on <svg>.",
+		"Tooltip violation (RULE-033): Use shadcn <Tooltip.Root> instead of HTML title attribute. Exempt: alt on images, title on <svg>, title on <iframe>.",
 };
 
 export default tseslint.config(
@@ -72,14 +75,17 @@ export default tseslint.config(
 	{
 		files: ["**/*.ts", "**/*.svelte.ts"],
 		rules: {
-			"jsdoc/require-jsdoc": ["warn", {
-				require: {
-					FunctionDeclaration: true,
-					MethodDefinition: true,
-					ClassDeclaration: true,
+			"jsdoc/require-jsdoc": [
+				"warn",
+				{
+					require: {
+						FunctionDeclaration: true,
+						MethodDefinition: true,
+						ClassDeclaration: true,
+					},
+					publicOnly: true,
 				},
-				publicOnly: true,
-			}],
+			],
 			"jsdoc/require-description": "warn",
 		},
 	},
@@ -91,11 +97,7 @@ export default tseslint.config(
 		files: ["src/lib/components/**/*.svelte"],
 		ignores: ["src/lib/components/ui/**"],
 		rules: {
-			"no-restricted-syntax": [
-				"error",
-				noInvokeInComponents,
-				noHtmlTitleAttribute,
-			],
+			"no-restricted-syntax": ["error", noInvokeInComponents, noHtmlTitleAttribute],
 		},
 	},
 	// RULE-006 / Component purity for non-Svelte component files (.ts helpers).
@@ -123,11 +125,6 @@ export default tseslint.config(
 		},
 	},
 	{
-		ignores: [
-			"build/",
-			".svelte-kit/",
-			"node_modules/",
-			"dist/",
-		],
+		ignores: ["build/", ".svelte-kit/", "node_modules/", "dist/"],
 	},
 );

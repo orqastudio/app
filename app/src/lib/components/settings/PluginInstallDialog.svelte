@@ -33,6 +33,7 @@
 	}
 </script>
 
+<!-- Exception: fixed overlay — requires CSS positioning/z-index not expressible via ORQA layout primitives -->
 <div class="bg-background/80 fixed inset-0 z-50 flex items-center justify-center">
 	<Panel padding="loose" rounded="lg" border="all" background="card">
 		<Stack gap={4}>

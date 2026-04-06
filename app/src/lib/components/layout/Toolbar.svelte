@@ -2,9 +2,16 @@
 	import { open } from "@tauri-apps/plugin-dialog";
 	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { getVersion, getName } from "@tauri-apps/api/app";
-	import { invoke } from "@tauri-apps/api/core";
 	import logoStatic from "$lib/assets/logo-static.svg";
-	import { Spacer, Button, Text } from "@orqastudio/svelte-components/pure";
+	import { launchDevtools } from "$lib/services/plugin-service";
+	import {
+		Spacer,
+		Button,
+		Text,
+		Panel,
+		WindowTitleBar,
+		AppIcon,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { projectStore } = getStores();
@@ -77,9 +84,9 @@
 		settingsOpen = true;
 	}
 
-	/** Invoke the Tauri command to launch the devtools window. */
+	/** Launch the devtools window via the plugin service. */
 	async function handleLaunchDevtools(): Promise<void> {
-		await invoke("launch_devtools");
+		await launchDevtools();
 	}
 
 	/**
@@ -111,23 +118,15 @@
 	}
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div
-	class="toolbar-drag border-border bg-background relative z-50 flex h-10 items-center border-b"
-	onmousedown={handleDragStart}
-	ondblclick={handleDoubleClick}
->
-	<div class="border-border flex h-10 w-12 shrink-0 items-center justify-center border-r">
+<WindowTitleBar onmousedown={handleDragStart} ondblclick={handleDoubleClick}>
+	<!-- Logo area matching the activity bar width -->
+	<Panel fixedWidth="icon-bar" border="right" direction="column" align="center" full padding="none">
 		{#if projectStore.iconDataUrl}
-			<img
-				src={projectStore.iconDataUrl}
-				alt="OrqaStudio"
-				class="pointer-events-none h-5 w-5 rounded object-contain"
-			/>
+			<AppIcon src={projectStore.iconDataUrl} alt="OrqaStudio" size="sm" rounded objectContain />
 		{:else}
-			<img src={logoStatic} alt="OrqaStudio" class="pointer-events-none h-5 w-5" />
+			<AppIcon src={logoStatic} alt="OrqaStudio" size="sm" />
 		{/if}
-	</div>
+	</Panel>
 
 	<MenuBar
 		{hasProject}
@@ -146,7 +145,7 @@
 		<Text variant="caption" tone="muted">DevTools</Text>
 	</Button>
 	<WindowControls />
-</div>
+</WindowTitleBar>
 
 <AboutDialog
 	open={aboutOpen}
@@ -177,13 +176,3 @@
 	onConfirm={confirmInitialize}
 	onCancel={cancelInitialize}
 />
-
-<style>
-	.toolbar-drag {
-		-webkit-app-region: drag;
-	}
-	.toolbar-drag :global(button) {
-		cursor: default;
-		-webkit-app-region: no-drag;
-	}
-</style>

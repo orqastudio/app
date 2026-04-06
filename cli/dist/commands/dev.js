@@ -73,7 +73,11 @@ function logSuccess(msg) {
     prefixLines("ctrl", COLOURS.green, msg);
 }
 // ── Port / process utilities (local to dev.ts) ────────────────────────────────
-/** Find PIDs listening on a specific port. */
+/**
+ * Find PIDs listening on a specific port.
+ * @param port - The TCP port number to scan.
+ * @returns Array of PIDs with an active LISTENING socket on the given port.
+ */
 function findPidsOnPort(port) {
     if (isWindows()) {
         const out = exec("netstat -ano");
@@ -150,18 +154,25 @@ function removeControlFile(root) {
     try {
         fs.unlinkSync(getControlFilePath(root));
     }
-    catch { /* ignore */ }
+    catch {
+        /* ignore */
+    }
 }
 function cleanupSignalFile(root) {
     try {
         fs.unlinkSync(getSignalFilePath(root));
     }
-    catch { /* ignore */ }
+    catch {
+        /* ignore */
+    }
 }
 // ── Kill all (orphan cleanup) ─────────────────────────────────────────────────
 /**
  * Find and kill all OrqaStudio processes by name and port.
  * Used before a fresh start and by `orqa dev kill`.
+ * @param root - Absolute path to the dev repo root.
+ * @param opts - Optional kill modifiers.
+ * @param opts.preserveDevtools - When true, skip killing the Tauri devtools process.
  */
 async function killAll(root, opts = {}) {
     logCtrl("Stopping OrqaStudio processes...");
@@ -170,12 +181,17 @@ async function killAll(root, opts = {}) {
         await runDaemonCommand(["stop"]);
         logCtrl("Daemon stopped.");
     }
-    catch { /* not running */ }
+    catch {
+        /* not running */
+    }
     const pidsToKill = new Set();
     // Batch discovery — single PowerShell call on Windows instead of one per name.
     const processNames = [
         "orqa-studio",
-        "orqa-mcp-server", "orqa-lsp-server", "orqa-search-server", "orqa-validation",
+        "orqa-mcp-server",
+        "orqa-lsp-server",
+        "orqa-search-server",
+        "orqa-validation",
     ];
     if (!opts.preserveDevtools) {
         processNames.push("orqa-devtools", "cargo-tauri");
@@ -202,9 +218,7 @@ async function killAll(root, opts = {}) {
         getPort("storybook"),
         5173, // legacy default Vite port
     ];
-    const portsToCheck = opts.preserveDevtools
-        ? basePorts
-        : [...basePorts, ...devtoolsPorts];
+    const portsToCheck = opts.preserveDevtools ? basePorts : [...basePorts, ...devtoolsPorts];
     for (const port of portsToCheck) {
         for (const pid of findPidsOnPort(port)) {
             logCtrl(`Found process on port ${port} (PID ${pid})`);
@@ -260,6 +274,7 @@ async function killAll(root, opts = {}) {
 /**
  * Launch OrqaDev (the devtools Tauri app) via `cargo tauri dev`.
  * This is the default subcommand — the user runs `orqa dev` from their shell.
+ * @param root - Absolute path to the dev repo root.
  */
 async function cmdDev(root) {
     const devtoolsDir = path.join(root, "devtools");
@@ -277,7 +292,14 @@ async function cmdDev(root) {
     // Build devtools' npm dependencies before launching Vite.
     // Without dist/ in these packages, devtools Vite will 500 on import.
     logCtrl("Building devtools dependencies...");
-    for (const lib of ["libs/constants", "libs/types", "libs/logger", "libs/sdk", "libs/graph-visualiser", "libs/svelte-components"]) {
+    for (const lib of [
+        "libs/constants",
+        "libs/types",
+        "libs/logger",
+        "libs/sdk",
+        "libs/graph-visualiser",
+        "libs/svelte-components",
+    ]) {
         const libDir = path.join(root, lib);
         if (!fs.existsSync(path.join(libDir, "package.json")))
             continue;
@@ -295,13 +317,16 @@ async function cmdDev(root) {
         stdio: "inherit",
         env: rustEnv(root),
     });
-    child.on("close", (code) => { process.exit(code ?? 0); });
+    child.on("close", (code) => {
+        process.exit(code ?? 0);
+    });
 }
 // ── Subcommand: start-processes (called by OrqaDev) ───────────────────────────
 /**
  * Build all packages and start the dev environment in the foreground.
  * Called by OrqaDev via `orqa dev start-processes`. All process orchestration
  * is delegated to ProcessManager — this function is a thin setup wrapper.
+ * @param root - Absolute path to the dev repo root.
  */
 async function cmdStartProcesses(root) {
     logCtrl("Rebuilding CLI...");
@@ -335,10 +360,16 @@ async function cmdStartProcesses(root) {
     await pm.startServices();
     await pm.startApp();
     pm.watchAll();
-    process.on("SIGINT", () => { void pm.shutdown().then(() => process.exit(0)); });
-    process.on("SIGTERM", () => { void pm.shutdown().then(() => process.exit(0)); });
+    process.on("SIGINT", () => {
+        void pm.shutdown().then(() => process.exit(0));
+    });
+    process.on("SIGTERM", () => {
+        void pm.shutdown().then(() => process.exit(0));
+    });
     if (isWindows())
-        process.on("SIGHUP", () => { void pm.shutdown().then(() => process.exit(0)); });
+        process.on("SIGHUP", () => {
+            void pm.shutdown().then(() => process.exit(0));
+        });
     logCtrl("Dev environment running. Press Ctrl+C to stop.");
 }
 // ── Subcommand: stop ──────────────────────────────────────────────────────────
@@ -408,6 +439,7 @@ function cmdStatus(root) {
 /**
  * Print the dependency graph build tiers computed by ProcessManager.
  * Useful for diagnosing dependency ordering and verifying graph reader output.
+ * @param root - Absolute path to the dev repo root.
  */
 async function cmdGraph(root) {
     const pm = await ProcessManager.create(root);
@@ -465,6 +497,7 @@ function cmdDebugTool(root, args) {
 // ── Main entry point ──────────────────────────────────────────────────────────
 /**
  * Dispatch the dev command to the appropriate subcommand handler.
+ * @param args - Positional arguments passed after `orqa dev`, used to select the subcommand.
  */
 export async function runDevCommand(args) {
     if (args[0] === "--help" || args[0] === "-h") {

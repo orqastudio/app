@@ -119,8 +119,7 @@ async function daemonStart() {
             break;
     }
     if (health === null) {
-        throw new Error("Daemon did not start within 3 seconds.\n" +
-            "Check .state/daemon.log for startup errors.");
+        throw new Error("Daemon did not start within 3 seconds.\n" + "Check .state/daemon.log for startup errors.");
     }
     console.log(`Daemon started (PID ${health.pid}, port ${port}, uptime ${health.uptime_seconds}s).`);
 }
@@ -147,7 +146,9 @@ async function daemonStop() {
         try {
             unlinkSync(pidPath);
         }
-        catch { /* ignore */ }
+        catch {
+            /* ignore */
+        }
         return;
     }
     try {
