@@ -8,7 +8,7 @@
 		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 	} from "@orqastudio/svelte-components/pure";
 	import ToolCallCard from "./ToolCallCard.svelte";
 	import { getToolDisplay, groupLabel } from "$lib/utils/tool-display";
@@ -38,13 +38,10 @@
 </script>
 
 <Collapsible bind:open>
-	<CollapsibleTrigger
-		class="border-border bg-muted/30 hover:bg-muted/50 w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors"
-	>
+	<CollapsibleSection>
 		<HStack gap={2}>
 			<Icon name="chevron-right" size="sm" />
-			{@const ToolIcon = displayInfo.icon}
-			<ToolIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+			<Icon name={displayInfo.iconName} size="sm" tone="muted" />
 			<!-- flex-1 fills the trigger row so the status icon sits flush right -->
 			<Box flex={1} minWidth={0}><Caption variant="caption-mono" truncate>{label}</Caption></Box>
 			{#if errorCount > 0}
@@ -56,7 +53,7 @@
 				<Icon name="check-circle" size="sm" />
 			{/if}
 		</HStack>
-	</CollapsibleTrigger>
+	</CollapsibleSection>
 	<CollapsibleContent>
 		<IndentedBlock>
 			<Stack gap={1}>

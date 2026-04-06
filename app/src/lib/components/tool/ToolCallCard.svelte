@@ -73,7 +73,7 @@
 </script>
 
 <Collapsible bind:open>
-	<CollapsibleSection tone={isEnforcementBlock ? "destructive" : "muted"}>
+	<CollapsibleSection variant={isEnforcementBlock ? "destructive" : "muted"}>
 		<Icon name="chevron-right" size="sm" />
 		<Icon name={displayInfo.iconName} size="sm" tone="muted" />
 		<!-- flex-1 fills the trigger row so the status icon sits flush right -->

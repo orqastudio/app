@@ -307,14 +307,8 @@ export { ActivityBarButton } from "./activity-bar/index.js";
 // ColorSwatch — rectangular color preview with a native sr-only color input for settings panels
 export { ColorSwatch } from "./color-swatch/index.js";
 
-// MiniProgressBar — inline ratio progress bar without label text
-export { MiniProgressBar } from "./mini-progress-bar/index.js";
-
 // StatCard — styled muted stat cell for dashboard metric grids, wraps TooltipTrigger
 export { StatCard } from "./stat-card/index.js";
-
-// FixedScrollArea — ScrollArea constrained to an explicit pixel height
-export { FixedScrollArea } from "./fixed-scroll-area/index.js";
 
 // DynamicGrid — CSS grid with a runtime column count and minWidth (for plugin-driven kanban boards)
 export { DynamicGrid } from "./dynamic-grid/index.js";

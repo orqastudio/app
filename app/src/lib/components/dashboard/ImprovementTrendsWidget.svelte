@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		Box,
 		LoadingSpinner,
 		Caption,
 		Text,
@@ -302,27 +303,30 @@
 						</Stack>
 					</Panel>
 				{:else if path}
-					<svg
-						class="min-h-0 w-full flex-1"
-						viewBox="0 0 100 {SPARKLINE_HEIGHT}"
-						preserveAspectRatio="none"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							d="{path} L100,{SPARKLINE_HEIGHT - 2} L0,{SPARKLINE_HEIGHT - 2} Z"
-							fill={stroke}
-							fill-opacity="0.12"
-						/>
-						<path
-							d={path}
-							{stroke}
-							stroke-width="1.5"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							vector-effect="non-scaling-stroke"
-						/>
-					</svg>
+					<Box flex={1} minHeight={0} width="full">
+						<svg
+							width="100%"
+							height="100%"
+							viewBox="0 0 100 {SPARKLINE_HEIGHT}"
+							preserveAspectRatio="none"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path
+								d="{path} L100,{SPARKLINE_HEIGHT - 2} L0,{SPARKLINE_HEIGHT - 2} Z"
+								fill={stroke}
+								fill-opacity="0.12"
+							/>
+							<path
+								d={path}
+								{stroke}
+								stroke-width="1.5"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								vector-effect="non-scaling-stroke"
+							/>
+						</svg>
+					</Box>
 				{:else}
 					<Panel padding="normal">
 						<Stack gap={0}>

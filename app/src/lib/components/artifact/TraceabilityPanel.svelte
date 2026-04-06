@@ -5,7 +5,7 @@
 		Icon,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 		Badge,
 		HStack,
 		Stack,
@@ -78,12 +78,7 @@
 {:else if result}
 	<Panel padding="tight" border="bottom">
 		<Collapsible bind:open>
-			<!-- CollapsibleTrigger is a library component (Bits UI primitive wrapper) that
-			     forwards class= via ...restProps. Passing class= to library components is the
-			     standard Tailwind composition pattern for headless UI — NOT a raw HTML violation. -->
-			<CollapsibleTrigger
-				class="text-muted-foreground hover:text-foreground flex w-full items-center gap-1 text-xs font-medium transition-colors"
-			>
+			<CollapsibleSection variant="link">
 				<Icon name="chevron-right" size="xs" rotate90={open} />
 				Traceability
 				{#if result.disconnected}
@@ -91,7 +86,7 @@
 				{:else if result.impact_radius > 0}
 					<Caption tone="muted">{result.impact_radius} affected</Caption>
 				{/if}
-			</CollapsibleTrigger>
+			</CollapsibleSection>
 
 			<CollapsibleContent>
 				<Panel padding="normal">
@@ -151,16 +146,13 @@
 						{#if result.descendants.length > 0}
 							<Stack gap={1}>
 								<Collapsible bind:open={descendantsOpen}>
-									<!-- CollapsibleTrigger: library component, class= forwarded via ...restProps. -->
-									<CollapsibleTrigger
-										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
-									>
+									<CollapsibleSection variant="subheading">
 										<HStack gap={1}>
 											<Icon name="chevron-right" size="xs" rotate90={descendantsOpen} />
 											What does this affect?
 											<Caption tone="muted">({result.descendants.length})</Caption>
 										</HStack>
-									</CollapsibleTrigger>
+									</CollapsibleSection>
 									<CollapsibleContent>
 										<Panel padding="tight"
 											><HStack wrap gap={1}>
@@ -186,16 +178,13 @@
 						{#if result.siblings.length > 0}
 							<Stack gap={1}>
 								<Collapsible bind:open={siblingsOpen}>
-									<!-- CollapsibleTrigger: library component, class= forwarded via ...restProps. -->
-									<CollapsibleTrigger
-										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
-									>
+									<CollapsibleSection variant="subheading">
 										<HStack gap={1}>
 											<Icon name="chevron-right" size="xs" rotate90={siblingsOpen} />
 											Related work
 											<Caption tone="muted">({result.siblings.length})</Caption>
 										</HStack>
-									</CollapsibleTrigger>
+									</CollapsibleSection>
 									<CollapsibleContent>
 										<Panel padding="tight"
 											><HStack wrap gap={1}>

@@ -270,9 +270,7 @@
 					<Stack gap={1}>
 						<!-- Outliers -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="unlink" size="xs" />
@@ -328,9 +326,7 @@
 
 						<!-- Connectivity score -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="link" size="xs" />
@@ -356,9 +352,7 @@
 
 						<!-- Avg Degree -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="git-branch" size="xs" />
@@ -384,9 +378,7 @@
 
 						<!-- Broken refs -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="link-2-off" size="xs" />
@@ -418,9 +410,7 @@
 					<Stack gap={1}>
 						<!-- Delivery pipeline -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="package" size="xs" />
@@ -447,9 +437,7 @@
 
 						<!-- Learning pipeline -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="book-open" size="xs" />
@@ -482,9 +470,7 @@
 					<Stack gap={1}>
 						<!-- Pillar Traceability -->
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="hover:bg-muted/60 w-full rounded px-1 py-0.5 text-left transition-colors"
-							>
+							<TooltipTrigger variant="metric-row">
 								<HStack justify="between">
 									<HStack gap={1}>
 										<Icon name="target" size="xs" />

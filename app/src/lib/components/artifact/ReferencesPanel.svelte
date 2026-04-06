@@ -11,7 +11,7 @@
 		Panel,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 	} from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import { SvelteMap } from "svelte/reactivity";
@@ -130,18 +130,12 @@
 	<Panel padding="tight" border="bottom">
 		<Collapsible bind:open={panelOpen}>
 			<HStack justify="between">
-				<!-- CollapsibleTrigger is a library component (Bits UI primitive wrapper) that
-				     forwards class= via ...restProps to the underlying trigger element. Passing
-				     class= to a library component is the standard Tailwind composition pattern
-				     for headless UI primitives — this is NOT a raw HTML violation. -->
-				<CollapsibleTrigger
-					class="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
-				>
+				<CollapsibleSection variant="link">
 					<HStack gap={1}>
 						<Icon name="chevron-right" size="sm" />
 						Relationships
 					</HStack>
-				</CollapsibleTrigger>
+				</CollapsibleSection>
 				{#if panelOpen}
 					<TooltipRoot>
 						<TooltipTrigger>

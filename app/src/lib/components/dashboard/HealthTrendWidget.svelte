@@ -1,6 +1,7 @@
 <script lang="ts">
 	import {
 		Icon,
+		Box,
 		CardRoot,
 		CardHeader,
 		CardTitle,
@@ -210,45 +211,46 @@
 									<!-- Y-axis scale: height matches SVG viewBox so max/min labels align with chart edges -->
 									<SparklineYAxis maxLabel={maxValue(config.key)} height={SPARKLINE_HEIGHT} />
 									<!-- Custom SVG sparkline — no ORQA primitive fits this shape -->
-									<svg
-										width={SPARKLINE_WIDTH}
-										height={SPARKLINE_HEIGHT}
-										viewBox="0 0 {SPARKLINE_WIDTH} {SPARKLINE_HEIGHT}"
-										class="shrink-0"
-										fill="none"
-										xmlns="http://www.w3.org/2000/svg"
-									>
-										<line
-											x1="0"
-											y1={SPARKLINE_HEIGHT - 4}
-											x2={SPARKLINE_WIDTH}
-											y2={SPARKLINE_HEIGHT - 4}
-											stroke="hsl(var(--muted-foreground) / 0.2)"
-											stroke-width="0.5"
-										/>
-										{#if sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
-											{@const pathD = sparklinePath(
-												chronological,
-												config.key,
-												SPARKLINE_WIDTH,
-												SPARKLINE_HEIGHT,
-											)}
-											<path
-												d="{pathD} L{SPARKLINE_WIDTH},{SPARKLINE_HEIGHT - 4} L0,{SPARKLINE_HEIGHT -
-													4} Z"
-												fill={config.strokeColor}
-												fill-opacity="0.08"
+									<Box flex={0}>
+										<svg
+											width={SPARKLINE_WIDTH}
+											height={SPARKLINE_HEIGHT}
+											viewBox="0 0 {SPARKLINE_WIDTH} {SPARKLINE_HEIGHT}"
+											fill="none"
+											xmlns="http://www.w3.org/2000/svg"
+										>
+											<line
+												x1="0"
+												y1={SPARKLINE_HEIGHT - 4}
+												x2={SPARKLINE_WIDTH}
+												y2={SPARKLINE_HEIGHT - 4}
+												stroke="hsl(var(--muted-foreground) / 0.2)"
+												stroke-width="0.5"
 											/>
-											<path
-												d={pathD}
-												stroke={config.strokeColor}
-												stroke-width="1.5"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												fill="none"
-											/>
-										{/if}
-									</svg>
+											{#if sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
+												{@const pathD = sparklinePath(
+													chronological,
+													config.key,
+													SPARKLINE_WIDTH,
+													SPARKLINE_HEIGHT,
+												)}
+												<path
+													d="{pathD} L{SPARKLINE_WIDTH},{SPARKLINE_HEIGHT -
+														4} L0,{SPARKLINE_HEIGHT - 4} Z"
+													fill={config.strokeColor}
+													fill-opacity="0.08"
+												/>
+												<path
+													d={pathD}
+													stroke={config.strokeColor}
+													stroke-width="1.5"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													fill="none"
+												/>
+											{/if}
+										</svg>
+									</Box>
 								</HStack>
 							</Stack>
 						{/each}
