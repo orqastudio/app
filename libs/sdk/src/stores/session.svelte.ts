@@ -4,20 +4,33 @@ import { logger } from "../logger.js";
 
 const log = logger("session");
 
+/**
+ *
+ */
 export class SessionStore {
 	sessions = $state<SessionSummary[]>([]);
 	activeSession = $state<Session | null>(null);
 	isLoading = $state(false);
 	error = $state<string | null>(null);
 
+	/**
+	 *
+	 */
 	get hasActiveSession(): boolean {
 		return this.activeSession !== null;
 	}
 
+	/**
+	 *
+	 */
 	get activeSessionId(): number | null {
 		return this.activeSession?.id ?? null;
 	}
 
+	/**
+	 *
+	 * @param projectId
+	 */
 	async loadSessions(projectId: number): Promise<void> {
 		this.isLoading = true;
 		this.error = null;
@@ -32,6 +45,11 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param projectId
+	 * @param model
+	 */
 	async createSession(projectId: number, model?: string): Promise<Session> {
 		this.error = null;
 		try {
@@ -50,6 +68,10 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param sessionId
+	 */
 	async selectSession(sessionId: number): Promise<void> {
 		this.isLoading = true;
 		this.error = null;
@@ -65,6 +87,10 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param sessionId
+	 */
 	async restoreSession(sessionId: number): Promise<boolean> {
 		this.isLoading = true;
 		this.error = null;
@@ -84,7 +110,11 @@ export class SessionStore {
 		}
 	}
 
-	/** Handle an auto-generated title update from the backend. */
+	/**
+	 * Handle an auto-generated title update from the backend.
+	 * @param sessionId
+	 * @param title
+	 */
 	handleTitleUpdate(sessionId: number, title: string): void {
 		if (this.activeSession && this.activeSession.id === sessionId) {
 			this.activeSession = { ...this.activeSession, title };
@@ -92,6 +122,11 @@ export class SessionStore {
 		this.sessions = this.sessions.map((s) => s.id === sessionId ? { ...s, title } : s);
 	}
 
+	/**
+	 *
+	 * @param sessionId
+	 * @param title
+	 */
 	async updateTitle(sessionId: number, title: string): Promise<void> {
 		this.error = null;
 		try {
@@ -108,6 +143,10 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param sessionId
+	 */
 	async endSession(sessionId: number): Promise<void> {
 		this.error = null;
 		try {
@@ -123,6 +162,10 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param sessionId
+	 */
 	async deleteSession(sessionId: number): Promise<void> {
 		this.error = null;
 		// Optimistically remove from list for immediate UI update
@@ -138,6 +181,9 @@ export class SessionStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	clear() {
 		this.sessions = [];
 		this.activeSession = null;

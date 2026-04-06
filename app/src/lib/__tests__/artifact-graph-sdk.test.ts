@@ -79,7 +79,10 @@ function makeNode(id: string, overrides: Partial<ArtifactNode> = {}): ArtifactNo
 	};
 }
 
-/** Create a minimal PluginRegistry stub with no schemas or relationships. */
+/**
+ * Create a minimal PluginRegistry stub with no schemas or relationships.
+ * @param overrides
+ */
 function makeRegistry(overrides: Partial<PluginRegistry> = {}): PluginRegistry {
 	return {
 		allSchemas: [],
@@ -96,6 +99,8 @@ function makeRegistry(overrides: Partial<PluginRegistry> = {}): PluginRegistry {
 /**
  * Build an ArtifactGraphSDK inside a Svelte effect root and pre-populate the graph.
  * Returns the sdk. The root is tracked for cleanup in afterEach.
+ * @param nodes
+ * @param registry
  */
 function buildSDK(nodes: ArtifactNode[], registry?: PluginRegistry): ArtifactGraphSDK {
 	let sdk!: ArtifactGraphSDK;
@@ -216,10 +221,7 @@ describe("ArtifactGraphSDK.brokenRefs", () => {
 
 	it("does not report refs whose target exists in the graph", () => {
 		const validRef = makeRef({ target_id: "T-002", source_id: "T-001" });
-		const sdk = buildSDK([
-			makeNode("T-001", { references_out: [validRef] }),
-			makeNode("T-002"),
-		]);
+		const sdk = buildSDK([makeNode("T-001", { references_out: [validRef] }), makeNode("T-002")]);
 		expect(sdk.brokenRefs()).toHaveLength(0);
 	});
 
@@ -260,10 +262,7 @@ describe("ArtifactGraphSDK.orphans", () => {
 describe("ArtifactGraphSDK.traverse", () => {
 	it("returns nodes connected by the given relationship type", () => {
 		const ref = makeRef({ target_id: "T-002", source_id: "T-001", relationship_type: "delivers" });
-		const sdk = buildSDK([
-			makeNode("T-001", { references_out: [ref] }),
-			makeNode("T-002"),
-		]);
+		const sdk = buildSDK([makeNode("T-001", { references_out: [ref] }), makeNode("T-002")]);
 		const result = sdk.traverse("T-001", "delivers");
 		expect(result).toHaveLength(1);
 		expect(result[0].id).toBe("T-002");
@@ -271,10 +270,7 @@ describe("ArtifactGraphSDK.traverse", () => {
 
 	it("does not return nodes connected by a different relationship type", () => {
 		const ref = makeRef({ target_id: "T-002", source_id: "T-001", relationship_type: "blocks" });
-		const sdk = buildSDK([
-			makeNode("T-001", { references_out: [ref] }),
-			makeNode("T-002"),
-		]);
+		const sdk = buildSDK([makeNode("T-001", { references_out: [ref] }), makeNode("T-002")]);
 		expect(sdk.traverse("T-001", "delivers")).toHaveLength(0);
 	});
 
@@ -286,10 +282,7 @@ describe("ArtifactGraphSDK.traverse", () => {
 describe("ArtifactGraphSDK.traverseIncoming", () => {
 	it("returns nodes that point to the given node via the given relationship type", () => {
 		const ref = makeRef({ source_id: "T-001", target_id: "T-002", relationship_type: "delivers" });
-		const sdk = buildSDK([
-			makeNode("T-001"),
-			makeNode("T-002", { references_in: [ref] }),
-		]);
+		const sdk = buildSDK([makeNode("T-001"), makeNode("T-002", { references_in: [ref] })]);
 		const result = sdk.traverseIncoming("T-002", "delivers");
 		expect(result).toHaveLength(1);
 		expect(result[0].id).toBe("T-001");
@@ -315,10 +308,7 @@ describe("ArtifactGraphSDK.missingInverses", () => {
 			relationship_type: "delivers",
 		});
 		const sdk = buildSDK(
-			[
-				makeNode("EPIC-001", { references_out: [deliversRef] }),
-				makeNode("TASK-001"),
-			],
+			[makeNode("EPIC-001", { references_out: [deliversRef] }), makeNode("TASK-001")],
 			registry,
 		);
 

@@ -1,6 +1,15 @@
 <!-- Renders an enforcement rule: load status, scope, violation counts, and full markdown content. -->
 <script lang="ts">
-	import { Icon, Badge, HStack, Stack, Box, Text, Button, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Badge,
+		HStack,
+		Stack,
+		Box,
+		Text,
+		Button,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
@@ -11,28 +20,24 @@
 	let { content, ruleName }: { content: string; ruleName: string } = $props();
 
 	// Match this rule name against loaded enforcement rules
-	const matchedRule = $derived(
-		enforcementStore.rules.find((r) => r.name === ruleName),
-	);
+	const matchedRule = $derived(enforcementStore.rules.find((r) => r.name === ruleName));
 	const isLoaded = $derived(matchedRule !== null && matchedRule !== undefined);
 
 	// Violations for this specific rule
 	const ruleViolations = $derived(
 		enforcementStore.violations.filter((v) => v.rule_name === ruleName),
 	);
-	const ruleBlockCount = $derived(
-		ruleViolations.filter((v) => v.action === "Block").length,
-	);
-	const ruleWarnCount = $derived(
-		ruleViolations.filter((v) => v.action === "Warn").length,
-	);
+	const ruleBlockCount = $derived(ruleViolations.filter((v) => v.action === "Block").length);
+	const ruleWarnCount = $derived(ruleViolations.filter((v) => v.action === "Warn").length);
 
 	let violationsExpanded = $state(true);
 </script>
 
 <Stack gap={4}>
 	<!-- Enforcement status bar — flex-wrap not in HStack props, kept as div. -->
-	<div class="flex flex-wrap items-center gap-2 rounded-md border border-border bg-muted/30 px-3 py-2">
+	<div
+		class="border-border bg-muted/30 flex flex-wrap items-center gap-2 rounded-md border px-3 py-2"
+	>
 		{#if isLoaded}
 			<HStack gap={1}>
 				<Icon name="check-circle" size="sm" />
@@ -58,7 +63,8 @@
 			</HStack>
 			<span class="text-muted-foreground">|</span>
 			<Text variant="caption">
-				{matchedRule.entries.length} {matchedRule.entries.length === 1 ? "entry" : "entries"}
+				{matchedRule.entries.length}
+				{matchedRule.entries.length === 1 ? "entry" : "entries"}
 			</Text>
 		{/if}
 
@@ -77,11 +83,7 @@
 	<!-- Violation details (collapsible) -->
 	{#if ruleViolations.length > 0}
 		<Panel padding="none" border="all" rounded="md">
-			<Button
-				variant="ghost"
-				full
-				onclick={() => (violationsExpanded = !violationsExpanded)}
-			>
+			<Button variant="ghost" full onclick={() => (violationsExpanded = !violationsExpanded)}>
 				<HStack gap={1}>
 					{#if violationsExpanded}
 						<Icon name="chevron-down" size="xs" />
@@ -94,19 +96,19 @@
 			{#if violationsExpanded}
 				<Panel padding="tight" border="top">
 					<Stack gap={1}>
-					{#each ruleViolations as violation (violation.timestamp)}
-						<HStack gap={2} align="start">
-							{#if violation.action === "Block"}
-								<Icon name="shield" size="xs" />
-							{:else}
-								<Icon name="alert-triangle" size="xs" />
-							{/if}
-							<Box flex={1} minWidth={0}>
-								<Text variant="caption-mono" truncate block>{violation.tool_name}</Text>
-								<Text variant="caption" block>{violation.detail}</Text>
-							</Box>
-						</HStack>
-					{/each}
+						{#each ruleViolations as violation (violation.timestamp)}
+							<HStack gap={2} align="start">
+								{#if violation.action === "Block"}
+									<Icon name="shield" size="xs" />
+								{:else}
+									<Icon name="alert-triangle" size="xs" />
+								{/if}
+								<Box flex={1} minWidth={0}>
+									<Text variant="caption-mono" truncate block>{violation.tool_name}</Text>
+									<Text variant="caption" block>{violation.detail}</Text>
+								</Box>
+							</HStack>
+						{/each}
 					</Stack>
 				</Panel>
 			{/if}

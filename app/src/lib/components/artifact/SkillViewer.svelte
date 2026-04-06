@@ -38,34 +38,35 @@
 		typeof metadata.description === "string" ? metadata.description : null,
 	);
 	const allowedTools = $derived(
-		Array.isArray(metadata["allowed-tools"])
-			? (metadata["allowed-tools"] as string[])
-			: [],
+		Array.isArray(metadata["allowed-tools"]) ? (metadata["allowed-tools"] as string[]) : [],
 	);
-	const version = $derived(
-		typeof metadata.version === "string" ? metadata.version : null,
-	);
-	const tags = $derived(
-		Array.isArray(metadata.tags) ? (metadata.tags as string[]) : [],
-	);
+	const version = $derived(typeof metadata.version === "string" ? metadata.version : null);
+	const tags = $derived(Array.isArray(metadata.tags) ? (metadata.tags as string[]) : []);
 </script>
 
 <Stack gap={4}>
 	<!-- Structured header -->
-	<Panel padding="normal" border="bottom"><Stack gap={3}>
-		{#if version}
-			<HStack gap={1}>
-				<SmallBadge variant="outline">v{version}</SmallBadge>
-			</HStack>
-		{/if}
+	<Panel padding="normal" border="bottom"
+		><Stack gap={3}>
+			{#if version}
+				<HStack gap={1}>
+					<SmallBadge variant="outline">v{version}</SmallBadge>
+				</HStack>
+			{/if}
 
-		{#if description}
-			<Text variant="body-muted" block>{description}</Text>
-		{/if}
+			{#if description}
+				<Text variant="body-muted" block>{description}</Text>
+			{/if}
 
-		<MetadataRow icon="wrench" label="Allowed Tools" items={allowedTools} badgeVariant="secondary" />
-		<MetadataRow icon="tag" label="Tags" items={tags} badgeVariant="outline" />
-	</Stack></Panel>
+			<MetadataRow
+				icon="wrench"
+				label="Allowed Tools"
+				items={allowedTools}
+				badgeVariant="secondary"
+			/>
+			<MetadataRow icon="tag" label="Tags" items={tags} badgeVariant="outline" />
+		</Stack></Panel
+	>
 
 	<!-- Body content -->
 	{#if body.trim()}

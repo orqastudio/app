@@ -31,12 +31,18 @@
 
 	const displayTitle = $derived(session.title ?? "New Session");
 
+	/**
+	 *
+	 */
 	function startEditing() {
 		isEditing = true;
 		editTitle = session.title ?? "";
 		setTimeout(() => inputRef?.focus(), 0);
 	}
 
+	/**
+	 *
+	 */
 	function finishEditing() {
 		isEditing = false;
 		const trimmed = editTitle.trim();
@@ -45,6 +51,10 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param event
+	 */
 	function handleTitleKeydown(event: KeyboardEvent) {
 		if (event.key === "Enter") {
 			event.preventDefault();
@@ -64,7 +74,7 @@
 			loading={sessionsLoading}
 			error={sessionsError}
 			onSelect={onSelectSession}
-			onNewSession={onNewSession}
+			{onNewSession}
 			onDelete={onDeleteSession}
 			onRetry={onRetryLoadSessions}
 		>
@@ -82,7 +92,7 @@
 					bind:value={editTitle}
 					onblur={finishEditing}
 					onkeydown={handleTitleKeydown}
-					class="min-w-0 flex-1 h-7 rounded border border-border bg-background px-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+					class="border-border bg-background focus:ring-ring h-7 min-w-0 flex-1 rounded border px-2 text-sm focus:ring-1 focus:outline-none"
 				/>
 				<Button variant="ghost" size="icon-sm" onclick={finishEditing} aria-label="Save title">
 					<Icon name="check" size="sm" />

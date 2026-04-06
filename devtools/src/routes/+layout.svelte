@@ -17,6 +17,10 @@
 	// Returns true when the event originated from an element that accepts keyboard
 	// input — input, textarea, select, or any contenteditable. Used to suppress
 	// shortcuts that should not fire while the user is typing.
+	/**
+	 *
+	 * @param e
+	 */
 	function isInputFocused(e: KeyboardEvent): boolean {
 		const target = e.target as HTMLElement | null;
 		if (!target) return false;
@@ -26,6 +30,10 @@
 
 	// Global keydown handler. Checks modifier keys and the active element before
 	// dispatching to the appropriate store action or DOM operation.
+	/**
+	 *
+	 * @param e
+	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		const mod = e.ctrlKey || e.metaKey;
 

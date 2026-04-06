@@ -29,6 +29,8 @@ export interface StreamEvent {
  * const event = createStreamEvent("content_delta", { text: "Hello" });
  * const error = createStreamEvent("error", { message: "Rate limited" });
  * ```
+ * @param type
+ * @param data
  */
 export function createStreamEvent(
 	type: StreamEventType,

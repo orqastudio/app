@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Text, Caption, Code, Stack, HStack } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Button,
+		Heading,
+		Text,
+		Caption,
+		Code,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -14,6 +22,9 @@
 
 	let checking = $state(true);
 
+	/**
+	 *
+	 */
 	async function check() {
 		checking = true;
 		setupStore.error = null;
@@ -52,8 +63,7 @@
 		<Stack gap={3} align="center">
 			<Text tone="warning">Not authenticated</Text>
 			<Caption tone="muted">
-				Run <Code>claude</Code> in your terminal and
-				follow the login prompts to authenticate.
+				Run <Code>claude</Code> in your terminal and follow the login prompts to authenticate.
 			</Caption>
 			<Button variant="outline" onclick={check}>Check Again</Button>
 		</Stack>

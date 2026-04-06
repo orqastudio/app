@@ -26,14 +26,20 @@
 	let appVersion = $state("0.1.0");
 
 	$effect(() => {
-		getName().then((n) => { appName = n; });
-		getVersion().then((v) => { appVersion = v; });
+		getName().then((n) => {
+			appName = n;
+		});
+		getVersion().then((v) => {
+			appVersion = v;
+		});
 	});
 
+	/** Open the new project dialog. */
 	function handleNewProject(): void {
 		newProjectOpen = true;
 	}
 
+	/** Show the OS folder picker and open the selected directory as a project. */
 	async function handleOpenProject(): Promise<void> {
 		const selected = await open({
 			directory: true,
@@ -51,6 +57,7 @@
 		}
 	}
 
+	/** Confirm initializing the pending path as an Orqa project. */
 	async function confirmInitialize(): Promise<void> {
 		initConfirmOpen = false;
 		if (pendingInitPath) {
@@ -59,19 +66,26 @@
 		}
 	}
 
+	/** Cancel the pending project initialization and clear the pending path. */
 	function cancelInitialize(): void {
 		initConfirmOpen = false;
 		pendingInitPath = null;
 	}
 
+	/** Open the settings dialog. */
 	function handleSettings(): void {
 		settingsOpen = true;
 	}
 
+	/** Invoke the Tauri command to launch the devtools window. */
 	async function handleLaunchDevtools(): Promise<void> {
 		await invoke("launch_devtools");
 	}
 
+	/**
+	 * Start window drag on primary mouse button press outside interactive elements.
+	 * @param e
+	 */
 	function handleDragStart(e: MouseEvent): void {
 		if (e.button !== 0) return;
 		const target = e.target as HTMLElement;
@@ -79,27 +93,39 @@
 		getCurrentWindow().startDragging();
 	}
 
+	/**
+	 * Toggle window maximize state on double-click outside interactive elements.
+	 * @param e
+	 */
 	function handleDoubleClick(e: MouseEvent): void {
 		const target = e.target as HTMLElement;
 		if (target.closest("button, [data-menu-bar]")) return;
 		const win = getCurrentWindow();
 		win.isMaximized().then((maximized) => {
-			if (maximized) { win.unmaximize(); } else { win.maximize(); }
+			if (maximized) {
+				win.unmaximize();
+			} else {
+				win.maximize();
+			}
 		});
 	}
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="toolbar-drag relative z-50 flex h-10 items-center border-b border-border bg-background"
+	class="toolbar-drag border-border bg-background relative z-50 flex h-10 items-center border-b"
 	onmousedown={handleDragStart}
 	ondblclick={handleDoubleClick}
 >
-	<div class="flex h-10 w-12 shrink-0 items-center justify-center border-r border-border">
+	<div class="border-border flex h-10 w-12 shrink-0 items-center justify-center border-r">
 		{#if projectStore.iconDataUrl}
-			<img src={projectStore.iconDataUrl} alt="OrqaStudio" class="h-5 w-5 rounded object-contain pointer-events-none" />
+			<img
+				src={projectStore.iconDataUrl}
+				alt="OrqaStudio"
+				class="pointer-events-none h-5 w-5 rounded object-contain"
+			/>
 		{:else}
-			<img src={logoStatic} alt="OrqaStudio" class="h-5 w-5 pointer-events-none" />
+			<img src={logoStatic} alt="OrqaStudio" class="pointer-events-none h-5 w-5" />
 		{/if}
 	</div>
 
@@ -109,7 +135,9 @@
 		onOpenProject={handleOpenProject}
 		onCloseProject={() => projectStore.closeProject()}
 		onSettings={handleSettings}
-		onAbout={() => { aboutOpen = true; }}
+		onAbout={() => {
+			aboutOpen = true;
+		}}
 		onExit={() => getCurrentWindow().close()}
 	/>
 
@@ -122,19 +150,25 @@
 
 <AboutDialog
 	open={aboutOpen}
-	onClose={() => { aboutOpen = false; }}
+	onClose={() => {
+		aboutOpen = false;
+	}}
 	{appName}
 	{appVersion}
 />
 
 <SettingsDialog
 	open={settingsOpen}
-	onClose={() => { settingsOpen = false; }}
+	onClose={() => {
+		settingsOpen = false;
+	}}
 />
 
 <NewProjectDialog
 	open={newProjectOpen}
-	onClose={() => { newProjectOpen = false; }}
+	onClose={() => {
+		newProjectOpen = false;
+	}}
 />
 
 <InitConfirmDialog

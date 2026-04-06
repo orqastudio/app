@@ -9,20 +9,32 @@
 import { FIXTURE_ARTIFACTS, FIXTURE_PROJECT_SETTINGS } from "./fixtures.js";
 
 export interface MockStoreOverrides {
-	readonly projectStore?: Readonly<Partial<{
-		readonly hasProject: boolean;
-		readonly projectName: string;
-		readonly projectPath: string;
-		readonly settings: typeof FIXTURE_PROJECT_SETTINGS;
-	}>>;
-	readonly settingsStore?: Readonly<Partial<{
-		readonly theme: "light" | "dark" | "system";
-		readonly model: string;
-	}>>;
+	readonly projectStore?: Readonly<
+		Partial<{
+			readonly hasProject: boolean;
+			readonly projectName: string;
+			readonly projectPath: string;
+			readonly settings: typeof FIXTURE_PROJECT_SETTINGS;
+		}>
+	>;
+	readonly settingsStore?: Readonly<
+		Partial<{
+			readonly theme: "light" | "dark" | "system";
+			readonly model: string;
+		}>
+	>;
 	readonly artifacts?: typeof FIXTURE_ARTIFACTS;
-	readonly toasts?: ReadonlyArray<{ readonly id: string; readonly message: string; readonly type: "info" | "error" | "success" | "warning" }>;
+	readonly toasts?: ReadonlyArray<{
+		readonly id: string;
+		readonly message: string;
+		readonly type: "info" | "error" | "success" | "warning";
+	}>;
 }
 
+/**
+ *
+ * @param overrides
+ */
 export function createMockStores(overrides?: MockStoreOverrides) {
 	const artifacts = overrides?.artifacts ?? [...FIXTURE_ARTIFACTS];
 	const settings = overrides?.projectStore?.settings ?? FIXTURE_PROJECT_SETTINGS;
@@ -56,9 +68,7 @@ export function createMockStores(overrides?: MockStoreOverrides) {
 			const rels = relationshipType
 				? artifact.relationships.filter((r) => r.type === relationshipType)
 				: artifact.relationships;
-			return rels
-				.map((r) => artifacts.find((a) => a.id === r.target))
-				.filter(Boolean);
+			return rels.map((r) => artifacts.find((a) => a.id === r.target)).filter(Boolean);
 		},
 	};
 
@@ -103,6 +113,9 @@ export function createMockStores(overrides?: MockStoreOverrides) {
 	return stores;
 }
 
+/**
+ *
+ */
 export function getStores() {
 	const stores = (globalThis as Record<string, unknown>).__orqa_stores;
 	if (!stores) {

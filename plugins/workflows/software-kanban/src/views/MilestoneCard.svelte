@@ -37,10 +37,7 @@
 	const epicLabelPlural = $derived(`${epicLabel.toLowerCase()}s`);
 </script>
 
-<Button
-	variant="card"
-	onclick={onClick}
->
+<Button variant="card" onclick={onClick}>
 	<Stack gap={3}>
 		<!-- Header -->
 		<HStack gap={3} align="start">

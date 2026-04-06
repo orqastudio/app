@@ -40,8 +40,9 @@ export default defineConfig({
 			output: {
 				globals: (id: string) => {
 					if (id === "svelte" || id.startsWith("svelte/")) return "window.__orqa.svelteInternal";
-					if (id.startsWith("@orqastudio/svelte-components/connected")) return "window.__orqa.componentsConnected";
-				if (id.startsWith("@orqastudio/svelte-components")) return "window.__orqa.components";
+					if (id.startsWith("@orqastudio/svelte-components/connected"))
+						return "window.__orqa.componentsConnected";
+					if (id.startsWith("@orqastudio/svelte-components")) return "window.__orqa.components";
 					if (id.startsWith("@orqastudio/")) {
 						const map: Record<string, string> = {
 							"@orqastudio/sdk": "window.__orqa.sdk",

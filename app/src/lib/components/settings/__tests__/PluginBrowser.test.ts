@@ -134,7 +134,9 @@ describe("PluginBrowser", () => {
 
 	it("renders manual install input", () => {
 		render(PluginBrowser);
-		expect(screen.getByPlaceholderText(/orqastudio\/orqastudio-plugin-claude/i)).toBeInTheDocument();
+		expect(
+			screen.getByPlaceholderText(/orqastudio\/orqastudio-plugin-claude/i),
+		).toBeInTheDocument();
 	});
 
 	it("renders error message when pluginStore has an error", () => {

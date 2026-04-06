@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, HStack, Stack, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		DialogRoot,
+		DialogContent,
+		DialogHeader,
+		DialogTitle,
+		DialogDescription,
+		HStack,
+		Stack,
+		Text,
+	} from "@orqastudio/svelte-components/pure";
 	import logoPulse from "$lib/assets/logo-pulse.svg";
 
 	interface Props {
@@ -14,7 +23,9 @@
 
 <DialogRoot
 	{open}
-	onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
+	onOpenChange={(isOpen) => {
+		if (!isOpen) onClose();
+	}}
 >
 	<DialogContent>
 		<DialogHeader>

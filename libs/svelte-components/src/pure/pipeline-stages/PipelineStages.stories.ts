@@ -27,18 +27,29 @@ export const WithEdges: Story = {
 			{ key: "research", label: "Research", count: 6, dotColorClass: "bg-amber-400" },
 			{ key: "ready", label: "Ready", count: 3, dotColorClass: "bg-emerald-400" },
 		],
-		edges: [
-			{ count: 4 },
-			{ count: 2 },
-		],
+		edges: [{ count: 4 }, { count: 2 }],
 	},
 };
 
 export const WithTooltips: Story = {
 	args: {
 		stages: [
-			{ key: "captured", label: "Captured", count: 5, dotColorClass: "bg-muted-foreground", tooltipTitle: "Newly captured", tooltipBody: "Ideas that haven't been explored yet." },
-			{ key: "active", label: "Active", count: 3, dotColorClass: "bg-primary", tooltipTitle: "In progress", tooltipBody: "Currently being worked on." },
+			{
+				key: "captured",
+				label: "Captured",
+				count: 5,
+				dotColorClass: "bg-muted-foreground",
+				tooltipTitle: "Newly captured",
+				tooltipBody: "Ideas that haven't been explored yet.",
+			},
+			{
+				key: "active",
+				label: "Active",
+				count: 3,
+				dotColorClass: "bg-primary",
+				tooltipTitle: "In progress",
+				tooltipBody: "Currently being worked on.",
+			},
 		],
 	},
 };

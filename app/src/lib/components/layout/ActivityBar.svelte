@@ -10,16 +10,22 @@
 	import type { NavigationItem } from "@orqastudio/types";
 	import ActivityBarItem from "./ActivityBarItem.svelte";
 
-	/** Convert a config key to a human-readable label (mirrors Rust humanize_name). */
+	/**
+	 * Convert a config key to a human-readable label (mirrors Rust humanize_name).
+	 * @param key - The config key to humanize.
+	 * @returns The humanized label.
+	 */
 	function humanizeKey(key: string): string {
-		return key
-			.replace(/[-_]/g, " ")
-			.replace(/\b\w/g, (c) => c.toUpperCase());
+		return key.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	const navItems = $derived(navigationStore.topLevelNavItems);
 
-	/** Check if a NavigationItem or its children is active. */
+	/**
+	 * Check if a NavigationItem or its children is active.
+	 * @param item - The navigation item to check.
+	 * @returns Whether the item is currently active.
+	 */
 	function isNavItemActive(item: NavigationItem): boolean {
 		if (item.type === "group") {
 			return navigationStore.activeGroup === item.key;
@@ -27,7 +33,10 @@
 		return navigationStore.activeActivity === item.key && navigationStore.activeGroup === null;
 	}
 
-	/** Handle click on a navigation item. */
+	/**
+	 * Handle click on a navigation item.
+	 * @param item - The navigation item that was clicked.
+	 */
 	function handleNavClick(item: NavigationItem): void {
 		if (item.type === "group") {
 			navigationStore.setGroup(item.key);
@@ -38,7 +47,7 @@
 	}
 </script>
 
-<div class="flex w-12 flex-col items-center gap-0 border-r border-border bg-muted/30 py-2">
+<div class="border-border bg-muted/30 flex w-12 flex-col items-center gap-0 border-r py-2">
 	{#if navItems}
 		<!-- Render main nav items, skipping bottom fixed items -->
 		{#each navItems as item (item.key)}
@@ -66,7 +75,10 @@
 				icon={graphItem.icon}
 				label="Artifact Graph"
 				active={navigationStore.activeActivity === "artifact-graph"}
-				onclick={() => { navigationStore.activeGroup = null; navigationStore.setActivity("artifact-graph"); }}
+				onclick={() => {
+					navigationStore.activeGroup = null;
+					navigationStore.setActivity("artifact-graph");
+				}}
 			/>
 		{/if}
 
@@ -87,7 +99,10 @@
 				icon={pluginsItem.icon}
 				label="Plugins"
 				active={navigationStore.activeActivity === "plugins"}
-				onclick={() => { navigationStore.activeGroup = null; navigationStore.setActivity("plugins"); }}
+				onclick={() => {
+					navigationStore.activeGroup = null;
+					navigationStore.setActivity("plugins");
+				}}
 			/>
 		{/if}
 
@@ -97,7 +112,10 @@
 				icon={settingsItem.icon}
 				label="Project Settings"
 				active={navigationStore.activeActivity === "settings"}
-				onclick={() => { settingsStore.setActiveSection("project-general"); navigationStore.setActivity("settings"); }}
+				onclick={() => {
+					settingsStore.setActiveSection("project-general");
+					navigationStore.setActivity("settings");
+				}}
 			/>
 		{/if}
 	{/if}

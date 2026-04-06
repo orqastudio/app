@@ -12,7 +12,8 @@ type Story = StoryObj;
 
 export const Completed: Story = {
 	args: {
-		content: "Let me analyze the artifact relationships...\nChecking for circular dependencies.\nAll clear — no cycles detected.",
+		content:
+			"Let me analyze the artifact relationships...\nChecking for circular dependencies.\nAll clear — no cycles detected.",
 		isStreaming: false,
 	},
 };

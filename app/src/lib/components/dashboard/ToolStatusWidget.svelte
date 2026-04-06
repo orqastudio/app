@@ -1,9 +1,24 @@
 <script lang="ts">
 	import { Icon } from "@orqastudio/svelte-components/pure";
-	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		CardAction,
+	} from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Caption, Code, CollapsibleRoot, CollapsibleTrigger, CollapsibleContent } from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		HStack,
+		Stack,
+		Caption,
+		Code,
+		CollapsibleRoot,
+		CollapsibleTrigger,
+		CollapsibleContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger, fmt } from "@orqastudio/sdk";
 
@@ -53,76 +68,79 @@
 </script>
 
 {#if hasTools}
-<CardRoot>
-	<CardHeader compact>
-		<CardTitle>
-			<HStack gap={2}>
-				<Icon name="wrench" size="md" />
-				Plugin CLI Tools
-			</HStack>
-		</CardTitle>
-		<CardAction>
-			<Badge variant="outline" size="xs">
-				{pluginStore.cliToolStatuses.length} tool{pluginStore.cliToolStatuses.length !== 1 ? "s" : ""}
-			</Badge>
-		</CardAction>
-	</CardHeader>
-	<CardContent>
-		<Stack gap={2}>
-			{#each pluginStore.cliToolStatuses as tool (`${tool.plugin}:${tool.tool_key}`)}
-				{@const isRunning = running === `${tool.plugin}:${tool.tool_key}`}
-				<Panel padding="tight" border="all" rounded="md">
-					<HStack justify="between">
-						<HStack gap={2}>
-							{#if tool.success === true}
-								<Icon name="circle-check" size="sm" />
-							{:else if tool.success === false}
-								<Icon name="circle-x" size="sm" />
-							{:else}
-								<Icon name="circle-dashed" size="sm" />
-							{/if}
-							<Stack gap={0}>
-								<Caption variant="caption-strong">{tool.label}</Caption>
-								<Caption>
-									{#if tool.summary}
-										{tool.summary}{#if tool.last_duration_ms} — {formatDuration(tool.last_duration_ms)}{/if}
-									{:else}
-										Not run yet
-									{/if}
-								</Caption>
-							</Stack>
+	<CardRoot>
+		<CardHeader compact>
+			<CardTitle>
+				<HStack gap={2}>
+					<Icon name="wrench" size="md" />
+					Plugin CLI Tools
+				</HStack>
+			</CardTitle>
+			<CardAction>
+				<Badge variant="outline" size="xs">
+					{pluginStore.cliToolStatuses.length} tool{pluginStore.cliToolStatuses.length !== 1
+						? "s"
+						: ""}
+				</Badge>
+			</CardAction>
+		</CardHeader>
+		<CardContent>
+			<Stack gap={2}>
+				{#each pluginStore.cliToolStatuses as tool (`${tool.plugin}:${tool.tool_key}`)}
+					{@const isRunning = running === `${tool.plugin}:${tool.tool_key}`}
+					<Panel padding="tight" border="all" rounded="md">
+						<HStack justify="between">
+							<HStack gap={2}>
+								{#if tool.success === true}
+									<Icon name="circle-check" size="sm" />
+								{:else if tool.success === false}
+									<Icon name="circle-x" size="sm" />
+								{:else}
+									<Icon name="circle-dashed" size="sm" />
+								{/if}
+								<Stack gap={0}>
+									<Caption variant="caption-strong">{tool.label}</Caption>
+									<Caption>
+										{#if tool.summary}
+											{tool.summary}{#if tool.last_duration_ms}
+												— {formatDuration(tool.last_duration_ms)}{/if}
+										{:else}
+											Not run yet
+										{/if}
+									</Caption>
+								</Stack>
+							</HStack>
+							<Button
+								variant="ghost"
+								size="sm"
+								disabled={isRunning}
+								onclick={() => runTool(tool.plugin, tool.tool_key)}
+							>
+								{#if isRunning}
+									<LoadingSpinner size="sm" />
+								{:else}
+									Run
+								{/if}
+							</Button>
 						</HStack>
-						<Button
-							variant="ghost"
-							size="sm"
-							disabled={isRunning}
-							onclick={() => runTool(tool.plugin, tool.tool_key)}
-						>
-							{#if isRunning}
-								<LoadingSpinner size="sm" />
-							{:else}
-								Run
-							{/if}
-						</Button>
-					</HStack>
-				</Panel>
-			{/each}
-		</Stack>
+					</Panel>
+				{/each}
+			</Stack>
 
-		{#if error}
-			<Caption tone="destructive">{error}</Caption>
-		{/if}
+			{#if error}
+				<Caption tone="destructive">{error}</Caption>
+			{/if}
 
-		{#if lastResult && lastResult.exit_code !== 0}
-			<CollapsibleRoot>
-				<CollapsibleTrigger>
-					<Button variant="ghost" size="sm">Last run output</Button>
-				</CollapsibleTrigger>
-				<CollapsibleContent>
-					<Code block>{lastResult.stderr || lastResult.stdout}</Code>
-				</CollapsibleContent>
-			</CollapsibleRoot>
-		{/if}
-	</CardContent>
-</CardRoot>
+			{#if lastResult && lastResult.exit_code !== 0}
+				<CollapsibleRoot>
+					<CollapsibleTrigger>
+						<Button variant="ghost" size="sm">Last run output</Button>
+					</CollapsibleTrigger>
+					<CollapsibleContent>
+						<Code block>{lastResult.stderr || lastResult.stdout}</Code>
+					</CollapsibleContent>
+				</CollapsibleRoot>
+			{/if}
+		</CardContent>
+	</CardRoot>
 {/if}

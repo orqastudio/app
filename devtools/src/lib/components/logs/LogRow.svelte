@@ -21,8 +21,10 @@
 	// Brief confirmation text shown after a successful copy.
 	let copyFeedback = $state<"idle" | "copied">("idle");
 
-	// Copy the full log entry as a JSON string to the system clipboard.
-	// Shows a brief "Copied" confirmation then resets to the icon.
+	/**
+	 * Copy the full log entry as JSON to the clipboard, showing brief confirmation.
+	 * @param e
+	 */
 	async function copyToClipboard(e: MouseEvent): Promise<void> {
 		// Prevent the click from toggling the expand state.
 		e.stopPropagation();
@@ -37,7 +39,10 @@
 		}
 	}
 
-	// Format a Unix millisecond timestamp as HH:MM:SS.mmm.
+	/**
+	 * Format a Unix millisecond timestamp as HH:MM:SS.mmm.
+	 * @param ms
+	 */
 	function formatTimestamp(ms: number): string {
 		const d = new Date(ms);
 		const hh = d.getHours().toString().padStart(2, "0");
@@ -49,7 +54,10 @@
 
 	// Badge variant for the level indicator, keyed by level string.
 	// Uses library Badge variants where they fit; falls back to secondary.
-	const LEVEL_BADGE_VARIANT: Record<string, "secondary" | "destructive" | "outline" | "default" | "warning"> = {
+	const LEVEL_BADGE_VARIANT: Record<
+		string,
+		"secondary" | "destructive" | "outline" | "default" | "warning"
+	> = {
 		Debug: "outline",
 		Info: "default",
 		Warn: "warning",
@@ -77,53 +85,49 @@
 
 <!-- Absolute-positioned wrapper lets the virtualiser translate rows without
      reflowing the DOM. The inner content uses a normal block layout. -->
-<div
-	class="log-row {rowTintClass}"
-	{style}
-	role="row"
->
+<div class="log-row {rowTintClass}" {style} role="row">
 	<!-- Main row: fixed-height single line with all columns. The copy button
 	     is positioned at the right edge and revealed on group hover.
 	     Wrapper span with display:contents is invisible to layout; scoped class
 	     provides the hook for :global() CSS overrides on the Button inside. -->
 	<span class="log-row__main-wrap" style="display: contents;">
-	<Button
-		variant="ghost"
-		style="height: 24px; line-height: 24px;"
-		onclick={() => (expanded = !expanded)}
-		aria-expanded={expanded}
-	>
-		<!-- Timestamp: monospace, fixed width so columns align. -->
-		<span class="log-row__timestamp">
-			{formatTimestamp(event.timestamp)}
-		</span>
+		<Button
+			variant="ghost"
+			style="height: 24px; line-height: 24px;"
+			onclick={() => (expanded = !expanded)}
+			aria-expanded={expanded}
+		>
+			<!-- Timestamp: monospace, fixed width so columns align. -->
+			<span class="log-row__timestamp">
+				{formatTimestamp(event.timestamp)}
+			</span>
 
-		<!-- Level badge: small pill aligned left, using shared Badge component.
+			<!-- Level badge: small pill aligned left, using shared Badge component.
 		     Wrapper span with display:contents provides :global() hook without
 		     affecting layout. -->
-		<span class="log-row__badge-cell">
-			<span class="log-row__badge-wrap" style="display: contents;">
-				<Badge variant={badgeVariant}>
-					{event.level}
-				</Badge>
+			<span class="log-row__badge-cell">
+				<span class="log-row__badge-wrap" style="display: contents;">
+					<Badge variant={badgeVariant}>
+						{event.level}
+					</Badge>
+				</span>
 			</span>
-		</span>
 
-		<!-- Source: subtle muted label. -->
-		<span class="log-row__source">
-			{event.source}
-		</span>
+			<!-- Source: subtle muted label. -->
+			<span class="log-row__source">
+				{event.source}
+			</span>
 
-		<!-- Category: slightly stronger colour. -->
-		<span class="log-row__category">
-			{event.category}
-		</span>
+			<!-- Category: slightly stronger colour. -->
+			<span class="log-row__category">
+				{event.category}
+			</span>
 
-		<!-- Message: fills remaining space, truncates with ellipsis. -->
-		<span class="log-row__message">
-			{event.message}
-		</span>
-	</Button>
+			<!-- Message: fills remaining space, truncates with ellipsis. -->
+			<span class="log-row__message">
+				{event.message}
+			</span>
+		</Button>
 	</span>
 
 	<!-- Copy-to-clipboard button: absolutely positioned at the right of the row,
@@ -149,9 +153,9 @@
 		<div class="log-row__metadata">
 			<!-- Code block replaces raw pre element for metadata JSON display.
 		     Scoped wrapper provides the :global() hook without passing class to Code. -->
-		<span class="log-row__code-wrap">
-			<Code block={true}>{metadataJson}</Code>
-		</span>
+			<span class="log-row__code-wrap">
+				<Code block={true}>{metadataJson}</Code>
+			</span>
 		</div>
 	{/if}
 </div>

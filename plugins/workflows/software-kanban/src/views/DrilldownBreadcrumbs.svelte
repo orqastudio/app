@@ -18,9 +18,4 @@
 	const homeItem = $derived(items[0]);
 </script>
 
-<Breadcrumb
-	items={breadcrumbItems}
-	showHome={true}
-	onHome={homeItem?.onClick}
-	maxWidth="240px"
-/>
+<Breadcrumb items={breadcrumbItems} showHome={true} onHome={homeItem?.onClick} maxWidth="240px" />

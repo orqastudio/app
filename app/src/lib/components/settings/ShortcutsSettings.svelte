@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { HStack, Stack, Caption, Kbd, Panel } from "@orqastudio/svelte-components/pure";
 
 	const shortcuts: { key: string; action: string }[] = [
@@ -20,10 +26,10 @@
 		<Stack gap={2}>
 			{#each shortcuts as shortcut (shortcut.key)}
 				<Panel padding="tight">
-				<HStack justify="between">
-					<Caption tone="muted">{shortcut.action}</Caption>
-					<Kbd>{shortcut.key}</Kbd>
-				</HStack>
+					<HStack justify="between">
+						<Caption tone="muted">{shortcut.action}</Caption>
+						<Kbd>{shortcut.key}</Kbd>
+					</HStack>
 				</Panel>
 			{/each}
 		</Stack>

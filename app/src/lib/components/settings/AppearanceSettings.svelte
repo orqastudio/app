@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+	} from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { ThemeMode } from "@orqastudio/sdk";
@@ -32,7 +39,8 @@
 				items={themeModeOptions}
 				selected={settingsStore.themeMode}
 				onSelect={handleThemeChange}
-				triggerLabel={themeModeOptions.find((o) => o.value === settingsStore.themeMode)?.label ?? "System"}
+				triggerLabel={themeModeOptions.find((o) => o.value === settingsStore.themeMode)?.label ??
+					"System"}
 				triggerSize="default"
 				align="start"
 			/>

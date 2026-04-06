@@ -17,16 +17,31 @@ import { installMockStores, clearMockStores } from "../../shared/__tests__/mock-
 vi.mock("@orqastudio/svelte-components/pure", async (importActual) => {
 	const actual = await importActual<typeof import("@orqastudio/svelte-components/pure")>();
 	const { default: TooltipRoot } = await import("../../shared/__tests__/stubs/TooltipRoot.svelte");
-	const { default: TooltipTrigger } = await import("../../shared/__tests__/stubs/TooltipTrigger.svelte");
-	const { default: TooltipContent } = await import("../../shared/__tests__/stubs/TooltipContent.svelte");
+	const { default: TooltipTrigger } = await import(
+		"../../shared/__tests__/stubs/TooltipTrigger.svelte"
+	);
+	const { default: TooltipContent } = await import(
+		"../../shared/__tests__/stubs/TooltipContent.svelte"
+	);
 	return { ...actual, TooltipRoot, TooltipTrigger, TooltipContent };
 });
 
 // Mock Tauri plugin imports that StatusBar's transitive imports may trigger
 vi.mock("@tauri-apps/api/core", () => ({ invoke: vi.fn() }));
 vi.mock("@tauri-apps/plugin-dialog", () => ({ open: vi.fn() }));
-vi.mock("@tauri-apps/api/window", () => ({ getCurrentWindow: vi.fn(() => ({ startDragging: vi.fn(), isMaximized: vi.fn(), maximize: vi.fn(), unmaximize: vi.fn(), close: vi.fn() })) }));
-vi.mock("@tauri-apps/api/app", () => ({ getVersion: vi.fn().mockResolvedValue("0.1.0"), getName: vi.fn().mockResolvedValue("OrqaStudio") }));
+vi.mock("@tauri-apps/api/window", () => ({
+	getCurrentWindow: vi.fn(() => ({
+		startDragging: vi.fn(),
+		isMaximized: vi.fn(),
+		maximize: vi.fn(),
+		unmaximize: vi.fn(),
+		close: vi.fn(),
+	})),
+}));
+vi.mock("@tauri-apps/api/app", () => ({
+	getVersion: vi.fn().mockResolvedValue("0.1.0"),
+	getName: vi.fn().mockResolvedValue("OrqaStudio"),
+}));
 vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn().mockResolvedValue(() => {}) }));
 
 // SVG asset mock
@@ -51,7 +66,6 @@ describe("StatusBar", () => {
 	it("renders the model display name", () => {
 		installMockStores({
 			settingsStore: {
-				...({} as any),
 				sidecarStatus: { state: "connected" },
 				daemonHealth: { state: "connected", artifacts: 0, rules: 0 },
 				modelDisplayName: "claude-sonnet-4-6",
@@ -72,13 +86,12 @@ describe("StatusBar", () => {
 	it("does not render token counter when session has no tokens", () => {
 		installMockStores({
 			sessionStore: {
-				...({} as any),
 				activeSession: null,
 				sessions: [],
 				hasActiveSession: false,
 				isLoading: false,
 				error: null,
-			} as any,
+			},
 		});
 		render(StatusBar);
 		// Token counter should not be visible when session is null
@@ -88,7 +101,6 @@ describe("StatusBar", () => {
 	it("renders token counter when session has tokens", () => {
 		installMockStores({
 			sessionStore: {
-				...({} as any),
 				activeSession: {
 					id: 1,
 					total_input_tokens: 1500,
@@ -98,7 +110,7 @@ describe("StatusBar", () => {
 				hasActiveSession: true,
 				isLoading: false,
 				error: null,
-			} as any,
+			},
 		});
 		render(StatusBar);
 		// 1500 tokens → "1.5k" and 200 → "200"
@@ -108,7 +120,6 @@ describe("StatusBar", () => {
 	it("renders artifact count from SDK graph size", () => {
 		installMockStores({
 			artifactGraphSDK: {
-				...({} as any),
 				graph: { size: 99 },
 				loading: false,
 				error: null,
@@ -123,7 +134,7 @@ describe("StatusBar", () => {
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),
-			} as any,
+			},
 		});
 		render(StatusBar);
 		expect(screen.getByText("99")).toBeInTheDocument();
@@ -132,7 +143,6 @@ describe("StatusBar", () => {
 	it("renders sidecar state label", () => {
 		installMockStores({
 			settingsStore: {
-				...({} as any),
 				sidecarStatus: { state: "error", error_message: "Timeout" },
 				daemonHealth: { state: "disconnected" },
 				modelDisplayName: "Claude Sonnet",
@@ -144,7 +154,7 @@ describe("StatusBar", () => {
 				destroy: vi.fn(),
 				setActiveSection: vi.fn(),
 				refreshDaemonHealth: vi.fn(),
-			} as any,
+			},
 		});
 		render(StatusBar);
 		expect(screen.getByText("Error")).toBeInTheDocument();
@@ -153,7 +163,6 @@ describe("StatusBar", () => {
 	it("renders startup task label when active", () => {
 		installMockStores({
 			settingsStore: {
-				...({} as any),
 				sidecarStatus: { state: "starting" },
 				daemonHealth: { state: "disconnected" },
 				modelDisplayName: "Claude Sonnet",
@@ -165,7 +174,7 @@ describe("StatusBar", () => {
 				destroy: vi.fn(),
 				setActiveSection: vi.fn(),
 				refreshDaemonHealth: vi.fn(),
-			} as any,
+			},
 		});
 		render(StatusBar);
 		expect(screen.getByText(/Loading plugins/)).toBeInTheDocument();

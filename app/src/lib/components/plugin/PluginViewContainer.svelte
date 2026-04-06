@@ -26,8 +26,11 @@
 			const content = await readTextFile(bundlePath);
 
 			// Execute the IIFE. It returns the module exports object.
-			// eslint-disable-next-line no-new-func
-			const module = new Function(content + "\nreturn OrqaPluginView;")() as Record<string, unknown>;
+
+			const module = new Function(content + "\nreturn OrqaPluginView;")() as Record<
+				string,
+				unknown
+			>;
 
 			if (!module.default && !module.mount) {
 				error = `Plugin "${pluginName}" view "${viewKey}" does not export a default component or mount function`;

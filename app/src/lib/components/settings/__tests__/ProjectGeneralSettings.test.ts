@@ -79,9 +79,7 @@ describe("ProjectGeneralSettings", () => {
 		const input = screen.getByLabelText(/Name/i);
 		await fireEvent.input(input, { target: { value: "Updated Project" } });
 		await fireEvent.blur(input);
-		expect(onSave).toHaveBeenCalledWith(
-			expect.objectContaining({ name: "Updated Project" }),
-		);
+		expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ name: "Updated Project" }));
 	});
 
 	it("renders Upload button when no icon is set", () => {

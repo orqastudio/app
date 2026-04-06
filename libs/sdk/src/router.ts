@@ -27,7 +27,11 @@ import { assertNever } from "@orqastudio/types";
 let _pushState: (url: string, state: Record<string, unknown>) => void = (url) => history.pushState(null, "", url);
 let _replaceState: (url: string, state: Record<string, unknown>) => void = (url) => history.replaceState(null, "", url);
 
-/** Inject SvelteKit navigation functions. Call once from the app's root layout. */
+/**
+ * Inject SvelteKit navigation functions. Call once from the app's root layout.
+ * @param pushState
+ * @param replaceState
+ */
 export function injectNavigation(
 	pushState: (url: string, state: Record<string, unknown>) => void,
 	replaceState: (url: string, state: Record<string, unknown>) => void,
@@ -38,17 +42,28 @@ export function injectNavigation(
 
 // ── Navigation API for plugins and SDK consumers ────────────────────────────
 
-/** Navigate to an artifact by path (e.g., ".orqa/learning/rules/RULE-abc.md"). */
+/**
+ * Navigate to an artifact by path (e.g., ".orqa/learning/rules/RULE-abc.md").
+ * @param artifactPath
+ * @param activity
+ */
 export function navigateToArtifact(artifactPath: string, activity?: string): void {
 	pushRoute({ type: "artifact", activity: activity ?? "explorer", artifactPath });
 }
 
-/** Navigate to a plugin view. */
+/**
+ * Navigate to a plugin view.
+ * @param pluginName
+ * @param viewKey
+ */
 export function navigateToPluginView(pluginName: string, viewKey: string): void {
 	pushRoute({ type: "plugin", pluginName, viewKey });
 }
 
-/** Navigate to an activity panel (e.g., "roadmap", "lessons", "settings"). */
+/**
+ * Navigate to an activity panel (e.g., "roadmap", "lessons", "settings").
+ * @param activity
+ */
 export function navigateToActivity(activity: string): void {
 	pushRoute({ type: "artifacts", activity });
 }
@@ -78,6 +93,7 @@ export interface ParsedRoute {
 
 /**
  * Parse a hash string into a structured route.
+ * @param hash
  */
 export function parseHash(hash: string): ParsedRoute {
 	// Remove leading # and /
@@ -139,6 +155,7 @@ export function parseHash(hash: string): ParsedRoute {
  * Build a hash string from route parameters.
  * Exhaustively handles all ParsedRoute variants — adding a new type without a
  * case here will produce a compile error via assertNever.
+ * @param route
  */
 export function buildHash(route: ParsedRoute): string {
 	switch (route.type) {
@@ -169,6 +186,7 @@ export function buildHash(route: ParsedRoute): string {
  * Uses SvelteKit's pushState to avoid conflicts with the SvelteKit router.
  * This also avoids triggering the hashchange listener (which would cause a
  * loop when called from syncToHash → pushRoute → hashchange → applyRoute).
+ * @param route
  */
 export function pushRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
@@ -179,6 +197,7 @@ export function pushRoute(route: ParsedRoute): void {
 
 /**
  * Replace the current route without adding a history entry.
+ * @param route
  */
 export function replaceRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);

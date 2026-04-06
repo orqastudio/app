@@ -2,7 +2,14 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { ToolCallState } from "@orqastudio/sdk";
 	import { getActivityPhase, getEphemeralLabel } from "$lib/utils/tool-display";
-	import { Caption, Text, StreamingDots, Stack, HStack, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Caption,
+		Text,
+		StreamingDots,
+		Stack,
+		HStack,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 
 	let {
 		hasContent = false,
@@ -47,9 +54,7 @@
 	// Determine the current mode
 	const hasActiveTools = $derived(toolCalls.length > 0);
 	const runningTool = $derived(toolCalls.find((t) => !t.isComplete));
-	const lastCompletedTool = $derived(
-		toolCalls.length > 0 ? toolCalls[toolCalls.length - 1] : null,
-	);
+	const lastCompletedTool = $derived(toolCalls.length > 0 ? toolCalls[toolCalls.length - 1] : null);
 
 	// Activity phase from the most recent tool
 	const currentPhase = $derived(

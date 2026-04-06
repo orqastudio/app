@@ -1,7 +1,26 @@
 <script lang="ts">
-	import { Icon, DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
-	import { TabsRoot as Tabs, TabsContent, TabsList, TabsTrigger } from "@orqastudio/svelte-components/pure";
-	import { ScrollArea, Stack, Code, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		DialogRoot,
+		DialogContent,
+		DialogHeader,
+		DialogTitle,
+		DialogDescription,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		TabsRoot as Tabs,
+		TabsContent,
+		TabsList,
+		TabsTrigger,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		ScrollArea,
+		Stack,
+		Code,
+		Caption,
+		Text,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import {
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
@@ -12,10 +31,7 @@
 
 	const log = logger("conversation");
 
-	let {
-		entry,
-		open = $bindable(false),
-	}: { entry: ContextEntryType; open: boolean } = $props();
+	let { entry, open = $bindable(false) }: { entry: ContextEntryType; open: boolean } = $props();
 
 	let customPromptOpen = $state(true);
 	let governancePromptOpen = $state(false);
@@ -35,8 +51,7 @@
 					const obj = m as Record<string, unknown>;
 					return {
 						role: typeof obj.role === "string" ? obj.role : "unknown",
-						content:
-							typeof obj.content === "string" ? obj.content : JSON.stringify(obj.content),
+						content: typeof obj.content === "string" ? obj.content : JSON.stringify(obj.content),
 					};
 				}
 				return { role: "unknown", content: String(m) };
@@ -48,13 +63,13 @@
 	});
 
 	const dialogTitle = $derived(
-		entry.type === "system_prompt_sent" ? "System Prompt Details" : "Injected Context Details"
+		entry.type === "system_prompt_sent" ? "System Prompt Details" : "Injected Context Details",
 	);
 
 	const dialogDescription = $derived(
 		entry.type === "system_prompt_sent"
 			? `${entry.totalChars.toLocaleString()} characters sent to the model`
-			: `${entry.messageCount} messages, ${entry.totalChars.toLocaleString()} characters injected`
+			: `${entry.messageCount} messages, ${entry.totalChars.toLocaleString()} characters injected`,
 	);
 
 	const rawText = $derived.by(() => {
@@ -69,6 +84,10 @@
 		return entry.messages;
 	});
 
+	/**
+	 * Return a human-readable label for a message role string.
+	 * @param role
+	 */
 	function roleLabel(role: string): string {
 		if (role === "user") return "User";
 		if (role === "assistant") return "Assistant";
@@ -96,7 +115,7 @@
 							{#if entry.customPrompt}
 								<Collapsible bind:open={customPromptOpen}>
 									<CollapsibleTrigger
-										class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+										class="border-border bg-muted/30 hover:bg-muted/50 flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors"
 									>
 										<Icon name="chevron-right" size="sm" />
 										<!-- flex-1 is structural (fills trigger row) -->
@@ -105,7 +124,7 @@
 									</CollapsibleTrigger>
 									<CollapsibleContent>
 										<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-										<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+										<div class="border-border mt-1 ml-3 border-l-2 pl-4">
 											<Code block>{entry.customPrompt}</Code>
 										</div>
 									</CollapsibleContent>
@@ -118,7 +137,7 @@
 
 							<Collapsible bind:open={governancePromptOpen}>
 								<CollapsibleTrigger
-									class="flex w-full items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+									class="border-border bg-muted/30 hover:bg-muted/50 flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors"
 								>
 									<Icon name="chevron-right" size="sm" />
 									<!-- flex-1 is structural (fills trigger row) -->
@@ -127,7 +146,7 @@
 								</CollapsibleTrigger>
 								<CollapsibleContent>
 									<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-									<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+									<div class="border-border mt-1 ml-3 border-l-2 pl-4">
 										<Code block>{entry.governancePrompt}</Code>
 									</div>
 								</CollapsibleContent>

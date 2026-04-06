@@ -51,7 +51,9 @@
 		/>
 	{:else}
 		<Callout tone="warning" border="dashed" iconName="alert-triangle">
-			<Caption tone="warning">Invalid artifacts directive: requires type, parent, and field attributes.</Caption>
+			<Caption tone="warning"
+				>Invalid artifacts directive: requires type, parent, and field attributes.</Caption
+			>
 		</Callout>
 	{/if}
 {:else}

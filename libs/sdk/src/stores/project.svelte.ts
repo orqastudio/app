@@ -11,6 +11,9 @@ import type {
 
 const log = logger("project");
 
+/**
+ *
+ */
 export class ProjectStore {
 	activeProject = $state<Project | null>(null);
 	projects = $state<ProjectSummary[]>([]);
@@ -23,24 +26,39 @@ export class ProjectStore {
 	scanning = $state(false);
 	iconDataUrl = $state<string | null>(null);
 
+	/**
+	 *
+	 */
 	get hasProject(): boolean {
 		return this.activeProject !== null;
 	}
 
+	/**
+	 *
+	 */
 	get hasSettings(): boolean {
 		return this.projectSettings !== null;
 	}
 
+	/**
+	 *
+	 */
 	get projectPath(): string | null {
 		return this.activeProject?.path ?? null;
 	}
 
+	/**
+	 *
+	 */
 	get artifactCounts(): Record<string, number> {
 		if (!this.activeProject) return {};
 		const summary = this.projects.find((p) => p.id === this.activeProject?.id);
 		return summary ? { total: summary.artifact_count } : {};
 	}
 
+	/**
+	 *
+	 */
 	get artifactConfig(): ArtifactEntry[] {
 		return this.projectSettings?.artifacts ?? [];
 	}
@@ -77,7 +95,10 @@ export class ProjectStore {
 		}
 	}
 
-	/** Open a project by its directory path. Creates a DB record if new. */
+	/**
+	 * Open a project by its directory path. Creates a DB record if new.
+	 * @param path
+	 */
 	async openProject(path: string) {
 		log.info(`openProject: opening ${path}`);
 		this.loading = true;
@@ -107,7 +128,10 @@ export class ProjectStore {
 		}
 	}
 
-	/** Load project settings from .orqa/project.json */
+	/**
+	 * Load project settings from .orqa/project.json
+	 * @param path
+	 */
 	async loadProjectSettings(path: string) {
 		this.settingsLoaded = false;
 		try {
@@ -130,7 +154,11 @@ export class ProjectStore {
 		}
 	}
 
-	/** Save project settings to .orqa/project.json */
+	/**
+	 * Save project settings to .orqa/project.json
+	 * @param path
+	 * @param settings
+	 */
 	async saveProjectSettings(path: string, settings: ProjectSettings) {
 		try {
 			const saved = await invoke<ProjectSettings>(
@@ -144,7 +172,11 @@ export class ProjectStore {
 		}
 	}
 
-	/** Scan the project filesystem for stack and governance info */
+	/**
+	 * Scan the project filesystem for stack and governance info
+	 * @param path
+	 * @param excludedPaths
+	 */
 	async scanProject(
 		path: string,
 		excludedPaths?: string[],
@@ -165,7 +197,10 @@ export class ProjectStore {
 		}
 	}
 
-	/** Upload a project icon from a file path */
+	/**
+	 * Upload a project icon from a file path
+	 * @param sourcePath
+	 */
 	async uploadIcon(sourcePath: string) {
 		if (!this.projectPath || !this.projectSettings) {
 			return;
@@ -211,7 +246,10 @@ export class ProjectStore {
 		this.iconDataUrl = null;
 	}
 
-	/** Check whether a directory is an initialized Orqa project. */
+	/**
+	 * Check whether a directory is an initialized Orqa project.
+	 * @param path
+	 */
 	async checkIsOrqaProject(path: string): Promise<boolean> {
 		const settings = await invoke<ProjectSettings | null>("project_settings_read", { path });
 		return settings !== null;
@@ -226,24 +264,43 @@ export class ProjectStore {
 		this.error = null;
 	}
 
+	/**
+	 *
+	 * @param project
+	 */
 	setActiveProject(project: Project | null) {
 		this.activeProject = project;
 		this.error = null;
 	}
 
+	/**
+	 *
+	 * @param projects
+	 */
 	setProjects(projects: ProjectSummary[]) {
 		this.projects = projects;
 	}
 
+	/**
+	 *
+	 * @param loading
+	 */
 	setLoading(loading: boolean) {
 		this.loading = loading;
 	}
 
+	/**
+	 *
+	 * @param error
+	 */
 	setError(error: string | null) {
 		this.error = error;
 		this.loading = false;
 	}
 
+	/**
+	 *
+	 */
 	clear() {
 		this.activeProject = null;
 		this.projects = [];

@@ -1,5 +1,17 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, LoadingSpinner, Stack, HStack, Grid, Caption, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		LoadingSpinner,
+		Stack,
+		HStack,
+		Grid,
+		Caption,
+		Text,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
@@ -61,14 +73,21 @@
 	 * @param height - The total SVG height in pixels.
 	 * @returns An SVG path `d` attribute string, or an empty string if fewer than 2 points.
 	 */
-	function sparklinePath(data: readonly HealthSnapshot[], key: keyof HealthSnapshot, width: number, height: number): string {
+	function sparklinePath(
+		data: readonly HealthSnapshot[],
+		key: keyof HealthSnapshot,
+		width: number,
+		height: number,
+	): string {
 		if (data.length < 2) return "";
 		const values = data.map((s) => Number(s[key]));
 		const max = Math.max(...values, 1); // At least 1 to avoid division by zero
 		const padding = 4; // Vertical padding so line doesn't touch edges
 		const usableHeight = height - padding * 2;
 		const stepX = width / (values.length - 1);
-		const points = values.map((v, i) => `${i * stepX},${padding + usableHeight - (v / max) * usableHeight}`);
+		const points = values.map(
+			(v, i) => `${i * stepX},${padding + usableHeight - (v / max) * usableHeight}`,
+		);
 		return `M${points.join(" L")}`;
 	}
 
@@ -161,77 +180,86 @@
 		<CardContent>
 			{#if loading}
 				<Panel padding="normal">
-				<Stack gap={0} align="center">
-					<LoadingSpinner />
-				</Stack>
+					<Stack gap={0} align="center">
+						<LoadingSpinner />
+					</Stack>
 				</Panel>
 			{:else}
 				<Stack gap={3}>
-				<Grid cols={2} gap={6}>
-					{#each sparklines as config (config.key)}
-						<Stack gap={1}>
-							<!-- Header: label + latest value -->
-							<HStack justify="between" align="baseline">
-								<Caption>{config.label}</Caption>
-								<HStack gap={1} align="baseline">
-									<Text variant="heading-base" tone={config.tone}>
-										{latestValue(config.key)}
-									</Text>
-									{#if trendPercent(config.key) !== null}
-										<Caption variant="caption-strong" tone={trendTone(config.key)}>
-											{trendArrow(config.key)} {trendIndicator(config.key)}
-										</Caption>
-									{/if}
+					<Grid cols={2} gap={6}>
+						{#each sparklines as config (config.key)}
+							<Stack gap={1}>
+								<!-- Header: label + latest value -->
+								<HStack justify="between" align="baseline">
+									<Caption>{config.label}</Caption>
+									<HStack gap={1} align="baseline">
+										<Text variant="heading-base" tone={config.tone}>
+											{latestValue(config.key)}
+										</Text>
+										{#if trendPercent(config.key) !== null}
+											<Caption variant="caption-strong" tone={trendTone(config.key)}>
+												{trendArrow(config.key)}
+												{trendIndicator(config.key)}
+											</Caption>
+										{/if}
+									</HStack>
 								</HStack>
-							</HStack>
-							<!-- Sparkline with y-axis scale — custom SVG chart, wrapped in HStack -->
-							<HStack gap={1} align="start">
-								<!-- Y-axis scale labels use style for precise height alignment -->
-								<div style="display: flex; flex-direction: column; justify-content: space-between; height: {SPARKLINE_HEIGHT}px; font-size: 9px; font-variant-numeric: tabular-nums; color: hsl(var(--muted-foreground) / 0.6);">
-									<span>{maxValue(config.key)}</span>
-									<span>0</span>
-								</div>
-								<!-- Custom SVG sparkline — no ORQA primitive fits this shape -->
-								<svg
-									width={SPARKLINE_WIDTH}
-									height={SPARKLINE_HEIGHT}
-									viewBox="0 0 {SPARKLINE_WIDTH} {SPARKLINE_HEIGHT}"
-									class="shrink-0"
-									fill="none"
-									xmlns="http://www.w3.org/2000/svg"
-								>
-									<line
-										x1="0"
-										y1={SPARKLINE_HEIGHT - 4}
-										x2={SPARKLINE_WIDTH}
-										y2={SPARKLINE_HEIGHT - 4}
-										stroke="hsl(var(--muted-foreground) / 0.2)"
-										stroke-width="0.5"
-									/>
-									{#if sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
-										{@const pathD = sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
-										<path
-											d="{pathD} L{SPARKLINE_WIDTH},{SPARKLINE_HEIGHT - 4} L0,{SPARKLINE_HEIGHT - 4} Z"
-											fill={config.strokeColor}
-											fill-opacity="0.08"
+								<!-- Sparkline with y-axis scale — custom SVG chart, wrapped in HStack -->
+								<HStack gap={1} align="start">
+									<!-- Y-axis scale labels use style for precise height alignment -->
+									<div
+										style="display: flex; flex-direction: column; justify-content: space-between; height: {SPARKLINE_HEIGHT}px; font-size: 9px; font-variant-numeric: tabular-nums; color: hsl(var(--muted-foreground) / 0.6);"
+									>
+										<span>{maxValue(config.key)}</span>
+										<span>0</span>
+									</div>
+									<!-- Custom SVG sparkline — no ORQA primitive fits this shape -->
+									<svg
+										width={SPARKLINE_WIDTH}
+										height={SPARKLINE_HEIGHT}
+										viewBox="0 0 {SPARKLINE_WIDTH} {SPARKLINE_HEIGHT}"
+										class="shrink-0"
+										fill="none"
+										xmlns="http://www.w3.org/2000/svg"
+									>
+										<line
+											x1="0"
+											y1={SPARKLINE_HEIGHT - 4}
+											x2={SPARKLINE_WIDTH}
+											y2={SPARKLINE_HEIGHT - 4}
+											stroke="hsl(var(--muted-foreground) / 0.2)"
+											stroke-width="0.5"
 										/>
-										<path
-											d={pathD}
-											stroke={config.strokeColor}
-											stroke-width="1.5"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											fill="none"
-										/>
-									{/if}
-								</svg>
-							</HStack>
-						</Stack>
-					{/each}
-				</Grid>
-				<Stack gap={0}>
-					<Caption>Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}</Caption>
-				</Stack>
+										{#if sparklinePath(chronological, config.key, SPARKLINE_WIDTH, SPARKLINE_HEIGHT)}
+											{@const pathD = sparklinePath(
+												chronological,
+												config.key,
+												SPARKLINE_WIDTH,
+												SPARKLINE_HEIGHT,
+											)}
+											<path
+												d="{pathD} L{SPARKLINE_WIDTH},{SPARKLINE_HEIGHT - 4} L0,{SPARKLINE_HEIGHT -
+													4} Z"
+												fill={config.strokeColor}
+												fill-opacity="0.08"
+											/>
+											<path
+												d={pathD}
+												stroke={config.strokeColor}
+												stroke-width="1.5"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												fill="none"
+											/>
+										{/if}
+									</svg>
+								</HStack>
+							</Stack>
+						{/each}
+					</Grid>
+					<Stack gap={0}>
+						<Caption>Based on {snapshots.length} scan{snapshots.length !== 1 ? "s" : ""}</Caption>
+					</Stack>
 				</Stack>
 			{/if}
 		</CardContent>

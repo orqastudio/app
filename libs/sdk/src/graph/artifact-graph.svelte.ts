@@ -57,6 +57,9 @@ export interface ArtifactGraphConfig {
 
 const log = logger("graph");
 
+/**
+ *
+ */
 export class ArtifactGraphSDK {
 	// -----------------------------------------------------------------------
 	// Reactive state
@@ -98,6 +101,10 @@ export class ArtifactGraphSDK {
 	private config: ArtifactGraphConfig | null = null;
 	private _lastSchemaCount = 0;
 
+	/**
+	 *
+	 * @param registry
+	 */
 	constructor(registry: PluginRegistry) {
 		this.registry = registry;
 
@@ -124,20 +131,31 @@ export class ArtifactGraphSDK {
 		return [...new Set([...platformKeys, ...pluginKeys])];
 	}
 
-	/** Get the inverse of a relationship key, or undefined if unknown. */
+	/**
+	 * Get the inverse of a relationship key, or undefined if unknown.
+	 * @param key
+	 */
 	getInverse(key: string): string | undefined {
 		const rel = this.registry.getRelationship(key);
 		return rel?.inverse;
 	}
 
-	/** Get all relationship keys for a given semantic category. */
+	/**
+	 * Get all relationship keys for a given semantic category.
+	 * @param semantic
+	 */
 	keysForSemantic(semantic: string): string[] {
 		return this.registry.allRelationships
 			.filter((rel) => rel.semantic === semantic)
 			.flatMap((rel) => rel.inverse !== rel.key ? [rel.key, rel.inverse] : [rel.key]);
 	}
 
-	/** Validate a relationship between two artifact types. Returns null if valid. */
+	/**
+	 * Validate a relationship between two artifact types. Returns null if valid.
+	 * @param key
+	 * @param fromType
+	 * @param toType
+	 */
 	validateRelationship(key: string, fromType: string, toType: string): string | null {
 		return this.registry.validateRelationship(key, fromType, toType);
 	}
@@ -146,6 +164,10 @@ export class ArtifactGraphSDK {
 	// Lifecycle
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param config
+	 */
 	async initialize(config: ArtifactGraphConfig): Promise<void> {
 		if (this._initCalled) return;
 		this._initCalled = true;
@@ -182,10 +204,16 @@ export class ArtifactGraphSDK {
 		}
 	}
 
+	/**
+	 *
+	 */
 	clearPendingTransitions(): void {
 		this.pendingTransitions = [];
 	}
 
+	/**
+	 *
+	 */
 	async refresh(): Promise<void> {
 		if (this.loading) return;
 		this.loading = true;
@@ -204,6 +232,10 @@ export class ArtifactGraphSDK {
 		}
 	}
 
+	/**
+	 *
+	 * @param callback
+	 */
 	onRefresh(callback: RefreshCallback): () => void {
 		this.refreshCallbacks.push(callback);
 		return () => {
@@ -215,6 +247,10 @@ export class ArtifactGraphSDK {
 	// Resolution — synchronous in-memory lookups
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param id
+	 */
 	resolve(id: string): ArtifactNode | undefined {
 		const direct = this.graph.get(id);
 		if (direct) return direct;
@@ -225,6 +261,10 @@ export class ArtifactGraphSDK {
 		return undefined;
 	}
 
+	/**
+	 *
+	 * @param path
+	 */
 	resolveByPath(path: string): ArtifactNode | undefined {
 		const id = this.pathIndex.get(path);
 		if (!id) return undefined;
@@ -235,10 +275,18 @@ export class ArtifactGraphSDK {
 	// Relationship queries — synchronous
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param id
+	 */
 	referencesFrom(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_out ?? [];
 	}
 
+	/**
+	 *
+	 * @param id
+	 */
 	referencesTo(id: string): readonly ArtifactRef[] {
 		return this.graph.get(id)?.references_in ?? [];
 	}
@@ -247,10 +295,18 @@ export class ArtifactGraphSDK {
 	// Bulk queries — synchronous
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param type
+	 */
 	byType(type: string): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter((n) => n.artifact_type === type);
 	}
 
+	/**
+	 *
+	 * @param status
+	 */
 	byStatus(status: string): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter((n) => n.status === status);
 	}
@@ -259,10 +315,20 @@ export class ArtifactGraphSDK {
 	// Content — async disk read/write
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param path
+	 */
 	async readContent(path: string): Promise<string> {
 		return invoke<string>("read_artifact_content", { path });
 	}
 
+	/**
+	 *
+	 * @param path
+	 * @param field
+	 * @param value
+	 */
 	async updateField(path: string, field: string, value: string): Promise<void> {
 		await invoke<void>("update_artifact_field", { path, field, value });
 		await this.refresh();
@@ -272,12 +338,18 @@ export class ArtifactGraphSDK {
 	// Graph health — synchronous
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 */
 	brokenRefs(): ArtifactRef[] {
 		return Array.from(this.graph.values()).flatMap((node) =>
 			node.references_out.filter((ref) => !this.graph.has(ref.target_id)),
 		);
 	}
 
+	/**
+	 *
+	 */
 	orphans(): ArtifactNode[] {
 		return Array.from(this.graph.values()).filter(
 			(n) => n.references_out.length === 0 && n.references_in.length === 0,
@@ -288,6 +360,11 @@ export class ArtifactGraphSDK {
 	// Relationship traversal — synchronous
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param id
+	 * @param relationshipType
+	 */
 	traverse(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
 		if (!node) return [];
@@ -299,6 +376,11 @@ export class ArtifactGraphSDK {
 			});
 	}
 
+	/**
+	 *
+	 * @param id
+	 * @param relationshipType
+	 */
 	traverseIncoming(id: string, relationshipType: string): ArtifactNode[] {
 		const node = this.graph.get(id);
 		if (!node) return [];
@@ -310,7 +392,10 @@ export class ArtifactGraphSDK {
 			});
 	}
 
-	/** Get all outgoing relationships from an artifact with resolved targets. */
+	/**
+	 * Get all outgoing relationships from an artifact with resolved targets.
+	 * @param id
+	 */
 	relationshipsFrom(id: string): { target: ArtifactNode; type: string; rationale?: string }[] {
 		const node = this.graph.get(id);
 		if (!node) return [];
@@ -353,6 +438,7 @@ export class ArtifactGraphSDK {
 	 * (things this artifact drives — epics, rules, decisions)
 	 *
 	 * All relationship keys are derived from the registry — nothing hardcoded.
+	 * @param id
 	 */
 	pipelineChain(id: string): { upstream: ArtifactNode[]; downstream: ArtifactNode[] } {
 		const upstream: ArtifactNode[] = [];
@@ -437,10 +523,17 @@ export class ArtifactGraphSDK {
 	// Integrity checks — async (requires backend scan)
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 */
 	async runIntegrityScan(): Promise<IntegrityCheck[]> {
 		return invoke<IntegrityCheck[]>("run_integrity_scan");
 	}
 
+	/**
+	 *
+	 * @param checks
+	 */
 	async applyAutoFixes(checks: IntegrityCheck[]): Promise<AppliedFix[]> {
 		return invoke<AppliedFix[]>("apply_auto_fixes", { checks });
 	}
@@ -449,6 +542,11 @@ export class ArtifactGraphSDK {
 	// Health snapshots — async (requires backend storage)
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param errorCount
+	 * @param warningCount
+	 */
 	async storeHealthSnapshot(errorCount: number, warningCount: number): Promise<HealthSnapshot> {
 		return invoke<HealthSnapshot>("store_health_snapshot", {
 			errorCount,
@@ -456,12 +554,17 @@ export class ArtifactGraphSDK {
 		});
 	}
 
+	/**
+	 *
+	 * @param limit
+	 */
 	async getHealthSnapshots(limit?: number): Promise<HealthSnapshot[]> {
 		const effectiveLimit = limit ?? this.config?.snapshotLimit ?? 30;
 		return invoke<HealthSnapshot[]>("get_health_snapshots", { limit: effectiveLimit });
 	}
 
-	/** Fetch extended structural health metrics from the backend.
+	/**
+	 * Fetch extended structural health metrics from the backend.
 	 *
 	 * Returns `GraphHealthData` computed by the Rust `compute_graph_health` function,
 	 * including component count, orphan percentage, density, traceability, and
@@ -471,11 +574,13 @@ export class ArtifactGraphSDK {
 		return invoke<GraphHealthData>("get_graph_health");
 	}
 
-	/** Fetch full traceability data for an artifact.
+	/**
+	 * Fetch full traceability data for an artifact.
 	 *
 	 * Returns ancestry chains to pillar/vision roots, all downstream descendants
 	 * with BFS depth, sibling artifacts sharing a common parent, impact radius,
 	 * and a disconnected flag when no path to any pillar exists.
+	 * @param id
 	 */
 	async getTraceability(id: string): Promise<TraceabilityResult> {
 		return invoke<TraceabilityResult>("get_artifact_traceability", { id });
@@ -485,6 +590,11 @@ export class ArtifactGraphSDK {
 	// Subscriptions
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param id
+	 * @param callback
+	 */
 	subscribe(id: string, callback: NodeCallback): () => void {
 		const existing = this.nodeSubscribers.get(id) ?? [];
 		existing.push(callback);
@@ -501,6 +611,11 @@ export class ArtifactGraphSDK {
 		};
 	}
 
+	/**
+	 *
+	 * @param type
+	 * @param callback
+	 */
 	subscribeType(type: string, callback: TypeCallback): () => void {
 		const existing = this.typeSubscribers.get(type) ?? [];
 		existing.push(callback);

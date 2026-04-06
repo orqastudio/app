@@ -3,7 +3,30 @@
      reference sections: keyboard shortcuts, event schema, and filter syntax.
      Closed by pressing Escape or clicking the backdrop. -->
 <script lang="ts">
-	import { Button, Badge, Panel, SectionHeader, Separator, ScrollArea, CardRoot, CardContent, Kbd, Stack, HStack, Heading, Text, Caption, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Icon, Box } from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		Badge,
+		Panel,
+		SectionHeader,
+		Separator,
+		ScrollArea,
+		CardRoot,
+		CardContent,
+		Kbd,
+		Stack,
+		HStack,
+		Heading,
+		Text,
+		Caption,
+		Table,
+		TableHeader,
+		TableBody,
+		TableRow,
+		TableHead,
+		TableCell,
+		Icon,
+		Box,
+	} from "@orqastudio/svelte-components/pure";
 
 	// Whether the panel is visible. Exported so the parent (DevToolsShell) can
 	// toggle it from the toolbar button and the ? keyboard shortcut handler.
@@ -13,12 +36,15 @@
 		open?: boolean;
 	} = $props();
 
-	// Close the panel. Called by Escape key and backdrop click.
+	/** Close the help panel. Called by Escape key and backdrop click. */
 	function close(): void {
 		open = false;
 	}
 
-	// Handle keyboard events on the document: Escape closes the panel.
+	/**
+	 * Handle document keydown: Escape closes the panel when open.
+	 * @param e
+	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		if (e.key === "Escape" && open) {
 			e.preventDefault();
@@ -63,21 +89,10 @@
 {#if open}
 	<!-- Backdrop: full-screen transparent overlay that closes the panel on click.
 	     Raw div used because Box does not accept aria-hidden. -->
-	<div
-		class="help-panel__backdrop"
-		role="presentation"
-		onclick={close}
-		aria-hidden="true"
-	></div>
+	<div class="help-panel__backdrop" role="presentation" onclick={close} aria-hidden="true"></div>
 
 	<!-- Slide-out panel: fixed to the right edge, full viewport height. -->
-	<Box
-		position="fixed"
-		right={0}
-		top={0}
-		zIndex={50}
-		aria-label="Help panel"
-	>
+	<Box position="fixed" right={0} top={0} zIndex={50} aria-label="Help panel">
 		<!-- Panel wrapper: full height flex column, scoped CSS provides width and border. -->
 		<div class="help-panel" role="complementary">
 			<!-- Panel header: SectionHeader provides px-3 py-2 border-b layout. -->
@@ -89,12 +104,7 @@
 				{#snippet end()}
 					<!-- Wrapper span with display:contents provides :global() hook for Button override. -->
 					<span class="help-panel__close-wrap" style="display: contents;">
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							onclick={close}
-							aria-label="Close help panel"
-						>
+						<Button variant="ghost" size="icon-sm" onclick={close} aria-label="Close help panel">
 							<!-- Icon component replaces the raw inline SVG. Size "sm" = 14px. -->
 							<Icon name="x" size="sm" />
 						</Button>
@@ -105,143 +115,155 @@
 			<!-- Scrollable content area via ScrollArea for styled scrollbars. -->
 			<ScrollArea full>
 				<Panel padding="normal">
-				<Stack gap={0}>
+					<Stack gap={0}>
+						<!-- SECTION 1: Keyboard shortcuts. -->
+						<CardRoot>
+							<CardContent>
+								<div class="help-panel__section-head">
+									<Heading level={6}>Keyboard Shortcuts</Heading>
+								</div>
+								<!-- Wrapper div provides :global() scope for table cell overrides. -->
+								<div class="help-panel__table-wrap">
+									<Table>
+										<TableBody>
+											{#each shortcuts as [key, description] (key)}
+												<TableRow>
+													<TableCell>
+														<span class="help-panel__key-cell">
+															<Kbd>{key}</Kbd>
+														</span>
+													</TableCell>
+													<TableCell>
+														<Caption>{description}</Caption>
+													</TableCell>
+												</TableRow>
+											{/each}
+										</TableBody>
+									</Table>
+								</div>
+							</CardContent>
+						</CardRoot>
 
-					<!-- SECTION 1: Keyboard shortcuts. -->
-					<CardRoot>
-						<CardContent>
-							<div class="help-panel__section-head"><Heading level={6}>Keyboard Shortcuts</Heading></div>
-							<!-- Wrapper div provides :global() scope for table cell overrides. -->
-							<div class="help-panel__table-wrap">
-								<Table>
-									<TableBody>
-										{#each shortcuts as [key, description]}
+						<Separator />
+
+						<!-- SECTION 2: Event schema. -->
+						<CardRoot>
+							<CardContent>
+								<div class="help-panel__section-head">
+									<Heading level={6}>Event Schema</Heading>
+								</div>
+								<div class="help-panel__section-sub">
+									<Caption block>Each log event has the following fields:</Caption>
+								</div>
+								<div class="help-panel__table-wrap">
+									<Table>
+										<TableHeader>
 											<TableRow>
-												<TableCell>
-													<span class="help-panel__key-cell">
-														<Kbd>{key}</Kbd>
-													</span>
-												</TableCell>
-												<TableCell>
-													<Caption>{description}</Caption>
-												</TableCell>
+												<TableHead><Caption>Field</Caption></TableHead>
+												<TableHead><Caption>Type</Caption></TableHead>
+												<TableHead><Caption>Description</Caption></TableHead>
 											</TableRow>
-										{/each}
-									</TableBody>
-								</Table>
-							</div>
-						</CardContent>
-					</CardRoot>
+										</TableHeader>
+										<TableBody>
+											{#each schemaFields as [field, type, desc] (field)}
+												<TableRow>
+													<TableCell>
+														<!-- Wrapper span for field badge monospace/primary color override. -->
+														<span class="help-panel__field-badge-wrap" style="display: contents;">
+															<Badge variant="outline" size="xs">{field}</Badge>
+														</span>
+													</TableCell>
+													<TableCell>
+														<!-- Wrapper span for type badge monospace/secondary color override. -->
+														<span class="help-panel__type-badge-wrap" style="display: contents;">
+															<Badge variant="outline" size="xs">{type}</Badge>
+														</span>
+													</TableCell>
+													<TableCell>
+														<Caption>{desc}</Caption>
+													</TableCell>
+												</TableRow>
+											{/each}
+										</TableBody>
+									</Table>
+								</div>
+							</CardContent>
+						</CardRoot>
 
-					<Separator />
+						<Separator />
 
-					<!-- SECTION 2: Event schema. -->
-					<CardRoot>
-						<CardContent>
-							<div class="help-panel__section-head"><Heading level={6}>Event Schema</Heading></div>
-							<div class="help-panel__section-sub"><Caption block>Each log event has the following fields:</Caption></div>
-							<div class="help-panel__table-wrap">
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead><Caption>Field</Caption></TableHead>
-											<TableHead><Caption>Type</Caption></TableHead>
-											<TableHead><Caption>Description</Caption></TableHead>
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										{#each schemaFields as [field, type, desc]}
-											<TableRow>
-												<TableCell>
-													<!-- Wrapper span for field badge monospace/primary color override. -->
-													<span class="help-panel__field-badge-wrap" style="display: contents;">
-														<Badge variant="outline" size="xs">{field}</Badge>
-													</span>
-												</TableCell>
-												<TableCell>
-													<!-- Wrapper span for type badge monospace/secondary color override. -->
-													<span class="help-panel__type-badge-wrap" style="display: contents;">
-														<Badge variant="outline" size="xs">{type}</Badge>
-													</span>
-												</TableCell>
-												<TableCell>
-													<Caption>{desc}</Caption>
-												</TableCell>
-											</TableRow>
-										{/each}
-									</TableBody>
-								</Table>
-							</div>
-						</CardContent>
-					</CardRoot>
+						<!-- SECTION 3: Filter syntax. -->
+						<CardRoot>
+							<CardContent>
+								<div class="help-panel__section-head">
+									<Heading level={6}>Filter Syntax</Heading>
+								</div>
 
-					<Separator />
-
-					<!-- SECTION 3: Filter syntax. -->
-					<CardRoot>
-						<CardContent>
-							<div class="help-panel__section-head"><Heading level={6}>Filter Syntax</Heading></div>
-
-							<div class="help-panel__section-sub">
-								<Caption block>
-									The search box matches against the <Badge variant="outline" size="xs">message</Badge> field as a case-insensitive substring.
-								</Caption>
-							</div>
-
-							<Stack gap={3}>
-								<Stack gap={1}>
-									<Text variant="body-strong">Source filter</Text>
+								<div class="help-panel__section-sub">
 									<Caption block>
-										Select one or more sources from the <Text variant="body-strong">Source</Text> dropdown.
-										Only events from the selected sources are shown. Clearing the selection shows all sources.
+										The search box matches against the <Badge variant="outline" size="xs"
+											>message</Badge
+										> field as a case-insensitive substring.
 									</Caption>
-									<CardRoot>
-										<CardContent>
-											<!-- Wrapper span for mono badge override. -->
-											<span class="help-panel__mono-badge-wrap" style="display: contents;">
-												<Badge variant="outline" size="xs">
-													Daemon, App, Frontend, DevController, MCP, LSP, Search, Worker
-												</Badge>
-											</span>
-										</CardContent>
-									</CardRoot>
-								</Stack>
+								</div>
 
-								<Stack gap={1}>
-									<Text variant="body-strong">Level filter</Text>
-									<Caption block>
-										Toggle individual levels using the checkboxes in the filter bar.
-										Multiple levels can be active simultaneously.
-									</Caption>
-									<HStack gap={1} wrap={true}>
-										{#each levels as [level]}
-											<!-- Badge provides the visual level pill; data-level drives color
+								<Stack gap={3}>
+									<Stack gap={1}>
+										<Text variant="body-strong">Source filter</Text>
+										<Caption block>
+											Select one or more sources from the <Text variant="body-strong">Source</Text> dropdown.
+											Only events from the selected sources are shown. Clearing the selection shows all
+											sources.
+										</Caption>
+										<CardRoot>
+											<CardContent>
+												<!-- Wrapper span for mono badge override. -->
+												<span class="help-panel__mono-badge-wrap" style="display: contents;">
+													<Badge variant="outline" size="xs">
+														Daemon, App, Frontend, DevController, MCP, LSP, Search, Worker
+													</Badge>
+												</span>
+											</CardContent>
+										</CardRoot>
+									</Stack>
+
+									<Stack gap={1}>
+										<Text variant="body-strong">Level filter</Text>
+										<Caption block>
+											Toggle individual levels using the checkboxes in the filter bar. Multiple
+											levels can be active simultaneously.
+										</Caption>
+										<HStack gap={1} wrap={true}>
+											{#each levels as [level] (level)}
+												<!-- Badge provides the visual level pill; data-level drives color
 											     via scoped CSS. Now accepted via Badge restProps. -->
-											<Badge variant="outline" size="xs" data-level={level}>{level}</Badge>
-										{/each}
-									</HStack>
-								</Stack>
+												<Badge variant="outline" size="xs" data-level={level}>{level}</Badge>
+											{/each}
+										</HStack>
+									</Stack>
 
-								<Stack gap={1}>
-									<Text variant="body-strong">Category filter</Text>
-									<Caption block>
-										Select one or more categories from the <Text variant="body-strong">Category</Text> dropdown.
-										The list is populated from categories present in the current event buffer.
-									</Caption>
-								</Stack>
+									<Stack gap={1}>
+										<Text variant="body-strong">Category filter</Text>
+										<Caption block>
+											Select one or more categories from the <Text variant="body-strong"
+												>Category</Text
+											> dropdown. The list is populated from categories present in the current event
+											buffer.
+										</Caption>
+									</Stack>
 
-								<Stack gap={1}>
-									<Text variant="body-strong">Combining filters</Text>
-									<Caption block>
-										All active filters are combined with AND logic: an event must match every active
-										filter to be shown. Use <Text variant="body-strong">Clear filters</Text> to reset all at once.
-									</Caption>
+									<Stack gap={1}>
+										<Text variant="body-strong">Combining filters</Text>
+										<Caption block>
+											All active filters are combined with AND logic: an event must match every
+											active filter to be shown. Use <Text variant="body-strong">Clear filters</Text
+											> to reset all at once.
+										</Caption>
+									</Stack>
 								</Stack>
-							</Stack>
-						</CardContent>
-					</CardRoot>
-
-				</Stack>
+							</CardContent>
+						</CardRoot>
+					</Stack>
 				</Panel>
 			</ScrollArea>
 		</div>

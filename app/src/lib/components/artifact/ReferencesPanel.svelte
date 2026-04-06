@@ -1,6 +1,13 @@
 <!-- Collapsible panel showing incoming and outgoing references for an artifact. Supports list and graph views. -->
 <script lang="ts">
-	import { Icon, HStack, Stack, Box, Caption, Button, Panel,
+	import {
+		Icon,
+		HStack,
+		Stack,
+		Box,
+		Caption,
+		Button,
+		Panel,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -47,7 +54,11 @@
 		panelOpen && artifactId ? artifactGraphSDK.referencesFrom(artifactId) : [],
 	);
 
-	/** Humanize a relationship type or field name. */
+	/**
+	 * Humanize a relationship type or field name.
+	 * @param value - The raw relationship type or field name string.
+	 * @returns A title-cased human-readable label.
+	 */
 	function humanizeLabel(value: string): string {
 		return value
 			.replace(/-/g, " ")
@@ -55,7 +66,11 @@
 			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
-	/** Group refs by relationship_type (or field as fallback). */
+	/**
+	 * Group refs by relationship_type (or field as fallback).
+	 * @param refs - The list of artifact references to group.
+	 * @returns A SvelteMap keyed by relationship type with arrays of refs.
+	 */
 	function groupRefs(refs: readonly ArtifactRef[]): SvelteMap<string, ArtifactRef[]> {
 		const groups = new SvelteMap<string, ArtifactRef[]>();
 		for (const ref of refs) {
@@ -79,15 +94,29 @@
 	/** Per-group expanded state for overflow toggle. */
 	const expandedGroups = new SvelteMap<string, boolean>();
 
+	/**
+	 * Return whether the overflow group identified by key is expanded.
+	 * @param key
+	 */
 	function isExpanded(key: string): boolean {
 		return expandedGroups.get(key) ?? false;
 	}
 
+	/**
+	 * Toggle the expanded state for the overflow group identified by key.
+	 * @param key
+	 */
 	function toggleExpanded(key: string): void {
 		expandedGroups.set(key, !isExpanded(key));
 	}
 
-	/** Get visible refs for a group (respecting overflow toggle). */
+	/**
+	 * Get visible refs for a group (respecting overflow toggle).
+	 * @param groupKey - The relationship type key for this group.
+	 * @param direction - Direction prefix ("in" or "out") used to build the composite expansion key.
+	 * @param refs - The full list of refs for this group.
+	 * @returns The slice of refs to display (up to 3 unless expanded).
+	 */
 	function visibleRefs(groupKey: string, direction: string, refs: ArtifactRef[]): ArtifactRef[] {
 		const key = `${direction}:${groupKey}`;
 		if (refs.length <= 3 || isExpanded(key)) return refs;
@@ -100,7 +129,7 @@
 		<Collapsible bind:open={panelOpen}>
 			<HStack justify="between">
 				<CollapsibleTrigger
-					class="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+					class="text-muted-foreground hover:text-foreground text-xs font-medium transition-colors"
 				>
 					<HStack gap={1}>
 						<Icon name="chevron-right" size="sm" />
@@ -113,8 +142,10 @@
 							{#snippet child({ props })}
 								<button
 									{...props}
-									class="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-foreground"
-									onclick={() => { viewMode = viewMode === "list" ? "graph" : "list"; }}
+									class="text-muted-foreground hover:bg-accent hover:text-foreground flex h-6 w-6 items-center justify-center rounded"
+									onclick={() => {
+										viewMode = viewMode === "list" ? "graph" : "list";
+									}}
 								>
 									{#if viewMode === "list"}
 										<Icon name="network" size="sm" />
@@ -132,74 +163,78 @@
 			</HStack>
 			<CollapsibleContent>
 				<Stack gap={1}>
-				{#if viewMode === "graph"}
-					<RelationshipGraphView
-						{artifactId}
-						{incomingRefs}
-						{outgoingRefs}
-					/>
-				{:else}
-					<Panel padding="normal">
-					<Stack gap={2}>
-						{#if incomingRefs.length > 0}
-							<Stack gap={1}>
-								{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
-									{@const dirKey = `in:${groupKey}`}
-									<!-- grid with 2 cols: type label left, links right. w-[arbitrary] not in Grid, kept as div. -->
-									<div class="grid grid-cols-2 items-baseline gap-2">
-										<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
-											{humanizeLabel(groupKey)}
-										</span>
-
-										<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-											{#each visibleRefs(groupKey, "in", refs) as ref, i ("in:" + ref.source_id + ref.relationship_type + i)}
-												<ArtifactLink id={ref.source_id} />
-											{/each}
-											{#if refs.length > 3}
-												<Button
-													variant="ghost"
-													size="sm"
-													onclick={() => toggleExpanded(dirKey)}
+					{#if viewMode === "graph"}
+						<RelationshipGraphView {artifactId} {incomingRefs} {outgoingRefs} />
+					{:else}
+						<Panel padding="normal">
+							<Stack gap={2}>
+								{#if incomingRefs.length > 0}
+									<Stack gap={1}>
+										{#each [...incomingGrouped] as [groupKey, refs] (groupKey)}
+											{@const dirKey = `in:${groupKey}`}
+											<!-- grid with 2 cols: type label left, links right. w-[arbitrary] not in Grid, kept as div. -->
+											<div class="grid grid-cols-2 items-baseline gap-2">
+												<span
+													class="border-muted-foreground/20 bg-muted text-muted-foreground justify-self-start rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize"
 												>
-													{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
-												</Button>
-											{/if}
-										</HStack></Box>
-									</div>
-								{/each}
-							</Stack>
-						{/if}
+													{humanizeLabel(groupKey)}
+												</span>
 
-						{#if outgoingRefs.length > 0}
-							<Stack gap={1}>
-								{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
-									{@const dirKey = `out:${groupKey}`}
-									<div class="grid grid-cols-2 items-baseline gap-2">
-										<span class="justify-self-start rounded border border-muted-foreground/20 bg-muted px-1.5 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
-											{humanizeLabel(groupKey)}
-										</span>
-
-										<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-											{#each visibleRefs(groupKey, "out", refs) as ref, i ("out:" + ref.target_id + ref.relationship_type + i)}
-												<ArtifactLink id={ref.target_id} />
-											{/each}
-											{#if refs.length > 3}
-												<Button
-													variant="ghost"
-													size="sm"
-													onclick={() => toggleExpanded(dirKey)}
+												<Box flex={1} minWidth={0}
+													><HStack wrap gap={1}>
+														{#each visibleRefs(groupKey, "in", refs) as ref, i ("in:" + ref.source_id + ref.relationship_type + i)}
+															<ArtifactLink id={ref.source_id} />
+														{/each}
+														{#if refs.length > 3}
+															<Button
+																variant="ghost"
+																size="sm"
+																onclick={() => toggleExpanded(dirKey)}
+															>
+																{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
+															</Button>
+														{/if}
+													</HStack></Box
 												>
-													{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
-												</Button>
-											{/if}
-										</HStack></Box>
-									</div>
-								{/each}
+											</div>
+										{/each}
+									</Stack>
+								{/if}
+
+								{#if outgoingRefs.length > 0}
+									<Stack gap={1}>
+										{#each [...outgoingGrouped] as [groupKey, refs] (groupKey)}
+											{@const dirKey = `out:${groupKey}`}
+											<div class="grid grid-cols-2 items-baseline gap-2">
+												<span
+													class="border-muted-foreground/20 bg-muted text-muted-foreground justify-self-start rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize"
+												>
+													{humanizeLabel(groupKey)}
+												</span>
+
+												<Box flex={1} minWidth={0}
+													><HStack wrap gap={1}>
+														{#each visibleRefs(groupKey, "out", refs) as ref, i ("out:" + ref.target_id + ref.relationship_type + i)}
+															<ArtifactLink id={ref.target_id} />
+														{/each}
+														{#if refs.length > 3}
+															<Button
+																variant="ghost"
+																size="sm"
+																onclick={() => toggleExpanded(dirKey)}
+															>
+																{isExpanded(dirKey) ? "hide" : `\u2026 +${refs.length - 3}`}
+															</Button>
+														{/if}
+													</HStack></Box
+												>
+											</div>
+										{/each}
+									</Stack>
+								{/if}
 							</Stack>
-						{/if}
-					</Stack>
-					</Panel>
-				{/if}
+						</Panel>
+					{/if}
 				</Stack>
 			</CollapsibleContent>
 		</Collapsible>

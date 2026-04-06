@@ -1,5 +1,20 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, LoadingSpinner, Button, HStack, Stack, Text, Caption, Grid } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardAction,
+		LoadingSpinner,
+		Button,
+		HStack,
+		Stack,
+		Text,
+		Caption,
+		Grid,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
@@ -15,12 +30,18 @@
 		onAutoFix?: () => void;
 	}
 
-	const { checks, loading, fixing = false, scanned, graphHealth, onScan, onAutoFix }: Props = $props();
+	const {
+		checks,
+		loading,
+		fixing = false,
+		scanned,
+		graphHealth,
+		onScan,
+		onAutoFix,
+	}: Props = $props();
 
 	// Score: percentage of graph in the largest connected component.
-	const healthScore = $derived(
-		graphHealth ? pct(graphHealth.largest_component_ratio) : "0"
-	);
+	const healthScore = $derived(graphHealth ? pct(graphHealth.largest_component_ratio) : "0");
 
 	// Traffic light based on largest_component_ratio thresholds.
 	type HealthStatus = "green" | "amber" | "red" | "empty";
@@ -156,7 +177,10 @@
 			{:else}
 				<HStack gap={2}>
 					<Text variant="body-strong">{scoreLabel}</Text>
-					<span aria-hidden="true" style="position: relative; display: flex; height: 0.75rem; width: 0.75rem; flex-shrink: 0; align-items: center; justify-content: center;">
+					<span
+						aria-hidden="true"
+						style="position: relative; display: flex; height: 0.75rem; width: 0.75rem; flex-shrink: 0; align-items: center; justify-content: center;"
+					>
 						<span class="absolute h-3 w-3 rounded-full {circleClass} opacity-30"></span>
 						<span class="h-1.5 w-1.5 rounded-full {circleClass}"></span>
 					</span>
@@ -166,160 +190,211 @@
 	</CardHeader>
 	<CardContent compact>
 		<Stack gap={3}>
-		{#if graphHealth && graphHealth.total_nodes > 0}
-			<Grid cols={2} gap={2}>
-				<!-- Outliers -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="unlink" size="sm" />
-						<Caption variant="caption-tabular" tone={outlierTone}>
-							{graphHealth.outlier_count}
-						</Caption>
-						<Caption>Outlier{graphHealth.outlier_count !== 1 ? "s" : ""}</Caption>
-						{#if outlierAgeSummary}
-							<Caption tone="muted">{outlierAgeSummary}</Caption>
-						{/if}
-					</TooltipTrigger>
-					<TooltipContent side="bottom">
-						<Text variant="body-strong" block>Pipeline Outliers</Text>
-						<Text variant="body-muted" block>Active artifacts outside both the delivery pipeline (task / epic / milestone / idea / research / decision / wireframe) and the learning pipeline (lesson / rule). Outliers need attention — connect them or archive them.</Text>
-						{#if graphHealth.outlier_age_distribution.stale > 0}
-							<Text variant="body" tone="destructive" block>{graphHealth.outlier_age_distribution.stale} stale (90d+ or no date) — priority action.</Text>
-						{/if}
-						{#if graphHealth.outlier_age_distribution.aging > 0}
-							<Text variant="body" tone="warning" block>{graphHealth.outlier_age_distribution.aging} aging (30–90d) — connect or archive soon.</Text>
-						{/if}
-						{#if graphHealth.outlier_age_distribution.fresh > 0}
-							<Text variant="body-muted" block>{graphHealth.outlier_age_distribution.fresh} fresh (≤30d) — within grace period.</Text>
-						{/if}
-					</TooltipContent>
-				</TooltipRoot>
-
-				<!-- Avg Degree -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="git-branch" size="sm" />
-						<Caption variant="caption-tabular" tone={degreeTone}>{fmt(graphHealth.avg_degree)}</Caption>
-						<Caption>Avg Degree</Caption>
-					</TooltipTrigger>
-					<TooltipContent side="bottom">
-						<Text variant="body-strong" block>Average Connection Degree</Text>
-						<Text variant="body-muted" block>The average number of relationships per artifact. Higher means a more interconnected knowledge graph. A well-connected graph has an average degree of 4+ — each artifact relates to multiple others.</Text>
-					</TooltipContent>
-				</TooltipRoot>
-
-				<!-- Delivery Pipeline -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="package" size="sm" />
-						<Caption variant="caption-tabular" tone={deliveryTone}>
-							{pct(graphHealth.delivery_connectivity)}%
-						</Caption>
-						<Caption>Delivery</Caption>
-					</TooltipTrigger>
-					<TooltipContent side="bottom">
-						<Text variant="body-strong" block>Delivery Pipeline Connectivity</Text>
-						<Text variant="body-muted" block>Percentage of delivery artifacts (task, epic, milestone, idea, research, decision, wireframe) connected in the main delivery component. Target: 90%+.</Text>
-					</TooltipContent>
-				</TooltipRoot>
-
-				<!-- Learning Pipeline -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="book-open" size="sm" />
-						<Caption variant="caption-tabular" tone={learningTone}>
-							{pct(graphHealth.learning_connectivity)}%
-						</Caption>
-						<Caption>Learning</Caption>
-					</TooltipTrigger>
-					<TooltipContent side="bottom">
-						<Text variant="body-strong" block>Learning Loop Connectivity</Text>
-						<Text variant="body-muted" block>Percentage of learning artifacts (lesson, rule) connected to each other or to decisions. Disconnected lessons and rules are not feeding back into the delivery process. Target: 80%+.</Text>
-					</TooltipContent>
-				</TooltipRoot>
-
-				<!-- Scan Results -->
-				{#if scanned}
+			{#if graphHealth && graphHealth.total_nodes > 0}
+				<Grid cols={2} gap={2}>
+					<!-- Outliers -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-							{#if errorCount > 0}
-								<Icon name="circle-alert" size="sm" />
-								<Caption variant="caption-tabular" tone="destructive">{errorCount}E / {warningCount}W</Caption>
-							{:else if warningCount > 0}
-								<Icon name="triangle-alert" size="sm" />
-								<Caption variant="caption-tabular" tone="warning">{warningCount}W</Caption>
-							{:else}
-								<Icon name="circle-alert" size="sm" />
-								<Caption tone="success">Clean</Caption>
+						<TooltipTrigger
+							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+						>
+							<Icon name="unlink" size="sm" />
+							<Caption variant="caption-tabular" tone={outlierTone}>
+								{graphHealth.outlier_count}
+							</Caption>
+							<Caption>Outlier{graphHealth.outlier_count !== 1 ? "s" : ""}</Caption>
+							{#if outlierAgeSummary}
+								<Caption tone="muted">{outlierAgeSummary}</Caption>
 							{/if}
-							<Caption>Integrity</Caption>
 						</TooltipTrigger>
 						<TooltipContent side="bottom">
-							<Text variant="body-strong" block>Integrity Scan Results</Text>
-							<Text variant="body-muted" block>File-level checks: broken references, invalid statuses, missing required fields, schema violations. Errors must be fixed. Warnings indicate potential issues. Use Auto-fix for machine-fixable problems.</Text>
+							<Text variant="body-strong" block>Pipeline Outliers</Text>
+							<Text variant="body-muted" block
+								>Active artifacts outside both the delivery pipeline (task / epic / milestone / idea
+								/ research / decision / wireframe) and the learning pipeline (lesson / rule).
+								Outliers need attention — connect them or archive them.</Text
+							>
+							{#if graphHealth.outlier_age_distribution.stale > 0}
+								<Text variant="body" tone="destructive" block
+									>{graphHealth.outlier_age_distribution.stale} stale (90d+ or no date) — priority action.</Text
+								>
+							{/if}
+							{#if graphHealth.outlier_age_distribution.aging > 0}
+								<Text variant="body" tone="warning" block
+									>{graphHealth.outlier_age_distribution.aging} aging (30–90d) — connect or archive soon.</Text
+								>
+							{/if}
+							{#if graphHealth.outlier_age_distribution.fresh > 0}
+								<Text variant="body-muted" block
+									>{graphHealth.outlier_age_distribution.fresh} fresh (≤30d) — within grace period.</Text
+								>
+							{/if}
 						</TooltipContent>
 					</TooltipRoot>
-				{:else}
-					<Panel padding="normal">
-					<Stack gap={1} align="center">
+
+					<!-- Avg Degree -->
+					<TooltipRoot delayDuration={300}>
+						<TooltipTrigger
+							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+						>
+							<Icon name="git-branch" size="sm" />
+							<Caption variant="caption-tabular" tone={degreeTone}
+								>{fmt(graphHealth.avg_degree)}</Caption
+							>
+							<Caption>Avg Degree</Caption>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">
+							<Text variant="body-strong" block>Average Connection Degree</Text>
+							<Text variant="body-muted" block
+								>The average number of relationships per artifact. Higher means a more
+								interconnected knowledge graph. A well-connected graph has an average degree of 4+ —
+								each artifact relates to multiple others.</Text
+							>
+						</TooltipContent>
+					</TooltipRoot>
+
+					<!-- Delivery Pipeline -->
+					<TooltipRoot delayDuration={300}>
+						<TooltipTrigger
+							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+						>
+							<Icon name="package" size="sm" />
+							<Caption variant="caption-tabular" tone={deliveryTone}>
+								{pct(graphHealth.delivery_connectivity)}%
+							</Caption>
+							<Caption>Delivery</Caption>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">
+							<Text variant="body-strong" block>Delivery Pipeline Connectivity</Text>
+							<Text variant="body-muted" block
+								>Percentage of delivery artifacts (task, epic, milestone, idea, research, decision,
+								wireframe) connected in the main delivery component. Target: 90%+.</Text
+							>
+						</TooltipContent>
+					</TooltipRoot>
+
+					<!-- Learning Pipeline -->
+					<TooltipRoot delayDuration={300}>
+						<TooltipTrigger
+							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+						>
+							<Icon name="book-open" size="sm" />
+							<Caption variant="caption-tabular" tone={learningTone}>
+								{pct(graphHealth.learning_connectivity)}%
+							</Caption>
+							<Caption>Learning</Caption>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">
+							<Text variant="body-strong" block>Learning Loop Connectivity</Text>
+							<Text variant="body-muted" block
+								>Percentage of learning artifacts (lesson, rule) connected to each other or to
+								decisions. Disconnected lessons and rules are not feeding back into the delivery
+								process. Target: 80%+.</Text
+							>
+						</TooltipContent>
+					</TooltipRoot>
+
+					<!-- Scan Results -->
+					{#if scanned}
+						<TooltipRoot delayDuration={300}>
+							<TooltipTrigger
+								class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+							>
+								{#if errorCount > 0}
+									<Icon name="circle-alert" size="sm" />
+									<Caption variant="caption-tabular" tone="destructive"
+										>{errorCount}E / {warningCount}W</Caption
+									>
+								{:else if warningCount > 0}
+									<Icon name="triangle-alert" size="sm" />
+									<Caption variant="caption-tabular" tone="warning">{warningCount}W</Caption>
+								{:else}
+									<Icon name="circle-alert" size="sm" />
+									<Caption tone="success">Clean</Caption>
+								{/if}
+								<Caption>Integrity</Caption>
+							</TooltipTrigger>
+							<TooltipContent side="bottom">
+								<Text variant="body-strong" block>Integrity Scan Results</Text>
+								<Text variant="body-muted" block
+									>File-level checks: broken references, invalid statuses, missing required fields,
+									schema violations. Errors must be fixed. Warnings indicate potential issues. Use
+									Auto-fix for machine-fixable problems.</Text
+								>
+							</TooltipContent>
+						</TooltipRoot>
+					{:else}
+						<Panel padding="normal">
+							<Stack gap={1} align="center">
+								<Icon name="scan" size="sm" />
+								<Caption variant="caption-tabular">—</Caption>
+								<Caption>Integrity</Caption>
+							</Stack>
+						</Panel>
+					{/if}
+
+					<!-- Pillar Traceability -->
+					<TooltipRoot delayDuration={300}>
+						<TooltipTrigger
+							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
+						>
+							<Icon name="target" size="sm" />
+							<Caption variant="caption-tabular" tone={traceabilityTone}>
+								{fmt(graphHealth.pillar_traceability)}%
+							</Caption>
+							<Caption>Traceability</Caption>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">
+							<Text variant="body-strong" block>Pillar Traceability</Text>
+							<Text variant="body-muted" block
+								>Percentage of rules that are grounded by at least one pillar via a grounded-by
+								relationship. Rules without pillar grounding are unanchored — they enforce something
+								with no stated rationale.</Text
+							>
+						</TooltipContent>
+					</TooltipRoot>
+				</Grid>
+			{/if}
+
+			<!-- Threshold alerts -->
+			{#if thresholdAlerts.length > 0}
+				<Stack gap={1}>
+					{#each thresholdAlerts as alert (alert.message)}
+						<Panel padding="tight">
+							<HStack gap={1}>
+								<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
+								<Caption tone={alert.level === "red" ? "destructive" : "warning"}
+									>{alert.message}</Caption
+								>
+							</HStack>
+						</Panel>
+					{/each}
+				</Stack>
+			{/if}
+
+			<!-- Scan and Auto-fix action buttons -->
+			<Grid cols={2} gap={2}>
+				<Button variant="outline" size="sm" onclick={onScan} disabled={loading || fixing}>
+					{#if loading}
+						<LoadingSpinner size="sm" />
+					{:else}
 						<Icon name="scan" size="sm" />
-						<Caption variant="caption-tabular">—</Caption>
-						<Caption>Integrity</Caption>
-					</Stack>
-					</Panel>
-				{/if}
-
-				<!-- Pillar Traceability -->
-				<TooltipRoot delayDuration={300}>
-					<TooltipTrigger class="flex flex-col items-center justify-center gap-1 rounded-md bg-muted/50 py-3 transition-colors hover:bg-muted/80">
-						<Icon name="target" size="sm" />
-						<Caption variant="caption-tabular" tone={traceabilityTone}>
-							{fmt(graphHealth.pillar_traceability)}%
-						</Caption>
-						<Caption>Traceability</Caption>
-					</TooltipTrigger>
-					<TooltipContent side="bottom">
-						<Text variant="body-strong" block>Pillar Traceability</Text>
-						<Text variant="body-muted" block>Percentage of rules that are grounded by at least one pillar via a grounded-by relationship. Rules without pillar grounding are unanchored — they enforce something with no stated rationale.</Text>
-					</TooltipContent>
-				</TooltipRoot>
-
+					{/if}
+					Scan
+				</Button>
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={onAutoFix}
+					disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}
+				>
+					{#if fixing}
+						<LoadingSpinner size="sm" />
+					{:else}
+						<Icon name="wrench" size="sm" />
+					{/if}
+					Auto-fix{scanned && fixableCount > 0 ? ` (${fixableCount})` : ""}
+				</Button>
 			</Grid>
-		{/if}
-
-		<!-- Threshold alerts -->
-		{#if thresholdAlerts.length > 0}
-			<Stack gap={1}>
-				{#each thresholdAlerts as alert (alert.message)}
-					<Panel padding="tight">
-					<HStack gap={1}>
-						<Icon name={alert.level === "red" ? "circle-alert" : "triangle-alert"} size="sm" />
-						<Caption tone={alert.level === "red" ? "destructive" : "warning"}>{alert.message}</Caption>
-					</HStack>
-					</Panel>
-				{/each}
-			</Stack>
-		{/if}
-
-		<!-- Scan and Auto-fix action buttons -->
-		<Grid cols={2} gap={2}>
-			<Button variant="outline" size="sm" onclick={onScan} disabled={loading || fixing}>
-				{#if loading}
-					<LoadingSpinner size="sm" />
-				{:else}
-					<Icon name="scan" size="sm" />
-				{/if}
-				Scan
-			</Button>
-			<Button variant="outline" size="sm" onclick={onAutoFix} disabled={loading || fixing || !scanned || fixableCount === 0 || !onAutoFix}>
-				{#if fixing}
-					<LoadingSpinner size="sm" />
-				{:else}
-					<Icon name="wrench" size="sm" />
-				{/if}
-				Auto-fix{scanned && fixableCount > 0 ? ` (${fixableCount})` : ""}
-			</Button>
-		</Grid>
 		</Stack>
 	</CardContent>
 </CardRoot>

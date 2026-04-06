@@ -51,7 +51,7 @@ describe("WelcomeScreen", () => {
 	});
 
 	it("calls projectStore.openProject when a directory is selected", async () => {
-		vi.mocked(open).mockResolvedValueOnce("/home/user/my-project" as any);
+		vi.mocked(open).mockResolvedValueOnce("/home/user/my-project" as unknown as null);
 		render(WelcomeScreen);
 		const btn = screen.getByRole("button", { name: /Open Project/i });
 		await fireEvent.click(btn);
@@ -72,7 +72,6 @@ describe("WelcomeScreen", () => {
 	it("renders an error message when projectStore.error is set", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: false,
 				activeProject: null,
 				projectPath: null,
@@ -86,7 +85,7 @@ describe("WelcomeScreen", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(WelcomeScreen);
 		expect(screen.getByText("Failed to open project")).toBeInTheDocument();

@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, TooltipRoot as Tooltip, TooltipContent, TooltipTrigger, Caption, Code, Badge } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		TooltipRoot as Tooltip,
+		TooltipContent,
+		TooltipTrigger,
+		Caption,
+		Code,
+		Badge,
+	} from "@orqastudio/svelte-components/pure";
 
 	let {
 		action,

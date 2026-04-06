@@ -21,6 +21,9 @@
 		return task.detail;
 	});
 
+	/**
+	 *
+	 */
 	async function check() {
 		checking = true;
 		setupStore.error = null;
@@ -32,6 +35,9 @@
 		}
 	}
 
+	/**
+	 *
+	 */
 	async function waitForDownload() {
 		// The embedding model download is started during app init in lib.rs.
 		// Poll the startup tracker until it completes.

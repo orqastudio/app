@@ -86,6 +86,9 @@ function forwardToDashboard(level: string, source: string, message: string): voi
  * The daemon persists events in SQLite so they survive dashboard restarts.
  * The `source` field maps to `EventSource::Frontend` on the Rust side.
  * Fire-and-forget — silently fails when the daemon is not running.
+ * @param level
+ * @param source
+ * @param message
  */
 function forwardToDaemonBus(level: string, source: string, message: string): void {
 	try {
@@ -149,7 +152,6 @@ function emit(entry: LogEntry): void {
 
 /**
  * Create a scoped logger for a module.
- *
  * @param source - Module name (e.g. "navigation", "artifact", "graph")
  */
 export function logger(source: string): Logger {
@@ -186,7 +188,10 @@ export function logger(source: string): Logger {
 	};
 }
 
-/** Subscribe to all log entries (for in-app error display, telemetry, etc.) */
+/**
+ * Subscribe to all log entries (for in-app error display, telemetry, etc.)
+ * @param fn
+ */
 export function subscribeToLogs(fn: LogSubscriber): () => void {
 	subscribers = [...subscribers, fn];
 	return () => {
@@ -194,7 +199,10 @@ export function subscribeToLogs(fn: LogSubscriber): () => void {
 	};
 }
 
-/** Set the minimum log level for console output. */
+/**
+ * Set the minimum log level for console output.
+ * @param level
+ */
 export function setLogLevel(level: LogLevel): void {
 	minLevel = level;
 }

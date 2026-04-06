@@ -41,11 +41,8 @@
 	const filtered = $derived(
 		violations.filter((v) => {
 			const matchesRule =
-				ruleFilter.trim() === "" ||
-				v.rule_name.toLowerCase().includes(ruleFilter.toLowerCase());
-			const matchesAction =
-				actionFilter === "all" ||
-				v.action.toLowerCase() === actionFilter;
+				ruleFilter.trim() === "" || v.rule_name.toLowerCase().includes(ruleFilter.toLowerCase());
+			const matchesAction = actionFilter === "all" || v.action.toLowerCase() === actionFilter;
 			return matchesRule && matchesAction;
 		}),
 	);
@@ -53,6 +50,10 @@
 	const blockCount = $derived(violations.filter((v) => v.action.toLowerCase() === "block").length);
 	const warnCount = $derived(violations.filter((v) => v.action.toLowerCase() === "warn").length);
 
+	/**
+	 *
+	 * @param iso
+	 */
 	function formatTimestamp(iso: string): string {
 		try {
 			const d = new Date(iso.endsWith("Z") ? iso : `${iso}Z`);
@@ -92,18 +93,16 @@
 			<!-- Filters -->
 			<HStack gap={2}>
 				<Box flex={1}>
-					<SearchInput
-						bind:value={ruleFilter}
-						placeholder="Filter by rule name..."
-						size="xs"
-					/>
+					<SearchInput bind:value={ruleFilter} placeholder="Filter by rule name..." size="xs" />
 				</Box>
 				<HStack gap={1}>
-					{#each (["all", "block", "warn"] as const) as opt (opt)}
+					{#each ["all", "block", "warn"] as const as opt (opt)}
 						<Button
 							variant={actionFilter === opt ? "secondary" : "ghost"}
 							size="sm"
-							onclick={() => { actionFilter = opt; }}
+							onclick={() => {
+								actionFilter = opt;
+							}}
 						>
 							{opt === "all" ? "All" : opt === "block" ? "Blocks" : "Warns"}
 						</Button>
@@ -122,7 +121,7 @@
 		{:else if error}
 			<Center full>
 				<Panel padding="normal">
-					<ErrorDisplay message={error} onRetry={onRetry} />
+					<ErrorDisplay message={error} {onRetry} />
 				</Panel>
 			</Center>
 		{:else if filtered.length === 0}
@@ -134,10 +133,7 @@
 						description="Enforcement violations will appear here when rules block or warn on tool calls."
 					/>
 				{:else}
-					<EmptyState
-						title="No matches"
-						description="No violations match your current filters."
-					/>
+					<EmptyState title="No matches" description="No violations match your current filters." />
 				{/if}
 			</Center>
 		{:else}
@@ -188,7 +184,10 @@
 	<!-- Footer with result count -->
 	{#if !loading && !error && violations.length > 0}
 		<SectionFooter>
-			<Caption>{filtered.length} of {violations.length} {violations.length === 1 ? "violation" : "violations"}</Caption>
+			<Caption
+				>{filtered.length} of {violations.length}
+				{violations.length === 1 ? "violation" : "violations"}</Caption
+			>
 		</SectionFooter>
 	{/if}
 </Stack>

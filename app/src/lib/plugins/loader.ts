@@ -30,6 +30,7 @@ interface DiscoveredPlugin {
  * the plugins/ directory), loads manifests, and registers with the
  * plugin registry. View components are loaded on demand when the user
  * navigates to a plugin view route — not at registration time.
+ * @param registry
  */
 export async function registerInstalledPlugins(registry: PluginRegistry): Promise<void> {
 	let plugins: DiscoveredPlugin[];
@@ -95,7 +96,9 @@ export async function registerInstalledPlugins(registry: PluginRegistry): Promis
 	}
 
 	if (remaining.size > 0) {
-		log.warn(`${remaining.size} plugin(s) could not be registered (unresolved deps): ${[...remaining].join(", ")}`);
+		log.warn(
+			`${remaining.size} plugin(s) could not be registered (unresolved deps): ${[...remaining].join(", ")}`,
+		);
 	}
 
 	log.info(`Registered ${registered.size}/${manifests.size} plugin(s)`);

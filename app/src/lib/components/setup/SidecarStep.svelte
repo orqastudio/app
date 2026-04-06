@@ -17,6 +17,9 @@
 
 	let starting = $state(true);
 
+	/**
+	 *
+	 */
 	async function start() {
 		starting = true;
 		setupStore.error = null;

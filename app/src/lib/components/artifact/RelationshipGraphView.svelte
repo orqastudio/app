@@ -29,20 +29,32 @@
 	/** The cytoscape instance, cleaned up on destroy. */
 	let cy: cytoscape.Core | null = null;
 
-	/** Resolve a node color from its artifact type. */
+	/**
+	 * Resolve a node color from its artifact type.
+	 * @param id - The artifact ID to look up.
+	 * @returns A hex color string for the artifact type, or gray as fallback.
+	 */
 	function resolveNodeColor(id: string): string {
 		const node = artifactGraphSDK.resolve(id);
 		if (!node) return "#6b7280";
 		return ARTIFACT_TYPE_COLORS[node.artifact_type] ?? "#6b7280";
 	}
 
-	/** Resolve the display title for an artifact. */
+	/**
+	 * Resolve the display title for an artifact.
+	 * @param id - The artifact ID to look up.
+	 * @returns The artifact title, or the ID itself if the artifact is not found.
+	 */
 	function resolveTitle(id: string): string {
 		const node = artifactGraphSDK.resolve(id);
 		return node?.title ?? id;
 	}
 
-	/** Humanize a relationship type label. */
+	/**
+	 * Humanize a relationship type label.
+	 * @param value - The raw relationship type string to humanize.
+	 * @returns A title-cased human-readable label.
+	 */
 	function humanizeLabel(value: string): string {
 		return value
 			.replace(/-/g, " ")
@@ -50,7 +62,10 @@
 			.replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
-	/** Build and (re)initialize the cytoscape instance. */
+	/**
+	 * Build and (re)initialize the cytoscape instance.
+	 * @param el - The container div to mount cytoscape into.
+	 */
 	function buildGraph(el: HTMLDivElement): void {
 		if (cy) {
 			cy.destroy();

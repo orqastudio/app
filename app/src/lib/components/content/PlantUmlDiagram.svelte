@@ -11,7 +11,10 @@
 	/** Simple SVG cache keyed by diagram source text. */
 	const svgCache: Record<string, string> = {};
 
-	/** Detect whether the app is currently in dark mode. */
+	/**
+	 * Detect whether the app is currently in dark mode.
+	 * @returns True when the dark class is present on the document root element.
+	 */
 	function isDark(): boolean {
 		if (typeof document === "undefined") return false;
 		return document.documentElement.classList.contains("dark");
@@ -23,6 +26,8 @@
 	 *
 	 * Uses the browser's CompressionStream API (deflate-raw) and custom base64
 	 * encoding with PlantUML's 64-character alphabet.
+	 * @param source - The PlantUML diagram source text to encode.
+	 * @returns The encoded string suitable for appending to the PlantUML server URL.
 	 */
 	async function encodePlantUml(source: string): Promise<string> {
 		const data = new TextEncoder().encode(source);
@@ -57,6 +62,8 @@
 	/**
 	 * PlantUML's custom base64 encoding.
 	 * Uses the alphabet: 0-9, A-Z, a-z, -, _
+	 * @param data - The compressed byte array to encode.
+	 * @returns The PlantUML-alphabet base64 encoded string.
 	 */
 	function encode64(data: Uint8Array): string {
 		let result = "";
@@ -73,6 +80,12 @@
 		return result;
 	}
 
+	/**
+	 * Encode three bytes into four PlantUML base64 characters.
+	 * @param b1
+	 * @param b2
+	 * @param b3
+	 */
 	function append3bytes(b1: number, b2: number, b3: number): string {
 		const c1 = b1 >> 2;
 		const c2 = ((b1 & 0x3) << 4) | (b2 >> 4);
@@ -81,6 +94,10 @@
 		return encode6bit(c1) + encode6bit(c2) + encode6bit(c3) + encode6bit(c4);
 	}
 
+	/**
+	 * Map a 6-bit value to a PlantUML alphabet character.
+	 * @param b
+	 */
 	function encode6bit(b: number): string {
 		if (b < 10) return String.fromCharCode(48 + b); // 0-9
 		b -= 10;
@@ -96,6 +113,8 @@
 	/**
 	 * Inject dark-mode skin params if the app is in dark mode
 	 * and the source does not already contain skinparam directives.
+	 * @param source - The original PlantUML source text.
+	 * @returns The source with dark skin params injected, or unchanged if not in dark mode.
 	 */
 	function withTheme(source: string): string {
 		const trimmed = source.trim();
@@ -128,6 +147,7 @@
 		return darkSkin + "\n" + trimmed;
 	}
 
+	/** Encode the current text, fetch the SVG from the PlantUML server, and cache the result. */
 	async function fetchDiagram(): Promise<void> {
 		loading = true;
 		error = null;
@@ -186,7 +206,9 @@
 </script>
 
 <!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
-<div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
+<div
+	style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;"
+>
 	{#if loading}
 		<Center>
 			<Panel padding="loose">
@@ -194,9 +216,12 @@
 			</Panel>
 		</Center>
 	{:else if error}
-		<div style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;">
+		<div
+			style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;"
+		>
 			<Caption variant="caption-strong" tone="destructive">PlantUML render error</Caption>
-			<pre style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
+			<pre
+				style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
 		</div>
 	{:else if svgContent}
 		<div style="display: flex; justify-content: center;">

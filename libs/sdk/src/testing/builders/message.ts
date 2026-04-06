@@ -49,6 +49,7 @@ const defaults: Message = {
  * ```ts
  * const msg = createMessage({ role: "assistant", content: "Hi!" });
  * ```
+ * @param overrides
  */
 export function createMessage(overrides: Partial<Message> = {}): Message {
 	return { ...defaults, ...overrides };

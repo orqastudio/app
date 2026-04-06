@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { Icon, HStack, Button, Text, Code } from "@orqastudio/svelte-components/pure";
-	import { CardRoot as Card, CardContent, CardFooter, CardHeader, CardTitle } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot as Card,
+		CardContent,
+		CardFooter,
+		CardHeader,
+		CardTitle,
+	} from "@orqastudio/svelte-components/pure";
 	import CodeBlock from "$lib/components/content/CodeBlock.svelte";
 	import { logger } from "@orqastudio/sdk";
 	import type { PendingApproval } from "@orqastudio/sdk";
@@ -25,7 +31,10 @@
 		try {
 			return JSON.stringify(JSON.parse(approval.input), null, 2);
 		} catch (err) {
-			log.error("Failed to parse tool approval input as JSON", { toolName: approval.toolName, err });
+			log.error("Failed to parse tool approval input as JSON", {
+				toolName: approval.toolName,
+				err,
+			});
 			return approval.input;
 		}
 	});
@@ -42,8 +51,8 @@
 	</CardHeader>
 	<CardContent compact>
 		<Text variant="caption" block>
-			Claude wants to run <Code>{stripToolName(approval.toolName)}</Code> with the
-			following parameters. Allow this action?
+			Claude wants to run <Code>{stripToolName(approval.toolName)}</Code> with the following parameters.
+			Allow this action?
 		</Text>
 		<CodeBlock text={formattedInput()} lang="json" />
 	</CardContent>

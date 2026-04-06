@@ -1,5 +1,19 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, CardAction, Heading, Button, HStack, Stack, Text, Caption, ProgressBar } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		CardAction,
+		Heading,
+		Button,
+		HStack,
+		Stack,
+		Text,
+		Caption,
+		ProgressBar,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
@@ -99,33 +113,37 @@
 		{:else}
 			<!-- Title + deadline row + gate question wrapped in a Stack for uniform spacing -->
 			<Stack gap={3}>
-			<HStack justify="between" align="start" gap={4}>
-				<Stack gap={0} flex={1}>
-					<Heading level={2}>{activeMilestone.node.title}</Heading>
-					{#if activeMilestone.node.description}
-						<Text variant="body-muted" lineClamp={2}>{activeMilestone.node.description}</Text>
+				<HStack justify="between" align="start" gap={4}>
+					<Stack gap={0} flex={1}>
+						<Heading level={2}>{activeMilestone.node.title}</Heading>
+						{#if activeMilestone.node.description}
+							<Text variant="body-muted" lineClamp={2}>{activeMilestone.node.description}</Text>
+						{/if}
+					</Stack>
+					{#if activeMilestone.deadline}
+						<HStack gap={1} align="center">
+							<Icon name="calendar" size="sm" />
+							<Caption>{activeMilestone.deadline}</Caption>
+						</HStack>
 					{/if}
-				</Stack>
-				{#if activeMilestone.deadline}
-					<HStack gap={1} align="center">
-						<Icon name="calendar" size="sm" />
-						<Caption>{activeMilestone.deadline}</Caption>
-					</HStack>
-				{/if}
-			</HStack>
+				</HStack>
 
-			<!-- Gate question -->
-			{#if activeMilestone.gate}
-				<Panel padding="tight" background="muted" rounded="md">
-					<Text variant="overline-muted" block>Gate question</Text>
-					<Text variant="body" block>"{activeMilestone.gate}"</Text>
-				</Panel>
-			{/if}
+				<!-- Gate question -->
+				{#if activeMilestone.gate}
+					<Panel padding="tight" background="muted" rounded="md">
+						<Text variant="overline-muted" block>Gate question</Text>
+						<Text variant="body" block>"{activeMilestone.gate}"</Text>
+					</Panel>
+				{/if}
 			</Stack>
 
 			<!-- P1 epic progress -->
 			{#if activeMilestone.p1Total > 0}
-				<ProgressBar label="P1 Epics" current={activeMilestone.p1Done} total={activeMilestone.p1Total} />
+				<ProgressBar
+					label="P1 Epics"
+					current={activeMilestone.p1Done}
+					total={activeMilestone.p1Total}
+				/>
 			{:else}
 				<Caption>No P1 epics defined for this milestone.</Caption>
 			{/if}

@@ -13,7 +13,7 @@
 
 	/** All governance artifacts with their created dates — derived from plugin registry. */
 	const governanceArtifacts = $derived(
-		pluginRegistry.governanceSchemas.flatMap((s) => artifactGraphSDK.byType(s.key))
+		pluginRegistry.governanceSchemas.flatMap((s) => artifactGraphSDK.byType(s.key)),
 	);
 
 	/**
@@ -233,7 +233,7 @@
 		chronological.filter((s) => {
 			const date = s.created_at.slice(0, 10);
 			return date >= last7Days[0];
-		})
+		}),
 	);
 
 	/**
@@ -250,8 +250,6 @@
 		// For snapshot-based metrics, use recent snapshots only
 		return recentSnapshots.map((s) => m.getValue(s));
 	}
-
-
 </script>
 
 {#if loaded}
@@ -271,33 +269,38 @@
 			{@const path = hasTrend ? sparklinePath(values, m.fixedMin, m.fixedMax) : ""}
 			{@const isLeft = idx % 2 === 0}
 			{@const isTop = idx < 2}
-			<div class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-r border-border' : ''} {isTop ? 'border-t border-border' : ''}">
+			<div
+				class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-border border-r' : ''} {isTop
+					? 'border-border border-t'
+					: ''}"
+			>
 				<!-- Metric header -->
 				<Panel padding="normal">
-				<HStack justify="between">
-					<Caption variant="caption-strong">{m.label}</Caption>
-					<HStack gap={1} align="baseline">
-						<Text variant="heading-base">
-							{currentValue(m)}{m.unit ?? ""}
-						</Text>
-						{#if arrow}
-							<Caption variant="caption-strong" {tone}>
-								{arrow} {label}
-							</Caption>
-						{/if}
+					<HStack justify="between">
+						<Caption variant="caption-strong">{m.label}</Caption>
+						<HStack gap={1} align="baseline">
+							<Text variant="heading-base">
+								{currentValue(m)}{m.unit ?? ""}
+							</Text>
+							{#if arrow}
+								<Caption variant="caption-strong" {tone}>
+									{arrow}
+									{label}
+								</Caption>
+							{/if}
+						</HStack>
 					</HStack>
-				</HStack>
 				</Panel>
 				<!-- Sparkline — flush to cell edges — custom SVG chart -->
 				{#if loading}
 					<Panel padding="normal">
-					<Stack gap={0} align="center">
-						<LoadingSpinner size="sm" />
-					</Stack>
+						<Stack gap={0} align="center">
+							<LoadingSpinner size="sm" />
+						</Stack>
 					</Panel>
 				{:else if path}
 					<svg
-						class="flex-1 w-full min-h-0"
+						class="min-h-0 w-full flex-1"
 						viewBox="0 0 100 {SPARKLINE_HEIGHT}"
 						preserveAspectRatio="none"
 						fill="none"
@@ -310,7 +313,7 @@
 						/>
 						<path
 							d={path}
-							stroke={stroke}
+							{stroke}
 							stroke-width="1.5"
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -319,9 +322,9 @@
 					</svg>
 				{:else}
 					<Panel padding="normal">
-					<Stack gap={0}>
-						<Caption>No trend data yet</Caption>
-					</Stack>
+						<Stack gap={0}>
+							<Caption>No trend data yet</Caption>
+						</Stack>
 					</Panel>
 				{/if}
 			</div>

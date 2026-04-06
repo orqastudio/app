@@ -246,7 +246,8 @@ export type {
  * Exhaustiveness check utility. Use as the default case in switch statements
  * over discriminated unions to get a compile-time error when a new variant
  * is added but not handled.
- *
+ * @param value
+ * @param message
  * @example
  * ```ts
  * type Status = "active" | "completed" | "error";
@@ -267,7 +268,6 @@ export function assertNever(value: never, message?: string): never {
 /**
  * Recursive readonly type. Makes all properties and nested objects/arrays
  * deeply immutable at the type level. Use for data crossing the IPC boundary.
- *
  * @example
  * ```ts
  * type FrozenProject = DeepReadonly<Project>;

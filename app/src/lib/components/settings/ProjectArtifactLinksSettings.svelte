@@ -1,8 +1,18 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Stack, Caption, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
-	import type { ProjectSettings, ArtifactLinksConfig, ArtifactLinkDisplayMode } from "@orqastudio/types";
+	import type {
+		ProjectSettings,
+		ArtifactLinksConfig,
+		ArtifactLinkDisplayMode,
+	} from "@orqastudio/types";
 
 	interface Props {
 		settings: ProjectSettings;
@@ -24,10 +34,17 @@
 	/** All type prefixes, in display order — from persisted settings. */
 	const prefixes = $derived(Object.keys(effectiveColors));
 
+	/**
+	 *
+	 * @param prefix
+	 */
 	function getDisplayMode(prefix: string): ArtifactLinkDisplayMode {
 		return effectiveDisplayModes[prefix] ?? "id";
 	}
 
+	/**
+	 *
+	 */
 	function buildConfig(): ArtifactLinksConfig {
 		return {
 			displayModes: effectiveDisplayModes,
@@ -35,6 +52,11 @@
 		};
 	}
 
+	/**
+	 *
+	 * @param prefix
+	 * @param mode
+	 */
 	function handleDisplayModeChange(prefix: string, mode: ArtifactLinkDisplayMode) {
 		const displayModes = { ...effectiveDisplayModes, [prefix]: mode };
 		props.onSave({
@@ -43,6 +65,11 @@
 		});
 	}
 
+	/**
+	 *
+	 * @param prefix
+	 * @param color
+	 */
 	function handleColorChange(prefix: string, color: string) {
 		const colors = { ...effectiveColors, [prefix]: color };
 		props.onSave({
@@ -51,6 +78,10 @@
 		});
 	}
 
+	/**
+	 *
+	 * @param prefix
+	 */
 	function resetColor(prefix: string) {
 		const colors = { ...effectiveColors };
 		// Remove color override — no hardcoded default to restore to.
@@ -70,11 +101,11 @@
 	<CardContent>
 		<!-- Column headers -->
 		<Panel padding="tight">
-		<HStack gap={4}>
-			<Caption variant="caption-strong" tone="muted">Type</Caption>
-			<Caption variant="caption-strong" tone="muted">Display</Caption>
-			<Caption variant="caption-strong" tone="muted">Colour</Caption>
-		</HStack>
+			<HStack gap={4}>
+				<Caption variant="caption-strong" tone="muted">Type</Caption>
+				<Caption variant="caption-strong" tone="muted">Display</Caption>
+				<Caption variant="caption-strong" tone="muted">Colour</Caption>
+			</HStack>
 		</Panel>
 
 		<Separator />
@@ -111,9 +142,12 @@
 					<!-- Colour swatch + native picker + reset.
 					     input[type=color] is a legitimate exception — ColorInput primitive follow-up needed. -->
 					<HStack gap={1}>
-						<label class="flex cursor-pointer items-center gap-1" aria-label="Pick colour for {prefix}">
+						<label
+							class="flex cursor-pointer items-center gap-1"
+							aria-label="Pick colour for {prefix}"
+						>
 							<span
-								class="inline-block h-4 w-4 shrink-0 rounded border border-border"
+								class="border-border inline-block h-4 w-4 shrink-0 rounded border"
 								style="background-color: {color};"
 							></span>
 							<input

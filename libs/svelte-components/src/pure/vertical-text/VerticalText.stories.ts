@@ -9,9 +9,19 @@ const meta = {
 		variant: {
 			control: "select",
 			options: [
-				"body", "body-muted", "body-strong", "body-strong-muted",
-				"caption", "caption-strong", "caption-mono", "caption-tabular",
-				"label", "overline", "overline-muted", "mono", "tabular",
+				"body",
+				"body-muted",
+				"body-strong",
+				"body-strong-muted",
+				"caption",
+				"caption-strong",
+				"caption-mono",
+				"caption-tabular",
+				"label",
+				"overline",
+				"overline-muted",
+				"mono",
+				"tabular",
 			],
 		},
 		tone: {

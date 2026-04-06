@@ -1,6 +1,24 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge, Button, HStack, Stack, Grid, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+		Heading,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		Badge,
+		Button,
+		HStack,
+		Stack,
+		Grid,
+		Caption,
+		Text,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -77,19 +95,11 @@
 		<Separator />
 
 		<FormGroup label="Project Name" for="wizard-project-name">
-			<Input
-				id="wizard-project-name"
-				bind:value={projectName}
-				placeholder="Project name"
-			/>
+			<Input id="wizard-project-name" bind:value={projectName} placeholder="Project name" />
 		</FormGroup>
 
 		{#if !scanned}
-			<Button
-				variant="outline"
-				onclick={handleScan}
-				disabled={projectStore.scanning}
-			>
+			<Button variant="outline" onclick={handleScan} disabled={projectStore.scanning}>
 				{#if projectStore.scanning}
 					<Icon name="loader-circle" size="sm" />
 					Scanning...
@@ -162,7 +172,9 @@
 					</Panel>
 					<Panel padding="tight" border="all" rounded="md">
 						<Stack gap={0} align="center">
-							<Text variant="heading-base">{scanResult.governance.has_claude_config ? "Yes" : "No"}</Text>
+							<Text variant="heading-base"
+								>{scanResult.governance.has_claude_config ? "Yes" : "No"}</Text
+							>
 							<Caption tone="muted">CLAUDE.md</Caption>
 						</Stack>
 					</Panel>

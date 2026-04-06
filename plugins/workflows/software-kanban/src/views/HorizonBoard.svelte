@@ -65,16 +65,30 @@
 	let dragMilestoneId = $state<string | null>(null);
 	let dropTargetKey = $state<string | null>(null);
 
+	/**
+	 *
+	 * @param e
+	 * @param milestone
+	 */
 	function handleDragStart(e: DragEvent, milestone: ArtifactNode) {
 		dragMilestoneId = milestone.id;
 		e.dataTransfer?.setData("text/plain", milestone.id);
 	}
 
+	/**
+	 *
+	 * @param e
+	 * @param colKey
+	 */
 	function handleDragOver(e: DragEvent, colKey: string) {
 		e.preventDefault();
 		dropTargetKey = colKey;
 	}
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleDragLeave(e: DragEvent) {
 		// Only reset the drop target when the cursor actually leaves the column,
 		// not when it moves between child elements.
@@ -83,6 +97,11 @@
 		dropTargetKey = null;
 	}
 
+	/**
+	 *
+	 * @param e
+	 * @param colKey
+	 */
 	function handleDrop(e: DragEvent, colKey: string) {
 		e.preventDefault();
 		e.stopPropagation();
@@ -98,13 +117,18 @@
 		}
 		if (!milestone) return;
 
-		const currentHorizon = (milestone.frontmatter["horizon"] as string | undefined) ?? inferHorizon(milestone);
+		const currentHorizon =
+			(milestone.frontmatter["horizon"] as string | undefined) ?? inferHorizon(milestone);
 		if (currentHorizon === colKey) return;
 
 		onHorizonChange?.(milestone, colKey);
 		dragMilestoneId = null;
 	}
 
+	/**
+	 *
+	 * @param ms
+	 */
 	function inferHorizon(ms: ArtifactNode): string {
 		const s = ms.status ?? "captured";
 		if (s === "active") return "now";
@@ -114,11 +138,13 @@
 		return "next";
 	}
 
+	/**
+	 *
+	 * @param msId
+	 */
 	function epicsForMilestone(msId: string): ArtifactNode[] {
 		return epics.filter((e) =>
-			e.references_out.some(
-				(r) => r.relationship_type === epicParentRel && r.target_id === msId,
-			),
+			e.references_out.some((r) => r.relationship_type === epicParentRel && r.target_id === msId),
 		);
 	}
 
@@ -177,7 +203,7 @@
 				...col,
 				description: "",
 				milestones: allMilestones.filter(
-					(ms) => (ms.frontmatter["priority"] as string | undefined ?? "none") === col.key,
+					(ms) => ((ms.frontmatter["priority"] as string | undefined) ?? "none") === col.key,
 				),
 			}));
 		}
@@ -187,19 +213,20 @@
 		}
 		return assertNever(sortBy);
 	});
-
 </script>
 
 <Stack gap={3} height="full">
 	<!-- Toolbar -->
 	<HStack justify="between" align="center">
 		<Caption variant="caption-tabular">
-			{allMilestones.filter(m => m.status === 'complete').length}/{allMilestones.length} Done
+			{allMilestones.filter((m) => m.status === "complete").length}/{allMilestones.length} Done
 		</Caption>
 		<SelectMenu
 			items={SORT_OPTIONS as Array<{ value: string; label: string }>}
 			selected={sortBy}
-			onSelect={(v) => { sortBy = v as SortBy; }}
+			onSelect={(v) => {
+				sortBy = v as SortBy;
+			}}
 			triggerLabel={sortByLabel}
 			triggerSize="sm"
 		/>
@@ -219,7 +246,10 @@
 				<div class="horizon-col">
 					<CollapsibleRoot
 						open={isColOpen}
-						onOpenChange={(open) => { if (!open) collapsedCols.add(col.key); else collapsedCols.delete(col.key); }}
+						onOpenChange={(open) => {
+							if (!open) collapsedCols.add(col.key);
+							else collapsedCols.delete(col.key);
+						}}
 					>
 						{#if isCollapsed}
 							<!-- Thin collapsed bar for done column. collapsed-bar class applied via scoped CSS. -->
@@ -269,11 +299,7 @@
 									{#snippet end()}
 										{#if col.isDone}
 											<CollapsibleTrigger>
-												<Button
-													variant="ghost"
-													size="icon-sm"
-													aria-label="Collapse {col.label}"
-												>
+												<Button variant="ghost" size="icon-sm" aria-label="Collapse {col.label}">
 													<Icon name="chevron-right" size="sm" />
 												</Button>
 											</CollapsibleTrigger>
@@ -291,42 +317,44 @@
 									<Box minHeight={0} flex={1}>
 										<ScrollArea full orientation="vertical">
 											<Panel padding="normal">
-											<Stack gap={3} role="list">
-												{#if col.milestones.length === 0}
-													<EmptyState
-														title="No {rootLabel.toLowerCase()}s"
-														description="Drop a {rootLabel.toLowerCase()} here."
-													/>
-												{:else}
-													{#each col.milestones as ms (ms.id)}
-														{@const msEpics = epicsForMilestone(ms.id)}
-														{@const doneCount = msEpics.filter((e) => e.status === "completed").length}
-														{@const inProgress = msEpics.filter((e) => e.status === "active")}
-														{@const critical = msEpics.filter(
-															(e) => e.priority === "P1" && e.status !== "completed",
-														)}
-														<!-- Raw div required: HTML5 drag API needs a native draggable element.
+												<Stack gap={3} role="list">
+													{#if col.milestones.length === 0}
+														<EmptyState
+															title="No {rootLabel.toLowerCase()}s"
+															description="Drop a {rootLabel.toLowerCase()} here."
+														/>
+													{:else}
+														{#each col.milestones as ms (ms.id)}
+															{@const msEpics = epicsForMilestone(ms.id)}
+															{@const doneCount = msEpics.filter(
+																(e) => e.status === "completed",
+															).length}
+															{@const inProgress = msEpics.filter((e) => e.status === "active")}
+															{@const critical = msEpics.filter(
+																(e) => e.priority === "P1" && e.status !== "completed",
+															)}
+															<!-- Raw div required: HTML5 drag API needs a native draggable element.
 														     Cursor classes moved to scoped CSS. -->
-														<div
-															draggable={onHorizonChange !== undefined && sortBy === "horizon"}
-															ondragstart={(e) => handleDragStart(e, ms)}
-															class:draggable-item={onHorizonChange && sortBy === "horizon"}
-															role="listitem"
-														>
-															<MilestoneCard
-																milestone={ms}
-																epicCount={msEpics.length}
-																doneEpicCount={doneCount}
-																inProgressEpics={inProgress}
-																criticalEpics={critical}
-																{epicLabel}
-																onClick={() => onMilestoneClick(ms)}
-															/>
-														</div>
-													{/each}
-												{/if}
-											</Stack>
-										</Panel>
+															<div
+																draggable={onHorizonChange !== undefined && sortBy === "horizon"}
+																ondragstart={(e) => handleDragStart(e, ms)}
+																class:draggable-item={onHorizonChange && sortBy === "horizon"}
+																role="listitem"
+															>
+																<MilestoneCard
+																	milestone={ms}
+																	epicCount={msEpics.length}
+																	doneEpicCount={doneCount}
+																	inProgressEpics={inProgress}
+																	criticalEpics={critical}
+																	{epicLabel}
+																	onClick={() => onMilestoneClick(ms)}
+																/>
+															</div>
+														{/each}
+													{/if}
+												</Stack>
+											</Panel>
 										</ScrollArea>
 									</Box>
 								</CollapsibleContent>
@@ -378,7 +406,9 @@
 		border-radius: 0.75rem;
 		border: 1px solid var(--color-border);
 		background-color: color-mix(in srgb, var(--color-muted) 5%, transparent);
-		transition: border-color 0.15s, background-color 0.15s;
+		transition:
+			border-color 0.15s,
+			background-color 0.15s;
 	}
 
 	.column-expanded.drag-over {

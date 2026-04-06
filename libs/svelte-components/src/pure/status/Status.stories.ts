@@ -8,7 +8,20 @@ const meta = {
 	argTypes: {
 		status: {
 			control: "select",
-			options: ["captured", "exploring", "ready", "prioritised", "active", "hold", "blocked", "review", "completed", "surpassed", "recurring", "archived"],
+			options: [
+				"captured",
+				"exploring",
+				"ready",
+				"prioritised",
+				"active",
+				"hold",
+				"blocked",
+				"review",
+				"completed",
+				"surpassed",
+				"recurring",
+				"archived",
+			],
 		},
 		mode: {
 			control: "select",

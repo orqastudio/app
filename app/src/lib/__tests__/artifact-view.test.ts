@@ -6,7 +6,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { applyFilters, applySort, applyGrouping, countFieldValues } from "../utils/artifact-view.js";
+import {
+	applyFilters,
+	applySort,
+	applyGrouping,
+	countFieldValues,
+} from "../utils/artifact-view.js";
 import type { DocNode, FilterableField } from "@orqastudio/types";
 
 // ---------------------------------------------------------------------------
@@ -46,10 +51,7 @@ describe("applyFilters", () => {
 	});
 
 	it("filters leaf nodes by a single field", () => {
-		const nodes = [
-			makeNode("active", { status: "active" }),
-			makeNode("done", { status: "done" }),
-		];
+		const nodes = [makeNode("active", { status: "active" }), makeNode("done", { status: "done" })];
 		const result = applyFilters(nodes, { status: ["active"] });
 		expect(result).toHaveLength(1);
 		expect(result[0].label).toBe("active");
@@ -77,10 +79,7 @@ describe("applyFilters", () => {
 	});
 
 	it("excludes nodes missing a filtered field", () => {
-		const nodes = [
-			makeNode("has-status", { status: "active" }),
-			makeNode("no-status", {}),
-		];
+		const nodes = [makeNode("has-status", { status: "active" }), makeNode("no-status", {})];
 		const result = applyFilters(nodes, { status: ["active"] });
 		expect(result).toHaveLength(1);
 	});
@@ -123,10 +122,7 @@ describe("applySort", () => {
 	});
 
 	it("moves nodes with missing field to the end regardless of direction", () => {
-		const nodes = [
-			makeNode("no-field"),
-			makeNode("has-field", { status: "active" }),
-		];
+		const nodes = [makeNode("no-field"), makeNode("has-field", { status: "active" })];
 		const asc = applySort(nodes, { field: "status", direction: "asc" });
 		const desc = applySort(nodes, { field: "status", direction: "desc" });
 		expect(asc[asc.length - 1].label).toBe("no-field");
@@ -174,10 +170,7 @@ describe("applyGrouping", () => {
 	});
 
 	it("puts nodes without the group field into Other", () => {
-		const nodes = [
-			makeNode("has-status", { status: "active" }),
-			makeNode("no-status"),
-		];
+		const nodes = [makeNode("has-status", { status: "active" }), makeNode("no-status")];
 		const groups = applyGrouping(nodes, "status", undefined, []);
 		const other = groups.find((g) => g.label === "Other");
 		expect(other?.nodes).toHaveLength(1);
@@ -195,10 +188,7 @@ describe("applyGrouping", () => {
 	});
 
 	it("respects schema enum order from FilterableField when no groupOrder", () => {
-		const nodes = [
-			makeNode("b", { status: "done" }),
-			makeNode("a", { status: "active" }),
-		];
+		const nodes = [makeNode("b", { status: "done" }), makeNode("a", { status: "active" })];
 		const fields: FilterableField[] = [{ name: "status", values: ["active", "done"] }];
 		const groups = applyGrouping(nodes, "status", undefined, fields);
 		expect(groups[0].label).toBe("Active");

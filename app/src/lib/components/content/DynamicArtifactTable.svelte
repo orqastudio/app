@@ -2,7 +2,19 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, projectStore } = getStores();
-	import { statusIconName, resolveIcon, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Badge, Caption, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		statusIconName,
+		resolveIcon,
+		Table,
+		TableHeader,
+		TableBody,
+		TableRow,
+		TableHead,
+		TableCell,
+		Badge,
+		Caption,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import type { ArtifactNode } from "@orqastudio/types";
 
 	let {
@@ -29,7 +41,7 @@
 	 * Array index is the natural sort position — no static config needed.
 	 */
 	const statusOrder = $derived(
-		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i]))
+		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i])),
 	);
 
 	/** Find all artifacts of childType where frontmatter[refField] matches parentId. */
@@ -59,6 +71,10 @@
 		return matched;
 	});
 
+	/**
+	 * Navigate to the artifact with the given ID in the artifact viewer.
+	 * @param id
+	 */
 	function navigateTo(id: string): void {
 		navigationStore.navigateToArtifact(id);
 	}
@@ -83,13 +99,15 @@
 						onclick={() => navigateTo(child.id)}
 						role="button"
 						tabindex={0}
-						onkeydown={(e) => { if (e.key === "Enter" || e.key === " ") navigateTo(child.id); }}
+						onkeydown={(e) => {
+							if (e.key === "Enter" || e.key === " ") navigateTo(child.id);
+						}}
 					>
 						<!-- Status icon -->
 						<TableCell>
 							{#if child.status}
 								{@const StatusIcon = resolveIcon(statusIconName(child.status))}
-								<StatusIcon class="h-3.5 w-3.5 text-muted-foreground" />
+								<StatusIcon class="text-muted-foreground h-3.5 w-3.5" />
 							{/if}
 						</TableCell>
 						<!-- ID -->
@@ -119,7 +137,9 @@
 	</Panel>
 {:else}
 	<!-- Inline style required: dashed border-style and text-align cannot be expressed via Box typed props -->
-	<div style="margin-top: 1rem; border-radius: 0.5rem; border: 1px dashed hsl(var(--border)); padding: 1rem; text-align: center;">
+	<div
+		style="margin-top: 1rem; border-radius: 0.5rem; border: 1px dashed hsl(var(--border)); padding: 1rem; text-align: center;"
+	>
 		<Caption tone="muted">No {childType} artifacts found for {parentId}</Caption>
 	</div>
 {/if}

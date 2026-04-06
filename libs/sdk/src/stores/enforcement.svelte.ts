@@ -5,6 +5,9 @@ import type {
 	StoredEnforcementViolation,
 } from "@orqastudio/types";
 
+/**
+ *
+ */
 export class EnforcementStore {
 	rules = $state<EnforcementRule[]>([]);
 	violations = $state<EnforcementViolation[]>([]);
@@ -18,6 +21,9 @@ export class EnforcementStore {
 	blockCount = $derived(this.violations.filter((v) => v.action === "Block").length);
 	warnCount = $derived(this.violations.filter((v) => v.action === "Warn").length);
 
+	/**
+	 *
+	 */
 	async loadRules(): Promise<void> {
 		this.loading = true;
 		this.error = null;
@@ -30,6 +36,9 @@ export class EnforcementStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async reloadRules(): Promise<void> {
 		this.loading = true;
 		this.error = null;
@@ -43,14 +52,24 @@ export class EnforcementStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param v
+	 */
 	addViolation(v: EnforcementViolation): void {
 		this.violations = [...this.violations, v];
 	}
 
+	/**
+	 *
+	 */
 	clearViolations(): void {
 		this.violations = [];
 	}
 
+	/**
+	 *
+	 */
 	async loadViolationHistory(): Promise<void> {
 		this.historyLoading = true;
 		this.historyError = null;

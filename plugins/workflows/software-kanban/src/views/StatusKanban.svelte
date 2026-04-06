@@ -35,7 +35,9 @@
 		readonly columns: readonly ColumnDef[];
 		readonly onCardClick?: (node: ArtifactNode) => void;
 		readonly onFieldChange?: (node: ArtifactNode, newValue: string) => Promise<void>;
-		readonly getTaskCount?: (nodeId: string) => { readonly done: number; readonly total: number } | undefined;
+		readonly getTaskCount?: (
+			nodeId: string,
+		) => { readonly done: number; readonly total: number } | undefined;
 	} = $props();
 
 	// Grouping options
@@ -54,6 +56,10 @@
 	// All-done view: whether the user has clicked "View board" to override the all-done state
 	let showBoardOverride = $state(false);
 
+	/**
+	 *
+	 * @param colKey
+	 */
 	function nodesForColumn(colKey: string): ArtifactNode[] {
 		if (groupBy === "priority") {
 			// Remap priority columns to P1/P2/P3/none
@@ -67,11 +73,21 @@
 		return assertNever(groupBy);
 	}
 
+	/**
+	 *
+	 * @param e
+	 * @param node
+	 */
 	function handleDragStart(e: DragEvent, node: ArtifactNode) {
 		dragNodeId = node.id;
 		e.dataTransfer?.setData("text/plain", node.id);
 	}
 
+	/**
+	 *
+	 * @param e
+	 * @param colKey
+	 */
 	function handleDrop(e: DragEvent, colKey: string) {
 		e.preventDefault();
 		const nodeId = e.dataTransfer?.getData("text/plain") ?? dragNodeId;
@@ -79,8 +95,7 @@
 		const node = nodes.find((n) => n.id === nodeId);
 		if (!node) return;
 
-		const currentValue =
-			groupBy === "priority" ? (node.priority ?? "") : (node.status ?? "");
+		const currentValue = groupBy === "priority" ? (node.priority ?? "") : (node.status ?? "");
 
 		if (currentValue === colKey) return;
 
@@ -108,9 +123,7 @@
 	const nonDoneCount = $derived(
 		nodes.filter((n) => {
 			if (groupBy === "priority") return false; // priority mode has no "done" semantics
-			const doneKeys = activeColumns
-				.filter((c) => c.isDone)
-				.map((c) => c.key.toLowerCase());
+			const doneKeys = activeColumns.filter((c) => c.isDone).map((c) => c.key.toLowerCase());
 			return !doneKeys.includes((n.status ?? "").toLowerCase());
 		}).length,
 	);
@@ -123,6 +136,10 @@
 	);
 
 	// Done column is collapsed only when there are non-done items present
+	/**
+	 *
+	 * @param col
+	 */
 	function doneColumnCollapsed(col: ColumnDef): boolean {
 		if (!col.isDone) return false;
 		return nonDoneCount > 0;
@@ -166,11 +183,7 @@
 			<HStack gap={3} height="full">
 				{#if totalNodes === 0}
 					<Center flex={1}>
-						<EmptyState
-							icon="layers"
-							title="No items"
-							description="Nothing to show here yet."
-						/>
+						<EmptyState icon="layers" title="No items" description="Nothing to show here yet." />
 					</Center>
 				{:else}
 					{#each activeColumns as col (col.key)}
@@ -192,9 +205,7 @@
 										{node}
 										taskCount={getTaskCount?.(node.id)}
 										onClick={onCardClick ? () => onCardClick(node) : undefined}
-										onDragStart={onFieldChange
-											? (e) => handleDragStart(e, node)
-											: undefined}
+										onDragStart={onFieldChange ? (e) => handleDragStart(e, node) : undefined}
 									/>
 								{/each}
 							{/if}

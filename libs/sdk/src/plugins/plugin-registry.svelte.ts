@@ -66,6 +66,9 @@ export interface RegistrationConflict {
 
 const log = logger("plugins");
 
+/**
+ *
+ */
 export class PluginRegistry {
 	/** All registered plugins keyed by plugin name. */
 	plugins = $state<SvelteMap<string, RegisteredPlugin>>(new SvelteMap());
@@ -97,6 +100,7 @@ export class PluginRegistry {
 	 * Register platform (core.json) relationships as the baseline.
 	 * Must be called before any plugin registration.
 	 * Platform relationships cannot be overridden by plugins.
+	 * @param relationships
 	 */
 	registerPlatformRelationships(relationships: readonly RelationshipType[]): void {
 		for (const rel of relationships) {
@@ -124,6 +128,7 @@ export class PluginRegistry {
 	/**
 	 * Load plugin project configs (from project.json).
 	 * Must be called before plugin registration so aliases are available.
+	 * @param configs
 	 */
 	loadPluginConfigs(configs: Record<string, PluginProjectConfig>): void {
 		for (const [pluginName, config] of Object.entries(configs)) {
@@ -150,6 +155,7 @@ export class PluginRegistry {
 	/**
 	 * Resolve a key — returns the canonical key if an alias was provided,
 	 * or the alias if a canonical key was provided and has one.
+	 * @param key
 	 */
 	resolveKey(key: string): string {
 		return this.aliasToCanonical.get(key) ?? key;
@@ -157,6 +163,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get the project-local alias for a canonical key, or the key itself if no alias.
+	 * @param canonicalKey
 	 */
 	getAlias(canonicalKey: string): string {
 		return this.canonicalToAlias.get(canonicalKey) ?? canonicalKey;
@@ -165,6 +172,11 @@ export class PluginRegistry {
 	/**
 	 * Set an alias for a conflict resolution. Updates the maps immediately.
 	 * Caller is responsible for persisting to project.json.
+	 * @param pluginName
+	 * @param type
+	 * @param canonicalKey
+	 * @param alias
+	 * @param label
 	 */
 	setAlias(pluginName: string, type: "schema" | "relationship", canonicalKey: string, alias: string, label?: string): void {
 		// Update maps
@@ -188,6 +200,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get the plugin project config for serialization back to project.json.
+	 * @param pluginName
 	 */
 	getPluginConfig(pluginName: string): PluginProjectConfig | null {
 		return this.pluginConfigs.get(pluginName) ?? null;
@@ -210,7 +223,6 @@ export class PluginRegistry {
 
 	/**
 	 * Register a plugin with its manifest and component map.
-	 *
 	 * @param manifest - The plugin manifest.
 	 * @param components - Map of component keys to Svelte components.
 	 * @throws If dependencies unmet, schemas conflict, or relationships conflict.
@@ -308,6 +320,7 @@ export class PluginRegistry {
 
 	/**
 	 * Unregister a plugin and remove its schema/relationship ownership.
+	 * @param pluginName
 	 */
 	unregister(pluginName: string): void {
 		const plugin = this.plugins.get(pluginName);
@@ -339,6 +352,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get the artifact schema for a given type key.
+	 * @param key
 	 */
 	getSchema(key: string): ArtifactSchema | null {
 		const owner = this.schemaOwnership.get(key);
@@ -394,6 +408,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get a relationship definition by key (forward or inverse).
+	 * @param key
 	 */
 	getRelationship(key: string): RelationshipType | null {
 		return this.relationshipDefs.get(key) ?? null;
@@ -401,6 +416,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get the owner of a relationship key ("platform" or plugin name).
+	 * @param key
 	 */
 	getRelationshipOwner(key: string): string | null {
 		return this.relationshipOwnership.get(key) ?? null;
@@ -409,6 +425,9 @@ export class PluginRegistry {
 	/**
 	 * Validate that a relationship between two artifact types is allowed.
 	 * Returns null if valid, or an error message if invalid.
+	 * @param relationshipKey
+	 * @param fromType
+	 * @param toType
 	 */
 	validateRelationship(relationshipKey: string, fromType: string, toType: string): string | null {
 		const rel = this.relationshipDefs.get(relationshipKey);
@@ -462,6 +481,8 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a view component from a specific plugin.
+	 * @param pluginSource
+	 * @param viewKey
 	 */
 	getViewComponent(pluginSource: string, viewKey: string): Component | null {
 		const plugin = this.plugins.get(pluginSource);
@@ -471,6 +492,8 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a widget component from a specific plugin.
+	 * @param pluginSource
+	 * @param widgetKey
 	 */
 	getWidgetComponent(pluginSource: string, widgetKey: string): Component | null {
 		const plugin = this.plugins.get(pluginSource);
@@ -485,6 +508,7 @@ export class PluginRegistry {
 	/**
 	 * Check for all conflicts: schema keys, relationship keys, and
 	 * relationship constraint mismatches.
+	 * @param manifest
 	 */
 	checkConflicts(manifest: PluginManifest): RegistrationConflict[] {
 		const conflicts: RegistrationConflict[] = [];
@@ -555,6 +579,7 @@ export class PluginRegistry {
 
 	/**
 	 * Get a specific plugin registration.
+	 * @param pluginName
 	 */
 	getPlugin(pluginName: string): RegisteredPlugin | null {
 		return this.plugins.get(pluginName) ?? null;
@@ -562,6 +587,7 @@ export class PluginRegistry {
 
 	/**
 	 * Check if a plugin is registered and enabled.
+	 * @param pluginName
 	 */
 	isPluginActive(pluginName: string): boolean {
 		return this.plugins.has(pluginName);
@@ -576,6 +602,7 @@ export class PluginRegistry {
 
 	/**
 	 * Resolve a navigation item's label and icon from plugin registrations.
+	 * @param item
 	 */
 	resolveNavigationItem(item: NavigationItem): {
 		key: string;
@@ -623,6 +650,9 @@ export class PluginRegistry {
 	// Provider Management
 	// -----------------------------------------------------------------------
 
+	/**
+	 *
+	 */
 	get activeSidecarKey(): string | null {
 		if (this.providerConfig.activeSidecar) {
 			return this.providerConfig.activeSidecar;
@@ -631,12 +661,19 @@ export class PluginRegistry {
 		return first ? first.key : null;
 	}
 
+	/**
+	 *
+	 */
 	get activeSidecar(): SidecarRegistration | null {
 		const key = this.activeSidecarKey;
 		if (!key) return null;
 		return this.sidecarProviders.find((s) => s.key === key) ?? null;
 	}
 
+	/**
+	 *
+	 * @param key
+	 */
 	setActiveSidecar(key: string): void {
 		this.providerConfig = {
 			...this.providerConfig,
@@ -644,6 +681,10 @@ export class PluginRegistry {
 		};
 	}
 
+	/**
+	 *
+	 * @param manifest
+	 */
 	isSidecarSatisfied(manifest: PluginManifest): boolean {
 		if (!manifest.requiresSidecar) return true;
 		const required = Array.isArray(manifest.requiresSidecar)
@@ -653,6 +694,9 @@ export class PluginRegistry {
 		return required.every((r) => available.includes(r));
 	}
 
+	/**
+	 *
+	 */
 	get blockedPlugins(): PluginManifest[] {
 		return [];
 	}

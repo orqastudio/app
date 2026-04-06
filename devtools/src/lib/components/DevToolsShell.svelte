@@ -4,15 +4,27 @@
      - Running: AppShell with ActivityBar, StatusBar, and content views -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { Button, LoadingSpinner, resolveIcon, ConnectionIndicator, Caption } from "@orqastudio/svelte-components/pure";
-	import { AppShell, ActivityBar, StatusBar, WelcomeHero, type ActivityBarItem } from "@orqastudio/svelte-components/connected";
-	import { navigation, type DevToolsTab, connectionLabel } from "../stores/devtools-navigation.svelte.js";
-	import { assertNever } from "@orqastudio/types";
 	import {
-		devController,
-		startDev,
-		stopDev,
-	} from "../stores/dev-controller.svelte.js";
+		Button,
+		LoadingSpinner,
+		resolveIcon,
+		ConnectionIndicator,
+		Caption,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		AppShell,
+		ActivityBar,
+		StatusBar,
+		WelcomeHero,
+		type ActivityBarItem,
+	} from "@orqastudio/svelte-components/connected";
+	import {
+		navigation,
+		type DevToolsTab,
+		connectionLabel,
+	} from "../stores/devtools-navigation.svelte.js";
+	import { assertNever } from "@orqastudio/types";
+	import { devController, startDev, stopDev } from "../stores/dev-controller.svelte.js";
 	import {
 		viewingHistorical,
 		activeSessionId,
@@ -36,15 +48,13 @@
 
 	const connectionState = $derived(
 		navigation.connection.state === "connected"
-			? "connected" as const
+			? ("connected" as const)
 			: navigation.connection.state === "reconnecting"
-				? "reconnecting" as const
-				: "waiting" as const,
+				? ("reconnecting" as const)
+				: ("waiting" as const),
 	);
 
-	const isBusy = $derived(
-		devController.state === "starting" || devController.state === "stopping",
-	);
+	const isBusy = $derived(devController.state === "starting" || devController.state === "stopping");
 	const showWorkspace = $derived(devController.state === "running");
 
 	const NAV_DEFS: { key: DevToolsTab; icon: string; label: string }[] = [
@@ -60,7 +70,9 @@
 			label: def.label,
 			key: def.key,
 			active: navigation.activeTab === def.key,
-			onclick: () => { navigation.activeTab = def.key; },
+			onclick: () => {
+				navigation.activeTab = def.key;
+			},
 		})),
 	);
 
@@ -70,24 +82,36 @@
 			label: "Stop Dev Environment",
 			key: "stop",
 			active: false,
-			onclick: () => { if (!isBusy) stopDev(); },
+			onclick: () => {
+				if (!isBusy) stopDev();
+			},
 		},
 		{
 			icon: resolveIcon("settings"),
 			label: "Help (?)",
 			key: "help",
 			active: helpOpen,
-			onclick: () => { helpOpen = !helpOpen; },
+			onclick: () => {
+				helpOpen = !helpOpen;
+			},
 		},
 	]);
 
 	// Exhaustiveness guard for the active tab switch in the template.
 	// Called in the {:else} branch — if a new DevToolsTab variant is added without
 	// updating the template, this will throw at compile time (never type check).
+	/**
+	 * Exhaustiveness guard: throws if tab is an unhandled DevToolsTab variant.
+	 * @param tab
+	 */
 	function assertTabNever(tab: never): never {
 		return assertNever(tab);
 	}
 
+	/**
+	 * Handle keydown: ? key toggles help panel when not in a text input.
+	 * @param e
+	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {
 			const target = e.target as HTMLElement;
@@ -135,18 +159,21 @@
 		{#snippet statusBar()}
 			<StatusBar>
 				{#snippet left()}
-					<ConnectionIndicator state={connectionState} label={connectionLabel(navigation.connection)} />
+					<ConnectionIndicator
+						state={connectionState}
+						label={connectionLabel(navigation.connection)}
+					/>
 				{/snippet}
 				{#snippet right()}
 					{#if viewingHistorical.value}
 						{@const session = sessions.find((s) => s.id === activeSessionId.value)}
 						<!-- Wrapper span: provides scoped hook for the historical session label override.
 						     Caption does not accept class; all visual treatment comes from scoped CSS. -->
-					<span class="status-bar__historical-label">
-						<Caption>
-							Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
-						</Caption>
-					</span>
+						<span class="status-bar__historical-label">
+							<Caption>
+								Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
+							</Caption>
+						</span>
 					{:else}
 						<Caption>{devController.state}</Caption>
 					{/if}
@@ -167,9 +194,7 @@
 		{:else if devController.state === "stopping"}
 			<LoadingSpinner />
 		{:else}
-			<Button variant="default" size="lg" onclick={startDev}>
-				Start Dev Environment
-			</Button>
+			<Button variant="default" size="lg" onclick={startDev}>Start Dev Environment</Button>
 		{/if}
 	</WelcomeHero>
 {/if}

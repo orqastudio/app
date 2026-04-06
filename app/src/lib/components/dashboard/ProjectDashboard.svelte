@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { Icon, Heading } from "@orqastudio/svelte-components/pure";
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { EmptyState, Stack, HStack, Grid, Text } from "@orqastudio/svelte-components/pure";
 	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -17,9 +23,7 @@
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
 
 	const project = $derived(projectStore.activeProject);
-	const projectName = $derived(
-		projectStore.projectSettings?.name ?? project?.name ?? "",
-	);
+	const projectName = $derived(projectStore.projectSettings?.name ?? project?.name ?? "");
 
 	// Graph health widget state (shared scan results for the Clarity column)
 	let healthChecks = $state<IntegrityCheck[]>([]);
@@ -79,86 +83,90 @@
 
 <ScrollArea full>
 	<Panel padding="loose">
-	<Stack gap={4}>
-		{#if !project}
-			<EmptyState
-				icon="folder-open"
-				title="No project open"
-				description="Open a project to view its dashboard and governance artifacts."
-				action={{ label: "Open Project", onclick: () => {} }}
-			/>
-		{:else}
-			<!-- Project header -->
-			<HStack gap={3} align="center">
-				{#if projectStore.iconDataUrl}
-					<!-- Project icon image — no ORQA Image primitive; img is the minimal exception here -->
-					<img src={projectStore.iconDataUrl} alt={projectName} style="height: 3rem; width: 3rem; border-radius: 0.375rem; object-fit: contain;" />
-				{:else}
-					<Icon name="folder-open" size="xl" />
-				{/if}
-				<Stack gap={0}>
-					<Heading level={1}>{projectName}</Heading>
-					{#if projectStore.projectSettings?.description}
-						<Text variant="body-muted">{projectStore.projectSettings.description}</Text>
-					{:else}
-						<Text variant="body-muted">{project.path}</Text>
-					{/if}
-				</Stack>
-			</HStack>
-
-			<!-- Row 1: MilestoneContextCard — full width -->
-			<MilestoneContextCard />
-
-			<!-- Row 2: Three pillar columns — each card carries its own title -->
-			<Grid cols={1} md={3} gap={4}>
-				<!-- Column 1: Where You Are (Clarity) — title lives inside GraphHealthWidget -->
-				<GraphHealthWidget
-					checks={healthChecks}
-					loading={healthLoading}
-					fixing={healthFixing}
-					scanned={healthScanned}
-					{graphHealth}
-					onScan={runHealthScan}
-					onAutoFix={runHealthAutoFix}
+		<Stack gap={4}>
+			{#if !project}
+				<EmptyState
+					icon="folder-open"
+					title="No project open"
+					description="Open a project to view its dashboard and governance artifacts."
+					action={{ label: "Open Project", onclick: () => {} }}
 				/>
+			{:else}
+				<!-- Project header -->
+				<HStack gap={3} align="center">
+					{#if projectStore.iconDataUrl}
+						<!-- Project icon image — no ORQA Image primitive; img is the minimal exception here -->
+						<img
+							src={projectStore.iconDataUrl}
+							alt={projectName}
+							style="height: 3rem; width: 3rem; border-radius: 0.375rem; object-fit: contain;"
+						/>
+					{:else}
+						<Icon name="folder-open" size="xl" />
+					{/if}
+					<Stack gap={0}>
+						<Heading level={1}>{projectName}</Heading>
+						{#if projectStore.projectSettings?.description}
+							<Text variant="body-muted">{projectStore.projectSettings.description}</Text>
+						{:else}
+							<Text variant="body-muted">{project.path}</Text>
+						{/if}
+					</Stack>
+				</HStack>
 
-				<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
-				<CardRoot>
-					<CardHeader compact>
-						<CardTitle>
-							<HStack gap={1}>
-								<Icon name="trending-up" size="md" />
-								Learning
-							</HStack>
-						</CardTitle>
-						<CardDescription>How You're Improving</CardDescription>
-					</CardHeader>
-					<CardContent>
-						<ImprovementTrendsWidget />
-					</CardContent>
-				</CardRoot>
+				<!-- Row 1: MilestoneContextCard — full width -->
+				<MilestoneContextCard />
 
-				<!-- Column 3: What's Next (Purpose) — title lives inside DecisionQueueWidget -->
-				<DecisionQueueWidget />
-			</Grid>
+				<!-- Row 2: Three pillar columns — each card carries its own title -->
+				<Grid cols={1} md={3} gap={4}>
+					<!-- Column 1: Where You Are (Clarity) — title lives inside GraphHealthWidget -->
+					<GraphHealthWidget
+						checks={healthChecks}
+						loading={healthLoading}
+						fixing={healthFixing}
+						scanned={healthScanned}
+						{graphHealth}
+						onScan={runHealthScan}
+						onAutoFix={runHealthAutoFix}
+					/>
 
-			<!-- Row 3: Knowledge Pipeline (2/3) + Lesson Velocity (1/3) -->
-			<!-- Grid primitive doesn't support column span overrides; use CSS grid directly -->
-			<div class="grid grid-cols-3 gap-4 items-stretch">
-				<div class="col-span-2">
-					<PipelineWidget />
+					<!-- Column 2: Learning — ImprovementTrendsWidget wrapped in a card -->
+					<CardRoot>
+						<CardHeader compact>
+							<CardTitle>
+								<HStack gap={1}>
+									<Icon name="trending-up" size="md" />
+									Learning
+								</HStack>
+							</CardTitle>
+							<CardDescription>How You're Improving</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<ImprovementTrendsWidget />
+						</CardContent>
+					</CardRoot>
+
+					<!-- Column 3: What's Next (Purpose) — title lives inside DecisionQueueWidget -->
+					<DecisionQueueWidget />
+				</Grid>
+
+				<!-- Row 3: Knowledge Pipeline (2/3) + Lesson Velocity (1/3) -->
+				<!-- Grid primitive doesn't support column span overrides; use CSS grid directly -->
+				<div class="grid grid-cols-3 items-stretch gap-4">
+					<div class="col-span-2">
+						<PipelineWidget />
+					</div>
+					<div class="col-span-1">
+						<LessonVelocityWidget />
+					</div>
 				</div>
-				<div class="col-span-1">
-					<LessonVelocityWidget />
-				</div>
-			</div>
 
-			<!-- Row 4: Pipeline Health — full width at bottom -->
-			<IntegrityWidget />
+				<!-- Row 4: Pipeline Health — full width at bottom -->
+				<IntegrityWidget />
 
-			<!-- Row 5: Plugin Tools — shows registered tool statuses with Run buttons -->
-			<ToolStatusWidget />
-		{/if}
-	</Stack>
+				<!-- Row 5: Plugin Tools — shows registered tool statuses with Run buttons -->
+				<ToolStatusWidget />
+			{/if}
+		</Stack>
 	</Panel>
 </ScrollArea>

@@ -27,7 +27,7 @@ describe("ArtifactMasterDetail", () => {
 	it("shows placeholder text when no artifact is selected", () => {
 		installMockStores({
 			navigationStore: {
-				...({} as any),
+				...({} as unknown),
 				activeActivity: "discovery",
 				activeGroup: null,
 				selectedArtifactPath: null,
@@ -44,7 +44,7 @@ describe("ArtifactMasterDetail", () => {
 				openArtifact: vi.fn(),
 				getNavType: vi.fn().mockReturnValue(null),
 				getLabelForKey: vi.fn().mockReturnValue("Discovery"),
-			} as any,
+			} as unknown,
 		});
 		render(ArtifactMasterDetail, { props: { activity: "discovery" } });
 		expect(screen.getByText(/Select an item to view it/i)).toBeInTheDocument();

@@ -26,11 +26,11 @@
 	 * or a placeholder when nothing is selected.
 	 */
 	const CORE_VIEWS: Record<string, Component> = {
-		"project": ProjectDashboard,
-		"roadmap": RoadmapView,
+		project: ProjectDashboard,
+		roadmap: RoadmapView,
 		"artifact-graph": FullGraphView,
-		"welcome": WelcomeScreen,
-		"plugins": PluginBrowser,
+		welcome: WelcomeScreen,
+		plugins: PluginBrowser,
 	};
 
 	// Resolve what to render in the explorer panel
@@ -87,10 +87,7 @@
 
 <Box height="full" width="full">
 	{#if resolved.type === "plugin"}
-		<PluginViewContainer
-			pluginName={resolved.pluginName}
-			viewKey={resolved.viewKey}
-		/>
+		<PluginViewContainer pluginName={resolved.pluginName} viewKey={resolved.viewKey} />
 	{:else if resolved.type === "placeholder"}
 		<Center full>
 			<Text variant="body-muted">Select an item to view it</Text>

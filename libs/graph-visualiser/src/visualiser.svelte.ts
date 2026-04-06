@@ -19,6 +19,9 @@ import type { NodePosition } from "./types.js";
 import { SvelteMap } from "svelte/reactivity";
 import { buildVisualizationElements } from "./elements.js";
 
+/**
+ *
+ */
 export class GraphVisualiser {
     /** Current graph data reference. */
     private _graph: ReadonlyMap<string, ArtifactNode> = $state(new SvelteMap());
@@ -36,6 +39,7 @@ export class GraphVisualiser {
     /**
      * Update the visualiser with new graph data.
      * Call this whenever the SDK's graph refreshes.
+     * @param graph
      */
     update(graph: ReadonlyMap<string, ArtifactNode>): void {
         this._graph = graph;

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 // THIS FILE IS AUTO-GENERATED — DO NOT EDIT BY HAND.
 // Source: libs/types/src/platform/*.schema.json
 // Regenerate: node scripts/generate-types.mjs

@@ -14,7 +14,10 @@ export default meta;
 type Story = StoryObj;
 
 export const Default: Story = {
-	args: { content: "# Hello World\n\nThis is **bold** and *italic* text.\n\n- List item 1\n- List item 2\n\n```typescript\nconst x = 42;\n```" },
+	args: {
+		content:
+			"# Hello World\n\nThis is **bold** and *italic* text.\n\n- List item 1\n- List item 2\n\n```typescript\nconst x = 42;\n```",
+	},
 };
 
 export const Empty: Story = {
@@ -22,5 +25,5 @@ export const Empty: Story = {
 };
 
 export const CodeBlock: Story = {
-	args: { content: "```rust\nfn main() {\n    println!(\"Hello, world!\");\n}\n```" },
+	args: { content: '```rust\nfn main() {\n    println!("Hello, world!");\n}\n```' },
 };

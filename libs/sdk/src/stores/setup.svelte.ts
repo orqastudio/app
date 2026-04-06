@@ -6,6 +6,9 @@ const log = logger("setup");
 
 const STEP_IDS = ["claude_cli", "claude_auth", "sidecar", "embedding_model", "complete"] as const;
 
+/**
+ *
+ */
 export class SetupStore {
 	setupComplete = $state(true);
 	currentStep = $state(0);
@@ -15,14 +18,23 @@ export class SetupStore {
 	embeddingStatus = $state<SetupStepStatus | null>(null);
 	sidecarStarted = $state(false);
 
+	/**
+	 *
+	 */
 	get stepId(): string {
 		return STEP_IDS[this.currentStep] ?? "complete";
 	}
 
+	/**
+	 *
+	 */
 	get totalSteps(): number {
 		return STEP_IDS.length;
 	}
 
+	/**
+	 *
+	 */
 	async checkSetupStatus(): Promise<void> {
 		this.loading = true;
 		this.error = null;
@@ -43,6 +55,9 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async checkCli(): Promise<void> {
 		this.error = null;
 
@@ -55,6 +70,9 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async checkAuth(): Promise<void> {
 		this.error = null;
 
@@ -66,6 +84,9 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async checkEmbeddingModel(): Promise<void> {
 		this.error = null;
 
@@ -78,6 +99,9 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async reauthenticate(): Promise<void> {
 		this.error = null;
 
@@ -89,6 +113,9 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async completeSetup(): Promise<void> {
 		this.error = null;
 
@@ -100,12 +127,18 @@ export class SetupStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	nextStep(): void {
 		if (this.currentStep < STEP_IDS.length - 1) {
 			this.currentStep++;
 		}
 	}
 
+	/**
+	 *
+	 */
 	reset(): void {
 		this.currentStep = 0;
 		this.loading = false;

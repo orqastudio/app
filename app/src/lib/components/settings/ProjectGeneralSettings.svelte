@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
@@ -93,11 +101,7 @@
 		<Separator />
 
 		<FormGroup label="Name" for="settings-name">
-			<Input
-				id="settings-name"
-				bind:value={localName}
-				onblur={handleBlurSave}
-			/>
+			<Input id="settings-name" bind:value={localName} onblur={handleBlurSave} />
 		</FormGroup>
 
 		<FormGroup label="Description" for="settings-description">

@@ -33,9 +33,15 @@ describe("ToolStatusWidget", () => {
 	it("renders Plugin CLI Tools heading when tools are registered", () => {
 		installMockStores({
 			pluginStore: {
-				...({} as any),
 				cliToolStatuses: [
-					{ plugin: "claude", tool_key: "check", label: "Check Auth", success: true, summary: "Authenticated", last_duration_ms: 150 },
+					{
+						plugin: "claude",
+						tool_key: "check",
+						label: "Check Auth",
+						success: true,
+						summary: "Authenticated",
+						last_duration_ms: 150,
+					},
 				],
 				installed: [],
 				error: null,
@@ -48,7 +54,7 @@ describe("ToolStatusWidget", () => {
 				uninstall: vi.fn(),
 				runCliTool: vi.fn().mockResolvedValue({ exit_code: 0, stdout: "OK", stderr: "" }),
 				getManifest: vi.fn(),
-			} as any,
+			},
 		});
 		render(ToolStatusWidget);
 		expect(screen.getByText("Plugin CLI Tools")).toBeInTheDocument();
@@ -57,10 +63,23 @@ describe("ToolStatusWidget", () => {
 	it("renders each tool's label and summary", () => {
 		installMockStores({
 			pluginStore: {
-				...({} as any),
 				cliToolStatuses: [
-					{ plugin: "claude", tool_key: "check", label: "Check Auth", success: true, summary: "All good", last_duration_ms: 200 },
-					{ plugin: "svelte", tool_key: "build", label: "Build", success: false, summary: "Build failed", last_duration_ms: 5000 },
+					{
+						plugin: "claude",
+						tool_key: "check",
+						label: "Check Auth",
+						success: true,
+						summary: "All good",
+						last_duration_ms: 200,
+					},
+					{
+						plugin: "svelte",
+						tool_key: "build",
+						label: "Build",
+						success: false,
+						summary: "Build failed",
+						last_duration_ms: 5000,
+					},
 				],
 				installed: [],
 				error: null,
@@ -73,7 +92,7 @@ describe("ToolStatusWidget", () => {
 				uninstall: vi.fn(),
 				runCliTool: vi.fn().mockResolvedValue({ exit_code: 0, stdout: "OK", stderr: "" }),
 				getManifest: vi.fn(),
-			} as any,
+			},
 		});
 		render(ToolStatusWidget);
 		expect(screen.getByText("Check Auth")).toBeInTheDocument();
@@ -84,10 +103,23 @@ describe("ToolStatusWidget", () => {
 	it("renders a Run button for each tool", () => {
 		installMockStores({
 			pluginStore: {
-				...({} as any),
 				cliToolStatuses: [
-					{ plugin: "claude", tool_key: "check", label: "Check Auth", success: null, summary: null, last_duration_ms: null },
-					{ plugin: "svelte", tool_key: "lint", label: "Lint", success: null, summary: null, last_duration_ms: null },
+					{
+						plugin: "claude",
+						tool_key: "check",
+						label: "Check Auth",
+						success: null,
+						summary: null,
+						last_duration_ms: null,
+					},
+					{
+						plugin: "svelte",
+						tool_key: "lint",
+						label: "Lint",
+						success: null,
+						summary: null,
+						last_duration_ms: null,
+					},
 				],
 				installed: [],
 				error: null,
@@ -100,7 +132,7 @@ describe("ToolStatusWidget", () => {
 				uninstall: vi.fn(),
 				runCliTool: vi.fn().mockResolvedValue({ exit_code: 0, stdout: "OK", stderr: "" }),
 				getManifest: vi.fn(),
-			} as any,
+			},
 		});
 		render(ToolStatusWidget);
 		const runButtons = screen.getAllByRole("button", { name: /Run/i });
@@ -111,9 +143,15 @@ describe("ToolStatusWidget", () => {
 		const mockRunCliTool = vi.fn().mockResolvedValue({ exit_code: 0, stdout: "OK", stderr: "" });
 		installMockStores({
 			pluginStore: {
-				...({} as any),
 				cliToolStatuses: [
-					{ plugin: "claude", tool_key: "check", label: "Check Auth", success: null, summary: null, last_duration_ms: null },
+					{
+						plugin: "claude",
+						tool_key: "check",
+						label: "Check Auth",
+						success: null,
+						summary: null,
+						last_duration_ms: null,
+					},
 				],
 				installed: [],
 				error: null,
@@ -126,7 +164,7 @@ describe("ToolStatusWidget", () => {
 				uninstall: vi.fn(),
 				runCliTool: mockRunCliTool,
 				getManifest: vi.fn(),
-			} as any,
+			},
 		});
 		render(ToolStatusWidget);
 		const runBtn = screen.getByRole("button", { name: /Run/i });
@@ -137,9 +175,15 @@ describe("ToolStatusWidget", () => {
 	it("renders 'Not run yet' for tools without summary", () => {
 		installMockStores({
 			pluginStore: {
-				...({} as any),
 				cliToolStatuses: [
-					{ plugin: "claude", tool_key: "check", label: "Check Auth", success: null, summary: null, last_duration_ms: null },
+					{
+						plugin: "claude",
+						tool_key: "check",
+						label: "Check Auth",
+						success: null,
+						summary: null,
+						last_duration_ms: null,
+					},
 				],
 				installed: [],
 				error: null,
@@ -152,7 +196,7 @@ describe("ToolStatusWidget", () => {
 				uninstall: vi.fn(),
 				runCliTool: vi.fn().mockResolvedValue({ exit_code: 0, stdout: "", stderr: "" }),
 				getManifest: vi.fn(),
-			} as any,
+			},
 		});
 		render(ToolStatusWidget);
 		expect(screen.getByText("Not run yet")).toBeInTheDocument();

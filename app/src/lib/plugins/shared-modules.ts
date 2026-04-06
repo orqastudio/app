@@ -28,6 +28,9 @@ declare global {
 	}
 }
 
+/**
+ *
+ */
 export function exposeSharedModules(): void {
 	window.__orqa = {
 		sdk,

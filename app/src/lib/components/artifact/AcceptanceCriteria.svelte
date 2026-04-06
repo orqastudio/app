@@ -1,6 +1,13 @@
 <!-- Renders a list of acceptance criteria for a task artifact, using check icons when the task is completed. -->
 <script lang="ts">
-	import { Icon, CardRoot, CardContent, Stack, HStack, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardContent,
+		Stack,
+		HStack,
+		Text,
+	} from "@orqastudio/svelte-components/pure";
 
 	let {
 		criteria,

@@ -56,6 +56,10 @@
 		lessons.filter((l) => l.recurrence >= 2 && l.status === "active"),
 	);
 
+	/**
+	 *
+	 * @param status
+	 */
 	function statusVariant(status: string): "default" | "secondary" | "outline" {
 		switch (status) {
 			case "promoted":
@@ -115,95 +119,98 @@
 				<!-- Active lessons -->
 				{#if activeCount > 0}
 					<Stack gap={1}>
-					<Text variant="overline-muted" block>
-						Active ({activeCount})
-					</Text>
-					<Stack gap={1}>
-						{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
-							<Button
-								variant="ghost"
-								size="sm"
-								full
-								onclick={() => onSelect(lesson)}
-								aria-pressed={selectedId === lesson.id}
-								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
-							>
-								<HStack justify="between" gap={1} align="start" full>
-									<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
-										<HStack gap={1}>
-											<Caption variant="caption-mono">{lesson.id}</Caption>
-											<span class={`rounded px-1 py-0.5 text-[10px] font-medium ${categoryColor(lesson.category)}`}>
-												{lesson.category}
-											</span>
-										</HStack>
-										<Caption truncate>{lesson.title}</Caption>
-									</div>
-									{#if lesson.recurrence >= 2}
-										<Badge variant="secondary" size="xs">
-											x{lesson.recurrence}
-										</Badge>
-									{/if}
-								</HStack>
-							</Button>
-						{/each}
-					</Stack>
+						<Text variant="overline-muted" block>
+							Active ({activeCount})
+						</Text>
+						<Stack gap={1}>
+							{#each lessons.filter((l) => l.status === "active") as lesson (lesson.id)}
+								<Button
+									variant="ghost"
+									size="sm"
+									full
+									onclick={() => onSelect(lesson)}
+									aria-pressed={selectedId === lesson.id}
+									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
+								>
+									<HStack justify="between" gap={1} align="start" full>
+										<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+											<HStack gap={1}>
+												<Caption variant="caption-mono">{lesson.id}</Caption>
+												<span
+													class={`rounded px-1 py-0.5 text-[10px] font-medium ${categoryColor(lesson.category)}`}
+												>
+													{lesson.category}
+												</span>
+											</HStack>
+											<Caption truncate>{lesson.title}</Caption>
+										</div>
+										{#if lesson.recurrence >= 2}
+											<Badge variant="secondary" size="xs">
+												x{lesson.recurrence}
+											</Badge>
+										{/if}
+									</HStack>
+								</Button>
+							{/each}
+						</Stack>
 					</Stack>
 				{/if}
 
 				<!-- Promoted lessons -->
 				{#if promotedCount > 0}
 					<Stack gap={1}>
-					<Text variant="overline-muted" block>
-						Promoted ({promotedCount})
-					</Text>
-					<Stack gap={1}>
-						{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
-							<Button
-								variant="ghost"
-								size="sm"
-								full
-								onclick={() => onSelect(lesson)}
-								aria-pressed={selectedId === lesson.id}
-								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
-							>
-								<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
-									<HStack gap={1}>
-										<Caption variant="caption-mono">{lesson.id}</Caption>
-										<Badge variant={statusVariant(lesson.status)} size="xs">
-											{lesson.status}
-										</Badge>
-									</HStack>
-									<Caption truncate>{lesson.title}</Caption>
-								</div>
-							</Button>
-						{/each}
-					</Stack>
+						<Text variant="overline-muted" block>
+							Promoted ({promotedCount})
+						</Text>
+						<Stack gap={1}>
+							{#each lessons.filter((l) => l.status === "promoted") as lesson (lesson.id)}
+								<Button
+									variant="ghost"
+									size="sm"
+									full
+									onclick={() => onSelect(lesson)}
+									aria-pressed={selectedId === lesson.id}
+									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem;"
+								>
+									<div style="min-width: 0; flex: 1; display: flex; flex-direction: column;">
+										<HStack gap={1}>
+											<Caption variant="caption-mono">{lesson.id}</Caption>
+											<Badge variant={statusVariant(lesson.status)} size="xs">
+												{lesson.status}
+											</Badge>
+										</HStack>
+										<Caption truncate>{lesson.title}</Caption>
+									</div>
+								</Button>
+							{/each}
+						</Stack>
 					</Stack>
 				{/if}
 
 				<!-- Resolved lessons -->
 				{#if lessons.some((l) => l.status === "resolved")}
 					<Stack gap={1}>
-					<Text variant="overline-muted" block>
-						Resolved
-					</Text>
-					<Stack gap={1}>
-						{#each lessons.filter((l) => l.status === "resolved") as lesson (lesson.id)}
-							<Button
-								variant="ghost"
-								size="sm"
-								full
-								onclick={() => onSelect(lesson)}
-								aria-pressed={selectedId === lesson.id}
-								style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem; opacity: {selectedId === lesson.id ? 1 : 0.6};"
-							>
-								<HStack gap={1}>
-									<Caption variant="caption-mono">{lesson.id}</Caption>
-									<Caption truncate>{lesson.title}</Caption>
-								</HStack>
-							</Button>
-						{/each}
-					</Stack>
+						<Text variant="overline-muted" block>Resolved</Text>
+						<Stack gap={1}>
+							{#each lessons.filter((l) => l.status === "resolved") as lesson (lesson.id)}
+								<Button
+									variant="ghost"
+									size="sm"
+									full
+									onclick={() => onSelect(lesson)}
+									aria-pressed={selectedId === lesson.id}
+									style="justify-content: flex-start; text-align: left; height: auto; padding: 0.5rem; opacity: {selectedId ===
+									lesson.id
+										? 1
+										: 0.6};"
+								>
+									<HStack gap={1}>
+										<Caption variant="caption-mono">{lesson.id}</Caption>
+										<Caption truncate>{lesson.title}</Caption>
+									</HStack>
+								</Button>
+							{/each}
+						</Stack>
 					</Stack>
 				{/if}
 			{/if}

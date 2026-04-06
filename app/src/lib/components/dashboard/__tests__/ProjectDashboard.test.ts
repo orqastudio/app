@@ -26,7 +26,6 @@ describe("ProjectDashboard", () => {
 	it("renders empty state when no project is open", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: false,
 				activeProject: null,
 				projectPath: null,
@@ -40,7 +39,7 @@ describe("ProjectDashboard", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(ProjectDashboard);
 		expect(screen.getByText("No project open")).toBeInTheDocument();
@@ -49,7 +48,6 @@ describe("ProjectDashboard", () => {
 	it("renders project name in header when project is active", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: true,
 				activeProject: { id: 1, name: "OrqaStudio Dev", path: "/code/orqastudio-dev" },
 				projectPath: "/code/orqastudio-dev",
@@ -63,7 +61,7 @@ describe("ProjectDashboard", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(ProjectDashboard);
 		expect(screen.getByText("OrqaStudio Dev")).toBeInTheDocument();
@@ -72,7 +70,6 @@ describe("ProjectDashboard", () => {
 	it("renders project description when set", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: true,
 				activeProject: { id: 1, name: "My Project", path: "/code/my-project" },
 				projectPath: "/code/my-project",
@@ -86,7 +83,7 @@ describe("ProjectDashboard", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(ProjectDashboard);
 		expect(screen.getByText("A test project description")).toBeInTheDocument();
@@ -95,7 +92,6 @@ describe("ProjectDashboard", () => {
 	it("renders project path when no description is set", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: true,
 				activeProject: { id: 1, name: "My Project", path: "/code/my-project" },
 				projectPath: "/code/my-project",
@@ -109,7 +105,7 @@ describe("ProjectDashboard", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(ProjectDashboard);
 		expect(screen.getByText("/code/my-project")).toBeInTheDocument();
@@ -118,7 +114,6 @@ describe("ProjectDashboard", () => {
 	it("renders project icon when iconDataUrl is set", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: true,
 				activeProject: { id: 1, name: "Iconic Project", path: "/code/iconic" },
 				projectPath: "/code/iconic",
@@ -132,7 +127,7 @@ describe("ProjectDashboard", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(ProjectDashboard);
 		const img = screen.getByAltText("Iconic Project");

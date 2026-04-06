@@ -58,21 +58,34 @@
 					const title = (s.title ?? "Untitled").toLowerCase();
 					const preview = (s.preview ?? "").toLowerCase();
 					return title.includes(query) || preview.includes(query);
-				})
+				}),
 	);
 
+	/**
+	 *
+	 * @param sessionId
+	 */
 	function handleSelect(sessionId: number) {
 		onSelect(sessionId);
 		open = false;
 		searchQuery = "";
 	}
 
+	/**
+	 *
+	 */
 	function handleNewSession() {
 		onNewSession();
 		open = false;
 		searchQuery = "";
 	}
 
+	/**
+	 *
+	 * @param event
+	 * @param sessionId
+	 * @param title
+	 */
 	function handleDeleteClick(event: MouseEvent, sessionId: number, title: string) {
 		event.stopPropagation();
 		deleteTargetId = sessionId;
@@ -80,6 +93,9 @@
 		deleteDialogOpen = true;
 	}
 
+	/**
+	 *
+	 */
 	function handleDeleteConfirm() {
 		if (deleteTargetId !== null) {
 			onDelete(deleteTargetId);
@@ -88,7 +104,13 @@
 		}
 	}
 
-	function statusVariant(status: SessionStatus): "default" | "secondary" | "destructive" | "outline" {
+	/**
+	 *
+	 * @param status
+	 */
+	function statusVariant(
+		status: SessionStatus,
+	): "default" | "secondary" | "destructive" | "outline" {
 		switch (status) {
 			case "active":
 				return "default";
@@ -103,6 +125,10 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param status
+	 */
 	function statusLabel(status: SessionStatus): string {
 		switch (status) {
 			case "active":
@@ -118,6 +144,10 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param dateStr
+	 */
 	function formatRelativeTime(dateStr: string): string {
 		const date = new Date(dateStr);
 		const now = new Date();
@@ -166,7 +196,7 @@
 				</HStack>
 			{:else if error}
 				<Panel padding="normal">
-					<ErrorDisplay message={error} onRetry={onRetry} />
+					<ErrorDisplay message={error} {onRetry} />
 				</Panel>
 			{:else if filteredSessions.length === 0}
 				<EmptyState
@@ -182,7 +212,12 @@
 							gap={2}
 							full
 							onclick={() => handleSelect(session.id)}
-							onkeydown={(e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleSelect(session.id); } }}
+							onkeydown={(e: KeyboardEvent) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.preventDefault();
+									handleSelect(session.id);
+								}
+							}}
 							role="option"
 							aria-selected={isActive}
 							tabindex={0}

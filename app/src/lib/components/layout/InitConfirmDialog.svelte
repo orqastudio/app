@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { DialogRoot, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, Panel, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		DialogRoot,
+		DialogContent,
+		DialogHeader,
+		DialogTitle,
+		DialogDescription,
+		DialogFooter,
+		Panel,
+		Text,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 
 	interface Props {
@@ -14,13 +23,16 @@
 
 <DialogRoot
 	{open}
-	onOpenChange={(isOpen) => { if (!isOpen) onCancel(); }}
+	onOpenChange={(isOpen) => {
+		if (!isOpen) onCancel();
+	}}
 >
 	<DialogContent>
 		<DialogHeader>
 			<DialogTitle>Not an Orqa Project</DialogTitle>
 			<DialogDescription>
-				This folder doesn't have an Orqa configuration. Would you like to initialize it as a new Orqa project?
+				This folder doesn't have an Orqa configuration. Would you like to initialize it as a new
+				Orqa project?
 			</DialogDescription>
 		</DialogHeader>
 		{#if pendingPath}

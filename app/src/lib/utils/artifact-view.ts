@@ -1,6 +1,10 @@
 import type { DocNode, SortConfig, FilterableField } from "@orqastudio/types";
 
-/** Filter nodes by frontmatter values. */
+/**
+ * Filter nodes by frontmatter values.
+ * @param nodes
+ * @param filters
+ */
 export function applyFilters(
 	nodes: readonly DocNode[],
 	filters: Readonly<Record<string, readonly string[]>>,
@@ -22,7 +26,11 @@ export function applyFilters(
 	});
 }
 
-/** Sort nodes by a frontmatter field. */
+/**
+ * Sort nodes by a frontmatter field.
+ * @param nodes
+ * @param sort
+ */
 export function applySort(nodes: readonly DocNode[], sort: Readonly<SortConfig>): DocNode[] {
 	if (!sort.field || sort.field === "title") {
 		// Sort by label
@@ -63,7 +71,13 @@ export function applySort(nodes: readonly DocNode[], sort: Readonly<SortConfig>)
 	});
 }
 
-/** Group nodes by a frontmatter field value. */
+/**
+ * Group nodes by a frontmatter field value.
+ * @param nodes
+ * @param groupField
+ * @param groupOrder
+ * @param filterableFields
+ */
 export function applyGrouping(
 	nodes: readonly DocNode[],
 	groupField: string,
@@ -125,7 +139,11 @@ export function applyGrouping(
 	return result.filter((g) => g.nodes.length > 0);
 }
 
-/** Count how many nodes match each value of a filterable field. */
+/**
+ * Count how many nodes match each value of a filterable field.
+ * @param nodes
+ * @param fieldName
+ */
 export function countFieldValues(
 	nodes: readonly DocNode[],
 	fieldName: string,
@@ -141,9 +159,10 @@ export function countFieldValues(
 	}, {});
 }
 
-/** Humanize a field value for display (replace hyphens/underscores with spaces, title-case). */
+/**
+ * Humanize a field value for display (replace hyphens/underscores with spaces, title-case).
+ * @param value
+ */
 function humanizeValue(value: string): string {
-	return value
-		.replace(/[-_]/g, " ")
-		.replace(/\b\w/g, (c) => c.toUpperCase());
+	return value.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }

@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Caption, Text, Stack, HStack } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Button,
+		Heading,
+		Caption,
+		Text,
+		Stack,
+		HStack,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { setupStore } = getStores();
@@ -12,6 +20,9 @@
 
 	let completing = $state(false);
 
+	/**
+	 *
+	 */
 	async function handleComplete() {
 		completing = true;
 		await setupStore.completeSetup();

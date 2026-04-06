@@ -24,9 +24,7 @@
 	const chartHeight = $derived(height - LABEL_HEIGHT);
 
 	// Generate the SVG path for the timing values.
-	const path = $derived(
-		sparklinePath(stats.history, width, chartHeight, { padding: PADDING }),
-	);
+	const path = $derived(sparklinePath(stats.history, width, chartHeight, { padding: PADDING }));
 
 	// Y axis: min and max label values rounded to one decimal.
 	const yMin = $derived(stats.min === Infinity ? 0 : Math.round(stats.min * 10) / 10);
@@ -47,10 +45,7 @@
 		<!-- Waiting-for-data placeholder: centered caption in a rounded muted box.
 		     Dynamic width/height require inline style since Box has no style prop;
 		     scoped class provides the background+radius. -->
-		<div
-			class="timing-chart__placeholder"
-			style="width:{width}px;height:{height}px"
-		>
+		<div class="timing-chart__placeholder" style="width:{width}px;height:{height}px">
 			<Caption>Waiting for data…</Caption>
 		</div>
 	{:else}
@@ -94,20 +89,14 @@
 				/>
 
 				<!-- Y-axis min label — fill uses CSS variable directly. -->
-				<text
-					x={PADDING}
-					y={baselineY - 3}
-					font-size="9"
-					fill="hsl(var(--muted-foreground) / 0.6)"
-				>{yMin}ms</text>
+				<text x={PADDING} y={baselineY - 3} font-size="9" fill="hsl(var(--muted-foreground) / 0.6)"
+					>{yMin}ms</text
+				>
 
 				<!-- Y-axis max label — fill uses CSS variable directly. -->
-				<text
-					x={PADDING}
-					y={PADDING + 9}
-					font-size="9"
-					fill="hsl(var(--muted-foreground) / 0.6)"
-				>{yMax}ms</text>
+				<text x={PADDING} y={PADDING + 9} font-size="9" fill="hsl(var(--muted-foreground) / 0.6)"
+					>{yMax}ms</text
+				>
 
 				<!-- X-axis labels: first/last sample markers, rendered as native SVG
 				     text so they pin to the plot's exact pixel width without an HTML
@@ -119,16 +108,16 @@
 					font-size="10"
 					fill="hsl(var(--muted-foreground))"
 					text-anchor="start"
-					style="font-variant-numeric: tabular-nums;"
-				>−{stats.history.length} samples</text>
+					style="font-variant-numeric: tabular-nums;">−{stats.history.length} samples</text
+				>
 				<text
 					x={width - PADDING}
 					y={height - 4}
 					font-size="10"
 					fill="hsl(var(--muted-foreground))"
 					text-anchor="end"
-					style="font-variant-numeric: tabular-nums;"
-				>now</text>
+					style="font-variant-numeric: tabular-nums;">now</text
+				>
 			</svg>
 		</div>
 	{/if}

@@ -51,9 +51,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Artifact Graph Engine",
 		status: "active",
 		description: "Build the graph-based artifact relationship engine.",
-		relationships: [
-			{ type: "delivers", target: "MS-001" },
-		],
+		relationships: [{ type: "delivers", target: "MS-001" }],
 	},
 	{
 		id: "TASK-001",
@@ -61,9 +59,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Set up Tauri v2 project scaffold",
 		status: "completed",
 		description: "Initialize the Tauri v2 project with Svelte 5 frontend and Rust backend.",
-		relationships: [
-			{ type: "delivers", target: "EPIC-001" },
-		],
+		relationships: [{ type: "delivers", target: "EPIC-001" }],
 	},
 	{
 		id: "TASK-002",
@@ -82,9 +78,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Build graph query engine",
 		status: "exploring",
 		description: "Implement graph traversal and query capabilities.",
-		relationships: [
-			{ type: "delivers", target: "EPIC-002" },
-		],
+		relationships: [{ type: "delivers", target: "EPIC-002" }],
 	},
 	{
 		id: "MS-001",
@@ -100,9 +94,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Use Tauri v2 for desktop runtime",
 		status: "completed",
 		description: "Chosen for native performance, small binary size, and Rust backend.",
-		relationships: [
-			{ type: "drives", target: "EPIC-001" },
-		],
+		relationships: [{ type: "drives", target: "EPIC-001" }],
 	},
 	{
 		id: "RULE-001",
@@ -110,16 +102,15 @@ export const FIXTURE_ARTIFACTS = [
 		title: "All relationships must use canonical vocabulary",
 		status: "active",
 		description: "No ad-hoc relationship types. All must come from the canonical set.",
-		relationships: [
-			{ type: "enforces", target: "AD-001" },
-		],
+		relationships: [{ type: "enforces", target: "AD-001" }],
 	},
 	{
 		id: "PILLAR-001",
 		type: "pillar",
 		title: "Clarity Through Structure",
 		status: "active",
-		description: "Making thinking visible. If it's not structured and browsable, it doesn't exist yet.",
+		description:
+			"Making thinking visible. If it's not structured and browsable, it doesn't exist yet.",
 		relationships: [],
 	},
 	{
@@ -127,7 +118,8 @@ export const FIXTURE_ARTIFACTS = [
 		type: "pillar",
 		title: "Learning Through Reflection",
 		status: "active",
-		description: "The system improves over time through documented mistakes and extracted patterns.",
+		description:
+			"The system improves over time through documented mistakes and extracted patterns.",
 		relationships: [],
 	},
 	{
@@ -144,9 +136,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Always validate relationship vocabulary at commit time",
 		status: "active",
 		description: "Discovered through a bug where ad-hoc relationship types bypassed validation.",
-		relationships: [
-			{ type: "informed-by", target: "RULE-001" },
-		],
+		relationships: [{ type: "informed-by", target: "RULE-001" }],
 	},
 	{
 		id: "IDEA-001",
@@ -162,9 +152,7 @@ export const FIXTURE_ARTIFACTS = [
 		title: "Graph visualization libraries comparison",
 		status: "completed",
 		description: "Evaluated Cytoscape, D3, and Sigma.js for graph rendering.",
-		relationships: [
-			{ type: "informs", target: "EPIC-002" },
-		],
+		relationships: [{ type: "informs", target: "EPIC-002" }],
 	},
 	{
 		id: "SKILL-001",

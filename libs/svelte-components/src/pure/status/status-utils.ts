@@ -30,6 +30,8 @@ export const DEFAULT_STATUSES: StatusConfig[] = [
 /**
  * Resolve a status key to its full config.
  * Searches the provided statuses first, falls back to defaults.
+ * @param key
+ * @param statuses
  */
 export function resolveStatus(key: string, statuses?: readonly StatusConfig[]): StatusConfig {
 	const k = key.toLowerCase();
@@ -43,22 +45,38 @@ export function resolveStatus(key: string, statuses?: readonly StatusConfig[]): 
 	return { key: k, label: key, icon: "circle", color: "muted" };
 }
 
-/** Get the display label for a status key. */
+/**
+ * Get the display label for a status key.
+ * @param key
+ * @param statuses
+ */
 export function statusLabel(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).label;
 }
 
-/** Get the icon name for a status key. */
+/**
+ * Get the icon name for a status key.
+ * @param key
+ * @param statuses
+ */
 export function statusIconName(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).icon;
 }
 
-/** Get the semantic color for a status key. */
+/**
+ * Get the semantic color for a status key.
+ * @param key
+ * @param statuses
+ */
 export function statusColor(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).color ?? "muted";
 }
 
-/** Whether a status should show a spinning animation. */
+/**
+ * Whether a status should show a spinning animation.
+ * @param key
+ * @param statuses
+ */
 export function statusIsSpinning(key: string, statuses?: readonly StatusConfig[]): boolean {
 	return resolveStatus(key, statuses).spin === true;
 }
@@ -75,7 +93,11 @@ export const STATUS_COLOR_CLASSES: Record<string, string> = {
 	muted: "text-muted-foreground",
 };
 
-/** Get the Tailwind text color class for a status key. */
+/**
+ * Get the Tailwind text color class for a status key.
+ * @param key
+ * @param statuses
+ */
 export function statusColorClass(key: string, statuses?: readonly StatusConfig[]): string {
 	const color = statusColor(key, statuses);
 	return STATUS_COLOR_CLASSES[color] ?? "text-muted-foreground";

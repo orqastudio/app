@@ -50,12 +50,20 @@
 	let isOpen = $state(untrack(() => !collapsed));
 	let isDragOver = $state(false);
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleDragOver(e: DragEvent) {
 		e.preventDefault();
 		isDragOver = true;
 		onDragOver?.(e);
 	}
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleDragLeave(e: DragEvent) {
 		// Only reset isDragOver when the cursor actually leaves the column, not when
 		// it moves between child elements. relatedTarget is the element the cursor
@@ -65,6 +73,10 @@
 		isDragOver = false;
 	}
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleDrop(e: DragEvent) {
 		e.stopPropagation();
 		isDragOver = false;
@@ -122,11 +134,7 @@
 					{#snippet end()}
 						{#if isDone}
 							<CollapsibleTrigger>
-								<Button
-									variant="ghost"
-									size="icon-sm"
-									aria-label="Collapse {title} column"
-								>
+								<Button variant="ghost" size="icon-sm" aria-label="Collapse {title} column">
 									<Icon name="chevron-right" size="sm" />
 								</Button>
 							</CollapsibleTrigger>
@@ -139,9 +147,9 @@
 					<Box minHeight={0} flex={1}>
 						<ScrollArea full orientation="vertical">
 							<Panel padding="tight">
-							<Stack gap={2} role="list">
-								{@render children()}
-							</Stack>
+								<Stack gap={2} role="list">
+									{@render children()}
+								</Stack>
 							</Panel>
 						</ScrollArea>
 					</Box>
@@ -187,7 +195,9 @@
 		border-radius: 0.5rem;
 		border: 1px solid var(--color-border);
 		background-color: color-mix(in srgb, var(--color-muted) 10%, transparent);
-		transition: border-color 0.15s, background-color 0.15s;
+		transition:
+			border-color 0.15s,
+			background-color 0.15s;
 	}
 
 	.column-expanded.drag-over {

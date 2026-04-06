@@ -8,6 +8,10 @@
 
 	let { group }: { group: string } = $props();
 
+	/**
+	 *
+	 * @param iconName
+	 */
 	function resolveIconName(iconName: string | undefined): string {
 		return iconName ?? "folder";
 	}
@@ -15,6 +19,7 @@
 	/**
 	 * Look up the icon for a sub-category by matching its config path against navTree types.
 	 * Priority: config icon → navTree icon → undefined (caller falls back to FolderIcon).
+	 * @param subKey
 	 */
 	function getSubCategoryIcon(subKey: string): string | undefined {
 		const config = projectStore.artifactConfig;

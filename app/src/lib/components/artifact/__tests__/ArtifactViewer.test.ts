@@ -16,8 +16,12 @@ import { installMockStores, clearMockStores } from "../../shared/__tests__/mock-
 vi.mock("@orqastudio/svelte-components/pure", async (importActual) => {
 	const actual = await importActual<typeof import("@orqastudio/svelte-components/pure")>();
 	const { default: TooltipRoot } = await import("../../shared/__tests__/stubs/TooltipRoot.svelte");
-	const { default: TooltipTrigger } = await import("../../shared/__tests__/stubs/TooltipTrigger.svelte");
-	const { default: TooltipContent } = await import("../../shared/__tests__/stubs/TooltipContent.svelte");
+	const { default: TooltipTrigger } = await import(
+		"../../shared/__tests__/stubs/TooltipTrigger.svelte"
+	);
+	const { default: TooltipContent } = await import(
+		"../../shared/__tests__/stubs/TooltipContent.svelte"
+	);
 	return { ...actual, TooltipRoot, TooltipTrigger, TooltipContent };
 });
 
@@ -38,7 +42,7 @@ describe("ArtifactViewer", () => {
 	it("renders loading spinner when content is loading", () => {
 		installMockStores({
 			artifactStore: {
-				...({} as any),
+				...({} as unknown),
 				navTree: null,
 				activeContent: null,
 				activeContentLoading: true,
@@ -46,7 +50,7 @@ describe("ArtifactViewer", () => {
 				loadNavTree: vi.fn(),
 				loadContent: vi.fn(),
 				invalidateNavTree: vi.fn(),
-			} as any,
+			} as unknown,
 		});
 		const { container } = render(ArtifactViewer);
 		expect(container.querySelector(".flex")).toBeInTheDocument();
@@ -55,7 +59,7 @@ describe("ArtifactViewer", () => {
 	it("renders error message when content load failed", () => {
 		installMockStores({
 			artifactStore: {
-				...({} as any),
+				...({} as unknown),
 				navTree: null,
 				activeContent: null,
 				activeContentLoading: false,
@@ -63,7 +67,7 @@ describe("ArtifactViewer", () => {
 				loadNavTree: vi.fn(),
 				loadContent: vi.fn(),
 				invalidateNavTree: vi.fn(),
-			} as any,
+			} as unknown,
 		});
 		render(ArtifactViewer);
 		expect(screen.getByText("File not found")).toBeInTheDocument();
@@ -72,7 +76,7 @@ describe("ArtifactViewer", () => {
 	it("renders empty state prompt when no content is loaded", () => {
 		installMockStores({
 			artifactStore: {
-				...({} as any),
+				...({} as unknown),
 				navTree: null,
 				activeContent: null,
 				activeContentLoading: false,
@@ -80,7 +84,7 @@ describe("ArtifactViewer", () => {
 				loadNavTree: vi.fn(),
 				loadContent: vi.fn(),
 				invalidateNavTree: vi.fn(),
-			} as any,
+			} as unknown,
 		});
 		render(ArtifactViewer);
 		expect(screen.getByText(/Select an artifact to view/i)).toBeInTheDocument();
@@ -89,7 +93,7 @@ describe("ArtifactViewer", () => {
 	it("renders markdown content when loaded", () => {
 		installMockStores({
 			artifactStore: {
-				...({} as any),
+				...({} as unknown),
 				navTree: null,
 				activeContent: "# Hello World\n\nThis is content.",
 				activeContentLoading: false,
@@ -97,9 +101,9 @@ describe("ArtifactViewer", () => {
 				loadNavTree: vi.fn(),
 				loadContent: vi.fn(),
 				invalidateNavTree: vi.fn(),
-			} as any,
+			} as unknown,
 			navigationStore: {
-				...({} as any),
+				...({} as unknown),
 				activeActivity: "discovery",
 				activeGroup: null,
 				selectedArtifactPath: ".orqa/discovery/DOC-001.md",
@@ -115,7 +119,7 @@ describe("ArtifactViewer", () => {
 				navigateToArtifact: vi.fn(),
 				openArtifact: vi.fn(),
 				getNavType: vi.fn().mockReturnValue(null),
-			} as any,
+			} as unknown,
 		});
 		render(ArtifactViewer);
 		// The markdown renderer produces an h1 element
@@ -125,7 +129,7 @@ describe("ArtifactViewer", () => {
 	it("renders breadcrumbs when they are set", () => {
 		installMockStores({
 			artifactStore: {
-				...({} as any),
+				...({} as unknown),
 				navTree: null,
 				activeContent: "# Doc",
 				activeContentLoading: false,
@@ -133,9 +137,9 @@ describe("ArtifactViewer", () => {
 				loadNavTree: vi.fn(),
 				loadContent: vi.fn(),
 				invalidateNavTree: vi.fn(),
-			} as any,
+			} as unknown,
 			navigationStore: {
-				...({} as any),
+				...({} as unknown),
 				activeActivity: "discovery",
 				activeGroup: null,
 				selectedArtifactPath: ".orqa/discovery/DOC-001.md",
@@ -151,7 +155,7 @@ describe("ArtifactViewer", () => {
 				navigateToArtifact: vi.fn(),
 				openArtifact: vi.fn(),
 				getNavType: vi.fn().mockReturnValue(null),
-			} as any,
+			} as unknown,
 		});
 		render(ArtifactViewer);
 		expect(screen.getByText("Discovery")).toBeInTheDocument();

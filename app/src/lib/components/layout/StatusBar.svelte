@@ -4,11 +4,8 @@
 	import {
 		Icon,
 		ConnectionIndicator,
-		HStack,
-		Box,
 		Text,
 		Spacer,
-		Separator,
 		TooltipRoot,
 		TooltipTrigger,
 		TooltipContent,
@@ -17,7 +14,8 @@
 	import { getStores, fmt } from "@orqastudio/sdk";
 	import { assertNever } from "@orqastudio/types";
 
-	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
+	const { settingsStore, sessionStore, navigationStore, artifactGraphSDK, pluginRegistry } =
+		getStores();
 	import finMark from "$lib/assets/fin-mark.svg";
 
 	/** Map the sidecar process state to a ConnectionIndicator state. */
@@ -90,11 +88,12 @@
 
 	const session = $derived(sessionStore.activeSession);
 	const hasTokens = $derived(
-		session !== null &&
-			(session.total_input_tokens > 0 || session.total_output_tokens > 0),
+		session !== null && (session.total_input_tokens > 0 || session.total_output_tokens > 0),
 	);
 
-	const artifactCount = $derived(Math.max(artifactGraphSDK.graph.size, settingsStore.daemonHealth.artifacts ?? 0));
+	const artifactCount = $derived(
+		Math.max(artifactGraphSDK.graph.size, settingsStore.daemonHealth.artifacts ?? 0),
+	);
 
 	/**
 	 * Format a token count as a human-readable string (e.g. 1.2k, 3.4M).
@@ -132,16 +131,12 @@
 			<span class="brand-label">OrqaStudio</span>
 		</div>
 
-		<div class="h-3 w-px bg-border"></div>
+		<div class="bg-border h-3 w-px"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
-						{...props}
-						class="status-btn"
-						onclick={openModelSettings}
-					>
+					<button {...props} class="status-btn" onclick={openModelSettings}>
 						<Icon name="brain" size="xs" />
 						<span>{settingsStore.modelDisplayName}</span>
 					</button>
@@ -173,7 +168,7 @@
 			<span class="token-counter">
 				{formatTokens(session.total_input_tokens)}↑ {formatTokens(session.total_output_tokens)}↓
 			</span>
-			<div class="h-3 w-px bg-border"></div>
+			<div class="bg-border h-3 w-px"></div>
 		{/if}
 
 		<TooltipRoot>
@@ -198,21 +193,24 @@
 				{/snippet}
 			</TooltipTrigger>
 			<TooltipContent side="top">
-				<Text variant="body">{artifactGraphSDK.error ? `Index error: ${artifactGraphSDK.error}` : "Rebuild artifact graph index"}</Text>
+				<Text variant="body"
+					>{artifactGraphSDK.error
+						? `Index error: ${artifactGraphSDK.error}`
+						: "Rebuild artifact graph index"}</Text
+				>
 			</TooltipContent>
 		</TooltipRoot>
 
-		<div class="h-3 w-px bg-border"></div>
+		<div class="bg-border h-3 w-px"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
-						{...props}
-						class="status-btn"
-						onclick={openPluginSettings}
-					>
-						<ConnectionIndicator state={sidecarConnectionState} label={settingsStore.sidecarStateLabel} />
+					<button {...props} class="status-btn" onclick={openPluginSettings}>
+						<ConnectionIndicator
+							state={sidecarConnectionState}
+							label={settingsStore.sidecarStateLabel}
+						/>
 					</button>
 				{/snippet}
 			</TooltipTrigger>
@@ -221,17 +219,16 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<div class="h-3 w-px bg-border"></div>
+		<div class="bg-border h-3 w-px"></div>
 
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<button
-						{...props}
-						class="status-btn"
-						onclick={() => settingsStore.refreshDaemonHealth()}
-					>
-						<ConnectionIndicator state={daemonConnectionState} label={settingsStore.daemonStateLabel} />
+					<button {...props} class="status-btn" onclick={() => settingsStore.refreshDaemonHealth()}>
+						<ConnectionIndicator
+							state={daemonConnectionState}
+							label={settingsStore.daemonStateLabel}
+						/>
 					</button>
 				{/snippet}
 			</TooltipTrigger>

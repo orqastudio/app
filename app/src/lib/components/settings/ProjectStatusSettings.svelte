@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Stack, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
@@ -224,8 +232,6 @@
 			<Caption tone="muted">No statuses defined. Add one below.</Caption>
 		{:else}
 			{#each localStatuses as status, index (status.key + index)}
-				{@const isDragging = dragIndex === index}
-				{@const isDragTarget = dragOverIndex === index && dragIndex !== null && dragIndex !== index}
 				<!-- Draggable container: native drag API requires raw div — not expressible via Box props -->
 				<div
 					class="rounded-md border p-3"
@@ -241,11 +247,7 @@
 						<HStack gap={2}>
 							<Icon name="grip-vertical" size="md" />
 							<Caption variant="caption-mono" tone="muted">{status.key}</Caption>
-							<Button
-								variant="ghost"
-								size="sm"
-								onclick={() => requestDelete(index)}
-							>
+							<Button variant="ghost" size="sm" onclick={() => requestDelete(index)}>
 								<Icon name="trash-2" size="sm" />
 							</Button>
 						</HStack>
@@ -308,11 +310,7 @@
 						<Stack gap={1}>
 							<HStack justify="between">
 								<Caption tone="muted">Auto-transition rules</Caption>
-								<Button
-									variant="ghost"
-									size="sm"
-									onclick={() => addAutoRule(index)}
-								>
+								<Button variant="ghost" size="sm" onclick={() => addAutoRule(index)}>
 									<Icon name="plus" size="xs" />
 									Add rule
 								</Button>
@@ -325,15 +323,23 @@
 										<HStack gap={2}>
 											<Input
 												value={rule.condition}
-												oninput={(e) => updateAutoRule(index, rIndex, "condition", e.currentTarget.value)}
+												oninput={(e) =>
+													updateAutoRule(index, rIndex, "condition", e.currentTarget.value)}
 												placeholder="condition"
 											/>
 											<Caption tone="muted">→</Caption>
 											<SelectMenu
-												items={[{ label: "Select target", value: "" }, ...localStatuses.filter((s) => s.key !== status.key).map((t) => ({ label: t.label || t.key, value: t.key }))]}
+												items={[
+													{ label: "Select target", value: "" },
+													...localStatuses
+														.filter((s) => s.key !== status.key)
+														.map((t) => ({ label: t.label || t.key, value: t.key })),
+												]}
 												selected={rule.target}
 												onSelect={(v) => updateAutoRule(index, rIndex, "target", v)}
-												triggerLabel={localStatuses.find((s) => s.key === rule.target)?.label || rule.target || "Select target"}
+												triggerLabel={localStatuses.find((s) => s.key === rule.target)?.label ||
+													rule.target ||
+													"Select target"}
 											/>
 											<Button
 												variant="ghost"

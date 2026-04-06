@@ -20,10 +20,26 @@
 
 	const log = logger("lifecycle");
 
-	import { ResizablePaneGroup, ResizableHandle, ResizablePane, Stack, HStack, Box } from "@orqastudio/svelte-components/pure";
+	import {
+		ResizablePaneGroup,
+		ResizableHandle,
+		ResizablePane,
+		Stack,
+		HStack,
+		Box,
+	} from "@orqastudio/svelte-components/pure";
 	import setupBackground from "$lib/assets/setup-background.png";
 
-	const { errorStore, navigationStore, settingsStore, artifactStore, projectStore, setupStore, enforcementStore, artifactGraphSDK } = getStores();
+	const {
+		errorStore,
+		navigationStore,
+		settingsStore,
+		artifactStore,
+		projectStore,
+		setupStore,
+		enforcementStore,
+		artifactGraphSDK,
+	} = getStores();
 
 	/** Promise that resolves once all plugins are registered (schemas available). */
 	const pluginsReady = getContext<Promise<void>>("pluginsReady");
@@ -34,14 +50,16 @@
 	const hasProject = $derived(projectStore.hasProject);
 	const groupHasMultipleSubCategories = $derived(
 		navigationStore.activeGroup !== null &&
-		navigationStore.groupSubCategories[navigationStore.activeGroup].length > 1,
+			navigationStore.groupSubCategories[navigationStore.activeGroup].length > 1,
 	);
 	const needsSetup = $derived(projectStore.settingsLoaded && !projectStore.hasSettings);
-	const hideChatPanel = $derived(
-		navigationStore.activeActivity === "settings",
-	);
+	const hideChatPanel = $derived(navigationStore.activeActivity === "settings");
 	const setupNeeded = $derived(!setupStore.setupComplete);
 
+	/**
+	 * Handle global keydown events to toggle artifact search overlay on Ctrl+Space.
+	 * @param e
+	 */
 	function handleGlobalKeydown(e: KeyboardEvent) {
 		// Ctrl+Space (or Cmd+Space on Mac) toggles the search overlay
 		if (e.code === "Space" && (e.ctrlKey || e.metaKey)) {
@@ -88,7 +106,6 @@
 		}
 	});
 
-
 	// Load the unified navigation tree once the project is ready
 	$effect(() => {
 		if (hasProject && !needsSetup && artifactStore.navTree === null) {
@@ -103,9 +120,7 @@
 	$effect(() => {
 		const project = projectStore.activeProject;
 		if (!project || needsSetup) return;
-		void pluginsReady.then(() =>
-			artifactGraphSDK.initialize({ projectPath: project.path }),
-		);
+		void pluginsReady.then(() => artifactGraphSDK.initialize({ projectPath: project.path }));
 	});
 
 	// Load enforcement rules and violation history when the rules activity is active
@@ -146,7 +161,7 @@
 				class="relative flex-1 overflow-hidden"
 				style="background-image: url({setupBackground}); background-size: cover; background-position: center;"
 			>
-				<div class="absolute inset-0 bg-background/70"></div>
+				<div class="bg-background/70 absolute inset-0"></div>
 				<div class="relative z-10 flex h-full w-full items-center justify-center px-4">
 					<div class="w-full max-w-lg">
 						<ProjectSetupWizard
@@ -167,7 +182,7 @@
 
 			<!-- Level 3: Artifact List Panel — shows individual artifacts within the active category -->
 			{#if navigationStore.isArtifactActivity}
-				<div class="flex w-[240px] flex-col overflow-hidden border-r border-border">
+				<div class="border-border flex w-[240px] flex-col overflow-hidden border-r">
 					<ArtifactNav category={navigationStore.activeActivity} />
 				</div>
 			{/if}
@@ -189,14 +204,13 @@
 						</ResizablePane>
 						<ResizableHandle />
 						<ResizablePane defaultSize={30} minSize={20}>
-							<div class="flex h-full flex-col bg-chat">
+							<div class="bg-chat flex h-full flex-col">
 								<ConversationView />
 							</div>
 						</ResizablePane>
 					</ResizablePaneGroup>
 				</Box>
 			{/if}
-
 		{:else}
 			<!-- No project loaded — welcome screen, no sidebar -->
 			<Box flex={1}>

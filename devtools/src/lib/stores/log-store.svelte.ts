@@ -154,12 +154,18 @@ $effect.root(() => {
 // Derive the set of categories that have appeared in the event buffer so the
 // category filter dropdown only shows categories that exist in current data.
 // Exported as a function because Svelte 5 cannot export $derived from modules.
+/**
+ *
+ */
 export function knownCategories(): Set<string> {
 	return new Set(events.map((ev) => ev.category));
 }
 
 // Filtered view of the event buffer. Applies all active filters in order:
 // source → level → category → text search. An empty filter set passes all events.
+/**
+ *
+ */
 export function filteredEvents(): LogEvent[] {
 	return events.filter((ev) => {
 		if (filters.sources.size > 0 && !filters.sources.has(ev.source)) return false;
@@ -174,6 +180,9 @@ export function filteredEvents(): LogEvent[] {
 }
 
 // Returns true when any filter is active (used to show the Clear button).
+/**
+ *
+ */
 export function hasActiveFilters(): boolean {
 	return (
 		filters.sources.size > 0 ||
@@ -184,6 +193,9 @@ export function hasActiveFilters(): boolean {
 }
 
 // Reset all filters to their default (show-all) state.
+/**
+ *
+ */
 export function clearFilters(): void {
 	filters.sources = new Set();
 	filters.levels = new Set();
@@ -352,6 +364,7 @@ export async function loadHistory(): Promise<void> {
  * Map a raw JSON object from query_session_events into a LogEvent. The SQLite
  * store serialises level/source via Rust's Debug/Display formatting which
  * matches the TypeScript union types used in the frontend.
+ * @param obj
  */
 function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
 	return {
@@ -370,6 +383,7 @@ function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
  * Switch the log view to a historical session. Stops the Tauri live listener,
  * clears the buffer, loads the first page of events from SQLite, and sets
  * historicalMode so components update their UI accordingly.
+ * @param session
  */
 export async function enterHistoricalMode(session: DevToolsSession): Promise<void> {
 	// Pause live streaming while browsing history.
@@ -396,6 +410,7 @@ export async function enterHistoricalMode(session: DevToolsSession): Promise<voi
 /**
  * Load the next page of events for the current historical session and append
  * them to the buffer. Updates historicalOffset and historicalExhausted.
+ * @param sessionId
  */
 export async function loadMoreHistoricalEvents(sessionId: string): Promise<void> {
 	if (historyLoading.value || historicalExhausted.value) return;

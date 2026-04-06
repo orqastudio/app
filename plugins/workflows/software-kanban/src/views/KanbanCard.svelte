@@ -26,6 +26,10 @@
 		onDragStart?: (e: DragEvent) => void;
 	} = $props();
 
+	/**
+	 *
+	 * @param priority
+	 */
 	function priorityVariant(priority: string | null): BadgeVariant {
 		if (priority === "P1") return "destructive";
 		if (priority === "P2") return "default";

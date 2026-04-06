@@ -16,8 +16,12 @@ import { installMockStores, clearMockStores } from "../../shared/__tests__/mock-
 vi.mock("@orqastudio/svelte-components/pure", async (importActual) => {
 	const actual = await importActual<typeof import("@orqastudio/svelte-components/pure")>();
 	const { default: TooltipRoot } = await import("../../shared/__tests__/stubs/TooltipRoot.svelte");
-	const { default: TooltipTrigger } = await import("../../shared/__tests__/stubs/TooltipTrigger.svelte");
-	const { default: TooltipContent } = await import("../../shared/__tests__/stubs/TooltipContent.svelte");
+	const { default: TooltipTrigger } = await import(
+		"../../shared/__tests__/stubs/TooltipTrigger.svelte"
+	);
+	const { default: TooltipContent } = await import(
+		"../../shared/__tests__/stubs/TooltipContent.svelte"
+	);
 	return { ...actual, TooltipRoot, TooltipTrigger, TooltipContent };
 });
 
@@ -26,8 +30,12 @@ vi.mock("@tauri-apps/api/event", () => ({ listen: vi.fn().mockResolvedValue(() =
 
 import IntegrityWidget from "../IntegrityWidget.svelte";
 
-/** Builds a full artifactGraphSDK mock including all methods used by IntegrityWidget and ArtifactLink. */
-function makeGraphMock(overrides: Record<string, unknown> = {}) {
+/**
+ * Builds a full artifactGraphSDK mock including all methods used by IntegrityWidget and ArtifactLink.
+ * @param overrides - Properties to override in the default mock.
+ * @returns The merged mock object.
+ */
+function makeGraphMock(overrides: Record<string, unknown> = {}): Record<string, unknown> {
 	return {
 		graph: { size: 0 },
 		loading: false,
@@ -47,7 +55,7 @@ function makeGraphMock(overrides: Record<string, unknown> = {}) {
 		applyAutoFixes: vi.fn().mockResolvedValue([]),
 		initialize: vi.fn().mockResolvedValue(undefined),
 		...overrides,
-	} as any;
+	};
 }
 
 describe("IntegrityWidget", () => {
@@ -66,7 +74,10 @@ describe("IntegrityWidget", () => {
 
 	it("renders 'all clear' when scan returns no checks", async () => {
 		installMockStores({
-			artifactGraphSDK: makeGraphMock({ graph: { size: 5 }, runIntegrityScan: vi.fn().mockResolvedValue([]) }),
+			artifactGraphSDK: makeGraphMock({
+				graph: { size: 5 },
+				runIntegrityScan: vi.fn().mockResolvedValue([]),
+			}),
 		});
 		render(IntegrityWidget);
 		await waitFor(() => {
@@ -76,11 +87,26 @@ describe("IntegrityWidget", () => {
 
 	it("shows error badge count when scan finds errors", async () => {
 		const mockChecks = [
-			{ severity: "Error", category: "BrokenLink", artifact_id: "EPIC-001", message: "Broken link", auto_fixable: false },
-			{ severity: "Warning", category: "MissingStatus", artifact_id: "TASK-002", message: "No status", auto_fixable: true },
+			{
+				severity: "Error",
+				category: "BrokenLink",
+				artifact_id: "EPIC-001",
+				message: "Broken link",
+				auto_fixable: false,
+			},
+			{
+				severity: "Warning",
+				category: "MissingStatus",
+				artifact_id: "TASK-002",
+				message: "No status",
+				auto_fixable: true,
+			},
 		];
 		installMockStores({
-			artifactGraphSDK: makeGraphMock({ graph: { size: 10 }, runIntegrityScan: vi.fn().mockResolvedValue(mockChecks) }),
+			artifactGraphSDK: makeGraphMock({
+				graph: { size: 10 },
+				runIntegrityScan: vi.fn().mockResolvedValue(mockChecks),
+			}),
 		});
 		render(IntegrityWidget);
 		await waitFor(() => {
@@ -91,10 +117,19 @@ describe("IntegrityWidget", () => {
 
 	it("renders severity filter buttons after scan", async () => {
 		const mockChecks = [
-			{ severity: "Error", category: "BrokenLink", artifact_id: "EPIC-001", message: "Broken", auto_fixable: false },
+			{
+				severity: "Error",
+				category: "BrokenLink",
+				artifact_id: "EPIC-001",
+				message: "Broken",
+				auto_fixable: false,
+			},
 		];
 		installMockStores({
-			artifactGraphSDK: makeGraphMock({ graph: { size: 5 }, runIntegrityScan: vi.fn().mockResolvedValue(mockChecks) }),
+			artifactGraphSDK: makeGraphMock({
+				graph: { size: 5 },
+				runIntegrityScan: vi.fn().mockResolvedValue(mockChecks),
+			}),
 		});
 		render(IntegrityWidget);
 		await waitFor(() => {

@@ -1,12 +1,26 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Caption, Dot } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		HStack,
+		Stack,
+		Caption,
+		Dot,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores, pct } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, pluginRegistry } = getStores();
 	import type { ArtifactNode, ArtifactRef, RelationshipType } from "@orqastudio/types";
 	import { assertNever } from "@orqastudio/types";
 
-	import { PipelineStages, type PipelineStage, type PipelineEdge } from "@orqastudio/svelte-components/pure";
+	import {
+		PipelineStages,
+		type PipelineStage,
+		type PipelineEdge,
+	} from "@orqastudio/svelte-components/pure";
 
 	// -------------------------------------------------------------------------
 	// Pipeline stage definitions — derived from registered relationships
@@ -159,7 +173,7 @@
 	function countEdgesBetween(
 		fromArtifacts: ArtifactNode[],
 		toType: string,
-		relationshipTypes: string[]
+		relationshipTypes: string[],
 	): number {
 		let count = 0;
 		for (const artifact of fromArtifacts) {
@@ -230,7 +244,7 @@
 			const count = countEdgesBetween(
 				fromArtifacts,
 				toDef.artifactType,
-				fromDef.outboundRelationships
+				fromDef.outboundRelationships,
 			);
 			edges.push({ fromKey: fromDef.key, toKey: toDef.key, count });
 		}
@@ -250,10 +264,14 @@
 	 */
 	function statusBorderClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "border-destructive";
-			case "attention": return "border-warning";
-			case "healthy":   return "border-border";
-			default:          return assertNever(status);
+			case "isolated":
+				return "border-destructive";
+			case "attention":
+				return "border-warning";
+			case "healthy":
+				return "border-border";
+			default:
+				return assertNever(status);
 		}
 	}
 
@@ -264,10 +282,14 @@
 	 */
 	function statusBgClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "bg-destructive/10";
-			case "attention": return "bg-warning/10";
-			case "healthy":   return "bg-muted/30";
-			default:          return assertNever(status);
+			case "isolated":
+				return "bg-destructive/10";
+			case "attention":
+				return "bg-warning/10";
+			case "healthy":
+				return "bg-muted/30";
+			default:
+				return assertNever(status);
 		}
 	}
 
@@ -291,10 +313,14 @@
 	 */
 	function statusLabelClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "text-destructive";
-			case "attention": return "text-warning";
-			case "healthy":   return "text-muted-foreground";
-			default:          return assertNever(status);
+			case "isolated":
+				return "text-destructive";
+			case "attention":
+				return "text-warning";
+			case "healthy":
+				return "text-muted-foreground";
+			default:
+				return assertNever(status);
 		}
 	}
 
@@ -305,10 +331,14 @@
 	 */
 	function statusDotColorClass(status: StageData["status"]): string {
 		switch (status) {
-			case "isolated":  return "bg-destructive";
-			case "attention": return "bg-warning";
-			case "healthy":   return "bg-muted-foreground/50";
-			default:          return assertNever(status);
+			case "isolated":
+				return "bg-destructive";
+			case "attention":
+				return "bg-warning";
+			case "healthy":
+				return "bg-muted-foreground/50";
+			default:
+				return assertNever(status);
 		}
 	}
 
@@ -324,11 +354,11 @@
 			statusLabelClass: statusLabelClass(data.status),
 			tooltipTitle: data.reason,
 			tooltipBody: data.suggestion,
-		}))
+		})),
 	);
 
 	const pipelineEdges = $derived.by((): PipelineEdge[] =>
-		edgeCountList.map((e) => ({ count: e.count }))
+		edgeCountList.map((e) => ({ count: e.count })),
 	);
 </script>
 

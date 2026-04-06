@@ -35,6 +35,10 @@
 
 	let { children } = $props();
 
+	/**
+	 *
+	 * @param event
+	 */
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.ctrlKey || event.metaKey) {
 			switch (event.key) {

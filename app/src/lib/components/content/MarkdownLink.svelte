@@ -34,6 +34,10 @@
 	const isArtifactLink = $derived(artifactIdRe.test(href));
 	const isExternal = $derived(href.startsWith("http://") || href.startsWith("https://"));
 
+	/**
+	 * Open external href in the OS browser via Tauri shell opener.
+	 * @param e
+	 */
 	function handleExternalClick(e: MouseEvent) {
 		e.preventDefault();
 		open(href);
@@ -43,10 +47,12 @@
 {#if isArtifactLink}
 	<ArtifactLink id={href} />
 {:else if isExternal}
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- External links use Tauri shell opener, not SvelteKit router -->
 	<a {href} {title} onclick={handleExternalClick}>
 		{@render children?.()}
 	</a>
 {:else}
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- Relative links in markdown content are rendered as-is in the Tauri webview -->
 	<a {href} {title}>
 		{@render children?.()}
 	</a>

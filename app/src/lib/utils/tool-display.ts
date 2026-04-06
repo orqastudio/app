@@ -4,7 +4,11 @@
 import { resolveIcon } from "@orqastudio/svelte-components/pure";
 import { logger } from "@orqastudio/sdk";
 import type { Component } from "svelte";
-import { TOOL_ICONS, TOOL_LABELS, CAPABILITY_LABELS as capabilityLabels } from "$lib/config/tool-display-config";
+import {
+	TOOL_ICONS,
+	TOOL_LABELS,
+	CAPABILITY_LABELS as capabilityLabels,
+} from "$lib/config/tool-display-config";
 
 export { CAPABILITY_LABELS } from "$lib/config/tool-display-config";
 
@@ -12,6 +16,7 @@ const log = logger("tool-display");
 
 /**
  * Strips an MCP server prefix from a tool name.
+ * @param name
  */
 export function stripToolName(name: string): string {
 	const parts = name.split("__");
@@ -23,6 +28,7 @@ export function stripToolName(name: string): string {
 
 /**
  * Returns the display label and icon for a tool name.
+ * @param name
  */
 export function getToolDisplay(name: string): { label: string; icon: Component; iconName: string } {
 	const stripped = stripToolName(name);
@@ -34,11 +40,22 @@ export function getToolDisplay(name: string): { label: string; icon: Component; 
 	};
 }
 
-/** Returns a human-readable label for an agent capability identifier. */
+/**
+ * Returns a human-readable label for an agent capability identifier.
+ * @param capability
+ */
 export function getCapabilityLabel(capability: string): string {
-	return capabilityLabels[capability] ?? capability.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+	return (
+		capabilityLabels[capability] ??
+		capability.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+	);
 }
 
+/**
+ *
+ * @param toolName
+ * @param count
+ */
 export function groupLabel(toolName: string, count: number): string {
 	const stripped = stripToolName(toolName);
 	const labels: Record<string, string> = {
@@ -55,6 +72,10 @@ export function groupLabel(toolName: string, count: number): string {
 	return labels[stripped] ?? `${stripped} (${count} calls)`;
 }
 
+/**
+ *
+ * @param toolName
+ */
 export function getActivityPhase(toolName: string): string {
 	const stripped = stripToolName(toolName);
 	const phases: Record<string, string> = {
@@ -71,6 +92,11 @@ export function getActivityPhase(toolName: string): string {
 	return phases[stripped] ?? "Working";
 }
 
+/**
+ *
+ * @param toolName
+ * @param input
+ */
 export function getEphemeralLabel(toolName: string, input: string): string {
 	const stripped = stripToolName(toolName);
 	try {

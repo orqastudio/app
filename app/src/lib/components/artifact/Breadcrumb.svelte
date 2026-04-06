@@ -7,6 +7,7 @@
 
 	let { items }: { items: string[] } = $props();
 
+	/** Navigate home by closing the artifact viewer and returning to the list. */
 	function handleHome() {
 		navigationStore.closeArtifact();
 	}
@@ -16,6 +17,7 @@
 	 * items[0] is the section label, items[1..n-1] are folder segments,
 	 * items[n-1] is the leaf (non-clickable). Clicking a folder segment
 	 * closes the artifact viewer and returns to the list.
+	 * @param index - The index of the clicked breadcrumb segment.
 	 */
 	function handleSegmentClick(index: number) {
 		// Only the first segment (section label) has a meaningful navigation target:
@@ -34,7 +36,7 @@
 				return { label: item, onClick: () => handleSegmentClick(index) };
 			}
 			return item;
-		})
+		}),
 	);
 </script>
 

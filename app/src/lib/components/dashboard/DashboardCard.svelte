@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardAction,
+	} from "@orqastudio/svelte-components/pure";
 	import type { Snippet } from "svelte";
 
 	let {

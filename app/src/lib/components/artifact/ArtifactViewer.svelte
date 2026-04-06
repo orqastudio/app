@@ -10,13 +10,22 @@
 	import { MarkdownRenderer } from "@orqastudio/svelte-components/connected";
 	import DiagramCodeBlock from "$lib/components/content/DiagramCodeBlock.svelte";
 	import MarkdownLink from "$lib/components/content/MarkdownLink.svelte";
-	import { LoadingSpinner, Heading, Stack, HStack, Box, Text, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		LoadingSpinner,
+		Heading,
+		Stack,
+		HStack,
+		Box,
+		Text,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { TraceabilityResult } from "@orqastudio/types";
 
-	const { artifactStore, projectStore, navigationStore, artifactGraphSDK, pluginRegistry } = getStores();
+	const { artifactStore, projectStore, navigationStore, artifactGraphSDK, pluginRegistry } =
+		getStores();
 	import { parseFrontmatter } from "$lib/utils/frontmatter";
 
 	// ---------------------------------------------------------------------------
@@ -50,8 +59,7 @@
 			})
 			.catch((err: unknown) => {
 				if (!stale) {
-					traceabilityError =
-						err instanceof Error ? err.message : String(err);
+					traceabilityError = err instanceof Error ? err.message : String(err);
 					traceabilityResult = null;
 				}
 			})
@@ -74,9 +82,7 @@
 	 * graph (i.e. after the watcher has indexed it). May be undefined for newly
 	 * created files that the watcher hasn't processed yet.
 	 */
-	const graphNode = $derived(
-		currentPath ? artifactGraphSDK.resolveByPath(currentPath) : undefined,
-	);
+	const graphNode = $derived(currentPath ? artifactGraphSDK.resolveByPath(currentPath) : undefined);
 
 	/**
 	 * Effective metadata: prefer pre-parsed frontmatter from the graph node when
@@ -115,7 +121,13 @@
 		// Strip leading paragraph (non-blank lines until the first blank line or heading)
 		// Only strip if it looks like a description paragraph (not a heading, list, or code block)
 		const firstChar = text.trimStart()[0];
-		if (firstChar && firstChar !== "#" && firstChar !== "-" && firstChar !== "`" && firstChar !== "|") {
+		if (
+			firstChar &&
+			firstChar !== "#" &&
+			firstChar !== "-" &&
+			firstChar !== "`" &&
+			firstChar !== "|"
+		) {
 			text = text.replace(/^[^\n]+(\n[^\n]+)*\n?/, "");
 		}
 
@@ -150,8 +162,7 @@
 	 * When true, we strip the leading heading/description from the body to avoid duplication.
 	 */
 	const hasFrontmatterTitle = $derived(
-		!isReadme &&
-		parsedContent !== null && typeof parsedContent.metadata["title"] === "string",
+		!isReadme && parsedContent !== null && typeof parsedContent.metadata["title"] === "string",
 	);
 
 	/**
@@ -160,10 +171,8 @@
 	 */
 	const hasMetadataFields = $derived(
 		!isReadme &&
-		parsedContent !== null &&
-		Object.keys(parsedContent.metadata).some(
-			(k) => k !== "title" && k !== "description",
-		),
+			parsedContent !== null &&
+			Object.keys(parsedContent.metadata).some((k) => k !== "title" && k !== "description"),
 	);
 
 	/**
@@ -197,7 +206,6 @@
 		return [];
 	});
 
-
 	/** Acceptance criteria array for tasks. */
 	const acceptanceCriteria = $derived.by((): string[] => {
 		if (!parsedContent) return [];
@@ -211,7 +219,9 @@
 	 * Uses prefixes declared by plugins rather than a hardcoded list.
 	 */
 	const ARTIFACT_ID_RE = $derived.by(() => {
-		const prefixes = pluginRegistry.allSchemas.map((s: { idPrefix?: string }) => s.idPrefix).filter((p): p is string => !!p);
+		const prefixes = pluginRegistry.allSchemas
+			.map((s: { idPrefix?: string }) => s.idPrefix)
+			.filter((p): p is string => !!p);
 		if (prefixes.length === 0) return /^[A-Z]+-\d+$/;
 		const escaped = prefixes.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
 		return new RegExp(`^(${escaped.join("|")})-\\d+$`);
@@ -244,18 +254,17 @@
 				seg
 					.split("-")
 					.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-					.join(" ")
+					.join(" "),
 			);
 			navigationStore.openArtifact(docPath, crumbs);
 		}
 	}
-
 </script>
 
 <Stack height="full" gap={0}>
 	<!-- Breadcrumb bar (hidden on home/landing pages). h-10 is a specific Tailwind height not in HStack's height map. -->
 	{#if breadcrumbs.length > 0}
-		<div class="flex h-10 items-center justify-between border-b border-border px-4 shrink-0">
+		<div class="border-border flex h-10 shrink-0 items-center justify-between border-b px-4">
 			<Breadcrumb items={breadcrumbs} />
 		</div>
 	{/if}
@@ -291,12 +300,13 @@
 					{:else if parsedContent}
 						{#if hasMetadataFields}
 							{#if artifactStatus && pipelineStages.length > 0}
-								<PipelineStepper stages={pipelineStages} status={artifactStatus} path={currentPath ?? ""} />
+								<PipelineStepper
+									stages={pipelineStages}
+									status={artifactStatus}
+									path={currentPath ?? ""}
+								/>
 							{/if}
-							<FrontmatterHeader
-								metadata={parsedContent.metadata}
-								{artifactType}
-							/>
+							<FrontmatterHeader metadata={parsedContent.metadata} {artifactType} />
 						{:else if hasFrontmatterTitle}
 							<!-- Title + description only, no metadata card -->
 							{@const title = parsedContent.metadata["title"] as string}
@@ -305,18 +315,29 @@
 								<Heading level={1}>{title}</Heading>
 								{#if description}
 									<!-- leading-relaxed is not a Text variant; kept as p. -->
-									<p class="text-sm leading-relaxed text-muted-foreground">{description}</p>
+									<p class="text-muted-foreground text-sm leading-relaxed">{description}</p>
 								{/if}
 							</Stack>
 						{/if}
 						<Stack gap={4}>
 							{#if acceptanceCriteria.length > 0}
-								<AcceptanceCriteria criteria={acceptanceCriteria} status={parsedContent?.metadata["status"] as string ?? ""} />
+								<AcceptanceCriteria
+									criteria={acceptanceCriteria}
+									status={(parsedContent?.metadata["status"] as string) ?? ""}
+								/>
 							{/if}
-							<MarkdownRenderer content={bodyToRender ?? parsedContent.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+							<MarkdownRenderer
+								content={bodyToRender ?? parsedContent.body}
+								codeRenderer={DiagramCodeBlock}
+								linkRenderer={MarkdownLink}
+							/>
 						</Stack>
 					{:else}
-						<MarkdownRenderer content={content} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+						<MarkdownRenderer
+							{content}
+							codeRenderer={DiagramCodeBlock}
+							linkRenderer={MarkdownLink}
+						/>
 					{/if}
 				</Panel>
 			</ScrollArea>

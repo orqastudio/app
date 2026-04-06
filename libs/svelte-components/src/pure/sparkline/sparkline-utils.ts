@@ -6,6 +6,13 @@
 /**
  * Generate an SVG path string from a series of numeric values.
  * Normalises values to fit within the given width/height.
+ * @param values
+ * @param width
+ * @param height
+ * @param options
+ * @param options.padding
+ * @param options.fixedMin
+ * @param options.fixedMax
  */
 export function sparklinePath(
 	values: readonly number[],
@@ -29,6 +36,8 @@ export function sparklinePath(
 /**
  * Calculate trend percentage between two values.
  * Returns null if insufficient data.
+ * @param current
+ * @param previous
  */
 export function trendPercent(current: number, previous: number): number | null {
 	if (previous === 0) {
@@ -38,7 +47,10 @@ export function trendPercent(current: number, previous: number): number | null {
 	return Math.round(((current - previous) / previous) * 100);
 }
 
-/** Format a trend percentage with sign. */
+/**
+ * Format a trend percentage with sign.
+ * @param pct
+ */
 export function formatTrend(pct: number | null): string {
 	if (pct === null) return "";
 	if (pct === 0) return "0%";
@@ -46,7 +58,10 @@ export function formatTrend(pct: number | null): string {
 	return `${sign}${pct}%`;
 }
 
-/** Get a trend arrow character. */
+/**
+ * Get a trend arrow character.
+ * @param pct
+ */
 export function trendArrow(pct: number | null): string {
 	if (pct === null || pct === 0) return "";
 	return pct > 0 ? "\u2191" : "\u2193";

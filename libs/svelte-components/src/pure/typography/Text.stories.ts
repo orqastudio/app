@@ -84,4 +84,6 @@ export const Block: Story = { args: { variant: "body", block: true } };
 // lineClamp stories — truncate wins when both are set.
 export const LineClamp2: Story = { args: { variant: "body", lineClamp: 2 } };
 export const LineClamp3: Story = { args: { variant: "body", lineClamp: 3 } };
-export const TruncateWinsOverLineClamp: Story = { args: { variant: "body", truncate: true, lineClamp: 2 } };
+export const TruncateWinsOverLineClamp: Story = {
+	args: { variant: "body", truncate: true, lineClamp: 2 },
+};

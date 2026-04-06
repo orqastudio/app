@@ -15,28 +15,30 @@ let _instance: GraphVisualiser | null = null;
  * Call once from the root layout after initializeStores().
  */
 export function initializeGraphViz(): GraphVisualiser {
-    if (_instance) return _instance;
+	if (_instance) return _instance;
 
-    const { artifactGraphSDK } = getStores();
-    _instance = new GraphVisualiser();
+	const { artifactGraphSDK } = getStores();
+	_instance = new GraphVisualiser();
 
-    // Sync on every graph refresh (return value is unlisten fn — kept alive by closure)
-    artifactGraphSDK.onRefresh(() => {
-        _instance!.update(artifactGraphSDK.graph);
-    });
+	// Sync on every graph refresh (return value is unlisten fn — kept alive by closure)
+	artifactGraphSDK.onRefresh(() => {
+		_instance!.update(artifactGraphSDK.graph);
+	});
 
-    // Initial sync if graph is already loaded
-    if (artifactGraphSDK.graph.size > 0) {
-        _instance.update(artifactGraphSDK.graph);
-    }
+	// Initial sync if graph is already loaded
+	if (artifactGraphSDK.graph.size > 0) {
+		_instance.update(artifactGraphSDK.graph);
+	}
 
-    return _instance;
+	return _instance;
 }
 
 /** Access the graph visualiser. Throws if not initialized. */
 export function getGraphViz(): GraphVisualiser {
-    if (!_instance) {
-        throw new Error("[OrqaStudio] GraphVisualiser not initialized. Call initializeGraphViz() first.");
-    }
-    return _instance;
+	if (!_instance) {
+		throw new Error(
+			"[OrqaStudio] GraphVisualiser not initialized. Call initializeGraphViz() first.",
+		);
+	}
+	return _instance;
 }

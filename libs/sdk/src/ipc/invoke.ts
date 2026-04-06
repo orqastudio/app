@@ -11,6 +11,7 @@ const log = logger("ipc");
  *
  * Returns the same reference (frozen in place) for zero-allocation overhead.
  * Primitives and null pass through unchanged.
+ * @param obj
  */
 function deepFreeze<T>(obj: T): Readonly<T> {
 	if (obj === null || obj === undefined || typeof obj !== "object") {
@@ -31,6 +32,8 @@ function deepFreeze<T>(obj: T): Readonly<T> {
 /**
  * Wraps Tauri's invoke with performance timing and structured logging.
  * Logs duration on success and error details on failure before re-throwing.
+ * @param cmd
+ * @param args
  */
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
 	const start = performance.now();
@@ -64,7 +67,10 @@ export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Pr
 	}
 }
 
-/** Extract a human-readable message from any error shape (Error, OrqaError, string, unknown). */
+/**
+ * Extract a human-readable message from any error shape (Error, OrqaError, string, unknown).
+ * @param err
+ */
 export function extractErrorMessage(err: unknown): string {
 	if (err instanceof Error) return err.message;
 	if (typeof err === "string") return err;
@@ -74,6 +80,10 @@ export function extractErrorMessage(err: unknown): string {
 	return String(err);
 }
 
+/**
+ *
+ * @param onEvent
+ */
 export function createStreamChannel(onEvent: (event: StreamEvent) => void): Channel<StreamEvent> {
 	const channel = new Channel<StreamEvent>();
 	channel.onmessage = onEvent;

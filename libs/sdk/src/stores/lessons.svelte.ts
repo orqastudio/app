@@ -1,6 +1,9 @@
 import { invoke, extractErrorMessage } from "../ipc/invoke.js";
 import type { Lesson } from "@orqastudio/types";
 
+/**
+ *
+ */
 export class LessonStore {
 	lessons = $state<Lesson[]>([]);
 	loading = $state(false);
@@ -11,6 +14,10 @@ export class LessonStore {
 		return this.lessons.filter((l) => l.recurrence >= 2 && l.status === "active");
 	}
 
+	/**
+	 *
+	 * @param projectPath
+	 */
 	async loadLessons(projectPath: string): Promise<void> {
 		this.loading = true;
 		this.error = null;
@@ -23,6 +30,13 @@ export class LessonStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param projectPath
+	 * @param title
+	 * @param category
+	 * @param body
+	 */
 	async createLesson(
 		projectPath: string,
 		title: string,
@@ -43,6 +57,11 @@ export class LessonStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param projectPath
+	 * @param id
+	 */
 	async incrementRecurrence(projectPath: string, id: string): Promise<void> {
 		this.error = null;
 		try {

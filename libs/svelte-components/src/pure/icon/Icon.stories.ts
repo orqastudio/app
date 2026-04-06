@@ -8,7 +8,18 @@ const meta = {
 	argTypes: {
 		name: {
 			control: "select",
-			options: ["target", "shield", "zap", "lightbulb", "flag", "bot", "brain", "rocket", "workflow", "network"],
+			options: [
+				"target",
+				"shield",
+				"zap",
+				"lightbulb",
+				"flag",
+				"bot",
+				"brain",
+				"rocket",
+				"workflow",
+				"network",
+			],
 		},
 		size: {
 			control: "select",

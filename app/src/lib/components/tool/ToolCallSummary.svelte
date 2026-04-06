@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Icon, HStack, Caption, Stack, Badge,
+	import {
+		Icon,
+		HStack,
+		Caption,
+		Stack,
+		Badge,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
 		CollapsibleTrigger,
@@ -90,7 +95,7 @@
 {#if totalTools > 0}
 	<Collapsible bind:open>
 		<CollapsibleTrigger
-			class="w-full rounded-lg border border-border bg-muted/30 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50"
+			class="border-border bg-muted/30 hover:bg-muted/50 w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors"
 		>
 			<HStack gap={2}>
 				<Icon name="chevron-right" size="sm" />
@@ -100,14 +105,16 @@
 				{#if errorCount > 0}
 					<HStack gap={1}>
 						<Icon name="x-circle" size="sm" />
-						<Caption tone="destructive">{errorCount} {errorCount === 1 ? "error" : "errors"}</Caption>
+						<Caption tone="destructive"
+							>{errorCount} {errorCount === 1 ? "error" : "errors"}</Caption
+						>
 					</HStack>
 				{/if}
 			</HStack>
 		</CollapsibleTrigger>
 		<CollapsibleContent>
 			<!-- border-l-2 and ml-3 are structural indentation; no ORQA primitive supports border-left -->
-			<div class="ml-3 mt-1 border-l-2 border-border pl-4">
+			<div class="border-border mt-1 ml-3 border-l-2 pl-4">
 				<Stack gap={1}>
 					{#if summaryParts.length > 0}
 						<HStack gap={2} wrap>

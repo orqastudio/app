@@ -8,7 +8,14 @@
      scrolls away from the bottom. The scroll-lock toggle button restores it. -->
 <script lang="ts">
 	import { onMount, onDestroy, tick } from "svelte";
-	import { Button, Caption, HStack, SectionHeader, SectionFooter, Stack } from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		Caption,
+		HStack,
+		SectionHeader,
+		SectionFooter,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 	import { assertNever } from "@orqastudio/types";
 	import {
 		events,
@@ -82,10 +89,13 @@
 	const historicalSessionLabel = $derived(
 		sessions.find((s) => s.id === activeSessionId.value)
 			? sessionDisplayLabel(sessions.find((s) => s.id === activeSessionId.value)!)
-			: "historical session"
+			: "historical session",
 	);
 
-	// Resolve the empty-state message for the connection status with exhaustiveness check.
+	/**
+	 * Resolve the empty-state message for the current connection status.
+	 * @param status
+	 */
 	function connectionEmptyMessage(status: typeof connectionStatus.value): string {
 		switch (status) {
 			case "connecting":
@@ -99,15 +109,14 @@
 		}
 	}
 
-	// Load more events for the current historical session.
+	/** Load the next page of events for the current historical session. */
 	async function handleLoadMore(): Promise<void> {
 		if (activeSessionId.value) {
 			await loadMoreHistoricalEvents(activeSessionId.value);
 		}
 	}
 
-	// Return to the live feed from the historical banner button. Updates both
-	// session-store state and log-store so the ring buffer stream is re-activated.
+	/** Return to the live feed, re-activating the ring buffer stream. */
 	async function handleReturnToLive(): Promise<void> {
 		await switchToCurrentSession();
 		await exitHistoricalMode();
@@ -160,8 +169,7 @@
 	// Slice of filtered events to render (visible + overscan).
 	const visibleEvents = $derived(filteredEvents.slice(visibleRange.start, visibleRange.end));
 
-	// Handle scroll events from the viewport. Updates scrollTop and, if the user
-	// scrolls up away from the bottom, disables scroll-lock.
+	/** Handle viewport scroll: update scrollTop and disable scroll-lock if user scrolled up. */
 	function handleScroll(): void {
 		if (!viewport) return;
 		scrollTop = viewport.scrollTop;
@@ -172,9 +180,7 @@
 		}
 	}
 
-	// Scroll the viewport to the bottom. Called when new events arrive and
-	// scroll-lock is enabled, and when the user clicks the scroll-lock button
-	// to re-enable it.
+	/** Scroll the viewport to the bottom after the current tick. */
 	async function scrollToBottom(): Promise<void> {
 		await tick();
 		if (viewport) {
@@ -183,7 +189,7 @@
 		}
 	}
 
-	// Re-enable scroll-lock and immediately jump to the bottom.
+	/** Re-enable scroll-lock and immediately jump to the bottom of the log. */
 	function enableScrollLock(): void {
 		scrollLock.enabled = true;
 		scrollToBottom();
@@ -223,13 +229,12 @@
 <!-- Outer container: Stack fills the height of the Logs tab content area. -->
 <Stack gap={0} height="full">
 	<!-- Column header bar: SectionHeader compact provides px-2 py-1 border-b layout. -->
-	<SectionHeader
-		variant="compact"
-		role="row"
-	>
+	<SectionHeader variant="compact" role="row">
 		{#each COLUMNS as col (col.label)}
 			{#if col.width !== null}
-				<div class="log-table__col-label log-table__col-label--fixed" style="width: {col.width}px;">{col.label}</div>
+				<div class="log-table__col-label log-table__col-label--fixed" style="width: {col.width}px;">
+					{col.label}
+				</div>
 			{:else}
 				<div class="log-table__col-label log-table__col-label--flex">{col.label}</div>
 			{/if}
@@ -243,24 +248,12 @@
 				<!-- Wrapper span with display:contents is invisible to flex layout;
 				     scoped class provides the hook for :global() CSS overrides. -->
 				<span class="log-table__follow-wrap" style="display: contents;">
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						onclick={enableScrollLock}
-					>
-						Follow
-					</Button>
+					<Button variant="ghost" size="icon-sm" onclick={enableScrollLock}>Follow</Button>
 				</span>
 			{/if}
 			<LogExport />
 			<span class="log-table__clear-wrap" style="display: contents;">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					onclick={clearEvents}
-				>
-					Clear
-				</Button>
+				<Button variant="ghost" size="icon-sm" onclick={clearEvents}>Clear</Button>
 			</span>
 		</div>
 	</SectionHeader>
@@ -276,11 +269,7 @@
 					</Caption>
 				</div>
 				<span class="log-table__return-wrap" style="display: contents;">
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						onclick={handleReturnToLive}
-					>
+					<Button variant="ghost" size="icon-sm" onclick={handleReturnToLive}>
 						Return to live
 					</Button>
 				</span>
@@ -325,10 +314,7 @@
 		     positioned inside it via their pre-computed offsets. -->
 		<div class="log-table__spacer" style="height: {totalHeight}px;">
 			{#each visibleEvents as ev (ev.id)}
-				<LogRow
-					event={ev}
-					style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;"
-				/>
+				<LogRow event={ev} style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;" />
 			{/each}
 		</div>
 
@@ -368,9 +354,13 @@
 	<div class="log-table__status">
 		<HStack gap={3} full>
 			{#if historicalMode.value}
-				<Caption variant="caption-tabular">{events.length} of {historicalTotal.value} events loaded</Caption>
+				<Caption variant="caption-tabular"
+					>{events.length} of {historicalTotal.value} events loaded</Caption
+				>
 			{:else if filteredEvents.length !== events.length}
-				<Caption variant="caption-tabular">{filteredEvents.length} of {totalReceived.value} events</Caption>
+				<Caption variant="caption-tabular"
+					>{filteredEvents.length} of {totalReceived.value} events</Caption
+				>
 			{:else}
 				<Caption variant="caption-tabular">{totalReceived.value} events received</Caption>
 			{/if}

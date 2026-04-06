@@ -3,24 +3,30 @@
 	import mermaid from "mermaid";
 	import { Caption, Center, Panel } from "@orqastudio/svelte-components/pure";
 
-
 	let { text }: { text: string } = $props();
 
 	let svgContent = $state<string | null>(null);
 	let error = $state<string | null>(null);
 	let rendering = $state(true);
 
-	/** Detect whether the app is currently in dark mode. */
+	/**
+	 * Detect whether the app is currently in dark mode.
+	 * @returns True when the dark class is present on the document root element.
+	 */
 	function isDark(): boolean {
 		if (typeof document === "undefined") return false;
 		return document.documentElement.classList.contains("dark");
 	}
 
-	/** Generate a unique ID for each diagram render. */
+	/**
+	 * Generate a unique ID for each diagram render.
+	 * @returns A random alphanumeric string prefixed with "mermaid-".
+	 */
 	function diagramId(): string {
 		return `mermaid-${Math.random().toString(36).slice(2, 10)}`;
 	}
 
+	/** Initialize mermaid with the current theme and render the diagram text to SVG. */
 	async function renderDiagram(): Promise<void> {
 		rendering = true;
 		error = null;
@@ -68,7 +74,9 @@
 </script>
 
 <!-- Inline style required: background opacity and overflow-x cannot be expressed via Box typed props -->
-<div style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;">
+<div
+	style="border-radius: 0.375rem; border: 1px solid hsl(var(--border)); background: hsl(var(--muted) / 0.3); padding: 1rem; overflow-x: auto;"
+>
 	{#if rendering && !error && !svgContent}
 		<Center>
 			<Panel padding="loose">
@@ -77,9 +85,12 @@
 		</Center>
 	{/if}
 	{#if error}
-		<div style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;">
+		<div
+			style="border-radius: 0.375rem; background: hsl(var(--destructive) / 0.1); padding: 0.75rem;"
+		>
 			<Caption variant="caption-strong" tone="destructive">Mermaid render error</Caption>
-			<pre style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
+			<pre
+				style="margin-top: 0.25rem; white-space: pre-wrap; font-size: 0.75rem; color: hsl(var(--destructive));">{error}</pre>
 		</div>
 	{:else if svgContent}
 		<div style="display: flex; justify-content: center;">

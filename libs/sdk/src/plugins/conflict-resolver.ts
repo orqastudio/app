@@ -19,6 +19,12 @@ const log = logger("conflict-resolver");
 
 /**
  * Build a system prompt for the AI to resolve plugin conflicts.
+ * @param conflicts
+ * @param existingManifest
+ * @param newManifest
+ * @param projectContext
+ * @param projectContext.vision
+ * @param projectContext.pillars
  */
 export function buildConflictResolutionPrompt(
 	conflicts: readonly RegistrationConflict[],
@@ -88,6 +94,7 @@ Respond with a JSON array of ConflictResolutionSuggestion objects:
 
 /**
  * Parse the AI's response into typed suggestions.
+ * @param response
  */
 export function parseConflictResolutionResponse(
 	response: string,

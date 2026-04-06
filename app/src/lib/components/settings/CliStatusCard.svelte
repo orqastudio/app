@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Stack, Caption, Code } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -94,12 +101,7 @@
 				<Icon name="refresh-cw" size="sm" />
 				Re-check Status
 			</Button>
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={onReauthenticate}
-				disabled={reauthenticating}
-			>
+			<Button variant="outline" size="sm" onclick={onReauthenticate} disabled={reauthenticating}>
 				{#if reauthenticating}
 					<Icon name="loader-circle" size="sm" />
 					Authenticating...

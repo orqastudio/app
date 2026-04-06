@@ -14,7 +14,7 @@
 	// Whether a save operation is in progress (prevents double-clicks).
 	let saving = $state(false);
 
-	// Format today's date as YYYY-MM-DD for the default file name.
+	/** Format today's date as YYYY-MM-DD for the default file name. */
 	function todayString(): string {
 		const d = new Date();
 		const yyyy = d.getFullYear();
@@ -23,15 +23,15 @@
 		return `${yyyy}-${mm}-${dd}`;
 	}
 
-	// Serialise the filtered event list to a pretty-printed JSON string.
-	// All fields from LogEvent are included: timestamp, level, source,
-	// category, message, metadata, session_id, and id.
+	/**
+	 * Serialise the filtered event list to a pretty-printed JSON string.
+	 * @param evs
+	 */
 	function serialiseEvents(evs: LogEvent[]): string {
 		return JSON.stringify(evs, null, 2);
 	}
 
-	// Open the native save dialog, let the user choose a file path, then
-	// write the serialised events to that path. No-ops if the user cancels.
+	/** Open the native save dialog and write serialised events to the chosen path. */
 	async function handleExport(): Promise<void> {
 		if (saving) return;
 		saving = true;

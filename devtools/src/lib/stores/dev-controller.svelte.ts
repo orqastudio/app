@@ -33,6 +33,9 @@ if (typeof window !== "undefined") {
 	});
 }
 
+/**
+ *
+ */
 export async function startDev(): Promise<void> {
 	if (devController.state !== "stopped") return;
 	devController.state = "starting";
@@ -44,6 +47,9 @@ export async function startDev(): Promise<void> {
 	}
 }
 
+/**
+ *
+ */
 export async function stopDev(): Promise<void> {
 	if (devController.state !== "running") return;
 	devController.state = "stopping";

@@ -30,7 +30,9 @@ export const CaptionDefault: StoryObj<typeof Caption> = { args: { variant: "capt
 export const CaptionStrong: StoryObj<typeof Caption> = { args: { variant: "caption-strong" } };
 export const CaptionMono: StoryObj<typeof Caption> = { args: { variant: "caption-mono" } };
 export const CaptionTabular: StoryObj<typeof Caption> = { args: { variant: "caption-tabular" } };
-export const CaptionLineClamp2: StoryObj<typeof Caption> = { args: { variant: "caption", lineClamp: 2 } };
+export const CaptionLineClamp2: StoryObj<typeof Caption> = {
+	args: { variant: "caption", lineClamp: 2 },
+};
 
 // Code block mode — for multi-line code and log output.
 export const CodeInline: StoryObj<typeof Code> = { args: { block: false } };

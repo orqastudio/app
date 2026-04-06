@@ -33,10 +33,8 @@ import Toolbar from "../Toolbar.svelte";
 import { invoke } from "@tauri-apps/api/core";
 
 describe("Toolbar", () => {
-	let stores: ReturnType<typeof installMockStores>;
-
 	beforeEach(() => {
-		stores = installMockStores();
+		installMockStores();
 	});
 
 	afterEach(() => {
@@ -64,7 +62,6 @@ describe("Toolbar", () => {
 	it("renders project icon when iconDataUrl is set", () => {
 		installMockStores({
 			projectStore: {
-				...({} as any),
 				hasProject: true,
 				activeProject: { id: 1, name: "My Project", path: "/home/user/my-project" },
 				projectPath: "/home/user/my-project",
@@ -78,7 +75,7 @@ describe("Toolbar", () => {
 				loadActiveProject: vi.fn(),
 				loadProjectSettings: vi.fn(),
 				checkIsOrqaProject: vi.fn(),
-			} as any,
+			},
 		});
 		render(Toolbar);
 		const img = screen.getByAltText("OrqaStudio");

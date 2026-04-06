@@ -22,10 +22,7 @@
 		sessionDuration,
 		type DevToolsSession,
 	} from "../../stores/session-store.svelte.js";
-	import {
-		enterHistoricalMode,
-		exitHistoricalMode,
-	} from "../../stores/log-store.svelte.js";
+	import { enterHistoricalMode, exitHistoricalMode } from "../../stores/log-store.svelte.js";
 
 	// Whether the session dropdown is open.
 	let dropdownOpen = $state(false);
@@ -48,19 +45,22 @@
 	// The currently displayed session — the one being viewed or the current session.
 	const displayedSession = $derived(
 		sessions.find((s) =>
-			viewingHistorical.value
-				? s.id === activeSessionId.value
-				: s.is_current
-		) ?? sessions[0] ?? null
+			viewingHistorical.value ? s.id === activeSessionId.value : s.is_current,
+		) ??
+			sessions[0] ??
+			null,
 	);
 
-	// Toggle the dropdown open/closed.
+	/** Toggle the session dropdown open or closed. */
 	function toggleDropdown(): void {
 		dropdownOpen = !dropdownOpen;
 		contextMenuId = null;
 	}
 
-	// Close all overlays when the user clicks outside the picker.
+	/**
+	 * Close all overlays when the user clicks outside the session picker.
+	 * @param e
+	 */
 	function handleDocumentClick(e: MouseEvent): void {
 		const target = e.target as HTMLElement;
 		if (!target.closest("[data-session-picker]")) {
@@ -72,8 +72,10 @@
 		}
 	}
 
-	// Switch to a session and close the dropdown. Updates session-store state
-	// then delegates to log-store to load events from SQLite.
+	/**
+	 * Switch to a session and load its events from SQLite, then close the dropdown.
+	 * @param session
+	 */
 	async function handleSelectSession(session: DevToolsSession): Promise<void> {
 		if (session.is_current && !viewingHistorical.value) {
 			dropdownOpen = false;
@@ -84,7 +86,11 @@
 		await enterHistoricalMode(session);
 	}
 
-	// Start the inline rename flow for a session.
+	/**
+	 * Start the inline rename flow for the given session.
+	 * @param session
+	 * @param e
+	 */
 	function startRename(session: DevToolsSession, e: MouseEvent): void {
 		e.stopPropagation();
 		contextMenuId = null;
@@ -92,7 +98,7 @@
 		renameValue = session.label ?? "";
 	}
 
-	// Commit the rename on Enter or blur.
+	/** Commit the pending inline rename when Enter is pressed or the input blurs. */
 	async function commitRename(): Promise<void> {
 		if (renamingId === null) return;
 		const id = renamingId;
@@ -103,6 +109,10 @@
 		}
 	}
 
+	/**
+	 * Handle keydown in the rename input: Enter commits, Escape cancels.
+	 * @param e
+	 */
 	function handleRenameKeydown(e: KeyboardEvent): void {
 		if (e.key === "Enter") {
 			e.preventDefault();
@@ -112,7 +122,11 @@
 		}
 	}
 
-	// Confirm and delete a session.
+	/**
+	 * Confirm and delete a session and all its events.
+	 * @param session
+	 * @param e
+	 */
 	async function handleDelete(session: DevToolsSession, e: MouseEvent): Promise<void> {
 		e.stopPropagation();
 		contextMenuId = null;
@@ -120,6 +134,11 @@
 	}
 
 	// Toggle context menu for a session row.
+	/**
+	 *
+	 * @param sessionId
+	 * @param e
+	 */
 	function toggleContextMenu(sessionId: string, e: MouseEvent): void {
 		e.stopPropagation();
 		contextMenuId = contextMenuId === sessionId ? null : sessionId;
@@ -127,6 +146,9 @@
 
 	// Return to the live feed. Exits historical mode in both session-store and
 	// log-store so the ring buffer stream is re-activated.
+	/**
+	 *
+	 */
 	async function handleReturnToLive(): Promise<void> {
 		await switchToCurrentSession();
 		await exitHistoricalMode();
@@ -137,10 +159,7 @@
 
 <!-- Session picker bar: always visible above the filter strip.
      Scoped CSS class provides layout; no Tailwind utility classes used. -->
-<div
-	class="session-picker"
-	data-session-picker
->
+<div class="session-picker" data-session-picker>
 	{#if viewingHistorical.value}
 		<!-- Historical banner: shown when a past session is being viewed.
 		     HStack provides the flex-row layout. -->
@@ -153,13 +172,7 @@
 			</div>
 			<!-- Wrapper span with display:contents provides :global() hook for Button override. -->
 			<span class="session-picker__return-wrap" style="display: contents;">
-				<Button
-					variant="ghost"
-					size="icon-sm"
-					onclick={handleReturnToLive}
-				>
-					Return to live
-				</Button>
+				<Button variant="ghost" size="icon-sm" onclick={handleReturnToLive}>Return to live</Button>
 			</span>
 		</HStack>
 	{:else}
@@ -184,11 +197,7 @@
 
 	<!-- Dropdown panel: session list. Scoped CSS class provides positioning. -->
 	{#if dropdownOpen}
-		<div
-			class="session-picker__panel"
-			role="listbox"
-			aria-label="Session list"
-		>
+		<div class="session-picker__panel" role="listbox" aria-label="Session list">
 			{#if sessions.length === 0}
 				<!-- Empty message: scoped div provides padding + centering. -->
 				<div class="session-picker__empty">
@@ -203,7 +212,8 @@
 						data-current={session.is_current}
 						data-active={activeSessionId.value === session.id}
 						role="option"
-						aria-selected={activeSessionId.value === session.id || (session.is_current && !viewingHistorical.value)}
+						aria-selected={activeSessionId.value === session.id ||
+							(session.is_current && !viewingHistorical.value)}
 					>
 						{#if renamingId === session.id}
 							<!-- Inline rename: ORQA Input component replaces raw input.
@@ -221,10 +231,7 @@
 						{:else}
 							<!-- Clickable session info: wrapper span for Button override. -->
 							<span class="session-picker__row-content-wrap" style="display: contents;">
-								<Button
-									variant="ghost"
-									onclick={() => handleSelectSession(session)}
-								>
+								<Button variant="ghost" onclick={() => handleSelectSession(session)}>
 									<div class="session-picker__session-label">
 										{sessionDisplayLabel(session)}
 										{#if session.is_current}
@@ -257,20 +264,15 @@
 								<div class="session-picker__context-menu">
 									<!-- Wrapper span for context item Button override. -->
 									<span class="session-picker__context-item-wrap" style="display: contents;">
-										<Button
-											variant="ghost"
-											onclick={(e) => startRename(session, e)}
-										>
-											Rename
-										</Button>
+										<Button variant="ghost" onclick={(e) => startRename(session, e)}>Rename</Button>
 									</span>
 									{#if !session.is_current}
 										<!-- Danger item gets its own wrapper for color override. -->
-										<span class="session-picker__context-item-wrap session-picker__context-item-danger-wrap" style="display: contents;">
-											<Button
-												variant="ghost"
-												onclick={(e) => handleDelete(session, e)}
-											>
+										<span
+											class="session-picker__context-item-wrap session-picker__context-item-danger-wrap"
+											style="display: contents;"
+										>
+											<Button variant="ghost" onclick={(e) => handleDelete(session, e)}>
 												Delete
 											</Button>
 										</span>

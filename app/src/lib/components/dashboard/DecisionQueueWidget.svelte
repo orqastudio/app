@@ -1,5 +1,18 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction, Stack, HStack, Caption, Text, Button } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardAction,
+		Stack,
+		HStack,
+		Caption,
+		Text,
+		Button,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
@@ -80,7 +93,7 @@
 
 	/** Status sort index derived from the project status order. Lower index = higher priority. */
 	const statusOrder = $derived(
-		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i]))
+		Object.fromEntries((projectStore.projectSettings?.statuses ?? []).map((s, i) => [s.key, i])),
 	);
 
 	const epicEntries = $derived.by((): EpicEntry[] => {
@@ -99,11 +112,7 @@
 
 		for (const node of artifactGraphSDK.byType("epic")) {
 			const status = node.status ?? "";
-			if (
-				status !== "active" &&
-				status !== "ready" &&
-				status !== "prioritised"
-			) continue;
+			if (status !== "active" && status !== "ready" && status !== "prioritised") continue;
 
 			const tasks = tasksByEpic.get(node.id) ?? [];
 			const taskTotal = tasks.length;
@@ -184,80 +193,80 @@
 		<CardContent>
 			<!-- Fixed-height scroll area for the queue content — 280px matches card layout budget -->
 			<div style="height: 280px; overflow-y: auto; padding: 0 0.75rem 0.75rem;">
-			{#if activeTab === "actions"}
-				<!-- ---------------------------------------------------------- -->
-				<!-- Actions tab: all artifacts needing attention               -->
-				<!-- ---------------------------------------------------------- -->
-				{#if pendingActions.length === 0}
-					<Panel padding="normal">
-					<HStack gap={2}>
-						<Icon name="check-circle-2" size="md" />
-						<Text variant="body-muted">No pending actions — everything is moving</Text>
-					</HStack>
-					</Panel>
-				{:else}
-					<Stack gap={1}>
-						{#each pendingActions as action (action.id)}
-							<Panel padding="tight">
+				{#if activeTab === "actions"}
+					<!-- ---------------------------------------------------------- -->
+					<!-- Actions tab: all artifacts needing attention               -->
+					<!-- ---------------------------------------------------------- -->
+					{#if pendingActions.length === 0}
+						<Panel padding="normal">
 							<HStack gap={2}>
-								<Stack gap={0} flex={1}>
-									<Text variant="caption-strong" truncate>{action.action}</Text>
-									<Caption truncate>{action.title}</Caption>
-								</Stack>
-								<div class="shrink-0">
-									<ArtifactLink id={action.id} displayLabel={action.id} />
-								</div>
+								<Icon name="check-circle-2" size="md" />
+								<Text variant="body-muted">No pending actions — everything is moving</Text>
 							</HStack>
-							</Panel>
-						{/each}
-					</Stack>
-				{/if}
-			{:else}
-				<!-- ---------------------------------------------------------- -->
-				<!-- Epics tab: in-progress + next ready epics                  -->
-				<!-- ---------------------------------------------------------- -->
-				{#if epicEntries.length === 0}
-					<Panel padding="normal">
-					<HStack gap={2}>
-						<Icon name="map" size="md" />
-						<Text variant="body-muted">No active or ready epics</Text>
-					</HStack>
-					</Panel>
+						</Panel>
+					{:else}
+						<Stack gap={1}>
+							{#each pendingActions as action (action.id)}
+								<Panel padding="tight">
+									<HStack gap={2}>
+										<Stack gap={0} flex={1}>
+											<Text variant="caption-strong" truncate>{action.action}</Text>
+											<Caption truncate>{action.title}</Caption>
+										</Stack>
+										<div class="shrink-0">
+											<ArtifactLink id={action.id} displayLabel={action.id} />
+										</div>
+									</HStack>
+								</Panel>
+							{/each}
+						</Stack>
+					{/if}
 				{:else}
-					<Stack gap={1}>
-						{#each epicEntries as epic (epic.id)}
-							<Panel padding="tight">
+					<!-- ---------------------------------------------------------- -->
+					<!-- Epics tab: in-progress + next ready epics                  -->
+					<!-- ---------------------------------------------------------- -->
+					{#if epicEntries.length === 0}
+						<Panel padding="normal">
 							<HStack gap={2}>
-								<Stack gap={1} flex={1}>
-									<Text variant="caption-strong" truncate>{epic.title}</Text>
-									{#if epic.description}
-										<Caption truncate>{epic.description}</Caption>
-									{/if}
-									{#if epic.taskProgress !== null}
-										<HStack gap={1} align="center">
-											<div class="h-1 flex-1 rounded-full bg-muted overflow-hidden">
-												<div
-													class="h-full rounded-full bg-success transition-all"
-													style:width="{Math.round(epic.taskProgress * 100)}%"
-												></div>
-											</div>
-											<Caption variant="caption-tabular">{epic.taskDone}/{epic.taskTotal}</Caption>
-										</HStack>
-									{/if}
-								</Stack>
-								<div class="shrink-0">
-									<ArtifactLink id={epic.id} displayLabel={epic.id} />
-								</div>
+								<Icon name="map" size="md" />
+								<Text variant="body-muted">No active or ready epics</Text>
 							</HStack>
-							</Panel>
-						{/each}
-					</Stack>
+						</Panel>
+					{:else}
+						<Stack gap={1}>
+							{#each epicEntries as epic (epic.id)}
+								<Panel padding="tight">
+									<HStack gap={2}>
+										<Stack gap={1} flex={1}>
+											<Text variant="caption-strong" truncate>{epic.title}</Text>
+											{#if epic.description}
+												<Caption truncate>{epic.description}</Caption>
+											{/if}
+											{#if epic.taskProgress !== null}
+												<HStack gap={1} align="center">
+													<div class="bg-muted h-1 flex-1 overflow-hidden rounded-full">
+														<div
+															class="bg-success h-full rounded-full transition-all"
+															style:width="{Math.round(epic.taskProgress * 100)}%"
+														></div>
+													</div>
+													<Caption variant="caption-tabular"
+														>{epic.taskDone}/{epic.taskTotal}</Caption
+													>
+												</HStack>
+											{/if}
+										</Stack>
+										<div class="shrink-0">
+											<ArtifactLink id={epic.id} displayLabel={epic.id} />
+										</div>
+									</HStack>
+								</Panel>
+							{/each}
+						</Stack>
 
-					<Button variant="ghost" size="sm" onclick={openRoadmap}>
-						View roadmap
-					</Button>
+						<Button variant="ghost" size="sm" onclick={openRoadmap}>View roadmap</Button>
+					{/if}
 				{/if}
-			{/if}
 			</div>
 		</CardContent>
 	</CardRoot>

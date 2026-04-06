@@ -38,7 +38,6 @@ describe("HealthTrendWidget", () => {
 	it("renders nothing when fewer than 2 snapshots exist", async () => {
 		installMockStores({
 			artifactGraphSDK: {
-				...({} as any),
 				graph: { size: 5 },
 				loading: false,
 				error: null,
@@ -51,7 +50,7 @@ describe("HealthTrendWidget", () => {
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),
-			} as any,
+			},
 		});
 		const { container } = render(HealthTrendWidget);
 		await new Promise((r) => setTimeout(r, 10));
@@ -62,7 +61,6 @@ describe("HealthTrendWidget", () => {
 	it("renders Health Trends heading when 2+ snapshots exist", async () => {
 		installMockStores({
 			artifactGraphSDK: {
-				...({} as any),
 				graph: { size: 5 },
 				loading: false,
 				error: null,
@@ -71,14 +69,13 @@ describe("HealthTrendWidget", () => {
 				getTraceability: vi.fn(),
 				runIntegrityScan: vi.fn(),
 				storeHealthSnapshot: vi.fn(),
-				getHealthSnapshots: vi.fn().mockResolvedValue([
-					makeSnapshot({ error_count: 2 }),
-					makeSnapshot({ error_count: 1 }),
-				]),
+				getHealthSnapshots: vi
+					.fn()
+					.mockResolvedValue([makeSnapshot({ error_count: 2 }), makeSnapshot({ error_count: 1 })]),
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),
-			} as any,
+			},
 		});
 		render(HealthTrendWidget);
 		await waitFor(() => {
@@ -89,7 +86,6 @@ describe("HealthTrendWidget", () => {
 	it("renders sparkline labels: Errors, Warnings, Orphans, Broken Refs", async () => {
 		installMockStores({
 			artifactGraphSDK: {
-				...({} as any),
 				graph: { size: 10 },
 				loading: false,
 				error: null,
@@ -98,14 +94,26 @@ describe("HealthTrendWidget", () => {
 				getTraceability: vi.fn(),
 				runIntegrityScan: vi.fn(),
 				storeHealthSnapshot: vi.fn(),
-				getHealthSnapshots: vi.fn().mockResolvedValue([
-					makeSnapshot({ error_count: 3, warning_count: 1, orphan_count: 0, broken_ref_count: 2 }),
-					makeSnapshot({ error_count: 2, warning_count: 0, orphan_count: 1, broken_ref_count: 1 }),
-				]),
+				getHealthSnapshots: vi
+					.fn()
+					.mockResolvedValue([
+						makeSnapshot({
+							error_count: 3,
+							warning_count: 1,
+							orphan_count: 0,
+							broken_ref_count: 2,
+						}),
+						makeSnapshot({
+							error_count: 2,
+							warning_count: 0,
+							orphan_count: 1,
+							broken_ref_count: 1,
+						}),
+					]),
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),
-			} as any,
+			},
 		});
 		render(HealthTrendWidget);
 		await waitFor(() => {
@@ -119,7 +127,6 @@ describe("HealthTrendWidget", () => {
 	it("renders scan count text", async () => {
 		installMockStores({
 			artifactGraphSDK: {
-				...({} as any),
 				graph: { size: 10 },
 				loading: false,
 				error: null,
@@ -128,15 +135,13 @@ describe("HealthTrendWidget", () => {
 				getTraceability: vi.fn(),
 				runIntegrityScan: vi.fn(),
 				storeHealthSnapshot: vi.fn(),
-				getHealthSnapshots: vi.fn().mockResolvedValue([
-					makeSnapshot(),
-					makeSnapshot(),
-					makeSnapshot(),
-				]),
+				getHealthSnapshots: vi
+					.fn()
+					.mockResolvedValue([makeSnapshot(), makeSnapshot(), makeSnapshot()]),
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),
-			} as any,
+			},
 		});
 		render(HealthTrendWidget);
 		await waitFor(() => {

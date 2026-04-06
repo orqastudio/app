@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { Icon, HStack, Stack, Text, Caption } from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
-	import { CardRoot, CardHeader, CardTitle, CardContent, CardAction } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		CardAction,
+	} from "@orqastudio/svelte-components/pure";
 	import { Badge } from "@orqastudio/svelte-components/pure";
 	import { Button } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
@@ -79,7 +85,11 @@
 	});
 
 	/** Core plugin names to filter from all views. These are infrastructure, not user-facing. */
-	const CORE_PLUGIN_NAMES = new Set(["@orqastudio/plugin-core-framework", "core", "@orqastudio/core"]);
+	const CORE_PLUGIN_NAMES = new Set([
+		"@orqastudio/plugin-core-framework",
+		"core",
+		"@orqastudio/core",
+	]);
 
 	/**
 	 * Returns true if the plugin is the core framework plugin, which is hidden from the browser.
@@ -273,9 +283,7 @@
 		try {
 			// Apply aliases
 			for (const [key, resolution] of Object.entries(resolutions)) {
-				const isSchema = conflictDialog.conflicts.some(
-					(c) => c.key === key && c.type === "schema",
-				);
+				const isSchema = conflictDialog.conflicts.some((c) => c.key === key && c.type === "schema");
 				pluginRegistry.setAlias(
 					resolution.plugin,
 					isSchema ? "schema" : "relationship",
@@ -358,9 +366,12 @@
 		if (type === "installed") {
 			detailLoading = true;
 			try {
-				detailManifest = await pluginStore.getManifest(plugin.name) as PluginManifestData | null;
+				detailManifest = (await pluginStore.getManifest(plugin.name)) as PluginManifestData | null;
 			} catch (err) {
-				log.error("Failed to load plugin manifest for detail view", { pluginName: plugin.name, err });
+				log.error("Failed to load plugin manifest for detail view", {
+					pluginName: plugin.name,
+					err,
+				});
 				detailManifest = null;
 			} finally {
 				detailLoading = false;
@@ -418,11 +429,7 @@
 	{#if detailView}
 		<!-- Detail View -->
 		<Stack gap={3}>
-			<Button
-				variant="ghost"
-				size="sm"
-				onclick={closeDetail}
-			>
+			<Button variant="ghost" size="sm" onclick={closeDetail}>
 				<Icon name="arrow-left" size="sm" />
 				Back to {activeTab}
 			</Button>
@@ -465,25 +472,27 @@
 				</CardHeader>
 				<CardContent>
 					<Stack gap={2}>
-					<Text variant="caption" tone="muted">{detailView.plugin.description ?? "No description"}</Text>
-					<HStack gap={2} wrap>
-						{#if detailView.plugin.version}
-							<Caption tone="muted">v{detailView.plugin.version}</Caption>
-						{/if}
-						{#if detailView.plugin.repo}
-							<Caption tone="muted">{detailView.plugin.repo}</Caption>
-						{/if}
-						{#if detailView.plugin.source}
-							<Caption tone="muted">{detailView.plugin.source}</Caption>
-						{/if}
-					</HStack>
-					{#if detailView.plugin.capabilities?.length}
-						<HStack gap={1} wrap>
-							{#each detailView.plugin.capabilities as cap (cap)}
-								<Badge variant="outline" size="xs">{cap}</Badge>
-							{/each}
+						<Text variant="caption" tone="muted"
+							>{detailView.plugin.description ?? "No description"}</Text
+						>
+						<HStack gap={2} wrap>
+							{#if detailView.plugin.version}
+								<Caption tone="muted">v{detailView.plugin.version}</Caption>
+							{/if}
+							{#if detailView.plugin.repo}
+								<Caption tone="muted">{detailView.plugin.repo}</Caption>
+							{/if}
+							{#if detailView.plugin.source}
+								<Caption tone="muted">{detailView.plugin.source}</Caption>
+							{/if}
 						</HStack>
-					{/if}
+						{#if detailView.plugin.capabilities?.length}
+							<HStack gap={1} wrap>
+								{#each detailView.plugin.capabilities as cap (cap)}
+									<Badge variant="outline" size="xs">{cap}</Badge>
+								{/each}
+							</HStack>
+						{/if}
 					</Stack>
 				</CardContent>
 			</CardRoot>
@@ -491,9 +500,9 @@
 			<!-- Manifest details (installed plugins only) -->
 			{#if detailLoading}
 				<Panel padding="loose">
-				<HStack justify="center">
-					<LoadingSpinner size="md" />
-				</HStack>
+					<HStack justify="center">
+						<LoadingSpinner size="md" />
+					</HStack>
 				</Panel>
 			{:else if detailManifest}
 				{#if detailManifest.provides.schemas.length > 0}
@@ -524,7 +533,9 @@
 							<Stack gap={1}>
 								{#each detailManifest.provides.relationships as rel (rel.key)}
 									<Stack gap={0}>
-										<Caption variant="caption-strong">{rel.label} <Caption tone="muted">/ {rel.inverse}</Caption></Caption>
+										<Caption variant="caption-strong"
+											>{rel.label} <Caption tone="muted">/ {rel.inverse}</Caption></Caption
+										>
 										<Caption tone="muted">{rel.description}</Caption>
 									</Stack>
 								{/each}
@@ -599,15 +610,15 @@
 		<!-- Tab bar -->
 		<Panel padding="tight" border="all" rounded="md">
 			<HStack gap={1}>
-			{#each (["installed", "official", "community", "groups"] as Tab[]) as tab (tab)}
-				<Button
-					variant={activeTab === tab ? "default" : "ghost"}
-					size="sm"
-					onclick={() => handleTabChange(tab)}
-				>
-					{tab.charAt(0).toUpperCase() + tab.slice(1)}
-				</Button>
-			{/each}
+				{#each ["installed", "official", "community", "groups"] as Tab[] as tab (tab)}
+					<Button
+						variant={activeTab === tab ? "default" : "ghost"}
+						size="sm"
+						onclick={() => handleTabChange(tab)}
+					>
+						{tab.charAt(0).toUpperCase() + tab.slice(1)}
+					</Button>
+				{/each}
 			</HStack>
 		</Panel>
 
@@ -620,7 +631,9 @@
 							<HStack justify="between">
 								<Stack gap={0}>
 									<Caption variant="caption-strong">{displayName(plugin)}</Caption>
-									<Caption tone="muted">v{plugin.version ?? "?"} — {plugin.source ?? "local"}</Caption>
+									<Caption tone="muted"
+										>v{plugin.version ?? "?"} — {plugin.source ?? "local"}</Caption
+									>
 									{#if plugin.description}
 										<Caption tone="muted" lineClamp={1}>{plugin.description}</Caption>
 									{/if}
@@ -638,13 +651,13 @@
 				{/each}
 			</Stack>
 
-		<!-- Official tab -->
+			<!-- Official tab -->
 		{:else if activeTab === "official"}
 			{#if pluginStore.loadingRegistry}
 				<Panel padding="loose">
-				<HStack justify="center">
-					<LoadingSpinner size="md" />
-				</HStack>
+					<HStack justify="center">
+						<LoadingSpinner size="md" />
+					</HStack>
 				</Panel>
 			{:else}
 				<Stack gap={2}>
@@ -675,7 +688,10 @@
 												variant="default"
 												size="sm"
 												disabled={installing !== null}
-												onclick={(e: MouseEvent) => { e.stopPropagation(); installFromRegistry(plugin); }}
+												onclick={(e: MouseEvent) => {
+													e.stopPropagation();
+													installFromRegistry(plugin);
+												}}
 											>
 												{#if installing === plugin.name}
 													<LoadingSpinner size="sm" />
@@ -695,13 +711,13 @@
 				</Stack>
 			{/if}
 
-		<!-- Community tab -->
+			<!-- Community tab -->
 		{:else if activeTab === "community"}
 			{#if pluginStore.loadingRegistry}
 				<Panel padding="loose">
-				<HStack justify="center">
-					<LoadingSpinner size="md" />
-				</HStack>
+					<HStack justify="center">
+						<LoadingSpinner size="md" />
+					</HStack>
 				</Panel>
 			{:else}
 				<Stack gap={2}>
@@ -726,7 +742,10 @@
 												variant="outline"
 												size="sm"
 												disabled={installing !== null}
-												onclick={(e: MouseEvent) => { e.stopPropagation(); installFromRegistry(plugin); }}
+												onclick={(e: MouseEvent) => {
+													e.stopPropagation();
+													installFromRegistry(plugin);
+												}}
 											>
 												{#if installing === plugin.name}
 													<LoadingSpinner size="sm" />
@@ -745,16 +764,18 @@
 					{/each}
 				</Stack>
 			{/if}
-		<!-- Groups tab — plugin bundles derived from registry categories -->
+			<!-- Groups tab — plugin bundles derived from registry categories -->
 		{:else if activeTab === "groups"}
 			{#if pluginStore.loadingRegistry}
 				<Panel padding="loose">
-				<HStack justify="center">
-					<LoadingSpinner size="md" />
-				</HStack>
+					<HStack justify="center">
+						<LoadingSpinner size="md" />
+					</HStack>
 				</Panel>
 			{:else if bundles.length === 0}
-				<Caption tone="muted" block>No plugin bundles available. Check the Official tab for individual plugins.</Caption>
+				<Caption tone="muted" block
+					>No plugin bundles available. Check the Official tab for individual plugins.</Caption
+				>
 			{:else}
 				<Stack gap={2}>
 					{#each bundles as bundle (bundle.key)}
@@ -788,20 +809,22 @@
 							</CardHeader>
 							<CardContent>
 								<Stack gap={2}>
-								<Caption tone="muted">{bundle.description}</Caption>
-								<Stack gap={1}>
-									{#each bundle.plugins as plugin (plugin.name)}
-										<HStack justify="between">
-											<HStack gap={1}>
-												<Icon name={plugin.icon ?? "puzzle"} size="sm" />
-												<Caption>{plugin.displayName ?? plugin.display_name ?? plugin.name}</Caption>
+									<Caption tone="muted">{bundle.description}</Caption>
+									<Stack gap={1}>
+										{#each bundle.plugins as plugin (plugin.name)}
+											<HStack justify="between">
+												<HStack gap={1}>
+													<Icon name={plugin.icon ?? "puzzle"} size="sm" />
+													<Caption
+														>{plugin.displayName ?? plugin.display_name ?? plugin.name}</Caption
+													>
+												</HStack>
+												{#if isInstalled(plugin.name)}
+													<Badge variant="outline" size="xs">Installed</Badge>
+												{/if}
 											</HStack>
-											{#if isInstalled(plugin.name)}
-												<Badge variant="outline" size="xs">Installed</Badge>
-											{/if}
-										</HStack>
-									{/each}
-								</Stack>
+										{/each}
+									</Stack>
 								</Stack>
 							</CardContent>
 						</CardRoot>
@@ -816,12 +839,17 @@
 				<CardTitle>Manual Install</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<Caption tone="muted">Enter a GitHub repo (owner/repo), a specific version (owner/repo@v0.2.0), or a local filesystem path.</Caption>
+				<Caption tone="muted"
+					>Enter a GitHub repo (owner/repo), a specific version (owner/repo@v0.2.0), or a local
+					filesystem path.</Caption
+				>
 				<HStack gap={2}>
 					<Input
 						placeholder="orqastudio/orqastudio-plugin-claude"
 						bind:value={manualSource}
-						onkeydown={(e: KeyboardEvent) => { if (e.key === "Enter") installManual(); }}
+						onkeydown={(e: KeyboardEvent) => {
+							if (e.key === "Enter") installManual();
+						}}
 					/>
 					<Button
 						variant="default"

@@ -6,6 +6,7 @@ import type { RelationshipType } from "./plugin.js";
  * This replaces the hardcoded INVERSE_MAP constant. Both platform relationships
  * and project/plugin relationships use the same `RelationshipType` shape, so
  * callers merge them before calling this function.
+ * @param relationships
  */
 export function buildInverseMap(
 	relationships: ReadonlyArray<Pick<RelationshipType, "key" | "inverse">>,
@@ -25,6 +26,9 @@ export function buildInverseMap(
  * Usage: `hasSemanticRole(semantics, "evolves-into", "lineage")` → true
  * This allows checks to query intent ("is this a lineage relationship?")
  * without hardcoding specific relationship keys.
+ * @param semantics
+ * @param relationshipKey
+ * @param semanticName
  */
 export function hasSemantic(
 	semantics: Readonly<Record<string, { readonly keys: readonly string[] }>>,
@@ -38,6 +42,8 @@ export function hasSemantic(
  * Get all relationship keys for a given semantic category.
  *
  * Usage: `keysForSemantic(semantics, "lineage")` → ["evolves-into", "evolves-from", "merged-into", "merged-from"]
+ * @param semantics
+ * @param semanticName
  */
 export function keysForSemantic(
 	semantics: Readonly<Record<string, { readonly keys: readonly string[] }>>,

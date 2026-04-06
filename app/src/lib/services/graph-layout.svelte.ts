@@ -24,101 +24,99 @@ import { assertNever } from "@orqastudio/types";
 const log = logger("graph-layout-worker");
 
 class GraphLayoutService {
-    /** Computed node positions from the most recent layout run. */
-    positions = $state<Array<{ id: string; x: number; y: number }>>([]);
+	/** Computed node positions from the most recent layout run. */
+	positions = $state<Array<{ id: string; x: number; y: number }>>([]);
 
-    /** True while the worker is computing a layout. */
-    layoutRunning = $state(false);
+	/** True while the worker is computing a layout. */
+	layoutRunning = $state(false);
 
-    /** Rough layout progress, 0–100. */
-    layoutProgress = $state(0);
+	/** Rough layout progress, 0–100. */
+	layoutProgress = $state(0);
 
-    private worker: Worker;
+	private worker: Worker;
 
-    /**
-     * Element count from the last `requestLayout` call that triggered a run.
-     * Used for cache invalidation — if the count is the same and we already
-     * have positions, skip the expensive layout.
-     */
-    private lastElementCount = 0;
+	/**
+	 * Element count from the last `requestLayout` call that triggered a run.
+	 * Used for cache invalidation — if the count is the same and we already
+	 * have positions, skip the expensive layout.
+	 */
+	private lastElementCount = 0;
 
-    constructor() {
-        // Vite handles Worker bundling when using `new URL(..., import.meta.url)`.
-        this.worker = new Worker(
-            new URL("../workers/graph-layout.worker.ts", import.meta.url),
-            { type: "module" },
-        );
+	constructor() {
+		// Vite handles Worker bundling when using `new URL(..., import.meta.url)`.
+		this.worker = new Worker(new URL("../workers/graph-layout.worker.ts", import.meta.url), {
+			type: "module",
+		});
 
-        this.worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
-            const msg = event.data;
+		this.worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
+			const msg = event.data;
 
-            switch (msg.type) {
-                case "positions":
-                    this.positions = [...msg.positions];
-                    this.layoutRunning = false;
-                    this.layoutProgress = 100;
-                    break;
-                case "progress":
-                    this.layoutProgress = msg.percent;
-                    break;
-                case "error":
-                    log.error(msg.message);
-                    this.layoutRunning = false;
-                    this.layoutProgress = 0;
-                    break;
-                default:
-                    assertNever(msg);
-            }
-        };
+			switch (msg.type) {
+				case "positions":
+					this.positions = [...msg.positions];
+					this.layoutRunning = false;
+					this.layoutProgress = 100;
+					break;
+				case "progress":
+					this.layoutProgress = msg.percent;
+					break;
+				case "error":
+					log.error(msg.message);
+					this.layoutRunning = false;
+					this.layoutProgress = 0;
+					break;
+				default:
+					assertNever(msg);
+			}
+		};
 
-        this.worker.onerror = (err) => {
-            log.error("worker uncaught error", err);
-            this.layoutRunning = false;
-            this.layoutProgress = 0;
-        };
-    }
+		this.worker.onerror = (err) => {
+			log.error("worker uncaught error", err);
+			this.layoutRunning = false;
+			this.layoutProgress = 0;
+		};
+	}
 
-    /**
-     * Request a layout computation for the given element set.
-     *
-     * If the node count matches the previous run AND we already have cached
-     * positions, the request is a no-op (positions are still valid).
-     *
-     * @param elements Cytoscape element definitions (nodes + edges).
-     */
-    requestLayout(elements: cytoscape.ElementDefinition[]): void {
-        const nodeCount = elements.filter((e) => e.group === "nodes").length;
+	/**
+	 * Request a layout computation for the given element set.
+	 *
+	 * If the node count matches the previous run AND we already have cached
+	 * positions, the request is a no-op (positions are still valid).
+	 * @param elements Cytoscape element definitions (nodes + edges).
+	 */
+	requestLayout(elements: cytoscape.ElementDefinition[]): void {
+		const nodeCount = elements.filter((e) => e.group === "nodes").length;
 
-        // Cache hit — skip if node count unchanged and positions exist.
-        if (nodeCount === this.lastElementCount && this.positions.length > 0) {
-            return;
-        }
+		// Cache hit — skip if node count unchanged and positions exist.
+		if (nodeCount === this.lastElementCount && this.positions.length > 0) {
+			return;
+		}
 
-        this.lastElementCount = nodeCount;
-        this.layoutRunning = true;
-        this.layoutProgress = 0;
+		this.lastElementCount = nodeCount;
+		this.layoutRunning = true;
+		this.layoutProgress = 0;
 
-        // Strip reactive proxies before transferring to the worker — plain
-        // objects cross the structured-clone boundary cleanly.
-        const plainElements = elements.map((el) => ({
-            group: el.group ?? "nodes",
-            data: { ...(el.data ?? {}) },
-        }));
+		// Strip reactive proxies before transferring to the worker — plain
+		// objects cross the structured-clone boundary cleanly.
+		const plainElements = elements.map((el) => ({
+			group: el.group ?? "nodes",
+			data: { ...(el.data ?? {}) },
+		}));
 
-        const request: WorkerRequest = { type: "layout", elements: plainElements };
-        this.worker.postMessage(request);
-    }
+		const request: WorkerRequest = { type: "layout", elements: plainElements };
+		this.worker.postMessage(request);
+	}
 
-    /**
-     * Invalidate the position cache so the next `requestLayout` call always
-     * triggers a fresh layout, even if the node count is the same.
-     *
-     * Called by `artifactGraphSDK._fetchAll()` when the graph refreshes.
-     */
-    invalidate(): void {
-        this.lastElementCount = 0;
-        this.positions = [];
-    }
+	/**
+	 * Invalidate the position cache so the next `requestLayout` call always
+	 * triggers a fresh layout, even if the node count is the same.
+	 *
+	 * Called by `artifactGraphSDK._fetchAll()` when the graph refreshes.
+	 */
+	invalidate(): void {
+		this.lastElementCount = 0;
+		this.positions = [];
+	}
 }
 
 // ---------------------------------------------------------------------------

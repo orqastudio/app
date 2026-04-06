@@ -1,11 +1,26 @@
 <script lang="ts">
-	import { Icon,
-		DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent,
+	import {
+		Icon,
+		DropdownMenuRoot,
+		DropdownMenuTrigger,
+		DropdownMenuItem,
+		DropdownMenuContent,
 		DropdownMenuSeparator,
-		DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
-		PopoverRoot as Popover, PopoverTrigger, PopoverContent,
-		Button, HStack, Stack, Box, Caption, Panel, SectionFooter,
-		statusIconName, resolveIcon,
+		DropdownMenuLabel,
+		DropdownMenuRadioGroup,
+		DropdownMenuRadioItem,
+		PopoverRoot as Popover,
+		PopoverTrigger,
+		PopoverContent,
+		Button,
+		HStack,
+		Stack,
+		Box,
+		Caption,
+		Panel,
+		SectionFooter,
+		statusIconName,
+		resolveIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { countFieldValues } from "$lib/utils/artifact-view";
 	import type {
@@ -41,22 +56,23 @@
 	} = $props();
 
 	// Derive whether filters are active (any non-empty filter array)
-	const hasActiveFilters = $derived(
-		Object.values(currentFilters).some((v) => v.length > 0),
-	);
+	const hasActiveFilters = $derived(Object.values(currentFilters).some((v) => v.length > 0));
 
 	// Derive default sort from navigation config
 	const defaultSort = $derived(
 		navigationConfig?.defaults?.sort ?? { field: "title", direction: "asc" },
 	);
 	const isNonDefaultSort = $derived(
-		currentSort.field !== defaultSort.field ||
-			currentSort.direction !== defaultSort.direction,
+		currentSort.field !== defaultSort.field || currentSort.direction !== defaultSort.direction,
 	);
 
 	// The radio group value encodes "field:direction"
 	const sortValue = $derived(`${currentSort.field}:${currentSort.direction}`);
 
+	/**
+	 *
+	 * @param value
+	 */
 	function setSortFromValue(value: string) {
 		const [field, direction] = value.split(":");
 		if (field && direction) {
@@ -64,22 +80,36 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param name
+	 */
 	function humanizeField(name: string): string {
-		return name
-			.replace(/[-_]/g, " ")
-			.replace(/\b\w/g, (c) => c.toUpperCase());
+		return name.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
+	/**
+	 *
+	 * @param value
+	 */
 	function humanizeValue(value: string): string {
-		return value
-			.replace(/[-_]/g, " ")
-			.replace(/\b\w/g, (c) => c.toUpperCase());
+		return value.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
+	/**
+	 *
+	 * @param field
+	 * @param value
+	 */
 	function isFilterActive(field: string, value: string): boolean {
 		return (currentFilters[field] ?? []).includes(value);
 	}
 
+	/**
+	 *
+	 * @param field
+	 * @param value
+	 */
 	function toggleFilter(field: string, value: string) {
 		const current = currentFilters[field] ?? [];
 		const updated: readonly string[] = current.includes(value)
@@ -88,10 +118,20 @@
 		onFilterChange({ ...currentFilters, [field]: updated } as Record<string, readonly string[]>);
 	}
 
+	/**
+	 *
+	 * @param field
+	 */
 	function clearFieldFilters(field: string) {
-		onFilterChange({ ...currentFilters, [field]: [] as readonly string[] } as Record<string, readonly string[]>);
+		onFilterChange({ ...currentFilters, [field]: [] as readonly string[] } as Record<
+			string,
+			readonly string[]
+		>);
 	}
 
+	/**
+	 *
+	 */
 	function clearAllFilters() {
 		const cleared: Record<string, readonly string[]> = {};
 		for (const key of Object.keys(currentFilters)) {
@@ -109,33 +149,31 @@
 	const sortOptions = $derived<SortOption[]>([
 		{ label: "Title (A-Z)", value: "title:asc" },
 		{ label: "Title (Z-A)", value: "title:desc" },
-		...sortableFields.filter((f) => f.name !== "title").flatMap((f) => {
-			const human = humanizeField(f.name);
-			if (f.field_type === "date" || f.field_type === "datetime") {
+		...sortableFields
+			.filter((f) => f.name !== "title")
+			.flatMap((f) => {
+				const human = humanizeField(f.name);
+				if (f.field_type === "date" || f.field_type === "datetime") {
+					return [
+						{ label: `${human} (newest)`, value: `${f.name}:desc` },
+						{ label: `${human} (oldest)`, value: `${f.name}:asc` },
+					];
+				}
 				return [
-					{ label: `${human} (newest)`, value: `${f.name}:desc` },
-					{ label: `${human} (oldest)`, value: `${f.name}:asc` },
+					{ label: `${human} (A-Z)`, value: `${f.name}:asc` },
+					{ label: `${human} (Z-A)`, value: `${f.name}:desc` },
 				];
-			}
-			return [
-				{ label: `${human} (A-Z)`, value: `${f.name}:asc` },
-				{ label: `${human} (Z-A)`, value: `${f.name}:desc` },
-			];
-		}),
+			}),
 	]);
 </script>
 
-<div class="flex h-10 items-center justify-end gap-1 border-b border-border px-2">
+<div class="border-border flex h-10 items-center justify-end gap-1 border-b px-2">
 	<!-- Sort dropdown -->
 	<Box position="relative">
 		<DropdownMenuRoot>
 			<DropdownMenuTrigger>
 				{#snippet child({ props })}
-					<Button
-						{...props}
-						variant="ghost"
-						size="icon-sm"
-					>
+					<Button {...props} variant="ghost" size="icon-sm">
 						<Icon name="arrow-up-down" size="sm" />
 					</Button>
 				{/snippet}
@@ -180,7 +218,7 @@
 		</DropdownMenuRoot>
 		{#if isNonDefaultSort}
 			<span
-				class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
+				class="bg-primary pointer-events-none absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full"
 			></span>
 		{/if}
 	</Box>
@@ -191,11 +229,7 @@
 			<Popover>
 				<PopoverTrigger>
 					{#snippet child({ props })}
-						<Button
-							{...props}
-							variant="ghost"
-							size="icon-sm"
-						>
+						<Button {...props} variant="ghost" size="icon-sm">
 							<Icon name="filter" size="sm" />
 						</Button>
 					{/snippet}
@@ -210,11 +244,7 @@
 										{humanizeField(field.name)}
 									</Caption>
 									{#if (currentFilters[field.name] ?? []).length > 0}
-										<Button
-											variant="ghost"
-											size="sm"
-											onclick={() => clearFieldFilters(field.name)}
-										>
+										<Button variant="ghost" size="sm" onclick={() => clearFieldFilters(field.name)}>
 											Clear
 										</Button>
 									{/if}
@@ -223,10 +253,7 @@
 									{#each field.values as value (value)}
 										{@const active = isFilterActive(field.name, value)}
 										{@const count = counts[value] ?? 0}
-										<Button
-											variant="ghost"
-											onclick={() => toggleFilter(field.name, value)}
-										>
+										<Button variant="ghost" onclick={() => toggleFilter(field.name, value)}>
 											<!-- Checkbox indicator -->
 											<span
 												class="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm border {active
@@ -240,7 +267,7 @@
 											<!-- Status icon if this is a status field -->
 											{#if field.name === "status"}
 												{@const StatusIcon = resolveIcon(statusIconName(value))}
-												<StatusIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+												<StatusIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
 											{/if}
 											<span class="flex-1 capitalize">{humanizeValue(value)}</span>
 											{#if count > 0}
@@ -254,12 +281,7 @@
 
 						{#if hasActiveFilters}
 							<SectionFooter variant="compact">
-								<Button
-									variant="ghost"
-									onclick={clearAllFilters}
-								>
-									Clear all filters
-								</Button>
+								<Button variant="ghost" onclick={clearAllFilters}>Clear all filters</Button>
 							</SectionFooter>
 						{/if}
 					</Stack>
@@ -267,7 +289,7 @@
 			</Popover>
 			{#if hasActiveFilters}
 				<span
-					class="pointer-events-none absolute right-0.5 top-0.5 h-1.5 w-1.5 rounded-full bg-primary"
+					class="bg-primary pointer-events-none absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full"
 				></span>
 			{/if}
 		</Box>

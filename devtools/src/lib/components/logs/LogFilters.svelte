@@ -15,6 +15,7 @@
 		PopoverTrigger,
 		PopoverContent,
 	} from "@orqastudio/svelte-components/pure";
+	import { SvelteSet } from "svelte/reactivity";
 	import {
 		filters,
 		hasActiveFilters as getHasActiveFilters,
@@ -37,8 +38,13 @@
 	// Toggle a value in a Set stored on the filters object. Svelte 5 $state
 	// tracks object identity; we must reassign to trigger reactivity when the
 	// Set contents change.
+	/**
+	 * Toggle a value in a reactive set, returning a new set with the value added or removed.
+	 * @param set
+	 * @param value
+	 */
 	function toggleSet<T>(set: Set<T>, value: T): Set<T> {
-		const next = new Set(set);
+		const next = new SvelteSet(set);
 		if (next.has(value)) {
 			next.delete(value);
 		} else {
@@ -47,24 +53,36 @@
 		return next;
 	}
 
-	// Toggle a source in the active source filter set.
+	/**
+	 * Toggle a source in the active source filter set.
+	 * @param source
+	 */
 	function toggleSource(source: LogEvent["source"]): void {
 		filters.sources = toggleSet(filters.sources, source);
 	}
 
-	// Toggle a level in the active level filter set.
+	/**
+	 * Toggle a level in the active level filter set.
+	 * @param level
+	 */
 	function toggleLevel(level: LogEvent["level"]): void {
 		filters.levels = toggleSet(filters.levels, level);
 	}
 
-	// Toggle a category in the active category filter set.
+	/**
+	 * Toggle a category in the active category filter set.
+	 * @param category
+	 */
 	function toggleCategory(category: string): void {
 		filters.categories = toggleSet(filters.categories, category);
 	}
 
 	// Badge variant for the level indicators in the checkbox group.
 	// Matches the variants used in LogRow so the filter labels mirror the table.
-	const LEVEL_BADGE_VARIANT: Record<string, "secondary" | "destructive" | "outline" | "default" | "warning"> = {
+	const LEVEL_BADGE_VARIANT: Record<
+		string,
+		"secondary" | "destructive" | "outline" | "default" | "warning"
+	> = {
 		Debug: "outline",
 		Info: "default",
 		Warn: "warning",
@@ -75,22 +93,13 @@
 
 <!-- Filter bar: compact single-line strip above the log table.
      Scoped CSS class provides layout; no Tailwind utility classes used. -->
-<div
-	class="log-filters"
-	role="toolbar"
-	aria-label="Log filters"
->
+<div class="log-filters" role="toolbar" aria-label="Log filters">
 	<!-- Source multi-select dropdown: PopoverRoot/Trigger/Content replace the raw dropdown divs. -->
 	<PopoverRoot bind:open={sourceOpen}>
 		<PopoverTrigger>
 			<!-- Wrapper span with display:contents provides :global() hook for Button overrides. -->
 			<span class="log-filters__trigger-wrap" style="display: contents;">
-				<Button
-					variant="outline"
-					size="sm"
-					aria-haspopup="listbox"
-					aria-expanded={sourceOpen}
-				>
+				<Button variant="outline" size="sm" aria-haspopup="listbox" aria-expanded={sourceOpen}>
 					Source
 					{#if filters.sources.size > 0}
 						<!-- Wrapper span for Badge count indicator. -->
@@ -124,11 +133,7 @@
 							<!-- Checkbox component provides the visual indicator; pointer-events none
 							     via scoped CSS lets the Button's onclick handle the toggle. -->
 							<span class="log-filters__checkbox-wrap">
-								<Checkbox
-									checked={filters.sources.has(source)}
-									aria-hidden="true"
-									tabindex={-1}
-								/>
+								<Checkbox checked={filters.sources.has(source)} aria-hidden="true" tabindex={-1} />
 							</span>
 							<Caption>{source}</Caption>
 						</Button>
@@ -140,23 +145,14 @@
 
 	<!-- Level checkbox group (inline, no dropdown needed — only 5 values).
 	     HStack provides flex-row layout; scoped CSS sets gap/shrink. -->
-	<HStack
-		gap={1}
-		role="group"
-		aria-label="Level filter"
-	>
+	<HStack gap={1} role="group" aria-label="Level filter">
 		{#each ALL_LEVELS as level (level)}
 			<!-- Label accepts onclick via restProps for the toggle action.
 			     Wrapper span provides :global() hook for Badge overrides. -->
 			<Label onclick={() => toggleLevel(level)}>
-				<Checkbox
-					checked={filters.levels.has(level)}
-					aria-label={level}
-				/>
+				<Checkbox checked={filters.levels.has(level)} aria-label={level} />
 				<span class="log-filters__level-badge-wrap" style="display: contents;">
-					<Badge
-						variant={LEVEL_BADGE_VARIANT[level] ?? "outline"}
-					>
+					<Badge variant={LEVEL_BADGE_VARIANT[level] ?? "outline"}>
 						{level}
 					</Badge>
 				</span>
@@ -237,12 +233,7 @@
 	<!-- Clear all filters button — only visible when a filter is active. -->
 	{#if hasActiveFilters}
 		<span class="log-filters__clear-wrap" style="display: contents;">
-			<Button
-				variant="outline"
-				size="sm"
-				onclick={clearFilters}
-				aria-label="Clear all filters"
-			>
+			<Button variant="outline" size="sm" onclick={clearFilters} aria-label="Clear all filters">
 				Clear filters
 			</Button>
 		</span>

@@ -1,10 +1,30 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
-	import { Button, Stack, HStack, Panel, Grid, Caption, SelectMenu } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		Stack,
+		HStack,
+		Panel,
+		Grid,
+		Caption,
+		SelectMenu,
+	} from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { ConfirmDialog as ConfirmDeleteDialog } from "@orqastudio/svelte-components/pure";
-	import type { ProjectSettings, DeliveryTypeConfig, DeliveryParentConfig } from "@orqastudio/types";
+	import type {
+		ProjectSettings,
+		DeliveryTypeConfig,
+		DeliveryParentConfig,
+	} from "@orqastudio/types";
 
 	interface Props {
 		settings: ProjectSettings;
@@ -26,6 +46,9 @@
 		localTypes = (props.settings.delivery?.types ?? []).map((t) => ({ ...t }));
 	});
 
+	/**
+	 *
+	 */
 	function buildSettings(): ProjectSettings {
 		return {
 			...props.settings,
@@ -36,15 +59,29 @@
 		};
 	}
 
+	/**
+	 *
+	 */
 	function save() {
 		props.onSave(buildSettings());
 	}
 
+	/**
+	 *
+	 * @param index
+	 * @param field
+	 * @param value
+	 */
 	function updateType(index: number, field: keyof DeliveryTypeConfig, value: string) {
 		localTypes = localTypes.map((t, i) => (i === index ? { ...t, [field]: value } : t));
 		save();
 	}
 
+	/**
+	 *
+	 * @param index
+	 * @param parentType
+	 */
 	function updateParentType(index: number, parentType: string) {
 		localTypes = localTypes.map((t, i) => {
 			if (i !== index) return t;
@@ -60,6 +97,11 @@
 		save();
 	}
 
+	/**
+	 *
+	 * @param index
+	 * @param parentRelationship
+	 */
 	function updateParentRelationship(index: number, parentRelationship: string) {
 		localTypes = localTypes.map((t, i) => {
 			if (i !== index) return t;
@@ -72,6 +114,11 @@
 		save();
 	}
 
+	/**
+	 *
+	 * @param index
+	 * @param gateField
+	 */
 	function updateGateField(index: number, gateField: string) {
 		localTypes = localTypes.map((t, i) => {
 			if (i !== index) return t;
@@ -80,6 +127,9 @@
 		save();
 	}
 
+	/**
+	 *
+	 */
 	function addType() {
 		const newType: DeliveryTypeConfig = {
 			key: `type_${Date.now()}`,
@@ -90,11 +140,18 @@
 		save();
 	}
 
+	/**
+	 *
+	 * @param index
+	 */
 	function requestDelete(index: number) {
 		deleteIndex = index;
 		confirmDeleteOpen = true;
 	}
 
+	/**
+	 *
+	 */
 	function confirmDelete() {
 		if (deleteIndex !== null) {
 			localTypes = localTypes.filter((_, i) => i !== deleteIndex);
@@ -122,11 +179,7 @@
 					<Stack gap={3}>
 						<HStack justify="between">
 							<Caption variant="caption-mono" tone="muted">{type.key}</Caption>
-							<Button
-								variant="ghost"
-								size="sm"
-								onclick={() => requestDelete(index)}
-							>
+							<Button variant="ghost" size="sm" onclick={() => requestDelete(index)}>
 								<Icon name="trash-2" size="sm" />
 							</Button>
 						</HStack>
@@ -153,10 +206,14 @@
 						<Grid cols={2} gap={3}>
 							<FormGroup label="Parent type" for="parent-type-{index}">
 								<SelectMenu
-									items={[{ label: "None", value: "" }, ...typeKeyOptions.filter((o) => o.value !== type.key)]}
+									items={[
+										{ label: "None", value: "" },
+										...typeKeyOptions.filter((o) => o.value !== type.key),
+									]}
 									selected={type.parent?.type ?? ""}
 									onSelect={(v) => updateParentType(index, v)}
-									triggerLabel={typeKeyOptions.find((o) => o.value === (type.parent?.type ?? ""))?.label ?? "None"}
+									triggerLabel={typeKeyOptions.find((o) => o.value === (type.parent?.type ?? ""))
+										?.label ?? "None"}
 								/>
 							</FormGroup>
 							<FormGroup label="Parent relationship" for="parent-rel-{index}">

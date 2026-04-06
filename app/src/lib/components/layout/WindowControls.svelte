@@ -14,10 +14,12 @@
 			});
 	});
 
+	/** Minimize the current window. */
 	async function minimize() {
 		await getCurrentWindow().minimize();
 	}
 
+	/** Toggle the current window between maximized and restored states. */
 	async function toggleMaximize() {
 		const win = getCurrentWindow();
 		if (isMaximized) {
@@ -28,6 +30,7 @@
 		isMaximized = !isMaximized;
 	}
 
+	/** Close the current window. */
 	async function close() {
 		await getCurrentWindow().close();
 	}
@@ -37,7 +40,12 @@
 	<Button variant="ghost" size="icon-sm" onclick={minimize} aria-label="Minimize">
 		<Icon name="minus" size="sm" />
 	</Button>
-	<Button variant="ghost" size="icon-sm" onclick={toggleMaximize} aria-label={isMaximized ? "Restore" : "Maximize"}>
+	<Button
+		variant="ghost"
+		size="icon-sm"
+		onclick={toggleMaximize}
+		aria-label={isMaximized ? "Restore" : "Maximize"}
+	>
 		{#if isMaximized}
 			<Icon name="copy" size="xs" />
 		{:else}

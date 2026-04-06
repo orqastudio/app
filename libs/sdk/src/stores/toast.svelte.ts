@@ -19,6 +19,9 @@ export interface Toast {
 const DEFAULT_DURATION_MS = 4000;
 const MAX_TOASTS = 10;
 
+/**
+ *
+ */
 export class ToastStore {
 	toasts = $state<Toast[]>([]);
 	private nextId = 0;
@@ -28,6 +31,12 @@ export class ToastStore {
 		return `toast-${this.nextId++}-${Date.now()}`;
 	}
 
+	/**
+	 *
+	 * @param message
+	 * @param type
+	 * @param duration
+	 */
 	add(message: string, type: ToastType, duration: number = DEFAULT_DURATION_MS): string {
 		const id = this.generateId();
 		const entry: Toast = { id, message, type, duration };
@@ -44,6 +53,10 @@ export class ToastStore {
 		return id;
 	}
 
+	/**
+	 *
+	 * @param id
+	 */
 	dismiss(id: string): void {
 		const timer = this.dismissTimers.get(id);
 		if (timer !== undefined) {
@@ -53,6 +66,9 @@ export class ToastStore {
 		this.toasts = this.toasts.filter((t) => t.id !== id);
 	}
 
+	/**
+	 *
+	 */
 	dismissAll(): void {
 		for (const timer of this.dismissTimers.values()) {
 			clearTimeout(timer);
@@ -62,7 +78,10 @@ export class ToastStore {
 	}
 }
 
-/** Create convenience functions bound to a ToastStore instance. */
+/**
+ * Create convenience functions bound to a ToastStore instance.
+ * @param store
+ */
 export function createToastConvenience(store: ToastStore) {
 	return {
 		success(message: string, duration?: number): string {

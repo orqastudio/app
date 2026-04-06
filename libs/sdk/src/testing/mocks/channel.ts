@@ -7,7 +7,10 @@
 export class MockChannel<T> {
 	onmessage: ((event: T) => void) | null = null;
 
-	/** Simulate an event from the backend. Calls onmessage if set. */
+	/**
+	 * Simulate an event from the backend. Calls onmessage if set.
+	 * @param event
+	 */
 	emit(event: T): void {
 		if (this.onmessage) {
 			this.onmessage(event);

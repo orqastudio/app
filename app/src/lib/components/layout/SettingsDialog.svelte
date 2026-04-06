@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Icon, Button, HStack, Box, DialogRoot, DialogContent, DialogTitle, DialogDescription } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Button,
+		HStack,
+		Box,
+		DialogRoot,
+		DialogContent,
+		DialogTitle,
+		DialogDescription,
+	} from "@orqastudio/svelte-components/pure";
 	import SettingsView from "$lib/components/settings/SettingsView.svelte";
 	import SettingsCategoryNav from "$lib/components/navigation/SettingsCategoryNav.svelte";
 
@@ -16,23 +25,27 @@
 
 <DialogRoot
 	{open}
-	onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}
+	onOpenChange={(isOpen) => {
+		if (!isOpen) onClose();
+	}}
 >
 	<DialogContent>
 		<HStack justify="between">
 			<DialogTitle>Settings</DialogTitle>
 			<DialogDescription>Application settings</DialogDescription>
-			<Button
-				variant="ghost"
-				size="icon-sm"
-				onclick={onClose}
-			>
+			<Button variant="ghost" size="icon-sm" onclick={onClose}>
 				<Icon name="x" size="md" />
 			</Button>
 		</HStack>
 		<HStack gap={0} flex={1} align="stretch">
-			<div class="w-56 shrink-0 border-r border-border">
-				<SettingsCategoryNav mode="app" activeSection={dialogSection} onSectionChange={(s) => { dialogSection = s; }} />
+			<div class="border-border w-56 shrink-0 border-r">
+				<SettingsCategoryNav
+					mode="app"
+					activeSection={dialogSection}
+					onSectionChange={(s) => {
+						dialogSection = s;
+					}}
+				/>
 			</div>
 			<Box flex={1}>
 				<SettingsView activeSection={dialogSection} />

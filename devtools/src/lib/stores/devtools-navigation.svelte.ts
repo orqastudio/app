@@ -55,6 +55,10 @@ function persistTab(tab: DevToolsTab): void {
 }
 
 // Return a human-readable status bar label for the given connection state.
+/**
+ *
+ * @param conn
+ */
 export function connectionLabel(conn: ConnectionState): string {
 	switch (conn.state) {
 		case "connected":

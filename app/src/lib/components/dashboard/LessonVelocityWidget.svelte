@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardContent, HStack, Stack, Caption, Dot } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardContent,
+		HStack,
+		Stack,
+		Caption,
+		Dot,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { artifactGraphSDK, navigationStore, pluginRegistry } = getStores();
@@ -47,7 +57,7 @@
 				dotColorClass: hexToDotClass(def.color),
 				tooltipTitle: `${count} ${def.label.toLowerCase()} ${count === 1 ? "lesson" : "lessons"}`,
 			};
-		})
+		}),
 	);
 
 	const awaitingPromotion = $derived(stageCounts["recurring"] ?? 0);
@@ -90,20 +100,17 @@
 		</CardHeader>
 		<CardContent>
 			<Stack gap={3}>
-			<PipelineStages
-				stages={pipelineStages}
-				onStageClick={(key) => navigateToLessons(key)}
-			/>
+				<PipelineStages stages={pipelineStages} onStageClick={(key) => navigateToLessons(key)} />
 
-			<!-- Summary text -->
-			<HStack gap={1}>
-				{#if awaitingPromotion === 0}
-					<Icon name="check-circle-2" size="sm" />
-				{:else}
-					<Dot size="sm" color="warning" />
-				{/if}
-				<Caption>{summaryText}</Caption>
-			</HStack>
+				<!-- Summary text -->
+				<HStack gap={1}>
+					{#if awaitingPromotion === 0}
+						<Icon name="check-circle-2" size="sm" />
+					{:else}
+						<Dot size="sm" color="warning" />
+					{/if}
+					<Caption>{summaryText}</Caption>
+				</HStack>
 			</Stack>
 		</CardContent>
 	</CardRoot>

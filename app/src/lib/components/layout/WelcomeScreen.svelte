@@ -10,7 +10,7 @@
 
 	let opening = $state(false);
 
-	// Opens the native folder picker and loads the selected project.
+	/** Open the native folder picker and load the selected project. */
 	async function handleOpenProject() {
 		opening = true;
 		try {

@@ -5,6 +5,9 @@ import type { NavTree } from "@orqastudio/types";
 
 const log = logger("artifact");
 
+/**
+ *
+ */
 export class ArtifactStore {
 	// The full navigation tree — loaded once, refreshed by file watcher
 	navTree = $state<NavTree | null>(null);
@@ -32,7 +35,10 @@ export class ArtifactStore {
 		}
 	}
 
-	/** Load artifact content for viewing. Delegates to the SDK which reads from disk each time. */
+	/**
+	 * Load artifact content for viewing. Delegates to the SDK which reads from disk each time.
+	 * @param path
+	 */
 	async loadContent(path: string) {
 		this.activeContentLoading = true;
 		this.activeContentError = null;
@@ -57,6 +63,9 @@ export class ArtifactStore {
 		this.loadNavTree();
 	}
 
+	/**
+	 *
+	 */
 	clear() {
 		this.navTree = null;
 		this.navTreeLoading = false;

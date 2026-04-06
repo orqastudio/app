@@ -101,9 +101,7 @@ export const metrics = $state<{
 	// Total event count processed.
 	totalEvents: number;
 }>({
-	byCategory: Object.fromEntries(
-		Object.keys(METRIC_CATEGORIES).map((k) => [k, emptyStats(k)]),
-	),
+	byCategory: Object.fromEntries(Object.keys(METRIC_CATEGORIES).map((k) => [k, emptyStats(k)])),
 	errorBuckets: [],
 	totalEvents: 0,
 });

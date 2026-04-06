@@ -55,7 +55,9 @@
 				<Stack gap={1} flex={1} minHeight={0}>
 					<HStack gap={2}>
 						<Caption variant="caption-mono">{lesson.id}</Caption>
-						<span class={`rounded px-1.5 py-0.5 text-[11px] font-medium ${categoryColor(lesson.category)}`}>
+						<span
+							class={`rounded px-1.5 py-0.5 text-[11px] font-medium ${categoryColor(lesson.category)}`}
+						>
 							{lesson.category}
 						</span>
 						{#if lesson.status !== "active"}
@@ -74,11 +76,7 @@
 						<Caption variant="caption-strong">{lesson.recurrence}x</Caption>
 					</HStack>
 					{#if lesson.status === "active"}
-						<Button
-							variant="outline"
-							size="sm"
-							onclick={() => onIncrementRecurrence(lesson.id)}
-						>
+						<Button variant="outline" size="sm" onclick={() => onIncrementRecurrence(lesson.id)}>
 							+1 Recurrence
 						</Button>
 					{/if}
@@ -87,7 +85,9 @@
 
 			{#if isPromotionCandidate}
 				<Callout tone="warning" density="compact" iconName="arrow-up-circle">
-					<Caption tone="warning">Recurred {lesson.recurrence} times — ready for promotion to a rule</Caption>
+					<Caption tone="warning"
+						>Recurred {lesson.recurrence} times — ready for promotion to a rule</Caption
+					>
 				</Callout>
 			{/if}
 
@@ -113,7 +113,11 @@
 	<!-- Body -->
 	<ScrollArea full>
 		<Panel padding="normal">
-			<MarkdownRenderer content={lesson.body} codeRenderer={DiagramCodeBlock} linkRenderer={MarkdownLink} />
+			<MarkdownRenderer
+				content={lesson.body}
+				codeRenderer={DiagramCodeBlock}
+				linkRenderer={MarkdownLink}
+			/>
 		</Panel>
 	</ScrollArea>
 </Stack>

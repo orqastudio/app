@@ -172,7 +172,10 @@
 			<Stack gap={0}>
 				{#each appCategories as item (item.id)}
 					<button
-						class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
+						class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection ===
+						item.id
+							? 'bg-accent text-accent-foreground'
+							: 'hover:bg-accent/50'}"
 						onclick={() => handleSectionChange(item.id)}
 					>
 						<Icon name={item.icon} size="md" />
@@ -193,7 +196,10 @@
 						<Stack gap={0}>
 							{#each group.items as item (item.id)}
 								<button
-									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection === item.id ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
+									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-2 {currentSection ===
+									item.id
+										? 'bg-accent text-accent-foreground'
+										: 'hover:bg-accent/50'}"
 									onclick={() => handleSectionChange(item.id)}
 								>
 									<Icon name={item.icon} size="md" />

@@ -36,13 +36,18 @@ export interface Logger {
 type LogSubscriber = (entry: LogEntry) => void;
 /**
  * Create a scoped logger for a module.
- *
  * @param source - Module name (e.g. "navigation", "artifact", "graph")
  */
 export declare function logger(source: string): Logger;
-/** Subscribe to all log entries (for in-app error display, telemetry, etc.) */
+/**
+ * Subscribe to all log entries (for in-app error display, telemetry, etc.)
+ * @param fn
+ */
 export declare function subscribeToLogs(fn: LogSubscriber): () => void;
-/** Set the minimum log level for console output. */
+/**
+ * Set the minimum log level for console output.
+ * @param level
+ */
 export declare function setLogLevel(level: LogLevel): void;
 /**
  * Switch the console log level to "debug".

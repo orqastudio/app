@@ -9,6 +9,10 @@
 import { mount as svelteMount, unmount as svelteUnmount } from "svelte";
 import RoadmapView from "./RoadmapView.svelte";
 
+/**
+ *
+ * @param container
+ */
 export function mount(container: HTMLElement): () => void {
 	const component = svelteMount(RoadmapView, { target: container });
 	return () => svelteUnmount(component);

@@ -11,9 +11,9 @@
 	const { navigationStore } = getStores();
 </script>
 
-<div class="flex w-[200px] flex-col overflow-hidden border-r border-border bg-muted/10">
+<div class="border-border bg-muted/10 flex w-[200px] flex-col overflow-hidden border-r">
 	<!-- Panel header — fixed height matched to breadcrumb bar -->
-	<div class="flex h-10 items-center border-b border-border px-3">
+	<div class="border-border flex h-10 items-center border-b px-3">
 		<Text variant="overline-muted">
 			{#if navigationStore.activeGroup !== null}
 				{navigationStore.getLabelForKey(navigationStore.activeGroup)}
@@ -36,14 +36,18 @@
 		{:else if navigationStore.activeActivity === "settings"}
 			<SettingsCategoryNav mode="project" />
 		{:else if navigationStore.activeActivity === "chat"}
-			<Panel padding="normal"><Center full>
-				<Caption>Session list will be available in a future update.</Caption>
-			</Center></Panel>
+			<Panel padding="normal"
+				><Center full>
+					<Caption>Session list will be available in a future update.</Caption>
+				</Center></Panel
+			>
 		{:else if navigationStore.activeActivity === "plugins"}
 			<!-- Plugin browser is displayed in the main explorer area. -->
-			<Panel padding="normal"><Center full>
-				<Caption>Select a tab in the plugin browser.</Caption>
-			</Center></Panel>
+			<Panel padding="normal"
+				><Center full>
+					<Caption>Select a tab in the plugin browser.</Caption>
+				</Center></Panel
+			>
 		{:else if navigationStore.isArtifactActivity}
 			<ArtifactNav category={navigationStore.activeActivity} />
 		{/if}

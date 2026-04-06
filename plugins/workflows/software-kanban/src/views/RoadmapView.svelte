@@ -79,9 +79,7 @@
 	let selectedMilestone = $state<ArtifactNode | null>(null);
 	let selectedEpic = $state<ArtifactNode | null>(null);
 
-	const drillLevel = $derived(
-		selectedEpic ? 2 : selectedMilestone ? 1 : 0,
-	);
+	const drillLevel = $derived(selectedEpic ? 2 : selectedMilestone ? 1 : 0);
 
 	// ---------------------------------------------------------------------------
 	// Breadcrumb items derived from drill level
@@ -123,6 +121,7 @@
 	/**
 	 * Determine a milestone's horizon bucket.
 	 * Uses the `horizon` frontmatter field if present, otherwise infers from status.
+	 * @param ms
 	 */
 	function milestoneHorizon(ms: ArtifactNode): string {
 		const fm = ms.frontmatter;
@@ -225,6 +224,10 @@
 	// Task count helper (used for epic cards)
 	// ---------------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param epicId
+	 */
 	function taskCountForEpic(epicId: string): { done: number; total: number } {
 		const epicTaskList = tasks.filter((t) =>
 			t.references_out.some(
@@ -239,11 +242,13 @@
 	// Field update via backend (drag and drop persists)
 	// ---------------------------------------------------------------------------
 
-	async function updateField(
-		node: ArtifactNode,
-		field: string,
-		value: string,
-	): Promise<void> {
+	/**
+	 *
+	 * @param node
+	 * @param field
+	 * @param value
+	 */
+	async function updateField(node: ArtifactNode, field: string, value: string): Promise<void> {
 		try {
 			await artifactGraphSDK.updateField(node.path, field, value);
 		} catch (err) {
@@ -255,11 +260,19 @@
 	// Navigation handlers
 	// ---------------------------------------------------------------------------
 
+	/**
+	 *
+	 * @param ms
+	 */
 	function handleMilestoneClick(ms: ArtifactNode) {
 		selectedMilestone = ms;
 		selectedEpic = null;
 	}
 
+	/**
+	 *
+	 * @param epic
+	 */
 	function handleEpicClick(epic: ArtifactNode) {
 		if (drillLevel === 1) {
 			selectedEpic = epic;
@@ -269,6 +282,10 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param task
+	 */
 	function handleTaskClick(task: ArtifactNode) {
 		navigationStore.navigateToArtifact(task.id);
 	}
@@ -290,10 +307,7 @@
 			</Center>
 		{:else if graphError && !hasData}
 			<Panel padding="loose">
-				<ErrorDisplay
-					message={graphError}
-					onRetry={() => artifactGraphSDK.refresh()}
-				/>
+				<ErrorDisplay message={graphError} onRetry={() => artifactGraphSDK.refresh()} />
 			</Panel>
 		{:else if !hasData}
 			<Center flex={1}>
@@ -306,100 +320,95 @@
 		{:else if drillLevel === 0}
 			<!-- Level 0: Horizon board -->
 			<Panel padding="loose" full>
-			<Stack gap={4} height="full">
-				<HStack gap={3} align="center">
-					<Icon name="kanban" size="xl" />
-					<Stack gap={0}>
-						<Heading level={2}>Roadmap</Heading>
-						<Caption>
-							Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
-						</Caption>
-					</Stack>
-				</HStack>
-				<Box minHeight={0} flex={1}>
-					<HorizonBoard
-						columns={horizonColumns}
-						{epics}
-						epicParentRel={level1ParentRel}
-						epicLabel={level1Label}
-						{rootLabel}
-						onMilestoneClick={handleMilestoneClick}
-						onHorizonChange={async (ms, horizon) =>
-							updateField(ms, "horizon", horizon)}
-					/>
-				</Box>
-			</Stack>
+				<Stack gap={4} height="full">
+					<HStack gap={3} align="center">
+						<Icon name="kanban" size="xl" />
+						<Stack gap={0}>
+							<Heading level={2}>Roadmap</Heading>
+							<Caption>
+								Click a {rootLabel.toLowerCase()} to drill into its {level1Label.toLowerCase()}s.
+							</Caption>
+						</Stack>
+					</HStack>
+					<Box minHeight={0} flex={1}>
+						<HorizonBoard
+							columns={horizonColumns}
+							{epics}
+							epicParentRel={level1ParentRel}
+							epicLabel={level1Label}
+							{rootLabel}
+							onMilestoneClick={handleMilestoneClick}
+							onHorizonChange={async (ms, horizon) => updateField(ms, "horizon", horizon)}
+						/>
+					</Box>
+				</Stack>
 			</Panel>
 		{:else if drillLevel === 1 && selectedMilestone}
 			<!-- Level 1: Milestone → Epics kanban -->
 			<Panel padding="loose" full>
-			<Stack gap={4} height="full">
-				<!-- Milestone detail header -->
-				<Stack gap={1}>
-					<Stack gap={0}>
-						<Caption variant="caption-mono">{selectedMilestone.id}</Caption>
-						<Heading level={2}>{selectedMilestone.title}</Heading>
+				<Stack gap={4} height="full">
+					<!-- Milestone detail header -->
+					<Stack gap={1}>
+						<Stack gap={0}>
+							<Caption variant="caption-mono">{selectedMilestone.id}</Caption>
+							<Heading level={2}>{selectedMilestone.title}</Heading>
+						</Stack>
+						{#if selectedMilestone.description}
+							<Text variant="body-muted">{selectedMilestone.description}</Text>
+						{/if}
+						{#if milestoneEpics.length > 0}
+							{@const doneCount = milestoneEpics.filter((e) => e.status === "completed").length}
+							<Caption>
+								{doneCount}/{milestoneEpics.length}
+								{level1Label.toLowerCase()}s done
+							</Caption>
+						{/if}
 					</Stack>
-					{#if selectedMilestone.description}
-						<Text variant="body-muted">{selectedMilestone.description}</Text>
-					{/if}
-					{#if milestoneEpics.length > 0}
-						{@const doneCount = milestoneEpics.filter(
-							(e) => e.status === "completed",
-						).length}
-						<Caption>
-							{doneCount}/{milestoneEpics.length} {level1Label.toLowerCase()}s done
-						</Caption>
-					{/if}
-				</Stack>
 
-				<!-- Epics kanban -->
-				<Box minHeight={0} flex={1}>
-					<StatusKanban
-						nodes={milestoneEpics}
-						columns={epicColumns}
-						onCardClick={handleEpicClick}
-						onFieldChange={async (epic, newStatus) =>
-							updateField(epic, "status", newStatus)}
-						getTaskCount={(epicId) => taskCountForEpic(epicId)}
-					/>
-				</Box>
-			</Stack>
+					<!-- Epics kanban -->
+					<Box minHeight={0} flex={1}>
+						<StatusKanban
+							nodes={milestoneEpics}
+							columns={epicColumns}
+							onCardClick={handleEpicClick}
+							onFieldChange={async (epic, newStatus) => updateField(epic, "status", newStatus)}
+							getTaskCount={(epicId) => taskCountForEpic(epicId)}
+						/>
+					</Box>
+				</Stack>
 			</Panel>
 		{:else if drillLevel === 2 && selectedEpic}
 			<!-- Level 2: Epic → Tasks kanban -->
 			<Panel padding="loose" full>
-			<Stack gap={4} height="full">
-				<!-- Epic detail header -->
-				<Stack gap={1}>
-					<Stack gap={0}>
-						<Caption variant="caption-mono">{selectedEpic.id}</Caption>
-						<Heading level={2}>{selectedEpic.title}</Heading>
+				<Stack gap={4} height="full">
+					<!-- Epic detail header -->
+					<Stack gap={1}>
+						<Stack gap={0}>
+							<Caption variant="caption-mono">{selectedEpic.id}</Caption>
+							<Heading level={2}>{selectedEpic.title}</Heading>
+						</Stack>
+						{#if selectedEpic.description}
+							<Text variant="body-muted">{selectedEpic.description}</Text>
+						{/if}
+						{#if epicTasks.length > 0}
+							{@const doneCount = epicTasks.filter((t) => t.status === "completed").length}
+							<Caption>
+								{doneCount}/{epicTasks.length}
+								{level2Label.toLowerCase()}s done
+							</Caption>
+						{/if}
 					</Stack>
-					{#if selectedEpic.description}
-						<Text variant="body-muted">{selectedEpic.description}</Text>
-					{/if}
-					{#if epicTasks.length > 0}
-						{@const doneCount = epicTasks.filter(
-							(t) => t.status === "completed",
-						).length}
-						<Caption>
-							{doneCount}/{epicTasks.length} {level2Label.toLowerCase()}s done
-						</Caption>
-					{/if}
-				</Stack>
 
-				<!-- Tasks kanban -->
-				<Box minHeight={0} flex={1}>
-					<StatusKanban
-						nodes={epicTasks}
-						columns={TASK_COLUMNS}
-						onCardClick={handleTaskClick}
-						onFieldChange={async (task, newStatus) =>
-							updateField(task, "status", newStatus)}
-					/>
-				</Box>
-			</Stack>
+					<!-- Tasks kanban -->
+					<Box minHeight={0} flex={1}>
+						<StatusKanban
+							nodes={epicTasks}
+							columns={TASK_COLUMNS}
+							onCardClick={handleTaskClick}
+							onFieldChange={async (task, newStatus) => updateField(task, "status", newStatus)}
+						/>
+					</Box>
+				</Stack>
 			</Panel>
 		{/if}
 	</Stack>

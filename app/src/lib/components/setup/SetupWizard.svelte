@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, Caption, HStack, Dot, Stack } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		Caption,
+		HStack,
+		Dot,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 	import ClaudeCliStep from "./ClaudeCliStep.svelte";
 	import ClaudeAuthStep from "./ClaudeAuthStep.svelte";
 	import SidecarStep from "./SidecarStep.svelte";
@@ -16,17 +26,25 @@
 
 	const { onComplete }: Props = $props();
 
+	/**
+	 *
+	 */
 	function handleStepComplete() {
 		setupStore.nextStep();
 	}
 
+	/**
+	 *
+	 */
 	function handleSetupComplete() {
 		onComplete();
 	}
 </script>
 
 <!-- Full-screen background with cover image -->
-<div style="position: relative; display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; overflow: hidden; background-image: url({setupBackground}); background-size: cover; background-position: center;">
+<div
+	style="position: relative; display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; overflow: hidden; background-image: url({setupBackground}); background-size: cover; background-position: center;"
+>
 	<!-- Backdrop overlay -->
 	<div style="position: absolute; inset: 0; background: hsl(var(--background) / 0.7);"></div>
 
@@ -44,14 +62,13 @@
 					<Stack gap={3}>
 						<HStack gap={2} justify="center">
 							{#each Array.from({ length: setupStore.totalSteps }, (_, idx) => idx) as i (i)}
-								<Dot
-									color={i <= setupStore.currentStep ? "primary" : "muted"}
-									size="md"
-								/>
+								<Dot color={i <= setupStore.currentStep ? "primary" : "muted"} size="md" />
 							{/each}
 						</HStack>
 					</Stack>
-					<Caption tone="muted">Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</Caption>
+					<Caption tone="muted"
+						>Step {setupStore.currentStep + 1} of {setupStore.totalSteps}</Caption
+					>
 				</div>
 			</CardHeader>
 

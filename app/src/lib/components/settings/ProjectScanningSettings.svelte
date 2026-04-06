@@ -1,6 +1,23 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup, Heading } from "@orqastudio/svelte-components/pure";
-	import { Badge, Button, HStack, Stack, Caption, Text, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+		Heading,
+	} from "@orqastudio/svelte-components/pure";
+	import {
+		Badge,
+		Button,
+		HStack,
+		Stack,
+		Caption,
+		Text,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { Input } from "@orqastudio/svelte-components/pure";
 	import { Textarea } from "@orqastudio/svelte-components/pure";
@@ -135,7 +152,9 @@
 				onblur={() => props.onSave(buildSettings())}
 			/>
 			{#if localCustomPrompt.trim()}
-				<span class="text-xs text-muted-foreground">{localCustomPrompt.trim().length} characters</span>
+				<span class="text-muted-foreground text-xs"
+					>{localCustomPrompt.trim().length} characters</span
+				>
 			{/if}
 		</FormGroup>
 
@@ -163,7 +182,12 @@
 						if (e.key === "Enter") addExcludedPath();
 					}}
 				/>
-				<Button variant="outline" size="sm" onclick={addExcludedPath} disabled={!newExcludedPath.trim()}>
+				<Button
+					variant="outline"
+					size="sm"
+					onclick={addExcludedPath}
+					disabled={!newExcludedPath.trim()}
+				>
 					<Icon name="plus" size="sm" />
 				</Button>
 			</HStack>
@@ -223,7 +247,8 @@
 						{/if}
 					</Button>
 				</HStack>
-				<Caption tone="muted">No scan results yet. Click Scan to detect your project stack.</Caption>
+				<Caption tone="muted">No scan results yet. Click Scan to detect your project stack.</Caption
+				>
 			</Stack>
 		{/if}
 	</CardContent>

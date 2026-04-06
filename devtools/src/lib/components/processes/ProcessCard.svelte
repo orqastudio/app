@@ -49,6 +49,10 @@
 	// running → connected (green), crashed → disconnected (red),
 	// stopped → waiting (muted/gray in context), not_found → waiting,
 	// unknown → reconnecting (yellow).
+	/**
+	 *
+	 * @param status
+	 */
 	function resolveConnectionState(status: ProcessStatus): ConnectionState {
 		switch (status) {
 			case "running":
@@ -66,6 +70,10 @@
 	}
 
 	// Human-readable status label passed to ConnectionIndicator as an override.
+	/**
+	 *
+	 * @param status
+	 */
 	function resolveStatusLabel(status: ProcessStatus): string {
 		switch (status) {
 			case "running":
@@ -87,6 +95,10 @@
 	const statusLabel = $derived(resolveStatusLabel(process.status));
 
 	// Format uptime_seconds into a human-readable string (e.g. "2h 14m" or "45s").
+	/**
+	 *
+	 * @param seconds
+	 */
 	function formatUptime(seconds: number): string {
 		if (seconds < 60) return `${seconds}s`;
 		const mins = Math.floor(seconds / 60);
@@ -97,17 +109,28 @@
 	}
 
 	// Format memory_bytes into a human-readable string (MB or KB).
+	/**
+	 *
+	 * @param bytes
+	 */
 	function formatMemory(bytes: number): string {
 		if (bytes >= 1_048_576) return `${(bytes / 1_048_576).toFixed(1)} MB`;
 		if (bytes >= 1_024) return `${(bytes / 1_024).toFixed(1)} KB`;
 		return `${bytes} B`;
 	}
 
+	/**
+	 *
+	 */
 	function handleClick() {
 		onselect?.(process.source);
 	}
 
 	// Allow keyboard activation so the card is operable without a pointer.
+	/**
+	 *
+	 * @param event
+	 */
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();
@@ -117,6 +140,10 @@
 
 	// Extract the filename portion of a binary path for the compact display.
 	// Falls back to the full path when there is no directory separator.
+	/**
+	 *
+	 * @param path
+	 */
 	function binaryFilename(path: string): string {
 		const last = path.replace(/\\/g, "/").split("/").pop();
 		return last ?? path;

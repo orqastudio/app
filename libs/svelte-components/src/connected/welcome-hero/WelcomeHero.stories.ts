@@ -21,7 +21,8 @@ export const WithLogo: Story = {
 	args: {
 		title: "OrqaDev",
 		subtitle: "Developer tools for OrqaStudio",
-		logoSrc: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23666'/%3E%3C/svg%3E",
+		logoSrc:
+			"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23666'/%3E%3C/svg%3E",
 		logoAlt: "OrqaDev",
 	},
 };

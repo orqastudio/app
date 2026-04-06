@@ -2,6 +2,10 @@
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { CLAUDE_MODEL_OPTIONS } from "./model-options";
 
+	/**
+	 *
+	 * @param modelId
+	 */
 	function getModelLabel(modelId: string): string {
 		const found = CLAUDE_MODEL_OPTIONS.find((m) => m.value === modelId);
 		return found ? found.label : modelId;

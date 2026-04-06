@@ -23,9 +23,7 @@
 		path?: string;
 	} = $props();
 
-	const currentIndex = $derived(
-		stages.findIndex((s) => s.key === status?.toLowerCase()),
-	);
+	const currentIndex = $derived(stages.findIndex((s) => s.key === status?.toLowerCase()));
 
 	/**
 	 * Keys reachable from the current status — driven by the `transitions` array
@@ -38,14 +36,16 @@
 	const reachableKeys = $derived.by((): string[] => {
 		const statusKey = status?.toLowerCase();
 		if (!statusKey) return [];
-		const def = projectStore.projectSettings?.statuses?.find(
-			(s) => s.key === statusKey,
-		);
+		const def = projectStore.projectSettings?.statuses?.find((s) => s.key === statusKey);
 		return def?.transitions ?? [];
 	});
 
 	let transitioning = $state(false);
 
+	/**
+	 * Trigger a status transition to the given target key via the artifact graph SDK.
+	 * @param targetKey
+	 */
 	async function handleTransition(targetKey: string) {
 		if (!path || transitioning) return;
 		transitioning = true;
@@ -60,89 +60,85 @@
 {#if stages.length > 0 && currentIndex >= 0}
 	<Panel padding="normal">
 		<Stack gap={1}>
-		<!-- Row 1: circles and connector lines, vertically centered on circles -->
-		<HStack gap={0}>
-			{#each stages as stage, i (stage.key)}
-				{@const isPast = i < currentIndex}
-				{@const isCurrent = i === currentIndex}
-				{@const isReachable = path && reachableKeys.includes(stage.key)}
+			<!-- Row 1: circles and connector lines, vertically centered on circles -->
+			<HStack gap={0}>
+				{#each stages as stage, i (stage.key)}
+					{@const isPast = i < currentIndex}
+					{@const isCurrent = i === currentIndex}
+					{@const isReachable = path && reachableKeys.includes(stage.key)}
 
-				<!-- Connector line before this stage (not before the first) -->
-				{#if i > 0}
-					<div
-						class="h-px flex-1 min-w-3 {i <= currentIndex
-							? 'bg-primary/40'
-							: 'bg-muted-foreground/15'}"
-					></div>
-				{/if}
-
-				<!-- Circle indicator — specific sizes (h-4, w-4, rounded-full) require raw divs. -->
-				<div class="flex items-center justify-center">
-					{#if isReachable}
-						<button
-						class="h-4 w-4 rounded-full border border-primary/50 bg-primary/5 p-0 hover:bg-primary/20 disabled:pointer-events-none disabled:opacity-50"
-						onclick={() => handleTransition(stage.key)}
-						disabled={transitioning}
-					></button>
-					{:else if isPast}
+					<!-- Connector line before this stage (not before the first) -->
+					{#if i > 0}
 						<div
-							class="flex h-4 w-4 items-center justify-center rounded-full bg-primary/20"
-						>
-							<Icon name="check" size="md" />
-						</div>
-					{:else if isCurrent}
-						<div
-							class="flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 ring-1 ring-primary/50"
-						>
-							<div class="h-2 w-2 rounded-full bg-primary"></div>
-						</div>
-					{:else}
-						<div
-							class="h-3.5 w-3.5 rounded-full border border-muted-foreground/20"
+							class="h-px min-w-3 flex-1 {i <= currentIndex
+								? 'bg-primary/40'
+								: 'bg-muted-foreground/15'}"
 						></div>
 					{/if}
-				</div>
-			{/each}
-		</HStack>
 
-		<!-- Row 2: labels, positioned to align under their circles -->
-		<HStack gap={0} align="start">
-			{#each stages as stage, i (stage.key)}
-				{@const isPast = i < currentIndex}
-				{@const isCurrent = i === currentIndex}
-				{@const isReachable = path && reachableKeys.includes(stage.key)}
+					<!-- Circle indicator — specific sizes (h-4, w-4, rounded-full) require raw divs. -->
+					<div class="flex items-center justify-center">
+						{#if isReachable}
+							<button
+								class="border-primary/50 bg-primary/5 hover:bg-primary/20 h-4 w-4 rounded-full border p-0 disabled:pointer-events-none disabled:opacity-50"
+								onclick={() => handleTransition(stage.key)}
+								disabled={transitioning}
+							></button>
+						{:else if isPast}
+							<div class="bg-primary/20 flex h-4 w-4 items-center justify-center rounded-full">
+								<Icon name="check" size="md" />
+							</div>
+						{:else if isCurrent}
+							<div
+								class="bg-primary/15 ring-primary/50 flex h-5 w-5 items-center justify-center rounded-full ring-1"
+							>
+								<div class="bg-primary h-2 w-2 rounded-full"></div>
+							</div>
+						{:else}
+							<div class="border-muted-foreground/20 h-3.5 w-3.5 rounded-full border"></div>
+						{/if}
+					</div>
+				{/each}
+			</HStack>
 
-				<!-- Spacer matching connector line width -->
-				{#if i > 0}
-					<div class="flex-1 min-w-3"></div>
-				{/if}
+			<!-- Row 2: labels, positioned to align under their circles -->
+			<HStack gap={0} align="start">
+				{#each stages as stage, i (stage.key)}
+					{@const isPast = i < currentIndex}
+					{@const isCurrent = i === currentIndex}
+					{@const isReachable = path && reachableKeys.includes(stage.key)}
 
-				<!-- Label only -->
-				<div class="flex items-center justify-center">
-					{#if isCurrent}
-						<span class="text-[10px] font-semibold leading-tight whitespace-nowrap text-primary">
-							{stage.label}
-						</span>
-					{:else if isReachable}
-						<button
-						class="text-[9px] leading-tight whitespace-nowrap text-primary/60 hover:underline disabled:pointer-events-none disabled:opacity-50"
-						onclick={() => handleTransition(stage.key)}
-						disabled={transitioning}
-					>
-						{stage.label}
-					</button>
-					{:else if isPast}
-						<span class="text-[9px] leading-tight whitespace-nowrap text-muted-foreground/60">
-							{stage.label}
-						</span>
-					{:else}
-						<span class="text-[9px] leading-tight whitespace-nowrap text-muted-foreground/40">
-							{stage.label}
-						</span>
+					<!-- Spacer matching connector line width -->
+					{#if i > 0}
+						<div class="min-w-3 flex-1"></div>
 					{/if}
-				</div>
-			{/each}
-		</HStack>
+
+					<!-- Label only -->
+					<div class="flex items-center justify-center">
+						{#if isCurrent}
+							<span class="text-primary text-[10px] leading-tight font-semibold whitespace-nowrap">
+								{stage.label}
+							</span>
+						{:else if isReachable}
+							<button
+								class="text-primary/60 text-[9px] leading-tight whitespace-nowrap hover:underline disabled:pointer-events-none disabled:opacity-50"
+								onclick={() => handleTransition(stage.key)}
+								disabled={transitioning}
+							>
+								{stage.label}
+							</button>
+						{:else if isPast}
+							<span class="text-muted-foreground/60 text-[9px] leading-tight whitespace-nowrap">
+								{stage.label}
+							</span>
+						{:else}
+							<span class="text-muted-foreground/40 text-[9px] leading-tight whitespace-nowrap">
+								{stage.label}
+							</span>
+						{/if}
+					</div>
+				{/each}
+			</HStack>
 		</Stack>
 	</Panel>
 {/if}

@@ -1,5 +1,16 @@
 <script lang="ts">
-	import { Icon, Caption, Box, HStack, Text, Button, Panel, SectionHeader, SectionFooter, ScrollArea } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Caption,
+		Box,
+		HStack,
+		Text,
+		Button,
+		Panel,
+		SectionHeader,
+		SectionFooter,
+		ScrollArea,
+	} from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 
 	const { navigationStore, artifactGraphSDK } = getStores();
@@ -55,15 +66,26 @@
 		}
 	});
 
+	/**
+	 *
+	 */
 	function close() {
 		navigationStore.searchOverlayOpen = false;
 	}
 
+	/**
+	 *
+	 * @param node
+	 */
 	function selectResult(node: ArtifactNode) {
 		navigationStore.navigateToArtifact(node.id);
 		close();
 	}
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "Escape") {
 			e.preventDefault();
@@ -80,6 +102,10 @@
 		}
 	}
 
+	/**
+	 *
+	 * @param e
+	 */
 	function handleBackdropClick(e: MouseEvent) {
 		if (e.target === e.currentTarget) {
 			close();
@@ -90,7 +116,7 @@
 {#if open}
 	<!-- Backdrop — fixed overlay that intercepts clicks outside the search card -->
 	<div
-		class="fixed inset-0 z-50 bg-background/60 backdrop-blur-sm"
+		class="bg-background/60 fixed inset-0 z-50 backdrop-blur-sm"
 		onclick={handleBackdropClick}
 		onkeydown={handleKeydown}
 		role="dialog"
@@ -100,7 +126,7 @@
 	>
 		<!-- Centred card in upper third -->
 		<div class="mx-auto mt-[15vh] w-full max-w-xl px-4">
-			<div class="rounded-lg border border-border bg-popover shadow-2xl">
+			<div class="border-border bg-popover rounded-lg border shadow-2xl">
 				<!-- Search input row -->
 				<SectionHeader>
 					<Icon name="search" size="md" />
@@ -108,7 +134,7 @@
 						bind:this={inputEl}
 						bind:value={query}
 						placeholder="Search artifacts..."
-						class="h-12 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+						class="text-foreground placeholder:text-muted-foreground h-12 flex-1 bg-transparent text-sm outline-none"
 					/>
 					{#if query}
 						<Button
@@ -129,44 +155,51 @@
 				{#if query.trim() && results.length > 0}
 					<Box>
 						<ScrollArea>
-						<Panel padding="tight">
-							{#each results as node, i (node.id)}
-								<button
-									class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm {i === selectedIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'}"
-									onclick={() => selectResult(node)}
-									onmouseenter={() => {
-										selectedIndex = i;
-									}}
-								>
-									<!-- Status icon -->
-									{#if node.status}
-										{@const StatusIcon = resolveIcon(statusIconName(node.status))}
-										<StatusIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-									{:else}
-										<Icon name="file-text" size="sm" />
-									{/if}
+							<Panel padding="tight">
+								{#each results as node, i (node.id)}
+									<button
+										class="flex w-full items-center justify-start gap-2 rounded-md px-2 py-1.5 text-sm {i ===
+										selectedIndex
+											? 'bg-accent text-accent-foreground'
+											: 'hover:bg-accent/50'}"
+										onclick={() => selectResult(node)}
+										onmouseenter={() => {
+											selectedIndex = i;
+										}}
+									>
+										<!-- Status icon -->
+										{#if node.status}
+											{@const StatusIcon = resolveIcon(statusIconName(node.status))}
+											<StatusIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+										{:else}
+											<Icon name="file-text" size="sm" />
+										{/if}
 
-									<!-- Project badge (org mode) -->
-									{#if node.project}
-										<span class="shrink-0 rounded bg-primary/10 px-1 py-0.5 text-[9px] font-medium text-primary">
-											{node.project}
+										<!-- Project badge (org mode) -->
+										{#if node.project}
+											<span
+												class="bg-primary/10 text-primary shrink-0 rounded px-1 py-0.5 text-[9px] font-medium"
+											>
+												{node.project}
+											</span>
+										{/if}
+
+										<!-- ID badge -->
+										<span
+											class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 font-mono text-[11px]"
+										>
+											{node.id}
 										</span>
-									{/if}
 
-									<!-- ID badge -->
-									<span class="shrink-0 rounded bg-muted px-1 py-0.5 font-mono text-[11px] text-muted-foreground">
-										{node.id}
-									</span>
+										<!-- Title -->
+										<span class="min-w-0 flex-1 truncate">{node.title}</span>
 
-									<!-- Title -->
-									<span class="min-w-0 flex-1 truncate">{node.title}</span>
-
-									<!-- Type -->
-									<Text variant="caption" truncate>{node.artifact_type}</Text>
-								</button>
-							{/each}
-					</Panel>
-					</ScrollArea>
+										<!-- Type -->
+										<Text variant="caption" truncate>{node.artifact_type}</Text>
+									</button>
+								{/each}
+							</Panel>
+						</ScrollArea>
 					</Box>
 				{:else if query.trim()}
 					<Panel padding="loose">
@@ -186,7 +219,9 @@
 					{#snippet end()}
 						<HStack gap={2}>
 							{#if query.trim() && results.length > 0}
-								<Text variant="caption">{results.length}{results.length >= 50 ? "+" : ""} results</Text>
+								<Text variant="caption"
+									>{results.length}{results.length >= 50 ? "+" : ""} results</Text
+								>
 							{/if}
 							<Text variant="caption">↵ Open</Text>
 							<Text variant="caption">Esc Close</Text>

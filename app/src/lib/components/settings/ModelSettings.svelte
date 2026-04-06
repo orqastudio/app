@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, FormGroup } from "@orqastudio/svelte-components/pure";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		FormGroup,
+	} from "@orqastudio/svelte-components/pure";
 	import { SelectMenu } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import type { DefaultModel } from "@orqastudio/sdk";
@@ -7,7 +14,11 @@
 
 	const { settingsStore } = getStores();
 
-	const modelOptions = CLAUDE_MODEL_OPTIONS as { value: DefaultModel; label: string; description: string }[];
+	const modelOptions = CLAUDE_MODEL_OPTIONS as {
+		value: DefaultModel;
+		label: string;
+		description: string;
+	}[];
 
 	/**
 	 * Applies the selected model to the settings store.
@@ -26,13 +37,15 @@
 	<CardContent>
 		<FormGroup
 			label="Default Model"
-			description={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.description ?? ""}
+			description={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.description ??
+				""}
 		>
 			<SelectMenu
 				items={modelOptions}
 				selected={settingsStore.defaultModel}
 				onSelect={handleModelChange}
-				triggerLabel={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.label ?? "Auto"}
+				triggerLabel={modelOptions.find((o) => o.value === settingsStore.defaultModel)?.label ??
+					"Auto"}
 				triggerSize="default"
 				align="start"
 			/>

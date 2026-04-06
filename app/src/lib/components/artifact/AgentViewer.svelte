@@ -48,30 +48,35 @@
 	const knowledge = $derived(
 		Array.isArray(metadata.knowledge) ? (metadata.knowledge as string[]) : [],
 	);
-	const model = $derived(
-		typeof metadata.model === "string" ? metadata.model : null,
-	);
+	const model = $derived(typeof metadata.model === "string" ? metadata.model : null);
 </script>
 
 <Stack gap={4}>
 	<!-- Structured header -->
-	<Panel padding="normal" border="bottom"><Stack gap={3}>
-		{#if description}
-			<Text variant="body-muted" block>{description}</Text>
-		{/if}
+	<Panel padding="normal" border="bottom"
+		><Stack gap={3}>
+			{#if description}
+				<Text variant="body-muted" block>{description}</Text>
+			{/if}
 
-		<MetadataRow icon="wrench" label="Capabilities" items={capabilities} badgeVariant="secondary" />
-		<MetadataRow icon="brain" label="Knowledge" items={knowledge} badgeVariant="outline" />
-		{#if model}
-			<HStack gap={1}>
+			<MetadataRow
+				icon="wrench"
+				label="Capabilities"
+				items={capabilities}
+				badgeVariant="secondary"
+			/>
+			<MetadataRow icon="brain" label="Knowledge" items={knowledge} badgeVariant="outline" />
+			{#if model}
 				<HStack gap={1}>
-					<Icon name="cpu" size="sm" />
-					<Text variant="caption">Model</Text>
+					<HStack gap={1}>
+						<Icon name="cpu" size="sm" />
+						<Text variant="caption">Model</Text>
+					</HStack>
+					<SmallBadge variant="default">{model}</SmallBadge>
 				</HStack>
-				<SmallBadge variant="default">{model}</SmallBadge>
-			</HStack>
-		{/if}
-	</Stack></Panel>
+			{/if}
+		</Stack></Panel
+	>
 
 	<!-- Body content -->
 	{#if body.trim()}

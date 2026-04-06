@@ -9,6 +9,7 @@ import { ARTIFACT_TYPE_COLORS } from "./colors.js";
 /**
  * Build visualization-ready Cytoscape elements with colors, labels, tooltips.
  * Edges are deduplicated by source→target pair.
+ * @param graph
  */
 export function buildVisualizationElements(graph: ReadonlyMap<string, ArtifactNode>): cytoscape.ElementDefinition[] {
     const nodeElements: cytoscape.ElementDefinition[] = [...graph.values()].map((node) => ({

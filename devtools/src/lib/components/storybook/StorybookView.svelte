@@ -31,6 +31,9 @@
 
 	// Issues a HEAD request to the Storybook URL. HEAD is used instead of GET to
 	// avoid loading the full page just to check server availability.
+	/**
+	 *
+	 */
 	async function checkStorybook(): Promise<void> {
 		try {
 			const response = await fetch(STORYBOOK_URL, {

@@ -35,6 +35,9 @@ function defaultApplyTheme(mode: ThemeMode): void {
 	}
 }
 
+/**
+ *
+ */
 export class SettingsStore {
 	themeMode = $state<ThemeMode>("system");
 	defaultModel = $state<DefaultModel>("auto");
@@ -68,6 +71,11 @@ export class SettingsStore {
 	private _mediaQueryCleanup: (() => void) | null = null;
 	private _onThemeChange: ((mode: ThemeMode) => void) | null = null;
 
+	/**
+	 *
+	 * @param options
+	 * @param options.onThemeChange
+	 */
 	async initialize(options?: { onThemeChange?: (mode: ThemeMode) => void }): Promise<void> {
 		if (this._initialized) return;
 		this._initialized = true;
@@ -119,6 +127,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	destroy(): void {
 		if (this._pollIntervalId !== null) {
 			clearInterval(this._pollIntervalId);
@@ -179,6 +190,10 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param mode
+	 */
 	async setThemeMode(mode: ThemeMode): Promise<void> {
 		this.themeMode = mode;
 		this.applyTheme(mode);
@@ -195,6 +210,10 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param model
+	 */
 	async setDefaultModel(model: DefaultModel): Promise<void> {
 		this.defaultModel = model;
 
@@ -210,6 +229,10 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param size
+	 */
 	async setFontSize(size: number): Promise<void> {
 		this.fontSize = Math.max(12, Math.min(20, size));
 
@@ -225,18 +248,31 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 * @param section
+	 */
 	setActiveSection(section: string) {
 		this.activeSection = section;
 	}
 
+	/**
+	 *
+	 */
 	get startupDone(): boolean {
 		return this.startupStatus?.all_done ?? false;
 	}
 
+	/**
+	 *
+	 */
 	get activeStartupTask(): StartupTask | null {
 		return this.startupStatus?.tasks.find((t) => t.status === "in_progress") ?? null;
 	}
 
+	/**
+	 *
+	 */
 	async refreshSidecarStatus(): Promise<void> {
 		// Poll startup status until all tasks are done
 		if (!this.startupDone) {
@@ -270,6 +306,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async restartSidecar(): Promise<void> {
 		try {
 			const status = await invoke<SidecarStatus>("sidecar_restart");
@@ -287,6 +326,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	async refreshDaemonHealth(): Promise<void> {
 		const prevState = this.daemonHealth.state;
 		try {
@@ -333,6 +375,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	get daemonStateLabel(): string {
 		switch (this.daemonHealth.state) {
 			case "connected":
@@ -346,10 +391,16 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	get daemonConnected(): boolean {
 		return this.daemonHealth.state === "connected";
 	}
 
+	/**
+	 *
+	 */
 	get modelDisplayName(): string {
 		switch (this.defaultModel) {
 			case "auto":
@@ -365,6 +416,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	get sidecarStateLabel(): string {
 		switch (this.sidecarStatus.state) {
 			case "connected":
@@ -382,6 +436,9 @@ export class SettingsStore {
 		}
 	}
 
+	/**
+	 *
+	 */
 	get sidecarConnected(): boolean {
 		return this.sidecarStatus.state === "connected";
 	}

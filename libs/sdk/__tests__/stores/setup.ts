@@ -15,10 +15,16 @@ import { vi } from "vitest";
 const mockInvoke = vi.fn();
 
 // Minimal Channel mock that captures onmessage callback
+/**
+ *
+ */
 class MockChannel<T> {
 	onmessage: ((event: T) => void) | null = null;
 
-	/** Helper for tests to simulate events from the backend */
+	/**
+	 * Helper for tests to simulate events from the backend
+	 * @param event
+	 */
 	emit(event: T) {
 		if (this.onmessage) {
 			this.onmessage(event);

@@ -31,9 +31,7 @@ export function initDevConsole() {
 			original(...args);
 
 			// Forward to the dev dashboard using sendBeacon to avoid CORS issues.
-			const message = args
-				.map((a) => (typeof a === "string" ? a : JSON.stringify(a)))
-				.join(" ");
+			const message = args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
 			const level = method === "log" ? "info" : method;
 			const payload = JSON.stringify({ level, source: "console", message });
 			navigator.sendBeacon(

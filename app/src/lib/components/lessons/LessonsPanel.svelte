@@ -18,10 +18,18 @@
 		}
 	});
 
+	/**
+	 *
+	 * @param lesson
+	 */
 	function handleSelect(lesson: Lesson) {
 		selectedLesson = lesson;
 	}
 
+	/**
+	 *
+	 * @param id
+	 */
 	async function handleIncrementRecurrence(id: string) {
 		if (!projectPath) return;
 		await lessonStore.incrementRecurrence(projectPath, id);
@@ -32,6 +40,9 @@
 		}
 	}
 
+	/**
+	 *
+	 */
 	function handleRetry() {
 		if (projectPath) {
 			lessonStore.loadLessons(projectPath);
@@ -41,7 +52,9 @@
 
 <HStack gap={0} height="full">
 	<!-- Lesson list sidebar (240px); border-right requires raw div — no ORQA primitive supports single-side border without padding -->
-	<div style="width: 15rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid hsl(var(--border));">
+	<div
+		style="width: 15rem; flex-shrink: 0; overflow: hidden; border-right: 1px solid hsl(var(--border));"
+	>
 		<LessonList
 			lessons={lessonStore.lessons}
 			loading={lessonStore.loading}

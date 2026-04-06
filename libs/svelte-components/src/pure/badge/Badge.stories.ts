@@ -24,4 +24,6 @@ export const Outline: Story = { args: { variant: "outline" } };
 export const Warning: Story = { args: { variant: "warning" } };
 export const Success: Story = { args: { variant: "success" } };
 // Combined: success + xs size + capitalize for live status labels.
-export const SuccessXsCapitalize: Story = { args: { variant: "success", size: "xs", capitalize: true } };
+export const SuccessXsCapitalize: Story = {
+	args: { variant: "success", size: "xs", capitalize: true },
+};

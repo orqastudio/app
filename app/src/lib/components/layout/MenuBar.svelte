@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Icon, DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuItem, DropdownMenuContent, DropdownMenuSeparator } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		DropdownMenuRoot,
+		DropdownMenuTrigger,
+		DropdownMenuItem,
+		DropdownMenuContent,
+		DropdownMenuSeparator,
+	} from "@orqastudio/svelte-components/pure";
 
 	interface Props {
 		hasProject: boolean;
@@ -27,16 +34,28 @@
 	const triggerClass =
 		"flex h-7 items-center rounded px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground";
 
+	/**
+	 * Toggle the specified menu open or close it if already open.
+	 * @param menu
+	 */
 	function handleMenuClick(menu: string): void {
 		activeMenu = activeMenu === menu ? null : menu;
 	}
 
+	/**
+	 * Switch to a different menu on hover when menu mode is active.
+	 * @param menu
+	 */
 	function handleMenuHover(menu: string): void {
 		if (menuMode && activeMenu !== menu) {
 			activeMenu = menu;
 		}
 	}
 
+	/**
+	 * Close the menu and execute the provided menu action.
+	 * @param action
+	 */
 	function handleItem(action: () => void): void {
 		activeMenu = null;
 		action();
@@ -48,13 +67,18 @@
 	<!-- File menu -->
 	<DropdownMenuRoot
 		open={activeMenu === "file"}
-		onOpenChange={(isOpen) => { if (!isOpen) activeMenu = null; }}
+		onOpenChange={(isOpen) => {
+			if (!isOpen) activeMenu = null;
+		}}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div onmouseenter={() => handleMenuHover("file")}>
 			<DropdownMenuTrigger
 				class={triggerClass}
-				onclick={(e: MouseEvent) => { e.preventDefault(); handleMenuClick("file"); }}
+				onclick={(e: MouseEvent) => {
+					e.preventDefault();
+					handleMenuClick("file");
+				}}
 			>
 				File
 			</DropdownMenuTrigger>
@@ -86,13 +110,18 @@
 	<!-- Edit menu -->
 	<DropdownMenuRoot
 		open={activeMenu === "edit"}
-		onOpenChange={(isOpen) => { if (!isOpen) activeMenu = null; }}
+		onOpenChange={(isOpen) => {
+			if (!isOpen) activeMenu = null;
+		}}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div onmouseenter={() => handleMenuHover("edit")}>
 			<DropdownMenuTrigger
 				class={triggerClass}
-				onclick={(e: MouseEvent) => { e.preventDefault(); handleMenuClick("edit"); }}
+				onclick={(e: MouseEvent) => {
+					e.preventDefault();
+					handleMenuClick("edit");
+				}}
 			>
 				Edit
 			</DropdownMenuTrigger>
@@ -108,13 +137,18 @@
 	<!-- Help menu -->
 	<DropdownMenuRoot
 		open={activeMenu === "help"}
-		onOpenChange={(isOpen) => { if (!isOpen) activeMenu = null; }}
+		onOpenChange={(isOpen) => {
+			if (!isOpen) activeMenu = null;
+		}}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div onmouseenter={() => handleMenuHover("help")}>
 			<DropdownMenuTrigger
 				class={triggerClass}
-				onclick={(e: MouseEvent) => { e.preventDefault(); handleMenuClick("help"); }}
+				onclick={(e: MouseEvent) => {
+					e.preventDefault();
+					handleMenuClick("help");
+				}}
 			>
 				Help
 			</DropdownMenuTrigger>

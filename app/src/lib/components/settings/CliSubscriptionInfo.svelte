@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Badge, HStack, Stack, Caption, Text, Code, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Badge,
+		HStack,
+		Stack,
+		Caption,
+		Text,
+		Code,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 
 	interface Props {
@@ -69,38 +77,42 @@
 
 <Separator />
 <Panel padding="normal" rounded="lg" border="all" background="muted">
-<Stack gap={3}>
-	<HStack gap={2} justify="between">
-		<Text variant="body-strong">Subscription</Text>
-		{#if subscriptionType}
-			<Badge variant="default"><Caption variant="caption">{formatSubscriptionType(subscriptionType)}</Caption></Badge>
-		{/if}
-	</HStack>
-
-	{#if rateLimitTier}
-		<HStack gap={2}>
-			<Caption tone="muted">Rate Limit:</Caption>
-			<Code>{formatRateLimitTier(rateLimitTier)}</Code>
+	<Stack gap={3}>
+		<HStack gap={2} justify="between">
+			<Text variant="body-strong">Subscription</Text>
+			{#if subscriptionType}
+				<Badge variant="default"
+					><Caption variant="caption">{formatSubscriptionType(subscriptionType)}</Caption></Badge
+				>
+			{/if}
 		</HStack>
-	{/if}
 
-	{#if expiresAt}
-		{@const expiry = formatExpiry(expiresAt)}
-		<HStack gap={2}>
-			<Caption tone="muted">Token Expiry:</Caption>
-			<Caption tone={expiry.expired ? "destructive" : undefined}>{expiry.label}</Caption>
-		</HStack>
-	{/if}
-
-	{#if scopes.length > 0}
-		<HStack gap={2} align="start">
-			<Caption tone="muted">Scopes:</Caption>
-			<HStack gap={1} wrap>
-				{#each scopes as scope (scope)}
-					<Badge variant="outline"><Caption variant="caption-mono">{formatScope(scope)}</Caption></Badge>
-				{/each}
+		{#if rateLimitTier}
+			<HStack gap={2}>
+				<Caption tone="muted">Rate Limit:</Caption>
+				<Code>{formatRateLimitTier(rateLimitTier)}</Code>
 			</HStack>
-		</HStack>
-	{/if}
-</Stack>
+		{/if}
+
+		{#if expiresAt}
+			{@const expiry = formatExpiry(expiresAt)}
+			<HStack gap={2}>
+				<Caption tone="muted">Token Expiry:</Caption>
+				<Caption tone={expiry.expired ? "destructive" : undefined}>{expiry.label}</Caption>
+			</HStack>
+		{/if}
+
+		{#if scopes.length > 0}
+			<HStack gap={2} align="start">
+				<Caption tone="muted">Scopes:</Caption>
+				<HStack gap={1} wrap>
+					{#each scopes as scope (scope)}
+						<Badge variant="outline"
+							><Caption variant="caption-mono">{formatScope(scope)}</Caption></Badge
+						>
+					{/each}
+				</HStack>
+			</HStack>
+		{/if}
+	</Stack>
 </Panel>

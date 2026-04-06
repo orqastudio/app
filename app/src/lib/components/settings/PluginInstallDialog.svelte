@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Icon, Heading, HStack, Stack, Caption, Text, Button, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Heading,
+		HStack,
+		Stack,
+		Caption,
+		Text,
+		Button,
+		Panel,
+	} from "@orqastudio/svelte-components/pure";
 	import type { PluginManifest } from "@orqastudio/types";
 
 	interface Props {
@@ -14,15 +23,16 @@
 	const navItems = $derived(manifest.defaultNavigation ?? []);
 	const hasNavItems = $derived(navItems.length > 0);
 
+	/**
+	 *
+	 * @param key
+	 */
 	function humanizeKey(key: string): string {
-		return key
-			.replace(/[-_]/g, " ")
-			.replace(/\b\w/g, (c) => c.toUpperCase());
+		return key.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
-
 </script>
 
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-background/80">
+<div class="bg-background/80 fixed inset-0 z-50 flex items-center justify-center">
 	<Panel padding="loose" rounded="lg" border="all" background="card">
 		<Stack gap={4}>
 			<HStack gap={3}>

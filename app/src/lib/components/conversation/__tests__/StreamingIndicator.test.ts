@@ -25,7 +25,9 @@ describe("StreamingIndicator", () => {
 	});
 
 	it("shows animated dots", () => {
-		const { container } = render(StreamingIndicator, { props: { hasContent: false, toolCalls: [] } });
+		const { container } = render(StreamingIndicator, {
+			props: { hasContent: false, toolCalls: [] },
+		});
 		// Three animated spans with animate-bounce class
 		const dots = container.querySelectorAll(".animate-bounce");
 		expect(dots.length).toBe(3);
@@ -55,8 +57,22 @@ describe("StreamingIndicator", () => {
 
 	it("shows tool progress counter when tools are active", () => {
 		const toolCalls = [
-			{ toolCallId: "c1", toolName: "bash", input: "{}", output: null, isError: false, isComplete: true },
-			{ toolCallId: "c2", toolName: "read", input: "{}", output: null, isError: false, isComplete: false },
+			{
+				toolCallId: "c1",
+				toolName: "bash",
+				input: "{}",
+				output: null,
+				isError: false,
+				isComplete: true,
+			},
+			{
+				toolCallId: "c2",
+				toolName: "read",
+				input: "{}",
+				output: null,
+				isError: false,
+				isComplete: false,
+			},
 		];
 		render(StreamingIndicator, { props: { hasContent: false, toolCalls } });
 		// 1 of 2 tools complete

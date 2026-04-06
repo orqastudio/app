@@ -1,6 +1,15 @@
 <!-- Renders structured frontmatter fields for a governance artifact: title, description, status, priority, dates, links, chips, and gate questions. -->
 <script lang="ts">
-	import { Icon, CardRoot, CardContent, HStack, Box, Heading, Badge, Stack } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardContent,
+		HStack,
+		Box,
+		Heading,
+		Badge,
+		Stack,
+	} from "@orqastudio/svelte-components/pure";
 	import { ArtifactLink } from "@orqastudio/svelte-components/connected";
 	import GateQuestions from "./GateQuestions.svelte";
 	import { StatusIndicator } from "@orqastudio/svelte-components/connected";
@@ -109,7 +118,8 @@
 	/** Scoring dimensions as key-value pairs for inline display. */
 	const scoringEntries = $derived.by(() => {
 		const raw = metadata["scoring"];
-		if (raw === null || raw === undefined || typeof raw !== "object" || Array.isArray(raw)) return [];
+		if (raw === null || raw === undefined || typeof raw !== "object" || Array.isArray(raw))
+			return [];
 		return Object.entries(raw as Record<string, unknown>).filter(
 			([, v]) => v !== null && v !== undefined,
 		);
@@ -137,7 +147,7 @@
 	const dateChip = $derived(
 		createdShort && updatedShort && createdShort !== updatedShort
 			? `${createdShort} → ${updatedShort}`
-			: createdShort ?? updatedShort,
+			: (createdShort ?? updatedShort),
 	);
 
 	/** Gate — supports both a single string (milestones) and an array (pillars). */
@@ -180,7 +190,12 @@
 	});
 
 	/** True when the card has content below the header row. */
-	const hasBody = $derived(bodyEntries.length > 0 || appTools.length > 0 || gateQuestions.length > 0 || scoringEntries.length > 0);
+	const hasBody = $derived(
+		bodyEntries.length > 0 ||
+			appTools.length > 0 ||
+			gateQuestions.length > 0 ||
+			scoringEntries.length > 0,
+	);
 </script>
 
 <!-- Title -->
@@ -190,169 +205,191 @@
 
 <!-- Description + metadata card share a Stack gap={4} so no marginTop or mb-* spacers are needed. -->
 <Stack gap={4}>
-{#if description}
-	<!-- leading-relaxed is not in Text variants, kept as p. -->
-	<p class="text-sm leading-relaxed text-muted-foreground">{description}</p>
-{/if}
+	{#if description}
+		<!-- leading-relaxed is not in Text variants, kept as p. -->
+		<p class="text-muted-foreground text-sm leading-relaxed">{description}</p>
+	{/if}
 
-<!-- Metadata card -->
-<CardRoot gap={0}>
-	<CardContent>
-		<!-- ID + Status/Priority row — only rendered when at least one value is present -->
-		{#if id || (status && isPresent(status)) || priority || dateChip}
-			<HStack justify="between" gap={3} align={hasBody ? "start" : "center"}>
-				<Stack gap={0.5}>
-					{#if id}
-						<!-- tracking-widest and uppercase not in Text variants, kept as p. -->
-						<p class="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-							{artifactType} · {id}
-						</p>
-					{/if}
-				</Stack>
+	<!-- Metadata card -->
+	<CardRoot gap={0}>
+		<CardContent>
+			<!-- ID + Status/Priority row — only rendered when at least one value is present -->
+			{#if id || (status && isPresent(status)) || priority || dateChip}
+				<HStack justify="between" gap={3} align={hasBody ? "start" : "center"}>
+					<Stack gap={0.5}>
+						{#if id}
+							<!-- tracking-widest and uppercase not in Text variants, kept as p. -->
+							<p
+								class="text-muted-foreground font-mono text-xs font-semibold tracking-widest uppercase"
+							>
+								{artifactType} · {id}
+							</p>
+						{/if}
+					</Stack>
 
-				<HStack gap={2} flex={0}>
-					{#if createdShort}
-						<span class="text-muted-foreground"><Badge variant="secondary">
-							<Icon name="calendar-plus" size="xs" />{createdShort}
-						</Badge></span>
-					{/if}
-					{#if updatedShort && updatedShort !== createdShort}
-						<span class="text-muted-foreground"><Badge variant="secondary">
-							<Icon name="calendar-check" size="xs" />{updatedShort}
-						</Badge></span>
-					{/if}
-					{#if priority}
-						<span class={priorityClass(priority)}><Badge variant="outline">
-							{priorityLabel(priority)}
-						</Badge></span>
-					{/if}
-					{#if status && isPresent(status)}
-						<StatusIndicator {status} mode="badge" />
-					{/if}
-				</HStack>
-			</HStack>
-		{/if}
-
-		<!-- Scoring dimensions (shown near priority when present) -->
-		{#if priority && scoringEntries.length > 0}
-			<HStack align="baseline" gap={2}>
-				<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
-				<span class="w-[7rem] shrink-0 text-xs font-medium text-muted-foreground">
-					<HStack gap={1}>
-						<Icon name="scale" size="xs" />Scoring
+					<HStack gap={2} flex={0}>
+						{#if createdShort}
+							<span class="text-muted-foreground"
+								><Badge variant="secondary">
+									<Icon name="calendar-plus" size="xs" />{createdShort}
+								</Badge></span
+							>
+						{/if}
+						{#if updatedShort && updatedShort !== createdShort}
+							<span class="text-muted-foreground"
+								><Badge variant="secondary">
+									<Icon name="calendar-check" size="xs" />{updatedShort}
+								</Badge></span
+							>
+						{/if}
+						{#if priority}
+							<span class={priorityClass(priority)}
+								><Badge variant="outline">
+									{priorityLabel(priority)}
+								</Badge></span
+							>
+						{/if}
+						{#if status && isPresent(status)}
+							<StatusIndicator {status} mode="badge" />
+						{/if}
 					</HStack>
-				</span>
-				<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-					{#each scoringEntries as [key, val] (key)}
-						<Badge variant="secondary">
-							<span class="font-normal"><span class="text-muted-foreground">{humanizeKey(key)}:</span> {String(val)}</span>
-						</Badge>
-					{/each}
-				</HStack></Box>
-			</HStack>
-		{/if}
-
-		<!-- Dynamic body — YAML source order, type-dispatched -->
-		{#each bodyEntries as [key, value] (key)}
-			{@const type = fieldType(key)}
-			{#if type === "date"}
-				{@const formatted = formatDate(value)}
-				{#if formatted}
-					<HStack align="baseline" gap={2}>
-						<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
-						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-							{humanizeKey(key)}
-						</span>
-						<span class="text-xs text-foreground">{formatted}</span>
-					</HStack>
-				{/if}
-
-			{:else if type === "link"}
-				{@const vals = asArray(value).filter(Boolean)}
-				{#if vals.length > 0}
-					<HStack align="baseline" gap={2}>
-						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-							{humanizeKey(key)}
-						</span>
-						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-							{#each vals as val, i (i)}
-								<ArtifactLink id={val.trim()} />
-							{/each}
-						</HStack></Box>
-					</HStack>
-				{/if}
-
-			{:else if type === "chip"}
-				{@const items = asArray(value).filter(Boolean)}
-				{#if items.length > 0}
-					<HStack align="baseline" gap={2}>
-						<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-							{humanizeKey(key)}
-						</span>
-						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-							{#each items as item, i (i)}
-								<span class="capitalize"><Badge variant="secondary">{item}</Badge></span>
-							{/each}
-						</HStack></Box>
-					</HStack>
-				{/if}
-
-			{:else if type === "boolean"}
-				<HStack gap={2}>
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					{#if value}
-						<Icon name="check" size="md" />
-					{:else}
-						<Icon name="x" size="md" />
-					{/if}
-				</HStack>
-
-			{:else}
-				<!-- generic -->
-				<HStack align="baseline" gap={2}>
-					<span class="w-[7rem] shrink-0 text-xs font-medium capitalize text-muted-foreground">
-						{humanizeKey(key)}
-					</span>
-					{#if Array.isArray(value)}
-						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-							{#each value as v, i (i)}
-								<span class="capitalize"><Badge variant="secondary">{v}</Badge></span>
-							{/each}
-						</HStack></Box>
-					{:else if typeof value === "object" && value !== null}
-						<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-							{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
-								<Badge variant="secondary">
-									<span class="text-muted-foreground">{humanizeKey(k)}:</span> {String(v)}
-								</Badge>
-							{/each}
-						</HStack></Box>
-					{:else}
-						<span class="min-w-0 flex-1 text-xs capitalize text-foreground">{String(value)}</span>
-					{/if}
 				</HStack>
 			{/if}
-		{/each}
 
-		<!-- Capabilities (human-friendly names) -->
-		{#if appTools.length > 0}
-			<HStack align="baseline" gap={2}>
-				<!-- w-[7rem] + capitalize not in Stack/Box primitives, kept as span. -->
-				<span class="inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize text-muted-foreground">
-					<Icon name="wrench" size="xs" />Capabilities
-				</span>
-				<Box flex={1} minWidth={0}><HStack wrap gap={1}>
-					{#each appTools as tool, i (i)}
-						<Badge variant="secondary">{tool}</Badge>
-					{/each}
-				</HStack></Box>
-			</HStack>
-		{/if}
+			<!-- Scoring dimensions (shown near priority when present) -->
+			{#if priority && scoringEntries.length > 0}
+				<HStack align="baseline" gap={2}>
+					<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
+					<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium">
+						<HStack gap={1}>
+							<Icon name="scale" size="xs" />Scoring
+						</HStack>
+					</span>
+					<Box flex={1} minWidth={0}
+						><HStack wrap gap={1}>
+							{#each scoringEntries as [key, val] (key)}
+								<Badge variant="secondary">
+									<span class="font-normal"
+										><span class="text-muted-foreground">{humanizeKey(key)}:</span>
+										{String(val)}</span
+									>
+								</Badge>
+							{/each}
+						</HStack></Box
+					>
+				</HStack>
+			{/if}
 
-		<!-- Gate question(s) — always last -->
-		<GateQuestions questions={gateQuestions} />
-	</CardContent>
-</CardRoot>
+			<!-- Dynamic body — YAML source order, type-dispatched -->
+			{#each bodyEntries as [key, value] (key)}
+				{@const type = fieldType(key)}
+				{#if type === "date"}
+					{@const formatted = formatDate(value)}
+					{#if formatted}
+						<HStack align="baseline" gap={2}>
+							<!-- w-[7rem] is an arbitrary width not in Box/Stack props, kept as span. -->
+							<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium capitalize">
+								{humanizeKey(key)}
+							</span>
+							<span class="text-foreground text-xs">{formatted}</span>
+						</HStack>
+					{/if}
+				{:else if type === "link"}
+					{@const vals = asArray(value).filter(Boolean)}
+					{#if vals.length > 0}
+						<HStack align="baseline" gap={2}>
+							<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium capitalize">
+								{humanizeKey(key)}
+							</span>
+							<Box flex={1} minWidth={0}
+								><HStack wrap gap={1}>
+									{#each vals as val, i (i)}
+										<ArtifactLink id={val.trim()} />
+									{/each}
+								</HStack></Box
+							>
+						</HStack>
+					{/if}
+				{:else if type === "chip"}
+					{@const items = asArray(value).filter(Boolean)}
+					{#if items.length > 0}
+						<HStack align="baseline" gap={2}>
+							<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium capitalize">
+								{humanizeKey(key)}
+							</span>
+							<Box flex={1} minWidth={0}
+								><HStack wrap gap={1}>
+									{#each items as item, i (i)}
+										<span class="capitalize"><Badge variant="secondary">{item}</Badge></span>
+									{/each}
+								</HStack></Box
+							>
+						</HStack>
+					{/if}
+				{:else if type === "boolean"}
+					<HStack gap={2}>
+						<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium capitalize">
+							{humanizeKey(key)}
+						</span>
+						{#if value}
+							<Icon name="check" size="md" />
+						{:else}
+							<Icon name="x" size="md" />
+						{/if}
+					</HStack>
+				{:else}
+					<!-- generic -->
+					<HStack align="baseline" gap={2}>
+						<span class="text-muted-foreground w-[7rem] shrink-0 text-xs font-medium capitalize">
+							{humanizeKey(key)}
+						</span>
+						{#if Array.isArray(value)}
+							<Box flex={1} minWidth={0}
+								><HStack wrap gap={1}>
+									{#each value as v, i (i)}
+										<span class="capitalize"><Badge variant="secondary">{v}</Badge></span>
+									{/each}
+								</HStack></Box
+							>
+						{:else if typeof value === "object" && value !== null}
+							<Box flex={1} minWidth={0}
+								><HStack wrap gap={1}>
+									{#each Object.entries(value as Record<string, unknown>) as [k, v], i (i)}
+										<Badge variant="secondary">
+											<span class="text-muted-foreground">{humanizeKey(k)}:</span>
+											{String(v)}
+										</Badge>
+									{/each}
+								</HStack></Box
+							>
+						{:else}
+							<span class="text-foreground min-w-0 flex-1 text-xs capitalize">{String(value)}</span>
+						{/if}
+					</HStack>
+				{/if}
+			{/each}
+
+			<!-- Capabilities (human-friendly names) -->
+			{#if appTools.length > 0}
+				<HStack align="baseline" gap={2}>
+					<!-- w-[7rem] + capitalize not in Stack/Box primitives, kept as span. -->
+					<span
+						class="text-muted-foreground inline-flex w-[7rem] shrink-0 items-center gap-1 text-xs font-medium capitalize"
+					>
+						<Icon name="wrench" size="xs" />Capabilities
+					</span>
+					<Box flex={1} minWidth={0}
+						><HStack wrap gap={1}>
+							{#each appTools as tool, i (i)}
+								<Badge variant="secondary">{tool}</Badge>
+							{/each}
+						</HStack></Box
+					>
+				</HStack>
+			{/if}
+
+			<!-- Gate question(s) — always last -->
+			<GateQuestions questions={gateQuestions} />
+		</CardContent>
+	</CardRoot>
 </Stack>

@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { Icon, CardRoot, CardHeader, CardTitle, CardDescription, CardContent } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Stack, Caption } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -66,7 +73,9 @@
 
 			{#if settingsStore.sidecarStatus.error_message}
 				<!-- Error message box: destructive/30 border and destructive/10 bg are not in Box typed props — keep as raw div -->
-				<div class="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+				<div
+					class="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm"
+				>
 					{settingsStore.sidecarStatus.error_message}
 				</div>
 			{/if}

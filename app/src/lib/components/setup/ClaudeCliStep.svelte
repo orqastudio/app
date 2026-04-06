@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Icon, Button, Heading, Text, Caption, Stack, HStack, Link } from "@orqastudio/svelte-components/pure";
+	import {
+		Icon,
+		Button,
+		Heading,
+		Text,
+		Caption,
+		Stack,
+		Link,
+	} from "@orqastudio/svelte-components/pure";
 	import { LoadingSpinner } from "@orqastudio/svelte-components/pure";
 	import { ErrorDisplay } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -14,6 +22,9 @@
 
 	let checking = $state(true);
 
+	/**
+	 *
+	 */
 	async function check() {
 		checking = true;
 		setupStore.error = null;

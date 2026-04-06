@@ -38,6 +38,7 @@ const defaults: ArtifactNode = {
  * ```ts
  * const node = createTestNode({ id: "EPIC-042", artifactType: "epic", status: "draft" });
  * ```
+ * @param overrides
  */
 export function createTestNode(overrides: Partial<ArtifactNode> = {}): ArtifactNode {
 	return {
