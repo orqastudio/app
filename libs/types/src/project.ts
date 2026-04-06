@@ -192,7 +192,8 @@ export type ArtifactEntry = ArtifactTypeConfig | ArtifactGroupConfig;
 
 /**
  * Type guard: is this entry a group (has children)?
- * @param entry
+ * @param entry - The artifact entry to test.
+ * @returns True if the entry is an ArtifactGroupConfig with a children array.
  */
 export function isArtifactGroup(entry: ArtifactEntry): entry is ArtifactGroupConfig {
 	return "children" in entry;

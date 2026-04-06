@@ -121,7 +121,8 @@
 	/**
 	 * Determine a milestone's horizon bucket.
 	 * Uses the `horizon` frontmatter field if present, otherwise infers from status.
-	 * @param ms
+	 * @param ms - The milestone artifact node to determine a horizon for.
+	 * @returns The horizon key string ("now", "next", "later", or "done").
 	 */
 	function milestoneHorizon(ms: ArtifactNode): string {
 		const fm = ms.frontmatter;
@@ -225,8 +226,9 @@
 	// ---------------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param epicId
+	 * Returns the done and total task counts for a given epic, used to render progress on epic cards.
+	 * @param epicId - The epic artifact ID to count tasks for.
+	 * @returns An object with `done` and `total` task counts for the epic.
 	 */
 	function taskCountForEpic(epicId: string): { done: number; total: number } {
 		const epicTaskList = tasks.filter((t) =>
@@ -243,10 +245,10 @@
 	// ---------------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param node
-	 * @param field
-	 * @param value
+	 * Persists a frontmatter field update for an artifact via the graph SDK.
+	 * @param node - The artifact node whose field is being updated.
+	 * @param field - The frontmatter field name to update (e.g. "horizon", "status").
+	 * @param value - The new value to write for the field.
 	 */
 	async function updateField(node: ArtifactNode, field: string, value: string): Promise<void> {
 		try {
@@ -261,8 +263,8 @@
 	// ---------------------------------------------------------------------------
 
 	/**
-	 *
-	 * @param ms
+	 * Handles milestone click events, drilling down to the milestone's epic kanban.
+	 * @param ms - The milestone artifact node that was clicked.
 	 */
 	function handleMilestoneClick(ms: ArtifactNode) {
 		selectedMilestone = ms;
@@ -270,8 +272,8 @@
 	}
 
 	/**
-	 *
-	 * @param epic
+	 * Handles epic click events, drilling down to the epic's task kanban or navigating directly.
+	 * @param epic - The epic artifact node that was clicked.
 	 */
 	function handleEpicClick(epic: ArtifactNode) {
 		if (drillLevel === 1) {
@@ -283,8 +285,8 @@
 	}
 
 	/**
-	 *
-	 * @param task
+	 * Handles task click events, navigating the app to the task's artifact detail view.
+	 * @param task - The task artifact node that was clicked.
 	 */
 	function handleTaskClick(task: ArtifactNode) {
 		navigationStore.navigateToArtifact(task.id);

@@ -48,8 +48,9 @@ const BASE_COMPILER_OPTIONS: Record<string, unknown> = {
  *
  * Each entry may carry `option` (the compilerOptions key) and `value` (the
  * value to set). Entries missing either field are silently skipped.
- * @param base
- * @param entries
+ * @param base - The canonical base compiler options to start from.
+ * @param entries - Enforcement entries that may override individual compiler options.
+ * @returns A new compiler options map with rule overrides applied on top of the base.
  */
 function applyRuleOverrides(
 	base: Readonly<Record<string, unknown>>,

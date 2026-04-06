@@ -51,8 +51,8 @@
 	let isDragOver = $state(false);
 
 	/**
-	 *
-	 * @param e
+	 * Handles dragover events on the column, marking it as a drop target.
+	 * @param e - The drag event from the browser drag-and-drop API.
 	 */
 	function handleDragOver(e: DragEvent) {
 		e.preventDefault();
@@ -61,8 +61,8 @@
 	}
 
 	/**
-	 *
-	 * @param e
+	 * Handles dragleave events, clearing the drag-over state only when the cursor exits the column boundary.
+	 * @param e - The drag event from the browser drag-and-drop API.
 	 */
 	function handleDragLeave(e: DragEvent) {
 		// Only reset isDragOver when the cursor actually leaves the column, not when
@@ -74,8 +74,8 @@
 	}
 
 	/**
-	 *
-	 * @param e
+	 * Handles drop events on the column, forwarding the event to the parent via the onDrop prop.
+	 * @param e - The drag event from the browser drag-and-drop API.
 	 */
 	function handleDrop(e: DragEvent) {
 		e.stopPropagation();

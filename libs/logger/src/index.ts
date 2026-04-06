@@ -134,7 +134,8 @@ function emit(entry: LogEntry): void {
 				break;
 			default: {
 				// Exhaustiveness check — compile error if a new LogLevel is added without a case.
-				const _exhaustive: never = entry.level;
+				const exhaustive: never = entry.level;
+				void exhaustive;
 				console.log(prefix, entry.message, entry.data ?? "");
 			}
 		}

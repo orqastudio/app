@@ -6,13 +6,14 @@
 /**
  * Generate an SVG path string from a series of numeric values.
  * Normalises values to fit within the given width/height.
- * @param values
- * @param width
- * @param height
- * @param options
- * @param options.padding
- * @param options.fixedMin
- * @param options.fixedMax
+ * @param values - Array of numeric data points to plot.
+ * @param width - Total SVG width in pixels.
+ * @param height - Total SVG height in pixels.
+ * @param options - Optional rendering configuration.
+ * @param options.padding - Vertical padding in pixels (default 4).
+ * @param options.fixedMin - Fixed minimum value; overrides computed min.
+ * @param options.fixedMax - Fixed maximum value; overrides computed max.
+ * @returns SVG path data string starting with M, or empty string if fewer than 2 values.
  */
 export function sparklinePath(
 	values: readonly number[],
@@ -36,8 +37,9 @@ export function sparklinePath(
 /**
  * Calculate trend percentage between two values.
  * Returns null if insufficient data.
- * @param current
- * @param previous
+ * @param current - The current metric value.
+ * @param previous - The previous metric value to compare against.
+ * @returns Percentage change rounded to nearest integer, or null when previous is zero and current is non-zero.
  */
 export function trendPercent(current: number, previous: number): number | null {
 	if (previous === 0) {
@@ -49,7 +51,8 @@ export function trendPercent(current: number, previous: number): number | null {
 
 /**
  * Format a trend percentage with sign.
- * @param pct
+ * @param pct - The trend percentage to format, or null for no data.
+ * @returns Formatted string like "+12%" or "-5%", empty string when null or zero.
  */
 export function formatTrend(pct: number | null): string {
 	if (pct === null) return "";
@@ -60,7 +63,8 @@ export function formatTrend(pct: number | null): string {
 
 /**
  * Get a trend arrow character.
- * @param pct
+ * @param pct - The trend percentage to represent, or null for no data.
+ * @returns An up or down arrow character, or empty string when null or zero.
  */
 export function trendArrow(pct: number | null): string {
 	if (pct === null || pct === 0) return "";
@@ -69,8 +73,9 @@ export function trendArrow(pct: number | null): string {
 
 /**
  * Determine trend colour class.
- * @param pct - trend percentage
- * @param lowerIsBetter - if true, negative trend = good (green). Default true.
+ * @param pct - Trend percentage value, or null for no data.
+ * @param lowerIsBetter - If true, negative trend = good (green). Default true.
+ * @returns Tailwind text color class name appropriate for the trend direction.
  */
 export function trendColorClass(pct: number | null, lowerIsBetter = true): string {
 	if (pct === null || pct === 0) return "text-muted-foreground";

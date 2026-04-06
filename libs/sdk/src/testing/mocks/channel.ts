@@ -9,7 +9,7 @@ export class MockChannel<T> {
 
 	/**
 	 * Simulate an event from the backend. Calls onmessage if set.
-	 * @param event
+	 * @param event - The event payload to deliver to the registered onmessage handler.
 	 */
 	emit(event: T): void {
 		if (this.onmessage) {

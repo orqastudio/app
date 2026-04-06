@@ -1,5 +1,5 @@
 /**
- * Mock @tauri-apps/api/event utilities.
+ * Mock `@tauri-apps/api/event` utilities.
  *
  * Provides standalone mock factories for the Tauri event API
  * when you need more control than setupTauriMocks() provides.
@@ -17,6 +17,7 @@ export interface MockEventApi {
  *
  * - `listen` resolves to an unlisten function (also a mock)
  * - `emit` resolves to void
+ * @returns MockEventApi containing mock listen and emit functions.
  */
 export function createMockEventApi(): MockEventApi {
 	const unlisten = vi.fn();

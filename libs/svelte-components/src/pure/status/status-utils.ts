@@ -30,8 +30,9 @@ export const DEFAULT_STATUSES: StatusConfig[] = [
 /**
  * Resolve a status key to its full config.
  * Searches the provided statuses first, falls back to defaults.
- * @param key
- * @param statuses
+ * @param key - The status key to look up (case-insensitive).
+ * @param statuses - Optional custom status list to search first.
+ * @returns The matching StatusConfig, or a minimal fallback config using the raw key.
  */
 export function resolveStatus(key: string, statuses?: readonly StatusConfig[]): StatusConfig {
 	const k = key.toLowerCase();
@@ -47,8 +48,9 @@ export function resolveStatus(key: string, statuses?: readonly StatusConfig[]): 
 
 /**
  * Get the display label for a status key.
- * @param key
- * @param statuses
+ * @param key - The status key to look up.
+ * @param statuses - Optional custom status list to search first.
+ * @returns Human-readable label string for the status.
  */
 export function statusLabel(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).label;
@@ -56,8 +58,9 @@ export function statusLabel(key: string, statuses?: readonly StatusConfig[]): st
 
 /**
  * Get the icon name for a status key.
- * @param key
- * @param statuses
+ * @param key - The status key to look up.
+ * @param statuses - Optional custom status list to search first.
+ * @returns Lucide icon name string for the status.
  */
 export function statusIconName(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).icon;
@@ -65,8 +68,9 @@ export function statusIconName(key: string, statuses?: readonly StatusConfig[]):
 
 /**
  * Get the semantic color for a status key.
- * @param key
- * @param statuses
+ * @param key - The status key to look up.
+ * @param statuses - Optional custom status list to search first.
+ * @returns Semantic color name (e.g. "success", "warning"), defaulting to "muted".
  */
 export function statusColor(key: string, statuses?: readonly StatusConfig[]): string {
 	return resolveStatus(key, statuses).color ?? "muted";
@@ -74,8 +78,9 @@ export function statusColor(key: string, statuses?: readonly StatusConfig[]): st
 
 /**
  * Whether a status should show a spinning animation.
- * @param key
- * @param statuses
+ * @param key - The status key to look up.
+ * @param statuses - Optional custom status list to search first.
+ * @returns True if the status icon should spin, false otherwise.
  */
 export function statusIsSpinning(key: string, statuses?: readonly StatusConfig[]): boolean {
 	return resolveStatus(key, statuses).spin === true;
@@ -95,8 +100,9 @@ export const STATUS_COLOR_CLASSES: Record<string, string> = {
 
 /**
  * Get the Tailwind text color class for a status key.
- * @param key
- * @param statuses
+ * @param key - The status key to look up.
+ * @param statuses - Optional custom status list to search first.
+ * @returns Tailwind text color class string, defaulting to "text-muted-foreground".
  */
 export function statusColorClass(key: string, statuses?: readonly StatusConfig[]): string {
 	const color = statusColor(key, statuses);

@@ -214,8 +214,9 @@ export const DEFAULT_ICON_MAP: Record<string, Component> = {
  * Resolve an icon name to a Lucide component.
  * Checks the custom registry first (if provided), then the default map.
  * Returns a fallback circle icon if the name is not found.
- * @param name
- * @param customRegistry
+ * @param name - Icon name to resolve, or undefined to get the fallback.
+ * @param customRegistry - Optional plugin-provided icon registry to search first.
+ * @returns A Lucide Svelte component for the named icon, or CircleDotIcon as fallback.
  */
 export function resolveIcon(
 	name: string | undefined,

@@ -30,7 +30,8 @@ import {
 
 /**
  * Maps ESLint severity strings to their canonical form.
- * @param raw
+ * @param raw - The raw severity value from a rule enforcement entry.
+ * @returns The canonical ESLint severity string.
  */
 function normaliseSeverity(raw: unknown): "error" | "warn" | "off" {
 	if (raw === "error" || raw === 0) return "error";
@@ -41,7 +42,8 @@ function normaliseSeverity(raw: unknown): "error" | "warn" | "off" {
 /**
  * Build the rules object from enforcement entries filtered for the eslint
  * engine. Entries without a `rule` field are skipped.
- * @param entries
+ * @param entries - Enforcement entries to convert into ESLint rule definitions.
+ * @returns A record mapping rule names to their severity or [severity, options] tuples.
  */
 function buildRulesFromEntries(entries: readonly EnforcementEntry[]): Record<string, unknown> {
 	const rules: Record<string, unknown> = {};
@@ -67,10 +69,11 @@ function buildRulesFromEntries(entries: readonly EnforcementEntry[]): Record<str
  * Render the generated eslint.config.js content as a string.
  *
  * The output imports typescript-eslint, eslint-plugin-svelte, and
- * eslint-plugin-jsdoc using project-level NPM packages. No @orqastudio/*
+ * eslint-plugin-jsdoc using project-level NPM packages. No `@orqastudio`
  * imports are used so the config is self-contained at runtime.
- * @param tsRules
- * @param svelteRules
+ * @param tsRules - Rule overrides to embed in the TypeScript config block.
+ * @param svelteRules - Rule overrides to embed in the Svelte config block.
+ * @returns The full generated eslint.config.js file content as a string.
  */
 function renderEslintConfig(
 	tsRules: Record<string, unknown>,
@@ -171,8 +174,9 @@ ${svelteRulesStr}
 /**
  * Render a rules object as indented key-value lines for embedding in the
  * generated config.
- * @param rules
- * @param indent
+ * @param rules - The ESLint rules record to render as indented source lines.
+ * @param indent - Number of spaces to prepend to each rendered rule line.
+ * @returns A multi-line string of indented `"rule": value,` entries.
  */
 function renderRulesObject(rules: Record<string, unknown>, indent: number): string {
 	const pad = " ".repeat(indent);

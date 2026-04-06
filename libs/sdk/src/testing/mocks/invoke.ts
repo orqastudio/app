@@ -3,8 +3,8 @@
  *
  * Provides two approaches:
  * - `createMockInvoke()` — returns a standalone mock for manual wiring
- * - `setupTauriMocks()` — calls vi.mock() on @tauri-apps/api/core and
- *   @tauri-apps/api/event, returning the mock invoke for test configuration
+ * - `setupTauriMocks()` — calls vi.mock() on `@tauri-apps/api/core` and
+ *   `@tauri-apps/api/event`, returning the mock invoke for test configuration
  *
  * Pattern matches the existing orqa-studio setup.ts mock structure.
  */
@@ -15,6 +15,7 @@ import { MockChannel } from "./channel.js";
 /**
  * Create a standalone mock invoke function.
  * Useful when you need to control the mock without vi.mock() side effects.
+ * @returns An object containing mockInvoke (the mock function) and reset (clears recorded calls).
  */
 export function createMockInvoke(): { mockInvoke: Mock; reset: () => void } {
 	const mockInvoke = vi.fn();
@@ -35,6 +36,7 @@ export function createMockInvoke(): { mockInvoke: Mock; reset: () => void } {
  * import { setupTauriMocks } from "@orqastudio/test-config/mocks";
  * const { mockInvoke } = setupTauriMocks();
  * ```
+ * @returns An object containing mockInvoke for configuring per-command return values.
  */
 export function setupTauriMocks(): { mockInvoke: Mock } {
 	const mockInvoke = vi.fn();

@@ -66,9 +66,9 @@
 	let dropTargetKey = $state<string | null>(null);
 
 	/**
-	 *
-	 * @param e
-	 * @param milestone
+	 * Initiates a drag operation for a milestone card, storing the dragged milestone ID.
+	 * @param e - The drag event from the browser drag-and-drop API.
+	 * @param milestone - The milestone artifact node being dragged.
 	 */
 	function handleDragStart(e: DragEvent, milestone: ArtifactNode) {
 		dragMilestoneId = milestone.id;
@@ -76,9 +76,9 @@
 	}
 
 	/**
-	 *
-	 * @param e
-	 * @param colKey
+	 * Handles dragover events on a horizon column, marking it as the active drop target.
+	 * @param e - The drag event from the browser drag-and-drop API.
+	 * @param colKey - The horizon column key (e.g. "now", "next", "later", "done").
 	 */
 	function handleDragOver(e: DragEvent, colKey: string) {
 		e.preventDefault();
@@ -86,8 +86,8 @@
 	}
 
 	/**
-	 *
-	 * @param e
+	 * Handles dragleave events, clearing the drop target only when the cursor exits the column boundary.
+	 * @param e - The drag event from the browser drag-and-drop API.
 	 */
 	function handleDragLeave(e: DragEvent) {
 		// Only reset the drop target when the cursor actually leaves the column,
@@ -98,9 +98,9 @@
 	}
 
 	/**
-	 *
-	 * @param e
-	 * @param colKey
+	 * Handles drop events on a horizon column, triggering a horizon change for the dragged milestone.
+	 * @param e - The drag event from the browser drag-and-drop API.
+	 * @param colKey - The horizon column key the milestone is being dropped into.
 	 */
 	function handleDrop(e: DragEvent, colKey: string) {
 		e.preventDefault();
@@ -126,8 +126,9 @@
 	}
 
 	/**
-	 *
-	 * @param ms
+	 * Infers a milestone's horizon bucket from its status when no explicit horizon frontmatter is set.
+	 * @param ms - The milestone artifact node to infer a horizon for.
+	 * @returns The horizon key string ("now", "next", "later", or "done").
 	 */
 	function inferHorizon(ms: ArtifactNode): string {
 		const s = ms.status ?? "captured";
@@ -139,8 +140,9 @@
 	}
 
 	/**
-	 *
-	 * @param msId
+	 * Returns all epics that reference the given milestone via the configured parent relationship.
+	 * @param msId - The milestone artifact ID to find epics for.
+	 * @returns An array of epic artifact nodes that deliver to the specified milestone.
 	 */
 	function epicsForMilestone(msId: string): ArtifactNode[] {
 		return epics.filter((e) =>

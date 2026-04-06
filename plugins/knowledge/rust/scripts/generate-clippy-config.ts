@@ -42,7 +42,8 @@ interface ClippyLintGroup {
  *
  * Treats unrecognised or absent values as "warn" since that is the least
  * disruptive default.
- * @param raw
+ * @param raw - The raw level value from a rule enforcement entry.
+ * @returns The canonical ClippyLevel string.
  */
 function normaliseLevel(raw: unknown): ClippyLevel {
 	if (raw === "deny" || raw === "error") return "deny";
@@ -55,7 +56,8 @@ function normaliseLevel(raw: unknown): ClippyLevel {
  *
  * Entries without a `lint` field are skipped. Uses .reduce() to build the
  * group object without imperative mutation.
- * @param entries
+ * @param entries - The enforcement entries to group by clippy level.
+ * @returns A ClippyLintGroup with lints partitioned into deny, warn, and allow arrays.
  */
 function groupByLevel(entries: readonly EnforcementEntry[]): ClippyLintGroup {
 	return entries.reduce<ClippyLintGroup>(
@@ -73,8 +75,9 @@ function groupByLevel(entries: readonly EnforcementEntry[]): ClippyLintGroup {
  * Render a TOML array of strings, one entry per line.
  *
  * Returns an empty string when the array is empty so the section is omitted.
- * @param key
- * @param values
+ * @param key - The TOML key name (e.g. "deny", "warn", "allow").
+ * @param values - The lint name strings to render as array elements.
+ * @returns A TOML key = [...] block string, or an empty string if values is empty.
  */
 function renderTomlArray(key: string, values: string[]): string {
 	if (values.length === 0) return "";

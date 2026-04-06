@@ -59,8 +59,9 @@ const DEFAULT_CONFIG: Record<string, unknown> = {
  * `options` sets the rule to the options object.
  *
  * Entries without a `rule` field are silently skipped.
- * @param base
- * @param entries
+ * @param base - The canonical default markdownlint config to start from.
+ * @param entries - Enforcement entries that may enable, disable, or configure rules.
+ * @returns A new config object with rule overrides applied on top of the base.
  */
 function applyOverrides(
 	base: Readonly<Record<string, unknown>>,

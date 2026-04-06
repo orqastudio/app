@@ -16,12 +16,13 @@ const log = logger("conflict-resolver");
 
 /**
  * Build a system prompt for the AI to resolve plugin conflicts.
- * @param conflicts
- * @param existingManifest
- * @param newManifest
- * @param projectContext
- * @param projectContext.vision
- * @param projectContext.pillars
+ * @param conflicts - List of detected registration conflicts between the two plugins.
+ * @param existingManifest - Manifest of the already-installed plugin.
+ * @param newManifest - Manifest of the plugin being installed.
+ * @param projectContext - Optional project context to include in the prompt.
+ * @param projectContext.vision - The project vision statement.
+ * @param projectContext.pillars - The project pillar names.
+ * @returns A formatted system prompt string for conflict resolution inference.
  */
 export function buildConflictResolutionPrompt(
 	conflicts: readonly RegistrationConflict[],

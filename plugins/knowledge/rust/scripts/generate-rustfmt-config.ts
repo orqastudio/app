@@ -48,8 +48,9 @@ const DEFAULT_OPTIONS: Record<string, unknown> = {
  * Apply per-option overrides from rule enforcement entries.
  *
  * Entries missing either `option` or `value` are silently skipped.
- * @param base
- * @param entries
+ * @param base - The canonical default options to start from.
+ * @param entries - Enforcement entries that may override individual options.
+ * @returns A new options map with rule overrides applied on top of the base.
  */
 function applyOverrides(
 	base: Readonly<Record<string, unknown>>,
@@ -68,7 +69,8 @@ function applyOverrides(
 
 /**
  * Render a TOML value. Strings are quoted; booleans and numbers are bare.
- * @param v
+ * @param v - The value to render as a TOML literal.
+ * @returns A TOML-formatted string representation of the value.
  */
 function toTomlValue(v: unknown): string {
 	if (typeof v === "string") return `"${v}"`;
@@ -77,7 +79,8 @@ function toTomlValue(v: unknown): string {
 
 /**
  * Render a flat TOML file from a key/value map.
- * @param options
+ * @param options - The rustfmt option key/value pairs to render.
+ * @returns A multi-line TOML string with one `key = value` line per option.
  */
 function renderToml(options: Record<string, unknown>): string {
 	return Object.entries(options)

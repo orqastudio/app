@@ -32,8 +32,10 @@ export interface MockStoreOverrides {
 }
 
 /**
- *
- * @param overrides
+ * Create a fully populated mock store object compatible with OrqaStores.
+ * Registers the result on globalThis.__orqa_stores for component discovery.
+ * @param overrides - Optional partial overrides for individual store slices.
+ * @returns The constructed mock stores object.
  */
 export function createMockStores(overrides?: MockStoreOverrides) {
 	const artifacts = overrides?.artifacts ?? [...FIXTURE_ARTIFACTS];
@@ -104,7 +106,7 @@ export function createMockStores(overrides?: MockStoreOverrides) {
 		settingsStore,
 		toastStore,
 		navigationStore,
-		invoke: async (_cmd: string, _args?: Record<string, unknown>) => null,
+		invoke: async () => null,
 	};
 
 	// Register on globalThis so connected components can find stores
@@ -114,7 +116,9 @@ export function createMockStores(overrides?: MockStoreOverrides) {
 }
 
 /**
- *
+ * Retrieve the mock stores registered on globalThis.__orqa_stores.
+ * Throws if createMockStores() has not been called first.
+ * @returns The previously registered mock stores object.
  */
 export function getStores() {
 	const stores = (globalThis as Record<string, unknown>).__orqa_stores;

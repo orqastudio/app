@@ -27,8 +27,9 @@
 	} = $props();
 
 	/**
-	 *
-	 * @param priority
+	 * Maps a priority string to the corresponding badge variant for visual distinction.
+	 * @param priority - The artifact priority string (e.g. "P1", "P2") or null if unset.
+	 * @returns The BadgeVariant to use for the priority badge.
 	 */
 	function priorityVariant(priority: string | null): BadgeVariant {
 		if (priority === "P1") return "destructive";

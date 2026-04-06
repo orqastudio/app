@@ -232,8 +232,8 @@ export type {
  * Exhaustiveness check utility. Use as the default case in switch statements
  * over discriminated unions to get a compile-time error when a new variant
  * is added but not handled.
- * @param value
- * @param message
+ * @param value - The value that should never be reached; TypeScript enforces this at compile time.
+ * @param message - Optional custom error message to throw instead of the default.
  * @example
  * ```ts
  * type Status = "active" | "completed" | "error";

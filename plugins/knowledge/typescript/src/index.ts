@@ -1,5 +1,5 @@
 /**
- * @orqastudio/plugin-typescript
+ * `@orqastudio/plugin-typescript`
  *
  * TypeScript development infrastructure plugin. Provides tsconfig presets that
  * projects extend from:

@@ -58,8 +58,9 @@ const DEFAULT_OPTIONS: Record<string, unknown> = {
  * Apply per-option overrides from rule enforcement entries.
  *
  * Entries missing either `option` or `value` are silently skipped.
- * @param base
- * @param entries
+ * @param base - The canonical default Prettier options to start from.
+ * @param entries - Enforcement entries that may override individual Prettier options.
+ * @returns A new options map with rule overrides applied on top of the base.
  */
 function applyOverrides(
 	base: Readonly<Record<string, unknown>>,

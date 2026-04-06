@@ -1,8 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/svelte";
 import Stack from "./Stack.svelte";
-import HStack from "./HStack.svelte";
-import Grid from "./Grid.svelte";
-import Center from "./Center.svelte";
 
 // Stack is a structural-only primitive. Visual decoration (padding, border, margin,
 // overflow) must be applied via Panel, SectionHeader, or SectionFooter.
