@@ -86,7 +86,8 @@
 
 	/**
 	 * Return a human-readable label for a message role string.
-	 * @param role
+	 * @param role - The raw message role (e.g. "user", "assistant", "system").
+	 * @returns A capitalized display label for the role.
 	 */
 	function roleLabel(role: string): string {
 		if (role === "user") return "User";

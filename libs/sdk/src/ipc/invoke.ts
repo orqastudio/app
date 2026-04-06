@@ -11,16 +11,15 @@ const log = logger("ipc");
  *
  * Returns the same reference (frozen in place) for zero-allocation overhead.
  * Primitives and null pass through unchanged.
- * @param obj
+ * @param obj - The value to freeze; non-objects pass through unchanged.
+ * @returns The same reference, now deeply frozen.
  */
 function deepFreeze<T>(obj: T): Readonly<T> {
 	if (obj === null || obj === undefined || typeof obj !== "object") {
 		return obj;
 	}
 	Object.freeze(obj);
-	const values = Array.isArray(obj)
-		? obj
-		: Object.values(obj as Record<string, unknown>);
+	const values = Array.isArray(obj) ? obj : Object.values(obj as Record<string, unknown>);
 	for (const value of values) {
 		if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
 			deepFreeze(value);
@@ -32,8 +31,9 @@ function deepFreeze<T>(obj: T): Readonly<T> {
 /**
  * Wraps Tauri's invoke with performance timing and structured logging.
  * Logs duration on success and error details on failure before re-throwing.
- * @param cmd
- * @param args
+ * @param cmd - The Tauri command name to invoke.
+ * @param args - Optional arguments to pass to the command.
+ * @returns The command result, deeply frozen to enforce immutability.
  */
 export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
 	const start = performance.now();
@@ -69,7 +69,8 @@ export async function invoke<T>(cmd: string, args?: Record<string, unknown>): Pr
 
 /**
  * Extract a human-readable message from any error shape (Error, OrqaError, string, unknown).
- * @param err
+ * @param err - The thrown value, which may be an Error, OrqaError, string, or unknown.
+ * @returns A string message suitable for display to the user.
  */
 export function extractErrorMessage(err: unknown): string {
 	if (err instanceof Error) return err.message;
@@ -81,8 +82,10 @@ export function extractErrorMessage(err: unknown): string {
 }
 
 /**
- *
- * @param onEvent
+ * Create a Tauri Channel wired to a stream event callback.
+ * The channel forwards each incoming backend message to the provided handler.
+ * @param onEvent - Callback invoked for each streaming event from the backend.
+ * @returns A configured Tauri Channel ready to pass to an invoke call.
  */
 export function createStreamChannel(onEvent: (event: StreamEvent) => void): Channel<StreamEvent> {
 	const channel = new Channel<StreamEvent>();

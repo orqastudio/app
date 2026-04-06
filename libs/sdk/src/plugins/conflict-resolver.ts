@@ -7,10 +7,7 @@
  * semantic difference, and proposes aliases that preserve intent.
  */
 
-import type {
-	PluginManifest,
-	ConflictResolutionSuggestion,
-} from "@orqastudio/types";
+import type { PluginManifest, ConflictResolutionSuggestion } from "@orqastudio/types";
 import { assertNever } from "@orqastudio/types";
 import { logger } from "../logger.js";
 import type { RegistrationConflict } from "./plugin-registry.svelte.js";
@@ -96,12 +93,9 @@ Respond with a JSON array of ConflictResolutionSuggestion objects:
  * Parse the AI's response into typed suggestions.
  * @param response
  */
-export function parseConflictResolutionResponse(
-	response: string,
-): ConflictResolutionSuggestion[] {
+export function parseConflictResolutionResponse(response: string): ConflictResolutionSuggestion[] {
 	// Extract JSON from response (may be wrapped in markdown code block)
-	const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/) ??
-		response.match(/\[[\s\S]*\]/);
+	const jsonMatch = response.match(/```json\s*([\s\S]*?)\s*```/) ?? response.match(/\[[\s\S]*\]/);
 
 	if (!jsonMatch) return [];
 

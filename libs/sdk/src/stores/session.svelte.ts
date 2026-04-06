@@ -119,7 +119,7 @@ export class SessionStore {
 		if (this.activeSession && this.activeSession.id === sessionId) {
 			this.activeSession = { ...this.activeSession, title };
 		}
-		this.sessions = this.sessions.map((s) => s.id === sessionId ? { ...s, title } : s);
+		this.sessions = this.sessions.map((s) => (s.id === sessionId ? { ...s, title } : s));
 	}
 
 	/**
@@ -137,7 +137,7 @@ export class SessionStore {
 			if (this.activeSession && this.activeSession.id === sessionId) {
 				this.activeSession = { ...this.activeSession, title };
 			}
-			this.sessions = this.sessions.map((s) => s.id === sessionId ? { ...s, title } : s);
+			this.sessions = this.sessions.map((s) => (s.id === sessionId ? { ...s, title } : s));
 		} catch (err) {
 			this.error = extractErrorMessage(err);
 		}

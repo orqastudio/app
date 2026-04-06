@@ -2,7 +2,7 @@
  * Test builder for ArtifactNode objects.
  *
  * Produces valid nodes with sensible defaults. All fields are overridable.
- * The @orqastudio/types dependency will be added later — for now, the
+ * The \@orqastudio/types dependency will be added later — for now, the
  * interface is defined locally.
  */
 
@@ -38,7 +38,8 @@ const defaults: ArtifactNode = {
  * ```ts
  * const node = createTestNode({ id: "EPIC-042", artifactType: "epic", status: "draft" });
  * ```
- * @param overrides
+ * @param overrides - Partial ArtifactNode fields to override the defaults.
+ * @returns A complete ArtifactNode with all fields populated.
  */
 export function createTestNode(overrides: Partial<ArtifactNode> = {}): ArtifactNode {
 	return {

@@ -14,7 +14,10 @@ export function buildInverseMap(
 	return new Map(
 		relationships.flatMap((rel) =>
 			rel.inverse !== rel.key
-				? [[rel.key, rel.inverse], [rel.inverse, rel.key]]
+				? [
+						[rel.key, rel.inverse],
+						[rel.inverse, rel.key],
+					]
 				: [[rel.key, rel.inverse]],
 		),
 	);
@@ -51,4 +54,3 @@ export function keysForSemantic(
 ): readonly string[] {
 	return semantics[semanticName]?.keys ?? [];
 }
-

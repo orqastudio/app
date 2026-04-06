@@ -30,7 +30,7 @@ interface DiscoveredPlugin {
  * the plugins/ directory), loads manifests, and registers with the
  * plugin registry. View components are loaded on demand when the user
  * navigates to a plugin view route — not at registration time.
- * @param registry
+ * @param registry - The plugin registry to register discovered plugins into.
  */
 export async function registerInstalledPlugins(registry: PluginRegistry): Promise<void> {
 	let plugins: DiscoveredPlugin[];

@@ -53,7 +53,8 @@
 
 	/**
 	 * Return whether the overflow list for the given relationship type is expanded.
-	 * @param type
+	 * @param type - The relationship type key (e.g. "delivers") to check expansion state for.
+	 * @returns True if the overflow list for the given type is expanded.
 	 */
 	function isExpanded(type: string): boolean {
 		return expandedTypes.get(type) ?? false;
@@ -61,7 +62,7 @@
 
 	/**
 	 * Toggle the expanded state for the overflow list of the given relationship type.
-	 * @param type
+	 * @param type - The relationship type key whose overflow expansion state to toggle.
 	 */
 	function toggleExpanded(type: string): void {
 		expandedTypes.set(type, !isExpanded(type));

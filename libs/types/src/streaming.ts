@@ -7,24 +7,24 @@ export type StreamEvent =
 	| {
 			type: "tool_result";
 			data: { tool_call_id: string; tool_name: string; result: string; is_error: boolean };
-		}
+	  }
 	| { type: "block_complete"; data: { block_index: number; content_type: string } }
 	| { type: "turn_complete"; data: { input_tokens: number; output_tokens: number } }
 	| {
 			type: "stream_error";
 			data: { code: string; message: string; recoverable: boolean };
-		}
+	  }
 	| { type: "stream_cancelled"; data: null }
 	| {
 			/** Emitted when a write or execute tool requests user approval before running. */
 			type: "tool_approval_request";
 			data: { tool_call_id: string; tool_name: string; input: string };
-		}
+	  }
 	| {
 			/** Emitted after a turn when a process compliance violation is detected. */
 			type: "process_violation";
 			data: { check: string; message: string };
-		}
+	  }
 	| { type: "session_title_updated"; data: { session_id: number; title: string } }
 	| {
 			type: "system_prompt_sent";
@@ -33,7 +33,7 @@ export type StreamEvent =
 				governance_prompt: string;
 				total_chars: number;
 			};
-		}
+	  }
 	| {
 			type: "context_injected";
 			data: {
@@ -41,4 +41,4 @@ export type StreamEvent =
 				total_chars: number;
 				messages: string; // JSON array of {role, content}
 			};
-		};
+	  };

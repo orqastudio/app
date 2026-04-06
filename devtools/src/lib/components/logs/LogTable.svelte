@@ -94,7 +94,8 @@
 
 	/**
 	 * Resolve the empty-state message for the current connection status.
-	 * @param status
+	 * @param status - The current connection status value.
+	 * @returns A human-readable description of why no events are visible.
 	 */
 	function connectionEmptyMessage(status: typeof connectionStatus.value): string {
 		switch (status) {

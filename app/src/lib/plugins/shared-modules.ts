@@ -1,8 +1,8 @@
 /**
  * Expose shared modules on window.__orqa for plugin bundles.
  *
- * Plugin views are pre-bundled with @orqastudio/sdk and
- * @orqastudio/svelte-components marked as externals. At runtime,
+ * Plugin views are pre-bundled with \@orqastudio/sdk and
+ * \@orqastudio/svelte-components marked as externals. At runtime,
  * their imports resolve from this global, giving plugins access to
  * the same store instances and component library as the app.
  *
@@ -29,7 +29,8 @@ declare global {
 }
 
 /**
- *
+ * Registers all shared OrqaStudio modules on the window.__orqa global so that plugin bundles
+ * can resolve their externals at runtime without bundling their own copies.
  */
 export function exposeSharedModules(): void {
 	window.__orqa = {

@@ -19,16 +19,16 @@
 	});
 
 	/**
-	 *
-	 * @param lesson
+	 * Set the selected lesson for display in the viewer panel.
+	 * @param lesson - The lesson object the user clicked in the list.
 	 */
 	function handleSelect(lesson: Lesson) {
 		selectedLesson = lesson;
 	}
 
 	/**
-	 *
-	 * @param id
+	 * Increment the recurrence count for a lesson and refresh the selected lesson from the store.
+	 * @param id - The unique identifier of the lesson whose recurrence should be incremented.
 	 */
 	async function handleIncrementRecurrence(id: string) {
 		if (!projectPath) return;
@@ -40,9 +40,7 @@
 		}
 	}
 
-	/**
-	 *
-	 */
+	/** Retry loading lessons from disk when a previous load failed. */
 	function handleRetry() {
 		if (projectPath) {
 			lessonStore.loadLessons(projectPath);

@@ -29,8 +29,8 @@
 	let selectedCategory = $state<string | null>(null);
 
 	/**
-	 * Toggle a category's detail chart: select it if different, deselect if same.
-	 * @param cat
+	 * Toggle a category's detail chart: selects the given category or deselects it if already selected.
+	 * @param cat - The metric category key to select or deselect.
 	 */
 	function toggleCategory(cat: string): void {
 		selectedCategory = selectedCategory === cat ? null : cat;
@@ -40,9 +40,9 @@
 	const CATEGORY_KEYS = Object.keys(METRIC_CATEGORIES);
 
 	/**
-	 * Format a millisecond value for display. Shows one decimal for sub-100ms
-	 * values and rounds to whole ms above that.
-	 * @param ms
+	 * Format a millisecond value for display, showing one decimal for sub-100ms values.
+	 * @param ms - Duration in milliseconds to format.
+	 * @returns Human-readable duration like "12.3ms" or "145ms", or "—" for degenerate values.
 	 */
 	function fmtMs(ms: number): string {
 		if (ms === 0 || ms === Infinity || ms === -Infinity) return "—";
@@ -50,9 +50,9 @@
 	}
 
 	/**
-	 * Compute the trend percentage for a metric: compares the most recent value
-	 * to the value ten samples ago (or the second value if fewer than ten exist).
-	 * @param history
+	 * Compute the trend percentage for a metric by comparing the most recent value to ten samples ago.
+	 * @param history - Array of historical metric values, ordered oldest to newest.
+	 * @returns Percentage change rounded to the nearest integer, or null if insufficient data.
 	 */
 	function computeTrend(history: number[]): number | null {
 		if (history.length < 2) return null;

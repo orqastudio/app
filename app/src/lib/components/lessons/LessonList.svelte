@@ -57,8 +57,9 @@
 	);
 
 	/**
-	 *
-	 * @param status
+	 * Return the badge variant that corresponds to the lesson's promotion status.
+	 * @param status - The lesson status string (e.g. "promoted", "resolved", "active").
+	 * @returns The badge variant used by the Badge component.
 	 */
 	function statusVariant(status: string): "default" | "secondary" | "outline" {
 		switch (status) {

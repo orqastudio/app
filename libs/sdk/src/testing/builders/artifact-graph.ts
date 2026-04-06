@@ -20,7 +20,8 @@ import type { ArtifactNode } from "./artifact-node.js";
  * const graph = createTestGraph([epic, task]);
  * // graph.get("TASK-001").referencesIn === ["EPIC-001"]
  * ```
- * @param nodes
+ * @param nodes - Array of test nodes to index and wire together.
+ * @returns A Map keyed by node id with bidirectional references populated.
  */
 export function createTestGraph(nodes: ArtifactNode[]): Map<string, ArtifactNode> {
 	const graph = new Map<string, ArtifactNode>();

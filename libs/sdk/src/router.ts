@@ -24,13 +24,15 @@ import { assertNever } from "@orqastudio/types";
 // Navigation functions — injected by the app during initialization.
 // The SDK can't import $app/navigation directly (it's a standalone library).
 // The app calls injectNavigation() with SvelteKit's pushState/replaceState.
-let _pushState: (url: string, state: Record<string, unknown>) => void = (url) => history.pushState(null, "", url);
-let _replaceState: (url: string, state: Record<string, unknown>) => void = (url) => history.replaceState(null, "", url);
+let _pushState: (url: string, state: Record<string, unknown>) => void = (url) =>
+	history.pushState(null, "", url);
+let _replaceState: (url: string, state: Record<string, unknown>) => void = (url) =>
+	history.replaceState(null, "", url);
 
 /**
  * Inject SvelteKit navigation functions. Call once from the app's root layout.
- * @param pushState
- * @param replaceState
+ * @param pushState - SvelteKit pushState function that adds a history entry.
+ * @param replaceState - SvelteKit replaceState function that replaces the current entry.
  */
 export function injectNavigation(
 	pushState: (url: string, state: Record<string, unknown>) => void,
@@ -44,8 +46,8 @@ export function injectNavigation(
 
 /**
  * Navigate to an artifact by path (e.g., ".orqa/learning/rules/RULE-abc.md").
- * @param artifactPath
- * @param activity
+ * @param artifactPath - Relative path to the artifact file on disk.
+ * @param activity - Optional activity context for the explorer panel.
  */
 export function navigateToArtifact(artifactPath: string, activity?: string): void {
 	pushRoute({ type: "artifact", activity: activity ?? "explorer", artifactPath });
@@ -53,8 +55,8 @@ export function navigateToArtifact(artifactPath: string, activity?: string): voi
 
 /**
  * Navigate to a plugin view.
- * @param pluginName
- * @param viewKey
+ * @param pluginName - Fully-qualified plugin package name (may include scope).
+ * @param viewKey - The view identifier registered by the plugin.
  */
 export function navigateToPluginView(pluginName: string, viewKey: string): void {
 	pushRoute({ type: "plugin", pluginName, viewKey });
@@ -62,7 +64,7 @@ export function navigateToPluginView(pluginName: string, viewKey: string): void 
 
 /**
  * Navigate to an activity panel (e.g., "roadmap", "lessons", "settings").
- * @param activity
+ * @param activity - Activity key that identifies the panel to show.
  */
 export function navigateToActivity(activity: string): void {
 	pushRoute({ type: "artifacts", activity });
@@ -84,7 +86,15 @@ export function navigateToSettings(): void {
 }
 
 export interface ParsedRoute {
-	type: "project" | "artifacts" | "artifact" | "plugin" | "settings" | "graph" | "setup" | "default";
+	type:
+		| "project"
+		| "artifacts"
+		| "artifact"
+		| "plugin"
+		| "settings"
+		| "graph"
+		| "setup"
+		| "default";
 	activity?: string;
 	artifactPath?: string;
 	pluginName?: string;
@@ -93,7 +103,8 @@ export interface ParsedRoute {
 
 /**
  * Parse a hash string into a structured route.
- * @param hash
+ * @param hash - Raw window.location.hash string including the leading `#`.
+ * @returns A ParsedRoute discriminated union representing the current view.
  */
 export function parseHash(hash: string): ParsedRoute {
 	// Remove leading # and /
@@ -155,7 +166,8 @@ export function parseHash(hash: string): ParsedRoute {
  * Build a hash string from route parameters.
  * Exhaustively handles all ParsedRoute variants — adding a new type without a
  * case here will produce a compile error via assertNever.
- * @param route
+ * @param route - The structured route to encode as a hash.
+ * @returns A hash string suitable for window.location.hash.
  */
 export function buildHash(route: ParsedRoute): string {
 	switch (route.type) {
@@ -186,7 +198,7 @@ export function buildHash(route: ParsedRoute): string {
  * Uses SvelteKit's pushState to avoid conflicts with the SvelteKit router.
  * This also avoids triggering the hashchange listener (which would cause a
  * loop when called from syncToHash → pushRoute → hashchange → applyRoute).
- * @param route
+ * @param route - The destination route to push onto the history stack.
  */
 export function pushRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
@@ -197,7 +209,7 @@ export function pushRoute(route: ParsedRoute): void {
 
 /**
  * Replace the current route without adding a history entry.
- * @param route
+ * @param route - The route to replace the current history entry with.
  */
 export function replaceRoute(route: ParsedRoute): void {
 	const hash = buildHash(route);
@@ -208,6 +220,7 @@ export function replaceRoute(route: ParsedRoute): void {
 
 /**
  * Get the current route from the URL hash.
+ * @returns The parsed route representing the current window hash.
  */
 export function currentRoute(): ParsedRoute {
 	return parseHash(window.location.hash);

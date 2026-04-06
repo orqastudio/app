@@ -70,8 +70,8 @@
 	const sortValue = $derived(`${currentSort.field}:${currentSort.direction}`);
 
 	/**
-	 *
-	 * @param value
+	 * Parse a "field:direction" radio value and propagate the new sort config upward.
+	 * @param value - The encoded sort string in "field:direction" format (e.g. "title:asc").
 	 */
 	function setSortFromValue(value: string) {
 		const [field, direction] = value.split(":");
@@ -81,34 +81,37 @@
 	}
 
 	/**
-	 *
-	 * @param name
+	 * Convert a field key into a human-readable label by replacing separators and title-casing.
+	 * @param name - The raw field key such as "created_at" or "artifact-type".
+	 * @returns A formatted label such as "Created At" or "Artifact Type".
 	 */
 	function humanizeField(name: string): string {
 		return name.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	/**
-	 *
-	 * @param value
+	 * Convert a filter value into a human-readable label by replacing separators and title-casing.
+	 * @param value - The raw filter value such as "in_progress" or "high-priority".
+	 * @returns A formatted label such as "In Progress" or "High Priority".
 	 */
 	function humanizeValue(value: string): string {
 		return value.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	/**
-	 *
-	 * @param field
-	 * @param value
+	 * Return true when the given field value is currently selected as a filter.
+	 * @param field - The filterable field key to check.
+	 * @param value - The specific field value to test for active selection.
+	 * @returns True if the value is in the current filter set for the field.
 	 */
 	function isFilterActive(field: string, value: string): boolean {
 		return (currentFilters[field] ?? []).includes(value);
 	}
 
 	/**
-	 *
-	 * @param field
-	 * @param value
+	 * Toggle a filter value on or off and propagate the updated filter map upward.
+	 * @param field - The filterable field key whose filter is being toggled.
+	 * @param value - The specific field value to add or remove from the active filters.
 	 */
 	function toggleFilter(field: string, value: string) {
 		const current = currentFilters[field] ?? [];
@@ -119,8 +122,8 @@
 	}
 
 	/**
-	 *
-	 * @param field
+	 * Clear all active filters for a specific field and propagate the updated filter map upward.
+	 * @param field - The filterable field key whose filters should be cleared.
 	 */
 	function clearFieldFilters(field: string) {
 		onFilterChange({ ...currentFilters, [field]: [] as readonly string[] } as Record<
@@ -129,9 +132,7 @@
 		>);
 	}
 
-	/**
-	 *
-	 */
+	/** Clear all active filters across every field and propagate the empty filter map upward. */
 	function clearAllFilters() {
 		const cleared: Record<string, readonly string[]> = {};
 		for (const key of Object.keys(currentFilters)) {

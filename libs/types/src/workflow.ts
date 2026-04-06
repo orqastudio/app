@@ -13,12 +13,7 @@
 // ---------------------------------------------------------------------------
 
 /** Core state categories for cross-cutting UI treatment and aggregation. */
-export type StateCategory =
-	| "planning"
-	| "active"
-	| "review"
-	| "completed"
-	| "terminal";
+export type StateCategory = "planning" | "active" | "review" | "completed" | "terminal";
 
 /** The canonical set of state categories as a runtime constant. */
 export const STATE_CATEGORIES: readonly StateCategory[] = [
@@ -34,12 +29,7 @@ export const STATE_CATEGORIES: readonly StateCategory[] = [
 // ---------------------------------------------------------------------------
 
 /** Guard primitive types — declarative checks evaluated before a transition. */
-export type GuardType =
-	| "field_check"
-	| "relationship_check"
-	| "query"
-	| "role_check"
-	| "code_hook";
+export type GuardType = "field_check" | "relationship_check" | "query" | "role_check" | "code_hook";
 
 /** Operators for field_check guards. */
 export type FieldCheckOperator =
@@ -121,12 +111,7 @@ export interface Guard {
 // ---------------------------------------------------------------------------
 
 /** Action primitive types — operations executed during transitions. */
-export type ActionType =
-	| "set_field"
-	| "append_log"
-	| "create_artifact"
-	| "notify"
-	| "code_hook";
+export type ActionType = "set_field" | "append_log" | "create_artifact" | "notify" | "code_hook";
 
 /** Notification channels for notify actions. */
 export type NotifyChannel = "ui" | "log" | "hook";
@@ -221,11 +206,7 @@ export type GatePattern =
 	| "scope_decision";
 
 /** Timeout actions for gates. */
-export type GateTimeoutAction =
-	| "escalate"
-	| "auto_approve"
-	| "auto_reject"
-	| "notify";
+export type GateTimeoutAction = "escalate" | "auto_approve" | "auto_reject" | "notify";
 
 /** Gate timeout configuration. */
 export interface GateTimeout {

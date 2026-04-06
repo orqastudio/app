@@ -92,10 +92,7 @@ export class ErrorStoreImpl {
 		};
 
 		window.onunhandledrejection = (event: PromiseRejectionEvent) => {
-			const msg =
-				event.reason instanceof Error
-					? event.reason.message
-					: String(event.reason);
+			const msg = event.reason instanceof Error ? event.reason.message : String(event.reason);
 			this.addError("frontend", `Unhandled rejection: ${msg}`);
 		};
 	}

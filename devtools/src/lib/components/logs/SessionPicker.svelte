@@ -59,7 +59,7 @@
 
 	/**
 	 * Close all overlays when the user clicks outside the session picker.
-	 * @param e
+	 * @param e - The document click event used to check the click target.
 	 */
 	function handleDocumentClick(e: MouseEvent): void {
 		const target = e.target as HTMLElement;
@@ -74,7 +74,8 @@
 
 	/**
 	 * Switch to a session and load its events from SQLite, then close the dropdown.
-	 * @param session
+	 * @param session - The session to activate and load events for.
+	 * @returns Resolves after the session switch and event load complete.
 	 */
 	async function handleSelectSession(session: DevToolsSession): Promise<void> {
 		if (session.is_current && !viewingHistorical.value) {
@@ -87,9 +88,9 @@
 	}
 
 	/**
-	 * Start the inline rename flow for the given session.
-	 * @param session
-	 * @param e
+	 * Start the inline rename flow for the given session by setting the rename state.
+	 * @param session - The session to rename.
+	 * @param e - The click event; propagation is stopped to avoid row selection.
 	 */
 	function startRename(session: DevToolsSession, e: MouseEvent): void {
 		e.stopPropagation();
@@ -110,8 +111,8 @@
 	}
 
 	/**
-	 * Handle keydown in the rename input: Enter commits, Escape cancels.
-	 * @param e
+	 * Handle keydown in the rename input: Enter commits the rename, Escape cancels it.
+	 * @param e - The keyboard event from the rename input field.
 	 */
 	function handleRenameKeydown(e: KeyboardEvent): void {
 		if (e.key === "Enter") {
@@ -123,9 +124,10 @@
 	}
 
 	/**
-	 * Confirm and delete a session and all its events.
-	 * @param session
-	 * @param e
+	 * Confirm and delete a session and all its stored events.
+	 * @param session - The session to permanently delete.
+	 * @param e - The click event; propagation is stopped to avoid row selection.
+	 * @returns Resolves after the deletion and list reload complete.
 	 */
 	async function handleDelete(session: DevToolsSession, e: MouseEvent): Promise<void> {
 		e.stopPropagation();
@@ -133,21 +135,19 @@
 		await deleteSession(session.id);
 	}
 
-	// Toggle context menu for a session row.
 	/**
-	 *
-	 * @param sessionId
-	 * @param e
+	 * Toggle the context menu open or closed for the given session row.
+	 * @param sessionId - The ID of the session whose context menu to toggle.
+	 * @param e - The click event; propagation is stopped to avoid row selection.
 	 */
 	function toggleContextMenu(sessionId: string, e: MouseEvent): void {
 		e.stopPropagation();
 		contextMenuId = contextMenuId === sessionId ? null : sessionId;
 	}
 
-	// Return to the live feed. Exits historical mode in both session-store and
-	// log-store so the ring buffer stream is re-activated.
 	/**
-	 *
+	 * Return to the live feed by exiting historical mode in both the session and log stores.
+	 * @returns Resolves after the stores have switched back to live mode.
 	 */
 	async function handleReturnToLive(): Promise<void> {
 		await switchToCurrentSession();

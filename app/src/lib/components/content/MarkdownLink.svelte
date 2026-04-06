@@ -36,7 +36,7 @@
 
 	/**
 	 * Open external href in the OS browser via Tauri shell opener.
-	 * @param e
+	 * @param e - The click event to prevent default navigation on.
 	 */
 	function handleExternalClick(e: MouseEvent) {
 		e.preventDefault();

@@ -9,7 +9,8 @@ export interface FrontmatterResult {
  * and multiline string values (using `|` or `>` block scalar indicators).
  *
  * This is a lightweight regex-based parser -- not a full YAML parser.
- * @param content
+ * @param content - Raw file content string, possibly with CRLF line endings.
+ * @returns Parsed frontmatter metadata and the remaining body text.
  */
 export function parseFrontmatter(content: string): FrontmatterResult {
 	// Normalise CRLF line endings to LF so the regex anchors ($) and

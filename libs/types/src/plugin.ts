@@ -147,7 +147,6 @@ export interface CliToolRegistration {
 	dataEndpoint?: string;
 }
 
-
 /** A hook provided by a plugin, triggered on specific events. */
 export interface HookRegistration {
 	/** Unique hook key. */
@@ -368,7 +367,6 @@ export interface PluginLifecycle {
 // ---------------------------------------------------------------------------
 // Plugin Manifest
 // ---------------------------------------------------------------------------
-
 
 /** The full plugin manifest (read from `orqa-plugin.json`). */
 export interface PluginManifest {
@@ -901,7 +899,6 @@ export interface CliToolRunResult {
 	completed_at: number;
 }
 
-
 /** Status snapshot for a registered CLI tool. */
 export interface CliToolRunStatus {
 	/** Tool key. */
@@ -919,7 +916,6 @@ export interface CliToolRunStatus {
 	/** Human-readable summary. */
 	summary: string | null;
 }
-
 
 // ---------------------------------------------------------------------------
 // Plugin Registry & Distribution Types

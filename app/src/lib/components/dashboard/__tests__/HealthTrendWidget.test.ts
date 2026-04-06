@@ -94,22 +94,20 @@ describe("HealthTrendWidget", () => {
 				getTraceability: vi.fn(),
 				runIntegrityScan: vi.fn(),
 				storeHealthSnapshot: vi.fn(),
-				getHealthSnapshots: vi
-					.fn()
-					.mockResolvedValue([
-						makeSnapshot({
-							error_count: 3,
-							warning_count: 1,
-							orphan_count: 0,
-							broken_ref_count: 2,
-						}),
-						makeSnapshot({
-							error_count: 2,
-							warning_count: 0,
-							orphan_count: 1,
-							broken_ref_count: 1,
-						}),
-					]),
+				getHealthSnapshots: vi.fn().mockResolvedValue([
+					makeSnapshot({
+						error_count: 3,
+						warning_count: 1,
+						orphan_count: 0,
+						broken_ref_count: 2,
+					}),
+					makeSnapshot({
+						error_count: 2,
+						warning_count: 0,
+						orphan_count: 1,
+						broken_ref_count: 1,
+					}),
+				]),
 				getGraphHealth: vi.fn(),
 				applyAutoFixes: vi.fn(),
 				initialize: vi.fn(),

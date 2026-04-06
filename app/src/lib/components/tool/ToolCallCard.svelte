@@ -13,10 +13,10 @@
 	import { getToolDisplay } from "$lib/utils/tool-display";
 	import { fmt } from "@orqastudio/sdk";
 
-	// Parses "Rule 'rule-name' blocked..." text to extract rule name
 	/**
-	 *
-	 * @param text
+	 * Parse enforcement violation text to extract the rule name from the standard message format.
+	 * @param text - The enforcement violation message string (e.g. "Rule 'rule-name' blocked...").
+	 * @returns The extracted rule name, or null if the text does not match the expected format.
 	 */
 	function parseEnforcementRuleName(text: string): string | null {
 		const match = /^Rule '([^']+)'/.exec(text);

@@ -1,5 +1,5 @@
 /**
- * MockChannel — minimal Channel mock matching @tauri-apps/api/core Channel.
+ * MockChannel — minimal Channel mock matching \@tauri-apps/api/core Channel.
  *
  * Captures the `onmessage` callback and exposes an `emit()` helper
  * so tests can simulate backend events without a running Tauri app.

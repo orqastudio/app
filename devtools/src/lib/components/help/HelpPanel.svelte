@@ -43,7 +43,7 @@
 
 	/**
 	 * Handle document keydown: Escape closes the panel when open.
-	 * @param e
+	 * @param e - The keyboard event from the document keydown listener.
 	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		if (e.key === "Escape" && open) {

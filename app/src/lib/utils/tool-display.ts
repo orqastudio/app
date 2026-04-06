@@ -16,7 +16,8 @@ const log = logger("tool-display");
 
 /**
  * Strips an MCP server prefix from a tool name.
- * @param name
+ * @param name - The raw tool name, potentially prefixed with "mcp__server__".
+ * @returns The tool name with the MCP prefix removed, or the original name if no prefix.
  */
 export function stripToolName(name: string): string {
 	const parts = name.split("__");
@@ -28,7 +29,8 @@ export function stripToolName(name: string): string {
 
 /**
  * Returns the display label and icon for a tool name.
- * @param name
+ * @param name - The raw tool name, potentially MCP-prefixed.
+ * @returns The resolved display label, icon component, and icon name.
  */
 export function getToolDisplay(name: string): { label: string; icon: Component; iconName: string } {
 	const stripped = stripToolName(name);
@@ -42,7 +44,8 @@ export function getToolDisplay(name: string): { label: string; icon: Component; 
 
 /**
  * Returns a human-readable label for an agent capability identifier.
- * @param capability
+ * @param capability - The capability identifier string (e.g. "read_file", "write_code").
+ * @returns A formatted human-readable label, falling back to title-cased identifier.
  */
 export function getCapabilityLabel(capability: string): string {
 	return (
@@ -52,9 +55,10 @@ export function getCapabilityLabel(capability: string): string {
 }
 
 /**
- *
- * @param toolName
- * @param count
+ * Returns a grouped activity label summarising multiple calls of the same tool type.
+ * @param toolName - The raw tool name used to determine the group label template.
+ * @param count - The number of tool calls in the group.
+ * @returns A human-readable summary such as "Read 3 files" or "Ran 2 commands".
  */
 export function groupLabel(toolName: string, count: number): string {
 	const stripped = stripToolName(toolName);
@@ -73,8 +77,10 @@ export function groupLabel(toolName: string, count: number): string {
 }
 
 /**
- *
- * @param toolName
+ * Returns the high-level activity phase label for a given tool, used in the conversation UI to
+ * group tool calls into phases like "Exploring Code", "Writing Code", or "Running Commands".
+ * @param toolName - The raw tool name to classify.
+ * @returns A phase label for display in the conversation activity indicator.
  */
 export function getActivityPhase(toolName: string): string {
 	const stripped = stripToolName(toolName);
@@ -93,9 +99,11 @@ export function getActivityPhase(toolName: string): string {
 }
 
 /**
- *
- * @param toolName
- * @param input
+ * Returns a short, real-time label for a tool call in progress, including file name or query
+ * extracted from the tool input. Used for the ephemeral activity line in the conversation view.
+ * @param toolName - The raw tool name identifying the operation type.
+ * @param input - The JSON-encoded tool input containing operation parameters.
+ * @returns A human-readable in-progress label such as "Reading src/foo.ts".
  */
 export function getEphemeralLabel(toolName: string, input: string): string {
 	const stripped = stripToolName(toolName);

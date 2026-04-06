@@ -28,7 +28,8 @@
 
 	/**
 	 * Return the icon name for a directory node, falling back to "folder".
-	 * @param iconName
+	 * @param iconName - The icon name from the node definition, which may be null or undefined.
+	 * @returns The provided icon name, or "folder" as a fallback.
 	 */
 	function resolveDirectoryIcon(iconName: string | null | undefined): string {
 		return iconName ?? "folder";
@@ -41,7 +42,8 @@
 
 	/**
 	 * Return the persisted view state for a category, initializing from nav config defaults if absent.
-	 * @param cat
+	 * @param cat - The category key (e.g. "task", "epic") whose view state is needed.
+	 * @returns The current view state (sort, filters, group) for the given category.
 	 */
 	function getViewState(cat: string): ArtifactViewState {
 		if (!viewStates.has(cat)) {
@@ -74,7 +76,8 @@
 
 	/**
 	 * Return true when a path refers to a README file (excluded from artifact lists).
-	 * @param path
+	 * @param path - The file path to test, which may be null.
+	 * @returns True if the path ends with "README" or "README.md", false otherwise.
 	 */
 	function isReadmePath(path: string | null): boolean {
 		if (!path) return false;
@@ -105,7 +108,7 @@
 
 	/**
 	 * Persist the new sort config and update reactive sort state.
-	 * @param sort
+	 * @param sort - The new sort configuration containing field and direction.
 	 */
 	function handleSortChange(sort: SortConfig) {
 		currentSort = sort;
@@ -114,8 +117,8 @@
 	}
 
 	/**
-	 *
-	 * @param filters
+	 * Persist the new filter state and update reactive filter state.
+	 * @param filters - A map of field names to selected filter values.
 	 */
 	function handleFilterChange(filters: Record<string, readonly string[]>) {
 		currentFilters = filters;
@@ -124,8 +127,8 @@
 	}
 
 	/**
-	 *
-	 * @param group
+	 * Persist the new group-by field and update reactive group state.
+	 * @param group - The field name to group artifacts by, or null to disable grouping.
 	 */
 	function handleGroupChange(group: string | null) {
 		currentGroup = group;
@@ -155,8 +158,9 @@
 	// ---- Breadcrumb helpers ----
 
 	/**
-	 *
-	 * @param segment
+	 * Convert a kebab-case path segment into a title-cased display label.
+	 * @param segment - A single path segment such as "my-artifacts".
+	 * @returns A human-readable label such as "My Artifacts".
 	 */
 	function humanizeSegment(segment: string): string {
 		return segment
@@ -166,8 +170,9 @@
 	}
 
 	/**
-	 *
-	 * @param node
+	 * Build the ordered breadcrumb label array for a node, including group, category, and folder hierarchy.
+	 * @param node - The artifact tree node for which breadcrumbs are being generated.
+	 * @returns An array of display label strings from the root group down to the artifact title.
 	 */
 	function buildBreadcrumbs(node: DocNode): string[] {
 		const crumbs: string[] = [];
@@ -206,8 +211,8 @@
 	}
 
 	/**
-	 *
-	 * @param node
+	 * Navigate to the artifact represented by the clicked leaf node.
+	 * @param node - The leaf DocNode that the user clicked in the navigation tree.
 	 */
 	function handleLeafClick(node: DocNode) {
 		if (!node.path) return;

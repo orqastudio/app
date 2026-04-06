@@ -33,7 +33,6 @@
 
 	// Drag state
 	let dragIndex = $state<number | null>(null);
-	let dragOverIndex = $state<number | null>(null);
 
 	$effect(() => {
 		localStatuses = (props.settings.statuses ?? []).map((s) => ({
@@ -185,13 +184,11 @@
 	}
 
 	/**
-	 * Prevents default drag behavior and tracks the current drag-over index.
+	 * Prevents default drag behavior to allow the drop event to fire.
 	 * @param e - The drag event to prevent default on.
-	 * @param index - The index of the status being dragged over.
 	 */
-	function handleDragOver(e: DragEvent, index: number) {
+	function handleDragOver(e: DragEvent) {
 		e.preventDefault();
-		dragOverIndex = index;
 	}
 
 	/**
@@ -201,7 +198,6 @@
 	function handleDrop(index: number) {
 		if (dragIndex === null || dragIndex === index) {
 			dragIndex = null;
-			dragOverIndex = null;
 			return;
 		}
 		const reordered = [...localStatuses];
@@ -209,14 +205,12 @@
 		reordered.splice(index, 0, moved);
 		localStatuses = reordered;
 		dragIndex = null;
-		dragOverIndex = null;
 		save();
 	}
 
 	/** Clears drag state when the drag operation ends without a drop. */
 	function handleDragEnd() {
 		dragIndex = null;
-		dragOverIndex = null;
 	}
 </script>
 
@@ -237,7 +231,7 @@
 					class="rounded-md border p-3"
 					draggable="true"
 					ondragstart={() => handleDragStart(index)}
-					ondragover={(e) => handleDragOver(e, index)}
+					ondragover={(e) => handleDragOver(e)}
 					ondrop={() => handleDrop(index)}
 					ondragend={handleDragEnd}
 					role="listitem"

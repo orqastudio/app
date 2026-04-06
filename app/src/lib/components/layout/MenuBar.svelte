@@ -36,7 +36,7 @@
 
 	/**
 	 * Toggle the specified menu open or close it if already open.
-	 * @param menu
+	 * @param menu - The key identifying which menu to toggle (e.g. "file", "view").
 	 */
 	function handleMenuClick(menu: string): void {
 		activeMenu = activeMenu === menu ? null : menu;
@@ -44,7 +44,7 @@
 
 	/**
 	 * Switch to a different menu on hover when menu mode is active.
-	 * @param menu
+	 * @param menu - The key identifying the menu being hovered over.
 	 */
 	function handleMenuHover(menu: string): void {
 		if (menuMode && activeMenu !== menu) {
@@ -54,7 +54,7 @@
 
 	/**
 	 * Close the menu and execute the provided menu action.
-	 * @param action
+	 * @param action - The callback function for the menu item that was selected.
 	 */
 	function handleItem(action: () => void): void {
 		activeMenu = null;

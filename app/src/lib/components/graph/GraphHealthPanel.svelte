@@ -115,9 +115,10 @@
 	// --- Delta helpers (higher = better unless noted) ---
 
 	/**
-	 *
-	 * @param current
-	 * @param previous
+	 * Format the numeric difference between two health metric values for display.
+	 * @param current - The current snapshot value of the metric.
+	 * @param previous - The previous snapshot value, or undefined if no history exists.
+	 * @returns A signed string like "+2.3" or "-1.0", or an empty string when the delta is negligible.
 	 */
 	function fmtDeltaNum(current: number, previous: number | undefined): string {
 		if (previous === undefined) return "";
@@ -128,9 +129,10 @@
 	}
 
 	/**
-	 *
-	 * @param currentRatio
-	 * @param previousRatio
+	 * Format the percentage-point difference between two ratio values for display.
+	 * @param currentRatio - The current snapshot ratio (0–1).
+	 * @param previousRatio - The previous snapshot ratio, or undefined if no history exists.
+	 * @returns A signed percentage string like "+5%" or "-3%", or an empty string when unchanged.
 	 */
 	function fmtDeltaPct(currentRatio: number, previousRatio: number | undefined): string {
 		if (previousRatio === undefined) return "";
@@ -142,9 +144,10 @@
 
 	// Returns the tone for a delta annotation: success when the change is good, destructive otherwise.
 	/**
-	 *
-	 * @param diff
-	 * @param higherIsBetter
+	 * Determine the semantic tone for a delta annotation based on direction and metric polarity.
+	 * @param diff - The formatted delta string (e.g. "+5%"); an empty string means no change.
+	 * @param higherIsBetter - True when an increase in the metric is desirable (e.g. connectivity).
+	 * @returns "success" or "destructive" based on whether the change is favourable, or null if no change.
 	 */
 	function deltaTone(diff: string, higherIsBetter: boolean): "success" | "destructive" | null {
 		if (!diff) return null;

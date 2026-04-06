@@ -9,8 +9,9 @@
 	let { group }: { group: string } = $props();
 
 	/**
-	 *
-	 * @param iconName
+	 * Return the provided icon name, or "folder" if none is defined.
+	 * @param iconName - The icon name from a sub-category config entry, or undefined if absent.
+	 * @returns The resolved icon name to pass to the Icon component.
 	 */
 	function resolveIconName(iconName: string | undefined): string {
 		return iconName ?? "folder";
@@ -19,7 +20,8 @@
 	/**
 	 * Look up the icon for a sub-category by matching its config path against navTree types.
 	 * Priority: config icon → navTree icon → undefined (caller falls back to FolderIcon).
-	 * @param subKey
+	 * @param subKey - The sub-category key to resolve an icon for (e.g. "task", "epic").
+	 * @returns The icon name string, or undefined if no icon is configured or found in the navTree.
 	 */
 	function getSubCategoryIcon(subKey: string): string | undefined {
 		const config = projectStore.artifactConfig;

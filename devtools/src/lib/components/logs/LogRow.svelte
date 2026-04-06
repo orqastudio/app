@@ -22,8 +22,9 @@
 	let copyFeedback = $state<"idle" | "copied">("idle");
 
 	/**
-	 * Copy the full log entry as JSON to the clipboard, showing brief confirmation.
-	 * @param e
+	 * Copy the full log entry as JSON to the clipboard, showing brief confirmation feedback.
+	 * @param e - The click event; propagation is stopped to prevent row expansion.
+	 * @returns Resolves after the clipboard write attempt completes.
 	 */
 	async function copyToClipboard(e: MouseEvent): Promise<void> {
 		// Prevent the click from toggling the expand state.
@@ -40,8 +41,9 @@
 	}
 
 	/**
-	 * Format a Unix millisecond timestamp as HH:MM:SS.mmm.
-	 * @param ms
+	 * Format a Unix millisecond timestamp as HH:MM:SS.mmm for the time column.
+	 * @param ms - Unix timestamp in milliseconds.
+	 * @returns Time string in HH:MM:SS.mmm format.
 	 */
 	function formatTimestamp(ms: number): string {
 		const d = new Date(ms);

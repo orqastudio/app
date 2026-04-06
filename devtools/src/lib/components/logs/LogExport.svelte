@@ -14,7 +14,10 @@
 	// Whether a save operation is in progress (prevents double-clicks).
 	let saving = $state(false);
 
-	/** Format today's date as YYYY-MM-DD for the default file name. */
+	/**
+	 * Format today's date as YYYY-MM-DD for use in the default export file name.
+	 * @returns The current date in YYYY-MM-DD format.
+	 */
 	function todayString(): string {
 		const d = new Date();
 		const yyyy = d.getFullYear();
@@ -24,14 +27,18 @@
 	}
 
 	/**
-	 * Serialise the filtered event list to a pretty-printed JSON string.
-	 * @param evs
+	 * Serialise the filtered event list to a pretty-printed JSON string for export.
+	 * @param evs - The log events to serialise.
+	 * @returns A formatted JSON array string.
 	 */
 	function serialiseEvents(evs: LogEvent[]): string {
 		return JSON.stringify(evs, null, 2);
 	}
 
-	/** Open the native save dialog and write serialised events to the chosen path. */
+	/**
+	 * Open the native save dialog and write the serialised filtered events to the chosen path.
+	 * @returns Resolves when the file is saved or the dialog is cancelled.
+	 */
 	async function handleExport(): Promise<void> {
 		if (saving) return;
 		saving = true;

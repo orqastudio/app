@@ -52,8 +52,8 @@
 	}
 
 	/**
-	 *
-	 * @param event
+	 * Commit the title edit on Enter, or cancel it on Escape.
+	 * @param event - The keyboard event from the title input field.
 	 */
 	function handleTitleKeydown(event: KeyboardEvent) {
 		if (event.key === "Enter") {

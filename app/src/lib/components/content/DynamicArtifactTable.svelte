@@ -73,7 +73,7 @@
 
 	/**
 	 * Navigate to the artifact with the given ID in the artifact viewer.
-	 * @param id
+	 * @param id - The artifact ID to open in the viewer.
 	 */
 	function navigateTo(id: string): void {
 		navigationStore.navigateToArtifact(id);

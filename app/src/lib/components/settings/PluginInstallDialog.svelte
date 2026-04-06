@@ -24,8 +24,9 @@
 	const hasNavItems = $derived(navItems.length > 0);
 
 	/**
-	 *
-	 * @param key
+	 * Convert a plugin key into a human-readable label by replacing separators and title-casing words.
+	 * @param key - The raw plugin key such as "my-plugin" or "artifact_type".
+	 * @returns A formatted label such as "My Plugin" or "Artifact Type".
 	 */
 	function humanizeKey(key: string): string {
 		return key.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

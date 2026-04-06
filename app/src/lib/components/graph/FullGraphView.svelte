@@ -70,8 +70,8 @@
 	let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
 	/**
-	 *
-	 * @param el
+	 * Initialise or rebuild the Cytoscape graph inside the provided container element.
+	 * @param el - The DOM element that Cytoscape will use as its rendering container.
 	 */
 	function buildGraph(el: HTMLDivElement): void {
 		if (cy) {

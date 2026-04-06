@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Message } from "@orqastudio/types";
-	import { Caption, Center, Box } from "@orqastudio/svelte-components/pure";
+	import { Caption, Center } from "@orqastudio/svelte-components/pure";
 
 	let { message }: { message: Message } = $props();
 

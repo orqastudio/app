@@ -67,7 +67,8 @@ export const FIELD_ORDER: string[] = [
 
 /**
  * Returns Tailwind classes for priority badges.
- * @param priority
+ * @param priority - The priority value (e.g. "P1", "P2", "P3").
+ * @returns Tailwind CSS class string for the badge background, text, and border colours.
  */
 export function priorityClass(priority: string): string {
 	if (priority === "P1") return "bg-destructive/15 text-destructive border-destructive/30";
@@ -78,8 +79,9 @@ export function priorityClass(priority: string): string {
 }
 
 /**
- * Returns human-readable label for priority.
- * @param priority
+ * Returns a human-readable label for a priority value.
+ * @param priority - The priority value (e.g. "P1", "P2", "P3").
+ * @returns The human-readable label such as "P1 — Critical", or the raw value for unknown priorities.
  */
 export function priorityLabel(priority: string): string {
 	if (priority === "P1") return "P1 — Critical";

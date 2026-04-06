@@ -60,9 +60,13 @@ export class ConversationStore {
 	/** Current conversation status — use this instead of inspecting isStreaming/isLoading separately. */
 	status = $state<ConversationStatus>("idle");
 	/** True while the model is actively streaming a response. Derived from status. */
-	get isStreaming(): boolean { return this.status === "streaming"; }
+	get isStreaming(): boolean {
+		return this.status === "streaming";
+	}
 	/** True while messages are being loaded from the backend. Derived from status. */
-	get isLoading(): boolean { return this.status === "loading"; }
+	get isLoading(): boolean {
+		return this.status === "loading";
+	}
 	/** Last error message, or null if none. */
 	error = $state<string | null>(null);
 	/** Active tool call states, keyed by tool_call_id. */
@@ -147,9 +151,8 @@ export class ConversationStore {
 		this.status = "streaming";
 
 		// Optimistically add the user message to the UI immediately
-		const nextTurn = this.messages.length > 0
-			? Math.max(...this.messages.map((m) => m.turn_index)) + 1
-			: 0;
+		const nextTurn =
+			this.messages.length > 0 ? Math.max(...this.messages.map((m) => m.turn_index)) + 1 : 0;
 		const optimisticMessage: Message = {
 			id: -Date.now(),
 			session_id: sessionId,
@@ -280,7 +283,9 @@ export class ConversationStore {
 				if (event.data.resolved_model) {
 					this.resolvedModel = event.data.resolved_model;
 				}
-				log.info(`stream_start: model=${event.data.resolved_model ?? "unknown"} message_id=${event.data.message_id}`);
+				log.info(
+					`stream_start: model=${event.data.resolved_model ?? "unknown"} message_id=${event.data.message_id}`,
+				);
 				break;
 
 			case "text_delta":
@@ -338,9 +343,10 @@ export class ConversationStore {
 				break;
 
 			case "turn_complete": {
-				const elapsed_ms = this.streamStartTime !== null
-					? (performance.now() - this.streamStartTime).toFixed(1)
-					: null;
+				const elapsed_ms =
+					this.streamStartTime !== null
+						? (performance.now() - this.streamStartTime).toFixed(1)
+						: null;
 				this.streamStartTime = null;
 				log.info(`turn_complete: elapsed_ms=${elapsed_ms ?? "unknown"}`);
 				this.status = "idle";

@@ -102,15 +102,17 @@
 	// updating the template, this will throw at compile time (never type check).
 	/**
 	 * Exhaustiveness guard: throws if tab is an unhandled DevToolsTab variant.
-	 * @param tab
+	 * @param tab - The unhandled tab value; TypeScript narrows this to never.
+	 * @returns Never returns — always throws.
 	 */
 	function assertTabNever(tab: never): never {
 		return assertNever(tab);
 	}
 
 	/**
-	 * Handle keydown: ? key toggles help panel when not in a text input.
-	 * @param e
+	 * Handle keydown: ? key toggles the help panel when not typing in an input field.
+	 * Ctrl+1–4 navigate directly to the corresponding tab.
+	 * @param e - The keyboard event from the document keydown listener.
 	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		if (e.key === "?" && !e.ctrlKey && !e.metaKey && !e.altKey) {

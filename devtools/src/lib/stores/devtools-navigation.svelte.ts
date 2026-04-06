@@ -54,10 +54,10 @@ function persistTab(tab: DevToolsTab): void {
 	}
 }
 
-// Return a human-readable status bar label for the given connection state.
 /**
- *
- * @param conn
+ * Return a human-readable status bar label for the given connection state.
+ * @param conn - The current connection state discriminated union value.
+ * @returns Display string suitable for the status bar.
  */
 export function connectionLabel(conn: ConnectionState): string {
 	switch (conn.state) {

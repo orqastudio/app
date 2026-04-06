@@ -11,12 +11,8 @@
 
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
-import {
-	viewingHistorical,
-	activeSessionId,
-	loadSessionEvents,
-	type DevToolsSession,
-} from "./session-store.svelte.js";
+import { SvelteSet } from "svelte/reactivity";
+import { loadSessionEvents, type DevToolsSession } from "./session-store.svelte.js";
 
 // Shape of a log event as emitted by the Tauri backend.
 export interface LogEvent {
@@ -92,9 +88,9 @@ interface PersistedFilters {
 // Restore filter state from localStorage. Returns defaults when nothing is
 // stored or the stored value cannot be parsed.
 function loadPersistedFilters(): {
-	sources: Set<LogEvent["source"]>;
-	levels: Set<LogEvent["level"]>;
-	categories: Set<string>;
+	sources: SvelteSet<LogEvent["source"]>;
+	levels: SvelteSet<LogEvent["level"]>;
+	categories: SvelteSet<string>;
 	searchText: string;
 } {
 	try {
@@ -102,16 +98,21 @@ function loadPersistedFilters(): {
 		if (raw) {
 			const parsed: PersistedFilters = JSON.parse(raw);
 			return {
-				sources: new Set(parsed.sources ?? []),
-				levels: new Set(parsed.levels ?? []),
-				categories: new Set(parsed.categories ?? []),
+				sources: new SvelteSet(parsed.sources ?? []),
+				levels: new SvelteSet(parsed.levels ?? []),
+				categories: new SvelteSet(parsed.categories ?? []),
 				searchText: typeof parsed.searchText === "string" ? parsed.searchText : "",
 			};
 		}
 	} catch {
 		// Corrupted or unavailable — silently fall through to defaults.
 	}
-	return { sources: new Set(), levels: new Set(), categories: new Set(), searchText: "" };
+	return {
+		sources: new SvelteSet(),
+		levels: new SvelteSet(),
+		categories: new SvelteSet(),
+		searchText: "",
+	};
 }
 
 // Write current filter state to localStorage.
@@ -133,9 +134,9 @@ function persistFilters(): void {
 // searchText is applied as a case-insensitive substring match on message.
 // Initialised from localStorage so the last-used filters are restored on startup.
 export const filters = $state<{
-	sources: Set<LogEvent["source"]>;
-	levels: Set<LogEvent["level"]>;
-	categories: Set<string>;
+	sources: SvelteSet<LogEvent["source"]>;
+	levels: SvelteSet<LogEvent["level"]>;
+	categories: SvelteSet<string>;
 	searchText: string;
 }>(loadPersistedFilters());
 
@@ -143,28 +144,28 @@ export const filters = $state<{
 $effect.root(() => {
 	$effect(() => {
 		// Access all filter fields to establish reactive dependencies.
-		filters.sources;
-		filters.levels;
-		filters.categories;
-		filters.searchText;
+		void filters.sources;
+		void filters.levels;
+		void filters.categories;
+		void filters.searchText;
 		persistFilters();
 	});
 });
 
-// Derive the set of categories that have appeared in the event buffer so the
-// category filter dropdown only shows categories that exist in current data.
-// Exported as a function because Svelte 5 cannot export $derived from modules.
 /**
- *
+ * Derive the set of categories that have appeared in the event buffer so the
+ * category filter dropdown only shows categories that exist in current data.
+ * Exported as a function because Svelte 5 cannot export $derived from modules.
+ * @returns Reactive set of all category strings seen in the current buffer.
  */
-export function knownCategories(): Set<string> {
-	return new Set(events.map((ev) => ev.category));
+export function knownCategories(): SvelteSet<string> {
+	return new SvelteSet(events.map((ev) => ev.category));
 }
 
-// Filtered view of the event buffer. Applies all active filters in order:
-// source → level → category → text search. An empty filter set passes all events.
 /**
- *
+ * Filtered view of the event buffer. Applies all active filters in order:
+ * source, level, category, then text search. An empty filter set passes all events.
+ * @returns Array of log events that match all active filter criteria.
  */
 export function filteredEvents(): LogEvent[] {
 	return events.filter((ev) => {
@@ -179,9 +180,9 @@ export function filteredEvents(): LogEvent[] {
 	});
 }
 
-// Returns true when any filter is active (used to show the Clear button).
 /**
- *
+ * Returns true when any filter is active, used to show the Clear button.
+ * @returns True if at least one filter dimension has an active selection.
  */
 export function hasActiveFilters(): boolean {
 	return (
@@ -192,14 +193,13 @@ export function hasActiveFilters(): boolean {
 	);
 }
 
-// Reset all filters to their default (show-all) state.
 /**
- *
+ * Reset all filters to their default show-all state.
  */
 export function clearFilters(): void {
-	filters.sources = new Set();
-	filters.levels = new Set();
-	filters.categories = new Set();
+	filters.sources = new SvelteSet();
+	filters.levels = new SvelteSet();
+	filters.categories = new SvelteSet();
 	filters.searchText = "";
 }
 
@@ -223,6 +223,7 @@ function appendEvent(event: LogEvent): void {
 /**
  * Start listening for Tauri log events. Safe to call multiple times; only one
  * listener is registered. Returns a cleanup function for use in onDestroy.
+ * @returns A cleanup function that unlistens and marks the stream as disconnected.
  */
 export async function startLogStream(): Promise<() => void> {
 	if (unlisten !== null) {
@@ -335,7 +336,7 @@ export async function loadHistory(): Promise<void> {
 		if (historical.length === 0) return;
 
 		// Deduplicate against events already in the buffer by id.
-		const existingIds = new Set(events.map((ev) => ev.id));
+		const existingIds = new SvelteSet(events.map((ev) => ev.id));
 		const newEvents = historical.filter((ev) => !existingIds.has(ev.id));
 
 		if (newEvents.length === 0) return;
@@ -364,7 +365,8 @@ export async function loadHistory(): Promise<void> {
  * Map a raw JSON object from query_session_events into a LogEvent. The SQLite
  * store serialises level/source via Rust's Debug/Display formatting which
  * matches the TypeScript union types used in the frontend.
- * @param obj
+ * @param obj - Raw JSON record from the SQLite query result.
+ * @returns A typed LogEvent with all fields coerced from the raw data.
  */
 function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
 	return {
@@ -383,7 +385,7 @@ function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
  * Switch the log view to a historical session. Stops the Tauri live listener,
  * clears the buffer, loads the first page of events from SQLite, and sets
  * historicalMode so components update their UI accordingly.
- * @param session
+ * @param session - The historical session to browse.
  */
 export async function enterHistoricalMode(session: DevToolsSession): Promise<void> {
 	// Pause live streaming while browsing history.
@@ -410,7 +412,7 @@ export async function enterHistoricalMode(session: DevToolsSession): Promise<voi
 /**
  * Load the next page of events for the current historical session and append
  * them to the buffer. Updates historicalOffset and historicalExhausted.
- * @param sessionId
+ * @param sessionId - The session ID whose next page of events to load.
  */
 export async function loadMoreHistoricalEvents(sessionId: string): Promise<void> {
 	if (historyLoading.value || historicalExhausted.value) return;

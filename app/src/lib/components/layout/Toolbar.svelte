@@ -84,7 +84,7 @@
 
 	/**
 	 * Start window drag on primary mouse button press outside interactive elements.
-	 * @param e
+	 * @param e - The mouse event from the toolbar's mousedown listener.
 	 */
 	function handleDragStart(e: MouseEvent): void {
 		if (e.button !== 0) return;
@@ -95,7 +95,7 @@
 
 	/**
 	 * Toggle window maximize state on double-click outside interactive elements.
-	 * @param e
+	 * @param e - The mouse event from the toolbar's dblclick listener.
 	 */
 	function handleDoubleClick(e: MouseEvent): void {
 		const target = e.target as HTMLElement;

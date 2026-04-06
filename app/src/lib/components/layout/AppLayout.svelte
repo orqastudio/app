@@ -58,7 +58,7 @@
 
 	/**
 	 * Handle global keydown events to toggle artifact search overlay on Ctrl+Space.
-	 * @param e
+	 * @param e - The keyboard event fired on the window.
 	 */
 	function handleGlobalKeydown(e: KeyboardEvent) {
 		// Ctrl+Space (or Cmd+Space on Mac) toggles the search overlay

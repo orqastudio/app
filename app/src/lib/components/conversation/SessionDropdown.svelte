@@ -62,8 +62,8 @@
 	);
 
 	/**
-	 *
-	 * @param sessionId
+	 * Select a session by ID, close the dropdown, and clear the search input.
+	 * @param sessionId - The numeric ID of the session to select.
 	 */
 	function handleSelect(sessionId: number) {
 		onSelect(sessionId);
@@ -71,9 +71,7 @@
 		searchQuery = "";
 	}
 
-	/**
-	 *
-	 */
+	/** Create a new session, close the dropdown, and clear the search input. */
 	function handleNewSession() {
 		onNewSession();
 		open = false;
@@ -81,10 +79,10 @@
 	}
 
 	/**
-	 *
-	 * @param event
-	 * @param sessionId
-	 * @param title
+	 * Open the delete confirmation dialog for the given session.
+	 * @param event - The mouse event that triggered the delete button click.
+	 * @param sessionId - The numeric ID of the session to delete.
+	 * @param title - The display title of the session, shown in the confirmation dialog.
 	 */
 	function handleDeleteClick(event: MouseEvent, sessionId: number, title: string) {
 		event.stopPropagation();
@@ -93,9 +91,7 @@
 		deleteDialogOpen = true;
 	}
 
-	/**
-	 *
-	 */
+	/** Confirm deletion of the pending target session and reset dialog state. */
 	function handleDeleteConfirm() {
 		if (deleteTargetId !== null) {
 			onDelete(deleteTargetId);
@@ -105,8 +101,9 @@
 	}
 
 	/**
-	 *
-	 * @param status
+	 * Return the badge variant that corresponds to the session's status.
+	 * @param status - The current status of the session.
+	 * @returns The badge variant string used by the Badge component.
 	 */
 	function statusVariant(
 		status: SessionStatus,
@@ -126,8 +123,9 @@
 	}
 
 	/**
-	 *
-	 * @param status
+	 * Return the human-readable label for a session status.
+	 * @param status - The current status of the session.
+	 * @returns A capitalised display string for the status.
 	 */
 	function statusLabel(status: SessionStatus): string {
 		switch (status) {
@@ -145,8 +143,9 @@
 	}
 
 	/**
-	 *
-	 * @param dateStr
+	 * Format an ISO date string as a human-readable relative time (e.g. "3h ago", "yesterday").
+	 * @param dateStr - An ISO 8601 date string representing when the session was last updated.
+	 * @returns A short relative-time string for display in the session list.
 	 */
 	function formatRelativeTime(dateStr: string): string {
 		const date = new Date(dateStr);

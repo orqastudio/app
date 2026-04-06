@@ -32,9 +32,16 @@ export type { Logger, LogLevel, LogEntry } from "./logger.js";
 
 // Router
 export {
-	parseHash, pushRoute, currentRoute, injectNavigation,
-	navigateToArtifact, navigateToPluginView, navigateToActivity,
-	navigateToProject, navigateToGraph, navigateToSettings,
+	parseHash,
+	pushRoute,
+	currentRoute,
+	injectNavigation,
+	navigateToArtifact,
+	navigateToPluginView,
+	navigateToActivity,
+	navigateToProject,
+	navigateToGraph,
+	navigateToSettings,
 } from "./router.js";
 export type { ParsedRoute } from "./router.js";
 
@@ -59,6 +66,12 @@ export {
 export type { ToolCallState, ContextEntry, PendingApproval } from "./stores/index.js";
 export type { ThemeMode, DefaultModel, DaemonState, DaemonHealth } from "./stores/index.js";
 export type { AppError } from "./stores/index.js";
-export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig, ActiveNavItem } from "./stores/index.js";
+export type {
+	ActivityView,
+	ActivityGroup,
+	ExplorerView,
+	SubCategoryConfig,
+	ActiveNavItem,
+} from "./stores/index.js";
 export type { Toast, ToastType } from "./stores/index.js";
 export type { PluginEntry } from "./stores/index.js";

@@ -35,15 +35,17 @@
 	const prefixes = $derived(Object.keys(effectiveColors));
 
 	/**
-	 *
-	 * @param prefix
+	 * Return the configured display mode for the given artifact link prefix, defaulting to "id".
+	 * @param prefix - The artifact type prefix whose display mode is being retrieved (e.g. "TASK").
+	 * @returns The display mode for the prefix, or "id" if none has been configured.
 	 */
 	function getDisplayMode(prefix: string): ArtifactLinkDisplayMode {
 		return effectiveDisplayModes[prefix] ?? "id";
 	}
 
 	/**
-	 *
+	 * Assemble the current artifact links configuration from effective display modes and colors.
+	 * @returns The ArtifactLinksConfig object ready to be merged into project settings.
 	 */
 	function buildConfig(): ArtifactLinksConfig {
 		return {
@@ -53,9 +55,9 @@
 	}
 
 	/**
-	 *
-	 * @param prefix
-	 * @param mode
+	 * Persist a changed display mode for the given artifact link prefix.
+	 * @param prefix - The artifact type prefix whose display mode is being changed (e.g. "TASK").
+	 * @param mode - The new display mode to apply ("id", "title", or "both").
 	 */
 	function handleDisplayModeChange(prefix: string, mode: ArtifactLinkDisplayMode) {
 		const displayModes = { ...effectiveDisplayModes, [prefix]: mode };
@@ -66,9 +68,9 @@
 	}
 
 	/**
-	 *
-	 * @param prefix
-	 * @param color
+	 * Persist a changed chip color for the given artifact link prefix.
+	 * @param prefix - The artifact type prefix whose color is being changed (e.g. "TASK").
+	 * @param color - The new CSS color string to apply to the artifact link chip.
 	 */
 	function handleColorChange(prefix: string, color: string) {
 		const colors = { ...effectiveColors, [prefix]: color };
@@ -79,8 +81,8 @@
 	}
 
 	/**
-	 *
-	 * @param prefix
+	 * Remove the color override for the given artifact link prefix, reverting to the plugin default.
+	 * @param prefix - The artifact type prefix whose color override should be removed (e.g. "TASK").
 	 */
 	function resetColor(prefix: string) {
 		const colors = { ...effectiveColors };

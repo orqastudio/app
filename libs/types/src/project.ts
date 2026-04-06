@@ -86,7 +86,6 @@ export interface ArtifactLinksConfig {
 	colors: Record<string, string>;
 }
 
-
 /** An automatic transition rule on a status. */
 export interface StatusAutoRule {
 	condition: string;
@@ -217,7 +216,9 @@ export const PLATFORM_CONFIG: PlatformConfig = platformConfigData as PlatformCon
  * Platform artifact type keys derived from core.json.
  * Backwards-compatible: same shape as the old hardcoded array.
  */
-export const PLATFORM_ARTIFACT_TYPES: readonly string[] = PLATFORM_CONFIG.artifactTypes.map(t => t.key);
+export const PLATFORM_ARTIFACT_TYPES: readonly string[] = PLATFORM_CONFIG.artifactTypes.map(
+	(t) => t.key,
+);
 
 /** @deprecated Use `PLATFORM_CONFIG.artifactTypes[n].key` instead. */
 export type PlatformArtifactType = string;

@@ -29,22 +29,22 @@ import { PluginStore } from "./stores/plugin.svelte.js";
 
 /** The full set of SDK store instances. */
 export interface OrqaStores {
-    readonly artifactGraphSDK: ArtifactGraphSDK;
-    readonly sessionStore: SessionStore;
-    readonly projectStore: ProjectStore;
-    readonly artifactStore: ArtifactStore;
-    readonly conversationStore: ConversationStore;
-    readonly enforcementStore: EnforcementStore;
-    readonly lessonStore: LessonStore;
-    readonly setupStore: SetupStore;
-    readonly settingsStore: SettingsStore;
-    readonly errorStore: ErrorStoreImpl;
-    readonly navigationStore: NavigationStore;
-    readonly toastStore: ToastStore;
-    readonly pluginRegistry: PluginRegistry;
-    readonly pluginStore: PluginStore;
-    /** Convenience functions: toast.success(), toast.error(), etc. */
-    readonly toast: ReturnType<typeof createToastConvenience>;
+	readonly artifactGraphSDK: ArtifactGraphSDK;
+	readonly sessionStore: SessionStore;
+	readonly projectStore: ProjectStore;
+	readonly artifactStore: ArtifactStore;
+	readonly conversationStore: ConversationStore;
+	readonly enforcementStore: EnforcementStore;
+	readonly lessonStore: LessonStore;
+	readonly setupStore: SetupStore;
+	readonly settingsStore: SettingsStore;
+	readonly errorStore: ErrorStoreImpl;
+	readonly navigationStore: NavigationStore;
+	readonly toastStore: ToastStore;
+	readonly pluginRegistry: PluginRegistry;
+	readonly pluginStore: PluginStore;
+	/** Convenience functions: toast.success(), toast.error(), etc. */
+	readonly toast: ReturnType<typeof createToastConvenience>;
 }
 
 // ---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ export interface OrqaStores {
 const REGISTRY_KEY = "__orqa_stores";
 
 declare global {
-    var __orqa_stores: OrqaStores | undefined;  
+	var __orqa_stores: OrqaStores | undefined;
 }
 
 /**
@@ -65,44 +65,44 @@ declare global {
  * @returns The full set of store instances.
  */
 export function initializeStores(): OrqaStores {
-    if (globalThis[REGISTRY_KEY]) return globalThis[REGISTRY_KEY];
+	if (globalThis[REGISTRY_KEY]) return globalThis[REGISTRY_KEY];
 
-    const pluginRegistry = new PluginRegistry();
-    const artifactGraphSDK = new ArtifactGraphSDK(pluginRegistry);
-    const sessionStore = new SessionStore();
-    const projectStore = new ProjectStore();
-    const artifactStore = new ArtifactStore();
-    const conversationStore = new ConversationStore();
-    const enforcementStore = new EnforcementStore();
-    const lessonStore = new LessonStore();
-    const setupStore = new SetupStore();
-    const settingsStore = new SettingsStore();
-    const errorStore = new ErrorStoreImpl();
-    const navigationStore = new NavigationStore();
-    const toastStore = new ToastStore();
-    const toast = createToastConvenience(toastStore);
-    const pluginStore = new PluginStore();
+	const pluginRegistry = new PluginRegistry();
+	const artifactGraphSDK = new ArtifactGraphSDK(pluginRegistry);
+	const sessionStore = new SessionStore();
+	const projectStore = new ProjectStore();
+	const artifactStore = new ArtifactStore();
+	const conversationStore = new ConversationStore();
+	const enforcementStore = new EnforcementStore();
+	const lessonStore = new LessonStore();
+	const setupStore = new SetupStore();
+	const settingsStore = new SettingsStore();
+	const errorStore = new ErrorStoreImpl();
+	const navigationStore = new NavigationStore();
+	const toastStore = new ToastStore();
+	const toast = createToastConvenience(toastStore);
+	const pluginStore = new PluginStore();
 
-    const stores: OrqaStores = {
-        artifactGraphSDK,
-        sessionStore,
-        projectStore,
-        artifactStore,
-        conversationStore,
-        enforcementStore,
-        lessonStore,
-        setupStore,
-        settingsStore,
-        errorStore,
-        navigationStore,
-        toastStore,
-        pluginRegistry,
-        pluginStore,
-        toast,
-    };
+	const stores: OrqaStores = {
+		artifactGraphSDK,
+		sessionStore,
+		projectStore,
+		artifactStore,
+		conversationStore,
+		enforcementStore,
+		lessonStore,
+		setupStore,
+		settingsStore,
+		errorStore,
+		navigationStore,
+		toastStore,
+		pluginRegistry,
+		pluginStore,
+		toast,
+	};
 
-    globalThis[REGISTRY_KEY] = stores;
-    return stores;
+	globalThis[REGISTRY_KEY] = stores;
+	return stores;
 }
 
 /**
@@ -116,12 +116,12 @@ export function initializeStores(): OrqaStores {
  * @returns The registered store instances.
  */
 export function getStores(): OrqaStores {
-    const stores = globalThis[REGISTRY_KEY];
-    if (!stores) {
-        throw new Error(
-            "[OrqaStudio SDK] Stores not initialized. " +
-            "The host app must call initializeStores() before plugins can access stores."
-        );
-    }
-    return stores;
+	const stores = globalThis[REGISTRY_KEY];
+	if (!stores) {
+		throw new Error(
+			"[OrqaStudio SDK] Stores not initialized. " +
+				"The host app must call initializeStores() before plugins can access stores.",
+		);
+	}
+	return stores;
 }

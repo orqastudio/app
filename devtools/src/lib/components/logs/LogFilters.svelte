@@ -39,9 +39,10 @@
 	// tracks object identity; we must reassign to trigger reactivity when the
 	// Set contents change.
 	/**
-	 * Toggle a value in a reactive set, returning a new set with the value added or removed.
-	 * @param set
-	 * @param value
+	 * Toggle a value in a reactive set, returning a new SvelteSet with the value added or removed.
+	 * @param set - The existing set to base the new set on.
+	 * @param value - The value to add if absent or remove if present.
+	 * @returns A new SvelteSet with the toggled membership.
 	 */
 	function toggleSet<T>(set: Set<T>, value: T): Set<T> {
 		const next = new SvelteSet(set);
@@ -55,7 +56,7 @@
 
 	/**
 	 * Toggle a source in the active source filter set.
-	 * @param source
+	 * @param source - The log source to add or remove from the filter.
 	 */
 	function toggleSource(source: LogEvent["source"]): void {
 		filters.sources = toggleSet(filters.sources, source);
@@ -63,7 +64,7 @@
 
 	/**
 	 * Toggle a level in the active level filter set.
-	 * @param level
+	 * @param level - The log level to add or remove from the filter.
 	 */
 	function toggleLevel(level: LogEvent["level"]): void {
 		filters.levels = toggleSet(filters.levels, level);
@@ -71,7 +72,7 @@
 
 	/**
 	 * Toggle a category in the active category filter set.
-	 * @param category
+	 * @param category - The category string to add or remove from the filter.
 	 */
 	function toggleCategory(category: string): void {
 		filters.categories = toggleSet(filters.categories, category);

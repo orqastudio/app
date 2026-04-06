@@ -54,8 +54,8 @@
 
 	/**
 	 * Open an artifact when the user clicks its card.
-	 * @param name
-	 * @param path
+	 * @param name - The display name of the artifact to open.
+	 * @param path - The file path of the artifact to open.
 	 */
 	function handleItemClick(name: string, path: string) {
 		if (!config) return;

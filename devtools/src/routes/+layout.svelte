@@ -14,12 +14,12 @@
 
 	let { children } = $props();
 
-	// Returns true when the event originated from an element that accepts keyboard
-	// input — input, textarea, select, or any contenteditable. Used to suppress
-	// shortcuts that should not fire while the user is typing.
 	/**
-	 *
-	 * @param e
+	 * Returns true when the event originated from an element that accepts keyboard
+	 * input — input, textarea, select, or any contenteditable. Used to suppress
+	 * shortcuts that should not fire while the user is typing.
+	 * @param e - The keyboard event to inspect.
+	 * @returns True if the event target is a text input element.
 	 */
 	function isInputFocused(e: KeyboardEvent): boolean {
 		const target = e.target as HTMLElement | null;
@@ -28,11 +28,10 @@
 		return tag === "input" || tag === "textarea" || tag === "select" || target.isContentEditable;
 	}
 
-	// Global keydown handler. Checks modifier keys and the active element before
-	// dispatching to the appropriate store action or DOM operation.
 	/**
-	 *
-	 * @param e
+	 * Global keydown handler. Checks modifier keys and the active element before
+	 * dispatching to the appropriate store action or DOM operation.
+	 * @param e - The keyboard event fired on the window.
 	 */
 	function handleKeydown(e: KeyboardEvent): void {
 		const mod = e.ctrlKey || e.metaKey;

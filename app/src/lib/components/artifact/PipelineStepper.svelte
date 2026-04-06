@@ -44,7 +44,7 @@
 
 	/**
 	 * Trigger a status transition to the given target key via the artifact graph SDK.
-	 * @param targetKey
+	 * @param targetKey - The status key to transition the current artifact to.
 	 */
 	async function handleTransition(targetKey: string) {
 		if (!path || transitioning) return;

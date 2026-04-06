@@ -13,6 +13,7 @@ let _instance: GraphVisualiser | null = null;
 /**
  * Initialize the graph visualiser and wire it to the SDK's graph refresh.
  * Call once from the root layout after initializeStores().
+ * @returns The singleton GraphVisualiser instance.
  */
 export function initializeGraphViz(): GraphVisualiser {
 	if (_instance) return _instance;
@@ -33,7 +34,10 @@ export function initializeGraphViz(): GraphVisualiser {
 	return _instance;
 }
 
-/** Access the graph visualiser. Throws if not initialized. */
+/**
+ * Access the singleton graph visualiser instance. Throws if not initialized.
+ * @returns The singleton GraphVisualiser instance.
+ */
 export function getGraphViz(): GraphVisualiser {
 	if (!_instance) {
 		throw new Error(

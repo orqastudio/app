@@ -33,7 +33,8 @@
 	let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 	/**
-	 *
+	 * Fetch the current process status list from the Rust backend via IPC and update the reactive state.
+	 * @returns Resolves after the status list is fetched and stored.
 	 */
 	async function fetchStatus(): Promise<void> {
 		try {
@@ -48,8 +49,8 @@
 	}
 
 	/**
-	 *
-	 * @param source
+	 * Toggle the selected process source filter so the log table highlights events from that process.
+	 * @param source - The process source string to select or deselect.
 	 */
 	function handleSelect(source: string): void {
 		selectedSource = selectedSource === source ? null : source;
@@ -61,7 +62,7 @@
 	const isBusy = $derived(devController.state === "starting" || devController.state === "stopping");
 
 	/**
-	 *
+	 * Toggle the dev environment: starts it if stopped, stops it if running.
 	 */
 	function handleToggle(): void {
 		if (isRunning) {
@@ -71,10 +72,10 @@
 		}
 	}
 
-	// Resolve button label from the current dev controller state with exhaustiveness check.
 	/**
-	 *
-	 * @param state
+	 * Resolve the start/stop button label from the dev controller state with exhaustiveness check.
+	 * @param state - The current dev controller state.
+	 * @returns A label string describing the current action or state.
 	 */
 	function resolveButtonLabel(state: typeof devController.state): string {
 		switch (state) {

@@ -1,9 +1,10 @@
 import type { DocNode, SortConfig, FilterableField } from "@orqastudio/types";
 
 /**
- * Filter nodes by frontmatter values.
- * @param nodes
- * @param filters
+ * Filter nodes by frontmatter values, returning only nodes whose frontmatter matches all active filters.
+ * @param nodes - The full list of artifact nodes to filter.
+ * @param filters - Map of field names to allowed value arrays; empty arrays mean no filter for that field.
+ * @returns The subset of nodes that pass all active filters.
  */
 export function applyFilters(
 	nodes: readonly DocNode[],
@@ -27,9 +28,10 @@ export function applyFilters(
 }
 
 /**
- * Sort nodes by a frontmatter field.
- * @param nodes
- * @param sort
+ * Sort nodes by a frontmatter field, using date-aware comparison for date fields and locale-sensitive string comparison otherwise.
+ * @param nodes - The artifact nodes to sort.
+ * @param sort - The sort configuration including field name and direction.
+ * @returns A new sorted array of nodes.
  */
 export function applySort(nodes: readonly DocNode[], sort: Readonly<SortConfig>): DocNode[] {
 	if (!sort.field || sort.field === "title") {
@@ -72,11 +74,12 @@ export function applySort(nodes: readonly DocNode[], sort: Readonly<SortConfig>)
 }
 
 /**
- * Group nodes by a frontmatter field value.
- * @param nodes
- * @param groupField
- * @param groupOrder
- * @param filterableFields
+ * Group nodes by a frontmatter field value, ordering groups by navigation config, schema enum order, or alphabetically.
+ * @param nodes - The artifact nodes to group.
+ * @param groupField - The frontmatter field name to group by.
+ * @param groupOrder - Optional explicit ordering of group keys from navigation config.
+ * @param filterableFields - Schema field definitions used to determine enum-based group order.
+ * @returns Groups in display order, each with a humanized label and member nodes.
  */
 export function applyGrouping(
 	nodes: readonly DocNode[],
@@ -140,9 +143,10 @@ export function applyGrouping(
 }
 
 /**
- * Count how many nodes match each value of a filterable field.
- * @param nodes
- * @param fieldName
+ * Count how many nodes match each value of a filterable field, used to display counts in filter UI.
+ * @param nodes - The artifact nodes to count across.
+ * @param fieldName - The frontmatter field name to tally values for.
+ * @returns A map from field value to occurrence count.
  */
 export function countFieldValues(
 	nodes: readonly DocNode[],
@@ -160,8 +164,9 @@ export function countFieldValues(
 }
 
 /**
- * Humanize a field value for display (replace hyphens/underscores with spaces, title-case).
- * @param value
+ * Humanize a field value for display by replacing hyphens and underscores with spaces and title-casing each word.
+ * @param value - The raw field value from frontmatter (e.g. "in-progress" or "my_field").
+ * @returns The humanized display string (e.g. "In Progress" or "My Field").
  */
 function humanizeValue(value: string): string {
 	return value.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

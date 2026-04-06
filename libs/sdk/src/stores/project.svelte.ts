@@ -135,10 +135,7 @@ export class ProjectStore {
 	async loadProjectSettings(path: string) {
 		this.settingsLoaded = false;
 		try {
-			const settings = await invoke<ProjectSettings | null>(
-				"project_settings_read",
-				{ path },
-			);
+			const settings = await invoke<ProjectSettings | null>("project_settings_read", { path });
 			this.projectSettings = settings;
 			if (settings?.icon) {
 				await this.loadIcon();
@@ -161,10 +158,7 @@ export class ProjectStore {
 	 */
 	async saveProjectSettings(path: string, settings: ProjectSettings) {
 		try {
-			const saved = await invoke<ProjectSettings>(
-				"project_settings_write",
-				{ path, settings },
-			);
+			const saved = await invoke<ProjectSettings>("project_settings_write", { path, settings });
 			this.projectSettings = saved;
 		} catch (err: unknown) {
 			const message = extractErrorMessage(err);
@@ -177,10 +171,7 @@ export class ProjectStore {
 	 * @param path
 	 * @param excludedPaths
 	 */
-	async scanProject(
-		path: string,
-		excludedPaths?: string[],
-	): Promise<ProjectScanResult | null> {
+	async scanProject(path: string, excludedPaths?: string[]): Promise<ProjectScanResult | null> {
 		this.scanning = true;
 		try {
 			const result = await invoke<ProjectScanResult>("project_scan", {

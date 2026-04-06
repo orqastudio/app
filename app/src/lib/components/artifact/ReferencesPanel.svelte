@@ -96,7 +96,8 @@
 
 	/**
 	 * Return whether the overflow group identified by key is expanded.
-	 * @param key
+	 * @param key - The composite group key (e.g. "out:delivers") used to look up expansion state.
+	 * @returns True if the overflow group is expanded to show all items.
 	 */
 	function isExpanded(key: string): boolean {
 		return expandedGroups.get(key) ?? false;
@@ -104,7 +105,7 @@
 
 	/**
 	 * Toggle the expanded state for the overflow group identified by key.
-	 * @param key
+	 * @param key - The composite group key (e.g. "out:delivers") whose expansion state to toggle.
 	 */
 	function toggleExpanded(key: string): void {
 		expandedGroups.set(key, !isExpanded(key));

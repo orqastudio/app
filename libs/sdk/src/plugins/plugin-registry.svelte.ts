@@ -59,7 +59,6 @@ export interface RegistrationConflict {
 	detail: string;
 }
 
-
 // ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
@@ -178,7 +177,13 @@ export class PluginRegistry {
 	 * @param alias
 	 * @param label
 	 */
-	setAlias(pluginName: string, type: "schema" | "relationship", canonicalKey: string, alias: string, label?: string): void {
+	setAlias(
+		pluginName: string,
+		type: "schema" | "relationship",
+		canonicalKey: string,
+		alias: string,
+		label?: string,
+	): void {
 		// Update maps
 		this.aliasToCanonical.set(alias, canonicalKey);
 		this.canonicalToAlias.set(canonicalKey, alias);
@@ -227,17 +232,14 @@ export class PluginRegistry {
 	 * @param components - Map of component keys to Svelte components.
 	 * @throws If dependencies unmet, schemas conflict, or relationships conflict.
 	 */
-	register(
-		manifest: PluginManifest,
-		components: Record<string, Component>,
-	): void {
+	register(manifest: PluginManifest, components: Record<string, Component>): void {
 		// Check dependencies
 		if (manifest.requires) {
 			for (const dep of manifest.requires) {
 				if (!this.plugins.has(dep)) {
 					throw new Error(
 						`[PluginRegistry] Cannot register "${manifest.name}": ` +
-						`required plugin "${dep}" is not loaded.`,
+							`required plugin "${dep}" is not loaded.`,
 					);
 				}
 			}
@@ -253,8 +255,8 @@ export class PluginRegistry {
 			if (missing.length > 0) {
 				throw new Error(
 					`[PluginRegistry] Cannot register "${manifest.name}": ` +
-					`required sidecar(s) not available: ${missing.join(", ")}. ` +
-					`Register a sidecar provider first.`,
+						`required sidecar(s) not available: ${missing.join(", ")}. ` +
+						`Register a sidecar provider first.`,
 				);
 			}
 		}
@@ -263,9 +265,7 @@ export class PluginRegistry {
 		const conflicts = this.checkConflicts(manifest);
 		if (conflicts.length > 0) {
 			const msgs = conflicts.map((c) => c.detail);
-			throw new Error(
-				`[PluginRegistry] Cannot register "${manifest.name}": ${msgs.join("; ")}`,
-			);
+			throw new Error(`[PluginRegistry] Cannot register "${manifest.name}": ${msgs.join("; ")}`);
 		}
 
 		// Build component maps
@@ -463,16 +463,14 @@ export class PluginRegistry {
 	 * Get all CLI tool registrations across all plugins.
 	 */
 	get allCliTools(): CliToolRegistration[] {
-		return Array.from(this.plugins.values())
-			.flatMap((p) => p.manifest.provides.cliTools ?? []);
+		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.cliTools ?? []);
 	}
 
 	/**
 	 * Get all hook registrations across all plugins.
 	 */
 	get allHooks(): HookRegistration[] {
-		return Array.from(this.plugins.values())
-			.flatMap((p) => p.manifest.provides.hooks ?? []);
+		return Array.from(this.plugins.values()).flatMap((p) => p.manifest.provides.hooks ?? []);
 	}
 
 	// -----------------------------------------------------------------------
@@ -711,7 +709,10 @@ export class PluginRegistry {
 	 */
 	getSettingsPages(): Array<SettingsPageDeclaration & { pluginName: string }> {
 		return Array.from(this.plugins.entries()).flatMap(([name, plugin]) =>
-			(plugin.manifest.provides.settings_pages ?? []).map((page) => ({ ...page, pluginName: name })),
+			(plugin.manifest.provides.settings_pages ?? []).map((page) => ({
+				...page,
+				pluginName: name,
+			})),
 		);
 	}
 

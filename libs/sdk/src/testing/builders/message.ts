@@ -2,7 +2,7 @@
  * Test builder for conversation Message objects.
  *
  * Produces valid messages matching the orqa-studio Message shape.
- * The @orqastudio/types dependency will be added later — for now,
+ * The \@orqastudio/types dependency will be added later — for now,
  * the interface is defined locally.
  */
 
@@ -49,7 +49,8 @@ const defaults: Message = {
  * ```ts
  * const msg = createMessage({ role: "assistant", content: "Hi!" });
  * ```
- * @param overrides
+ * @param overrides - Partial Message fields to override the defaults.
+ * @returns A complete Message with all fields populated.
  */
 export function createMessage(overrides: Partial<Message> = {}): Message {
 	return { ...defaults, ...overrides };

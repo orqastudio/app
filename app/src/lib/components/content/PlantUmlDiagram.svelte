@@ -82,9 +82,10 @@
 
 	/**
 	 * Encode three bytes into four PlantUML base64 characters.
-	 * @param b1
-	 * @param b2
-	 * @param b3
+	 * @param b1 - The first input byte (0-255).
+	 * @param b2 - The second input byte (0-255).
+	 * @param b3 - The third input byte (0-255).
+	 * @returns Four PlantUML base64 alphabet characters representing the three bytes.
 	 */
 	function append3bytes(b1: number, b2: number, b3: number): string {
 		const c1 = b1 >> 2;
@@ -96,7 +97,8 @@
 
 	/**
 	 * Map a 6-bit value to a PlantUML alphabet character.
-	 * @param b
+	 * @param b - The 6-bit integer value (0-63) to encode.
+	 * @returns The single PlantUML base64 alphabet character for this value.
 	 */
 	function encode6bit(b: number): string {
 		if (b < 10) return String.fromCharCode(48 + b); // 0-9

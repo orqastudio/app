@@ -20,39 +20,39 @@ import { SvelteMap } from "svelte/reactivity";
 import { buildVisualizationElements } from "./elements.js";
 
 /**
- *
+ * Reactive visualiser class that wraps graph data and exposes derived Cytoscape elements.
  */
 export class GraphVisualiser {
-    /** Current graph data reference. */
-    private _graph: ReadonlyMap<string, ArtifactNode> = $state(new SvelteMap());
+	/** Current graph data reference. */
+	private _graph: ReadonlyMap<string, ArtifactNode> = $state(new SvelteMap());
 
-    /** Version counter for reactive tracking. */
-    private _version = $state(0);
+	/** Version counter for reactive tracking. */
+	private _version = $state(0);
 
-    /** Cached node positions from the last layout computation. */
-    cachedPositions = $state<NodePosition[]>([]);
+	/** Cached node positions from the last layout computation. */
+	cachedPositions = $state<NodePosition[]>([]);
 
-    // -----------------------------------------------------------------------
-    // Lifecycle
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Lifecycle
+	// -----------------------------------------------------------------------
 
-    /**
-     * Update the visualiser with new graph data.
-     * Call this whenever the SDK's graph refreshes.
-     * @param graph
-     */
-    update(graph: ReadonlyMap<string, ArtifactNode>): void {
-        this._graph = graph;
-        this._version++;
-        this.cachedPositions = [];
-    }
+	/**
+	 * Update the visualiser with new graph data.
+	 * Call this whenever the SDK's graph refreshes.
+	 * @param graph - Latest artifact graph map from the SDK.
+	 */
+	update(graph: ReadonlyMap<string, ArtifactNode>): void {
+		this._graph = graph;
+		this._version++;
+		this.cachedPositions = [];
+	}
 
-    // -----------------------------------------------------------------------
-    // Reactive derived properties
-    // -----------------------------------------------------------------------
+	// -----------------------------------------------------------------------
+	// Reactive derived properties
+	// -----------------------------------------------------------------------
 
-    graphElements = $derived.by((): cytoscape.ElementDefinition[] => {
-        void this._version;
-        return buildVisualizationElements(this._graph);
-    });
+	graphElements = $derived.by((): cytoscape.ElementDefinition[] => {
+		void this._version;
+		return buildVisualizationElements(this._graph);
+	});
 }

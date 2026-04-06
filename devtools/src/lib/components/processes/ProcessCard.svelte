@@ -45,13 +45,10 @@
 	// Whether the card is currently hovered, showing the expanded binary path row.
 	let hovered = $state(false);
 
-	// Map ProcessStatus to the closest ConnectionState equivalent.
-	// running → connected (green), crashed → disconnected (red),
-	// stopped → waiting (muted/gray in context), not_found → waiting,
-	// unknown → reconnecting (yellow).
 	/**
-	 *
-	 * @param status
+	 * Map a ProcessStatus to the closest ConnectionState equivalent for the indicator dot.
+	 * @param status - The process status to map.
+	 * @returns The corresponding connection state for the ConnectionIndicator component.
 	 */
 	function resolveConnectionState(status: ProcessStatus): ConnectionState {
 		switch (status) {
@@ -69,10 +66,10 @@
 		}
 	}
 
-	// Human-readable status label passed to ConnectionIndicator as an override.
 	/**
-	 *
-	 * @param status
+	 * Return a human-readable status label for a process status, used in the ConnectionIndicator.
+	 * @param status - The process status to describe.
+	 * @returns A capitalised label suitable for display in the card header.
 	 */
 	function resolveStatusLabel(status: ProcessStatus): string {
 		switch (status) {
@@ -94,10 +91,10 @@
 	const connectionState = $derived<ConnectionState>(resolveConnectionState(process.status));
 	const statusLabel = $derived(resolveStatusLabel(process.status));
 
-	// Format uptime_seconds into a human-readable string (e.g. "2h 14m" or "45s").
 	/**
-	 *
-	 * @param seconds
+	 * Format an uptime duration in seconds as a human-readable string such as "45s", "14m", or "2h 14m".
+	 * @param seconds - Uptime duration in seconds.
+	 * @returns A compact human-readable uptime string.
 	 */
 	function formatUptime(seconds: number): string {
 		if (seconds < 60) return `${seconds}s`;
@@ -108,10 +105,10 @@
 		return remainingMins > 0 ? `${hours}h ${remainingMins}m` : `${hours}h`;
 	}
 
-	// Format memory_bytes into a human-readable string (MB or KB).
 	/**
-	 *
-	 * @param bytes
+	 * Format a byte count as a human-readable memory string in MB, KB, or B.
+	 * @param bytes - Memory usage in bytes.
+	 * @returns A formatted memory string such as "12.3 MB" or "512 KB".
 	 */
 	function formatMemory(bytes: number): string {
 		if (bytes >= 1_048_576) return `${(bytes / 1_048_576).toFixed(1)} MB`;
@@ -120,29 +117,27 @@
 	}
 
 	/**
-	 *
+	 * Fire the onselect callback with the process source when the card is clicked.
 	 */
-	function handleClick() {
+	function handleClick(): void {
 		onselect?.(process.source);
 	}
 
-	// Allow keyboard activation so the card is operable without a pointer.
 	/**
-	 *
-	 * @param event
+	 * Allow keyboard activation of the card so it is operable without a pointer device.
+	 * @param event - The keydown event; activates on Enter or Space.
 	 */
-	function handleKeydown(event: KeyboardEvent) {
+	function handleKeydown(event: KeyboardEvent): void {
 		if (event.key === "Enter" || event.key === " ") {
 			event.preventDefault();
 			onselect?.(process.source);
 		}
 	}
 
-	// Extract the filename portion of a binary path for the compact display.
-	// Falls back to the full path when there is no directory separator.
 	/**
-	 *
-	 * @param path
+	 * Extract the filename portion of a binary path for compact display in the card footer.
+	 * @param path - The full binary path, which may use Windows or Unix separators.
+	 * @returns The filename component, or the full path if no separator is found.
 	 */
 	function binaryFilename(path: string): string {
 		const last = path.replace(/\\/g, "/").split("/").pop();

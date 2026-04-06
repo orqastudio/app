@@ -66,16 +66,14 @@
 		}
 	});
 
-	/**
-	 *
-	 */
+	/** Close the search overlay by setting the navigation store flag to false. */
 	function close() {
 		navigationStore.searchOverlayOpen = false;
 	}
 
 	/**
-	 *
-	 * @param node
+	 * Navigate to the selected artifact and close the search overlay.
+	 * @param node - The artifact node the user selected from the search results.
 	 */
 	function selectResult(node: ArtifactNode) {
 		navigationStore.navigateToArtifact(node.id);
@@ -83,8 +81,8 @@
 	}
 
 	/**
-	 *
-	 * @param e
+	 * Handle keyboard navigation within the search overlay (Escape, ArrowUp, ArrowDown, Enter).
+	 * @param e - The keyboard event from the overlay's keydown listener.
 	 */
 	function handleKeydown(e: KeyboardEvent) {
 		if (e.key === "Escape") {
@@ -103,8 +101,8 @@
 	}
 
 	/**
-	 *
-	 * @param e
+	 * Close the overlay when the user clicks the backdrop area outside the search card.
+	 * @param e - The mouse event from the backdrop element's click listener.
 	 */
 	function handleBackdropClick(e: MouseEvent) {
 		if (e.target === e.currentTarget) {

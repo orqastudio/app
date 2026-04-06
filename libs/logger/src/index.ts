@@ -86,20 +86,22 @@ function forwardToDashboard(level: string, source: string, message: string): voi
  * The daemon persists events in SQLite so they survive dashboard restarts.
  * The `source` field maps to `EventSource::Frontend` on the Rust side.
  * Fire-and-forget — silently fails when the daemon is not running.
- * @param level
- * @param source
- * @param message
+ * @param level - Log severity level string.
+ * @param source - Module name that produced the log entry.
+ * @param message - Human-readable log message text.
  */
 function forwardToDaemonBus(level: string, source: string, message: string): void {
 	try {
 		if (typeof fetch === "undefined") return;
-		const body = JSON.stringify([{
-			level,
-			source: "frontend",
-			category: source,
-			message: `[${source}] ${message}`,
-			timestamp: Date.now(),
-		}]);
+		const body = JSON.stringify([
+			{
+				level,
+				source: "frontend",
+				category: source,
+				message: `[${source}] ${message}`,
+				timestamp: Date.now(),
+			},
+		]);
 		void fetch(DAEMON_EVENTS_URL, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
@@ -153,20 +155,45 @@ function emit(entry: LogEntry): void {
 /**
  * Create a scoped logger for a module.
  * @param source - Module name (e.g. "navigation", "artifact", "graph")
+ * @returns A Logger instance bound to the given source tag.
  */
 export function logger(source: string): Logger {
 	return {
 		debug(message: string, ...data: unknown[]) {
-			emit({ level: "debug", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+			emit({
+				level: "debug",
+				source,
+				message,
+				timestamp: Date.now(),
+				data: data.length ? data : undefined,
+			});
 		},
 		info(message: string, ...data: unknown[]) {
-			emit({ level: "info", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+			emit({
+				level: "info",
+				source,
+				message,
+				timestamp: Date.now(),
+				data: data.length ? data : undefined,
+			});
 		},
 		warn(message: string, ...data: unknown[]) {
-			emit({ level: "warn", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+			emit({
+				level: "warn",
+				source,
+				message,
+				timestamp: Date.now(),
+				data: data.length ? data : undefined,
+			});
 		},
 		error(message: string, ...data: unknown[]) {
-			emit({ level: "error", source, message, timestamp: Date.now(), data: data.length ? data : undefined });
+			emit({
+				level: "error",
+				source,
+				message,
+				timestamp: Date.now(),
+				data: data.length ? data : undefined,
+			});
 		},
 		perf(label: string, fn?: () => unknown) {
 			if (!fn) {
@@ -190,7 +217,8 @@ export function logger(source: string): Logger {
 
 /**
  * Subscribe to all log entries (for in-app error display, telemetry, etc.)
- * @param fn
+ * @param fn - Callback invoked for every emitted log entry.
+ * @returns An unsubscribe function that removes the subscriber.
  */
 export function subscribeToLogs(fn: LogSubscriber): () => void {
 	subscribers = [...subscribers, fn];
@@ -201,7 +229,7 @@ export function subscribeToLogs(fn: LogSubscriber): () => void {
 
 /**
  * Set the minimum log level for console output.
- * @param level
+ * @param level - Minimum level; entries below this are suppressed from console.
  */
 export function setLogLevel(level: LogLevel): void {
 	minLevel = level;

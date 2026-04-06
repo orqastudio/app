@@ -47,7 +47,8 @@
 	});
 
 	/**
-	 *
+	 * Assemble the full project settings object from the current local delivery type buffer.
+	 * @returns A new ProjectSettings value with the local delivery type list applied.
 	 */
 	function buildSettings(): ProjectSettings {
 		return {
@@ -59,18 +60,16 @@
 		};
 	}
 
-	/**
-	 *
-	 */
+	/** Save the current local delivery type buffer to project settings via the onSave prop. */
 	function save() {
 		props.onSave(buildSettings());
 	}
 
 	/**
-	 *
-	 * @param index
-	 * @param field
-	 * @param value
+	 * Update a single string field on the delivery type at the given index and persist.
+	 * @param index - The zero-based index of the delivery type to update in the local buffer.
+	 * @param field - The key of the DeliveryTypeConfig field to update.
+	 * @param value - The new string value to set for the field.
 	 */
 	function updateType(index: number, field: keyof DeliveryTypeConfig, value: string) {
 		localTypes = localTypes.map((t, i) => (i === index ? { ...t, [field]: value } : t));
@@ -78,9 +77,9 @@
 	}
 
 	/**
-	 *
-	 * @param index
-	 * @param parentType
+	 * Update the parent artifact type for the delivery type at the given index and persist.
+	 * @param index - The zero-based index of the delivery type to update.
+	 * @param parentType - The new parent type key, or an empty string to remove the parent config.
 	 */
 	function updateParentType(index: number, parentType: string) {
 		localTypes = localTypes.map((t, i) => {
@@ -98,9 +97,9 @@
 	}
 
 	/**
-	 *
-	 * @param index
-	 * @param parentRelationship
+	 * Update the parent relationship type for the delivery type at the given index and persist.
+	 * @param index - The zero-based index of the delivery type to update.
+	 * @param parentRelationship - The relationship key linking this type to its parent (e.g. "delivers").
 	 */
 	function updateParentRelationship(index: number, parentRelationship: string) {
 		localTypes = localTypes.map((t, i) => {
@@ -115,9 +114,9 @@
 	}
 
 	/**
-	 *
-	 * @param index
-	 * @param gateField
+	 * Update the gate field for the delivery type at the given index and persist.
+	 * @param index - The zero-based index of the delivery type to update.
+	 * @param gateField - The YAML field name used as a workflow gate, or an empty string to remove.
 	 */
 	function updateGateField(index: number, gateField: string) {
 		localTypes = localTypes.map((t, i) => {
@@ -141,17 +140,15 @@
 	}
 
 	/**
-	 *
-	 * @param index
+	 * Open the delete confirmation dialog for the delivery type at the given index.
+	 * @param index - The zero-based index of the delivery type the user wants to remove.
 	 */
 	function requestDelete(index: number) {
 		deleteIndex = index;
 		confirmDeleteOpen = true;
 	}
 
-	/**
-	 *
-	 */
+	/** Confirm deletion of the pending delivery type and persist the updated list. */
 	function confirmDelete() {
 		if (deleteIndex !== null) {
 			localTypes = localTypes.filter((_, i) => i !== deleteIndex);

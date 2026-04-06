@@ -12,14 +12,14 @@ export const DEFAULT_PORT_BASE = 10100;
 
 /** Service port offsets from the base. */
 export const PORT_OFFSETS = {
-  daemon: 0,
-  lsp: 1,
-  mcp: 2,
-  vite: 20,
-  dashboard: 30,
-  sync: 31,
-  devtools: 40,
-  storybook: 50,
+	daemon: 0,
+	lsp: 1,
+	mcp: 2,
+	vite: 20,
+	dashboard: 30,
+	sync: 31,
+	devtools: 40,
+	storybook: 50,
 } as const;
 
 /** Names of all known OrqaStudio services. */
@@ -32,10 +32,10 @@ export type ServiceName = keyof typeof PORT_OFFSETS;
  * @returns The resolved port base number.
  */
 export function getPortBase(): number {
-  const raw = process.env["ORQA_PORT_BASE"];
-  if (!raw) return DEFAULT_PORT_BASE;
-  const n = parseInt(raw, 10);
-  return Number.isNaN(n) ? DEFAULT_PORT_BASE : n;
+	const raw = process.env["ORQA_PORT_BASE"];
+	if (!raw) return DEFAULT_PORT_BASE;
+	const n = parseInt(raw, 10);
+	return Number.isNaN(n) ? DEFAULT_PORT_BASE : n;
 }
 
 /**
@@ -47,5 +47,5 @@ export function getPortBase(): number {
  * @returns The port number for that service.
  */
 export function getPort(service: ServiceName): number {
-  return getPortBase() + PORT_OFFSETS[service];
+	return getPortBase() + PORT_OFFSETS[service];
 }

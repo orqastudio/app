@@ -29,9 +29,7 @@ const log = logger("navigation");
  * @returns Title-cased label (e.g. "My Artifact Type").
  */
 function humanizeKey(key: string): string {
-	return key
-		.replace(/[-_]/g, " ")
-		.replace(/\b\w/g, (c) => c.toUpperCase());
+	return key.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /**
@@ -157,9 +155,17 @@ export class NavigationStore {
 		if (this._applyingRoute) return;
 
 		if (this.activeNavItem?.type === "plugin" && this.activeNavItem.pluginSource) {
-			pushRoute({ type: "plugin", pluginName: this.activeNavItem.pluginSource, viewKey: this.activeNavItem.key });
+			pushRoute({
+				type: "plugin",
+				pluginName: this.activeNavItem.pluginSource,
+				viewKey: this.activeNavItem.key,
+			});
 		} else if (this.selectedArtifactPath) {
-			pushRoute({ type: "artifact", activity: this.activeActivity, artifactPath: this.selectedArtifactPath });
+			pushRoute({
+				type: "artifact",
+				activity: this.activeActivity,
+				artifactPath: this.selectedArtifactPath,
+			});
 		} else if (this.activeActivity === "project") {
 			pushRoute({ type: "project" });
 		} else if (this.activeActivity === "settings" || this.activeActivity === "configure") {
@@ -240,7 +246,14 @@ export class NavigationStore {
 
 		// Sort groups by pipeline stage order — tells the story of the workflow.
 		// Groups not in this list appear after all listed groups.
-		const STAGE_ORDER = ["discovery", "planning", "delivery", "learning", "documentation", "agents"];
+		const STAGE_ORDER = [
+			"discovery",
+			"planning",
+			"delivery",
+			"learning",
+			"documentation",
+			"agents",
+		];
 		const pluginItems: NavigationItem[] = [];
 		const ordered = new Set<string>();
 
@@ -372,7 +385,14 @@ export class NavigationStore {
 	 */
 	get isArtifactActivity(): boolean {
 		if (this.activeNavItem) {
-			const builtinViews = ["project", "artifact-graph", "settings", "configure", "chat", "plugins"];
+			const builtinViews = [
+				"project",
+				"artifact-graph",
+				"settings",
+				"configure",
+				"chat",
+				"plugins",
+			];
 			if (builtinViews.includes(this.activeNavItem.key)) return false;
 			if (this.activeNavItem.type === "plugin") return false;
 			return this.activeNavItem.type === "builtin";
@@ -713,7 +733,11 @@ export class NavigationStore {
 				if (found) return found;
 			} else if (node.path) {
 				const np = node.path.replace(/\\/g, "/");
-				if (np === normalizedPath || `${np}.md` === normalizedPath || np === normalizedPath.replace(/\.md$/, "")) {
+				if (
+					np === normalizedPath ||
+					`${np}.md` === normalizedPath ||
+					np === normalizedPath.replace(/\.md$/, "")
+				) {
 					return node;
 				}
 			}

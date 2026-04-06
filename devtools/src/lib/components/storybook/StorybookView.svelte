@@ -32,20 +32,21 @@
 	// Issues a HEAD request to the Storybook URL. HEAD is used instead of GET to
 	// avoid loading the full page just to check server availability.
 	/**
-	 *
+	 * Issue a HEAD request to the Storybook URL to check whether the dev server is reachable.
+	 * In no-cors mode a successful request returns an opaque response; a network error throws.
+	 * @returns Resolves after the reachability check completes.
 	 */
 	async function checkStorybook(): Promise<void> {
 		try {
-			const response = await fetch(STORYBOOK_URL, {
+			await fetch(STORYBOOK_URL, {
 				method: "HEAD",
-				// No-cors would hide the status code; use cors and rely on the catch
-				// to detect an unreachable host.
+				// No-cors returns an opaque response (status 0) on success; a network
+				// error throws, letting us detect an unreachable host via the catch.
 				mode: "no-cors",
 				cache: "no-store",
 				signal: AbortSignal.timeout(3000),
 			});
-			// In no-cors mode the browser returns an opaque response with status 0
-			// when the request succeeds (the server is up). A network error throws.
+			// If fetch did not throw, the server responded — mark it as running.
 			isRunning = true;
 		} catch {
 			isRunning = false;

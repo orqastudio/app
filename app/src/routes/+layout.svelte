@@ -36,8 +36,8 @@
 	let { children } = $props();
 
 	/**
-	 *
-	 * @param event
+	 * Handle global keyboard shortcuts for toggling the navigation panel (Ctrl/Cmd+B).
+	 * @param event - The keyboard event fired on the window.
 	 */
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.ctrlKey || event.metaKey) {

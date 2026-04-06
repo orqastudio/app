@@ -34,7 +34,8 @@ if (typeof window !== "undefined") {
 }
 
 /**
- *
+ * Start the dev environment by invoking the Rust backend IPC command.
+ * @returns Resolves after the start command is dispatched.
  */
 export async function startDev(): Promise<void> {
 	if (devController.state !== "stopped") return;
@@ -48,7 +49,8 @@ export async function startDev(): Promise<void> {
 }
 
 /**
- *
+ * Stop the running dev environment by invoking the Rust backend IPC command.
+ * @returns Resolves after the stop command is dispatched.
  */
 export async function stopDev(): Promise<void> {
 	if (devController.state !== "running") return;

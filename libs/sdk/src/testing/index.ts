@@ -1,4 +1,9 @@
-export { MockChannel, createMockInvoke, setupTauriMocks, createMockEventApi } from "./mocks/index.js";
+export {
+	MockChannel,
+	createMockInvoke,
+	setupTauriMocks,
+	createMockEventApi,
+} from "./mocks/index.js";
 export type { MockEventApi } from "./mocks/index.js";
 export {
 	createTestNode,

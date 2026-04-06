@@ -12,7 +12,13 @@ export type { ThemeMode, DefaultModel, DaemonState, DaemonHealth } from "./setti
 export { ErrorStoreImpl } from "./errors.svelte.js";
 export type { AppError } from "./errors.svelte.js";
 export { NavigationStore } from "./navigation.svelte.js";
-export type { ActivityView, ActivityGroup, ExplorerView, SubCategoryConfig, ActiveNavItem } from "./navigation.svelte.js";
+export type {
+	ActivityView,
+	ActivityGroup,
+	ExplorerView,
+	SubCategoryConfig,
+	ActiveNavItem,
+} from "./navigation.svelte.js";
 export { ToastStore, createToastConvenience } from "./toast.svelte.js";
 export type { Toast, ToastType } from "./toast.svelte.js";
 export { PluginStore } from "./plugin.svelte.js";

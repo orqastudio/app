@@ -2,7 +2,7 @@
  * Test builder for streaming events.
  *
  * Produces StreamEvent objects matching the orqa-studio streaming shape.
- * The @orqastudio/types dependency will be added later — for now,
+ * The \@orqastudio/types dependency will be added later — for now,
  * the interface is defined locally.
  */
 
@@ -29,8 +29,9 @@ export interface StreamEvent {
  * const event = createStreamEvent("content_delta", { text: "Hello" });
  * const error = createStreamEvent("error", { message: "Rate limited" });
  * ```
- * @param type
- * @param data
+ * @param type - The discriminant that identifies the event variant.
+ * @param data - Payload object for the event; defaults to an empty object.
+ * @returns A StreamEvent with the given type and data.
  */
 export function createStreamEvent(
 	type: StreamEventType,

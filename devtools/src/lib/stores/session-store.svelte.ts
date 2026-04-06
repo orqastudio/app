@@ -10,6 +10,7 @@
 //   delete_session        → ()
 
 import { invoke } from "@tauri-apps/api/core";
+import { SvelteDate } from "svelte/reactivity";
 
 // Shape of a session summary as returned by the `list_sessions` IPC command.
 export interface DevToolsSession {
@@ -48,51 +49,46 @@ export const viewingHistorical = $state<{ value: boolean }>({ value: false });
 // The session ID currently being viewed, or null when showing the live feed.
 export const activeSessionId = $state<{ value: string | null }>({ value: null });
 
-// Fetch all sessions from the backend and update the reactive list.
 /**
- *
+ * Fetch all sessions from the backend and update the reactive list.
  */
 export async function loadSessions(): Promise<void> {
 	const result = await invoke<DevToolsSession[]>("list_sessions");
 	sessions.splice(0, sessions.length, ...result);
 }
 
-// Switch the log view to a historical session. The log-store reacts to
-// viewingHistorical.value and activeSessionId.value changing.
 /**
- *
- * @param sessionId
+ * Switch the log view to a historical session. The log-store reacts to
+ * viewingHistorical.value and activeSessionId.value changing.
+ * @param sessionId - The session ID to activate for historical browsing.
  */
 export async function switchToSession(sessionId: string): Promise<void> {
 	activeSessionId.value = sessionId;
 	viewingHistorical.value = true;
 }
 
-// Return the log view to the live ring buffer stream.
 /**
- *
+ * Return the log view to the live ring buffer stream.
  */
 export async function switchToCurrentSession(): Promise<void> {
 	viewingHistorical.value = false;
 	activeSessionId.value = null;
 }
 
-// Rename a session. Reloads the session list to reflect the change.
 /**
- *
- * @param sessionId
- * @param label
+ * Rename a session. Reloads the session list to reflect the change.
+ * @param sessionId - The session to rename.
+ * @param label - The new display label for the session.
  */
 export async function renameSession(sessionId: string, label: string): Promise<void> {
 	await invoke("rename_session", { sessionId, label });
 	await loadSessions();
 }
 
-// Delete a session and all its events. Reloads the session list.
-// If the deleted session was being viewed, switch back to live.
 /**
- *
- * @param sessionId
+ * Delete a session and all its events. Reloads the session list.
+ * If the deleted session was being viewed, switches back to live.
+ * @param sessionId - The session to delete.
  */
 export async function deleteSession(sessionId: string): Promise<void> {
 	await invoke("delete_session", { sessionId });
@@ -102,11 +98,11 @@ export async function deleteSession(sessionId: string): Promise<void> {
 	await loadSessions();
 }
 
-// Query events for a specific session from the SQLite store.
-// Returns the paginated response including total count.
 /**
- *
- * @param params
+ * Query events for a specific session from the SQLite store.
+ * Returns the paginated response including total count.
+ * @param params - Query parameters including session ID, offset, limit, and optional filters.
+ * @returns Paginated event response with total count.
  */
 export async function loadSessionEvents(
 	params: SessionEventQueryParams,

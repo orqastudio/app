@@ -52,7 +52,7 @@
 		// Keyboard shortcut: Ctrl+N for new session
 		/**
 		 * Handle global keyboard shortcuts registered during the component's lifetime.
-		 * @param event
+		 * @param event - The keyboard event fired on the window.
 		 */
 		function handleKeydown(event: KeyboardEvent) {
 			if ((event.ctrlKey || event.metaKey) && event.key === "n") {
@@ -152,7 +152,7 @@
 
 	/**
 	 * Send a user message to the active session and dismiss the resume banner.
-	 * @param content
+	 * @param content - The text content of the message to send.
 	 */
 	function handleSend(content: string) {
 		if (!session) return;
@@ -167,9 +167,7 @@
 		conversationStore.stopStreaming(session.id);
 	}
 
-	/**
-	 *
-	 */
+	/** Create a new conversation session and clear the current message history. */
 	async function handleNewSession() {
 		const project = projectStore.activeProject;
 		if (!project) return;
@@ -178,8 +176,8 @@
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Switch the active session and clear current messages before loading the selected one.
+	 * @param sessionId - The numeric ID of the session to select.
 	 */
 	async function handleSelectSession(sessionId: number) {
 		conversationStore.clear();
@@ -187,16 +185,16 @@
 	}
 
 	/**
-	 *
-	 * @param sessionId
+	 * Delete the specified session from the session store.
+	 * @param sessionId - The numeric ID of the session to delete.
 	 */
 	async function handleDeleteSession(sessionId: number) {
 		await sessionStore.deleteSession(sessionId);
 	}
 
 	/**
-	 *
-	 * @param title
+	 * Update the title of the active session.
+	 * @param title - The new title string to apply to the session.
 	 */
 	function handleUpdateTitle(title: string) {
 		if (!session) return;

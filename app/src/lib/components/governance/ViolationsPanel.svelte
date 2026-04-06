@@ -51,8 +51,9 @@
 	const warnCount = $derived(violations.filter((v) => v.action.toLowerCase() === "warn").length);
 
 	/**
-	 *
-	 * @param iso
+	 * Format an ISO timestamp string for display in the violations list.
+	 * @param iso - An ISO 8601 date string representing when the violation was recorded.
+	 * @returns A localised short date-and-time string, or the original string on parse failure.
 	 */
 	function formatTimestamp(iso: string): string {
 		try {

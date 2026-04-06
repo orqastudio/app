@@ -147,7 +147,7 @@ export class ArtifactGraphSDK {
 	keysForSemantic(semantic: string): string[] {
 		return this.registry.allRelationships
 			.filter((rel) => rel.semantic === semantic)
-			.flatMap((rel) => rel.inverse !== rel.key ? [rel.key, rel.inverse] : [rel.key]);
+			.flatMap((rel) => (rel.inverse !== rel.key ? [rel.key, rel.inverse] : [rel.key]));
 	}
 
 	/**
@@ -177,9 +177,11 @@ export class ArtifactGraphSDK {
 		log.info(`initialize: starting for ${config.projectPath}`);
 
 		if (config.watchFiles !== false) {
-			await invoke<void>("artifact_watch_start", { projectPath: config.projectPath }).catch((err: unknown) => {
-				log.warn("watcher failed to start", err);
-			});
+			await invoke<void>("artifact_watch_start", { projectPath: config.projectPath }).catch(
+				(err: unknown) => {
+					log.warn("watcher failed to start", err);
+				},
+			);
 		}
 
 		await this._loadAll();
@@ -659,9 +661,7 @@ export class ArtifactGraphSDK {
 
 		const [statsResult, ...typedNodes] = await Promise.all([
 			invoke<GraphStats>("get_graph_stats"),
-			...typeKeys.map((t) =>
-				invoke<ArtifactNode[]>("get_artifacts_by_type", { artifactType: t }),
-			),
+			...typeKeys.map((t) => invoke<ArtifactNode[]>("get_artifacts_by_type", { artifactType: t })),
 		]);
 
 		const newGraph = new SvelteMap<string, ArtifactNode>();
@@ -679,7 +679,9 @@ export class ArtifactGraphSDK {
 		}
 
 		const elapsed_ms = (performance.now() - fetchStart).toFixed(1);
-		log.info(`_fetchAll complete in ${elapsed_ms}ms: ${newGraph.size} total nodes (stats reports ${statsResult.node_count})`);
+		log.info(
+			`_fetchAll complete in ${elapsed_ms}ms: ${newGraph.size} total nodes (stats reports ${statsResult.node_count})`,
+		);
 
 		this.graph = newGraph;
 		this.pathIndex = newPathIndex;
@@ -688,7 +690,11 @@ export class ArtifactGraphSDK {
 		this._notifySubscribers(newGraph);
 
 		for (const cb of this.refreshCallbacks) {
-			try { cb(); } catch (err: unknown) { log.warn("subscriber callback failed", err); }
+			try {
+				cb();
+			} catch (err: unknown) {
+				log.warn("subscriber callback failed", err);
+			}
 		}
 	}
 
