@@ -10,7 +10,7 @@
 		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 	} from "@orqastudio/svelte-components/pure";
 	import ToolCallCard from "./ToolCallCard.svelte";
 	import { getToolDisplay, groupLabel, stripToolName } from "$lib/utils/tool-display";
@@ -89,16 +89,14 @@
 		if (entries.length <= 1) return [];
 		return entries.map(([name, count]) => {
 			const display = getToolDisplay(name);
-			return { name, count, label: display.label, icon: display.icon };
+			return { name, count, label: display.label, iconName: display.iconName };
 		});
 	});
 </script>
 
 {#if totalTools > 0}
 	<Collapsible bind:open>
-		<CollapsibleTrigger
-			class="border-border bg-muted/30 hover:bg-muted/50 w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors"
-		>
+		<CollapsibleSection>
 			<HStack gap={2}>
 				<Icon name="chevron-right" size="sm" />
 				<Icon name="wrench" size="sm" />
@@ -113,16 +111,15 @@
 					</HStack>
 				{/if}
 			</HStack>
-		</CollapsibleTrigger>
+		</CollapsibleSection>
 		<CollapsibleContent>
 			<IndentedBlock>
 				<Stack gap={1}>
 					{#if summaryParts.length > 0}
 						<HStack gap={2} wrap>
 							{#each summaryParts as part (part.name)}
-								{@const PartIcon = part.icon}
 								<Badge variant="outline" size="xs">
-									<PartIcon class="h-3 w-3" />
+									<Icon name={part.iconName} size="xs" />
 									{part.label} ({part.count})
 								</Badge>
 							{/each}

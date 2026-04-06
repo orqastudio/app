@@ -1,4 +1,6 @@
-<!-- CSS grid layout primitive with optional responsive column breakpoints. -->
+<!-- CSS grid layout primitive with optional responsive column breakpoints.
+     The `items` prop controls align-items for the grid (default: "stretch").
+     For dynamic runtime column counts, use DynamicGrid instead. -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import { cn } from "../../utils/cn.js";
@@ -57,12 +59,21 @@
 		12: "lg:grid-cols-12",
 	};
 
+	// align-items preset for the grid container.
+	const itemsMap: Record<string, string> = {
+		stretch: "items-stretch",
+		start: "items-start",
+		center: "items-center",
+		end: "items-end",
+	};
+
 	let {
 		cols = 1,
 		gap = 2,
 		sm,
 		md,
 		lg,
+		items,
 		children,
 	}: {
 		cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
@@ -70,6 +81,8 @@
 		sm?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
 		md?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
 		lg?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+		/** align-items for all grid cells. Omit to use browser default (stretch). */
+		items?: "stretch" | "start" | "center" | "end";
 		children?: Snippet;
 	} = $props();
 
@@ -78,8 +91,9 @@
 	const smClass = $derived(sm != null ? smColsMap[sm] : undefined);
 	const mdClass = $derived(md != null ? mdColsMap[md] : undefined);
 	const lgClass = $derived(lg != null ? lgColsMap[lg] : undefined);
+	const itemsClass = $derived(items != null ? itemsMap[items] : undefined);
 </script>
 
-<div class={cn("grid", colsClass, gapClass, smClass, mdClass, lgClass)}>
+<div class={cn("grid", colsClass, gapClass, smClass, mdClass, lgClass, itemsClass)}>
 	{@render children?.()}
 </div>

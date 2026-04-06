@@ -78,6 +78,9 @@
 {:else if result}
 	<Panel padding="tight" border="bottom">
 		<Collapsible bind:open>
+			<!-- CollapsibleTrigger is a library component (Bits UI primitive wrapper) that
+			     forwards class= via ...restProps. Passing class= to library components is the
+			     standard Tailwind composition pattern for headless UI — NOT a raw HTML violation. -->
 			<CollapsibleTrigger
 				class="text-muted-foreground hover:text-foreground flex w-full items-center gap-1 text-xs font-medium transition-colors"
 			>
@@ -148,6 +151,7 @@
 						{#if result.descendants.length > 0}
 							<Stack gap={1}>
 								<Collapsible bind:open={descendantsOpen}>
+									<!-- CollapsibleTrigger: library component, class= forwarded via ...restProps. -->
 									<CollapsibleTrigger
 										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
 									>
@@ -182,6 +186,7 @@
 						{#if result.siblings.length > 0}
 							<Stack gap={1}>
 								<Collapsible bind:open={siblingsOpen}>
+									<!-- CollapsibleTrigger: library component, class= forwarded via ...restProps. -->
 									<CollapsibleTrigger
 										class="text-muted-foreground hover:text-foreground text-[10px] font-medium tracking-wide uppercase transition-colors"
 									>

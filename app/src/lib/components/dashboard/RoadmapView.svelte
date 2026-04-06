@@ -13,6 +13,7 @@
 		Text,
 		Caption,
 		ColorDot,
+		DynamicGrid,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
@@ -212,11 +213,8 @@
 						</Stack>
 					</Panel>
 				{:else}
-					<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
-					<div
-						class="grid gap-4"
-						style="grid-template-columns: repeat({milestoneStages.length}, minmax(200px, 1fr));"
-					>
+					<!-- Dynamic-column kanban grid — column count from plugin registry -->
+					<DynamicGrid columns={milestoneStages.length} minWidth="200px" gap={4}>
 						{#each milestoneStages as stage (stage.key)}
 							{@const cards = milestoneColumns.get(stage.key) ?? []}
 							<Stack gap={2}>
@@ -280,7 +278,7 @@
 								</Stack>
 							</Stack>
 						{/each}
-					</div>
+					</DynamicGrid>
 				{/if}
 			{:else}
 				<!-- ================================================================
@@ -301,11 +299,8 @@
 						</Stack>
 					</Panel>
 				{:else}
-					<!-- Dynamic-column kanban grid — column count from plugin registry; inline style required -->
-					<div
-						class="grid gap-4"
-						style="grid-template-columns: repeat({epicStages.length}, minmax(200px, 1fr));"
-					>
+					<!-- Dynamic-column kanban grid — column count from plugin registry -->
+					<DynamicGrid columns={epicStages.length} minWidth="200px" gap={4}>
 						{#each epicStages as stage (stage.key)}
 							{@const cards = epicColumns.get(stage.key) ?? []}
 							<Stack gap={2}>
@@ -356,7 +351,7 @@
 								</Stack>
 							</Stack>
 						{/each}
-					</div>
+					</DynamicGrid>
 				{/if}
 			{/if}
 		</Stack>

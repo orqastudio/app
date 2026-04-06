@@ -6,7 +6,14 @@
 		CardDescription,
 		CardContent,
 	} from "@orqastudio/svelte-components/pure";
-	import { Button, HStack, Stack, Caption, Panel } from "@orqastudio/svelte-components/pure";
+	import {
+		Button,
+		HStack,
+		Stack,
+		Caption,
+		Panel,
+		ColorSwatch,
+	} from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
 	import type {
 		ProjectSettings,
@@ -141,27 +148,13 @@
 						</Button>
 					</HStack>
 
-					<!-- Colour swatch + native picker + reset.
-					     input[type=color] is a legitimate exception — ColorInput primitive follow-up needed. -->
+					<!-- Colour swatch + native picker + reset. -->
 					<HStack gap={1}>
-						<label
-							class="flex cursor-pointer items-center gap-1"
-							aria-label="Pick colour for {prefix}"
-						>
-							<span
-								class="border-border inline-block h-4 w-4 shrink-0 rounded border"
-								style="background-color: {color};"
-							></span>
-							<input
-								type="color"
-								class="sr-only"
-								value={color}
-								oninput={(e) => {
-									const target = e.currentTarget;
-									handleColorChange(prefix, target.value);
-								}}
-							/>
-						</label>
+						<ColorSwatch
+							{color}
+							label="Pick colour for {prefix}"
+							onchange={(c) => handleColorChange(prefix, c)}
+						/>
 						{#if !isDefault}
 							<Button
 								variant="ghost"

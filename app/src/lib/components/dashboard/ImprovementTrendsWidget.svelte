@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { LoadingSpinner, Caption, Text, Stack, HStack } from "@orqastudio/svelte-components/pure";
+	import {
+		LoadingSpinner,
+		Caption,
+		Text,
+		Stack,
+		HStack,
+		TwoByTwoGrid,
+		MetricGridCell,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
 
@@ -256,11 +264,9 @@
 	<!--
 		Single card containing a 2x2 grid of trend cells.
 		Card title / description are injected by ProjectDashboard.
-		Dividers between cells via border-r / border-b on each cell.
-		Per-cell conditional borders (top/right based on position index) cannot be expressed via
-		Grid props — Grid applies uniform gaps, not per-edge borders. Raw grid+div retained here.
+		Dividers between cells via MetricGridCell borderRight / borderTop props.
 	-->
-	<div class="grid h-full grid-cols-2 grid-rows-2 overflow-hidden">
+	<TwoByTwoGrid>
 		{#each metrics as m, idx (m.label)}
 			{@const values = sparklineValues(m)}
 			{@const arrow = trendArrow(m)}
@@ -270,11 +276,7 @@
 			{@const path = hasTrend ? sparklinePath(values, m.fixedMin, m.fixedMax) : ""}
 			{@const isLeft = idx % 2 === 0}
 			{@const isTop = idx < 2}
-			<div
-				class="flex min-h-0 flex-col overflow-hidden {isLeft ? 'border-border border-r' : ''} {isTop
-					? 'border-border border-t'
-					: ''}"
-			>
+			<MetricGridCell borderRight={isLeft} borderTop={isTop}>
 				<!-- Metric header -->
 				<Panel padding="normal">
 					<HStack justify="between">
@@ -328,7 +330,7 @@
 						</Stack>
 					</Panel>
 				{/if}
-			</div>
+			</MetricGridCell>
 		{/each}
-	</div>
+	</TwoByTwoGrid>
 {/if}

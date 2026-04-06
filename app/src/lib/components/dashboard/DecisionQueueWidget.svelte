@@ -13,6 +13,8 @@
 		Text,
 		Button,
 		Box,
+		MiniProgressBar,
+		FixedScrollArea,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 
@@ -193,8 +195,7 @@
 		</CardHeader>
 		<CardContent>
 			<!-- Fixed-height scroll area for the queue content — 280px matches card layout budget -->
-			<!-- ScrollArea has a fixed-height variant but requires explicit height; inline style needed for 280px budget -->
-			<div style="height: 280px; overflow-y: auto; padding: 0 0.75rem 0.75rem;">
+			<FixedScrollArea height={280}>
 				{#if activeTab === "actions"}
 					<!-- ---------------------------------------------------------- -->
 					<!-- Actions tab: all artifacts needing attention               -->
@@ -246,12 +247,7 @@
 											{/if}
 											{#if epic.taskProgress !== null}
 												<HStack gap={1} align="center">
-													<div class="bg-muted h-1 flex-1 overflow-hidden rounded-full">
-														<div
-															class="bg-success h-full rounded-full transition-all"
-															style:width="{Math.round(epic.taskProgress * 100)}%"
-														></div>
-													</div>
+													<MiniProgressBar ratio={epic.taskProgress} />
 													<Caption variant="caption-tabular"
 														>{epic.taskDone}/{epic.taskTotal}</Caption
 													>
@@ -269,7 +265,7 @@
 						<Button variant="ghost" size="sm" onclick={openRoadmap}>View roadmap</Button>
 					{/if}
 				{/if}
-			</div>
+			</FixedScrollArea>
 		</CardContent>
 	</CardRoot>
 {/if}

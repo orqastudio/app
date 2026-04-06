@@ -15,9 +15,10 @@
 		Caption,
 		Grid,
 		GlowDot,
+		StatCard,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
-	import { TooltipRoot, TooltipTrigger, TooltipContent } from "@orqastudio/svelte-components/pure";
+	import { TooltipRoot, TooltipContent } from "@orqastudio/svelte-components/pure";
 	import type { IntegrityCheck, GraphHealthData } from "@orqastudio/types";
 	import { fmt, pct } from "@orqastudio/sdk";
 
@@ -184,9 +185,7 @@
 				<Grid cols={2} gap={2}>
 					<!-- Outliers -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger
-							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-						>
+						<StatCard>
 							<Icon name="unlink" size="sm" />
 							<Caption variant="caption-tabular" tone={outlierTone}>
 								{graphHealth.outlier_count}
@@ -195,7 +194,7 @@
 							{#if outlierAgeSummary}
 								<Caption tone="muted">{outlierAgeSummary}</Caption>
 							{/if}
-						</TooltipTrigger>
+						</StatCard>
 						<TooltipContent side="bottom">
 							<Text variant="body-strong" block>Pipeline Outliers</Text>
 							<Text variant="body-muted" block
@@ -223,15 +222,13 @@
 
 					<!-- Avg Degree -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger
-							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-						>
+						<StatCard>
 							<Icon name="git-branch" size="sm" />
 							<Caption variant="caption-tabular" tone={degreeTone}
 								>{fmt(graphHealth.avg_degree)}</Caption
 							>
 							<Caption>Avg Degree</Caption>
-						</TooltipTrigger>
+						</StatCard>
 						<TooltipContent side="bottom">
 							<Text variant="body-strong" block>Average Connection Degree</Text>
 							<Text variant="body-muted" block
@@ -244,15 +241,13 @@
 
 					<!-- Delivery Pipeline -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger
-							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-						>
+						<StatCard>
 							<Icon name="package" size="sm" />
 							<Caption variant="caption-tabular" tone={deliveryTone}>
 								{pct(graphHealth.delivery_connectivity)}%
 							</Caption>
 							<Caption>Delivery</Caption>
-						</TooltipTrigger>
+						</StatCard>
 						<TooltipContent side="bottom">
 							<Text variant="body-strong" block>Delivery Pipeline Connectivity</Text>
 							<Text variant="body-muted" block
@@ -264,15 +259,13 @@
 
 					<!-- Learning Pipeline -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger
-							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-						>
+						<StatCard>
 							<Icon name="book-open" size="sm" />
 							<Caption variant="caption-tabular" tone={learningTone}>
 								{pct(graphHealth.learning_connectivity)}%
 							</Caption>
 							<Caption>Learning</Caption>
-						</TooltipTrigger>
+						</StatCard>
 						<TooltipContent side="bottom">
 							<Text variant="body-strong" block>Learning Loop Connectivity</Text>
 							<Text variant="body-muted" block
@@ -286,9 +279,7 @@
 					<!-- Scan Results -->
 					{#if scanned}
 						<TooltipRoot delayDuration={300}>
-							<TooltipTrigger
-								class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-							>
+							<StatCard>
 								{#if errorCount > 0}
 									<Icon name="circle-alert" size="sm" />
 									<Caption variant="caption-tabular" tone="destructive"
@@ -302,7 +293,7 @@
 									<Caption tone="success">Clean</Caption>
 								{/if}
 								<Caption>Integrity</Caption>
-							</TooltipTrigger>
+							</StatCard>
 							<TooltipContent side="bottom">
 								<Text variant="body-strong" block>Integrity Scan Results</Text>
 								<Text variant="body-muted" block
@@ -324,15 +315,13 @@
 
 					<!-- Pillar Traceability -->
 					<TooltipRoot delayDuration={300}>
-						<TooltipTrigger
-							class="bg-muted/50 hover:bg-muted/80 flex flex-col items-center justify-center gap-1 rounded-md py-3 transition-colors"
-						>
+						<StatCard>
 							<Icon name="target" size="sm" />
 							<Caption variant="caption-tabular" tone={traceabilityTone}>
 								{fmt(graphHealth.pillar_traceability)}%
 							</Caption>
 							<Caption>Traceability</Caption>
-						</TooltipTrigger>
+						</StatCard>
 						<TooltipContent side="bottom">
 							<Text variant="body-strong" block>Pillar Traceability</Text>
 							<Text variant="body-muted" block

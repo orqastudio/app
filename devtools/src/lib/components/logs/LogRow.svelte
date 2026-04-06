@@ -16,12 +16,12 @@
 
 	let {
 		event,
-		style = "",
+		topPx = 0,
 		ondraweropen,
 	}: {
 		event: LogEvent;
-		// Inline style string injected by the virtualiser for position/transform.
-		style?: string;
+		// Virtualiser-computed top offset in pixels, forwarded to LogRowShell.
+		topPx?: number;
 		// When provided, row clicks open the drawer instead of the inline expand panel.
 		ondraweropen?: (event: LogEvent) => void;
 	} = $props();
@@ -78,12 +78,11 @@
 </script>
 
 <!-- LogRowShell provides absolute positioning + group class for hover-reveal actions. -->
-<LogRowShell level={rowLevel} {style}>
+<LogRowShell level={rowLevel} {topPx}>
 	<!-- Main row: full-width row button with all columns. -->
 	<Button
 		variant="row"
-		size="xs"
-		style="height: 24px; line-height: 24px;"
+		size="log-row"
 		onclick={() => {
 			if (ondraweropen) {
 				ondraweropen(event);

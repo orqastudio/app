@@ -312,7 +312,7 @@
 			{#each visibleEvents as ev (ev.id)}
 				<LogRow
 					event={ev}
-					style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;"
+					topPx={rowOffsets[filteredEvents.indexOf(ev)]}
 					ondraweropen={handleRowClick}
 				/>
 			{/each}

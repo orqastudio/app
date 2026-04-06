@@ -11,6 +11,7 @@
 		Grid,
 		Caption,
 		Text,
+		SparklineYAxis,
 	} from "@orqastudio/svelte-components/pure";
 	import { Panel } from "@orqastudio/svelte-components/pure";
 	import { getStores, logger } from "@orqastudio/sdk";
@@ -206,14 +207,8 @@
 								</HStack>
 								<!-- Sparkline with y-axis scale — custom SVG chart, wrapped in HStack -->
 								<HStack gap={1} align="start">
-									<!-- Y-axis scale: fixed pixel height must match SVG viewBox; font-size 9px + tabular-nums
-								     cannot be expressed via Stack typed props — inline style is the precise exception here -->
-									<div
-										style="display: flex; flex-direction: column; justify-content: space-between; height: {SPARKLINE_HEIGHT}px; font-size: 9px; font-variant-numeric: tabular-nums; color: hsl(var(--muted-foreground) / 0.6);"
-									>
-										<span>{maxValue(config.key)}</span>
-										<span>0</span>
-									</div>
+									<!-- Y-axis scale: height matches SVG viewBox so max/min labels align with chart edges -->
+									<SparklineYAxis maxLabel={maxValue(config.key)} height={SPARKLINE_HEIGHT} />
 									<!-- Custom SVG sparkline — no ORQA primitive fits this shape -->
 									<svg
 										width={SPARKLINE_WIDTH}

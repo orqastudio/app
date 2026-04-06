@@ -9,7 +9,7 @@
 		IndentedBlock,
 		CollapsibleRoot as Collapsible,
 		CollapsibleContent,
-		CollapsibleTrigger,
+		CollapsibleSection,
 	} from "@orqastudio/svelte-components/pure";
 	import ViolationBadge from "$lib/components/enforcement/ViolationBadge.svelte";
 	import { getToolDisplay } from "$lib/utils/tool-display";
@@ -73,14 +73,9 @@
 </script>
 
 <Collapsible bind:open>
-	<CollapsibleTrigger
-		class="flex w-full items-center gap-2 rounded-lg border {isEnforcementBlock
-			? 'border-destructive/50 bg-destructive/5'
-			: 'border-border bg-muted/30'} hover:bg-muted/50 px-3 py-2 text-left text-sm transition-colors"
-	>
+	<CollapsibleSection tone={isEnforcementBlock ? "destructive" : "muted"}>
 		<Icon name="chevron-right" size="sm" />
-		{@const ToolIcon = displayInfo.icon}
-		<ToolIcon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+		<Icon name={displayInfo.iconName} size="sm" tone="muted" />
 		<!-- flex-1 fills the trigger row so the status icon sits flush right -->
 		<Box flex={1} minWidth={0}>
 			<Caption variant="caption-mono" truncate>{displayInfo.label}</Caption>
@@ -94,7 +89,7 @@
 		{:else}
 			<Icon name="loader" size="sm" />
 		{/if}
-	</CollapsibleTrigger>
+	</CollapsibleSection>
 	<CollapsibleContent>
 		<IndentedBlock>
 			<Stack gap={2}>

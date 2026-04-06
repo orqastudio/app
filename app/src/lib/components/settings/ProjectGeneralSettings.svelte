@@ -7,6 +7,7 @@
 		CardDescription,
 		CardContent,
 		FormGroup,
+		AppIcon,
 	} from "@orqastudio/svelte-components/pure";
 	import { Button, HStack, Panel } from "@orqastudio/svelte-components/pure";
 	import { Separator } from "@orqastudio/svelte-components/pure";
@@ -72,11 +73,13 @@
 		<FormGroup label="Project Icon">
 			<HStack gap={3}>
 				{#if props.iconDataUrl}
-					<!-- img is a legitimate exception — Image primitive follow-up needed -->
-					<img
+					<AppIcon
 						src={props.iconDataUrl}
 						alt="Project icon"
-						class="h-10 w-10 rounded border object-contain"
+						size="md"
+						rounded
+						objectContain
+						border
 					/>
 				{:else}
 					<Panel padding="tight" rounded="md" border="all" background="muted">

@@ -3,7 +3,7 @@
      Shows an empty state when the server is not reachable. -->
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	import { ConnectionIndicator, EmptyState, Box } from "@orqastudio/svelte-components/pure";
+	import { ConnectionIndicator, EmptyState, Box, Iframe } from "@orqastudio/svelte-components/pure";
 	import type { ConnectionState } from "@orqastudio/svelte-components/pure";
 
 	import { DEFAULT_PORT_BASE, PORT_OFFSETS } from "@orqastudio/constants";
@@ -78,16 +78,12 @@
 	</Box>
 
 	{#if isRunning}
-		<!-- Storybook iframe. sandbox allows scripts and same-origin access so that
-		     Storybook's own navigation can function normally inside the frame.
-		     iframe is not a prohibited element; inline style used here because the
-		     fill-container dimensions are fixed and not driven by Tailwind tokens. -->
-		<iframe
+		<Iframe
 			src={STORYBOOK_URL}
 			title="Storybook"
-			style="height: 100%; width: 100%; flex: 1; border: none;"
+			fill
 			sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
-		></iframe>
+		/>
 	{:else if checked}
 		<!-- Empty state: shown when the poll confirms Storybook is not reachable. -->
 		<EmptyState

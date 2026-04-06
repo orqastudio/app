@@ -10,13 +10,14 @@
 		ScrollArea,
 		Center,
 		Text,
+		Box,
 	} from "@orqastudio/svelte-components/pure";
 
 	const log = logger("plugin-view");
 
 	let { pluginName, viewKey }: { pluginName: string; viewKey: string } = $props();
 
-	let container = $state<HTMLDivElement>(undefined!);
+	let container = $state<HTMLDivElement | undefined>(undefined);
 	let error: string | null = $state(null);
 	let loading = $state(true);
 	let cleanup: (() => void) | null = null;
@@ -45,10 +46,15 @@
 				return;
 			}
 
-			// Set loading false so the container div renders, then mount into it
+			// Set loading false so the container Box renders, then mount into it
 			// on the next tick once the DOM has updated.
 			loading = false;
 			await tick();
+
+			if (!container) {
+				error = "Plugin mount target not available after render";
+				return;
+			}
 
 			if (typeof module.mount === "function") {
 				cleanup = module.mount(container);
@@ -84,8 +90,7 @@
 			</CardRoot>
 		</Center>
 	{:else}
-		<!-- bind:this is a legitimate exception — plugin IIFE mount target requires a raw HTMLDivElement ref;
-		     Svelte component bind:this gives the component instance, not the DOM node -->
-		<div bind:this={container} style="height: 100%; width: 100%;"></div>
+		<!-- Box bind:ref gives the raw HTMLDivElement, which the plugin IIFE mount function requires. -->
+		<Box bind:ref={container} height="full" width="full"></Box>
 	{/if}
 </ScrollArea>

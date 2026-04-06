@@ -153,6 +153,7 @@ export { Icon, resolveIcon, DEFAULT_ICON_MAP } from "./icon/index.js";
 // Data visualisation
 export {
 	Sparkline,
+	TimingChartSvg,
 	sparklinePath,
 	trendPercent,
 	formatTrend,
@@ -189,7 +190,16 @@ export { Toolbar, WindowTitleBar } from "./toolbar/index.js";
 export { Panel } from "./panel/index.js";
 export { SectionHeader, SectionFooter } from "./section-header/index.js";
 export { Callout } from "./callout/index.js";
-export { Stack, HStack, Grid, Spacer, Center, Box, BackgroundImage } from "./layout/index.js";
+export {
+	Stack,
+	HStack,
+	Grid,
+	GridCell,
+	Spacer,
+	Center,
+	Box,
+	BackgroundImage,
+} from "./layout/index.js";
 export { NavItem } from "./nav-item/index.js";
 export { ConnectionIndicator, type ConnectionState } from "./connection-indicator/index.js";
 export { Kbd } from "./kbd/index.js";
@@ -293,3 +303,30 @@ export { AppIcon } from "./app-icon/index.js";
 
 // ActivityBar — icon-only square navigation buttons for the vertical activity bar
 export { ActivityBarButton } from "./activity-bar/index.js";
+
+// ColorSwatch — rectangular color preview with a native sr-only color input for settings panels
+export { ColorSwatch } from "./color-swatch/index.js";
+
+// MiniProgressBar — inline ratio progress bar without label text
+export { MiniProgressBar } from "./mini-progress-bar/index.js";
+
+// StatCard — styled muted stat cell for dashboard metric grids, wraps TooltipTrigger
+export { StatCard } from "./stat-card/index.js";
+
+// FixedScrollArea — ScrollArea constrained to an explicit pixel height
+export { FixedScrollArea } from "./fixed-scroll-area/index.js";
+
+// DynamicGrid — CSS grid with a runtime column count and minWidth (for plugin-driven kanban boards)
+export { DynamicGrid } from "./dynamic-grid/index.js";
+
+// SparklineYAxis — fixed-height y-axis scale label column for custom SVG sparklines
+export { SparklineYAxis } from "./sparkline-y-axis/index.js";
+
+// MetricGridCell — grid cell with optional per-edge borders for 2×2 metric panels
+export { MetricGridCell } from "./metric-grid-cell/index.js";
+
+// TwoByTwoGrid — 2-column 2-row fill-height grid for dashboard improvement trend panels
+export { TwoByTwoGrid } from "./two-by-two-grid/index.js";
+
+// Iframe — typed library wrapper around <iframe> so app/devtools code stays free of raw HTML
+export { Iframe } from "./iframe/index.js";

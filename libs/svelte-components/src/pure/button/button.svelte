@@ -32,6 +32,9 @@
 				"icon-lg": "size-10",
 				// Compact size for dense devtools toolbars: 20px height, 10px font.
 				xs: "h-5 px-1.5 text-[10px] gap-1",
+				// Log row button: 24px (h-6) to match ROW_HEIGHT in the log virtualiser. Leading-6
+				// ensures text is vertically centred at this fixed height without an inline style.
+				"log-row": "h-6 leading-6 text-[10px] gap-0",
 				// Status bar size: 24px height, 12px font, tight padding for the 2rem footer strip.
 				status: "h-6 px-1.5 text-xs gap-1",
 				// Column item size: auto height, column flex layout, for multi-line session/option rows.

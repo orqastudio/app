@@ -102,6 +102,12 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		1: "flex-1",
 	};
 
+	// Named min-height tokens for semantic step containers and similar layout anchors.
+	const minHeightTokenMap: Record<string, string> = {
+		// "step" = 12.5rem — prevents wizard/step cards from collapsing during content transitions.
+		step: "min-h-50",
+	};
+
 	let {
 		ref = $bindable<HTMLDivElement | undefined>(undefined),
 		height,
@@ -136,8 +142,8 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		width?: "full" | "screen" | "auto";
 		/** Maximum width token. Use "60" for 240px, or xs/sm/md/lg for standard widths. */
 		maxWidth?: "60" | "xs" | "sm" | "md" | "lg";
-		/** Sets min-h-0 to allow flex children to shrink below content size. */
-		minHeight?: 0;
+		/** Sets min-h-0 to allow flex children to shrink below content size. Use "step" for 12.5rem wizard card anchors. */
+		minHeight?: 0 | "step";
 		/** Sets min-w-0 to allow flex children to shrink below content size. */
 		minWidth?: 0;
 		/** CSS position. Use with top/right/bottom/left or inset for offsets. */
@@ -176,6 +182,9 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 	const maxWidthClass = $derived(maxWidth != null ? maxWidthMap[maxWidth] : undefined);
 	const positionClass = $derived(position != null ? positionMap[position] : undefined);
 	const insetClass = $derived(inset != null ? insetMap[inset] : undefined);
+	const minHeightTokenClass = $derived(
+		typeof minHeight === "string" ? (minHeightTokenMap[minHeight] ?? undefined) : undefined,
+	);
 	const topClass = $derived(top != null ? topMap[top] : undefined);
 	const rightClass = $derived(right != null ? rightMap[right] : undefined);
 	const bottomClass = $derived(bottom != null ? bottomMap[bottom] : undefined);
@@ -194,6 +203,7 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		widthClass,
 		maxWidthClass,
 		minHeight === 0 && "min-h-0",
+		minHeightTokenClass,
 		minWidth === 0 && "min-w-0",
 		positionClass,
 		insetClass,

@@ -7,7 +7,15 @@
 		CardDescription,
 		CardContent,
 	} from "@orqastudio/svelte-components/pure";
-	import { EmptyState, Stack, HStack, Grid, Text } from "@orqastudio/svelte-components/pure";
+	import {
+		EmptyState,
+		Stack,
+		HStack,
+		Grid,
+		GridCell,
+		Text,
+		AppIcon,
+	} from "@orqastudio/svelte-components/pure";
 	import { Panel, ScrollArea } from "@orqastudio/svelte-components/pure";
 	import { getStores } from "@orqastudio/sdk";
 	import MilestoneContextCard from "./MilestoneContextCard.svelte";
@@ -95,11 +103,12 @@
 				<!-- Project header -->
 				<HStack gap={3} align="center">
 					{#if projectStore.iconDataUrl}
-						<!-- Project icon image — no ORQA Image primitive; img is the minimal exception here -->
-						<img
+						<AppIcon
 							src={projectStore.iconDataUrl}
 							alt={projectName}
-							style="height: 3rem; width: 3rem; border-radius: 0.375rem; object-fit: contain;"
+							size="md"
+							rounded
+							objectContain
 						/>
 					{:else}
 						<Icon name="folder-open" size="xl" />
@@ -151,15 +160,14 @@
 				</Grid>
 
 				<!-- Row 3: Knowledge Pipeline (2/3) + Lesson Velocity (1/3) -->
-				<!-- Grid primitive doesn't support column span overrides; use CSS grid directly -->
-				<div class="grid grid-cols-3 items-stretch gap-4">
-					<div class="col-span-2">
+				<Grid cols={3} items="stretch" gap={4}>
+					<GridCell span={2}>
 						<PipelineWidget />
-					</div>
-					<div class="col-span-1">
+					</GridCell>
+					<GridCell span={1}>
 						<LessonVelocityWidget />
-					</div>
-				</div>
+					</GridCell>
+				</Grid>
 
 				<!-- Row 4: Pipeline Health — full width at bottom -->
 				<IntegrityWidget />

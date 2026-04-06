@@ -9,6 +9,8 @@
 		HStack,
 		Dot,
 		Stack,
+		BackgroundImage,
+		Box,
 	} from "@orqastudio/svelte-components/pure";
 	import ClaudeCliStep from "./ClaudeCliStep.svelte";
 	import ClaudeAuthStep from "./ClaudeAuthStep.svelte";
@@ -41,15 +43,9 @@
 	}
 </script>
 
-<!-- Full-screen background with cover image -->
-<div
-	style="position: relative; display: flex; height: 100%; width: 100%; align-items: center; justify-content: center; overflow: hidden; background-image: url({setupBackground}); background-size: cover; background-position: center;"
->
-	<!-- Backdrop overlay -->
-	<div style="position: absolute; inset: 0; background: hsl(var(--background) / 0.7);"></div>
-
-	<!-- Centered card container -->
-	<div style="position: relative; z-index: 10; width: 100%; max-width: 32rem; padding: 0 1rem;">
+<!-- Full-screen background with cover image and centered card -->
+<BackgroundImage src={setupBackground} overlay>
+	<Box maxWidth="sm" width="full">
 		<CardRoot>
 			<CardHeader>
 				<Stack gap={2} align="center">
@@ -71,8 +67,8 @@
 			</CardHeader>
 
 			<CardContent>
-				<!-- min-height prevents card from collapsing during step transitions; 12.5rem cannot be expressed via Stack props -->
-				<div style="min-height: 12.5rem;">
+				<!-- min-height prevents card from collapsing during step transitions -->
+				<Box minHeight="step">
 					{#if setupStore.stepId === "claude_cli"}
 						<ClaudeCliStep onComplete={handleStepComplete} />
 					{:else if setupStore.stepId === "claude_auth"}
@@ -84,8 +80,8 @@
 					{:else if setupStore.stepId === "complete"}
 						<SetupComplete onComplete={handleSetupComplete} />
 					{/if}
-				</div>
+				</Box>
 			</CardContent>
 		</CardRoot>
-	</div>
-</div>
+	</Box>
+</BackgroundImage>
