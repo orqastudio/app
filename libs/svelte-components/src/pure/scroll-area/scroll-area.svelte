@@ -29,16 +29,10 @@
 		children?: import("svelte").Snippet;
 	} = $props();
 
-	const heightClass = $derived(
-		full ? "h-full" : maxHeight ? maxHeightMap[maxHeight] : undefined,
-	);
+	const heightClass = $derived(full ? "h-full" : maxHeight ? maxHeightMap[maxHeight] : undefined);
 </script>
 
-<ScrollAreaPrimitive.Root
-	bind:ref
-	data-slot="scroll-area"
-	class="relative {heightClass ?? ''}"
->
+<ScrollAreaPrimitive.Root bind:ref data-slot="scroll-area" class="relative {heightClass ?? ''}">
 	<ScrollAreaPrimitive.Viewport
 		bind:ref={viewportRef}
 		data-slot="scroll-area-viewport"

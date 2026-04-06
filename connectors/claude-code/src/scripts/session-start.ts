@@ -20,62 +20,62 @@ const DAEMON_URL = `http://127.0.0.1:${DAEMON_PORT}`;
 
 /** Run the SessionStart hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
-  const stateDir = join(projectDir, ".state");
+	const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
+	const stateDir = join(projectDir, ".state");
 
-  // Session guard — only run once per session
-  const guardFile = join(stateDir, ".session-started");
-  if (existsSync(guardFile)) {
-    process.exit(0);
-  }
-  mkdirSync(stateDir, { recursive: true });
-  writeFileSync(guardFile, new Date().toISOString());
+	// Session guard — only run once per session
+	const guardFile = join(stateDir, ".session-started");
+	if (existsSync(guardFile)) {
+		process.exit(0);
+	}
+	mkdirSync(stateDir, { recursive: true });
+	writeFileSync(guardFile, new Date().toISOString());
 
-  // Daemon health gate — block if unreachable
-  try {
-    await fetch(`${DAEMON_URL}/health`, {
-      signal: AbortSignal.timeout(2000),
-    });
-  } catch {
-    outputBlock([
-      "OrqaStudio daemon is not running. Rule enforcement requires the daemon.",
-      "",
-      "Start it with: orqa daemon start",
-      `Daemon expected on port ${DAEMON_PORT}.`,
-    ]);
-  }
+	// Daemon health gate — block if unreachable
+	try {
+		await fetch(`${DAEMON_URL}/health`, {
+			signal: AbortSignal.timeout(2000),
+		});
+	} catch {
+		outputBlock([
+			"OrqaStudio daemon is not running. Rule enforcement requires the daemon.",
+			"",
+			"Start it with: orqa daemon start",
+			`Daemon expected on port ${DAEMON_PORT}.`,
+		]);
+	}
 
-  // Call daemon for session initialization
-  let result: HookResult;
-  try {
-    result = await callDaemon<HookResult>("/hook", { event: "SessionStart" });
-  } catch {
-    result = { action: "allow", messages: [], violations: [] };
-  }
+	// Call daemon for session initialization
+	let result: HookResult;
+	try {
+		result = await callDaemon<HookResult>("/hook", { event: "SessionStart" });
+	} catch {
+		result = { action: "allow", messages: [], violations: [] };
+	}
 
-  // Load session continuity context
-  const parts: string[] = [];
+	// Load session continuity context
+	const parts: string[] = [];
 
-  if (result.messages?.length > 0) {
-    parts.push(result.messages.join("\n"));
-  }
+	if (result.messages?.length > 0) {
+		parts.push(result.messages.join("\n"));
+	}
 
-  const sessionStatePath = join(stateDir, "session-state.md");
-  if (existsSync(sessionStatePath)) {
-    const sessionState = readFileSync(sessionStatePath, "utf-8");
-    parts.push("=== PREVIOUS SESSION STATE ===");
-    parts.push(sessionState);
-    parts.push("=== END SESSION STATE ===");
-    parts.push("Read the session state above. Resume where the previous session left off.");
-  }
+	const sessionStatePath = join(stateDir, "session-state.md");
+	if (existsSync(sessionStatePath)) {
+		const sessionState = readFileSync(sessionStatePath, "utf-8");
+		parts.push("=== PREVIOUS SESSION STATE ===");
+		parts.push(sessionState);
+		parts.push("=== END SESSION STATE ===");
+		parts.push("Read the session state above. Resume where the previous session left off.");
+	}
 
-  if (parts.length > 0) {
-    process.stdout.write(JSON.stringify({ systemMessage: parts.join("\n\n") }));
-  }
+	if (parts.length > 0) {
+		process.stdout.write(JSON.stringify({ systemMessage: parts.join("\n\n") }));
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

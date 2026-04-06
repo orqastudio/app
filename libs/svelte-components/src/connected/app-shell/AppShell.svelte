@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { ResizablePaneGroup, ResizableHandle, ResizablePane } from "../../pure/resizable/index.js";
+	import {
+		ResizablePaneGroup,
+		ResizableHandle,
+		ResizablePane,
+	} from "../../pure/resizable/index.js";
 
 	let {
 		toolbar,
@@ -29,7 +33,7 @@
 	} = $props();
 </script>
 
-<div class="flex h-screen flex-col bg-background text-foreground">
+<div class="bg-background text-foreground flex h-screen flex-col">
 	{#if toolbar}
 		{@render toolbar()}
 	{/if}
@@ -53,7 +57,7 @@
 					</ResizablePane>
 					<ResizableHandle />
 					<ResizablePane defaultSize={chatPanelSize} minSize={20}>
-						<div class="flex h-full flex-col bg-chat">
+						<div class="bg-chat flex h-full flex-col">
 							{@render chatPanel()}
 						</div>
 					</ResizablePane>

@@ -7,7 +7,7 @@
 	let {
 		title,
 		description,
-		children
+		children,
 	}: {
 		title?: string;
 		description?: string;

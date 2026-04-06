@@ -12,7 +12,8 @@
 </script>
 
 {#if block}
-	<pre class="bg-muted p-3 rounded text-xs font-mono overflow-x-auto whitespace-pre-wrap">{@render children?.()}</pre>
+	<pre
+		class="bg-muted overflow-x-auto rounded p-3 font-mono text-xs whitespace-pre-wrap">{@render children?.()}</pre>
 {:else}
-	<code class="text-xs font-mono rounded bg-muted px-1.5 py-0.5">{@render children?.()}</code>
+	<code class="bg-muted rounded px-1.5 py-0.5 font-mono text-xs">{@render children?.()}</code>
 {/if}

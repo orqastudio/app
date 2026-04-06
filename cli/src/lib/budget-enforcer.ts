@@ -15,10 +15,7 @@ export type { ModelTier } from "./agent-spawner.js";
 // ---------------------------------------------------------------------------
 
 /** Cost per million tokens by model tier (USD). */
-export const COST_PER_MTOK: Record<
-	ModelTier,
-	{ input: number; output: number; cached: number }
-> = {
+export const COST_PER_MTOK: Record<ModelTier, { input: number; output: number; cached: number }> = {
 	opus: { input: 15, output: 75, cached: 1.5 },
 	sonnet: { input: 3, output: 15, cached: 0.3 },
 	haiku: { input: 0.25, output: 1.25, cached: 0.025 },
@@ -116,9 +113,7 @@ export function inferModelTier(model: string): ModelTier {
  * @param currentTier - The current model tier to downgrade from.
  * @returns The next cheaper tier, or undefined if already at haiku.
  */
-export function suggestDowngrade(
-	currentTier: ModelTier,
-): ModelTier | undefined {
+export function suggestDowngrade(currentTier: ModelTier): ModelTier | undefined {
 	const idx = MODEL_TIERS.indexOf(currentTier);
 	if (idx <= 0) return undefined;
 	return MODEL_TIERS[idx - 1];
@@ -189,10 +184,7 @@ export class BudgetEnforcer {
 	 * @param modelTier - The model tier intended for this agent
 	 * @returns Budget check result indicating whether the spawn is allowed.
 	 */
-	checkAgentSpawn(
-		promptTokens: number,
-		modelTier: ModelTier,
-	): BudgetCheckResult {
+	checkAgentSpawn(promptTokens: number, modelTier: ModelTier): BudgetCheckResult {
 		// Check per-agent prompt budget
 		if (promptTokens > this.config.perAgentPromptTokens) {
 			return {
@@ -204,8 +196,7 @@ export class BudgetEnforcer {
 		}
 
 		// Check session token budget
-		const sessionRatio =
-			this.sessionTokens / this.config.perSessionTotalTokens;
+		const sessionRatio = this.sessionTokens / this.config.perSessionTotalTokens;
 		if (sessionRatio >= 1.0) {
 			return {
 				allowed: false,
@@ -264,10 +255,7 @@ export class BudgetEnforcer {
 	 * @param modelTier - Current model tier for downgrade suggestions
 	 * @returns Budget check result for this agent's continuation.
 	 */
-	checkAgentContinue(
-		agentId: string,
-		modelTier: ModelTier,
-	): BudgetCheckResult {
+	checkAgentContinue(agentId: string, modelTier: ModelTier): BudgetCheckResult {
 		const used = this.agentTokens.get(agentId) ?? 0;
 		const ratio = used / this.config.perAgentTotalTokens;
 
@@ -326,12 +314,7 @@ export class BudgetEnforcer {
 	): void {
 		const total = inputTokens + outputTokens;
 		this.sessionTokens += total;
-		this.sessionCost += estimateCost(
-			modelTier,
-			inputTokens,
-			outputTokens,
-			cachedTokens,
-		);
+		this.sessionCost += estimateCost(modelTier, inputTokens, outputTokens, cachedTokens);
 
 		const prev = this.agentTokens.get(agentId) ?? 0;
 		this.agentTokens.set(agentId, prev + total);

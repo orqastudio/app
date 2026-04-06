@@ -197,7 +197,9 @@ export function runPluginGenerators(
 			: spawnSync("node", [generatorPath, ...argv], { stdio: "inherit" });
 
 		if (result.status !== 0) {
-			console.error(`    Generator failed (exit ${result.status ?? "unknown"}): ${entry.generator}`);
+			console.error(
+				`    Generator failed (exit ${result.status ?? "unknown"}): ${entry.generator}`,
+			);
 		} else {
 			console.log(`    Generated: ${entry.config_output}`);
 		}
@@ -219,7 +221,8 @@ async function cmdPrereqs(): Promise<void> {
 		console.error("");
 		console.error("    Git is required. Install it from:");
 		if (platform === "windows") console.error("      https://git-scm.com/download/win");
-		else if (platform === "macos") console.error("      xcode-select --install  (or: brew install git)");
+		else if (platform === "macos")
+			console.error("      xcode-select --install  (or: brew install git)");
 		else console.error("      sudo apt install git  (or your package manager)");
 		process.exit(1);
 	}
@@ -262,7 +265,9 @@ async function cmdPrereqs(): Promise<void> {
 			}
 		} else {
 			// No version manager — offer to install fnm
-			const answer = await ask("    No Node version manager found. Install fnm (fast node manager)? [Y/n] ");
+			const answer = await ask(
+				"    No Node version manager found. Install fnm (fast node manager)? [Y/n] ",
+			);
 			if (answer !== "n" && answer !== "no") {
 				console.log("    Installing fnm...");
 				if (platform === "windows") {
@@ -297,7 +302,9 @@ async function cmdPrereqs(): Promise<void> {
 		console.log("  ✗ rust — not found");
 
 		if (hasCommand("rustup")) {
-			const answer = await ask("    rustup found but no toolchain installed. Install stable? [Y/n] ");
+			const answer = await ask(
+				"    rustup found but no toolchain installed. Install stable? [Y/n] ",
+			);
 			if (answer !== "n" && answer !== "no") {
 				run("rustup install stable");
 				run("rustup default stable");
@@ -315,7 +322,9 @@ async function cmdPrereqs(): Promise<void> {
 					console.log("    On Windows, download and run the installer from:");
 					console.log("      https://rustup.rs/");
 					console.log("");
-					console.log("    After installation, restart your terminal and re-run: orqa install prereqs");
+					console.log(
+						"    After installation, restart your terminal and re-run: orqa install prereqs",
+					);
 					process.exit(0);
 				} else {
 					run("curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y");
@@ -351,7 +360,9 @@ function exitWithNodeInstructions(platform: string): never {
 		console.error("      Option 1: brew install fnm && fnm install 22");
 		console.error("      Option 2: https://nodejs.org/en/download");
 	} else {
-		console.error("      Option 1: curl -fsSL https://fnm.vercel.app/install | bash && fnm install 22");
+		console.error(
+			"      Option 1: curl -fsSL https://fnm.vercel.app/install | bash && fnm install 22",
+		);
 		console.error("      Option 2: https://nodejs.org/en/download");
 	}
 	process.exit(1);
@@ -503,7 +514,10 @@ export function cmdPluginSync(root: string): void {
 		return;
 	}
 
-	const pluginsSection = (projectJson["plugins"] ?? {}) as Record<string, Partial<PluginProjectConfig>>;
+	const pluginsSection = (projectJson["plugins"] ?? {}) as Record<
+		string,
+		Partial<PluginProjectConfig>
+	>;
 	const enabledPlugins = Object.entries(pluginsSection).filter(([, cfg]) => cfg.enabled === true);
 
 	if (enabledPlugins.length === 0) {
@@ -520,9 +534,7 @@ export function cmdPluginSync(root: string): void {
 		}
 
 		// Resolve plugin directory relative to project root if not absolute.
-		const pluginDir = path.isAbsolute(cfg.path)
-			? cfg.path
-			: path.join(root, cfg.path);
+		const pluginDir = path.isAbsolute(cfg.path) ? cfg.path : path.join(root, cfg.path);
 
 		const manifestFile = path.join(pluginDir, "orqa-plugin.json");
 		if (!fs.existsSync(manifestFile)) {
@@ -534,7 +546,9 @@ export function cmdPluginSync(root: string): void {
 		try {
 			pluginManifest = readManifest(pluginDir);
 		} catch (e) {
-			console.error(`  Plugin ${name}: manifest read failed — ${e instanceof Error ? e.message : String(e)}`);
+			console.error(
+				`  Plugin ${name}: manifest read failed — ${e instanceof Error ? e.message : String(e)}`,
+			);
 			continue;
 		}
 
@@ -645,7 +659,9 @@ export function cmdPluginSync(root: string): void {
 		const registryPath = generatePromptRegistry(root);
 		console.log(`  ✓ prompt-registry.json written to ${registryPath}`);
 	} catch (e) {
-		console.error(`  Prompt registry generation failed: ${e instanceof Error ? e.message : String(e)}`);
+		console.error(
+			`  Prompt registry generation failed: ${e instanceof Error ? e.message : String(e)}`,
+		);
 	}
 }
 
@@ -688,7 +704,10 @@ function cmdSmokeTest(root: string): void {
 	const appCheckDir = path.join(root, "app");
 	if (fs.existsSync(path.join(appCheckDir, "package.json"))) {
 		try {
-			execSync("npx svelte-check --threshold error", { cwd: appCheckDir, stdio: ["pipe", "pipe", "pipe"] });
+			execSync("npx svelte-check --threshold error", {
+				cwd: appCheckDir,
+				stdio: ["pipe", "pipe", "pipe"],
+			});
 			console.log("  ✓ svelte-check passes");
 		} catch {
 			console.error("  ✗ svelte-check failed — frontend dependencies may not be linked");

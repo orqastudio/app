@@ -92,24 +92,18 @@ const DAEMON_PORT = getPort("daemon");
  * @param autoFix - Whether to automatically apply fixes.
  * @returns The raw JSON response string, or null if the daemon is unreachable.
  */
-export async function callDaemon(
-	targetPath: string,
-	autoFix: boolean,
-): Promise<string | null> {
+export async function callDaemon(targetPath: string, autoFix: boolean): Promise<string | null> {
 	try {
 		const controller = new AbortController();
 		const timeout = setTimeout(() => controller.abort(), 500);
 		try {
 			const endpoint = autoFix ? "/validation/fix" : "/validation/scan";
-			const response = await fetch(
-				`http://127.0.0.1:${DAEMON_PORT}${endpoint}`,
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ path: targetPath, apply: autoFix }),
-					signal: controller.signal,
-				},
-			);
+			const response = await fetch(`http://127.0.0.1:${DAEMON_PORT}${endpoint}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ path: targetPath, apply: autoFix }),
+				signal: controller.signal,
+			});
 			if (!response.ok) return null;
 			return await response.text();
 		} finally {
@@ -263,15 +257,12 @@ export function formatReport(report: ValidationReport): {
 	for (const [category, findings] of byCategory) {
 		lines.push(`\n${category} (${findings.length}):`);
 		for (const f of findings) {
-			const icon =
-				f.severity === "Error" || f.severity === "error" ? "E" : "W";
+			const icon = f.severity === "Error" || f.severity === "error" ? "E" : "W";
 			lines.push(`  [${icon}] ${f.artifact_id}: ${f.message}`);
 		}
 	}
 
-	const errors = checks.filter(
-		(c) => c.severity === "Error" || c.severity === "error",
-	).length;
+	const errors = checks.filter((c) => c.severity === "Error" || c.severity === "error").length;
 	const warnings = checks.length - errors;
 	lines.push(`\n${checks.length} error(s).`);
 

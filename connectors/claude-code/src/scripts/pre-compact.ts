@@ -14,38 +14,38 @@ import { readInput, callDaemon, outputWarn } from "../hooks/shared.js";
 
 /** Extended result type for the PreCompact hook, which may return a context blob. */
 interface PreCompactResult {
-  action: "allow" | "block" | "warn";
-  messages: string[];
-  violations: Array<{ rule_id: string; action: string; message: string }>;
-  /** Markdown content to persist as .state/governance-context.md. */
-  context?: string;
+	action: "allow" | "block" | "warn";
+	messages: string[];
+	violations: Array<{ rule_id: string; action: string; message: string }>;
+	/** Markdown content to persist as .state/governance-context.md. */
+	context?: string;
 }
 
 /** Run the PreCompact hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
-  const stateDir = join(projectDir, ".state");
-  mkdirSync(stateDir, { recursive: true });
+	const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
+	const stateDir = join(projectDir, ".state");
+	mkdirSync(stateDir, { recursive: true });
 
-  let result: PreCompactResult;
-  try {
-    result = await callDaemon<PreCompactResult>("/hook", { event: "PreCompact" });
-  } catch {
-    process.exit(0);
-  }
+	let result: PreCompactResult;
+	try {
+		result = await callDaemon<PreCompactResult>("/hook", { event: "PreCompact" });
+	} catch {
+		process.exit(0);
+	}
 
-  // Write governance context file if daemon returned content
-  if (result.context) {
-    writeFileSync(join(stateDir, "governance-context.md"), result.context);
-  }
+	// Write governance context file if daemon returned content
+	if (result.context) {
+		writeFileSync(join(stateDir, "governance-context.md"), result.context);
+	}
 
-  if (result.messages?.length > 0) {
-    outputWarn(result.messages);
-  }
+	if (result.messages?.length > 0) {
+		outputWarn(result.messages);
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

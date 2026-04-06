@@ -24,10 +24,23 @@ export { readLockfile, writeLockfile } from "./lib/lockfile.js";
 export { readManifest, validateManifest } from "./lib/manifest.js";
 
 // Graph browsing (daemon-backed)
-export { scanArtifactGraph, queryGraph, getGraphStats, type GraphNode, type GraphQueryOptions, type GraphStats } from "./lib/graph.js";
+export {
+	scanArtifactGraph,
+	queryGraph,
+	getGraphStats,
+	type GraphNode,
+	type GraphQueryOptions,
+	type GraphStats,
+} from "./lib/graph.js";
 
 // Daemon client
-export { callDaemonGraph, isDaemonRunning, type DaemonArtifactNode, type DaemonArtifactRef, type DaemonHealthResponse } from "./lib/daemon-client.js";
+export {
+	callDaemonGraph,
+	isDaemonRunning,
+	type DaemonArtifactNode,
+	type DaemonArtifactRef,
+	type DaemonHealthResponse,
+} from "./lib/daemon-client.js";
 
 // Version management
 export {
@@ -38,7 +51,12 @@ export {
 } from "./lib/version-sync.js";
 
 // Repo maintenance
-export { auditLicenses, DEFAULT_LICENSE_POLICY, type LicenseAuditResult, type LicensePolicy } from "./lib/license.js";
+export {
+	auditLicenses,
+	DEFAULT_LICENSE_POLICY,
+	type LicenseAuditResult,
+	type LicensePolicy,
+} from "./lib/license.js";
 export { auditReadmes, generateReadmeTemplate, type ReadmeAuditResult } from "./lib/readme.js";
 
 // Token tracking

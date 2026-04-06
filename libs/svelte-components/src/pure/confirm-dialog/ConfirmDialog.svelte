@@ -26,6 +26,7 @@
 		onConfirm: () => void;
 	} = $props();
 
+	/** Call the onConfirm callback then close the dialog. */
 	function handleConfirm() {
 		onConfirm();
 		open = false;

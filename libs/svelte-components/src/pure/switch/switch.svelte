@@ -25,13 +25,13 @@
 <SwitchPrimitive.Root
 	bind:checked
 	{disabled}
-	onCheckedChange={onCheckedChange}
+	{onCheckedChange}
 	aria-label={ariaLabel}
 	data-slot="switch"
 	class={cn(
 		"peer inline-flex shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent",
 		"transition-colors",
-		"focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+		"focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
 		"disabled:cursor-not-allowed disabled:opacity-50",
 		"data-[state=checked]:bg-primary data-[state=unchecked]:bg-muted-foreground/30",
 		size === "sm" ? "h-5 w-9" : "h-6 w-11",
@@ -39,11 +39,11 @@
 >
 	<SwitchPrimitive.Thumb
 		class={cn(
-			"pointer-events-none block rounded-full bg-background shadow-sm",
+			"bg-background pointer-events-none block rounded-full shadow-sm",
 			"transition-transform duration-100",
 			size === "sm"
 				? "h-4 w-4 data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
-				: "h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"
+				: "h-5 w-5 data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0",
 		)}
 	/>
 </SwitchPrimitive.Root>

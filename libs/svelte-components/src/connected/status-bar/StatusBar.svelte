@@ -12,7 +12,9 @@
 	} = $props();
 </script>
 
-<div class="flex h-8 items-center border-t border-border bg-muted/30 px-4 pb-1 text-xs text-muted-foreground">
+<div
+	class="border-border bg-muted/30 text-muted-foreground flex h-8 items-center border-t px-4 pb-1 text-xs"
+>
 	<div class="flex items-center gap-3">
 		{#if left}
 			{@render left()}

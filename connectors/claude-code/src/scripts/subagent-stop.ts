@@ -14,28 +14,28 @@ import type { HookResult } from "../hooks/shared.js";
 
 /** Run the SubagentStop hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const agentType = input.agent_type ?? "unknown";
+	const agentType = input.agent_type ?? "unknown";
 
-  const context = {
-    event: "SubagentStop" as const,
-    agent_type: agentType,
-  };
+	const context = {
+		event: "SubagentStop" as const,
+		agent_type: agentType,
+	};
 
-  let result: HookResult;
-  try {
-    result = await callDaemon<HookResult>("/hook", context);
-  } catch {
-    // Daemon unavailable — fail-open
-    process.exit(0);
-  }
+	let result: HookResult;
+	try {
+		result = await callDaemon<HookResult>("/hook", context);
+	} catch {
+		// Daemon unavailable — fail-open
+		process.exit(0);
+	}
 
-  if (result.messages?.length > 0) {
-    outputWarn(result.messages);
-  }
+	if (result.messages?.length > 0) {
+		outputWarn(result.messages);
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

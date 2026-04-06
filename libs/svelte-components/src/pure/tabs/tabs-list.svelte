@@ -1,10 +1,7 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from "bits-ui";
 
-	let {
-		ref = $bindable(null),
-		...restProps
-	}: Omit<TabsPrimitive.ListProps, "class"> = $props();
+	let { ref = $bindable(null), ...restProps }: Omit<TabsPrimitive.ListProps, "class"> = $props();
 </script>
 
 <TabsPrimitive.List

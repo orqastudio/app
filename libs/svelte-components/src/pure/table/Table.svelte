@@ -11,11 +11,6 @@
 	}: WithElementRef<Omit<HTMLAttributes<HTMLTableElement>, "class">> = $props();
 </script>
 
-<table
-	bind:this={ref}
-	data-slot="table"
-	class="w-full caption-bottom text-sm"
-	{...restProps}
->
+<table bind:this={ref} data-slot="table" class="w-full caption-bottom text-sm" {...restProps}>
 	{@render children?.()}
 </table>

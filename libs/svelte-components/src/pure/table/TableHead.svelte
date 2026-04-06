@@ -31,15 +31,17 @@
 		mono?: boolean;
 	} = $props();
 
-	const widthClass = $derived(width === "xs" ? "w-16" : width === "sm" ? "w-24" : width === "md" ? "w-40" : undefined);
+	const widthClass = $derived(
+		width === "xs" ? "w-16" : width === "sm" ? "w-24" : width === "md" ? "w-40" : undefined,
+	);
 </script>
 
 <th
 	bind:this={ref}
 	data-slot="table-head"
 	class={cn(
-		"px-3 py-2 text-left text-xs font-medium text-muted-foreground",
-		sortable && "cursor-pointer select-none hover:text-foreground",
+		"text-muted-foreground px-3 py-2 text-left text-xs font-medium",
+		sortable && "hover:text-foreground cursor-pointer select-none",
 		align === "center" && "text-center",
 		align === "right" && "text-right",
 		mono && "font-mono",

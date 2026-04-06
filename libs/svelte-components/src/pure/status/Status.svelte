@@ -29,7 +29,9 @@
 		<span>{config.label}</span>
 	</span>
 {:else}
-	<span class="inline-flex items-center gap-1.5 rounded border border-border bg-muted/30 px-1.5 py-0.5 text-xs text-muted-foreground">
+	<span
+		class="border-border bg-muted/30 text-muted-foreground inline-flex items-center gap-1.5 rounded border px-1.5 py-0.5 text-xs"
+	>
 		<Icon class="h-3 w-3 shrink-0 {colorClass} {isSpinning ? 'status-spin' : ''}" />{config.label}
 	</span>
 {/if}
@@ -39,7 +41,11 @@
 		animation: status-spin 4s linear infinite;
 	}
 	@keyframes status-spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

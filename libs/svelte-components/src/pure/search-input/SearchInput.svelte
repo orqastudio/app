@@ -17,10 +17,10 @@
 
 <div class="relative">
 	<SearchIcon
-		class="absolute {iconClass} top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground"
+		class="absolute {iconClass} text-muted-foreground top-1/2 h-3.5 w-3.5 -translate-y-1/2"
 	/>
 	<input
-		class="border-input bg-background selection:bg-primary dark:bg-input/30 selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground flex min-w-0 rounded-md border px-3 py-1 text-xs shadow-xs transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] w-full {inputSizeClass}"
+		class="border-input bg-background selection:bg-primary dark:bg-input/30 selection:text-primary-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 flex w-full min-w-0 rounded-md border px-3 py-1 text-xs shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 {inputSizeClass}"
 		{placeholder}
 		bind:value
 	/>

@@ -44,6 +44,13 @@ export default tseslint.config(
 
     },
   },
+  // Library components use consumer-provided hrefs — SvelteKit resolve() doesn't apply.
+  {
+    files: ["libs/svelte-components/**/*.svelte"],
+    rules: {
+      "svelte/no-navigation-without-resolve": "off",
+    },
+  },
 
   // ── Layer 3: Environment globals ──────────────────────────────────────
   // Tauri apps run in both browser (webview) and node (build tooling).

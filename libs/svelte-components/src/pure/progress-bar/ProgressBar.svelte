@@ -22,10 +22,7 @@
 		<Text variant="caption">{label}</Text>
 		<Text variant="tabular">{current}/{total}</Text>
 	</HStack>
-	<div class="h-1.5 w-full rounded-full bg-muted">
-		<div
-			class="h-full rounded-full transition-all {colorClass}"
-			style="width: {percentage}%"
-		></div>
+	<div class="bg-muted h-1.5 w-full rounded-full">
+		<div class="h-full rounded-full transition-all {colorClass}" style="width: {percentage}%"></div>
 	</div>
 </Stack>

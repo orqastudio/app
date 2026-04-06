@@ -20,8 +20,8 @@
 	{disabled}
 	data-slot="checkbox"
 	class={cn(
-		"peer h-4 w-4 shrink-0 rounded border border-input shadow-xs",
-		"focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring",
+		"peer border-input h-4 w-4 shrink-0 rounded border shadow-xs",
+		"focus-visible:ring-ring/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:outline-none",
 		"disabled:cursor-not-allowed disabled:opacity-50",
 		"data-[state=checked]:bg-primary data-[state=checked]:border-primary data-[state=checked]:text-primary-foreground",
 		"transition-colors",
@@ -34,7 +34,7 @@
 			class={cn(
 				"flex items-center justify-center text-current",
 				"transition-opacity",
-				isChecked ? "opacity-100" : "opacity-0"
+				isChecked ? "opacity-100" : "opacity-0",
 			)}
 			aria-hidden="true"
 		>

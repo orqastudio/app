@@ -29,11 +29,7 @@
 	import TabsTrigger from "./tabs-trigger.svelte";
 	import TabsContent from "./tabs-content.svelte";
 
-	let {
-		value = $bindable(""),
-		tabs,
-		children,
-	}: TabsProps = $props();
+	let { value = $bindable(""), tabs, children }: TabsProps = $props();
 
 	// $derived cannot be used here because `value` is $bindable — a parent may update it at any time.
 	// This $effect initialises the default selection once when tabs load and no value is provided.

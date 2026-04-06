@@ -10,7 +10,7 @@
 		required = false,
 		error,
 		description,
-		children
+		children,
 	}: {
 		label?: string;
 		for?: string;
@@ -23,7 +23,7 @@
 
 <Stack gap={1.5}>
 	{#if label}
-		<label class="text-sm font-medium leading-none" for={htmlFor}>
+		<label class="text-sm leading-none font-medium" for={htmlFor}>
 			{label}
 			{#if required}<span class="text-destructive ml-0.5">*</span>{/if}
 		</label>

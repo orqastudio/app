@@ -25,28 +25,28 @@ import { assertNever } from "@orqastudio/types";
  * strategy, and lifecycle behaviour.
  */
 export type NodeKind =
-	| "ts-library"      // tsc build, watches src/, emits to dist/
-	| "svelte-library"  // svelte-package, watches src/, emits to dist/
-	| "rust-workspace"  // cargo build --workspace; implicit root for Rust nodes
-	| "tauri-app"       // cargo tauri dev (manages its own watch/rebuild cycle)
-	| "service"         // long-running process (daemon, search server)
-	| "plugin";         // npm run build + orqa plugin refresh
+	| "ts-library" // tsc build, watches src/, emits to dist/
+	| "svelte-library" // svelte-package, watches src/, emits to dist/
+	| "rust-workspace" // cargo build --workspace; implicit root for Rust nodes
+	| "tauri-app" // cargo tauri dev (manages its own watch/rebuild cycle)
+	| "service" // long-running process (daemon, search server)
+	| "plugin"; // npm run build + orqa plugin refresh
 
 /**
  * Status of a single process node at a point in time.
  */
 export type NodeStatus =
-	| "pending"         // not yet built
-	| "building"        // build in progress
-	| "built"           // build succeeded, not yet running (for services/apps)
-	| "build-failed"    // build failed
-	| "starting"        // service/app is launching
-	| "running"         // service/app is alive and healthy
-	| "watching"        // built and watching for changes (libraries)
-	| "rebuilding"      // file change detected, rebuilding
-	| "stopping"        // graceful shutdown in progress
-	| "stopped"         // service was running but is now stopped
-	| "crashed";        // service exited unexpectedly
+	| "pending" // not yet built
+	| "building" // build in progress
+	| "built" // build succeeded, not yet running (for services/apps)
+	| "build-failed" // build failed
+	| "starting" // service/app is launching
+	| "running" // service/app is alive and healthy
+	| "watching" // built and watching for changes (libraries)
+	| "rebuilding" // file change detected, rebuilding
+	| "stopping" // graceful shutdown in progress
+	| "stopped" // service was running but is now stopped
+	| "crashed"; // service exited unexpectedly
 
 /**
  * A single node in the process dependency graph. Represents one buildable or
@@ -143,6 +143,8 @@ interface PackageJson {
 /**
  * Read a package.json file, returning null if it doesn't exist or cannot be
  * parsed. Safe to call on arbitrary paths.
+ * @param pkgPath - Absolute path to the package.json file.
+ * @returns The parsed package.json object, or null on failure.
  */
 function readPackageJson(pkgPath: string): PackageJson | null {
 	try {
@@ -154,8 +156,10 @@ function readPackageJson(pkgPath: string): PackageJson | null {
 }
 
 /**
- * Strip the @orqastudio/ scope from a package name to produce a node ID.
- * e.g. "@orqastudio/sdk" → "sdk".
+ * Strip the `@orqastudio/` scope from a package name to produce a node ID.
+ * e.g. `@orqastudio/sdk` → `sdk`.
+ * @param name - The full scoped package name to strip.
+ * @returns The node ID with the scope prefix removed.
  */
 function packageNameToId(name: string): string {
 	return name.replace(/^@orqastudio\//, "");
@@ -169,6 +173,8 @@ function packageNameToId(name: string): string {
  * the newest src/ file, the library is up-to-date and can skip a rebuild.
  * Skips node_modules and dotfiles for speed — those directories aren't source
  * inputs or build outputs.
+ * @param dir - Absolute path to the directory to scan.
+ * @returns The newest mtime in milliseconds since epoch, or 0 if unreadable.
  */
 function newestMtime(dir: string): number {
 	let newest = 0;
@@ -202,6 +208,8 @@ function newestMtime(dir: string): number {
 
 /**
  * Return the watchPatterns for a given NodeKind.
+ * @param kind - The node kind to look up patterns for.
+ * @returns Array of glob patterns matching source files for that kind.
  */
 function watchPatternsForKind(kind: NodeKind): string[] {
 	switch (kind) {
@@ -223,11 +231,11 @@ function watchPatternsForKind(kind: NodeKind): string[] {
  * Determine NodeKind for an npm package from its directory location and build
  * script. Returns null if the package should not be included in the graph
  * (no build script, or explicitly excluded).
+ * @param relDir - Relative directory path from the repo root (e.g. `libs/sdk`).
+ * @param pkg - The parsed package.json for the package.
+ * @returns The NodeKind for this package, or null to exclude it from the graph.
  */
-function npmKind(
-	relDir: string,
-	pkg: PackageJson,
-): NodeKind | null {
+function npmKind(relDir: string, pkg: PackageJson): NodeKind | null {
 	const buildScript = pkg.scripts?.["build"] ?? "";
 
 	// Plugins and connectors are always "plugin" regardless of build script.
@@ -261,9 +269,11 @@ function npmKind(
  *
  * For each package.json:
  *   1. Reads `dependencies` and `peerDependencies` (NOT devDependencies).
- *   2. Filters to @orqastudio/* entries to build the dependency edge list.
- *   3. Strips the @orqastudio/ scope to map to node IDs.
+ *   2. Filters to `@orqastudio/*` entries to build the dependency edge list.
+ *   3. Strips the `@orqastudio/` scope to map to node IDs.
  *   4. Determines NodeKind from directory and build script.
+ * @param root - Absolute path to the repo root.
+ * @returns Partial node map keyed by node ID (dependents not yet populated).
  */
 function readNpmGraph(root: string): Map<string, ProcessNode> {
 	const nodes = new Map<string, ProcessNode>();
@@ -351,9 +361,11 @@ function readNpmGraph(root: string): Map<string, ProcessNode> {
 }
 
 /**
- * Extract @orqastudio/* dependency IDs from a package.json.
+ * Extract `@orqastudio/*` dependency IDs from a package.json.
  * Only reads `dependencies` and `peerDependencies` — devDependencies are
  * build-time tooling, not runtime graph edges.
+ * @param pkg - The parsed package.json object to extract dependencies from.
+ * @returns Array of node IDs derived from `@orqastudio/*` dependency names.
  */
 function computeNpmDeps(pkg: PackageJson): string[] {
 	const allDeps = {
@@ -375,6 +387,8 @@ function computeNpmDeps(pkg: PackageJson): string[] {
  *
  * Engine crates are NOT individual nodes — they are built as part of the
  * workspace unit. Individual nodes only exist for top-level binaries.
+ * @param root - Absolute path to the repo root.
+ * @returns Node map for Rust workspace, daemon, and search service nodes.
  */
 function readCargoGraph(root: string): Map<string, ProcessNode> {
 	const nodes = new Map<string, ProcessNode>();
@@ -443,6 +457,7 @@ function readCargoGraph(root: string): Map<string, ProcessNode> {
 /**
  * Compute the reverse edges (dependents) for every node in the merged graph.
  * Mutates the nodes in place — must be called after all nodes are merged.
+ * @param nodes - The merged node map to populate dependents on.
  */
 function computeDependents(nodes: Map<string, ProcessNode>): void {
 	for (const [id, node] of nodes) {
@@ -468,6 +483,8 @@ function computeDependents(nodes: Map<string, ProcessNode>): void {
  *   Tier 1: [sdk, graph-visualiser, daemon, search]
  *   Tier 2: [svelte-components]
  *   Tier 3: [app, plugins...]
+ * @param nodes - The merged node map with dependents already populated.
+ * @returns Ordered array of tiers, each containing concurrently-buildable node IDs.
  */
 function computeBuildTiers(nodes: Map<string, ProcessNode>): string[][] {
 	const inDegree = new Map<string, number>();
@@ -491,7 +508,7 @@ function computeBuildTiers(nodes: Map<string, ProcessNode>): string[][] {
 		const nextReady: string[] = [];
 
 		for (const id of ready) {
-			for (const dependent of (adjList.get(id) ?? [])) {
+			for (const dependent of adjList.get(id) ?? []) {
 				const newDeg = (inDegree.get(dependent) ?? 1) - 1;
 				inDegree.set(dependent, newDeg);
 				if (newDeg === 0) nextReady.push(dependent);
@@ -504,9 +521,7 @@ function computeBuildTiers(nodes: Map<string, ProcessNode>): string[][] {
 	// Cycle detection: any node still with inDegree > 0 is part of a cycle.
 	const processed = tiers.flat().length;
 	if (processed < nodes.size) {
-		const remaining = [...nodes.keys()].filter(
-			(id) => !tiers.flat().includes(id),
-		);
+		const remaining = [...nodes.keys()].filter((id) => !tiers.flat().includes(id));
 		throw new Error(
 			`Circular dependency detected among: ${remaining.join(", ")}. ` +
 				"Fix the dependency cycle before running the dev environment.",
@@ -521,6 +536,8 @@ function computeBuildTiers(nodes: Map<string, ProcessNode>): string[][] {
  *
  * Reads npm and Cargo graphs, merges them, computes dependents (reverse
  * edges), runs topological sort, and returns an immutable ProcessGraph.
+ * @param root - Absolute path to the repo root.
+ * @returns The fully resolved ProcessGraph with build tiers and reverse edges.
  */
 export async function buildProcessGraph(root: string): Promise<ProcessGraph> {
 	const npmNodes = readNpmGraph(root);
@@ -547,17 +564,26 @@ export async function buildProcessGraph(root: string): Promise<ProcessGraph> {
 
 // ── Platform helpers ──────────────────────────────────────────────────────────
 
-/** Returns true when running on Windows. */
+/**
+ * Returns true when running on Windows.
+ * @returns True if the current platform is win32.
+ */
 export function isWindows(): boolean {
 	return platform() === "win32";
 }
 
-/** Returns the platform-correct npm executable name. */
+/**
+ * Returns the platform-correct npm executable name.
+ * @returns `npm.cmd` on Windows, `npm` on Unix.
+ */
 export function npm(): string {
 	return isWindows() ? "npm.cmd" : "npm";
 }
 
-/** Returns the platform-correct npx executable name. */
+/**
+ * Returns the platform-correct npx executable name.
+ * @returns `npx.cmd` on Windows, `npx` on Unix.
+ */
 export function npx(): string {
 	return isWindows() ? "npx.cmd" : "npx";
 }
@@ -568,6 +594,8 @@ export function npx(): string {
  * Execute a shell command synchronously, returning trimmed stdout.
  * Returns empty string on failure — callers treat empty as "not found".
  * Exported so dev.ts can use it inside killAll without duplication.
+ * @param cmd - The shell command string to execute.
+ * @returns Trimmed stdout of the command, or empty string on failure.
  */
 export function exec(cmd: string): string {
 	try {
@@ -584,6 +612,8 @@ export function exec(cmd: string): string {
 /**
  * Build the Rust process environment: inherit current env, add RUST_LOG and
  * ORQA_PROJECT_ROOT so binaries pick up the correct project root.
+ * @param root - Absolute path to the project root, written to ORQA_PROJECT_ROOT.
+ * @returns A process environment record suitable for passing to spawn options.
  */
 export function rustEnv(root: string): NodeJS.ProcessEnv {
 	return {
@@ -596,6 +626,9 @@ export function rustEnv(root: string): NodeJS.ProcessEnv {
 /**
  * Find a pre-built Rust binary in the workspace target directories.
  * Checks debug first, then release. Falls back to the bare name (PATH lookup).
+ * @param root - Absolute path to the repo root containing the target/ directory.
+ * @param name - Binary name without extension (e.g. `orqa-search-server`).
+ * @returns Absolute path to the found binary, or the bare name for PATH resolution.
  */
 function findBin(root: string, name: string): string {
 	const ext = isWindows() ? ".exe" : "";
@@ -613,6 +646,8 @@ function findBin(root: string, name: string): string {
  * Find PIDs of all processes matching the given name.
  * Uses PowerShell on Windows, pgrep on Unix.
  * Exported for use by dev.ts killAll helper.
+ * @param name - The process name to search for (without path or extension).
+ * @returns Array of matching PIDs, or empty array if none found.
  */
 export function findPidsByName(name: string): number[] {
 	if (isWindows()) {
@@ -633,6 +668,8 @@ export function findPidsByName(name: string): number[] {
  * Find PIDs of all processes matching ANY of the given names in a single
  * PowerShell/pgrep call. Much faster than calling findPidsByName per name.
  * Returns a Map of name → PIDs.
+ * @param names - Array of process names to search for simultaneously.
+ * @returns Map from each process name to its matching PIDs (empty array if none).
  */
 export function findPidsByNames(names: string[]): Map<string, number[]> {
 	const result = new Map<string, number[]>();
@@ -669,6 +706,7 @@ export function findPidsByNames(names: string[]): Map<string, number[]> {
  * Uses `taskkill /T /F` on Windows (native tree kill, fast — no WMI).
  * Falls back to SIGKILL on Unix.
  * Exported for use by dev.ts killAll helper.
+ * @param pid - The process ID to kill along with its entire child tree.
  */
 export function killProcessTree(pid: number): void {
 	if (pid === process.pid) return;
@@ -681,14 +719,24 @@ export function killProcessTree(pid: number): void {
 				windowsHide: true,
 				stdio: "ignore",
 			});
-		} catch { /* already dead or access denied */ }
+		} catch {
+			/* already dead or access denied */
+		}
 		return;
 	}
 
-	try { process.kill(pid, "SIGKILL"); } catch { /* already dead */ }
+	try {
+		process.kill(pid, "SIGKILL");
+	} catch {
+		/* already dead */
+	}
 }
 
-/** Resolve after ms milliseconds. */
+/**
+ * Resolve after ms milliseconds.
+ * @param ms - Number of milliseconds to wait before resolving.
+ * @returns A promise that resolves after the given delay.
+ */
 export function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -696,6 +744,9 @@ export function sleep(ms: number): Promise<void> {
 /**
  * Poll the daemon health endpoint every 250ms until it responds 200 or
  * the timeout elapses. Returns true if the daemon became healthy in time.
+ * @param port - The port the daemon health endpoint is listening on.
+ * @param timeoutMs - Maximum milliseconds to wait before giving up.
+ * @returns True if the daemon responded healthy within the timeout, false otherwise.
  */
 async function waitForDaemon(port: number, timeoutMs: number): Promise<boolean> {
 	const deadline = Date.now() + timeoutMs;
@@ -751,6 +802,8 @@ export class ProcessManager {
 	/**
 	 * Read the dependency graph from disk and return a configured ProcessManager.
 	 * This is the only way to construct an instance.
+	 * @param root - Absolute path to the project root.
+	 * @returns A fully configured ProcessManager instance.
 	 */
 	static async create(root: string): Promise<ProcessManager> {
 		const graph = await buildProcessGraph(root);
@@ -763,6 +816,7 @@ export class ProcessManager {
 	 * Build all nodes in dependency order, running nodes in the same tier
 	 * concurrently. Skips nodes whose dependencies failed (poisoned set).
 	 * Updates each node's status and emits NodeEvents throughout.
+	 * @returns Build result listing succeeded and failed node IDs.
 	 */
 	async buildAll(): Promise<BuildResult> {
 		const succeeded: string[] = [];
@@ -798,9 +852,7 @@ export class ProcessManager {
 					succeeded.push(nodeId);
 				} else {
 					const error: string =
-						result.reason instanceof Error
-							? result.reason.message
-							: String(result.reason);
+						result.reason instanceof Error ? result.reason.message : String(result.reason);
 					failed.push({ nodeId, error });
 					// Mark all downstream nodes as poisoned so they are skipped.
 					this.propagatePoison(nodeId, poisoned);
@@ -815,6 +867,8 @@ export class ProcessManager {
 	 * Add nodeId and all of its transitive dependents to the poisoned set.
 	 * Used after a build failure to prevent downstream nodes from attempting
 	 * to build against a broken dependency.
+	 * @param nodeId - The node ID of the failed build to start poisoning from.
+	 * @param poisoned - The mutable set of poisoned node IDs to add to.
 	 */
 	private propagatePoison(nodeId: string, poisoned: Set<string>): void {
 		const node = this.graph.nodes.get(nodeId);
@@ -835,6 +889,7 @@ export class ProcessManager {
 	 * Services and the tauri-app are skipped here — they are started separately
 	 * (services via startServices, app via startApp). The rust-workspace covers
 	 * the service binaries as part of its workspace build.
+	 * @param node - The node to build.
 	 */
 	private async buildNode(node: ProcessNode): Promise<void> {
 		// Services and tauri-app are not pre-built in isolation.
@@ -942,6 +997,8 @@ export class ProcessManager {
 	 * Conservative: returns false on any I/O error, missing dist/, or empty src/.
 	 * A false return just means "rebuild to be safe" — never produces a wrong
 	 * skip.
+	 * @param node - The node to check for up-to-date output.
+	 * @returns True if the dist/ output is newer than all src/ inputs, false otherwise.
 	 */
 	private isLibraryUpToDate(node: ProcessNode): boolean {
 		if (node.kind !== "ts-library" && node.kind !== "svelte-library") {
@@ -962,10 +1019,10 @@ export class ProcessManager {
 	/**
 	 * Return the [executable, args] pair for the build command of a node.
 	 * Does not handle "service" or "tauri-app" — those are skipped by buildNode.
+	 * @param node - The node to derive the build command for.
+	 * @returns A tuple of [executable, args] suitable for passing to spawn.
 	 */
-	private buildCommand(
-		node: ProcessNode,
-	): [string, string[]] {
+	private buildCommand(node: ProcessNode): [string, string[]] {
 		switch (node.kind) {
 			case "ts-library":
 				return [npx(), ["tsc"]];
@@ -999,6 +1056,13 @@ export class ProcessManager {
 	/**
 	 * Spawn a child process, pipe stdout/stderr through the event/log system,
 	 * resolve on exit code 0, and reject with an error message on non-zero exit.
+	 * @param cmd - The executable to spawn.
+	 * @param args - Arguments to pass to the executable.
+	 * @param opts - Spawn options controlling working directory and node context.
+	 * @param opts.cwd - Working directory for the child process.
+	 * @param opts.nodeId - Node ID used to prefix log output.
+	 * @param opts.nodeName - Human-readable node name used in error messages.
+	 * @returns A promise that resolves on exit code 0 or rejects on failure.
 	 */
 	private spawnAsync(
 		cmd: string,
@@ -1040,9 +1104,7 @@ export class ProcessManager {
 				} else {
 					// Use last line of stderr as the error summary; full output was
 					// already streamed line-by-line above.
-					const summary =
-						stderr.trimEnd().split("\n").pop()?.trim() ||
-						`exited with code ${code}`;
+					const summary = stderr.trimEnd().split("\n").pop()?.trim() || `exited with code ${code}`;
 					reject(new Error(summary));
 				}
 			});
@@ -1151,6 +1213,11 @@ export class ProcessManager {
 	 * Spawn a service process with crash-restart and exponential backoff.
 	 * Tracks consecutive crash count; stops retrying after maxCrashes.
 	 * Stores the ChildProcess in managedProcesses keyed by node ID.
+	 * @param node - The process graph node representing the service to spawn.
+	 * @param cmd - Absolute path or command name of the binary to execute.
+	 * @param args - Command-line arguments forwarded to the child process.
+	 * @param opts - Optional spawn overrides.
+	 * @param opts.env - Environment variables merged into the child process environment.
 	 */
 	private async spawnService(
 		node: ProcessNode,
@@ -1246,7 +1313,8 @@ export class ProcessManager {
 	 * leaves the manager running so the user can restart-tauri.
 	 */
 	async startApp(): Promise<void> {
-		const node = this.graph.nodes.get("orqa-studio") ??
+		const node =
+			this.graph.nodes.get("orqa-studio") ??
 			// fall back to first tauri-app node in the graph
 			[...this.graph.nodes.values()].find((n) => n.kind === "tauri-app");
 		if (!node) return;
@@ -1349,14 +1417,20 @@ export class ProcessManager {
 		for (const timer of this.debounceTimers.values()) clearTimeout(timer);
 		this.debounceTimers.clear();
 		for (const watcher of this.watchers) {
-			try { watcher.close(); } catch { /* already closed */ }
+			try {
+				watcher.close();
+			} catch {
+				/* already closed */
+			}
 		}
 		this.watchers = [];
 
 		// Kill app.
-		const appChild = this.managedProcesses.get("orqa-studio") ??
-			[...this.managedProcesses.entries()]
-				.find(([id]) => this.graph.nodes.get(id)?.kind === "tauri-app")?.[1];
+		const appChild =
+			this.managedProcesses.get("orqa-studio") ??
+			[...this.managedProcesses.entries()].find(
+				([id]) => this.graph.nodes.get(id)?.kind === "tauri-app",
+			)?.[1];
 		if (appChild?.pid) {
 			this.log("ctrl", `Killing app (PID ${appChild.pid})...`);
 			killProcessTree(appChild.pid);
@@ -1382,7 +1456,11 @@ export class ProcessManager {
 		const controlFile = path.join(this.root, ".state", "dev-controller.json");
 		const signalFile = path.join(this.root, ".state", "dev-signal");
 		for (const f of [controlFile, signalFile]) {
-			try { fs.unlinkSync(f); } catch { /* already gone */ }
+			try {
+				fs.unlinkSync(f);
+			} catch {
+				/* already gone */
+			}
 		}
 
 		this.log("ctrl", "Shutdown complete.");
@@ -1391,6 +1469,10 @@ export class ProcessManager {
 	/**
 	 * Emit a NodeEvent for a service node status transition.
 	 * Service events use a subset of triggers; error is optional.
+	 * @param node - The process graph node whose status changed.
+	 * @param status - The new status to broadcast.
+	 * @param trigger - The cause of the status transition.
+	 * @param error - Optional error message string when the transition is failure-driven.
 	 */
 	private emitServiceEvent(
 		node: ProcessNode,
@@ -1441,6 +1523,7 @@ export class ProcessManager {
 	 * Register an fs.FSWatcher for a single node's watchDir.
 	 * Filters events by watchPatterns (file extension match).
 	 * Debounces per-node at 500ms.
+	 * @param node - The process graph node whose watchDir to monitor.
 	 */
 	private watchNode(node: ProcessNode): void {
 		if (!fs.existsSync(node.watchDir)) return;
@@ -1464,6 +1547,7 @@ export class ProcessManager {
 	 * Register individual source watchers for the rust-workspace node.
 	 * Watches each engine crate's src/ and daemon/src/ individually so
 	 * fs.watch recursive mode reliably captures nested .rs file changes.
+	 * @param node - The rust-workspace process graph node to watch.
 	 */
 	private watchRustWorkspace(node: ProcessNode): void {
 		const watchTargets: string[] = [];
@@ -1509,6 +1593,9 @@ export class ProcessManager {
 	 * Returns true if filename matches any of the given glob patterns.
 	 * Patterns are simple extension wildcards (e.g. "**\/*.ts") — we match
 	 * by file extension only, which is sufficient for all current patterns.
+	 * @param filename - The changed file name as reported by fs.watch.
+	 * @param patterns - Glob-style patterns to test against the file extension.
+	 * @returns True when at least one pattern matches the file's extension.
 	 */
 	private matchesPatterns(filename: string, patterns: string[]): boolean {
 		const ext = path.extname(filename);
@@ -1519,6 +1606,8 @@ export class ProcessManager {
 	/**
 	 * Schedule a rebuild for nodeId after the 500ms debounce window.
 	 * Resets the timer on each call so rapid successive changes coalesce.
+	 * @param nodeId - Identifier of the graph node to rebuild.
+	 * @param changedFile - Path of the file that triggered the rebuild, used for logging.
 	 */
 	private scheduleRebuild(nodeId: string, changedFile: string): void {
 		const existing = this.debounceTimers.get(nodeId);
@@ -1540,6 +1629,8 @@ export class ProcessManager {
 	 *
 	 * If the node is already rebuilding, the incoming change is queued and
 	 * processed after the current cascade finishes.
+	 * @param nodeId - Identifier of the graph node that changed.
+	 * @param changedFile - Path of the file that triggered the cascade, used for logging.
 	 */
 	private async triggerCascade(nodeId: string, changedFile: string): Promise<void> {
 		if (this.rebuilding.has(nodeId)) {
@@ -1601,6 +1692,7 @@ export class ProcessManager {
 	/**
 	 * If a change was queued while nodeId was rebuilding, trigger another
 	 * cascade immediately for that queued change.
+	 * @param nodeId - Identifier of the graph node whose pending queue to drain.
 	 */
 	private drainQueue(nodeId: string): void {
 		const queued = this.rebuildQueue.get(nodeId);
@@ -1614,6 +1706,8 @@ export class ProcessManager {
 	 * BFS from nodeId's direct dependents, returning all transitive dependents
 	 * in topological order (breadth-first = shallowest first).
 	 * The starting node itself is not included.
+	 * @param nodeId - Identifier of the root graph node to expand from.
+	 * @returns Ordered array of downstream node IDs, shallowest dependencies first.
 	 */
 	private collectDownstream(nodeId: string): string[] {
 		const visited = new Set<string>();
@@ -1636,6 +1730,7 @@ export class ProcessManager {
 	 * Restart a service node after its workspace dependency was rebuilt.
 	 * Daemon uses its command module; search server is killed and respawned.
 	 * Emits stopping → starting → running events.
+	 * @param nodeId - Identifier of the service graph node to restart.
 	 */
 	private async restartService(nodeId: string): Promise<void> {
 		const node = this.graph.nodes.get(nodeId);
@@ -1676,6 +1771,7 @@ export class ProcessManager {
 	/**
 	 * Run `orqa plugin refresh --plugin <name>` after a successful plugin build
 	 * so the installed plugin copy reflects the new build output.
+	 * @param node - The plugin process graph node whose installed copy to refresh.
 	 */
 	private async refreshPlugin(node: ProcessNode): Promise<void> {
 		const pluginName = node.name.replace(/^@orqastudio\//, "");
@@ -1695,6 +1791,8 @@ export class ProcessManager {
 	/**
 	 * Register a listener for node lifecycle events. Returns an unsubscribe
 	 * function — call it to stop receiving events.
+	 * @param listener - Callback invoked with each NodeEvent as it is emitted.
+	 * @returns An unsubscribe function that removes the listener when called.
 	 */
 	onEvent(listener: (event: NodeEvent) => void): () => void {
 		this.eventListeners.push(listener);
@@ -1706,6 +1804,7 @@ export class ProcessManager {
 	/**
 	 * Emit a NodeEvent to all registered listeners. Called internally by build,
 	 * service, and watch methods as status transitions occur.
+	 * @param event - The NodeEvent to broadcast to all registered listeners.
 	 */
 	protected emitEvent(event: NodeEvent): void {
 		for (const listener of this.eventListeners) listener(event);
@@ -1716,6 +1815,8 @@ export class ProcessManager {
 	/**
 	 * Write a human-readable prefixed log line to stdout.
 	 * Format: HH:MM:SS [nodeId] message
+	 * @param prefix - Short label printed in square brackets, typically a node ID.
+	 * @param msg - The message text; multi-line strings are split and each line prefixed.
 	 */
 	private log(prefix: string, msg: string): void {
 		const ts = new Date().toLocaleTimeString("en-GB", { hour12: false });
@@ -1727,6 +1828,7 @@ export class ProcessManager {
 	/**
 	 * Write a JSON-serialised NodeEvent to stdout as a single line.
 	 * The OrqaDev UI reads these lines to update process status panels.
+	 * @param event - The NodeEvent to serialise and write to stdout.
 	 */
 	private logJson(event: NodeEvent): void {
 		process.stdout.write(JSON.stringify(event) + "\n");
@@ -1736,6 +1838,7 @@ export class ProcessManager {
 
 	/**
 	 * Return a snapshot of all node statuses at the current moment.
+	 * @returns A map of node ID to its current NodeStatus.
 	 */
 	getStatus(): Map<string, NodeStatus> {
 		const result = new Map<string, NodeStatus>();

@@ -13,6 +13,11 @@
 
 	export type DropdownMenuEntry = DropdownMenuItem | DropdownMenuSeparator;
 
+	/**
+	 * Type guard that narrows a dropdown menu entry to a separator.
+	 * @param entry - A menu entry that may be either an action item or a separator
+	 * @returns True when the entry is a separator, narrowing the type accordingly
+	 */
 	function isSeparator(entry: DropdownMenuEntry): entry is DropdownMenuSeparator {
 		return "separator" in entry;
 	}
@@ -42,13 +47,7 @@
 	import DropdownMenuItemComponent from "./dropdown-menu-item.svelte";
 	import DropdownMenuSeparatorComponent from "./dropdown-menu-separator.svelte";
 
-	let {
-		align = "end",
-		side = "bottom",
-		trigger,
-		items,
-		children,
-	}: DropdownMenuProps = $props();
+	let { align = "end", side = "bottom", trigger, items, children }: DropdownMenuProps = $props();
 </script>
 
 <DropdownMenuPrimitive.Root>

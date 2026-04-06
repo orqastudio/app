@@ -114,10 +114,7 @@ function appendMetricLine(projectRoot: string, line: string): void {
  * @param projectRoot - Absolute path to the project root.
  * @param metrics - The request metrics to record.
  */
-export function recordRequest(
-	projectRoot: string,
-	metrics: RequestMetrics,
-): void {
+export function recordRequest(projectRoot: string, metrics: RequestMetrics): void {
 	const event: MetricEvent = { _type: "request", data: metrics };
 	appendMetricLine(projectRoot, JSON.stringify(event));
 }
@@ -127,10 +124,7 @@ export function recordRequest(
  * @param projectRoot - Absolute path to the project root.
  * @param metrics - The agent metrics to record.
  */
-export function recordAgentComplete(
-	projectRoot: string,
-	metrics: AgentMetrics,
-): void {
+export function recordAgentComplete(projectRoot: string, metrics: AgentMetrics): void {
 	const event: MetricEvent = { _type: "agent_complete", data: metrics };
 	appendMetricLine(projectRoot, JSON.stringify(event));
 }
@@ -140,10 +134,7 @@ export function recordAgentComplete(
  * @param projectRoot - Absolute path to the project root.
  * @param metrics - The session metrics to record.
  */
-export function recordSessionSummary(
-	projectRoot: string,
-	metrics: SessionMetrics,
-): void {
+export function recordSessionSummary(projectRoot: string, metrics: SessionMetrics): void {
 	const event: MetricEvent = { _type: "session_summary", data: metrics };
 	appendMetricLine(projectRoot, JSON.stringify(event));
 }
@@ -186,10 +177,7 @@ export function filterEvents<T extends MetricEvent["_type"]>(
 	events: MetricEvent[],
 	type: T,
 ): Extract<MetricEvent, { _type: T }>[] {
-	return events.filter((e) => e._type === type) as Extract<
-		MetricEvent,
-		{ _type: T }
-	>[];
+	return events.filter((e) => e._type === type) as Extract<MetricEvent, { _type: T }>[];
 }
 
 // ---------------------------------------------------------------------------
@@ -276,8 +264,7 @@ export class TokenTracker {
 	 */
 	finalize(costEstimate: number): SessionMetrics {
 		const totalTokens = this.totalInputTokens + this.totalOutputTokens;
-		const overheadRatio =
-			totalTokens > 0 ? this.teamSpawnCost / totalTokens : 0;
+		const overheadRatio = totalTokens > 0 ? this.teamSpawnCost / totalTokens : 0;
 
 		const summary: SessionMetrics = {
 			sessionId: this.sessionId,
@@ -306,10 +293,7 @@ export class TokenTracker {
  * @param periodDays - Number of days back to include in the trend window.
  * @returns Computed trend metrics for the specified period.
  */
-export function computeTrends(
-	projectRoot: string,
-	periodDays: number,
-): TrendMetrics {
+export function computeTrends(projectRoot: string, periodDays: number): TrendMetrics {
 	const events = readMetricEvents(projectRoot);
 	const cutoff = new Date();
 	cutoff.setDate(cutoff.getDate() - periodDays);
@@ -356,9 +340,7 @@ export function computeTrends(
 	}
 
 	const avgCacheHitRate =
-		totalInput > 0
-			? Math.round((totalCacheHit / totalInput) * 1000) / 1000
-			: 0;
+		totalInput > 0 ? Math.round((totalCacheHit / totalInput) * 1000) / 1000 : 0;
 
 	return {
 		periodDays,

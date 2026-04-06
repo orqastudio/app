@@ -73,7 +73,7 @@ export async function runMcpCommand(args: string[]): Promise<void> {
 	if (binary === null) {
 		process.stderr.write(
 			"orqa-mcp-server binary not found. Build it with:\n" +
-			"  cargo build --manifest-path engine/mcp-server/Cargo.toml\n",
+				"  cargo build --manifest-path engine/mcp-server/Cargo.toml\n",
 		);
 		process.exit(1);
 	}
@@ -82,8 +82,10 @@ export async function runMcpCommand(args: string[]): Promise<void> {
 	// The daemon is managed by `orqa dev` in a separate terminal.
 	if (!(await isDaemonHealthy())) {
 		process.stderr.write(
-			"Warning: daemon not running on port " + DAEMON_PORT + ". " +
-			"Start dev environment with `orqa dev` in a separate terminal.\n",
+			"Warning: daemon not running on port " +
+				DAEMON_PORT +
+				". " +
+				"Start dev environment with `orqa dev` in a separate terminal.\n",
 		);
 	}
 

@@ -23,4 +23,7 @@
 	};
 </script>
 
-<span class="inline-block shrink-0 rounded-full {sizeMap[size]} {colorMap[color]}" aria-hidden="true"></span>
+<span
+	class="inline-block shrink-0 rounded-full {sizeMap[size]} {colorMap[color]}"
+	aria-hidden="true"
+></span>

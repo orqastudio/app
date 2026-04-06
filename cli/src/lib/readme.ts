@@ -39,12 +39,14 @@ const LANGUAGE_DETECTORS: Array<{
 	{
 		name: "Tailwind CSS",
 		detect: (dir) => hasFileMatching(dir, /^tailwind\.config/),
-		badge: "![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)",
+		badge:
+			"![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)",
 	},
 	{
 		name: "TypeScript",
 		detect: (dir) => fs.existsSync(path.join(dir, "tsconfig.json")) || hasFileWithExt(dir, ".ts"),
-		badge: "![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)",
+		badge:
+			"![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)",
 	},
 	{
 		name: "Shell",
@@ -55,15 +57,21 @@ const LANGUAGE_DETECTORS: Array<{
 
 function hasFileWithExt(dir: string, ext: string): boolean {
 	try {
-		return fs.readdirSync(dir).some((f) => f.endsWith(ext)) ||
-			fs.readdirSync(path.join(dir, "src")).some((f) => f.endsWith(ext));
-	} catch { return false; }
+		return (
+			fs.readdirSync(dir).some((f) => f.endsWith(ext)) ||
+			fs.readdirSync(path.join(dir, "src")).some((f) => f.endsWith(ext))
+		);
+	} catch {
+		return false;
+	}
 }
 
 function hasFileMatching(dir: string, pattern: RegExp): boolean {
 	try {
 		return fs.readdirSync(dir).some((f) => pattern.test(f));
-	} catch { return false; }
+	} catch {
+		return false;
+	}
 }
 
 // ── Section detection ───────────────────────────────────────────────────────
@@ -131,9 +139,7 @@ function checkReadme(dir: string, name: string): ReadmeAuditResult {
 	const readmePath = path.join(dir, "README.md");
 
 	// Detect languages present in this repo
-	const detectedLanguages = LANGUAGE_DETECTORS
-		.filter((d) => d.detect(dir))
-		.map((d) => d.name);
+	const detectedLanguages = LANGUAGE_DETECTORS.filter((d) => d.detect(dir)).map((d) => d.name);
 
 	if (!fs.existsSync(readmePath)) {
 		return {
@@ -218,9 +224,10 @@ export function generateReadmeTemplate(opts: {
 
 	const banner = `![OrqaStudio](https://github.com/orqastudio/.github/blob/main/assets/banners/banner-1680x240.png?raw=1)`;
 
-	const installSection = opts.category !== "tool"
-		? `\n## Installation\n\n\`\`\`bash\nnpm install ${opts.name}\n\`\`\`\n`
-		: "";
+	const installSection =
+		opts.category !== "tool"
+			? `\n## Installation\n\n\`\`\`bash\nnpm install ${opts.name}\n\`\`\`\n`
+			: "";
 
 	return `${badgeLine}
 

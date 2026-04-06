@@ -3,12 +3,15 @@
 	import { getStores } from "@orqastudio/sdk";
 	import { statusIconName, statusIsSpinning, resolveIcon } from "../../pure/index.js";
 
-
 	const { navigationStore, artifactGraphSDK, projectStore } = getStores();
 
 	let { id, path, displayLabel }: { id?: string; path?: string; displayLabel?: string } = $props();
 
-	/** Extract the project prefix from a qualified ID (e.g. "sdk::EPIC-001" -> "sdk"). */
+	/**
+	 * Extract the project prefix from a qualified ID (e.g. "sdk::EPIC-001" -> "sdk").
+	 * @param qualifiedId - The full artifact ID that may contain a "::" namespace separator
+	 * @returns The project prefix before "::", or null if no separator is present
+	 */
 	function extractProjectPrefix(qualifiedId: string): string | null {
 		const idx = qualifiedId.indexOf("::");
 		return idx >= 0 ? qualifiedId.slice(0, idx) : null;
@@ -19,15 +22,33 @@
 		if (id) {
 			const node = artifactGraphSDK.resolve(id);
 			const label = displayLabel ?? (id.includes("::") ? id.split("::")[1] : id);
-			return { label, resolvable: node !== undefined, targetId: node ? id : null, node: node ?? null, projectPrefix: extractProjectPrefix(id) };
+			return {
+				label,
+				resolvable: node !== undefined,
+				targetId: node ? id : null,
+				node: node ?? null,
+				projectPrefix: extractProjectPrefix(id),
+			};
 		}
 		if (path) {
 			const targetId = artifactGraphSDK.pathIndex.get(path.trim());
 			const node = targetId ? artifactGraphSDK.resolve(targetId) : undefined;
 			const label = displayLabel ?? path;
-			return { label, resolvable: targetId !== undefined, targetId: targetId ?? null, node: node ?? null, projectPrefix: null };
+			return {
+				label,
+				resolvable: targetId !== undefined,
+				targetId: targetId ?? null,
+				node: node ?? null,
+				projectPrefix: null,
+			};
 		}
-		return { label: displayLabel ?? "??", resolvable: false, targetId: null, node: null, projectPrefix: null };
+		return {
+			label: displayLabel ?? "??",
+			resolvable: false,
+			targetId: null,
+			node: null,
+			projectPrefix: null,
+		};
 	});
 
 	/** The type prefix of the resolved artifact (e.g. "EPIC" from "EPIC-001"). */
@@ -60,16 +81,18 @@
 	 */
 	const chipLabel = $derived.by((): string => {
 		if (displayLabel) return displayLabel;
-		if (displayMode === "title" && resolved.node?.title && resolved.node.title !== resolved.targetId) {
+		if (
+			displayMode === "title" &&
+			resolved.node?.title &&
+			resolved.node.title !== resolved.targetId
+		) {
 			return resolved.node.title;
 		}
 		return resolved.label;
 	});
 
 	/** Whether the chip label is a title (not the raw ID). */
-	const showingTitle = $derived(
-		resolved.node !== null && chipLabel !== resolved.targetId,
-	);
+	const showingTitle = $derived(resolved.node !== null && chipLabel !== resolved.targetId);
 
 	/** Status icon component for the resolved node, or null if no status. */
 	const StatusIcon = $derived(
@@ -77,9 +100,7 @@
 	);
 
 	/** Whether the status icon should spin (active/in-progress). */
-	const spinning = $derived(
-		resolved.node?.status ? statusIsSpinning(resolved.node.status) : false,
-	);
+	const spinning = $derived(resolved.node?.status ? statusIsSpinning(resolved.node.status) : false);
 
 	/** First line of the description for use in the popover. */
 	const descriptionSnippet = $derived.by(() => {
@@ -89,6 +110,7 @@
 		return firstLine.length > 120 ? firstLine.slice(0, 120) + "…" : firstLine;
 	});
 
+	/** Navigate to the resolved artifact when the chip is clicked. Does nothing if the artifact has no target ID. */
 	function handleClick() {
 		if (resolved.targetId) {
 			navigationStore.navigateToArtifact(resolved.targetId);
@@ -102,7 +124,7 @@
 			{#snippet child({ props })}
 				<button
 					{...props}
-					class="inline-flex items-center gap-1 whitespace-nowrap rounded border px-1.5 py-0.5 font-mono text-[11px] font-medium transition-all"
+					class="inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[11px] font-medium whitespace-nowrap transition-all"
 					style={chipColor
 						? `background-color: color-mix(in srgb, ${chipColor} 15%, transparent); border-color: color-mix(in srgb, ${chipColor} 40%, transparent); color: ${chipColor};`
 						: "background-color: rgb(6 182 212 / 0.1); border-color: rgb(6 182 212 / 0.3); color: rgb(34 211 238);"}
@@ -112,10 +134,12 @@
 						<StatusIcon class="h-3 w-3 shrink-0 {spinning ? 'status-spin' : ''}" />
 					{/if}
 					{#if resolved.projectPrefix}
-						<span class="opacity-50 text-[9px]">{resolved.projectPrefix}</span>
+						<span class="text-[9px] opacity-50">{resolved.projectPrefix}</span>
 					{/if}
 					{#if showingTitle}
-						<span class="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">{chipLabel}</span>
+						<span class="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
+							>{chipLabel}</span
+						>
 					{:else}
 						{chipLabel}
 					{/if}
@@ -133,11 +157,11 @@
 						{/if}
 						<span class="font-mono font-semibold">{node.id}</span>
 						{#if node.status}
-							<span class="capitalize text-muted-foreground">· {node.status}</span>
+							<span class="text-muted-foreground capitalize">· {node.status}</span>
 						{/if}
 					</div>
 					{#if node.title && node.title !== node.id}
-						<p class="font-medium leading-snug">{node.title}</p>
+						<p class="leading-snug font-medium">{node.title}</p>
 					{/if}
 					{#if descriptionSnippet}
 						<p class="text-muted-foreground">{descriptionSnippet}</p>
@@ -154,7 +178,7 @@
 			{#snippet child({ props })}
 				<span
 					{...props}
-					class="inline-flex items-center gap-1 whitespace-nowrap rounded border border-warning/30 bg-warning/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-warning"
+					class="border-warning/30 bg-warning/10 text-warning inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[11px] font-medium whitespace-nowrap"
 				>
 					<Icon name="link-2-off" size="xs" />
 					{resolved.label}

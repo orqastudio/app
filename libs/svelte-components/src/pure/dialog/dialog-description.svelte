@@ -2,10 +2,8 @@
 	import { Dialog as DialogPrimitive } from "bits-ui";
 	import { cn } from "../../utils/cn.js";
 
-	let {
-		ref = $bindable(null),
-		...restProps
-	}: Omit<DialogPrimitive.DescriptionProps, "class"> = $props();
+	let { ref = $bindable(null), ...restProps }: Omit<DialogPrimitive.DescriptionProps, "class"> =
+		$props();
 </script>
 
 <DialogPrimitive.Description

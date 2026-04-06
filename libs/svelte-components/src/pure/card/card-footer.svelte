@@ -9,19 +9,12 @@
 		children?: Snippet;
 	}
 
-	let {
-		compact = false,
-		children,
-		...restProps
-	}: CardFooterProps = $props();
+	let { compact = false, children, ...restProps }: CardFooterProps = $props();
 </script>
 
 <div
 	data-slot="card-footer"
-	class={cn(
-		"flex items-center px-6",
-		compact ? "pt-2" : "[.border-t]:pt-6",
-	)}
+	class={cn("flex items-center px-6", compact ? "pt-2" : "[.border-t]:pt-6")}
 	{...restProps}
 >
 	{@render children?.()}

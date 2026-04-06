@@ -22,10 +22,7 @@ export function parseFrontmatterFromContent(
 	const fmEnd = content.indexOf("\n---", 4);
 	if (fmEnd === -1) return null;
 	try {
-		const fm = parseYaml(content.substring(4, fmEnd)) as Record<
-			string,
-			unknown
-		>;
+		const fm = parseYaml(content.substring(4, fmEnd)) as Record<string, unknown>;
 		if (!fm || typeof fm !== "object") return null;
 		return [fm, content.substring(fmEnd + 4)];
 	} catch {
@@ -39,9 +36,7 @@ export function parseFrontmatterFromContent(
  * @param filePath - Absolute path to the file to parse.
  * @returns The parsed frontmatter object, or null if parsing fails.
  */
-export function parseFrontmatterFromFile(
-	filePath: string,
-): Record<string, unknown> | null {
+export function parseFrontmatterFromFile(filePath: string): Record<string, unknown> | null {
 	let content: string;
 	try {
 		content = readFileSync(filePath, "utf-8");

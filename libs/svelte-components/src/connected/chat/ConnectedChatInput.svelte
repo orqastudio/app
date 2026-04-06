@@ -17,17 +17,18 @@
 
 	const isStreaming = $derived(conversationStore.isStreaming);
 
+	/**
+	 * Send a message into the active session via the conversation store.
+	 * @param content - The trimmed message text to send
+	 */
 	function handleSubmit(content: string) {
 		conversationStore.sendMessage(sessionId, content);
 	}
 
+	/** Stop the in-progress streaming response for the active session. */
 	function handleStop() {
 		conversationStore.stopStreaming(sessionId);
 	}
 </script>
 
-<ChatInput
-	{isStreaming}
-	onsubmit={handleSubmit}
-	onstop={handleStop}
-/>
+<ChatInput {isStreaming} onsubmit={handleSubmit} onstop={handleStop} />

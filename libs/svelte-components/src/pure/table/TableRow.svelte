@@ -24,7 +24,7 @@
 	data-slot="table-row"
 	class={cn(
 		"border-b transition-colors",
-		interactive && "cursor-pointer hover:bg-muted/30",
+		interactive && "hover:bg-muted/30 cursor-pointer",
 		selected && "bg-accent",
 	)}
 	{...restProps}

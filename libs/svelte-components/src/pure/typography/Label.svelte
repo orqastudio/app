@@ -13,7 +13,11 @@
 	let { htmlFor, required = false, children, ...restProps }: LabelProps = $props();
 </script>
 
-<label for={htmlFor} class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" {...restProps}>
+<label
+	for={htmlFor}
+	class="leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+	{...restProps}
+>
 	<Text variant="label">
 		{@render children?.()}
 		{#if required}<span class="text-destructive ml-0.5">*</span>{/if}

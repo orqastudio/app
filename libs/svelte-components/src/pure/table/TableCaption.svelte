@@ -14,7 +14,7 @@
 <caption
 	bind:this={ref}
 	data-slot="table-caption"
-	class="mt-2 text-sm text-muted-foreground"
+	class="text-muted-foreground mt-2 text-sm"
 	{...restProps}
 >
 	{@render children?.()}

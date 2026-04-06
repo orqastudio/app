@@ -55,7 +55,8 @@
 			</span>
 			{#if trend !== undefined && trend !== null}
 				<span class="text-xs font-medium {trendClass}">
-					{trendArrow(trend)} {formatTrend(trend)}
+					{trendArrow(trend)}
+					{formatTrend(trend)}
 				</span>
 			{/if}
 		</HStack>

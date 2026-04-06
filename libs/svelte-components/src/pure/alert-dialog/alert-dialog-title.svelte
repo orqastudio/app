@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
 
-	let {
-		ref = $bindable(null),
-		...restProps
-	}: Omit<AlertDialogPrimitive.TitleProps, "class"> = $props();
+	let { ref = $bindable(null), ...restProps }: Omit<AlertDialogPrimitive.TitleProps, "class"> =
+		$props();
 </script>
 
 <AlertDialogPrimitive.Title

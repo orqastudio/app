@@ -118,10 +118,7 @@ function printAgentSummary(agents: AgentMetrics[]): void {
 
 	// Sort by total tokens descending
 	const sorted = [...agents].sort(
-		(a, b) =>
-			b.totalInputTokens +
-			b.totalOutputTokens -
-			(a.totalInputTokens + a.totalOutputTokens),
+		(a, b) => b.totalInputTokens + b.totalOutputTokens - (a.totalInputTokens + a.totalOutputTokens),
 	);
 
 	console.log("Top Agents by Token Usage");
@@ -153,10 +150,7 @@ function printTrends(projectRoot: string, periodDays: number): void {
 
 	if (Object.keys(trends.modelDistribution).length > 0) {
 		console.log("  Model distribution:");
-		const total = Object.values(trends.modelDistribution).reduce(
-			(s, n) => s + n,
-			0,
-		);
+		const total = Object.values(trends.modelDistribution).reduce((s, n) => s + n, 0);
 		for (const [model, count] of Object.entries(trends.modelDistribution)) {
 			const pct = total > 0 ? ((count / total) * 100).toFixed(1) : "0.0";
 			console.log(`    ${model}: ${count} (${pct}%)`);
@@ -189,17 +183,12 @@ export async function runMetricsCommand(args: string[]): Promise<void> {
 		const output: Record<string, unknown> = {};
 
 		if (options.showSession) {
-			const sessions = filterEvents(events, "session_summary").map(
-				(e) => e.data,
-			);
-			output.session =
-				sessions.length > 0 ? sessions[sessions.length - 1] : null;
+			const sessions = filterEvents(events, "session_summary").map((e) => e.data);
+			output.session = sessions.length > 0 ? sessions[sessions.length - 1] : null;
 		}
 
 		if (options.showAgents) {
-			output.agents = filterEvents(events, "agent_complete").map(
-				(e) => e.data,
-			);
+			output.agents = filterEvents(events, "agent_complete").map((e) => e.data);
 		}
 
 		if (options.showTrends) {
@@ -211,9 +200,7 @@ export async function runMetricsCommand(args: string[]): Promise<void> {
 	}
 
 	if (options.showSession) {
-		const sessions = filterEvents(events, "session_summary").map(
-			(e) => e.data,
-		);
+		const sessions = filterEvents(events, "session_summary").map((e) => e.data);
 		printSessionSummary(sessions);
 	}
 

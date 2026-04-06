@@ -35,10 +35,8 @@ export async function fetchRegistry(
 			fetchRegistry("community"),
 		]);
 
-		const officialPlugins =
-			official.status === "fulfilled" ? official.value.plugins : [];
-		const communityPlugins =
-			community.status === "fulfilled" ? community.value.plugins : [];
+		const officialPlugins = official.status === "fulfilled" ? official.value.plugins : [];
+		const communityPlugins = community.status === "fulfilled" ? community.value.plugins : [];
 
 		return {
 			version: 1,

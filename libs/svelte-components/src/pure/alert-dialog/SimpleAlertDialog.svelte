@@ -83,7 +83,12 @@
 		{:else if onConfirm}
 			<AlertDialogFooter>
 				<AlertDialogCancel onclick={() => onCancel?.()}>{cancelLabel}</AlertDialogCancel>
-				<AlertDialogAction onclick={() => { onConfirm(); open = false; }}>{confirmLabel}</AlertDialogAction>
+				<AlertDialogAction
+					onclick={() => {
+						onConfirm();
+						open = false;
+					}}>{confirmLabel}</AlertDialogAction
+				>
 			</AlertDialogFooter>
 		{/if}
 	</AlertDialogContent>

@@ -25,14 +25,14 @@
 	} = $props();
 </script>
 
-<div class="flex w-12 flex-col items-center border-r border-border bg-muted/30 py-2">
+<div class="border-border bg-muted/30 flex w-12 flex-col items-center border-r py-2">
 	{#each topItems as item (item.key)}
 		<Tooltip side="right">
 			{#snippet trigger({ props })}
 				<button
 					{...props}
 					class={cn(
-						"flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+						"text-muted-foreground hover:bg-accent hover:text-accent-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors",
 						item.active && "bg-accent text-accent-foreground",
 					)}
 					onclick={item.onclick}
@@ -62,7 +62,7 @@
 				<button
 					{...props}
 					class={cn(
-						"flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+						"text-muted-foreground hover:bg-accent hover:text-accent-foreground flex h-9 w-9 items-center justify-center rounded-md transition-colors",
 						item.active && "bg-accent text-accent-foreground",
 					)}
 					onclick={item.onclick}

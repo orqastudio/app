@@ -7,10 +7,7 @@
 		children?: import("svelte").Snippet;
 	}
 
-	let {
-		size = "base",
-		children,
-	}: CardTitleProps = $props();
+	let { size = "base", children }: CardTitleProps = $props();
 
 	const sizeMap: Record<string, string> = {
 		xs: "text-xs font-semibold",

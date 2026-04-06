@@ -18,49 +18,49 @@ const DAEMON_URL = `http://127.0.0.1:${DAEMON_PORT}`;
 
 /** Run the UserPromptSubmit hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const userMessage = input.user_message ?? input.prompt ?? "";
-  const agentType = input.agent_type ?? "orchestrator";
+	const userMessage = input.user_message ?? input.prompt ?? "";
+	const agentType = input.agent_type ?? "orchestrator";
 
-  // Daemon health gate — block if unreachable
-  try {
-    await fetch(`${DAEMON_URL}/health`, {
-      signal: AbortSignal.timeout(2000),
-    });
-  } catch {
-    outputBlock([
-      "OrqaStudio daemon is not running. Rule enforcement requires the daemon.",
-      "",
-      "Start it with: orqa daemon start",
-      "",
-      `Daemon expected on port ${DAEMON_PORT}.`,
-    ]);
-  }
+	// Daemon health gate — block if unreachable
+	try {
+		await fetch(`${DAEMON_URL}/health`, {
+			signal: AbortSignal.timeout(2000),
+		});
+	} catch {
+		outputBlock([
+			"OrqaStudio daemon is not running. Rule enforcement requires the daemon.",
+			"",
+			"Start it with: orqa daemon start",
+			"",
+			`Daemon expected on port ${DAEMON_PORT}.`,
+		]);
+	}
 
-  if (!userMessage) {
-    process.exit(0);
-  }
+	if (!userMessage) {
+		process.exit(0);
+	}
 
-  // Call the prompt pipeline via the daemon
-  const context = {
-    event: "PromptSubmit" as const,
-    user_message: userMessage,
-    agent_type: agentType,
-  };
+	// Call the prompt pipeline via the daemon
+	const context = {
+		event: "PromptSubmit" as const,
+		user_message: userMessage,
+		agent_type: agentType,
+	};
 
-  let result: HookResult;
-  try {
-    result = await callDaemon<HookResult>("/hook", context);
-  } catch {
-    process.exit(0);
-  }
+	let result: HookResult;
+	try {
+		result = await callDaemon<HookResult>("/hook", context);
+	} catch {
+		process.exit(0);
+	}
 
-  if (result.messages?.length > 0) {
-    outputWarn(result.messages);
-  }
+	if (result.messages?.length > 0) {
+		outputWarn(result.messages);
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

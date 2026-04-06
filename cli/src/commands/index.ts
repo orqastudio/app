@@ -57,8 +57,7 @@ function parseOptions(args: string[]): IndexOptions {
 	// Resolve model dir: CLI arg > env var > default
 	if (!modelDir) {
 		modelDir =
-			process.env.ORQA_MODEL_DIR ??
-			join(resolve(projectPath), "models", "all-MiniLM-L6-v2");
+			process.env.ORQA_MODEL_DIR ?? join(resolve(projectPath), "models", "all-MiniLM-L6-v2");
 	}
 
 	// Resolve db path: CLI arg > default
@@ -110,9 +109,7 @@ export async function runIndexCommand(args: string[]): Promise<void> {
 	const manifest = findSearchServerManifest(options.projectPath);
 
 	if (!manifest) {
-		console.error(
-			"Search server crate not found. Ensure engine/search exists.",
-		);
+		console.error("Search server crate not found. Ensure engine/search exists.");
 		process.exit(1);
 	}
 
@@ -240,9 +237,7 @@ async function runSearchServerCommand(
 					responsesReceived++;
 
 					if (response.error) {
-						console.error(
-							`Error (${response.error.code}): ${response.error.message}`,
-						);
+						console.error(`Error (${response.error.code}): ${response.error.message}`);
 						hasError = true;
 					} else if (response.result) {
 						const result = response.result;
@@ -251,9 +246,7 @@ async function runSearchServerCommand(
 								`  Chunks: ${result.chunk_count}, Indexed: ${result.is_indexed}, Embeddings: ${result.has_embeddings}`,
 							);
 						} else if (result.downloaded !== undefined) {
-							console.log(
-								`  Downloaded to: ${result.model_dir}`,
-							);
+							console.log(`  Downloaded to: ${result.model_dir}`);
 						} else if (typeof result === "boolean" && result) {
 							console.log("  Embedder initialized.");
 						}

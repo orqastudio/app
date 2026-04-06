@@ -50,7 +50,7 @@
 		"flex flex-col rounded-xl",
 		variantMap[variant],
 		gapMap[gap],
-		interactive && "cursor-pointer transition-colors hover:bg-accent/30",
+		interactive && "hover:bg-accent/30 cursor-pointer transition-colors",
 		full && "h-full",
 	)}
 	{onclick}

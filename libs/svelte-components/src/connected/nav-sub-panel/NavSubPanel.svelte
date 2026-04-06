@@ -12,9 +12,12 @@
 	} = $props();
 </script>
 
-<div class="flex flex-col overflow-hidden border-r border-border bg-muted/10" style="width: {width}px">
-	<div class="flex h-10 items-center border-b border-border px-3">
-		<h2 class="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+<div
+	class="border-border bg-muted/10 flex flex-col overflow-hidden border-r"
+	style="width: {width}px"
+>
+	<div class="border-border flex h-10 items-center border-b px-3">
+		<h2 class="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
 			{title}
 		</h2>
 	</div>

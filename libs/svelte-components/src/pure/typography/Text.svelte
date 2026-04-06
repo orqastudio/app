@@ -33,23 +33,30 @@
 		children?: Snippet;
 	}
 
-	let { variant = "body", truncate = false, tone, block = false, lineClamp, children }: TextProps = $props();
+	let {
+		variant = "body",
+		truncate = false,
+		tone,
+		block = false,
+		lineClamp,
+		children,
+	}: TextProps = $props();
 
 	// Maps each variant to its fixed Tailwind class combination.
 	const variantClasses: Record<TextVariant, string> = {
-		"body": "text-sm text-foreground",
+		body: "text-sm text-foreground",
 		"body-muted": "text-sm text-muted-foreground",
 		"body-strong": "text-sm font-semibold text-foreground",
 		"body-strong-muted": "text-sm font-semibold text-muted-foreground",
-		"caption": "text-xs text-muted-foreground",
+		caption: "text-xs text-muted-foreground",
 		"caption-strong": "text-xs font-semibold text-muted-foreground",
 		"caption-mono": "text-xs font-mono text-muted-foreground",
 		"caption-tabular": "text-xs font-mono tabular-nums text-muted-foreground",
-		"label": "text-sm font-medium",
-		"overline": "text-xs font-semibold uppercase tracking-wide",
+		label: "text-sm font-medium",
+		overline: "text-xs font-semibold uppercase tracking-wide",
 		"overline-muted": "text-xs font-semibold uppercase tracking-wide text-muted-foreground",
-		"mono": "text-xs font-mono",
-		"tabular": "text-xs font-mono tabular-nums",
+		mono: "text-xs font-mono",
+		tabular: "text-xs font-mono tabular-nums",
 		"heading-xl": "text-xl font-semibold tracking-tight",
 		"heading-lg": "text-lg font-semibold",
 		"heading-base": "text-base font-semibold",
@@ -86,9 +93,11 @@
 		[
 			variantClasses[variant],
 			tone ? toneClasses[tone] : null,
-			truncate ? "truncate" : (lineClamp ? lineClampClasses[lineClamp] : null),
+			truncate ? "truncate" : lineClamp ? lineClampClasses[lineClamp] : null,
 			block ? "block" : null,
-		].filter(Boolean).join(" ")
+		]
+			.filter(Boolean)
+			.join(" "),
 	);
 
 	// Determine the rendered element: heading variants get semantic h tags, block=true gets <p>, default is <span>.

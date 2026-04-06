@@ -28,14 +28,12 @@
 	// Derive active from the navigation store when path is provided.
 	// Each instance derives its own active state independently —
 	// only the item whose active state actually CHANGES re-renders.
-	const isActive = $derived(
-		path ? navigationStore.selectedArtifactPath === path : active,
-	);
+	const isActive = $derived(path ? navigationStore.selectedArtifactPath === path : active);
 </script>
 
 <button
 	class={cn(
-		"flex w-full flex-col gap-0.5 rounded px-2 py-1.5 text-left hover:bg-accent/50",
+		"hover:bg-accent/50 flex w-full flex-col gap-0.5 rounded px-2 py-1.5 text-left",
 		isActive && "bg-accent",
 	)}
 	{onclick}
@@ -44,11 +42,14 @@
 		{#if status}
 			<StatusIndicator {status} mode="dot" />
 		{:else if badge}
-			<span class="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] font-normal text-muted-foreground">{badge}</span>
+			<span
+				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 text-[10px] font-normal"
+				>{badge}</span
+			>
 		{/if}
 		<span class="truncate">{label}</span>
 	</span>
 	{#if description}
-		<p class="truncate text-xs text-muted-foreground">{description}</p>
+		<p class="text-muted-foreground truncate text-xs">{description}</p>
 	{/if}
 </button>

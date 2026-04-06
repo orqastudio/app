@@ -39,13 +39,6 @@ component. For a centered card on a padded background, wrap Center in Panel. -->
 	const flexClass = $derived(flex != null ? flexMap[flex] : undefined);
 </script>
 
-<div
-	class={cn(
-		"flex items-center justify-center",
-		full && "h-full",
-		gapClass,
-		flexClass,
-	)}
->
+<div class={cn("flex items-center justify-center", full && "h-full", gapClass, flexClass)}>
 	{@render children?.()}
 </div>

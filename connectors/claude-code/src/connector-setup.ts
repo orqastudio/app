@@ -46,9 +46,7 @@ export interface ConnectorSetupResult {
  * @param projectRoot - Absolute path to the project root directory.
  * @returns Setup result indicating what was created or updated.
  */
-export function runConnectorSetup(
-	projectRoot: string,
-): ConnectorSetupResult {
+export function runConnectorSetup(projectRoot: string): ConnectorSetupResult {
 	const claudeDir = path.join(projectRoot, ".claude");
 
 	// Ensure .claude/ exists

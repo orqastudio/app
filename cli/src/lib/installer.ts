@@ -108,7 +108,9 @@ export function detectMethodologyConflict(
 						existingPlugin: installed.name,
 					};
 				}
-			} catch { /* skip invalid */ }
+			} catch {
+				/* skip invalid */
+			}
 		}
 	}
 
@@ -141,8 +143,8 @@ function enforceOneMethodology(manifest: PluginManifest, projectRoot: string): v
 				if (installedPurpose.includes("methodology")) {
 					throw new Error(
 						`Cannot install methodology plugin '${manifest.name}': project already has ` +
-						`methodology plugin '${installed.name}' installed. Only one methodology plugin ` +
-						`is allowed per project. Uninstall '${installed.name}' first.`,
+							`methodology plugin '${installed.name}' installed. Only one methodology plugin ` +
+							`is allowed per project. Uninstall '${installed.name}' first.`,
 					);
 				}
 			} catch (err) {
@@ -179,8 +181,8 @@ function enforceOnePerStage(manifest: PluginManifest, projectRoot: string): void
 				if (existingSlot === incomingSlot) {
 					throw new Error(
 						`Cannot install workflow plugin '${manifest.name}': stage slot '${incomingSlot}' ` +
-						`is already filled by '${installed.name}'. Only one workflow plugin may occupy ` +
-						`each stage slot. Uninstall '${installed.name}' first.`,
+							`is already filled by '${installed.name}'. Only one workflow plugin may occupy ` +
+							`each stage slot. Uninstall '${installed.name}' first.`,
 					);
 				}
 			} catch (err) {
@@ -197,10 +199,7 @@ function enforceOnePerStage(manifest: PluginManifest, projectRoot: string): void
  * @param projectRoot - Absolute path to the project root.
  * @returns Array of key collision results.
  */
-function detectCollisions(
-	manifest: PluginManifest,
-	projectRoot: string,
-): KeyCollisionResult[] {
+function detectCollisions(manifest: PluginManifest, projectRoot: string): KeyCollisionResult[] {
 	const collisions: KeyCollisionResult[] = [];
 
 	// Build existing relationship map: key → { source, rel }
@@ -223,7 +222,9 @@ function detectCollisions(
 				for (const rel of installed.provides.relationships) {
 					existing.push({ source: installed.name, rel });
 				}
-			} catch { /* skip invalid */ }
+			} catch {
+				/* skip invalid */
+			}
 		}
 	}
 
@@ -282,9 +283,7 @@ export async function installPlugin(options: InstallOptions): Promise<InstallRes
 		return installFromGitHub(options.source, options.version, dir, root, options.postInstall);
 	}
 
-	throw new Error(
-		`Invalid source: ${options.source}. Use owner/repo for GitHub or a local path.`,
-	);
+	throw new Error(`Invalid source: ${options.source}. Use owner/repo for GitHub or a local path.`);
 }
 
 async function installFromLocalPath(
@@ -348,9 +347,7 @@ async function installFromGitHub(
 
 	const response = await fetch(archiveUrl);
 	if (!response.ok) {
-		throw new Error(
-			`Failed to download ${archiveUrl}: ${response.status} ${response.statusText}`,
-		);
+		throw new Error(`Failed to download ${archiveUrl}: ${response.status} ${response.statusText}`);
 	}
 
 	const buffer = Buffer.from(await response.arrayBuffer());
@@ -365,9 +362,7 @@ async function installFromGitHub(
 
 		// Find the manifest in extracted contents
 		const entries = fs.readdirSync(tmpDir);
-		const extractedDir = entries.length === 1
-			? path.join(tmpDir, entries[0])
-			: tmpDir;
+		const extractedDir = entries.length === 1 ? path.join(tmpDir, entries[0]) : tmpDir;
 
 		const manifest = readManifest(extractedDir);
 		const errors = validateManifest(manifest);
@@ -427,10 +422,9 @@ async function installFromGitHub(
 }
 
 async function fetchLatestTag(repo: string): Promise<string> {
-	const response = await fetch(
-		`https://api.github.com/repos/${repo}/releases/latest`,
-		{ headers: { Accept: "application/vnd.github.v3+json" } },
-	);
+	const response = await fetch(`https://api.github.com/repos/${repo}/releases/latest`, {
+		headers: { Accept: "application/vnd.github.v3+json" },
+	});
 
 	if (!response.ok) {
 		throw new Error(`Failed to fetch latest release for ${repo}: ${response.status}`);
@@ -547,4 +541,3 @@ export function listInstalledPlugins(projectRoot?: string): InstallResult[] {
 
 	return results;
 }
-

@@ -3969,6 +3969,7 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "tray-icon",
+ "uuid",
  "windows-sys 0.60.2",
 ]
 

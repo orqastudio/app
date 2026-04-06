@@ -1,8 +1,11 @@
 <script lang="ts" module>
-	export type BreadcrumbItem =
-		| string
-		| { label: string; onClick?: () => void };
+	export type BreadcrumbItem = string | { label: string; onClick?: () => void };
 
+	/**
+	 * Normalise a breadcrumb item to the canonical object shape with a label and optional click handler.
+	 * @param item - A breadcrumb segment as either a plain string or a structured object
+	 * @returns An object with a label string and an optional onClick callback
+	 */
 	function normalise(item: BreadcrumbItem): { label: string; onClick?: () => void } {
 		return typeof item === "string" ? { label: item } : item;
 	}
@@ -34,30 +37,30 @@
 <nav class="flex items-center gap-1 text-sm" aria-label="Breadcrumb">
 	{#if showHome && onHome}
 		<button
-			class="flex items-center text-muted-foreground hover:text-foreground transition-colors"
+			class="text-muted-foreground hover:text-foreground flex items-center transition-colors"
 			onclick={onHome}
 		>
 			<HomeIcon class="h-3.5 w-3.5" />
 		</button>
 		{#if normalised.length > 0}
-			<ChevronRightIcon class="h-3 w-3 shrink-0 text-muted-foreground/60" />
+			<ChevronRightIcon class="text-muted-foreground/60 h-3 w-3 shrink-0" />
 		{/if}
 	{/if}
 
 	{#each normalised as item, i (i)}
 		{#if i > 0}
-			<ChevronRightIcon class="h-3 w-3 shrink-0 text-muted-foreground/60" />
+			<ChevronRightIcon class="text-muted-foreground/60 h-3 w-3 shrink-0" />
 		{/if}
 		{#if i === normalised.length - 1}
 			<span
-				class="font-medium text-foreground truncate"
+				class="text-foreground truncate font-medium"
 				style={maxWidth ? `max-width: ${maxWidth}` : undefined}
 			>
 				{item.label}
 			</span>
 		{:else if item.onClick}
 			<button
-				class="text-muted-foreground hover:text-foreground transition-colors truncate"
+				class="text-muted-foreground hover:text-foreground truncate transition-colors"
 				style={maxWidth ? `max-width: ${maxWidth}` : undefined}
 				onclick={item.onClick}
 			>

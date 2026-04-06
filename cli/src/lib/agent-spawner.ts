@@ -241,13 +241,15 @@ export interface FindingsDocument {
  * @returns Markdown string with YAML frontmatter header and body.
  */
 export function serializeFindings(doc: FindingsDocument): string {
-	const changedFilesYaml = doc.header.changedFiles.length > 0
-		? doc.header.changedFiles.map((f) => `  - "${f}"`).join("\n")
-		: "  []";
+	const changedFilesYaml =
+		doc.header.changedFiles.length > 0
+			? doc.header.changedFiles.map((f) => `  - "${f}"`).join("\n")
+			: "  []";
 
-	const followUpsYaml = doc.header.followUps.length > 0
-		? doc.header.followUps.map((f) => `  - "${f}"`).join("\n")
-		: "  []";
+	const followUpsYaml =
+		doc.header.followUps.length > 0
+			? doc.header.followUps.map((f) => `  - "${f}"`).join("\n")
+			: "  []";
 
 	return [
 		"---",
@@ -408,10 +410,7 @@ export function createAgentConfig(params: CreateAgentParams): AgentSpawnConfig {
 	const toolConstraints = ROLE_TOOL_CONSTRAINTS[role];
 
 	// Compute findings path if team context is provided
-	const findingsPath =
-		teamName && taskId
-			? `.state/team/${teamName}/task-${taskId}.md`
-			: null;
+	const findingsPath = teamName && taskId ? `.state/team/${teamName}/task-${taskId}.md` : null;
 
 	// Default token budget per role tier if not specified
 	const effectiveBudget = tokenBudget ?? DEFAULT_TOKEN_BUDGETS[modelTier];

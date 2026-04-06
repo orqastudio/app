@@ -46,13 +46,11 @@ const REQUIRED_PLUGIN_CATEGORIES = ["language", "framework"];
 
 function checkRequiredCategories(plugins: LoadedPlugin[]): PluginIntegrityFinding[] {
 	const categories = new Set(plugins.map((p) => p.category).filter(Boolean));
-	return REQUIRED_PLUGIN_CATEGORIES
-		.filter((cat) => !categories.has(cat))
-		.map((cat) => ({
-			plugin: "(project)",
-			severity: "warning" as const,
-			message: `No plugin provides the "${cat}" category — consider installing one`,
-		}));
+	return REQUIRED_PLUGIN_CATEGORIES.filter((cat) => !categories.has(cat)).map((cat) => ({
+		plugin: "(project)",
+		severity: "warning" as const,
+		message: `No plugin provides the "${cat}" category — consider installing one`,
+	}));
 }
 
 function checkPluginDependencies(plugins: LoadedPlugin[]): PluginIntegrityFinding[] {
@@ -151,7 +149,6 @@ const PLUGIN_CONFIG_KNOWN_FIELDS: Record<string, string> = {
 /** Required fields for project.json. */
 const PROJECT_JSON_REQUIRED = ["name"];
 
-
 function validateProjectJson(filePath: string): SchemaFinding[] {
 	const findings: SchemaFinding[] = [];
 	const relPath = relative(process.cwd(), filePath);
@@ -225,7 +222,11 @@ function validateProjectJson(filePath: string): SchemaFinding[] {
 	const plugins = data["plugins"];
 	if (plugins && typeof plugins === "object" && !Array.isArray(plugins)) {
 		for (const [pluginName, pluginConfig] of Object.entries(plugins as Record<string, unknown>)) {
-			if (typeof pluginConfig !== "object" || pluginConfig === null || Array.isArray(pluginConfig)) {
+			if (
+				typeof pluginConfig !== "object" ||
+				pluginConfig === null ||
+				Array.isArray(pluginConfig)
+			) {
 				findings.push({
 					file: relPath,
 					field: `plugins.${pluginName}`,
@@ -348,7 +349,8 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 			continue;
 		}
 		for (const entry of entries) {
-			if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "node_modules")
+				continue;
 			const manifestPath = join(containerDir, entry.name, "orqa-plugin.json");
 			if (existsSync(manifestPath)) {
 				findings.push(...validatePluginManifest(manifestPath));
@@ -367,7 +369,8 @@ function discoverAndValidate(projectRoot: string): SchemaFinding[] {
 			continue;
 		}
 		for (const entry of entries) {
-			if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "node_modules") continue;
+			if (!entry.isDirectory() || entry.name.startsWith(".") || entry.name === "node_modules")
+				continue;
 			const manifestPath = join(containerDir, entry.name, "orqa-plugin.json");
 			if (!existsSync(manifestPath)) continue;
 			try {

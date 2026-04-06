@@ -10,8 +10,4 @@
 	} = $props();
 </script>
 
-<RadioGroupPrimitive.Root
-	bind:value
-	data-slot="radio-group"
-	class="flex flex-col gap-2"
-/>
+<RadioGroupPrimitive.Root bind:value data-slot="radio-group" class="flex flex-col gap-2" />

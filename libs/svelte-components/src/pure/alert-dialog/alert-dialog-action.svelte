@@ -2,10 +2,8 @@
 	import { AlertDialog as AlertDialogPrimitive } from "bits-ui";
 	import { buttonVariants } from "../button/index.js";
 
-	let {
-		ref = $bindable(null),
-		...restProps
-	}: Omit<AlertDialogPrimitive.ActionProps, "class"> = $props();
+	let { ref = $bindable(null), ...restProps }: Omit<AlertDialogPrimitive.ActionProps, "class"> =
+		$props();
 </script>
 
 <AlertDialogPrimitive.Action

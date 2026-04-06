@@ -47,12 +47,12 @@
 					<p class="text-xs font-medium {styles.label}">
 						{typeLabels[entry.type as ToastType]}
 					</p>
-					<p class="mt-0.5 text-xs text-muted-foreground">
+					<p class="text-muted-foreground mt-0.5 text-xs">
 						{entry.message}
 					</p>
 				</div>
 				<button
-					class="flex-shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground"
+					class="text-muted-foreground hover:text-foreground flex-shrink-0 rounded p-0.5"
 					onclick={() => stores.toastStore.remove(entry.id)}
 				>
 					<XIcon class="h-3.5 w-3.5" />
@@ -64,8 +64,14 @@
 
 <style>
 	@keyframes toast-slide-in {
-		from { opacity: 0; transform: translateY(-0.75rem); }
-		to { opacity: 1; transform: translateY(0); }
+		from {
+			opacity: 0;
+			transform: translateY(-0.75rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 	.toast-enter {
 		animation: toast-slide-in 200ms ease-out forwards;

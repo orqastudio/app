@@ -15,12 +15,10 @@
 
 <Center>
 	<Stack align="center" gap={2}>
-		<CircleAlertIcon class="h-10 w-10 text-destructive" />
+		<CircleAlertIcon class="text-destructive h-10 w-10" />
 		<Text variant="caption" tone="destructive">{message}</Text>
 		{#if onRetry}
-			<Button variant="secondary" size="sm" onclick={onRetry}>
-				Retry
-			</Button>
+			<Button variant="secondary" size="sm" onclick={onRetry}>Retry</Button>
 		{/if}
 	</Stack>
 </Center>

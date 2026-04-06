@@ -46,9 +46,12 @@ export function validateManifest(manifest: PluginManifest): string[] {
 	}
 
 	if (manifest.role !== undefined) {
-		const validRoles = /^(core:(framework|discovery|delivery|governance)|enhancement:(delivery|governance|development)|extension)$/;
+		const validRoles =
+			/^(core:(framework|discovery|delivery|governance)|enhancement:(delivery|governance|development)|extension)$/;
 		if (!validRoles.test(manifest.role)) {
-			errors.push(`Invalid role: "${manifest.role}". Must be core:<domain>, enhancement:<domain>, or extension.`);
+			errors.push(
+				`Invalid role: "${manifest.role}". Must be core:<domain>, enhancement:<domain>, or extension.`,
+			);
 		}
 	}
 

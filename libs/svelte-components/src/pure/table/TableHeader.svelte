@@ -14,7 +14,7 @@
 <thead
 	bind:this={ref}
 	data-slot="table-header"
-	class="border-b bg-muted/50 [&_tr]:border-b"
+	class="bg-muted/50 border-b [&_tr]:border-b"
 	{...restProps}
 >
 	{@render children?.()}

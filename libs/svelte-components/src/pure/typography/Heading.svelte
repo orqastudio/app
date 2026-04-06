@@ -13,7 +13,10 @@
 	let { level = 1, children }: HeadingProps = $props();
 
 	// Maps heading level to the corresponding Text variant.
-	const levelVariants: Record<HeadingLevel, "heading-xl" | "heading-lg" | "heading-base" | "heading-sm" | "overline"> = {
+	const levelVariants: Record<
+		HeadingLevel,
+		"heading-xl" | "heading-lg" | "heading-base" | "heading-sm" | "overline"
+	> = {
 		1: "heading-xl",
 		2: "heading-lg",
 		3: "heading-base",

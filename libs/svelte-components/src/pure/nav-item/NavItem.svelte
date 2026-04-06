@@ -24,6 +24,7 @@
 		children?: Snippet;
 	} = $props();
 
+	/** Toggle the expanded state when the item is collapsible, then call the optional onclick callback. */
 	function handleClick() {
 		if (collapsible) {
 			expanded = !expanded;
@@ -35,26 +36,32 @@
 <Stack gap={0}>
 	<button
 		class={cn(
-			"flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm hover:bg-accent/50",
+			"hover:bg-accent/50 flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm",
 			active && "bg-accent text-accent-foreground",
 		)}
 		onclick={handleClick}
 	>
 		{#if collapsible}
 			<ChevronRightIcon
-				class={cn("h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform", expanded && "rotate-90")}
+				class={cn(
+					"text-muted-foreground h-3.5 w-3.5 shrink-0 transition-transform",
+					expanded && "rotate-90",
+				)}
 			/>
 		{/if}
 		{#if Icon}
-			<Icon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+			<Icon class="text-muted-foreground h-3.5 w-3.5 shrink-0" />
 		{/if}
 		<span class="flex-1 truncate text-left">{label}</span>
 		{#if badge !== undefined}
-			<span class="shrink-0 rounded bg-muted px-1 py-0.5 text-[10px] text-muted-foreground tabular-nums">{badge}</span>
+			<span
+				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 text-[10px] tabular-nums"
+				>{badge}</span
+			>
 		{/if}
 	</button>
 	{#if collapsible && expanded && children}
-		<div class="ml-4 mt-0.5">
+		<div class="mt-0.5 ml-4">
 			{@render children()}
 		</div>
 	{/if}

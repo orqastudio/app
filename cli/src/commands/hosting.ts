@@ -95,7 +95,8 @@ export async function runHostingCommand(args: string[]): Promise<void> {
 			break;
 
 		case "mirror":
-			console.log(`
+			console.log(
+				`
 Push Mirror Setup
 =================
 
@@ -112,7 +113,8 @@ Steps:
   5. Set sync interval (e.g. every push, or hourly)
 
 Note: The target repository must already exist on GitHub.
-`.trim());
+`.trim(),
+			);
 			break;
 
 		default:

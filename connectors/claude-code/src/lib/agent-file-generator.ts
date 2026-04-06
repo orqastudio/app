@@ -17,10 +17,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import {
-	DEFAULT_MODEL_TIERS,
-	type UniversalRole,
-} from "@orqastudio/cli";
+import { DEFAULT_MODEL_TIERS, type UniversalRole } from "@orqastudio/cli";
 
 // ---------------------------------------------------------------------------
 // Role Definitions
@@ -66,7 +63,8 @@ const AGENT_DEFINITIONS: Record<string, AgentDefinition> = {
 		displayName: "orchestrator",
 		description:
 			"Coordinates work across agent teams. Delegates all implementation to specialized agents. Reads structured summaries from findings files. Never implements directly.",
-		tools: "Read,Glob,Grep,Agent,TeamCreate,TaskCreate,TaskUpdate,TaskGet,TaskList,SendMessage,TeamDelete",
+		tools:
+			"Read,Glob,Grep,Agent,TeamCreate,TaskCreate,TaskUpdate,TaskGet,TaskList,SendMessage,TeamDelete",
 		maxTurns: 200,
 		body: `# Orchestrator
 

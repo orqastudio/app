@@ -42,7 +42,7 @@
 			<DropdownMenuItem onclick={() => onSelect(item.value)}>
 				{item.label}
 				{#if item.value === selected}
-					<CheckIcon class="ml-auto mr-1 h-3.5 w-3.5" />
+					<CheckIcon class="mr-1 ml-auto h-3.5 w-3.5" />
 				{/if}
 			</DropdownMenuItem>
 		{/each}

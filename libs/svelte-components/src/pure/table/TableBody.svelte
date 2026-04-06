@@ -11,11 +11,6 @@
 	}: WithElementRef<Omit<HTMLAttributes<HTMLTableSectionElement>, "class">> = $props();
 </script>
 
-<tbody
-	bind:this={ref}
-	data-slot="table-body"
-	class="[&_tr:last-child]:border-0"
-	{...restProps}
->
+<tbody bind:this={ref} data-slot="table-body" class="[&_tr:last-child]:border-0" {...restProps}>
 	{@render children?.()}
 </tbody>

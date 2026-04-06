@@ -8,10 +8,7 @@
  * the Rust validation crate.
  */
 
-import {
-	callDaemonGraph,
-	type DaemonArtifactNode,
-} from "./daemon-client.js";
+import { callDaemonGraph, type DaemonArtifactNode } from "./daemon-client.js";
 
 // ---------------------------------------------------------------------------
 // Types (preserved for callers)
@@ -96,10 +93,7 @@ function toGraphNode(node: DaemonArtifactNode): GraphNode {
  * @returns Array of all graph nodes.
  */
 export async function scanArtifactGraph(): Promise<GraphNode[]> {
-	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
-		"GET",
-		"/artifacts",
-	);
+	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>("GET", "/artifacts");
 	return daemonNodes.map(toGraphNode);
 }
 
@@ -118,8 +112,7 @@ export async function queryGraph(
 	optionsArg?: GraphQueryOptions,
 ): Promise<GraphNode[]> {
 	// Support both old signature (nodes, options) and direct (options) call.
-	const options: GraphQueryOptions =
-		optionsArg ?? (_nodesOrOptions as GraphQueryOptions);
+	const options: GraphQueryOptions = optionsArg ?? (_nodesOrOptions as GraphQueryOptions);
 
 	// Build query string with the filters the daemon supports natively.
 	const params = new URLSearchParams();
@@ -136,10 +129,7 @@ export async function queryGraph(
 	const qs = params.toString();
 	const path = qs ? `/artifacts?${qs}` : "/artifacts";
 
-	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>(
-		"GET",
-		path,
-	);
+	const daemonNodes = await callDaemonGraph<DaemonArtifactNode[]>("GET", path);
 
 	let results = daemonNodes.map(toGraphNode);
 
@@ -156,16 +146,12 @@ export async function queryGraph(
 
 	if (options.relatedTo) {
 		const target = options.relatedTo;
-		results = results.filter((n) =>
-			n.relationships.some((r) => r.target === target),
-		);
+		results = results.filter((n) => n.relationships.some((r) => r.target === target));
 	}
 
 	if (options.relationshipType) {
 		const relType = options.relationshipType;
-		results = results.filter((n) =>
-			n.relationships.some((r) => r.type === relType),
-		);
+		results = results.filter((n) => n.relationships.some((r) => r.type === relType));
 	}
 
 	if (options.limit) {

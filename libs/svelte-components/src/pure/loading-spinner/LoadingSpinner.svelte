@@ -16,6 +16,6 @@
 
 <Center>
 	<div
-		class="animate-spin rounded-full border-2 border-muted border-t-primary {sizeClasses[size]}"
+		class="border-muted border-t-primary animate-spin rounded-full border-2 {sizeClasses[size]}"
 	></div>
 </Center>

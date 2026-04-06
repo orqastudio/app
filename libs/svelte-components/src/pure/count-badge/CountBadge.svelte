@@ -13,4 +13,9 @@
 	};
 </script>
 
-<span class="inline-flex size-5 items-center justify-center rounded-full text-xs font-semibold {variantMap[variant]}" aria-hidden="true">{count}</span>
+<span
+	class="inline-flex size-5 items-center justify-center rounded-full text-xs font-semibold {variantMap[
+		variant
+	]}"
+	aria-hidden="true">{count}</span
+>

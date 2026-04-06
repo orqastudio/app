@@ -76,8 +76,6 @@
 	const lgClass = $derived(lg != null ? lgColsMap[lg] : undefined);
 </script>
 
-<div
-	class={cn("grid", colsClass, gapClass, smClass, mdClass, lgClass)}
->
+<div class={cn("grid", colsClass, gapClass, smClass, mdClass, lgClass)}>
 	{@render children?.()}
 </div>

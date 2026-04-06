@@ -108,8 +108,8 @@ async function daemonStart(): Promise<void> {
 	if (binary === null) {
 		throw new Error(
 			"orqa-daemon binary not found.\n" +
-			"Build with: cargo build -p orqa-daemon\n" +
-			"Searched: target/debug/, target/release/",
+				"Build with: cargo build -p orqa-daemon\n" +
+				"Searched: target/debug/, target/release/",
 		);
 	}
 
@@ -136,8 +136,7 @@ async function daemonStart(): Promise<void> {
 
 	if (health === null) {
 		throw new Error(
-			"Daemon did not start within 3 seconds.\n" +
-			"Check .state/daemon.log for startup errors.",
+			"Daemon did not start within 3 seconds.\n" + "Check .state/daemon.log for startup errors.",
 		);
 	}
 
@@ -169,7 +168,11 @@ async function daemonStop(): Promise<void> {
 
 	if (!processIsAlive(pid)) {
 		// Stale PID file — clean it up silently.
-		try { unlinkSync(pidPath); } catch { /* ignore */ }
+		try {
+			unlinkSync(pidPath);
+		} catch {
+			/* ignore */
+		}
 		return;
 	}
 
@@ -251,7 +254,7 @@ async function daemonStatus(): Promise<void> {
 	if (health === null) {
 		console.log(
 			`Daemon: PID ${pid} alive but /health on port ${port} did not respond.\n` +
-			`  Check .state/daemon.log for errors.`,
+				`  Check .state/daemon.log for errors.`,
 		);
 		return;
 	}
@@ -259,9 +262,9 @@ async function daemonStatus(): Promise<void> {
 	const uptime = formatUptime(health.uptime_seconds);
 	console.log(
 		`Daemon: running\n` +
-		`  PID    : ${health.pid}\n` +
-		`  port   : ${port}\n` +
-		`  uptime : ${uptime}`,
+			`  PID    : ${health.pid}\n` +
+			`  port   : ${port}\n` +
+			`  uptime : ${uptime}`,
 	);
 }
 

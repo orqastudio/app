@@ -33,7 +33,12 @@
 {:else if error}
 	<ErrorDisplay message={error} {onRetry} />
 {:else if empty}
-	<EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} action={emptyAction} />
+	<EmptyState
+		icon={emptyIcon}
+		title={emptyTitle}
+		description={emptyDescription}
+		action={emptyAction}
+	/>
 {:else}
 	{@render children()}
 {/if}

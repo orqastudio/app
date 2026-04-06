@@ -14,32 +14,32 @@ import type { HookResult } from "../hooks/shared.js";
 
 /** Run the Stop hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
-  const stateDir = join(projectDir, ".state");
+	const projectDir = input.cwd ?? process.env["CLAUDE_PROJECT_DIR"] ?? ".";
+	const stateDir = join(projectDir, ".state");
 
-  // Call daemon to save session state
-  try {
-    const result = await callDaemon<HookResult>("/hook", { event: "SessionEnd" });
-    if (result.messages?.length > 0) {
-      outputWarn(result.messages);
-    }
-  } catch {
-    // Daemon unavailable — best-effort, don't block shutdown
-  }
+	// Call daemon to save session state
+	try {
+		const result = await callDaemon<HookResult>("/hook", { event: "SessionEnd" });
+		if (result.messages?.length > 0) {
+			outputWarn(result.messages);
+		}
+	} catch {
+		// Daemon unavailable — best-effort, don't block shutdown
+	}
 
-  // Clean up session guard
-  const guardFile = join(stateDir, ".session-started");
-  if (existsSync(guardFile)) {
-    try {
-      unlinkSync(guardFile);
-    } catch {
-      // Ignore cleanup errors
-    }
-  }
+	// Clean up session guard
+	const guardFile = join(stateDir, ".session-started");
+	if (existsSync(guardFile)) {
+		try {
+			unlinkSync(guardFile);
+		} catch {
+			// Ignore cleanup errors
+		}
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

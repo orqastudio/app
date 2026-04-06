@@ -64,7 +64,8 @@ export async function runRepoCommand(args: string[]): Promise<void> {
 			}
 			if (mismatch.length > 0) {
 				console.log(`\n${mismatch.length} MISMATCH:`);
-				for (const r of mismatch) console.log(`  ${r.file}: found ${r.found}, expected ${r.expected}`);
+				for (const r of mismatch)
+					console.log(`  ${r.file}: found ${r.found}, expected ${r.expected}`);
 			}
 
 			if (missing.length > 0 || mismatch.length > 0) process.exit(1);
@@ -96,7 +97,8 @@ export async function runRepoCommand(args: string[]): Promise<void> {
 				console.log(`\n${incomplete.length} INCOMPLETE:`);
 				for (const r of incomplete) {
 					const issues: string[] = [];
-					if (r.missingSections.length > 0) issues.push(`sections: ${r.missingSections.join(", ")}`);
+					if (r.missingSections.length > 0)
+						issues.push(`sections: ${r.missingSections.join(", ")}`);
 					if (r.missingBadges.length > 0) issues.push(`badges: ${r.missingBadges.join(", ")}`);
 					if (r.missingBanner) issues.push("banner");
 					console.log(`  ${r.name}: missing ${issues.join("; ")}`);

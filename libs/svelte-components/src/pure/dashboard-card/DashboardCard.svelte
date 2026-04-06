@@ -1,6 +1,13 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
-	import { CardRoot, CardHeader, CardTitle, CardDescription, CardContent, CardAction } from "../card/index.js";
+	import {
+		CardRoot,
+		CardHeader,
+		CardTitle,
+		CardDescription,
+		CardContent,
+		CardAction,
+	} from "../card/index.js";
 
 	let {
 		title,

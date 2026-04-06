@@ -13,7 +13,7 @@
 	} = $props();
 </script>
 
-<div class="flex h-10 items-center border-b border-border px-3">
+<div class="border-border flex h-10 items-center border-b px-3">
 	<HStack gap={2}>
 		{#if left}
 			{@render left()}

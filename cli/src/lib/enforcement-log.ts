@@ -41,8 +41,7 @@ export function createEvent(
 	return {
 		id: randomUUID(),
 		timestamp: new Date().toISOString(),
-		resolution:
-			fields.result === "pass" ? "fixed" : "unresolved",
+		resolution: fields.result === "pass" ? "fixed" : "unresolved",
 		...fields,
 	};
 }
@@ -52,10 +51,7 @@ export function createEvent(
  * @param projectRoot - Absolute path to the project root.
  * @param event - The enforcement event to log.
  */
-export function logEvent(
-	projectRoot: string,
-	event: EnforcementEvent,
-): void {
+export function logEvent(projectRoot: string, event: EnforcementEvent): void {
 	const logPath = getLogPath(projectRoot);
 	const dir = dirname(logPath);
 	if (!existsSync(dir)) {
@@ -69,10 +65,7 @@ export function logEvent(
  * @param projectRoot - Absolute path to the project root.
  * @param response - The enforcement response to log.
  */
-export function logResponse(
-	projectRoot: string,
-	response: EnforcementResponse,
-): void {
+export function logResponse(projectRoot: string, response: EnforcementResponse): void {
 	const logPath = getLogPath(projectRoot);
 	const dir = dirname(logPath);
 	if (!existsSync(dir)) {

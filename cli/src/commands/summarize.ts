@@ -11,10 +11,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import {
-	parseFrontmatterFromContent,
-	writeFrontmatter,
-} from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 import { getRoot } from "../lib/root.js";
 
 /**
@@ -64,11 +61,7 @@ const SUMMARY_MAX_TOKENS = 170;
  * @param description - Optional frontmatter description field.
  * @returns Generated summary string.
  */
-function generateSummary(
-	title: string,
-	body: string,
-	description?: string,
-): string {
+function generateSummary(title: string, body: string, description?: string): string {
 	const parts: string[] = [];
 
 	// Purpose — from title and first meaningful paragraph
@@ -106,11 +99,7 @@ function generateSummary(
  * @param description - Optional frontmatter description.
  * @returns A one-line purpose string.
  */
-function extractPurpose(
-	title: string,
-	body: string,
-	description?: string,
-): string {
+function extractPurpose(title: string, body: string, description?: string): string {
 	// Use description if available and concise
 	if (description) {
 		const firstLine = description.split("\n")[0].trim();
@@ -130,9 +119,7 @@ function extractPurpose(
 			!trimmed.startsWith("|") &&
 			!trimmed.startsWith("```")
 		) {
-			return trimmed.length > 150
-				? trimmed.substring(0, 147) + "..."
-				: trimmed;
+			return trimmed.length > 150 ? trimmed.substring(0, 147) + "..." : trimmed;
 		}
 	}
 
@@ -165,20 +152,14 @@ function extractKeyPoints(body: string): string[] {
 					!nextLine.startsWith("```") &&
 					!nextLine.startsWith("|")
 				) {
-					const point =
-						nextLine.length > 80
-							? nextLine.substring(0, 77) + "..."
-							: nextLine;
+					const point = nextLine.length > 80 ? nextLine.substring(0, 77) + "..." : nextLine;
 					points.push(`${heading}: ${point}`);
 					break;
 				}
 			}
 
 			// If no meaningful line found, just use the heading
-			if (
-				points.length === 0 ||
-				!points[points.length - 1].startsWith(heading)
-			) {
+			if (points.length === 0 || !points[points.length - 1].startsWith(heading)) {
 				points.push(heading);
 			}
 		}
@@ -196,9 +177,7 @@ function extractKeyPoints(body: string): string[] {
 function extractWhenToUse(body: string, description?: string): string | null {
 	// Check description for "Use when:" pattern
 	if (description) {
-		const useWhenMatch = description.match(
-			/use when[:\s]+(.+?)(?:\n|$)/i,
-		);
+		const useWhenMatch = description.match(/use when[:\s]+(.+?)(?:\n|$)/i);
 		if (useWhenMatch) {
 			return useWhenMatch[1].trim();
 		}
@@ -217,9 +196,7 @@ function extractWhenToUse(body: string, description?: string): string | null {
 			for (let j = i + 1; j < lines.length && j < i + 3; j++) {
 				const next = lines[j].trim();
 				if (next.length > 10 && !next.startsWith("#")) {
-					return next.length > 100
-						? next.substring(0, 97) + "..."
-						: next;
+					return next.length > 100 ? next.substring(0, 97) + "..." : next;
 				}
 			}
 		}
@@ -266,10 +243,7 @@ interface SummarizeResult {
  * @param force - Whether to overwrite an existing summary.
  * @returns Result indicating whether the summary was created or skipped.
  */
-function summarizeFile(
-	filePath: string,
-	force: boolean,
-): SummarizeResult {
+function summarizeFile(filePath: string, force: boolean): SummarizeResult {
 	const absPath = path.resolve(filePath);
 
 	let content: string;
@@ -305,8 +279,7 @@ function summarizeFile(
 		return { path: absPath, id, title, action: "skipped" };
 	}
 
-	const description =
-		typeof fm.description === "string" ? fm.description : undefined;
+	const description = typeof fm.description === "string" ? fm.description : undefined;
 	const summary = generateSummary(title, body, description);
 	const tokens = estimateTokens(summary);
 
@@ -441,9 +414,7 @@ export async function runSummarizeCommand(args: string[]): Promise<void> {
 
 			switch (result.action) {
 				case "created":
-					console.log(
-						`  CREATED  ${result.id}  ${result.title} (${result.tokens} tokens)`,
-					);
+					console.log(`  CREATED  ${result.id}  ${result.title} (${result.tokens} tokens)`);
 					created++;
 					break;
 				case "skipped":
@@ -474,14 +445,10 @@ export async function runSummarizeCommand(args: string[]): Promise<void> {
 
 	switch (result.action) {
 		case "created":
-			console.log(
-				`Summary generated for ${result.id} (${result.tokens} tokens)`,
-			);
+			console.log(`Summary generated for ${result.id} (${result.tokens} tokens)`);
 			break;
 		case "skipped":
-			console.log(
-				`${result.id} already has a summary. Use --force to overwrite.`,
-			);
+			console.log(`${result.id} already has a summary. Use --force to overwrite.`);
 			break;
 		case "error":
 			console.error(`Error: ${result.error}`);

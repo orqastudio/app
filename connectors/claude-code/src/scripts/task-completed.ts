@@ -14,36 +14,36 @@ import type { HookResult } from "../hooks/shared.js";
 
 /** Run the TaskCompleted hook. */
 async function main(): Promise<void> {
-  const input = await readInput();
+	const input = await readInput();
 
-  const agentType = input.agent_type ?? "unknown";
-  const toolInput = input.tool_input ?? {};
+	const agentType = input.agent_type ?? "unknown";
+	const toolInput = input.tool_input ?? {};
 
-  const context = {
-    event: "TaskCompleted" as const,
-    agent_type: agentType,
-    tool_input: toolInput,
-  };
+	const context = {
+		event: "TaskCompleted" as const,
+		agent_type: agentType,
+		tool_input: toolInput,
+	};
 
-  let result: HookResult;
-  try {
-    result = await callDaemon<HookResult>("/hook", context);
-  } catch {
-    process.exit(0);
-  }
+	let result: HookResult;
+	try {
+		result = await callDaemon<HookResult>("/hook", context);
+	} catch {
+		process.exit(0);
+	}
 
-  if (result.action === "block") {
-    const messages = result.messages?.length
-      ? result.messages
-      : ["Task completion blocked — acceptance criteria not met."];
-    outputBlock(messages);
-  }
+	if (result.action === "block") {
+		const messages = result.messages?.length
+			? result.messages
+			: ["Task completion blocked — acceptance criteria not met."];
+		outputBlock(messages);
+	}
 
-  if (result.messages?.length > 0) {
-    outputWarn(result.messages);
-  }
+	if (result.messages?.length > 0) {
+		outputWarn(result.messages);
+	}
 
-  process.exit(0);
+	process.exit(0);
 }
 
 main().catch(() => process.exit(0));

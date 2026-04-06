@@ -374,12 +374,7 @@ export function diffPluginContent(
 			// Compute detailed three-way state if we have hashes
 			if (entry?.files[relPath]) {
 				const sourceHash = computeFileHash(sourceFile);
-				const state = computeThreeWayState(
-					relPath,
-					projectRoot,
-					entry.files[relPath],
-					sourceHash,
-				);
+				const state = computeThreeWayState(relPath, projectRoot, entry.files[relPath], sourceHash);
 				result.threeWay.push({ path: relPath, state });
 			} else {
 				result.threeWay.push({ path: relPath, state: "plugin-updated" });
@@ -514,7 +509,6 @@ export function computeThreeWayState(
  * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
  * by comparing the current installed hash against the baseline recorded at install
  * time and the current plugin source hash.
- *
  * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
  * @param lastEntry - The hash entry recorded at last install (baseline hashes).
  * @param currentSourceHash - Current hash of the file in the plugin source.
@@ -559,7 +553,9 @@ function isInsideWorkspace(dir: string): boolean {
 				if (Array.isArray(pkg.workspaces) && pkg.workspaces.length > 0) {
 					return true;
 				}
-			} catch { /* ignore */ }
+			} catch {
+				/* ignore */
+			}
 		}
 		current = path.dirname(current);
 	}
@@ -576,10 +572,7 @@ function isInsideWorkspace(dir: string): boolean {
  * @param projectRoot - Absolute path to the project root.
  * @param pluginManifest - The plugin's manifest containing symlink declarations.
  */
-export function processPluginSymlinks(
-	projectRoot: string,
-	pluginManifest: PluginManifest,
-): void {
+export function processPluginSymlinks(projectRoot: string, pluginManifest: PluginManifest): void {
 	const symlinks = pluginManifest.provides?.symlinks;
 	if (!symlinks || symlinks.length === 0) return;
 
@@ -620,9 +613,7 @@ export function processPluginSymlinks(
  * Collects values from plugin manifests and writes them to a single output file.
  * @param projectRoot - Absolute path to the project root.
  */
-export function processAggregatedFiles(
-	projectRoot: string,
-): void {
+export function processAggregatedFiles(projectRoot: string): void {
 	// Scan all plugin manifests for aggregatedFiles declarations
 	const scanDirs = [
 		path.join(projectRoot, "plugins"),
@@ -730,14 +721,10 @@ export function processAggregatedFiles(
 
 		// Apply wrapper if specified
 		const firstDecl = decls[0];
-		const output = firstDecl.wrapper
-			? { [firstDecl.wrapper]: collected }
-			: collected;
+		const output = firstDecl.wrapper ? { [firstDecl.wrapper]: collected } : collected;
 
 		const newContent = JSON.stringify(output, null, 2);
-		const existingContent = fs.existsSync(outputPath)
-			? fs.readFileSync(outputPath, "utf-8")
-			: "";
+		const existingContent = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf-8") : "";
 
 		if (newContent !== existingContent) {
 			fs.writeFileSync(outputPath, newContent);

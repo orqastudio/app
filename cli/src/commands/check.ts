@@ -27,10 +27,7 @@ import {
 	type ToolDefinition,
 } from "../lib/config-generator.js";
 import { getRoot } from "../lib/root.js";
-import {
-	runValidation,
-	formatReport,
-} from "../lib/validation-engine.js";
+import { runValidation, formatReport } from "../lib/validation-engine.js";
 
 const USAGE = `
 Usage: orqa check [subcommand]
@@ -230,7 +227,9 @@ async function cmdConfigure(root: string): Promise<void> {
 
 	if (entries.length === 0) {
 		console.log("No enforcement entries found in coding standards rules.");
-		console.log("Add enforcement entries to rules in .orqa/learning/rules/ with plugin/tool/config.");
+		console.log(
+			"Add enforcement entries to rules in .orqa/learning/rules/ with plugin/tool/config.",
+		);
 		return;
 	}
 
@@ -307,4 +306,3 @@ function findProjectDir(root: string, pluginName: string): string | null {
 
 	return fs.existsSync(root) ? root : null;
 }
-

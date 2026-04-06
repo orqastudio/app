@@ -22,7 +22,11 @@ export const DEFAULT_LICENSE_POLICY: LicensePolicy[] = [
 	{ category: "app", expectedLicense: "BSL-1.1", description: "Core app — BSL-1.1" },
 	{ category: "libs", expectedLicense: "BSL-1.1", description: "Libraries — BSL-1.1" },
 	{ category: "plugins", expectedLicense: "BSL-1.1", description: "Plugins — BSL-1.1" },
-	{ category: "connectors", expectedLicense: "Apache-2.0", description: "Connectors — Apache 2.0 (third-party compatibility)" },
+	{
+		category: "connectors",
+		expectedLicense: "Apache-2.0",
+		description: "Connectors — Apache 2.0 (third-party compatibility)",
+	},
 	{ category: "templates", expectedLicense: "BSL-1.1", description: "Templates — BSL-1.1" },
 	{ category: "tools", expectedLicense: "MIT", description: "Tools — MIT" },
 	{ category: "registry", expectedLicense: "MIT", description: "Registries — MIT" },

@@ -7,10 +7,7 @@
 		children?: import("svelte").Snippet;
 	}
 
-	let {
-		size = "sm",
-		children,
-	}: CardDescriptionProps = $props();
+	let { size = "sm", children }: CardDescriptionProps = $props();
 </script>
 
 <p

@@ -171,9 +171,7 @@ function printArtifactDetail(node: GraphNode, allNodes: GraphNode[]): void {
 	}
 
 	// Show reverse relationships (what points to this artifact)
-	const incoming = allNodes.filter((n) =>
-		n.relationships.some((r) => r.target === node.id),
-	);
+	const incoming = allNodes.filter((n) => n.relationships.some((r) => r.target === node.id));
 	if (incoming.length > 0) {
 		console.log(`\n  Referenced by (${incoming.length}):`);
 		for (const src of incoming) {
@@ -249,7 +247,10 @@ function printTree(results: GraphNode[]): void {
 	// Group results by delivery type
 	const nodesByType = new Map<string, GraphNode[]>();
 	for (const level of hierarchy) {
-		nodesByType.set(level.type, results.filter((n) => n.type === level.type));
+		nodesByType.set(
+			level.type,
+			results.filter((n) => n.type === level.type),
+		);
 	}
 
 	// Find the root level (no parent)
@@ -309,9 +310,10 @@ function printTree(results: GraphNode[]): void {
 		const parentNodes = nodesByType.get(level.parentType) ?? [];
 		const nodes = nodesByType.get(level.type) ?? [];
 		const orphans = nodes.filter(
-			(n) => !n.relationships.some(
-				(r) => r.type === level.parentRelationship && parentNodes.some((p) => p.id === r.target),
-			),
+			(n) =>
+				!n.relationships.some(
+					(r) => r.type === level.parentRelationship && parentNodes.some((p) => p.id === r.target),
+				),
 		);
 		if (orphans.length > 0) {
 			console.log(`Unlinked ${level.type}s:`);

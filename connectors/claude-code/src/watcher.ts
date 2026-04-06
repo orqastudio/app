@@ -23,11 +23,7 @@ import { generatePlugin } from "./generator.js";
 const DEBOUNCE_MS = 500;
 
 /** Paths to watch relative to project root. */
-const WATCH_PATTERNS = [
-  ".orqa/workflows",
-  ".orqa/learning/rules",
-  ".orqa/schema.composed.json",
-];
+const WATCH_PATTERNS = [".orqa/workflows", ".orqa/learning/rules", ".orqa/schema.composed.json"];
 
 /** Glob pattern (directory) for plugin manifests. */
 const PLUGINS_DIR = "plugins";
@@ -49,14 +45,14 @@ const PLUGIN_MANIFEST_NAME = "orqa-plugin.json";
  * @returns A debounced function that resets the timer on each invocation.
  */
 function debounce(fn: () => void, delayMs: number): () => void {
-  let timer: ReturnType<typeof setTimeout> | null = null;
-  return () => {
-    if (timer !== null) clearTimeout(timer);
-    timer = setTimeout(() => {
-      timer = null;
-      fn();
-    }, delayMs);
-  };
+	let timer: ReturnType<typeof setTimeout> | null = null;
+	return () => {
+		if (timer !== null) clearTimeout(timer);
+		timer = setTimeout(() => {
+			timer = null;
+			fn();
+		}, delayMs);
+	};
 }
 
 // ---------------------------------------------------------------------------
@@ -73,37 +69,33 @@ function debounce(fn: () => void, delayMs: number): () => void {
  * @param label - Human-readable label for log output identifying this watcher.
  * @returns An FSWatcher instance, or null if the path does not exist.
  */
-function startWatcher(
-  watchPath: string,
-  onChange: () => void,
-  label: string,
-): fs.FSWatcher | null {
-  if (!fs.existsSync(watchPath)) {
-    // Not an error — many watch targets may not exist in fresh projects.
-    return null;
-  }
+function startWatcher(watchPath: string, onChange: () => void, label: string): fs.FSWatcher | null {
+	if (!fs.existsSync(watchPath)) {
+		// Not an error — many watch targets may not exist in fresh projects.
+		return null;
+	}
 
-  try {
-    const watcher = fs.watch(watchPath, { recursive: true }, (_event, filename) => {
-      // Filter to relevant file types.
-      if (
-        filename === null ||
-        (!filename.endsWith(".yaml") &&
-          !filename.endsWith(".yml") &&
-          !filename.endsWith(".md") &&
-          !filename.endsWith(".json"))
-      ) {
-        return;
-      }
-      console.log(`[watcher] ${label}: changed — ${filename}`);
-      onChange();
-    });
-    return watcher;
-  } catch {
-    // fs.watch can fail on some platforms for certain paths.
-    console.warn(`[watcher] could not watch ${label} — ${watchPath}`);
-    return null;
-  }
+	try {
+		const watcher = fs.watch(watchPath, { recursive: true }, (_event, filename) => {
+			// Filter to relevant file types.
+			if (
+				filename === null ||
+				(!filename.endsWith(".yaml") &&
+					!filename.endsWith(".yml") &&
+					!filename.endsWith(".md") &&
+					!filename.endsWith(".json"))
+			) {
+				return;
+			}
+			console.log(`[watcher] ${label}: changed — ${filename}`);
+			onChange();
+		});
+		return watcher;
+	} catch {
+		// fs.watch can fail on some platforms for certain paths.
+		console.warn(`[watcher] could not watch ${label} — ${watchPath}`);
+		return null;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -124,62 +116,64 @@ function startWatcher(
  * @returns A cleanup function that stops all watchers. Call on process exit.
  */
 export function watchAndRegenerate(projectRoot: string): () => void {
-  const watchers: fs.FSWatcher[] = [];
+	const watchers: fs.FSWatcher[] = [];
 
-  const onChanged = debounce(() => {
-    console.log("[watcher] regenerating Claude Code Plugin artifacts...");
-    generatePlugin(projectRoot).then((result) => {
-      const written = [result.claudeMd, result.hooksJson, result.mcpJson, result.lspJson, ...result.agents];
-      console.log(
-        `[watcher] regeneration complete — ${written.length} file(s) written`,
-      );
-      if (result.errors.length > 0) {
-        for (const w of result.errors) {
-          console.warn(`[watcher] warning: ${w}`);
-        }
-      }
-    }).catch((err: unknown) => {
-      console.error(
-        `[watcher] regeneration failed: ${err instanceof Error ? err.message : String(err)}`,
-      );
-    });
-  }, DEBOUNCE_MS);
+	const onChanged = debounce(() => {
+		console.log("[watcher] regenerating Claude Code Plugin artifacts...");
+		generatePlugin(projectRoot)
+			.then((result) => {
+				const written = [
+					result.claudeMd,
+					result.hooksJson,
+					result.mcpJson,
+					result.lspJson,
+					...result.agents,
+				];
+				console.log(`[watcher] regeneration complete — ${written.length} file(s) written`);
+				if (result.errors.length > 0) {
+					for (const w of result.errors) {
+						console.warn(`[watcher] warning: ${w}`);
+					}
+				}
+			})
+			.catch((err: unknown) => {
+				console.error(
+					`[watcher] regeneration failed: ${err instanceof Error ? err.message : String(err)}`,
+				);
+			});
+	}, DEBOUNCE_MS);
 
-  // Watch .orqa/workflows/, .orqa/learning/rules/, .orqa/schema.composed.json.
-  for (const pattern of WATCH_PATTERNS) {
-    const watchPath = path.join(projectRoot, pattern);
-    const watcher = startWatcher(watchPath, onChanged, pattern);
-    if (watcher !== null) watchers.push(watcher);
-  }
+	// Watch .orqa/workflows/, .orqa/learning/rules/, .orqa/schema.composed.json.
+	for (const pattern of WATCH_PATTERNS) {
+		const watchPath = path.join(projectRoot, pattern);
+		const watcher = startWatcher(watchPath, onChanged, pattern);
+		if (watcher !== null) watchers.push(watcher);
+	}
 
-  // Watch plugins/*/orqa-plugin.json by watching the plugins/ directory.
-  // fs.watch with recursive:true on the directory will catch manifest changes.
-  const pluginsDir = path.join(projectRoot, PLUGINS_DIR);
-  if (fs.existsSync(pluginsDir)) {
-    try {
-      const watcher = fs.watch(
-        pluginsDir,
-        { recursive: true },
-        (_event, filename) => {
-          if (filename !== null && filename.endsWith(PLUGIN_MANIFEST_NAME)) {
-            console.log(`[watcher] plugins: manifest changed — ${filename}`);
-            onChanged();
-          }
-        },
-      );
-      watchers.push(watcher);
-    } catch {
-      console.warn(`[watcher] could not watch plugins directory — ${pluginsDir}`);
-    }
-  }
+	// Watch plugins/*/orqa-plugin.json by watching the plugins/ directory.
+	// fs.watch with recursive:true on the directory will catch manifest changes.
+	const pluginsDir = path.join(projectRoot, PLUGINS_DIR);
+	if (fs.existsSync(pluginsDir)) {
+		try {
+			const watcher = fs.watch(pluginsDir, { recursive: true }, (_event, filename) => {
+				if (filename !== null && filename.endsWith(PLUGIN_MANIFEST_NAME)) {
+					console.log(`[watcher] plugins: manifest changed — ${filename}`);
+					onChanged();
+				}
+			});
+			watchers.push(watcher);
+		} catch {
+			console.warn(`[watcher] could not watch plugins directory — ${pluginsDir}`);
+		}
+	}
 
-  console.log(`[watcher] watching ${watchers.length} path(s) in ${projectRoot}`);
+	console.log(`[watcher] watching ${watchers.length} path(s) in ${projectRoot}`);
 
-  // Cleanup function — removes all watchers.
-  return () => {
-    for (const watcher of watchers) {
-      watcher.close();
-    }
-    console.log("[watcher] all watchers closed");
-  };
+	// Cleanup function — removes all watchers.
+	return () => {
+		for (const watcher of watchers) {
+			watcher.close();
+		}
+		console.log("[watcher] all watchers closed");
+	};
 }

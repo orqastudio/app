@@ -43,16 +43,23 @@ function getInitialStatus(projectDir: string, artifactType: string): string | nu
 		for (const entry of entries) {
 			if (!entry.endsWith(".resolved.json")) continue;
 			try {
-				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<string, unknown>;
+				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<
+					string,
+					unknown
+				>;
 				const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
 				if (artifactTypes && typeof artifactTypes === "object" && artifactType in artifactTypes) {
 					const typeDef = artifactTypes[artifactType] as Record<string, unknown> | undefined;
 					const sm = typeDef?.["state_machine"] as Record<string, unknown> | undefined;
 					if (typeof sm?.["initial_state"] === "string") return sm["initial_state"];
 				}
-			} catch { /* skip */ }
+			} catch {
+				/* skip */
+			}
 		}
-	} catch { /* skip */ }
+	} catch {
+		/* skip */
+	}
 	return null;
 }
 
@@ -72,7 +79,10 @@ function getActiveStatuses(projectDir: string, artifactType: string): Set<string
 		for (const entry of entries) {
 			if (!entry.endsWith(".resolved.json")) continue;
 			try {
-				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<string, unknown>;
+				const parsed = JSON.parse(readFileSync(join(workflowsDir, entry), "utf-8")) as Record<
+					string,
+					unknown
+				>;
 				const artifactTypes = parsed["artifact_types"] as Record<string, unknown> | undefined;
 				if (!artifactTypes || !(artifactType in artifactTypes)) continue;
 				const typeDef = artifactTypes[artifactType] as Record<string, unknown> | undefined;
@@ -84,9 +94,13 @@ function getActiveStatuses(projectDir: string, artifactType: string): Set<string
 						result.add(stateName);
 					}
 				}
-			} catch { /* skip */ }
+			} catch {
+				/* skip */
+			}
 		}
-	} catch { /* skip */ }
+	} catch {
+		/* skip */
+	}
 	return result;
 }
 
@@ -116,7 +130,9 @@ function getTaskToEpicRelationship(projectDir: string): string | null {
 						return taskType.parent.relationship;
 					}
 				}
-			} catch { /* skip */ }
+			} catch {
+				/* skip */
+			}
 		}
 	}
 	return null;
@@ -231,7 +247,8 @@ function parseRuleFrontmatter(filePath: string): RuleFrontmatter | null {
 	return {
 		id: typeof fm.id === "string" ? fm.id : "",
 		title: typeof fm.title === "string" ? fm.title : "",
-		enforcement_updated: typeof fm.enforcement_updated === "string" ? fm.enforcement_updated : undefined,
+		enforcement_updated:
+			typeof fm.enforcement_updated === "string" ? fm.enforcement_updated : undefined,
 		relationships: extractRelationships(fm),
 	};
 }
@@ -356,7 +373,11 @@ function findActiveEpic(projectDir: string): string | null {
 	for (const entry of entries) {
 		if (!entry.endsWith(".md")) continue;
 		const fm = parseFrontmatterFromFile(join(epicsDir, entry));
-		if (typeof fm?.status === "string" && activeStatuses.has(fm.status) && typeof fm.id === "string") {
+		if (
+			typeof fm?.status === "string" &&
+			activeStatuses.has(fm.status) &&
+			typeof fm.id === "string"
+		) {
 			return fm.id;
 		}
 	}
@@ -386,11 +407,17 @@ function nextTaskFilename(tasksDir: string): string {
 	return `TASK-${String(next).padStart(3, "0")}.md`;
 }
 
-function createTaskArtifact(projectDir: string, finding: EscalationFinding, epicId: string | null): string {
+function createTaskArtifact(
+	projectDir: string,
+	finding: EscalationFinding,
+	epicId: string | null,
+): string {
 	const today = new Date().toISOString().slice(0, 10);
 
 	const titleVerb = finding.reason === "promote" ? "Promote" : "Strengthen enforcement for";
-	const titleTarget = finding.ruleId ? `${finding.ruleId} (from ${finding.lessonId})` : `lesson ${finding.lessonId}`;
+	const titleTarget = finding.ruleId
+		? `${finding.ruleId} (from ${finding.lessonId})`
+		: `lesson ${finding.lessonId}`;
 	const title = `ESCALATION: ${titleVerb} ${titleTarget} (recurrence ${finding.recurrence})`;
 	const taskId = generateIdFromTitle("TASK", title);
 
@@ -492,7 +519,9 @@ async function runEscalationCheck(projectDir: string, args: string[]): Promise<v
 	for (const finding of findings) {
 		const tag = finding.reason === "promote" ? "[PROMOTE]" : "[STRENGTHEN]";
 		const ruleNote = finding.ruleId ? ` → ${finding.ruleId}` : "";
-		console.log(`  ${tag} ${finding.lessonId}${ruleNote} — recurrence ${finding.recurrence} (status: ${finding.lessonStatus})`);
+		console.log(
+			`  ${tag} ${finding.lessonId}${ruleNote} — recurrence ${finding.recurrence} (status: ${finding.lessonStatus})`,
+		);
 		console.log(`    ${finding.lessonTitle}`);
 		console.log(`    ${finding.description}`);
 		console.log();
@@ -500,7 +529,9 @@ async function runEscalationCheck(projectDir: string, args: string[]): Promise<v
 
 	if (createTasks) {
 		const epicId = findActiveEpic(projectDir);
-		console.log(epicId ? `Active epic: ${epicId}` : "No active epic found — tasks created without epic link.");
+		console.log(
+			epicId ? `Active epic: ${epicId}` : "No active epic found — tasks created without epic link.",
+		);
 		console.log();
 
 		for (const finding of findings) {

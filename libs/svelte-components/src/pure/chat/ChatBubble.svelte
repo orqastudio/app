@@ -15,19 +15,21 @@
 
 {#if role === "user"}
 	<HStack justify="end">
-		<div class="max-w-[80%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-primary-foreground">
+		<div
+			class="bg-primary text-primary-foreground max-w-[80%] rounded-2xl rounded-tr-sm px-4 py-2.5"
+		>
 			{#if children}{@render children()}{/if}
 		</div>
 	</HStack>
 {:else if role === "assistant"}
 	<HStack justify="start">
-		<div class="max-w-[85%] rounded-2xl rounded-tl-sm border border-border bg-muted/50 px-4 py-2.5">
+		<div class="border-border bg-muted/50 max-w-[85%] rounded-2xl rounded-tl-sm border px-4 py-2.5">
 			{#if children}{@render children()}{/if}
 		</div>
 	</HStack>
 {:else}
 	<HStack justify="center">
-		<div class="max-w-[90%] rounded-lg bg-muted/30 px-4 py-2">
+		<div class="bg-muted/30 max-w-[90%] rounded-lg px-4 py-2">
 			{#if children}{@render children()}{/if}
 		</div>
 	</HStack>

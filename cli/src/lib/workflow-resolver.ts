@@ -199,46 +199,41 @@ export function discoverWorkflows(projectRoot: string): {
 		}
 
 		// Scan for workflow files
-		const workflowFiles = fs.readdirSync(workflowsDir).filter(
-			(f) => f.endsWith(".workflow.yaml") || f.endsWith(".workflow.yml"),
-		);
+		const workflowFiles = fs
+			.readdirSync(workflowsDir)
+			.filter((f) => f.endsWith(".workflow.yaml") || f.endsWith(".workflow.yml"));
 
-			for (const file of workflowFiles) {
-				const filePath = path.join(workflowsDir, file);
-				try {
-					const content = fs.readFileSync(filePath, "utf-8");
-					const parsed = parseYaml(content) as WorkflowDefinition;
+		for (const file of workflowFiles) {
+			const filePath = path.join(workflowsDir, file);
+			try {
+				const content = fs.readFileSync(filePath, "utf-8");
+				const parsed = parseYaml(content) as WorkflowDefinition;
 
-					if (!parsed || typeof parsed !== "object") {
-						errors.push(`${filePath}: Failed to parse — not a valid YAML object`);
-						continue;
-					}
-
-					// Basic structural check
-					if (!parsed.name || !parsed.states || !parsed.transitions) {
-						errors.push(
-							`${filePath}: Missing required fields (name, states, transitions)`,
-						);
-						continue;
-					}
-
-					const isSkeleton =
-						Array.isArray(parsed.contribution_points) &&
-						parsed.contribution_points.length > 0;
-
-					workflows.push({
-						filePath,
-						pluginDir,
-						pluginName,
-						definition: parsed,
-						isSkeleton,
-					});
-				} catch (err) {
-					errors.push(
-						`${filePath}: ${err instanceof Error ? err.message : String(err)}`,
-					);
+				if (!parsed || typeof parsed !== "object") {
+					errors.push(`${filePath}: Failed to parse — not a valid YAML object`);
+					continue;
 				}
+
+				// Basic structural check
+				if (!parsed.name || !parsed.states || !parsed.transitions) {
+					errors.push(`${filePath}: Missing required fields (name, states, transitions)`);
+					continue;
+				}
+
+				const isSkeleton =
+					Array.isArray(parsed.contribution_points) && parsed.contribution_points.length > 0;
+
+				workflows.push({
+					filePath,
+					pluginDir,
+					pluginName,
+					definition: parsed,
+					isSkeleton,
+				});
+			} catch (err) {
+				errors.push(`${filePath}: ${err instanceof Error ? err.message : String(err)}`);
 			}
+		}
 	}
 
 	return { workflows, errors };
@@ -269,9 +264,9 @@ export function discoverOverrides(projectRoot: string): {
 		return { overrides, errors };
 	}
 
-	const files = fs.readdirSync(overridesDir).filter(
-		(f) => f.endsWith(".override.yaml") || f.endsWith(".override.yml"),
-	);
+	const files = fs
+		.readdirSync(overridesDir)
+		.filter((f) => f.endsWith(".override.yaml") || f.endsWith(".override.yml"));
 
 	for (const file of files) {
 		const filePath = path.join(overridesDir, file);
@@ -291,9 +286,7 @@ export function discoverOverrides(projectRoot: string): {
 
 			overrides.push({ filePath, override: parsed });
 		} catch (err) {
-			errors.push(
-				`${filePath}: ${err instanceof Error ? err.message : String(err)}`,
-			);
+			errors.push(`${filePath}: ${err instanceof Error ? err.message : String(err)}`);
 		}
 	}
 
@@ -328,9 +321,7 @@ export function applyOverrides(
 	const result: WorkflowDefinition = JSON.parse(JSON.stringify(definition));
 
 	// Filter overrides targeting this workflow
-	const applicable = overrides.filter(
-		(o) => o.override.target_workflow === result.name,
-	);
+	const applicable = overrides.filter((o) => o.override.target_workflow === result.name);
 
 	for (const { filePath, override } of applicable) {
 		const statesAdded: string[] = [];
@@ -368,11 +359,7 @@ export function applyOverrides(
 
 		// Apply top-level field overrides
 		if (override.fields) {
-			const allowedFields = new Set([
-				"description",
-				"initial_state",
-				"version",
-			]);
+			const allowedFields = new Set(["description", "initial_state", "version"]);
 			for (const [field, value] of Object.entries(override.fields)) {
 				if (!allowedFields.has(field)) {
 					errors.push(
@@ -385,10 +372,9 @@ export function applyOverrides(
 			}
 		}
 
-		const relPath = path.relative(
-			path.join(path.dirname(filePath), "..", ".."),
-			filePath,
-		).replace(/\\/g, "/");
+		const relPath = path
+			.relative(path.join(path.dirname(filePath), "..", ".."), filePath)
+			.replace(/\\/g, "/");
 
 		metadata.overrides.push({
 			file: relPath,
@@ -432,9 +418,7 @@ interface ContributionDeclaration {
  * @param workflows - All discovered workflows to classify.
  * @returns Object with skeletons, contributions map, and standalone workflows.
  */
-export function matchContributions(
-	workflows: DiscoveredWorkflow[],
-): {
+export function matchContributions(workflows: DiscoveredWorkflow[]): {
 	skeletons: DiscoveredWorkflow[];
 	contributions: Map<string, WorkflowContribution[]>;
 	standalone: DiscoveredWorkflow[];
@@ -524,9 +508,7 @@ export function mergeContributions(
 	metadata: ResolutionMetadata;
 } {
 	// Deep clone the skeleton definition
-	const merged: WorkflowDefinition = JSON.parse(
-		JSON.stringify(skeleton.definition),
-	);
+	const merged: WorkflowDefinition = JSON.parse(JSON.stringify(skeleton.definition));
 
 	const metadata: ResolutionMetadata = {
 		skeletonPlugin: skeleton.pluginName,
@@ -646,25 +628,19 @@ export function validateResolvedWorkflow(
 
 	// initial_state exists
 	if (!stateNames.has(definition.initial_state)) {
-		errors.push(
-			`initial_state "${definition.initial_state}" does not exist in states`,
-		);
+		errors.push(`initial_state "${definition.initial_state}" does not exist in states`);
 	}
 
 	// Valid state categories (engine vocabulary, defined in @orqastudio/types)
 	const validCategories = new Set<string>(STATE_CATEGORIES);
 	for (const [name, state] of Object.entries(definition.states)) {
 		if (!validCategories.has(state.category)) {
-			errors.push(
-				`State "${name}" has invalid category "${state.category}"`,
-			);
+			errors.push(`State "${name}" has invalid category "${state.category}"`);
 		}
 	}
 
 	// Transition references
-	const gateNames = definition.gates
-		? new Set(Object.keys(definition.gates))
-		: new Set<string>();
+	const gateNames = definition.gates ? new Set(Object.keys(definition.gates)) : new Set<string>();
 
 	for (let i = 0; i < definition.transitions.length; i++) {
 		const t = definition.transitions[i];
@@ -672,30 +648,22 @@ export function validateResolvedWorkflow(
 
 		for (const fromState of fromStates) {
 			if (!stateNames.has(fromState)) {
-				errors.push(
-					`Transition[${i}] from "${fromState}" — state does not exist`,
-				);
+				errors.push(`Transition[${i}] from "${fromState}" — state does not exist`);
 			}
 		}
 
 		if (!stateNames.has(t.to)) {
-			errors.push(
-				`Transition[${i}] to "${t.to}" — state does not exist`,
-			);
+			errors.push(`Transition[${i}] to "${t.to}" — state does not exist`);
 		}
 
 		if (t.gate && !gateNames.has(t.gate)) {
-			errors.push(
-				`Transition[${i}] gate "${t.gate}" — gate not defined in gates map`,
-			);
+			errors.push(`Transition[${i}] gate "${t.gate}" — gate not defined in gates map`);
 		}
 	}
 
 	// Required contribution points
 	for (const point of metadata.unfilledRequired) {
-		errors.push(
-			`Required contribution point "${point}" was not filled by any plugin`,
-		);
+		errors.push(`Required contribution point "${point}" was not filled by any plugin`);
 	}
 
 	return errors;
@@ -833,11 +801,12 @@ function writeStageResolvedWorkflows(
 		}
 
 		// Determine initial state for the stage contribution workflow.
-		const initialState = stageTransitions.length > 0
-			? (Array.isArray(stageTransitions[0].from)
-				? stageTransitions[0].from[0]
-				: stageTransitions[0].from) ?? Object.keys(stageStates)[0]
-			: Object.keys(stageStates)[0];
+		const initialState =
+			stageTransitions.length > 0
+				? ((Array.isArray(stageTransitions[0].from)
+						? stageTransitions[0].from[0]
+						: stageTransitions[0].from) ?? Object.keys(stageStates)[0])
+				: Object.keys(stageStates)[0];
 
 		const primaryPlugin = contributingPlugins[0]?.plugin ?? "unknown";
 
@@ -908,7 +877,10 @@ function writeStageResolvedWorkflows(
  * @param pluginName - The name of the plugin providing this artifact type.
  * @returns A plain object summary suitable for embedding in resolved YAML.
  */
-function buildArtifactTypeSummary(schema: ArtifactSchema, pluginName: string): Record<string, unknown> {
+function buildArtifactTypeSummary(
+	schema: ArtifactSchema,
+	pluginName: string,
+): Record<string, unknown> {
 	const requiredKeys = new Set(schema.frontmatter.required ?? []);
 	const properties = schema.frontmatter.properties ?? {};
 	const required: Record<string, unknown> = {};
@@ -927,20 +899,20 @@ function buildArtifactTypeSummary(schema: ArtifactSchema, pluginName: string): R
 	return {
 		id_prefix: schema.idPrefix,
 		id_pattern: buildIdPatternForSchema(schema.idPrefix),
-		default_path: schema.defaultPath.endsWith("/")
-			? schema.defaultPath
-			: schema.defaultPath + "/",
+		default_path: schema.defaultPath.endsWith("/") ? schema.defaultPath : schema.defaultPath + "/",
 		icon: schema.icon,
 		source_plugin: pluginName,
 		fields: { required, optional },
 		additional_properties: schema.frontmatter.additionalProperties ?? true,
-		...(statuses.length > 0 ? {
-			state_machine: {
-				initial_state: statuses[0],
-				states: buildStateMapFromTransitions(schema.statusTransitions ?? {}),
-				transitions: [],
-			},
-		} : {}),
+		...(statuses.length > 0
+			? {
+					state_machine: {
+						initial_state: statuses[0],
+						states: buildStateMapFromTransitions(schema.statusTransitions ?? {}),
+						transitions: [],
+					},
+				}
+			: {}),
 	};
 }
 
@@ -997,9 +969,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 	result.errors.push(...overrideDiscovery.errors);
 
 	// 3. Match contributions to skeletons
-	const { skeletons, contributions, standalone } = matchContributions(
-		discovery.workflows,
-	);
+	const { skeletons, contributions, standalone } = matchContributions(discovery.workflows);
 
 	// 4. Ensure output directory exists
 	const outputDir = path.join(projectRoot, ".orqa", "workflows");
@@ -1017,10 +987,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 
 		// Validate after overrides are applied
 		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
-		const outputPath = path.join(
-			outputDir,
-			`${overrideResult.definition.name}.resolved.json`,
-		);
+		const outputPath = path.join(outputDir, `${overrideResult.definition.name}.resolved.json`);
 
 		// Write the resolved workflow as JSON
 		const outputContent = buildResolvedJson(overrideResult.definition, metadata);
@@ -1037,9 +1004,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		// Write per-stage resolved files for methodology skeletons.
 		// Methodology skeletons have contribution_points with a `stage` field.
 		// Each stage gets its own <stage>.resolved.json alongside the main file.
-		const hasStages = (skeleton.definition.contribution_points ?? []).some(
-			(p) => p.stage,
-		);
+		const hasStages = (skeleton.definition.contribution_points ?? []).some((p) => p.stage);
 		if (hasStages) {
 			try {
 				writeStageResolvedWorkflows(skeleton, contributions, projectRoot, outputDir);
@@ -1069,10 +1034,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
 		result.errors.push(...overrideResult.errors);
 
 		const errors = validateResolvedWorkflow(overrideResult.definition, metadata);
-		const outputPath = path.join(
-			outputDir,
-			`${overrideResult.definition.name}.resolved.json`,
-		);
+		const outputPath = path.join(outputDir, `${overrideResult.definition.name}.resolved.json`);
 
 		const outputContent = buildResolvedJson(overrideResult.definition, metadata);
 		fs.writeFileSync(outputPath, outputContent, "utf-8");
@@ -1103,10 +1065,7 @@ export function resolveAllWorkflows(projectRoot: string): ResolveAllResult {
  * @param metadata - The resolution metadata to embed in the output.
  * @returns The full JSON string.
  */
-function buildResolvedJson(
-	definition: WorkflowDefinition,
-	metadata: ResolutionMetadata,
-): string {
+function buildResolvedJson(definition: WorkflowDefinition, metadata: ResolutionMetadata): string {
 	// Embed resolution metadata directly in the JSON output for traceability.
 	const output = {
 		...definition,

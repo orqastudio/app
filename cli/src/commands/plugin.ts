@@ -6,7 +6,12 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodologyConflict } from "../lib/installer.js";
+import {
+	installPlugin,
+	uninstallPlugin,
+	listInstalledPlugins,
+	detectMethodologyConflict,
+} from "../lib/installer.js";
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
 import {
@@ -23,7 +28,11 @@ import {
 	processAggregatedFiles,
 	computeFileHash,
 } from "../lib/content-lifecycle.js";
-import type { ContentManifest, FileHashEntry, ThreeWayFileStatus } from "../lib/content-lifecycle.js";
+import type {
+	ContentManifest,
+	FileHashEntry,
+	ThreeWayFileStatus,
+} from "../lib/content-lifecycle.js";
 import { createHash } from "node:crypto";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
@@ -310,11 +319,19 @@ async function cmdInstall(args: string[]): Promise<void> {
 
 		for (const c of result.collisions) {
 			console.log(`  Key: "${c.key}"`);
-			console.log(`    Existing (${c.existingSource}): ${c.existingDescription || "(no description)"}`);
-			console.log(`      semantic: ${c.existingSemantic ?? "none"}, from: [${c.existingFrom.join(", ")}], to: [${c.existingTo.join(", ")}]`);
+			console.log(
+				`    Existing (${c.existingSource}): ${c.existingDescription || "(no description)"}`,
+			);
+			console.log(
+				`      semantic: ${c.existingSemantic ?? "none"}, from: [${c.existingFrom.join(", ")}], to: [${c.existingTo.join(", ")}]`,
+			);
 			console.log(`    Incoming: ${c.incomingDescription || "(no description)"}`);
-			console.log(`      semantic: ${c.incomingSemantic ?? "none"}, from: [${c.incomingFrom.join(", ")}], to: [${c.incomingTo.join(", ")}]`);
-			console.log(`    Intent match: ${c.semanticMatch ? "YES — same semantic, likely safe to merge" : "NO — different semantic, should rename"}`);
+			console.log(
+				`      semantic: ${c.incomingSemantic ?? "none"}, from: [${c.incomingFrom.join(", ")}], to: [${c.incomingTo.join(", ")}]`,
+			);
+			console.log(
+				`    Intent match: ${c.semanticMatch ? "YES — same semantic, likely safe to merge" : "NO — different semantic, should rename"}`,
+			);
 			console.log();
 		}
 
@@ -323,7 +340,12 @@ async function cmdInstall(args: string[]): Promise<void> {
 		const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 		const ask = (q: string): Promise<string> => new Promise((resolve) => rl.question(q, resolve));
 
-		const decisions: Array<{ key: string; decision: "merged" | "renamed"; existingSource: string; originalKey?: string }> = [];
+		const decisions: Array<{
+			key: string;
+			decision: "merged" | "renamed";
+			existingSource: string;
+			originalKey?: string;
+		}> = [];
 
 		for (const c of result.collisions) {
 			const suggestion = c.semanticMatch ? "merge" : "rename";
@@ -331,7 +353,12 @@ async function cmdInstall(args: string[]): Promise<void> {
 			const choice = answer.trim().toLowerCase();
 
 			if (choice === "r" || choice === "rename") {
-				decisions.push({ key: c.key, decision: "renamed", existingSource: c.existingSource, originalKey: c.key });
+				decisions.push({
+					key: c.key,
+					decision: "renamed",
+					existingSource: c.existingSource,
+					originalKey: c.key,
+				});
 				console.log(`    -> Will namespace as plugin-specific key\n`);
 			} else {
 				decisions.push({ key: c.key, decision: "merged", existingSource: c.existingSource });
@@ -344,7 +371,10 @@ async function cmdInstall(args: string[]): Promise<void> {
 		// Write decisions to the installed manifest
 		if (decisions.length > 0) {
 			const manifestPath = path.join(result.path, "orqa-plugin.json");
-			const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8")) as Record<string, unknown>;
+			const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8")) as Record<
+				string,
+				unknown
+			>;
 			manifest["mergeDecisions"] = decisions;
 			fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
 			console.log(`Recorded ${decisions.length} merge decision(s) in plugin manifest.`);
@@ -360,7 +390,7 @@ async function cmdInstall(args: string[]): Promise<void> {
 	if (methodologyConflict) {
 		console.error(
 			`\nMethodology conflict: role "${methodologyConflict.role}" is already provided by ${methodologyConflict.existingPlugin}.` +
-			`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
+				`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
 		);
 		// Clean up the just-installed files
 		uninstallPlugin(result.name, projectRoot);
@@ -465,12 +495,14 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 	if (methodologyConflict) {
 		console.error(
 			`\nMethodology conflict: role "${methodologyConflict.role}" is already provided by ${methodologyConflict.existingPlugin}.` +
-			`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
+				`\nOnly one plugin per core role is allowed. Uninstall ${methodologyConflict.existingPlugin} first, or choose a different plugin.`,
 		);
 		process.exit(1);
 	}
 
-	console.log(`\nInstalling first-party plugin: ${pluginManifest.name} @ ${pluginManifest.version}`);
+	console.log(
+		`\nInstalling first-party plugin: ${pluginManifest.name} @ ${pluginManifest.version}`,
+	);
 	console.log(`Path: ${shortPath}`);
 
 	// Install npm dependencies and build
@@ -672,10 +704,18 @@ async function cmdOutdated(): Promise<void> {
 		process.exit(1);
 	}
 
-	const pluginsSection = (projectJson["plugins"] ?? {}) as Record<string, Partial<PluginProjectConfig>>;
+	const pluginsSection = (projectJson["plugins"] ?? {}) as Record<
+		string,
+		Partial<PluginProjectConfig>
+	>;
 	const contentManifest = readContentManifest(projectRoot);
 
-	const outdatedPlugins: Array<{ name: string; installedVersion: string; sourceVersion: string; reason: string }> = [];
+	const outdatedPlugins: Array<{
+		name: string;
+		installedVersion: string;
+		sourceVersion: string;
+		reason: string;
+	}> = [];
 
 	for (const [name, cfg] of Object.entries(pluginsSection)) {
 		if (!cfg.path) continue;
@@ -702,9 +742,7 @@ async function cmdOutdated(): Promise<void> {
 
 		// Check manifest hash mismatch — detects content changes even without a version bump.
 		if (manifestEntry) {
-			const currentHash = createHash("sha256")
-				.update(fs.readFileSync(manifestFile))
-				.digest("hex");
+			const currentHash = createHash("sha256").update(fs.readFileSync(manifestFile)).digest("hex");
 			if (manifestEntry.manifestHash && currentHash !== manifestEntry.manifestHash) {
 				reasons.push("manifest content changed");
 			} else if (!manifestEntry.manifestHash) {
@@ -809,7 +847,9 @@ async function cmdDisable(args: string[]): Promise<void> {
 		updateProjectJsonPlugin(projectRoot, name, { enabled: false });
 	}
 
-	console.log(`Plugin ${name} disabled. Content removed from .orqa/ (manifest retained for re-enable).`);
+	console.log(
+		`Plugin ${name} disabled. Content removed from .orqa/ (manifest retained for re-enable).`,
+	);
 }
 
 // ---------------------------------------------------------------------------
@@ -822,9 +862,7 @@ async function cmdRefresh(args: string[]): Promise<void> {
 
 	// Collect plugins to refresh
 	const installed = listInstalledPlugins(projectRoot);
-	const toRefresh = targetName
-		? installed.filter((p) => p.name === targetName)
-		: installed;
+	const toRefresh = targetName ? installed.filter((p) => p.name === targetName) : installed;
 
 	if (toRefresh.length === 0) {
 		console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
@@ -937,9 +975,7 @@ async function cmdDiff(args: string[]): Promise<void> {
 	const projectRoot = process.cwd();
 
 	const installed = listInstalledPlugins(projectRoot);
-	const toDiff = targetName
-		? installed.filter((p) => p.name === targetName)
-		: installed;
+	const toDiff = targetName ? installed.filter((p) => p.name === targetName) : installed;
 
 	if (toDiff.length === 0) {
 		console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
@@ -1007,10 +1043,10 @@ async function cmdDiff(args: string[]): Promise<void> {
 
 async function cmdRegistry(args: string[]): Promise<void> {
 	const source = args.includes("--official")
-		? "official" as const
+		? ("official" as const)
 		: args.includes("--community")
-			? "community" as const
-			: "all" as const;
+			? ("community" as const)
+			: ("all" as const);
 
 	const searchTerm = args.find((a) => !a.startsWith("--"));
 
@@ -1031,9 +1067,7 @@ async function cmdRegistry(args: string[]): Promise<void> {
 			printRegistryResults(catalog.plugins);
 		}
 	} catch (err) {
-		console.error(
-			`Failed to fetch registry: ${err instanceof Error ? err.message : String(err)}`,
-		);
+		console.error(`Failed to fetch registry: ${err instanceof Error ? err.message : String(err)}`);
 		process.exit(1);
 	}
 }
@@ -1084,9 +1118,7 @@ async function cmdStatus(args: string[]): Promise<void> {
 	const projectRoot = process.cwd();
 
 	const installed = listInstalledPlugins(projectRoot);
-	const toCheck = targetName
-		? installed.filter((p) => p.name === targetName)
-		: installed;
+	const toCheck = targetName ? installed.filter((p) => p.name === targetName) : installed;
 
 	if (toCheck.length === 0) {
 		console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
@@ -1105,9 +1137,7 @@ async function cmdStatus(args: string[]): Promise<void> {
 
 		for (const [relPath, hashEntry] of Object.entries(entry.files)) {
 			const sourceFile = findSourceFile(p.path, pluginManifest, relPath);
-			const sourceHash = sourceFile && fs.existsSync(sourceFile)
-				? computeFileHash(sourceFile)
-				: "";
+			const sourceHash = sourceFile && fs.existsSync(sourceFile) ? computeFileHash(sourceFile) : "";
 
 			const state = computeThreeWayState(relPath, projectRoot, hashEntry, sourceHash);
 			fileStatuses.push({ path: relPath, state });
@@ -1124,11 +1154,18 @@ async function cmdStatus(args: string[]): Promise<void> {
 	for (const result of allResults) {
 		console.log(`\n${result.plugin}:`);
 		for (const f of result.files) {
-			const icon = f.state === "clean" ? " " :
-				f.state === "plugin-updated" ? "P" :
-				f.state === "user-modified" ? "U" :
-				f.state === "conflict" ? "C" :
-				f.state === "missing" ? "!" : "?";
+			const icon =
+				f.state === "clean"
+					? " "
+					: f.state === "plugin-updated"
+						? "P"
+						: f.state === "user-modified"
+							? "U"
+							: f.state === "conflict"
+								? "C"
+								: f.state === "missing"
+									? "!"
+									: "?";
 			console.log(`  [${icon}] ${path.basename(f.path)}: ${f.state}`);
 		}
 	}
@@ -1177,7 +1214,9 @@ async function cmdTemplateValidate(args: string[]): Promise<void> {
 			}
 		}
 	} catch (err) {
-		errors.push(`Failed to parse orqa-plugin.json: ${err instanceof Error ? err.message : String(err)}`);
+		errors.push(
+			`Failed to parse orqa-plugin.json: ${err instanceof Error ? err.message : String(err)}`,
+		);
 	}
 
 	if (errors.length === 0) {

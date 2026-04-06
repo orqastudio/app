@@ -11,10 +11,7 @@
 import { type Dirent, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { getRoot } from "../lib/root.js";
-import {
-	parseFrontmatterFromContent,
-	writeFrontmatter,
-} from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 
 const USAGE = `
 Usage: orqa migrate [options]
@@ -110,9 +107,7 @@ function loadMigrationMappings(projectRoot: string): MigrationMapping[] {
 			const migrationMap = migration as Record<string, string>;
 
 			// Only include if there are actual renames (from !== to)
-			const hasRenames = Object.entries(migrationMap).some(
-				([from, to]) => from !== to,
-			);
+			const hasRenames = Object.entries(migrationMap).some(([from, to]) => from !== to);
 			if (!hasRenames) continue;
 
 			// Use the stage file name as workflow name since standalone per-type files are gone.
@@ -171,16 +166,10 @@ function walkFiles(dir: string, results: string[] = []): string[] {
 function scanArtifacts(
 	projectRoot: string,
 ): Map<string, Array<{ file: string; id: string; status: string }>> {
-	const scanDirs = [
-		join(projectRoot, ".orqa"),
-		join(projectRoot, "app", ".orqa"),
-	];
+	const scanDirs = [join(projectRoot, ".orqa"), join(projectRoot, "app", ".orqa")];
 
 	const allFiles = scanDirs.flatMap((d) => walkFiles(d));
-	const byType = new Map<
-		string,
-		Array<{ file: string; id: string; status: string }>
-	>();
+	const byType = new Map<string, Array<{ file: string; id: string; status: string }>>();
 
 	for (const file of allFiles) {
 		let content: string;
@@ -356,9 +345,7 @@ export async function runMigrateCommand(args: string[]): Promise<void> {
 	);
 
 	for (const change of changes) {
-		const rel = change.file
-			.replace(projectRoot + "/", "")
-			.replace(projectRoot + "\\", "");
+		const rel = change.file.replace(projectRoot + "/", "").replace(projectRoot + "\\", "");
 		console.log(
 			`  ${change.artifactId} (${change.artifactType}): ${change.oldStatus} -> ${change.newStatus}`,
 		);
@@ -376,9 +363,7 @@ export async function runMigrateCommand(args: string[]): Promise<void> {
 	console.log(`Migrated ${applied}/${changes.length} artifact(s).`);
 
 	if (applied < changes.length) {
-		console.error(
-			`Warning: ${changes.length - applied} artifact(s) could not be updated.`,
-		);
+		console.error(`Warning: ${changes.length - applied} artifact(s) could not be updated.`);
 		process.exit(1);
 	}
 }

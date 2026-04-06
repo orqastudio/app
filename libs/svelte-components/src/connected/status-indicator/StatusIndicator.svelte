@@ -14,12 +14,14 @@
 	// Resolve statuses from the store's project config
 	const stores = getStores();
 	const statuses = $derived<StatusConfig[] | undefined>(
-		stores.projectStore?.settings?.statuses?.map((s: { key: string; label: string; icon?: string; spin?: boolean }) => ({
-			key: s.key,
-			label: s.label,
-			icon: s.icon ?? "circle",
-			spin: s.spin,
-		}))
+		stores.projectStore?.settings?.statuses?.map(
+			(s: { key: string; label: string; icon?: string; spin?: boolean }) => ({
+				key: s.key,
+				label: s.label,
+				icon: s.icon ?? "circle",
+				spin: s.spin,
+			}),
+		),
 	);
 </script>
 

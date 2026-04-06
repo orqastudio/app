@@ -56,7 +56,10 @@ export function extractEnforcementEntries(rulesDir: string): EnforcementEntry[] 
 
 		let fmEnd = -1;
 		for (let i = 1; i < lines.length; i++) {
-			if (lines[i].trim() === "---") { fmEnd = i; break; }
+			if (lines[i].trim() === "---") {
+				fmEnd = i;
+				break;
+			}
 		}
 		if (fmEnd === -1) continue;
 
@@ -68,7 +71,11 @@ export function extractEnforcementEntries(rulesDir: string): EnforcementEntry[] 
 
 			for (const entry of enforcement) {
 				const e = entry as Record<string, unknown>;
-				if (typeof e["plugin"] === "string" && typeof e["tool"] === "string" && Array.isArray(e["config"])) {
+				if (
+					typeof e["plugin"] === "string" &&
+					typeof e["tool"] === "string" &&
+					Array.isArray(e["config"])
+				) {
 					entries.push({
 						plugin: e["plugin"] as string,
 						tool: e["tool"] as string,
@@ -76,7 +83,9 @@ export function extractEnforcementEntries(rulesDir: string): EnforcementEntry[] 
 					});
 				}
 			}
-		} catch { /* skip unparseable */ }
+		} catch {
+			/* skip unparseable */
+		}
 	}
 
 	return entries;
@@ -116,7 +125,9 @@ export function loadPluginTools(projectRoot: string): Map<string, Map<string, To
 			}
 
 			result.set(pluginName, toolMap);
-		} catch { /* skip */ }
+		} catch {
+			/* skip */
+		}
 	}
 
 	return result;
@@ -175,9 +186,7 @@ function buildJsonConfig(configs: ConfigEntry[], toolName: string): Record<strin
 		const rules: Record<string, unknown> = {};
 		for (const c of configs) {
 			if (c["rule"] && c["severity"]) {
-				rules[c["rule"] as string] = c["options"]
-					? [c["severity"], c["options"]]
-					: c["severity"];
+				rules[c["rule"] as string] = c["options"] ? [c["severity"], c["options"]] : c["severity"];
 			}
 		}
 		return { rules };

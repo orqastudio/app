@@ -15,6 +15,9 @@
 </script>
 
 <!-- writing-mode has no Tailwind utility — inline style is required here. -->
-<span class="inline-block select-none" style="writing-mode: vertical-rl; transform: rotate(180deg);">
+<span
+	class="inline-block select-none"
+	style="writing-mode: vertical-rl; transform: rotate(180deg);"
+>
 	<Text {variant} {tone}>{@render children?.()}</Text>
 </span>

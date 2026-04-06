@@ -92,7 +92,8 @@ export function syncVersions(projectRoot: string, version: string): VersionSyncR
 		for (const entry of fs.readdirSync(connectorsDir, { withFileTypes: true })) {
 			if (!entry.isDirectory()) continue;
 			const dir = path.join(connectorsDir, entry.name);
-			if (updateJsonVersion(path.join(dir, "package.json"), version)) updated.push(path.join(dir, "package.json"));
+			if (updateJsonVersion(path.join(dir, "package.json"), version))
+				updated.push(path.join(dir, "package.json"));
 			updateOrqaDeps(path.join(dir, "package.json"), version);
 		}
 	}
@@ -112,10 +113,14 @@ export function syncVersions(projectRoot: string, version: string): VersionSyncR
 		for (const entry of fs.readdirSync(containerDir, { withFileTypes: true })) {
 			if (!entry.isDirectory()) continue;
 			const dir = path.join(containerDir, entry.name);
-			if (updateJsonVersion(path.join(dir, "orqa-plugin.json"), version)) updated.push(path.join(dir, "orqa-plugin.json"));
-			if (updateJsonVersion(path.join(dir, "package.json"), version)) updated.push(path.join(dir, "package.json"));
-			if (updateJsonVersion(path.join(dir, ".claude-plugin", "plugin.json"), version)) updated.push(path.join(dir, ".claude-plugin/plugin.json"));
-			if (updateOrqaDeps(path.join(dir, "package.json"), version)) updated.push(path.join(dir, "package.json") + " (deps)");
+			if (updateJsonVersion(path.join(dir, "orqa-plugin.json"), version))
+				updated.push(path.join(dir, "orqa-plugin.json"));
+			if (updateJsonVersion(path.join(dir, "package.json"), version))
+				updated.push(path.join(dir, "package.json"));
+			if (updateJsonVersion(path.join(dir, ".claude-plugin", "plugin.json"), version))
+				updated.push(path.join(dir, ".claude-plugin/plugin.json"));
+			if (updateOrqaDeps(path.join(dir, "package.json"), version))
+				updated.push(path.join(dir, "package.json") + " (deps)");
 		}
 	}
 
@@ -145,11 +150,18 @@ export function checkVersionDrift(projectRoot: string): VersionDrift[] {
 				if (!data[section]) continue;
 				for (const [key, val] of Object.entries(data[section] as Record<string, string>)) {
 					if (key.startsWith("@orqastudio/") && val !== canonical) {
-						drift.push({ file: `${filePath} → ${key}`, found: val, expected: canonical, type: "dependency" });
+						drift.push({
+							file: `${filePath} → ${key}`,
+							found: val,
+							expected: canonical,
+							type: "dependency",
+						});
 					}
 				}
 			}
-		} catch { /* skip */ }
+		} catch {
+			/* skip */
+		}
 	};
 
 	// Scan all known locations
@@ -174,7 +186,9 @@ export function checkVersionDrift(projectRoot: string): VersionDrift[] {
 			if (match && match[1] !== canonical) {
 				drift.push({ file: cargoToml, found: match[1], expected: canonical, type: "cargo" });
 			}
-		} catch { /* skip */ }
+		} catch {
+			/* skip */
+		}
 	}
 
 	return drift;
@@ -192,7 +206,9 @@ function updateJsonVersion(filePath: string, version: string): boolean {
 		data.version = version;
 		fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf-8");
 		return true;
-	} catch { return false; }
+	} catch {
+		return false;
+	}
 }
 
 function updateOrqaDeps(filePath: string, version: string): boolean {
@@ -213,7 +229,9 @@ function updateOrqaDeps(filePath: string, version: string): boolean {
 			fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + "\n", "utf-8");
 		}
 		return changed;
-	} catch { return false; }
+	} catch {
+		return false;
+	}
 }
 
 function updateCargoVersion(filePath: string, version: string): boolean {
@@ -224,5 +242,7 @@ function updateCargoVersion(filePath: string, version: string): boolean {
 		if (updated === content) return false;
 		fs.writeFileSync(filePath, updated, "utf-8");
 		return true;
-	} catch { return false; }
+	} catch {
+		return false;
+	}
 }

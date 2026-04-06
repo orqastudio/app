@@ -54,9 +54,7 @@ function detectIsDirectory(resolvedTarget: string): boolean {
  * @param linkPath - The path where the symlink will be created.
  */
 export function createSymlink(target: string, linkPath: string): void {
-	const absTarget = path.isAbsolute(target)
-		? target
-		: path.resolve(path.dirname(linkPath), target);
+	const absTarget = path.isAbsolute(target) ? target : path.resolve(path.dirname(linkPath), target);
 
 	if (process.platform === "win32") {
 		// Escape single quotes in paths for PowerShell safety

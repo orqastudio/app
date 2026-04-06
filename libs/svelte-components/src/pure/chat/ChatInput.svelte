@@ -31,6 +31,10 @@
 
 	const canSend = $derived(value.trim().length > 0 && !isStreaming && !disabled);
 
+	/**
+	 * Submit the message on Enter (without Shift), preventing the default newline insertion.
+	 * @param event - The keyboard event from the textarea
+	 */
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
@@ -38,6 +42,7 @@
 		}
 	}
 
+	/** Trim the current value, call the onsubmit callback, then clear the field and reset its height. Does nothing when streaming, disabled, or the input is blank. */
 	function send() {
 		const content = value.trim();
 		if (content.length === 0 || isStreaming || disabled) return;
@@ -46,10 +51,12 @@
 		resetTextareaHeight();
 	}
 
+	/** Trigger auto-resize whenever the textarea content changes. */
 	function handleInput() {
 		autoResize();
 	}
 
+	/** Expand the textarea to fit its content up to a 200px maximum height. */
 	function autoResize() {
 		if (!textareaRef) return;
 		textareaRef.style.height = "auto";
@@ -57,13 +64,14 @@
 		textareaRef.style.height = `${Math.min(textareaRef.scrollHeight, maxHeight)}px`;
 	}
 
+	/** Reset the textarea height back to auto after a message is sent. */
 	function resetTextareaHeight() {
 		if (!textareaRef) return;
 		textareaRef.style.height = "auto";
 	}
 </script>
 
-<div class="border-t border-border bg-background p-3">
+<div class="border-border bg-background border-t p-3">
 	<HStack gap={2}>
 		<Textarea
 			bind:ref={textareaRef}

@@ -9,10 +9,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
-import {
-	parseFrontmatterFromContent,
-	writeFrontmatter,
-} from "../lib/frontmatter.js";
+import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
 
 const USAGE = `
 Usage: orqa id <subcommand> [options]
@@ -65,7 +62,13 @@ function walkFiles(dir: string, results: string[] = []): string[] {
 		return results;
 	}
 	for (const entry of entries) {
-		if (entry.name.startsWith(".") || entry.name === "node_modules" || entry.name === "dist" || entry.name === "target") continue;
+		if (
+			entry.name.startsWith(".") ||
+			entry.name === "node_modules" ||
+			entry.name === "dist" ||
+			entry.name === "target"
+		)
+			continue;
 		const full = join(dir, entry.name);
 		if (entry.isDirectory()) walkFiles(full, results);
 		else if (entry.name.endsWith(".md")) results.push(full);
@@ -281,7 +284,7 @@ export async function runIdCommand(args: string[]): Promise<void> {
 		case "generate": {
 			const positional = subArgs.filter((a) => !a.startsWith("--"));
 			if (positional.length < 2) {
-				console.error('Usage: orqa id generate <TYPE> <TITLE>');
+				console.error("Usage: orqa id generate <TYPE> <TITLE>");
 				console.error('Example: orqa id generate TASK "Fix broken tests"');
 				process.exit(1);
 			}
@@ -305,7 +308,9 @@ export async function runIdCommand(args: string[]): Promise<void> {
 				process.exit(1);
 			}
 			const [oldId, newId] = ids;
-			const targetPath = resolve(subArgs.find((a) => a.startsWith("--path="))?.replace("--path=", "") ?? process.cwd());
+			const targetPath = resolve(
+				subArgs.find((a) => a.startsWith("--path="))?.replace("--path=", "") ?? process.cwd(),
+			);
 			migrateId(targetPath, oldId, newId);
 			break;
 		}

@@ -18,8 +18,8 @@
 	{disabled}
 	data-slot="radio-group-item"
 	class={cn(
-		"aspect-square h-4 w-4 rounded-full border border-input shadow-xs",
-		"focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring",
+		"border-input aspect-square h-4 w-4 rounded-full border shadow-xs",
+		"focus-visible:ring-ring/50 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:outline-none",
 		"disabled:cursor-not-allowed disabled:opacity-50",
 		"data-[state=checked]:border-primary",
 		"transition-colors",
@@ -31,11 +31,11 @@
 			class={cn(
 				"flex items-center justify-center",
 				"transition-opacity",
-				checked ? "opacity-100" : "opacity-0"
+				checked ? "opacity-100" : "opacity-0",
 			)}
 			aria-hidden="true"
 		>
-			<span class="h-2 w-2 rounded-full bg-primary"></span>
+			<span class="bg-primary h-2 w-2 rounded-full"></span>
 		</span>
 	{/snippet}
 </RadioGroupPrimitive.Item>
