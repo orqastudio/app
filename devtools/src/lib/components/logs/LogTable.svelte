@@ -40,10 +40,22 @@
 		sessions,
 		switchToCurrentSession,
 	} from "../../stores/session-store.svelte.js";
+	import { openDrawer } from "../../stores/drawer-store.svelte.js";
+	import type { LogEvent } from "../../stores/log-store.svelte.js";
 
 	const filteredEvents = $derived(getFilteredEvents());
 	import LogRow from "./LogRow.svelte";
 	import LogExport from "./LogExport.svelte";
+
+	/**
+	 * Handle a row click from the virtualised log table. Opens the EventDrawer
+	 * for the clicked event, passing the current filtered event list as the
+	 * navigation context so next/prev steps through visible events.
+	 * @param event - The log event whose row was clicked.
+	 */
+	function handleRowClick(event: LogEvent): void {
+		openDrawer(event, filteredEvents);
+	}
 
 	// Height of a collapsed row in pixels. Must match the inline style in LogRow.
 	const ROW_HEIGHT = 24;
@@ -315,7 +327,11 @@
 		     positioned inside it via their pre-computed offsets. -->
 		<div class="log-table__spacer" style="height: {totalHeight}px;">
 			{#each visibleEvents as ev (ev.id)}
-				<LogRow event={ev} style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;" />
+				<LogRow
+					event={ev}
+					style="top: {rowOffsets[filteredEvents.indexOf(ev)]}px;"
+					ondraweropen={handleRowClick}
+				/>
 			{/each}
 		</div>
 

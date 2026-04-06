@@ -9,6 +9,7 @@
 // ── Container ── Card*, SimpleCard, FormCard, ListCard, DashboardCard, ViewContainer, Collapsible*
 // ── Form ── FormGroup, FormSection, Checkbox, Switch, RadioGroup, IssueFilters
 // ── Utility ── VisuallyHidden, ThinkingBlock
+// ── DevTools ── StackFrameList, EventDrawer, ContextTable, RawJson
 
 // Typography primitives
 export { Heading, Text, Label, Caption, Code } from "./typography/index.js";
@@ -218,3 +219,9 @@ export { IssueFilters } from "./issue-filters/index.js";
 export { Dot } from "./dot/index.js";
 export { CountBadge } from "./count-badge/index.js";
 export { VerticalText } from "./vertical-text/index.js";
+
+// DevTools Step 4 components
+export { StackFrameList } from "./stack-frame-list/index.js";
+export { EventDrawer } from "./event-drawer/index.js";
+export { ContextTable, type ContextEntry } from "./context-table/index.js";
+export { RawJson } from "./raw-json/index.js";

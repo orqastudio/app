@@ -9,10 +9,13 @@
 	let {
 		event,
 		style = "",
+		ondraweropen,
 	}: {
 		event: LogEvent;
 		// Inline style string injected by the virtualiser for position/transform.
 		style?: string;
+		// When provided, row clicks open the drawer instead of the inline expand panel.
+		ondraweropen?: (event: LogEvent) => void;
 	} = $props();
 
 	// Whether the metadata panel is expanded for this row.
@@ -96,7 +99,13 @@
 		<Button
 			variant="ghost"
 			style="height: 24px; line-height: 24px;"
-			onclick={() => (expanded = !expanded)}
+			onclick={() => {
+				if (ondraweropen) {
+					ondraweropen(event);
+				} else {
+					expanded = !expanded;
+				}
+			}}
 			aria-expanded={expanded}
 		>
 			<!-- Timestamp: monospace, fixed width so columns align. -->

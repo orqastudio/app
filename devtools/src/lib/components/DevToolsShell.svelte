@@ -10,6 +10,11 @@
 		resolveIcon,
 		ConnectionIndicator,
 		Caption,
+		EventDrawer,
+		StackFrameList,
+		ContextTable,
+		RawJson,
+		type ContextEntry,
 	} from "@orqastudio/svelte-components/pure";
 	import {
 		AppShell,
@@ -24,6 +29,16 @@
 		connectionLabel,
 	} from "../stores/devtools-navigation.svelte.js";
 	import { assertNever } from "@orqastudio/types";
+	import type { LogEvent } from "../stores/log-store.svelte.js";
+	import {
+		isDrawerOpen,
+		getDrawerEvent,
+		getDrawerTab,
+		closeDrawer,
+		nextEvent,
+		prevEvent,
+		setTab,
+	} from "../stores/drawer-store.svelte.js";
 	import { devController, startDev, stopDev } from "../stores/dev-controller.svelte.js";
 	import {
 		viewingHistorical,
@@ -112,6 +127,48 @@
 	}
 
 	/**
+	 * Build the context entries array for ContextTable from a log event's fields.
+	 * Extracts scalar fields (source, level, category, session_id, correlation_id,
+	 * fingerprint) and flattens metadata key-value pairs when metadata is an object.
+	 * @param event - The log event to extract context from, or null.
+	 * @returns Ordered array of ContextEntry objects for display.
+	 */
+	function buildContextEntries(event: LogEvent | null): ContextEntry[] {
+		if (!event) return [];
+		const entries: ContextEntry[] = [
+			{ key: "source", value: event.source },
+			{ key: "level", value: event.level },
+			{ key: "category", value: event.category },
+		];
+		if (event.session_id) {
+			entries.push({ key: "session_id", value: event.session_id, copyable: true });
+		}
+		if (event.correlation_id) {
+			entries.push({ key: "correlation_id", value: event.correlation_id, copyable: true });
+		}
+		if (event.fingerprint) {
+			entries.push({ key: "fingerprint", value: event.fingerprint, copyable: true });
+		}
+		// Flatten metadata when it is a plain object — add each key-value pair.
+		if (
+			event.metadata !== null &&
+			typeof event.metadata === "object" &&
+			!Array.isArray(event.metadata)
+		) {
+			for (const [k, v] of Object.entries(event.metadata as Record<string, unknown>)) {
+				entries.push({ key: k, value: String(v) });
+			}
+		}
+		return entries;
+	}
+
+	// Reactive references to drawer state via getter functions. These re-run
+	// any time the underlying $state values change so the template stays current.
+	const drawerOpen = $derived(isDrawerOpen());
+	const drawerEvent = $derived(getDrawerEvent());
+	const drawerTab = $derived(getDrawerTab());
+
+	/**
 	 * Handle keydown: ? key toggles the help panel when not typing in an input field.
 	 * Ctrl+1–5 navigate directly to the corresponding tab.
 	 * @param e - The keyboard event from the document keydown listener.
@@ -146,20 +203,46 @@
 		{/snippet}
 
 		{#snippet mainContent()}
-			{#if navigation.activeTab === "issues"}
-				<IssuesView />
-			{:else if navigation.activeTab === "stream"}
-				{@render children()}
-			{:else if navigation.activeTab === "processes"}
-				<ProcessView />
-			{:else if navigation.activeTab === "storybook"}
-				<StorybookView />
-			{:else if navigation.activeTab === "metrics"}
-				<MetricsView />
-			{:else}
-				{@const _exhaustive = assertTabNever(navigation.activeTab)}
-				{_exhaustive}
-			{/if}
+			<!-- Main content area + optional EventDrawer side panel. The drawer renders
+			     alongside the active tab so it persists across tab switches. -->
+			<div class="shell__content-with-drawer">
+				<div class="shell__main-pane">
+					{#if navigation.activeTab === "issues"}
+						<IssuesView />
+					{:else if navigation.activeTab === "stream"}
+						{@render children()}
+					{:else if navigation.activeTab === "processes"}
+						<ProcessView />
+					{:else if navigation.activeTab === "storybook"}
+						<StorybookView />
+					{:else if navigation.activeTab === "metrics"}
+						<MetricsView />
+					{:else}
+						{@const _exhaustive = assertTabNever(navigation.activeTab)}
+						{_exhaustive}
+					{/if}
+				</div>
+
+				<EventDrawer
+					open={drawerOpen}
+					event={drawerEvent}
+					activeTab={drawerTab}
+					onclose={closeDrawer}
+					onnext={nextEvent}
+					onprev={prevEvent}
+					ontabchange={setTab}
+				>
+					{#snippet stackContent()}
+						<StackFrameList frames={drawerEvent?.stack_frames ?? []} />
+					{/snippet}
+					{#snippet contextContent()}
+						<ContextTable entries={buildContextEntries(drawerEvent)} />
+					{/snippet}
+					{#snippet rawContent()}
+						<RawJson data={drawerEvent} />
+					{/snippet}
+				</EventDrawer>
+			</div>
 		{/snippet}
 
 		{#snippet statusBar()}
@@ -218,5 +301,22 @@
 		white-space: nowrap;
 		font-style: italic;
 		color: var(--color-primary);
+	}
+
+	/* Flex row containing the main content pane and the optional EventDrawer. The
+	   drawer sits to the right of the active view and persists across tab switches
+	   so users can keep an event in view while navigating. */
+	.shell__content-with-drawer {
+		display: flex;
+		flex-direction: row;
+		height: 100%;
+		overflow: hidden;
+	}
+
+	/* Main pane expands to fill all space not consumed by the drawer. */
+	.shell__main-pane {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
 	}
 </style>

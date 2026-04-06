@@ -24,7 +24,10 @@
 		loadIssueGroups,
 		type IssueSortBy,
 		type SortDir,
+		type IssueGroup,
 	} from "../../stores/issue-store.svelte.js";
+	import { events } from "../../stores/log-store.svelte.js";
+	import { openDrawer } from "../../stores/drawer-store.svelte.js";
 
 	/** Current text search query — client-side only, not sent to backend. */
 	let searchQuery = $state("");
@@ -89,6 +92,37 @@
 		searchQuery = query;
 	}
 
+	/**
+	 * Handle an issue row click. Selects the issue in the store and opens the
+	 * EventDrawer for the group's most recent event. The navigation list is built
+	 * from the most recent event of each visible group so the user can step
+	 * through issues without closing the drawer.
+	 * @param group - The issue group that was clicked.
+	 */
+	function handleIssueClick(group: IssueGroup): void {
+		selectIssue(group.fingerprint);
+
+		// Find the most recent event for this group from the live event buffer.
+		// recent_event_ids is ordered newest-first; we walk the list to find
+		// the first id that exists in the current buffer.
+		const recentId = group.recent_event_ids[0];
+		if (recentId === undefined) return;
+
+		const event = events.find((ev) => ev.id === recentId);
+		if (!event) return;
+
+		// Build a navigation list from the most recent event of each visible group.
+		// Groups without a matching event in the buffer are skipped.
+		const navList = filteredGroups
+			.map((g) => {
+				const id = g.recent_event_ids[0];
+				return id !== undefined ? events.find((ev) => ev.id === id) : undefined;
+			})
+			.filter((ev): ev is NonNullable<typeof ev> => ev !== undefined);
+
+		openDrawer(event, navList.length > 0 ? navList : [event]);
+	}
+
 	onMount(() => {
 		let cleanup: (() => void) | undefined;
 
@@ -127,7 +161,7 @@
 					<IssueRow
 						{...group}
 						selected={selectedFingerprint.value === group.fingerprint}
-						onclick={() => selectIssue(group.fingerprint)}
+						onclick={() => handleIssueClick(group)}
 					/>
 				{/each}
 			</Stack>
