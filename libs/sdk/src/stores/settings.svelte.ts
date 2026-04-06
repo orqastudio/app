@@ -36,7 +36,7 @@ function defaultApplyTheme(mode: ThemeMode): void {
 }
 
 /**
- *
+ * Reactive store managing user preferences, sidecar status, and daemon health.
  */
 export class SettingsStore {
 	themeMode = $state<ThemeMode>("system");
@@ -72,9 +72,9 @@ export class SettingsStore {
 	private _onThemeChange: ((mode: ThemeMode) => void) | null = null;
 
 	/**
-	 *
-	 * @param options
-	 * @param options.onThemeChange
+	 * Initializes the store by loading settings and starting background polling for sidecar and daemon health.
+	 * @param options - Optional configuration for the initialization.
+	 * @param options.onThemeChange - Optional callback invoked whenever the active theme changes.
 	 */
 	async initialize(options?: { onThemeChange?: (mode: ThemeMode) => void }): Promise<void> {
 		if (this._initialized) return;
@@ -128,7 +128,7 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Stops polling intervals and cleans up all event listeners.
 	 */
 	destroy(): void {
 		if (this._pollIntervalId !== null) {
@@ -191,8 +191,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
-	 * @param mode
+	 * Updates the active theme mode and persists the change to backend settings.
+	 * @param mode - The theme mode to activate (light, dark, or system).
 	 */
 	async setThemeMode(mode: ThemeMode): Promise<void> {
 		this.themeMode = mode;
@@ -211,8 +211,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
-	 * @param model
+	 * Updates the default Claude model and persists the change to backend settings.
+	 * @param model - The model identifier to set as default.
 	 */
 	async setDefaultModel(model: DefaultModel): Promise<void> {
 		this.defaultModel = model;
@@ -230,8 +230,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
-	 * @param size
+	 * Updates the editor font size (clamped to 12-20) and persists it to backend settings.
+	 * @param size - The desired font size in pixels.
 	 */
 	async setFontSize(size: number): Promise<void> {
 		this.fontSize = Math.max(12, Math.min(20, size));
@@ -249,29 +249,31 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
-	 * @param section
+	 * Sets the currently visible settings section in the UI.
+	 * @param section - The section identifier to activate.
 	 */
 	setActiveSection(section: string) {
 		this.activeSection = section;
 	}
 
 	/**
-	 *
+	 * Returns true when all startup tasks have completed.
+	 * @returns Whether all startup tasks are in the done state.
 	 */
 	get startupDone(): boolean {
 		return this.startupStatus?.all_done ?? false;
 	}
 
 	/**
-	 *
+	 * Returns the first startup task currently in progress, or null if none are active.
+	 * @returns The in-progress startup task, or null.
 	 */
 	get activeStartupTask(): StartupTask | null {
 		return this.startupStatus?.tasks.find((t) => t.status === "in_progress") ?? null;
 	}
 
 	/**
-	 *
+	 * Polls the backend for the current sidecar status and startup progress, updating reactive state.
 	 */
 	async refreshSidecarStatus(): Promise<void> {
 		// Poll startup status until all tasks are done
@@ -307,7 +309,7 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Sends a restart command to the sidecar process and updates the sidecar status.
 	 */
 	async restartSidecar(): Promise<void> {
 		try {
@@ -327,7 +329,7 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Polls the daemon health endpoint and updates daemonHealth with the latest state.
 	 */
 	async refreshDaemonHealth(): Promise<void> {
 		const prevState = this.daemonHealth.state;
@@ -376,7 +378,8 @@ export class SettingsStore {
 	}
 
 	/**
-	 *
+	 * Returns a human-readable label for the current daemon connection state.
+	 * @returns A display string for the daemon state.
 	 */
 	get daemonStateLabel(): string {
 		switch (this.daemonHealth.state) {

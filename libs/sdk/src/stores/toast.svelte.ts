@@ -20,7 +20,7 @@ const DEFAULT_DURATION_MS = 4000;
 const MAX_TOASTS = 10;
 
 /**
- *
+ * Reactive store that manages the list of active toast notifications.
  */
 export class ToastStore {
 	toasts = $state<Toast[]>([]);
@@ -32,10 +32,11 @@ export class ToastStore {
 	}
 
 	/**
-	 *
-	 * @param message
-	 * @param type
-	 * @param duration
+	 * Adds a new toast notification and schedules auto-dismiss if duration is positive.
+	 * @param message - The text content to display in the toast.
+	 * @param type - The severity type controlling the toast's visual appearance.
+	 * @param duration - How long in milliseconds before the toast is auto-dismissed.
+	 * @returns The generated ID for the new toast.
 	 */
 	add(message: string, type: ToastType, duration: number = DEFAULT_DURATION_MS): string {
 		const id = this.generateId();
@@ -54,8 +55,8 @@ export class ToastStore {
 	}
 
 	/**
-	 *
-	 * @param id
+	 * Dismisses a specific toast by ID, cancelling its auto-dismiss timer.
+	 * @param id - The ID of the toast to remove.
 	 */
 	dismiss(id: string): void {
 		const timer = this.dismissTimers.get(id);
@@ -67,7 +68,7 @@ export class ToastStore {
 	}
 
 	/**
-	 *
+	 * Dismisses all active toasts and cancels all pending auto-dismiss timers.
 	 */
 	dismissAll(): void {
 		for (const timer of this.dismissTimers.values()) {
@@ -79,8 +80,9 @@ export class ToastStore {
 }
 
 /**
- * Create convenience functions bound to a ToastStore instance.
- * @param store
+ * Creates convenience helper functions bound to a specific ToastStore instance.
+ * @param store - The ToastStore instance to bind the helpers to.
+ * @returns An object with typed shorthand methods for each toast severity level.
  */
 export function createToastConvenience(store: ToastStore) {
 	return {

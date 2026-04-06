@@ -113,12 +113,13 @@ export async function loadSessionEvents(
 // Format a session's start timestamp as a human-readable label.
 // Used when label is null to show an auto-generated display name.
 /**
- *
- * @param session
+ * Returns a human-readable display label for a session, using its custom label or a formatted timestamp.
+ * @param session - The session to generate a display label for.
+ * @returns The session's custom label or an auto-generated timestamp-based name.
  */
 export function sessionDisplayLabel(session: DevToolsSession): string {
 	if (session.label) return session.label;
-	const d = new Date(session.started_at);
+	const d = new SvelteDate(session.started_at);
 	const date = d.toLocaleDateString(undefined, {
 		year: "numeric",
 		month: "2-digit",
@@ -131,8 +132,9 @@ export function sessionDisplayLabel(session: DevToolsSession): string {
 // Format the duration between started_at and ended_at as a human-readable string.
 // Returns "Active" when ended_at is null (current session).
 /**
- *
- * @param session
+ * Formats the elapsed duration of a session as a human-readable string.
+ * @param session - The session whose duration to format.
+ * @returns A human-readable duration string, or "Active" if the session is still running.
  */
 export function sessionDuration(session: DevToolsSession): string {
 	if (session.ended_at === null) return "Active";

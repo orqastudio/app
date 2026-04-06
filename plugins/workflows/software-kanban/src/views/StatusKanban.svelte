@@ -57,8 +57,9 @@
 	let showBoardOverride = $state(false);
 
 	/**
-	 *
-	 * @param colKey
+	 * Returns the list of artifact nodes that belong to the given column key.
+	 * @param colKey - The column key to filter nodes by (e.g. status or priority value).
+	 * @returns The artifact nodes assigned to that column.
 	 */
 	function nodesForColumn(colKey: string): ArtifactNode[] {
 		if (groupBy === "priority") {
@@ -74,9 +75,9 @@
 	}
 
 	/**
-	 *
-	 * @param e
-	 * @param node
+	 * Initiates a drag operation for the given artifact node.
+	 * @param e - The drag event from the browser.
+	 * @param node - The artifact node being dragged.
 	 */
 	function handleDragStart(e: DragEvent, node: ArtifactNode) {
 		dragNodeId = node.id;
@@ -84,9 +85,9 @@
 	}
 
 	/**
-	 *
-	 * @param e
-	 * @param colKey
+	 * Handles dropping a dragged artifact node into the target column.
+	 * @param e - The drop event from the browser.
+	 * @param colKey - The column key where the node was dropped.
 	 */
 	function handleDrop(e: DragEvent, colKey: string) {
 		e.preventDefault();
@@ -137,8 +138,9 @@
 
 	// Done column is collapsed only when there are non-done items present
 	/**
-	 *
-	 * @param col
+	 * Determines whether the done column should be collapsed.
+	 * @param col - The column definition to check.
+	 * @returns True if the column is a done column and there are non-done items.
 	 */
 	function doneColumnCollapsed(col: ColumnDef): boolean {
 		if (!col.isDone) return false;
