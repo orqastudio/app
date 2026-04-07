@@ -184,8 +184,8 @@
 						d="M {x1} {y1} C {mx} {y1}, {mx} {y2}, {x2} {y2}"
 						fill="none"
 						stroke="currentColor"
-						stroke-width="1"
-						class="text-border opacity-40"
+						stroke-width="1.5"
+						class="text-border"
 					/>
 				{/each}
 			</svg>

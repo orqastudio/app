@@ -86,17 +86,24 @@ pub fn write_pid(project_root: &Path) -> io::Result<()> {
     Ok(())
 }
 
-/// Remove the PID file on graceful shutdown.
+/// Remove the PID file and ready signal on graceful shutdown.
 ///
-/// Silently ignores `NotFound` errors — the file may have been deleted by a
+/// Silently ignores `NotFound` errors — the files may have been deleted by a
 /// previous cleanup pass. Other errors are returned to the caller.
 pub fn cleanup_pid(project_root: &Path) -> io::Result<()> {
     let pid_path = project_root.join(PID_FILE_PATH);
     match fs::remove_file(&pid_path) {
-        Ok(()) => Ok(()),
-        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(e) => Err(e),
+        Ok(()) => {}
+        Err(e) if e.kind() == io::ErrorKind::NotFound => {}
+        Err(e) => return Err(e),
     }
+    let ready_path = project_root.join(".state/daemon.ready");
+    match fs::remove_file(&ready_path) {
+        Ok(()) => {}
+        Err(e) if e.kind() == io::ErrorKind::NotFound => {}
+        Err(e) => return Err(e),
+    }
+    Ok(())
 }
 
 /// Return true if a process with the given PID is currently alive.

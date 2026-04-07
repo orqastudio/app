@@ -718,6 +718,15 @@ pub async fn start(
     info!(subsystem = "health", addr = %addr, "health endpoint listening");
 
     let listener = tokio::net::TcpListener::bind(addr).await?;
+
+    // Signal readiness by writing .state/daemon.ready. The CLI watches for
+    // this file instead of polling /health, giving instant startup notification.
+    if let Ok(cwd) = std::env::current_dir() {
+        let ready_path = cwd.join(".state/daemon.ready");
+        let _ = std::fs::write(&ready_path, format!("{}", std::process::id()));
+        info!(subsystem = "health", path = %ready_path.display(), "ready signal written");
+    }
+
     axum::serve(listener, app).await.map_err(|e| {
         error!(subsystem = "health", error = %e, "health server error");
         e.into()

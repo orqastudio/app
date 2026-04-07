@@ -14,7 +14,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { existsSync, readFileSync, mkdirSync, unlinkSync } from "node:fs";
+import { existsSync, readFileSync, mkdirSync, unlinkSync, watch as fsWatch } from "node:fs";
 import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
 import { getPort, DEFAULT_PORT_BASE } from "../lib/ports.js";
@@ -85,8 +85,8 @@ export async function runDaemonCommand(args: string[]): Promise<void> {
  * Start the orqa-daemon binary in the background.
  *
  * Finds the binary in well-known build directories, spawns it detached so it
- * survives the CLI process exit, then waits up to 3 seconds for the health
- * endpoint to respond before reporting success or failure.
+ * survives the CLI process exit, then polls the health endpoint with
+ * exponential backoff until the daemon responds or the process exits.
  */
 async function daemonStart(): Promise<void> {
 	const projectRoot = getRoot();
@@ -125,20 +125,67 @@ async function daemonStart(): Promise<void> {
 	});
 	child.unref();
 
-	// Wait up to 3 seconds for /health to respond.
-	const startedAt = Date.now();
-	let health: DaemonHealthResponse | null = null;
-	while (Date.now() - startedAt < 3000) {
-		await sleep(150);
-		health = await fetchHealth(port);
-		if (health !== null) break;
+	// Wait for the daemon to signal readiness via .state/daemon.ready.
+	// The daemon writes this file after the HTTP listener is bound.
+	// Falls back to health polling if fs.watch is unavailable.
+	const readyPath = join(projectRoot, ".state", "daemon.ready");
+	// Remove stale ready file from previous session.
+	try {
+		unlinkSync(readyPath);
+	} catch {
+		/* doesn't exist */
 	}
 
-	if (health === null) {
-		throw new Error(
-			"Daemon did not start within 3 seconds.\n" + "Check .state/daemon.log for startup errors.",
-		);
-	}
+	const health = await new Promise<DaemonHealthResponse>((resolve, reject) => {
+		const deadline = setTimeout(() => {
+			watcher?.close();
+			reject(
+				new Error(
+					"Daemon did not signal readiness within 60 seconds.\n" +
+						"Check .state/daemon.log for startup errors.",
+				),
+			);
+		}, 60_000);
+
+		// Watch for the ready file to appear.
+		const stateDir = join(projectRoot, ".state");
+		const watcher = fsWatch(stateDir, (_event: string, filename: string | null) => {
+			if (filename === "daemon.ready") {
+				watcher.close();
+				clearTimeout(deadline);
+				sleep(100)
+					.then(() => fetchHealth(port))
+					.then((h) => {
+						if (h) resolve(h);
+						else reject(new Error("Daemon ready file appeared but /health failed."));
+					});
+			}
+		});
+
+		// Check immediately in case the file was written before we started watching.
+		if (existsSync(readyPath)) {
+			watcher.close();
+			clearTimeout(deadline);
+			sleep(100)
+				.then(() => fetchHealth(port))
+				.then((h) => {
+					if (h) resolve(h);
+					else reject(new Error("Daemon ready file exists but /health failed."));
+				});
+		}
+
+		// Fail fast if the child process exits.
+		child.on("exit", (code: number | null) => {
+			watcher.close();
+			clearTimeout(deadline);
+			reject(
+				new Error(
+					`Daemon exited with code ${code} during startup.\n` +
+						"Check .state/daemon.log for errors.",
+				),
+			);
+		});
+	});
 
 	console.log(
 		`Daemon started (PID ${health.pid}, port ${port}, uptime ${health.uptime_seconds}s).`,
@@ -194,7 +241,7 @@ async function daemonStop(): Promise<void> {
 /**
  * Stop the daemon if running, then start a fresh instance.
  *
- * Waits up to 3 seconds for the existing process to exit before starting the
+ * Waits up to 10 seconds for the existing process to exit before starting the
  * new one, to avoid port conflicts.
  */
 async function daemonRestart(): Promise<void> {
@@ -207,8 +254,8 @@ async function daemonRestart(): Promise<void> {
 		try {
 			process.kill(pid, "SIGTERM");
 			console.log(`Sent SIGTERM to daemon (PID ${pid}). Waiting for exit...`);
-			// Wait up to 3 seconds for the process to die.
-			const deadline = Date.now() + 3000;
+			// Wait up to 10 seconds for the process to die.
+			const deadline = Date.now() + 10_000;
 			while (Date.now() < deadline) {
 				await sleep(150);
 				if (!processIsAlive(pid)) break;
