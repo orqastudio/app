@@ -899,11 +899,8 @@ export class ProcessManager {
 			return;
 		}
 
-		// Skip rebuild when dist/ is already newer than src/. svelte-package and
-		// tsc both rimraf their output dir before writing, so rebuilding a library
-		// whose consumers (app Vite, devtools Vite) are already reading from dist/
-		// causes import-resolution panics during the tens-of-ms gap. Incremental
-		// skip makes orqa dev start-processes race-free and dramatically faster.
+		// Skip rebuild when dist/ is already newer than src/. This avoids redundant
+		// rebuilds at startup when nothing has changed since the last build.
 		if (this.isLibraryUpToDate(node)) {
 			node.status = "built";
 			node.lastBuiltAt = Date.now();
@@ -1027,7 +1024,10 @@ export class ProcessManager {
 			case "ts-library":
 				return [npx(), ["tsc"]];
 			case "svelte-library":
-				return [npx(), ["svelte-package", "-i", "src", "-o", "dist"]];
+				// --preserve-output prevents rimraf of dist/ before writing. Without it,
+				// Vite sees files disappear then reappear, triggering an HMR avalanche.
+				// Incremental write means Vite sees clean file updates → single HMR cycle.
+				return [npx(), ["svelte-package", "-i", "src", "-o", "dist", "--preserve-output"]];
 			case "rust-workspace":
 				return [
 					"cargo",
@@ -1670,7 +1670,12 @@ export class ProcessManager {
 			const depNode = this.graph.nodes.get(depId);
 			if (!depNode) continue;
 
-			if (depNode.kind === "service") {
+			if (depNode.kind === "tauri-app") {
+				// Tauri apps have their own Vite HMR — they pick up library dist/
+				// changes automatically via the file system. No rebuild needed.
+				this.log(depId, `${depNode.name} picks up changes via Vite HMR — skipping rebuild`);
+				continue;
+			} else if (depNode.kind === "service") {
 				await this.restartService(depId);
 			} else {
 				depNode.status = "rebuilding";
