@@ -136,9 +136,9 @@ impl DevtoolsRepo<'_> {
             let mut stmt = tx
                 .prepare_cached(
                     "INSERT INTO devtools_events \
-                     (original_id, session_id, timestamp, level, source, \
+                     (original_id, session_id, timestamp, level, source, tier, \
                       category, message, metadata, daemon_event_id) \
-                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)",
                 )
                 .map_err(|e| StorageError::Database(e.to_string()))?;
             for event in &events {
@@ -148,6 +148,7 @@ impl DevtoolsRepo<'_> {
                     event.timestamp,
                     format!("{:?}", event.level),
                     format!("{}", event.source),
+                    format!("{}", event.tier),
                     event.category,
                     event.message,
                     event.metadata.to_string(),
@@ -314,7 +315,7 @@ impl DevtoolsRepo<'_> {
         let offset = query.offset.unwrap_or(0);
         let limit = query.limit.unwrap_or(1000).min(5000);
         let data_sql = format!(
-            "SELECT rowid, original_id, session_id, timestamp, level, source,
+            "SELECT rowid, original_id, session_id, timestamp, level, source, tier,
                     category, message, metadata, daemon_event_id
              FROM devtools_events
              WHERE {where_clause}
@@ -330,7 +331,7 @@ impl DevtoolsRepo<'_> {
             .map_err(|e| StorageError::Database(e.to_string()))?;
         let events: Vec<serde_json::Value> = data_stmt
             .query_map(rusqlite::params_from_iter(data_params.iter()), |row| {
-                let metadata_str: String = row.get(8)?;
+                let metadata_str: String = row.get(9)?;
                 Ok((
                     row.get::<_, i64>(0)?,
                     row.get::<_, i64>(1)?,
@@ -340,8 +341,9 @@ impl DevtoolsRepo<'_> {
                     row.get::<_, String>(5)?,
                     row.get::<_, String>(6)?,
                     row.get::<_, String>(7)?,
+                    row.get::<_, String>(8)?,
                     metadata_str,
-                    row.get::<_, Option<i64>>(9)?,
+                    row.get::<_, Option<i64>>(10)?,
                 ))
             })
             .map_err(|e| StorageError::Database(e.to_string()))?
@@ -354,6 +356,7 @@ impl DevtoolsRepo<'_> {
                     timestamp,
                     level,
                     source,
+                    tier,
                     category,
                     message,
                     metadata_str,
@@ -368,6 +371,7 @@ impl DevtoolsRepo<'_> {
                         "timestamp":       timestamp,
                         "level":           level,
                         "source":          source,
+                        "tier":            tier,
                         "category":        category,
                         "message":         message,
                         "metadata":        metadata,
@@ -391,7 +395,7 @@ fn now_ms() -> i64 {
 
 #[cfg(test)]
 mod tests {
-    use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+    use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent};
 
     use super::*;
     use crate::Storage;
@@ -406,6 +410,7 @@ mod tests {
             timestamp: 1_000_000 + id as i64,
             level: EventLevel::Info,
             source: EventSource::Daemon,
+            tier: EventTier::default(),
             category: "test".to_owned(),
             message: format!("msg-{id}"),
             metadata: serde_json::Value::Null,

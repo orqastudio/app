@@ -25,7 +25,9 @@
 		clearFilters,
 		ALL_LEVELS,
 		ALL_SOURCES,
+		ALL_TIERS,
 		type LogEvent,
+		type EventTier,
 	} from "../../stores/log-store.svelte.js";
 
 	const hasActiveFilters = $derived(getHasActiveFilters());
@@ -70,6 +72,14 @@
 	 */
 	function toggleLevel(level: LogEvent["level"]): void {
 		filters.levels = toggleSet(filters.levels, level);
+	}
+
+	/**
+	 * Toggle a tier in the active tier filter set.
+	 * @param tier - The event tier to add or remove from the filter.
+	 */
+	function toggleTier(tier: EventTier): void {
+		filters.tiers = toggleSet(filters.tiers, tier);
 	}
 
 	/**
@@ -128,6 +138,18 @@
 			</Stack>
 		</PopoverContent>
 	</PopoverRoot>
+
+	<!-- Tier toggle (Build / Runtime — only 2 values). -->
+	<HStack gap={1} role="group" aria-label="Tier filter">
+		{#each ALL_TIERS as tier (tier)}
+			<Label onclick={() => toggleTier(tier)}>
+				<Checkbox checked={filters.tiers.has(tier)} aria-label={tier} />
+				<Badge variant={tier === "Build" ? "secondary" : "outline"} size="xs">
+					{tier}
+				</Badge>
+			</Label>
+		{/each}
+	</HStack>
 
 	<!-- Level checkbox group (inline, no dropdown needed — only 5 values). -->
 	<HStack gap={1} role="group" aria-label="Level filter">

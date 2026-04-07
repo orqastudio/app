@@ -179,7 +179,7 @@ fn row_to_json(row: &rusqlite::Row<'_>) -> rusqlite::Result<serde_json::Value> {
 
 #[cfg(test)]
 mod tests {
-    use orqa_engine_types::types::event::{EventLevel, EventSource};
+    use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier};
 
     use super::*;
     use crate::Storage;
@@ -194,6 +194,7 @@ mod tests {
             timestamp: 1_000_000 + id as i64,
             level,
             source,
+            tier: EventTier::default(),
             category: "test".to_owned(),
             message: message.to_owned(),
             metadata: serde_json::Value::Null,
@@ -251,6 +252,7 @@ mod tests {
             timestamp: 9_999_999,
             level: EventLevel::Error,
             source: EventSource::MCP,
+            tier: EventTier::default(),
             category: "dupe".to_owned(),
             message: "should not appear".to_owned(),
             metadata: serde_json::Value::Null,

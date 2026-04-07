@@ -13,6 +13,7 @@ import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import { SvelteSet } from "svelte/reactivity";
 import { loadSessionEvents, type DevToolsSession } from "./session-store.svelte.js";
+import { trackProcessEvent } from "./process-tracker.svelte.js";
 
 // A single parsed stack frame as serialised by the backend.
 export interface StackFrame {
@@ -22,6 +23,9 @@ export interface StackFrame {
 	readonly function?: string;
 	readonly raw?: string;
 }
+
+// Lifecycle tier: build-time output vs runtime activity.
+export type EventTier = "Build" | "Runtime";
 
 // Shape of a log event as emitted by the Tauri backend.
 export interface LogEvent {
@@ -37,11 +41,11 @@ export interface LogEvent {
 		| "LSP"
 		| "Search"
 		| "Worker";
+	readonly tier: EventTier;
 	readonly category: string;
 	readonly message: string;
 	readonly metadata: unknown;
 	readonly session_id: string | null;
-	// Fields added in Task 1.1 for issue grouping and error attribution.
 	readonly fingerprint?: string;
 	readonly message_template?: string;
 	readonly correlation_id?: string;
@@ -62,6 +66,9 @@ export const ALL_SOURCES: LogEvent["source"][] = [
 	"Search",
 	"Worker",
 ];
+
+// All valid event tiers.
+export const ALL_TIERS: EventTier[] = ["Build", "Runtime"];
 
 // Maximum number of events held in the display buffer. Events beyond this
 // limit are evicted from the front (oldest-first) to keep memory bounded.
@@ -95,6 +102,7 @@ const STORAGE_KEY_FILTERS = "orqadev:logFilters";
 interface PersistedFilters {
 	sources: LogEvent["source"][];
 	levels: LogEvent["level"][];
+	tiers: EventTier[];
 	categories: string[];
 	searchText: string;
 }
@@ -104,6 +112,7 @@ interface PersistedFilters {
 function loadPersistedFilters(): {
 	sources: SvelteSet<LogEvent["source"]>;
 	levels: SvelteSet<LogEvent["level"]>;
+	tiers: SvelteSet<EventTier>;
 	categories: SvelteSet<string>;
 	searchText: string;
 } {
@@ -114,6 +123,7 @@ function loadPersistedFilters(): {
 			return {
 				sources: new SvelteSet(parsed.sources ?? []),
 				levels: new SvelteSet(parsed.levels ?? []),
+				tiers: new SvelteSet(parsed.tiers ?? []),
 				categories: new SvelteSet(parsed.categories ?? []),
 				searchText: typeof parsed.searchText === "string" ? parsed.searchText : "",
 			};
@@ -124,6 +134,7 @@ function loadPersistedFilters(): {
 	return {
 		sources: new SvelteSet(),
 		levels: new SvelteSet(),
+		tiers: new SvelteSet(),
 		categories: new SvelteSet(),
 		searchText: "",
 	};
@@ -135,6 +146,7 @@ function persistFilters(): void {
 		const snapshot: PersistedFilters = {
 			sources: [...filters.sources],
 			levels: [...filters.levels],
+			tiers: [...filters.tiers],
 			categories: [...filters.categories],
 			searchText: filters.searchText,
 		};
@@ -150,6 +162,7 @@ function persistFilters(): void {
 export const filters = $state<{
 	sources: SvelteSet<LogEvent["source"]>;
 	levels: SvelteSet<LogEvent["level"]>;
+	tiers: SvelteSet<EventTier>;
 	categories: SvelteSet<string>;
 	searchText: string;
 }>(loadPersistedFilters());
@@ -160,6 +173,7 @@ $effect.root(() => {
 		// Access all filter fields to establish reactive dependencies.
 		void filters.sources;
 		void filters.levels;
+		void filters.tiers;
 		void filters.categories;
 		void filters.searchText;
 		persistFilters();
@@ -185,6 +199,7 @@ export function filteredEvents(): LogEvent[] {
 	return events.filter((ev) => {
 		if (filters.sources.size > 0 && !filters.sources.has(ev.source)) return false;
 		if (filters.levels.size > 0 && !filters.levels.has(ev.level)) return false;
+		if (filters.tiers.size > 0 && !filters.tiers.has(ev.tier)) return false;
 		if (filters.categories.size > 0 && !filters.categories.has(ev.category)) return false;
 		if (filters.searchText.length > 0) {
 			const needle = filters.searchText.toLowerCase();
@@ -202,6 +217,7 @@ export function hasActiveFilters(): boolean {
 	return (
 		filters.sources.size > 0 ||
 		filters.levels.size > 0 ||
+		filters.tiers.size > 0 ||
 		filters.categories.size > 0 ||
 		filters.searchText.length > 0
 	);
@@ -213,6 +229,7 @@ export function hasActiveFilters(): boolean {
 export function clearFilters(): void {
 	filters.sources = new SvelteSet();
 	filters.levels = new SvelteSet();
+	filters.tiers = new SvelteSet();
 	filters.categories = new SvelteSet();
 	filters.searchText = "";
 }
@@ -228,6 +245,7 @@ function appendEvent(event: LogEvent): void {
 	}
 	events.push(event);
 	totalReceived.value += 1;
+	trackProcessEvent(event);
 	// Mark connected on first event — proves the stream is live.
 	if (connectionStatus.value === "connecting") {
 		connectionStatus.value = "connected";
@@ -336,6 +354,7 @@ export async function loadHistory(): Promise<void> {
 				timestamp: Number(obj.timestamp),
 				level: obj.level as LogEvent["level"],
 				source: obj.source as LogEvent["source"],
+				tier: (obj.tier as EventTier) ?? "Runtime",
 				category: String(obj.category ?? ""),
 				message: String(obj.message ?? ""),
 				metadata: obj.metadata ?? null,
@@ -388,6 +407,7 @@ function rawToLogEvent(obj: Record<string, unknown>): LogEvent {
 		timestamp: Number(obj.timestamp),
 		level: obj.level as LogEvent["level"],
 		source: obj.source as LogEvent["source"],
+		tier: (obj.tier as EventTier) ?? "Runtime",
 		category: String(obj.category ?? ""),
 		message: String(obj.message ?? ""),
 		metadata: obj.metadata ?? null,

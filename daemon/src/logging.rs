@@ -44,7 +44,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{EnvFilter, Layer};
 
 use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
-use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent, StackFrame};
+use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent, StackFrame};
 
 use crate::correlation::current_correlation_id;
 use crate::event_bus::EventBus;
@@ -247,6 +247,7 @@ where
             timestamp,
             level,
             source: EventSource::Daemon,
+            tier: EventTier::default(),
             category,
             message,
             metadata,

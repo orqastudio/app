@@ -1,12 +1,9 @@
 <!-- Main layout shell for OrqaDev. Composes exclusively from the shared
      component library — no raw Tailwind classes.
-     - Stopped: WelcomeHero with "Start Dev Environment" button
-     - Running: AppShell with ActivityBar, StatusBar, and content views -->
+     Always shows the workspace — the CLI starts processes before opening devtools. -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
 	import {
-		Button,
-		LoadingSpinner,
 		resolveIcon,
 		ConnectionIndicator,
 		Caption,
@@ -24,7 +21,6 @@
 		AppShell,
 		ActivityBar,
 		StatusBar,
-		WelcomeHero,
 		type ActivityBarItem,
 	} from "@orqastudio/svelte-components/connected";
 	import {
@@ -43,7 +39,7 @@
 		prevEvent,
 		setTab,
 	} from "../stores/drawer-store.svelte.js";
-	import { devController, startDev, stopDev } from "../stores/dev-controller.svelte.js";
+	import { devController } from "../stores/dev-controller.svelte.js";
 	import {
 		viewingHistorical,
 		activeSessionId,
@@ -57,8 +53,6 @@
 	import IssuesView from "./issues/IssuesView.svelte";
 	import TraceView from "./trace/TraceView.svelte";
 	import { selectTrace } from "../stores/trace-store.svelte.js";
-	import setupBackground from "$lib/assets/setup-background.png";
-	import finMark from "$lib/assets/fin-mark.svg";
 
 	let {
 		children,
@@ -76,13 +70,10 @@
 				: ("waiting" as const),
 	);
 
-	const isBusy = $derived(devController.state === "starting" || devController.state === "stopping");
-	const showWorkspace = $derived(devController.state === "running");
-
 	const NAV_DEFS: { key: DevToolsTab; icon: string; label: string }[] = [
-		{ key: "issues", icon: "alert-circle", label: "Issues" },
-		{ key: "stream", icon: "list", label: "Stream" },
 		{ key: "processes", icon: "cpu", label: "Processes" },
+		{ key: "stream", icon: "list", label: "Stream" },
+		{ key: "issues", icon: "alert-circle", label: "Issues" },
 		{ key: "storybook", icon: "book-open", label: "Storybook" },
 		{ key: "metrics", icon: "activity", label: "Metrics" },
 		{ key: "trace", icon: "git-branch", label: "Trace" },
@@ -101,15 +92,6 @@
 	);
 
 	const bottomItems: ActivityBarItem[] = $derived([
-		{
-			icon: resolveIcon("circle-stop"),
-			label: "Stop Dev Environment",
-			key: "stop",
-			active: false,
-			onclick: () => {
-				if (!isBusy) stopDev();
-			},
-		},
 		{
 			icon: resolveIcon("settings"),
 			label: "Help (?)",
@@ -226,103 +208,85 @@
 
 <svelte:document onkeydown={handleKeydown} />
 
-{#if showWorkspace}
-	<AppShell showNavPanel={false} showChatPanel={false}>
-		{#snippet activityBar()}
-			<ActivityBar {topItems} {bottomItems} />
-		{/snippet}
+<AppShell showNavPanel={false} showChatPanel={false}>
+	{#snippet activityBar()}
+		<ActivityBar {topItems} {bottomItems} />
+	{/snippet}
 
-		{#snippet mainContent()}
-			<!-- Main content area + optional EventDrawer side panel. The drawer renders
+	{#snippet mainContent()}
+		<!-- Main content area + optional EventDrawer side panel. The drawer renders
 			     alongside the active tab so it persists across tab switches. -->
-			<HStack height="full">
-				<Box flex={1} minWidth={0} height="full">
-					{#if navigation.activeTab === "issues"}
-						<IssuesView />
-					{:else if navigation.activeTab === "stream"}
-						{@render children()}
-					{:else if navigation.activeTab === "processes"}
-						<ProcessView />
-					{:else if navigation.activeTab === "storybook"}
-						<StorybookView />
-					{:else if navigation.activeTab === "metrics"}
-						<MetricsView />
-					{:else if navigation.activeTab === "trace"}
-						<TraceView />
-					{:else}
-						{@const _exhaustive = assertTabNever(navigation.activeTab)}
-						{_exhaustive}
-					{/if}
-				</Box>
+		<HStack height="full">
+			<Box flex={1} minWidth={0} height="full">
+				{#if navigation.activeTab === "issues"}
+					<IssuesView />
+				{:else if navigation.activeTab === "stream"}
+					{@render children()}
+				{:else if navigation.activeTab === "processes"}
+					<ProcessView />
+				{:else if navigation.activeTab === "storybook"}
+					<StorybookView />
+				{:else if navigation.activeTab === "metrics"}
+					<MetricsView />
+				{:else if navigation.activeTab === "trace"}
+					<TraceView />
+				{:else}
+					{@const _exhaustive = assertTabNever(navigation.activeTab)}
+					{_exhaustive}
+				{/if}
+			</Box>
 
-				<EventDrawer
-					open={drawerOpen}
-					event={drawerEvent}
-					activeTab={drawerTab}
-					onclose={closeDrawer}
-					onnext={nextEvent}
-					onprev={prevEvent}
-					ontabchange={setTab}
-				>
-					{#snippet toolbarContent()}
-						<AiExplainButton event={drawerEvent} onexplain={handleAiExplain} />
-					{/snippet}
-					{#snippet stackContent()}
-						<StackFrameList frames={drawerEvent?.stack_frames ?? []} />
-					{/snippet}
-					{#snippet contextContent()}
-						<ContextTable
-							entries={buildContextEntries(drawerEvent)}
-							onValueClick={handleContextValueClick}
-						/>
-					{/snippet}
-					{#snippet rawContent()}
-						<RawJson data={drawerEvent} />
-					{/snippet}
-				</EventDrawer>
-			</HStack>
-		{/snippet}
-
-		{#snippet statusBar()}
-			<StatusBar>
-				{#snippet left()}
-					<ConnectionIndicator
-						state={connectionState}
-						label={connectionLabel(navigation.connection)}
+			<EventDrawer
+				open={drawerOpen}
+				event={drawerEvent}
+				activeTab={drawerTab}
+				onclose={closeDrawer}
+				onnext={nextEvent}
+				onprev={prevEvent}
+				ontabchange={setTab}
+			>
+				{#snippet toolbarContent()}
+					<AiExplainButton event={drawerEvent} onexplain={handleAiExplain} />
+				{/snippet}
+				{#snippet stackContent()}
+					<StackFrameList frames={drawerEvent?.stack_frames ?? []} />
+				{/snippet}
+				{#snippet contextContent()}
+					<ContextTable
+						entries={buildContextEntries(drawerEvent)}
+						onValueClick={handleContextValueClick}
 					/>
 				{/snippet}
-				{#snippet right()}
-					{#if viewingHistorical.value}
-						{@const session = sessions.find((s) => s.id === activeSessionId.value)}
-						<!-- Box constrains width so Caption truncate works within the status bar slot. -->
-						<Box maxWidth="60">
-							<Caption truncate tone="primary" italic>
-								Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
-							</Caption>
-						</Box>
-					{:else}
-						<Caption>{devController.state}</Caption>
-					{/if}
+				{#snippet rawContent()}
+					<RawJson data={drawerEvent} />
 				{/snippet}
-			</StatusBar>
-		{/snippet}
-	</AppShell>
-{:else}
-	<WelcomeHero
-		backgroundImage={setupBackground}
-		logoSrc={finMark}
-		logoAlt="OrqaStudio"
-		title="OrqaDev"
-		subtitle="Developer tools for OrqaStudio"
-	>
-		{#if devController.state === "starting"}
-			<LoadingSpinner />
-		{:else if devController.state === "stopping"}
-			<LoadingSpinner />
-		{:else}
-			<Button variant="default" size="lg" onclick={startDev}>Start Dev Environment</Button>
-		{/if}
-	</WelcomeHero>
-{/if}
+			</EventDrawer>
+		</HStack>
+	{/snippet}
+
+	{#snippet statusBar()}
+		<StatusBar>
+			{#snippet left()}
+				<ConnectionIndicator
+					state={connectionState}
+					label={connectionLabel(navigation.connection)}
+				/>
+			{/snippet}
+			{#snippet right()}
+				{#if viewingHistorical.value}
+					{@const session = sessions.find((s) => s.id === activeSessionId.value)}
+					<!-- Box constrains width so Caption truncate works within the status bar slot. -->
+					<Box maxWidth="60">
+						<Caption truncate tone="primary" italic>
+							Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
+						</Caption>
+					</Box>
+				{:else}
+					<Caption>{devController.state}</Caption>
+				{/if}
+			{/snippet}
+		</StatusBar>
+	{/snippet}
+</AppShell>
 
 <HelpPanel bind:open={helpOpen} />

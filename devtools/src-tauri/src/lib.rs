@@ -85,6 +85,18 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let dev_ctrl_state = dev_controller::DevControllerState::new();
     app.manage(dev_ctrl_state);
 
+    // Dev mode: set by the CLI via ORQA_DEV_MODE=1. When absent, the devtools
+    // runs in attach/production mode (no process management, runtime events only).
+    let dev_mode = std::env::var("ORQA_DEV_MODE").is_ok_and(|v| v == "1" || v == "true");
+    app.manage(DevModeFlag(dev_mode));
+
+    // Always connect the SSE consumer on startup. In both dev and production
+    // modes, the daemon is already running by the time the devtools window opens
+    // (started by the CLI process manager or the production app respectively).
+    // The SSE consumer has retry logic with exponential backoff, so it handles
+    // the brief window where the daemon may still be starting.
+    events::spawn_consumer(app.handle().clone(), Arc::clone(&consumer_state));
+
     Ok(())
 }
 
@@ -98,6 +110,16 @@ fn now_ms() -> i64 {
 
 /// Managed state holding the UUID of the currently active devtools session.
 pub struct ActiveSession(pub String);
+
+/// Whether the devtools is running in dev mode (launched by `orqa dev`) or
+/// production/attach mode (opened from the main app to inspect a running daemon).
+pub struct DevModeFlag(pub bool);
+
+/// IPC command — returns true when the devtools is running in dev mode.
+#[tauri::command]
+fn devtools_is_dev_mode(flag: tauri::State<'_, DevModeFlag>) -> bool {
+    flag.0
+}
 
 /// Build and run the Tauri application event loop.
 ///
@@ -132,6 +154,7 @@ pub fn run() {
             session_commands::delete_session,
             issue_group_commands::devtools_list_issue_groups,
             issue_group_commands::devtools_get_issue_group,
+            devtools_is_dev_mode,
         ])
         .build(tauri::generate_context!())
         // BINARY ENTRY POINT: Tauri's builder `.build()` returns Result but if it

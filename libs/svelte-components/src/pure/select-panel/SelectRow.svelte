@@ -28,17 +28,32 @@
 	} = $props();
 </script>
 
-<div
-	data-slot="select-row"
-	class={cn(
-		"border-border relative flex items-center border-b last:border-b-0",
-		current && !active && "bg-primary/[0.08]",
-		active && "bg-primary/[0.15]",
-	)}
-	role={onclick ? role || "button" : role || undefined}
-	tabindex={onclick ? 0 : undefined}
-	aria-selected={ariaSelected}
-	{onclick}
->
-	{@render children?.()}
-</div>
+{#if onclick}
+	<button
+		type="button"
+		data-slot="select-row"
+		class={cn(
+			"border-border relative flex w-full items-center border-b text-left last:border-b-0",
+			current && !active && "bg-primary/[0.08]",
+			active && "bg-primary/[0.15]",
+		)}
+		role={role || undefined}
+		aria-selected={ariaSelected}
+		{onclick}
+	>
+		{@render children?.()}
+	</button>
+{:else}
+	<div
+		data-slot="select-row"
+		class={cn(
+			"border-border relative flex items-center border-b last:border-b-0",
+			current && !active && "bg-primary/[0.08]",
+			active && "bg-primary/[0.15]",
+		)}
+		role={role || undefined}
+		aria-selected={ariaSelected}
+	>
+		{@render children?.()}
+	</div>
+{/if}

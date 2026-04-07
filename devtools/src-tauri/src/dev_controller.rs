@@ -16,7 +16,7 @@ use tokio::process::Command;
 use tokio::sync::Mutex;
 use tracing::{info, warn};
 
-use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent};
 
 use crate::events::{EventBatchWriter, EventConsumerState};
 
@@ -135,6 +135,15 @@ fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String
                 _ => EventSource::DevController,
             };
 
+            // For app/search sources, try to parse Rust tracing format:
+            // "2026-04-07T13:55:45.787509Z DEBUG module::path: actual message"
+            // Extract the level and strip the ISO timestamp + module prefix.
+            if matches!(source, EventSource::App | EventSource::Search) {
+                if let Some(parsed) = parse_rust_tracing(message) {
+                    return (source, parsed.0, parsed.1, parsed.2);
+                }
+            }
+
             let level = if stripped.contains("[31m")
                 || message.contains("error")
                 || message.contains("ERROR")
@@ -174,6 +183,46 @@ fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String
     )
 }
 
+/// Try to parse a Rust tracing-formatted line.
+///
+/// Format: `2026-04-07T13:55:45.787509Z LEVEL module::path: message`
+/// Returns (level, category, message) if the line matches, or None if it doesn't.
+fn parse_rust_tracing(line: &str) -> Option<(EventLevel, String, String)> {
+    // ISO timestamp is 20+ chars followed by Z and a space.
+    let rest = if line.len() > 22 && line.as_bytes().get(10) == Some(&b'T') {
+        // Skip the ISO timestamp (everything up to and including "Z ")
+        line.find("Z ").map(|pos| &line[pos + 2..])
+    } else {
+        None
+    }?;
+
+    // Next token is the level keyword.
+    let (level, after_level) = if let Some(r) = rest.strip_prefix("ERROR ") {
+        (EventLevel::Error, r)
+    } else if let Some(r) = rest.strip_prefix("WARN ") {
+        (EventLevel::Warn, r)
+    } else if let Some(r) = rest.strip_prefix("INFO ") {
+        (EventLevel::Info, r)
+    } else if let Some(r) = rest.strip_prefix("DEBUG ") {
+        (EventLevel::Debug, r)
+    } else if let Some(r) = rest.strip_prefix("TRACE ") {
+        (EventLevel::Debug, r)
+    } else {
+        return None;
+    };
+
+    // After level: "module::path: message" or "module::path: key=value key=value"
+    let (category, message) = if let Some(colon_pos) = after_level.find(": ") {
+        let module = &after_level[..colon_pos];
+        let msg = after_level[colon_pos + 2..].trim();
+        (module.to_owned(), msg.to_owned())
+    } else {
+        ("app".to_owned(), after_level.trim().to_owned())
+    };
+
+    Some((level, category, message))
+}
+
 /// Strip ANSI escape sequences from a string.
 fn strip_ansi(s: &str) -> String {
     let mut result = String::with_capacity(s.len());
@@ -210,6 +259,7 @@ async fn emit_log(
         timestamp: now_ms(),
         level,
         source,
+        tier: EventTier::Build,
         category,
         message: message.clone(),
         metadata: serde_json::Value::Null,

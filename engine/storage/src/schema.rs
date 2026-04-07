@@ -249,6 +249,7 @@ CREATE TABLE IF NOT EXISTS devtools_events (
     timestamp       INTEGER NOT NULL,
     level           TEXT    NOT NULL,
     source          TEXT    NOT NULL,
+    tier            TEXT    NOT NULL DEFAULT 'Runtime',
     category        TEXT    NOT NULL,
     message         TEXT    NOT NULL,
     metadata        TEXT    NOT NULL DEFAULT '{}',

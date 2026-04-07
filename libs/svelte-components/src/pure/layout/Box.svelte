@@ -8,7 +8,7 @@ Card, Toolbar, SectionHeader).
 The only props Box exposes are:
   • STRUCTURAL  — flex, height, width, maxWidth, minHeight, minWidth, position,
                   inset, top, right, bottom, left, zIndex
-  • WIRING      — children, role, aria-*, onclick
+  • WIRING      — children, role, aria-*
 
 Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea. -->
 <script lang="ts">
@@ -129,8 +129,6 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		role,
 		"aria-label": ariaLabel,
 		"aria-hidden": ariaHidden,
-		onclick,
-		onmouseenter,
 		children,
 	}: {
 		/** Bindable reference to the underlying div element (e.g. for canvas/Cytoscape mounting). */
@@ -170,8 +168,6 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		role?: string;
 		"aria-label"?: string;
 		"aria-hidden"?: boolean | "true" | "false";
-		onclick?: (e: MouseEvent) => void;
-		onmouseenter?: (e: MouseEvent) => void;
 		children?: Snippet;
 	} = $props();
 
@@ -214,14 +210,10 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		transformClass,
 		sizeClass,
 		truncate && "truncate",
-		onclick && "cursor-pointer",
 	)}
-	role={onclick ? role || "button" : role || undefined}
-	tabindex={onclick ? 0 : undefined}
+	role={role || undefined}
 	aria-label={ariaLabel || undefined}
 	aria-hidden={ariaHidden != null ? ariaHidden : undefined}
-	{onclick}
-	{onmouseenter}
 >
 	{@render children?.()}
 </div>

@@ -75,6 +75,29 @@ impl fmt::Display for EventSource {
     }
 }
 
+/// The lifecycle tier an event belongs to.
+///
+/// Separates build-time output (compilation, bundling, process management) from
+/// runtime events (daemon activity, watcher notifications, enforcement). In
+/// production there are no build events — only runtime.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+pub enum EventTier {
+    /// Compilation, bundling, process start/stop — dev-only.
+    Build,
+    /// Daemon activity, watcher events, enforcement, app runtime — always present.
+    #[default]
+    Runtime,
+}
+
+impl fmt::Display for EventTier {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Build => write!(f, "build"),
+            Self::Runtime => write!(f, "runtime"),
+        }
+    }
+}
+
 /// A single resolved source location in a stack trace.
 ///
 /// Used within `LogEvent.stack_frames` to represent symbolicated call-stack
@@ -116,6 +139,9 @@ pub struct LogEvent {
     pub level: EventLevel,
     /// The source component that emitted this event.
     pub source: EventSource,
+    /// Lifecycle tier: build-time output vs runtime activity.
+    #[serde(default)]
+    pub tier: EventTier,
     /// Logical grouping for filtering (e.g. "file-watcher", "agent", "build").
     pub category: String,
     /// Human-readable description of what occurred.

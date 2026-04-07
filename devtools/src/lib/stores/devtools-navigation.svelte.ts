@@ -9,6 +9,7 @@
 // Tabs: issues, stream, processes, storybook, metrics, trace.
 
 import { listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import { assertNever } from "@orqastudio/types";
 
 export type DevToolsTab = "issues" | "stream" | "processes" | "storybook" | "metrics" | "trace";
@@ -44,7 +45,7 @@ function migrateLegacyTab(stored: string): string {
 	return stored;
 }
 
-// Restore the previously selected tab from localStorage, falling back to "issues"
+// Restore the previously selected tab from localStorage, falling back to "processes"
 // if nothing is stored or the stored value is not a valid tab name.
 // Applies legacy migration before validation so renamed tabs are handled correctly.
 function loadPersistedTab(): DevToolsTab {
@@ -59,7 +60,7 @@ function loadPersistedTab(): DevToolsTab {
 	} catch {
 		// localStorage unavailable (e.g., sandboxed context) — silently fall through.
 	}
-	return "issues";
+	return "processes";
 }
 
 // Persist the active tab to localStorage.
@@ -96,9 +97,12 @@ export function connectionLabel(conn: ConnectionState): string {
 export const navigation = $state<{
 	activeTab: DevToolsTab;
 	connection: ConnectionState;
+	/** True when running inside `orqa dev` (process management available). */
+	devMode: boolean;
 }>({
 	activeTab: loadPersistedTab(),
 	connection: { state: "waiting-for-daemon" },
+	devMode: false,
 });
 
 // $effect runs after state initialises. Persists the active tab to localStorage
@@ -115,4 +119,14 @@ $effect.root(() => {
 	listen<ConnectionState>("orqa://connection-state", (event) => {
 		navigation.connection = event.payload;
 	});
+
+	// Query the backend for dev mode flag on startup.
+	invoke<boolean>("devtools_is_dev_mode")
+		.then((isDevMode) => {
+			navigation.devMode = isDevMode;
+		})
+		.catch(() => {
+			// Default to false (production/attach mode) if the command fails.
+			navigation.devMode = false;
+		});
 });

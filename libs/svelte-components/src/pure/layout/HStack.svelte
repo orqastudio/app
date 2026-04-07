@@ -6,7 +6,7 @@ decorative belongs in a purpose-built component (Panel, Toolbar, SectionHeader).
 
 The only props HStack exposes are:
   • STRUCTURAL  — gap, align, justify, wrap, flex, height, width, minHeight, full
-  • WIRING      — children, role, aria-*, onclick, onkeydown
+  • WIRING      — children, role, aria-*
 
 Defaults: align="center", overflow hidden. Scrollable rows wrap content in a
 ScrollArea. There is no overflow prop — by design. -->
@@ -88,8 +88,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		"aria-selected": ariaSelected,
 		"aria-label": ariaLabel,
 		"data-menu-bar": dataMenuBar,
-		onclick,
-		onkeydown,
 		children,
 	}: {
 		gap?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
@@ -115,8 +113,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		"aria-label"?: string;
 		/** Marks this row as a menu bar, excluding it from Tauri window drag regions. */
 		"data-menu-bar"?: boolean;
-		onclick?: (e: MouseEvent) => void;
-		onkeydown?: (e: KeyboardEvent) => void;
 		children?: Snippet;
 	} = $props();
 
@@ -137,7 +133,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		alignClass,
 		wrap && "flex-wrap",
 		full && "w-full",
-		onclick && "cursor-pointer",
 		heightClass,
 		widthClass,
 		minHeight === 0 && "min-h-0",
@@ -145,13 +140,10 @@ ScrollArea. There is no overflow prop — by design. -->
 		flexClass,
 		indentClass,
 	)}
-	role={onclick ? role || "button" : role || undefined}
-	tabindex={onclick ? 0 : undefined}
+	role={role || undefined}
 	aria-selected={ariaSelected != null ? ariaSelected : undefined}
 	aria-label={ariaLabel || undefined}
 	data-menu-bar={dataMenuBar || undefined}
-	{onclick}
-	{onkeydown}
 >
 	{@render children?.()}
 </div>

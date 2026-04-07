@@ -45,10 +45,16 @@
 	 * the full issueGroups list is returned unchanged.
 	 * @returns Issue groups matching the current searchQuery.
 	 */
+	const ISSUE_LEVELS = new Set(["WARN", "ERROR"]);
+
 	const filteredGroups = $derived(
-		searchQuery.trim().length === 0
-			? issueGroups
-			: issueGroups.filter((g) => g.title.toLowerCase().includes(searchQuery.trim().toLowerCase())),
+		issueGroups
+			.filter((g) => ISSUE_LEVELS.has(g.level))
+			.filter(
+				(g) =>
+					searchQuery.trim().length === 0 ||
+					g.title.toLowerCase().includes(searchQuery.trim().toLowerCase()),
+			),
 	);
 
 	/**

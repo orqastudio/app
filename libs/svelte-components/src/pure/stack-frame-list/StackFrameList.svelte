@@ -2,8 +2,8 @@
      The top frame (index 0) is emphasized. Clicking any frame copies file:line
      to the clipboard and shows a transient "Copied!" tooltip. -->
 <script lang="ts">
+	import { cn } from "../../utils/cn.js";
 	import { Stack } from "../layout/index.js";
-	import { HStack } from "../layout/index.js";
 	import { Caption } from "../typography/index.js";
 	import { Text } from "../typography/index.js";
 	import { Code } from "../typography/index.js";
@@ -76,15 +76,11 @@
 		{#each frames as frame, index (frame.file + ":" + (frame.line ?? index))}
 			<SimpleTooltip side="top" delayDuration={0}>
 				{#snippet trigger({ props })}
-					<HStack
+					<button
+						type="button"
 						{...props}
-						gap={2}
-						justify="between"
-						full
-						role="button"
-						tabindex={0}
+						class={cn("flex w-full items-center justify-between gap-2 overflow-hidden")}
 						onclick={() => copyFrame(frame, index)}
-						onkeydown={(e) => e.key === "Enter" && copyFrame(frame, index)}
 					>
 						{#if index === 0}
 							<Text variant="body-strong">{functionLabel(frame)}</Text>
@@ -92,7 +88,7 @@
 							<Code>{functionLabel(frame)}</Code>
 						{/if}
 						<Caption variant="caption-mono" truncate>{locationLabel(frame)}</Caption>
-					</HStack>
+					</button>
 				{/snippet}
 				{copiedIndex === index ? "Copied!" : "Click to copy"}
 			</SimpleTooltip>

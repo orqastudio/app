@@ -47,20 +47,36 @@
 	};
 </script>
 
-<div
-	data-slot="card"
-	class={cn(
-		"flex flex-col rounded-xl",
-		variantMap[variant],
-		gapMap[gap],
-		interactive && "hover:bg-accent/30 cursor-pointer transition-colors",
-		selected && "border-accent shadow-[0_0_0_1px_hsl(var(--accent))]",
-		full && "h-full",
-	)}
-	{onclick}
-	role={onclick ? "button" : undefined}
-	tabindex={onclick ? 0 : undefined}
-	{...restProps}
->
-	{@render children?.()}
-</div>
+{#if onclick}
+	<button
+		type="button"
+		data-slot="card"
+		class={cn(
+			"flex w-full flex-col rounded-xl text-left",
+			variantMap[variant],
+			gapMap[gap],
+			interactive && "hover:bg-accent/30 cursor-pointer transition-colors",
+			selected && "border-accent shadow-[0_0_0_1px_hsl(var(--accent))]",
+			full && "h-full",
+		)}
+		{onclick}
+		{...restProps}
+	>
+		{@render children?.()}
+	</button>
+{:else}
+	<div
+		data-slot="card"
+		class={cn(
+			"flex flex-col rounded-xl",
+			variantMap[variant],
+			gapMap[gap],
+			interactive && "hover:bg-accent/30 cursor-pointer transition-colors",
+			selected && "border-accent shadow-[0_0_0_1px_hsl(var(--accent))]",
+			full && "h-full",
+		)}
+		{...restProps}
+	>
+		{@render children?.()}
+	</div>
+{/if}

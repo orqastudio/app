@@ -34,7 +34,7 @@ use tracing::{error, info};
 
 use orqa_engine::ports::resolve_daemon_port;
 use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
-use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent, StackFrame};
+use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent, StackFrame};
 use orqa_storage::Storage;
 
 use crate::config::DaemonConfig;
@@ -230,6 +230,7 @@ async fn events_ingest_handler(
             timestamp,
             level,
             source,
+            tier: EventTier::default(),
             category,
             message: ingest.message,
             metadata: serde_json::Value::Null,

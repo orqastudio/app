@@ -11,7 +11,7 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
-use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent};
 use tokio::sync::broadcast;
 
 /// Capacity of the broadcast channel ring buffer.
@@ -111,6 +111,7 @@ impl EventBus {
             timestamp: 0,
             level: EventLevel::Info,
             source: EventSource::Daemon,
+            tier: EventTier::default(),
             category: "bus".to_owned(),
             message: "event bus shutting down".to_owned(),
             metadata: serde_json::Value::Null,
@@ -146,7 +147,7 @@ pub struct EventBusStats {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use orqa_engine_types::types::event::{EventLevel, EventSource, LogEvent};
+    use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent};
 
     /// Build a minimal LogEvent for use in tests.
     fn make_event(id: u64, message: &str) -> LogEvent {
@@ -155,6 +156,7 @@ mod tests {
             timestamp: 1_000_000 + id as i64,
             level: EventLevel::Info,
             source: EventSource::Daemon,
+            tier: EventTier::default(),
             category: "test".to_owned(),
             message: message.to_owned(),
             metadata: serde_json::Value::Null,

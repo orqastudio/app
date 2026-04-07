@@ -73,6 +73,15 @@
 		};
 	});
 
+	let contentAreaRef = $state<HTMLDivElement | undefined>(undefined);
+
+	$effect(() => {
+		const el = contentAreaRef;
+		if (!el) return;
+		el.addEventListener("click", handleContentClick);
+		return () => el.removeEventListener("click", handleContentClick);
+	});
+
 	const content = $derived(artifactStore.activeContent);
 	const breadcrumbs = $derived(navigationStore.breadcrumbs);
 	const activity = $derived(navigationStore.activeActivity);
@@ -294,8 +303,7 @@
 				/>
 			{/if}
 		{/if}
-		<!-- role="presentation" and onclick preserved for artifact link navigation -->
-		<Box flex={1} minHeight={0} role="presentation" onclick={handleContentClick}>
+		<Box bind:ref={contentAreaRef} flex={1} minHeight={0} role="presentation">
 			<ScrollArea full>
 				<Panel padding="loose">
 					{#if fileExtension === "sh"}

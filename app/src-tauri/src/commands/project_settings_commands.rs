@@ -13,8 +13,14 @@ use crate::state::AppState;
 /// Delegates to the daemon `GET /projects/settings` endpoint, which reads
 /// `project.json` for the active project. Returns `None` when no project.json
 /// exists (empty object returned by daemon is mapped to None).
+///
+/// The `path` parameter is accepted for forward-compatibility with multi-project
+/// support. Currently the daemon reads settings for its configured project root.
 #[tauri::command]
-pub async fn project_settings_read(state: State<'_, AppState>) -> Result<Option<Value>, OrqaError> {
+pub async fn project_settings_read(
+    state: State<'_, AppState>,
+    #[allow(unused_variables)] path: String,
+) -> Result<Option<Value>, OrqaError> {
     let value = state.daemon.client.get_project_settings().await?;
     // Daemon returns an empty object when no project.json exists.
     if value.as_object().is_some_and(serde_json::Map::is_empty) {
@@ -27,9 +33,13 @@ pub async fn project_settings_read(state: State<'_, AppState>) -> Result<Option<
 /// Write project settings via the daemon.
 ///
 /// Delegates to `PUT /projects/settings`. Returns the written settings value.
+///
+/// The `path` parameter is accepted for forward-compatibility with multi-project
+/// support. Currently the daemon writes settings for its configured project root.
 #[tauri::command]
 pub async fn project_settings_write(
     state: State<'_, AppState>,
+    #[allow(unused_variables)] path: String,
     settings: Value,
 ) -> Result<Value, OrqaError> {
     state.daemon.client.write_project_settings(&settings).await

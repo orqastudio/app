@@ -289,37 +289,52 @@ async function cmdDev(root) {
             killProcessTree(pid);
         await sleep(1_000);
     }
-    // Build devtools' npm dependencies before launching Vite.
-    // Without dist/ in these packages, devtools Vite will 500 on import.
-    logCtrl("Building devtools dependencies...");
-    for (const lib of [
-        "libs/constants",
-        "libs/types",
-        "libs/logger",
-        "libs/sdk",
-        "libs/graph-visualiser",
-        "libs/svelte-components",
-    ]) {
-        const libDir = path.join(root, lib);
-        if (!fs.existsSync(path.join(libDir, "package.json")))
-            continue;
-        try {
-            execSync(`${npm()} run build`, { cwd: libDir, stdio: "inherit" });
-        }
-        catch {
-            logError("ctrl", `Build failed for ${lib} — devtools may have import errors`);
-        }
+    // Stop all running OrqaStudio processes so cargo can overwrite binaries.
+    // Wait for Windows to release file handles on the killed processes.
+    await killAll(root, { preserveDevtools: true });
+    await sleep(2_000);
+    // ── Step 1: Build all packages via the process manager ──────────────
+    logCtrl("Building all packages...");
+    const pm = await ProcessManager.create(root);
+    const result = await pm.buildAll();
+    if (result.failed.length > 0) {
+        for (const f of result.failed)
+            logError("pm", `Build failed: ${f.nodeId}: ${f.error}`);
+        logCtrl("Some builds failed. Starting what we can...");
     }
-    logCtrl("Launching OrqaDev (cargo tauri dev)...");
-    logCtrl("Build output will appear below. Ctrl+C to stop.\n");
-    const child = spawn("cargo", ["tauri", "dev"], {
+    // ── Step 2: Start services (daemon, search) and the main app ────────
+    logCtrl("Starting services and app...");
+    await pm.startServices();
+    await pm.startApp();
+    pm.watchAll();
+    // ── Step 3: Launch devtools (observer only — no process management) ──
+    logCtrl("Launching OrqaDev...");
+    const devtoolsChild = spawn("cargo", ["tauri", "dev"], {
         cwd: devtoolsDir,
         stdio: "inherit",
-        env: rustEnv(root),
+        env: { ...rustEnv(root), ORQA_DEV_MODE: "1" },
     });
-    child.on("close", (code) => {
-        process.exit(code ?? 0);
+    // ── Shutdown: Ctrl+C stops everything ──────────────────────────────
+    let shuttingDown = false;
+    async function shutdown() {
+        if (shuttingDown)
+            return;
+        shuttingDown = true;
+        logCtrl("Shutting down...");
+        devtoolsChild.kill();
+        await pm.shutdown();
+        process.exit(0);
+    }
+    process.on("SIGINT", () => void shutdown());
+    process.on("SIGTERM", () => void shutdown());
+    if (isWindows())
+        process.on("SIGHUP", () => void shutdown());
+    // If the devtools window closes, shut everything down.
+    devtoolsChild.on("close", () => {
+        if (!shuttingDown)
+            void shutdown();
     });
+    logCtrl("Dev environment running. Close the devtools window or press Ctrl+C to stop.");
 }
 // ── Subcommand: start-processes (called by OrqaDev) ───────────────────────────
 /**

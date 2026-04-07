@@ -2,7 +2,6 @@
 	import {
 		Icon,
 		HStack,
-		Box,
 		DropdownMenuRoot,
 		MenuBarTrigger,
 		DropdownMenuItem,
@@ -69,16 +68,15 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<Box onmouseenter={() => handleMenuHover("file")}>
-			<MenuBarTrigger
-				onclick={(e: MouseEvent) => {
-					e.preventDefault();
-					handleMenuClick("file");
-				}}
-			>
-				File
-			</MenuBarTrigger>
-		</Box>
+		<MenuBarTrigger
+			onmouseenter={() => handleMenuHover("file")}
+			onclick={(e: MouseEvent) => {
+				e.preventDefault();
+				handleMenuClick("file");
+			}}
+		>
+			File
+		</MenuBarTrigger>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onNewProject)}>
 				<Icon name="folder-plus" size="md" />
@@ -110,16 +108,15 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<Box onmouseenter={() => handleMenuHover("edit")}>
-			<MenuBarTrigger
-				onclick={(e: MouseEvent) => {
-					e.preventDefault();
-					handleMenuClick("edit");
-				}}
-			>
-				Edit
-			</MenuBarTrigger>
-		</Box>
+		<MenuBarTrigger
+			onmouseenter={() => handleMenuHover("edit")}
+			onclick={(e: MouseEvent) => {
+				e.preventDefault();
+				handleMenuClick("edit");
+			}}
+		>
+			Edit
+		</MenuBarTrigger>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onSettings)}>
 				<Icon name="sliders-horizontal" size="md" />
@@ -135,16 +132,15 @@
 			if (!isOpen) activeMenu = null;
 		}}
 	>
-		<Box onmouseenter={() => handleMenuHover("help")}>
-			<MenuBarTrigger
-				onclick={(e: MouseEvent) => {
-					e.preventDefault();
-					handleMenuClick("help");
-				}}
-			>
-				Help
-			</MenuBarTrigger>
-		</Box>
+		<MenuBarTrigger
+			onmouseenter={() => handleMenuHover("help")}
+			onclick={(e: MouseEvent) => {
+				e.preventDefault();
+				handleMenuClick("help");
+			}}
+		>
+			Help
+		</MenuBarTrigger>
 		<DropdownMenuContent align="start">
 			<DropdownMenuItem onclick={() => handleItem(onAbout)}>
 				<Icon name="info" size="md" />

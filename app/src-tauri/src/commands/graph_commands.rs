@@ -177,9 +177,13 @@ pub async fn run_integrity_scan(
 
 /// Apply auto-fixable integrity checks and return the list of applied fixes.
 ///
-/// Delegates to POST /validation/fix on the daemon.
+/// Delegates to POST /validation/fix on the daemon. The `checks` parameter is
+/// accepted for forward-compatibility (e.g. selective fix) but currently unused.
 #[tauri::command]
-pub async fn apply_auto_fixes(state: State<'_, AppState>) -> Result<Vec<AppliedFix>, OrqaError> {
+pub async fn apply_auto_fixes(
+    state: State<'_, AppState>,
+    #[allow(unused_variables)] checks: Vec<IntegrityCheck>,
+) -> Result<Vec<AppliedFix>, OrqaError> {
     let client = daemon_client(&state)?;
     let resp = client.run_validation_fix().await?;
     tracing::info!(

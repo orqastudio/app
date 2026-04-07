@@ -94,13 +94,7 @@ use SectionHeader or SectionFooter. -->
 		minWidth,
 		flex,
 		role,
-		draggable,
 		"aria-label": ariaLabel,
-		onclick,
-		ondragstart,
-		ondragover,
-		ondrop,
-		ondragend,
 		children,
 	}: {
 		/** Uniform padding preset. */
@@ -125,18 +119,7 @@ use SectionHeader or SectionFooter. -->
 		minWidth?: 0;
 		flex?: 0 | 1;
 		role?: string;
-		/** Makes the panel participate in HTML drag-and-drop as a drag source. */
-		draggable?: boolean;
 		"aria-label"?: string;
-		onclick?: (e: MouseEvent) => void;
-		/** Drag source started — fires when the user begins dragging this panel. */
-		ondragstart?: (e: DragEvent) => void;
-		/** Drag target hover — fires while a drag is over this panel; call preventDefault to allow drop. */
-		ondragover?: (e: DragEvent) => void;
-		/** Drop — fires when a draggable is dropped onto this panel. */
-		ondrop?: (e: DragEvent) => void;
-		/** Drag ended — fires when the drag operation ends (drop or cancel). */
-		ondragend?: (e: DragEvent) => void;
 		children?: Snippet;
 	} = $props();
 
@@ -169,17 +152,9 @@ use SectionHeader or SectionFooter. -->
 		minHeight === 0 && "min-h-0",
 		minWidth === 0 && "min-w-0",
 		flexClass,
-		onclick && "cursor-pointer",
 	)}
-	role={onclick ? role || "button" : role || undefined}
-	tabindex={onclick ? 0 : undefined}
-	draggable={draggable || undefined}
+	role={role || undefined}
 	aria-label={ariaLabel || undefined}
-	{onclick}
-	{ondragstart}
-	{ondragover}
-	{ondrop}
-	{ondragend}
 >
 	{@render children?.()}
 </div>
