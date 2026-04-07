@@ -49,7 +49,7 @@
 	bind:ref
 	data-slot="scroll-area"
 	class="relative overflow-hidden {heightClass ?? ''}"
-	style:height={heightPx != null ? `${heightPx}px` : undefined}
+	style={heightPx != null ? `height: ${heightPx}px` : undefined}
 >
 	<ScrollAreaPrimitive.Viewport
 		bind:ref={viewportRef}
