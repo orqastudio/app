@@ -19,7 +19,11 @@
 	import ProcessCard from "./ProcessCard.svelte";
 	import type { ProcessInfo } from "./ProcessCard.svelte";
 	import ProcessGraphView from "./ProcessGraphView.svelte";
-	import { topologyLoaded } from "../../stores/graph-topology.svelte.js";
+	import {
+		topologyLoaded,
+		initTopology,
+		updateNodeStatus,
+	} from "../../stores/graph-topology.svelte.js";
 	import { getTrackedProcesses } from "../../stores/process-tracker.svelte.js";
 
 	const POLL_INTERVAL_MS = 2000;
@@ -43,6 +47,10 @@
 			const result = await invoke<ProcessInfo[]>("devtools_process_status");
 			daemonProcesses = result;
 			pollError = false;
+			// Sync daemon-reported process statuses into the topology graph.
+			for (const p of result) {
+				updateNodeStatus(p.source, p.status);
+			}
 		} catch {
 			pollError = true;
 		} finally {
@@ -63,6 +71,7 @@
 	onMount(() => {
 		fetchStatus();
 		pollTimer = setInterval(fetchStatus, POLL_INTERVAL_MS);
+		initTopology();
 	});
 
 	onDestroy(() => {
