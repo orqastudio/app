@@ -352,7 +352,22 @@ async function cmdDev(root: string): Promise<void> {
 	// Emit the dependency graph so devtools can render the process graph view.
 	pm.emitGraphTopology();
 
-	// ── Step 2: Start services (daemon, search) and the main app ────────
+	// ── Step 2: Build app backend explicitly ────────────────────────────
+	// The rust-workspace build excludes orqa-studio. Build it here so the
+	// binary reflects the latest code before cargo tauri dev starts in
+	// watch mode.
+	logCtrl("Building app backend...");
+	try {
+		execSync("cargo build -p orqa-studio --color always", {
+			cwd: path.join(root, "app"),
+			stdio: "inherit",
+			env: rustEnv(root),
+		});
+	} catch {
+		logError("ctrl", "App build failed — launching with existing binary");
+	}
+
+	// ── Step 3: Start services (daemon, search) and the main app ────────
 	logCtrl("Starting services and app...");
 	await pm.startServices();
 	await pm.startApp();
