@@ -358,7 +358,21 @@ async function cmdDev(root: string): Promise<void> {
 	await pm.startApp();
 	pm.watchAll();
 
-	// ── Step 3: Launch devtools (observer only — no process management) ──
+	// ── Step 3: Build and launch devtools ────────────────────────────────
+	// The rust-workspace build excludes orqa-devtools, so we build it
+	// explicitly before launching cargo tauri dev. This ensures the binary
+	// picks up any Rust changes committed since the last build.
+	logCtrl("Building devtools backend...");
+	try {
+		execSync("cargo build -p orqa-devtools --color always", {
+			cwd: devtoolsDir,
+			stdio: "inherit",
+			env: rustEnv(root),
+		});
+	} catch {
+		logError("ctrl", "Devtools build failed — launching with existing binary");
+	}
+
 	logCtrl("Launching OrqaDev...");
 	const devtoolsChild = spawn("cargo", ["tauri", "dev"], {
 		cwd: devtoolsDir,
