@@ -10,7 +10,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
 use serde::Serialize;
-use tauri::{AppHandle, Emitter, State};
+use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::io::{AsyncBufReadExt, BufReader};
 use tokio::process::Command;
 use tokio::sync::Mutex;
@@ -26,6 +26,9 @@ const TAURI_EVENT_NEW_LOG: &str = "orqa://log-event";
 /// Tauri event name for dev controller state changes.
 const TAURI_EVENT_DEV_STATE: &str = "orqa://dev-controller-state";
 
+/// Tauri event name for the dependency graph topology.
+const TAURI_EVENT_GRAPH_TOPOLOGY: &str = "orqa://graph-topology";
+
 /// Monotonically increasing event ID for controller-generated events.
 /// Starts at a high offset to avoid colliding with daemon-generated IDs.
 static NEXT_ID: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(10_000_000);
@@ -37,6 +40,10 @@ pub struct DevControllerState {
     /// Handle to the child process, if running. Used for killing on stop.
     child_id: Mutex<Option<u32>>,
 }
+
+/// Shared state for the process manager dependency graph topology.
+/// Populated once when the PM emits the `graph-topology` JSON event at startup.
+pub struct GraphTopologyState(pub Mutex<Option<serde_json::Value>>);
 
 impl DevControllerState {
     /// Create a new dev controller state with no running processes.
@@ -132,6 +139,7 @@ fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String
             let source = match tag {
                 "app" => EventSource::App,
                 "search" => EventSource::Search,
+                "daemon" => EventSource::Daemon,
                 _ => EventSource::DevController,
             };
 
@@ -164,6 +172,8 @@ fn parse_controller_line(line: &str) -> (EventSource, EventLevel, String, String
                 "ctrl" => "controller",
                 "app" => "tauri-dev",
                 "search" => "search-server",
+                "daemon" => "daemon",
+                "storybook" => "storybook",
                 "build" | "watch" => "file-watcher",
                 "plugin" => "plugin-watcher",
                 s if s.starts_with("tsc:") => "typescript",
@@ -366,6 +376,9 @@ pub async fn devtools_start_dev(
         let app_out = app.clone();
         let state_out = Arc::clone(&event_state_ref);
         let bw_out = Arc::clone(&batch_writer_ref);
+        let topo_state = app
+            .try_state::<Arc<GraphTopologyState>>()
+            .map(|s| Arc::clone(&s));
         let stdout_task = tauri::async_runtime::spawn(async move {
             if let Some(stdout) = stdout {
                 let reader = BufReader::new(stdout);
@@ -373,6 +386,18 @@ pub async fn devtools_start_dev(
                 while let Ok(Some(line)) = lines.next_line().await {
                     if line.trim().is_empty() {
                         continue;
+                    }
+                    // Intercept graph-topology events before normal log parsing.
+                    if line.trim_start().starts_with('{') {
+                        if let Ok(val) = serde_json::from_str::<serde_json::Value>(line.trim()) {
+                            if val.get("type").and_then(|v| v.as_str()) == Some("graph-topology") {
+                                if let Some(ref ts) = topo_state {
+                                    *ts.0.lock().await = Some(val.clone());
+                                }
+                                let _ = app_out.emit(TAURI_EVENT_GRAPH_TOPOLOGY, &val);
+                                continue;
+                            }
+                        }
                     }
                     let (source, level, category, message) = parse_controller_line(&line);
                     emit_log(

@@ -14,6 +14,11 @@
 		AiExplainButton,
 		HStack,
 		Box,
+		Spacer,
+		Text,
+		WindowTitleBar,
+		WindowControls,
+		AppIcon,
 		type ContextEntry,
 	} from "@orqastudio/svelte-components/pure";
 	import { emit } from "@tauri-apps/api/event";
@@ -53,6 +58,7 @@
 	import IssuesView from "./issues/IssuesView.svelte";
 	import TraceView from "./trace/TraceView.svelte";
 	import { selectTrace } from "../stores/trace-store.svelte.js";
+	import finMark from "$lib/assets/fin-mark.svg";
 
 	let {
 		children,
@@ -209,6 +215,17 @@
 <svelte:document onkeydown={handleKeydown} />
 
 <AppShell showNavPanel={false} showChatPanel={false}>
+	{#snippet toolbar()}
+		<WindowTitleBar>
+			<HStack gap={2}>
+				<AppIcon src={finMark} alt="OrqaDev" size="xs" />
+				<Text variant="caption" tone="muted">OrqaDev</Text>
+			</HStack>
+			<Spacer />
+			<WindowControls />
+		</WindowTitleBar>
+	{/snippet}
+
 	{#snippet activityBar()}
 		<ActivityBar {topItems} {bottomItems} />
 	{/snippet}

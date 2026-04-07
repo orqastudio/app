@@ -186,7 +186,7 @@ export { ListCard } from "./list-card/index.js";
 export { DashboardCard } from "./dashboard-card/index.js";
 export { ProgressBar } from "./progress-bar/index.js";
 export { ViewContainer } from "./view-container/index.js";
-export { Toolbar, WindowTitleBar } from "./toolbar/index.js";
+export { Toolbar, WindowTitleBar, WindowControls } from "./toolbar/index.js";
 export { Panel } from "./panel/index.js";
 export { SectionHeader, SectionFooter } from "./section-header/index.js";
 export { Callout } from "./callout/index.js";

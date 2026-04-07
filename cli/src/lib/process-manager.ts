@@ -1840,6 +1840,23 @@ export class ProcessManager {
 		process.stdout.write(JSON.stringify(event) + "\n");
 	}
 
+	/**
+	 * Emit the full dependency graph topology as a JSON event.
+	 * Called after buildAll() so the devtools can render the process graph view
+	 * with dependency edges. This is a one-shot event, not a NodeEvent.
+	 */
+	emitGraphTopology(): void {
+		const nodes = [...this.graph.nodes.values()].map((n) => ({
+			id: n.id,
+			name: n.name,
+			kind: n.kind,
+			status: n.status,
+			dependsOn: n.dependsOn,
+			dependents: n.dependents,
+		}));
+		process.stdout.write(JSON.stringify({ type: "graph-topology", nodes }) + "\n");
+	}
+
 	// ── Status query ──────────────────────────────────────────────────────────
 
 	/**

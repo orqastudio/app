@@ -349,6 +349,9 @@ async function cmdDev(root: string): Promise<void> {
 		logCtrl("Some builds failed. Starting what we can...");
 	}
 
+	// Emit the dependency graph so devtools can render the process graph view.
+	pm.emitGraphTopology();
+
 	// ── Step 2: Start services (daemon, search) and the main app ────────
 	logCtrl("Starting services and app...");
 	await pm.startServices();
@@ -423,6 +426,7 @@ async function cmdStartProcesses(root: string): Promise<void> {
 		for (const f of result.failed) logError("pm", `Build failed: ${f.nodeId}: ${f.error}`);
 		logCtrl("Some builds failed. Starting what we can...");
 	}
+	pm.emitGraphTopology();
 	await pm.startServices();
 	await pm.startApp();
 	pm.watchAll();

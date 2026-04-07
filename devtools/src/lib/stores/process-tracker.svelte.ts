@@ -8,6 +8,7 @@
 import { SvelteSet } from "svelte/reactivity";
 import { type LogEvent } from "./log-store.svelte.js";
 import type { ProcessInfo, ProcessStatus } from "../components/processes/ProcessCard.svelte";
+import { updateNodeStatus } from "./graph-topology.svelte.js";
 
 // Process state tracked from PM events.
 interface TrackedProcess {
@@ -63,6 +64,9 @@ export function trackProcessEvent(event: LogEvent): void {
 			startedAt: status === "running" ? event.timestamp : null,
 		});
 	}
+
+	// Also update the graph topology node if it exists.
+	updateNodeStatus(nodeId, status);
 }
 
 /**

@@ -85,6 +85,11 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let dev_ctrl_state = dev_controller::DevControllerState::new();
     app.manage(dev_ctrl_state);
 
+    let graph_topo = Arc::new(dev_controller::GraphTopologyState(tokio::sync::Mutex::new(
+        None,
+    )));
+    app.manage(graph_topo);
+
     // Dev mode: set by the CLI via ORQA_DEV_MODE=1. When absent, the devtools
     // runs in attach/production mode (no process management, runtime events only).
     let dev_mode = std::env::var("ORQA_DEV_MODE").is_ok_and(|v| v == "1" || v == "true");
@@ -121,6 +126,14 @@ fn devtools_is_dev_mode(flag: tauri::State<'_, DevModeFlag>) -> bool {
     flag.0
 }
 
+/// IPC command — returns the process manager dependency graph topology, if available.
+#[tauri::command]
+async fn devtools_graph_topology(
+    state: tauri::State<'_, Arc<dev_controller::GraphTopologyState>>,
+) -> Result<Option<serde_json::Value>, String> {
+    Ok(state.0.lock().await.clone())
+}
+
 /// Build and run the Tauri application event loop.
 ///
 /// Uses `.build(generate_context!()).run(callback)` so that the `RunEvent::Exit`
@@ -155,6 +168,7 @@ pub fn run() {
             issue_group_commands::devtools_list_issue_groups,
             issue_group_commands::devtools_get_issue_group,
             devtools_is_dev_mode,
+            devtools_graph_topology,
         ])
         .build(tauri::generate_context!())
         // BINARY ENTRY POINT: Tauri's builder `.build()` returns Result but if it

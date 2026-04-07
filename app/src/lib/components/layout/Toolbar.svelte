@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { open } from "@tauri-apps/plugin-dialog";
-	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import { getVersion, getName } from "@tauri-apps/api/app";
+	import { getCurrentWindow } from "@tauri-apps/api/window";
 	import logoStatic from "$lib/assets/logo-static.svg";
 	import { launchDevtools } from "$lib/services/plugin-service";
 	import {
@@ -15,7 +15,7 @@
 	import { getStores } from "@orqastudio/sdk";
 
 	const { projectStore } = getStores();
-	import WindowControls from "./WindowControls.svelte";
+	import { WindowControls } from "@orqastudio/svelte-components/pure";
 	import AboutDialog from "./AboutDialog.svelte";
 	import NewProjectDialog from "./NewProjectDialog.svelte";
 	import SettingsDialog from "./SettingsDialog.svelte";
@@ -88,37 +88,9 @@
 	async function handleLaunchDevtools(): Promise<void> {
 		await launchDevtools();
 	}
-
-	/**
-	 * Start window drag on primary mouse button press outside interactive elements.
-	 * @param e - The mouse event from the toolbar's mousedown listener.
-	 */
-	function handleDragStart(e: MouseEvent): void {
-		if (e.button !== 0) return;
-		const target = e.target as HTMLElement;
-		if (target.closest("button, [data-menu-bar]")) return;
-		getCurrentWindow().startDragging();
-	}
-
-	/**
-	 * Toggle window maximize state on double-click outside interactive elements.
-	 * @param e - The mouse event from the toolbar's dblclick listener.
-	 */
-	function handleDoubleClick(e: MouseEvent): void {
-		const target = e.target as HTMLElement;
-		if (target.closest("button, [data-menu-bar]")) return;
-		const win = getCurrentWindow();
-		win.isMaximized().then((maximized) => {
-			if (maximized) {
-				win.unmaximize();
-			} else {
-				win.maximize();
-			}
-		});
-	}
 </script>
 
-<WindowTitleBar onmousedown={handleDragStart} ondblclick={handleDoubleClick}>
+<WindowTitleBar>
 	<!-- Logo area matching the activity bar width -->
 	<Panel fixedWidth="icon-bar" border="right" direction="column" align="center" full padding="none">
 		{#if projectStore.iconDataUrl}

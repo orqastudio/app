@@ -1,12 +1,10 @@
-<!-- Process diagnostics view for OrqaDev. Shows a grid of ProcessCard components
-     auto-discovered from the daemon health endpoint. Status is polled every 2
-     seconds via the devtools_process_status IPC command. CLI-managed processes
-     (search, app) are tracked from process manager events in the log stream. -->
+<!-- Process diagnostics view for OrqaDev. Shows the dependency graph with
+     build/process status per node. Falls back to a flat card grid when the
+     graph topology isn't available (e.g. production attach mode). -->
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	import { invoke } from "@tauri-apps/api/core";
 	import {
-		Callout,
 		ConnectionIndicator,
 		EmptyState,
 		Panel,
@@ -15,24 +13,23 @@
 		Grid,
 		Heading,
 		Text,
-		Code,
 		ScrollArea,
 		Center,
 	} from "@orqastudio/svelte-components/pure";
 	import ProcessCard from "./ProcessCard.svelte";
 	import type { ProcessInfo } from "./ProcessCard.svelte";
+	import ProcessGraphView from "./ProcessGraphView.svelte";
+	import { topologyLoaded } from "../../stores/graph-topology.svelte.js";
 	import { getTrackedProcesses } from "../../stores/process-tracker.svelte.js";
 
 	const POLL_INTERVAL_MS = 2000;
 
 	let daemonProcesses = $state<ProcessInfo[]>([]);
 	let initialized = $state(false);
-	let selectedSource = $state<string | null>(null);
 	let pollError = $state(false);
 	let pollTimer: ReturnType<typeof setInterval> | null = null;
 
 	// Merge daemon-reported processes with CLI process manager tracked processes.
-	// Daemon reports itself + LSP + MCP. PM tracker reports search, app, storybook, etc.
 	const processes = $derived.by(() => {
 		const pmProcesses = getTrackedProcesses();
 		const daemonSources = new Set(daemonProcesses.map((p) => p.source));
@@ -51,14 +48,6 @@
 		} finally {
 			initialized = true;
 		}
-	}
-
-	/**
-	 * Toggle the selected process source filter for log highlighting.
-	 * @param source - The process source string to select or deselect.
-	 */
-	function handleSelect(source: string): void {
-		selectedSource = selectedSource === source ? null : source;
 	}
 
 	const connectionState = $derived(
@@ -83,48 +72,50 @@
 	});
 </script>
 
-<ScrollArea full>
-	<Panel padding="normal">
-		<Stack gap={4}>
+{#if topologyLoaded.value}
+	<!-- Graph topology available — show the dependency graph view. -->
+	<Stack gap={0} height="full">
+		<Panel padding="tight" border="bottom">
 			<HStack justify="between">
-				<Heading level={5}>Processes</Heading>
+				<Heading level={5}>System Health</Heading>
 				{#if initialized}
 					<ConnectionIndicator state={connectionState} label={connectionLabel} />
 				{/if}
 			</HStack>
+		</Panel>
+		<ProcessGraphView />
+	</Stack>
+{:else}
+	<!-- No topology — fallback to flat card grid (production attach mode). -->
+	<ScrollArea full>
+		<Panel padding="normal">
+			<Stack gap={4}>
+				<HStack justify="between">
+					<Heading level={5}>Processes</Heading>
+					{#if initialized}
+						<ConnectionIndicator state={connectionState} label={connectionLabel} />
+					{/if}
+				</HStack>
 
-			{#if !initialized}
-				<Center full>
-					<Text variant="body-muted">Loading process status...</Text>
-				</Center>
-			{:else if processes.length === 0}
-				<Center full>
-					<EmptyState
-						title="No processes detected"
-						description="Waiting for the daemon health endpoint to report process status."
-					/>
-				</Center>
-			{:else}
-				<Grid cols={2} md={3} lg={5} gap={3}>
-					{#each processes as process (process.source)}
-						<ProcessCard
-							{process}
-							selected={selectedSource === process.source}
-							onselect={handleSelect}
+				{#if !initialized}
+					<Center full>
+						<Text variant="body-muted">Loading process status...</Text>
+					</Center>
+				{:else if processes.length === 0}
+					<Center full>
+						<EmptyState
+							title="No processes detected"
+							description="Waiting for the daemon health endpoint to report process status."
 						/>
-					{/each}
-				</Grid>
-
-				{#if selectedSource !== null}
-					<Callout tone="muted" align="start">
-						<Text variant="body-muted" block>
-							Showing logs for source <Code>{selectedSource}</Code>. Click the card again to clear
-							the filter. Navigate to the
-							<Text variant="body">Stream</Text> tab to see filtered entries.
-						</Text>
-					</Callout>
+					</Center>
+				{:else}
+					<Grid cols={2} md={3} lg={5} gap={3}>
+						{#each processes as process (process.source)}
+							<ProcessCard {process} />
+						{/each}
+					</Grid>
 				{/if}
-			{/if}
-		</Stack>
-	</Panel>
-</ScrollArea>
+			</Stack>
+		</Panel>
+	</ScrollArea>
+{/if}
