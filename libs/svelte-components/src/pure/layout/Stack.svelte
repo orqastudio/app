@@ -100,9 +100,9 @@ ScrollArea. There is no overflow prop — by design. -->
 		minWidth === 0 && "min-w-0",
 		flexClass,
 	)}
-	{role}
-	{tabindex}
-	aria-label={ariaLabel}
+	role={role || undefined}
+	tabindex={tabindex != null ? tabindex : undefined}
+	aria-label={ariaLabel || undefined}
 	aria-multiselectable={ariaMultiselectable}
 >
 	{@render children?.()}

@@ -218,10 +218,10 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		truncate && "truncate",
 		onclick && "cursor-pointer",
 	)}
-	{role}
-	{tabindex}
-	aria-label={ariaLabel}
-	aria-hidden={ariaHidden}
+	role={role || undefined}
+	tabindex={tabindex != null ? tabindex : undefined}
+	aria-label={ariaLabel || undefined}
+	aria-hidden={ariaHidden != null ? ariaHidden : undefined}
 	{onclick}
 	{onmouseenter}
 >

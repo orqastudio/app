@@ -84,7 +84,8 @@ no free colors, paddings, or radii. -->
 	aria-label={ariaLabel}
 >
 	{#if icon}
-		<svelte:component this={icon} class="h-4 w-4 shrink-0" />
+		{@const IconComponent = icon}
+		<IconComponent class="h-4 w-4 shrink-0" />
 	{:else if iconName}
 		<Icon name={iconName} size="sm" />
 	{/if}

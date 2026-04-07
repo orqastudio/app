@@ -147,10 +147,10 @@ ScrollArea. There is no overflow prop — by design. -->
 		flexClass,
 		indentClass,
 	)}
-	{role}
-	{tabindex}
-	aria-selected={ariaSelected}
-	aria-label={ariaLabel}
+	role={role || undefined}
+	tabindex={tabindex != null ? tabindex : undefined}
+	aria-selected={ariaSelected != null ? ariaSelected : undefined}
+	aria-label={ariaLabel || undefined}
 	data-menu-bar={dataMenuBar || undefined}
 	{onclick}
 	{onkeydown}
