@@ -1670,10 +1670,11 @@ export class ProcessManager {
 			const depNode = this.graph.nodes.get(depId);
 			if (!depNode) continue;
 
-			if (depNode.kind === "tauri-app") {
-				// Tauri apps have their own Vite HMR — they pick up library dist/
-				// changes automatically via the file system. No rebuild needed.
-				this.log(depId, `${depNode.name} picks up changes via Vite HMR — skipping rebuild`);
+			if (depNode.kind === "tauri-app" || depNode.kind === "svelte-library") {
+				// Tauri apps and svelte-library nodes pick up dependency changes
+				// via Vite HMR — Vite watches their node_modules/dist files directly.
+				// Rebuilding them triggers redundant HMR avalanches.
+				this.log(depId, `${depNode.name} picks up changes via Vite HMR — skipping`);
 				continue;
 			} else if (depNode.kind === "service") {
 				await this.restartService(depId);
