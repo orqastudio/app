@@ -336,15 +336,15 @@ export class SettingsStore {
 		try {
 			const data = await invoke<{
 				status: string;
-				artifacts: number;
-				rules: number;
+				artifact_count: number;
+				rule_count: number;
 			}>("daemon_health");
 
 			if (data.status === "ok") {
 				const next: DaemonHealth = {
 					state: "connected",
-					artifacts: data.artifacts,
-					rules: data.rules,
+					artifacts: data.artifact_count,
+					rules: data.rule_count,
 					error: null,
 				};
 				if (next.state !== prevState) {
@@ -354,8 +354,8 @@ export class SettingsStore {
 			} else {
 				const next: DaemonHealth = {
 					state: "degraded",
-					artifacts: data.artifacts ?? 0,
-					rules: data.rules ?? 0,
+					artifacts: data.artifact_count ?? 0,
+					rules: data.rule_count ?? 0,
 					error: `Unexpected status: ${data.status}`,
 				};
 				if (next.state !== prevState) {
