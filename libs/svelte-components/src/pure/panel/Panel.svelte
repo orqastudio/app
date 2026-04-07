@@ -171,7 +171,8 @@ use SectionHeader or SectionFooter. -->
 		flexClass,
 		onclick && "cursor-pointer",
 	)}
-	role={role || undefined}
+	role={onclick ? role || "button" : role || undefined}
+	tabindex={onclick ? 0 : undefined}
 	draggable={draggable || undefined}
 	aria-label={ariaLabel || undefined}
 	{onclick}
