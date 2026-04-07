@@ -157,6 +157,25 @@ async fn devtools_graph_topology(
     }
 }
 
+/// IPC command — reads process status from `.state/process-status.json`.
+///
+/// The CLI process manager writes this file on every status change. The
+/// devtools reads it on each poll cycle to sync node statuses into the
+/// topology graph, since PM events don't flow through the devtools in
+/// the new `orqa dev` flow.
+#[tauri::command]
+fn devtools_process_statuses() -> Result<std::collections::HashMap<String, String>, String> {
+    let project_root = std::env::var("ORQA_PROJECT_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
+    let status_path = project_root.join(".state/process-status.json");
+
+    match std::fs::read_to_string(&status_path) {
+        Ok(content) => serde_json::from_str(&content).map_err(|e| e.to_string()),
+        Err(_) => Ok(std::collections::HashMap::new()),
+    }
+}
+
 /// Build and run the Tauri application event loop.
 ///
 /// Uses `.build(generate_context!()).run(callback)` so that the `RunEvent::Exit`
@@ -192,6 +211,7 @@ pub fn run() {
             issue_group_commands::devtools_get_issue_group,
             devtools_is_dev_mode,
             devtools_graph_topology,
+            devtools_process_statuses,
         ])
         .build(tauri::generate_context!())
         // BINARY ENTRY POINT: Tauri's builder `.build()` returns Result but if it

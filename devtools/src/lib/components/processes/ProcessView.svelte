@@ -51,6 +51,16 @@
 			for (const p of result) {
 				updateNodeStatus(p.source, p.status);
 			}
+			// Also read PM-written process statuses from disk for nodes the
+			// daemon doesn't manage (search, app, libraries).
+			try {
+				const pmStatuses = await invoke<Record<string, string>>("devtools_process_statuses");
+				for (const [nodeId, status] of Object.entries(pmStatuses)) {
+					updateNodeStatus(nodeId, status);
+				}
+			} catch {
+				// Not available — PM may not have written status yet.
+			}
 		} catch {
 			pollError = true;
 		} finally {

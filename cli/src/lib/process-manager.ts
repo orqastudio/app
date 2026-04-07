@@ -1814,6 +1814,26 @@ export class ProcessManager {
 	 */
 	protected emitEvent(event: NodeEvent): void {
 		for (const listener of this.eventListeners) listener(event);
+		this.writeProcessStatus();
+	}
+
+	/**
+	 * Write current status of all nodes to `.state/process-status.json`.
+	 * The devtools reads this file to sync node statuses when PM events
+	 * don't flow through the dev_controller (new cmdDev flow).
+	 */
+	private writeProcessStatus(): void {
+		const statuses: Record<string, string> = {};
+		for (const [id, node] of this.graph.nodes) {
+			statuses[id] = node.status;
+		}
+		try {
+			const stateDir = path.join(this.root, ".state");
+			if (!fs.existsSync(stateDir)) fs.mkdirSync(stateDir, { recursive: true });
+			fs.writeFileSync(path.join(stateDir, "process-status.json"), JSON.stringify(statuses));
+		} catch {
+			// Best effort.
+		}
 	}
 
 	// ── Logging ───────────────────────────────────────────────────────────────

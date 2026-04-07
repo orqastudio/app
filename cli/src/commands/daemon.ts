@@ -14,6 +14,7 @@
  */
 
 import { spawn } from "node:child_process";
+import { createServer as createNetServer } from "node:net";
 import { existsSync, readFileSync, mkdirSync, unlinkSync, watch as fsWatch } from "node:fs";
 import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
@@ -246,7 +247,9 @@ async function daemonStop(): Promise<void> {
  */
 async function daemonRestart(): Promise<void> {
 	const projectRoot = getRoot();
+	const port = getPort("daemon");
 	const pidPath = getPidPath(projectRoot);
+	const readyPath = join(projectRoot, ".state", "daemon.ready");
 	const pid = readPid(pidPath);
 
 	// Stop existing daemon if running.
@@ -254,15 +257,45 @@ async function daemonRestart(): Promise<void> {
 		try {
 			process.kill(pid, "SIGTERM");
 			console.log(`Sent SIGTERM to daemon (PID ${pid}). Waiting for exit...`);
-			// Wait up to 10 seconds for the process to die.
-			const deadline = Date.now() + 10_000;
+			// Wait up to 15 seconds for the process to die.
+			const deadline = Date.now() + 15_000;
 			while (Date.now() < deadline) {
-				await sleep(150);
+				await sleep(200);
 				if (!processIsAlive(pid)) break;
+			}
+			if (processIsAlive(pid)) {
+				console.log(`Daemon (PID ${pid}) did not exit gracefully — force killing.`);
+				try {
+					process.kill(pid, "SIGKILL");
+				} catch {
+					/* already dead */
+				}
+				await sleep(500);
 			}
 		} catch {
 			// Process may have already exited — continue to start.
 		}
+	}
+
+	// Clean up stale PID and ready files before starting fresh.
+	try {
+		unlinkSync(pidPath);
+	} catch {
+		/* doesn't exist */
+	}
+	try {
+		unlinkSync(readyPath);
+	} catch {
+		/* doesn't exist */
+	}
+
+	// Wait for the port to be free. On Windows, the OS may hold the port
+	// briefly after the process exits.
+	const portDeadline = Date.now() + 5_000;
+	while (Date.now() < portDeadline) {
+		const inUse = await isPortInUse(port);
+		if (!inUse) break;
+		await sleep(200);
 	}
 
 	// Start fresh.
@@ -398,6 +431,21 @@ function processIsAlive(pid: number): boolean {
 	} catch {
 		return false;
 	}
+}
+
+/**
+ * Check if a TCP port is currently in use by attempting to bind to it.
+ * @param port - The port number to check.
+ * @returns True if the port is in use (bind failed), false if free.
+ */
+function isPortInUse(port: number): Promise<boolean> {
+	return new Promise((resolve) => {
+		const server = createNetServer();
+		server.once("error", () => resolve(true));
+		server.listen(port, "127.0.0.1", () => {
+			server.close(() => resolve(false));
+		});
+	});
 }
 
 /**
