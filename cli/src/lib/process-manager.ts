@@ -1854,7 +1854,21 @@ export class ProcessManager {
 			dependsOn: n.dependsOn,
 			dependents: n.dependents,
 		}));
-		process.stdout.write(JSON.stringify({ type: "graph-topology", nodes }) + "\n");
+		const payload = { type: "graph-topology", nodes };
+		process.stdout.write(JSON.stringify(payload) + "\n");
+
+		// Write to .state/ so devtools can read it on startup even when
+		// the topology event was emitted before the devtools window opened.
+		const stateDir = path.join(this.root, ".state");
+		try {
+			if (!fs.existsSync(stateDir)) fs.mkdirSync(stateDir, { recursive: true });
+			fs.writeFileSync(
+				path.join(stateDir, "graph-topology.json"),
+				JSON.stringify(payload, null, 2),
+			);
+		} catch {
+			// Best effort — devtools will fall back to flat card grid.
+		}
 	}
 
 	// ── Status query ──────────────────────────────────────────────────────────

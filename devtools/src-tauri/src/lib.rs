@@ -127,11 +127,34 @@ fn devtools_is_dev_mode(flag: tauri::State<'_, DevModeFlag>) -> bool {
 }
 
 /// IPC command — returns the process manager dependency graph topology, if available.
+///
+/// First checks the in-memory state (populated when dev_controller parses the
+/// graph-topology JSON event from start-processes). If empty, falls back to
+/// reading `.state/graph-topology.json` from disk (written by the CLI when it
+/// orchestrates the build directly in the new `orqa dev` flow).
 #[tauri::command]
 async fn devtools_graph_topology(
     state: tauri::State<'_, Arc<dev_controller::GraphTopologyState>>,
 ) -> Result<Option<serde_json::Value>, String> {
-    Ok(state.0.lock().await.clone())
+    // Check in-memory state first (populated via start-processes stdout parsing).
+    let in_memory = state.0.lock().await.clone();
+    if in_memory.is_some() {
+        return Ok(in_memory);
+    }
+
+    // Fall back to reading from disk (written by CLI's emitGraphTopology).
+    let project_root = std::env::var("ORQA_PROJECT_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
+    let topo_path = project_root.join(".state/graph-topology.json");
+
+    match std::fs::read_to_string(&topo_path) {
+        Ok(content) => match serde_json::from_str::<serde_json::Value>(&content) {
+            Ok(val) => Ok(Some(val)),
+            Err(_) => Ok(None),
+        },
+        Err(_) => Ok(None),
+    }
 }
 
 /// Build and run the Tauri application event loop.
