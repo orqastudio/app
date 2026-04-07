@@ -82,7 +82,8 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let batch_writer = events::EventBatchWriter::new(Arc::clone(&storage), session_id);
     app.manage(Arc::new(batch_writer));
 
-    events::spawn_consumer(app.handle().clone(), consumer_state);
+    // NOTE: spawn_consumer is NOT called here. It starts when the user clicks
+    // "Start Dev Environment" — see devtools_start_dev in dev_controller.rs.
 
     let dev_ctrl_state = dev_controller::DevControllerState::new();
     app.manage(dev_ctrl_state);

@@ -307,6 +307,11 @@ pub async fn devtools_start_dev(
 
         emit_dev_state(&app, &DevState::Running);
 
+        // Start the SSE event consumer now that the daemon is starting up.
+        // The consumer retries with backoff so it handles the brief window
+        // between process spawn and daemon health endpoint readiness.
+        crate::events::spawn_consumer(app.clone(), event_state_ref.clone());
+
         // Read stdout and stderr concurrently, converting lines to log events.
         let stdout = child.stdout.take();
         let stderr = child.stderr.take();
