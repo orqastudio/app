@@ -26,7 +26,7 @@
 		type SortDir,
 		type IssueGroup,
 	} from "../../stores/issue-store.svelte.js";
-	import { events } from "../../stores/log-store.svelte.js";
+	import { events, type LogEvent } from "../../stores/log-store.svelte.js";
 	import { openDrawer } from "../../stores/drawer-store.svelte.js";
 
 	/** Current text search query — client-side only, not sent to backend. */
@@ -93,32 +93,55 @@
 	}
 
 	/**
+	 * Build a synthetic LogEvent from issue group metadata. Used when the group's
+	 * most recent event is not present in the live event buffer (e.g. daemon
+	 * restarted, buffer rolled over). The level and source fields are cast from
+	 * the group's string values — the backend guarantees they match the enum.
+	 * @param group - The issue group to synthesize an event from.
+	 * @returns A LogEvent shaped from the group's metadata.
+	 */
+	function syntheticEvent(group: IssueGroup): LogEvent {
+		return {
+			id: group.recent_event_ids[0] ?? 0,
+			timestamp: group.last_seen,
+			level: group.level as LogEvent["level"],
+			source: group.component as LogEvent["source"],
+			category: "",
+			message: group.title,
+			metadata: null,
+			session_id: null,
+			fingerprint: group.fingerprint,
+			message_template: group.title,
+			correlation_id: undefined,
+			stack_frames: [],
+		};
+	}
+
+	/**
 	 * Handle an issue row click. Selects the issue in the store and opens the
-	 * EventDrawer for the group's most recent event. The navigation list is built
-	 * from the most recent event of each visible group so the user can step
-	 * through issues without closing the drawer.
+	 * EventDrawer. Prefers the matching event from the live buffer; when the
+	 * event is not in the buffer (e.g. loaded from history or not yet streamed),
+	 * builds a synthetic event from the group metadata so the drawer always opens.
+	 * The navigation list is built from the most recent event of each visible group.
 	 * @param group - The issue group that was clicked.
 	 */
 	function handleIssueClick(group: IssueGroup): void {
 		selectIssue(group.fingerprint);
 
-		// Find the most recent event for this group from the live event buffer.
-		// recent_event_ids is ordered newest-first; we walk the list to find
-		// the first id that exists in the current buffer.
+		// Prefer a real event from the live buffer; fall back to a synthetic one
+		// built from group metadata so the click always opens the drawer.
 		const recentId = group.recent_event_ids[0];
-		if (recentId === undefined) return;
-
-		const event = events.find((ev) => ev.id === recentId);
-		if (!event) return;
+		const bufferedEvent =
+			recentId !== undefined ? events.find((ev) => ev.id === recentId) : undefined;
+		const event = bufferedEvent ?? syntheticEvent(group);
 
 		// Build a navigation list from the most recent event of each visible group.
-		// Groups without a matching event in the buffer are skipped.
-		const navList = filteredGroups
-			.map((g) => {
-				const id = g.recent_event_ids[0];
-				return id !== undefined ? events.find((ev) => ev.id === id) : undefined;
-			})
-			.filter((ev): ev is NonNullable<typeof ev> => ev !== undefined);
+		// Groups without a matching event in the buffer use a synthetic event.
+		const navList = filteredGroups.map((g) => {
+			const id = g.recent_event_ids[0];
+			const found = id !== undefined ? events.find((ev) => ev.id === id) : undefined;
+			return found ?? syntheticEvent(g);
+		});
 
 		openDrawer(event, navList.length > 0 ? navList : [event]);
 	}

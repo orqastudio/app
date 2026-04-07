@@ -236,7 +236,7 @@
 			<!-- Main content area + optional EventDrawer side panel. The drawer renders
 			     alongside the active tab so it persists across tab switches. -->
 			<HStack height="full">
-				<Box flex={1} minWidth={0}>
+				<Box flex={1} minWidth={0} height="full">
 					{#if navigation.activeTab === "issues"}
 						<IssuesView />
 					{:else if navigation.activeTab === "stream"}
