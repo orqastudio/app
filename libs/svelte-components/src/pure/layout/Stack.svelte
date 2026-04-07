@@ -6,7 +6,7 @@ decorative belongs in a purpose-built component (Panel, Card, SectionHeader).
 
 The only props Stack exposes are:
   • STRUCTURAL  — gap, align, flex, height, width, minHeight, full
-  • WIRING      — children, role, tabindex, aria-*
+  • WIRING      — children, role, aria-*
 
 Defaults: align="stretch", overflow hidden. Scrollable panels wrap content in a
 ScrollArea. There is no overflow prop — by design. -->
@@ -53,7 +53,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		minWidth,
 		flex,
 		role,
-		tabindex,
 		"aria-label": ariaLabel,
 		"aria-multiselectable": ariaMultiselectable,
 		children,
@@ -73,7 +72,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		/** flex-none (0) or flex-1 (1) shorthand. */
 		flex?: 0 | 1;
 		role?: string;
-		tabindex?: number;
 		"aria-label"?: string;
 		"aria-multiselectable"?: boolean | "true" | "false";
 		children?: Snippet;
@@ -101,7 +99,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		flexClass,
 	)}
 	role={role || undefined}
-	tabindex={tabindex != null ? tabindex : undefined}
 	aria-label={ariaLabel || undefined}
 	aria-multiselectable={ariaMultiselectable}
 >

@@ -94,7 +94,6 @@ use SectionHeader or SectionFooter. -->
 		minWidth,
 		flex,
 		role,
-		tabindex,
 		draggable,
 		"aria-label": ariaLabel,
 		onclick,
@@ -126,7 +125,6 @@ use SectionHeader or SectionFooter. -->
 		minWidth?: 0;
 		flex?: 0 | 1;
 		role?: string;
-		tabindex?: number;
 		/** Makes the panel participate in HTML drag-and-drop as a drag source. */
 		draggable?: boolean;
 		"aria-label"?: string;
@@ -173,10 +171,9 @@ use SectionHeader or SectionFooter. -->
 		flexClass,
 		onclick && "cursor-pointer",
 	)}
-	{role}
-	{tabindex}
-	{draggable}
-	aria-label={ariaLabel}
+	role={role || undefined}
+	draggable={draggable || undefined}
+	aria-label={ariaLabel || undefined}
 	{onclick}
 	{ondragstart}
 	{ondragover}

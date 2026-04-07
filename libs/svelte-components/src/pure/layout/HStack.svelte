@@ -6,7 +6,7 @@ decorative belongs in a purpose-built component (Panel, Toolbar, SectionHeader).
 
 The only props HStack exposes are:
   • STRUCTURAL  — gap, align, justify, wrap, flex, height, width, minHeight, full
-  • WIRING      — children, role, tabindex, aria-*, onclick, onkeydown
+  • WIRING      — children, role, aria-*, onclick, onkeydown
 
 Defaults: align="center", overflow hidden. Scrollable rows wrap content in a
 ScrollArea. There is no overflow prop — by design. -->
@@ -85,7 +85,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		flex,
 		indent,
 		role,
-		tabindex,
 		"aria-selected": ariaSelected,
 		"aria-label": ariaLabel,
 		"data-menu-bar": dataMenuBar,
@@ -112,7 +111,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		/** Tree depth. Each level adds 8px of left margin. Clamped to 0-8. */
 		indent?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 		role?: string;
-		tabindex?: number;
 		"aria-selected"?: boolean;
 		"aria-label"?: string;
 		/** Marks this row as a menu bar, excluding it from Tauri window drag regions. */
@@ -148,7 +146,6 @@ ScrollArea. There is no overflow prop — by design. -->
 		indentClass,
 	)}
 	role={role || undefined}
-	tabindex={tabindex != null ? tabindex : undefined}
 	aria-selected={ariaSelected != null ? ariaSelected : undefined}
 	aria-label={ariaLabel || undefined}
 	data-menu-bar={dataMenuBar || undefined}

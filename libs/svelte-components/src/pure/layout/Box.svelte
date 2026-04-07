@@ -8,7 +8,7 @@ Card, Toolbar, SectionHeader).
 The only props Box exposes are:
   • STRUCTURAL  — flex, height, width, maxWidth, minHeight, minWidth, position,
                   inset, top, right, bottom, left, zIndex
-  • WIRING      — children, role, tabindex, aria-*, onclick
+  • WIRING      — children, role, aria-*, onclick
 
 Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea. -->
 <script lang="ts">
@@ -127,7 +127,6 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		size,
 		truncate,
 		role,
-		tabindex,
 		"aria-label": ariaLabel,
 		"aria-hidden": ariaHidden,
 		onclick,
@@ -169,7 +168,6 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		/** When true, truncates overflowing text with an ellipsis. */
 		truncate?: boolean;
 		role?: string;
-		tabindex?: number;
 		"aria-label"?: string;
 		"aria-hidden"?: boolean | "true" | "false";
 		onclick?: (e: MouseEvent) => void;
@@ -219,7 +217,6 @@ Overflow is hardcoded to hidden. Scrollable regions wrap content in a ScrollArea
 		onclick && "cursor-pointer",
 	)}
 	role={role || undefined}
-	tabindex={tabindex != null ? tabindex : undefined}
 	aria-label={ariaLabel || undefined}
 	aria-hidden={ariaHidden != null ? ariaHidden : undefined}
 	{onclick}
