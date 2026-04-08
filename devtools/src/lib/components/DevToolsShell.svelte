@@ -15,6 +15,7 @@
 		HStack,
 		Box,
 		Spacer,
+		Panel,
 		WindowTitleBar,
 		WindowControls,
 		AppIcon,
@@ -216,10 +217,17 @@
 <AppShell showNavPanel={false} showChatPanel={false}>
 	{#snippet toolbar()}
 		<WindowTitleBar>
-			<HStack gap={2}>
-				<AppIcon src={devtoolsIcon} alt="OrqaDev" size="xs" />
-				<Wordmark suffix="DevTools" size="xs" />
-			</HStack>
+			<Panel
+				fixedWidth="icon-bar"
+				border="right"
+				direction="column"
+				align="center"
+				full
+				padding="none"
+			>
+				<AppIcon src={devtoolsIcon} alt="OrqaDevTools" size="toolbar" />
+			</Panel>
+			<Wordmark suffix="DevTools" size="xs" />
 			<Spacer />
 			<WindowControls />
 		</WindowTitleBar>

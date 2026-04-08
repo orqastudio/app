@@ -94,9 +94,15 @@
 	<!-- Logo area matching the activity bar width -->
 	<Panel fixedWidth="icon-bar" border="right" direction="column" align="center" full padding="none">
 		{#if projectStore.iconDataUrl}
-			<AppIcon src={projectStore.iconDataUrl} alt="OrqaStudio" size="sm" rounded objectContain />
+			<AppIcon
+				src={projectStore.iconDataUrl}
+				alt="OrqaStudio"
+				size="toolbar"
+				rounded
+				objectContain
+			/>
 		{:else}
-			<AppIcon src={logoStatic} alt="OrqaStudio" size="sm" />
+			<AppIcon src={logoStatic} alt="OrqaStudio" size="toolbar" />
 		{/if}
 	</Panel>
 

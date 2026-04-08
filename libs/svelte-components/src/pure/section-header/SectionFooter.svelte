@@ -67,10 +67,10 @@ Variants:
 	aria-label={ariaLabel}
 >
 	{#if start || end}
-		<div class="flex min-w-0 items-center gap-2">
+		<div class="flex min-w-0 shrink items-center gap-2">
 			{#if start}{@render start()}{/if}
 		</div>
-		<div class="flex items-center gap-2">
+		<div class="flex shrink-0 items-center gap-2">
 			{#if end}{@render end()}{/if}
 		</div>
 	{:else if children}
