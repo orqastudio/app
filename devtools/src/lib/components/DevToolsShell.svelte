@@ -59,6 +59,7 @@
 	import TraceView from "./trace/TraceView.svelte";
 	import { selectTrace } from "../stores/trace-store.svelte.js";
 	import devtoolsIcon from "$lib/assets/devtools-icon.svg";
+	import finMark from "$lib/assets/fin-mark.svg";
 
 	let {
 		children,
@@ -292,8 +293,8 @@
 	{#snippet statusBar()}
 		<StatusBar>
 			{#snippet left()}
-				<AppIcon src={devtoolsIcon} alt="" size="xs" />
-				<Wordmark suffix="DevTools" size="xs" />
+				<AppIcon src={finMark} alt="" size="xs" />
+				<Wordmark suffix="Studio" size="xs" />
 			{/snippet}
 			{#snippet right()}
 				{#if viewingHistorical.value}

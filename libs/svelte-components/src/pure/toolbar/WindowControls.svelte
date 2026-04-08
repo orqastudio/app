@@ -40,7 +40,7 @@
 	}
 </script>
 
-<HStack gap={1} role="group" aria-label="Window controls">
+<HStack gap={2} role="group" aria-label="Window controls">
 	<Button variant="ghost" size="icon-sm" onclick={minimize} aria-label="Minimize">
 		<Icon name="minus" size="sm" />
 	</Button>
