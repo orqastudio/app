@@ -17,9 +17,7 @@ ScrollArea. There is no overflow prop — by design. -->
 	// Closed-set gap vocabulary. Adding values means extending design tokens first.
 	const gapMap: Record<number, string> = {
 		0: "gap-0",
-		0.5: "gap-0.5",
 		1: "gap-1",
-		1.5: "gap-1.5",
 		2: "gap-2",
 		3: "gap-3",
 		4: "gap-4",
@@ -90,7 +88,7 @@ ScrollArea. There is no overflow prop — by design. -->
 		"data-menu-bar": dataMenuBar,
 		children,
 	}: {
-		gap?: 0 | 0.5 | 1 | 1.5 | 2 | 3 | 4 | 6 | 8;
+		gap?: 0 | 1 | 2 | 3 | 4 | 6 | 8;
 		align?: "start" | "center" | "end" | "baseline" | "stretch";
 		justify?: "start" | "center" | "end" | "between" | "around";
 		wrap?: boolean;

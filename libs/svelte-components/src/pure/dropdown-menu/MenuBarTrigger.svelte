@@ -19,7 +19,7 @@
 </script>
 
 <DropdownMenuTrigger
-	class="text-muted-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground flex h-7 items-center rounded px-2.5 text-xs font-medium transition-colors"
+	class="text-muted-foreground hover:bg-accent hover:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground flex h-7 items-center rounded px-3 text-xs font-medium transition-colors"
 	{onclick}
 	{onmouseenter}
 >

@@ -40,7 +40,7 @@
 <Stack gap={0}>
 	<button
 		class={cn(
-			"hover:bg-accent/50 flex w-full items-center gap-1.5 rounded px-2 py-1 text-sm",
+			"hover:bg-accent/50 flex w-full items-center gap-2 rounded px-2 py-1 text-sm",
 			active && "bg-accent text-accent-foreground",
 		)}
 		onclick={handleClick}
@@ -66,13 +66,13 @@
 		{/if}
 		{#if badge !== undefined}
 			<span
-				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 text-[10px] tabular-nums"
+				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-1 text-[10px] tabular-nums"
 				>{badge}</span
 			>
 		{/if}
 	</button>
 	{#if collapsible && expanded && children}
-		<div class="mt-0.5 ml-4">
+		<div class="mt-1 ml-4">
 			{@render children()}
 		</div>
 	{/if}

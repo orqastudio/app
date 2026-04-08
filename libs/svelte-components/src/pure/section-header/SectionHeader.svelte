@@ -11,7 +11,7 @@ Slots:
 
 Variants:
   • section    — primary header of a panel or route view (px-3 py-2 border-b)
-  • subsection — nested/secondary header inside a section (px-3 py-1.5 border-b)
+  • subsection — nested/secondary header inside a section (px-3 py-2 border-b)
   • compact    — tight headers for dense lists (px-2 py-1 border-b) -->
 <script lang="ts">
 	import type { Snippet } from "svelte";
@@ -19,7 +19,7 @@ Variants:
 
 	const variantMap: Record<string, string> = {
 		section: "px-3 py-2 border-b border-border",
-		subsection: "px-3 py-1.5 border-b border-border",
+		subsection: "px-3 py-2 border-b border-border",
 		compact: "px-2 py-1 border-b border-border",
 	};
 

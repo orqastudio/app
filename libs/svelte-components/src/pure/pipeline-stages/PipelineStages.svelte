@@ -47,7 +47,7 @@
 	}
 </script>
 
-<HStack gap={1.5} align="stretch">
+<HStack gap={2} align="stretch">
 	{#each stages as stage, i (stage.key)}
 		{#if stage.tooltipTitle}
 			<TooltipRoot>
@@ -56,7 +56,7 @@
 						{#if onStageClick}
 							<button
 								{...props}
-								class="hover:bg-accent/50 flex w-[88px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 transition-colors {stage.borderClass ??
+								class="hover:bg-accent/50 flex w-[88px] shrink-0 flex-col items-center gap-2 rounded-lg border px-2 py-3 transition-colors {stage.borderClass ??
 									'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 								onclick={() => onStageClick?.(stage.key)}
 							>
@@ -65,7 +65,7 @@
 						{:else}
 							<div
 								{...props}
-								class="flex w-[88px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 {stage.borderClass ??
+								class="flex w-[88px] shrink-0 flex-col items-center gap-2 rounded-lg border px-2 py-3 {stage.borderClass ??
 									'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 							>
 								{@render stageInner(stage)}
@@ -86,7 +86,7 @@
 					{#snippet child({ props })}
 						<button
 							{...props}
-							class="hover:bg-accent/50 flex w-[88px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 transition-colors {stage.borderClass ??
+							class="hover:bg-accent/50 flex w-[88px] shrink-0 flex-col items-center gap-2 rounded-lg border px-2 py-3 transition-colors {stage.borderClass ??
 								'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 							onclick={() => onStageClick?.(stage.key)}
 						>
@@ -100,7 +100,7 @@
 			</TooltipRoot>
 		{:else}
 			<div
-				class="flex w-[88px] shrink-0 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 {stage.borderClass ??
+				class="flex w-[88px] shrink-0 flex-col items-center gap-2 rounded-lg border px-2 py-3 {stage.borderClass ??
 					'border-border'} {stage.bgClass ?? 'bg-muted/30'}"
 			>
 				{@render stageInner(stage)}
@@ -110,7 +110,7 @@
 		{#if i < stages.length - 1}
 			{#if hasEdges && edges}
 				<div
-					class="flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 {defaultColorClass(
+					class="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 {defaultColorClass(
 						edges[i],
 					)}"
 				>

@@ -23,17 +23,17 @@
 
 <button
 	class={cn(
-		"hover:bg-accent/50 flex w-full flex-col gap-0.5 rounded px-2 py-1.5 text-left",
+		"hover:bg-accent/50 flex w-full flex-col gap-1 rounded px-2 py-2 text-left",
 		active && "bg-accent",
 	)}
 	{onclick}
 >
-	<HStack gap={1.5}>
+	<HStack gap={2}>
 		{#if StatusIcon}
 			<StatusIcon class="text-muted-foreground inline-block h-3.5 w-3.5 shrink-0" />
 		{:else if badge}
 			<span
-				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-0.5 text-[10px] font-normal"
+				class="bg-muted text-muted-foreground shrink-0 rounded px-1 py-1 text-[10px] font-normal"
 				>{badge}</span
 			>
 		{/if}

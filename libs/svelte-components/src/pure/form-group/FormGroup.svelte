@@ -21,11 +21,11 @@
 	} = $props();
 </script>
 
-<Stack gap={1.5}>
+<Stack gap={2}>
 	{#if label}
 		<label class="text-sm leading-none font-medium" for={htmlFor}>
 			{label}
-			{#if required}<span class="text-destructive ml-0.5">*</span>{/if}
+			{#if required}<span class="text-destructive ml-1">*</span>{/if}
 		</label>
 	{/if}
 	{@render children?.()}

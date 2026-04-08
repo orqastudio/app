@@ -120,7 +120,7 @@
 
 <div
 	class={cn(
-		"hover:bg-accent/50 flex w-full cursor-pointer items-center gap-3 rounded px-2 py-1.5 text-left",
+		"hover:bg-accent/50 flex w-full cursor-pointer items-center gap-3 rounded px-2 py-2 text-left",
 		selected && "bg-accent",
 	)}
 	role="button"
