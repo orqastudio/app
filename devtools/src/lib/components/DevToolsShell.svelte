@@ -15,10 +15,10 @@
 		HStack,
 		Box,
 		Spacer,
-		Text,
 		WindowTitleBar,
 		WindowControls,
 		AppIcon,
+		Wordmark,
 		type ContextEntry,
 	} from "@orqastudio/svelte-components/pure";
 	import { emit } from "@tauri-apps/api/event";
@@ -218,7 +218,7 @@
 		<WindowTitleBar>
 			<HStack gap={2}>
 				<AppIcon src={finMark} alt="OrqaDev" size="xs" />
-				<Text variant="caption" tone="muted">OrqaDev</Text>
+				<Wordmark suffix="DevTools" size="xs" />
 			</HStack>
 			<Spacer />
 			<WindowControls />
@@ -284,7 +284,7 @@
 		<StatusBar>
 			{#snippet left()}
 				<AppIcon src={finMark} alt="" size="xs" />
-				<Text variant="body-strong">OrqaDev</Text>
+				<Wordmark suffix="DevTools" size="xs" />
 			{/snippet}
 			{#snippet right()}
 				{#if viewingHistorical.value}

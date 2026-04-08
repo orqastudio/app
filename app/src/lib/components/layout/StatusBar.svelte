@@ -7,6 +7,7 @@
 		Text,
 		Button,
 		Separator,
+		Wordmark,
 		SectionFooter,
 		TooltipRoot,
 		TooltipTrigger,
@@ -130,7 +131,7 @@
 	{#snippet start()}
 		<!-- Brand -->
 		<AppIcon src={finMark} alt="" size="xs" />
-		<Text variant="body-strong">OrqaStudio</Text>
+		<Wordmark suffix="Studio" size="xs" />
 
 		<Separator orientation="vertical" />
 

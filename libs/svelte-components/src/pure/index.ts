@@ -301,6 +301,9 @@ export { SearchCard, SearchBarInput, SearchResultItem } from "./search-overlay/i
 // AppIcon — application logo image with fixed size and pointer-events disabled
 export { AppIcon } from "./app-icon/index.js";
 
+// Wordmark — split-weight brand text ("Orqa" bold + suffix light)
+export { Wordmark } from "./wordmark/index.js";
+
 // ActivityBar — icon-only square navigation buttons for the vertical activity bar
 export { ActivityBarButton } from "./activity-bar/index.js";
 
