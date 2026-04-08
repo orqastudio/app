@@ -23,6 +23,7 @@
 		topologyLoaded,
 		initTopology,
 		updateNodeStatus,
+		ensureDaemonSubprocess,
 	} from "../../stores/graph-topology.svelte.js";
 	import { getTrackedProcesses } from "../../stores/process-tracker.svelte.js";
 
@@ -48,8 +49,13 @@
 			daemonProcesses = result;
 			pollError = false;
 			// Sync daemon-reported process statuses into the topology graph.
+			// Daemon subprocesses (lsp, mcp) aren't in the PM topology — inject them.
 			for (const p of result) {
-				updateNodeStatus(p.source, p.status);
+				if (p.source === "daemon") {
+					updateNodeStatus(p.source, p.status);
+				} else {
+					ensureDaemonSubprocess(p.source, p.name, p.status, "daemon");
+				}
 			}
 			// Also read PM-written process statuses from disk for nodes the
 			// daemon doesn't manage (search, app, libraries).

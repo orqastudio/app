@@ -15,7 +15,7 @@ use axum::Json;
 use serde::Deserialize;
 
 use crate::health::HealthState;
-use crate::subprocess::ProcessSnapshot;
+use orqa_engine_types::types::settings::{SidecarState, SidecarStatus};
 
 // ---------------------------------------------------------------------------
 // Request shapes
@@ -32,18 +32,68 @@ pub struct RestartRequest {
 // Handlers
 // ---------------------------------------------------------------------------
 
-/// Handle GET /sidecar/status — return snapshots of all managed subprocesses.
+/// Handle GET /sidecar/status — return the status of the Claude sidecar.
 ///
-/// Reads from the shared process_snapshots registry that the daemon event
-/// loop updates every 250 ms. Returns an empty list if no subprocesses are
-/// registered.
-pub async fn get_sidecar_status(State(state): State<HealthState>) -> Json<Vec<ProcessSnapshot>> {
+/// Checks the process_snapshots registry for a Claude-related subprocess
+/// (MCP server). If found and running, reports connected. Otherwise reports
+/// the appropriate state based on CLI detection.
+pub async fn get_sidecar_status(State(state): State<HealthState>) -> Json<SidecarStatus> {
     let snapshots = state
         .process_snapshots
         .lock()
         .map(|g| g.clone())
         .unwrap_or_default();
-    Json(snapshots)
+
+    // Look for the MCP server subprocess — this is the Claude connector.
+    let mcp = snapshots.iter().find(|s| s.source == "mcp");
+
+    let status = match mcp {
+        Some(proc) if proc.status == "running" => SidecarStatus {
+            state: SidecarState::Connected,
+            pid: proc.pid,
+            uptime_seconds: proc.uptime_seconds,
+            cli_detected: true,
+            cli_version: None,
+            error_message: None,
+        },
+        Some(proc) if proc.status == "stopped" => SidecarStatus {
+            state: SidecarState::Stopped,
+            pid: None,
+            uptime_seconds: None,
+            cli_detected: proc.binary_path.is_some(),
+            cli_version: None,
+            error_message: None,
+        },
+        Some(proc) if proc.status == "crashed" => SidecarStatus {
+            state: SidecarState::Error,
+            pid: None,
+            uptime_seconds: None,
+            cli_detected: proc.binary_path.is_some(),
+            cli_version: None,
+            error_message: Some("MCP server crashed".to_owned()),
+        },
+        Some(proc) if proc.status == "not_found" => SidecarStatus {
+            state: SidecarState::NotStarted,
+            pid: None,
+            uptime_seconds: None,
+            cli_detected: false,
+            cli_version: None,
+            error_message: Some(format!(
+                "Binary not found: {}",
+                proc.binary_path.as_deref().unwrap_or("orqa-mcp-server")
+            )),
+        },
+        _ => SidecarStatus {
+            state: SidecarState::NotStarted,
+            pid: None,
+            uptime_seconds: None,
+            cli_detected: false,
+            cli_version: None,
+            error_message: None,
+        },
+    };
+
+    Json(status)
 }
 
 /// Handle POST /sidecar/restart — request a named subprocess restart.

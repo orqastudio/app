@@ -108,3 +108,34 @@ export function updateNodeStatus(nodeId: string, status: string): void {
 		node.status = status;
 	}
 }
+
+/**
+ * Ensure a daemon-reported subprocess appears in the topology graph.
+ * Adds the node if it doesn't already exist. Used for processes managed
+ * by the daemon (LPS, MCP/sidecar) that aren't in the PM dependency graph.
+ * @param id - The process source ID (e.g. "lsp", "mcp").
+ * @param name - Human-readable process name.
+ * @param status - Current process status string.
+ * @param parentId - ID of the parent node (typically "daemon").
+ */
+export function ensureDaemonSubprocess(
+	id: string,
+	name: string,
+	status: string,
+	parentId: string,
+): void {
+	const existing = topology.nodes.find((n) => n.id === id);
+	if (existing) {
+		existing.status = status;
+		return;
+	}
+	// Add as a new node with a dependency on its parent.
+	topology.nodes.push({
+		id,
+		name,
+		kind: "service",
+		status,
+		dependsOn: [parentId],
+		dependents: [],
+	});
+}
