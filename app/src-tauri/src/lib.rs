@@ -163,6 +163,7 @@ fn register_commands(builder: tauri::Builder<tauri::Wry>) -> tauri::Builder<taur
         commands::enforcement_commands::enforcement_rules_reload,
         commands::enforcement_commands::enforcement_violations_list,
         commands::enforcement_commands::governance_scan,
+        commands::graph_commands::get_all_artifacts,
         commands::graph_commands::get_artifacts_by_type,
         commands::graph_commands::read_artifact_content,
         commands::graph_commands::get_graph_stats,

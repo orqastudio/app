@@ -40,6 +40,15 @@ fn daemon_client(state: &State<'_, AppState>) -> Result<DaemonClient, OrqaError>
 // Tauri commands
 // ---------------------------------------------------------------------------
 
+/// Get all artifact nodes regardless of type.
+///
+/// Delegates to GET /artifacts on the daemon (no type filter).
+#[tauri::command]
+pub async fn get_all_artifacts(state: State<'_, AppState>) -> Result<Vec<ArtifactNode>, OrqaError> {
+    let client = daemon_client(&state)?;
+    client.query_artifacts(None, None).await
+}
+
 /// Get all artifact nodes of a given type (e.g. "epic", "task", "milestone").
 ///
 /// Delegates to GET /artifacts?type=<artifact_type> on the daemon.

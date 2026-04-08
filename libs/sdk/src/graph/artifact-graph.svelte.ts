@@ -687,28 +687,19 @@ export class ArtifactGraphSDK {
 	}
 
 	private async _fetchAll(): Promise<void> {
-		// Use all known type keys from platform + registered plugins
-		const typeKeys = this.allTypeKeys;
 		const fetchStart = performance.now();
-		log.info(`_fetchAll: querying ${typeKeys.length} type keys: ${typeKeys.join(", ")}`);
 
-		const [statsResult, ...typedNodes] = await Promise.all([
+		const [statsResult, allNodes] = await Promise.all([
 			invoke<GraphStats>("get_graph_stats"),
-			...typeKeys.map((t) => invoke<ArtifactNode[]>("get_artifacts_by_type", { artifactType: t })),
+			invoke<ArtifactNode[]>("get_all_artifacts"),
 		]);
 
 		const newGraph = new SvelteMap<string, ArtifactNode>();
 		const newPathIndex = new SvelteMap<string, string>();
 
-		for (let i = 0; i < typedNodes.length; i++) {
-			const nodes = typedNodes[i] ?? [];
-			for (const node of nodes) {
-				newGraph.set(node.id, node);
-				newPathIndex.set(node.path, node.id);
-			}
-			if (nodes.length > 0) {
-				log.info(`  ${typeKeys[i]}: ${nodes.length} nodes`);
-			}
+		for (const node of allNodes) {
+			newGraph.set(node.id, node);
+			newPathIndex.set(node.path, node.id);
 		}
 
 		const elapsed_ms = (performance.now() - fetchStart).toFixed(1);
