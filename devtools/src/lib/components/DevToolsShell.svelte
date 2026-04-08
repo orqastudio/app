@@ -222,6 +222,7 @@
 				border="right"
 				direction="column"
 				align="center"
+				justify="center"
 				full
 				padding="none"
 			>

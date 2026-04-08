@@ -42,7 +42,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="title-bar border-border bg-background relative z-50 flex h-10 items-center border-b pr-2"
+	class="title-bar border-border bg-background relative z-50 flex h-10 items-center gap-2 border-b pr-2"
 	onmousedown={handleDragStart}
 	ondblclick={handleDoubleClick}
 >

@@ -92,7 +92,15 @@
 
 <WindowTitleBar>
 	<!-- Logo area matching the activity bar width -->
-	<Panel fixedWidth="icon-bar" border="right" direction="column" align="center" full padding="none">
+	<Panel
+		fixedWidth="icon-bar"
+		border="right"
+		direction="column"
+		align="center"
+		justify="center"
+		full
+		padding="none"
+	>
 		{#if projectStore.iconDataUrl}
 			<AppIcon
 				src={projectStore.iconDataUrl}

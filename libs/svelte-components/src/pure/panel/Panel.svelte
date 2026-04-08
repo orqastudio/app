@@ -64,6 +64,14 @@ use SectionHeader or SectionFooter. -->
 		stretch: "items-stretch",
 	};
 
+	// Justify-content for column direction panels.
+	const justifyMap: Record<string, string> = {
+		center: "justify-center",
+		start: "justify-start",
+		end: "justify-end",
+		between: "justify-between",
+	};
+
 	// Border radius presets.
 	const roundedMap: Record<string, string> = {
 		none: "",
@@ -87,6 +95,7 @@ use SectionHeader or SectionFooter. -->
 		fixedWidth,
 		direction,
 		align,
+		justify,
 		full = false,
 		height,
 		width,
@@ -111,6 +120,8 @@ use SectionHeader or SectionFooter. -->
 		direction?: "column";
 		/** Align-items for flex direction panels. */
 		align?: "center" | "start" | "end" | "stretch";
+		/** Justify-content for flex direction panels. */
+		justify?: "center" | "start" | "end" | "between";
 		/** Fill available height. */
 		full?: boolean;
 		height?: "full" | "screen";
@@ -128,6 +139,7 @@ use SectionHeader or SectionFooter. -->
 	const fixedWidthClass = $derived(fixedWidth != null ? fixedWidthMap[fixedWidth] : undefined);
 	const directionClass = $derived(direction != null ? directionMap[direction] : undefined);
 	const alignClass = $derived(align != null ? alignMap[align] : undefined);
+	const justifyClass = $derived(justify != null ? justifyMap[justify] : undefined);
 	const borderClass = $derived(borderMap[border] ?? "");
 	const roundedClass = $derived(roundedMap[rounded] ?? "");
 	const flexClass = $derived(flex != null ? flexMap[flex] : undefined);
@@ -143,6 +155,7 @@ use SectionHeader or SectionFooter. -->
 		fixedWidthClass,
 		directionClass,
 		alignClass,
+		justifyClass,
 		full && "h-full",
 		height === "full" && "h-full",
 		height === "screen" && "h-screen",
