@@ -302,12 +302,43 @@ async function cmdDev(root) {
             logError("pm", `Build failed: ${f.nodeId}: ${f.error}`);
         logCtrl("Some builds failed. Starting what we can...");
     }
-    // ── Step 2: Start services (daemon, search) and the main app ────────
+    // Emit the dependency graph so devtools can render the process graph view.
+    pm.emitGraphTopology();
+    // ── Step 2: Build app backend explicitly ────────────────────────────
+    // The rust-workspace build excludes orqa-studio. Build it here so the
+    // binary reflects the latest code before cargo tauri dev starts in
+    // watch mode.
+    logCtrl("Building app backend...");
+    try {
+        execSync("cargo build -p orqa-studio --color always", {
+            cwd: path.join(root, "app"),
+            stdio: "inherit",
+            env: rustEnv(root),
+        });
+    }
+    catch {
+        logError("ctrl", "App build failed — launching with existing binary");
+    }
+    // ── Step 3: Start services (daemon, search) and the main app ────────
     logCtrl("Starting services and app...");
     await pm.startServices();
     await pm.startApp();
     pm.watchAll();
-    // ── Step 3: Launch devtools (observer only — no process management) ──
+    // ── Step 3: Build and launch devtools ────────────────────────────────
+    // The rust-workspace build excludes orqa-devtools, so we build it
+    // explicitly before launching cargo tauri dev. This ensures the binary
+    // picks up any Rust changes committed since the last build.
+    logCtrl("Building devtools backend...");
+    try {
+        execSync("cargo build -p orqa-devtools --color always", {
+            cwd: devtoolsDir,
+            stdio: "inherit",
+            env: rustEnv(root),
+        });
+    }
+    catch {
+        logError("ctrl", "Devtools build failed — launching with existing binary");
+    }
     logCtrl("Launching OrqaDev...");
     const devtoolsChild = spawn("cargo", ["tauri", "dev"], {
         cwd: devtoolsDir,
@@ -372,6 +403,7 @@ async function cmdStartProcesses(root) {
             logError("pm", `Build failed: ${f.nodeId}: ${f.error}`);
         logCtrl("Some builds failed. Starting what we can...");
     }
+    pm.emitGraphTopology();
     await pm.startServices();
     await pm.startApp();
     pm.watchAll();

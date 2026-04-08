@@ -17,7 +17,21 @@ use tauri::State;
 /// success, or an error if the daemon is unreachable or returns a non-200 status.
 #[tauri::command]
 pub async fn daemon_health(state: State<'_, AppState>) -> Result<DaemonHealthResponse, OrqaError> {
-    state.daemon.client.health().await
+    match state.daemon.client.health().await {
+        Ok(resp) => {
+            tracing::debug!(
+                status = %resp.status,
+                artifacts = resp.artifact_count,
+                rules = resp.rule_count,
+                "daemon_health: ok"
+            );
+            Ok(resp)
+        }
+        Err(e) => {
+            tracing::warn!(error = %e, "daemon_health: failed");
+            Err(e)
+        }
+    }
 }
 
 #[cfg(test)]

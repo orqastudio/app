@@ -143,9 +143,10 @@ async fn devtools_graph_topology(
     }
 
     // Fall back to reading from disk (written by CLI's emitGraphTopology).
-    let project_root = std::env::var("ORQA_PROJECT_ROOT")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
+    let project_root = std::env::var("ORQA_PROJECT_ROOT").map_or_else(
+        |_| std::env::current_dir().unwrap_or_default(),
+        std::path::PathBuf::from,
+    );
     let topo_path = project_root.join(".state/graph-topology.json");
 
     match std::fs::read_to_string(&topo_path) {
@@ -181,9 +182,10 @@ fn devtools_connection_state(
 /// the new `orqa dev` flow.
 #[tauri::command]
 fn devtools_process_statuses() -> Result<std::collections::HashMap<String, String>, String> {
-    let project_root = std::env::var("ORQA_PROJECT_ROOT")
-        .map(std::path::PathBuf::from)
-        .unwrap_or_else(|_| std::env::current_dir().unwrap_or_default());
+    let project_root = std::env::var("ORQA_PROJECT_ROOT").map_or_else(
+        |_| std::env::current_dir().unwrap_or_default(),
+        std::path::PathBuf::from,
+    );
     let status_path = project_root.join(".state/process-status.json");
 
     match std::fs::read_to_string(&status_path) {

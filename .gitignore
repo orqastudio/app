@@ -13,3 +13,20 @@ models/
 *.duckdb
 *.duckdb.wal
 connectors/claude-code/tsconfig.tsbuildinfo
+
+# tsc / Svelte preprocessor output alongside source files.
+# All packages use outDir: "dist" — any .js/.d.ts in src/ is orphaned build output.
+libs/*/src/**/*.js
+libs/*/src/**/*.d.ts
+libs/*/src/**/*.js.map
+libs/*/src/**/*.d.ts.map
+cli/src/**/*.js
+cli/src/**/*.d.ts
+cli/src/**/*.js.map
+cli/src/**/*.d.ts.map
+plugins/**/src/**/*.js
+plugins/**/src/**/*.d.ts
+plugins/shared/**/*.js
+plugins/shared/**/*.d.ts
+sidecars/*/src/**/*.js
+sidecars/*/src/**/*.d.ts

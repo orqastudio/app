@@ -108,21 +108,21 @@
 		}
 	});
 
-	// Load the unified navigation tree once the project is ready
-	$effect(() => {
-		if (hasProject && !needsSetup && artifactStore.navTree === null) {
-			artifactStore.loadNavTree();
-		}
-	});
-
-	// Initialize the artifact graph SDK when a project becomes active.
-	// Wait for plugins to be registered first so all schema type keys are
-	// available — otherwise _fetchAll runs with zero types and the graph
-	// appears empty until the schema-count $effect fires a re-fetch.
+	// Load the navigation tree and artifact graph once the project AND plugins
+	// are ready. Plugin schemas must be registered first — the nav tree uses
+	// pluginRegistry.getSchema() to resolve artifact paths, and the artifact
+	// graph SDK needs type keys from schemas. Without this ordering, getNavType()
+	// returns null and artifact lists appear empty.
 	$effect(() => {
 		const project = projectStore.activeProject;
 		if (!project || needsSetup) return;
-		void pluginsReady.then(() => artifactGraphSDK.initialize({ projectPath: project.path }));
+
+		void pluginsReady.then(() => {
+			if (artifactStore.navTree === null) {
+				artifactStore.loadNavTree();
+			}
+			artifactGraphSDK.initialize({ projectPath: project.path });
+		});
 	});
 
 	// Load enforcement rules and violation history when the rules activity is active

@@ -1,1 +1,7 @@
 .claude/
+
+# tsc output alongside source — published output lives in dist/
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map

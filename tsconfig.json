@@ -10,8 +10,8 @@
 		"moduleResolution": "bundler",
 		"target": "ESNext",
 		"module": "ESNext",
-		"declaration": true,
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"noEmit": true
 	},
 	"include": [
 		"cli/src/**/*.ts",

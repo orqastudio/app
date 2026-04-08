@@ -13,6 +13,7 @@
  *   orqa daemon status   — show PID, uptime, and health endpoint response
  */
 import { spawn } from "node:child_process";
+import { createServer as createNetServer } from "node:net";
 import { existsSync, readFileSync, mkdirSync, unlinkSync } from "node:fs";
 import { join } from "node:path";
 import { getRoot } from "../lib/root.js";
@@ -76,8 +77,8 @@ export async function runDaemonCommand(args) {
  * Start the orqa-daemon binary in the background.
  *
  * Finds the binary in well-known build directories, spawns it detached so it
- * survives the CLI process exit, then waits up to 3 seconds for the health
- * endpoint to respond before reporting success or failure.
+ * survives the CLI process exit, then polls the health endpoint with
+ * exponential backoff until the daemon responds or the process exits.
  */
 async function daemonStart() {
     const projectRoot = getRoot();
@@ -109,17 +110,41 @@ async function daemonStart() {
         windowsHide: true,
     });
     child.unref();
-    // Wait up to 3 seconds for /health to respond.
-    const startedAt = Date.now();
+    // Poll health endpoint with exponential backoff until the daemon responds.
+    // Also checks the .state/daemon.ready file and fails fast if the process exits.
+    const readyPath = join(projectRoot, ".state", "daemon.ready");
+    try {
+        unlinkSync(readyPath);
+    }
+    catch {
+        /* doesn't exist */
+    }
     let health = null;
-    while (Date.now() - startedAt < 3000) {
-        await sleep(150);
+    let backoff = 150;
+    const maxBackoff = 2000;
+    const deadline = Date.now() + 60_000;
+    while (Date.now() < deadline) {
+        await sleep(backoff);
+        // Fail fast if the daemon process exited.
+        if (child.exitCode !== null) {
+            throw new Error(`Daemon exited with code ${child.exitCode} during startup.\n` +
+                "Check .state/daemon.log for errors.");
+        }
+        // Check health endpoint.
         health = await fetchHealth(port);
         if (health !== null)
             break;
+        // Also check the ready file as a fallback signal.
+        if (existsSync(readyPath)) {
+            health = await fetchHealth(port);
+            if (health !== null)
+                break;
+        }
+        backoff = Math.min(backoff * 1.5, maxBackoff);
     }
     if (health === null) {
-        throw new Error("Daemon did not start within 3 seconds.\n" + "Check .state/daemon.log for startup errors.");
+        throw new Error("Daemon did not respond to health checks within 60 seconds.\n" +
+            "Check .state/daemon.log for startup errors.");
     }
     console.log(`Daemon started (PID ${health.pid}, port ${port}, uptime ${health.uptime_seconds}s).`);
 }
@@ -168,29 +193,63 @@ async function daemonStop() {
 /**
  * Stop the daemon if running, then start a fresh instance.
  *
- * Waits up to 3 seconds for the existing process to exit before starting the
+ * Waits up to 10 seconds for the existing process to exit before starting the
  * new one, to avoid port conflicts.
  */
 async function daemonRestart() {
     const projectRoot = getRoot();
+    const port = getPort("daemon");
     const pidPath = getPidPath(projectRoot);
+    const readyPath = join(projectRoot, ".state", "daemon.ready");
     const pid = readPid(pidPath);
     // Stop existing daemon if running.
     if (pid !== null && processIsAlive(pid)) {
         try {
             process.kill(pid, "SIGTERM");
             console.log(`Sent SIGTERM to daemon (PID ${pid}). Waiting for exit...`);
-            // Wait up to 3 seconds for the process to die.
-            const deadline = Date.now() + 3000;
+            // Wait up to 15 seconds for the process to die.
+            const deadline = Date.now() + 15_000;
             while (Date.now() < deadline) {
-                await sleep(150);
+                await sleep(200);
                 if (!processIsAlive(pid))
                     break;
+            }
+            if (processIsAlive(pid)) {
+                console.log(`Daemon (PID ${pid}) did not exit gracefully — force killing.`);
+                try {
+                    process.kill(pid, "SIGKILL");
+                }
+                catch {
+                    /* already dead */
+                }
+                await sleep(500);
             }
         }
         catch {
             // Process may have already exited — continue to start.
         }
+    }
+    // Clean up stale PID and ready files before starting fresh.
+    try {
+        unlinkSync(pidPath);
+    }
+    catch {
+        /* doesn't exist */
+    }
+    try {
+        unlinkSync(readyPath);
+    }
+    catch {
+        /* doesn't exist */
+    }
+    // Wait for the port to be free. On Windows, the OS may hold the port
+    // briefly after the process exits.
+    const portDeadline = Date.now() + 5_000;
+    while (Date.now() < portDeadline) {
+        const inUse = await isPortInUse(port);
+        if (!inUse)
+            break;
+        await sleep(200);
     }
     // Start fresh.
     await daemonStart();
@@ -302,6 +361,20 @@ function processIsAlive(pid) {
     catch {
         return false;
     }
+}
+/**
+ * Check if a TCP port is currently in use by attempting to bind to it.
+ * @param port - The port number to check.
+ * @returns True if the port is in use (bind failed), false if free.
+ */
+function isPortInUse(port) {
+    return new Promise((resolve) => {
+        const server = createNetServer();
+        server.once("error", () => resolve(true));
+        server.listen(port, "127.0.0.1", () => {
+            server.close(() => resolve(false));
+        });
+    });
 }
 /**
  * Call the daemon health endpoint with a short timeout.

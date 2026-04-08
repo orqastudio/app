@@ -319,82 +319,98 @@ async fn load_gap_events(
 ///
 /// Every event pushed to the ring buffer is also queued to the `EventBatchWriter`
 /// for SQLite persistence via the non-blocking batch writer channel.
-pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
-    tauri::async_runtime::spawn(async move {
-        // Unix-ms timestamp of the last received event; used to fill gaps on reconnect.
-        let mut last_timestamp: Option<i64> = None;
-        // Current sleep duration before the next attempt; doubles on each failure.
-        let mut backoff_secs = BACKOFF_INITIAL_SECS;
-        // 1-based counter for the current reconnect sequence; reset on success.
-        let mut attempt: u32 = 1;
-        // Flag to skip gap-fill on the very first connection attempt.
-        let mut first_attempt = true;
+/// Persistent reconnection loop for the SSE event consumer.
+///
+/// Runs indefinitely, connecting to the daemon SSE stream and reconnecting
+/// with exponential backoff on failure. Gap-fills missed events from the
+/// daemon's `/events` query endpoint between reconnect attempts.
+async fn consumer_loop(app: AppHandle, state: Arc<EventConsumerState>) {
+    let mut last_timestamp: Option<i64> = None;
+    let mut backoff_secs = BACKOFF_INITIAL_SECS;
+    let mut attempt: u32 = 1;
+    let mut first_attempt = true;
 
-        loop {
-            let port = resolve_daemon_port();
-            let base_url = format!("http://127.0.0.1:{port}");
-            let stream_url = format!("{base_url}/events/stream");
+    loop {
+        let port = resolve_daemon_port();
+        let base_url = format!("http://127.0.0.1:{port}");
+        let stream_url = format!("{base_url}/events/stream");
+        let batch_writer = app
+            .try_state::<Arc<EventBatchWriter>>()
+            .map(|s| Arc::clone(&s));
 
-            // Retrieve batch_writer from managed state each loop iteration.
-            let batch_writer = app
-                .try_state::<Arc<EventBatchWriter>>()
-                .map(|s| Arc::clone(&s));
+        prepare_connection(
+            &app,
+            &state,
+            batch_writer.as_ref(),
+            &base_url,
+            first_attempt,
+            attempt,
+            backoff_secs,
+            &mut last_timestamp,
+        )
+        .await;
 
-            if first_attempt {
-                emit_connection_state(&app, &state, &ConnectionState::WaitingForDaemon);
-                info!(subsystem = "event-consumer", %stream_url, "connecting to daemon SSE stream");
-            } else {
-                // Fill the event gap before reconnecting to the live stream.
-                if let (Some(ts), Some(ref bw)) = (last_timestamp, &batch_writer) {
-                    load_gap_events(&app, &state, bw, &base_url, ts).await;
-                }
-                emit_connection_state(&app, &state, &ConnectionState::Reconnecting { attempt });
-                info!(
-                    subsystem = "event-consumer",
-                    attempt, backoff_secs, "reconnecting to daemon SSE stream"
-                );
-            }
+        let result = connect_and_consume(
+            &app,
+            Arc::clone(&state),
+            batch_writer.clone(),
+            &stream_url,
+            &mut last_timestamp,
+        )
+        .await;
 
-            let bw_for_consume = batch_writer.clone();
-            match connect_and_consume(
-                &app,
-                Arc::clone(&state),
-                bw_for_consume,
-                &stream_url,
-                &mut last_timestamp,
-            )
-            .await
-            {
-                Ok(()) => {
-                    info!(
-                        subsystem = "event-consumer",
-                        "SSE stream ended cleanly — reconnecting"
-                    );
-                    // Server closed the stream gracefully; reset backoff.
-                    backoff_secs = BACKOFF_INITIAL_SECS;
-                    attempt = 1;
-                }
-                Err(e) => {
-                    warn!(
-                        subsystem = "event-consumer",
-                        error = %e,
-                        backoff_secs,
-                        "SSE stream error — retrying after backoff"
-                    );
-                }
-            }
-
-            first_attempt = false;
-
-            // Notify the frontend we are pausing before the next attempt.
-            emit_connection_state(&app, &state, &ConnectionState::WaitingForDaemon);
-            tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
-
-            // Double the backoff, capped at BACKOFF_MAX_SECS.
+        if let Err(e) = &result {
+            warn!(subsystem = "event-consumer", error = %e, backoff_secs, "SSE stream error — retrying");
+        }
+        let stream_ok = result.is_ok();
+        first_attempt = false;
+        emit_connection_state(&app, &state, &ConnectionState::WaitingForDaemon);
+        tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
+        if stream_ok {
+            backoff_secs = BACKOFF_INITIAL_SECS;
+            attempt = 1;
+        } else {
             backoff_secs = (backoff_secs * 2).min(BACKOFF_MAX_SECS);
             attempt = attempt.saturating_add(1);
         }
-    });
+    }
+}
+
+/// Emit connection state and gap-fill events before a connection attempt.
+#[allow(clippy::too_many_arguments)]
+async fn prepare_connection(
+    app: &AppHandle,
+    state: &Arc<EventConsumerState>,
+    batch_writer: Option<&Arc<EventBatchWriter>>,
+    base_url: &str,
+    first_attempt: bool,
+    attempt: u32,
+    backoff_secs: u64,
+    last_timestamp: &mut Option<i64>,
+) {
+    if first_attempt {
+        emit_connection_state(app, state, &ConnectionState::WaitingForDaemon);
+        info!(
+            subsystem = "event-consumer",
+            base_url, "connecting to daemon SSE stream"
+        );
+    } else {
+        if let (Some(ts), Some(bw)) = (*last_timestamp, batch_writer) {
+            load_gap_events(app, state, bw, base_url, ts).await;
+        }
+        emit_connection_state(app, state, &ConnectionState::Reconnecting { attempt });
+        info!(
+            subsystem = "event-consumer",
+            attempt, backoff_secs, "reconnecting to daemon SSE stream"
+        );
+    }
+}
+
+/// Spawn the SSE event consumer on the async runtime.
+///
+/// Launches the persistent reconnection loop as a background tokio task.
+pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
+    tauri::async_runtime::spawn(consumer_loop(app, state));
 }
 
 /// Connect to the daemon SSE endpoint and consume events until the stream ends.

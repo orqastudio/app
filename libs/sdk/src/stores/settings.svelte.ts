@@ -77,43 +77,56 @@ export class SettingsStore {
 	 * @param options.onThemeChange - Optional callback invoked whenever the active theme changes.
 	 */
 	async initialize(options?: { onThemeChange?: (mode: ThemeMode) => void }): Promise<void> {
-		if (this._initialized) return;
-		this._initialized = true;
-
-		// Store the callback. If none provided, use the default browser DOM manipulation.
-		this._onThemeChange = options?.onThemeChange ?? null;
-
-		await this.loadAllSettings();
-		await this.refreshSidecarStatus();
-
-		log.info("settings initialized", {
-			theme: this.themeMode,
-			model: this.defaultModel,
-			fontSize: this.fontSize,
-		});
-
-		// Apply theme on init
-		this.applyTheme(this.themeMode);
-
-		// Listen for system theme changes when in "system" mode
-		if (typeof window !== "undefined") {
-			const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-			const handler = () => {
-				if (this.themeMode === "system") {
-					this.applyTheme("system");
-				}
-			};
-			mediaQuery.addEventListener("change", handler);
-			this._mediaQueryCleanup = () => mediaQuery.removeEventListener("change", handler);
+		// Clear any stale intervals from a previous HMR cycle. The store
+		// singleton survives Vite hot-reload (globalThis), but old setInterval
+		// handles become orphaned when the Rust backend restarts.
+		if (this._pollIntervalId !== null) {
+			clearInterval(this._pollIntervalId);
+			this._pollIntervalId = null;
+		}
+		if (this._daemonPollIntervalId !== null) {
+			clearInterval(this._daemonPollIntervalId);
+			this._daemonPollIntervalId = null;
 		}
 
-		// Start sidecar status polling (every 5 seconds)
+		if (!this._initialized) {
+			// Store the callback. If none provided, use the default browser DOM manipulation.
+			this._onThemeChange = options?.onThemeChange ?? null;
+
+			await this.loadAllSettings();
+
+			log.info("settings initialized", {
+				theme: this.themeMode,
+				model: this.defaultModel,
+				fontSize: this.fontSize,
+			});
+
+			// Apply theme on init
+			this.applyTheme(this.themeMode);
+
+			// Listen for system theme changes when in "system" mode
+			if (typeof window !== "undefined") {
+				const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+				const handler = () => {
+					if (this.themeMode === "system") {
+						this.applyTheme("system");
+					}
+				};
+				mediaQuery.addEventListener("change", handler);
+				this._mediaQueryCleanup = () => mediaQuery.removeEventListener("change", handler);
+			}
+
+			this._initialized = true;
+		}
+
+		// Always (re)start polling — handles both fresh init and HMR recovery.
+		await this.refreshSidecarStatus();
+		this.refreshDaemonHealth();
+
 		this._pollIntervalId = setInterval(() => {
 			this.refreshSidecarStatus();
 		}, 5000);
 
-		// Start daemon health polling (every 10 seconds)
-		this.refreshDaemonHealth();
 		this._daemonPollIntervalId = setInterval(() => {
 			this.refreshDaemonHealth();
 		}, 10_000);

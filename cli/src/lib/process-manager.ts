@@ -573,6 +573,29 @@ export function isWindows(): boolean {
 }
 
 /**
+ * Locate the Windows SDK bin directory containing RC.EXE for the host architecture.
+ * Scans the standard Windows Kits install path for the newest SDK version.
+ * @returns Absolute path to the SDK bin directory, or null if not found.
+ */
+function findWindowsSdkRcDir(): string | null {
+	const kitsRoot = "C:\\Program Files (x86)\\Windows Kits\\10\\bin";
+	if (!fs.existsSync(kitsRoot)) return null;
+
+	// Find the newest SDK version directory that contains rc.exe for x64.
+	const versions = fs
+		.readdirSync(kitsRoot)
+		.filter((d) => d.startsWith("10."))
+		.sort()
+		.reverse();
+
+	for (const ver of versions) {
+		const dir = path.join(kitsRoot, ver, "x64");
+		if (fs.existsSync(path.join(dir, "rc.exe"))) return dir;
+	}
+	return null;
+}
+
+/**
  * Returns the platform-correct npm executable name.
  * @returns `npm.cmd` on Windows, `npm` on Unix.
  */
@@ -616,11 +639,22 @@ export function exec(cmd: string): string {
  * @returns A process environment record suitable for passing to spawn options.
  */
 export function rustEnv(root: string): NodeJS.ProcessEnv {
-	return {
+	const env: NodeJS.ProcessEnv = {
 		...process.env,
 		RUST_LOG: process.env["RUST_LOG"] ?? "debug",
 		ORQA_PROJECT_ROOT: root,
 	};
+
+	// On Windows, tauri-winres needs RC.EXE from the Windows SDK.
+	// Detect the SDK bin directory and prepend it to PATH if not already present.
+	if (isWindows()) {
+		const sdkBin = findWindowsSdkRcDir();
+		if (sdkBin && !(env.PATH ?? "").includes(sdkBin)) {
+			env.PATH = `${sdkBin};${env.PATH ?? ""}`;
+		}
+	}
+
+	return env;
 }
 
 /**

@@ -204,63 +204,64 @@ where
             tracing::Level::ERROR => EventLevel::Error,
         };
 
-        // Use the subsystem field if present; fall back to the tracing target.
         let category = visitor
             .subsystem
             .clone()
             .unwrap_or_else(|| event.metadata().target().to_owned());
-
         let message = visitor.message.unwrap_or_default();
-
-        // Pack remaining structured fields into the metadata JSON object.
         let metadata = if visitor.fields.is_empty() {
             serde_json::Value::Null
         } else {
             serde_json::Value::Object(visitor.fields)
         };
 
-        let timestamp = std::time::SystemTime::now()
-            .duration_since(std::time::UNIX_EPOCH)
-            .map(|d| d.as_millis() as i64)
-            .unwrap_or(0);
-
-        // Compute stable message template and fingerprint for IssueGroup deduplication.
-        let template = extract_template(&message);
-        let fp = compute_fingerprint(
-            &EventSource::Daemon.to_string(),
-            &level.to_string(),
-            &template,
-            "", // stack_top — empty for now, wired in Task 3.3
-        );
-
-        // Capture a backtrace for Error-level events only, since force_capture
-        // is expensive and callers expect it only on genuine errors.
-        let stack_frames = if level == EventLevel::Error {
-            let bt = std::backtrace::Backtrace::force_capture();
-            Some(parse_backtrace(&bt))
-        } else {
-            None
-        };
-
-        let log_event = LogEvent {
-            id: self.next_id(),
-            timestamp,
-            level,
-            source: EventSource::Daemon,
-            tier: EventTier::default(),
-            category,
-            message,
-            metadata,
-            session_id: None,
-            fingerprint: Some(fp),
-            message_template: Some(template),
-            // Read the task-local correlation ID if we are executing inside a
-            // request scope. Background tasks will get None.
-            correlation_id: current_correlation_id(),
-            stack_frames,
-        };
-
+        let log_event = build_log_event(self.next_id(), level, category, message, metadata);
         self.bus.publish(log_event);
+    }
+}
+
+/// Construct a `LogEvent` with fingerprint, backtrace, and correlation ID.
+fn build_log_event(
+    id: u64,
+    level: EventLevel,
+    category: String,
+    message: String,
+    metadata: serde_json::Value,
+) -> LogEvent {
+    let timestamp = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as i64)
+        .unwrap_or(0);
+
+    let template = extract_template(&message);
+    let fp = compute_fingerprint(
+        &EventSource::Daemon.to_string(),
+        &level.to_string(),
+        &template,
+        "",
+    );
+
+    let stack_frames = if level == EventLevel::Error {
+        let bt = std::backtrace::Backtrace::force_capture();
+        Some(parse_backtrace(&bt))
+    } else {
+        None
+    };
+
+    LogEvent {
+        id,
+        timestamp,
+        level,
+        source: EventSource::Daemon,
+        tier: EventTier::default(),
+        category,
+        message,
+        metadata,
+        session_id: None,
+        fingerprint: Some(fp),
+        message_template: Some(template),
+        correlation_id: current_correlation_id(),
+        stack_frames,
     }
 }
 

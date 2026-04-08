@@ -17,7 +17,16 @@ use crate::state::AppState;
 /// Query the current status of the claude subprocess managed by the daemon.
 #[tauri::command]
 pub async fn sidecar_status(state: State<'_, AppState>) -> Result<SidecarStatus, OrqaError> {
-    state.daemon.client.get_sidecar_status().await
+    match state.daemon.client.get_sidecar_status().await {
+        Ok(status) => {
+            tracing::debug!(state = ?status.state, "sidecar_status: ok");
+            Ok(status)
+        }
+        Err(e) => {
+            tracing::warn!(error = %e, "sidecar_status: failed");
+            Err(e)
+        }
+    }
 }
 
 /// Restart the claude subprocess via the daemon.

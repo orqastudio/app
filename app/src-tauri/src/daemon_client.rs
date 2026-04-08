@@ -25,6 +25,13 @@ use orqa_engine_types::{AppliedFix, ArtifactNode, IntegrityCheck, TraceabilityRe
 
 use crate::error::OrqaError;
 
+/// Percent-encode the `/` in scoped plugin names so axum's single-segment
+/// `/{name}` route matches correctly. `@orqastudio/plugin-foo` becomes
+/// `@orqastudio%2Fplugin-foo`.
+fn encode_plugin_name(name: &str) -> String {
+    name.replace('/', "%2F")
+}
+
 // ---------------------------------------------------------------------------
 // Daemon response shapes
 //
@@ -620,13 +627,15 @@ impl DaemonClient {
 
     /// GET /plugins/:name/path — get the filesystem path for an installed plugin.
     pub async fn get_plugin_path(&self, name: &str) -> Result<Value, OrqaError> {
-        let path = format!("/plugins/{name}/path");
+        let encoded = encode_plugin_name(name);
+        let path = format!("/plugins/{encoded}/path");
         self.get(&path).await
     }
 
     /// GET /plugins/:name — get a specific plugin manifest.
     pub async fn get_plugin(&self, name: &str) -> Result<Value, OrqaError> {
-        let path = format!("/plugins/{name}");
+        let encoded = encode_plugin_name(name);
+        let path = format!("/plugins/{encoded}");
         self.get(&path).await
     }
 

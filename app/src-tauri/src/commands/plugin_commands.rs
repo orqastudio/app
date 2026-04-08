@@ -96,12 +96,21 @@ pub async fn plugin_get_path(
 ///
 /// Returns the raw JSON from `orqa-plugin.json` without type-specific parsing
 /// to preserve all fields the frontend needs.
+///
+/// The daemon wraps the manifest in `{ name, path, manifest }` — we unwrap
+/// the inner `manifest` field so the frontend receives the raw manifest shape
+/// (with `provides`, `defaultNavigation`, etc. at the top level).
 #[tauri::command]
 pub async fn plugin_get_manifest(
     name: String,
     state: State<'_, AppState>,
 ) -> Result<serde_json::Value, OrqaError> {
-    state.daemon.client.get_plugin(&name).await
+    let response = state.daemon.client.get_plugin(&name).await?;
+    // Unwrap the manifest from the PluginManifestResponse wrapper.
+    match response.get("manifest") {
+        Some(manifest) => Ok(manifest.clone()),
+        None => Ok(response),
+    }
 }
 
 #[cfg(test)]

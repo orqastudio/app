@@ -22,7 +22,8 @@ use std::sync::Arc;
 
 use orqa_plugin::discovery::{scan_plugins, DiscoveredPlugin};
 use orqa_plugin::installer::{install_from_path, InstallResult};
-use orqa_plugin::manifest::read_manifest;
+/// Plugin manifest filename — must match engine::plugin::manifest::MANIFEST_FILENAME.
+const MANIFEST_FILENAME: &str = "orqa-plugin.json";
 use orqa_plugin::registry::RegistryCache;
 
 use crate::graph_state::GraphState;
@@ -142,15 +143,22 @@ pub async fn get_plugin(
         )
     })?;
 
-    let plugin_path = std::path::Path::new(&plugin.path);
-    let manifest_raw = read_manifest(plugin_path).map_err(|e| {
+    // Read the raw JSON file directly to preserve ALL fields — the Rust
+    // PluginManifest struct is a minimal subset and drops fields the frontend
+    // needs (requires, requiresSidecar, workflows, knowledge, semantics, etc.).
+    let manifest_path = std::path::Path::new(&plugin.path).join(MANIFEST_FILENAME);
+    let raw_json = std::fs::read_to_string(&manifest_path).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({ "error": e.to_string(), "code": "MANIFEST_ERROR" })),
         )
     })?;
-
-    let manifest_json = serde_json::to_value(&manifest_raw).unwrap_or(serde_json::Value::Null);
+    let manifest_json: serde_json::Value = serde_json::from_str(&raw_json).map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "MANIFEST_PARSE_ERROR" })),
+        )
+    })?;
 
     Ok(Json(PluginManifestResponse {
         name: plugin.name.clone(),

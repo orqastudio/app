@@ -67,49 +67,64 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
     let root = fixture_dir();
     let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
 
-    // Base routes: /reload, /artifacts/*, /graph/* via HealthState.
     let state = HealthState::for_test(graph_state.clone(), None);
     let base = orqa_daemon_lib::build_router(state);
 
-    // Plugin routes — GET /plugins, GET /plugins/{name}, GET /plugins/{name}/path.
-    let plugin_router = Router::new()
+    let router = base
+        .route("/health", get(test_health_handler(graph_state.clone())))
+        .nest("/plugins", plugin_router(graph_state.clone()))
+        .nest("/workflow", workflow_router(graph_state.clone()))
+        .nest("/agents", agent_router(graph_state.clone()))
+        .nest("/hooks", hook_router(graph_state));
+
+    let db_file = tempfile::NamedTempFile::new().expect("tempfile must create");
+    (router, db_file)
+}
+
+fn plugin_router(state: orqa_daemon_lib::graph_state::GraphState) -> Router {
+    Router::new()
         .route("/", get(orqa_daemon_lib::routes::plugins::list_plugins))
         .route("/{name}", get(orqa_daemon_lib::routes::plugins::get_plugin))
         .route(
             "/{name}/path",
             get(orqa_daemon_lib::routes::plugins::get_plugin_path),
         )
-        .with_state(graph_state.clone());
+        .with_state(state)
+}
 
-    // Workflow routes — GET /workflow/transitions.
-    let workflow_router = Router::new()
+fn workflow_router(state: orqa_daemon_lib::graph_state::GraphState) -> Router {
+    Router::new()
         .route(
             "/transitions",
             get(orqa_daemon_lib::routes::workflow::list_transitions),
         )
-        .with_state(graph_state.clone());
+        .with_state(state)
+}
 
-    // Agent routes — GET /agents/behavioral-messages, GET /agents/{role}.
-    let agent_router = Router::new()
+fn agent_router(state: orqa_daemon_lib::graph_state::GraphState) -> Router {
+    Router::new()
         .route(
             "/behavioral-messages",
             get(orqa_daemon_lib::routes::agents::get_behavioral_messages),
         )
         .route("/{role}", get(orqa_daemon_lib::routes::agents::get_agent))
-        .with_state(graph_state.clone());
+        .with_state(state)
+}
 
-    // Hook routes — GET /hooks.
-    let hook_router = Router::new()
+fn hook_router(state: orqa_daemon_lib::graph_state::GraphState) -> Router {
+    Router::new()
         .route("/", get(orqa_daemon_lib::routes::hooks::list_hooks))
-        .with_state(graph_state.clone());
+        .with_state(state)
+}
 
-    // Inline health handler that mirrors the real GET /health response shape
-    // using artifact/rule counts from GraphState. HealthState::for_test omits
-    // uptime, pid, version from the handler's response, so we provide them here.
-    let gs_health = graph_state.clone();
-    let health_handler = move || {
-        let gs = gs_health.clone();
-        async move {
+fn test_health_handler(
+    gs: orqa_daemon_lib::graph_state::GraphState,
+) -> impl FnOnce() -> std::pin::Pin<
+    Box<dyn std::future::Future<Output = axum::Json<serde_json::Value>> + Send>,
+> + Clone {
+    move || {
+        let gs = gs.clone();
+        Box::pin(async move {
             axum::Json(serde_json::json!({
                 "status": "ok",
                 "uptime_seconds": 0u64,
@@ -119,18 +134,8 @@ pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
                 "rule_count": gs.rule_count(),
                 "processes": [],
             }))
-        }
-    };
-
-    let router = base
-        .route("/health", get(health_handler))
-        .nest("/plugins", plugin_router)
-        .nest("/workflow", workflow_router)
-        .nest("/agents", agent_router)
-        .nest("/hooks", hook_router);
-
-    let db_file = tempfile::NamedTempFile::new().expect("tempfile must create");
-    (router, db_file)
+        })
+    }
 }
 
 /// Build and return the full axum `Router` with all smoke-tested daemon routes,

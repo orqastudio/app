@@ -15,7 +15,7 @@
 // polling cycle. This allows OrqaDev to auto-discover managed subprocesses
 // without any hardcoded process list — new processes appear automatically.
 
-use std::net::SocketAddr;
+use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
@@ -715,9 +715,22 @@ pub async fn start(
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     info!(subsystem = "health", port, "starting health endpoint");
-    info!(subsystem = "health", addr = %addr, "health endpoint listening");
 
-    let listener = tokio::net::TcpListener::bind(addr).await?;
+    // Use SO_REUSEADDR so the daemon can rebind immediately after a restart.
+    // Without this, a killed daemon leaves the port in TIME_WAIT and the new
+    // instance fails with EADDRINUSE (OS error 10048 on Windows).
+    let socket = socket2::Socket::new(
+        socket2::Domain::IPV4,
+        socket2::Type::STREAM,
+        Some(socket2::Protocol::TCP),
+    )?;
+    socket.set_reuse_address(true)?;
+    socket.set_nonblocking(true)?;
+    socket.bind(&SocketAddrV4::new(Ipv4Addr::LOCALHOST, port).into())?;
+    socket.listen(128)?;
+    let listener = tokio::net::TcpListener::from_std(socket.into())?;
+
+    info!(subsystem = "health", addr = %addr, "health endpoint listening");
 
     // Signal readiness by writing .state/daemon.ready. The CLI watches for
     // this file instead of polling /health, giving instant startup notification.

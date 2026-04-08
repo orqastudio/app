@@ -44,10 +44,13 @@ pub async fn get_sidecar_status(State(state): State<HealthState>) -> Json<Sideca
         .map(|g| g.clone())
         .unwrap_or_default();
 
-    // Look for the MCP server subprocess — this is the Claude connector.
     let mcp = snapshots.iter().find(|s| s.source == "mcp");
+    Json(snapshot_to_sidecar_status(mcp))
+}
 
-    let status = match mcp {
+/// Map a process snapshot to a `SidecarStatus`.
+fn snapshot_to_sidecar_status(mcp: Option<&crate::subprocess::ProcessSnapshot>) -> SidecarStatus {
+    match mcp {
         Some(proc) if proc.status == "running" => SidecarStatus {
             state: SidecarState::Connected,
             pid: proc.pid,
@@ -91,9 +94,7 @@ pub async fn get_sidecar_status(State(state): State<HealthState>) -> Json<Sideca
             cli_version: None,
             error_message: None,
         },
-    };
-
-    Json(status)
+    }
 }
 
 /// Handle POST /sidecar/restart — request a named subprocess restart.

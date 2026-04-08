@@ -7,7 +7,7 @@
 use serde::Serialize;
 use std::path::Path;
 
-use orqa_engine_types::config::load_project_settings;
+use orqa_engine_types::config::{load_project_settings, PluginProjectConfig};
 
 /// A discovered plugin from scanning the project.
 #[derive(Debug, Clone, Serialize)]
@@ -35,56 +35,12 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
         return vec![];
     };
 
-    let mut discovered = Vec::new();
-
-    for config in settings.plugins.values() {
-        if !config.installed || !config.enabled {
-            continue;
-        }
-
-        let plugin_path = project_root.join(&config.path);
-        let manifest_path = plugin_path.join("orqa-plugin.json");
-
-        // Read raw JSON to extract name/version/description. This avoids
-        // failures from strict Rust struct deserialization (e.g., agent
-        // definitions missing required fields like `title`).
-        let contents = match std::fs::read_to_string(&manifest_path) {
-            Ok(c) => c,
-            Err(e) => {
-                tracing::warn!(path = %manifest_path.display(), error = %e, "[plugins] failed to read plugin manifest");
-                continue;
-            }
-        };
-        let json = match serde_json::from_str::<serde_json::Value>(&contents) {
-            Ok(v) => v,
-            Err(e) => {
-                tracing::warn!(path = %plugin_path.display(), error = %e, "[plugins] failed to parse plugin manifest JSON");
-                continue;
-            }
-        };
-        let Some(name) = json.get("name").and_then(|v| v.as_str()) else {
-            continue;
-        };
-
-        discovered.push(DiscoveredPlugin {
-            name: name.to_owned(),
-            version: json
-                .get("version")
-                .and_then(|v| v.as_str())
-                .unwrap_or("0.0.0")
-                .to_owned(),
-            display_name: json
-                .get("displayName")
-                .and_then(|v| v.as_str())
-                .map(str::to_owned),
-            description: json
-                .get("description")
-                .and_then(|v| v.as_str())
-                .map(str::to_owned),
-            path: plugin_path.to_string_lossy().into_owned(),
-            source: "installed".to_owned(),
-        });
-    }
+    let discovered: Vec<DiscoveredPlugin> = settings
+        .plugins
+        .values()
+        .filter(|c| c.installed && c.enabled)
+        .filter_map(|config| discover_one(project_root, config))
+        .collect();
 
     tracing::info!(
         count = discovered.len(),
@@ -93,6 +49,45 @@ pub fn scan_plugins(project_root: &Path) -> Vec<DiscoveredPlugin> {
     );
 
     discovered
+}
+
+/// Try to read and parse a single plugin manifest, returning `None` on failure.
+fn discover_one(project_root: &Path, config: &PluginProjectConfig) -> Option<DiscoveredPlugin> {
+    let plugin_path = project_root.join(&config.path);
+    let manifest_path = plugin_path.join("orqa-plugin.json");
+
+    let contents = std::fs::read_to_string(&manifest_path)
+        .inspect_err(|e| {
+            tracing::warn!(path = %manifest_path.display(), error = %e, "[plugins] failed to read plugin manifest");
+        })
+        .ok()?;
+
+    let json: serde_json::Value = serde_json::from_str(&contents)
+        .inspect_err(|e| {
+            tracing::warn!(path = %plugin_path.display(), error = %e, "[plugins] failed to parse plugin manifest JSON");
+        })
+        .ok()?;
+
+    let name = json.get("name").and_then(|v| v.as_str())?;
+
+    Some(DiscoveredPlugin {
+        name: name.to_owned(),
+        version: json
+            .get("version")
+            .and_then(|v| v.as_str())
+            .unwrap_or("0.0.0")
+            .to_owned(),
+        display_name: json
+            .get("displayName")
+            .and_then(|v| v.as_str())
+            .map(str::to_owned),
+        description: json
+            .get("description")
+            .and_then(|v| v.as_str())
+            .map(str::to_owned),
+        path: plugin_path.to_string_lossy().into_owned(),
+        source: "installed".to_owned(),
+    })
 }
 
 #[cfg(test)]

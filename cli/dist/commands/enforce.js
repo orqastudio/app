@@ -248,24 +248,68 @@ function matchesPattern(file, pattern) {
  * @returns The process exit code (0 = success).
  */
 function runAction(action, files) {
-    const argv = [...action.args];
-    // When staged files are provided, append them after the args.
-    if (files !== null && files.length > 0) {
-        argv.push(...files);
-    }
-    // Resolve commands through node_modules/.bin (same as npm scripts).
+    const baseArgv = [...action.args];
     const npmBin = join(process.cwd(), "node_modules", ".bin");
     const pathEnv = `${npmBin}${process.platform === "win32" ? ";" : ":"}${process.env.PATH ?? ""}`;
-    const result = spawnSync(action.command, argv, {
-        stdio: "inherit",
-        shell: process.platform === "win32",
-        env: { ...process.env, PATH: pathEnv },
-    });
+    const env = { ...process.env, PATH: pathEnv };
+    const shell = process.platform === "win32";
+    // When no staged files, run the tool without file arguments.
+    if (files === null || files.length === 0) {
+        return spawnAction(action.command, baseArgv, env, shell);
+    }
+    // Batch files to avoid exceeding Windows' 8191-char command line limit.
+    // Each batch runs the tool on a subset of files. All batches must pass.
+    const batches = batchFiles(baseArgv, files);
+    for (const batch of batches) {
+        const code = spawnAction(action.command, [...baseArgv, ...batch], env, shell);
+        if (code !== 0)
+            return code;
+    }
+    return 0;
+}
+/**
+ * Run a single command and return its exit code.
+ * @param command - Executable name or path.
+ * @param argv - Argument array to pass to the process.
+ * @param env - Environment variables for the child process.
+ * @param shell - Whether to spawn inside a shell (required on Windows).
+ * @returns Process exit code (0 = success).
+ */
+function spawnAction(command, argv, env, shell) {
+    const result = spawnSync(command, argv, { stdio: "inherit", shell, env });
     if (result.error) {
-        console.error(`Failed to run ${action.command}: ${result.error.message}`);
+        console.error(`Failed to run ${command}: ${result.error.message}`);
         return 1;
     }
     return result.status ?? 1;
+}
+/**
+ * Split a file list into batches that fit within the Windows command line limit.
+ * On non-Windows platforms, returns all files in a single batch.
+ * @param baseArgv - Base argument array (used to estimate command length).
+ * @param files - Full list of files to partition.
+ * @returns Array of file batches, each fitting within the command line limit.
+ */
+function batchFiles(baseArgv, files) {
+    if (process.platform !== "win32")
+        return [files];
+    const MAX_CMD_LEN = 8000; // Leave margin below the 8191 hard limit
+    const baseLen = baseArgv.join(" ").length + 50; // command + safety margin
+    const batches = [];
+    let current = [];
+    let currentLen = baseLen;
+    for (const file of files) {
+        if (currentLen + file.length + 1 > MAX_CMD_LEN && current.length > 0) {
+            batches.push(current);
+            current = [];
+            currentLen = baseLen;
+        }
+        current.push(file);
+        currentLen += file.length + 1;
+    }
+    if (current.length > 0)
+        batches.push(current);
+    return batches;
 }
 // ---------------------------------------------------------------------------
 // Subcommand: response
