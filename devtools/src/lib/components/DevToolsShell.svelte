@@ -57,7 +57,7 @@
 	import IssuesView from "./issues/IssuesView.svelte";
 	import TraceView from "./trace/TraceView.svelte";
 	import { selectTrace } from "../stores/trace-store.svelte.js";
-	import finMark from "$lib/assets/fin-mark.svg";
+	import devtoolsIcon from "$lib/assets/devtools-icon.svg";
 
 	let {
 		children,
@@ -217,7 +217,7 @@
 	{#snippet toolbar()}
 		<WindowTitleBar>
 			<HStack gap={2}>
-				<AppIcon src={finMark} alt="OrqaDev" size="xs" />
+				<AppIcon src={devtoolsIcon} alt="OrqaDev" size="xs" />
 				<Wordmark suffix="DevTools" size="xs" />
 			</HStack>
 			<Spacer />
@@ -283,7 +283,7 @@
 	{#snippet statusBar()}
 		<StatusBar>
 			{#snippet left()}
-				<AppIcon src={finMark} alt="" size="xs" />
+				<AppIcon src={devtoolsIcon} alt="" size="xs" />
 				<Wordmark suffix="DevTools" size="xs" />
 			{/snippet}
 			{#snippet right()}

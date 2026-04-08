@@ -41,8 +41,8 @@
 			"outputs": []
 		},
 		{
-			"source": "svg/Dev Tools Icon.svg",
-			"purpose": "DevTools app icon — taskbar, window title, desktop shortcut for OrqaDevTools",
+			"source": "svg/DevToolsAppIcon.svg",
+			"purpose": "DevTools taskbar/window icon — used as the OS-level application icon",
 			"outputs": [
 				{
 					"path": "assets/icons/devtools-icon.ico",
@@ -54,6 +54,15 @@
 				{ "path": "assets/icons/devtools-256x256.png", "format": "png", "size": 256 },
 				{ "path": "assets/icons/devtools-512x512.png", "format": "png", "size": 512 },
 				{ "path": "assets/icons/devtools-1024x1024.png", "format": "png", "size": 1024 }
+			]
+		},
+		{
+			"source": "svg/DevToolsIcon.svg",
+			"purpose": "DevTools in-app icon — status bar, title bar, header within the devtools UI",
+			"outputs": [
+				{ "path": "assets/icons/devtools-inapp.svg", "format": "svg", "size": null },
+				{ "path": "assets/icons/devtools-inapp-32x32.png", "format": "png", "size": 32 },
+				{ "path": "assets/icons/devtools-inapp-64x64.png", "format": "png", "size": 64 }
 			]
 		},
 		{
