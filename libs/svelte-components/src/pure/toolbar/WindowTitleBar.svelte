@@ -42,7 +42,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
-	class="title-bar border-border bg-background relative z-50 flex h-10 items-center border-b"
+	class="title-bar border-border bg-background relative z-50 flex h-10 items-center border-b pr-2"
 	onmousedown={handleDragStart}
 	ondblclick={handleDoubleClick}
 >
@@ -58,7 +58,7 @@
 	/* Buttons and menu bars are interactive and must not be captured by the drag region. */
 	.title-bar :global(button),
 	.title-bar :global([data-menu-bar]) {
-		cursor: default;
+		cursor: pointer;
 		-webkit-app-region: no-drag;
 	}
 </style>

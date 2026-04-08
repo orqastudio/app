@@ -2,12 +2,10 @@
      token counters, artifact index state, sidecar status, and daemon health. -->
 <script lang="ts">
 	import {
-		Icon,
 		ConnectionIndicator,
 		Text,
 		Button,
 		Separator,
-		HStack,
 		Wordmark,
 		SectionFooter,
 		TooltipRoot,
@@ -139,8 +137,14 @@
 		<TooltipRoot>
 			<TooltipTrigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="status" onclick={openModelSettings}>
-						<Icon name="brain" size="xs" /><span>{settingsStore.modelDisplayName}</span>
+					<Button
+						{...props}
+						variant="ghost"
+						size="status"
+						startIcon="brain"
+						onclick={openModelSettings}
+					>
+						{settingsStore.modelDisplayName}
 					</Button>
 				{/snippet}
 			</TooltipTrigger>
@@ -150,14 +154,11 @@
 		</TooltipRoot>
 
 		{#if settingsStore.activeStartupTask}
-			<HStack gap={1}>
-				<Icon name="loader-circle" size="xs" />
-				<Text variant="caption">
-					{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
-						? `: ${settingsStore.activeStartupTask.detail}`
-						: "..."}
-				</Text>
-			</HStack>
+			<Button variant="ghost" size="status" startIcon="loader-circle" disabled>
+				{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
+					? `: ${settingsStore.activeStartupTask.detail}`
+					: "..."}
+			</Button>
 		{/if}
 	{/snippet}
 
@@ -178,16 +179,15 @@
 						{...props}
 						variant="ghost"
 						size="status"
+						startIcon={artifactGraphSDK.loading
+							? "loader-circle"
+							: artifactGraphSDK.error
+								? "triangle-alert"
+								: "database"}
 						onclick={() => artifactGraphSDK.refresh()}
 						disabled={artifactGraphSDK.loading}
 					>
-						{#if artifactGraphSDK.loading}
-							<Icon name="loader-circle" size="xs" />
-						{:else if artifactGraphSDK.error}
-							<Icon name="triangle-alert" size="xs" /><span>Index Error</span>
-						{:else}
-							<Icon name="database" size="xs" /><span>{artifactCount}</span>
-						{/if}
+						{artifactGraphSDK.error ? "Index Error" : artifactCount}
 					</Button>
 				{/snippet}
 			</TooltipTrigger>
