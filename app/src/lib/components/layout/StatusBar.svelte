@@ -7,6 +7,7 @@
 		Text,
 		Button,
 		Separator,
+		HStack,
 		Wordmark,
 		SectionFooter,
 		TooltipRoot,
@@ -139,8 +140,7 @@
 			<TooltipTrigger>
 				{#snippet child({ props })}
 					<Button {...props} variant="ghost" size="status" onclick={openModelSettings}>
-						<Icon name="brain" size="xs" />
-						{settingsStore.modelDisplayName}
+						<Icon name="brain" size="xs" /><span>{settingsStore.modelDisplayName}</span>
 					</Button>
 				{/snippet}
 			</TooltipTrigger>
@@ -149,14 +149,15 @@
 			</TooltipContent>
 		</TooltipRoot>
 
-		<!-- Startup task indicator -->
 		{#if settingsStore.activeStartupTask}
-			<Icon name="loader-circle" size="xs" />
-			<Text variant="caption">
-				{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
-					? `: ${settingsStore.activeStartupTask.detail}`
-					: "..."}
-			</Text>
+			<HStack gap={1}>
+				<Icon name="loader-circle" size="xs" />
+				<Text variant="caption">
+					{settingsStore.activeStartupTask.label}{settingsStore.activeStartupTask.detail
+						? `: ${settingsStore.activeStartupTask.detail}`
+						: "..."}
+				</Text>
+			</HStack>
 		{/if}
 	{/snippet}
 
@@ -183,11 +184,9 @@
 						{#if artifactGraphSDK.loading}
 							<Icon name="loader-circle" size="xs" />
 						{:else if artifactGraphSDK.error}
-							<Icon name="triangle-alert" size="xs" />
-							Index Error
+							<Icon name="triangle-alert" size="xs" /><span>Index Error</span>
 						{:else}
-							<Icon name="database" size="xs" />
-							{artifactCount}
+							<Icon name="database" size="xs" /><span>{artifactCount}</span>
 						{/if}
 					</Button>
 				{/snippet}
