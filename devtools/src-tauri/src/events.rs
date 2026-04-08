@@ -177,12 +177,17 @@ pub struct EventConsumerState {
     buffer: Mutex<VecDeque<LogEvent>>,
     /// Cumulative count of events evicted from the front due to overflow.
     dropped_count: Mutex<u64>,
+    /// Current SSE connection state, updated by the consumer loop.
+    /// Uses std::sync::Mutex (not tokio) since it's accessed from both sync
+    /// IPC commands and async consumer tasks. Lock is held only briefly.
+    pub connection_state: std::sync::Mutex<ConnectionState>,
 }
 
 impl EventConsumerState {
     /// Create a new empty consumer state.
     pub fn new() -> Arc<Self> {
         Arc::new(Self {
+            connection_state: std::sync::Mutex::new(ConnectionState::WaitingForDaemon),
             buffer: Mutex::new(VecDeque::with_capacity(RING_BUFFER_CAPACITY)),
             dropped_count: Mutex::new(0),
         })
@@ -202,8 +207,15 @@ pub async fn push_event_pub(state: &Arc<EventConsumerState>, event: LogEvent) {
     buffer.push_back(event);
 }
 
-/// Emit a connection state change event to the frontend.
-fn emit_connection_state(app: &AppHandle, conn_state: &ConnectionState) {
+/// Emit a connection state change event to the frontend and store it.
+fn emit_connection_state(
+    app: &AppHandle,
+    state: &Arc<EventConsumerState>,
+    conn_state: &ConnectionState,
+) {
+    if let Ok(mut guard) = state.connection_state.lock() {
+        *guard = conn_state.clone();
+    }
     if let Err(e) = app.emit(TAURI_EVENT_CONNECTION, conn_state) {
         error!(
             subsystem = "event-consumer",
@@ -329,14 +341,14 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
                 .map(|s| Arc::clone(&s));
 
             if first_attempt {
-                emit_connection_state(&app, &ConnectionState::WaitingForDaemon);
+                emit_connection_state(&app, &state, &ConnectionState::WaitingForDaemon);
                 info!(subsystem = "event-consumer", %stream_url, "connecting to daemon SSE stream");
             } else {
                 // Fill the event gap before reconnecting to the live stream.
                 if let (Some(ts), Some(ref bw)) = (last_timestamp, &batch_writer) {
                     load_gap_events(&app, &state, bw, &base_url, ts).await;
                 }
-                emit_connection_state(&app, &ConnectionState::Reconnecting { attempt });
+                emit_connection_state(&app, &state, &ConnectionState::Reconnecting { attempt });
                 info!(
                     subsystem = "event-consumer",
                     attempt, backoff_secs, "reconnecting to daemon SSE stream"
@@ -375,7 +387,7 @@ pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
             first_attempt = false;
 
             // Notify the frontend we are pausing before the next attempt.
-            emit_connection_state(&app, &ConnectionState::WaitingForDaemon);
+            emit_connection_state(&app, &state, &ConnectionState::WaitingForDaemon);
             tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
 
             // Double the backoff, capped at BACKOFF_MAX_SECS.
@@ -413,7 +425,7 @@ async fn connect_and_consume(
     }
 
     // Notify the frontend the stream is live.
-    emit_connection_state(app, &ConnectionState::Connected);
+    emit_connection_state(app, &state, &ConnectionState::Connected);
     info!(subsystem = "event-consumer", "SSE stream connected");
 
     // Accumulate partial line data across chunks. SSE lines end with '\n'.

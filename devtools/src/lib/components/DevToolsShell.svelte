@@ -44,7 +44,6 @@
 		prevEvent,
 		setTab,
 	} from "../stores/drawer-store.svelte.js";
-	import { devController } from "../stores/dev-controller.svelte.js";
 	import {
 		viewingHistorical,
 		activeSessionId,
@@ -284,23 +283,22 @@
 	{#snippet statusBar()}
 		<StatusBar>
 			{#snippet left()}
-				<ConnectionIndicator
-					state={connectionState}
-					label={connectionLabel(navigation.connection)}
-				/>
+				<AppIcon src={finMark} alt="" size="xs" />
+				<Text variant="body-strong">OrqaDev</Text>
 			{/snippet}
 			{#snippet right()}
 				{#if viewingHistorical.value}
 					{@const session = sessions.find((s) => s.id === activeSessionId.value)}
-					<!-- Box constrains width so Caption truncate works within the status bar slot. -->
 					<Box maxWidth="60">
 						<Caption truncate tone="primary" italic>
 							Viewing: {session ? sessionDisplayLabel(session) : "historical session"}
 						</Caption>
 					</Box>
-				{:else}
-					<Caption>{devController.state}</Caption>
 				{/if}
+				<ConnectionIndicator
+					state={connectionState}
+					label={connectionLabel(navigation.connection)}
+				/>
 			{/snippet}
 		</StatusBar>
 	{/snippet}

@@ -157,6 +157,22 @@ async fn devtools_graph_topology(
     }
 }
 
+/// IPC command — returns the current SSE connection state.
+///
+/// The frontend calls this on mount to get the initial state, since the
+/// `orqa://connection-state` Tauri event may have fired before the Svelte
+/// app's event listener was registered.
+#[tauri::command]
+fn devtools_connection_state(
+    state: tauri::State<'_, Arc<events::EventConsumerState>>,
+) -> events::ConnectionState {
+    state
+        .connection_state
+        .lock()
+        .map(|g| g.clone())
+        .unwrap_or(events::ConnectionState::WaitingForDaemon)
+}
+
 /// IPC command — reads process status from `.state/process-status.json`.
 ///
 /// The CLI process manager writes this file on every status change. The
@@ -212,6 +228,7 @@ pub fn run() {
             devtools_is_dev_mode,
             devtools_graph_topology,
             devtools_process_statuses,
+            devtools_connection_state,
         ])
         .build(tauri::generate_context!())
         // BINARY ENTRY POINT: Tauri's builder `.build()` returns Result but if it

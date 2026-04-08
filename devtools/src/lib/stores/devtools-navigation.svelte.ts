@@ -126,7 +126,16 @@ $effect.root(() => {
 			navigation.devMode = isDevMode;
 		})
 		.catch(() => {
-			// Default to false (production/attach mode) if the command fails.
 			navigation.devMode = false;
+		});
+
+	// Query the current SSE connection state on startup. The connection-state
+	// Tauri event may have fired before this listener was registered.
+	invoke<ConnectionState>("devtools_connection_state")
+		.then((state) => {
+			navigation.connection = state;
+		})
+		.catch(() => {
+			// Leave as initial waiting state.
 		});
 });
