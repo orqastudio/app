@@ -94,7 +94,11 @@ services:
 volumes:
   # Daemon session state: metrics, PID files, watcher caches.
   daemon-state:
-  # Forgejo repository and database storage.
+  # Forgejo volumes — reuse existing data from orqastudio-git compose stack.
+  # These are external so docker compose down does NOT delete git history.
   forgejo-data:
-  # Forgejo server configuration.
+    external: true
+    name: orqastudio-git_orqastudio-data
   forgejo-config:
+    external: true
+    name: orqastudio-git_orqastudio-config

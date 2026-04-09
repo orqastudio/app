@@ -68,6 +68,35 @@ pub fn check_existing(project_root: &Path) -> io::Result<bool> {
         )
     })?;
 
+    // If the PID matches our own process, the file is stale from a previous
+    // run in the same container (Docker reuses PID 1 for the entrypoint).
+    if pid == std::process::id() {
+        let _ = fs::remove_file(&pid_path);
+        return Ok(false);
+    }
+
+    // PID 1 is always alive (init/container entrypoint) but is never a daemon.
+    // Treat a PID file containing 1 as stale — the previous container exited
+    // without cleanup.
+    if pid == 1 {
+        let _ = fs::remove_file(&pid_path);
+        return Ok(false);
+    }
+
+    // On Linux, verify the process is actually orqa-daemon by reading
+    // /proc/<pid>/cmdline. A live process with a different name means the PID
+    // was reused by the OS.
+    #[cfg(target_os = "linux")]
+    {
+        let cmdline_path = format!("/proc/{pid}/cmdline");
+        if let Ok(cmdline) = fs::read_to_string(&cmdline_path) {
+            if !cmdline.contains("orqa-daemon") {
+                let _ = fs::remove_file(&pid_path);
+                return Ok(false);
+            }
+        }
+    }
+
     Ok(process_is_alive(pid))
 }
 

@@ -1,89 +1,78 @@
-# Session State — 2026-04-08
+# Session State — 2026-04-09
 
 ## What was done this session
 
-### Plugin loading pipeline (FIXED — 3 root causes)
+### Dev environment investigation
 
-- Daemon `GET /plugins/:name` round-tripped through lossy Rust struct, dropping
-  `defaultNavigation`, `requires`, `workflows`, `knowledge`, `semantics`.
-  Now reads raw JSON file directly.
-- Scoped plugin names with `/` broke axum `/{name}` route matching.
-  DaemonClient percent-encodes `/` as `%2F`.
-- Daemon wrapped response in `{name, path, manifest}` but frontend expected raw.
-  `plugin_get_manifest` extracts `response["manifest"]`.
+- Full process hierarchy mapped: ProcessManager → daemon → LSP/MCP, search, Forgejo, Tauri apps, file watchers
+- Identified orphan process risks, missing health checks, port mismatches
+- Forgejo container recreated on correct 10xxx ports, SSH config fixed
 
-### Daemon restart reliability (FIXED)
+### Containerisation (IDEA-4d48c4a7)
 
-- `SO_REUSEADDR` via socket2 on TCP listener prevents EADDRINUSE (OS error 10048)
-  when old socket is in TIME_WAIT after restart.
+- Wrote full proposal with hybrid approach (containerised services + native UI)
+- Two modes: `orqa dev` (containerised daemon, stable backend) and `orqa dev --include-backend` (native, full hot-reload)
+- Phase 1 COMPLETE: search consolidation, retire standalone search server, daemon auto-restart
+- Phases 2-5 COMPLETE: Dockerfile.daemon, docker-compose.dev.yml, ProcessManager integration, unified startup
 
-### Frontend timing (FIXED)
+### Search consolidation (daemon is single source of truth)
 
-- `loadNavTree()` and `artifactGraphSDK.initialize()` now await `pluginsReady`.
-- `settingsStore.initialize()` clears stale polling intervals on HMR re-entry.
+- MCP server search tools now proxy to daemon HTTP endpoints via DaemonClient
+- Removed duplicate SearchEngine/DuckDB from MCP server
+- Retired standalone orqa-search-server binary
+- `orqa index` rewired to call daemon HTTP endpoints
 
-### Build hygiene (FIXED)
+### Daemon improvements
 
-- Root `tsconfig.json` had `declaration:true` without `noEmit` — was the cause of
-  1100+ orphaned `.js`/`.d.ts` files in `src/` directories. Fixed with `noEmit:true`.
-- `rustEnv()` auto-detects Windows SDK RC.EXE path for tauri-winres.
-- Gitignore rules added for `src/**/*.js` patterns across libs, cli, plugins.
+- Auto-restart for crashed LSP/MCP subprocesses (exponential backoff, max 5 retries)
+- ORQA_HEADLESS=1 support — skips system tray in container mode
+- System tray: left-click focuses/launches app, "Open DevTools" menu item, cross-platform (Win32/macOS/Linux)
+- Fixed latent libc dependency bug exposed by Linux container build
 
-### Enforce pipeline (FIXED)
+### Port consolidation
 
-- Removed obsolete `artifact-validation` engine from core-framework plugin manifest.
-- Deleted migration-period scripts (`validate-artifacts.mjs`, `validate-connector-output.mjs`).
-- File batching in `runAction` for Windows 8191-char command line limit.
+- `infrastructure/ports.json` is single source of truth for all port allocation
+- Consumed by Rust (compile-time include_str!) and TypeScript (runtime import)
+- Vite port corrected to 10420 everywhere
+- `orqa check ports` validates static configs against ports.json
+- Zero hardcoded port numbers in source code
 
-### Lint compliance (FIXED)
+### Dev environment quality of life
 
-- All `clippy::too_many_lines` fixed via helper extraction (sidecar, logging, events, discovery, test helpers).
-- All `clippy::map_unwrap_or` fixed in devtools lib.rs.
-- `clippy::ref_option` fixed in events.rs.
-- Missing stories added for ColorDot, GlowDot, IndentedBlock.
-- JSDoc params added to enforce.ts new functions.
-- `no-explicit-any` fixed in vitest.svelte.d.ts.
-- Generated `.js`/`.d.ts` files removed from git tracking.
+- `make link` target for fast CLI relinking after reboot
+- Forgejo unified into `orqa dev` — `orqa hosting up/down` redirects
 
-### Observability
+## Commits this session
 
-- Tracing added to `daemon_health` and `sidecar_status` IPC commands.
+- `d1f32738b` — ports.json SOT, search consolidation, daemon auto-restart, tray UX (56 files)
+- `f80a66f5f` — Containerise dev environment: Dockerfile, compose, ProcessManager integration (17 files)
 
 ## Verified working
 
-- Navigation menu populates with plugin-contributed groups (Discovery, Planning, Delivery, etc.)
-- Daemon health shows connected with 1622 artifacts, 60 rules
-- Sidecar shows connected in status bar
-- Health polling recovers after HMR hot-reload
-- `orqa dev` builds succeed with RC.EXE auto-detection
-- Pre-commit hook passes clean (zero errors, zero warnings)
+- Forgejo git server on 10xxx ports (10030 HTTP, 10222 SSH), SSH authenticated
+- Docker image `orqa-daemon:latest` builds and runs (587MB, 3 binaries, ORQA_HEADLESS=1)
+- `docker compose -f infrastructure/docker-compose.dev.yml config` validates
+- All Rust workspace compiles clean (cargo check)
+- All TypeScript compiles clean (npx tsc)
+- Pre-commit hooks pass (lint, format, markdownlint, stories)
 
 ## Known issues
 
-### Sidecar not in devtools node graph
+### LSP single-client TCP mode
 
-- Sidecar is spawned on-demand per session (`streaming.rs`), not tracked in `process_snapshots`
-- Devtools only reads `process_snapshots` from `/health`, so sidecar never appears
-- Architecture: sidecars are plugins with `provides.sidecar`, daemon should spawn/track them
-- LSP + MCP are global infrastructure services that sidecars USE, not sidecars themselves
+LSP server exits after one editor disconnects (single-client design). Auto-restart
+handles this now, but making it loop like MCP would be cleaner. Low priority.
 
-### LSP and MCP crash on startup
+### Docker image size
 
-- Both exit with code 1 within 260ms of spawning
-- Needs investigation — likely port conflict or missing dependency
-
-### Devtools graph layout
-
-- Currently tiered dependency layout, should be hub-spoke with daemon as hub
-
-### Windows taskbar icon
-
-- Binary has correct icon embedded, Windows displays cached version
-- Need to clear Windows icon cache
+587MB due to GTK3 + libxdo pulled in by tray-icon dependency (even in headless mode).
+A `headless` Cargo feature flag excluding tray-icon would reduce this significantly.
+Future optimisation.
 
 ## Next priorities
 
-1. Investigate LSP/MCP crash — they're infrastructure for all sidecars
-2. Sidecar lifecycle: daemon spawns from plugin registrations, tracks in snapshots
-3. Devtools hub-spoke graph layout with daemon as central hub
-4. Content loading verification — nav items show, need to verify artifact lists populate
+1. Sidecar lifecycle — daemon spawns sidecars from plugin registrations, tracks in snapshots
+2. Devtools hub-spoke graph layout with daemon as central hub
+3. Content loading verification — nav items populate, artifact lists work
+4. Test `orqa dev` end-to-end with containerised daemon (first real usage)
+5. Consider `orqa-tray` native binary for containerised mode (currently no tray in container mode)
