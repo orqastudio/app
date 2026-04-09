@@ -1,0 +1,52 @@
+# Cargo manifest for the orqa-storage-migration crate.
+#
+# This crate is intentionally a STANDALONE workspace, not a member of the root
+# workspace. Reason: rusqlite in orqa-storage uses the `bundled` feature which
+# claims `links = "sqlite3"` via libsqlite3-sys. The `sea-orm-migration` crate
+# with `sqlx-sqlite` also claims `links = "sqlite3"`. Cargo forbids two crates
+# in the same workspace from claiming the same native link key. The migration
+# tool is a separate binary — standalone workspace is the correct architecture.
+#
+# To run migrations: cd engine/storage/migration && cargo run
+# To test:           cd engine/storage/migration && cargo test
+[workspace]
+
+[package]
+name = "orqa-storage-migration"
+version = "0.1.0-dev"
+edition = "2021"
+description = "SeaORM migration runner for orqa-storage — converts legacy _migrations schema to seaql_migrations"
+
+[lib]
+name = "orqa_storage_migration"
+path = "src/lib.rs"
+
+[[bin]]
+name = "migration"
+path = "src/main.rs"
+
+[dependencies]
+sea-orm-migration = { version = "~2.0.0-rc.37", features = ["sqlx-sqlite", "runtime-tokio-rustls"], default-features = false }
+# sea-orm is a transitive dep of sea-orm-migration, but declare it explicitly
+# so we can import ConnectionTrait, DatabaseConnection, DbBackend, Statement.
+sea-orm = { version = "~2.0.0-rc.37", features = ["sqlx-sqlite", "runtime-tokio-rustls"], default-features = false }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+
+[lints.rust]
+rust_2018_idioms = { level = "warn", priority = -1 }
+# elided_lifetimes_in_paths is triggered by the sea-orm-migration MigrationTrait
+# which uses &SchemaManager without an explicit lifetime. Implementing the trait
+# requires matching its exact signature, so we suppress this specific lint.
+elided_lifetimes_in_paths = "allow"
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+needless_pass_by_value = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+doc_markdown = "allow"
+unwrap_used = "warn"

@@ -15,12 +15,20 @@ path = "src/lib.rs"
 
 [dependencies]
 rusqlite = { version = "0.33", features = ["bundled"] }
+# sea-orm: macros-only mode provides entity/relation derivation without any
+# database backend or sqlx dependency. sqlx-sqlite conflicts with rusqlite's
+# bundled libsqlite3-sys at the linker level; the runtime backend is added in
+# task A2 once rusqlite is removed. Sea-orm 2.x makes sqlx optional (sqlx?)
+# so no-default-features + macros compiles without pulling in sqlx at all.
+sea-orm = { version = "~2.0.0-rc.37", features = ["macros"], default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
 tracing = "0.1"
 tokio = { version = "1", features = ["rt", "sync"] }
 orqa-engine-types = { path = "../types" }
+# async-trait is required for the repository trait definitions in traits.rs.
+async-trait = "0.1"
 # Used by open_in_memory() to create stable temp-file-backed databases for tests.
 tempfile = "3"
 

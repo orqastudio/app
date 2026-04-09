@@ -11,6 +11,10 @@ members = [
     "engine/plugin",
     "engine/prompt",
     "engine/storage",
+    # engine/storage/migration is a standalone workspace (not a root member) because
+    # sea-orm-migration's sqlx-sqlite backend conflicts with rusqlite's `bundled`
+    # feature at the Cargo `links = "sqlite3"` level. Run migrations from
+    # engine/storage/migration/ with `cargo run` or `cargo test` directly.
     "engine/validation",
     "engine/workflow",
     "engine/search",

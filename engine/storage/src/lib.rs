@@ -22,6 +22,8 @@ use rusqlite::Connection;
 pub use error::StorageError;
 pub use frozen::Frozen;
 
+/// SeaORM entity definitions for all 12 tables.
+pub mod entity;
 /// Error types returned by all storage operations.
 pub mod error;
 /// Zero-cost immutability wrapper for data returned from storage.
@@ -32,6 +34,8 @@ pub mod migrate;
 pub mod repo;
 /// SQL schema constants for the unified database.
 pub mod schema;
+/// Async repository trait contracts — pure domain types, no ORM leakage.
+pub mod traits;
 
 use repo::devtools::DevtoolsRepo;
 use repo::events::EventRepo;
