@@ -35,6 +35,7 @@ use tracing::{error, info};
 use orqa_engine::ports::resolve_daemon_port;
 use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
 use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent, StackFrame};
+use orqa_storage::traits::EventRepository as _;
 use orqa_storage::Storage;
 
 use crate::config::DaemonConfig;
@@ -266,10 +267,7 @@ async fn events_query_handler(
         limit: query.limit,
     };
 
-    let events =
-        tokio::task::spawn_blocking(move || storage.events().query(&filter).unwrap_or_default())
-            .await
-            .unwrap_or_default();
+    let events = storage.events().query(&filter).await.unwrap_or_default();
 
     let count = events.len();
     Json(serde_json::json!({ "events": events, "count": count }))

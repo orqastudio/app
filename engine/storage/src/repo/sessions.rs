@@ -1,289 +1,109 @@
 // Sessions repository for orqa-storage.
 //
-// Provides CRUD and query operations over the `sessions` table. Sessions are
-// the primary unit of user–agent interaction within a project. All SQL is
-// ported directly from app/src-tauri/src/repo/session_repo.rs.
+// Provides async CRUD and query operations over the `sessions` table. Sessions
+// are the primary unit of user–agent interaction within a project. All SQL is
+// expressed as raw statements via SeaORM's ConnectionTrait.
 
-use rusqlite::params;
+use std::sync::Arc;
+
+use sea_orm::{ConnectionTrait, DatabaseConnection, DbBackend, Statement};
 
 use orqa_engine_types::types::session::{Session, SessionStatus, SessionSummary};
 
 use crate::error::StorageError;
-use crate::Storage;
+use crate::traits::SessionRepository;
 
-/// Zero-cost repository handle for the `sessions` table.
+/// Async repository handle for the `sessions` table.
 ///
-/// Borrows `Storage` for its lifetime. Obtain via `Storage::sessions()`.
-pub struct SessionRepo<'a> {
-    pub(crate) storage: &'a Storage,
+/// Holds a shared `Arc<DatabaseConnection>` obtained from `Storage::sessions()`.
+pub struct SessionRepo {
+    pub(crate) db: Arc<DatabaseConnection>,
 }
 
-impl SessionRepo<'_> {
-    /// Create a new session and return the full row.
-    pub fn create(
-        &self,
-        project_id: i64,
-        model: &str,
-        system_prompt: Option<&str>,
-    ) -> Result<Session, StorageError> {
-        let conn = self.storage.conn()?;
-        conn.execute(
-            "INSERT INTO sessions (project_id, model, system_prompt) VALUES (?1, ?2, ?3)",
-            params![project_id, model, system_prompt],
-        )?;
-        let id = conn.last_insert_rowid();
-        get_conn(&conn, id)
-    }
-
-    /// Get a session by its primary key.
-    pub fn get(&self, id: i64) -> Result<Session, StorageError> {
-        let conn = self.storage.conn()?;
-        get_conn(&conn, id)
-    }
-
-    /// List sessions for a project with optional status filter and pagination.
-    pub fn list(
-        &self,
-        project_id: i64,
-        status_filter: Option<&str>,
-        limit: i64,
-        offset: i64,
-    ) -> Result<Vec<SessionSummary>, StorageError> {
-        let conn = self.storage.conn()?;
-
-        let sql = if status_filter.is_some() {
-            "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
-                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
-                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
-             FROM sessions s \
-             WHERE s.project_id = ?1 AND s.status = ?2 \
-             ORDER BY s.updated_at DESC \
-             LIMIT ?3 OFFSET ?4"
-        } else {
-            "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
-                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
-                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
-             FROM sessions s \
-             WHERE s.project_id = ?1 \
-             ORDER BY s.updated_at DESC \
-             LIMIT ?2 OFFSET ?3"
-        };
-
-        let mut stmt = conn.prepare(sql)?;
-        let rows = if let Some(status) = status_filter {
-            stmt.query_map(
-                params![project_id, status, limit, offset],
-                map_session_summary,
-            )?
-        } else {
-            stmt.query_map(params![project_id, limit, offset], map_session_summary)?
-        };
-
-        rows.map(|row| row.map_err(|e| StorageError::Database(e.to_string())))
-            .collect()
-    }
-
-    /// List all sessions across all projects with optional status filter.
-    ///
-    /// Used by the daemon when no project_id filter is requested — returns
-    /// sessions ordered by most recently updated. Applies an implicit cap of
-    /// 1000 rows to prevent unbounded result sets.
-    pub fn list_all(
-        &self,
-        status_filter: Option<&str>,
-    ) -> Result<Vec<SessionSummary>, StorageError> {
-        let conn = self.storage.conn()?;
-        let base = "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
-                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
-                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
-                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
-             FROM sessions s";
-
-        let mut stmt;
-        let rows: Box<dyn Iterator<Item = rusqlite::Result<SessionSummary>>> = if let Some(status) =
-            status_filter
-        {
-            let sql = format!("{base} WHERE s.status = ?1 ORDER BY s.updated_at DESC LIMIT 1000");
-            stmt = conn.prepare(&sql)?;
-            Box::new(stmt.query_map(params![status], map_session_summary)?)
-        } else {
-            let sql = format!("{base} ORDER BY s.updated_at DESC LIMIT 1000");
-            stmt = conn.prepare(&sql)?;
-            Box::new(stmt.query_map([], map_session_summary)?)
-        };
-
-        rows.map(|row| row.map_err(|e| StorageError::Database(e.to_string())))
-            .collect()
-    }
-
-    /// Update a session's status to an arbitrary value.
-    ///
-    /// Used by the daemon HTTP layer to apply status transitions received from
-    /// HTTP clients. The CHECK constraint in SQLite enforces valid values.
-    pub fn update_status(&self, id: i64, status: &str) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET status = ?1, \
-             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?2",
-            params![status, id],
-        )?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-
-    /// Store the next turn index by inserting a user message and returning its ID.
-    ///
-    /// Calls the messages repo internally — provided as a convenience method so
-    /// the streaming route only needs `Arc<Storage>`.
-    pub fn next_turn_index(&self, session_id: i64) -> Result<i32, StorageError> {
-        let conn = self.storage.conn()?;
-        let max: Option<i32> = conn.query_row(
-            "SELECT MAX(turn_index) FROM messages WHERE session_id = ?1",
-            params![session_id],
-            |row| row.get(0),
-        )?;
-        Ok(max.map_or(0, |m| m + 1))
-    }
-
-    /// Update the title of a session and mark it as manually set.
-    ///
-    /// Once marked, auto-naming will not overwrite this title.
-    pub fn update_title(&self, id: i64, title: &str) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET title = ?1, title_manually_set = 1, \
-             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?2",
-            params![title, id],
-        )?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-
-    /// Auto-update session title only if not manually set.
-    ///
-    /// Returns `Ok(true)` if the title was updated, `Ok(false)` if skipped
-    /// because the session has `title_manually_set = 1`.
-    pub fn auto_update_title(&self, id: i64, title: &str) -> Result<bool, StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET title = ?1, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?2 AND (title_manually_set = 0 OR title_manually_set IS NULL)",
-            params![title, id],
-        )?;
-        Ok(rows > 0)
-    }
-
-    /// Mark a session as completed.
-    pub fn end_session(&self, id: i64) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET status = 'completed', \
-             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?1",
-            params![id],
-        )?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-
-    /// Delete a session and its messages (cascade).
-    pub fn delete(&self, id: i64) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute("DELETE FROM sessions WHERE id = ?1", params![id])?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-
-    /// Update token usage counters for a session (additive).
-    pub fn update_token_usage(
-        &self,
-        id: i64,
-        input_tokens: i64,
-        output_tokens: i64,
-    ) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET \
-             total_input_tokens = total_input_tokens + ?1, \
-             total_output_tokens = total_output_tokens + ?2, \
-             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?3",
-            params![input_tokens, output_tokens, id],
-        )?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-
-    /// Store the provider session ID so conversation context survives app restarts.
-    pub fn update_provider_session_id(
-        &self,
-        id: i64,
-        provider_session_id: &str,
-    ) -> Result<(), StorageError> {
-        let conn = self.storage.conn()?;
-        let rows = conn.execute(
-            "UPDATE sessions SET provider_session_id = ?1, \
-             updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
-             WHERE id = ?2",
-            params![provider_session_id, id],
-        )?;
-        if rows == 0 {
-            return Err(StorageError::NotFound(format!("session {id}")));
-        }
-        Ok(())
-    }
-}
-
-/// Fetch a session by id from an existing open connection.
-fn get_conn(conn: &rusqlite::Connection, id: i64) -> Result<Session, StorageError> {
-    conn.query_row(
-        "SELECT id, project_id, title, model, system_prompt, status, summary, \
-                handoff_notes, total_input_tokens, total_output_tokens, total_cost_usd, \
-                provider_session_id, created_at, updated_at, \
-                COALESCE(title_manually_set, 0) \
-         FROM sessions WHERE id = ?1",
-        params![id],
-        |row| {
-            let status_str: String = row.get(5)?;
-            Ok(Session {
-                id: row.get(0)?,
-                project_id: row.get(1)?,
-                title: row.get(2)?,
-                model: row.get(3)?,
-                system_prompt: row.get(4)?,
-                status: parse_status(&status_str),
-                summary: row.get(6)?,
-                handoff_notes: row.get(7)?,
-                total_input_tokens: row.get(8)?,
-                total_output_tokens: row.get(9)?,
-                total_cost_usd: row.get(10)?,
-                provider_session_id: row.get(11)?,
-                created_at: row.get(12)?,
-                updated_at: row.get(13)?,
-                title_manually_set: row.get::<_, i64>(14)? != 0,
-            })
-        },
-    )
-    .map_err(|e| match e {
-        rusqlite::Error::QueryReturnedNoRows => StorageError::NotFound(format!("session {id}")),
-        other => StorageError::Database(other.to_string()),
+/// Map a SeaORM `QueryResult` row to a `Session` domain value.
+///
+/// Column positions must match the SELECT order used in every get-by-id query.
+fn map_session(row: &sea_orm::QueryResult) -> Result<Session, StorageError> {
+    let status_str: String = row
+        .try_get("", "status")
+        .map_err(|e| StorageError::Database(e.to_string()))?;
+    let title_manually_set: i64 = row
+        .try_get("", "title_manually_set")
+        .map_err(|e| StorageError::Database(e.to_string()))?;
+    Ok(Session {
+        id: row
+            .try_get("", "id")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        project_id: row
+            .try_get("", "project_id")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        title: row
+            .try_get("", "title")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        model: row
+            .try_get("", "model")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        system_prompt: row
+            .try_get("", "system_prompt")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        status: parse_status(&status_str),
+        summary: row
+            .try_get("", "summary")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        handoff_notes: row
+            .try_get("", "handoff_notes")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        total_input_tokens: row
+            .try_get("", "total_input_tokens")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        total_output_tokens: row
+            .try_get("", "total_output_tokens")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        total_cost_usd: row
+            .try_get("", "total_cost_usd")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        provider_session_id: row
+            .try_get("", "provider_session_id")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        created_at: row
+            .try_get("", "created_at")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        updated_at: row
+            .try_get("", "updated_at")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        title_manually_set: title_manually_set != 0,
     })
 }
 
+/// Map a SeaORM `QueryResult` row to a `SessionSummary` domain value.
+fn map_session_summary(row: &sea_orm::QueryResult) -> Result<SessionSummary, StorageError> {
+    let status_str: String = row
+        .try_get("", "status")
+        .map_err(|e| StorageError::Database(e.to_string()))?;
+    Ok(SessionSummary {
+        id: row
+            .try_get("", "id")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        title: row
+            .try_get("", "title")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        status: parse_status(&status_str),
+        created_at: row
+            .try_get("", "created_at")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        updated_at: row
+            .try_get("", "updated_at")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        message_count: row
+            .try_get("", "message_count")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+        preview: row
+            .try_get("", "preview")
+            .map_err(|e| StorageError::Database(e.to_string()))?,
+    })
+}
+
+/// Parse a status string into the `SessionStatus` enum.
 fn parse_status(s: &str) -> SessionStatus {
     match s {
         "active" => SessionStatus::Active,
@@ -293,39 +113,335 @@ fn parse_status(s: &str) -> SessionStatus {
     }
 }
 
-fn map_session_summary(row: &rusqlite::Row<'_>) -> rusqlite::Result<SessionSummary> {
-    let status_str: String = row.get(2)?;
-    Ok(SessionSummary {
-        id: row.get(0)?,
-        title: row.get(1)?,
-        status: parse_status(&status_str),
-        created_at: row.get(3)?,
-        updated_at: row.get(4)?,
-        message_count: row.get(5)?,
-        preview: row.get(6)?,
-    })
+/// Serialize a `SessionStatus` to its SQL string representation.
+fn status_to_str(status: SessionStatus) -> &'static str {
+    match status {
+        SessionStatus::Active => "active",
+        SessionStatus::Completed => "completed",
+        SessionStatus::Abandoned => "abandoned",
+        SessionStatus::Error => "error",
+    }
+}
+
+/// Fetch a session by its integer primary key from the shared connection.
+async fn fetch_by_id(db: &DatabaseConnection, id: i64) -> Result<Session, StorageError> {
+    let row = db
+        .query_one_raw(Statement::from_sql_and_values(
+            DbBackend::Sqlite,
+            "SELECT id, project_id, title, model, system_prompt, status, summary, \
+                    handoff_notes, total_input_tokens, total_output_tokens, total_cost_usd, \
+                    provider_session_id, created_at, updated_at, \
+                    COALESCE(title_manually_set, 0) AS title_manually_set \
+             FROM sessions WHERE id = ?",
+            [id.into()],
+        ))
+        .await
+        .map_err(|e| StorageError::Database(e.to_string()))?
+        .ok_or_else(|| StorageError::NotFound(format!("session {id}")))?;
+    map_session(&row)
+}
+
+#[async_trait::async_trait]
+impl SessionRepository for SessionRepo {
+    /// Create a new session and return the full row.
+    async fn create(
+        &self,
+        project_id: i64,
+        model: &str,
+        system_prompt: Option<&str>,
+    ) -> Result<Session, StorageError> {
+        let prompt_val: sea_orm::Value = match system_prompt {
+            Some(p) => p.into(),
+            None => sea_orm::Value::String(None),
+        };
+        self.db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "INSERT INTO sessions (project_id, model, system_prompt) VALUES (?, ?, ?)",
+                [project_id.into(), model.into(), prompt_val],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+
+        // Retrieve the most recently inserted row for this project and model.
+        let row = self
+            .db
+            .query_one_raw(Statement::from_string(
+                DbBackend::Sqlite,
+                "SELECT id, project_id, title, model, system_prompt, status, summary, \
+                        handoff_notes, total_input_tokens, total_output_tokens, total_cost_usd, \
+                        provider_session_id, created_at, updated_at, \
+                        COALESCE(title_manually_set, 0) AS title_manually_set \
+                 FROM sessions ORDER BY id DESC LIMIT 1"
+                    .to_owned(),
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?
+            .ok_or_else(|| {
+                StorageError::NotFound("sessions table is empty after insert".to_owned())
+            })?;
+        map_session(&row)
+    }
+
+    /// Get a session by its primary key.
+    async fn get(&self, id: i64) -> Result<Session, StorageError> {
+        fetch_by_id(&self.db, id).await
+    }
+
+    /// List sessions for a project with optional status filter and pagination.
+    async fn list(
+        &self,
+        project_id: i64,
+        status_filter: Option<SessionStatus>,
+        limit: i64,
+        offset: i64,
+    ) -> Result<Vec<SessionSummary>, StorageError> {
+        let summary_select = "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
+                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
+                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
+                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
+             FROM sessions s";
+
+        let rows = match status_filter {
+            Some(status) => {
+                let status_str = status_to_str(status);
+                self.db
+                    .query_all_raw(Statement::from_sql_and_values(
+                        DbBackend::Sqlite,
+                        format!("{summary_select} WHERE s.project_id = ? AND s.status = ? ORDER BY s.updated_at DESC LIMIT ? OFFSET ?"),
+                        [project_id.into(), status_str.into(), limit.into(), offset.into()],
+                    ))
+                    .await
+                    .map_err(|e| StorageError::Database(e.to_string()))?
+            }
+            None => {
+                self.db
+                    .query_all_raw(Statement::from_sql_and_values(
+                        DbBackend::Sqlite,
+                        format!("{summary_select} WHERE s.project_id = ? ORDER BY s.updated_at DESC LIMIT ? OFFSET ?"),
+                        [project_id.into(), limit.into(), offset.into()],
+                    ))
+                    .await
+                    .map_err(|e| StorageError::Database(e.to_string()))?
+            }
+        };
+
+        rows.iter().map(map_session_summary).collect()
+    }
+
+    /// List all sessions across all projects with optional status filter.
+    ///
+    /// Applies an implicit cap of 1000 rows to prevent unbounded result sets.
+    async fn list_all(
+        &self,
+        status_filter: Option<SessionStatus>,
+    ) -> Result<Vec<SessionSummary>, StorageError> {
+        let summary_select = "SELECT s.id, s.title, s.status, s.created_at, s.updated_at, \
+                    (SELECT COUNT(*) FROM messages m WHERE m.session_id = s.id) AS message_count, \
+                    (SELECT m2.content FROM messages m2 WHERE m2.session_id = s.id \
+                     AND m2.role = 'user' ORDER BY m2.turn_index ASC LIMIT 1) AS preview \
+             FROM sessions s";
+
+        let rows = match status_filter {
+            Some(status) => {
+                let status_str = status_to_str(status);
+                self.db
+                    .query_all_raw(Statement::from_sql_and_values(
+                        DbBackend::Sqlite,
+                        format!("{summary_select} WHERE s.status = ? ORDER BY s.updated_at DESC LIMIT 1000"),
+                        [status_str.into()],
+                    ))
+                    .await
+                    .map_err(|e| StorageError::Database(e.to_string()))?
+            }
+            None => self
+                .db
+                .query_all_raw(Statement::from_string(
+                    DbBackend::Sqlite,
+                    format!("{summary_select} ORDER BY s.updated_at DESC LIMIT 1000"),
+                ))
+                .await
+                .map_err(|e| StorageError::Database(e.to_string()))?,
+        };
+
+        rows.iter().map(map_session_summary).collect()
+    }
+
+    /// Update a session's status.
+    async fn update_status(&self, id: i64, status: SessionStatus) -> Result<(), StorageError> {
+        let status_str = status_to_str(status);
+        let result = self.db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET status = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+                [status_str.into(), id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
+
+    /// Return the next turn index for a session (max existing + 1, or 0).
+    async fn next_turn_index(&self, session_id: i64) -> Result<i32, StorageError> {
+        let row = self.db
+            .query_one_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "SELECT COALESCE(MAX(turn_index), -1) AS max_turn FROM messages WHERE session_id = ?",
+                [session_id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?
+            .ok_or_else(|| StorageError::Database("next_turn_index query returned no row".to_owned()))?;
+        let max: i64 = row
+            .try_get("", "max_turn")
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        Ok((max + 1) as i32)
+    }
+
+    /// Update the session title and mark it as manually set.
+    async fn update_title(&self, id: i64, title: &str) -> Result<(), StorageError> {
+        let result = self
+            .db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET title = ?, title_manually_set = 1, \
+                 updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+                [title.into(), id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
+
+    /// Auto-update session title only if not manually set.
+    ///
+    /// Returns `true` if updated, `false` if skipped.
+    async fn auto_update_title(&self, id: i64, title: &str) -> Result<bool, StorageError> {
+        let result = self.db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET title = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
+                 WHERE id = ? AND (title_manually_set = 0 OR title_manually_set IS NULL)",
+                [title.into(), id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        Ok(result.rows_affected() > 0)
+    }
+
+    /// Mark a session as completed.
+    async fn end_session(&self, id: i64) -> Result<(), StorageError> {
+        let result = self
+            .db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET status = 'completed', \
+                 updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+                [id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
+
+    /// Delete a session and its messages (cascade).
+    async fn delete(&self, id: i64) -> Result<(), StorageError> {
+        let result = self
+            .db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "DELETE FROM sessions WHERE id = ?",
+                [id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
+
+    /// Increment token usage counters for a session (additive).
+    async fn update_token_usage(
+        &self,
+        id: i64,
+        input_tokens: i64,
+        output_tokens: i64,
+    ) -> Result<(), StorageError> {
+        let result = self
+            .db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET \
+                 total_input_tokens = total_input_tokens + ?, \
+                 total_output_tokens = total_output_tokens + ?, \
+                 updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') \
+                 WHERE id = ?",
+                [input_tokens.into(), output_tokens.into(), id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
+
+    /// Store the provider session ID for context continuity across restarts.
+    async fn update_provider_session_id(
+        &self,
+        id: i64,
+        provider_session_id: &str,
+    ) -> Result<(), StorageError> {
+        let result = self
+            .db
+            .execute_raw(Statement::from_sql_and_values(
+                DbBackend::Sqlite,
+                "UPDATE sessions SET provider_session_id = ?, \
+                 updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+                [provider_session_id.into(), id.into()],
+            ))
+            .await
+            .map_err(|e| StorageError::Database(e.to_string()))?;
+        if result.rows_affected() == 0 {
+            return Err(StorageError::NotFound(format!("session {id}")));
+        }
+        Ok(())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::traits::{ProjectRepository, SessionRepository};
     use crate::Storage;
 
-    fn setup() -> Storage {
-        let storage = Storage::open_in_memory().expect("in-memory storage");
+    async fn setup() -> Storage {
+        let storage = Storage::open_in_memory().await.expect("in-memory storage");
         storage
             .projects()
             .create("test", "/test", None)
+            .await
             .expect("create project");
         storage
     }
 
-    #[test]
-    fn create_and_get_session() {
-        let storage = setup();
+    #[tokio::test]
+    async fn create_and_get_session() {
+        let storage = setup().await;
         let session = storage
             .sessions()
             .create(1, "claude-opus-4-6", Some("You are helpful"))
+            .await
             .expect("create session");
 
         assert_eq!(session.project_id, 1);
@@ -336,65 +452,93 @@ mod tests {
         assert!(!session.title_manually_set);
     }
 
-    #[test]
-    fn get_nonexistent_session() {
-        let storage = setup();
-        let result = storage.sessions().get(999);
+    #[tokio::test]
+    async fn get_nonexistent_session() {
+        let storage = setup().await;
+        let result = storage.sessions().get(999).await;
         assert!(matches!(result, Err(StorageError::NotFound(_))));
     }
 
-    #[test]
-    fn end_session_marks_completed() {
-        let storage = setup();
-        let s = storage.sessions().create(1, "auto", None).expect("create");
-        storage.sessions().end_session(s.id).expect("end");
-        let fetched = storage.sessions().get(s.id).expect("get");
+    #[tokio::test]
+    async fn end_session_marks_completed() {
+        let storage = setup().await;
+        let s = storage
+            .sessions()
+            .create(1, "auto", None)
+            .await
+            .expect("create");
+        storage.sessions().end_session(s.id).await.expect("end");
+        let fetched = storage.sessions().get(s.id).await.expect("get");
         assert_eq!(fetched.status, SessionStatus::Completed);
     }
 
-    #[test]
-    fn update_token_usage_is_additive() {
-        let storage = setup();
-        let s = storage.sessions().create(1, "auto", None).expect("create");
+    #[tokio::test]
+    async fn update_token_usage_is_additive() {
+        let storage = setup().await;
+        let s = storage
+            .sessions()
+            .create(1, "auto", None)
+            .await
+            .expect("create");
         storage
             .sessions()
             .update_token_usage(s.id, 100, 50)
+            .await
             .expect("first update");
         storage
             .sessions()
             .update_token_usage(s.id, 200, 100)
+            .await
             .expect("second update");
-        let fetched = storage.sessions().get(s.id).expect("get");
+        let fetched = storage.sessions().get(s.id).await.expect("get");
         assert_eq!(fetched.total_input_tokens, 300);
         assert_eq!(fetched.total_output_tokens, 150);
     }
 
-    #[test]
-    fn auto_update_title_skips_manually_set() {
-        let storage = setup();
-        let s = storage.sessions().create(1, "auto", None).expect("create");
+    #[tokio::test]
+    async fn auto_update_title_skips_manually_set() {
+        let storage = setup().await;
+        let s = storage
+            .sessions()
+            .create(1, "auto", None)
+            .await
+            .expect("create");
         storage
             .sessions()
             .update_title(s.id, "User Title")
+            .await
             .expect("manual title");
         let updated = storage
             .sessions()
             .auto_update_title(s.id, "Auto Title")
+            .await
             .expect("auto");
         assert!(!updated, "auto title should not overwrite manual title");
-        let fetched = storage.sessions().get(s.id).expect("get");
+        let fetched = storage.sessions().get(s.id).await.expect("get");
         assert_eq!(fetched.title.as_deref(), Some("User Title"));
     }
 
-    #[test]
-    fn list_sessions_pagination() {
-        let storage = setup();
+    #[tokio::test]
+    async fn list_sessions_pagination() {
+        let storage = setup().await;
         for _ in 0..5 {
-            storage.sessions().create(1, "auto", None).expect("create");
+            storage
+                .sessions()
+                .create(1, "auto", None)
+                .await
+                .expect("create");
         }
-        let page1 = storage.sessions().list(1, None, 2, 0).expect("page 1");
+        let page1 = storage
+            .sessions()
+            .list(1, None, 2, 0)
+            .await
+            .expect("page 1");
         assert_eq!(page1.len(), 2);
-        let page3 = storage.sessions().list(1, None, 2, 4).expect("page 3");
+        let page3 = storage
+            .sessions()
+            .list(1, None, 2, 4)
+            .await
+            .expect("page 3");
         assert_eq!(page3.len(), 1);
     }
 }

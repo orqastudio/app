@@ -16,8 +16,7 @@ use sea_orm_migration::MigratorTrait;
 #[tokio::main]
 async fn main() {
     // Determine database path from environment or use default.
-    let db_path = std::env::var("ORQA_DB_PATH")
-        .unwrap_or_else(|_| ".state/orqa.db".to_owned());
+    let db_path = std::env::var("ORQA_DB_PATH").unwrap_or_else(|_| ".state/orqa.db".to_owned());
 
     let db_url = format!("sqlite://{db_path}?mode=rwc");
 

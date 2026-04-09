@@ -25,6 +25,7 @@ use orqa_engine_types::traits::storage::ProjectSettingsStore as _;
 use orqa_engine_types::types::project::{Project, ProjectSummary};
 use orqa_project::scanner::scan_project;
 use orqa_project::store::FileProjectSettingsStore;
+use orqa_storage::traits::ProjectRepository as _;
 
 use crate::graph_state::GraphState;
 use crate::health::HealthState;
@@ -79,21 +80,12 @@ pub async fn list_projects(
 ) -> Result<Json<Vec<ProjectSummary>>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage.projects().list().map(Json).map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-            )
-        })
-    })
-    .await
-    .map_err(|e| {
+    storage.projects().list().await.map(Json).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
         )
-    })?
+    })
 }
 
 /// Handle GET /projects/active — return the most recently used project.
@@ -104,7 +96,7 @@ pub async fn get_active_project(
 ) -> Result<Json<Project>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || match storage.projects().get_active() {
+    match storage.projects().get_active().await {
         Ok(Some(p)) => Ok(Json(p)),
         Ok(None) => Err((
             StatusCode::NOT_FOUND,
@@ -114,14 +106,7 @@ pub async fn get_active_project(
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
         )),
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    }
 }
 
 /// Handle POST /projects/open — open a project by path, creating a record if needed.
@@ -136,42 +121,46 @@ pub async fn open_project(
     let path = req.path.clone();
     let name = req.name.clone();
 
-    tokio::task::spawn_blocking(move || {
-        // Check if the project already exists by path.
-        match storage.projects().get_by_path(&path) {
-            Ok(existing) => {
-                // Touch to make it the most recently active project.
-                let _ = storage.projects().touch_updated_at(existing.id);
-                let refreshed = storage.projects().get(existing.id).unwrap_or(existing);
-                Ok(Json(refreshed))
-            }
-            Err(orqa_storage::error::StorageError::NotFound(_)) => {
-                // Derive a display name from the final path component if not provided.
-                let display_name = name.unwrap_or_else(|| {
-                    std::path::Path::new(&path)
-                        .file_name()
-                        .and_then(|n| n.to_str())
-                        .unwrap_or("project")
-                        .to_owned()
-                });
-                storage.projects().create(&display_name, &path, None)
-                    .map(Json)
-                    .map_err(|e| (
-                        StatusCode::UNPROCESSABLE_ENTITY,
-                        Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
-                    ))
-            }
-            Err(e) => Err((
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-            )),
+    // Check if the project already exists by path.
+    match storage.projects().get_by_path(&path).await {
+        Ok(existing) => {
+            // Touch to make it the most recently active project.
+            let _ = storage.projects().touch_updated_at(existing.id).await;
+            let refreshed = storage
+                .projects()
+                .get(existing.id)
+                .await
+                .unwrap_or(existing);
+            Ok(Json(refreshed))
         }
-    })
-    .await
-    .map_err(|e| (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-    ))?
+        Err(orqa_storage::error::StorageError::NotFound(_)) => {
+            // Derive a display name from the final path component if not provided.
+            let display_name = name.unwrap_or_else(|| {
+                std::path::Path::new(&path)
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .unwrap_or("project")
+                    .to_owned()
+            });
+            storage
+                .projects()
+                .create(&display_name, &path, None)
+                .await
+                .map(Json)
+                .map_err(|e| {
+                    (
+                        StatusCode::UNPROCESSABLE_ENTITY,
+                        Json(
+                            serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" }),
+                        ),
+                    )
+                })
+        }
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
+    }
 }
 
 /// Handle GET /projects/settings — read project.json for the active project.
@@ -226,12 +215,15 @@ pub async fn update_project_settings(
 
     tokio::task::spawn_blocking(move || {
         let store = FileProjectSettingsStore::new();
-        store.save(&project_root, &settings)
+        store
+            .save(&project_root, &settings)
             .map(|()| Json(settings))
-            .map_err(|e| (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "SETTINGS_SAVE_FAILED" })),
-            ))
+            .map_err(|e| {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "SETTINGS_SAVE_FAILED" })),
+                )
+            })
     })
     .await
     .map_err(|e| {
@@ -384,8 +376,9 @@ mod tests {
     ///
     /// Graph state uses the fixture project so `project_root` is valid for
     /// the project-settings handlers that read/write project.json.
-    fn project_router() -> Router {
+    async fn project_router() -> Router {
         let storage = Storage::open_in_memory()
+            .await
             .map(Arc::new)
             .expect("in-memory storage");
 
@@ -421,7 +414,7 @@ mod tests {
     #[tokio::test]
     async fn get_projects_returns_empty_list_initially() {
         // With no projects opened, GET /projects must return an empty array.
-        let app = project_router();
+        let app = project_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -444,7 +437,7 @@ mod tests {
     #[tokio::test]
     async fn post_projects_open_creates_project_entry() {
         // Opening a project by path must create a record and return it with name and path.
-        let app = project_router();
+        let app = project_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -470,7 +463,7 @@ mod tests {
     #[tokio::test]
     async fn post_projects_open_twice_returns_same_project() {
         // Opening the same path twice must return the same record (idempotent).
-        let app = project_router();
+        let app = project_router().await;
         let open = |app: Router| {
             app.oneshot(
                 Request::builder()
@@ -494,7 +487,7 @@ mod tests {
     #[tokio::test]
     async fn get_active_returns_404_when_no_projects() {
         // With no projects opened, GET /projects/active must return 404.
-        let app = project_router();
+        let app = project_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -512,7 +505,7 @@ mod tests {
     #[tokio::test]
     async fn get_active_returns_most_recently_opened_project() {
         // After opening a project, GET /projects/active must return it.
-        let app = project_router();
+        let app = project_router().await;
         let open_resp = app
             .clone()
             .oneshot(
@@ -552,7 +545,7 @@ mod tests {
         // GET /projects/settings must return 200. The fixture project may or may
         // not have a project.json — either an object or null is valid, but the
         // status must be 200.
-        let app = project_router();
+        let app = project_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -577,6 +570,7 @@ mod tests {
         let tmp_root = tmp.path().to_path_buf();
 
         let storage = Storage::open_in_memory()
+            .await
             .map(Arc::new)
             .expect("in-memory storage");
 

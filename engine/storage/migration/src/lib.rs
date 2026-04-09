@@ -24,7 +24,7 @@ pub mod m003_devtools_sessions;
 /// Migration 4: issue_groups table and fingerprint columns on event tables.
 pub mod m004_issue_groups;
 
-use sea_orm::{ConnectionTrait, DatabaseConnection, DbBackend, Statement};
+use sea_orm::{ConnectionTrait, DatabaseBackend, DatabaseConnection, DbBackend, Statement};
 use sea_orm_migration::prelude::*;
 
 /// The SeaORM migrator for orqa-storage.
@@ -45,6 +45,24 @@ impl MigratorTrait for Migrator {
     }
 }
 
+/// Run the full migration sequence on `db`.
+///
+/// This is the one-call entry point for `Storage::open`:
+/// 1. Calls `bridge_legacy_migrations` to handle existing databases that used
+///    the old `_migrations` tracking table.
+/// 2. Calls `Migrator::up` to apply any pending migrations.
+///
+/// Safe to call multiple times — already-applied migrations are skipped.
+///
+/// # Errors
+///
+/// Returns `DbErr` if any migration or bridge step fails.
+pub async fn run(_backend: DatabaseBackend, db: &DatabaseConnection) -> Result<(), DbErr> {
+    bridge_legacy_migrations(db).await?;
+    Migrator::up(db, None).await?;
+    Ok(())
+}
+
 /// Bridge legacy `_migrations` table to SeaORM's `seaql_migrations` table.
 ///
 /// Existing orqa.db databases track applied migrations in `_migrations`
@@ -63,6 +81,7 @@ impl MigratorTrait for Migrator {
 /// # Errors
 ///
 /// Returns `DbErr` if any database query fails.
+#[allow(clippy::too_many_lines)]
 pub async fn bridge_legacy_migrations(db: &DatabaseConnection) -> Result<(), DbErr> {
     // Map legacy version numbers to SeaORM migration names.
     // These names must match MigrationName::name() in each migration struct.
@@ -141,7 +160,9 @@ mod tests {
 
     /// Open an in-memory SQLite database for testing.
     async fn open_mem() -> DatabaseConnection {
-        Database::connect("sqlite::memory:").await.expect("open mem db")
+        Database::connect("sqlite::memory:")
+            .await
+            .expect("open mem db")
     }
 
     #[tokio::test]
@@ -174,7 +195,10 @@ mod tests {
                 ))
                 .await
                 .expect("query");
-            assert!(row.is_some(), "table '{table}' should exist after migration");
+            assert!(
+                row.is_some(),
+                "table '{table}' should exist after migration"
+            );
         }
 
         // seaql_migrations must record all 4 migrations.
@@ -195,7 +219,9 @@ mod tests {
         // Running Migrator::up twice is safe (already-applied migrations skipped).
         let db = open_mem().await;
         Migrator::up(&db, None).await.expect("first run");
-        Migrator::up(&db, None).await.expect("second run is idempotent");
+        Migrator::up(&db, None)
+            .await
+            .expect("second run is idempotent");
 
         let count_row = db
             .query_one_raw(Statement::from_string(
@@ -216,10 +242,13 @@ mod tests {
         // Bridge before creating any tables — no _migrations table exists.
         bridge_legacy_migrations(&db).await.expect("bridge no-op");
         // Now run migrations normally — should work fine.
-        Migrator::up(&db, None).await.expect("migration after no-op bridge");
+        Migrator::up(&db, None)
+            .await
+            .expect("migration after no-op bridge");
     }
 
     #[tokio::test]
+    #[allow(clippy::too_many_lines)]
     async fn bridge_marks_existing_migrations() {
         // Simulate an existing DB: create _migrations with versions 1 and 2,
         // apply the corresponding schema, then verify bridge + up only applies
@@ -367,7 +396,9 @@ CREATE TABLE IF NOT EXISTS log_events (
             let row = db
                 .query_one_raw(Statement::from_string(
                     DbBackend::Sqlite,
-                    format!("SELECT 1 FROM sqlite_master WHERE type='table' AND name='{table}' LIMIT 1"),
+                    format!(
+                        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='{table}' LIMIT 1"
+                    ),
                 ))
                 .await
                 .expect("query");
@@ -394,14 +425,15 @@ CREATE TABLE IF NOT EXISTS log_events (
 
         db.execute_raw(Statement::from_string(
             DbBackend::Sqlite,
-            "INSERT INTO _migrations (version, name) VALUES (1, 'initial_core_schema')"
-                .to_owned(),
+            "INSERT INTO _migrations (version, name) VALUES (1, 'initial_core_schema')".to_owned(),
         ))
         .await
         .expect("insert");
 
         bridge_legacy_migrations(&db).await.expect("first bridge");
-        bridge_legacy_migrations(&db).await.expect("second bridge is idempotent");
+        bridge_legacy_migrations(&db)
+            .await
+            .expect("second bridge is idempotent");
 
         let count_row = db
             .query_one_raw(Statement::from_string(
@@ -412,6 +444,9 @@ CREATE TABLE IF NOT EXISTS log_events (
             .expect("count query")
             .expect("row");
         let count: i64 = count_row.try_get("", "cnt").expect("cnt");
-        assert_eq!(count, 1, "should have exactly 1 entry after idempotent bridge");
+        assert_eq!(
+            count, 1,
+            "should have exactly 1 entry after idempotent bridge"
+        );
     }
 }

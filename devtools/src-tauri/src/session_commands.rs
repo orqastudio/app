@@ -1,9 +1,5 @@
 //! Tauri IPC command wrappers for devtools session management via orqa-storage.
 //!
-//! Each command is a thin async wrapper that calls the corresponding
-//! `DevtoolsRepo` method via `tokio::task::spawn_blocking` so the `!Send`
-//! rusqlite connection never touches the async runtime directly.
-//!
 //! All commands receive `Storage` and `ActiveSession` from Tauri's managed state.
 
 use std::sync::Arc;
@@ -11,6 +7,7 @@ use std::sync::Arc;
 use orqa_storage::repo::devtools::{
     DevtoolsEventQuery, DevtoolsEventQueryResponse, DevtoolsSessionInfo, DevtoolsSessionSummary,
 };
+use orqa_storage::traits::DevtoolsRepository as _;
 use orqa_storage::Storage;
 use tauri::State;
 
@@ -26,16 +23,11 @@ pub async fn list_sessions(
     storage: State<'_, Arc<Storage>>,
     active: State<'_, Arc<ActiveSession>>,
 ) -> Result<Vec<DevtoolsSessionSummary>, String> {
-    let storage = Arc::clone(&storage);
-    let session_id = active.0.clone();
-    tokio::task::spawn_blocking(move || {
-        storage
-            .devtools()
-            .list_sessions(&session_id)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("list_sessions panicked: {e}"))?
+    storage
+        .devtools()
+        .list_sessions(&active.0)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 /// IPC command — query events for a specific session with optional filters and paging.
@@ -49,15 +41,11 @@ pub async fn query_session_events(
     storage: State<'_, Arc<Storage>>,
     params: DevtoolsEventQuery,
 ) -> Result<DevtoolsEventQueryResponse, String> {
-    let storage = Arc::clone(&storage);
-    tokio::task::spawn_blocking(move || {
-        storage
-            .devtools()
-            .query_events(&params)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("query_session_events panicked: {e}"))?
+    storage
+        .devtools()
+        .query_events(&params)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 /// IPC command — return metadata for the currently active session.
@@ -69,16 +57,11 @@ pub async fn get_current_session(
     storage: State<'_, Arc<Storage>>,
     active: State<'_, Arc<ActiveSession>>,
 ) -> Result<DevtoolsSessionInfo, String> {
-    let storage = Arc::clone(&storage);
-    let session_id = active.0.clone();
-    tokio::task::spawn_blocking(move || {
-        storage
-            .devtools()
-            .get_session(&session_id)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("get_current_session panicked: {e}"))?
+    storage
+        .devtools()
+        .get_session(&active.0)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 /// IPC command — set or update the user-editable label for a session.
@@ -92,15 +75,11 @@ pub async fn rename_session(
     session_id: String,
     label: String,
 ) -> Result<(), String> {
-    let storage = Arc::clone(&storage);
-    tokio::task::spawn_blocking(move || {
-        storage
-            .devtools()
-            .rename_session(&session_id, &label)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("rename_session panicked: {e}"))?
+    storage
+        .devtools()
+        .rename_session(&session_id, &label)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 /// IPC command — delete a session and all its events (CASCADE).
@@ -113,13 +92,9 @@ pub async fn delete_session(
     storage: State<'_, Arc<Storage>>,
     session_id: String,
 ) -> Result<(), String> {
-    let storage = Arc::clone(&storage);
-    tokio::task::spawn_blocking(move || {
-        storage
-            .devtools()
-            .delete_session(&session_id)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("delete_session panicked: {e}"))?
+    storage
+        .devtools()
+        .delete_session(&session_id)
+        .await
+        .map_err(|e| e.to_string())
 }

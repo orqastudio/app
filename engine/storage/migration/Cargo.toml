@@ -1,16 +1,12 @@
 # Cargo manifest for the orqa-storage-migration crate.
 #
-# This crate is intentionally a STANDALONE workspace, not a member of the root
-# workspace. Reason: rusqlite in orqa-storage uses the `bundled` feature which
-# claims `links = "sqlite3"` via libsqlite3-sys. The `sea-orm-migration` crate
-# with `sqlx-sqlite` also claims `links = "sqlite3"`. Cargo forbids two crates
-# in the same workspace from claiming the same native link key. The migration
-# tool is a separate binary — standalone workspace is the correct architecture.
+# Provides the SeaORM migration runner for orqa-storage. This crate is a member
+# of the root workspace. Previously it was a standalone workspace to avoid a
+# `links = "sqlite3"` conflict with rusqlite's `bundled` feature, but now that
+# rusqlite has been replaced with SeaORM throughout, both crates use the same
+# sqlx-sqlite backend and there is no links conflict.
 #
-# To run migrations: cd engine/storage/migration && cargo run
-# To test:           cd engine/storage/migration && cargo test
-[workspace]
-
+# To run migrations standalone: cargo run -p orqa-storage-migration
 [package]
 name = "orqa-storage-migration"
 version = "0.1.0-dev"

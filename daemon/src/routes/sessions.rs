@@ -2,8 +2,7 @@
 //
 // Sessions are stored in the unified SQLite database (.state/orqa.db) via the
 // engine/storage crate. All handlers use `HealthState::storage` to access the
-// sessions and messages repos. Database operations run via spawn_blocking to
-// keep the tokio runtime free.
+// sessions and messages repos.
 //
 // Endpoints:
 //   POST   /sessions               — create a new session
@@ -20,7 +19,8 @@ use axum::Json;
 use serde::Deserialize;
 
 use orqa_engine_types::types::message::Message;
-use orqa_engine_types::types::session::{Session, SessionSummary};
+use orqa_engine_types::types::session::{Session, SessionStatus, SessionSummary};
+use orqa_storage::traits::{MessageRepository as _, SessionRepository as _};
 
 use crate::health::HealthState;
 
@@ -57,6 +57,20 @@ pub struct UpdateSessionRequest {
     pub status: Option<String>,
 }
 
+/// Parse a session status string into a `SessionStatus` variant.
+///
+/// Returns `None` if the string is unrecognised, so the caller can decide
+/// whether to treat it as an error or fall back to no filter.
+fn parse_session_status(s: &str) -> Option<SessionStatus> {
+    match s {
+        "active" => Some(SessionStatus::Active),
+        "completed" => Some(SessionStatus::Completed),
+        "abandoned" => Some(SessionStatus::Abandoned),
+        "error" => Some(SessionStatus::Error),
+        _ => None,
+    }
+}
+
 /// Response when the storage layer is unavailable.
 fn storage_unavailable() -> (StatusCode, Json<serde_json::Value>) {
     (
@@ -82,25 +96,17 @@ pub async fn create_session(
     let system_prompt = req.system_prompt.clone();
     let project_id = req.project_id;
 
-    tokio::task::spawn_blocking(move || {
-        storage
-            .sessions()
-            .create(project_id, &model, system_prompt.as_deref())
-            .map(|s| (StatusCode::CREATED, Json(s)))
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
-                )
-            })
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    storage
+        .sessions()
+        .create(project_id, &model, system_prompt.as_deref())
+        .await
+        .map(|s| (StatusCode::CREATED, Json(s)))
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "CREATE_FAILED" })),
+            )
+        })
 }
 
 /// Handle GET /sessions — list sessions with optional project_id and status filters.
@@ -112,27 +118,19 @@ pub async fn list_sessions(
     let project_id = query.project_id;
     let status = query.status.clone();
 
-    tokio::task::spawn_blocking(move || {
-        let result = if let Some(pid) = project_id {
-            storage.sessions().list(pid, status.as_deref(), 1000, 0)
-        } else {
-            storage.sessions().list_all(status.as_deref())
-        };
+    let status_filter = status.as_deref().and_then(parse_session_status);
+    let result = if let Some(pid) = project_id {
+        storage.sessions().list(pid, status_filter, 1000, 0).await
+    } else {
+        storage.sessions().list_all(status_filter).await
+    };
 
-        result.map(Json).map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-            )
-        })
-    })
-    .await
-    .map_err(|e| {
+    result.map(Json).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
         )
-    })?
+    })
 }
 
 /// Handle GET /sessions/:id — get a single session by ID.
@@ -142,27 +140,18 @@ pub async fn get_session(
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage.sessions().get(id).map(Json).map_err(|e| {
-            let (status, code) =
-                if e.to_string().contains("NotFound") || e.to_string().contains("not found") {
-                    (StatusCode::NOT_FOUND, "NOT_FOUND")
-                } else {
-                    (StatusCode::INTERNAL_SERVER_ERROR, "DB_ERROR")
-                };
-            (
-                status,
-                Json(serde_json::json!({ "error": e.to_string(), "code": code })),
-            )
-        })
-    })
-    .await
-    .map_err(|e| {
+    storage.sessions().get(id).await.map(Json).map_err(|e| {
+        let (status, code) =
+            if e.to_string().contains("NotFound") || e.to_string().contains("not found") {
+                (StatusCode::NOT_FOUND, "NOT_FOUND")
+            } else {
+                (StatusCode::INTERNAL_SERVER_ERROR, "DB_ERROR")
+            };
         (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            status,
+            Json(serde_json::json!({ "error": e.to_string(), "code": code })),
         )
-    })?
+    })
 }
 
 /// Handle PUT /sessions/:id — update a session's title and/or status.
@@ -173,38 +162,43 @@ pub async fn update_session(
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        if let Some(title) = req.title {
-            storage.sessions().update_title(id, &title).map_err(|e| {
+    if let Some(title) = req.title {
+        storage
+            .sessions()
+            .update_title(id, &title)
+            .await
+            .map_err(|e| {
                 (
                     StatusCode::UNPROCESSABLE_ENTITY,
                     Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
                 )
             })?;
-        }
-        if let Some(status) = req.status {
-            storage.sessions().update_status(id, &status).map_err(|e| {
-                (
-                    StatusCode::UNPROCESSABLE_ENTITY,
-                    Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-                )
-            })?;
-        }
-
-        storage.sessions().get(id).map(Json).map_err(|e| {
+    }
+    if let Some(status_str) = req.status {
+        let status = parse_session_status(&status_str).ok_or_else(|| {
             (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": format!("unknown status: {status_str}"), "code": "INVALID_STATUS" })),
             )
-        })
-    })
-    .await
-    .map_err(|e| {
+        })?;
+        storage
+            .sessions()
+            .update_status(id, status)
+            .await
+            .map_err(|e| {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+                )
+            })?;
+    }
+
+    storage.sessions().get(id).await.map(Json).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
         )
-    })?
+    })
 }
 
 /// Handle DELETE /sessions/:id — permanently delete a session and its messages.
@@ -214,22 +208,13 @@ pub async fn delete_session(
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage.sessions().delete(id).map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
-            )
-        })?;
-        Ok(StatusCode::NO_CONTENT)
-    })
-    .await
-    .map_err(|e| {
+    storage.sessions().delete(id).await.map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
         )
-    })?
+    })?;
+    Ok(StatusCode::NO_CONTENT)
 }
 
 /// Handle POST /sessions/:id/end — mark a session as completed.
@@ -239,27 +224,18 @@ pub async fn end_session(
 ) -> Result<Json<Session>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage.sessions().end_session(id).map_err(|e| {
-            (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
-            )
-        })?;
-        storage.sessions().get(id).map(Json).map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
-            )
-        })
-    })
-    .await
-    .map_err(|e| {
+    storage.sessions().end_session(id).await.map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UPDATE_FAILED" })),
+        )
+    })?;
+    storage.sessions().get(id).await.map(Json).map_err(|e| {
         (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
         )
-    })?
+    })
 }
 
 /// Handle GET /sessions/:id/messages — list all messages in a session.
@@ -269,25 +245,17 @@ pub async fn list_session_messages(
 ) -> Result<Json<Vec<Message>>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage
-            .messages()
-            .list(id, 10_000, 0)
-            .map(Json)
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-                )
-            })
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    storage
+        .messages()
+        .list(id, 10_000, 0)
+        .await
+        .map(Json)
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+            )
+        })
 }
 
 // ---------------------------------------------------------------------------
@@ -297,6 +265,7 @@ pub async fn list_session_messages(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use orqa_storage::traits::ProjectRepository as _;
 
     use axum::body::Body;
     use axum::http::{Method, Request, StatusCode};
@@ -314,13 +283,14 @@ mod tests {
     ///
     /// Returns (Router, project_id) so tests can create sessions without
     /// needing to hit a /projects route.
-    fn session_router() -> (Router, i64) {
-        let storage = Storage::open_in_memory().expect("in-memory storage");
+    async fn session_router() -> (Router, i64) {
+        let storage = Storage::open_in_memory().await.expect("in-memory storage");
 
         // Create a seed project so we have a valid project_id for sessions.
         let project_id = storage
             .projects()
             .create("test-project", "/test/project", None)
+            .await
             .expect("project_create")
             .id;
 
@@ -361,7 +331,7 @@ mod tests {
     #[tokio::test]
     async fn post_sessions_creates_session_and_returns_201() {
         // POST /sessions must return 201 with id and status="active".
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -389,7 +359,7 @@ mod tests {
     #[tokio::test]
     async fn post_sessions_response_has_project_id() {
         // The created session must carry the project_id we supplied.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -411,7 +381,7 @@ mod tests {
     #[tokio::test]
     async fn get_sessions_returns_200_with_list() {
         // GET /sessions must return 200 with a JSON array (empty or populated).
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         // Create one session first.
         let create_resp = app
             .clone()
@@ -449,7 +419,7 @@ mod tests {
     #[tokio::test]
     async fn get_session_returns_created_session() {
         // GET /sessions/:id must return the same session we just created.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let create_resp = app
             .clone()
             .oneshot(
@@ -485,7 +455,7 @@ mod tests {
     #[tokio::test]
     async fn get_session_returns_404_for_nonexistent() {
         // Requesting a session that doesn't exist must return 404.
-        let (app, _) = session_router();
+        let (app, _) = session_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -505,7 +475,7 @@ mod tests {
     #[tokio::test]
     async fn put_session_updates_title() {
         // After PUT with a new title, the title field must reflect the change.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let create_resp = app
             .clone()
             .oneshot(
@@ -543,7 +513,7 @@ mod tests {
     #[tokio::test]
     async fn delete_session_returns_204() {
         // DELETE /sessions/:id must return 204 No Content.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let create_resp = app
             .clone()
             .oneshot(
@@ -576,7 +546,7 @@ mod tests {
     #[tokio::test]
     async fn after_delete_get_session_returns_404() {
         // After DELETE, GET /sessions/:id must return 404.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let create_resp = app
             .clone()
             .oneshot(
@@ -622,7 +592,7 @@ mod tests {
     #[tokio::test]
     async fn get_session_messages_on_new_session_returns_empty_array() {
         // A freshly created session must return an empty messages array.
-        let (app, project_id) = session_router();
+        let (app, project_id) = session_router().await;
         let create_resp = app
             .clone()
             .oneshot(

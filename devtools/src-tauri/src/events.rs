@@ -22,6 +22,7 @@ use std::time::Duration;
 
 use orqa_engine_types::ports::resolve_daemon_port;
 use orqa_engine_types::types::event::LogEvent;
+use orqa_storage::traits::{DevtoolsRepository as _, IssueGroupRepository as _};
 use orqa_storage::Storage;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager as _, State};
@@ -136,20 +137,11 @@ fn spawn_flush_loop(
     });
 }
 
-/// Move `batch` into `spawn_blocking` and flush it to SQLite via `DevtoolsRepo`.
+/// Flush `batch` to SQLite via `DevtoolsRepo`.
 async fn flush(storage: &Arc<Storage>, session_id: &str, batch: &mut Vec<LogEvent>) {
-    let storage_clone = Arc::clone(storage);
-    let sid = session_id.to_owned();
     let events = std::mem::take(batch);
-    if let Err(e) = tokio::task::spawn_blocking(move || {
-        storage_clone
-            .devtools()
-            .insert_events(&sid, events)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    {
-        error!(subsystem = "event-batch-writer", error = ?e, "spawn_blocking panicked during flush");
+    if let Err(e) = storage.devtools().insert_events(session_id, events).await {
+        error!(subsystem = "event-batch-writer", error = ?e, "flush to SQLite failed");
     }
 }
 
@@ -527,25 +519,6 @@ async fn process_sse_lines(
     }
 }
 
-/// Perform the blocking SQLite upsert and group read for `upsert_issue_group`.
-///
-/// Returns the updated `IssueGroup` on success, or a String error.
-fn do_upsert_blocking(
-    storage: Arc<Storage>,
-    fp: String,
-    title: String,
-    component: String,
-    level: String,
-    timestamp_ms: i64,
-    event_id: u64,
-) -> Result<Option<orqa_storage::repo::issue_groups::IssueGroup>, String> {
-    storage
-        .issue_groups()
-        .upsert(&fp, &title, &component, &level, timestamp_ms, event_id)
-        .map_err(|e| e.to_string())?;
-    storage.issue_groups().get(&fp).map_err(|e| e.to_string())
-}
-
 /// Fire-and-forget helper that upserts a fingerprinted event into `issue_groups`
 /// and emits an `orqa://issue-group-update` Tauri event with the updated group.
 ///
@@ -574,29 +547,24 @@ pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
             return;
         };
 
-        let result = tokio::task::spawn_blocking(move || {
-            do_upsert_blocking(
-                storage,
-                fp,
-                title,
-                component,
-                level,
-                event.timestamp,
-                event.id,
-            )
-        })
-        .await;
+        if let Err(e) = storage
+            .issue_groups()
+            .upsert(&fp, &title, &component, &level, event.timestamp, event.id)
+            .await
+        {
+            error!(subsystem = "issue-group-upsert", error = %e, "upsert failed");
+            return;
+        }
 
-        match result {
+        match storage.issue_groups().get(&fp).await {
             Err(e) => {
-                error!(subsystem = "issue-group-upsert", error = ?e, "spawn_blocking panicked");
+                error!(subsystem = "issue-group-upsert", error = %e, "get after upsert failed")
             }
-            Ok(Err(e)) => error!(subsystem = "issue-group-upsert", error = %e, "upsert failed"),
-            Ok(Ok(None)) => error!(
+            Ok(None) => error!(
                 subsystem = "issue-group-upsert",
                 "group missing after upsert"
             ),
-            Ok(Ok(Some(group))) => {
+            Ok(Some(group)) => {
                 if let Err(e) = app.emit(TAURI_EVENT_ISSUE_GROUP_UPDATE, &group) {
                     error!(subsystem = "issue-group-upsert", error = %e, "failed to emit event");
                 }

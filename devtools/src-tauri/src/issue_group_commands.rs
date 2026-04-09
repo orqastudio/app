@@ -1,13 +1,12 @@
 // Tauri IPC command wrappers for issue group queries via orqa-storage.
 //
 // Exposes list and get operations over the `issue_groups` table so the frontend
-// can display deduplicated error summaries. All commands follow the same
-// spawn_blocking pattern used in session_commands.rs: the rusqlite connection
-// never touches the async runtime directly.
+// can display deduplicated error summaries.
 
 use std::sync::Arc;
 
 use orqa_storage::repo::issue_groups::{IssueGroup, SortBy, SortDir};
+use orqa_storage::traits::IssueGroupRepository as _;
 use orqa_storage::Storage;
 use tauri::State;
 
@@ -26,26 +25,22 @@ pub async fn devtools_list_issue_groups(
     limit: Option<u32>,
     offset: Option<u32>,
 ) -> Result<Vec<IssueGroup>, String> {
-    let storage = Arc::clone(&storage);
-    tokio::task::spawn_blocking(move || {
-        let sort_by = parse_sort_by(sort_by.as_deref());
-        let sort_dir = parse_sort_dir(sort_dir.as_deref());
-        let limit = limit.unwrap_or(100);
-        let offset = offset.unwrap_or(0);
-        storage
-            .issue_groups()
-            .list(
-                sort_by,
-                sort_dir,
-                filter_component.as_deref(),
-                filter_level.as_deref(),
-                limit,
-                offset,
-            )
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("devtools_list_issue_groups panicked: {e}"))?
+    let sort_by = parse_sort_by(sort_by.as_deref());
+    let sort_dir = parse_sort_dir(sort_dir.as_deref());
+    let limit = limit.unwrap_or(100);
+    let offset = offset.unwrap_or(0);
+    storage
+        .issue_groups()
+        .list(
+            sort_by,
+            sort_dir,
+            filter_component.as_deref(),
+            filter_level.as_deref(),
+            limit,
+            offset,
+        )
+        .await
+        .map_err(|e| e.to_string())
 }
 
 /// IPC command — get a single issue group by fingerprint.
@@ -56,15 +51,11 @@ pub async fn devtools_get_issue_group(
     storage: State<'_, Arc<Storage>>,
     fingerprint: String,
 ) -> Result<Option<IssueGroup>, String> {
-    let storage = Arc::clone(&storage);
-    tokio::task::spawn_blocking(move || {
-        storage
-            .issue_groups()
-            .get(&fingerprint)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("devtools_get_issue_group panicked: {e}"))?
+    storage
+        .issue_groups()
+        .get(&fingerprint)
+        .await
+        .map_err(|e| e.to_string())
 }
 
 // ---------------------------------------------------------------------------

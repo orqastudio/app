@@ -13,15 +13,14 @@ use sea_orm_migration::prelude::*;
 /// Migration 1 — initial core schema.
 pub struct Migration;
 
-
-
 impl MigrationName for Migration {
-    fn name(&self) -> &str {
+    fn name(&self) -> &'static str {
         "m001_initial_core_schema"
     }
 }
 
 #[async_trait::async_trait]
+#[allow(clippy::too_many_lines)]
 impl MigrationTrait for Migration {
     /// Apply the initial core schema.
     ///

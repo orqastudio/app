@@ -14,13 +14,13 @@ name = "orqa_storage"
 path = "src/lib.rs"
 
 [dependencies]
-rusqlite = { version = "0.33", features = ["bundled"] }
-# sea-orm: macros-only mode provides entity/relation derivation without any
-# database backend or sqlx dependency. sqlx-sqlite conflicts with rusqlite's
-# bundled libsqlite3-sys at the linker level; the runtime backend is added in
-# task A2 once rusqlite is removed. Sea-orm 2.x makes sqlx optional (sqlx?)
-# so no-default-features + macros compiles without pulling in sqlx at all.
-sea-orm = { version = "~2.0.0-rc.37", features = ["macros"], default-features = false }
+# SeaORM with SQLite backend via sqlx. Provides async query execution, entity
+# derivation, and the DatabaseConnection pool shared across async callers.
+sea-orm = { version = "~2.0.0-rc.37", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"], default-features = false }
+# Migration runner used by Storage::open to apply schema versions on startup.
+sea-orm-migration = { version = "~2.0.0-rc.37", features = ["sqlx-sqlite", "runtime-tokio-rustls"], default-features = false }
+# Migration definitions: the 4 versioned schema migrations for orqa.db.
+orqa-storage-migration = { path = "migration" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "2"
@@ -29,7 +29,7 @@ tokio = { version = "1", features = ["rt", "sync"] }
 orqa-engine-types = { path = "../types" }
 # async-trait is required for the repository trait definitions in traits.rs.
 async-trait = "0.1"
-# Used by open_in_memory() to create stable temp-file-backed databases for tests.
+# tempfile provides a TempDir for open_in_memory() test instances.
 tempfile = "3"
 
 [dev-dependencies]

@@ -18,6 +18,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde::Serialize;
 
+use orqa_storage::traits::SettingsRepository as _;
+
 use crate::health::HealthState;
 
 // ---------------------------------------------------------------------------
@@ -149,50 +151,42 @@ pub async fn get_setup_status(
 ) -> Result<Json<SetupStatus>, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        let stored_version = storage
-            .settings()
-            .get("setup_version", "app")
-            .ok()
-            .flatten()
-            .and_then(|v| v.as_u64())
-            .unwrap_or(0);
+    let stored_version = storage
+        .settings()
+        .get("setup_version", "app")
+        .await
+        .ok()
+        .flatten()
+        .and_then(|v| v.as_u64())
+        .unwrap_or(0);
 
-        let steps = vec![
-            SetupStepStatus {
-                id: "claude_cli",
-                label: "Claude CLI",
-                status: "pending",
-                detail: None,
-            },
-            SetupStepStatus {
-                id: "authentication",
-                label: "Authentication",
-                status: "pending",
-                detail: None,
-            },
-            SetupStepStatus {
-                id: "embedding_model",
-                label: "Embedding Model",
-                status: "pending",
-                detail: None,
-            },
-        ];
+    let steps = vec![
+        SetupStepStatus {
+            id: "claude_cli",
+            label: "Claude CLI",
+            status: "pending",
+            detail: None,
+        },
+        SetupStepStatus {
+            id: "authentication",
+            label: "Authentication",
+            status: "pending",
+            detail: None,
+        },
+        SetupStepStatus {
+            id: "embedding_model",
+            label: "Embedding Model",
+            status: "pending",
+            detail: None,
+        },
+    ];
 
-        Ok(Json(SetupStatus {
-            setup_complete: stored_version >= CURRENT_SETUP_VERSION,
-            current_version: CURRENT_SETUP_VERSION,
-            stored_version,
-            steps,
-        }))
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    Ok(Json(SetupStatus {
+        setup_complete: stored_version >= CURRENT_SETUP_VERSION,
+        current_version: CURRENT_SETUP_VERSION,
+        stored_version,
+        steps,
+    }))
 }
 
 /// Handle GET /setup/claude-cli — check Claude CLI installation.
@@ -295,20 +289,19 @@ pub async fn complete_setup(
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
 
-    tokio::task::spawn_blocking(move || {
-        storage.settings()
-            .set("setup_version", &serde_json::json!(CURRENT_SETUP_VERSION), "app")
-            .map(|()| StatusCode::NO_CONTENT)
-            .map_err(|e| (
+    storage
+        .settings()
+        .set(
+            "setup_version",
+            &serde_json::json!(CURRENT_SETUP_VERSION),
+            "app",
+        )
+        .await
+        .map(|()| StatusCode::NO_CONTENT)
+        .map_err(|e| {
+            (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": e.to_string(), "code": "SETTINGS_SAVE_FAILED" })),
-            ))
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+            )
+        })
 }

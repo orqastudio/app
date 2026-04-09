@@ -48,6 +48,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
 use orqa_engine_types::types::event::LogEvent;
+use orqa_storage::traits::EventRepository as _;
 use orqa_storage::Storage;
 use tokio::sync::broadcast;
 
@@ -117,28 +118,16 @@ fn spawn_event_batch_writer(bus: Arc<event_bus::EventBus>, storage: Arc<Storage>
     });
 }
 
-/// Move `batch` into `spawn_blocking` and flush it to the events repo.
+/// Flush `batch` to the events repo and clear it.
 ///
-/// Clears `batch` after dispatching. The `Arc<Storage>` clone ensures the
-/// storage outlives the blocking closure.
+/// Uses async `.await` directly since `EventRepository::insert_batch` is async.
 async fn flush_event_batch(storage: &Arc<Storage>, batch: &mut Vec<LogEvent>) {
-    let storage_clone = Arc::clone(storage);
     let events = std::mem::take(batch);
-    if let Err(e) = tokio::task::spawn_blocking(move || {
-        if let Err(e) = storage_clone.events().insert_batch(events) {
-            error!(
-                subsystem = "storage",
-                error = %e,
-                "[storage] event batch insert failed"
-            );
-        }
-    })
-    .await
-    {
+    if let Err(e) = storage.events().insert_batch(events).await {
         error!(
             subsystem = "storage",
-            error = ?e,
-            "[storage] spawn_blocking panicked during event flush"
+            error = %e,
+            "[storage] event batch insert failed"
         );
     }
 }
@@ -301,8 +290,10 @@ async fn run(
     // Open the unified SQLite storage at .state/orqa.db. This replaces the
     // separate daemon.db and events.db that previously lived in .state/.
     // Degrades gracefully if the database cannot be opened.
-    let storage = match Storage::open(&project_root) {
+    let storage = match Storage::open(&project_root).await {
         Ok(s) => {
+            let s = Arc::new(s);
+
             // Spawn background batch writer: drains the event bus into the
             // unified storage's log_events table via batched inserts.
             spawn_event_batch_writer(Arc::clone(&event_bus), Arc::clone(&s));
@@ -316,14 +307,11 @@ async fn run(
                 interval.tick().await;
                 loop {
                     interval.tick().await;
-                    let s = Arc::clone(&purge_storage);
-                    if let Err(e) =
-                        tokio::task::spawn_blocking(move || s.events().purge(retention_days)).await
-                    {
+                    if let Err(e) = purge_storage.events().purge(retention_days).await {
                         error!(
                             subsystem = "storage",
-                            error = ?e,
-                            "[storage] spawn_blocking panicked during event purge"
+                            error = %e,
+                            "[storage] event purge failed"
                         );
                     }
                 }

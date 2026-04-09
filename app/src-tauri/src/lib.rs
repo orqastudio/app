@@ -75,10 +75,20 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 ///
 /// Calls `project_open` which opens project-scoped storage and stores it in
 /// AppState, then marks setup complete so the wizard is skipped.
+/// Uses `tauri::async_runtime::block_on` because this is called from the sync
+/// Tauri setup callback but all storage operations are now async.
 fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
-    let state: tauri::State<'_, state::AppState> = app.state();
+    use orqa_storage::traits::SettingsRepository as _;
 
-    match commands::project_commands::project_open(project_root.to_owned(), state) {
+    let state: tauri::State<'_, state::AppState> = app.state();
+    let project_root_owned = project_root.to_owned();
+
+    let project_result = tauri::async_runtime::block_on(commands::project_commands::project_open(
+        project_root_owned,
+        state,
+    ));
+
+    match project_result {
         Ok(project) => {
             tracing::info!(path = %project.path, "auto-opened project from ORQA_PROJECT_ROOT");
         }
@@ -91,13 +101,14 @@ fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
     // Mark first-run setup as complete — dev environment is already configured.
     let state: tauri::State<'_, state::AppState> = app.state();
     if let Ok(storage) = state.db.get() {
-        if let Err(e) = storage
-            .settings()
-            .set("setup_version", &serde_json::json!(1u32), "app")
-        {
-            tracing::warn!(err = %e, "failed to auto-complete setup");
-        } else {
-            tracing::info!("auto-completed first-run setup (dev mode)");
+        let result = tauri::async_runtime::block_on(storage.settings().set(
+            "setup_version",
+            &serde_json::json!(1u32),
+            "app",
+        ));
+        match result {
+            Err(e) => tracing::warn!(err = %e, "failed to auto-complete setup"),
+            Ok(_) => tracing::info!("auto-completed first-run setup (dev mode)"),
         }
     }
 }

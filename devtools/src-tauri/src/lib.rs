@@ -20,6 +20,7 @@ pub mod issue_group_commands;
 
 use std::sync::Arc;
 
+use orqa_storage::traits::DevtoolsRepository as _;
 use orqa_storage::Storage;
 use tauri::Manager as _;
 use tracing_subscriber::EnvFilter;
@@ -50,26 +51,25 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     );
 
     // Open the unified storage and register it as managed state.
-    let storage =
-        Storage::open(&project_root).map_err(|e| format!("failed to open storage: {e}"))?;
+    // Storage::open is async; use block_on since setup_app is a sync Tauri callback.
+    let storage = Arc::new(
+        tauri::async_runtime::block_on(Storage::open(&project_root))
+            .map_err(|e| format!("failed to open storage: {e}"))?,
+    );
 
     // Mark any orphaned sessions from a previous crash as interrupted
     // before creating the new session.
-    storage
-        .devtools()
-        .mark_orphaned_sessions_interrupted()
+    tauri::async_runtime::block_on(storage.devtools().mark_orphaned_sessions_interrupted())
         .map_err(|e| format!("failed to mark orphaned sessions: {e}"))?;
 
     // Create the session for this devtools open.
     let session_id = uuid::Uuid::new_v4().to_string();
     let started_at = now_ms();
-    storage
-        .devtools()
-        .create_session(&session_id, started_at)
+    tauri::async_runtime::block_on(storage.devtools().create_session(&session_id, started_at))
         .map_err(|e| format!("failed to create session: {e}"))?;
 
     // Purge sessions older than 30 days.
-    let _ = storage.devtools().purge_old_sessions(30);
+    let _ = tauri::async_runtime::block_on(storage.devtools().purge_old_sessions(30));
 
     app.manage(Arc::clone(&storage));
 
@@ -198,6 +198,7 @@ fn devtools_process_statuses() -> Result<std::collections::HashMap<String, Strin
 ///
 /// Uses `.build(generate_context!()).run(callback)` so that the `RunEvent::Exit`
 /// handler can call `storage.devtools().end_session()` for a clean session close.
+#[allow(clippy::too_many_lines)]
 pub fn run() {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -248,7 +249,9 @@ pub fn run() {
                     .duration_since(std::time::UNIX_EPOCH)
                     .unwrap_or_default()
                     .as_millis() as i64;
-                let _ = storage.devtools().end_session(&active.0, ended_at);
+                let _ = tauri::async_runtime::block_on(
+                    storage.devtools().end_session(&active.0, ended_at),
+                );
             }
         }
     });

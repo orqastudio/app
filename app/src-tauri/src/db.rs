@@ -15,6 +15,9 @@ use crate::error::OrqaError;
 ///
 /// Creates `.state/` if absent, applies PRAGMAs, and runs pending migrations.
 /// Returns an `Arc<Storage>` that commands clone out of state for each operation.
-pub fn open_project_storage(project_root: &Path) -> Result<Arc<Storage>, OrqaError> {
-    Storage::open(project_root).map_err(|e| OrqaError::Database(e.to_string()))
+pub async fn open_project_storage(project_root: &Path) -> Result<Arc<Storage>, OrqaError> {
+    Storage::open(project_root)
+        .await
+        .map(Arc::new)
+        .map_err(|e| OrqaError::Database(e.to_string()))
 }

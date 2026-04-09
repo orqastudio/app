@@ -5,6 +5,8 @@
 
 use tauri::Manager;
 
+use orqa_storage::traits::SettingsRepository as _;
+
 use crate::domain::setup::{self, ClaudeCliInfo, SetupStatus, SetupStepStatus, StepStatus};
 use crate::error::OrqaError;
 use crate::state::AppState;
@@ -53,10 +55,10 @@ fn default_steps() -> Vec<SetupStepStatus> {
 /// Reads the stored `setup_version` from settings. If no project is open
 /// (storage not initialised), setup is incomplete.
 #[tauri::command]
-pub fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, OrqaError> {
+pub async fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, OrqaError> {
     let (setup_complete, stored_version) = match state.db.get() {
         Ok(storage) => {
-            let stored = storage.settings().get("setup_version", "app")?;
+            let stored = storage.settings().get("setup_version", "app").await?;
             let version = stored.and_then(|v| v.as_u64()).map_or(0, |v| v as u32);
             (version >= CURRENT_SETUP_VERSION, version)
         }
@@ -131,23 +133,33 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
 ///
 /// Requires an open project (storage must be initialised via `project_open`).
 #[tauri::command]
-pub fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
+pub async fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
     let storage = state.db.get()?;
-    Ok(storage.settings().set(
-        "setup_version",
-        &serde_json::json!(CURRENT_SETUP_VERSION),
-        "app",
-    )?)
+    Ok(storage
+        .settings()
+        .set(
+            "setup_version",
+            &serde_json::json!(CURRENT_SETUP_VERSION),
+            "app",
+        )
+        .await?)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use orqa_storage::traits::SettingsRepository as _;
 
-    #[test]
-    fn get_setup_status_incomplete_when_no_version() {
-        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
-        let stored = storage.settings().get("setup_version", "app").expect("get");
+    #[tokio::test]
+    async fn get_setup_status_incomplete_when_no_version() {
+        let storage = orqa_storage::Storage::open_in_memory()
+            .await
+            .expect("db init");
+        let stored = storage
+            .settings()
+            .get("setup_version", "app")
+            .await
+            .expect("get");
         assert!(stored.is_none());
 
         let stored_version = 0_u32;
@@ -166,9 +178,11 @@ mod tests {
         assert_eq!(status.steps[0].status, StepStatus::Pending);
     }
 
-    #[test]
-    fn get_setup_status_complete_when_version_matches() {
-        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+    #[tokio::test]
+    async fn get_setup_status_complete_when_version_matches() {
+        let storage = orqa_storage::Storage::open_in_memory()
+            .await
+            .expect("db init");
         storage
             .settings()
             .set(
@@ -176,11 +190,13 @@ mod tests {
                 &serde_json::json!(CURRENT_SETUP_VERSION),
                 "app",
             )
+            .await
             .expect("set");
 
         let stored = storage
             .settings()
             .get("setup_version", "app")
+            .await
             .expect("get")
             .expect("should exist");
         let stored_version = stored.as_u64().map_or(0, |v| v as u32);
@@ -196,11 +212,17 @@ mod tests {
         assert_eq!(status.stored_version, CURRENT_SETUP_VERSION);
     }
 
-    #[test]
-    fn complete_setup_stores_version() {
-        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+    #[tokio::test]
+    async fn complete_setup_stores_version() {
+        let storage = orqa_storage::Storage::open_in_memory()
+            .await
+            .expect("db init");
 
-        let before = storage.settings().get("setup_version", "app").expect("get");
+        let before = storage
+            .settings()
+            .get("setup_version", "app")
+            .await
+            .expect("get");
         assert!(before.is_none());
 
         storage
@@ -210,11 +232,13 @@ mod tests {
                 &serde_json::json!(CURRENT_SETUP_VERSION),
                 "app",
             )
+            .await
             .expect("set");
 
         let after = storage
             .settings()
             .get("setup_version", "app")
+            .await
             .expect("get")
             .expect("should exist");
         assert_eq!(after, serde_json::json!(CURRENT_SETUP_VERSION));
@@ -272,22 +296,25 @@ mod tests {
         assert!(!info.authenticated);
     }
 
-    #[test]
-    fn setup_status_incomplete_when_version_too_low() {
-        let storage = orqa_storage::Storage::open_in_memory().expect("db init");
+    #[tokio::test]
+    async fn setup_status_incomplete_when_version_too_low() {
+        let storage = orqa_storage::Storage::open_in_memory()
+            .await
+            .expect("db init");
         storage
             .settings()
             .set("setup_version", &serde_json::json!(0), "app")
+            .await
             .expect("set");
 
         let stored = storage
             .settings()
             .get("setup_version", "app")
+            .await
             .expect("get")
             .expect("should exist");
         let stored_version = stored.as_u64().map_or(0, |v| v as u32);
 
         assert!(stored_version < CURRENT_SETUP_VERSION);
-        assert!(!stored_version >= CURRENT_SETUP_VERSION);
     }
 }

@@ -13,6 +13,8 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde::Deserialize;
 
+use orqa_storage::traits::SettingsRepository as _;
+
 use crate::health::HealthState;
 
 // ---------------------------------------------------------------------------
@@ -61,34 +63,25 @@ pub async fn get_settings(
     let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
     let scope = query.scope.clone();
 
-    tokio::task::spawn_blocking(move || {
-        let result = if let Some(ref s) = scope {
-            storage.settings().get_all(s)
-        } else {
-            storage.settings().get_all_any_scope()
-        };
+    let result = if let Some(ref s) = scope {
+        storage.settings().get_all(s).await
+    } else {
+        storage.settings().get_all_any_scope().await
+    };
 
-        result
-            .map(|m| {
-                Json(
-                    serde_json::to_value(m)
-                        .unwrap_or(serde_json::Value::Object(serde_json::Map::new())),
-                )
-            })
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
-                )
-            })
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    result
+        .map(|m| {
+            Json(
+                serde_json::to_value(m)
+                    .unwrap_or(serde_json::Value::Object(serde_json::Map::new())),
+            )
+        })
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": e.to_string(), "code": "LIST_FAILED" })),
+            )
+        })
 }
 
 /// Handle PUT /settings/:key — upsert a setting value by key.
@@ -104,25 +97,20 @@ pub async fn set_setting(
     let scope = req.scope.unwrap_or_else(|| "app".to_owned());
     let value = req.value.clone();
 
-    tokio::task::spawn_blocking(move || {
-        storage.settings().set(&key, &value, &scope).map_err(|e| {
+    storage
+        .settings()
+        .set(&key, &value, &scope)
+        .await
+        .map_err(|e| {
             (
                 StatusCode::UNPROCESSABLE_ENTITY,
                 Json(serde_json::json!({ "error": e.to_string(), "code": "SET_FAILED" })),
             )
         })?;
 
-        Ok(Json(
-            serde_json::json!({ "key": key, "value": value, "scope": scope }),
-        ))
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
+    Ok(Json(
+        serde_json::json!({ "key": key, "value": value, "scope": scope }),
+    ))
 }
 
 // ---------------------------------------------------------------------------
@@ -145,8 +133,9 @@ mod tests {
     use orqa_storage::Storage;
 
     /// Build a fresh router with the settings routes wired to an in-memory store.
-    fn settings_router() -> Router {
+    async fn settings_router() -> Router {
         let storage = Storage::open_in_memory()
+            .await
             .map(Arc::new)
             .expect("in-memory storage");
 
@@ -177,7 +166,7 @@ mod tests {
     #[tokio::test]
     async fn get_settings_returns_empty_object_initially() {
         // With no settings stored, GET /settings must return an empty JSON object.
-        let app = settings_router();
+        let app = settings_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -200,7 +189,7 @@ mod tests {
     #[tokio::test]
     async fn put_settings_sets_value() {
         // PUT /settings/theme_mode must persist the value.
-        let app = settings_router();
+        let app = settings_router().await;
         let resp = app
             .oneshot(
                 Request::builder()
@@ -222,7 +211,7 @@ mod tests {
     #[tokio::test]
     async fn get_settings_returns_previously_set_value() {
         // After PUT, GET /settings must include the key we set.
-        let app = settings_router();
+        let app = settings_router().await;
 
         app.clone()
             .oneshot(
@@ -255,7 +244,7 @@ mod tests {
     #[tokio::test]
     async fn settings_json_round_trip_complex_value() {
         // A complex JSON object must survive a PUT then GET cycle unchanged.
-        let app = settings_router();
+        let app = settings_router().await;
         let complex = serde_json::json!({
             "enabled": true,
             "count": 42,

@@ -15,6 +15,8 @@
 
 use tauri::{Emitter, Runtime, State};
 
+use orqa_storage::traits::{HealthRepository as _, ProjectRepository as _};
+
 use crate::daemon_client::{DaemonClient, DaemonGraphHealth};
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
 use crate::error::OrqaError;
@@ -220,26 +222,30 @@ pub async fn store_health_snapshot(
 
     let project = storage
         .projects()
-        .get_active()?
+        .get_active()
+        .await?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
-    Ok(storage.health().create(
-        project.id,
-        &NewHealthSnapshot {
-            node_count: health.total_nodes as i64,
-            edge_count: health.total_edges as i64,
-            broken_ref_count: health.broken_ref_count as i64,
-            error_count,
-            warning_count,
-            largest_component_ratio: health.largest_component_ratio,
-            avg_degree: health.avg_degree,
-            pillar_traceability: health.pillar_traceability,
-            outlier_count: health.outlier_count as i64,
-            outlier_percentage: health.outlier_percentage,
-            delivery_connectivity: health.delivery_connectivity,
-            learning_connectivity: health.learning_connectivity,
-        },
-    )?)
+    Ok(storage
+        .health()
+        .create(
+            project.id,
+            &NewHealthSnapshot {
+                node_count: health.total_nodes as i64,
+                edge_count: health.total_edges as i64,
+                broken_ref_count: health.broken_ref_count as i64,
+                error_count,
+                warning_count,
+                largest_component_ratio: health.largest_component_ratio,
+                avg_degree: health.avg_degree,
+                pillar_traceability: health.pillar_traceability,
+                outlier_count: health.outlier_count as i64,
+                outlier_percentage: health.outlier_percentage,
+                delivery_connectivity: health.delivery_connectivity,
+                learning_connectivity: health.learning_connectivity,
+            },
+        )
+        .await?)
 }
 
 /// Update a single YAML frontmatter field in an artifact file.
@@ -287,7 +293,7 @@ pub async fn update_artifact_field(
 ///
 /// This query is local-only — snapshots are stored in the app's SQLite database.
 #[tauri::command]
-pub fn get_health_snapshots(
+pub async fn get_health_snapshots(
     limit: Option<i64>,
     state: State<'_, AppState>,
 ) -> Result<Vec<HealthSnapshot>, OrqaError> {
@@ -295,12 +301,14 @@ pub fn get_health_snapshots(
 
     let project = storage
         .projects()
-        .get_active()?
+        .get_active()
+        .await?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
     Ok(storage
         .health()
-        .get_recent(project.id, limit.unwrap_or(30))?)
+        .get_recent(project.id, limit.unwrap_or(30))
+        .await?)
 }
 
 #[cfg(test)]

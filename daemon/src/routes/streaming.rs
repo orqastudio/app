@@ -31,6 +31,7 @@ use tracing::{debug, error, info};
 
 use orqa_enforcement::engine::EnforcementEngine;
 use orqa_enforcement::store::load_rules;
+use orqa_engine_types::types::message::{MessageRole, StreamStatus};
 use orqa_engine_types::types::streaming::StreamEvent;
 use orqa_prompt::resolve_system_prompt;
 use orqa_search::SearchEngine;
@@ -44,6 +45,8 @@ use orqa_streaming::tools::{
 };
 use orqa_workflow::gates::{evaluate_stop_verdicts, evaluate_write_verdicts, ProcessGateConfig};
 use orqa_workflow::tracker::{TrackerConfig, WorkflowTracker};
+
+use orqa_storage::traits::{MessageRepository as _, SessionRepository as _};
 
 use crate::health::HealthState;
 
@@ -689,43 +692,32 @@ pub async fn send_message(
         ))?;
 
     // Persist the user message and get its ID and the current provider session ID.
-    let content_clone = content.clone();
-    let storage_clone = Arc::clone(&storage);
-    let (user_message_id, provider_session_id) = tokio::task::spawn_blocking(move || {
-        let session = storage_clone
-            .sessions()
-            .get(session_id)
-            .map_err(|e| format!("session not found: {e}"))?;
-        let turn_index = storage_clone
-            .messages()
-            .next_turn_index(session_id)
-            .map_err(|e| format!("next turn index: {e}"))?;
-        let msg = storage_clone
-            .messages()
-            .create(
-                session_id,
-                "user",
-                "text",
-                Some(&content_clone),
-                turn_index,
-                0,
-            )
-            .map_err(|e| format!("create user message: {e}"))?;
-        Ok::<(i64, Option<String>), String>((msg.id, session.provider_session_id))
-    })
-    .await
-    .map_err(|e| {
-        (
+    let session = storage
+        .sessions()
+        .get(session_id)
+        .await
+        .map_err(|e| (
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({ "error": format!("session not found: {e}"), "code": "SESSION_NOT_FOUND" })),
+        ))?;
+    let provider_session_id = session.provider_session_id;
+    let turn_index = storage
+        .messages()
+        .next_turn_index(session_id)
+        .await
+        .map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-        )
-    })?
-    .map_err(|e| {
-        (
+            Json(serde_json::json!({ "error": format!("next turn index: {e}"), "code": "DB_ERROR" })),
+        ))?;
+    let user_msg = storage
+        .messages()
+        .create(session_id, MessageRole::User, Some(&content), turn_index, 0)
+        .await
+        .map_err(|e| (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e, "code": "DB_ERROR" })),
-        )
-    })?;
+            Json(serde_json::json!({ "error": format!("create user message: {e}"), "code": "DB_ERROR" })),
+        ))?;
+    let user_message_id = user_msg.id;
 
     // Resolve the system prompt from disk.
     let system_prompt = resolve_system_prompt(&project_root);
@@ -759,40 +751,42 @@ pub async fn send_message(
             acc.stream_complete, acc.had_error, acc.input_tokens, acc.output_tokens,
         );
 
-        // Persist the assistant message.
+        // Persist the assistant message using block_on since we are inside
+        // a spawn_blocking thread and cannot use .await directly.
         {
-            let turn_index = storage_for_loop
-                .messages()
-                .next_turn_index(session_id)
+            let handle = tokio::runtime::Handle::current();
+            let turn_index = handle
+                .block_on(storage_for_loop.messages().next_turn_index(session_id))
                 .unwrap_or(1);
             let content_val = if acc.text.is_empty() {
                 None
             } else {
                 Some(acc.text.as_str())
             };
-            if let Ok(assistant_msg) = storage_for_loop.messages().create(
+            if let Ok(assistant_msg) = handle.block_on(storage_for_loop.messages().create(
                 session_id,
-                "assistant",
-                "text",
+                MessageRole::Assistant,
                 content_val,
                 turn_index,
                 0,
-            ) {
+            )) {
                 let status = if acc.stream_complete && !acc.had_error {
-                    "complete"
+                    StreamStatus::Complete
                 } else {
-                    "error"
+                    StreamStatus::Error
                 };
-                let _ = storage_for_loop
-                    .messages()
-                    .update_stream_status(assistant_msg.id, status);
+                let _ = handle.block_on(
+                    storage_for_loop
+                        .messages()
+                        .update_stream_status(assistant_msg.id, status),
+                );
             }
             if acc.stream_complete {
-                let _ = storage_for_loop.sessions().update_token_usage(
+                let _ = handle.block_on(storage_for_loop.sessions().update_token_usage(
                     session_id,
                     acc.input_tokens,
                     acc.output_tokens,
-                );
+                ));
             }
         }
 
