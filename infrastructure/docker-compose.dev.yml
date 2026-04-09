@@ -47,8 +47,9 @@ services:
       - ../plugins:/project/plugins:ro
       # ONNX models — read-only; daemon loads models but never modifies them.
       - ../models:/project/models:ro
-      # Session state — named volume so it persists across container restarts.
-      - daemon-state:/project/.state
+      # Session state — bind mount (NOT named volume) so the native app and
+      # containerised daemon share the same .state/ directory and SQLite DB.
+      - ../.state:/project/.state:rw
     working_dir: /project
     healthcheck:
       # The daemon exposes GET /health on its HTTP port.
@@ -92,8 +93,6 @@ services:
       - forgejo-config:/etc/forgejo
 
 volumes:
-  # Daemon session state: metrics, PID files, watcher caches.
-  daemon-state:
   # Forgejo volumes — reuse existing data from orqastudio-git compose stack.
   # These are external so docker compose down does NOT delete git history.
   forgejo-data:

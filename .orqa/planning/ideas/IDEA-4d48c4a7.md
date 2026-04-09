@@ -493,6 +493,38 @@ that. Containerisation gives clean lifecycle management (no orphans, auto-restar
 unified startup) as a bonus. `--include-backend` opts into the heavier native
 mode only when you're actively touching Rust code.
 
+## Blocker: SQLite contention in containerised mode
+
+**Discovered 2026-04-09 during testing.**
+
+The native Tauri app opens `.state/orqa.db` directly via `Storage::open()`.
+The containerised daemon also opens `.state/orqa.db`. Two processes writing to
+the same SQLite file through a Docker bind mount causes "database is locked"
+errors, especially on Windows where Docker Desktop's bind mount layer adds
+latency to file locking.
+
+**Impact:** Default containerised mode (`orqa dev`) is NOT usable until the app
+is refactored to stop opening the database directly. `orqa dev --include-backend`
+(native daemon) works correctly.
+
+**Fix required before containerised mode is default:**
+
+The app must proxy ALL database operations through the daemon HTTP API instead
+of opening SQLite directly. This means adding daemon HTTP endpoints for every
+operation the app currently does via `Storage`:
+
+- Sessions: create, list, get, update, delete
+- Messages: list
+- Settings: get, set
+- Projects: open, list
+- Health snapshots: store, get
+- Lessons: list, create, increment
+- Enforcement: rules, violations, scan
+
+This is a significant refactor — each Tauri command that currently calls
+`state.db.get()` needs to call the daemon HTTP client instead. Until then,
+`--include-backend` is the working dev mode.
+
 ## What this doesn't solve (and shouldn't)
 
 - **Hot reload latency** -- Vite and Storybook stay native for sub-100ms HMR.
