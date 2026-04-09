@@ -713,8 +713,17 @@ pub async fn start(
         .layer(axum_mw::from_fn(correlation_id_middleware))
         .with_state(state);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], port));
-    info!(subsystem = "health", port, "starting health endpoint");
+    // In headless/container mode, bind to 0.0.0.0 so Docker port publishing
+    // works. In native mode, bind to 127.0.0.1 for security (don't expose to
+    // the network).
+    let headless = std::env::var("ORQA_HEADLESS").is_ok_and(|v| v == "1" || v == "true");
+    let bind_addr = if headless {
+        Ipv4Addr::UNSPECIFIED // 0.0.0.0
+    } else {
+        Ipv4Addr::LOCALHOST // 127.0.0.1
+    };
+    let addr = SocketAddr::from((bind_addr, port));
+    info!(subsystem = "health", %addr, "starting health endpoint");
 
     // Use SO_REUSEADDR so the daemon can rebind immediately after a restart.
     // Without this, a killed daemon leaves the port in TIME_WAIT and the new
@@ -726,7 +735,7 @@ pub async fn start(
     )?;
     socket.set_reuse_address(true)?;
     socket.set_nonblocking(true)?;
-    socket.bind(&SocketAddrV4::new(Ipv4Addr::LOCALHOST, port).into())?;
+    socket.bind(&SocketAddrV4::new(bind_addr, port).into())?;
     socket.listen(128)?;
     let listener = tokio::net::TcpListener::from_std(socket.into())?;
 

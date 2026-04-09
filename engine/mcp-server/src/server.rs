@@ -297,7 +297,14 @@ pub fn run_tcp(
 
     // Use socket2 to set SO_REUSEADDR before binding, preventing OS error 10048
     // (EADDRINUSE) on rapid restart when the previous socket is still in TIME_WAIT.
-    let addr: SocketAddr = format!("127.0.0.1:{tcp_port}")
+    // In container mode (ORQA_HEADLESS), bind to 0.0.0.0 so Docker port
+    // publishing works. Natively, bind to 127.0.0.1 for security.
+    let host = if std::env::var("ORQA_HEADLESS").is_ok_and(|v| v == "1" || v == "true") {
+        "0.0.0.0"
+    } else {
+        "127.0.0.1"
+    };
+    let addr: SocketAddr = format!("{host}:{tcp_port}")
         .parse()
         .map_err(|e| McpError::Io(io::Error::new(io::ErrorKind::InvalidInput, e)))?;
     let socket =

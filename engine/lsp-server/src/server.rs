@@ -470,7 +470,14 @@ pub async fn run_tcp(
     use std::net::SocketAddr;
     use tokio::net::TcpListener;
 
-    let addr: SocketAddr = format!("127.0.0.1:{port}").parse()?;
+    // In container mode (ORQA_HEADLESS), bind to 0.0.0.0 so Docker port
+    // publishing works. Natively, bind to 127.0.0.1 for security.
+    let host = if std::env::var("ORQA_HEADLESS").is_ok_and(|v| v == "1" || v == "true") {
+        "0.0.0.0"
+    } else {
+        "127.0.0.1"
+    };
+    let addr: SocketAddr = format!("{host}:{port}").parse()?;
 
     // Create the socket with SO_REUSEADDR so the daemon can restart the LSP
     // server on the same port without waiting for TIME_WAIT to expire.

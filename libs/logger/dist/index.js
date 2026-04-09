@@ -7,7 +7,7 @@
  *
  * Endpoint URLs are not hardcoded. The app must call configureLogger() at
  * startup with the URLs derived from infrastructure/ports.json via
- * @orqastudio/constants. This keeps the logger library port-agnostic.
+ * `@orqastudio/constants`. This keeps the logger library port-agnostic.
  *
  * Usage:
  *   import { logger, configureLogger } from "@orqastudio/logger";
@@ -102,7 +102,7 @@ function parseCallStack(stack, skipCount) {
  * Configure logger endpoint URLs from ports resolved by the app.
  *
  * Must be called once at app startup before any log entries are emitted.
- * The app derives URLs from infrastructure/ports.json via @orqastudio/constants.
+ * The app derives URLs from infrastructure/ports.json via `@orqastudio/constants`.
  * Without this call, forwarding to dashboard and daemon silently no-ops.
  * @param config - Endpoint URLs for dashboard and daemon forwarding.
  */
