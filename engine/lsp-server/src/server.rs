@@ -459,15 +459,30 @@ pub async fn run_stdio(
 /// Run the LSP server over a TCP connection.
 ///
 /// Useful for debugging with editors that support TCP LSP connections.
+/// Uses socket2 to set SO_REUSEADDR before binding, preventing EADDRINUSE
+/// crashes when the daemon restarts the LSP server on the same port.
 pub async fn run_tcp(
     project_root: &Path,
     port: u16,
     daemon_port: u16,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    use socket2::{Domain, Protocol, Socket, Type};
+    use std::net::SocketAddr;
     use tokio::net::TcpListener;
 
-    let addr = format!("127.0.0.1:{port}");
-    let listener = TcpListener::bind(&addr).await?;
+    let addr: SocketAddr = format!("127.0.0.1:{port}").parse()?;
+
+    // Create the socket with SO_REUSEADDR so the daemon can restart the LSP
+    // server on the same port without waiting for TIME_WAIT to expire.
+    let socket = Socket::new(Domain::IPV4, Type::STREAM, Some(Protocol::TCP))?;
+    socket.set_reuse_address(true)?;
+    socket.bind(&addr.into())?;
+    socket.listen(1)?;
+
+    let std_listener: std::net::TcpListener = socket.into();
+    std_listener.set_nonblocking(true)?;
+    let listener = TcpListener::from_std(std_listener)?;
+
     tracing::info!("OrqaStudio LSP server listening on {addr}");
 
     let (stream, _) = listener.accept().await?;

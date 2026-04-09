@@ -349,11 +349,21 @@ pub fn run_tcp(
     tcp_port: u16,
     daemon_port: u16,
 ) -> Result<(), McpError> {
-    use std::net::TcpListener;
+    use socket2::{Domain, Protocol, Socket, Type};
+    use std::net::SocketAddr;
 
-    let addr = format!("127.0.0.1:{tcp_port}");
-    let listener = TcpListener::bind(&addr).map_err(McpError::Io)?;
-    tracing::info!(addr, "MCP server listening on TCP");
+    // Use socket2 to set SO_REUSEADDR before binding, preventing OS error 10048
+    // (EADDRINUSE) on rapid restart when the previous socket is still in TIME_WAIT.
+    let addr: SocketAddr = format!("127.0.0.1:{tcp_port}")
+        .parse()
+        .map_err(|e| McpError::Io(io::Error::new(io::ErrorKind::InvalidInput, e)))?;
+    let socket =
+        Socket::new(Domain::IPV4, Type::STREAM, Some(Protocol::TCP)).map_err(McpError::Io)?;
+    socket.set_reuse_address(true).map_err(McpError::Io)?;
+    socket.bind(&addr.into()).map_err(McpError::Io)?;
+    socket.listen(1).map_err(McpError::Io)?;
+    let listener: std::net::TcpListener = socket.into();
+    tracing::info!(addr = %addr, "MCP server listening on TCP");
 
     loop {
         let (stream, peer_addr) = listener.accept().map_err(McpError::Io)?;

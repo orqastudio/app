@@ -16,7 +16,7 @@
 //     endpoint can report per-process detail without re-querying the OS.
 
 use std::path::{Path, PathBuf};
-use std::process::{Child, Command};
+use std::process::{Child, ChildStderr, Command};
 use std::time::Instant;
 
 use tracing::{error, info, warn};
@@ -64,6 +64,8 @@ pub struct SubprocessManager {
     pub binary_path: Option<PathBuf>,
     /// Instant the subprocess was most recently started. `None` until first successful start.
     started_at: Option<Instant>,
+    /// Captured stderr from the child process for crash diagnostics.
+    stderr_output: Option<ChildStderr>,
 }
 
 impl SubprocessManager {
@@ -80,6 +82,7 @@ impl SubprocessManager {
             crash_count: 0,
             binary_path: None,
             started_at: None,
+            stderr_output: None,
         }
     }
 
@@ -183,24 +186,35 @@ impl SubprocessManager {
             "spawning subprocess"
         );
 
-        let mut cmd = Command::new(&binary_path);
+        let mut cmd = self.build_command(&binary_path, project_root);
+        let mut child = cmd.spawn()?;
+        let stderr = child.stderr.take();
+
+        info!(name = %self.name, pid = child.id(), "subprocess started");
+
+        self.binary_path = Some(binary_path);
+        self.started_at = Some(Instant::now());
+        self.stderr_output = stderr;
+        self.child = Some(child);
+        self.status = SubprocessStatus::Running;
+        Ok(())
+    }
+
+    /// Build the `Command` for spawning this subprocess.
+    fn build_command(&self, binary_path: &Path, project_root: &Path) -> Command {
+        let mut cmd = Command::new(binary_path);
         cmd.arg(project_root)
             .args(&self.args)
-            // Stdin is null — subprocesses do not expect interactive input from
-            // the daemon. Stdout is discarded; stderr is captured so subprocess
-            // logs are available without opening a visible console window.
             .stdin(std::process::Stdio::null())
             .stdout(std::process::Stdio::null())
             .stderr(std::process::Stdio::piped());
 
-        // Propagate any caller-supplied environment variables (e.g. ORQA_TRACE_ID).
         for (key, val) in &self.env_vars {
             cmd.env(key, val);
         }
 
         // On Windows, CREATE_NO_WINDOW prevents the child process from opening
-        // a visible console window. Without this flag, every LSP/MCP subprocess
-        // pops up a black cmd.exe window on the desktop.
+        // a visible console window.
         #[cfg(windows)]
         {
             use std::os::windows::process::CommandExt;
@@ -208,19 +222,7 @@ impl SubprocessManager {
             cmd.creation_flags(CREATE_NO_WINDOW);
         }
 
-        let child = cmd.spawn()?;
-
-        info!(
-            name = %self.name,
-            pid = child.id(),
-            "subprocess started"
-        );
-
-        self.binary_path = Some(binary_path);
-        self.started_at = Some(Instant::now());
-        self.child = Some(child);
-        self.status = SubprocessStatus::Running;
-        Ok(())
+        cmd
     }
 
     /// Stop the subprocess by sending SIGKILL (or TerminateProcess on Windows).
@@ -242,6 +244,7 @@ impl SubprocessManager {
             let _ = child.wait();
             info!(name = %self.name, "subprocess stopped");
         }
+        self.stderr_output = None;
         self.status = SubprocessStatus::Stopped;
     }
 
@@ -259,11 +262,13 @@ impl SubprocessManager {
                         self.status = SubprocessStatus::Stopped;
                     } else {
                         self.crash_count += 1;
+                        let stderr_text = self.read_stderr();
                         error!(
                             name = %self.name,
                             pid,
                             exit_status = ?exit_status,
                             crash_count = self.crash_count,
+                            stderr = %stderr_text,
                             "subprocess crashed"
                         );
                         self.status = SubprocessStatus::Crashed;
@@ -285,6 +290,22 @@ impl SubprocessManager {
     /// Return `true` if the subprocess is currently running.
     pub fn is_running(&self) -> bool {
         self.status == SubprocessStatus::Running
+    }
+
+    /// Read remaining stderr bytes from the child process, up to 4 KB.
+    /// Returns an empty string if no stderr is available.
+    fn read_stderr(&mut self) -> String {
+        let Some(stderr) = self.stderr_output.take() else {
+            return String::new();
+        };
+        use std::io::Read;
+        let mut buf = vec![0u8; 4096];
+        let mut reader = std::io::BufReader::new(stderr);
+        match reader.read(&mut buf) {
+            Ok(n) => String::from_utf8_lossy(&buf[..n]).to_string(),
+            Err(_) => String::new(),
+        }
+        // Note: don't store it back — we only need it once per crash
     }
 }
 

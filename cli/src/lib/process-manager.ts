@@ -827,6 +827,8 @@ export class ProcessManager {
 	private rebuilding: Set<string> = new Set();
 	/** Queued file-change path per node, held while the node is rebuilding. */
 	private rebuildQueue: Map<string, string> = new Map();
+	/** Active build child processes — killed during shutdown to prevent orphans. */
+	private buildProcesses: Set<ChildProcess> = new Set();
 
 	private constructor(root: string, graph: ProcessGraph) {
 		this.root = root;
@@ -1110,6 +1112,7 @@ export class ProcessManager {
 				windowsHide: true,
 				shell: isWindows(),
 			});
+			this.buildProcesses.add(child);
 
 			let stderr = "";
 
@@ -1133,6 +1136,7 @@ export class ProcessManager {
 			});
 
 			child.on("close", (code) => {
+				this.buildProcesses.delete(child);
 				if (code === 0) {
 					resolve();
 				} else {
@@ -1447,6 +1451,15 @@ export class ProcessManager {
 		this.shutdownRequested = true;
 		this.log("ctrl", "Shutting down...");
 
+		// Kill in-flight build processes (cargo, node, tsc) to prevent orphans.
+		for (const child of this.buildProcesses) {
+			if (child.pid) {
+				this.log("ctrl", `Killing build process (PID ${child.pid})...`);
+				killProcessTree(child.pid);
+			}
+		}
+		this.buildProcesses.clear();
+
 		// Close all file watchers and clear debounce timers.
 		for (const timer of this.debounceTimers.values()) clearTimeout(timer);
 		this.debounceTimers.clear();
@@ -1459,25 +1472,16 @@ export class ProcessManager {
 		}
 		this.watchers = [];
 
-		// Kill app.
-		const appChild =
-			this.managedProcesses.get("orqa-studio") ??
-			[...this.managedProcesses.entries()].find(
-				([id]) => this.graph.nodes.get(id)?.kind === "tauri-app",
-			)?.[1];
-		if (appChild?.pid) {
-			this.log("ctrl", `Killing app (PID ${appChild.pid})...`);
-			killProcessTree(appChild.pid);
+		// Kill all managed processes (app, search, storybook, etc.)
+		for (const [id, child] of this.managedProcesses) {
+			if (child.pid) {
+				this.log("ctrl", `Killing ${id} (PID ${child.pid})...`);
+				killProcessTree(child.pid);
+			}
 		}
+		this.managedProcesses.clear();
 
-		// Kill search server.
-		const searchChild = this.managedProcesses.get("search");
-		if (searchChild?.pid) {
-			this.log("ctrl", `Killing search (PID ${searchChild.pid})...`);
-			killProcessTree(searchChild.pid);
-		}
-
-		// Stop daemon gracefully.
+		// Stop daemon gracefully (daemon is not in managedProcesses — it's started via runDaemonCommand).
 		try {
 			const { runDaemonCommand } = await import("../commands/daemon.js");
 			await runDaemonCommand(["stop"]);
