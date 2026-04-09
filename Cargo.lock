@@ -3942,6 +3942,7 @@ dependencies = [
  "glob",
  "http-body-util",
  "image",
+ "libc",
  "notify",
  "notify-debouncer-full 0.7.0",
  "orqa-artifact",

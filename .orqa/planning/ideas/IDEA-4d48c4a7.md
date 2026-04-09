@@ -363,15 +363,35 @@ approaches, with a recommended default:
 
 Two distinct modes for the daemon, selectable at startup:
 
-**`orqa dev` (default — native daemon, container Forgejo)**
+**`orqa dev` (default — containerised daemon, stable backend)**
 
-The daemon runs natively on the host, same as today. File watchers trigger
-native `cargo build` (incremental, fast, uses the 93 GB target/ cache) and
-restart the daemon process. Forgejo runs in Docker. This is the day-to-day
-dev workflow when you're actively changing Rust code.
+The daemon runs in Docker from a pre-built image. No Rust source watching,
+no daemon rebuilds. Frontend hot-reload works normally. This is the day-to-day
+workflow — most dev time is frontend work against a stable backend.
 
 ```text
 orqa dev (ProcessManager)
++-- Docker Compose
+|   +-- orqa-daemon (container, ports 10100-10102)
+|   +-- forgejo (container, ports 10030/10222)
++-- orqa-tray (native, polls /health)
++-- cargo tauri dev (OrqaDev + App — native)
++-- Vite dev servers (native, hot-reload)
++-- File watchers for TS/Svelte libs (hot-reload)
++-- No Rust file watchers (container image is static)
+```text
+
+Rebuild the backend manually when needed: `orqa dev rebuild daemon` →
+`docker compose build daemon && docker compose up -d daemon`
+
+**`orqa dev --include-backend` (native daemon, full hot-reload)**
+
+The daemon runs natively on the host. File watchers trigger `cargo build`
+(incremental, fast, uses the 93 GB target/ cache) and restart the daemon.
+Use this when actively changing Rust engine/daemon code.
+
+```text
+orqa dev --include-backend (ProcessManager — full)
 +-- Docker Compose
 |   +-- forgejo (container, ports 10030/10222)
 +-- orqa-daemon (native, port 10100)
@@ -379,36 +399,15 @@ orqa dev (ProcessManager)
 |   +-- orqa-mcp-server (native subprocess)
 +-- orqa-tray (native, polls /health)
 +-- cargo tauri dev (OrqaDev + App — native)
-+-- Vite dev servers (native)
-+-- File watchers → cargo build → restart daemon
++-- Vite dev servers (native, hot-reload)
++-- File watchers for everything (TS, Svelte, Rust → rebuild + restart)
 ```text
 
-Process lifecycle improvement over today:
-- Forgejo gets Docker lifecycle (no orphans, auto-restart)
+Process lifecycle in this mode:
+
+- Forgejo still gets Docker lifecycle (no orphans, auto-restart)
 - Daemon gets subprocess auto-restart for LSP/MCP (Phase 1c)
-- `killAll()` remains for native daemon cleanup on crash
-
-**`orqa dev --services` (containerised daemon, no hot-reload)**
-
-The daemon runs in Docker from a pre-built image. No source watching, no
-rebuilds. Use this when:
-- You're only working on frontend (Svelte/TS) and want a stable backend
-- Testing container deployment locally
-- Reproducing a CI issue
-
-```text
-orqa dev --services (ProcessManager — simplified)
-+-- Docker Compose
-|   +-- orqa-daemon (container, ports 10100-10102)
-|   +-- forgejo (container, ports 10030/10222)
-+-- orqa-tray (native, polls /health)
-+-- cargo tauri dev (OrqaDev + App — native)
-+-- Vite dev servers (native)
-+-- No file watchers for Rust (container image is static)
-```text
-
-Rebuild manually when needed: `orqa dev rebuild daemon` →
-`docker compose build daemon && docker compose up -d daemon`
+- `killAll()` handles native daemon cleanup on crash
 
 ### Option B: cargo watch inside container (LINUX/MAC ONLY)
 
@@ -468,7 +467,7 @@ What auto-rebuilds on file change vs what needs `orqa dev restart <target>`:
 | package.json deps | `*/package.json` | **No** | Needs `npm install` + `orqa dev restart` | Full restart |
 | ONNX models | `models/` | **No** | Needs daemon restart to reload | Daemon restart |
 
-**`orqa dev --services` (containerised daemon)**
+**`orqa dev --include-backend` (containerised daemon)**
 
 | Component | Change in | Auto-rebuild? | Mechanism | Downtime |
 |-----------|-----------|---------------|-----------|----------|
@@ -483,15 +482,16 @@ What auto-rebuilds on file change vs what needs `orqa dev restart <target>`:
 ### Recommendation
 
 Use **Option A** (two-profile) as the default:
-- `orqa dev` for active Rust development (native daemon, fast rebuilds)
-- `orqa dev --services` for frontend-only work (containerised daemon, stable)
-- Option B is available on Linux/macOS where filesystem performance permits
-- Option C is a future optimisation if cross-compilation tooling improves
 
-The key insight: containerisation's primary value here is **lifecycle management**
-(no orphans, auto-restart, unified startup), not build isolation. The native
-daemon already benefits from Phase 1c (auto-restart) and the improved `killAll()`
-cleanup. Full containerisation is reserved for when you don't need hot-reload.
+- `orqa dev` — containerised daemon, stable backend, frontend hot-reload (default)
+- `orqa dev --include-backend` — native daemon, full Rust hot-reload (active engine work)
+- Option B (cargo watch in container) available on Linux/macOS where FS performance permits
+- Option C (cross-compile) is a future optimisation
+
+The key insight: most dev time is frontend work. The default should optimise for
+that. Containerisation gives clean lifecycle management (no orphans, auto-restart,
+unified startup) as a bonus. `--include-backend` opts into the heavier native
+mode only when you're actively touching Rust code.
 
 ## What this doesn't solve (and shouldn't)
 

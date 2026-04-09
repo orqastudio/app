@@ -14,3 +14,7 @@
 
 install: ## Bootstrap the CLI then run orqa install
 	@bash scripts/install.sh
+
+link: ## Relink the CLI onto PATH (fast, use after reboot)
+	@cd libs/types && npx tsc
+	@cd cli && npx tsc && npm link

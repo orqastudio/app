@@ -15,7 +15,7 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import { spawn, execSync, type ChildProcess } from "node:child_process";
 import { platform } from "node:os";
-import { getPort } from "./ports.js";
+import { getPort, getFixedPort } from "./ports.js";
 import { assertNever } from "@orqastudio/types";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -764,15 +764,27 @@ async function waitForDaemon(port: number, timeoutMs: number): Promise<boolean> 
 /**
  * Coordinates the lifecycle of all dev-environment processes.
  *
- * Constructed via ProcessManager.create(root) which reads the dependency graph
- * from disk. Service lifecycle (Task 3) and file-watching (Task 4) fill in the
- * remaining placeholder methods.
+ * Constructed via ProcessManager.create(root, opts) which reads the dependency
+ * graph from disk.
+ *
+ * Two modes:
+ *   - Default (includeBackend = false): the daemon runs via Docker Compose
+ *     (infrastructure/docker-compose.dev.yml). Rust file watchers are skipped
+ *     because the container manages its own rebuild cycle.
+ *   - Native (includeBackend = true, --include-backend flag): the daemon runs
+ *     as a native OS process via runDaemonCommand. Rust file watchers are active.
  */
 export class ProcessManager {
 	/** The resolved dependency graph, read-only after construction. */
 	readonly graph: ProcessGraph;
 	/** Absolute path to the project root. */
 	private root: string;
+	/**
+	 * When false (default), the daemon is managed by Docker Compose and Rust
+	 * file watchers are skipped. When true (--include-backend), the native daemon
+	 * binary is used and Rust watchers rebuild on source changes.
+	 */
+	private includeBackend: boolean;
 	/** Registered event listeners; subscriptions managed via onEvent(). */
 	private eventListeners: Array<(event: NodeEvent) => void> = [];
 	/** Long-running child processes keyed by node ID (services, app). */
@@ -790,20 +802,26 @@ export class ProcessManager {
 	/** Active build child processes — killed during shutdown to prevent orphans. */
 	private buildProcesses: Set<ChildProcess> = new Set();
 
-	private constructor(root: string, graph: ProcessGraph) {
+	private constructor(root: string, graph: ProcessGraph, includeBackend: boolean) {
 		this.root = root;
 		this.graph = graph;
+		this.includeBackend = includeBackend;
 	}
 
 	/**
 	 * Read the dependency graph from disk and return a configured ProcessManager.
 	 * This is the only way to construct an instance.
 	 * @param root - Absolute path to the project root.
+	 * @param opts - Optional configuration options.
+	 * @param opts.includeBackend - When true, use native Rust daemon instead of Docker Compose.
 	 * @returns A fully configured ProcessManager instance.
 	 */
-	static async create(root: string): Promise<ProcessManager> {
+	static async create(
+		root: string,
+		opts: { includeBackend?: boolean } = {},
+	): Promise<ProcessManager> {
 		const graph = await buildProcessGraph(root);
-		return new ProcessManager(root, graph);
+		return new ProcessManager(root, graph, opts.includeBackend ?? false);
 	}
 
 	// ── Build execution ───────────────────────────────────────────────────────
@@ -1114,12 +1132,61 @@ export class ProcessManager {
 	/**
 	 * Start the daemon and auxiliary dev services.
 	 *
-	 * Daemon is started via runDaemonCommand("start") which manages its own PID
-	 * file. Emits starting → running events for each service node.
+	 * Default mode (includeBackend = false): brings up the unified Docker Compose
+	 * stack (daemon + Forgejo) and blocks until the daemon healthcheck passes.
+	 *
+	 * Native mode (includeBackend = true): starts the daemon via its CLI command
+	 * module, which manages its own PID file. Emits starting → running events.
+	 *
+	 * Storybook is always started regardless of mode.
 	 */
 	async startServices(): Promise<void> {
-		await this.startDaemon();
+		if (this.includeBackend) {
+			await this.startDaemon();
+		} else {
+			await this.startDockerCompose();
+		}
 		this.startStorybook();
+	}
+
+	/**
+	 * Bring up the Docker Compose stack defined in infrastructure/docker-compose.dev.yml.
+	 *
+	 * Uses `docker compose up -d --wait` which blocks until all container
+	 * healthchecks pass (daemon /health endpoint included). Emits starting →
+	 * running events on the daemon node.
+	 */
+	private async startDockerCompose(): Promise<void> {
+		const node = this.graph.nodes.get("daemon");
+		if (node) {
+			node.status = "starting";
+			this.emitServiceEvent(node, "starting", "startup");
+		}
+		this.log("docker", "Bringing up Docker Compose stack...");
+
+		const composeFile = path.join(this.root, "infrastructure", "docker-compose.dev.yml");
+		try {
+			await this.spawnAsync("docker", ["compose", "-f", composeFile, "up", "-d", "--wait"], {
+				cwd: this.root,
+				nodeId: "docker",
+				nodeName: "Docker Compose",
+			});
+			if (node) {
+				node.status = "running";
+				this.emitServiceEvent(node, "running", "startup");
+			}
+			this.log("docker", "Docker Compose stack is up.");
+			const forgejoPort = getFixedPort("forgejo_http");
+			this.log("docker", `Forgejo git server: http://localhost:${forgejoPort}`);
+		} catch (err) {
+			const error = err instanceof Error ? err.message : String(err);
+			if (node) {
+				node.status = "build-failed";
+				node.lastError = error;
+				this.emitServiceEvent(node, "build-failed", "startup", error);
+			}
+			this.log("docker", `Docker Compose failed: ${error}`);
+		}
 	}
 
 	/**
@@ -1422,13 +1489,29 @@ export class ProcessManager {
 		}
 		this.managedProcesses.clear();
 
-		// Stop daemon gracefully (daemon is not in managedProcesses — it's started via runDaemonCommand).
-		try {
-			const { runDaemonCommand } = await import("../commands/daemon.js");
-			await runDaemonCommand(["stop"]);
-			this.log("ctrl", "Daemon stopped.");
-		} catch {
-			this.log("ctrl", "Daemon was not running.");
+		// Stop daemon — method depends on mode.
+		if (this.includeBackend) {
+			// Native mode: stop via the daemon CLI command module.
+			try {
+				const { runDaemonCommand } = await import("../commands/daemon.js");
+				await runDaemonCommand(["stop"]);
+				this.log("ctrl", "Daemon stopped.");
+			} catch {
+				this.log("ctrl", "Daemon was not running.");
+			}
+		} else {
+			// Docker Compose mode: bring the whole stack down cleanly.
+			try {
+				const composeFile = path.join(this.root, "infrastructure", "docker-compose.dev.yml");
+				await this.spawnAsync("docker", ["compose", "-f", composeFile, "down"], {
+					cwd: this.root,
+					nodeId: "docker",
+					nodeName: "Docker Compose",
+				});
+				this.log("ctrl", "Docker Compose stack stopped.");
+			} catch {
+				this.log("ctrl", "Docker Compose down failed (may already be stopped).");
+			}
 		}
 
 		// Remove state files.
@@ -1478,17 +1561,25 @@ export class ProcessManager {
 	/**
 	 * Activate file watchers for all nodes that support watch-mode rebuilds.
 	 *
-	 * Skipped:
+	 * Skipped always:
 	 *   - tauri-app: cargo tauri dev manages its own watch loop.
 	 *   - service: restarted as part of the rust-workspace cascade.
 	 *
-	 * Special case for rust-workspace: registers individual watchers for each
-	 * engine crate's src/ directory and daemon/src/ rather than the workspace
-	 * root, so changes in deeply nested crate sources are detected reliably.
+	 * Skipped in Docker Compose mode (includeBackend = false):
+	 *   - rust-workspace: the daemon container manages its own Rust rebuild cycle.
+	 *   - daemon (service): owned by Docker Compose.
+	 *
+	 * Special case for rust-workspace in native mode: registers individual
+	 * watchers for each engine crate's src/ and daemon/src/ rather than the
+	 * workspace root, so changes in deeply nested crate sources are detected.
 	 */
 	watchAll(): void {
 		for (const node of this.graph.nodes.values()) {
 			if (node.kind === "tauri-app" || node.kind === "service") continue;
+
+			// In Docker Compose mode, skip Rust-layer watchers — the container
+			// owns the daemon build cycle.
+			if (!this.includeBackend && node.kind === "rust-workspace") continue;
 
 			if (node.kind === "rust-workspace") {
 				this.watchRustWorkspace(node);

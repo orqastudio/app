@@ -1,0 +1,100 @@
+# docker-compose.dev.yml — unified dev stack: OrqaStudio daemon + Forgejo git server.
+#
+# Port source of truth: infrastructure/ports.json
+#   daemon health/API  10100  (services.daemon)
+#   LSP server         10101  (services.lsp)
+#   MCP server         10102  (services.mcp)
+#   Forgejo HTTP       10030  (services.forgejo_http)
+#   Forgejo SSH        10222  (services.forgejo_ssh)
+#
+# Usage:
+#   docker compose -f infrastructure/docker-compose.dev.yml up -d
+#   docker compose -f infrastructure/docker-compose.dev.yml down
+#
+# The daemon build context is the repo root.  Run from the repo root:
+#   docker compose -f infrastructure/docker-compose.dev.yml up -d
+
+services:
+
+  # ── OrqaStudio daemon ──────────────────────────────────────────────────────
+  # Persistent background process providing file watching, LSP, MCP, and health.
+  # Built from infrastructure/docker/Dockerfile.daemon.
+  daemon:
+    build:
+      context: ../
+      dockerfile: infrastructure/docker/Dockerfile.daemon
+    container_name: orqa-daemon
+    restart: unless-stopped
+    environment:
+      # Port base matches ports.json services.daemon.port.
+      ORQA_PORT_BASE: "10100"
+      # Path to the ONNX embedding model inside the container (models/ bind mount).
+      ORQA_EMBED_MODEL: /project/models/all-MiniLM-L6-v2
+      RUST_LOG: info
+      # Disable system tray — no display server in the container.
+      ORQA_HEADLESS: "1"
+    ports:
+      # Daemon health + HTTP API (ports.json: services.daemon.port)
+      - "10100:10100"
+      # LSP server TCP (ports.json: services.lsp.port)
+      - "10101:10101"
+      # MCP server TCP (ports.json: services.mcp.port)
+      - "10102:10102"
+    volumes:
+      # Project artifacts — read-write so the daemon can write state/metrics.
+      - ../.orqa:/project/.orqa:rw
+      # Plugin sources — read-only; daemon reads but never writes plugins.
+      - ../plugins:/project/plugins:ro
+      # ONNX models — read-only; daemon loads models but never modifies them.
+      - ../models:/project/models:ro
+      # Session state — named volume so it persists across container restarts.
+      - daemon-state:/project/.state
+    working_dir: /project
+    healthcheck:
+      # The daemon exposes GET /health on its HTTP port.
+      test: ["CMD", "curl", "-f", "http://localhost:10100/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ── Forgejo — local Git server ─────────────────────────────────────────────
+  # Hosts OrqaStudio project repositories locally for offline-first operation.
+  # Config mirrors infrastructure/orqastudio-git/docker-compose.yml.
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:10
+    container_name: orqastudio-git
+    restart: unless-stopped
+    environment:
+      FORGEJO__database__DB_TYPE: sqlite3
+      FORGEJO__server__DOMAIN: localhost
+      FORGEJO__server__SSH_DOMAIN: localhost
+      FORGEJO__server__ROOT_URL: http://localhost:10030/
+      FORGEJO__server__HTTP_PORT: "3000"
+      FORGEJO__server__SSH_PORT: "10222"
+      FORGEJO__server__DISABLE_SSH: "false"
+      FORGEJO__server__LFS_START_SERVER: "true"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__repository__DEFAULT_BRANCH: main
+      FORGEJO__repository__ENABLE_PUSH_CREATE_USER: "true"
+      FORGEJO__mirror__ENABLED: "true"
+      FORGEJO__mirror__DEFAULT_INTERVAL: 1h
+      FORGEJO__actions__ENABLED: "true"
+      FORGEJO__service__DISABLE_REGISTRATION: "false"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+    ports:
+      # Forgejo HTTP (ports.json: services.forgejo_http.port)
+      - "10030:3000"
+      # Forgejo SSH (ports.json: services.forgejo_ssh.port)
+      - "10222:22"
+    volumes:
+      - forgejo-data:/data
+      - forgejo-config:/etc/forgejo
+
+volumes:
+  # Daemon session state: metrics, PID files, watcher caches.
+  daemon-state:
+  # Forgejo repository and database storage.
+  forgejo-data:
+  # Forgejo server configuration.
+  forgejo-config:

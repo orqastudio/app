@@ -576,9 +576,22 @@ fn main() {
         .recv()
         .expect("daemon-runtime thread exited before sending tray handles");
 
-    // Run the tray loop on the main thread (Win32 message pump requirement).
-    // Returns when Quit is selected or the shutdown flag is set externally.
-    let tray_status = tray::run_tray_loop(Arc::clone(&shutdown_flag), subprocess_statuses);
+    // In headless mode (ORQA_HEADLESS=1, e.g. running in a Docker container),
+    // skip the tray entirely and just wait for the shutdown signal.
+    let headless = std::env::var("ORQA_HEADLESS").is_ok_and(|v| v == "1" || v == "true");
+
+    let tray_status = if headless {
+        // Block the main thread until the shutdown flag is set externally
+        // (Ctrl-C, SIGTERM, or Docker stop).
+        while !shutdown_flag.load(Ordering::SeqCst) {
+            std::thread::sleep(std::time::Duration::from_millis(250));
+        }
+        tray::TrayStatus::Headless
+    } else {
+        // Run the tray loop on the main thread (Win32 message pump requirement).
+        // Returns when Quit is selected or the shutdown flag is set externally.
+        tray::run_tray_loop(Arc::clone(&shutdown_flag), subprocess_statuses)
+    };
 
     // Ensure the shutdown flag is set so the async event loop exits even if
     // the tray returned Headless (no tray support on this platform).

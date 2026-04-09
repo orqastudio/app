@@ -1,0 +1,190 @@
+# Dockerfile.daemon — multi-stage build for the OrqaStudio daemon, LSP server, and MCP server.
+# Produces a minimal runtime image with only the three headless binaries.
+# The builder stage caches Rust dependencies by copying all Cargo manifests first,
+# building stubs to prime the registry cache, then replacing stubs with real source.
+#
+# Ubuntu 24.04 (glibc 2.39) is required as both builder and runtime:
+#   - ort-sys C++ objects compiled with clang emit __isoc23_strtol references (C23 stdlib)
+#     which are present in glibc >= 2.38 but absent in Debian bookworm (glibc 2.36).
+#   - Rust >= 1.88 is required: ort, image, time crates declare rust-version = "1.88".
+#     edition2024 (transitive dep arrow-string v58) needs Rust >= 1.85.
+
+# ── Builder ───────────────────────────────────────────────────────────────────
+FROM ubuntu:24.04 AS builder
+
+# Install Rust via rustup, then system packages needed at build time:
+#   build-essential / gcc    — linker and C standard library
+#   pkg-config / libssl-dev  — reqwest (TLS)
+#   cmake                    — some C libraries in the dep tree (ort)
+#   clang / libclang-dev     — ort (ONNX Runtime) builds C++ objects via clang
+#   libglib2.0-dev           — tray-icon links against glib-2.0 on Linux
+#     (even headless builds link the GTK stack; the tray gracefully falls
+#      back to headless at runtime when no display is available)
+#   libgtk-3-dev             — tray-icon on Linux uses GTK3 menus
+#   libxdo-dev               — xdotool/libxdo used by tray focus helper on Linux
+#   curl                     — used by rustup installer
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    pkg-config \
+    libssl-dev \
+    cmake \
+    clang \
+    libclang-dev \
+    libglib2.0-dev \
+    libgtk-3-dev \
+    libxdo-dev \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Rust 1.88 via rustup (no tty required — use non-interactive mode).
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
+    sh -s -- -y --default-toolchain 1.88.0 --profile minimal --no-modify-path
+
+WORKDIR /build
+
+# ── Step 1: copy workspace-level manifests ────────────────────────────────────
+# Copying every Cargo.toml before any source lets Docker cache the dependency
+# download/compile layer.  When only source files change the dep layer is reused.
+COPY Cargo.toml Cargo.lock ./
+
+# Engine library crates (lib-only, no binary)
+COPY engine/agent/Cargo.toml       engine/agent/Cargo.toml
+COPY engine/artifact/Cargo.toml    engine/artifact/Cargo.toml
+COPY engine/core/Cargo.toml        engine/core/Cargo.toml
+COPY engine/enforcement/Cargo.toml engine/enforcement/Cargo.toml
+COPY engine/graph/Cargo.toml       engine/graph/Cargo.toml
+COPY engine/lesson/Cargo.toml      engine/lesson/Cargo.toml
+COPY engine/plugin/Cargo.toml      engine/plugin/Cargo.toml
+COPY engine/project/Cargo.toml     engine/project/Cargo.toml
+COPY engine/prompt/Cargo.toml      engine/prompt/Cargo.toml
+COPY engine/search/Cargo.toml      engine/search/Cargo.toml
+COPY engine/storage/Cargo.toml     engine/storage/Cargo.toml
+COPY engine/streaming/Cargo.toml   engine/streaming/Cargo.toml
+COPY engine/types/Cargo.toml       engine/types/Cargo.toml
+COPY engine/validation/Cargo.toml  engine/validation/Cargo.toml
+COPY engine/workflow/Cargo.toml    engine/workflow/Cargo.toml
+
+# Server crates (lib + binary each)
+COPY engine/mcp-server/Cargo.toml  engine/mcp-server/Cargo.toml
+COPY engine/lsp-server/Cargo.toml  engine/lsp-server/Cargo.toml
+
+# Application crates (excluded from the build targets but must be present in
+# the workspace so Cargo does not complain about missing members)
+COPY app/src-tauri/Cargo.toml      app/src-tauri/Cargo.toml
+COPY devtools/src-tauri/Cargo.toml devtools/src-tauri/Cargo.toml
+
+# Daemon
+COPY daemon/Cargo.toml daemon/Cargo.toml
+
+# ── Step 2: create stub sources for every workspace member ────────────────────
+# Cargo requires src/lib.rs or src/main.rs to be present when resolving the
+# dependency graph.  We create empty stubs so `cargo build` can download and
+# compile all transitive dependencies without needing real source code.
+RUN set -e; \
+    # Engine libraries — all lib-only
+    for crate in agent artifact core enforcement graph lesson plugin project \
+                 prompt search storage streaming types validation workflow; do \
+        mkdir -p engine/$crate/src && \
+        printf '// stub\n' > engine/$crate/src/lib.rs; \
+    done; \
+    # validation also has a binary
+    mkdir -p engine/validation/src/bin && \
+    printf 'fn main() {}\n' > engine/validation/src/bin/server.rs; \
+    # mcp-server: lib + bin
+    mkdir -p engine/mcp-server/src/bin && \
+    printf '// stub\n' > engine/mcp-server/src/lib.rs && \
+    printf 'fn main() {}\n' > engine/mcp-server/src/bin/server.rs; \
+    # lsp-server: lib + bin
+    mkdir -p engine/lsp-server/src/bin && \
+    printf '// stub\n' > engine/lsp-server/src/lib.rs && \
+    printf 'fn main() {}\n' > engine/lsp-server/src/bin/server.rs; \
+    # daemon: lib + bin
+    mkdir -p daemon/src && \
+    printf '// stub\n' > daemon/src/lib.rs && \
+    printf 'fn main() {}\n' > daemon/src/main.rs; \
+    # Tauri app stubs — satisfy the workspace; they will not be built
+    mkdir -p app/src-tauri/src && \
+    printf '// stub\n' > app/src-tauri/src/lib.rs && \
+    printf 'fn main() {}\n' > app/src-tauri/src/main.rs; \
+    mkdir -p devtools/src-tauri/src && \
+    printf '// stub\n' > devtools/src-tauri/src/lib.rs && \
+    printf 'fn main() {}\n' > devtools/src-tauri/src/main.rs
+
+# Files referenced by include_str!/include_bytes! at compile time.
+# Must be present for both the stub build (dep-cache) and the real build.
+#   engine/types/src/platform.rs   — libs/types/src/platform/core.json
+#   engine/types/src/ports.rs      — infrastructure/ports.json
+#   daemon/src/tray.rs             — libs/brand/assets/icons/favicon-32x32.png
+COPY libs/types/src/platform/core.json              libs/types/src/platform/core.json
+COPY libs/brand/assets/icons/favicon-32x32.png      libs/brand/assets/icons/favicon-32x32.png
+COPY infrastructure/ports.json                       infrastructure/ports.json
+
+# ── Step 3: prime the dependency cache ───────────────────────────────────────
+# Build only the three target binaries in release mode using stub sources.
+# This downloads and compiles all transitive dependencies (including ort-sys,
+# duckdb, tokenizers) and caches them in target/release/deps.
+# The Tauri crates are excluded by only naming the three target binaries.
+RUN cargo build --release \
+        --bin orqa-daemon \
+        --bin orqa-mcp-server \
+        --bin orqa-lsp-server
+
+# ── Step 4: replace stubs with real source ────────────────────────────────────
+# Remove ALL compiled artefacts for workspace-internal crates (orqa_*).
+# The stub sources produced empty .rlib files that export no symbols.  Cargo
+# caches by fingerprint, so simply overwriting the source does not trigger a
+# recompile unless the fingerprint files are also removed.  Deleting every
+# orqa_* artefact forces Cargo to recompile all internal crates from real source.
+# Third-party deps (non-orqa prefixes) are preserved for cache efficiency.
+RUN find target/release/deps -name 'orqa_*' -o -name 'liborqa_*' | xargs rm -f 2>/dev/null; \
+    rm -f target/release/orqa-daemon \
+          target/release/orqa-mcp-server \
+          target/release/orqa-lsp-server; \
+    find target/release/.fingerprint -maxdepth 1 -name 'orqa-*' -type d | xargs rm -rf 2>/dev/null; \
+    true
+
+COPY engine/ engine/
+COPY daemon/ daemon/
+
+# ── Step 5: build real binaries ───────────────────────────────────────────────
+RUN cargo build --release \
+        --bin orqa-daemon \
+        --bin orqa-mcp-server \
+        --bin orqa-lsp-server
+
+# ── Runtime ───────────────────────────────────────────────────────────────────
+# Ubuntu 24.04 provides glibc 2.39 which matches the builder glibc.
+# The binaries link against glibc 2.38+ symbols (__isoc23_strtol from ort-sys)
+# so the runtime must provide glibc >= 2.38.
+FROM ubuntu:24.04 AS runtime
+
+# ca-certificates — TLS verification for outbound HTTPS (reqwest, plugin downloads)
+# curl            — used by the daemon health-check endpoint
+# libxdo3         — runtime dep of tray-icon's Linux focus helper (xdotool)
+# libgtk-3-0     — GTK3 runtime for tray-icon (even in headless mode the lib is linked)
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    libxdo3 \
+    libgtk-3-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the three headless binaries from the builder stage.
+COPY --from=builder /build/target/release/orqa-daemon     /usr/local/bin/orqa-daemon
+COPY --from=builder /build/target/release/orqa-mcp-server /usr/local/bin/orqa-mcp-server
+COPY --from=builder /build/target/release/orqa-lsp-server /usr/local/bin/orqa-lsp-server
+
+# Tell the daemon it is running headless — disables the system tray code path.
+ENV ORQA_HEADLESS=1
+
+# The daemon mounts the project directory at /project.
+WORKDIR /project
+
+ENTRYPOINT ["orqa-daemon"]

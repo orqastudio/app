@@ -51,6 +51,9 @@ Subcommands:
   tool [args...]      Run the debug-tool submodule
 
 Flags:
+  --include-backend   Run the native Rust daemon instead of Docker Compose (advanced).
+                      Default: daemon runs in a Docker container via
+                      infrastructure/docker-compose.dev.yml.
   --legacy-dashboard  Use the legacy dev.mjs web dashboard instead of OrqaDev (deprecated)
 `.trim();
 // ── Logging ───────────────────────────────────────────────────────────────────
@@ -170,28 +173,49 @@ function cleanupSignalFile(root) {
 /**
  * Find and kill all OrqaStudio processes by name and port.
  * Used before a fresh start and by `orqa dev kill`.
+ *
+ * In Docker Compose mode (includeBackend = false, the default): the daemon
+ * container is brought down via `docker compose down` before killing any
+ * remaining native processes. In native mode: the daemon is stopped via its
+ * CLI command module as before.
+ *
  * @param root - Absolute path to the dev repo root.
  * @param opts - Optional kill modifiers.
  * @param opts.preserveDevtools - When true, skip killing the Tauri devtools process.
+ * @param opts.includeBackend - When true, use native daemon stop instead of docker compose down.
  */
 async function killAll(root, opts = {}) {
     logCtrl("Stopping OrqaStudio processes...");
-    try {
-        const { runDaemonCommand } = await import("./daemon.js");
-        await runDaemonCommand(["stop"]);
-        logCtrl("Daemon stopped.");
+    if (opts.includeBackend) {
+        // Native mode: stop the daemon via its CLI command module.
+        try {
+            const { runDaemonCommand } = await import("./daemon.js");
+            await runDaemonCommand(["stop"]);
+            logCtrl("Daemon stopped.");
+        }
+        catch {
+            /* not running */
+        }
     }
-    catch {
-        /* not running */
+    else {
+        // Docker Compose mode: bring down the whole stack cleanly first.
+        const composeFile = path.join(root, "infrastructure", "docker-compose.dev.yml");
+        if (fs.existsSync(composeFile)) {
+            try {
+                execSync(`docker compose -f "${composeFile}" down`, {
+                    cwd: root,
+                    stdio: "inherit",
+                });
+                logCtrl("Docker Compose stack stopped.");
+            }
+            catch {
+                // Stack may not have been running — continue with native cleanup.
+            }
+        }
     }
     const pidsToKill = new Set();
     // Batch discovery — single PowerShell call on Windows instead of one per name.
-    const processNames = [
-        "orqa-studio",
-        "orqa-mcp-server",
-        "orqa-lsp-server",
-        "orqa-validation",
-    ];
+    const processNames = ["orqa-studio", "orqa-mcp-server", "orqa-lsp-server", "orqa-validation"];
     if (!opts.preserveDevtools) {
         processNames.push("orqa-devtools", "cargo-tauri");
     }
@@ -274,8 +298,10 @@ async function killAll(root, opts = {}) {
  * Launch OrqaDev (the devtools Tauri app) via `cargo tauri dev`.
  * This is the default subcommand — the user runs `orqa dev` from their shell.
  * @param root - Absolute path to the dev repo root.
+ * @param opts - Optional configuration options.
+ * @param opts.includeBackend - When true, use native Rust daemon instead of Docker Compose.
  */
-async function cmdDev(root) {
+async function cmdDev(root, opts = {}) {
     const devtoolsDir = path.join(root, "devtools");
     if (!fs.existsSync(path.join(devtoolsDir, "src-tauri", "tauri.conf.json"))) {
         logError("ctrl", "devtools directory not found. Are you in the dev repo root?");
@@ -290,11 +316,11 @@ async function cmdDev(root) {
     }
     // Stop all running OrqaStudio processes so cargo can overwrite binaries.
     // Wait for Windows to release file handles on the killed processes.
-    await killAll(root, { preserveDevtools: true });
+    await killAll(root, { preserveDevtools: true, includeBackend: opts.includeBackend });
     await sleep(2_000);
     // ── Step 1: Build all packages via the process manager ──────────────
     logCtrl("Building all packages...");
-    const pm = await ProcessManager.create(root);
+    const pm = await ProcessManager.create(root, { includeBackend: opts.includeBackend });
     const result = await pm.buildAll();
     if (result.failed.length > 0) {
         for (const f of result.failed)
@@ -372,8 +398,10 @@ async function cmdDev(root) {
  * Called by OrqaDev via `orqa dev start-processes`. All process orchestration
  * is delegated to ProcessManager — this function is a thin setup wrapper.
  * @param root - Absolute path to the dev repo root.
+ * @param opts - Optional configuration options.
+ * @param opts.includeBackend - When true, use native Rust daemon instead of Docker Compose.
  */
-async function cmdStartProcesses(root) {
+async function cmdStartProcesses(root, opts = {}) {
     logCtrl("Rebuilding CLI...");
     try {
         execSync(`${npx()} tsc --project ${path.join(root, "cli/tsconfig.json")}`, {
@@ -393,9 +421,9 @@ async function cmdStartProcesses(root) {
     }
     // Stop all running OrqaStudio processes so cargo can overwrite binaries.
     // Preserve devtools — this command is called FROM devtools.
-    await killAll(root, { preserveDevtools: true });
+    await killAll(root, { preserveDevtools: true, includeBackend: opts.includeBackend });
     // Build, start, and watch via ProcessManager.
-    const pm = await ProcessManager.create(root);
+    const pm = await ProcessManager.create(root, { includeBackend: opts.includeBackend });
     const result = await pm.buildAll();
     if (result.failed.length > 0) {
         for (const f of result.failed)
@@ -441,13 +469,13 @@ async function cmdStop(root) {
     logCtrl("No controller running. Use 'orqa dev kill' to force-kill orphaned processes.");
 }
 // ── Subcommand: kill ──────────────────────────────────────────────────────────
-async function cmdKill(root) {
-    await killAll(root);
+async function cmdKill(root, opts = {}) {
+    await killAll(root, { includeBackend: opts.includeBackend });
     removeControlFile(root);
     cleanupSignalFile(root);
 }
 // ── Subcommand: restart (send signal to running controller) ───────────────────
-async function cmdSignal(root, signal, label) {
+async function cmdSignal(root, signal, label, opts = {}) {
     const ctrl = readControlFile(root);
     if (ctrl && processIsAlive(ctrl.pid)) {
         logCtrl(`Signalling controller to ${label}...`);
@@ -460,7 +488,7 @@ async function cmdSignal(root, signal, label) {
         removeControlFile(root);
     if (signal === "restart-tauri" || signal === "restart") {
         logCtrl("No controller running. Starting dev environment...");
-        await cmdDev(root);
+        await cmdDev(root, opts);
         return;
     }
     logError("ctrl", "No controller running. Use 'orqa dev' first.");
@@ -553,25 +581,26 @@ export async function runDevCommand(args) {
     const root = getRoot();
     const legacyDashboard = args.includes("--legacy-dashboard");
     void legacyDashboard; // retained for flag-strip only; OrqaDev no longer uses it
-    const filteredArgs = args.filter((a) => a !== "--legacy-dashboard");
+    const includeBackend = args.includes("--include-backend");
+    const filteredArgs = args.filter((a) => a !== "--legacy-dashboard" && a !== "--include-backend");
     const sub = filteredArgs[0] ?? "dev";
     switch (sub) {
         case "dev":
-            await cmdDev(root);
+            await cmdDev(root, { includeBackend });
             break;
         case "start-processes":
-            await cmdStartProcesses(root);
+            await cmdStartProcesses(root, { includeBackend });
             break;
         case "stop":
             await cmdStop(root);
             break;
         case "kill":
-            await cmdKill(root);
+            await cmdKill(root, { includeBackend });
             break;
         case "restart": {
             const target = filteredArgs[1];
             if (!target) {
-                await cmdSignal(root, "restart", "Full restart");
+                await cmdSignal(root, "restart", "Full restart", { includeBackend });
             }
             else {
                 const signalMap = {
@@ -583,7 +612,7 @@ export async function runDevCommand(args) {
                 };
                 const entry = signalMap[target];
                 if (entry) {
-                    await cmdSignal(root, entry[0], entry[1]);
+                    await cmdSignal(root, entry[0], entry[1], { includeBackend });
                 }
                 else {
                     console.error(`Unknown restart target: ${target}`);

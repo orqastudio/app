@@ -1,11 +1,11 @@
 /**
  * Hosting commands — local git server management.
  *
- * orqa hosting up       Start the local git server
- * orqa hosting down     Stop the local git server
+ * orqa hosting up       (redirects to orqa dev — Forgejo is now part of the dev stack)
+ * orqa hosting down     (redirects to orqa dev — use orqa dev kill to stop everything)
  * orqa hosting setup    First-time setup (admin user, org, repo, push)
- * orqa hosting status   Show server status
- * orqa hosting logs     Show server logs
+ * orqa hosting status   Show server container status
+ * orqa hosting logs     Follow server logs
  * orqa hosting push     Push monorepo to the local server
  * orqa hosting mirror   Show instructions for configuring a push mirror
  */
@@ -22,8 +22,8 @@ const USAGE = `
 Usage: orqa hosting <subcommand>
 
 Subcommands:
-  up        Start the local git server
-  down      Stop the local git server
+  up        (use 'orqa dev' — Forgejo starts automatically as part of the dev stack)
+  down      (use 'orqa dev kill' — stops all dev services including Forgejo)
   setup     First-time setup (admin user, org, repo, push)
   status    Show server container status
   logs      Follow server logs (Ctrl+C to stop)
@@ -61,15 +61,18 @@ export async function runHostingCommand(args: string[]): Promise<void> {
 
 	switch (subcommand) {
 		case "up":
-			console.log("Starting local git server...");
-			run(composeCmd(root, "up -d"), root);
-			console.log(`\nServer started. Web UI: http://localhost:${forgejoPort}`);
+			console.log(
+				`Forgejo is now managed by 'orqa dev' and starts automatically with the dev stack.\n` +
+					`Run 'orqa dev' to start all dev services including the git server.\n` +
+					`Web UI will be available at http://localhost:${forgejoPort} once the stack is up.`,
+			);
 			break;
 
 		case "down":
-			console.log("Stopping local git server...");
-			run(composeCmd(root, "down"), root);
-			console.log("Server stopped.");
+			console.log(
+				`Forgejo is now managed by 'orqa dev'.\n` +
+					`Run 'orqa dev kill' to stop all dev services including the git server.`,
+			);
 			break;
 
 		case "setup": {
