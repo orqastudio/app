@@ -112,6 +112,14 @@ fn status_label(status: SubprocessStatus) -> &'static str {
     }
 }
 
+/// IDs of the interactive menu items, returned by `build_menu` so the event
+/// loop can match incoming `MenuEvent`s to the correct action.
+struct MenuIds {
+    open_app: tray_icon::menu::MenuId,
+    open_devtools: tray_icon::menu::MenuId,
+    quit: tray_icon::menu::MenuId,
+}
+
 /// Build the tray context menu with current LSP and MCP subprocess statuses.
 ///
 /// Menu structure:
@@ -120,15 +128,11 @@ fn status_label(status: SubprocessStatus) -> &'static str {
 ///   - "LSP: <status>" — current LSP server status (non-interactive)
 ///   - "MCP: <status>" — current MCP server status (non-interactive)
 ///   - Separator
-///   - "Open App" — launches the OrqaStudio application
+///   - "Open App" — focus or launch OrqaStudio
+///   - "Open DevTools" — focus or launch OrqaDev
+///   - Separator
 ///   - "Quit" — triggers graceful daemon shutdown
-fn build_menu(
-    statuses: SubprocessStatuses,
-) -> (
-    tray_icon::menu::Menu,
-    tray_icon::menu::MenuId,
-    tray_icon::menu::MenuId,
-) {
+fn build_menu(statuses: SubprocessStatuses) -> (tray_icon::menu::Menu, MenuIds) {
     use tray_icon::menu::{Menu, MenuItem, PredefinedMenuItem};
 
     let menu = Menu::new();
@@ -138,75 +142,188 @@ fn build_menu(
     let lsp_item = MenuItem::new(format!("LSP: {}", status_label(statuses.lsp)), false, None);
     let mcp_item = MenuItem::new(format!("MCP: {}", status_label(statuses.mcp)), false, None);
     let sep2 = PredefinedMenuItem::separator();
-    let open_item = MenuItem::new("Open App", true, None);
+    let open_app_item = MenuItem::new("Open App", true, None);
+    let open_devtools_item = MenuItem::new("Open DevTools", true, None);
+    let sep3 = PredefinedMenuItem::separator();
     let quit_item = MenuItem::new("Quit", true, None);
 
-    let open_id = open_item.id().clone();
-    let quit_id = quit_item.id().clone();
+    let ids = MenuIds {
+        open_app: open_app_item.id().clone(),
+        open_devtools: open_devtools_item.id().clone(),
+        quit: quit_item.id().clone(),
+    };
 
     menu.append(&header).expect("menu append header");
     menu.append(&sep1).expect("menu append sep1");
     menu.append(&lsp_item).expect("menu append lsp");
     menu.append(&mcp_item).expect("menu append mcp");
     menu.append(&sep2).expect("menu append sep2");
-    menu.append(&open_item).expect("menu append open");
+    menu.append(&open_app_item).expect("menu append open_app");
+    menu.append(&open_devtools_item)
+        .expect("menu append open_devtools");
+    menu.append(&sep3).expect("menu append sep3");
     menu.append(&quit_item).expect("menu append quit");
 
-    (menu, open_id, quit_id)
+    (menu, ids)
 }
 
 /// Rebuild the tray context menu when subprocess statuses have changed.
 ///
-/// Updates `tray` with a fresh menu and refreshes `open_id`, `quit_id`,
-/// `last_lsp`, and `last_mcp`. No-op when statuses match the last-rendered
-/// values. Both IDs must be updated together because each `build_menu` call
-/// generates new `MenuId` values — stale IDs will never match incoming events.
+/// Updates `tray` with a fresh menu and refreshes all `MenuIds`. No-op when
+/// statuses match the last-rendered values. All IDs must be updated together
+/// because each `build_menu` call generates new `MenuId` values — stale IDs
+/// will never match incoming events.
 fn maybe_refresh_menu(
     tray: &tray_icon::TrayIcon,
     current: SubprocessStatuses,
-    open_id: &mut tray_icon::menu::MenuId,
-    quit_id: &mut tray_icon::menu::MenuId,
+    ids: &mut MenuIds,
     last_lsp: &mut SubprocessStatus,
     last_mcp: &mut SubprocessStatus,
 ) {
     if current.lsp != *last_lsp || current.mcp != *last_mcp {
-        let (new_menu, new_open_id, new_quit_id) = build_menu(current);
-        *open_id = new_open_id;
-        *quit_id = new_quit_id;
+        let (new_menu, new_ids) = build_menu(current);
+        *ids = new_ids;
         tray.set_menu(Some(Box::new(new_menu)));
         *last_lsp = current.lsp;
         *last_mcp = current.mcp;
     }
 }
 
-/// Launch the OrqaStudio application in the default browser.
+/// Focus an existing window with `window_title`, or launch `binary_name` if no
+/// window is found.
 ///
-/// Uses the platform-native mechanism to open the app URL:
-/// - macOS: `open <url>`
-/// - Windows: `cmd /c start <url>`
-/// - Linux/other: `xdg-open <url>`
+/// On Windows, uses `FindWindowW` to locate the window by title and
+/// `SetForegroundWindow` to bring it to the front. On other platforms, falls
+/// back to spawning the binary (Tauri single-instance handling should focus
+/// the existing window).
+fn focus_or_launch(binary_name: &str, window_title: &str) {
+    if try_focus_window(window_title) {
+        tracing::info!(
+            subsystem = "tray",
+            window = window_title,
+            "[tray] focused existing window"
+        );
+        return;
+    }
+
+    // No existing window — launch the binary.
+    launch_binary(binary_name, window_title);
+}
+
+/// Attempt to find and focus a window by its title.
 ///
-/// Errors are logged but do not crash the daemon — the tray remains functional
-/// even when the app cannot be launched.
-fn open_app() {
-    use orqa_engine::ports::{resolve_port_base, VITE_PORT_OFFSET};
-    let port = resolve_port_base() + VITE_PORT_OFFSET;
-    let url = format!("http://localhost:{port}");
+/// Returns `true` if the window was found and focused, `false` otherwise.
+#[cfg(windows)]
+#[allow(unsafe_code)]
+fn try_focus_window(window_title: &str) -> bool {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        FindWindowW, IsIconic, SetForegroundWindow, ShowWindow, SW_RESTORE,
+    };
 
-    #[cfg(target_os = "macos")]
-    let result = std::process::Command::new("open").arg(&url).spawn();
+    let title_wide: Vec<u16> = window_title
+        .encode_utf16()
+        .chain(std::iter::once(0))
+        .collect();
 
-    #[cfg(target_os = "windows")]
-    let result = std::process::Command::new("cmd")
-        .args(["/c", "start", &url])
-        .spawn();
+    // Safety: FindWindowW with null class name searches all top-level windows.
+    // The wide string is null-terminated and valid for the duration of the call.
+    let hwnd = unsafe { FindWindowW(std::ptr::null(), title_wide.as_ptr()) };
+    if hwnd.is_null() {
+        return false;
+    }
 
-    #[cfg(not(any(target_os = "macos", target_os = "windows")))]
-    let result = std::process::Command::new("xdg-open").arg(&url).spawn();
+    // Safety: hwnd is a valid window handle returned by FindWindowW.
+    // Restore if minimised, then bring to foreground.
+    unsafe {
+        if IsIconic(hwnd) != 0 {
+            ShowWindow(hwnd, SW_RESTORE);
+        }
+        SetForegroundWindow(hwnd);
+    }
+    true
+}
 
-    match result {
-        Ok(_) => tracing::info!(subsystem = "tray", %url, "[tray] opened app in browser"),
-        Err(e) => tracing::warn!(subsystem = "tray", error = %e, %url, "[tray] failed to open app"),
+/// On macOS, use AppleScript to activate the application by window title.
+#[cfg(target_os = "macos")]
+fn try_focus_window(window_title: &str) -> bool {
+    // AppleScript: tell the application whose name matches to activate.
+    // Tauri window titles match the app name in the menu bar.
+    let script = format!(
+        r#"tell application "System Events"
+            set targetProcess to first process whose frontmost is false and name contains "{window_title}"
+            set frontmost of targetProcess to true
+        end tell"#
+    );
+    std::process::Command::new("osascript")
+        .args(["-e", &script])
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+}
+
+/// On Linux, use wmctrl to activate a window by title. Falls back to xdotool.
+#[cfg(not(any(windows, target_os = "macos")))]
+fn try_focus_window(window_title: &str) -> bool {
+    // Try wmctrl first (most reliable for X11 and some Wayland compositors).
+    if std::process::Command::new("wmctrl")
+        .args(["-a", window_title])
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+    {
+        return true;
+    }
+
+    // Fallback: xdotool for X11.
+    std::process::Command::new("xdotool")
+        .args(["search", "--name", window_title, "windowactivate"])
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false)
+}
+
+/// Launch a binary by name, searching sibling directory and PATH.
+///
+/// The binary is spawned detached so it survives independently of the daemon.
+fn launch_binary(binary_name: &str, label: &str) {
+    let binary_path = crate::subprocess::SubprocessManager::find_binary(binary_name);
+
+    let Some(bin) = binary_path else {
+        tracing::warn!(
+            subsystem = "tray",
+            binary = binary_name,
+            "[tray] binary not found — cannot launch {label}"
+        );
+        return;
+    };
+
+    let mut cmd = std::process::Command::new(&bin);
+
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        // DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
+        cmd.creation_flags(0x0000_0008 | 0x0000_0200);
+    }
+
+    match cmd.spawn() {
+        Ok(_) => tracing::info!(
+            subsystem = "tray",
+            binary = %bin.display(),
+            "[tray] launched {label}"
+        ),
+        Err(e) => tracing::warn!(
+            subsystem = "tray",
+            error = %e,
+            binary = %bin.display(),
+            "[tray] failed to launch {label}"
+        ),
     }
 }
 
@@ -271,8 +388,7 @@ fn pump_messages() {}
 /// Returns `Some(TrayStatus::Exited)` when Quit is selected, `None` to continue.
 fn process_events(
     tray: &tray_icon::TrayIcon,
-    open_id: &mut tray_icon::menu::MenuId,
-    quit_id: &mut tray_icon::menu::MenuId,
+    ids: &mut MenuIds,
     last_lsp: &mut SubprocessStatus,
     last_mcp: &mut SubprocessStatus,
     subprocess_statuses: &Arc<Mutex<SubprocessStatuses>>,
@@ -282,7 +398,7 @@ fn process_events(
 
     // Process right-click context menu events.
     while let Ok(event) = MenuEvent::receiver().try_recv() {
-        if event.id == *quit_id {
+        if event.id == ids.quit {
             tracing::info!(
                 subsystem = "tray",
                 "[tray] Quit selected — initiating shutdown"
@@ -290,13 +406,17 @@ fn process_events(
             shutdown_flag.store(true, Ordering::SeqCst);
             return Some(TrayStatus::Exited);
         }
-        if event.id == *open_id {
+        if event.id == ids.open_app {
             tracing::info!(subsystem = "tray", "[tray] Open App selected");
-            open_app();
+            focus_or_launch("orqa-studio", "OrqaStudio");
+        }
+        if event.id == ids.open_devtools {
+            tracing::info!(subsystem = "tray", "[tray] Open DevTools selected");
+            focus_or_launch("orqa-devtools", "OrqaDev");
         }
     }
 
-    // Process left-click events — open the app directly.
+    // Process left-click events — focus or launch the app.
     // Respond on ButtonUp to avoid double-firing with a DoubleClick that may follow.
     while let Ok(event) = TrayIconEvent::receiver().try_recv() {
         if let TrayIconEvent::Click {
@@ -305,13 +425,13 @@ fn process_events(
             ..
         } = event
         {
-            tracing::info!(subsystem = "tray", "[tray] left-click — opening app");
-            open_app();
+            tracing::info!(subsystem = "tray", "[tray] left-click — focusing app");
+            focus_or_launch("orqa-studio", "OrqaStudio");
         }
     }
 
     let current = subprocess_statuses.lock().map(|g| *g).unwrap_or_default();
-    maybe_refresh_menu(tray, current, open_id, quit_id, last_lsp, last_mcp);
+    maybe_refresh_menu(tray, current, ids, last_lsp, last_mcp);
     None
 }
 
@@ -328,7 +448,7 @@ pub fn run_tray_loop(
 
     let icon = build_icon();
     let initial = SubprocessStatuses::default();
-    let (initial_menu, mut open_id, mut quit_id) = build_menu(initial);
+    let (initial_menu, mut ids) = build_menu(initial);
 
     let tray = match TrayIconBuilder::new()
         .with_menu(Box::new(initial_menu))
@@ -359,8 +479,7 @@ pub fn run_tray_loop(
 
         if let Some(status) = process_events(
             &tray,
-            &mut open_id,
-            &mut quit_id,
+            &mut ids,
             &mut last_lsp,
             &mut last_mcp,
             &subprocess_statuses,

@@ -36,6 +36,7 @@ Subcommands:
   enforce       Enforcement + integrity validation (--fix, --mechanism, --report)
   audit         Full governance audit with escalation scanning
   schema        Validate project.json and plugin manifests
+  ports         Validate static config files match infrastructure/ports.json
   <tool-name>   Run a specific plugin tool (e.g. eslint, clippy, svelte-check)
 
 Running 'orqa check' with no subcommand runs the validation engine AND all
@@ -82,6 +83,13 @@ export async function runCheckCommand(args) {
     if (target === "schema") {
         const { runEnforceCommand } = await import("./enforce.js");
         await runEnforceCommand(root, ["schema", ...args.slice(1)]);
+        return;
+    }
+    if (target === "ports") {
+        const { runCheckPortsCommand } = await import("./check-ports.js");
+        const exitCode = await runCheckPortsCommand();
+        if (exitCode !== 0)
+            process.exit(exitCode);
         return;
     }
     // "orqa check validate" — run only the shared validation engine

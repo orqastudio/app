@@ -55,5 +55,3 @@ jobs:
       - name: Test
         run: cargo test
 
-      - name: Build release binary
-        run: cargo build --release --bin orqa-search-server

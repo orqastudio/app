@@ -5,6 +5,6 @@
  * All CLI code imports from this module so that there is one import path to
  * update if the package layout ever changes.
  */
-export { DEFAULT_PORT_BASE, PORT_OFFSETS, getPortBase, getPort } from "@orqastudio/constants";
-export type { ServiceName } from "@orqastudio/constants";
+export { DEFAULT_PORT_BASE, PORT_OFFSETS, getPortBase, getPort, getFixedPort, } from "@orqastudio/constants";
+export type { ServiceName, AnyServiceName } from "@orqastudio/constants";
 //# sourceMappingURL=ports.d.ts.map

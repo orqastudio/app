@@ -5,11 +5,14 @@
 //!   LLM clients that spawn `orqa-mcp-server` directly.
 //! - **TCP**: listens on `127.0.0.1:<port>` and handles one client connection —
 //!   used when the daemon manages the MCP server as a persistent process.
+//!
+//! Search operations are fully delegated to the daemon's HTTP search endpoints.
+//! The MCP server holds no local SearchEngine instance — the daemon owns the
+//! single DuckDB index at .state/search.duckdb.
 
 use std::io::{self, BufRead, Write};
 use std::path::PathBuf;
 
-use orqa_engine::search::SearchEngine;
 use serde_json::{json, Value};
 use tracing::{debug, warn};
 
@@ -22,12 +25,13 @@ use crate::types::{JsonRpcError, JsonRpcRequest, JsonRpcResponse, McpResource};
 // Server state
 // ---------------------------------------------------------------------------
 
-/// The MCP server. Holds a daemon client for graph operations and a lazy
-/// search engine for semantic/regex queries.
+/// The MCP server. Holds a daemon client for all graph and search operations.
+///
+/// Search is fully delegated to the daemon — no local SearchEngine instance is
+/// held here. All tool calls go through the daemon HTTP API.
 pub struct McpServer {
     project_root: PathBuf,
     daemon: DaemonClient,
-    search: Option<SearchEngine>,
 }
 
 impl McpServer {
@@ -41,62 +45,7 @@ impl McpServer {
         Self {
             project_root,
             daemon: DaemonClient::new(daemon_port),
-            search: None,
         }
-    }
-
-    // -----------------------------------------------------------------------
-    // Lazy accessor
-    // -----------------------------------------------------------------------
-
-    /// Get or initialise the search engine (lazy init).
-    fn get_search(&mut self) -> Result<&mut SearchEngine, String> {
-        if self.search.is_none() {
-            let db_path = self.project_root.join(".orqa").join("search.duckdb");
-            let mut engine = SearchEngine::new(&db_path)
-                .map_err(|e| format!("failed to init search engine: {e}"))?;
-
-            engine
-                .index(
-                    &self.project_root,
-                    &[
-                        "node_modules".into(),
-                        "target".into(),
-                        ".git".into(),
-                        "dist".into(),
-                    ],
-                )
-                .map_err(|e| format!("failed to index project: {e}"))?;
-
-            // Try to init embedder from known model locations.
-            // Priority: ORQA_MODEL_DIR env var > project-root models/ > app data dir > ~/Downloads
-            let env_model_dir = std::env::var("ORQA_MODEL_DIR").ok().map(PathBuf::from);
-            let project_model_dir = Some(self.project_root.join("models").join("all-MiniLM-L6-v2"));
-            let model_dirs = [
-                env_model_dir,
-                project_model_dir,
-                dirs_next::data_dir().map(|d| {
-                    d.join("com.orqastudio.app")
-                        .join("models")
-                        .join("all-MiniLM-L6-v2")
-                }),
-                dirs_next::home_dir().map(|d| d.join("Downloads")),
-            ];
-            for dir in model_dirs.into_iter().flatten() {
-                if dir.join("model.onnx").exists()
-                    && dir.join("tokenizer.json").exists()
-                    && engine.init_embedder_sync(&dir).is_ok()
-                {
-                    let _ = engine.embed_chunks();
-                    break;
-                }
-            }
-
-            self.search = Some(engine);
-        }
-        self.search
-            .as_mut()
-            .ok_or_else(|| "search engine not available".into())
     }
 
     // -----------------------------------------------------------------------
@@ -194,16 +143,10 @@ impl McpServer {
             "graph_read" => graph_tools::tool_read(&self.project_root, &arguments),
             "graph_refresh" => graph_tools::tool_refresh(&self.daemon),
             "graph_traceability" => graph_tools::tool_traceability(&self.daemon, &arguments),
-            "search_regex" => self
-                .get_search()
-                .and_then(|e| search_tools::tool_search_regex(e, &arguments)),
-            "search_semantic" => self
-                .get_search()
-                .and_then(|e| search_tools::tool_search_semantic(e, &arguments)),
-            "search_research" => self
-                .get_search()
-                .and_then(|e| search_tools::tool_search_research(e, &arguments)),
-            "search_status" => self.get_search().and_then(search_tools::tool_search_status),
+            "search_regex" => search_tools::tool_search_regex(&self.daemon, &arguments),
+            "search_semantic" => search_tools::tool_search_semantic(&self.daemon, &arguments),
+            "search_research" => search_tools::tool_search_research(&self.daemon, &arguments),
+            "search_status" => search_tools::tool_search_status(&self.daemon),
             _ => Err(format!("unknown tool: {tool_name}")),
         };
 

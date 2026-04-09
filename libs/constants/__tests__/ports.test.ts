@@ -1,17 +1,13 @@
 /**
  * Tests for port constants and resolution functions.
  *
- * Verifies that the single-source-of-truth port constants have the expected
- * values and that getPort/getPortBase correctly apply environment overrides.
+ * Verifies that the single-source-of-truth port constants (read from
+ * infrastructure/ports.json) have the expected values and that
+ * getPort/getPortBase correctly apply environment overrides.
  */
 
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-	DEFAULT_PORT_BASE,
-	PORT_OFFSETS,
-	getPortBase,
-	getPort,
-} from "../src/ports.js";
+import { DEFAULT_PORT_BASE, PORT_OFFSETS, getPortBase, getPort } from "../src/ports.js";
 
 describe("DEFAULT_PORT_BASE", () => {
 	it("is 10100", () => {
@@ -32,8 +28,8 @@ describe("PORT_OFFSETS", () => {
 		expect(PORT_OFFSETS.mcp).toBe(2);
 	});
 
-	it("vite offset is 20", () => {
-		expect(PORT_OFFSETS.vite).toBe(20);
+	it("vite offset is 320 (10100 + 320 = 10420)", () => {
+		expect(PORT_OFFSETS.vite).toBe(320);
 	});
 
 	it("dashboard offset is 30", () => {
@@ -121,8 +117,8 @@ describe("getPort", () => {
 		expect(getPort("mcp")).toBe(10102);
 	});
 
-	it("vite port equals DEFAULT_PORT_BASE + 20", () => {
-		expect(getPort("vite")).toBe(10120);
+	it("vite port equals 10420 (base 10100 + offset 320)", () => {
+		expect(getPort("vite")).toBe(10420);
 	});
 
 	it("dashboard port equals DEFAULT_PORT_BASE + 30", () => {

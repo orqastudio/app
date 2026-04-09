@@ -14,6 +14,8 @@
 
 set -euo pipefail
 
+# PORT SOURCE OF TRUTH: infrastructure/ports.json services.forgejo_http.port
+# Validated by: orqa check ports
 SERVER_URL="http://localhost:10030"
 CONTAINER="orqastudio"
 ADMIN_USER="${ORQA_GIT_USER:-orqa-admin}"

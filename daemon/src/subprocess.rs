@@ -8,8 +8,10 @@
 // Design decisions:
 //   - Binary presence is checked before spawning so the daemon degrades
 //     gracefully when the server binaries are not yet built.
-//   - The daemon does NOT restart subprocesses on crash (that is a future
-//     phase enhancement). It logs the exit and marks the process as stopped.
+//   - Crashed subprocesses are automatically restarted with exponential backoff
+//     (2s, 4s, 8s, 16s, 30s) up to max_restarts (5) consecutive crashes.
+//   - crash_count resets to zero after the subprocess runs stably for 60s,
+//     so transient failures do not permanently exhaust the restart budget.
 //   - `check_status` polls the child's exit code rather than sending a signal
 //     so the check is non-destructive on all platforms.
 //   - `binary_path` and `started_at` are recorded at spawn time so the health
@@ -17,7 +19,7 @@
 
 use std::path::{Path, PathBuf};
 use std::process::{Child, ChildStderr, Command};
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
 use tracing::{error, info, warn};
 
@@ -42,6 +44,12 @@ pub enum SubprocessStatus {
 /// `check_status` method polls the child's exit code to detect crashes.
 /// `binary_path` and `started_at` are set when the subprocess is successfully
 /// spawned so callers can report per-process detail for the health endpoint.
+///
+/// Auto-restart: when a crash is detected the manager schedules a restart with
+/// exponential backoff. The event loop calls `poll_restart` on each tick to
+/// trigger the restart once the backoff delay has elapsed. After `max_restarts`
+/// consecutive crashes the manager stops retrying and logs an error. The crash
+/// count resets to zero when the subprocess runs stably for 60 seconds.
 pub struct SubprocessManager {
     /// Human-readable name for logging (e.g., "mcp-server").
     pub name: String,
@@ -57,9 +65,17 @@ pub struct SubprocessManager {
     child: Option<Child>,
     /// Last known status.
     status: SubprocessStatus,
-    /// Number of times this subprocess has crashed since it was created.
-    /// Incremented each time `check_status` observes a non-zero exit code.
+    /// Number of consecutive crashes. Incremented on each crash, reset to zero
+    /// after 60 seconds of stable running.
     pub crash_count: u32,
+    /// Maximum consecutive crashes before giving up on auto-restart.
+    max_restarts: u32,
+    /// Project root passed to the most recent `start()` call, stored so that
+    /// `restart()` can re-spawn without the caller needing to re-supply it.
+    project_root: Option<PathBuf>,
+    /// When `Some`, the event loop should trigger a restart at this instant.
+    /// Set by `schedule_restart()`, cleared by `poll_restart()`.
+    next_restart_at: Option<Instant>,
     /// Resolved binary path recorded at spawn time. `None` until first successful start.
     pub binary_path: Option<PathBuf>,
     /// Instant the subprocess was most recently started. `None` until first successful start.
@@ -80,6 +96,9 @@ impl SubprocessManager {
             child: None,
             status: SubprocessStatus::Stopped,
             crash_count: 0,
+            max_restarts: 5,
+            project_root: None,
+            next_restart_at: None,
             binary_path: None,
             started_at: None,
             stderr_output: None,
@@ -197,6 +216,7 @@ impl SubprocessManager {
         self.stderr_output = stderr;
         self.child = Some(child);
         self.status = SubprocessStatus::Running;
+        self.project_root = Some(project_root.to_path_buf());
         Ok(())
     }
 
@@ -250,6 +270,11 @@ impl SubprocessManager {
 
     /// Poll the child's exit status and update `self.status` accordingly.
     ///
+    /// When the subprocess has been running stably for 60 seconds, resets
+    /// `crash_count` to zero so transient past failures do not exhaust the
+    /// restart budget. When a crash is detected, schedules an auto-restart
+    /// with exponential backoff unless the restart budget is exhausted.
+    ///
     /// Returns the current status after polling. Call this periodically from
     /// the event loop to detect crashes without blocking.
     pub fn check_status(&mut self) -> SubprocessStatus {
@@ -272,11 +297,21 @@ impl SubprocessManager {
                             "subprocess crashed"
                         );
                         self.status = SubprocessStatus::Crashed;
+                        self.schedule_restart();
                     }
                     self.child = None;
                 }
                 Ok(None) => {
-                    // Still running — no state change.
+                    // Still running — reset crash count if uptime exceeds 60s.
+                    if let Some(started) = self.started_at {
+                        if started.elapsed() >= Duration::from_secs(60) && self.crash_count > 0 {
+                            info!(
+                                name = %self.name,
+                                "subprocess stable for 60s — resetting crash count"
+                            );
+                            self.crash_count = 0;
+                        }
+                    }
                     self.status = SubprocessStatus::Running;
                 }
                 Err(e) => {
@@ -290,6 +325,82 @@ impl SubprocessManager {
     /// Return `true` if the subprocess is currently running.
     pub fn is_running(&self) -> bool {
         self.status == SubprocessStatus::Running
+    }
+
+    /// Compute the backoff delay in milliseconds for the current crash count.
+    ///
+    /// Schedule: 2s → 4s → 8s → 16s → 30s (capped). Uses crash_count before
+    /// incrementing so crash_count=1 yields the first backoff delay of 2000ms.
+    fn backoff_ms(&self) -> u64 {
+        // crash_count is already incremented by the time this is called.
+        let exponent = self.crash_count.saturating_sub(1);
+        let delay = 2000u64.saturating_mul(1u64 << exponent.min(4));
+        delay.min(30_000)
+    }
+
+    /// Return `true` if auto-restart should be attempted.
+    ///
+    /// Returns `false` once crash_count exceeds max_restarts or if there is no
+    /// stored project_root to restart with.
+    fn should_restart(&self) -> bool {
+        self.crash_count <= self.max_restarts && self.project_root.is_some()
+    }
+
+    /// Schedule a restart after the appropriate backoff delay.
+    ///
+    /// Does nothing if `should_restart()` is false. Logs whether a restart is
+    /// being scheduled or whether the retry budget is exhausted.
+    fn schedule_restart(&mut self) {
+        if !self.should_restart() {
+            error!(
+                name = %self.name,
+                crash_count = self.crash_count,
+                max_restarts = self.max_restarts,
+                "subprocess exceeded max restarts — giving up"
+            );
+            return;
+        }
+        let delay = self.backoff_ms();
+        let restart_at = Instant::now() + Duration::from_millis(delay);
+        self.next_restart_at = Some(restart_at);
+        warn!(
+            name = %self.name,
+            crash_count = self.crash_count,
+            backoff_ms = delay,
+            "scheduling auto-restart after backoff"
+        );
+    }
+
+    /// Restart the subprocess: stop any remnant, then start again.
+    ///
+    /// Uses the project_root stored from the previous `start()` call. Logs an
+    /// error and returns early if no project_root is available.
+    pub fn restart(&mut self) {
+        let Some(root) = self.project_root.clone() else {
+            error!(name = %self.name, "cannot restart — no project_root stored");
+            return;
+        };
+        info!(name = %self.name, crash_count = self.crash_count, "restarting subprocess");
+        self.stop();
+        if let Err(e) = self.start(&root) {
+            error!(name = %self.name, error = %e, "restart failed — subprocess will not run");
+        }
+    }
+
+    /// Check whether a scheduled restart is due and execute it if so.
+    ///
+    /// Called by the event loop on every polling tick. Returns `true` if a
+    /// restart was triggered this tick, `false` otherwise.
+    pub fn poll_restart(&mut self) -> bool {
+        let Some(restart_at) = self.next_restart_at else {
+            return false;
+        };
+        if Instant::now() < restart_at {
+            return false;
+        }
+        self.next_restart_at = None;
+        self.restart();
+        true
     }
 
     /// Read remaining stderr bytes from the child process, up to 4 KB.

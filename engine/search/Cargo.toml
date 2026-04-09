@@ -8,10 +8,6 @@ description = "ONNX-based code search engine for OrqaStudio"
 name = "orqa_search"
 path = "src/lib.rs"
 
-[[bin]]
-name = "orqa-search-server"
-path = "src/bin/server.rs"
-
 [dependencies]
 thiserror = "2"
 serde = { version = "1", features = ["derive"] }

@@ -422,9 +422,11 @@ async fn run(
 /// Poll the shutdown flag and yield to the tokio runtime between checks.
 ///
 /// Polls both LSP and MCP subprocess statuses on each iteration so crashes are
-/// logged promptly. Writes the latest statuses to `subprocess_statuses` for the
-/// tray thread and to `process_snapshots` for the health endpoint. Polling every
-/// 250 ms adds negligible overhead for a long-running background process.
+/// logged promptly. After status polling, checks whether a scheduled auto-restart
+/// is due for either subprocess and triggers it. Writes the latest statuses to
+/// `subprocess_statuses` for the tray thread and to `process_snapshots` for the
+/// health endpoint. Polling every 250 ms adds negligible overhead for a
+/// long-running background process.
 async fn run_event_loop(
     shutdown_flag: &Arc<AtomicBool>,
     lsp: &mut SubprocessManager,
@@ -439,6 +441,10 @@ async fn run_event_loop(
         // Poll subprocess statuses to detect crashes and log them.
         let lsp_status = lsp.check_status();
         let mcp_status = mcp.check_status();
+
+        // Trigger any pending auto-restarts whose backoff delay has elapsed.
+        lsp.poll_restart();
+        mcp.poll_restart();
 
         // Update the shared status snapshot for the tray thread to read.
         if let Ok(mut guard) = subprocess_statuses.lock() {

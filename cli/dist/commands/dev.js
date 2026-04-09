@@ -190,7 +190,6 @@ async function killAll(root, opts = {}) {
         "orqa-studio",
         "orqa-mcp-server",
         "orqa-lsp-server",
-        "orqa-search-server",
         "orqa-validation",
     ];
     if (!opts.preserveDevtools) {

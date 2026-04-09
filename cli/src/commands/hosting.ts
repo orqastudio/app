@@ -13,6 +13,7 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
 import { getRoot } from "../lib/root.js";
+import { getFixedPort } from "@orqastudio/constants";
 
 const COMPOSE_FILE = "infrastructure/orqastudio-git/docker-compose.yml";
 const SETUP_SCRIPT = "infrastructure/orqastudio-git/setup.sh";
@@ -56,11 +57,13 @@ export async function runHostingCommand(args: string[]): Promise<void> {
 
 	const root = getRoot();
 
+	const forgejoPort = getFixedPort("forgejo_http");
+
 	switch (subcommand) {
 		case "up":
 			console.log("Starting local git server...");
 			run(composeCmd(root, "up -d"), root);
-			console.log("\nServer started. Web UI: http://localhost:10030");
+			console.log(`\nServer started. Web UI: http://localhost:${forgejoPort}`);
 			break;
 
 		case "down":
@@ -104,7 +107,7 @@ A push mirror replicates commits from the local git server to GitHub automatical
 This must be configured via the server web UI because it requires a GitHub token.
 
 Steps:
-  1. Open the server web UI: http://localhost:10030
+  1. Open the server web UI: http://localhost:${forgejoPort}
   2. Navigate to the repository settings
   3. Click "Mirror Settings"
   4. Add a push mirror:

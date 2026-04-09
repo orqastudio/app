@@ -2,13 +2,20 @@
  * Centralized logger for OrqaStudio.
  *
  * Provides structured logging with levels, source tags, and dual forwarding:
- * - Dev dashboard at localhost:10130/log (for live SSE display)
- * - Daemon event bus at localhost:10100/events (for persistence)
+ * - Dev dashboard /log endpoint (for live SSE display)
+ * - Daemon event bus /events endpoint (for persistence)
  *
- * Use this instead of bare `console.log` throughout the codebase.
+ * Endpoint URLs are not hardcoded. The app must call configureLogger() at
+ * startup with the URLs derived from infrastructure/ports.json via
+ * `@orqastudio/constants`. This keeps the logger library port-agnostic.
  *
  * Usage:
- *   import { logger } from "@orqastudio/logger";
+ *   import { logger, configureLogger } from "@orqastudio/logger";
+ *   import { getPort } from "@orqastudio/constants";
+ *   configureLogger({
+ *     devLogUrl: `http://localhost:${getPort("dashboard")}/log`,
+ *     daemonEventsUrl: `http://localhost:${getPort("daemon")}/events`,
+ *   });
  *   const log = logger("navigation");
  *   log.info("Opened artifact", path);
  *   log.perf("loadContent", () => fetchContent(path));
@@ -49,10 +56,18 @@ export interface Logger {
 
 type LogSubscriber = (entry: LogEntry) => void;
 
-const DEV_LOG_URL = "http://localhost:10130/log";
-// Daemon event bus ingest URL — matches ORQA_PORT_BASE default of 10100.
-// This constant mirrors the port used by daemon/src/health.rs.
-const DAEMON_EVENTS_URL = "http://localhost:10100/events";
+/** Logger endpoint configuration set by the app at startup via configureLogger(). */
+interface LoggerConfig {
+	/** URL of the dev dashboard log ingest endpoint (e.g. http://localhost:10130/log). */
+	readonly devLogUrl: string;
+	/** URL of the daemon event bus ingest endpoint (e.g. http://localhost:10100/events). */
+	readonly daemonEventsUrl: string;
+}
+
+// Endpoint URLs are set by the app at startup. Null before configureLogger() is called —
+// forwarding silently no-ops when unconfigured (safe during SSR or unit tests).
+let _devLogUrl: string | null = null;
+let _daemonEventsUrl: string | null = null;
 
 // Immutable reassignment pattern — subscribers is replaced rather than mutated in place.
 let subscribers: readonly LogSubscriber[] = [];
@@ -132,14 +147,29 @@ function parseCallStack(stack: string | undefined, skipCount: number): StackFram
 	return frames;
 }
 
+/**
+ * Configure logger endpoint URLs from ports resolved by the app.
+ *
+ * Must be called once at app startup before any log entries are emitted.
+ * The app derives URLs from infrastructure/ports.json via `@orqastudio/constants`.
+ * Without this call, forwarding to dashboard and daemon silently no-ops.
+ * @param config - Endpoint URLs for dashboard and daemon forwarding.
+ */
+export function configureLogger(config: LoggerConfig): void {
+	_devLogUrl = config.devLogUrl;
+	_daemonEventsUrl = config.daemonEventsUrl;
+}
+
 function forwardToDashboard(level: string, source: string, message: string): void {
+	if (!_devLogUrl) return;
 	try {
+		const url = _devLogUrl;
 		const body = JSON.stringify({ level, source, message: `[${source}] ${message}` });
 		if (typeof navigator !== "undefined" && navigator.sendBeacon) {
 			const blob = new Blob([body], { type: "application/json" });
-			navigator.sendBeacon(DEV_LOG_URL, blob);
+			navigator.sendBeacon(url, blob);
 		} else if (typeof fetch !== "undefined") {
-			void fetch(DEV_LOG_URL, {
+			void fetch(url, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body,
@@ -168,8 +198,10 @@ function forwardToDaemonBus(
 	message: string,
 	stackFrames?: StackFrame[],
 ): void {
+	if (!_daemonEventsUrl) return;
 	try {
 		if (typeof fetch === "undefined") return;
+		const url = _daemonEventsUrl;
 		const event: Record<string, unknown> = {
 			level,
 			source: "frontend",
@@ -181,7 +213,7 @@ function forwardToDaemonBus(
 			event.stack_frames = stackFrames;
 		}
 		const body = JSON.stringify([event]);
-		void fetch(DAEMON_EVENTS_URL, {
+		void fetch(url, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body,

@@ -227,13 +227,7 @@ async function killAll(root: string, opts: { preserveDevtools?: boolean } = {}):
 	const pidsToKill = new Set<number>();
 
 	// Batch discovery — single PowerShell call on Windows instead of one per name.
-	const processNames = [
-		"orqa-studio",
-		"orqa-mcp-server",
-		"orqa-lsp-server",
-		"orqa-search-server",
-		"orqa-validation",
-	];
+	const processNames = ["orqa-studio", "orqa-mcp-server", "orqa-lsp-server", "orqa-validation"];
 	if (!opts.preserveDevtools) {
 		processNames.push("orqa-devtools", "cargo-tauri");
 	}

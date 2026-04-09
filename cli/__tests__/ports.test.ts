@@ -4,15 +4,11 @@
  *
  * Every OrqaStudio service derives its port from a single base plus a fixed
  * offset. These tests verify that derivation is correct and that the env var
- * override works as expected.
+ * override works as expected. Port values are read from infrastructure/ports.json
+ * via `@orqastudio/constants` — no hardcoded values appear here.
  */
 import { describe, it, expect, afterEach } from "vitest";
-import {
-	DEFAULT_PORT_BASE,
-	PORT_OFFSETS,
-	getPortBase,
-	getPort,
-} from "../src/lib/ports.js";
+import { DEFAULT_PORT_BASE, PORT_OFFSETS, getPortBase, getPort } from "../src/lib/ports.js";
 
 const ORIGINAL_ENV = process.env["ORQA_PORT_BASE"];
 
@@ -52,8 +48,8 @@ describe("PORT_OFFSETS", () => {
 		expect(PORT_OFFSETS.mcp).toBe(2);
 	});
 
-	it("vite offset is 20", () => {
-		expect(PORT_OFFSETS.vite).toBe(20);
+	it("vite offset is 320 (10100 + 320 = 10420)", () => {
+		expect(PORT_OFFSETS.vite).toBe(320);
 	});
 
 	it("dashboard offset is 30", () => {
@@ -119,9 +115,9 @@ describe("getPort", () => {
 		expect(getPort("mcp")).toBe(DEFAULT_PORT_BASE + 2);
 	});
 
-	it("vite port is base + 20", () => {
+	it("vite port is 10420 (base 10100 + offset 320)", () => {
 		delete process.env["ORQA_PORT_BASE"];
-		expect(getPort("vite")).toBe(DEFAULT_PORT_BASE + 20);
+		expect(getPort("vite")).toBe(10420);
 	});
 
 	it("devtools port is base + 40", () => {
@@ -134,6 +130,6 @@ describe("getPort", () => {
 		expect(getPort("daemon")).toBe(20000);
 		expect(getPort("lsp")).toBe(20001);
 		expect(getPort("mcp")).toBe(20002);
-		expect(getPort("vite")).toBe(20020);
+		expect(getPort("vite")).toBe(20320);
 	});
 });

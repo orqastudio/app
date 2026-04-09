@@ -7,6 +7,9 @@
 ##
 ## Access: http://localhost:10030
 ## SSH:    ssh://git@localhost:10222
+##
+## Port source of truth: infrastructure/ports.json (services.forgejo_http, services.forgejo_ssh)
+## Validated by: orqa check ports
 
 services:
   orqastudio:

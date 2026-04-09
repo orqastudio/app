@@ -2,7 +2,8 @@
  * Dev-mode logging setup.
  *
  * Sets the log level to debug in dev mode and intercepts browser console
- * methods to forward entries to the dev dashboard at localhost:10130/log.
+ * methods to forward entries to the dev dashboard. The dashboard port is
+ * resolved from infrastructure/ports.json via `@orqastudio/constants`.
  * Dashboard forwarding for SDK logger entries is handled by the SDK's
  * built-in forwardToDashboard() in emit().
  *
@@ -10,6 +11,7 @@
  */
 
 import { setLogLevel } from "@orqastudio/sdk";
+import { getPort } from "@orqastudio/constants";
 
 /**
  * Initialize dev console settings.
@@ -20,6 +22,8 @@ export function initDevConsole() {
 
 	// Set log level to debug in dev mode
 	setLogLevel("debug");
+
+	const devLogUrl = `http://localhost:${getPort("dashboard")}/log`;
 
 	// Intercept console methods and forward to the dev dashboard.
 	// The original method is always called first so normal browser output is unaffected.
@@ -34,10 +38,7 @@ export function initDevConsole() {
 			const message = args.map((a) => (typeof a === "string" ? a : JSON.stringify(a))).join(" ");
 			const level = method === "log" ? "info" : method;
 			const payload = JSON.stringify({ level, source: "console", message });
-			navigator.sendBeacon(
-				"http://localhost:10130/log",
-				new Blob([payload], { type: "text/plain" }),
-			);
+			navigator.sendBeacon(devLogUrl, new Blob([payload], { type: "text/plain" }));
 		};
 	}
 }

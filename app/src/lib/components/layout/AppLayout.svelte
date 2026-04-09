@@ -17,6 +17,8 @@
 	import { ErrorToast } from "@orqastudio/svelte-components/connected";
 	import { getStores, logger } from "@orqastudio/sdk";
 	import { initDevConsole } from "$lib/utils/dev-console";
+	import { configureLogger } from "@orqastudio/logger";
+	import { getPort } from "@orqastudio/constants";
 
 	const log = logger("lifecycle");
 
@@ -72,6 +74,12 @@
 
 	onMount(async () => {
 		log.info("app shell mounted");
+		// Configure logger endpoints from ports.json via @orqastudio/constants.
+		// Must be called before any forwarded log entries are emitted.
+		configureLogger({
+			devLogUrl: `http://localhost:${getPort("dashboard")}/log`,
+			daemonEventsUrl: `http://localhost:${getPort("daemon")}/events`,
+		});
 		settingsStore.initialize();
 		errorStore.initialize();
 		errorStore.initBrowserHandlers();

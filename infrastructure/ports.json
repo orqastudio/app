@@ -1,0 +1,15 @@
+{
+	"base": 10100,
+	"services": {
+		"daemon": { "offset": 0, "port": 10100, "description": "Daemon health + HTTP API" },
+		"lsp": { "offset": 1, "port": 10101, "description": "LSP server (TCP)" },
+		"mcp": { "offset": 2, "port": 10102, "description": "MCP server (TCP)" },
+		"forgejo_http": { "offset": null, "port": 10030, "description": "Git server HTTP" },
+		"forgejo_ssh": { "offset": null, "port": 10222, "description": "Git server SSH" },
+		"vite": { "offset": 320, "port": 10420, "description": "App Vite dev server" },
+		"dashboard": { "offset": 30, "port": 10130, "description": "Dev dashboard" },
+		"sync": { "offset": 31, "port": 10131, "description": "Sync bridge" },
+		"devtools": { "offset": 40, "port": 10140, "description": "DevTools Vite dev server" },
+		"storybook": { "offset": 50, "port": 10150, "description": "Storybook" }
+	}
+}

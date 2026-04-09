@@ -1,11 +1,72 @@
 // Port constants for all OrqaStudio services.
 //
-// All services derive their ports from a single base (ORQA_PORT_BASE, default
-// 10100) plus a fixed offset. This module is the single source of truth for
-// Rust port numbers — every crate that needs a port imports from here rather
-// than duplicating constants inline.
+// infrastructure/ports.json is the single source of truth for all port
+// assignments. This module embeds that file at compile time (include_str!) and
+// parses it once at startup via OnceLock so every crate that needs a port
+// imports from here rather than duplicating constants or hardcoding values.
+//
+// Services with an "offset" in ports.json derive their port from the base plus
+// that offset. ORQA_PORT_BASE overrides the runtime base while keeping all
+// offsets constant. Services without an offset (forgejo_http, forgejo_ssh) have
+// a fixed port that is not affected by ORQA_PORT_BASE.
 
-/// Default base port for all OrqaStudio services.
+use std::sync::OnceLock;
+
+use serde::Deserialize;
+
+// Embed the ports JSON at compile time. The path is relative to this source
+// file (engine/types/src/ports.rs) → three levels up to the repo root, then
+// infrastructure/ports.json.
+const PORTS_JSON_STR: &str = include_str!("../../../infrastructure/ports.json");
+
+// ---------------------------------------------------------------------------
+// Deserialization types
+// ---------------------------------------------------------------------------
+
+/// One entry in the "services" map of infrastructure/ports.json.
+#[derive(Debug, Deserialize)]
+struct ServiceEntry {
+    /// Offset from the base port, or null for fixed-port services.
+    offset: Option<u16>,
+    /// The absolute port number (base + offset, or fixed value).
+    port: u16,
+}
+
+/// Top-level shape of infrastructure/ports.json.
+#[derive(Debug, Deserialize)]
+struct PortsJson {
+    /// The base port number (default 10100). Offset-based services derive their
+    /// port from base + offset. Tests assert this value for regression safety.
+    #[cfg_attr(not(test), allow(dead_code))]
+    base: u16,
+    services: std::collections::HashMap<String, ServiceEntry>,
+}
+
+// ---------------------------------------------------------------------------
+// Compile-time-embedded, runtime-parsed singleton
+// ---------------------------------------------------------------------------
+
+/// Parsed ports.json. Initialised once on first access via `ports()`.
+static PORTS: OnceLock<PortsJson> = OnceLock::new();
+
+/// Return a reference to the parsed ports.json singleton.
+///
+/// Panics if the embedded JSON is malformed — this would be a compile-time
+/// defect caught in CI, not a runtime error in production.
+fn ports() -> &'static PortsJson {
+    PORTS.get_or_init(|| {
+        serde_json::from_str(PORTS_JSON_STR)
+            .expect("infrastructure/ports.json is embedded at compile time and must be valid JSON")
+    })
+}
+
+// ---------------------------------------------------------------------------
+// Public constants
+// ---------------------------------------------------------------------------
+
+/// Default base port for all OrqaStudio services (daemon offset = 0).
+///
+/// Equals ports.json `base`. ORQA_PORT_BASE overrides this at runtime.
 pub const DEFAULT_PORT_BASE: u16 = 10100;
 
 /// Port offset for the daemon health endpoint.
@@ -17,15 +78,15 @@ pub const LSP_PORT_OFFSET: u16 = 1;
 /// Port offset for the MCP server.
 pub const MCP_PORT_OFFSET: u16 = 2;
 
-/// Port offset for the Vite dev server (frontend).
-pub const VITE_PORT_OFFSET: u16 = 20;
+/// Port offset for the Vite dev server. 10100 + 320 = 10420.
+pub const VITE_PORT_OFFSET: u16 = 320;
 
 /// Port offset for the debug dashboard.
 pub const DASHBOARD_PORT_OFFSET: u16 = 30;
 
-/// Port offset for the IPC socket used by the Tauri app for internal
-/// communication between the sidecar processes and the main app process.
-pub const IPC_SOCKET_PORT_OFFSET: u16 = 58;
+// ---------------------------------------------------------------------------
+// Runtime port resolution
+// ---------------------------------------------------------------------------
 
 /// Resolve the port base from the ORQA_PORT_BASE environment variable.
 ///
@@ -52,9 +113,19 @@ pub fn resolve_mcp_port() -> u16 {
     resolve_port_base() + MCP_PORT_OFFSET
 }
 
-/// Resolve the IPC socket port (port base + IPC_SOCKET_PORT_OFFSET).
-pub fn resolve_ipc_socket_port() -> u16 {
-    resolve_port_base() + IPC_SOCKET_PORT_OFFSET
+/// Resolve the port for a named service from infrastructure/ports.json.
+///
+/// For offset-based services: returns resolve_port_base() + offset.
+/// For fixed-port services (forgejo_http, forgejo_ssh): returns the fixed port,
+/// ignoring ORQA_PORT_BASE since those services cannot be remapped.
+/// Returns None if the service name is not found in ports.json.
+pub fn resolve_port(service: &str) -> Option<u16> {
+    let p = ports();
+    let entry = p.services.get(service)?;
+    match entry.offset {
+        Some(offset) => Some(resolve_port_base() + offset),
+        None => Some(entry.port),
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -82,6 +153,12 @@ mod tests {
     }
 
     #[test]
+    fn vite_port_offset_is_320() {
+        // 10100 + 320 = 10420, the correct app Vite dev server port.
+        assert_eq!(VITE_PORT_OFFSET, 320);
+    }
+
+    #[test]
     fn offsets_are_distinct() {
         // Each service must have a unique port offset.
         let offsets = [
@@ -90,7 +167,6 @@ mod tests {
             MCP_PORT_OFFSET,
             VITE_PORT_OFFSET,
             DASHBOARD_PORT_OFFSET,
-            IPC_SOCKET_PORT_OFFSET,
         ];
         for i in 0..offsets.len() {
             for j in (i + 1)..offsets.len() {
@@ -100,6 +176,69 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn ports_json_embeds_and_parses() {
+        // Verify the embedded JSON parses correctly and contains expected services.
+        let p = ports();
+        assert_eq!(p.base, 10100);
+        assert!(p.services.contains_key("daemon"));
+        assert!(p.services.contains_key("lsp"));
+        assert!(p.services.contains_key("mcp"));
+        assert!(p.services.contains_key("vite"));
+        assert!(p.services.contains_key("forgejo_http"));
+        assert!(p.services.contains_key("forgejo_ssh"));
+    }
+
+    #[test]
+    fn resolve_port_daemon() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        std::env::remove_var("ORQA_PORT_BASE");
+        assert_eq!(resolve_port("daemon"), Some(10100));
+    }
+
+    #[test]
+    fn resolve_port_lsp() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        std::env::remove_var("ORQA_PORT_BASE");
+        assert_eq!(resolve_port("lsp"), Some(10101));
+    }
+
+    #[test]
+    fn resolve_port_mcp() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        std::env::remove_var("ORQA_PORT_BASE");
+        assert_eq!(resolve_port("mcp"), Some(10102));
+    }
+
+    #[test]
+    fn resolve_port_vite_is_10420() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        std::env::remove_var("ORQA_PORT_BASE");
+        assert_eq!(resolve_port("vite"), Some(10420));
+    }
+
+    #[test]
+    fn resolve_port_forgejo_http_is_fixed() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        // Fixed port services are not affected by ORQA_PORT_BASE.
+        std::env::set_var("ORQA_PORT_BASE", "20000");
+        assert_eq!(resolve_port("forgejo_http"), Some(10030));
+        std::env::remove_var("ORQA_PORT_BASE");
+    }
+
+    #[test]
+    fn resolve_port_forgejo_ssh_is_fixed() {
+        let _guard = ENV_MUTEX.lock().unwrap();
+        std::env::set_var("ORQA_PORT_BASE", "20000");
+        assert_eq!(resolve_port("forgejo_ssh"), Some(10222));
+        std::env::remove_var("ORQA_PORT_BASE");
+    }
+
+    #[test]
+    fn resolve_port_unknown_returns_none() {
+        assert_eq!(resolve_port("unknown_service"), None);
     }
 
     #[test]
@@ -150,13 +289,5 @@ mod tests {
         std::env::remove_var("ORQA_PORT_BASE");
         let mcp = resolve_mcp_port();
         assert_eq!(mcp, DEFAULT_PORT_BASE + MCP_PORT_OFFSET);
-    }
-
-    #[test]
-    fn resolve_ipc_socket_port_equals_base_plus_offset() {
-        let _guard = ENV_MUTEX.lock().unwrap();
-        std::env::remove_var("ORQA_PORT_BASE");
-        let ipc = resolve_ipc_socket_port();
-        assert_eq!(ipc, DEFAULT_PORT_BASE + IPC_SOCKET_PORT_OFFSET);
     }
 }

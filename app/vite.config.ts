@@ -2,6 +2,12 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import { svelteTesting } from "@testing-library/svelte/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vitest/config";
+import { getPort } from "@orqastudio/constants";
+
+// Port is read from infrastructure/ports.json via @orqastudio/constants.
+// The canonical value is 10420 (base 10100 + offset 320).
+// tauri.conf.json devUrl must match — validated by `orqa check ports`.
+const APP_PORT = getPort("vite");
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), svelteTesting()],
@@ -18,7 +24,7 @@ export default defineConfig({
 		],
 	},
 	server: {
-		port: 10420,
+		port: APP_PORT,
 		strictPort: true,
 		allowedHosts: true,
 		fs: {

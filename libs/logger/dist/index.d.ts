@@ -2,13 +2,20 @@
  * Centralized logger for OrqaStudio.
  *
  * Provides structured logging with levels, source tags, and dual forwarding:
- * - Dev dashboard at localhost:10130/log (for live SSE display)
- * - Daemon event bus at localhost:10100/events (for persistence)
+ * - Dev dashboard /log endpoint (for live SSE display)
+ * - Daemon event bus /events endpoint (for persistence)
  *
- * Use this instead of bare `console.log` throughout the codebase.
+ * Endpoint URLs are not hardcoded. The app must call configureLogger() at
+ * startup with the URLs derived from infrastructure/ports.json via
+ * @orqastudio/constants. This keeps the logger library port-agnostic.
  *
  * Usage:
- *   import { logger } from "@orqastudio/logger";
+ *   import { logger, configureLogger } from "@orqastudio/logger";
+ *   import { getPort } from "@orqastudio/constants";
+ *   configureLogger({
+ *     devLogUrl: `http://localhost:${getPort("dashboard")}/log`,
+ *     daemonEventsUrl: `http://localhost:${getPort("daemon")}/events`,
+ *   });
  *   const log = logger("navigation");
  *   log.info("Opened artifact", path);
  *   log.perf("loadContent", () => fetchContent(path));
@@ -43,6 +50,22 @@ export interface Logger {
     perfAsync<T>(label: string, fn: () => Promise<T>): Promise<T>;
 }
 type LogSubscriber = (entry: LogEntry) => void;
+/** Logger endpoint configuration set by the app at startup via configureLogger(). */
+interface LoggerConfig {
+    /** URL of the dev dashboard log ingest endpoint (e.g. http://localhost:10130/log). */
+    readonly devLogUrl: string;
+    /** URL of the daemon event bus ingest endpoint (e.g. http://localhost:10100/events). */
+    readonly daemonEventsUrl: string;
+}
+/**
+ * Configure logger endpoint URLs from ports resolved by the app.
+ *
+ * Must be called once at app startup before any log entries are emitted.
+ * The app derives URLs from infrastructure/ports.json via @orqastudio/constants.
+ * Without this call, forwarding to dashboard and daemon silently no-ops.
+ * @param config - Endpoint URLs for dashboard and daemon forwarding.
+ */
+export declare function configureLogger(config: LoggerConfig): void;
 /**
  * Create a scoped logger for a module.
  * @param source - Module name (e.g. "navigation", "artifact", "graph")

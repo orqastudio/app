@@ -14,6 +14,11 @@
 //! | POST   | `/validation/scan`            | `graph_validate`      |
 //! | GET    | `/artifacts/:id/traceability` | `graph_traceability`  |
 //! | POST   | `/reload`                     | `graph_refresh`       |
+//! | POST   | `/search/regex`               | `search_regex`        |
+//! | POST   | `/search/semantic`            | `search_semantic`     |
+//! | GET    | `/search/status`              | `search_status`       |
+//! | POST   | `/search/index`               | `search_index`        |
+//! | POST   | `/search/embed`               | `search_embed`        |
 
 use serde_json::Value;
 
@@ -128,5 +133,58 @@ impl DaemonClient {
     /// `POST /reload` — rebuild all graph state from disk.
     pub fn reload(&self) -> Result<Value, McpError> {
         self.post("/reload", &serde_json::json!({}))
+    }
+
+    /// `POST /search/regex` — regex search over the indexed codebase.
+    ///
+    /// Returns an array of `SearchResult` objects from the daemon's search index.
+    pub fn search_regex(
+        &self,
+        pattern: &str,
+        path_filter: Option<&str>,
+        max_results: u32,
+    ) -> Result<Value, McpError> {
+        let mut body = serde_json::json!({
+            "pattern": pattern,
+            "max_results": max_results
+        });
+        if let Some(filter) = path_filter {
+            body["path_filter"] = serde_json::json!(filter);
+        }
+        self.post("/search/regex", &body)
+    }
+
+    /// `POST /search/semantic` — semantic search using ONNX embeddings.
+    ///
+    /// Returns an array of `SearchResult` objects ranked by cosine similarity.
+    pub fn search_semantic(&self, query: &str, max_results: u32) -> Result<Value, McpError> {
+        self.post(
+            "/search/semantic",
+            &serde_json::json!({
+                "query": query,
+                "max_results": max_results
+            }),
+        )
+    }
+
+    /// `GET /search/status` — get the current search index status.
+    ///
+    /// Returns an `IndexStatus` object with chunk count and embedding state.
+    pub fn search_status(&self) -> Result<Value, McpError> {
+        self.get("/search/status")
+    }
+
+    /// `POST /search/index` — trigger re-indexing of the codebase.
+    ///
+    /// Returns an `IndexResponse` with the resulting chunk count.
+    pub fn search_index(&self, exclude: &[String]) -> Result<Value, McpError> {
+        self.post("/search/index", &serde_json::json!({ "exclude": exclude }))
+    }
+
+    /// `POST /search/embed` — generate ONNX embeddings for un-embedded chunks.
+    ///
+    /// Returns an `IndexResponse` with the count of newly embedded chunks.
+    pub fn search_embed(&self) -> Result<Value, McpError> {
+        self.post("/search/embed", &serde_json::json!({}))
     }
 }

@@ -4090,7 +4090,6 @@ dependencies = [
 name = "orqa-mcp-server"
 version = "0.1.0-dev"
 dependencies = [
- "dirs-next",
  "orqa-engine",
  "regex",
  "reqwest 0.12.28",

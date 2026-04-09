@@ -1,1 +1,1 @@
-{"version":3,"file":"check.d.ts","sourceRoot":"","sources":["../../src/commands/check.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;;;GAiBG;AAyCH;;;GAGG;AACH,wBAAsB,eAAe,CAAC,IAAI,EAAE,MAAM,EAAE,GAAG,OAAO,CAAC,IAAI,CAAC,CA+EnE"}
+{"version":3,"file":"check.d.ts","sourceRoot":"","sources":["../../src/commands/check.ts"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;;;;;GAiBG;AA0CH;;;GAGG;AACH,wBAAsB,eAAe,CAAC,IAAI,EAAE,MAAM,EAAE,GAAG,OAAO,CAAC,IAAI,CAAC,CAsFnE"}

@@ -380,15 +380,14 @@ function computeNpmDeps(pkg: PackageJson): string[] {
 /**
  * Build the Rust side of the process graph.
  *
- * Creates three nodes:
+ * Creates two nodes:
  *   - rust-workspace: the entire Cargo workspace built as a unit.
  *   - daemon:         long-running service that depends on rust-workspace.
- *   - search:         search server binary that depends on rust-workspace.
  *
  * Engine crates are NOT individual nodes — they are built as part of the
  * workspace unit. Individual nodes only exist for top-level binaries.
  * @param root - Absolute path to the repo root.
- * @returns Node map for Rust workspace, daemon, and search service nodes.
+ * @returns Node map for Rust workspace and daemon service nodes.
  */
 function readCargoGraph(root: string): Map<string, ProcessNode> {
 	const nodes = new Map<string, ProcessNode>();
@@ -429,26 +428,6 @@ function readCargoGraph(root: string): Map<string, ProcessNode> {
 			lastError: null,
 		};
 		nodes.set("daemon", daemon);
-	}
-
-	// search — the orqa-search-server binary in engine/search.
-	const searchDir = path.join(root, "engine", "search");
-	if (fs.existsSync(searchDir)) {
-		const search: ProcessNode = {
-			id: "search",
-			name: "search",
-			kind: "service",
-			status: "pending",
-			rootDir: searchDir,
-			watchDir: path.join(searchDir, "src"),
-			watchPatterns: watchPatternsForKind("service"),
-			dependsOn: ["rust-workspace"],
-			dependents: [],
-			pid: null,
-			lastBuiltAt: null,
-			lastError: null,
-		};
-		nodes.set("search", search);
 	}
 
 	return nodes;
@@ -655,25 +634,6 @@ export function rustEnv(root: string): NodeJS.ProcessEnv {
 	}
 
 	return env;
-}
-
-/**
- * Find a pre-built Rust binary in the workspace target directories.
- * Checks debug first, then release. Falls back to the bare name (PATH lookup).
- * @param root - Absolute path to the repo root containing the target/ directory.
- * @param name - Binary name without extension (e.g. `orqa-search-server`).
- * @returns Absolute path to the found binary, or the bare name for PATH resolution.
- */
-function findBin(root: string, name: string): string {
-	const ext = isWindows() ? ".exe" : "";
-	const candidates = [
-		path.join(root, "target", "debug", `${name}${ext}`),
-		path.join(root, "target", "release", `${name}${ext}`),
-	];
-	for (const c of candidates) {
-		if (fs.existsSync(c)) return c;
-	}
-	return `${name}${ext}`;
 }
 
 /**
@@ -1152,15 +1112,13 @@ export class ProcessManager {
 	// ── Service lifecycle ─────────────────────────────────────────────────────
 
 	/**
-	 * Start the daemon and search server, waiting for both to become healthy.
+	 * Start the daemon and auxiliary dev services.
 	 *
 	 * Daemon is started via runDaemonCommand("start") which manages its own PID
-	 * file. The search server is a spawned binary with crash-restart handling.
-	 * Emits starting → running events for each service node.
+	 * file. Emits starting → running events for each service node.
 	 */
 	async startServices(): Promise<void> {
 		await this.startDaemon();
-		await this.startSearch();
 		this.startStorybook();
 	}
 
@@ -1229,22 +1187,6 @@ export class ProcessManager {
 			this.emitServiceEvent(node, "build-failed", "startup", node.lastError);
 			this.log("daemon", node.lastError);
 		}
-	}
-
-	/**
-	 * Spawn the orqa-search-server binary with crash-restart and exponential
-	 * backoff. Gives up after 5 consecutive crashes.
-	 */
-	private async startSearch(): Promise<void> {
-		const node = this.graph.nodes.get("search");
-		if (!node) return;
-
-		const appDir = path.join(this.root, "app");
-		const bin = findBin(this.root, "orqa-search-server");
-
-		await this.spawnService(node, bin, [appDir], {
-			env: rustEnv(this.root),
-		});
 	}
 
 	/**
@@ -1440,11 +1382,10 @@ export class ProcessManager {
 	 *
 	 * Sequence:
 	 *   1. Set shutdownRequested to suppress crash-restart loops.
-	 *   2. (Task 4) Close all file watchers.
-	 *   3. Kill the app process tree.
-	 *   4. Kill the search process tree.
-	 *   5. Stop the daemon via runDaemonCommand("stop").
-	 *   6. Remove control and signal files.
+	 *   2. Close all file watchers.
+	 *   3. Kill all managed processes (app, storybook, etc.).
+	 *   4. Stop the daemon via runDaemonCommand("stop").
+	 *   5. Remove control and signal files.
 	 */
 	async shutdown(): Promise<void> {
 		if (this.shutdownRequested) return;
@@ -1472,7 +1413,7 @@ export class ProcessManager {
 		}
 		this.watchers = [];
 
-		// Kill all managed processes (app, search, storybook, etc.)
+		// Kill all managed processes (app, storybook, etc.)
 		for (const [id, child] of this.managedProcesses) {
 			if (child.pid) {
 				this.log("ctrl", `Killing ${id} (PID ${child.pid})...`);
@@ -1772,7 +1713,7 @@ export class ProcessManager {
 
 	/**
 	 * Restart a service node after its workspace dependency was rebuilt.
-	 * Daemon uses its command module; search server is killed and respawned.
+	 * Daemon uses its CLI command module for graceful restart.
 	 * Emits stopping → starting → running events.
 	 * @param nodeId - Identifier of the service graph node to restart.
 	 */
@@ -1798,17 +1739,6 @@ export class ProcessManager {
 				this.emitServiceEvent(node, "crashed", "dependency-rebuild", error);
 				this.log(nodeId, `Daemon restart failed: ${error}`);
 			}
-		} else if (nodeId === "search") {
-			// Kill existing process if running.
-			const existing = this.managedProcesses.get("search");
-			if (existing?.pid) {
-				killProcessTree(existing.pid);
-				this.managedProcesses.delete("search");
-			}
-
-			const appDir = path.join(this.root, "app");
-			const bin = findBin(this.root, "orqa-search-server");
-			await this.spawnService(node, bin, [appDir], { env: rustEnv(this.root) });
 		}
 	}
 

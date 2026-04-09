@@ -1,8 +1,13 @@
 //! Search tool implementations: regex, semantic, research, status.
+//!
+//! All search operations proxy to the daemon's HTTP search endpoints rather
+//! than embedding a local SearchEngine. This keeps a single DuckDB index
+//! (in .state/search.duckdb) owned by the daemon, and makes the MCP server
+//! stateless with respect to search.
 
-use orqa_engine::search::{SearchEngine, SearchResult};
 use serde_json::{json, Value};
 
+use crate::daemon::DaemonClient;
 use crate::types::McpToolDefinition;
 
 // ---------------------------------------------------------------------------
@@ -83,26 +88,43 @@ pub fn tool_definitions() -> Vec<McpToolDefinition> {
 // Scope filtering
 // ---------------------------------------------------------------------------
 
-fn filter_by_scope(results: Vec<SearchResult>, scope: &str) -> Vec<SearchResult> {
+/// Filter a JSON array of search results by scope.
+///
+/// Applies after results come back from the daemon, because scope is an MCP
+/// concept (artifact vs. codebase distinction) that the daemon does not know
+/// about. Operates on the `file_path` field of each result object.
+fn filter_by_scope(results: Vec<Value>, scope: &str) -> Vec<Value> {
     match scope {
         "artifacts" => results
             .into_iter()
-            .filter(|r| r.file_path.contains(".orqa/") || r.file_path.contains(".orqa\\"))
+            .filter(|r| {
+                r.get("file_path")
+                    .and_then(Value::as_str)
+                    .is_some_and(|p| p.contains(".orqa/") || p.contains(".orqa\\"))
+            })
             .collect(),
         "codebase" => results
             .into_iter()
-            .filter(|r| !r.file_path.contains(".orqa/") && !r.file_path.contains(".orqa\\"))
+            .filter(|r| {
+                r.get("file_path")
+                    .and_then(Value::as_str)
+                    .is_some_and(|p| !p.contains(".orqa/") && !p.contains(".orqa\\"))
+            })
             .collect(),
-        _ => results, // "all" or unrecognised
+        _ => results, // "all" or unrecognised — pass through
     }
 }
 
-fn result_to_json(r: &SearchResult, source: Option<&str>) -> Value {
+/// Convert a daemon search result JSON object to a display-friendly summary.
+///
+/// Keeps only `file`, `line`, `content`, and `score` fields. Optionally tags
+/// the result with a `source` label (e.g. "semantic", "regex_fallback").
+fn result_to_json(r: &Value, source: Option<&str>) -> Value {
     let mut v = json!({
-        "file": r.file_path,
-        "line": r.start_line,
-        "content": r.content,
-        "score": r.score
+        "file": r.get("file_path"),
+        "line": r.get("start_line"),
+        "content": r.get("content"),
+        "score": r.get("score")
     });
     if let Some(s) = source {
         v["source"] = json!(s);
@@ -110,15 +132,28 @@ fn result_to_json(r: &SearchResult, source: Option<&str>) -> Value {
     v
 }
 
+/// Parse a daemon response as a JSON array of search results.
+///
+/// Returns an error if the daemon returned an error object or a non-array value.
+fn parse_results(response: Value) -> Result<Vec<Value>, String> {
+    if let Some(err) = response.get("error") {
+        return Err(format!("daemon search error: {err}"));
+    }
+    response
+        .as_array()
+        .cloned()
+        .ok_or_else(|| "daemon returned non-array search response".to_owned())
+}
+
 // ---------------------------------------------------------------------------
 // Tool implementations
 // ---------------------------------------------------------------------------
 
-/// Execute a regex search over the indexed codebase and return JSON-formatted results.
+/// Execute a regex search via the daemon and return JSON-formatted results.
 ///
-/// Reads `pattern`, `path_filter`, `scope`, and `limit` from `args`. Returns a pretty-printed
-/// JSON array of matching chunks. Defaults: limit=20, scope="all".
-pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
+/// Reads `pattern`, `path_filter`, `scope`, and `limit` from `args`. Proxies
+/// to POST /search/regex on the daemon. Defaults: limit=20, scope="all".
+pub fn tool_search_regex(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let pattern = args
         .get("pattern")
         .and_then(|v| v.as_str())
@@ -127,20 +162,21 @@ pub fn tool_search_regex(engine: &mut SearchEngine, args: &Value) -> Result<Stri
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(20) as u32;
 
-    let results = engine
+    let response = daemon
         .search_regex(pattern, path_filter, limit)
-        .map_err(|e| format!("search error: {e}"))?;
+        .map_err(|e| e.to_string())?;
 
+    let results = parse_results(response)?;
     let filtered = filter_by_scope(results, scope);
     let summary: Vec<Value> = filtered.iter().map(|r| result_to_json(r, None)).collect();
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
-/// Execute a semantic (embedding-based) search and return JSON-formatted results.
+/// Execute a semantic search via the daemon and return JSON-formatted results.
 ///
-/// Reads `query`, `scope`, and `limit` from `args`. Returns a pretty-printed JSON array of
-/// matching chunks sorted by semantic similarity. Defaults: limit=10, scope="all".
-pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
+/// Reads `query`, `scope`, and `limit` from `args`. Proxies to POST
+/// /search/semantic on the daemon. Defaults: limit=10, scope="all".
+pub fn tool_search_semantic(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let query = args
         .get("query")
         .and_then(|v| v.as_str())
@@ -148,22 +184,24 @@ pub fn tool_search_semantic(engine: &mut SearchEngine, args: &Value) -> Result<S
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(10) as u32;
 
-    let results = engine
+    let response = daemon
         .search_semantic(query, limit)
-        .map_err(|e| format!("semantic search error: {e}"))?;
+        .map_err(|e| e.to_string())?;
 
+    let results = parse_results(response)?;
     let filtered = filter_by_scope(results, scope);
     let summary: Vec<Value> = filtered.iter().map(|r| result_to_json(r, None)).collect();
     serde_json::to_string_pretty(&summary).map_err(|e| e.to_string())
 }
 
-/// Execute a multi-step research query: semantic search followed by symbol-level follow-up.
+/// Execute a multi-step research query via the daemon.
 ///
-/// Reads `question`, `scope`, and `limit` from `args`. Performs semantic search first; if
-/// no results are found, falls back to a regex keyword search. Returns a structured JSON object
-/// with primary and related results. Defaults: limit=5, scope="all".
+/// Reads `question`, `scope`, and `limit` from `args`. Performs semantic search
+/// first; extracts symbols from results; runs a regex follow-up for those
+/// symbols. Falls back to keyword regex if semantic search returns nothing.
+/// Defaults: limit=5, scope="all".
 #[allow(clippy::too_many_lines)]
-pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<String, String> {
+pub fn tool_search_research(daemon: &DaemonClient, args: &Value) -> Result<String, String> {
     let question = args
         .get("question")
         .and_then(|v| v.as_str())
@@ -171,14 +209,16 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     let scope = args.get("scope").and_then(|v| v.as_str()).unwrap_or("all");
     let limit = args.get("limit").and_then(Value::as_u64).unwrap_or(5) as u32;
 
-    // Step 1: Semantic search for conceptually relevant chunks
-    let raw_results = engine
+    // Step 1: Semantic search for conceptually relevant chunks.
+    let raw_response = daemon
         .search_semantic(question, limit)
         .map_err(|e| format!("semantic search error: {e}"))?;
+
+    let raw_results = parse_results(raw_response)?;
     let semantic_results = filter_by_scope(raw_results, scope);
 
     if semantic_results.is_empty() {
-        // Fall back to regex with keywords from the question
+        // Fall back to regex with keywords from the question.
         let keywords: Vec<&str> = question
             .split_whitespace()
             .filter(|w| w.len() > 3)
@@ -190,9 +230,10 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
         }
 
         let pattern = keywords.join("|");
-        let fallback = engine
+        let fallback_response = daemon
             .search_regex(&pattern, None, limit)
             .map_err(|e| format!("regex fallback error: {e}"))?;
+        let fallback = parse_results(fallback_response)?;
 
         let summary: Vec<Value> = fallback
             .iter()
@@ -207,7 +248,7 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
         .map_err(|e| e.to_string());
     }
 
-    // Step 2: Extract symbols from semantic results
+    // Step 2: Extract symbols from semantic result content.
     let symbol_pattern = regex::Regex::new(
         r"(?:fn|pub fn|struct|enum|trait|type|const|interface|class|function|export)\s+(\w+)",
     )
@@ -216,8 +257,12 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     let symbols: Vec<String> = semantic_results
         .iter()
         .flat_map(|result| {
+            let content = result
+                .get("content")
+                .and_then(Value::as_str)
+                .unwrap_or_default();
             symbol_pattern
-                .captures_iter(&result.content)
+                .captures_iter(content)
                 .map(|cap| cap[1].to_string())
                 .collect::<Vec<_>>()
         })
@@ -229,7 +274,7 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
             acc
         });
 
-    // Step 3: Regex follow-up for extracted symbols
+    // Step 3: Regex follow-up for extracted symbols.
     let mut follow_up_results = Vec::new();
     if !symbols.is_empty() {
         let follow_pattern = symbols
@@ -238,19 +283,23 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
             .cloned()
             .collect::<Vec<_>>()
             .join("|");
-        if let Ok(results) = engine.search_regex(&follow_pattern, None, 10) {
-            for r in results {
-                let already_found = semantic_results
-                    .iter()
-                    .any(|s| s.file_path == r.file_path && s.start_line == r.start_line);
-                if !already_found {
-                    follow_up_results.push(r);
+        if let Ok(resp) = daemon.search_regex(&follow_pattern, None, 10) {
+            if let Ok(results) = parse_results(resp) {
+                for r in results {
+                    // Skip results already in the semantic set (same file + line).
+                    let already_found = semantic_results.iter().any(|s| {
+                        s.get("file_path") == r.get("file_path")
+                            && s.get("start_line") == r.get("start_line")
+                    });
+                    if !already_found {
+                        follow_up_results.push(r);
+                    }
                 }
             }
         }
     }
 
-    // Step 4: Assemble response
+    // Step 4: Assemble response.
     let primary: Vec<Value> = semantic_results
         .iter()
         .map(|r| result_to_json(r, Some("semantic")))
@@ -271,19 +320,20 @@ pub fn tool_search_research(engine: &mut SearchEngine, args: &Value) -> Result<S
     .map_err(|e| e.to_string())
 }
 
-/// Return the current search index status as a JSON object.
+/// Return the current search index status from the daemon as a JSON object.
 ///
-/// Returns `is_indexed`, `chunk_count`, and `has_embeddings` fields reflecting
-/// the current state of the ONNX search engine.
-pub fn tool_search_status(engine: &mut SearchEngine) -> Result<String, String> {
-    let status = engine
-        .get_status()
-        .map_err(|e| format!("status error: {e}"))?;
+/// Proxies to GET /search/status on the daemon and forwards the response fields.
+pub fn tool_search_status(daemon: &DaemonClient) -> Result<String, String> {
+    let status = daemon.search_status().map_err(|e| e.to_string())?;
+
+    if let Some(err) = status.get("error") {
+        return Err(format!("daemon status error: {err}"));
+    }
 
     serde_json::to_string_pretty(&json!({
-        "is_indexed": status.is_indexed,
-        "chunk_count": status.chunk_count,
-        "has_embeddings": status.has_embeddings,
+        "is_indexed": status.get("is_indexed"),
+        "chunk_count": status.get("chunk_count"),
+        "has_embeddings": status.get("has_embeddings"),
     }))
     .map_err(|e| e.to_string())
 }
