@@ -54,10 +54,4 @@ mod tests {
         let key = "   ";
         assert!(key.trim().is_empty());
     }
-
-    #[test]
-    fn scope_defaults_to_app() {
-        // Verify Option::unwrap_or produces the fallback when None is given.
-        assert_eq!(None::<String>.unwrap_or_else(|| "app".to_owned()), "app");
-    }
 }
