@@ -65,6 +65,7 @@ COPY engine/project/Cargo.toml     engine/project/Cargo.toml
 COPY engine/prompt/Cargo.toml      engine/prompt/Cargo.toml
 COPY engine/search/Cargo.toml      engine/search/Cargo.toml
 COPY engine/storage/Cargo.toml     engine/storage/Cargo.toml
+COPY engine/storage/migration/Cargo.toml engine/storage/migration/Cargo.toml
 COPY engine/streaming/Cargo.toml   engine/streaming/Cargo.toml
 COPY engine/types/Cargo.toml       engine/types/Cargo.toml
 COPY engine/validation/Cargo.toml  engine/validation/Cargo.toml
@@ -81,6 +82,9 @@ COPY devtools/src-tauri/Cargo.toml devtools/src-tauri/Cargo.toml
 
 # Daemon
 COPY daemon/Cargo.toml daemon/Cargo.toml
+
+# libs/db — HTTP client crate used by app and devtools (workspace member)
+COPY libs/db/Cargo.toml libs/db/Cargo.toml
 
 # ── Step 2: create stub sources for every workspace member ────────────────────
 # Cargo requires src/lib.rs or src/main.rs to be present when resolving the
@@ -108,6 +112,13 @@ RUN set -e; \
     mkdir -p daemon/src && \
     printf '// stub\n' > daemon/src/lib.rs && \
     printf 'fn main() {}\n' > daemon/src/main.rs; \
+    # libs/db: lib-only, workspace member
+    mkdir -p libs/db/src && \
+    printf '// stub\n' > libs/db/src/lib.rs; \
+    # engine/storage/migration: standalone workspace but needed as path dep
+    mkdir -p engine/storage/migration/src && \
+    printf '// stub\n' > engine/storage/migration/src/lib.rs && \
+    printf 'fn main() {}\n' > engine/storage/migration/src/main.rs; \
     # Tauri app stubs — satisfy the workspace; they will not be built
     mkdir -p app/src-tauri/src && \
     printf '// stub\n' > app/src-tauri/src/lib.rs && \
@@ -151,6 +162,7 @@ RUN find target/release/deps -name 'orqa_*' -o -name 'liborqa_*' | xargs rm -f 2
 
 COPY engine/ engine/
 COPY daemon/ daemon/
+COPY libs/db/ libs/db/
 
 # ── Step 5: build real binaries ───────────────────────────────────────────────
 RUN cargo build --release \

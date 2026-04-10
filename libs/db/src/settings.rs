@@ -37,21 +37,18 @@ impl SettingsClient<'_> {
 
     /// Set a setting value (upsert by key + scope).
     ///
-    /// Calls PUT /settings.
+    /// Calls PUT /settings/{key} with body {"value": X, "scope": "..."}.
     pub async fn set(
         &self,
         key: &str,
         value: &serde_json::Value,
         scope: &str,
     ) -> Result<(), DbError> {
-        let body = serde_json::json!({
-            "key": key,
-            "value": value,
-            "scope": scope,
-        });
+        let body = serde_json::json!({ "value": value, "scope": scope });
+        let key_encoded = key.replace('/', "%2F");
         let resp = self
             .http
-            .put(format!("{}/settings", self.base_url))
+            .put(format!("{}/settings/{key_encoded}", self.base_url))
             .json(&body)
             .send()
             .await?;
