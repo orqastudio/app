@@ -2,77 +2,74 @@
 
 ## What was done this session
 
-### Dev environment investigation
+### SeaORM HTTP migration (Phases C + D + E COMPLETE)
 
-- Full process hierarchy mapped: ProcessManager → daemon → LSP/MCP, search, Forgejo, Tauri apps, file watchers
-- Identified orphan process risks, missing health checks, port mismatches
-- Forgejo container recreated on correct 10xxx ports, SSH config fixed
+**Phase C — Daemon HTTP route expansion**
 
-### Containerisation (IDEA-4d48c4a7)
+- All storage operations now exposed via daemon HTTP endpoints
+- New routes: `/devtools/sessions`, `/health-snapshots`, `/issue-groups`, `/messages`, `/themes`, `/violations`
+- `daemon/src/health.rs`: health snapshot routes with GET /health-snapshots/:project_id
+- `daemon/src/routes/mod.rs`: route registration for all new modules
 
-- Wrote full proposal with hybrid approach (containerised services + native UI)
-- Two modes: `orqa dev` (containerised daemon, stable backend) and `orqa dev --include-backend` (native, full hot-reload)
-- Phase 1 COMPLETE: search consolidation, retire standalone search server, daemon auto-restart
-- Phases 2-5 COMPLETE: Dockerfile.daemon, docker-compose.dev.yml, ProcessManager integration, unified startup
+**Phase D — libs/db HTTP client crate**
 
-### Search consolidation (daemon is single source of truth)
+- New crate: `libs/db/` — typed reqwest HTTP client for daemon API
+- `DbClient` owns `reqwest::Client` (Arc-backed, cheaply cloneable) with `#[derive(Clone)]`
+- Sub-clients: `projects()`, `sessions()`, `messages()`, `settings()`, `health_snapshots()`, `devtools()`, `issue_groups()`
+- `DbError`: `Network`, `Http { status, code, error }`, `Deserialization`
+- Port resolution via `orqa_engine_types::ports::resolve_daemon_port()`
 
-- MCP server search tools now proxy to daemon HTTP endpoints via DaemonClient
-- Removed duplicate SearchEngine/DuckDB from MCP server
-- Retired standalone orqa-search-server binary
-- `orqa index` rewired to call daemon HTTP endpoints
+**Phase E1 — App migration (app/src-tauri)**
 
-### Daemon improvements
+- ZERO `state.db.get()` calls remain
+- ZERO `orqa_storage::` imports remain in app/src-tauri/src/
+- `orqa-storage` removed from app/src-tauri/Cargo.toml
+- `app/src-tauri/src/db.rs` deleted
+- All command files use `libs/db` via `state.db.client.*`
+- `state.rs`: `AppState.db` is now `OrqaDb { client: DbClient }` instead of `AppDatabase { storage: Arc<Storage> }`
+- `error.rs`: `From<orqa_db::DbError>` converts HTTP 404 → `NotFound`, else → `Database`
+- `cargo check -p orqa-studio` — PASS
+- `cargo clippy -p orqa-studio -- -D warnings` — PASS (0 warnings)
+- `cargo test -p orqa-studio` — PASS (113 tests)
 
-- Auto-restart for crashed LSP/MCP subprocesses (exponential backoff, max 5 retries)
-- ORQA_HEADLESS=1 support — skips system tray in container mode
-- System tray: left-click focuses/launches app, "Open DevTools" menu item, cross-platform (Win32/macOS/Linux)
-- Fixed latent libc dependency bug exposed by Linux container build
+**Phase E2 — Devtools migration (devtools/src-tauri)**
 
-### Port consolidation
+- `orqa-storage` removed from devtools/src-tauri/Cargo.toml
+- `orqa-db` added as dependency
+- `Arc<Storage>` managed state → `DbClient` managed state
+- `EventBatchWriter` owns `DbClient` instead of `Arc<Storage>`
+- All IPC commands use `State<'_, DbClient>` and call `db.devtools().*` / `db.issue_groups().*`
+- `lib.rs`: setup via `db.devtools().mark_orphaned_sessions_interrupted()`, `create_session()`, `purge_old_sessions(30)`
+- `SKIP_WINRES=1 cargo check --lib -p orqa-devtools` — PASS
+- `SKIP_WINRES=1 cargo clippy --lib -p orqa-devtools -- -D warnings` — PASS (0 warnings)
+- `SKIP_WINRES=1 cargo test -p orqa-devtools` — PASS (0 tests)
 
-- `infrastructure/ports.json` is single source of truth for all port allocation
-- Consumed by Rust (compile-time include_str!) and TypeScript (runtime import)
-- Vite port corrected to 10420 everywhere
-- `orqa check ports` validates static configs against ports.json
-- Zero hardcoded port numbers in source code
+### SQLite contention blocker: RESOLVED
 
-### Dev environment quality of life
-
-- `make link` target for fast CLI relinking after reboot
-- Forgejo unified into `orqa dev` — `orqa hosting up/down` redirects
+Neither app nor devtools opens the SQLite database directly. The daemon is now the sole
+SQLite writer. Containerised default mode is unblocked.
 
 ## Commits this session
 
-- `d1f32738b` — ports.json SOT, search consolidation, daemon auto-restart, tray UX (56 files)
-- `f80a66f5f` — Containerise dev environment: Dockerfile, compose, ProcessManager integration (17 files)
+Previous session commits (for reference):
 
-## Verified working
+- `d19d59e44` — SeaORM Phase B: full rusqlite→SeaORM migration
+- `5db75a3b3` — SeaORM foundation: entities, traits, migration framework
 
-- Forgejo git server on 10xxx ports (10030 HTTP, 10222 SSH), SSH authenticated
-- Docker image `orqa-daemon:latest` builds and runs (587MB, 3 binaries, ORQA_HEADLESS=1)
-- `docker compose -f infrastructure/docker-compose.dev.yml config` validates
-- All Rust workspace compiles clean (cargo check)
-- All TypeScript compiles clean (npx tsc)
-- Pre-commit hooks pass (lint, format, markdownlint, stories)
+Current session (uncommitted):
 
-## Known issues
-
-### LSP single-client TCP mode
-
-LSP server exits after one editor disconnects (single-client design). Auto-restart
-handles this now, but making it loop like MCP would be cleaner. Low priority.
-
-### Docker image size
-
-587MB due to GTK3 + libxdo pulled in by tray-icon dependency (even in headless mode).
-A `headless` Cargo feature flag excluding tray-icon would reduce this significantly.
-Future optimisation.
+- Phases C + D + E1 + E2 (staged, ready to commit)
 
 ## Next priorities
 
-1. Sidecar lifecycle — daemon spawns sidecars from plugin registrations, tracks in snapshots
-2. Devtools hub-spoke graph layout with daemon as central hub
-3. Content loading verification — nav items populate, artifact lists work
-4. Test `orqa dev` end-to-end with containerised daemon (first real usage)
-5. Consider `orqa-tray` native binary for containerised mode (currently no tray in container mode)
+1. **Commit** the Phase C/D/E changeset
+2. **Integration test** — run full dev stack with daemon + app to verify HTTP paths work end-to-end
+3. **Sidecar lifecycle** — research complete, implementation pending
+4. **Devtools hub-spoke graph layout** — research complete, implementation pending
+5. **Content loading verification**
+6. **orqa-tray standalone binary** for containerised mode
+
+## Open items
+
+- `SKIP_WINRES=1` needed for devtools builds on Windows without RC.EXE in PATH (pre-existing)
+- Minor: `engine/storage/src/repo/messages.rs` has a one-line whitespace addition (harmless, committed with Phase E)
