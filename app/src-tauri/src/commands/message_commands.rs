@@ -1,10 +1,9 @@
 // Tauri IPC commands for message retrieval.
 //
-// Messages are persisted in the project-scoped SQLite database via engine/storage.
+// Messages are persisted in the daemon's database. The app reads messages
+// via the daemon HTTP API through libs/db.
 
 use tauri::State;
-
-use orqa_storage::traits::MessageRepository as _;
 
 use crate::domain::message::Message;
 use crate::error::OrqaError;
@@ -30,8 +29,9 @@ pub async fn message_list(
         ));
     }
 
-    let storage = state.db.get()?;
-    Ok(storage
+    Ok(state
+        .db
+        .client
         .messages()
         .list(session_id, limit_val, offset_val)
         .await?)
@@ -39,135 +39,6 @@ pub async fn message_list(
 
 #[cfg(test)]
 mod tests {
-    use crate::domain::message::MessageRole;
-    use orqa_storage::traits::{
-        MessageRepository as _, ProjectRepository as _, SessionRepository as _,
-    };
-
-    async fn setup() -> (orqa_storage::Storage, i64) {
-        let storage = orqa_storage::Storage::open_in_memory()
-            .await
-            .expect("db init");
-        let project = storage
-            .projects()
-            .create("test", "/test", None)
-            .await
-            .expect("create project");
-        storage
-            .sessions()
-            .create(project.id, "auto", None)
-            .await
-            .expect("create session");
-        (storage, 1)
-    }
-
-    #[tokio::test]
-    async fn list_messages_default_pagination() {
-        let (storage, session_id) = setup().await;
-        storage
-            .messages()
-            .create(session_id, MessageRole::User, Some("Hello"), 0, 0)
-            .await
-            .expect("create");
-        storage
-            .messages()
-            .create(session_id, MessageRole::Assistant, Some("Hi"), 1, 0)
-            .await
-            .expect("create");
-
-        let messages = storage
-            .messages()
-            .list(session_id, 100, 0)
-            .await
-            .expect("list");
-        assert_eq!(messages.len(), 2);
-        assert_eq!(messages[0].role, MessageRole::User);
-        assert_eq!(messages[1].role, MessageRole::Assistant);
-    }
-
-    #[tokio::test]
-    async fn list_messages_with_pagination() {
-        let (storage, session_id) = setup().await;
-        for i in 0..5 {
-            storage
-                .messages()
-                .create(session_id, MessageRole::User, Some("msg"), i, 0)
-                .await
-                .expect("create");
-        }
-
-        let page = storage
-            .messages()
-            .list(session_id, 2, 0)
-            .await
-            .expect("page 1");
-        assert_eq!(page.len(), 2);
-
-        let page = storage
-            .messages()
-            .list(session_id, 2, 4)
-            .await
-            .expect("page 3");
-        assert_eq!(page.len(), 1);
-    }
-
-    #[tokio::test]
-    async fn list_empty_session() {
-        let (storage, session_id) = setup().await;
-        let messages = storage
-            .messages()
-            .list(session_id, 100, 0)
-            .await
-            .expect("list");
-        assert!(messages.is_empty());
-    }
-
-    #[tokio::test]
-    async fn search_finds_matching_messages() {
-        let (storage, session_id) = setup().await;
-        storage
-            .messages()
-            .create(
-                session_id,
-                MessageRole::User,
-                Some("How do I fix the parsing bug?"),
-                0,
-                0,
-            )
-            .await
-            .expect("create");
-        storage
-            .messages()
-            .create(
-                session_id,
-                MessageRole::Assistant,
-                Some("Update the parser module"),
-                1,
-                0,
-            )
-            .await
-            .expect("create");
-
-        // search uses project_id=1 (the project in setup)
-        let results = storage
-            .messages()
-            .search(1, "parsing", 10)
-            .await
-            .expect("search");
-        assert!(!results.is_empty());
-    }
-
-    #[tokio::test]
-    async fn search_empty_returns_nothing() {
-        let (storage, _session_id) = setup().await;
-        let results = storage
-            .messages()
-            .search(1, "nonexistent_term_xyz", 10)
-            .await
-            .expect("search");
-        assert!(results.is_empty());
-    }
-
     #[test]
     fn empty_query_validation() {
         let query = "   ";

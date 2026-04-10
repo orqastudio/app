@@ -1,14 +1,13 @@
-//! Tauri IPC command wrappers for devtools session management via orqa-storage.
+//! Tauri IPC command wrappers for devtools session management via libs/db.
 //!
-//! All commands receive `Storage` and `ActiveSession` from Tauri's managed state.
+//! All commands receive `DbClient` and `ActiveSession` from Tauri's managed state.
 
 use std::sync::Arc;
 
-use orqa_storage::repo::devtools::{
+use orqa_db::devtools::{
     DevtoolsEventQuery, DevtoolsEventQueryResponse, DevtoolsSessionInfo, DevtoolsSessionSummary,
 };
-use orqa_storage::traits::DevtoolsRepository as _;
-use orqa_storage::Storage;
+use orqa_db::DbClient;
 use tauri::State;
 
 use crate::ActiveSession;
@@ -20,11 +19,10 @@ use crate::ActiveSession;
 /// session picker dropdown in the frontend.
 #[tauri::command]
 pub async fn list_sessions(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     active: State<'_, Arc<ActiveSession>>,
 ) -> Result<Vec<DevtoolsSessionSummary>, String> {
-    storage
-        .devtools()
+    db.devtools()
         .list_sessions(&active.0)
         .await
         .map_err(|e| e.to_string())
@@ -38,11 +36,10 @@ pub async fn list_sessions(
 /// pagination control.
 #[tauri::command]
 pub async fn query_session_events(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     params: DevtoolsEventQuery,
 ) -> Result<DevtoolsEventQueryResponse, String> {
-    storage
-        .devtools()
+    db.devtools()
         .query_events(&params)
         .await
         .map_err(|e| e.to_string())
@@ -54,11 +51,10 @@ pub async fn query_session_events(
 /// event count without fetching all sessions.
 #[tauri::command]
 pub async fn get_current_session(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     active: State<'_, Arc<ActiveSession>>,
 ) -> Result<DevtoolsSessionInfo, String> {
-    storage
-        .devtools()
+    db.devtools()
         .get_session(&active.0)
         .await
         .map_err(|e| e.to_string())
@@ -71,12 +67,11 @@ pub async fn get_current_session(
 /// fall back to the auto-generated "Session <date> <time>" display name.
 #[tauri::command]
 pub async fn rename_session(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     session_id: String,
     label: String,
 ) -> Result<(), String> {
-    storage
-        .devtools()
+    db.devtools()
         .rename_session(&session_id, &label)
         .await
         .map_err(|e| e.to_string())
@@ -88,12 +83,8 @@ pub async fn rename_session(
 /// but the guard is left to the frontend. Deleting a non-existent `session_id`
 /// is silently ignored.
 #[tauri::command]
-pub async fn delete_session(
-    storage: State<'_, Arc<Storage>>,
-    session_id: String,
-) -> Result<(), String> {
-    storage
-        .devtools()
+pub async fn delete_session(db: State<'_, DbClient>, session_id: String) -> Result<(), String> {
+    db.devtools()
         .delete_session(&session_id)
         .await
         .map_err(|e| e.to_string())

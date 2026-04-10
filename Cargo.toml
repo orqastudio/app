@@ -12,6 +12,7 @@ members = [
     "engine/prompt",
     "engine/storage",
     "engine/storage/migration",
+    "libs/db",
     "engine/validation",
     "engine/workflow",
     "engine/search",

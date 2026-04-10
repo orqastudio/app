@@ -1,7 +1,7 @@
 //! OrqaDev Tauri application setup and command registration.
 //!
 //! Bootstraps the Tauri builder with logging, shared state (event ring buffer,
-//! unified storage), and IPC commands for the developer tools companion app.
+//! daemon HTTP client), and IPC commands for the developer tools companion app.
 
 /// Dev environment controller — spawns `orqa dev start-processes` and pipes output.
 pub mod dev_controller;
@@ -12,16 +12,16 @@ pub mod events;
 /// IPC command for querying process status from the daemon health endpoint.
 pub mod process_status;
 
-/// IPC command wrappers for the session database backed by orqa-storage.
+/// IPC command wrappers for the session database backed by libs/db.
 pub mod session_commands;
 
-/// IPC command wrappers for issue group queries backed by orqa-storage.
+/// IPC command wrappers for issue group queries backed by libs/db.
 pub mod issue_group_commands;
 
 use std::sync::Arc;
 
-use orqa_storage::traits::DevtoolsRepository as _;
-use orqa_storage::Storage;
+use orqa_db::DbClient;
+use orqa_engine_types::ports::resolve_daemon_port;
 use tauri::Manager as _;
 use tracing_subscriber::EnvFilter;
 
@@ -34,44 +34,33 @@ fn init_logging() {
 /// Run the Tauri setup callback: initialise logging, shared state, and the
 /// background SSE consumer that connects to the daemon event bus.
 ///
-/// Also opens the unified storage, keying off `ORQA_PROJECT_ROOT` env var
-/// with a fallback to the current working directory.
+/// Creates a `DbClient` pointing at the daemon HTTP API and registers it as
+/// managed state. All devtools operations go through the daemon — no SQLite.
 fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     init_logging();
     tracing::info!("OrqaDev starting");
 
-    // Resolve the project root from env var or fall back to cwd.
-    // The CLI sets ORQA_PROJECT_ROOT when launching devtools so the DB lands
-    // in the correct .state/ directory for the current project.
-    let project_root = std::env::var("ORQA_PROJECT_ROOT").map_or_else(
-        // BINARY ENTRY POINT: current_dir() failure is an unrecoverable OS error —
-        // OrqaDev cannot determine which project to open without a working directory.
-        |_| std::env::current_dir().expect("cannot read cwd"),
-        std::path::PathBuf::from,
-    );
+    // Build the daemon HTTP client. The daemon must be running before devtools
+    // opens (started by the CLI process manager or the main app).
+    let port = resolve_daemon_port();
+    let db_base_url = format!("http://127.0.0.1:{port}");
+    let db = DbClient::new(&db_base_url);
 
-    // Open the unified storage and register it as managed state.
-    // Storage::open is async; use block_on since setup_app is a sync Tauri callback.
-    let storage = Arc::new(
-        tauri::async_runtime::block_on(Storage::open(&project_root))
-            .map_err(|e| format!("failed to open storage: {e}"))?,
-    );
-
-    // Mark any orphaned sessions from a previous crash as interrupted
-    // before creating the new session.
-    tauri::async_runtime::block_on(storage.devtools().mark_orphaned_sessions_interrupted())
+    // Mark any orphaned sessions from a previous crash as interrupted.
+    tauri::async_runtime::block_on(db.devtools().mark_orphaned_sessions_interrupted())
         .map_err(|e| format!("failed to mark orphaned sessions: {e}"))?;
 
     // Create the session for this devtools open.
     let session_id = uuid::Uuid::new_v4().to_string();
     let started_at = now_ms();
-    tauri::async_runtime::block_on(storage.devtools().create_session(&session_id, started_at))
+    tauri::async_runtime::block_on(db.devtools().create_session(&session_id, started_at))
         .map_err(|e| format!("failed to create session: {e}"))?;
 
-    // Purge sessions older than 30 days.
-    let _ = tauri::async_runtime::block_on(storage.devtools().purge_old_sessions(30));
+    // Purge sessions older than 30 days (best-effort; ignore errors).
+    let _ = tauri::async_runtime::block_on(db.devtools().purge_old_sessions(30));
 
-    app.manage(Arc::clone(&storage));
+    // Register the DbClient as managed state for all IPC commands.
+    app.manage(db.clone());
 
     // Store the active session id as managed state so commands can retrieve it.
     app.manage(Arc::new(ActiveSession(session_id.clone())));
@@ -79,7 +68,8 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let consumer_state = events::EventConsumerState::new();
     app.manage(Arc::clone(&consumer_state));
 
-    let batch_writer = events::EventBatchWriter::new(Arc::clone(&storage), session_id);
+    // The batch writer owns a clone of DbClient (cheap — reqwest::Client is Arc-backed).
+    let batch_writer = events::EventBatchWriter::new(db, session_id);
     app.manage(Arc::new(batch_writer));
 
     let dev_ctrl_state = dev_controller::DevControllerState::new();
@@ -96,10 +86,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     app.manage(DevModeFlag(dev_mode));
 
     // Always connect the SSE consumer on startup. In both dev and production
-    // modes, the daemon is already running by the time the devtools window opens
-    // (started by the CLI process manager or the production app respectively).
-    // The SSE consumer has retry logic with exponential backoff, so it handles
-    // the brief window where the daemon may still be starting.
+    // modes, the daemon is already running by the time the devtools window opens.
     events::spawn_consumer(app.handle().clone(), Arc::clone(&consumer_state));
 
     Ok(())
@@ -130,8 +117,7 @@ fn devtools_is_dev_mode(flag: tauri::State<'_, DevModeFlag>) -> bool {
 ///
 /// First checks the in-memory state (populated when dev_controller parses the
 /// graph-topology JSON event from start-processes). If empty, falls back to
-/// reading `.state/graph-topology.json` from disk (written by the CLI when it
-/// orchestrates the build directly in the new `orqa dev` flow).
+/// reading `.state/graph-topology.json` from disk.
 #[tauri::command]
 async fn devtools_graph_topology(
     state: tauri::State<'_, Arc<dev_controller::GraphTopologyState>>,
@@ -176,10 +162,7 @@ fn devtools_connection_state(
 
 /// IPC command — reads process status from `.state/process-status.json`.
 ///
-/// The CLI process manager writes this file on every status change. The
-/// devtools reads it on each poll cycle to sync node statuses into the
-/// topology graph, since PM events don't flow through the devtools in
-/// the new `orqa dev` flow.
+/// The CLI process manager writes this file on every status change.
 #[tauri::command]
 fn devtools_process_statuses() -> Result<std::collections::HashMap<String, String>, String> {
     let project_root = std::env::var("ORQA_PROJECT_ROOT").map_or_else(
@@ -197,7 +180,7 @@ fn devtools_process_statuses() -> Result<std::collections::HashMap<String, Strin
 /// Build and run the Tauri application event loop.
 ///
 /// Uses `.build(generate_context!()).run(callback)` so that the `RunEvent::Exit`
-/// handler can call `storage.devtools().end_session()` for a clean session close.
+/// handler can call `db.devtools().end_session()` for a clean session close.
 #[allow(clippy::too_many_lines)]
 pub fn run() {
     let app = tauri::Builder::default()
@@ -241,17 +224,13 @@ pub fn run() {
     app.run(|app_handle, event| {
         if let tauri::RunEvent::Exit = event {
             // End the active session so it has a proper ended_at timestamp.
-            if let (Some(storage), Some(active)) = (
-                app_handle.try_state::<Arc<Storage>>(),
+            if let (Some(db), Some(active)) = (
+                app_handle.try_state::<DbClient>(),
                 app_handle.try_state::<Arc<ActiveSession>>(),
             ) {
-                let ended_at = std::time::SystemTime::now()
-                    .duration_since(std::time::UNIX_EPOCH)
-                    .unwrap_or_default()
-                    .as_millis() as i64;
-                let _ = tauri::async_runtime::block_on(
-                    storage.devtools().end_session(&active.0, ended_at),
-                );
+                let ended_at = now_ms();
+                let _ =
+                    tauri::async_runtime::block_on(db.devtools().end_session(&active.0, ended_at));
             }
         }
     });

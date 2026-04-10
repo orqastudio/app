@@ -90,10 +90,10 @@ impl From<orqa_engine_types::error::EngineError> for OrqaError {
     }
 }
 
-impl From<orqa_storage::StorageError> for OrqaError {
-    fn from(err: orqa_storage::StorageError) -> Self {
+impl From<orqa_db::DbError> for OrqaError {
+    fn from(err: orqa_db::DbError) -> Self {
         match err {
-            orqa_storage::StorageError::NotFound(msg) => Self::NotFound(msg),
+            orqa_db::DbError::Http { status: 404, .. } => Self::NotFound(err.to_string()),
             other => Self::Database(other.to_string()),
         }
     }

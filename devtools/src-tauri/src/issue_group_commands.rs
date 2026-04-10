@@ -1,13 +1,10 @@
-// Tauri IPC command wrappers for issue group queries via orqa-storage.
+// Tauri IPC command wrappers for issue group queries via libs/db.
 //
-// Exposes list and get operations over the `issue_groups` table so the frontend
-// can display deduplicated error summaries.
+// Exposes list and get operations over the daemon's issue-groups endpoint so
+// the frontend can display deduplicated error summaries.
 
-use std::sync::Arc;
-
-use orqa_storage::repo::issue_groups::{IssueGroup, SortBy, SortDir};
-use orqa_storage::traits::IssueGroupRepository as _;
-use orqa_storage::Storage;
+use orqa_db::issue_groups::{IssueGroup, SortBy, SortDir};
+use orqa_db::DbClient;
 use tauri::State;
 
 /// IPC command — list issue groups with optional filtering and sorting.
@@ -17,7 +14,7 @@ use tauri::State;
 /// `sort_dir` ("asc", "desc"), `filter_component`, and `filter_level` strings.
 #[tauri::command]
 pub async fn devtools_list_issue_groups(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     sort_by: Option<String>,
     sort_dir: Option<String>,
     filter_component: Option<String>,
@@ -29,8 +26,7 @@ pub async fn devtools_list_issue_groups(
     let sort_dir = parse_sort_dir(sort_dir.as_deref());
     let limit = limit.unwrap_or(100);
     let offset = offset.unwrap_or(0);
-    storage
-        .issue_groups()
+    db.issue_groups()
         .list(
             sort_by,
             sort_dir,
@@ -48,11 +44,10 @@ pub async fn devtools_list_issue_groups(
 /// Returns `null` in JSON when no group with the given fingerprint exists.
 #[tauri::command]
 pub async fn devtools_get_issue_group(
-    storage: State<'_, Arc<Storage>>,
+    db: State<'_, DbClient>,
     fingerprint: String,
 ) -> Result<Option<IssueGroup>, String> {
-    storage
-        .issue_groups()
+    db.issue_groups()
         .get(&fingerprint)
         .await
         .map_err(|e| e.to_string())

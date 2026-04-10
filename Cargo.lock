@@ -4380,11 +4380,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "orqa-db"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "orqa-engine-types",
+ "reqwest 0.12.28",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.18",
+]
+
+[[package]]
 name = "orqa-devtools"
 version = "0.1.0-dev"
 dependencies = [
+ "orqa-db",
  "orqa-engine-types",
- "orqa-storage",
  "reqwest 0.12.28",
  "serde",
  "serde_json",
@@ -4624,8 +4636,8 @@ dependencies = [
  "futures-util",
  "notify",
  "notify-debouncer-full 0.6.0",
+ "orqa-db",
  "orqa-engine-types",
- "orqa-storage",
  "reqwest 0.12.28",
  "serde",
  "serde_json",

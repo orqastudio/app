@@ -1,22 +1,25 @@
 //! Shared helpers for Tauri command modules.
 
-use orqa_storage::traits::ProjectRepository as _;
-
 use crate::error::OrqaError;
 use crate::state::AppState;
 
-/// Resolve the active project's filesystem path from the database.
+/// Resolve the active project's filesystem path from the daemon.
 ///
-/// Reads the stored path from the database, then validates it is the true
+/// Reads the stored path from the daemon, then validates it is the true
 /// project root by confirming a `.orqa/` directory is present. If it is not,
 /// walks up the directory tree until `.orqa/` is found. This handles cases
 /// where a subdirectory (e.g. `app/`) was stored instead of the project root.
 /// Falls back to the stored path when no `.orqa/` ancestor can be found.
 pub async fn active_project_path(state: &tauri::State<'_, AppState>) -> Result<String, OrqaError> {
-    let storage = state.db.get()?;
-    let project = storage.projects().get_active().await?.ok_or_else(|| {
-        OrqaError::NotFound("no active project — open a project first".to_owned())
-    })?;
+    let project = state
+        .db
+        .client
+        .projects()
+        .get_active()
+        .await?
+        .ok_or_else(|| {
+            OrqaError::NotFound("no active project — open a project first".to_owned())
+        })?;
 
     let path = project.path;
 

@@ -3,9 +3,7 @@
 // All graph operations are delegated to the daemon via HTTP using `DaemonClient`.
 // There is no in-process graph building — the daemon is the sole source of truth.
 //
-// Commands that store health snapshots locally (store_health_snapshot,
-// get_health_snapshots) continue to use SQLite directly since snapshot
-// persistence is an app-level concern, not a daemon concern.
+// Health snapshot persistence goes through libs/db (HTTP to daemon), not SQLite.
 //
 // ID representation: artifact IDs are `String` (opaque file-path-derived keys).
 // The `id: String` parameter is intentionally untyped — it is an external
@@ -14,8 +12,6 @@
 // enforces by only accepting IDs it issued.
 
 use tauri::{Emitter, Runtime, State};
-
-use orqa_storage::traits::{HealthRepository as _, ProjectRepository as _};
 
 use crate::daemon_client::{DaemonClient, DaemonGraphHealth};
 use crate::domain::health_snapshot::{HealthSnapshot, NewHealthSnapshot};
@@ -207,8 +203,8 @@ pub async fn apply_auto_fixes(
 
 /// Store a health snapshot with current graph metrics and integrity counts.
 ///
-/// Fetches the current graph health from the daemon, then writes a snapshot
-/// to the local SQLite database.
+/// Fetches the current graph health from the daemon, then persists a snapshot
+/// via the daemon HTTP API (through libs/db).
 #[tauri::command]
 pub async fn store_health_snapshot(
     error_count: i64,
@@ -218,16 +214,18 @@ pub async fn store_health_snapshot(
     let client = daemon_client(&state)?;
     let health = client.get_graph_health().await?;
 
-    let storage = state.db.get()?;
-
-    let project = storage
+    let project = state
+        .db
+        .client
         .projects()
         .get_active()
         .await?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
-    Ok(storage
-        .health()
+    Ok(state
+        .db
+        .client
+        .health_snapshots()
         .create(
             project.id,
             &NewHealthSnapshot {
@@ -291,22 +289,24 @@ pub async fn update_artifact_field(
 
 /// Get the most recent health snapshots for the active project.
 ///
-/// This query is local-only — snapshots are stored in the app's SQLite database.
+/// Queries the daemon via the HTTP API for snapshots stored in the daemon's database.
 #[tauri::command]
 pub async fn get_health_snapshots(
     limit: Option<i64>,
     state: State<'_, AppState>,
 ) -> Result<Vec<HealthSnapshot>, OrqaError> {
-    let storage = state.db.get()?;
-
-    let project = storage
+    let project = state
+        .db
+        .client
         .projects()
         .get_active()
         .await?
         .ok_or_else(|| OrqaError::NotFound("no active project".to_owned()))?;
 
-    Ok(storage
-        .health()
+    Ok(state
+        .db
+        .client
+        .health_snapshots()
         .get_recent(project.id, limit.unwrap_or(30))
         .await?)
 }

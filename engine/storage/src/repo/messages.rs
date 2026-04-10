@@ -50,6 +50,7 @@ pub struct MessageRepo {
 /// Map a SeaORM `QueryResult` row to a `Message` domain value.
 ///
 /// Column positions must match the SELECT order used in every message query.
+#[allow(clippy::too_many_lines)]
 fn map_message(row: &sea_orm::QueryResult) -> Result<Message, StorageError> {
     let role_str: String = row
         .try_get("", "role")

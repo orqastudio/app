@@ -1,11 +1,9 @@
 // Tauri IPC commands for the first-run setup wizard.
 //
-// Setup completion is stored as `setup_version` in the project-scoped settings.
-// If no project is open yet, setup is considered incomplete.
+// Setup completion is stored as `setup_version` in the daemon settings.
+// The app reads and writes setup state via the daemon HTTP API through libs/db.
 
 use tauri::Manager;
-
-use orqa_storage::traits::SettingsRepository as _;
 
 use crate::domain::setup::{self, ClaudeCliInfo, SetupStatus, SetupStepStatus, StepStatus};
 use crate::error::OrqaError;
@@ -52,18 +50,18 @@ fn default_steps() -> Vec<SetupStepStatus> {
 
 /// Query the current setup status.
 ///
-/// Reads the stored `setup_version` from settings. If no project is open
-/// (storage not initialised), setup is incomplete.
+/// Reads the stored `setup_version` from daemon settings. If the daemon is
+/// unreachable, setup is treated as incomplete.
 #[tauri::command]
 pub async fn get_setup_status(state: tauri::State<'_, AppState>) -> Result<SetupStatus, OrqaError> {
-    let (setup_complete, stored_version) = match state.db.get() {
-        Ok(storage) => {
-            let stored = storage.settings().get("setup_version", "app").await?;
-            let version = stored.and_then(|v| v.as_u64()).map_or(0, |v| v as u32);
-            (version >= CURRENT_SETUP_VERSION, version)
-        }
-        Err(_) => (false, 0),
-    };
+    let (setup_complete, stored_version) =
+        match state.db.client.settings().get("setup_version", "app").await {
+            Ok(Some(v)) => {
+                let version = v.as_u64().map_or(0, |v| v as u32);
+                (version >= CURRENT_SETUP_VERSION, version)
+            }
+            Ok(None) | Err(_) => (false, 0),
+        };
 
     Ok(SetupStatus {
         setup_complete,
@@ -129,13 +127,12 @@ pub fn check_embedding_model(app_handle: tauri::AppHandle) -> Result<SetupStepSt
     }
 }
 
-/// Mark setup as complete by storing the current version in settings.
-///
-/// Requires an open project (storage must be initialised via `project_open`).
+/// Mark setup as complete by storing the current version in daemon settings.
 #[tauri::command]
 pub async fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), OrqaError> {
-    let storage = state.db.get()?;
-    Ok(storage
+    Ok(state
+        .db
+        .client
         .settings()
         .set(
             "setup_version",
@@ -148,101 +145,6 @@ pub async fn complete_setup(state: tauri::State<'_, AppState>) -> Result<(), Orq
 #[cfg(test)]
 mod tests {
     use super::*;
-    use orqa_storage::traits::SettingsRepository as _;
-
-    #[tokio::test]
-    async fn get_setup_status_incomplete_when_no_version() {
-        let storage = orqa_storage::Storage::open_in_memory()
-            .await
-            .expect("db init");
-        let stored = storage
-            .settings()
-            .get("setup_version", "app")
-            .await
-            .expect("get");
-        assert!(stored.is_none());
-
-        let stored_version = 0_u32;
-        let status = SetupStatus {
-            setup_complete: stored_version >= CURRENT_SETUP_VERSION,
-            current_version: CURRENT_SETUP_VERSION,
-            stored_version,
-            steps: default_steps(),
-        };
-
-        assert!(!status.setup_complete);
-        assert_eq!(status.current_version, CURRENT_SETUP_VERSION);
-        assert_eq!(status.stored_version, 0);
-        assert_eq!(status.steps.len(), 5);
-        assert_eq!(status.steps[0].id, "claude_cli");
-        assert_eq!(status.steps[0].status, StepStatus::Pending);
-    }
-
-    #[tokio::test]
-    async fn get_setup_status_complete_when_version_matches() {
-        let storage = orqa_storage::Storage::open_in_memory()
-            .await
-            .expect("db init");
-        storage
-            .settings()
-            .set(
-                "setup_version",
-                &serde_json::json!(CURRENT_SETUP_VERSION),
-                "app",
-            )
-            .await
-            .expect("set");
-
-        let stored = storage
-            .settings()
-            .get("setup_version", "app")
-            .await
-            .expect("get")
-            .expect("should exist");
-        let stored_version = stored.as_u64().map_or(0, |v| v as u32);
-
-        let status = SetupStatus {
-            setup_complete: stored_version >= CURRENT_SETUP_VERSION,
-            current_version: CURRENT_SETUP_VERSION,
-            stored_version,
-            steps: default_steps(),
-        };
-
-        assert!(status.setup_complete);
-        assert_eq!(status.stored_version, CURRENT_SETUP_VERSION);
-    }
-
-    #[tokio::test]
-    async fn complete_setup_stores_version() {
-        let storage = orqa_storage::Storage::open_in_memory()
-            .await
-            .expect("db init");
-
-        let before = storage
-            .settings()
-            .get("setup_version", "app")
-            .await
-            .expect("get");
-        assert!(before.is_none());
-
-        storage
-            .settings()
-            .set(
-                "setup_version",
-                &serde_json::json!(CURRENT_SETUP_VERSION),
-                "app",
-            )
-            .await
-            .expect("set");
-
-        let after = storage
-            .settings()
-            .get("setup_version", "app")
-            .await
-            .expect("get")
-            .expect("should exist");
-        assert_eq!(after, serde_json::json!(CURRENT_SETUP_VERSION));
-    }
 
     #[test]
     fn default_steps_has_expected_ids() {
@@ -294,27 +196,5 @@ mod tests {
         assert!(info.version.is_none());
         assert!(info.path.is_none());
         assert!(!info.authenticated);
-    }
-
-    #[tokio::test]
-    async fn setup_status_incomplete_when_version_too_low() {
-        let storage = orqa_storage::Storage::open_in_memory()
-            .await
-            .expect("db init");
-        storage
-            .settings()
-            .set("setup_version", &serde_json::json!(0), "app")
-            .await
-            .expect("set");
-
-        let stored = storage
-            .settings()
-            .get("setup_version", "app")
-            .await
-            .expect("get")
-            .expect("should exist");
-        let stored_version = stored.as_u64().map_or(0, |v| v as u32);
-
-        assert!(stored_version < CURRENT_SETUP_VERSION);
     }
 }

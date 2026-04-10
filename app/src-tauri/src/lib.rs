@@ -1,14 +1,13 @@
 //! OrqaStudio Tauri application entry point.
 //!
 //! Bootstraps the Tauri builder with all plugins, commands, and application state.
-//! The app is a pure UI layer — all engine operations are delegated to the daemon.
+//! The app is a pure UI layer — all storage operations go through the daemon via
+//! libs/db, and all engine operations are delegated to the daemon via HTTP.
 
 /// Tauri IPC command handlers (all `#[tauri::command]` functions).
 pub mod commands;
 /// HTTP client for the OrqaStudio daemon REST API.
 pub mod daemon_client;
-/// Project-scoped storage initialization (thin wrapper over engine/storage).
-pub mod db;
 /// Domain logic: artifact types, session management, settings, and setup checks.
 pub mod domain;
 /// Application-level error type.
@@ -26,17 +25,23 @@ pub mod watcher;
 
 use std::sync::{Arc, Mutex};
 
+use orqa_db::DbClient;
+use orqa_engine_types::ports::resolve_daemon_port;
 use tauri::Manager;
 
-/// Construct and return the initial `AppState` with no project open.
+/// Construct and return the initial `AppState`.
 ///
-/// Storage starts as `None` — it is populated by the first `project_open` call.
+/// `DbClient` is pre-configured to talk to the daemon's storage API on the
+/// resolved port. `DaemonClient` is separate (graph, validation, artifacts).
 fn build_app_state(
     tracker: &Arc<startup::StartupTracker>,
 ) -> Result<state::AppState, Box<dyn std::error::Error>> {
+    let port = resolve_daemon_port();
+    let db_base_url = format!("http://127.0.0.1:{port}");
+
     Ok(state::AppState {
-        db: state::StorageState {
-            storage: Mutex::new(None),
+        db: state::DbClientState {
+            client: DbClient::new(&db_base_url),
         },
         daemon: state::DaemonState {
             client: daemon_client::DaemonClient::new()?,
@@ -63,7 +68,7 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     app.manage(app_state);
 
     // When launched by `orqa dev`, ORQA_PROJECT_ROOT is set. Open the project
-    // storage and auto-complete setup so a fresh DB is immediately usable.
+    // and auto-complete setup so a fresh environment is immediately usable.
     if let Ok(project_root) = std::env::var("ORQA_PROJECT_ROOT") {
         auto_open_dev_project(app, &project_root);
     }
@@ -73,13 +78,11 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
 
 /// Auto-open a project when launched via `orqa dev`.
 ///
-/// Calls `project_open` which opens project-scoped storage and stores it in
-/// AppState, then marks setup complete so the wizard is skipped.
+/// Calls `project_open` to register/touch the project in the daemon, then marks
+/// setup complete via the daemon settings API so the wizard is skipped.
 /// Uses `tauri::async_runtime::block_on` because this is called from the sync
-/// Tauri setup callback but all storage operations are now async.
+/// Tauri setup callback but all storage operations are async.
 fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
-    use orqa_storage::traits::SettingsRepository as _;
-
     let state: tauri::State<'_, state::AppState> = app.state();
     let project_root_owned = project_root.to_owned();
 
@@ -98,18 +101,16 @@ fn auto_open_dev_project(app: &tauri::App, project_root: &str) {
         }
     }
 
-    // Mark first-run setup as complete — dev environment is already configured.
+    // Mark first-run setup as complete via daemon settings API.
     let state: tauri::State<'_, state::AppState> = app.state();
-    if let Ok(storage) = state.db.get() {
-        let result = tauri::async_runtime::block_on(storage.settings().set(
-            "setup_version",
-            &serde_json::json!(1u32),
-            "app",
-        ));
-        match result {
-            Err(e) => tracing::warn!(err = %e, "failed to auto-complete setup"),
-            Ok(_) => tracing::info!("auto-completed first-run setup (dev mode)"),
-        }
+    let result = tauri::async_runtime::block_on(state.db.client.settings().set(
+        "setup_version",
+        &serde_json::json!(1u32),
+        "app",
+    ));
+    match result {
+        Err(e) => tracing::warn!(err = %e, "failed to auto-complete setup"),
+        Ok(()) => tracing::info!("auto-completed first-run setup (dev mode)"),
     }
 }
 

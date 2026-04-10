@@ -556,6 +556,108 @@ pub async fn start(
         )
         .with_state(state.graph_state.clone());
 
+    // Message routes — create, tool-message create, and FTS5 search.
+    let message_router = Router::new()
+        .route("/", post(crate::routes::messages::create_message))
+        .route("/tool", post(crate::routes::messages::create_tool_message))
+        .route("/search", post(crate::routes::messages::search_messages))
+        .route(
+            "/{id}/content",
+            axum::routing::put(crate::routes::messages::update_message_content),
+        )
+        .route(
+            "/{id}/stream-status",
+            axum::routing::put(crate::routes::messages::update_message_stream_status),
+        )
+        .with_state(state.clone());
+
+    // Theme routes — project design tokens and user overrides.
+    let theme_router = Router::new()
+        .route("/", get(crate::routes::themes::get_themes))
+        .route(
+            "/overrides",
+            get(crate::routes::themes::get_overrides)
+                .delete(crate::routes::themes::clear_overrides),
+        )
+        .route(
+            "/overrides/{token}",
+            axum::routing::put(crate::routes::themes::set_override),
+        )
+        .with_state(state.clone());
+
+    // Health snapshot routes — persist and retrieve graph health metrics.
+    let health_snapshot_router = Router::new()
+        .route(
+            "/",
+            get(crate::routes::health_snapshots::list_health_snapshots)
+                .post(crate::routes::health_snapshots::create_health_snapshot),
+        )
+        .route(
+            "/{id}",
+            get(crate::routes::health_snapshots::get_health_snapshot),
+        )
+        .with_state(state.clone());
+
+    // Violation routes — record and list enforcement violations in SQLite.
+    let violation_router = Router::new()
+        .route(
+            "/",
+            get(crate::routes::violations::list_violations)
+                .post(crate::routes::violations::record_violation),
+        )
+        .with_state(state.clone());
+
+    // Devtools session routes — session lifecycle and event query for OrqaDev.
+    let devtools_session_router = Router::new()
+        .route(
+            "/",
+            post(crate::routes::devtools_sessions::create_devtools_session)
+                .get(crate::routes::devtools_sessions::list_devtools_sessions),
+        )
+        .route(
+            "/mark-orphaned",
+            post(crate::routes::devtools_sessions::mark_orphaned_sessions),
+        )
+        .route(
+            "/purge",
+            post(crate::routes::devtools_sessions::purge_devtools_sessions),
+        )
+        .route(
+            "/{id}",
+            get(crate::routes::devtools_sessions::get_devtools_session)
+                .delete(crate::routes::devtools_sessions::delete_devtools_session),
+        )
+        .route(
+            "/{id}/label",
+            axum::routing::put(crate::routes::devtools_sessions::rename_devtools_session),
+        )
+        .route(
+            "/{id}/end",
+            post(crate::routes::devtools_sessions::end_devtools_session),
+        )
+        .route(
+            "/{id}/events",
+            post(crate::routes::devtools_sessions::insert_devtools_events),
+        )
+        .route(
+            "/{id}/events/query",
+            post(crate::routes::devtools_sessions::query_devtools_events),
+        )
+        .with_state(state.clone());
+
+    // Issue group routes — deduplicated error clusters.
+    let issue_group_router = Router::new()
+        .route("/", get(crate::routes::issue_groups::list_issue_groups))
+        .route(
+            "/upsert",
+            post(crate::routes::issue_groups::upsert_issue_group),
+        )
+        .route(
+            "/{fingerprint}",
+            get(crate::routes::issue_groups::get_issue_group),
+        )
+        .with_state(state.clone());
+
     // Session routes — chat session and message management, plus daemon stream loop.
     let session_router = Router::new()
         .route(
@@ -698,8 +800,14 @@ pub async fn start(
         .nest("/agents", agent_router)
         .nest("/content", content_router)
         .nest("/lessons", lesson_router)
+        .nest("/messages", message_router)
         .nest("/sessions", session_router)
         .nest("/projects", project_router)
+        .nest("/themes", theme_router)
+        .nest("/health-snapshots", health_snapshot_router)
+        .nest("/violations", violation_router)
+        .nest("/devtools-sessions", devtools_session_router)
+        .nest("/issue-groups", issue_group_router)
         .nest("/settings", settings_router)
         .nest("/sidecar", sidecar_router)
         .nest("/cli-tools", cli_tools_router)

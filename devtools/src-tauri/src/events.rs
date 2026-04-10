@@ -8,22 +8,21 @@
 // frontend queries events via IPC commands exposed here.
 //
 // Write-through persistence: after every push_event_pub call, the event is
-// also queued to the EventBatchWriter for SQLite persistence. This adds
+// also queued to the EventBatchWriter for daemon persistence. This adds
 // zero latency to the hot path — the channel send is non-blocking.
 //
 // Reconnection uses exponential backoff starting at 1 s, doubling each attempt
 // up to a maximum of 30 s. On each reconnect, missed events are loaded from the
-// daemon's SQLite history via GET /events?after=<last_timestamp>. Connection
+// daemon's history via GET /events?after=<last_timestamp>. Connection
 // state changes are broadcast to the frontend via orqa://connection-state events.
 
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::Duration;
 
+use orqa_db::DbClient;
 use orqa_engine_types::ports::resolve_daemon_port;
 use orqa_engine_types::types::event::LogEvent;
-use orqa_storage::traits::{DevtoolsRepository as _, IssueGroupRepository as _};
-use orqa_storage::Storage;
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Emitter, Manager as _, State};
 use tokio::sync::mpsc;
@@ -33,7 +32,7 @@ use tracing::{error, info, warn};
 /// Maximum number of events retained in the ring buffer.
 const RING_BUFFER_CAPACITY: usize = 50_000;
 
-/// Maximum events to accumulate before flushing to SQLite.
+/// Maximum events to accumulate before flushing to the daemon.
 const BATCH_SIZE: usize = 100;
 
 /// Maximum time to wait before flushing a non-empty batch.
@@ -55,29 +54,28 @@ const BACKOFF_INITIAL_SECS: u64 = 1;
 const BACKOFF_MAX_SECS: u64 = 30;
 
 /// Non-blocking batch writer that queues events through an mpsc channel and
-/// flushes them to `orqa-storage` via a background task.
+/// flushes them to the daemon via libs/db in a background task.
 ///
-/// This replaces the SessionDb batch writer. Callers use `queue_event()` which
-/// is a non-blocking send; the background flush loop calls
-/// `storage.devtools().insert_events()` in a `spawn_blocking` context.
+/// Callers use `queue_event()` which is a non-blocking send; the background
+/// flush loop calls `db.devtools().insert_events()`.
 pub struct EventBatchWriter {
     /// Channel sender for queuing events.
     tx: mpsc::UnboundedSender<LogEvent>,
 }
 
 impl EventBatchWriter {
-    /// Create a new batch writer bound to `storage` and `session_id`, and spawn
+    /// Create a new batch writer bound to `db` and `session_id`, and spawn
     /// the background flush loop.
-    pub fn new(storage: Arc<Storage>, session_id: String) -> Self {
+    pub fn new(db: DbClient, session_id: String) -> Self {
         let (tx, rx) = mpsc::unbounded_channel::<LogEvent>();
-        spawn_flush_loop(storage, session_id, rx);
+        spawn_flush_loop(db, session_id, rx);
         Self { tx }
     }
 
-    /// Queue a single event for batched write to SQLite.
+    /// Queue a single event for batched write to the daemon.
     ///
     /// Non-blocking: the event is sent on the unbounded channel and the
-    /// background flush loop handles the actual INSERT.
+    /// background flush loop handles the actual HTTP call.
     pub fn queue_event(&self, event: LogEvent) {
         if self.tx.send(event).is_err() {
             warn!(
@@ -88,17 +86,13 @@ impl EventBatchWriter {
     }
 }
 
-/// Spawn the background tokio task that drains the channel into the database.
+/// Spawn the background tokio task that drains the channel into the daemon.
 ///
-/// Accumulates events into a local batch and flushes via `spawn_blocking` when
-/// the batch reaches `BATCH_SIZE` or `FLUSH_INTERVAL` elapses. Exits when the
+/// Accumulates events into a local batch and flushes via `db.devtools().insert_events()`
+/// when the batch reaches `BATCH_SIZE` or `FLUSH_INTERVAL` elapses. Exits when the
 /// channel is closed (i.e., when `EventBatchWriter` is dropped), flushing any
 /// remaining events.
-fn spawn_flush_loop(
-    storage: Arc<Storage>,
-    session_id: String,
-    mut rx: mpsc::UnboundedReceiver<LogEvent>,
-) {
+fn spawn_flush_loop(db: DbClient, session_id: String, mut rx: mpsc::UnboundedReceiver<LogEvent>) {
     tauri::async_runtime::spawn(async move {
         let mut batch: Vec<LogEvent> = Vec::with_capacity(BATCH_SIZE);
         let flush_interval = tokio::time::interval(FLUSH_INTERVAL);
@@ -113,13 +107,13 @@ fn spawn_flush_loop(
                         Some(event) => {
                             batch.push(event);
                             if batch.len() >= BATCH_SIZE {
-                                flush(&storage, &session_id, &mut batch).await;
+                                flush(&db, &session_id, &mut batch).await;
                             }
                         }
                         None => {
                             // Channel closed — flush remaining events and exit.
                             if !batch.is_empty() {
-                                flush(&storage, &session_id, &mut batch).await;
+                                flush(&db, &session_id, &mut batch).await;
                             }
                             info!(subsystem = "event-batch-writer", "flush loop exiting");
                             break;
@@ -129,7 +123,7 @@ fn spawn_flush_loop(
 
                 _ = flush_interval.tick() => {
                     if !batch.is_empty() {
-                        flush(&storage, &session_id, &mut batch).await;
+                        flush(&db, &session_id, &mut batch).await;
                     }
                 }
             }
@@ -137,11 +131,11 @@ fn spawn_flush_loop(
     });
 }
 
-/// Flush `batch` to SQLite via `DevtoolsRepo`.
-async fn flush(storage: &Arc<Storage>, session_id: &str, batch: &mut Vec<LogEvent>) {
+/// Flush `batch` to the daemon via `DbClient`.
+async fn flush(db: &DbClient, session_id: &str, batch: &mut Vec<LogEvent>) {
     let events = std::mem::take(batch);
-    if let Err(e) = storage.devtools().insert_events(session_id, events).await {
-        error!(subsystem = "event-batch-writer", error = ?e, "flush to SQLite failed");
+    if let Err(e) = db.devtools().insert_events(session_id, events).await {
+        error!(subsystem = "event-batch-writer", error = ?e, "flush to daemon failed");
     }
 }
 
@@ -251,12 +245,11 @@ async fn fetch_events_json(url: &str) -> Option<Vec<serde_json::Value>> {
         })
 }
 
-/// Load events missed during a disconnect from the daemon's SQLite history.
+/// Load events missed during a disconnect from the daemon's history.
 ///
 /// Queries `GET /events?after=<after_ms>&limit=5000` and pushes each returned
 /// event into the ring buffer, emits it to the frontend, and queues it for
-/// SQLite persistence. Silently no-ops when the daemon is unreachable — the
-/// subsequent live stream attempt will surface the connectivity error.
+/// persistence. Silently no-ops when the daemon is unreachable.
 async fn load_gap_events(
     app: &AppHandle,
     state: &Arc<EventConsumerState>,
@@ -267,7 +260,7 @@ async fn load_gap_events(
     let url = format!("{base_url}/events?after={after_ms}&limit=5000");
     info!(
         subsystem = "event-consumer",
-        after_ms, "loading gap events from SQLite history"
+        after_ms, "loading gap events from daemon history"
     );
 
     let Some(events) = fetch_events_json(&url).await else {
@@ -281,7 +274,7 @@ async fn load_gap_events(
                 if let Err(e) = app.emit(TAURI_EVENT_NEW_LOG, &event) {
                     error!(subsystem = "event-consumer", error = %e, "failed to emit gap event");
                 }
-                // Persist to SQLite before moving event into ring buffer.
+                // Persist before moving event into ring buffer.
                 batch_writer.queue_event(event.clone());
                 // Upsert into issue_groups for gap-fill events with a fingerprint.
                 if event.fingerprint.is_some() {
@@ -296,7 +289,7 @@ async fn load_gap_events(
     }
     info!(
         subsystem = "event-consumer",
-        count, "loaded gap events from SQLite history"
+        count, "loaded gap events from daemon history"
     );
 }
 
@@ -304,18 +297,15 @@ async fn load_gap_events(
 ///
 /// Connects to the daemon's `/events/stream` endpoint and feeds every received
 /// event into the ring buffer. On disconnect or error the task retries with
-/// exponential backoff (1 s → 2 s → 4 s → … → 30 s max). Before reconnecting
-/// to the live stream, the task queries `/events?after=<last_timestamp>` to
-/// replay any events missed during the gap. Connection state transitions are
-/// emitted to the frontend via `orqa://connection-state` Tauri events.
-///
-/// Every event pushed to the ring buffer is also queued to the `EventBatchWriter`
-/// for SQLite persistence via the non-blocking batch writer channel.
+/// exponential backoff (1 s → 2 s → 4 s → … → 30 s max).
+pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
+    tauri::async_runtime::spawn(consumer_loop(app, state));
+}
+
 /// Persistent reconnection loop for the SSE event consumer.
 ///
 /// Runs indefinitely, connecting to the daemon SSE stream and reconnecting
-/// with exponential backoff on failure. Gap-fills missed events from the
-/// daemon's `/events` query endpoint between reconnect attempts.
+/// with exponential backoff on failure. Gap-fills missed events between attempts.
 async fn consumer_loop(app: AppHandle, state: Arc<EventConsumerState>) {
     let mut last_timestamp: Option<i64> = None;
     let mut backoff_secs = BACKOFF_INITIAL_SECS;
@@ -398,22 +388,14 @@ async fn prepare_connection(
     }
 }
 
-/// Spawn the SSE event consumer on the async runtime.
-///
-/// Launches the persistent reconnection loop as a background tokio task.
-pub fn spawn_consumer(app: AppHandle, state: Arc<EventConsumerState>) {
-    tauri::async_runtime::spawn(consumer_loop(app, state));
-}
-
 /// Connect to the daemon SSE endpoint and consume events until the stream ends.
 ///
 /// Reads the response body in chunks, accumulating bytes until newlines are
 /// found. Each `data:` SSE line is parsed as a `LogEvent`, stored in the ring
-/// buffer, emitted as a Tauri frontend event, and queued for SQLite persistence.
+/// buffer, emitted as a Tauri frontend event, and queued for persistence.
 /// Emits a `Connected` state event when the HTTP response is successfully
 /// established. Updates `last_timestamp` on each event so the caller can fill
-/// gaps on reconnect. Returns `Ok(())` when the server closes the stream, or an
-/// error on failure.
+/// gaps on reconnect. Returns `Ok(())` when the server closes the stream.
 async fn connect_and_consume(
     app: &AppHandle,
     state: Arc<EventConsumerState>,
@@ -464,8 +446,7 @@ async fn connect_and_consume(
 /// Each complete line ending with `\n` is extracted, `data:` prefix stripped,
 /// and the payload deserialized as `LogEvent`. Incomplete trailing data is left
 /// in `buf` for the next chunk. Updates `last_timestamp` to the most recent
-/// event's timestamp so reconnect logic can query the missed event gap. Each
-/// parsed event is also queued for SQLite persistence via the batch writer.
+/// event's timestamp so reconnect logic can query the missed event gap.
 async fn process_sse_lines(
     app: &AppHandle,
     state: &Arc<EventConsumerState>,
@@ -494,13 +475,11 @@ async fn process_sse_lines(
                             "failed to emit Tauri log event"
                         );
                     }
-                    // Queue for SQLite persistence before moving into ring buffer.
+                    // Queue for persistence before moving into ring buffer.
                     if let Some(bw) = batch_writer {
                         bw.queue_event(event.clone());
                     }
                     // Upsert into issue_groups if the event carries a fingerprint.
-                    // This is fire-and-forget: a spawned task handles the blocking
-                    // SQLite write and emits the group-update event when done.
                     if event.fingerprint.is_some() {
                         upsert_issue_group(app.clone(), event.clone());
                     }
@@ -519,12 +498,12 @@ async fn process_sse_lines(
     }
 }
 
-/// Fire-and-forget helper that upserts a fingerprinted event into `issue_groups`
+/// Fire-and-forget helper that upserts a fingerprinted event into issue_groups
 /// and emits an `orqa://issue-group-update` Tauri event with the updated group.
 ///
 /// Called from the event ingest paths (live SSE and gap-fill) for any event that
 /// carries a non-None fingerprint. Spawns a new async task so the caller is never
-/// blocked by the SQLite write. Retrieves `Storage` from managed app state.
+/// blocked by the HTTP call. Retrieves `DbClient` from managed app state.
 pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
     tauri::async_runtime::spawn(async move {
         let Some(fp) = event.fingerprint.as_deref().map(str::to_owned) else {
@@ -538,16 +517,16 @@ pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
         let component = event.source.to_string();
         let level = event.level.to_string();
 
-        let Some(storage) = app.try_state::<Arc<Storage>>().map(|s| Arc::clone(&s)) else {
+        let Some(db) = app.try_state::<DbClient>().as_deref().cloned() else {
             error!(
                 subsystem = "issue-group-upsert",
                 fingerprint = %fp,
-                "storage not in managed state — upsert skipped"
+                "DbClient not in managed state — upsert skipped"
             );
             return;
         };
 
-        if let Err(e) = storage
+        if let Err(e) = db
             .issue_groups()
             .upsert(&fp, &title, &component, &level, event.timestamp, event.id)
             .await
@@ -556,9 +535,9 @@ pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
             return;
         }
 
-        match storage.issue_groups().get(&fp).await {
+        match db.issue_groups().get(&fp).await {
             Err(e) => {
-                error!(subsystem = "issue-group-upsert", error = %e, "get after upsert failed")
+                error!(subsystem = "issue-group-upsert", error = %e, "get after upsert failed");
             }
             Ok(None) => error!(
                 subsystem = "issue-group-upsert",
@@ -672,14 +651,9 @@ pub async fn clear_events(state: State<'_, Arc<EventConsumerState>>) -> Result<(
 }
 
 /// Filter parameters accepted by `devtools_query_history`.
-///
-/// All fields are optional and map directly to the daemon's `GET /events`
-/// query parameters. `before` is converted to the daemon's `after` parameter
-/// by querying events whose timestamp is strictly less than `before`.
 #[derive(Debug, Deserialize)]
 pub struct HistoryQueryParams {
     /// Unix timestamp in milliseconds — return events before this point.
-    /// Used to page backward from the oldest visible event.
     pub before: Option<i64>,
     /// Filter by source string (e.g. "Daemon", "App").
     pub source: Option<String>,
@@ -699,10 +673,8 @@ struct DaemonEventsResponse {
 ///
 /// When `before` is set the daemon is asked for all events (after=0) with a
 /// high fetch limit so the caller can filter client-side to those with
-/// timestamp < before. The daemon currently only supports an `after` lower
-/// bound; `before` filtering is applied after the response is received.
+/// timestamp < before.
 fn build_history_url(port: u16, params: &HistoryQueryParams, limit: u32) -> String {
-    // When paging backward we fetch a larger window so we can trim client-side.
     let fetch_limit = if params.before.is_some() {
         5000_u32
     } else {
@@ -736,13 +708,13 @@ fn apply_before_cutoff(
     events
 }
 
-/// IPC command — query historical events from the daemon's SQLite store.
+/// IPC command — query historical events from the daemon's store.
 ///
 /// Calls the daemon's `GET /events` HTTP endpoint with the supplied filter
 /// parameters. Results are returned as raw JSON values so the frontend can
-/// merge them into the log store with its own deduplication logic. A maximum
-/// of 1000 events per request is enforced; the caller pages backward by
-/// supplying a decreasing `before` timestamp.
+/// merge them with its own deduplication logic. A maximum of 1000 events per
+/// request is enforced; the caller pages backward by supplying a decreasing
+/// `before` timestamp.
 #[tauri::command]
 pub async fn devtools_query_history(
     params: HistoryQueryParams,
