@@ -367,7 +367,8 @@ mod tests {
             r#"---
 scope: project
 enforcement:
-  - event: file
+  - mechanism: hook
+    event: file
     action: block
     conditions:
       - field: file_path
@@ -411,7 +412,8 @@ Do not use unwrap() in production code.
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: block
     pattern: "--no-verify"
 ---
@@ -441,7 +443,8 @@ Never use --no-verify on commits.
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: warn
     pattern: "git push --force"
 ---
@@ -466,7 +469,8 @@ Force pushing is risky.
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: block
     pattern: "--no-verify"
 ---
@@ -479,7 +483,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: warn
     pattern: "--no-verify"
 ---
@@ -501,7 +506,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: file
+  - mechanism: hook
+    event: file
     action: inject
     conditions:
       - field: file_path
@@ -540,7 +546,8 @@ Load Rust knowledge when editing Rust files.
             r#"---
 scope: project
 enforcement:
-  - event: lint
+  - mechanism: hook
+    event: lint
     action: warn
     pattern: "clippy"
 ---
@@ -575,7 +582,8 @@ Delegates to clippy.
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: inject
     pattern: "cargo build"
 ---
@@ -632,7 +640,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: scan
+  - mechanism: hook
+    event: scan
     action: warn
     scope: "agents/*.md"
     conditions:
@@ -669,7 +678,8 @@ Agent files should not restate rule content inline.
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: block
     pattern: "--no-verify"
 ---
@@ -695,7 +705,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: scan
+  - mechanism: hook
+    event: scan
     action: warn
     scope: "nonexistent-dir/*.md"
     conditions:
@@ -730,7 +741,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: scan
+  - mechanism: hook
+    event: scan
     action: warn
     scope: "*.md"
     conditions:
@@ -768,7 +780,8 @@ enforcement:
             r#"---
 scope: project
 enforcement:
-  - event: scan
+  - mechanism: hook
+    event: scan
     action: warn
     scope: "*.md"
     conditions:

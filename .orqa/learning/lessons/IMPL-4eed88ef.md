@@ -1,7 +1,7 @@
 ---
 id: IMPL-4eed88ef
 type: lesson
-title: Dogfood readiness signal: lessons are observations, not corrections
+title: "Dogfood readiness signal: lessons are observations, not corrections"
 description: "When captured lessons shift from corrections (process failures needing enforcement) to observations (validating that something works), that shift is a maturity signal indicating the current layer is stable enough to begin dogfooding at the next level."
 status: captured
 created: 2026-03-21

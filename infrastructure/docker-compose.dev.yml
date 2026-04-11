@@ -45,6 +45,15 @@ services:
       - ../.orqa:/project/.orqa:rw
       # Plugin sources — read-only; daemon reads but never writes plugins.
       - ../plugins:/project/plugins:ro
+      # Connector plugins — the claude-code connector is registered in
+      # project.json as a plugin at `connectors/claude-code/`.  Mount it
+      # read-only so plugin discovery can read its orqa-plugin.json without
+      # spamming "No such file or directory" warnings on every scan.
+      - ../connectors:/project/connectors:ro
+      # Sidecar plugins — same story as connectors. The claude-agent-sdk
+      # sidecar lives at `sidecars/claude-agent-sdk/` and is registered as
+      # `@orqastudio/plugin-claude` in project.json.
+      - ../sidecars:/project/sidecars:ro
       # ONNX models — read-only; daemon loads models but never modifies them.
       - ../models:/project/models:ro
       # Session state — bind mount (NOT named volume) so the native app and

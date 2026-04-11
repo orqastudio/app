@@ -95,7 +95,8 @@ mod tests {
             r#"---
 scope: project
 enforcement:
-  - event: bash
+  - mechanism: hook
+    event: bash
     action: warn
     pattern: "TODO"
 ---

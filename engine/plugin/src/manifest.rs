@@ -106,8 +106,15 @@ pub struct ActionDeclaration {
     pub command: String,
     /// Command-line arguments passed to the binary.
     pub args: Vec<String>,
-    /// Glob pattern for the files this action operates on.
-    pub files: String,
+    /// Optional glob pattern for the files this action operates on.
+    ///
+    /// When omitted, the enforcement declaration's `file_types` (one level
+    /// up) already describes the action's file scope — most generators
+    /// (clippy, tsc, cargo) run workspace-wide and don't need a per-action
+    /// glob. Left as an optional escape hatch for tools like eslint that
+    /// take an explicit file list on the command line.
+    #[serde(default)]
+    pub files: Option<String>,
 }
 
 /// File watch declaration for a generator — triggers regeneration on change.
@@ -139,14 +146,33 @@ pub struct MergeDecision {
 
 /// An agent role definition declared by a plugin.
 ///
-/// Provides the structured metadata the engine needs to compose agent prompts
-/// from plugin-contributed definitions (P1: Plugin-Composed Everything).
+/// Supports two shapes simultaneously so plugins can use whichever fits best:
+///
+/// 1. **Inline** — `{ id, title, description, preamble, capabilities }`.
+///    The full prompt metadata is embedded in the manifest.
+/// 2. **File reference** — `{ key, id, path }`. The plugin points to an
+///    external markdown file in its `agents/` directory (synced to
+///    `.claude/agents/` at install time) and the prompt pipeline loads
+///    the content from disk.
+///
+/// Every field is optional on deserialization so the parser accepts both
+/// shapes.  Runtime code that needs `title` for display falls back to `id`
+/// via [`AgentDefinition::display_title`].
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentDefinition {
-    /// Unique identifier for this agent role within the plugin (e.g. "orchestrator").
+    /// Unique identifier for this agent (e.g. "orchestrator" or "AGENT-65b56a0b").
     pub id: String,
-    /// Human-readable name shown in the UI and logs.
-    pub title: String,
+    /// Optional stable dedup key — used by install-time sync to detect renames.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub key: Option<String>,
+    /// Optional path to the external agent markdown file, relative to the
+    /// plugin root (e.g. `"agents/AGENT-65b56a0b.md"`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub path: Option<String>,
+    /// Optional human-readable name shown in the UI and logs.  When absent,
+    /// callers should fall back to [`AgentDefinition::display_title`].
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub title: Option<String>,
     /// One-sentence description of the agent's purpose.
     #[serde(default)]
     pub description: String,
@@ -156,6 +182,15 @@ pub struct AgentDefinition {
     /// Tool capability identifiers this agent is granted access to.
     #[serde(default)]
     pub capabilities: Vec<String>,
+}
+
+impl AgentDefinition {
+    /// Return the agent's display title, falling back to `id` when `title`
+    /// is absent (file-reference shape).
+    #[must_use]
+    pub fn display_title(&self) -> &str {
+        self.title.as_deref().unwrap_or(&self.id)
+    }
 }
 
 /// A plugin-registered custom viewer for a specific artifact type.
