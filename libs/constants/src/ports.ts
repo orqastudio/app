@@ -2,24 +2,26 @@
  * Port constants for all OrqaStudio services.
  *
  * All ports are defined in infrastructure/ports.json as the single source of
- * truth. This module reads that file and exposes the canonical getPortBase()
- * and getPort() API consumed by all TypeScript code. The vite offset (320)
- * gives 10100 + 320 = 10420, placing the app Vite server well outside the
- * base+0..base+99 cluster used by daemon subsystems.
+ * truth.  This module imports that file statically so bundlers (Vite) can
+ * inline it at build time, keeping this module runnable in both Node
+ * (CLI, tests) and the browser (Svelte app, devtools).
+ *
+ * The previous implementation used `createRequire("node:module")`, which
+ * works in Node but fails under Vite with
+ * `"createRequire" is not exported by "__vite-browser-external"` — that
+ * produced the white-screen Vite error page in the app window.
  *
  * Static config files (tauri.conf.json, docker-compose.yml) that cannot import
  * at runtime must hardcode port values — they are validated by `orqa check ports`.
  */
 
-import { createRequire } from "node:module";
-
-// Load the canonical ports definition from infrastructure/ports.json.
-// createRequire is used for JSON imports to remain compatible with both CJS
-// and ESM output without --experimental-json-modules.
-const require = createRequire(import.meta.url);
-// Path is relative to this compiled file's location (libs/constants/src/).
-// The JSON file lives at infrastructure/ports.json from the repo root.
-const PORTS_JSON = require("../../../infrastructure/ports.json") as PortsJson;
+// Path is relative to this file's location at libs/constants/src/ports.ts.
+// After compilation to dist/ports.js the relative path is still correct
+// because src/ and dist/ are siblings under libs/constants/.
+// Using a type-only JSON import keeps the attribute syntax out of the
+// compiled JS (TypeScript erases it) while `resolveJsonModule` in
+// tsconfig emits a normal JSON import that Vite inlines and Node resolves.
+import portsJsonRaw from "../../../infrastructure/ports.json" with { type: "json" };
 
 /** Shape of infrastructure/ports.json. */
 interface ServiceEntry {
@@ -32,6 +34,8 @@ interface PortsJson {
 	readonly base: number;
 	readonly services: Record<string, ServiceEntry>;
 }
+
+const PORTS_JSON: PortsJson = portsJsonRaw as PortsJson;
 
 /** Default base port for all OrqaStudio services (daemon offset = 0). */
 export const DEFAULT_PORT_BASE: number = PORTS_JSON.base;
@@ -61,13 +65,18 @@ export type ServiceName = keyof typeof PORT_OFFSETS;
 export type AnyServiceName = keyof typeof PORTS_JSON.services;
 
 /**
- * Resolve the port base from ORQA_PORT_BASE environment variable.
+ * Resolve the port base from the `ORQA_PORT_BASE` environment variable.
  *
- * Returns DEFAULT_PORT_BASE when the variable is absent or not a valid integer.
+ * Returns `DEFAULT_PORT_BASE` when the variable is absent or not a valid
+ * integer.  The `typeof process` guard keeps this function callable in the
+ * browser, where `process` is not defined — in that environment we always
+ * return the default base because env vars are not addressable from the
+ * webview.
  * @returns The resolved port base number.
  */
 export function getPortBase(): number {
-	const raw = process.env["ORQA_PORT_BASE"];
+	const raw =
+		typeof process !== "undefined" && process.env ? process.env["ORQA_PORT_BASE"] : undefined;
 	if (!raw) return DEFAULT_PORT_BASE;
 	const n = parseInt(raw, 10);
 	return Number.isNaN(n) ? DEFAULT_PORT_BASE : n;
