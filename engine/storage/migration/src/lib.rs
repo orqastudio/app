@@ -23,6 +23,8 @@ pub mod m002_log_events;
 pub mod m003_devtools_sessions;
 /// Migration 4: issue_groups table and fingerprint columns on event tables.
 pub mod m004_issue_groups;
+/// Migration 5: add `tier` column to `devtools_events` (schema-drift fix).
+pub mod m005_devtools_events_tier;
 
 use sea_orm::{ConnectionTrait, DatabaseBackend, DatabaseConnection, DbBackend, Statement};
 use sea_orm_migration::prelude::*;
@@ -41,6 +43,7 @@ impl MigratorTrait for Migrator {
             Box::new(m002_log_events::Migration),
             Box::new(m003_devtools_sessions::Migration),
             Box::new(m004_issue_groups::Migration),
+            Box::new(m005_devtools_events_tier::Migration),
         ]
     }
 }
@@ -211,7 +214,7 @@ mod tests {
             .expect("count query")
             .expect("row");
         let count: i64 = count_row.try_get("", "cnt").expect("cnt");
-        assert_eq!(count, 4, "should record 4 migrations in seaql_migrations");
+        assert_eq!(count, 5, "should record 5 migrations in seaql_migrations");
     }
 
     #[tokio::test]
@@ -232,7 +235,7 @@ mod tests {
             .expect("count query")
             .expect("row");
         let count: i64 = count_row.try_get("", "cnt").expect("cnt");
-        assert_eq!(count, 4, "should still record exactly 4 migrations");
+        assert_eq!(count, 5, "should still record exactly 5 migrations");
     }
 
     #[tokio::test]
@@ -389,7 +392,7 @@ CREATE TABLE IF NOT EXISTS log_events (
             .expect("count query")
             .expect("row");
         let count: i64 = count_row.try_get("", "cnt").expect("cnt");
-        assert_eq!(count, 4, "seaql_migrations should have all 4 entries");
+        assert_eq!(count, 5, "seaql_migrations should have all 5 entries");
 
         // devtools_sessions and issue_groups must exist (applied by Migrator::up).
         for table in &["devtools_sessions", "issue_groups"] {

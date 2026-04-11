@@ -136,20 +136,20 @@ impl DevtoolsClient<'_> {
 
     /// Insert a batch of events for the given session.
     ///
-    /// Calls POST /devtools-sessions/:id/events.
+    /// Calls POST /devtools-sessions/:id/events with a bare JSON array body.
+    /// The daemon handler deserializes the body as `Vec<LogEvent>` directly.
     pub async fn insert_events(
         &self,
         session_id: &str,
         events: Vec<LogEvent>,
     ) -> Result<(), DbError> {
-        let body = serde_json::json!({ "events": events });
         let resp = self
             .http
             .post(format!(
                 "{}/devtools-sessions/{session_id}/events",
                 self.base_url
             ))
-            .json(&body)
+            .json(&events)
             .send()
             .await?;
         parse_empty_response(resp).await
