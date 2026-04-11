@@ -2,12 +2,15 @@
 //
 // Issue groups deduplicate recurring events by fingerprint. Each group tracks the
 // total count, a 24-bucket hourly sparkline, and the 50 most recent event IDs.
-// These routes expose the full IssueGroupRepository contract over HTTP.
 //
-// Endpoints:
-//   POST /issue-groups/upsert              — insert or update a group by fingerprint
+// Upsert is not exposed over HTTP — the daemon's `issue_group_consumer` computes
+// groups internally from the event bus and publishes live updates via the
+// `GET /issue-groups/stream` SSE endpoint (defined in `health.rs`).
+//
+// Endpoints (HTTP):
 //   GET  /issue-groups                     — list groups with sort and filter options
 //   GET  /issue-groups/:fingerprint        — get a single group by fingerprint
+//   GET  /issue-groups/stream              — SSE stream of updated groups
 
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
@@ -22,17 +25,6 @@ use crate::health::HealthState;
 // ---------------------------------------------------------------------------
 // Request / response shapes
 // ---------------------------------------------------------------------------
-
-/// Request body for POST /issue-groups/upsert.
-#[derive(Debug, Deserialize)]
-pub struct UpsertIssueGroupRequest {
-    pub fingerprint: String,
-    pub title: String,
-    pub component: String,
-    pub level: String,
-    pub timestamp_ms: i64,
-    pub event_id: u64,
-}
 
 /// Query parameters for GET /issue-groups.
 #[derive(Debug, Deserialize)]
@@ -83,36 +75,6 @@ fn storage_unavailable() -> (StatusCode, Json<serde_json::Value>) {
 // ---------------------------------------------------------------------------
 // Handlers
 // ---------------------------------------------------------------------------
-
-/// Handle POST /issue-groups/upsert — insert or update an issue group.
-///
-/// On first occurrence creates a new row with count=1. On subsequent occurrences
-/// increments count, rotates the sparkline bucket, and updates the ring buffer.
-pub async fn upsert_issue_group(
-    State(state): State<HealthState>,
-    Json(req): Json<UpsertIssueGroupRequest>,
-) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let storage = state.storage.clone().ok_or_else(storage_unavailable)?;
-
-    storage
-        .issue_groups()
-        .upsert(
-            &req.fingerprint,
-            &req.title,
-            &req.component,
-            &req.level,
-            req.timestamp_ms,
-            req.event_id,
-        )
-        .await
-        .map(|()| StatusCode::NO_CONTENT)
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UPSERT_FAILED" })),
-            )
-        })
-}
 
 /// Handle GET /issue-groups — list groups with optional filtering and sorting.
 ///

@@ -89,6 +89,12 @@ fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     // modes, the daemon is already running by the time the devtools window opens.
     events::spawn_consumer(app.handle().clone(), Arc::clone(&consumer_state));
 
+    // Connect the issue-group update stream so the frontend receives live
+    // `orqa://issue-group-update` events without any HTTP writes from the
+    // devtools process.  The daemon computes groups internally and pushes
+    // updates via SSE.
+    events::spawn_issue_group_stream(app.handle().clone());
+
     Ok(())
 }
 

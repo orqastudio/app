@@ -30,6 +30,7 @@ mod correlation;
 mod event_bus;
 mod graph_state;
 mod health;
+mod issue_group_consumer;
 mod knowledge;
 mod logging;
 mod lsp;
@@ -290,13 +291,23 @@ async fn run(
     // Open the unified SQLite storage at .state/orqa.db. This replaces the
     // separate daemon.db and events.db that previously lived in .state/.
     // Degrades gracefully if the database cannot be opened.
-    let storage = match Storage::open(&project_root).await {
+    //
+    // When storage opens successfully, spawn two background bus subscribers:
+    //   1. Event batch writer — persists every LogEvent into `log_events`.
+    //   2. Issue group consumer — upserts fingerprinted error/warn events
+    //      into `issue_groups` and rebroadcasts the updated row to the
+    //      `issue_group_updates` channel for SSE clients.
+    let (storage, issue_group_updates) = match Storage::open(&project_root).await {
         Ok(s) => {
             let s = Arc::new(s);
 
             // Spawn background batch writer: drains the event bus into the
             // unified storage's log_events table via batched inserts.
             spawn_event_batch_writer(Arc::clone(&event_bus), Arc::clone(&s));
+
+            // Spawn the issue group consumer.  Returns a broadcast sender
+            // that the SSE route handler subscribes to for live updates.
+            let update_tx = issue_group_consumer::spawn(Arc::clone(&event_bus), Arc::clone(&s));
 
             // Spawn a background task that purges expired events every 6 hours.
             let purge_storage = Arc::clone(&s);
@@ -317,7 +328,7 @@ async fn run(
                 }
             });
 
-            Some(s)
+            (Some(s), Some(update_tx))
         }
         Err(e) => {
             warn!(
@@ -325,7 +336,7 @@ async fn run(
                 error = %e,
                 "[storage] could not open orqa.db — running without persistence"
             );
-            None
+            (None, None)
         }
     };
 
@@ -359,8 +370,10 @@ async fn run(
         let snapshots = Arc::clone(&process_snapshots);
         let gs = graph_state.clone();
         let st = storage.clone();
+        let ig_tx = issue_group_updates.clone();
         async move {
-            if let Err(e) = health::start(daemon_port, daemon_config, bus, st, snapshots, gs).await
+            if let Err(e) =
+                health::start(daemon_port, daemon_config, bus, st, snapshots, gs, ig_tx).await
             {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }

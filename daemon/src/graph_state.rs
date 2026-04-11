@@ -11,7 +11,9 @@
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, RwLock};
 
+use orqa_enforcement::store::load_rules;
 use orqa_engine_types::platform::ArtifactTypeDef;
+use orqa_engine_types::types::enforcement::EnforcementRule;
 use orqa_engine_types::ArtifactGraph;
 use orqa_validation::context::build_validation_context_complete;
 use orqa_validation::graph::{build_artifact_graph, load_project_config};
@@ -20,8 +22,8 @@ use orqa_validation::types::ValidationContext;
 use orqa_validation::ArtifactNode;
 use tracing::{info, warn};
 
-/// All cached engine state, rebuilt together on each reload so the graph and
-/// validation context are always in sync.
+/// All cached engine state, rebuilt together on each reload so the graph,
+/// validation context, and parsed enforcement rules are always in sync.
 pub struct GraphStateInner {
     /// The artifact graph for the project, built from `.orqa/`.
     pub graph: ArtifactGraph,
@@ -34,6 +36,13 @@ pub struct GraphStateInner {
     /// Terminal status values collected from plugin manifests.
     /// Used to build PipelineCategories.excluded_statuses for callers.
     pub terminal_statuses: Vec<String>,
+    /// Parsed enforcement rules from `.orqa/learning/rules/*.md`.
+    ///
+    /// Cached here so `GET /enforcement/rules` can be served in O(1) without
+    /// re-reading 60+ files from disk on every request.  The file watcher
+    /// invalidates this cache by calling [`GraphState::reload`] whenever a
+    /// file under `.orqa/` changes.
+    pub enforcement_rules: Vec<EnforcementRule>,
     /// The project root this state was built from.
     pub project_root: PathBuf,
 }
@@ -79,29 +88,41 @@ impl GraphState {
             ctx: build_validation_context(&[], &DeliveryConfig::default(), &[], &[]),
             artifact_types: Vec::new(),
             terminal_statuses: Vec::new(),
+            enforcement_rules: Vec::new(),
             project_root: project_root.to_path_buf(),
         };
         Self(Arc::new(RwLock::new(inner)))
     }
 
-    /// Reload the graph and validation context from disk.
+    /// Reload the graph, validation context, and enforcement rules from disk.
     ///
-    /// Called by the file watcher when `.orqa/` or `plugins/` changes. Returns the
-    /// new artifact count for logging. Errors are logged as warnings and the
-    /// existing state is preserved so the daemon keeps serving stale-but-valid data.
+    /// Called by the file watcher when `.orqa/` or `plugins/` changes. Returns
+    /// the new artifact count for logging. Errors are logged as warnings and
+    /// the existing state is preserved so the daemon keeps serving
+    /// stale-but-valid data.
     pub fn reload(&self, project_root: &Path) -> usize {
         match build_inner(project_root) {
             Ok(inner) => {
-                let count = inner.graph.nodes.len();
+                let artifact_count = inner.graph.nodes.len();
+                let enforcement_rule_count = inner.enforcement_rules.len();
+                let enforcement_entry_count: usize = inner
+                    .enforcement_rules
+                    .iter()
+                    .map(|r| r.entries.len())
+                    .sum();
                 match self.0.write() {
                     Ok(mut guard) => {
                         *guard = inner;
                         info!(
                             subsystem = "graph-state",
-                            artifact_count = count,
-                            "[graph-state] graph reloaded ({count} artifacts)"
+                            artifact_count,
+                            enforcement_rule_count,
+                            enforcement_entry_count,
+                            "[graph-state] reloaded ({artifact_count} artifacts, \
+                             {enforcement_rule_count} enforcement rules, \
+                             {enforcement_entry_count} entries)"
                         );
-                        count
+                        artifact_count
                     }
                     Err(e) => {
                         warn!(
@@ -121,6 +142,17 @@ impl GraphState {
                 );
                 0
             }
+        }
+    }
+
+    /// Return a cloned snapshot of the cached enforcement rules.
+    ///
+    /// Route handlers call this instead of re-reading rule files from disk on
+    /// every request.  The lock is held only for the duration of the clone.
+    pub fn enforcement_rules(&self) -> Vec<EnforcementRule> {
+        match self.0.read() {
+            Ok(guard) => guard.enforcement_rules.clone(),
+            Err(_) => Vec::new(),
         }
     }
 
@@ -166,8 +198,14 @@ impl GraphState {
 
 /// Construct a fresh `GraphStateInner` from the project root.
 ///
-/// Builds the graph, loads project config, scans plugin manifests, and assembles
-/// the validation context. All steps must succeed for a consistent state.
+/// Builds the graph, loads project config, scans plugin manifests, assembles
+/// the validation context, and parses enforcement rules.  All these steps are
+/// performed together so the cache is internally consistent on every reload.
+///
+/// Enforcement-rule load failures are tolerated: a missing rules directory or
+/// a single bad file must not break graph construction, so the parser's
+/// individual errors are logged by `load_rules` and the aggregate result
+/// falls back to an empty list.
 fn build_inner(project_root: &Path) -> Result<GraphStateInner, orqa_validation::ValidationError> {
     let graph = build_artifact_graph(project_root)?;
     let (valid_statuses, delivery, project_relationships) = load_project_config(project_root);
@@ -183,11 +221,23 @@ fn build_inner(project_root: &Path) -> Result<GraphStateInner, orqa_validation::
         &plugin_contributions.enforcement_mechanisms,
     );
 
+    let rules_dir = project_root.join(".orqa/learning/rules");
+    let enforcement_rules = load_rules(&rules_dir).unwrap_or_else(|e| {
+        warn!(
+            subsystem = "graph-state",
+            rules_dir = %rules_dir.display(),
+            error = %e,
+            "[graph-state] enforcement rules directory missing or unreadable — caching empty list"
+        );
+        Vec::new()
+    });
+
     Ok(GraphStateInner {
         graph,
         ctx,
         artifact_types: plugin_contributions.artifact_types,
         terminal_statuses: plugin_contributions.terminal_statuses,
+        enforcement_rules,
         project_root: project_root.to_path_buf(),
     })
 }
@@ -489,5 +539,168 @@ mod tests {
             via_helper, via_direct,
             "artifact_count helper must match direct graph.nodes.len()"
         );
+    }
+
+    // -------------------------------------------------------------------------
+    // enforcement rules cache
+    // -------------------------------------------------------------------------
+
+    /// YAML frontmatter body for a test rule containing a single `mechanism: hook`.
+    ///
+    /// The hook targets a bash event so it exercises the parser path that
+    /// lifts an entry into `EnforcementRule::entries`, guaranteeing the
+    /// cached rule has a non-empty entries vec for assertions.
+    fn hook_rule(name: &str, pattern: &str) -> String {
+        format!(
+            r#"---
+id: RULE-{name}
+type: rule
+title: "{name}"
+status: active
+enforcement:
+  - mechanism: hook
+    type: PreToolUse
+    event: bash
+    action: block
+    pattern: "{pattern}"
+---
+# {name}
+"#
+        )
+    }
+
+    /// Bootstrap a minimal `.orqa/` layout in `dir`: creates `project.json`,
+    /// the learning/rules directory, and the schema file the graph builder
+    /// requires.  Returns the `learning/rules` path so tests can drop files
+    /// into it directly.
+    fn bootstrap_minimal_project(dir: &Path) -> PathBuf {
+        let orqa = dir.join(".orqa");
+        std::fs::create_dir_all(orqa.join("learning/rules")).expect("create rules dir");
+        std::fs::create_dir_all(orqa.join("implementation/tasks")).expect("create tasks dir");
+        std::fs::write(
+            orqa.join("project.json"),
+            r#"{"id":"test","name":"test","plugins":{}}"#,
+        )
+        .expect("write project.json");
+        std::fs::write(
+            orqa.join("schema.composed.json"),
+            r#"{"artifact_types":{}}"#,
+        )
+        .expect("write schema");
+        orqa.join("learning/rules")
+    }
+
+    /// Adding a new rule file then calling `reload` makes the new rule
+    /// appear in the cached `enforcement_rules` list.  This is the
+    /// "watcher fires on create" path end-to-end.
+    #[test]
+    fn reload_picks_up_newly_added_rule_file() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let rules_dir = bootstrap_minimal_project(dir.path());
+
+        let state = GraphState::build(dir.path()).expect("build must succeed");
+        assert!(
+            state.enforcement_rules().is_empty(),
+            "precondition: empty rules dir yields empty cache"
+        );
+
+        // Drop a hook rule into the directory and reload.
+        std::fs::write(
+            rules_dir.join("RULE-fresh.md"),
+            hook_rule("fresh", "--no-verify"),
+        )
+        .expect("write rule");
+        state.reload(dir.path());
+
+        let cached = state.enforcement_rules();
+        assert_eq!(cached.len(), 1, "reload must pick up the new rule");
+        assert_eq!(cached[0].name, "RULE-fresh");
+        assert_eq!(
+            cached[0].entries.len(),
+            1,
+            "hook entry must be lifted into entries on reload"
+        );
+    }
+
+    /// Editing an existing rule file's content and calling `reload` makes
+    /// the cached rule reflect the new pattern.  This is the "watcher
+    /// fires on modify" path end-to-end.
+    #[test]
+    fn reload_reflects_edited_rule_file_content() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let rules_dir = bootstrap_minimal_project(dir.path());
+
+        std::fs::write(
+            rules_dir.join("RULE-edit.md"),
+            hook_rule("edit", "initial-pattern"),
+        )
+        .expect("write rule v1");
+        let state = GraphState::build(dir.path()).expect("build must succeed");
+        let v1 = state.enforcement_rules();
+        assert_eq!(v1.len(), 1);
+        assert_eq!(
+            v1[0].entries[0].pattern.as_deref(),
+            Some("initial-pattern"),
+            "v1 must contain the original pattern"
+        );
+
+        // Overwrite with new pattern and reload.
+        std::fs::write(
+            rules_dir.join("RULE-edit.md"),
+            hook_rule("edit", "updated-pattern"),
+        )
+        .expect("write rule v2");
+        state.reload(dir.path());
+
+        let v2 = state.enforcement_rules();
+        assert_eq!(v2.len(), 1);
+        assert_eq!(
+            v2[0].entries[0].pattern.as_deref(),
+            Some("updated-pattern"),
+            "v2 must contain the updated pattern after reload"
+        );
+    }
+
+    /// Deleting a rule file and calling `reload` drops the rule from the
+    /// cached list.  This is the "watcher fires on remove" path end-to-end.
+    #[test]
+    fn reload_drops_deleted_rule_file() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let rules_dir = bootstrap_minimal_project(dir.path());
+
+        std::fs::write(
+            rules_dir.join("RULE-doomed.md"),
+            hook_rule("doomed", "--no-verify"),
+        )
+        .expect("write doomed");
+        std::fs::write(
+            rules_dir.join("RULE-survivor.md"),
+            hook_rule("survivor", "--force"),
+        )
+        .expect("write survivor");
+
+        let state = GraphState::build(dir.path()).expect("build must succeed");
+        assert_eq!(
+            state.enforcement_rules().len(),
+            2,
+            "precondition: both rules are cached"
+        );
+
+        // Delete doomed and reload.
+        std::fs::remove_file(rules_dir.join("RULE-doomed.md")).expect("delete doomed");
+        state.reload(dir.path());
+
+        let cached = state.enforcement_rules();
+        assert_eq!(cached.len(), 1, "deleted rule must disappear from cache");
+        assert_eq!(cached[0].name, "RULE-survivor", "only survivor must remain");
+    }
+
+    /// `enforcement_rules()` on an empty state returns an empty list, never
+    /// panics or blocks.  Guards against calling the helper before the
+    /// first reload has completed.
+    #[test]
+    fn enforcement_rules_empty_state_returns_empty_list() {
+        let state = GraphState::build_empty(Path::new("/x"));
+        assert!(state.enforcement_rules().is_empty());
     }
 }

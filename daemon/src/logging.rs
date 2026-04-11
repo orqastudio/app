@@ -220,7 +220,13 @@ where
     }
 }
 
-/// Construct a `LogEvent` with fingerprint, backtrace, and correlation ID.
+/// Construct a `LogEvent` with optional fingerprint, backtrace, and correlation ID.
+///
+/// Fingerprints are only assigned to `Warn` and `Error` events.  Info/Debug/Perf
+/// events never become issue groups — they are pure observability data — so
+/// fingerprinting them is wasteful and causes noise in the issue group view.
+/// Constraining the fingerprinted set also closes one half of the feedback loop
+/// between the daemon's event bus and the issue-group consumer.
 fn build_log_event(
     id: u64,
     level: EventLevel,
@@ -234,12 +240,20 @@ fn build_log_event(
         .unwrap_or(0);
 
     let template = extract_template(&message);
-    let fp = compute_fingerprint(
-        &EventSource::Daemon.to_string(),
-        &level.to_string(),
-        &template,
-        "",
-    );
+
+    // Only warn/error events get a fingerprint. Info/debug/perf are excluded
+    // from the issue-group pipeline entirely.
+    let (fingerprint, message_template) = if matches!(level, EventLevel::Warn | EventLevel::Error) {
+        let fp = compute_fingerprint(
+            &EventSource::Daemon.to_string(),
+            &level.to_string(),
+            &template,
+            "",
+        );
+        (Some(fp), Some(template))
+    } else {
+        (None, None)
+    };
 
     let stack_frames = if level == EventLevel::Error {
         let bt = std::backtrace::Backtrace::force_capture();
@@ -258,8 +272,8 @@ fn build_log_event(
         message,
         metadata,
         session_id: None,
-        fingerprint: Some(fp),
-        message_template: Some(template),
+        fingerprint,
+        message_template,
         correlation_id: current_correlation_id(),
         stack_frames,
     }
@@ -385,14 +399,15 @@ fn parse_backtrace(bt: &std::backtrace::Backtrace) -> Vec<StackFrame> {
 /// Panics if the tracing subscriber registry cannot be installed. This only
 /// happens if another subscriber was installed first, which is a programming
 /// error.
+#[allow(clippy::too_many_lines)]
 pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     let state_dir = project_root.join(".state");
     // Best-effort: if `.state/` cannot be created we fall back to a
     // non-rolling appender writing to the same directory.
     let _ = std::fs::create_dir_all(&state_dir);
 
-    // Resolve the effective display log level. The event bus always receives
-    // TRACE regardless of this value.
+    // Resolve the effective display log level. The event bus has its own
+    // filter (see `bus_filter_str` below) and is not affected by this.
     let effective_level = resolve_log_level(project_root);
 
     // Build a daily-rolling file appender for structured JSON logs.
@@ -424,12 +439,26 @@ pub fn init(project_root: &Path, bus: Option<Arc<EventBus>>) -> LogGuard {
     };
 
     // Event bus layer — converts every tracing event to a `LogEvent` and
-    // publishes it.  Uses LevelFilter::TRACE so all events reach the bus;
-    // display-side filtering is handled by consumers of the bus.
+    // publishes it.  Uses an `EnvFilter` (not `LevelFilter::TRACE`) to keep
+    // third-party noise off the bus: sqlx emits DEBUG for every query,
+    // hyper/reqwest emit TRACE per request, and so on.  All of that would
+    // otherwise flood devtools and create feedback loops through the
+    // issue-group consumer.
+    //
+    // Default filter: `info` globally, DEBUG for all `orqa_*` crates.  Override
+    // via `ORQA_BUS_FILTER` env var for deep debugging sessions.
+    let bus_filter_str = std::env::var("ORQA_BUS_FILTER").unwrap_or_else(|_| {
+        "info,orqa_daemon=debug,orqa_storage=info,orqa_engine=info,\
+         sqlx=off,sea_orm=off,hyper=off,h2=off,reqwest=off,tower=off,\
+         tower_http=off,rustls=off"
+            .to_owned()
+    });
     // Boxed for the same reason as the other layers.
     let bus_layer: Option<Box<dyn Layer<_> + Send + Sync>> = bus.map(|b| {
         EventBusLayer::new(b)
-            .with_filter(tracing_subscriber::filter::LevelFilter::TRACE)
+            .with_filter(
+                EnvFilter::try_new(&bus_filter_str).unwrap_or_else(|_| EnvFilter::new("info")),
+            )
             .boxed()
     });
 

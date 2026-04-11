@@ -28,6 +28,7 @@ use axum::{Json, Router};
 
 use crate::middleware::correlation_id_middleware;
 use serde::{Deserialize, Serialize};
+use tokio::sync::broadcast;
 use tokio_stream::wrappers::BroadcastStream;
 use tokio_stream::StreamExt as _;
 use tracing::{error, info};
@@ -35,6 +36,7 @@ use tracing::{error, info};
 use orqa_engine::ports::resolve_daemon_port;
 use orqa_engine_types::fingerprint::{compute_fingerprint, extract_template};
 use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent, StackFrame};
+use orqa_storage::repo::issue_groups::IssueGroup;
 use orqa_storage::traits::EventRepository as _;
 use orqa_storage::Storage;
 
@@ -87,6 +89,12 @@ pub struct HealthState {
     /// Each active session has a broadcast channel for SSE delivery, a
     /// cancellation flag, and a pending-approval map for tool approval.
     pub stream_registry: SessionStreamRegistry,
+    /// Broadcast sender for `IssueGroup` updates published by the daemon-side
+    /// `issue_group_consumer`.  SSE handlers call `subscribe()` on this sender
+    /// to stream live updates to connected clients.  `None` when storage is
+    /// unavailable — in that case the consumer was never spawned and no
+    /// updates are produced.
+    pub issue_group_updates: Option<broadcast::Sender<IssueGroup>>,
 }
 
 impl HealthState {
@@ -107,6 +115,7 @@ impl HealthState {
             process_snapshots: Arc::new(Mutex::new(Vec::<ProcessSnapshot>::new())),
             graph_state,
             stream_registry: SessionStreamRegistry::new(),
+            issue_group_updates: None,
         }
     }
 }
@@ -334,6 +343,41 @@ async fn events_stream_handler(
     Sse::new(stream)
 }
 
+/// Handle GET /issue-groups/stream — subscribe to the daemon-side issue group
+/// consumer and stream updated `IssueGroup` values to the caller as SSE.
+///
+/// Each update is serialized to JSON and delivered as a single SSE `data`
+/// field.  Returns an empty stream when storage is unavailable (no consumer
+/// is running).  The stream runs until the client disconnects.
+async fn issue_groups_stream_handler(
+    State(state): State<HealthState>,
+) -> Sse<impl futures_util::Stream<Item = Result<Event, axum::Error>>> {
+    // When storage is unavailable we create an empty broadcast so the stream
+    // resolves immediately with no events and the client sees a clean close.
+    let receiver = match state.issue_group_updates.as_ref() {
+        Some(tx) => tx.subscribe(),
+        None => {
+            let (tx, rx) = broadcast::channel::<IssueGroup>(1);
+            drop(tx);
+            rx
+        }
+    };
+    let stream = BroadcastStream::new(receiver).filter_map(|result| match result {
+        Ok(group) => match serde_json::to_string(&group) {
+            Ok(json) => Some(Ok(Event::default().data(json))),
+            Err(e) => {
+                error!(subsystem = "sse", error = %e, "failed to serialize issue group for SSE");
+                None
+            }
+        },
+        Err(e) => {
+            error!(subsystem = "sse", error = %e, "issue-group SSE broadcast error — stream ending");
+            None
+        }
+    });
+    Sse::new(stream)
+}
+
 /// Handle POST /reload — rebuild the cached artifact graph and validation context from disk.
 ///
 /// Returns the new artifact and rule counts. The watcher already calls
@@ -390,7 +434,7 @@ pub fn resolve_port() -> u16 {
 /// `process_snapshots` is the shared subprocess registry written by the event
 /// loop. The health handler reads it on every GET /health request so OrqaDev
 /// always receives current per-process detail.
-#[allow(clippy::too_many_lines)]
+#[allow(clippy::too_many_lines, clippy::too_many_arguments)]
 pub async fn start(
     port: u16,
     config: DaemonConfig,
@@ -398,6 +442,7 @@ pub async fn start(
     storage: Option<Arc<Storage>>,
     process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
     graph_state: GraphState,
+    issue_group_updates: Option<broadcast::Sender<IssueGroup>>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
@@ -408,6 +453,7 @@ pub async fn start(
         process_snapshots,
         graph_state,
         stream_registry: SessionStreamRegistry::new(),
+        issue_group_updates,
     };
 
     // Artifact routes — operate on the cached graph.
@@ -646,12 +692,14 @@ pub async fn start(
         .with_state(state.clone());
 
     // Issue group routes — deduplicated error clusters.
+    //
+    // Upsert is NOT exposed over HTTP: the daemon computes issue groups
+    // internally from its own event bus via `issue_group_consumer`.  The SSE
+    // stream at `/issue-groups/stream` broadcasts updates to subscribers so
+    // devtools can render live changes without polling.
     let issue_group_router = Router::new()
         .route("/", get(crate::routes::issue_groups::list_issue_groups))
-        .route(
-            "/upsert",
-            post(crate::routes::issue_groups::upsert_issue_group),
-        )
+        .route("/stream", get(issue_groups_stream_handler))
         .route(
             "/{fingerprint}",
             get(crate::routes::issue_groups::get_issue_group),

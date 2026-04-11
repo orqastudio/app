@@ -6,7 +6,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::{parse_empty_response, parse_response, DbError};
+use crate::{parse_response, DbError};
 
 /// A deduplicated group of events sharing the same fingerprint.
 ///
@@ -66,35 +66,6 @@ pub struct IssueGroupsClient<'a> {
 }
 
 impl IssueGroupsClient<'_> {
-    /// Insert or update an issue group for the given fingerprint.
-    ///
-    /// Calls POST /issue-groups/upsert.
-    pub async fn upsert(
-        &self,
-        fingerprint: &str,
-        title: &str,
-        component: &str,
-        level: &str,
-        timestamp_ms: i64,
-        event_id: u64,
-    ) -> Result<(), DbError> {
-        let body = serde_json::json!({
-            "fingerprint": fingerprint,
-            "title": title,
-            "component": component,
-            "level": level,
-            "timestamp_ms": timestamp_ms,
-            "event_id": event_id,
-        });
-        let resp = self
-            .http
-            .post(format!("{}/issue-groups/upsert", self.base_url))
-            .json(&body)
-            .send()
-            .await?;
-        parse_empty_response(resp).await
-    }
-
     /// List issue groups with optional filtering and sorting.
     ///
     /// Calls GET /issue-groups?sort_by=...&sort_dir=...&limit=...&offset=...

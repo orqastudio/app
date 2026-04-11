@@ -276,10 +276,6 @@ async fn load_gap_events(
                 }
                 // Persist before moving event into ring buffer.
                 batch_writer.queue_event(event.clone());
-                // Upsert into issue_groups for gap-fill events with a fingerprint.
-                if event.fingerprint.is_some() {
-                    upsert_issue_group(app.clone(), event.clone());
-                }
                 push_event_pub(state, event).await;
             }
             Err(e) => {
@@ -479,10 +475,6 @@ async fn process_sse_lines(
                     if let Some(bw) = batch_writer {
                         bw.queue_event(event.clone());
                     }
-                    // Upsert into issue_groups if the event carries a fingerprint.
-                    if event.fingerprint.is_some() {
-                        upsert_issue_group(app.clone(), event.clone());
-                    }
                     push_event_pub(state, event).await;
                 }
                 Err(e) => {
@@ -498,58 +490,114 @@ async fn process_sse_lines(
     }
 }
 
-/// Fire-and-forget helper that upserts a fingerprinted event into issue_groups
-/// and emits an `orqa://issue-group-update` Tauri event with the updated group.
+/// Spawn the background consumer for the daemon-side issue-group update stream.
 ///
-/// Called from the event ingest paths (live SSE and gap-fill) for any event that
-/// carries a non-None fingerprint. Spawns a new async task so the caller is never
-/// blocked by the HTTP call. Retrieves `DbClient` from managed app state.
-pub fn upsert_issue_group(app: AppHandle, event: LogEvent) {
+/// Connects to `GET /issue-groups/stream` (SSE) on the daemon and emits each
+/// received `IssueGroup` payload to the frontend via
+/// `orqa://issue-group-update`.  The daemon computes issue groups internally
+/// from its own event bus, so this devtools task is a pure pass-through —
+/// no HTTP writes, no feedback loops.
+///
+/// Reconnects with exponential backoff (1 s → 30 s) matching the log-event
+/// SSE consumer so both streams recover together after a daemon restart.
+pub fn spawn_issue_group_stream(app: AppHandle) {
     tauri::async_runtime::spawn(async move {
-        let Some(fp) = event.fingerprint.as_deref().map(str::to_owned) else {
-            return;
-        };
-        let title = event
-            .message_template
-            .as_deref()
-            .unwrap_or(&event.message)
-            .to_owned();
-        let component = event.source.to_string();
-        let level = event.level.to_string();
+        let mut backoff_secs = BACKOFF_INITIAL_SECS;
+        loop {
+            let port = resolve_daemon_port();
+            let url = format!("http://127.0.0.1:{port}/issue-groups/stream");
 
-        let Some(db) = app.try_state::<DbClient>().as_deref().cloned() else {
-            error!(
-                subsystem = "issue-group-upsert",
-                fingerprint = %fp,
-                "DbClient not in managed state — upsert skipped"
-            );
-            return;
-        };
-
-        if let Err(e) = db
-            .issue_groups()
-            .upsert(&fp, &title, &component, &level, event.timestamp, event.id)
-            .await
-        {
-            error!(subsystem = "issue-group-upsert", error = %e, "upsert failed");
-            return;
-        }
-
-        match db.issue_groups().get(&fp).await {
-            Err(e) => {
-                error!(subsystem = "issue-group-upsert", error = %e, "get after upsert failed");
-            }
-            Ok(None) => error!(
-                subsystem = "issue-group-upsert",
-                "group missing after upsert"
-            ),
-            Ok(Some(group)) => {
-                if let Err(e) = app.emit(TAURI_EVENT_ISSUE_GROUP_UPDATE, &group) {
-                    error!(subsystem = "issue-group-upsert", error = %e, "failed to emit event");
+            match connect_issue_group_stream(&app, &url).await {
+                Ok(()) => {
+                    // Clean stream close — reset backoff.
+                    backoff_secs = BACKOFF_INITIAL_SECS;
+                }
+                Err(e) => {
+                    warn!(
+                        subsystem = "issue-group-stream",
+                        error = %e,
+                        backoff_secs,
+                        "issue-group stream error — retrying"
+                    );
+                    backoff_secs = (backoff_secs * 2).min(BACKOFF_MAX_SECS);
                 }
             }
+            tokio::time::sleep(Duration::from_secs(backoff_secs)).await;
         }
     });
+}
+
+/// Connect to the issue-group SSE endpoint and forward each payload to the frontend.
+///
+/// Returns `Ok(())` when the server closes the stream cleanly and `Err` on any
+/// HTTP, I/O, or parse error so the caller can apply backoff before retrying.
+async fn connect_issue_group_stream(
+    app: &AppHandle,
+    url: &str,
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    let client = reqwest::Client::new();
+    let mut response = client
+        .get(url)
+        .header("Accept", "text/event-stream")
+        .send()
+        .await?;
+
+    if !response.status().is_success() {
+        return Err(format!("issue-group stream returned {}", response.status()).into());
+    }
+
+    info!(subsystem = "issue-group-stream", "stream connected");
+
+    let mut line_buf = String::new();
+    while let Some(chunk) = response.chunk().await? {
+        let text = match std::str::from_utf8(&chunk) {
+            Ok(s) => s,
+            Err(e) => {
+                warn!(subsystem = "issue-group-stream", error = %e, "non-UTF8 chunk — skipping");
+                continue;
+            }
+        };
+        line_buf.push_str(text);
+        dispatch_issue_group_lines(app, &mut line_buf);
+    }
+    Ok(())
+}
+
+/// Drain every complete line from `buf`, parse the `data:` payload, and emit
+/// each `IssueGroup` payload to the frontend.  Incomplete trailing data is
+/// left in the buffer for the next chunk.
+fn dispatch_issue_group_lines(app: &AppHandle, buf: &mut String) {
+    while let Some(newline_pos) = buf.find('\n') {
+        let line = buf[..newline_pos].trim_end_matches('\r').to_owned();
+        let remainder = buf[newline_pos + 1..].to_owned();
+        *buf = remainder;
+        let Some(data) = line.strip_prefix("data:") else {
+            continue;
+        };
+        let data = data.trim();
+        if data.is_empty() {
+            continue;
+        }
+        match serde_json::from_str::<serde_json::Value>(data) {
+            Ok(group) => {
+                if let Err(e) = app.emit(TAURI_EVENT_ISSUE_GROUP_UPDATE, &group) {
+                    error!(
+                        subsystem = "issue-group-stream",
+                        error = %e,
+                        "failed to emit issue-group update"
+                    );
+                }
+            }
+            Err(e) => {
+                warn!(
+                    subsystem = "issue-group-stream",
+                    error = %e,
+                    raw = data,
+                    "failed to parse issue-group payload"
+                );
+            }
+        }
+    }
 }
 
 /// Query parameters for the `get_events` IPC command.
