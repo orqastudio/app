@@ -30,8 +30,6 @@ use notify::RecursiveMode;
 use notify_debouncer_full::{new_debouncer, DebounceEventResult, Debouncer, RecommendedCache};
 use tracing::{debug, info, warn};
 
-use orqa_engine::enforcement::engine::EnforcementEngine;
-use orqa_engine::enforcement::store::load_rules;
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
 
@@ -386,14 +384,18 @@ fn handle_events(
             }
 
             if orqa_changed {
-                // Reload the shared graph cache so all route handlers see updated state.
+                // Reload the shared graph cache so all route handlers see
+                // updated state.  The reload also re-parses every enforcement
+                // rule file under `.orqa/learning/rules/` and caches the
+                // result — route handlers never hit disk.
                 graph_state.reload(root);
-                reload_enforcement(root);
             }
 
             if plugins_changed {
                 reload_plugins(root);
-                // Plugin manifests affect the validation context — also reload graph.
+                // Plugin manifests affect the validation context — also reload
+                // graph (which also reloads enforcement rules, since they
+                // travel together).
                 graph_state.reload(root);
             }
         }
@@ -536,36 +538,6 @@ fn path_is_under(path: &Path, root: &Path, subdir: &str) -> bool {
     path.starts_with(root.join(subdir))
 }
 
-/// Reload enforcement rules after `.orqa/` changes.
-///
-/// Loads rules from `.orqa/learning/rules`, compiles the enforcement engine,
-/// and logs how many rules and compiled entries were loaded at info level.
-/// Errors are logged at warn level — a missing rules directory or unparseable
-/// rule file must not crash the daemon.
-fn reload_enforcement(root: &Path) {
-    let rules_dir = root.join(".orqa/learning/rules");
-    match load_rules(&rules_dir) {
-        Ok(rules) => {
-            let rule_count: usize = rules.len();
-            let engine = EnforcementEngine::new(rules);
-            let entry_count: usize = engine.rules().iter().map(|r| r.entries.len()).sum();
-            info!(
-                subsystem = "watcher",
-                rule_count,
-                entry_count,
-                "[watcher] enforcement reloaded ({rule_count} rules, {entry_count} entries)"
-            );
-        }
-        Err(e) => {
-            warn!(
-                subsystem = "watcher",
-                error = %e,
-                "[watcher] enforcement reload failed"
-            );
-        }
-    }
-}
-
 /// Reload plugin discovery after `plugins/` changes.
 ///
 /// Calls `scan_plugins` from the engine and logs the discovered count at info
@@ -656,12 +628,6 @@ mod tests {
     fn reload_plugins_does_not_crash_on_missing_project() {
         // scan_plugins is infallible — returns empty vec for nonexistent root.
         reload_plugins(Path::new("/nonexistent/project/root"));
-    }
-
-    #[test]
-    fn reload_enforcement_logs_error_on_missing_rules_dir() {
-        // reload_enforcement is best-effort — must not panic when rules dir absent.
-        reload_enforcement(Path::new("/nonexistent/project/root"));
     }
 
     #[test]

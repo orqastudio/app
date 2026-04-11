@@ -1,11 +1,13 @@
 // Enforcement routes: rule listing, violation scanning, and governance scan.
 //
-// All handlers call into the orqa-enforcement crate. Rules are loaded from the
-// .orqa/learning/rules directory under the project root.
+// Enforcement rules are cached in `GraphState` and rebuilt by the file watcher
+// whenever `.orqa/` changes — route handlers never hit disk. This keeps the
+// hot path O(1) and eliminates the 3-second reparse loop that previously
+// fired on every request.
 //
 // Endpoints:
 //   GET  /enforcement/rules         — list all parsed enforcement rules
-//   POST /enforcement/rules/reload  — reload rules from disk (same as list)
+//   POST /enforcement/rules/reload  — force an immediate reload from disk
 //   GET  /enforcement/violations    — list scan findings classified as errors
 //   POST /enforcement/scan          — full governance scan across all areas
 
@@ -16,7 +18,6 @@ use serde::Serialize;
 
 use orqa_enforcement::engine::EnforcementEngine;
 use orqa_enforcement::scanner::scan_governance;
-use orqa_enforcement::store::load_rules;
 use orqa_engine_types::config::load_project_settings;
 use orqa_engine_types::types::enforcement::{EnforcementRule, ScanFinding};
 use orqa_engine_types::types::governance::GovernanceScanResult;
@@ -42,63 +43,57 @@ pub struct EnforcementScanResponse {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Load enforcement rules from the project root's learning/rules directory.
+/// Read the cached project root from graph state.
 ///
-/// Returns an empty list if the directory is absent or unreadable.
-fn load_project_rules(project_root: &std::path::Path) -> Vec<EnforcementRule> {
-    let rules_dir = project_root.join(".orqa/learning/rules");
-    load_rules(&rules_dir).unwrap_or_default()
+/// Returns `None` if the state lock is poisoned — callers fall back to an
+/// empty response so the endpoint never blocks.
+fn project_root(state: &GraphState) -> Option<std::path::PathBuf> {
+    state.0.read().ok().map(|guard| guard.project_root.clone())
 }
 
 // ---------------------------------------------------------------------------
 // Handlers
 // ---------------------------------------------------------------------------
 
-/// Handle GET /enforcement/rules — return all enforcement rules from .orqa/.
+/// Handle GET /enforcement/rules — return all cached enforcement rules.
 ///
-/// Loads rules from the learning/rules directory under the project root.
-/// Returns an empty list if the directory is absent.
+/// Reads from the in-memory cache populated by the file watcher.  The cache
+/// is invalidated automatically whenever a file under `.orqa/` changes, so
+/// callers see up-to-date rules without ever paying the parse cost on the
+/// request path.
 pub async fn list_enforcement_rules(State(state): State<GraphState>) -> Json<Vec<EnforcementRule>> {
-    let Ok(guard) = state.0.read() else {
-        return Json(Vec::new());
-    };
-    let project_root = guard.project_root.clone();
-    drop(guard);
-    Json(load_project_rules(&project_root))
+    Json(state.enforcement_rules())
 }
 
-/// Handle POST /enforcement/rules/reload — reload rules from disk.
+/// Handle POST /enforcement/rules/reload — force an immediate reload from disk.
 ///
-/// Re-reads rule files from disk. Identical to GET /enforcement/rules but
-/// semantically signals to the caller that a refresh has been performed.
+/// Bypasses the watcher-driven invalidation for callers that want synchronous
+/// freshness (e.g. a manual "Reload rules" button in the UI).  After rebuild,
+/// returns the new cached list.
 pub async fn reload_enforcement_rules(
     State(state): State<GraphState>,
 ) -> Json<Vec<EnforcementRule>> {
-    let Ok(guard) = state.0.read() else {
+    let Some(root) = project_root(&state) else {
         return Json(Vec::new());
     };
-    let project_root = guard.project_root.clone();
-    drop(guard);
-    Json(load_project_rules(&project_root))
+    state.reload(&root);
+    Json(state.enforcement_rules())
 }
 
 /// Handle GET /enforcement/violations — return scan findings classified as errors.
 ///
-/// Builds an enforcement engine from all loaded rules and runs the project scan.
-/// Only findings whose severity is "error" are returned as violations.
+/// Builds an enforcement engine from the cached rules and runs the project
+/// scan.  Only findings whose action is `Block` are returned as violations.
 pub async fn list_enforcement_violations(
     State(state): State<GraphState>,
 ) -> Json<Vec<ScanFinding>> {
-    let Ok(guard) = state.0.read() else {
+    let Some(root) = project_root(&state) else {
         return Json(Vec::new());
     };
-    let project_root = guard.project_root.clone();
-    drop(guard);
 
-    let rules = load_project_rules(&project_root);
+    let rules = state.enforcement_rules();
     let engine = EnforcementEngine::new(rules);
-    let findings = engine.scan(&project_root).unwrap_or_default();
-    // Return only Block-action findings as "violations".
+    let findings = engine.scan(&root).unwrap_or_default();
     use orqa_engine_types::types::enforcement::RuleAction;
     let violations: Vec<ScanFinding> = findings
         .into_iter()
@@ -110,31 +105,28 @@ pub async fn list_enforcement_violations(
 /// Handle POST /enforcement/scan — full governance scan across all artifact areas.
 ///
 /// Uses `scan_governance` with the project's artifact config to discover
-/// coverage across all governance areas. Returns rules, governance scan result,
-/// and total artifact count.
+/// coverage across all governance areas. Returns cached rules, governance
+/// scan result, and total artifact count.
 pub async fn enforcement_scan(
     State(state): State<GraphState>,
 ) -> Result<Json<EnforcementScanResponse>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = {
-        let Ok(guard) = state.0.read() else {
-            return Err((
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
-            ));
-        };
-        guard.project_root.clone()
+    let Some(root) = project_root(&state) else {
+        return Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+        ));
     };
 
-    let rules = load_project_rules(&project_root);
+    let rules = state.enforcement_rules();
 
     // Load artifact config for governance scan coverage computation.
-    let artifacts = load_project_settings(&project_root)
+    let artifacts = load_project_settings(&root)
         .ok()
         .flatten()
         .map(|s| s.artifacts)
         .unwrap_or_default();
 
-    let governance = scan_governance(&project_root, &artifacts).unwrap_or(GovernanceScanResult {
+    let governance = scan_governance(&root, &artifacts).unwrap_or(GovernanceScanResult {
         areas: Vec::new(),
         coverage_ratio: 0.0,
     });
