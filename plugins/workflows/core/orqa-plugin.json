@@ -64,6 +64,16 @@
 				"on_change": "regenerate"
 			},
 			"file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"]
+		},
+		{
+			"role": "generator",
+			"engine": "githooks",
+			"config_output": ".githooks",
+			"generator": "scripts/generate-githooks.ts",
+			"watch": {
+				"paths": ["plugins/**/orqa-plugin.json"],
+				"on_change": "regenerate"
+			}
 		}
 	],
 	"content": {
