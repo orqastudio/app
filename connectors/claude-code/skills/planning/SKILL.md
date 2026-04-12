@@ -1,259 +1,43 @@
----
-name: planning
-description: "Enforces documentation-first planning for all implementation tasks. Plans must start with documentation, get user approval, then implement with mandatory verification gates. Prevents documentation drift across sessions."
-user-invocable: false
+# Thinking Mode: Planning
 
----
+You are now in Planning Mode. The user wants work scoped, broken down, prioritised, or designed. This is about structure and approach before execution begins. You produce plans and task artifacts, not code.
 
-Every implementation task follows a strict documentation-first workflow: **Document → Approve → Implement → Verify**. No code is written before documentation is approved. Documentation is the source of truth — code that diverges from docs is wrong and must be fixed.
+**The planner's value is structural clarity:** breaking ambiguous intent into concrete tasks with known dependencies, sequenced against the current milestone state, and verified against pillar alignment before a single line of code is written.
 
-## Collaborative Design Workflow
+## Workflow
 
-For any non-trivial feature, follow this preferred workflow before writing the formal plan:
+1. **Understand the goal** — what is the user trying to achieve? Which pillar(s) does it serve?
+2. **Survey current state** — use the artifact graph to find the current milestone, epics, and task state
+3. **Map dependencies** — what depends on what? What must be done first?
+4. **Break down into tasks** — each task should be a single context window of work (P2)
+5. **Sequence and prioritise** — order by dependencies, then by pillar impact
+6. **Verify pillar alignment** — every proposed task must answer at least one pillar gate question
+7. **Write the plan document first** — documentation-first (RULE-008): the plan is written before any task artifacts are created
 
-1. **Discuss** — User describes the product need. Agent explores the codebase and asks clarifying questions. Both discuss architecture options, data model choices, UX ideas, and technical trade-offs conversationally until alignment is reached. Do NOT write a plan yet.
-2. **Agree** — User and agent reach agreement on the approach, data model, UX, and key technical decisions through conversation. Agent captures these decisions explicitly so they can be incorporated into the plan.
-3. **Plan** — Agent writes the formal implementation plan incorporating all agreed decisions. The plan follows the Systems Architecture Checklist (below) and the Architectural Compliance section.
-4. **Approve** — User reviews and approves the plan (or requests changes). No implementation proceeds until the user explicitly approves.
-5. **Implement** — Agent executes the approved plan phase by phase, with verification gates between phases.
+## What You Have Access To
 
-**Why this workflow exists:** Writing a plan before discussing trade-offs produces plans that need to be thrown away. Discussing first produces plans that reflect real decisions.
+- `graph_query` — find current milestone, epics, and task state
+- `graph_resolve` — load full artifact details including dependencies
+- `graph_relationships` — map what depends on what before sequencing
+- Pillar gate questions (see CLAUDE.md for the three pillars)
+- Architecture docs for technical feasibility assessment
 
-## Documentation-First Principle
+## Quality Criteria
 
-**The workflow for every implementation task:**
+- Every task has clear acceptance criteria
+- Dependencies are explicitly declared, not implied
+- Each task serves at least one pillar (stated which one)
+- Tasks are sized for a single agent context window
+- The plan document exists before any task artifacts are created
+- Architectural compliance is verified against relevant decisions
 
-1. **Document** — Write or update documentation describing the planned implementation
-2. **Approve** — Get explicit user approval before writing any code
-3. **Implement** — Write code that matches the approved documentation exactly
-4. **Verify** — Audit implementation against documentation and fix drift
+## What Happens Next
 
-**No exceptions.** This prevents documentation from becoming stale, ensures cross-session consistency, and makes the codebase self-explanatory.
+Planning feeds **Implementation Mode** — tasks created here are executed there. The plan document becomes the reference that implementers and reviewers check against.
 
-## Pre-Implementation Documentation Checklist
+## Governance
 
-**MANDATORY before ANY code changes.** Read these documents to understand context and constraints:
-
-### Always Read
-
-- `.orqa/documentation/reference/` — Existing feature designs related to the task
-- `.orqa/learning/decisions/` — Relevant `AD-NNN.md` architecture decision artifacts
-- `.orqa/implementation/tasks/` — Task artifacts with context, constraints, and priorities
-- `.orqa/documentation/about/roadmap.md` — Verify the work is prioritized and not scope creep
-
-### Read When Modifying Backend
-
-- `backend/src-tauri/src/` — Existing Rust module structure, command handlers, domain types
-
-### Read When User-Facing Changes
-
-- `.orqa/documentation/about/vision.md` — Two-Pillar framework and product vision
-- `.orqa/documentation/about/governance.md` — Governance rules and decision-making process
-
-### Use Search Tools First
-
-Before reading entire files:
-
-- `code_research` — "How does [feature area] work?" for architectural understanding
-- `search_semantic` — Find relevant docs and code for specific concepts
-- `search_regex` — Verify command names, function names, or specific symbols exist
-
-**Why search tools first:** Avoids pulling entire files into context. Narrows down exactly what to read.
-
-## Plan Structure Requirements
-
-Every implementation plan must include these sections in order:
-
-### 1. Architectural Compliance
-
-> **Reminder:** When this plan reaches implementation phases, Phase 1 MUST be documentation updates. See section 5 below.
-
-**Verify adherence to all foundational principles.** Show HOW each principle is satisfied with patterns specific to the plan — not just a list of AD numbers.
-
-**Mandatory checks (verify every one that applies):**
-
-| Principle | Verify |
-| ----------- | -------- |
-| [PD-7121ec20](PD-7121ec20) (Thick backend) | Domain logic in Rust, Svelte is view layer only |
-| [PD-4e7faf0e](PD-4e7faf0e) (IPC boundary) | All communication via `#[tauri::command]` and `invoke()` |
-| [PD-2d58941b](PD-2d58941b) (Error propagation) | All functions return `Result<T, E>`, no unwrap/expect/panic |
-| [PD-ecc96aef](PD-ecc96aef) (Svelte 5 runes) | `$state`, `$derived`, `$effect`, `$props()` only — no Svelte 4 patterns |
-| [PD-75bb14ae](PD-75bb14ae) (SQLite persistence) | Structured data in SQLite, file-based artifacts from disk |
-| [PD-9a7d7256](PD-9a7d7256) (Component purity) | Pages fetch data, components receive via props only |
-| End-to-end completeness | Every feature includes all 4 layers: Rust command → IPC type → Svelte component → store binding |
-| Coding standards | Function size limits, zero clippy/rustfmt warnings, 80%+ coverage |
-
-**Example (good):**
-
-```markdown
-## Architectural Compliance
-
-**PD-7121ec20 (Thick backend):** Session management logic lives entirely in `backend/src-tauri/src/domain/sessions.rs`.
-Frontend only displays session list and current conversation.
-
-**PD-4e7faf0e (IPC boundary):** New commands `create_session` and `list_sessions` exposed via `#[tauri::command]`.
-Frontend calls via `invoke('create_session', { name })`.
-
-**PD-2d58941b (Error propagation):** All session functions return `Result<Session, SessionError>`.
-Command handlers map to `Result<T, String>` for Tauri serialization.
-```
-
-**Anti-pattern (bad):**
-
-```markdown
-## Architectural Compliance
-
-Complies with PD-7121ec20, PD-4e7faf0e, PD-2d58941b, PD-ecc96aef, PD-75bb14ae, PD-9a7d7256.
-```
-
-### 1b. Systems Architecture Checklist
-
-Every plan MUST explicitly address each dimension below. For each, state either the specific approach OR "N/A — [reason]". Leaving a dimension blank is a plan rejection.
-
-| Dimension | What to Address |
-| ----------- | ---------------- |
-| **Data Persistence** | What new data is created? Where is it stored? Schema design. Migration strategy. |
-| **IPC Contract** | New/modified Tauri commands. Request/response types. Serialization. |
-| **State Management** | Frontend state: where stored (runes store, component, URL)? How loaded/saved? What happens on window refresh? |
-| **Configuration** | What config files are read/written? What config values are new? Where do defaults come from? |
-| **Error Handling** | What can go wrong? How does each error surface to the user? Recovery paths? |
-| **Testing Strategy** | Unit test approach (cargo test, Vitest). Integration test approach. E2E coverage (Playwright)? |
-| **User Preferences** | Are there user choices that need persisting across sessions? Default values? Override mechanisms? |
-| **Documentation** | Which docs need updating? Docs MUST be written before code (documentation-first). |
-
-### 2. UX-First Design
-
-**For user-facing changes:** Design the ideal user experience BEFORE the backend architecture.
-
-**Required subsections:**
-
-1. **User Journeys** — What the user sees and does in every scenario
-2. **UI Design** — Components, layouts, and interactions
-3. **Component State Table** — Every component, every state it can be in:
-
-| Component | State | User Sees |
-| ----------- | ------- | ----------- |
-| SessionList | Loading | Spinner with "Loading sessions..." |
-| SessionList | Empty | "No sessions yet" with create button |
-| SessionList | Loaded | List of session cards with timestamps |
-| SessionList | Error | Error message with retry button |
-
-1. **Backend Requirements** — Derived from the above. What commands, types, and domain logic are needed to enable the UX?
-
-### 3. Governing Documentation
-
-**List the documentation that governs each implementation phase.**
-
-### 4. Verification Gates
-
-**Define what "done" means for each phase.** Include both quality checks and documentation compliance audits.
-
-**Example:**
-
-```markdown
-## Verification Gate: Phase 1 Complete
-
-**Quality Checks:**
-
-- `cargo fmt --check` passes
-- `cargo clippy --all-targets -- -D warnings` passes
-- `cargo test` passes with 80%+ coverage
-- `npm run check` passes
-
-**Documentation Compliance:**
-
-- IPC command signatures match the relevant `AD-NNN.md` decisions in `.orqa/learning/decisions/`
-- Component states match the plan's component state table
-- Error types match documented error propagation strategy
-```
-
-### 5. Documentation Update (ALWAYS Phase 1 — NON-NEGOTIABLE)
-
-**Every plan's FIRST implementation phase updates the documentation to define the target state BEFORE any code is written.**
-
-**Required phase ordering:**
-
-```text
-Phase 1: Documentation update ← Define target state first
-Phase 2: Backend changes       ← Governed by Phase 1 docs
-Phase 3: Frontend changes      ← Governed by Phase 1 docs
-Phase 4: Documentation verification ← Confirm docs still match
-```
-
-## Documentation Drift Prevention
-
-**Drift = code that no longer matches the documentation.**
-
-### Mandatory Rules During Implementation
-
-1. **Re-read governing docs at the start of EVERY phase** — even if you "remember" from a prior session.
-2. **Documentation is ALWAYS right** — if code diverges from docs, the code is wrong.
-3. **No silent improvements** — if you discover a better approach during coding, STOP, update the doc FIRST, then resume.
-4. **Between sessions: re-read docs before continuing.**
-5. **Documentation compliance is a gate** — audit after every phase.
-
-## Verification Gate Protocol
-
-**After each implementation phase:**
-
-1. **Verify documentation currency**
-2. **Run quality checks:**
-
-   ```bash
-   cargo fmt --check
-   cargo clippy --all-targets -- -D warnings
-   cargo test
-   npm run check
-   npm run lint
-   npm run test
-   ```
-
-3. **Documentation compliance audit**
-4. **Fix cycle:** If any check fails, fix it and re-run
-5. **Gate pass:** Only when all checks pass AND documentation compliance is verified
-
-**NEVER proceed to the next phase with failing checks or undocumented drift.**
-
-## Plan Structure Template
-
-Use this template for every implementation plan. Sections must appear in this order:
-
-```markdown
-## Architectural Compliance
-[Verify each principle with specific patterns for this plan — show HOW, not just a list]
-
-## Systems Architecture Checklist
-[Address each dimension: Data Persistence, IPC Contract, State Management, Configuration,
-Health & Status, Error Handling, Testing Strategy, User Preferences, Documentation.
-State "N/A — [reason]" for inapplicable ones.]
-
-## Target UX
-[Wireframes/mockups/descriptions of what the user sees]
-
-## User Journeys
-[Every scenario: first-time, power user, error, edge cases]
-
-## Component States
-[Table: component x state -> what the user sees]
-
-## User-Facing Language
-[Internal key -> display label mapping]
-
-## Phase N: [Name]
-[Implementation details — backend derived from the above]
-
-## Verification
-[Measured by user-visible outcomes]
-```
-
-## See Also
-
-- `.orqa/learning/rules/[RULE-dccf4226](RULE-dccf4226).md` — Plan mode requirements
-- `.orqa/learning/rules/[RULE-05ae2ce7](RULE-05ae2ce7).md` — AD-XXX quick reference
-- `.orqa/learning/rules/[RULE-1b238fc8](RULE-1b238fc8).md` — Two-Pillar framework and governance
-- `.orqa/documentation/development/coding-standards.md` — Code quality standards
-
-## Related Skills
-
-- See the **search** skill for pre-implementation codebase research
-- See the **architecture** skill for architectural compliance during planning
+- RULE-008: documentation first — plans are written before task artifacts
+- RULE-031: vision alignment — every planned task must serve at least one pillar
+- Task artifacts: `type: task`, `status: proposed`, linked to their parent epic
+- Plans include an architectural compliance section
