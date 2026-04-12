@@ -61,11 +61,14 @@ enum RawEntry {
 struct RawHook {
     /// Event subject — `file`, `bash`, `scan`, or `lint`.  Hooks whose
     /// event is anything else (e.g. `team_create`, `session_end`) are
-    /// documented-only and skipped.
-    event: String,
+    /// documented-only and skipped.  Absent for hooks like `Stop` and
+    /// `SessionStart` that aren't tied to a specific tool event.
+    #[serde(default)]
+    event: Option<String>,
     /// Action to take on match — `block`, `warn`, or `inject`.  Unknown
     /// actions (e.g. `check`) are documented-only and skipped.
-    action: String,
+    #[serde(default)]
+    action: Option<String>,
     /// Optional AND-composed conditions for file/scan events.
     #[serde(default)]
     conditions: Vec<RawCondition>,
@@ -134,14 +137,22 @@ fn split_frontmatter(content: &str) -> (Option<&str>, &str) {
 /// `Ok(None)` for hooks whose event or action isn't in the daemon's enum set
 /// (treated as documentation-only), and `Err` only for truly malformed input.
 fn parse_hook(raw: RawHook) -> Result<Option<EnforcementEntry>, EngineError> {
-    let event = match raw.event.as_str() {
+    // Hooks without an event or action are lifecycle hooks (Stop,
+    // SessionStart, PostToolUse with no target) — they're not evaluated by
+    // the daemon's enforcement engine and are documentation-only.
+    let Some(event_str) = &raw.event else {
+        return Ok(None);
+    };
+    let Some(action_str) = &raw.action else {
+        return Ok(None);
+    };
+
+    let event = match event_str.as_str() {
         "file" => EventType::File,
         "bash" => EventType::Bash,
         "scan" => EventType::Scan,
         "lint" => EventType::Lint,
         other => {
-            // Documented-only: hooks targeting events the daemon doesn't
-            // evaluate (team_create, session_end, prompt, …).
             tracing::debug!(
                 "[enforcement] skipping hook with undaemoned event '{other}' \
                  — treated as declarative"
@@ -150,12 +161,11 @@ fn parse_hook(raw: RawHook) -> Result<Option<EnforcementEntry>, EngineError> {
         }
     };
 
-    let action = match raw.action.as_str() {
+    let action = match action_str.as_str() {
         "block" => RuleAction::Block,
         "warn" => RuleAction::Warn,
         "inject" => RuleAction::Inject,
         other => {
-            // Documented-only: actions the daemon cannot dispatch.
             tracing::debug!(
                 "[enforcement] skipping hook with undaemoned action '{other}' \
                  — treated as declarative"
@@ -267,8 +277,8 @@ mod tests {
     #[test]
     fn parse_hook_file_block() {
         let raw = RawHook {
-            event: "file".to_owned(),
-            action: "block".to_owned(),
+            event: Some("file".to_owned()),
+            action: Some("block".to_owned()),
             conditions: vec![
                 RawCondition {
                     field: "file_path".to_owned(),
@@ -292,8 +302,8 @@ mod tests {
     #[test]
     fn parse_hook_bash_warn() {
         let raw = RawHook {
-            event: "bash".to_owned(),
-            action: "warn".to_owned(),
+            event: Some("bash".to_owned()),
+            action: Some("warn".to_owned()),
             conditions: vec![],
             pattern: Some("--no-verify".to_owned()),
             scope: None,
@@ -308,8 +318,8 @@ mod tests {
     #[test]
     fn parse_hook_inject_with_knowledge() {
         let raw = RawHook {
-            event: "file".to_owned(),
-            action: "inject".to_owned(),
+            event: Some("file".to_owned()),
+            action: Some("inject".to_owned()),
             conditions: vec![RawCondition {
                 field: "file_path".to_owned(),
                 pattern: r"src-tauri/.*\.rs$".to_owned(),
@@ -327,8 +337,8 @@ mod tests {
     #[test]
     fn parse_hook_undaemoned_event_is_none() {
         let raw = RawHook {
-            event: "team_create".to_owned(),
-            action: "block".to_owned(),
+            event: Some("team_create".to_owned()),
+            action: Some("block".to_owned()),
             conditions: vec![],
             pattern: None,
             scope: None,
@@ -340,8 +350,8 @@ mod tests {
     #[test]
     fn parse_hook_undaemoned_action_is_none() {
         let raw = RawHook {
-            event: "file".to_owned(),
-            action: "check".to_owned(),
+            event: Some("file".to_owned()),
+            action: Some("check".to_owned()),
             conditions: vec![],
             pattern: None,
             scope: None,
@@ -353,8 +363,8 @@ mod tests {
     #[test]
     fn parse_hook_scan_with_scope() {
         let raw = RawHook {
-            event: "scan".to_owned(),
-            action: "warn".to_owned(),
+            event: Some("scan".to_owned()),
+            action: Some("warn".to_owned()),
             conditions: vec![RawCondition {
                 field: "content".to_owned(),
                 pattern: r"unwrap\(\)".to_owned(),
