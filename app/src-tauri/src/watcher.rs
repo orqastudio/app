@@ -116,6 +116,15 @@ fn create_debouncer<R: Runtime>(
             };
 
             let has_relevant_change = events.iter().any(|evt| {
+                // Only react to content-modifying events: Create, Write,
+                // Remove, Rename.  Metadata-only changes (atime, permissions)
+                // happen on Windows/NTFS when the daemon reads files through
+                // a Docker bind mount — they do NOT indicate content changed
+                // and must be filtered out to avoid triggering 3.3-second
+                // full graph rebuilds on every artifact view.
+                if !is_content_event(evt.kind) {
+                    return false;
+                }
                 evt.paths
                     .iter()
                     .any(|p| is_relevant_path(p, &orqa_dir_for_closure))
@@ -129,6 +138,27 @@ fn create_debouncer<R: Runtime>(
         },
     )
     .map_err(|e| format!("failed to create debouncer: {e}"))
+}
+
+/// Return `true` when the event kind indicates content was actually modified.
+///
+/// Excludes metadata-only changes (access-time updates, permission changes)
+/// which fire on Windows when other processes read a file through a Docker
+/// bind mount but don't indicate that the artifact's content was changed.
+fn is_content_event(kind: notify::EventKind) -> bool {
+    use notify::event::{CreateKind, ModifyKind, RemoveKind, RenameMode};
+    use notify::EventKind;
+
+    matches!(
+        kind,
+        EventKind::Create(CreateKind::File | CreateKind::Any)
+            | EventKind::Modify(
+                ModifyKind::Data(_)
+                    | ModifyKind::Name(RenameMode::Any | RenameMode::To | RenameMode::From)
+                    | ModifyKind::Any
+            )
+            | EventKind::Remove(RemoveKind::File | RemoveKind::Any)
+    )
 }
 
 /// Emit artifact change events to all windows.

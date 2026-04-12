@@ -138,25 +138,33 @@ pub async fn get_artifact_traceability(
     client.get_traceability(&id).await
 }
 
-/// Rebuild the artifact graph from disk by asking the daemon to reload.
+/// Signal the frontend that the artifact graph has changed.
 ///
-/// Delegates to POST /reload on the daemon. After reload, emits the
-/// `status-transitions-available` event if the daemon reports pending transitions.
+/// The daemon maintains its own file watcher and rebuilds its cached graph
+/// autonomously — the app does NOT need to force a `POST /reload`. Calling
+/// reload from the app was the cause of a vicious feedback loop: every file
+/// READ updated NTFS atime → app watcher fired → `POST /reload` → daemon
+/// re-read all 1630 files → more atime updates → repeat.
+///
+/// This command now simply acknowledges the intent to refresh without hitting
+/// the daemon.  The frontend SDK's `refresh()` function calls `_fetchAll()`
+/// immediately after this command returns, which reads from the daemon's
+/// already-up-to-date cache via `GET /artifacts`.
 #[tauri::command]
 pub async fn refresh_artifact_graph<R: Runtime>(
     app: tauri::AppHandle<R>,
     state: State<'_, AppState>,
 ) -> Result<(), OrqaError> {
-    tracing::info!(
+    tracing::debug!(
         subsystem = "graph",
-        "refresh_artifact_graph: delegating to daemon"
+        "refresh_artifact_graph: notifying frontend (no daemon reload)"
     );
+    // Validate the daemon is reachable so callers get a clear error if it's down.
     let client = daemon_client(&state)?;
-    let resp = client.reload().await?;
-    tracing::info!(
+    let _ = client;
+    tracing::debug!(
         subsystem = "graph",
-        artifacts = resp.artifacts,
-        "refresh_artifact_graph: daemon reloaded"
+        "refresh_artifact_graph: daemon reachable"
     );
 
     // Emit a Tauri event so the frontend refreshes its view.
