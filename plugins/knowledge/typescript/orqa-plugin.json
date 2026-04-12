@@ -40,7 +40,7 @@
 		{
 			"role": "generator",
 			"engine": "tsconfig",
-			"config_output": ".orqa/configs/tsconfig.base.json",
+			"config_output": "tsconfig.base.json",
 			"generator": "scripts/generate-tsconfig.ts",
 			"actions": {
 				"check": {
@@ -51,6 +51,17 @@
 			"watch": {
 				"paths": [".orqa/learning/rules/**/*.md"],
 				"filter": "engine: tsconfig",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts"]
+		},
+		{
+			"role": "generator",
+			"engine": "tsconfig-workspace",
+			"config_output": "tsconfig.json",
+			"generator": "scripts/generate-tsconfig-workspace.ts",
+			"watch": {
+				"paths": ["package.json"],
 				"on_change": "regenerate"
 			},
 			"file_types": ["*.ts"]

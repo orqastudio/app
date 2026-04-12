@@ -9,7 +9,7 @@
 		{
 			"role": "generator",
 			"engine": "clippy",
-			"config_output": ".orqa/configs/clippy.toml",
+			"config_output": "clippy.toml",
 			"generator": "scripts/generate-clippy-config.ts",
 			"actions": {
 				"check": {
@@ -32,7 +32,7 @@
 		{
 			"role": "generator",
 			"engine": "rustfmt",
-			"config_output": ".orqa/configs/.rustfmt.toml",
+			"config_output": ".rustfmt.toml",
 			"generator": "scripts/generate-rustfmt-config.ts",
 			"actions": {
 				"check": {

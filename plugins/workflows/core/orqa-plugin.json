@@ -53,6 +53,17 @@
 			},
 			"file_types": ["*.md"],
 			"rules_path": "rules/markdownlint/"
+		},
+		{
+			"role": "generator",
+			"engine": "prettierignore",
+			"config_output": ".prettierignore",
+			"generator": "scripts/generate-prettierignore.ts",
+			"watch": {
+				"paths": ["package.json"],
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"]
 		}
 	],
 	"content": {
