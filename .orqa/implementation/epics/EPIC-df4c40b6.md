@@ -1,6 +1,6 @@
 ---
 id: "EPIC-df4c40b6"
-type: "epic"
+type: epic
 title: "Dashboard redesign — layout, widgets, and plugin extensibility"
 description: "Redesign the dashboard from a vertical card stack to an information-dense layout. Architecture must support drag-and-drop positioning and plugin-provided custom widgets."
 status: archived

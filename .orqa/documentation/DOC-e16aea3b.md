@@ -1,6 +1,7 @@
 ---
 id: DOC-e16aea3b
 type: doc
+status: active
 title: OrqaStudio Agentic Workflow and Enforcement Pipeline
 description: "The core concept of OrqaStudio: how agents do structured work, how knowledge flows into their context, how the artifact graph connects everything, and how the three-layer enforcement stack ensures quality from real-time diagnostics through hard commit gates."
 category: architecture

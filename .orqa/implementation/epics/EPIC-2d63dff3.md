@@ -1,6 +1,6 @@
 ---
 id: "EPIC-2d63dff3"
-type: "epic"
+type: epic
 title: "Validation consolidation: libs/validation crate as single source of truth"
 description: "Extract all validation logic into a shared libs/validation Rust crate. Consolidate 6 separate implementations into one. Add graph-theoretic metrics. All consumers (app, MCP, LSP, CLI, hooks, visualiser) use the same library for consistent results."
 status: review

@@ -1,6 +1,6 @@
 ---
 id: "PERSONA-c4afd86b"
-type: "persona"
+type: persona
 title: "Alex — The Lead"
 description: "Senior product manager or tech lead who turns ambiguity into clarity. Uses AI as a thinking partner for structured reasoning and governance."
 status: active

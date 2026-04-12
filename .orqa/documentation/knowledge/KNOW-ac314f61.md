@@ -1,6 +1,7 @@
 ---
 id: KNOW-ac314f61
 type: knowledge
+status: active
 title: delegation-patterns
 description: "How the orchestrator delegates work to specialized agents. Covers role boundaries, delegation protocol, and when to use subagents vs agent teams."
 user-invocable: false

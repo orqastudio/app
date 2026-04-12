@@ -1,6 +1,6 @@
 ---
 id: "EPIC-9ddef7f9"
-type: "epic"
+type: epic
 title: "Artifact Browser — Sort, Filter, Search"
 description: "Complete the core artifact browsing experience with sorting/grouping/filtering in the browser panel, AI-driven cross-artifact search, and a references panel."
 status: active

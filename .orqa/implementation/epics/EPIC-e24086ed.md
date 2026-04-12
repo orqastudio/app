@@ -1,6 +1,6 @@
 ---
 id: "EPIC-e24086ed"
-type: "epic"
+type: epic
 title: "Code quality audit and enforcement alignment"
 description: "Comprehensive audit of codebase against documented coding standards, lint rule coverage, test coverage, dead code, schema validation compliance, and recurring lessons. Findings feed into the learning loop as lessons and enforcement improvements."
 status: captured

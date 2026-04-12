@@ -1,6 +1,6 @@
 ---
 id: "EPIC-9a1eba3f"
-type: "epic"
+type: epic
 title: "Rule Enforcement Engine with Claude Code Companion Plugin"
 description: "Build a two-context rule enforcement engine: a Claude Code companion plugin\n(separate repo) that enforces .orqa/ rules in the CLI, then integrate the same\nenforcement logic into the OrqaStudio app for dogfooding parity.\n"
 status: archived

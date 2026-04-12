@@ -1,6 +1,6 @@
 ---
 id: "EPIC-c08f0b83"
-type: "epic"
+type: epic
 title: "Roadmap kanban view"
 description: "Replace the static roadmap documentation page with a dynamic kanban board view under Process. Milestone-level board with drill-down into epics and tasks, all data from the graph."
 status: archived

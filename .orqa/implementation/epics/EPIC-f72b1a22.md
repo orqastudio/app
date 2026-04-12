@@ -1,6 +1,6 @@
 ---
 id: "EPIC-f72b1a22"
-type: "epic"
+type: epic
 title: "UX Polish Sprint"
 description: "UX improvements identified during early dogfooding: streaming fix, output truncation, tool call grouping, auto-naming sessions, custom titlebar."
 status: archived

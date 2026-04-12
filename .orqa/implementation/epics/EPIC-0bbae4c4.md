@@ -1,6 +1,6 @@
 ---
 id: "EPIC-0bbae4c4"
-type: "epic"
+type: epic
 title: "Rebrand: Forge → OrqaStudio"
 description: "Product rebrand from \"Forge\" to \"Orqa Studio\": name, directory structure (src/ → ui/), brand assets, documentation, and build configuration updates."
 status: archived

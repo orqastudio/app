@@ -42,6 +42,14 @@ const DEFAULT_CONFIG: Record<string, unknown> = {
 	// MD013 — line length: disabled because documentation often has long links
 	// and code snippets that cannot be wrapped without harming readability.
 	MD013: false,
+	// MD024 — duplicate headings: siblings_only allows the same heading text to
+	// appear under different parent sections. Artifact files commonly repeat
+	// phase headings ("Phase 2", "Tasks") in separate structural sections.
+	MD024: { siblings_only: true },
+	// MD025 — single top-level heading: front_matter_title cleared so that the
+	// YAML `title:` field is not counted as an H1. Artifact frontmatter titles
+	// are metadata, not document headings.
+	MD025: { front_matter_title: "" },
 	// MD033 — inline HTML: allowed in documentation for callout blocks and
 	// rendered table improvements.
 	MD033: false,

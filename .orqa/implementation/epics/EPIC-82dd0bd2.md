@@ -1,6 +1,6 @@
 ---
 id: "EPIC-82dd0bd2"
-type: "epic"
+type: epic
 title: "Pipeline health dashboard"
 description: "Surface pipeline integrity on the app dashboard with scan/fix actions, add pipeline visualization and temporal analytics."
 status: archived

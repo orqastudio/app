@@ -1,6 +1,6 @@
 ---
 id: "KNOW-b5f520d5"
-type: "knowledge"
+type: knowledge
 title: "Orqa Store Patterns"
 domain: platform/svelte
 description: "OrqaStudio Svelte 5 rune store patterns: class-based stores with $state/$derived,\nstore-to-component data flow, and reactive state management.\nUse when: Creating or modifying Svelte stores, wiring stores to components,\nmanaging loading/error/empty states, or debugging reactivity issues.\n"

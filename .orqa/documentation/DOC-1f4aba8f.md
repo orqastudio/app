@@ -1,6 +1,7 @@
 ---
 id: DOC-1f4aba8f
 type: doc
+status: active
 title: Three-Layer Enforcement Model
 description: "How OrqaStudio enforces governance through three layers: LSP real-time diagnostics for mechanical checks, behavioral rules for judgement calls, and pre-commit hard gates as the final safety net. Includes the demotion model for transitioning rules between layers."
 category: governance

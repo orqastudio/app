@@ -1,6 +1,6 @@
 ---
 id: "KNOW-4f81ddc5"
-type: "knowledge"
+type: knowledge
 title: "Orqa IPC Patterns"
 domain: platform/tauri
 description: "OrqaStudio IPC patterns: Tauri invoke() calls, #[tauri::command] handlers,\nChannel<T> streaming, command registration, and IPC type contracts.\nUse when: Adding or modifying Tauri commands, wiring frontend to backend,\nimplementing streaming features, or debugging IPC boundary issues.\n"

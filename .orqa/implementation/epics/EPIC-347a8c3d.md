@@ -1,6 +1,6 @@
 ---
 id: "EPIC-347a8c3d"
-type: "epic"
+type: epic
 title: "Rust artifact platform engine"
 description: "Extend libs/validation from validator-only to the canonical artifact engine. Single parser/serialiser for markdown+YAML → validated JSON. Content access, rule evaluation, hook lifecycle, daemon mode. Eliminates all hand-rolled frontmatter parsing."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: "KNOW-1afbc656"
-type: "knowledge"
+type: knowledge
 title: "Orqa Documentation Authoring"
 domain: standards/readme
 description: "OrqaStudio documentation authoring conventions: internal link format, cross-referencing\nbetween artifacts, markdown rendering pipeline, and content structure patterns.\nUse when: Writing or editing any markdown content in .orqa/ — documentation pages,\nartifact body text, research documents, epic designs, rule descriptions, README files.\n"

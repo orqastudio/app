@@ -1,6 +1,6 @@
 ---
 id: "KNOW-0d6c1ece"
-type: "knowledge"
+type: knowledge
 title: "OrqaStudio Frontend Best Practices"
 domain: platform/svelte
 description: "Umbrella skill for all frontend implementation work. Establishes composability,\ncoding standards, and component conventions as always-in-mind principles, then\nreferences deeper skills for Svelte 5, TypeScript, and Tailwind specifics.\nUse when: Any agent is about to write or modify frontend code (ui/, components, stores).\n"

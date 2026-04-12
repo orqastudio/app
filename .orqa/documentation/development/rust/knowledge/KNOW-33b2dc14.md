@@ -1,6 +1,6 @@
 ---
 id: "KNOW-33b2dc14"
-type: "knowledge"
+type: knowledge
 title: "Orqa Streaming Pipeline"
 domain: platform/rust
 description: "OrqaStudio streaming pipeline: Agent SDK → sidecar (Bun) → NDJSON → Rust Channel<T> → Svelte.\nCovers ProviderEvent types, StreamEvent types, sidecar protocol, error handling, and tool approval.\nUse when: Modifying the streaming pipeline, adding new event types, debugging streaming issues,\nor working with the sidecar.\n"

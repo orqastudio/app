@@ -1,6 +1,6 @@
 ---
 id: "EPIC-4fb5e9e1"
-type: "epic"
+type: epic
 title: "Vision & Brand Identity"
 description: "Evolve OrqaStudio's vision from software development tool to domain-agnostic PILLAR-c9e0a695 engine. Rename pillars, broaden personas, establish licensing, and align all documentation with canonical strategic vision."
 status: archived

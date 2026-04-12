@@ -1,6 +1,6 @@
 ---
 id: "EPIC-7394ba2a"
-type: "epic"
+type: epic
 title: "Portable Governance Framework"
 description: "Restructure agents from 16 software-specific roles to 7 universal roles, extract domain knowledge into skills, create project setup skills, update product documentation to reflect the PILLAR-c9e0a695 engine identity and governance hub capability. Implements PD-48b310f9 and PD-26b0eb9f."
 status: archived

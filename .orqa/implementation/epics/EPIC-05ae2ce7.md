@@ -1,6 +1,6 @@
 ---
 id: "EPIC-05ae2ce7"
-type: "epic"
+type: epic
 title: "Architecture Decisions"
 description: "Formal architecture decision records (PD-09fc4e65 through PD-af88bb69) capturing every significant technical choice made before implementation."
 status: archived

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-a951c9b6"
-type: "epic"
+type: epic
 title: "Product Definition"
 description: "The complete product specification: personas, user journeys, information architecture, glossary, and MVP feature set."
 status: archived

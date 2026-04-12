@@ -1,6 +1,6 @@
 ---
 id: "EPIC-73fcc85a"
-type: "epic"
+type: epic
 title: "Enforcement & Continuity"
 description: "Add real-time violation detection during streaming, hook-based rule injection, compliance dashboard, and session handoff continuity."
 status: archived

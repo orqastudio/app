@@ -1,6 +1,6 @@
 ---
 id: "EPIC-3e6cad90"
-type: "epic"
+type: epic
 title: "Knowledge Maturity Pipeline — Full Migration"
 description: "Migrate all governance artifacts to the PD-430829f1 knowledge maturity pipeline: rule-overrides mechanism, relationship backfill on ~150 artifacts, schema enforcement, deprecated field removal. Done in one pass to avoid mid-migration drift."
 status: archived

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-6e11f0af"
-type: "epic"
+type: epic
 title: "Artifact Graph SDK extraction research"
 description: "Research extracting the artifactGraphSDK into a standalone npm package that plugins can import, enabling the plugin architecture's data layer."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-3a3e5aea"
-type: "epic"
+type: epic
 title: "Schema-driven LSP enforcement for artifact intelligence"
 description: "Implement full schema-driven artifact intelligence in the orqa LSP: real-time validation, autocomplete, hover, go-to-definition, code actions, broken link detection, reverse relationship checks, and plugin schema ingestion. All powered by plugin schemas — nothing hardcoded."
 status: captured

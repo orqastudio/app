@@ -1,6 +1,6 @@
 ---
 id: "EPIC-560cf78c"
-type: "epic"
+type: epic
 title: "Developer Experience Polish"
 description: "Quality-of-life improvements for dogfooding, including project-local database, build splash window, and system prompt templates."
 status: captured

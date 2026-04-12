@@ -1,5 +1,6 @@
 ---
 id: IDEA-4d48c4a7
+type: idea
 title: Containerise dev environment services
 status: proposed
 created: 2026-04-09

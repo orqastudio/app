@@ -1,6 +1,6 @@
 ---
 id: "EPIC-fdcdb958"
-type: "epic"
+type: epic
 title: "Skills→Knowledge rename and connector architecture alignment"
 description: "Rename OrqaStudio's \"skills\" concept to \"knowledge\" to resolve naming collision with Claude Code's \"skills\" (slash commands). Establish the connector as a bridge that reads from canonical sources — no copies, no forks, no staleness. Document the semantic distinction in core artifacts."
 status: ready

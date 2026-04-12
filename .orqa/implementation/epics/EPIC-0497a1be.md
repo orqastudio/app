@@ -1,6 +1,6 @@
 ---
 id: "EPIC-0497a1be"
-type: "epic"
+type: epic
 title: "Business logic deduplication — daemon delegation model"
 description: "Consolidate 7 categories of business logic duplication across the codebase by migrating JavaScript/TypeScript reimplementations to delegate to the canonical Rust validation crate via the daemon HTTP API. Eliminates logic drift risk in graph scanning, schema validation, status transitions, frontmatter parsing, relationship validation, Cytoscape analysis, and type inference."
 status: review

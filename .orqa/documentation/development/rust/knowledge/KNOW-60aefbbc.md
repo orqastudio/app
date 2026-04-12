@@ -1,6 +1,6 @@
 ---
 id: "KNOW-60aefbbc"
-type: "knowledge"
+type: knowledge
 title: "Orqa Domain Services"
 domain: platform/rust
 description: "OrqaStudio domain service patterns: how Rust backend services are structured,\ncomposed, tested, and wired to Tauri commands. Covers service anatomy, command\ndelegation, error propagation, and the boundary between domain logic and framework code.\nUse when: Creating new domain services, refactoring backend logic out of commands,\nadding business logic to the Rust backend, or reviewing service architecture.\n"

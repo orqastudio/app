@@ -1,6 +1,7 @@
 ---
 id: DOC-ecc181cb
 type: doc
+status: active
 title: README Standards
 description: "Canonical README structure for all OrqaStudio repositories — required badges, banner, sections, and audit process."
 category: reference

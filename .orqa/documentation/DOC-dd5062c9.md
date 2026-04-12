@@ -1,6 +1,7 @@
 ---
 id: DOC-dd5062c9
 type: doc
+status: active
 title: Shared Validation Engine
 description: "How the shared validation engine works: a single TypeScript library in libs/validation/ consumed by three adapters (LSP, CLI, pre-commit). Schema-driven, plugin-aware, and the foundation for all artifact quality enforcement."
 category: architecture

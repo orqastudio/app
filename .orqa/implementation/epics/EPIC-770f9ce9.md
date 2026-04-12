@@ -1,6 +1,6 @@
 ---
 id: "EPIC-770f9ce9"
-type: "epic"
+type: epic
 title: "Artifact Graph Alignment Audit"
 description: "Comprehensive audit and cleanup of all .orqa/ artifacts to align with graph-based\nknowledge injection principles, correct layer classifications, fix data integrity\nissues, and eliminate sources of context confusion.\n"
 status: archived

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-5d5d0ae6"
-type: "epic"
+type: epic
 title: "UX Design"
 description: "The complete UX specification: design system, wireframes, component inventory, interaction patterns, and responsive behaviour rules."
 status: archived

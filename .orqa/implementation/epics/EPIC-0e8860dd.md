@@ -1,6 +1,6 @@
 ---
 id: "EPIC-0e8860dd"
-type: "epic"
+type: epic
 title: "Pillars as First-Class Artifacts"
 description: "Make product pillars structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings across rules and documentation. Implements PD-74a2cb7a."
 status: archived

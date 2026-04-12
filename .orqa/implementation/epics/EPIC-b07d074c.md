@@ -1,6 +1,6 @@
 ---
 id: "EPIC-b07d074c"
-type: "epic"
+type: epic
 title: "Claude Code connector switch — clear state, register plugin, verify governance"
 description: "The actual switch to the Claude Code connector plugin. Clears stale symlinks and session state, registers the plugin in Claude Code settings, resets auto-memory, verifies hooks/agents/skills/MCP all work end-to-end, and runs a first governed session to confirm the system is production-ready."
 status: captured

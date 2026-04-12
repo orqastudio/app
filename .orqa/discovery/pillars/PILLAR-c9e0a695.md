@@ -1,6 +1,6 @@
 ---
 id: "PILLAR-c9e0a695"
-type: "pillar"
+type: pillar
 title: "Clarity Through Structure"
 description: "Making thinking, standards, and decisions visible and structured."
 status: active

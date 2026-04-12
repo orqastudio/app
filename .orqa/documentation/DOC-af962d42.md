@@ -1,6 +1,7 @@
 ---
 id: DOC-af962d42
 type: doc
+status: active
 title: License Policy
 description: "Which licenses apply to which OrqaStudio components and how to audit compliance."
 category: reference

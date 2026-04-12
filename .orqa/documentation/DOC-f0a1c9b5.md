@@ -1,6 +1,7 @@
 ---
 id: DOC-f0a1c9b5
 type: doc
+status: active
 title: Versioning System Guide
 description: "How OrqaStudio's single-version ecosystem works — the VERSION file, sync process, and dev tag convention."
 category: how-to

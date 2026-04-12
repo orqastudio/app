@@ -1,6 +1,6 @@
 ---
 id: "EPIC-5adc6d0a"
-type: "epic"
+type: epic
 title: "Repository Directory Reorganisation"
 description: "Restructure the repository so that frontend, backend, sidecar, and debugger code\neach live in their own top-level directory. Watchers then target only their specific\ndirectory, eliminating unnecessary rebuilds when unrelated files change.\n"
 status: archived

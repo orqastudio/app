@@ -1,6 +1,7 @@
 ---
 id: DOC-a06f2a63
 type: doc
+status: active
 title: "Svelte Plugin Setup"
 description: "How to install and configure the Svelte development plugin — dependencies, config generation, and organisation mode."
 category: onboarding

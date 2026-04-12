@@ -1,6 +1,6 @@
 ---
 id: "KNOW-207d9e2c"
-type: "knowledge"
+type: knowledge
 title: "Orqa Error Composition"
 domain: platform/rust
 description: "OrqaStudio error composition and flow: OrqaError anatomy, From implementations,\nerror propagation through domain/repo/command layers, IPC serialization, and\nfrontend error handling patterns.\nUse when: Adding new error variants, implementing error handling in commands or\ndomain services, wiring error states in Svelte stores, or debugging error flow\nacross the Tauri boundary.\n"

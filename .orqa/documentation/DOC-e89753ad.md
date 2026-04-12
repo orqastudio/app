@@ -1,6 +1,7 @@
 ---
 id: DOC-e89753ad
 type: doc
+status: active
 title: OrqaStudio CLI Commands
 description: "Complete reference for the orqa CLI: all commands, subcommands, options, and usage patterns. The single developer interface for setup, quality checks, testing, governance, plugin management, and protocol servers."
 category: development

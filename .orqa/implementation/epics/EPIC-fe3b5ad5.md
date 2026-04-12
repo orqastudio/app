@@ -1,6 +1,6 @@
 ---
 id: "EPIC-fe3b5ad5"
-type: "epic"
+type: epic
 title: "Technical Design"
 description: "The complete technical blueprint: database schema, IPC commands, Rust modules, streaming pipeline, tool definitions, and error taxonomy."
 status: archived

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-dcc0bac6"
-type: "epic"
+type: epic
 title: "Plugin infrastructure and delivery plugin extraction"
 status: exploring
 created: 2026-03-16T00:00:00.000Z

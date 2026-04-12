@@ -1,6 +1,6 @@
 ---
 id: "EPIC-59b92c8d"
-type: "epic"
+type: epic
 title: "Content Migration to Plugin-Composed Architecture"
 description: "Migrate CLAUDE.md, rule files, agent definitions, and knowledge artifacts to the plugin-composed architecture. One epic, sequential tasks with validation between each step."
 status: captured

@@ -1,6 +1,6 @@
 ---
 id: "EPIC-3f01a10f"
-type: "epic"
+type: epic
 title: "Canonical hook types in @orqastudio/types"
 description: "Add CanonicalHookEvent, HookContext, HookResult, LoadedRule, RuleViolation to the centralised types library. All consumers import from here."
 status: captured

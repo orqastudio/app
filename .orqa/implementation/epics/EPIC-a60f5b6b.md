@@ -1,6 +1,6 @@
 ---
 id: "EPIC-a60f5b6b"
-type: "epic"
+type: epic
 title: "Principle enforcement foundations"
 description: "Close all gaps between declared principles and mechanical enforcement. Backfill the relationship graph, mechanically enforce all enforceable rules, automate the learning loop, build Pillar 3 tooling, establish a behavioral rule enforcement plan, define priority dimensions, and build the gap audit into repeatable tooling. The system enforces itself going forward."
 status: archived

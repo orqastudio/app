@@ -1,6 +1,6 @@
 ---
 id: "KNOW-8615fee2"
-type: "knowledge"
+type: knowledge
 title: "OrqaStudio Backend Best Practices"
 domain: platform/rust
 description: "Umbrella skill for all backend implementation work. Establishes composability,\ncoding standards, and error handling as always-in-mind principles, then\nreferences deeper skills for Rust, Tauri, and persistence specifics.\nUse when: Any agent is about to write or modify backend code (app/src-tauri/, libs/engine/).\n"

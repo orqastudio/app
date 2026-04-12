@@ -1,6 +1,6 @@
 ---
 id: "EPIC-5a5e3c6c"
-type: "epic"
+type: epic
 title: "Notification system — toast, in-app panel, desktop"
 description: "Design and implement a notification strategy covering toast messages, in-app notification panel, and desktop notifications. Determine which events use which channel."
 status: archived

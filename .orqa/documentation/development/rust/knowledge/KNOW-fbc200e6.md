@@ -1,6 +1,6 @@
 ---
 id: "KNOW-fbc200e6"
-type: "knowledge"
+type: knowledge
 title: "Orqa Repository Pattern"
 domain: platform/rust
 description: "OrqaStudio's persistence layer using the repository pattern with rusqlite.\nCovers repository anatomy, connection management, query patterns, migrations,\nerror handling, and testing.\nUse when: Adding a new database entity, writing a new repository module,\nmodifying persistence logic, writing migration SQL, or testing database code.\n"

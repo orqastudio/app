@@ -1,6 +1,6 @@
 ---
 id: "EPIC-d45b4dfd"
-type: "epic"
+type: epic
 title: "Artifact Graph SDK and Structural Integrity"
 description: "Build a bidirectional artifact node graph with a typed frontend SDK, body template enforcement, markdown cross-linking, file watcher for live refresh, and plugin-ready subscription API — establishing the foundation for the plugin architecture."
 status: archived

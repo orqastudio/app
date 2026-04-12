@@ -1,6 +1,7 @@
 ---
 id: DOC-586bfa9a
 type: doc
+status: active
 title: Knowledge Auto-Injection
 description: "How OrqaStudio automatically injects relevant knowledge into agents: declared injection from agent employs relationships, semantic search for task-relevant knowledge, deduplication, and hook-based enforcement."
 category: architecture

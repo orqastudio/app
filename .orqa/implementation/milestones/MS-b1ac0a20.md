@@ -1,12 +1,12 @@
 ---
 id: "MS-b1ac0a20"
-type: "milestone"
+type: milestone
 title: "Dogfooding"
-description: "OrqaStudio is usable as a daily workspace for building OrqaStudio itself. The app runs in dogfood mode, editing its own source code. This milestone covers the gap between \"pieces exist\" and \"it actually works end-to-end."
+description: "OrqaStudio is usable as a daily workspace for building OrqaStudio itself. A waypoint on the path to MVP (MS-21d5096a), not a separate destination. Completing this milestone means the app is stable enough to develop itself."
 status: active
 created: 2026-03-07T00:00:00.000Z
-updated: 2026-03-07T00:00:00.000Z
-gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?\nAre recent lessons observations rather than corrections? If most lessons captured in the current phase are pure observations — not requiring promotion to rules with enforcement — the infrastructure layer is mature enough to begin app dogfooding. (See IMPL-4eed88ef)\n"
+updated: 2026-04-12T00:00:00.000Z
+gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?"
 relationships: []
 ---
 
@@ -15,6 +15,10 @@ relationships: []
 OrqaStudio is developed using itself (`.orqa/project.json` has `dogfood: true`). The app runs with `--no-watch` so editing Rust files doesn't kill the active session. Frontend changes hot-reload via Vite HMR. Rust changes require manual restart.
 
 Most core infrastructure is in place (40+ IPC commands, streaming pipeline, session persistence, tool approval, governance scanning). This milestone focuses on wiring existing pieces together and filling critical gaps that prevent daily use.
+
+## Relationship to MVP
+
+This milestone is a waypoint on the path to MS-21d5096a (MVP — Public Beta). Its remaining work feeds directly into the MVP's work streams. Completing dogfooding readiness is not a separate goal — it's the first gate on the road to public beta. All remaining epics here are also tracked under the relevant MVP work stream.
 
 ## Epics
 
@@ -71,8 +75,6 @@ Most core infrastructure is in place (40+ IPC commands, streaming pipeline, sess
 - [ ] All P1 epics are done
 - [ ] App is used daily for OrqaStudio development alongside the CLI
 - [ ] Governance artifacts are browsable and editable in the UI
-- [ ] `.orqa/` artifacts (milestones, epics, ideas, research, lessons) are visible in the UI
 - [ ] Conversation debugging is possible through AI transparency features
 - [ ] Session context survives app restarts
-- [ ] Basic git status visibility (branch, uncommitted changes, worktrees) — see [IDEA-8cad4236](IDEA-8cad4236)
-- [ ] Historical artifact backfill complete (decision chains, surpassed artifacts, lesson history) — see [TASK-bf4b1013](TASK-bf4b1013)
+- [ ] DevTools provide enough visibility to make development feedback actionable

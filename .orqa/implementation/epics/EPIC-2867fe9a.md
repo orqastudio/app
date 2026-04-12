@@ -1,6 +1,6 @@
 ---
 id: "EPIC-2867fe9a"
-type: "epic"
+type: epic
 title: "Dev environment migration and schema-driven enforcement"
 description: "Consolidate all OrqaStudio repos into a submodule-based dev environment, migrate project-level artifacts there, and make all integrity enforcement schema-driven rather than hardcoded.\n"
 status: active

@@ -1,6 +1,6 @@
 ---
 id: "KNOW-882d8c4f"
-type: "knowledge"
+type: knowledge
 title: "Orqa Store Orchestration"
 domain: platform/svelte
 description: "How multiple Svelte 5 rune stores coordinate in OrqaStudio without tight coupling.\nCovers store independence, component-level orchestration via $derived and $effect,\ncircular dependency prevention, cross-store derived state, and initialization order.\nUse when: Wiring multiple stores together, adding cross-store coordination,\ndebugging state synchronization issues, or planning new multi-store features.\n"
