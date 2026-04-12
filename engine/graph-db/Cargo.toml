@@ -1,0 +1,26 @@
+[package]
+name = "orqa-graph-db"
+version = "0.1.0-dev"
+edition = "2021"
+description = "SurrealDB proof-of-concept for the OrqaStudio artifact graph"
+publish = false
+
+[dependencies]
+surrealdb = { version = "3", features = ["kv-surrealkv", "kv-mem"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+walkdir = "2"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["async_tokio"] }
+tempfile = "3"
+
+[[bench]]
+name = "poc"
+harness = false
+
+[lints]
+workspace = true

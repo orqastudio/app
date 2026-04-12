@@ -1,0 +1,1218 @@
+---
+id: PLAN-storage-migration
+type: plan
+status: draft
+title: Storage Layer Migration — SurrealDB as Source of Truth
+domain: architecture
+description: Comprehensive migration plan from file-based .orqa/ to SurrealDB-first storage with three deployment tiers, automatic git version history, offline sync, and mobile-ready architecture
+created: 2026-04-10T00:00:00.000Z
+updated: 2026-04-10
+relationships:
+  - type: references
+    target: DOC-62969bc3
+  - type: references
+    target: DOC-80a4cf76
+---
+
+## Executive Summary
+
+OrqaStudio currently stores operational data in SQLite (`.state/orqa.db`) and builds its artifact graph by scanning 1,748 markdown files from `.orqa/` into an in-memory `HashMap`. Every file change triggers a full rebuild (~3.3s). Markdown files in `.orqa/` are the source of truth for all artifacts.
+
+This plan retires the file-based approach. **SurrealDB becomes the source of truth for all artifacts.** Markdown files are no longer canonical -- they are the distribution format for plugins and the export format for portability. The `.orqa/` directory shrinks to project config (`project.json`), composed schema (`schema.composed.json`), and generated enforcement configs (`configs/`). Everything else lives in SurrealDB.
+
+Three deployment tiers -- local, self-hosted, and cloud-hosted -- use the same Tauri app with different connection targets. Per-project storage configuration allows one app instance to have multiple open projects, each connected to a different tier. For self-hosted and cloud tiers, collaboration happens through a shared SurrealDB instance that multiple users connect to via the server daemon.
+
+**Git is automatic background infrastructure at every tier** -- not a user-facing workflow. On every artifact write, the daemon exports the change to a local git repo and commits it automatically. This provides line-level version history, audit trail, and conflict resolution machinery -- all invisible to the user. `orqa export` = clone the git history repo. Forgejo hosts these audit trail repos in hosted tiers.
+
+**Offline-first at every tier.** Remote projects (self-hosted or cloud) maintain a local SurrealDB replica so the user can keep working when connectivity drops. Changes queue locally and sync back when the connection returns. Offline changes are committed to a local git branch automatically; on reconnect, git's merge machinery handles conflict resolution.
+
+**Mobile-ready architecture.** The daemon HTTP API is the universal access layer. The storage abstraction (embedded SurrealDB via Rust crate, per-project connections) cross-compiles to iOS/Android via Tauri 2.0's mobile support. The Svelte UI runs in a webview. Mobile is a future phase, but the architecture does not preclude it.
+
+**P7 revised:** "Resolved Workflow Is a Record" -- the resolved workflow is a deterministic SurrealDB record, exportable as a file via `orqa export` when needed for portability, git backup, or human review.
+
+---
+
+## 1. Current State Analysis
+
+### 1.1 SQLite via SeaORM (`.state/orqa.db`)
+
+**Tables (12):** projects, sessions, messages, settings, project_themes, project_theme_overrides, enforcement_violations, health_snapshots, log_events, devtools_sessions, devtools_events, issue_groups
+
+**Migration system:** 5 SeaORM migrations (`m001`-`m005`) with a legacy bridge (`bridge_legacy_migrations`) that maps old `_migrations` table rows to `seaql_migrations`. Connection string is already abstracted through SeaORM's `ConnectOptions` -- switching to Postgres requires changing the URL and feature flags, not rewriting queries.
+
+**Storage struct** (`engine/storage/src/lib.rs`): wraps `Arc<DatabaseConnection>` with repo accessors (ProjectRepo, SessionRepo, etc.). SQLite PRAGMAs (WAL, foreign_keys, busy_timeout) are applied post-connect -- these become Postgres connection pool settings instead.
+
+### 1.2 In-Memory Artifact Graph
+
+**Graph types** (`engine/types/src/types/graph.rs`):
+
+- `ArtifactGraph`: `HashMap<String, ArtifactNode>` + `HashMap<String, String>` path index
+- `ArtifactNode`: id, path, artifact_type, title, status, priority, frontmatter (JSON), body, references_out/in
+- `ArtifactRef`: source_id, target_id, field, relationship_type
+
+**Graph construction** (`engine/graph/src/build.rs`): Two-pass algorithm -- walk `.orqa/*.md`, parse YAML frontmatter, collect forward refs, then invert into backlinks. Supports organisation mode (cross-project refs). Valid relationship types loaded from `core.json` + plugin manifests.
+
+**Graph state** (`daemon/src/graph_state.rs`): `Arc<RwLock<GraphStateInner>>` holding graph + validation context + enforcement rules + artifact types. File watcher triggers `reload()` which rebuilds everything from scratch, swaps under write lock. Reload is ~3.3s for 1,748 files.
+
+**Relationship model** (`engine/types/src/platform.rs`): 32 semantic relationship types with from/to type constraints, inverse keys, cardinality constraints, and status rules. Defined in `core.json`, extended by plugins.
+
+**Graph metrics** (`engine/graph/src/metrics.rs`): Health computation (outliers, connectivity, traceability), BFS traversal for ancestry chains, sibling detection, impact radius. All operate on the in-memory `ArtifactGraph`.
+
+### 1.3 Search (DuckDB)
+
+**`engine/search`**: ONNX-based semantic search using DuckDB for vector storage. Already a separate persistence layer. The search index is rebuilt independently of the artifact graph.
+
+### 1.4 Docker Infrastructure
+
+Current `docker-compose.dev.yml` runs:
+
+- `orqa-daemon` (Rust binary, ports 10100-10102)
+- `forgejo` (local git server, ports 10030, 10222)
+
+Volumes bind-mount `.orqa/`, `plugins/`, `connectors/`, `sidecars/`, `models/`, `.state/`.
+
+---
+
+## 2. Database Architecture: What Goes Where
+
+### 2.1 Design Principle
+
+**SurrealDB is the source of truth for all artifacts.** Markdown files are the distribution format (plugins ship them) and the export format (`orqa export` produces them). The database is not a materialized view of the file system -- the file system is a projection of the database.
+
+**Git is automatic background infrastructure** that provides version history, audit trail, and conflict resolution. The daemon commits artifact changes to git automatically -- users never interact with git directly.
+
+**SurrealDB** owns: the artifact graph (nodes, typed edges, traversals), artifact content (frontmatter + body), graph health metrics, ancestry chains, cycle detection, enforcement rules (parsed from plugin markdown at install time), knowledge artifacts. It operates identically in embedded mode (local tier) or server mode (hosted tiers) via the same `surrealdb` Rust crate.
+
+**Postgres** owns (self-hosted and cloud tiers only): operational data (sessions, messages, events, health snapshots, issue groups), user/org management (users, organisations, memberships), full-text search (`tsvector` replaces SQLite FTS5). Postgres is NOT needed for the local tier -- SQLite covers it.
+
+**SQLite** owns (local tier only): the same operational data that Postgres handles in hosted tiers. The SeaORM abstraction means repo-layer code is identical regardless of backend.
+
+### 2.2 SurrealDB Schema (All Artifacts)
+
+SurrealDB stores the complete artifact graph -- every artifact that previously lived as a markdown file in `.orqa/`:
+
+```surql
+-- Artifact nodes
+DEFINE TABLE artifact SCHEMAFULL;
+DEFINE FIELD id ON artifact TYPE string;
+DEFINE FIELD artifact_type ON artifact TYPE string;
+DEFINE FIELD title ON artifact TYPE string;
+DEFINE FIELD description ON artifact TYPE option<string>;
+DEFINE FIELD status ON artifact TYPE option<string>;
+DEFINE FIELD priority ON artifact TYPE option<string>;
+DEFINE FIELD domain ON artifact TYPE option<string>;
+DEFINE FIELD project ON artifact TYPE option<string>;
+DEFINE FIELD frontmatter ON artifact TYPE object;     -- all frontmatter fields
+DEFINE FIELD body ON artifact TYPE option<string>;     -- markdown body
+DEFINE FIELD source_plugin ON artifact TYPE option<string>;  -- which plugin provided this
+DEFINE FIELD content_hash ON artifact TYPE option<string>;   -- for change detection
+DEFINE FIELD version ON artifact TYPE int DEFAULT 1;  -- monotonic version counter
+DEFINE FIELD created_at ON artifact TYPE datetime;
+DEFINE FIELD updated_at ON artifact TYPE datetime;
+DEFINE FIELD updated_by ON artifact TYPE option<string>;     -- user id for audit
+
+-- Typed edges
+DEFINE TABLE relates_to SCHEMAFULL TYPE RELATION IN artifact OUT artifact;
+DEFINE FIELD relationship_type ON relates_to TYPE string;
+DEFINE FIELD field ON relates_to TYPE string;
+DEFINE FIELD source_id ON relates_to TYPE string;
+
+-- Enforcement rules (parsed from plugin markdown at install time)
+DEFINE TABLE enforcement_rule SCHEMAFULL;
+DEFINE FIELD id ON enforcement_rule TYPE string;
+DEFINE FIELD rule_type ON enforcement_rule TYPE string;   -- mechanical | advisory
+DEFINE FIELD scope ON enforcement_rule TYPE string;
+DEFINE FIELD source_plugin ON enforcement_rule TYPE string;
+DEFINE FIELD content ON enforcement_rule TYPE string;
+DEFINE FIELD created_at ON enforcement_rule TYPE datetime;
+
+-- Indexes
+DEFINE INDEX idx_artifact_type ON artifact FIELDS artifact_type;
+DEFINE INDEX idx_artifact_status ON artifact FIELDS status;
+DEFINE INDEX idx_artifact_domain ON artifact FIELDS domain;
+DEFINE INDEX idx_artifact_source ON artifact FIELDS source_plugin;
+DEFINE INDEX idx_relates_to_type ON relates_to FIELDS relationship_type;
+```text
+
+**Graph queries that become native:**
+
+| Current (Rust code) | SurrealDB query |
+|---------------------|-----------------|
+| BFS `trace_to_pillars` | `SELECT ->relates_to->artifact.* FROM artifact:TASK_001 WHERE artifact_type IN ['pillar','vision'] FETCH relates_to` |
+| `trace_descendants` | `SELECT <-relates_to<-artifact.* FROM artifact:EPIC_048` |
+| `find_siblings` | `SELECT ->relates_to->artifact<-relates_to<-artifact FROM artifact:TASK_001 WHERE relationship_type = 'delivers'` |
+| Cycle detection | `SELECT * FROM artifact:X ->relates_to->artifact WHERE id = artifact:X` |
+| Outlier detection | `SELECT * FROM artifact WHERE count(->relates_to) = 0 AND count(<-relates_to) = 0 AND status NOT IN [...]` |
+
+### 2.3 Postgres Schema (Hosted Tiers Only)
+
+Everything currently in SQLite moves to Postgres for the self-hosted and cloud tiers:
+
+| Domain | Tables | Notes |
+|--------|--------|-------|
+| Projects | `projects` | Add `org_id`, `owner_id` for multi-user |
+| Sessions | `sessions`, `messages` | Add `user_id` foreign key, message FTS via `tsvector` |
+| Settings | `settings` | Scope becomes `(key, scope, user_id)` |
+| Themes | `project_themes`, `project_theme_overrides` | No structural changes |
+| Enforcement | `enforcement_violations` | Add `resolved_by`, `resolved_at` |
+| Health | `health_snapshots` | No structural changes |
+| Events | `log_events` | Partition by timestamp for retention |
+| Devtools | `devtools_sessions`, `devtools_events` | Add `user_id` |
+| Issue Groups | `issue_groups` | No structural changes |
+| **New** | `users`, `organisations`, `org_members` | Multi-user identity |
+
+**Key Postgres features used:**
+
+- `tsvector` + GIN index replaces SQLite FTS5 for message search
+- Connection pooling via `deadpool-postgres` or SeaORM's built-in pool
+- Row-level security (RLS) for multi-tenant isolation in cloud mode
+- `LISTEN/NOTIFY` for internal service coordination
+
+### 2.4 `.orqa/` Directory (Config + Export Only)
+
+After migration, `.orqa/` contains:
+
+```text
+.orqa/
+  project.json              # project identity, plugin registry, settings, storage connection config
+  schema.composed.json      # composed artifact type schemas (generated from plugins)
+  configs/                  # generated enforcement configs (eslint, clippy, prettier, etc.)
+```text
+
+Artifacts do NOT live as files. They live in SurrealDB. The `orqa export` command clones the automatic git history repo, giving the user a full versioned history of all artifacts as markdown files.
+
+### 2.5 Search (DuckDB -- Unchanged)
+
+DuckDB continues to own the semantic search index. It is already decoupled from both SQLite and the artifact graph. No migration needed for the search layer itself, though the search engine should subscribe to SurrealDB change events rather than rescanning markdown files.
+
+---
+
+## 3. Graph Database Evaluation
+
+### 3.1 Evaluation Criteria
+
+| Criterion | Weight | Why |
+|-----------|--------|-----|
+| Offline-first / embeddable | High | Local dev must work without Docker |
+| Docker-composable | High | Hosted mode and CI need containerized deployment |
+| Rust client quality | High | Engine crates are Rust; the client must be production-grade |
+| Relationship query performance | High | 32 typed relationships, ancestry traversal, cycle detection |
+| License | Medium | Must be usable in BSL-1.1 product |
+| Multi-model (document + graph) | Medium | Artifacts have both structured data and body text |
+| Real-time subscriptions | Medium | App needs live graph updates |
+| Cross-compilation (mobile) | Medium | Must compile to iOS/Android targets for future mobile support |
+
+### 3.2 Candidates
+
+#### Neo4j
+
+- **Strengths:** Industry standard, mature Cypher query language, excellent traversal performance, rich ecosystem
+- **Weaknesses:** Java-based (heavy container), Community Edition is GPL (license conflict with BSL-1.1), no embedded mode for Rust, official Rust driver is thin wrapper over Bolt protocol
+- **Offline-first:** No. Server-only, no embedded option
+- **License:** Community = GPL-3.0 (problematic), Enterprise = commercial (expensive)
+- **Verdict: REJECT** -- no embedded mode, GPL license conflict
+
+#### TypeDB
+
+- **Strengths:** Strong type system, reasoning engine, schema enforcement
+- **Weaknesses:** Java-based, heavy resource footprint, niche query language (TypeQL), tiny Rust ecosystem, slow community momentum
+- **Offline-first:** No embedded mode
+- **License:** AGPL-3.0 (problematic for BSL-1.1)
+- **Verdict: REJECT** -- AGPL license, no embedded mode, heavy
+
+#### Dgraph
+
+- **Strengths:** GraphQL native, horizontal scaling
+- **Weaknesses:** Go-based server, no embedded mode, Rust client is community-maintained, recent governance instability
+- **Offline-first:** No embedded mode
+- **License:** Apache 2.0 (compatible)
+- **Verdict: REJECT** -- no embedded mode, Rust client quality insufficient
+
+#### CozoDB (embedded)
+
+- **Strengths:** Embeddable (Rust-native), Datalog query language, supports graph traversals, small footprint
+- **Weaknesses:** Niche project, small community, Datalog is unfamiliar to most developers, no native real-time subscriptions, limited ecosystem
+- **Offline-first:** Yes (embedded Rust library)
+- **Docker:** Would need custom wrapper
+- **License:** MPL-2.0 (compatible)
+- **Verdict: CONSIDER** -- good for embedded, weak for hosted/collaboration
+
+#### IndraDB (embedded)
+
+- **Strengths:** Rust-native, embeddable, property graph model
+- **Weaknesses:** Minimal ecosystem, no query language (programmatic API only), no indexing beyond primary keys, no real-time features, essentially abandoned (last meaningful commit 2023)
+- **Verdict: REJECT** -- abandoned, no query language
+
+#### SurrealDB
+
+- **Strengths:**
+  - Multi-model: document + graph + relational in one engine
+  - **Embeddable Rust library** (`surrealdb` crate with `kv-mem`, `kv-rocksdb`, `kv-surrealkv` features) -- runs in-process, no server needed
+  - **Also runs as server** (Docker image, single binary) for hosted mode
+  - Native graph traversal syntax (`->edge->node`, `<-edge<-node`)
+  - SurrealQL is SQL-like (low learning curve) with graph extensions
+  - DEFINE TABLE ... TYPE RELATION for first-class edges
+  - Real-time subscriptions via LIVE SELECT
+  - Record links (typed foreign keys between tables)
+  - Rust-first (written in Rust, Rust client is the primary SDK)
+  - License: BSL-1.1 (identical license family to OrqaStudio)
+  - Active development, strong community
+  - AI-native (vector search built in)
+  - **Cross-compiles to iOS/Android** via the Rust crate (no JVM/Go runtime dependency)
+- **Weaknesses:**
+  - Pre-2.0 stability concerns (v2.0 released late 2024, maturing)
+  - Query planner less mature than Neo4j for complex multi-hop traversals
+  - Smaller ecosystem than Neo4j/Postgres
+- **Offline-first:** Yes -- embedded mode via `surrealdb` crate with SurrealKV backend
+- **Docker:** Official `surrealdb/surrealdb` image
+- **License:** BSL-1.1 (compatible -- same license family)
+- **Verdict: RECOMMEND** -- only candidate that satisfies all criteria
+
+### 3.3 Recommendation: SurrealDB
+
+SurrealDB is the only candidate that satisfies all evaluation criteria:
+
+1. **Embedded + server dual mode** -- same `surrealdb` Rust crate works in-process (offline) or connects to a remote server (hosted). Engine crate code is identical in both modes; only the connection string changes.
+2. **Rust-native** -- written in Rust, the Rust SDK is first-party and the most complete client.
+3. **Graph-native** -- `->relates_to->artifact` syntax replaces hundreds of lines of hand-written BFS/DFS in `engine/graph/src/metrics.rs`.
+4. **Multi-model** -- artifacts have both structured fields (graph queries) and body text (document queries). SurrealDB handles both without a second database.
+5. **Real-time** -- `LIVE SELECT` provides subscription-based change notification for the app frontend.
+6. **License alignment** -- BSL-1.1, same as OrqaStudio.
+7. **BSL-1.1 risk assessment** -- low risk for a governance platform. OrqaStudio does not compete with SurrealDB's database-as-a-service offering. The license restricts competing database services, not applications built on top.
+8. **Mobile-ready** -- pure Rust crate cross-compiles to iOS/Android without additional runtime dependencies. Embedded mode works identically on mobile as on desktop.
+
+---
+
+## 4. Plugin Strategy: Markdown as Distribution, DB as Destination
+
+### 4.1 Principle: Plugins Ship Files, Install Writes to DB
+
+Plugins continue to distribute their artifacts as markdown files with YAML frontmatter. This is the portable distribution format -- it works with git, is human-readable, and requires no database to inspect.
+
+However, `orqa install` no longer copies plugin markdown files into `.orqa/`. Instead, it **parses** the markdown and **writes** the resulting artifacts directly into SurrealDB. The `.orqa/` directory does not accumulate artifact files.
+
+### 4.2 Plugin Install Pipeline
+
+```text
+Plugin source (markdown files in plugin directory)
+    |
+    v
+orqa install (plugin crate)
+    |
+    +--> Parse each markdown file (frontmatter + body)
+    +--> Validate against composed schema
+    +--> Upsert artifact records into SurrealDB
+    +--> Upsert relationship edges into SurrealDB
+    +--> Store content_hash for change detection
+    +--> Update plugin registry in project.json
+    |
+    v
+SurrealDB (artifacts live here)
+    |
+    v
+Daemon auto-commits to git history repo (background)
+```text
+
+### 4.3 Three-Way Diff Model (Preserved)
+
+The existing three-way diff model (plugin source vs installed baseline vs project copy) is preserved, but "project copy" now means the SurrealDB record rather than a file:
+
+- **Plugin source**: markdown file in the plugin directory (original)
+- **Installed baseline**: `content_hash` stored on the SurrealDB record at install time
+- **Project copy**: the current SurrealDB record (may have been edited by the user via the app)
+
+Detection logic:
+
+- **Plugin updated**: plugin source hash differs from installed baseline hash
+- **User edited**: current record hash differs from installed baseline hash
+- **Conflict**: both changed
+
+### 4.4 File Watcher Integration (Plugin Source Only)
+
+The daemon watches plugin source directories (not `.orqa/`) for changes. When a plugin's source files change:
+
+1. File watcher detects change to `plugins/<name>/content/<artifact>.md`
+2. Daemon reads and parses only that file
+3. Computes new `content_hash`, compares to installed baseline hash
+4. If changed: triggers plugin update flow (respects three-way diff -- does not overwrite user edits)
+
+For user-created artifacts (not from plugins), the app writes directly to SurrealDB. No file watcher needed.
+
+---
+
+## 5. Three-Tier Deployment Model
+
+### 5.1 Architecture
+
+The same Tauri app is the ONLY client at every tier. There is no web app. There is no separate frontend. The daemon is the API at every tier. This architecture extends to mobile -- the same Tauri app (via Tauri 2.0 mobile support) connects to the daemon HTTP API.
+
+```text
+                    +----------------------------+
+                    |   Tauri App (UI)           |
+                    |   SvelteKit frontend       |
+                    |   Desktop + Mobile (future)|
+                    +-------------+--------------+
+                                  |
+                    +-------------+--------------+
+                    |        Daemon (API)        |
+                    |   Engine crates, MCP/LSP   |
+                    |   Auto git version history |
+                    +-------------+--------------+
+                                  |
+           +----------------------+----------------------+
+           |                      |                      |
++----------+----------+ +---------+----------+ +---------+-----------+
+|   Local (embedded)  | |   Self-Hosted      | |   Cloud Hosted      |
+|                     | |                    | |                     |
+| SurrealDB:          | | SurrealDB: server  | | SurrealDB: managed  |
+|   SurrealKV         | |   (Docker/bare)    | |   (managed service) |
+|   (in-process)      | |                    | |                     |
+|                     | | Postgres: server   | | Postgres: managed   |
+| SQLite:             | |   (Docker/bare)    | |   (managed service) |
+|   operational data  | |                    | |                     |
+|                     | | Forgejo: server    | | Forgejo: managed    |
+| Git: local auto-    | |   (audit repos)    | |   (audit repos)     |
+|   commit history    | |                    | |                     |
+|                     | | Team manages infra | | OrqaStudio-as-a-    |
+| No server deps.     | |                    | |   service            |
+| Fully offline.      | |                    | |                     |
++---------------------+ +--------------------+ +---------------------+
+
+All tiers: git runs automatically in background (version history).
+All tiers: offline work via local SurrealDB replica (see Section 5.5).
+```text
+
+### 5.2 Local Tier (Default)
+
+**Zero server dependencies. Fully offline. The airplane-mode path.**
+
+- **SurrealDB**: embedded mode via `surrealdb` crate with `kv-surrealkv` backend. Data stored in `.state/surreal/`. Runs in-process inside the daemon -- no external process needed.
+- **SQLite**: operational data (sessions, messages, events, health, settings). Already exists at `.state/orqa.db`.
+- **Search**: DuckDB with ONNX embeddings (already in place).
+- **Git**: automatic local version history in `.state/history/`. Daemon commits on every artifact write. No server needed -- provides rollback and audit trail for a single user.
+
+This is what `orqa init` creates. A developer on an airplane with no Docker can work.
+
+### 5.3 Self-Hosted Tier
+
+**Team manages their own infrastructure. Full collaboration via shared DB.**
+
+- **SurrealDB**: server mode (Docker container or bare metal). Shared across team members. All users read/write to the same SurrealDB instance.
+- **Postgres**: server (Docker or managed). Replaces SQLite for operational data. Adds user/org management, `tsvector` full-text search, RLS for multi-tenant isolation.
+- **Forgejo**: server (Docker or self-hosted). Hosts the project's git audit trail repo. NOT user-facing -- it is the backend for version history, blame, and export. Optionally exposed to admins.
+- **The server daemon** connects to SurrealDB + Postgres directly. Commits artifact changes to the Forgejo-hosted git repo automatically. The Tauri app connects to the server daemon over HTTPS.
+
+### 5.4 Cloud Hosted Tier
+
+**OrqaStudio-as-a-service. Managed everything.**
+
+- Same architecture as self-hosted, but OrqaStudio manages the infrastructure.
+- Multi-tenant with org management.
+- Managed onboarding, billing, and support.
+- The Tauri app connects to the cloud daemon endpoint.
+
+### 5.5 Offline Sync for Remote Projects
+
+**Every remote project maintains a local SurrealDB replica.** When a user opens a self-hosted or cloud project, the daemon keeps a local embedded SurrealDB copy of the artifact graph alongside the remote connection. This enables seamless offline work.
+
+```text
+Online:
+  App <-> Daemon <-> Remote SurrealDB (primary)
+                 \-> Local SurrealDB replica (kept in sync)
+                 \-> Local git branch (auto-commits continue)
+
+Offline (connectivity lost):
+  App <-> Daemon <-> Local SurrealDB replica (becomes working copy)
+                     Local git branch (offline changes committed here)
+
+Reconnected:
+  Daemon detects connectivity restored
+  Local DB changes synced to remote SurrealDB
+  Local git branch merged with server git branch
+  Git merge machinery resolves text-level conflicts
+  Remaining conflicts surfaced in app UI
+```text
+
+**How it works:**
+
+1. **Initial clone**: When a remote project is first opened, the daemon performs a full export from the remote SurrealDB and imports into a local embedded SurrealDB at `.state/surreal-replica/<project-id>/`. It also clones the git audit trail repo locally.
+2. **Online mode**: All reads and writes go to the remote SurrealDB. The local replica is kept in sync via periodic snapshots or change streaming. The server daemon commits changes to the Forgejo git repo.
+3. **Offline detection**: The daemon monitors connectivity to the remote SurrealDB endpoint. On connection failure, it switches to the local replica transparently.
+4. **Offline work**: The user continues working against the local replica. Mutations are committed to a local git branch automatically (same as online, just to a local branch instead of the server).
+5. **Reconnection**: When connectivity returns, the daemon syncs local DB changes to the remote SurrealDB and merges the local git branch with the server branch. Git's merge machinery handles text-based conflict resolution for the audit trail.
+6. **Conflict resolution**: If the same artifact was modified both locally (offline) and remotely, the git three-way merge resolves most text conflicts automatically. Remaining conflicts surface in the app UI for manual resolution.
+
+**Configuration:**
+
+```json
+// .orqa/project.json (remote project with offline support)
+{
+  "storage": {
+    "tier": "self-hosted",
+    "surreal": {
+      "mode": "remote",
+      "url": "wss://surreal.team.example.com"
+    },
+    "offline": {
+      "enabled": true,
+      "replica_path": ".state/surreal-replica/",
+      "sync_interval_seconds": 60
+    }
+  }
+}
+```text
+
+### 5.6 Mobile Client (Future)
+
+The architecture supports a future mobile client (iOS/Android) via Tauri 2.0's experimental mobile support. This is not in the initial phase scope but the architecture is designed to not preclude it.
+
+**Key architectural properties that enable mobile:**
+
+1. **Daemon HTTP API is the universal access layer.** The mobile app connects to a remote daemon exactly like the desktop app does in hosted mode. No mobile-specific API needed.
+2. **Embedded SurrealDB cross-compiles to mobile.** The `surrealdb` Rust crate compiles to iOS (aarch64-apple-ios) and Android (aarch64-linux-android) targets. For offline-capable mobile, the same embedded SurrealDB runs on the device.
+3. **Svelte UI runs in a webview.** Tauri 2.0 uses the platform's native webview (WKWebView on iOS, Android WebView on Android). The SvelteKit frontend renders identically.
+4. **Per-project storage model works on mobile.** A mobile user can have:
+   - A local-only project (fully offline, embedded SurrealDB on device)
+   - A remote project connected to a self-hosted or cloud daemon
+   - A remote project with offline replica (same offline sync model as desktop)
+5. **Same engine crates.** The Rust engine crates compile to mobile targets. No TypeScript/Swift/Kotlin reimplementation needed.
+
+**What mobile does NOT include (initially):**
+
+- Daemon running on the device (mobile connects to a remote daemon for hosted projects)
+- MCP/LSP servers on mobile (desktop-only developer tooling)
+- File watcher integration (no local file system access pattern on mobile)
+- Plugin development (desktop-only concern)
+
+**Mobile deployment model:**
+
+| Scenario | Storage | Daemon |
+|----------|---------|--------|
+| Mobile + cloud project | Remote SurrealDB + local replica for offline | Remote daemon (cloud) |
+| Mobile + self-hosted project | Remote SurrealDB + local replica for offline | Remote daemon (self-hosted) |
+| Mobile + local-only project | Embedded SurrealDB on device | Embedded daemon on device (Tauri backend) |
+
+---
+
+## 6. Per-Project Storage Configuration
+
+One app instance can have multiple open projects, each independently configured:
+
+- **Project A**: local (embedded SurrealDB + SQLite, local git history)
+- **Project B**: connected to team self-hosted server (with local offline replica)
+- **Project C**: connected to cloud hosted service (with local offline replica)
+
+The project switcher handles this. The daemon manages multiple concurrent storage connections.
+
+### 6.1 Configuration
+
+```json
+// .orqa/project.json (local project)
+{
+  "name": "my-project",
+  "id": "proj-abc123",
+  "storage": {
+    "tier": "local",
+    "surreal": {
+      "mode": "embedded",
+      "path": ".state/surreal/"
+    },
+    "relational": {
+      "backend": "sqlite",
+      "path": ".state/orqa.db"
+    },
+    "history": {
+      "path": ".state/history/"
+    }
+  },
+  "plugins": { ... },
+  "settings": { ... }
+}
+```text
+
+For self-hosted or cloud:
+
+```json
+{
+  "storage": {
+    "tier": "self-hosted",
+    "surreal": {
+      "mode": "remote",
+      "url": "wss://surreal.team.example.com"
+    },
+    "relational": {
+      "backend": "postgres",
+      "url": "${ORQA_POSTGRES_URL}"
+    },
+    "forgejo": {
+      "url": "https://git.team.example.com",
+      "org": "my-team"
+    },
+    "offline": {
+      "enabled": true,
+      "replica_path": ".state/surreal-replica/",
+      "sync_interval_seconds": 60
+    }
+  }
+}
+```text
+
+### 6.2 Connection Lifecycle
+
+1. User opens project in app
+2. Daemon reads `project.json`, determines storage tier
+3. Daemon opens appropriate connections (embedded or remote)
+4. Daemon initializes git history repo (local or clone from Forgejo)
+5. For remote projects with offline enabled: daemon also opens local replica connection
+6. All engine crate calls route through the connection for that project
+7. Every artifact write triggers an automatic git commit in the background
+8. If remote connection drops: daemon transparently fails over to local replica
+9. User can switch between projects without restarting the daemon
+
+---
+
+## 7. Migration Path: Files INTO the Database
+
+### 7.1 Strategy
+
+Migrate existing `.orqa/` artifact files INTO SurrealDB, then retire the file-based storage. This is a one-way migration. After migration, `.orqa/` shrinks to config + export only.
+
+### 7.2 Migration Steps
+
+```text
+orqa migrate storage
+    |
+    +--> Phase 1: Artifact ingestion
+    |    - Scan all .orqa/ markdown files
+    |    - Parse YAML frontmatter + body for each
+    |    - Insert artifact records into SurrealDB
+    |    - Insert relationship edges into SurrealDB
+    |    - Store content_hash for each record
+    |    - Verify: record count matches file count
+    |    - Verify: edge count matches relationship count
+    |
+    +--> Phase 2: Initialize git history
+    |    - Create git repo at .state/history/
+    |    - Export all artifacts from SurrealDB to markdown
+    |    - Initial commit with full artifact snapshot
+    |    - This becomes the baseline for version history
+    |
+    +--> Phase 3: Operational data (if switching to Postgres)
+    |    - Read all rows from SQLite tables
+    |    - Transform SQLite-specific types (TEXT dates -> TIMESTAMPTZ, etc.)
+    |    - Insert into Postgres tables
+    |    - Verify: row counts match per table
+    |    - Migrate FTS5 index -> tsvector + GIN index
+    |
+    +--> Phase 4: Verification
+    |    - Run graph health check on SurrealDB data
+    |    - Compare health metrics with current in-memory graph results
+    |    - Run sample queries (traceability, ancestry) and compare
+    |    - Validate all enforcement rules loaded correctly
+    |
+    +--> Phase 5: Cutover
+    |    - Update project.json to use new storage config
+    |    - Archive .orqa/ artifact files to .state/archive/orqa-files/
+    |    - Restructure .orqa/ to config-only layout
+    |    - Log migration completion
+    |
+    +--> Phase 6: Cleanup
+         - Remove archived files after user confirms
+         - Update .gitignore
+```text
+
+### 7.3 Rollback
+
+If migration fails or the user wants to revert:
+
+```text
+orqa migrate storage --rollback
+```text
+
+Restores the archived `.orqa/` files from `.state/archive/orqa-files/` and reverts `project.json`.
+
+### 7.4 Fresh Projects
+
+New projects created after this migration skip file-based storage entirely. `orqa init` sets up SurrealDB (embedded), initializes a git history repo at `.state/history/`, and writes the config-only `.orqa/` layout from the start.
+
+### 7.5 `orqa export`
+
+`orqa export` = clone the git history repo. The user gets a complete, versioned markdown history of every artifact change. This is the portability and escape-hatch story: leave the platform with a `git clone`.
+
+```text
+orqa export --path ./my-project-export
+```text
+
+Produces a git repository containing the full history of all artifacts as markdown files. Each commit corresponds to an artifact change (or batch of changes). The user can browse, diff, blame, and search this repo with standard git tools.
+
+---
+
+## 8. Automatic Git Version History
+
+### 8.1 Principle: Git as Invisible Infrastructure
+
+Git runs automatically in the background at every tier. It is NOT a user-facing workflow. Users interact with artifacts through the app; they never see, touch, or think about git.
+
+Git provides:
+
+- **Line-level version history** of every artifact change (who, what, when, why)
+- **Audit trail** for compliance and review
+- **Conflict resolution machinery** for offline reconnection (text-based three-way merge)
+- **Export/portability format** (`orqa export` = clone the history repo)
+- **Rollback capability** (restore any previous artifact state from git history)
+
+### 8.2 How It Works
+
+On every artifact write to SurrealDB (or batched every few seconds for rapid changes):
+
+1. Daemon exports the changed artifact to markdown (same format as plugin distribution)
+2. Writes the markdown file to the git history repo (`.state/history/` for local, Forgejo-hosted for remote)
+3. Commits with a structured commit message (e.g., `update TASK-001: [title] | changed: status, description | by: [user_id]`)
+
+4. For hosted tiers: pushes to the Forgejo-hosted repo in the background
+
+### 8.3 Per-Tier Behavior
+
+| Tier | Git repo location | Pushed to server? | Provides |
+|------|-------------------|-------------------|----------|
+| Local | `.state/history/` (local only) | No | Version history, rollback, export |
+| Self-hosted | `.state/history/` (local) + Forgejo repo (server) | Yes (auto) | + Team-wide audit, blame, server-side backup |
+| Cloud | `.state/history/` (local) + Forgejo repo (managed) | Yes (auto) | + Same as self-hosted, managed infrastructure |
+
+### 8.4 Batching Strategy
+
+To avoid excessive commits during bulk operations (e.g., `orqa install` upserting 200 artifacts):
+
+- **Single-artifact writes**: commit immediately (or within 2-3 seconds)
+- **Bulk operations**: batch all changes into a single commit at the end of the operation
+- **Rapid manual edits**: debounce to one commit per artifact per 5-second window
+- Batching is a daemon-internal concern -- the user sees none of this
+
+### 8.5 Forgejo's Role (Hosted Tiers)
+
+In self-hosted and cloud tiers, Forgejo hosts one git repo per project. It is **backend infrastructure**, not a user-facing tool.
+
+**What Forgejo provides:**
+
+- Server-side storage for the git audit trail
+- Git blame and diff via its web UI (accessible to admins for audit purposes)
+- Webhook integration (optional: trigger actions on artifact changes)
+- Backup target for git repos (standard git remote)
+
+**What Forgejo does NOT provide:**
+
+- User-facing collaboration UI (users collaborate via the app, not via PRs)
+- Authentication for end users (auth is handled by the daemon API layer)
+- Any surface the end user interacts with directly
+
+Forgejo is optionally exposed to project admins for audit review. It is never required for normal app usage.
+
+### 8.6 Offline and Git
+
+When a user is offline on a remote project:
+
+1. Artifact writes go to the local SurrealDB replica (Section 5.5)
+2. Git commits continue to the local git repo (`.state/history/`)
+3. These commits go to a local branch (e.g., `offline/<user-id>/<timestamp>`)
+4. On reconnection: local DB changes sync to remote SurrealDB, and the local git branch merges with the server branch
+5. Git's three-way merge handles most text conflicts automatically
+6. Remaining conflicts surface in the app UI
+
+---
+
+## 9. Docker Compose
+
+### 9.1 Local Tier (Optional Docker)
+
+Local tier does not require Docker. For developers who want containerized services:
+
+```yaml
+# infrastructure/docker-compose.local.yml
+services:
+  daemon:
+    build: .
+    container_name: orqa-daemon
+    ports:
+      - "10100:10100"  # HTTP API
+      - "10101:10101"  # MCP
+      - "10102:10102"  # LSP
+    volumes:
+      - .:/workspace
+    environment:
+      - ORQA_STORAGE_TIER=local
+```text
+
+### 9.2 Self-Hosted Tier
+
+```yaml
+# infrastructure/docker-compose.self-hosted.yml
+services:
+  daemon:
+    build: .
+    container_name: orqa-daemon
+    restart: unless-stopped
+    ports:
+      - "10100:10100"
+      - "10101:10101"
+      - "10102:10102"
+    environment:
+      - ORQA_STORAGE_TIER=self-hosted
+      - ORQA_SURREAL_URL=ws://surrealdb:8000
+      - ORQA_POSTGRES_URL=postgres://orqa:orqa@postgres:5432/orqa
+      - ORQA_FORGEJO_URL=http://forgejo:3000
+    depends_on:
+      surrealdb:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      forgejo:
+        condition: service_healthy
+
+  surrealdb:
+    image: surrealdb/surrealdb:v2
+    container_name: orqa-surrealdb
+    restart: unless-stopped
+    command: start --user root --pass root_dev file:/data/orqa.db
+    ports:
+      - "10201:8000"
+    volumes:
+      - surreal-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: orqa-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: orqa
+      POSTGRES_PASSWORD: orqa_dev
+      POSTGRES_DB: orqa
+    ports:
+      - "10200:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orqa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:10
+    container_name: orqa-forgejo
+    restart: unless-stopped
+    ports:
+      - "10030:3000"
+      - "10222:22"
+    volumes:
+      - forgejo-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  surreal-data:
+    name: orqa-surreal-data
+  postgres-data:
+    name: orqa-postgres-data
+  forgejo-data:
+    name: orqa-forgejo-data
+```text
+
+### 9.3 Cloud Tier
+
+Cloud tier uses managed services -- no Docker compose needed. The daemon connects to managed SurrealDB, Postgres, and Forgejo endpoints via environment variables.
+
+### 9.4 Port Allocation
+
+Add to `infrastructure/ports.json`:
+
+```json
+{
+  "services": {
+    "postgres": { "port": 10200, "description": "PostgreSQL database" },
+    "surrealdb": { "port": 10201, "description": "SurrealDB graph database" }
+  }
+}
+```text
+
+---
+
+## 10. Phasing: What Ships When
+
+### Phase S1: SurrealDB Embedded Graph (Replace In-Memory HashMap)
+
+**Goal:** Replace the in-memory `HashMap` graph with embedded SurrealDB. Eliminate the 3.3s full rebuild. This is the foundation for everything else.
+
+**What it enables:** Incremental graph updates (~5ms per file vs ~3,300ms full rebuild), persistent graph state across daemon restarts, native graph traversal queries.
+
+**Scope:**
+
+1. Add `surrealdb` crate dependency to `engine/graph` with `kv-surrealkv` feature
+2. Create `engine/graph/src/surreal.rs` -- connection management, schema definition, upsert/delete functions
+3. Create `engine/graph/src/sync.rs` -- single-file sync (parse file, upsert node + edges)
+4. Modify `daemon/src/graph_state.rs`:
+   - `GraphState::build()` initializes SurrealDB (embedded) and runs initial materialization from files
+   - `GraphState::reload()` becomes `GraphState::sync_file(path)` for targeted updates
+   - `GraphState::full_rebuild()` remains as a fallback
+5. Migrate graph queries in `engine/graph/src/metrics.rs` from Rust BFS/DFS to SurrealQL
+6. Migrate graph queries in MCP tools (`engine/mcp-server/src/tools/graph.rs`)
+7. Migrate graph queries in LSP (`engine/lsp-server/src/graph.rs`)
+8. Update `engine/validation` to read from SurrealDB instead of in-memory graph
+9. Wire file watcher to `sync_file()` with debouncing (100ms window) and `content_hash` dedup
+10. Data stored in `.state/surreal/` (embedded mode)
+
+**Note:** In this phase, `.orqa/` markdown files remain the source of truth. SurrealDB is a materialized view. The source-of-truth flip happens in S2.
+
+**Acceptance criteria:**
+
+- [ ] Single-file change syncs to graph in <50ms (vs 3,300ms today)
+- [ ] `orqa graph health` produces identical results from SurrealDB as from in-memory
+- [ ] `orqa graph trace ARTIFACT-ID` produces identical ancestry chains
+- [ ] Full rebuild from files completes and matches file count
+- [ ] Embedded mode works with no Docker dependency
+- [ ] All existing graph tests pass against SurrealDB backend
+- [ ] Daemon restart loads persistent graph from SurrealDB (no full file scan needed)
+
+**Dependencies:** None -- this is self-contained.
+
+### Phase S2: DB-as-Source-of-Truth (Retire `.orqa/` File Storage)
+
+**Goal:** Flip the source of truth from files to SurrealDB. Retire `.orqa/` as artifact storage. Add `orqa export`/`orqa import` pipeline.
+
+**What it enables:** The app writes directly to SurrealDB (no file I/O for artifact CRUD), `.orqa/` shrinks to config-only, `orqa export` produces portable markdown snapshots.
+
+**Scope:**
+
+1. Implement `orqa export` -- clone the git history repo to a specified directory (full versioned artifact history)
+2. Implement `orqa import` -- parse markdown files from a directory, upsert into SurrealDB
+3. Implement `orqa migrate storage` -- run the full migration pipeline (Section 7.2)
+4. Modify `orqa install` pipeline: parse plugin markdown -> write directly to SurrealDB (no file copy to `.orqa/`)
+5. Modify app artifact CRUD: write to SurrealDB, not to files
+6. Restructure `.orqa/` to config-only layout (`project.json`, `schema.composed.json`, `configs/`)
+7. Remove file watcher for `.orqa/` artifact files (keep watcher for plugin source directories)
+8. Add LIVE SELECT subscriptions for app frontend -- push artifact changes to UI in real time
+9. Update `orqa verify` to check SurrealDB consistency (no file comparison needed)
+10. Archive existing `.orqa/` artifact files to `.state/archive/`
+
+**Acceptance criteria:**
+
+- [ ] `orqa export` produces a git repo with full artifact history as markdown files
+- [ ] `orqa import` correctly imports markdown files into SurrealDB
+- [ ] `orqa install` writes plugin artifacts to SurrealDB, not to `.orqa/`
+- [ ] App artifact create/update/delete operates on SurrealDB, not files
+- [ ] `.orqa/` contains only `project.json`, `schema.composed.json`, and `configs/`
+- [ ] App frontend receives live updates via LIVE SELECT
+- [ ] `orqa migrate storage` successfully migrates a real project's `.orqa/` into SurrealDB
+- [ ] Three-way diff model works with SurrealDB records instead of file copies
+
+**Dependencies:** Phase S1 (SurrealDB must exist and work for the graph).
+
+### Phase S3: Automatic Git Version History
+
+**Goal:** Implement automatic background git commits on every artifact write. Git becomes invisible version history infrastructure at every tier.
+
+**What it enables:** Line-level audit trail of every artifact change, rollback to any previous state, `orqa export` produces a full versioned git repo, conflict resolution machinery for offline reconnection.
+
+**Scope:**
+
+1. Implement git history repo initialization in `.state/history/` (local tier) or clone from Forgejo (hosted tiers)
+2. Implement daemon background task: on every SurrealDB artifact write, export changed artifact to markdown and commit to git
+3. Implement batching: debounce rapid changes (5-second window per artifact), batch bulk operations into single commits
+4. Implement structured commit messages (artifact ID, user, changed fields, status transitions)
+5. For hosted tiers: implement automatic push to Forgejo-hosted repo in background
+6. Update `orqa export` to clone the git history repo (replacing simple file export)
+7. Implement `orqa history <artifact-id>` -- show version history of a specific artifact from git log
+8. Implement rollback: `orqa rollback <artifact-id> --to <commit>` -- restore artifact from git history into SurrealDB
+9. Add version history view in the app UI (timeline of changes per artifact, sourced from git log)
+
+**Acceptance criteria:**
+
+- [ ] Every artifact create/update/delete produces a git commit within 5 seconds
+- [ ] Bulk operations (e.g., `orqa install`) produce a single batched commit
+- [ ] Commit messages contain structured metadata (artifact ID, user, changed fields)
+- [ ] `orqa export` clones the full git history repo with all artifact versions
+- [ ] `orqa history TASK-001` shows the complete change history of that artifact
+- [ ] `orqa rollback TASK-001 --to <commit>` restores the artifact in SurrealDB
+- [ ] For hosted tiers: commits auto-push to Forgejo in background
+- [ ] Git operations never block the main daemon thread (async background task)
+- [ ] Local tier works with no server dependency (git repo is local only)
+
+**Dependencies:** Phase S2 (DB must be source of truth before git can track DB changes).
+
+### Phase S4: Offline Sync for Remote Projects
+
+**Goal:** Enable seamless offline work on remote (self-hosted/cloud) projects via local SurrealDB replicas with automatic sync on reconnection.
+
+**What it enables:** Users connected to a remote project can lose connectivity and keep working. Changes queue locally, git commits continue to a local branch, and everything syncs back when the connection returns.
+
+**Scope:**
+
+1. Implement local SurrealDB replica creation: full export from remote -> import into `.state/surreal-replica/<project-id>/`
+2. Implement connectivity monitoring for remote SurrealDB endpoints (heartbeat, timeout detection)
+3. Implement transparent failover: daemon switches reads/writes from remote to local replica when connectivity drops
+4. Implement local git branching: offline changes committed to `offline/<user-id>/<timestamp>` branch
+5. Implement reconnection sync: on connectivity restored, sync local DB changes to remote SurrealDB, merge local git branch with server branch
+6. Implement git three-way merge for conflict resolution on reconnection
+7. Implement periodic replica sync: configurable interval (default 60s) to keep local replica fresh while online
+8. Add `offline.enabled` and `offline.sync_interval_seconds` to project storage config
+9. Add `orqa sync status` -- show connectivity state, offline queue depth, last sync time
+10. Handle edge cases: daemon restart while offline, multiple projects with different connectivity states, replica corruption recovery
+
+**Acceptance criteria:**
+
+- [ ] Remote project opens with local replica created automatically
+- [ ] Connectivity loss is detected within 10 seconds
+- [ ] User can create, edit, and delete artifacts while offline with no errors or degradation
+- [ ] Offline changes are committed to a local git branch automatically
+- [ ] On reconnection: DB changes sync to remote, git branch merges with server
+- [ ] Git three-way merge resolves non-conflicting text changes automatically
+- [ ] Remaining conflicts surface in the app UI for manual resolution
+- [ ] `orqa sync status` shows connectivity state, queue depth, and last sync time
+- [ ] Daemon restart while offline resumes from local replica with queue intact
+- [ ] Periodic sync keeps replica within configured interval of remote state
+
+**Dependencies:** Phase S3 (git version history must be working -- offline sync relies on git branching and merge for conflict resolution).
+
+### Phase S5: Remote Daemon Deployment (Self-Hosted Tier)
+
+**Goal:** Deploy the daemon as a shared server connecting to SurrealDB server + Postgres + Forgejo. Multiple Tauri app clients connect to it.
+
+**What it enables:** Team collaboration without each user running their own infrastructure. Centralized artifact graph with shared state. Server-side git audit trail via Forgejo.
+
+**Scope:**
+
+1. Implement Postgres backend for SeaORM (switch from SQLite)
+2. Create new migrations (m006+) for Postgres-specific features (tsvector, TIMESTAMPTZ, RLS)
+3. Add `users`, `organisations`, `org_members` tables
+4. Add `user_id` columns to sessions, devtools_sessions, settings
+5. Replace FTS5 with Postgres `tsvector` + GIN index
+6. Implement daemon HTTPS API for remote Tauri app connections
+7. Implement auth layer (JWT or session tokens via Forgejo OAuth)
+8. Modify `surrealdb` connection to use remote mode (`ws://`) when tier is `self-hosted`
+9. Configure daemon to auto-push git commits to Forgejo-hosted project repo
+10. Build Docker compose stack for self-hosted deployment (Section 9.2)
+11. Implement per-project connection routing in the daemon
+
+**Acceptance criteria:**
+
+- [ ] Daemon connects to SurrealDB server + Postgres + Forgejo
+- [ ] Tauri app connects to remote daemon over HTTPS
+- [ ] Multiple users see consistent artifact graph via shared SurrealDB
+- [ ] Auth works via Forgejo OAuth
+- [ ] All existing storage tests pass against Postgres backend
+- [ ] Docker compose stack brings up all services and passes health checks
+- [ ] FTS queries return equivalent results with tsvector vs SQLite FTS5
+- [ ] Git commits auto-push to Forgejo-hosted repo
+- [ ] Offline sync (S4) works for clients connected to the self-hosted daemon
+- [ ] Forgejo web UI accessible to admins for audit review
+
+**Dependencies:** Phase S4 (offline sync must work before deploying remote infrastructure that clients depend on).
+
+### Phase S6: Cloud Tier (Multi-Tenant, Org Management)
+
+**Goal:** OrqaStudio-as-a-service. Managed multi-tenant deployment with onboarding, org management, and hosted infrastructure.
+
+**What it enables:** Teams use OrqaStudio without managing any infrastructure.
+
+**Scope:**
+
+1. Multi-tenant isolation via Postgres RLS and SurrealDB namespaces
+2. Organisation management (create org, invite members, manage roles)
+3. Managed Forgejo instances per organisation (git audit trail repos)
+4. Onboarding flow (create account -> create org -> create first project)
+5. Billing integration (if commercial)
+6. Cloud daemon deployment (managed Kubernetes or equivalent)
+7. Monitoring, alerting, backups
+8. Data export for org portability (`orqa export --org` -- clone all project git repos)
+
+**Acceptance criteria:**
+
+- [ ] New user can sign up, create org, invite team member, and collaborate on a project
+- [ ] Data isolation: org A cannot see org B's artifacts
+- [ ] Full feature parity with self-hosted tier
+- [ ] Data export produces portable git repos that can be imported into a self-hosted or local instance
+- [ ] Offline sync works for cloud-connected clients
+
+**Dependencies:** Phase S5 (self-hosted must be stable before adding multi-tenancy).
+
+### Future: Mobile Client
+
+**Not in initial phase scope.** The architecture is designed to support mobile (see Section 5.6) but mobile development begins after the cloud tier is stable. The mobile phase would involve:
+
+1. Tauri 2.0 mobile build targets (iOS + Android)
+2. Embedded SurrealDB on mobile for offline-capable local projects
+3. Remote daemon connection for hosted projects (reuses desktop HTTPS API)
+4. Offline replica sync on mobile (reuses S4 infrastructure)
+5. Local git history on mobile (reuses S3 infrastructure)
+6. Mobile-optimized UI layouts (responsive Svelte components)
+7. App store distribution
+
+**Prerequisites:** S5 (remote daemon) + S4 (offline sync) must be stable. Tauri 2.0 mobile support must be production-ready.
+
+### Phase Summary
+
+| Phase | Goal | Dependencies | Docker Required | What It Enables |
+|-------|------|-------------|-----------------|-----------------|
+| S1 | SurrealDB embedded graph | None | No (embedded) | Fast incremental updates, persistent graph, native queries |
+| S2 | DB-as-source-of-truth | S1 | No | App writes to DB, .orqa/ is config-only, export/import |
+| S3 | Automatic git version history | S2 | No | Invisible audit trail, rollback, export as git repo |
+| S4 | Offline sync | S3 | No | Seamless offline work on remote projects, git-based conflict resolution |
+| S5 | Remote daemon (self-hosted) | S4 | Yes | Shared server, team collaboration via shared DB, Forgejo audit trail |
+| S6 | Cloud tier | S5 | Yes (managed) | Multi-tenant SaaS, org management |
+| Future | Mobile client | S5 + S4 | No | iOS/Android app with offline support |
+
+**S1-S2 are the local story.** A solo developer gets a fast, persistent artifact graph with no external dependencies.
+
+**S3 adds invisible version history.** Every artifact change is tracked with full git history -- rollback, audit, export.
+
+**S4 adds offline resilience.** Remote projects keep working when connectivity drops; git merge handles reconnection conflicts.
+
+**S5-S6 add the hosted tiers.** Teams and organisations get shared infrastructure with managed deployment. Collaboration happens through the shared DB; git provides the audit trail.
+
+**Mobile comes after** the hosted tiers are stable, leveraging the same storage abstraction, offline sync, and daemon API.
+
+---
+
+## 11. Risk Analysis
+
+### 11.1 SurrealDB Maturity
+
+**Risk:** SurrealDB v2 is relatively new. Query planner bugs or performance regressions could impact production.
+
+**Mitigation:**
+
+- Embedded mode uses well-tested SurrealKV storage backend
+- `orqa export` provides a complete git history backup at any time -- no data loss if SurrealDB corrupts
+- Pin a specific SurrealDB version and test thoroughly before upgrading
+- CI runs full test suite against the pinned version
+
+### 11.2 SurrealDB BSL-1.1 License
+
+**Risk:** BSL-1.1 restricts competing with SurrealDB's database service. Could this affect OrqaStudio?
+
+**Mitigation:**
+
+- OrqaStudio is a governance platform, not a database service. Zero competitive overlap.
+- BSL-1.1 converts to Apache 2.0 after the change date (typically 4 years). Long-term the license becomes fully permissive.
+- OrqaStudio itself uses BSL-1.1 -- same license philosophy.
+- Worst case: if SurrealDB changes direction, embedded mode is a Rust crate that can be pinned indefinitely.
+
+### 11.3 Source-of-Truth Flip Complexity
+
+**Risk:** Moving from files-as-source to DB-as-source is a fundamental architectural change. Bugs in the migration could lose artifact data.
+
+**Mitigation:**
+
+- Phase S1 keeps files as source of truth -- SurrealDB is additive. This validates the DB layer before the flip.
+- Git history repo is initialized with a full snapshot during migration (Section 7.2), providing a complete backup.
+- Original `.orqa/` files archived to `.state/archive/` (not deleted).
+- `orqa migrate storage --rollback` restores from archive.
+- `orqa import` can always rebuild the DB from exported files.
+
+### 11.4 Git Commit Volume
+
+**Risk:** Automatic git commits on every artifact write could produce very large git repos over time, especially for active projects.
+
+**Mitigation:**
+
+- Governance artifacts are small (markdown text). Even 10,000 commits with 2,000 artifacts produces a git repo well under 1 GB.
+- Batching (Section 8.4) reduces commit frequency during bulk operations.
+- Git's delta compression is highly efficient for text files with incremental changes.
+- Periodic `git gc` (daemon background task) keeps repo size optimal.
+- Future: if repo size becomes a concern, shallow clones for export and periodic squashing of old history.
+
+### 11.5 Offline Sync Conflicts
+
+**Risk:** Extended offline periods accumulate many local changes. When connectivity returns, merge conflicts may be complex or numerous.
+
+**Mitigation:**
+
+- Governance artifacts are structured (YAML frontmatter + markdown body). Field-level merging is more deterministic than free-text merging.
+- Git's three-way merge resolves most text conflicts automatically. Only true field-level conflicts require manual resolution.
+- The app UI surfaces conflicts clearly with side-by-side comparison and manual resolution tools.
+- `orqa sync status` shows queue depth so users can monitor divergence.
+- Periodic sync while online (configurable interval) minimizes the window for divergence.
+
+### 11.6 Per-Project Multi-Connection Complexity
+
+**Risk:** One daemon managing multiple concurrent SurrealDB connections (some embedded, some remote, some with offline replicas) plus git repos adds connection management complexity.
+
+**Mitigation:**
+
+- Each project gets its own isolated connection and git repo. No cross-project queries or shared git history.
+- The `surrealdb` crate handles both embedded and remote modes with the same API -- the daemon doesn't need separate code paths.
+- Connection lifecycle tied to project open/close events. Clean teardown on project close.
+- Offline replicas are just additional embedded SurrealDB instances -- same connection model as local projects.
+- Git operations are async background tasks that never block the main daemon thread.
+
+### 11.7 Local Replica Storage Cost
+
+**Risk:** Maintaining local SurrealDB replicas for remote projects doubles the storage footprint per project.
+
+**Mitigation:**
+
+- Governance artifacts are small (mostly markdown). A project with 2,000 artifacts is ~50-100 MB in SurrealDB.
+- Offline replicas are opt-in via `offline.enabled` in project config. Users who don't need offline can disable it.
+- Replicas are stored in `.state/surreal-replica/` which can be excluded from backups and regenerated from the remote at any time.
+
+### 11.8 Mobile Platform Constraints
+
+**Risk:** Tauri 2.0 mobile support is experimental. SurrealDB's Rust crate may have untested edge cases on iOS/Android. Mobile platform restrictions (background execution, storage limits) may require architecture adjustments.
+
+**Mitigation:**
+
+- Mobile is explicitly deferred to a future phase. No mobile-specific code ships in S1-S6.
+- The architecture is designed to be mobile-friendly (HTTP API, embedded SurrealDB, webview UI) but does not commit to mobile-specific features until Tauri 2.0 mobile is production-ready.
+- The daemon HTTP API and storage abstraction are platform-agnostic by design -- they will work on mobile without modification if the underlying platforms support them.
+- If Tauri 2.0 mobile proves insufficient, the HTTP API allows a native mobile shell (Swift/Kotlin) to connect to a remote daemon without any backend changes.
+
+---
+
+## 12. Tradeoff Summary
+
+| Decision | Chosen | Rejected | Why |
+|----------|--------|----------|-----|
+| Source of truth | SurrealDB | Markdown files | DB enables fast queries, LIVE SELECT for UI, direct CRUD without file I/O. Files are a distribution and export format. |
+| Graph DB | SurrealDB | Neo4j, TypeDB, CozoDB, IndraDB, Dgraph | Only option with embedded Rust mode + server mode + compatible license + mobile cross-compilation |
+| Local relational | SQLite (keep) | Embedded Postgres | Zero-dependency local dev; SeaORM abstracts the difference |
+| Hosted relational | Postgres | Keep SQLite | Multi-user needs real concurrency, RLS, tsvector, LISTEN/NOTIFY |
+| Git role | Automatic background version history | User-facing push/pull workflow | Users should never think about git. DB is the collaboration surface. Git is invisible audit/history infrastructure. |
+| Collaboration | Shared DB via server daemon | Git-based push/pull | Shared SurrealDB provides real-time collaboration. Git is audit trail, not sync mechanism. |
+| Conflict resolution (offline) | Git three-way merge | Custom CRDT/OT | Git merge is battle-tested for text-based conflicts. Governance artifacts are structured markdown. |
+| `.orqa/` role | Config + export only | Continue as artifact storage | Eliminates file/DB sync complexity. One source of truth, not two. |
+| Deployment | Three tiers (local/self-hosted/cloud) | Dual mode (local/hosted) | Per-project flexibility. Solo devs and enterprise teams use the same app. |
+| Offline strategy | Local replica + local git branch + sync on reconnect | Always-online requirement | Offline-first is a core principle. Remote projects must degrade gracefully. |
+| Mobile approach | Same Tauri app via Tauri 2.0 | Separate native mobile app | One codebase, one UI framework, same storage abstraction. Defer until Tauri 2.0 mobile is stable. |
+| Export format | Clone git history repo | Flat file dump | Git repo preserves full version history. `orqa export` = `git clone`. Escape hatch with full audit trail. |
+| Ship first | S1 (embedded graph) | S2 (DB-as-source) | Biggest performance win (660x for single-file changes), no Docker needed, validates SurrealDB before the source-of-truth flip |
+
+---
+
+## 13. Open Questions
+
+1. **SurrealDB namespace strategy:** Should each project use a separate SurrealDB namespace (native feature) or a single namespace with project-prefixed IDs? Namespaces provide clean isolation but may complicate cross-project queries in organisation mode.
+
+2. **Search integration:** Should the DuckDB search index move to SurrealDB (which supports vector search)? This would reduce the number of storage engines. Tradeoff: DuckDB + ONNX is already working and performant; SurrealDB's vector search is newer and less proven.
+
+3. **Git history repo format:** Should the git history repo mirror the `.orqa/` directory structure (by artifact type), use a flat structure (one file per artifact), or organize by domain? This affects how useful `git log --follow` and `git blame` are.
+
+4. **Commit batching threshold:** What is the right debounce window for git commits? Too short (1s) = excessive commits. Too long (30s) = user might close the app before the commit fires. 5 seconds is the current proposal.
+
+5. **Organisation mode + SurrealDB:** The current org mode uses qualified keys (`project::ARTIFACT-ID`). With SurrealDB, this maps naturally to namespaces or database-per-project. Which approach scales better for organisations with 50+ projects?
+
+6. **Forgejo hosting for cloud tier:** Self-host Forgejo, or use Codeberg's hosted offering, or build a minimal git server? The cloud tier needs a managed git service -- Forgejo is the obvious choice but adds infrastructure to manage.
+
+7. **Offline replica consistency model:** Should the local replica be eventually consistent (periodic snapshots) or strongly consistent (stream every mutation while online)? Streaming gives a fresher replica but adds complexity and bandwidth. Periodic snapshots are simpler but may miss recent changes when going offline unexpectedly.
+
+8. **Mobile offline storage budget:** Mobile devices have limited storage. Should there be a configurable limit on offline replica size (e.g., "keep only artifacts modified in the last 30 days")? Or always replicate the full project?
+
+9. **Tauri 2.0 mobile readiness:** When should we evaluate Tauri 2.0 mobile support for production readiness? Gate mobile phase on a specific Tauri milestone, or begin experimental mobile builds alongside S5/S6?
+
+10. **Admin access to Forgejo:** For self-hosted/cloud tiers, should Forgejo's web UI be exposed to project admins by default? Or is it strictly backend infrastructure with audit data surfaced only through the app?
