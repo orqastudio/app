@@ -33,6 +33,7 @@ You are now in Research Mode. The user wants something investigated, explored, c
 ## What Happens Next
 
 Research findings typically feed other modes:
+
 - **Planning** — you understand the system before scoping changes
 - **Implementation** — the implementer knows where to put the code
 - **Debugging** — investigation is targeted by prior understanding

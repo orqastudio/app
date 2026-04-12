@@ -29,6 +29,7 @@ You are now in Debugging Mode. Something is broken or behaving unexpectedly. You
 ## What Happens Next
 
 Debugging routes to other modes once diagnosis is complete:
+
 - **Code bug** → **Implementation Mode** to fix it
 - **Governance gap** (missing rule, unenforced standard) → **Learning Loop Mode** to capture it
 - **Root cause unclear** → **Research Mode** for deeper investigation

@@ -19,6 +19,7 @@ You are now in Review Mode. The user wants something checked, validated, or audi
 ## Verdict Format
 
 For each criterion checked:
+
 - **PASS** — state what was checked and the evidence that confirms conformance
 - **FAIL** — state what was checked, what the violation is, and cite the specific rule or criterion that is broken
 
