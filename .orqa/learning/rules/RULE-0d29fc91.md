@@ -6,7 +6,7 @@ description: "Prefer semantic search over Grep/Glob for multi-file searches. Loa
 status: active
 enforcement_type: advisory
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-04-13"
 enforcement:
 
   - mechanism: behavioral
@@ -14,15 +14,10 @@ enforcement:
     message: "Prefer semantic search over Grep/Glob for any search spanning more than one file or directory; load the correct search knowledge for your context"
 relationships:
 
-  - target: "PD-7d3d7521"
+  - target: "PD-a44384d1"
 
     type: "enforces"
-    rationale: "Auto-generated inverse of enforces relationship from PD-7d3d7521"
-
-  - target: "PD-306eccf1"
-
-    type: "enforces"
-    rationale: "Auto-generated inverse of enforces relationship from PD-306eccf1"
+    rationale: "Rule enforces the semantic search engine architecture from PD-a44384d1 — the daemon-consolidated search implementation accessed via CLI protocol modes"
 ---
 **Prefer semantic search over Grep/Glob for any search that spans more than one file or directory.**
 
@@ -32,17 +27,17 @@ OrqaStudio has one search implementation with two access paths. The same three t
 
 | Context | Access Path | Implementation | Tool Names |
 | --- | --- | --- | --- |
-| **CLI** (Claude Code terminal) | `orqa mcp` — orqastudio MCP server | Native ONNX Runtime + DuckDB engine served over MCP | `search_regex`, `search_semantic`, `search_research` |
-| **App** (OrqaStudio UI) | Embedded Tauri commands | Same native engine, no MCP hop | `search_regex`, `search_semantic`, `search_research` |
+| **Claude Code** (AI assistant terminal) | `orqa mcp` — CLI protocol mode | Native ONNX Runtime + DuckDB engine in daemon | `search_regex`, `search_semantic`, `search_research` |
+| **App** (OrqaStudio UI) | Direct daemon connection | Same native engine, no protocol hop | `search_regex`, `search_semantic`, `search_research` |
 
-The underlying search engine is Rust code in `backend/src-tauri/src/search/` using the `ort` crate for ONNX and DuckDB for storage. Both access paths call the same engine — the tools have the same names and query patterns in both contexts.
+The underlying search engine is Rust code in `backend/src-tauri/src/search/` using the `ort` crate for ONNX and DuckDB for storage, embedded within the daemon. Both access paths call the same engine via daemon APIs — the tools have the same names and query patterns in both contexts.
 
 ## How to Determine Your Context
 
 | Signal | Context |
 | --- | --- |
-| `Read`, `Edit`, `Bash` tools available (PascalCase built-ins) | Claude Code CLI — use search tools via orqastudio MCP server |
-| `read`, `edit`, `bash` tools available (lowercase Tauri commands) | OrqaStudio App — use native embedded search |
+| `Read`, `Edit`, `Bash` tools available (PascalCase built-ins) | Claude Code CLI — use search tools via `orqa mcp` (daemon protocol mode) |
+| `read`, `edit`, `bash` tools available (lowercase Tauri commands) | OrqaStudio App — use native embedded search (direct daemon connection) |
 | Neither search path available | Fallback to Grep/Glob (note in task summary) |
 
 ## Enforcement

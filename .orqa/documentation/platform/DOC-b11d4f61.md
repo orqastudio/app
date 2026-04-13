@@ -24,7 +24,9 @@ relationships:
     rationale: Documentation page references RULE-dd5b69e6
 ---
 
-OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across four layers, each addressing a different enforcement concern.
+OrqaStudio's enforcement system ensures agents follow the structured thinking process — understand, plan, document, implement, review, learn — at every stage of work. It operates across five layers, each addressing a different enforcement concern.
+
+**Note:** Some module paths referenced in this document have migrated from `app/src-tauri/` to the `engine/` layer. Layer 4 (Prompt-Based Skill Injection) describes planned infrastructure. These references will be corrected during the SurrealDB migration.
 
 The system runs in two contexts: the **Rust backend** (native enforcement engine within the Tauri app) and the **CLI plugin** (JavaScript hooks for Claude Code compatibility). Both implement the same logic from the same rule frontmatter.
 
