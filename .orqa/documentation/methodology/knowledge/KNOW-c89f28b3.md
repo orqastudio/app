@@ -37,7 +37,7 @@ The user wants governance artifacts created, updated, enforced, or audited. This
 - Full artifact graph context — rules, lessons, knowledge, enforcement entries
 - Understanding of enforcement mechanisms: validators, hooks, prompt injection, knowledge injection
 - Lesson promotion pipeline: observation → lesson → rule → enforcement
-- Graph integrity tools: `graph_validate`, `graph_relationships`
+- Graph integrity tools: `graph_validate`, `graph_relationships` (planned — requires SurrealDB graph tools)
 
 ## Distinguishing from Similar Modes
 

@@ -65,5 +65,5 @@ Debugging never directly produces code changes — it produces a diagnosis that 
 ## Governance
 
 - `diagnostic-methodology` knowledge artifact defines the full reproduction and isolation protocol
-- RULE-005 (search over grep): use semantic search to find relevant code before reading files manually
-- Findings from debugging that reveal systemic gaps are CRITICAL in dogfood mode (RULE-009)
+- RULE-0d29fc91 (code search usage): use semantic search to find relevant code before reading files manually
+- Findings from debugging that reveal systemic gaps are CRITICAL in dogfood mode (RULE-998da8ea (dogfood mode))

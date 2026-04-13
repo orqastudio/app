@@ -32,7 +32,7 @@ You are building infrastructure that this project will use immediately. This is 
 
 **Core requirements (same as Implementation Mode):**
 
-- Coding standards (RULE-006) and four-layer completeness rule (RULE-010)
+- Coding standards (RULE-9814ec3c (coding standards)) and four-layer completeness rule (RULE-b03009da (end-to-end completeness))
 - Relevant domain knowledge: `svelte5-best-practices`, `rust-async-patterns`, `orqa-ipc-patterns`
 - Search the codebase for existing implementations before creating new ones
 - Verify full request chain: component → store → invoke → Rust command
@@ -40,7 +40,7 @@ You are building infrastructure that this project will use immediately. This is 
 **PLUS Dogfood-Specific Guidance:**
 
 - Awareness of the project's dogfood flag in project configuration — you are editing the app from inside or alongside it
-- RULE-009 context (dogfood mode constraints, restart protocol, sidecar self-edit warnings)
+- RULE-998da8ea (dogfood mode) context (dogfood mode constraints, restart protocol, sidecar self-edit warnings)
 - Search **aggressively** for existing patterns in THIS codebase — reuse over rebuild is critical for dogfood
 - For Rust backend changes: offer to run `make restart-tauri` after commit — changes affect the running environment
 - For sidecar protocol changes (`app/src-tauri/src/sidecar/`): warn before modifying; protocol changes require rebuild + restart

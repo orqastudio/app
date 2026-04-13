@@ -19,8 +19,8 @@ Review Mode is active when the user wants something checked, validated, or audit
 
 Reviews check three kinds of conformance:
 
-1. **Code quality** — does the implementation follow coding standards (RULE-006)?
-2. **Completeness** — does the feature satisfy the four-layer completeness rule (RULE-010)?
+1. **Code quality** — does the implementation follow coding standards (RULE-9814ec3c (coding standards))?
+2. **Completeness** — does the feature satisfy the four-layer completeness rule (RULE-b03009da (end-to-end completeness))?
 3. **Artifact integrity** — do the governance artifacts have correct structure and relationships?
 
 ---
@@ -45,7 +45,7 @@ Typical signals:
 
 The reviewer needs the applicable standards loaded as explicit context:
 
-- The relevant RULE artifacts (RULE-006, RULE-010, etc.)
+- The relevant RULE artifacts (RULE-9814ec3c (coding standards), RULE-b03009da (end-to-end completeness), etc.)
 - The acceptance criteria from the task artifact being reviewed
 - The artifact graph relationships to check for structural gaps
 - The four-layer checklist for IPC features
@@ -68,6 +68,6 @@ The reviewer does not fix. This is not a limitation — it is the property that 
 
 ## Governance
 
-- RULE-001 (delegation): reviewers produce verdicts, implementers produce fixes — these roles never merge
+- RULE-87ba1b81 (agent delegation): reviewers produce verdicts, implementers produce fixes — these roles never merge
 - Verdicts are structured: PASS/FAIL, evidence list, rule citations
 - Acceptance criteria come from the task artifact, not from the reviewer's personal judgement

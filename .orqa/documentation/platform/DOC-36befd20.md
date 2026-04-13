@@ -65,6 +65,6 @@ When the research reveals a pattern or anti-pattern, the output may route to **L
 
 ## Governance
 
-- RULE-005 (search over grep) applies — semantic search before file-level grep
+- RULE-0d29fc91 (code search usage) applies — semantic search before file-level grep
 - Research artifacts live in `.orqa/discovery/research/` with `type: research`
 - Findings documents reference their sources using the structured sources format

@@ -251,7 +251,7 @@ orqa graph --related-to KNOW-586bfa9a       # Find related artifacts
 orqa graph --id DOC-e16aea3b                # Read one artifact
 ```text
 
-MCP tools expose the same queries to AI agents (`graph_query`, `graph_resolve`, `graph_relationships`).
+MCP tools expose the same queries to AI agents (`graph_query`, `graph_resolve`, `graph_relationships` — planned, requires SurrealDB graph tools).
 
 ## Plugin Architecture
 

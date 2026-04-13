@@ -510,7 +510,7 @@ pub fn tool_load_knowledge(input: &serde_json::Value, root: &Path) -> (String, b
 
     let knowledge_path = root
         .join(".orqa")
-        .join("process")
+        .join("documentation")
         .join("knowledge")
         .join(format!("{name}.md"));
 
