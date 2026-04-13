@@ -6,6 +6,7 @@ description: "Solo builder who relies heavily on AI for execution. Needs a tool 
 status: active
 created: "2026-03-07"
 updated: "2026-03-18"
-relationships: []
+relationships:
+  - {type: informs, target: VISION-4893db55}
 ---
 Tertiary persona. Solo founder, indie developer, or independent professional building something alone. Wears every hat and needs AI agents as the team, with governance as the safety net. See the full personas document for details.

@@ -3,7 +3,7 @@ id: RES-0bbae4c4
 type: discovery-research
 title: "Rebrand: Forge → OrqaStudio"
 description: "Product rebrand from \"Forge\" to \"Orqa Studio\" — name, directory structure, brand assets, and documentation. Includes src/ → ui/ directory rename."
-status: completed
+status: archived
 created: 2026-03-04
 updated: 2026-03-09
 relationships:

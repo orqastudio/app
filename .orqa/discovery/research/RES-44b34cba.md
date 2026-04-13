@@ -3,7 +3,7 @@ id: "RES-44b34cba"
 type: discovery-research
 title: "Native Search Engine Implementation"
 description: "Design and implementation of OrqaStudio's native code search engine using DuckDB for storage, ONNX Runtime for embeddings, and DirectML for hardware acceleration. Three search modes: regex, semantic, and code_research."
-status: completed
+status: archived
 created: "2026-03-04"
 updated: "2026-03-09"
 relationships:

@@ -3,7 +3,7 @@ id: "RES-72f6f6b6"
 type: discovery-research
 title: "Artifact Layer Taxonomy and Core vs Project Classification"
 description: "Investigation into how governance artifacts should be classified as core (ships with every project) vs project-specific (OrqaStudio dogfood), including layer renaming, template distribution, and user-facing documentation gaps."
-status: completed
+status: archived
 created: "2026-03-11"
 updated: "2026-03-11"
 relationships:

@@ -4,7 +4,7 @@ id: RES-d067c8c2
 type: discovery-research
 title: Wireframing Tool Research
 description: Text-based wireframing tools suitable for AI-agent-driven UX design. Evaluates 8 tools against 10 requirements.
-status: completed
+status: archived
 created: 2026-03-02
 updated: 2026-03-07
 relationships: []
@@ -21,7 +21,7 @@ OrqaStudio's Phase 0d (UX Design) requires generating wireframe images for core 
 
 The wireframing tool must be usable by an AI agent (Claude) during development sessions — this means the tool must accept a **text-based input format** (not a GUI-only tool), output **image files** (PNG or SVG), and ideally support **theming** so wireframes can match OrqaStudio's eventual design system.
 
-ImagineUI (https://imagineui.github.io/en/) was the initial candidate. This research validates that choice and compares alternatives.
+ImagineUI (<https://imagineui.github.io/en/>) was the initial candidate. This research validates that choice and compares alternatives.
 
 ---
 
@@ -48,7 +48,7 @@ ImagineUI (https://imagineui.github.io/en/) was the initial candidate. This rese
 
 **What it is:** A CLI tool that generates wireframe images from a "localized human-readable format" using `.scene` files. Designed specifically for UI mockups.
 
-**Repository:** https://github.com/imagineui/imagineui
+**Repository:** <https://github.com/imagineui/imagineui>
 **License:** MIT
 **Stars:** ~162
 **Last commit:** March 2024 (over a year ago)
@@ -108,7 +108,7 @@ npx imagineui-cli --input=path/to/file.scene --outputDir=path/to/output/
 
 **What it is:** A subproject of PlantUML specifically designed for GUI wireframes and screen mockups. Part of the mature PlantUML ecosystem.
 
-**Website:** https://plantuml.com/salt
+**Website:** <https://plantuml.com/salt>
 **License:** GPL/LGPL/Apache/EPL/MIT (multi-licensed — LGPL version available for commercial bundling without source disclosure, as long as the jar is unmodified)
 **Stars:** ~10.5k (main PlantUML repo)
 **Maintenance:** Actively maintained. PlantUML has continuous releases.
@@ -170,7 +170,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 - `skinparam` commands for background colors, fonts (being deprecated)
 - New CSS-like `<style>` blocks for modern styling (replacing skinparam)
 - Scale command for output size control
-- Theme gallery available at https://the-lum.github.io/puml-themes-gallery/
+- Theme gallery available at <https://the-lum.github.io/puml-themes-gallery/>
 - Font control via `skinparam defaultFontName` (system-dependent portability)
 
 **AI agent reliability:** HIGH. The DSL is well-documented with extensive examples. The syntax is concise and rule-based (not ambiguous natural language). PlantUML has been widely used by AI models — Claude and other LLMs can generate PlantUML Salt reliably. The element vocabulary maps directly to standard UI components.
@@ -200,7 +200,7 @@ cat diagram.puml | java -jar plantuml.jar -pipe -tsvg > output.svg
 
 **What it is:** A modern diagram scripting language focused on software architecture diagrams, flowcharts, and structural visualization. Written in Go.
 
-**Repository:** https://github.com/terrastruct/d2
+**Repository:** <https://github.com/terrastruct/d2>
 **License:** Mozilla Public License 2.0 (MPL-2.0)
 **Stars:** ~23.1k
 **Last active:** Actively maintained with 5,095+ commits
@@ -286,7 +286,7 @@ d2 -t 200 input.d2 output.png  # with theme ID
 
 **What it is:** A JavaScript-based diagramming tool that renders markdown-like text into diagrams. Widely supported in GitHub, GitLab, Notion, and many markdown renderers.
 
-**Repository:** https://github.com/mermaid-js/mermaid
+**Repository:** <https://github.com/mermaid-js/mermaid>
 **License:** MIT
 **Stars:** ~85k+
 **Maintenance:** Very actively maintained, large contributor base
@@ -359,7 +359,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 
 **What it is:** A virtual whiteboard for hand-drawn-style diagrams. Primarily a web/GUI tool with JSON-based file format and emerging programmatic APIs.
 
-**Repository:** https://github.com/excalidraw/excalidraw
+**Repository:** <https://github.com/excalidraw/excalidraw>
 **License:** MIT
 **Stars:** ~118k
 **Last release:** v0.18.0 (March 2025)
@@ -433,7 +433,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 
 **What it is:** A unified API that renders multiple diagram formats (including PlantUML, Mermaid, D2, Excalidraw, and many others) to SVG/PNG. Can be self-hosted or used as a public service.
 
-**Repository:** https://github.com/yuzutech/kroki
+**Repository:** <https://github.com/yuzutech/kroki>
 **License:** MIT
 **Maintenance:** Actively maintained
 
@@ -519,7 +519,7 @@ npx @mermaid-js/mermaid-cli -i diagram.mmd -o output.png -b transparent
 
 ## Recommendation
 
-**Primary wireframing tool: PlantUML Salt**
+### Primary wireframing tool: PlantUML Salt
 
 PlantUML Salt is the clear winner for OrqaStudio's wireframing needs:
 
@@ -537,7 +537,7 @@ PlantUML Salt is the clear winner for OrqaStudio's wireframing needs:
 
 7. **License** — LGPL version allows commercial bundling without source disclosure (as long as the JAR is unmodified). Generated images have no license requirements.
 
-**Secondary tool: D2**
+### Secondary tool: D2
 
 D2 should be adopted for non-wireframe diagrams in OrqaStudio's documentation:
 

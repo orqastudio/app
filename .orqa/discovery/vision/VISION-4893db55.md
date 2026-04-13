@@ -9,7 +9,10 @@ created: 2026-03-02
 updated: 2026-03-07
 sort: 1
 status: captured
-relationships: []
+relationships:
+  - {type: informs, target: PILLAR-2acd86c1}
+  - {type: informs, target: PILLAR-a6a4bbbb}
+  - {type: informs, target: PILLAR-c9e0a695}
 
 ---
 

@@ -3,7 +3,7 @@ id: "RES-f7bd7ab1"
 type: discovery-research
 title: "Inter-Artifact Linking Design"
 description: "Design a robust ID-to-path resolution system for artifact cross-references, replacing the fragile label-prefix matching with backend-resolved paths and consistent YAML link conventions."
-status: completed
+status: archived
 created: "2026-03-10"
 updated: "2026-03-10"
 relationships:

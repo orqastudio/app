@@ -3,7 +3,7 @@ id: RES-4dbf04d7
 type: discovery-research
 title: Cross-cutting concerns of repository directory restructure
 description: "Audit every file, config, and path reference that would need updating when reorganising the repository into backend/, ui/src/, sidecars/, and debugger/ directories."
-status: completed
+status: archived
 created: 2026-03-12
 updated: 2026-03-12
 sources: []
@@ -137,7 +137,7 @@ Automatable via `sed` find-replace on `.md` files in `.orqa/`.
 - Update Makefile (9 changes), dev.mjs (1 path)
 - Verify: `make dev && make kill`
 
-**Phase 6: Integration test**
+### Phase 6: Integration test
 
 - `make check` (all quality gates)
 - `make dev` + manual smoke test

@@ -3,7 +3,7 @@ id: "RES-e7cf8d7b"
 type: discovery-research
 title: "Self-Sustaining Artifact System"
 description: "Make the artifact system self-sustaining so new artifacts are created correctly by default and all types are defined in the framework."
-status: completed
+status: archived
 created: "2026-03-07"
 updated: "2026-03-08"
 relationships:
@@ -114,11 +114,11 @@ The full decision content lives only in the individual artifacts. The index prov
 
 ### WS-3: Roadmap & Cross-Reference Integrity
 
-**3a. Update roadmap completed work section**
+#### 3a. Update roadmap completed work section
 
 Replace the Phase 0/1/2b descriptions with references to [MS-063c15b9](MS-063c15b9) and [EPIC-5a0624dc](EPIC-5a0624dc)–031. The roadmap should say "see the milestone and its epics for details" rather than duplicating the content.
 
-**3b. Validate all cross-references**
+#### 3b. Validate all cross-references
 
 An agent reads every `.orqa/decisions/AD-NNN.md` file and verifies:
 
@@ -143,7 +143,7 @@ This epic tracks the migration itself (distinct from [EPIC-9ddef7f9](EPIC-9ddef7
 - Tasks: one per workstream above
 - Acceptance: all gaps in the gap analysis table are closed
 
-**4b. Update migration plan**
+#### 4b. Update migration plan
 
 Link `.orqa/plans/artifact-migration.md` to [EPIC-2f1efbd5](EPIC-2f1efbd5) and update its status.
 
