@@ -1,0 +1,2515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "generated": true,
+  "generatedAt": "2026-04-04T08:19:03.667Z",
+  "description": "Composed schema generated from all installed plugins. Artifact types, relationship types, and validation constraints sourced from plugin manifests.",
+  "artifactTypes": {
+    "vision": {
+      "id_prefix": "VISION",
+      "label": "Vision",
+      "plural": "Vision",
+      "id_pattern": "^VISION-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/vision/",
+      "icon": "eye",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^VISION-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured"
+        ],
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "semantic": "discovery"
+    },
+    "pillar": {
+      "id_prefix": "PILLAR",
+      "label": "Pillar",
+      "plural": "Pillars",
+      "id_pattern": "^PILLAR-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/pillars/",
+      "icon": "columns-3",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PILLAR-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gate": {
+            "type": [
+              "string",
+              "array"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "semantic": "discovery"
+    },
+    "persona": {
+      "id_prefix": "PERSONA",
+      "label": "Persona",
+      "plural": "Personas",
+      "id_pattern": "^PERSONA-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/personas/",
+      "icon": "users",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PERSONA-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "active": [
+          "active"
+        ],
+        "review": [
+          "review"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "semantic": "discovery"
+    },
+    "pivot": {
+      "id_prefix": "PIVOT",
+      "label": "Pivot",
+      "plural": "Pivots",
+      "id_pattern": "^PIVOT-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/pivots/",
+      "icon": "refresh-cw",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PIVOT-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review pivot",
+      "semantic": "discovery"
+    },
+    "discovery-idea": {
+      "id_prefix": "DISC-IDEA",
+      "label": "Discovery Idea",
+      "plural": "Discovery Ideas",
+      "id_pattern": "^DISC-IDEA-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/ideas/",
+      "icon": "lightbulb",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(IDEA|DISC-IDEA)-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Assess idea",
+      "semantic": "discovery"
+    },
+    "discovery-research": {
+      "id_prefix": "DISC-RES",
+      "label": "Discovery Research",
+      "plural": "Discovery Research",
+      "id_pattern": "^DISC-RES-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/research/",
+      "icon": "flask-conical",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(RES|DISC-RES)-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "methodology": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review research",
+      "semantic": "discovery"
+    },
+    "discovery-decision": {
+      "id_prefix": "DISC-AD",
+      "label": "Discovery Decision",
+      "plural": "Discovery Decisions",
+      "id_pattern": "^DISC-AD-[a-f0-9]{8}$",
+      "default_path": ".orqa/discovery/decisions/",
+      "icon": "scale",
+      "source": "@orqastudio/plugin-agile-discovery",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(AD|DISC-AD)-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "reviewAction": "Review decision",
+      "semantic": "discovery"
+    },
+    "planning-idea": {
+      "id_prefix": "PLAN-IDEA",
+      "label": "Planning Idea",
+      "plural": "Planning Ideas",
+      "id_pattern": "^PLAN-IDEA-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/ideas/",
+      "icon": "lightbulb",
+      "source": "@orqastudio/plugin-agile-planning",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(IDEA|PLAN-IDEA)-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "draft",
+          "evaluating"
+        ],
+        "active": [
+          "accepted",
+          "hold"
+        ],
+        "terminal": [
+          "rejected",
+          "archived"
+        ]
+      },
+      "reviewAction": "Assess planning idea",
+      "semantic": "planning"
+    },
+    "planning-research": {
+      "id_prefix": "PLAN-RES",
+      "label": "Planning Research",
+      "plural": "Planning Research",
+      "id_pattern": "^PLAN-RES-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/research/",
+      "icon": "flask-conical",
+      "source": "@orqastudio/plugin-agile-planning",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^(RES|PLAN-RES)-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "methodology": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "proposed"
+        ],
+        "active": [
+          "investigating",
+          "hold"
+        ],
+        "completed": [
+          "concluded"
+        ],
+        "terminal": [
+          "archived"
+        ]
+      },
+      "reviewAction": "Review planning research",
+      "semantic": "planning"
+    },
+    "planning-decision": {
+      "id_prefix": "PLAN-AD",
+      "label": "Planning Decision",
+      "plural": "Planning Decisions",
+      "id_pattern": "^PLAN-AD-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/decisions/",
+      "icon": "scale",
+      "source": "@orqastudio/plugin-agile-planning",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PLAN-AD-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "proposed"
+        ],
+        "active": [
+          "reviewing",
+          "hold"
+        ],
+        "completed": [
+          "resolved"
+        ],
+        "terminal": [
+          "deferred",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "reviewAction": "Review planning decision",
+      "semantic": "planning"
+    },
+    "wireframe": {
+      "id_prefix": "WIRE",
+      "label": "Wireframe",
+      "plural": "Wireframes",
+      "id_pattern": "^WIRE-[a-f0-9]{8}$",
+      "default_path": ".orqa/planning/wireframes/",
+      "icon": "layout",
+      "source": "@orqastudio/plugin-agile-planning",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^WIRE-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review wireframe",
+      "semantic": "planning"
+    },
+    "decision": {
+      "id_prefix": "AD",
+      "label": "Decision",
+      "plural": "Decisions",
+      "id_pattern": "^AD-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/decisions/",
+      "icon": "scale",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^AD-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "reviewAction": "Review decision",
+      "semantic": "governance"
+    },
+    "rule": {
+      "id_prefix": "RULE",
+      "label": "Rule",
+      "plural": "Rules",
+      "id_pattern": "^RULE-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/rules/",
+      "icon": "shield",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^RULE-[a-f0-9]{8}$"
+          },
+          "enforcement": {
+            "type": "array"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "inactive",
+              "review"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "demoted_date": {
+            "type": "string",
+            "format": "date",
+            "description": "ISO date when the rule was demoted to inactive"
+          },
+          "demoted_reason": {
+            "type": "string",
+            "description": "Why the rule was demoted (e.g. enforced by orqa lsp schema validation)"
+          },
+          "replaced_by": {
+            "type": "string",
+            "description": "What now covers this rule (e.g. orqa lsp, pre-commit hook)"
+          },
+          "stability_threshold": {
+            "type": "number",
+            "minimum": 1,
+            "default": 10,
+            "description": "Sessions with zero violations before the rule is safe to delete"
+          },
+          "stability_count": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0,
+            "description": "Current count of consecutive clean sessions since demotion"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "inactive",
+        "review"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "inactive",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "reviewAction": "Review rule",
+      "semantic": "governance"
+    },
+    "lesson": {
+      "id_prefix": "IMPL",
+      "label": "Lesson",
+      "plural": "Lessons",
+      "id_pattern": "^IMPL-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/lessons/",
+      "icon": "book-open",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^IMPL-[a-f0-9]{8}$"
+          },
+          "recurrence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "recurring",
+              "review",
+              "completed",
+              "promoted"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "maturity": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "recurring",
+        "review",
+        "completed",
+        "promoted"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "recurring"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "promoted",
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review lesson",
+      "semantic": "learning"
+    },
+    "knowledge": {
+      "id_prefix": "KNOW",
+      "label": "Knowledge",
+      "plural": "Knowledge",
+      "id_pattern": "^KNOW-[a-f0-9]{8}$",
+      "default_path": ".orqa/documentation/knowledge/",
+      "icon": "zap",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^KNOW-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "thinking-mode": {
+            "type": "string",
+            "description": "Prompt classification mode this knowledge artifact represents. Used by the thinking-mode classifier to match prompts to behavioral context."
+          },
+          "priority-rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Rule categories prioritised when this thinking mode is active. Used by the prompt injector to select relevant behavioral rules."
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "semantic": "documentation",
+      "size_constraints": {
+        "min_tokens": 500,
+        "max_tokens": 2000,
+        "unit": "tokens"
+      }
+    },
+    "agent": {
+      "id_prefix": "AGENT",
+      "label": "Agent",
+      "plural": "Agents",
+      "id_pattern": "^AGENT-[a-f0-9]{8}$",
+      "default_path": ".claude/agents/",
+      "icon": "bot",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^AGENT-[a-f0-9]{8}$"
+          },
+          "preamble": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "model": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review agent",
+      "semantic": "governance"
+    },
+    "principle-decision": {
+      "id_prefix": "PD",
+      "label": "Principle Decision",
+      "plural": "Principle Decisions",
+      "id_pattern": "^PD-[a-f0-9]{8}$",
+      "default_path": ".orqa/learning/decisions/",
+      "icon": "scale",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^PD-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "influence": "high",
+      "reviewAction": "Review principle decision",
+      "semantic": "governance"
+    },
+    "doc": {
+      "id_prefix": "DOC",
+      "label": "Document",
+      "plural": "Documents",
+      "id_pattern": "^DOC-[a-f0-9]{8}$",
+      "default_path": ".orqa/documentation/",
+      "icon": "file-text",
+      "source": "@orqastudio/plugin-core-framework",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^DOC-[a-f0-9]{8}$"
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring"
+        ],
+        "active": [
+          "active",
+          "hold"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "semantic": "documentation"
+    },
+    "milestone": {
+      "id_prefix": "MS",
+      "label": "Milestone",
+      "plural": "Milestones",
+      "id_pattern": "^MS-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/milestones/",
+      "icon": "flag",
+      "source": "@orqastudio/plugin-software-kanban",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^MS-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "gate": {
+            "type": [
+              "string",
+              "array"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "target_date": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "exploring",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold",
+          "blocked"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review milestone",
+      "semantic": "delivery"
+    },
+    "epic": {
+      "id_prefix": "EPIC",
+      "label": "Epic",
+      "plural": "Epics",
+      "id_pattern": "^EPIC-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/epics/",
+      "icon": "layers",
+      "source": "@orqastudio/plugin-software-kanban",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^EPIC-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "exploring",
+              "ready",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "exploring",
+        "ready",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "discover",
+          "plan",
+          "document",
+          "ideation",
+          "investigation",
+          "strategic_decision",
+          "discovery_complete",
+          "scope_analysis",
+          "estimation",
+          "prioritisation",
+          "plan_finalised",
+          "draft_docs"
+        ],
+        "active": [
+          "implement",
+          "publish_docs",
+          "task_assignment",
+          "development",
+          "testing",
+          "integration",
+          "implementation_complete"
+        ],
+        "review": [
+          "review",
+          "review_docs",
+          "code_review",
+          "gate_check",
+          "acceptance_verification",
+          "review_complete"
+        ],
+        "completed": [
+          "learn",
+          "capture",
+          "retrospective",
+          "pattern-tracking",
+          "recurrence-detection",
+          "learning_complete"
+        ],
+        "terminal": [
+          "done"
+        ]
+      },
+      "reviewAction": "Review epic",
+      "semantic": "delivery"
+    },
+    "task": {
+      "id_prefix": "TASK",
+      "label": "Task",
+      "plural": "Tasks",
+      "id_pattern": "^TASK-[a-f0-9]{8}$",
+      "default_path": ".orqa/implementation/tasks/",
+      "icon": "check-square",
+      "source": "@orqastudio/plugin-software-kanban",
+      "fields": {
+        "required": {
+          "id": {
+            "type": "string",
+            "pattern": "^TASK-[a-f0-9]{8}$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "captured",
+              "ready",
+              "prioritised",
+              "active",
+              "review",
+              "completed"
+            ]
+          }
+        },
+        "optional": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "assignee": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "target",
+                "type"
+              ],
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "rationale": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": true,
+      "statuses": [
+        "captured",
+        "ready",
+        "prioritised",
+        "active",
+        "review",
+        "completed"
+      ],
+      "initialStatus": "captured",
+      "stateCategories": {
+        "planning": [
+          "captured",
+          "ready",
+          "prioritised"
+        ],
+        "active": [
+          "active",
+          "hold",
+          "blocked"
+        ],
+        "review": [
+          "review"
+        ],
+        "completed": [
+          "completed"
+        ],
+        "terminal": [
+          "surpassed",
+          "archived"
+        ]
+      },
+      "reviewAction": "Review task",
+      "semantic": "delivery"
+    }
+  },
+  "relationshipTypes": [
+    {
+      "key": "upholds",
+      "inverse": "upheld-by",
+      "label": "Upholds",
+      "inverseLabel": "Upheld By",
+      "from": [
+        "pillar"
+      ],
+      "to": [
+        "vision"
+      ],
+      "description": "Pillar supports the vision",
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "grounded",
+      "inverse": "grounded-by",
+      "label": "Grounded",
+      "inverseLabel": "Grounded By",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea",
+        "epic"
+      ],
+      "to": [
+        "pillar"
+      ],
+      "description": "Idea or epic anchored to a foundational principle",
+      "semantic": "foundation"
+    },
+    {
+      "key": "benefits",
+      "inverse": "benefited-by",
+      "label": "Benefits",
+      "inverseLabel": "Benefited By",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea"
+      ],
+      "to": [
+        "persona"
+      ],
+      "description": "Idea serves a target persona",
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "crystallises",
+      "inverse": "crystallised-by",
+      "label": "Crystallises",
+      "inverseLabel": "Crystallised By",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea"
+      ],
+      "to": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "principle-decision"
+      ],
+      "description": "Idea crystallises into an architecture decision",
+      "semantic": "lineage"
+    },
+    {
+      "key": "spawns",
+      "inverse": "spawned-by",
+      "label": "Spawns",
+      "inverseLabel": "Spawned By",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea"
+      ],
+      "to": [
+        "research",
+        "discovery-research",
+        "planning-research"
+      ],
+      "description": "Idea spawns an investigation",
+      "semantic": "lineage"
+    },
+    {
+      "key": "drives",
+      "inverse": "driven-by",
+      "label": "Drives",
+      "inverseLabel": "Driven By",
+      "from": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "principle-decision"
+      ],
+      "to": [
+        "epic"
+      ],
+      "description": "Decision motivates a body of delivery work",
+      "semantic": "governance"
+    },
+    {
+      "key": "governs",
+      "inverse": "governed-by",
+      "label": "Governs",
+      "inverseLabel": "Governed By",
+      "from": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "principle-decision"
+      ],
+      "to": [
+        "rule"
+      ],
+      "description": "Decision establishes governance \u2014 leads into the learning loop",
+      "semantic": "governance"
+    },
+    {
+      "key": "enforces",
+      "inverse": "enforced-by",
+      "label": "Enforces",
+      "inverseLabel": "Enforced By",
+      "from": [
+        "rule"
+      ],
+      "to": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "principle-decision"
+      ],
+      "description": "Rule enforces a decision",
+      "semantic": "governance",
+      "constraints": {
+        "required": false,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "codifies",
+      "inverse": "codified-by",
+      "label": "Codifies",
+      "inverseLabel": "Codified By",
+      "from": [
+        "rule"
+      ],
+      "to": [
+        "lesson"
+      ],
+      "description": "Rule codifies a lesson into enforceable governance",
+      "semantic": "governance"
+    },
+    {
+      "key": "informs",
+      "inverse": "informed-by",
+      "label": "Informs",
+      "inverseLabel": "Informed By",
+      "from": [
+        "research",
+        "discovery-research",
+        "planning-research",
+        "wireframe"
+      ],
+      "to": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "research",
+        "discovery-research",
+        "planning-research",
+        "principle-decision",
+        "epic"
+      ],
+      "description": "Research findings or wireframes inform a decision, research thread, or epic",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "teaches",
+      "inverse": "taught-by",
+      "label": "Teaches",
+      "inverseLabel": "Taught By",
+      "from": [
+        "lesson"
+      ],
+      "to": [
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "principle-decision"
+      ],
+      "description": "Lesson teaches a future decision",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "guides",
+      "inverse": "guided-by",
+      "label": "Guides",
+      "inverseLabel": "Guided By",
+      "from": [
+        "research",
+        "discovery-research",
+        "planning-research"
+      ],
+      "to": [
+        "epic"
+      ],
+      "description": "Research guides a body of delivery work",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "cautions",
+      "inverse": "cautioned-by",
+      "label": "Cautions",
+      "inverseLabel": "Cautioned By",
+      "from": [
+        "lesson"
+      ],
+      "to": [
+        "epic"
+      ],
+      "description": "Lesson cautions a body of delivery work",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "serves",
+      "inverse": "served-by",
+      "label": "Serves",
+      "inverseLabel": "Served By",
+      "from": [
+        "agent"
+      ],
+      "to": [
+        "pillar",
+        "persona"
+      ],
+      "description": "Agent is accountable to a foundational principle",
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "employs",
+      "inverse": "employed-by",
+      "label": "Employs",
+      "inverseLabel": "Employed By",
+      "from": [
+        "agent"
+      ],
+      "to": [
+        "knowledge"
+      ],
+      "description": "Agent employs a knowledge capability",
+      "semantic": "agency",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "documents",
+      "inverse": "documented-by",
+      "label": "Documents",
+      "inverseLabel": "Documented By",
+      "from": [
+        "doc"
+      ],
+      "to": [
+        "epic",
+        "decision",
+        "discovery-decision",
+        "planning-decision",
+        "rule",
+        "milestone",
+        "principle-decision"
+      ],
+      "description": "Document describes an artifact for human reference",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "synchronised-with",
+      "inverse": "synchronised-with",
+      "label": "Synchronised With",
+      "inverseLabel": "Synchronised With",
+      "from": [
+        "knowledge",
+        "doc"
+      ],
+      "to": [
+        "knowledge",
+        "doc"
+      ],
+      "description": "Paired content kept in sync \u2014 agent-facing and human-facing versions",
+      "semantic": "synchronisation"
+    },
+    {
+      "key": "merged-into",
+      "inverse": "merged-from",
+      "label": "Merged Into",
+      "inverseLabel": "Merged From",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea",
+        "research",
+        "discovery-research",
+        "planning-research"
+      ],
+      "to": [
+        "idea",
+        "discovery-idea",
+        "planning-idea",
+        "research",
+        "discovery-research",
+        "planning-research"
+      ],
+      "description": "Artifacts consolidated \u2014 multiple ideas or research threads become one",
+      "semantic": "lineage"
+    },
+    {
+      "key": "revises",
+      "inverse": "revised-by",
+      "label": "Revises",
+      "inverseLabel": "Revised By",
+      "from": [
+        "pivot"
+      ],
+      "to": [
+        "vision",
+        "persona",
+        "pillar"
+      ],
+      "description": "Pivot revises a foundational artifact",
+      "semantic": "foundation",
+      "constraints": {
+        "required": true,
+        "minCount": 1
+      }
+    },
+    {
+      "key": "promoted-to",
+      "inverse": "promoted-from",
+      "label": "Promoted To",
+      "inverseLabel": "Promoted From",
+      "from": [
+        "lesson"
+      ],
+      "to": [
+        "rule"
+      ],
+      "description": "Lesson promoted to an enforceable rule",
+      "semantic": "governance"
+    },
+    {
+      "key": "evolves-to",
+      "inverse": "evolved-from",
+      "label": "Evolves To",
+      "inverseLabel": "Evolved From",
+      "from": [
+        "discovery-idea"
+      ],
+      "to": [
+        "discovery-research"
+      ],
+      "description": "Discovery idea evolves into a research investigation",
+      "semantic": "lineage"
+    },
+    {
+      "key": "pivots",
+      "inverse": "pivoted-by",
+      "label": "Pivots",
+      "inverseLabel": "Pivoted By",
+      "from": [
+        "vision"
+      ],
+      "to": [
+        "pivot"
+      ],
+      "description": "Vision triggers a strategic pivot",
+      "semantic": "foundation"
+    },
+    {
+      "key": "hands-off-to",
+      "inverse": "handed-off-from",
+      "label": "Hands Off To",
+      "inverseLabel": "Handed Off From",
+      "from": [
+        "discovery-decision"
+      ],
+      "to": [
+        "planning-idea"
+      ],
+      "description": "Discovery decision hands off to a planning idea for implementation scoping",
+      "semantic": "lineage"
+    },
+    {
+      "key": "references",
+      "inverse": "referenced-by",
+      "label": "References",
+      "inverseLabel": "Referenced By",
+      "from": [
+        "planning-decision",
+        "doc"
+      ],
+      "to": [
+        "discovery-research",
+        "doc"
+      ],
+      "description": "Planning decision or doc references discovery research or another doc for context",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "implements",
+      "inverse": "implemented-by",
+      "label": "Implements",
+      "inverseLabel": "Implemented By",
+      "from": [
+        "planning-decision"
+      ],
+      "to": [
+        "epic"
+      ],
+      "description": "Planning decision implements through an epic (cross-stage to implementation)",
+      "semantic": "delivery"
+    },
+    {
+      "key": "visualises",
+      "inverse": "visualised-by",
+      "label": "Visualises",
+      "inverseLabel": "Visualised By",
+      "from": [
+        "wireframe"
+      ],
+      "to": [
+        "planning-decision"
+      ],
+      "description": "Wireframe visualises a planning decision",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "realises",
+      "inverse": "realised-by",
+      "label": "Realises",
+      "inverseLabel": "Realised By",
+      "from": [
+        "idea",
+        "discovery-idea",
+        "planning-idea"
+      ],
+      "to": [
+        "epic",
+        "task"
+      ],
+      "description": "Idea realised through delivery work",
+      "semantic": "lineage"
+    },
+    {
+      "key": "yields",
+      "inverse": "yielded-by",
+      "label": "Yields",
+      "inverseLabel": "Yielded By",
+      "from": [
+        "task"
+      ],
+      "to": [
+        "lesson"
+      ],
+      "description": "Task yields a lesson learned",
+      "semantic": "knowledge-flow"
+    },
+    {
+      "key": "addresses",
+      "inverse": "addressed-by",
+      "label": "Addresses",
+      "inverseLabel": "Addressed By",
+      "from": [
+        "task",
+        "epic"
+      ],
+      "to": [
+        "lesson"
+      ],
+      "description": "Task or epic addresses a lesson or implementation finding",
+      "semantic": "corrective"
+    },
+    {
+      "key": "delivers",
+      "inverse": "delivered-by",
+      "label": "Delivers",
+      "inverseLabel": "Delivered By",
+      "from": [
+        "task"
+      ],
+      "to": [
+        "epic"
+      ],
+      "description": "Task delivers work to an epic",
+      "semantic": "hierarchy",
+      "constraints": {
+        "required": true,
+        "minCount": 1,
+        "statusRules": [
+          {
+            "evaluate": "target",
+            "condition": "all-targets-in",
+            "statuses": [
+              "completed"
+            ],
+            "proposedStatus": "review",
+            "description": "Epic moves to review when all delivering tasks are completed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "fulfils",
+      "inverse": "fulfilled-by",
+      "label": "Fulfils",
+      "inverseLabel": "Fulfilled By",
+      "from": [
+        "epic"
+      ],
+      "to": [
+        "milestone"
+      ],
+      "description": "Epic fulfils a milestone checkpoint",
+      "semantic": "hierarchy",
+      "constraints": {
+        "statusRules": [
+          {
+            "evaluate": "target",
+            "condition": "all-targets-in",
+            "statuses": [
+              "completed"
+            ],
+            "proposedStatus": "review",
+            "description": "Milestone moves to review when all fulfilling epics are completed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "depends-on",
+      "inverse": "depended-on-by",
+      "label": "Depends On",
+      "inverseLabel": "Depended On By",
+      "from": [
+        "task",
+        "epic"
+      ],
+      "to": [
+        "task",
+        "epic"
+      ],
+      "description": "Task or epic cannot proceed until dependency is completed",
+      "semantic": "dependency",
+      "constraints": {
+        "statusRules": [
+          {
+            "evaluate": "source",
+            "condition": "any-target-in",
+            "statuses": [
+              "captured",
+              "exploring",
+              "ready",
+              "prioritised",
+              "active",
+              "hold"
+            ],
+            "proposedStatus": "blocked",
+            "description": "Task is blocked when any dependency is not yet completed"
+          },
+          {
+            "evaluate": "source",
+            "condition": "all-targets-in",
+            "statuses": [
+              "completed",
+              "surpassed",
+              "archived"
+            ],
+            "proposedStatus": "ready",
+            "description": "Task is unblocked when all dependencies are completed"
+          }
+        ]
+      }
+    }
+  ]
+}
