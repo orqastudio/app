@@ -1,0 +1,10 @@
+
+=== VALIDATION SUMMARY ===
+  invalid-status: 67
+  invalid-type: 3
+  warning:knowledge-size: 88
+  warning:location-mismatch: 1733
+  warning:unknown-relationship-type: 91
+
+Total errors: 70
+Total warnings: 1912
