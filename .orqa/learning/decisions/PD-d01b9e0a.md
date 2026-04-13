@@ -3,9 +3,9 @@ id: "PD-d01b9e0a"
 type: principle-decision
 title: "Security Model"
 description: "Tauri three-layer security model with filesystem scoping, sensitive path denials, and OS keychain for API key storage."
-status: completed
+status: archived
 created: 2026-03-02T00:00:00.000Z
-updated: 2026-03-02T00:00:00.000Z
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"

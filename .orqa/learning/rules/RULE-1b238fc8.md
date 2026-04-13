@@ -2,11 +2,11 @@
 id: RULE-1b238fc8
 type: rule
 title: Vision Alignment
-description: Every feature must serve at least one active pillar defined in .orqa/process/pillars/.
+description: Every feature must serve at least one active pillar defined in .orqa/discovery/pillars/.
 status: active
 enforcement_type: advisory
 created: 2026-03-07
-updated: 2026-03-13
+updated: 2026-04-13
 enforcement:
 
   - mechanism: behavioral
@@ -22,7 +22,7 @@ relationships:
 
     type: documented-by
 ---
-Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/process/pillars/`. Read the active pillars before implementing any new capability.
+Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/discovery/pillars/`. Read the active pillars before implementing any new capability.
 
 ## Pillar Alignment Test
 
@@ -32,7 +32,7 @@ Every feature MUST trace to at least one active pillar. Pillars are structured a
 - **`description`** — What the pillar means
 - **`gate`** — Questions to evaluate whether work serves this pillar
 
-**Source of truth:** `.orqa/process/pillars/PILLAR-NNN.md` files. Do not hardcode pillar names or descriptions in rules, documentation, or agent instructions — always reference the pillar artifacts.
+**Source of truth:** `.orqa/discovery/pillars/PILLAR-NNN.md` files. Do not hardcode pillar names or descriptions in rules, documentation, or agent instructions — always reference the pillar artifacts.
 
 To evaluate a feature, read each active pillar's `gate` questions and check if the feature can answer "yes" to at least one question from at least one pillar.
 
@@ -49,7 +49,7 @@ Reject any feature that:
 
 Before implementing any feature:
 
-1. **Read active pillars** from `.orqa/process/pillars/`
+1. **Read active pillars** from `.orqa/discovery/pillars/`
 2. **For each pillar**, evaluate the feature against its gate questions
 3. **If no pillar is served**, the feature is out of scope — flag to the user and suggest an alternative that aligns
 
@@ -76,7 +76,7 @@ UX-first does NOT mean ignoring architectural constraints. It means the UI defin
 
 The following are **foundational principles** that can ONLY be changed with explicit user direction and approval:
 
-- The pillar framework (active pillars defined in `.orqa/process/pillars/`)
+- The pillar framework (active pillars defined in `.orqa/discovery/pillars/`)
 - The project's technology stack as defined in architecture decisions
 - The service boundary design (defined in architecture decisions)
 - The UX-first design principle

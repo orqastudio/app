@@ -6,7 +6,7 @@ description: "Every feature must include all required layers in the same commit.
 status: active
 enforcement_type: advisory
 created: 2026-03-07
-updated: 2026-03-24
+updated: 2026-04-13
 enforcement:
 
   - mechanism: behavioral
@@ -52,7 +52,7 @@ For any feature that touches the IPC boundary between frontend and backend, ALL 
 
 | Layer | What | Where |
 | --- | --- | --- |
-| **Backend command** | Tauri command or service function | `backend/src-tauri/src/commands/` |
+| **Backend command** | Tauri command or service function | `app/src-tauri/src/commands/` |
 | **IPC type** | Shared type definitions (Rust + TypeScript) | Rust: domain types with `Serialize`/`Deserialize`. TS: matching interface in `$lib/types/` |
 | **Frontend store** | Reactive state management | `ui/src/lib/stores/` |
 | **UI component** | User-facing display | `ui/src/lib/components/` or `ui/src/routes/` |

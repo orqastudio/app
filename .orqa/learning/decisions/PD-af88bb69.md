@@ -3,9 +3,9 @@ id: "PD-af88bb69"
 type: principle-decision
 title: "Composability Principle"
 description: "External integrations connect through provider-agnostic interfaces. Provider-specific logic lives in swappable sidecar processes."
-status: completed
+status: archived
 created: 2026-03-02T00:00:00.000Z
-updated: 2026-03-13T00:00:00.000Z
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-05ae2ce7"
     type: "drives"

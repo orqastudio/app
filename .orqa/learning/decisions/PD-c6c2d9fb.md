@@ -3,9 +3,9 @@ id: "PD-c6c2d9fb"
 type: principle-decision
 title: "Rule promotion requires enforcement — rules without enforcement are lessons"
 description: "A lesson MUST NOT be promoted to a rule unless an enforcement mechanism is attempted. Enforcement flows through the artifact graph enforcement system at three layers: artifact graph declaration, Rust application, and Claude plugin. Raw platform hooks bypass the system and are forbidden."
-status: completed
+status: archived
 created: 2026-03-14T00:00:00.000Z
-updated: 2026-03-14T00:00:00.000Z
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-12fba656"
     type: "drives"

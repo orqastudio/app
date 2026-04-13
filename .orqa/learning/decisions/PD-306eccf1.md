@@ -3,9 +3,9 @@ id: "PD-306eccf1"
 type: principle-decision
 title: "AI-Driven Cross-Artifact Search"
 description: "Cross-artifact search uses AI semantic understanding rather than keyword matching. Queries are routed through the AI provider with artifact graph context, returning structured results with relevance explanations."
-status: completed
+status: archived
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-9ddef7f9

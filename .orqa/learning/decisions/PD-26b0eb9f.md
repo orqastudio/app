@@ -3,9 +3,9 @@ id: "PD-26b0eb9f"
 type: principle-decision
 title: "Skill-Driven Project Initialisation"
 description: "Project setup is driven by skills, not templates. A base setup skill handles scaffolding, an inference skill reads existing folder content, and project type skills provide domain-specific governance presets."
-status: completed
+status: archived
 created: "2026-03-09"
-updated: "2026-03-09"
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-7bf140e2"
     type: "drives"

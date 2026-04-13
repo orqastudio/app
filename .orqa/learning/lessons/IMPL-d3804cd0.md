@@ -3,9 +3,9 @@ id: "IMPL-d3804cd0"
 type: lesson
 title: "Decisions scrolled out of view by automated work must be resurfaced"
 description: "When the orchestrator presents a decision to the user and then launches background agents whose output scrolls the decision out of view, the user loses context. The orchestrator must re-present pending decisions after automated work completes, not assume the user remembers what was asked."
-status: completed
+status: archived
 created: 2026-03-13T00:00:00.000Z
-updated: 2026-03-13T00:00:00.000Z
+updated: "2026-04-13"
 maturity: "understanding"
 recurrence: 1
 relationships:

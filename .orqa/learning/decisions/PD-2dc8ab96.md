@@ -3,9 +3,9 @@ id: "PD-2dc8ab96"
 type: principle-decision
 title: "Lint suppression exceptions require decision audit trail"
 description: "Every lint suppression annotation (#[allow(clippy::...)], eslint-disable, @ts-ignore) must reference an accepted decision artifact. Pre-commit scanner validates the mapping. Vendored components are exempt."
-status: completed
+status: archived
 created: 2026-03-13T00:00:00.000Z
-updated: 2026-03-13T00:00:00.000Z
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-e24086ed

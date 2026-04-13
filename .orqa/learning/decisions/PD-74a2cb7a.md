@@ -3,9 +3,9 @@ id: "PD-74a2cb7a"
 type: principle-decision
 title: "Pillars as First-Class Planning Artifacts"
 description: "Product pillars become structured artifacts in .orqa/principles/pillars/ with frontmatter schema, referenced by ID from other artifacts, and injected into AI system prompts. Replaces hardcoded pillar strings scattered across rules and documentation."
-status: completed
+status: archived
 created: "2026-03-09"
-updated: "2026-03-13"
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-0e8860dd

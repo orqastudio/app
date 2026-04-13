@@ -3,9 +3,9 @@ id: "PD-efe10e1d"
 type: principle-decision
 title: "CLI Rule Loading — Accept Full Injection Until Selective Loading Exists"
 description: "Accept that .claude/rules/ symlink loads all 44 rules into every CLI session. The graph-based injection model requires selective loading that Claude Code does not yet support."
-status: completed
+status: archived
 created: "2026-03-12"
-updated: "2026-03-12"
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-5b353057

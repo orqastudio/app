@@ -4,9 +4,9 @@ id: IMPL-42dd183e
 type: lesson
 title: Encode Improvements in Artifacts
 description: "If a process improvement exists only in conversation history, it is lost in the next session. Every improvement must be recorded as a lesson and encoded in the relevant agent, rule, or skill."
-status: completed
+status: archived
 created: 2026-03-07
-updated: 2026-03-07
+updated: "2026-04-13"
 maturity: understanding
 recurrence: 1
 relationships:

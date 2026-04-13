@@ -19,6 +19,12 @@ relationships:
   - type: enforces
     target: PD-48b310f9
     rationale: "Agent teams rule enforces the Universal Roles decision by requiring delegation to role-specific subagents"
+  - target: IMPL-ca2f3f46
+    type: promoted-from
+    rationale: "Rule was promoted from this lesson"
+  - target: IMPL-a91ac743
+    type: promoted-from
+    rationale: "Rule was promoted from this lesson"
 ---
 
 The orchestrator MUST use Claude Code's Agent tool to spawn subagents for all implementation, review, research, and documentation writing work. The Agent tool creates isolated subagent contexts with their own tool access and context windows, keeping the orchestrator's context clean for coordination.

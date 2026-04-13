@@ -6,7 +6,7 @@ description: The orchestrator coordinates but does not implement. All implementa
 status: active
 enforcement_type: mechanical
 created: 2026-03-07
-updated: 2026-03-14
+updated: 2026-04-13
 enforcement:
 
   - mechanism: behavioral
@@ -60,7 +60,7 @@ The orchestrator coordinates. It does NOT implement. Every implementation task i
 
 ## What the Orchestrator MUST Delegate
 
-- Any change to `backend/src-tauri/` (Rust backend code) — delegate to Implementer with backend knowledge
+- Any change to `app/src-tauri/` (Rust backend code) — delegate to Implementer with backend knowledge
 - Any change to `ui/` (Svelte frontend code) — delegate to Implementer with frontend knowledge, or Designer
 - Any change to `sidecar/` (Agent SDK sidecar) — delegate to Implementer with backend knowledge
 - Any change to `.orqa/` artifacts — delegate to Governance Steward
@@ -105,7 +105,7 @@ This was promoted from [IMPL-2dc87f24](IMPL-2dc87f24) after 3 recurrences.
 
 The orchestrator may bypass delegation for:
 
-- Governance artifacts (`.orqa/process/rules/`, `.orqa/process/agents/`, `.orqa/process/knowledge/`) — these ARE the orchestrator's domain
+- Governance artifacts (`.orqa/learning/rules/`, `.orqa/process/agents/`, `.orqa/documentation/`) — these ARE the orchestrator's domain
 - Process documentation (`.orqa/documentation/guide/`) — orchestration is a process concern
 - Session state (`.state/session-state.md`) — coordination artifact
 - Planning artifact **structure** (`.orqa/implementation/`) — creating/updating frontmatter, status transitions, cross-references. Content authoring (research findings, documentation pages) is delegated to Writer.

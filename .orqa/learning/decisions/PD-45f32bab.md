@@ -3,9 +3,9 @@ id: PD-45f32bab
 type: principle-decision
 title: Core Graph Firmware Principle
 description: "Core graph artifacts (schemas, traversal instructions, process model, core skills) are non-editable firmware that ships with OrqaStudio. Project context layers on top. Protected by rule enforcement, git hooks, and app UI."
-status: completed
+status: archived
 created: 2026-03-12
-updated: 2026-03-12
+updated: 2026-04-13
 relationships:
   - type: drives
     target: EPIC-c828007a

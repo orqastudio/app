@@ -3,9 +3,9 @@ id: "IMPL-f70ed197"
 type: lesson
 title: "Recording observations is not scope creep — scope decisions happen at triage"
 description: "The orchestrator sometimes hesitates to record observations because it perceives them as scope creep. But observations are just capture — whether to include them in the current epic's scope is a triage decision made at task completion or epic closure, per the three-tier observation logging discipline. Capture should never be gatekept."
-status: completed
+status: archived
 created: "2026-03-13"
-updated: "2026-03-13"
+updated: "2026-04-13"
 maturity: "understanding"
 recurrence: 1
 relationships:

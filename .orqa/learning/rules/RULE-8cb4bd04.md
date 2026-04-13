@@ -3,9 +3,9 @@ id: "RULE-8cb4bd04"
 type: rule
 title: "Testing Standards"
 description: "Test organisation, coverage requirements, mock boundaries, and isolation rules."
-status: "active"
+status: active
 created: "2026-03-07"
-updated: "2026-03-07"
+updated: "2026-04-13"
 enforcement:
   - mechanism: behavioral
     message: "80%+ test coverage required; tests must be organised by layer; no skipping tests without documented justification"
@@ -25,8 +25,8 @@ relationships:
 
 | Location | Type | Purpose |
 | ---------- | ------ | --------- |
-| `backend/src-tauri/src/**/tests/` | Rust unit tests | Single-module logic, domain functions, utilities |
-| `backend/src-tauri/tests/` | Rust integration tests | Cross-module flows, database interactions, file system operations |
+| `app/src-tauri/src/**/tests/` | Rust unit tests | Single-module logic, domain functions, utilities |
+| `app/src-tauri/tests/` | Rust integration tests | Cross-module flows, database interactions, file system operations |
 | `ui/**/*.test.ts` | Frontend unit tests | Svelte components, stores, utility functions (Vitest) |
 | `tests/` (root) | E2E tests | Playwright browser tests against the running Tauri app |
 

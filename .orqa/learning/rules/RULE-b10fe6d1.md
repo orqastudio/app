@@ -6,7 +6,7 @@ description: "Enforces creation standards, status transitions, promotion gates, 
 status: active
 enforcement_type: mechanical
 created: "2026-03-07"
-updated: "2026-03-13"
+updated: "2026-04-13"
 enforcement:
 
   - mechanism: behavioral
@@ -50,6 +50,14 @@ relationships:
   - target: "DOC-f6c4ac69"
 
     type: "documented-by"
+
+  - target: "IMPL-b27c458f"
+    type: "promoted-from"
+    rationale: "Rule was promoted from this lesson"
+
+  - target: "IMPL-db8027b6"
+    type: "promoted-from"
+    rationale: "Rule was promoted from this lesson"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.
 
@@ -66,14 +74,14 @@ Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enf
 | User mentions a future feature or "we should eventually..." | `IDEA-NNN` | Create in `.orqa/implementation/ideas/` with `status: captured` |
 | User approves an idea for investigation | Update existing `IDEA-NNN` | Set `status: exploring`, begin research |
 | Research validates an idea for implementation | `EPIC-NNN` | Create in `.orqa/implementation/epics/` with `status: draft`, update idea `evolves-into` |
-| An epic needs investigation work before implementation | Research file | Create in `.orqa/implementation/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
+| An epic needs investigation work before implementation | Research file | Create in `.orqa/discovery/research/`; reference from epic `research-refs` field. Implementation design goes in the epic body. |
 | An epic is approved and scoped for implementation | Update `EPIC-NNN` | Set `status: ready` (requires `docs-required` gate satisfied) |
 | A task within an epic needs detailed tracking | `TASK-NNN` | Create in `.orqa/implementation/tasks/` with `epic:` reference |
 | An epic is created or moves to `ready` | Reconciliation `TASK-NNN` | Auto-create a standing reconciliation task for the epic (see Epic Reconciliation Task below) |
 | A strategic goal is defined | `MS-NNN` | Create in `.orqa/implementation/milestones/` |
-| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/process/lessons/` (see [RULE-c603e90e](RULE-c603e90e) (lessons-learned)) |
-| A question needs investigation before a decision | Research file | Create in `.orqa/implementation/research/` |
-| Research produces an architectural choice | `AD-NNN` | Create in `.orqa/process/decisions/` |
+| An implementation reveals a reusable pattern | `IMPL-NNN` | Create in `.orqa/learning/lessons/` (see [RULE-c603e90e](RULE-c603e90e) (lessons-learned)) |
+| A question needs investigation before a decision | Research file | Create in `.orqa/discovery/research/` |
+| Research produces an architectural choice | `AD-NNN` | Create in `.orqa/learning/decisions/` |
 
 ### ID Assignment
 
@@ -109,7 +117,7 @@ draft ──> ready ──> in-progress ──> review ──> done
 - `in-progress → review`: Implementation complete, submitted for verification gates
 - `review → done`: **Human gate (NON-NEGOTIABLE)** — the orchestrator presents a completion summary to the user and receives explicit approval. The summary must include: tasks completed, docs-produced verification, lessons logged during implementation, and any scope changes. The orchestrator MUST NOT mark an epic as done without user confirmation. All verification gates must also have passed (code-reviewer, qa-tester, ux-reviewer), and all `docs-produced` items verified as created/updated
 
-The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/implementation/research/` that informed the design.
+The epic body contains the implementation design — data model, IPC contracts, component breakdown, and approach. For investigation-heavy work, the epic may carry a `research-refs` field listing research documents in `.orqa/discovery/research/` that informed the design.
 
 ### Epic Reconciliation Task (NON-NEGOTIABLE)
 
@@ -226,7 +234,7 @@ proposed ──> accepted ──> superseded
 - `accepted → superseded`: A new decision replaces this one — both the new and old artifacts MUST be updated in the same commit
 - `accepted → deprecated`: Decision is no longer relevant (technology removed, context changed) — reason documented in the decision body
 
-**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/process/decisions/` following the Decision schema in `.orqa/documentation/about/artifact-framework.md`.
+**Creation rule:** When research produces an architectural choice, an `AD-NNN.md` MUST be created in `.orqa/learning/decisions/` following the Decision schema in `.orqa/documentation/about/artifact-framework.md`.
 
 **Supersession rule:** When a new decision replaces an accepted decision, both the new artifact (`supersedes: AD-<old>`) and the old artifact (`status: superseded`, `superseded-by: AD-<new>`) MUST be updated in the same commit. A one-sided supersession is an integrity violation.
 
@@ -276,7 +284,7 @@ Every epic's `docs-produced` field lists documentation that this work creates or
 An idea MUST NOT be promoted to an epic until:
 
 1. **Status is `shaped`** — the idea has been through `exploring` and has clear scope
-2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/implementation/research/` or the research question has been answered and documented in the idea body
+2. **All `research-needed` items are investigated** — research artifacts exist in `.orqa/discovery/research/` or the research question has been answered and documented in the idea body
 3. **Pillar alignment confirmed** — at least one pillar is listed and justified
 4. **Related ideas scanned** — before creating the epic, scan all ideas for thematic overlap. Related ideas may be bundled into the same epic or explicitly noted as separate scope
 5. **User approves promotion** — the orchestrator presents the shaped idea, any related ideas found, and asks for explicit approval
@@ -447,7 +455,7 @@ The orchestrator SHOULD periodically verify:
 - Leaving `evolves-into` null on an idea with `status: promoted`
 - Creating duplicate IDs (two artifacts with the same ID)
 - Modifying artifact IDs after creation
-- Recording an architecture decision without a corresponding `AD-NNN.md` file in `.orqa/process/decisions/`
+- Recording an architecture decision without a corresponding `AD-NNN.md` file in `.orqa/learning/decisions/`
 - Updating one side of a decision supersession without updating the other
 - Using process words (UAT, Phase, Sprint, Round, Audit) in epic titles unless they describe the actual deliverable content — epic titles describe what is achieved, not how work is organised
 - Marking an epic as `done` without explicit user approval (human gate violation)

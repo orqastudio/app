@@ -3,9 +3,9 @@ id: "PD-e4a3b5da"
 type: principle-decision
 title: "Tool Implementation as MCP"
 description: "Core tools implemented in Rust and exposed to Agent SDK as custom MCP server. Built-in SDK tools disabled."
-status: completed
+status: archived
 created: 2026-03-02T00:00:00.000Z
-updated: 2026-03-02T00:00:00.000Z
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-f6d06edb"
     type: "drives"

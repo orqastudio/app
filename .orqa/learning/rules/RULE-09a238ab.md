@@ -6,7 +6,7 @@ description: "Defines which data belongs in SQLite, which in file-based artifact
 status: active
 enforcement_type: advisory
 created: "2026-03-11"
-updated: "2026-03-13"
+updated: "2026-04-13"
 enforcement:
 
   - mechanism: behavioral
@@ -23,6 +23,8 @@ relationships:
 
     type: "enforces"
 ---
+> **Note (2026-04-13):** Search index implementation is being migrated from DuckDB to SurrealDB/ONNX. This rule applies to the current implementation and will be updated post-migration.
+
 Data persistence in OrqaStudio follows three channels, each with clear boundaries.
 
 ## Persistence Channels

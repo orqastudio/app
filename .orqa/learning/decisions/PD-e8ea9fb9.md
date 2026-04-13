@@ -3,9 +3,9 @@ id: "PD-e8ea9fb9"
 type: principle-decision
 title: "Config-Driven Navigation Defaults"
 description: "Each artifact type directory can contain a _navigation.json file that configures default sort, group, filter, group ordering, and custom layout for the browser panel."
-status: completed
+status: archived
 created: "2026-03-11"
-updated: "2026-03-11"
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-9ddef7f9

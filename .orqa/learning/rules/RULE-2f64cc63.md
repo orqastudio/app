@@ -6,7 +6,7 @@ description: Orchestrating agents keep working until the user says to stop. Agen
 status: active
 enforcement_type: advisory
 created: 2026-03-21
-updated: 2026-03-21
+updated: 2026-04-13
 enforcement:
 
   - mechanism: behavioral
@@ -14,9 +14,9 @@ enforcement:
     message: "Agents keep working until the task is done or a genuine blocker is encountered; never ask for permission to continue or propose stopping between steps"
 relationships:
 
-  - target: IMPL-36b767ce
-
-    type: codifies
+  - target: IMPL-2dc87f24
+    type: promoted-from
+    rationale: "Rule was promoted from this lesson"
 ---
 
 The user delegates a task to an agent. The agent works until the task is done or a genuine blocker is encountered. **Agents do not ask to stop. They do not propose stopping. They do not request permission to continue.**

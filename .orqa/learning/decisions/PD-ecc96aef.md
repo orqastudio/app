@@ -3,9 +3,9 @@ id: PD-ecc96aef
 type: principle-decision
 title: Svelte 5 Runes Only
 description: "Svelte 5 runes only ($state, $derived, $effect, $props). No Svelte 4 patterns."
-status: completed
+status: archived
 created: 2026-03-02
-updated: 2026-03-13
+updated: 2026-04-13
 relationships:
   - type: drives
     target: EPIC-c8195723

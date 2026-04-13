@@ -2,11 +2,11 @@
 id: RULE-c603e90e
 type: rule
 title: Lessons Learned
-description: "Two learning loops: implementation lessons in .orqa/process/lessons/ and process retrospectives. Both are mandatory."
+description: "Two learning loops: implementation lessons in .orqa/learning/lessons/ and process retrospectives. Both are mandatory."
 status: active
 enforcement_type: mechanical
 created: 2026-03-07
-updated: 2026-03-14
+updated: 2026-04-13
 enforcement:
 
   - mechanism: behavioral
@@ -31,28 +31,32 @@ relationships:
   - target: DOC-f6c4ac69
 
     type: documented-by
+
+  - target: IMPL-a1373533
+    type: promoted-from
+    rationale: "Rule was promoted from this lesson"
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.
 
 ## Implementation Lessons
 
-Lessons are stored as individual markdown files in `.orqa/process/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `.orqa/process/lessons/` as a consolidated view.
+Lessons are stored as individual markdown files in `.orqa/learning/lessons/`, one file per lesson with YAML frontmatter (id, title, category, recurrence count, promoted-to, tags). In the CLI, agents can also reference `.orqa/learning/lessons/` as a consolidated view.
 
 When `code-reviewer`, `qa-tester`, or `ux-reviewer` reports a FAIL verdict:
 
-1. **Check existing lessons** — search `.orqa/process/lessons/` for the failure pattern before reporting it as a novel finding
+1. **Check existing lessons** — search `.orqa/learning/lessons/` for the failure pattern before reporting it as a novel finding
 2. **If the failure matches an existing lesson:** note the recurrence (increment the count in the lesson file's frontmatter)
-3. **If the failure is new:** the reviewing agent creates a new `IMPL-NNN.md` file in `.orqa/process/lessons/` before the fix-and-resubmit cycle begins
+3. **If the failure is new:** the reviewing agent creates a new `IMPL-NNN.md` file in `.orqa/learning/lessons/` before the fix-and-resubmit cycle begins
 4. **When an IMPL entry reaches recurrence >= 2:** the `orchestrator` (with `governance-maintenance` knowledge) is triggered to promote it to a rule, coding standard addition, or knowledge update
 5. **After promotion:** the lesson file's "promoted-to" frontmatter field is updated with the target artifact
 
 ## Process Retrospectives
 
-Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/process/lessons/`:
+Process-level learnings are captured as lessons (`IMPL-NNN`) in `.orqa/learning/lessons/`:
 
 1. **Process changes** (new rule, new agent, workflow change, governance update) — the `orchestrator` creates or updates a lesson
 2. **Ineffective rules** (violations continue despite the rule) — the `orchestrator` creates a lesson and proposes stronger enforcement
-3. **Session start** — the orchestrator checks `.orqa/process/lessons/` for known patterns and recurring issues
+3. **Session start** — the orchestrator checks `.orqa/learning/lessons/` for known patterns and recurring issues
 
 ## Promotion Pipeline
 
@@ -79,7 +83,7 @@ All review agents (`code-reviewer`, `qa-tester`, `ux-reviewer`) MUST include a "
 
 - Any new IMPL entries added during this review
 - Any recurrence updates to existing IMPL entries
-- Confirmation that `.orqa/process/lessons/` was checked for known patterns
+- Confirmation that `.orqa/learning/lessons/` was checked for known patterns
 
 ## Lesson Status Vocabulary
 
@@ -101,7 +105,7 @@ Review agents that skip lesson documentation are in violation of this rule. The 
 
 In OrqaStudio, the lesson pipeline (create, recurrence tracking, promotion) is managed through the UI. The app provides a lessons view where users can browse, filter, and promote lessons. Recurrence counts are updated automatically when the app detects matching failure patterns. Promotion to rules or coding standards is initiated from the UI and routed to the `orchestrator` for execution.
 
-In the CLI, agents create lesson files manually in `.orqa/process/lessons/` following the YAML frontmatter format, and the `orchestrator` handles promotion through the standard governance audit process.
+In the CLI, agents create lesson files manually in `.orqa/learning/lessons/` following the YAML frontmatter format, and the `orchestrator` handles promotion through the standard governance audit process.
 
 ## Related Rules
 

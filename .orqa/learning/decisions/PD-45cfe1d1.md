@@ -3,9 +3,9 @@ id: "PD-45cfe1d1"
 type: principle-decision
 title: "Config-Driven Artifact Scanning"
 description: "The artifact scanner reads paths from project.json config, not hardcoded constants. Directories are walked recursively like a file explorer. Frontmatter title is used for display labels.\n"
-status: completed
+status: archived
 created: "2026-03-08"
-updated: "2026-03-13"
+updated: "2026-04-13"
 relationships:
   - target: "EPIC-2f1efbd5"
     type: "drives"

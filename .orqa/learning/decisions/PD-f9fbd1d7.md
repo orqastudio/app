@@ -3,9 +3,9 @@ id: "PD-f9fbd1d7"
 type: principle-decision
 title: "Filesystem-Driven Doc Browsing"
 description: "Documentation browsing is project-scoped and filesystem-driven. Doc tree built dynamically from project directory scanning."
-status: completed
+status: archived
 created: "2026-03-03"
-updated: "2026-03-13"
+updated: "2026-04-13"
 relationships:
   - type: drives
     target: EPIC-4d60940b

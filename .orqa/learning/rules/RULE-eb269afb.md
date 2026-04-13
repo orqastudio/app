@@ -3,9 +3,9 @@ id: "RULE-eb269afb"
 type: rule
 title: "Reusable Components"
 description: "Check shared component library before creating new UI elements. Use EmptyState, LoadingSpinner, ErrorDisplay, etc."
-status: "active"
+status: active
 created: "2026-03-07"
-updated: "2026-03-11"
+updated: "2026-04-13"
 enforcement:
   - mechanism: behavioral
     message: "Check shared component library before creating new UI elements; code reviewer rejects inline empty states, spinners, and error displays when shared components exist"

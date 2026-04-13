@@ -3,9 +3,9 @@ id: PD-4e7faf0e
 type: principle-decision
 title: IPC Boundary Design
 description: Tauri invoke() commands are the only frontend-backend communication channel. Streaming clarified by PD-39e2fb81.
-status: completed
+status: archived
 created: 2026-03-02
-updated: 2026-03-13
+updated: 2026-04-13
 relationships:
   - type: drives
     target: EPIC-347a8c3d

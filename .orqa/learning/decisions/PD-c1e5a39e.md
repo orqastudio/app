@@ -3,9 +3,9 @@ id: PD-c1e5a39e
 type: principle-decision
 title: "Three-Tier Skill Loading — Agent, Orchestrator, Wrapper"
 description: "Skills are loaded at three tiers: portable skills on agent definitions, project-specific skills injected by the orchestrator at task creation, and wrapper skills that resolve context-dependent implementations at load time.\n"
-status: completed
+status: archived
 created: 2026-03-09
-updated: 2026-03-13
+updated: 2026-04-13
 relationships:
   - target: EPIC-42a5330b
     type: drives
