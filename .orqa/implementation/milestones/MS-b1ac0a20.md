@@ -5,7 +5,7 @@ title: "Dogfooding"
 description: "OrqaStudio is usable as a daily workspace for building OrqaStudio itself. A waypoint on the path to MVP (MS-21d5096a), not a separate destination. Completing this milestone means the app is stable enough to develop itself."
 status: active
 created: 2026-03-07T00:00:00.000Z
-updated: 2026-04-12T00:00:00.000Z
+updated: 2026-04-13T00:00:00.000Z
 gate: "Can we use this app instead of the terminal for governance management, conversation debugging, and structured thinking about the project?"
 relationships: []
 ---
@@ -63,6 +63,19 @@ This milestone is a waypoint on the path to MS-21d5096a (MVP — Public Beta). I
 | [EPIC-c1833545](EPIC-c1833545) | Composability Refactoring | draft |
 | [EPIC-e24086ed](EPIC-e24086ed) | Code Quality Audit | draft |
 | [EPIC-e7deeac7](EPIC-e7deeac7) | Frontend Test Suite | draft |
+| [EPIC-9e3d320b](EPIC-9e3d320b) | Port Allocation Standardisation and CLI Process Ownership | active |
+| [EPIC-c96c9f12](EPIC-c96c9f12) | UAT Round 3 | active |
+| [EPIC-f7055984](EPIC-f7055984) | Dashboard & Artifact Viewer UAT Fixes | active |
+| [EPIC-0497a1be](EPIC-0497a1be) | Business Logic Deduplication — Daemon Delegation Model | review |
+| [EPIC-11824d67](EPIC-11824d67) | Clean Up Tools, Scripts, and Githooks | captured |
+| [EPIC-4e9696fa](EPIC-4e9696fa) | System Tray for Daemon Lifecycle | captured |
+| [EPIC-5b353057](EPIC-5b353057) | Connector as Thin Adapter | captured |
+| [EPIC-d1d42012](EPIC-d1d42012) | Artifact ID Migration + Mandatory Skill Documentation | captured |
+| [EPIC-f0d70262](EPIC-f0d70262) | Centralised Logger Library | captured |
+| [EPIC-fdcdb958](EPIC-fdcdb958) | Skills→Knowledge Rename and Connector Architecture Alignment | ready |
+| [EPIC-a1b2c3d4](EPIC-a1b2c3d4) | OrqaDev: Comprehensive Logging & Developer Tools | captured |
+| [EPIC-1f0fcb54](EPIC-1f0fcb54) | Semantic Layout Lego Blocks | delivered |
+| [EPIC-b3c2e8f5](EPIC-b3c2e8f5) | Devtools Evolution — Grouped Issue Monitoring | captured |
 
 ### P3 — Polish
 

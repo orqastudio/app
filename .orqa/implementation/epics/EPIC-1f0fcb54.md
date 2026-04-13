@@ -6,12 +6,15 @@ description: "Remove all visual escape hatches (padding, border, background, rou
 status: delivered
 priority: P0
 created: "2026-04-05"
-updated: "2026-04-06"
+updated: "2026-04-13"
 horizon: active
 relationships:
   - target: "PILLAR-c9e0a695"
     type: "grounded"
     rationale: "Clarity Through Structure — a locked-down component API enforces visual consistency and makes it impossible for AI agents or developers to create inconsistent UI."
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
+    rationale: "Semantic component lockdown enables consistent plugin and devtools UI during dogfooding"
 ---
 
 # Semantic Layout Lego Blocks

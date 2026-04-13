@@ -6,7 +6,7 @@ description: "Evolve the OrqaStudio devtools from a raw log firehose into a Musc
 status: captured
 priority: P1
 created: "2026-04-05"
-updated: "2026-04-05"
+updated: "2026-04-13"
 horizon: next
 relationships:
   - target: "PILLAR-c9e0a695"
@@ -18,6 +18,9 @@ relationships:
   - target: "EPIC-1f0fcb54"
     type: "depends-on"
     rationale: "Semantic lego blocks must be in place — all new views use ORQA components only, no raw HTML."
+  - target: "MS-b1ac0a20"
+    type: "fulfils"
+    rationale: "Advanced devtools monitoring belongs to dogfooding milestone — depends on OrqaDev app (EPIC-a1b2c3d4)"
 ---
 
 # Devtools Evolution — Grouped Issue Monitoring

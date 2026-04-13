@@ -3,9 +3,9 @@ id: "EPIC-c2be0ef4"
 type: epic
 title: "Inference-time decision tree: self-navigating knowledge discovery"
 description: "Implement the self-navigating knowledge discovery model. Replace pre-injection with a reasoning protocol that agents work through to find their own knowledge. Create the decision tree as a governance artifact, update the hook to inject it, and make it plugin-extensible."
-status: review
+status: archived
 created: 2026-03-21T00:00:00.000Z
-updated: 2026-03-21T00:00:00.000Z
+updated: 2026-04-13T00:00:00.000Z
 relationships:
   - target: "MS-b1ac0a20"
     type: "fulfils"

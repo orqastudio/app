@@ -3,9 +3,9 @@ id: "EPIC-fb1822c2"
 type: epic
 title: "Connector architecture v2: service extraction, semantic knowledge injection, graph-first enforcement"
 description: "Extract MCP/LSP/ONNX into standalone libraries that run independently in dev mode. Replace keyword-based INTENT_MAP with semantic search for knowledge injection. Enforce artifact graph usage. Enable plugin specialist agents. Add hook telemetry and bash safety."
-status: review
+status: archived
 created: 2026-03-20T00:00:00.000Z
-updated: 2026-03-20T00:00:00.000Z
+updated: 2026-04-13T00:00:00.000Z
 relationships:
   - target: "MS-b1ac0a20"
     type: "fulfils"
