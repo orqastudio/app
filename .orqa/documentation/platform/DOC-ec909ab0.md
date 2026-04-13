@@ -7,7 +7,7 @@ domain: reference
 category: reference
 description: "Definitions, parameters, and execution model for tools available to the AI agent within OrqaStudio sessions."
 created: 2026-03-02
-updated: 2026-03-10
+updated: 2026-04-13
 sort: 16
 relationships:
   - target: PD-d01b9e0a
@@ -18,7 +18,7 @@ relationships:
 
 **Date:** 2026-03-02 | **References:** [PD-e4a3b5da](PD-e4a3b5da), [PD-d01b9e0a](PD-d01b9e0a)
 
-This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `app/src-tauri/src/domain/tool_executor.rs` and registered in the sidecar's in-process MCP server (`app/src-tauri/src/sidecar/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
+This document defines the 10 tools that OrqaStudio exposes to the Claude Agent SDK. Tools are implemented in Rust in `engine/streaming/src/tools.rs` and registered in the sidecar (`sidecars/claude-agent-sdk/sidecar/src/providers/claude-agent.ts`). Tool names use no prefix — the agent sees them as `read_file`, `write_file`, etc.
 
 ---
 
@@ -255,7 +255,7 @@ Load the full content of a project skill document by name.
 | ----------- | ------ | ---------- | ------------- |
 | `name` | string | Yes | Knowledge name (e.g. `rust-async-patterns`). Must not contain path separators. |
 
-**Behaviour:** Reads `.orqa/knowledge/{name}/KNOW.md` from the project root. Returns the file contents on success. Returns an error if the knowledge name contains `/`, `\`, or `..`, or if the file does not exist.
+**Behaviour:** Reads `.orqa/documentation/knowledge/{name}.md` from the project root. Returns the file contents on success. Returns an error if the knowledge name contains `/`, `\`, or `..`, or if the file does not exist.
 
 **Read-only:** Yes — auto-approved without user interaction.
 

@@ -2,9 +2,11 @@
 id: DOC-7b9b45f0
 type: doc
 title: Schema Validation Reference
+description: How OrqaStudio validates the artifact graph using schema-driven rules from core.json and plugin manifests.
 domain: reference
 category: reference
 status: active
+updated: 2026-04-13
 relationships:
   - target: KNOW-2bf2b321
     type: synchronised-with
@@ -102,5 +104,5 @@ Then both validators pick it up automatically. No code changes needed.
 | Platform types + relationships | `libs/types/src/platform/core.json` |
 | Plugin types + relationships | `plugins/{name}/orqa-plugin.json` |
 | TypeScript type definitions | `libs/types/src/plugin.ts` (RelationshipType, RelationshipConstraints, etc.) |
-| Validator (CLI) | `libs/cli/src/validator/` |
-| Validator (Rust) | `app/app/src-tauri/src/domain/artifact_graph.rs` |
+| Validator (CLI) | `cli/src/lib/validation-engine.ts` |
+| Validator (Rust) | `app/src-tauri/src/domain/artifact_graph.rs` |

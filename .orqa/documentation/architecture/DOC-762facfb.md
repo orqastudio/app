@@ -35,6 +35,7 @@ orqastudio-dev/
     lesson/                     # Lesson store, promotion pipeline
     project/                    # Project scanning, settings, governance counts
     validation/                 # Integrity checks, graph construction
+    storage/                    # SeaORM-based SQLite repository layer — entity models and repositories for projects, sessions, messages, settings, themes, violations, health snapshots, devtools sessions/events, and issue groups
     mcp-server/                 # MCP protocol server (Rust)
     lsp-server/                 # LSP protocol server (Rust)
     core/                       # Thin facade -- re-exports all engine crates

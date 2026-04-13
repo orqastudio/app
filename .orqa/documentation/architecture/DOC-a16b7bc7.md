@@ -7,7 +7,7 @@ description: "How OrqaStudio tracks whether demoted rules are safe to delete: th
 category: governance
 status: active
 created: 2026-03-24
-updated: 2026-03-24
+updated: 2026-04-13
 relationships:
   - target: KNOW-a16b7bc7
     type: synchronised-with
@@ -50,7 +50,7 @@ stability_count: 0
 
 ### 2. Violation Logging
 
-The pre-commit hook (`plugins/githooks/hooks/pre-commit`) logs every validation failure to `.state/precommit-violations.jsonl`. Each entry records:
+The pre-commit hook (`.githooks/pre-commit`) logs every validation failure to `.state/precommit-violations.jsonl`. Each entry records:
 
 - **timestamp** — when the violation occurred
 - **violation_type** — which check failed (e.g., `orqa-enforce`, `frontmatter-schema`)
@@ -62,7 +62,7 @@ This log is append-only and persists across sessions (it lives in `.state/`, whi
 
 ### 3. Session Start Stability Check
 
-At every session start, the stability tracker (`connectors/claude-code/hooks/scripts/stability-check.mjs`) runs automatically. For each demoted rule, it:
+At every session start, the stability tracker (`connectors/claude-code/src/scripts/session-start.ts`) runs automatically. For each demoted rule, it:
 
 1. **Checks** the violation log for entries matching the rule's enforcement domain
 2. **Resets** the counter to 0 if any matching violations are found
@@ -113,8 +113,8 @@ Day 16:  User confirms deletion — rule file removed
 
 | File | Purpose |
 | ------ | --------- |
-| `connectors/claude-code/hooks/scripts/stability-check.mjs` | Session-start stability tracker |
-| `plugins/githooks/hooks/pre-commit` | Violation logging (appends to JSONL) |
+| `connectors/claude-code/src/scripts/session-start.ts` | Session-start stability tracker |
+| `.githooks/pre-commit` | Violation logging (appends to JSONL) |
 | `.state/precommit-violations.jsonl` | Append-only violation log |
 | `plugins/agile-methodology/orqa-plugin.json` | Rule schema with demotion fields |
 

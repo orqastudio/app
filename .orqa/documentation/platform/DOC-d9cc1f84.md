@@ -7,7 +7,7 @@ domain: architecture
 category: architecture
 description: How the orchestrator coordinates work across specialized agents using delegation and verification.
 created: 2026-03-02
-updated: 2026-03-12
+updated: 2026-04-13
 sort: 20
 relationships:
   - target: PD-48b310f9
@@ -42,19 +42,26 @@ The orchestrator is the **process coordinator** of the agentic team. It:
 - Coordinates, delegates, and gates -- it does NOT implement
 - Reads task artifacts in `.orqa/implementation/tasks/` at session start to understand current priorities
 - Checks session state from `.state/session-state.md` if resuming
-- Creates a git worktree for each task before delegating it
+- Creates a named team (TeamCreate) before spawning any agents
+- Creates tasks within the team (TaskCreate) for tracking
+- Delegates all implementation to background agents (Agent, `run_in_background: true`)
+- Reads findings from `.state/` files — does NOT accumulate agent output in context
 - Verifies the Definition of Ready before delegating any task
-- Merges completed worktrees to main after review approval
+- Spawns a separate Reviewer agent after each implementation is complete
+- Accepts task completion only on Reviewer PASS verdict
+- Commits completed work and cleans up the team (TeamDelete)
 - Verifies the Definition of Done before reporting task complete
-- Runs `cargo build && npm run build` after merges to verify integration
+- Runs `cargo build && npm run build` after commits to verify integration
 
 ```mermaid
 graph TD
     User --> Orch["Orchestrator<br/>(Main session)"]
-    Orch -->|"Task tool"| Agent["Specialized Agent<br/>(Subagent)"]
-    Agent -->|"Implements, tests, commits"| Review["Review Gate<br/>(code-reviewer -> qa-tester -> ux-reviewer)"]
-    Review -->|"PASS"| Orch
-    Orch -->|"git merge"| Main["main branch"]
+    Orch -->|"TeamCreate + TaskCreate"| Team["Named Team"]
+    Team -->|"Agent (background)"| Impl["Implementer Agent"]
+    Impl -->|"writes findings to .state/"| Orch
+    Orch -->|"Agent (background)"| Rev["Reviewer Agent"]
+    Rev -->|"PASS/FAIL verdict"| Orch
+    Orch -->|"PASS: commit + TeamDelete"| Main["main branch"]
     Main -->|"cargo build && npm run build"| Verify["Post-merge verification"]
 ```
 
@@ -65,8 +72,9 @@ graph TD
 - Read large files directly -- delegates reading to subagents or uses context-aware search (`orqa-code-search`)
 - Run verbose commands whose output fills context -- uses `--short`/`--oneline` flags
 - Iterate on implementation -- the full edit-test-fix cycle belongs in the subagent
-- Work directly on main -- every change goes through a worktree
-- Self-certify task completion -- always passes through review gates
+- Implement code, write files, or edit source directly -- all work goes to background agents
+- Self-certify task completion -- always spawns a Reviewer agent for independent verification
+- Accumulate agent output in context -- reads structured summaries from `.state/` findings files only
 
 ---
 
@@ -82,7 +90,7 @@ The orchestrator's context window is finite. Filling it causes session death.
 4. **One task at a time** -- Complete, merge, clean up, THEN start the next.
 5. **Monitor context usage** -- After every 3-4 tool calls, assess whether context is growing too fast.
 6. **Subagents for iteration** -- If a task requires multiple rounds of edit-test-fix, delegate the ENTIRE cycle.
-7. **Commit and clear** -- After merging a worktree, summarize in 1-2 sentences and move on.
+7. **Commit and clear** -- After the Reviewer returns a PASS verdict, commit all changes and run TeamDelete to clean up the team. Summarise completed work in 1-2 sentences in session state.
 
 > [!IMPORTANT]
 > FAILURE TO MANAGE CONTEXT = SESSION DEATH. This is non-negotiable.
@@ -133,30 +141,34 @@ All agents are universal roles (see [PD-48b310f9](PD-48b310f9)). Agent definitio
 Every task follows this lifecycle without exception:
 
 1. **Session start** -- Read task artifacts in `.orqa/implementation/tasks/`, check `.state/session-state.md`, check `git stash list`, check `git status --short`
-2. **Definition of Ready check** -- Verify all DoR items before delegating (Definition of Ready)
-3. **Worktree creation** -- `git worktree add ../orqa-<task> -b <agent>/<task>`
-4. **Subagent dispatch** -- Task tool with `subagent_type` to the correct agent
-5. **Subagent implements** -- Skills loaded, code search research, implementation, quality checks, commit
-6. **Review gate** -- `code-reviewer` then `qa-tester` then `ux-reviewer` (if UI-facing)
-7. **Definition of Done verification** -- All DoD items satisfied (Definition of Done)
-8. **Merge** -- `cd ../orqa && git merge <branch>`
-9. **Cleanup** -- Kill background processes, `git branch -d <branch>`, `git worktree remove ../orqa-<task>`
-10. **Post-merge verification** -- `cargo build && npm run build`
-11. **Mark complete** -- Update task artifact in `.orqa/implementation/tasks/` to `status: done`
+2. **Team setup** -- `TeamCreate` to create a named team; `TaskCreate` for each task to track
+3. **Definition of Ready check** -- Verify all DoR items before delegating (Definition of Ready)
+4. **Agent dispatch** -- `Agent` tool with `run_in_background: true`, `team_name`, and `subagent_type`; provide structured task prompt with findings file path
+5. **Agent implements** -- Skills loaded, code search research, implementation, quality checks; writes findings to `.state/team/<name>/task-<id>.md`
+6. **TaskUpdate** -- Agent marks task complete (or failed) via TaskUpdate
+7. **Orchestrator reads findings** -- Reads the findings file; does NOT read agent messages directly
+8. **Reviewer agent** -- Orchestrator spawns a separate Reviewer agent to verify acceptance criteria with evidence; Reviewer writes PASS/FAIL verdict to its own findings file
+9. **Definition of Done verification** -- All DoD items satisfied (Definition of Done)
+10. **Accept or fix** -- On PASS: proceed to commit. On FAIL: delegate fix to implementer, re-review
+11. **Commit** -- Orchestrator commits all changes with a meaningful commit message
+12. **Cleanup** -- `TeamDelete` to remove the team
+13. **Post-commit verification** -- `cargo build && npm run build`
+14. **Mark complete** -- Update task artifact in `.orqa/implementation/tasks/` to `status: done`
 
 ---
 
 ## Verification Gate Protocol
 
-The orchestrator MUST NOT mark a task complete without all three reviewers passing.
+The orchestrator MUST NOT mark a task complete without a Reviewer PASS verdict. Self-assessment is not review.
 
-| Gate | Agent | Checks |
+| Step | Who | What |
 | ------ | ------- | -------- |
-| 1 | `code-reviewer` | clippy/rustfmt/ESLint/svelte-check zero errors, no stubs, 80%+ coverage, doc compliance, all layers complete |
-| 2 | `qa-tester` | End-to-end functional correctness, smoke test -- "would it work right now?" |
-| 3 | `ux-reviewer` | Labels match UI specs, all states handled, shared components, no jargon (if UI-facing) |
+| 1 | Implementer | Writes findings to `.state/team/<name>/task-<id>.md` with work done and evidence |
+| 2 | Orchestrator | Reads findings file; spawns a Reviewer agent with the task ACs and the findings file path |
+| 3 | Reviewer | Verifies each AC with evidence from the actual code/artifacts; produces PASS or FAIL verdict |
+| 4 | Orchestrator | Reads Reviewer verdict; accepts on PASS, delegates fix on FAIL |
 
-Each reviewer produces a PASS/FAIL verdict with evidence. On FAIL, the implementing agent fixes and resubmits -- the reviewer re-audits before PASS can be issued.
+The Reviewer does NOT fix issues. It reports specifically which ACs passed and which failed with evidence. On FAIL, the orchestrator delegates the fix back to the implementer, then spawns a fresh Reviewer to re-verify.
 
 ---
 
@@ -167,9 +179,8 @@ Each reviewer produces a PASS/FAIL verdict with evidence. On FAIL, the implement
 [ ] Check .state/session-state.md -- resume context from prior session
 [ ] git stash list -- investigate any stashes (commit or drop)
 [ ] git status --short -- commit any untracked/modified files before starting
-[ ] git worktree list -- verify no stale worktrees from prior sessions
 [ ] Load orqa-code-search, composability, and planning skills
-[ ] Check .orqa/process/lessons/ for known patterns and recurring issues
+[ ] Check .orqa/learning/lessons/ for known patterns and recurring issues
 ```
 
 ---

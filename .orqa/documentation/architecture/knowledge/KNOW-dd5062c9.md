@@ -3,7 +3,7 @@ id: KNOW-dd5062c9
 type: knowledge
 status: active
 title: "Shared Validation Engine"
-description: "One validation engine in libs/validation/ consumed by three adapters (LSP, CLI, pre-commit) — schema-driven, plugin-aware, foundation for all artifact quality enforcement"
+description: "One validation engine in engine/validation/ consumed by three adapters (LSP, CLI, pre-commit) — schema-driven, plugin-aware, foundation for all artifact quality enforcement"
 tier: always
 created: 2026-03-29
 roles: [implementer, reviewer, governance-steward]
@@ -24,7 +24,7 @@ OrqaStudio has **one validation engine** used by three consumers. All artifact v
 Plugin schema.json files
         │
         ▼
-  Shared validation engine (engine/validation/ or libs/validation/)
+  Shared validation engine (engine/validation/ or engine/validation/)
         │
    ┌────┴────┬────────┐
    ▼         ▼        ▼

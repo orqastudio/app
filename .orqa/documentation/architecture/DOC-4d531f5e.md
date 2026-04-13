@@ -14,6 +14,8 @@ relationships:
     target: DOC-62969bc3
 ---
 
+> **Post-MVP scope:** Connector generation is post-MVP per PLAN-mvp.md. The connector framework architecture is built in the MVP; generating output for third-party tools (Claude Code plugin, Cursor rules, Copilot instructions) comes after the first public beta.
+
 # Connector Architecture
 
 > This is part of the OrqaStudio Architecture Reference.

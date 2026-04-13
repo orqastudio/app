@@ -121,5 +121,3 @@ Ensure the knowledge artifact has a descriptive `title` and `description` in its
 ## Related Documents
 
 - [KNOW-586bfa9a](KNOW-586bfa9a) — Agent-facing knowledge pair for this documentation page
-- [DOC-8d2e5eef](DOC-8d2e5eef) — Agent Team Structure (which agents have which declared knowledge)
-- [DOC-7068f40a](DOC-7068f40a) — Documentation Placement Guide (where to write knowledge artifacts)

@@ -7,7 +7,7 @@ description: "The user wants something investigated, explored, or understood —
 category: platform
 status: active
 created: 2026-03-21
-updated: 2026-03-21
+updated: 2026-04-13
 relationships:
   - target: KNOW-36befd20
     type: synchronised-with
@@ -66,5 +66,5 @@ When the research reveals a pattern or anti-pattern, the output may route to **L
 ## Governance
 
 - RULE-005 (search over grep) applies — semantic search before file-level grep
-- Research artifacts live in `.orqa/process/research/` with `type: research`
+- Research artifacts live in `.orqa/discovery/research/` with `type: research`
 - Findings documents reference their sources using the structured sources format

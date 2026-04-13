@@ -7,7 +7,7 @@ description: "The user wants something built, fixed, added, or refactored — ha
 category: platform
 status: active
 created: 2026-03-21
-updated: 2026-03-21
+updated: 2026-04-13
 relationships:
   - target: KNOW-f7fb7aa7
     type: synchronised-with
@@ -67,6 +67,6 @@ Implementation Mode never self-certifies. After the implementer finishes, the or
 
 ## Governance
 
-- RULE-006 (coding standards) applies to all implementation work
-- RULE-010 (end-to-end completeness) applies to any feature touching the IPC boundary
-- RULE-020 (no stubs) applies universally — real implementations only
+- Coding standards apply to all implementation work
+- End-to-end completeness applies to any feature touching the IPC boundary: Rust command, IPC types, Svelte component, and store binding must all be committed together
+- No stubs allowed universally — real implementations only

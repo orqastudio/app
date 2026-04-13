@@ -84,6 +84,7 @@ common case.
 #### GET /health
 
 Response:
+
 ```json
 {
   "status": "ok",
@@ -118,6 +119,7 @@ Response:
 Request: `{}` (empty body)
 
 Response:
+
 ```json
 {
   "status": "reloaded",
@@ -152,6 +154,7 @@ Core artifact CRUD and graph operations.
 #### GET /artifacts
 
 Query parameters:
+
 - `type` — filter by artifact type (e.g. `epic`, `task`, `rule`)
 - `status` — filter by status (e.g. `active`, `draft`, `in-progress`)
 - `search` — full-text search across title, description, body
@@ -189,6 +192,7 @@ Response: single `ArtifactNode` or 404.
 #### GET /artifacts/:id/content
 
 Response:
+
 ```json
 {
   "content": "---\nid: EPIC-048\n...\n---\n\n# Body markdown"
@@ -198,6 +202,7 @@ Response:
 #### POST /artifacts
 
 Request:
+
 ```json
 {
   "type": "task",
@@ -211,6 +216,7 @@ Request:
 ```
 
 Response (201):
+
 ```json
 {
   "id": "TASK-1a2b3c4d",
@@ -221,6 +227,7 @@ Response (201):
 #### PUT /artifacts/:id
 
 Request:
+
 ```json
 {
   "field": "status",
@@ -229,6 +236,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "id": "EPIC-048",
@@ -245,6 +253,7 @@ Response: `204 No Content`
 #### GET /artifacts/:id/traceability
 
 Response:
+
 ```json
 {
   "artifact_id": "EPIC-048",
@@ -259,6 +268,7 @@ Response:
 #### GET /artifacts/:id/impact
 
 Response:
+
 ```json
 {
   "id": "EPIC-048",
@@ -279,6 +289,7 @@ Response:
 | GET | `/artifacts/tree` | Scan the navigation tree from schema.composed.json | `artifact` (artifact_entries_from_schema, reader) |
 
 Response:
+
 ```json
 {
   "groups": [
@@ -310,6 +321,7 @@ Graph-level analytics and statistics.
 #### GET /graph/stats
 
 Response:
+
 ```json
 {
   "node_count": 247,
@@ -322,6 +334,7 @@ Response:
 #### GET /graph/health
 
 Response:
+
 ```json
 {
   "connected_components": 2,
@@ -338,6 +351,7 @@ Response:
 Query parameters: `limit` (default 50)
 
 Response:
+
 ```json
 [
   {
@@ -356,6 +370,7 @@ Response:
 #### POST /graph/health/snapshots
 
 Request:
+
 ```json
 {
   "error_count": 3,
@@ -384,6 +399,7 @@ Response (201): the created snapshot object.
 Request: `{}` (empty body, uses cached graph)
 
 Response:
+
 ```json
 {
   "checks": [
@@ -403,6 +419,7 @@ Response:
 #### POST /validation/fix
 
 Request:
+
 ```json
 {
   "fix": true
@@ -410,6 +427,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "checks": [ ],
@@ -430,6 +448,7 @@ Response:
 #### POST /validation/hook
 
 Request:
+
 ```json
 {
   "event": "PreToolUse",
@@ -442,6 +461,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "allowed": true,
@@ -464,6 +484,7 @@ Response:
 #### GET /enforcement/rules
 
 Response:
+
 ```json
 [
   {
@@ -481,6 +502,7 @@ Response:
 #### POST /enforcement/scan
 
 Response:
+
 ```json
 {
   "rules": [ ],
@@ -505,6 +527,7 @@ Response:
 #### POST /search/regex
 
 Request:
+
 ```json
 {
   "pattern": "fn main",
@@ -514,6 +537,7 @@ Request:
 ```
 
 Response:
+
 ```json
 [
   {
@@ -528,6 +552,7 @@ Response:
 #### POST /search/semantic
 
 Request:
+
 ```json
 {
   "query": "artifact graph construction",
@@ -540,6 +565,7 @@ Response: same shape as regex search, with cosine similarity scores.
 #### GET /search/status
 
 Response:
+
 ```json
 {
   "is_indexed": true,
@@ -561,6 +587,7 @@ Response:
 #### GET /workflow/transitions
 
 Response:
+
 ```json
 [
   {
@@ -577,6 +604,7 @@ Response:
 #### POST /workflow/transitions/apply
 
 Request:
+
 ```json
 {
   "artifact_id": "TASK-001",
@@ -585,6 +613,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "artifact_id": "TASK-001",
@@ -607,6 +636,7 @@ Response:
 #### POST /prompt/generate
 
 Request:
+
 ```json
 {
   "message": "implement the login flow",
@@ -616,6 +646,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "prompt": "<system prompt text>",
@@ -632,6 +663,7 @@ Response:
 #### POST /prompt/knowledge
 
 Request:
+
 ```json
 {
   "agent_prompt": "You are an Implementer. Fix the login bug in...",
@@ -640,6 +672,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "entries": [
@@ -664,6 +697,7 @@ Response:
 #### POST /prompt/context
 
 Request:
+
 ```json
 {
   "project_path": "/path/to/project"
@@ -671,6 +705,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "rule_titles": ["No stubs or placeholders", "Always test before commit"],
@@ -681,6 +716,7 @@ Response:
 #### POST /prompt/compact-context
 
 Request:
+
 ```json
 {
   "project_path": "/path/to/project"
@@ -688,6 +724,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "context_document": "# Governance Context (saved before compaction)\n...",
@@ -713,6 +750,7 @@ Response:
 #### GET /plugins
 
 Response:
+
 ```json
 [
   {
@@ -728,6 +766,7 @@ Response:
 #### POST /plugins/install/local
 
 Request:
+
 ```json
 {
   "path": "/path/to/local/plugin"
@@ -735,6 +774,7 @@ Request:
 ```
 
 Response (201):
+
 ```json
 {
   "name": "my-plugin",
@@ -746,6 +786,7 @@ Response (201):
 #### POST /plugins/install/github
 
 Request:
+
 ```json
 {
   "repo": "orqastudio/plugin-software",
@@ -767,11 +808,12 @@ Response (201): same shape as local install.
 #### GET /agents/:role
 
 Response:
+
 ```json
 {
   "role": "orchestrator",
   "preamble": "You are the orchestrator...",
-  "file_path": ".orqa/process/agents/orchestrator.md"
+  "file_path": ".orqa/documentation/architecture/DOC-b951327c.md"
 }
 ```
 
@@ -788,6 +830,7 @@ Knowledge artifact loading for the prompt pipeline.
 #### GET /content/knowledge/:key
 
 Response:
+
 ```json
 {
   "key": "domain-services",
@@ -809,6 +852,7 @@ Response:
 #### GET /lessons
 
 Response:
+
 ```json
 [
   {
@@ -829,6 +873,7 @@ Response:
 #### POST /lessons
 
 Request:
+
 ```json
 {
   "title": "New Lesson",
@@ -876,6 +921,7 @@ Query parameters for `GET /sessions`: `project_id`, `status`
 #### POST /projects/scan
 
 Response:
+
 ```json
 {
   "languages": ["rust", "typescript", "svelte"],
@@ -897,6 +943,7 @@ Response:
 | POST | `/session-start` | Structured startup checks for connector sessions | daemon session_start logic |
 
 Response:
+
 ```json
 {
   "checks": [
@@ -979,6 +1026,7 @@ Response:
 #### GET /events
 
 Query parameters:
+
 - `level` — filter by severity (debug, info, warn, error, perf)
 - `source` — filter by source (daemon, app, frontend, mcp, lsp, etc.)
 - `category` — filter by category
@@ -988,6 +1036,7 @@ Query parameters:
 - `session_id` — filter by agent session
 
 Response:
+
 ```json
 {
   "events": [
@@ -1009,6 +1058,7 @@ Response:
 #### POST /events
 
 Request (batch):
+
 ```json
 [
   {
@@ -1028,7 +1078,7 @@ Response: `204 No Content`
 
 Each event is delivered as an SSE `data` field containing a JSON `LogEvent`:
 
-```
+```text
 data: {"id":42,"timestamp":1711929600000,"level":"info","source":"daemon","category":"health","message":"graph reloaded","metadata":{},"session_id":null}
 
 data: {"id":43,...}
@@ -1078,7 +1128,7 @@ Three endpoints emit Server-Sent Events for real-time updates:
 
 Emits events when the file watcher detects changes in `.orqa/`:
 
-```
+```text
 event: artifact-changed
 data: {"path":".orqa/implementation/tasks/TASK-001.md","event_type":"modified"}
 
@@ -1090,7 +1140,7 @@ data: {"reason":"artifact-changed","timestamp":1711929600000}
 
 Emits events when auto-transitions are applied or manual transitions are proposed:
 
-```
+```text
 event: transition-applied
 data: {"artifact_id":"TASK-001","old_status":"blocked","new_status":"active","reason":"dependencies resolved"}
 

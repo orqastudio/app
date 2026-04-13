@@ -41,7 +41,7 @@ The fastest enforcement layer. The LSP mode (`orqa lsp`) validates artifact file
 - Mechanical and deterministic — the same input always produces the same diagnostic
 - Driven by plugin `schema.json` files — no hardcoded rules
 - Zero latency feedback — errors appear as you type
-- Uses the shared validation engine (`libs/validation/`)
+- Uses the shared validation engine (`engine/validation/`)
 
 ### Layer 2: Behavioral Rules (Prompt Injection)
 

@@ -136,7 +136,7 @@ The validation engine reads these schemas. It never hardcodes valid values. Addi
 
 ### Three Consumers, One Engine
 
-The shared validation engine (`libs/validation/`) is consumed by three adapters:
+The shared validation engine (`engine/validation/`) is consumed by three adapters:
 
 | Consumer | When | Response |
 | ---------- | ------ | ---------- |
@@ -287,9 +287,9 @@ This detects both plugin updates and user local edits, and merges them intellige
 
 | Content Type | Source | Installed To |
 | ------------- | -------- | ------------- |
-| Agents | `plugins/<name>/agents/` | `.orqa/process/agents/` |
-| Knowledge | `plugins/<name>/knowledge/` | `.orqa/process/knowledge/` |
-| Rules | `plugins/<name>/rules/` | `.orqa/process/rules/` |
+| Agents | `plugins/<name>/agents/` | `.orqa/documentation/` |
+| Knowledge | `plugins/<name>/knowledge/` | `.orqa/learning/` |
+| Rules | `plugins/<name>/rules/` | `.orqa/learning/rules/` |
 | Docs | `plugins/<name>/docs/` | `.orqa/documentation/` |
 | Schemas | `orqa-plugin.json` provides.schemas | Used by validation engine |
 | Relationships | `orqa-plugin.json` provides.relationships | Used by validation engine |

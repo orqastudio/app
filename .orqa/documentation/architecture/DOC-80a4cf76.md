@@ -47,3 +47,6 @@ relationships:
 | Summary generation | Author writes summaries. `orqa summarize` generates drafts. | PD-1ef9f57c |
 | Relationship storage | Forward-only. Task stores `delivers: epic`; graph computes inverses. | CLAUDE.md |
 | Session state | `.state/` not `tmp/`. Operational data, not disposable. | PD-8727f99a |
+| P7 revised — resolved workflow is a record | SurrealDB replaces file-based workflow resolution. Resolved workflow is a deterministic SurrealDB record, exportable via `orqa export`. "Resolved Workflow Is a File on Disk" is retired. Active. 2026-04-12. | This document |
+| SurrealDB as source of truth for artifact storage | Markdown-scan into HashMap replaced by SurrealDB with native graph traversals, typed edges, and real graph queries. Enables artifact browser, ancestry traversal, cycle detection, and health metrics. Active. 2026-04-12. | This document |
+| rusqlite → SeaORM migration | SeaORM provides type-safe migrations, entity models, and better ergonomics for the SQLite operational data layer. Migration complete; SeaORM is now the ORM for all SQLite data. Complete. 2026-03-19. | This document |

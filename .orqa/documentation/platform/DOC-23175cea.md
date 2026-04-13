@@ -7,7 +7,7 @@ domain: reference
 category: reference
 description: Catalog of all Tauri IPC commands defining the frontend-backend communication contract.
 created: 2026-03-02
-updated: 2026-03-10
+updated: 2026-04-13
 sort: 1
 relationships:
   - target: PD-39e2fb81
@@ -19,6 +19,8 @@ relationships:
   - target: EPIC-d45b4dfd
     type: documents
 ---
+
+**Scope:** This document covers Tauri IPC commands — `invoke()` calls from the frontend (SvelteKit) to the Tauri backend. For the daemon's RESTful HTTP API (port 10100), see DOC-7f3a2e9c.
 
 **References:** [Tauri v2 Research](RES-7b24ff49), [PD-4e7faf0e](PD-4e7faf0e), [PD-39e2fb81](PD-39e2fb81), Rust Module Architecture
 
@@ -162,15 +164,13 @@ First-run setup wizard. Checks prerequisites before the app is usable.
 
 ## 12. Lesson Commands (`lesson_commands.rs`)
 
-Lesson management backed by file-based storage in `.orqa/process/lessons/`. Lessons are stored as `IMPL-NNN.md` files.
+Lesson management backed by file-based storage in `.orqa/learning/lessons/`. Lessons are stored as `IMPL-NNN.md` files.
 
 | Command | Signature | Description |
 | --------- | ----------- | ------------- |
-| `lessons_list` | `(project_path: String) -> Vec\<Lesson\>` | List all lessons from `.orqa/process/lessons/` |
-| `lessons_get` | `(project_path: String, id: String) -> Lesson` | Get a single lesson by ID (e.g. `[IMPL-bc62d0ba](IMPL-bc62d0ba)`) |
-| `lessons_create` | `(project_path: String, title: String, category: String, body: String) -> Lesson` | Create a new lesson with auto-assigned ID |
-| `lesson_increment_recurrence` | `(project_path: String, id: String) -> Lesson` | Increment recurrence count; used by review agents |
-| `lessons_scan_promotions` | `(project_path: String) -> Vec\<Lesson\>` | Return lessons with recurrence >= 2 that have not yet been promoted |
+| `lessons_list` | `(project_path: String) -> Vec\<Lesson\>` | List all lessons; delegates to daemon via GET /lessons |
+| `lessons_create` | `(project_path: String, title: String, category: String, body: String) -> Lesson` | Create a new lesson with auto-assigned ID; delegates to daemon via POST /lessons |
+| `lesson_increment_recurrence` | `(project_path: String, id: String) -> Lesson` | Increment recurrence count; delegates to daemon via PUT /lessons/:id/recurrence |
 
 ## 13. Governance Commands (`governance_commands.rs`)
 

@@ -85,7 +85,7 @@ The target structure reflects the methodology's stages and the engine's artifact
 - Decisions split by level: `planning/decisions/` (tactical) and `learning/decisions/` (architectural/principle)
 - Knowledge lives WITH documentation — knowledge is documentation split into agent-consumable chunks with injection metadata
 - Wireframes are their own artifact type, not DOC
-- Resolved workflows are JSON files named by stage (`.resolved.json`), one per stage plus per-artifact-type files; each stage file embeds per-type state machines under the `artifact_types` key
+- Resolved workflows are SurrealDB records (exportable as a file via `orqa export`), one per stage plus per-artifact-type records; each stage record embeds per-type state machines under the `artifact_types` key
 - Composed schema and prompt registry are explicit generated artifacts
 
 ### 5.2 Relationships Define Flow

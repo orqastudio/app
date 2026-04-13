@@ -7,7 +7,7 @@ domain: guides
 category: how-to
 description: "Day-to-day workflow for creating, transitioning, and managing artifacts through their lifecycle."
 created: 2026-03-07
-updated: 2026-03-09
+updated: 2026-04-13
 sort: 3
 relationships:
   - target: RULE-b10fe6d1
@@ -22,7 +22,7 @@ relationships:
 
 This document describes how artifacts flow through the OrqaStudio™ development process day-to-day. It covers when artifacts are created, how they transition between states, and the gates that govern each transition.
 
-For artifact schemas and field definitions, see `.orqa/documentation/about/artifact-framework.md`.
+For artifact schemas and field definitions, see Artifact Framework (DOC-28344cd7).
 For enforcement rules, see [RULE-b10fe6d1](RULE-b10fe6d1).
 
 ---
@@ -42,7 +42,7 @@ graph TD
     Review["Implementation complete<br/>status: review"]
     Done["Verification gates passed<br/>docs-produced verified<br/>status: done"]
 
-    Lesson["Implementation patterns captured<br/>IMPL-NNN in .orqa/process/lessons/"]
+    Lesson["Implementation patterns captured<br/>IMPL-NNN in .orqa/learning/lessons/"]
     Promoted2["Recurring patterns promoted to rules/skills"]
 
     P1["All P1 epics done"]
@@ -67,13 +67,13 @@ Whenever the user mentions a future feature, enhancement, or "we should eventual
 
 ### How
 
-1. Scan `.orqa/implementation/ideas/` to determine the next ID
+1. Scan `.orqa/discovery/ideas/` to determine the next ID
 2. Create `IDEA-NNN.md` with:
    - `status: captured`
    - `pillar` alignment (at least one pillar must apply)
    - `research-needed` listing what needs investigation
    - `tags` for discoverability
-3. Add a brief entry in `.orqa/documentation/about/roadmap.md` if the idea is significant enough for roadmap visibility
+3. Add a brief entry in `.orqa/documentation/` if the idea is significant enough for roadmap visibility
 4. Inform the user the idea has been captured
 
 ### What NOT to Do
@@ -95,7 +95,7 @@ Triggered when the user approves investigation of a captured idea.
    - Create or update research artifacts in `.orqa/discovery/research/`
    - Investigate technical feasibility, UX implications, architectural fit
    - Document findings in the research artifacts
-3. If research produces an architectural choice, create an `AD-NNN.md` in `.orqa/process/decisions/` (see Decision Creation below)
+3. If research produces an architectural choice, create a `PD-NNN.md` in `.orqa/learning/decisions/` (see Decision Creation below)
 
 ### Shaping (exploring → shaped)
 
@@ -130,7 +130,7 @@ The idea MUST be `shaped` before promotion. The user MUST explicitly approve.
 3. Update `IDEA-NNN.md`:
    - Set `status: promoted`
    - Set `promoted-to: EPIC-NNN`
-4. Update `.orqa/documentation/about/roadmap.md` to include the new epic
+4. Update `.orqa/documentation/` to include the new epic
 5. Update the parent milestone's `epic-count`
 
 ---
@@ -143,14 +143,14 @@ Before an epic can begin implementation:
 
 1. The orchestrator checks every item in `docs-required`
 2. Each listed document must exist and be current
-3. If any document is missing, create it first (delegate to `documentation-writer`)
+3. If any document is missing, create it first (delegate to a Writer agent)
 4. Once all `docs-required` items are satisfied, set `status: ready`
 
 ### Starting Work (ready → in-progress)
 
 1. Verify the epic meets the Definition of Ready (see [RULE-b10fe6d1](RULE-b10fe6d1) epic gates)
-2. Create a worktree: `git worktree add ../orqa-<epic-name> -b <branch>`
-3. Assign the appropriate agent(s)
+2. Create a team: `TeamCreate` with a named team for the epic
+3. Spawn background agents via `Agent` with `run_in_background: true` and `team_name` set
 4. Set `status: in-progress`
 5. Update `assignee` field
 
@@ -159,30 +159,27 @@ Before an epic can begin implementation:
 1. Follow the implementation design in the epic body
 2. Tasks are tracked as checklist items in the epic body
 3. If a task needs its own tracking, graduate it to `TASK-NNN.md` in `.orqa/implementation/tasks/`
-4. Commit regularly to the worktree branch
-5. Capture implementation lessons in `.orqa/process/lessons/`
+4. The orchestrator commits work at natural task boundaries
+5. Capture implementation lessons in `.orqa/learning/lessons/`
 
 ### Review (in-progress → review)
 
 When implementation is complete:
 
 1. Set `status: review`
-2. Run verification gates:
-   - `code-reviewer`: code quality, compliance, end-to-end completeness
-   - `qa-tester`: functional correctness, smoke tests
-   - `ux-reviewer`: UI compliance (if applicable)
+2. Spawn a Reviewer agent via `Agent` — orchestrator reads the findings file, does not self-assess
 3. Verify all `docs-produced` items were actually created or updated
 4. If any gate fails, fix and re-review
 
 ### Completion (review → done)
 
-When all verification gates pass:
+When the Reviewer agent issues a PASS verdict:
 
 1. Set `status: done`
-2. Merge worktree to main
-3. Clean up worktree and branch
+2. Commit all remaining changes to main
+3. Clean up the team with `TeamDelete`
 4. Update parent milestone `completed-epics` count
-5. Log any new lessons in `.orqa/process/lessons/`
+5. Log any new lessons in `.orqa/learning/lessons/`
 
 ---
 
@@ -255,8 +252,8 @@ When research produces an architectural choice that affects the system — a tec
 
 ### How
 
-1. Scan `.orqa/process/decisions/` to determine the next ID (`AD-NNN`)
-2. Create `AD-NNN.md` with required frontmatter:
+1. Scan `.orqa/learning/decisions/` to determine the next ID (`PD-NNN`)
+2. Create `PD-NNN.md` with required frontmatter:
    - `status: proposed` initially; advance to `accepted` once the user has reviewed and approved
    - `category` set to the appropriate domain (`ipc`, `data`, `ui`, `security`, `tooling`, `process`)
    - `research-refs` linking to the research artifact(s) that produced this decision
@@ -269,13 +266,13 @@ When research produces an architectural choice that affects the system — a tec
 
 When a new decision replaces an existing accepted decision:
 
-1. Create the new `AD-NNN.md` with `supersedes: AD-<old>` in frontmatter
-2. Update the superseded decision: set `status: superseded` and `superseded-by: AD-<new>`
+1. Create the new `PD-NNN.md` with `supersedes: PD-<old>` in frontmatter
+2. Update the superseded decision: set `status: surpassed` and add a `superseded-by` relationship to the new decision
 3. Both artifacts MUST be updated in the same commit — a supersession is incomplete if only one side is updated
 
 ### What NOT to Do
 
-- Every decision MUST be an individual `AD-NNN.md` artifact in `.orqa/process/decisions/`
+- Every decision MUST be an individual `PD-NNN.md` artifact in `.orqa/learning/decisions/`
 - Do not modify an accepted decision in place — supersede it with a new decision instead
 - Do not leave a decision at `proposed` indefinitely — either accept it or archive it with a reason
 
@@ -283,7 +280,7 @@ When a new decision replaces an existing accepted decision:
 
 ## Roadmap Synchronisation
 
-The roadmap (`.orqa/documentation/about/roadmap.md`) must stay in sync with artifacts:
+The roadmap (`.orqa/documentation/`) must stay in sync with artifacts:
 
 | Event | Roadmap Update |
 | ------- | ---------------- |
@@ -304,8 +301,8 @@ The orchestrator periodically verifies:
 - Every epic's `depends-on` and `blocks` point to existing epics
 - Every idea's `evolves-into` (when set) points to an existing epic
 - Every epic's `research-refs` (when set) point to existing research files in `.orqa/discovery/research/`
-- Every decision's `evolves-into` (when set) points to an existing `AD-NNN.md`
-- Every decision's `evolves-from` (when set) points to an existing `AD-NNN.md`
+- Every decision's `evolves-into` (when set) points to an existing `PD-NNN.md`
+- Every decision's `evolves-from` (when set) points to an existing `PD-NNN.md`
 - Milestone `epic-count` matches the actual number of epics referencing it
 - Milestone `completed-epics` matches the count of epics with `status: done`
 

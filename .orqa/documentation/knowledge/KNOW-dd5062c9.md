@@ -4,7 +4,7 @@ type: knowledge
 title: Shared Validation Engine
 summary: "OrqaStudio has **one validation engine** with **three consumers**. All artifact validation — frontmatter schemas, relationship types, status values, broken links, required fields — runs through a shared library."
 description: |
-  How the shared validation engine works: a single library in libs/validation/ consumed
+  How the shared validation engine works: a single library in engine/validation/ consumed
   by three adapters (LSP real-time, CLI on-demand, pre-commit gate). Schema-driven from
   plugin schema.json files. Use when: adding validation rules, modifying artifact schemas,
   building enforcement tooling, or debugging validation failures.
@@ -33,7 +33,7 @@ Plugin schema.json files
         │
         ▼
 ┌─────────────────────┐
-│  libs/validation/    │  ← Single validation engine
+│  engine/validation/    │  ← Single validation engine
 │  (TypeScript)        │
 └────┬───────┬────────┘
      │       │        │
@@ -43,7 +43,7 @@ Plugin schema.json files
    time)   check)   pre-commit)
 ```text
 
-### The Engine (libs/validation/)
+### The Engine (engine/validation/)
 
 The validation engine is a TypeScript library that:
 

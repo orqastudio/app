@@ -1,7 +1,7 @@
 ---
 id: DOC-e6fb92b0
 type: doc
-status: active
+status: archived
 title: Plugin Architecture
 domain: architecture
 category: architecture
@@ -19,6 +19,8 @@ relationships:
     type: documents
     rationale: Documentation page references RULE-dd5b69e6
 ---
+
+> **Archived 2026-04-13:** Superseded by DOC-41ccf7c4 (Plugin Architecture). The four-layer plugin model described here has been replaced. DOC-41ccf7c4 is the authoritative plugin architecture reference.
 
 # Plugin Architecture
 

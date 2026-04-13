@@ -4,7 +4,7 @@ type: doc
 status: active
 title: Shared Validation Engine
 domain: architecture
-description: "How the shared validation engine works: a Rust crate in libs/validation/ consumed by three adapters (LSP, CLI, pre-commit). Schema-driven, plugin-aware, and the foundation for all artifact quality enforcement."
+description: "How the shared validation engine works: a Rust crate in engine/validation/ consumed by three adapters (LSP, CLI, pre-commit). Schema-driven, plugin-aware, and the foundation for all artifact quality enforcement."
 category: architecture
 created: 2026-03-24
 updated: 2026-03-24
@@ -18,16 +18,16 @@ relationships:
 
 ## Overview
 
-OrqaStudio has **one validation engine** used by three consumers. All artifact validation — frontmatter schemas, relationship types, status values, broken links, required fields — runs through a shared Rust crate in `libs/validation/`. No consumer implements its own validation logic.
+OrqaStudio has **one validation engine** used by three consumers. All artifact validation — frontmatter schemas, relationship types, status values, broken links, required fields — runs through a shared Rust crate in `engine/validation/`. No consumer implements its own validation logic.
 
 ## Architecture
 
 ```text
-                 Plugin schema.json files
+                 Plugin orqa-plugin.json files
                          │
                          ▼
               ┌──────────────────────┐
-              │   libs/validation/   │
+              │   engine/validation/   │
               │                      │
               │  Schema loading      │
               │  Frontmatter check   │
@@ -49,7 +49,7 @@ The validation engine is a Rust crate with no runtime dependencies on the daemon
 
 ### Schema Source
 
-Schemas are **plugin-provided**. Each artifact type directory (e.g., `.orqa/process/rules/`, `.orqa/implementation/epics/`) contains a `schema.json` file in JSON Schema format. The validation engine discovers schemas via the plugin system's artifact configuration.
+Schemas are **plugin-provided**. Plugins declare their artifact type schemas in their `orqa-plugin.json` manifest under `provides.schemas`. The validation engine discovers schemas via the plugin system's artifact configuration.
 
 Plugins declare schemas in their `orqa-plugin.json` manifest under `provides.schemas`. The engine loads all registered schemas at startup and matches them to files by directory path.
 
@@ -57,7 +57,7 @@ Plugins declare schemas in their `orqa-plugin.json` manifest under `provides.sch
 
 ### Frontmatter Schema Validation
 
-Every `.md` file in `.orqa/` has YAML frontmatter. The engine validates each field against the directory's `schema.json`:
+Every `.md` file in `.orqa/` has YAML frontmatter. The engine validates each field against the artifact type's schema declared in the plugin manifest:
 
 | Check | Example Violation |
 | ------- | ------------------- |
@@ -103,7 +103,7 @@ The LSP adapter also provides **completions** by reading schema enum values.
 The `orqa check` command runs the validation engine against all artifacts and outputs a human-readable report:
 
 ```text
-ERROR  .orqa/process/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
+ERROR  .orqa/learning/rules/RULE-abc123.md:5  Invalid status "enabled" — valid values: active, inactive
 WARN   .orqa/implementation/tasks/TASK-def456.md:12  Missing inverse: EPIC-789 does not reference this task
 ```text
 
@@ -117,8 +117,8 @@ The pre-commit adapter also logs violations to `.state/precommit-violations.json
 
 ## Adding New Validation Rules
 
-1. **If the rule is schema-based**: Add the constraint to the relevant `schema.json` file. The engine picks it up automatically.
-2. **If the rule is cross-artifact**: Add a new check function in the `libs/validation/` crate that the engine calls during its integrity pass.
+1. **If the rule is schema-based**: Add the constraint to the plugin's `orqa-plugin.json` under `provides.schemas`. The engine picks it up automatically.
+2. **If the rule is cross-artifact**: Add a new check function in the `engine/validation/` crate that the engine calls during its integrity pass.
 3. **If the rule is plugin-specific**: Add the constraint to the plugin's schema definitions. The engine loads plugin schemas dynamically.
 
 All three consumers automatically gain the new rule — there is nothing to update per-consumer.
@@ -127,9 +127,8 @@ All three consumers automatically gain the new rule — there is nothing to upda
 
 | File | Purpose |
 | ------ | --------- |
-| `libs/validation/` | Shared validation engine library |
-| `plugins/*/schema.json` (per artifact directory) | JSON Schema definitions for artifact types |
-| `plugins/*/orqa-plugin.json` | Plugin manifest declaring schemas and relationship types |
+| `engine/validation/` | Shared validation engine library |
+| `plugins/*/orqa-plugin.json` | Plugin manifest declaring artifact type schemas and relationship types |
 
 ## Related Documents
 

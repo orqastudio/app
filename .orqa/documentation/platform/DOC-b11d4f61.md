@@ -7,7 +7,7 @@ domain: architecture
 category: architecture
 description: "Architecture of OrqaStudio's five-layer enforcement system — process gates, knowledge injection, tooling ecosystem delegation, prompt-based skill injection, and the schema-driven integrity engine."
 created: 2026-03-05
-updated: 2026-03-18
+updated: 2026-04-13
 sort: 11
 relationships:
   - target: RULE-9814ec3c
@@ -32,7 +32,7 @@ The system runs in two contexts: the **Rust backend** (native enforcement engine
 
 ## Single Source of Truth
 
-Rule files in `.orqa/process/rules/` are the single source of truth for:
+Rule files in `.orqa/learning/rules/` are the single source of truth for:
 
 1. **Human-readable behavioral constraints** — injected into agent context as rule text
 2. **Machine-readable enforcement entries** — YAML frontmatter declaring patterns, actions, and skill injections
@@ -109,7 +109,7 @@ The `WorkflowTracker` (`app/src-tauri/src/domain/workflow_tracker.rs`) tracks se
 | Skills loaded | Names of loaded skills | Detect skill loading |
 | Commands run | Bash commands executed | Detect `make check`/`make test` runs |
 | Verification run | Boolean flag | Set when `make check`/`make test` detected |
-| Lessons checked | Boolean flag | Set when `.orqa/process/lessons/` read |
+| Lessons checked | Boolean flag | Set when `.orqa/learning/lessons/` read |
 | Injected skills | Deduplication set | Prevent injecting the same skill twice per session |
 
 The tracker is stored in `AppState` behind a `Mutex\<WorkflowTracker\>` and shared across all tool execution handlers.
@@ -159,7 +159,7 @@ When agents touch specific code areas, the enforcement system automatically inje
 
 1. Rule frontmatter declares `action: inject` entries with `conditions` matching file paths and `skills` listing skill names
 2. When a file write matches, the `Verdict` carries the skill names
-3. The tool executor reads each skill's `KNOW.md` from `.orqa/process/knowledge/{name}/KNOW.md`
+3. The tool executor reads each skill's `KNOW.md` from `.orqa/learning/{name}/KNOW.md`
 4. YAML frontmatter is stripped; the skill body content is returned
 5. Content is deduplicated per session via the `WorkflowTracker`'s `injected_skills` set
 6. The combined skill content is prepended to the tool output
@@ -235,7 +235,7 @@ enforcement:
 
 ```mermaid
 graph TD
-    Rule["Documented standard<br/>(.orqa/process/rules/RULE-NNN.md)"]
+    Rule["Documented standard<br/>(.orqa/learning/rules/RULE-NNN.md)"]
     Lint["lint enforcement entry<br/>(documents which linter enforces this)"]
     Config["Linter config<br/>(eslint.config.js, Cargo.toml, etc.)"]
     Hook["Pre-commit hook (.githooks/pre-commit)<br/>or make check"]
@@ -286,7 +286,7 @@ The CLI plugin uses keyword-based intent classification via `prompt-injector.ts`
 
 The app uses semantic similarity via the `SkillInjector` (`app/src-tauri/src/domain/skill_injector.rs`):
 
-1. On startup, all skills are discovered from `.orqa/process/knowledge/*/KNOW.md`
+1. On startup, all skills are discovered from `.orqa/learning/*/KNOW.md`
 2. Each skill's `description:` frontmatter field is extracted
 3. Descriptions are embedded using the ONNX embedder (bge-small-en-v1.5, 384-dim vectors)
 4. When a user prompt arrives, it is embedded and compared against all skill embeddings
@@ -360,35 +360,41 @@ The CLI (`orqa enforce`) runs the same schema-driven checks as the Rust engine. 
 
 ## Rust Module Structure
 
+The enforcement implementation is split between the app (integrity/artifact graph) and the engine (validation):
+
 ```text
 app/src-tauri/src/domain/
-  enforcement.rs            -- Type definitions: EventType, RuleAction, EnforcementEntry,
-                               EnforcementRule, Verdict, ScanFinding, Condition
-  enforcement_parser.rs     -- YAML frontmatter parsing: split_frontmatter(),
-                               parse_rule_content(), parse_entry()
-  enforcement_engine.rs     -- EnforcementEngine: compile entries, evaluate_file(),
-                               evaluate_bash(), scan()
+  enforcement_violation.rs  -- EnforcementViolation type for persisting violations
   integrity_engine.rs       -- Schema-driven integrity: build_validation_context(),
                                run_schema_checks(), RelationshipSchema, ValidationContext
   platform_config.rs        -- Embedded core.json: PLATFORM static, relationship/type defs
   artifact_graph.rs         -- ArtifactGraph: build, check_integrity(), apply_fixes()
-  workflow_tracker.rs       -- WorkflowTracker: session event tracking, skill dedup
-  process_gates.rs          -- evaluate_process_gates(): five gate evaluations
-  skill_injector.rs         -- SkillInjector: ONNX embedding + cosine similarity matching
-  tool_executor.rs          -- Tool execution with enforcement integration (non-streaming)
-  stream_loop.rs            -- Streaming tool execution with enforcement integration
+app/src-tauri/src/commands/
+  enforcement_commands.rs   -- Tauri IPC commands for enforcement operations
+
+engine/validation/src/
+  lib.rs                    -- Validation engine entry point
+  graph.rs                  -- Artifact graph construction
+  context.rs                -- ValidationContext: merged constraint set
+  parse.rs                  -- Frontmatter parsing
+  platform.rs               -- Platform schema loading
+  checks/
+    enforcement.rs          -- Enforcement entry evaluation
+    schema.rs               -- Schema compliance checks
+    structural.rs           -- Structural integrity checks
+    cardinality.rs          -- Cardinality constraint checks
+    cycles.rs               -- Circular dependency detection
+    status.rs               -- Status transition validation
+    delivery.rs             -- Delivery hierarchy validation
+    file_level.rs           -- File-level checks
 ```
 
 ### Supporting Modules
 
 ```text
 app/src-tauri/src/
-  repo/
-    enforcement_rules_repo.rs -- load_rules(): reads .orqa/process/rules/*.md from disk
-  state.rs                    -- AppState: holds EnforcementEngine, WorkflowTracker,
-                                 SkillInjector behind Mutex
-  search/
-    embedder.rs               -- ONNX Runtime embedder used by SkillInjector
+  state.rs                  -- AppState: holds artifact graph and validation context
+  watcher.rs                -- File watcher: detects .orqa/ changes, triggers re-validation
 ```
 
 ---

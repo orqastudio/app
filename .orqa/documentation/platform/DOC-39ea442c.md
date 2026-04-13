@@ -8,7 +8,7 @@ category: architecture
 description: "Five-stage prompt generation pipeline: Plugin Registry, Schema Assembly, Section Resolution, Token Budgeting, and Prompt Output. Replaces monolithic CLAUDE.md loading with generated, role-specific, token-budgeted, KV-cache-aware prompts."
 sort: 13
 created: 2026-03-25
-updated: 2026-03-25
+updated: 2026-04-13
 relationships:
   - target: PD-1ef9f57c
     type: documents
@@ -43,7 +43,7 @@ Each stage has a single responsibility and a clear input/output contract. The pi
 
 ## Stage 1: Plugin Registry
 
-**Module:** `libs/cli/src/lib/prompt-registry.ts`
+**Module:** `cli/src/lib/prompt-registry.ts`
 
 **Purpose:** Scan installed plugins for knowledge declarations and prompt sections, build a cached lookup registry.
 
@@ -66,8 +66,8 @@ Each stage has a single responsibility and a clear input/output contract. The pi
 
 **Source classification:** Each entry is classified by its conflict resolution priority:
 
-1. `project-rules` -- reserved for `.orqa/process/rules/` (highest priority)
-2. `project-knowledge` -- reserved for `.orqa/process/knowledge/`
+1. `project-rules` -- reserved for `.orqa/learning/rules/` (highest priority)
+2. `project-knowledge` -- reserved for `.orqa/learning/`
 3. `plugin` -- most installed plugins
 4. `core` -- the core framework plugin (lowest priority)
 
@@ -93,7 +93,7 @@ interface RegistryKnowledgeEntry {
 
 ## Stage 2: Schema Assembly
 
-**Module:** `libs/cli/src/lib/prompt-pipeline.ts` (`assembleSchema` function)
+**Module:** `cli/src/lib/prompt-pipeline.ts` (`assembleSchema` function)
 
 **Purpose:** For a given (role, workflow-stage, task) tuple, collect all applicable prompt sections from the registry, applying conflict resolution.
 
@@ -132,7 +132,7 @@ app/src-tauri/src/domain/artifact_graph.rs
 
 ## Stage 3: Section Resolution
 
-**Module:** `libs/cli/src/lib/prompt-pipeline.ts` (`resolveSections` function)
+**Module:** `cli/src/lib/prompt-pipeline.ts` (`resolveSections` function)
 
 **Purpose:** Resolve assembled sections by loading actual content from disk or using inline summaries.
 
@@ -154,7 +154,7 @@ app/src-tauri/src/domain/artifact_graph.rs
 
 ## Stage 4: Token Budgeting
 
-**Module:** `libs/cli/src/lib/prompt-pipeline.ts` (`applyTokenBudget` function)
+**Module:** `cli/src/lib/prompt-pipeline.ts` (`applyTokenBudget` function)
 
 **Purpose:** Enforce the token budget by trimming low-priority sections until the prompt fits.
 
@@ -193,7 +193,7 @@ app/src-tauri/src/domain/artifact_graph.rs
 
 ## Stage 5: Prompt Output
 
-**Module:** `libs/cli/src/lib/prompt-pipeline.ts` (`assemblePrompt` function)
+**Module:** `cli/src/lib/prompt-pipeline.ts` (`assemblePrompt` function)
 
 **Purpose:** Assemble the final prompt with KV-cache-aware section ordering and Claude XML tags.
 
@@ -259,7 +259,7 @@ Handles on-demand knowledge access for agents at runtime.
 
 - `generateOnDemandPreamble(count)` -- generates the instruction text appended to prompts
 - `queryOnDemandEntries(registry, options)` -- filters registry for on-demand entries by tags/role
-- `retrieveKnowledge(projectPath, options)` -- disk-based fallback that reads knowledge artifacts from `.orqa/process/knowledge/`, filtered by tags/role/text within a token budget
+- `retrieveKnowledge(projectPath, options)` -- disk-based fallback that reads knowledge artifacts from `.orqa/learning/`, filtered by tags/role/text within a token budget
 - `countOnDemandEntries(registry)` -- counts on-demand entries for the preamble
 
 ### Agent Spawner (`agent-spawner.ts`)
