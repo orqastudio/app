@@ -96,6 +96,20 @@ OrqaStudio's `.orqa/` directory is the governance artifact system. All artifacts
 | `DOC-80a4cf76` | Key Decisions | ...making a new architectural decision |
 | `DOC-762facfb` | Codebase Structure | ...adding or moving files |
 
+The canonical target-state architecture is defined in `targets/CLAUDE.md`. Read it before any architectural work. The `.orqa/documentation/architecture/` docs above provide implementation detail — the `targets/` directory is the authoritative reference for the migration end-state.
+
+### Target State Files
+
+The `targets/` directory holds the authoritative end-state for the migration:
+
+| Path | Purpose |
+|------|---------|
+| `targets/CLAUDE.md` | Target agent instructions (source of truth for migration) |
+| `targets/skills/` | Target skill definitions for each thinking mode |
+| `targets/auto-memory/` | Target auto-memory files to be installed |
+
+Do NOT edit files in `targets/` without an explicit migration task that specifies the change.
+
 ## Thinking Modes
 
 The orchestrator routes work through thinking modes based on what the user is asking for. Each mode has a dedicated platform doc with activation signals, workflow steps, and quality criteria.
@@ -186,6 +200,21 @@ When an agent encounters ambiguity: check architecture docs → raise to orchest
 - **No "we'll fix this later"** — if it doesn't match the architecture, fix it now
 - **Every file justifies its existence** against the architecture
 
+## Forbidden Actions
+
+Agents MUST NOT do any of the following without explicit user instruction:
+
+- Edit `.claude/CLAUDE.md` directly (blocked by settings.json deny rules — use Bash for intentional migration changes only)
+- Commit code (orchestrator commits only, after Reviewer PASS)
+- Improvise when requirements are ambiguous — escalate instead
+- Skip pre-commit hooks (`--no-verify`)
+- Spawn agents without a named team (`TeamCreate` first)
+- Run agents in the foreground (always `run_in_background: true`)
+- Leave legacy code commented out or feature-flagged
+- Create backwards-compatibility shims
+- Defer technical debt ("we'll fix this later")
+- Edit files in `targets/` outside of an explicit P1-S* migration task
+
 ## Current Project Focus
 
 **Read `.claude/PLAN-mvp.md` before starting any work.** It defines the MVP scope, the three irreducible capabilities, six work streams, and what is explicitly post-MVP. All work should be evaluated against this plan.
@@ -229,6 +258,14 @@ Replacing the markdown-based artifact system with **SurrealDB as source of truth
 | `.claude/tasks/migration-tasks-phase6-8.md` | Phase 6-8 (content, governance, restructure) | ~70 |
 | `.claude/tasks/migration-tasks-phase9-11.md` | Phase 9-11 (frontend, validation, docs) | ~70 |
 
+### Current Migration Phase
+
+- **Completed:** P1-S1 (targets directory), P1-S2 (enforcement configs — eslint, prettier, markdownlint, rustfmt, git hooks)
+- **Current:** P1-S3 — update `.claude/` with migration-specific context (CLAUDE.md, agents/, settings.json)
+- **Next:** P1-S4 — audit and complete remaining target files
+
+Before starting any migration task, confirm the current phase against `.claude/tasks/migration-tasks-phase1-3.md`.
+
 ## Autonomous Execution
 
 Work continuously without stopping. Do not ask "shall I proceed?" or "ready for the next task?". The user will interrupt if they want to steer. Silence means continue.
@@ -244,6 +281,10 @@ The ONLY acceptable reasons to pause:
 - No `--no-verify` — fix errors, don't skip hooks
 - After Rust changes: rebuild and restart daemon
 - Agents do NOT commit — the orchestrator commits after reviewing findings
+
+## Environment Variables
+
+`ORQA_SKIP_SCHEMA_VALIDATION=true` is set in `.claude/settings.json`. This disables schema validation during migration phases where schema files are being restructured. Do NOT remove this setting mid-migration — it is intentional and will be cleared when the migration reaches a stable schema state.
 
 ## Session Protocol
 

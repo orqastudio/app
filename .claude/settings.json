@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "70",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "ORQA_DRY_RUN": "true",
+    "ORQA_SKIP_SCHEMA_VALIDATION": "true"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(./*)",
+      "Read(./**)",
+      "Grep(./**)",
+      "Write(./.state/team/**)",
+      "Write(./.claude/tasks/**)",
+      "Bash(echo \"Exit code: $?\")"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(//.aws/**)",
+      "Read(//.ssh/**)",
+      "Edit(./targets/**)",
+      "Write(./targets/**)",
+      "Edit(./.claude/settings.json)",
+      "Write(./.claude/settings.json)",
+      "Edit(./.claude/settings.local.json)",
+      "Write(./.claude/settings.local.json)",
+      "Edit(./.claude/CLAUDE.md)",
+      "Write(./.claude/CLAUDE.md)",
+      "Edit(./.orqa/manifest.json)",
+      "Edit(./.orqa/project.json)",
+      "Edit(./scripts/validate-artifacts.mjs)",
+      "Write(./scripts/validate-artifacts.mjs)",
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(cp * targets/*)",
+      "Bash(mv * targets/*)",
+      "Bash(tee * targets/*)",
+      "Bash(sed -i * targets/*)",
+      "Bash(cp * .claude/settings*)",
+      "Bash(mv * .claude/settings*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/validate-artifacts.mjs\" --hook --file \"$(echo $TOOL_INPUT | node -e \"process.stdin.on('data',d=>{const j=JSON.parse(d);console.log(j.file_path||j.content&&'skip'||'skip')})\"  2>/dev/null || echo skip)\"",
+            "timeout": 10,
+            "statusMessage": "Validating artifact schema"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.md ]] && [[ \"$FILE\" == */.orqa/* ]]; then npx markdownlint-cli2 \"$FILE\" 2>&1 || true; fi'",
+            "timeout": 10,
+            "statusMessage": "Checking markdown lint"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.ts ]] || [[ \"$FILE\" == *.svelte ]]; then npx eslint \"$FILE\" 2>&1 || true; fi'",
+            "timeout": 15,
+            "statusMessage": "Running ESLint"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.rs ]]; then cargo clippy --quiet -- -D warnings 2>&1 || true; fi'",
+            "timeout": 60,
+            "statusMessage": "Running Clippy"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.rs ]]; then cargo test --quiet 2>&1 || true; fi'",
+            "timeout": 120,
+            "statusMessage": "Running Rust tests"
+          },
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_RESULT\" | node -e \"process.stdin.on(\\\"data\\\",d=>{try{const j=JSON.parse(d);console.log(j.filePath||\\\"\\\")}catch{console.log(\\\"\\\")}}\" 2>/dev/null); if [[ \"$FILE\" == *.ts ]] || [[ \"$FILE\" == *.svelte ]]; then npx vitest run 2>&1 || true; fi'",
+            "timeout": 60,
+            "statusMessage": "Running Vitest tests"
+          }
+        ]
+      }
+    ]
+  }
+}
