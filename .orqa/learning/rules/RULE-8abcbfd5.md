@@ -24,7 +24,7 @@ relationships:
 
   - target: DOC-d9cc1f84
 
-    type: documented-by
+    type: documents
 ---
 Agent definitions declare **capabilities** (what they can do), not **tools** (how they
 do it). The mapping from capabilities to provider-specific tool names is defined in this

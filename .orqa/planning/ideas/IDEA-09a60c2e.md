@@ -10,7 +10,7 @@ created: 2026-03-24
 updated: 2026-03-24
 relationships:
   - target: PILLAR-c9e0a695
-    type: grounds
+    type: grounded
     rationale: "Broken UI prevents users from navigating the structured artifact graph, directly undermining Clarity Through Structure"
   - target: PERSONA-c4afd86b
     type: benefits

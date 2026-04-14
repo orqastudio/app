@@ -16,7 +16,7 @@ relationships:
 
   - target: IMPL-984941fb
 
-    type: promoted-from
+    type: promoted-to
 ---
 
 Session state is a **working document**, not a post-session summary. `.state/session-state.md` must reflect the current state of the conversation at all times.

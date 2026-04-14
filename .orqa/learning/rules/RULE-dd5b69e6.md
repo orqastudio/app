@@ -24,15 +24,15 @@ relationships:
 
   - target: DOC-b11d4f61
 
-    type: documented-by
+    type: documents
 
   - target: DOC-d9cc1f84
 
-    type: documented-by
+    type: documents
 
   - target: DOC-e6fb92b0
 
-    type: documented-by
+    type: documents
 ---
 Every agent MUST have a `skills:` list in its YAML frontmatter. Agent tool access is declared via `capabilities:` and resolved per provider context — see [RULE-8abcbfd5](RULE-8abcbfd5). Skills load in three tiers [PD-c1e5a39e](PD-c1e5a39e).
 

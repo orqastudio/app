@@ -13,7 +13,7 @@ description: >
 created: 2026-03-25
 relationships:
   - target: RES-d6e8ab11
-    type: related
+    type: informs
     rationale: "Architecture context for workflow, agent, and state machine design"
 tags:
   - ux
@@ -408,7 +408,7 @@ The research document describes a hub-spoke model where the orchestrator delegat
 
 ### Recommendation: Layered Visibility
 
-**Layer 1: Action-Oriented (Default)**
+#### Layer 1: Action-Oriented (Default)
 
 Surface agent activity as *work happening*, not *agents executing*:
 
@@ -422,7 +422,7 @@ Surface agent activity as *work happening*, not *agents executing*:
   - Each task shows: title, status (pending/running/complete), elapsed time
   - This is a core widget (agent teams are a core concept, not plugin-specific)
 
-**Layer 2: Metrics (Opt-In)**
+#### Layer 2: Metrics (Opt-In)
 
 A dedicated "Session Metrics" view (core view, not plugin) accessible from the StatusBar or Settings:
 
@@ -433,7 +433,7 @@ A dedicated "Session Metrics" view (core view, not plugin) accessible from the S
 
 This view reads from `.state/token-metrics.jsonl` (as specified in the research doc).
 
-**Layer 3: Debug (Developer Tools)**
+#### Layer 3: Debug (Developer Tools)
 
 A "Developer Console" panel (already partially implemented as `initDevConsole()` in AppLayout):
 

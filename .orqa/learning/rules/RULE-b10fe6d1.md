@@ -25,11 +25,11 @@ relationships:
 
   - target: "DOC-db5b37dc"
 
-    type: "documented-by"
+    type: "documents"
 
   - target: "DOC-ffad3f6b"
 
-    type: "documented-by"
+    type: "documents"
 
   - target: "PD-3b986859"
 
@@ -45,18 +45,18 @@ relationships:
 
   - target: "DOC-28344cd7"
 
-    type: "documented-by"
+    type: "documents"
 
   - target: "DOC-f6c4ac69"
 
-    type: "documented-by"
+    type: "documents"
 
   - target: "IMPL-b27c458f"
-    type: "promoted-from"
+    type: "promoted-to"
     rationale: "Rule was promoted from this lesson"
 
   - target: "IMPL-db8027b6"
-    type: "promoted-from"
+    type: "promoted-to"
     rationale: "Rule was promoted from this lesson"
 ---
 Every structured artifact in `.orqa/` follows a defined lifecycle. This rule enforces creation standards, status transitions, promotion gates, documentation gates, and cross-referencing.

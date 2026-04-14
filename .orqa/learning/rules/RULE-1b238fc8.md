@@ -20,7 +20,7 @@ relationships:
 
   - target: DOC-06224bf6
 
-    type: documented-by
+    type: documents
 ---
 Every feature, command, and UI element must serve the project's guiding principles. These principles are defined as **pillar artifacts** in `.orqa/discovery/pillars/`. Read the active pillars before implementing any new capability.
 

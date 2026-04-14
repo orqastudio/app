@@ -397,7 +397,8 @@
               "exploring",
               "active",
               "review",
-              "completed"
+              "completed",
+              "surpassed"
             ]
           }
         },
@@ -443,7 +444,8 @@
         "exploring",
         "active",
         "review",
-        "completed"
+        "completed",
+        "surpassed"
       ],
       "initialStatus": "captured",
       "stateCategories": {
@@ -668,7 +670,8 @@
               "exploring",
               "active",
               "review",
-              "completed"
+              "completed",
+              "surpassed"
             ]
           }
         },
@@ -714,7 +717,8 @@
         "exploring",
         "active",
         "review",
-        "completed"
+        "completed",
+        "surpassed"
       ],
       "initialStatus": "captured",
       "stateCategories": {
@@ -1309,8 +1313,8 @@
       },
       "semantic": "documentation",
       "size_constraints": {
-        "min_tokens": 500,
-        "max_tokens": 2000,
+        "min_tokens": 200,
+        "max_tokens": 2500,
         "unit": "tokens"
       }
     },
@@ -1713,7 +1717,8 @@
               "ready",
               "active",
               "review",
-              "completed"
+              "completed",
+              "archived"
             ]
           }
         },
@@ -1760,7 +1765,8 @@
         "ready",
         "active",
         "review",
-        "completed"
+        "completed",
+        "archived"
       ],
       "initialStatus": "captured",
       "stateCategories": {
@@ -2038,7 +2044,7 @@
       "to": [
         "rule"
       ],
-      "description": "Decision establishes governance \u2014 leads into the learning loop",
+      "description": "Decision establishes governance — leads into the learning loop",
       "semantic": "governance"
     },
     {
@@ -2217,7 +2223,7 @@
         "knowledge",
         "doc"
       ],
-      "description": "Paired content kept in sync \u2014 agent-facing and human-facing versions",
+      "description": "Paired content kept in sync — agent-facing and human-facing versions",
       "semantic": "synchronisation"
     },
     {
@@ -2241,7 +2247,7 @@
         "discovery-research",
         "planning-research"
       ],
-      "description": "Artifacts consolidated \u2014 multiple ideas or research threads become one",
+      "description": "Artifacts consolidated — multiple ideas or research threads become one",
       "semantic": "lineage"
     },
     {

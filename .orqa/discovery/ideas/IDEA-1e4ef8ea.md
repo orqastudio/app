@@ -13,7 +13,7 @@ description: >
 created: 2026-03-27
 relationships:
   - target: IDEA-7ae8b766
-    type: related
+    type: informs
     rationale: "Agent constitution research informs the governance model for this framework"
   - target: PERSONA-c4afd86b
     type: benefits
@@ -58,14 +58,14 @@ coordination logic should live in the app itself?
 
 ## Research References
 
-- **Chroma Context-1** (https://www.trychroma.com/research/context-1) — research
+- **Chroma Context-1** (<https://www.trychroma.com/research/context-1>) — research
 
   on context and retrieval for agent systems. Relevant to how agent teams
   share knowledge and coordinate via structured context.
 
 ## Libraries to Evaluate
 
-- **CrewAI** (https://crewai.com/open-source) — potentially ideal fit.
+- **CrewAI** (<https://crewai.com/open-source>) — potentially ideal fit.
 
   Uses YAML definitions for agents, tasks, and crews which aligns directly
   with P4 (Declarative Over Imperative). Supports role-based agents,
@@ -73,7 +73,7 @@ coordination logic should live in the app itself?
   crew/agent/task definitions could map to OrqaStudio's plugin-provided
   role definitions and workflow-driven task routing.
 
-- **AutoGen** (https://github.com/microsoft/autogen) — Microsoft's
+- **AutoGen** (<https://github.com/microsoft/autogen>) — Microsoft's
 
   multi-agent conversation framework. Supports customizable agents,
   human-in-the-loop, and group chat patterns. Compare its conversation-based

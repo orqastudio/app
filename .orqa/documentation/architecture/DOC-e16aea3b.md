@@ -13,16 +13,16 @@ relationships:
     type: synchronised-with
     rationale: "Agent-facing knowledge pair for this user-facing documentation page"
   - target: DOC-22783288
-    type: related
+    type: references
     rationale: "CLI architecture is the developer interface into this workflow"
   - target: DOC-dd5062c9
-    type: related
+    type: realises
     rationale: "Shared validation engine implements Layer 1 and Layer 3 of the enforcement stack"
   - target: DOC-1f4aba8f
-    type: related
+    type: crystallises
     rationale: "Three-layer enforcement model is the detailed breakdown of the enforcement stack described here"
   - target: DOC-586bfa9a
-    type: related
+    type: crystallises
     rationale: "Knowledge auto-injection is the detailed breakdown of knowledge injection described here"
 ---
 

@@ -23,7 +23,7 @@ relationships:
 
   - target: DOC-9814ec3c
 
-    type: documented-by
+    type: documents
 
   - target: PD-af88bb69
 

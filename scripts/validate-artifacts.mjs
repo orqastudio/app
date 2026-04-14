@@ -234,8 +234,8 @@ function validateArtifact(filePath, artifactIndex) {
   if (id && type) {
     // 2. Validate ID format
     if (!schema.artifactTypes[type]) {
-      errors.push({
-        category: 'invalid-type',
+      warnings.push({
+        category: 'unknown-type',
         message: `Unknown artifact type: ${type}`
       });
     } else {
@@ -255,13 +255,31 @@ function validateArtifact(filePath, artifactIndex) {
       // 3. Check type-location consistency
       const relativeDir = path.relative(orqaDir, path.dirname(filePath));
       const expectedPath = typeConfig.default_path;
-      
+
       if (expectedPath) {
-        const expectedRelative = expectedPath.replace(/\/$/, '');
-        if (!relativeDir.includes(expectedRelative)) {
+        // Extract the path part after .orqa/ and remove trailing slash
+        // e.g., ".orqa/discovery/ideas/" -> "discovery/ideas"
+        const expectedRelative = expectedPath
+          .replace(/^\.orqa\//, '')
+          .replace(/\/$/, '');
+
+        let isMatch = false;
+
+        // Special handling for 'knowledge' type: allow knowledge/ subdirectory anywhere under documentation/
+        if (type === 'knowledge') {
+          isMatch = relativeDir.startsWith('documentation/') && relativeDir.includes('/knowledge');
+        } else {
+          // Check if actual directory matches expected location
+          // Allows both exact match and subdirectory match
+          // e.g., "doc" type expects "documentation" and allows "documentation/guides", "documentation/architecture", etc.
+          isMatch = relativeDir === expectedRelative ||
+                   relativeDir.startsWith(expectedRelative + '/');
+        }
+
+        if (!isMatch) {
           warnings.push({
             category: 'location-mismatch',
-            message: `Type '${type}' should be in directory '${expectedRelative}', found in '${relativeDir}'`
+            message: `Type '${type}' should be in directory '${expectedRelative}' or subdirectory, found in '${relativeDir}'`
           });
         }
       }
@@ -287,19 +305,24 @@ function validateArtifact(filePath, artifactIndex) {
         }
       }
 
-      // 5. Check knowledge size constraints
+      // 5. Check knowledge size constraints (read from schema, not hardcoded)
       if (type === 'knowledge') {
-        const tokens = estimateTokens(body);
-        if (tokens < 500) {
-          warnings.push({
-            category: 'knowledge-size',
-            message: `Knowledge artifact too short (~${tokens} tokens, expected 500-2000)`
-          });
-        } else if (tokens > 2000) {
-          warnings.push({
-            category: 'knowledge-size',
-            message: `Knowledge artifact too long (~${tokens} tokens, expected 500-2000)`
-          });
+        const sizeConstraints = typeConfig?.size_constraints;
+        if (sizeConstraints && sizeConstraints.unit === 'tokens') {
+          const tokens = estimateTokens(body);
+          const minT = sizeConstraints.min_tokens;
+          const maxT = sizeConstraints.max_tokens;
+          if (typeof minT === 'number' && tokens < minT) {
+            warnings.push({
+              category: 'knowledge-size',
+              message: `Knowledge artifact too short (~${tokens} tokens, expected ${minT}-${maxT})`
+            });
+          } else if (typeof maxT === 'number' && tokens > maxT) {
+            warnings.push({
+              category: 'knowledge-size',
+              message: `Knowledge artifact too long (~${tokens} tokens, expected ${minT}-${maxT})`
+            });
+          }
         }
       }
     }

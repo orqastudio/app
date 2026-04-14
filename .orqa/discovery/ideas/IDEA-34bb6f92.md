@@ -8,7 +8,7 @@ created: 2026-03-24
 updated: 2026-03-24
 relationships:
   - target: IDEA-40b0842d
-    type: related
+    type: depends-on
     rationale: "Requires the market research agent capability to exist first"
   - target: PILLAR-2acd86c1
     type: grounded

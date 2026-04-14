@@ -8,7 +8,7 @@ created: 2026-03-02T00:00:00.000Z
 updated: 2026-03-08T00:00:00.000Z
 relationships:
   - target: "PD-4ea9a290"
-    type: "evolves-into"
+    type: "evolves-to"
     rationale: "PD-4ea9a290 moves source of truth from .claude/ to .orqa/, superseding the .claude/-native format"
   - target: "EPIC-05ae2ce7"
     type: "drives"

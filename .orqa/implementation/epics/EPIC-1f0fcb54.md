@@ -3,7 +3,7 @@ id: "EPIC-1f0fcb54"
 type: epic
 title: "Semantic layout lego blocks — strip primitives, enforce design system via components"
 description: "Remove all visual escape hatches (padding, border, background, rounded, margin, overflow, style) from layout primitives (Stack, HStack, Box, Center). Replace with purpose-built semantic components: Panel (padded container), SectionHeader/SectionFooter (horizontal bars with baked-in padding + border), Callout (inline tonal banner). Add indent structural prop to HStack for tree-depth rows. Migrate ~100 consumer call sites across app, devtools, and plugins. Zero raw-HTML tolerance in app code."
-status: delivered
+status: completed
 priority: P0
 created: "2026-04-05"
 updated: "2026-04-13"

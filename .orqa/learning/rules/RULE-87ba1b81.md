@@ -26,15 +26,15 @@ relationships:
 
   - target: DOC-28344cd7
 
-    type: documented-by
+    type: documents
 
   - target: DOC-7bdef310
 
-    type: documented-by
+    type: documents
 
   - target: DOC-d9cc1f84
 
-    type: documented-by
+    type: documents
 ---
 The orchestrator coordinates. It does NOT implement. Every implementation task is delegated to a universal role with the appropriate knowledge loaded.
 

@@ -29,15 +29,15 @@ relationships:
 
   - target: "RULE-d2c2063a"
 
-    type: "extends"
+    type: "crystallises"
 
   - target: "RULE-998da8ea"
 
-    type: "extends"
+    type: "crystallises"
 
   - target: "RULE-f609242f"
 
-    type: "extends"
+    type: "crystallises"
 ---
 
 After any commit that touches compiled Rust source code, the affected binaries MUST be rebuilt and the daemon restarted immediately. Stale binaries serve outdated results — validation errors that no longer exist, graph data that doesn't reflect recent changes, and diagnostics based on old code. This wastes significant tokens because agents work against broken assumptions.

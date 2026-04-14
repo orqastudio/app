@@ -13,7 +13,7 @@ tags:
   - plugin-architecture
 relationships:
   - target: RES-138eff6e
-    type: related
+    type: informs
     rationale: "Token efficiency research informs team sizing and model selection"
 ---
 
@@ -30,7 +30,7 @@ The current approach of spawning disposable agents per task is failing on four f
 
 An IRL development team works differently: persistent specialists, built-in domain expertise, natural handoffs, sequential quality. This proposal redesigns the agent model to mirror that reality.
 
-**Key Design Principle: Composable Team Structure**
+### Key Design Principle: Composable Team Structure
 
 The team is defined in the **Software plugin** (`plugins/software/agents/`) — not in the framework. This design principle enables **portability across any tech stack**:
 
@@ -199,7 +199,7 @@ Knowledge is organized in `.orqa/process/knowledge/` by domain:
 
 ### 1.4 Current Failure Modes
 
-**Problem 1: Disposable agents lose context**
+#### Problem 1: Disposable agents lose context
 
 ```text
 Session N: Backend agent builds feature A (learns 5 patterns)
@@ -208,7 +208,7 @@ Session N+1: Different backend agent builds feature B (relearns same 5 patterns)
 
 → Knowledge exists in artifacts but not in agent continuity
 
-**Problem 2: Parallel compilation kills quality**
+#### Problem 2: Parallel compilation kills quality
 
 ```text
 Backend agent A: Starts rustc for feature X (uses 400MB RAM)
@@ -218,7 +218,7 @@ System: OOM — builds fail, timeouts, no clear error
 
 → Resource safety rule exists but no enforcement at team level
 
-**Problem 3: Agents don't shut down**
+#### Problem 3: Agents don't shut down
 
 ```text
 Orchestrator: "Delegate feature X to Backend agent"
@@ -229,7 +229,7 @@ Background: Both agents alive, competing for resources
 
 → TeamDelete supposed to happen but doesn't reliably
 
-**Problem 4: No handoff discipline**
+#### Problem 4: No handoff discipline
 
 ```text
 Backend finishes IPC layer (command + type)
@@ -677,7 +677,7 @@ The orchestrator injects knowledge once per session. Core team members don't re-
 - **1 Integration Lead** — cross-boundary contracts
 - **1 Governance Lead** — .orqa/ artifacts
 
-**Total: 5 agents, persistent for entire session**
+#### Total: 5 agents, persistent for entire session
 
 ### 6.2 When to Spawn Specialists
 
@@ -780,7 +780,7 @@ TeamDelete:
 
 ### 8.1 From Current Failures
 
-**Anti-pattern 1: Spawn agents per task without team concept**
+#### Anti-pattern 1: Spawn agents per task without team concept
 
 ```text
 Task 1 → Backend Agent X → Knowledge loaded, work done, dies
@@ -790,7 +790,7 @@ Task 3 → Backend Agent Z → Knowledge reloaded AGAIN
 
 **Fix:** Persistent Backend Lead carries knowledge across 3 tasks
 
-**Anti-pattern 2: Parallel Rust compilation**
+#### Anti-pattern 2: Parallel Rust compilation
 
 ```text
 Agent A: cargo build (400MB)
@@ -800,7 +800,7 @@ System: OOM
 
 **Fix:** Compilation resource synchronization via SendMessage
 
-**Anti-pattern 3: Stale agents consuming resources**
+#### Anti-pattern 3: Stale agents consuming resources
 
 ```text
 Agent A finishes, doesn't terminate
@@ -810,7 +810,7 @@ After 10 tasks: 10 agents alive, competing for memory
 
 **Fix:** Explicit TeamDelete after task batch completion
 
-**Anti-pattern 4: No handoff discipline**
+#### Anti-pattern 4: No handoff discipline
 
 ```text
 Backend: "IPC layer done"
@@ -821,7 +821,7 @@ Integration: Finds type mismatch post-hoc
 
 **Fix:** Integration Lead validates all contracts before Frontend starts
 
-**Anti-pattern 5: Parallel same-layer work**
+#### Anti-pattern 5: Parallel same-layer work
 
 ```text
 Backend Agent A: Building Tauri command for feature X
@@ -831,7 +831,7 @@ Both try to update app builder → merge conflict, no clear resolution
 
 **Fix:** One Backend Lead owns all backend changes sequentially
 
-**Anti-pattern 6: Agent doesn't know the project's quality workflow**
+#### Anti-pattern 6: Agent doesn't know the project's quality workflow
 
 ```text
 Agent: restructures 306 files, runs cargo check, reports "done"
@@ -844,7 +844,7 @@ project knowledge that agents must load BEFORE starting work. The team
 design should ensure agents consume the project's quality workflow from
 the coding-standards plugin, not discover it at commit time.
 
-**Anti-pattern 7: Agent uses cargo check instead of orqa check**
+#### Anti-pattern 7: Agent uses cargo check instead of orqa check
 
 ```text
 Agent: "cargo check passes — done"
@@ -1030,14 +1030,14 @@ These changes affect how the Orchestrator agent behaves at runtime:
 
 The persistent team model is **stack-agnostic**. To deploy the same team to a different technology stack:
 
-**Step 1: Identify the new tech stack**
+### Step 1: Identify the new tech stack
 
 ```text
 Current (OrqaStudio): Rust backend + Svelte frontend + TypeScript + Tauri
 Target (Example): Python backend + React frontend + TypeScript
 ```
 
-**Step 2: Identify equivalent language plugins**
+### Step 2: Identify equivalent language plugins
 
 ```text
 Rust → Python       (plugins/python/)
@@ -1046,10 +1046,11 @@ TypeScript → (unchanged, or plugins/typescript-react/)
 Tauri → Flask/FastAPI (plugins/fastapi/ or plugins/flask/)
 ```
 
-**Step 3: No agent changes needed**
+### Step 3: No agent changes needed
+
 The team agents (`AGENT-backend-lead-sw.md`, `AGENT-frontend-lead-sw.md`, etc.) do NOT change. Only their knowledge sources change.
 
-**Step 4: Update agent knowledge references**
+### Step 4: Update agent knowledge references
 
 ```yaml
 # BEFORE (OrqaStudio)

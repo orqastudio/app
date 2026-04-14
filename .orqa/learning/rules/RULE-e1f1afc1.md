@@ -65,7 +65,7 @@ relationships:
 
   - target: "DOC-e6fb92b0"
 
-    type: "documented-by"
+    type: "documents"
 ---
 When agents write to specific code areas, the enforcement engine automatically injects
 relevant domain knowledge as system context. This implements Layer 2 (Knowledge Injection)

@@ -42,7 +42,7 @@ relationships:
 
   - target: DOC-e6fb92b0
 
-    type: documented-by
+    type: documents
 ---
 Core graph artifacts define how the artifact graph works, how agents traverse it, and how the structured thinking process operates. They are **firmware** — they ship with OrqaStudio and are not modified during normal project use.
 

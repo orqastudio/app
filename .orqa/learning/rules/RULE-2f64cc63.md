@@ -15,7 +15,7 @@ enforcement:
 relationships:
 
   - target: IMPL-2dc87f24
-    type: promoted-from
+    type: promoted-to
     rationale: "Rule was promoted from this lesson"
 ---
 

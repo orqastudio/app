@@ -17,7 +17,7 @@ enforcement:
     description: "Knowledge injection triggered when writing to component directory"
 relationships:
   - target: "DOC-2c94f7ba"
-    type: "documented-by"
+    type: "documents"
   - target: "PD-9a7d7256"
     type: "enforces"
 ---

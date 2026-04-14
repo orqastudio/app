@@ -9,7 +9,7 @@ relationships:
   - target: EPIC-fb1822c2
     type: drives
   - target: PD-a44384d1
-    type: evolves-into
+    type: evolves-to
     rationale: "Section 1 (Dev Process Separation) superseded — MCP and LSP are now CLI stdio modes, not separate managed processes. Other sections remain active."
 ---
 

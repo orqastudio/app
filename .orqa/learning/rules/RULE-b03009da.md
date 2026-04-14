@@ -30,17 +30,17 @@ relationships:
 
   - target: RULE-05ae2ce7
 
-    type: complements
+    type: governs
     rationale: "Architecture decisions define the layer requirements this rule enforces"
 
   - target: RULE-af5771e3
 
-    type: complements
+    type: governs
     rationale: "No-stubs ensures each layer has a real implementation, not scaffolding"
 
   - target: RULE-c382e053
 
-    type: complements
+    type: governs
     rationale: "No-aliases ensures layers agree on types without shims"
 ---
 

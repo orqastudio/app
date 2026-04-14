@@ -8,7 +8,7 @@ created: 2026-03-02
 updated: 2026-03-02
 relationships:
   - target: PD-859ed163
-    type: evolves-into
+    type: evolves-to
     rationale: "PD-859ed163 scopes SQLite to conversation persistence only, replacing this broader SQLite-for-all decision"
 ---
 

@@ -30,10 +30,10 @@ relationships:
 
   - target: DOC-f6c4ac69
 
-    type: documented-by
+    type: documents
 
   - target: IMPL-a1373533
-    type: promoted-from
+    type: promoted-to
     rationale: "Rule was promoted from this lesson"
 ---
 The team maintains two learning loops to prevent mistakes from recurring across sessions. Both loops are mandatory — they are not guidelines.

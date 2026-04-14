@@ -214,7 +214,7 @@ The `.orqa/` artifacts need cleanup before SurrealDB migration. **Read `.claude/
 
 Replacing the markdown-based artifact system with **SurrealDB as source of truth**.
 
-- **Storage migration plan:** `.orqa/planning/PLAN-storage-migration.md`
+- **Storage migration epic:** `.orqa/implementation/epics/EPIC-358d42a4.md`
 - **Graph DB PoC:** `engine/graph-db/` — standalone SurrealDB proof-of-concept crate
 - **Three deployment tiers:** local (embedded SurrealDB + SQLite), self-hosted (SurrealDB server + Postgres), cloud-hosted
 - **Git becomes automatic background infrastructure** for version history and audit trails

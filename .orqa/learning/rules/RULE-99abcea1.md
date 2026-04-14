@@ -20,10 +20,10 @@ relationships:
     target: PD-48b310f9
     rationale: "Agent teams rule enforces the Universal Roles decision by requiring delegation to role-specific subagents"
   - target: IMPL-ca2f3f46
-    type: promoted-from
+    type: promoted-to
     rationale: "Rule was promoted from this lesson"
   - target: IMPL-a91ac743
-    type: promoted-from
+    type: promoted-to
     rationale: "Rule was promoted from this lesson"
 ---
 

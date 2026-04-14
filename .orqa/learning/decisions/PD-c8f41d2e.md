@@ -8,16 +8,16 @@ created: 2026-03-26T00:00:00.000Z
 updated: 2026-03-26T00:00:00.000Z
 relationships:
   - target: "EPIC-2451d1a9"
-    type: "related"
+    type: "informs"
     rationale: "Phase 2 — Connector Thinning service dependency design"
   - target: "PD-a44384d1"
-    type: "refines"
+    type: "revises"
     rationale: "Builds on CLI-as-single-interface decision to define the daemon-only dependency model"
   - target: "PD-1ef9f57c"
-    type: "aligned-with"
+    type: "synchronised-with"
     rationale: "Consistent with resolution Q8: daemon is the business logic boundary, MCP/LSP are access protocols"
   - target: "TASK-5a858776"
-    type: "related"
+    type: "informs"
     rationale: "Design artifact for the service dependency check task"
 ---
 

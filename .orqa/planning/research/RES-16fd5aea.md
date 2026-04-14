@@ -9,13 +9,13 @@ updated: 2026-03-24
 category: code-quality
 relationships:
   - target: EPIC-e24086ed
-    type: supports
+    type: guides
     rationale: Findings feed the code quality audit epic
   - target: IDEA-0066e754
-    type: related
+    type: delivers
     rationale: Finding 4 identified this idea as duplicated across delivery/ and discovery/
   - target: IDEA-14669b52
-    type: related
+    type: informs
     rationale: Finding 5 resulted in this idea for graph query performance
   - target: EPIC-664909f8
     type: guides

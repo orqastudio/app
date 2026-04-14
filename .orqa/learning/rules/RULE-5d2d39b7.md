@@ -35,19 +35,19 @@ relationships:
 
   - target: RULE-8ee65d73
 
-    type: extends
+    type: crystallises
 
   - target: RULE-8aadfd6c
 
-    type: related
+    type: informs
 
   - target: RULE-d543d759
 
-    type: extends
+    type: crystallises
 
   - target: RULE-99abcea1
 
-    type: constrains
+    type: governs
 ---
 
 The orchestrator MUST NOT create a new team, start a new epic, or begin a new phase of work while follow-up items from the current batch remain unresolved. This is a hard gate, not a suggestion.

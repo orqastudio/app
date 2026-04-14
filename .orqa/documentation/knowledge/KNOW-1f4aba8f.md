@@ -20,7 +20,7 @@ relationships:
     type: synchronised-with
     rationale: "User-facing documentation pair for this agent-facing knowledge artifact"
   - target: KNOW-a16b7bc7
-    type: complements
+    type: governs
     rationale: "Stability tracking handles the lifecycle after a rule is demoted from this model"
 ---
 

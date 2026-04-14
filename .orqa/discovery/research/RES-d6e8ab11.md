@@ -15,16 +15,16 @@ created: 2026-03-25
 updated: 2026-03-25
 relationships:
   - target: RES-12f2bf80
-    type: evolves
+    type: evolves-to
     rationale: "Supersedes the persistent dev team model with workflow-first architecture"
   - target: RES-138eff6e
-    type: related
+    type: informs
     rationale: "Incorporates token efficiency findings into architectural design"
   - target: TASK-61605174
-    type: related
+    type: delivers
     rationale: "Research produced for this task"
   - target: EPIC-7fd25812
-    type: related
+    type: crystallises
     rationale: "Part of the stabilisation epic"
   - target: PD-1ef9f57c
     type: informs
