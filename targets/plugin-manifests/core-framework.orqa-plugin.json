@@ -1,0 +1,1234 @@
+{
+	"name": "@orqastudio/plugin-core-framework",
+	"version": "0.1.4-dev",
+	"displayName": "Core Framework",
+	"description": "The agent execution model — universal roles, delegation, session management, knowledge loading, thinking mode classification. Every project gets this.",
+	"categories": ["workflow", "infrastructure", "enforcement-generator"],
+	"purpose": "workflow",
+	"stage_slot": "learning",
+	"role": "core:framework",
+	"uninstallable": true,
+	"enforcement": [
+		{
+			"role": "generator",
+			"engine": "prettier",
+			"config_output": ".orqa/configs/.prettierrc",
+			"generator": "scripts/generate-prettier-config.ts",
+			"actions": {
+				"check": {
+					"command": "prettier",
+					"args": ["--config", ".orqa/configs/.prettierrc", "--check"],
+					"files": "*.{ts,svelte,js,json,css}"
+				},
+				"fix": {
+					"command": "prettier",
+					"args": ["--config", ".orqa/configs/.prettierrc", "--write"],
+					"files": "*.{ts,svelte,js,json,css}"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: prettier",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"],
+			"rules_path": "rules/prettier/"
+		},
+		{
+			"role": "generator",
+			"engine": "markdownlint",
+			"config_output": ".orqa/configs/.markdownlint.json",
+			"generator": "scripts/generate-markdownlint-config.ts",
+			"actions": {
+				"check": {
+					"command": "markdownlint-cli2",
+					"args": ["--config", ".orqa/configs/.markdownlint.json"],
+					"files": "*.md"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: markdownlint",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.md"],
+			"rules_path": "rules/markdownlint/"
+		},
+		{
+			"role": "generator",
+			"engine": "prettierignore",
+			"config_output": ".prettierignore",
+			"generator": "scripts/generate-prettierignore.ts",
+			"watch": {
+				"paths": ["package.json"],
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"]
+		},
+		{
+			"role": "generator",
+			"engine": "githooks",
+			"config_output": ".githooks",
+			"generator": "scripts/generate-githooks.ts",
+			"watch": {
+				"paths": ["plugins/**/orqa-plugin.json"],
+				"on_change": "regenerate"
+			}
+		}
+	],
+	"content": {
+		"agents": {
+			"source": "agents",
+			"target": ".claude/agents"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		},
+		"rules": {
+			"source": "rules",
+			"target": ".orqa/learning/rules"
+		},
+		"docs": {
+			"source": "docs",
+			"target": ".orqa/documentation"
+		},
+		"workflows": {
+			"source": "workflows",
+			"target": ".orqa/workflows"
+		}
+	},
+	"provides": {
+		"schemas": [
+			{
+				"key": "decision",
+				"label": "Decision",
+				"plural": "Decisions",
+				"icon": "scale",
+				"defaultPath": ".orqa/learning/decisions",
+				"idPrefix": "AD",
+				"semantic": "governance",
+				"reviewAction": "Review decision",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id", "status"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^AD-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				},
+				"influence": "high"
+			},
+			{
+				"key": "rule",
+				"label": "Rule",
+				"plural": "Rules",
+				"icon": "shield",
+				"defaultPath": ".orqa/learning/rules",
+				"idPrefix": "RULE",
+				"semantic": "governance",
+				"reviewAction": "Review rule",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id", "status", "enforcement"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^RULE-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"enforcement": {
+							"type": "array"
+						},
+						"demoted_date": {
+							"type": "string",
+							"format": "date",
+							"description": "ISO date when the rule was demoted to inactive"
+						},
+						"demoted_reason": {
+							"type": "string",
+							"description": "Why the rule was demoted (e.g. enforced by orqa lsp schema validation)"
+						},
+						"replaced_by": {
+							"type": "string",
+							"description": "What now covers this rule (e.g. orqa lsp, pre-commit hook)"
+						},
+						"stability_threshold": {
+							"type": "number",
+							"minimum": 1,
+							"default": 10,
+							"description": "Sessions with zero violations before the rule is safe to delete"
+						},
+						"stability_count": {
+							"type": "number",
+							"minimum": 0,
+							"default": 0,
+							"description": "Current count of consecutive clean sessions since demotion"
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				},
+				"influence": "high"
+			},
+			{
+				"key": "lesson",
+				"label": "Lesson",
+				"plural": "Lessons",
+				"icon": "book-open",
+				"defaultPath": ".orqa/learning/lessons",
+				"idPrefix": "IMPL",
+				"semantic": "learning",
+				"reviewAction": "Review lesson",
+				"categories": [
+					{
+						"key": "process",
+						"label": "Process",
+						"color": "#8b5cf6"
+					},
+					{
+						"key": "architecture",
+						"label": "Architecture",
+						"color": "#6366f1"
+					},
+					{
+						"key": "governance",
+						"label": "Governance",
+						"color": "#10b981"
+					},
+					{
+						"key": "coding",
+						"label": "Coding",
+						"color": "#f59e0b"
+					},
+					{
+						"key": "testing",
+						"label": "Testing",
+						"color": "#ef4444"
+					}
+				],
+				"frontmatter": {
+					"type": "object",
+					"required": ["id", "status", "recurrence"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^IMPL-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"recurrence": {
+							"type": "integer",
+							"minimum": 0
+						},
+						"maturity": {
+							"type": "string"
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				}
+			},
+			{
+				"key": "knowledge",
+				"label": "Knowledge",
+				"plural": "Knowledge",
+				"icon": "zap",
+				"defaultPath": ".orqa/documentation/knowledge",
+				"idPrefix": "KNOW",
+				"semantic": "documentation",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^KNOW-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"thinking-mode": {
+							"type": "string",
+							"description": "Prompt classification mode this knowledge artifact represents. Used by the thinking-mode classifier to match prompts to behavioral context."
+						},
+						"priority-rules": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							},
+							"description": "Rule categories prioritised when this thinking mode is active. Used by the prompt injector to select relevant behavioral rules."
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				}
+			},
+			{
+				"key": "agent",
+				"label": "Agent",
+				"plural": "Agents",
+				"icon": "bot",
+				"defaultPath": ".claude/agents",
+				"idPrefix": "AGENT",
+				"semantic": "governance",
+				"reviewAction": "Review agent",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id", "status", "preamble"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^AGENT-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"preamble": {
+							"type": "string"
+						},
+						"model": {
+							"type": "string"
+						},
+						"capabilities": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"knowledge": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				}
+			},
+			{
+				"key": "principle-decision",
+				"label": "Principle Decision",
+				"plural": "Principle Decisions",
+				"icon": "scale",
+				"defaultPath": ".orqa/learning/decisions",
+				"idPrefix": "PD",
+				"semantic": "governance",
+				"reviewAction": "Review principle decision",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id", "status"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^PD-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				},
+				"statuses": [
+					"captured",
+					"exploring",
+					"active",
+					"hold",
+					"review",
+					"completed",
+					"surpassed",
+					"archived"
+				],
+				"initialStatus": "captured",
+				"stateCategories": {
+					"planning": ["captured", "exploring"],
+					"active": ["active", "hold"],
+					"review": ["review"],
+					"completed": ["completed"],
+					"terminal": ["surpassed", "archived"]
+				},
+				"influence": "high"
+			},
+			{
+				"key": "doc",
+				"label": "Document",
+				"plural": "Documents",
+				"icon": "file-text",
+				"defaultPath": ".orqa/documentation",
+				"idPrefix": "DOC",
+				"semantic": "documentation",
+				"frontmatter": {
+					"type": "object",
+					"required": ["id"],
+					"properties": {
+						"id": {
+							"type": "string",
+							"pattern": "^DOC-[a-f0-9]{8}$"
+						},
+						"title": {
+							"type": "string"
+						},
+						"description": {
+							"type": ["string", "null"]
+						},
+						"relationships": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": ["target", "type"],
+								"properties": {
+									"target": {
+										"type": "string"
+									},
+									"type": {
+										"type": "string"
+									},
+									"rationale": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					},
+					"additionalProperties": true
+				}
+			}
+		],
+		"workflows": [
+			{
+				"artifact_type": "epic",
+				"path": "workflows/learning.contribution.workflow.yaml",
+				"contribution": true
+			},
+			{
+				"artifact_type": "decision",
+				"path": "workflows/decision.workflow.yaml",
+				"pipeline_stages": [
+					{
+						"key": "captured",
+						"label": "Captured",
+						"color": "#94a3b8"
+					},
+					{
+						"key": "exploring",
+						"label": "Exploring",
+						"color": "#60a5fa"
+					},
+					{
+						"key": "active",
+						"label": "Active",
+						"color": "#f59e0b"
+					},
+					{
+						"key": "review",
+						"label": "Review",
+						"color": "#8b5cf6"
+					},
+					{
+						"key": "completed",
+						"label": "Completed",
+						"color": "#10b981"
+					}
+				]
+			},
+			{
+				"artifact_type": "rule",
+				"path": "workflows/rule.workflow.yaml",
+				"pipeline_stages": [
+					{
+						"key": "captured",
+						"label": "Captured",
+						"color": "#94a3b8"
+					},
+					{
+						"key": "exploring",
+						"label": "Exploring",
+						"color": "#60a5fa"
+					},
+					{
+						"key": "active",
+						"label": "Active",
+						"color": "#10b981"
+					},
+					{
+						"key": "inactive",
+						"label": "Inactive",
+						"color": "#f59e0b"
+					},
+					{
+						"key": "review",
+						"label": "Review",
+						"color": "#8b5cf6"
+					}
+				]
+			},
+			{
+				"artifact_type": "lesson",
+				"path": "workflows/lesson.workflow.yaml",
+				"pipeline_stages": [
+					{
+						"key": "captured",
+						"label": "Captured",
+						"color": "#94a3b8"
+					},
+					{
+						"key": "exploring",
+						"label": "Exploring",
+						"color": "#60a5fa"
+					},
+					{
+						"key": "active",
+						"label": "Active",
+						"color": "#f59e0b"
+					},
+					{
+						"key": "recurring",
+						"label": "Recurring",
+						"color": "#ef4444"
+					},
+					{
+						"key": "review",
+						"label": "Review",
+						"color": "#8b5cf6"
+					},
+					{
+						"key": "completed",
+						"label": "Completed",
+						"color": "#10b981"
+					},
+					{
+						"key": "promoted",
+						"label": "Promoted",
+						"color": "#6366f1"
+					}
+				]
+			},
+			{
+				"artifact_type": "knowledge",
+				"path": "workflows/knowledge.workflow.yaml"
+			},
+			{
+				"artifact_type": "agent",
+				"path": "workflows/agent.workflow.yaml"
+			},
+			{
+				"artifact_type": "doc",
+				"path": "workflows/doc.workflow.yaml"
+			},
+			{
+				"artifact_type": "principle-decision",
+				"path": "workflows/principle-decision.workflow.yaml"
+			}
+		],
+		"enforcement_mechanisms": [
+			{
+				"key": "behavioral",
+				"description": "Prompt injection reminder — minimum enforcement floor",
+				"strength": 1
+			},
+			{
+				"key": "json-schema",
+				"description": "Frontmatter JSON Schema validation",
+				"strength": 8
+			},
+			{
+				"key": "hook",
+				"description": "Lifecycle hook enforcement (PreAction, PostAction, etc.)",
+				"strength": 5
+			},
+			{
+				"key": "onnx",
+				"description": "Semantic inference — similarity, classification, pattern matching (lesson recurrence, duplicate detection, compliance)",
+				"strength": 4
+			},
+			{
+				"key": "pre-commit",
+				"description": "Git pre-commit hook check — runs before each commit to block non-compliant changes",
+				"strength": 7
+			},
+			{
+				"key": "lint",
+				"description": "Static analysis linter check (eslint, rustfmt, clippy, etc.)",
+				"strength": 6
+			},
+			{
+				"key": "svelte-check",
+				"description": "Svelte type checking and diagnostics via svelte-check",
+				"strength": 7
+			},
+			{
+				"key": "cargo-test",
+				"description": "Rust test suite via cargo test",
+				"strength": 7
+			},
+			{
+				"key": "vitest",
+				"description": "TypeScript/JavaScript test suite via vitest",
+				"strength": 7
+			},
+			{
+				"key": "tsc",
+				"description": "TypeScript type checking via tsc",
+				"strength": 7
+			}
+		],
+		"relationships": [],
+		"agents": [
+			{
+				"key": "1dab5ebe",
+				"id": "AGENT-4c94fe14",
+				"path": "agents/AGENT-4c94fe14.md"
+			},
+			{
+				"key": "b0774726",
+				"id": "AGENT-8e58cd87",
+				"path": "agents/AGENT-8e58cd87.md"
+			},
+			{
+				"key": "bedeffd1",
+				"id": "AGENT-d1be3776",
+				"path": "agents/AGENT-d1be3776.md"
+			},
+			{
+				"key": "c5284fde",
+				"id": "AGENT-0aad40f4",
+				"path": "agents/AGENT-0aad40f4.md"
+			},
+			{
+				"key": "caff7bc1",
+				"id": "AGENT-85be6ace",
+				"path": "agents/AGENT-85be6ace.md"
+			},
+			{
+				"key": "cc255bc8",
+				"id": "AGENT-e5dd38e4",
+				"path": "agents/AGENT-e5dd38e4.md"
+			},
+			{
+				"key": "ec1b3785",
+				"id": "AGENT-bbad3d30",
+				"path": "agents/AGENT-bbad3d30.md"
+			},
+			{
+				"key": "fb0ce261",
+				"id": "AGENT-e333508b",
+				"path": "agents/AGENT-e333508b.md"
+			}
+		],
+		"knowledge": [
+			{
+				"key": "323c2803",
+				"id": "KNOW-b95ec6e3",
+				"label": "Thinking Mode: Debugging"
+			},
+			{
+				"key": "449b1e02",
+				"id": "KNOW-51de8fb7",
+				"label": "Artifact Status Management"
+			},
+			{
+				"key": "6f33713e",
+				"id": "KNOW-21d28aa0",
+				"label": "Planning"
+			},
+			{
+				"key": "83614358",
+				"id": "KNOW-fd636a56",
+				"label": "Thinking Mode: Review"
+			},
+			{
+				"key": "a2b3c4d5",
+				"id": "KNOW-13348442",
+				"label": "Search"
+			},
+			{
+				"key": "a4b5c6d7",
+				"id": "KNOW-7c871921",
+				"label": "Project Type Detection"
+			},
+			{
+				"key": "c9d8e7f6",
+				"id": "KNOW-e484802a",
+				"label": "Reviewer Reasoning Methodology"
+			},
+			{
+				"key": "d1a2b3c4",
+				"id": "KNOW-3d946f9a",
+				"label": "Agent Decision Methodology"
+			},
+			{
+				"key": "e0dec720",
+				"id": "KNOW-2876afc7",
+				"label": "Project Setup"
+			},
+			{
+				"key": "e3a559c9",
+				"id": "KNOW-f5ee4e0d",
+				"label": "Plugin Setup"
+			},
+			{
+				"key": "e5f6a7b8",
+				"id": "KNOW-b320cae8",
+				"label": "Implementer Reasoning Methodology"
+			},
+			{
+				"key": "f7476f0a",
+				"id": "KNOW-9ff8c63f",
+				"label": "Research Methodology"
+			},
+			{
+				"key": "f8e9d0a1",
+				"id": "KNOW-a4e351bc",
+				"label": "Governance Migration Methodology"
+			},
+			{
+				"key": "fda0559b",
+				"id": "KNOW-f7fb7aa7",
+				"label": "Thinking Mode: Implementation"
+			},
+			{
+				"key": "a4fd56bd",
+				"id": "KNOW-a16b7bc7",
+				"label": "Demoted Rule Stability Tracking"
+			},
+			{
+				"key": "7c1a3e50",
+				"id": "KNOW-22783288",
+				"label": "CLI Architecture"
+			},
+			{
+				"key": "8d2b4f61",
+				"id": "KNOW-dd5062c9",
+				"label": "Shared Validation Engine"
+			},
+			{
+				"key": "9e3c5072",
+				"id": "KNOW-1f4aba8f",
+				"label": "Three-Layer Enforcement Model"
+			},
+			{
+				"key": "b05e7294",
+				"id": "KNOW-586bfa9a",
+				"label": "Knowledge Auto-Injection"
+			},
+			{
+				"key": "88a2d5f5",
+				"id": "KNOW-e89753ad",
+				"label": "OrqaStudio CLI Commands"
+			},
+			{
+				"key": "25919e07",
+				"id": "KNOW-477f2c9c",
+				"label": "Agentic Workflow and Enforcement Pipeline"
+			},
+			{
+				"key": "03421ec0",
+				"id": "KNOW-03421ec0",
+				"label": "Project Inference"
+			},
+			{
+				"key": "4a58e7dd",
+				"id": "KNOW-4a58e7dd",
+				"label": "Project Migration"
+			},
+			{
+				"key": "85a449e7",
+				"id": "KNOW-85a449e7",
+				"label": "Naming Conventions"
+			},
+			{
+				"key": "46f68631",
+				"id": "KNOW-46f68631",
+				"label": "Licensing Decisions"
+			},
+			{
+				"key": "1a4f41f7",
+				"id": "KNOW-1a4f41f7",
+				"label": "Dependency License Compatibility"
+			},
+			{
+				"key": "2bf2b321",
+				"id": "KNOW-2bf2b321",
+				"label": "Schema Validation"
+			},
+			{
+				"key": "a53d826c",
+				"id": "KNOW-a53d826c",
+				"label": "Centralized Logging"
+			},
+			{
+				"key": "1afbc656",
+				"id": "KNOW-1afbc656",
+				"label": "Orqa Documentation Authoring"
+			},
+			{
+				"key": "5611351f",
+				"id": "KNOW-5611351f",
+				"label": "OrqaStudio Architecture"
+			},
+			{
+				"key": "816ebef3",
+				"id": "KNOW-816ebef3",
+				"label": "Artifact Creation Protocol"
+			},
+			{
+				"key": "9573eeea",
+				"id": "KNOW-9573eeea",
+				"label": "Artifact ID Format"
+			},
+			{
+				"key": "bcfeb64e",
+				"id": "KNOW-bcfeb64e",
+				"label": "Rule Enforcement"
+			},
+			{
+				"key": "126aa140",
+				"id": "KNOW-126aa140",
+				"label": "Quality Check Runner"
+			},
+			{
+				"key": "1c2d005d",
+				"id": "KNOW-1c2d005d",
+				"label": "Config Generation from Rules"
+			}
+		],
+		"hooks": [],
+		"views": [],
+		"widgets": [],
+		"behavioral_rules": [],
+		"mode_templates": {},
+		"session_reminders": [],
+		"knowledge_declarations": [
+			{
+				"id": "search",
+				"tier": "stage-triggered",
+				"stages": ["implement", "review", "research"],
+				"tags": ["search", "semantic", "regex", "methodology"],
+				"priority": "P1",
+				"summary": "Search methodology: three modes — regex for exact patterns, semantic for natural language, research for compound queries. Search before creating, find callers before refactoring.",
+				"content_file": "knowledge/KNOW-13348442.md"
+			},
+			{
+				"id": "three-layer-enforcement-model",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["implement", "review"],
+				"tags": ["enforcement", "three-layer", "model"],
+				"priority": "P1",
+				"summary": "Three-layer enforcement model: schema validation (structural) > semantic analysis (behavioral) > human review (judgment). Each layer catches what the previous cannot.",
+				"content_file": "knowledge/KNOW-1f4aba8f.md"
+			},
+			{
+				"id": "planning",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "writer"],
+				"stages": ["plan", "implement"],
+				"tags": ["planning", "documentation-first", "verification"],
+				"priority": "P1",
+				"summary": "Documentation-first planning: plans start with documentation, get user approval, then implement with mandatory verification gates. Prevents documentation drift across sessions.",
+				"content_file": "knowledge/KNOW-21d28aa0.md"
+			},
+			{
+				"id": "cli-architecture",
+				"tier": "stage-triggered",
+				"roles": ["implementer"],
+				"stages": ["implement"],
+				"tags": ["architecture", "cli", "commands"],
+				"priority": "P2",
+				"summary": "CLI architecture: command structure, plugin discovery, subcommand registration, and how CLI tools integrate with the daemon and plugin system.",
+				"content_file": "knowledge/KNOW-22783288.md"
+			},
+			{
+				"id": "project-setup",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["setup", "project", "initialization"],
+				"priority": "P2",
+				"summary": "Project setup: how to initialize a new OrqaStudio project, configure plugins, and establish the governance structure.",
+				"content_file": "knowledge/KNOW-2876afc7.md"
+			},
+			{
+				"id": "agent-decision-methodology",
+				"tier": "on-demand",
+				"roles": ["implementer", "reviewer"],
+				"tags": ["decision", "methodology", "tradeoffs"],
+				"priority": "P2",
+				"summary": "Agent decision methodology: structured approach to making design decisions. Identify constraints, evaluate tradeoffs, document in ADR format when architecturally significant.",
+				"content_file": "knowledge/KNOW-3d946f9a.md"
+			},
+			{
+				"id": "agentic-workflow-and-enforcement-pipelin",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["implement", "review"],
+				"tags": ["architecture", "agentic", "enforcement", "pipeline"],
+				"priority": "P1",
+				"summary": "Agentic workflow and enforcement pipeline: how agent prompts flow through thinking modes, knowledge injection, validation gates, and enforcement hooks. The execution spine of the system.",
+				"content_file": "knowledge/KNOW-477f2c9c.md"
+			},
+			{
+				"id": "artifact-status-management",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["implement", "review"],
+				"tags": ["status", "lifecycle", "artifacts"],
+				"priority": "P2",
+				"summary": "Artifact status management: rules for transitioning artifact status values. Status drives workflow progression and enforcement. Query schema for valid transitions.",
+				"content_file": "knowledge/KNOW-51de8fb7.md"
+			},
+			{
+				"id": "knowledge-auto-injection",
+				"tier": "stage-triggered",
+				"stages": ["implement", "review"],
+				"tags": ["knowledge", "injection", "auto-loading"],
+				"priority": "P1",
+				"summary": "Knowledge auto-injection: how the system automatically loads relevant knowledge based on tier (always/stage-triggered/on-demand), file paths, and semantic search triggers.",
+				"content_file": "knowledge/KNOW-586bfa9a.md"
+			},
+			{
+				"id": "project-type-detection",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["project-type", "detection", "classification"],
+				"priority": "P2",
+				"summary": "Project type detection: methodology for classifying projects by stack, language, framework. Drives plugin recommendations and governance templates.",
+				"content_file": "knowledge/KNOW-7c871921.md"
+			},
+			{
+				"id": "research-methodology",
+				"tier": "on-demand",
+				"roles": ["researcher"],
+				"tags": ["research", "methodology", "source-verification"],
+				"priority": "P2",
+				"summary": "Research methodology: source verification, credibility assessment, cross-referencing, structured documentation with confidence levels. For agents investigating external sources.",
+				"content_file": "knowledge/KNOW-9ff8c63f.md"
+			},
+			{
+				"id": "demoted-rule-stability-tracking",
+				"tier": "stage-triggered",
+				"roles": ["reviewer"],
+				"stages": ["review", "maintain"],
+				"tags": ["rules", "demotion", "stability"],
+				"priority": "P2",
+				"summary": "Demoted rule stability tracking: monitors rules demoted to knowledge, tracks whether demotion was correct based on subsequent violations. Informs rule lifecycle decisions.",
+				"content_file": "knowledge/KNOW-a16b7bc7.md"
+			},
+			{
+				"id": "governance-migration-methodology",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["migration", "governance", "methodology"],
+				"priority": "P2",
+				"summary": "Governance migration methodology: how to migrate governance artifacts between versions or formats. Safe migration patterns with validation.",
+				"content_file": "knowledge/KNOW-a4e351bc.md"
+			},
+			{
+				"id": "implementer-reasoning-methodology",
+				"tier": "stage-triggered",
+				"roles": ["implementer"],
+				"stages": ["implement"],
+				"tags": ["reasoning", "methodology", "implementer"],
+				"priority": "P2",
+				"summary": "Implementer reasoning methodology: structured approach to implementation decisions. Consider alternatives, document rationale, verify against acceptance criteria.",
+				"content_file": "knowledge/KNOW-b320cae8.md"
+			},
+			{
+				"id": "thinking-mode-debugging",
+				"tier": "always",
+				"tags": ["thinking-mode", "debugging", "troubleshooting"],
+				"priority": "P0",
+				"summary": "Debugging thinking mode: reproduce, isolate, identify root cause, then route to implementation or learning loop. Triggered by broken/unexpected behavior signals.",
+				"content_file": "knowledge/KNOW-b95ec6e3.md"
+			},
+			{
+				"id": "shared-validation-engine",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["implement", "review"],
+				"tags": ["architecture", "validation", "shared-engine"],
+				"priority": "P2",
+				"summary": "Shared validation engine: single schema-driven validator used by both CLI (TypeScript) and app (Rust). Schema IS the rule — no custom business logic in validators.",
+				"content_file": "knowledge/KNOW-dd5062c9.md"
+			},
+			{
+				"id": "reviewer-reasoning-methodology",
+				"tier": "stage-triggered",
+				"roles": ["reviewer"],
+				"stages": ["review"],
+				"tags": ["reasoning", "methodology", "reviewer"],
+				"priority": "P2",
+				"summary": "Reviewer reasoning methodology: structured approach to review verdicts. Evidence-based evaluation against standards, not opinion. Produce actionable feedback.",
+				"content_file": "knowledge/KNOW-e484802a.md"
+			},
+			{
+				"id": "orqastudio-cli-commands",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["implement", "review"],
+				"tags": ["cli", "commands", "orqa", "tooling"],
+				"priority": "P1",
+				"summary": "OrqaStudio CLI command reference: every orqa command, subcommands, and usage. Agents must use orqa commands instead of raw cargo/npm/make.",
+				"content_file": "knowledge/KNOW-e89753ad.md"
+			},
+			{
+				"id": "plugin-setup",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["plugin", "setup", "claude-code"],
+				"priority": "P2",
+				"summary": "Plugin setup: installs companion plugin for Claude Code. Detects existing agent infrastructure, migrates, registers plugin, sets up symlinks.",
+				"content_file": "knowledge/KNOW-f5ee4e0d.md"
+			},
+			{
+				"id": "thinking-mode-implementation",
+				"tier": "always",
+				"tags": ["thinking-mode", "implementation", "coding"],
+				"priority": "P0",
+				"summary": "Implementation thinking mode: hands-on work producing code, artifacts, or configuration. Requires coding standards, testing patterns, and architecture awareness. Triggered by build/fix/add/refactor signals.",
+				"content_file": "knowledge/KNOW-f7fb7aa7.md"
+			},
+			{
+				"id": "thinking-mode-review",
+				"tier": "always",
+				"tags": ["thinking-mode", "review", "audit"],
+				"priority": "P0",
+				"summary": "Review thinking mode: checks work against standards, produces PASS/FAIL verdict with evidence. Does not fix — only evaluates. Triggered by check/validate/audit signals.",
+				"content_file": "knowledge/KNOW-fd636a56.md"
+			},
+			{
+				"id": "artifact-creation",
+				"tier": "on-demand",
+				"roles": ["implementer", "governance-steward"],
+				"tags": ["artifact", "creation", "frontmatter", "schema", "relationships"],
+				"priority": "P2",
+				"summary": "How to create valid OrqaStudio artifacts: frontmatter requirements, relationship rules, schema compliance, status discovery via plugin schemas, and common patterns.",
+				"content_file": "knowledge/KNOW-816ebef3.md"
+			},
+			{
+				"id": "artifact-ids",
+				"tier": "on-demand",
+				"roles": ["implementer", "governance-steward"],
+				"tags": ["artifact", "ids", "format", "hex"],
+				"priority": "P2",
+				"summary": "Artifact ID format: TYPE-XXXXXXXX hex format, generation commands, rules for uniqueness and type-prefix matching.",
+				"content_file": "knowledge/KNOW-9573eeea.md"
+			},
+			{
+				"id": "rule-enforcement",
+				"tier": "on-demand",
+				"roles": ["implementer", "governance-steward"],
+				"tags": ["rule", "enforcement", "hooks", "cli-plugin"],
+				"priority": "P2",
+				"summary": "How OrqaStudio governance rules are enforced via PreToolUse hooks: enforcement entry format, event types (file/bash), actions (block/warn/inject).",
+				"content_file": "knowledge/KNOW-bcfeb64e.md"
+			},
+			{
+				"id": "quality-check-runner",
+				"tier": "on-demand",
+				"roles": ["implementer", "reviewer"],
+				"tags": ["quality", "checks", "orqa-check"],
+				"priority": "P2",
+				"summary": "Quality check runner: orqa check discovers tools from installed plugins and runs them all. Returns unified summary of lint, type-check, test results.",
+				"content_file": "knowledge/KNOW-126aa140.md"
+			},
+			{
+				"id": "config-generation-from-rules",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["config-generation", "eslint", "clippy", "enforcement"],
+				"priority": "P2",
+				"summary": "Config generation from rules: generates tool configs (ESLint, clippy, rustfmt) from OrqaStudio enforcement rules. Rules define what; this generates the how.",
+				"content_file": "knowledge/KNOW-1c2d005d.md"
+			}
+		],
+		"role_definitions": [
+			{
+				"role": "orchestrator",
+				"description": "Coordinates work across agent teams",
+				"prompt_template": "You coordinate multi-agent teams. Delegate all implementation. Read findings files. Never implement directly."
+			},
+			{
+				"role": "implementer",
+				"description": "Implements code changes",
+				"prompt_template": "You implement code changes. Read requirements, write code, run tests. Follow architecture docs."
+			},
+			{
+				"role": "reviewer",
+				"description": "Reviews work against acceptance criteria",
+				"prompt_template": "You review completed work. Check every AC with evidence. Produce PASS/FAIL verdicts."
+			},
+			{
+				"role": "writer",
+				"description": "Creates and edits documentation",
+				"prompt_template": "You write documentation. Match target architecture, not current patterns."
+			},
+			{
+				"role": "planner",
+				"description": "Designs implementation approaches",
+				"prompt_template": "You design implementation plans. Map dependencies, identify risks, produce atomic tasks."
+			},
+			{
+				"role": "designer",
+				"description": "Creates UI/UX designs",
+				"prompt_template": "You design UI components and experiences. Produce design specs and component code."
+			},
+			{
+				"role": "governance-steward",
+				"description": "Maintains governance artifacts",
+				"prompt_template": "You maintain .orqa/ artifacts. Ensure structure matches architecture. No source code changes."
+			},
+			{
+				"role": "researcher",
+				"description": "Investigates and gathers information",
+				"prompt_template": "You research questions. Gather evidence from code and docs. Write structured findings."
+			}
+		]
+	},
+	"defaultNavigation": [
+		{
+			"key": "agents",
+			"type": "group",
+			"icon": "bot",
+			"label": "Agents",
+			"children": [
+				{
+					"key": "agents",
+					"type": "builtin",
+					"icon": "bot"
+				}
+			]
+		}
+	]
+}

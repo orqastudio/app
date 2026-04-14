@@ -1,0 +1,100 @@
+{
+	"stage": "discovery",
+	"display_name": "Discovery",
+	"description": "Investigate the problem space, define product identity, capture structured knowledge about users and context.",
+	"thinking_mode": "Research",
+	"entry_criteria": [
+		"A new problem domain or product direction needs investigation",
+		"Existing vision requires re-examination due to market or scope shift"
+	],
+	"exit_criteria": [
+		"At least one vision artifact is active",
+		"At least 3 pillars are defined and linked to the vision",
+		"At least one persona is documented",
+		"Discovery decisions have been handed off to planning via hands-off-to relationships"
+	],
+	"artifact_types_produced": [
+		"vision",
+		"pillar",
+		"persona",
+		"pivot",
+		"discovery-idea",
+		"discovery-research",
+		"discovery-decision"
+	],
+	"relationships_created": [
+		{
+			"type": "upholds",
+			"from": "pillar",
+			"to": "vision",
+			"note": "Each pillar supports the product vision"
+		},
+		{
+			"type": "drives",
+			"from": "vision",
+			"to": "pillar",
+			"note": "Vision drives pillar definition"
+		},
+		{
+			"type": "grounded",
+			"from": "discovery-idea",
+			"to": "pillar",
+			"note": "Ideas are grounded in pillars"
+		},
+		{
+			"type": "evolves-to",
+			"from": "discovery-idea",
+			"to": "discovery-research",
+			"note": "Ideas evolve into research"
+		},
+		{
+			"type": "evolves-to",
+			"from": "discovery-research",
+			"to": "discovery-decision",
+			"note": "Research evolves into decisions"
+		},
+		{
+			"type": "hands-off-to",
+			"from": "discovery-decision",
+			"to": "planning-idea",
+			"note": "Discovery hands off to planning"
+		},
+		{
+			"type": "pivots",
+			"from": "pivot",
+			"to": "vision",
+			"note": "Pivots modify the vision direction"
+		},
+		{
+			"type": "benefits",
+			"from": "persona",
+			"to": "vision",
+			"note": "Personas identify who benefits from the vision"
+		}
+	],
+	"agent_specializations": {
+		"primary": "researcher",
+		"supporting": ["governance-steward", "writer"]
+	},
+	"knowledge_injection": ["DOC-36befd20"],
+	"state_machine": {
+		"initial": "active",
+		"states": ["active", "complete", "archived"],
+		"transitions": [
+			{
+				"from": "active",
+				"to": "complete",
+				"guard": "exit_criteria_met"
+			},
+			{
+				"from": "complete",
+				"to": "archived",
+				"guard": "superseded_by_pivot"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-agile-discovery"
+	]
+}

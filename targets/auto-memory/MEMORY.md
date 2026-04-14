@@ -1,0 +1,16 @@
+- [Product identity](product_identity.md) — OrqaStudio is a clarity engine for structured thinking, not an AI dev tool
+- [Three pillars](pillars.md) — Clarity Through Structure, Learning Through Reflection, Purpose Through Continuity
+- [Architecture: plugin-canonical](architecture_plugin_canonical.md) — plugins are source of truth, .orqa/ is installed copies + dev-only artifacts
+- [Architecture: forward-only relationships](architecture_relationships.md) — task stores delivers:epic, graph computes inverses
+- [Architecture: daemon boundary](architecture_daemon.md) — daemon owns all DB access, MCP/LSP are access protocols
+- [SurrealDB migration](project_surrealdb.md) — replacing markdown artifact graph with SurrealDB, three deployment tiers
+- [Lesson: no stubs or placeholders](lesson_no_stubs.md) — real implementations only, no deferred deliverables
+- [Lesson: enforce through the system](lesson_enforce_through_system.md) — use OrqaStudio's enforcement, not raw platform hooks
+- [Lesson: documentation first](lesson_docs_first.md) — docs define intent, code follows docs
+- [Lesson: orchestrator must not stop](lesson_no_stopping.md) — do not ask permission to continue when not blocked
+- [Lesson: findings to disk](lesson_findings_to_disk.md) — agent work must be written to findings files, not accumulated in context
+- [Lesson: investigate systemically](lesson_investigate_systemically.md) — understand the pattern before fixing individual instances
+- [Lesson: commit at boundaries](lesson_commit_boundaries.md) — commit at task/phase completion to prevent file accumulation
+- [Rule: search over grep](rule_search_over_grep.md) — semantic search before file-level grep (RULE-005)
+- [Rule: dogfood mode](rule_dogfood.md) — enforcement gaps found during development are immediately CRITICAL
+- [User: Bobbi](user_bobbi.md) — project owner, she/her, prefers direct actionable guidance

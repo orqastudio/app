@@ -1,0 +1,172 @@
+{
+	"name": "@orqastudio/plugin-rust",
+	"displayName": "Rust",
+	"version": "0.1.4-dev",
+	"description": "Base Rust development infrastructure — clippy, rustfmt enforcement config generation.",
+	"categories": ["domain-knowledge", "enforcement-generator", "enforcement-contributor"],
+	"purpose": "knowledge",
+	"enforcement": [
+		{
+			"role": "generator",
+			"engine": "clippy",
+			"config_output": "clippy.toml",
+			"generator": "scripts/generate-clippy-config.ts",
+			"actions": {
+				"check": {
+					"command": "cargo",
+					"args": ["clippy", "--workspace", "--all-targets"]
+				},
+				"fix": {
+					"command": "cargo",
+					"args": ["clippy", "--workspace", "--all-targets", "--fix", "--allow-dirty"]
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: clippy",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.rs"],
+			"rules_path": "rules/clippy/"
+		},
+		{
+			"role": "generator",
+			"engine": "rustfmt",
+			"config_output": ".rustfmt.toml",
+			"generator": "scripts/generate-rustfmt-config.ts",
+			"actions": {
+				"check": {
+					"command": "cargo",
+					"args": ["fmt", "--check"]
+				},
+				"fix": {
+					"command": "cargo",
+					"args": ["fmt"]
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: rustfmt",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.rs"],
+			"rules_path": "rules/rustfmt/"
+		}
+	],
+	"provides": {
+		"agents": [
+			{
+				"key": "4241392c",
+				"id": "AGENT-26e5029d",
+				"path": "agents/AGENT-26e5029d.md"
+			},
+			{
+				"key": "e1e47559",
+				"id": "AGENT-065a25cc",
+				"path": "agents/AGENT-065a25cc.md"
+			}
+		],
+		"lspServers": {
+			"rust": {
+				"command": "rust-analyzer",
+				"extensionToLanguage": {
+					".rs": "rust"
+				}
+			}
+		},
+		"knowledge": [
+			{
+				"key": "12495e28",
+				"id": "KNOW-ea7898e4",
+				"label": "Rust Async Patterns"
+			},
+			{
+				"key": "214b7cdc",
+				"id": "KNOW-694ff7cb"
+			},
+			{
+				"key": "2a72f929",
+				"id": "KNOW-f7d03a2c"
+			},
+			{
+				"key": "5efa83a5",
+				"id": "KNOW-d4095bd9"
+			}
+		],
+		"decision_tree": {
+			"branches": [
+				{
+					"mode": "implementation",
+					"domain": "rust-backend",
+					"description": "Implementing Rust code — Tauri commands, domain logic, repositories, async patterns",
+					"search_context": "rust async, tauri command, thiserror, repository pattern, domain service"
+				}
+			]
+		},
+		"knowledge_declarations": [
+			{
+				"id": "rust-testing-patterns",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["**/*.rs"],
+				"tags": ["rust", "reference"],
+				"priority": "P3",
+				"summary": "Rust language reference for common patterns used in the OrqaStudio backend.",
+				"content_file": "knowledge/KNOW-694ff7cb.md"
+			},
+			{
+				"id": "clippy-config-management",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["**/*.rs"],
+				"tags": ["rust", "reference"],
+				"priority": "P3",
+				"summary": "Supplementary Rust reference for advanced patterns.",
+				"content_file": "knowledge/KNOW-d4095bd9.md"
+			},
+			{
+				"id": "rust-async-patterns",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["**/*.rs"],
+				"tags": ["rust", "async", "tokio", "patterns"],
+				"priority": "P2",
+				"summary": "Rust async patterns with Tokio: tasks, channels, streams, error handling, graceful shutdown, async traits. Production patterns for concurrent Rust.",
+				"content_file": "knowledge/KNOW-ea7898e4.md"
+			},
+			{
+				"id": "rust-plugin-installation",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["**/*.rs"],
+				"tags": ["rust", "reference"],
+				"priority": "P3",
+				"summary": "Additional Rust patterns and idioms reference for backend development.",
+				"content_file": "knowledge/KNOW-f7d03a2c.md"
+			}
+		]
+	},
+	"content": {
+		"agents": {
+			"source": "agents",
+			"target": ".claude/agents"
+		},
+		"documentation": {
+			"source": "documentation",
+			"target": ".orqa/documentation"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		}
+	},
+	"dependencies": {
+		"system": [
+			{
+				"binary": "cargo",
+				"minVersion": "1.70.0"
+			}
+		]
+	},
+	"role": "enhancement:delivery"
+}

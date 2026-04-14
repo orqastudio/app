@@ -1,0 +1,116 @@
+{
+	"stage": "implementation",
+	"display_name": "Implementation",
+	"description": "Build, fix, add, or refactor. Concrete deliverables tracked through milestones, epics, and tasks.",
+	"thinking_mode": "Implementation",
+	"entry_criteria": [
+		"Epics are defined with acceptance criteria (linked to planning-decisions via implements)",
+		"At least one epic is in active state"
+	],
+	"exit_criteria": [
+		"Tasks in epic are complete",
+		"Epic delivers its milestone via fulfils relationship",
+		"No legacy code commented out or deferred"
+	],
+	"artifact_types_produced": ["milestone", "epic", "task"],
+	"relationships_created": [
+		{
+			"type": "delivers",
+			"from": "task",
+			"to": "epic",
+			"note": "Tasks deliver epics"
+		},
+		{
+			"type": "fulfils",
+			"from": "epic",
+			"to": "milestone",
+			"note": "Epics fulfil milestones"
+		},
+		{
+			"type": "realises",
+			"from": "milestone",
+			"to": "planning-decision",
+			"note": "Milestones realise planning decisions"
+		},
+		{
+			"type": "depends-on",
+			"from": "task",
+			"to": "task",
+			"note": "Task dependency ordering"
+		},
+		{
+			"type": "depends-on",
+			"from": "epic",
+			"to": "epic",
+			"note": "Epic dependency ordering"
+		},
+		{
+			"type": "implements",
+			"from": "task",
+			"to": "planning-decision",
+			"note": "Tasks implement decisions"
+		},
+		{
+			"type": "addresses",
+			"from": "task",
+			"to": "lesson",
+			"note": "Tasks address recurrent lessons"
+		},
+		{
+			"type": "yields",
+			"from": "task",
+			"to": "lesson",
+			"note": "Task work yields lessons"
+		}
+	],
+	"agent_specializations": {
+		"primary": "implementer",
+		"supporting": ["reviewer", "governance-steward"]
+	},
+	"knowledge_injection": ["DOC-f7fb7aa7", "KNOW-0188373b", "KNOW-1314ac47", "KNOW-5f4db8f7"],
+	"state_machine": {
+		"initial": "planned",
+		"states": ["planned", "active", "review", "complete", "blocked", "archived"],
+		"transitions": [
+			{
+				"from": "planned",
+				"to": "active",
+				"guard": "dependencies_met"
+			},
+			{
+				"from": "active",
+				"to": "review",
+				"guard": "implementation_complete"
+			},
+			{
+				"from": "review",
+				"to": "complete",
+				"guard": "reviewer_pass"
+			},
+			{
+				"from": "review",
+				"to": "active",
+				"guard": "reviewer_fail"
+			},
+			{
+				"from": "active",
+				"to": "blocked",
+				"guard": "blocker_identified"
+			},
+			{
+				"from": "blocked",
+				"to": "active",
+				"guard": "blocker_resolved"
+			},
+			{
+				"from": "complete",
+				"to": "archived",
+				"guard": "milestone_complete"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-software-kanban"
+	]
+}

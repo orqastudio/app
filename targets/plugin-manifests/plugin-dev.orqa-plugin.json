@@ -1,0 +1,80 @@
+{
+	"name": "@orqastudio/plugin-plugin-dev",
+	"version": "0.1.4-dev",
+	"displayName": "Plugin Development",
+	"description": "Plugin development tooling — scaffolding, manifest management, content ownership, three-way diff, first-party and third-party workflows. Opt-in for plugin authors.",
+	"categories": ["domain-knowledge"],
+	"purpose": "knowledge",
+	"role": "enhancement:development",
+	"provides": {
+		"agents": [
+			{
+				"key": "34a6e2cd",
+				"id": "AGENT-ce86fb50",
+				"path": "agents/AGENT-ce86fb50.md"
+			}
+		],
+		"knowledge": [
+			{
+				"key": "b453410f",
+				"id": "KNOW-2f38309a",
+				"label": "Plugin Development"
+			},
+			{
+				"key": "e1333874",
+				"id": "KNOW-e6fee7a0",
+				"label": "First-Party Plugin Development"
+			},
+			{
+				"key": "63cc1a00",
+				"id": "KNOW-1b7fa054",
+				"label": "Third-Party Plugin Development"
+			}
+		],
+		"schemas": [],
+		"enforcement_mechanisms": [],
+		"relationships": [],
+		"hooks": [],
+		"views": [],
+		"widgets": [],
+		"knowledge_declarations": [
+			{
+				"id": "third-party-plugin-development",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["plugin", "third-party", "development"],
+				"priority": "P3",
+				"summary": "Third-party plugin development: standalone plugin creation outside the platform monorepo. Template-based, registry publishing, community conventions.",
+				"content_file": "knowledge/KNOW-1b7fa054.md"
+			},
+			{
+				"id": "plugin-development",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["plugin", "development", "scaffolding"],
+				"priority": "P2",
+				"summary": "Plugin development: detects first-party vs third-party context, loads appropriate sub-knowledge. Use when creating new plugins or extending the platform.",
+				"content_file": "knowledge/KNOW-2f38309a.md"
+			},
+			{
+				"id": "first-party-plugin-development",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["plugin", "first-party", "monorepo"],
+				"priority": "P2",
+				"summary": "First-party plugin development: workflow for the platform monorepo. Plugins are submodules, managed by dev environment CLI, published via CI.",
+				"content_file": "knowledge/KNOW-e6fee7a0.md"
+			}
+		]
+	},
+	"content": {
+		"agents": {
+			"source": "agents",
+			"target": ".claude/agents"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		}
+	}
+}

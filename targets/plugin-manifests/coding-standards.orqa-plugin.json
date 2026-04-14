@@ -1,0 +1,101 @@
+{
+	"name": "@orqastudio/plugin-coding-standards",
+	"version": "0.1.0-dev",
+	"displayName": "Coding Standards",
+	"description": "Cross-cutting enforcement generators for ESLint, Prettier, and Markdownlint. Provides enforcement config generation driven by project rules, with violation detection and auto-fix.",
+	"categories": ["infrastructure", "enforcement-generator"],
+	"purpose": "infrastructure",
+	"role": "core:enforcement",
+	"uninstallable": false,
+	"enforcement": [
+		{
+			"role": "generator",
+			"engine": "eslint",
+			"config_output": ".orqa/configs/eslint.config.js",
+			"generator": "scripts/generate-eslint-config.ts",
+			"actions": {
+				"check": {
+					"command": "eslint",
+					"args": [
+						"--config",
+						".orqa/configs/eslint.config.js",
+						"--max-warnings",
+						"0",
+						"--no-warn-ignored"
+					],
+					"files": "*.{ts,svelte,js}"
+				},
+				"fix": {
+					"command": "eslint",
+					"args": ["--config", ".orqa/configs/eslint.config.js", "--fix"],
+					"files": "*.{ts,svelte,js}"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: eslint",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js"],
+			"rules_path": "rules/eslint/"
+		},
+		{
+			"role": "generator",
+			"engine": "prettier",
+			"config_output": ".orqa/configs/.prettierrc",
+			"generator": "scripts/generate-prettier-config.ts",
+			"actions": {
+				"check": {
+					"command": "prettier",
+					"args": ["--config", ".orqa/configs/.prettierrc", "--check"],
+					"files": "*.{ts,svelte,js,json,css}"
+				},
+				"fix": {
+					"command": "prettier",
+					"args": ["--config", ".orqa/configs/.prettierrc", "--write"],
+					"files": "*.{ts,svelte,js,json,css}"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: prettier",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js", "*.json", "*.css"],
+			"rules_path": "rules/prettier/"
+		},
+		{
+			"role": "generator",
+			"engine": "markdownlint",
+			"config_output": ".orqa/configs/.markdownlint.json",
+			"generator": "scripts/generate-markdownlint-config.ts",
+			"actions": {
+				"check": {
+					"command": "markdownlint-cli2",
+					"args": ["--config", ".orqa/configs/.markdownlint.json"],
+					"files": "*.md"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: markdownlint",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.md"],
+			"rules_path": "rules/markdownlint/"
+		}
+	],
+	"provides": {
+		"schemas": [],
+		"relationships": [],
+		"knowledge": [],
+		"cliTools": [],
+		"hooks": []
+	},
+	"content": {
+		"rules": {
+			"source": "rules",
+			"target": ".orqa/learning/rules"
+		}
+	}
+}

@@ -1,3 +1,11 @@
 # Migration task lists — dense operational reference format,
 # not governance artifacts. Exempt from MD032 and similar structural rules.
 .claude/tasks/
+
+# Target state files — agent instruction and auto-memory format.
+# These intentionally use dense heading/list layout for token efficiency.
+# Not governance artifacts subject to documentation structure rules.
+targets/CLAUDE.md
+targets/auto-memory/
+targets/skills/
+targets/claude-code-plugin/.claude/

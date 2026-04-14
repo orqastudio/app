@@ -1,0 +1,90 @@
+{
+	"stage": "planning",
+	"display_name": "Planning",
+	"description": "Design implementation approach, map dependencies, decompose work into epics and tasks.",
+	"thinking_mode": "Planning",
+	"entry_criteria": [
+		"At least one discovery-decision has been handed off to planning (hands-off-to relationship exists)",
+		"Vision and pillars are in active or complete state"
+	],
+	"exit_criteria": [
+		"Planning decisions have been linked to epics via implements relationships",
+		"Epics are decomposed into tasks with acceptance criteria",
+		"Dependencies are mapped with depends-on relationships"
+	],
+	"artifact_types_produced": [
+		"planning-idea",
+		"planning-research",
+		"planning-decision",
+		"wireframe"
+	],
+	"relationships_created": [
+		{
+			"type": "grounded",
+			"from": "planning-idea",
+			"to": "pillar",
+			"note": "Planning ideas grounded in pillars"
+		},
+		{
+			"type": "evolves-to",
+			"from": "planning-idea",
+			"to": "planning-research",
+			"note": "Ideas evolve into research"
+		},
+		{
+			"type": "evolves-to",
+			"from": "planning-research",
+			"to": "planning-decision",
+			"note": "Research evolves into decisions"
+		},
+		{
+			"type": "implements",
+			"from": "planning-decision",
+			"to": "epic",
+			"note": "Decisions are implemented via epics"
+		},
+		{
+			"type": "visualises",
+			"from": "wireframe",
+			"to": "planning-decision",
+			"note": "Wireframes visualise decisions"
+		},
+		{
+			"type": "references",
+			"from": "planning-decision",
+			"to": "discovery-decision",
+			"note": "Planning decisions reference discovery context"
+		},
+		{
+			"type": "informs",
+			"from": "planning-decision",
+			"to": "principle-decision",
+			"note": "Planning decisions can inform principles"
+		}
+	],
+	"agent_specializations": {
+		"primary": "planner",
+		"supporting": ["governance-steward", "researcher"]
+	},
+	"knowledge_injection": ["DOC-4a4241a5"],
+	"state_machine": {
+		"initial": "active",
+		"states": ["active", "complete", "archived"],
+		"transitions": [
+			{
+				"from": "active",
+				"to": "complete",
+				"guard": "exit_criteria_met"
+			},
+			{
+				"from": "complete",
+				"to": "archived",
+				"guard": "superseded"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-agile-planning"
+	]
+}

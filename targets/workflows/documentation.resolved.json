@@ -1,0 +1,90 @@
+{
+	"stage": "documentation",
+	"display_name": "Documentation",
+	"description": "Write, update, and organise documentation. Create docs that describe the system and knowledge artifacts that agents can inject.",
+	"thinking_mode": "Documentation",
+	"entry_criteria": [
+		"Implementation work is producing or has produced concrete deliverables",
+		"Architecture decisions or design rationale needs to be captured"
+	],
+	"exit_criteria": [
+		"Key decisions and architecture are documented in doc artifacts",
+		"Corresponding knowledge (KNOW) artifacts exist for agent-injectable content",
+		"doc and knowledge artifacts are linked via synchronised-with relationships"
+	],
+	"artifact_types_produced": ["doc", "knowledge"],
+	"relationships_created": [
+		{
+			"type": "documents",
+			"from": "doc",
+			"to": "epic",
+			"note": "Docs document epics"
+		},
+		{
+			"type": "documents",
+			"from": "doc",
+			"to": "principle-decision",
+			"note": "Docs document decisions"
+		},
+		{
+			"type": "documents",
+			"from": "doc",
+			"to": "rule",
+			"note": "Docs document rules"
+		},
+		{
+			"type": "documents",
+			"from": "doc",
+			"to": "milestone",
+			"note": "Docs document milestones"
+		},
+		{
+			"type": "synchronised-with",
+			"from": "doc",
+			"to": "knowledge",
+			"note": "Docs and knowledge stay in sync"
+		},
+		{
+			"type": "guides",
+			"from": "doc",
+			"to": "epic",
+			"note": "Implementation guides reference epics"
+		}
+	],
+	"agent_specializations": {
+		"primary": "writer",
+		"supporting": ["governance-steward"]
+	},
+	"knowledge_injection": ["DOC-bf70068c"],
+	"state_machine": {
+		"initial": "active",
+		"states": ["active", "complete", "stale", "archived"],
+		"transitions": [
+			{
+				"from": "active",
+				"to": "complete",
+				"guard": "reviewed_and_accurate"
+			},
+			{
+				"from": "complete",
+				"to": "stale",
+				"guard": "synchronised_with_source_updated"
+			},
+			{
+				"from": "stale",
+				"to": "active",
+				"guard": "update_initiated"
+			},
+			{
+				"from": "complete",
+				"to": "archived",
+				"guard": "superseded"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-agile-documentation",
+		"@orqastudio/plugin-core-framework"
+	]
+}

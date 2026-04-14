@@ -1,0 +1,141 @@
+{
+	"name": "@orqastudio/plugin-tauri",
+	"version": "0.1.4-dev",
+	"displayName": "Tauri Development",
+	"description": "Tauri v2 desktop application patterns — extends the Rust plugin with Tauri-specific configuration, IPC patterns, and build settings.",
+	"extends": ["@orqastudio/plugin-rust"],
+	"requires": ["@orqastudio/plugin-rust", "@orqastudio/plugin-svelte"],
+	"categories": ["domain-knowledge"],
+	"purpose": "knowledge",
+	"provides": {
+		"knowledge": [
+			{
+				"key": "2539a6e4",
+				"id": "KNOW-1da7ecd8",
+				"label": "Tauri v2 IPC Patterns Reference"
+			},
+			{
+				"key": "6f7f4da5",
+				"id": "KNOW-a274d90d"
+			},
+			{
+				"key": "a5434b61",
+				"id": "KNOW-5efbe925",
+				"label": "Tauri v2 Capabilities & Permissions Reference"
+			},
+			{
+				"key": "c323ec5f",
+				"id": "KNOW-59077955",
+				"label": "Tauri v2 Development"
+			},
+			{
+				"key": "de97219c",
+				"id": "KNOW-73490bde"
+			},
+			{
+				"key": "8615fee2",
+				"id": "KNOW-8615fee2",
+				"label": "OrqaStudio Backend Best Practices"
+			},
+			{
+				"key": "207d9e2c",
+				"id": "KNOW-207d9e2c",
+				"label": "Orqa Error Composition"
+			},
+			{
+				"key": "60aefbbc",
+				"id": "KNOW-60aefbbc",
+				"label": "Orqa Domain Services"
+			},
+			{
+				"key": "4f81ddc5",
+				"id": "KNOW-4f81ddc5",
+				"label": "Orqa IPC Patterns"
+			},
+			{
+				"key": "33b2dc14",
+				"id": "KNOW-33b2dc14",
+				"label": "Orqa Streaming Pipeline"
+			},
+			{
+				"key": "fbc200e6",
+				"id": "KNOW-fbc200e6",
+				"label": "Orqa Repository Pattern"
+			}
+		],
+		"agents": [
+			{
+				"key": "1ed9512e",
+				"id": "AGENT-65b56a0b",
+				"path": "agents/AGENT-65b56a0b.md"
+			}
+		],
+		"knowledge_declarations": [
+			{
+				"id": "tauri-v2-ipc-patterns-reference",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["app/src-tauri/**"],
+				"tags": ["tauri", "ipc", "commands", "events", "channels"],
+				"priority": "P2",
+				"summary": "Tauri v2 IPC patterns: commands (invoke), events (fire-and-forget), channels (streaming). Three IPC primitives with Rust/TypeScript examples.",
+				"content_file": "knowledge/KNOW-1da7ecd8.md"
+			},
+			{
+				"id": "tauri-v2-development",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["app/src-tauri/**"],
+				"tags": ["tauri", "development", "configuration"],
+				"priority": "P2",
+				"summary": "Tauri v2 development: tauri.conf.json, Rust commands, IPC patterns, capabilities, troubleshooting builds, desktop/mobile deployment.",
+				"content_file": "knowledge/KNOW-59077955.md"
+			},
+			{
+				"id": "tauri-v2-capabilities-permissions-refere",
+				"tier": "on-demand",
+				"roles": ["implementer", "reviewer"],
+				"paths": ["app/src-tauri/capabilities/**"],
+				"tags": ["tauri", "capabilities", "permissions", "security"],
+				"priority": "P2",
+				"summary": "Tauri v2 capabilities and permissions: capability files, permission declarations, scope configuration. Security boundary for IPC commands.",
+				"content_file": "knowledge/KNOW-5efbe925.md"
+			},
+			{
+				"id": "tauri-v2-patterns",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["app/src-tauri/**"],
+				"tags": ["tauri", "reference"],
+				"priority": "P3",
+				"summary": "Additional Tauri v2 reference for specific development patterns.",
+				"content_file": "knowledge/KNOW-73490bde.md"
+			},
+			{
+				"id": "tauri-plugin-installation",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["app/src-tauri/**"],
+				"tags": ["tauri", "reference"],
+				"priority": "P3",
+				"summary": "Tauri v2 reference material for application development patterns.",
+				"content_file": "knowledge/KNOW-a274d90d.md"
+			}
+		]
+	},
+	"content": {
+		"agents": {
+			"source": "agents",
+			"target": ".claude/agents"
+		},
+		"documentation": {
+			"source": "documentation",
+			"target": ".orqa/documentation"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		}
+	},
+	"role": "enhancement:delivery"
+}

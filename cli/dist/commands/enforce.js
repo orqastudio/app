@@ -166,9 +166,23 @@ export async function runEnforceCommand(projectRoot, args) {
         // When it does not (e.g. tsc --project), run without file args.
         let files = null;
         if (stagedFiles !== null && engine.fileTypes.length > 0) {
-            const relevant = filterByPatterns(stagedFiles, engine.fileTypes);
+            let relevant = filterByPatterns(stagedFiles, engine.fileTypes);
             if (relevant.length === 0)
                 continue; // No relevant staged files — skip engine.
+            // Apply engine-specific ignore files. markdownlint-cli2 does not apply
+            // .markdownlintignore when files are passed as explicit paths, so we filter
+            // here before handing off. Other engines (eslint, prettier) have their own
+            // built-in ignore-file support and don't need this step.
+            const ignoreFileMap = {
+                markdownlint: ".markdownlintignore",
+            };
+            const ignoreFileName = ignoreFileMap[engine.engine];
+            if (ignoreFileName) {
+                const ignorePatterns = readIgnoreFile(join(projectRoot, ignoreFileName));
+                relevant = filterByIgnorePatterns(relevant, ignorePatterns);
+                if (relevant.length === 0)
+                    continue; // All files ignored — skip engine.
+            }
             if (action.files) {
                 files = relevant;
             }
@@ -212,6 +226,50 @@ function getStagedFiles() {
  */
 function filterByPatterns(files, patterns) {
     return files.filter((file) => patterns.some((pattern) => matchesPattern(file, pattern)));
+}
+/**
+ * Read an ignore file (like .markdownlintignore, .eslintignore) and return its patterns.
+ *
+ * Lines starting with '#' are comments. Empty lines are skipped.
+ * @param ignoreFilePath - Absolute path to the ignore file.
+ * @returns Array of glob patterns to exclude.
+ */
+function readIgnoreFile(ignoreFilePath) {
+    if (!existsSync(ignoreFilePath))
+        return [];
+    return readFileSync(ignoreFilePath, "utf-8")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0 && !line.startsWith("#"));
+}
+/**
+ * Filter staged files against an ignore file, removing files that match any ignore pattern.
+ *
+ * Uses simple prefix/glob matching against relative file paths.
+ * Supports exact paths, directory prefixes (ending with /), and * wildcards.
+ * @param files - Staged file paths to filter.
+ * @param ignorePatterns - Patterns read from an ignore file.
+ * @returns Files that do NOT match any ignore pattern.
+ */
+function filterByIgnorePatterns(files, ignorePatterns) {
+    if (ignorePatterns.length === 0)
+        return files;
+    return files.filter((file) => {
+        const normalized = file.replace(/\\/g, "/");
+        return !ignorePatterns.some((pattern) => {
+            const p = pattern.replace(/\\/g, "/");
+            // Directory pattern: "targets/auto-memory/" matches any file inside it
+            if (p.endsWith("/"))
+                return normalized.startsWith(p) || normalized === p.slice(0, -1);
+            // Glob pattern: "targets/**" or "targets/*"
+            if (p.includes("*")) {
+                const prefix = p.split("*")[0];
+                return normalized.startsWith(prefix);
+            }
+            // Exact file match
+            return normalized === p;
+        });
+    });
 }
 /**
  * Match a file path against a simple glob pattern.

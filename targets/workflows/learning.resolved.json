@@ -1,0 +1,89 @@
+{
+	"stage": "learning",
+	"display_name": "Learning Loop",
+	"description": "Capture observations, promote lessons to rules. The governance system grows and hardens over time.",
+	"thinking_mode": "Learning Loop",
+	"entry_criteria": [
+		"An observation, discovery, or pattern has been identified during any stage",
+		"A lesson has recurred enough times to warrant promotion consideration"
+	],
+	"exit_criteria": [
+		"Observation is captured as a lesson artifact",
+		"Recurring lessons are promoted to rules via promoted-to relationship",
+		"Rules are linked to relevant enforcement engines"
+	],
+	"artifact_types_produced": ["lesson", "rule", "principle-decision"],
+	"relationships_created": [
+		{
+			"type": "promoted-to",
+			"from": "lesson",
+			"to": "rule",
+			"note": "Lessons promoted to rules when recurrence threshold reached"
+		},
+		{
+			"type": "codifies",
+			"from": "rule",
+			"to": "lesson",
+			"note": "Rules codify recurring lessons"
+		},
+		{
+			"type": "governs",
+			"from": "principle-decision",
+			"to": "rule",
+			"note": "Decisions govern rule creation"
+		},
+		{
+			"type": "teaches",
+			"from": "lesson",
+			"to": "principle-decision",
+			"note": "Lessons teach decision rationale"
+		},
+		{
+			"type": "cautions",
+			"from": "lesson",
+			"to": "epic",
+			"note": "Lessons caution future epics"
+		},
+		{
+			"type": "enforces",
+			"from": "rule",
+			"to": "epic",
+			"note": "Rules enforce standards on epics"
+		}
+	],
+	"agent_specializations": {
+		"primary": "governance-steward",
+		"supporting": ["writer"]
+	},
+	"knowledge_injection": ["DOC-83039175", "KNOW-85e392ea", "KNOW-8d76c3c7"],
+	"state_machine": {
+		"initial": "captured",
+		"states": ["captured", "active", "promoted", "archived", "surpassed"],
+		"transitions": [
+			{
+				"from": "captured",
+				"to": "active",
+				"guard": "reviewed_and_valid"
+			},
+			{
+				"from": "active",
+				"to": "promoted",
+				"guard": "recurrence_threshold_met"
+			},
+			{
+				"from": "active",
+				"to": "archived",
+				"guard": "no_longer_relevant"
+			},
+			{
+				"from": "promoted",
+				"to": "surpassed",
+				"guard": "superseded_by_newer_rule"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-core-framework"
+	]
+}

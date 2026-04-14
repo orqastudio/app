@@ -1,0 +1,131 @@
+{
+	"name": "@orqastudio/plugin-typescript",
+	"displayName": "TypeScript",
+	"version": "0.1.4-dev",
+	"description": "Base TypeScript development infrastructure — tsconfig presets and enforcement config generation for TypeScript/Svelte/JS projects.",
+	"categories": ["domain-knowledge", "enforcement-generator", "enforcement-contributor"],
+	"purpose": "knowledge",
+	"enforcement": [
+		{
+			"role": "generator",
+			"engine": "eslint",
+			"config_output": ".orqa/configs/eslint.config.js",
+			"generator": "scripts/generate-eslint-config.ts",
+			"actions": {
+				"check": {
+					"command": "eslint",
+					"args": [
+						"--config",
+						".orqa/configs/eslint.config.js",
+						"--max-warnings",
+						"0",
+						"--no-warn-ignored"
+					],
+					"files": "*.{ts,svelte,js}"
+				},
+				"fix": {
+					"command": "eslint",
+					"args": ["--config", ".orqa/configs/eslint.config.js", "--fix"],
+					"files": "*.{ts,svelte,js}"
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: eslint",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts", "*.svelte", "*.js"],
+			"rules_path": "rules/eslint/"
+		},
+		{
+			"role": "generator",
+			"engine": "tsconfig",
+			"config_output": "tsconfig.base.json",
+			"generator": "scripts/generate-tsconfig.ts",
+			"actions": {
+				"check": {
+					"command": "tsc",
+					"args": ["--noEmit", "--project", "."]
+				}
+			},
+			"watch": {
+				"paths": [".orqa/learning/rules/**/*.md"],
+				"filter": "engine: tsconfig",
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts"]
+		},
+		{
+			"role": "generator",
+			"engine": "tsconfig-workspace",
+			"config_output": "tsconfig.json",
+			"generator": "scripts/generate-tsconfig-workspace.ts",
+			"watch": {
+				"paths": ["package.json"],
+				"on_change": "regenerate"
+			},
+			"file_types": ["*.ts"]
+		}
+	],
+	"content": {
+		"documentation": {
+			"source": "documentation",
+			"target": ".orqa/documentation"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		},
+		"rules": {
+			"source": "rules",
+			"target": ".orqa/learning/rules"
+		}
+	},
+	"dependencies": {
+		"npm": [
+			"@typescript-eslint/eslint-plugin",
+			"@typescript-eslint/parser",
+			"typescript-eslint",
+			"typescript-language-server"
+		]
+	},
+	"build": "npm run build",
+	"provides": {
+		"knowledge": [
+			{
+				"key": "typescript-advanced-types",
+				"id": "KNOW-TS-001",
+				"label": "TypeScript Advanced Types"
+			},
+			{
+				"key": "40e2eb99",
+				"id": "KNOW-40e2eb99",
+				"label": "TypeScript Advanced Types"
+			}
+		],
+		"lspServers": {
+			"typescript": {
+				"command": "typescript-language-server",
+				"args": ["--stdio"],
+				"extensionToLanguage": {
+					".ts": "typescript",
+					".tsx": "typescriptreact",
+					".js": "javascript",
+					".jsx": "javascriptreact"
+				}
+			}
+		},
+		"knowledge_declarations": [
+			{
+				"id": "typescript-advanced-types",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"paths": ["**/*.ts"],
+				"tags": ["typescript", "advanced-types", "generics"],
+				"priority": "P3",
+				"summary": "TypeScript advanced types: generics, conditional types, mapped types, template literals, utility types. For complex type logic and compile-time type safety.",
+				"content_file": "knowledge/KNOW-40e2eb99.md"
+			}
+		]
+	}
+}

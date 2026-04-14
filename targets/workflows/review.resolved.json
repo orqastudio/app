@@ -1,0 +1,62 @@
+{
+	"stage": "review",
+	"display_name": "Review",
+	"description": "Check, validate, audit. Produces PASS/FAIL verdicts against acceptance criteria. Does not fix — reports.",
+	"thinking_mode": "Review",
+	"entry_criteria": [
+		"Implementation artifact is in review state",
+		"Implementer has written findings to disk",
+		"Acceptance criteria are defined in the task or epic"
+	],
+	"exit_criteria": [
+		"Reviewer has produced a PASS verdict for all acceptance criteria",
+		"Verdict is written to findings file",
+		"No acceptance criterion is deferred or omitted"
+	],
+	"artifact_types_produced": [],
+	"relationships_created": [
+		{
+			"type": "governs",
+			"from": "rule",
+			"to": "epic",
+			"note": "Rules govern implementation standards"
+		},
+		{
+			"type": "governs",
+			"from": "rule",
+			"to": "task",
+			"note": "Rules govern task execution"
+		}
+	],
+	"agent_specializations": {
+		"primary": "reviewer",
+		"supporting": []
+	},
+	"knowledge_injection": ["DOC-fd636a56", "KNOW-91a7a6c1", "KNOW-1314ac47", "KNOW-08fcd847"],
+	"state_machine": {
+		"initial": "in-progress",
+		"states": ["in-progress", "pass", "fail"],
+		"transitions": [
+			{
+				"from": "in-progress",
+				"to": "pass",
+				"guard": "all_acs_verified"
+			},
+			{
+				"from": "in-progress",
+				"to": "fail",
+				"guard": "any_ac_failed"
+			},
+			{
+				"from": "fail",
+				"to": "in-progress",
+				"guard": "implementer_resubmits"
+			}
+		]
+	},
+	"plugins_contributing": [
+		"@orqastudio/plugin-agile-methodology",
+		"@orqastudio/plugin-agile-review",
+		"@orqastudio/plugin-software-kanban"
+	]
+}

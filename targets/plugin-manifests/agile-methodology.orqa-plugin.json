@@ -1,0 +1,636 @@
+{
+	"name": "@orqastudio/plugin-agile-methodology",
+	"version": "0.1.4-dev",
+	"displayName": "Agile Governance",
+	"description": "Agile governance methodology — the skeleton workflow with contribution points, relationship vocabulary, and content (knowledge, rules, docs) about the agile model. No artifact type definitions.",
+	"categories": ["methodology"],
+	"purpose": "methodology",
+	"role": "core:methodology",
+	"provides": {
+		"schemas": [],
+		"agents": [
+			{
+				"key": "e7f3a2c9",
+				"id": "AGENT-7a06d10e",
+				"path": "agents/AGENT-7a06d10e.md"
+			}
+		],
+		"views": [],
+		"widgets": [],
+		"workflows": [
+			{
+				"artifact_type": "epic",
+				"path": "workflows/agile-methodology.workflow.yaml"
+			}
+		],
+		"relationships": [
+			{
+				"key": "upholds",
+				"inverse": "upheld-by",
+				"label": "Upholds",
+				"inverseLabel": "Upheld By",
+				"from": ["pillar"],
+				"to": ["vision"],
+				"description": "Pillar supports the vision",
+				"semantic": "foundation",
+				"constraints": {
+					"required": true,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "grounded",
+				"inverse": "grounded-by",
+				"label": "Grounded",
+				"inverseLabel": "Grounded By",
+				"from": ["idea", "discovery-idea", "planning-idea", "epic"],
+				"to": ["pillar"],
+				"description": "Idea or epic anchored to a foundational principle",
+				"semantic": "foundation"
+			},
+			{
+				"key": "benefits",
+				"inverse": "benefited-by",
+				"label": "Benefits",
+				"inverseLabel": "Benefited By",
+				"from": ["idea", "discovery-idea", "planning-idea"],
+				"to": ["persona"],
+				"description": "Idea serves a target persona",
+				"semantic": "foundation",
+				"constraints": {
+					"required": true,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "crystallises",
+				"inverse": "crystallised-by",
+				"label": "Crystallises",
+				"inverseLabel": "Crystallised By",
+				"from": ["idea", "discovery-idea", "planning-idea"],
+				"to": ["decision", "discovery-decision", "planning-decision", "principle-decision"],
+				"description": "Idea crystallises into an architecture decision",
+				"semantic": "lineage"
+			},
+			{
+				"key": "spawns",
+				"inverse": "spawned-by",
+				"label": "Spawns",
+				"inverseLabel": "Spawned By",
+				"from": ["idea", "discovery-idea", "planning-idea"],
+				"to": ["research", "discovery-research", "planning-research"],
+				"description": "Idea spawns an investigation",
+				"semantic": "lineage"
+			},
+			{
+				"key": "drives",
+				"inverse": "driven-by",
+				"label": "Drives",
+				"inverseLabel": "Driven By",
+				"from": ["decision", "discovery-decision", "planning-decision", "principle-decision"],
+				"to": ["epic"],
+				"description": "Decision motivates a body of delivery work",
+				"semantic": "governance"
+			},
+			{
+				"key": "governs",
+				"inverse": "governed-by",
+				"label": "Governs",
+				"inverseLabel": "Governed By",
+				"from": ["decision", "discovery-decision", "planning-decision", "principle-decision"],
+				"to": ["rule"],
+				"description": "Decision establishes governance — leads into the learning loop",
+				"semantic": "governance"
+			},
+			{
+				"key": "enforces",
+				"inverse": "enforced-by",
+				"label": "Enforces",
+				"inverseLabel": "Enforced By",
+				"from": ["rule"],
+				"to": ["decision", "discovery-decision", "planning-decision", "principle-decision"],
+				"description": "Rule enforces a decision",
+				"semantic": "governance",
+				"constraints": {
+					"required": false,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "codifies",
+				"inverse": "codified-by",
+				"label": "Codifies",
+				"inverseLabel": "Codified By",
+				"from": ["rule"],
+				"to": ["lesson"],
+				"description": "Rule codifies a lesson into enforceable governance",
+				"semantic": "governance"
+			},
+			{
+				"key": "informs",
+				"inverse": "informed-by",
+				"label": "Informs",
+				"inverseLabel": "Informed By",
+				"from": ["research", "discovery-research", "planning-research", "wireframe"],
+				"to": [
+					"decision",
+					"discovery-decision",
+					"planning-decision",
+					"research",
+					"discovery-research",
+					"planning-research",
+					"principle-decision",
+					"epic"
+				],
+				"description": "Research findings or wireframes inform a decision, research thread, or epic",
+				"semantic": "knowledge-flow"
+			},
+			{
+				"key": "teaches",
+				"inverse": "taught-by",
+				"label": "Teaches",
+				"inverseLabel": "Taught By",
+				"from": ["lesson"],
+				"to": ["decision", "discovery-decision", "planning-decision", "principle-decision"],
+				"description": "Lesson teaches a future decision",
+				"semantic": "knowledge-flow"
+			},
+			{
+				"key": "guides",
+				"inverse": "guided-by",
+				"label": "Guides",
+				"inverseLabel": "Guided By",
+				"from": ["research", "discovery-research", "planning-research"],
+				"to": ["epic"],
+				"description": "Research guides a body of delivery work",
+				"semantic": "knowledge-flow"
+			},
+			{
+				"key": "cautions",
+				"inverse": "cautioned-by",
+				"label": "Cautions",
+				"inverseLabel": "Cautioned By",
+				"from": ["lesson"],
+				"to": ["epic"],
+				"description": "Lesson cautions a body of delivery work",
+				"semantic": "knowledge-flow"
+			},
+			{
+				"key": "serves",
+				"inverse": "served-by",
+				"label": "Serves",
+				"inverseLabel": "Served By",
+				"from": ["agent"],
+				"to": ["pillar", "persona"],
+				"description": "Agent is accountable to a foundational principle",
+				"semantic": "foundation",
+				"constraints": {
+					"required": true,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "employs",
+				"inverse": "employed-by",
+				"label": "Employs",
+				"inverseLabel": "Employed By",
+				"from": ["agent"],
+				"to": ["knowledge"],
+				"description": "Agent employs a knowledge capability",
+				"semantic": "agency",
+				"constraints": {
+					"required": true,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "documents",
+				"inverse": "documented-by",
+				"label": "Documents",
+				"inverseLabel": "Documented By",
+				"from": ["doc"],
+				"to": [
+					"epic",
+					"decision",
+					"discovery-decision",
+					"planning-decision",
+					"rule",
+					"milestone",
+					"principle-decision"
+				],
+				"description": "Document describes an artifact for human reference",
+				"semantic": "knowledge-flow"
+			},
+			{
+				"key": "synchronised-with",
+				"inverse": "synchronised-with",
+				"label": "Synchronised With",
+				"inverseLabel": "Synchronised With",
+				"from": ["knowledge", "doc"],
+				"to": ["knowledge", "doc"],
+				"description": "Paired content kept in sync — agent-facing and human-facing versions",
+				"semantic": "synchronisation"
+			},
+			{
+				"key": "merged-into",
+				"inverse": "merged-from",
+				"label": "Merged Into",
+				"inverseLabel": "Merged From",
+				"from": [
+					"idea",
+					"discovery-idea",
+					"planning-idea",
+					"research",
+					"discovery-research",
+					"planning-research"
+				],
+				"to": [
+					"idea",
+					"discovery-idea",
+					"planning-idea",
+					"research",
+					"discovery-research",
+					"planning-research"
+				],
+				"description": "Artifacts consolidated — multiple ideas or research threads become one",
+				"semantic": "lineage"
+			},
+			{
+				"key": "revises",
+				"inverse": "revised-by",
+				"label": "Revises",
+				"inverseLabel": "Revised By",
+				"from": ["pivot"],
+				"to": ["vision", "persona", "pillar"],
+				"description": "Pivot revises a foundational artifact",
+				"semantic": "foundation",
+				"constraints": {
+					"required": true,
+					"minCount": 1
+				}
+			},
+			{
+				"key": "promoted-to",
+				"inverse": "promoted-from",
+				"label": "Promoted To",
+				"inverseLabel": "Promoted From",
+				"from": ["lesson"],
+				"to": ["rule"],
+				"description": "Lesson promoted to an enforceable rule",
+				"semantic": "governance"
+			}
+		],
+		"knowledge": [
+			{
+				"key": "85e392ea",
+				"id": "KNOW-85e392ea",
+				"label": "Thinking Mode: Learning Loop"
+			},
+			{
+				"key": "8d1c4be6",
+				"id": "KNOW-8d1c4be6",
+				"label": "Plugin Artifact Usage"
+			},
+			{
+				"key": "8d76c3c7",
+				"id": "KNOW-8d76c3c7",
+				"label": "Governance Maintenance"
+			},
+			{
+				"key": "7a4e45d4",
+				"id": "KNOW-7a4e45d4",
+				"label": "Thinking Mode: General"
+			},
+			{
+				"key": "c89f28b3",
+				"id": "KNOW-c89f28b3",
+				"label": "Thinking Mode: Governance"
+			},
+			{
+				"key": "57365826",
+				"id": "KNOW-57365826",
+				"label": "Query Artifact Schemas Before Writing Frontmatter"
+			},
+			{
+				"key": "e3432947",
+				"id": "KNOW-e3432947",
+				"label": "Plugin-Canonical Architecture — Where Content Lives and Why"
+			},
+			{
+				"key": "6d80cf39",
+				"id": "KNOW-6d80cf39",
+				"label": "Documentation Placement — Where to Write Docs and Knowledge"
+			},
+			{
+				"key": "ee860ed9",
+				"id": "KNOW-ee860ed9",
+				"label": "Enforcement Patterns"
+			},
+			{
+				"key": "936e5944",
+				"id": "KNOW-936e5944",
+				"label": "Governance Patterns"
+			},
+			{
+				"key": "8d2e5eef",
+				"id": "KNOW-8d2e5eef",
+				"label": "Agent Team Structure"
+			},
+			{
+				"key": "16e91c20",
+				"id": "KNOW-16e91c20",
+				"label": "Artifact Audit Methodology"
+			},
+			{
+				"key": "2a846fb7",
+				"id": "KNOW-2a846fb7",
+				"label": "OrqaStudio Enforcement Engine"
+			},
+			{
+				"key": "3155cdaa",
+				"id": "KNOW-3155cdaa",
+				"label": "Orchestrator decision tree — self-navigating knowledge discovery"
+			},
+			{
+				"key": "ac314f61",
+				"id": "KNOW-ac314f61",
+				"label": "Delegation Patterns"
+			},
+			{
+				"key": "b1593311",
+				"id": "KNOW-b1593311",
+				"label": "Implementer decision tree — domain-aware implementation protocol"
+			},
+			{
+				"key": "08fcd847",
+				"id": "KNOW-08fcd847",
+				"label": "Reviewer decision tree — standards-driven review protocol"
+			}
+		],
+		"cliTools": [],
+		"hooks": [],
+		"behavioral_rules": [
+			"For process learnings and feedback: create lesson artifacts in .orqa/learning/lessons/ instead of auto-memory files. Use auto-memory only for user-specific preferences (user type) and external references (reference type)."
+		],
+		"knowledge_declarations": [
+			{
+				"id": "governance-maintenance",
+				"tier": "stage-triggered",
+				"roles": ["reviewer", "writer"],
+				"stages": ["review", "maintain"],
+				"priority": "P1",
+				"summary": "Governance custodianship: audit agent definitions, maintain rules/knowledge artifacts, process lesson promotions, verify reading list currency, ensure internal consistency across the governance layer.",
+				"content_file": "knowledge/KNOW-8d76c3c7.md"
+			},
+			{
+				"id": "thinking-mode-learning",
+				"tier": "always",
+				"roles": ["researcher", "writer"],
+				"priority": "P2",
+				"summary": "Learning loop thinking mode: when encountering surprising outcomes or process failures, capture as lesson artifacts. Lessons may be promoted to rules after review. Structure: observation, hypothesis, evidence, recommendation.",
+				"content_file": "knowledge/KNOW-85e392ea.md"
+			},
+			{
+				"id": "plugin-artifact-usage",
+				"tier": "on-demand",
+				"tags": ["plugin", "artifact", "governance"],
+				"priority": "P3",
+				"content_file": "knowledge/KNOW-8d1c4be6.md"
+			},
+			{
+				"id": "enforcement-patterns",
+				"tier": "always",
+				"tags": ["governance", "enforcement", "mechanisms"],
+				"priority": "P1",
+				"summary": "Enforcement mechanism hierarchy: validator checks (strongest) > PreToolUse blocking hooks > PostToolUse warnings > stop hooks > thinking modes > agent prompts (weakest). Choose mechanism by required enforcement strength.",
+				"content_file": "knowledge/KNOW-ee860ed9.md"
+			},
+			{
+				"id": "orchestrator-decision-tree",
+				"tier": "always",
+				"roles": ["orchestrator"],
+				"tags": ["orchestrator", "decision-tree", "delegation", "reasoning"],
+				"priority": "P1",
+				"summary": "Orchestrator reasoning protocol: classify context (implementation/research/planning/bug/learning/review/docs), understand what the work requires, form the right question, then delegate with context.",
+				"content_file": "knowledge/KNOW-3155cdaa.md"
+			},
+			{
+				"id": "delegation-patterns",
+				"tier": "always",
+				"roles": ["orchestrator"],
+				"tags": ["delegation", "roles", "subagents", "teams"],
+				"priority": "P1",
+				"summary": "How the orchestrator delegates work to specialized agents. Covers role boundaries, when to use subagents vs agent teams, and the delegation protocol.",
+				"content_file": "knowledge/KNOW-ac314f61.md"
+			},
+			{
+				"id": "implementer-decision-tree",
+				"tier": "always",
+				"roles": ["implementer"],
+				"tags": ["implementer", "decision-tree", "reasoning", "domain"],
+				"priority": "P1",
+				"summary": "Implementer reasoning protocol: understand domain layer, form the right question, search for existing patterns, build and verify. Prevents duplicate implementations.",
+				"content_file": "knowledge/KNOW-b1593311.md"
+			},
+			{
+				"id": "reviewer-decision-tree",
+				"tier": "always",
+				"roles": ["reviewer"],
+				"tags": ["reviewer", "decision-tree", "reasoning", "verdict"],
+				"priority": "P1",
+				"summary": "Reviewer reasoning protocol: understand what is being reviewed, find applicable standards, produce an evidence-based PASS/FAIL verdict. Reviewer produces verdicts only — never fixes code.",
+				"content_file": "knowledge/KNOW-08fcd847.md"
+			}
+		]
+	},
+	"content": {
+		"agents": {
+			"source": "agents",
+			"target": ".claude/agents"
+		},
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		},
+		"rules": {
+			"source": "rules",
+			"target": ".orqa/learning/rules"
+		}
+	},
+	"semantics": {
+		"foundation": {
+			"description": "Relationships anchoring the foundational layer — vision, pillars, personas, agents, and changes to them",
+			"keys": [
+				"upholds",
+				"upheld-by",
+				"grounded",
+				"grounded-by",
+				"benefits",
+				"benefited-by",
+				"revises",
+				"revised-by",
+				"serves",
+				"served-by"
+			]
+		},
+		"lineage": {
+			"description": "Relationships establishing artifact succession — one thing becoming or spawning another",
+			"keys": [
+				"crystallises",
+				"crystallised-by",
+				"spawns",
+				"spawned-by",
+				"merged-into",
+				"merged-from"
+			]
+		},
+		"governance": {
+			"description": "Relationships where decisions and rules direct behaviour",
+			"keys": [
+				"drives",
+				"driven-by",
+				"governs",
+				"governed-by",
+				"enforces",
+				"enforced-by",
+				"codifies",
+				"codified-by",
+				"promoted-to",
+				"promoted-from"
+			]
+		},
+		"knowledge-flow": {
+			"description": "Relationships where knowledge flows between artifacts",
+			"keys": [
+				"informs",
+				"informed-by",
+				"teaches",
+				"taught-by",
+				"guides",
+				"guided-by",
+				"cautions",
+				"cautioned-by",
+				"documents",
+				"documented-by",
+				"related"
+			]
+		},
+		"agency": {
+			"description": "Relationships where agents consume knowledge capabilities",
+			"keys": ["employs", "employed-by"]
+		},
+		"synchronisation": {
+			"description": "Paired content kept in sync",
+			"keys": ["synchronised-with"]
+		}
+	},
+	"artifactLinks": {
+		"displayModes": {
+			"VISION": "title",
+			"PILLAR": "title",
+			"PERSONA": "title",
+			"IDEA": "title",
+			"AD": "title",
+			"RULE": "title",
+			"IMPL": "title",
+			"KNOW": "title",
+			"AGENT": "title",
+			"DOC": "title",
+			"PIVOT": "title"
+		},
+		"colors": {
+			"VISION": "#f59e0b",
+			"PILLAR": "#8b5cf6",
+			"PERSONA": "#ec4899",
+			"IDEA": "#fbbf24",
+			"AD": "#6366f1",
+			"RULE": "#10b981",
+			"IMPL": "#f97316",
+			"KNOW": "#14b8a6",
+			"AGENT": "#0ea5e9",
+			"DOC": "#64748b",
+			"PIVOT": "#ef4444"
+		}
+	},
+	"prompt_classification": {
+		"thinking_mode_exceptions": {
+			"learning-loop": "governance",
+			"dogfood-implementation": "implementation"
+		},
+		"prompt_types": [
+			"implementation",
+			"planning",
+			"review",
+			"debugging",
+			"research",
+			"documentation",
+			"governance",
+			"general"
+		],
+		"stage_mappings": {
+			"implementation": "implement",
+			"planning": "plan",
+			"review": "review",
+			"debugging": "debug",
+			"research": "research",
+			"documentation": "document",
+			"governance": "govern",
+			"general": "general"
+		},
+		"keyword_patterns": {
+			"implementation": [
+				"implement",
+				"build",
+				"create",
+				"add",
+				"write code",
+				"fix bug",
+				"refactor",
+				"migrate",
+				"wire up",
+				"hook up"
+			],
+			"debugging": [
+				"debug",
+				"investigate",
+				"why does",
+				"broken",
+				"error",
+				"crash",
+				"failing",
+				"not working",
+				"trace"
+			],
+			"review": ["review", "audit", "check", "verify", "validate", "assess", "compliance"],
+			"research": [
+				"research",
+				"explore",
+				"investigate options",
+				"compare",
+				"evaluate",
+				"what are the"
+			],
+			"planning": [
+				"plan",
+				"design",
+				"scope",
+				"epic",
+				"roadmap",
+				"milestone",
+				"break down",
+				"approach"
+			],
+			"documentation": ["document", "docs", "write up", "describe", "explain", "specification"],
+			"governance": [
+				"rule",
+				"governance",
+				"enforce",
+				"lesson",
+				"artifact",
+				"pillar",
+				"promote",
+				"knowledge"
+			]
+		}
+	}
+}

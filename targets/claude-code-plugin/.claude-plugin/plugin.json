@@ -1,0 +1,97 @@
+{
+	"name": "orqastudio",
+	"description": "OrqaStudio governance integration for Claude Code — agent delegation, rule enforcement, skill injection, artifact validation, and process workflow.",
+	"version": "0.1.0-dev",
+	"author": {
+		"name": "OrqaStudio"
+	},
+	"hooks": {
+		"config_file": "hooks/hooks.json"
+	},
+	"skills": [
+		{
+			"name": "orqa",
+			"path": "skills/orqa/SKILL.md",
+			"description": "Run OrqaStudio governance commands. Routes to subcommands: save, create, validate, and more."
+		},
+		{
+			"name": "orqa-create",
+			"path": "skills/orqa-create/SKILL.md",
+			"description": "Create a new governance artifact (task, epic, decision, rule, knowledge, etc.) via the OrqaStudio daemon."
+		},
+		{
+			"name": "orqa-save",
+			"path": "skills/orqa-save/SKILL.md",
+			"description": "Save current session context to governance artifacts via the OrqaStudio daemon."
+		},
+		{
+			"name": "orqa-validate",
+			"path": "skills/orqa-validate/SKILL.md",
+			"description": "Validate governance artifacts against the composed plugin schema via the OrqaStudio daemon."
+		},
+		{
+			"name": "research",
+			"path": "skills/research/SKILL.md",
+			"description": "Investigate, explore, compare, or understand something. Produces findings, not code."
+		},
+		{
+			"name": "plan",
+			"path": "skills/planning/SKILL.md",
+			"description": "Scope, break down, prioritise, or design work before execution begins."
+		},
+		{
+			"name": "build",
+			"path": "skills/implementation/SKILL.md",
+			"description": "Build, fix, add, or refactor. Concrete deliverables, no stubs."
+		},
+		{
+			"name": "review",
+			"path": "skills/review/SKILL.md",
+			"description": "Check, validate, or audit against standards. PASS/FAIL verdict, not fixes."
+		},
+		{
+			"name": "document",
+			"path": "skills/documentation/SKILL.md",
+			"description": "Write, update, or organise docs. Documentation-first principle."
+		},
+		{
+			"name": "debug",
+			"path": "skills/debugging/SKILL.md",
+			"description": "Reproduce, isolate, diagnose. Ends when root cause is known, not when fix is applied."
+		},
+		{
+			"name": "learn",
+			"path": "skills/learning-loop/SKILL.md",
+			"description": "Capture observations, promote lessons to rules. Governance grows."
+		}
+	],
+	"commands": [
+		{
+			"name": "orqa",
+			"path": "commands/orqa.md",
+			"description": "Run OrqaStudio CLI commands"
+		},
+		{
+			"name": "orqa-create",
+			"path": "commands/orqa-create.md",
+			"description": "Create a new governance artifact"
+		},
+		{
+			"name": "orqa-enforce",
+			"path": "commands/orqa-enforce.md",
+			"description": "Run enforcement checks"
+		},
+		{
+			"name": "orqa-save",
+			"path": "commands/orqa-save.md",
+			"description": "Save current session context to governance artifacts"
+		}
+	],
+	"resources": [
+		{
+			"name": "OrqaStudio Governance Knowledge",
+			"path": "knowledge/",
+			"description": "Agent-optimized knowledge artifacts for governance workflows, rules, and methodology."
+		}
+	]
+}

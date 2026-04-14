@@ -1,0 +1,110 @@
+{
+	"name": "@orqastudio/claude-code-connector",
+	"version": "0.1.0-dev",
+	"displayName": "Claude Code Connector",
+	"description": "Bridges OrqaStudio governance with Claude Code — agent mapping, rule enforcement, skill injection, artifact validation, and slash commands.",
+	"requires": ["@orqastudio/plugin-agile-methodology", "@orqastudio/plugin-systems-thinking"],
+	"categories": ["connector"],
+	"purpose": "connector",
+	"content": {
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/connector"
+		}
+	},
+	"dependencies": {
+		"npm": ["@orqastudio/cli", "@orqastudio/types", "yaml"]
+	},
+	"build": "npm run build",
+	"lifecycle": {
+		"install": "node dist/index.js setup"
+	},
+	"provides": {
+		"schemas": [],
+		"views": [],
+		"widgets": [],
+		"relationships": [],
+		"lspServers": {
+			"orqastudio": {
+				"command": "orqa",
+				"args": ["lsp"],
+				"extensionToLanguage": {
+					".md": "markdown"
+				}
+			}
+		},
+		"mcpServers": {
+			"orqastudio": {
+				"command": "orqa",
+				"args": ["mcp"]
+			}
+		},
+		"knowledge": [
+			{
+				"key": "0fd23e0b",
+				"id": "KNOW-4a58e7dd",
+				"label": "Project Migration"
+			},
+			{
+				"key": "82ceb1bd",
+				"id": "KNOW-03421ec0",
+				"label": "Project Inference"
+			},
+			{
+				"key": "tool-mapping",
+				"id": "KNOW-b0b55e54",
+				"label": "tool-mapping"
+			}
+		],
+		"hooks": [
+			{
+				"event": "PreToolUse",
+				"description": "Rule enforcement — evaluates governance rules before Write/Edit/Bash"
+			},
+			{
+				"event": "UserPromptSubmit",
+				"description": "Intent classification — injects relevant skills based on user prompt"
+			},
+			{
+				"event": "SessionStart",
+				"description": "Health checks, session recovery, delegation reminders"
+			},
+			{
+				"event": "Stop",
+				"description": "Pre-commit checklist, uncommitted change warnings"
+			},
+			{
+				"event": "PostToolUse",
+				"description": "Artifact validation — validates .orqa/ files after Write/Edit"
+			},
+			{
+				"event": "PreCompact",
+				"description": "Context preservation — saves governance context before compaction"
+			},
+			{
+				"event": "SubagentStop",
+				"description": "Subagent review — validates output against governance scope"
+			}
+		],
+		"cliTools": [],
+		"symlinks": [
+			{
+				"source": ".orqa/learning/rules",
+				"target": ".claude/rules"
+			}
+		],
+		"aggregatedFiles": [
+			{
+				"target": ".mcp.json",
+				"collect": "provides.mcpServers",
+				"wrapper": "mcpServers",
+				"stripFields": ["type"]
+			},
+			{
+				"target": ".lsp.json",
+				"collect": "provides.lspServers",
+				"relativeToPlugin": true
+			}
+		]
+	}
+}

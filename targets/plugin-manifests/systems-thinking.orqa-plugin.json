@@ -1,0 +1,176 @@
+{
+	"name": "@orqastudio/plugin-systems-thinking",
+	"version": "0.1.4-dev",
+	"displayName": "Systems Thinking",
+	"description": "Systems thinking methodology — second-order effects analysis, diagnostic methodology, restructuring methodology. Teaches agents to trace consequences, find root causes, and refactor with awareness of the whole system.",
+	"categories": ["domain-knowledge"],
+	"purpose": "knowledge",
+	"role": "core:discovery",
+	"content": {
+		"knowledge": {
+			"source": "knowledge",
+			"target": ".orqa/documentation/knowledge"
+		},
+		"rules": {
+			"source": "rules",
+			"target": ".orqa/learning/rules"
+		}
+	},
+	"provides": {
+		"schemas": [],
+		"relationships": [],
+		"knowledge": [
+			{
+				"key": "1a8eb147",
+				"id": "KNOW-36befd20",
+				"label": "Thinking Mode: Research"
+			},
+			{
+				"key": "1ab0e715",
+				"id": "KNOW-bf70068c",
+				"label": "Thinking Mode: Documentation"
+			},
+			{
+				"key": "30a419dd",
+				"id": "KNOW-7fadba3f",
+				"label": "Architectural Evaluation"
+			},
+			{
+				"key": "54823e2d",
+				"id": "KNOW-41849545",
+				"label": "Systems Thinking"
+			},
+			{
+				"key": "82d32398",
+				"id": "KNOW-1ea9291c"
+			},
+			{
+				"key": "8c98ea98",
+				"id": "KNOW-a3dcdd05",
+				"label": "Restructuring Methodology"
+			},
+			{
+				"key": "a4c8f1e2",
+				"id": "KNOW-eeceaabf",
+				"label": "Thinking Mode: Dogfood Implementation"
+			},
+			{
+				"key": "c7fb7c83",
+				"id": "KNOW-d13d80e1"
+			},
+			{
+				"key": "de25b290",
+				"id": "KNOW-4a4241a5",
+				"label": "Thinking Mode: Planning"
+			},
+			{
+				"key": "f0c40eaf",
+				"id": "KNOW-0619a413",
+				"label": "Composability"
+			},
+			{
+				"key": "f5edb34d",
+				"id": "KNOW-8564d52c",
+				"label": "Diagnostic Methodology"
+			}
+		],
+		"hooks": [],
+		"views": [],
+		"widgets": [],
+		"knowledge_declarations": [
+			{
+				"id": "composability",
+				"tier": "on-demand",
+				"roles": ["implementer", "reviewer"],
+				"tags": ["composability", "methodology", "architecture"],
+				"priority": "P2",
+				"summary": "Composability philosophy: building systems from small, pure, swappable units. Meta-skill that informs all patterns — function-level and feature-level. The most fundamental design principle.",
+				"content_file": "knowledge/KNOW-0619a413.md"
+			},
+			{
+				"id": "artifact-relationships",
+				"tier": "on-demand",
+				"tags": ["systems-thinking", "reference"],
+				"priority": "P3",
+				"summary": "Additional systems thinking reference material for deeper analysis patterns.",
+				"content_file": "knowledge/KNOW-1ea9291c.md"
+			},
+			{
+				"id": "thinking-mode-research",
+				"tier": "always",
+				"tags": ["thinking-mode", "research", "investigation"],
+				"priority": "P0",
+				"summary": "Research thinking mode: information gathering only, no code changes. Agent produces findings using search tools, cross-references before reporting. Triggered by investigation, exploration, or audit signals.",
+				"content_file": "knowledge/KNOW-36befd20.md"
+			},
+			{
+				"id": "systems-thinking",
+				"tier": "on-demand",
+				"tags": ["systems-thinking", "methodology", "patterns"],
+				"priority": "P2",
+				"summary": "Systems thinking: identify systems, map boundaries, trace relationships, find patterns, discover the uniform base. Applied to codebases and architectures.",
+				"content_file": "knowledge/KNOW-41849545.md"
+			},
+			{
+				"id": "thinking-mode-planning",
+				"tier": "always",
+				"tags": ["thinking-mode", "planning", "design"],
+				"priority": "P0",
+				"summary": "Planning thinking mode: scopes, breaks down, prioritises, and designs work before execution. Documentation-first, user approval gates. Triggered by plan/scope/design signals.",
+				"content_file": "knowledge/KNOW-4a4241a5.md"
+			},
+			{
+				"id": "architectural-evaluation",
+				"tier": "on-demand",
+				"roles": ["reviewer", "researcher"],
+				"tags": ["architecture", "evaluation", "review"],
+				"priority": "P2",
+				"summary": "Architectural evaluation: methodology for assessing architectural decisions, identifying violations, and recommending improvements. Systems-level review.",
+				"content_file": "knowledge/KNOW-7fadba3f.md"
+			},
+			{
+				"id": "diagnostic-methodology",
+				"tier": "stage-triggered",
+				"roles": ["implementer", "reviewer"],
+				"stages": ["debug"],
+				"tags": ["debugging", "diagnostic", "methodology"],
+				"priority": "P1",
+				"summary": "Diagnostic methodology: structured approach to reproducing, isolating, and identifying root causes. Hypothesis-driven debugging with evidence collection.",
+				"content_file": "knowledge/KNOW-8564d52c.md"
+			},
+			{
+				"id": "restructuring-methodology",
+				"tier": "on-demand",
+				"roles": ["implementer"],
+				"tags": ["restructuring", "refactoring", "methodology"],
+				"priority": "P2",
+				"summary": "Restructuring methodology: when and how to restructure code or project layout. Safe refactoring patterns, migration strategies, validation at each step.",
+				"content_file": "knowledge/KNOW-a3dcdd05.md"
+			},
+			{
+				"id": "thinking-mode-documentation",
+				"tier": "always",
+				"tags": ["thinking-mode", "documentation", "writing"],
+				"priority": "P0",
+				"summary": "Documentation thinking mode: captures knowledge for humans. Agent writes doc artifacts, not code. Requires documentation standards and doc schema awareness. Triggered by doc/README/guide requests.",
+				"content_file": "knowledge/KNOW-bf70068c.md"
+			},
+			{
+				"id": "tech-debt-management",
+				"tier": "on-demand",
+				"tags": ["systems-thinking", "reference"],
+				"priority": "P3",
+				"summary": "Supplementary systems thinking patterns and analysis frameworks.",
+				"content_file": "knowledge/KNOW-d13d80e1.md"
+			},
+			{
+				"id": "thinking-mode-dogfood-implementation",
+				"tier": "always",
+				"tags": ["thinking-mode", "dogfood", "infrastructure"],
+				"priority": "P0",
+				"summary": "Dogfood implementation thinking mode: building infrastructure for immediate use in current workflow, not future features. Infrastructure is validated by the workflow that triggered its creation.",
+				"content_file": "knowledge/KNOW-eeceaabf.md"
+			}
+		]
+	}
+}
