@@ -14,6 +14,7 @@
 //! cleanly with the rest of the engine.
 
 use anyhow::Result;
+use serde::Serialize;
 use surrealdb::types::{RecordId, SurrealValue};
 
 use crate::surreal::GraphDb;
@@ -23,7 +24,7 @@ use crate::surreal::GraphDb;
 // ---------------------------------------------------------------------------
 
 /// A single step in a traceability path — one artifact reachable via graph traversal.
-#[derive(Debug, Clone, SurrealValue)]
+#[derive(Debug, Clone, Serialize, SurrealValue)]
 pub struct TraceStep {
     /// SurrealDB record ID of the artifact (e.g. `artifact:EPIC-001`).
     pub id: RecordId,
@@ -43,7 +44,7 @@ pub struct GroupCount {
 }
 
 /// An artifact with zero incoming and zero outgoing edges.
-#[derive(Debug, Clone, SurrealValue)]
+#[derive(Debug, Clone, Serialize, SurrealValue)]
 pub struct OrphanArtifact {
     /// SurrealDB record ID (e.g. `artifact:ORPHAN-001`).
     pub id: RecordId,
@@ -51,6 +52,24 @@ pub struct OrphanArtifact {
     pub artifact_type: String,
     /// Human-readable title.
     pub title: String,
+    /// Relative path to the source markdown file.
+    pub path: String,
+}
+
+/// A full artifact record returned by list and search queries.
+///
+/// Used by `list_artifacts` and `search_artifacts` to return artifact data
+/// to route handlers without exposing the full frontmatter blob.
+#[derive(Debug, Clone, SurrealValue)]
+pub struct ArtifactRecord {
+    /// SurrealDB record ID (e.g. `artifact:EPIC-001`).
+    pub id: RecordId,
+    /// Semantic type of the artifact (e.g. `"epic"`, `"pillar"`).
+    pub artifact_type: String,
+    /// Human-readable title of the artifact.
+    pub title: String,
+    /// Lifecycle status of the artifact (e.g. `"active"`, `"archived"`).
+    pub status: Option<String>,
     /// Relative path to the source markdown file.
     pub path: String,
 }
@@ -238,6 +257,61 @@ pub async fn total_edges(db: &GraphDb) -> Result<usize> {
 }
 
 // ---------------------------------------------------------------------------
+// List and search queries
+// ---------------------------------------------------------------------------
+
+/// List all artifacts from SurrealDB, with optional filters.
+///
+/// Filters are applied as exact case-sensitive matches. Both filters may be
+/// combined; `None` means no constraint on that field. Results are ordered
+/// by `artifact_type ASC, title ASC` for stable pagination.
+pub async fn list_artifacts(
+    db: &GraphDb,
+    artifact_type: Option<&str>,
+    status: Option<&str>,
+) -> Result<Vec<ArtifactRecord>> {
+    // Build the WHERE clause dynamically so we avoid runtime SurrealQL
+    // conditional logic and keep each code path simple and auditable.
+    let where_clause = match (artifact_type, status) {
+        (Some(t), Some(s)) => format!(
+            "WHERE artifact_type = '{}' AND status = '{}'",
+            t.replace('\'', "\\'"),
+            s.replace('\'', "\\'")
+        ),
+        (Some(t), None) => format!("WHERE artifact_type = '{}'", t.replace('\'', "\\'")),
+        (None, Some(s)) => format!("WHERE status = '{}'", s.replace('\'', "\\'")),
+        (None, None) => String::new(),
+    };
+
+    let query = format!(
+        "SELECT id, artifact_type, title, status, path \
+         FROM artifact \
+         {where_clause} \
+         ORDER BY artifact_type ASC, title ASC;"
+    );
+
+    let mut response = db.0.query(&query).await?;
+    let results: Vec<ArtifactRecord> = response.take(0)?;
+    Ok(results)
+}
+
+/// Search artifacts by title using a case-insensitive substring match.
+///
+/// Uses SurrealDB's `string::lowercase` on both the stored title and the query
+/// string so that `"EPIC"` matches `"Epic One"`. The query is bound as a
+/// parameter `$q` to prevent injection. Results are ordered by `title ASC`.
+pub async fn search_artifacts(db: &GraphDb, query: &str) -> Result<Vec<ArtifactRecord>> {
+    let surql = "SELECT id, artifact_type, title, status, path \
+                 FROM artifact \
+                 WHERE string::lowercase(title) CONTAINS string::lowercase($q) \
+                 ORDER BY title ASC;";
+
+    let mut response = db.0.query(surql).bind(("q", query.to_owned())).await?;
+    let results: Vec<ArtifactRecord> = response.take(0)?;
+    Ok(results)
+}
+
+// ---------------------------------------------------------------------------
 // Unit tests
 // ---------------------------------------------------------------------------
 
@@ -402,6 +476,86 @@ mod tests {
         assert!(
             ids.iter().any(|id: &String| id.contains("PILLAR-001")),
             "expected PILLAR-001 reachable from EPIC-001, got: {ids:?}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_list_artifacts_all() {
+        let (db, _dir) = setup_db_with_artifacts().await;
+        let records = list_artifacts(&db, None, None).await.unwrap();
+        assert_eq!(
+            records.len(),
+            5,
+            "expected all 5 artifacts, got: {records:?}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_list_artifacts_by_type() {
+        let (db, _dir) = setup_db_with_artifacts().await;
+        let records = list_artifacts(&db, Some("epic"), None).await.unwrap();
+        assert_eq!(records.len(), 2, "expected 2 epics, got: {records:?}");
+        let ids: Vec<String> = records.iter().map(|r| format!("{:?}", r.id)).collect();
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-001")),
+            "expected EPIC-001 in results, got: {ids:?}"
+        );
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-002")),
+            "expected EPIC-002 in results, got: {ids:?}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_list_artifacts_by_status() {
+        let (db, _dir) = setup_db_with_artifacts().await;
+        let records = list_artifacts(&db, None, Some("active")).await.unwrap();
+        assert_eq!(
+            records.len(),
+            5,
+            "expected all 5 active artifacts, got: {records:?}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_search_artifacts() {
+        let (db, _dir) = setup_db_with_artifacts().await;
+        // Titles are "Epic One" and "Epic Two" — lowercase "epic" should match both.
+        let records = search_artifacts(&db, "epic").await.unwrap();
+        assert_eq!(
+            records.len(),
+            2,
+            "expected 2 results for 'epic', got: {records:?}"
+        );
+        let ids: Vec<String> = records.iter().map(|r| format!("{:?}", r.id)).collect();
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-001")),
+            "expected EPIC-001 in search results, got: {ids:?}"
+        );
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-002")),
+            "expected EPIC-002 in search results, got: {ids:?}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_search_artifacts_case_insensitive() {
+        let (db, _dir) = setup_db_with_artifacts().await;
+        // Uppercase query "EPIC" must match the same two artifacts as lowercase "epic".
+        let records = search_artifacts(&db, "EPIC").await.unwrap();
+        assert_eq!(
+            records.len(),
+            2,
+            "expected 2 results for 'EPIC', got: {records:?}"
+        );
+        let ids: Vec<String> = records.iter().map(|r| format!("{:?}", r.id)).collect();
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-001")),
+            "expected EPIC-001 in case-insensitive search results, got: {ids:?}"
+        );
+        assert!(
+            ids.iter().any(|id| id.contains("EPIC-002")),
+            "expected EPIC-002 in case-insensitive search results, got: {ids:?}"
         );
     }
 }

@@ -46,8 +46,9 @@ pub use metrics::{
 pub use surreal::GraphDb;
 pub use surreal_queries::{
     avg_degree, count_by_status, count_by_type, find_orphans as surreal_find_orphans,
-    find_siblings as surreal_find_siblings, total_artifacts, total_edges,
-    trace_descendants as surreal_trace_descendants, trace_to_pillars as surreal_trace_to_pillars,
-    GroupCount, OrphanArtifact, TraceStep,
+    find_siblings as surreal_find_siblings, list_artifacts, search_artifacts, total_artifacts,
+    total_edges, trace_descendants as surreal_trace_descendants,
+    trace_to_pillars as surreal_trace_to_pillars, ArtifactRecord, GroupCount, OrphanArtifact,
+    TraceStep,
 };
 pub use sync::{bulk_sync, delete_artifact, sync_file, BulkSyncSummary, SyncResult};

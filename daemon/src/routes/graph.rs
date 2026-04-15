@@ -10,13 +10,18 @@
 //   GET  /graph/health/snapshots  — historical snapshots (not implemented — returns empty)
 //   POST /graph/health/snapshots  — store a new snapshot (not implemented — returns 501)
 //   GET  /graph/parity            — compare HashMap count vs SurrealDB count
+//   GET  /graph/trace/{id}        — direct descendants from SurrealDB
+//   GET  /graph/siblings/{id}     — siblings sharing a common target from SurrealDB
+//   GET  /graph/orphans           — isolated artifacts with no edges from SurrealDB
 
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
-use orqa_graph::surreal_queries::total_artifacts;
+use orqa_graph::surreal_queries::{
+    find_orphans, find_siblings, total_artifacts, trace_descendants, OrphanArtifact, TraceStep,
+};
 use orqa_validation::graph::graph_stats;
 use orqa_validation::metrics::compute_health;
 use orqa_validation::types::GraphHealth;
@@ -190,4 +195,78 @@ pub async fn get_graph_parity(State(state): State<GraphState>) -> Json<GraphPari
             surreal_available: true, // DB exists but query failed
         }),
     }
+}
+
+// ---------------------------------------------------------------------------
+// SurrealDB traversal routes
+// ---------------------------------------------------------------------------
+
+/// Handle GET /graph/trace/:id — return all artifacts that point directly to the given ID.
+///
+/// Performs a single-hop reverse traversal via `trace_descendants` to find all
+/// artifacts that relate to the given artifact ID via incoming edges. Returns
+/// `503 Service Unavailable` when SurrealDB is not initialised.
+pub async fn get_graph_trace(
+    State(state): State<GraphState>,
+    axum::extract::Path(id): axum::extract::Path<String>,
+) -> Result<Json<Vec<TraceStep>>, StatusCode> {
+    let surreal_db = match state.0.read() {
+        Ok(guard) => guard.db.clone(),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    let Some(db) = surreal_db else {
+        return Err(StatusCode::SERVICE_UNAVAILABLE);
+    };
+
+    trace_descendants(&db, &id)
+        .await
+        .map(Json)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+}
+
+/// Handle GET /graph/siblings/:id — return all artifacts sharing a common target as the given ID.
+///
+/// Finds artifacts that point to the same target via the same relationship type as
+/// `artifact_id`, excluding `artifact_id` itself. Returns `503 Service Unavailable`
+/// when SurrealDB is not initialised.
+pub async fn get_graph_siblings(
+    State(state): State<GraphState>,
+    axum::extract::Path(id): axum::extract::Path<String>,
+) -> Result<Json<Vec<TraceStep>>, StatusCode> {
+    let surreal_db = match state.0.read() {
+        Ok(guard) => guard.db.clone(),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    let Some(db) = surreal_db else {
+        return Err(StatusCode::SERVICE_UNAVAILABLE);
+    };
+
+    find_siblings(&db, &id)
+        .await
+        .map(Json)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
+}
+
+/// Handle GET /graph/orphans — return all artifacts with no incoming or outgoing edges.
+///
+/// Excludes artifacts with terminal statuses (`archived`, `surpassed`, `completed`).
+/// Returns `503 Service Unavailable` when SurrealDB is not initialised.
+pub async fn get_graph_orphans(
+    State(state): State<GraphState>,
+) -> Result<Json<Vec<OrphanArtifact>>, StatusCode> {
+    let surreal_db = match state.0.read() {
+        Ok(guard) => guard.db.clone(),
+        Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
+
+    let Some(db) = surreal_db else {
+        return Err(StatusCode::SERVICE_UNAVAILABLE);
+    };
+
+    find_orphans(&db)
+        .await
+        .map(Json)
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)
 }
