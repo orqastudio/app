@@ -70,6 +70,7 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
             "/health/snapshots",
             get(routes::graph::list_health_snapshots).post(routes::graph::create_health_snapshot),
         )
+        .route("/parity", get(routes::graph::get_graph_parity))
         .with_state(state.graph_state.clone());
 
     axum::Router::new()

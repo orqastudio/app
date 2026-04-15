@@ -5591,14 +5591,20 @@ dependencies = [
 name = "orqa-graph"
 version = "0.1.0-dev"
 dependencies = [
+ "anyhow",
+ "hex",
  "orqa-engine-types",
  "regex",
  "serde",
  "serde_json",
  "serde_yaml",
+ "sha2",
+ "surrealdb",
  "tempfile",
  "thiserror 2.0.18",
+ "tokio",
  "tracing",
+ "walkdir",
 ]
 
 [[package]]

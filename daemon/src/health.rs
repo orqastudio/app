@@ -488,6 +488,7 @@ pub async fn start(
             get(crate::routes::graph::list_health_snapshots)
                 .post(crate::routes::graph::create_health_snapshot),
         )
+        .route("/parity", get(crate::routes::graph::get_graph_parity))
         .with_state(state.graph_state.clone());
 
     // Validation routes.

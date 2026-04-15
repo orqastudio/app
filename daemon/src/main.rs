@@ -343,7 +343,7 @@ async fn run(
     // Build the cached artifact graph and validation context. Failures are
     // non-fatal — the daemon starts without graph state and attempts a reload
     // on the next file change.
-    let graph_state = match GraphState::build(&project_root) {
+    let graph_state = match GraphState::build(&project_root).await {
         Ok(gs) => {
             info!(
                 subsystem = "graph-state",

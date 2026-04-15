@@ -310,13 +310,9 @@ mod integration {
         insert_artifact(&db, "EPIC-001", "E1", "epic").await;
 
         let counts = queries::count_by_type(&db).await.expect("counts");
-        let task_count = counts
-            .iter()
-            .find(|c| c.group.as_deref() == Some("task"));
+        let task_count = counts.iter().find(|c| c.group.as_deref() == Some("task"));
         assert_eq!(task_count.map(|c| c.count), Some(2));
-        let epic_count = counts
-            .iter()
-            .find(|c| c.group.as_deref() == Some("epic"));
+        let epic_count = counts.iter().find(|c| c.group.as_deref() == Some("epic"));
         assert_eq!(epic_count.map(|c| c.count), Some(1));
     }
 

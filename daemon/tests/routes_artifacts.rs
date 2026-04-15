@@ -30,7 +30,7 @@ use tower::ServiceExt as _;
 /// GET /artifacts returns all 3 fixture artifacts.
 #[tokio::test]
 async fn list_artifacts_returns_all_fixtures() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts")
@@ -50,7 +50,7 @@ async fn list_artifacts_returns_all_fixtures() {
 /// GET /artifacts?type=epic returns only EPIC-test001.
 #[tokio::test]
 async fn list_artifacts_filter_by_type_returns_matching_subset() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts?type=epic")
@@ -76,7 +76,7 @@ async fn list_artifacts_filter_by_type_returns_matching_subset() {
 /// GET /artifacts?type=nonexistent returns an empty array (no 404 — just empty list).
 #[tokio::test]
 async fn list_artifacts_filter_by_nonexistent_type_returns_empty() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts?type=nonexistent")
@@ -100,7 +100,7 @@ async fn list_artifacts_filter_by_nonexistent_type_returns_empty() {
 /// GET /artifacts?status=active returns EPIC-test001 and RULE-test001 (both active).
 #[tokio::test]
 async fn list_artifacts_filter_by_status_returns_matching_subset() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts?status=active")
@@ -138,7 +138,7 @@ async fn list_artifacts_filter_by_status_returns_matching_subset() {
 /// GET /artifacts/EPIC-test001 returns 200 with the artifact's fields.
 #[tokio::test]
 async fn get_artifact_by_id_returns_200_with_fields() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/EPIC-test001")
@@ -160,7 +160,7 @@ async fn get_artifact_by_id_returns_200_with_fields() {
 /// GET /artifacts/DOES-NOT-EXIST returns 404.
 #[tokio::test]
 async fn get_artifact_nonexistent_returns_404() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/DOES-NOT-EXIST")
@@ -178,7 +178,7 @@ async fn get_artifact_nonexistent_returns_404() {
 /// GET /artifacts/EPIC-test001/content returns 200 with non-empty markdown content.
 #[tokio::test]
 async fn get_artifact_content_returns_200_with_markdown() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/EPIC-test001/content")
@@ -209,7 +209,7 @@ async fn get_artifact_content_returns_200_with_markdown() {
 /// GET /artifacts/DOES-NOT-EXIST/content returns 404.
 #[tokio::test]
 async fn get_artifact_content_nonexistent_returns_404() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/DOES-NOT-EXIST/content")
@@ -230,7 +230,7 @@ async fn get_artifact_content_nonexistent_returns_404() {
 /// descendants or ancestry_chains list (the task has an upward connection).
 #[tokio::test]
 async fn get_artifact_traceability_returns_200_with_valid_fields() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/TASK-test001/traceability")
@@ -269,7 +269,7 @@ async fn get_artifact_traceability_returns_200_with_valid_fields() {
 /// GET /artifacts/DOES-NOT-EXIST/traceability returns 404.
 #[tokio::test]
 async fn get_artifact_traceability_nonexistent_returns_404() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/DOES-NOT-EXIST/traceability")
@@ -287,7 +287,7 @@ async fn get_artifact_traceability_nonexistent_returns_404() {
 /// GET /artifacts/tree returns 200 with a non-empty tree structure.
 #[tokio::test]
 async fn get_artifact_tree_returns_200_non_empty() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/artifacts/tree")
@@ -315,7 +315,7 @@ async fn get_artifact_tree_returns_200_non_empty() {
 /// tests do not rely on fixture file content being unchanged between runs).
 #[tokio::test]
 async fn update_artifact_returns_200_with_updated_field() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("PUT")
         .uri("/artifacts/EPIC-test001")

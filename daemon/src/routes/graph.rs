@@ -9,12 +9,14 @@
 //   GET  /graph/health            — extended health metrics (components, density, etc.)
 //   GET  /graph/health/snapshots  — historical snapshots (not implemented — returns empty)
 //   POST /graph/health/snapshots  — store a new snapshot (not implemented — returns 501)
+//   GET  /graph/parity            — compare HashMap count vs SurrealDB count
 
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
+use orqa_graph::surreal_queries::total_artifacts;
 use orqa_validation::graph::graph_stats;
 use orqa_validation::metrics::compute_health;
 use orqa_validation::types::GraphHealth;
@@ -119,4 +121,73 @@ pub async fn list_health_snapshots() -> Json<Vec<serde_json::Value>> {
 /// the SQLite snapshot store is wired up.
 pub async fn create_health_snapshot(Json(_req): Json<HealthSnapshotRequest>) -> StatusCode {
     StatusCode::NOT_IMPLEMENTED
+}
+
+// ---------------------------------------------------------------------------
+// Parity validation
+// ---------------------------------------------------------------------------
+
+/// Response body for GET /graph/parity.
+#[derive(Debug, Serialize)]
+pub struct GraphParityResponse {
+    /// Artifact count from the in-memory HashMap graph.
+    pub hashmap_count: usize,
+    /// Artifact count from SurrealDB (materialized view).
+    /// `None` when SurrealDB is unavailable (failed to initialize).
+    pub surreal_count: Option<usize>,
+    /// `true` when both counts are equal (or SurrealDB is unavailable).
+    ///
+    /// `false` means the materialized view is out of sync — a manual
+    /// `bulk_sync` or daemon restart may be required.
+    pub in_sync: bool,
+    /// `true` when SurrealDB was successfully initialized on startup.
+    pub surreal_available: bool,
+}
+
+/// Handle GET /graph/parity — compare the in-memory HashMap against SurrealDB.
+///
+/// Returns the artifact count from both sources and a boolean `in_sync` flag.
+/// A mismatch (`in_sync: false`) signals that the SurrealDB materialized view
+/// has drifted from the file-backed HashMap — typically caused by a crash or
+/// mid-flight sync error. Clients may use this to display a data-integrity
+/// warning or trigger a manual resync.
+///
+/// When SurrealDB is unavailable, `surreal_count` is `null` and `in_sync` is
+/// `true` (no contradiction can be detected without the second source).
+pub async fn get_graph_parity(State(state): State<GraphState>) -> Json<GraphParityResponse> {
+    let (hashmap_count, surreal_db) = match state.0.read() {
+        Ok(guard) => (guard.graph.nodes.len(), guard.db.clone()),
+        Err(_) => {
+            return Json(GraphParityResponse {
+                hashmap_count: 0,
+                surreal_count: None,
+                in_sync: true,
+                surreal_available: false,
+            });
+        }
+    };
+
+    let Some(db) = surreal_db else {
+        return Json(GraphParityResponse {
+            hashmap_count,
+            surreal_count: None,
+            in_sync: true,
+            surreal_available: false,
+        });
+    };
+
+    match total_artifacts(&db).await {
+        Ok(surreal_count) => Json(GraphParityResponse {
+            in_sync: hashmap_count == surreal_count,
+            hashmap_count,
+            surreal_count: Some(surreal_count),
+            surreal_available: true,
+        }),
+        Err(_) => Json(GraphParityResponse {
+            hashmap_count,
+            surreal_count: None,
+            in_sync: true,
+            surreal_available: true, // DB exists but query failed
+        }),
+    }
 }

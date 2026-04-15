@@ -383,6 +383,7 @@ mod tests {
             .expect("in-memory storage");
 
         let graph_state = GraphState::build(&fixture_root())
+            .await
             .unwrap_or_else(|_| GraphState::build_empty(&fixture_root()));
 
         let state = HealthState::for_test(graph_state, Some(Arc::clone(&storage)));

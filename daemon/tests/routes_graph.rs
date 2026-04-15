@@ -26,7 +26,7 @@ use tower::ServiceExt as _;
 /// GET /graph/stats returns 200 with node_count matching the fixture (3 nodes).
 #[tokio::test]
 async fn graph_stats_node_count_matches_fixtures() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/graph/stats")
@@ -49,7 +49,7 @@ async fn graph_stats_node_count_matches_fixtures() {
 /// GET /graph/stats returns edge_count > 0 because the fixture has a task→epic relationship.
 #[tokio::test]
 async fn graph_stats_edge_count_nonzero() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/graph/stats")
@@ -75,7 +75,7 @@ async fn graph_stats_edge_count_nonzero() {
 /// GET /graph/stats returns 200 with all required fields present.
 #[tokio::test]
 async fn graph_stats_has_required_fields() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/graph/stats")
@@ -113,7 +113,7 @@ async fn graph_stats_has_required_fields() {
 /// GET /graph/health returns 200 with all required GraphHealth fields.
 #[tokio::test]
 async fn graph_health_returns_200_with_valid_fields() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/graph/health")
@@ -156,7 +156,7 @@ async fn graph_health_returns_200_with_valid_fields() {
 /// GET /graph/health total_nodes matches the fixture count (3 nodes).
 #[tokio::test]
 async fn graph_health_total_nodes_matches_fixtures() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("GET")
         .uri("/graph/health")
@@ -182,7 +182,7 @@ async fn graph_health_total_nodes_matches_fixtures() {
 /// POST /reload returns 200 with status "reloaded" and the current artifact count.
 #[tokio::test]
 async fn reload_returns_reloaded_status_with_artifact_count() {
-    let router = helpers::build_app_router();
+    let router = helpers::build_app_router().await;
     let request = Request::builder()
         .method("POST")
         .uri("/reload")

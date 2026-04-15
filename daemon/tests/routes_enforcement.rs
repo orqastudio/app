@@ -18,7 +18,7 @@ use http_body_util::BodyExt as _;
 use tower::ServiceExt as _;
 
 /// Build a Router wired to the real enforcement route handlers.
-fn build_enforcement_router() -> axum::Router {
+async fn build_enforcement_router() -> axum::Router {
     use axum::routing::{get, post};
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::routes::enforcement::{
@@ -27,7 +27,9 @@ fn build_enforcement_router() -> axum::Router {
     };
 
     let root = helpers::fixture_dir();
-    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
 
     axum::Router::new()
         .route("/enforcement/rules", get(list_enforcement_rules))
@@ -50,7 +52,7 @@ fn build_enforcement_router() -> axum::Router {
 /// a correct response for a project with no enforcement-engine-format rules.
 #[tokio::test]
 async fn enforcement_rules_returns_200_and_json_array() {
-    let app = build_enforcement_router();
+    let app = build_enforcement_router().await;
 
     let response = app
         .oneshot(
@@ -86,8 +88,8 @@ async fn enforcement_rules_returns_200_and_json_array() {
 #[tokio::test]
 async fn enforcement_rules_reload_returns_same_rules_as_list() {
     // Build two routers from the same fixture so we can compare responses.
-    let app_list = build_enforcement_router();
-    let app_reload = build_enforcement_router();
+    let app_list = build_enforcement_router().await;
+    let app_reload = build_enforcement_router().await;
 
     // GET /enforcement/rules
     let list_resp = app_list
@@ -142,7 +144,7 @@ async fn enforcement_rules_reload_returns_same_rules_as_list() {
 /// The key invariant is that the endpoint returns a well-formed array — not an error.
 #[tokio::test]
 async fn enforcement_violations_returns_json_array() {
-    let app = build_enforcement_router();
+    let app = build_enforcement_router().await;
 
     let response = app
         .oneshot(
@@ -177,7 +179,7 @@ async fn enforcement_violations_returns_json_array() {
 /// and artifact counting all composed correctly.
 #[tokio::test]
 async fn enforcement_scan_returns_governance_scan_result() {
-    let app = build_enforcement_router();
+    let app = build_enforcement_router().await;
 
     let response = app
         .oneshot(

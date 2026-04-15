@@ -90,9 +90,7 @@ fn bench_single_upsert(c: &mut Criterion) {
     });
 
     c.bench_function("single_upsert", |b| {
-        b.iter(|| {
-            rt.block_on(async { ingest_single_file(&db, &leaf, &orqa).await.unwrap() })
-        });
+        b.iter(|| rt.block_on(async { ingest_single_file(&db, &leaf, &orqa).await.unwrap() }));
     });
 }
 
@@ -186,9 +184,7 @@ fn bench_descendants(c: &mut Criterion) {
     eprintln!("Descendants of: {epic_id}");
 
     c.bench_function("descendants", |b| {
-        b.iter(|| {
-            rt.block_on(async { queries::trace_descendants(&db, &epic_id).await.unwrap() })
-        });
+        b.iter(|| rt.block_on(async { queries::trace_descendants(&db, &epic_id).await.unwrap() }));
     });
 }
 
@@ -248,7 +244,14 @@ fn bench_health_metrics(c: &mut Criterion) {
             let statuses = queries::count_by_status(&db).await.unwrap();
             let total_a = queries::total_artifacts(&db).await.unwrap();
             let total_e = queries::total_edges(&db).await.unwrap();
-            (avg, orphans.len(), types.len(), statuses.len(), total_a, total_e)
+            (
+                avg,
+                orphans.len(),
+                types.len(),
+                statuses.len(),
+                total_a,
+                total_e,
+            )
         });
 
     eprintln!(

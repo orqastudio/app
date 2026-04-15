@@ -92,8 +92,7 @@ pub async fn ingest_single_file(db: &GraphDb, path: &Path, orqa_root: &Path) -> 
         std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
 
     let (fm_text, body) = extract_frontmatter(&content);
-    let fm_text =
-        fm_text.ok_or_else(|| anyhow::anyhow!("no frontmatter in {}", path.display()))?;
+    let fm_text = fm_text.ok_or_else(|| anyhow::anyhow!("no frontmatter in {}", path.display()))?;
 
     let yaml_value: serde_yaml::Value = serde_yaml::from_str(&fm_text)
         .with_context(|| format!("parsing YAML in {}", path.display()))?;
@@ -211,11 +210,7 @@ async fn upsert_artifact(
 }
 
 /// Delete existing edges and insert new relationship edges for an artifact.
-async fn insert_edges(
-    db: &GraphDb,
-    id: &str,
-    relationships: &[RawRelationship],
-) -> Result<usize> {
+async fn insert_edges(db: &GraphDb, id: &str, relationships: &[RawRelationship]) -> Result<usize> {
     let safe_id = sanitize_record_id(id);
     let mut edge_count = 0;
 

@@ -40,12 +40,14 @@ pub fn fixture_dir() -> PathBuf {
 ///
 /// This is the entry point for C-1 (graph routes) and C-2 (artifact routes)
 /// integration tests.
-pub fn build_app_router() -> Router {
+pub async fn build_app_router() -> Router {
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
 
     let state = HealthState::for_test(graph_state, None);
     orqa_daemon_lib::build_router(state)
@@ -60,12 +62,14 @@ pub fn build_app_router() -> Router {
 /// Returns `(Router, tempfile::NamedTempFile)` — the NamedTempFile is unused
 /// but returned so the caller signature is consistent with `build_store_router`.
 /// Drop it at end of test scope.
-pub fn build_full_router() -> (Router, tempfile::NamedTempFile) {
+pub async fn build_full_router() -> (Router, tempfile::NamedTempFile) {
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
 
     let state = HealthState::for_test(graph_state.clone(), None);
     let base = orqa_daemon_lib::build_router(state);

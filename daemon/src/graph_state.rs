@@ -15,6 +15,9 @@ use orqa_enforcement::store::load_rules;
 use orqa_engine_types::platform::ArtifactTypeDef;
 use orqa_engine_types::types::enforcement::EnforcementRule;
 use orqa_engine_types::ArtifactGraph;
+use orqa_graph::surreal::{initialize_schema, open_embedded, GraphDb};
+use orqa_graph::surreal_queries::total_artifacts;
+use orqa_graph::sync::bulk_sync;
 use orqa_validation::context::build_validation_context_complete;
 use orqa_validation::graph::{build_artifact_graph, load_project_config};
 use orqa_validation::platform::scan_plugin_manifests;
@@ -45,6 +48,13 @@ pub struct GraphStateInner {
     pub enforcement_rules: Vec<EnforcementRule>,
     /// The project root this state was built from.
     pub project_root: PathBuf,
+    /// Embedded SurrealDB handle — a materialized view of the file-based artifact
+    /// graph. Populated via `bulk_sync` at startup. `None` when SurrealDB could
+    /// not be initialized (e.g. storage path not writable) or on `build_empty`.
+    ///
+    /// `reload()` preserves the existing `GraphDb` handle across graph rebuilds
+    /// so the embedded database connection is never closed mid-session.
+    pub db: Option<GraphDb>,
 }
 
 /// Shared reference to the cached graph state, safe for concurrent read access.
@@ -69,9 +79,91 @@ impl GraphState {
     /// Returns an error if the artifact graph cannot be constructed. Validation
     /// context failures are non-fatal — we fall back to a minimal context rather
     /// than refusing to start.
-    pub fn build(project_root: &Path) -> Result<Self, String> {
-        let inner =
+    ///
+    /// Initializes an embedded SurrealDB instance at `{project_root}/.state/surreal/`.
+    /// If the database is cold (no artifacts), runs `bulk_sync` to materialize the
+    /// artifact graph. If the database is warm (artifacts already present from a prior
+    /// session), skips `bulk_sync` — the file watcher handles incremental updates while
+    /// the daemon is running. SurrealDB failures are non-fatal — the daemon starts with
+    /// `db: None` and routes that require SurrealDB degrade gracefully.
+    #[allow(clippy::too_many_lines)]
+    pub async fn build(project_root: &Path) -> Result<Self, String> {
+        let mut inner =
             build_inner(project_root).map_err(|e| format!("graph state build failed: {e}"))?;
+
+        // Initialize embedded SurrealDB at .state/surreal/.
+        let surreal_path = project_root.join(".state/surreal");
+        if let Err(e) = std::fs::create_dir_all(&surreal_path) {
+            warn!(
+                subsystem = "graph-state",
+                path = %surreal_path.display(),
+                error = %e,
+                "[graph-state] could not create .state/surreal/ — starting without SurrealDB"
+            );
+        } else {
+            match open_embedded(&surreal_path).await {
+                Err(e) => {
+                    warn!(
+                        subsystem = "graph-state",
+                        path = %surreal_path.display(),
+                        error = %e,
+                        "[graph-state] could not open SurrealDB — starting without SurrealDB"
+                    );
+                }
+                Ok(db) => {
+                    if let Err(e) = initialize_schema(&db).await {
+                        warn!(
+                            subsystem = "graph-state",
+                            error = %e,
+                            "[graph-state] SurrealDB schema init failed — starting without SurrealDB"
+                        );
+                    } else {
+                        // Warm-start optimisation: if the database already
+                        // contains artifacts, skip bulk_sync entirely. The file
+                        // watcher (Task 6) handles incremental updates while the
+                        // daemon is running; bulk_sync is only needed on a cold
+                        // start (first run or after the DB has been wiped).
+                        let existing_count = total_artifacts(&db).await.unwrap_or(0);
+                        if existing_count > 0 {
+                            info!(
+                                subsystem = "graph-state",
+                                artifact_count = existing_count,
+                                "[graph-state] SurrealDB warm start — \
+                                 skipping bulk_sync ({} artifacts already present)",
+                                existing_count
+                            );
+                            inner.db = Some(db);
+                        } else {
+                            match bulk_sync(&db, project_root).await {
+                                Ok(summary) => {
+                                    info!(
+                                        subsystem = "graph-state",
+                                        upserted = summary.upserted,
+                                        unchanged = summary.unchanged,
+                                        errors = summary.errors,
+                                        "[graph-state] SurrealDB cold start — \
+                                         bulk_sync complete \
+                                         ({} upserted, {} unchanged, {} errors)",
+                                        summary.upserted,
+                                        summary.unchanged,
+                                        summary.errors
+                                    );
+                                    inner.db = Some(db);
+                                }
+                                Err(e) => {
+                                    warn!(
+                                        subsystem = "graph-state",
+                                        error = %e,
+                                        "[graph-state] SurrealDB bulk_sync failed — starting without SurrealDB"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         Ok(Self(Arc::new(RwLock::new(inner))))
     }
 
@@ -79,6 +171,9 @@ impl GraphState {
     ///
     /// All route handlers check for empty state and return sensible defaults. This
     /// allows the daemon to start in a degraded-but-functional mode.
+    ///
+    /// SurrealDB is not initialized in the empty state (`db: None`). Callers that
+    /// need SurrealDB should use `build()` instead.
     pub fn build_empty(project_root: &Path) -> Self {
         use orqa_validation::context::build_validation_context;
         use orqa_validation::settings::DeliveryConfig;
@@ -90,6 +185,7 @@ impl GraphState {
             terminal_statuses: Vec::new(),
             enforcement_rules: Vec::new(),
             project_root: project_root.to_path_buf(),
+            db: None,
         };
         Self(Arc::new(RwLock::new(inner)))
     }
@@ -100,9 +196,21 @@ impl GraphState {
     /// the new artifact count for logging. Errors are logged as warnings and
     /// the existing state is preserved so the daemon keeps serving
     /// stale-but-valid data.
+    ///
+    /// The SurrealDB `db` handle is preserved across reloads so the embedded
+    /// database connection is never closed mid-session. Per-file SurrealDB sync
+    /// is handled by the file watcher (Task 6 of the SurrealDB migration).
     pub fn reload(&self, project_root: &Path) -> usize {
+        // Preserve the existing SurrealDB handle across the inner rebuild.
+        // build_inner sets db: None; we re-inject it after construction.
+        let existing_db = match self.0.read() {
+            Ok(guard) => guard.db.clone(),
+            Err(_) => None,
+        };
+
         match build_inner(project_root) {
-            Ok(inner) => {
+            Ok(mut inner) => {
+                inner.db = existing_db;
                 let artifact_count = inner.graph.nodes.len();
                 let enforcement_rule_count = inner.enforcement_rules.len();
                 let enforcement_entry_count: usize = inner
@@ -194,6 +302,25 @@ impl GraphState {
             Err(_) => None,
         }
     }
+
+    /// Return a clone of the embedded SurrealDB handle, if available.
+    ///
+    /// `None` when SurrealDB could not be initialized at startup (storage error,
+    /// schema failure, or `build_empty` was used). Route handlers that require
+    /// SurrealDB should check this and return an appropriate error response when
+    /// `None` is returned.
+    ///
+    /// Cloning `GraphDb` is cheap — `Surreal<Db>` is an `Arc` wrapper internally.
+    ///
+    /// # Note
+    /// Used by the parity validation route (`GET /graph/parity`) and the file
+    /// watcher for incremental per-file SurrealDB sync on `.orqa/` changes.
+    pub fn surreal_db(&self) -> Option<GraphDb> {
+        match self.0.read() {
+            Ok(guard) => guard.db.clone(),
+            Err(_) => None,
+        }
+    }
 }
 
 /// Construct a fresh `GraphStateInner` from the project root.
@@ -239,6 +366,7 @@ fn build_inner(project_root: &Path) -> Result<GraphStateInner, orqa_validation::
         terminal_statuses: plugin_contributions.terminal_statuses,
         enforcement_rules,
         project_root: project_root.to_path_buf(),
+        db: None,
     })
 }
 
@@ -405,10 +533,12 @@ mod tests {
     // -------------------------------------------------------------------------
 
     /// build with the minimal-project fixture succeeds and returns nodes.
-    #[test]
-    fn build_with_fixture_succeeds_and_has_nodes() {
+    #[tokio::test]
+    async fn build_with_fixture_succeeds_and_has_nodes() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed on minimal fixture");
+        let state = GraphState::build(&root)
+            .await
+            .expect("build must succeed on minimal fixture");
         assert!(
             state.artifact_count() > 0,
             "fixture project has known artifacts; artifact_count must be > 0"
@@ -416,10 +546,10 @@ mod tests {
     }
 
     /// find_node returns the correct artifact_type and title for a known fixture ID.
-    #[test]
-    fn find_node_returns_correct_type_and_title_for_fixture_id() {
+    #[tokio::test]
+    async fn find_node_returns_correct_type_and_title_for_fixture_id() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed");
+        let state = GraphState::build(&root).await.expect("build must succeed");
 
         let node = state
             .find_node("EPIC-test001")
@@ -430,10 +560,10 @@ mod tests {
     }
 
     /// find_node with a non-existent ID returns None even after a successful build.
-    #[test]
-    fn find_node_returns_none_for_nonexistent_id() {
+    #[tokio::test]
+    async fn find_node_returns_none_for_nonexistent_id() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed");
+        let state = GraphState::build(&root).await.expect("build must succeed");
         assert!(
             state.find_node("EPIC-doesnotexist").is_none(),
             "find_node must return None for IDs not in the graph"
@@ -441,10 +571,10 @@ mod tests {
     }
 
     /// artifact_count with the fixture reflects the known number of artifacts.
-    #[test]
-    fn artifact_count_with_fixture_is_correct() {
+    #[tokio::test]
+    async fn artifact_count_with_fixture_is_correct() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed");
+        let state = GraphState::build(&root).await.expect("build must succeed");
         // Fixture contains EPIC-test001, TASK-test001, RULE-test001 = 3 artifacts.
         assert_eq!(
             state.artifact_count(),
@@ -454,12 +584,49 @@ mod tests {
     }
 
     /// rule_count with the fixture reflects the known number of rule artifacts.
-    #[test]
-    fn rule_count_with_fixture_is_correct() {
+    #[tokio::test]
+    async fn rule_count_with_fixture_is_correct() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed");
+        let state = GraphState::build(&root).await.expect("build must succeed");
         // Fixture contains exactly one rule: RULE-test001.
         assert_eq!(state.rule_count(), 1, "minimal fixture has exactly 1 rule");
+    }
+
+    /// build() with the minimal-project fixture populates SurrealDB with the
+    /// same artifact count as the in-memory HashMap.
+    ///
+    /// This is the parity check for Task 5 — verifying that SurrealDB is
+    /// initialized and bulk_sync runs without error on the fixture project.
+    #[tokio::test]
+    async fn build_populates_surreal_db_matching_artifact_count() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let root = dir.path();
+        // Use the bootstrap helper to create a minimal project with known artifacts.
+        let rules_dir = bootstrap_minimal_project(root);
+        // Write one known artifact with a hook rule.
+        std::fs::write(
+            rules_dir.join("RULE-test001.md"),
+            hook_rule("test001", "--no-verify"),
+        )
+        .expect("write rule");
+
+        let state = GraphState::build(root).await.expect("build must succeed");
+
+        // SurrealDB must be initialized (not None).
+        let db = state.surreal_db();
+        assert!(db.is_some(), "surreal_db() must return Some after build()");
+
+        // Artifact count in SurrealDB must match the HashMap count.
+        let db = db.unwrap();
+        let surreal_count = total_artifacts(&db)
+            .await
+            .expect("total_artifacts query must succeed");
+        let hashmap_count = state.artifact_count();
+        assert_eq!(
+            surreal_count, hashmap_count,
+            "SurrealDB artifact count must match HashMap count: \
+             surreal={surreal_count}, hashmap={hashmap_count}"
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -521,10 +688,10 @@ mod tests {
     ///
     /// This tests that the artifact_count helper faithfully reflects the graph —
     /// if someone changed one path but not the other, this would catch it.
-    #[test]
-    fn artifact_count_consistent_with_graph_node_count() {
+    #[tokio::test]
+    async fn artifact_count_consistent_with_graph_node_count() {
         let root = fixture_root();
-        let state = GraphState::build(&root).expect("build must succeed");
+        let state = GraphState::build(&root).await.expect("build must succeed");
 
         let via_helper = state.artifact_count();
         let via_direct = state
@@ -593,12 +760,14 @@ enforcement:
     /// Adding a new rule file then calling `reload` makes the new rule
     /// appear in the cached `enforcement_rules` list.  This is the
     /// "watcher fires on create" path end-to-end.
-    #[test]
-    fn reload_picks_up_newly_added_rule_file() {
+    #[tokio::test]
+    async fn reload_picks_up_newly_added_rule_file() {
         let dir = tempfile::tempdir().expect("tempdir");
         let rules_dir = bootstrap_minimal_project(dir.path());
 
-        let state = GraphState::build(dir.path()).expect("build must succeed");
+        let state = GraphState::build(dir.path())
+            .await
+            .expect("build must succeed");
         assert!(
             state.enforcement_rules().is_empty(),
             "precondition: empty rules dir yields empty cache"
@@ -625,8 +794,8 @@ enforcement:
     /// Editing an existing rule file's content and calling `reload` makes
     /// the cached rule reflect the new pattern.  This is the "watcher
     /// fires on modify" path end-to-end.
-    #[test]
-    fn reload_reflects_edited_rule_file_content() {
+    #[tokio::test]
+    async fn reload_reflects_edited_rule_file_content() {
         let dir = tempfile::tempdir().expect("tempdir");
         let rules_dir = bootstrap_minimal_project(dir.path());
 
@@ -635,7 +804,9 @@ enforcement:
             hook_rule("edit", "initial-pattern"),
         )
         .expect("write rule v1");
-        let state = GraphState::build(dir.path()).expect("build must succeed");
+        let state = GraphState::build(dir.path())
+            .await
+            .expect("build must succeed");
         let v1 = state.enforcement_rules();
         assert_eq!(v1.len(), 1);
         assert_eq!(
@@ -663,8 +834,8 @@ enforcement:
 
     /// Deleting a rule file and calling `reload` drops the rule from the
     /// cached list.  This is the "watcher fires on remove" path end-to-end.
-    #[test]
-    fn reload_drops_deleted_rule_file() {
+    #[tokio::test]
+    async fn reload_drops_deleted_rule_file() {
         let dir = tempfile::tempdir().expect("tempdir");
         let rules_dir = bootstrap_minimal_project(dir.path());
 
@@ -679,7 +850,9 @@ enforcement:
         )
         .expect("write survivor");
 
-        let state = GraphState::build(dir.path()).expect("build must succeed");
+        let state = GraphState::build(dir.path())
+            .await
+            .expect("build must succeed");
         assert_eq!(
             state.enforcement_rules().len(),
             2,

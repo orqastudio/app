@@ -7,11 +7,17 @@
 //! Public modules:
 //! - `build`: graph construction, scanning, node assembly, type inference
 //! - `metrics`: graph health metrics and traceability queries
+//! - `surreal`: SurrealDB connection wrapper and schema initialisation
+//! - `surreal_queries`: SurrealQL-based graph query functions
+//! - `sync`: incremental and bulk sync of `.orqa/` markdown files into SurrealDB
 //! - `error`: `GraphError` type for I/O and YAML parse failures
 
 pub mod build;
 pub mod error;
 pub mod metrics;
+pub mod surreal;
+pub mod surreal_queries;
+pub mod sync;
 
 #[cfg(test)]
 mod metrics_tests;
@@ -37,3 +43,11 @@ pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     PipelineCategories,
 };
+pub use surreal::GraphDb;
+pub use surreal_queries::{
+    avg_degree, count_by_status, count_by_type, find_orphans as surreal_find_orphans,
+    find_siblings as surreal_find_siblings, total_artifacts, total_edges,
+    trace_descendants as surreal_trace_descendants, trace_to_pillars as surreal_trace_to_pillars,
+    GroupCount, OrphanArtifact, TraceStep,
+};
+pub use sync::{bulk_sync, delete_artifact, sync_file, BulkSyncSummary, SyncResult};

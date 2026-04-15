@@ -19,13 +19,15 @@ use tower::ServiceExt as _;
 /// Build a minimal Router wired to the real validation route handlers.
 ///
 /// Uses GraphState from the fixture project so all checks run against real data.
-fn build_validation_router() -> axum::Router {
+async fn build_validation_router() -> axum::Router {
     use axum::routing::post;
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::routes::validation::{validation_fix, validation_hook, validation_scan};
 
     let root = helpers::fixture_dir();
-    let graph_state = GraphState::build(&root).unwrap_or_else(|_| GraphState::build_empty(&root));
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
 
     axum::Router::new()
         .route("/validation/scan", post(validation_scan))
@@ -44,7 +46,7 @@ fn build_validation_router() -> axum::Router {
 /// This verifies that the handler wires validation + health metrics together.
 #[tokio::test]
 async fn validation_scan_returns_checks_and_health() {
-    let app = build_validation_router();
+    let app = build_validation_router().await;
 
     let response = app
         .oneshot(
@@ -89,7 +91,7 @@ async fn validation_scan_returns_checks_and_health() {
 /// pipeline ran — not just that the handler returned a 200.
 #[tokio::test]
 async fn validation_scan_health_contains_metric_fields() {
-    let app = build_validation_router();
+    let app = build_validation_router().await;
 
     let response = app
         .oneshot(
@@ -137,7 +139,7 @@ async fn validation_scan_health_contains_metric_fields() {
 /// but with an empty fixes_applied array. No files must be written to disk.
 #[tokio::test]
 async fn validation_fix_dry_run_returns_empty_fixes_applied() {
-    let app = build_validation_router();
+    let app = build_validation_router().await;
 
     let response = app
         .oneshot(
@@ -186,7 +188,7 @@ async fn validation_fix_dry_run_returns_empty_fixes_applied() {
 /// enforcement mechanism, not a tool-based one), the action should be "allow".
 #[tokio::test]
 async fn validation_hook_with_pre_action_context_returns_result() {
-    let app = build_validation_router();
+    let app = build_validation_router().await;
 
     let hook_ctx = serde_json::json!({
         "event": "PreAction",

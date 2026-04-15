@@ -33,7 +33,7 @@ use tower::ServiceExt as _;
 /// does not error — an empty array is a valid response.
 #[tokio::test]
 async fn plugins_list_returns_200_and_json_array() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -60,7 +60,7 @@ async fn plugins_list_returns_200_and_json_array() {
 /// GET /plugins/:name returns 404 for an unknown plugin name.
 #[tokio::test]
 async fn plugins_get_unknown_returns_404() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -85,7 +85,7 @@ async fn plugins_get_unknown_returns_404() {
 /// empty — but the response must be a JSON array with status 200.
 #[tokio::test]
 async fn workflow_transitions_returns_200_and_array() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -119,7 +119,7 @@ async fn workflow_transitions_returns_200_and_array() {
 /// are expected to be 1. The response shape is an object, not a bare array.
 #[tokio::test]
 async fn agents_behavioral_messages_returns_200_and_has_messages_field() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -158,7 +158,7 @@ async fn agents_behavioral_messages_returns_200_and_has_messages_field() {
 /// The fixture project has no agent files, so any role lookup must return 404.
 #[tokio::test]
 async fn agents_get_unknown_role_returns_404() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -183,7 +183,7 @@ async fn agents_get_unknown_role_returns_404() {
 /// The response must include the "hooks" key.
 #[tokio::test]
 async fn hooks_list_returns_200_with_hooks_key() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -221,7 +221,7 @@ async fn hooks_list_returns_200_with_hooks_key() {
 /// artifact count must be 3 and rule count must be 1.
 #[tokio::test]
 async fn reload_returns_reloaded_status_and_counts() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -276,7 +276,7 @@ async fn reload_returns_reloaded_status_and_counts() {
 /// `total_nodes` must be 3.
 #[tokio::test]
 async fn graph_health_returns_200_with_metrics() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -314,7 +314,7 @@ async fn graph_health_returns_200_with_metrics() {
 /// The fixture has no broken refs (all 3 artifacts are self-consistent).
 #[tokio::test]
 async fn graph_stats_broken_refs_is_zero_for_clean_fixture() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -346,7 +346,7 @@ async fn graph_stats_broken_refs_is_zero_for_clean_fixture() {
 /// GET /artifacts/:id returns 200 with the correct artifact for a known ID.
 #[tokio::test]
 async fn artifacts_get_known_id_returns_correct_artifact() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -379,7 +379,7 @@ async fn artifacts_get_known_id_returns_correct_artifact() {
 /// GET /artifacts/:id returns 404 for an unknown artifact ID.
 #[tokio::test]
 async fn artifacts_get_unknown_id_returns_404() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -399,7 +399,7 @@ async fn artifacts_get_unknown_id_returns_404() {
 /// The fixture has exactly one epic: EPIC-test001.
 #[tokio::test]
 async fn artifacts_filter_by_type_returns_matching_subset() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -431,7 +431,7 @@ async fn artifacts_filter_by_type_returns_matching_subset() {
 /// The fixture has exactly one rule: RULE-test001.
 #[tokio::test]
 async fn artifacts_filter_by_type_rule_returns_one() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -456,7 +456,7 @@ async fn artifacts_filter_by_type_rule_returns_one() {
 /// GET /artifacts?type=nonexistent returns an empty array, not an error.
 #[tokio::test]
 async fn artifacts_filter_by_unknown_type_returns_empty_array() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -488,7 +488,7 @@ async fn artifacts_filter_by_unknown_type_returns_empty_array() {
 /// GET /health returns pid as a positive integer.
 #[tokio::test]
 async fn health_response_has_positive_pid() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -516,7 +516,7 @@ async fn health_response_has_positive_pid() {
 /// GET /health returns uptime_seconds as a non-negative integer.
 #[tokio::test]
 async fn health_response_has_uptime_seconds() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(
@@ -546,7 +546,7 @@ async fn health_response_has_uptime_seconds() {
 /// GET /health returns artifact_count matching the fixture's known count.
 #[tokio::test]
 async fn health_response_artifact_count_matches_fixture() {
-    let (app, _db) = helpers::build_full_router();
+    let (app, _db) = helpers::build_full_router().await;
 
     let response = app
         .oneshot(

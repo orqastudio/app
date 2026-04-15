@@ -26,12 +26,15 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{Duration, Instant};
 
+use notify::EventKind;
 use notify::RecursiveMode;
 use notify_debouncer_full::{new_debouncer, DebounceEventResult, Debouncer, RecommendedCache};
+use tokio::runtime::Handle;
 use tracing::{debug, info, warn};
 
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
+use orqa_graph::sync::{delete_artifact_by_path, sync_file, SyncResult};
 
 use crate::graph_state::GraphState;
 
@@ -200,6 +203,13 @@ fn build_registry(project_root: &Path) -> Vec<WatchRegistration> {
 pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Result<WatchHandle> {
     let root = project_root.to_path_buf();
 
+    // Capture the tokio runtime handle from the calling async context.
+    // `start_watcher` is always invoked from `run()` which is an async fn,
+    // so `Handle::current()` succeeds here. The handle is cloned into the
+    // debouncer's background thread so async SurrealDB operations can be
+    // driven from within the synchronous callback.
+    let tokio_handle = Handle::current();
+
     // Build the registry once here for directory collection, and again inside
     // the closure so each copy is independently owned.
     let plugin_watch_dirs = {
@@ -212,7 +222,7 @@ pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Re
         None,
         move |result: DebounceEventResult| {
             let registry = build_registry(&root);
-            handle_events(result, &root, &registry, &graph_state);
+            handle_events(result, &root, &registry, &graph_state, &tokio_handle);
         },
     )?;
 
@@ -338,14 +348,20 @@ fn static_prefix_of(pattern: &str) -> String {
 /// For each non-ignored changed path:
 ///   - If it falls under `.orqa/`, calls `graph_state.reload()` to update the
 ///     cached artifact graph and validation context, then reloads enforcement.
+///     Additionally, for each changed `.md` file, performs an incremental
+///     SurrealDB sync via `sync_file` (create/modify) or `delete_artifact_by_path`
+///     (remove). The tokio runtime handle bridges the async sync calls from this
+///     synchronous callback thread.
 ///   - If it falls under `plugins/`, reloads plugin discovery and also reloads
 ///     the graph because plugin manifests affect the validation context.
 ///   - If it matches any registered watch path pattern, invokes the generator.
+#[allow(clippy::too_many_lines)]
 fn handle_events(
     result: DebounceEventResult,
     root: &Path,
     registry: &[WatchRegistration],
     graph_state: &GraphState,
+    tokio_handle: &Handle,
 ) {
     match result {
         Ok(events) => {
@@ -370,6 +386,15 @@ fn handle_events(
                     // Infrastructure watches.
                     if path_is_under(path, root, ".orqa") {
                         orqa_changed = true;
+
+                        // Incremental SurrealDB sync for .md files.
+                        // Non-.md files (e.g. README, YAML config) are skipped —
+                        // `sync_file` handles those via its own frontmatter check.
+                        if path.extension().and_then(|e| e.to_str()) == Some("md") {
+                            if let Some(db) = graph_state.surreal_db() {
+                                sync_orqa_file(path, root, &db, event.kind, tokio_handle);
+                            }
+                        }
                     } else if path_is_under(path, root, "plugins") {
                         plugins_changed = true;
                     }
@@ -408,6 +433,91 @@ fn handle_events(
                 );
             }
         }
+    }
+}
+
+/// Perform an incremental SurrealDB sync for a single `.orqa/` markdown file.
+///
+/// Called from the synchronous debouncer callback thread. Bridges to async by
+/// using the captured tokio runtime handle's `block_on`.
+///
+/// - `EventKind::Remove` → `delete_artifact_by_path` (file gone from disk)
+/// - All other kinds → `sync_file` (create or modify — content-hash guards no-ops)
+///
+/// Errors are logged at `warn` and never propagated — a sync failure must not
+/// crash the watcher or prevent the HashMap reload from running.
+#[allow(clippy::too_many_lines)]
+fn sync_orqa_file(
+    path: &Path,
+    root: &Path,
+    db: &orqa_graph::surreal::GraphDb,
+    kind: EventKind,
+    tokio_handle: &Handle,
+) {
+    if kind.is_remove() {
+        // File deleted from disk — remove from SurrealDB by relative path.
+        if let Ok(rel) = path.strip_prefix(root) {
+            let rel_str = rel.to_string_lossy().replace('\\', "/");
+            let db = db.clone();
+            let path_display = path.display().to_string();
+            tokio_handle.block_on(async move {
+                if let Err(e) = delete_artifact_by_path(&db, &rel_str).await {
+                    warn!(
+                        subsystem = "watcher",
+                        path = %path_display,
+                        error = %e,
+                        "[watcher] failed to delete artifact from SurrealDB"
+                    );
+                } else {
+                    debug!(
+                        subsystem = "watcher",
+                        path = %path_display,
+                        "[watcher] deleted artifact from SurrealDB"
+                    );
+                }
+            });
+        }
+    } else {
+        // File created or modified — sync into SurrealDB.
+        // `sync_file` uses content-hash dedup so unchanged files are no-ops.
+        let db = db.clone();
+        let path_owned = path.to_path_buf();
+        let root_owned = root.to_path_buf();
+        tokio_handle.block_on(async move {
+            match sync_file(&db, &path_owned, &root_owned).await {
+                Ok(SyncResult::Upserted { id, edge_count }) => {
+                    info!(
+                        subsystem = "watcher",
+                        artifact_id = %id,
+                        edges = edge_count,
+                        "[watcher] synced artifact to SurrealDB"
+                    );
+                }
+                Ok(SyncResult::Unchanged) => {
+                    debug!(
+                        subsystem = "watcher",
+                        path = %path_owned.display(),
+                        "[watcher] artifact content unchanged — SurrealDB not updated"
+                    );
+                }
+                Ok(SyncResult::Skipped { reason }) => {
+                    debug!(
+                        subsystem = "watcher",
+                        path = %path_owned.display(),
+                        reason = %reason,
+                        "[watcher] artifact skipped for SurrealDB sync"
+                    );
+                }
+                Err(e) => {
+                    warn!(
+                        subsystem = "watcher",
+                        path = %path_owned.display(),
+                        error = %e,
+                        "[watcher] failed to sync artifact to SurrealDB"
+                    );
+                }
+            }
+        });
     }
 }
 
