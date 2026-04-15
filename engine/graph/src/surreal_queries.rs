@@ -74,6 +74,20 @@ pub struct ArtifactRecord {
     pub path: String,
 }
 
+impl ArtifactRecord {
+    /// Extract the string key from the record ID (e.g. `"EPIC-001"` from `artifact:EPIC-001`).
+    ///
+    /// Artifact keys are always stored as `RecordIdKey::String` variants. Falls back to an
+    /// empty string if the key variant is unexpected.
+    pub fn id_key(&self) -> &str {
+        use surrealdb::types::RecordIdKey;
+        match &self.id.key {
+            RecordIdKey::String(s) => s.as_str(),
+            _ => "",
+        }
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Traceability queries
 // ---------------------------------------------------------------------------

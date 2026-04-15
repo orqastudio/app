@@ -21,6 +21,9 @@ use serde::{Deserialize, Serialize};
 use orqa_artifact::artifact_entries_from_schema;
 use orqa_artifact::reader::artifact_scan_tree;
 use orqa_engine_types::types::artifact::NavTree;
+use orqa_graph::surreal_queries::{
+    list_artifacts as surreal_list, search_artifacts as surreal_search,
+};
 use orqa_validation::auto_fix::update_artifact_field;
 use orqa_validation::metrics::compute_traceability;
 use orqa_validation::PipelineCategories;
@@ -103,12 +106,62 @@ pub struct ImpactResponse {
 
 /// Handle GET /artifacts — return all artifacts matching the query filters.
 ///
-/// All filtering is done against the cached graph. No disk I/O is performed.
+/// Uses SurrealDB as a fast-path for filtering and search when available and the
+/// request is not org-mode (project filter absent). SurrealDB returns matching IDs
+/// which are then resolved against the HashMap for full `ArtifactNode` data. Falls
+/// back to the HashMap path when SurrealDB is unavailable or returns an error.
 #[allow(clippy::too_many_lines)]
 pub async fn list_artifacts(
     State(state): State<GraphState>,
     Query(params): Query<ArtifactsQuery>,
 ) -> Json<Vec<ArtifactNode>> {
+    // SurrealDB fast-path: only when no org-mode project filter is set.
+    // Org-mode filtering requires alias-deduplication logic only the HashMap path handles.
+    if params.project.is_none() {
+        let db_opt = state.0.read().ok().and_then(|g| g.db.clone());
+        if let Some(db) = db_opt {
+            let surreal_result = if let Some(ref q) = params.search {
+                surreal_search(&db, q).await
+            } else {
+                surreal_list(
+                    &db,
+                    params.artifact_type.as_deref(),
+                    params.status.as_deref(),
+                )
+                .await
+            };
+
+            match surreal_result {
+                Ok(records) => {
+                    let guard = match state.0.read() {
+                        Ok(g) => g,
+                        Err(p) => p.into_inner(),
+                    };
+                    // Resolve each SurrealDB record to a full ArtifactNode via the HashMap.
+                    // id_key() extracts the string portion of the RecordId (e.g. "EPIC-001").
+                    let mut nodes: Vec<ArtifactNode> = records
+                        .iter()
+                        .filter_map(|r| guard.graph.nodes.get(r.id_key()).cloned())
+                        .collect();
+                    nodes.sort_by(|a, b| {
+                        a.artifact_type
+                            .cmp(&b.artifact_type)
+                            .then_with(|| a.id.cmp(&b.id))
+                    });
+                    return Json(nodes);
+                }
+                Err(e) => {
+                    tracing::warn!(
+                        subsystem = "artifacts",
+                        error = %e,
+                        "[artifacts] SurrealDB list_artifacts failed, falling back to HashMap"
+                    );
+                    // Fall through to the HashMap path below.
+                }
+            }
+        }
+    }
+
     let Ok(guard) = state.0.read() else {
         return Json(Vec::new());
     };
