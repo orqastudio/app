@@ -673,6 +673,49 @@ Each task is sized for one implementer context window. Format: **ID / What / Fil
 
 ---
 
+### TASK-S2-26 — Dev-environment hardening: Tauri frontendDist + pre-commit hook scope
+
+**Status:** SCHEDULED — can run standalone any time after Wave 1. Two independent pre-existing issues surfaced during the Wave 1 commit process that are worth fixing together:
+
+**What:** Two small dev-environment problems that caused the Wave 1 commit to snag:
+
+1. **Tauri `frontendDist` missing-directory panic.** `app/src-tauri/tauri.conf.json` and `devtools/src-tauri/tauri.conf.json` both set `frontendDist` to `"../build"`. The `tauri::generate_context!()` macro panics at compile time if that directory doesn't exist — even a `cargo check` of unrelated crates fails because those Tauri crates are compiled as part of the workspace. A clean dev-env checkout cannot build anything until the frontends are built first. Today this is patched with placeholder `build/index.html` files (gitignored), but:
+   - The root dev-env setup (`make install` / `scripts/install.sh`) should build the frontends as part of bootstrap, OR
+   - The Tauri config should point at a directory that always exists (e.g. `static/`) with a build-time hook that replaces it at release time, OR
+   - A fallback placeholder in the repo (committed, minimal, clearly labelled as placeholder) so nothing has to be built before the Rust workspace compiles.
+
+2. **Pre-commit hook over-broad scope.** `.githooks/pre-commit` runs `orqa enforce --staged` which internally runs clippy against the whole workspace (including `orqa-studio`/`orqa-devtools` Tauri crates). Committing Rust changes to `engine/` or `daemon/` forces re-compilation of the Tauri crates, which then fails on (1). The hook should scope its clippy/check runs to the crates that actually own the staged files — or skip dependent crates that cannot compile without out-of-repo state. Alternative: the hook checks `frontendDist` existence as a precondition and prints an actionable error ("run `orqa build` first") instead of a proc-macro panic.
+
+**Files to READ:**
+- `.githooks/pre-commit`
+- `cli/src/commands/enforce.ts` (logic backing `orqa enforce --staged`)
+- `cli/src/commands/enforce*` helpers
+- `app/src-tauri/tauri.conf.json`, `devtools/src-tauri/tauri.conf.json`
+- `scripts/install.sh`, `Makefile`
+
+**Files to MODIFY (candidate — depends on chosen fix path):**
+- `scripts/install.sh` (build frontends at bootstrap if that's the chosen path)
+- `.githooks/pre-commit` (scope clippy/check to staged-file owners)
+- `cli/src/commands/enforce.ts` (narrow clippy scope; add precondition check)
+- Tauri configs (point at a committed placeholder path — LAST resort, lowest quality fix)
+
+**AC:**
+- [ ] A fresh checkout (`git clone ... && cd ... && cargo check -p orqa-daemon`) compiles without building any frontend. No Tauri proc-macro panics bubble up to unrelated crate checks.
+- [ ] Pre-commit hook does NOT re-compile the Tauri crates when the staged changes are wholly under `engine/`, `daemon/`, `cli/`, or other non-Tauri-owning paths.
+- [ ] Making a Rust change in `engine/` and committing works on a machine that has never run `npm run build` on `app/` or `devtools/`.
+- [ ] Hook scope decisions documented in `.githooks/pre-commit` comments so future contributors understand the constraint.
+
+**Reviewer checks:**
+- Wipe `app/build/` and `devtools/build/`. Run `cargo check -p orqa-daemon` — succeeds.
+- Wipe `app/build/` and `devtools/build/`. Stage a change to `engine/graph/src/lib.rs` and attempt to commit — the hook succeeds without requiring the frontends to be built.
+- Try to commit a change to `app/src-tauri/src/lib.rs` (a Tauri-owning file) — the hook correctly detects the Tauri dependency and produces an actionable error if `frontendDist` is missing (rather than the opaque proc-macro panic).
+
+**Deps:** None. Can run standalone any time.
+
+**Rationale for filing:** Wave 1 commit required manually creating placeholder `app/build/index.html` and `devtools/build/index.html` to get past the Tauri macro panic, and tolerating slow pre-commit compilation of unrelated Tauri crates. Both are pre-existing environmental issues, not introduced by Wave 1; filing this task keeps them visible without blocking future waves.
+
+---
+
 ## Collision Map
 
 Tasks that touch the same file and MUST serialize:
@@ -725,6 +768,9 @@ Wave 1 landed 2026-04-16 with 5 PASS (S2-01, S2-03, S2-07, S2-09, S2-20). S2-23 
 
 **Wave 1.5 — Post-Wave-1 cleanup (single implementer, runs before Wave 2)**
 - TASK-S2-25 (fixture hygiene + merge-route integration test + doc comment hygiene)
+
+**Standalone — can run any time, no wave dependency**
+- TASK-S2-26 (dev-environment hardening: Tauri frontendDist + pre-commit hook scope — surfaced during Wave 1 commit)
 
 **Wave 2 — Write-path flip**
 - TASK-S2-04 (flip PUT)
