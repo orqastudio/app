@@ -365,15 +365,31 @@ async fn run(
         }
     };
 
+    // Create the watcher pause/resume control before spawning the health server
+    // so both share the same Arc. The HTTP routes at POST /watcher/pause and
+    // POST /watcher/resume will update this control; the file-watcher callback
+    // reads it before processing events.
+    let watcher_control = routes::watcher::WatcherControl::new();
+
     tokio::spawn({
         let bus = Arc::clone(&event_bus);
         let snapshots = Arc::clone(&process_snapshots);
         let gs = graph_state.clone();
         let st = storage.clone();
         let ig_tx = issue_group_updates.clone();
+        let wc = watcher_control.clone();
         async move {
-            if let Err(e) =
-                health::start(daemon_port, daemon_config, bus, st, snapshots, gs, ig_tx).await
+            if let Err(e) = health::start(
+                daemon_port,
+                daemon_config,
+                bus,
+                st,
+                snapshots,
+                gs,
+                ig_tx,
+                wc,
+            )
+            .await
             {
                 error!(subsystem = "health", error = %e, "[health] health server failed");
             }
@@ -382,7 +398,8 @@ async fn run(
 
     // The watcher handle must be kept alive for the duration of the event loop.
     // If starting the watcher fails the daemon continues without file watching.
-    let _watcher_handle = match watcher::start_watcher(&project_root, graph_state) {
+    let _watcher_handle = match watcher::start_watcher(&project_root, graph_state, watcher_control)
+    {
         Ok(handle) => {
             info!(subsystem = "watcher", "[watcher] file watchers started");
             Some(handle)

@@ -1,7 +1,7 @@
 /**
  * Plugin management commands.
  *
- * orqa plugin list|install|uninstall|update|enable|disable|refresh|diff|registry|create
+ * orqa plugin list|install|uninstall|update|enable|disable|refresh|registry|create
  */
 
 import * as fs from "node:fs";
@@ -17,22 +17,12 @@ import { readManifest } from "../lib/manifest.js";
 import {
 	readContentManifest,
 	writeContentManifest,
-	copyPluginContent,
-	removePluginContent,
 	installPluginDeps,
 	buildPlugin,
 	runLifecycleHook,
-	diffPluginContent,
-	computeThreeWayState,
-	findSourceFile,
 	processAggregatedFiles,
-	computeFileHash,
 } from "../lib/content-lifecycle.js";
-import type {
-	ContentManifest,
-	FileHashEntry,
-	ThreeWayFileStatus,
-} from "../lib/content-lifecycle.js";
+import type { ContentManifest } from "../lib/content-lifecycle.js";
 import { createHash } from "node:crypto";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
@@ -49,11 +39,9 @@ Subcommands:
   uninstall <name>                  Remove a plugin
   update [name]                     Update one or all plugins
   outdated                          List plugins whose source version or manifest has changed
-  enable <name>                     Enable a plugin (copy content to .orqa/)
-  disable <name>                    Disable a plugin (remove content from .orqa/)
-  refresh [name]                    Re-sync content for one or all enabled plugins
-  diff [name]                       Show content drift for one or all installed plugins
-  status [name]                     Show three-way state for tracked files
+  enable <name>                     Enable a plugin
+  disable <name>                    Disable a plugin
+  refresh [name]                    Re-sync deps and build for one or all enabled plugins
   registry [--official|--community] Browse available plugins
   create [template]                 Scaffold a new plugin from template
   template-validate [template]      Validate a plugin template directory
@@ -97,14 +85,8 @@ export async function runPluginCommand(args: string[]): Promise<void> {
 		case "refresh":
 			await cmdRefresh(args.slice(1));
 			break;
-		case "diff":
-			await cmdDiff(args.slice(1));
-			break;
 		case "registry":
 			await cmdRegistry(args.slice(1));
-			break;
-		case "status":
-			await cmdStatus(args.slice(1));
 			break;
 		case "create":
 			await cmdCreate(args.slice(1));
@@ -248,21 +230,6 @@ function removeProjectJsonPlugin(projectRoot: string, name: string): void {
  * @param projectRoot - Absolute path to the project root.
  * @param pluginName - Plugin name whose content files should be deleted.
  */
-function deleteContentFiles(projectRoot: string, pluginName: string): void {
-	const contentManifest = readContentManifest(projectRoot);
-	const entry = contentManifest.plugins[pluginName];
-
-	if (!entry) {
-		return;
-	}
-
-	for (const relPath of Object.keys(entry.files)) {
-		const absPath = path.join(projectRoot, relPath);
-		if (fs.existsSync(absPath)) {
-			fs.unlinkSync(absPath);
-		}
-	}
-}
 
 // ---------------------------------------------------------------------------
 // list
@@ -406,14 +373,7 @@ async function cmdInstall(args: string[]): Promise<void> {
 	installPluginDeps(result.path, pluginManifest);
 	buildPlugin(result.path, pluginManifest);
 
-	// Copy content to .orqa/
-	const copyResult = copyPluginContent(result.path, projectRoot, pluginManifest);
-	const copiedCount = Object.keys(copyResult.copied).length;
-	if (copiedCount > 0) {
-		console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
-	}
-
-	// Record ownership in .orqa/manifest.json including manifestHash for outdated detection.
+	// Record plugin registration in .orqa/manifest.json including manifestHash for outdated detection.
 	const contentManifest: ContentManifest = readContentManifest(projectRoot);
 	const manifestFileInstall = path.join(result.path, "orqa-plugin.json");
 	const manifestHashInstall = createHash("sha256")
@@ -423,7 +383,7 @@ async function cmdInstall(args: string[]): Promise<void> {
 		version: result.version,
 		installed_at: new Date().toISOString(),
 		manifestHash: manifestHashInstall,
-		files: copyResult.copied,
+		files: {},
 	};
 	writeContentManifest(projectRoot, contentManifest);
 
@@ -509,14 +469,7 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 	installPluginDeps(pluginDir, pluginManifest);
 	buildPlugin(pluginDir, pluginManifest);
 
-	// Copy content to .orqa/
-	const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest);
-	const copiedCount = Object.keys(copyResult.copied).length;
-	if (copiedCount > 0) {
-		console.log(`  Copied ${copiedCount} content file(s) to .orqa/`);
-	}
-
-	// Record ownership in .orqa/manifest.json including manifestHash for outdated detection.
+	// Record plugin registration in .orqa/manifest.json including manifestHash for outdated detection.
 	const contentManifest: ContentManifest = readContentManifest(projectRoot);
 	const manifestFileFirstParty = path.join(pluginDir, "orqa-plugin.json");
 	const manifestHashFirstParty = createHash("sha256")
@@ -526,7 +479,7 @@ async function cmdInstallFirstParty(pluginDir: string, projectRoot: string): Pro
 		version: pluginManifest.version,
 		installed_at: new Date().toISOString(),
 		manifestHash: manifestHashFirstParty,
-		files: copyResult.copied,
+		files: {},
 	};
 	writeContentManifest(projectRoot, contentManifest);
 
@@ -605,8 +558,10 @@ async function cmdUninstall(args: string[]): Promise<void> {
 		}
 	}
 
-	// Remove content from .orqa/ and clear manifest entry
-	removePluginContent(name, projectRoot);
+	// Remove manifest entry and project.json registration
+	const uninstallManifest = readContentManifest(projectRoot);
+	delete uninstallManifest.plugins[name];
+	writeContentManifest(projectRoot, uninstallManifest);
 
 	// Remove from .orqa/project.json
 	removeProjectJsonPlugin(projectRoot, name);
@@ -653,21 +608,13 @@ async function cmdUpdate(args: string[]): Promise<void> {
 			// Re-install from the same repo (fetches latest)
 			const result = await installPlugin({ source: locked.repo, projectRoot });
 
-			// Re-sync content
+			// Update manifest entry for updated version
 			const pluginManifest = readManifest(result.path);
-			const copyResult = copyPluginContent(result.path, projectRoot, pluginManifest);
-			const copiedCount = Object.keys(copyResult.copied).length;
-
-			if (copiedCount > 0) {
-				console.log(`  Re-synced ${copiedCount} content file(s)`);
-			}
-
-			// Update content manifest
 			const contentManifest = readContentManifest(projectRoot);
 			contentManifest.plugins[result.name] = {
 				version: result.version,
 				installed_at: new Date().toISOString(),
-				files: copyResult.copied,
+				files: {},
 			};
 			writeContentManifest(projectRoot, contentManifest);
 
@@ -799,20 +746,13 @@ async function cmdEnable(args: string[]): Promise<void> {
 
 	const pluginManifest = readManifest(pluginDir);
 
-	// Copy content from plugin -> .orqa/
-	const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest);
-	const copiedCount = Object.keys(copyResult.copied).length;
-
-	if (copiedCount > 0) {
-		console.log(`Copied ${copiedCount} content file(s) to .orqa/`);
-	}
-
-	// Update content manifest (add or refresh entry)
+	// Update manifest entry for enabled state
 	const contentManifest = readContentManifest(projectRoot);
+	const existingEntry = contentManifest.plugins[name];
 	contentManifest.plugins[name] = {
 		version: pluginManifest.version,
-		installed_at: new Date().toISOString(),
-		files: copyResult.copied,
+		installed_at: existingEntry?.installed_at ?? new Date().toISOString(),
+		files: existingEntry?.files ?? {},
 	};
 	writeContentManifest(projectRoot, contentManifest);
 
@@ -838,18 +778,13 @@ async function cmdDisable(args: string[]): Promise<void> {
 	const name = args[0];
 	const projectRoot = process.cwd();
 
-	// Delete files from .orqa/ but keep the manifest entry (for re-enable)
-	deleteContentFiles(projectRoot, name);
-
 	// Set enabled: false in project.json
 	const projectJsonPath = path.join(projectRoot, ".orqa", "project.json");
 	if (fs.existsSync(projectJsonPath)) {
 		updateProjectJsonPlugin(projectRoot, name, { enabled: false });
 	}
 
-	console.log(
-		`Plugin ${name} disabled. Content removed from .orqa/ (manifest retained for re-enable).`,
-	);
+	console.log(`Plugin ${name} disabled.`);
 }
 
 // ---------------------------------------------------------------------------
@@ -896,41 +831,16 @@ async function cmdRefresh(args: string[]): Promise<void> {
 		installPluginDeps(pluginDir, pluginManifest);
 		buildPlugin(pluginDir, pluginManifest);
 
-		// Re-sync content (uses three-way diff internally)
-		const existingManifest = readContentManifest(projectRoot);
-		const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest, existingManifest);
-
-		// Merge: skipped files retain their existing hashes
-		const mergedFiles: Record<string, FileHashEntry> = { ...copyResult.copied };
-		const existingEntry = existingManifest.plugins[p.name];
-		if (existingEntry) {
-			for (const skippedFile of copyResult.skipped) {
-				const existing = existingEntry.files[skippedFile.path];
-				if (existing) {
-					mergedFiles[skippedFile.path] = existing;
-				}
-			}
-		}
-
-		// Update manifest
+		// Update manifest entry with refreshed version
 		const contentManifest = readContentManifest(projectRoot);
 		contentManifest.plugins[p.name] = {
 			version: pluginManifest.version,
 			installed_at: new Date().toISOString(),
-			files: mergedFiles,
+			files: contentManifest.plugins[p.name]?.files ?? {},
 		};
 		writeContentManifest(projectRoot, contentManifest);
 
-		const copiedCount = Object.keys(copyResult.copied).length;
-		if (copiedCount > 0) {
-			console.log(`  Re-synced ${copiedCount} content file(s)`);
-		} else {
-			console.log(`  No content to sync.`);
-		}
-
-		if (copyResult.skipped.length > 0) {
-			console.log(`  Skipped ${copyResult.skipped.length} user-modified file(s)`);
-		}
+		console.log(`  Refreshed deps and build.`);
 
 		// Ensure plugin is registered in project.json (fixes fresh-clone gap)
 		const shortPath = path.relative(projectRoot, pluginDir);
@@ -963,78 +873,6 @@ async function cmdRefresh(args: string[]): Promise<void> {
 	}
 
 	console.log("Refresh complete.");
-}
-
-// ---------------------------------------------------------------------------
-// diff
-// ---------------------------------------------------------------------------
-
-async function cmdDiff(args: string[]): Promise<void> {
-	const targetName = args[0];
-	const useJson = args.includes("--json");
-	const projectRoot = process.cwd();
-
-	const installed = listInstalledPlugins(projectRoot);
-	const toDiff = targetName ? installed.filter((p) => p.name === targetName) : installed;
-
-	if (toDiff.length === 0) {
-		console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
-		return;
-	}
-
-	const results = [];
-
-	for (const p of toDiff) {
-		const pluginManifest = readManifest(p.path);
-		const result = diffPluginContent(p.path, projectRoot, pluginManifest);
-		results.push(result);
-	}
-
-	if (useJson) {
-		console.log(JSON.stringify(results, null, 2));
-		return;
-	}
-
-	// Human-readable output
-	let totalModified = 0;
-	let totalMissing = 0;
-	let totalIdentical = 0;
-	let totalOrphaned = 0;
-
-	for (const result of results) {
-		console.log(`  ${result.pluginName}:`);
-
-		const allFiles = [
-			...result.identical.map((f) => ({ file: f, status: "identical" })),
-			...result.modified.map((f) => ({ file: f, status: "MODIFIED" })),
-			...result.missing.map((f) => ({ file: f, status: "MISSING" })),
-			...result.orphaned.map((f) => ({ file: f, status: "ORPHANED" })),
-		];
-
-		if (allFiles.length === 0) {
-			console.log("    (no content)");
-		} else {
-			for (const { file, status } of allFiles) {
-				const filename = path.basename(file);
-				console.log(`    ${filename}: ${status}`);
-			}
-		}
-
-		console.log();
-
-		totalIdentical += result.identical.length;
-		totalModified += result.modified.length;
-		totalMissing += result.missing.length;
-		totalOrphaned += result.orphaned.length;
-	}
-
-	const parts: string[] = [];
-	if (totalModified > 0) parts.push(`${totalModified} modified`);
-	if (totalMissing > 0) parts.push(`${totalMissing} missing`);
-	if (totalOrphaned > 0) parts.push(`${totalOrphaned} orphaned`);
-	if (totalIdentical > 0) parts.push(`${totalIdentical} identical`);
-
-	console.log(`  ${parts.join(", ")}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1106,69 +944,6 @@ async function cmdCreate(args: string[]): Promise<void> {
 	// Phase 8: will scaffold from templates/
 	console.log(`Scaffolding plugin from '${template}' template...`);
 	console.log("(Template system not yet implemented — coming in Phase 8)");
-}
-
-// ---------------------------------------------------------------------------
-// status
-// ---------------------------------------------------------------------------
-
-async function cmdStatus(args: string[]): Promise<void> {
-	const targetName = args[0];
-	const useJson = args.includes("--json");
-	const projectRoot = process.cwd();
-
-	const installed = listInstalledPlugins(projectRoot);
-	const toCheck = targetName ? installed.filter((p) => p.name === targetName) : installed;
-
-	if (toCheck.length === 0) {
-		console.log(targetName ? `Plugin not found: ${targetName}` : "No plugins installed.");
-		return;
-	}
-
-	const contentManifest = readContentManifest(projectRoot);
-	const allResults: Array<{ plugin: string; files: ThreeWayFileStatus[] }> = [];
-
-	for (const p of toCheck) {
-		const pluginManifest = readManifest(p.path);
-		const entry = contentManifest.plugins[p.name];
-		if (!entry) continue;
-
-		const fileStatuses: ThreeWayFileStatus[] = [];
-
-		for (const [relPath, hashEntry] of Object.entries(entry.files)) {
-			const sourceFile = findSourceFile(p.path, pluginManifest, relPath);
-			const sourceHash = sourceFile && fs.existsSync(sourceFile) ? computeFileHash(sourceFile) : "";
-
-			const state = computeThreeWayState(relPath, projectRoot, hashEntry, sourceHash);
-			fileStatuses.push({ path: relPath, state });
-		}
-
-		allResults.push({ plugin: p.name, files: fileStatuses });
-	}
-
-	if (useJson) {
-		console.log(JSON.stringify(allResults, null, 2));
-		return;
-	}
-
-	for (const result of allResults) {
-		console.log(`\n${result.plugin}:`);
-		for (const f of result.files) {
-			const icon =
-				f.state === "clean"
-					? " "
-					: f.state === "plugin-updated"
-						? "P"
-						: f.state === "user-modified"
-							? "U"
-							: f.state === "conflict"
-								? "C"
-								: f.state === "missing"
-									? "!"
-									: "?";
-			console.log(`  [${icon}] ${path.basename(f.path)}: ${f.state}`);
-		}
-	}
 }
 
 // ---------------------------------------------------------------------------

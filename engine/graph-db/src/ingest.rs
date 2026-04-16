@@ -10,6 +10,7 @@ use std::path::Path;
 use anyhow::{Context, Result};
 use serde::Deserialize;
 
+use crate::writers::bump_version;
 use crate::GraphDb;
 
 /// Summary of an ingestion run.
@@ -198,14 +199,21 @@ async fn upsert_artifact(
             source_plugin = NONE, \
             content_hash = NONE, \
             created = {created_sql}, \
-            updated = {updated_sql}, \
-            updated_at = time::now();"
+            updated = {updated_sql};"
     );
 
     db.db
         .query(&query)
         .await
         .with_context(|| format!("upserting artifact {id}"))?;
+
+    // Bump version and updated_at atomically after the field write.
+    // Sets version = current + 1 and updated_at = time::now() in a single UPSERT.
+    // Migration ingest always starts at version 1 (first bump from default 0).
+    bump_version(db, id, None)
+        .await
+        .map_err(|e| anyhow::anyhow!("version bump failed for {id}: {e}"))?;
+
     Ok(())
 }
 

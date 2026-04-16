@@ -321,6 +321,26 @@ impl GraphState {
             Err(_) => None,
         }
     }
+
+    /// Inject a SurrealDB handle into an existing `GraphState`.
+    ///
+    /// Used by integration tests to replace the `None` database in a freshly
+    /// built empty state with an in-memory SurrealDB instance. This allows
+    /// integration tests to run the full import route pipeline without writing
+    /// to disk.
+    ///
+    /// Must be `pub` so integration tests in `daemon/tests/` (separate Rust
+    /// crates that link this lib) can call it. Integration-test compilation
+    /// does NOT set `cfg(test)` on the lib (they link against it as a library),
+    /// so the dead-code allow must be unconditional — the function is dead
+    /// from the perspective of every compile-target except the integration
+    /// tests themselves.
+    #[allow(dead_code)]
+    pub fn inject_db(&self, db: GraphDb) {
+        if let Ok(mut guard) = self.0.write() {
+            guard.db = Some(db);
+        }
+    }
 }
 
 /// Construct a fresh `GraphStateInner` from the project root.

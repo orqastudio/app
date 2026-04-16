@@ -41,12 +41,14 @@ pub mod watcher;
 // This mirrors the router construction in `health::start` without port binding.
 // Tests call this with a `HealthState` built from fixture data, then dispatch
 // requests via `tower::ServiceExt::oneshot`.
+#[allow(clippy::too_many_lines)]
 pub fn build_router(state: health::HealthState) -> axum::Router {
     use axum::routing::{get, post};
 
     let artifact_router = axum::Router::new()
         .route("/", get(routes::artifacts::list_artifacts))
         .route("/tree", get(routes::artifacts::get_artifact_tree))
+        .route("/import", post(routes::import::import_artifacts))
         .route("/{id}", get(routes::artifacts::get_artifact))
         .route(
             "/{id}",
@@ -76,10 +78,27 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route("/orphans", get(routes::graph::get_graph_orphans))
         .with_state(state.graph_state.clone());
 
+    // Watcher control routes — pause/resume event emission during migration.
+    let watcher_router = axum::Router::new()
+        .route("/pause", post(routes::watcher::pause_watcher))
+        .route("/resume", post(routes::watcher::resume_watcher))
+        .route("/status", get(routes::watcher::watcher_status))
+        .with_state(state.watcher_control.clone());
+
+    // Admin storage migration routes — ingest phase for `orqa migrate storage`.
+    let admin_migrate_router = axum::Router::new()
+        .route(
+            "/storage/ingest",
+            post(routes::admin_migrate::storage_ingest),
+        )
+        .with_state(state.graph_state.clone());
+
     axum::Router::new()
         .route("/reload", post(health_reload_handler))
         .nest("/artifacts", artifact_router)
         .nest("/graph", graph_router)
+        .nest("/watcher", watcher_router)
+        .nest("/admin/migrate", admin_migrate_router)
         .layer(axum::middleware::from_fn(
             middleware::correlation_id_middleware,
         ))

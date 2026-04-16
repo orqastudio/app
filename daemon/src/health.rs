@@ -44,6 +44,7 @@ use crate::config::DaemonConfig;
 use crate::event_bus::{EventBus, EventBusStats};
 use crate::graph_state::GraphState;
 use crate::routes::streaming::SessionStreamRegistry;
+use crate::routes::watcher::WatcherControl;
 use crate::subprocess::ProcessSnapshot;
 
 /// Query parameters accepted by `GET /events`.
@@ -89,6 +90,12 @@ pub struct HealthState {
     /// Each active session has a broadcast channel for SSE delivery, a
     /// cancellation flag, and a pending-approval map for tool approval.
     pub stream_registry: SessionStreamRegistry,
+    /// Watcher pause/resume control shared with the file watcher.
+    ///
+    /// Route handlers at `POST /watcher/pause` and `POST /watcher/resume` hold
+    /// a clone of this and update the shared state. The debouncer callback
+    /// reads it to decide whether to emit sync events.
+    pub watcher_control: WatcherControl,
     /// Broadcast sender for `IssueGroup` updates published by the daemon-side
     /// `issue_group_consumer`.  SSE handlers call `subscribe()` on this sender
     /// to stream live updates to connected clients.  `None` when storage is
@@ -116,6 +123,7 @@ impl HealthState {
             graph_state,
             stream_registry: SessionStreamRegistry::new(),
             issue_group_updates: None,
+            watcher_control: WatcherControl::new(),
         }
     }
 }
@@ -443,6 +451,7 @@ pub async fn start(
     process_snapshots: Arc<Mutex<Vec<ProcessSnapshot>>>,
     graph_state: GraphState,
     issue_group_updates: Option<broadcast::Sender<IssueGroup>>,
+    watcher_control: WatcherControl,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
@@ -454,12 +463,14 @@ pub async fn start(
         graph_state,
         stream_registry: SessionStreamRegistry::new(),
         issue_group_updates,
+        watcher_control,
     };
 
     // Artifact routes — operate on the cached graph.
     let artifact_router = Router::new()
         .route("/", get(crate::routes::artifacts::list_artifacts))
         .route("/tree", get(crate::routes::artifacts::get_artifact_tree))
+        .route("/import", post(crate::routes::import::import_artifacts))
         .route("/{id}", get(crate::routes::artifacts::get_artifact))
         .route(
             "/{id}",
@@ -831,6 +842,21 @@ pub async fn start(
         .route("/status", get(crate::routes::startup::get_startup_status))
         .with_state(state.clone());
 
+    // Watcher control routes — pause/resume event emission during migration.
+    let watcher_router = Router::new()
+        .route("/pause", post(crate::routes::watcher::pause_watcher))
+        .route("/resume", post(crate::routes::watcher::resume_watcher))
+        .route("/status", get(crate::routes::watcher::watcher_status))
+        .with_state(state.watcher_control.clone());
+
+    // Admin storage migration routes — ingest phase for `orqa migrate storage`.
+    let admin_migrate_router = Router::new()
+        .route(
+            "/storage/ingest",
+            post(crate::routes::admin_migrate::storage_ingest),
+        )
+        .with_state(state.graph_state.clone());
+
     let app = Router::new()
         .route("/health", get(health_handler))
         .route("/reload", post(reload_handler))
@@ -871,6 +897,8 @@ pub async fn start(
         .nest("/devtools", devtools_router)
         .nest("/git", git_router)
         .nest("/startup", startup_router)
+        .nest("/watcher", watcher_router)
+        .nest("/admin/migrate", admin_migrate_router)
         .layer(axum_mw::from_fn(correlation_id_middleware))
         .with_state(state);
 

@@ -47,6 +47,7 @@ DEFINE FIELD IF NOT EXISTS source_plugin ON artifact TYPE option<string>;
 DEFINE FIELD IF NOT EXISTS content_hash ON artifact TYPE option<string>;
 DEFINE FIELD IF NOT EXISTS created ON artifact TYPE option<string>;
 DEFINE FIELD IF NOT EXISTS updated ON artifact TYPE option<string>;
+DEFINE FIELD IF NOT EXISTS version ON artifact TYPE int DEFAULT 1;
 DEFINE FIELD IF NOT EXISTS updated_at ON artifact TYPE datetime DEFAULT time::now();
 
 DEFINE INDEX IF NOT EXISTS idx_artifact_type ON artifact FIELDS artifact_type;

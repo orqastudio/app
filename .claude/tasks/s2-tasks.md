@@ -384,10 +384,12 @@ Each task is sized for one implementer context window. Format: **ID / What / Fil
 - [ ] `.orqa/` post-cutover contains only: `project.json`, `schema.composed.json`, `configs/`, and `plugins/` (runtime-code install target from TASK-S2-08).
 - [ ] Writes `.state/archive/orqa-files/<migration_id>/manifest.json` listing every moved file.
 - [ ] `project.json` gains `storage: { backend: "surrealdb", migration_id: "..." }`.
+- [ ] `.orqa/prompt-registry.json` is NOT archived/moved by cutover — it is live runtime output of the knowledge-injection pipeline and belongs to TASK-S2-24 (deferred). Cutover must leave it in place.
 
 **Reviewer checks:**
 - Run on a copy of the real repo `.orqa/`; verify move (not copy) by checking source dirs are gone.
 - Confirm the three canonical entries are the ONLY survivors.
+- Confirm `.orqa/prompt-registry.json` is still present post-cutover.
 
 **Deps:** TASK-S2-09, TASK-S2-10, TASK-S2-04, TASK-S2-05, TASK-S2-06, TASK-S2-08 (all writes must flow through SurrealDB before archive).
 
@@ -580,24 +582,94 @@ Each task is sized for one implementer context window. Format: **ID / What / Fil
 
 ---
 
-### TASK-S2-23 — Delete `.orqa/prompt-registry.json` (unused stub)
+### TASK-S2-23 — Delete `.orqa/prompt-registry.json` — **WITHDRAWN from Wave 1** (per Bobbi, 2026-04-16)
 
-**What:** Quick cleanup. Grep to confirm no code writes to or reads `.orqa/prompt-registry.json`; if a writer exists, repoint it at SurrealDB (or delete the writer if it was dead scaffolding); then remove the file.
+**Status:** WITHDRAWN. `.orqa/prompt-registry.json` is NOT an unused stub. It is the live output of the knowledge-injection pipeline.
 
-**Files to READ:** grep `prompt-registry` across `cli/`, `engine/`, `daemon/`, `frontend/`.
-**Files to MODIFY:** any writer found (redirect to SurrealDB or delete); `.orqa/prompt-registry.json` removed from tree.
+**Rationale:**
+- **Writer:** `cli/src/lib/prompt-registry.ts:generatePromptRegistry()` — reads all installed plugin manifests, collects `knowledge_declarations`, and writes merged JSON to `.orqa/prompt-registry.json`. Called from `cli/src/commands/install.ts` and `cli/src/commands/plugin.ts` at `orqa install` / `orqa plugin install/update`.
+- **Reader:** `daemon/src/knowledge.rs:get_declared_knowledge()` — reads the file at POST /knowledge request time to return declared knowledge entries for the detected agent role. Degrades gracefully if file absent, but knowledge injection silently goes dark.
+- The file is currently empty (`knowledge: []`) only because no installed plugin declares `knowledge_declarations`. The pipeline itself is live code.
+
+**See findings:** `.state/findings/s2-wave1/TASK-S2-23.findings.md`
+
+**Impact on other tasks:** None for Wave 1. TASK-S2-14 cutover MUST NOT archive or delete `.orqa/prompt-registry.json` — it is config-adjacent runtime output, not an artifact file. The cutover's move list covers only the artifact directories (`discovery`, `documentation`, `implementation`, `learning`, `planning`, `workflows`).
+
+**Where the work went:** Moved to TASK-S2-24 (deferred, knowledge layer migration).
+
+---
+
+### TASK-S2-24 — Migrate knowledge-injection pipeline (prompt-registry) to SurrealDB
+
+**Status:** DEFERRED — not in Wave 1-8 scope. Runs when the broader knowledge layer is migrated to SurrealDB (tentatively Phase S3 or a dedicated knowledge-layer epic — Bobbi to slot).
+
+**What:** Replace file-based `.orqa/prompt-registry.json` with SurrealDB records. `generatePromptRegistry()` writes records to a new `knowledge_declaration` table with `source_plugin`. `get_declared_knowledge()` queries records for the agent role. Delete the JSON file and all file-based code paths once the DB path is live.
+
+**Files to READ:**
+- `cli/src/lib/prompt-registry.ts`
+- `cli/src/commands/install.ts:21,629`
+- `cli/src/commands/plugin.ts:29`
+- `daemon/src/knowledge.rs:267,651,694,734`
+- `cli/__tests__/agent-spawner.test.ts:29`
+
+**Files to MODIFY:** all of the above plus new `knowledge_declaration` table in `engine/graph-db/src/schema.rs`.
+
+**AC (sketch — refine at schedule time):**
+- [ ] `knowledge_declaration` table defined in SurrealDB schema with columns: `id`, `source_plugin`, `role`, `content_file`, `content`.
+- [ ] `generatePromptRegistry()` writes records to `knowledge_declaration` instead of JSON file.
+- [ ] `get_declared_knowledge()` queries `knowledge_declaration` records; no filesystem access for prompt-registry.
+- [ ] `.orqa/prompt-registry.json` deleted, all references removed (`grep -r prompt-registry` returns zero hits post-task).
+- [ ] POST /knowledge integration test: install plugin declaring knowledge → query records → verify returned knowledge matches declaration.
+- [ ] Plugin uninstall removes `source_plugin = <name>` records, matching TASK-S2-08 pattern.
+
+**Reviewer checks (sketch):**
+- Run integration test end-to-end.
+- Confirm zero filesystem reads of `prompt-registry.json` post-task (strace or grep-based).
+- Confirm graceful empty state when no plugin declares knowledge (returns `[]`, no error).
+
+**Deps:** TASK-S2-08 (plugin install split pattern — knowledge migration mirrors the same ingest flow).
+
+---
+
+### TASK-S2-25 — Wave 1 post-commit cleanup (fixture hygiene + non-blocking followups)
+
+**Status:** SCHEDULED — runs immediately after the Wave 1 commit lands, before Wave 2 begins. Contains the non-blocking followups surfaced during Wave 1 review cycles.
+
+**What:** Three small cleanups, bundled because they are each too small for standalone tasks but collectively worth a short focused pass:
+
+1. **Fixture hygiene for TASK-S2-09 integration tests.** `daemon/tests/routes_admin_migrate.rs` tests C1 and C2 currently post ingest requests at the fixture root directly, so each test run writes a fresh JSON report to `tests/fixtures/s2-09-migrate/.state/migrations/`. The fixture root accumulates these reports (28 present at Wave 1 review time). C3 already correctly uses `tempfile::tempdir()` for isolation — apply the same pattern to C1 and C2. Post-fix, the `.state/` subtree under the fixture dir should never be git-tracked (also add a `tests/fixtures/**/.state/` entry to `.gitignore` if not already present).
+
+2. **Three-way merge route-level integration test.** TASK-S2-03's three-way merge algorithm (`engine/graph/src/merge.rs`) has strong unit-test coverage but no HTTP-level integration test exercising `POST /artifacts/import --on-conflict=merge` with a hand-authored conflict fixture. Add one end-to-end test using a divergent fixture to prove the route path is wired correctly.
+
+3. **Review cycle-2 doc comment hygiene.** `engine/graph/src/writers.rs` module doc (introduced in S2-20 cycle 2) should be spot-verified after S2-03 cycle 2 landed — check the doc still accurately describes that every writer routes through `bump_version()`.
+
+**Files to READ:**
+- `daemon/tests/routes_admin_migrate.rs` (C1, C2, C3 tests)
+- `tests/fixtures/s2-09-migrate/` (fixture tree)
+- `tests/fixtures/s2-03-import/fixture-merge-conflict/` (existing merge-conflict fixture)
+- `engine/graph/src/writers.rs` (module doc)
+- `.gitignore`
+
+**Files to MODIFY:**
+- `daemon/tests/routes_admin_migrate.rs` (update C1, C2 to use `tempfile::tempdir()`)
+- `.gitignore` (add `tests/fixtures/**/.state/` if missing)
+- `daemon/tests/routes_import.rs` (new integration test for merge path — or a new test file if cleaner)
+- `engine/graph/src/writers.rs` (doc comment spot fix if needed)
 
 **AC:**
-- [ ] `grep -r "prompt-registry" cli/ engine/ daemon/ frontend/` returns zero hits after the task.
-- [ ] `.orqa/prompt-registry.json` does not exist.
-- [ ] If a writer was found: document what it was for in the findings (may surface a follow-up).
-- [ ] Build + test pass with the file removed.
+- [ ] C1 and C2 tests in `routes_admin_migrate.rs` use tempdirs; no writes to `tests/fixtures/s2-09-migrate/.state/` during test runs.
+- [ ] `tests/fixtures/**/.state/` gitignored.
+- [ ] `tests/fixtures/s2-09-migrate/.state/` removed from the working tree (delete the accumulated reports).
+- [ ] New merge-path integration test exists, passes, and actually exercises a three-way merge via HTTP (not just a merge call via the engine layer).
+- [ ] `engine/graph/src/writers.rs` module doc accurately reflects the post-cycle-2 state.
+- [ ] Full `cargo test -p orqa-daemon` + `cargo clippy` still green.
 
 **Reviewer checks:**
-- Grep is clean.
-- Daemon startup does not attempt to read the file (no error, no warning log).
+- Run the full daemon test suite twice in a row — no fixture-dir pollution between runs.
+- New merge integration test actually fails when the algorithm is temporarily broken (mutation test).
+- `git ls-files tests/fixtures/s2-09-migrate/.state/` returns empty.
 
-**Deps:** None — can land in Wave 1 alongside probe/import/install tasks.
+**Deps:** Wave 1 must be committed first — this task assumes the landed shape of S2-03, S2-09, and S2-20.
 
 ---
 
@@ -619,14 +691,18 @@ Tasks that touch the same file and MUST serialize:
 | `.orqa/` filesystem layout | TASK-S2-14 (archive/restructure), TASK-S2-17 (cleanup) — serialise |
 | `.orqa/plugins/` runtime-code install target | TASK-S2-08 only (created by install); TASK-S2-14 leaves it intact |
 | `orqa-plugin.json` schema (if extended for target field) | TASK-S2-08 only |
-| `engine/graph-db/src/schema.rs` | TASK-S2-20 (version/updated_at); TASK-S2-22 (plugin_installation table) — serialise |
+| `engine/graph-db/src/schema.rs` | TASK-S2-20 (version/updated_at); TASK-S2-22 (plugin_installation table); TASK-S2-24 (knowledge_declaration table, deferred) — serialise |
 | `engine/graph-db/src/writers.rs` (new) | TASK-S2-20 creates; TASK-S2-04, 05, 06, 08, 09, 22 call the helper |
 | `cli/src/commands/verify.ts` | TASK-S2-16 (SurrealDB consistency flip); TASK-S2-22 (manifest read-from-daemon) — serialise |
 | `cli/src/commands/install.ts` | TASK-S2-07 (stop copying into `.orqa/`); TASK-S2-22 (ledger write path) — serialise |
 | `.orqa/manifest.json` | TASK-S2-22 (ported then archived) |
-| `.orqa/prompt-registry.json` | TASK-S2-23 (deleted) |
+| `.orqa/prompt-registry.json` | TASK-S2-24 (deferred migration to SurrealDB — do NOT delete in S2) |
 | `project.json` | TASK-S2-14 only |
 | Frontend artifact store | TASK-S2-13 only |
+| `.gitignore` | TASK-S2-25 only |
+| `daemon/tests/routes_admin_migrate.rs` | TASK-S2-09 (created); TASK-S2-25 (fixture tempdirs — Wave 1.5 runs alone post-commit) — serialise |
+| `daemon/tests/routes_import.rs` | TASK-S2-03 (created); TASK-S2-25 (merge route integration test may add to it) — serialise |
+| `engine/graph/src/writers.rs` | TASK-S2-20 creates; TASK-S2-03 extends (import_upsert, import_merge_write route through bump_version); TASK-S2-25 (module doc hygiene) — serialise |
 
 Parallel-safe pairs: almost everything between different CLI commands, different engine modules, and frontend. The serialised files above are the only true contention.
 
@@ -636,14 +712,19 @@ Parallel-safe pairs: almost everything between different CLI commands, different
 
 Each wave is a set of tasks safe to execute in parallel. A wave completes fully (all Reviewer PASS) before the next begins.
 
-**Wave 1 — Foundation, read-only risk**
-- TASK-S2-01 (LIVE SELECT probe)
-- TASK-S2-03 (orqa import with user-selectable conflict policy — no dep on -02)
-- TASK-S2-07 (CLI install stops writing `.orqa/`)
-- TASK-S2-09 (migrate storage ingest)
-- TASK-S2-20 (version field + bump helper — lands before any writer consumes it)
-- TASK-S2-23 (delete unused `prompt-registry.json` stub)
+**Wave 1 — Foundation, read-only risk** ✅ LANDED 2026-04-16
+- TASK-S2-01 (LIVE SELECT probe) — **PASS**
+- TASK-S2-03 (orqa import with user-selectable conflict policy — no dep on -02) — **PASS** (cycle 2)
+- TASK-S2-07 (CLI install stops writing `.orqa/`) — **PASS**
+- TASK-S2-09 (migrate storage ingest) — **PASS** (cycle 2)
+- TASK-S2-20 (version field + bump helper — lands before any writer consumes it) — **PASS** (cycle 2)
+- ~~TASK-S2-23~~ WITHDRAWN — prompt-registry.json is live code, not a stub; knowledge-layer migration deferred to TASK-S2-24
 - (TASK-S2-02 export DEFERRED to S3 per Bobbi)
+
+Wave 1 landed 2026-04-16 with 5 PASS (S2-01, S2-03, S2-07, S2-09, S2-20). S2-23 withdrawn. Post-wave cleanup scheduled as TASK-S2-25.
+
+**Wave 1.5 — Post-Wave-1 cleanup (single implementer, runs before Wave 2)**
+- TASK-S2-25 (fixture hygiene + merge-route integration test + doc comment hygiene)
 
 **Wave 2 — Write-path flip**
 - TASK-S2-04 (flip PUT)
@@ -716,7 +797,7 @@ Surface before any S2 execution begins. Do NOT answer autonomously.
 
 9. ~~Plugin uninstall semantics.~~ **RESOLVED (Bobbi, 2026-04-15):** Vanish — but only after a UI confirmation flow shows the user what will be lost (list of artifacts, flag of any user-edited ones). Uninstall blocked until user explicitly confirms. See new TASK-S2-18 for the UI flow.
 
-10. ~~`manifest.json`, `prompt-registry.json` fate.~~ **RESOLVED (Bobbi, 2026-04-15):** (A2) `manifest.json` becomes a SurrealDB record type `plugin_installation` written atomically with the plugin install transaction; existing 56KB JSON is migrated in. A `plugin install list` CLI command replaces the `cat .orqa/manifest.json` debug path. (B1) `prompt-registry.json` is deleted after a grep confirms nothing writes to it; if a writer exists, fix it to target SurrealDB first, then delete. See new **TASK-S2-22** (manifest migration to SurrealDB) and **TASK-S2-23** (prompt-registry deletion).
+10. ~~`manifest.json`, `prompt-registry.json` fate.~~ **RESOLVED (Bobbi, 2026-04-15):** (A2) `manifest.json` becomes a SurrealDB record type `plugin_installation` written atomically with the plugin install transaction; existing 56KB JSON is migrated in. A `plugin install list` CLI command replaces the `cat .orqa/manifest.json` debug path. (B1) `prompt-registry.json` is deleted after a grep confirms nothing writes to it; if a writer exists, fix it to target SurrealDB first, then delete. See new **TASK-S2-22** (manifest migration to SurrealDB) and **TASK-S2-23** (prompt-registry deletion). **UPDATE (Bobbi, 2026-04-16):** S2-23 WITHDRAWN — `prompt-registry.json` has a live writer (`cli/src/lib/prompt-registry.ts:generatePromptRegistry()`) and reader (`daemon/src/knowledge.rs:get_declared_knowledge()`); the empty-file state was misleading. Knowledge-layer migration deferred to **TASK-S2-24** (Phase S3 / dedicated knowledge-layer epic).
 
 11. ~~Q-A (raised by TASK-S2-08) — Manifest classification for artifact vs runtime code.~~ **RESOLVED (Bobbi, 2026-04-15):** Option (a) — explicit `target: "surrealdb" | "runtime"` field per `content` entry in `orqa-plugin.json`. Convenience default: if `target` is omitted AND the path ends in `.md`, installer defaults to `surrealdb` and emits a lint warning; otherwise defaults to `runtime` with lint warning. Strict validation (no defaults) can be tightened later. Migration: one-shot script in TASK-S2-08 walks all 16 existing manifests, classifies each entry by its current install destination (`.orqa/<artifact-dir>/*` → `surrealdb`; everywhere else → `runtime`), writes the `target` back, commits the updated manifests.
 

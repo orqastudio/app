@@ -1,0 +1,10 @@
+{
+  "name": "@orqastudio/plugin-knowledge",
+  "version": "1.0.0",
+  "content": {
+    "knowledge-docs": {
+      "source": "./content/knowledge",
+      "target": ".orqa/documentation/knowledge"
+    }
+  }
+}

@@ -14,6 +14,7 @@
 pub mod ingest;
 pub mod queries;
 pub mod schema;
+pub mod writers;
 
 #[cfg(test)]
 mod tests;

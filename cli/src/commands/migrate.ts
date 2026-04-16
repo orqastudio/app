@@ -1,25 +1,35 @@
 /**
- * Migrate command — apply status migrations from workflow definitions.
+ * Migrate command — status migrations and SurrealDB storage migration.
  *
- * orqa migrate [options]
+ * Subcommands:
+ *   orqa migrate storage ingest  — ingest user-authored .orqa/ artifacts into SurrealDB
+ *   orqa migrate [options]       — apply status migrations from workflow definitions
  *
- * Reads migration mappings from .orqa/workflows/*.resolved.json and updates
- * artifact frontmatter `status` fields accordingly. Only changes status values
- * that differ between old and new (i.e., actual renames, not identity mappings).
+ * The `storage ingest` subcommand is the CLI face of TASK-S2-09: it pauses the
+ * file watcher, calls POST /admin/migrate/storage/ingest on the daemon, then
+ * resumes the watcher (in a finally block so resume always runs).
+ *
+ * The base command reads migration mappings from .orqa/workflows/*.resolved.json
+ * and updates artifact frontmatter `status` fields accordingly. Only changes
+ * status values that differ between old and new (i.e., actual renames, not
+ * identity mappings).
  */
 
 import { type Dirent, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { getRoot } from "../lib/root.js";
 import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
+import { runMigrateStorageIngestCommand } from "./migrate-storage.js";
 
 const USAGE = `
-Usage: orqa migrate [options]
+Usage: orqa migrate <subcommand|options>
 
-Apply status migrations from workflow definitions to artifact frontmatter.
+Subcommands:
+  storage ingest   Migrate user-authored .orqa/ artifacts into SurrealDB
+                   (pauses file watcher, ingests, resumes watcher)
 
-Reads migration mappings from .orqa/workflows/*.resolved.json and updates
-each artifact's status field when it matches a migration "from" value.
+Base command (no subcommand): apply status migrations from workflow definitions
+to artifact frontmatter.
 
 Options:
   --dry-run            Preview changes without writing files
@@ -28,9 +38,10 @@ Options:
   --help, -h           Show this help message
 
 Examples:
-  orqa migrate --dry-run          Preview all migrations
-  orqa migrate                    Apply all migrations
-  orqa migrate --type task        Migrate only task artifacts
+  orqa migrate storage ingest         Ingest .orqa/ artifacts into SurrealDB
+  orqa migrate --dry-run              Preview all status migrations
+  orqa migrate                        Apply all status migrations
+  orqa migrate --type task            Migrate only task artifacts
 `.trim();
 
 // ---------------------------------------------------------------------------
@@ -278,10 +289,25 @@ function applyChanges(changes: MigrationChange[]): number {
 // ---------------------------------------------------------------------------
 
 /**
- * Dispatch the migrate command: apply workflow-driven status migrations across the graph.
+ * Dispatch the migrate command: storage migration or workflow-driven status migrations.
+ *
+ * Routes `orqa migrate storage ingest` to the storage ingest subcommand.
+ * All other invocations run the base workflow status migration logic.
  * @param args - CLI arguments after "migrate".
  */
 export async function runMigrateCommand(args: string[]): Promise<void> {
+	// Route storage migration subcommand before help check so
+	// `orqa migrate storage ingest --help` reaches its own help text.
+	if (args[0] === "storage") {
+		if (args[1] === "ingest") {
+			await runMigrateStorageIngestCommand(args.slice(2));
+			return;
+		}
+		console.error(`Unknown storage subcommand: ${args[1] ?? "(none)"}`);
+		console.error("Run 'orqa migrate --help' for available subcommands.");
+		process.exit(1);
+	}
+
 	if (args.includes("--help") || args.includes("-h")) {
 		console.log(USAGE);
 		return;

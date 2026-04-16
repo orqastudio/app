@@ -18,6 +18,7 @@ use sha2::{Digest, Sha256};
 
 use crate::build::extract_frontmatter;
 use crate::surreal::GraphDb;
+use crate::writers::bump_version;
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -156,6 +157,9 @@ async fn is_unchanged(db: &GraphDb, rel_path: &str, hash: &str) -> Result<bool> 
 }
 
 /// Upsert a parsed artifact node into SurrealDB, replacing any existing record.
+///
+/// After writing the core fields, calls `bump_version` to atomically increment
+/// the `version` counter and set `updated_at = time::now()`.
 async fn upsert_artifact_node(
     db: &GraphDb,
     artifact: &ParsedArtifact,
@@ -176,8 +180,7 @@ async fn upsert_artifact_node(
             content_hash = '{hash_sql}', \
             source_plugin = NONE, \
             created = {created_sql}, \
-            updated = {updated_sql}, \
-            updated_at = time::now();",
+            updated = {updated_sql};",
         type_sql = escape_surql_string(&artifact.artifact_type),
         title_sql = escape_surql_string(&artifact.title),
         desc_sql = option_to_surql(artifact.description.as_deref()),
@@ -193,6 +196,12 @@ async fn upsert_artifact_node(
     db.0.query(&upsert)
         .await
         .with_context(|| format!("upserting artifact {}", artifact.id))?;
+
+    // Bump version and updated_at atomically after the field write.
+    bump_version(db, &artifact.id, None)
+        .await
+        .map_err(|e| anyhow::anyhow!("version bump failed for {}: {e}", artifact.id))?;
+
     Ok(())
 }
 

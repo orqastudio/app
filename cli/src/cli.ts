@@ -24,6 +24,7 @@ import { runSummarizeCommand } from "./commands/summarize.js";
 import { runMetricsCommand } from "./commands/metrics.js";
 import { runMigrateCommand } from "./commands/migrate.js";
 import { runEnforceCommand } from "./commands/enforce.js";
+import { runImportCommand } from "./commands/import.js";
 
 /** Read version dynamically from package.json so it never drifts from the published value. */
 const require = createRequire(import.meta.url);
@@ -43,6 +44,7 @@ Commands:
   test        Run test suites (rust, app)
   build       Production build (full, rust, app)
   graph       Browse the artifact graph
+  import      Import a directory of markdown artifacts into SurrealDB
   daemon      Manage the validation daemon (start, stop, restart, status)
   mcp         MCP server + search indexing (index)
   metrics     Token usage and cost metrics
@@ -125,6 +127,9 @@ async function main(): Promise<void> {
 			break;
 		case "migrate":
 			await runMigrateCommand(commandArgs);
+			break;
+		case "import":
+			await runImportCommand(commandArgs);
 			break;
 		case "git":
 			await runGitCommand(commandArgs);

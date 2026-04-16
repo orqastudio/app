@@ -37,6 +37,7 @@ use orqa_engine::plugin::manifest::read_manifest;
 use orqa_graph::sync::{delete_artifact_by_path, sync_file, SyncResult};
 
 use crate::graph_state::GraphState;
+use crate::routes::watcher::WatcherControl;
 
 /// Infrastructure directories to always watch, relative to the project root.
 ///
@@ -196,11 +197,21 @@ fn build_registry(project_root: &Path) -> Vec<WatchRegistration> {
 /// the cached artifact graph and validation context in place.
 ///
 /// Returns a [`WatchHandle`] that keeps the watcher alive for as long as it is
-/// held. Drop the handle to stop watching.
+/// held. Drop the handle to stop watching. The handle exposes a `control` field
+/// that callers can clone to wire to the pause/resume route handlers.
+///
+/// `control` is the pre-created `WatcherControl` that was already passed to the
+/// HTTP health server. Sharing a single control ensures that `POST /watcher/pause`
+/// affects this watcher instance. The control is moved into the `WatchHandle`
+/// and a clone is given to the debouncer callback.
 ///
 /// Directories that do not exist are skipped with a warning. The watcher starts
 /// successfully even if no plugin watches or no infrastructure directories exist.
-pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Result<WatchHandle> {
+pub fn start_watcher(
+    project_root: &Path,
+    graph_state: GraphState,
+    control: WatcherControl,
+) -> notify::Result<WatchHandle> {
     let root = project_root.to_path_buf();
 
     // Capture the tokio runtime handle from the calling async context.
@@ -217,12 +228,23 @@ pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Re
         collect_watch_dirs(project_root, &reg)
     };
 
+    // Clone the control for the debouncer callback. The original is moved into
+    // the WatchHandle so the caller retains the same Arc via the handle.
+    let control_for_callback = control.clone();
+
     let mut debouncer = new_debouncer(
         Duration::from_millis(DEBOUNCE_MS),
         None,
         move |result: DebounceEventResult| {
             let registry = build_registry(&root);
-            handle_events(result, &root, &registry, &graph_state, &tokio_handle);
+            handle_events(
+                result,
+                &root,
+                &registry,
+                &graph_state,
+                &tokio_handle,
+                &control_for_callback,
+            );
         },
     )?;
 
@@ -246,6 +268,10 @@ pub fn start_watcher(project_root: &Path, graph_state: GraphState) -> notify::Re
             "[watcher] no directories could be watched"
         );
     }
+
+    // The `control` Arc is kept alive via the caller's `watcher_control` variable
+    // (shared with the health server) and the debouncer's own `control_for_callback` clone.
+    let _ = control;
 
     Ok(WatchHandle {
         _debouncer: debouncer,
@@ -350,11 +376,14 @@ fn static_prefix_of(pattern: &str) -> String {
 ///     cached artifact graph and validation context, then reloads enforcement.
 ///     Additionally, for each changed `.md` file, performs an incremental
 ///     SurrealDB sync via `sync_file` (create/modify) or `delete_artifact_by_path`
-///     (remove). The tokio runtime handle bridges the async sync calls from this
-///     synchronous callback thread.
+///     (remove) — but ONLY when `control.is_running()` is true. While the watcher
+///     is paused (e.g. during `orqa migrate storage ingest`) file changes are
+///     detected but not synced to SurrealDB to avoid partial writes during migration.
 ///   - If it falls under `plugins/`, reloads plugin discovery and also reloads
 ///     the graph because plugin manifests affect the validation context.
 ///   - If it matches any registered watch path pattern, invokes the generator.
+///
+/// The `control` argument is cheap to clone (Arc) and is checked once per batch.
 #[allow(clippy::too_many_lines)]
 fn handle_events(
     result: DebounceEventResult,
@@ -362,7 +391,17 @@ fn handle_events(
     registry: &[WatchRegistration],
     graph_state: &GraphState,
     tokio_handle: &Handle,
+    control: &WatcherControl,
 ) {
+    // Short-circuit all sync work when paused. Graph reload and generator
+    // invocations are also suppressed so the watcher is truly quiescent.
+    if !control.is_running() {
+        debug!(
+            subsystem = "watcher",
+            "[watcher] paused — file-change events suppressed"
+        );
+        return;
+    }
     match result {
         Ok(events) => {
             let mut orqa_changed = false;

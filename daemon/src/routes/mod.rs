@@ -1,7 +1,9 @@
 // Route modules for the daemon HTTP API.
 //
 // Each module corresponds to a resource group in the API design:
+//   - admin_migrate:      storage migration routes (ingest phase)
 //   - artifacts:          CRUD and graph queries for individual artifacts
+//   - import:             POST /artifacts/import — markdown tree → SurrealDB with conflict policy
 //   - graph:              graph-level analytics (stats, health, snapshots)
 //   - validation:         integrity scan, auto-fix, hook evaluation
 //   - enforcement:        rule listing, reload, violation scan
@@ -29,7 +31,9 @@
 //   - devtools:           OrqaDev devtools window launch and status
 //   - git:                git stash list and uncommitted status
 //   - startup:            daemon startup task status
+//   - watcher:            watcher pause/resume control
 
+pub mod admin_migrate;
 pub mod agents;
 pub mod artifacts;
 pub mod cli_tools;
@@ -41,6 +45,7 @@ pub mod git;
 pub mod graph;
 pub mod health_snapshots;
 pub mod hooks;
+pub mod import;
 pub mod issue_groups;
 pub mod lessons;
 pub mod messages;
@@ -57,4 +62,5 @@ pub mod streaming;
 pub mod themes;
 pub mod validation;
 pub mod violations;
+pub mod watcher;
 pub mod workflow;

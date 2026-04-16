@@ -38,16 +38,42 @@ pub fn fixture_dir() -> PathBuf {
 /// graph routes as the production daemon. Tests dispatch requests via
 /// `tower::ServiceExt::oneshot` without binding a real port.
 ///
-/// This is the entry point for C-1 (graph routes) and C-2 (artifact routes)
-/// integration tests.
+/// The GraphState is loaded from the minimal fixture project (so artifact
+/// routes see real fixture nodes) and is also backed by a fresh in-memory
+/// SurrealDB (so import and graph-DB routes get an isolated, clean database
+/// per call without writing to disk).
+///
+/// This is the entry point for all daemon integration tests.
 pub async fn build_app_router() -> Router {
+    use orqa_graph::surreal::{initialize_schema, open_memory};
+
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
+    // Load fixture artifacts into the in-memory HashMap graph so that
+    // artifact-route tests (routes_artifacts.rs) see pre-populated nodes.
     let graph_state = GraphState::build(&root)
         .await
         .unwrap_or_else(|_| GraphState::build_empty(&root));
+
+    // Replace/add the SurrealDB handle with a fresh in-memory instance so
+    // tests do not write to the on-disk .state/surreal/ path under the fixture
+    // directory and each call gets an isolated database.
+    //
+    // bulk_sync populates the in-memory DB from fixture files so that
+    // SurrealDB-backed list/filter/get routes (routes_artifacts.rs) see the
+    // same fixture artifacts that the HashMap graph contains.
+    // Import tests (routes_import.rs) call build_app_router() for a fresh
+    // empty router per test — bulk_sync is fast on the small fixture set.
+    let db = open_memory().await.expect("open in-memory SurrealDB");
+    initialize_schema(&db)
+        .await
+        .expect("initialize SurrealDB schema");
+    orqa_graph::sync::bulk_sync(&db, &root)
+        .await
+        .expect("bulk_sync fixture artifacts into in-memory SurrealDB");
+    graph_state.inject_db(db);
 
     let state = HealthState::for_test(graph_state, None);
     orqa_daemon_lib::build_router(state)

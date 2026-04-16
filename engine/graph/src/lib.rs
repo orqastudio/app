@@ -14,10 +14,12 @@
 
 pub mod build;
 pub mod error;
+pub mod merge;
 pub mod metrics;
 pub mod surreal;
 pub mod surreal_queries;
 pub mod sync;
+pub mod writers;
 
 #[cfg(test)]
 mod metrics_tests;
@@ -39,6 +41,7 @@ pub use build::{
     TypeRegistry,
 };
 pub use error::GraphError;
+pub use merge::{three_way_merge, value_to_map, FieldMerge, MergeResult};
 pub use metrics::{
     compute_health, compute_traceability, find_siblings, trace_descendants, trace_to_pillars,
     PipelineCategories,
@@ -52,3 +55,6 @@ pub use surreal_queries::{
     TraceStep,
 };
 pub use sync::{bulk_sync, delete_artifact, sync_file, BulkSyncSummary, SyncResult};
+pub use writers::{
+    bump_version, import_merge_write, import_upsert, read_artifact, BumpError, StoredArtifact,
+};
