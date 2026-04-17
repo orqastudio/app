@@ -7,7 +7,7 @@
 //! Entry points:
 //! - `bump_version`   — atomic version increment + updated_at; called by every writer path
 //! - `import_upsert`  — overwrite an existing record, bumping its `version` field
-//! - `import_merge`   — write a merge-resolved field map, bumping `version`
+//! - `import_merge_write` — write a merge-resolved field map, bumping `version`
 //! - `read_artifact`  — read the current frontmatter JSON for a record by ID
 //!
 //! `bump_version` behaviour:

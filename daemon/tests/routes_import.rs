@@ -18,6 +18,7 @@
 //   C5. Import fixture-merge-conflict with merge policy → CONFLICT outcome,
 //       conflict file written
 //   C6. version increments on UPDATE; unchanged on SKIPPED
+//   C6b. base_snapshot enables HTTP-level three-way merge → MERGED outcome
 //   C7. base_snapshot field: present but unused → warning in response
 //   C8. Invalid path → 400 Bad Request
 
@@ -403,6 +404,104 @@ async fn c7_base_snapshot_present_but_unused_warning() {
     assert!(
         warning.contains("not used"),
         "warning must explain snapshot was not used: {warning}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// C6b: Three-way merge via HTTP — base_snapshot enables clean auto-merge
+// ---------------------------------------------------------------------------
+
+/// C6b: An import with `on_conflict: merge` and a `base_snapshot` entry that covers
+/// the divergence between ours and theirs produces a MERGED outcome via the HTTP route,
+/// not just via the engine layer directly.
+///
+/// Scenario:
+///   base   = {title: "Merge Test", status: "active"}
+///   ours   = {title: "Merge Test", status: "draft"}          (we changed status)
+///   theirs = {title: "Merge Test (Renamed)", status: "active"} (they changed title)
+///
+/// Expected: clean three-way merge → merged=1, conflicts=0, outcome=MERGED
+#[tokio::test]
+async fn c6b_merge_with_base_snapshot_auto_merges() {
+    let tmp = tempfile::tempdir().unwrap();
+    let dir = tmp.path();
+
+    // Step 1: seed the DB with the base state via upsert.
+    let base_content = "---\nid: EPIC-MERGE-BASE\ntype: epic\ntitle: Merge Test\nstatus: active\npriority: high\n---\n\nBody text.\n";
+    std::fs::write(dir.join("EPIC-MERGE-BASE.md"), base_content).unwrap();
+
+    let router = helpers::build_app_router().await;
+    let dir_str = dir.to_string_lossy().replace('\\', "/");
+
+    let (s1, b1) = post_import(
+        router.clone(),
+        serde_json::json!({ "path": dir_str, "on_conflict": "upsert" }),
+    )
+    .await;
+    assert_eq!(s1, StatusCode::OK, "base seed must succeed: {b1}");
+    assert_eq!(b1["created"], 1, "must create base record: {b1}");
+
+    // Step 2: simulate "our" change — update status to "draft" via a second upsert.
+    let ours_content = "---\nid: EPIC-MERGE-BASE\ntype: epic\ntitle: Merge Test\nstatus: draft\npriority: high\n---\n\nBody text.\n";
+    std::fs::write(dir.join("EPIC-MERGE-BASE.md"), ours_content).unwrap();
+
+    let (s2, b2) = post_import(
+        router.clone(),
+        serde_json::json!({ "path": dir_str, "on_conflict": "upsert" }),
+    )
+    .await;
+    assert_eq!(s2, StatusCode::OK, "our upsert must succeed: {b2}");
+    assert_eq!(b2["updated"], 1, "must update with our change: {b2}");
+
+    // Step 3: import "theirs" (new title, original status) with base_snapshot.
+    // The base_snapshot tells the merge algorithm what the original base looked like
+    // so it can distinguish our change (status→draft) from their change (title→renamed).
+    let theirs_content = "---\nid: EPIC-MERGE-BASE\ntype: epic\ntitle: Merge Test (Renamed)\nstatus: active\npriority: high\n---\n\nBody text.\n";
+    std::fs::write(dir.join("EPIC-MERGE-BASE.md"), theirs_content).unwrap();
+
+    let (s3, b3) = post_import(
+        router.clone(),
+        serde_json::json!({
+            "path": dir_str,
+            "on_conflict": "merge",
+            "no_base_action": "review-each",
+            "base_snapshot": {
+                "EPIC-MERGE-BASE": {
+                    "id": "EPIC-MERGE-BASE",
+                    "type": "epic",
+                    "title": "Merge Test",
+                    "status": "active",
+                    "priority": "high"
+                }
+            }
+        }),
+    )
+    .await;
+    assert_eq!(StatusCode::OK, s3, "merge import must return 200: {b3}");
+    assert_eq!(
+        b3["merged"], 1,
+        "three-way merge must produce merged=1: {b3}"
+    );
+    assert_eq!(
+        b3["conflicts"], 0,
+        "clean merge must have conflicts=0: {b3}"
+    );
+
+    // Verify the per-artifact result entry.
+    let results = b3["results"]
+        .as_array()
+        .expect("response must have results array");
+    assert_eq!(results.len(), 1, "must have exactly one result entry: {b3}");
+    let result = &results[0];
+    assert_eq!(
+        result["outcome"].as_str(),
+        Some("MERGED"),
+        "per-artifact outcome must be MERGED: {result}"
+    );
+    assert_eq!(
+        result["id"].as_str(),
+        Some("EPIC-MERGE-BASE"),
+        "result id must be EPIC-MERGE-BASE: {result}"
     );
 }
 

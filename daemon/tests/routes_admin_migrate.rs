@@ -108,9 +108,14 @@ async fn get_watcher_status(router: axum::Router) -> String {
 ///   - BROKEN.md   → unknown (malformed YAML) → flagged
 #[tokio::test]
 async fn c1_three_class_ingest_correct_counts() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
     let router = helpers::build_app_router().await;
 
-    let (status, body) = post_ingest(router, json!({ "project_root": fixture_root_str() })).await;
+    let (status, body) = post_ingest(router, json!({ "project_root": tmp_root_str })).await;
 
     assert_eq!(status, StatusCode::OK, "ingest must return 200: {body}");
 
@@ -218,12 +223,17 @@ async fn c1_three_class_ingest_correct_counts() {
 ///     SurrealDB produces zero new inserts on the second run.
 #[tokio::test]
 async fn c2_idempotent_rerun_inserts_zero() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
     let router = helpers::build_app_router().await;
 
     // First ingest — seeds the DB with 2 user artifacts.
     let (s1, b1) = post_ingest(
         router.clone(),
-        json!({ "project_root": fixture_root_str() }),
+        json!({ "project_root": tmp_root_str.clone() }),
     )
     .await;
     assert_eq!(s1, StatusCode::OK, "first ingest must return 200: {b1}");
@@ -233,7 +243,7 @@ async fn c2_idempotent_rerun_inserts_zero() {
     );
 
     // Second ingest — content hashes unchanged, so inserted must be 0.
-    let (s2, b2) = post_ingest(router, json!({ "project_root": fixture_root_str() })).await;
+    let (s2, b2) = post_ingest(router, json!({ "project_root": tmp_root_str })).await;
     assert_eq!(s2, StatusCode::OK, "second ingest must return 200: {b2}");
     assert_eq!(
         b2["counts"]["inserted"], 0,
