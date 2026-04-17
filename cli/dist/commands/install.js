@@ -18,7 +18,7 @@ import { getRoot } from "../lib/root.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
-import { installPluginDeps, buildPlugin, copyPluginContent, readContentManifest, writeContentManifest, processAggregatedFiles, } from "../lib/content-lifecycle.js";
+import { installPluginDeps, buildPlugin, readContentManifest, writeContentManifest, processAggregatedFiles, } from "../lib/content-lifecycle.js";
 import { readManifest } from "../lib/manifest.js";
 import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
@@ -485,26 +485,6 @@ export function cmdPluginSync(root) {
             console.error(`    Build failed: ${e instanceof Error ? e.message : String(e)}`);
             // Continue — content copy may still succeed for pre-built plugins.
         }
-        // Copy content to .orqa/ using three-way diff to preserve user edits.
-        let copyResult;
-        try {
-            copyResult = copyPluginContent(pluginDir, root, pluginManifest, contentManifest);
-        }
-        catch (e) {
-            console.error(`    Content copy failed: ${e instanceof Error ? e.message : String(e)}`);
-            continue;
-        }
-        // Merge: skipped files retain their existing hashes.
-        const mergedFiles = { ...copyResult.copied };
-        const existingEntry = contentManifest.plugins[name];
-        if (existingEntry) {
-            for (const skipped of copyResult.skipped) {
-                const existing = existingEntry.files[skipped.path];
-                if (existing) {
-                    mergedFiles[skipped.path] = existing;
-                }
-            }
-        }
         // Update content manifest entry for this plugin including manifestHash for outdated detection.
         const manifestFileSync = path.join(pluginDir, "orqa-plugin.json");
         const manifestHashSync = createHash("sha256")
@@ -514,15 +494,8 @@ export function cmdPluginSync(root) {
             version: pluginManifest.version,
             installed_at: new Date().toISOString(),
             manifestHash: manifestHashSync,
-            files: mergedFiles,
+            files: contentManifest.plugins[name]?.files ?? {},
         };
-        const copiedCount = Object.keys(copyResult.copied).length;
-        if (copiedCount > 0) {
-            console.log(`    Copied ${copiedCount} file(s) to .orqa/`);
-        }
-        if (copyResult.skipped.length > 0) {
-            console.log(`    Skipped ${copyResult.skipped.length} user-modified file(s)`);
-        }
         // Write back plugin registration so path and version stay current.
         const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
         updateProjectJsonPlugin(root, name, {

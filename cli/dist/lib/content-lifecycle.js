@@ -1,15 +1,12 @@
 /**
- * Plugin content lifecycle — install, remove, diff, and refresh plugin content.
+ * Plugin content lifecycle — manifest tracking, dependency installation, builds, and hooks.
  *
- * Plugins declare content mappings in `orqa-plugin.json`:
- *   { "content": { "rules": { "source": "rules", "target": ".orqa/learning/rules" } } }
- *
- * When installed, plugin content is copied from plugin source dirs to `.orqa/` target
- * dirs under the project root. Ownership is tracked in `.orqa/manifest.json`.
+ * Plugins declare content mappings in `orqa-plugin.json`. Ownership of installed
+ * content is tracked in `.orqa/manifest.json`. Content is no longer copied to `.orqa/`
+ * subdirs by this module — SurrealDB is the source of truth for artifact content.
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
 // ---------------------------------------------------------------------------
 // Constants
@@ -44,90 +41,6 @@ export function writeContentManifest(projectRoot, manifest) {
         fs.mkdirSync(dir, { recursive: true });
     }
     fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf-8");
-}
-// ---------------------------------------------------------------------------
-// Content Copy & Removal
-// ---------------------------------------------------------------------------
-/**
- * Copy files from the plugin's content source dirs to the project's target dirs.
- *
- * Supports three-way diff: when `currentManifest` is provided, files that have
- * been modified by the user (user-modified or conflict) are skipped.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param manifest - The plugin's `orqa-plugin.json` manifest.
- * @param currentManifest - Optional existing content manifest for three-way state.
- * @returns CopyResult with copied files (with hashes) and skipped files.
- */
-export function copyPluginContent(pluginDir, projectRoot, manifest, currentManifest) {
-    if (!manifest.content || Object.keys(manifest.content).length === 0) {
-        return { copied: {}, skipped: [] };
-    }
-    const copied = {};
-    const skipped = [];
-    const existingEntry = currentManifest?.plugins[manifest.name];
-    for (const [, mapping] of Object.entries(manifest.content)) {
-        // Handle "extends" strategy
-        if (mapping.strategy === "extends") {
-            setupConfigExtends(pluginDir, projectRoot, mapping);
-            continue;
-        }
-        const sourceDir = path.join(pluginDir, mapping.source);
-        const targetDir = path.join(projectRoot, mapping.target);
-        if (!fs.existsSync(sourceDir)) {
-            continue;
-        }
-        if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true });
-        }
-        const entries = fs.readdirSync(sourceDir, { withFileTypes: true });
-        for (const entry of entries) {
-            if (!entry.isFile()) {
-                continue;
-            }
-            const srcFile = path.join(sourceDir, entry.name);
-            const dstFile = path.join(targetDir, entry.name);
-            const relativePath = path.join(mapping.target, entry.name).replace(/\\/g, "/");
-            // Compute source hash before copy
-            const sourceHash = computeFileHash(srcFile);
-            // Three-way state check when we have an existing manifest
-            if (existingEntry && existingEntry.files[relativePath]) {
-                const state = computeThreeWayState(relativePath, projectRoot, existingEntry.files[relativePath], sourceHash);
-                if (state === "user-modified" || state === "conflict") {
-                    skipped.push({ path: relativePath, state });
-                    continue;
-                }
-            }
-            fs.copyFileSync(srcFile, dstFile);
-            // Compute installed hash after copy
-            const installedHash = computeFileHash(dstFile);
-            copied[relativePath] = { sourceHash, installedHash };
-        }
-    }
-    return { copied, skipped };
-}
-/**
- * Remove all content files belonging to a plugin and update the manifest.
- * @param pluginName - The plugin's `name` field from its manifest.
- * @param projectRoot - Absolute path to the project root.
- */
-export function removePluginContent(pluginName, projectRoot) {
-    const contentManifest = readContentManifest(projectRoot);
-    const entry = contentManifest.plugins[pluginName];
-    if (!entry) {
-        return;
-    }
-    for (const relPath of Object.keys(entry.files)) {
-        const absPath = path.join(projectRoot, relPath);
-        if (fs.existsSync(absPath)) {
-            fs.unlinkSync(absPath);
-        }
-    }
-    const updated = {
-        plugins: { ...contentManifest.plugins },
-    };
-    delete updated.plugins[pluginName];
-    writeContentManifest(projectRoot, updated);
 }
 // ---------------------------------------------------------------------------
 // Dependencies & Build
@@ -195,194 +108,6 @@ export function runLifecycleHook(pluginDir, pluginManifest, hook) {
         return;
     }
     execSync(command, { cwd: pluginDir, stdio: "inherit" });
-}
-// ---------------------------------------------------------------------------
-// Diff
-// ---------------------------------------------------------------------------
-/**
- * Compare the plugin's source content against the installed copies in `.orqa/`.
- *
- * For each file tracked in the content manifest:
- * - If it no longer exists in `.orqa/`: listed as `missing`.
- * - If its content matches the plugin source: listed as `identical`.
- * - If its content differs: listed as `modified`.
- *
- * Files found in the plugin's target dirs that are NOT in the manifest are `orphaned`.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param pluginManifest - The plugin's manifest.
- * @returns Diff result categorizing files as identical, modified, missing, or orphaned.
- */
-export function diffPluginContent(pluginDir, projectRoot, pluginManifest) {
-    const result = {
-        pluginName: pluginManifest.name,
-        identical: [],
-        modified: [],
-        missing: [],
-        orphaned: [],
-        threeWay: [],
-    };
-    const contentManifest = readContentManifest(projectRoot);
-    const entry = contentManifest.plugins[pluginManifest.name];
-    const trackedFiles = new Set(Object.keys(entry?.files ?? {}));
-    // Categorise each tracked file
-    for (const relPath of trackedFiles) {
-        const installedPath = path.join(projectRoot, relPath);
-        if (!fs.existsSync(installedPath)) {
-            result.missing.push(relPath);
-            result.threeWay.push({ path: relPath, state: "missing" });
-            continue;
-        }
-        // Find the corresponding source file in the plugin
-        const sourceFile = findSourceFile(pluginDir, pluginManifest, relPath);
-        if (!sourceFile || !fs.existsSync(sourceFile)) {
-            // Source no longer exists — treat as modified (stale install)
-            result.modified.push(relPath);
-            continue;
-        }
-        const installedContent = fs.readFileSync(installedPath);
-        const sourceContent = fs.readFileSync(sourceFile);
-        if (installedContent.equals(sourceContent)) {
-            result.identical.push(relPath);
-            result.threeWay.push({ path: relPath, state: "clean" });
-        }
-        else {
-            result.modified.push(relPath);
-            // Compute detailed three-way state if we have hashes
-            if (entry?.files[relPath]) {
-                const sourceHash = computeFileHash(sourceFile);
-                const state = computeThreeWayState(relPath, projectRoot, entry.files[relPath], sourceHash);
-                result.threeWay.push({ path: relPath, state });
-            }
-            else {
-                result.threeWay.push({ path: relPath, state: "plugin-updated" });
-            }
-        }
-    }
-    // Find orphaned files in target dirs — files not tracked by ANY plugin
-    if (pluginManifest.content) {
-        // Build set of ALL tracked files across ALL plugins
-        const allTrackedFiles = new Set();
-        for (const [, pluginEntry] of Object.entries(contentManifest.plugins)) {
-            for (const f of Object.keys(pluginEntry.files)) {
-                allTrackedFiles.add(f);
-            }
-        }
-        for (const [, mapping] of Object.entries(pluginManifest.content)) {
-            const targetDir = path.join(projectRoot, mapping.target);
-            if (!fs.existsSync(targetDir)) {
-                continue;
-            }
-            const entries = fs.readdirSync(targetDir, { withFileTypes: true });
-            for (const dirEntry of entries) {
-                if (!dirEntry.isFile()) {
-                    continue;
-                }
-                const relPath = path.join(mapping.target, dirEntry.name).replace(/\\/g, "/");
-                // Only orphaned if not tracked by ANY plugin
-                if (!allTrackedFiles.has(relPath)) {
-                    result.orphaned.push(relPath);
-                }
-            }
-        }
-    }
-    return result;
-}
-// ---------------------------------------------------------------------------
-// Refresh
-// ---------------------------------------------------------------------------
-/**
- * Re-install a plugin's dependencies, rebuild, re-copy content, and update the manifest.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param pluginManifest - The plugin's manifest.
- * @returns CopyResult with copied and skipped files.
- */
-export function refreshPluginContent(pluginDir, projectRoot, pluginManifest) {
-    installPluginDeps(pluginDir, pluginManifest);
-    buildPlugin(pluginDir, pluginManifest);
-    // Read existing manifest for three-way state
-    const existingManifest = readContentManifest(projectRoot);
-    const copyResult = copyPluginContent(pluginDir, projectRoot, pluginManifest, existingManifest);
-    // Merge: skipped files retain their existing hashes
-    const mergedFiles = { ...copyResult.copied };
-    const existingEntry = existingManifest.plugins[pluginManifest.name];
-    if (existingEntry) {
-        for (const skipped of copyResult.skipped) {
-            const existing = existingEntry.files[skipped.path];
-            if (existing) {
-                mergedFiles[skipped.path] = existing;
-            }
-        }
-    }
-    // Update the content manifest
-    const contentManifest = readContentManifest(projectRoot);
-    contentManifest.plugins[pluginManifest.name] = {
-        version: pluginManifest.version,
-        installed_at: new Date().toISOString(),
-        files: mergedFiles,
-    };
-    writeContentManifest(projectRoot, contentManifest);
-    return copyResult;
-}
-// ---------------------------------------------------------------------------
-// Three-way state helpers
-// ---------------------------------------------------------------------------
-/**
- * Compute the three-way state of a file by comparing:
- * - The installed file on disk vs the installedHash at last install
- * - The current source hash vs the sourceHash at last install
- *
- * States:
- * - "clean": neither user nor plugin changed it
- * - "plugin-updated": plugin has a newer version, user hasn't touched it
- * - "user-modified": user changed it, plugin hasn't updated
- * - "conflict": both user and plugin changed it
- * - "missing": file doesn't exist on disk
- * @param relPath - Relative path from project root to the file.
- * @param projectRoot - Absolute path to the project root.
- * @param lastEntry - The hash entry from the last install.
- * @param currentSourceHash - Current hash of the file in the plugin source.
- * @returns The three-way state of the file.
- */
-export function computeThreeWayState(relPath, projectRoot, lastEntry, currentSourceHash) {
-    const absPath = path.join(projectRoot, relPath);
-    if (!fs.existsSync(absPath)) {
-        return "missing";
-    }
-    const currentInstalledHash = computeFileHash(absPath);
-    return computeThreeWayStateFromHashes(currentInstalledHash, lastEntry, currentSourceHash);
-}
-/**
- * Pure three-way diff state computation from pre-computed hashes with no I/O.
- *
- * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
- * by comparing the current installed hash against the baseline recorded at install
- * time and the current plugin source hash.
- * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
- * @param lastEntry - The hash entry recorded at last install (baseline hashes).
- * @param currentSourceHash - Current hash of the file in the plugin source.
- * @returns The three-way state of the file.
- */
-export function computeThreeWayStateFromHashes(currentInstalledHash, lastEntry, currentSourceHash) {
-    const userChanged = currentInstalledHash !== lastEntry.installedHash;
-    const pluginChanged = currentSourceHash !== lastEntry.sourceHash;
-    if (!userChanged && !pluginChanged)
-        return "clean";
-    if (pluginChanged && !userChanged)
-        return "plugin-updated";
-    if (userChanged && !pluginChanged)
-        return "user-modified";
-    return "conflict";
-}
-/**
- * Compute the SHA-256 hash of a file.
- * @param filePath - Absolute path to the file to hash.
- * @returns Hex-encoded SHA-256 hash of the file contents.
- */
-export function computeFileHash(filePath) {
-    const content = fs.readFileSync(filePath);
-    return createHash("sha256").update(content).digest("hex");
 }
 /**
  * Check if a directory is inside an npm workspace (root package.json has "workspaces").
@@ -593,32 +318,6 @@ function isBinaryAvailable(binary) {
         }
     }
     return false;
-}
-/**
- * Given a relative path from the project root (e.g. `.orqa/learning/rules/RULE-abc.md`),
- * find the corresponding source file in the plugin directory by matching target mappings.
- *
- * Returns the absolute path to the source file, or null if no mapping covers this path.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param pluginManifest - The plugin's manifest containing content mappings.
- * @param relPath - Relative path from the project root to the installed file.
- * @returns Absolute path to the source file, or null if no mapping covers this path.
- */
-export function findSourceFile(pluginDir, pluginManifest, relPath) {
-    if (!pluginManifest.content) {
-        return null;
-    }
-    // Normalise to forward slashes for comparison
-    const normRelPath = relPath.replace(/\\/g, "/");
-    for (const [, mapping] of Object.entries(pluginManifest.content)) {
-        const normTarget = mapping.target.replace(/\\/g, "/").replace(/\/$/, "");
-        if (!normRelPath.startsWith(`${normTarget}/`)) {
-            continue;
-        }
-        const filename = normRelPath.slice(normTarget.length + 1);
-        return path.join(pluginDir, mapping.source, filename);
-    }
-    return null;
 }
 /**
  * Set up JSON extends — creates a target file with an "extends" field pointing

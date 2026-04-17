@@ -1,25 +1,14 @@
 /**
- * Plugin content lifecycle — install, remove, diff, and refresh plugin content.
+ * Plugin content lifecycle — manifest tracking, dependency installation, builds, and hooks.
  *
- * Plugins declare content mappings in `orqa-plugin.json`:
- *   { "content": { "rules": { "source": "rules", "target": ".orqa/learning/rules" } } }
- *
- * When installed, plugin content is copied from plugin source dirs to `.orqa/` target
- * dirs under the project root. Ownership is tracked in `.orqa/manifest.json`.
+ * Plugins declare content mappings in `orqa-plugin.json`. Ownership of installed
+ * content is tracked in `.orqa/manifest.json`. Content is no longer copied to `.orqa/`
+ * subdirs by this module — SurrealDB is the source of truth for artifact content.
  */
 import type { PluginManifest, PluginContentMapping } from "@orqastudio/types";
 export interface FileHashEntry {
     readonly sourceHash: string;
     readonly installedHash: string;
-}
-export type ThreeWayState = "clean" | "plugin-updated" | "user-modified" | "conflict" | "missing";
-export interface ThreeWayFileStatus {
-    readonly path: string;
-    readonly state: ThreeWayState;
-}
-export interface CopyResult {
-    readonly copied: Record<string, FileHashEntry>;
-    readonly skipped: ThreeWayFileStatus[];
 }
 export interface ContentManifest {
     plugins: Record<string, ContentManifestEntry>;
@@ -31,19 +20,6 @@ export interface ContentManifestEntry {
     manifestHash?: string;
     /** Relative paths from project root, using forward slashes → hash entries. */
     files: Record<string, FileHashEntry>;
-}
-export interface ContentDiffResult {
-    readonly pluginName: string;
-    /** Files whose content is identical between plugin source and .orqa/ copy. */
-    readonly identical: string[];
-    /** Files in .orqa/ that differ from the plugin source. */
-    readonly modified: string[];
-    /** Files in the manifest but deleted from .orqa/. */
-    readonly missing: string[];
-    /** Files found in the plugin's target dirs that are not in the manifest. */
-    readonly orphaned: string[];
-    /** Three-way state for each tracked file. */
-    readonly threeWay: ThreeWayFileStatus[];
 }
 /**
  * Read `.orqa/manifest.json` from the project root.
@@ -58,24 +34,6 @@ export declare function readContentManifest(projectRoot: string): ContentManifes
  * @param manifest - The content manifest to write.
  */
 export declare function writeContentManifest(projectRoot: string, manifest: ContentManifest): void;
-/**
- * Copy files from the plugin's content source dirs to the project's target dirs.
- *
- * Supports three-way diff: when `currentManifest` is provided, files that have
- * been modified by the user (user-modified or conflict) are skipped.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param manifest - The plugin's `orqa-plugin.json` manifest.
- * @param currentManifest - Optional existing content manifest for three-way state.
- * @returns CopyResult with copied files (with hashes) and skipped files.
- */
-export declare function copyPluginContent(pluginDir: string, projectRoot: string, manifest: PluginManifest, currentManifest?: ContentManifest): CopyResult;
-/**
- * Remove all content files belonging to a plugin and update the manifest.
- * @param pluginName - The plugin's `name` field from its manifest.
- * @param projectRoot - Absolute path to the project root.
- */
-export declare function removePluginContent(pluginName: string, projectRoot: string): void;
 /**
  * Install plugin dependencies.
  *
@@ -100,65 +58,6 @@ export declare function buildPlugin(pluginDir: string, pluginManifest: PluginMan
  */
 export declare function runLifecycleHook(pluginDir: string, pluginManifest: PluginManifest, hook: "install" | "uninstall"): void;
 /**
- * Compare the plugin's source content against the installed copies in `.orqa/`.
- *
- * For each file tracked in the content manifest:
- * - If it no longer exists in `.orqa/`: listed as `missing`.
- * - If its content matches the plugin source: listed as `identical`.
- * - If its content differs: listed as `modified`.
- *
- * Files found in the plugin's target dirs that are NOT in the manifest are `orphaned`.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param pluginManifest - The plugin's manifest.
- * @returns Diff result categorizing files as identical, modified, missing, or orphaned.
- */
-export declare function diffPluginContent(pluginDir: string, projectRoot: string, pluginManifest: PluginManifest): ContentDiffResult;
-/**
- * Re-install a plugin's dependencies, rebuild, re-copy content, and update the manifest.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param projectRoot - Absolute path to the project root.
- * @param pluginManifest - The plugin's manifest.
- * @returns CopyResult with copied and skipped files.
- */
-export declare function refreshPluginContent(pluginDir: string, projectRoot: string, pluginManifest: PluginManifest): CopyResult;
-/**
- * Compute the three-way state of a file by comparing:
- * - The installed file on disk vs the installedHash at last install
- * - The current source hash vs the sourceHash at last install
- *
- * States:
- * - "clean": neither user nor plugin changed it
- * - "plugin-updated": plugin has a newer version, user hasn't touched it
- * - "user-modified": user changed it, plugin hasn't updated
- * - "conflict": both user and plugin changed it
- * - "missing": file doesn't exist on disk
- * @param relPath - Relative path from project root to the file.
- * @param projectRoot - Absolute path to the project root.
- * @param lastEntry - The hash entry from the last install.
- * @param currentSourceHash - Current hash of the file in the plugin source.
- * @returns The three-way state of the file.
- */
-export declare function computeThreeWayState(relPath: string, projectRoot: string, lastEntry: FileHashEntry, currentSourceHash: string): ThreeWayState;
-/**
- * Pure three-way diff state computation from pre-computed hashes with no I/O.
- *
- * Determines whether a file is clean, plugin-updated, user-modified, or in conflict
- * by comparing the current installed hash against the baseline recorded at install
- * time and the current plugin source hash.
- * @param currentInstalledHash - SHA-256 hash of the currently installed file content.
- * @param lastEntry - The hash entry recorded at last install (baseline hashes).
- * @param currentSourceHash - Current hash of the file in the plugin source.
- * @returns The three-way state of the file.
- */
-export declare function computeThreeWayStateFromHashes(currentInstalledHash: string, lastEntry: FileHashEntry, currentSourceHash: string): ThreeWayState;
-/**
- * Compute the SHA-256 hash of a file.
- * @param filePath - Absolute path to the file to hash.
- * @returns Hex-encoded SHA-256 hash of the file contents.
- */
-export declare function computeFileHash(filePath: string): string;
-/**
  * Process symlink declarations from a plugin manifest.
  * Creates symlinks in the project directory as declared.
  * @param projectRoot - Absolute path to the project root.
@@ -179,15 +78,4 @@ export declare function processAggregatedFiles(projectRoot: string): void;
  * @param mapping - The content mapping declaring the extension.
  */
 export declare function setupConfigExtends(pluginDir: string, projectRoot: string, mapping: PluginContentMapping): void;
-/**
- * Given a relative path from the project root (e.g. `.orqa/learning/rules/RULE-abc.md`),
- * find the corresponding source file in the plugin directory by matching target mappings.
- *
- * Returns the absolute path to the source file, or null if no mapping covers this path.
- * @param pluginDir - Absolute path to the plugin directory.
- * @param pluginManifest - The plugin's manifest containing content mappings.
- * @param relPath - Relative path from the project root to the installed file.
- * @returns Absolute path to the source file, or null if no mapping covers this path.
- */
-export declare function findSourceFile(pluginDir: string, pluginManifest: PluginManifest, relPath: string): string | null;
 //# sourceMappingURL=content-lifecycle.d.ts.map

@@ -178,7 +178,6 @@ function cleanupSignalFile(root) {
  * container is brought down via `docker compose down` before killing any
  * remaining native processes. In native mode: the daemon is stopped via its
  * CLI command module as before.
- *
  * @param root - Absolute path to the dev repo root.
  * @param opts - Optional kill modifiers.
  * @param opts.preserveDevtools - When true, skip killing the Tauri devtools process.

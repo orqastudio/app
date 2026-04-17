@@ -1,7 +1,7 @@
 /**
  * Plugin management commands.
  *
- * orqa plugin list|install|uninstall|update|enable|disable|refresh|diff|registry|create
+ * orqa plugin list|install|uninstall|update|enable|disable|refresh|registry|create
  */
 import type { PluginProjectConfig } from "@orqastudio/types";
 /**

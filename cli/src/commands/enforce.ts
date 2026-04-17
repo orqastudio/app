@@ -19,7 +19,7 @@
  */
 
 import { existsSync, readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join, dirname, resolve } from "node:path";
 import { execSync, spawnSync } from "node:child_process";
 import { parse as parseYaml } from "yaml";
 import {
@@ -199,6 +199,13 @@ export async function runEnforceCommand(projectRoot: string, args: string[]): Pr
 	// 4. Get staged files if --staged was requested.
 	const stagedFiles = staged ? getStagedFiles() : null;
 
+	// 4b. When --staged, resolve which Rust packages own the staged .rs files.
+	// This is used below to scope cargo engines to only the affected crates,
+	// avoiding a full --workspace compile that would drag in Tauri crates
+	// requiring a built frontend directory.
+	const stagedRustPackages =
+		stagedFiles !== null ? getStagedRustPackages(projectRoot, stagedFiles) : null;
+
 	// 5. Dispatch to each engine.
 	let allPassed = true;
 
@@ -241,14 +248,159 @@ export async function runEnforceCommand(projectRoot: string, args: string[]): Pr
 			// else: files stays null → engine runs project-wide without file args
 		}
 
+		// For cargo engines (clippy, rustfmt) running in --staged mode, scope the
+		// invocation to only the packages that own the staged files. This prevents
+		// a full --workspace compile that would include Tauri crates (orqa-studio,
+		// orqa-devtools) which require a built frontend directory — a precondition
+		// that does not exist on a fresh checkout or in a pure backend commit.
+		let effectiveAction = action;
+		if (
+			staged &&
+			action.command === "cargo" &&
+			stagedRustPackages !== null &&
+			stagedRustPackages.size > 0
+		) {
+			// If any staged Tauri crate has a missing frontend dir, fail early with
+			// an actionable error rather than letting the proc-macro panic surface.
+			if (checkTauriFrontendDirs(projectRoot, stagedRustPackages)) {
+				allPassed = false;
+				continue;
+			}
+			effectiveAction = {
+				...action,
+				args: buildScopedCargoArgs(action.args, stagedRustPackages),
+			};
+		}
+
 		// Handle built-in enforcement checks (registered from rules, not plugins).
-		const exitCode = action.command.startsWith("__builtin:")
-			? runBuiltinCheck(projectRoot, action.command, files)
-			: runAction(action, files);
+		const exitCode = effectiveAction.command.startsWith("__builtin:")
+			? runBuiltinCheck(projectRoot, effectiveAction.command, files)
+			: runAction(effectiveAction, files);
 		if (exitCode !== 0) allPassed = false;
 	}
 
 	return allPassed ? 0 : 1;
+}
+
+/**
+ * Walk up from a file path to find the nearest Cargo.toml, returning its directory.
+ * Stops at projectRoot. Returns null if none found.
+ * @param projectRoot - Absolute path to the repo root.
+ * @param filePath - Relative file path from repo root.
+ * @returns Absolute path to the directory containing the nearest Cargo.toml, or null.
+ */
+function findCargoManifestDir(projectRoot: string, filePath: string): string | null {
+	let dir = dirname(resolve(projectRoot, filePath));
+	const root = resolve(projectRoot);
+	while (dir.startsWith(root)) {
+		if (existsSync(join(dir, "Cargo.toml"))) return dir;
+		const parent = dirname(dir);
+		if (parent === dir) break;
+		dir = parent;
+	}
+	return null;
+}
+
+/**
+ * Read the package name from a Cargo.toml file.
+ * Returns null if the file cannot be read or has no [package] name.
+ * @param manifestDir - Absolute path to the directory containing Cargo.toml.
+ * @returns The package name string, or null.
+ */
+function readCargoPackageName(manifestDir: string): string | null {
+	try {
+		const content = readFileSync(join(manifestDir, "Cargo.toml"), "utf-8");
+		const match = content.match(/^\[package\][\s\S]*?^name\s*=\s*"([^"]+)"/m);
+		return match ? match[1] : null;
+	} catch {
+		return null;
+	}
+}
+
+// Tauri crate names that require a frontend build directory to compile.
+// These crates use tauri::generate_context!() which panics at compile time
+// if the configured frontendDist directory doesn't exist.
+const TAURI_CRATE_NAMES = new Set(["orqa-studio", "orqa-devtools"]);
+
+// Maps each Tauri crate package name to the path of its frontend dist dir,
+// relative to the project root.
+const TAURI_FRONTEND_DIRS: Record<string, string> = {
+	"orqa-studio": "app/build",
+	"orqa-devtools": "devtools/build",
+};
+
+/**
+ * Given a list of staged Rust file paths, resolve the set of Cargo package
+ * names that own those files. Returns null when no Rust files are staged.
+ *
+ * Used to scope cargo clippy / rustfmt to only the affected crates instead
+ * of running --workspace (which includes Tauri crates that require a frontend
+ * build dir to compile).
+ * @param projectRoot - Absolute path to the repo root.
+ * @param stagedFiles - All staged file paths (relative to repo root).
+ * @returns Set of package names, or null if no .rs files are staged.
+ */
+function getStagedRustPackages(projectRoot: string, stagedFiles: string[]): Set<string> | null {
+	const rustFiles = stagedFiles.filter((f) => f.endsWith(".rs"));
+	if (rustFiles.length === 0) return null;
+
+	const packages = new Set<string>();
+	for (const f of rustFiles) {
+		const manifestDir = findCargoManifestDir(projectRoot, f);
+		if (!manifestDir) continue;
+		const name = readCargoPackageName(manifestDir);
+		if (name) packages.add(name);
+	}
+	return packages;
+}
+
+/**
+ * Check whether any of the named packages are Tauri crates whose frontend
+ * dist directory is missing. Prints an actionable error for each missing dir.
+ * Returns true if any Tauri crate has a missing frontend dir.
+ *
+ * When a Tauri crate is in scope but its frontend dist dir doesn't exist,
+ * tauri::generate_context!() panics at compile time with an opaque error.
+ * This check intercepts that condition and provides a clear fix instruction.
+ * @param projectRoot - Absolute path to the repo root.
+ * @param packages - Set of Cargo package names that will be checked.
+ * @returns True if any Tauri crate's frontend dist dir is absent.
+ */
+function checkTauriFrontendDirs(projectRoot: string, packages: Set<string>): boolean {
+	let missing = false;
+	for (const pkg of packages) {
+		if (!TAURI_CRATE_NAMES.has(pkg)) continue;
+		const frontendDir = TAURI_FRONTEND_DIRS[pkg];
+		if (frontendDir && !existsSync(join(projectRoot, frontendDir))) {
+			const appDir = frontendDir.split("/")[0];
+			console.error(
+				`ERROR: ${pkg} requires a built frontend but ${frontendDir}/ does not exist.\n` +
+					`       Run: cd ${appDir} && npm run build`,
+			);
+			missing = true;
+		}
+	}
+	return missing;
+}
+
+/**
+ * Build a scoped cargo argv for a staged-file check run.
+ *
+ * Replaces the --workspace flag with -p <pkg> flags for each package in
+ * the staged set. If no packages are present (nothing staged), returns the
+ * original args unchanged (the caller will have already skipped the run).
+ *
+ * Also strips --all-targets when scoping to specific packages so that
+ * Tauri build-script targets are not inadvertently compiled.
+ * @param baseArgs - The original action args from the plugin manifest.
+ * @param packages - The set of package names to scope the run to.
+ * @returns A new argv array with -p flags replacing --workspace.
+ */
+function buildScopedCargoArgs(baseArgs: string[], packages: Set<string>): string[] {
+	// Remove --workspace and --all-targets; we'll add targeted -p flags.
+	const filtered = baseArgs.filter((a) => a !== "--workspace" && a !== "--all-targets");
+	const pkgFlags = [...packages].flatMap((p) => ["-p", p]);
+	return [...filtered, ...pkgFlags];
 }
 
 /**
