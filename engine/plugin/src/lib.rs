@@ -15,6 +15,8 @@ pub mod cli_runner;
 pub mod collision;
 /// Installation constraint enforcement (one-methodology, one-per-stage).
 pub mod constraints;
+/// Content installation — runtime file copy and uninstall for plugin content entries.
+pub mod content;
 /// Plugin discovery — scan for installed and enabled plugins.
 pub mod discovery;
 /// Hook execution — run registered plugin hooks at lifecycle events.

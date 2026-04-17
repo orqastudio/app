@@ -589,6 +589,10 @@ pub async fn start(
             axum::routing::delete(crate::routes::plugins::uninstall_plugin),
         )
         .route("/{name}/path", get(crate::routes::plugins::get_plugin_path))
+        .route(
+            "/{name}/uninstall-preview",
+            get(crate::routes::plugins::preview_plugin_uninstall),
+        )
         .with_state(state.graph_state.clone());
 
     // Agent routes — agent preamble and behavioral messages.

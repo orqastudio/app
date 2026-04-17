@@ -38,6 +38,23 @@ pub struct InstallResult {
     /// True when the installed plugin declares enforcement entries.
     /// The caller must trigger enforcement config regeneration after installation.
     pub requires_enforcement_regeneration: bool,
+    /// Number of runtime files copied to their `install_path` destinations.
+    pub runtime_files_copied: usize,
+    /// Number of surrealdb-target content entries that need daemon-layer ingest.
+    /// The daemon reads this to know whether to walk source dirs and call sync_plugin_file.
+    pub surrealdb_content_entries: usize,
+}
+
+/// Preview of what uninstalling a plugin would remove.
+#[derive(Debug, Clone, Serialize)]
+pub struct UninstallPreview {
+    /// The plugin's package name.
+    pub name: String,
+    /// Runtime files that would be deleted from `install_path` destinations.
+    pub runtime_files: Vec<String>,
+    /// Number of SurrealDB artifact records that would be removed (source_plugin = name).
+    /// The daemon layer computes the exact count; this field is always 0 from the engine.
+    pub surrealdb_artifact_count: usize,
 }
 
 /// Install a plugin from a local filesystem path.
@@ -104,6 +121,11 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
 
     copy_dir_all(source, &target)?;
 
+    // Install runtime content entries (file copies) immediately.
+    // SurrealDB-target entries are handled by the daemon layer after this call returns.
+    let content_summary =
+        super::content::install_runtime_content(&target, project_root, &manifest.content)?;
+
     // P5-28: read post-install action flags from the manifest.
     let requires_schema_recomposition = manifest.install_constraints.affects_schema;
     // A non-empty enforcement array means the plugin participates in enforcement generation.
@@ -117,11 +139,15 @@ pub fn install_from_path(source: &Path, project_root: &Path) -> Result<InstallRe
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
+        runtime_files_copied: content_summary.runtime_copied,
+        surrealdb_content_entries: content_summary.surrealdb_entries,
     };
 
     tracing::info!(
         plugin = %result.name,
         version = %result.version,
+        runtime_files_copied = result.runtime_files_copied,
+        surrealdb_content_entries = result.surrealdb_content_entries,
         "[plugins] install_from_path succeeded"
     );
 
@@ -228,6 +254,11 @@ fn finalize_github_install(
 
     update_lockfile(project_root, &manifest, repo, sha256)?;
 
+    // Install runtime content entries (file copies) immediately.
+    // SurrealDB-target entries are handled by the daemon layer after this call returns.
+    let content_summary =
+        super::content::install_runtime_content(&target, project_root, &manifest.content)?;
+
     // P5-28: read post-install action flags from the manifest.
     let requires_schema_recomposition = manifest.install_constraints.affects_schema;
     // A plugin that declares any enforcement entries requires enforcement regeneration.
@@ -241,21 +272,55 @@ fn finalize_github_install(
         collisions,
         requires_schema_recomposition,
         requires_enforcement_regeneration,
+        runtime_files_copied: content_summary.runtime_copied,
+        surrealdb_content_entries: content_summary.surrealdb_entries,
     };
 
     tracing::info!(
         plugin = %result.name,
         version = %result.version,
         resolved_ref = %resolved_ref,
+        runtime_files_copied = result.runtime_files_copied,
+        surrealdb_content_entries = result.surrealdb_content_entries,
         "[plugins] install_from_github succeeded"
     );
 
     Ok(result)
 }
 
+/// Return a preview of what uninstalling `name` would remove, without performing any deletion.
+///
+/// This is the first step of the two-step uninstall handshake. The daemon layer augments
+/// `surrealdb_artifact_count` before returning the preview to the caller.
+pub fn preview_uninstall(name: &str, project_root: &Path) -> Result<UninstallPreview, EngineError> {
+    let short_name = name.split('/').next_back().unwrap_or(name);
+    let plugin_dir = project_root.join("plugins").join(short_name);
+
+    if !plugin_dir.exists() {
+        return Err(EngineError::Plugin(format!(
+            "plugin not found: {name} (expected at {})",
+            plugin_dir.display()
+        )));
+    }
+
+    let manifest = read_manifest(&plugin_dir)?;
+    let runtime_files = super::content::preview_uninstall_content(project_root, &manifest.content)
+        .into_iter()
+        .map(|p| p.to_string_lossy().into_owned())
+        .collect();
+
+    Ok(UninstallPreview {
+        name: name.to_owned(),
+        runtime_files,
+        surrealdb_artifact_count: 0, // daemon layer fills this in
+    })
+}
+
 /// Uninstall a plugin by name.
 ///
-/// Removes the plugin directory and updates the lockfile.
+/// Removes runtime content files, the plugin directory, and updates the lockfile.
+/// SurrealDB artifact removal (records with source_plugin = name) is handled by the
+/// daemon layer after this function returns.
 pub fn uninstall(name: &str, project_root: &Path) -> Result<(), EngineError> {
     let short_name = name.split('/').next_back().unwrap_or(name);
     let plugin_dir = project_root.join("plugins").join(short_name);
@@ -266,6 +331,16 @@ pub fn uninstall(name: &str, project_root: &Path) -> Result<(), EngineError> {
             plugin_dir.display()
         )));
     }
+
+    // Read manifest before removing the plugin dir so we know which runtime files to clean up.
+    let manifest = read_manifest(&plugin_dir)?;
+    let removed = super::content::uninstall_runtime_content(project_root, &manifest.content)?;
+
+    tracing::info!(
+        plugin = %name,
+        runtime_files_removed = removed,
+        "[plugins] uninstall: runtime content removed"
+    );
 
     std::fs::remove_dir_all(&plugin_dir)?;
 

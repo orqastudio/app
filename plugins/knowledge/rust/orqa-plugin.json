@@ -149,15 +149,18 @@
 	"content": {
 		"agents": {
 			"source": "agents",
-			"target": ".claude/agents"
+			"installPath": ".claude/agents",
+			"target": "runtime"
 		},
 		"documentation": {
 			"source": "documentation",
-			"target": ".orqa/documentation"
+			"installPath": ".orqa/documentation",
+			"target": "surrealdb"
 		},
 		"knowledge": {
 			"source": "knowledge",
-			"target": ".orqa/documentation/knowledge"
+			"installPath": ".orqa/documentation/knowledge",
+			"target": "surrealdb"
 		}
 	},
 	"dependencies": {

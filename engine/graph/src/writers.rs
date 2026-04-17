@@ -306,6 +306,72 @@ fn build_upsert_query(
 }
 
 // ---------------------------------------------------------------------------
+// Field update (PUT /artifacts/:id)
+// ---------------------------------------------------------------------------
+
+/// Update a single frontmatter field in the SurrealDB artifact record.
+///
+/// Reads the current stored frontmatter, applies the field change, recomputes
+/// the content_hash from the updated frontmatter JSON, writes the change, then
+/// calls `bump_version` so `version` and `updated_at` always advance on PUT.
+///
+/// Returns the new `version` value on success.
+///
+/// Mapped column names: `status`, `title`, `description`, `priority` are promoted
+/// to top-level SurrealDB columns in addition to `frontmatter`. All other fields
+/// are written only into `frontmatter`.
+pub async fn update_artifact_fields(
+    db: &GraphDb,
+    artifact_id: &str,
+    field: &str,
+    value: &str,
+) -> Result<u64> {
+    let stored = read_artifact(db, artifact_id)
+        .await?
+        .ok_or_else(|| anyhow::anyhow!("artifact '{artifact_id}' not found in SurrealDB"))?;
+
+    // Apply the field change to the stored frontmatter JSON.
+    let mut fm = match stored.frontmatter {
+        Value::Object(m) => m,
+        _ => serde_json::Map::default(),
+    };
+    fm.insert(field.to_owned(), Value::String(value.to_owned()));
+    let updated_fm = Value::Object(fm);
+
+    // Recompute content_hash from the updated frontmatter JSON.
+    let fm_json = serde_json::to_string(&updated_fm).unwrap_or_else(|_| "{}".to_owned());
+    use sha2::{Digest, Sha256};
+    let new_hash = hex::encode(Sha256::digest(fm_json.as_bytes()));
+
+    let safe_id = sanitize_record_id(artifact_id);
+
+    // Determine which top-level column to update alongside frontmatter.
+    let column_clause = match field {
+        "status" => format!(", status = '{}'", escape_surql_string(value)),
+        "title" => format!(", title = '{}'", escape_surql_string(value)),
+        "description" => format!(", description = '{}'", escape_surql_string(value)),
+        "priority" => format!(", priority = '{}'", escape_surql_string(value)),
+        _ => String::new(),
+    };
+
+    let query = format!(
+        "UPSERT artifact:`{safe_id}` SET \
+            frontmatter = {fm_json}, \
+            content_hash = '{hash_sql}'{column_clause};",
+        hash_sql = escape_surql_string(&new_hash),
+    );
+    db.0.query(&query)
+        .await
+        .with_context(|| format!("update_artifact_fields for {artifact_id}"))?;
+
+    let new_version = bump_version(db, artifact_id, None)
+        .await
+        .map_err(|e| anyhow::anyhow!("version bump failed for {artifact_id}: {e}"))?;
+
+    Ok(new_version)
+}
+
+// ---------------------------------------------------------------------------
 // Merge write
 // ---------------------------------------------------------------------------
 

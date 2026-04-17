@@ -8,20 +8,21 @@
 //   GET    /plugins                   — list installed plugins
 //   GET    /plugins/:name             — get a plugin's manifest
 //   GET    /plugins/:name/path        — get filesystem path to a plugin
+//   GET    /plugins/:name/uninstall-preview — preview what uninstall would remove
 //   POST   /plugins/install/local     — install from a local path
 //   POST   /plugins/install/github    — install from GitHub
-//   DELETE /plugins/:name             — uninstall a plugin
+//   DELETE /plugins/:name             — uninstall a plugin (requires ?force=true or returns preview)
 //   GET    /plugins/registry          — browse plugin registry
 //   GET    /plugins/updates           — check for available updates
 
-use axum::extract::{Path, State};
+use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 use orqa_plugin::discovery::{scan_plugins, DiscoveredPlugin};
-use orqa_plugin::installer::{install_from_path, InstallResult};
+use orqa_plugin::installer::{install_from_path, InstallResult, UninstallPreview};
 /// Plugin manifest filename — must match engine::plugin::manifest::MANIFEST_FILENAME.
 const MANIFEST_FILENAME: &str = "orqa-plugin.json";
 use orqa_plugin::registry::RegistryCache;
@@ -46,6 +47,15 @@ pub struct InstallGithubRequest {
     pub repo: String,
     /// Specific version tag to install (e.g. "1.0.0"). None installs latest.
     pub version: Option<String>,
+}
+
+/// Query parameters for DELETE /plugins/:name.
+#[derive(Debug, Deserialize)]
+pub struct UninstallQuery {
+    /// When true, perform the destructive uninstall immediately.
+    /// When absent or false, return a preview of what would be removed.
+    #[serde(default)]
+    pub force: bool,
 }
 
 /// Response body for GET /plugins/:name.
@@ -201,28 +211,85 @@ pub async fn get_plugin_path(
     }))
 }
 
-/// Handle POST /plugins/install/local — install a plugin from a local path.
+/// Handle GET /plugins/:name/uninstall-preview — return what uninstalling would remove.
 ///
-/// Runs synchronously via spawn_blocking. Triggers graph reload after installation
-/// to pick up any new artifact types registered by the plugin.
-pub async fn install_plugin_local(
+/// No destructive actions are taken. The daemon augments the engine's preview with
+/// the SurrealDB artifact count for records with source_plugin = name.
+pub async fn preview_plugin_uninstall(
     State(state): State<GraphState>,
-    Json(req): Json<InstallLocalRequest>,
-) -> Result<Json<InstallResult>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = {
+    Path(name): Path<String>,
+) -> Result<Json<UninstallPreview>, (StatusCode, Json<serde_json::Value>)> {
+    let (project_root, db) = {
         let Ok(guard) = state.0.read() else {
             return Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
             ));
         };
-        guard.project_root.clone()
+        (guard.project_root.clone(), guard.db.clone())
+    };
+
+    let name_clone = name.clone();
+    let mut preview = tokio::task::spawn_blocking(move || {
+        orqa_plugin::installer::preview_uninstall(&name_clone, &project_root)
+    })
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "PREVIEW_PANIC" })),
+        )
+    })?
+    .map_err(|e| {
+        (
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "PLUGIN_NOT_FOUND" })),
+        )
+    })?;
+
+    // Augment with the SurrealDB artifact count for this plugin.
+    if let Some(db) = db {
+        let name_escaped = name.replace('\'', "\\'");
+        let query = format!(
+            "SELECT count() FROM artifact WHERE source_plugin = '{name_escaped}' GROUP ALL;"
+        );
+        if let Ok(mut response) = db.0.query(&query).await {
+            let rows: Vec<serde_json::Value> = response.take(0).unwrap_or_default();
+            preview.surrealdb_artifact_count = rows
+                .first()
+                .and_then(|r| r.get("count"))
+                .and_then(serde_json::Value::as_u64)
+                .unwrap_or(0) as usize;
+        }
+    }
+
+    Ok(Json(preview))
+}
+
+/// Handle POST /plugins/install/local — install a plugin from a local path.
+///
+/// Runs synchronously via spawn_blocking. After installation, ingests all
+/// surrealdb-target content entries into SurrealDB with source_plugin set.
+/// Triggers graph reload after installation to pick up any new artifact types.
+pub async fn install_plugin_local(
+    State(state): State<GraphState>,
+    Json(req): Json<InstallLocalRequest>,
+) -> Result<Json<InstallResult>, (StatusCode, Json<serde_json::Value>)> {
+    let (project_root, db) = {
+        let Ok(guard) = state.0.read() else {
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            ));
+        };
+        (guard.project_root.clone(), guard.db.clone())
     };
 
     let source_path = std::path::PathBuf::from(&req.path);
+    let project_root_clone = project_root.clone();
 
     let result =
-        tokio::task::spawn_blocking(move || install_from_path(&source_path, &project_root))
+        tokio::task::spawn_blocking(move || install_from_path(&source_path, &project_root_clone))
             .await
             .map_err(|e| {
                 (
@@ -237,13 +304,15 @@ pub async fn install_plugin_local(
                 )
             })?;
 
+    // Ingest surrealdb-target content and enforcement rules into SurrealDB.
+    if let Some(ref db) = db {
+        if result.surrealdb_content_entries > 0 {
+            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await;
+        }
+        ingest_enforcement_rules(db, &result.name, &result.path).await;
+    }
+
     // Reload the graph to pick up any schema changes from the new plugin.
-    let project_root = {
-        let Ok(guard) = state.0.read() else {
-            return Ok(Json(result));
-        };
-        guard.project_root.clone()
-    };
     state.reload(&project_root);
 
     Ok(Json(result))
@@ -257,14 +326,14 @@ pub async fn install_plugin_github(
     State(state): State<GraphState>,
     Json(req): Json<InstallGithubRequest>,
 ) -> Result<Json<InstallResult>, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = {
+    let (project_root, db) = {
         let Ok(guard) = state.0.read() else {
             return Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
             ));
         };
-        guard.project_root.clone()
+        (guard.project_root.clone(), guard.db.clone())
     };
 
     let result = orqa_plugin::installer::install_from_github(
@@ -280,12 +349,14 @@ pub async fn install_plugin_github(
         )
     })?;
 
-    let project_root = {
-        let Ok(guard) = state.0.read() else {
-            return Ok(Json(result));
-        };
-        guard.project_root.clone()
-    };
+    // Ingest surrealdb-target content and enforcement rules into SurrealDB.
+    if let Some(ref db) = db {
+        if result.surrealdb_content_entries > 0 {
+            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await;
+        }
+        ingest_enforcement_rules(db, &result.name, &result.path).await;
+    }
+
     state.reload(&project_root);
 
     Ok(Json(result))
@@ -293,42 +364,76 @@ pub async fn install_plugin_github(
 
 /// Handle DELETE /plugins/:name — uninstall a named plugin.
 ///
-/// Runs synchronously via spawn_blocking.
+/// Without `?force=true`, returns a preview (HTTP 200 + body) instead of performing
+/// the destructive uninstall. With `?force=true`, removes the plugin and deletes all
+/// SurrealDB artifact records whose `source_plugin` field matches this plugin's name.
+#[allow(clippy::too_many_lines)]
 pub async fn uninstall_plugin(
     State(state): State<GraphState>,
     Path(name): Path<String>,
+    Query(query): Query<UninstallQuery>,
 ) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
-    let project_root = {
+    if !query.force {
+        // Return 400 asking the caller to use the preview endpoint or pass ?force=true.
+        return Err((
+            StatusCode::BAD_REQUEST,
+            Json(serde_json::json!({
+                "error": "uninstall requires confirmation: use GET /plugins/:name/uninstall-preview to see what would be removed, then DELETE with ?force=true",
+                "code": "UNINSTALL_REQUIRES_FORCE"
+            })),
+        ));
+    }
+
+    let (project_root, db) = {
         let Ok(guard) = state.0.read() else {
             return Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
             ));
         };
-        guard.project_root.clone()
+        (guard.project_root.clone(), guard.db.clone())
     };
 
-    tokio::task::spawn_blocking(move || orqa_plugin::installer::uninstall(&name, &project_root))
-        .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_PANIC" })),
-            )
-        })?
-        .map_err(|e| {
-            (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_FAILED" })),
-            )
-        })?;
+    let name_clone = name.clone();
+    let project_root_clone = project_root.clone();
+    tokio::task::spawn_blocking(move || {
+        orqa_plugin::installer::uninstall(&name_clone, &project_root_clone)
+    })
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_PANIC" })),
+        )
+    })?
+    .map_err(|e| {
+        (
+            StatusCode::UNPROCESSABLE_ENTITY,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_FAILED" })),
+        )
+    })?;
 
-    state.reload(&{
-        let Ok(guard) = state.0.read() else {
-            return Ok(StatusCode::NO_CONTENT);
-        };
-        guard.project_root.clone()
-    });
+    // Remove all SurrealDB artifact records and enforcement rules with source_plugin = name.
+    if let Some(ref db) = db {
+        match orqa_graph::delete_plugin_artifacts(db, &name).await {
+            Ok(_) => {
+                tracing::info!(plugin = %name, "[plugins] SurrealDB artifacts removed on uninstall");
+            }
+            Err(e) => {
+                tracing::warn!(plugin = %name, error = %e, "[plugins] SurrealDB artifact cleanup failed");
+            }
+        }
+        match orqa_graph::delete_plugin_enforcement_rules(db, &name).await {
+            Ok(_) => {
+                tracing::info!(plugin = %name, "[plugins] enforcement rules removed on uninstall");
+            }
+            Err(e) => {
+                tracing::warn!(plugin = %name, error = %e, "[plugins] enforcement rule cleanup failed");
+            }
+        }
+    }
+
+    state.reload(&project_root);
 
     Ok(StatusCode::NO_CONTENT)
 }
@@ -403,4 +508,131 @@ pub async fn check_plugin_updates(State(state): State<GraphState>) -> Json<Vec<P
         .collect();
 
     Json(updates)
+}
+
+// ---------------------------------------------------------------------------
+// Internal: SurrealDB content ingest helper
+// ---------------------------------------------------------------------------
+
+/// Ingest all `.md` files from a single surrealdb-target source directory.
+///
+/// Returns `(ingested, skipped, errors)` counts.
+async fn ingest_content_dir(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    src_dir: &std::path::Path,
+    project_root: &std::path::Path,
+) -> (usize, usize, usize) {
+    use orqa_graph::sync_plugin_file;
+
+    let (mut ingested, mut skipped, mut errors) = (0usize, 0usize, 0usize);
+
+    let walker = walkdir::WalkDir::new(src_dir)
+        .follow_links(false)
+        .into_iter()
+        .filter_map(Result::ok)
+        .filter(|e| {
+            let p = e.path();
+            p.is_file() && p.extension().and_then(|x| x.to_str()) == Some("md")
+        });
+
+    for entry_item in walker {
+        let path = entry_item.into_path();
+        match sync_plugin_file(db, &path, project_root, plugin_name).await {
+            Ok(orqa_graph::SyncResult::Upserted { .. }) => ingested += 1,
+            Ok(orqa_graph::SyncResult::Unchanged | orqa_graph::SyncResult::Skipped { .. }) => {
+                skipped += 1;
+            }
+            Err(e) => {
+                tracing::warn!(plugin = %plugin_name, path = %path.display(), error = %e, "[plugins] surrealdb content ingest failed");
+                errors += 1;
+            }
+        }
+    }
+
+    (ingested, skipped, errors)
+}
+
+/// Walk the installed plugin's surrealdb-target source directories and ingest each `.md` file.
+///
+/// Called after a successful install when `result.surrealdb_content_entries > 0`.
+/// Errors are logged but do not fail the install — the plugin is already on disk.
+async fn ingest_surrealdb_content(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    plugin_path: &str,
+    project_root: &std::path::Path,
+) {
+    use orqa_plugin::manifest::read_manifest;
+
+    let plugin_dir = std::path::Path::new(plugin_path);
+    let manifest = match read_manifest(plugin_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] failed to read manifest for SurrealDB ingest");
+            return;
+        }
+    };
+
+    let (mut ingested, mut skipped, mut errors) = (0usize, 0usize, 0usize);
+
+    for (key, entry) in &manifest.content {
+        if entry.target != orqa_plugin::manifest::ContentTarget::Surrealdb {
+            continue;
+        }
+        let src_dir = plugin_dir.join(&entry.source);
+        if !src_dir.exists() {
+            tracing::warn!(plugin = %plugin_name, key = %key, source = %entry.source, "[plugins] surrealdb content source dir not found");
+            continue;
+        }
+        let (i, s, e) = ingest_content_dir(db, plugin_name, &src_dir, project_root).await;
+        ingested += i;
+        skipped += s;
+        errors += e;
+    }
+
+    tracing::info!(plugin = %plugin_name, ingested, skipped, errors, "[plugins] surrealdb content ingest complete");
+}
+
+/// Read the plugin manifest and ingest enforcement rules from all enforcement declarations.
+///
+/// Each `EnforcementDeclaration` with a `rules_path` is walked; rule `.md` files are
+/// upserted into the `enforcement_rule` SurrealDB table with `source_plugin` set.
+/// Errors are logged but do not fail the install — the plugin is already on disk.
+async fn ingest_enforcement_rules(db: &orqa_graph::GraphDb, plugin_name: &str, plugin_path: &str) {
+    use orqa_graph::EnforcementRuleSource;
+    use orqa_plugin::manifest::read_manifest;
+
+    let plugin_dir = std::path::Path::new(plugin_path);
+    let manifest = match read_manifest(plugin_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] failed to read manifest for enforcement rule ingest");
+            return;
+        }
+    };
+
+    if manifest.enforcement.is_empty() {
+        return;
+    }
+
+    // Convert manifest enforcement declarations to the sync module's minimal type.
+    let sources: Vec<EnforcementRuleSource> = manifest
+        .enforcement
+        .iter()
+        .map(|decl| EnforcementRuleSource {
+            rules_path: decl.rules_path.clone(),
+        })
+        .collect();
+
+    match orqa_graph::upsert_enforcement_rules_from_plugin(db, plugin_name, plugin_dir, &sources)
+        .await
+    {
+        Ok(count) => {
+            tracing::info!(plugin = %plugin_name, count, "[plugins] enforcement rules ingested");
+        }
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] enforcement rule ingest failed");
+        }
+    }
 }

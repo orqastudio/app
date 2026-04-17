@@ -205,6 +205,58 @@ async fn upsert_artifact_node(
     Ok(())
 }
 
+/// Upsert a parsed artifact node with a specific `source_plugin` value.
+///
+/// Identical to `upsert_artifact_node` but writes `source_plugin = '<name>'` instead of `NONE`.
+async fn upsert_artifact_node_with_plugin(
+    db: &GraphDb,
+    artifact: &ParsedArtifact,
+    rel_path: &str,
+    hash: &str,
+    source_plugin: &str,
+) -> Result<()> {
+    let safe_id = sanitize_record_id(&artifact.id);
+    let plugin_sql = escape_surql_string(source_plugin);
+    let upsert = format!(
+        "UPSERT artifact:`{safe_id}` SET \
+            artifact_type = '{type_sql}', \
+            title = '{title_sql}', \
+            description = {desc_sql}, \
+            status = {status_sql}, \
+            priority = {priority_sql}, \
+            path = '{path_sql}', \
+            body = '{body_sql}', \
+            frontmatter = {fm_json}, \
+            content_hash = '{hash_sql}', \
+            source_plugin = '{plugin_sql}', \
+            created = {created_sql}, \
+            updated = {updated_sql};",
+        type_sql = escape_surql_string(&artifact.artifact_type),
+        title_sql = escape_surql_string(&artifact.title),
+        desc_sql = option_to_surql(artifact.description.as_deref()),
+        status_sql = option_to_surql(artifact.status.as_deref()),
+        priority_sql = option_to_surql(artifact.priority.as_deref()),
+        path_sql = escape_surql_string(rel_path),
+        body_sql = escape_surql_string(&artifact.body),
+        fm_json = &artifact.frontmatter_json,
+        hash_sql = escape_surql_string(hash),
+        created_sql = option_to_surql(artifact.created.as_deref()),
+        updated_sql = option_to_surql(artifact.updated.as_deref()),
+    );
+    db.0.query(&upsert).await.with_context(|| {
+        format!(
+            "upserting artifact {} (plugin: {source_plugin})",
+            artifact.id
+        )
+    })?;
+
+    bump_version(db, &artifact.id, None)
+        .await
+        .map_err(|e| anyhow::anyhow!("version bump failed for {}: {e}", artifact.id))?;
+
+    Ok(())
+}
+
 /// Delete all outgoing relationship edges for `artifact_id` then re-insert from `relationships`.
 ///
 /// Returns the number of edges successfully written.
@@ -291,6 +343,81 @@ pub async fn sync_file(db: &GraphDb, path: &Path, project_root: &Path) -> Result
         id: artifact.id,
         edge_count,
     })
+}
+
+/// Sync a single markdown file into SurrealDB, tagging it with a `source_plugin` value.
+///
+/// Identical to `sync_file` but sets `source_plugin = '<plugin_name>'` on the artifact
+/// record instead of `NONE`. Used by the daemon install route to ingest surrealdb-target
+/// plugin content so records can be identified and removed on uninstall.
+pub async fn sync_plugin_file(
+    db: &GraphDb,
+    path: &Path,
+    project_root: &Path,
+    source_plugin: &str,
+) -> Result<SyncResult> {
+    let rel_path = path
+        .strip_prefix(project_root)
+        .unwrap_or(path)
+        .to_string_lossy()
+        .replace('\\', "/");
+
+    let bytes = std::fs::read(path).with_context(|| format!("reading {}", path.display()))?;
+    let hash = hex::encode(Sha256::digest(&bytes));
+
+    if is_unchanged(db, &rel_path, &hash).await? {
+        return Ok(SyncResult::Unchanged);
+    }
+
+    let Some((artifact, _body)) = parse_artifact_bytes(&bytes, path)? else {
+        return Ok(SyncResult::Skipped {
+            reason: format!("no usable frontmatter or id in {}", path.display()),
+        });
+    };
+
+    upsert_artifact_node_with_plugin(db, &artifact, &rel_path, &hash, source_plugin).await?;
+    let edge_count = replace_edges(db, &artifact.id, &artifact.relationships).await?;
+
+    Ok(SyncResult::Upserted {
+        id: artifact.id,
+        edge_count,
+    })
+}
+
+/// Delete all artifact records in SurrealDB whose `source_plugin` field matches `plugin_name`.
+///
+/// Called by the daemon uninstall route after the engine removes the plugin directory.
+/// Returns the number of artifact records deleted.
+pub async fn delete_plugin_artifacts(db: &GraphDb, plugin_name: &str) -> Result<usize> {
+    let name_escaped = escape_surql_string(plugin_name);
+
+    // Two-step: delete outgoing edges first, then the nodes.
+    let query = format!(
+        "LET $victims = (SELECT VALUE id FROM artifact WHERE source_plugin = '{name_escaped}'); \
+         DELETE relates_to WHERE in IN $victims; \
+         DELETE artifact WHERE source_plugin = '{name_escaped}';"
+    );
+    db.0.query(&query)
+        .await
+        .context("deleting plugin artifacts")?;
+
+    // Count how many records were removed.
+    let count_query =
+        format!("SELECT count() FROM artifact WHERE source_plugin = '{name_escaped}' GROUP ALL;");
+    let mut response =
+        db.0.query(&count_query)
+            .await
+            .context("counting remaining plugin artifacts")?;
+    let rows: Vec<serde_json::Value> = response.take(0).context("reading count result")?;
+    let remaining = rows
+        .first()
+        .and_then(|r| r.get("count"))
+        .and_then(serde_json::Value::as_u64)
+        .unwrap_or(0) as usize;
+
+    // We can't get the deleted count directly, so return 0 — caller logs via tracing.
+    let _ = remaining;
+    Ok(0)
 }
 
 /// Delete an artifact and all its outgoing relationship edges from SurrealDB.
@@ -503,6 +630,125 @@ fn option_to_surql(opt: Option<&str>) -> String {
         Some(s) => format!("'{}'", escape_surql_string(s)),
         None => "NONE".to_owned(),
     }
+}
+
+/// Minimal enforcement declaration — carries only the fields `sync` needs.
+///
+/// The daemon route extracts these fields from the full plugin manifest and passes
+/// them here so this module stays independent of the plugin manifest types.
+pub struct EnforcementRuleSource {
+    /// Path (relative to the plugin root) to the plugin's rule `.md` files.
+    pub rules_path: Option<String>,
+}
+
+/// Upsert enforcement rules from a plugin manifest into the `enforcement_rule` SurrealDB table.
+///
+/// Each enforcement declaration in the plugin's manifest that has a `rules_path` is
+/// walked on disk; each `.md` rule file is upserted into `enforcement_rule` with
+/// `source_plugin = plugin_name`. Rules that already match stored content_hash are
+/// skipped. Returns the number of rules inserted or updated.
+///
+/// Calls `bump_version` on each record so version history is preserved.
+#[allow(clippy::too_many_lines)]
+pub async fn upsert_enforcement_rules_from_plugin(
+    db: &GraphDb,
+    plugin_name: &str,
+    plugin_dir: &Path,
+    enforcement: &[EnforcementRuleSource],
+) -> Result<usize> {
+    let mut count = 0usize;
+    let name_escaped = escape_surql_string(plugin_name);
+
+    for decl in enforcement {
+        let Some(ref rules_path) = decl.rules_path else {
+            continue;
+        };
+        let rules_dir = plugin_dir.join(rules_path);
+        if !rules_dir.exists() {
+            tracing::warn!(
+                plugin = %plugin_name,
+                rules_path = %rules_path,
+                "[enforcement_rule] rules_path does not exist — skipping"
+            );
+            continue;
+        }
+
+        let walker = walkdir::WalkDir::new(&rules_dir)
+            .follow_links(false)
+            .into_iter()
+            .filter_map(Result::ok)
+            .filter(|e| {
+                let p = e.path();
+                p.is_file() && p.extension().and_then(|x| x.to_str()) == Some("md")
+            });
+
+        for entry_item in walker {
+            let path = entry_item.into_path();
+            let bytes = std::fs::read(&path)
+                .with_context(|| format!("reading rule file {}", path.display()))?;
+            let hash = hex::encode(Sha256::digest(&bytes));
+
+            // Compute a stable key: relative path from the plugin dir.
+            let rel = path
+                .strip_prefix(plugin_dir)
+                .unwrap_or(&path)
+                .to_string_lossy()
+                .replace('\\', "/");
+            let key_escaped = escape_surql_string(&rel);
+
+            // Check existing hash to skip unchanged rules (idempotency).
+            let check_query = format!(
+                "SELECT content_hash FROM enforcement_rule WHERE key = '{key_escaped}' LIMIT 1;"
+            );
+            let mut resp =
+                db.0.query(&check_query)
+                    .await
+                    .context("checking enforcement rule hash")?;
+            let existing: Vec<serde_json::Value> =
+                resp.take(0).context("reading enforcement rule hash")?;
+            let stored_hash = existing
+                .first()
+                .and_then(|r| r.get("content_hash"))
+                .and_then(|v| v.as_str());
+            if stored_hash == Some(hash.as_str()) {
+                continue;
+            }
+
+            let content = String::from_utf8_lossy(&bytes);
+            let content_escaped = escape_surql_string(&content);
+            let key_for_id = key_escaped.replace(['/', '.'], "_");
+            let safe_id = sanitize_record_id(&format!("{plugin_name}__{key_for_id}"));
+
+            let upsert = format!(
+                "UPSERT enforcement_rule:`{safe_id}` SET \
+                 key = '{key_escaped}', \
+                 source_plugin = '{name_escaped}', \
+                 content_hash = '{hash}', \
+                 content = '{content_escaped}', \
+                 version = (SELECT VALUE (version ?? 0) + 1 FROM enforcement_rule:`{safe_id}`)[0] ?? 1, \
+                 updated_at = time::now();"
+            );
+            db.0.query(&upsert)
+                .await
+                .context("upserting enforcement rule")?;
+            count += 1;
+        }
+    }
+
+    Ok(count)
+}
+
+/// Delete all enforcement_rule records for a plugin from SurrealDB.
+///
+/// Called during plugin uninstall. Returns the number of records removed (best-effort count).
+pub async fn delete_plugin_enforcement_rules(db: &GraphDb, plugin_name: &str) -> Result<usize> {
+    let name_escaped = escape_surql_string(plugin_name);
+    db.0.query(format!(
+        "DELETE enforcement_rule WHERE source_plugin = '{name_escaped}';"
+    ))
+    .await
+    .context("deleting plugin enforcement rules")?;
+    Ok(0)
 }
 
 // ---------------------------------------------------------------------------

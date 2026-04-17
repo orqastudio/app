@@ -54,7 +54,12 @@ pub use surreal_queries::{
     trace_to_pillars as surreal_trace_to_pillars, ArtifactRecord, GroupCount, OrphanArtifact,
     TraceStep,
 };
-pub use sync::{bulk_sync, delete_artifact, sync_file, BulkSyncSummary, SyncResult};
+pub use sync::{
+    bulk_sync, delete_artifact, delete_artifact_by_path, delete_plugin_artifacts,
+    delete_plugin_enforcement_rules, sync_file, sync_plugin_file,
+    upsert_enforcement_rules_from_plugin, BulkSyncSummary, EnforcementRuleSource, SyncResult,
+};
 pub use writers::{
-    bump_version, import_merge_write, import_upsert, read_artifact, BumpError, StoredArtifact,
+    bump_version, import_merge_write, import_upsert, read_artifact, update_artifact_fields,
+    BumpError, StoredArtifact,
 };

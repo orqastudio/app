@@ -31,6 +31,31 @@ pub fn fixture_dir() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/minimal-project")
 }
 
+/// Build a full axum Router with SurrealDB absent — `db: None` in GraphState.
+///
+/// Used to test that routes requiring SurrealDB return 503 rather than silently
+/// degrading to a disk-write fallback. The fixture graph is loaded into the
+/// HashMap (so artifact IDs are resolvable) but no SurrealDB handle is injected.
+pub async fn build_app_router_without_surrealdb() -> Router {
+    use orqa_daemon_lib::graph_state::GraphState;
+    use orqa_daemon_lib::health::HealthState;
+
+    let root = fixture_dir();
+    // Load fixture artifacts into the in-memory HashMap graph — no SurrealDB.
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
+
+    // Discard any SurrealDB handle that build() may have opened so the guard
+    // sees db: None and the PUT handler returns 503.
+    if let Ok(mut guard) = graph_state.0.write() {
+        guard.db = None;
+    }
+
+    let state = HealthState::for_test(graph_state, None);
+    orqa_daemon_lib::build_router(state)
+}
+
 /// Build a full axum Router using real route handlers from `orqa_daemon_lib`,
 /// backed by a minimal `HealthState` constructed from fixture data.
 ///
@@ -112,12 +137,17 @@ pub async fn build_full_router() -> (Router, tempfile::NamedTempFile) {
 }
 
 fn plugin_router(state: orqa_daemon_lib::graph_state::GraphState) -> Router {
+    use axum::routing::post;
     Router::new()
         .route("/", get(orqa_daemon_lib::routes::plugins::list_plugins))
         .route("/{name}", get(orqa_daemon_lib::routes::plugins::get_plugin))
         .route(
             "/{name}/path",
             get(orqa_daemon_lib::routes::plugins::get_plugin_path),
+        )
+        .route(
+            "/install/local",
+            post(orqa_daemon_lib::routes::plugins::install_plugin_local),
         )
         .with_state(state)
 }

@@ -1,7 +1,8 @@
 // Artifact routes: CRUD and graph queries against the cached artifact graph.
 //
-// All handlers read from the shared GraphState. PUT /artifacts/:id modifies
-// the file on disk and then triggers a graph reload. Other write operations
+// All handlers read from the shared GraphState. PUT /artifacts/:id writes to
+// SurrealDB (authoritative) and refreshes the in-memory HashMap from the
+// stored record. No disk writes occur on the PUT path. Other write operations
 // (POST, DELETE) are deferred to a later task.
 //
 // Endpoints:
@@ -24,7 +25,7 @@ use orqa_engine_types::types::artifact::NavTree;
 use orqa_graph::surreal_queries::{
     list_artifacts as surreal_list, search_artifacts as surreal_search,
 };
-use orqa_validation::auto_fix::update_artifact_field;
+use orqa_graph::writers::update_artifact_fields;
 use orqa_validation::metrics::compute_traceability;
 use orqa_validation::PipelineCategories;
 use orqa_validation::{ArtifactNode, TraceabilityResult};
@@ -292,50 +293,98 @@ pub async fn get_artifact_content(
     Ok(Json(ContentResponse { content }))
 }
 
-/// Handle PUT /artifacts/:id — update a single frontmatter field and reload graph.
+/// Refresh a single node in the in-memory HashMap from a SurrealDB record.
 ///
-/// Calls `update_artifact_field` from the validation crate to write the change to
-/// disk. After the write, triggers a graph reload so subsequent requests see the
-/// updated state. Both the disk write and the reload are wrapped in `spawn_blocking`
-/// because they perform synchronous I/O and must not block the tokio thread pool.
-#[allow(clippy::too_many_lines)]
+/// Called after a SurrealDB write to avoid a full graph reload. Does nothing
+/// if the artifact is not found in the graph or if the state lock is poisoned.
+fn refresh_node_in_state(
+    state: &GraphState,
+    id: &str,
+    field: &str,
+    value_str: &str,
+    frontmatter: serde_json::Value,
+) {
+    let Ok(mut guard) = state.0.write() else {
+        return;
+    };
+
+    let map_key = if guard.graph.nodes.contains_key(id) {
+        Some(id.to_owned())
+    } else {
+        guard
+            .graph
+            .nodes
+            .iter()
+            .find(|(_, n)| n.id == id)
+            .map(|(k, _)| k.clone())
+    };
+
+    let Some(key) = map_key else { return };
+    let Some(node) = guard.graph.nodes.get_mut(&key) else {
+        return;
+    };
+
+    match field {
+        "status" => node.status = Some(value_str.to_owned()),
+        "title" => node.title.clone_from(&value_str.to_owned()),
+        "description" => node.description = Some(value_str.to_owned()),
+        "priority" => node.priority = Some(value_str.to_owned()),
+        _ => {}
+    }
+    node.frontmatter = frontmatter;
+}
+
+/// Handle PUT /artifacts/:id — update a single frontmatter field in SurrealDB.
+///
+/// SurrealDB is the authoritative write target. Returns 503 if SurrealDB is
+/// unavailable — there is no silent fallback to a disk write. After the write,
+/// the in-memory HashMap entry is refreshed from the SurrealDB record so
+/// subsequent requests see the updated state without a full disk reload.
 pub async fn update_artifact(
     State(state): State<GraphState>,
     Path(id): Path<String>,
     Json(req): Json<UpdateArtifactRequest>,
 ) -> Result<Json<UpdateArtifactResponse>, (StatusCode, Json<serde_json::Value>)> {
-    let (file_path, project_root) = {
+    // Verify the artifact exists in the HashMap and get its node ID.
+    {
         let guard = state.0.read().map_err(|_| {
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
             )
         })?;
-        let node = guard.graph.nodes.get(&id)
+        guard
+            .graph
+            .nodes
+            .get(&id)
             .or_else(|| guard.graph.nodes.values().find(|n| n.id == id))
-            .cloned()
-            .ok_or_else(|| (
-                StatusCode::NOT_FOUND,
-                Json(serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" })),
-            ))?;
-        let file_path = guard.project_root.join(&node.path);
-        (file_path, guard.project_root.clone())
-    };
+            .ok_or_else(|| {
+                (
+                    StatusCode::NOT_FOUND,
+                    Json(serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" })),
+                )
+            })?;
+    }
+
+    // Require SurrealDB — no silent fallback to disk write.
+    let db = state.surreal_db().ok_or_else(|| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "error": "SurrealDB unavailable — PUT requires a live database connection",
+                "code": "DB_UNAVAILABLE"
+            })),
+        )
+    })?;
 
     let value_str = match &req.value {
         serde_json::Value::String(s) => s.clone(),
         other => other.to_string(),
     };
 
-    let field = req.field.clone();
-    tokio::task::spawn_blocking(move || update_artifact_field(&file_path, &field, &value_str))
+    // Write the field update to SurrealDB; version and updated_at are bumped atomically.
+    update_artifact_fields(&db, &id, &req.field, &value_str)
         .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-            )
-        })?
         .map_err(|e| {
             (
                 StatusCode::UNPROCESSABLE_ENTITY,
@@ -343,18 +392,10 @@ pub async fn update_artifact(
             )
         })?;
 
-    // Reload the graph so subsequent requests see the updated state.
-    // Wrapped in spawn_blocking because reload() does a full directory scan.
-    let state_clone = state.clone();
-    let root_clone = project_root.clone();
-    tokio::task::spawn_blocking(move || state_clone.reload(&root_clone))
-        .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({ "error": e.to_string(), "code": "TASK_PANIC" })),
-            )
-        })?;
+    // Refresh the HashMap entry from the SurrealDB record (no disk read).
+    if let Ok(Some(stored)) = orqa_graph::writers::read_artifact(&db, &id).await {
+        refresh_node_in_state(&state, &id, &req.field, &value_str, stored.frontmatter);
+    }
 
     Ok(Json(UpdateArtifactResponse {
         id,

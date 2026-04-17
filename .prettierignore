@@ -18,3 +18,9 @@ src-tauri/
 # Lock files
 package-lock.json
 pnpm-lock.yaml
+
+# Plugin manifests — structured data written by the migration script.
+# Authored convention is 2-space indent; prettier's useTabs=true does not apply.
+plugins/**/orqa-plugin.json
+connectors/**/orqa-plugin.json
+daemon/tests/fixtures/**/orqa-plugin.json

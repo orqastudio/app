@@ -181,6 +181,7 @@ mod tests {
                 stage_slot: stage_slot.map(String::from),
                 affects_schema: false,
             },
+            content: std::collections::HashMap::new(),
         }
     }
 

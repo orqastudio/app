@@ -32,9 +32,13 @@ use notify_debouncer_full::{new_debouncer, DebounceEventResult, Debouncer, Recom
 use tokio::runtime::Handle;
 use tracing::{debug, info, warn};
 
+use orqa_engine::plugin::content::install_runtime_content;
 use orqa_engine::plugin::discovery::scan_plugins;
 use orqa_engine::plugin::manifest::read_manifest;
-use orqa_graph::sync::{delete_artifact_by_path, sync_file, SyncResult};
+use orqa_graph::sync::{
+    delete_artifact_by_path, sync_file, upsert_enforcement_rules_from_plugin,
+    EnforcementRuleSource, SyncResult,
+};
 
 use crate::graph_state::GraphState;
 use crate::routes::watcher::WatcherControl;
@@ -457,6 +461,11 @@ fn handle_events(
 
             if plugins_changed {
                 reload_plugins(root);
+                // Re-copy runtime entries and re-ingest surrealdb entries for
+                // all installed plugins so source edits are reflected immediately.
+                if let Some(db) = graph_state.surreal_db() {
+                    resync_all_plugin_content(root, &db, tokio_handle);
+                }
                 // Plugin manifests affect the validation context — also reload
                 // graph (which also reloads enforcement rules, since they
                 // travel together).
@@ -700,6 +709,120 @@ fn reload_plugins(root: &Path) {
         "[watcher] plugins reloaded ({} plugins discovered)",
         plugins.len()
     );
+}
+
+/// Re-copy runtime content and re-ingest surrealdb content for all installed plugins.
+///
+/// Called when any file under the monorepo `plugins/` source directory changes.
+/// Both copy and ingest operations are idempotent (content-hash dedup) so re-running
+/// them on every source edit is safe. Errors are logged and never propagate.
+#[allow(clippy::too_many_lines)]
+fn resync_all_plugin_content(root: &Path, db: &orqa_graph::GraphDb, tokio_handle: &Handle) {
+    let plugins = scan_plugins(root);
+    for plugin in &plugins {
+        let plugin_dir = PathBuf::from(&plugin.path);
+        let manifest = match read_manifest(&plugin_dir) {
+            Ok(m) => m,
+            Err(e) => {
+                warn!(
+                    subsystem = "watcher",
+                    plugin = %plugin.name,
+                    error = %e,
+                    "[watcher] failed to read manifest for plugin content resync — skipping"
+                );
+                continue;
+            }
+        };
+
+        // Re-copy runtime entries.
+        if let Err(e) = install_runtime_content(&plugin_dir, root, &manifest.content) {
+            warn!(
+                subsystem = "watcher",
+                plugin = %plugin.name,
+                error = %e,
+                "[watcher] runtime content re-copy failed"
+            );
+        }
+
+        // Re-ingest surrealdb entries and enforcement rules.
+        let sources: Vec<EnforcementRuleSource> = manifest
+            .enforcement
+            .iter()
+            .map(|d| EnforcementRuleSource {
+                rules_path: d.rules_path.clone(),
+            })
+            .collect();
+
+        // Walk surrealdb-target content entries and re-ingest changed .md files.
+        for (key, entry) in &manifest.content {
+            if entry.target != orqa_engine::plugin::manifest::ContentTarget::Surrealdb {
+                continue;
+            }
+            let src_dir = plugin_dir.join(&entry.source);
+            if !src_dir.exists() {
+                debug!(
+                    subsystem = "watcher",
+                    plugin = %plugin.name,
+                    key = %key,
+                    "[watcher] surrealdb content source dir not found — skipping"
+                );
+                continue;
+            }
+            let db_clone = db.clone();
+            let plugin_name = plugin.name.clone();
+            let root_owned = root.to_path_buf();
+            let src_dir_owned = src_dir.clone();
+            tokio_handle.block_on(async move {
+                let walker = walkdir::WalkDir::new(&src_dir_owned)
+                    .follow_links(false)
+                    .into_iter()
+                    .filter_map(Result::ok)
+                    .filter(|e| {
+                        let p = e.path();
+                        p.is_file() && p.extension().and_then(|x| x.to_str()) == Some("md")
+                    });
+                for entry_item in walker {
+                    let path = entry_item.into_path();
+                    if let Err(e) =
+                        orqa_graph::sync_plugin_file(&db_clone, &path, &root_owned, &plugin_name)
+                            .await
+                    {
+                        warn!(
+                            subsystem = "watcher",
+                            plugin = %plugin_name,
+                            path = %path.display(),
+                            error = %e,
+                            "[watcher] surrealdb content re-ingest failed"
+                        );
+                    }
+                }
+            });
+        }
+
+        // Re-upsert enforcement rules.
+        if !sources.is_empty() {
+            let db_clone = db.clone();
+            let plugin_name = plugin.name.clone();
+            let plugin_dir_owned = plugin_dir.clone();
+            tokio_handle.block_on(async move {
+                if let Err(e) = upsert_enforcement_rules_from_plugin(
+                    &db_clone,
+                    &plugin_name,
+                    &plugin_dir_owned,
+                    &sources,
+                )
+                .await
+                {
+                    warn!(
+                        subsystem = "watcher",
+                        plugin = %plugin_name,
+                        error = %e,
+                        "[watcher] enforcement rule re-ingest failed"
+                    );
+                }
+            });
+        }
+    }
 }
 
 /// Return `true` if any path component of `path` is an ignored directory.

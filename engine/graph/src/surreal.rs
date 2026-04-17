@@ -60,6 +60,18 @@ DEFINE FIELD IF NOT EXISTS relation_type ON relates_to TYPE string;
 DEFINE FIELD IF NOT EXISTS field ON relates_to TYPE string DEFAULT 'relationships';
 
 DEFINE INDEX IF NOT EXISTS idx_relates_type ON relates_to FIELDS relation_type;
+
+-- Enforcement rule table — plugin-installed rule files tagged with source_plugin
+DEFINE TABLE IF NOT EXISTS enforcement_rule SCHEMAFULL;
+DEFINE FIELD IF NOT EXISTS key ON enforcement_rule TYPE string;
+DEFINE FIELD IF NOT EXISTS source_plugin ON enforcement_rule TYPE option<string>;
+DEFINE FIELD IF NOT EXISTS content_hash ON enforcement_rule TYPE option<string>;
+DEFINE FIELD IF NOT EXISTS content ON enforcement_rule TYPE option<string>;
+DEFINE FIELD IF NOT EXISTS version ON enforcement_rule TYPE int DEFAULT 1;
+DEFINE FIELD IF NOT EXISTS updated_at ON enforcement_rule TYPE datetime DEFAULT time::now();
+
+DEFINE INDEX IF NOT EXISTS idx_enforcement_rule_key ON enforcement_rule FIELDS key UNIQUE;
+DEFINE INDEX IF NOT EXISTS idx_enforcement_rule_plugin ON enforcement_rule FIELDS source_plugin;
 ";
 
 /// Opens an embedded SurrealKV database at the given filesystem path.

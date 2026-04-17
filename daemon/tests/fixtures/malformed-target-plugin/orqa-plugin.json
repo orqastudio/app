@@ -1,0 +1,20 @@
+{
+  "name": "@orqastudio/test-malformed-target",
+  "version": "0.0.1",
+  "displayName": "Malformed Target Test Plugin",
+  "description": "Fixture plugin with an invalid content target value for rejection testing.",
+  "categories": ["domain-knowledge"],
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": []
+  },
+  "content": {
+    "docs": {
+      "source": "documentation",
+      "installPath": ".orqa/documentation",
+      "target": "wrong-enum"
+    }
+  }
+}

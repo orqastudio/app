@@ -12,7 +12,8 @@
   "content": {
     "knowledge": {
       "source": "knowledge",
-      "target": ".orqa/documentation/connector"
+      "installPath": ".orqa/documentation/connector",
+      "target": "surrealdb"
     }
   },
   "dependencies": {

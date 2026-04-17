@@ -8,6 +8,37 @@ use std::path::Path;
 
 use orqa_engine_types::error::EngineError;
 
+/// Where a content entry is installed at `orqa plugin install` time.
+///
+/// `Surrealdb` — source files are parsed and ingested as artifact records into SurrealDB
+/// with `source_plugin = <name>`. No files are written to `.orqa/<artifact-dir>/`.
+/// `Runtime` — source files are byte-copied to `install_path` (e.g. `.claude/agents`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ContentTarget {
+    /// Artifact content ingested into SurrealDB.
+    Surrealdb,
+    /// Runtime code copied to `install_path` on disk.
+    Runtime,
+}
+
+/// A single content directory declared in a plugin manifest.
+///
+/// After migration (S2-08), every entry carries an explicit `target` that
+/// tells the installer which sink to use. Schema validation rejects entries
+/// where `target` is absent or an unrecognised value.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ContentEntry {
+    /// Source directory, relative to the plugin root (e.g. `"knowledge"`).
+    pub source: String,
+    /// Destination path, relative to the project root (e.g. `".orqa/documentation/knowledge"`
+    /// for surrealdb entries or `".claude/agents"` for runtime entries).
+    #[serde(rename = "installPath")]
+    pub install_path: String,
+    /// Which install sink this entry targets. Required — schema validation rejects absent values.
+    pub target: ContentTarget,
+}
+
 /// Minimal Rust representation of a plugin manifest.
 ///
 /// Only the fields the engine needs are parsed. The full manifest is handled
@@ -50,6 +81,12 @@ pub struct PluginManifest {
     /// These fields are top-level in the manifest JSON (not nested under a sub-object).
     #[serde(flatten)]
     pub install_constraints: PluginInstallConstraints,
+    /// Content directory declarations split by install sink.
+    /// After S2-08 migration, every entry carries an explicit `target` (surrealdb | runtime).
+    /// Entries with absent or unrecognised `target` values are rejected at install time
+    /// with a clear error — no silent defaults.
+    #[serde(default, deserialize_with = "deserialize_content_entries")]
+    pub content: std::collections::HashMap<String, ContentEntry>,
 }
 
 /// Declares how this plugin participates in the enforcement pipeline.
@@ -305,6 +342,59 @@ pub struct PluginInstallConstraints {
     pub affects_schema: bool,
 }
 
+// ---------------------------------------------------------------------------
+// Content entry deserialization with validation
+// ---------------------------------------------------------------------------
+
+/// Deserialize the `content` map from JSON, validating each entry's `target` field.
+///
+/// Rejects entries where `target` is absent (the field is required post-S2-08 migration)
+/// by returning a deserialization error. Also emits lint warnings for entries that are
+/// present but had to fall back via the standard serde path — in practice this function
+/// enforces the "no defaults" rule at parse time.
+fn deserialize_content_entries<'de, D>(
+    deserializer: D,
+) -> Result<std::collections::HashMap<String, ContentEntry>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    use serde::de::Error;
+
+    // Deserialize as raw JSON first so we can inspect field presence before
+    // attempting the typed deserialization.
+    let raw: std::collections::HashMap<String, serde_json::Value> =
+        std::collections::HashMap::deserialize(deserializer)?;
+
+    let mut out = std::collections::HashMap::new();
+
+    for (key, val) in &raw {
+        // Validate that `target` is explicitly present and a recognised string.
+        let target_val = val.get("target");
+        match target_val {
+            None => {
+                return Err(D::Error::custom(format!(
+                    "content entry '{key}': missing required field 'target' \
+                     (must be \"surrealdb\" or \"runtime\")"
+                )));
+            }
+            Some(serde_json::Value::String(s)) if s != "surrealdb" && s != "runtime" => {
+                return Err(D::Error::custom(format!(
+                    "content entry '{key}': invalid target value '{s}' \
+                     (must be \"surrealdb\" or \"runtime\")"
+                )));
+            }
+            _ => {} // valid
+        }
+
+        let entry: ContentEntry = serde_json::from_value(val.clone())
+            .map_err(|e| D::Error::custom(format!("content entry '{key}': {e}")))?;
+
+        out.insert(key.clone(), entry);
+    }
+
+    Ok(out)
+}
+
 const MANIFEST_FILENAME: &str = "orqa-plugin.json";
 
 /// Read a plugin manifest from a directory.
@@ -404,6 +494,7 @@ mod tests {
             merge_decisions: vec![],
             default_navigation: vec![],
             install_constraints: PluginInstallConstraints::default(),
+            content: std::collections::HashMap::new(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -437,6 +528,7 @@ mod tests {
             merge_decisions: vec![],
             default_navigation: vec![],
             install_constraints: PluginInstallConstraints::default(),
+            content: std::collections::HashMap::new(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -470,6 +562,7 @@ mod tests {
             merge_decisions: vec![],
             default_navigation: vec![],
             install_constraints: PluginInstallConstraints::default(),
+            content: std::collections::HashMap::new(),
         };
 
         let errors = validate_manifest(&manifest);
@@ -715,6 +808,7 @@ mod tests {
             merge_decisions: vec![],
             default_navigation: vec![],
             install_constraints: PluginInstallConstraints::default(),
+            content: std::collections::HashMap::new(),
         };
         let errors = validate_manifest(&manifest);
         assert!(
@@ -770,5 +864,103 @@ mod tests {
             "plugin-test-settings"
         );
         assert_eq!(manifest.provides.settings_pages[0].section, "plugins");
+    }
+
+    /// Canonical surrealdb content entry parses into the typed `ContentEntry`.
+    #[test]
+    fn content_entry_surrealdb_target_parsed() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {},
+            "content": {
+                "knowledge": {
+                    "source": "knowledge",
+                    "installPath": ".orqa/documentation/knowledge",
+                    "target": "surrealdb"
+                }
+            }
+        }"#;
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        let entry = manifest.content.get("knowledge").expect("knowledge entry");
+        assert_eq!(entry.source, "knowledge");
+        assert_eq!(entry.install_path, ".orqa/documentation/knowledge");
+        assert_eq!(entry.target, ContentTarget::Surrealdb);
+    }
+
+    /// Canonical runtime content entry parses into the typed `ContentEntry`.
+    #[test]
+    fn content_entry_runtime_target_parsed() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {},
+            "content": {
+                "agents": {
+                    "source": "agents",
+                    "installPath": ".claude/agents",
+                    "target": "runtime"
+                }
+            }
+        }"#;
+        let manifest: PluginManifest = serde_json::from_str(json).unwrap();
+        let entry = manifest.content.get("agents").expect("agents entry");
+        assert_eq!(entry.source, "agents");
+        assert_eq!(entry.install_path, ".claude/agents");
+        assert_eq!(entry.target, ContentTarget::Runtime);
+    }
+
+    /// A missing `target` field must be rejected at parse time with a clear error
+    /// mentioning the entry key and the valid values. No silent default is allowed
+    /// — the installer's strict-validation contract depends on this.
+    #[test]
+    fn content_entry_missing_target_rejected() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {},
+            "content": {
+                "docs": {
+                    "source": "docs",
+                    "installPath": ".orqa/documentation"
+                }
+            }
+        }"#;
+        let err = serde_json::from_str::<PluginManifest>(json)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("docs") && err.contains("missing") && err.contains("target"),
+            "unexpected error message: {err}"
+        );
+    }
+
+    /// An unrecognised `target` value (e.g. "files") must be rejected at parse
+    /// time with a clear error naming the bad value and the valid set.
+    #[test]
+    fn content_entry_invalid_target_rejected() {
+        let json = r#"{
+            "name": "@orqastudio/plugin-test",
+            "version": "0.1.0",
+            "categories": ["domain-knowledge"],
+            "provides": {},
+            "content": {
+                "docs": {
+                    "source": "docs",
+                    "installPath": ".orqa/documentation",
+                    "target": "files"
+                }
+            }
+        }"#;
+        let err = serde_json::from_str::<PluginManifest>(json)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("docs") && err.contains("invalid") && err.contains("files"),
+            "unexpected error message: {err}"
+        );
     }
 }

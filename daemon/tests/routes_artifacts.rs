@@ -311,8 +311,7 @@ async fn get_artifact_tree_returns_200_non_empty() {
 ///
 /// Uses `description` as the field under test because changing it is idempotent
 /// and does not affect other tests (each test builds its own router with an
-/// independent GraphState snapshot; the file write will persist to disk but
-/// tests do not rely on fixture file content being unchanged between runs).
+/// independent GraphState snapshot backed by an in-memory SurrealDB).
 #[tokio::test]
 async fn update_artifact_returns_200_with_updated_field() {
     let router = helpers::build_app_router().await;
@@ -334,4 +333,36 @@ async fn update_artifact_returns_200_with_updated_field() {
     assert_eq!(json["id"], "EPIC-test001");
     assert_eq!(json["field"], "description");
     assert_eq!(json["new_value"], "Updated by integration test");
+}
+
+/// PUT /artifacts/:id returns 503 when SurrealDB is unavailable.
+///
+/// The artifact must exist in the HashMap (so 404 is not the reason) but
+/// the SurrealDB handle must be absent. The PUT handler must return 503
+/// and must NOT silently fall back to a disk write.
+#[tokio::test]
+async fn update_artifact_returns_503_when_surrealdb_unavailable() {
+    let router = helpers::build_app_router_without_surrealdb().await;
+    let request = Request::builder()
+        .method("PUT")
+        .uri("/artifacts/EPIC-test001")
+        .header("content-type", "application/json")
+        .body(Body::from(
+            r#"{"field":"description","value":"Should fail with 503"}"#,
+        ))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    assert_eq!(
+        response.status(),
+        StatusCode::SERVICE_UNAVAILABLE,
+        "PUT must return 503 when SurrealDB is unavailable, not silently succeed"
+    );
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(
+        json["code"], "DB_UNAVAILABLE",
+        "error code must be DB_UNAVAILABLE"
+    );
 }
