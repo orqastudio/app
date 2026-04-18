@@ -402,6 +402,275 @@ pub async fn import_merge_write(
 }
 
 // ---------------------------------------------------------------------------
+// Plugin installation ledger
+// ---------------------------------------------------------------------------
+
+/// Install status for a plugin_installation SurrealDB record.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum PluginInstallStatus {
+    /// Installation is in progress — filesystem write completed, SurrealDB ingest not yet done.
+    Installing,
+    /// Plugin is fully installed with all SurrealDB content ingested.
+    Installed,
+    /// Installation failed during ingest — filesystem may be present but SurrealDB content is incomplete.
+    Failed,
+}
+
+impl PluginInstallStatus {
+    /// Returns the lowercase string representation for SurrealQL literals.
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Installing => "installing",
+            Self::Installed => "installed",
+            Self::Failed => "failed",
+        }
+    }
+}
+
+impl std::fmt::Display for PluginInstallStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+/// A single file tracked in a `plugin_installation` record.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PluginFileEntry {
+    /// Path to the file, relative to project root.
+    pub path: String,
+    /// SHA-256 hash of the file at the source (plugin) location.
+    pub source_hash: String,
+    /// SHA-256 hash of the file as installed (copied) to the project.
+    pub installed_hash: String,
+    /// Install target: `"surrealdb"` or `"runtime"`.
+    pub target: String,
+    /// SurrealDB artifact record ID, if this file was ingested as an artifact.
+    /// Serialized without the key when None so SCHEMAFULL `option<string>` accepts the field.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub artifact_id: Option<String>,
+}
+
+/// Result of a drift check across all non-failed plugin installations.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct PluginDriftReport {
+    /// `true` when all installed files match their source hashes; `false` when any drift exists.
+    pub clean: bool,
+    /// List of plugins that have at least one drifted file.
+    pub drifted_plugins: Vec<DriftedPlugin>,
+}
+
+/// A plugin with one or more drifted files.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DriftedPlugin {
+    /// The plugin package name.
+    pub plugin_name: String,
+    /// Files whose `installed_hash` no longer matches `source_hash`.
+    pub drifted_files: Vec<DriftedFile>,
+}
+
+/// A single drifted file entry.
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+pub struct DriftedFile {
+    /// Path relative to the project root.
+    pub path: String,
+    /// Expected hash from the plugin source.
+    pub source_hash: String,
+    /// Actual hash of the installed file.
+    pub installed_hash: String,
+}
+
+/// Encode a plugin name as a safe SurrealDB record ID segment.
+///
+/// `@` → `AT_`, `/` → `__`, any backtick is stripped. This encoding
+/// is stable so the same plugin name always maps to the same record ID.
+fn plugin_name_to_record_id(plugin_name: &str) -> String {
+    plugin_name
+        .replace('@', "AT_")
+        .replace('/', "__")
+        .replace('`', "")
+}
+
+/// Upsert a plugin_installation record using the record-ID form.
+///
+/// Uses `UPSERT plugin_installation:<id>` so the record is created when absent
+/// and updated when present. The `WHERE` form is not used because SurrealDB 3.x's
+/// `UPSERT ... WHERE` silently no-ops on insert when no match exists.
+pub async fn upsert_plugin_installation(
+    db: &GraphDb,
+    plugin_name: &str,
+    manifest_version: &str,
+    manifest_hash: &str,
+    files: &[PluginFileEntry],
+    status: PluginInstallStatus,
+) -> Result<()> {
+    upsert_plugin_installation_with_timestamp(
+        db,
+        plugin_name,
+        manifest_version,
+        manifest_hash,
+        files,
+        None,
+        status,
+    )
+    .await
+}
+
+/// Upsert a plugin_installation record with an explicit `installed_at` timestamp.
+///
+/// When `installed_at` is `None`, the field is set to `time::now()` so every
+/// install (including re-installs) records a fresh timestamp. Callers that need
+/// to preserve a specific timestamp (e.g. the migrate route porting an existing
+/// manifest.json entry) pass `Some(iso_string)`.
+pub async fn upsert_plugin_installation_with_timestamp(
+    db: &GraphDb,
+    plugin_name: &str,
+    manifest_version: &str,
+    manifest_hash: &str,
+    files: &[PluginFileEntry],
+    installed_at: Option<&str>,
+    status: PluginInstallStatus,
+) -> Result<()> {
+    let record_id = plugin_name_to_record_id(plugin_name);
+    let safe_name = escape_surql_string(plugin_name);
+    let safe_version = escape_surql_string(manifest_version);
+    let safe_hash = escape_surql_string(manifest_hash);
+    let status_str = status.as_str();
+
+    let files_json = serde_json::to_string(files)
+        .with_context(|| format!("serializing files for {plugin_name}"))?;
+
+    let installed_at_expr = match installed_at {
+        Some(ts) => {
+            let safe_ts = escape_surql_string(ts);
+            format!("<datetime>'{safe_ts}'")
+        }
+        None => "time::now()".to_owned(),
+    };
+
+    let query = format!(
+        "UPSERT plugin_installation:`{record_id}` SET \
+            plugin_name = '{safe_name}', \
+            manifest_version = '{safe_version}', \
+            manifest_hash = '{safe_hash}', \
+            files = {files_json}, \
+            install_status = '{status_str}', \
+            installed_at = {installed_at_expr}, \
+            version = (SELECT VALUE (version ?? 0) + 1 FROM plugin_installation:`{record_id}`)[0] ?? 1, \
+            updated_at = time::now();"
+    );
+    db.0.query(&query)
+        .await
+        .with_context(|| format!("upsert_plugin_installation for {plugin_name}"))?;
+    Ok(())
+}
+
+/// Delete a plugin_installation record by plugin name.
+///
+/// Uses the record-ID form for a targeted single-record delete.
+pub async fn delete_plugin_installation(db: &GraphDb, plugin_name: &str) -> Result<()> {
+    let record_id = plugin_name_to_record_id(plugin_name);
+    let query = format!("DELETE plugin_installation:`{record_id}`;");
+    db.0.query(&query)
+        .await
+        .with_context(|| format!("delete_plugin_installation for {plugin_name}"))?;
+    Ok(())
+}
+
+/// Read a single plugin_installation record by plugin name.
+///
+/// Returns `Ok(None)` when no record exists for the given plugin name.
+pub async fn read_plugin_installation(db: &GraphDb, plugin_name: &str) -> Result<Option<Value>> {
+    let record_id = plugin_name_to_record_id(plugin_name);
+    let query = format!("SELECT * FROM plugin_installation:`{record_id}`;");
+    let mut response =
+        db.0.query(&query)
+            .await
+            .with_context(|| format!("read_plugin_installation for {plugin_name}"))?;
+    let rows: Vec<Value> = response
+        .take(0)
+        .with_context(|| format!("reading plugin_installation rows for {plugin_name}"))?;
+    Ok(rows.into_iter().next())
+}
+
+/// List all non-failed plugin_installation records, ordered by plugin name.
+///
+/// Records with `install_status = 'failed'` are excluded. Use
+/// `list_all_plugin_installations` to include failed records.
+pub async fn list_plugin_installations(db: &GraphDb) -> Result<Vec<Value>> {
+    let query =
+        "SELECT * FROM plugin_installation WHERE install_status != 'failed' ORDER BY plugin_name;";
+    let mut response =
+        db.0.query(query)
+            .await
+            .context("list_plugin_installations")?;
+    let rows: Vec<Value> = response.take(0).context("list_plugin_installations rows")?;
+    Ok(rows)
+}
+
+/// List all plugin_installation records including failed ones, ordered by plugin name.
+pub async fn list_all_plugin_installations(db: &GraphDb) -> Result<Vec<Value>> {
+    let query = "SELECT * FROM plugin_installation ORDER BY plugin_name;";
+    let mut response =
+        db.0.query(query)
+            .await
+            .context("list_all_plugin_installations")?;
+    let rows: Vec<Value> = response
+        .take(0)
+        .context("list_all_plugin_installations rows")?;
+    Ok(rows)
+}
+
+/// Check all non-failed plugin installations for file hash drift.
+///
+/// Compares `source_hash` against `installed_hash` for every file in every
+/// non-failed `plugin_installation` record. Returns a `PluginDriftReport`
+/// with `clean = true` when all hashes match.
+pub async fn check_plugin_drift(db: &GraphDb) -> Result<PluginDriftReport> {
+    let records = list_plugin_installations(db).await?;
+    let mut drifted_plugins: Vec<DriftedPlugin> = Vec::new();
+
+    for record in records {
+        let plugin_name = record
+            .get("plugin_name")
+            .and_then(|v| v.as_str())
+            .unwrap_or_default()
+            .to_owned();
+
+        let Some(files) = record.get("files").and_then(|v| v.as_array()) else {
+            continue;
+        };
+
+        let drifted_files: Vec<DriftedFile> = files
+            .iter()
+            .filter_map(|f| {
+                let path = f.get("path").and_then(|v| v.as_str())?.to_owned();
+                let source_hash = f.get("source_hash").and_then(|v| v.as_str())?.to_owned();
+                let installed_hash = f.get("installed_hash").and_then(|v| v.as_str())?.to_owned();
+                (source_hash != installed_hash).then_some(DriftedFile {
+                    path,
+                    source_hash,
+                    installed_hash,
+                })
+            })
+            .collect();
+
+        if !drifted_files.is_empty() {
+            drifted_plugins.push(DriftedPlugin {
+                plugin_name,
+                drifted_files,
+            });
+        }
+    }
+
+    let clean = drifted_plugins.is_empty();
+    Ok(PluginDriftReport {
+        clean,
+        drifted_plugins,
+    })
+}
+
+// ---------------------------------------------------------------------------
 // Unit tests
 // ---------------------------------------------------------------------------
 
@@ -613,5 +882,86 @@ mod tests {
         }
 
         assert!(result.is_ok(), "flag off must never return Conflict");
+    }
+
+    #[tokio::test]
+    async fn upsert_plugin_installation_creates_and_reads_record() {
+        let db = make_db().await;
+
+        let files = vec![PluginFileEntry {
+            path: "test/file.md".to_owned(),
+            source_hash: "src-hash".to_owned(),
+            installed_hash: "src-hash".to_owned(),
+            target: "surrealdb".to_owned(),
+            artifact_id: None,
+        }];
+
+        upsert_plugin_installation(
+            &db,
+            "@test/plugin-a",
+            "1.0.0",
+            "manifest-hash",
+            &files,
+            PluginInstallStatus::Installed,
+        )
+        .await
+        .unwrap();
+
+        let record = read_plugin_installation(&db, "@test/plugin-a")
+            .await
+            .unwrap();
+        assert!(record.is_some(), "record must be created on upsert");
+        let record = record.unwrap();
+        assert_eq!(
+            record.get("plugin_name").and_then(|v| v.as_str()),
+            Some("@test/plugin-a"),
+        );
+        assert_eq!(
+            record.get("manifest_version").and_then(|v| v.as_str()),
+            Some("1.0.0"),
+        );
+    }
+
+    #[tokio::test]
+    async fn upsert_plugin_installation_delete_removes_record() {
+        let db = make_db().await;
+        let files = vec![PluginFileEntry {
+            path: "test/file.md".to_owned(),
+            source_hash: "abc".to_owned(),
+            installed_hash: "abc".to_owned(),
+            target: "surrealdb".to_owned(),
+            artifact_id: None,
+        }];
+
+        upsert_plugin_installation(
+            &db,
+            "@test/plugin-delete",
+            "1.0.0",
+            "hash",
+            &files,
+            PluginInstallStatus::Installed,
+        )
+        .await
+        .unwrap();
+
+        assert!(
+            read_plugin_installation(&db, "@test/plugin-delete")
+                .await
+                .unwrap()
+                .is_some(),
+            "record must exist before delete"
+        );
+
+        delete_plugin_installation(&db, "@test/plugin-delete")
+            .await
+            .unwrap();
+
+        assert!(
+            read_plugin_installation(&db, "@test/plugin-delete")
+                .await
+                .unwrap()
+                .is_none(),
+            "record must be gone after delete"
+        );
     }
 }

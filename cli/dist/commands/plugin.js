@@ -2,13 +2,15 @@
  * Plugin management commands.
  *
  * orqa plugin list|install|uninstall|update|enable|disable|refresh|registry|create
+ *
+ * "list" delegates to plugin-list.ts which reads from SurrealDB via the daemon.
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { installPlugin, uninstallPlugin, listInstalledPlugins, detectMethodologyConflict, } from "../lib/installer.js";
 import { fetchRegistry, searchRegistry } from "../lib/registry.js";
 import { readManifest } from "../lib/manifest.js";
-import { readContentManifest, writeContentManifest, installPluginDeps, buildPlugin, runLifecycleHook, processAggregatedFiles, } from "../lib/content-lifecycle.js";
+import { installPluginDeps, buildPlugin, runLifecycleHook, processAggregatedFiles, } from "../lib/content-lifecycle.js";
 import { createHash } from "node:crypto";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
@@ -42,9 +44,11 @@ export async function runPluginCommand(args) {
         return;
     }
     switch (subcommand) {
-        case "list":
-            await cmdList();
+        case "list": {
+            const { runPluginListCommand } = await import("./plugin-list.js");
+            await runPluginListCommand(args.slice(1));
             break;
+        }
         case "install":
             await cmdInstall(args.slice(1));
             break;
@@ -194,18 +198,6 @@ function removeProjectJsonPlugin(projectRoot, name) {
 // ---------------------------------------------------------------------------
 // list
 // ---------------------------------------------------------------------------
-async function cmdList() {
-    const plugins = listInstalledPlugins();
-    if (plugins.length === 0) {
-        console.log("No plugins installed.");
-        return;
-    }
-    console.log("Installed plugins:\n");
-    for (const p of plugins) {
-        console.log(`  ${p.name} @ ${p.version} (${p.source})`);
-        console.log(`    ${p.path}`);
-    }
-}
 // ---------------------------------------------------------------------------
 // install
 // ---------------------------------------------------------------------------
@@ -293,19 +285,6 @@ async function cmdInstall(args) {
     // Install npm dependencies and build
     installPluginDeps(result.path, pluginManifest);
     buildPlugin(result.path, pluginManifest);
-    // Record plugin registration in .orqa/manifest.json including manifestHash for outdated detection.
-    const contentManifest = readContentManifest(projectRoot);
-    const manifestFileInstall = path.join(result.path, "orqa-plugin.json");
-    const manifestHashInstall = createHash("sha256")
-        .update(fs.readFileSync(manifestFileInstall))
-        .digest("hex");
-    contentManifest.plugins[result.name] = {
-        version: result.version,
-        installed_at: new Date().toISOString(),
-        manifestHash: manifestHashInstall,
-        files: {},
-    };
-    writeContentManifest(projectRoot, contentManifest);
     // Register in .orqa/project.json — include version so outdated checks work.
     const projectJsonPath = path.join(projectRoot, ".orqa", "project.json");
     if (fs.existsSync(projectJsonPath)) {
@@ -376,19 +355,6 @@ async function cmdInstallFirstParty(pluginDir, projectRoot) {
     // Install npm dependencies and build
     installPluginDeps(pluginDir, pluginManifest);
     buildPlugin(pluginDir, pluginManifest);
-    // Record plugin registration in .orqa/manifest.json including manifestHash for outdated detection.
-    const contentManifest = readContentManifest(projectRoot);
-    const manifestFileFirstParty = path.join(pluginDir, "orqa-plugin.json");
-    const manifestHashFirstParty = createHash("sha256")
-        .update(fs.readFileSync(manifestFileFirstParty))
-        .digest("hex");
-    contentManifest.plugins[pluginManifest.name] = {
-        version: pluginManifest.version,
-        installed_at: new Date().toISOString(),
-        manifestHash: manifestHashFirstParty,
-        files: {},
-    };
-    writeContentManifest(projectRoot, contentManifest);
     // Register in .orqa/project.json — include version so outdated checks work.
     updateProjectJsonPlugin(projectRoot, pluginManifest.name, {
         installed: true,
@@ -456,10 +422,6 @@ async function cmdUninstall(args) {
             runLifecycleHook(pluginDir, pluginManifest, "uninstall");
         }
     }
-    // Remove manifest entry and project.json registration
-    const uninstallManifest = readContentManifest(projectRoot);
-    delete uninstallManifest.plugins[name];
-    writeContentManifest(projectRoot, uninstallManifest);
     // Remove from .orqa/project.json
     removeProjectJsonPlugin(projectRoot, name);
     // Remove plugin directory and update lockfile — but only for GitHub-installed plugins.
@@ -496,15 +458,7 @@ async function cmdUpdate(args) {
         if (locked) {
             // Re-install from the same repo (fetches latest)
             const result = await installPlugin({ source: locked.repo, projectRoot });
-            // Update manifest entry for updated version
             const pluginManifest = readManifest(result.path);
-            const contentManifest = readContentManifest(projectRoot);
-            contentManifest.plugins[result.name] = {
-                version: result.version,
-                installed_at: new Date().toISOString(),
-                files: {},
-            };
-            writeContentManifest(projectRoot, contentManifest);
             // Run install hook again
             runLifecycleHook(result.path, pluginManifest, "install");
             console.log(`Updated ${result.name} to ${result.version}`);
@@ -519,9 +473,10 @@ async function cmdUpdate(args) {
  * from what is recorded in .orqa/manifest.json.
  *
  * For each enabled plugin in project.json this command:
- *   1. Reads the current orqa-plugin.json version from the plugin directory.
- *   2. Compares the version against the version recorded in manifest.json.
- *   3. Compares the manifest hash against the manifestHash recorded in manifest.json.
+ *   1. Reads the plugin_installation ledger record from the daemon (SurrealDB).
+ *   2. Reads the current orqa-plugin.json version from the plugin directory.
+ *   3. Compares the source version against the ledger version.
+ *   4. Compares the current manifest hash against the ledger manifest_hash.
  * Plugins that fail either check are reported as outdated.
  */
 async function cmdOutdated() {
@@ -535,7 +490,25 @@ async function cmdOutdated() {
         process.exit(1);
     }
     const pluginsSection = (projectJson["plugins"] ?? {});
-    const contentManifest = readContentManifest(projectRoot);
+    // Fetch ledger records from daemon (SurrealDB). Fall back to empty map on error.
+    const portBase = process.env["ORQA_PORT_BASE"];
+    const port = portBase ? parseInt(portBase, 10) : 10100;
+    const ledger = new Map();
+    try {
+        const resp = await fetch(`http://127.0.0.1:${port}/plugins/installed`);
+        if (resp.ok) {
+            const records = (await resp.json());
+            for (const r of records) {
+                ledger.set(r.plugin_name, {
+                    manifest_version: r.manifest_version,
+                    manifest_hash: r.manifest_hash,
+                });
+            }
+        }
+    }
+    catch {
+        // Daemon not running — fall back to filesystem check below.
+    }
     const outdatedPlugins = [];
     for (const [name, cfg] of Object.entries(pluginsSection)) {
         if (!cfg.path)
@@ -551,26 +524,22 @@ async function cmdOutdated() {
         catch {
             continue;
         }
-        const manifestEntry = contentManifest.plugins[name];
-        const installedVersion = manifestEntry?.version ?? cfg.version ?? "(unknown)";
+        const ledgerEntry = ledger.get(name);
+        const installedVersion = ledgerEntry?.manifest_version ?? cfg.version ?? "(unknown)";
         const reasons = [];
-        // Check version mismatch against manifest.json record.
-        if (manifestEntry?.version && manifestEntry.version !== sourceManifest.version) {
+        // Check version mismatch against ledger record.
+        if (ledgerEntry?.manifest_version && ledgerEntry.manifest_version !== sourceManifest.version) {
             reasons.push(`version ${installedVersion} → ${sourceManifest.version}`);
         }
         // Check manifest hash mismatch — detects content changes even without a version bump.
-        if (manifestEntry) {
+        if (ledgerEntry) {
             const currentHash = createHash("sha256").update(fs.readFileSync(manifestFile)).digest("hex");
-            if (manifestEntry.manifestHash && currentHash !== manifestEntry.manifestHash) {
+            if (currentHash !== ledgerEntry.manifest_hash) {
                 reasons.push("manifest content changed");
-            }
-            else if (!manifestEntry.manifestHash) {
-                // Entry predates manifestHash tracking — flag for refresh.
-                reasons.push("no manifest hash (run orqa install to record)");
             }
         }
         else {
-            reasons.push("not in manifest.json (run orqa install to record)");
+            reasons.push("no ledger record (run orqa install to record)");
         }
         if (reasons.length > 0) {
             outdatedPlugins.push({
@@ -609,16 +578,6 @@ async function cmdEnable(args) {
         console.error("Run 'orqa plugin install' first.");
         process.exit(1);
     }
-    const pluginManifest = readManifest(pluginDir);
-    // Update manifest entry for enabled state
-    const contentManifest = readContentManifest(projectRoot);
-    const existingEntry = contentManifest.plugins[name];
-    contentManifest.plugins[name] = {
-        version: pluginManifest.version,
-        installed_at: existingEntry?.installed_at ?? new Date().toISOString(),
-        files: existingEntry?.files ?? {},
-    };
-    writeContentManifest(projectRoot, contentManifest);
     // Set enabled: true in project.json
     const projectJsonPath = path.join(projectRoot, ".orqa", "project.json");
     if (fs.existsSync(projectJsonPath)) {
@@ -680,14 +639,6 @@ async function cmdRefresh(args) {
         // Install deps and build
         installPluginDeps(pluginDir, pluginManifest);
         buildPlugin(pluginDir, pluginManifest);
-        // Update manifest entry with refreshed version
-        const contentManifest = readContentManifest(projectRoot);
-        contentManifest.plugins[p.name] = {
-            version: pluginManifest.version,
-            installed_at: new Date().toISOString(),
-            files: contentManifest.plugins[p.name]?.files ?? {},
-        };
-        writeContentManifest(projectRoot, contentManifest);
         console.log(`  Refreshed deps and build.`);
         // Ensure plugin is registered in project.json (fixes fresh-clone gap)
         const shortPath = path.relative(projectRoot, pluginDir);

@@ -1,0 +1,20 @@
+{
+  "name": "@orqastudio/test-roundtrip",
+  "version": "1.0.0",
+  "displayName": "Roundtrip Test Plugin",
+  "description": "Minimal fixture plugin for install/uninstall/reinstall HTTP roundtrip tests.",
+  "categories": ["domain-knowledge"],
+  "provides": {
+    "schemas": [],
+    "views": [],
+    "widgets": [],
+    "relationships": []
+  },
+  "content": {
+    "entries": {
+      "source": "content/surrealdb-entries",
+      "installPath": ".orqa/documentation",
+      "target": "surrealdb"
+    }
+  }
+}

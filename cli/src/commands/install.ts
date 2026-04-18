@@ -22,12 +22,9 @@ import { generatePromptRegistry } from "../lib/prompt-registry.js";
 import {
 	installPluginDeps,
 	buildPlugin,
-	readContentManifest,
-	writeContentManifest,
 	processAggregatedFiles,
 } from "../lib/content-lifecycle.js";
 import { readManifest } from "../lib/manifest.js";
-import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
 import type { PluginProjectConfig, PluginManifest } from "@orqastudio/types";
 
@@ -522,7 +519,6 @@ export function cmdPluginSync(root: string): void {
 		console.log("  No enabled plugins in project.json.");
 	}
 
-	const contentManifest = readContentManifest(root);
 	let processed = 0;
 
 	for (const [name, cfg] of enabledPlugins) {
@@ -561,18 +557,6 @@ export function cmdPluginSync(root: string): void {
 			// Continue — content copy may still succeed for pre-built plugins.
 		}
 
-		// Update content manifest entry for this plugin including manifestHash for outdated detection.
-		const manifestFileSync = path.join(pluginDir, "orqa-plugin.json");
-		const manifestHashSync = createHash("sha256")
-			.update(fs.readFileSync(manifestFileSync))
-			.digest("hex");
-		contentManifest.plugins[name] = {
-			version: pluginManifest.version,
-			installed_at: new Date().toISOString(),
-			manifestHash: manifestHashSync,
-			files: contentManifest.plugins[name]?.files ?? {},
-		};
-
 		// Write back plugin registration so path and version stay current.
 		const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
 		updateProjectJsonPlugin(root, name, {
@@ -592,9 +576,6 @@ export function cmdPluginSync(root: string): void {
 
 		processed++;
 	}
-
-	// Persist updated content manifest after all plugins are processed.
-	writeContentManifest(root, contentManifest);
 
 	console.log(`  Processed ${processed}/${enabledPlugins.length} plugin(s).`);
 

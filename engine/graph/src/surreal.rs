@@ -72,6 +72,25 @@ DEFINE FIELD IF NOT EXISTS updated_at ON enforcement_rule TYPE datetime DEFAULT 
 
 DEFINE INDEX IF NOT EXISTS idx_enforcement_rule_key ON enforcement_rule FIELDS key UNIQUE;
 DEFINE INDEX IF NOT EXISTS idx_enforcement_rule_plugin ON enforcement_rule FIELDS source_plugin;
+
+-- Plugin installation ledger — replaces .orqa/manifest.json
+DEFINE TABLE IF NOT EXISTS plugin_installation SCHEMAFULL;
+DEFINE FIELD IF NOT EXISTS plugin_name ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS version ON plugin_installation TYPE int DEFAULT 1;
+DEFINE FIELD IF NOT EXISTS updated_at ON plugin_installation TYPE datetime DEFAULT time::now();
+DEFINE FIELD IF NOT EXISTS installed_at ON plugin_installation TYPE datetime DEFAULT time::now();
+DEFINE FIELD IF NOT EXISTS manifest_version ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS manifest_hash ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS files ON plugin_installation TYPE array DEFAULT [];
+DEFINE FIELD IF NOT EXISTS files[*] ON plugin_installation TYPE object;
+DEFINE FIELD IF NOT EXISTS files[*].path ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS files[*].source_hash ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS files[*].installed_hash ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS files[*].target ON plugin_installation TYPE string;
+DEFINE FIELD IF NOT EXISTS files[*].artifact_id ON plugin_installation TYPE option<string>;
+DEFINE FIELD IF NOT EXISTS install_status ON plugin_installation TYPE string DEFAULT 'installed';
+
+DEFINE INDEX IF NOT EXISTS idx_plugin_installation_name ON plugin_installation FIELDS plugin_name UNIQUE;
 ";
 
 /// Opens an embedded SurrealKV database at the given filesystem path.

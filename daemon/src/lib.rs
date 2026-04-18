@@ -91,12 +91,30 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
             "/storage/ingest",
             post(routes::admin_migrate::storage_ingest),
         )
+        .route(
+            "/storage/manifest",
+            post(routes::admin_migrate::manifest_migrate),
+        )
+        .with_state(state.graph_state.clone());
+
+    let plugin_installation_router = axum::Router::new()
+        .route("/installed", get(routes::plugins::list_installed_plugins))
+        .route(
+            "/installed/{name}",
+            axum::routing::delete(routes::plugins::delete_installed_plugin),
+        )
+        .route("/drift", get(routes::plugins::check_plugin_drift))
+        .route(
+            "/{name}/installation",
+            get(routes::plugins::get_plugin_installation),
+        )
         .with_state(state.graph_state.clone());
 
     axum::Router::new()
         .route("/reload", post(health_reload_handler))
         .nest("/artifacts", artifact_router)
         .nest("/graph", graph_router)
+        .nest("/plugins", plugin_installation_router)
         .nest("/watcher", watcher_router)
         .nest("/admin/migrate", admin_migrate_router)
         .layer(axum::middleware::from_fn(

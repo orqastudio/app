@@ -568,6 +568,15 @@ pub async fn start(
     let plugin_router = Router::new()
         .route("/", get(crate::routes::plugins::list_plugins))
         .route(
+            "/installed",
+            get(crate::routes::plugins::list_installed_plugins),
+        )
+        .route(
+            "/installed/{name}",
+            axum::routing::delete(crate::routes::plugins::delete_installed_plugin),
+        )
+        .route("/drift", get(crate::routes::plugins::check_plugin_drift))
+        .route(
             "/registry",
             get(crate::routes::plugins::list_plugin_registry),
         )
@@ -589,6 +598,10 @@ pub async fn start(
             axum::routing::delete(crate::routes::plugins::uninstall_plugin),
         )
         .route("/{name}/path", get(crate::routes::plugins::get_plugin_path))
+        .route(
+            "/{name}/installation",
+            get(crate::routes::plugins::get_plugin_installation),
+        )
         .route(
             "/{name}/uninstall-preview",
             get(crate::routes::plugins::preview_plugin_uninstall),
@@ -858,6 +871,10 @@ pub async fn start(
         .route(
             "/storage/ingest",
             post(crate::routes::admin_migrate::storage_ingest),
+        )
+        .route(
+            "/storage/manifest",
+            post(crate::routes::admin_migrate::manifest_migrate),
         )
         .with_state(state.graph_state.clone());
 

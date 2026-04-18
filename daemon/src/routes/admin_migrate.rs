@@ -655,6 +655,314 @@ fn unix_secs_to_utc(secs: u64) -> (u64, u64, u64, u64, u64, u64) {
 }
 
 // ---------------------------------------------------------------------------
+// Manifest.json migration handler
+// ---------------------------------------------------------------------------
+
+/// Request body for POST /admin/migrate/storage/manifest.
+///
+/// All fields are optional. If `project_root` is absent, the daemon uses the
+/// project root it was started with.
+#[derive(Debug, Deserialize)]
+pub struct ManifestMigrateRequest {
+    /// Override the project root to scan. If absent, uses the daemon's root.
+    pub project_root: Option<String>,
+}
+
+/// Response body for POST /admin/migrate/storage/manifest.
+#[derive(Debug, Serialize)]
+pub struct ManifestMigrateResponse {
+    /// Unique ID for this migration run.
+    pub migration_id: String,
+    /// Number of plugin entries ported to SurrealDB.
+    pub ported: usize,
+    /// Number of plugin entries skipped (already present with matching hash).
+    pub skipped: usize,
+    /// Number of plugin entries that failed.
+    pub errors: usize,
+    /// Path where the archived manifest.json was written.
+    pub archive_path: String,
+}
+
+/// Handle POST /admin/migrate/storage/manifest.
+///
+/// Reads `.orqa/manifest.json`, ports each plugin entry into the
+/// `plugin_installation` SurrealDB table, then archives the file to
+/// `.state/archive/orqa-files/<migration_id>/manifest.json`.
+///
+/// Idempotent: re-running when a record already exists in SurrealDB will
+/// call `upsert_plugin_installation` which bumps version and updates the record.
+/// After archiving, `.orqa/manifest.json` is removed.
+#[allow(clippy::too_many_lines)]
+pub async fn manifest_migrate(
+    State(graph_state): State<GraphState>,
+    body: Option<Json<ManifestMigrateRequest>>,
+) -> (StatusCode, Json<serde_json::Value>) {
+    let project_root: PathBuf = body
+        .as_ref()
+        .and_then(|b| b.project_root.as_deref())
+        .map_or_else(
+            || {
+                graph_state
+                    .0
+                    .read()
+                    .map(|g| g.project_root.clone())
+                    .unwrap_or_default()
+            },
+            PathBuf::from,
+        );
+
+    let Some(db) = graph_state.surreal_db() else {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "error": "SurrealDB is not available — daemon may not have initialized correctly"
+            })),
+        );
+    };
+
+    let migration_id = Uuid::new_v4().to_string();
+    let manifest_path = project_root.join(".orqa").join("manifest.json");
+
+    if !manifest_path.exists() {
+        return (
+            StatusCode::OK,
+            Json(
+                serde_json::to_value(ManifestMigrateResponse {
+                    migration_id,
+                    ported: 0,
+                    skipped: 0,
+                    errors: 0,
+                    archive_path: String::new(),
+                })
+                .unwrap_or_default(),
+            ),
+        );
+    }
+
+    let manifest_bytes = match std::fs::read(&manifest_path) {
+        Ok(b) => b,
+        Err(e) => {
+            warn!(
+                subsystem = "migrate",
+                migration_id = %migration_id,
+                error = %e,
+                "[migrate] cannot read manifest.json"
+            );
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": format!("cannot read manifest.json: {e}") })),
+            );
+        }
+    };
+
+    let manifest_json: serde_json::Value = match serde_json::from_slice(&manifest_bytes) {
+        Ok(v) => v,
+        Err(e) => {
+            return (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": format!("cannot parse manifest.json: {e}") })),
+            );
+        }
+    };
+
+    let plugins = match manifest_json.get("plugins").and_then(|v| v.as_object()) {
+        Some(p) => p.clone(),
+        None => {
+            return (
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({ "error": "manifest.json has no 'plugins' object" })),
+            );
+        }
+    };
+
+    let (mut ported, mut skipped, mut errors) = (0usize, 0usize, 0usize);
+
+    for (plugin_name, entry) in &plugins {
+        let manifest_version = entry
+            .get("version")
+            .and_then(|v| v.as_str())
+            .unwrap_or("unknown")
+            .to_owned();
+
+        let manifest_hash = entry
+            .get("manifestHash")
+            .and_then(|v| v.as_str())
+            .unwrap_or("")
+            .to_owned();
+
+        let installed_at = entry
+            .get("installed_at")
+            .and_then(|v| v.as_str())
+            .map(str::to_owned);
+
+        // Build PluginFileEntry list from the legacy files map.
+        let files = build_file_entries_from_manifest(entry);
+
+        // Check if already present with the same hash — skip to avoid unnecessary bumps.
+        let already_present =
+            is_plugin_installation_current(&db, plugin_name, &manifest_hash).await;
+        if already_present {
+            info!(
+                subsystem = "migrate",
+                migration_id = %migration_id,
+                plugin = %plugin_name,
+                "[migrate] SKIP manifest entry — already present with matching hash"
+            );
+            skipped += 1;
+            continue;
+        }
+
+        match orqa_graph::upsert_plugin_installation_with_timestamp(
+            &db,
+            plugin_name,
+            &manifest_version,
+            &manifest_hash,
+            &files,
+            installed_at.as_deref(),
+            orqa_graph::PluginInstallStatus::Installed,
+        )
+        .await
+        {
+            Ok(()) => {
+                info!(
+                    subsystem = "migrate",
+                    migration_id = %migration_id,
+                    plugin = %plugin_name,
+                    "[migrate] PORT manifest entry to SurrealDB"
+                );
+                ported += 1;
+            }
+            Err(e) => {
+                warn!(
+                    subsystem = "migrate",
+                    migration_id = %migration_id,
+                    plugin = %plugin_name,
+                    error = %e,
+                    "[migrate] ERROR porting manifest entry"
+                );
+                errors += 1;
+            }
+        }
+    }
+
+    // Archive the manifest.json file before removing it.
+    let archive_dir = project_root
+        .join(".state")
+        .join("archive")
+        .join("orqa-files")
+        .join(&migration_id);
+    let _ = std::fs::create_dir_all(&archive_dir);
+    let archive_path = archive_dir.join("manifest.json");
+    let archive_rel = format!(".state/archive/orqa-files/{migration_id}/manifest.json");
+
+    if let Err(e) = std::fs::copy(&manifest_path, &archive_path) {
+        warn!(
+            subsystem = "migrate",
+            migration_id = %migration_id,
+            error = %e,
+            "[migrate] failed to archive manifest.json — not removing original"
+        );
+        return (
+            StatusCode::OK,
+            Json(
+                serde_json::to_value(ManifestMigrateResponse {
+                    migration_id,
+                    ported,
+                    skipped,
+                    errors,
+                    archive_path: String::new(),
+                })
+                .unwrap_or_default(),
+            ),
+        );
+    }
+
+    // Remove the original only after a successful archive copy.
+    if let Err(e) = std::fs::remove_file(&manifest_path) {
+        warn!(
+            subsystem = "migrate",
+            migration_id = %migration_id,
+            error = %e,
+            "[migrate] failed to remove manifest.json after archiving"
+        );
+    }
+
+    info!(
+        subsystem = "migrate",
+        migration_id = %migration_id,
+        ported,
+        skipped,
+        errors,
+        archive = %archive_rel,
+        "[migrate] manifest.json migration complete"
+    );
+
+    (
+        StatusCode::OK,
+        Json(
+            serde_json::to_value(ManifestMigrateResponse {
+                migration_id,
+                ported,
+                skipped,
+                errors,
+                archive_path: archive_rel,
+            })
+            .unwrap_or_default(),
+        ),
+    )
+}
+
+/// Convert a legacy manifest.json plugin entry's `files` map into `PluginFileEntry` list.
+///
+/// The legacy shape is: `files: { "path": { "sourceHash": "...", "installedHash": "..." } }`.
+fn build_file_entries_from_manifest(entry: &serde_json::Value) -> Vec<orqa_graph::PluginFileEntry> {
+    let Some(files_map) = entry.get("files").and_then(|v| v.as_object()) else {
+        return Vec::new();
+    };
+
+    files_map
+        .iter()
+        .map(|(path, hashes)| {
+            let source_hash = hashes
+                .get("sourceHash")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_owned();
+            let installed_hash = hashes
+                .get("installedHash")
+                .and_then(|v| v.as_str())
+                .unwrap_or("")
+                .to_owned();
+            orqa_graph::PluginFileEntry {
+                path: path.clone(),
+                source_hash,
+                installed_hash,
+                target: String::new(),
+                artifact_id: None,
+            }
+        })
+        .collect()
+}
+
+/// Check if a plugin_installation record already has the given manifest hash.
+///
+/// Returns true when the stored record's manifest_hash matches — indicating no
+/// re-migration is needed.
+async fn is_plugin_installation_current(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    manifest_hash: &str,
+) -> bool {
+    match orqa_graph::read_plugin_installation(db, plugin_name).await {
+        Ok(Some(record)) => record
+            .get("manifest_hash")
+            .and_then(|v| v.as_str())
+            .is_some_and(|h| h == manifest_hash),
+        _ => false,
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Unit tests
 // ---------------------------------------------------------------------------
 

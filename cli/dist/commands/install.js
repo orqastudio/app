@@ -18,9 +18,8 @@ import { getRoot } from "../lib/root.js";
 import { runWorkflowResolution } from "../lib/workflow-resolver.js";
 import { writeComposedSchema } from "../lib/schema-composer.js";
 import { generatePromptRegistry } from "../lib/prompt-registry.js";
-import { installPluginDeps, buildPlugin, readContentManifest, writeContentManifest, processAggregatedFiles, } from "../lib/content-lifecycle.js";
+import { installPluginDeps, buildPlugin, processAggregatedFiles, } from "../lib/content-lifecycle.js";
 import { readManifest } from "../lib/manifest.js";
-import { createHash } from "node:crypto";
 import { readProjectJson, updateProjectJsonPlugin } from "./plugin.js";
 const NODE_MIN_MAJOR = 22;
 const USAGE = `
@@ -453,7 +452,6 @@ export function cmdPluginSync(root) {
     if (enabledPlugins.length === 0) {
         console.log("  No enabled plugins in project.json.");
     }
-    const contentManifest = readContentManifest(root);
     let processed = 0;
     for (const [name, cfg] of enabledPlugins) {
         if (!cfg.path) {
@@ -485,17 +483,6 @@ export function cmdPluginSync(root) {
             console.error(`    Build failed: ${e instanceof Error ? e.message : String(e)}`);
             // Continue — content copy may still succeed for pre-built plugins.
         }
-        // Update content manifest entry for this plugin including manifestHash for outdated detection.
-        const manifestFileSync = path.join(pluginDir, "orqa-plugin.json");
-        const manifestHashSync = createHash("sha256")
-            .update(fs.readFileSync(manifestFileSync))
-            .digest("hex");
-        contentManifest.plugins[name] = {
-            version: pluginManifest.version,
-            installed_at: new Date().toISOString(),
-            manifestHash: manifestHashSync,
-            files: contentManifest.plugins[name]?.files ?? {},
-        };
         // Write back plugin registration so path and version stay current.
         const shortPath = path.relative(root, pluginDir).replace(/\\/g, "/");
         updateProjectJsonPlugin(root, name, {
@@ -514,8 +501,6 @@ export function cmdPluginSync(root) {
         }
         processed++;
     }
-    // Persist updated content manifest after all plugins are processed.
-    writeContentManifest(root, contentManifest);
     console.log(`  Processed ${processed}/${enabledPlugins.length} plugin(s).`);
     // Process aggregated files from all plugins (e.g. rules, skills compiled into single files).
     try {

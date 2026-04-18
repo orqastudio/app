@@ -2,6 +2,8 @@
  * Plugin management commands.
  *
  * orqa plugin list|install|uninstall|update|enable|disable|refresh|registry|create
+ *
+ * "list" delegates to plugin-list.ts which reads from SurrealDB via the daemon.
  */
 import type { PluginProjectConfig } from "@orqastudio/types";
 /**

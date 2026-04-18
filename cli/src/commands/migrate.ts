@@ -19,7 +19,10 @@ import { type Dirent, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { getRoot } from "../lib/root.js";
 import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatter.js";
-import { runMigrateStorageIngestCommand } from "./migrate-storage.js";
+import {
+	runMigrateStorageIngestCommand,
+	runMigrateStorageManifestCommand,
+} from "./migrate-storage.js";
 
 const USAGE = `
 Usage: orqa migrate <subcommand|options>
@@ -301,6 +304,10 @@ export async function runMigrateCommand(args: string[]): Promise<void> {
 	if (args[0] === "storage") {
 		if (args[1] === "ingest") {
 			await runMigrateStorageIngestCommand(args.slice(2));
+			return;
+		}
+		if (args[1] === "manifest") {
+			await runMigrateStorageManifestCommand(args.slice(2));
 			return;
 		}
 		console.error(`Unknown storage subcommand: ${args[1] ?? "(none)"}`);

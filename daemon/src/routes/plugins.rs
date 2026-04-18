@@ -6,8 +6,10 @@
 //
 // Endpoints:
 //   GET    /plugins                   — list installed plugins
+//   GET    /plugins/installed         — list all plugin_installation ledger records
 //   GET    /plugins/:name             — get a plugin's manifest
 //   GET    /plugins/:name/path        — get filesystem path to a plugin
+//   GET    /plugins/:name/installation — get plugin_installation ledger record
 //   GET    /plugins/:name/uninstall-preview — preview what uninstall would remove
 //   POST   /plugins/install/local     — install from a local path
 //   POST   /plugins/install/github    — install from GitHub
@@ -56,6 +58,14 @@ pub struct UninstallQuery {
     /// When absent or false, return a preview of what would be removed.
     #[serde(default)]
     pub force: bool,
+}
+
+/// Query parameters for GET /plugins/installed.
+#[derive(Debug, Deserialize)]
+pub struct ListInstalledQuery {
+    /// When true, include records with install_status = 'failed'.
+    #[serde(default)]
+    pub include_failed: bool,
 }
 
 /// Response body for GET /plugins/:name.
@@ -271,6 +281,11 @@ pub async fn preview_plugin_uninstall(
 /// Runs synchronously via spawn_blocking. After installation, ingests all
 /// surrealdb-target content entries into SurrealDB with source_plugin set.
 /// Triggers graph reload after installation to pick up any new artifact types.
+///
+/// The status-tracking model (Installing → Installed/Failed ledger writes)
+/// makes this handler necessarily sequential and slightly over the 50-line
+/// limit. Splitting it would fragment the atomic lifecycle.
+#[allow(clippy::too_many_lines)]
 pub async fn install_plugin_local(
     State(state): State<GraphState>,
     Json(req): Json<InstallLocalRequest>,
@@ -304,12 +319,48 @@ pub async fn install_plugin_local(
                 )
             })?;
 
-    // Ingest surrealdb-target content and enforcement rules into SurrealDB.
+    // Write-then-validate: write ledger with Installing status first, then ingest.
+    // On ingest failure the record is updated to Failed and an HTTP error is returned.
     if let Some(ref db) = db {
-        if result.surrealdb_content_entries > 0 {
-            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await;
+        write_plugin_installation_record(
+            db,
+            &result.name,
+            &result.version,
+            &result.path,
+            orqa_graph::PluginInstallStatus::Installing,
+        )
+        .await;
+
+        let content_result = if result.surrealdb_content_entries > 0 {
+            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await
+        } else {
+            Ok(())
+        };
+        let rules_result = ingest_enforcement_rules(db, &result.name, &result.path).await;
+
+        let ingest_error = content_result.err().or_else(|| rules_result.err());
+        if let Some(err_msg) = ingest_error {
+            tracing::warn!(plugin = %result.name, error = %err_msg, "[plugins] ingest failed — marking plugin as Failed");
+            write_plugin_installation_status(
+                db,
+                &result.name,
+                &result.path,
+                orqa_graph::PluginInstallStatus::Failed,
+            )
+            .await;
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": err_msg, "code": "INGEST_FAILED" })),
+            ));
         }
-        ingest_enforcement_rules(db, &result.name, &result.path).await;
+
+        write_plugin_installation_status(
+            db,
+            &result.name,
+            &result.path,
+            orqa_graph::PluginInstallStatus::Installed,
+        )
+        .await;
     }
 
     // Reload the graph to pick up any schema changes from the new plugin.
@@ -322,6 +373,11 @@ pub async fn install_plugin_local(
 ///
 /// Delegates to `orqa_plugin::installer::install_from_github`. Async — the
 /// underlying function uses reqwest for GitHub API and archive download.
+///
+/// The status-tracking model (Installing → Installed/Failed ledger writes)
+/// makes this handler necessarily sequential and slightly over the 50-line
+/// limit. Splitting it would fragment the atomic lifecycle.
+#[allow(clippy::too_many_lines)]
 pub async fn install_plugin_github(
     State(state): State<GraphState>,
     Json(req): Json<InstallGithubRequest>,
@@ -349,12 +405,48 @@ pub async fn install_plugin_github(
         )
     })?;
 
-    // Ingest surrealdb-target content and enforcement rules into SurrealDB.
+    // Write-then-validate: write ledger with Installing status first, then ingest.
+    // On ingest failure the record is updated to Failed and an HTTP error is returned.
     if let Some(ref db) = db {
-        if result.surrealdb_content_entries > 0 {
-            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await;
+        write_plugin_installation_record(
+            db,
+            &result.name,
+            &result.version,
+            &result.path,
+            orqa_graph::PluginInstallStatus::Installing,
+        )
+        .await;
+
+        let content_result = if result.surrealdb_content_entries > 0 {
+            ingest_surrealdb_content(db, &result.name, &result.path, &project_root).await
+        } else {
+            Ok(())
+        };
+        let rules_result = ingest_enforcement_rules(db, &result.name, &result.path).await;
+
+        let ingest_error = content_result.err().or_else(|| rules_result.err());
+        if let Some(err_msg) = ingest_error {
+            tracing::warn!(plugin = %result.name, error = %err_msg, "[plugins] ingest failed — marking plugin as Failed");
+            write_plugin_installation_status(
+                db,
+                &result.name,
+                &result.path,
+                orqa_graph::PluginInstallStatus::Failed,
+            )
+            .await;
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": err_msg, "code": "INGEST_FAILED" })),
+            ));
         }
-        ingest_enforcement_rules(db, &result.name, &result.path).await;
+
+        write_plugin_installation_status(
+            db,
+            &result.name,
+            &result.path,
+            orqa_graph::PluginInstallStatus::Installed,
+        )
+        .await;
     }
 
     state.reload(&project_root);
@@ -394,26 +486,46 @@ pub async fn uninstall_plugin(
         (guard.project_root.clone(), guard.db.clone())
     };
 
-    let name_clone = name.clone();
-    let project_root_clone = project_root.clone();
-    tokio::task::spawn_blocking(move || {
-        orqa_plugin::installer::uninstall(&name_clone, &project_root_clone)
-    })
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_PANIC" })),
-        )
-    })?
-    .map_err(|e| {
-        (
-            StatusCode::UNPROCESSABLE_ENTITY,
-            Json(serde_json::json!({ "error": e.to_string(), "code": "UNINSTALL_FAILED" })),
-        )
-    })?;
+    // Read the ledger record first to get the authoritative file list for filesystem cleanup.
+    let runtime_files: Vec<String> = if let Some(ref db) = db {
+        match orqa_graph::read_plugin_installation(db, &name).await {
+            Ok(Some(record)) => record
+                .get("files")
+                .and_then(|v| v.as_array())
+                .map(|files| {
+                    files
+                        .iter()
+                        .filter(|f| f.get("target").and_then(|t| t.as_str()) == Some("runtime"))
+                        .filter_map(|f| f.get("path").and_then(|p| p.as_str()).map(str::to_owned))
+                        .collect()
+                })
+                .unwrap_or_default(),
+            Ok(None) => {
+                tracing::warn!(plugin = %name, "[plugins] no ledger record found for uninstall — filesystem cleanup skipped");
+                Vec::new()
+            }
+            Err(e) => {
+                tracing::warn!(plugin = %name, error = %e, "[plugins] failed to read ledger for uninstall — filesystem cleanup skipped");
+                Vec::new()
+            }
+        }
+    } else {
+        Vec::new()
+    };
 
-    // Remove all SurrealDB artifact records and enforcement rules with source_plugin = name.
+    // Delete runtime files recorded in the ledger.
+    for rel_path in &runtime_files {
+        let abs_path = project_root.join(rel_path);
+        if abs_path.exists() {
+            if let Err(e) = std::fs::remove_file(&abs_path) {
+                tracing::warn!(plugin = %name, path = %abs_path.display(), error = %e, "[plugins] failed to remove runtime file on uninstall");
+            } else {
+                tracing::info!(plugin = %name, path = %abs_path.display(), "[plugins] runtime file removed on uninstall");
+            }
+        }
+    }
+
+    // Remove all SurrealDB artifact records, enforcement rules, and the installation ledger record.
     if let Some(ref db) = db {
         match orqa_graph::delete_plugin_artifacts(db, &name).await {
             Ok(_) => {
@@ -429,6 +541,14 @@ pub async fn uninstall_plugin(
             }
             Err(e) => {
                 tracing::warn!(plugin = %name, error = %e, "[plugins] enforcement rule cleanup failed");
+            }
+        }
+        match orqa_graph::delete_plugin_installation(db, &name).await {
+            Ok(()) => {
+                tracing::info!(plugin = %name, "[plugins] installation ledger record removed on uninstall");
+            }
+            Err(e) => {
+                tracing::warn!(plugin = %name, error = %e, "[plugins] installation ledger cleanup failed");
             }
         }
     }
@@ -510,6 +630,151 @@ pub async fn check_plugin_updates(State(state): State<GraphState>) -> Json<Vec<P
     Json(updates)
 }
 
+/// Handle GET /plugins/installed — list plugin_installation ledger records.
+///
+/// By default excludes failed records. Pass `?include_failed=true` to include
+/// records with `install_status = 'failed'`. Returns an empty array when
+/// SurrealDB is not available.
+pub async fn list_installed_plugins(
+    State(state): State<GraphState>,
+    Query(query): Query<ListInstalledQuery>,
+) -> Result<Json<Vec<serde_json::Value>>, (StatusCode, Json<serde_json::Value>)> {
+    let db = {
+        let Ok(guard) = state.0.read() else {
+            return Ok(Json(Vec::new()));
+        };
+        guard.db.clone()
+    };
+
+    let Some(db) = db else {
+        return Ok(Json(Vec::new()));
+    };
+
+    let result = if query.include_failed {
+        orqa_graph::list_all_plugin_installations(&db).await
+    } else {
+        orqa_graph::list_plugin_installations(&db).await
+    };
+
+    match result {
+        Ok(records) => Ok(Json(records)),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
+    }
+}
+
+/// Handle GET /plugins/:name/installation — get a single plugin_installation ledger record.
+///
+/// Returns the plugin_installation record for the named plugin. Returns 404 if no
+/// record exists (plugin not installed or ledger not yet populated).
+pub async fn get_plugin_installation(
+    State(state): State<GraphState>,
+    Path(name): Path<String>,
+) -> Result<Json<serde_json::Value>, (StatusCode, Json<serde_json::Value>)> {
+    let db = {
+        let Ok(guard) = state.0.read() else {
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            ));
+        };
+        guard.db.clone()
+    };
+
+    let Some(db) = db else {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({ "error": "SurrealDB not available", "code": "NO_DB" })),
+        ));
+    };
+
+    match orqa_graph::read_plugin_installation(&db, &name).await {
+        Ok(Some(record)) => Ok(Json(record)),
+        Ok(None) => Err((
+            StatusCode::NOT_FOUND,
+            Json(serde_json::json!({
+                "error": format!("no installation record for plugin '{name}'"),
+                "code": "NOT_FOUND"
+            })),
+        )),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
+    }
+}
+
+/// Handle DELETE /plugins/installed/:name — remove a plugin_installation ledger record.
+///
+/// Removes only the SurrealDB ledger record — does not uninstall files from disk.
+/// Used by tests and administrative tooling that needs to clean up ledger entries
+/// independently from the full filesystem uninstall flow.
+pub async fn delete_installed_plugin(
+    State(state): State<GraphState>,
+    Path(name): Path<String>,
+) -> Result<StatusCode, (StatusCode, Json<serde_json::Value>)> {
+    let db = {
+        let Ok(guard) = state.0.read() else {
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            ));
+        };
+        guard.db.clone()
+    };
+
+    let Some(db) = db else {
+        return Err((
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({ "error": "SurrealDB not available", "code": "NO_DB" })),
+        ));
+    };
+
+    match orqa_graph::delete_plugin_installation(&db, &name).await {
+        Ok(()) => Ok(StatusCode::NO_CONTENT),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
+    }
+}
+
+/// Handle GET /plugins/drift — check installed plugins for file hash drift.
+///
+/// Compares `source_hash` vs `installed_hash` for every file in every non-failed
+/// plugin_installation record. Returns `{ clean: bool, drifted_plugins: [...] }`.
+/// Returns `{ clean: true, drifted_plugins: [] }` when SurrealDB is unavailable.
+pub async fn check_plugin_drift(
+    State(state): State<GraphState>,
+) -> Result<Json<orqa_graph::PluginDriftReport>, (StatusCode, Json<serde_json::Value>)> {
+    let db = {
+        let Ok(guard) = state.0.read() else {
+            return Ok(Json(orqa_graph::PluginDriftReport {
+                clean: true,
+                drifted_plugins: Vec::new(),
+            }));
+        };
+        guard.db.clone()
+    };
+
+    let Some(db) = db else {
+        return Ok(Json(orqa_graph::PluginDriftReport {
+            clean: true,
+            drifted_plugins: Vec::new(),
+        }));
+    };
+
+    match orqa_graph::check_plugin_drift(&db).await {
+        Ok(report) => Ok(Json(report)),
+        Err(e) => Err((
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DB_ERROR" })),
+        )),
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Internal: SurrealDB content ingest helper
 // ---------------------------------------------------------------------------
@@ -555,24 +820,20 @@ async fn ingest_content_dir(
 
 /// Walk the installed plugin's surrealdb-target source directories and ingest each `.md` file.
 ///
-/// Called after a successful install when `result.surrealdb_content_entries > 0`.
-/// Errors are logged but do not fail the install — the plugin is already on disk.
+/// Returns `Err` if the manifest cannot be read. Individual file errors are logged
+/// and counted but do not cause early return — all files are attempted. Returns
+/// `Err` if any file errors occurred so the caller can propagate to the ledger.
 async fn ingest_surrealdb_content(
     db: &orqa_graph::GraphDb,
     plugin_name: &str,
     plugin_path: &str,
     project_root: &std::path::Path,
-) {
+) -> Result<(), String> {
     use orqa_plugin::manifest::read_manifest;
 
     let plugin_dir = std::path::Path::new(plugin_path);
-    let manifest = match read_manifest(plugin_dir) {
-        Ok(m) => m,
-        Err(e) => {
-            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] failed to read manifest for SurrealDB ingest");
-            return;
-        }
-    };
+    let manifest = read_manifest(plugin_dir)
+        .map_err(|e| format!("failed to read manifest for SurrealDB ingest: {e}"))?;
 
     let (mut ingested, mut skipped, mut errors) = (0usize, 0usize, 0usize);
 
@@ -592,31 +853,34 @@ async fn ingest_surrealdb_content(
     }
 
     tracing::info!(plugin = %plugin_name, ingested, skipped, errors, "[plugins] surrealdb content ingest complete");
+
+    if errors > 0 {
+        return Err(format!("{errors} file(s) failed to ingest into SurrealDB"));
+    }
+    Ok(())
 }
 
 /// Read the plugin manifest and ingest enforcement rules from all enforcement declarations.
 ///
 /// Each `EnforcementDeclaration` with a `rules_path` is walked; rule `.md` files are
 /// upserted into the `enforcement_rule` SurrealDB table with `source_plugin` set.
-/// Errors are logged but do not fail the install — the plugin is already on disk.
-async fn ingest_enforcement_rules(db: &orqa_graph::GraphDb, plugin_name: &str, plugin_path: &str) {
+/// Returns `Err` if the manifest cannot be read or the ingest operation fails.
+async fn ingest_enforcement_rules(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    plugin_path: &str,
+) -> Result<(), String> {
     use orqa_graph::EnforcementRuleSource;
     use orqa_plugin::manifest::read_manifest;
 
     let plugin_dir = std::path::Path::new(plugin_path);
-    let manifest = match read_manifest(plugin_dir) {
-        Ok(m) => m,
-        Err(e) => {
-            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] failed to read manifest for enforcement rule ingest");
-            return;
-        }
-    };
+    let manifest = read_manifest(plugin_dir)
+        .map_err(|e| format!("failed to read manifest for enforcement rule ingest: {e}"))?;
 
     if manifest.enforcement.is_empty() {
-        return;
+        return Ok(());
     }
 
-    // Convert manifest enforcement declarations to the sync module's minimal type.
     let sources: Vec<EnforcementRuleSource> = manifest
         .enforcement
         .iter()
@@ -625,14 +889,140 @@ async fn ingest_enforcement_rules(db: &orqa_graph::GraphDb, plugin_name: &str, p
         })
         .collect();
 
-    match orqa_graph::upsert_enforcement_rules_from_plugin(db, plugin_name, plugin_dir, &sources)
-        .await
-    {
-        Ok(count) => {
-            tracing::info!(plugin = %plugin_name, count, "[plugins] enforcement rules ingested");
-        }
+    let count =
+        orqa_graph::upsert_enforcement_rules_from_plugin(db, plugin_name, plugin_dir, &sources)
+            .await
+            .map_err(|e| format!("enforcement rule ingest failed: {e}"))?;
+
+    tracing::info!(plugin = %plugin_name, count, "[plugins] enforcement rules ingested");
+    Ok(())
+}
+
+/// Write a plugin_installation ledger record with the given status.
+///
+/// Reads the plugin's manifest to compute the hash and file list. Errors are logged
+/// but do not fail the install — the plugin is already on disk and in SurrealDB.
+/// Called first with `Installing` and then with `Installed` (or `Failed`) so a
+/// failure mid-install leaves a recoverable evidence record.
+#[allow(clippy::too_many_lines)]
+async fn write_plugin_installation_record(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    plugin_version: &str,
+    plugin_path: &str,
+    status: orqa_graph::PluginInstallStatus,
+) {
+    use orqa_graph::PluginFileEntry;
+    use orqa_plugin::manifest::read_manifest;
+    use sha2::{Digest, Sha256};
+
+    let plugin_dir = std::path::Path::new(plugin_path);
+    let manifest_path = plugin_dir.join("orqa-plugin.json");
+
+    // Compute manifest hash.
+    let manifest_hash = match std::fs::read(&manifest_path) {
+        Ok(bytes) => format!("{:x}", Sha256::digest(&bytes)),
         Err(e) => {
-            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] enforcement rule ingest failed");
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] cannot read manifest for installation record");
+            return;
+        }
+    };
+
+    let manifest = match read_manifest(plugin_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] cannot parse manifest for installation record");
+            return;
+        }
+    };
+
+    // Build file entries from the content declarations in the manifest.
+    let mut files: Vec<PluginFileEntry> = Vec::new();
+    for entry in manifest.content.values() {
+        let target_str = match entry.target {
+            orqa_plugin::manifest::ContentTarget::Surrealdb => "surrealdb",
+            orqa_plugin::manifest::ContentTarget::Runtime => "runtime",
+        };
+
+        // Walk the source directory to enumerate individual files.
+        let src_dir = plugin_dir.join(&entry.source);
+        if !src_dir.exists() {
+            continue;
+        }
+        let walker = walkdir::WalkDir::new(&src_dir)
+            .follow_links(false)
+            .into_iter()
+            .filter_map(Result::ok)
+            .filter(|e| e.path().is_file());
+
+        for entry_item in walker {
+            let path = entry_item.into_path();
+            let Ok(file_bytes) = std::fs::read(&path) else {
+                continue;
+            };
+            let hash = format!("{:x}", Sha256::digest(&file_bytes));
+            // Relative path from project root using the declared target path as base.
+            let rel = {
+                let rel_src = path
+                    .strip_prefix(&src_dir)
+                    .map(|p| p.to_string_lossy().replace('\\', "/"))
+                    .unwrap_or_default();
+                format!("{}/{}", entry.install_path.trim_end_matches('/'), rel_src)
+            };
+            files.push(PluginFileEntry {
+                path: rel,
+                source_hash: hash.clone(),
+                installed_hash: hash,
+                target: target_str.to_owned(),
+                artifact_id: None,
+            });
         }
     }
+
+    match orqa_graph::upsert_plugin_installation(
+        db,
+        plugin_name,
+        plugin_version,
+        &manifest_hash,
+        &files,
+        status,
+    )
+    .await
+    {
+        Ok(()) => {
+            tracing::info!(plugin = %plugin_name, install_status = %status.as_str(), "[plugins] installation ledger record written");
+        }
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] installation ledger write failed");
+        }
+    }
+}
+
+/// Update only the install_status field of an existing plugin_installation record.
+///
+/// Called after ingest completes (or fails) to mark the transition from Installing
+/// to Installed or Failed. Errors are logged but do not propagate — the plugin is
+/// already on disk and a stale Installing record is better than a panicked route.
+async fn write_plugin_installation_status(
+    db: &orqa_graph::GraphDb,
+    plugin_name: &str,
+    plugin_path: &str,
+    status: orqa_graph::PluginInstallStatus,
+) {
+    use orqa_plugin::manifest::read_manifest;
+
+    let plugin_dir = std::path::Path::new(plugin_path);
+    let manifest = match read_manifest(plugin_dir) {
+        Ok(m) => m,
+        Err(e) => {
+            tracing::warn!(plugin = %plugin_name, error = %e, "[plugins] cannot read manifest for status update");
+            return;
+        }
+    };
+
+    let manifest_version = &manifest.version;
+
+    // Re-use the full upsert to write the updated status. The files list is
+    // preserved because UPSERT sets the field explicitly each time.
+    write_plugin_installation_record(db, plugin_name, manifest_version, plugin_path, status).await;
 }

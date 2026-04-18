@@ -1,1 +1,1 @@
-{"version":3,"file":"verify.d.ts","sourceRoot":"","sources":["../../src/commands/verify.ts"],"names":[],"mappings":"AAAA;;;;;;;GAOG;AAKH,0EAA0E;AAC1E,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CAsBtD"}
+{"version":3,"file":"verify.d.ts","sourceRoot":"","sources":["../../src/commands/verify.ts"],"names":[],"mappings":"AAAA;;;;;;;;GAQG;AAkBH,wFAAwF;AACxF,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,IAAI,CAAC,CA+CtD"}
