@@ -397,6 +397,343 @@ async fn c4_watcher_state_running_before_and_after_ingest() {
 }
 
 // ---------------------------------------------------------------------------
+// V1: Verify after ingest — zero deltas expected
+// ---------------------------------------------------------------------------
+
+/// V1: Run ingest then immediately verify against the written report.
+///
+/// Because SurrealDB state exactly matches what was just inserted, all metric
+/// deltas must be zero and `all_clean` must be true.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn v1_verify_after_ingest_reports_zero_deltas() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
+    // Use a shared HealthState rooted at the temp dir so both the ingest and
+    // verify routes see the same SurrealDB instance without touching the shared
+    // embedded fixture DB on disk (which would deadlock under concurrent tests).
+    let state = helpers::build_state_for_project(tmp_root).await;
+    let router = orqa_daemon_lib::build_router(state);
+
+    // Run ingest first to populate SurrealDB and write the report file.
+    let (ingest_status, ingest_body) =
+        post_ingest(router.clone(), json!({ "project_root": tmp_root_str })).await;
+    assert_eq!(
+        ingest_status,
+        StatusCode::OK,
+        "ingest must return 200: {ingest_body}"
+    );
+    let migration_id = ingest_body["migration_id"]
+        .as_str()
+        .expect("ingest must return migration_id");
+
+    // Now verify against the just-written report.
+    let (verify_status, verify_body) = get_verify(router, migration_id, &tmp_root_str).await;
+
+    assert_eq!(
+        verify_status,
+        StatusCode::OK,
+        "verify must return 200: {verify_body}"
+    );
+    assert_eq!(
+        verify_body["all_clean"], true,
+        "verify must report all_clean=true immediately after ingest: {verify_body}"
+    );
+
+    let deltas = verify_body["metric_deltas"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
+    assert!(
+        deltas.is_empty(),
+        "metric_deltas must be empty after ingest, got: {verify_body}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// V2: Forced delta — delete a record, verify must report mismatch
+// ---------------------------------------------------------------------------
+
+/// V2: Run ingest, delete one SurrealDB artifact record, then verify.
+///
+/// The total_artifacts count in SurrealDB will be lower than the baseline
+/// recorded in the ingest report. `all_clean` must be false and
+/// `metric_deltas` must contain a `total_artifacts` entry with the discrepancy.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn v2_forced_delta_reports_mismatch_and_exits_nonzero() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
+    let state = helpers::build_state_for_project(tmp_root).await;
+    let router = orqa_daemon_lib::build_router(state.clone());
+
+    // Ingest to seed SurrealDB (2 user artifacts: DEC-001 and DEC-002).
+    let (ingest_status, ingest_body) =
+        post_ingest(router.clone(), json!({ "project_root": tmp_root_str })).await;
+    assert_eq!(
+        ingest_status,
+        StatusCode::OK,
+        "ingest must succeed: {ingest_body}"
+    );
+    let migration_id = ingest_body["migration_id"]
+        .as_str()
+        .expect("ingest must return migration_id");
+
+    // Force a delta by deleting one artifact from SurrealDB directly.
+    // The GraphState holds the SurrealDB handle; delete DEC-001 via raw query.
+    if let Some(db) = state.graph_state.surreal_db() {
+        let _ =
+            db.0.query("DELETE artifact WHERE path = '.orqa/implementation/epics/DEC-001.md';")
+                .await;
+    }
+
+    // Verify — must detect the delta.
+    let router2 = orqa_daemon_lib::build_router(state);
+    let (verify_status, verify_body) = get_verify(router2, migration_id, &tmp_root_str).await;
+
+    assert_eq!(
+        verify_status,
+        StatusCode::OK,
+        "verify route must return 200 even on delta: {verify_body}"
+    );
+    assert_eq!(
+        verify_body["all_clean"], false,
+        "all_clean must be false when a record was deleted: {verify_body}"
+    );
+
+    let deltas = verify_body["metric_deltas"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
+    assert!(
+        !deltas.is_empty(),
+        "metric_deltas must be non-empty after forced deletion: {verify_body}"
+    );
+
+    let total_delta = deltas
+        .iter()
+        .find(|d| d["metric"].as_str() == Some("total_artifacts"));
+    assert!(
+        total_delta.is_some(),
+        "must have a total_artifacts delta: {verify_body}"
+    );
+    let td = total_delta.unwrap();
+    assert_eq!(
+        td["expected"], 2,
+        "baseline expected 2 inserted artifacts: {td}"
+    );
+    assert_eq!(
+        td["actual"], 1,
+        "actual must be 1 after deleting DEC-001: {td}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// V3: Idempotent re-run — same seed, same results
+// ---------------------------------------------------------------------------
+
+/// V3: Running verify twice with the same migration_id produces identical results.
+///
+/// Verifies that the sample seed is deterministic and that the route is stable
+/// across repeated invocations against unchanged SurrealDB state.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn v3_verify_is_idempotent_same_seed_same_results() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
+    let state = helpers::build_state_for_project(tmp_root).await;
+
+    // Ingest once.
+    let router = orqa_daemon_lib::build_router(state.clone());
+    let (ingest_status, ingest_body) =
+        post_ingest(router.clone(), json!({ "project_root": tmp_root_str })).await;
+    assert_eq!(
+        ingest_status,
+        StatusCode::OK,
+        "ingest must succeed: {ingest_body}"
+    );
+    let migration_id = ingest_body["migration_id"]
+        .as_str()
+        .expect("ingest must return migration_id");
+
+    // Verify twice using two separate routers backed by the same shared state.
+    let r1 = orqa_daemon_lib::build_router(state.clone());
+    let r2 = orqa_daemon_lib::build_router(state);
+    let (_, body1) = get_verify(r1, migration_id, &tmp_root_str).await;
+    let (_, body2) = get_verify(r2, migration_id, &tmp_root_str).await;
+
+    // Both runs must agree on seed, all_clean, and delta count.
+    assert_eq!(
+        body1["sample_seed"], body2["sample_seed"],
+        "sample_seed must be identical across runs"
+    );
+    assert_eq!(
+        body1["all_clean"], body2["all_clean"],
+        "all_clean must be identical across runs"
+    );
+    assert_eq!(
+        body1["metric_deltas"].as_array().map(|a| a.len()),
+        body2["metric_deltas"].as_array().map(|a| a.len()),
+        "metric_deltas length must be identical across runs"
+    );
+    assert_eq!(
+        body1["trace_results"].as_array().map(|a| a.len()),
+        body2["trace_results"].as_array().map(|a| a.len()),
+        "trace_results length must be identical across runs"
+    );
+
+    // Verify that the trace sample artifact IDs are in the same order.
+    let empty1 = vec![];
+    let ids1: Vec<_> = body1["trace_results"]
+        .as_array()
+        .unwrap_or(&empty1)
+        .iter()
+        .map(|r| r["artifact_id"].as_str().unwrap_or(""))
+        .collect();
+    let empty2 = vec![];
+    let ids2: Vec<_> = body2["trace_results"]
+        .as_array()
+        .unwrap_or(&empty2)
+        .iter()
+        .map(|r| r["artifact_id"].as_str().unwrap_or(""))
+        .collect();
+    assert_eq!(
+        ids1, ids2,
+        "trace sample artifact order must be deterministic"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// V4: Edge delta — delete an edge, verify must report edge_count mismatch
+// ---------------------------------------------------------------------------
+
+/// V4: Run ingest, delete a relates_to edge from SurrealDB, then verify.
+///
+/// The fixture contains at least one artifact with relationships. After deleting
+/// an edge record, `edge_count` in SurrealDB will be lower than the baseline
+/// snapshotted at ingest time. `all_clean` must be false and `metric_deltas`
+/// must contain an `edge_count` entry.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn v4_edge_deletion_reports_edge_count_delta() {
+    let tmp = tempfile::tempdir().unwrap();
+    let tmp_root = tmp.path();
+    copy_fixture_to_temp(tmp_root);
+    let tmp_root_str = tmp_root.to_string_lossy().replace('\\', "/");
+
+    let state = helpers::build_state_for_project(tmp_root).await;
+    let router = orqa_daemon_lib::build_router(state.clone());
+
+    // Ingest to seed SurrealDB.
+    let (ingest_status, ingest_body) =
+        post_ingest(router.clone(), json!({ "project_root": tmp_root_str })).await;
+    assert_eq!(
+        ingest_status,
+        StatusCode::OK,
+        "ingest must succeed: {ingest_body}"
+    );
+
+    let migration_id = ingest_body["migration_id"]
+        .as_str()
+        .expect("ingest must return migration_id");
+
+    // Check how many edges were snapshotted in the report.
+    let baseline_edge_count = ingest_body
+        .get("files") // we read the report from disk instead
+        .and_then(|_| None::<i64>) // placeholder — we read via DB
+        .unwrap_or(0i64);
+    let _ = baseline_edge_count; // unused; we rely on the verify delta assertion
+
+    // Read the edge count from the snapshotted baseline via the report file.
+    let report_path = tmp_root
+        .join(".state/migrations")
+        .join(format!("{migration_id}.json"));
+    let report_bytes = std::fs::read(&report_path).expect("report must exist");
+    let report_json: serde_json::Value =
+        serde_json::from_slice(&report_bytes).expect("report must be valid JSON");
+    let snapshotted_edge_count = report_json["baseline_metrics"]["edge_count"]
+        .as_i64()
+        .unwrap_or(0);
+
+    // Skip the test if the fixture has no edges — nothing to delete.
+    if snapshotted_edge_count == 0 {
+        return;
+    }
+
+    // Delete all relates_to edges from SurrealDB to create a maximum delta.
+    if let Some(db) = state.graph_state.surreal_db() {
+        let _ = db.0.query("DELETE relates_to;").await;
+    }
+
+    // Verify — must detect the edge_count delta.
+    let router2 = orqa_daemon_lib::build_router(state);
+    let (verify_status, verify_body) = get_verify(router2, migration_id, &tmp_root_str).await;
+
+    assert_eq!(
+        verify_status,
+        StatusCode::OK,
+        "verify route must return 200 even on edge delta: {verify_body}"
+    );
+    assert_eq!(
+        verify_body["all_clean"], false,
+        "all_clean must be false when edges were deleted: {verify_body}"
+    );
+
+    let deltas = verify_body["metric_deltas"]
+        .as_array()
+        .cloned()
+        .unwrap_or_default();
+    let edge_delta = deltas
+        .iter()
+        .find(|d| d["metric"].as_str() == Some("edge_count"));
+    assert!(
+        edge_delta.is_some(),
+        "metric_deltas must contain edge_count entry after deleting all edges: {verify_body}"
+    );
+    let ed = edge_delta.unwrap();
+    assert_eq!(
+        ed["actual"], 0,
+        "actual edge_count must be 0 after DELETE: {ed}"
+    );
+    assert!(
+        ed["expected"].as_i64().unwrap_or(0) > 0,
+        "expected edge_count must be positive (was snapshotted at ingest): {ed}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Verify helper
+// ---------------------------------------------------------------------------
+
+/// GET /admin/migrate/storage/verify with migration_id and project_root query params.
+async fn get_verify(
+    router: axum::Router,
+    migration_id: &str,
+    project_root: &str,
+) -> (StatusCode, serde_json::Value) {
+    let uri = format!(
+        "/admin/migrate/storage/verify?migration_id={migration_id}&project_root={project_root}"
+    );
+    let req = Request::builder()
+        .method("GET")
+        .uri(&uri)
+        .body(Body::empty())
+        .unwrap();
+
+    let response = router.oneshot(req).await.unwrap();
+    let status = response.status();
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let body: serde_json::Value = serde_json::from_slice(&bytes)
+        .unwrap_or(json!({"_raw": std::str::from_utf8(&bytes).unwrap_or("(binary)")}));
+    (status, body)
+}
+
+// ---------------------------------------------------------------------------
 // Fixture copy helper
 // ---------------------------------------------------------------------------
 

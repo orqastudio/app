@@ -22,6 +22,7 @@ import { parseFrontmatterFromContent, writeFrontmatter } from "../lib/frontmatte
 import {
 	runMigrateStorageIngestCommand,
 	runMigrateStorageManifestCommand,
+	runMigrateStorageVerifyCommand,
 } from "./migrate-storage.js";
 
 const USAGE = `
@@ -30,6 +31,9 @@ Usage: orqa migrate <subcommand|options>
 Subcommands:
   storage ingest   Migrate user-authored .orqa/ artifacts into SurrealDB
                    (pauses file watcher, ingests, resumes watcher)
+  storage verify   Compare current SurrealDB state against the ingest baseline
+                   (read-only, safe to re-run, exits non-zero on any delta)
+  storage manifest Port .orqa/manifest.json plugin records into SurrealDB
 
 Base command (no subcommand): apply status migrations from workflow definitions
 to artifact frontmatter.
@@ -308,6 +312,10 @@ export async function runMigrateCommand(args: string[]): Promise<void> {
 		}
 		if (args[1] === "manifest") {
 			await runMigrateStorageManifestCommand(args.slice(2));
+			return;
+		}
+		if (args[1] === "verify") {
+			await runMigrateStorageVerifyCommand(args.slice(2));
 			return;
 		}
 		console.error(`Unknown storage subcommand: ${args[1] ?? "(none)"}`);

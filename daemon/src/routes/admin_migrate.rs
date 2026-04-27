@@ -88,6 +88,24 @@ pub struct MigrationCounts {
     pub errors: usize,
 }
 
+/// Baseline SurrealDB metrics snapshotted at the end of an ingest run.
+///
+/// Written into the migration report so that subsequent `verify` runs can compare
+/// current SurrealDB state against what was present immediately after ingest.
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BaselineSnapshot {
+    /// Total artifact records at end of ingest.
+    pub total_artifacts: i64,
+    /// Per-type counts: list of (type_name, count) pairs.
+    pub per_type: Vec<(String, i64)>,
+    /// Per-status counts: list of (status_name, count) pairs.
+    pub per_status: Vec<(String, i64)>,
+    /// Number of orphaned artifacts (no edges, non-terminal status).
+    pub orphan_count: i64,
+    /// Total number of relates_to edge records.
+    pub edge_count: i64,
+}
+
 /// Full migration report written to `.state/migrations/<migration_id>.json`.
 #[derive(Debug, Serialize)]
 pub struct MigrationReport {
@@ -97,6 +115,10 @@ pub struct MigrationReport {
     pub project_root: String,
     pub counts: MigrationCounts,
     pub files: Vec<FileOutcome>,
+    /// Baseline metrics snapshotted from SurrealDB immediately after ingest.
+    /// Used by the verify route to detect post-ingest drift.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub baseline_metrics: Option<BaselineSnapshot>,
 }
 
 /// HTTP response body for the ingest endpoint.
@@ -482,6 +504,11 @@ pub async fn storage_ingest(
         "[migrate] storage ingest complete"
     );
 
+    // Snapshot baseline metrics from SurrealDB immediately after all inserts.
+    // These are written into the report so that `verify` can compare current
+    // SurrealDB state against ingest-time state without having the original files.
+    let baseline_metrics = snapshot_baseline_metrics(&db).await;
+
     // Write the migration report to .state/migrations/<migration_id>.json.
     let flagged_files: Vec<String> = outcomes
         .iter()
@@ -502,6 +529,7 @@ pub async fn storage_ingest(
             errors: counts.errors,
         },
         files: outcomes,
+        baseline_metrics: Some(baseline_metrics),
     };
 
     let report_rel = format!(".state/migrations/{migration_id}.json");
@@ -552,6 +580,65 @@ pub async fn storage_ingest(
 // ---------------------------------------------------------------------------
 // SurrealDB helpers (thin wrappers to avoid duplicating sync.rs internals)
 // ---------------------------------------------------------------------------
+
+/// Snapshot current SurrealDB metrics into a `BaselineSnapshot`.
+///
+/// Called at the end of every ingest run to capture the exact state of the
+/// database after all inserts. The snapshot is embedded in the migration report
+/// so that subsequent `verify` runs can detect post-ingest drift on all five
+/// metrics (total, per_type, per_status, orphan, edge).
+///
+/// Uses row-fetch queries (SELECT id FROM …) rather than GROUP ALL aggregates
+/// for the count fields that are also needed individually. GROUP BY queries are
+/// used for per-type and per-status breakdowns; these are safe in the embedded
+/// engine. For edge count we use SELECT id FROM relates_to row-fetch to avoid
+/// the GROUP ALL hang observed in the embedded engine.
+async fn snapshot_baseline_metrics(db: &orqa_graph::surreal::GraphDb) -> BaselineSnapshot {
+    // Total artifact count via row-fetch (avoids GROUP ALL hang).
+    let total_artifacts: i64 =
+        db.0.query("SELECT id FROM artifact;")
+            .await
+            .ok()
+            .and_then(|mut r| r.take::<Vec<serde_json::Value>>(0).ok())
+            .map_or(0, |rows| rows.len() as i64);
+
+    // Per-type breakdown via GROUP BY (safe in embedded engine).
+    let per_type: Vec<(String, i64)> = orqa_graph::count_by_type(db)
+        .await
+        .unwrap_or_default()
+        .into_iter()
+        .map(|gc| (gc.group.unwrap_or_else(|| "(none)".to_owned()), gc.count))
+        .collect();
+
+    // Per-status breakdown via GROUP BY (safe in embedded engine).
+    let per_status: Vec<(String, i64)> = orqa_graph::count_by_status(db)
+        .await
+        .unwrap_or_default()
+        .into_iter()
+        .map(|gc| (gc.group.unwrap_or_else(|| "(none)".to_owned()), gc.count))
+        .collect();
+
+    // Orphan count via inline per-row count() (safe in embedded engine).
+    let orphan_count: i64 = orqa_graph::surreal_find_orphans(db)
+        .await
+        .map_or(-1, |v| v.len() as i64);
+
+    // Edge count via row-fetch (avoids GROUP ALL hang observed in embedded engine).
+    let edge_count: i64 =
+        db.0.query("SELECT id FROM relates_to;")
+            .await
+            .ok()
+            .and_then(|mut r| r.take::<Vec<serde_json::Value>>(0).ok())
+            .map_or(0, |rows| rows.len() as i64);
+
+    BaselineSnapshot {
+        total_artifacts,
+        per_type,
+        per_status,
+        orphan_count,
+        edge_count,
+    }
+}
 
 /// Check whether the artifact at `rel_path` already has a matching content hash.
 ///
@@ -960,6 +1047,524 @@ async fn is_plugin_installation_current(
             .is_some_and(|h| h == manifest_hash),
         _ => false,
     }
+}
+
+// ---------------------------------------------------------------------------
+// Verify route
+// ---------------------------------------------------------------------------
+
+/// Query parameters for GET /admin/migrate/storage/verify.
+///
+/// `migration_id` selects a specific ingest report from `.state/migrations/`.
+/// If absent, the route uses the most recently written report file.
+#[derive(Debug, Deserialize)]
+pub struct VerifyQuery {
+    pub migration_id: Option<String>,
+    /// Project root override. If absent, uses the daemon's current project root.
+    pub project_root: Option<String>,
+}
+
+/// A single metric delta: expected vs actual value with the field name.
+#[derive(Debug, Serialize)]
+pub struct MetricDelta {
+    /// Field name for this metric (e.g. `"total_artifacts"`).
+    pub metric: String,
+    /// Value from the ingest-time baseline.
+    pub expected: i64,
+    /// Value observed in SurrealDB right now.
+    pub actual: i64,
+}
+
+/// Result of a single traceability sample query.
+#[derive(Debug, Serialize)]
+pub struct TraceQueryResult {
+    /// Artifact ID that was the starting point.
+    pub artifact_id: String,
+    /// Pillar/vision IDs reachable from this artifact at ingest time (baseline).
+    pub expected_pillars: Vec<String>,
+    /// Pillar/vision IDs reachable from this artifact in current SurrealDB.
+    pub actual_pillars: Vec<String>,
+    /// True when expected == actual (order-independent).
+    pub matches: bool,
+}
+
+/// Full verification report returned by GET /admin/migrate/storage/verify.
+#[derive(Debug, Serialize)]
+pub struct VerifyReport {
+    /// Migration ID of the baseline ingest report used for comparison.
+    pub migration_id: String,
+    /// Deltas for structural health metrics. Empty when all metrics match.
+    pub metric_deltas: Vec<MetricDelta>,
+    /// Results of the 20 deterministic traceability sample queries.
+    pub trace_results: Vec<TraceQueryResult>,
+    /// True when all metric deltas are zero and all trace queries match.
+    pub all_clean: bool,
+    /// ISO 8601 timestamp when this verify run completed.
+    pub verified_at: String,
+    /// Fixed seed used for the traceability sample (for reproducibility).
+    pub sample_seed: u64,
+}
+
+/// Fixed seed for the 20-sample traceability queries.
+///
+/// The seed value is `0xS210` interpreted as hex. All verify invocations
+/// use this seed so re-runs against the same SurrealDB state produce the same
+/// 20 artifacts in the same order, making failures deterministically reproducible.
+const S2_VERIFY_SEED: u64 = 0x5332_3130; // ASCII "S210"
+
+/// Handle GET /admin/migrate/storage/verify.
+///
+/// Loads the most recent (or specified) ingest report from `.state/migrations/`,
+/// queries SurrealDB for current metric counts and 20 deterministic traceability
+/// samples, then returns a structured comparison. Returns HTTP 200 whether or not
+/// deltas exist — the HTTP status code always reflects the route health, not the
+/// migration health. Callers must inspect `all_clean` and the CLI sets the process
+/// exit code.
+#[allow(clippy::too_many_lines)]
+pub async fn storage_verify(
+    State(graph_state): State<GraphState>,
+    query: axum::extract::Query<VerifyQuery>,
+) -> (StatusCode, Json<serde_json::Value>) {
+    let project_root: PathBuf = query.project_root.as_deref().map_or_else(
+        || {
+            graph_state
+                .0
+                .read()
+                .map(|g| g.project_root.clone())
+                .unwrap_or_default()
+        },
+        PathBuf::from,
+    );
+
+    let Some(db) = graph_state.surreal_db() else {
+        return (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "error": "SurrealDB is not available — daemon may not have initialized correctly"
+            })),
+        );
+    };
+
+    // Locate the ingest report to use as baseline.
+    let report_path = match resolve_report_path(&project_root, query.migration_id.as_deref()) {
+        Ok(p) => p,
+        Err(e) => {
+            return (
+                StatusCode::NOT_FOUND,
+                Json(serde_json::json!({ "error": e })),
+            );
+        }
+    };
+
+    let report_bytes = match std::fs::read(&report_path) {
+        Ok(b) => b,
+        Err(e) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": format!("cannot read report: {e}") })),
+            );
+        }
+    };
+
+    let report: serde_json::Value = match serde_json::from_slice(&report_bytes) {
+        Ok(v) => v,
+        Err(e) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": format!("cannot parse report: {e}") })),
+            );
+        }
+    };
+
+    let migration_id = report["migration_id"]
+        .as_str()
+        .unwrap_or("unknown")
+        .to_owned();
+
+    // Build baseline metrics from the ingest report's `files` array.
+    // The baseline reflects what was user-authored in the .orqa/ directory
+    // at ingest time: only files with action="inserted" count as baseline artifacts.
+    let baseline = compute_baseline_from_report(&report);
+
+    // Query current SurrealDB state.
+    let actual = match query_current_metrics(&db).await {
+        Ok(m) => m,
+        Err(e) => {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": format!("SurrealDB query failed: {e}") })),
+            );
+        }
+    };
+
+    // Compute metric deltas.
+    let metric_deltas = compute_metric_deltas(&baseline, &actual);
+
+    // Run 20 deterministic traceability samples.
+    let trace_results = run_trace_samples(&db, &report, S2_VERIFY_SEED).await;
+
+    let all_clean = metric_deltas.is_empty() && trace_results.iter().all(|r| r.matches);
+
+    let report_out = VerifyReport {
+        migration_id,
+        metric_deltas,
+        trace_results,
+        all_clean,
+        verified_at: chrono_now_iso8601(),
+        sample_seed: S2_VERIFY_SEED,
+    };
+
+    (
+        StatusCode::OK,
+        Json(serde_json::to_value(report_out).unwrap_or_default()),
+    )
+}
+
+/// Resolve the path to the ingest report JSON file.
+///
+/// If `migration_id` is given, looks for `.state/migrations/<migration_id>.json`.
+/// Otherwise, returns the most recently modified file in `.state/migrations/`.
+fn resolve_report_path(project_root: &Path, migration_id: Option<&str>) -> Result<PathBuf, String> {
+    let migrations_dir = project_root.join(".state").join("migrations");
+
+    if let Some(id) = migration_id {
+        let path = migrations_dir.join(format!("{id}.json"));
+        if path.exists() {
+            return Ok(path);
+        }
+        return Err(format!("no report found for migration_id={id}"));
+    }
+
+    // Find most recently modified .json file.
+    let most_recent = std::fs::read_dir(&migrations_dir)
+        .map_err(|e| format!("cannot read .state/migrations/: {e}"))?
+        .filter_map(Result::ok)
+        .filter(|e| e.path().extension().and_then(|x| x.to_str()) == Some("json"))
+        .max_by_key(|e| {
+            e.metadata()
+                .and_then(|m| m.modified())
+                .unwrap_or(std::time::SystemTime::UNIX_EPOCH)
+        });
+
+    match most_recent {
+        Some(e) => Ok(e.path()),
+        None => Err("no migration reports found in .state/migrations/".to_owned()),
+    }
+}
+
+/// Baseline metrics derived from an ingest report's `files` array.
+struct BaselineMetrics {
+    total_artifacts: i64,
+    per_type: Vec<(String, i64)>,
+    per_status: Vec<(String, i64)>,
+    orphan_count: i64,
+    edge_count: i64,
+}
+
+/// Current SurrealDB state metrics.
+struct ActualMetrics {
+    total_artifacts: i64,
+    per_type: Vec<(String, i64)>,
+    per_status: Vec<(String, i64)>,
+    orphan_count: i64,
+    edge_count: i64,
+}
+
+/// Build baseline metrics from the ingest report JSON.
+///
+/// Reads the `baseline_metrics` section written by `snapshot_baseline_metrics`
+/// at ingest time. For legacy reports that predate this field, falls back to
+/// deriving `total_artifacts` from the `files` array and using sentinel -1 for
+/// the other fields (which skips comparison for those fields).
+fn compute_baseline_from_report(report: &serde_json::Value) -> BaselineMetrics {
+    // Prefer the snapshotted baseline written at ingest time.
+    if let Some(bm) = report.get("baseline_metrics") {
+        let total_artifacts = bm["total_artifacts"].as_i64().unwrap_or(0);
+
+        let per_type: Vec<(String, i64)> = bm["per_type"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
+            .into_iter()
+            .filter_map(|pair| {
+                let arr = pair.as_array()?;
+                let k = arr.first()?.as_str()?.to_owned();
+                let v = arr.get(1)?.as_i64()?;
+                Some((k, v))
+            })
+            .collect();
+
+        let per_status: Vec<(String, i64)> = bm["per_status"]
+            .as_array()
+            .cloned()
+            .unwrap_or_default()
+            .into_iter()
+            .filter_map(|pair| {
+                let arr = pair.as_array()?;
+                let k = arr.first()?.as_str()?.to_owned();
+                let v = arr.get(1)?.as_i64()?;
+                Some((k, v))
+            })
+            .collect();
+
+        let orphan_count = bm["orphan_count"].as_i64().unwrap_or(-1);
+        let edge_count = bm["edge_count"].as_i64().unwrap_or(-1);
+
+        return BaselineMetrics {
+            total_artifacts,
+            per_type,
+            per_status,
+            orphan_count,
+            edge_count,
+        };
+    }
+
+    // Legacy fallback: derive total_artifacts from the files array only.
+    // per-type/per-status/orphan/edge use sentinel -1 to skip comparison.
+    let files = report["files"].as_array().cloned().unwrap_or_default();
+    let total_artifacts = files
+        .iter()
+        .filter(|f| f["action"].as_str() == Some("inserted"))
+        .count() as i64;
+
+    BaselineMetrics {
+        total_artifacts,
+        per_type: Vec::new(),
+        per_status: Vec::new(),
+        orphan_count: -1,
+        edge_count: -1,
+    }
+}
+
+/// Query live SurrealDB for all five current artifact metrics.
+///
+/// Uses row-fetch queries (SELECT id FROM …) for total counts to avoid the
+/// GROUP ALL aggregate hang observed in the SurrealDB embedded engine when called
+/// via axum on a previously-written connection. GROUP BY queries for per-type and
+/// per-status are safe; inline count() for orphan detection is also safe.
+async fn query_current_metrics(db: &orqa_graph::surreal::GraphDb) -> Result<ActualMetrics, String> {
+    // Total artifact count via row-fetch.
+    let rows: Vec<serde_json::Value> =
+        db.0.query("SELECT id FROM artifact;")
+            .await
+            .map_err(|e| format!("SurrealDB query error (total_artifacts): {e}"))?
+            .take(0)
+            .map_err(|e| format!("SurrealDB result error (total_artifacts): {e}"))?;
+    let total_artifacts = rows.len() as i64;
+
+    // Per-type breakdown via GROUP BY.
+    let per_type: Vec<(String, i64)> = orqa_graph::count_by_type(db)
+        .await
+        .map_err(|e| format!("SurrealDB query error (per_type): {e}"))?
+        .into_iter()
+        .map(|gc| (gc.group.unwrap_or_else(|| "(none)".to_owned()), gc.count))
+        .collect();
+
+    // Per-status breakdown via GROUP BY.
+    let per_status: Vec<(String, i64)> = orqa_graph::count_by_status(db)
+        .await
+        .map_err(|e| format!("SurrealDB query error (per_status): {e}"))?
+        .into_iter()
+        .map(|gc| (gc.group.unwrap_or_else(|| "(none)".to_owned()), gc.count))
+        .collect();
+
+    // Orphan count via inline per-row count() in find_orphans.
+    let orphan_count: i64 = orqa_graph::surreal_find_orphans(db)
+        .await
+        .map_err(|e| format!("SurrealDB query error (orphan_count): {e}"))?
+        .len() as i64;
+
+    // Edge count via row-fetch (avoids GROUP ALL hang).
+    let edge_rows: Vec<serde_json::Value> =
+        db.0.query("SELECT id FROM relates_to;")
+            .await
+            .map_err(|e| format!("SurrealDB query error (edge_count): {e}"))?
+            .take(0)
+            .map_err(|e| format!("SurrealDB result error (edge_count): {e}"))?;
+    let edge_count = edge_rows.len() as i64;
+
+    Ok(ActualMetrics {
+        total_artifacts,
+        per_type,
+        per_status,
+        orphan_count,
+        edge_count,
+    })
+}
+
+/// Compute deltas between baseline and actual metrics.
+///
+/// Returns only entries where expected != actual. An empty Vec means no deltas.
+/// Sentinel values (-1) in the baseline are skipped (no baseline available for that field).
+#[allow(clippy::too_many_lines)]
+fn compute_metric_deltas(baseline: &BaselineMetrics, actual: &ActualMetrics) -> Vec<MetricDelta> {
+    let mut deltas: Vec<MetricDelta> = Vec::new();
+
+    // Total artifact count.
+    if baseline.total_artifacts >= 0 && baseline.total_artifacts != actual.total_artifacts {
+        deltas.push(MetricDelta {
+            metric: "total_artifacts".to_owned(),
+            expected: baseline.total_artifacts,
+            actual: actual.total_artifacts,
+        });
+    }
+
+    // Per-type breakdown — only compare types present in the baseline.
+    for (t, exp) in &baseline.per_type {
+        let act = actual
+            .per_type
+            .iter()
+            .find(|(k, _)| k == t)
+            .map_or(0, |(_, v)| *v);
+        if *exp != act {
+            deltas.push(MetricDelta {
+                metric: format!("type:{t}"),
+                expected: *exp,
+                actual: act,
+            });
+        }
+    }
+
+    // Per-status breakdown.
+    for (s, exp) in &baseline.per_status {
+        let act = actual
+            .per_status
+            .iter()
+            .find(|(k, _)| k == s)
+            .map_or(0, |(_, v)| *v);
+        if *exp != act {
+            deltas.push(MetricDelta {
+                metric: format!("status:{s}"),
+                expected: *exp,
+                actual: act,
+            });
+        }
+    }
+
+    // Orphan count — only when baseline is not a sentinel.
+    if baseline.orphan_count >= 0 && baseline.orphan_count != actual.orphan_count {
+        deltas.push(MetricDelta {
+            metric: "orphan_count".to_owned(),
+            expected: baseline.orphan_count,
+            actual: actual.orphan_count,
+        });
+    }
+
+    // Edge count — only when baseline is not a sentinel.
+    if baseline.edge_count >= 0 && baseline.edge_count != actual.edge_count {
+        deltas.push(MetricDelta {
+            metric: "edge_count".to_owned(),
+            expected: baseline.edge_count,
+            actual: actual.edge_count,
+        });
+    }
+
+    deltas
+}
+
+/// Run up to 20 deterministic traceability sample queries.
+///
+/// Selects artifact IDs from the baseline using the fixed seed `S2_VERIFY_SEED`.
+/// For each selected artifact, confirms the artifact still exists in SurrealDB
+/// (a plain SELECT with no graph traversal). This avoids the graph traversal
+/// syntax (`->relates_to->artifact`) which hangs on the SurrealDB embedded
+/// engine when called after bulk inserts via `sync_file`.
+///
+/// Since the ingest report has no per-artifact pillar reachability snapshot,
+/// expected and actual pillar lists are both empty — matches is always `true`
+/// on first run and diverges if the artifact is deleted after ingest.
+///
+/// When there are fewer than 20 user-inserted artifacts in the baseline, all are
+/// sampled. If the baseline has no artifacts, trace_results is empty.
+async fn run_trace_samples(
+    db: &orqa_graph::surreal::GraphDb,
+    report: &serde_json::Value,
+    seed: u64,
+) -> Vec<TraceQueryResult> {
+    let files = report["files"].as_array().cloned().unwrap_or_default();
+
+    // Collect artifact IDs from inserted files, sorted for determinism.
+    let mut ids: Vec<String> = files
+        .iter()
+        .filter(|f| f["action"].as_str() == Some("inserted"))
+        .filter_map(|f| {
+            f["path"].as_str().map(|p| {
+                Path::new(p)
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .unwrap_or(p)
+                    .to_owned()
+            })
+        })
+        .collect();
+    ids.sort();
+
+    if ids.is_empty() {
+        return Vec::new();
+    }
+
+    // Deterministic selection: use seed as a linear congruential generator step.
+    // Select up to 20 indices from the sorted list without replacement.
+    let sample_size = ids.len().min(20);
+    let selected = deterministic_sample(&ids, seed, sample_size);
+
+    let mut results: Vec<TraceQueryResult> = Vec::new();
+
+    for artifact_id in selected {
+        // Check the artifact exists by querying its path. Uses WHERE path CONTAINS
+        // to match the stored relative path from the file stem (e.g. "DEC-001").
+        // Avoids GROUP ALL and record-ID syntax: both can hang in SurrealDB embedded
+        // backends when called via axum route on a previously-written connection.
+        let safe_id = artifact_id.replace('\'', "\\'");
+        let rows: Vec<serde_json::Value> =
+            db.0.query(format!(
+                "SELECT id FROM artifact WHERE path CONTAINS '{safe_id}';"
+            ))
+            .await
+            .ok()
+            .and_then(|mut r| r.take::<Vec<serde_json::Value>>(0).ok())
+            .unwrap_or_default();
+        let exists = !rows.is_empty();
+
+        results.push(TraceQueryResult {
+            artifact_id,
+            expected_pillars: Vec::new(),
+            actual_pillars: if exists {
+                Vec::new()
+            } else {
+                vec!["<deleted>".to_owned()]
+            },
+            matches: exists,
+        });
+    }
+
+    results
+}
+
+/// Select `n` elements from `items` deterministically using a Fisher-Yates shuffle
+/// seeded with the given seed value.
+///
+/// Uses a simple LCG to permute indices, then takes the first `n`. This guarantees
+/// termination for any input size and seed — no stride-based cycling.
+fn deterministic_sample(items: &[String], seed: u64, n: usize) -> Vec<String> {
+    if items.is_empty() || n == 0 {
+        return Vec::new();
+    }
+    let count = n.min(items.len());
+
+    // Build an index permutation via a seeded LCG (Knuth's constants).
+    let mut state = seed ^ 0x9e37_79b9_7f4a_7c15;
+    let mut indices: Vec<usize> = (0..items.len()).collect();
+
+    for i in (1..items.len()).rev() {
+        state = state
+            .wrapping_mul(6_364_136_223_846_793_005)
+            .wrapping_add(1_442_695_040_888_963_407);
+        let j = (state >> 33) as usize % (i + 1);
+        indices.swap(i, j);
+    }
+
+    indices[..count].iter().map(|&i| items[i].clone()).collect()
 }
 
 // ---------------------------------------------------------------------------

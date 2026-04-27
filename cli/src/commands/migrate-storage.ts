@@ -2,13 +2,16 @@
  * Storage migration command — migrate .orqa/ markdown artifacts into SurrealDB.
  *
  * orqa migrate storage ingest [--project-root <path>]
+ * orqa migrate storage verify [--migration-id <id>] [--project-root <path>]
  *
- * Calls the daemon to classify every .md file under .orqa/ as user-authored
- * (inserted) or plugin-derived (skipped). Pauses the file watcher before
- * ingestion and resumes it after, on both success and error paths.
+ * ingest: Calls the daemon to classify every .md file under .orqa/ as
+ *   user-authored (inserted) or plugin-derived (skipped). Pauses the file
+ *   watcher before ingestion and resumes it after, on both success and error
+ *   paths. Idempotent via content-hash dedup.
  *
- * Idempotent: re-running against a populated SurrealDB writes zero new records
- * because the daemon uses content-hash dedup.
+ * verify: Read-only comparison of current SurrealDB state against the baseline
+ *   recorded by a prior ingest. Prints a structured report; exits non-zero when
+ *   any delta is detected. Safe to re-run — does not write any state.
  */
 
 import { resolve } from "node:path";
@@ -56,6 +59,28 @@ interface ManifestMigrateResponse {
 	skipped: number;
 	errors: number;
 	archive_path: string;
+}
+
+interface MetricDelta {
+	metric: string;
+	expected: number;
+	actual: number;
+}
+
+interface TraceQueryResult {
+	artifact_id: string;
+	expected_pillars: string[];
+	actual_pillars: string[];
+	matches: boolean;
+}
+
+interface VerifyReport {
+	migration_id: string;
+	metric_deltas: MetricDelta[];
+	trace_results: TraceQueryResult[];
+	all_clean: boolean;
+	verified_at: string;
+	sample_seed: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -188,6 +213,47 @@ function printSummary(resp: IngestResponse): void {
 // ---------------------------------------------------------------------------
 
 /**
+ * GET /admin/migrate/storage/verify — compare SurrealDB state against the ingest baseline.
+ * @param migrationId - Optional migration ID to use as the baseline report.
+ * @param projectRoot - Optional project root override.
+ * @returns The VerifyReport from the daemon.
+ */
+async function getStorageVerify(
+	migrationId: string | null,
+	projectRoot: string | null,
+): Promise<VerifyReport> {
+	const base = daemonBaseUrl();
+	const params = new URLSearchParams();
+	if (migrationId) params.set("migration_id", migrationId);
+	if (projectRoot) params.set("project_root", projectRoot);
+	const url = `${base}/admin/migrate/storage/verify${params.size > 0 ? `?${params.toString()}` : ""}`;
+
+	let response: Response;
+	try {
+		response = await fetch(url, { method: "GET" });
+	} catch (err) {
+		const msg = err instanceof Error ? err.message : String(err);
+		throw new Error(
+			`Could not reach daemon at ${url}: ${msg}\n` +
+				"Ensure the daemon is running with: orqa daemon start",
+		);
+	}
+
+	if (!response.ok) {
+		let detail = "";
+		try {
+			const json = (await response.json()) as Record<string, unknown>;
+			detail = typeof json["error"] === "string" ? `: ${json["error"]}` : "";
+		} catch {
+			// ignore parse errors
+		}
+		throw new Error(`Daemon returned ${response.status}${detail}`);
+	}
+
+	return (await response.json()) as VerifyReport;
+}
+
+/**
  * POST /admin/migrate/storage/manifest — port .orqa/manifest.json into SurrealDB.
  * @param projectRoot - The project root to scan for manifest.json.
  * @returns The ManifestMigrateResponse from the daemon.
@@ -265,6 +331,108 @@ export async function runMigrateStorageIngestCommand(args: string[]): Promise<vo
 		await resumeWatcher();
 		console.log("  Watcher resumed.");
 	}
+}
+
+const VERIFY_USAGE = `
+Usage: orqa migrate storage verify [options]
+
+Compare the current SurrealDB artifact state against the baseline recorded by
+a prior ingest run. Prints a structured report and exits non-zero when any delta
+is detected (missing records, count mismatches, or traceability changes).
+
+Read-only — safe to re-run. Does not require --confirm. Does not pause the watcher.
+
+Options:
+  --migration-id <id>     Use a specific migration report as the baseline (default: most recent)
+  --project-root <path>   Override the project root (default: CWD root)
+  --help, -h              Show this help message
+
+Exit codes:
+  0 — all counts match, all 20 traceability samples pass
+  1 — one or more deltas detected
+`.trim();
+
+/**
+ * Dispatch the storage verify subcommand.
+ *
+ * Calls GET /admin/migrate/storage/verify on the daemon, prints a structured
+ * comparison report, and exits non-zero if any delta is detected. Safe to
+ * re-run — read-only, does not modify any state.
+ * @param args - CLI arguments after "migrate storage verify".
+ */
+export async function runMigrateStorageVerifyCommand(args: string[]): Promise<void> {
+	if (args.includes("--help") || args.includes("-h")) {
+		console.log(VERIFY_USAGE);
+		return;
+	}
+
+	let projectRoot: string | null = null;
+	const rootIdx = args.indexOf("--project-root");
+	if (rootIdx !== -1 && rootIdx + 1 < args.length) {
+		projectRoot = resolve(args[rootIdx + 1]);
+	} else {
+		projectRoot = resolve(getRoot());
+	}
+
+	let migrationId: string | null = null;
+	const midIdx = args.indexOf("--migration-id");
+	if (midIdx !== -1 && midIdx + 1 < args.length) {
+		migrationId = args[midIdx + 1];
+	}
+
+	let report: VerifyReport;
+	try {
+		report = await getStorageVerify(migrationId, projectRoot);
+	} catch (err) {
+		console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+		process.exit(1);
+	}
+
+	printVerifyReport(report);
+
+	if (!report.all_clean) {
+		process.exit(1);
+	}
+}
+
+/**
+ * Print the verify report to stdout in a structured, human-readable format.
+ * @param report - The VerifyReport from the daemon.
+ */
+function printVerifyReport(report: VerifyReport): void {
+	console.log(`\nStorage verify — migration: ${report.migration_id}`);
+	console.log(`  Verified at: ${report.verified_at}`);
+	console.log(`  Sample seed: 0x${report.sample_seed.toString(16).toUpperCase()}\n`);
+
+	if (report.metric_deltas.length === 0) {
+		console.log("  Metric counts: PASS — all counts match baseline");
+	} else {
+		console.error(`  Metric counts: FAIL — ${report.metric_deltas.length} delta(s) detected:`);
+		for (const delta of report.metric_deltas) {
+			console.error(
+				`    ${delta.metric}: expected=${delta.expected}, actual=${delta.actual} (delta: ${delta.actual - delta.expected})`,
+			);
+		}
+	}
+
+	const traceFails = report.trace_results.filter((r) => !r.matches);
+	if (traceFails.length === 0) {
+		const total = report.trace_results.length;
+		console.log(`  Traceability: PASS — ${total} sample(s) all match`);
+	} else {
+		console.error(
+			`  Traceability: FAIL — ${traceFails.length}/${report.trace_results.length} sample(s) diverged:`,
+		);
+		for (const r of traceFails) {
+			console.error(`    artifact: ${r.artifact_id}`);
+			console.error(`      expected pillars: ${r.expected_pillars.join(", ") || "(none)"}`);
+			console.error(`      actual   pillars: ${r.actual_pillars.join(", ") || "(none)"}`);
+		}
+	}
+
+	console.log(
+		report.all_clean ? "\nResult: PASS — no deltas detected" : "\nResult: FAIL — deltas detected",
+	);
 }
 
 const MANIFEST_USAGE = `

@@ -112,9 +112,26 @@ pub async fn open_embedded(path: &Path) -> Result<GraphDb> {
 ///
 /// Data is lost when the `GraphDb` is dropped. Intended for unit tests and
 /// short-lived operations that do not require durability.
+///
+/// NOTE: SurrealDB's `kv-mem` backend shares a single in-process datastore
+/// across ALL instances using the same namespace+database name. If you need
+/// test isolation in a process running concurrent tests, use `open_memory_isolated`
+/// with a unique `db_name` instead.
 pub async fn open_memory() -> Result<GraphDb> {
     let db = Surreal::new::<Mem>(()).await?;
     db.use_ns("orqa").use_db("artifacts").await?;
+    Ok(GraphDb(db))
+}
+
+/// Opens an in-memory SurrealDB instance with a caller-specified database name.
+///
+/// Uses the same `kv-mem` backend as `open_memory` but selects a unique
+/// `db_name` within the `orqa` namespace so that concurrent tests operating
+/// on separate logical datasets do not share the same underlying tables.
+/// Required when multiple in-memory instances coexist in the same process.
+pub async fn open_memory_isolated(db_name: &str) -> Result<GraphDb> {
+    let db = Surreal::new::<Mem>(()).await?;
+    db.use_ns("orqa").use_db(db_name).await?;
     Ok(GraphDb(db))
 }
 

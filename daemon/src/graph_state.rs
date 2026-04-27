@@ -18,6 +18,8 @@ use orqa_engine_types::ArtifactGraph;
 use orqa_graph::surreal::{initialize_schema, open_embedded, GraphDb};
 use orqa_graph::surreal_queries::total_artifacts;
 use orqa_graph::sync::bulk_sync;
+
+use crate::event_bus::EventBus;
 use orqa_validation::context::build_validation_context_complete;
 use orqa_validation::graph::{build_artifact_graph, load_project_config};
 use orqa_validation::platform::scan_plugin_manifests;
@@ -55,6 +57,12 @@ pub struct GraphStateInner {
     /// `reload()` preserves the existing `GraphDb` handle across graph rebuilds
     /// so the embedded database connection is never closed mid-session.
     pub db: Option<GraphDb>,
+    /// Central event bus for publishing lifecycle events (create, delete, update).
+    ///
+    /// `None` in `build_empty` and test scenarios that don't inject a bus.
+    /// Route handlers that publish events check `is_some()` and skip silently
+    /// when absent — the bus is optional so tests don't require one.
+    pub event_bus: Option<Arc<EventBus>>,
 }
 
 /// Shared reference to the cached graph state, safe for concurrent read access.
@@ -186,6 +194,7 @@ impl GraphState {
             enforcement_rules: Vec::new(),
             project_root: project_root.to_path_buf(),
             db: None,
+            event_bus: None,
         };
         Self(Arc::new(RwLock::new(inner)))
     }
@@ -201,16 +210,17 @@ impl GraphState {
     /// database connection is never closed mid-session. Per-file SurrealDB sync
     /// is handled by the file watcher (Task 6 of the SurrealDB migration).
     pub fn reload(&self, project_root: &Path) -> usize {
-        // Preserve the existing SurrealDB handle across the inner rebuild.
-        // build_inner sets db: None; we re-inject it after construction.
-        let existing_db = match self.0.read() {
-            Ok(guard) => guard.db.clone(),
-            Err(_) => None,
+        // Preserve the existing SurrealDB handle and event bus across the inner rebuild.
+        // build_inner sets db: None and event_bus: None; we re-inject both after construction.
+        let (existing_db, existing_bus) = match self.0.read() {
+            Ok(guard) => (guard.db.clone(), guard.event_bus.clone()),
+            Err(_) => (None, None),
         };
 
         match build_inner(project_root) {
             Ok(mut inner) => {
                 inner.db = existing_db;
+                inner.event_bus = existing_bus;
                 let artifact_count = inner.graph.nodes.len();
                 let enforcement_rule_count = inner.enforcement_rules.len();
                 let enforcement_entry_count: usize = inner
@@ -341,6 +351,27 @@ impl GraphState {
             guard.db = Some(db);
         }
     }
+
+    /// Inject an event bus into an existing `GraphState`.
+    ///
+    /// Called during daemon startup after the `EventBus` is created, so that
+    /// artifact route handlers can publish lifecycle events (create, delete).
+    #[allow(dead_code)]
+    pub fn inject_event_bus(&self, bus: Arc<EventBus>) {
+        if let Ok(mut guard) = self.0.write() {
+            guard.event_bus = Some(bus);
+        }
+    }
+
+    /// Return a clone of the event bus handle, if one was injected.
+    ///
+    /// Route handlers that publish events call this and skip silently when `None`.
+    pub fn event_bus(&self) -> Option<Arc<EventBus>> {
+        match self.0.read() {
+            Ok(guard) => guard.event_bus.clone(),
+            Err(_) => None,
+        }
+    }
 }
 
 /// Construct a fresh `GraphStateInner` from the project root.
@@ -387,6 +418,7 @@ fn build_inner(project_root: &Path) -> Result<GraphStateInner, orqa_validation::
         enforcement_rules,
         project_root: project_root.to_path_buf(),
         db: None,
+        event_bus: None,
     })
 }
 

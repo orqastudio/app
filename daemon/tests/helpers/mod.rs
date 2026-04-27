@@ -12,9 +12,16 @@
 //   - `build_app_router`   — full router using real route handlers and HealthState
 
 use std::path::PathBuf;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::Arc;
 use std::sync::RwLock;
 
-use std::sync::Arc;
+/// Process-global counter for generating unique in-memory SurrealDB database names.
+///
+/// SurrealDB's `kv-mem` backend shares one in-process datastore across all instances
+/// using the same namespace+database pair. Tests must use unique names to avoid
+/// cross-test data contamination when running concurrently.
+static TEST_DB_COUNTER: AtomicU64 = AtomicU64::new(0);
 
 use axum::routing::get;
 use axum::Router;
@@ -34,20 +41,19 @@ pub fn fixture_dir() -> PathBuf {
 /// Build a full axum Router with SurrealDB absent — `db: None` in GraphState.
 ///
 /// Used to test that routes requiring SurrealDB return 503 rather than silently
-/// degrading to a disk-write fallback. The fixture graph is loaded into the
-/// HashMap (so artifact IDs are resolvable) but no SurrealDB handle is injected.
+/// degrading to a disk-write fallback. The fixture HashMap and validation context
+/// are populated (so schema validation and artifact lookups work), but no SurrealDB
+/// handle is injected, so routes that gate on `surreal_db()` return 503.
 pub async fn build_app_router_without_surrealdb() -> Router {
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    // Load fixture artifacts into the in-memory HashMap graph — no SurrealDB.
+    // build() loads the HashMap + ctx from fixture files and opens an embedded SurrealDB.
+    // We then clear the db handle so routes see db: None and return 503.
     let graph_state = GraphState::build(&root)
         .await
         .unwrap_or_else(|_| GraphState::build_empty(&root));
-
-    // Discard any SurrealDB handle that build() may have opened so the guard
-    // sees db: None and the PUT handler returns 503.
     if let Ok(mut guard) = graph_state.0.write() {
         guard.db = None;
     }
@@ -60,24 +66,70 @@ pub async fn build_app_router_without_surrealdb() -> Router {
 ///
 /// Useful when a test needs two routers that share the same `GraphState` — e.g. POST followed
 /// by GET to verify read-your-writes. Both routers are built via `build_router(state.clone())`.
+///
+/// Calls `GraphState::build` to populate the HashMap and validation context from fixture files,
+/// then replaces the embedded SurrealDB handle with an isolated in-memory instance so tests
+/// do not contend on the shared `.state/surreal/` file lock.
 pub async fn build_app_state() -> orqa_daemon_lib::health::HealthState {
-    use orqa_graph::surreal::{initialize_schema, open_memory};
+    use orqa_graph::surreal::{initialize_schema, open_memory_isolated};
 
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
+    // build() populates HashMap + validation ctx from fixture files.
     let graph_state = GraphState::build(&root)
         .await
         .unwrap_or_else(|_| GraphState::build_empty(&root));
 
-    let db = open_memory().await.expect("open in-memory SurrealDB");
+    // Replace the embedded SurrealDB with an isolated in-memory instance.
+    let id = TEST_DB_COUNTER.fetch_add(1, Ordering::SeqCst);
+    let db_name = format!("test_appstate_{id}");
+    let db = open_memory_isolated(&db_name)
+        .await
+        .expect("open isolated in-memory SurrealDB");
     initialize_schema(&db)
         .await
         .expect("initialize SurrealDB schema");
     orqa_graph::sync::bulk_sync(&db, &root)
         .await
         .expect("bulk_sync fixture artifacts");
+    graph_state.inject_db(db);
+
+    HealthState::for_test(graph_state, None)
+}
+
+/// Build a `HealthState` with a fresh on-disk SurrealDB rooted at `project_root`.
+///
+/// Uses `open_embedded` at `<project_root>/.state/surreal/` to create a truly
+/// isolated SurrealDB store per test. SurrealDB's `kv-mem` backend shares a
+/// single in-process store across ALL in-memory instances regardless of database
+/// name — concurrent writes from multiple tests corrupt each other's state and
+/// cause queries to hang. On-disk embedded stores are isolated at the OS level.
+///
+/// `project_root` must be a unique temp directory per test (callers use
+/// `tempfile::tempdir()` to guarantee this).
+///
+/// The embedded SurrealDB is initialized with the schema but NOT pre-populated;
+/// callers drive population via the route under test (e.g. POST /admin/migrate/storage/ingest).
+pub async fn build_state_for_project(
+    project_root: &std::path::Path,
+) -> orqa_daemon_lib::health::HealthState {
+    use orqa_graph::surreal::{initialize_schema, open_embedded};
+
+    use orqa_daemon_lib::graph_state::GraphState;
+    use orqa_daemon_lib::health::HealthState;
+
+    let graph_state = GraphState::build_empty(project_root);
+
+    let surreal_path = project_root.join(".state").join("surreal");
+    std::fs::create_dir_all(&surreal_path).expect("create .state/surreal dir");
+    let db = open_embedded(&surreal_path)
+        .await
+        .expect("open embedded SurrealDB for test");
+    initialize_schema(&db)
+        .await
+        .expect("initialize SurrealDB schema");
     graph_state.inject_db(db);
 
     HealthState::for_test(graph_state, None)
@@ -90,35 +142,33 @@ pub async fn build_app_state() -> orqa_daemon_lib::health::HealthState {
 /// graph routes as the production daemon. Tests dispatch requests via
 /// `tower::ServiceExt::oneshot` without binding a real port.
 ///
-/// The GraphState is loaded from the minimal fixture project (so artifact
-/// routes see real fixture nodes) and is also backed by a fresh in-memory
-/// SurrealDB (so import and graph-DB routes get an isolated, clean database
-/// per call without writing to disk).
+/// Calls `GraphState::build` to populate the HashMap and validation context
+/// from fixture files (required for routes that read the HashMap and for schema
+/// validation). Then replaces the embedded SurrealDB handle with a fresh isolated
+/// in-memory instance so concurrent tests do not contend on the shared
+/// `.state/surreal/` embedded DB file lock.
 ///
 /// This is the entry point for all daemon integration tests.
 pub async fn build_app_router() -> Router {
-    use orqa_graph::surreal::{initialize_schema, open_memory};
+    use orqa_graph::surreal::{initialize_schema, open_memory_isolated};
 
     use orqa_daemon_lib::graph_state::GraphState;
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
-    // Load fixture artifacts into the in-memory HashMap graph so that
-    // artifact-route tests (routes_artifacts.rs) see pre-populated nodes.
+    // build() populates the HashMap and validation ctx (incl. plugin schema) from
+    // fixture files — required for GET /artifacts/:id, schema validation, etc.
     let graph_state = GraphState::build(&root)
         .await
         .unwrap_or_else(|_| GraphState::build_empty(&root));
 
-    // Replace/add the SurrealDB handle with a fresh in-memory instance so
-    // tests do not write to the on-disk .state/surreal/ path under the fixture
-    // directory and each call gets an isolated database.
-    //
-    // bulk_sync populates the in-memory DB from fixture files so that
-    // SurrealDB-backed list/filter/get routes (routes_artifacts.rs) see the
-    // same fixture artifacts that the HashMap graph contains.
-    // Import tests (routes_import.rs) call build_app_router() for a fresh
-    // empty router per test — bulk_sync is fast on the small fixture set.
-    let db = open_memory().await.expect("open in-memory SurrealDB");
+    // Replace the embedded SurrealDB with a per-call isolated in-memory instance.
+    // Each call gets a unique DB name so kv-mem does not share state across tests.
+    let id = TEST_DB_COUNTER.fetch_add(1, Ordering::SeqCst);
+    let db_name = format!("test_approuter_{id}");
+    let db = open_memory_isolated(&db_name)
+        .await
+        .expect("open isolated in-memory SurrealDB");
     initialize_schema(&db)
         .await
         .expect("initialize SurrealDB schema");
@@ -145,6 +195,8 @@ pub async fn build_full_router() -> (Router, tempfile::NamedTempFile) {
     use orqa_daemon_lib::health::HealthState;
 
     let root = fixture_dir();
+    // build() populates the HashMap and validation ctx from fixture files — required
+    // for routes_misc tests that assert artifact counts and agent messages.
     let graph_state = GraphState::build(&root)
         .await
         .unwrap_or_else(|_| GraphState::build_empty(&root));

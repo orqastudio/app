@@ -453,6 +453,9 @@ pub async fn start(
     issue_group_updates: Option<broadcast::Sender<IssueGroup>>,
     watcher_control: WatcherControl,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    // Inject the event bus into GraphState so artifact route handlers can publish events.
+    graph_state.inject_event_bus(Arc::clone(&event_bus));
+
     let state = HealthState {
         started_at: Arc::new(Instant::now()),
         pid: std::process::id(),
@@ -476,6 +479,10 @@ pub async fn start(
         .route(
             "/{id}",
             axum::routing::put(crate::routes::artifacts::update_artifact),
+        )
+        .route(
+            "/{id}",
+            axum::routing::delete(crate::routes::artifacts::delete_artifact_handler),
         )
         .route(
             "/{id}/content",
@@ -867,7 +874,7 @@ pub async fn start(
         .route("/status", get(crate::routes::watcher::watcher_status))
         .with_state(state.watcher_control.clone());
 
-    // Admin storage migration routes — ingest phase for `orqa migrate storage`.
+    // Admin storage migration routes — ingest, manifest, and verify phases.
     let admin_migrate_router = Router::new()
         .route(
             "/storage/ingest",
@@ -876,6 +883,10 @@ pub async fn start(
         .route(
             "/storage/manifest",
             post(crate::routes::admin_migrate::manifest_migrate),
+        )
+        .route(
+            "/storage/verify",
+            get(crate::routes::admin_migrate::storage_verify),
         )
         .with_state(state.graph_state.clone());
 

@@ -56,6 +56,10 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
             axum::routing::put(routes::artifacts::update_artifact),
         )
         .route(
+            "/{id}",
+            axum::routing::delete(routes::artifacts::delete_artifact_handler),
+        )
+        .route(
             "/{id}/content",
             get(routes::artifacts::get_artifact_content),
         )
@@ -86,7 +90,7 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route("/status", get(routes::watcher::watcher_status))
         .with_state(state.watcher_control.clone());
 
-    // Admin storage migration routes — ingest phase for `orqa migrate storage`.
+    // Admin storage migration routes — ingest, manifest, and verify phases.
     let admin_migrate_router = axum::Router::new()
         .route(
             "/storage/ingest",
@@ -95,6 +99,10 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
         .route(
             "/storage/manifest",
             post(routes::admin_migrate::manifest_migrate),
+        )
+        .route(
+            "/storage/verify",
+            get(routes::admin_migrate::storage_verify),
         )
         .with_state(state.graph_state.clone());
 

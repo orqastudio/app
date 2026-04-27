@@ -389,6 +389,7 @@ pub struct RelationshipEdge {
 /// Returns `Err` with a message containing "DUPLICATE" when the ID already exists.
 /// On success, calls `bump_version` (version starts at 2, `updated_at` is set) and
 /// inserts each relationship edge via `upsert_relates_to_edge`.
+#[allow(clippy::too_many_lines)]
 pub async fn create_artifact(
     db: &GraphDb,
     artifact_id: &str,
@@ -401,6 +402,10 @@ pub async fn create_artifact(
         anyhow::bail!("DUPLICATE: artifact '{artifact_id}' already exists in SurrealDB");
     }
 
+    // Use UPSERT artifact:`id` SET ... rather than INSERT INTO ... VALUES (...) so
+    // the record ID is set via the UPSERT target. INSERT with an explicit id column
+    // containing a full record reference produces unreachable records when queried
+    // via UPSERT-style backtick IDs across SurrealDB driver versions.
     let safe_id = sanitize_record_id(artifact_id);
     let title = fields
         .get("title")
@@ -416,12 +421,18 @@ pub async fn create_artifact(
     let created = fields.get("created").and_then(|v| v.as_str());
     let updated = fields.get("updated").and_then(|v| v.as_str());
     let fm_json = serde_json::to_string(fields).unwrap_or_else(|_| "{}".to_owned());
-
     let query = format!(
-        "INSERT INTO artifact (id, artifact_type, title, description, status, priority, \
-            frontmatter, content_hash, created, updated, created_at) VALUES \
-            (artifact:`{safe_id}`, '{type_sql}', '{title_sql}', {desc_sql}, {status_sql}, \
-            {priority_sql}, {fm_json}, '{hash_sql}', {created_sql}, {updated_sql}, time::now());",
+        "UPSERT artifact:`{safe_id}` SET \
+            artifact_type = '{type_sql}', \
+            title = '{title_sql}', \
+            description = {desc_sql}, \
+            status = {status_sql}, \
+            priority = {priority_sql}, \
+            path = '', \
+            frontmatter = {fm_json}, \
+            content_hash = '{hash_sql}', \
+            created = {created_sql}, \
+            updated = {updated_sql};",
         type_sql = escape_surql_string(artifact_type),
         title_sql = escape_surql_string(title),
         desc_sql = option_to_surql(description),
@@ -433,7 +444,7 @@ pub async fn create_artifact(
     );
     db.0.query(&query)
         .await
-        .with_context(|| format!("create_artifact INSERT for {artifact_id}"))?;
+        .with_context(|| format!("create_artifact UPSERT for {artifact_id}"))?;
 
     // Bump version after insert so updated_at is set and version advances from DEFAULT 1.
     let version = bump_version(db, artifact_id, None)
@@ -472,6 +483,29 @@ pub async fn upsert_relates_to_edge(
     Ok(())
 }
 
+/// Count all `relates_to` edges involving the given artifact ID as source OR target.
+///
+/// Used in DELETE integration tests to verify that both incoming and outgoing edges
+/// have been fully removed from SurrealDB.
+pub async fn count_edges_involving(db: &GraphDb, artifact_id: &str) -> Result<usize> {
+    let safe_id = sanitize_record_id(artifact_id);
+    let query = format!(
+        "SELECT count() AS total FROM relates_to \
+         WHERE in = artifact:`{safe_id}` OR out = artifact:`{safe_id}` GROUP ALL;"
+    );
+    let mut response =
+        db.0.query(&query)
+            .await
+            .with_context(|| format!("count_edges_involving for {artifact_id}"))?;
+    let rows: Vec<Value> = response.take(0).context("reading count result")?;
+    let count = rows
+        .first()
+        .and_then(|r| r.get("total"))
+        .and_then(Value::as_u64)
+        .unwrap_or(0) as usize;
+    Ok(count)
+}
+
 /// Count the number of `relates_to` edges where `in` matches the given artifact ID.
 ///
 /// Used after `create_artifact` to confirm how many edges were actually written.
@@ -491,6 +525,52 @@ pub async fn count_edges_from(db: &GraphDb, artifact_id: &str) -> Result<usize> 
         .and_then(Value::as_u64)
         .unwrap_or(0) as usize;
     Ok(count)
+}
+
+// ---------------------------------------------------------------------------
+// Delete (DELETE /artifacts/:id)
+// ---------------------------------------------------------------------------
+
+/// Delete an artifact and all `relates_to` edges in both directions.
+///
+/// Deletes edges where the artifact is the source (`in`) AND where it is the
+/// target (`out`) before removing the artifact record itself. Returns `Ok(false)`
+/// when no record exists for the given ID (caller maps to 404). Returns `Ok(true)`
+/// on success.
+///
+/// The two DELETE statements are issued sequentially and are not wrapped in a
+/// SurrealDB transaction (SurrealDB embedded does not expose BEGIN/COMMIT over the
+/// embedded API in the same way as the network server). In practice the edge deletes
+/// complete before the artifact delete; the window between the two is sub-millisecond
+/// on an embedded DB and there is no concurrent writer during a DELETE in the daemon.
+pub async fn delete_artifact_with_edges(db: &GraphDb, artifact_id: &str) -> Result<bool> {
+    // Return Ok(false) when the artifact does not exist — caller maps this to 404.
+    if read_artifact(db, artifact_id).await?.is_none() {
+        return Ok(false);
+    }
+
+    let safe_id = sanitize_record_id(artifact_id);
+
+    // Delete all edges where this artifact is the source (outgoing).
+    db.0.query(format!(
+        "DELETE relates_to WHERE in = artifact:`{safe_id}`;"
+    ))
+    .await
+    .with_context(|| format!("deleting outgoing edges for {artifact_id}"))?;
+
+    // Delete all edges where this artifact is the target (incoming).
+    db.0.query(format!(
+        "DELETE relates_to WHERE out = artifact:`{safe_id}`;"
+    ))
+    .await
+    .with_context(|| format!("deleting incoming edges for {artifact_id}"))?;
+
+    // Delete the artifact record itself.
+    db.0.query(format!("DELETE artifact:`{safe_id}`;"))
+        .await
+        .with_context(|| format!("deleting artifact record {artifact_id}"))?;
+
+    Ok(true)
 }
 
 // ---------------------------------------------------------------------------
@@ -904,6 +984,26 @@ mod tests {
         let db = make_db().await;
         let result = read_artifact(&db, "EPIC-NOTEXIST").await.unwrap();
         assert!(result.is_none());
+    }
+
+    /// create_artifact writes a record readable by read_artifact.
+    #[tokio::test]
+    async fn create_artifact_is_readable() {
+        let db = make_db().await;
+        let fields = fields_from(&json!({
+            "id": "TASK-CA01",
+            "type": "task",
+            "title": "Create artifact test",
+            "status": "todo"
+        }));
+        create_artifact(&db, "TASK-CA01", &fields, "hash-ca01", &[])
+            .await
+            .unwrap();
+        let stored = read_artifact(&db, "TASK-CA01").await.unwrap();
+        assert!(
+            stored.is_some(),
+            "create_artifact record must be readable via read_artifact"
+        );
     }
 
     // -----------------------------------------------------------------------

@@ -552,6 +552,37 @@ mod tests {
         );
     }
 
+    /// Verify that `total_artifacts` does not hang after `sync_file` inserts into
+    /// an on-disk (embedded SurrealKV) database instance.
+    ///
+    /// Uses embedded SurrealKV rather than kv-mem to match the V test scenario.
+    #[tokio::test]
+    async fn test_total_artifacts_after_sync_file_embedded() {
+        use crate::surreal::{initialize_schema, open_embedded};
+        use crate::sync::sync_file;
+
+        let dir = tempfile::tempdir().unwrap();
+        let surreal_path = dir.path().join("surreal");
+        std::fs::create_dir_all(&surreal_path).unwrap();
+        let db = open_embedded(&surreal_path).await.unwrap();
+        initialize_schema(&db).await.unwrap();
+
+        let orqa_dir = dir.path().join(".orqa");
+        std::fs::create_dir_all(&orqa_dir).unwrap();
+        std::fs::write(
+            orqa_dir.join("DEC-001.md"),
+            "---\nid: DEC-001\ntype: decision\ntitle: Test\nstatus: accepted\n---\nBody.\n",
+        )
+        .unwrap();
+
+        sync_file(&db, &orqa_dir.join("DEC-001.md"), dir.path())
+            .await
+            .unwrap();
+
+        let count = total_artifacts(&db).await.unwrap();
+        assert_eq!(count, 1, "expected 1 artifact after sync_file, got {count}");
+    }
+
     #[tokio::test]
     async fn test_search_artifacts_case_insensitive() {
         let (db, _dir) = setup_db_with_artifacts().await;

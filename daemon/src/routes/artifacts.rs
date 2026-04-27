@@ -1,18 +1,19 @@
 // Artifact routes: CRUD and graph queries against the cached artifact graph.
 //
-// All write handlers (POST, PUT) target SurrealDB as the authoritative store and
+// All write handlers (POST, PUT, DELETE) target SurrealDB as the authoritative store and
 // refresh the in-memory HashMap from the stored record. No disk writes occur on
-// any write path. DELETE is deferred to a later task.
+// any write path.
 //
 // Endpoints:
-//   POST /artifacts                   — create a new artifact in SurrealDB
-//   GET  /artifacts                   — query with optional type/status/search filters
-//   GET  /artifacts/tree              — navigation tree derived from schema + disk scan
-//   GET  /artifacts/:id               — single artifact node
-//   GET  /artifacts/:id/content       — raw markdown file content from disk
-//   PUT  /artifacts/:id               — update a frontmatter field
-//   GET  /artifacts/:id/traceability  — traceability chain
-//   GET  /artifacts/:id/impact        — downstream impact metadata
+//   POST   /artifacts                   — create a new artifact in SurrealDB
+//   GET    /artifacts                   — query with optional type/status/search filters
+//   GET    /artifacts/tree              — navigation tree derived from schema + disk scan
+//   GET    /artifacts/:id               — single artifact node
+//   GET    /artifacts/:id/content       — raw markdown file content from disk
+//   PUT    /artifacts/:id               — update a frontmatter field
+//   DELETE /artifacts/:id               — remove artifact + cascade-delete edges, emit event
+//   GET    /artifacts/:id/traceability  — traceability chain
+//   GET    /artifacts/:id/impact        — downstream impact metadata
 
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
@@ -24,11 +25,13 @@ use std::collections::BTreeMap;
 use orqa_artifact::artifact_entries_from_schema;
 use orqa_artifact::reader::artifact_scan_tree;
 use orqa_engine_types::types::artifact::NavTree;
+use orqa_engine_types::types::event::{EventLevel, EventSource, EventTier, LogEvent};
 use orqa_graph::surreal_queries::{
     list_artifacts as surreal_list, search_artifacts as surreal_search,
 };
 use orqa_graph::writers::{
-    count_edges_from, create_artifact, update_artifact_fields, RelationshipEdge,
+    count_edges_from, create_artifact, delete_artifact_with_edges, update_artifact_fields,
+    RelationshipEdge,
 };
 use orqa_validation::checks::schema::{build_composed_schema, validate_frontmatter};
 use orqa_validation::metrics::compute_traceability;
@@ -627,6 +630,97 @@ pub async fn update_artifact(
         field: req.field,
         new_value: req.value,
     }))
+}
+
+/// Response body for DELETE /artifacts/:id.
+#[derive(Debug, Serialize)]
+pub struct DeleteArtifactResponse {
+    /// ID of the artifact that was deleted.
+    pub id: String,
+    /// Unix timestamp (milliseconds) when the deletion completed.
+    pub deleted_at: i64,
+}
+
+/// Handle DELETE /artifacts/:id — remove an artifact and all its edges from SurrealDB.
+///
+/// Cascade-deletes `relates_to` edges in both directions (source and target) before
+/// removing the artifact record itself. The in-memory HashMap entry is removed so
+/// subsequent GET requests do not return stale data. A deletion event is published
+/// on the event bus to prepare downstream consumers (TASK-S2-12).
+///
+/// Returns 404 when the artifact does not exist. Returns 503 when SurrealDB is
+/// unavailable — there is no silent fallback.
+#[allow(clippy::too_many_lines)]
+pub async fn delete_artifact_handler(
+    State(state): State<GraphState>,
+    Path(id): Path<String>,
+) -> Result<(StatusCode, Json<DeleteArtifactResponse>), (StatusCode, Json<serde_json::Value>)> {
+    // Require SurrealDB — no silent fallback.
+    let db = state.surreal_db().ok_or_else(|| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "error": "SurrealDB unavailable — DELETE requires a live database connection",
+                "code": "DB_UNAVAILABLE"
+            })),
+        )
+    })?;
+
+    // Delete artifact and all edges in both directions from SurrealDB.
+    let deleted = delete_artifact_with_edges(&db, &id).await.map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({ "error": e.to_string(), "code": "DELETE_FAILED" })),
+        )
+    })?;
+
+    if !deleted {
+        return Err((
+            StatusCode::NOT_FOUND,
+            Json(
+                serde_json::json!({ "error": format!("artifact '{}' not found", id), "code": "NOT_FOUND" }),
+            ),
+        ));
+    }
+
+    // Record deletion timestamp before releasing the DB handle.
+    let deleted_at = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_millis() as i64)
+        .unwrap_or(0);
+
+    // Remove the HashMap entry so GET /artifacts no longer returns this artifact.
+    if let Ok(mut guard) = state.0.write() {
+        guard.graph.nodes.remove(&id);
+    }
+
+    // Publish deletion event on the event bus — consumed by TASK-S2-12 listeners.
+    if let Some(bus) = state.event_bus() {
+        let event_id = bus.next_ingest_id();
+        bus.publish(LogEvent {
+            id: event_id,
+            timestamp: deleted_at,
+            level: EventLevel::Info,
+            source: EventSource::Daemon,
+            tier: EventTier::default(),
+            category: "artifact.deleted".to_owned(),
+            message: format!("artifact '{id}' deleted"),
+            metadata: serde_json::json!({
+                "id": id,
+                "deleted_at": deleted_at
+            }),
+            session_id: None,
+            fingerprint: None,
+            message_template: Some("artifact '{id}' deleted".to_owned()),
+            correlation_id: None,
+            stack_frames: None,
+        });
+    }
+
+    Ok((
+        StatusCode::OK,
+        Json(DeleteArtifactResponse { id, deleted_at }),
+    ))
 }
 
 /// Handle GET /artifacts/:id/traceability — compute the traceability chain.
