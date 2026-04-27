@@ -33,6 +33,7 @@ orqa-search = { path = "../engine/search" }
 orqa-prompt = { path = "../engine/prompt" }
 orqa-artifact = { path = "../engine/artifact" }
 orqa-streaming = { path = "../engine/streaming" }
+surrealdb = { version = "3", features = ["kv-surrealkv", "kv-mem"] }
 uuid = { version = "1", features = ["v4"] }
 tokio = { version = "1", features = ["full"] }
 tokio-stream = { version = "0.1", features = ["sync"] }

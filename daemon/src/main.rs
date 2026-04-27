@@ -41,6 +41,7 @@ mod prompt;
 mod routes;
 mod session_start;
 mod subprocess;
+mod surreal_live;
 mod tray;
 mod watcher;
 
@@ -395,6 +396,31 @@ async fn run(
             }
         }
     });
+
+    // Start the LIVE SELECT subscription task if SurrealDB is available.
+    // The task publishes artifact.created/updated/deleted events to the event bus
+    // so SSE consumers (TASK-S2-13) can push live updates to the frontend.
+    // When SurrealDB is absent (db: None) the task is not started — callers degrade
+    // gracefully without live artifact events.
+    let _surreal_live_handle = {
+        let maybe_db = { graph_state.0.read().ok().and_then(|g| g.db.clone()) };
+        match maybe_db {
+            Some(db) => {
+                info!(
+                    subsystem = "surreal_live",
+                    "[surreal-live] starting LIVE SELECT subscription"
+                );
+                Some(surreal_live::start_live_updates(db, Arc::clone(&event_bus)))
+            }
+            None => {
+                warn!(
+                    subsystem = "surreal_live",
+                    "[surreal-live] SurrealDB not available — live artifact events disabled"
+                );
+                None
+            }
+        }
+    };
 
     // The watcher handle must be kept alive for the duration of the event loop.
     // If starting the watcher fails the daemon continues without file watching.

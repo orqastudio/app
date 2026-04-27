@@ -32,6 +32,7 @@ pub mod process;
 pub mod prompt;
 pub mod session_start;
 pub mod subprocess;
+pub mod surreal_live;
 pub mod tray;
 pub mod watcher;
 

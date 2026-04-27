@@ -5496,6 +5496,7 @@ dependencies = [
  "serde_yaml",
  "sha2",
  "socket2 0.5.10",
+ "surrealdb",
  "tempfile",
  "tokio",
  "tokio-stream",
