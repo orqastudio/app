@@ -372,6 +372,128 @@ pub async fn update_artifact_fields(
 }
 
 // ---------------------------------------------------------------------------
+// Create (POST /artifacts)
+// ---------------------------------------------------------------------------
+
+/// Relationship edge to insert alongside a new artifact.
+#[derive(Debug, Clone)]
+pub struct RelationshipEdge {
+    /// Target artifact ID.
+    pub target_id: String,
+    /// Semantic relationship type string (e.g. "delivers", "enforced-by").
+    pub relation_type: String,
+}
+
+/// Insert a new artifact record into SurrealDB.
+///
+/// Returns `Err` with a message containing "DUPLICATE" when the ID already exists.
+/// On success, calls `bump_version` (version starts at 2, `updated_at` is set) and
+/// inserts each relationship edge via `upsert_relates_to_edge`.
+pub async fn create_artifact(
+    db: &GraphDb,
+    artifact_id: &str,
+    fields: &BTreeMap<String, Value>,
+    content_hash: &str,
+    relationships: &[RelationshipEdge],
+) -> Result<u64> {
+    // Duplicate check — read before write so we can return a clear error.
+    if read_artifact(db, artifact_id).await?.is_some() {
+        anyhow::bail!("DUPLICATE: artifact '{artifact_id}' already exists in SurrealDB");
+    }
+
+    let safe_id = sanitize_record_id(artifact_id);
+    let title = fields
+        .get("title")
+        .and_then(|v| v.as_str())
+        .unwrap_or(artifact_id);
+    let artifact_type = fields
+        .get("type")
+        .and_then(|v| v.as_str())
+        .unwrap_or("unknown");
+    let description = fields.get("description").and_then(|v| v.as_str());
+    let status = fields.get("status").and_then(|v| v.as_str());
+    let priority = fields.get("priority").and_then(|v| v.as_str());
+    let created = fields.get("created").and_then(|v| v.as_str());
+    let updated = fields.get("updated").and_then(|v| v.as_str());
+    let fm_json = serde_json::to_string(fields).unwrap_or_else(|_| "{}".to_owned());
+
+    let query = format!(
+        "INSERT INTO artifact (id, artifact_type, title, description, status, priority, \
+            frontmatter, content_hash, created, updated, created_at) VALUES \
+            (artifact:`{safe_id}`, '{type_sql}', '{title_sql}', {desc_sql}, {status_sql}, \
+            {priority_sql}, {fm_json}, '{hash_sql}', {created_sql}, {updated_sql}, time::now());",
+        type_sql = escape_surql_string(artifact_type),
+        title_sql = escape_surql_string(title),
+        desc_sql = option_to_surql(description),
+        status_sql = option_to_surql(status),
+        priority_sql = option_to_surql(priority),
+        hash_sql = escape_surql_string(content_hash),
+        created_sql = option_to_surql(created),
+        updated_sql = option_to_surql(updated),
+    );
+    db.0.query(&query)
+        .await
+        .with_context(|| format!("create_artifact INSERT for {artifact_id}"))?;
+
+    // Bump version after insert so updated_at is set and version advances from DEFAULT 1.
+    let version = bump_version(db, artifact_id, None)
+        .await
+        .map_err(|e| anyhow::anyhow!("version bump failed for {artifact_id}: {e}"))?;
+
+    // Insert relationship edges.
+    for rel in relationships {
+        upsert_relates_to_edge(db, artifact_id, &rel.target_id, &rel.relation_type).await?;
+    }
+
+    Ok(version)
+}
+
+/// Atomically upsert a `relates_to` edge between two artifacts.
+///
+/// Uses RELATE with UPSERT semantics so a duplicate call is idempotent. The
+/// `relation_type` field is always updated to the supplied value so re-ingest
+/// correctly repairs stale edge types.
+pub async fn upsert_relates_to_edge(
+    db: &GraphDb,
+    from_id: &str,
+    to_id: &str,
+    relation_type: &str,
+) -> Result<()> {
+    let from_safe = sanitize_record_id(from_id);
+    let to_safe = sanitize_record_id(to_id);
+    let rel_type_sql = escape_surql_string(relation_type);
+    let query = format!(
+        "RELATE artifact:`{from_safe}`->relates_to->artifact:`{to_safe}` \
+            SET relation_type = '{rel_type_sql}';"
+    );
+    db.0.query(&query)
+        .await
+        .with_context(|| format!("upsert_relates_to_edge {from_id} -> {to_id}"))?;
+    Ok(())
+}
+
+/// Count the number of `relates_to` edges where `in` matches the given artifact ID.
+///
+/// Used after `create_artifact` to confirm how many edges were actually written.
+pub async fn count_edges_from(db: &GraphDb, artifact_id: &str) -> Result<usize> {
+    let safe_id = sanitize_record_id(artifact_id);
+    let query = format!(
+        "SELECT count() AS total FROM relates_to WHERE in = artifact:`{safe_id}` GROUP ALL;"
+    );
+    let mut response =
+        db.0.query(&query)
+            .await
+            .with_context(|| format!("count_edges_from for {artifact_id}"))?;
+    let rows: Vec<Value> = response.take(0).context("reading count result")?;
+    let count = rows
+        .first()
+        .and_then(|r| r.get("total"))
+        .and_then(Value::as_u64)
+        .unwrap_or(0) as usize;
+    Ok(count)
+}
+
+// ---------------------------------------------------------------------------
 // Merge write
 // ---------------------------------------------------------------------------
 

@@ -366,3 +366,319 @@ async fn update_artifact_returns_503_when_surrealdb_unavailable() {
         "error code must be DB_UNAVAILABLE"
     );
 }
+
+// ---------------------------------------------------------------------------
+// POST /artifacts
+// ---------------------------------------------------------------------------
+
+/// POST /artifacts with a valid body creates the artifact and returns 201.
+///
+/// The created artifact must be visible in a subsequent GET /artifacts request
+/// (read-your-writes). Both requests share the same router instance with the
+/// same GraphState, so the HashMap is updated atomically by the POST handler.
+#[tokio::test]
+async fn create_artifact_returns_201_with_fields() {
+    let router = helpers::build_app_router().await;
+    let body = serde_json::json!({
+        "id": "TASK-post001",
+        "type": "task",
+        "title": "Integration test task",
+        "status": "todo"
+    });
+    let request = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&body).unwrap()))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    assert_eq!(
+        response.status(),
+        StatusCode::CREATED,
+        "POST must return 201 Created"
+    );
+
+    let resp_bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&resp_bytes).unwrap();
+    assert_eq!(json["id"], "TASK-post001");
+    assert_eq!(json["artifact_type"], "task");
+    assert!(
+        json["version"].as_u64().unwrap_or(0) >= 1,
+        "version must be at least 1"
+    );
+    assert!(
+        !json["content_hash"].as_str().unwrap_or("").is_empty(),
+        "content_hash must be set"
+    );
+}
+
+/// POST /artifacts followed by GET /artifacts/:id returns the new artifact (read-your-writes).
+#[tokio::test]
+async fn create_artifact_visible_in_get_by_id() {
+    use tower::ServiceExt as _;
+
+    let state = helpers::build_app_state().await;
+    let router1 = orqa_daemon_lib::build_router(state.clone());
+    let router2 = orqa_daemon_lib::build_router(state);
+
+    let post_body = serde_json::json!({
+        "id": "TASK-ryw001",
+        "type": "task",
+        "title": "Read-your-writes test",
+        "status": "todo"
+    });
+    let post_req = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&post_body).unwrap()))
+        .unwrap();
+
+    let post_response = router1.oneshot(post_req).await.unwrap();
+    assert_eq!(post_response.status(), StatusCode::CREATED);
+
+    // Same GraphState — GET must see the artifact immediately.
+    let get_req = Request::builder()
+        .method("GET")
+        .uri("/artifacts/TASK-ryw001")
+        .body(Body::empty())
+        .unwrap();
+    let get_response = router2.oneshot(get_req).await.unwrap();
+    assert_eq!(
+        get_response.status(),
+        StatusCode::OK,
+        "GET /artifacts/:id must return 200 for the just-created artifact"
+    );
+
+    let body = get_response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(json["id"], "TASK-ryw001");
+}
+
+/// POST /artifacts with an ID that already exists returns 409.
+#[tokio::test]
+async fn create_artifact_duplicate_returns_409() {
+    let router = helpers::build_app_router().await;
+    let body = serde_json::json!({
+        "id": "EPIC-test001",
+        "type": "epic",
+        "title": "Duplicate test"
+    });
+    let request = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&body).unwrap()))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    assert_eq!(
+        response.status(),
+        StatusCode::CONFLICT,
+        "duplicate artifact ID must return 409 Conflict"
+    );
+
+    let resp_bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&resp_bytes).unwrap();
+    assert_eq!(json["code"], "DUPLICATE", "error code must be DUPLICATE");
+}
+
+/// POST /artifacts with a missing required field (id) returns 422 (axum deserialization error).
+#[tokio::test]
+async fn create_artifact_missing_required_field_returns_4xx() {
+    let router = helpers::build_app_router().await;
+    let body = serde_json::json!({
+        "type": "task",
+        "title": "Missing id field"
+    });
+    let request = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&body).unwrap()))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    let status = response.status().as_u16();
+    assert!(
+        (400..500).contains(&status),
+        "missing required field must return 4xx, got {status}"
+    );
+}
+
+/// POST /artifacts returns 503 when SurrealDB is unavailable.
+#[tokio::test]
+async fn create_artifact_returns_503_when_surrealdb_unavailable() {
+    let router = helpers::build_app_router_without_surrealdb().await;
+    let body = serde_json::json!({
+        "id": "TASK-503test",
+        "type": "task",
+        "title": "503 test"
+    });
+    let request = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&body).unwrap()))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    assert_eq!(
+        response.status(),
+        StatusCode::SERVICE_UNAVAILABLE,
+        "POST must return 503 when SurrealDB is unavailable"
+    );
+
+    let resp_bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&resp_bytes).unwrap();
+    assert_eq!(
+        json["code"], "DB_UNAVAILABLE",
+        "error code must be DB_UNAVAILABLE"
+    );
+}
+
+/// POST /artifacts with relationships creates edges and GET /graph/trace/:id succeeds.
+#[tokio::test]
+async fn create_artifact_with_relationships_and_trace() {
+    use tower::ServiceExt as _;
+
+    let state = helpers::build_app_state().await;
+    let router1 = orqa_daemon_lib::build_router(state.clone());
+    let router2 = orqa_daemon_lib::build_router(state);
+
+    let post_body = serde_json::json!({
+        "id": "TASK-edge001",
+        "type": "task",
+        "title": "Edge test task",
+        "status": "todo",
+        "relationships": [
+            { "target": "EPIC-test001", "type": "delivers" }
+        ]
+    });
+    let post_req = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&post_body).unwrap()))
+        .unwrap();
+
+    let post_response = router1.oneshot(post_req).await.unwrap();
+    assert_eq!(post_response.status(), StatusCode::CREATED);
+
+    let resp_bytes = post_response
+        .into_body()
+        .collect()
+        .await
+        .unwrap()
+        .to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&resp_bytes).unwrap();
+    assert_eq!(
+        json["edge_count"], 1,
+        "one relationship edge must be inserted"
+    );
+
+    // GET /graph/trace/:id must succeed — the artifact is in the DB.
+    let trace_req = Request::builder()
+        .method("GET")
+        .uri("/graph/trace/TASK-edge001")
+        .body(Body::empty())
+        .unwrap();
+    let trace_response = router2.oneshot(trace_req).await.unwrap();
+    assert_eq!(
+        trace_response.status(),
+        StatusCode::OK,
+        "GET /graph/trace/:id must return 200 for the just-created artifact"
+    );
+}
+
+/// POST /artifacts with an invalid status value returns 422 with SCHEMA_INVALID code.
+///
+/// The fixture now includes a task plugin manifest that constrains `status` to an enum.
+/// This test verifies the composed-schema validator fires before the SurrealDB write.
+#[tokio::test]
+async fn create_artifact_invalid_status_returns_422() {
+    let router = helpers::build_app_router().await;
+    let body = serde_json::json!({
+        "id": "TASK-schema001",
+        "type": "task",
+        "title": "Schema validation test",
+        "status": "not-a-valid-status"
+    });
+    let request = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&body).unwrap()))
+        .unwrap();
+
+    let response = router.oneshot(request).await.unwrap();
+    assert_eq!(
+        response.status(),
+        StatusCode::UNPROCESSABLE_ENTITY,
+        "invalid status value must return 422"
+    );
+
+    let resp_bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let json: serde_json::Value = serde_json::from_slice(&resp_bytes).unwrap();
+    assert_eq!(
+        json["code"], "SCHEMA_INVALID",
+        "error code must be SCHEMA_INVALID, got: {json}"
+    );
+    assert!(
+        json["violations"].is_array(),
+        "response must include violations array"
+    );
+    assert!(
+        !json["violations"].as_array().unwrap().is_empty(),
+        "violations array must be non-empty"
+    );
+}
+
+/// POST /artifacts with relationships: verify edge was actually written to SurrealDB.
+///
+/// After POST, queries SurrealDB directly (via the db handle from app state) to assert
+/// the relates_to record exists — not just that the request contained an edge.
+#[tokio::test]
+async fn create_artifact_edge_written_to_surrealdb() {
+    use orqa_graph::writers::count_edges_from;
+
+    let state = helpers::build_app_state().await;
+    let router = orqa_daemon_lib::build_router(state.clone());
+
+    let post_body = serde_json::json!({
+        "id": "TASK-dbedge001",
+        "type": "task",
+        "title": "DB edge verification test",
+        "status": "todo",
+        "relationships": [
+            { "target": "EPIC-test001", "type": "delivers" }
+        ]
+    });
+    let post_req = Request::builder()
+        .method("POST")
+        .uri("/artifacts")
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&post_body).unwrap()))
+        .unwrap();
+
+    let post_response = router.oneshot(post_req).await.unwrap();
+    assert_eq!(
+        post_response.status(),
+        StatusCode::CREATED,
+        "POST must return 201"
+    );
+
+    // Query SurrealDB directly to confirm the edge record was written.
+    let db = state
+        .graph_state
+        .surreal_db()
+        .expect("SurrealDB must be available in test state");
+    let edge_count = count_edges_from(&db, "TASK-dbedge001")
+        .await
+        .expect("count_edges_from must succeed");
+    assert_eq!(
+        edge_count, 1,
+        "exactly one relates_to edge must exist in SurrealDB for TASK-dbedge001"
+    );
+}

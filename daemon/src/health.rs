@@ -469,6 +469,7 @@ pub async fn start(
     // Artifact routes — operate on the cached graph.
     let artifact_router = Router::new()
         .route("/", get(crate::routes::artifacts::list_artifacts))
+        .route("/", post(crate::routes::artifacts::create_artifact_handler))
         .route("/tree", get(crate::routes::artifacts::get_artifact_tree))
         .route("/import", post(crate::routes::import::import_artifacts))
         .route("/{id}", get(crate::routes::artifacts::get_artifact))

@@ -1,0 +1,60 @@
+{
+  "name": "@orqa-test/tasks",
+  "version": "0.1.0",
+  "description": "Minimal task type definition for daemon integration tests.",
+  "provides": {
+    "schemas": [
+      {
+        "key": "task",
+        "label": "Tasks",
+        "icon": "check",
+        "idPrefix": "TASK",
+        "frontmatter": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^TASK-"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["todo", "in-progress", "done", "cancelled"]
+            }
+          }
+        },
+        "statusTransitions": {
+          "todo": ["in-progress"],
+          "in-progress": ["done", "cancelled"],
+          "done": [],
+          "cancelled": []
+        }
+      },
+      {
+        "key": "epic",
+        "label": "Epics",
+        "icon": "layers",
+        "idPrefix": "EPIC",
+        "frontmatter": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^EPIC-"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["draft", "active", "done"]
+            }
+          }
+        },
+        "statusTransitions": {
+          "draft": ["active"],
+          "active": ["done"],
+          "done": []
+        }
+      }
+    ]
+  }
+}

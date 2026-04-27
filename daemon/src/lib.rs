@@ -47,6 +47,7 @@ pub fn build_router(state: health::HealthState) -> axum::Router {
 
     let artifact_router = axum::Router::new()
         .route("/", get(routes::artifacts::list_artifacts))
+        .route("/", post(routes::artifacts::create_artifact_handler))
         .route("/tree", get(routes::artifacts::get_artifact_tree))
         .route("/import", post(routes::import::import_artifacts))
         .route("/{id}", get(routes::artifacts::get_artifact))

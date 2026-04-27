@@ -60,9 +60,10 @@ pub use sync::{
     upsert_enforcement_rules_from_plugin, BulkSyncSummary, EnforcementRuleSource, SyncResult,
 };
 pub use writers::{
-    bump_version, check_plugin_drift, delete_plugin_installation, import_merge_write,
-    import_upsert, list_all_plugin_installations, list_plugin_installations, read_artifact,
-    read_plugin_installation, update_artifact_fields, upsert_plugin_installation,
-    upsert_plugin_installation_with_timestamp, BumpError, DriftedFile, DriftedPlugin,
-    PluginDriftReport, PluginFileEntry, PluginInstallStatus, StoredArtifact,
+    bump_version, check_plugin_drift, count_edges_from, create_artifact,
+    delete_plugin_installation, import_merge_write, import_upsert, list_all_plugin_installations,
+    list_plugin_installations, read_artifact, read_plugin_installation, update_artifact_fields,
+    upsert_plugin_installation, upsert_plugin_installation_with_timestamp, upsert_relates_to_edge,
+    BumpError, DriftedFile, DriftedPlugin, PluginDriftReport, PluginFileEntry, PluginInstallStatus,
+    RelationshipEdge, StoredArtifact,
 };

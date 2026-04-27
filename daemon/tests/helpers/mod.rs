@@ -56,6 +56,33 @@ pub async fn build_app_router_without_surrealdb() -> Router {
     orqa_daemon_lib::build_router(state)
 }
 
+/// Build a `HealthState` backed by a fresh in-memory SurrealDB and the minimal fixture project.
+///
+/// Useful when a test needs two routers that share the same `GraphState` — e.g. POST followed
+/// by GET to verify read-your-writes. Both routers are built via `build_router(state.clone())`.
+pub async fn build_app_state() -> orqa_daemon_lib::health::HealthState {
+    use orqa_graph::surreal::{initialize_schema, open_memory};
+
+    use orqa_daemon_lib::graph_state::GraphState;
+    use orqa_daemon_lib::health::HealthState;
+
+    let root = fixture_dir();
+    let graph_state = GraphState::build(&root)
+        .await
+        .unwrap_or_else(|_| GraphState::build_empty(&root));
+
+    let db = open_memory().await.expect("open in-memory SurrealDB");
+    initialize_schema(&db)
+        .await
+        .expect("initialize SurrealDB schema");
+    orqa_graph::sync::bulk_sync(&db, &root)
+        .await
+        .expect("bulk_sync fixture artifacts");
+    graph_state.inject_db(db);
+
+    HealthState::for_test(graph_state, None)
+}
+
 /// Build a full axum Router using real route handlers from `orqa_daemon_lib`,
 /// backed by a minimal `HealthState` constructed from fixture data.
 ///

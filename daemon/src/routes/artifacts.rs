@@ -1,11 +1,11 @@
 // Artifact routes: CRUD and graph queries against the cached artifact graph.
 //
-// All handlers read from the shared GraphState. PUT /artifacts/:id writes to
-// SurrealDB (authoritative) and refreshes the in-memory HashMap from the
-// stored record. No disk writes occur on the PUT path. Other write operations
-// (POST, DELETE) are deferred to a later task.
+// All write handlers (POST, PUT) target SurrealDB as the authoritative store and
+// refresh the in-memory HashMap from the stored record. No disk writes occur on
+// any write path. DELETE is deferred to a later task.
 //
 // Endpoints:
+//   POST /artifacts                   — create a new artifact in SurrealDB
 //   GET  /artifacts                   — query with optional type/status/search filters
 //   GET  /artifacts/tree              — navigation tree derived from schema + disk scan
 //   GET  /artifacts/:id               — single artifact node
@@ -19,13 +19,18 @@ use axum::http::StatusCode;
 use axum::Json;
 use serde::{Deserialize, Serialize};
 
+use std::collections::BTreeMap;
+
 use orqa_artifact::artifact_entries_from_schema;
 use orqa_artifact::reader::artifact_scan_tree;
 use orqa_engine_types::types::artifact::NavTree;
 use orqa_graph::surreal_queries::{
     list_artifacts as surreal_list, search_artifacts as surreal_search,
 };
-use orqa_graph::writers::update_artifact_fields;
+use orqa_graph::writers::{
+    count_edges_from, create_artifact, update_artifact_fields, RelationshipEdge,
+};
+use orqa_validation::checks::schema::{build_composed_schema, validate_frontmatter};
 use orqa_validation::metrics::compute_traceability;
 use orqa_validation::PipelineCategories;
 use orqa_validation::{ArtifactNode, TraceabilityResult};
@@ -56,6 +61,59 @@ pub struct ArtifactsQuery {
 // ---------------------------------------------------------------------------
 // Request / response shapes
 // ---------------------------------------------------------------------------
+
+/// A single relationship edge in a POST /artifacts request body.
+#[derive(Debug, Deserialize)]
+pub struct RelationshipInput {
+    /// Target artifact ID.
+    pub target: String,
+    /// Semantic relationship type (e.g. "delivers", "enforced-by").
+    #[serde(rename = "type")]
+    pub relation_type: String,
+}
+
+/// Request body for POST /artifacts.
+///
+/// `id` and `type` are required. All other frontmatter fields are optional.
+/// `relationships` mirrors the frontmatter `relationships:` array and is used
+/// to create `relates_to` edges in SurrealDB.
+#[derive(Debug, Deserialize)]
+pub struct CreateArtifactRequest {
+    /// Artifact ID (e.g. "EPIC-new001"). Must be unique in SurrealDB.
+    pub id: String,
+    /// Artifact type key (e.g. "epic", "task", "rule").
+    #[serde(rename = "type")]
+    pub artifact_type: String,
+    /// Human-readable title.
+    pub title: Option<String>,
+    /// Optional description.
+    pub description: Option<String>,
+    /// Optional status string.
+    pub status: Option<String>,
+    /// Optional priority string.
+    pub priority: Option<String>,
+    /// Relationship edges to create alongside the artifact.
+    #[serde(default)]
+    pub relationships: Vec<RelationshipInput>,
+    /// Any additional frontmatter fields passed through verbatim.
+    #[serde(flatten)]
+    pub extra_fields: serde_json::Map<String, serde_json::Value>,
+}
+
+/// Response body for POST /artifacts.
+#[derive(Debug, Serialize)]
+pub struct CreateArtifactResponse {
+    /// ID of the artifact that was created.
+    pub id: String,
+    /// Artifact type key.
+    pub artifact_type: String,
+    /// Version assigned by SurrealDB after the write.
+    pub version: u64,
+    /// SHA-256 content hash of the frontmatter JSON at creation time.
+    pub content_hash: String,
+    /// Number of `relates_to` edges inserted.
+    pub edge_count: usize,
+}
 
 /// Request body for PUT /artifacts/:id.
 #[derive(Debug, Deserialize)]
@@ -104,6 +162,173 @@ pub struct ImpactResponse {
 // ---------------------------------------------------------------------------
 // Handlers
 // ---------------------------------------------------------------------------
+
+/// Handle POST /artifacts — insert a new artifact into SurrealDB.
+///
+/// Returns 409 when an artifact with the same ID already exists. Returns 503 when
+/// SurrealDB is unavailable. On success the new record is inserted into the
+/// in-memory HashMap so subsequent GET /artifacts requests reflect the new artifact
+/// without requiring a full reload.
+#[allow(clippy::too_many_lines)]
+pub async fn create_artifact_handler(
+    State(state): State<GraphState>,
+    Json(req): Json<CreateArtifactRequest>,
+) -> Result<(StatusCode, Json<CreateArtifactResponse>), (StatusCode, Json<serde_json::Value>)> {
+    // Require SurrealDB — no silent fallback.
+    let db = state.surreal_db().ok_or_else(|| {
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Json(serde_json::json!({
+                "error": "SurrealDB unavailable — POST requires a live database connection",
+                "code": "DB_UNAVAILABLE"
+            })),
+        )
+    })?;
+
+    // Build the frontmatter BTreeMap from the request.
+    let mut fields: BTreeMap<String, serde_json::Value> = BTreeMap::new();
+    fields.insert("id".to_owned(), serde_json::Value::String(req.id.clone()));
+    fields.insert(
+        "type".to_owned(),
+        serde_json::Value::String(req.artifact_type.clone()),
+    );
+    if let Some(ref t) = req.title {
+        fields.insert("title".to_owned(), serde_json::Value::String(t.clone()));
+    }
+    if let Some(ref d) = req.description {
+        fields.insert(
+            "description".to_owned(),
+            serde_json::Value::String(d.clone()),
+        );
+    }
+    if let Some(ref s) = req.status {
+        fields.insert("status".to_owned(), serde_json::Value::String(s.clone()));
+    }
+    if let Some(ref p) = req.priority {
+        fields.insert("priority".to_owned(), serde_json::Value::String(p.clone()));
+    }
+    for (k, v) in &req.extra_fields {
+        // Skip keys already inserted above to avoid overwriting typed fields.
+        if !matches!(
+            k.as_str(),
+            "id" | "type" | "title" | "description" | "status" | "priority"
+        ) {
+            fields.insert(k.clone(), v.clone());
+        }
+    }
+
+    // Validate the frontmatter against the composed JSON Schema for this artifact type.
+    // Clone what we need from the state before any await so the lock is not held across await.
+    let (artifact_types, schema_extensions) = {
+        let guard = state.0.read().map_err(|_| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({ "error": "state lock poisoned", "code": "LOCK_ERROR" })),
+            )
+        })?;
+        (
+            guard.ctx.artifact_types.clone(),
+            guard.ctx.schema_extensions.clone(),
+        )
+    };
+
+    if let Some(type_def) = artifact_types.iter().find(|t| t.key == req.artifact_type) {
+        let type_extensions: Vec<&orqa_validation::platform::SchemaExtension> = schema_extensions
+            .iter()
+            .filter(|e| e.target_key == req.artifact_type)
+            .collect();
+        let schema = build_composed_schema(type_def, &type_extensions);
+        let fm_value = serde_json::to_value(&fields)
+            .unwrap_or(serde_json::Value::Object(serde_json::Map::default()));
+        let errors = validate_frontmatter(&fm_value, &schema);
+        if !errors.is_empty() {
+            let violations: Vec<serde_json::Value> = errors
+                .iter()
+                .map(|e| serde_json::json!({ "path": e.path, "message": e.message }))
+                .collect();
+            return Err((
+                StatusCode::UNPROCESSABLE_ENTITY,
+                Json(serde_json::json!({
+                    "error": "request body failed JSON Schema validation",
+                    "code": "SCHEMA_INVALID",
+                    "violations": violations
+                })),
+            ));
+        }
+    }
+
+    // Compute content_hash from the frontmatter JSON.
+    use sha2::{Digest, Sha256};
+    let fm_json = serde_json::to_string(&fields).unwrap_or_else(|_| "{}".to_owned());
+    let content_hash = hex::encode(Sha256::digest(fm_json.as_bytes()));
+
+    // Convert relationship inputs to edge descriptors.
+    let edges: Vec<RelationshipEdge> = req
+        .relationships
+        .iter()
+        .map(|r| RelationshipEdge {
+            target_id: r.target.clone(),
+            relation_type: r.relation_type.clone(),
+        })
+        .collect();
+
+    // Write to SurrealDB.
+    let version = create_artifact(&db, &req.id, &fields, &content_hash, &edges)
+        .await
+        .map_err(|e| {
+            let msg = e.to_string();
+            if msg.contains("DUPLICATE") {
+                (
+                    StatusCode::CONFLICT,
+                    Json(serde_json::json!({
+                        "error": format!("artifact '{}' already exists", req.id),
+                        "code": "DUPLICATE"
+                    })),
+                )
+            } else {
+                (
+                    StatusCode::UNPROCESSABLE_ENTITY,
+                    Json(serde_json::json!({ "error": msg, "code": "CREATE_FAILED" })),
+                )
+            }
+        })?;
+
+    // Read back edge count from SurrealDB — confirms writes succeeded, not just that the
+    // request contained edges.
+    let edge_count = count_edges_from(&db, &req.id).await.unwrap_or(edges.len());
+
+    // Refresh the HashMap so GET /artifacts sees the new artifact immediately.
+    if let Ok(mut guard) = state.0.write() {
+        let title = req.title.clone().unwrap_or_else(|| req.id.clone());
+        let node = ArtifactNode {
+            id: req.id.clone(),
+            project: None,
+            path: String::new(),
+            artifact_type: req.artifact_type.clone(),
+            title,
+            description: req.description.clone(),
+            status: req.status.clone(),
+            priority: req.priority.clone(),
+            frontmatter: serde_json::to_value(&fields)
+                .unwrap_or(serde_json::Value::Object(serde_json::Map::default())),
+            body: None,
+            references_out: Vec::new(),
+            references_in: Vec::new(),
+        };
+        guard.graph.nodes.insert(req.id.clone(), node);
+    }
+
+    Ok((
+        StatusCode::CREATED,
+        Json(CreateArtifactResponse {
+            id: req.id,
+            artifact_type: req.artifact_type,
+            version,
+            content_hash,
+            edge_count,
+        }),
+    ))
+}
 
 /// Handle GET /artifacts — return all artifacts matching the query filters.
 ///
